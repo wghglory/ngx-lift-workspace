@@ -11,7 +11,6 @@ import { ToastContainerComponent } from './toast-container.component';
 describe('ToastContainerComponent', () => {
   let component: ToastContainerComponent;
   let fixture: ComponentFixture<ToastContainerComponent>;
-  let toastService: ToastService;
   let deleteToastSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -27,7 +26,6 @@ describe('ToastContainerComponent', () => {
 
     fixture = TestBed.createComponent(ToastContainerComponent);
     component = fixture.componentInstance;
-    toastService = TestBed.inject(ToastService);
   });
 
   it('should create', () => {

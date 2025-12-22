@@ -1,6 +1,6 @@
-import {FormControl, FormGroup, ValidatorFn} from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 
-import {intersectionValidator} from './intersection.validator';
+import { intersectionValidator } from './intersection.validator';
 
 describe('intersectionValidator', () => {
   let formGroup: FormGroup;
@@ -14,13 +14,17 @@ describe('intersectionValidator', () => {
         field1: new FormControl([]),
         field2: new FormControl([]),
       },
-      {validators: validator},
+      { validators: validator },
     );
   });
 
   it('should return null when no intersection exists', () => {
-    formGroup.get('field1')!.setValue(['apple', 'banana']);
-    formGroup.get('field2')!.setValue(['orange', 'grape']);
+    const field1 = formGroup.get('field1');
+    const field2 = formGroup.get('field2');
+    if (field1 && field2) {
+      field1.setValue(['apple', 'banana']);
+      field2.setValue(['orange', 'grape']);
+    }
 
     formGroup.updateValueAndValidity();
 
@@ -28,12 +32,16 @@ describe('intersectionValidator', () => {
   });
 
   it('should return an error when an intersection exists', () => {
-    formGroup.get('field1')!.setValue(['apple', 'banana']);
-    formGroup.get('field2')!.setValue(['banana', 'orange']);
+    const field1 = formGroup.get('field1');
+    const field2 = formGroup.get('field2');
+    if (field1 && field2) {
+      field1.setValue(['apple', 'banana']);
+      field2.setValue(['banana', 'orange']);
+    }
 
     formGroup.updateValueAndValidity();
 
-    expect(formGroup.errors).toEqual({intersection: true});
+    expect(formGroup.errors).toEqual({ intersection: true });
   });
 
   it('should return null when one of the controls is missing', () => {
@@ -41,7 +49,7 @@ describe('intersectionValidator', () => {
       {
         field1: new FormControl(['apple', 'banana']),
       },
-      {validators: validator},
+      { validators: validator },
     );
 
     formGroup.updateValueAndValidity();
@@ -55,7 +63,7 @@ describe('intersectionValidator', () => {
         field1: new FormControl('apple'),
         field2: new FormControl(['orange', 'grape']),
       },
-      {validators: validator},
+      { validators: validator },
     );
 
     formGroup.updateValueAndValidity();

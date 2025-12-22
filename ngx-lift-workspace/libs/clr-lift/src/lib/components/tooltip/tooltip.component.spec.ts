@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { TemplateRef, ViewContainerRef } from '@angular/core';
 import { vi } from 'vitest';
 
 import { TooltipComponent } from './tooltip.component';

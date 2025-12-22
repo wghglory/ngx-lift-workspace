@@ -9,17 +9,31 @@ import { getTestBed } from '@angular/core/testing';
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
 } as typeof ResizeObserver;
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  constructor() {
+    // Mock implementation
+  }
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
   takeRecords() {
     return [];
   }

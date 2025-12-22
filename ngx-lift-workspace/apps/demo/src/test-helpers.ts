@@ -29,7 +29,9 @@ export const provideTestSvgIcon = () => [
   {
     provide: SvgIconRegistryService,
     useValue: {
-      loadSvg: () => {},
+      loadSvg: () => {
+        // Mock implementation
+      },
     },
   },
 ];
@@ -45,7 +47,9 @@ export const provideCommonTesting = () => [
   {
     provide: SvgIconRegistryService,
     useValue: {
-      loadSvg: () => {},
+      loadSvg: () => {
+        // Mock implementation
+      },
     },
   },
 ];

@@ -1,5 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 
 import { UniqueValidator } from './unique.validator';
 
@@ -92,7 +97,13 @@ describe('UniqueValidator', () => {
         fb.group({ key: fb.control(NaN), value: fb.control(NaN) }),
         fb.group({ key: fb.control(NaN), value: fb.control(NaN) }),
       ],
-      [UniqueValidator.unique((c) => c.get('key')!)],
+      [
+        UniqueValidator.unique((c) => {
+          const keyControl = c.get('key');
+          // In test context, key control always exists
+          return keyControl as AbstractControl;
+        }),
+      ],
     );
 
     expect(formArray.valid).toBeTruthy();

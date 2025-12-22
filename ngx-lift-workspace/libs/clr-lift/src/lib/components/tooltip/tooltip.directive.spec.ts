@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, ComponentRef, DebugElement } from '@angular/core';
 import {
   ComponentFixture,
   fakeAsync,
@@ -8,6 +8,7 @@ import {
 import { By } from '@angular/platform-browser';
 import { vi } from 'vitest';
 
+import { TooltipComponent } from './tooltip.component';
 import { TooltipDirective } from './tooltip.directive';
 
 describe('TooltipDirective', () => {
@@ -25,7 +26,9 @@ describe('TooltipDirective', () => {
       height: 100,
       x: 0,
       y: 0,
-      toJSON: () => {},
+      toJSON: () => {
+        // Mock implementation for getBoundingClientRect
+      },
     }));
 
     Element.prototype.getBoundingClientRect = mockGetBoundingClientRect;
@@ -79,8 +82,9 @@ describe('TooltipDirective', () => {
   }));
 
   it('should handle showTooltip when content is empty', () => {
-    const directive = directiveElement.injector.get(TooltipDirective);
-    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // Mock implementation
+    });
 
     // Create a new test component with empty content
     @Component({
@@ -91,7 +95,9 @@ describe('TooltipDirective', () => {
     class EmptyContentComponent {}
 
     const emptyFixture = TestBed.createComponent(EmptyContentComponent);
-    const emptyDirectiveElement = emptyFixture.debugElement.query(By.directive(TooltipDirective));
+    const emptyDirectiveElement = emptyFixture.debugElement.query(
+      By.directive(TooltipDirective),
+    );
     const emptyDirective = emptyDirectiveElement.injector.get(TooltipDirective);
 
     emptyDirective.onMouseEnter();
@@ -99,7 +105,9 @@ describe('TooltipDirective', () => {
 
     // Tooltip should not be created
     expect(emptyDirective['tooltipComponent']).toBeFalsy();
-    expect(consoleSpy).toHaveBeenCalledWith('Tooltip content not defined, cannot show tooltip');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Tooltip content not defined, cannot show tooltip',
+    );
 
     consoleSpy.mockRestore();
   });
@@ -122,7 +130,7 @@ describe('TooltipDirective', () => {
       hostView: {
         detectChanges: vi.fn(),
       },
-    } as any;
+    } as unknown as ComponentRef<TooltipComponent>;
 
     directive['tooltipComponent'] = mockComponent;
 

@@ -69,7 +69,9 @@ describe('TranslationService', () => {
   });
 
   it('should handle unsupported language gracefully', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // Mock implementation
+    });
 
     translationService.translate('someKey');
 
@@ -78,7 +80,9 @@ describe('TranslationService', () => {
   });
 
   it('should handle missing translation gracefully', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // Mock implementation
+    });
 
     translationService.loadTranslationsForComponent('testComponent', {
       es: {
@@ -96,7 +100,9 @@ describe('TranslationService', () => {
   });
 
   it('should handle missing translation in default language', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // Mock implementation
+    });
 
     const missingTranslation = translationService.translate('someKey');
 

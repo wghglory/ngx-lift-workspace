@@ -1,8 +1,11 @@
-import {differenceInDays} from './difference-in-days.util';
+import { differenceInDays } from './difference-in-days.util';
 
 describe('differenceInDays', () => {
   it('should return the correct number of whole days between two dates', () => {
-    const result1 = differenceInDays(new Date('2022-09-08'), new Date('2023-09-18'));
+    const result1 = differenceInDays(
+      new Date('2022-09-08'),
+      new Date('2023-09-18'),
+    );
     expect(result1).toBe(-375);
 
     const result2 = differenceInDays('2022-09-08', '2023-09-18');
@@ -11,7 +14,10 @@ describe('differenceInDays', () => {
     const result3 = differenceInDays('2023-09-18', '2022-09-08');
     expect(result3).toBe(375);
 
-    const result4 = differenceInDays(new Date('2020-01-01'), new Date('2020-01-01'));
+    const result4 = differenceInDays(
+      new Date('2020-01-01'),
+      new Date('2020-01-01'),
+    );
     expect(result4).toBe(0);
 
     const result5 = differenceInDays(Date.now(), new Date('2024-01-01'));
@@ -19,7 +25,11 @@ describe('differenceInDays', () => {
   });
 
   it('should return the difference between two dates with time', () => {
-    const result1 = differenceInDays(new Date('2022-09-08'), new Date('2022-09-08T12:00:00'));
-    expect(result1 === 0 || result1 === -0).toBe(true); // Handle -0 vs 0
+    const result1 = differenceInDays(
+      new Date('2022-09-08'),
+      new Date('2022-09-08T12:00:00'),
+    );
+    // Handle -0 vs 0 - both should be treated as 0 (avoid comparing directly with -0)
+    expect(Math.abs(result1)).toBe(0);
   });
 });

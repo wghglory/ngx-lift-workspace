@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {assertInInjectionContext, computed, Injector, isSignal, Signal, untracked} from '@angular/core';
-import {toObservable, toSignal} from '@angular/core/rxjs-interop';
+import {
+  assertInInjectionContext,
+  computed,
+  Injector,
+  isSignal,
+  Signal,
+  untracked,
+} from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   combineLatest,
   distinctUntilChanged,
@@ -128,20 +135,26 @@ export function combineFrom<Input extends object, Output = Input>(
  * }
  * ```
  */
-export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal<Output | null | undefined> {
+export function combineFrom<Input = any, Output = Input>(
+  ...args: any[]
+): Signal<Output | null | undefined> {
   assertInInjectionContext(combineFrom);
 
-  const {normalizedSources, hasInitValue, operator, options} = normalizeArgs<Input, Output>(args);
+  const { normalizedSources, hasInitValue, operator, options } = normalizeArgs<
+    Input,
+    Output
+  >(args);
 
-  const ret = hasInitValue
-    ? toSignal(combineLatest(normalizedSources).pipe(operator), {
-        initialValue: options!.initialValue!,
-        injector: options?.injector,
-      })
-    : (toSignal(combineLatest(normalizedSources).pipe(operator), {
-        injector: options?.injector,
-        // requireSync: true,
-      }) as Signal<Output | undefined>);
+  const ret =
+    hasInitValue && options?.initialValue !== undefined
+      ? toSignal(combineLatest(normalizedSources).pipe(operator), {
+          initialValue: options.initialValue,
+          injector: options?.injector,
+        })
+      : (toSignal(combineLatest(normalizedSources).pipe(operator), {
+          injector: options?.injector,
+          // requireSync: true,
+        }) as Signal<Output | undefined>);
 
   return ret;
 }
@@ -161,7 +174,9 @@ function normalizeArgs<Input, Output>(
   const hasOperator = typeof args[1] === 'function';
 
   if (args.length === 3 && !hasOperator) {
-    throw new TypeError('combineFrom needs a pipe operator as the second argument');
+    throw new TypeError(
+      'combineFrom needs a pipe operator as the second argument',
+    );
   }
 
   // pass sources and options
@@ -183,18 +198,22 @@ function normalizeArgs<Input, Output>(
         let initialValue: any;
         try {
           initialValue = untracked(source);
-        } catch (_e) {
+        } catch {
           // If the input is not set, skip startWith or provide a fallback
           initialValue = undefined;
         }
         // toObservable doesn't immediately emit initialValue of the signal
-        acc[keyOrIndex] = toObservable(source, {injector: options?.injector}).pipe(startWith(initialValue));
+        acc[keyOrIndex] = toObservable(source, {
+          injector: options?.injector,
+        }).pipe(startWith(initialValue));
       } else if (isObservable(source)) {
         acc[keyOrIndex] = source.pipe(distinctUntilChanged());
       } else if (typeof source === 'function') {
         // seldom use: pass function like () => 5
         const computedRes = computed(source as () => unknown);
-        acc[keyOrIndex] = toObservable(computedRes, {injector: options?.injector}).pipe(startWith(source()));
+        acc[keyOrIndex] = toObservable(computedRes, {
+          injector: options?.injector,
+        }).pipe(startWith(source()));
       } else {
         // seldom use: pass promise, Map, array, etc that from accepts
         acc[keyOrIndex] = from(source as any).pipe(distinctUntilChanged());
@@ -204,5 +223,5 @@ function normalizeArgs<Input, Output>(
     (Array.isArray(sources) ? [] : {}) as any,
   );
 
-  return {normalizedSources, operator, hasInitValue, options};
+  return { normalizedSources, operator, hasInitValue, options };
 }

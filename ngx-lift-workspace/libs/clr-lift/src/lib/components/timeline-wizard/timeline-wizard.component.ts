@@ -81,9 +81,13 @@ export class TimelineWizardComponent implements AfterViewInit {
    */
   next$ = this.nextAction.pipe(
     tap(() => this.beforeAsyncOperation()),
-    switchMap(() =>
+    switchMap(() => {
+      const currentRef = this.currentComponentRef;
+      if (!currentRef) {
+        throw new Error('Current component reference is not available');
+      }
       // Fly into the component and switch to next$ stream (e.g. API call when clicking next button)
-      this.currentComponentRef!.instance.next$.pipe(
+      return currentRef.instance.next$.pipe(
         createAsyncState({
           next: () => {
             if (this.timelineWizardService.isLastStep) {
@@ -94,8 +98,8 @@ export class TimelineWizardComponent implements AfterViewInit {
           },
           error: (err) => this.setStepAsError(err),
         }),
-      ),
-    ),
+      );
+    }),
   );
 
   constructor() {
@@ -223,10 +227,11 @@ export class TimelineWizardComponent implements AfterViewInit {
   private initComponent(cmpRef: ComponentRef<TimelineBaseComponent>) {
     // for a form step component, fill in the step data
     if (cmpRef.instance.form) {
+      const form = cmpRef.instance.form;
       // defer patchValue, wait for component's form initialization
       setTimeout(
         () =>
-          cmpRef.instance.form!.patchValue(
+          form.patchValue(
             cmpRef.instance.dataToFormValue(
               this.timelineWizardService.currentStep.data,
             ),

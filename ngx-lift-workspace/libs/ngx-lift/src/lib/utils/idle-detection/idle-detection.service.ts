@@ -1,4 +1,4 @@
-import { inject, Injectable, Optional } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { fromEvent, merge, Subject, Subscription, throttleTime } from 'rxjs';
 
 import { IdleDetectionConfig } from './idle-detection.config';

@@ -13,7 +13,9 @@ describe('AppComponent', () => {
         {
           provide: SvgIconRegistryService,
           useValue: {
-            loadSvg: () => {},
+            loadSvg: () => {
+              // Mock implementation
+            },
           },
         },
       ],

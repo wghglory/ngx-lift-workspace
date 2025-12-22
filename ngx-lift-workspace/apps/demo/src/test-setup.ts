@@ -1,22 +1,39 @@
 import '@angular/compiler';
 import '@analogjs/vitest-angular/setup-zone';
 
-import {BrowserTestingModule, platformBrowserTesting} from '@angular/platform-browser/testing';
-import {getTestBed} from '@angular/core/testing';
+import {
+  BrowserTestingModule,
+  platformBrowserTesting,
+} from '@angular/platform-browser/testing';
+import { getTestBed } from '@angular/core/testing';
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
 } as typeof ResizeObserver;
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  constructor() {
+    // Mock implementation
+  }
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
   takeRecords() {
     return [];
   }
@@ -25,4 +42,7 @@ global.IntersectionObserver = class IntersectionObserver {
   thresholds = [];
 } as typeof IntersectionObserver;
 
-getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
+getTestBed().initTestEnvironment(
+  BrowserTestingModule,
+  platformBrowserTesting(),
+);
