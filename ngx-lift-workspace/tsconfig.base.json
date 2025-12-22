@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "ngx-lift": ["libs/ngx-lift/src/index.ts"]
+      "ngx-lift": ["libs/ngx-lift/src/index.ts"],
+      "clr-lift": ["libs/clr-lift/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
