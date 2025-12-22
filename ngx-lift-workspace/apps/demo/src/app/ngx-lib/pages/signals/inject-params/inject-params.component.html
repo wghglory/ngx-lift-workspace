@@ -1,46 +1,39 @@
 <cll-page-container [title]="'injectParams'" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      The <code>injectParams</code> function is a versatile utility for
-      injecting and transforming route parameters within an Angular application.
-      It provides a reactive way to access and manipulate route parameters using
-      Angular's signals-based architecture, making it easier to handle dynamic
-      routing scenarios.
+      The <code>injectParams</code> function is a versatile utility for injecting and transforming route parameters
+      within an Angular application. It provides a reactive way to access and manipulate route parameters using
+      Angular's signals-based architecture, making it easier to handle dynamic routing scenarios.
     </p>
 
     <h2>Usage</h2>
     <ul class="list-disc">
       <li>
-        When called without any arguments, <code>injectParams</code> returns a
-        signal containing the entire params object of the current route. This is
-        useful when multiple parameters need to be accessed or processed.
+        When called without any arguments, <code>injectParams</code> returns a signal containing the entire params
+        object of the current route. This is useful when multiple parameters need to be accessed or processed.
       </li>
       <li>
-        When a key is specified, <code>injectParams</code> returns the value of
-        the corresponding parameter as a signal. If the parameter is not
-        present, null is returned. This is useful for accessing individual
-        parameters directly.
+        When a key is specified, <code>injectParams</code> returns the value of the corresponding parameter as a signal.
+        If the parameter is not present, null is returned. This is useful for accessing individual parameters directly.
       </li>
       <li>
         To transform the parameters, you can either pass a
-        <code>transform</code> function as the first argument, or pass it in the
-        <code>options</code> <code>transform</code> property.
+        <code>transform</code> function as the first argument, or pass it in the <code>options</code>
+        <code>transform</code> property.
       </li>
       <li>
-        <code>Options</code> not only contains the
-        <code>transform</code> function, but also the <code>initialValue</code>.
-        If the
+        <code>Options</code> not only contains the <code>transform</code> function, but also the
+        <code>initialValue</code>. If the
         <code>initialValue</code>
-        type is a boolean or number, <code>transform</code> function must be
-        provided.
+        type is a boolean or number, <code>transform</code> function must be provided.
       </li>
     </ul>
 
     <app-code-block [code]="code" />
 
     <cll-callout>
-      When <code>initialValue</code> is provided as a boolean or number,
-      <code>transform</code> function must be provided returning the same type.
+      When <code>initialValue</code> is provided as a boolean or number, <code>transform</code> function must be
+      provided returning the same type.
     </cll-callout>
   </section>
 </cll-page-container>

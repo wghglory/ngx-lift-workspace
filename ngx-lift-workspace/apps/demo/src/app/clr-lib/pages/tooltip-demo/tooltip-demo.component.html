@@ -1,45 +1,43 @@
 <cll-page-container title="Tooltip" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      Whether you want to display additional information, provide hints, or
-      offer interactive content, Tooltip has got you covered.
+      Whether you want to display additional information, provide hints, or offer interactive content, Tooltip has got
+      you covered.
     </p>
     <h2>Features</h2>
 
     <ol class="list-decimal">
       <li>
-        <strong>Content Interaction</strong>: Support for hover and copy actions
-        within the content popover, making it interactive and engaging.
+        <strong>Content Interaction</strong>: Support for hover and copy actions within the content popover, making it
+        interactive and engaging.
       </li>
       <li>
-        <strong>Delay Configuration</strong>: Configure delay options for
-        showing/hiding the tooltip, providing flexibility in timing.
+        <strong>Delay Configuration</strong>: Configure delay options for showing/hiding the tooltip, providing
+        flexibility in timing.
       </li>
       <li>
-        <strong>Automatic Positioning</strong>: Automatically positions the
-        tooltip for optimal visibility, ensuring content remains accessible.
+        <strong>Automatic Positioning</strong>: Automatically positions the tooltip for optimal visibility, ensuring
+        content remains accessible.
       </li>
       <li>
-        <strong>Focus Trap</strong>: Implements focus trapping to keep focus
-        within the tooltip when it's open, enhancing accessibility.
+        <strong>Focus Trap</strong>: Implements focus trapping to keep focus within the tooltip when it's open,
+        enhancing accessibility.
       </li>
       <li>
-        <strong>Click Outside Interaction</strong>: Close the popover when
-        clicking outside the tooltip, offering intuitive behavior.
+        <strong>Click Outside Interaction</strong>: Close the popover when clicking outside the tooltip, offering
+        intuitive behavior.
       </li>
       <li>
-        <strong>Keyboard Operations</strong>: Supports keyboard operations,
-        including using the escape key to close the tooltip, improving
-        accessibility.
+        <strong>Keyboard Operations</strong>: Supports keyboard operations, including using the escape key to close the
+        tooltip, improving accessibility.
       </li>
       <li>
-        <strong>Dark Mode</strong>: Offers a dark mode for a better visual
-        experience, catering to different design preferences.
+        <strong>Dark Mode</strong>: Offers a dark mode for a better visual experience, catering to different design
+        preferences.
       </li>
       <li>
-        <strong>Resize/Scroll Positioning (Pending)</strong>: Planned
-        implementation for resizing, scrolling, and dynamic positioning, further
-        enhancing versatility.
+        <strong>Resize/Scroll Positioning (Pending)</strong>: Planned implementation for resizing, scrolling, and
+        dynamic positioning, further enhancing versatility.
       </li>
     </ol>
   </section>
@@ -47,18 +45,15 @@
   <section class="space-y-6">
     <h2>Usages</h2>
     <p>
-      Import <code>TooltipModule</code> or <code>TooltipDirective</code>,
-      <code>TooltipComponent</code> based on your need (standalone components or
-      legacy).
+      Import <code>TooltipModule</code> or <code>TooltipDirective</code>, <code>TooltipComponent</code> based on your
+      need (standalone components or legacy).
     </p>
     <app-code-block [code]="importCode" />
 
     <h3>Basic Tooltip</h3>
     <app-code-block [code]="basicTooltipCode" lang="html" />
     <div class="space-x-5">
-      <a href="javascript:void(0)" cllTooltip="This is our cllTooltip text"
-        >Basic Tooltip 1</a
-      >
+      <a href="javascript:void(0)" cllTooltip="This is our cllTooltip text">Basic Tooltip 1</a>
       <a
         href="javascript:void(0)"
         cllTooltip
@@ -68,15 +63,12 @@
       >
         Basic Tooltip 2 with Delay 500ms
       </a>
-      <a href="javascript:void(0)" cllTooltip cllTooltipContent=""
-        >Empty Content Won't Show Tooltip</a
-      >
+      <a href="javascript:void(0)" cllTooltip cllTooltipContent="">Empty Content Won't Show Tooltip</a>
     </div>
     <p>
-      In this usage, you can simply add a tooltip by specifying the content
-      directly or through attribute directive
-      <code>cllTooltipContent</code>. Additional configurations such as hide
-      delay and width can be customized as per your requirements.
+      In this usage, you can simply add a tooltip by specifying the content directly or through attribute directive
+      <code>cllTooltipContent</code>. Additional configurations such as hide delay and width can be customized as per
+      your requirements.
     </p>
 
     <h3>Tooltip with Dynamic Content</h3>
@@ -97,20 +89,17 @@
       </a>
       <ng-template #content let-data let-value="value">
         {{ 'A great tooltip:' }} {{ data }} {{ value }}
-        <cll-callout>
-          You can also put a component inside ng-template
-        </cll-callout>
+        <cll-callout> You can also put a component inside ng-template </cll-callout>
       </ng-template>
     </div>
     <p>
-      In this scenario, Tooltip accepts dynamic content provided through Angular
-      templates. You can specify templates using ng-template and bind them to
-      the tooltip component for dynamic display. This allows for more
-      interactive and customized tooltips.
+      In this scenario, Tooltip accepts dynamic content provided through Angular templates. You can specify templates
+      using ng-template and bind them to the tooltip component for dynamic display. This allows for more interactive and
+      customized tooltips.
     </p>
     <cll-callout>
-      <code>cllTooltipContentContext</code> is optional, it's the context that
-      will be passed to the ng-template during creating the embedded view.
+      <code>cllTooltipContentContext</code> is optional, it's the context that will be passed to the ng-template during
+      creating the embedded view.
     </cll-callout>
 
     <h3>Tooltip with Component Reference</h3>
@@ -129,27 +118,18 @@
       }
     </div>
     <p>
-      In this usage, Tooltip can display content from Angular components
-      dynamically. It demonstrates how you can create and inject components into
-      the tooltip, providing endless possibilities for displaying rich and
-      interactive content.
+      In this usage, Tooltip can display content from Angular components dynamically. It demonstrates how you can create
+      and inject components into the tooltip, providing endless possibilities for displaying rich and interactive
+      content.
     </p>
 
     <h3>Tooltip with Component Type</h3>
     <app-code-block [code]="componentTypeCode" />
     <div>
-      <a
-        href="javascript:void(0)"
-        cllTooltip
-        [cllTooltipContent]="SpinnerComponent"
-        [cllTooltipHideDelay]="1000"
-      >
+      <a href="javascript:void(0)" cllTooltip [cllTooltipContent]="SpinnerComponent" [cllTooltipHideDelay]="1000">
         Component Type Example
       </a>
     </div>
-    <p>
-      If you have a component without any inputs, e.g. just display some data.
-      You can pass the component Type.
-    </p>
+    <p>If you have a component without any inputs, e.g. just display some data. You can pass the component Type.</p>
   </section>
 </cll-page-container>

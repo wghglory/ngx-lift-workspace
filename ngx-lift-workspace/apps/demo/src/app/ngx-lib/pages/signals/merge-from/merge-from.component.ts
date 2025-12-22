@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { ClarityModule } from '@clr/angular';
-import { PageContainerComponent } from 'clr-lift';
-import { mergeFrom } from 'ngx-lift';
-import { delay, of, pipe, startWith, switchMap } from 'rxjs';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {ClarityModule} from '@clr/angular';
+import {PageContainerComponent} from 'clr-lift';
+import {mergeFrom} from 'ngx-lift';
+import {delay, of, pipe, startWith, switchMap} from 'rxjs';
 
-import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
-import { highlight } from '../../../../shared/utils/highlight.util';
+import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
+import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-merge-from',
@@ -23,16 +23,13 @@ export class MergeFromComponent {
   mergedArray = mergeFrom([this.a, this.b$]);
 
   // 1 is coming~. After 1s, emit "2 is coming~"
-  mergedOperator = mergeFrom(
-    [this.a, this.b$],
-    pipe(switchMap((res) => of(`${res} is coming~`))),
-  );
+  mergedOperator = mergeFrom([this.a, this.b$], pipe(switchMap((res) => of(`${res} is coming~`))));
 
   // initially display "loading". After 1s, emit "2 is coming~"
   mergedWithInitialValue = mergeFrom(
     [this.a, this.b$],
     pipe(switchMap((res) => of(`${res} is coming~`).pipe(delay(1000)))),
-    { initialValue: 'loading' }, // pass the initial value of the resulting signal
+    {initialValue: 'loading'}, // pass the initial value of the resulting signal
   );
 
   // initially display 0. After 1s, display "2 is coming~"

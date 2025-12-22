@@ -15,14 +15,17 @@ This document provides a comprehensive list of all available commands for managi
 ## 🔧 Development Commands
 
 ### Start Demo Application
+
 ```bash
 npm start
 # or
 nx serve demo
 ```
+
 Starts the demo application on `http://localhost:4200` with hot reload.
 
 ### Watch Library Changes
+
 ```bash
 # Watch ngx-lift for changes
 npm run watch:ngx
@@ -34,27 +37,33 @@ npm run watch:clr
 # or
 nx build clr-lift --watch
 ```
+
 Automatically rebuilds the library when source files change.
 
 ## 🏗️ Build Commands
 
 ### Build All Projects
+
 ```bash
 npm run build
 # or
 nx run-many -t build
 ```
+
 Builds all libraries and applications in the workspace.
 
 ### Build Libraries Only
+
 ```bash
 npm run build:libs
 # or
 nx run-many -t build --projects=ngx-lift,clr-lift
 ```
+
 Builds both ngx-lift and clr-lift libraries.
 
 ### Build Individual Library
+
 ```bash
 # Build ngx-lift
 npm run build:ngx
@@ -68,14 +77,17 @@ nx build clr-lift
 ```
 
 ### Build Demo Application
+
 ```bash
 npm run build:demo
 # or
 nx build demo --configuration=production
 ```
+
 Builds the demo application for production.
 
 ### Build with Specific Configuration
+
 ```bash
 # Development build
 nx build demo --configuration=development
@@ -87,6 +99,7 @@ nx build demo --configuration=production
 ## 🧪 Test Commands
 
 ### Run All Tests
+
 ```bash
 npm test
 # or
@@ -94,6 +107,7 @@ nx run-many -t test
 ```
 
 ### Test Individual Library
+
 ```bash
 # Test ngx-lift
 npm run test:ngx
@@ -107,6 +121,7 @@ nx test clr-lift
 ```
 
 ### Test with Coverage
+
 ```bash
 npm run test:coverage
 # or
@@ -117,19 +132,23 @@ nx test ngx-lift --coverage
 ```
 
 ### Test in Watch Mode
+
 ```bash
 nx test ngx-lift --watch
 ```
 
 ### Test with UI
+
 ```bash
 nx test ngx-lift --ui
 ```
+
 Opens Vitest UI for interactive testing.
 
 ## 🎨 Lint & Format Commands
 
 ### Lint All Projects
+
 ```bash
 npm run lint
 # or
@@ -137,6 +156,7 @@ nx run-many -t lint
 ```
 
 ### Lint and Auto-fix
+
 ```bash
 npm run lint:fix
 # or
@@ -144,6 +164,7 @@ nx run-many -t lint --fix
 ```
 
 ### Lint Specific Project
+
 ```bash
 nx lint ngx-lift
 nx lint clr-lift
@@ -151,6 +172,7 @@ nx lint demo
 ```
 
 ### Format Code
+
 ```bash
 npm run format
 # or
@@ -158,6 +180,7 @@ prettier --write "**/*.{ts,json,css,scss,md,html}"
 ```
 
 ### Check Formatting
+
 ```bash
 npm run format:check
 # or
@@ -169,6 +192,7 @@ prettier --check "**/*.{ts,json,css,scss,md,html}"
 ### Automated Publishing with Nx Release
 
 #### Version Bump
+
 ```bash
 npm run release:version
 # or
@@ -181,6 +205,7 @@ nx release version patch
 ```
 
 #### Publish to npm
+
 ```bash
 npm run release:publish
 # or
@@ -194,6 +219,7 @@ nx release publish --projects=clr-lift
 ### Manual Publishing
 
 #### Publish ngx-lift
+
 ```bash
 npm run publish:ngx
 # or
@@ -201,6 +227,7 @@ nx build ngx-lift && cd dist/libs/ngx-lift && npm publish
 ```
 
 #### Publish clr-lift
+
 ```bash
 npm run publish:clr
 # or
@@ -208,11 +235,13 @@ nx build clr-lift && cd dist/libs/clr-lift && npm publish
 ```
 
 #### Publish Both Libraries
+
 ```bash
 npm run publish:all
 ```
 
 ### Publishing Prerequisites
+
 ```bash
 # Login to npm
 npm login
@@ -229,6 +258,7 @@ npm pack
 ### Netlify Deployment
 
 #### Manual Deploy
+
 ```bash
 # Install Netlify CLI
 npm install -g netlify-cli
@@ -245,6 +275,7 @@ netlify deploy --dir=dist/apps/demo/browser
 ```
 
 #### Link to Netlify Site
+
 ```bash
 netlify link
 ```
@@ -252,6 +283,7 @@ netlify link
 ### Vercel Deployment
 
 #### Manual Deploy
+
 ```bash
 # Install Vercel CLI
 npm install -g vercel
@@ -268,6 +300,7 @@ vercel --cwd dist/apps/demo/browser
 ```
 
 #### Link to Vercel Project
+
 ```bash
 vercel link
 ```
@@ -302,9 +335,11 @@ npm run graph
 # or
 nx graph
 ```
+
 Opens an interactive visualization of the project dependency graph.
 
 ### Show Project Details
+
 ```bash
 nx show project ngx-lift
 nx show project clr-lift
@@ -312,17 +347,21 @@ nx show project demo
 ```
 
 ### List Projects
+
 ```bash
 nx show projects
 ```
 
 ### Reset Nx Cache
+
 ```bash
 nx reset
 ```
+
 Clears the Nx cache. Useful when experiencing build issues.
 
 ### Run Multiple Targets
+
 ```bash
 # Run build and test in parallel
 nx run-many -t build test --parallel=3
@@ -334,6 +373,7 @@ nx run-many -t build --projects=ngx-lift,clr-lift
 ## 🔍 Utility Commands
 
 ### Check Dependencies
+
 ```bash
 # List outdated dependencies
 npm outdated
@@ -346,6 +386,7 @@ npm audit fix
 ```
 
 ### Clean Build Artifacts
+
 ```bash
 # Remove dist folder
 rm -rf dist
@@ -358,11 +399,13 @@ rm -rf node_modules package-lock.json && npm install
 ```
 
 ### Generate New Library
+
 ```bash
 nx generate @nx/angular:library my-new-lib
 ```
 
 ### Generate New Component
+
 ```bash
 nx generate @nx/angular:component my-component --project=ngx-lift
 ```
@@ -370,16 +413,19 @@ nx generate @nx/angular:component my-component --project=ngx-lift
 ## 🐛 Debugging Commands
 
 ### Verbose Output
+
 ```bash
 nx build ngx-lift --verbose
 ```
 
 ### Skip Cache
+
 ```bash
 nx build ngx-lift --skip-nx-cache
 ```
 
 ### Dry Run
+
 ```bash
 nx release version --dry-run
 ```
@@ -387,11 +433,13 @@ nx release version --dry-run
 ## 📊 Performance Commands
 
 ### Analyze Bundle Size
+
 ```bash
 nx build demo --configuration=production --stats-json
 ```
 
 ### Profile Build
+
 ```bash
 nx build ngx-lift --profile
 ```
@@ -399,11 +447,13 @@ nx build ngx-lift --profile
 ## 🔐 Environment Setup
 
 ### Set npm Registry
+
 ```bash
 npm config set registry https://registry.npmjs.org/
 ```
 
 ### Configure Git
+
 ```bash
 git config user.name "Your Name"
 git config user.email "your.email@example.com"
@@ -419,6 +469,7 @@ git config user.email "your.email@example.com"
 ## 🆘 Troubleshooting
 
 ### Clear All Caches
+
 ```bash
 nx reset
 rm -rf node_modules/.cache
@@ -426,21 +477,24 @@ rm -rf dist
 ```
 
 ### Reinstall Dependencies
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 ### Check Nx Configuration
+
 ```bash
 nx report
 ```
+
 Shows Nx version and configuration details.
 
 ---
 
 For more information, visit:
+
 - [Nx Documentation](https://nx.dev)
 - [Angular CLI Documentation](https://angular.io/cli)
 - [npm Documentation](https://docs.npmjs.com/)
-

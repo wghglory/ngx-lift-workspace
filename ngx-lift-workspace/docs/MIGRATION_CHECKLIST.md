@@ -22,17 +22,20 @@ Use this checklist to track your migration progress and ensure everything is set
 ## 🔧 Setup Tasks (Your Action Required)
 
 ### Initial Setup
+
 - [ ] Navigate to workspace: `cd ngx-lift-workspace`
 - [ ] Install dependencies: `npm install`
 - [ ] Verify installation: `npm list --depth=0`
 
 ### Build Verification
+
 - [ ] Build ngx-lift: `npm run build:ngx`
 - [ ] Build clr-lift: `npm run build:clr`
 - [ ] Build demo app: `npm run build:demo`
 - [ ] Verify dist folder contents
 
 ### Test Migration
+
 - [ ] Review test files in `libs/ngx-lift/src/lib/**/*.spec.ts`
 - [ ] Review test files in `libs/clr-lift/src/lib/**/*.spec.ts`
 - [ ] Convert Jasmine syntax to Vitest (see guide below)
@@ -41,6 +44,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Run tests with coverage: `npm run test:coverage`
 
 ### Development Environment
+
 - [ ] Start demo app: `npm start`
 - [ ] Verify app loads at http://localhost:4200
 - [ ] Test hot reload by making a change
@@ -48,12 +52,14 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Verify changes reflect in demo app
 
 ### Code Quality
+
 - [ ] Run linter: `npm run lint`
 - [ ] Fix linting errors: `npm run lint:fix`
 - [ ] Format code: `npm run format`
 - [ ] Verify no linting/formatting issues
 
 ### GitHub Setup
+
 - [ ] Create/update GitHub repository
 - [ ] Push code to GitHub
 - [ ] Go to Settings → Secrets and variables → Actions
@@ -65,6 +71,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Add `VERCEL_PROJECT_ID` secret
 
 ### Netlify Setup
+
 - [ ] Log in to Netlify (https://app.netlify.com)
 - [ ] Click "Add new site" → "Import an existing project"
 - [ ] Connect to GitHub repository
@@ -74,6 +81,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Check deployed site URL
 
 ### Vercel Setup
+
 - [ ] Log in to Vercel (https://vercel.com)
 - [ ] Click "Add New Project"
 - [ ] Import GitHub repository
@@ -83,6 +91,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Check deployed site URL
 
 ### npm Publishing Setup
+
 - [ ] Log in to npm: `npm login`
 - [ ] Verify login: `npm whoami`
 - [ ] Check package names are available
@@ -90,6 +99,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Test local publish (dry run): `npm publish --dry-run`
 
 ### CI/CD Verification
+
 - [ ] Create a test branch
 - [ ] Make a small change
 - [ ] Push and create PR
@@ -100,6 +110,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Check Netlify/Vercel deployments
 
 ### Publishing Verification
+
 - [ ] Create a git tag: `git tag v1.10.4-test`
 - [ ] Push tag: `git push origin v1.10.4-test`
 - [ ] Verify publish workflow runs
@@ -111,6 +122,7 @@ Use this checklist to track your migration progress and ensure everything is set
 ### Common Jasmine to Vitest Conversions
 
 #### 1. Imports
+
 ```typescript
 // Before (Jasmine - no imports needed)
 describe('MyComponent', () => {
@@ -118,7 +130,7 @@ describe('MyComponent', () => {
 });
 
 // After (Vitest - add imports)
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 
 describe('MyComponent', () => {
   // tests
@@ -126,6 +138,7 @@ describe('MyComponent', () => {
 ```
 
 #### 2. Spies
+
 ```typescript
 // Before (Jasmine)
 spyOn(service, 'method').and.returnValue(value);
@@ -137,6 +150,7 @@ vi.spyOn(service, 'method').mockImplementation(() => value);
 ```
 
 #### 3. Async Tests
+
 ```typescript
 // Before (Jasmine)
 it('should do something', async () => {
@@ -152,6 +166,7 @@ it('should do something', async () => {
 ```
 
 #### 4. Matchers (mostly the same)
+
 ```typescript
 // These work in both Jasmine and Vitest
 expect(value).toBe(expected);
@@ -202,7 +217,9 @@ npm run
 ## 🐛 Common Issues & Solutions
 
 ### Issue: Build fails with module not found
+
 **Solution:**
+
 ```bash
 nx reset
 rm -rf dist node_modules
@@ -211,13 +228,17 @@ npm run build:libs
 ```
 
 ### Issue: Tests fail with import errors
+
 **Solution:**
+
 - Add Vitest imports: `import { describe, it, expect } from 'vitest';`
 - Check test-setup.ts is configured
 - Verify vite.config.mts includes test files
 
 ### Issue: Demo app won't start
+
 **Solution:**
+
 ```bash
 # Build libraries first
 npm run build:libs
@@ -226,13 +247,17 @@ npm start
 ```
 
 ### Issue: Path resolution errors
+
 **Solution:**
+
 - Check tsconfig.base.json paths
 - Ensure libraries are built
 - Restart TypeScript server in IDE
 
 ### Issue: GitHub Actions fail
+
 **Solution:**
+
 - Check all secrets are added
 - Verify workflow file syntax
 - Check Node version matches (20.x)
@@ -287,4 +312,3 @@ Your migration is complete when:
 **Last Updated**: December 22, 2025
 
 **Status**: Ready for your action! Start with `npm install`
-

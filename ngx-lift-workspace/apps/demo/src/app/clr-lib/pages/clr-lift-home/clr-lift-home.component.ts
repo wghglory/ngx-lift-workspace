@@ -9,13 +9,7 @@ import {TileWithIconComponent} from '../../../shared/components/tile-with-icon/t
 @Component({
   selector: 'app-clr-lift-home',
   standalone: true,
-  imports: [
-    ClarityModule,
-    CalloutComponent,
-    SvgIconComponent,
-    TileWithIconComponent,
-    CodeBlockComponent,
-  ],
+  imports: [ClarityModule, CalloutComponent, SvgIconComponent, TileWithIconComponent, CodeBlockComponent],
   templateUrl: './clr-lift-home.component.html',
   styleUrl: './clr-lift-home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

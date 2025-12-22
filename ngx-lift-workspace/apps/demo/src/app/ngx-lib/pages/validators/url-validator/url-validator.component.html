@@ -1,14 +1,10 @@
-<cll-page-container
-  [title]="'urlValidator & httpsValidator'"
-  customClass="space-y-9"
->
+<cll-page-container [title]="'urlValidator & httpsValidator'" customClass="space-y-9">
   <section class="space-y-6">
     <h2>Overview</h2>
     <p>
-      The <code>urlValidator</code> and <code>httpsValidator</code> functions
-      are Angular validators used to check if a given string adheres to specific
-      URL patterns. These validators can be utilized in Angular Reactive Forms
-      to ensure the validity of user-entered URLs.
+      The <code>urlValidator</code> and <code>httpsValidator</code> functions are Angular validators used to check if a
+      given string adheres to specific URL patterns. These validators can be utilized in Angular Reactive Forms to
+      ensure the validity of user-entered URLs.
     </p>
 
     <h2>Usage</h2>
@@ -21,9 +17,7 @@
           <clr-control-error>Required</clr-control-error>
         }
         @if (form.controls.url.errors?.['invalidUrl']) {
-          <clr-control-error>
-            Please enter a valid URL (starting with https or http)
-          </clr-control-error>
+          <clr-control-error> Please enter a valid URL (starting with https or http) </clr-control-error>
         }
       </clr-input-container>
 
@@ -32,9 +26,7 @@
         <input clrInput formControlName="https" />
         <clr-control-helper>Provide a https URL</clr-control-helper>
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'invalidUrl'">
-          Please enter a https URL
-        </clr-control-error>
+        <clr-control-error *clrIfError="'invalidUrl'"> Please enter a https URL </clr-control-error>
       </clr-input-container>
     </form>
 

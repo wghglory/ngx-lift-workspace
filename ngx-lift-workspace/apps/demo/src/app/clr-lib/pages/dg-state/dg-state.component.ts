@@ -1,15 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ClarityModule } from '@clr/angular';
-import {
-  AlertComponent,
-  CalloutComponent,
-  PageContainerComponent,
-} from 'clr-lift';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {ClarityModule} from '@clr/angular';
+import {AlertComponent, CalloutComponent, PageContainerComponent} from 'clr-lift';
 
-import { CodeBlockComponent } from '../../../shared/components/code-block/code-block.component';
-import { highlight } from '../../../shared/utils/highlight.util';
-import { UserDatagridComponent } from '../../shared/components/user-datagrid/user-datagrid.component';
+import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
+import {highlight} from '../../../shared/utils/highlight.util';
+import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-datagrid.component';
 
 @Component({
   selector: 'app-dg-state',

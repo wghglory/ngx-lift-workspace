@@ -18,7 +18,6 @@ This guide covers deploying the demo application to Netlify and Vercel, as well 
 #### Method 1: GitHub Actions Workflow
 
 1. **Set up npm Token**:
-
    - Go to npmjs.com → Account Settings → Access Tokens
    - Generate a new token with "Automation" type
    - Add to GitHub Secrets as `NPM_TOKEN`
@@ -103,24 +102,21 @@ This project follows [Semantic Versioning](https://semver.org/):
 #### Setup
 
 1. **Connect Repository**:
-
    - Go to [Netlify](https://app.netlify.com/)
    - Click "Add new site" → "Import an existing project"
    - Connect to GitHub repository
 
 2. **Configure Build Settings**:
-
-   - Build command: `npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production`
+   - Build command:
+     `npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production`
    - Publish directory: `dist/apps/demo/browser`
    - Base directory: (leave empty)
 
 3. **Add Environment Variables** (if needed):
-
    - Go to Site settings → Environment variables
    - Add any required variables
 
 4. **Get Site ID and Auth Token**:
-
    - Site ID: Site settings → General → Site details → API ID
    - Auth Token: User settings → Applications → Personal access tokens
 
@@ -199,25 +195,22 @@ netlify link
 #### Setup
 
 1. **Connect Repository**:
-
    - Go to [Vercel](https://vercel.com/)
    - Click "Add New Project"
    - Import your GitHub repository
 
 2. **Configure Build Settings**:
-
    - Framework Preset: Other
-   - Build Command: `npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production`
+   - Build Command:
+     `npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production`
    - Output Directory: `dist/apps/demo/browser`
    - Install Command: `npm ci`
 
 3. **Get Project IDs**:
-
    - Project ID: Project Settings → General
    - Org ID: Account Settings → General
 
 4. **Get Auth Token**:
-
    - Account Settings → Tokens
    - Create new token
 
@@ -295,12 +288,10 @@ vercel env add
 All workflows are in `.github/workflows/`:
 
 1. **`ci.yml`**: Continuous Integration
-
    - Runs on: Push, Pull Requests
    - Actions: Lint, Test, Build
 
 2. **`publish.yml`**: Library Publishing
-
    - Runs on: Manual trigger, Git tags
    - Actions: Build, Test, Publish to npm
 
@@ -356,7 +347,6 @@ VERCEL_PROJECT_ID      # Vercel project ID
    ```
 
 2. **Clear Build Cache**:
-
    - Netlify: Site settings → Build & deploy → Clear cache
    - Vercel: Redeploy with "Clear cache"
 
@@ -374,7 +364,6 @@ VERCEL_PROJECT_ID      # Vercel project ID
    ```
 
 2. **Check Package Name**:
-
    - Ensure package name is available
    - Check for typos in package.json
 
@@ -385,7 +374,6 @@ VERCEL_PROJECT_ID      # Vercel project ID
 ### Deployment Preview Not Working
 
 1. **Check PR Settings**:
-
    - Netlify: Site settings → Build & deploy → Deploy contexts
    - Vercel: Project settings → Git → Deploy Previews
 

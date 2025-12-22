@@ -8,12 +8,7 @@ import {TileWithIconComponent} from '../../../shared/components/tile-with-icon/t
 @Component({
   selector: 'app-ngx-lift-home',
   standalone: true,
-  imports: [
-    ClarityModule,
-    SvgIconComponent,
-    TileWithIconComponent,
-    CodeBlockComponent,
-  ],
+  imports: [ClarityModule, SvgIconComponent, TileWithIconComponent, CodeBlockComponent],
   templateUrl: './ngx-lift-home.component.html',
   styleUrl: './ngx-lift-home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

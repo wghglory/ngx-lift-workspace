@@ -5,6 +5,7 @@ Welcome to the migrated ngx-lift monorepo! This guide will help you get started 
 ## 📍 You Are Here
 
 This is the **ngx-lift-workspace** - a modern Nx monorepo containing:
+
 - **ngx-lift** library - Angular utilities, operators, pipes, and more
 - **clr-lift** library - VMware Clarity component extensions
 - **demo** application - Showcase of both libraries
@@ -27,21 +28,25 @@ Visit `http://localhost:4200` to see the demo!
 ## 📚 Documentation Guide
 
 ### For First-Time Users
+
 1. **START HERE** (you are here!) - Quick orientation
 2. **QUICK_START.md** - Essential commands and workflows
 3. **README.md** - Complete documentation
 
 ### For Developers
+
 1. **COMMANDS.md** - All available commands (50+)
 2. **README.md** - Development workflows
 3. **MIGRATION_SUMMARY.md** - Technical details
 
 ### For DevOps/Deployment
+
 1. **DEPLOYMENT.md** - Complete deployment guide
 2. **README.md** - CI/CD section
 3. **.github/workflows/** - GitHub Actions
 
 ### For Migration Understanding
+
 1. **MIGRATION_COMPLETE.md** - What was done
 2. **MIGRATION_SUMMARY.md** - Detailed changes
 3. **MIGRATION_PLAN.md** - Original strategy
@@ -50,6 +55,7 @@ Visit `http://localhost:4200` to see the demo!
 ## 🎯 Common Tasks
 
 ### Development
+
 ```bash
 npm start              # Start demo app
 npm run watch:ngx      # Watch ngx-lift changes
@@ -57,6 +63,7 @@ npm run watch:clr      # Watch clr-lift changes
 ```
 
 ### Testing
+
 ```bash
 npm test               # Run all tests
 npm run test:ngx       # Test ngx-lift
@@ -64,6 +71,7 @@ npm run test:clr       # Test clr-lift
 ```
 
 ### Building
+
 ```bash
 npm run build          # Build everything
 npm run build:libs     # Build both libraries
@@ -71,12 +79,14 @@ npm run build:demo     # Build demo for production
 ```
 
 ### Publishing
+
 ```bash
 npm run release:version   # Bump version
 npm run release:publish   # Publish to npm
 ```
 
 ### Code Quality
+
 ```bash
 npm run lint           # Lint all projects
 npm run format         # Format code
@@ -84,17 +94,17 @@ npm run format         # Format code
 
 ## 📖 Documentation Files
 
-| File | Purpose | When to Read |
-|------|---------|--------------|
-| **START_HERE.md** | Quick orientation | First time |
-| **QUICK_START.md** | Essential commands | Daily use |
-| **README.md** | Complete documentation | Reference |
-| **COMMANDS.md** | All commands | Looking for specific command |
-| **DEPLOYMENT.md** | Deployment guide | Setting up CI/CD |
-| **MIGRATION_COMPLETE.md** | Migration summary | Understanding what changed |
-| **MIGRATION_SUMMARY.md** | Technical details | Deep dive |
-| **MIGRATION_CHECKLIST.md** | Action items | Post-migration tasks |
-| **MIGRATION_VISUAL_SUMMARY.txt** | Visual overview | Quick reference |
+| File                             | Purpose                | When to Read                 |
+| -------------------------------- | ---------------------- | ---------------------------- |
+| **START_HERE.md**                | Quick orientation      | First time                   |
+| **QUICK_START.md**               | Essential commands     | Daily use                    |
+| **README.md**                    | Complete documentation | Reference                    |
+| **COMMANDS.md**                  | All commands           | Looking for specific command |
+| **DEPLOYMENT.md**                | Deployment guide       | Setting up CI/CD             |
+| **MIGRATION_COMPLETE.md**        | Migration summary      | Understanding what changed   |
+| **MIGRATION_SUMMARY.md**         | Technical details      | Deep dive                    |
+| **MIGRATION_CHECKLIST.md**       | Action items           | Post-migration tasks         |
+| **MIGRATION_VISUAL_SUMMARY.txt** | Visual overview        | Quick reference              |
 
 ## 🗂️ Project Structure
 
@@ -134,18 +144,21 @@ See **MIGRATION_CHECKLIST.md** for detailed action items.
 ## 🎓 Learning Path
 
 ### Day 1: Get Running
+
 1. Read this file (START_HERE.md)
 2. Run quick start commands
 3. Explore demo app at localhost:4200
 4. Skim QUICK_START.md
 
 ### Day 2: Understand the System
+
 1. Read README.md
 2. Try different npm scripts
 3. View project graph: `npm run graph`
 4. Explore library source code
 
 ### Day 3: Deep Dive
+
 1. Read COMMANDS.md
 2. Read DEPLOYMENT.md
 3. Set up CI/CD
@@ -154,22 +167,26 @@ See **MIGRATION_CHECKLIST.md** for detailed action items.
 ## 🆘 Need Help?
 
 ### Quick Answers
+
 - **Build fails?** → Run `nx reset && npm install && npm run build:libs`
 - **Tests fail?** → Check test imports, may need Vitest conversion
 - **Demo won't start?** → Build libraries first: `npm run build:libs`
 - **Import errors?** → Check `tsconfig.base.json` paths
 
 ### Documentation
+
 - Check the relevant documentation file above
 - Search in COMMANDS.md for specific commands
 - Read troubleshooting sections in README.md
 
 ### External Resources
+
 - [Nx Documentation](https://nx.dev)
 - [Vitest Documentation](https://vitest.dev)
 - [Angular Documentation](https://angular.io)
 
 ### Support
+
 - Open an issue on GitHub
 - Check existing issues
 - Review workflow logs (for CI/CD issues)
@@ -233,5 +250,4 @@ Then open `http://localhost:4200` and start exploring!
 
 **Welcome to the ngx-lift monorepo! Happy coding! 🚀**
 
-*For detailed information, see README.md*
-
+_For detailed information, see README.md_

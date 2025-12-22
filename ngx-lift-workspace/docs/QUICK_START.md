@@ -23,6 +23,7 @@ Visit `http://localhost:4200` to see the demo app.
 ## 📋 Most Common Commands
 
 ### Development
+
 ```bash
 npm start              # Start demo app
 npm run watch:ngx      # Watch ngx-lift changes
@@ -30,6 +31,7 @@ npm run watch:clr      # Watch clr-lift changes
 ```
 
 ### Building
+
 ```bash
 npm run build          # Build everything
 npm run build:libs     # Build both libraries
@@ -39,6 +41,7 @@ npm run build:demo     # Build demo app for production
 ```
 
 ### Testing
+
 ```bash
 npm test               # Run all tests
 npm run test:ngx       # Test ngx-lift
@@ -47,6 +50,7 @@ npm run test:coverage  # Run tests with coverage
 ```
 
 ### Code Quality
+
 ```bash
 npm run lint           # Lint all projects
 npm run lint:fix       # Lint and auto-fix
@@ -54,12 +58,14 @@ npm run format         # Format code with Prettier
 ```
 
 ### Publishing
+
 ```bash
 npm run release:version   # Bump version
 npm run release:publish   # Publish to npm
 ```
 
 ### Deployment
+
 ```bash
 npm run build:demo     # Build for production
 # Then deploy to Netlify or Vercel
@@ -106,6 +112,7 @@ npm run release:publish
 ### Deploying Demo App
 
 #### Automatic (Recommended)
+
 ```bash
 # Just push to main branch
 git push origin main
@@ -113,6 +120,7 @@ git push origin main
 ```
 
 #### Manual
+
 ```bash
 # 1. Build everything
 npm run build:libs
@@ -161,15 +169,16 @@ npm install clr-lift ngx-lift @clr/angular
 
 ```typescript
 // From ngx-lift
-import { createAsyncState, poll, computedAsync } from 'ngx-lift';
+import {createAsyncState, poll, computedAsync} from 'ngx-lift';
 
 // From clr-lift
-import { AlertComponent, ToastService } from 'clr-lift';
+import {AlertComponent, ToastService} from 'clr-lift';
 ```
 
 ## 🐛 Common Issues
 
 ### Build Fails
+
 ```bash
 # Clear cache and rebuild
 nx reset
@@ -178,6 +187,7 @@ npm run build:libs
 ```
 
 ### Tests Fail
+
 ```bash
 # Clear cache
 nx reset
@@ -188,6 +198,7 @@ npm install
 ```
 
 ### Demo App Won't Start
+
 ```bash
 # Ensure libraries are built first
 npm run build:libs
@@ -219,9 +230,9 @@ npm start
 ## 🎉 You're Ready!
 
 Start developing with:
+
 ```bash
 npm start
 ```
 
 Happy coding! 🚀
-

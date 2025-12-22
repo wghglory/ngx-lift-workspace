@@ -1,16 +1,14 @@
 <cll-page-container [title]="'computedAsync'" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      <code>computedAsync</code> is a versatile utility enabling value
-      computation from Promises, Observables, or regular values. It provides
-      flexibility in computational behavior through selectable flattening
-      strategies (switch, merge, concat, exhaust) and initial value assignment.
+      <code>computedAsync</code> is a versatile utility enabling value computation from Promises, Observables, or
+      regular values. It provides flexibility in computational behavior through selectable flattening strategies
+      (switch, merge, concat, exhaust) and initial value assignment.
     </p>
     <h2>Usage</h2>
     <p>
-      To utilize <code>computedAsync</code>, provide a function returning a
-      Promise, Observable, or regular value. It then returns a
-      <code>Signal</code> emitting the computed value.
+      To utilize <code>computedAsync</code>, provide a function returning a Promise, Observable, or regular value. It
+      then returns a <code>Signal</code> emitting the computed value.
     </p>
   </section>
 
@@ -20,101 +18,87 @@
 
     <h3>Works with Observables</h3>
     <p>
-      When returning an Observable, it is automatically subscribed to and will
-      be unsubscribed when the component is destroyed or when the computation is
-      re-triggered.
+      When returning an Observable, it is automatically subscribed to and will be unsubscribed when the component is
+      destroyed or when the computation is re-triggered.
     </p>
     <p>
-      In the following example, if the userId changes, the previous computation
-      will be cancelled (including any ongoing API calls), and a new computation
-      will be initiated.
+      In the following example, if the userId changes, the previous computation will be cancelled (including any ongoing
+      API calls), and a new computation will be initiated.
     </p>
     <app-code-block [code]="observableCode" />
 
     <h3>Works with regular values</h3>
     <p>
       This doesn’t offer any advantage over employing a standard computed
-      <code>signal</code>. However, it does allow the return of regular values
-      (those not consisting of Promises or Observables) from the callback
-      function.
+      <code>signal</code>. However, it does allow the return of regular values (those not consisting of Promises or
+      Observables) from the callback function.
     </p>
     <p>
-      The callback function executes in the microtask queue, hence it won’t
-      promptly emit the value (by default, it returns undefined). To emit the
-      value immediately, you can utilize the requireSync option within the
-      second argument options object.
+      The callback function executes in the microtask queue, hence it won’t promptly emit the value (by default, it
+      returns undefined). To emit the value immediately, you can utilize the requireSync option within the second
+      argument options object.
     </p>
     <app-code-block [code]="regularCode" />
 
     <h3>Works with <code>initialValue</code></h3>
     <p>
-      If we wish to establish an initial value for the computed value, we can
-      provide it as the second argument within the options object.
+      If we wish to establish an initial value for the computed value, we can provide it as the second argument within
+      the options object.
     </p>
     <app-code-block [code]="promiseInitialValueCode" />
 
     <h3>Works with <code>requireSync</code></h3>
     <p>
-      If we possess an Observable that synchronously emits the value, we can
-      utilize the requireSync option to ensure immediate emission of the value.
-      This feature is also beneficial for ensuring the <code>signal</code> type
+      If we possess an Observable that synchronously emits the value, we can utilize the requireSync option to ensure
+      immediate emission of the value. This feature is also beneficial for ensuring the <code>signal</code> type
       excludes undefined by default.
     </p>
     <p>
-      Without requireSync, the <code>signal</code> type would be
-      <code>Signal&lt;User | undefined&gt;</code>. However, with requireSync
-      enabled, the <code>signal</code> type will be
-      <code>Signal&lt;User&gt;</code>.
+      Without requireSync, the <code>signal</code> type would be <code>Signal&lt;User | undefined&gt;</code>. However,
+      with requireSync enabled, the <code>signal</code> type will be <code>Signal&lt;User&gt;</code>.
     </p>
     <app-code-block [code]="requireSyncCode" />
 
     <h4>Work with <code>createAsyncState</code> operator</h4>
     <p>
-      In the example below, we have a <code>Signal</code> that represents the
-      state of an API call. We use <code>computedAsync</code> and
-      <code>createAsyncState</code> operator to compute the state of the API
-      call based on the <code>userId</code>.
+      In the example below, we have a <code>Signal</code> that represents the state of an API call. We use
+      <code>computedAsync</code> and <code>createAsyncState</code> operator to compute the state of the API call based
+      on the <code>userId</code>.
     </p>
     <app-code-block [code]="createAsyncStateCode" />
 
     <h3>Behaviors (switch, merge, concat, exhaust)</h3>
     <p>
-      By default, <code>computedAsync</code> employs the switch behavior, which
-      entails that if the computation is re-triggered before the prior one
-      concludes, the former will be canceled. Should you wish to alter this
-      behavior, you can provide the behavior option within the second argument
-      options object.
+      By default, <code>computedAsync</code> employs the switch behavior, which entails that if the computation is
+      re-triggered before the prior one concludes, the former will be canceled. Should you wish to alter this behavior,
+      you can provide the behavior option within the second argument options object.
     </p>
     <app-code-block [code]="behaviorCode" />
     <h4>switch (default)</h4>
     <p>
-      When desiring to cancel the prior computation, the switch behavior is
-      utilized, which is the default. If a new computation is triggered before
-      the previous one concludes, the former will be terminated.
+      When desiring to cancel the prior computation, the switch behavior is utilized, which is the default. If a new
+      computation is triggered before the previous one concludes, the former will be terminated.
     </p>
     <h4>merge</h4>
     <p>
-      To retain the preceding computation, the merge behavior is employed. If a
-      new computation is initiated before the previous one is finished, the
-      former is preserved while the latter is started.
+      To retain the preceding computation, the merge behavior is employed. If a new computation is initiated before the
+      previous one is finished, the former is preserved while the latter is started.
     </p>
     <h4>concat</h4>
     <p>
-      If preservation of the prior computation is desired along with waiting for
-      its completion before initiating the new one, the concat behavior is
-      chosen.
+      If preservation of the prior computation is desired along with waiting for its completion before initiating the
+      new one, the concat behavior is chosen.
     </p>
     <h4>exhaust</h4>
     <p>
-      In instances where disregarding the new computation while the prior one
-      remains ongoing is necessary, the exhaust behavior is selected.
+      In instances where disregarding the new computation while the prior one remains ongoing is necessary, the exhaust
+      behavior is selected.
     </p>
 
     <h3>Use with previous computed value</h3>
     <p>
-      Should there be a necessity to utilize the previously computed value in
-      the subsequent computation, it can be accessed within the callback
-      function as the first argument.
+      Should there be a necessity to utilize the previously computed value in the subsequent computation, it can be
+      accessed within the callback function as the first argument.
     </p>
     <app-code-block [code]="previousCode" />
 
@@ -122,13 +106,7 @@
 
     <h4>Load users initially</h4>
     <div>
-      <button
-        class="btn btn-primary"
-        (click)="refresh()"
-        [clrLoading]="usersState().loading === true"
-      >
-        Refresh
-      </button>
+      <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().loading === true">Refresh</button>
     </div>
 
     @if (usersState().loading) {
@@ -152,17 +130,12 @@
 
     <cll-callout>
       Learn
-      <a [routerLink]="['../createTrigger']"><code>createTrigger</code> here</a
-      >.
+      <a [routerLink]="['../createTrigger']"><code>createTrigger</code> here</a>.
     </cll-callout>
 
     <h4>Load users when button clicks</h4>
     <div>
-      <button
-        class="btn btn-primary"
-        (click)="load()"
-        [clrLoading]="deferredUsersState()?.loading === true"
-      >
+      <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.loading === true">
         Load Users
       </button>
     </div>

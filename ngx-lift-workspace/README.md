@@ -1,6 +1,7 @@
 # ngx-lift Monorepo
 
-A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along with a demo application showcasing their capabilities.
+A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along with a demo application showcasing their
+capabilities.
 
 [![CI](https://github.com/wghglory/ngx-lift/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
@@ -10,7 +11,8 @@ A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along wit
 
 ### ngx-lift
 
-A comprehensive Angular library designed to enhance and simplify your Angular development experience with utilities, operators, pipes, signals, and validators.
+A comprehensive Angular library designed to enhance and simplify your Angular development experience with utilities,
+operators, pipes, signals, and validators.
 
 **[View on npm](https://www.npmjs.com/package/ngx-lift)** | **[Documentation](https://ngx-lift.netlify.app)**
 
@@ -324,10 +326,10 @@ npm install clr-lift ngx-lift @clr/angular
 
 ```typescript
 // Import from ngx-lift
-import { createAsyncState, poll } from 'ngx-lift';
+import {createAsyncState, poll} from 'ngx-lift';
 
 // Import from clr-lift
-import { AlertComponent, ToastService } from 'clr-lift';
+import {AlertComponent, ToastService} from 'clr-lift';
 ```
 
 ## 🤝 Contributing

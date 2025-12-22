@@ -1,37 +1,29 @@
 <cll-page-container [title]="'combineLatestEager'" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      The RxJS operator <code>combineLatest</code> is frequently employed to
-      merge multiple observables, triggering emissions whenever any of the
-      source observables emits a value. However, a limitation arises as it
-      mandates all sources to emit at least once. In UI scenarios,
-      <code>combineLatest</code> is often employed to construct a view model
-      observable (<code>vm$</code>). When one of the sources is a
-      <code>Subject</code>, using <code>vm$</code> with the async pipe becomes
-      problematic because the <code>Subject</code> may not emit any values
-      initially. This issue is elegantly addressed by the augmented
-      functionality of the <code>combineLatestEager</code> function.
+      The RxJS operator <code>combineLatest</code> is frequently employed to merge multiple observables, triggering
+      emissions whenever any of the source observables emits a value. However, a limitation arises as it mandates all
+      sources to emit at least once. In UI scenarios, <code>combineLatest</code> is often employed to construct a view
+      model observable (<code>vm$</code>). When one of the sources is a <code>Subject</code>, using
+      <code>vm$</code> with the async pipe becomes problematic because the <code>Subject</code> may not emit any values
+      initially. This issue is elegantly addressed by the augmented functionality of the
+      <code>combineLatestEager</code> function.
     </p>
     <p>
-      <code>combineLatestEager</code> seamlessly extends the capabilities of
-      <code>combineLatest</code> by incorporating
-      <code>startWith(null)</code> for each <code>Subject</code> present in the
-      provided sources. This augmentation ensures that the combined observable
-      initializes with a null value for each <code>Subject</code>, resolving the
-      challenge posed by <code>combineLatest</code> in scenarios where initial
-      emissions from certain sources are not guaranteed.
+      <code>combineLatestEager</code> seamlessly extends the capabilities of <code>combineLatest</code> by incorporating
+      <code>startWith(null)</code> for each <code>Subject</code> present in the provided sources. This augmentation
+      ensures that the combined observable initializes with a null value for each <code>Subject</code>, resolving the
+      challenge posed by <code>combineLatest</code> in scenarios where initial emissions from certain sources are not
+      guaranteed.
     </p>
     <p>
-      In most cases, the aforementioned approach should work seamlessly for you.
-      However, when dealing with numerous observables, it might become
-      challenging to distinguish which ones lack initial emissions. For such
-      scenarios,
+      In most cases, the aforementioned approach should work seamlessly for you. However, when dealing with numerous
+      observables, it might become challenging to distinguish which ones lack initial emissions. For such scenarios,
       <strong
-        >you have the flexibility to set the second parameter to true in
-        combineLatestEager, which appends <code>startWith(null)</code> for all
-        source observables</strong
-      >. This option becomes especially valuable when dealing with situations
-      where ensuring initial emissions is crucial.
+        >you have the flexibility to set the second parameter to true in combineLatestEager, which appends
+        <code>startWith(null)</code> for all source observables</strong
+      >. This option becomes especially valuable when dealing with situations where ensuring initial emissions is
+      crucial.
     </p>
   </section>
 

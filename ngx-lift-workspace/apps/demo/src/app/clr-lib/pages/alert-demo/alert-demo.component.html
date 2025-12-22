@@ -1,44 +1,28 @@
 <cll-page-container title="Alert" customClass="space-y-9">
   <section class="space-y-3">
     <p>
-      Alerts are banners that draw the user's attention to an important message.
-      Elements of an alert, such as icons and color, indicate the type and
-      urgency of the message's information.
+      Alerts are banners that draw the user's attention to an important message. Elements of an alert, such as icons and
+      color, indicate the type and urgency of the message's information.
     </p>
 
     <h2>Usage</h2>
-    <p>
-      Use alerts to grab the user's attention to provide critical information
-      needed in context.
-    </p>
+    <p>Use alerts to grab the user's attention to provide critical information needed in context.</p>
 
-    <p>
-      The <code>&lt;cll-alert /&gt;</code> component provides optional inputs,
-      including:
-    </p>
+    <p>The <code>&lt;cll-alert /&gt;</code> component provides optional inputs, including:</p>
 
     <ul class="list-disc">
       <li>
-        <code>alertType</code>: "info", "warning", "success", "danger",
-        "neutral", "loading" and "unknown". Defaulting to &quot;danger&quot;
+        <code>alertType</code>: "info", "warning", "success", "danger", "neutral", "loading" and "unknown". Defaulting
+        to &quot;danger&quot;
       </li>
-      <li>
-        <code>isAppLevel</code>: defaulting to false. If you want to display a
-        app-level alert, set true
-      </li>
+      <li><code>isAppLevel</code>: defaulting to false. If you want to display a app-level alert, set true</li>
       <li><code>isSmall</code>: defaulting to false</li>
-      <li>
-        <code>isLightweight</code>: defaulting to false. Used to display a
-        lightweight alert
-      </li>
+      <li><code>isLightweight</code>: defaulting to false. Used to display a lightweight alert</li>
       <li><code>error</code>: type of HttpErrorResponse</li>
       <li><code>content</code>: type of string.</li>
     </ul>
 
-    <p>
-      If the alert has complex html, we provide <code>ng-content</code> slot so
-      you can inject it.
-    </p>
+    <p>If the alert has complex html, we provide <code>ng-content</code> slot so you can inject it.</p>
   </section>
 
   <section>
@@ -48,19 +32,16 @@
     <section customClass="space-y-9">
       <h3>Standard Alerts</h3>
       <p class="!mt-4">
-        Use standard alerts for messages that reflect the context of where the
-        user is in the application.
+        Use standard alerts for messages that reflect the context of where the user is in the application.
       </p>
 
       <article class="space-y-3">
         <h4>Display an API error response</h4>
         <p>
-          We frequently need to display error responses from APIs. To handle
-          these, we use the error input to pass in the error details. The alert
-          displays the error message specifically from the
-          <code>message</code> property of the response error object if it
-          exists. If not, as a fallback, it will display the message from the
-          HttpErrorResponse object.
+          We frequently need to display error responses from APIs. To handle these, we use the error input to pass in
+          the error details. The alert displays the error message specifically from the
+          <code>message</code> property of the response error object if it exists. If not, as a fallback, it will
+          display the message from the HttpErrorResponse object.
         </p>
         <cll-alert [error]="error" />
         <app-code-block [code]="standardApiErrorCode" lang="html" />
@@ -69,27 +50,23 @@
       <article class="space-y-3">
         <h4>Display a custom content</h4>
         <p>
-          Under the hood, the content is passed directly to innerHTML, which
-          means you can include HTML tags. This is particularly useful when you
-          have translation strings that contain HTML markup, allowing for rich
-          text formatting and structure in your alerts.
+          Under the hood, the content is passed directly to innerHTML, which means you can include HTML tags. This is
+          particularly useful when you have translation strings that contain HTML markup, allowing for rich text
+          formatting and structure in your alerts.
         </p>
         <cll-alert alertType="success" content="I'm a successful content" />
         <cll-alert alertType="info" content="I'm a info content" />
         <cll-alert alertType="warning" content="I'm a warning content" />
         <cll-alert alertType="danger" content="I'm a danger content" />
-        <cll-alert
-          alertType="info"
-          [content]="'<strong>Hello world</strong>, I like clr-lift!'"
-        />
+        <cll-alert alertType="info" [content]="'<strong>Hello world</strong>, I like clr-lift!'" />
         <app-code-block [code]="standardContentCode" lang="html" />
       </article>
 
       <article class="space-y-3">
         <h4>Inject HTML tags by content projection</h4>
         <p>
-          In addition, the alert component utilizes <code>ng-content</code> to
-          process its content, enabling the inclusion of complex HTML tags.
+          In addition, the alert component utilizes <code>ng-content</code> to process its content, enabling the
+          inclusion of complex HTML tags.
         </p>
         <cll-alert>
           <p class="!mt-0 !mb-2">
@@ -117,59 +94,29 @@
 
       <article class="space-y-3">
         <h4>Small Alert</h4>
-        <cll-alert
-          alertType="danger"
-          content="I'm a small alert"
-          [isSmall]="true"
-        />
+        <cll-alert alertType="danger" content="I'm a small alert" [isSmall]="true" />
         <app-code-block [code]="standardSmallAlertCode" lang="html" />
       </article>
     </section>
 
     <section class="space-y-4">
       <h3>Lightweight Alerts</h3>
-      <p>
-        Use lightweight alerts inside containers, other components and layouts.
-      </p>
+      <p>Use lightweight alerts inside containers, other components and layouts.</p>
       <cll-alert [isLightweight]="true" [error]="error" />
-      <cll-alert
-        [isLightweight]="true"
-        alertType="success"
-        content="I'm a successful content"
-      />
-      <cll-alert
-        [isLightweight]="true"
-        alertType="info"
-        content="I'm a info content"
-      />
-      <cll-alert
-        [isLightweight]="true"
-        alertType="warning"
-        content="I'm a warning content"
-      />
-      <cll-alert
-        [isLightweight]="true"
-        alertType="neutral"
-        content="I'm a neutral content"
-      />
-      <cll-alert
-        [isLightweight]="true"
-        alertType="loading"
-        content="I'm a loading content"
-      />
-      <cll-alert
-        [isLightweight]="true"
-        alertType="unknown"
-        content="I'm a unknown content"
-      />
+      <cll-alert [isLightweight]="true" alertType="success" content="I'm a successful content" />
+      <cll-alert [isLightweight]="true" alertType="info" content="I'm a info content" />
+      <cll-alert [isLightweight]="true" alertType="warning" content="I'm a warning content" />
+      <cll-alert [isLightweight]="true" alertType="neutral" content="I'm a neutral content" />
+      <cll-alert [isLightweight]="true" alertType="loading" content="I'm a loading content" />
+      <cll-alert [isLightweight]="true" alertType="unknown" content="I'm a unknown content" />
       <app-code-block [code]="lightweightAlertsCode" lang="html" />
     </section>
 
     <section class="space-y-4">
       <h3>App-Level Alerts</h3>
       <p>
-        Use app-level alerts in the global context of an application. Place them
-        at the top of all content and navigation.
+        Use app-level alerts in the global context of an application. Place them at the top of all content and
+        navigation.
       </p>
 
       <cll-alert [error]="error" [isAppLevel]="true" />
@@ -182,16 +129,8 @@
         I'm a successful content injected by content projection &nbsp;
         <a href="javascript:void(0)" class="btn btn-inverse btn-sm">View</a>
       </cll-alert>
-      <cll-alert
-        alertType="info"
-        content="I'm a info content"
-        [isAppLevel]="true"
-      />
-      <cll-alert
-        alertType="warning"
-        content="I'm a warning content"
-        [isAppLevel]="true"
-      />
+      <cll-alert alertType="info" content="I'm a info content" [isAppLevel]="true" />
+      <cll-alert alertType="warning" content="I'm a warning content" [isAppLevel]="true" />
       <app-code-block [code]="appLevelAlertsCode" lang="html" />
     </section>
   </section>

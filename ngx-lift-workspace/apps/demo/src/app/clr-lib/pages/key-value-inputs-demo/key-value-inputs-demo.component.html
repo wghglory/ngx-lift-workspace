@@ -1,38 +1,34 @@
 <cll-page-container [title]="'Key Value Inputs'" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      The <code>KeyValueInputsComponent</code> is an Angular component designed
-      to facilitate the input of key-value pairs. It provides a dynamic form
-      allowing users to add, edit, and remove key-value pairs. This component is
-      built using Angular, Clarity Design System, and ngx-lift.
+      The <code>KeyValueInputsComponent</code> is an Angular component designed to facilitate the input of key-value
+      pairs. It provides a dynamic form allowing users to add, edit, and remove key-value pairs. This component is built
+      using Angular, Clarity Design System, and ngx-lift.
     </p>
 
     <h2>Features</h2>
     <ul class="list-disc">
       <li>
-        <strong>Dynamic Form Array:</strong> Empowers users to effortlessly
-        manage multiple key-value pairs through the use of an Angular FormArray.
+        <strong>Dynamic Form Array:</strong> Empowers users to effortlessly manage multiple key-value pairs through the
+        use of an Angular FormArray.
       </li>
       <li>
-        <strong>Real-time Validation:</strong> Provides real-time validation for
-        key and value inputs, including required field validation and uniqueness
-        validation (if configured).
+        <strong>Real-time Validation:</strong> Provides real-time validation for key and value inputs, including
+        required field validation and uniqueness validation (if configured).
       </li>
       <li>
-        <strong>Intuitive Control:</strong> Ensures user-friendly interactions
-        by dynamically disabling the "Add New Controls" button if any key-value
-        pair is deemed invalid. This feature enhances the overall usability and
+        <strong>Intuitive Control:</strong> Ensures user-friendly interactions by dynamically disabling the "Add New
+        Controls" button if any key-value pair is deemed invalid. This feature enhances the overall usability and
         prevents the addition of incomplete or incorrect data to the form.
       </li>
     </ul>
 
     <cll-callout>
-      Explore how the <code>KeyValueInputsComponent</code> leverages the
-      <code>UniqueValidator</code> to perform validation against key controls.
+      Explore how the <code>KeyValueInputsComponent</code> leverages the <code>UniqueValidator</code> to perform
+      validation against key controls.
       <a [routerLink]="['/ngx-lift/validators/unique']">
-        Click here to gain insights into the implementation and utilization of
-        the <code>UniqueValidator</code> for ensuring uniqueness in the key
-        input fields within the component.
+        Click here to gain insights into the implementation and utilization of the <code>UniqueValidator</code> for
+        ensuring uniqueness in the key input fields within the component.
       </a>
     </cll-callout>
   </section>
@@ -43,62 +39,34 @@
 
     <h3>Inputs</h3>
     <ul class="list-disc">
-      <li>
-        <strong>formArray:</strong> An Angular FormArray that holds the
-        key-value pairs.
-      </li>
-      <li>
-        <strong>data (optional):</strong> Initial data to pre-populate the form
-        with existing key-value pairs.
-      </li>
-      <li>
-        <strong>uniqueKey (optional):</strong> Set to <code>true</code>(default)
-        to enable unique key validation.
-      </li>
-      <li>
-        <strong>keyHelper (optional):</strong> Helper text for the key input
-        field.
-      </li>
-      <li>
-        <strong>valueHelper (optional):</strong> Helper text for the value input
-        field.
-      </li>
-      <li>
-        <strong>addText (optional):</strong> Text for the &quot;Add Key-Value
-        Pair&quot; button.
-      </li>
+      <li><strong>formArray:</strong> An Angular FormArray that holds the key-value pairs.</li>
+      <li><strong>data (optional):</strong> Initial data to pre-populate the form with existing key-value pairs.</li>
+      <li><strong>uniqueKey (optional):</strong> Set to <code>true</code>(default) to enable unique key validation.</li>
+      <li><strong>keyHelper (optional):</strong> Helper text for the key input field.</li>
+      <li><strong>valueHelper (optional):</strong> Helper text for the value input field.</li>
+      <li><strong>addText (optional):</strong> Text for the &quot;Add Key-Value Pair&quot; button.</li>
       <li><strong>inputSize (optional):</strong> Size of the input fields.</li>
+      <li><strong>buttonClass (optional):</strong> Custom class to apply to "Add Key-Value Pair" button.</li>
       <li>
-        <strong>buttonClass (optional):</strong> Custom class to apply to "Add
-        Key-Value Pair" button.
+        <strong>smartMode (optional):</strong> If set to <code>true</code>, the component will automatically create one
+        key-value pair when there's no any key-value inputs.
       </li>
       <li>
-        <strong>smartMode (optional):</strong> If set to <code>true</code>, the
-        component will automatically create one key-value pair when there's no
-        any key-value inputs.
+        <strong>keyPattern (optional):</strong> If key control needs to pass a custom regex pattern. You can pass an
+        object with two keys: <code>regex</code> and <code>message</code>. message property is optional.
       </li>
       <li>
-        <strong>keyPattern (optional):</strong> If key control needs to pass a
-        custom regex pattern. You can pass an object with two keys:
-        <code>regex</code> and <code>message</code>. message property is
-        optional.
-      </li>
-      <li>
-        <strong>valuePattern (optional):</strong> Similar with
-        <code>keyPattern</code>, but used for value control.
+        <strong>valuePattern (optional):</strong> Similar with <code>keyPattern</code>, but used for value control.
       </li>
     </ul>
 
     <h3>Outputs</h3>
     <ul class="list-disc">
       <li>
-        <strong>removeKeyValue:</strong> Event emitted when a key-value pair is
-        removed. Provides the index of the removed pair.
+        <strong>removeKeyValue:</strong> Event emitted when a key-value pair is removed. Provides the index of the
+        removed pair.
       </li>
-      <li>
-        <strong>addKeyValue:</strong> Event emitted when a new key-value pair is
-        added.
-      </li>
+      <li><strong>addKeyValue:</strong> Event emitted when a new key-value pair is added.</li>
     </ul>
   </section>
 
@@ -109,10 +77,9 @@
       [data]="data"
       [keyPattern]="{
         regex: '^\\w+\\d+$',
-        message:
-          'custom error message: key must start with a letter and end with a number',
+        message: 'custom error message: key must start with a letter and end with a number',
       }"
-      [valuePattern]="{ regex: '^\\w+\\d+$' }"
+      [valuePattern]="{regex: '^\\w+\\d+$'}"
       [smartMode]="true"
       [uniqueKey]="true"
       buttonClass="btn-link"

@@ -10,13 +10,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-date-range-validator',
   standalone: true,
-  imports: [
-    ClarityModule,
-    ReactiveFormsModule,
-    PageContainerComponent,
-    CalloutComponent,
-    CodeBlockComponent,
-  ],
+  imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
   templateUrl: './date-range-validator.component.html',
   styleUrl: './date-range-validator.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

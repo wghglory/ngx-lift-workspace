@@ -1,26 +1,12 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  OnInit,
-  output,
-} from '@angular/core';
-import { ClarityModule } from '@clr/angular';
-import {
-  IdleDetectionConfig,
-  IdleDetectionService,
-  isEmpty,
-  pickBy,
-} from 'ngx-lift';
-import { map, merge, Subject, tap } from 'rxjs';
+import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, OnInit, output} from '@angular/core';
+import {ClarityModule} from '@clr/angular';
+import {IdleDetectionConfig, IdleDetectionService, isEmpty, pickBy} from 'ngx-lift';
+import {map, merge, Subject, tap} from 'rxjs';
 
-import { TranslatePipe } from '../../pipes/translate.pipe';
-import { TranslationService } from '../../services/translation.service';
-import { idleDetectionTranslations } from './idle-detection.l10n';
+import {TranslatePipe} from '../../pipes/translate.pipe';
+import {TranslationService} from '../../services/translation.service';
+import {idleDetectionTranslations} from './idle-detection.l10n';
 
 @Component({
   selector: 'cll-idle-detection',
@@ -58,10 +44,7 @@ export class IdleDetectionComponent implements OnInit {
   countdown$ = this.idleDetectionService.onCountDown();
 
   constructor() {
-    this.translationService.loadTranslationsForComponent(
-      'idleDetection',
-      idleDetectionTranslations,
-    );
+    this.translationService.loadTranslationsForComponent('idleDetection', idleDetectionTranslations);
 
     effect(() => {
       const config = pickBy(

@@ -2,53 +2,30 @@
   <section class="space-y-6">
     <h2>Overview</h2>
     <p>
-      The UniqueValidator is a custom Angular Forms validator designed to check
-      for uniqueness across multiple fields within a <code>FormArray</code> or
-      <code>FormGroup</code>. It ensures that each control&#39;s value is unique
+      The UniqueValidator is a custom Angular Forms validator designed to check for uniqueness across multiple fields
+      within a <code>FormArray</code> or <code>FormGroup</code>. It ensures that each control&#39;s value is unique
       among all other controls within the array or group.
     </p>
     <h2>Usage</h2>
     <h3>Usage Scenario 1: Array of FormControls</h3>
 
-    <p>
-      If you have an array of individual FormControls and want to ensure
-      uniqueness, follow these steps:
-    </p>
+    <p>If you have an array of individual FormControls and want to ensure uniqueness, follow these steps:</p>
 
     <ol class="list-decimal">
-      <li>
-        Attach <code>UniqueValidator.unique()</code> to the FormArray you want
-        to validate.
-      </li>
+      <li>Attach <code>UniqueValidator.unique()</code> to the FormArray you want to validate.</li>
       <li>Trigger the control's updateValueAndValidity() method as needed.</li>
     </ol>
 
     <form clrForm [formGroup]="form1">
-      <cll-callout
-        >Type the same value in below controls and see the effect when
-        blur.</cll-callout
-      >
+      <cll-callout>Type the same value in below controls and see the effect when blur.</cll-callout>
 
       <ng-container formArrayName="demo1">
-        @for (
-          control of form1.controls.demo1.controls;
-          track control;
-          let i = $index
-        ) {
+        @for (control of form1.controls.demo1.controls; track control; let i = $index) {
           <clr-input-container>
             <label [attr.for]="i">Control {{ i + 1 }}</label>
-            <input
-              clrInput
-              type="text"
-              [formControlName]="i"
-              (blur)="validateControlByIndex(i)"
-            />
-            <clr-control-helper
-              >Control value should be unique</clr-control-helper
-            >
-            <clr-control-error *clrIfError="'notUnique'"
-              >Duplicated</clr-control-error
-            >
+            <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
+            <clr-control-helper>Control value should be unique</clr-control-helper>
+            <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
           </clr-input-container>
         }
       </ng-container>
@@ -59,27 +36,18 @@
     <h3>Usage Scenario 2: Array of FormGroups with Key-Value Pairs</h3>
     <p>
       In a more complex scenario, imagine you have an array of
-      <code>FormGroups</code>, each containing key-value pairs as
-      <code>FormControls</code>. You want to ensure the uniqueness of the key
-      controls' values (left controls below) across all groups. For this case,
-      you can pass a control selector as the argument of
-      <code>UniqueValidator.unique(controlSelector)</code>. The selector depends
-      on how you build the form. Please check the below code about how to obtain
-      key controls and validate against themselves.
+      <code>FormGroups</code>, each containing key-value pairs as <code>FormControls</code>. You want to ensure the
+      uniqueness of the key controls' values (left controls below) across all groups. For this case, you can pass a
+      control selector as the argument of <code>UniqueValidator.unique(controlSelector)</code>. The selector depends on
+      how you build the form. Please check the below code about how to obtain key controls and validate against
+      themselves.
     </p>
 
     <form clrForm [formGroup]="form2">
-      <cll-callout
-        >Type the same value in below key controls and see the effect when
-        blur.</cll-callout
-      >
+      <cll-callout>Type the same value in below key controls and see the effect when blur.</cll-callout>
 
       <ng-container formArrayName="demo2">
-        @for (
-          group of form2.controls.demo2.controls;
-          track group;
-          let i = $index
-        ) {
+        @for (group of form2.controls.demo2.controls; track group; let i = $index) {
           <div [formGroup]="group" style="display: flex; gap: 1rem">
             <clr-input-container>
               <label class="clr-sr-only">key</label>
@@ -90,24 +58,13 @@
                 [size]="30"
                 placeholder="key control"
               />
-              <clr-control-helper
-                >key control should be unique</clr-control-helper
-              >
-              <clr-control-error *clrIfError="'notUnique'"
-                >Duplicated</clr-control-error
-              >
+              <clr-control-helper>key control should be unique</clr-control-helper>
+              <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
             </clr-input-container>
             <clr-input-container>
               <label class="clr-sr-only">value</label>
-              <input
-                clrInput
-                [formControl]="group.controls.value"
-                [size]="30"
-                placeholder="value control"
-              />
-              <clr-control-helper
-                >value control has not validation</clr-control-helper
-              >
+              <input clrInput [formControl]="group.controls.value" [size]="30" placeholder="value control" />
+              <clr-control-helper>value control has not validation</clr-control-helper>
             </clr-input-container>
           </div>
         }
