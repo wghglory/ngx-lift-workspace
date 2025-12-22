@@ -1,0 +1,45 @@
+<cll-page-container title="Range" class="space-y-9">
+  <p>
+    Assume you have the number 20. In Angular HTML, you want to create an array ranging from 1 to 20 and display it in a
+    dropdown list. You might find that Angular's <code>*ngFor</code> loop cannot directly iterate over a number,
+    requiring you to create an array first. While you could generate this array in TypeScript, there might be cases
+    where you prefer to create such an array directly in the HTML. For instance, if you have a list of computers with
+    varying maximum CPU counts, and you wish to allow users to select a range of CPUs in a dropdown list, a custom
+    "range" pipe would be useful for generating the necessary array.
+  </p>
+
+  <cll-callout>
+    <ul class="list-disc">
+      <li>
+        The <code>range</code> pipe creates an array of numbers (positive and/or negative) progressing from start up to,
+        <strong class="text-red-500 dark:text-red-300">but not including, end</strong>.
+      </li>
+      <li>A step of -1 is used if a negative start is specified without an end or step.</li>
+      <li>If end is not specified, it's set to start with start then set to 0.</li>
+    </ul>
+
+    <p class="underline">
+      We also provide a <code>range</code> utility function that you can import from <code>ngx-lift</code>.
+    </p>
+  </cll-callout>
+
+  <p>
+    The pipe accepts a tuple containing a start number, an end number, a step value, and a boolean flag indicating
+    whether the array should be in reverse order. The default value for the step is 1. When only one number is passed,
+    the array will be starting from 0 to that number.
+  </p>
+
+  <h2>Usage</h2>
+
+  <app-code-block [code]="exampleCode" lang="html"></app-code-block>
+
+  <app-code-block [code]="cpuCode" lang="html"></app-code-block>
+  <div class="space-x-6">
+    <label for="cpu-count">Choose CPU count</label>
+    <select id="cpu-count">
+      @for (count of [1, 5] | range; track count) {
+        <option [value]="count">{{ count }} CPU(s)</option>
+      }
+    </select>
+  </div>
+</cll-page-container>

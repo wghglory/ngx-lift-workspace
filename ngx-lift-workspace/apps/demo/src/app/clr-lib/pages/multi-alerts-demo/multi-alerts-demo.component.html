@@ -1,0 +1,54 @@
+<cll-page-container title="Multi Alerts" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      Frequently, there is a need to showcase multiple alerts, particularly those at the application level positioned at
+      the top. The clr-lift offers two highly beneficial components for this purpose:
+      <code>AlertContainerComponent</code>
+      and <code>AlertService</code>.
+    </p>
+
+    <h2>Usage</h2>
+
+    <h3>Basic Usage</h3>
+
+    <ol class="list-decimal">
+      <li>
+        Import <code>AlertContainerComponent</code> and include <code>&lt;cll-alert-container&gt;</code> above the
+        Clarity header tag within the main container.
+      </li>
+      <li>
+        Import <code>AlertService</code> and utilize its <code>addAlert()</code>, <code>deleteAlert()</code>, or
+        <code>clearAlerts()</code> methods for effective management of alerts.
+      </li>
+    </ol>
+
+    <app-code-block [code]="htmlCode" lang="html" />
+
+    <p>
+      To incorporate alerts into your code, employ the provided code structure. The <code>addAlert</code> function takes
+      an object as its parameter, with the <code>content</code> field being mandatory and representing the alert content
+      in string format. Additionally, you have the option to include other properties, such as <code>alertType</code>,
+      to specify the type of alert, and indicate whether it is an application-level alert through
+      <code>isAppLevel</code>. The default value for <code>isAppLevel</code> is true, as in most cases, you would prefer
+      to display multiple alerts at the application level.
+    </p>
+    <app-code-block [code]="tsCode" />
+
+    <h3>Advanced Usage</h3>
+    <p>
+      In certain scenarios, you may want to include a button or link within an alert's content. To handle button clicks
+      or navigate to an internal route through link clicks, you can use the <code>onTargetClick</code> and
+      <code>targetSelector</code> properties. The <code>targetSelector</code> represents the selector of the clickable
+      element (ID, class, etc.), and the <code>onTargetClick</code> specifies the function to be executed upon clicking
+      the element.
+    </p>
+    <app-code-block [code]="advancedCode" />
+  </section>
+
+  <section class="space-y-6">
+    <h2>Interactive UI</h2>
+    <cll-alert-container />
+    <button class="btn btn-outline" (click)="addAlert()">Add Alert</button>
+    <button class="btn btn-outline" (click)="clearAlerts()">Clear All Alerts</button>
+  </section>
+</cll-page-container>

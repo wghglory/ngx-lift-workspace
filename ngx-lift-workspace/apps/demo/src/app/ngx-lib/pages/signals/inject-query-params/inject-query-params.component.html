@@ -1,0 +1,25 @@
+<cll-page-container [title]="'injectQueryParams'" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      The <code>injectQueryParams</code> function is a helper that enables us to inject query parameters from the
+      current route as a signal. Utilizing query parameters as a signal is beneficial in a modern Angular signals-based
+      architecture.
+    </p>
+
+    <h2>Usage</h2>
+    <ul class="list-disc">
+      <li>
+        When <code>injectQueryParams</code> is called, it returns a signal containing the current query parameters.
+      </li>
+      <li>To further transform the value into any shape, you can pass a transform function.</li>
+      <li>To use a default value when no value is present, you can pass an initialValue.</li>
+      <li>To transform the query parameters, you can pass a function to <code>injectQueryParams</code>.</li>
+      <li>
+        To get the value of a specific query parameter, you can pass the name of the parameter to
+        <code>injectQueryParams</code>.
+      </li>
+    </ul>
+
+    <app-code-block [code]="code" />
+  </section>
+</cll-page-container>

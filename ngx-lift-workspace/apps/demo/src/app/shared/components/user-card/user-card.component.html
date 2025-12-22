@@ -1,0 +1,13 @@
+@if (user()) {
+  <div class="card !mt-0">
+    <div class="card-block flex gap-9">
+      <img [src]="user().picture.thumbnail" alt="thumbnail" class="w-12" />
+      <dl class="grid grid-cols-2 flex-1">
+        <dt class="font-medium">Name</dt>
+        <dd>{{ user().name.first }} {{ user().name.last }}</dd>
+        <dt class="font-medium">Gender</dt>
+        <dd>{{ user().gender }}</dd>
+      </dl>
+    </div>
+  </div>
+}

@@ -1,0 +1,12 @@
+<div
+  class="spinner"
+  [class]="customClass()"
+  [ngClass]="{
+    'spinner-lg': size() === 'lg',
+    'spinner-md': size() === 'md',
+    'spinner-sm': size() === 'sm',
+    'mx-auto': inline() ? false : center(),
+    'spinner-inline': inline(),
+    'spinner-block': !inline(),
+  }"
+></div>

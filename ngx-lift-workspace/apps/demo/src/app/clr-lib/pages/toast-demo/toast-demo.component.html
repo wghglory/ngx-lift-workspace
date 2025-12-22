@@ -1,0 +1,85 @@
+<cll-page-container title="Toast" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      Toast messages serve as a user-friendly means to communicate medium-priority events that users may wish to
+      reference later. These messages appear temporarily on the screen and can be stored in a notifications panel until
+      closed or expired.
+    </p>
+    <h2>Usage Guidelines</h2>
+    <strong class="block text-xl">Do:</strong>
+    <ol class="list-decimal">
+      <li><strong>Provide Navigation</strong>: Include a link or location for users to navigate to from the toast.</li>
+      <li>
+        <strong>Use Relative Timestamps</strong>: Display timestamps relative to the user (e.g., &quot;1 hour ago&quot;
+        instead of an absolute date).
+      </li>
+      <li>
+        <strong>Keep Titles Short</strong>: Use a short, succinct title (max 35 characters) that conveys the high-level
+        message quickly.
+      </li>
+      <li>
+        <strong>Craft Consumable Descriptions</strong>: Keep descriptions concise (max 156 characters) for easy
+        consumption.
+      </li>
+    </ol>
+    <strong class="block text-xl">Do Not:</strong>
+    <ol class="list-decimal">
+      <li><strong>Use &quot;Close&quot; as an Action</strong>: Clicking the close button should close the toast.</li>
+      <li>
+        <strong>Overcrowd Actions</strong>: Limit toast messages to a maximum of 2 actions; prioritize the most
+        important ones.
+      </li>
+      <li>
+        <strong>Include Object Identifiers in Title</strong>: Avoid using object identifiers in the title; use them only
+        in the description.
+      </li>
+      <li><strong>Add Icons</strong>: To maintain clarity, refrain from adding icons to the toast messages.</li>
+      <li>
+        <strong>Show Irrelevant Toasts</strong>: Display toasts only when the information is still relevant to the user.
+      </li>
+    </ol>
+  </section>
+
+  <section class="space-y-6">
+    <h2>Implementation</h2>
+    <p>To implement toast messages, follow these steps:</p>
+    <ol class="list-decimal">
+      <li>Import <code>ToastComponent</code> from the <code>clr-lift</code> library into your app component.</li>
+      <li>
+        Include <code>&lt;cll-toast-container [timeoutSeconds]=&quot;8&quot; /&gt;</code> in
+        <code>app.component.html</code>. This container will hold all toasts. The container markup should appear only
+        once in your application.
+      </li>
+      <li>
+        You can pass non-required inputs for global configurations, such as <code>timeoutSeconds</code> (auto close
+        time), <code>manualClosable</code> (manual closure option), and <code>topOffset</code> (adjustment of distance
+        to the screen top).
+      </li>
+    </ol>
+
+    <app-code-block [code]="containerCode" lang="typescript" />
+
+    <h3>Toast Creation</h3>
+    <p>To create a toast, utilize the <code>ToastService</code>, which offers several APIs:</p>
+
+    <h4>addToast</h4>
+    <p>
+      Use <code>addToast</code> to pass a toast object with required properties (title and description) and optional
+      configurations.
+    </p>
+
+    <app-code-block [code]="addToastCode" lang="typescript" />
+
+    <h3>Shorthand APIs</h3>
+    <p>For simplicity, four shorthand APIs are provided to create toasts with different types:</p>
+
+    <app-code-block [code]="shortHandCode" lang="typescript" />
+  </section>
+
+  <section>
+    <button (click)="showSuccessToast()" class="btn btn-success">Success Toast</button>
+    <button (click)="showInfoToast()" class="btn btn-primary">Info Toast</button>
+    <button (click)="showErrorToast()" class="btn btn-danger">Error Toast</button>
+    <button (click)="showWarningToast()" class="btn btn-warning">Warning Toast</button>
+  </section>
+</cll-page-container>

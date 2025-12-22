@@ -1,0 +1,56 @@
+<div class="space-y-9 sm:p-10 relative">
+  <section class="grid xl:grid-cols-2 sm:gap-10">
+    <div class="space-y-3 max-w-[calc(100vw-48px)]">
+      <h1 class="sm:!text-6xl leading-loose">clr-lift</h1>
+      <p class="sm:!text-3xl sm:!mt-16">
+        Extending the Clarity library with reusable components, utilities and operators.
+      </p>
+      <p class="sm:!text-2xl">Supports Angular 17 and later versions</p>
+      <app-code-block [code]="'npm install clr-lift ngx-lift &#64;clr/angular &#64;clr/ui'" lang="shell" />
+    </div>
+    <svg-icon class="flex-1" [src]="'./assets/clr-lift.svg'" [svgStyle]="{width: '100%'}" />
+  </section>
+
+  <section class="grid lg:grid-cols-3 gap-5">
+    <app-tile-with-icon
+      icon="⚒️"
+      title="Utilities"
+      description="A suite of utilities finely tuned for Clarity components. These utilities simplify common tasks
+      and operations, providing developers with a seamless and cohesive experience when interacting with Clarity
+      components."
+    >
+    </app-tile-with-icon>
+    <app-tile-with-icon
+      icon="📦"
+      title="RxJS Operators"
+      [description]="
+        'Amplify the functionality of the Clarity library. For example, the <code>dgState</code> operator streamlines datagrid state management, offering developers an intuitive and efficient approach when working with Clarity datagrids.'
+      "
+    >
+    </app-tile-with-icon>
+    <app-tile-with-icon
+      icon="🧩"
+      title="Components"
+      description="A variety of custom components adhering to Clarity styling standards, including
+    toast, alert, and more."
+    >
+    </app-tile-with-icon>
+  </section>
+
+  <cll-callout>
+    <ul class="list-disc space-y-2">
+      <li>
+        In some cases, a <strong>force installation</strong> may be necessary, particularly if &#64;clr/angular's
+        peerDependency mandates a distinct Angular version.
+      </li>
+      <li>
+        If you're not utilizing the latest Angular version, consider setting <code>skipLibCheck: true</code> in
+        tsconfig.json to circumvent potential build errors.
+      </li>
+      <li>
+        For guidance on setting up Clarity for your project, you can refer to the
+        <a href="https://clarity.design/pages/developing" target="_blank">Clarity Design</a> documentation.
+      </li>
+    </ul>
+  </cll-callout>
+</div>

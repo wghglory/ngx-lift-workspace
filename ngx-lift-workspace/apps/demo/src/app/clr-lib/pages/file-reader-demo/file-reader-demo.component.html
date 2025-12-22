@@ -1,0 +1,92 @@
+<cll-page-container title="File Reader" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      The <code>FileReaderComponent</code> allows you to easily browse and read the contents of text files. If the
+      selected file is a certificate, you can utilize the <code>CertificateSignpost</code> component to display its
+      contents effectively.
+    </p>
+
+    <h2>Features</h2>
+    <ul class="list-disc">
+      <li><strong>File Browsing: </strong>File selection and removal.</li>
+      <li><strong>Content Reading: </strong>Reading file content as plain text or base64 encoded string.</li>
+      <li><strong>Browse Notification: </strong>Emitting events when a file is selected or removed.</li>
+      <li><strong>Validation: </strong>Validation for file size and content parsing errors.</li>
+    </ul>
+
+    <h2>Inputs</h2>
+    <ul class="list-disc">
+      <li>
+        <code>controlId</code>: This input sets the id attribute for the file input element. It is useful for
+        associating a label with the file input.
+      </li>
+      <li>
+        <code>acceptFiles</code>: This input specifies the types of files that the file input should accept. It uses the
+        same format as the accept attribute of a standard HTML file input.
+      </li>
+      <li>
+        <code>encoded</code>: This boolean input determines whether the file content should be read and output as a
+        base64 encoded string. If true, the file content will be encoded; if false, the raw text content will be used.
+      </li>
+      <li>
+        <code>maxSize</code>: This input sets the maximum allowed file size (in megabytes). If the selected file exceeds
+        this size, a validation error will be triggered.
+      </li>
+      <li>
+        <code>disabled</code>: This boolean input disables the file input when set to true. The user will not be able to
+        select or remove files while the component is <code>disabled</code>.
+      </li>
+    </ul>
+
+    <h2>Usage</h2>
+    <form clrForm [formGroup]="form" class="!mt-0" (ngSubmit)="submit()">
+      <clr-control-container>
+        <label for="ca-bundle">CA Bundle</label>
+        <cll-file-reader
+          controlId="ca-bundle"
+          clrControl
+          [encoded]="false"
+          [maxSize]="certFileLimit"
+          [acceptFiles]="certAcceptedFiles"
+          [formControl]="form.controls.caCert"
+          (fileChange)="onFileChange($event)"
+        />
+        @if (form.controls.caCert.value) {
+          <clr-control-success>
+            Show certificate:
+            @if (form.controls.caCert.valid) {
+              <cll-certificate-signpost
+                [pem]="form.controls.caCert.value"
+                [pemEncoded]="false"
+                [showIcon]="true"
+                [position]="'bottom-right'"
+              />
+            }
+          </clr-control-success>
+        }
+        <clr-control-error *clrIfError="'exceedLimit'">
+          Exceed the maximum file size ({{ certFileLimit }} MB).
+        </clr-control-error>
+        <clr-control-error *clrIfError="'invalidCertificate'; error as error">
+          {{ error }}
+        </clr-control-error>
+        <clr-control-error *clrIfError="'required'"> Required </clr-control-error>
+      </clr-control-container>
+
+      <clr-control-container>
+        <label for="file">File</label>
+        <cll-file-reader controlId="file" clrControl [encoded]="false" [formControl]="form.controls.file" />
+        @if (form.controls.file.value) {
+          <clr-control-success> File content has been read successfully </clr-control-success>
+        }
+        <clr-control-error *clrIfError="'parse'; error as error"> {{ error }} </clr-control-error>
+        <clr-control-error *clrIfError="'required'"> Required </clr-control-error>
+      </clr-control-container>
+
+      <button type="submit" class="btn btn-primary mt-6" [disabled]="form.invalid">Submit and view console log</button>
+    </form>
+
+    <app-code-block [code]="htmlCode" lang="html" />
+    <app-code-block [code]="tsCode" />
+  </section>
+</cll-page-container>

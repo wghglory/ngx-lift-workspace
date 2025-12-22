@@ -1,0 +1,23 @@
+<cll-page-container [title]="'URL Utilities'" class="space-y-9">
+  <section class="space-y-6">
+    <h2>isIP & isFQDN</h2>
+    <p>Check if a URL hostname is IP or FQDN.</p>
+    <app-code-block [code]="ipAndFqdnCode" />
+
+    <cll-callout>You may use <code>URL</code> constructor to get the hostname, but remember to try catch.</cll-callout>
+    <app-code-block [code]="tryCatchCode" />
+  </section>
+
+  <section class="space-y-6">
+    <h2>isUrl & isHttps</h2>
+    <p>
+      <code>isUrl</code> is used to check if a URL is Valid. <code>isHttps</code> is used to check if the URL starts
+      with https.
+    </p>
+
+    <app-code-block [code]="urlCode" />
+    <cll-callout>
+      We also provide <a [routerLink]="'../../pipes/is-https'"><code>isHttps</code></a> pipe.
+    </cll-callout>
+  </section>
+</cll-page-container>

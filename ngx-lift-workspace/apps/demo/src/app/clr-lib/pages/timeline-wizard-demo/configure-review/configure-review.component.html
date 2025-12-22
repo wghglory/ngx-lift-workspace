@@ -1,0 +1,43 @@
+<section class="@container">
+  @if (operatorStep) {
+    <div class="card">
+      <div class="card-block p-4">
+        <h3 class="card-title !mb-6" cds-text>Configure Operator</h3>
+        <dl class="keyvalue-grid">
+          <dt class="clr-control-label">Name</dt>
+          <dd>{{ operatorStep.operator.name }}</dd>
+          <dt class="clr-control-label">Namespace</dt>
+          <dd>{{ operatorStep.operator.namespace }}</dd>
+        </dl>
+      </div>
+    </div>
+  }
+  @if (serviceStep) {
+    <div class="card">
+      <div class="card-block p-4">
+        <h3 class="card-title !mb-6" cds-text>Configure Service</h3>
+        <dl class="keyvalue-grid">
+          <dt class="clr-control-label">CPU</dt>
+          <dd>{{ serviceStep.service.cpu }}</dd>
+          <dt class="clr-control-label">Replicas</dt>
+          <dd>{{ serviceStep.service.replicas }}</dd>
+          <dt class="clr-control-label">URL</dt>
+          <dd>{{ serviceStep.service.url }}</dd>
+        </dl>
+      </div>
+    </div>
+  }
+  @if (runtimePropertiesStep) {
+    <div class="card">
+      <div class="card-block p-4">
+        <h3 class="card-title !mb-6" cds-text>Configure Runtime Properties</h3>
+        <dl class="keyvalue-grid">
+          @for (item of runtimePropertiesStep.appProperties | keyvalue; track item.key) {
+            <dt class="clr-control-label">{{ item.key }}</dt>
+            <dd>{{ item.value }}</dd>
+          }
+        </dl>
+      </div>
+    </div>
+  }
+</section>

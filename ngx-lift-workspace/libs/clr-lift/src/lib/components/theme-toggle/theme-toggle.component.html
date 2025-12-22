@@ -1,0 +1,17 @@
+<button
+  cds-layout="m:none"
+  class="btn btn-link nav-link"
+  [attr.aria-label]="ariaLabel()"
+  (click)="toggleTheme()"
+  (mouseenter)="setHovering(true)"
+  (mouseleave)="setHovering(false)"
+>
+  <cds-icon
+    size="md"
+    class="theme-toggle"
+    [attr.shape]="iconShape()"
+    [attr.inverse]="hovering()"
+    [attr.solid]="hovering()"
+  />
+  {{ themeDisplayName() }}
+</button>

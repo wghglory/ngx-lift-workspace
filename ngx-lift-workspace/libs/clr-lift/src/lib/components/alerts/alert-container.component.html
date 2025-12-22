@@ -1,0 +1,19 @@
+<clr-alerts>
+  @for (alert of alerts(); track alert.id) {
+    <clr-alert
+      [clrAlertClosable]="true"
+      [clrAlertType]="alert.alertType"
+      [clrAlertAppLevel]="alert.isAppLevel"
+      [clrCloseButtonAriaLabel]="'alert.close' | translate"
+      (clrAlertClosedChange)="onCloseAlert(alert.id)"
+    >
+      <clr-alert-item>
+        <span class="alert-text" role="alert" [innerHTML]="alert.content"></span>
+        <!-- This can be placed inside alert-text span
+      <div class="alert-actions">
+        <button class="btn alert-action">Fix</button>
+      </div> -->
+      </clr-alert-item>
+    </clr-alert>
+  }
+</clr-alerts>

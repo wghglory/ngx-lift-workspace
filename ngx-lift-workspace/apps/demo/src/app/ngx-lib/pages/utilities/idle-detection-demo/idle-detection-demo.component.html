@@ -1,0 +1,89 @@
+<cll-page-container [title]="'Idle Detection'" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      Idle detection is the process of monitoring user activity and determining when a user becomes inactive. This is
+      particularly useful for applications that require users to remain logged in, as it allows the system to take
+      appropriate action when a user stops interacting with the application, such as warning them of an impending
+      timeout or automatically logging them out after a period of inactivity.
+    </p>
+
+    <h2>Key Features of the Idle Detection Service</h2>
+    <ol class="list-decimal">
+      <li>
+        <strong>Configurable Idle and Timeout Durations</strong>: The service allows for customization of the idle and
+        timeout durations through the <code>IdleDetectionConfig</code> class.
+      </li>
+      <li>
+        <strong>Automatic Reset on User Activity</strong>: The service automatically resets the idle timer whenever user
+        activity is detected, ensuring that the user&#39;s session remains active.
+      </li>
+      <li>
+        <strong>Event Emission</strong>: The service emits events when the idle period ends and when the countdown to
+        timeout begins, allowing components to take action, such as displaying a warning message to the user.
+      </li>
+      <li>
+        <strong>Reactive Programming</strong>: By using RxJS subjects, the service provides observables that emit events
+        when the user becomes idle or when the countdown ends. This allows components to react to these events in
+        real-time.
+      </li>
+    </ol>
+
+    <h2>Usage</h2>
+    <h3>1. Configure idle and timeout durations globally</h3>
+    <p>We provide a configuration class that will hold our idle and timeout durations:</p>
+    <app-code-block [code]="configCode" />
+
+    <cll-callout>
+      There are two phases of idle detection: the <strong>idle-detection phase</strong> and the
+      <strong>timeout phase</strong>.
+
+      <ol class="list-decimal pt-5 space-y-3">
+        <li>
+          <strong>Idle-detection phase</strong>: Suppose you configure <code>idleDurationInSeconds</code> to 5 * 60 (5
+          minutes). From the moment there is no action on the website, you enter this phase. After 5 minutes, the idle
+          detection ends, indicating that you have been idle for a long time (<code>idleDurationInSeconds</code>). You
+          can subscribe to the <code>onIdleEnd()</code> observable, which will emit at this moment. Once this phase is
+          completed, you will enter the second phase.
+        </li>
+        <li>
+          <strong>Timeout phase</strong>: When you enter this phase, the countdown starts immediately from the value of
+          <code>timeoutDurationInSeconds</code>. You can subscribe to the <code>onCountDown()</code> observable to
+          obtain the countdown value. When the countdown reaches 0, the <strong>timeout phase</strong> will end. You can
+          subscribe to the <code>onTimeout()</code> observable to know when the <strong>timeout phase</strong> ends. At
+          this point, you can log out the user or perform other actions.
+        </li>
+      </ol>
+    </cll-callout>
+
+    <p>
+      To use the idle detection service in an Angular application, you would first provide the configuration in your
+      module:
+    </p>
+    <app-code-block [code]="moduleUsage" />
+
+    <p>Use in standalone app:</p>
+    <app-code-block [code]="standaloneUsage" />
+
+    <h3>2. Use IdleDetectionService in your component</h3>
+    <p>Then, in your AppComponent, you can subscribe to the service&#39;s observables to react to idle events:</p>
+    <app-code-block [code]="someComponentUsage" />
+
+    <h3>3. (Optional) Use IdleDetectionComponent</h3>
+    <p>
+      Furthermore, we provide a component in <code>clr-lift</code> that displays a Clarity modal dialog when the user is
+      idle. The dialog will appear when the idle-detection phase concludes and start counting down. Once the countdown
+      ends, you can hook into the <code>timeout</code> handler in your component to perform custom logic such as
+      clearing the localStorage token and redirecting the user to the login page.
+    </p>
+    <p>
+      The parameters <code>idleDurationInSeconds</code> and <code>timeoutDurationInSeconds</code> are optional. When
+      these parameters are passed, they will overwrite the configuration passed by
+      <code>provideIdleDetectionConfig</code>.
+    </p>
+    <app-code-block [code]="idleDetectionComponentCode" />
+    <p>The dialog looks like below:</p>
+    <img src="./assets/idle-detection-dialog.png" alt="Idle Detection Dialog" />
+  </section>
+</cll-page-container>
+
+<!-- <cll-idle-detection [idleDurationInSeconds]="5" [timeoutDurationInSeconds]="5" (timeout)="onTimeout()" /> -->

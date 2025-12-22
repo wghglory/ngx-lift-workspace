@@ -1,9 +1,25 @@
 {
   "name": "ngx-lift",
-  "version": "0.0.1",
+  "version": "1.10.3",
+  "description": "A project has been crafted with the goal of enhancing and simplifying your Angular development experience.",
+  "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "ngx-lift"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wghglory/ngx-lift.git"
+  },
+  "homepage": "https://ngx-lift.netlify.app",
   "peerDependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/core": "^20.3.0"
+    "@angular/common": ">=17.0.0",
+    "@angular/core": ">=17.0.0",
+    "rxjs": ">=7.8.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
   },
   "sideEffects": false
 }

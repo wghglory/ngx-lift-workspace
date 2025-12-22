@@ -1,0 +1,46 @@
+<cll-page-container title="Mask Pipe" class="space-y-9">
+  <p>
+    The <code>MaskPipe</code> is an Angular pipe designed to mask characters in a string based on specified options. It
+    can be used to obscure sensitive information in user interfaces, such as credit card numbers or phone numbers.
+  </p>
+
+  <section class="space-y-6">
+    <h2>Usage</h2>
+    <h3>Basic Usage</h3>
+    <p>
+      The <code>MaskPipe</code> can be used in your templates to mask characters within a string. Here is an example:
+    </p>
+    <app-code-block [code]="simpleCode" lang="html"></app-code-block>
+
+    <h3>Customizing Masking Options</h3>
+    <p>
+      You can customize the masking behavior by providing options to the <code>mask</code> pipe. The available options
+      are:
+    </p>
+    <ul class="list-disc space-y-2">
+      <li>
+        <code>unmaskedPrefixLength</code>: Number of unmasked characters at the beginning of the string (default: 6).
+      </li>
+      <li><code>unmaskedSuffixLength</code>: Number of unmasked characters at the end of the string (default: 6).</li>
+      <li>
+        <code>masked</code>: Boolean flag indicating whether masking is enabled (default: true). This is useful when you
+        want to toggle the mask.
+      </li>
+    </ul>
+    <h4>Example with custom options:</h4>
+    <app-code-block [code]="customCode" lang="html"></app-code-block>
+  </section>
+
+  <section class="space-y-6">
+    <h2>Conditions for Masking</h2>
+    <p>The <code>MaskPipe</code> applies masking based on the following conditions:</p>
+    <ol class="list-decimal space-y-2">
+      <li>
+        The length of the input string must be greater than the sum of <code>unmaskedPrefixLength</code> and
+        <code>unmaskedSuffixLength</code>.
+      </li>
+      <li><code>unmaskedPrefixLength</code> and <code>unmaskedSuffixLength</code> must not be negative.</li>
+      <li>The <code>masked</code> option must be <code>true</code>.</li>
+    </ol>
+  </section>
+</cll-page-container>

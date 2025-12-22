@@ -1,0 +1,56 @@
+<cll-page-container [title]="'Spinner'" class="space-y-9">
+  <section class="space-y-6">
+    <p>A spinner is a visual indicator of an ongoing, user-initiated process.</p>
+
+    <p>Clarity has two types of spinners, each with its own use case:</p>
+    <ul>
+      <li>Page Spinners: For tracking the progress of an operation related to an entire page.</li>
+      <li>Inline Spinners: For tracking the progress of an operation related to a specific component.</li>
+    </ul>
+
+    <p>The spinner has below inputs:</p>
+    <ul class="list-disc">
+      <li><code>size</code>: Determines the spinner size. Accepts 'lg' (default), 'md', or 'sm'.</li>
+      <li>
+        <code>center</code>: Centers the spinner as a block element (default). Pass <code>false</code> to disable
+        centering.
+      </li>
+      <li>
+        <code>inline</code>: Specifies whether the spinner should be displayed as an inline-block element. Useful for
+        aligning spinners within text or other inline elements.
+      </li>
+      <li><code>class</code>: A string of additional CSS classes to apply to the spinner.</li>
+    </ul>
+  </section>
+
+  <section class="space-y-6">
+    <h2>Usage</h2>
+    <p>Import SpinnerComponent.</p>
+    <app-code-block [code]="importCode" />
+
+    <h3>Default Spinner</h3>
+    <p>The default spinner is centered, large, and has a block display.</p>
+    <cll-spinner />
+    <app-code-block [code]="defaultCode" lang="html" />
+
+    <h3>Middle Size Spinner</h3>
+    <cll-spinner [size]="'md'" />
+    <app-code-block [code]="middleSizeCode" lang="html" />
+
+    <h3>Small Size Spinner</h3>
+    <cll-spinner [size]="'sm'" />
+    <app-code-block [code]="smallSizeCode" lang="html" />
+
+    <h3>Algn Left Spinner</h3>
+    <cll-spinner [center]="false" />
+    <app-code-block [code]="alignLeftCode" lang="html" />
+
+    <h3>Custom Class Spinner</h3>
+    <cll-spinner [center]="false" class="mx-10" />
+    <app-code-block [code]="customClassCode" lang="html" />
+
+    <h3>Inline Spinner</h3>
+    <div><cll-spinner inline class="mx-2" /><span>Loading...</span></div>
+    <app-code-block [code]="inlineCode" lang="html" />
+  </section>
+</cll-page-container>

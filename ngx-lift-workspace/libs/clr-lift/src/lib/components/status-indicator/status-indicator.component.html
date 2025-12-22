@@ -1,0 +1,68 @@
+<span class="status-container">
+  @if (tooltip(); as tooltip) {
+    <button
+      class="btn btn-icon"
+      [cllTooltip]="tooltip"
+      [cllTooltipPosition]="tooltipPosition()"
+      [attr.aria-label]="tooltip"
+    >
+      <ng-container *ngTemplateOutlet="icon"></ng-container>
+    </button>
+  } @else {
+    <ng-container *ngTemplateOutlet="icon"></ng-container>
+  }
+
+  <ng-content></ng-content>
+</span>
+
+<ng-template #icon>
+  @switch (iconStatus()) {
+    @case ('success') {
+      <cds-icon
+        shape="success-standard"
+        status="success"
+        [attr.size]="iconSize()"
+        [attr.aria-label]="'status-indicator.success' | translate"
+      />
+    }
+    @case ('error') {
+      <cds-icon
+        shape="error-standard"
+        status="danger"
+        [attr.size]="iconSize()"
+        [attr.aria-label]="'status-indicator.error' | translate"
+      />
+    }
+    @case ('pending') {
+      <cds-icon
+        shape="sync"
+        status="info"
+        [attr.size]="iconSize()"
+        [attr.aria-label]="'status-indicator.pending' | translate"
+      />
+    }
+    @case ('warning') {
+      <cds-icon
+        shape="warning-standard"
+        status="warning"
+        [attr.size]="iconSize()"
+        [attr.aria-label]="'status-indicator.warning' | translate"
+      />
+    }
+    @case ('inactive') {
+      <cds-icon
+        shape="disconnect"
+        status="danger"
+        [attr.size]="iconSize()"
+        [attr.aria-label]="'status-indicator.inactive' | translate"
+      />
+    }
+    @default {
+      <cds-icon
+        shape="unknown-status"
+        [attr.size]="iconSize()"
+        [attr.aria-label]="'status-indicator.unknown' | translate"
+      />
+    }
+  }
+</ng-template>

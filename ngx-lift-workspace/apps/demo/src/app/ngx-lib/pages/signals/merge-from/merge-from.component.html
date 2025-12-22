@@ -1,0 +1,45 @@
+<cll-page-container [title]="'mergeFrom'" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      <code>mergeFrom</code> is a helper function that merges the values of Observables or Signals and emits the latest
+      value. It also allows for modifying the emitted value using RxJS operators before it is emitted.
+    </p>
+
+    <p>While it is similar to <code>merge()</code>, it also takes Signals into account.</p>
+
+    <p>
+      <code>mergeFrom</code> is akin to <code>combineFrom</code>, but instead of emitting a combined value, it emits the
+      latest emitted value using the merge operator rather than combineLatest.
+    </p>
+
+    <h2>Usage</h2>
+    <ul class="list-disc">
+      <li>Merge multiple Signals</li>
+      <li>Merge multiple Observables</li>
+      <li>Merge multiple Signals and Observables</li>
+      <li>Using initialValue param</li>
+    </ul>
+  </section>
+
+  <section class="space-y-6">
+    <h3>Basic Usage: Merge the signals or observables</h3>
+    <p>You have the flexibility to pass multiple signals or observables to the function.</p>
+    <app-code-block [code]="basicCode" />
+
+    <h3>Pass a RxJS pipe operator</h3>
+    <p>
+      You have the option to pass an RxJS pipe operator, which enables you to manipulate the emitted values as needed.
+      This provides a flexible and powerful way to customize the behavior of the emitted data.
+    </p>
+    <app-code-block [code]="pipeCode" />
+
+    <h3>Handle asynchronous code by <code>startWith</code> or <code>initialValue</code> option</h3>
+    <p>
+      To define the starting value of the resulting Signal and prevent potential errors with real async Observables, you
+      can employ the initialValue parameter within the third argument options object. Alternatively, you can address
+      this issue by utilizing the <code>startWith</code> operator within the pipe, ensuring that the Observable always
+      begins with a specified initial value, as demonstrated below.
+    </p>
+    <app-code-block [code]="asyncCode" />
+  </section>
+</cll-page-container>

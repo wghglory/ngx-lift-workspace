@@ -1,0 +1,10 @@
+:host {
+  display: block;
+
+  ::ng-deep .alert-text {
+    a {
+      text-decoration: underline;
+      color: white;
+    }
+  }
+}

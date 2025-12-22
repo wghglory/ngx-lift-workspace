@@ -1,0 +1,69 @@
+:host {
+  display: block;
+  z-index: 1040;
+  position: absolute;
+  max-width: 310px;
+  right: -12px;
+  opacity: 1;
+  margin-top: 18px;
+
+  @media screen and (min-width: 576px) {
+    width: 414px;
+    max-width: unset;
+    right: 0;
+  }
+}
+
+.toast-container {
+  margin-right: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.toast-description {
+  font-size: 1em;
+  color: #adbbc4;
+  margin-top: 3px;
+  line-height: 18px;
+
+  -webkit-line-clamp: 4;
+  -moz-line-clamp: 4;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // https://github.com/postcss/autoprefixer/issues/776
+  /* autoprefixer: ignore next */
+  -webkit-box-orient: vertical;
+  max-height: 70px;
+}
+
+.toast-date {
+  color: #adbbc4;
+  font-size: 11px;
+  margin-left: 6px;
+  position: relative;
+  top: 1px;
+  white-space: nowrap;
+}
+
+.toast-title {
+  font-weight: 500;
+  color: #e9ecef;
+  font-size: 14px;
+  margin-top: 0;
+  line-height: 24px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 240px;
+}
+
+:host-context([cds-theme='dark']) {
+  .toast-description {
+    color: #a9b6be;
+  }
+
+  .toast-date {
+    color: #a9b6be;
+  }
+}

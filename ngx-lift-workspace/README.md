@@ -1,82 +1,371 @@
-# NgxLiftWorkspace
+# ngx-lift Monorepo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along with a demo application showcasing their capabilities.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+[![CI](https://github.com/wghglory/ngx-lift/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
+[![npm version](https://badge.fury.io/js/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## 📦 Packages
 
-## Finish your CI setup
+### ngx-lift
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/2MppdxnH8e)
+A comprehensive Angular library designed to enhance and simplify your Angular development experience with utilities, operators, pipes, signals, and validators.
 
+**[View on npm](https://www.npmjs.com/package/ngx-lift)** | **[Documentation](https://ngx-lift.netlify.app)**
 
-## Run tasks
+### clr-lift
 
-To run the dev server for your app, use:
+An Angular library that augments VMware Clarity components with additional reusable components and utilities.
 
-```sh
-npx nx serve demo
+**[View on npm](https://www.npmjs.com/package/clr-lift)** | **[Documentation](https://ngx-lift.netlify.app/clr-lift)**
+
+### Demo Application
+
+A showcase application demonstrating the features and capabilities of both libraries.
+
+**[Live Demo](https://ngx-lift.netlify.app)**
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- npm 10.x or higher
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/wghglory/ngx-lift.git
+cd ngx-lift/ngx-lift-workspace
+
+# Install dependencies
+npm install
+
+# Start the demo application
+npm start
 ```
 
-To create a production bundle:
+The demo app will be available at `http://localhost:4200`.
 
-```sh
-npx nx build demo
+## 📖 Development
+
+### Project Structure
+
+```
+ngx-lift-workspace/
+├── apps/
+│   └── demo/              # Demo application
+├── libs/
+│   ├── ngx-lift/          # ngx-lift library
+│   └── clr-lift/          # clr-lift library
+├── dist/                  # Build outputs
+└── .github/workflows/     # CI/CD workflows
 ```
 
-To see all available targets to run for a project, run:
+### Common Commands
 
-```sh
-npx nx show project demo
+#### Development
+
+```bash
+# Start demo app
+npm start
+
+# Build all projects
+npm run build
+
+# Build only libraries
+npm run build:libs
+
+# Build specific library
+npm run build:ngx
+npm run build:clr
+
+# Watch mode for development
+npm run watch:ngx
+npm run watch:clr
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+#### Testing
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Run all tests
+npm test
 
-## Add new projects
+# Test specific library
+npm run test:ngx
+npm run test:clr
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
+# Run tests with coverage
+npm run test:coverage
 ```
 
-To generate a new library, use:
+#### Linting & Formatting
 
-```sh
-npx nx g @nx/angular:lib mylib
+```bash
+# Lint all projects
+npm run lint
+
+# Lint and fix
+npm run lint:fix
+
+# Format code
+npm run format
+
+# Check formatting
+npm run format:check
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+#### Nx Commands
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# View project graph
+npm run graph
 
+# Run affected tests
+npm run affected:test
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Build affected projects
+npm run affected:build
 
-## Install Nx Console
+# Lint affected projects
+npm run affected:lint
+```
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+## 📦 Publishing
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Automated Publishing (Recommended)
 
-## Useful links
+#### Using GitHub Actions
 
-Learn more:
+1. Go to Actions tab in GitHub
+2. Select "Publish Libraries" workflow
+3. Click "Run workflow"
+4. Choose version type (major, minor, patch)
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+#### Using Git Tags
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+# Create and push a version tag
+git tag v1.10.4
+git push origin v1.10.4
+```
+
+### Manual Publishing
+
+```bash
+# Version bump
+npm run release:version
+
+# Build and publish
+npm run release:publish
+```
+
+### Individual Library Publishing
+
+```bash
+# Publish ngx-lift only
+npm run publish:ngx
+
+# Publish clr-lift only
+npm run publish:clr
+
+# Publish both
+npm run publish:all
+```
+
+**Note**: You need to be logged in to npm (`npm login`) and have publish permissions.
+
+## 🚢 Deployment
+
+### Netlify
+
+#### Automatic Deployment
+
+- Push to `main` branch triggers automatic deployment
+- Pull requests get preview deployments
+
+#### Manual Deployment
+
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Build and deploy
+npm run build:demo
+netlify deploy --prod --dir=dist/apps/demo/browser
+```
+
+#### Configuration
+
+The `netlify.toml` file contains all deployment settings. Required secrets:
+
+- `NETLIFY_AUTH_TOKEN`
+- `NETLIFY_SITE_ID`
+
+### Vercel
+
+#### Automatic Deployment
+
+- Connected to GitHub repository
+- Deploys on push to `main`
+
+#### Manual Deployment
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Build and deploy
+npm run build:demo
+vercel --prod --cwd dist/apps/demo/browser
+```
+
+#### Configuration
+
+The `vercel.json` file contains deployment settings. Required secrets:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+## 🔄 CI/CD
+
+### GitHub Actions Workflows
+
+#### CI Workflow (`ci.yml`)
+
+- Runs on: Push to `main`/`develop`, Pull Requests
+- Actions:
+  - Lint affected projects
+  - Test affected projects with coverage
+  - Build affected projects
+  - Upload coverage reports
+
+#### Publish Workflow (`publish.yml`)
+
+- Runs on: Manual trigger, Git tags
+- Actions:
+  - Build libraries
+  - Run tests
+  - Publish to npm
+  - Create GitHub release
+
+#### Deploy Demo Workflow (`deploy-demo.yml`)
+
+- Runs on: Push to `main`, Manual trigger
+- Actions:
+  - Build libraries and demo app
+  - Deploy to Netlify
+  - Deploy to Vercel
+
+### Required GitHub Secrets
+
+```
+NPM_TOKEN              # npm authentication token
+NETLIFY_AUTH_TOKEN     # Netlify authentication token
+NETLIFY_SITE_ID        # Netlify site ID
+VERCEL_TOKEN           # Vercel authentication token
+VERCEL_ORG_ID          # Vercel organization ID
+VERCEL_PROJECT_ID      # Vercel project ID
+```
+
+## 🧪 Testing
+
+This project uses **Vitest** with `@analogjs/vitest-angular` for testing.
+
+### Running Tests
+
+```bash
+# Run all tests
+nx run-many -t test
+
+# Run tests for a specific library
+nx test ngx-lift
+nx test clr-lift
+
+# Run tests in watch mode
+nx test ngx-lift --watch
+
+# Run tests with coverage
+nx test ngx-lift --coverage
+
+# Run tests with UI
+nx test ngx-lift --ui
+```
+
+### Test Configuration
+
+Each library has its own `vite.config.mts` with test configuration. The test setup is in `src/test-setup.ts`.
+
+## 🔧 Configuration Files
+
+- **`nx.json`**: Nx workspace configuration
+- **`tsconfig.base.json`**: TypeScript base configuration with path mappings
+- **`package.json`**: Dependencies and scripts
+- **`netlify.toml`**: Netlify deployment configuration
+- **`vercel.json`**: Vercel deployment configuration
+- **`.github/workflows/`**: CI/CD workflows
+
+## 📚 Library Usage
+
+### Installing Libraries
+
+```bash
+# Install ngx-lift
+npm install ngx-lift
+
+# Install clr-lift (requires ngx-lift)
+npm install clr-lift ngx-lift @clr/angular
+```
+
+### Using in Your Project
+
+```typescript
+// Import from ngx-lift
+import { createAsyncState, poll } from 'ngx-lift';
+
+// Import from clr-lift
+import { AlertComponent, ToastService } from 'clr-lift';
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Commit Convention
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` New features
+- `fix:` Bug fixes
+- `docs:` Documentation changes
+- `style:` Code style changes (formatting, etc.)
+- `refactor:` Code refactoring
+- `test:` Test changes
+- `chore:` Build process or auxiliary tool changes
+
+## 📄 License
+
+MIT © [Guanghui Wang](https://github.com/wghglory)
+
+## 🔗 Links
+
+- **Homepage**: https://ngx-lift.netlify.app
+- **Repository**: https://github.com/wghglory/ngx-lift
+- **npm (ngx-lift)**: https://www.npmjs.com/package/ngx-lift
+- **npm (clr-lift)**: https://www.npmjs.com/package/clr-lift
+- **Issues**: https://github.com/wghglory/ngx-lift/issues
+
+## 📞 Support
+
+For questions and support, please open an issue on GitHub.
+
+---
+
+Built with ❤️ using [Nx](https://nx.dev) and [Angular](https://angular.io)

@@ -1,0 +1,18 @@
+<form clrForm [formGroup]="form">
+  <p class="clr-required-mark">Required Information</p>
+  <clr-input-container>
+    <label class="clr-required-mark">CPU</label>
+    <input type="text" clrInput [formControl]="form.controls.cpu" [size]="30" />
+    <clr-control-error> Required </clr-control-error>
+  </clr-input-container>
+  <clr-input-container>
+    <label class="clr-required-mark">Replicas</label>
+    <input type="text" clrInput [formControl]="form.controls.replicas" [size]="30" />
+    <clr-control-error> Required </clr-control-error>
+  </clr-input-container>
+  <clr-input-container>
+    <label class="clr-required-mark">URL</label>
+    <input type="text" clrInput [formControl]="form.controls.url" [size]="30" />
+    <clr-control-error> Required </clr-control-error>
+  </clr-input-container>
+</form>

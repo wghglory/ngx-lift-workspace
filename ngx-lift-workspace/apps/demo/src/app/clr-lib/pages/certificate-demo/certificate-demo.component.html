@@ -1,0 +1,53 @@
+<cll-page-container title="Certificate Signpost (Viewer)" class="space-y-9">
+  <p>
+    The <code>CertificateSignpostComponent</code>, an Angular component, elegantly interprets a PEM string, showcasing
+    the certificate's content with a click on the certificate icon. Seamlessly integrated with the Clarity Design
+    System, this component boasts functionalities to exhibit crucial details such as the certificate's status, validity
+    period, issuer information, and hash values.
+  </p>
+
+  <cll-callout>
+    PEM stands for Privacy Enhanced Mail. It's a file format that is often used to store cryptographic keys,
+    certificates, and other secure data. PEM files typically have extensions like .pem, .crt, .cer, and .key. The data
+    within a PEM file is usually encoded using Base64 encoding, which is a method of converting binary data into ASCII
+    characters.
+  </cll-callout>
+
+  <section class="space-y-6">
+    <h2>Usage</h2>
+    <ul class="list-disc">
+      <li>
+        <code>position</code>: Determines the positioning of the signpost content. The default is set to right-middle,
+        with various other positions available, including top-left, top-middle, top-right, right-top, right-middle,
+        right-bottom, bottom-right, bottom-middle, bottom-left, left-bottom, left-middle, and left-top.
+      </li>
+      <li>
+        <code>showIcon</code>: A boolean value to manage the visibility of the certificate status icon, set to true by
+        default.
+      </li>
+      <li>
+        <code>pemEncoded</code>: A boolean flag indicating whether the PEM string is encoded or not, with a default
+        value of false.
+      </li>
+      <li><code>pem</code>: A string containing the PEM-encoded certificate.</li>
+    </ul>
+
+    <h3>Example 1: Parsing Raw PEM</h3>
+    <p>Let's say you want to parse the following PEM and display the certificate signpost.</p>
+    <app-code-block [code]="pem1" />
+    <div>Click the certificate icon: <cll-certificate-signpost [pem]="pem1" /></div>
+    <app-code-block [code]="pem1Code" />
+
+    <h3>Example 2: Parsing PEM (Base64 Encoded)</h3>
+    <p>
+      At times, a PEM string is initially encoded in Base64 before being stored. In such scenarios, you can utilize the
+      pemEncoded flag to signify that the PEM string requires decoding before parsing. Here's an example of a string
+      that has been Base64 encoded using <code>btoa(firstExamplePemString)</code>:
+    </p>
+    <app-code-block [code]="pem2" />
+    <div>
+      Click the certificate icon: <cll-certificate-signpost [pem]="pem2" [pemEncoded]="true" position="right-top" />
+    </div>
+    <app-code-block [code]="pem2Code" />
+  </section>
+</cll-page-container>

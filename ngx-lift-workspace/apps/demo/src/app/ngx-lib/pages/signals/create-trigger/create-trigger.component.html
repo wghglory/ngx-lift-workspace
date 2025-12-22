@@ -1,0 +1,27 @@
+<cll-page-container [title]="'createTrigger'" class="space-y-9">
+  <section class="space-y-6">
+    <p>
+      <code>createTrigger</code> provides a way to manually initiate signal re-computations by referencing the trigger
+      signal it creates. Its functionality is similar to RxJS Subject. With each event, you can notify the subject using
+      its <code>next</code> method. Using <code>createTrigger</code> is convenient for manually triggering a "refresh"
+      and responding to it in a signal-oriented manner.
+    </p>
+
+    <p>
+      <code>createTrigger</code>() returns an object with two properties: <code>next</code> and <code>value</code>. The
+      <code>value</code> property indicates how many times you have triggered the signal update. The
+      <code>next</code> method is used to trigger the signal update. Consequently, you can prompt the re-computation of
+      any computed or effect (including <code>computedAsync</code> from ngx-lift) by accessing the signal returned when
+      listening.
+    </p>
+
+    <button class="btn btn-primary" (click)="refresh()">See Console Log</button>
+
+    <app-code-block [code]="triggerCode" />
+
+    <cll-callout>
+      Initially, <code>createTrigger's value()</code> returns 0. Whenever <code>next</code> is explicitly called, the
+      value adds 1.
+    </cll-callout>
+  </section>
+</cll-page-container>

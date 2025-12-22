@@ -1,0 +1,13 @@
+<form clrForm [formGroup]="form">
+  <p class="clr-required-mark">Required Information</p>
+  <clr-input-container>
+    <label class="clr-required-mark">Name</label>
+    <input type="text" clrInput [formControl]="form.controls.operator.controls.name" />
+    <clr-control-error> Required </clr-control-error>
+  </clr-input-container>
+  <clr-input-container>
+    <label class="clr-required-mark">Namespace</label>
+    <input type="text" clrInput [formControl]="form.controls.operator.controls.namespace" />
+    <clr-control-error> Required </clr-control-error>
+  </clr-input-container>
+</form>

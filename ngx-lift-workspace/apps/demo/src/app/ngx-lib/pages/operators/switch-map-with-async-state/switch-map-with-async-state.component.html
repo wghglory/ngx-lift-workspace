@@ -1,0 +1,40 @@
+<cll-page-container title="switchMapWithAsyncState" class="space-y-9">
+  <p>
+    Frequently, we find ourselves in situations where triggering an API request upon a user's button click is essential.
+    But how do we seamlessly transition between streams? Enter the solution: <code>switchMapWithAsyncState</code>. This
+    operator is tailor-made for such scenarios, effortlessly amalgamating the strengths of both the
+    <code>switchMap</code> and <code>createAsyncState</code> operators. By creating an <code>AsyncState</code> structure
+    to encapsulate your API response, this operator becomes a versatile powerhouse, delivering the combined
+    functionalities of <code>switchMap</code> and <code>createAsyncState</code> in one. The result is a seamless and
+    efficient approach to managing asynchronous operations.
+  </p>
+
+  <section class="space-y-6">
+    <h2>Example 1</h2>
+    <p>Selecting a different gender will populate the user list accordingly.</p>
+    <app-filter-users />
+    <app-code-block [code]="example1Code" />
+
+    <h2>Example 2</h2>
+    <p>
+      Submit the form using <code>switchMapWithAsyncState</code> and <code>toSignal</code>. The submission will always
+      emit an error because the API is designed to simulate an error.
+    </p>
+
+    <form>
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput name="username" />
+      </clr-input-container>
+
+      <button type="button" class="btn btn-primary mt-5" (click)="save()" [clrLoading]="saveAction()?.loading === true">
+        Save
+      </button>
+      @if (saveAction()?.error; as error) {
+        <cll-alert [error]="error" />
+      }
+    </form>
+
+    <app-code-block [code]="example2Code" />
+  </section>
+</cll-page-container>

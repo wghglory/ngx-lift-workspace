@@ -1,0 +1,54 @@
+<cll-page-container [title]="'intersectionValidator'" class="space-y-9">
+  <section class="space-y-6">
+    <h2>Overview</h2>
+    <p>
+      In Angular applications, you often need to validate form controls based on complex rules. One such scenario is
+      ensuring that two form controls do not have overlapping values. For example, you might have two lists of items and
+      want to ensure they don't contain any duplicates.
+    </p>
+
+    <h2>Usage</h2>
+    <p>
+      These two fields must both return arrays. When there's any overlap between the arrays, both fields and the form
+      will have the <code>&lbrace;intersection : true&rbrace;</code> error. You can check for this error in the form by
+      accessing <code>form.errors?.['intersection']</code>.
+    </p>
+
+    <form clrForm [formGroup]="form">
+      <clr-select-container>
+        <label>Included Namespaces</label>
+        <select clrSelect multiple name="options" [formControl]="form.controls.includedNamespaces" required>
+          <option value="default">default</option>
+          <option value="kube-system">kube-system</option>
+          <option value="kube-public">kube-public</option>
+        </select>
+        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+        <clr-control-error *clrIfError="'intersection'">
+          Included namespaces and excluded namespaces cannot overlap
+        </clr-control-error>
+      </clr-select-container>
+
+      <clr-select-container>
+        <label>Excluded Namespaces</label>
+        <select clrSelect multiple name="options" [formControl]="form.controls.excludedNamespaces" required>
+          <option value="default">default</option>
+          <option value="kube-system">kube-system</option>
+          <option value="kube-public">kube-public</option>
+        </select>
+        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+        <clr-control-error *clrIfError="'intersection'">
+          Included namespaces and excluded namespaces cannot overlap
+        </clr-control-error>
+      </clr-select-container>
+
+      @if (form.errors?.['intersection']) {
+        <cll-alert class="my-4" [content]="'Included namespaces and excluded namespaces have overlaps'" />
+      }
+
+      <button type="submit" class="btn-primary btn" [disabled]="form.invalid">Submit</button>
+    </form>
+
+    <app-code-block [code]="intersectionHtmlCode" [lang]="'html'" />
+    <app-code-block [code]="intersectionTsCode" />
+  </section>
+</cll-page-container>

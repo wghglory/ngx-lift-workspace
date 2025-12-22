@@ -1,0 +1,11 @@
+<clr-modal [clrModalOpen]="(open$ | async) === true" [clrModalClosable]="false">
+  <h3 class="modal-title">{{ 'idleDetection.title' | translate }}</h3>
+  <div class="modal-body">
+    <p cds-text>{{ 'idleDetection.description' | translate: (countdown$ | async) }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="keepMeSignedIn()">
+      {{ 'idleDetection.keepMeSignedIn' | translate }}
+    </button>
+  </div>
+</clr-modal>
