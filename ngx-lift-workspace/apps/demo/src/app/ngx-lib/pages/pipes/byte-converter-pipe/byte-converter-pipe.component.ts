@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
-import {ByteConverterPipe} from 'ngx-lift';
+import {PageContainerComponent} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -8,7 +7,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-byte-converter-pipe',
   standalone: true,
-  imports: [CodeBlockComponent, CalloutComponent, PageContainerComponent, ByteConverterPipe],
+  imports: [CodeBlockComponent, PageContainerComponent],
   templateUrl: './byte-converter-pipe.component.html',
   styleUrl: './byte-converter-pipe.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

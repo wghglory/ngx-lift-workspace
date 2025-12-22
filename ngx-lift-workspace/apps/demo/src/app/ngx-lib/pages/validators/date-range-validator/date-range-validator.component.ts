@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent} from 'clr-lift';
 import {dateRangeValidator} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -14,7 +14,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     ClarityModule,
     ReactiveFormsModule,
     PageContainerComponent,
-    AlertComponent,
     CalloutComponent,
     CodeBlockComponent,
   ],

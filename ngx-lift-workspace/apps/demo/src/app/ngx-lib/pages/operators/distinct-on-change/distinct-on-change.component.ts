@@ -5,13 +5,12 @@ import {distinctOnChange} from 'ngx-lift';
 import {from} from 'rxjs';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
-import {UserCardListComponent} from '../../../../shared/components/user-card-list/user-card-list.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-distinct-on-change',
   standalone: true,
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, UserCardListComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './distinct-on-change.component.html',
   styleUrl: './distinct-on-change.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

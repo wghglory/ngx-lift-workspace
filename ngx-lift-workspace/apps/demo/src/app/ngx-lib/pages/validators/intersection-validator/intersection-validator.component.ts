@@ -1,11 +1,20 @@
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent} from 'clr-lift';
-import {intersectionValidator} from 'ngx-lift';
+import { Component } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ClarityModule } from '@clr/angular';
+import {
+  AlertComponent,
+  CalloutComponent,
+  PageContainerComponent,
+} from 'clr-lift';
+import { intersectionValidator } from 'ngx-lift';
 
-import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
-import {highlight} from '../../../../shared/utils/highlight.util';
+import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
+import { highlight } from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-intersection-validator',
@@ -15,7 +24,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     ReactiveFormsModule,
     PageContainerComponent,
     AlertComponent,
-    CalloutComponent,
     CodeBlockComponent,
   ],
   templateUrl: './intersection-validator.component.html',
@@ -28,7 +36,9 @@ export class IntersectionValidatorComponent {
       excludedNamespaces: new FormControl<string[]>([], Validators.required),
     },
     {
-      validators: [intersectionValidator('includedNamespaces', 'excludedNamespaces')],
+      validators: [
+        intersectionValidator('includedNamespaces', 'excludedNamespaces'),
+      ],
     },
   );
 

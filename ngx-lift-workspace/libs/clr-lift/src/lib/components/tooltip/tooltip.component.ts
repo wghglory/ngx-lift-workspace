@@ -19,20 +19,13 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 
-import { PositioningTooltipDirective } from './positioning-tooltip.directive';
-import { TooltipDirective } from './tooltip.directive';
 import { TooltipPosition } from './tooltip.model';
 import { isElementClickable, isElementInsideCollection } from './tooltip.util';
 
 @Component({
   selector: 'cll-tooltip',
   standalone: true,
-  imports: [
-    CommonModule,
-    A11yModule,
-    TooltipDirective,
-    PositioningTooltipDirective,
-  ],
+  imports: [CommonModule, A11yModule],
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

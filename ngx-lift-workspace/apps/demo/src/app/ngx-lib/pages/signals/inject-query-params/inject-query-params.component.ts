@@ -1,7 +1,6 @@
-import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, effect, inject, numberAttribute} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent} from 'clr-lift';
 import {computedAsync, injectQueryParams} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -11,7 +10,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-inject-query-params',
   standalone: true,
-  imports: [ClarityModule, JsonPipe, PageContainerComponent, CodeBlockComponent, CalloutComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './inject-query-params.component.html',
   styleUrl: './inject-query-params.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,14 +1,14 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ClarityModule } from '@clr/angular';
+import { PageContainerComponent } from 'clr-lift';
 
-import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
-import {highlight} from '../../../shared/utils/highlight.util';
+import { CodeBlockComponent } from '../../../shared/components/code-block/code-block.component';
+import { highlight } from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-clr-datagrid-util',
   standalone: true,
-  imports: [ClarityModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './clr-datagrid-util.component.html',
   styleUrl: './clr-datagrid-util.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

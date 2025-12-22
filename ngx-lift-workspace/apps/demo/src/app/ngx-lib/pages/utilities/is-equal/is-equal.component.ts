@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -7,7 +7,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-is-equal',
   standalone: true,
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './is-equal.component.html',
   styleUrl: './is-equal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

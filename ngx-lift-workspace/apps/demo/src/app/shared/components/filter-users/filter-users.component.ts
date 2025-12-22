@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {AlertComponent, SpinnerComponent} from 'clr-lift';
 import {switchMapWithAsyncState} from 'ngx-lift';
 import {filter} from 'rxjs';
 
@@ -16,7 +16,6 @@ import {UserCardComponent} from '../user-card/user-card.component';
     CommonModule,
     ReactiveFormsModule,
     ClarityModule,
-    PageContainerComponent,
     SpinnerComponent,
     AlertComponent,
     UserCardComponent,

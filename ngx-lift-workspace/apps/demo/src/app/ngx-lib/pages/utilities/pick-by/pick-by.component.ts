@@ -1,13 +1,13 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PageContainerComponent } from 'clr-lift';
 
-import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
-import {highlight} from '../../../../shared/utils/highlight.util';
+import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
+import { highlight } from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-pick-by',
   standalone: true,
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './pick-by.component.html',
   styleUrl: './pick-by.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

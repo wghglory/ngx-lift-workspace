@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnDestroy, OnInit} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Router} from '@angular/router';
-import {CalloutComponent, IdleDetectionComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent} from 'clr-lift';
 import {IdleDetectionService} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -10,7 +10,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-idle-detection-demo',
   standalone: true,
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent, IdleDetectionComponent],
+  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent],
   templateUrl: './idle-detection-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

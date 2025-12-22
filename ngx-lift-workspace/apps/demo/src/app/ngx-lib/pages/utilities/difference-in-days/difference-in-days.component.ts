@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -7,7 +7,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-difference-in-days',
   standalone: true,
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './difference-in-days.component.html',
   styleUrl: './difference-in-days.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

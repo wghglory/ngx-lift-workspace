@@ -1,23 +1,29 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {RouterLink} from '@angular/router';
-import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
-import {combineFrom, createAsyncState} from 'ngx-lift';
-import {BehaviorSubject, delay, of, pipe, startWith, switchMap} from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import { ClarityModule } from '@clr/angular';
+import {
+  AlertComponent,
+  PageContainerComponent,
+  SpinnerComponent,
+} from 'clr-lift';
+import { combineFrom, createAsyncState } from 'ngx-lift';
+import { BehaviorSubject, delay, of, pipe, startWith, switchMap } from 'rxjs';
 
-import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
-import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
-import {highlight} from '../../../../shared/utils/highlight.util';
-import {UserService} from './../../../../shared/services/user.service';
+import { CodeBlockComponent } from '../../../../shared/components/code-block/code-block.component';
+import { UserCardComponent } from '../../../../shared/components/user-card/user-card.component';
+import { highlight } from '../../../../shared/utils/highlight.util';
+import { UserService } from './../../../../shared/services/user.service';
 
 @Component({
   selector: 'app-combine-from',
   standalone: true,
   imports: [
     ClarityModule,
-    RouterLink,
     PageContainerComponent,
-    CalloutComponent,
     CodeBlockComponent,
     SpinnerComponent,
     AlertComponent,
@@ -35,9 +41,12 @@ export class CombineFromComponent {
   combinedArray = combineFrom([this.a, this.b$]); // [1, 2]
 
   // object type
-  combinedObject = combineFrom({a: this.a, b: this.b$}); // {a: 1, b: 2}
+  combinedObject = combineFrom({ a: this.a, b: this.b$ }); // {a: 1, b: 2}
 
-  combineOperator = combineFrom([this.a, this.b$], pipe(switchMap(([a, b]) => of(a + b)))); // 3
+  combineOperator = combineFrom(
+    [this.a, this.b$],
+    pipe(switchMap(([a, b]) => of(a + b))),
+  ); // 3
 
   // initially 0, after 1s value changes to 3
   combinedWithInitialValue = combineFrom(
@@ -47,7 +56,7 @@ export class CombineFromComponent {
         ([a, b]) => of(a + b).pipe(delay(1000)), // later async emit value
       ),
     ),
-    {initialValue: 0}, // pass the initial value of the resulting signal
+    { initialValue: 0 }, // pass the initial value of the resulting signal
   );
 
   // initially 0, after 1s value changes to 3
@@ -80,7 +89,7 @@ export class CombineFromComponent {
   count = signal(3);
 
   usersState = combineFrom(
-    [this.count, this.userService.getUsers({results: 9})],
+    [this.count, this.userService.getUsers({ results: 9 })],
     pipe(
       switchMap(([count, users]) => of(users.results.slice(0, count))),
       createAsyncState(),
