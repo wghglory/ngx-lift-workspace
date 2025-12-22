@@ -1,6 +1,5 @@
 <div
-  class="spinner"
-  [class]="customClass()"
+  [class]="'spinner ' + (customClass() || '')"
   [ngClass]="{
     'spinner-lg': size() === 'lg',
     'spinner-md': size() === 'md',

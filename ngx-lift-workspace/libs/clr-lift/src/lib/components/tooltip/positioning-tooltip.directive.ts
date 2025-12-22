@@ -1,4 +1,4 @@
-/* eslint-disable @angular-eslint/directive-selector */
+ 
 // This directive is used to position the tooltip automatically. Now it's not being used.
 import {AfterViewInit, Directive, ElementRef, inject} from '@angular/core';
 

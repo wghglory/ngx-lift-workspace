@@ -19,7 +19,7 @@
         <code>inline</code>: Specifies whether the spinner should be displayed as an inline-block element. Useful for
         aligning spinners within text or other inline elements.
       </li>
-      <li><code>class</code>: A string of additional CSS classes to apply to the spinner.</li>
+      <li><code>customClass</code>: A string of additional CSS classes to apply to the spinner.</li>
     </ul>
   </section>
 
@@ -46,11 +46,11 @@
     <app-code-block [code]="alignLeftCode" lang="html" />
 
     <h3>Custom Class Spinner</h3>
-    <cll-spinner [center]="false" class="mx-10" />
+    <cll-spinner [center]="false" [customClass]="'mx-10'" />
     <app-code-block [code]="customClassCode" lang="html" />
 
     <h3>Inline Spinner</h3>
-    <div><cll-spinner inline class="mx-2" /><span>Loading...</span></div>
+    <div><cll-spinner inline [customClass]="'mx-2'" /><span>Loading...</span></div>
     <app-code-block [code]="inlineCode" lang="html" />
   </section>
 </cll-page-container>

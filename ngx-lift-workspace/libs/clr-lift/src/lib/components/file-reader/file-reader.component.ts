@@ -24,11 +24,11 @@ import {
   ValidationErrors,
   Validator,
 } from '@angular/forms';
-import {ClarityModule} from '@clr/angular';
+import { ClarityModule } from '@clr/angular';
 
-import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
-import {fileReaderTranslations} from './file-reader.l10n';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TranslationService } from '../../services/translation.service';
+import { fileReaderTranslations } from './file-reader.l10n';
 
 @Component({
   selector: 'cll-file-reader',
@@ -82,11 +82,18 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   encodedContent = signal('');
 
   constructor() {
-    this.translationService.loadTranslationsForComponent('FileReader', fileReaderTranslations);
+    this.translationService.loadTranslationsForComponent(
+      'FileReader',
+      fileReaderTranslations,
+    );
   }
 
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string) => void = () => {
+    // ControlValueAccessor onChange callback
+  };
+  private onTouched: () => void = () => {
+    // ControlValueAccessor onTouched callback
+  };
 
   sizeInvalid = computed(() => {
     const selectedFile = this.selectedFile();
@@ -113,7 +120,9 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
         this.rawContent.set(fileContent);
         try {
           this.encodedContent.set(btoa(fileContent));
-          const content = this.encoded() ? this.encodedContent() : this.rawContent();
+          const content = this.encoded()
+            ? this.encodedContent()
+            : this.rawContent();
           this.onChange(content); // Notify the form control
           this.onTouched();
 
@@ -153,7 +162,9 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
     }
 
     setTimeout(() => {
-      const content = this.encoded() ? this.encodedContent() : this.rawContent();
+      const content = this.encoded()
+        ? this.encodedContent()
+        : this.rawContent();
       this.onChange(content);
       this.onTouched();
     });
@@ -174,10 +185,10 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   validate(control: AbstractControl): ValidationErrors | null {
     if (this.sizeInvalid()) {
-      return {exceedLimit: true};
+      return { exceedLimit: true };
     }
     if (this.parseError()) {
-      return {parse: this.parseError()};
+      return { parse: this.parseError() };
     }
 
     return null;

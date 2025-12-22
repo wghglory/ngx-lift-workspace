@@ -5,7 +5,7 @@ import {Pipe, PipeTransform} from '@angular/core';
   standalone: true,
 })
 export class ArrayJoinPipe implements PipeTransform {
-  transform(value: unknown, separator: string = ',') {
+  transform(value: unknown, separator = ',') {
     if (Array.isArray(value)) {
       return value.join(separator);
     }

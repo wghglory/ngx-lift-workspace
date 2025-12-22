@@ -1,5 +1,4 @@
 import nx from '@nx/eslint-plugin';
-import angular from 'angular-eslint';
 
 import label from './tools/eslint-plugin/eslint-plugin-label.mjs';
 
@@ -53,12 +52,6 @@ export default [
     plugins: {
       label,
     },
-    extends: [
-      // Apply the recommended Angular template rules
-      ...angular.configs.templateRecommended,
-      // Apply the Angular template rules which focus on accessibility of our apps
-      ...angular.configs.templateAccessibility,
-    ],
     rules: {
       '@angular-eslint/template/label-has-associated-control': ['off'],
       'label/label-has-associated-control': ['error'],

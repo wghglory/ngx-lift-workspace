@@ -118,7 +118,7 @@ export class AppComponent {
   //   this.router.navigate(['/login']);
   // }
 
-  constructor(private idleDetectionService: IdleDetectionService) {}
+  private idleDetectionService = inject(IdleDetectionService);
 
   ngOnInit() {
     this.idleDetectionService.setConfig({

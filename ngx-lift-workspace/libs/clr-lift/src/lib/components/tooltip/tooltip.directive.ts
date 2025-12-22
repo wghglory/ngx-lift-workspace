@@ -102,7 +102,7 @@ export class TooltipDirective {
    * @param {boolean} force - indicates whether to force the removal of the tooltip
    * @return {void}
    */
-  removeTooltip(force: boolean = false) {
+  removeTooltip(force = false) {
     setTimeout(
       () => {
         if (!this.tooltipComponent) {

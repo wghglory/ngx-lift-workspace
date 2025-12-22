@@ -2,6 +2,18 @@
   "name": "@ngx-lift-workspace/source",
   "version": "0.0.0",
   "license": "MIT",
+  "author": "Derek Wang <guanghui-wang@foxmail.com>",
+  "keywords": [
+    "angular",
+    "ngx-lift",
+    "clr-lift"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wghglory/ngx-lift.git"
+  },
+  "homepage": "https://ngx-lift.netlify.app/",
+  "description": "A project has been crafted with the goal of enhancing and simplifying your Angular development experience.",
   "scripts": {
     "start": "nx serve demo",
     "build": "nx run-many -t build",

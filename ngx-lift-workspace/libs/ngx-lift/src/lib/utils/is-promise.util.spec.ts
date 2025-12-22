@@ -30,7 +30,9 @@ describe('isPromise', () => {
   });
 
   it('should return false for a function', () => {
-    expect(isPromise(() => {})).toBe(false);
+    expect(isPromise(() => {
+      // Empty function for testing
+    })).toBe(false);
   });
 
   it('should return false for an object without a then method', () => {

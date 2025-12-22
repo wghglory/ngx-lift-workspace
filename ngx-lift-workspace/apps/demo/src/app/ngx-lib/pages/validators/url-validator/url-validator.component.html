@@ -10,8 +10,8 @@
     <h2>Usage</h2>
     <form [formGroup]="form" clrForm>
       <clr-input-container>
-        <label>URL</label>
-        <input clrInput formControlName="url" />
+        <label for="url-validator-url">URL</label>
+        <input id="url-validator-url" clrInput formControlName="url" />
         <clr-control-helper>Provide a valid URL</clr-control-helper>
         @if (form.controls.url.hasError('required')) {
           <clr-control-error>Required</clr-control-error>
@@ -22,8 +22,8 @@
       </clr-input-container>
 
       <clr-input-container>
-        <label>Https-only URL</label>
-        <input clrInput formControlName="https" />
+        <label for="url-validator-https">Https-only URL</label>
+        <input id="url-validator-https" clrInput formControlName="https" />
         <clr-control-helper>Provide a https URL</clr-control-helper>
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
         <clr-control-error *clrIfError="'invalidUrl'"> Please enter a https URL </clr-control-error>

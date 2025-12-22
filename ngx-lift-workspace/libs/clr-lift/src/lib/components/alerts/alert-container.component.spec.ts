@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {CommonModule} from '@angular/common';
-import {Component, DebugElement, signal} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {ClarityModule} from '@clr/angular';
+import { CommonModule } from '@angular/common';
+import { Component, DebugElement, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { ClarityModule } from '@clr/angular';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
-import {AlertService} from './alert.service';
-import {AlertContainerComponent} from './alert-container.component';
+import { TranslationService } from '../../services/translation.service';
+import { MockTranslationService } from '../../services/translation.service.mock';
+import { AlertService } from './alert.service';
+import { AlertContainerComponent } from './alert-container.component';
 
 describe('AlertContainerComponent', () => {
   let component: AlertContainerComponent;
@@ -22,16 +22,23 @@ describe('AlertContainerComponent', () => {
       providers: [
         {
           provide: AlertService,
-          useValue: {alerts: signal([{content: 'alert 1'}, {content: 'alert 2'}]), deleteAlert: (id: symbol) => {}},
+          useValue: {
+            alerts: signal([{ content: 'alert 1' }, { content: 'alert 2' }]),
+            deleteAlert: (_id: symbol) => {
+              // Mock implementation
+            },
+          },
         },
-        {provide: TranslationService, useClass: MockTranslationService},
+        { provide: TranslationService, useClass: MockTranslationService },
       ],
     });
 
     fixture = TestBed.createComponent(AlertContainerComponent);
     component = fixture.componentInstance;
     alertService = TestBed.inject(AlertService);
-    translationService = TestBed.inject(TranslationService) as MockTranslationService;
+    translationService = TestBed.inject(
+      TranslationService,
+    ) as MockTranslationService;
   });
 
   it('should create', () => {
@@ -61,19 +68,35 @@ describe('TestAlertsHostComponent', () => {
   let element: DebugElement;
 
   const mockAlerts = [
-    {content: 'Test Alert 1', options: {alertType: 'info', isAppLevel: true}},
-    {content: 'Test Alert 2', options: {alertType: 'warning', isAppLevel: false}},
+    {
+      content: 'Test Alert 1',
+      options: { alertType: 'info', isAppLevel: true },
+    },
+    {
+      content: 'Test Alert 2',
+      options: { alertType: 'warning', isAppLevel: false },
+    },
   ];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [CommonModule, ClarityModule, AlertContainerComponent, TestAlertsHostComponent],
+      imports: [
+        CommonModule,
+        ClarityModule,
+        AlertContainerComponent,
+        TestAlertsHostComponent,
+      ],
       providers: [
         {
           provide: AlertService,
-          useValue: {alerts: signal(mockAlerts), deleteAlert: (id: symbol) => {}},
+          useValue: {
+            alerts: signal(mockAlerts),
+            deleteAlert: (_id: symbol) => {
+              // Mock implementation
+            },
+          },
         },
-        {provide: TranslationService, useClass: MockTranslationService},
+        { provide: TranslationService, useClass: MockTranslationService },
       ],
     });
 
@@ -96,7 +119,12 @@ describe('TestAlertsHostComponent', () => {
   });
 
   it('should call onCloseAlert when alert is closed', () => {
-    const mockAlert = {id: Symbol(), content: 'Test Alert', alertType: 'info' as const, isAppLevel: true};
+    const mockAlert = {
+      id: Symbol(),
+      content: 'Test Alert',
+      alertType: 'info' as const,
+      isAppLevel: true,
+    };
     alertService.alerts = signal([mockAlert]);
     const deleteAlertSpy = spyOn(alertService, 'deleteAlert');
 

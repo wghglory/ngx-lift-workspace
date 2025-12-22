@@ -6,7 +6,7 @@ import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
 type RuntimePropStepData = {appProperties: Array<{key: string; value: string}>};
 
 @Component({
-  selector: 'cll-configure-runtime-prop',
+  selector: 'app-configure-runtime-prop',
   standalone: true,
   imports: [ClarityModule, ReactiveFormsModule, KeyValueInputsComponent],
   templateUrl: './configure-runtime-prop.component.html',

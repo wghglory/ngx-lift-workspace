@@ -1,12 +1,12 @@
 <clr-radio-container clrInline>
-  <label>Select gender to load users</label>
+  <label for="filter-gender">Select gender to load users</label>
   <clr-radio-wrapper>
-    <input type="radio" clrRadio name="gender" value="male" [formControl]="genderControl" />
-    <label>Male</label>
+    <input type="radio" id="filter-gender-male" clrRadio name="gender" value="male" [formControl]="genderControl" />
+    <label for="filter-gender-male">Male</label>
   </clr-radio-wrapper>
   <clr-radio-wrapper>
-    <input type="radio" clrRadio name="gender" value="female" [formControl]="genderControl" />
-    <label>Female</label>
+    <input type="radio" id="filter-gender-female" clrRadio name="gender" value="female" [formControl]="genderControl" />
+    <label for="filter-gender-female">Female</label>
   </clr-radio-wrapper>
 </clr-radio-container>
 

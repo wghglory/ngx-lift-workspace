@@ -183,7 +183,7 @@ function normalizeArgs<Input, Output>(
         let initialValue: any;
         try {
           initialValue = untracked(source);
-        } catch (e) {
+        } catch (_e) {
           // If the input is not set, skip startWith or provide a fallback
           initialValue = undefined;
         }

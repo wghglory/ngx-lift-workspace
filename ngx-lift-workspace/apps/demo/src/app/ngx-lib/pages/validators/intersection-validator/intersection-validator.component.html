@@ -17,8 +17,8 @@
 
     <form clrForm [formGroup]="form">
       <clr-select-container>
-        <label>Included Namespaces</label>
-        <select clrSelect multiple name="options" [formControl]="form.controls.includedNamespaces" required>
+        <label for="intersection-included">Included Namespaces</label>
+        <select id="intersection-included" clrSelect multiple name="options" [formControl]="form.controls.includedNamespaces" required>
           <option value="default">default</option>
           <option value="kube-system">kube-system</option>
           <option value="kube-public">kube-public</option>
@@ -30,8 +30,8 @@
       </clr-select-container>
 
       <clr-select-container>
-        <label>Excluded Namespaces</label>
-        <select clrSelect multiple name="options" [formControl]="form.controls.excludedNamespaces" required>
+        <label for="intersection-excluded">Excluded Namespaces</label>
+        <select id="intersection-excluded" clrSelect multiple name="options" [formControl]="form.controls.excludedNamespaces" required>
           <option value="default">default</option>
           <option value="kube-system">kube-system</option>
           <option value="kube-public">kube-public</option>

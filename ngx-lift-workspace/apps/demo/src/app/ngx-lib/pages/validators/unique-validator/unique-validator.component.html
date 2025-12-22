@@ -50,9 +50,10 @@
         @for (group of form2.controls.demo2.controls; track group; let i = $index) {
           <div [formGroup]="group" style="display: flex; gap: 1rem">
             <clr-input-container>
-              <label class="clr-sr-only">key</label>
+              <label class="clr-sr-only" [for]="'unique-key-' + i">key</label>
               <input
                 clrInput
+                [id]="'unique-key-' + i"
                 [formControl]="group.controls.key"
                 (blur)="validateControl(group.controls.key)"
                 [size]="30"
@@ -62,8 +63,8 @@
               <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
             </clr-input-container>
             <clr-input-container>
-              <label class="clr-sr-only">value</label>
-              <input clrInput [formControl]="group.controls.value" [size]="30" placeholder="value control" />
+              <label class="clr-sr-only" [for]="'unique-value-' + i">value</label>
+              <input clrInput [id]="'unique-value-' + i" [formControl]="group.controls.value" [size]="30" placeholder="value control" />
               <clr-control-helper>value control has not validation</clr-control-helper>
             </clr-input-container>
           </div>

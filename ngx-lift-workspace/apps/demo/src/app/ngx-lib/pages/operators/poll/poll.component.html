@@ -128,8 +128,8 @@
 
     <form clrForm>
       <clr-input-container>
-        <label>Search by First Name</label>
-        <input type="text" clrInput name="firstName" (input)="searchByFirstName($any($event.target).value)" />
+        <label for="poll-firstname">Search by First Name</label>
+        <input type="text" id="poll-firstname" clrInput name="firstName" (input)="searchByFirstName($any($event.target).value)" />
       </clr-input-container>
     </form>
 

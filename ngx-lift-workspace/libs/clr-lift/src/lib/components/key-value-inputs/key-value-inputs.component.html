@@ -1,9 +1,12 @@
 @for (kvControl of formArray().controls; track kvControl; let i = $index) {
   <div class="inputs-container" [formGroup]="kvControl">
     <clr-input-container>
-      <label class="clr-sr-only">{{ 'key-value.key' | translate }}</label>
+      <label class="clr-sr-only" [for]="'key-' + i">{{
+        'key-value.key' | translate
+      }}</label>
       <input
         clrInput
+        [id]="'key-' + i"
         [formControl]="kvControl.controls.key"
         [size]="inputSize()"
         (blur)="validateKeyControl(kvControl.controls.key)"
@@ -13,7 +16,11 @@
         {{
           keyPattern()?.message
             ? keyPattern()?.message
-            : ('key-value.pattern' | translate: kvControl.controls.key.errors?.['pattern']?.['requiredPattern'])
+            : ('key-value.pattern'
+              | translate
+                : kvControl.controls.key.errors?.['pattern']?.[
+                    'requiredPattern'
+                  ])
         }}
       </clr-control-error>
       <clr-control-error *clrIfError="'required'">
@@ -24,14 +31,25 @@
       </clr-control-error>
     </clr-input-container>
     <clr-input-container>
-      <label class="clr-sr-only">{{ 'key-value.value' | translate }}</label>
-      <input clrInput [formControl]="kvControl.controls.value" [size]="inputSize()" />
+      <label class="clr-sr-only" [for]="'value-' + i">{{
+        'key-value.value' | translate
+      }}</label>
+      <input
+        clrInput
+        [id]="'value-' + i"
+        [formControl]="kvControl.controls.value"
+        [size]="inputSize()"
+      />
       <clr-control-helper>{{ valueHelper() }}</clr-control-helper>
       <clr-control-error *clrIfError="'pattern'">
         {{
           valuePattern()?.message
             ? valuePattern()?.message
-            : ('key-value.pattern' | translate: kvControl.controls.value.errors?.['pattern']?.['requiredPattern'])
+            : ('key-value.pattern'
+              | translate
+                : kvControl.controls.value.errors?.['pattern']?.[
+                    'requiredPattern'
+                  ])
         }}
       </clr-control-error>
       <clr-control-error *clrIfError="'required'">
@@ -50,7 +68,12 @@
 }
 
 <div class="button-container">
-  <button type="button" [class]="'btn ' + buttonClass()" (click)="addKeyValuePair()" [disabled]="formArray().invalid">
-    {{ addText() }}
+  <button
+    type="button"
+    [class]="'btn ' + buttonClass()"
+    (click)="addKeyValuePair()"
+    [disabled]="formArray().invalid"
+  >
+    {{ computedAddText() }}
   </button>
 </div>

@@ -1,4 +1,4 @@
-import {Injectable, Optional} from '@angular/core';
+import {inject, Injectable, Optional} from '@angular/core';
 import {fromEvent, merge, Subject, Subscription, throttleTime} from 'rxjs';
 
 import {IdleDetectionConfig} from './idle-detection.config';
@@ -76,7 +76,8 @@ export class IdleDetectionService {
    * Constructs the IdleDetectionService.
    * @param config - Optional configuration for idle and timeout durations.
    */
-  constructor(@Optional() config: IdleDetectionConfig) {
+  constructor() {
+    const config = inject(IdleDetectionConfig, {optional: true});
     if (config) {
       this.setConfig(config);
     }

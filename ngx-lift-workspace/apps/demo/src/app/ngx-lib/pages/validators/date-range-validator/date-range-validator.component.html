@@ -80,17 +80,18 @@
     </p>
     <form clrForm [formGroup]="dateForm" clrLabelSize="3">
       <clr-input-container class="!mt-1">
-        <label>Expiration Date (Raw HTML Input)</label>
-        <input type="date" class="w-[10rem]" clrInput [formControl]="dateForm.controls.expires" [min]="todayInISO" />
+        <label for="date-expires">Expiration Date (Raw HTML Input)</label>
+        <input type="date" id="date-expires" class="w-[10rem]" clrInput [formControl]="dateForm.controls.expires" [min]="todayInISO" />
         <clr-control-error *clrIfError="'minDate'; error as minDate">
           The date cannot be earlier than {{ minDate }}
         </clr-control-error>
       </clr-input-container>
 
       <clr-date-container>
-        <label class="clr-required-mark">Future 5 Days (Clarity Date Input)</label>
+        <label class="clr-required-mark" for="date-future-days">Future 5 Days (Clarity Date Input)</label>
         <input
           type="date"
+          id="date-future-days"
           clrDate
           [formControl]="dateForm.controls.futureDays"
           required
@@ -127,9 +128,10 @@
     <h4>Real Example: Select a Date with Time Within a Range</h4>
     <form clrForm [formGroup]="dateTimeForm">
       <clr-input-container class="!mt-1">
-        <label class="clr-required-mark">Expiration Date</label>
+        <label class="clr-required-mark" for="datetime-expires">Expiration Date</label>
         <input
           type="datetime-local"
+          id="datetime-expires"
           clrInput
           [formControl]="dateTimeForm.controls.expires"
           required

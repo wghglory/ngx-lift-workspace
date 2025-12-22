@@ -157,7 +157,7 @@ module.exports = {
   plugins: [
     require('@tailwindcss/container-queries'),
     // https://tailwindcss.com/docs/adding-custom-styles#using-css-and-layer
-    plugin(function ({ addBase, addComponents, addUtilities, theme }) {
+    plugin(function ({ addComponents }) {
       addComponents({
         // grid grid-cols-[1fr_3fr] @2xl:grid-cols-[repeat(2,minmax(min-content,130px)_3fr)] @4xl:grid-cols-[repeat(3,minmax(min-content,130px)_3fr)] gap-3 items-center
         '.keyvalue-grid': {

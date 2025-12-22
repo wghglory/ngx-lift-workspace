@@ -23,8 +23,8 @@
 
     <form>
       <clr-input-container>
-        <label>Name</label>
-        <input clrInput name="username" />
+        <label for="switchmap-name">Name</label>
+        <input id="switchmap-name" clrInput name="username" />
       </clr-input-container>
 
       <button type="button" class="btn btn-primary mt-5" (click)="save()" [clrLoading]="saveAction()?.loading === true">

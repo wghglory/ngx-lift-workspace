@@ -1,11 +1,12 @@
-import {Signal, signal} from '@angular/core';
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {catchError, delay, map, Observable, of, startWith} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import { Signal, signal } from '@angular/core';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { catchError, delay, map, Observable, of, startWith } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-import {computedAsync} from './computed-async';
+import { computedAsync } from './computed-async';
 
-const promise = <T>(value: T, time = 0): Promise<T> => new Promise((resolve) => setTimeout(() => resolve(value), time));
+const promise = <T>(value: T, time = 0): Promise<T> =>
+  new Promise((resolve) => setTimeout(() => resolve(value), time));
 
 describe(computedAsync.name, () => {
   describe('works with raw values', () => {
@@ -45,7 +46,7 @@ describe(computedAsync.name, () => {
           () => {
             return data().map((v) => v + value());
           },
-          {initialValue: []},
+          { initialValue: [] },
         );
 
         expect(result()).toEqual([]); // initial value
@@ -114,13 +115,13 @@ describe(computedAsync.name, () => {
     it('returns correct value and does not throw error if enabled', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
         const value = signal(1);
-        const s = computedAsync(() => of(value()), {requireSync: true});
+        const s = computedAsync(() => of(value()), { requireSync: true });
         expect(s()).toEqual(1); // initial value
       });
     }));
     it('returns correct value and does not throw error with initial value provided', () => {
       TestBed.runInInjectionContext(() => {
-        const s = computedAsync(() => of(1), {initialValue: 2});
+        const s = computedAsync(() => of(1), { initialValue: 2 });
         expect(s()).toEqual(2); // initial value
         TestBed.flushEffects();
         expect(s()).toEqual(1);
@@ -128,7 +129,7 @@ describe(computedAsync.name, () => {
     });
     it('returns correct value and does not throw error with normal variable when enabled', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
-        const s = computedAsync(() => 1, {requireSync: true});
+        const s = computedAsync(() => 1, { requireSync: true });
         expect(s()).toEqual(1); // initial value
       });
     }));
@@ -258,7 +259,7 @@ describe(computedAsync.name, () => {
               tap((v) => logs.push(v)),
             );
           },
-          {behavior: 'concat'},
+          { behavior: 'concat' },
         );
 
         expect(s()).toEqual(undefined); // initial value
@@ -303,7 +304,7 @@ describe(computedAsync.name, () => {
               tap((v) => logs.push(v)),
             );
           },
-          {behavior: 'merge'},
+          { behavior: 'merge' },
         );
 
         expect(s()).toEqual(undefined); // initial value
@@ -345,7 +346,7 @@ describe(computedAsync.name, () => {
               tap((v) => logs.push(v)),
             );
           },
-          {behavior: 'exhaust'},
+          { behavior: 'exhaust' },
         );
 
         expect(s()).toEqual(undefined); // initial value
@@ -385,7 +386,10 @@ describe(computedAsync.name, () => {
     it('and recovers from errors', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
         const loadAsyncDataLogs: number[] = [];
-        function loadAsyncData(number: number, throwError = false): Observable<number[]> {
+        function loadAsyncData(
+          number: number,
+          throwError = false,
+        ): Observable<number[]> {
           if (throwError) {
             loadAsyncDataLogs.push(number);
             return of([]).pipe(
@@ -396,7 +400,7 @@ describe(computedAsync.name, () => {
             );
           }
 
-          const array = Array.from({length: number}, (_, i) => i);
+          const array = Array.from({ length: number }, (_, i) => i);
           return of(array).pipe(
             tap(() => loadAsyncDataLogs.push(number)), // log the number of the request
             delay(1000), // simulate async
@@ -409,20 +413,20 @@ describe(computedAsync.name, () => {
         const data = computedAsync(
           () =>
             loadAsyncData(id(), throwErrorFlag).pipe(
-              map((res) => ({status: 'loaded' as const, result: res})),
-              startWith({status: 'loading' as const, result: []}),
-              catchError((err) => of({status: 'error' as const, error: err})),
+              map((res) => ({ status: 'loaded' as const, result: res })),
+              startWith({ status: 'loading' as const, result: [] }),
+              catchError((err) => of({ status: 'error' as const, error: err })),
             ),
-          {requireSync: true},
+          { requireSync: true },
         );
 
-        expect(data()).toEqual({status: 'loading', result: []});
+        expect(data()).toEqual({ status: 'loading', result: [] });
         expect(loadAsyncDataLogs).toEqual([1]);
         tick(500);
-        expect(data()).toEqual({status: 'loading', result: []});
+        expect(data()).toEqual({ status: 'loading', result: [] });
         expect(loadAsyncDataLogs).toEqual([1]);
         tick(500);
-        expect(data()).toEqual({status: 'loaded', result: [0]});
+        expect(data()).toEqual({ status: 'loaded', result: [0] });
 
         // if we don't flush effects, the effect won't run
         TestBed.flushEffects();
@@ -434,7 +438,7 @@ describe(computedAsync.name, () => {
         tick(500);
         expect(data().status).toEqual('loading');
         tick(500);
-        expect(data()).toEqual({status: 'loaded', result: [0, 1]});
+        expect(data()).toEqual({ status: 'loaded', result: [0, 1] });
         expect(loadAsyncDataLogs).toEqual([1, 2]);
 
         id.set(3);
@@ -460,7 +464,7 @@ describe(computedAsync.name, () => {
         tick(500);
         expect(data().status).toEqual('loading');
         tick(500);
-        expect(data()).toEqual({status: 'loaded', result: [0, 1, 2, 3]});
+        expect(data()).toEqual({ status: 'loaded', result: [0, 1, 2, 3] });
       });
     }));
   });
@@ -469,18 +473,24 @@ describe(computedAsync.name, () => {
     it('initial value', () => {
       TestBed.runInInjectionContext(() => {
         // promise
-        const onePromise: Signal<number | undefined> = computedAsync(() => promise(1));
+        const onePromise: Signal<number | undefined> = computedAsync(() =>
+          promise(1),
+        );
         const onlyPromises: Signal<number | undefined> = computedAsync(() => {
           if (Math.random() > 0.5) return Promise.resolve(1);
           return Promise.resolve(1);
         });
 
         // observable
-        const oneObservable: Signal<number | undefined> = computedAsync(() => of(1));
-        const onlyObservables: Signal<number | undefined> = computedAsync(() => {
-          if (Math.random() > 0.5) return of(1);
-          return of(1);
-        });
+        const oneObservable: Signal<number | undefined> = computedAsync(() =>
+          of(1),
+        );
+        const onlyObservables: Signal<number | undefined> = computedAsync(
+          () => {
+            if (Math.random() > 0.5) return of(1);
+            return of(1);
+          },
+        );
 
         // normal value
         const normalValue: Signal<number | undefined> = computedAsync(() => 1);
@@ -490,47 +500,78 @@ describe(computedAsync.name, () => {
         });
 
         // undefined or null
-        const undefinedValue: Signal<undefined> = computedAsync(() => undefined);
+        const undefinedValue: Signal<undefined> = computedAsync(
+          () => undefined,
+        );
         // TODO: should we allow this?
         const nullValue: Signal<null | undefined> = computedAsync(() => null);
 
-        const numberOrUndefined: Signal<number | undefined> = computedAsync(() => {
-          if (Math.random() > 0.5) return 1;
-          return undefined;
-        });
+        const numberOrUndefined: Signal<number | undefined> = computedAsync(
+          () => {
+            if (Math.random() > 0.5) return 1;
+            return undefined;
+          },
+        );
 
-        const numberOrNull: Signal<number | null | undefined> = computedAsync(() => {
-          if (Math.random() > 0.5) return 1;
-          return null;
-        });
+        const numberOrNull: Signal<number | null | undefined> = computedAsync(
+          () => {
+            if (Math.random() > 0.5) return 1;
+            return null;
+          },
+        );
 
         // initialValue + normal value
-        const withInitialValue: Signal<number | undefined> = computedAsync(() => 1, {initialValue: undefined});
+        const withInitialValue: Signal<number | undefined> = computedAsync(
+          () => 1,
+          { initialValue: undefined },
+        );
 
-        const withNullInitialValue: Signal<number | null> = computedAsync(() => 1, {initialValue: null});
+        const withNullInitialValue: Signal<number | null> = computedAsync(
+          () => 1,
+          { initialValue: null },
+        );
 
         const withInitialValue2: Signal<number> = computedAsync(() => 1, {
           initialValue: 0,
         });
-        const withInitialValue3: Signal<number[]> = computedAsync(() => [1, 2, 3], {initialValue: []});
+        const withInitialValue3: Signal<number[]> = computedAsync(
+          () => [1, 2, 3],
+          { initialValue: [] },
+        );
 
         // initialValue + promise
-        const promiseWithInitialValue: Signal<number | undefined> = computedAsync(() => promise(1), {
-          initialValue: undefined,
-        });
-        const promiseWithInitialValue2: Signal<number> = computedAsync(() => promise(1), {initialValue: 1});
-        const promiseWithInitialValue3: Signal<number[]> = computedAsync(() => promise([1, 2, 3]), {initialValue: []});
+        const promiseWithInitialValue: Signal<number | undefined> =
+          computedAsync(() => promise(1), {
+            initialValue: undefined,
+          });
+        const promiseWithInitialValue2: Signal<number> = computedAsync(
+          () => promise(1),
+          { initialValue: 1 },
+        );
+        const promiseWithInitialValue3: Signal<number[]> = computedAsync(
+          () => promise([1, 2, 3]),
+          { initialValue: [] },
+        );
 
         // initialValue + observable
         const observableWithInitialValue = computedAsync(() => of(1), {
           initialValue: undefined,
         });
 
-        const observableWithInitialValue2: Signal<number> = computedAsync(() => of(1), {initialValue: 1});
-        const observableWithInitialValue3: Signal<number[]> = computedAsync(() => of([1, 2, 3]), {initialValue: []});
+        const observableWithInitialValue2: Signal<number> = computedAsync(
+          () => of(1),
+          { initialValue: 1 },
+        );
+        const observableWithInitialValue3: Signal<number[]> = computedAsync(
+          () => of([1, 2, 3]),
+          { initialValue: [] },
+        );
 
         // initialValue + undefined
-        const initialValueUndefined: Signal<number | undefined> = computedAsync(() => 1, {initialValue: undefined});
+        const initialValueUndefined: Signal<number | undefined> = computedAsync(
+          () => 1,
+          { initialValue: undefined },
+        );
         // initialValue + null
         const initialValueNull: Signal<number | null> = computedAsync(() => 1, {
           initialValue: null,
@@ -541,7 +582,7 @@ describe(computedAsync.name, () => {
             if (Math.random() > 0.5) return promise(1);
             return of(1);
           },
-          {initialValue: 1},
+          { initialValue: 1 },
         );
 
         // requireSync + normal value
@@ -557,12 +598,15 @@ describe(computedAsync.name, () => {
             if (value > 0.5) return 1;
             return '1';
           },
-          {requireSync: true},
+          { requireSync: true },
         );
 
         expect(requireSyncNormalValue2()).toEqual(1);
 
-        const requireSyncNormalValue3: Signal<number[]> = computedAsync(() => [1, 2, 3], {requireSync: true});
+        const requireSyncNormalValue3: Signal<number[]> = computedAsync(
+          () => [1, 2, 3],
+          { requireSync: true },
+        );
 
         expect(requireSyncNormalValue3()).toEqual([1, 2, 3]);
 
@@ -571,11 +615,14 @@ describe(computedAsync.name, () => {
           const requireSyncPromise: never = computedAsync(() => promise(1), {
             requireSync: true,
           });
-          requireSyncPromise;
+          void requireSyncPromise;
         }).toThrowError(/Promises cannot work with requireSync/i);
 
         // requireSync + observable
-        const requireSyncObservable: Signal<number> = computedAsync(() => of(1), {requireSync: true});
+        const requireSyncObservable: Signal<number> = computedAsync(
+          () => of(1),
+          { requireSync: true },
+        );
 
         expect(requireSyncObservable()).toEqual(1);
 
@@ -587,18 +634,24 @@ describe(computedAsync.name, () => {
 
         expect(requireSyncNormalValue4()).toEqual(0);
 
-        const requireSyncNormalValue5: Signal<number[]> = computedAsync(() => [1, 2, 3], {
-          requireSync: true,
-          initialValue: [],
-        });
+        const requireSyncNormalValue5: Signal<number[]> = computedAsync(
+          () => [1, 2, 3],
+          {
+            requireSync: true,
+            initialValue: [],
+          },
+        );
 
         expect(requireSyncNormalValue5()).toEqual([]);
 
         // requireSync + undefined
-        const requireSyncUndefined: Signal<number | undefined> = computedAsync(() => 1, {
-          requireSync: true,
-          initialValue: undefined,
-        });
+        const requireSyncUndefined: Signal<number | undefined> = computedAsync(
+          () => 1,
+          {
+            requireSync: true,
+            initialValue: undefined,
+          },
+        );
 
         expect(requireSyncUndefined()).toEqual(1);
 
@@ -616,26 +669,29 @@ describe(computedAsync.name, () => {
         // expect(requireSyncPromiseWithInitialValue()).toBe(0);
 
         // requireSync + initialValue + observable
-        const requireSyncObservableWithInitialValue: Signal<number> = computedAsync(() => of(1), {
-          requireSync: true,
-          initialValue: 0,
-        });
+        const requireSyncObservableWithInitialValue: Signal<number> =
+          computedAsync(() => of(1), {
+            requireSync: true,
+            initialValue: 0,
+          });
 
         expect(requireSyncObservableWithInitialValue()).toEqual(0);
 
         // requireSync + initialValue + undefined
-        const requireSyncUndefinedWithInitialValue: Signal<number> = computedAsync(() => 1, {
-          requireSync: true,
-          initialValue: undefined,
-        });
+        const requireSyncUndefinedWithInitialValue: Signal<number> =
+          computedAsync(() => 1, {
+            requireSync: true,
+            initialValue: undefined,
+          });
 
         expect(requireSyncUndefinedWithInitialValue()).toEqual(1);
 
         // requireSync + initialValue + null
-        const requireSyncNullWithInitialValue: Signal<number | null> = computedAsync(() => 1, {
-          requireSync: true,
-          initialValue: null,
-        });
+        const requireSyncNullWithInitialValue: Signal<number | null> =
+          computedAsync(() => 1, {
+            requireSync: true,
+            initialValue: null,
+          });
 
         expect(requireSyncNullWithInitialValue()).toEqual(null);
 

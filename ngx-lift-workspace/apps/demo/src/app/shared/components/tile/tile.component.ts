@@ -9,5 +9,5 @@ import {ChangeDetectionStrategy, Component, input} from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TileComponent {
-  customClass = input.required<string>({alias: 'class'});
+  customClass = input.required<string>();
 }

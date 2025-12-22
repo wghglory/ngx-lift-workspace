@@ -33,43 +33,45 @@
 
     <form clrForm [formGroup]="form">
       <clr-radio-container>
-        <label>Do you like this tool?</label>
+        <label for="if-choice">Do you like this tool?</label>
         <clr-radio-wrapper>
           <input
             type="radio"
+            id="if-choice-like"
             clrRadio
             name="choice"
             value="LIKE"
             [formControl]="form.controls.choice"
             (change)="changeChoice()"
           />
-          <label>Of course 😜</label>
+          <label for="if-choice-like">Of course 😜</label>
         </clr-radio-wrapper>
         <clr-radio-wrapper>
           <input
             type="radio"
+            id="if-choice-unlike"
             clrRadio
             name="choice"
             value="UNLIKE"
             [formControl]="form.controls.choice"
             (change)="changeChoice()"
           />
-          <label>Sorry 😅</label>
+          <label for="if-choice-unlike">Sorry 😅</label>
         </clr-radio-wrapper>
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
       </clr-radio-container>
 
       <clr-input-container>
-        <label>Email</label>
-        <input clrInput type="text" [formControl]="form.controls.email" size="30" />
+        <label for="if-email">Email</label>
+        <input id="if-email" clrInput type="text" [formControl]="form.controls.email" size="30" />
         <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
         <clr-control-error *clrIfError="'email'">Invalid email</clr-control-error>
       </clr-input-container>
 
       <clr-input-container>
-        <label>Reason why you don't like</label>
-        <input clrInput type="text" [formControl]="form.controls.reason" size="30" />
+        <label for="if-reason">Reason why you don't like</label>
+        <input id="if-reason" clrInput type="text" [formControl]="form.controls.reason" size="30" />
         <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
       </clr-input-container>
