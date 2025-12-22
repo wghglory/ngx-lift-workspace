@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {DOCUMENT} from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import {
   ApplicationRef,
   ComponentRef,
@@ -14,9 +14,9 @@ import {
   Type,
 } from '@angular/core';
 
-import {TooltipComponent} from './tooltip.component';
-import {TooltipPosition} from './tooltip.model';
-import {collisionDetection, getTooltipCoords} from './tooltip.util';
+import { TooltipComponent } from './tooltip.component';
+import { TooltipPosition } from './tooltip.model';
+import { collisionDetection, getTooltipCoords } from './tooltip.util';
 
 @Directive({
   selector: '[cllTooltip]',
@@ -28,7 +28,9 @@ export class TooltipDirective {
   private document = inject(DOCUMENT);
 
   cllTooltip = input('');
-  cllTooltipContent = input<string | TemplateRef<any> | ComponentRef<any> | Type<any>>('');
+  cllTooltipContent = input<
+    string | TemplateRef<any> | ComponentRef<any> | Type<any>
+  >('');
   cllTooltipContentContext = input<Record<string, any>>(); // when cllTooltipContent is TemplateRef, context may be needed
   cllTooltipHideDelay = input(0);
   cllTooltipWidth = input(240);
@@ -47,10 +49,18 @@ export class TooltipDirective {
     return this.tooltipComponent?.location.nativeElement; // <cll-tooltip>
   }
   get tooltipAnchorElement() {
-    return this.hostElement?.querySelector('a') as HTMLAnchorElement; // <a class="tooltip">
+    const host = this.hostElement;
+    if (!host || typeof host.querySelector !== 'function') {
+      return undefined;
+    }
+    return host.querySelector('a') as HTMLAnchorElement; // <a class="tooltip">
   }
   get tooltipContentElement() {
-    return this.hostElement?.querySelector('.tooltip-content') as HTMLSpanElement; // span.tooltip-content
+    const host = this.hostElement;
+    if (!host || typeof host.querySelector !== 'function') {
+      return undefined;
+    }
+    return host.querySelector('.tooltip-content') as HTMLSpanElement; // span.tooltip-content
   }
 
   @HostListener('mouseenter')
@@ -81,13 +91,23 @@ export class TooltipDirective {
     }
 
     const environmentInjector = this.appRef.injector;
-    this.tooltipComponent = createComponent(TooltipComponent, {environmentInjector});
+    this.tooltipComponent = createComponent(TooltipComponent, {
+      environmentInjector,
+    });
 
-    this.tooltipContentElement.style.visibility = 'hidden'; // fix flicker issue because we want to delay the tooltip a while due to auto positioning
-    this.document.body.appendChild(this.hostElement);
+    const tooltipContent = this.tooltipContentElement;
+    if (tooltipContent) {
+      tooltipContent.style.visibility = 'hidden'; // fix flicker issue because we want to delay the tooltip a while due to auto positioning
+    }
+    const hostElement = this.hostElement;
+    if (hostElement) {
+      this.document.body.appendChild(hostElement);
+    }
 
     // calculatedPosition is the 1st render expected tooltip class.
-    const calculatedPosition = this.calculateTooltipPosition(this.cllTooltipPosition());
+    const calculatedPosition = this.calculateTooltipPosition(
+      this.cllTooltipPosition(),
+    );
     this.setTooltipProps(calculatedPosition);
 
     this.tooltipComponent.hostView.detectChanges(); // OR this.tooltipComponent.changeDetectorRef.detectChanges();
@@ -130,11 +150,22 @@ export class TooltipDirective {
    */
   private positionTooltip(previousTooltipPosition: string) {
     setTimeout(() => {
-      const latestTooltipClass = this.calculateTooltipClassByCollisionDetection();
+      if (!this.tooltipComponent) {
+        return;
+      }
+
+      const latestTooltipClass =
+        this.calculateTooltipClassByCollisionDetection();
+      const tooltipAnchor = this.tooltipAnchorElement;
+      const tooltipContent = this.tooltipContentElement;
+
+      if (!tooltipAnchor || !tooltipContent) {
+        return;
+      }
 
       // Update the tooltip element's classList
-      this.tooltipAnchorElement.setAttribute('class', latestTooltipClass);
-      this.tooltipContentElement.style.visibility = 'visible'; // fix flicker
+      tooltipAnchor.setAttribute('class', latestTooltipClass);
+      tooltipContent.style.visibility = 'visible'; // fix flicker
 
       // latest class not includes previous class, position changed! Re-render the tooltip
       if (!latestTooltipClass.includes(previousTooltipPosition)) {
@@ -156,8 +187,9 @@ export class TooltipDirective {
 
     this.tooltipComponent.setInput('triggerElementHovering', true);
     this.tooltipComponent.setInput('content', this.tooltipContent());
-    if (this.cllTooltipContentContext()) {
-      this.tooltipComponent.setInput('contentContext', this.cllTooltipContentContext()!);
+    const contentContext = this.cllTooltipContentContext();
+    if (contentContext) {
+      this.tooltipComponent.setInput('contentContext', contentContext);
     }
     this.tooltipComponent.setInput('width', this.cllTooltipWidth());
     this.tooltipComponent.setInput('position', calculatedPosition);
@@ -177,11 +209,17 @@ export class TooltipDirective {
    */
   private calculateTooltipPosition(positionOverride?: TooltipPosition) {
     const triggerRect = this.triggerElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const viewportWidth =
+      window.innerWidth || document.documentElement.clientWidth;
 
     // switch tooltip position based on where it is situated (left or right of the middle of the screen)
     // if trigger element is in the left side of the screen, show tooltip in top right
-    return positionOverride || (triggerRect.x < viewportWidth / 2 ? 'tooltip-top-right' : 'tooltip-top-left');
+    return (
+      positionOverride ||
+      (triggerRect.x < viewportWidth / 2
+        ? 'tooltip-top-right'
+        : 'tooltip-top-left')
+    );
   }
 
   /**
@@ -192,8 +230,14 @@ export class TooltipDirective {
       return;
     }
 
+    const firstElement = this.tooltipComponent.location.nativeElement
+      .firstElementChild as HTMLElement;
+    if (!firstElement) {
+      return;
+    }
+
     // latest tooltip class after positioning.
-    const tooltipClass = this.tooltipComponent.location.nativeElement.firstElementChild.classList.value;
+    const tooltipClass = firstElement.classList.value;
 
     const coords = getTooltipCoords(this.triggerElement, tooltipClass);
     this.tooltipComponent.setInput('left', coords.x);
@@ -207,11 +251,18 @@ export class TooltipDirective {
    * @return {string} The updated tooltip class based on collision detection.
    */
   private calculateTooltipClassByCollisionDetection() {
+    const tooltipAnchor = this.tooltipAnchorElement;
+    const tooltipContent = this.tooltipContentElement;
+
+    if (!tooltipAnchor || !tooltipContent) {
+      return 'tooltip-top-left'; // Default fallback
+    }
+
     // Tooltip class based on the 1st render
-    let tooltipClass = this.tooltipAnchorElement.classList.value;
+    let tooltipClass = tooltipAnchor.classList.value;
 
     // Update the tooltip class based on collision detection. The 2nd render will be based on the new class (auto positioning)
-    const {left, right, top, bottom} = collisionDetection(this.tooltipContentElement);
+    const { left, right, top, bottom } = collisionDetection(tooltipContent);
 
     if (left) {
       tooltipClass = tooltipClass.replace(/left/g, 'right');

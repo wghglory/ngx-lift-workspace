@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {A11yModule} from '@angular/cdk/a11y';
-import {CommonModule} from '@angular/common';
+import { A11yModule } from '@angular/cdk/a11y';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -19,8 +19,8 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 
-import {TooltipPosition} from './tooltip.model';
-import {isElementClickable, isElementInsideCollection} from './tooltip.util';
+import { TooltipPosition } from './tooltip.model';
+import { isElementClickable, isElementInsideCollection } from './tooltip.util';
 
 @Component({
   selector: 'cll-tooltip',
@@ -41,7 +41,9 @@ export class TooltipComponent {
 
   contentContext = input<Record<string, any>>();
 
-  @Input() set content(c: string | TemplateRef<any> | ComponentRef<any> | Type<any>) {
+  @Input() set content(
+    c: string | TemplateRef<any> | ComponentRef<any> | Type<any>,
+  ) {
     if (typeof c === 'string') {
       this.text = c;
     } else if (c instanceof TemplateRef) {
@@ -90,8 +92,15 @@ export class TooltipComponent {
   click(event: MouseEvent) {
     const target = event.target as HTMLElement;
 
+    if (!target) {
+      return;
+    }
+
     // Close the tooltip if the user clicks the mouse outside the tooltip or the user clicks a clickable element inside the tooltip
-    if ((target && isElementClickable(target)) || !isElementInsideCollection(target, this.tooltipChildren)) {
+    if (
+      isElementClickable(target) ||
+      !isElementInsideCollection(target, this.tooltipChildren)
+    ) {
       this.closePopover.emit(true);
     }
   }
@@ -103,6 +112,7 @@ export class TooltipComponent {
   mouseLeave(event: MouseEvent) {
     this.tooltipHovering = false;
 
+    // Use a timeout to allow mouse to move to trigger element
     setTimeout(() => {
       // if mouse out and not place onto the trigger element, close the tooltip
       if (!this.triggerElementHovering()) {

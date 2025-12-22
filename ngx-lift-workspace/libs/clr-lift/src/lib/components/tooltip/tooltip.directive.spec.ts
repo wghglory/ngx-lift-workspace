@@ -66,6 +66,9 @@ describe('TooltipDirective', () => {
     // Tooltip should be created
     expect(directive['tooltipComponent']).toBeTruthy();
 
+    // Wait for positionTooltip setTimeout to complete
+    tick();
+
     // Trigger mouse leave
     directive.onMouseLeave();
     fixture.detectChanges();
@@ -74,6 +77,58 @@ describe('TooltipDirective', () => {
     // Tooltip should be removed
     expect(directive['tooltipComponent']).toBeFalsy();
   }));
+
+  it('should handle showTooltip when content is empty', () => {
+    const directive = directiveElement.injector.get(TooltipDirective);
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    // Create a new test component with empty content
+    @Component({
+      template: `<div cllTooltip></div>`,
+      standalone: true,
+      imports: [TooltipDirective],
+    })
+    class EmptyContentComponent {}
+
+    const emptyFixture = TestBed.createComponent(EmptyContentComponent);
+    const emptyDirectiveElement = emptyFixture.debugElement.query(By.directive(TooltipDirective));
+    const emptyDirective = emptyDirectiveElement.injector.get(TooltipDirective);
+
+    emptyDirective.onMouseEnter();
+    emptyFixture.detectChanges();
+
+    // Tooltip should not be created
+    expect(emptyDirective['tooltipComponent']).toBeFalsy();
+    expect(consoleSpy).toHaveBeenCalledWith('Tooltip content not defined, cannot show tooltip');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should handle reRenderTooltip safely when firstElementChild is null', () => {
+    const directive = directiveElement.injector.get(TooltipDirective);
+
+    // Trigger mouse enter to create tooltip
+    directive.onMouseEnter();
+    fixture.detectChanges();
+
+    // Manually set tooltipComponent with a mock that has no firstElementChild
+    const mockComponent = {
+      location: {
+        nativeElement: {
+          firstElementChild: null,
+        },
+      },
+      setInput: vi.fn(),
+      hostView: {
+        detectChanges: vi.fn(),
+      },
+    } as any;
+
+    directive['tooltipComponent'] = mockComponent;
+
+    // This should not throw
+    expect(() => directive['reRenderTooltip']()).not.toThrow();
+  });
 });
 
 @Component({
