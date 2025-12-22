@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormControlDirective, NgControl, ReactiveFormsModule } from '@angular/forms';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {FormControl, FormControlDirective, NgControl, ReactiveFormsModule} from '@angular/forms';
 
-import { TranslationService } from '../../services/translation.service';
-import { MockTranslationService } from '../../services/translation.service.mock';
-import { FileReaderComponent } from './file-reader.component';
+import {TranslationService} from '../../services/translation.service';
+import {MockTranslationService} from '../../services/translation.service.mock';
+import {FileReaderComponent} from './file-reader.component';
 
 describe('FileReaderComponent', () => {
   let component: FileReaderComponent;
@@ -22,8 +22,8 @@ describe('FileReaderComponent', () => {
     TestBed.configureTestingModule({
       imports: [FileReaderComponent, ReactiveFormsModule],
       providers: [
-        { provide: TranslationService, useClass: MockTranslationService },
-        { provide: NgControl, useValue: mockNgControl },
+        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: NgControl, useValue: mockNgControl},
       ],
     });
     fixture = TestBed.createComponent(FileReaderComponent);

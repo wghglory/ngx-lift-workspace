@@ -1,14 +1,14 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ClrTimelineStepState } from '@clr/angular';
-import { TimelineWizardService } from 'clr-lift';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ClrTimelineStepState} from '@clr/angular';
+import {TimelineWizardService} from 'clr-lift';
 
-import { ConfigureReviewComponent } from './configure-review.component';
-import { Deployment } from '../deployment.type';
-import { ConfigureOperatorComponent } from '../configure-operator/configure-operator.component';
-import { ConfigureServiceComponent } from '../configure-service/configure-service.component';
-import { ConfigureRuntimePropComponent } from '../configure-runtime-prop/configure-runtime-prop.component';
+import {ConfigureReviewComponent} from './configure-review.component';
+import {Deployment} from '../deployment.type';
+import {ConfigureOperatorComponent} from '../configure-operator/configure-operator.component';
+import {ConfigureServiceComponent} from '../configure-service/configure-service.component';
+import {ConfigureRuntimePropComponent} from '../configure-runtime-prop/configure-runtime-prop.component';
 
 describe('ConfigureReviewComponent', () => {
   let component: ConfigureReviewComponent;
@@ -56,7 +56,7 @@ describe('ConfigureReviewComponent', () => {
         component: ConfigureRuntimePropComponent,
         data: {
           appProperties: [],
-        } as { appProperties: Array<{ key: string; value: string }> },
+        } as {appProperties: Array<{key: string; value: string}>},
       },
     ];
 

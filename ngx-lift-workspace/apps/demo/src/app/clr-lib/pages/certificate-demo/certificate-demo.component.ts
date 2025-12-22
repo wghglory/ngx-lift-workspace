@@ -7,7 +7,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-certificate-demo',
-  standalone: true,
   imports: [CalloutComponent, PageContainerComponent, CodeBlockComponent, ClarityModule, CertificateSignpostComponent],
   templateUrl: './certificate-demo.component.html',
   styleUrl: './certificate-demo.component.scss',
@@ -43,7 +42,6 @@ IhNzbM8m9Yop5w==
 import {CertificateSignpostComponent} from 'clr-lift';
 
 @Component({
-  standalone: true,
   imports: [CertificateSignpostComponent],
   template: \`<cll-certificate-signpost [pem]="pem1" />\`
 })
@@ -54,7 +52,6 @@ export class CertificateDemoComponent {}
 import {CertificateSignpostComponent} from 'clr-lift';
 
 @Component({
-  standalone: true,
   imports: [CertificateSignpostComponent],
   template: \`<cll-certificate-signpost [pem]="pem2" [pemEncoded]="true" position="left-top" />\`
 })

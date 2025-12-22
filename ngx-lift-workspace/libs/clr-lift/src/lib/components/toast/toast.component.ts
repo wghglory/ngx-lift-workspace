@@ -36,7 +36,6 @@ ClarityIcons.addIcons(timesIcon);
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
   imports: [ClarityModule, TranslatePipe],
-  standalone: true,
   animations: [
     trigger('launchToast', [
       transition(':enter', [

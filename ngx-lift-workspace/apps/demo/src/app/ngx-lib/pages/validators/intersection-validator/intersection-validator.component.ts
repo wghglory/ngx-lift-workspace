@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-intersection-validator',
-  standalone: true,
   imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, AlertComponent, CodeBlockComponent],
   templateUrl: './intersection-validator.component.html',
   styleUrl: './intersection-validator.component.scss',

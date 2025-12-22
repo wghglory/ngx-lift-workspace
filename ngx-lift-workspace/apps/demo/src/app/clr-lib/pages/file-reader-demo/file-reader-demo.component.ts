@@ -13,7 +13,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-file-reader-demo',
-  standalone: true,
   imports: [
     ClarityModule,
     ReactiveFormsModule,
@@ -135,7 +134,6 @@ RpegRTbFn9zkb7yHHaBaVYk6pAnpF8+e
 import {CertificateSignpostComponent, certificateValidator, FileReaderComponent} from 'clr-lift';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     ClarityModule,

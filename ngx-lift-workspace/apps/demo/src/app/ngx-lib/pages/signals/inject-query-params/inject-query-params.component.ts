@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-inject-query-params',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './inject-query-params.component.html',
   styleUrl: './inject-query-params.component.scss',
@@ -20,7 +19,10 @@ export class InjectQueryParamsComponent {
 
   queryParamsKeys = injectQueryParams((params) => Object.keys(params)); // returns a signal with all keys of the query params
 
-  searchParam = injectQueryParams('search', {initialValue: 3, transform: numberAttribute});
+  searchParam = injectQueryParams('search', {
+    initialValue: 3,
+    transform: numberAttribute,
+  });
 
   users = computedAsync(() => this.userService.getUsers({results: this.searchParam()}));
 

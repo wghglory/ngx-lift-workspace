@@ -7,7 +7,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-clr-datagrid-util',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './clr-datagrid-util.component.html',
   styleUrl: './clr-datagrid-util.component.scss',

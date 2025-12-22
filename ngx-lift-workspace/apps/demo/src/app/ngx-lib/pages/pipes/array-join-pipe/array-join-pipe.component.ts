@@ -6,7 +6,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-array-join-pipe',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent],
   templateUrl: './array-join-pipe.component.html',
   styleUrl: './array-join-pipe.component.scss',
@@ -17,7 +16,6 @@ export class ArrayJoinPipeComponent {
 import {ArrayJoinPipe} from 'ngx-lift';
 
 @Component({
-  standalone: true,
   imports: [ArrayJoinPipe],
   template: \`
     <p>{{ [1, 2, 3, 4] | arrayJoin }}</p>

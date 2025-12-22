@@ -10,7 +10,6 @@ import {UserCardComponent} from '../user-card/user-card.component';
 
 @Component({
   selector: 'app-user-card-list',
-  standalone: true,
   imports: [AsyncPipe, ClarityModule, SpinnerComponent, AlertComponent, UserCardComponent],
   templateUrl: './user-card-list.component.html',
   styleUrl: './user-card-list.component.scss',

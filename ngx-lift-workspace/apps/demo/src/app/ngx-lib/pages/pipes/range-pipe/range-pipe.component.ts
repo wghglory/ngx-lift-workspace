@@ -7,7 +7,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-range-pipe',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent, CalloutComponent, RangePipe],
   templateUrl: './range-pipe.component.html',
   styleUrl: './range-pipe.component.scss',
@@ -18,7 +17,6 @@ export class RangePipeComponent {
 import {RangePipe} from 'ngx-lift';
 
 @Component({
-  standalone: true,
   imports: [RangePipe],
   template: \`
     <p>{{ [1, 5] | range }}</p>

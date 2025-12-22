@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-idle-detection-demo',
-  standalone: true,
   imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent],
   templateUrl: './idle-detection-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

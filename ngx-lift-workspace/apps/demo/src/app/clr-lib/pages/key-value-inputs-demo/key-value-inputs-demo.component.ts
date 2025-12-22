@@ -9,7 +9,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-key-value-inputs-demo',
-  standalone: true,
   imports: [
     CommonModule,
     CalloutComponent,
@@ -37,7 +36,6 @@ export class KeyValueInputsDemoComponent {
 import {KeyValueFormGroup, KeyValueInputsComponent} from 'clr-lift';
 
 @Component({
-  standalone: true,
   imports: [KeyValueInputsComponent],
   template: \`
     <cll-key-value-inputs

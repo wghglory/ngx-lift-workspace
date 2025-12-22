@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-distinct-on-change',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './distinct-on-change.component.html',
   styleUrl: './distinct-on-change.component.scss',

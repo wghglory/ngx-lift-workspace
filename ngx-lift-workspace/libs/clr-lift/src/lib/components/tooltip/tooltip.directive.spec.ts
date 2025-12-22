@@ -1,15 +1,10 @@
-import { Component, ComponentRef, DebugElement } from '@angular/core';
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { vi } from 'vitest';
+import {Component, ComponentRef, DebugElement} from '@angular/core';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {vi} from 'vitest';
 
-import { TooltipComponent } from './tooltip.component';
-import { TooltipDirective } from './tooltip.directive';
+import {TooltipComponent} from './tooltip.component';
+import {TooltipDirective} from './tooltip.directive';
 
 describe('TooltipDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
@@ -38,9 +33,7 @@ describe('TooltipDirective', () => {
     });
 
     fixture = TestBed.createComponent(TestComponent);
-    directiveElement = fixture.debugElement.query(
-      By.directive(TooltipDirective),
-    );
+    directiveElement = fixture.debugElement.query(By.directive(TooltipDirective));
 
     // Ensure the actual element used by the directive has getBoundingClientRect
     const nativeElement = directiveElement.nativeElement;
@@ -89,15 +82,12 @@ describe('TooltipDirective', () => {
     // Create a new test component with empty content
     @Component({
       template: `<div cllTooltip></div>`,
-      standalone: true,
       imports: [TooltipDirective],
     })
     class EmptyContentComponent {}
 
     const emptyFixture = TestBed.createComponent(EmptyContentComponent);
-    const emptyDirectiveElement = emptyFixture.debugElement.query(
-      By.directive(TooltipDirective),
-    );
+    const emptyDirectiveElement = emptyFixture.debugElement.query(By.directive(TooltipDirective));
     const emptyDirective = emptyDirectiveElement.injector.get(TooltipDirective);
 
     emptyDirective.onMouseEnter();
@@ -105,9 +95,7 @@ describe('TooltipDirective', () => {
 
     // Tooltip should not be created
     expect(emptyDirective['tooltipComponent']).toBeFalsy();
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Tooltip content not defined, cannot show tooltip',
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Tooltip content not defined, cannot show tooltip');
 
     consoleSpy.mockRestore();
   });
@@ -141,7 +129,6 @@ describe('TooltipDirective', () => {
 
 @Component({
   template: `<div cllTooltip cllTooltipContent="Tooltip content"></div>`,
-  standalone: true,
   imports: [TooltipDirective],
 })
 class TestComponent {}
@@ -155,6 +142,5 @@ class TestComponent {}
       </span>
     </a>
   `,
-  standalone: true,
 })
 class MockTooltipComponent {}

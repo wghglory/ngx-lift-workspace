@@ -1,6 +1,6 @@
-import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import {FormControl, FormGroup, ValidatorFn} from '@angular/forms';
 
-import { intersectionValidator } from './intersection.validator';
+import {intersectionValidator} from './intersection.validator';
 
 describe('intersectionValidator', () => {
   let formGroup: FormGroup;
@@ -14,7 +14,7 @@ describe('intersectionValidator', () => {
         field1: new FormControl([]),
         field2: new FormControl([]),
       },
-      { validators: validator },
+      {validators: validator},
     );
   });
 
@@ -41,7 +41,7 @@ describe('intersectionValidator', () => {
 
     formGroup.updateValueAndValidity();
 
-    expect(formGroup.errors).toEqual({ intersection: true });
+    expect(formGroup.errors).toEqual({intersection: true});
   });
 
   it('should return null when one of the controls is missing', () => {
@@ -49,7 +49,7 @@ describe('intersectionValidator', () => {
       {
         field1: new FormControl(['apple', 'banana']),
       },
-      { validators: validator },
+      {validators: validator},
     );
 
     formGroup.updateValueAndValidity();
@@ -63,7 +63,7 @@ describe('intersectionValidator', () => {
         field1: new FormControl('apple'),
         field2: new FormControl(['orange', 'grape']),
       },
-      { validators: validator },
+      {validators: validator},
     );
 
     formGroup.updateValueAndValidity();

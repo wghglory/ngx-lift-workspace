@@ -8,7 +8,6 @@ import {AlertService} from './alert.service';
 
 @Component({
   selector: 'cll-alert-container',
-  standalone: true,
   imports: [ClarityModule, TranslatePipe],
   templateUrl: './alert-container.component.html',
   styleUrl: './alert-container.component.scss',

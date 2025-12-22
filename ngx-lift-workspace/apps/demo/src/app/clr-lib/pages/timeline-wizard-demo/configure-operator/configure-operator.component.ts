@@ -7,7 +7,6 @@ import {Deployment} from '../deployment.type';
 
 @Component({
   selector: 'app-configure-operator',
-  standalone: true,
   imports: [ClarityModule, ReactiveFormsModule],
   templateUrl: './configure-operator.component.html',
   styleUrl: './configure-operator.component.scss',

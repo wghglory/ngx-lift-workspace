@@ -1,10 +1,10 @@
-import { TestBed } from '@angular/core/testing';
-import { ClrTimelineStepState } from '@clr/angular';
-import { vi } from 'vitest';
+import {TestBed} from '@angular/core/testing';
+import {ClrTimelineStepState} from '@clr/angular';
+import {vi} from 'vitest';
 
-import { TimelineBaseComponent } from './timeline-base.component';
-import { TimelineStep } from './timeline-step.type';
-import { TimelineWizardService } from './timeline-wizard.service';
+import {TimelineBaseComponent} from './timeline-base.component';
+import {TimelineStep} from './timeline-step.type';
+import {TimelineWizardService} from './timeline-wizard.service';
 
 // Mock component for testing purposes
 class MockTimelineBaseComponent extends TimelineBaseComponent {}
@@ -29,19 +29,19 @@ describe('TimelineWizardService', () => {
         state: ClrTimelineStepState.SUCCESS,
         title: 'Step 1',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value1' },
+        data: {formData: 'value1'},
       },
       {
         state: ClrTimelineStepState.CURRENT,
         title: 'Step 2',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value2' },
+        data: {formData: 'value2'},
       },
     ];
 
     service.steps = mockSteps;
 
-    const data = service.getStepData<{ formData: string }>('Step 2');
+    const data = service.getStepData<{formData: string}>('Step 2');
     expect(data.formData).toEqual('value2');
   });
 
@@ -127,13 +127,13 @@ describe('TimelineWizardService', () => {
         state: ClrTimelineStepState.CURRENT,
         title: 'Step 2',
         component: MockTimelineBaseComponent,
-        data: { exampleData: 'value' },
+        data: {exampleData: 'value'},
       },
     ];
 
     service.steps = mockSteps;
 
-    expect(service.currentStepData).toEqual({ exampleData: 'value' });
+    expect(service.currentStepData).toEqual({exampleData: 'value'});
   });
 
   it('should correctly retrieve all steps data for review', () => {
@@ -142,28 +142,28 @@ describe('TimelineWizardService', () => {
         state: ClrTimelineStepState.SUCCESS,
         title: 'Step 1',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value1' },
+        data: {formData: 'value1'},
       },
       {
         state: ClrTimelineStepState.SUCCESS,
         title: 'Step 2',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value2' },
+        data: {formData: 'value2'},
       },
       {
         state: ClrTimelineStepState.CURRENT,
         title: 'Step 3',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value3' },
+        data: {formData: 'value3'},
       },
     ];
 
     service.steps = mockSteps;
 
     expect(service.allStepsData).toEqual([
-      { id: 'Step 1', data: { formData: 'value1' } },
-      { id: 'Step 2', data: { formData: 'value2' } },
-      { id: 'Step 3', data: { formData: 'value3' } },
+      {id: 'Step 1', data: {formData: 'value1'}},
+      {id: 'Step 2', data: {formData: 'value2'}},
+      {id: 'Step 3', data: {formData: 'value3'}},
     ]);
   });
 
@@ -173,26 +173,24 @@ describe('TimelineWizardService', () => {
         state: ClrTimelineStepState.PROCESSING,
         title: 'Step 1',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value1' },
+        data: {formData: 'value1'},
       },
       {
         state: ClrTimelineStepState.NOT_STARTED,
         title: 'Step 2',
         component: MockTimelineBaseComponent,
-        data: { formData: 'value2' },
+        data: {formData: 'value2'},
       },
     ];
 
     service.steps = mockSteps;
 
-    expect(service.getStepData<{ formData: string }>('Step 2')).toEqual({
+    expect(service.getStepData<{formData: string}>('Step 2')).toEqual({
       formData: 'value2',
     });
   });
 
   it('should throw an error when trying to retrieve step data with an invalid title', () => {
-    expect(() => service.getStepData('Invalid Step')).toThrowError(
-      'Step with identifier Invalid Step not found',
-    );
+    expect(() => service.getStepData('Invalid Step')).toThrowError('Step with identifier Invalid Step not found');
   });
 });

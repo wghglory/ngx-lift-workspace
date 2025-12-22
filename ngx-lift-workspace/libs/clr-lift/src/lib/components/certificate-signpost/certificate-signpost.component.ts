@@ -15,7 +15,6 @@ ClarityIcons.addIcons(certificateIcon);
 
 @Component({
   selector: 'cll-certificate-signpost',
-  standalone: true,
   imports: [NgClass, ClarityModule, TranslatePipe, CertificateComponent],
   templateUrl: './certificate-signpost.component.html',
   styleUrls: ['./certificate-signpost.component.scss'],

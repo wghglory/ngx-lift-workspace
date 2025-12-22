@@ -6,7 +6,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-spinner',
-  standalone: true,
   imports: [SpinnerComponent, PageContainerComponent, CodeBlockComponent],
   templateUrl: './spinner-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +15,6 @@ export class SpinnerDemoComponent {
 import {SpinnerComponent} from 'clr-lift';
 
 @Component({
-  standalone: true,
   imports: [SpinnerComponent],
 })
 export class YourComponent { }

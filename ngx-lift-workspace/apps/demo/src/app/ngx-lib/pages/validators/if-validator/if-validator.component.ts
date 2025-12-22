@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-if-validator',
-  standalone: true,
   imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
   templateUrl: './if-validator.component.html',
   styleUrl: './if-validator.component.scss',
@@ -38,7 +37,6 @@ export class IfValidatorComponent {
 import {ifValidator} from 'ngx-lift';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
 })
 export class IfValidatorComponent {

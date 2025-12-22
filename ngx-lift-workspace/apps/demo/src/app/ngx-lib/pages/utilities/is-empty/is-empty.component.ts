@@ -6,7 +6,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-is-empty',
-  standalone: true,
   imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './is-empty.component.html',
   styleUrl: './is-empty.component.scss',

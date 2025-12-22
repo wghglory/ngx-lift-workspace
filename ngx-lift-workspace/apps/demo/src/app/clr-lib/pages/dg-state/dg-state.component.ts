@@ -9,7 +9,6 @@ import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-
 
 @Component({
   selector: 'app-dg-state',
-  standalone: true,
   imports: [
     ClarityModule,
     RouterLink,

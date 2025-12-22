@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
-import { fromEvent, merge, Subject, Subscription, throttleTime } from 'rxjs';
+import {inject, Injectable} from '@angular/core';
+import {fromEvent, merge, Subject, Subscription, throttleTime} from 'rxjs';
 
-import { IdleDetectionConfig } from './idle-detection.config';
+import {IdleDetectionConfig} from './idle-detection.config';
 
 /**
  * Service for detecting user idle time and implementing a countdown.
@@ -77,7 +77,7 @@ export class IdleDetectionService {
    * @param config - Optional configuration for idle and timeout durations.
    */
   constructor() {
-    const config = inject(IdleDetectionConfig, { optional: true });
+    const config = inject(IdleDetectionConfig, {optional: true});
     if (config) {
       this.setConfig(config);
     }
@@ -115,12 +115,10 @@ export class IdleDetectionService {
    */
   private setupInterruptionEvents() {
     if (!this.interruptionSubscription) {
-      const throttledInterruptionEvents = this.interruptionEvents.map(
-        (eventName) => fromEvent(document, eventName).pipe(throttleTime(1000)),
+      const throttledInterruptionEvents = this.interruptionEvents.map((eventName) =>
+        fromEvent(document, eventName).pipe(throttleTime(1000)),
       );
-      this.interruptionSubscription = merge(
-        ...throttledInterruptionEvents,
-      ).subscribe(() => this.resetTimer());
+      this.interruptionSubscription = merge(...throttledInterruptionEvents).subscribe(() => this.resetTimer());
     }
   }
 

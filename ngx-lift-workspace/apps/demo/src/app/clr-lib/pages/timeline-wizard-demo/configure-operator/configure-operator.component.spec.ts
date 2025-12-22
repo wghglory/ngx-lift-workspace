@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ClrTimelineStepState } from '@clr/angular';
-import { TimelineWizardService } from 'clr-lift';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ClrTimelineStepState} from '@clr/angular';
+import {TimelineWizardService} from 'clr-lift';
 
-import { ConfigureOperatorComponent } from './configure-operator.component';
-import { Deployment } from '../deployment.type';
+import {ConfigureOperatorComponent} from './configure-operator.component';
+import {Deployment} from '../deployment.type';
 
 describe('ConfigureOperatorComponent', () => {
   let component: ConfigureOperatorComponent;

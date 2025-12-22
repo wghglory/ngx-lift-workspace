@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { IdleDetectionConfig } from './idle-detection.config';
-import { IdleDetectionService } from './idle-detection.service';
+import {IdleDetectionConfig} from './idle-detection.config';
+import {IdleDetectionService} from './idle-detection.service';
 
 describe('IdleDetectionService', () => {
   let service: IdleDetectionService;

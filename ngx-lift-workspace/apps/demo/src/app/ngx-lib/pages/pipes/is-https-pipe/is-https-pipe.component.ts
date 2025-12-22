@@ -7,7 +7,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-is-https-pipe',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent, CalloutComponent, RouterLink],
   templateUrl: './is-https-pipe.component.html',
   styleUrl: './is-https-pipe.component.scss',
@@ -18,7 +17,6 @@ export class IsHttpsPipeComponent {
 import {IsHttpsPipe} from 'ngx-lift';
 
 @Component({
-  standalone: true,
   imports: [IsHttpsPipe],
   template: \`
     <p>{{ 'https://www.example.com' | isHttps }}</p>

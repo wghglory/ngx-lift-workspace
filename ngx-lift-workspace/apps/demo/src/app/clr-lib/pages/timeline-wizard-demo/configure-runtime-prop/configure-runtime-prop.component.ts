@@ -3,11 +3,12 @@ import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular
 import {ClarityModule} from '@clr/angular';
 import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
 
-type RuntimePropStepData = {appProperties: Array<{key: string; value: string}>};
+type RuntimePropStepData = {
+  appProperties: Array<{key: string; value: string}>;
+};
 
 @Component({
   selector: 'app-configure-runtime-prop',
-  standalone: true,
   imports: [ClarityModule, ReactiveFormsModule, KeyValueInputsComponent],
   templateUrl: './configure-runtime-prop.component.html',
   styleUrls: ['./configure-runtime-prop.component.scss'],

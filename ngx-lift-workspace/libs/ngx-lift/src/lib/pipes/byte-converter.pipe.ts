@@ -32,7 +32,6 @@ import {inject, LOCALE_ID, Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({
   name: 'byteConverter',
-  standalone: true,
 })
 export class ByteConverterPipe implements PipeTransform {
   private locale = inject<string>(LOCALE_ID);
@@ -66,7 +65,9 @@ export class ByteConverterPipe implements PipeTransform {
   }
 
   private formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.locale, {maximumFractionDigits: 2}).format(value);
+    return new Intl.NumberFormat(this.locale, {
+      maximumFractionDigits: 2,
+    }).format(value);
   }
 }
 

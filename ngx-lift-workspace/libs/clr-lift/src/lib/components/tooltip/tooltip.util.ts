@@ -5,15 +5,9 @@
  * @param {string} tooltipClass - The class of the tooltip.
  * @returns {{ x: number; y: number }} The x and y coordinates for the tooltip (arrow origin).
  */
-export function getTooltipCoords(
-  triggerElement: HTMLElement,
-  tooltipClass: string,
-) {
-  if (
-    !triggerElement ||
-    typeof triggerElement.getBoundingClientRect !== 'function'
-  ) {
-    return { x: 0, y: 0 };
+export function getTooltipCoords(triggerElement: HTMLElement, tooltipClass: string) {
+  if (!triggerElement || typeof triggerElement.getBoundingClientRect !== 'function') {
+    return {x: 0, y: 0};
   }
 
   const rect = triggerElement.getBoundingClientRect();
@@ -41,7 +35,7 @@ export function getTooltipCoords(
       y: rect.top + rect.height / 2,
     };
   } else {
-    return { x: rect.left, y: rect.top };
+    return {x: rect.left, y: rect.top};
   }
 }
 
@@ -53,9 +47,7 @@ export function getTooltipCoords(
  */
 export function isElementClickable(el: HTMLElement) {
   return (
-    el.tagName.toLowerCase() === 'button' ||
-    el.tagName.toLowerCase() === 'a' ||
-    el.getAttribute('role') === 'button'
+    el.tagName.toLowerCase() === 'button' || el.tagName.toLowerCase() === 'a' || el.getAttribute('role') === 'button'
   );
 }
 
@@ -66,10 +58,7 @@ export function isElementClickable(el: HTMLElement) {
  * @param {HTMLCollection} collection - The collection to check against.
  * @returns {boolean} True if the element is inside the collection, otherwise false.
  */
-export function isElementInsideCollection(
-  el: HTMLElement,
-  collection: HTMLCollection,
-) {
+export function isElementInsideCollection(el: HTMLElement, collection: HTMLCollection) {
   return Array.from(collection).some((element) => element.contains(el));
 }
 
@@ -80,15 +69,9 @@ export function isElementInsideCollection(
  * @param {HTMLElement|Window} [referenceElement=window] - The reference element for collision detection. Defaults to the window.
  * @returns {{ left: boolean; right: boolean; top: boolean; bottom: boolean }} Object indicating which edges are colliding.
  */
-export function collisionDetection(
-  targetElement: HTMLElement,
-  referenceElement: HTMLElement | Window = window,
-) {
-  if (
-    !targetElement ||
-    typeof targetElement.getBoundingClientRect !== 'function'
-  ) {
-    return { left: false, right: false, top: false, bottom: false };
+export function collisionDetection(targetElement: HTMLElement, referenceElement: HTMLElement | Window = window) {
+  if (!targetElement || typeof targetElement.getBoundingClientRect !== 'function') {
+    return {left: false, right: false, top: false, bottom: false};
   }
 
   const elementRect = targetElement.getBoundingClientRect();
@@ -100,8 +83,7 @@ export function collisionDetection(
           right: window.innerWidth,
           bottom: window.innerHeight,
         }
-      : referenceElement &&
-          typeof referenceElement.getBoundingClientRect === 'function'
+      : referenceElement && typeof referenceElement.getBoundingClientRect === 'function'
         ? referenceElement.getBoundingClientRect()
         : {
             top: 0,
@@ -133,5 +115,5 @@ export function collisionDetection(
     bottom = true;
   }
 
-  return { left, right, top, bottom };
+  return {left, right, top, bottom};
 }

@@ -6,7 +6,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-byte-converter-pipe',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent],
   templateUrl: './byte-converter-pipe.component.html',
   styleUrl: './byte-converter-pipe.component.scss',
@@ -17,7 +16,6 @@ export class ByteConverterPipeComponent {
 import {ByteConverterPipe} from 'ngx-lift';
 
 @Component({
-  standalone: true,
   imports: [ByteConverterPipe],
   template: \`
     <p>{{ 104.89 | byteConverter }}</p>

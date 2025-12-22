@@ -1,12 +1,12 @@
-import { TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import {TestBed} from '@angular/core/testing';
+import {vi} from 'vitest';
 
-import { TranslationService } from '../services/translation.service';
-import { TranslatePipe } from './translate.pipe';
+import {TranslationService} from '../services/translation.service';
+import {TranslatePipe} from './translate.pipe';
 
 describe('TranslatePipe', () => {
   let pipe: TranslatePipe;
-  let translationServiceMock: { translate: ReturnType<typeof vi.fn> };
+  let translationServiceMock: {translate: ReturnType<typeof vi.fn>};
 
   beforeEach(() => {
     // Create a mock TranslationService
@@ -15,10 +15,7 @@ describe('TranslatePipe', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        TranslatePipe,
-        { provide: TranslationService, useValue: translationServiceMock },
-      ],
+      providers: [TranslatePipe, {provide: TranslationService, useValue: translationServiceMock}],
     });
 
     // Get an instance of the pipe and inject the mock service

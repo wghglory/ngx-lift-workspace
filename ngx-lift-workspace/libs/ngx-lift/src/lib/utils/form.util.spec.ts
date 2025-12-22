@@ -12,7 +12,6 @@ import {ifAsyncValidator, ifValidator} from './form.util';
       <input formControlName="testControl" />
     </form>
   `,
-  standalone: true,
   imports: [ReactiveFormsModule],
 })
 class TestComponent {

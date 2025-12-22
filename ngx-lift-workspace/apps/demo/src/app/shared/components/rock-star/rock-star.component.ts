@@ -7,7 +7,6 @@ import {of, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-rock-star',
-  standalone: true,
   imports: [CommonModule, AlertComponent, SpinnerComponent],
   templateUrl: './rock-star.component.html',
   styleUrl: './rock-star.component.scss',
@@ -23,7 +22,10 @@ export class RockStarComponent {
     switchMapWithAsyncState(() => this.http.get<{name: string}>(`https://jsonplaceholder.typicode.com/users/1`)),
   );
 
-  vm$ = combineLatestEager({today: this.today$, rockStarState: this.rockStarState$});
+  vm$ = combineLatestEager({
+    today: this.today$,
+    rockStarState: this.rockStarState$,
+  });
 
   showRockStar() {
     this.showStarAction.next();

@@ -12,7 +12,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-switch-map-with-async-state',
-  standalone: true,
   imports: [ClarityModule, AlertComponent, PageContainerComponent, CodeBlockComponent, FilterUsersComponent],
   templateUrl: './switch-map-with-async-state.component.html',
   styleUrl: './switch-map-with-async-state.component.scss',

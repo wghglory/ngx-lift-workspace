@@ -1,12 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
-import { vi } from 'vitest';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {of} from 'rxjs';
+import {vi} from 'vitest';
 
-import { ToastService } from './toast.service';
-import { CreatedToast } from './toast.type';
-import { ToastContainerComponent } from './toast-container.component';
+import {ToastService} from './toast.service';
+import {CreatedToast} from './toast.type';
+import {ToastContainerComponent} from './toast-container.component';
 
 describe('ToastContainerComponent', () => {
   let component: ToastContainerComponent;
@@ -21,7 +21,7 @@ describe('ToastContainerComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [ToastContainerComponent, NoopAnimationsModule],
-      providers: [{ provide: ToastService, useValue: spy }],
+      providers: [{provide: ToastService, useValue: spy}],
     });
 
     fixture = TestBed.createComponent(ToastContainerComponent);
@@ -36,8 +36,7 @@ describe('ToastContainerComponent', () => {
     fixture.componentRef.setInput('topOffset', 10);
     fixture.detectChanges();
 
-    const element =
-      fixture.debugElement.nativeElement.querySelector('.toast-container');
+    const element = fixture.debugElement.nativeElement.querySelector('.toast-container');
     const elementHost = element.parentNode;
     expect(elementHost.style.top).toBe('70px'); // 60px (default) + 10px
   });

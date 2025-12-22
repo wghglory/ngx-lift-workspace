@@ -1,10 +1,10 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
 
-import { ComputedAsyncComponent } from './computed-async.component';
+import {ComputedAsyncComponent} from './computed-async.component';
 
 describe('ComputedAsyncComponent', () => {
   let component: ComputedAsyncComponent;
@@ -13,12 +13,7 @@ describe('ComputedAsyncComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ComputedAsyncComponent],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([]),
-        provideNoopAnimations(),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ComputedAsyncComponent);

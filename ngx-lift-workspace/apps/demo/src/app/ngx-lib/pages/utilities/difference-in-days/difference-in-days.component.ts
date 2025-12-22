@@ -6,7 +6,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-difference-in-days',
-  standalone: true,
   imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './difference-in-days.component.html',
   styleUrl: './difference-in-days.component.scss',

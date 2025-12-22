@@ -8,7 +8,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-url',
-  standalone: true,
   imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent, RouterLink],
   templateUrl: './url.component.html',
   styleUrl: './url.component.scss',

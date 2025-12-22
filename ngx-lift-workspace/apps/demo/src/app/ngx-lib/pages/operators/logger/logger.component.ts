@@ -8,7 +8,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-logger',
-  standalone: true,
   imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './logger.component.html',
   styleUrl: './logger.component.scss',

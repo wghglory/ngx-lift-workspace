@@ -8,7 +8,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-inject-params',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, CalloutComponent],
   templateUrl: './inject-params.component.html',
   styleUrl: './inject-params.component.scss',
@@ -25,7 +24,10 @@ export class InjectParamsComponent {
   userId: Signal<string | null> = injectParams('id');
 
   // returns a signal with the value of the id param, initialValue is 1
-  id: Signal<number> = injectParams('id', {transform: numberAttribute, initialValue: 1});
+  id: Signal<number> = injectParams('id', {
+    transform: numberAttribute,
+    initialValue: 1,
+  });
 
   // pass a transform function directly
   idByTransformFn = injectParams((params) => params['id'] as string);

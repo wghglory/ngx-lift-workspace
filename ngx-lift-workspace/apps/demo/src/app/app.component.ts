@@ -28,7 +28,6 @@ ClarityIcons.addIcons([
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     RouterOutlet,
     RouterLink,

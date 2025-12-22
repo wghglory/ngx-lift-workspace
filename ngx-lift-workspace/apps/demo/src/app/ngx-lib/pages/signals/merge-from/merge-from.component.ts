@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-merge-from',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
   templateUrl: './merge-from.component.html',
   styleUrl: './merge-from.component.scss',

@@ -1,11 +1,8 @@
 import '@angular/compiler';
 import '@analogjs/vitest-angular/setup-zone';
 
-import {
-  BrowserTestingModule,
-  platformBrowserTesting,
-} from '@angular/platform-browser/testing';
-import { getTestBed } from '@angular/core/testing';
+import {BrowserTestingModule, platformBrowserTesting} from '@angular/platform-browser/testing';
+import {getTestBed} from '@angular/core/testing';
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
@@ -42,7 +39,4 @@ global.IntersectionObserver = class IntersectionObserver {
   thresholds = [];
 } as typeof IntersectionObserver;
 
-getTestBed().initTestEnvironment(
-  BrowserTestingModule,
-  platformBrowserTesting(),
-);
+getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());

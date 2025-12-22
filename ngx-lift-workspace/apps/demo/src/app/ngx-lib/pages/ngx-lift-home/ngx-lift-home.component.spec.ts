@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SvgIconRegistryService, SvgLoader } from 'angular-svg-icon';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {SvgIconRegistryService, SvgLoader} from 'angular-svg-icon';
 
-import { NgxLiftHomeComponent } from './ngx-lift-home.component';
+import {NgxLiftHomeComponent} from './ngx-lift-home.component';
 
 describe('NgxLiftHomeComponent', () => {
   let component: NgxLiftHomeComponent;

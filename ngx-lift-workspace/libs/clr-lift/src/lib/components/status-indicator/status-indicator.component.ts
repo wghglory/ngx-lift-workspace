@@ -28,7 +28,6 @@ ClarityIcons.addIcons(
 
 @Component({
   selector: 'cll-status-indicator',
-  standalone: true,
   imports: [CommonModule, ClarityModule, TranslatePipe, TooltipModule],
   templateUrl: './status-indicator.component.html',
   styleUrls: ['./status-indicator.component.scss'],

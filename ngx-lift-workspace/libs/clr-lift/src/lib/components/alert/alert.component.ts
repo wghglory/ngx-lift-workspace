@@ -8,7 +8,6 @@ import {AlertType} from '../alerts/alert.type';
   selector: 'cll-alert',
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss',
-  standalone: true,
   imports: [ClarityModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

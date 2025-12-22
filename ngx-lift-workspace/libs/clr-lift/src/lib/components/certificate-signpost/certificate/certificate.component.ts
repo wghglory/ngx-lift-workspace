@@ -10,7 +10,6 @@ import {CertificateStatus} from '../certificate.model';
 
 @Component({
   selector: 'cll-certificate',
-  standalone: true,
   imports: [ClarityModule, TranslatePipe, CommonModule],
   templateUrl: './certificate.component.html',
   styleUrls: ['./certificate.component.scss'],

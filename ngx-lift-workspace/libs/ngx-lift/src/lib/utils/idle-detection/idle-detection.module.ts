@@ -6,9 +6,7 @@ import {IdleDetectionConfig, provideIdleDetectionConfig} from './idle-detection.
  * Idle detection module.
  * @deprecated use provideIdleDetectionConfig(config: IdleDetectionConfig) instead
  */
-@NgModule({
-  imports: [],
-})
+@NgModule({})
 export class IdleDetectionModule {
   static forRoot(config: IdleDetectionConfig): ModuleWithProviders<IdleDetectionModule> {
     return {

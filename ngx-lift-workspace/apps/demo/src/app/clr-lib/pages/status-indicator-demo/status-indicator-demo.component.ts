@@ -6,7 +6,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-status-indicator-demo',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent, StatusIndicatorComponent],
   templateUrl: './status-indicator-demo.component.html',
   styleUrl: './status-indicator-demo.component.scss',

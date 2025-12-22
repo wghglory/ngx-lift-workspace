@@ -29,7 +29,6 @@ describe('CalloutComponent', () => {
       <div id="content">Test Content</div>
     </cll-callout>
   `,
-  standalone: true,
   imports: [CalloutComponent],
 })
 class TestHostComponent {}

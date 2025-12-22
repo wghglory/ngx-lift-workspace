@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IdleDetectionService } from 'ngx-lift';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {IdleDetectionService} from 'ngx-lift';
 
-import { TranslationService } from '../../services/translation.service';
-import { MockTranslationService } from '../../services/translation.service.mock';
-import { IdleDetectionComponent } from './idle-detection.component';
+import {TranslationService} from '../../services/translation.service';
+import {MockTranslationService} from '../../services/translation.service.mock';
+import {IdleDetectionComponent} from './idle-detection.component';
 
 describe('IdleDetectionComponent', () => {
   let component: IdleDetectionComponent;
@@ -12,10 +12,7 @@ describe('IdleDetectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IdleDetectionComponent],
-      providers: [
-        IdleDetectionService,
-        { provide: TranslationService, useClass: MockTranslationService },
-      ],
+      providers: [IdleDetectionService, {provide: TranslationService, useClass: MockTranslationService}],
     }).compileComponents();
 
     fixture = TestBed.createComponent(IdleDetectionComponent);

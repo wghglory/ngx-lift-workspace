@@ -1,4 +1,3 @@
- 
 // This directive is used to position the tooltip automatically. Now it's not being used.
 import {AfterViewInit, Directive, ElementRef, inject} from '@angular/core';
 
@@ -6,7 +5,6 @@ import {collisionDetection} from './tooltip.util';
 
 @Directive({
   selector: '[cllPositioningTooltip]',
-  standalone: true,
 })
 export class PositioningTooltipDirective implements AfterViewInit {
   private tooltipContainerElement = inject(ElementRef);

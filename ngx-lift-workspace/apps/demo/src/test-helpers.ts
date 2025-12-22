@@ -1,16 +1,13 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
-import { SvgIconRegistryService } from 'angular-svg-icon';
+import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
+import {provideRouter} from '@angular/router';
+import {SvgIconRegistryService} from 'angular-svg-icon';
 
 /**
  * Common test providers for components that need HTTP client
  */
-export const provideTestHttpClient = () => [
-  provideHttpClient(),
-  provideHttpClientTesting(),
-];
+export const provideTestHttpClient = () => [provideHttpClient(), provideHttpClientTesting()];
 
 /**
  * Common test providers for components that need animations (no-op for unit tests)

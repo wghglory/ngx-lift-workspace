@@ -12,10 +12,7 @@ describe('CertificateSignpostComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CertificateSignpostComponent],
-      providers: [
-        {provide: TranslationService, useClass: MockTranslationService},
-        CertificateService,
-      ],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}, CertificateService],
     });
     fixture = TestBed.createComponent(CertificateSignpostComponent);
     component = fixture.componentInstance;

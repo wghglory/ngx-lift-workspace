@@ -11,7 +11,6 @@ export interface MaskOptions {
 
 @Pipe({
   name: 'mask',
-  standalone: true,
 })
 export class MaskPipe implements PipeTransform {
   /**

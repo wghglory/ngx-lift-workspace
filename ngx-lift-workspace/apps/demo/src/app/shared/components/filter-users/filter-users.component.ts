@@ -11,7 +11,6 @@ import {UserCardComponent} from '../user-card/user-card.component';
 
 @Component({
   selector: 'app-filter-users',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ClarityModule, SpinnerComponent, AlertComponent, UserCardComponent],
   templateUrl: './filter-users.component.html',
   styleUrl: './filter-users.component.scss',

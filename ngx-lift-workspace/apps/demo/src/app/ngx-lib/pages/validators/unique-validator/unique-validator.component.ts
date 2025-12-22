@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-unique-validator',
-  standalone: true,
   imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
   templateUrl: './unique-validator.component.html',
   styleUrl: './unique-validator.component.scss',

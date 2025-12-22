@@ -9,7 +9,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-url-validator',
-  standalone: true,
   imports: [PageContainerComponent, ClarityModule, ReactiveFormsModule, CodeBlockComponent],
   templateUrl: './url-validator.component.html',
   styleUrl: './url-validator.component.scss',
@@ -25,7 +24,6 @@ export class UrlValidatorComponent {
 import {httpsValidator, urlValidator} from 'ngx-lift';
 
 @Component({
-  standalone: true,
   imports: [ReactiveFormsModule],
   template: \`
     <form [formGroup]="form">

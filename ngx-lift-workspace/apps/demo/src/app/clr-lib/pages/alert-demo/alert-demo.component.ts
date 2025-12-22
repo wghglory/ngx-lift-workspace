@@ -8,7 +8,6 @@ import {CodeBlockComponent} from './../../../shared/components/code-block/code-b
 
 @Component({
   selector: 'app-alert-demo',
-  standalone: true,
   imports: [AlertComponent, PageContainerComponent, TooltipModule, CodeBlockComponent, ClarityModule],
   templateUrl: './alert-demo.component.html',
   styleUrl: './alert-demo.component.scss',

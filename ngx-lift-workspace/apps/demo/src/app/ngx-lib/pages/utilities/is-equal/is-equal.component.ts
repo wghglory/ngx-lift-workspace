@@ -6,7 +6,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-is-equal',
-  standalone: true,
   imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './is-equal.component.html',
   styleUrl: './is-equal.component.scss',

@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ActivatedRoute, provideRouter} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
 
-import { InjectParamsComponent } from './inject-params.component';
+import {InjectParamsComponent} from './inject-params.component';
 
 describe('InjectParamsComponent', () => {
   let component: InjectParamsComponent;
@@ -17,7 +17,7 @@ describe('InjectParamsComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { params: {} },
+            snapshot: {params: {}},
             params: paramsSubject.asObservable(),
           },
         },

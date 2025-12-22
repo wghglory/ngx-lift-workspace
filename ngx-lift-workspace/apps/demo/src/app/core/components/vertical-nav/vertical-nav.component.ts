@@ -8,7 +8,6 @@ import {clrLiftNavConfig, ngxLiftNavConfig} from './vertical-nav.const';
 
 @Component({
   selector: 'app-vertical-nav',
-  standalone: true,
   imports: [ClarityModule, RouterLink, RouterLinkActive],
   templateUrl: './vertical-nav.component.html',
   styleUrl: './vertical-nav.component.scss',

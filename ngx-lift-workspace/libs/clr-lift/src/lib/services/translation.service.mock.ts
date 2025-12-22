@@ -6,10 +6,7 @@ export class MockTranslationService {
     return 'TranslatedText';
   }
 
-  loadTranslationsForComponent(
-    _componentKey: string,
-    _translationsToAdd: Record<string, Record<string, string>>,
-  ) {
+  loadTranslationsForComponent(_componentKey: string, _translationsToAdd: Record<string, Record<string, string>>) {
     // Mock implementation
   }
 }

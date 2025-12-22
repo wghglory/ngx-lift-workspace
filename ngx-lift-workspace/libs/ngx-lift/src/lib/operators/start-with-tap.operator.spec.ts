@@ -40,9 +40,7 @@ describe('startWithTap', () => {
       observer.error(error);
     });
 
-    await expect(
-      firstValueFrom(source$.pipe(startWithTap(callbackSpy))),
-    ).rejects.toThrow('Test Error');
+    await expect(firstValueFrom(source$.pipe(startWithTap(callbackSpy)))).rejects.toThrow('Test Error');
     expect(callbackSpy).toHaveBeenCalled();
   });
 });

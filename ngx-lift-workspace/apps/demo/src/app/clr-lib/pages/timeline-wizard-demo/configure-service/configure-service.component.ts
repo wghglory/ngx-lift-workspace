@@ -7,7 +7,6 @@ import {Deployment} from '../deployment.type';
 
 @Component({
   selector: 'app-configure-service',
-  standalone: true,
   imports: [ClarityModule, ReactiveFormsModule],
   templateUrl: './configure-service.component.html',
   styleUrl: './configure-service.component.scss',

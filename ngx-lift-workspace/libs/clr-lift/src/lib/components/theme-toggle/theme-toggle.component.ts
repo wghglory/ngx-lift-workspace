@@ -12,7 +12,6 @@ ClarityIcons.addIcons(sunIcon);
 
 @Component({
   selector: 'cll-theme-toggle',
-  standalone: true,
   imports: [ClarityModule],
   templateUrl: './theme-toggle.component.html',
   styleUrl: './theme-toggle.component.scss',

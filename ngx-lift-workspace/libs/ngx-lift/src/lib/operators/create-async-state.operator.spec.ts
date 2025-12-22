@@ -1,14 +1,14 @@
-import { last, lastValueFrom, of, takeLast, throwError } from 'rxjs';
-import { vi } from 'vitest';
+import {last, lastValueFrom, of, takeLast, throwError} from 'rxjs';
+import {vi} from 'vitest';
 
-import { createAsyncState } from './create-async-state.operator';
+import {createAsyncState} from './create-async-state.operator';
 
 describe('createAsyncState', () => {
   it('should transform Observable data to AsyncState with default loading state', async () => {
     const data$ = of('test').pipe(createAsyncState());
 
     const result = await lastValueFrom(data$.pipe(last()));
-    expect(result).toEqual({ loading: false, error: null, data: 'test' });
+    expect(result).toEqual({loading: false, error: null, data: 'test'});
   });
 
   it('should handle side effects using tap for successful data', async () => {
@@ -46,7 +46,7 @@ describe('createAsyncState', () => {
     );
 
     const result = await lastValueFrom(data$.pipe(takeLast(1)));
-    expect(result).toEqual({ loading: false, error: null, data: 'test' });
+    expect(result).toEqual({loading: false, error: null, data: 'test'});
   });
 
   it('should transform Observable data to AsyncState with custom loading state and catchError', async () => {
@@ -58,6 +58,6 @@ describe('createAsyncState', () => {
     );
 
     const result = await lastValueFrom(data$.pipe(last()));
-    expect(result).toEqual({ loading: false, error: 'Error!', data: null });
+    expect(result).toEqual({loading: false, error: 'Error!', data: null});
   });
 });

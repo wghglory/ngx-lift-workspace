@@ -12,11 +12,7 @@ describe('CreateAsyncStateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateAsyncStateComponent],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideNoopAnimations(),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideNoopAnimations()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateAsyncStateComponent);

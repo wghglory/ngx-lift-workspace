@@ -14,7 +14,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-tooltip-demo',
-  standalone: true,
   imports: [CodeBlockComponent, TooltipModule, CalloutComponent, PageContainerComponent],
   templateUrl: './tooltip-demo.component.html',
   styleUrl: './tooltip-demo.component.scss',
@@ -93,7 +92,9 @@ export class DemoComponent {
 
   ngOnInit() {
     const environmentInjector = this.appRef.injector;
-    this.alertComponentRef = createComponent(AlertComponent, {environmentInjector});
+    this.alertComponentRef = createComponent(AlertComponent, {
+      environmentInjector,
+    });
     this.alertComponentRef.setInput('content', 'I am from alert component');
     this.alertComponentRef.setInput('alertType', 'success');
     // this.alertComponentRef.hostView.detectChanges();

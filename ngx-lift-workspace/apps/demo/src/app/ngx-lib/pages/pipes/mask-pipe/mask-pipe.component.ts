@@ -7,7 +7,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-mask-pipe',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent],
   templateUrl: './mask-pipe.component.html',
   styleUrl: './mask-pipe.component.scss',

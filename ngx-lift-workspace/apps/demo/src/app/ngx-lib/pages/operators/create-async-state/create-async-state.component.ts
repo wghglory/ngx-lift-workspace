@@ -8,7 +8,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-create-async-state',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, UserCardListComponent],
   templateUrl: './create-async-state.component.html',
   styleUrl: './create-async-state.component.scss',
@@ -65,7 +64,6 @@ import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-user-detail',
-  standalone: true,
   imports: [SpinnerComponent, AlertComponent],
   templateUrl: './user-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

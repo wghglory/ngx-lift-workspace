@@ -31,7 +31,6 @@ describe(injectParams.name, () => {
 });
 
 @Component({
-  standalone: true,
   template: ``,
 })
 export class UserProfileComponent {

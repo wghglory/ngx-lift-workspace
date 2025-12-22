@@ -1,5 +1,5 @@
-import { AsyncPipe, NgClass } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+import {AsyncPipe, NgClass} from '@angular/common';
+import {HttpErrorResponse} from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -13,27 +13,19 @@ import {
   viewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { ClarityModule, ClrTimelineStepState } from '@clr/angular';
-import { createAsyncState, isEqual } from 'ngx-lift';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  Subject,
-  Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import {ClarityModule, ClrTimelineStepState} from '@clr/angular';
+import {createAsyncState, isEqual} from 'ngx-lift';
+import {debounceTime, distinctUntilChanged, Subject, Subscription, switchMap, tap} from 'rxjs';
 
-import { TranslatePipe } from '../../pipes/translate.pipe';
-import { TranslationService } from '../../services/translation.service';
-import { TimelineBaseComponent } from './timeline-base.component';
-import { TimelineStep } from './timeline-step.type';
-import { timelineWizardTranslations } from './timeline-wizard.l10n';
-import { TimelineWizardService } from './timeline-wizard.service';
+import {TranslatePipe} from '../../pipes/translate.pipe';
+import {TranslationService} from '../../services/translation.service';
+import {TimelineBaseComponent} from './timeline-base.component';
+import {TimelineStep} from './timeline-step.type';
+import {timelineWizardTranslations} from './timeline-wizard.l10n';
+import {TimelineWizardService} from './timeline-wizard.service';
 
 @Component({
   selector: 'cll-timeline-wizard',
-  standalone: true,
   imports: [ClarityModule, TranslatePipe, AsyncPipe, NgClass],
   providers: [TimelineWizardService],
   templateUrl: './timeline-wizard.component.html',
@@ -45,7 +37,7 @@ export class TimelineWizardComponent implements AfterViewInit {
   public timelineWizardService = inject(TimelineWizardService);
 
   // Dynamic component container
-  container = viewChild.required('container', { read: ViewContainerRef });
+  container = viewChild.required('container', {read: ViewContainerRef});
 
   /**
    * Controls whether to destroy step components when clicking prev/next buttons.
@@ -55,7 +47,7 @@ export class TimelineWizardComponent implements AfterViewInit {
   @Input() live = false;
   @Input() confirmButtonText = '';
 
-  @Input({ required: true }) set timelineSteps(value: TimelineStep[]) {
+  @Input({required: true}) set timelineSteps(value: TimelineStep[]) {
     this.timelineWizardService.steps = value;
   }
 
@@ -66,8 +58,7 @@ export class TimelineWizardComponent implements AfterViewInit {
   @Output() finished = new EventEmitter();
 
   // Step index as key, componentRef as value
-  private componentRefMap: Record<number, ComponentRef<TimelineBaseComponent>> =
-    {};
+  private componentRefMap: Record<number, ComponentRef<TimelineBaseComponent>> = {};
 
   private subscriptions: Subscription[] = [];
 
@@ -103,13 +94,8 @@ export class TimelineWizardComponent implements AfterViewInit {
   );
 
   constructor() {
-    this.translationService.loadTranslationsForComponent(
-      'timeline-wizard',
-      timelineWizardTranslations,
-    );
-    this.confirmButtonText = this.translationService.translate(
-      'timeline-wizard.confirm',
-    );
+    this.translationService.loadTranslationsForComponent('timeline-wizard', timelineWizardTranslations);
+    this.confirmButtonText = this.translationService.translate('timeline-wizard.confirm');
   }
 
   get currentComponentRef() {
@@ -117,9 +103,7 @@ export class TimelineWizardComponent implements AfterViewInit {
   }
 
   get currentStepFormInvalid() {
-    return (
-      !this.currentComponentRef || this.currentComponentRef.instance.stepInvalid
-    );
+    return !this.currentComponentRef || this.currentComponentRef.instance.stepInvalid;
   }
 
   // Wait for the container to exist in the DOM
@@ -138,9 +122,7 @@ export class TimelineWizardComponent implements AfterViewInit {
     }
 
     // Create dynamic component
-    const componentRef = this.container().createComponent(
-      this.timelineWizardService.currentStep.component,
-    );
+    const componentRef = this.container().createComponent(this.timelineWizardService.currentStep.component);
 
     // Save current component ref to know if the form is valid
     this.componentRefMap = {
@@ -173,27 +155,25 @@ export class TimelineWizardComponent implements AfterViewInit {
 
     // Change data source, update timeline; this should execute first before other logic
     // it change CURRENT, which affect currentStepIndex!
-    this.timelineWizardService.steps = this.timelineWizardService.steps.map(
-      (step, index) => {
-        // Change current step as "not started"
-        if (index === this.timelineWizardService.currentStepIndex) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.NOT_STARTED,
-            description: '', // Clear error
-          };
-        }
-        // Move to prev step, set it as "current"
-        else if (index === this.timelineWizardService.currentStepIndex - 1) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.CURRENT,
-          };
-        } else {
-          return step;
-        }
-      },
-    );
+    this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
+      // Change current step as "not started"
+      if (index === this.timelineWizardService.currentStepIndex) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.NOT_STARTED,
+          description: '', // Clear error
+        };
+      }
+      // Move to prev step, set it as "current"
+      else if (index === this.timelineWizardService.currentStepIndex - 1) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.CURRENT,
+        };
+      } else {
+        return step;
+      }
+    });
 
     // Update dynamic components; note that currentStepIndex was changed above.
     // If live is true, change display of old and new components.
@@ -203,12 +183,10 @@ export class TimelineWizardComponent implements AfterViewInit {
       // Accessing DOM elements using this.container.get() can be expensive in terms of performance, especially if the DOM is large or complex.
       // const currentElement = this.container.get(this.currentStepIndex + 1) as EmbeddedViewRef<TimelineBaseComponent>;
       // const prevElement = this.container.get(this.currentStepIndex) as EmbeddedViewRef<TimelineBaseComponent>;
-      const currentElement = this.componentRefMap[
-        this.timelineWizardService.currentStepIndex + 1
-      ].hostView as EmbeddedViewRef<TimelineBaseComponent>;
-      const prevElement = this.componentRefMap[
-        this.timelineWizardService.currentStepIndex
-      ].hostView as EmbeddedViewRef<TimelineBaseComponent>;
+      const currentElement = this.componentRefMap[this.timelineWizardService.currentStepIndex + 1]
+        .hostView as EmbeddedViewRef<TimelineBaseComponent>;
+      const prevElement = this.componentRefMap[this.timelineWizardService.currentStepIndex]
+        .hostView as EmbeddedViewRef<TimelineBaseComponent>;
 
       currentElement.rootNodes[0].style.display = 'none';
       prevElement.rootNodes[0].style.display = 'block';
@@ -230,45 +208,32 @@ export class TimelineWizardComponent implements AfterViewInit {
       const form = cmpRef.instance.form;
       // defer patchValue, wait for component's form initialization
       setTimeout(
-        () =>
-          form.patchValue(
-            cmpRef.instance.dataToFormValue(
-              this.timelineWizardService.currentStep.data,
-            ),
-          ),
+        () => form.patchValue(cmpRef.instance.dataToFormValue(this.timelineWizardService.currentStep.data)),
         // 1. execute
       );
 
       // hook form data into step data
       this.subscriptions.push(
         // 2. patchValue will pass dataToFormValue result
-        cmpRef.instance.form.valueChanges
-          .pipe(debounceTime(300), distinctUntilChanged(isEqual))
-          .subscribe(() => {
-            this.timelineWizardService.steps =
-              this.timelineWizardService.steps.map((step, index) => {
-                if (index === this.timelineWizardService.currentStepIndex) {
-                  return {
-                    ...step,
-                    data: cmpRef.instance.formValueToData(), // 3. simple step form value is the emitted data (form shape is the data model shape). For complex form like FormArray, need the step component to override formValueToData function
-                  };
-                } else {
-                  return step;
-                }
-              });
-          }),
+        cmpRef.instance.form.valueChanges.pipe(debounceTime(300), distinctUntilChanged(isEqual)).subscribe(() => {
+          this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
+            if (index === this.timelineWizardService.currentStepIndex) {
+              return {
+                ...step,
+                data: cmpRef.instance.formValueToData(), // 3. simple step form value is the emitted data (form shape is the data model shape). For complex form like FormArray, need the step component to override formValueToData function
+              };
+            } else {
+              return step;
+            }
+          });
+        }),
       );
     }
 
     cmpRef.setInput('allStepsData', this.timelineWizardService.allStepsData);
 
     if (this.timelineWizardService.currentStep.data) {
-      cmpRef.setInput(
-        'currentStepData',
-        cmpRef.instance.dataToFormValue(
-          this.timelineWizardService.currentStep.data,
-        ),
-      );
+      cmpRef.setInput('currentStepData', cmpRef.instance.dataToFormValue(this.timelineWizardService.currentStep.data));
     }
   }
 
@@ -276,19 +241,17 @@ export class TimelineWizardComponent implements AfterViewInit {
    *  when clicking next/finish button, clear error (description = ''), set processing state
    */
   private beforeAsyncOperation() {
-    this.timelineWizardService.steps = this.timelineWizardService.steps.map(
-      (step, index) => {
-        if (index === this.timelineWizardService.currentStepIndex) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.PROCESSING,
-            description: '',
-          };
-        } else {
-          return step;
-        }
-      },
-    );
+    this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
+      if (index === this.timelineWizardService.currentStepIndex) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.PROCESSING,
+          description: '',
+        };
+      } else {
+        return step;
+      }
+    });
   }
 
   /**
@@ -296,37 +259,33 @@ export class TimelineWizardComponent implements AfterViewInit {
    * @param err
    */
   private setStepAsError(err: HttpErrorResponse) {
-    this.timelineWizardService.steps = this.timelineWizardService.steps.map(
-      (step, index) => {
-        if (index === this.timelineWizardService.currentStepIndex) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.ERROR,
-            description: err.message,
-          };
-        } else {
-          return step;
-        }
-      },
-    );
+    this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
+      if (index === this.timelineWizardService.currentStepIndex) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.ERROR,
+          description: err.message,
+        };
+      } else {
+        return step;
+      }
+    });
   }
 
   private finish() {
     this.finished.emit();
 
-    this.timelineWizardService.steps = this.timelineWizardService.steps.map(
-      (step, index) => {
-        // Change current step as "success"
-        if (index === this.timelineWizardService.currentStepIndex) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.SUCCESS,
-          };
-        } else {
-          return step;
-        }
-      },
-    );
+    this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
+      // Change current step as "success"
+      if (index === this.timelineWizardService.currentStepIndex) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.SUCCESS,
+        };
+      } else {
+        return step;
+      }
+    });
   }
 
   /**
@@ -347,26 +306,24 @@ export class TimelineWizardComponent implements AfterViewInit {
      * change data source, update timeline, this should execute first before other logic,
      * because it change CURRENT, which affect currentStepIndex
      */
-    this.timelineWizardService.steps = this.timelineWizardService.steps.map(
-      (step, index) => {
-        // Change current step as "success"
-        if (index === this.timelineWizardService.currentStepIndex) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.SUCCESS,
-          };
-        }
-        // Move to next step, set it as "current"
-        else if (index === this.timelineWizardService.currentStepIndex + 1) {
-          return {
-            ...step,
-            state: ClrTimelineStepState.CURRENT,
-          };
-        } else {
-          return step;
-        }
-      },
-    );
+    this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
+      // Change current step as "success"
+      if (index === this.timelineWizardService.currentStepIndex) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.SUCCESS,
+        };
+      }
+      // Move to next step, set it as "current"
+      else if (index === this.timelineWizardService.currentStepIndex + 1) {
+        return {
+          ...step,
+          state: ClrTimelineStepState.CURRENT,
+        };
+      } else {
+        return step;
+      }
+    });
 
     /**
      * update dynamic components. Note currentStepIndex was changed above.
@@ -377,12 +334,10 @@ export class TimelineWizardComponent implements AfterViewInit {
       //  Accessing DOM elements using this.container.get() can be expensive in terms of performance, especially if the DOM is large or complex.
       // const nextElement = this.container.get(this.currentStepIndex) as EmbeddedViewRef<TimelineBaseComponent>;
       // const currentElement = this.container.get(this.currentStepIndex - 1) as EmbeddedViewRef<TimelineBaseComponent>;
-      const nextElement = this.componentRefMap[
-        this.timelineWizardService.currentStepIndex
-      ]?.hostView as EmbeddedViewRef<TimelineBaseComponent>;
-      const currentElement = this.componentRefMap[
-        this.timelineWizardService.currentStepIndex - 1
-      ].hostView as EmbeddedViewRef<TimelineBaseComponent>;
+      const nextElement = this.componentRefMap[this.timelineWizardService.currentStepIndex]
+        ?.hostView as EmbeddedViewRef<TimelineBaseComponent>;
+      const currentElement = this.componentRefMap[this.timelineWizardService.currentStepIndex - 1]
+        .hostView as EmbeddedViewRef<TimelineBaseComponent>;
 
       currentElement.rootNodes[0].style.display = 'none';
 

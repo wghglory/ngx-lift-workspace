@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SvgIconRegistryService } from 'angular-svg-icon';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {SvgIconRegistryService} from 'angular-svg-icon';
 
-import { ClrLiftHomeComponent } from './clr-lift-home.component';
+import {ClrLiftHomeComponent} from './clr-lift-home.component';
 
 describe('ClrLiftHomeComponent', () => {
   let component: ClrLiftHomeComponent;

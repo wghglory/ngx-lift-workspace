@@ -4,7 +4,6 @@ import {range} from '../utils';
 
 @Pipe({
   name: 'range',
-  standalone: true,
 })
 export class RangePipe implements PipeTransform {
   transform(value: [number]): number[];

@@ -13,7 +13,6 @@ import {Deployment} from './deployment.type';
 
 @Component({
   selector: 'app-timeline-wizard-demo',
-  standalone: true,
   imports: [CodeBlockComponent, CalloutComponent, PageContainerComponent, TimelineWizardComponent, RouterLink],
   templateUrl: './timeline-wizard-demo.component.html',
   styleUrl: './timeline-wizard-demo.component.scss',
@@ -82,7 +81,6 @@ import {TimelineStep, TimelineWizardComponent} from 'clr-lift';
 import {Deployment} from './deployment.type';
 
 @Component({
-  standalone: true,
   imports: [TimelineWizardComponent],
   template: \`
     <cll-timeline-wizard
@@ -242,7 +240,6 @@ import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
 type RuntimePropStepData = {appProperties: Array<{key: string; value: string}>};
 
 @Component({
-  standalone: true,
   imports: [
     KeyValueInputsComponent,
     //...

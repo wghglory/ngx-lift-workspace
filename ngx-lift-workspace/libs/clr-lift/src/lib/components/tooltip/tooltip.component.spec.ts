@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { vi } from 'vitest';
+import {ComponentFixture, TestBed, fakeAsync, tick} from '@angular/core/testing';
+import {vi} from 'vitest';
 
-import { TooltipComponent } from './tooltip.component';
+import {TooltipComponent} from './tooltip.component';
 
 describe('TooltipComponent', () => {
   let component: TooltipComponent;
@@ -40,8 +40,8 @@ describe('TooltipComponent', () => {
 
     // Create a clickable element outside the tooltip
     const outsideElement = document.createElement('button');
-    const event = new MouseEvent('click', { bubbles: true });
-    Object.defineProperty(event, 'target', { value: outsideElement, writable: false });
+    const event = new MouseEvent('click', {bubbles: true});
+    Object.defineProperty(event, 'target', {value: outsideElement, writable: false});
 
     component.click(event);
 
@@ -61,8 +61,8 @@ describe('TooltipComponent', () => {
       },
     });
 
-    const event = new MouseEvent('click', { bubbles: true });
-    Object.defineProperty(event, 'target', { value: mockElement, writable: false });
+    const event = new MouseEvent('click', {bubbles: true});
+    Object.defineProperty(event, 'target', {value: mockElement, writable: false});
 
     component.click(event);
 
@@ -107,7 +107,7 @@ describe('TooltipComponent', () => {
   it('should handle null event target in click handler', () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
 
-    const event = { target: null } as unknown as MouseEvent;
+    const event = {target: null} as unknown as MouseEvent;
     component.click(event);
 
     expect(spy).not.toHaveBeenCalled();

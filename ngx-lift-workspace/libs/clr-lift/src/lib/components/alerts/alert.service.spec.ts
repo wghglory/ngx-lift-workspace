@@ -1,9 +1,9 @@
-import { TestBed } from '@angular/core/testing';
-import { DomSanitizer } from '@angular/platform-browser';
-import { vi } from 'vitest';
+import {TestBed} from '@angular/core/testing';
+import {DomSanitizer} from '@angular/platform-browser';
+import {vi} from 'vitest';
 
-import { AlertService } from './alert.service';
-import { Alert } from './alert.type';
+import {AlertService} from './alert.service';
+import {Alert} from './alert.type';
 
 describe('AlertService', () => {
   let service: AlertService;
@@ -14,7 +14,7 @@ describe('AlertService', () => {
       providers: [
         {
           provide: DomSanitizer,
-          useValue: { bypassSecurityTrustHtml: (html: string) => html },
+          useValue: {bypassSecurityTrustHtml: (html: string) => html},
         },
       ],
     });
@@ -27,7 +27,7 @@ describe('AlertService', () => {
   });
 
   it('should add and sanitize alert', () => {
-    const mockAlert: Alert = { content: '<strong>Test Alert</strong>' };
+    const mockAlert: Alert = {content: '<strong>Test Alert</strong>'};
 
     service.addAlert(mockAlert);
 
@@ -36,9 +36,7 @@ describe('AlertService', () => {
     expect(alerts.length).toBe(1);
 
     const addedAlert = alerts[0];
-    expect(addedAlert.content).toEqual(
-      sanitizer.bypassSecurityTrustHtml(mockAlert.content),
-    );
+    expect(addedAlert.content).toEqual(sanitizer.bypassSecurityTrustHtml(mockAlert.content));
   });
 
   it('should delete alert and unregister event', () => {

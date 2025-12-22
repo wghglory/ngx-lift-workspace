@@ -12,7 +12,6 @@ import {UserService} from '../../../../shared/services/user.service';
 
 @Component({
   selector: 'app-user-datagrid',
-  standalone: true,
   imports: [CommonModule, ClarityModule, AlertComponent],
   templateUrl: './user-datagrid.component.html',
   styleUrl: './user-datagrid.component.scss',

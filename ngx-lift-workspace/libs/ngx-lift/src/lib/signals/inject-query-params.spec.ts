@@ -6,7 +6,6 @@ import {RouterTestingHarness} from '@angular/router/testing';
 import {injectQueryParams} from './inject-query-params';
 
 @Component({
-  standalone: true,
   template: ``,
 })
 export class SearchComponent {

@@ -7,7 +7,6 @@ import {Deployment} from '../deployment.type';
 
 @Component({
   selector: 'app-configure-review',
-  standalone: true,
   imports: [KeyValuePipe],
   templateUrl: './configure-review.component.html',
   styleUrls: ['./configure-review.component.scss'],

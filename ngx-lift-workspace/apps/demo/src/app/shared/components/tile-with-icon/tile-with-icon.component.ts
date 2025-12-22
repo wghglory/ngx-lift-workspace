@@ -4,7 +4,6 @@ import {TileComponent} from '../tile/tile.component';
 
 @Component({
   selector: 'app-tile-with-icon',
-  standalone: true,
   imports: [TileComponent],
   templateUrl: './tile-with-icon.component.html',
   styleUrl: './tile-with-icon.component.scss',

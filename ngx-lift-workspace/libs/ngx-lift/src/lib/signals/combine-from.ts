@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  assertInInjectionContext,
-  computed,
-  Injector,
-  isSignal,
-  Signal,
-  untracked,
-} from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import {assertInInjectionContext, computed, Injector, isSignal, Signal, untracked} from '@angular/core';
+import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {
   combineLatest,
   distinctUntilChanged,
@@ -135,15 +128,10 @@ export function combineFrom<Input extends object, Output = Input>(
  * }
  * ```
  */
-export function combineFrom<Input = any, Output = Input>(
-  ...args: any[]
-): Signal<Output | null | undefined> {
+export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal<Output | null | undefined> {
   assertInInjectionContext(combineFrom);
 
-  const { normalizedSources, hasInitValue, operator, options } = normalizeArgs<
-    Input,
-    Output
-  >(args);
+  const {normalizedSources, hasInitValue, operator, options} = normalizeArgs<Input, Output>(args);
 
   const ret =
     hasInitValue && options?.initialValue !== undefined
@@ -174,9 +162,7 @@ function normalizeArgs<Input, Output>(
   const hasOperator = typeof args[1] === 'function';
 
   if (args.length === 3 && !hasOperator) {
-    throw new TypeError(
-      'combineFrom needs a pipe operator as the second argument',
-    );
+    throw new TypeError('combineFrom needs a pipe operator as the second argument');
   }
 
   // pass sources and options
@@ -223,5 +209,5 @@ function normalizeArgs<Input, Output>(
     (Array.isArray(sources) ? [] : {}) as any,
   );
 
-  return { normalizedSources, operator, hasInitValue, options };
+  return {normalizedSources, operator, hasInitValue, options};
 }

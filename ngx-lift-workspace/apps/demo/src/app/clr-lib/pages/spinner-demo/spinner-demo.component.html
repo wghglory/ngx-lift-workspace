@@ -1,40 +1,25 @@
 <cll-page-container [title]="'Spinner'" customClass="space-y-9">
   <section class="space-y-6">
-    <p>
-      A spinner is a visual indicator of an ongoing, user-initiated process.
-    </p>
+    <p>A spinner is a visual indicator of an ongoing, user-initiated process.</p>
 
     <p>Clarity has two types of spinners, each with its own use case:</p>
     <ul>
-      <li>
-        Page Spinners: For tracking the progress of an operation related to an
-        entire page.
-      </li>
-      <li>
-        Inline Spinners: For tracking the progress of an operation related to a
-        specific component.
-      </li>
+      <li>Page Spinners: For tracking the progress of an operation related to an entire page.</li>
+      <li>Inline Spinners: For tracking the progress of an operation related to a specific component.</li>
     </ul>
 
     <p>The spinner has below inputs:</p>
     <ul class="list-disc">
+      <li><code>size</code>: Determines the spinner size. Accepts 'lg' (default), 'md', or 'sm'.</li>
       <li>
-        <code>size</code>: Determines the spinner size. Accepts 'lg' (default),
-        'md', or 'sm'.
+        <code>center</code>: Centers the spinner as a block element (default). Pass <code>false</code> to disable
+        centering.
       </li>
       <li>
-        <code>center</code>: Centers the spinner as a block element (default).
-        Pass <code>false</code> to disable centering.
+        <code>inline</code>: Specifies whether the spinner should be displayed as an inline-block element. Useful for
+        aligning spinners within text or other inline elements.
       </li>
-      <li>
-        <code>inline</code>: Specifies whether the spinner should be displayed
-        as an inline-block element. Useful for aligning spinners within text or
-        other inline elements.
-      </li>
-      <li>
-        <code>customClass</code>: A string of additional CSS classes to apply to
-        the spinner.
-      </li>
+      <li><code>customClass</code>: A string of additional CSS classes to apply to the spinner.</li>
     </ul>
   </section>
 

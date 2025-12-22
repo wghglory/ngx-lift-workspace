@@ -11,7 +11,6 @@ import {UserService} from './../../../../shared/services/user.service';
 
 @Component({
   selector: 'app-combine-from',
-  standalone: true,
   imports: [
     ClarityModule,
     PageContainerComponent,

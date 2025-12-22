@@ -13,11 +13,14 @@ import {Toast} from './toast.type';
   styleUrls: ['./toast-container.component.scss'],
   animations: [
     trigger('toastContainer', [
-      transition(':enter', [query('@launchToast', [stagger(`${multiply(200)}ms`, animateChild())], {optional: true})]),
+      transition(':enter', [
+        query('@launchToast', [stagger(`${multiply(200)}ms`, animateChild())], {
+          optional: true,
+        }),
+      ]),
       transition(':leave', [query('@launchToast', [animateChild()], {optional: true})]),
     ]),
   ],
-  standalone: true,
   imports: [ToastComponent, CommonModule],
 })
 export class ToastContainerComponent {

@@ -5,5 +5,5 @@ import typescript from 'highlight.js/lib/languages/typescript';
 hljs.registerLanguage('typescript', typescript);
 
 export function highlight(code: string, language = 'typescript') {
-  return hljs.highlight(code.trim(), { language }).value;
+  return hljs.highlight(code.trim(), {language}).value;
 }

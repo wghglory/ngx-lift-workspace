@@ -10,7 +10,6 @@ import {idleDetectionTranslations} from './idle-detection.l10n';
 
 @Component({
   selector: 'cll-idle-detection',
-  standalone: true,
   imports: [ClarityModule, TranslatePipe, AsyncPipe],
   templateUrl: './idle-detection.component.html',
   styleUrl: './idle-detection.component.scss',

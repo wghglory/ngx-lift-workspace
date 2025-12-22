@@ -13,7 +13,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-computed-async',
-  standalone: true,
   imports: [
     ClarityModule,
     RouterLink,

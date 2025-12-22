@@ -6,7 +6,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-pick-by',
-  standalone: true,
   imports: [PageContainerComponent, CodeBlockComponent],
   templateUrl: './pick-by.component.html',
   styleUrl: './pick-by.component.scss',

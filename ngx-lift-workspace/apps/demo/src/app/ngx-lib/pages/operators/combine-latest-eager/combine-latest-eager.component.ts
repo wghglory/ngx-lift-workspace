@@ -8,7 +8,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-combine-latest-eager',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, RockStarComponent],
   templateUrl: './combine-latest-eager.component.html',
   styleUrl: './combine-latest-eager.component.scss',

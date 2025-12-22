@@ -5,7 +5,6 @@ import {ByteConverterPipe} from './byte-converter.pipe';
 
 @Component({
   template: `<div>{{ fileSize | byteConverter }}</div>`,
-  standalone: true,
   imports: [ByteConverterPipe],
   providers: [{provide: LOCALE_ID, useValue: 'en-US'}],
 })
@@ -85,7 +84,6 @@ describe('ByteConverterPipe', () => {
 
 @Component({
   template: `<div>{{ fileSize | byteConverter }}</div>`,
-  standalone: true,
   imports: [ByteConverterPipe],
   providers: [{provide: LOCALE_ID, useValue: 'zh-CN'}],
 })

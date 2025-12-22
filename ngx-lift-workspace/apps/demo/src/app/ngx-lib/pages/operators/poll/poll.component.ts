@@ -14,7 +14,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-poll',
-  standalone: true,
   imports: [CommonModule, ClarityModule, PageContainerComponent, CodeBlockComponent, AlertComponent, CalloutComponent],
   templateUrl: './poll.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -181,6 +180,10 @@ export class PollComponent {
   }
 
   scrollToElement(element: HTMLElement) {
-    element.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest',
+    });
   }
 }

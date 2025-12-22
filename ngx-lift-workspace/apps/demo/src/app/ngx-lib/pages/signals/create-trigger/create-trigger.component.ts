@@ -8,7 +8,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-create-trigger',
-  standalone: true,
   imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, CalloutComponent],
   templateUrl: './create-trigger.component.html',
   styleUrl: './create-trigger.component.scss',

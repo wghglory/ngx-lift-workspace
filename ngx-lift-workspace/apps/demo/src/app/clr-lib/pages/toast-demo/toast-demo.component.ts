@@ -6,7 +6,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-toast-demo',
-  standalone: true,
   imports: [CodeBlockComponent, PageContainerComponent],
   templateUrl: './toast-demo.component.html',
   styleUrl: './toast-demo.component.scss',
@@ -18,7 +17,6 @@ export class ToastDemoComponent {
   containerCode = highlight(`
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     // ... other modules or standalone components
     ToastContainerComponent,

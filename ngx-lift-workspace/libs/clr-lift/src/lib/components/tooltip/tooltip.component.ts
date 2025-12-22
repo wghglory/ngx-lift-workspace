@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { A11yModule } from '@angular/cdk/a11y';
-import { CommonModule } from '@angular/common';
+import {A11yModule} from '@angular/cdk/a11y';
+import {CommonModule} from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -19,12 +19,11 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 
-import { TooltipPosition } from './tooltip.model';
-import { isElementClickable, isElementInsideCollection } from './tooltip.util';
+import {TooltipPosition} from './tooltip.model';
+import {isElementClickable, isElementInsideCollection} from './tooltip.util';
 
 @Component({
   selector: 'cll-tooltip',
-  standalone: true,
   imports: [CommonModule, A11yModule],
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss'],
@@ -41,9 +40,7 @@ export class TooltipComponent {
 
   contentContext = input<Record<string, any>>();
 
-  @Input() set content(
-    c: string | TemplateRef<any> | ComponentRef<any> | Type<any>,
-  ) {
+  @Input() set content(c: string | TemplateRef<any> | ComponentRef<any> | Type<any>) {
     if (typeof c === 'string') {
       this.text = c;
     } else if (c instanceof TemplateRef) {
@@ -97,10 +94,7 @@ export class TooltipComponent {
     }
 
     // Close the tooltip if the user clicks the mouse outside the tooltip or the user clicks a clickable element inside the tooltip
-    if (
-      isElementClickable(target) ||
-      !isElementInsideCollection(target, this.tooltipChildren)
-    ) {
+    if (isElementClickable(target) || !isElementInsideCollection(target, this.tooltipChildren)) {
       this.closePopover.emit(true);
     }
   }

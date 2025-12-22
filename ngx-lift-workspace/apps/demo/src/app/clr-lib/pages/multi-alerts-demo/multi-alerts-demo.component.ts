@@ -6,7 +6,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-multi-alerts-demo',
-  standalone: true,
   imports: [AlertContainerComponent, PageContainerComponent, CodeBlockComponent],
   templateUrl: './multi-alerts-demo.component.html',
   styleUrl: './multi-alerts-demo.component.scss',
@@ -41,7 +40,10 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
   }
 
   addAlert() {
-    this.alertService.addAlert({content: `New alert added on ${new Date()}`, alertType: 'success'});
+    this.alertService.addAlert({
+      content: `New alert added on ${new Date()}`,
+      alertType: 'success',
+    });
   }
 
   clearAlerts() {
