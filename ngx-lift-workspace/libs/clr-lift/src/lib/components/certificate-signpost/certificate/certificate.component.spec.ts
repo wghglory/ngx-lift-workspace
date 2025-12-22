@@ -1,6 +1,9 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { pki } from 'node-forge';
 
-import {CertificateComponent} from './certificate.component';
+import { TranslationService } from '../../../services/translation.service';
+import { MockTranslationService } from '../../../services/translation.service.mock';
+import { CertificateComponent } from './certificate.component';
 
 describe('CertificateComponent', () => {
   let component: CertificateComponent;
@@ -9,31 +12,27 @@ describe('CertificateComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CertificateComponent],
+      providers: [
+        { provide: TranslationService, useClass: MockTranslationService },
+      ],
     });
     fixture = TestBed.createComponent(CertificateComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('certificate', {
-      validity: {
-        notBefore: new Date(),
-        notAfter: new Date(),
-      },
-      issuer: {
-        attributes: [{name: 'string', value: 'string'}],
-        hash: {md5: '', sha1: ''},
-      },
-      subject: {
-        attributes: [{name: 'string', value: 'string'}],
-        hash: {md5: '', sha1: ''},
-      },
-    });
+    const cert = pki.createCertificate();
+    cert.validity.notBefore = new Date();
+    cert.validity.notAfter = new Date();
+    cert.issuer.attributes = [{ name: 'string', value: 'string' }];
+    cert.subject.attributes = [{ name: 'string', value: 'string' }];
+
+    fixture.componentRef.setInput('certificate', cert);
     fixture.componentRef.setInput('certificateStatus', {
       labelText: 'string',
       labelClass: 'string',
       status: 'info',
       shape: 'error-standard',
     });
-    fixture.componentRef.setInput('hash', {md5: '', sha1: ''});
+    fixture.componentRef.setInput('hash', { md5: '', sha1: '' });
 
     fixture.detectChanges();
   });

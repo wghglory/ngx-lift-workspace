@@ -1,7 +1,7 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import {IdleDetectionConfig} from './idle-detection.config';
-import {IdleDetectionService} from './idle-detection.service';
+import { IdleDetectionConfig } from './idle-detection.config';
+import { IdleDetectionService } from './idle-detection.service';
 
 describe('IdleDetectionService', () => {
   let service: IdleDetectionService;
@@ -11,7 +11,10 @@ describe('IdleDetectionService', () => {
       providers: [IdleDetectionService],
     });
     service = TestBed.inject(IdleDetectionService);
-    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 1});
+    service.setConfig({
+      idleDurationInSeconds: 1,
+      timeoutDurationInSeconds: 1,
+    });
   });
 
   afterEach(() => {
@@ -27,14 +30,14 @@ describe('IdleDetectionService', () => {
     const event = new MouseEvent('mousemove');
     document.dispatchEvent(event);
     expect(service['idleTimer']).toBeDefined();
-    expect(service['isCountingDown']).toBeFalse();
+    expect(service['isCountingDown']).toBeFalsy();
   });
 
   it('should start countdown after idle end', (done) => {
     service.startWatching();
     setTimeout(
       () => {
-        expect(service['isCountingDown']).toBeTrue();
+        expect(service['isCountingDown']).toBeTruthy();
         done();
       },
       service['idleDuration'] * 1000 + 100,
@@ -46,13 +49,16 @@ describe('IdleDetectionService', () => {
     setTimeout(() => {
       const event = new MouseEvent('mousemove');
       document.dispatchEvent(event);
-      expect(service['isCountingDown']).toBeFalse();
+      expect(service['isCountingDown']).toBeFalsy();
       done();
     }, 3000);
   });
 
   it('should emit countdown value every second', (done) => {
-    service.setConfig({timeoutDurationInSeconds: 3, idleDurationInSeconds: 1});
+    service.setConfig({
+      timeoutDurationInSeconds: 3,
+      idleDurationInSeconds: 1,
+    });
     service.startWatching();
     setTimeout(() => {
       service.onCountDown().subscribe((countdown) => {

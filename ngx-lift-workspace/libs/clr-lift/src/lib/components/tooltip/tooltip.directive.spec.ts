@@ -1,20 +1,53 @@
-import {Component, DebugElement} from '@angular/core';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
+import { Component, DebugElement } from '@angular/core';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { vi } from 'vitest';
 
-import {TooltipDirective} from './tooltip.directive';
+import { TooltipDirective } from './tooltip.directive';
 
 describe('TooltipDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let directiveElement: DebugElement;
 
   beforeEach(() => {
+    // Mock getBoundingClientRect for elements
+    const mockGetBoundingClientRect = vi.fn(() => ({
+      top: 0,
+      left: 0,
+      right: 100,
+      bottom: 100,
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    }));
+
+    Element.prototype.getBoundingClientRect = mockGetBoundingClientRect;
+
     TestBed.configureTestingModule({
       imports: [TooltipDirective, MockTooltipComponent],
     });
 
     fixture = TestBed.createComponent(TestComponent);
-    directiveElement = fixture.debugElement.query(By.directive(TooltipDirective));
+    directiveElement = fixture.debugElement.query(
+      By.directive(TooltipDirective),
+    );
+
+    // Ensure the actual element used by the directive has getBoundingClientRect
+    const nativeElement = directiveElement.nativeElement;
+    if (!nativeElement.getBoundingClientRect) {
+      Object.defineProperty(nativeElement, 'getBoundingClientRect', {
+        value: mockGetBoundingClientRect,
+        writable: true,
+        configurable: true,
+      });
+    }
   });
 
   it('should create an instance', () => {

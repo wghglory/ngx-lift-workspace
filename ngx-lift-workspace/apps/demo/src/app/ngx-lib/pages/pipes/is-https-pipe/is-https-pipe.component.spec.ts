@@ -1,4 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
 
 import {IsHttpsPipeComponent} from './is-https-pipe.component';
 
@@ -9,6 +10,7 @@ describe('IsHttpsPipeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IsHttpsPipeComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(IsHttpsPipeComponent);

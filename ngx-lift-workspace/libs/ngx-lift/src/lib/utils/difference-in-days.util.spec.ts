@@ -20,6 +20,6 @@ describe('differenceInDays', () => {
 
   it('should return the difference between two dates with time', () => {
     const result1 = differenceInDays(new Date('2022-09-08'), new Date('2022-09-08T12:00:00'));
-    expect(result1).toBe(0);
+    expect(result1 === 0 || result1 === -0).toBe(true); // Handle -0 vs 0
   });
 });

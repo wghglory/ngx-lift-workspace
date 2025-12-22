@@ -8,7 +8,7 @@
 import {HttpClient, provideHttpClient} from '@angular/common/http';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {of} from 'rxjs';
+import {firstValueFrom, of} from 'rxjs';
 
 import {KubernetesList, KubernetesObject} from '../models';
 import {
@@ -69,7 +69,7 @@ describe('aggregatePaginatedKubernetesResources', () => {
     req1.flush(mockResponse2);
   });
 
-  it('should not call API if no more pages', (done) => {
+  it('should not call API if no more pages', async () => {
     const endpoint = '/test-endpoint';
     const initialParams = {};
     const mockResponse: KubernetesList<KubernetesObject> = {
@@ -86,10 +86,8 @@ describe('aggregatePaginatedKubernetesResources', () => {
 
     const result$ = source$.pipe(aggregatePaginatedKubernetesResources(httpClient, endpoint, initialParams));
 
-    result$.subscribe((aggregatedList) => {
-      expect(aggregatedList.items.length).toBe(2);
-      done();
-    });
+    const aggregatedList = await firstValueFrom(result$);
+    expect(aggregatedList.items.length).toBe(2);
 
     httpTestingController.expectNone(endpoint);
   });

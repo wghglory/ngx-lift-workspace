@@ -13,6 +13,7 @@ describe('CodeBlockComponent', () => {
 
     fixture = TestBed.createComponent(CodeBlockComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('code', 'test code');
     fixture.detectChanges();
   });
 

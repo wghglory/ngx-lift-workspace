@@ -1,4 +1,5 @@
 import {TestBed} from '@angular/core/testing';
+import {vi} from 'vitest';
 
 import {TranslationService} from './translation.service';
 
@@ -68,15 +69,16 @@ describe('TranslationService', () => {
   });
 
   it('should handle unsupported language gracefully', () => {
-    spyOn(console, 'warn');
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     translationService.translate('someKey');
 
-    expect(console.warn).toHaveBeenCalledWith('en is not supported yet.');
+    expect(consoleWarnSpy).toHaveBeenCalledWith('en is not supported yet.');
+    consoleWarnSpy.mockRestore();
   });
 
   it('should handle missing translation gracefully', () => {
-    spyOn(console, 'warn');
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     translationService.loadTranslationsForComponent('testComponent', {
       es: {
@@ -86,21 +88,23 @@ describe('TranslationService', () => {
 
     const missingTranslation = translationService.translate('testComponent.key2');
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
       'testComponent.key2 is not translated in en yet. Will fallback to English to see if translation is available.',
     );
     expect(missingTranslation).toBe('!! Key testComponent.key2 not found !!');
+    consoleWarnSpy.mockRestore();
   });
 
   it('should handle missing translation in default language', () => {
-    spyOn(console, 'warn');
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const missingTranslation = translationService.translate('someKey');
 
-    expect(console.warn).toHaveBeenCalledWith(
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
       'someKey is not translated in en yet. Will fallback to English to see if translation is available.',
     );
     expect(missingTranslation).toBe('!! Key someKey not found !!');
+    consoleWarnSpy.mockRestore();
   });
 
   it('should format translation with arguments', () => {

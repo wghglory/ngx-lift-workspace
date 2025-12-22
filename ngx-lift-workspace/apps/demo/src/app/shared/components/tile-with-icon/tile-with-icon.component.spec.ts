@@ -1,6 +1,6 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {TileWithIconComponent} from './tile-with-icon.component';
+import { TileWithIconComponent } from './tile-with-icon.component';
 
 describe('TileWithIconComponent', () => {
   let component: TileWithIconComponent;
@@ -13,6 +13,9 @@ describe('TileWithIconComponent', () => {
 
     fixture = TestBed.createComponent(TileWithIconComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('icon', 'test-icon');
+    fixture.componentRef.setInput('title', 'Test Title');
+    fixture.componentRef.setInput('description', 'Test Description');
     fixture.detectChanges();
   });
 

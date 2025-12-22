@@ -1,28 +1,33 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {of} from 'rxjs';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
 
-import {ToastService} from './toast.service';
-import {CreatedToast} from './toast.type';
-import {ToastContainerComponent} from './toast-container.component';
+import { ToastService } from './toast.service';
+import { CreatedToast } from './toast.type';
+import { ToastContainerComponent } from './toast-container.component';
 
 describe('ToastContainerComponent', () => {
   let component: ToastContainerComponent;
   let fixture: ComponentFixture<ToastContainerComponent>;
-  let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let toastService: ToastService;
+  let deleteToastSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    const spy = jasmine.createSpyObj('ToastService', ['deleteToast']);
+    deleteToastSpy = vi.fn();
+    const spy = {
+      deleteToast: deleteToastSpy,
+    };
 
     TestBed.configureTestingModule({
       imports: [ToastContainerComponent, NoopAnimationsModule],
-      providers: [{provide: ToastService, useValue: spy}],
+      providers: [{ provide: ToastService, useValue: spy }],
     });
 
     fixture = TestBed.createComponent(ToastContainerComponent);
     component = fixture.componentInstance;
-    toastServiceSpy = TestBed.inject(ToastService) as jasmine.SpyObj<ToastService>;
+    toastService = TestBed.inject(ToastService);
   });
 
   it('should create', () => {
@@ -33,7 +38,8 @@ describe('ToastContainerComponent', () => {
     fixture.componentRef.setInput('topOffset', 10);
     fixture.detectChanges();
 
-    const element = fixture.debugElement.nativeElement.querySelector('.toast-container');
+    const element =
+      fixture.debugElement.nativeElement.querySelector('.toast-container');
     const elementHost = element.parentNode;
     expect(elementHost.style.top).toBe('70px'); // 60px (default) + 10px
   });
@@ -50,7 +56,7 @@ describe('ToastContainerComponent', () => {
 
     fixture.detectChanges();
 
-    const deleteSpy = spyOn(component, 'deleteToast');
+    const deleteSpy = vi.spyOn(component, 'deleteToast');
 
     const toastComponent = fixture.debugElement.query(By.css('cll-toast'));
     toastComponent.triggerEventHandler('closed', null);
@@ -63,6 +69,6 @@ describe('ToastContainerComponent', () => {
 
     component.deleteToast(toastId);
 
-    expect(toastServiceSpy.deleteToast).toHaveBeenCalledWith(toastId);
+    expect(deleteToastSpy).toHaveBeenCalledWith(toastId);
   });
 });

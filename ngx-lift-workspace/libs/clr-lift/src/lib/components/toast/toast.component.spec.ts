@@ -1,9 +1,12 @@
-import {NO_ERRORS_SCHEMA} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { vi } from 'vitest';
 
-import {ToastComponent} from './toast.component';
+import { TranslationService } from '../../services/translation.service';
+import { MockTranslationService } from '../../services/translation.service.mock';
+import { ToastComponent } from './toast.component';
 
 describe('ToastComponent', () => {
   let component: ToastComponent;
@@ -13,6 +16,9 @@ describe('ToastComponent', () => {
     TestBed.configureTestingModule({
       imports: [ToastComponent, NoopAnimationsModule],
       schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: TranslationService, useClass: MockTranslationService },
+      ],
     });
 
     fixture = TestBed.createComponent(ToastComponent);
@@ -25,7 +31,7 @@ describe('ToastComponent', () => {
 
   it('should set animation as false when close method is called', () => {
     fixture.componentRef.setInput('manualClosable', true);
-    // const closedSpy = spyOn(component.closed, 'emit');
+    // const closedSpy = vi.spyOn(component.closed, 'emit');
 
     component.close();
 
@@ -35,7 +41,10 @@ describe('ToastComponent', () => {
 
   it('should emit primaryButtonClick when primary button is clicked', () => {
     fixture.componentRef.setInput('primaryButtonText', 'Primary Button');
-    const primaryButtonClickSpy = spyOn(component.primaryButtonClick, 'emit');
+    const primaryButtonClickSpy = vi.spyOn(
+      component.primaryButtonClick,
+      'emit',
+    );
 
     fixture.detectChanges();
 
@@ -46,11 +55,16 @@ describe('ToastComponent', () => {
 
   it('should emit secondaryButtonClick when secondary button is clicked', () => {
     fixture.componentRef.setInput('secondaryButtonText', 'Secondary Button');
-    const secondaryButtonClickSpy = spyOn(component.secondaryButtonClick, 'emit');
+    const secondaryButtonClickSpy = vi.spyOn(
+      component.secondaryButtonClick,
+      'emit',
+    );
 
     fixture.detectChanges();
 
-    const secondaryButton = fixture.debugElement.query(By.css('.toast-button.secondary'));
+    const secondaryButton = fixture.debugElement.query(
+      By.css('.toast-button.secondary'),
+    );
     secondaryButton.triggerEventHandler('click', null);
     expect(secondaryButtonClickSpy).toHaveBeenCalled();
   });

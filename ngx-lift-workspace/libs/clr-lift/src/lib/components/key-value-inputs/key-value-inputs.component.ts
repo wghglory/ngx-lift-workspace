@@ -128,8 +128,9 @@ export class KeyValueInputsComponent implements OnInit {
   }
 
   private initializeFormData() {
-    if (this.data().length > 0) {
-      this.data().forEach((prop) => {
+    const data = this.data();
+    if (data && data.length > 0) {
+      data.forEach((prop) => {
         this.formArray().push(
           this.fb.group({
             key: [prop.key || '', this.keyValidators()],

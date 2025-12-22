@@ -1,58 +1,48 @@
-import {interval, last, Observable, of, take} from 'rxjs';
+import {firstValueFrom, interval, last, lastValueFrom, Observable, of, take} from 'rxjs';
+import {vi} from 'vitest';
 
 import {startWithTap} from './start-with-tap.operator';
 
 describe('startWithTap', () => {
-  it('calls the callback function and switches to the source observable', (done) => {
-    const callbackSpy = jasmine.createSpy('callback');
+  it('calls the callback function and switches to the source observable', async () => {
+    const callbackSpy = vi.fn();
     const source$ = of('data');
 
-    source$.pipe(startWithTap(callbackSpy)).subscribe({
-      next: (value) => {
-        expect(callbackSpy).toHaveBeenCalled();
-        expect(value).toBe('data');
-        done();
-      },
-    });
+    const value = await firstValueFrom(source$.pipe(startWithTap(callbackSpy)));
+    expect(callbackSpy).toHaveBeenCalled();
+    expect(value).toBe('data');
   });
 
-  it('works with an observable that emits multiple values', (done) => {
+  it('works with an observable that emits multiple values', async () => {
     let callbackTime: number;
 
-    const callbackSpy = jasmine.createSpy('callback').and.callFake(() => (callbackTime = Date.now() - startTime));
+    const callbackSpy = vi.fn().mockImplementation(() => (callbackTime = Date.now() - startTime));
 
     const count = 4;
     const period = 100;
     const source$ = interval(period).pipe(take(count));
     const startTime = Date.now();
 
-    source$.pipe(last(), startWithTap(callbackSpy)).subscribe({
-      next: (value) => {
-        const nextTime = Date.now() - startTime;
+    const value = await lastValueFrom(source$.pipe(last(), startWithTap(callbackSpy)));
+    const nextTime = Date.now() - startTime;
 
-        expect(callbackTime).toBeLessThan(period);
-        expect(nextTime).toBeGreaterThanOrEqual(period * count);
+    expect(callbackTime).toBeLessThan(period);
+    expect(nextTime).toBeGreaterThanOrEqual(period * count);
 
-        expect(callbackSpy).toHaveBeenCalled();
-        expect(value).toBe(count - 1);
-        done();
-      },
-    });
+    expect(callbackSpy).toHaveBeenCalled();
+    expect(value).toBe(count - 1);
   });
 
-  it('works with an observable that throws an error', (done) => {
-    const callbackSpy = jasmine.createSpy('callback');
+  it('works with an observable that throws an error', async () => {
+    const callbackSpy = vi.fn();
     const error = new Error('Test Error');
     const source$ = new Observable((observer) => {
       observer.error(error);
     });
 
-    source$.pipe(startWithTap(callbackSpy)).subscribe({
-      error: (err) => {
-        expect(callbackSpy).toHaveBeenCalled();
-        expect(err).toBe(error);
-        done();
-      },
-    });
+    await expect(
+      firstValueFrom(source$.pipe(startWithTap(callbackSpy))),
+    ).rejects.toThrow('Test Error');
+    expect(callbackSpy).toHaveBeenCalled();
   });
 });

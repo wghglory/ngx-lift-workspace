@@ -1,11 +1,22 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 
-import {AppComponent} from './app.component';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {},
+          },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -19,6 +30,8 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Ngx Lift Demo');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Ngx Lift Demo',
+    );
   });
 });

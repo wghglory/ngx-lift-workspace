@@ -1,19 +1,18 @@
-import {last, of, takeLast, throwError} from 'rxjs';
+import { last, lastValueFrom, of, takeLast, throwError } from 'rxjs';
+import { vi } from 'vitest';
 
-import {createAsyncState} from './create-async-state.operator';
+import { createAsyncState } from './create-async-state.operator';
 
 describe('createAsyncState', () => {
-  it('should transform Observable data to AsyncState with default loading state', (done) => {
+  it('should transform Observable data to AsyncState with default loading state', async () => {
     const data$ = of('test').pipe(createAsyncState());
 
-    data$.pipe(last()).subscribe((result) => {
-      expect(result).toEqual({loading: false, error: null, data: 'test'});
-      done();
-    });
+    const result = await lastValueFrom(data$.pipe(last()));
+    expect(result).toEqual({ loading: false, error: null, data: 'test' });
   });
 
-  it('should handle side effects using tap for successful data', (done) => {
-    const sideEffectSpy = jasmine.createSpy('sideEffectSpy');
+  it('should handle side effects using tap for successful data', async () => {
+    const sideEffectSpy = vi.fn();
 
     const data$ = of('test').pipe(
       createAsyncState({
@@ -21,14 +20,12 @@ describe('createAsyncState', () => {
       }),
     );
 
-    data$.pipe(last()).subscribe(() => {
-      expect(sideEffectSpy).toHaveBeenCalledWith('test');
-      done();
-    });
+    await lastValueFrom(data$.pipe(last()));
+    expect(sideEffectSpy).toHaveBeenCalledWith('test');
   });
 
-  it('should handle side effects using tap for error case', (done) => {
-    const errorCallbackSpy = jasmine.createSpy('errorCallbackSpy');
+  it('should handle side effects using tap for error case', async () => {
+    const errorCallbackSpy = vi.fn();
     const error$ = throwError(() => new Error('Error!'));
 
     const data$ = error$.pipe(
@@ -37,26 +34,22 @@ describe('createAsyncState', () => {
       }),
     );
 
-    data$.pipe(last()).subscribe(() => {
-      expect(errorCallbackSpy).toHaveBeenCalledWith(new Error('Error!'));
-      done();
-    });
+    await lastValueFrom(data$.pipe(last()));
+    expect(errorCallbackSpy).toHaveBeenCalledWith(new Error('Error!'));
   });
 
-  it('should transform Observable data to AsyncState with custom loading state', (done) => {
+  it('should transform Observable data to AsyncState with custom loading state', async () => {
     const data$ = of('test').pipe(
       createAsyncState({
         next: (value) => console.log(value),
       }),
     );
 
-    data$.pipe(takeLast(1)).subscribe((result) => {
-      expect(result).toEqual({loading: false, error: null, data: 'test'});
-      done();
-    });
+    const result = await lastValueFrom(data$.pipe(takeLast(1)));
+    expect(result).toEqual({ loading: false, error: null, data: 'test' });
   });
 
-  it('should transform Observable data to AsyncState with custom loading state and catchError', (done) => {
+  it('should transform Observable data to AsyncState with custom loading state and catchError', async () => {
     const error$ = throwError(() => 'Error!');
     const data$ = error$.pipe(
       createAsyncState<unknown, string>({
@@ -64,9 +57,7 @@ describe('createAsyncState', () => {
       }),
     );
 
-    data$.pipe(last()).subscribe((result) => {
-      expect(result).toEqual({loading: false, error: 'Error!', data: null});
-      done();
-    });
+    const result = await lastValueFrom(data$.pipe(last()));
+    expect(result).toEqual({ loading: false, error: 'Error!', data: null });
   });
 });

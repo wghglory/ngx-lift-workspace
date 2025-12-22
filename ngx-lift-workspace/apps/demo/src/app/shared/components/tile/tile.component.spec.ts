@@ -13,6 +13,7 @@ describe('TileComponent', () => {
 
     fixture = TestBed.createComponent(TileComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('customClass', 'test-class');
     fixture.detectChanges();
   });
 

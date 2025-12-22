@@ -1,6 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ClarityIcons, moonIcon, sunIcon} from '@cds/core/icon';
 import {ClarityModule} from '@clr/angular';
+import {vi} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
 import {MockTranslationService} from '../../services/translation.service.mock';
@@ -37,10 +38,11 @@ describe('ThemeToggleComponent', () => {
   });
 
   it('should emit new theme on theme toggle', () => {
-    spyOn(component.changeTheme, 'emit');
+    const changeThemeSpy = vi.spyOn(component.changeTheme, 'emit');
     const button = fixture.nativeElement.querySelector('button');
     button.click();
-    expect(component.changeTheme.emit).toHaveBeenCalledOnceWith(jasmine.any(String));
+    expect(changeThemeSpy).toHaveBeenCalledOnce();
+    expect(changeThemeSpy).toHaveBeenCalledWith(expect.any(String));
   });
 
   // Cleanup

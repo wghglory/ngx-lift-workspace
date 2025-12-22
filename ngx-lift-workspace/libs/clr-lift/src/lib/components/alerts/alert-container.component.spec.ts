@@ -4,6 +4,7 @@ import { Component, DebugElement, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ClarityModule } from '@clr/angular';
+import { vi } from 'vitest';
 
 import { TranslationService } from '../../services/translation.service';
 import { MockTranslationService } from '../../services/translation.service.mock';
@@ -47,7 +48,7 @@ describe('AlertContainerComponent', () => {
 
   it('should close alert when onCloseAlert is called', () => {
     const alertId = Symbol('testId');
-    const deleteAlertSpy = spyOn(alertService, 'deleteAlert');
+    const deleteAlertSpy = vi.spyOn(alertService, 'deleteAlert');
 
     component.onCloseAlert(alertId);
 
@@ -126,7 +127,7 @@ describe('TestAlertsHostComponent', () => {
       isAppLevel: true,
     };
     alertService.alerts = signal([mockAlert]);
-    const deleteAlertSpy = spyOn(alertService, 'deleteAlert');
+    const deleteAlertSpy = vi.spyOn(alertService, 'deleteAlert');
 
     fixture.detectChanges();
 
