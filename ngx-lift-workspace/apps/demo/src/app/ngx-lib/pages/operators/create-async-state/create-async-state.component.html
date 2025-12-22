@@ -1,48 +1,66 @@
-<cll-page-container [title]="'createAsyncState'" class="space-y-9">
+<cll-page-container [title]="'createAsyncState'" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      Imagine you're tasked with building a user list in your UI. Traditionally, this might involve defining variables
-      like loading, error, and users, then assigning values within your API subscribe method. However, as your page
-      requires multiple API requests, managing multiple loading and error variables becomes challenging, leading to
-      scattered variables throughout your component. This makes maintenance cumbersome and lacks cohesion with your
-      subscribe method.
+      Imagine you're tasked with building a user list in your UI. Traditionally,
+      this might involve defining variables like loading, error, and users, then
+      assigning values within your API subscribe method. However, as your page
+      requires multiple API requests, managing multiple loading and error
+      variables becomes challenging, leading to scattered variables throughout
+      your component. This makes maintenance cumbersome and lacks cohesion with
+      your subscribe method.
     </p>
 
     <p>
-      The <code>createAsyncState</code> operator is a handy RxJS operator for simplifying the handling of asynchronous
-      operations. It is meticulously crafted to encapsulate API responses within a standardized structure, streamlining
-      the process of subscribing to observables. With this approach, integrating data seamlessly into HTML components
-      becomes not only convenient but also ensures a more organized and maintainable codebase.
+      The <code>createAsyncState</code> operator is a handy RxJS operator for
+      simplifying the handling of asynchronous operations. It is meticulously
+      crafted to encapsulate API responses within a standardized structure,
+      streamlining the process of subscribing to observables. With this
+      approach, integrating data seamlessly into HTML components becomes not
+      only convenient but also ensures a more organized and maintainable
+      codebase.
     </p>
 
     <p>
-      This operator transforms an observable of type <code>T</code> into an observable of
-      <code>AsyncState&lt;T&gt;</code>. The <code>AsyncState</code> object encapsulates the following key states:
+      This operator transforms an observable of type <code>T</code> into an
+      observable of <code>AsyncState&lt;T&gt;</code>. The
+      <code>AsyncState</code> object encapsulates the following key states:
     </p>
 
     <ul>
-      <li><code>loading</code>: Indicates that the asynchronous operation is in progress.</li>
-      <li><code>error</code>: Represents any encountered errors during the operation.</li>
+      <li>
+        <code>loading</code>: Indicates that the asynchronous operation is in
+        progress.
+      </li>
+      <li>
+        <code>error</code>: Represents any encountered errors during the
+        operation.
+      </li>
       <li><code>data</code>: Holds the successful result of the operation.</li>
     </ul>
 
     <app-code-block [code]="asyncStateCode" />
 
     <p>
-      The <code>createAsyncState</code> operator accepts 2 parameters. The first optional parameter,
-      <code>observerOrNextForOrigin?: Partial&lt;TapObserver&lt;T&gt;&gt; | ((value: T) => void)</code>, has the same
-      type as RxJS <code>tap</code>. This allows you to pass callbacks for success and error scenarios if needed. The
-      second optional <code>initialValue</code> parameter specifies the initial state of the asynchronous operation. The
-      default initialValue is <code>&#123; loading: true, error: null, data: null &#125;</code>, meaning that the
-      observable starts in a loading state.
+      The <code>createAsyncState</code> operator accepts 2 parameters. The first
+      optional parameter,
+      <code
+        >observerOrNextForOrigin?: Partial&lt;TapObserver&lt;T&gt;&gt; |
+        ((value: T) => void)</code
+      >, has the same type as RxJS <code>tap</code>. This allows you to pass
+      callbacks for success and error scenarios if needed. The second optional
+      <code>initialValue</code> parameter specifies the initial state of the
+      asynchronous operation. The default initialValue is
+      <code>&#123; loading: true, error: null, data: null &#125;</code>, meaning
+      that the observable starts in a loading state.
     </p>
 
     <app-code-block [code]="callbackCode" />
 
     <p>
-      By using this operator, you can easily manage and respond to these different states in your application. The
-      resulting observable emits <code>AsyncState</code> objects, allowing you to handle loading spinners, display error
-      messages, and render content based on the received data.
+      By using this operator, you can easily manage and respond to these
+      different states in your application. The resulting observable emits
+      <code>AsyncState</code> objects, allowing you to handle loading spinners,
+      display error messages, and render content based on the received data.
     </p>
   </section>
 
@@ -51,14 +69,21 @@
 
   <h2>Provide initialValue</h2>
   <p>
-    Suppose there is a users table which contains comprehensive user information. When you click on a specific user
-    within this table, it will direct you to the user detail page. During this navigation process, the user's
-    information will be passed as route state. On the user detail page, you can initially showcase the data obtained
-    from the state. Subsequently, you can initiate a call to the user API. Once the API call is completed successfully,
-    the user information can be refreshed without having to display a loading spinner. You can set the initialValue in
-    the following manner: <code>&#123;loading: false, error: null, data: this.location.getState()&#125;</code>. This
-    configuration allows for a smooth presentation of user details and seamless updates when new data is fetched from
-    the API, enhancing the overall user experience on the detail page.
+    Suppose there is a users table which contains comprehensive user
+    information. When you click on a specific user within this table, it will
+    direct you to the user detail page. During this navigation process, the
+    user's information will be passed as route state. On the user detail page,
+    you can initially showcase the data obtained from the state. Subsequently,
+    you can initiate a call to the user API. Once the API call is completed
+    successfully, the user information can be refreshed without having to
+    display a loading spinner. You can set the initialValue in the following
+    manner:
+    <code
+      >&#123;loading: false, error: null, data:
+      this.location.getState()&#125;</code
+    >. This configuration allows for a smooth presentation of user details and
+    seamless updates when new data is fetched from the API, enhancing the
+    overall user experience on the detail page.
   </p>
   <app-code-block [code]="exampleWithoutLoadingCode" />
 </cll-page-container>

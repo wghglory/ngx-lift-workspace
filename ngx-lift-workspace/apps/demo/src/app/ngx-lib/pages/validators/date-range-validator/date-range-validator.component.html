@@ -1,64 +1,89 @@
-<cll-page-container [title]="'dateRangeValidator'" class="space-y-9">
+<cll-page-container [title]="'dateRangeValidator'" customClass="space-y-9">
   <section class="space-y-6">
     <h2>Overview</h2>
-    <p><code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range.</p>
+    <p>
+      <code>dateRangeValidator</code> is a custom validator that validates a
+      date falls within a specified range.
+    </p>
 
     <h3>Inputs</h3>
     <p>
-      The <code>dateRangeValidator</code> function accepts an interface, <code>DateRangeOptions</code>, which defines
-      the options for the date range validation. Here's a breakdown of the options:
+      The <code>dateRangeValidator</code> function accepts an interface,
+      <code>DateRangeOptions</code>, which defines the options for the date
+      range validation. Here's a breakdown of the options:
     </p>
     <ol class="list-decimal space-y-3">
       <li>
-        <code>minDate</code>: The minimum allowed date. If provided, the selected date must be equal to or later than
-        this date. The equality is determined based on the <code>minInclusive</code> option.
+        <code>minDate</code>: The minimum allowed date. If provided, the
+        selected date must be equal to or later than this date. The equality is
+        determined based on the <code>minInclusive</code> option.
       </li>
       <li>
-        <code>maxDate</code>: The maximum allowed date. If provided, the selected date must be equal to or earlier than
-        this date. The equality is determined based on the <code>maxInclusive</code> option.
+        <code>maxDate</code>: The maximum allowed date. If provided, the
+        selected date must be equal to or earlier than this date. The equality
+        is determined based on the <code>maxInclusive</code> option.
       </li>
       <li>
-        <code>minInclusive</code>: A boolean indicating whether the comparison for the minimum date can include the
-        exact date. Defaults to false.
+        <code>minInclusive</code>: A boolean indicating whether the comparison
+        for the minimum date can include the exact date. Defaults to false.
       </li>
       <li>
-        <code>maxInclusive</code>: A boolean indicating whether the comparison for the maximum date can include the
-        exact date. Defaults to false.
+        <code>maxInclusive</code>: A boolean indicating whether the comparison
+        for the maximum date can include the exact date. Defaults to false.
       </li>
       <li>
-        <code>compareTime</code>: A boolean indicating whether to compare the time as well. If true, comparisons will
-        include the time components of the date; if false, the time parts will be ignored.
+        <code>compareTime</code>: A boolean indicating whether to compare the
+        time as well. If true, comparisons will include the time components of
+        the date; if false, the time parts will be ignored.
       </li>
     </ol>
     <app-code-block [code]="dateRangeOptionsInterface" />
 
     <h3>Outputs</h3>
-    <p>The outputs of the <code>dateRangeValidator</code> function are as follows:</p>
+    <p>
+      The outputs of the <code>dateRangeValidator</code> function are as
+      follows:
+    </p>
 
     <ol class="list-decimal space-y-3">
       <li>
         <code>invalidDate</code>: Indicating whether the date is invalid.
         <ul class="list-disc indent-3">
-          <li>The user enters a date that is not in a valid format (e.g., "2023-13-01").</li>
+          <li>
+            The user enters a date that is not in a valid format (e.g.,
+            "2023-13-01").
+          </li>
           <li>The user enters a non-date value (e.g., "hello world").</li>
         </ul>
       </li>
 
       <li>
-        <code>minDate</code>: This error is returned when the selected date is earlier than or equal to the minimum
-        allowed date. The value is the minimum allowed date, formatted as an ISO string (if applicable).
+        <code>minDate</code>: This error is returned when the selected date is
+        earlier than or equal to the minimum allowed date. The value is the
+        minimum allowed date, formatted as an ISO string (if applicable).
         <ul class="list-disc indent-3">
-          <li>If minInclusive is false, the selected date is on or before the minDate.</li>
-          <li>If minInclusive is true, the selected date is before the minDate.</li>
+          <li>
+            If minInclusive is false, the selected date is on or before the
+            minDate.
+          </li>
+          <li>
+            If minInclusive is true, the selected date is before the minDate.
+          </li>
         </ul>
       </li>
 
       <li>
-        <code>maxDate</code>: This error is returned when the selected date is later than or equal to the maximum
-        allowed date. The value is the maximum allowed date, formatted as an ISO string (if applicable).
+        <code>maxDate</code>: This error is returned when the selected date is
+        later than or equal to the maximum allowed date. The value is the
+        maximum allowed date, formatted as an ISO string (if applicable).
         <ul class="list-disc indent-3">
-          <li>If maxInclusive is false, the selected date is on or after the maxDate.</li>
-          <li>If maxInclusive is true, the selected date is after the maxDate.</li>
+          <li>
+            If maxInclusive is false, the selected date is on or after the
+            maxDate.
+          </li>
+          <li>
+            If maxInclusive is true, the selected date is after the maxDate.
+          </li>
         </ul>
       </li>
     </ol>
@@ -67,28 +92,39 @@
 
     <h3>1. Validating a Date</h3>
     <p>
-      To validate a date, you can specify <code>minDate</code> and <code>maxDate</code>: This configuration ensures that
-      the selected date must fall between September 1st, 2024, and September 15th, 2024 (exclusive), ignoring the time
-      components. Sep. 15th is not valid since <code>maxInclusive</code> is false.
+      To validate a date, you can specify <code>minDate</code> and
+      <code>maxDate</code>: This configuration ensures that the selected date
+      must fall between September 1st, 2024, and September 15th, 2024
+      (exclusive), ignoring the time components. Sep. 15th is not valid since
+      <code>maxInclusive</code> is false.
     </p>
     <app-code-block [code]="dateExample" />
 
     <h4>Real Example: Select a Future Date</h4>
     <p>
-      Below example allows to select a future date and include today. To include the <code>minDate</code>, set
-      <code>minInclusive</code> to <code>true</code>.
+      Below example allows to select a future date and include today. To include
+      the <code>minDate</code>, set <code>minInclusive</code> to
+      <code>true</code>.
     </p>
     <form clrForm [formGroup]="dateForm" clrLabelSize="3">
       <clr-input-container class="!mt-1">
         <label>Expiration Date (Raw HTML Input)</label>
-        <input type="date" class="w-[10rem]" clrInput [formControl]="dateForm.controls.expires" [min]="todayInISO" />
+        <input
+          type="date"
+          class="w-[10rem]"
+          clrInput
+          [formControl]="dateForm.controls.expires"
+          [min]="todayInISO"
+        />
         <clr-control-error *clrIfError="'minDate'; error as minDate">
           The date cannot be earlier than {{ minDate }}
         </clr-control-error>
       </clr-input-container>
 
       <clr-date-container>
-        <label class="clr-required-mark">Future 5 Days (Clarity Date Input)</label>
+        <label class="clr-required-mark"
+          >Future 5 Days (Clarity Date Input)</label
+        >
         <input
           type="date"
           clrDate
@@ -98,29 +134,37 @@
           [max]="fiveDaysLaterInISO"
         />
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'invalidDate'">The date is invalid</clr-control-error>
+        <clr-control-error *clrIfError="'invalidDate'"
+          >The date is invalid</clr-control-error
+        >
         <clr-control-error *clrIfError="'maxDate'; error as maxDate">
           The date cannot be later than {{ maxDate }}
         </clr-control-error>
         <clr-control-error *clrIfError="'minDate'; error as minDate">
           The date cannot be earlier than {{ minDate }}
         </clr-control-error>
-        <clr-control-error *clrIfError="'max'">The date is too late (clarity validation)</clr-control-error>
-        <clr-control-error *clrIfError="'min'">The date is too early (clarity validation)</clr-control-error>
+        <clr-control-error *clrIfError="'max'"
+          >The date is too late (clarity validation)</clr-control-error
+        >
+        <clr-control-error *clrIfError="'min'"
+          >The date is too early (clarity validation)</clr-control-error
+        >
       </clr-date-container>
     </form>
     <app-code-block [code]="dateCode" />
 
     <cll-callout>
-      We could use the <code>min</code> and <code>max</code> pattern to validate the range. However, this validation
-      will not fail when typing a number like 12 or a string like 12hello.
+      We could use the <code>min</code> and <code>max</code> pattern to validate
+      the range. However, this validation will not fail when typing a number
+      like 12 or a string like 12hello.
     </cll-callout>
 
     <h3>2. Validating a Date and Time</h3>
     <p>
-      To validate both the date and the time, set <code>compareTime</code> to true. With the below configuration, the
-      selected date and time must fall between September 1st, 2024, at noon UTC, and September 2nd, 2024, at noon UTC,
-      considering the time components.
+      To validate both the date and the time, set <code>compareTime</code> to
+      true. With the below configuration, the selected date and time must fall
+      between September 1st, 2024, at noon UTC, and September 2nd, 2024, at noon
+      UTC, considering the time components.
     </p>
     <app-code-block [code]="dateTimeExample" />
 

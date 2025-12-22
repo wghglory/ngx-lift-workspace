@@ -1,25 +1,33 @@
-<cll-page-container [title]="'distinctOnChange'" class="space-y-9">
+<cll-page-container [title]="'distinctOnChange'" customClass="space-y-9">
   <section class="space-y-6">
     <p>
-      RxJS provides the <code>distinctUntilChanged</code> operator, which is useful for preventing duplicated emissions
-      within an observable stream. However, there are scenarios where we not only want to avoid duplicates but also need
-      to execute a callback function, such as displaying a toast, when a value changes after the initial emission.
+      RxJS provides the <code>distinctUntilChanged</code> operator, which is
+      useful for preventing duplicated emissions within an observable stream.
+      However, there are scenarios where we not only want to avoid duplicates
+      but also need to execute a callback function, such as displaying a toast,
+      when a value changes after the initial emission.
     </p>
     <p>
-      Enter the <code>distinctOnChange</code> operator—an lift designed to enhance RxJS Observables. This operator takes
-      two crucial parameters: <code>onChangeCallback</code> and <code>comparator</code>. The
-      <code>onChangeCallback</code> is a callback function that triggers whenever a distinct value is encountered in the
-      observable stream. It receives both the previous distinct value and the current value as arguments, allowing you
-      to perform specific actions based on this change. Meanwhile, the optional <code>comparator</code> function, with a
-      default behavior of strict equality comparison (<code>===</code>), determines whether two values are considered
-      equal.
+      Enter the <code>distinctOnChange</code> operator—an lift designed to
+      enhance RxJS Observables. This operator takes two crucial parameters:
+      <code>onChangeCallback</code> and <code>comparator</code>. The
+      <code>onChangeCallback</code> is a callback function that triggers
+      whenever a distinct value is encountered in the observable stream. It
+      receives both the previous distinct value and the current value as
+      arguments, allowing you to perform specific actions based on this change.
+      Meanwhile, the optional <code>comparator</code> function, with a default
+      behavior of strict equality comparison (<code>===</code>), determines
+      whether two values are considered equal.
     </p>
     <p>
-      The <code>distinctOnChange</code> operator is particularly valuable in scenarios where you not only seek distinct
-      values but also desire to execute custom logic or side effects when changes occur in the observable data. This
-      flexibility makes it a powerful tool for handling various real-time or user interaction scenarios within your
-      RxJS-powered applications. Integrate <code>distinctOnChange</code> into your projects to streamline asynchronous
-      data processing, make observables more versatile, and enhance the overall reactivity of your application.
+      The <code>distinctOnChange</code> operator is particularly valuable in
+      scenarios where you not only seek distinct values but also desire to
+      execute custom logic or side effects when changes occur in the observable
+      data. This flexibility makes it a powerful tool for handling various
+      real-time or user interaction scenarios within your RxJS-powered
+      applications. Integrate <code>distinctOnChange</code> into your projects
+      to streamline asynchronous data processing, make observables more
+      versatile, and enhance the overall reactivity of your application.
     </p>
   </section>
 

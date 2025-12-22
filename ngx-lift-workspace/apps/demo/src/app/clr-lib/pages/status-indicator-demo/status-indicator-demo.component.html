@@ -1,4 +1,4 @@
-<cll-page-container [title]="'Status Indicator'" class="space-y-6">
+<cll-page-container [title]="'Status Indicator'" customClass="space-y-6">
   <h2>Usage</h2>
   <p>Display a status indicator with a icon and text.</p>
 
@@ -6,28 +6,76 @@
     <section class="space-y-3">
       <h3>Basic Usage</h3>
       <ul>
-        <li><cll-status-indicator [iconStatus]="'error'"> Error </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'success'"> Success </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'unknown'"> unknown </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'inactive'"> Inactive </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'pending'"> Pending </cll-status-indicator></li>
+        <li>
+          <cll-status-indicator [iconStatus]="'error'">
+            Error
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'success'">
+            Success
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'warning'">
+            Warning
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'unknown'">
+            unknown
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'inactive'">
+            Inactive
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'pending'">
+            Pending
+          </cll-status-indicator>
+        </li>
       </ul>
     </section>
     <section class="space-y-3">
       <h3>Icon Size (T-Shirt Sizing)</h3>
       <ul>
-        <li><cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'success'" iconSize="md"> Success </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'warning'" iconSize="lg"> Warning </cll-status-indicator></li>
+        <li>
+          <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'">
+            Error
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'success'" iconSize="md">
+            Success
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'warning'" iconSize="lg">
+            Warning
+          </cll-status-indicator>
+        </li>
       </ul>
     </section>
     <section class="space-y-3">
       <h3>Icon Size (Number)</h3>
       <ul>
-        <li><cll-status-indicator [iconStatus]="'unknown'" [iconSize]="20"> unknown </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'inactive'" [iconSize]="30"> Inactive </cll-status-indicator></li>
-        <li><cll-status-indicator [iconStatus]="'pending'" [iconSize]="40"> Pending </cll-status-indicator></li>
+        <li>
+          <cll-status-indicator [iconStatus]="'unknown'" [iconSize]="20">
+            unknown
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'inactive'" [iconSize]="30">
+            Inactive
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator [iconStatus]="'pending'" [iconSize]="40">
+            Pending
+          </cll-status-indicator>
+        </li>
       </ul>
     </section>
   </div>

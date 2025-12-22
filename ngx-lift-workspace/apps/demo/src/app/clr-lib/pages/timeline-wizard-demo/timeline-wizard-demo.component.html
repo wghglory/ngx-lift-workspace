@@ -1,40 +1,57 @@
-<cll-page-container title="Timeline Wizard" class="space-y-9">
+<cll-page-container title="Timeline Wizard" customClass="space-y-9">
   <p>
-    The TimelineWizard component is designed to facilitate the creation of a timeline-based wizard in Angular
-    applications. This component allows you to create a series of steps, each represented by a component, and navigate
-    through them using a timeline. The TimelineWizard component provides features such as step navigation, asynchronous
-    validation, and dynamic component rendering.
+    The TimelineWizard component is designed to facilitate the creation of a
+    timeline-based wizard in Angular applications. This component allows you to
+    create a series of steps, each represented by a component, and navigate
+    through them using a timeline. The TimelineWizard component provides
+    features such as step navigation, asynchronous validation, and dynamic
+    component rendering.
   </p>
   <h2>Core Components</h2>
 
   <section class="space-y-6">
     <h3>TimelineBaseComponent</h3>
     <p>
-      The <code>TimelineBaseComponent</code> serves as the base class for all step components within the timeline
-      wizard. It provides essential properties and methods for managing the wizard steps. To utilize this,
+      The <code>TimelineBaseComponent</code> serves as the base class for all
+      step components within the timeline wizard. It provides essential
+      properties and methods for managing the wizard steps. To utilize this,
       <strong>
-        extend the abstract class for each step component and override specific properties and functions accordingly.
+        extend the abstract class for each step component and override specific
+        properties and functions accordingly.
       </strong>
     </p>
     <h4>Properties</h4>
     <ul class="list-disc indent-3 space-y-1">
-      <li><code>allStepsData</code>: An array containing the data of all wizard steps.</li>
-      <li><code>currentStepData</code>: The data of the current step or <code>null</code> if not available.</li>
       <li>
-        <code>form</code>: The form group associated with the step. Set to <code>null</code> for steps without a form.
+        <code>allStepsData</code>: An array containing the data of all wizard
+        steps.
       </li>
       <li>
-        <code>next$</code>: An observable that emits when the &quot;Next&quot; button is clicked. Override it to perform
-        custom actions.
+        <code>currentStepData</code>: The data of the current step or
+        <code>null</code> if not available.
       </li>
-      <li><code>stepInvalid</code>: Indicates whether the step&#39;s form is invalid.</li>
+      <li>
+        <code>form</code>: The form group associated with the step. Set to
+        <code>null</code> for steps without a form.
+      </li>
+      <li>
+        <code>next$</code>: An observable that emits when the &quot;Next&quot;
+        button is clicked. Override it to perform custom actions.
+      </li>
+      <li>
+        <code>stepInvalid</code>: Indicates whether the step&#39;s form is
+        invalid.
+      </li>
     </ul>
     <h4>Methods</h4>
     <ul class="list-disc indent-3 space-y-1">
-      <li><code>formValueToData()</code>: Converts the step&#39;s form value to data.</li>
       <li>
-        <code>dataToFormValue(data: any): any</code>: Converts step data to the form value that can be used for
-        <code>patchValue</code>.
+        <code>formValueToData()</code>: Converts the step&#39;s form value to
+        data.
+      </li>
+      <li>
+        <code>dataToFormValue(data: any): any</code>: Converts step data to the
+        form value that can be used for <code>patchValue</code>.
       </li>
     </ul>
   </section>
@@ -42,44 +59,68 @@
   <section class="space-y-6">
     <h3>TimelineStep Interface</h3>
     <p>
-      The <code>TimelineStep</code> interface defines the properties of a step in the timeline. You can pass an array of
-      steps to the TimelineWizard component as inputs. The shape of this input should match this interface.
+      The <code>TimelineStep</code> interface defines the properties of a step
+      in the timeline. You can pass an array of steps to the TimelineWizard
+      component as inputs. The shape of this input should match this interface.
     </p>
     <ul class="list-disc indent-3 space-y-1">
       <li>
-        <code>state</code>: The state of the timeline step (e.g., &#39;not-started&#39;, &#39;current&#39;,
-        &#39;success&#39;, &#39;error&#39;).
+        <code>state</code>: The state of the timeline step (e.g.,
+        &#39;not-started&#39;, &#39;current&#39;, &#39;success&#39;,
+        &#39;error&#39;).
       </li>
       <li><code>header</code>: The header of the timeline step.</li>
-      <li><code>title</code>: The title of the timeline step, acting as an identifier (should be unique).</li>
       <li>
-        <code>id</code>: The id of the timeline step, acting as an primary identifier. If id is not provided, will use
-        title as identifier instead.
+        <code>title</code>: The title of the timeline step, acting as an
+        identifier (should be unique).
+      </li>
+      <li>
+        <code>id</code>: The id of the timeline step, acting as an primary
+        identifier. If id is not provided, will use title as identifier instead.
       </li>
       <li><code>description</code>: The description of the timeline step.</li>
-      <li><code>component</code>: The Angular component associated with the timeline step.</li>
-      <li><code>data</code>: Step data, which will be converted to form data by the timeline wizard component.</li>
+      <li>
+        <code>component</code>: The Angular component associated with the
+        timeline step.
+      </li>
+      <li>
+        <code>data</code>: Step data, which will be converted to form data by
+        the timeline wizard component.
+      </li>
     </ul>
   </section>
 
   <section class="space-y-6">
     <h3>TimelineWizardComponent</h3>
-    <p><code>TimelineWizardComponent</code> is the main component responsible for managing the timeline wizard.</p>
+    <p>
+      <code>TimelineWizardComponent</code> is the main component responsible for
+      managing the timeline wizard.
+    </p>
     <h4>Inputs</h4>
     <ul class="list-disc indent-3 space-y-1">
-      <li><code>live</code>: Controls whether to destroy step components when clicking prev/next buttons.</li>
-      <li><code>confirmButtonText</code>: The text for the &quot;Confirm&quot; button.</li>
       <li>
-        <code>timelineSteps</code>: An array of <code>TimelineStep</code> objects representing the steps in the wizard.
+        <code>live</code>: Controls whether to destroy step components when
+        clicking prev/next buttons.
+      </li>
+      <li>
+        <code>confirmButtonText</code>: The text for the &quot;Confirm&quot;
+        button.
+      </li>
+      <li>
+        <code>timelineSteps</code>: An array of
+        <code>TimelineStep</code> objects representing the steps in the wizard.
       </li>
     </ul>
     <h4>Outputs</h4>
     <ul class="list-disc indent-3 space-y-1">
       <li>
-        <code>confirmed</code>: Emits all previous steps&#39; data when clicking the finish button in the last step.
+        <code>confirmed</code>: Emits all previous steps&#39; data when clicking
+        the finish button in the last step.
       </li>
       <li><code>canceled</code>: Emits when the wizard is canceled.</li>
-      <li><code>finished</code>: Emits when the wizard is successfully completed.</li>
+      <li>
+        <code>finished</code>: Emits when the wizard is successfully completed.
+      </li>
     </ul>
     <h4>Methods</h4>
     <ul class="list-disc indent-3 space-y-1">
@@ -92,30 +133,42 @@
   <section class="space-y-6">
     <h3>TimelineWizardService</h3>
     <p>
-      The <code>TimelineWizardService</code> is a service that manages the state and data of the timeline wizard. It
-      provides methods to retrieve steps' data and the current step.
+      The <code>TimelineWizardService</code> is a service that manages the state
+      and data of the timeline wizard. It provides methods to retrieve steps'
+      data and the current step.
     </p>
     <h4>Methods</h4>
     <ul class="list-disc indent-3 space-y-1">
       <li><code>currentStepIndex</code>: Get the index of the current step.</li>
-      <li><code>isFirstStep</code>: Check if the current step is the first step.</li>
-      <li><code>isLastStep</code>: Check if the current step is the last step.</li>
+      <li>
+        <code>isFirstStep</code>: Check if the current step is the first step.
+      </li>
+      <li>
+        <code>isLastStep</code>: Check if the current step is the last step.
+      </li>
       <li><code>currentStep</code>: Get the current step object.</li>
       <li><code>currentStepData</code>: Get the data of the current step.</li>
       <li><code>allStepsData</code>: Get all steps data to be reviewed.</li>
-      <li><code>getStepData&lt;T&gt;(key: string): T</code>: Get the data of a specific step by its id or title.</li>
+      <li>
+        <code>getStepData&lt;T&gt;(key: string): T</code>: Get the data of a
+        specific step by its id or title.
+      </li>
     </ul>
   </section>
 
   <section class="space-y-6">
     <h2>Example</h2>
     <p>
-      In the following example, the wizard comprises four distinct steps. The timelineSteps array defines the sequential
-      order of each step. Three of these steps, namely "Configure Operator," "Configure Service," and "Configure Runtime
-      Properties," involve form input. The last step, labeled "Review," acts as a comprehensive summary, consolidating
-      data from the preceding steps for presentation. Construct the timelineSteps array according to the structure
-      outlined in the <code>TimelineStep</code> type. Additionally, customize event handlers for scenarios such as
-      cancellation (canceled), confirmation (confirmed), and successful completion (finished).
+      In the following example, the wizard comprises four distinct steps. The
+      timelineSteps array defines the sequential order of each step. Three of
+      these steps, namely "Configure Operator," "Configure Service," and
+      "Configure Runtime Properties," involve form input. The last step, labeled
+      "Review," acts as a comprehensive summary, consolidating data from the
+      preceding steps for presentation. Construct the timelineSteps array
+      according to the structure outlined in the <code>TimelineStep</code> type.
+      Additionally, customize event handlers for scenarios such as cancellation
+      (canceled), confirmation (confirmed), and successful completion
+      (finished).
     </p>
     <h3>TimelineWizard Component</h3>
     <app-code-block [code]="wizardCode" />
@@ -123,84 +176,108 @@
 
     <h3>Step Components</h3>
     <p>
-      Let's delve into the implementation details of each step component. In essence, every step component is required
-      to extend the base class, <code>TimelineBaseComponent</code>, specifying the pertinent step type. The significance
-      of this specification lies in the fact that the <code>currentStepData</code> type aligns with the type defined in
+      Let's delve into the implementation details of each step component. In
+      essence, every step component is required to extend the base class,
+      <code>TimelineBaseComponent</code>, specifying the pertinent step type.
+      The significance of this specification lies in the fact that the
+      <code>currentStepData</code> type aligns with the type defined in
       <code>TimelineBaseComponent</code>.
     </p>
 
     <p>
-      For form-based steps, it is essential to override the form property and instantiate the FormGroup as exemplified
-      below.
+      For form-based steps, it is essential to override the form property and
+      instantiate the FormGroup as exemplified below.
     </p>
 
     <p>
-      There exist two methods to retrieve the current step data and all steps data. Firstly, you can employ the
-      <code>TimelineWizardService</code> by invoking the <code>getStepData</code> method with the step id or title as
-      the identifier. Alternatively, within the ngOnInit lifecycle hook, you can access <code>currentStepData</code> and
-      <code>allStepsData</code> —these two properties are input properties in <code>TimelineBaseComponent</code>. It is
-      imperative to note that attempting to access these properties in the constructor is prohibited due to their
-      unavailability at that particular stage of the component lifecycle.
+      There exist two methods to retrieve the current step data and all steps
+      data. Firstly, you can employ the
+      <code>TimelineWizardService</code> by invoking the
+      <code>getStepData</code> method with the step id or title as the
+      identifier. Alternatively, within the ngOnInit lifecycle hook, you can
+      access <code>currentStepData</code> and <code>allStepsData</code> —these
+      two properties are input properties in <code>TimelineBaseComponent</code>.
+      It is imperative to note that attempting to access these properties in the
+      constructor is prohibited due to their unavailability at that particular
+      stage of the component lifecycle.
     </p>
 
     <app-code-block [code]="operatorCode"></app-code-block>
 
     <p>
-      In situations where your <code>FormGroup</code> model does not precisely align with the data structure outlined in
-      the <code>timelineSteps</code>, customization of the mapping logic becomes necessary. This involves the overriding
-      of two key methods: <code>formValueToData</code> and <code>dataToFormValue</code>. The example code below
-      illustrates this process:
+      In situations where your <code>FormGroup</code> model does not precisely
+      align with the data structure outlined in the <code>timelineSteps</code>,
+      customization of the mapping logic becomes necessary. This involves the
+      overriding of two key methods: <code>formValueToData</code> and
+      <code>dataToFormValue</code>. The example code below illustrates this
+      process:
     </p>
     <p>
-      Consider a scenario where the <code>FormGroup</code> consists of three controls—<code>cpu</code>,
-      <code>replicas</code>, and <code>url</code>. Contrastingly, the <code>timelineSteps</code> data structure follows
-      the pattern <code>service: cpu, replicas, url</code>. This discrepancy necessitates adjustments to ensure
-      compatibility. The overridden <code>formValueToData</code> method exemplifies how to align the returned result
-      with the step data. Additionally, the <code>dataToFormValue</code> method is overridden to facilitate the
+      Consider a scenario where the <code>FormGroup</code> consists of three
+      controls—<code>cpu</code>, <code>replicas</code>, and <code>url</code>.
+      Contrastingly, the <code>timelineSteps</code> data structure follows the
+      pattern <code>service: cpu, replicas, url</code>. This discrepancy
+      necessitates adjustments to ensure compatibility. The overridden
+      <code>formValueToData</code> method exemplifies how to align the returned
+      result with the step data. Additionally, the
+      <code>dataToFormValue</code> method is overridden to facilitate the
       conversion of step data to the corresponding form value.
     </p>
 
     <app-code-block [code]="serviceCode"></app-code-block>
 
     <p>
-      In essence, these customizations ensure that the form values align seamlessly with the expected step data,
-      maintaining consistency between the form structure and the specified model.
+      In essence, these customizations ensure that the form values align
+      seamlessly with the expected step data, maintaining consistency between
+      the form structure and the specified model.
     </p>
 
     <p>
-      Illustrating a more advanced use case, consider the following example that delves into the intricacies of
-      <code>dataToFormValue</code> and <code>formValueToData</code> customization:
+      Illustrating a more advanced use case, consider the following example that
+      delves into the intricacies of
+      <code>dataToFormValue</code> and
+      <code>formValueToData</code> customization:
     </p>
     <app-code-block [code]="runtimePropsCode"></app-code-block>
 
     <cll-callout
       >To understand more about KeyValueInputsComponent, please visit
-      <a [routerLink]="['/clr-lift/components/key-value-inputs']">Key Value Inputs</a>.</cll-callout
+      <a [routerLink]="['/clr-lift/components/key-value-inputs']"
+        >Key Value Inputs</a
+      >.</cll-callout
     >
 
     <p>
-      In certain scenarios, your application might require a review step to consolidate and confirm the submission of
-      all preceding form values. Unlike previous step components, there&#39;s no need to override the form in the review
-      step, as it doesn&#39;t involve any form controls. The key focus is on aggregating data from the preceding steps.
-      Utilize the <code>TimelineWizardService</code> method <code>getStepData</code> to fetch the necessary data and
-      present it in the UI accordingly. Once you&#39;ve verified that all the data is accurate, you can proceed to
+      In certain scenarios, your application might require a review step to
+      consolidate and confirm the submission of all preceding form values.
+      Unlike previous step components, there&#39;s no need to override the form
+      in the review step, as it doesn&#39;t involve any form controls. The key
+      focus is on aggregating data from the preceding steps. Utilize the
+      <code>TimelineWizardService</code> method <code>getStepData</code> to
+      fetch the necessary data and present it in the UI accordingly. Once
+      you&#39;ve verified that all the data is accurate, you can proceed to
       submit it.
     </p>
     <p>
-      To accomplish this, you&#39;ll need to perform two main tasks. First, you must aggregate all the steps&#39; data
-      and map it to the desired API payload. The second task involves triggering the API call. You can leverage the
-      <code>timelineWizardService.allStepsData</code> to obtain all data. However, note that the shape is an array
-      containing each step&#39;s id or title as an identifier along with the respective step data. To address this, you
-      can create a custom data conversion function, such as the <code>buildPayload</code> method outlined below.
-      Subsequently, to initiate the API request, override the <code>next$</code> observable to construct your API
-      stream.
+      To accomplish this, you&#39;ll need to perform two main tasks. First, you
+      must aggregate all the steps&#39; data and map it to the desired API
+      payload. The second task involves triggering the API call. You can
+      leverage the
+      <code>timelineWizardService.allStepsData</code> to obtain all data.
+      However, note that the shape is an array containing each step&#39;s id or
+      title as an identifier along with the respective step data. To address
+      this, you can create a custom data conversion function, such as the
+      <code>buildPayload</code> method outlined below. Subsequently, to initiate
+      the API request, override the <code>next$</code> observable to construct
+      your API stream.
     </p>
 
     <app-code-block [code]="reviewCode"></app-code-block>
 
     <cll-callout>
-      You can customize the <code>next$</code> observable in any step, enabling the inclusion of both asynchronous and
-      synchronous operations, such as an API call.
+      You can customize the <code>next$</code> observable in any step, enabling
+      the inclusion of both asynchronous and synchronous operations, such as an
+      API call.
     </cll-callout>
   </section>
 
@@ -208,11 +285,18 @@
     <h2>Important Notes</h2>
     <ul class="list-disc indent-3 space-y-1">
       <li>
-        Ensure that each step component extends <code>TimelineBaseComponent</code> and follows the provided usage
+        Ensure that each step component extends
+        <code>TimelineBaseComponent</code> and follows the provided usage
         example.
       </li>
-      <li>Customize the <code>TimelineStep</code> objects to match the steps in your wizard.</li>
-      <li>Handle asynchronous operations in your step components by overriding the <code>next$</code> observable.</li>
+      <li>
+        Customize the <code>TimelineStep</code> objects to match the steps in
+        your wizard.
+      </li>
+      <li>
+        Handle asynchronous operations in your step components by overriding the
+        <code>next$</code> observable.
+      </li>
     </ul>
   </section>
 

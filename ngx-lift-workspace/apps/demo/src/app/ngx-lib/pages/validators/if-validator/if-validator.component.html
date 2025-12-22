@@ -1,33 +1,44 @@
-<cll-page-container [title]="'ifValidator & ifAsyncValidator'" class="space-y-9">
+<cll-page-container
+  [title]="'ifValidator & ifAsyncValidator'"
+  customClass="space-y-9"
+>
   <section class="space-y-6">
     <h2>Overview</h2>
     <p>
-      ngx-lift provides utility functions for creating conditional validators in Angular Reactive Forms. Conditional
-      validators allow you to apply specified validator functions based on a given condition. There are two main
-      functions exported: <code>ifValidator</code> for synchronous validators and <code>ifAsyncValidator</code> for
-      asynchronous validators.
+      ngx-lift provides utility functions for creating conditional validators in
+      Angular Reactive Forms. Conditional validators allow you to apply
+      specified validator functions based on a given condition. There are two
+      main functions exported: <code>ifValidator</code> for synchronous
+      validators and <code>ifAsyncValidator</code> for asynchronous validators.
     </p>
 
     <h3>ifValidator</h3>
     <p>
-      The <code>ifValidator</code> function creates a conditional validator that applies the specified validator
-      functions only if the provided condition is met. It takes three parameters: a condition function that determines
-      whether the validators should be applied, the trueValidatorFn representing the validator function or an array of
-      validator functions to be applied when the condition is true, and an optional falseValidatorFn representing the
-      validator function or an array of validator functions to be applied when the condition is false. It returns a
-      validator function that can be used with Angular Reactive Forms.
+      The <code>ifValidator</code> function creates a conditional validator that
+      applies the specified validator functions only if the provided condition
+      is met. It takes three parameters: a condition function that determines
+      whether the validators should be applied, the trueValidatorFn representing
+      the validator function or an array of validator functions to be applied
+      when the condition is true, and an optional falseValidatorFn representing
+      the validator function or an array of validator functions to be applied
+      when the condition is false. It returns a validator function that can be
+      used with Angular Reactive Forms.
     </p>
 
     <p>
-      Here's an example that demonstrates how to use the <code>ifValidator</code> function: Suppose you want to require
-      a reason input and a email input only when the "Sorry" option is selected in a form. The required validator is
-      applied to the text input control only when the "Sorry" option is chosen. The <code>ifValidator</code> function
-      allows you to conditionally apply the validator based on the selected option.
+      Here's an example that demonstrates how to use the
+      <code>ifValidator</code> function: Suppose you want to require a reason
+      input and a email input only when the "Sorry" option is selected in a
+      form. The required validator is applied to the text input control only
+      when the "Sorry" option is chosen. The <code>ifValidator</code> function
+      allows you to conditionally apply the validator based on the selected
+      option.
     </p>
 
     <cll-callout>
-      Invoke the <code>updateValueAndValidity()</code> method on the associated control whenever there is a change in
-      the specified condition for either <code>ifValidator</code> or <code>ifAsyncValidator</code>.
+      Invoke the <code>updateValueAndValidity()</code> method on the associated
+      control whenever there is a change in the specified condition for either
+      <code>ifValidator</code> or <code>ifAsyncValidator</code>.
     </cll-callout>
 
     <form clrForm [formGroup]="form">
@@ -60,28 +71,47 @@
 
       <clr-input-container>
         <label>Email</label>
-        <input clrInput type="text" [formControl]="form.controls.email" size="30" />
-        <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
+        <input
+          clrInput
+          type="text"
+          [formControl]="form.controls.email"
+          size="30"
+        />
+        <clr-control-helper
+          >Field required only when you choose Sorry</clr-control-helper
+        >
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'email'">Invalid email</clr-control-error>
+        <clr-control-error *clrIfError="'email'"
+          >Invalid email</clr-control-error
+        >
       </clr-input-container>
 
       <clr-input-container>
         <label>Reason why you don't like</label>
-        <input clrInput type="text" [formControl]="form.controls.reason" size="30" />
-        <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
+        <input
+          clrInput
+          type="text"
+          [formControl]="form.controls.reason"
+          size="30"
+        />
+        <clr-control-helper
+          >Field required only when you choose Sorry</clr-control-helper
+        >
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
       </clr-input-container>
 
-      <button type="submit" class="btn-primary btn" [disabled]="form.invalid">Submit</button>
+      <button type="submit" class="btn-primary btn" [disabled]="form.invalid">
+        Submit
+      </button>
     </form>
     <app-code-block [code]="ifValidatorCode" />
 
     <h3>ifAsyncValidator</h3>
     <p>
-      <code>ifAsyncValidator</code> shares similarities with <code>ifValidator</code> but differs in that it accepts two
-      parameters: the condition and an AsyncValidation function, designed specifically for handling asynchronous
-      operations.
+      <code>ifAsyncValidator</code> shares similarities with
+      <code>ifValidator</code> but differs in that it accepts two parameters:
+      the condition and an AsyncValidation function, designed specifically for
+      handling asynchronous operations.
     </p>
   </section>
 </cll-page-container>

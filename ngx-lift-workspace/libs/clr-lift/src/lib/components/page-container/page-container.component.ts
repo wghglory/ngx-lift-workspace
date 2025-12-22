@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, input} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'cll-page-container',
@@ -10,5 +10,5 @@ import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 })
 export class PageContainerComponent {
   title = input.required<string>();
-  customClass = input('', {alias: 'class'});
+  customClass = input('');
 }
