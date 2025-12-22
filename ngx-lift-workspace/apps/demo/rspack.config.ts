@@ -1,4 +1,4 @@
-import {createConfig} from '@nx/angular-rspack';
+import { createConfig } from '@nx/angular-rspack';
 
 export default createConfig(
   {
@@ -18,8 +18,19 @@ export default createConfig(
           glob: '**/*',
           input: './public',
         },
+        {
+          glob: '**/*',
+          input: './src/assets',
+          output: '/assets',
+        },
+        './src/favicon.ico',
       ],
-      styles: ['./src/styles.scss'],
+      styles: [
+        '../../node_modules/@cds/core/global.min.css',
+        '../../node_modules/@cds/core/styles/theme.dark.min.css',
+        '../../node_modules/@clr/ui/clr-ui.min.css',
+        './src/styles.scss',
+      ],
       devServer: {},
     },
   },
