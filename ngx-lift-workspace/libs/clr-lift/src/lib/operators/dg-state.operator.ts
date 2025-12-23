@@ -3,10 +3,32 @@ import {isEqual} from 'ngx-lift';
 import {debounce, distinctUntilChanged, map, Observable, pairwise, pipe, startWith, timer, UnaryFunction} from 'rxjs';
 
 /**
- * operator for handling Clarity Datagrid state transformations.
- * It is designed for managing Clarity Datagrid filters and supports optional distinctUntilChanged behavior.
- * @param enableDistinctUntilChanged Whether to enable distinctUntilChanged. Defaults to true.
- * @returns A RxJS pipe that takes an observable of ClrDatagridStateInterface or null and returns an observable of ClrDatagridStateInterface.
+ * RxJS operator for handling Clarity Datagrid state transformations.
+ * Designed for managing Clarity Datagrid filters with debouncing and optional distinctUntilChanged behavior.
+ *
+ * This operator:
+ * - Adds a 500ms debounce when filters change (to avoid excessive API calls)
+ * - Optionally filters out duplicate consecutive states
+ * - Starts with a null state to handle initial load scenarios
+ *
+ * @param enableDistinctUntilChanged - Whether to enable distinctUntilChanged filtering. Defaults to `true`.
+ * @returns A RxJS pipe function that transforms an observable of `ClrDatagridStateInterface | null`
+ *   into an observable of `ClrDatagridStateInterface | null`
+ *
+ * @example
+ * ```typescript
+ * export class UserDatagridComponent {
+ *   private dgSource = new BehaviorSubject<ClrDatagridStateInterface | null>(null);
+ *
+ *   usersState$ = this.dgSource.pipe(
+ *     dgState(), // Debounces filter changes and filters duplicates
+ *     switchMap((state) => {
+ *       const params = convertToHttpParams(state);
+ *       return this.userService.getUsers(params);
+ *     })
+ *   );
+ * }
+ * ```
  */
 export function dgState(
   enableDistinctUntilChanged = true,

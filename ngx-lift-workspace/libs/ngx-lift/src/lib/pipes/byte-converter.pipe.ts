@@ -1,33 +1,43 @@
 import {inject, LOCALE_ID, Pipe, PipeTransform} from '@angular/core';
 
 /**
- * import { LOCALE_ID, NgModule } from '@angular/core';
- * import { BrowserModule } from '@angular/platform-browser';
- * import { AppComponent } from './app.component';
- * import { registerLocaleData } from '@angular/common';
+ * Angular pipe that converts a number of bytes into a human-readable string format
+ * (e.g., "1.5 MB", "2.3 GB") with locale-aware formatting.
  *
+ * Supports multiple locales including English, French, Chinese, Japanese, and more.
+ * The pipe uses the application's LOCALE_ID to determine the appropriate unit translations.
+ *
+ * @example
+ * ```html
+ * <!-- Convert bytes to human-readable format -->
+ * <div>{{ 1024 | byteConverter }}</div>
+ * <!-- Output: "1 KB" (English) or "1 Ko" (French) -->
+ *
+ * <div>{{ 1048576 | byteConverter }}</div>
+ * <!-- Output: "1 MB" (English) or "1 Mo" (French) -->
+ * ```
+ *
+ * @example
+ * To use locale-specific formatting, configure LOCALE_ID in your app:
+ * ```typescript
+ * import { LOCALE_ID, NgModule } from '@angular/core';
+ * import { registerLocaleData } from '@angular/common';
  * import localeEn from '@angular/common/locales/en';
  * import localeFr from '@angular/common/locales/fr';
  *
- * // Register locales
  * registerLocaleData(localeEn);
  * registerLocaleData(localeFr);
  *
  * @NgModule({
- *   declarations: [AppComponent],
- *   imports: [BrowserModule],
  *   providers: [
  *     {
  *       provide: LOCALE_ID,
- *       useFactory: () => {
- *         // Use the browser's language or a default language
- *         return navigator.language || 'en';
- *       },
+ *       useFactory: () => navigator.language || 'en',
  *     },
  *   ],
- *   bootstrap: [AppComponent],
  * })
  * export class AppModule {}
+ * ```
  */
 
 @Pipe({

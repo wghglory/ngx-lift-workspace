@@ -2,6 +2,13 @@
 import {computed, CreateComputedOptions, DestroyRef, effect, inject, Signal, signal, untracked} from '@angular/core';
 import {concatAll, exhaustAll, isObservable, mergeAll, Observable, Subject, switchAll} from 'rxjs';
 
+/**
+ * Behavior mode for handling multiple async sources in computedAsync.
+ * - `switch`: Cancel previous async operations when a new one starts (default)
+ * - `merge`: Process all async operations concurrently
+ * - `concat`: Process async operations sequentially
+ * - `exhaust`: Ignore new async operations while one is in progress
+ */
 type ComputedAsyncBehavior = 'switch' | 'merge' | 'concat' | 'exhaust';
 
 // { equal, behavior }
@@ -11,6 +18,35 @@ type OptionsWithInitialValue<T> = {initialValue: T} & BaseOptions<T>;
 type OptionsWithOptionalInitialValue<T> = {initialValue?: undefined} & BaseOptions<T>;
 type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
 
+/**
+ * Creates a computed signal that can derive its value from asynchronous sources
+ * (Observables, Promises) or synchronous values. The signal automatically updates
+ * when dependencies change.
+ *
+ * @template T - The type of the computed value
+ * @param computeFn - A function that computes the value. Can return an Observable, Promise, or synchronous value.
+ *   The function receives the previous value as a parameter.
+ * @returns A signal that emits the computed value
+ *
+ * @example
+ * ```typescript
+ * // Basic usage with Observable
+ * const userId = signal(1);
+ * const user = computedAsync(() => this.userService.getUser(userId()));
+ *
+ * // With initial value
+ * const user = computedAsync(
+ *   () => this.userService.getUser(userId()),
+ *   { initialValue: null }
+ * );
+ *
+ * // With requireSync (ensures synchronous initial value)
+ * const user = computedAsync(
+ *   () => this.userService.getUserSync(userId()),
+ *   { requireSync: true }
+ * );
+ * ```
+ */
 // without options
 export function computedAsync<T>(
   computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,

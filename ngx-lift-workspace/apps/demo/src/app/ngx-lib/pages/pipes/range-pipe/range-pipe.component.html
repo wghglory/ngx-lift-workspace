@@ -1,11 +1,11 @@
 <cll-page-container title="Range" customClass="space-y-9">
   <p>
-    Assume you have the number 20. In Angular HTML, you want to create an array ranging from 1 to 20 and display it in a
-    dropdown list. You might find that Angular's <code>*ngFor</code> loop cannot directly iterate over a number,
-    requiring you to create an array first. While you could generate this array in TypeScript, there might be cases
-    where you prefer to create such an array directly in the HTML. For instance, if you have a list of computers with
-    varying maximum CPU counts, and you wish to allow users to select a range of CPUs in a dropdown list, a custom
-    "range" pipe would be useful for generating the necessary array.
+    When working with Angular templates, you may need to generate an array of numbers for iteration. For example, if you
+    have the number 20 and want to create an array from 1 to 20 to display in a dropdown list, Angular's
+    <code>*ngFor</code> directive cannot directly iterate over a number. While you could generate this array in
+    TypeScript, there are cases where creating the array directly in the template is more convenient. For instance, when
+    displaying a list of computers with varying maximum CPU counts and allowing users to select a CPU range in a
+    dropdown, the <code>range</code> pipe provides a clean solution for generating the necessary array.
   </p>
 
   <cll-callout>
@@ -19,14 +19,15 @@
     </ul>
 
     <p class="underline">
-      We also provide a <code>range</code> utility function that you can import from <code>ngx-lift</code>.
+      A <code>range</code> utility function is also available for use in TypeScript, which can be imported from
+      <code>ngx-lift</code>.
     </p>
   </cll-callout>
 
   <p>
     The pipe accepts a tuple containing a start number, an end number, a step value, and a boolean flag indicating
-    whether the array should be in reverse order. The default value for the step is 1. When only one number is passed,
-    the array will be starting from 0 to that number.
+    whether the array should be generated in reverse order. The default step value is 1. When only one number is
+    provided, the array starts from 0 up to (but not including) that number.
   </p>
 
   <h2>Usage</h2>
