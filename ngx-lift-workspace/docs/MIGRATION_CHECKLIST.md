@@ -21,7 +21,7 @@ Use this checklist to track your migration progress and ensure everything is set
 
 ## 🔧 Setup Tasks (Your Action Required)
 
-### Initial Setup
+<!-- ### Initial Setup
 
 - [ ] Navigate to workspace: `cd ngx-lift-workspace`
 - [ ] Install dependencies: `npm install`
@@ -32,19 +32,21 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Build ngx-lift: `npm run build:ngx`
 - [ ] Build clr-lift: `npm run build:clr`
 - [ ] Build demo app: `npm run build:demo`
-- [ ] Verify dist folder contents
+- [ ] Verify dist folder contents -->
 
 ### Test Migration
 
-- [ ] Review test files in `libs/ngx-lift/src/lib/**/*.spec.ts`
+<!-- - [ ] Review test files in `libs/ngx-lift/src/lib/**/*.spec.ts`
 - [ ] Review test files in `libs/clr-lift/src/lib/**/*.spec.ts`
 - [ ] Convert Jasmine syntax to Vitest (see guide below)
-- [ ] Run tests: `npm test`
+- [ ] Run tests: `npm test` -->
+
 - [ ] Fix any failing tests
 - [ ] Run tests with coverage: `npm run test:coverage`
 
 ### Development Environment
 
+<!--
 - [ ] Start demo app: `npm start`
 - [ ] Verify app loads at http://localhost:4200
 - [ ] Test hot reload by making a change
@@ -56,7 +58,7 @@ Use this checklist to track your migration progress and ensure everything is set
 - [ ] Run linter: `npm run lint`
 - [ ] Fix linting errors: `npm run lint:fix`
 - [ ] Format code: `npm run format`
-- [ ] Verify no linting/formatting issues
+- [ ] Verify no linting/formatting issues -->
 
 ### GitHub Setup
 
