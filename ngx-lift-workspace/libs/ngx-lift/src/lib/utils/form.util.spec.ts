@@ -105,3 +105,59 @@ describe('ifAsyncValidator', () => {
     expect(asyncValidatorFnMock).not.toHaveBeenCalled();
   });
 });
+
+describe('ifValidator edge cases', () => {
+  let fixture: ComponentFixture<TestComponent>;
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TestComponent);
+    fixture.detectChanges();
+  });
+
+  it('should handle array of validators in trueValidatorFn', () => {
+    const control = fixture.componentInstance.form.controls.testControl;
+    control.setValue('valid value');
+
+    const validator1 = vi.fn().mockReturnValue({error1: true});
+    const validator2 = vi.fn().mockReturnValue({error2: true});
+
+    const conditionalValidator = ifValidator((ctrl) => ctrl.value === 'valid value', [validator1, validator2]);
+
+    const result = conditionalValidator(control);
+    expect(result).not.toBeNull();
+    expect(validator1).toHaveBeenCalledWith(control);
+    expect(validator2).toHaveBeenCalledWith(control);
+  });
+
+  it('should handle array of validators in falseValidatorFn', () => {
+    const control = fixture.componentInstance.form.controls.testControl;
+    control.setValue('invalid value');
+
+    const validator1 = vi.fn().mockReturnValue({error1: true});
+    const validator2 = vi.fn().mockReturnValue({error2: true});
+
+    const conditionalValidator = ifValidator(
+      (ctrl) => ctrl.value === 'valid value',
+      vi.fn().mockReturnValue({error: true}),
+      [validator1, validator2],
+    );
+
+    const result = conditionalValidator(control);
+    expect(result).not.toBeNull();
+    expect(validator1).toHaveBeenCalledWith(control);
+    expect(validator2).toHaveBeenCalledWith(control);
+  });
+
+  it('should return null when falseValidatorFn is not provided and condition is false', () => {
+    const control = fixture.componentInstance.form.controls.testControl;
+    control.setValue('invalid value');
+
+    const conditionalValidator = ifValidator(
+      (ctrl) => ctrl.value === 'valid value',
+      vi.fn().mockReturnValue({error: true}),
+    );
+
+    const result = conditionalValidator(control);
+    expect(result).toBeNull();
+  });
+});

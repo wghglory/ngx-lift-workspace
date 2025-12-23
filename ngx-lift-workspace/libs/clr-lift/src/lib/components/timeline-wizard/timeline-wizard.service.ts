@@ -30,14 +30,22 @@ export class TimelineWizardService {
    * Get the current step object.
    */
   get currentStep(): TimelineStep {
-    return this.steps[this.currentStepIndex];
+    const index = this.currentStepIndex;
+    if (index === -1) {
+      throw new Error('No current step available');
+    }
+    return this.steps[index];
   }
 
   /**
    * Get the data of the current step.
    */
   get currentStepData() {
-    return this.currentStep.data;
+    const index = this.currentStepIndex;
+    if (index === -1) {
+      throw new Error('No current step available');
+    }
+    return this.steps[index].data;
   }
 
   /**

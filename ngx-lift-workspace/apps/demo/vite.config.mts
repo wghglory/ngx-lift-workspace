@@ -23,6 +23,13 @@ export default defineConfig(() => ({
     coverage: {
       reportsDirectory: '../../coverage/apps/demo',
       provider: 'v8' as const,
+      reporter: ['text-summary', 'html', 'json', 'json-summary'],
+      thresholds: {
+        statements: 80,
+        branches: 75,
+        functions: 80,
+        lines: 80,
+      },
     },
   },
 }));

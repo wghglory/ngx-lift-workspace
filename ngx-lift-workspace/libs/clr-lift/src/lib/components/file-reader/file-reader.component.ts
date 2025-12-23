@@ -6,6 +6,7 @@ import {
   inject,
   Injector,
   input,
+  linkedSignal,
   output,
   signal,
   viewChild,
@@ -62,7 +63,7 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
 
   fileChange = output<string>();
 
-  isDisabled = signal(this.disabled());
+  isDisabled = linkedSignal(() => this.disabled());
 
   // @Input({ required: true }) formControl: FormControl;
   formControl = computed(() => {

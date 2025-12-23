@@ -118,7 +118,7 @@ export class IdleDetectionService {
       const throttledInterruptionEvents = this.interruptionEvents.map((eventName) =>
         fromEvent(document, eventName).pipe(throttleTime(1000)),
       );
-      this.interruptionSubscription = merge(...throttledInterruptionEvents).subscribe(() => this.resetTimer());
+      this.interruptionSubscription = merge(...throttledInterruptionEvents).subscribe(() => this.resetTimer(true));
     }
   }
 
@@ -202,6 +202,9 @@ export class IdleDetectionService {
   clearTimers() {
     clearTimeout(this.idleTimer);
     clearInterval(this.countdownTimer);
+
+    this.idleTimer = undefined;
+    this.countdownTimer = undefined;
 
     this.interruptionSubscription?.unsubscribe();
     this.interruptionSubscription = undefined;
