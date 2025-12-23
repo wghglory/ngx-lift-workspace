@@ -1,0 +1,199 @@
+---
+alwaysApply: true
+---
+
+## Angular 20 Specific Guidelines
+
+### Component Architecture
+
+- **Standalone Components**: All components must be standalone (no NgModules)
+- **Imports**: Use `imports` array in `@Component` decorator, not `@NgModule`
+- **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush` for all components
+- **Component Lifecycle**: Use lifecycle hooks appropriately:
+  - `ngOnInit`: Component initialization, data fetching setup
+  - `ngAfterViewInit`: View-related initialization (ViewChild, ElementRef)
+  - `ngOnDestroy`: Cleanup subscriptions (if any), timers, event listeners
+  - **Never** put subscription logic in constructor
+
+### Signal-Based Development
+
+- **Signal Inputs**: Always use signal inputs instead of `@Input()` decorators
+
+  ```typescript
+  // ✅ Correct
+  name = input<string>();
+  age = input.required<number>();
+
+  // ❌ Wrong
+  @Input() name?: string;
+  @Input() age!: number;
+  ```
+
+- **Signal Outputs**: Use `output()` instead of `@Output()` decorators
+
+  ```typescript
+  // ✅ Correct
+  userChange = output<User>();
+
+  // ❌ Wrong
+  @Output() userChange = new EventEmitter<User>();
+  ```
+
+- **ViewChild/ViewChildren**: Use signal-based view queries
+
+  ```typescript
+  // ✅ Correct
+  fileElement = viewChild.required<ElementRef<HTMLInputElement>>('file');
+  items = viewChildren(ItemComponent);
+
+  // ❌ Wrong
+  @ViewChild('file') fileElement!: ElementRef;
+  ```
+
+- **Computed Signals**: Use `computed()` for derived state
+
+  ```typescript
+  fullName = computed(() => `${this.firstName()} ${this.lastName()}`);
+  ```
+
+- **Effects**: Use `effect()` only for side effects (logging, external API calls)
+  - **Never** manipulate DOM in effects
+  - **Never** update signals that trigger effects (avoid circular dependencies)
+  - Use `untracked()` when reading signals that shouldn't trigger re-computation
+
+### Dependency Injection
+
+- **Preferred Method**: Use `inject()` function over constructor injection
+
+  ```typescript
+  // ✅ Correct
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  // ❌ Wrong (unless required for specific use case)
+  constructor(private http: HttpClient) {}
+  ```
+
+- **Optional Injection**: Use `{optional: true}` for optional dependencies
+
+  ```typescript
+  private config = inject(ConfigService, {optional: true});
+  ```
+
+- **Injection Context**: Use `runInInjectionContext()` when accessing injectors outside constructor/injection context
+
+### Template Syntax
+
+- **Control Flow**: Use new Angular control flow syntax (`@if`, `@for`, `@switch`)
+
+  ```typescript
+  // ✅ Correct
+  @if (user(); as user) {
+    <p>{{ user.name }}</p>
+  }
+
+  @for (item of items(); track item.id) {
+    <div>{{ item.name }}</div>
+  }
+
+  // ❌ Wrong
+  <div *ngIf="user$ | async as user">
+  <div *ngFor="let item of items">
+  ```
+
+- **Async Pipe**: Always use async pipe for observables in templates
+
+  ```typescript
+  // ✅ Correct
+  @if (user$ | async; as user) {
+    <p>{{ user.name }}</p>
+  }
+
+  // ❌ Wrong
+  // Don't subscribe in component and store in property
+  ```
+
+- **Track Functions**: Always provide track function for `@for` loops
+
+  ```typescript
+  @for (item of items(); track item.id) {
+    // ...
+  }
+  ```
+
+- **Method Calls**: **NEVER** call component methods from templates
+  - Use computed signals or pipes instead
+  - Exception: Event handlers (`(click)="handleClick()"`)
+
+### Forms
+
+- **Reactive Forms**: Prefer reactive forms over template-driven forms
+- **ControlValueAccessor**: Implement for custom form controls
+
+  ```typescript
+  export class CustomControl implements ControlValueAccessor {
+    private onChange = (value: any) => {};
+    private onTouched = () => {};
+
+    writeValue(value: any): void {}
+    registerOnChange(fn: any): void {
+      this.onChange = fn;
+    }
+    registerOnTouched(fn: any): void {
+      this.onTouched = fn;
+    }
+    setDisabledState(isDisabled: boolean): void {}
+  }
+  ```
+
+- **Form Validation**: Use validators from `@angular/forms` and custom validators from `ngx-lift`
+- **Form State**: Access form control state reactively using signals or observables
+
+### Routing
+
+- **Standalone Routes**: Use standalone route configuration
+- **Route Params**: Use `injectParams()` from `ngx-lift` for route parameters
+
+  ```typescript
+  userId = injectParams('id');
+  allParams = injectParams();
+  ```
+
+- **Query Params**: Use `injectQueryParams()` from `ngx-lift` for query parameters
+
+  ```typescript
+  searchTerm = injectQueryParams('search');
+  ```
+
+- **Route Guards**: Implement guards as functional guards (preferred in Angular 20)
+
+### Performance Optimization
+
+- **OnPush Strategy**: **MANDATORY** for all components
+- **Track Functions**: **MANDATORY** for all `@for` loops
+- **Async Pipe**: **MANDATORY** for observables in templates
+- **Lazy Loading**: Use `@defer` for non-critical components
+- **Change Detection**: Minimize by using signals and computed values
+- **Memory Leaks**: Always clean up subscriptions, timers, and event listeners in `ngOnDestroy`
+
+### Component Communication
+
+- **Parent to Child**: Use signal inputs
+- **Child to Parent**: Use signal outputs
+- **Sibling Communication**: Use shared service or state management
+- **Cross-Component**: Use services with signals or observables
+
+### Error Handling
+
+- **ErrorHandler**: Implement global error handler for unhandled errors
+- **Component Errors**: Use `catchError` operator for observables
+- **Error Display**: Use Clarity alert components to display errors
+- **Error Logging**: Log errors appropriately (avoid sensitive information)
+
+### Accessibility
+
+- **ARIA Attributes**: Include appropriate ARIA attributes
+- **Keyboard Navigation**: Ensure all interactive elements are keyboard accessible
+- **Focus Management**: Manage focus appropriately (modals, dialogs, dynamic content)
+- **Semantic HTML**: Use semantic HTML elements where possible
+- **Labels**: Always associate labels with form controls

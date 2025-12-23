@@ -1,0 +1,130 @@
+---
+alwaysApply: true
+---
+
+## Core Technologies & Versions
+
+- **Angular**: 20.3.0
+- **Nx**: 22.0.0
+- **Clarity Design System**: @clr/angular 17.12.1 (for clr-lift)
+- **Testing**: Vitest 3.0.0 (unit), Playwright 1.36.0 (E2E)
+- **Linting**: ESLint 9.8.0 with custom rules
+- **TypeScript**: 5.9.2 (strict mode)
+
+## Non-Negotiables
+
+These principles are **mandatory** and must be followed in all code:
+
+- **TypeScript**: Strict mode enabled; DRY principle; **no `any` types**
+- **UI Components**: **Clarity Angular** components (`clr-*`) over raw HTML; **no hard-coded colors** (use Clarity SASS
+  variables)
+- **Accessibility**: ARIA attributes by default; keyboard navigation parity with mouse interactions
+- **i18n**: All user-visible text via Transloco; labels use sentence case; titles use title case
+- **State Management**: Signals for component state; reactive patterns for data flow
+- **Change Detection**: **ALWAYS** `ChangeDetectionStrategy.OnPush` for all components
+- **Testing**: Stable selectors (`getByRole` or `data-test-id`); 60%+ coverage minimum
+- **Lifecycle**: No subscriptions in constructor; initialization logic in `ngOnInit`
+
+## Code Quality Standards
+
+- **ESLint**: All code must pass ESLint without errors or warnings
+- **Prettier**: All code must be formatted with Prettier
+- **TypeScript**: Compilation must pass with no errors
+- **Lint Check**: Run `npx nx lint [project]` before considering work complete
+- **Justification**: Fix or suppress lint warnings only with explicit justification
+
+## Definition of Done
+
+Before marking any task as complete, verify:
+
+- ✅ UI uses `clr-*` components and Clarity variables only (no hard-coded styles)
+- ✅ Accessibility checked (labels, ARIA roles, keyboard focus management)
+- ✅ Transloco keys implemented with default English translations
+- ✅ Unit tests (Vitest) written with 60%+ coverage
+- ✅ E2E hooks (Playwright) added where applicable
+- ✅ Nx boundaries respected; **no circular dependencies**
+- ✅ Code formatted with Prettier; ESLint clean; TypeScript compilation passes
+- ✅ Copyright header included in all files
+
+## Specialized Rule Files
+
+For detailed guidelines, refer to:
+
+- **`angular.mdc`**: Angular 20 patterns, signals, dependency injection, templates, routing
+- **`testing.mdc`**: Vitest unit testing, Playwright E2E, test patterns, coverage
+- **`clarity.mdc`**: Clarity Design System components, styling, SASS variables, theming
+- **`rxjs.mdc`**: RxJS operators, async state management, subscription patterns
+- **`nx.mdc`**: Nx workspace structure, commands, project boundaries, code generation
+
+## Development Principles
+
+### Reactivity & State Management
+
+- **Signals First**: Prefer Angular Signals over Observables for component state
+- **Signal Inputs/Outputs**: Use `input()`, `output()` instead of `@Input()`, `@Output()`
+- **Computed Signals**: Use `computed()` for derived state
+- **Avoid Manual Subscriptions**: Use async pipe or reactive utilities (`computedAsync`, `combineFrom` from ngx-lift)
+- **Effects**: Use `effect()` sparingly for side effects only; avoid DOM manipulation
+
+### Performance Optimization
+
+- **OnPush Strategy**: **MANDATORY** for all components
+- **Track Functions**: **MANDATORY** for all `@for` loops (`track item.id`)
+- **Async Pipe**: **MANDATORY** for observables in templates (never manual subscriptions)
+- **Lazy Loading**: Use `@defer` for non-critical components
+- **No Method Calls in Templates**: Use pipes or computed signals instead
+- **Minimize Change Detection**: Use signals and computed values
+
+### TypeScript Best Practices
+
+- **Strict Mode**: Always enabled
+- **Type Inference**: Use where possible; explicit types for public APIs
+- **Interfaces vs Types**: Prefer interfaces for object shapes (unless unions/intersections needed)
+- **Immutability**: Use `readonly` for immutable data structures
+- **Utility Types**: Leverage `Partial`, `Pick`, `Omit`, etc. for type transformations
+- **Return Types**: Define proper return types for all functions and methods
+
+## Naming Conventions
+
+- **Async State Suffix**: Signals using `createAsyncState` must have `State` suffix (e.g., `usersState`,
+  `productsState`)
+- **Component Files**: kebab-case (e.g., `user-profile.component.ts`)
+- **Component Classes**: PascalCase (e.g., `UserProfileComponent`)
+- **Variables/Methods**: camelCase (e.g., `userName`, `getUserData()`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
+- **Types/Interfaces**: PascalCase (e.g., `UserProfile`, `ApiResponse`)
+
+## Service & Data Layer
+
+- **Dependency Injection**: Use `inject()` function (preferred over constructor injection)
+- **Service Scope**: Provide services at appropriate levels (root, component, feature)
+- **RxJS Operators**: Use operators properly (`map`, `filter`, `switchMap`, `catchError`, etc.)
+- **Error Handling**: Implement proper error handling and retry logic
+- **Async State**: Use async state management patterns for loading/error/success states
+
+## Architecture & Boundaries
+
+- **Nx Boundaries**: Respect project boundaries; **no circular dependencies**
+- **Project Structure**: Follow Nx library/app structure conventions
+- **Code Organization**: Organize by feature/domain
+- **Dependency Rules**: Leverage Nx tags and boundaries for dependency rules
+- **Code Generation**: Use Nx generators for consistent project structure
+
+## Error Handling
+
+- **Error Mechanisms**: Use Angular's error handling (`ErrorHandler`, `catchError` operator)
+- **User Messages**: Provide meaningful error messages via Transloco keys
+- **Logging**: Log errors appropriately (avoid sensitive information)
+- **Reactive Patterns**: Handle async errors gracefully using `catchError` and error signals
+
+## Code Generation Guidelines
+
+When generating code:
+
+1. Follow official documentation for Angular, Vitest, Playwright, TypeScript, and
+   [Clarity Design System](https://clarity.design)
+2. Apply industry best practices and design principles
+3. Ensure DRY (Don't Repeat Yourself) principle
+4. **Always** verify lint passes after generation; fix lint errors immediately
+5. Reference specialized rule files for detailed patterns
+6. Maintain consistency with existing codebase patterns

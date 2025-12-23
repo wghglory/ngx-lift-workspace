@@ -1,0 +1,256 @@
+---
+alwaysApply: true
+---
+
+## Testing Guidelines
+
+### Unit Testing with Vitest
+
+- **Framework**: Use Vitest (not Jasmine/Jest)
+- **Test Structure**: Follow AAA pattern (Arrange, Act, Assert)
+- **Test File Naming**: `*.spec.ts` (e.g., `file-reader.component.spec.ts`)
+
+#### Imports and Setup
+
+```typescript
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {describe, it, expect, beforeEach, vi} from 'vitest';
+import {Component} from '@angular/core';
+```
+
+#### Component Testing
+
+- **TestBed Configuration**: Configure TestBed in `beforeEach`
+
+  ```typescript
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [YourComponent, ReactiveFormsModule],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+    });
+    fixture = TestBed.createComponent(YourComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+  ```
+
+- **Signal Inputs**: Use `fixture.componentRef.setInput()` for signal inputs
+
+  ```typescript
+  fixture.componentRef.setInput('name', 'John');
+  fixture.componentRef.setInput('age', 30);
+  fixture.detectChanges();
+  ```
+
+- **ViewChild Signals**: Access via component instance
+
+  ```typescript
+  const fileElement = component.fileElement();
+  ```
+
+- **Translation Service**: Use `MockTranslationService` for components with translations
+  ```typescript
+  providers: [{provide: TranslationService, useClass: MockTranslationService}];
+  ```
+
+#### Spies and Mocks
+
+- **Vitest Spies**: Use `vi.spyOn()` instead of `spyOn()`
+
+  ```typescript
+  // ✅ Correct
+  const spy = vi.spyOn(service, 'method');
+  spy.mockReturnValue(value);
+  spy.mockImplementation(() => value);
+
+  // ❌ Wrong
+  spyOn(service, 'method').and.returnValue(value);
+  ```
+
+- **MockInstance**: Use `MockInstance<T>` for type-safe spies
+
+  ```typescript
+  // ✅ Correct
+  const mockService = MockInstance.create<MyService>();
+  vi.spyOn(mockService, 'method').mockReturnValue(value);
+
+  // ❌ Wrong
+  const mockService = {method: vi.fn()} as unknown as MyService;
+  ```
+
+- **Async Operations**: Use `fakeAsync` and `tick()` for time-based operations
+  ```typescript
+  it('should handle async operation', fakeAsync(() => {
+    component.doSomething();
+    tick(1000);
+    expect(component.result()).toBe(expected);
+  }));
+  ```
+
+#### Test Utilities
+
+- **Router Mock**: Use `RouterMock` from shared-spec library when needed
+- **ActivatedRoute Mock**: Use `ActivatedRouteMock` from shared-spec library
+- **Form Controls**: Create mock form controls for testing ControlValueAccessor
+  ```typescript
+  const mockFormControl = new FormControl('');
+  const mockNgControl = {
+    control: mockFormControl,
+    form: mockFormControl,
+  } as unknown as FormControlDirective;
+  ```
+
+#### Test Selectors
+
+- **Preferred**: Use `getByRole` from Testing Library
+
+  ```typescript
+  const button = screen.getByRole('button', {name: /submit/i});
+  ```
+
+- **Fallback**: Use `data-test-id` attributes for stable selectors
+
+  ```typescript
+  const element = fixture.nativeElement.querySelector('[data-test-id="submit-button"]');
+  ```
+
+- **Avoid**: Don't rely on implementation details (CSS classes, component structure)
+
+#### Coverage Requirements
+
+- **Minimum Coverage**: 60% for all components
+- **Critical Paths**: Aim for 80%+ coverage on business logic
+- **Coverage Thresholds**: Configured in `vite.config.mts`
+  - Statements: 80%
+  - Branches: 75%
+  - Functions: 80%
+  - Lines: 80%
+
+#### Test Organization
+
+- **Describe Blocks**: Group related tests
+
+  ```typescript
+  describe('ComponentName', () => {
+    describe('Feature A', () => {
+      it('should do something', () => {});
+    });
+
+    describe('Feature B', () => {
+      it('should do something else', () => {});
+    });
+  });
+  ```
+
+- **Test Names**: Use descriptive test names
+
+  ```typescript
+  // ✅ Good
+  it('should display error message when API call fails', () => {});
+
+  // ❌ Bad
+  it('should work', () => {});
+  ```
+
+### E2E Testing with Playwright
+
+- **Framework**: Use Playwright (not Protractor)
+- **Test File Naming**: `*.spec.ts` in `apps/*-e2e/src/`
+- **Configuration**: Use `playwright.config.ts` with Nx preset
+
+#### Test Structure
+
+```typescript
+import {test, expect} from '@playwright/test';
+
+test('should display user list', async ({page}) => {
+  await page.goto('/users');
+  await expect(page.locator('h1')).toContainText('Users');
+});
+```
+
+#### Best Practices
+
+- **Page Object Model**: Consider using page objects for complex flows
+- **Selectors**: Prefer stable selectors (`data-test-id`, roles, text)
+- **Wait Strategies**: Use `waitFor` for async operations
+- **Screenshots**: Take screenshots on failure (configured in playwright.config.ts)
+- **Trace**: Collect trace on first retry for debugging
+
+#### Browser Support
+
+- Test in Chromium, Firefox, and WebKit (configured in playwright.config.ts)
+- Mobile browsers can be added if needed
+
+### Test Commands
+
+- **Run All Tests**: `npm test` or `nx run-many -t test`
+- **Run Specific Project**: `npx nx test [project-name]`
+- **Run with Coverage**: `npm run test:coverage`
+- **Run E2E Tests**: `npx nx e2e [e2e-project-name]`
+- **Watch Mode**: `npx nx test [project-name] --watch`
+
+### Type Safety in Tests
+
+- **Avoid `any`**: Use proper types or `unknown` with type guards
+- **Type Guards**: Implement type guards when needed
+
+  ```typescript
+  function isUser(value: unknown): value is User {
+    return typeof value === 'object' && value !== null && 'id' in value;
+  }
+  ```
+
+- **Mock Types**: Use proper types for mocks
+  ```typescript
+  const mockUser: User = {
+    id: 1,
+    name: 'John',
+  };
+  ```
+
+### Common Testing Patterns
+
+#### Testing Signal Inputs
+
+```typescript
+it('should update when input changes', () => {
+  fixture.componentRef.setInput('name', 'New Name');
+  fixture.detectChanges();
+  expect(component.displayName()).toBe('New Name');
+});
+```
+
+#### Testing Async Operations
+
+```typescript
+it('should handle async data', async () => {
+  const data$ = of({id: 1, name: 'Test'});
+  component.data$ = data$;
+  fixture.detectChanges();
+  await fixture.whenStable();
+  expect(component.data()).toEqual({id: 1, name: 'Test'});
+});
+```
+
+#### Testing Form Controls
+
+```typescript
+it('should validate form control', () => {
+  const control = new FormControl('');
+  control.setValidators([Validators.required]);
+  control.setValue('');
+  expect(control.valid).toBe(false);
+});
+```
+
+#### Testing Outputs
+
+```typescript
+it('should emit event on click', () => {
+  const spy = vi.fn();
+  component.userChange.subscribe(spy);
+  component.handleClick();
+  expect(spy).toHaveBeenCalledWith(expectedValue);
+});
+```

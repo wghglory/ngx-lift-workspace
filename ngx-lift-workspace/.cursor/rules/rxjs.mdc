@@ -1,0 +1,339 @@
+---
+alwaysApply: true
+---
+
+## RxJS Patterns and Best Practices
+
+### Observable Creation
+
+- **Prefer Signals**: Use Angular Signals for component state when possible
+- **Observables for Streams**: Use Observables for continuous data streams (HTTP, events, timers)
+- **Creation Functions**: Use appropriate creation functions
+
+  ```typescript
+  // ✅ Good
+  data$ = of(data);
+  data$ = from(promise);
+  data$ = fromEvent(element, 'click');
+
+  // ❌ Avoid
+  data$ = new Observable(subscriber => { ... });
+  ```
+
+### Operators
+
+#### Common Operators
+
+- **map**: Transform values
+
+  ```typescript
+  users$ = this.http
+    .get<User[]>(url)
+    .pipe(map((users) => users.map((u) => ({...u, fullName: `${u.firstName} ${u.lastName}`}))));
+  ```
+
+- **filter**: Filter values
+
+  ```typescript
+  activeUsers$ = users$.pipe(filter((user) => user.active));
+  ```
+
+- **switchMap**: Cancel previous inner observables (HTTP requests)
+
+  ```typescript
+  user$ = userId$.pipe(switchMap((id) => this.http.get<User>(`/users/${id}`)));
+  ```
+
+- **mergeMap/flatMap**: Concurrent inner observables
+
+  ```typescript
+  results$ = ids$.pipe(mergeMap((id) => this.http.get<Result>(`/results/${id}`)));
+  ```
+
+- **concatMap**: Sequential inner observables
+
+  ```typescript
+  results$ = ids$.pipe(concatMap((id) => this.http.get<Result>(`/results/${id}`)));
+  ```
+
+- **exhaustMap**: Ignore new emissions while inner observable is active
+
+  ```typescript
+  save$ = saveAction$.pipe(exhaustMap(() => this.http.post('/save', data)));
+  ```
+
+- **catchError**: Handle errors
+
+  ```typescript
+  data$ = this.http.get(url).pipe(
+    catchError((error) => {
+      console.error(error);
+      return of(defaultValue);
+    }),
+  );
+  ```
+
+- **tap**: Side effects (logging, debugging)
+  ```typescript
+  data$ = this.http.get(url).pipe(
+    tap((data) => console.log('Received:', data)),
+    tap({error: (err) => console.error('Error:', err)}),
+  );
+  ```
+
+#### ngx-lift Operators
+
+- **createAsyncState**: Transform Observable to AsyncState
+
+  ```typescript
+  usersState$ = this.userService.getUsers().pipe(
+    createAsyncState({
+      next: (users) => console.log('Loaded users:', users),
+      error: (err) => console.error('Failed to load users:', err),
+    }),
+  );
+  ```
+
+- **switchMapWithAsyncState**: Combine switchMap with async state
+
+  ```typescript
+  userState$ = userId$.pipe(switchMapWithAsyncState((id) => this.userService.getUser(id)));
+  ```
+
+- **combineLatestEager**: Combine observables with initial values
+
+  ```typescript
+  vm$ = combineLatestEager({
+    users: this.users$,
+    filters: this.filters$,
+  });
+  ```
+
+- **poll**: Polling with configurable interval
+
+  ```typescript
+  dataState$ = poll({
+    interval: 5000,
+    pollingFn: () => this.http.get('/data'),
+    forceRefresh: this.refresh$,
+    initialValue: {loading: false, error: null, data: null},
+  });
+  ```
+
+- **distinctOnChange**: Execute callback on value change
+
+  ```typescript
+  data$.pipe(
+    distinctOnChange((prev, curr) => {
+      console.log('Value changed from', prev, 'to', curr);
+    }),
+  );
+  ```
+
+- **dgState**: Datagrid state management (Clarity)
+  ```typescript
+  state$ = this.datagridState$.pipe(dgState());
+  ```
+
+### Async State Management
+
+- **AsyncState Pattern**: Use AsyncState for loading/error/success states
+
+  ```typescript
+  interface AsyncState<T, E = Error> {
+    loading: boolean;
+    error: E | null;
+    data: T | null;
+  }
+  ```
+
+- **Template Usage**: Use async pipe with AsyncState
+  ```html
+  @if (userState$ | async; as state) { @if (state.loading) {
+  <cll-spinner />
+  } @if (state.error) {
+  <cll-alert [error]="state.error" />
+  } @if (state.data; as user) {
+  <p>{{ user.name }}</p>
+  } }
+  ```
+
+### Subscription Management
+
+- **Async Pipe**: Prefer async pipe in templates (automatic subscription management)
+
+  ```html
+  @if (data$ | async; as data) {
+  <p>{{ data.name }}</p>
+  }
+  ```
+
+- **Manual Subscriptions**: Only when necessary, always unsubscribe
+
+  ```typescript
+  private destroyRef = inject(DestroyRef);
+
+  ngOnInit() {
+    const subscription = this.data$.subscribe(data => {
+      // handle data
+    });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
+  }
+  ```
+
+- **takeUntil Pattern**: Use `takeUntil` with `DestroyRef` or `Subject`
+
+  ```typescript
+  private destroy$ = new Subject<void>();
+
+  ngOnInit() {
+    this.data$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  ```
+
+### Subjects
+
+- **BehaviorSubject**: For state that needs initial value
+
+  ```typescript
+  private userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
+  ```
+
+- **Subject**: For events/actions
+
+  ```typescript
+  private saveAction$ = new Subject<void>();
+
+  save() {
+    this.saveAction$.next();
+  }
+  ```
+
+- **ReplaySubject**: For caching last N values
+  ```typescript
+  private dataSubject = new ReplaySubject<Data>(3);
+  ```
+
+### Error Handling
+
+- **catchError**: Always handle errors in HTTP requests
+
+  ```typescript
+  data$ = this.http.get(url).pipe(
+    catchError((error) => {
+      this.errorService.handle(error);
+      return of(null);
+    }),
+  );
+  ```
+
+- **retry**: Retry failed operations
+
+  ```typescript
+  data$ = this.http.get(url).pipe(
+    retry(3),
+    catchError((error) => of(null)),
+  );
+  ```
+
+- **retryWhen**: Retry with custom logic
+  ```typescript
+  data$ = this.http.get(url).pipe(retryWhen((errors) => errors.pipe(delay(1000), take(3))));
+  ```
+
+### Combining Observables
+
+- **combineLatest**: Combine latest values from multiple observables
+
+  ```typescript
+  combined$ = combineLatest([users$, filters$]).pipe(map(([users, filters]) => filterUsers(users, filters)));
+  ```
+
+- **merge**: Merge multiple observables
+
+  ```typescript
+  merged$ = merge(source1$, source2$);
+  ```
+
+- **zip**: Combine observables in order
+
+  ```typescript
+  zipped$ = zip(users$, roles$).pipe(map(([users, roles]) => combineUsersAndRoles(users, roles)));
+  ```
+
+- **forkJoin**: Wait for all observables to complete
+  ```typescript
+  data$ = forkJoin({
+    users: this.getUsers(),
+    roles: this.getRoles(),
+  });
+  ```
+
+### Signals and Observables
+
+- **toSignal**: Convert Observable to Signal
+
+  ```typescript
+  user = toSignal(this.user$);
+  user = toSignal(this.user$, {initialValue: null});
+  ```
+
+- **toObservable**: Convert Signal to Observable
+
+  ```typescript
+  user$ = toObservable(this.user);
+  ```
+
+- **combineFrom**: Combine signals and observables (ngx-lift)
+  ```typescript
+  combined = combineFrom([this.signal, this.observable$]);
+  combined = combineFrom({a: this.signal, b: this.observable$});
+  ```
+
+### Performance Optimization
+
+- **shareReplay**: Share and replay values
+
+  ```typescript
+  data$ = this.http.get(url).pipe(shareReplay(1));
+  ```
+
+- **distinctUntilChanged**: Emit only when value changes
+
+  ```typescript
+  filtered$ = data$.pipe(distinctUntilChanged((prev, curr) => prev.id === curr.id));
+  ```
+
+- **debounceTime**: Debounce rapid emissions
+
+  ```typescript
+  searchResults$ = searchTerm$.pipe(
+    debounceTime(300),
+    switchMap((term) => this.search(term)),
+  );
+  ```
+
+- **throttleTime**: Throttle emissions
+  ```typescript
+  scrollEvents$ = fromEvent(window, 'scroll').pipe(throttleTime(100));
+  ```
+
+### Best Practices
+
+- **Avoid Manual Subscriptions**: Use async pipe or reactive patterns
+- **Error Handling**: Always handle errors in observable chains
+- **Memory Leaks**: Always unsubscribe from long-lived subscriptions
+- **Operator Order**: Order operators logically (transformation → filtering → side effects)
+- **Type Safety**: Maintain type safety throughout observable chains
+- **Documentation**: Document complex observable chains
