@@ -1,29 +1,21 @@
 import {TestBed} from '@angular/core/testing';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
-import {SvgIconRegistryService} from 'angular-svg-icon';
 
 import {AppComponent} from './app.component';
+import {provideTestSvgIcon} from '../test-helpers';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [
-        provideRouter([]),
-        {
-          provide: SvgIconRegistryService,
-          useValue: {
-            loadSvg: () => {
-              // Mock implementation
-            },
-          },
-        },
-      ],
+      providers: [provideRouter([]), provideNoopAnimations(), ...provideTestSvgIcon()],
     }).compileComponents();
   });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
@@ -32,6 +24,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Ngx Lift Demo');
+    expect(compiled.querySelector('.title')?.textContent).toContain('Angular Lift');
   });
 });
