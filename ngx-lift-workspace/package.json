@@ -26,7 +26,7 @@
     "test": "nx run-many -t test",
     "test:ngx": "nx test ngx-lift",
     "test:clr": "nx test clr-lift",
-    "test:coverage": "nx run-many -t test --coverage && node tools/vitest/show-coverage-summary.mjs",
+    "test:coverage": "nx run-many -t test --coverage --parallel=1 && node tools/vitest/show-coverage-summary.mjs",
     "lint": "nx run-many -t lint",
     "lint:fix": "nx run-many -t lint --fix",
     "format": "prettier --write \"**/*.{ts,json,css,scss,md,html}\"",
