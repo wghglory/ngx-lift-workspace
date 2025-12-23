@@ -1,3 +1,4 @@
+import {fakeAsync, tick} from '@angular/core/testing';
 import {ClrDatagridStateInterface} from '@clr/angular';
 import {BehaviorSubject} from 'rxjs';
 import {TestScheduler} from 'rxjs/testing';
@@ -56,205 +57,188 @@ describe('dgState', () => {
     });
   });
 
-  it('should emit when filter changes after 500ms', () => {
-    testScheduler.run(({flush}) => {
-      // Arrange
-      const initialState: ClrDatagridStateInterface | null = null;
-      const newState1: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
-      const newState2: ClrDatagridStateInterface | null = {filters: [{column1: 'value2'}]};
+  it('should emit when filter changes after 500ms', fakeAsync(() => {
+    // Arrange
+    const initialState: ClrDatagridStateInterface | null = null;
+    const newState1: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
+    const newState2: ClrDatagridStateInterface | null = {filters: [{column1: 'value2'}]};
 
-      const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
+    const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
 
-      setTimeout(() => {
-        source$.next(newState1);
-      }, 100);
+    // Act
+    const result$ = source$.pipe(dgState());
 
-      setTimeout(() => {
-        source$.next(newState2);
-        source$.complete();
-      }, 700);
-
-      // Act
-      const result$ = source$.pipe(dgState());
-
-      let count = 0;
-
-      const subscription = result$.subscribe((result) => {
-        if (count === 0) {
-          expect(result).toEqual(null);
-        } else if (count === 1) {
-          expect(result).toEqual(newState1);
-        } else if (count === 2) {
-          expect(result).toEqual(newState2);
-          subscription.unsubscribe();
-        }
-
-        count++;
-      });
-
-      // Advance virtual time
-      flush();
+    const results: (ClrDatagridStateInterface | null)[] = [];
+    const subscription = result$.subscribe((result) => {
+      results.push(result);
     });
-  });
 
-  it('should not emit when filter changes back to original value within 500ms', () => {
-    testScheduler.run(({flush}) => {
-      // Arrange
-      const initialState: ClrDatagridStateInterface | null = null;
-      const newState1: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
-      const newState2: ClrDatagridStateInterface | null = {filters: [{column1: 'value2'}]};
+    // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
+    tick(0);
+    expect(results[0]).toEqual(null);
 
-      const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
+    // Emit newState1 after 100ms
+    tick(100);
+    source$.next(newState1);
+    tick(500); // Wait for debounce
 
-      setTimeout(() => {
-        source$.next(newState1);
-      }, 100);
-      setTimeout(() => {
-        source$.next(newState2);
-      }, 200);
-      setTimeout(() => {
-        source$.next(newState1);
-        source$.complete();
-      }, 300);
+    // Emit newState2 after 700ms total
+    tick(100);
+    source$.next(newState2);
+    tick(500); // Wait for debounce
 
-      // Act
-      const result$ = source$.pipe(dgState());
+    expect(results[1]).toEqual(newState1);
+    expect(results[2]).toEqual(newState2);
 
-      let count = 0;
+    subscription.unsubscribe();
+    source$.complete();
+  }));
 
-      const subscription = result$.subscribe((result) => {
-        if (count === 0) {
-          expect(result).toEqual(null);
-        } else if (count === 1) {
-          expect(result).toEqual(newState1);
-          // The error "NG0953: Unexpected emit for destroyed OutputRef" indicates that Angular is trying to emit an event from a destroyed component or directive. This issue often occurs when you're using BehaviorSubject or other subjects and the component or directive that owns the subscription gets destroyed.
-          subscription.unsubscribe();
-        }
+  it('should not emit when filter changes back to original value within 500ms', fakeAsync(() => {
+    // Arrange
+    const initialState: ClrDatagridStateInterface | null = null;
+    const newState1: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
+    const newState2: ClrDatagridStateInterface | null = {filters: [{column1: 'value2'}]};
 
-        count++;
-      });
+    const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
 
-      // Advance virtual time
-      flush();
+    // Act
+    const result$ = source$.pipe(dgState());
+
+    const results: (ClrDatagridStateInterface | null)[] = [];
+    const subscription = result$.subscribe((result) => {
+      results.push(result);
     });
-  });
 
-  it('should not emit when filter does not change', () => {
-    testScheduler.run(({flush}) => {
-      // Arrange
-      const initialState: ClrDatagridStateInterface | null = null;
-      const newState1: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
-      const newState2: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
+    // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
+    tick(0);
+    expect(results[0]).toEqual(null);
 
-      const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
+    // Emit newState1 after 100ms
+    tick(100);
+    source$.next(newState1);
+    tick(100); // Wait 100ms before next change
+    source$.next(newState2);
+    tick(100); // Wait 100ms before changing back
+    source$.next(newState1);
+    tick(500); // Wait for debounce - should only emit newState1 once
 
-      setTimeout(() => {
-        source$.next(newState1);
-      }, 100);
+    expect(results.length).toBe(2); // Only initial and final newState1
+    expect(results[1]).toEqual(newState1);
 
-      setTimeout(() => {
-        source$.next(newState2);
-        source$.complete();
-      }, 700);
+    subscription.unsubscribe();
+    source$.complete();
+  }));
 
-      // Act
-      const result$ = source$.pipe(dgState());
+  it('should not emit when filter does not change', fakeAsync(() => {
+    // Arrange
+    const initialState: ClrDatagridStateInterface | null = null;
+    const newState1: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
+    const newState2: ClrDatagridStateInterface | null = {filters: [{column1: 'value1'}]};
 
-      let count = 0;
+    const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
 
-      const subscription = result$.subscribe((result) => {
-        if (count === 0) {
-          expect(result).toEqual(null);
-        } else if (count === 1) {
-          expect(result).toEqual(newState1);
-          subscription.unsubscribe();
-        }
+    // Act
+    const result$ = source$.pipe(dgState());
 
-        count++;
-      });
-
-      // Advance virtual time
-      flush();
+    const results: (ClrDatagridStateInterface | null)[] = [];
+    const subscription = result$.subscribe((result) => {
+      results.push(result);
     });
-  });
 
-  it('should emit the same state when enableDistinctUntilChanged is false', () => {
-    testScheduler.run(({flush}) => {
-      // Arrange
-      const initialState: ClrDatagridStateInterface | null = null;
-      const newState1: ClrDatagridStateInterface | null = clrDgState;
-      const newState2: ClrDatagridStateInterface | null = clrDgState;
+    // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
+    tick(0);
+    expect(results[0]).toEqual(null);
 
-      const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
+    // Emit newState1 after 100ms
+    tick(100);
+    source$.next(newState1);
+    tick(500); // Wait for debounce
 
-      setTimeout(() => {
-        source$.next(newState1);
-      }, 100);
+    // Emit newState2 (same filter value) after 700ms total
+    tick(100);
+    source$.next(newState2);
+    tick(500); // Wait for debounce - should not emit since filter didn't change
 
-      setTimeout(() => {
-        source$.next(newState2);
-        source$.complete();
-      }, 700);
+    expect(results.length).toBe(2); // Only initial and newState1
+    expect(results[1]).toEqual(newState1);
 
-      // Act
-      const result$ = source$.pipe(dgState(false)); // Disable distinctUntilChanged
+    subscription.unsubscribe();
+    source$.complete();
+  }));
 
-      let count = 0;
+  it('should emit the same state when enableDistinctUntilChanged is false', fakeAsync(() => {
+    // Arrange
+    const initialState: ClrDatagridStateInterface | null = null;
+    const newState1: ClrDatagridStateInterface | null = clrDgState;
+    const newState2: ClrDatagridStateInterface | null = clrDgState;
 
-      const subscription = result$.subscribe((result) => {
-        if (count === 0) {
-          expect(result).toEqual(null);
-        } else if (count === 1) {
-          expect(result).toEqual(clrDgState);
-        } else if (count === 2) {
-          expect(result).toEqual(clrDgState);
-          subscription.unsubscribe();
-        }
+    const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
 
-        count++;
-      });
+    // Act
+    const result$ = source$.pipe(dgState(false)); // Disable distinctUntilChanged
 
-      // Advance virtual time
-      flush();
+    const results: (ClrDatagridStateInterface | null)[] = [];
+    const subscription = result$.subscribe((result) => {
+      results.push(result);
     });
-  });
 
-  it('should not emit the same state when enableDistinctUntilChanged is true', () => {
-    testScheduler.run(({flush}) => {
-      // Arrange
-      const initialState: ClrDatagridStateInterface | null = null;
-      const newState1: ClrDatagridStateInterface | null = clrDgState;
-      const newState2: ClrDatagridStateInterface | null = clrDgState;
+    // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
+    tick(0);
+    expect(results[0]).toEqual(null);
 
-      const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
+    // Emit newState1 after 100ms
+    tick(100);
+    source$.next(newState1);
+    tick(500); // Wait for debounce
 
-      setTimeout(() => {
-        source$.next(newState1);
-      }, 100);
+    // Emit newState2 (same state) after 700ms total
+    tick(100);
+    source$.next(newState2);
+    tick(500); // Wait for debounce - should emit since distinctUntilChanged is disabled
 
-      setTimeout(() => {
-        source$.next(newState2);
-        source$.complete();
-      }, 700);
+    expect(results.length).toBe(3); // initial, newState1, newState2
+    expect(results[1]).toEqual(clrDgState);
+    expect(results[2]).toEqual(clrDgState);
 
-      // Act
-      const result$ = source$.pipe(dgState());
+    subscription.unsubscribe();
+    source$.complete();
+  }));
 
-      let count = 0;
+  it('should not emit the same state when enableDistinctUntilChanged is true', fakeAsync(() => {
+    // Arrange
+    const initialState: ClrDatagridStateInterface | null = null;
+    const newState1: ClrDatagridStateInterface | null = clrDgState;
+    const newState2: ClrDatagridStateInterface | null = clrDgState;
 
-      const subscription = result$.subscribe((result) => {
-        if (count === 0) {
-          expect(result).toEqual(null);
-        } else if (count === 1) {
-          expect(result).toEqual(clrDgState);
-          subscription.unsubscribe();
-        }
+    const source$ = new BehaviorSubject<ClrDatagridStateInterface | null>(initialState);
 
-        count++;
-      });
+    // Act
+    const result$ = source$.pipe(dgState());
 
-      // Advance virtual time
-      flush();
+    const results: (ClrDatagridStateInterface | null)[] = [];
+    const subscription = result$.subscribe((result) => {
+      results.push(result);
     });
-  });
+
+    // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
+    tick(0);
+    expect(results[0]).toEqual(null);
+
+    // Emit newState1 after 100ms
+    tick(100);
+    source$.next(newState1);
+    tick(500); // Wait for debounce
+
+    // Emit newState2 (same state) after 700ms total
+    tick(100);
+    source$.next(newState2);
+    tick(500); // Wait for debounce - should not emit since distinctUntilChanged is enabled
+
+    expect(results.length).toBe(2); // Only initial and newState1
+    expect(results[1]).toEqual(clrDgState);
+
+    subscription.unsubscribe();
+    source$.complete();
+  }));
 });

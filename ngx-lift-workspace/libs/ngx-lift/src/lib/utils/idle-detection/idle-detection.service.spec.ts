@@ -1,4 +1,4 @@
-import {TestBed} from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {IdleDetectionConfig} from './idle-detection.config';
 import {IdleDetectionService} from './idle-detection.service';
@@ -33,89 +33,66 @@ describe('IdleDetectionService', () => {
     expect(service['isCountingDown']).toBeFalsy();
   });
 
-  it('should start countdown after idle end', async () => {
+  it('should start countdown after idle end', fakeAsync(() => {
     service.startWatching();
-    await new Promise<void>((resolve) => {
-      setTimeout(
-        () => {
-          expect(service['isCountingDown']).toBeTruthy();
-          resolve();
-        },
-        service['idleDuration'] * 1000 + 100,
-      );
-    });
-  });
+    tick(service['idleDuration'] * 1000 + 100);
+    expect(service['isCountingDown']).toBeTruthy();
+  }));
 
-  it('should stop countdown on user activity during countdown', async () => {
+  it('should stop countdown on user activity during countdown', fakeAsync(() => {
     service.startWatching();
-    await new Promise<void>((resolve, reject) => {
-      // Wait for idle duration to pass (countdown starts) + a bit more to ensure we're in countdown phase
-      setTimeout(
-        () => {
-          // Countdown should be active
-          if (!service['isCountingDown']) {
-            reject(new Error('Countdown should be active at this point'));
-            return;
-          }
+    // Wait for idle duration to pass (countdown starts) + a bit more to ensure we're in countdown phase
+    tick(service['idleDuration'] * 1000 + 200);
 
-          // User activity during countdown - dispatch multiple events to ensure one gets through throttling
-          document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-          // Also dispatch a mousemove to ensure an event gets through
-          setTimeout(() => {
-            document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
-          }, 50);
+    // Countdown should be active
+    expect(service['isCountingDown']).toBeTruthy();
 
-          // Poll the state until countdown is stopped or timeout
-          const startTime = Date.now();
-          const checkInterval = setInterval(() => {
-            if (!service['isCountingDown'] && service['countdown'] === service['timeoutDuration']) {
-              clearInterval(checkInterval);
-              try {
-                expect(service['isCountingDown']).toBeFalsy();
-                expect(service['countdown']).toBe(service['timeoutDuration']);
-                resolve();
-              } catch (error) {
-                reject(error);
-              }
-            } else if (Date.now() - startTime > 3000) {
-              clearInterval(checkInterval);
-              reject(
-                new Error(`Timeout: isCountingDown=${service['isCountingDown']}, countdown=${service['countdown']}`),
-              );
-            }
-          }, 100);
-        },
-        service['idleDuration'] * 1000 + 200,
-      );
-    });
-  }, 15000);
+    // User activity during countdown - dispatch multiple events to ensure one gets through throttling
+    document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    // Also dispatch a mousemove to ensure an event gets through
+    tick(50);
+    document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
 
-  it('should emit countdown value every second', async () => {
+    // Wait a bit for the events to be processed
+    tick(200);
+
+    expect(service['isCountingDown']).toBeFalsy();
+    expect(service['countdown']).toBe(service['timeoutDuration']);
+  }));
+
+  it('should emit countdown value every second', fakeAsync(() => {
     service.setConfig({
       timeoutDurationInSeconds: 3,
       idleDurationInSeconds: 1,
     });
     service.startWatching();
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        service.onCountDown().subscribe((countdown) => {
-          expect(countdown).toBeLessThan(service['timeoutDuration']);
-          resolve();
-        });
-      }, 4000);
-    });
-  });
 
-  it('should emit countdown end event after timeout duration', async () => {
-    service.startWatching();
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        service.onTimeoutEnd().subscribe(() => {
-          resolve();
-        });
-      }, 2000);
+    const countdownValues: number[] = [];
+    service.onCountDown().subscribe((countdown) => {
+      countdownValues.push(countdown);
     });
-  });
+
+    // Wait for idle duration (1s) + countdown starts and emits initial value (3)
+    tick(1000);
+    expect(countdownValues.length).toBeGreaterThan(0);
+    // First emission is the initial countdown value (3), which equals timeoutDuration
+    // Wait for next second to get a value less than timeoutDuration
+    tick(1000);
+    expect(countdownValues.some((val) => val < service['timeoutDuration'])).toBeTruthy();
+  }));
+
+  it('should emit countdown end event after timeout duration', fakeAsync(() => {
+    service.startWatching();
+
+    let timeoutEndReceived = false;
+    service.onTimeoutEnd().subscribe(() => {
+      timeoutEndReceived = true;
+    });
+
+    // Wait for idle duration (1s) + timeout duration (1s) = 2s
+    tick(2000);
+    expect(timeoutEndReceived).toBeTruthy();
+  }));
 
   it('should set config correctly', () => {
     const config: IdleDetectionConfig = {
@@ -147,44 +124,30 @@ describe('IdleDetectionService', () => {
     expect(service['countdown']).toBe(8);
   });
 
-  it('should reset timer with countdown reset', async () => {
+  it('should reset timer with countdown reset', fakeAsync(() => {
     service.startWatching();
-    await new Promise<void>((resolve) => {
-      setTimeout(
-        () => {
-          // After idle period, countdown should start
-          expect(service['isCountingDown']).toBeTruthy();
+    tick(service['idleDuration'] * 1000 + 100);
 
-          // Reset with countdown reset
-          service.resetTimer(true);
-          expect(service['isCountingDown']).toBeFalsy();
-          expect(service['countdown']).toBe(service['timeoutDuration']);
+    // After idle period, countdown should start
+    expect(service['isCountingDown']).toBeTruthy();
 
-          resolve();
-        },
-        service['idleDuration'] * 1000 + 100,
-      );
-    });
-  });
+    // Reset with countdown reset
+    service.resetTimer(true);
+    expect(service['isCountingDown']).toBeFalsy();
+    expect(service['countdown']).toBe(service['timeoutDuration']);
+  }));
 
-  it('should reset timer without countdown reset during countdown', async () => {
+  it('should reset timer without countdown reset during countdown', fakeAsync(() => {
     service.startWatching();
-    await new Promise<void>((resolve) => {
-      setTimeout(
-        () => {
-          // After idle period, countdown should start
-          expect(service['isCountingDown']).toBeTruthy();
+    tick(service['idleDuration'] * 1000 + 100);
 
-          // Reset without countdown reset
-          service.resetTimer(false);
-          expect(service['isCountingDown']).toBeTruthy(); // Countdown should continue
+    // After idle period, countdown should start
+    expect(service['isCountingDown']).toBeTruthy();
 
-          resolve();
-        },
-        service['idleDuration'] * 1000 + 100,
-      );
-    });
-  });
+    // Reset without countdown reset
+    service.resetTimer(false);
+    expect(service['isCountingDown']).toBeTruthy(); // Countdown should continue
+  }));
 
   it('should clear all timers', () => {
     service.startWatching();
@@ -198,76 +161,58 @@ describe('IdleDetectionService', () => {
     expect(interruptionSubscription?.closed).toBe(true);
   });
 
-  it('should emit onIdleEnd event', async () => {
+  it('should emit onIdleEnd event', fakeAsync(() => {
     service.startWatching();
-    await new Promise<void>((resolve, reject) => {
-      let resolved = false;
-      service.onIdleEnd().subscribe(() => {
-        // startCountdown() is called synchronously after idleEndSubject.next()
-        // Use setTimeout to ensure the countdown has started (next tick)
-        setTimeout(() => {
-          try {
-            expect(service['isCountingDown']).toBeTruthy();
-            if (!resolved) {
-              resolved = true;
-              resolve();
-            }
-          } catch (error) {
-            if (!resolved) {
-              resolved = true;
-              reject(error);
-            }
-          }
-        }, 0);
-      });
-      // Wait for idle duration to pass (the observable will emit when idle ends)
-      // Add a buffer to ensure the event has been processed
-      setTimeout(
-        () => {
-          if (!resolved) {
-            resolved = true;
-            reject(new Error('onIdleEnd event was not emitted within timeout'));
-          }
-        },
-        service['idleDuration'] * 1000 + 500,
-      );
-    });
-  }, 15000);
 
-  it('should emit onTimeoutEnd event', async () => {
+    let idleEndReceived = false;
+    service.onIdleEnd().subscribe(() => {
+      idleEndReceived = true;
+    });
+
+    // Wait for idle duration to pass (the observable will emit when idle ends)
+    tick(service['idleDuration'] * 1000);
+    expect(idleEndReceived).toBeTruthy();
+    // startCountdown() is called synchronously after idleEndSubject.next()
+    // Check that countdown has started
+    expect(service['isCountingDown']).toBeTruthy();
+  }));
+
+  it('should emit onTimeoutEnd event', fakeAsync(() => {
     service.setConfig({
       idleDurationInSeconds: 1,
       timeoutDurationInSeconds: 1,
     });
     service.startWatching();
-    await new Promise<void>((resolve) => {
-      service.onTimeoutEnd().subscribe(() => {
-        expect(service['isCountingDown']).toBeFalsy();
-        resolve();
-      });
-      // Wait for idle duration + timeout duration to pass (the observable will emit when timeout ends)
-    });
-  });
 
-  it('should emit countdown values', async () => {
+    let timeoutEndReceived = false;
+    service.onTimeoutEnd().subscribe(() => {
+      expect(service['isCountingDown']).toBeFalsy();
+      timeoutEndReceived = true;
+    });
+
+    // Wait for idle duration (1s) + timeout duration (1s) = 2s
+    tick(2000);
+    expect(timeoutEndReceived).toBeTruthy();
+  }));
+
+  it('should emit countdown values', fakeAsync(() => {
     service.setConfig({
       idleDurationInSeconds: 1,
       timeoutDurationInSeconds: 3,
     });
     service.startWatching();
 
-    await new Promise<void>((resolve) => {
-      const countdownValues: number[] = [];
-      service.onCountDown().subscribe((countdown) => {
-        countdownValues.push(countdown);
-        if (countdownValues.length >= 2) {
-          expect(countdownValues[0]).toBe(3);
-          expect(countdownValues[1]).toBe(2);
-          resolve();
-        }
-      });
+    const countdownValues: number[] = [];
+    service.onCountDown().subscribe((countdown) => {
+      countdownValues.push(countdown);
     });
-  });
+
+    // Wait for idle duration (1s) + first countdown (1s) + second countdown (1s) = 3s
+    tick(3000);
+    expect(countdownValues.length).toBeGreaterThanOrEqual(2);
+    expect(countdownValues[0]).toBe(3);
+    expect(countdownValues[1]).toBe(2);
+  }));
 
   it('should handle multiple interruption events', () => {
     service.startWatching();
@@ -282,7 +227,7 @@ describe('IdleDetectionService', () => {
     expect(service['isCountingDown']).toBeFalsy();
   });
 
-  it('should throttle interruption events', async () => {
+  it('should throttle interruption events', fakeAsync(() => {
     service.startWatching();
     let timerResetCount = 0;
     const originalResetTimer = service['resetTimer'];
@@ -296,57 +241,30 @@ describe('IdleDetectionService', () => {
       document.dispatchEvent(new MouseEvent('mousemove'));
     }
 
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        // Should be throttled, so resetTimer should not be called 10 times
-        expect(timerResetCount).toBeLessThan(10);
-        resolve();
-      }, 2000);
-    });
-  });
+    tick(2000);
+    // Should be throttled, so resetTimer should not be called 10 times
+    expect(timerResetCount).toBeLessThan(10);
+  }));
 
-  it('should stop countdown when user activity detected during countdown', async () => {
+  it('should stop countdown when user activity detected during countdown', fakeAsync(() => {
     service.startWatching();
-    await new Promise<void>((resolve, reject) => {
-      setTimeout(
-        () => {
-          // Countdown should be active
-          if (!service['isCountingDown']) {
-            reject(new Error('Countdown should be active at this point'));
-            return;
-          }
+    tick(service['idleDuration'] * 1000 + 200);
 
-          // User activity during countdown - dispatch multiple events to ensure one gets through throttling
-          document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-          // Also dispatch a mousemove to ensure an event gets through
-          setTimeout(() => {
-            document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
-          }, 50);
+    // Countdown should be active
+    expect(service['isCountingDown']).toBeTruthy();
 
-          // Poll the state until countdown is stopped or timeout
-          const startTime = Date.now();
-          const checkInterval = setInterval(() => {
-            if (!service['isCountingDown'] && service['countdown'] === service['timeoutDuration']) {
-              clearInterval(checkInterval);
-              try {
-                expect(service['isCountingDown']).toBeFalsy();
-                expect(service['countdown']).toBe(service['timeoutDuration']);
-                resolve();
-              } catch (error) {
-                reject(error);
-              }
-            } else if (Date.now() - startTime > 3000) {
-              clearInterval(checkInterval);
-              reject(
-                new Error(`Timeout: isCountingDown=${service['isCountingDown']}, countdown=${service['countdown']}`),
-              );
-            }
-          }, 100);
-        },
-        service['idleDuration'] * 1000 + 200,
-      );
-    });
-  }, 15000);
+    // User activity during countdown - dispatch multiple events to ensure one gets through throttling
+    document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    // Also dispatch a mousemove to ensure an event gets through
+    tick(50);
+    document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
+
+    // Wait a bit for the events to be processed
+    tick(200);
+
+    expect(service['isCountingDown']).toBeFalsy();
+    expect(service['countdown']).toBe(service['timeoutDuration']);
+  }));
 
   it('should handle all interruption event types', () => {
     service.startWatching();

@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {AsyncValidatorFn, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {firstValueFrom, Observable, of, switchMap, timer} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {vi} from 'vitest';
 
 import {ifAsyncValidator, ifValidator} from './form.util';
@@ -77,7 +78,7 @@ describe('ifAsyncValidator', () => {
     fixture.detectChanges();
   });
 
-  it('should apply the async validator when the condition is met', async () => {
+  it('should apply the async validator when the condition is met', fakeAsync(() => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('valid value');
 
@@ -87,10 +88,17 @@ describe('ifAsyncValidator', () => {
 
     const conditionalAsyncValidator = ifAsyncValidator((ctrl) => ctrl.value === 'valid value', asyncValidatorFnMock);
 
-    const result = await firstValueFrom(conditionalAsyncValidator(control) as Observable<AsyncValidatorFn>);
+    let result: ReturnType<AsyncValidatorFn> | null = null;
+    (conditionalAsyncValidator(control) as Observable<ReturnType<AsyncValidatorFn>>)
+      .pipe(take(1))
+      .subscribe((value) => {
+        result = value;
+      });
+
+    tick(500);
     expect(result).toEqual({yourCustomAsyncError: true});
     expect(asyncValidatorFnMock).toHaveBeenCalledWith(control);
-  });
+  }));
 
   it('should not apply the async validator when the condition is not met', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
