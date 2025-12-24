@@ -99,6 +99,7 @@ npm run format         # Format code
 | **START_HERE.md**                | Quick orientation      | First time                   |
 | **QUICK_START.md**               | Essential commands     | Daily use                    |
 | **README.md**                    | Complete documentation | Reference                    |
+| **TECHNOLOGY_ANALYSIS.md**       | Tech stack analysis    | Understanding tech choices   |
 | **COMMANDS.md**                  | All commands           | Looking for specific command |
 | **DEPLOYMENT.md**                | Deployment guide       | Setting up CI/CD             |
 | **MIGRATION_COMPLETE.md**        | Migration summary      | Understanding what changed   |
