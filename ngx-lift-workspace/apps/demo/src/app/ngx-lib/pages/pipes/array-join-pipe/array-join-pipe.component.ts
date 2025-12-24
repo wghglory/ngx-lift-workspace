@@ -12,6 +12,8 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArrayJoinPipeComponent {
+  importCode = highlight(`import { ArrayJoinPipe } from 'ngx-lift';`);
+
   exampleCode = highlight(`
 import {ArrayJoinPipe} from 'ngx-lift';
 
@@ -29,5 +31,32 @@ import {ArrayJoinPipe} from 'ngx-lift';
   \`
 })
 export class ArrayJoinPipeDemoComponent { }
+  `);
+
+  commaSeparatedCode = highlight(`
+import {ArrayJoinPipe} from 'ngx-lift';
+
+@Component({
+  imports: [ArrayJoinPipe],
+  template: \`
+    <p>{{ [1, 2, 3, 4] | arrayJoin }}</p>
+    <!-- Output: "1,2,3,4" -->
+  \`
+})
+  `);
+
+  customSeparatorsCode = highlight(`
+import {ArrayJoinPipe} from 'ngx-lift';
+
+@Component({
+  imports: [ArrayJoinPipe],
+  template: \`
+    <p>{{ ['apple', 'orange', 'banana'] | arrayJoin: ';' }}</p>
+    <!-- Output: "apple;orange;banana" -->
+
+    <p>{{ ['John', 'Doe'] | arrayJoin: ' - ' }}</p>
+    <!-- Output: "John - Doe" -->
+  \`
+})
   `);
 }

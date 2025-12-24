@@ -105,27 +105,54 @@ export function combineFrom<Input extends object, Output = Input>(
 ): Signal<Output>;
 
 /**
- * Combines multiple `Observable` or `Signal` sources into a `Signal` that emits their values. It's like combineLatest.
+ * Combines multiple `Observable` or `Signal` sources into a `Signal` that emits their combined values.
+ * This function is similar to RxJS `combineLatest`, but works with both Observables and Signals,
+ * and returns a Signal instead of an Observable.
  *
- * @param {ObservableSignalInputTuple} sources - Array or object of `Observable` or `Signal` values
- * @param {OperatorFunction} [operator] - Operator to apply to the combined values
- * @param {CombineFromOptions} [options] - Options including `initialValue` and `injector`
- * @returns Signal emitting the combined values
+ * The function supports:
+ * - Array of sources: Returns a Signal of an array
+ * - Object of sources: Returns a Signal of an object with the same keys
+ * - Optional RxJS operator: Apply transformations to the combined values
+ * - Optional initial value: Provide an initial value for the Signal
+ *
+ * @template Input - The type of the input sources (array or object).
+ * @template Output - The type of the output Signal (defaults to Input).
+ *
+ * @param sources - Array or object of `Observable` or `Signal` values to combine.
+ * @param operator - Optional RxJS operator function to transform the combined values.
+ * @param options - Optional configuration object:
+ *   - `initialValue`: Initial value for the Signal (required if sources don't emit synchronously)
+ *   - `injector`: Angular injector to use for signal conversion
+ * @returns A Signal that emits the combined values from all sources.
  *
  * @example
- * ```ts
+ * ```typescript
+ * // Array of sources
  * export class Component {
- *  private readonly userService = inject(UserService);
- *  page = signal(2);
+ *   private readonly userService = inject(UserService);
+ *   page = signal(2);
  *
- *  data = combineFrom(
- *    [this.page, this.userService.users$],
- *    pipe(
- *      switchMap(([page, users]) => this.dataService.getData(page, users)),
- *      startWith([])
- *    )
- *  );
+ *   data = combineFrom(
+ *     [this.page, this.userService.users$],
+ *     pipe(
+ *       switchMap(([page, users]) => this.dataService.getData(page, users)),
+ *       startWith([])
+ *     )
+ *   );
  * }
+ *
+ * // Object of sources
+ * const vm = combineFrom({
+ *   users: users$,
+ *   filters: filtersSignal,
+ *   page: pageSignal
+ * });
+ *
+ * // With initial value
+ * const data = combineFrom(
+ *   [source1$, source2$],
+ *   { initialValue: [null, null] }
+ * );
  * ```
  */
 export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal<Output | null | undefined> {

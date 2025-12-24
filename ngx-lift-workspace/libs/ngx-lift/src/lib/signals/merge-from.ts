@@ -37,25 +37,45 @@ export function mergeFrom<Input extends readonly unknown[], Output = Input[numbe
 // No object inputs
 
 /**
- * merge multiple `Observable` or `Signal` sources into a `Signal` that emits the last value. It's like merge.
+ * Merges multiple `Observable` or `Signal` sources into a `Signal` that emits values from any source.
+ * This function is similar to RxJS `merge`, but works with both Observables and Signals,
+ * and returns a Signal instead of an Observable.
  *
- * @param {ObservableSignalInputTuple} sources - Array of `Observable` or `Signal` values
- * @param {OperatorFunction} [operator] - Operator to apply to the merge
- * @param {MergeFromOptions} [options] - Options including `initialValue` and `injector`
- * @returns Signal emitting the latest merge result
+ * When any source emits a value, the Signal will emit that value. This is useful for
+ * combining multiple event streams or reactive sources.
+ *
+ * @template Input - The type of values in the input sources array.
+ * @template Output - The type of the output Signal (defaults to Input[number]).
+ *
+ * @param sources - Array of `Observable` or `Signal` values to merge.
+ * @param operator - Optional RxJS operator function to transform the merged values.
+ * @param options - Optional configuration object:
+ *   - `initialValue`: Initial value for the Signal
+ *   - `injector`: Angular injector to use for signal conversion
+ * @returns A Signal that emits values from any of the merged sources.
  *
  * @example
- * ```ts
+ * ```typescript
  * export class Component {
  *   e$ = of(1).pipe(delay(1000));
  *   f = signal(2);
  *
+ *   // Merge with operator
  *   data = mergeFrom(
  *     [this.e$, this.f],
  *     pipe(
- *       switchMap((res) => of(`${res} is coming~`)),
+ *       map((res) => `${res} is coming~`),
  *       startWith(0),
  *     ),
+ *   );
+ *
+ *   // Simple merge
+ *   merged = mergeFrom([source1$, source2$, sourceSignal]);
+ *
+ *   // With initial value
+ *   merged = mergeFrom(
+ *     [source1$, source2$],
+ *     { initialValue: null }
  *   );
  * }
  * ```

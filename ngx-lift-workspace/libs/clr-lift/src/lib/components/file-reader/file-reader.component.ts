@@ -31,6 +31,26 @@ import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {fileReaderTranslations} from './file-reader.l10n';
 
+/**
+ * A file input component that implements ControlValueAccessor for use with Angular reactive forms.
+ * Supports file reading, validation, and base64 encoding.
+ *
+ * The component:
+ * - Reads file content as text or base64
+ * - Validates file size limits
+ * - Integrates with Angular forms via ControlValueAccessor
+ * - Emits file change events
+ *
+ * @example
+ * ```html
+ * <cll-file-reader
+ *   formControlName="fileContent"
+ *   [acceptFiles]="'.txt,.json'"
+ *   [maxSize]="5"
+ *   [encoded]="true"
+ * />
+ * ```
+ */
 @Component({
   selector: 'cll-file-reader',
   imports: [TranslatePipe, ClarityModule, FormsModule],
@@ -55,14 +75,48 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
 
   fileElement = viewChild.required<ElementRef<HTMLInputElement>>('file');
 
+  /**
+   * The unique identifier for the file input element.
+   * Used for accessibility and form association.
+   */
   controlId = input('');
+
+  /**
+   * Comma-separated list of accepted file types (e.g., '.txt,.json' or 'image/*').
+   * Defaults to '*' (all files).
+   */
   acceptFiles = input('*');
-  encoded = input(false); // read file content as base64
+
+  /**
+   * Whether to read file content as base64 encoded string.
+   * If `true`, the file content is base64 encoded; if `false`, it's read as plain text.
+   * Defaults to `false`.
+   */
+  encoded = input(false);
+
+  /**
+   * Maximum file size in megabytes.
+   * Files exceeding this size will trigger a validation error.
+   * Defaults to `Infinity` (no limit).
+   */
   maxSize = input(Infinity);
+
+  /**
+   * Whether the file input is disabled.
+   * Defaults to `false`.
+   */
   disabled = input(false);
 
+  /**
+   * Event emitter that emits the file content when a file is selected.
+   * The content is either plain text or base64 encoded, depending on the `encoded` input.
+   */
   fileChange = output<string>();
 
+  /**
+   * Linked signal that reflects the disabled state.
+   * Automatically updates when the `disabled` input changes.
+   */
   isDisabled = linkedSignal(() => this.disabled());
 
   // @Input({ required: true }) formControl: FormControl;

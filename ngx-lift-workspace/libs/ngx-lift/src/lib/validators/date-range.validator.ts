@@ -6,18 +6,80 @@ import {differenceInDays} from '../utils/difference-in-days.util';
  * Interface defining the options for the date range validator.
  */
 interface DateRangeOptions {
-  minDate?: Date | string; // Minimum allowed date
-  maxDate?: Date | string; // Maximum allowed date
-  minInclusive?: boolean; // Whether the comparison for the minimum date can include the exact date
-  maxInclusive?: boolean; // Whether the comparison for the maximum date can include the exact date
-  compareTime?: boolean; // Whether to compare the time as well. If true, comparisons will include Date time components; if false, time parts will be ignored
+  /**
+   * The minimum allowed date. The control value must be greater than (or equal to, if `minInclusive` is true) this date.
+   * Can be a Date object or a string that can be parsed by the Date constructor.
+   */
+  minDate?: Date | string;
+
+  /**
+   * The maximum allowed date. The control value must be less than (or equal to, if `maxInclusive` is true) this date.
+   * Can be a Date object or a string that can be parsed by the Date constructor.
+   */
+  maxDate?: Date | string;
+
+  /**
+   * Whether the comparison for the minimum date can include the exact date.
+   * If `true`, the control value can be equal to `minDate`.
+   * If `false` (default), the control value must be strictly greater than `minDate`.
+   */
+  minInclusive?: boolean;
+
+  /**
+   * Whether the comparison for the maximum date can include the exact date.
+   * If `true`, the control value can be equal to `maxDate`.
+   * If `false` (default), the control value must be strictly less than `maxDate`.
+   */
+  maxInclusive?: boolean;
+
+  /**
+   * Whether to compare the time components as well.
+   * If `true`, comparisons will include Date time components (hours, minutes, seconds, milliseconds).
+   * If `false` (default), time parts will be ignored and only the date portion will be compared.
+   */
+  compareTime?: boolean;
 }
 
 /**
- * Validates a date against a specified date range.
+ * Creates a validator function that validates a date against a specified date range.
  *
- * @param {DateRangeOptions} options - The options for the date range validation.
- * @returns {ValidatorFn} A function that validates a FormControl and returns an error if the date is out of range.
+ * The validator checks if the form control's date value falls within the specified range.
+ * It supports:
+ * - Minimum and maximum date constraints
+ * - Inclusive or exclusive boundary comparisons
+ * - Time-aware or date-only comparisons
+ *
+ * @param options - The options for the date range validation.
+ * @returns A validator function that validates a FormControl and returns an error object if the date is out of range,
+ *   or `null` if the date is valid. Error objects contain:
+ *   - `minDate`: ISO string of the minimum date (if value is too early)
+ *   - `maxDate`: ISO string of the maximum date (if value is too late)
+ *   - `invalidDate`: `true` (if the value cannot be parsed as a date)
+ *
+ * @example
+ * ```typescript
+ * // Date range with inclusive boundaries
+ * const form = new FormGroup({
+ *   startDate: new FormControl('', [
+ *     dateRangeValidator({
+ *       minDate: new Date('2024-01-01'),
+ *       maxDate: new Date('2024-12-31'),
+ *       minInclusive: true,
+ *       maxInclusive: true
+ *     })
+ *   ])
+ * });
+ *
+ * // Date-only comparison (ignores time)
+ * const form = new FormGroup({
+ *   appointment: new FormControl('', [
+ *     dateRangeValidator({
+ *       minDate: '2024-01-01',
+ *       compareTime: false
+ *     })
+ *   ])
+ * });
+ * ```
  */
 export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

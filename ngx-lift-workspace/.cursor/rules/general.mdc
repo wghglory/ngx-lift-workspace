@@ -45,6 +45,7 @@ Before marking any task as complete, verify:
 - ✅ Nx boundaries respected; **no circular dependencies**
 - ✅ Code formatted with Prettier; ESLint clean; TypeScript compilation passes
 - ✅ Copyright header included in all files
+- ✅ JSDoc comments added for all exported functions, classes, interfaces, types, and constants
 
 ## Specialized Rule Files
 
@@ -83,6 +84,13 @@ For detailed guidelines, refer to:
 - **Immutability**: Use `readonly` for immutable data structures
 - **Utility Types**: Leverage `Partial`, `Pick`, `Omit`, etc. for type transformations
 - **Return Types**: Define proper return types for all functions and methods
+- **JSDoc Documentation**: **MANDATORY** for all exported functions, classes, interfaces, types, and constants
+  - Include `@param` tags for all parameters with descriptions
+  - Include `@returns` or `@return` tags for return values
+  - Include `@template` tags for generic type parameters
+  - Include `@example` blocks with code samples for complex functions
+  - Document behavior, edge cases, and important notes
+  - JSDoc is essential for Storybook integration and API documentation
 
 ## Naming Conventions
 
@@ -128,3 +136,120 @@ When generating code:
 4. **Always** verify lint passes after generation; fix lint errors immediately
 5. Reference specialized rule files for detailed patterns
 6. Maintain consistency with existing codebase patterns
+7. **JSDoc Required**: All exported TypeScript code (functions, classes, interfaces, types, constants) must include
+   comprehensive JSDoc comments
+
+## Code Block Generation Rules
+
+### Code Block Pattern for Demo Pages
+
+When generating code blocks in demo page HTML templates, **ALWAYS** follow this pattern:
+
+**✅ CORRECT: Define code in TypeScript component**
+
+In TypeScript component file (`.component.ts`):
+
+```typescript
+import {highlight} from '../../../../shared/utils/highlight.util';
+
+export class MyComponent {
+  importCode = highlight(`import { MyModule } from 'package-name';`);
+
+  exampleCode = highlight(`
+@Component({
+  imports: [MyModule],
+  template: \`
+    <div>{{ value }}</div>
+  \`
+})
+export class ExampleComponent { }
+  `);
+
+  advancedCode = highlight(`
+// Advanced example code here
+  `);
+}
+```
+
+In HTML template file (`.component.html`):
+
+```html
+<app-code-block [code]="importCode" lang="typescript"></app-code-block>
+<app-code-block [code]="exampleCode" lang="html"></app-code-block>
+<app-code-block [code]="advancedCode" lang="typescript"></app-code-block>
+```
+
+**❌ WRONG: Inline code strings in HTML**
+
+**NEVER** use inline code strings in HTML templates:
+
+```html
+<!-- ❌ DO NOT DO THIS -->
+<app-code-block [code]="'import { MyModule } from \'package-name\';'" lang="typescript"></app-code-block>
+<app-code-block [code]="'<div>{{ value }}</div>'" lang="html"></app-code-block>
+```
+
+### Why This Pattern?
+
+1. **Avoids HTML parsing errors** - Nested quotes in inline strings cause parsing issues
+2. **Better maintainability** - Code is easier to read and modify in TypeScript files
+3. **Type safety** - TypeScript can validate the code strings
+4. **Consistency** - All code blocks follow the same pattern
+5. **Syntax highlighting** - The `highlight()` utility provides proper formatting
+
+### Required Steps
+
+1. Import `highlight` utility: `import {highlight} from '../../../../shared/utils/highlight.util';`
+2. Define code properties in the component class using `highlight()` function
+3. Reference properties in HTML using `[code]="propertyName"`
+4. Always specify the `lang` attribute (e.g., `lang="typescript"`, `lang="html"`, `lang="json"`)
+
+### Example Naming Convention
+
+- `importCode` - For import statements
+- `exampleCode` - For basic usage examples
+- `advancedCode` - For advanced usage examples
+- `simpleCode` - For simple examples
+- `customCode` - For custom configuration examples
+- Use descriptive names that indicate the purpose of the code block
+
+### Escaping Angular Control Flow Syntax
+
+When using Angular control flow syntax (`@if`, `@for`, `@else`, `@switch`, etc.) in code that will be rendered via
+`innerHTML` or inside inline `<code>` tags, **ALWAYS** escape the `@` symbol using the HTML entity `&#64;`:
+
+**✅ CORRECT - Inline code tags in HTML templates:**
+
+```html
+<p>Use <code>&#64;if</code> for conditional rendering.</p>
+<p>Alternatively, use async pipe with <code>&#64;if</code> for better type safety:</p>
+```
+
+**✅ CORRECT - Code blocks in TypeScript files (inside `highlight()` calls):**
+
+```typescript
+// In TypeScript component file - NO escaping needed
+htmlCode = highlight(`
+@if (condition) {
+  <div>Content</div>
+}
+@for (item of items; track item.id) {
+  <div>{{ item.name }}</div>
+}
+`);
+```
+
+**❌ WRONG - Inline code tags without escaping:**
+
+```html
+<p>Use <code>@if</code> for conditional rendering.</p>
+```
+
+**Important Notes:**
+
+- **DO NOT escape** `@` symbols in code blocks defined in TypeScript files (inside `highlight()` calls)
+- **DO escape** `@` symbols in inline `<code>` tags in HTML templates using `&#64;`
+- Code blocks displayed via `<app-code-block>` component use the code from TypeScript files, which should contain actual
+  `@` symbols (not escaped)
+- The escaping in HTML templates is necessary because `@` is a special character in Angular templates and Angular will
+  try to parse it as control flow syntax when it appears in inline code tags

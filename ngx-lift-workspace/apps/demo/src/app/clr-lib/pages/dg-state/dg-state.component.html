@@ -1,42 +1,104 @@
 <cll-page-container [title]="'dgState'" customClass="space-y-9">
-  <section class="space-y-6">
+  <!-- Overview -->
+  <section class="space-y-4">
+    <h2>Overview</h2>
     <p>
-      When utilizing Clarity Datagrid filtering, we employ the
-      <code>dgState</code> operator to manage the timing of API calls. This operator is designed to assess changes in
-      the datagrid filters and intelligently handle API trigger events. If the filters undergo modification, the
-      operator introduces a debounce of 500ms before initiating the API call. Conversely, for actions such as sorting or
-      fetching the next page of data, the API call is made promptly without any delay.
+      The <code>dgState</code> operator is an RxJS operator designed to manage Clarity Datagrid state transformations
+      with intelligent debouncing and duplicate filtering. It assesses changes in datagrid filters and handles API
+      trigger events efficiently.
     </p>
 
     <p>
-      Additionally, the <code>dgState</code> operator offers an optional parameter of type boolean to control the use of
-      the distinctUntilChanged operator internally. By default, this parameter is set to true. When enabled, it ensures
-      that no API call is initiated if the datagrid state remains the same. For instance, if a user enters "a" in a
-      filter input, then quickly types "aa," and finally reverts to "a," this parameter determines whether an API call
-      should be made based on the exact datagrid state. If set to true (default), no API call is triggered for the same
-      state. However, if set to false, another API call will be made even if the state remains unchanged.
+      When filters are modified, the operator introduces a 500ms debounce before initiating the API call, preventing
+      excessive requests during rapid typing. For actions such as sorting or pagination, the API call is made promptly
+      without delay.
+    </p>
+
+    <p>
+      The operator also provides an optional parameter to control the use of <code>distinctUntilChanged</code>. When
+      enabled (default: <code>true</code>), it ensures that no API call is initiated if the datagrid state remains the
+      same, preventing redundant requests.
     </p>
   </section>
 
-  <section class="space-y-6">
-    <h2>Example Code</h2>
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>dgState</h3>
+      <p>
+        RxJS operator for handling Clarity Datagrid state transformations with debouncing and optional
+        distinctUntilChanged behavior.
+      </p>
 
-    <p>Assume we have a API returning the below shape of data and we'd like to implement a server-driven datagrid.</p>
-    <app-code-block [code]="dataCode" lang="json" />
+      <h4>Signature</h4>
+      <div class="space-y-2">
+        <p>
+          <code
+            >dgState(enableDistinctUntilChanged?: boolean): UnaryFunction&lt;Observable&lt;ClrDatagridStateInterface |
+            null&gt;, Observable&lt;ClrDatagridStateInterface | null&gt;&gt;</code
+          >
+        </p>
+        <p><strong>Parameters:</strong></p>
+        <ul class="list-disc space-y-1 ml-6">
+          <li>
+            <code>enableDistinctUntilChanged</code>: <em>(Optional)</em> Whether to enable distinctUntilChanged
+            filtering. Defaults to <code>true</code>. When <code>true</code>, suppresses duplicate states. When
+            <code>false</code>, allows API calls even for identical states.
+          </li>
+        </ul>
+        <p>
+          <strong>Returns:</strong> A RxJS pipe function that transforms an observable of
+          <code>ClrDatagridStateInterface | null</code>
+        </p>
+      </div>
 
-    <app-code-block [code]="secondHtmlCode" lang="html" />
-    <p>Another approach to use async pipe with *ngIf:</p>
-    <app-code-block [code]="htmlCode" lang="html" />
+      <h4>Behavior</h4>
+      <ul class="list-disc space-y-1 ml-6">
+        <li>Adds a 500ms debounce when filters change (to avoid excessive API calls)</li>
+        <li>Optionally filters out duplicate consecutive states</li>
+        <li>Starts with a null state to handle initial load scenarios</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Basic Usage -->
+  <section class="space-y-4">
+    <h2>Basic Usage</h2>
+    <p>Use <code>dgState</code> in your observable pipeline to manage datagrid state changes efficiently:</p>
     <app-code-block [code]="typescriptCode" />
+  </section>
+
+  <!-- Examples -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>API Response Structure</h3>
+      <p>Assume we have an API returning the following shape of data for a server-driven datagrid:</p>
+      <app-code-block [code]="dataCode" lang="json" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Template Implementation</h3>
+      <p>Use the async pipe directly in your template:</p>
+      <app-code-block [code]="secondHtmlCode" lang="html" />
+      <p>Alternatively, use async pipe with <code>&#64;if</code> for better type safety:</p>
+      <app-code-block [code]="htmlCode" lang="html" />
+    </article>
 
     <cll-callout>
-      You can click
-      <a class="underline" [routerLink]="['/clr-lift/utilities/datagrid']">convertToHttpParams</a>
-      to see the detail of this utility function.
+      <p>
+        You can use the <a class="underline" [routerLink]="['/clr-lift/utilities/datagrid']">convertToHttpParams</a>
+        utility function to convert the datagrid state into HTTP parameters. See the documentation for more details.
+      </p>
     </cll-callout>
   </section>
 
-  <section>
+  <!-- Live Example -->
+  <section class="space-y-4">
+    <h2>Live Example</h2>
+    <p>Below is a working example of a server-driven datagrid using the <code>dgState</code> operator:</p>
     <app-user-datagrid />
   </section>
 </cll-page-container>

@@ -5,15 +5,47 @@ import {AbstractControl, FormArray, ValidationErrors, ValidatorFn} from '@angula
  *
  * This validator can be applied to a FormArray or FormGroup containing the controls to be validated.
  * It ensures that each control's value is unique among all other controls within the array or group.
+ *
+ * When duplicate values are found, the validator sets a `notUnique` error on all affected controls.
+ * The error is automatically removed when the value becomes unique again.
+ *
+ * @example
+ * ```typescript
+ * // FormArray with unique values
+ * const formArray = new FormArray([
+ *   new FormControl('value1'),
+ *   new FormControl('value2'),
+ *   new FormControl('value1') // This will have notUnique error
+ * ], [UniqueValidator.unique()]);
+ *
+ * // FormArray with custom key selector
+ * const formArray = new FormArray([
+ *   new FormGroup({
+ *     id: new FormControl(1),
+ *     name: new FormControl('Item 1')
+ *   }),
+ *   new FormGroup({
+ *     id: new FormControl(2),
+ *     name: new FormControl('Item 2')
+ *   })
+ * ], [UniqueValidator.unique(control => control.get('id'))]);
+ * ```
  */
 export class UniqueValidator {
   /**
-   * Validator function to be attached to a FormArray or FormGroup.
+   * Creates a validator function that checks for uniqueness of values across controls in a FormArray or FormGroup.
    *
-   * This validator checks for uniqueness of each control's value within the array or group.
+   * The validator:
+   * - Compares values using the provided key selector function
+   * - Sets `notUnique` error on controls with duplicate values
+   * - Automatically removes errors when values become unique
+   * - Ignores null, undefined, empty strings, and 'NaN' values
    *
-   * @param keySelector A function to select the key control for comparison (default is the control itself).
-   * @typeparam T The type of the control value.
+   * @template T - The type of the control value.
+   * @param keySelector - A function to select the key control for comparison.
+   *   Defaults to the control itself if not provided.
+   *   This is useful when validating FormGroups where you want to check uniqueness of a specific field.
+   * @returns A validator function that can be attached to a FormArray or FormGroup.
    */
   static unique<T>(
     keySelector: (control: AbstractControl) => AbstractControl<T> = (control: AbstractControl<T>) => control,

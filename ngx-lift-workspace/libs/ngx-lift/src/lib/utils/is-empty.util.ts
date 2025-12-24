@@ -2,6 +2,18 @@
 
 import {isArrayLike, isPrototype} from './internal.util';
 
+/**
+ * Type guard that checks if a string value is empty.
+ *
+ * @param value - The string value to check.
+ * @returns `true` if the value is an empty string, `false` otherwise.
+ *
+ * @example
+ * ```typescript
+ * isEmpty(''); // true
+ * isEmpty('text'); // false
+ * ```
+ */
 export function isEmpty(value: string): value is '';
 /**
  * Check if a value is null, undefined, empty ArrayLike, Map, Set or empty object.
@@ -56,8 +68,26 @@ export function isEmpty(value?: any): boolean {
   return true;
 }
 
+/**
+ * Type guard that checks if a string value is not empty.
+ *
+ * @param value - The string value to check.
+ * @returns `false` if the value is an empty string, `true` otherwise.
+ */
 export function isNotEmpty(value: ''): false;
+/**
+ * Type guard that checks if a string value is not empty.
+ *
+ * @param value - The string value to check.
+ * @returns `true` if the value is a non-empty string, `false` otherwise.
+ */
 export function isNotEmpty(value: string): value is Exclude<string, ''>;
+/**
+ * Type guard that checks if a value is not empty (not null, undefined, or empty collection).
+ *
+ * @param value - The value to check.
+ * @returns `true` if the value is not null, undefined, or empty, `false` otherwise.
+ */
 export function isNotEmpty<T extends object | ArrayLike<any> | Map<any, any> | Set<any>>(
   value: T | null | undefined,
 ): value is T;

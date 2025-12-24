@@ -87,6 +87,10 @@ poll({
     `);
 
   deferPollingCode = highlight(`
+import {poll} from 'ngx-lift';
+import {Subject} from 'rxjs';
+import {delay, of, switchMap, takeWhile} from 'rxjs';
+
 const startPolling = new Subject<void>();
 
 // start button click
@@ -139,6 +143,8 @@ poll({
   pollingFn: () => ajax('https://api.example.com/data'), // return an observable
 }).subscribe(console.log);
 `);
+
+  importCode = highlight(`import { poll } from 'ngx-lift';`);
 
   advancedCode = highlight(`
 import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';

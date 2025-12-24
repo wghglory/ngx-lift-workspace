@@ -17,11 +17,29 @@ const loggerFunctions: Record<LoggerType, ConsoleFunction> = {
 };
 
 /**
- * Logger operator for RxJS observables.
+ * RxJS operator that logs values emitted by an observable using various console methods.
+ * Useful for debugging and monitoring observable streams during development.
  *
- * @param loggerType The type of logger to be used: 'count', 'debug', 'dir', 'log', 'table'.
- *                   Defaults to 'log' if not provided or if an unknown type is specified.
+ * @template T - The type of values emitted by the observable.
+ * @param loggerType - The type of logger to be used. Options:
+ *   - `'log'`: Standard console.log (default)
+ *   - `'debug'`: Console.debug for debug messages
+ *   - `'dir'`: Console.dir for object inspection
+ *   - `'count'`: Console.count for counting emissions
+ *   - `'table'`: Console.table for tabular data display
  * @returns An RxJS operator function that logs values using the specified console function.
+ *
+ * @example
+ * ```typescript
+ * // Log all values
+ * source$.pipe(logger()).subscribe();
+ *
+ * // Use debug logger
+ * source$.pipe(logger('debug')).subscribe();
+ *
+ * // Display objects in table format
+ * users$.pipe(logger('table')).subscribe();
+ * ```
  */
 export const logger = <T>(loggerType: LoggerType = 'log'): OperatorFunction<T, T> =>
   pipe(

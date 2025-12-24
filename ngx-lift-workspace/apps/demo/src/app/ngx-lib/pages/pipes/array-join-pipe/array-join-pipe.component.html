@@ -1,10 +1,64 @@
-<cll-page-container title="Array Join" customClass="space-y-9">
-  <p>
-    The <code>ArrayJoinPipe</code> is an Angular pipe that facilitates joining elements of an array into a single string
-    using a specified separator. The default separator is a comma (<code>,</code>).
-  </p>
+<cll-page-container title="Array Join Pipe" customClass="space-y-9">
+  <!-- Overview -->
+  <section class="space-y-4">
+    <h2>Overview</h2>
+    <p>
+      The <code>ArrayJoinPipe</code> is an Angular pipe that joins array elements into a string using a specified
+      separator. It provides a convenient way to display array data as comma-separated or custom-delimited strings in
+      templates.
+    </p>
+  </section>
 
-  <h2>Usage</h2>
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>ArrayJoinPipe</h3>
+      <p>Angular pipe that joins array elements into a string using a specified separator.</p>
 
-  <app-code-block [code]="exampleCode" lang="html"></app-code-block>
+      <h4>Transform Method</h4>
+      <div class="space-y-2">
+        <p><strong>Signature:</strong></p>
+        <p><code>transform(value: unknown, separator?: string): string | unknown</code></p>
+        <p><strong>Parameters:</strong></p>
+        <ul class="list-disc space-y-1 ml-6">
+          <li><code>value</code>: The array to join. If not an array, returns the value as-is.</li>
+          <li>
+            <code>separator</code>: <em>(Optional)</em> The separator string to use between array elements. Defaults to
+            <code>','</code>.
+          </li>
+        </ul>
+        <p>
+          <strong>Returns:</strong> A string containing the joined array elements, or the original value if not an array
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Basic Usage -->
+  <section class="space-y-4">
+    <h2>Basic Usage</h2>
+    <p>
+      Use the pipe in your templates to join array elements. The default separator is a comma, but you can specify any
+      custom separator.
+    </p>
+    <app-code-block [code]="exampleCode" lang="html"></app-code-block>
+  </section>
+
+  <!-- Examples -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Comma-Separated Values</h3>
+      <p>Join numeric arrays with default comma separator:</p>
+      <app-code-block [code]="commaSeparatedCode" lang="html"></app-code-block>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Custom Separators</h3>
+      <p>Use different separators for various use cases:</p>
+      <app-code-block [code]="customSeparatorsCode" lang="html"></app-code-block>
+    </article>
+  </section>
 </cll-page-container>

@@ -16,6 +16,21 @@ import {TranslationService} from '../../services/translation.service';
 import {keyValueTranslations} from './key-value.l10n';
 import {KeyValueFormGroup} from './key-value-form-group.type';
 
+/**
+ * A component for managing dynamic key-value pair inputs in a form.
+ * Supports validation, uniqueness checking, pattern matching, and smart mode for automatic key-value management.
+ *
+ * @example
+ * ```html
+ * <cll-key-value-inputs
+ *   [formArray]="keyValueFormArray"
+ *   [uniqueKey]="true"
+ *   [keyPattern]="{ regex: '^[A-Z_]+$', message: 'Keys must be uppercase' }"
+ *   (addKeyValue)="onAdd()"
+ *   (removeKeyValue)="onRemove($event)"
+ * />
+ * ```
+ */
 @Component({
   selector: 'cll-key-value-inputs',
   imports: [TranslatePipe, ClarityModule, ReactiveFormsModule],
@@ -27,21 +42,86 @@ export class KeyValueInputsComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private hostElement = inject(ElementRef).nativeElement;
 
+  /**
+   * The FormArray containing key-value form groups.
+   * Required input for managing the key-value pairs.
+   */
   formArray = input.required<FormArray<KeyValueFormGroup>>();
+
+  /**
+   * Initial data to populate the form array.
+   * Array of objects with `key` and `value` properties.
+   */
   data = input<{key: string; value: string}[]>([]);
+
+  /**
+   * Whether keys must be unique across all key-value pairs.
+   * If `true`, the UniqueValidator is applied to ensure no duplicate keys.
+   * Defaults to `true`.
+   */
   uniqueKey = input(true);
+
+  /**
+   * Optional pattern validator configuration for keys.
+   * Contains a regex pattern and optional error message.
+   */
   keyPattern = input<{regex: string | RegExp; message?: string}>();
+
+  /**
+   * Optional pattern validator configuration for values.
+   * Contains a regex pattern and optional error message.
+   */
   valuePattern = input<{regex: string | RegExp; message?: string}>();
+
+  /**
+   * Helper text to display for the key input field.
+   */
   keyHelper = input('');
+
+  /**
+   * Helper text to display for the value input field.
+   */
   valueHelper = input('');
+
+  /**
+   * The size (width) of the input fields in characters.
+   * Defaults to 40.
+   */
   inputSize = input(40);
+
+  /**
+   * Additional CSS classes to apply to action buttons.
+   */
   buttonClass = input('');
+
+  /**
+   * Whether smart mode is enabled.
+   * In smart mode, the component provides enhanced UX features.
+   * Defaults to `false`.
+   */
   smartMode = input(false);
+
+  /**
+   * Custom text for the "Add" button.
+   * If not provided, uses the default translation key 'key-value.add'.
+   */
   addText = input('');
 
+  /**
+   * Computed text for the "Add" button.
+   * Uses custom text if provided, otherwise falls back to translation.
+   */
   computedAddText = computed(() => this.addText() || this.translationService.translate('key-value.add'));
 
+  /**
+   * Event emitted when a key-value pair is removed.
+   * Emits the index of the removed pair.
+   */
   removeKeyValue = output<number>();
+
+  /**
+   * Event emitted when a new key-value pair is added.
+   */
   addKeyValue = output<void>();
 
   keyValidators = computed(() => {

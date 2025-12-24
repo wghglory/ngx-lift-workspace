@@ -1,11 +1,30 @@
 import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 
 /**
- * A custom validator function that checks for intersection between two form controls. The two controls' values must be arrays.
+ * Creates a validator function that checks for intersection between two form controls within a FormGroup.
+ * Both controls' values must be arrays. The validator sets an error on both controls if they have any common values.
  *
- * @param {string} controlName1 - The name of the first form control.
- * @param {string} controlName2 - The name of the second form control.
- * @returns {ValidatorFn} A function that validates the form group and returns an error if there is an intersection.
+ * This is useful for scenarios where you need to ensure two arrays don't share any elements,
+ * such as preventing duplicate selections in multi-select scenarios.
+ *
+ * @template T - The type of elements in the arrays (defaults to `string`).
+ * @param controlName1 - The name of the first form control in the FormGroup.
+ * @param controlName2 - The name of the second form control in the FormGroup.
+ * @returns A validator function that validates the FormGroup and returns an error object with `intersection: true`
+ *   if there is an intersection between the two arrays, or `null` if there is no intersection.
+ *
+ * @example
+ * ```typescript
+ * const form = new FormGroup({
+ *   selectedUsers: new FormControl(['user1', 'user2']),
+ *   excludedUsers: new FormControl(['user3', 'user4']),
+ * }, {
+ *   validators: [intersectionValidator('selectedUsers', 'excludedUsers')]
+ * });
+ *
+ * // If selectedUsers contains 'user1' and excludedUsers also contains 'user1',
+ * // both controls will have an error: { intersection: true }
+ * ```
  */
 export function intersectionValidator<T = string>(controlName1: string, controlName2: string): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {

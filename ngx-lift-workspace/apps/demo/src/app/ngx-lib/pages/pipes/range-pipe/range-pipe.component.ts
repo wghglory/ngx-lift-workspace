@@ -13,6 +13,8 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RangePipeComponent {
+  importCode = highlight(`import { RangePipe } from 'ngx-lift';`);
+
   exampleCode = highlight(`
 import {RangePipe} from 'ngx-lift';
 
@@ -36,13 +38,20 @@ export class RangePipeComponent { }
   `);
 
   cpuCode = highlight(`
-<div class="space-x-6">
-  <label for="cpu-count">Choose CPU count</label>
-  <select id="cpu-count">
-    @for (count of [1, 5] | range; track count) {
-      <option [value]="count">{{ count }} CPU(s)</option>
-    }
-  </select>
-</div>
+import {RangePipe} from 'ngx-lift';
+
+@Component({
+  imports: [RangePipe],
+  template: \`
+    <div class="space-x-6">
+      <label for="cpu-count">Choose CPU count</label>
+      <select id="cpu-count">
+        @for (count of [1, 5] | range; track count) {
+          <option [value]="count">{{ count }} CPU(s)</option>
+        }
+      </select>
+    </div>
+  \`
+})
     `);
 }

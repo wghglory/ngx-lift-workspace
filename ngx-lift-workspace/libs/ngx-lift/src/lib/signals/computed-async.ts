@@ -23,10 +23,26 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  * (Observables, Promises) or synchronous values. The signal automatically updates
  * when dependencies change.
  *
- * @template T - The type of the computed value
+ * This function extends Angular's `computed()` to support async operations. It handles:
+ * - Observables: Automatically subscribes and unsubscribes
+ * - Promises: Converts to Observable and handles resolution
+ * - Synchronous values: Returns immediately
+ *
+ * The function supports different behaviors for handling multiple async operations:
+ * - `switch`: Cancel previous operations when a new one starts (default)
+ * - `merge`: Process all operations concurrently
+ * - `concat`: Process operations sequentially
+ * - `exhaust`: Ignore new operations while one is in progress
+ *
+ * @template T - The type of the computed value.
  * @param computeFn - A function that computes the value. Can return an Observable, Promise, or synchronous value.
- *   The function receives the previous value as a parameter.
- * @returns A signal that emits the computed value
+ *   The function receives the previous value as a parameter (if available).
+ * @param options - Optional configuration:
+ *   - `initialValue`: Initial value for the Signal
+ *   - `requireSync`: If `true`, requires the first computation to be synchronous (throws error for Promises)
+ *   - `behavior`: How to handle multiple async operations ('switch' | 'merge' | 'concat' | 'exhaust')
+ *   - `equal`: Custom equality function for signal comparison
+ * @returns A signal that emits the computed value. May be `T | undefined` if no initial value is provided.
  *
  * @example
  * ```typescript
@@ -44,6 +60,12 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  * const user = computedAsync(
  *   () => this.userService.getUserSync(userId()),
  *   { requireSync: true }
+ * );
+ *
+ * // With behavior option
+ * const data = computedAsync(
+ *   () => this.dataService.getData(),
+ *   { behavior: 'merge' }
  * );
  * ```
  */

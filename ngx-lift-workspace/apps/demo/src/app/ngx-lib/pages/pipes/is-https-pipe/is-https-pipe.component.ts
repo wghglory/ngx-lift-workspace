@@ -13,6 +13,8 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsHttpsPipeComponent {
+  importCode = highlight(`import { IsHttpsPipe } from 'ngx-lift';`);
+
   exampleCode = highlight(`
 import {IsHttpsPipe} from 'ngx-lift';
 
@@ -33,5 +35,36 @@ import {IsHttpsPipe} from 'ngx-lift';
 export class IsHttpsPipeDemoComponent {
   url = 'https://url-to-be-passed-into-a-child-component-only-when-url-matches-https.com';
 }
+  `);
+
+  conditionalRenderingCode = highlight(`
+import {IsHttpsPipe} from 'ngx-lift';
+
+@Component({
+  imports: [IsHttpsPipe],
+  template: \`
+    @if(url | isHttps) {
+      <secure-component [url]="url" />
+    } @else {
+      <p>Please use HTTPS</p>
+    }
+  \`
+})
+  `);
+
+  securityValidationCode = highlight(`
+import {IsHttpsPipe} from 'ngx-lift';
+
+@Component({
+  imports: [IsHttpsPipe],
+  template: \`
+    <div>
+      <span>{{ url }}</span>
+      @if(url | isHttps) {
+        <cds-icon shape="shield" status="success" />
+      }
+    </div>
+  \`
+})
   `);
 }

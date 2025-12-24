@@ -22,6 +22,8 @@ import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DgStateComponent {
+  importCode = highlight(`import { dgState } from 'clr-lift';`);
+
   dataCode = highlight(`
 {
   "results": [

@@ -3,6 +3,13 @@ import {DomSanitizer} from '@angular/platform-browser';
 
 import {Alert, RequiredAlert} from './alert.type';
 
+/**
+ * Service for managing application-wide alerts.
+ * Provides methods to add, delete, and clear alerts, with automatic HTML sanitization.
+ *
+ * Alerts are stored in a signal and automatically sanitized for safe HTML rendering.
+ * The service supports click event handlers on alert target elements.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -11,6 +18,10 @@ export class AlertService {
 
   private alertsSource = signal<RequiredAlert[]>([]);
 
+  /**
+   * Computed signal that provides all alerts with sanitized HTML content.
+   * The content is automatically sanitized using Angular's DomSanitizer to prevent XSS attacks.
+   */
   alerts = computed(() => {
     return this.alertsSource().map((alert) => ({
       ...alert,
@@ -18,6 +29,23 @@ export class AlertService {
     }));
   });
 
+  /**
+   * Adds a new alert to the alert list.
+   * The alert is added to the beginning of the list and assigned a unique ID.
+   * If the alert has a target selector and click handler, they are registered after a delay.
+   *
+   * @param alert - The alert configuration to add.
+   * @returns The created alert with all required properties and a unique ID.
+   *
+   * @example
+   * ```typescript
+   * alertService.addAlert({
+   *   content: 'Operation completed successfully',
+   *   alertType: 'success',
+   *   isAppLevel: true
+   * });
+   * ```
+   */
   addAlert(alert: Alert) {
     const newAlert = this.createAlert(alert);
 
@@ -28,6 +56,12 @@ export class AlertService {
     return newAlert;
   }
 
+  /**
+   * Deletes an alert by its unique identifier.
+   * If the alert has a registered click event handler, it is unregistered before deletion.
+   *
+   * @param id - The unique symbol identifier of the alert to delete.
+   */
   deleteAlert(id: symbol) {
     const alert = this.alertsSource().find((alert) => alert.id === id);
 
@@ -38,6 +72,10 @@ export class AlertService {
     }
   }
 
+  /**
+   * Clears all alerts from the alert list.
+   * All registered click event handlers are unregistered before clearing.
+   */
   clearAlerts() {
     this.alertsSource().forEach((alert) => {
       this.unregisterEvent(alert);

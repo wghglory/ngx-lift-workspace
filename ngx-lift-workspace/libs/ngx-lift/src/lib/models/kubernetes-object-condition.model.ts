@@ -1,3 +1,21 @@
+/**
+ * Represents a condition of a Kubernetes object.
+ * Conditions provide a standard way to represent the status of an object and its components.
+ *
+ * @template T - The type of the condition type (e.g., 'Ready', 'Available', 'Progressing').
+ * @template R - The type of the reason string (e.g., 'PodScheduled', 'ContainersReady').
+ *
+ * @example
+ * ```typescript
+ * const condition: KubernetesObjectCondition = {
+ *   type: 'Ready',
+ *   status: 'True',
+ *   reason: 'PodReady',
+ *   message: 'Pod is ready',
+ *   lastTransitionTime: '2024-01-01T00:00:00Z'
+ * };
+ * ```
+ */
 export interface KubernetesObjectCondition<T = string, R = string> {
   /**
    * lastTransitionTime is a string representing the last time the condition transitioned from one status to another.

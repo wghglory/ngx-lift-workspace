@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardListComponent} from '../../../../shared/components/user-card-list/user-card-list.component';
@@ -8,12 +8,14 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-create-async-state',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, UserCardListComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, UserCardListComponent, CalloutComponent],
   templateUrl: './create-async-state.component.html',
   styleUrl: './create-async-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateAsyncStateComponent {
+  importCode = highlight(`import { createAsyncState } from 'ngx-lift';`);
+
   callbackCode = highlight(`
 import {createAsyncState} from 'ngx-lift';
 
@@ -75,6 +77,35 @@ export class UserDetailComponent {
   userState$ = this.userService
     .getUserById(1)
     .pipe(createAsyncState<User>(noop, {loading: false, error: null, data: this.location.getState()}));
+}
+  `);
+
+  dependentRequestsCode = highlight(`
+import {createAsyncState} from 'ngx-lift';
+
+data$ = firstCall$.pipe(
+  switchMap(() => this.shopService.products$),
+  createAsyncState()
+);
+  `);
+
+  templateUsageCode = highlight(`
+import {createAsyncState} from 'ngx-lift';
+
+// In component:
+userState$ = this.userService.getUser(id).pipe(createAsyncState());
+
+// In template:
+@if (userState$ | async; as state) {
+  @if (state.loading) {
+    <cll-spinner />
+  }
+  @if (state.error) {
+    <cll-alert [error]="state.error" />
+  }
+  @if (state.data; as user) {
+    <user-card [user]="user" />
+  }
 }
   `);
 }

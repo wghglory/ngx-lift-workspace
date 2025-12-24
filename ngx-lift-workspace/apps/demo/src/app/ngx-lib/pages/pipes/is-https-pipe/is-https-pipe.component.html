@@ -1,12 +1,61 @@
-<cll-page-container title="Is Https" customClass="space-y-9">
-  <p>The <code>IsHttpsPipe</code> is an Angular pipe that checks if a given string represents a valid HTTPS URL.</p>
+<cll-page-container title="Is HTTPS Pipe" customClass="space-y-9">
+  <!-- Overview -->
+  <section class="space-y-4">
+    <h2>Overview</h2>
+    <p>
+      The <code>IsHttpsPipe</code> is an Angular pipe that checks if a URL string uses the HTTPS protocol. It's useful
+      for conditional rendering, validation, or security checks in templates.
+    </p>
 
-  <cll-callout>
-    We also provide
-    <a [routerLink]="'../../utilities/url'"><code>isHttps</code></a> utility.
-  </cll-callout>
+    <cll-callout>
+      <p>
+        A corresponding <code>isHttps</code> utility function is also available for use in TypeScript. See the
+        <a [routerLink]="'../../utilities/url'">URL utilities</a> documentation for more details.
+      </p>
+    </cll-callout>
+  </section>
 
-  <h2>Usage</h2>
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>IsHttpsPipe</h3>
+      <p>Angular pipe that checks if a URL string uses the HTTPS protocol.</p>
 
-  <app-code-block [code]="exampleCode" lang="html"></app-code-block>
+      <h4>Transform Method</h4>
+      <div class="space-y-2">
+        <p><strong>Signature:</strong></p>
+        <p><code>transform(value: string): boolean</code></p>
+        <p><strong>Parameters:</strong></p>
+        <ul class="list-disc space-y-1 ml-6">
+          <li><code>value</code>: The URL string to check</li>
+        </ul>
+        <p><strong>Returns:</strong> <code>true</code> if the URL uses HTTPS protocol, <code>false</code> otherwise</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Basic Usage -->
+  <section class="space-y-4">
+    <h2>Basic Usage</h2>
+    <p>Use the pipe in your templates to check if a URL uses HTTPS:</p>
+    <app-code-block [code]="exampleCode" lang="html"></app-code-block>
+  </section>
+
+  <!-- Examples -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Conditional Rendering</h3>
+      <p>Conditionally render components based on HTTPS status:</p>
+      <app-code-block [code]="conditionalRenderingCode" lang="html"></app-code-block>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Security Validation</h3>
+      <p>Display security indicators based on protocol:</p>
+      <app-code-block [code]="securityValidationCode" lang="html"></app-code-block>
+    </article>
+  </section>
 </cll-page-container>

@@ -13,22 +13,39 @@ export function combineLatestEager<T extends Record<string, Observable<unknown>>
 /**
  * Combines multiple observables into a single observable emitting an array or dictionary
  * of the latest values from each source observable.
- * Adds startWith(null) for each Subject in combineLatest when the second parameter startWithNullForAll is false.
- * When startWithNullForAll is true, each observable will startWith null.
+ *
+ * This operator is similar to RxJS `combineLatest`, but with additional behavior:
+ * - When `startWithNullForAll` is `false` (default), only `Subject` instances get `startWith(null)`
+ * - When `startWithNullForAll` is `true`, all observables get `startWith(null)`
+ *
+ * This ensures that `combineLatest` emits immediately with initial values, even if some
+ * observables haven't emitted yet.
  *
  * @template T - The type of the data in the observables.
  *
- * @param {Array<Observable<T>> | Record<string, Observable<T>>} sources -
- *   An array of observables or a dictionary of observables to be combined.
+ * @param sources - An array of observables or a dictionary (object) of observables to be combined.
+ * @param startWithNullForAll - When `true`, all observables will start with `null`.
+ *   When `false` (default), only `Subject` instances will start with `null`.
+ * @returns An observable emitting an array or dictionary of the latest values from each source observable.
+ *   Values may be `null` initially if `startWithNullForAll` is `true` or for `Subject` instances.
  *
- * @param {boolean} [startWithNullForAll=false] -
- *   Determines whether to start each observable with a `null` value.
+ * @throws {Error} Throws an error if the provided argument is not an array of observables or a dictionary of observables.
  *
- * @returns {Observable<Array<T | null> | Record<string, T | null>>} -
- *   An observable emitting an array or dictionary of the latest values from each source observable.
+ * @example
+ * ```typescript
+ * // Array of observables
+ * const combined$ = combineLatestEager([obs1$, obs2$, obs3$]);
  *
- * @throws {Error} -
- *   Throws an error if the provided argument is not an array of observables or a dictionary of observables.
+ * // Dictionary of observables
+ * const combined$ = combineLatestEager({
+ *   users: users$,
+ *   posts: posts$,
+ *   comments: comments$
+ * });
+ *
+ * // Start all with null
+ * const combined$ = combineLatestEager([obs1$, obs2$], true);
+ * ```
  */
 export function combineLatestEager<T>(
   sources: Array<Observable<T>> | Record<string, Observable<T>>,

@@ -1,181 +1,220 @@
 <cll-page-container title="poll" customClass="space-y-9">
-  <section class="space-y-6">
+  <!-- Overview -->
+  <section class="space-y-4">
+    <h2>Overview</h2>
     <p>
-      In modern web applications, it's common to interact with APIs to fetch data, and sometimes, we need to
-      continuously <code>poll</code> these APIs to keep our data up-to-date. While there are various ways to implement
-      polling mechanisms, leveraging the power of Reactive Programming can offer an elegant and efficient solution.
-      Hence, the <code>poll</code> operator, a handy tool in RxJS for simplifying the process of polling APIs comes to
-      play.
+      The <code>poll</code> operator is a custom RxJS operator that simplifies the process of polling APIs to keep data
+      up-to-date. It allows developers to create observables that periodically emit data at specified intervals,
+      abstracting away the complexity of managing polling intervals and API requests.
     </p>
 
     <p>
-      The <code>poll</code> operator is a custom operator built on top of RxJS, a powerful library for reactive
-      programming in JavaScript. It allows developers to create observables that periodically emit data at specified
-      intervals.
+      This operator is especially useful when real-time updates are required but the server does not support push
+      notifications (WebSockets, Server-Sent Events, etc.). It seamlessly integrates with other RxJS operators, enabling
+      developers to build reactive pipelines for handling data streams.
     </p>
 
-    <ul class="list-disc">
+    <ul class="list-disc space-y-2 ml-6">
+      <li><strong>Simplicity</strong>: Abstracts away the complexity of managing polling intervals and API requests</li>
       <li>
-        <strong>Simplicity</strong>: It abstracts away the complexity of managing polling intervals and API requests.
+        <strong>Flexibility</strong>: Customize parameters such as polling intervals and request payloads to suit your
+        application's needs
       </li>
       <li>
-        <strong>Flexibility</strong>: Developers can customize parameters, such as polling intervals and request
-        payloads, to suit their application's needs.
-      </li>
-      <li>
-        <strong>Reactivity</strong>: It seamlessly integrates with other RxJS operators, enabling developers to build
-        reactive pipelines for handling data streams.
-      </li>
-    </ul>
-
-    <h2>Usage</h2>
-
-    <p>
-      <code>poll</code> operator is especially handy when fetching data periodically from an API endpoint. This is
-      useful for scenarios where real-time updates are required but the server does not support push notifications.
-    </p>
-    <p>
-      By default, the <code>poll</code> operator starts polling immediately. Please refer to
-      <button class="btn btn-sm btn-link !normal-case !p-0" (click)="scrollToElement(deferPolling)">
-        Defer Polling
-      </button>
-      section if you'd like to start polling after an action.
-    </p>
-
-    <p>The <code>poll</code> operator takes an options object containing essential parameters:</p>
-
-    <ul class="list-disc">
-      <li>
-        <code>pollingFn</code>: A function to be executed periodically, that returns an
-        <strong>Observable, Promise or a primitive value</strong>.
-      </li>
-      <li><code>interval</code>: The interval in milliseconds between each poll.</li>
-      <li><code>paramsBuilder</code>: An optional function that builds parameters for the polling function.</li>
-      <li>
-        <code>forceRefresh</code>: An optional <strong>Observable or Signal</strong> that forces an immediate execution
-        of the <code>pollingFn</code> function when emitted.
-      </li>
-      <li>
-        <code>initialValue</code>: An optional value as the initial value of the poll results. You can use it if you
-        don't want to display a <code>loading: true</code> state.
-      </li>
-      <li>
-        <code>delay</code>: An optional value if you'd like to delay the start of polling. By default, the polling
-        starts immediately.
+        <strong>Reactivity</strong>: Seamlessly integrates with other RxJS operators for building reactive pipelines
       </li>
     </ul>
   </section>
 
-  <section class="space-y-6">
-    <h2>Example</h2>
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>poll</h3>
+      <p>
+        Polls data at a specified interval and can be triggered manually. Returns an observable that emits the result as
+        an <code>AsyncState</code> object.
+      </p>
 
-    <h3>Poll with different types of polling function</h3>
-    <p>Polling function supports Promise, Observable, or primitive value.</p>
+      <h4>Signature</h4>
+      <div class="space-y-2">
+        <p>
+          <code
+            >poll&lt;Data, Input&gt;(options: PollOptions&lt;Data, Input&gt;):
+            Observable&lt;AsyncState&lt;Data&gt;&gt;</code
+          >
+        </p>
+        <p><strong>Options:</strong></p>
+        <ul class="list-disc space-y-1 ml-6">
+          <li>
+            <code>pollingFn</code>: <strong>Required.</strong> A function that returns an Observable, Promise, or
+            primitive value. The function receives parameters built from <code>forceRefresh</code> or
+            <code>paramsBuilder</code>.
+          </li>
+          <li><code>interval</code>: <strong>Required.</strong> The interval in milliseconds between each poll.</li>
+          <li>
+            <code>forceRefresh</code>: <em>(Optional)</em> An Observable or Signal that triggers a manual refresh. The
+            emitted value is passed to <code>paramsBuilder</code> (if provided) or directly to <code>pollingFn</code>.
+          </li>
+          <li>
+            <code>paramsBuilder</code>: <em>(Optional)</em> A function that builds parameters for the polling function
+            based on the <code>forceRefresh</code> value.
+          </li>
+          <li>
+            <code>initialValue</code>: <em>(Optional)</em> An initial <code>AsyncState</code> value. Defaults to
+            <code>&#123; loading: true, error: null, data: null &#125;</code>.
+          </li>
+          <li>
+            <code>delay</code>: <em>(Optional)</em> Delay in milliseconds before starting the first poll. Defaults to
+            <code>0</code> (starts immediately).
+          </li>
+        </ul>
+        <p>
+          <strong>Returns:</strong> An observable that emits <code>AsyncState&lt;Data&gt;</code> objects with loading,
+          error, and data properties
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Basic Usage -->
+  <section class="space-y-4">
+    <h2>Basic Usage</h2>
+    <p>
+      By default, the <code>poll</code> operator starts polling immediately. Use it to fetch data periodically from an
+      API endpoint:
+    </p>
     <app-code-block [code]="simpleCode" />
+  </section>
 
-    <h3>Poll Until Condition is Met</h3>
-    <p>Poll every 1 second until the output is greater than 8.</p>
-    <app-code-block [code]="pollingTakeWhileCode" />
-    <cll-callout>You can add <code>takeUntil, takeWhile</code> to end the polling as your need.</cll-callout>
+  <!-- Examples -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
 
-    <h3>Poll with initialValue</h3>
-    <p>
-      By default the poll initial result is
-      <code>&#123;loading: true, error: null, data: null&#125;</code>. It's convenient to display a spinner since
-      loading is true. However, in some cases, you may not want to display a loading spinner. You can set
-      <code>initialValue</code> to any value you want.
-    </p>
-    <app-code-block [code]="pollingInitialValue" />
+    <article class="space-y-3">
+      <h3>Poll with Different Types of Polling Functions</h3>
+      <p>The polling function supports Promise, Observable, or primitive values:</p>
+      <app-code-block [code]="simpleCode" />
+    </article>
 
-    <h3 #deferPolling>Defer polling</h3>
+    <article class="space-y-3">
+      <h3>Poll Until Condition is Met</h3>
+      <p>Use RxJS operators like <code>takeWhile</code> to stop polling when a condition is met:</p>
+      <app-code-block [code]="pollingTakeWhileCode" />
+      <cll-callout>
+        <p>
+          You can add <code>takeUntil</code>, <code>takeWhile</code>, or other RxJS operators to control when polling
+          ends.
+        </p>
+      </cll-callout>
+    </article>
 
-    <p>
-      By default, the polling immediately starts. We support
-      <code>delay</code> prop to delay the start of polling.
-    </p>
-    <app-code-block [code]="deferPolling2Code" />
+    <article class="space-y-3">
+      <h3>Poll with initialValue</h3>
+      <p>
+        By default, the poll initial result is <code>&#123;loading: true, error: null, data: null&#125;</code>, which is
+        convenient for displaying a loading spinner. However, in some cases, you may not want to display a loading
+        spinner. You can set <code>initialValue</code> to any value you want:
+      </p>
+      <app-code-block [code]="pollingInitialValue" />
+    </article>
 
-    <p>
-      Sometime you may want to start the polling after an action.
-      <code>poll</code> operator can work with other RxJS operators to achieve this.
-    </p>
-    <app-code-block [code]="deferPollingCode" />
-    <button class="btn btn-primary" (click)="start()">Start Polling (See Console)</button>
+    <article class="space-y-3" #deferPolling>
+      <h3>Defer Polling</h3>
+      <p>By default, polling starts immediately. Use the <code>delay</code> option to delay the start of polling:</p>
+      <app-code-block [code]="deferPolling2Code" />
 
+      <p>
+        Alternatively, you can start polling after a user action by combining <code>poll</code> with other RxJS
+        operators:
+      </p>
+      <app-code-block [code]="deferPollingCode" />
+      <button class="btn btn-primary" (click)="start()">Start Polling (See Console)</button>
+    </article>
+  </section>
+
+  <!-- Advanced Usage -->
+  <section class="space-y-4">
     <h2>Advanced Usage</h2>
 
-    <ul class="list-disc space-y-3">
-      <li>
-        <strong>Force Refresh</strong>: Use the <code>forceRefresh</code> observable or signal to trigger the execution
-        of <code>pollingFn</code> whenever necessary, such as in response to user actions. The emitted value from
-        <code>forceRefresh</code> will be passed as the input to <code>paramsBuilder</code>, if provided; otherwise, it
-        goes directly to <code>pollingFn</code>.
-      </li>
-      <li>
-        <strong>Custom Parameters</strong>: Customize parameters by providing a <code>paramsBuilder</code> function,
-        which is especially useful when the <code>forceRefresh</code> value does not match the structure of
-        <code>pollingFn</code> parameters. This function allows you to transform the input, ensuring it meets the
-        specific requirements of <code>pollingFn</code>.
-      </li>
-    </ul>
+    <article class="space-y-3">
+      <h3>Force Refresh</h3>
+      <p>
+        Use the <code>forceRefresh</code> observable or signal to trigger the execution of
+        <code>pollingFn</code> whenever necessary, such as in response to user actions. The emitted value from
+        <code>forceRefresh</code> will be passed as the input to <code>paramsBuilder</code> (if provided) or directly to
+        <code>pollingFn</code>.
+      </p>
+    </article>
 
-    <h3>Advanced Example</h3>
-    <p>
-      The datagrid below will automatically refresh every 10 seconds. Additionally, whenever there's a change in the
-      input, triggering filtering, sorting, or pagination, the API will be promptly called, accompanied by a spinner
-      indicating loading.
-    </p>
+    <article class="space-y-3">
+      <h3>Custom Parameters</h3>
+      <p>
+        Customize parameters by providing a <code>paramsBuilder</code> function, which is especially useful when the
+        <code>forceRefresh</code> value does not match the structure of <code>pollingFn</code> parameters. This function
+        allows you to transform the input, ensuring it meets the specific requirements of <code>pollingFn</code>.
+      </p>
+    </article>
 
-    <form clrForm>
-      <clr-input-container>
-        <label for="poll-firstname">Search by First Name</label>
-        <input
-          type="text"
-          id="poll-firstname"
-          clrInput
-          name="firstName"
-          (input)="searchByFirstName($any($event.target).value)"
-        />
-      </clr-input-container>
-    </form>
+    <article class="space-y-3">
+      <h3>Advanced Example: Datagrid with Polling</h3>
+      <p>
+        The datagrid below will automatically refresh every 10 seconds. Additionally, whenever there's a change in the
+        input, triggering filtering, sorting, or pagination, the API will be promptly called, accompanied by a spinner
+        indicating loading.
+      </p>
 
-    <clr-datagrid
-      class="min-h-[200px]"
-      (clrDgRefresh)="refresh($event)"
-      [clrDgLoading]="(usersState$ | async)?.loading === true"
-      [(clrDgSingleSelected)]="selectedItem"
-    >
-      <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
-      <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
-      <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
-      <clr-dg-column [clrDgField]="'gender'">Gender</clr-dg-column>
+      <form clrForm>
+        <clr-input-container>
+          <label for="poll-firstname">Search by First Name</label>
+          <input
+            type="text"
+            id="poll-firstname"
+            clrInput
+            name="firstName"
+            (input)="searchByFirstName($any($event.target).value)"
+          />
+        </clr-input-container>
+      </form>
 
-      <clr-dg-placeholder>No data found</clr-dg-placeholder>
+      <clr-datagrid
+        class="min-h-[200px]"
+        (clrDgRefresh)="refresh($event)"
+        [clrDgLoading]="(usersState$ | async)?.loading === true"
+        [(clrDgSingleSelected)]="selectedItem"
+      >
+        <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
+        <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
+        <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
+        <clr-dg-column [clrDgField]="'gender'">Gender</clr-dg-column>
 
-      @for (user of (usersState$ | async)?.data?.results; track user.id.value) {
-        <clr-dg-row [clrDgItem]="user">
-          <clr-dg-cell>{{ user.name.first }}</clr-dg-cell>
-          <clr-dg-cell>{{ user.name.last }}</clr-dg-cell>
-          <clr-dg-cell>{{ user.email }}</clr-dg-cell>
-          <clr-dg-cell>{{ user.gender }}</clr-dg-cell>
-        </clr-dg-row>
+        <clr-dg-placeholder>No data found</clr-dg-placeholder>
+
+        @for (user of (usersState$ | async)?.data?.results; track user.id.value) {
+          <clr-dg-row [clrDgItem]="user">
+            <clr-dg-cell>{{ user.name.first }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.name.last }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.email }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.gender }}</clr-dg-cell>
+          </clr-dg-row>
+        }
+
+        <clr-dg-footer>
+          @if (total$ | async) {
+            {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of {{ total$ | async }} items
+          } @else {
+            No items
+          }
+          <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="(total$ | async) || 0" />
+        </clr-dg-footer>
+      </clr-datagrid>
+
+      @if ((usersState$ | async)?.error; as error) {
+        <cll-alert [error]="error" class="mb-4" />
       }
 
-      <clr-dg-footer>
-        @if (total$ | async) {
-          {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of {{ total$ | async }} items
-        } @else {
-          No items
-        }
-        <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="(total$ | async) || 0" />
-      </clr-dg-footer>
-    </clr-datagrid>
-
-    @if ((usersState$ | async)?.error; as error) {
-      <cll-alert [error]="error" class="mb-4" />
-    }
-
-    <app-code-block [code]="advancedCode" />
+      <app-code-block [code]="advancedCode" />
+    </article>
 
     <!--
 Another approach:
