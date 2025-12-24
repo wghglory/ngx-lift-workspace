@@ -1,4 +1,3 @@
-import {NgClass} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, input, signal, untracked} from '@angular/core';
 import {certificateIcon, ClarityIcons} from '@cds/core/icon';
 import {ClarityModule} from '@clr/angular';
@@ -15,7 +14,7 @@ ClarityIcons.addIcons(certificateIcon);
 
 @Component({
   selector: 'cll-certificate-signpost',
-  imports: [NgClass, ClarityModule, TranslatePipe, CertificateComponent],
+  imports: [ClarityModule, TranslatePipe, CertificateComponent],
   templateUrl: './certificate-signpost.component.html',
   styleUrls: ['./certificate-signpost.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -8,7 +8,7 @@
     <dd>
       {{ certificate().validity.notAfter | date: 'medium' }}
       @if (certificateStatus()) {
-        <span class="label ml-2 align-middle" [ngClass]="certificateStatus().labelClass">
+        <span class="label ml-2 align-middle" [class]="certificateStatus().labelClass">
           {{ certificateStatus().labelText }}
         </span>
       }

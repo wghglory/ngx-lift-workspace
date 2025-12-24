@@ -27,7 +27,7 @@
     }
     <button
       class="btn"
-      [ngClass]="timelineWizardService.isLastStep ? 'btn-success' : 'btn-primary'"
+      [class]="timelineWizardService.isLastStep ? 'btn-success' : 'btn-primary'"
       [clrLoading]="(next$ | async)?.loading === true"
       [disabled]="currentStepFormInvalid"
       (click)="nextStep()"

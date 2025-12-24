@@ -147,6 +147,30 @@ alwaysApply: true
   - **Exception**: HTML elements that can contain content (like `<div>`, `<span>`, `<p>`) should use opening/closing
     tags even when empty
 
+- **Class and Style Bindings**: Prefer `class` over `ngClass` and `style` over `ngStyle`
+
+  ```html
+  <!-- ✅ Correct -->
+  <div [class.active]="isActive()" [class.disabled]="isDisabled()">
+    <div [style.color]="textColor()" [style.font-size.px]="fontSize()">
+      <div [class]="computedClass()">
+        <div [style]="computedStyle()">
+          <!-- ❌ Wrong -->
+          <div [ngClass]="{active: isActive(), disabled: isDisabled()}">
+            <div [ngStyle]="{color: textColor(), 'font-size': fontSize() + 'px'}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  ```
+
+  - Use property binding `[class.className]` for single class toggles
+  - Use property binding `[style.property]` for single style properties
+  - Use computed signals for complex class/style logic
+  - **Exception**: Use `ngClass` or `ngStyle` only when you need to conditionally apply multiple classes/styles
+    dynamically and computed signals would be overly complex
+
 ### Forms
 
 - **Reactive Forms**: Prefer reactive forms over template-driven forms
