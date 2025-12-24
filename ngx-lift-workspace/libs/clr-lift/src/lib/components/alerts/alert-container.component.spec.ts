@@ -55,7 +55,7 @@ describe('AlertContainerComponent', () => {
 });
 
 @Component({
-  template: ` <cll-alert-container></cll-alert-container> `,
+  template: ` <cll-alert-container /> `,
   imports: [AlertContainerComponent],
 })
 class TestAlertsHostComponent {}

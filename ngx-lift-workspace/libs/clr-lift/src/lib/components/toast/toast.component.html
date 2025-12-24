@@ -114,8 +114,8 @@
     <div class="content" aria-live="polite">
       <div class="content-wrapper">
         <div class="toast-title-container" tabindex="0">
-          <ng-content select=".toast-title"></ng-content>
-          <ng-content select=".toast-date"></ng-content>
+          <ng-content select=".toast-title" />
+          <ng-content select=".toast-date" />
           @if (manualClosable()) {
             <button
               class="close-button"
@@ -125,13 +125,13 @@
               (blur)="focus(false)"
             >
               <span [@closeIconVisible]>
-                <cds-icon shape="times" size="16"></cds-icon>
+                <cds-icon shape="times" size="16" />
               </span>
             </button>
           }
         </div>
       </div>
-      <ng-content select=".toast-description"></ng-content>
+      <ng-content select=".toast-description" />
       <div class="button-container">
         @if (primaryButtonText()) {
           <button

@@ -6,13 +6,13 @@
       [cllTooltipPosition]="tooltipPosition()"
       [attr.aria-label]="tooltip"
     >
-      <ng-container *ngTemplateOutlet="icon"></ng-container>
+      <ng-container *ngTemplateOutlet="icon" />
     </button>
   } @else {
-    <ng-container *ngTemplateOutlet="icon"></ng-container>
+    <ng-container *ngTemplateOutlet="icon" />
   }
 
-  <ng-content></ng-content>
+  <ng-content />
 </span>
 
 <ng-template #icon>

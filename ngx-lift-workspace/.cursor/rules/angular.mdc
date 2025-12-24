@@ -125,6 +125,28 @@ alwaysApply: true
   - Use computed signals or pipes instead
   - Exception: Event handlers (`(click)="handleClick()"`)
 
+- **Self-Closing Tags**: Use self-closing tags when possible (when tags have no content)
+
+  ```html
+  <!-- ✅ Correct -->
+  <br />
+  <img [src]="imageUrl" [alt]="altText" />
+  <input [formControl]="control" />
+  <cds-icon shape="user" />
+  <clr-icon shape="check" />
+
+  <!-- ❌ Wrong -->
+  <br></br>
+  <img [src]="imageUrl" [alt]="altText"></img>
+  <input [formControl]="control"></input>
+  <cds-icon shape="user"></cds-icon>
+  <clr-icon shape="check"></clr-icon>
+  ```
+
+  - **Exception**: Custom Angular components that require content should use opening/closing tags
+  - **Exception**: HTML elements that can contain content (like `<div>`, `<span>`, `<p>`) should use opening/closing
+    tags even when empty
+
 ### Forms
 
 - **Reactive Forms**: Prefer reactive forms over template-driven forms
