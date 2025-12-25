@@ -6,12 +6,14 @@ This guide covers deploying the demo application to Netlify and Vercel, as well 
 
 ### Prerequisites
 
-1. **npm Account**: Create an account at [npmjs.com](https://www.npmjs.com/)
-2. **npm Login**: Authenticate locally
-   ```bash
-   npm login
-   ```
-3. **Publishing Rights**: Ensure you have publish permissions for `ngx-lift` and `clr-lift`
+- **Node.js**: 22.x or higher
+- **npm**: 10.x or higher
+- **npm Account**: Create an account at [npmjs.com](https://www.npmjs.com/)
+- **npm Token**: Create an automation token for publishing
+  1. Go to npmjs.com → Account Settings → Access Tokens
+  2. Generate a new token with "Automation" type
+  3. Add to GitHub Secrets as `NPM_TOKEN`
+- **Publishing Rights**: Ensure you have publish permissions for `ngx-lift` and `clr-lift`
 
 ### Automated Publishing (Recommended)
 
@@ -45,6 +47,9 @@ This automatically triggers the publish workflow.
 #### Using Nx Release (Recommended)
 
 ```bash
+# Set npm token (required for publishing)
+export NPM_TOKEN=your_npm_token_here
+
 # 1. Version bump (interactive)
 nx release version
 
@@ -64,6 +69,9 @@ nx release publish --projects=clr-lift
 #### Traditional npm Publish
 
 ```bash
+# Set npm token (required for publishing)
+export NPM_TOKEN=your_npm_token_here
+
 # Publish ngx-lift
 npm run build:ngx
 cd dist/libs/ngx-lift
@@ -85,7 +93,7 @@ cd ../../..
 - [ ] CHANGELOG updated
 - [ ] README updated if needed
 - [ ] Build successful (`npm run build:libs`)
-- [ ] Logged in to npm (`npm whoami`)
+- [ ] npm token configured (`NPM_TOKEN` environment variable or GitHub secret)
 
 ### Version Strategy
 
@@ -165,7 +173,7 @@ The `netlify.toml` file contains:
   status = 200
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
   NPM_VERSION = "10"
 ```
 
@@ -288,16 +296,32 @@ vercel env add
 All workflows are in `.github/workflows/`:
 
 1. **`ci.yml`**: Continuous Integration
-   - Runs on: Push, Pull Requests
-   - Actions: Lint, Test, Build
+   - Runs on: Push to `main`/`develop`, Pull Requests
+   - Node Version: 22.x
+   - Actions:
+     - Lint affected projects (parallel: 3)
+     - Test affected projects with coverage (parallel: 3)
+     - Build affected projects (parallel: 3)
+     - Upload coverage reports to Codecov
 
 2. **`publish.yml`**: Library Publishing
-   - Runs on: Manual trigger, Git tags
-   - Actions: Build, Test, Publish to npm
+   - Runs on: Manual trigger (with version type selection), Git tags (v\*)
+   - Node Version: 22.x
+   - Actions:
+     - Build libraries (parallel: 2)
+     - Run tests (parallel: 2)
+     - Version bump (manual trigger only)
+     - Publish to npm (with provenance)
+     - Create GitHub release (tag-based only)
 
 3. **`deploy-demo.yml`**: Demo Deployment
-   - Runs on: Push to main, Manual trigger
-   - Actions: Build, Deploy to Netlify/Vercel
+   - Runs on: Push to `main`, Manual trigger
+   - Node Version: 22.x
+   - Actions:
+     - Build libraries (parallel: 2)
+     - Build demo app (production configuration)
+     - Deploy to Netlify (with PR comments)
+     - Deploy to Vercel (production)
 
 ### Required GitHub Secrets
 
@@ -343,7 +367,7 @@ VERCEL_PROJECT_ID      # Vercel project ID
    ```toml
    # netlify.toml
    [build.environment]
-     NODE_VERSION = "20"
+     NODE_VERSION = "22"
    ```
 
 2. **Clear Build Cache**:
@@ -357,11 +381,12 @@ VERCEL_PROJECT_ID      # Vercel project ID
 ### npm Publish Fails
 
 1. **Check Authentication**:
-
-   ```bash
-   npm whoami
-   npm login
-   ```
+   - **For automated publishing**: Verify `NPM_TOKEN` is set in GitHub Secrets
+   - **For manual publishing**: Verify `NPM_TOKEN` environment variable is set
+     ```bash
+     echo $NPM_TOKEN  # Should show your token
+     ```
+   - **Verify token permissions**: Ensure the token has "Automation" type and publish permissions
 
 2. **Check Package Name**:
    - Ensure package name is available

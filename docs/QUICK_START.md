@@ -4,6 +4,13 @@ Get up and running with the ngx-lift monorepo in minutes!
 
 ## 🚀 Initial Setup
 
+### Prerequisites
+
+- Node.js 22.x or higher
+- npm 10.x or higher
+
+### Installation
+
 ```bash
 # 1. Navigate to workspace
 cd ngx-lift-workspace

@@ -20,6 +20,28 @@ alwaysApply: true
   import '@cds/core/icon/register.js';
   ```
 
+### CDS Layout Components
+
+- **CDS Layout**: Use `cds-layout` components from `@cds/core` for layout and spacing
+- **Layout Documentation**: Always refer to Clarity Core CDS Layout documentation when using `cds-layout` attribute:
+  - [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) - Introduction to
+    CDS layout system
+  - [Layout Spacing](https://storybook.core.clarity.design/?path=/story/layout-spacing--page) - Spacing utilities and
+    patterns
+  - [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page) - Grid system and responsive
+    layouts
+  - [Layout Vertical](https://storybook.core.clarity.design/?path=/story/layout-vertical--page) - Vertical layout
+    patterns
+  - [Layout Horizontal](https://storybook.core.clarity.design/?path=/story/layout-horizontal--page) - Horizontal layout
+    patterns
+
+- **When to Use CDS Layout attribute**: Use `cds-layout` attribute for:
+  - Page-level layouts and structure
+  - Spacing between components
+  - Responsive grid layouts
+  - Vertical and horizontal alignment
+  - Consistent spacing patterns
+
 ### Common Clarity Components
 
 #### Alerts
@@ -195,7 +217,17 @@ alwaysApply: true
 
 ### Responsive Design
 
-- **Clarity Grid**: Use Clarity grid system for responsive layouts
+- **CDS Layout Grid**: Prefer CDS Layout components for responsive layouts (see
+  [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page))
+
+  ```html
+  <cds-layout horizontal gap="md" wrap>
+    <cds-layout flex="auto">Content</cds-layout>
+    <cds-layout flex="auto">Content</cds-layout>
+  </cds-layout>
+  ```
+
+- **Clarity Grid**: Use Clarity grid system for legacy or specific use cases
 
   ```html
   <div class="clr-row">
@@ -205,6 +237,9 @@ alwaysApply: true
 
 - **Breakpoints**: Use Clarity breakpoints for responsive behavior
 - **Mobile First**: Design mobile-first, enhance for larger screens
+- **Layout Documentation**: Refer to
+  [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) for layout patterns
+  and best practices
 
 ### Theme Support
 
@@ -216,5 +251,8 @@ alwaysApply: true
 
 - **Component Composition**: Compose Clarity components to build complex UIs
 - **Consistency**: Follow Clarity design patterns for consistency
+- **Layout Usage**: Always refer to
+  [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using
+  `cds-layout` components
 - **Documentation**: Refer to [Clarity Design System](https://clarity.design) for component usage
 - **Version Compatibility**: Ensure compatibility with `@clr/angular` version 17

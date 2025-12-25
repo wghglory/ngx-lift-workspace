@@ -125,7 +125,7 @@ nx test clr-lift
 ```bash
 npm run test:coverage
 # or
-nx run-many -t test --coverage
+nx run-many -t test --coverage --parallel=1 && node tools/vitest/show-coverage-summary.mjs
 
 # Coverage for specific library
 nx test ngx-lift --coverage

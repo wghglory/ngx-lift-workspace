@@ -22,6 +22,8 @@ These principles are **mandatory** and must be followed in all code:
 - **i18n**: All user-visible text via Transloco; labels use sentence case; titles use title case
 - **State Management**: Signals for component state; reactive patterns for data flow
 - **Change Detection**: **ALWAYS** `ChangeDetectionStrategy.OnPush` for all components
+- **Component Decorator**: **NEVER** include `standalone: true` in `@Component` decorator (components are standalone by
+  default in Angular 20)
 - **Testing**: Stable selectors (`getByRole` or `data-test-id`); 60%+ coverage minimum
 - **Lifecycle**: No subscriptions in constructor; initialization logic in `ngOnInit`
 

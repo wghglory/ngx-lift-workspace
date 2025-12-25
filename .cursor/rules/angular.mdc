@@ -7,6 +7,30 @@ alwaysApply: true
 ### Component Architecture
 
 - **Standalone Components**: All components must be standalone (no NgModules)
+  - **DO NOT** include `standalone: true` in `@Component` decorator - components are standalone by default in Angular 20
+  - When generating new code, **NEVER** add `standalone: true` to component decorators
+
+  ```typescript
+  // ✅ Correct
+  @Component({
+    selector: 'app-example',
+    imports: [CommonModule, ClarityModule],
+    templateUrl: './example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+  })
+  export class ExampleComponent {}
+
+  // ❌ Wrong - DO NOT include standalone: true
+  @Component({
+    selector: 'app-example',
+    standalone: true, // ❌ Remove this - not needed in Angular 20
+    imports: [CommonModule, ClarityModule],
+    templateUrl: './example.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+  })
+  export class ExampleComponent {}
+  ```
+
 - **Imports**: Use `imports` array in `@Component` decorator, not `@NgModule`
 - **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush` for all components
 - **Component Lifecycle**: Use lifecycle hooks appropriately:
