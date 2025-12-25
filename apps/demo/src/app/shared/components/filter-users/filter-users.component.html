@@ -1,0 +1,29 @@
+<clr-radio-container clrInline>
+  <label for="filter-gender">Select gender to load users</label>
+  <clr-radio-wrapper>
+    <input type="radio" id="filter-gender-male" clrRadio name="gender" value="male" [formControl]="genderControl" />
+    <label for="filter-gender-male">Male</label>
+  </clr-radio-wrapper>
+  <clr-radio-wrapper>
+    <input type="radio" id="filter-gender-female" clrRadio name="gender" value="female" [formControl]="genderControl" />
+    <label for="filter-gender-female">Female</label>
+  </clr-radio-wrapper>
+</clr-radio-container>
+
+@if (searchState$ | async; as vm) {
+  <div class="mt-6 min-h-[286px]">
+    @if (vm.loading) {
+      <cll-spinner />
+    }
+    @if (vm.error; as error) {
+      <cll-alert [error]="error" />
+    }
+    @if (vm.data; as users) {
+      <div class="card-grid">
+        @for (user of users.results; track user) {
+          <app-user-card [user]="user" />
+        }
+      </div>
+    }
+  </div>
+}

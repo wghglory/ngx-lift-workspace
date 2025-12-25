@@ -1,0 +1,85 @@
+<cll-page-container [title]="'mergeFrom'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>mergeFrom</code> function merges the values of Observables or Signals and emits the latest value. It also
+    allows for modifying the emitted value using RxJS operators before it is emitted. While it is similar to
+    <code>merge()</code>, it also takes Signals into account. <code>mergeFrom</code> is akin to
+    <code>combineFrom</code>, but instead of emitting a combined value, it emits the latest emitted value using the
+    merge operator rather than combineLatest.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Merge multiple signals or observables:</p>
+      <app-code-block [code]="basicCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: With RxJS Pipe Operator</h3>
+      <p>Pass an RxJS pipe operator to manipulate the emitted values:</p>
+      <app-code-block [code]="pipeCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Handle Asynchronous Code</h3>
+      <p>Use <code>startWith</code> or <code>initialValue</code> option to handle async observables:</p>
+      <app-code-block [code]="asyncCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>mergeFrom</h3>
+        <p>
+          Merges multiple Observables or Signals into a single Signal that emits the latest value from any source,
+          similar to <code>merge</code> but with Signal support.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code
+              >sources: Record&lt;string, Observable&lt;T&gt; | Signal&lt;T&gt;&gt; | Array&lt;Observable&lt;T&gt; |
+              Signal&lt;T&gt;&gt;</code
+            >
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                An object or array of Observables or Signals to merge. When an object is provided, the result will be an
+                object with the same keys.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>operator?: OperatorFunction</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> An RxJS pipe operator to manipulate the emitted values before they are emitted.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: MergeFromOptions</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Configuration options including <code>initialValue</code> and <code>injector</code>.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">A signal that emits the latest value from any of the source observables or signals.</p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

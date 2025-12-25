@@ -1,0 +1,71 @@
+<div class="space-y-9 sm:p-10 relative">
+  <section class="grid xl:grid-cols-2 sm:gap-10">
+    <div class="space-y-3 max-w-[calc(100vw-48px)]">
+      <h1 class="sm:!text-6xl leading-loose">clr-lift</h1>
+      <p class="sm:!text-3xl sm:!mt-16">
+        Extending Clarity Design System with reusable components, utilities, and operators
+      </p>
+      <app-code-block [code]="'npm install clr-lift ngx-lift &#64;clr/angular &#64;clr/ui'" lang="shell" />
+
+      <div class="space-y-2">
+        <p class="sm:!text-xl font-semibold">Version Support Matrix</p>
+        <table class="table table-compact">
+          <thead>
+            <tr>
+              <th>clr-lift Version</th>
+              <th>Angular Version</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>v1.x</td>
+              <td>Angular 17+</td>
+            </tr>
+            <tr>
+              <td>v19.x</td>
+              <td>Angular 19+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <svg-icon class="flex-1" [src]="'./assets/clr-lift.svg'" [svgStyle]="{width: '100%'}" />
+  </section>
+
+  <section class="grid lg:grid-cols-3 gap-5">
+    <app-tile-with-icon
+      icon="⚒️"
+      title="Utilities"
+      description="Specialized utilities designed for Clarity components that simplify common tasks and operations, providing a seamless development experience"
+    />
+    <app-tile-with-icon
+      icon="📦"
+      title="RxJS Operators"
+      [description]="
+        'Enhanced RxJS operators that extend Clarity functionality. The <code>dgState</code> operator streamlines datagrid state management, providing an intuitive and efficient approach for working with Clarity datagrids.'
+      "
+    />
+    <app-tile-with-icon
+      icon="🧩"
+      title="Components"
+      description="Production-ready components built on Clarity Design System, including toast notifications, alerts, and more"
+    />
+  </section>
+
+  <cll-callout>
+    <ul class="list-disc space-y-2">
+      <li>
+        In some cases, a <strong>force installation</strong> may be required if &#64;clr/angular's peer dependencies
+        specify a different Angular version than your project.
+      </li>
+      <li>
+        If you are not using the latest Angular version, consider setting <code>skipLibCheck: true</code> in
+        tsconfig.json to avoid potential build errors.
+      </li>
+      <li>
+        For guidance on setting up Clarity Design System in your project, refer to the
+        <a href="https://clarity.design/pages/developing" target="_blank">Clarity Design System documentation</a>.
+      </li>
+    </ul>
+  </cll-callout>
+</div>

@@ -1,0 +1,161 @@
+@if (animate) {
+  <div class="toast" (mouseover)="mouseOver(true)" (mouseleave)="mouseOver(false)" [@launchToast]="loaded">
+    <span [@gradientMove] class="gradient"></span>
+    <div class="icon-container">
+      @switch (toastType()) {
+        @case ('error') {
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            [attr.aria-label]="'toast.error-icon' | translate"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 1C14.1756 1 16.3023 1.64514 18.1113 2.85383C19.9202 4.06253 21.3301 5.7805 22.1627 7.79048C22.9952 9.80047 23.2131 12.0122 22.7886 14.146C22.3642 16.2798 21.3166 18.2398 19.7782 19.7782C18.2398 21.3166 16.2798 22.3642 14.146 22.7886C12.0122 23.2131 9.80047 22.9952 7.79048 22.1627C5.7805 21.3301 4.06253 19.9202 2.85383 18.1113C1.64514 16.3023 1 14.1756 1 12C1 9.08262 2.15893 6.28473 4.22183 4.22183C6.28473 2.15893 9.08262 1 12 1Z"
+              stroke="#F54F47"
+              stroke-width="2"
+              stroke-miterlimit="10"
+            />
+            <path
+              [@errorLine]
+              id="error-icon-line"
+              d="M12 6.79999V12.7"
+              stroke="#F54F47"
+              stroke-width="2.65"
+              stroke-miterlimit="10"
+              stroke-linecap="round"
+              stroke-dasharray="7 7"
+            />
+            <path
+              [@errorDot]
+              id="error-icon-dot"
+              d="M12 18.4C12.7732 18.4 13.4 17.7732 13.4 17C13.4 16.2268 12.7732 15.6 12 15.6C11.2268 15.6 10.6 16.2268 10.6 17C10.6 17.7732 11.2268 18.4 12 18.4Z"
+              fill="#F54F47"
+            />
+          </svg>
+        }
+        @case ('info') {
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" [attr.aria-label]="'toast.info-icon' | translate">
+            <path
+              id="info-icon-outline"
+              d="M12 1C14.1756 1 16.3023 1.64514 18.1113 2.85383C19.9202 4.06253 21.3301 5.7805 22.1627 7.79048C22.9952 9.80047 23.2131 12.0122 22.7886 14.146C22.3642 16.2798 21.3166 18.2398 19.7782 19.7782C18.2398 21.3166 16.2798 22.3642 14.146 22.7886C12.0122 23.2131 9.80047 22.9952 7.79048 22.1627C5.7805 21.3301 4.06253 19.9202 2.85383 18.1113C1.64514 16.3023 1 14.1756 1 12C1 9.08262 2.15893 6.28473 4.22183 4.22183C6.28473 2.15893 9.08262 1 12 1Z"
+              stroke="#0095D3"
+              stroke-width="2"
+              stroke-miterlimit="10"
+            />
+            <path
+              d="M10 10H12V18M9 18H15"
+              [@infoLine]
+              id="info-icon-line"
+              style="animation-fill-mode: forwards"
+              stroke="#0095D3"
+              stroke-width="2"
+              stroke-miterlimit="10"
+              stroke-linecap="round"
+              stroke-dasharray="16 16"
+            />
+            <path
+              [@infoDot]
+              id="info-icon-dot"
+              style="transform-origin: 50% 42%"
+              d="M11.9 7.14999C12.618 7.14999 13.2 6.56796 13.2 5.84999C13.2 5.13202 12.618 4.54999 11.9 4.54999C11.182 4.54999 10.6 5.13202 10.6 5.84999C10.6 6.56796 11.182 7.14999 11.9 7.14999Z"
+              fill="#0095D3"
+            />
+          </svg>
+        }
+        @case ('warning') {
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            [attr.aria-label]="'toast.warning-icon' | translate"
+            fill="none"
+          >
+            <path
+              [@warnLine]
+              id="warn-icon-line"
+              d="M12.1424 15.6484C11.9012 15.6484 11.67 15.5889 11.4994 15.4831C11.3289 15.3772 11.2331 15.2337 11.2331 15.084V8.3113C11.2331 8.16162 11.3289 8.01807 11.4994 7.91222C11.67 7.80638 11.9012 7.74692 12.1424 7.74692C12.3836 7.74692 12.6149 7.80638 12.7854 7.91222C12.9559 8.01807 13.0517 8.16162 13.0517 8.3113V15.084C13.0517 15.2337 12.9559 15.3772 12.7854 15.4831C12.6149 15.5889 12.3836 15.6484 12.1424 15.6484Z"
+              fill="#FFEF5F"
+            />
+            <path
+              [@warnDot]
+              id="warn-icon-dot"
+              style="transform-origin: 50% 54%"
+              d="M12.1424 19.7796C12.8103 19.7796 13.3518 19.225 13.3518 18.5408C13.3518 17.8566 12.8103 17.3019 12.1424 17.3019C11.4745 17.3019 10.933 17.8566 10.933 18.5408C10.933 19.225 11.4745 19.7796 12.1424 19.7796Z"
+              fill="#FFEF5F"
+            />
+            <path
+              d="M10.1367 2.14914C10.5179 1.43948 11.2436 1 12.0319 1C12.8201 1 13.5458 1.43948 13.9275 2.15006L23.2526 19.7279C23.6166 20.4139 23.6009 21.2456 23.2114 21.9168C22.8219 22.588 22.1161 22.9994 21.3536 22.9996L2.72511 22.9994C1.95419 23.0171 1.23244 22.6128 0.830992 21.9384C0.429544 21.264 0.409194 20.4216 0.777969 19.727L10.1367 2.14914ZM1.95717 20.3848C1.8176 20.6477 1.82531 20.9668 1.97741 21.2224C2.1295 21.4779 2.40297 21.6311 2.71009 21.6242H21.3534C21.6423 21.6241 21.9097 21.4682 22.0573 21.2139C22.2049 20.9596 22.2108 20.6445 22.0729 20.3846L12.7494 2.80995C12.6055 2.54192 12.3305 2.37542 12.0319 2.37542C11.7336 2.37542 11.4589 2.54153 11.3148 2.809L1.95717 20.3848Z"
+              fill="#FFEF5F"
+            />
+          </svg>
+        }
+        @case ('success') {
+          <svg width="24" height="24" viewBox="0 0 24 24" [attr.aria-label]="'toast.success-info' | translate">
+            <circle class="success-bg" fill="#60B515" cx="12" cy="12" r="10.67" />
+            <path
+              id="check-mark"
+              [@checkMarkLine]
+              fill="none"
+              stroke="#ffffff"
+              stroke-linecap="round"
+              stroke-miterlimit="10"
+              stroke-width="2"
+              stroke-dasharray="31.386688232421875"
+              style="animation-fill-mode: forwards"
+              d="M5.69 11.33 10.21 15.83 18.3 7.76"
+            />
+          </svg>
+        }
+      }
+    </div>
+    <div class="content" aria-live="polite">
+      <div class="content-wrapper">
+        <div class="toast-title-container" tabindex="0">
+          <ng-content select=".toast-title" />
+          <ng-content select=".toast-date" />
+          @if (manualClosable()) {
+            <button
+              class="close-button"
+              [attr.aria-label]="'toast.close-notification' | translate"
+              (click)="close(true)"
+              (focus)="focus(true)"
+              (blur)="focus(false)"
+            >
+              <span [@closeIconVisible]>
+                <cds-icon shape="times" size="16" />
+              </span>
+            </button>
+          }
+        </div>
+      </div>
+      <ng-content select=".toast-description" />
+      <div class="button-container">
+        @if (primaryButtonText()) {
+          <button
+            type="button"
+            class="toast-button"
+            (focus)="focus(true)"
+            (blur)="focus(false)"
+            (click)="primaryButtonClick.emit()"
+          >
+            {{ primaryButtonText() }}
+          </button>
+        }
+        @if (secondaryButtonText()) {
+          <button
+            type="button"
+            class="toast-button secondary"
+            (focus)="focus(true)"
+            (blur)="focus(false)"
+            (click)="secondaryButtonClick.emit()"
+          >
+            {{ secondaryButtonText() }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

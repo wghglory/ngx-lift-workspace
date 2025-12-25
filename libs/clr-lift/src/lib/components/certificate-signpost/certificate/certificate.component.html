@@ -1,0 +1,42 @@
+<div class="certificate-container">
+  <h4 class="certificate-subtitle">{{ 'certificate.validityPeriod' | translate }}</h4>
+  <dl class="certificate-content">
+    <dt>{{ 'certificate.issuedOn' | translate }}</dt>
+    <dd>{{ certificate().validity.notBefore | date: 'medium' }}</dd>
+
+    <dt>{{ 'certificate.expiresOn' | translate }}</dt>
+    <dd>
+      {{ certificate().validity.notAfter | date: 'medium' }}
+      @if (certificateStatus()) {
+        <span class="label ml-2 align-middle" [class]="certificateStatus().labelClass">
+          {{ certificateStatus().labelText }}
+        </span>
+      }
+    </dd>
+  </dl>
+
+  <h4 class="certificate-subtitle">{{ 'certificate.issuedTo' | translate }}</h4>
+  <dl class="certificate-content">
+    @for (attr of certificate().subject.attributes; track attr) {
+      <dt>{{ 'certificate.' + attr.name | translate }}</dt>
+      <dd>{{ attr.value }}</dd>
+    }
+  </dl>
+
+  <h4 class="certificate-subtitle">{{ 'certificate.issuedBy' | translate }}</h4>
+  <dl class="certificate-content">
+    @for (attr of certificate().issuer.attributes; track attr) {
+      <dt>{{ 'certificate.' + attr.name | translate }}</dt>
+      <dd>{{ attr.value }}</dd>
+    }
+  </dl>
+
+  <h4 class="certificate-subtitle">{{ 'certificate.fingerprints' | translate }}</h4>
+  <dl class="certificate-content">
+    <dt>{{ 'certificate.md5Fingerprint' | translate }}</dt>
+    <dd>{{ hash().md5 }}</dd>
+
+    <dt>{{ 'certificate.sha1Fingerprint' | translate }}</dt>
+    <dd>{{ hash().sha1 }}</dd>
+  </dl>
+</div>

@@ -1,0 +1,90 @@
+<cll-page-container [title]="'injectQueryParams'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>injectQueryParams</code> function is a helper that enables us to inject query parameters from the current
+    route as a signal. Utilizing query parameters as a signal is beneficial in a modern Angular signals-based
+    architecture. It supports getting all query parameters, a specific parameter, transforming parameters, and providing
+    initial values.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Get All Query Parameters</h3>
+      <p>Get all query parameters as a signal:</p>
+      <app-code-block [code]="allParamsCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Get Single Query Parameter</h3>
+      <p>Get a specific query parameter by name:</p>
+      <app-code-block [code]="singleParamCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Transform Query Parameters</h3>
+      <p>Transform query parameters using a transform function:</p>
+      <app-code-block [code]="transformCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Transform with Initial Value</h3>
+      <p>Transform query parameters with an initial value and type conversion:</p>
+      <app-code-block [code]="transformWithInitialCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Complete Usage Example</h3>
+      <p>Complete example showing various usage patterns:</p>
+      <app-code-block [code]="completeExampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>injectQueryParams</h3>
+        <p>Injects and transforms route query parameters as reactive signals.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>keyOrTransform?: string | ((params: Params) => T)</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> When a string is provided, returns the value of that query parameter. When a
+                function is provided, it's used as a transform function to process all query parameters.
+              </p>
+              <p class="text-sm !mt-1">
+                If omitted, returns a signal containing all query parameters of the current route.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: InjectQueryParamsOptions&lt;T&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Configuration object containing <code>transform</code> function and/or
+                <code>initialValue</code>.
+              </p>
+              <p class="text-sm !mt-1">
+                If <code>initialValue</code> is a boolean or number, <code>transform</code> function must be provided to
+                convert the string parameter to the correct type.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">A signal containing the query parameter value(s) or transformed result.</p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

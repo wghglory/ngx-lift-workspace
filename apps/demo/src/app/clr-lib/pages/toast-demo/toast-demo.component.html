@@ -1,0 +1,246 @@
+<cll-page-container [title]="'Toast'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    Toast messages serve as a user-friendly means to communicate medium-priority events that users may wish to reference
+    later. These messages appear temporarily on the screen and can be stored in a notifications panel until closed or
+    expired.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Setup Toast Container</h3>
+      <p>
+        To implement toast messages, import <code>ToastContainerComponent</code> from the <code>clr-lift</code> library
+        and include <code>&lt;cll-toast-container [timeoutSeconds]=&quot;8&quot; /&gt;</code> in your app component.
+        This container will hold all toasts and should appear only once in your application. You can pass non-required
+        inputs for global configurations, such as <code>timeoutSeconds</code> (auto close time),
+        <code>manualClosable</code> (manual closure option), and <code>topOffset</code> (adjustment of distance to the
+        screen top).
+      </p>
+      <app-code-block [code]="containerCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Create Toast with addToast</h3>
+      <p>
+        Use <code>addToast</code> to pass a toast object with required properties (title and description) and optional
+        configurations.
+      </p>
+      <app-code-block [code]="addToastCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Shorthand APIs</h3>
+      <p>For simplicity, four shorthand APIs are provided to create toasts with different types:</p>
+      <app-code-block [code]="shortHandCode" lang="typescript" />
+      <div class="space-x-2">
+        <button (click)="showSuccessToast()" class="btn btn-success">Success Toast</button>
+        <button (click)="showInfoToast()" class="btn btn-primary">Info Toast</button>
+        <button (click)="showErrorToast()" class="btn btn-danger">Error Toast</button>
+        <button (click)="showWarningToast()" class="btn btn-warning">Warning Toast</button>
+      </div>
+    </article>
+  </section>
+
+  <!-- Usage Guidelines -->
+  <section class="space-y-4">
+    <h2>Usage Guidelines</h2>
+    <div class="space-y-3">
+      <div>
+        <strong class="block text-lg mb-2">Do:</strong>
+        <ol class="list-decimal space-y-1 ml-6">
+          <li>
+            <strong>Provide Navigation</strong>: Include a link or location for users to navigate to from the toast.
+          </li>
+          <li>
+            <strong>Use Relative Timestamps</strong>: Display timestamps relative to the user (e.g., "1 hour ago"
+            instead of an absolute date).
+          </li>
+          <li>
+            <strong>Keep Titles Short</strong>: Use a short, succinct title (max 35 characters) that conveys the
+            high-level message quickly.
+          </li>
+          <li>
+            <strong>Craft Consumable Descriptions</strong>: Keep descriptions concise (max 156 characters) for easy
+            consumption.
+          </li>
+        </ol>
+      </div>
+      <div>
+        <strong class="block text-lg mb-2">Do Not:</strong>
+        <ol class="list-decimal space-y-1 ml-6">
+          <li><strong>Use "Close" as an Action</strong>: Clicking the close button should close the toast.</li>
+          <li>
+            <strong>Overcrowd Actions</strong>: Limit toast messages to a maximum of 2 actions; prioritize the most
+            important ones.
+          </li>
+          <li>
+            <strong>Include Object Identifiers in Title</strong>: Avoid using object identifiers in the title; use them
+            only in the description.
+          </li>
+          <li><strong>Add Icons</strong>: To maintain clarity, refrain from adding icons to the toast messages.</li>
+          <li>
+            <strong>Show Irrelevant Toasts</strong>: Display toasts only when the information is still relevant to the
+            user.
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>ToastService</h3>
+        <p>Service for creating and managing toast notifications.</p>
+
+        <h4>Methods</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>addToast(options: ToastOptions): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Creates a toast with the specified options.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>success(options: ToastOptions): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Creates a success toast with the specified options.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>info(options: ToastOptions): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Creates an info toast with the specified options.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>warning(options: ToastOptions): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Creates a warning toast with the specified options.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>error(options: ToastOptions): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Creates an error toast with the specified options.</p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>ToastOptions Interface</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>title: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Required)</em> The title of the toast message.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>description: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Required)</em> The description of the toast message.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>toastType?: 'success' | 'info' | 'warning' | 'error'</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> The type of toast. Defaults to 'info'.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>date?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> A relative timestamp (e.g., "1hr ago").</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>manualClosable?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Whether the toast can be manually closed. Defaults to true.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>timeoutSeconds?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The number of seconds before the toast automatically closes. If not provided, uses
+                the container's default.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>primaryButtonText?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> Text for the primary action button.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>primaryButtonClick?: () => void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> Callback function for the primary button click.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>secondaryButtonText?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> Text for the secondary action button.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>secondaryButtonClick?: () => void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> Callback function for the secondary button click.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>closed?: () => void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><em>(Optional)</em> Callback function called when the toast is closed.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h3>ToastContainerComponent</h3>
+        <p>Container component that holds all toast notifications. Should appear only once in your application.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>timeoutSeconds?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Default timeout in seconds for toasts. Defaults to 8 seconds.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>manualClosable?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Whether toasts can be manually closed by default. Defaults to true.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>topOffset?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Distance from the top of the screen in pixels. Defaults to 0.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

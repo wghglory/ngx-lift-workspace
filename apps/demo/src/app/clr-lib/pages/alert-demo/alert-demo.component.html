@@ -1,0 +1,151 @@
+<cll-page-container [title]="'Alert'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    Alerts are banners that draw the user's attention to important messages. Visual elements such as icons and colors
+    indicate the type and urgency of the information being communicated. Use alerts to provide critical information that
+    requires immediate user attention within the current context. For complex HTML content, the component provides an
+    <code>ng-content</code> projection slot for custom content injection.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Display API Error Response</h3>
+      <p>
+        When displaying error responses from APIs, use the <code>error</code> input to pass error details. The alert
+        displays the error message from the <code>message</code> property of the response error object if available.
+        Otherwise, it falls back to displaying the message from the <code>HttpErrorResponse</code> object.
+      </p>
+      <cll-alert [error]="error" />
+      <app-code-block [code]="standardApiErrorCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Display Custom Content</h3>
+      <p>
+        The content is rendered using innerHTML, allowing you to include HTML tags. This is particularly useful when
+        working with translation strings that contain HTML markup, enabling rich text formatting and structured content
+        in alerts.
+      </p>
+      <cll-alert alertType="success" content="I'm a successful content" />
+      <cll-alert alertType="info" content="I'm a info content" />
+      <cll-alert alertType="warning" content="I'm a warning content" />
+      <cll-alert alertType="danger" content="I'm a danger content" />
+      <cll-alert alertType="info" [content]="'<strong>Hello world</strong>, I like clr-lift!'" />
+      <app-code-block [code]="standardContentCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Content Projection</h3>
+      <p>
+        The alert component also supports content projection via <code>ng-content</code>, enabling the inclusion of
+        complex HTML structures and Angular components.
+      </p>
+      <cll-alert>
+        <p class="!mt-0 !mb-2">
+          Multiple errors are listed as below by
+          <strong>content projection</strong>.
+        </p>
+        <ol class="list-decimal">
+          <li>Cannot read undefined.</li>
+          <li>
+            Cannot upload a object.
+            <button
+              [cllTooltip]="'server is down'"
+              [cllTooltipPosition]="'tooltip-right'"
+              class="btn btn-sm btn-link btn-icon !my-0 !px-0"
+              aria-label="info"
+              type="button"
+            >
+              <cds-icon shape="info-circle" />
+            </button>
+          </li>
+        </ol>
+      </cll-alert>
+      <app-code-block [code]="standardProjectionCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Small Alert</h3>
+      <p>Use the <code>isSmall</code> input to display a compact-sized alert:</p>
+      <cll-alert alertType="danger" content="I'm a small alert" [isSmall]="true" />
+      <app-code-block [code]="standardSmallAlertCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Lightweight Alerts</h3>
+      <p>Use lightweight alerts inside containers, other components and layouts:</p>
+      <cll-alert [isLightweight]="true" [error]="error" />
+      <cll-alert [isLightweight]="true" alertType="success" content="I'm a successful content" />
+      <cll-alert [isLightweight]="true" alertType="info" content="I'm a info content" />
+      <cll-alert [isLightweight]="true" alertType="warning" content="I'm a warning content" />
+      <cll-alert [isLightweight]="true" alertType="neutral" content="I'm a neutral content" />
+      <cll-alert [isLightweight]="true" alertType="loading" content="I'm a loading content" />
+      <cll-alert [isLightweight]="true" alertType="unknown" content="I'm a unknown content" />
+      <app-code-block [code]="lightweightAlertsCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 6: App-Level Alerts</h3>
+      <p>
+        Use app-level alerts in the global context of an application. Place them at the top of all content and
+        navigation:
+      </p>
+      <cll-alert [error]="error" [isAppLevel]="true" />
+      <cll-alert
+        alertType="success"
+        content="I'm a successful content passed into content property &nbsp; <a href='javascript:void(0)' class='btn btn-inverse btn-sm'>View</a>"
+        [isAppLevel]="true"
+      />
+      <cll-alert alertType="success" [isAppLevel]="true">
+        I'm a successful content injected by content projection &nbsp;
+        <a href="javascript:void(0)" class="btn btn-inverse btn-sm">View</a>
+      </cll-alert>
+      <cll-alert alertType="info" content="I'm a info content" [isAppLevel]="true" />
+      <cll-alert alertType="warning" content="I'm a warning content" [isAppLevel]="true" />
+      <app-code-block [code]="appLevelAlertsCode" lang="html" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>AlertComponent</h3>
+      <p>Alert component that displays important messages to users with various types and styles.</p>
+
+      <h4>Inputs</h4>
+      <ul class="list-disc space-y-1 ml-6">
+        <li>
+          <code>alertType</code>: <em>(Optional)</em> One of "info", "warning", "success", "danger", "neutral",
+          "loading", or "unknown". Defaults to "danger".
+        </li>
+        <li>
+          <code>isAppLevel</code>: <em>(Optional)</em> Boolean flag for app-level alerts. Defaults to
+          <code>false</code>. Set to <code>true</code> to display an app-level alert.
+        </li>
+        <li>
+          <code>isSmall</code>: <em>(Optional)</em> Boolean flag for compact sizing. Defaults to <code>false</code>.
+        </li>
+        <li>
+          <code>isLightweight</code>: <em>(Optional)</em> Boolean flag for lightweight styling. Defaults to
+          <code>false</code>. Set to <code>true</code> to display a lightweight alert.
+        </li>
+        <li>
+          <code>error</code>: <em>(Optional)</em> An <code>HttpErrorResponse</code> object to display error information.
+        </li>
+        <li>
+          <code>content</code>: <em>(Optional)</em> A string containing the alert message content. Supports HTML tags
+          via innerHTML.
+        </li>
+      </ul>
+
+      <h4>Content Projection</h4>
+      <p>
+        The component supports <code>ng-content</code> projection for complex HTML structures and Angular components.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

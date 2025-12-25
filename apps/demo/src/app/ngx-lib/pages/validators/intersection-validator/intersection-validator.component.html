@@ -1,0 +1,109 @@
+<cll-page-container [title]="'intersectionValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>intersectionValidator</code> is a custom Angular Forms validator designed to ensure that two form controls
+    do not have overlapping values. For example, you might have two lists of items and want to ensure they don't contain
+    any duplicates. When there's any overlap between the arrays, both fields and the form will have the
+    <code>&#123;intersection: true&#125;</code> error.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Validate Non-Overlapping Arrays</h3>
+      <p>
+        Ensure that included namespaces and excluded namespaces do not overlap. Both fields must return arrays.
+      </p>
+      <form clrForm [formGroup]="form">
+        <clr-select-container>
+          <label for="intersection-included">Included Namespaces</label>
+          <select
+            id="intersection-included"
+            clrSelect
+            multiple
+            name="options"
+            [formControl]="form.controls.includedNamespaces"
+            required
+          >
+            <option value="default">default</option>
+            <option value="kube-system">kube-system</option>
+            <option value="kube-public">kube-public</option>
+          </select>
+          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'intersection'">
+            Included namespaces and excluded namespaces cannot overlap
+          </clr-control-error>
+        </clr-select-container>
+
+        <clr-select-container>
+          <label for="intersection-excluded">Excluded Namespaces</label>
+          <select
+            id="intersection-excluded"
+            clrSelect
+            multiple
+            name="options"
+            [formControl]="form.controls.excludedNamespaces"
+            required
+          >
+            <option value="default">default</option>
+            <option value="kube-system">kube-system</option>
+            <option value="kube-public">kube-public</option>
+          </select>
+          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'intersection'">
+            Included namespaces and excluded namespaces cannot overlap
+          </clr-control-error>
+        </clr-select-container>
+
+        @if (form.errors?.['intersection']) {
+          <cll-alert class="my-4" [content]="'Included namespaces and excluded namespaces have overlaps'" />
+        }
+
+        <button type="submit" class="btn-primary btn" [disabled]="form.invalid">Submit</button>
+      </form>
+      <app-code-block [code]="intersectionHtmlCode" lang="html" />
+      <app-code-block [code]="intersectionTsCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>intersectionValidator</h3>
+        <p>
+          Validates that two form controls do not have overlapping values. Both controls must return arrays.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>controlName1: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">The name of the first form control to compare.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>controlName2: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">The name of the second form control to compare.</p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A validator function that returns <code>&#123;intersection: true&#125;</code> if the arrays overlap, or
+          <code>null</code> if they don't. You can check for this error in the form by accessing
+          <code>form.errors?.['intersection']</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

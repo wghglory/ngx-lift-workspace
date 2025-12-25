@@ -1,0 +1,64 @@
+<cll-page-container [title]="'logger'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>logger</code> operator is a utility function for RxJS observables that simplifies logging emitted values
+    using different console functions. This operator is useful for debugging and monitoring the behavior of your
+    observables during development.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Logging</h3>
+      <p>Log emitted values using console.log:</p>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Table Logging</h3>
+      <p>Log emitted values using console.table for better visualization:</p>
+      <app-code-block [code]="tableExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Other Console Methods</h3>
+      <p>Use other console methods like warn, error, or info:</p>
+      <app-code-block [code]="otherMethodsCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>logger</h3>
+        <p>RxJS operator that logs emitted values using different console functions.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>method?: 'log' | 'table' | 'warn' | 'error' | 'info' | 'debug'</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The console method to use for logging. Defaults to <code>'log'</code>.
+              </p>
+              <p class="text-sm !mt-1">
+                Available methods: <code>log</code>, <code>table</code>, <code>warn</code>, <code>error</code>,
+                <code>info</code>, <code>debug</code>.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">An observable that passes through all values while logging them to the console.</p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

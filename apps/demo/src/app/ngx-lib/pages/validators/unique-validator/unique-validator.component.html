@@ -1,0 +1,126 @@
+<cll-page-container [title]="'uniqueValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>uniqueValidator</code> is a custom Angular Forms validator designed to check for uniqueness across multiple
+    fields within a <code>FormArray</code> or <code>FormGroup</code>. It ensures that each control's value is unique
+    among all other controls within the array or group.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Array of FormControls</h3>
+      <p>
+        If you have an array of individual FormControls and want to ensure uniqueness, attach
+        <code>UniqueValidator.unique()</code> to the FormArray you want to validate.
+      </p>
+      <form clrForm [formGroup]="form1">
+        <cll-callout>Type the same value in below controls and see the effect when blur.</cll-callout>
+
+        <ng-container formArrayName="demo1">
+          @for (control of form1.controls.demo1.controls; track control; let i = $index) {
+            <clr-input-container>
+              <label [attr.for]="i">Control {{ i + 1 }}</label>
+              <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
+              <clr-control-helper>Control value should be unique</clr-control-helper>
+              <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
+            </clr-input-container>
+          }
+        </ng-container>
+      </form>
+      <app-code-block [code]="example1Code" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Array of FormGroups with Key-Value Pairs</h3>
+      <p>
+        In a more complex scenario, imagine you have an array of <code>FormGroups</code>, each containing key-value
+        pairs as <code>FormControls</code>. You want to ensure the uniqueness of the key controls' values (left controls
+        below) across all groups. For this case, you can pass a control selector as the argument of
+        <code>UniqueValidator.unique(controlSelector)</code>.
+      </p>
+      <form clrForm [formGroup]="form2">
+        <cll-callout>Type the same value in below key controls and see the effect when blur.</cll-callout>
+
+        <ng-container formArrayName="demo2">
+          @for (group of form2.controls.demo2.controls; track group; let i = $index) {
+            <div [formGroup]="group" style="display: flex; gap: 1rem">
+              <clr-input-container>
+                <label class="clr-sr-only" [for]="'unique-key-' + i">key</label>
+                <input
+                  clrInput
+                  [id]="'unique-key-' + i"
+                  [formControl]="group.controls.key"
+                  (blur)="validateControl(group.controls.key)"
+                  [size]="30"
+                  placeholder="key control"
+                />
+                <clr-control-helper>key control should be unique</clr-control-helper>
+                <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
+              </clr-input-container>
+              <clr-input-container>
+                <label class="clr-sr-only" [for]="'unique-value-' + i">value</label>
+                <input
+                  clrInput
+                  [id]="'unique-value-' + i"
+                  [formControl]="group.controls.value"
+                  [size]="30"
+                  placeholder="value control"
+                />
+                <clr-control-helper>value control has not validation</clr-control-helper>
+              </clr-input-container>
+            </div>
+          }
+        </ng-container>
+      </form>
+      <app-code-block [code]="example2Code" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>UniqueValidator</h3>
+        <p>
+          Validator class that checks for uniqueness across multiple fields within a <code>FormArray</code> or
+          <code>FormGroup</code>.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>controlSelector?: (control: AbstractControl) => AbstractControl</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> A function that selects which control within a FormGroup to validate for uniqueness.
+                If not provided, validates the FormControl values directly.
+              </p>
+              <p class="text-sm !mt-1">
+                Useful when you have an array of FormGroups and want to ensure uniqueness of a specific control within
+                each group.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A validator function that returns <code>&#123;notUnique: true&#125;</code> if duplicate values are found, or
+          <code>null</code> if all values are unique.
+        </p>
+
+        <h4>Usage Notes</h4>
+        <p class="text-sm">
+          Trigger the control's <code>updateValueAndValidity()</code> method as needed to re-validate when values change.
+        </p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

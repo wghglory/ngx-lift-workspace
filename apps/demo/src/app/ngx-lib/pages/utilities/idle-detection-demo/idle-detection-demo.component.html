@@ -1,0 +1,158 @@
+<cll-page-container [title]="'Idle Detection'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    Idle detection is the process of monitoring user activity and determining when a user becomes inactive. This is
+    particularly useful for applications that require users to remain logged in, as it allows the system to take
+    appropriate action when a user stops interacting with the application, such as warning them of an impending timeout
+    or automatically logging them out after a period of inactivity.
+  </p>
+  <p>
+    The Idle Detection Service provides configurable idle and timeout durations, automatic reset on user activity, event
+    emission for idle and timeout phases, and reactive programming support through RxJS observables.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Configure Idle Detection Globally</h3>
+      <p>Configure idle and timeout durations globally using the configuration class:</p>
+      <app-code-block [code]="configCode" lang="typescript" />
+      <cll-callout>
+        There are two phases of idle detection: the <strong>idle-detection phase</strong> and the
+        <strong>timeout phase</strong>.
+        <ol class="list-decimal pt-2 space-y-2 ml-6">
+          <li>
+            <strong>Idle-detection phase</strong>: Suppose you configure <code>idleDurationInSeconds</code> to 5 * 60 (5
+            minutes). From the moment there is no action on the website, you enter this phase. After 5 minutes, the idle
+            detection ends, indicating that you have been idle for a long time. You can subscribe to the
+            <code>onIdleEnd()</code> observable, which will emit at this moment. Once this phase is completed, you will
+            enter the second phase.
+          </li>
+          <li>
+            <strong>Timeout phase</strong>: When you enter this phase, the countdown starts immediately from the value of
+            <code>timeoutDurationInSeconds</code>. You can subscribe to the <code>onCountDown()</code> observable to
+            obtain the countdown value. When the countdown reaches 0, the <strong>timeout phase</strong> will end. You
+            can subscribe to the <code>onTimeoutEnd()</code> observable to know when the <strong>timeout phase</strong>
+            ends. At this point, you can log out the user or perform other actions.
+          </li>
+        </ol>
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Module Configuration</h3>
+      <p>Provide the configuration in your NgModule:</p>
+      <app-code-block [code]="moduleUsage" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Standalone App Configuration</h3>
+      <p>Provide the configuration in a standalone application:</p>
+      <app-code-block [code]="standaloneUsage" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Use IdleDetectionService in Component</h3>
+      <p>Subscribe to the service's observables to react to idle events:</p>
+      <app-code-block [code]="someComponentUsage" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Use IdleDetectionComponent</h3>
+      <p>
+        We provide a component in <code>clr-lift</code> that displays a Clarity modal dialog when the user is idle. The
+        dialog will appear when the idle-detection phase concludes and start counting down. Once the countdown ends, you
+        can hook into the <code>timeout</code> handler in your component to perform custom logic such as clearing the
+        localStorage token and redirecting the user to the login page.
+      </p>
+      <p>
+        The parameters <code>idleDurationInSeconds</code> and <code>timeoutDurationInSeconds</code> are optional. When
+        these parameters are passed, they will overwrite the configuration passed by
+        <code>provideIdleDetectionConfig</code>.
+      </p>
+      <app-code-block [code]="idleDetectionComponentCode" lang="typescript" />
+      <p>The dialog looks like below:</p>
+      <img src="./assets/idle-detection-dialog.png" alt="Idle Detection Dialog" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>IdleDetectionService</h3>
+        <p>Service for monitoring user activity and detecting idle periods.</p>
+
+        <h4>Methods</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>setConfig(config: IdleDetectionConfig): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Sets the idle detection configuration. Overwrites the global configuration if provided.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>startWatching(): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Starts monitoring user activity for idle detection.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>clearTimers(): void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Clears all timers and stops monitoring.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>onIdleEnd(): Observable&lt;void&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Observable that emits when the idle-detection phase ends and the timeout phase begins.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>onTimeoutEnd(): Observable&lt;void&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Observable that emits when the timeout phase ends.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>onCountDown(): Observable&lt;number&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Observable that emits the countdown value during the timeout phase. Emits the remaining seconds.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>IdleDetectionConfig Interface</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>idleDurationInSeconds?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Duration in seconds for the idle-detection phase. After this period of inactivity, the timeout phase
+                begins.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>timeoutDurationInSeconds?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Duration in seconds for the timeout phase. After this countdown, the timeout event is emitted.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

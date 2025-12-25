@@ -1,0 +1,101 @@
+<cll-page-container [title]="'injectParams'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>injectParams</code> function is a versatile utility for injecting and transforming route parameters within
+    an Angular application. It provides a reactive way to access and manipulate route parameters using Angular's
+    signals-based architecture, making it easier to handle dynamic routing scenarios.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Get All Route Parameters</h3>
+      <p>When called without any arguments, returns a signal containing the entire params object:</p>
+      <app-code-block [code]="allParamsCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Get Single Parameter</h3>
+      <p>When a key is specified, returns the value of the corresponding parameter as a signal:</p>
+      <app-code-block [code]="singleParamCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Transform Parameters</h3>
+      <p>Transform parameters using a transform function:</p>
+      <app-code-block [code]="transformCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Transform with Initial Value</h3>
+      <p>Transform parameters with an initial value and type conversion:</p>
+      <app-code-block [code]="transformWithInitialCode" lang="typescript" />
+      <cll-callout>
+        When <code>initialValue</code> is provided as a boolean or number, <code>transform</code> function must be
+        provided returning the same type.
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Complete Usage Example</h3>
+      <p>Complete example showing various usage patterns:</p>
+      <app-code-block [code]="completeExampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>injectParams</h3>
+        <p>Injects and transforms route parameters as reactive signals.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>keyOrTransform?: string | ((params: Params) => T)</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> When a string is provided, returns the value of that route parameter. When a
+                function is provided, it's used as a transform function to process all route parameters.
+              </p>
+              <p class="text-sm !mt-1">
+                If omitted, returns a signal containing the entire params object of the current route.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: InjectParamsOptions&lt;T&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Configuration object containing <code>transform</code> function and/or
+                <code>initialValue</code>.
+              </p>
+              <p class="text-sm !mt-1">
+                If <code>initialValue</code> is a boolean or number, <code>transform</code> function must be provided to
+                convert the string parameter to the correct type.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">A signal containing the route parameter value(s) or transformed result.</p>
+
+        <h4>Usage Patterns</h4>
+        <ul class="list-disc space-y-1 ml-6">
+          <li>No arguments: Returns signal with all route parameters</li>
+          <li>String key: Returns signal with specific parameter value (or null if not present)</li>
+          <li>Transform function: Returns signal with transformed parameters</li>
+          <li>With options: Allows initial value and type conversion</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

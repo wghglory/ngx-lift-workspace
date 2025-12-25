@@ -1,0 +1,31 @@
+{
+  "name": "clr-lift",
+  "version": "19.0.0",
+  "description": "The library is designed to augment the capabilities of the Clarity library by providing a set of reusable components built on top of clarity components.",
+  "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "clr-lift"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wghglory/ngx-lift.git"
+  },
+  "homepage": "https://ngx-lift.netlify.app/clr-lift",
+  "peerDependencies": {
+    "@angular/common": ">=19",
+    "@angular/core": ">=19",
+    "@angular/animations": ">=19",
+    "@angular/cdk": ">=19",
+    "@angular/platform-browser": ">=19",
+    "@angular/forms": ">=19",
+    "rxjs": ">=7.8.0",
+    "@clr/angular": ">=17",
+    "@cds/core": ">=6",
+    "node-forge": ">=1.3.0",
+    "ngx-lift": ">=19.0.0"
+  },
+  "dependencies": {},
+  "sideEffects": false
+}

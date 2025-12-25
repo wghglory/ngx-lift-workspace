@@ -1,0 +1,247 @@
+<cll-page-container [title]="'computedAsync'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises, Observables,
+    or regular values. It provides flexibility in computational behavior through selectable flattening strategies
+    (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>, provide a
+    function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting the
+    computed value.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Works with Promises</h3>
+      <p>Compute values from Promises:</p>
+      <app-code-block [code]="promiseCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Works with Observables</h3>
+      <p>
+        When returning an Observable, it is automatically subscribed to and will be unsubscribed when the component is
+        destroyed or when the computation is re-triggered. In the following example, if the userId changes, the previous
+        computation will be cancelled (including any ongoing API calls), and a new computation will be initiated.
+      </p>
+      <app-code-block [code]="observableCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Works with Regular Values</h3>
+      <p>
+        This doesn't offer any advantage over employing a standard computed <code>signal</code>. However, it does allow
+        the return of regular values (those not consisting of Promises or Observables) from the callback function. The
+        callback function executes in the microtask queue, hence it won't promptly emit the value (by default, it returns
+        undefined). To emit the value immediately, you can utilize the requireSync option within the second argument
+        options object.
+      </p>
+      <app-code-block [code]="regularCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Works with initialValue</h3>
+      <p>
+        If we wish to establish an initial value for the computed value, we can provide it as the second argument within
+        the options object.
+      </p>
+      <app-code-block [code]="promiseInitialValueCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Works with requireSync</h3>
+      <p>
+        If we possess an Observable that synchronously emits the value, we can utilize the requireSync option to ensure
+        immediate emission of the value. This feature is also beneficial for ensuring the <code>signal</code> type
+        excludes undefined by default. Without requireSync, the <code>signal</code> type would be
+        <code>Signal&lt;User | undefined&gt;</code>. However, with requireSync enabled, the <code>signal</code> type
+        will be <code>Signal&lt;User&gt;</code>.
+      </p>
+      <app-code-block [code]="requireSyncCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 6: Work with createAsyncState Operator</h3>
+      <p>
+        In the example below, we have a <code>Signal</code> that represents the state of an API call. We use
+        <code>computedAsync</code> and <code>createAsyncState</code> operator to compute the state of the API call based
+        on the <code>userId</code>.
+      </p>
+      <app-code-block [code]="createAsyncStateCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 7: Behaviors (switch, merge, concat, exhaust)</h3>
+      <p>
+        By default, <code>computedAsync</code> employs the switch behavior, which entails that if the computation is
+        re-triggered before the prior one concludes, the former will be canceled. Should you wish to alter this behavior,
+        you can provide the behavior option within the second argument options object.
+      </p>
+      <app-code-block [code]="behaviorCode" lang="typescript" />
+      <h4>switch (default)</h4>
+      <p>
+        When desiring to cancel the prior computation, the switch behavior is utilized, which is the default. If a new
+        computation is triggered before the previous one concludes, the former will be terminated.
+      </p>
+      <h4>merge</h4>
+      <p>
+        To retain the preceding computation, the merge behavior is employed. If a new computation is initiated before the
+        previous one is finished, the former is preserved while the latter is started.
+      </p>
+      <h4>concat</h4>
+      <p>
+        If preservation of the prior computation is desired along with waiting for its completion before initiating the
+        new one, the concat behavior is chosen.
+      </p>
+      <h4>exhaust</h4>
+      <p>
+        In instances where disregarding the new computation while the prior one remains ongoing is necessary, the exhaust
+        behavior is selected.
+      </p>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 8: Use with Previous Computed Value</h3>
+      <p>
+        Should there be a necessity to utilize the previously computed value in the subsequent computation, it can be
+        accessed within the callback function as the first argument.
+      </p>
+      <app-code-block [code]="previousCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 9: Load Data Initially</h3>
+      <p>Load users initially when the component loads:</p>
+      <div>
+        <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().loading === true">
+          Refresh
+        </button>
+      </div>
+
+      @if (usersState().loading) {
+        <cll-spinner />
+      }
+
+      @if (usersState().error; as error) {
+        <cll-alert [error]="error" />
+      }
+
+      @if (usersState().data?.results; as users) {
+        <div class="card-grid">
+          @for (user of users; track user.id.value) {
+            <app-user-card [user]="user" />
+          }
+        </div>
+      }
+
+      <app-code-block [code]="loadInitiallyHtmlCode" lang="html" />
+      <app-code-block [code]="loadInitiallyTsCode" lang="typescript" />
+      <cll-callout>
+        Learn <a [routerLink]="['../createTrigger']"><code>createTrigger</code> here</a>.
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 10: Load Data When Button Clicks</h3>
+      <p>Load users only when a button is clicked:</p>
+      <div>
+        <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.loading === true">
+          Load Users
+        </button>
+      </div>
+
+      @if (deferredUsersState()?.loading) {
+        <cll-spinner />
+      }
+
+      @if (deferredUsersState()?.error; as error) {
+        <cll-alert [error]="error" />
+      }
+
+      @if (deferredUsersState()?.data?.results; as users) {
+        <div class="card-grid">
+          @for (user of users; track user.id.value) {
+            <app-user-card [user]="user" />
+          }
+        </div>
+      }
+
+      <app-code-block [code]="loadDeferHtmlCode" lang="html" />
+      <app-code-block [code]="loadDeferTsCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>computedAsync</h3>
+        <p>
+          Computes values from Promises, Observables, or regular values, returning a Signal that emits the computed
+          value.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>computation: (previousValue?: T) => Promise&lt;T&gt; | Observable&lt;T&gt; | T</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                A function that returns a Promise, Observable, or regular value. The function receives the previous
+                computed value as an optional first argument.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: ComputedAsyncOptions&lt;T&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Configuration options:</p>
+              <ul class="list-disc space-y-1 ml-6 mt-1 text-sm">
+                <li>
+                  <code>initialValue?: T</code> - The initial value for the computed signal before the computation
+                  completes.
+                </li>
+                <li>
+                  <code>requireSync?: boolean</code> - If <code>true</code>, requires the computation to emit
+                  synchronously. This ensures the signal type excludes <code>undefined</code>.
+                </li>
+                <li>
+                  <code>behavior?: 'switch' | 'merge' | 'concat' | 'exhaust'</code> - The flattening strategy for
+                  handling multiple computations. Defaults to <code>'switch'</code>.
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A <code>Signal</code> that emits the computed value. The signal type depends on the <code>requireSync</code>
+          option: <code>Signal&lt;T | undefined&gt;</code> if <code>requireSync</code> is false or omitted,
+          <code>Signal&lt;T&gt;</code> if <code>requireSync</code> is true.
+        </p>
+
+        <h4>Behaviors</h4>
+        <ul class="list-disc space-y-1 ml-6 text-sm">
+          <li>
+            <code>switch</code> (default): Cancels the previous computation when a new one is triggered.
+          </li>
+          <li>
+            <code>merge</code>: Preserves the previous computation while starting a new one when triggered.
+          </li>
+          <li>
+            <code>concat</code>: Waits for the previous computation to complete before starting a new one.
+          </li>
+          <li>
+            <code>exhaust</code>: Ignores new computations while a previous one is still ongoing.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

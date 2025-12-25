@@ -1,0 +1,41 @@
+<clr-main-container>
+  <clr-header>
+    <div class="branding">
+      <a class="nav-link" routerLink="/"><span class="title">Angular Lift</span></a>
+    </div>
+    <div class="header-nav" [clr-nav-level]="1">
+      <a class="nav-link" routerLink="/ngx-lift" routerLinkActive="active">
+        <span class="nav-text">ngx-lift</span>
+      </a>
+      <a class="nav-link" routerLink="/clr-lift" routerLinkActive="active">
+        <span class="nav-text">clr-lift</span>
+      </a>
+    </div>
+    <div class="header-actions">
+      <a
+        class="nav-link nav-icon"
+        target="_blank"
+        rel="noreferrer noopener"
+        aria-label="Open on GitHub"
+        href="https://github.com/wghglory/ngx-lift"
+      >
+        <svg-icon src="./assets/github.svg" />
+      </a>
+      <cll-theme-toggle (changeTheme)="onThemeChange($event)" lang="en" />
+    </div>
+  </clr-header>
+
+  <div class="content-container">
+    <main class="content-area">
+      <router-outlet />
+      <footer class="sm:px-10 pt-5">
+        <hr class="hidden sm:block" />
+        <p>Code licensed by <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a></p>
+      </footer>
+    </main>
+
+    <app-vertical-nav />
+  </div>
+</clr-main-container>
+
+<cll-toast-container [timeoutSeconds]="8" />

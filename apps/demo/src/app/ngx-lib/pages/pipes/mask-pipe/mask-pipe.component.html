@@ -1,0 +1,115 @@
+<cll-page-container [title]="'mask'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>mask</code> pipe is an Angular pipe designed to mask sensitive string data by replacing characters with
+    asterisks, while preserving a configurable number of characters at the beginning and end. It's ideal for obscuring
+    sensitive information in user interfaces, such as credit card numbers, phone numbers, or API keys.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Mask sensitive strings with default settings (6 characters visible at start and end):</p>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Custom Masking Options</h3>
+      <p>Customize the number of visible characters at the beginning and end of the string:</p>
+      <app-code-block [code]="customCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Credit Card Masking</h3>
+      <p>Mask credit card numbers while showing the last 4 digits:</p>
+      <app-code-block [code]="creditCardCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Toggle Masking</h3>
+      <p>Conditionally show/hide sensitive data:</p>
+      <app-code-block [code]="toggleMaskCode" lang="html" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>mask</h3>
+        <p>Angular pipe that masks sensitive string data by replacing characters with asterisks.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>value: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">The input string to be masked.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: MaskOptions</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Configuration options for masking behavior. See <code>MaskOptions</code> interface
+                below.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          The masked string, or the original string if masking is disabled or the string is too short.
+        </p>
+
+        <h4>MaskOptions Interface</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>unmaskedPrefixLength?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Number of characters to leave unmasked at the beginning. Defaults to <code>6</code>.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>unmaskedSuffixLength?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Number of characters to leave unmasked at the end. Defaults to <code>6</code>.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>masked?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Boolean flag to enable/disable masking. Defaults to <code>true</code>.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Masking Conditions</h4>
+        <p class="text-sm">The pipe applies masking based on the following conditions:</p>
+        <ol class="list-decimal space-y-1 ml-6 text-sm">
+          <li>
+            The length of the input string must be greater than the sum of
+            <code>unmaskedPrefixLength</code> and <code>unmaskedSuffixLength</code>.
+          </li>
+          <li><code>unmaskedPrefixLength</code> and <code>unmaskedSuffixLength</code> must not be negative.</li>
+          <li>The <code>masked</code> option must be <code>true</code>.</li>
+        </ol>
+        <p class="text-sm">If any of these conditions are not met, the original string is returned unchanged.</p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

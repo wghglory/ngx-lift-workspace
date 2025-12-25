@@ -1,0 +1,79 @@
+<cll-page-container [title]="'byteConverter'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>byteConverter</code> pipe converts numeric byte values into human-readable file size strings (e.g., "1.5
+    MB", "2.3 GB") with locale-aware formatting. It automatically handles unit conversion (BYTE, KB, MB, GB, TB) and
+    supports internationalization with translations for multiple languages including English, French, Chinese, Japanese,
+    Korean, German, Spanish, Italian, Portuguese, and Russian.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Convert byte values to human-readable format:</p>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: File Size Display</h3>
+      <p>Display file sizes in a user-friendly format:</p>
+      <app-code-block [code]="fileSizeDisplayCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Different Unit Conversions</h3>
+      <p>The pipe automatically converts to the appropriate unit:</p>
+      <app-code-block [code]="unitConversionsCode" lang="html" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>byteConverter</h3>
+        <p>
+          Angular pipe that converts a number of bytes into a human-readable string format with locale-aware formatting.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>value?: number | null</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The number of bytes to convert. Returns <code>null</code> if the value is
+                <code>null</code>, <code>undefined</code>, or <code>NaN</code>.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A formatted string with the appropriate unit (B, KB, MB, GB, TB) based on the locale, or <code>null</code> if
+          the input is invalid.
+        </p>
+
+        <h4>Language Support</h4>
+        <p class="text-sm">
+          The pipe uses the application's <code>LOCALE_ID</code> to determine the appropriate unit translations. Supported
+          languages include English, French, Chinese (Simplified and Traditional), Japanese, Korean, German, Spanish,
+          Italian, Portuguese (Brazil), and Russian. If the browser language is not supported, English serves as the
+          default.
+        </p>
+        <cll-callout>
+          To configure locale support, refer to the
+          <a href="https://angular.io/guide/i18n" target="_blank">Angular i18n documentation</a>.
+        </cll-callout>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

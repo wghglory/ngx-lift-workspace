@@ -1,0 +1,243 @@
+import {
+  Component,
+  computed,
+  ElementRef,
+  forwardRef,
+  inject,
+  Injector,
+  input,
+  linkedSignal,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormControl,
+  FormControlDirective,
+  FormControlName,
+  FormGroupDirective,
+  FormsModule,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  NgControl,
+  ValidationErrors,
+  Validator,
+} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+
+import {TranslatePipe} from '../../pipes/translate.pipe';
+import {TranslationService} from '../../services/translation.service';
+import {fileReaderTranslations} from './file-reader.l10n';
+
+/**
+ * A file input component that implements ControlValueAccessor for use with Angular reactive forms.
+ * Supports file reading, validation, and base64 encoding.
+ *
+ * The component:
+ * - Reads file content as text or base64
+ * - Validates file size limits
+ * - Integrates with Angular forms via ControlValueAccessor
+ * - Emits file change events
+ *
+ * @example
+ * ```html
+ * <cll-file-reader
+ *   formControlName="fileContent"
+ *   [acceptFiles]="'.txt,.json'"
+ *   [maxSize]="5"
+ *   [encoded]="true"
+ * />
+ * ```
+ */
+@Component({
+  selector: 'cll-file-reader',
+  imports: [TranslatePipe, ClarityModule, FormsModule],
+  templateUrl: './file-reader.component.html',
+  styleUrls: ['./file-reader.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FileReaderComponent),
+      multi: true,
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => FileReaderComponent),
+      multi: true,
+    },
+  ],
+})
+export class FileReaderComponent implements ControlValueAccessor, Validator {
+  private injector = inject(Injector);
+  private translationService = inject(TranslationService);
+
+  fileElement = viewChild.required<ElementRef<HTMLInputElement>>('file');
+
+  /**
+   * The unique identifier for the file input element.
+   * Used for accessibility and form association.
+   */
+  controlId = input('');
+
+  /**
+   * Comma-separated list of accepted file types (e.g., '.txt,.json' or 'image/*').
+   * Defaults to '*' (all files).
+   */
+  acceptFiles = input('*');
+
+  /**
+   * Whether to read file content as base64 encoded string.
+   * If `true`, the file content is base64 encoded; if `false`, it's read as plain text.
+   * Defaults to `false`.
+   */
+  encoded = input(false);
+
+  /**
+   * Maximum file size in megabytes.
+   * Files exceeding this size will trigger a validation error.
+   * Defaults to `Infinity` (no limit).
+   */
+  maxSize = input(Infinity);
+
+  /**
+   * Whether the file input is disabled.
+   * Defaults to `false`.
+   */
+  disabled = input(false);
+
+  /**
+   * Event emitter that emits the file content when a file is selected.
+   * The content is either plain text or base64 encoded, depending on the `encoded` input.
+   */
+  fileChange = output<string>();
+
+  /**
+   * Linked signal that reflects the disabled state.
+   * Automatically updates when the `disabled` input changes.
+   */
+  isDisabled = linkedSignal(() => this.disabled());
+
+  // @Input({ required: true }) formControl: FormControl;
+  formControl = computed(() => {
+    const ngControl = this.injector.get(NgControl);
+
+    if (ngControl instanceof FormControlName) {
+      return this.injector.get(FormGroupDirective).getControl(ngControl);
+    } else {
+      return (ngControl as FormControlDirective).form as FormControl;
+    }
+  });
+
+  selectedFile = signal<File | undefined>(undefined);
+  parseError = signal('');
+  rawContent = signal('');
+  encodedContent = signal('');
+
+  constructor() {
+    this.translationService.loadTranslationsForComponent('FileReader', fileReaderTranslations);
+  }
+
+  private onChange: (value: string) => void = () => {
+    // ControlValueAccessor onChange callback
+  };
+  private onTouched: () => void = () => {
+    // ControlValueAccessor onTouched callback
+  };
+
+  sizeInvalid = computed(() => {
+    const selectedFile = this.selectedFile();
+    if (!selectedFile) {
+      return false;
+    }
+    return selectedFile.size > this.maxSize() * 1024 * 1024;
+  });
+
+  onFileSelected(event: Event) {
+    this.parseError.set('');
+
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.files && inputElement.files.length > 0) {
+      const selectedFile = inputElement.files[0];
+      this.selectedFile.set(selectedFile);
+
+      const reader = new FileReader();
+
+      reader.onload = (e: ProgressEvent) => {
+        const fileReader = e.target as FileReader;
+        const fileContent = fileReader.result as string;
+
+        this.rawContent.set(fileContent);
+        try {
+          this.encodedContent.set(btoa(fileContent));
+          const content = this.encoded() ? this.encodedContent() : this.rawContent();
+          this.onChange(content); // Notify the form control
+          this.onTouched();
+
+          this.fileChange.emit(content);
+        } catch (error) {
+          this.parseError.set((error as Error).message);
+          this.onChange(' '); // use 1 space string to avoid required error, onChange will trigger validate method
+          this.onTouched();
+        }
+      };
+
+      reader.readAsText(selectedFile);
+    }
+  }
+
+  removeFile() {
+    this.fileElement().nativeElement.value = '';
+    this.selectedFile.set(undefined);
+    this.rawContent.set('');
+    this.encodedContent.set('');
+    this.onChange('');
+    this.onTouched();
+  }
+
+  // value passed from new FormControl()
+  writeValue(value: string) {
+    if (!value) {
+      return;
+    }
+
+    if (this.encoded()) {
+      this.encodedContent.set(value);
+      this.rawContent.set(atob(value));
+    } else {
+      this.rawContent.set(value);
+      this.encodedContent.set(btoa(value));
+    }
+
+    setTimeout(() => {
+      const content = this.encoded() ? this.encodedContent() : this.rawContent();
+      this.onChange(content);
+      this.onTouched();
+    });
+  }
+
+  registerOnChange(fn: (value: string) => void) {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void) {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean) {
+    this.isDisabled.set(isDisabled);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  validate(control: AbstractControl): ValidationErrors | null {
+    if (this.sizeInvalid()) {
+      return {exceedLimit: true};
+    }
+    if (this.parseError()) {
+      return {parse: this.parseError()};
+    }
+
+    return null;
+  }
+}

@@ -1,0 +1,220 @@
+---
+alwaysApply: true
+---
+
+## Clarity Design System Guidelines
+
+### Component Usage
+
+- **Clarity Components**: Always use Clarity Angular components (`clr-*`) over raw HTML
+- **Import ClarityModule**: Import `ClarityModule` or specific Clarity components
+
+  ```typescript
+  import {ClarityModule} from '@clr/angular';
+  // or
+  import {ClrAlertModule, ClrButtonModule} from '@clr/angular';
+  ```
+
+- **CDS Components**: Use `@cds/core` components when appropriate (icons, etc.)
+  ```typescript
+  import '@cds/core/icon/register.js';
+  ```
+
+### Common Clarity Components
+
+#### Alerts
+
+```html
+<clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="true">
+  <clr-alert-item>
+    <span class="alert-text" role="alert">{{ message }}</span>
+  </clr-alert-item>
+</clr-alert>
+```
+
+- Use `clr-alert` for single alerts
+- Use `clr-alerts` for multiple alerts container
+- Always include `role="alert"` for accessibility
+- Use appropriate alert types: `info`, `warning`, `danger`, `success`
+
+#### Buttons
+
+```html
+<button class="btn btn-primary" [disabled]="isDisabled()">Submit</button>
+<button class="btn btn-outline" (click)="cancel()">Cancel</button>
+<button class="btn btn-link">Link Button</button>
+```
+
+- Use Clarity button classes: `btn`, `btn-primary`, `btn-outline`, `btn-link`, `btn-sm`, `btn-icon`
+- Use `[clrLoading]` for loading states
+- Always provide accessible labels
+
+#### Forms
+
+```html
+<clr-input-container>
+  <label>Name</label>
+  <input clrInput [(ngModel)]="name" />
+  <clr-control-error>Name is required</clr-control-error>
+</clr-input-container>
+```
+
+- Use Clarity form components: `clr-input-container`, `clr-textarea-container`, `clr-select-container`
+- Always associate labels with form controls
+- Use `clr-control-error` for validation messages
+
+#### Data Grid
+
+```html
+<clr-datagrid [clrDgItems]="users()">
+  <clr-dg-column>Name</clr-dg-column>
+  <clr-dg-column>Email</clr-dg-column>
+  <clr-dg-row *clrDgItems="let user">
+    <clr-dg-cell>{{ user.name }}</clr-dg-cell>
+    <clr-dg-cell>{{ user.email }}</clr-dg-cell>
+  </clr-dg-row>
+</clr-datagrid>
+```
+
+- Use `clr-datagrid` for data tables
+- Use `dgState` operator from `clr-lift` for state management
+- Implement pagination, sorting, and filtering using Clarity patterns
+
+#### Timeline
+
+```html
+<clr-timeline>
+  <clr-timeline-step [clrState]="'current'">
+    <clr-timeline-step-header>Step 1</clr-timeline-step-header>
+    <clr-timeline-step-title>Title</clr-timeline-step-title>
+    <clr-timeline-step-description>Description</clr-timeline-step-description>
+  </clr-timeline-step>
+</clr-timeline>
+```
+
+- Use `clr-timeline` for wizard/step-based flows
+- Use `clr-timeline-step` with appropriate states: `not-started`, `current`, `success`, `error`, `processing`
+
+### Styling Guidelines
+
+#### SASS Variables
+
+- **Colors**: Always use Clarity SASS variables, never hard-code colors
+
+  ```scss
+  // ✅ Correct
+  color: $clr-color-neutral-700;
+  background-color: $clr-color-action-600;
+
+  // ❌ Wrong
+  color: #333;
+  background-color: #0072a3;
+  ```
+
+- **Spacing**: Use Clarity spacing variables
+
+  ```scss
+  // ✅ Correct
+  padding: $clr-baseline-padding;
+  margin: $clr-baseline-margin;
+
+  // ❌ Wrong
+  padding: 12px;
+  margin: 16px;
+  ```
+
+- **Typography**: Use Clarity typography variables
+
+  ```scss
+  // ✅ Correct
+  font-size: $clr-h4-font-size;
+  font-weight: $clr-font-weight-semibold;
+
+  // ❌ Wrong
+  font-size: 18px;
+  font-weight: 600;
+  ```
+
+#### Component Scoping
+
+- **Host Selector**: Always scope styles to component using `:host`
+
+  ```scss
+  :host {
+    display: block;
+    padding: $clr-baseline-padding;
+  }
+  ```
+
+- **Avoid Global Styles**: Don't use `::ng-deep` unless absolutely necessary
+- **Clarity Utilities**: Use Clarity utility classes when available
+  ```html
+  <div class="clr-row">
+    <div class="clr-col-6">Content</div>
+  </div>
+  ```
+
+### Icons
+
+- **CDS Icons**: Use `@cds/core` icons
+
+  ```html
+  <cds-icon shape="user"></cds-icon> <cds-icon shape="check" status="success"></cds-icon>
+  ```
+
+- **Icon Registration**: Ensure icons are registered in the application
+  ```typescript
+  import '@cds/core/icon/register.js';
+  ```
+
+### Accessibility
+
+- **ARIA Labels**: Always provide ARIA labels for interactive elements
+
+  ```html
+  <button [attr.aria-label]="'Close dialog' | translate">
+    <cds-icon shape="times"></cds-icon>
+  </button>
+  ```
+
+- **Keyboard Navigation**: Ensure all Clarity components are keyboard accessible
+- **Focus Management**: Manage focus appropriately in modals, dropdowns, and dialogs
+- **Screen Readers**: Test with screen readers and ensure proper announcements
+
+### Clarity Lift Components
+
+- **Use clr-lift Components**: Leverage custom components from `clr-lift` library
+  - `cll-alert`: Enhanced alert component
+  - `cll-spinner`: Loading spinner
+  - `cll-page-container`: Page layout container
+  - `cll-callout`: Callout component
+  - `cll-file-reader`: File input component
+  - `cll-timeline-wizard`: Wizard component
+  - `cll-toast`: Toast notifications
+  - `cll-tooltip`: Tooltip component
+
+### Responsive Design
+
+- **Clarity Grid**: Use Clarity grid system for responsive layouts
+
+  ```html
+  <div class="clr-row">
+    <div class="clr-col-12 clr-col-md-6 clr-col-lg-4">Content</div>
+  </div>
+  ```
+
+- **Breakpoints**: Use Clarity breakpoints for responsive behavior
+- **Mobile First**: Design mobile-first, enhance for larger screens
+
+### Theme Support
+
+- **Dark Mode**: Support Clarity dark theme
+- **Theme Toggle**: Use `cll-theme-toggle` component for theme switching
+- **Theme Variables**: Use theme-aware variables when customizing
+
+### Best Practices
+
+- **Component Composition**: Compose Clarity components to build complex UIs
+- **Consistency**: Follow Clarity design patterns for consistency
+- **Documentation**: Refer to [Clarity Design System](https://clarity.design) for component usage
+- **Version Compatibility**: Ensure compatibility with `@clr/angular` version 17

@@ -1,0 +1,68 @@
+<cll-page-container [title]="'distinctOnChange'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>distinctOnChange</code> operator enhances RxJS Observables by not only preventing duplicate emissions
+    (like <code>distinctUntilChanged</code>) but also executing a callback function when a value changes. This is useful
+    for scenarios where you need to perform side effects, such as displaying a toast notification, when a value changes
+    after the initial emission.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Execute a callback when distinct values are encountered:</p>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: With Custom Comparator</h3>
+      <p>Use a custom comparator function to determine equality:</p>
+      <app-code-block [code]="comparatorExampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>distinctOnChange</h3>
+        <p>
+          RxJS operator that filters duplicate consecutive values and executes a callback when a distinct value is
+          encountered.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>onChangeCallback: (previous: T, current: T) => void</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Callback function that triggers whenever a distinct value is encountered. Receives both the previous
+                distinct value and the current value as arguments.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>comparator?: (previous: T, current: T) => boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Function to determine whether two values are considered equal. Defaults to strict
+                equality comparison (<code>===</code>).
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">An observable that emits distinct values and executes the callback on changes.</p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

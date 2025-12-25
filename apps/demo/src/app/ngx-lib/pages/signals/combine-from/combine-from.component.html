@@ -1,0 +1,111 @@
+<cll-page-container [title]="'combineFrom'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>combineFrom</code> function takes an array or object of Observables or Signals and produces a Signal that
+    emits the aggregated value from these sources. This function operates akin to <code>combineLatest</code>, yet it
+    extends its functionality to include Signals in the amalgamation process. Normally, it requires invocation within an
+    injection context. However, it offers the flexibility to be called outside of such contexts by providing the Injector
+    within the third argument options object. In cases where an Observable doesn't emit synchronously, you can utilize the
+    <code>startWith</code> operator to modify the initial emitted value, or alternatively specify an initialValue within
+    the options object.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Combine multiple signals or observables:</p>
+      <app-code-block [code]="basicCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: With RxJS Pipe Operator</h3>
+      <p>Pass an RxJS pipe operator to manipulate the emitted values:</p>
+      <app-code-block [code]="pipeCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Handle Asynchronous Code</h3>
+      <p>Use <code>startWith</code> or <code>initialValue</code> option to handle async observables:</p>
+      <app-code-block [code]="asyncCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Real Example - Get Filtered Data</h3>
+      <p>
+        In the "get users" request below, the response returns 9 users. We intend to display only the first 3 users. Any
+        client-side filtering, sorting can use the same strategy.
+      </p>
+      @if (usersState()?.loading) {
+        <cll-spinner />
+      }
+
+      @if (usersState()?.error; as error) {
+        <cll-alert [error]="error" />
+      }
+
+      @if (usersState()?.data; as users) {
+        <div class="card-grid">
+          @for (user of users; track user.id.value) {
+            <app-user-card [user]="user" />
+          }
+        </div>
+      }
+      <app-code-block [code]="realCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>combineFrom</h3>
+        <p>
+          Combines multiple Observables or Signals into a single Signal that emits aggregated values, similar to
+          <code>combineLatest</code> but with Signal support.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>sources: Record&lt;string, Observable&lt;T&gt; | Signal&lt;T&gt;&gt; | Array&lt;Observable&lt;T&gt; | Signal&lt;T&gt;&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                An object or array of Observables or Signals to combine. When an object is provided, the result will be
+                an object with the same keys.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>operator?: OperatorFunction</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> An RxJS pipe operator to manipulate the emitted values before they are emitted.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: CombineFromOptions</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Configuration options including <code>initialValue</code> and <code>injector</code>.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A signal that emits an array or object (depending on input type) containing the latest values from all source
+          observables and signals.
+        </p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

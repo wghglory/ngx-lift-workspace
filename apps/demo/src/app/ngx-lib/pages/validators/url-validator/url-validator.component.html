@@ -1,0 +1,88 @@
+<cll-page-container [title]="'urlValidator & httpsValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>urlValidator</code> and <code>httpsValidator</code> functions are Angular validators used to check if a given
+    string adheres to specific URL patterns. The <code>urlValidator</code> validates URLs starting with http or https,
+    while <code>httpsValidator</code> validates only HTTPS URLs. These validators can be utilized in Angular Reactive
+    Forms to ensure the validity of user-entered URLs.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: URL Validator</h3>
+      <p>Validate URLs that start with http or https:</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="url-validator-url">URL</label>
+          <input id="url-validator-url" clrInput formControlName="url" />
+          <clr-control-helper>Provide a valid URL</clr-control-helper>
+          @if (form.controls.url.hasError('required')) {
+            <clr-control-error>Required</clr-control-error>
+          }
+          @if (form.controls.url.errors?.['invalidUrl']) {
+            <clr-control-error>Please enter a valid URL (starting with https or http)</clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="urlExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: HTTPS Validator</h3>
+      <p>Validate only HTTPS URLs:</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="url-validator-https">Https-only URL</label>
+          <input id="url-validator-https" clrInput formControlName="https" />
+          <clr-control-helper>Provide a https URL</clr-control-helper>
+          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'invalidUrl'">Please enter a https URL</clr-control-error>
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="httpsExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Complete Form Example</h3>
+      <p>Complete example with both validators:</p>
+      <app-code-block [code]="completeExampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>urlValidator</h3>
+        <p>Angular validator that checks if a string is a valid URL starting with http or https.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="urlSignatureCode" lang="typescript" />
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A validator function that returns <code>&#123;invalidUrl: true&#125;</code> if the URL is invalid, or
+          <code>null</code> if valid.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <h3>httpsValidator</h3>
+        <p>Angular validator that checks if a string is a valid HTTPS URL.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="httpsSignatureCode" lang="typescript" />
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A validator function that returns <code>&#123;invalidUrl: true&#125;</code> if the URL is not HTTPS, or
+          <code>null</code> if valid.
+        </p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

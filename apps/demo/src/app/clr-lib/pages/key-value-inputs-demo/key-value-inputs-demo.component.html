@@ -1,0 +1,166 @@
+<cll-page-container [title]="'Key Value Inputs'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>KeyValueInputsComponent</code> is an Angular component designed to facilitate the input of key-value pairs.
+    It provides a dynamic form allowing users to add, edit, and remove key-value pairs. This component is built using
+    Angular, Clarity Design System, and ngx-lift. It features dynamic form arrays, real-time validation, and intuitive
+    controls that disable the "Add New Controls" button if any key-value pair is invalid.
+  </p>
+  <cll-callout>
+    Explore how the <code>KeyValueInputsComponent</code> leverages the <code>UniqueValidator</code> to perform
+    validation against key controls.
+    <a [routerLink]="['/ngx-lift/validators/unique']">
+      Click here to gain insights into the implementation and utilization of the <code>UniqueValidator</code> for
+      ensuring uniqueness in the key input fields within the component.
+    </a>
+  </cll-callout>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Create a form with a FormArray and use the KeyValueInputsComponent to manage key-value pairs:</p>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Interactive Demo</h3>
+      <p>Try adding, editing, and removing key-value pairs in the form below:</p>
+      <form clrForm [formGroup]="form">
+        <cll-key-value-inputs
+          [formArray]="form.controls.appProperties"
+          [inputSize]="30"
+          [data]="data"
+          [keyPattern]="{
+            regex: '^\\w+\\d+$',
+            message: 'custom error message: key must start with a letter and end with a number',
+          }"
+          [valuePattern]="{regex: '^\\w+\\d+$'}"
+          [smartMode]="true"
+          [uniqueKey]="true"
+          buttonClass="btn-link"
+          keyHelper="run time property key"
+          valueHelper="run time property value"
+          addText="add key value"
+        />
+      </form>
+      <p>Your form value output:</p>
+      <app-code-block [code]="form.value | json" lang="json" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>KeyValueInputsComponent</h3>
+        <p>Component for managing dynamic key-value pair inputs in Angular forms.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>formArray: FormArray&lt;KeyValueFormGroup&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Required)</em> An Angular FormArray that holds the key-value pairs. Each control in the array should
+                be a FormGroup with 'key' and 'value' FormControls.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>data?: Array&lt;&#123;key: string; value: string&#125;&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Initial data to pre-populate the form with existing key-value pairs.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>uniqueKey?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Set to <code>true</code> (default) to enable unique key validation. Uses <code>UniqueValidator</code> from
+                ngx-lift.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>keyHelper?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Helper text for the key input field.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>valueHelper?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Helper text for the value input field.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>addText?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Text for the "Add Key-Value Pair" button.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>inputSize?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Size of the input fields.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>buttonClass?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Custom class to apply to "Add Key-Value Pair" button.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>smartMode?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                If set to <code>true</code>, the component will automatically create one key-value pair when there are no
+                key-value inputs.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>keyPattern?: &#123;regex: string; message?: string&#125;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                If key control needs to pass a custom regex pattern. You can pass an object with two keys:
+                <code>regex</code> and <code>message</code>. The message property is optional.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>valuePattern?: &#123;regex: string; message?: string&#125;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Similar to <code>keyPattern</code>, but used for value control validation.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Outputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>removeKeyValue: EventEmitter&lt;number&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Event emitted when a key-value pair is removed. Provides the index of the removed pair.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>addKeyValue: EventEmitter&lt;void&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Event emitted when a new key-value pair is added.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

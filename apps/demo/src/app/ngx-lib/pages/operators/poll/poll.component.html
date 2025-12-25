@@ -1,0 +1,202 @@
+<cll-page-container [title]="'poll'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>poll</code> operator is a custom RxJS operator that simplifies the process of polling APIs to keep data
+    up-to-date. It allows developers to create observables that periodically emit data at specified intervals,
+    abstracting away the complexity of managing polling intervals and API requests. This operator is especially useful
+    when real-time updates are required but the server does not support push notifications (WebSockets, Server-Sent
+    Events, etc.). It seamlessly integrates with other RxJS operators, enabling developers to build reactive pipelines
+    for handling data streams.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Polling</h3>
+      <p>Poll data at a specified interval. The polling function supports Promise, Observable, or primitive values:</p>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Poll Until Condition is Met</h3>
+      <p>Use RxJS operators like <code>takeWhile</code> to stop polling when a condition is met:</p>
+      <app-code-block [code]="pollingTakeWhileCode" lang="typescript" />
+      <cll-callout>
+        You can add <code>takeUntil</code>, <code>takeWhile</code>, or other RxJS operators to control when polling
+        ends.
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Poll with initialValue</h3>
+      <p>
+        By default, the poll initial result is <code>&#123;loading: true, error: null, data: null&#125;</code>, which is
+        convenient for displaying a loading spinner. However, in some cases, you may not want to display a loading
+        spinner. You can set <code>initialValue</code> to any value you want:
+      </p>
+      <app-code-block [code]="pollingInitialValue" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Defer Polling</h3>
+      <p>By default, polling starts immediately. Use the <code>delay</code> option to delay the start of polling:</p>
+      <app-code-block [code]="deferPolling2Code" lang="typescript" />
+      <p>
+        Alternatively, you can start polling after a user action by combining <code>poll</code> with other RxJS
+        operators:
+      </p>
+      <app-code-block [code]="deferPollingCode" lang="typescript" />
+      <button class="btn btn-primary" (click)="start()">Start Polling (See Console)</button>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Force Refresh</h3>
+      <p>
+        Use the <code>forceRefresh</code> observable or signal to trigger the execution of <code>pollingFn</code> whenever
+        necessary, such as in response to user actions. The emitted value from <code>forceRefresh</code> will be passed
+        as the input to <code>paramsBuilder</code> (if provided) or directly to <code>pollingFn</code>.
+      </p>
+      <app-code-block [code]="forceRefreshCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 6: Advanced Example - Datagrid with Polling</h3>
+      <p>
+        The datagrid below will automatically refresh every 10 seconds. Additionally, whenever there's a change in the
+        input, triggering filtering, sorting, or pagination, the API will be promptly called, accompanied by a spinner
+        indicating loading.
+      </p>
+
+      <form clrForm>
+        <clr-input-container>
+          <label for="poll-firstname">Search by First Name</label>
+          <input
+            type="text"
+            id="poll-firstname"
+            clrInput
+            name="firstName"
+            (input)="searchByFirstName($any($event.target).value)"
+          />
+        </clr-input-container>
+      </form>
+
+      <clr-datagrid
+        class="min-h-[200px]"
+        (clrDgRefresh)="refresh($event)"
+        [clrDgLoading]="(usersState$ | async)?.loading === true"
+        [(clrDgSingleSelected)]="selectedItem"
+      >
+        <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
+        <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
+        <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
+        <clr-dg-column [clrDgField]="'gender'">Gender</clr-dg-column>
+
+        <clr-dg-placeholder>No data found</clr-dg-placeholder>
+
+        @for (user of (usersState$ | async)?.data?.results; track user.id.value) {
+          <clr-dg-row [clrDgItem]="user">
+            <clr-dg-cell>{{ user.name.first }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.name.last }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.email }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.gender }}</clr-dg-cell>
+          </clr-dg-row>
+        }
+
+        <clr-dg-footer>
+          @if (total$ | async) {
+            {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of {{ total$ | async }} items
+          } @else {
+            No items
+          }
+          <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="(total$ | async) || 0" />
+        </clr-dg-footer>
+      </clr-datagrid>
+
+      @if ((usersState$ | async)?.error; as error) {
+        <cll-alert [error]="error" class="mb-4" />
+      }
+
+      <app-code-block [code]="advancedCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>poll</h3>
+        <p>
+          Polls data at a specified interval and can be triggered manually. Returns an observable that emits the result
+          as an <code>AsyncState</code> object.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>pollingFn: (input?: Input) => Observable&lt;Data&gt; | Promise&lt;Data&gt; | Data</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <strong>Required.</strong> A function that returns an Observable, Promise, or primitive value. The
+                function receives parameters built from <code>forceRefresh</code> or <code>paramsBuilder</code>.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>interval: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1"><strong>Required.</strong> The interval in milliseconds between each poll.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>forceRefresh?: Observable&lt;Input&gt; | Signal&lt;Input&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> An Observable or Signal that triggers a manual refresh. The emitted value is passed
+                to <code>paramsBuilder</code> (if provided) or directly to <code>pollingFn</code>.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>paramsBuilder?: (input: Input) => any</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> A function that builds parameters for the polling function based on the
+                <code>forceRefresh</code> value. Useful when the <code>forceRefresh</code> value does not match the
+                structure of <code>pollingFn</code> parameters.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>initialValue?: AsyncState&lt;Data&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> An initial <code>AsyncState</code> value. Defaults to
+                <code>&#123; loading: true, error: null, data: null &#125;</code>.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>delay?: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Delay in milliseconds before starting the first poll. Defaults to <code>0</code>
+                (starts immediately).
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          An observable that emits <code>AsyncState&lt;Data&gt;</code> objects with loading, error, and data properties.
+        </p>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

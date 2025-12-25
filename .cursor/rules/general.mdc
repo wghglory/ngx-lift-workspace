@@ -1,0 +1,255 @@
+---
+alwaysApply: true
+---
+
+## Core Technologies & Versions
+
+- **Angular**: 20.3.0
+- **Nx**: 22.0.0
+- **Clarity Design System**: @clr/angular 17.12.1 (for clr-lift)
+- **Testing**: Vitest 3.0.0 (unit), Playwright 1.36.0 (E2E)
+- **Linting**: ESLint 9.8.0 with custom rules
+- **TypeScript**: 5.9.2 (strict mode)
+
+## Non-Negotiables
+
+These principles are **mandatory** and must be followed in all code:
+
+- **TypeScript**: Strict mode enabled; DRY principle; **no `any` types**
+- **UI Components**: **Clarity Angular** components (`clr-*`) over raw HTML; **no hard-coded colors** (use Clarity SASS
+  variables)
+- **Accessibility**: ARIA attributes by default; keyboard navigation parity with mouse interactions
+- **i18n**: All user-visible text via Transloco; labels use sentence case; titles use title case
+- **State Management**: Signals for component state; reactive patterns for data flow
+- **Change Detection**: **ALWAYS** `ChangeDetectionStrategy.OnPush` for all components
+- **Testing**: Stable selectors (`getByRole` or `data-test-id`); 60%+ coverage minimum
+- **Lifecycle**: No subscriptions in constructor; initialization logic in `ngOnInit`
+
+## Code Quality Standards
+
+- **ESLint**: All code must pass ESLint without errors or warnings
+- **Prettier**: All code must be formatted with Prettier
+- **TypeScript**: Compilation must pass with no errors
+- **Lint Check**: Run `npx nx lint [project]` before considering work complete
+- **Justification**: Fix or suppress lint warnings only with explicit justification
+
+## Definition of Done
+
+Before marking any task as complete, verify:
+
+- ✅ UI uses `clr-*` components and Clarity variables only (no hard-coded styles)
+- ✅ Accessibility checked (labels, ARIA roles, keyboard focus management)
+- ✅ Transloco keys implemented with default English translations
+- ✅ Unit tests (Vitest) written with 60%+ coverage
+- ✅ E2E hooks (Playwright) added where applicable
+- ✅ Nx boundaries respected; **no circular dependencies**
+- ✅ Code formatted with Prettier; ESLint clean; TypeScript compilation passes
+- ✅ Copyright header included in all files
+- ✅ JSDoc comments added for all exported functions, classes, interfaces, types, and constants
+
+## Specialized Rule Files
+
+For detailed guidelines, refer to:
+
+- **`angular.mdc`**: Angular 20 patterns, signals, dependency injection, templates, routing
+- **`testing.mdc`**: Vitest unit testing, Playwright E2E, test patterns, coverage
+- **`clarity.mdc`**: Clarity Design System components, styling, SASS variables, theming
+- **`rxjs.mdc`**: RxJS operators, async state management, subscription patterns
+- **`nx.mdc`**: Nx workspace structure, commands, project boundaries, code generation
+
+## Development Principles
+
+### Reactivity & State Management
+
+- **Signals First**: Prefer Angular Signals over Observables for component state
+- **Signal Inputs/Outputs**: Use `input()`, `output()` instead of `@Input()`, `@Output()`
+- **Computed Signals**: Use `computed()` for derived state
+- **Avoid Manual Subscriptions**: Use async pipe or reactive utilities (`computedAsync`, `combineFrom` from ngx-lift)
+- **Effects**: Use `effect()` sparingly for side effects only; avoid DOM manipulation
+
+### Performance Optimization
+
+- **OnPush Strategy**: **MANDATORY** for all components
+- **Track Functions**: **MANDATORY** for all `@for` loops (`track item.id`)
+- **Async Pipe**: **MANDATORY** for observables in templates (never manual subscriptions)
+- **Lazy Loading**: Use `@defer` for non-critical components
+- **No Method Calls in Templates**: Use pipes or computed signals instead
+- **Minimize Change Detection**: Use signals and computed values
+
+### TypeScript Best Practices
+
+- **Strict Mode**: Always enabled
+- **Type Inference**: Use where possible; explicit types for public APIs
+- **Interfaces vs Types**: Prefer interfaces for object shapes (unless unions/intersections needed)
+- **Immutability**: Use `readonly` for immutable data structures
+- **Utility Types**: Leverage `Partial`, `Pick`, `Omit`, etc. for type transformations
+- **Return Types**: Define proper return types for all functions and methods
+- **JSDoc Documentation**: **MANDATORY** for all exported functions, classes, interfaces, types, and constants
+  - Include `@param` tags for all parameters with descriptions
+  - Include `@returns` or `@return` tags for return values
+  - Include `@template` tags for generic type parameters
+  - Include `@example` blocks with code samples for complex functions
+  - Document behavior, edge cases, and important notes
+  - JSDoc is essential for Storybook integration and API documentation
+
+## Naming Conventions
+
+- **Async State Suffix**: Signals using `createAsyncState` must have `State` suffix (e.g., `usersState`,
+  `productsState`)
+- **Component Files**: kebab-case (e.g., `user-profile.component.ts`)
+- **Component Classes**: PascalCase (e.g., `UserProfileComponent`)
+- **Variables/Methods**: camelCase (e.g., `userName`, `getUserData()`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
+- **Types/Interfaces**: PascalCase (e.g., `UserProfile`, `ApiResponse`)
+
+## Service & Data Layer
+
+- **Dependency Injection**: Use `inject()` function (preferred over constructor injection)
+- **Service Scope**: Provide services at appropriate levels (root, component, feature)
+- **RxJS Operators**: Use operators properly (`map`, `filter`, `switchMap`, `catchError`, etc.)
+- **Error Handling**: Implement proper error handling and retry logic
+- **Async State**: Use async state management patterns for loading/error/success states
+
+## Architecture & Boundaries
+
+- **Nx Boundaries**: Respect project boundaries; **no circular dependencies**
+- **Project Structure**: Follow Nx library/app structure conventions
+- **Code Organization**: Organize by feature/domain
+- **Dependency Rules**: Leverage Nx tags and boundaries for dependency rules
+- **Code Generation**: Use Nx generators for consistent project structure
+
+## Error Handling
+
+- **Error Mechanisms**: Use Angular's error handling (`ErrorHandler`, `catchError` operator)
+- **User Messages**: Provide meaningful error messages via Transloco keys
+- **Logging**: Log errors appropriately (avoid sensitive information)
+- **Reactive Patterns**: Handle async errors gracefully using `catchError` and error signals
+
+## Code Generation Guidelines
+
+When generating code:
+
+1. Follow official documentation for Angular, Vitest, Playwright, TypeScript, and
+   [Clarity Design System](https://clarity.design)
+2. Apply industry best practices and design principles
+3. Ensure DRY (Don't Repeat Yourself) principle
+4. **Always** verify lint passes after generation; fix lint errors immediately
+5. Reference specialized rule files for detailed patterns
+6. Maintain consistency with existing codebase patterns
+7. **JSDoc Required**: All exported TypeScript code (functions, classes, interfaces, types, constants) must include
+   comprehensive JSDoc comments
+
+## Code Block Generation Rules
+
+### Code Block Pattern for Demo Pages
+
+When generating code blocks in demo page HTML templates, **ALWAYS** follow this pattern:
+
+**✅ CORRECT: Define code in TypeScript component**
+
+In TypeScript component file (`.component.ts`):
+
+```typescript
+import {highlight} from '../../../../shared/utils/highlight.util';
+
+export class MyComponent {
+  importCode = highlight(`import { MyModule } from 'package-name';`);
+
+  exampleCode = highlight(`
+@Component({
+  imports: [MyModule],
+  template: \`
+    <div>{{ value }}</div>
+  \`
+})
+export class ExampleComponent { }
+  `);
+
+  advancedCode = highlight(`
+// Advanced example code here
+  `);
+}
+```
+
+In HTML template file (`.component.html`):
+
+```html
+<app-code-block [code]="importCode" lang="typescript"></app-code-block>
+<app-code-block [code]="exampleCode" lang="html"></app-code-block>
+<app-code-block [code]="advancedCode" lang="typescript"></app-code-block>
+```
+
+**❌ WRONG: Inline code strings in HTML**
+
+**NEVER** use inline code strings in HTML templates:
+
+```html
+<!-- ❌ DO NOT DO THIS -->
+<app-code-block [code]="'import { MyModule } from \'package-name\';'" lang="typescript"></app-code-block>
+<app-code-block [code]="'<div>{{ value }}</div>'" lang="html"></app-code-block>
+```
+
+### Why This Pattern?
+
+1. **Avoids HTML parsing errors** - Nested quotes in inline strings cause parsing issues
+2. **Better maintainability** - Code is easier to read and modify in TypeScript files
+3. **Type safety** - TypeScript can validate the code strings
+4. **Consistency** - All code blocks follow the same pattern
+5. **Syntax highlighting** - The `highlight()` utility provides proper formatting
+
+### Required Steps
+
+1. Import `highlight` utility: `import {highlight} from '../../../../shared/utils/highlight.util';`
+2. Define code properties in the component class using `highlight()` function
+3. Reference properties in HTML using `[code]="propertyName"`
+4. Always specify the `lang` attribute (e.g., `lang="typescript"`, `lang="html"`, `lang="json"`)
+
+### Example Naming Convention
+
+- `importCode` - For import statements
+- `exampleCode` - For basic usage examples
+- `advancedCode` - For advanced usage examples
+- `simpleCode` - For simple examples
+- `customCode` - For custom configuration examples
+- Use descriptive names that indicate the purpose of the code block
+
+### Escaping Angular Control Flow Syntax
+
+When using Angular control flow syntax (`@if`, `@for`, `@else`, `@switch`, etc.) in code that will be rendered via
+`innerHTML` or inside inline `<code>` tags, **ALWAYS** escape the `@` symbol using the HTML entity `&#64;`:
+
+**✅ CORRECT - Inline code tags in HTML templates:**
+
+```html
+<p>Use <code>&#64;if</code> for conditional rendering.</p>
+<p>Alternatively, use async pipe with <code>&#64;if</code> for better type safety:</p>
+```
+
+**✅ CORRECT - Code blocks in TypeScript files (inside `highlight()` calls):**
+
+```typescript
+// In TypeScript component file - NO escaping needed
+htmlCode = highlight(`
+@if (condition) {
+  <div>Content</div>
+}
+@for (item of items; track item.id) {
+  <div>{{ item.name }}</div>
+}
+`);
+```
+
+**❌ WRONG - Inline code tags without escaping:**
+
+```html
+<p>Use <code>@if</code> for conditional rendering.</p>
+```
+
+**Important Notes:**
+
+- **DO NOT escape** `@` symbols in code blocks defined in TypeScript files (inside `highlight()` calls)
+- **DO escape** `@` symbols in inline `<code>` tags in HTML templates using `&#64;`
+- Code blocks displayed via `<app-code-block>` component use the code from TypeScript files, which should contain actual
+  `@` symbols (not escaped)
+- The escaping in HTML templates is necessary because `@` is a special character in Angular templates and Angular will
+  try to parse it as control flow syntax when it appears in inline code tags

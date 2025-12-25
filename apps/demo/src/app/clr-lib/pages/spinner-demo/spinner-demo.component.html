@@ -1,0 +1,118 @@
+<cll-page-container [title]="'Spinner'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    A spinner is a visual indicator of an ongoing, user-initiated process. Clarity has two types of spinners, each with
+    its own use case: <strong>Page Spinners</strong> for tracking the progress of an operation related to an entire
+    page, and <strong>Inline Spinners</strong> for tracking the progress of an operation related to a specific
+    component.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Default Spinner</h3>
+      <p>The default spinner is centered, large, and has a block display.</p>
+      <cll-spinner />
+      <app-code-block [code]="defaultCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Size Variations</h3>
+      <p>Spinners can be displayed in different sizes: large (default), medium, and small.</p>
+      <div class="space-y-4">
+        <div>
+          <p class="mb-2">Large (default):</p>
+          <cll-spinner />
+        </div>
+        <div>
+          <p class="mb-2">Medium:</p>
+          <cll-spinner [size]="'md'" />
+        </div>
+        <div>
+          <p class="mb-2">Small:</p>
+          <cll-spinner [size]="'sm'" />
+        </div>
+      </div>
+      <app-code-block [code]="sizeVariationsCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Alignment Options</h3>
+      <p>Control the alignment of the spinner using the <code>center</code> input.</p>
+      <div class="space-y-4">
+        <div>
+          <p class="mb-2">Centered (default):</p>
+          <cll-spinner />
+        </div>
+        <div>
+          <p class="mb-2">Left-aligned:</p>
+          <cll-spinner [center]="false" />
+        </div>
+      </div>
+      <app-code-block [code]="alignLeftCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Custom Styling</h3>
+      <p>Apply custom CSS classes to the spinner for additional styling.</p>
+      <cll-spinner [center]="false" [class]="'mx-10'" />
+      <app-code-block [code]="customClassCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Inline Spinner</h3>
+      <p>
+        Use the <code>inline</code> input to display the spinner as an inline-block element, useful for aligning
+        spinners within text or other inline elements.
+      </p>
+      <div><cll-spinner inline [class]="'mx-2'" /><span>Loading...</span></div>
+      <app-code-block [code]="inlineCode" lang="html" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>SpinnerComponent</h3>
+        <p>Component for displaying loading spinners.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>size?: 'lg' | 'md' | 'sm'</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Determines the spinner size. Accepts 'lg' (default), 'md', or 'sm'.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>center?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Centers the spinner as a block element (default). Pass <code>false</code> to disable centering.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>inline?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                Specifies whether the spinner should be displayed as an inline-block element. Useful for aligning
+                spinners within text or other inline elements.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>customClass?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">A string of additional CSS classes to apply to the spinner.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>
