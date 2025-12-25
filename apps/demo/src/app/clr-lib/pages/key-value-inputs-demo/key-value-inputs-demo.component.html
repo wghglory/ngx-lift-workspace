@@ -1,10 +1,10 @@
 <cll-page-container [title]="'Key Value Inputs'" customClass="space-y-9">
   <!-- Overview -->
   <p>
-    The <code>KeyValueInputsComponent</code> is an Angular component designed to facilitate the input of key-value pairs.
-    It provides a dynamic form allowing users to add, edit, and remove key-value pairs. This component is built using
-    Angular, Clarity Design System, and ngx-lift. It features dynamic form arrays, real-time validation, and intuitive
-    controls that disable the "Add New Controls" button if any key-value pair is invalid.
+    The <code>KeyValueInputsComponent</code> is an Angular component designed to facilitate the input of key-value
+    pairs. It provides a dynamic form allowing users to add, edit, and remove key-value pairs. This component is built
+    using Angular, Clarity Design System, and ngx-lift. It features dynamic form arrays, real-time validation, and
+    intuitive controls that disable the "Add New Controls" button if any key-value pair is invalid.
   </p>
   <cll-callout>
     Explore how the <code>KeyValueInputsComponent</code> leverages the <code>UniqueValidator</code> to perform
@@ -65,8 +65,8 @@
             <code>formArray: FormArray&lt;KeyValueFormGroup&gt;</code>
             <div class="ml-4">
               <p class="text-sm !mt-1">
-                <em>(Required)</em> An Angular FormArray that holds the key-value pairs. Each control in the array should
-                be a FormGroup with 'key' and 'value' FormControls.
+                <em>(Required)</em> An Angular FormArray that holds the key-value pairs. Each control in the array
+                should be a FormGroup with 'key' and 'value' FormControls.
               </p>
             </div>
           </li>
@@ -80,8 +80,8 @@
             <code>uniqueKey?: boolean</code>
             <div class="ml-4">
               <p class="text-sm !mt-1">
-                Set to <code>true</code> (default) to enable unique key validation. Uses <code>UniqueValidator</code> from
-                ngx-lift.
+                Set to <code>true</code> (default) to enable unique key validation. Uses
+                <code>UniqueValidator</code> from ngx-lift.
               </p>
             </div>
           </li>
@@ -119,8 +119,8 @@
             <code>smartMode?: boolean</code>
             <div class="ml-4">
               <p class="text-sm !mt-1">
-                If set to <code>true</code>, the component will automatically create one key-value pair when there are no
-                key-value inputs.
+                If set to <code>true</code>, the component will automatically create one key-value pair when there are
+                no key-value inputs.
               </p>
             </div>
           </li>
@@ -136,9 +136,7 @@
           <li class="space-y-1">
             <code>valuePattern?: &#123;regex: string; message?: string&#125;</code>
             <div class="ml-4">
-              <p class="text-sm !mt-1">
-                Similar to <code>keyPattern</code>, but used for value control validation.
-              </p>
+              <p class="text-sm !mt-1">Similar to <code>keyPattern</code>, but used for value control validation.</p>
             </div>
           </li>
         </ul>

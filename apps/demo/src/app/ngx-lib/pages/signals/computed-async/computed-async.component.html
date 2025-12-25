@@ -1,11 +1,11 @@
 <cll-page-container [title]="'computedAsync'" customClass="space-y-9">
   <!-- Overview -->
   <p>
-    The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises, Observables,
-    or regular values. It provides flexibility in computational behavior through selectable flattening strategies
-    (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>, provide a
-    function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting the
-    computed value.
+    The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises,
+    Observables, or regular values. It provides flexibility in computational behavior through selectable flattening
+    strategies (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>,
+    provide a function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting
+    the computed value.
   </p>
 
   <!-- Examples Section -->
@@ -33,9 +33,9 @@
       <p>
         This doesn't offer any advantage over employing a standard computed <code>signal</code>. However, it does allow
         the return of regular values (those not consisting of Promises or Observables) from the callback function. The
-        callback function executes in the microtask queue, hence it won't promptly emit the value (by default, it returns
-        undefined). To emit the value immediately, you can utilize the requireSync option within the second argument
-        options object.
+        callback function executes in the microtask queue, hence it won't promptly emit the value (by default, it
+        returns undefined). To emit the value immediately, you can utilize the requireSync option within the second
+        argument options object.
       </p>
       <app-code-block [code]="regularCode" lang="typescript" />
     </article>
@@ -75,8 +75,8 @@
       <h3>Example 7: Behaviors (switch, merge, concat, exhaust)</h3>
       <p>
         By default, <code>computedAsync</code> employs the switch behavior, which entails that if the computation is
-        re-triggered before the prior one concludes, the former will be canceled. Should you wish to alter this behavior,
-        you can provide the behavior option within the second argument options object.
+        re-triggered before the prior one concludes, the former will be canceled. Should you wish to alter this
+        behavior, you can provide the behavior option within the second argument options object.
       </p>
       <app-code-block [code]="behaviorCode" lang="typescript" />
       <h4>switch (default)</h4>
@@ -86,8 +86,8 @@
       </p>
       <h4>merge</h4>
       <p>
-        To retain the preceding computation, the merge behavior is employed. If a new computation is initiated before the
-        previous one is finished, the former is preserved while the latter is started.
+        To retain the preceding computation, the merge behavior is employed. If a new computation is initiated before
+        the previous one is finished, the former is preserved while the latter is started.
       </p>
       <h4>concat</h4>
       <p>
@@ -96,8 +96,8 @@
       </p>
       <h4>exhaust</h4>
       <p>
-        In instances where disregarding the new computation while the prior one remains ongoing is necessary, the exhaust
-        behavior is selected.
+        In instances where disregarding the new computation while the prior one remains ongoing is necessary, the
+        exhaust behavior is selected.
       </p>
     </article>
 
@@ -221,25 +221,17 @@
 
         <h4>Returns</h4>
         <p class="text-sm">
-          A <code>Signal</code> that emits the computed value. The signal type depends on the <code>requireSync</code>
-          option: <code>Signal&lt;T | undefined&gt;</code> if <code>requireSync</code> is false or omitted,
-          <code>Signal&lt;T&gt;</code> if <code>requireSync</code> is true.
+          A <code>Signal</code> that emits the computed value. The signal type depends on the
+          <code>requireSync</code> option: <code>Signal&lt;T | undefined&gt;</code> if <code>requireSync</code> is false
+          or omitted, <code>Signal&lt;T&gt;</code> if <code>requireSync</code> is true.
         </p>
 
         <h4>Behaviors</h4>
         <ul class="list-disc space-y-1 ml-6 text-sm">
-          <li>
-            <code>switch</code> (default): Cancels the previous computation when a new one is triggered.
-          </li>
-          <li>
-            <code>merge</code>: Preserves the previous computation while starting a new one when triggered.
-          </li>
-          <li>
-            <code>concat</code>: Waits for the previous computation to complete before starting a new one.
-          </li>
-          <li>
-            <code>exhaust</code>: Ignores new computations while a previous one is still ongoing.
-          </li>
+          <li><code>switch</code> (default): Cancels the previous computation when a new one is triggered.</li>
+          <li><code>merge</code>: Preserves the previous computation while starting a new one when triggered.</li>
+          <li><code>concat</code>: Waits for the previous computation to complete before starting a new one.</li>
+          <li><code>exhaust</code>: Ignores new computations while a previous one is still ongoing.</li>
         </ul>
       </div>
     </div>

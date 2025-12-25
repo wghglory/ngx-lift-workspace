@@ -28,9 +28,10 @@
     <article class="space-y-3">
       <h3>Example 2: Parsing PEM (Base64 Encoded)</h3>
       <p>
-        At times, a PEM string is initially encoded in Base64 before being stored. In such scenarios, you can utilize the
-        <code>pemEncoded</code> flag to signify that the PEM string requires decoding before parsing. Here's an example of
-        a string that has been Base64 encoded using <code>btoa(firstExamplePemString)</code>:
+        At times, a PEM string is initially encoded in Base64 before being stored. In such scenarios, you can utilize
+        the
+        <code>pemEncoded</code> flag to signify that the PEM string requires decoding before parsing. Here's an example
+        of a string that has been Base64 encoded using <code>btoa(firstExamplePemString)</code>:
       </p>
       <app-code-block [code]="pem2Code" lang="typescript" />
       <p>Click the certificate icon below to view the certificate details:</p>
@@ -64,8 +65,8 @@
             <code>pemEncoded?: boolean</code>
             <div class="ml-4">
               <p class="text-sm !mt-1">
-                A boolean flag indicating whether the PEM string is Base64-encoded or not. Defaults to <code>false</code>.
-                When <code>true</code>, the component will decode the string before parsing.
+                A boolean flag indicating whether the PEM string is Base64-encoded or not. Defaults to
+                <code>false</code>. When <code>true</code>, the component will decode the string before parsing.
               </p>
             </div>
           </li>

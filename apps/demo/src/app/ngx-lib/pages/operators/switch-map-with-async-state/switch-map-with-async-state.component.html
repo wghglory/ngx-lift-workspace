@@ -2,8 +2,8 @@
   <!-- Overview -->
   <p>
     The <code>switchMapWithAsyncState</code> operator combines the functionality of <code>switchMap</code> and
-    <code>createAsyncState</code> into a single operator. It's tailor-made for scenarios where you need to trigger an API
-    request based on user actions (like button clicks) and seamlessly transition between streams. By creating an
+    <code>createAsyncState</code> into a single operator. It's tailor-made for scenarios where you need to trigger an
+    API request based on user actions (like button clicks) and seamlessly transition between streams. By creating an
     <code>AsyncState</code> structure to encapsulate your API response, this operator delivers a seamless and efficient
     approach to managing asynchronous operations.
   </p>
@@ -32,7 +32,12 @@
           <input id="switchmap-name" clrInput name="username" />
         </clr-input-container>
 
-        <button type="button" class="btn btn-primary mt-5" (click)="save()" [clrLoading]="saveAction()?.loading === true">
+        <button
+          type="button"
+          class="btn btn-primary mt-5"
+          (click)="save()"
+          [clrLoading]="saveAction()?.loading === true"
+        >
           Save
         </button>
         @if (saveAction()?.error; as error) {

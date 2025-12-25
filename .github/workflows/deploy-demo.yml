@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           cache: 'npm'
 
       - name: Install dependencies
@@ -40,7 +40,7 @@ jobs:
           publish-dir: './dist/apps/demo/browser'
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
+          deploy-message: 'Deploy from GitHub Actions'
           enable-pull-request-comment: true
           enable-commit-comment: true
           overwrites-pull-request-comment: true
@@ -57,4 +57,3 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./dist/apps/demo/browser
           vercel-args: '--prod'
-

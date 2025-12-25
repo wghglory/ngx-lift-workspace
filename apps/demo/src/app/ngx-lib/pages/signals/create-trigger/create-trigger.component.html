@@ -1,10 +1,10 @@
 <cll-page-container [title]="'createTrigger'" customClass="space-y-9">
   <!-- Overview -->
   <p>
-    The <code>createTrigger</code> function provides a way to manually initiate signal re-computations by referencing the
-    trigger signal it creates. Its functionality is similar to RxJS Subject. With each event, you can notify the subject
-    using its <code>next</code> method. Using <code>createTrigger</code> is convenient for manually triggering a "refresh"
-    and responding to it in a signal-oriented manner.
+    The <code>createTrigger</code> function provides a way to manually initiate signal re-computations by referencing
+    the trigger signal it creates. Its functionality is similar to RxJS Subject. With each event, you can notify the
+    subject using its <code>next</code> method. Using <code>createTrigger</code> is convenient for manually triggering a
+    "refresh" and responding to it in a signal-oriented manner.
   </p>
 
   <!-- Examples Section -->
@@ -41,11 +41,11 @@
         <app-code-block [code]="signatureCode" lang="typescript" />
 
         <h4>Returns</h4>
-        <p class="text-sm">
-          An object with two properties:
-        </p>
+        <p class="text-sm">An object with two properties:</p>
         <ul class="list-disc space-y-1 ml-6 text-sm">
-          <li><code>value</code>: A signal that returns the number of times the trigger has been called (starts at 0)</li>
+          <li>
+            <code>value</code>: A signal that returns the number of times the trigger has been called (starts at 0)
+          </li>
           <li><code>next</code>: A method to trigger the signal update</li>
         </ul>
       </div>

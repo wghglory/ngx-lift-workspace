@@ -14,8 +14,8 @@
       <h3>Example 1: Date Range Validation</h3>
       <p>
         Validate that a date falls between a minimum and maximum date. This configuration ensures that the selected date
-        must fall between September 1st, 2024, and September 15th, 2024 (exclusive), ignoring the time components.
-        Sep. 15th is not valid since <code>maxInclusive</code> is false.
+        must fall between September 1st, 2024, and September 15th, 2024 (exclusive), ignoring the time components. Sep.
+        15th is not valid since <code>maxInclusive</code> is false.
       </p>
       <app-code-block [code]="dateExampleCode" lang="typescript" />
     </article>
@@ -132,12 +132,12 @@
                   be equal to or earlier than this date.
                 </li>
                 <li>
-                  <code>minInclusive?: boolean</code> - Whether the comparison for the minimum date can include the exact
-                  date. Defaults to <code>false</code>.
+                  <code>minInclusive?: boolean</code> - Whether the comparison for the minimum date can include the
+                  exact date. Defaults to <code>false</code>.
                 </li>
                 <li>
-                  <code>maxInclusive?: boolean</code> - Whether the comparison for the maximum date can include the exact
-                  date. Defaults to <code>false</code>.
+                  <code>maxInclusive?: boolean</code> - Whether the comparison for the maximum date can include the
+                  exact date. Defaults to <code>false</code>.
                 </li>
                 <li>
                   <code>compareTime?: boolean</code> - Whether to compare the time as well. If <code>true</code>,
@@ -154,9 +154,7 @@
 
         <h4>Validation Errors</h4>
         <ul class="list-disc space-y-1 ml-6 text-sm">
-          <li>
-            <code>invalidDate</code> - Returned when the date is invalid (e.g., "2023-13-01" or "hello world")
-          </li>
+          <li><code>invalidDate</code> - Returned when the date is invalid (e.g., "2023-13-01" or "hello world")</li>
           <li>
             <code>minDate</code> - Returned when the selected date is earlier than or equal to the minimum allowed date.
             The error value is the minimum allowed date formatted as an ISO string.
