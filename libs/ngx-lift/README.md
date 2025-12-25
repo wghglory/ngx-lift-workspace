@@ -50,7 +50,7 @@ providing an interactive way to understand the capabilities of ngx-lift.
 ### Source Code
 
 For a deeper understanding of ngx-lift, review the source code available on GitHub:
-[https://github.com/wghglory/ngx-lift/tree/master/projects/ngx-lift](https://github.com/wghglory/ngx-lift/tree/master/projects/ngx-lift).
+[https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift).
 Clone the repository to your local environment and explore the demos provided. Gain insights into how ngx-lift can
 elevate your Angular development workflow by examining the codebase and incorporating it into your projects.
 

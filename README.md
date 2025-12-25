@@ -3,7 +3,7 @@
 A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along with a demo application showcasing their
 capabilities.
 
-[![CI](https://github.com/wghglory/ngx-lift/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift/actions/workflows/ci.yml)
+[![CI](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
 [![npm version](https://badge.fury.io/js/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
 
@@ -39,8 +39,8 @@ A showcase application demonstrating the features and capabilities of both libra
 
 ```bash
 # Clone the repository
-git clone https://github.com/wghglory/ngx-lift.git
-cd ngx-lift/ngx-lift-workspace
+git clone https://github.com/wghglory/ngx-lift-workspace.git
+cd ngx-lift-workspace
 
 # Install dependencies
 npm install
@@ -359,10 +359,10 @@ MIT © [Guanghui Wang](https://github.com/wghglory)
 ## 🔗 Links
 
 - **Homepage**: https://ngx-lift.netlify.app
-- **Repository**: https://github.com/wghglory/ngx-lift
+- **Repository**: https://github.com/wghglory/ngx-lift-workspace
 - **npm (ngx-lift)**: https://www.npmjs.com/package/ngx-lift
 - **npm (clr-lift)**: https://www.npmjs.com/package/clr-lift
-- **Issues**: https://github.com/wghglory/ngx-lift/issues
+- **Issues**: https://github.com/wghglory/ngx-lift-workspace/issues
 
 ## 📞 Support
 

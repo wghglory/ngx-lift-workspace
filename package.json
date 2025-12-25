@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wghglory/ngx-lift.git"
+    "url": "git+https://github.com/wghglory/ngx-lift-workspace.git"
   },
   "homepage": "https://ngx-lift.netlify.app/",
   "description": "A project has been crafted with the goal of enhancing and simplifying your Angular development experience.",

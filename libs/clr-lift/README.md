@@ -58,7 +58,7 @@ Run `nx test clr-lift` to execute the unit tests.
 
 We welcome contributions to the **clr-lift** library. If you encounter any issues, have feature requests, or would like
 to contribute code, please check out our
-[contribution guidelines](https://github.com/wghglory/ngx-lift/CONTRIBUTING.md).
+[contribution guidelines](https://github.com/wghglory/ngx-lift-workspace/CONTRIBUTING.md).
 
 ## License
 
