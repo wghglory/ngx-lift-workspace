@@ -1,29 +1,118 @@
-<cll-page-container title="Datagrid Utilities" customClass="space-y-9">
-  <section class="space-y-6">
-    <p>
-      The Clarity datagrid in Datagrid Utilities is designed to emit a state whenever a user interacts with pagination
-      buttons, filters, or sorting options. To facilitate seamless integration with API requests, the Clarity datagrid
-      state requires conversion into an object suitable for HttpParams. To streamline this process, we offer the
-      <code>convertToHttpParams</code> function.
-    </p>
-    <p>
-      The output of the <code>convertToHttpParams</code> function is a structured data model, ensuring compatibility
-      with HttpParams for subsequent API requests. This model enhances the efficiency of data transmission and
-      retrieval. Below is an overview of the data model returned by the <code>convertToHttpParams</code> function.
-    </p>
+<cll-page-container [title]="'Datagrid Utilities'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The Clarity datagrid emits a state whenever a user interacts with pagination buttons, filters, or sorting options.
+    To facilitate seamless integration with API requests, the Clarity datagrid state requires conversion into an object
+    suitable for HttpParams. To streamline this process, we offer the <code>convertToHttpParams</code> function. The
+    output of the <code>convertToHttpParams</code> function is a structured data model, ensuring compatibility with
+    HttpParams for subsequent API requests. This model enhances the efficiency of data transmission and retrieval.
+  </p>
 
-    <app-code-block [code]="pageQueryModelCode" />
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Using convertToHttpParams</h3>
+      <p>
+        The <code>convertToHttpParams</code> function transforms a Clarity Datagrid state into a
+        <code>PageQuery</code> object that can be used with HttpParams. Below is the <code>PageQuery</code> interface
+        that defines the output structure:
+      </p>
+      <app-code-block [code]="pageQueryModelCode" lang="typescript" />
+      <p>
+        The function converts the Clarity datagrid state (containing pagination, sorting, and filter information) into a
+        <code>PageQuery</code> object. Here's an example of the transformation:
+      </p>
+      <div class="grid xl:grid-cols-2 gap-6">
+        <div>
+          <h4>Input: Clarity Datagrid State</h4>
+          <app-code-block [code]="stateCode" lang="json" />
+        </div>
+        <div>
+          <h4>Output: PageQuery Object</h4>
+          <app-code-block [code]="outputCode" lang="json" />
+        </div>
+      </div>
+      <p>Use <code>convertToHttpParams</code> in your component to convert datagrid state for API requests:</p>
+      <app-code-block [code]="usageCode" lang="typescript" />
+    </article>
   </section>
 
-  <section class="space-y-6">
-    <p>
-      Utilizing this function simplifies the conversion process, transforming the Clarity datagrid state presented in
-      the below first block into the corresponding code in the second block effortlessly.
-    </p>
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>convertToHttpParams</h3>
+        <p>
+          Converts a Clarity Datagrid state object into a <code>PageQuery</code> object suitable for use with HttpParams
+          in API requests.
+        </p>
 
-    <div class="grid xl:grid-cols-2 gap-6">
-      <app-code-block [code]="stateCode" />
-      <app-code-block [code]="outputCode" />
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>state: ClrDatagridStateInterface | null</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                The Clarity Datagrid state object containing pagination, sorting, and filter information. Can be
+                <code>null</code> for initial load scenarios.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          A <code>PageQuery</code> object containing <code>page</code>, <code>pageSize</code>, optional
+          <code>sortAsc</code> or <code>sortDesc</code>, and optional <code>filter</code> in FIQL format.
+        </p>
+
+        <h4>PageQuery Interface</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>page: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">The page number for pagination. Starts from 1.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>pageSize: number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">The number of items per page in the result set.</p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>sortAsc?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The field to sort in ascending order. Only present when sorting is ascending.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>sortDesc?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The field to sort in descending order. Only present when sorting is descending.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>filter?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The filter criteria in FIQL (Feed Item Query Language) format. Example:
+                <code>name==*term*;enabled==false</code>
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </section>
 </cll-page-container>

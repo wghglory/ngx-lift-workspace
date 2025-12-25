@@ -169,11 +169,14 @@ export type Deployment = {
 
   operatorCode = highlight(`
 import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
+import {Component, inject, OnInit} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Deployment} from '../deployment.type';
 
 @Component({
+  imports: [ReactiveFormsModule],
   template: \`
-    <form clrForm [formGroup]="form">
+    <form [formGroup]="form">
       <p class="clr-required-mark">Required Information</p>
       <clr-input-container>
         <label class="clr-required-mark">Name</label>
@@ -189,6 +192,8 @@ import {Deployment} from '../deployment.type';
   \`
 })
 export class ConfigureOperatorComponent extends TimelineBaseComponent<Deployment['operator']> implements OnInit {
+  private timelineWizardService = inject(TimelineWizardService);
+
   override form = new FormGroup({
     operator: new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -196,27 +201,51 @@ export class ConfigureOperatorComponent extends TimelineBaseComponent<Deployment
     }),
   });
 
-  timelineWizardService = inject(TimelineWizardService);
-
   // use id 'operator' to find the step
   stepData = this.timelineWizardService.getStepData<Pick<Deployment, 'operator'>>('operator');
 
   constructor() {
     super();
-
     // currentStepData shape comes from TimelineBaseComponent<Deployment['operator']>.
-    console.log(this.currentStepData); // not available at the time
-    console.log(this.stepData); // available from service
+    // Note: currentStepData is not available in constructor, use ngOnInit instead
   }
 
   ngOnInit() {
-    console.log(this.currentStepData); // will receive the @Input data
-    console.log(this.stepData); // available from service
+    // currentStepData will receive the @Input data here
+    console.log(this.currentStepData);
+    console.log(this.stepData); // also available from service
   }
 }
   `);
 
   serviceCode = highlight(`
+import {TimelineBaseComponent} from 'clr-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Deployment} from '../deployment.type';
+
+@Component({
+  imports: [ReactiveFormsModule],
+  template: \`
+    <form [formGroup]="form">
+      <clr-input-container>
+        <label class="clr-required-mark">CPU</label>
+        <input type="number" clrInput [formControl]="form.controls.cpu" />
+        <clr-control-error> Required </clr-control-error>
+      </clr-input-container>
+      <clr-input-container>
+        <label class="clr-required-mark">Replicas</label>
+        <input type="number" clrInput [formControl]="form.controls.replicas" />
+        <clr-control-error> Required </clr-control-error>
+      </clr-input-container>
+      <clr-input-container>
+        <label class="clr-required-mark">URL</label>
+        <input type="url" clrInput [formControl]="form.controls.url" />
+        <clr-control-error> Required </clr-control-error>
+      </clr-input-container>
+    </form>
+  \`
+})
 export class ConfigureServiceComponent extends TimelineBaseComponent<Deployment['service']> {
   override form = new FormGroup({
     cpu: new FormControl('', [Validators.required]),
@@ -236,16 +265,15 @@ export class ConfigureServiceComponent extends TimelineBaseComponent<Deployment[
 
   runtimePropsCode = highlight(`
 import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
+import {Component, inject} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
 type RuntimePropStepData = {appProperties: Array<{key: string; value: string}>};
 
 @Component({
-  imports: [
-    KeyValueInputsComponent,
-    //...
-  ],
+  imports: [KeyValueInputsComponent, ReactiveFormsModule],
   template: \`
-    <form clrForm [formGroup]="form">
+    <form [formGroup]="form">
       <cll-key-value-inputs
         [formArray]="form.controls.appProperties"
         [inputSize]="50"
@@ -289,8 +317,20 @@ export class ConfigureRuntimePropComponent extends TimelineBaseComponent<Runtime
 
   reviewCode = highlight(`
 import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
+import {Component, inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {Deployment} from '../deployment.type';
 
+@Component({
+  template: \`
+    <div>
+      <h3>Review Configuration</h3>
+      <p>Operator: {{ operatorStep?.operator?.name }}</p>
+      <p>Service: {{ serviceStep?.service?.url }}</p>
+      <p>Runtime Properties: {{ runtimePropertiesStep?.appProperties | json }}</p>
+    </div>
+  \`
+})
 export class ConfigureReviewComponent extends TimelineBaseComponent {
   private timelineWizardService = inject(TimelineWizardService);
   private http = inject(HttpClient);

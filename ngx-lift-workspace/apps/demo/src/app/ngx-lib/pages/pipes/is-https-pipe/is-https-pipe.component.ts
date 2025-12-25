@@ -1,21 +1,18 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {RouterLink} from '@angular/router';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-is-https-pipe',
-  imports: [CodeBlockComponent, PageContainerComponent, CalloutComponent, RouterLink],
+  imports: [CodeBlockComponent, PageContainerComponent],
   templateUrl: './is-https-pipe.component.html',
   styleUrl: './is-https-pipe.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsHttpsPipeComponent {
-  importCode = highlight(`import { IsHttpsPipe } from 'ngx-lift';`);
-
-  exampleCode = highlight(`
+  basicExampleCode = highlight(`
 import {IsHttpsPipe} from 'ngx-lift';
 
 @Component({
@@ -26,15 +23,9 @@ import {IsHttpsPipe} from 'ngx-lift';
 
     <p>{{ 'http://www.example.com' | isHttps }}</p>
     <!-- Output: false -->
-
-    @if(url | isHttps) {
-      <child-component [url]="url" />
-    }
   \`
 })
-export class IsHttpsPipeDemoComponent {
-  url = 'https://url-to-be-passed-into-a-child-component-only-when-url-matches-https.com';
-}
+export class IsHttpsExampleComponent {}
   `);
 
   conditionalRenderingCode = highlight(`
@@ -66,5 +57,9 @@ import {IsHttpsPipe} from 'ngx-lift';
     </div>
   \`
 })
+  `);
+
+  signatureCode = highlight(`
+transform(value: string): boolean
   `);
 }

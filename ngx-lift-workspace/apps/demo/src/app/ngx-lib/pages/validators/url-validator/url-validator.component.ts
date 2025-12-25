@@ -20,29 +20,93 @@ export class UrlValidatorComponent {
     https: new FormControl('', [Validators.required, httpsValidator]),
   });
 
-  exampleCode = highlight(`
-import {httpsValidator, urlValidator} from 'ngx-lift';
+  urlExampleCode = highlight(`
+import {urlValidator} from 'ngx-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
 @Component({
   imports: [ReactiveFormsModule],
   template: \`
     <form [formGroup]="form">
       <div>
-        <label>
-          URL
-          <input type="text" formControlName="url" />
-        </label>
-        <div *ngIf="form.controls.url.hasError('required')">Required</div>
-        <div *ngIf="form.controls.url.errors?.['invalidUrl']">Please enter a valid URL</div>
+        <label>URL</label>
+        <input type="text" formControlName="url" />
+        @if (form.controls.url.hasError('required')) {
+          <div>Required</div>
+        }
+        @if (form.controls.url.errors?.['invalidUrl']) {
+          <div>Please enter a valid URL</div>
+        }
+      </div>
+    </form>
+  \`
+})
+export class UrlValidatorExampleComponent {
+  form = new FormGroup({
+    url: new FormControl('', [Validators.required, urlValidator]),
+  });
+}
+  `);
+
+  httpsExampleCode = highlight(`
+import {httpsValidator} from 'ngx-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+
+@Component({
+  imports: [ReactiveFormsModule],
+  template: \`
+    <form [formGroup]="form">
+      <div>
+        <label>Https-only URL</label>
+        <input type="text" formControlName="https" />
+        @if (form.controls.https.hasError('required')) {
+          <div>Required</div>
+        }
+        @if (form.controls.https.hasError('invalidUrl')) {
+          <div>Please enter a https URL</div>
+        }
+      </div>
+    </form>
+  \`
+})
+export class HttpsValidatorExampleComponent {
+  form = new FormGroup({
+    https: new FormControl('', [Validators.required, httpsValidator]),
+  });
+}
+  `);
+
+  completeExampleCode = highlight(`
+import {httpsValidator, urlValidator} from 'ngx-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+
+@Component({
+  imports: [ReactiveFormsModule],
+  template: \`
+    <form [formGroup]="form">
+      <div>
+        <label>URL</label>
+        <input type="text" formControlName="url" />
+        @if (form.controls.url.hasError('required')) {
+          <div>Required</div>
+        }
+        @if (form.controls.url.errors?.['invalidUrl']) {
+          <div>Please enter a valid URL</div>
+        }
       </div>
 
       <div>
-        <label>
-          Https-only URL
-          <input type="text" formControlName="https" />
-        </label>
-        <div *ngIf="form.controls.url.hasError('required')">Required</div>
-        <div *ngIf="form.controls.url.hasError('invalidUrl')">Please enter a https URL</div>
+        <label>Https-only URL</label>
+        <input type="text" formControlName="https" />
+        @if (form.controls.https.hasError('required')) {
+          <div>Required</div>
+        }
+        @if (form.controls.https.hasError('invalidUrl')) {
+          <div>Please enter a https URL</div>
+        }
       </div>
     </form>
   \`
@@ -53,5 +117,13 @@ export class UrlValidatorComponent {
     https: new FormControl('', [Validators.required, httpsValidator]),
   });
 }
+  `);
+
+  urlSignatureCode = highlight(`
+urlValidator(control: AbstractControl): ValidationErrors | null
+  `);
+
+  httpsSignatureCode = highlight(`
+httpsValidator(control: AbstractControl): ValidationErrors | null
   `);
 }

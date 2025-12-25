@@ -55,44 +55,72 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
   }
 
   htmlCode = highlight(`
-<clr-main-container>
-  <cll-alert-container />
-  <clr-header></clr-header>
-</clr-main-container>
+import {AlertContainerComponent} from 'clr-lift';
+import {Component} from '@angular/core';
+
+@Component({
+  imports: [AlertContainerComponent],
+  template: \`
+    <clr-main-container>
+      <cll-alert-container />
+      <clr-header></clr-header>
+      <!-- rest of your app -->
+    </clr-main-container>
+  \`
+})
+export class AppComponent {}
   `);
 
   tsCode = highlight(`
-addAppLevelAlert() {
-  // You can pass 'danger', 'info', 'success', 'warning' for the alertType.
-  this.alertService.addAlert({
-    content: 'New app-level alert added.',
-    alertType: 'success',
-  });
-}
+import {AlertService} from 'clr-lift';
+import {Component, inject} from '@angular/core';
 
-addStandardAlert() {
-  this.alertService.addAlert({
-    content: 'New standard alert added.',
-    alertType: 'success',
-    isAppLevel: false,
-  });
-}
+@Component({})
+export class AlertExampleComponent {
+  private alertService = inject(AlertService);
 
-clearAlerts() {
-  this.alertService.clearAlerts();
+  addAppLevelAlert() {
+    // You can pass 'danger', 'info', 'success', 'warning' for the alertType.
+    this.alertService.addAlert({
+      content: 'New app-level alert added.',
+      alertType: 'success',
+    });
+  }
+
+  addStandardAlert() {
+    this.alertService.addAlert({
+      content: 'New standard alert added.',
+      alertType: 'success',
+      isAppLevel: false,
+    });
+  }
+
+  clearAlerts() {
+    this.alertService.clearAlerts();
+  }
 }
   `);
 
   advancedCode = highlight(`
-this.alertService.addAlert({
-  content: 'Alert with a button. <button type="button" class="btn btn-sm btn-outline" id="click-target">Click Me</button>',
-  alertType: 'info',
-  targetSelector: '#click-target',
-  onTargetClick: this.clickMe,
-});
+import {AlertService} from 'clr-lift';
+import {Component, inject} from '@angular/core';
 
-clickMe() {
-  alert('You did it correctly!');
+@Component({})
+export class AlertAdvancedExampleComponent {
+  private alertService = inject(AlertService);
+
+  addAlertWithButton() {
+    this.alertService.addAlert({
+      content: 'Alert with a button. <button type="button" class="btn btn-sm btn-outline" id="click-target">Click Me</button>',
+      alertType: 'info',
+      targetSelector: '#click-target',
+      onTargetClick: this.clickMe,
+    });
+  }
+
+  clickMe() {
+    alert('You did it correctly!');
+  }
 }
   `);
 }

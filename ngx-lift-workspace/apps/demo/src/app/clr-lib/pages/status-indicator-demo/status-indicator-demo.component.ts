@@ -12,20 +12,37 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusIndicatorDemoComponent {
-  exampleCode = highlight(`
+  basicExampleCode = highlight(`
 import {StatusIndicatorComponent} from 'clr-lift';
+import {Component} from '@angular/core';
 
-<cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
-<cll-status-indicator [iconStatus]="'success'" [iconSize]="24"> Success </cll-status-indicator>
+@Component({
+  imports: [StatusIndicatorComponent],
+  template: \`
+    <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
+    <cll-status-indicator [iconStatus]="'success'" [iconSize]="24"> Success </cll-status-indicator>
+    <cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator>
+  \`
+})
+export class StatusIndicatorExampleComponent {}
+  `);
 
-<li>
-  <cll-status-indicator
-    [iconStatus]="'pending'"
-    [tooltip]="'some pending happen'"
-    [tooltipPosition]="'tooltip-left'"
-  >
-    Pending
-  </cll-status-indicator>
-</li>
+  tooltipExampleCode = highlight(`
+import {StatusIndicatorComponent} from 'clr-lift';
+import {Component} from '@angular/core';
+
+@Component({
+  imports: [StatusIndicatorComponent],
+  template: \`
+    <cll-status-indicator
+      [iconStatus]="'pending'"
+      [tooltip]="'some pending happen'"
+      [tooltipPosition]="'tooltip-left'"
+    >
+      Pending
+    </cll-status-indicator>
+  \`
+})
+export class StatusIndicatorTooltipExampleComponent {}
   `);
 }

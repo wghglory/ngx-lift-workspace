@@ -62,15 +62,26 @@ export class IntersectionValidatorComponent {
 
   intersectionTsCode = highlight(`
 import {intersectionValidator} from 'ngx-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
-form = new FormGroup(
-  {
-    includedNamespaces: new FormControl<string[]>([], Validators.required),
-    excludedNamespaces: new FormControl<string[]>([], Validators.required),
-  },
-  {
-    validators: [intersectionValidator('includedNamespaces', 'excludedNamespaces')],
-  },
-);
+@Component({
+  imports: [ReactiveFormsModule],
+})
+export class IntersectionValidatorComponent {
+  form = new FormGroup(
+    {
+      includedNamespaces: new FormControl<string[]>([], Validators.required),
+      excludedNamespaces: new FormControl<string[]>([], Validators.required),
+    },
+    {
+      validators: [intersectionValidator('includedNamespaces', 'excludedNamespaces')],
+    },
+  );
+}
+  `);
+
+  signatureCode = highlight(`
+intersectionValidator(controlName1: string, controlName2: string): ValidatorFn
   `);
 }

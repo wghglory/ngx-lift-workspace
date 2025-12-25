@@ -64,8 +64,8 @@ export class PollComponent implements OnInit {
   }
 
   pollingTakeWhileCode = highlight(`
-import { poll } from 'ngx-lift';
-import { of, takeWhile, delay } from 'rxjs';
+import {poll} from 'ngx-lift';
+import {of, takeWhile, delay} from 'rxjs';
 
 poll({
   interval: 1000,
@@ -73,18 +73,18 @@ poll({
 })
   .pipe(takeWhile((state) => state.data === null || state.data <= 8, true))
   .subscribe(console.log);
-    `);
+  `);
 
   pollingInitialValue = highlight(`
-import { poll } from 'ngx-lift';
-import { of, delay } from 'rxjs';
+import {poll} from 'ngx-lift';
+import {of, delay} from 'rxjs';
 
 poll({
   interval: 1000,
   pollingFn: () => of(Math.random() * 10).pipe(delay(300)),
-  initialValue: { loading: false, error: null, data: 0 }, // display 0 for initial value
+  initialValue: {loading: false, error: null, data: 0}, // display 0 for initial value
 }).subscribe(console.log);
-    `);
+  `);
 
   deferPollingCode = highlight(`
 import {poll} from 'ngx-lift';
@@ -108,11 +108,11 @@ startPolling
     }),
   )
   .subscribe(console.log);
-    `);
+  `);
 
   deferPolling2Code = highlight(`
-import { poll } from 'ngx-lift';
-import { of } from 'rxjs';
+import {poll} from 'ngx-lift';
+import {of} from 'rxjs';
 
 poll({
   interval: 1000,
@@ -121,35 +121,72 @@ poll({
 }).subscribe(console.log);
   `);
 
-  simpleCode = highlight(`
-import { poll } from 'ngx-lift';
-import { ajax } from 'rxjs/ajax';
+  basicExampleCode = highlight(`
+import {poll} from 'ngx-lift';
+import {ajax} from 'rxjs/ajax';
 
+// Return a primitive value
 poll({
-  interval: 5000, // Poll every 5 second
-  pollingFn: () => Math.random(), // return a primitive value
+  interval: 5000, // Poll every 5 seconds
+  pollingFn: () => Math.random(),
 }).subscribe(console.log);
 
+// Return a Promise
 poll({
   interval: 5000,
   pollingFn: () =>
     new Promise((resolve) => {
-      setTimeout(() => { resolve(Math.random()); }, 200); // return a promise
+      setTimeout(() => {
+        resolve(Math.random());
+      }, 200);
     }),
 }).subscribe(console.log);
 
+// Return an Observable
 poll({
   interval: 5000,
-  pollingFn: () => ajax('https://api.example.com/data'), // return an observable
+  pollingFn: () => ajax('https://api.example.com/data'),
 }).subscribe(console.log);
-`);
+  `);
 
-  importCode = highlight(`import { poll } from 'ngx-lift';`);
+  forceRefreshCode = highlight(`
+import {poll} from 'ngx-lift';
+import {Subject} from 'rxjs';
+
+export class MyComponent {
+  private refresh$ = new Subject<void>();
+
+  dataState$ = poll({
+    interval: 5000,
+    pollingFn: () => this.http.get('/api/data'),
+    forceRefresh: this.refresh$,
+  });
+
+  refresh() {
+    this.refresh$.next();
+  }
+}
+  `);
+
+  signatureCode = highlight(`
+poll<Data, Input>(options: PollOptions<Data, Input>): Observable<AsyncState<Data>>
+
+interface PollOptions<Data, Input> {
+  pollingFn: (input?: Input) => Observable<Data> | Promise<Data> | Data;
+  interval: number;
+  forceRefresh?: Observable<Input> | Signal<Input>;
+  paramsBuilder?: (input: Input) => any;
+  initialValue?: AsyncState<Data>;
+  delay?: number;
+}
+  `);
 
   advancedCode = highlight(`
 import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
-import {AlertComponent, convertToHttpParams, dgState, PageContainerComponent} from 'clr-lift';
-import {AsyncState, isEqual, poll} from 'ngx-lift';
+import {AlertComponent, convertToHttpParams, dgState} from 'clr-lift';
+import {poll} from 'ngx-lift';
+import {inject} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 
 export class PollComponent {
   userService = inject(UserService);

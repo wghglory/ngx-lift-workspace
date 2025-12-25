@@ -1,36 +1,79 @@
 <cll-page-container [title]="'combineLatestEager'" customClass="space-y-9">
-  <section class="space-y-6">
-    <p>
-      The RxJS operator <code>combineLatest</code> is frequently employed to merge multiple observables, triggering
-      emissions whenever any of the source observables emits a value. However, a limitation arises as it mandates all
-      sources to emit at least once. In UI scenarios, <code>combineLatest</code> is often employed to construct a view
-      model observable (<code>vm$</code>). When one of the sources is a <code>Subject</code>, using
-      <code>vm$</code> with the async pipe becomes problematic because the <code>Subject</code> may not emit any values
-      initially. This issue is elegantly addressed by the augmented functionality of the
-      <code>combineLatestEager</code> function.
-    </p>
-    <p>
-      <code>combineLatestEager</code> seamlessly extends the capabilities of <code>combineLatest</code> by incorporating
-      <code>startWith(null)</code> for each <code>Subject</code> present in the provided sources. This augmentation
-      ensures that the combined observable initializes with a null value for each <code>Subject</code>, resolving the
-      challenge posed by <code>combineLatest</code> in scenarios where initial emissions from certain sources are not
-      guaranteed.
-    </p>
-    <p>
-      In most cases, the aforementioned approach should work seamlessly for you. However, when dealing with numerous
-      observables, it might become challenging to distinguish which ones lack initial emissions. For such scenarios,
-      <strong
-        >you have the flexibility to set the second parameter to true in combineLatestEager, which appends
-        <code>startWith(null)</code> for all source observables</strong
-      >. This option becomes especially valuable when dealing with situations where ensuring initial emissions is
-      crucial.
-    </p>
+  <!-- Overview -->
+  <p>
+    The RxJS operator <code>combineLatest</code> requires all sources to emit at least once, which can be problematic
+    when using <code>Subject</code> sources that may not emit initially. <code>combineLatestEager</code> extends
+    <code>combineLatest</code> by automatically adding <code>startWith(null)</code> for each <code>Subject</code> in the
+    sources, ensuring the combined observable initializes properly. You can also set the second parameter to
+    <code>true</code> to append <code>startWith(null)</code> for all source observables, which is useful when dealing
+    with numerous observables where initial emissions are not guaranteed.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Combine observables including Subjects that may not emit initially:</p>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Complete Example with Template</h3>
+      <p>Complete example showing how to use combineLatestEager with async pipe in templates:</p>
+      <app-rock-star />
+      <app-code-block [code]="htmlCode" lang="html" />
+      <app-code-block [code]="tsCode" lang="typescript" />
+    </article>
   </section>
 
-  <section class="space-y-6">
-    <h2>Example Code</h2>
-    <app-code-block [code]="htmlCode" lang="html" />
-    <app-code-block [code]="tsCode" />
-    <app-rock-star />
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>combineLatestEager</h3>
+        <p>
+          Combines multiple observables like <code>combineLatest</code>, but automatically adds
+          <code>startWith(null)</code> for Subject sources to ensure proper initialization.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>sources: Record&lt;string, Observable&lt;T&gt;&gt; | Observable&lt;T&gt;[]</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                An object or array of observables to combine. When an object is provided, the result will be an object
+                with the same keys.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>startWithAll?: boolean</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> When set to <code>true</code>, appends <code>startWith(null)</code> for all source
+                observables, not just Subjects. Defaults to <code>false</code>.
+              </p>
+              <p class="text-sm !mt-1">
+                Useful when dealing with numerous observables where it's challenging to distinguish which ones lack
+                initial emissions.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          An observable that emits an array or object (depending on input type) containing the latest values from all
+          source observables.
+        </p>
+      </div>
+    </div>
   </section>
 </cll-page-container>

@@ -1,124 +1,184 @@
-<cll-page-container [title]="'Status Indicator'" customClass="space-y-6">
-  <h2>Usage</h2>
-  <p>Display a status indicator with a icon and text.</p>
+<cll-page-container [title]="'Status Indicator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>StatusIndicatorComponent</code> displays a status indicator with an icon and text. It supports various
+    status types (error, success, warning, unknown, inactive, pending), customizable icon sizes, and optional tooltips for
+    additional information.
+  </p>
 
-  <div class="grid lg:grid-cols-3 gap-5">
-    <section class="space-y-3">
-      <h3>Basic Usage</h3>
-      <ul>
-        <li>
-          <cll-status-indicator [iconStatus]="'error'"> Error </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'success'"> Success </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'unknown'"> unknown </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'inactive'"> Inactive </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'pending'"> Pending </cll-status-indicator>
-        </li>
-      </ul>
-    </section>
-    <section class="space-y-3">
-      <h3>Icon Size (T-Shirt Sizing)</h3>
-      <ul>
-        <li>
-          <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'success'" iconSize="md"> Success </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'warning'" iconSize="lg"> Warning </cll-status-indicator>
-        </li>
-      </ul>
-    </section>
-    <section class="space-y-3">
-      <h3>Icon Size (Number)</h3>
-      <ul>
-        <li>
-          <cll-status-indicator [iconStatus]="'unknown'" [iconSize]="20"> unknown </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'inactive'" [iconSize]="30"> Inactive </cll-status-indicator>
-        </li>
-        <li>
-          <cll-status-indicator [iconStatus]="'pending'" [iconSize]="40"> Pending </cll-status-indicator>
-        </li>
-      </ul>
-    </section>
-  </div>
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
 
-  <section class="space-y-3">
-    <h3>Icon with Tooltip</h3>
-    <p>Hover your mouse over the icon.</p>
-    <ul>
-      <li>
-        <cll-status-indicator
-          [iconStatus]="'error'"
-          [tooltip]="'describe the error reason'"
-          [tooltipPosition]="'tooltip-top-left'"
-        >
-          Error
-        </cll-status-indicator>
-      </li>
-      <li>
-        <cll-status-indicator
-          [iconStatus]="'success'"
-          [tooltip]="'status is success'"
-          [tooltipPosition]="'tooltip-bottom-left'"
-        >
-          Success
-        </cll-status-indicator>
-      </li>
-      <li>
-        <cll-status-indicator
-          [iconStatus]="'warning'"
-          [tooltip]="'status is warning'"
-          [tooltipPosition]="'tooltip-bottom-right'"
-        >
-          Warning
-        </cll-status-indicator>
-      </li>
-      <li>
-        <cll-status-indicator
-          [iconStatus]="'unknown'"
-          [tooltip]="'unknown status'"
-          [tooltipPosition]="'tooltip-top-right'"
-        >
-          unknown
-        </cll-status-indicator>
-      </li>
-      <li>
-        <cll-status-indicator
-          [iconStatus]="'inactive'"
-          [tooltip]="'inactive status'"
-          [tooltipPosition]="'tooltip-top-left'"
-        >
-          Inactive
-        </cll-status-indicator>
-      </li>
-      <li>
-        <cll-status-indicator
-          [iconStatus]="'pending'"
-          [tooltip]="'some pending happen'"
-          [tooltipPosition]="'tooltip-left'"
-        >
-          Pending
-        </cll-status-indicator>
-      </li>
-    </ul>
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Display status indicators with different status types:</p>
+      <div class="grid lg:grid-cols-3 gap-5">
+        <section class="space-y-3">
+          <h4>Status Types</h4>
+          <ul class="space-y-2">
+            <li>
+              <cll-status-indicator [iconStatus]="'error'"> Error </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'success'"> Success </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'unknown'"> unknown </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'inactive'"> Inactive </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'pending'"> Pending </cll-status-indicator>
+            </li>
+          </ul>
+        </section>
+        <section class="space-y-3">
+          <h4>Icon Size (T-Shirt Sizing)</h4>
+          <ul class="space-y-2">
+            <li>
+              <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'success'" iconSize="md"> Success </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'warning'" iconSize="lg"> Warning </cll-status-indicator>
+            </li>
+          </ul>
+        </section>
+        <section class="space-y-3">
+          <h4>Icon Size (Number)</h4>
+          <ul class="space-y-2">
+            <li>
+              <cll-status-indicator [iconStatus]="'unknown'" [iconSize]="20"> unknown </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'inactive'" [iconSize]="30"> Inactive </cll-status-indicator>
+            </li>
+            <li>
+              <cll-status-indicator [iconStatus]="'pending'" [iconSize]="40"> Pending </cll-status-indicator>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Icon with Tooltip</h3>
+      <p>Add tooltips to status indicators for additional information. Hover your mouse over the icons below:</p>
+      <ul class="space-y-2">
+        <li>
+          <cll-status-indicator
+            [iconStatus]="'error'"
+            [tooltip]="'describe the error reason'"
+            [tooltipPosition]="'tooltip-top-left'"
+          >
+            Error
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator
+            [iconStatus]="'success'"
+            [tooltip]="'status is success'"
+            [tooltipPosition]="'tooltip-bottom-left'"
+          >
+            Success
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator
+            [iconStatus]="'warning'"
+            [tooltip]="'status is warning'"
+            [tooltipPosition]="'tooltip-bottom-right'"
+          >
+            Warning
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator
+            [iconStatus]="'unknown'"
+            [tooltip]="'unknown status'"
+            [tooltipPosition]="'tooltip-top-right'"
+          >
+            unknown
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator
+            [iconStatus]="'inactive'"
+            [tooltip]="'inactive status'"
+            [tooltipPosition]="'tooltip-top-left'"
+          >
+            Inactive
+          </cll-status-indicator>
+        </li>
+        <li>
+          <cll-status-indicator
+            [iconStatus]="'pending'"
+            [tooltip]="'some pending happen'"
+            [tooltipPosition]="'tooltip-left'"
+          >
+            Pending
+          </cll-status-indicator>
+        </li>
+      </ul>
+      <app-code-block [code]="tooltipExampleCode" lang="html" />
+    </article>
   </section>
 
-  <section class="space-y-6">
-    <h2>Example</h2>
-    <app-code-block [code]="exampleCode" lang="html" />
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>StatusIndicatorComponent</h3>
+        <p>Component for displaying status indicators with icons and text.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>iconStatus: 'error' | 'success' | 'warning' | 'unknown' | 'inactive' | 'pending'</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Required)</em> The status type that determines the icon and color displayed.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>iconSize?: 'sm' | 'md' | 'lg' | number</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The size of the icon. Can be a t-shirt size ('sm', 'md', 'lg') or a number in pixels.
+                Defaults to 'md'.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>tooltip?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Tooltip text to display when hovering over the icon. If provided, a tooltip will be
+                shown.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>tooltipPosition?: string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Position of the tooltip relative to the icon. Options include 'tooltip-top-left',
+                'tooltip-top-right', 'tooltip-bottom-left', 'tooltip-bottom-right', 'tooltip-left', etc.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </section>
 </cll-page-container>

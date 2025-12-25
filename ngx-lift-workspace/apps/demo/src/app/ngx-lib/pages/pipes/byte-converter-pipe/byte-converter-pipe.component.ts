@@ -12,28 +12,20 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ByteConverterPipeComponent {
-  importCode = highlight(`import { ByteConverterPipe } from 'ngx-lift';`);
-
-  exampleCode = highlight(`
+  basicExampleCode = highlight(`
 import {ByteConverterPipe} from 'ngx-lift';
 
 @Component({
   imports: [ByteConverterPipe],
   template: \`
     <p>{{ 104.89 | byteConverter }}</p>
-    <!-- Input fileSize: 104.89 bytes, Output: "104.89 B" -->
+    <!-- Output: "104.89 B" -->
 
     <p>{{ 1044.89 | byteConverter }}</p>
-    <!-- Input fileSize: 1044.89 bytes, Output: "1.02 KB" -->
-
-    <p>{{ 2 * 1024 * 1024 | byteConverter }}</p>
-    <!-- Input fileSize: 2 * 1024 * 1024 bytes, Output: "2 MB" -->
-
-    <p>{{ 2.89 * 1024 * 1024 * 1024 * 1024 | byteConverter }}</p>
-    <!-- Input fileSize: 2.89 * 1024 * 1024 * 1024 * 1024 bytes, Output: "2.89 TB" -->
+    <!-- Output: "1.02 KB" -->
   \`
 })
-export class ByteConverterPipeDemoComponent { }
+export class ByteConverterExampleComponent {}
   `);
 
   fileSizeDisplayCode = highlight(`
@@ -46,5 +38,37 @@ import {ByteConverterPipe} from 'ngx-lift';
     <!-- Example: "File size: 1.02 KB" -->
   \`
 })
+export class FileSizeExampleComponent {
+  fileSizeInBytes = 1044.89;
+}
+  `);
+
+  unitConversionsCode = highlight(`
+import {ByteConverterPipe} from 'ngx-lift';
+
+@Component({
+  imports: [ByteConverterPipe],
+  template: \`
+    <p>{{ 104.89 | byteConverter }}</p>
+    <!-- Output: "104.89 B" -->
+
+    <p>{{ 1044.89 | byteConverter }}</p>
+    <!-- Output: "1.02 KB" -->
+
+    <p>{{ 2 * 1024 * 1024 | byteConverter }}</p>
+    <!-- Output: "2 MB" -->
+
+    <p>{{ 3 * 1024 * 1024 * 1024 | byteConverter }}</p>
+    <!-- Output: "3 GB" -->
+
+    <p>{{ 2.89 * 1024 * 1024 * 1024 * 1024 | byteConverter }}</p>
+    <!-- Output: "2.89 TB" -->
+  \`
+})
+export class UnitConversionsExampleComponent {}
+  `);
+
+  signatureCode = highlight(`
+transform(value?: number | null): string | null
   `);
 }

@@ -57,17 +57,22 @@ export class ComputedAsyncComponent {
 
   promiseCode = highlight(`
 import {computedAsync} from 'ngx-lift';
+import {Component, input, Signal} from '@angular/core';
 
 export class UserDetailComponent {
   userId = input.required<number>();
 
-  user = computedAsync(
+  user: Signal<User | undefined> = computedAsync(
     () => fetch(\`https://localhost/api/users/\${this.userId()}\`).then((res) => res.json()),
   );
 }
   `);
 
   observableCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
 export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
@@ -79,69 +84,90 @@ export class UserDetailComponent {
   `);
 
   regularCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, Signal} from '@angular/core';
+
 export class UserDetailComponent {
-  user = computedAsync(() => ({name: 'Great user!'}), { requireSync: true });
+  user: Signal<User> = computedAsync(() => ({name: 'Great user!'}), {requireSync: true});
 }
   `);
 
   promiseInitialValueCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, input, Signal} from '@angular/core';
+
 export class UserDetailComponent {
   userId = input.required<number>();
 
-  user = computedAsync(
+  user: Signal<User> = computedAsync(
     () => fetch(\`https://localhost/api/users/\${this.userId()}\`).then((res) => res.json()),
-    { initialValue: { name: 'Placeholder' } }
+    {initialValue: {name: 'Placeholder'}},
   );
 }
   `);
 
   requireSyncCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {startWith} from 'rxjs/operators';
+
 export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
   user: Signal<User> = computedAsync(
-    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`).pipe(startWith({ name: 'Placeholder' })),
-    { requireSync: true },
+    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`).pipe(startWith({name: 'Placeholder'})),
+    {requireSync: true},
   );
 }
   `);
 
   createAsyncStateCode = highlight(`
 import {computedAsync, createAsyncState} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {AsyncState} from 'ngx-lift';
 
 export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
   userState: Signal<AsyncState<User>> = computedAsync(
-    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`).pipe(createAsyncState())),
-    { requireSync: true },
+    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`).pipe(createAsyncState()),
+    {requireSync: true},
   );
 }
   `);
 
   behaviorCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
 export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  user = computedAsync(
+  user: Signal<User | undefined> = computedAsync(
     () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
-    { behavior: 'merge' },
+    {behavior: 'merge'}, // or 'switch', 'concat', 'exhaust'
   );
 }
   `);
 
   previousCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
 export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  user = computedAsync(
+  user: Signal<User | undefined> = computedAsync(
     (previousValue) => {
       // Use previousValue here if you need
-
       return this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`);
     },
   );
@@ -172,8 +198,10 @@ export class UserDetailComponent {
 
   loadInitiallyTsCode = highlight(`
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
+import {Component, inject, Signal} from '@angular/core';
+import {UserService} from './user.service';
 
-export class UserDetailComponent {
+export class UserListComponent {
   private userService = inject(UserService);
   private refreshTrigger = createTrigger();
 
@@ -219,8 +247,10 @@ export class UserDetailComponent {
 
   loadDeferTsCode = highlight(`
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
+import {Component, inject, Signal} from '@angular/core';
+import {UserService} from './user.service';
 
-export class UserDetailComponent {
+export class UserListComponent {
   private userService = inject(UserService);
   private fetchTrigger = createTrigger();
 
@@ -232,6 +262,19 @@ export class UserDetailComponent {
   load() {
     this.fetchTrigger.next();
   }
+}
+  `);
+
+  signatureCode = highlight(`
+computedAsync<T>(
+  computation: (previousValue?: T) => Promise<T> | Observable<T> | T,
+  options?: ComputedAsyncOptions<T>
+): Signal<T | undefined> | Signal<T>
+
+interface ComputedAsyncOptions<T> {
+  initialValue?: T;
+  requireSync?: boolean;
+  behavior?: 'switch' | 'merge' | 'concat' | 'exhaust';
 }
   `);
 }

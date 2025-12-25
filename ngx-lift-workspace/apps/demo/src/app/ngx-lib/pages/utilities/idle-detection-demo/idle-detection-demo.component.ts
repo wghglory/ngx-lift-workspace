@@ -52,13 +52,19 @@ bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err))
   `);
 
   someComponentUsage = highlight(`
-import { IdleDetectionService } from 'ngx-lift';
+import {IdleDetectionService} from 'ngx-lift';
+import {Component, inject, OnInit, OnDestroy} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {DestroyRef} from '@angular/core';
 
-export class AppComponent implements OnInit {
-  constructor(private idleDetectionService: IdleDetectionService, private authService: AuthService) {}
+@Component({})
+export class AppComponent implements OnInit, OnDestroy {
+  private idleDetectionService = inject(IdleDetectionService);
+  private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    if(this.authService.isLoggedIn) {
+    if (this.authService.isLoggedIn) {
       // setConfig is optional if you have idle configuration by provideIdleDetectionConfig
       // This will overwrite the config passed by provideIdleDetectionConfig
       this.idleDetectionService.setConfig({
@@ -69,20 +75,29 @@ export class AppComponent implements OnInit {
       // Most important, start to watch for user inactivity!
       this.idleDetectionService.startWatching();
 
-      this.idleDetectionService.onIdleEnd().subscribe(() => {
-        // Handle idle end event, e.g., show a warning dialog
-        console.log('idle detection phase ends, enter timeout phase');
-      });
+      this.idleDetectionService
+        .onIdleEnd()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          // Handle idle end event, e.g., show a warning dialog
+          console.log('idle detection phase ends, enter timeout phase');
+        });
 
-      this.idleDetectionService.onTimeoutEnd().subscribe(() => {
-        // Handle timeout end event, e.g., log out the user
-        console.log('timeout phase ends, should logout user');
-      });
+      this.idleDetectionService
+        .onTimeoutEnd()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          // Handle timeout end event, e.g., log out the user
+          console.log('timeout phase ends, should logout user');
+        });
 
-      this.idleDetectionService.onCountDown().subscribe((countdown) => {
-        // Update the UI with the remaining time if needed
-        console.log(countdown, 'display countdown in UI');
-      });
+      this.idleDetectionService
+        .onCountDown()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((countdown) => {
+          // Update the UI with the remaining time if needed
+          console.log(countdown, 'display countdown in UI');
+        });
     }
   }
 
@@ -94,12 +109,17 @@ export class AppComponent implements OnInit {
 
   idleDetectionComponentCode = highlight(`
 import {IdleDetectionComponent} from 'clr-lift';
+import {Component, inject} from '@angular/core';
 
 @Component({
   imports: [IdleDetectionComponent],
   template: \`
-    if(isLoggedIn) {
-      <cll-idle-detection [idleDurationInSeconds]="15 * 60" [timeoutDurationInSeconds]="5 * 60" (timeout)="onTimeout()" />
+    @if (isLoggedIn) {
+      <cll-idle-detection
+        [idleDurationInSeconds]="15 * 60"
+        [timeoutDurationInSeconds]="5 * 60"
+        (timeout)="onTimeout()"
+      />
     }
   \`
 })

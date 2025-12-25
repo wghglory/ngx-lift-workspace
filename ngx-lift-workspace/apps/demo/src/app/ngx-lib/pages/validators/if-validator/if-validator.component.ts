@@ -35,9 +35,39 @@ export class IfValidatorComponent {
 
   ifValidatorCode = highlight(`
 import {ifValidator} from 'ngx-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
+  template: \`
+    <form [formGroup]="form">
+      <clr-radio-container>
+        <label>Do you like this tool?</label>
+        <clr-radio-wrapper>
+          <input type="radio" clrRadio name="choice" value="LIKE" [formControl]="form.controls.choice" (change)="changeChoice()" />
+          <label>Of course 😜</label>
+        </clr-radio-wrapper>
+        <clr-radio-wrapper>
+          <input type="radio" clrRadio name="choice" value="UNLIKE" [formControl]="form.controls.choice" (change)="changeChoice()" />
+          <label>Sorry 😅</label>
+        </clr-radio-wrapper>
+      </clr-radio-container>
+
+      <clr-input-container>
+        <label>Email</label>
+        <input clrInput type="text" [formControl]="form.controls.email" />
+        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+        <clr-control-error *clrIfError="'email'">Invalid email</clr-control-error>
+      </clr-input-container>
+
+      <clr-input-container>
+        <label>Reason why you don't like</label>
+        <input clrInput type="text" [formControl]="form.controls.reason" />
+        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+      </clr-input-container>
+    </form>
+  \`
 })
 export class IfValidatorComponent {
   validator = ifValidator(
@@ -58,5 +88,50 @@ export class IfValidatorComponent {
     this.form.controls.reason.updateValueAndValidity();
   }
 }
+  `);
+
+  ifAsyncValidatorCode = highlight(`
+import {ifAsyncValidator} from 'ngx-lift';
+import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {of} from 'rxjs';
+import {delay} from 'rxjs/operators';
+
+@Component({
+  imports: [ReactiveFormsModule],
+})
+export class IfAsyncValidatorComponent {
+  asyncValidator = ifAsyncValidator(
+    () => this.form?.controls.enableAsync.value === true,
+    (control) => {
+      // Simulate async validation
+      return of(null).pipe(delay(1000));
+    }
+  );
+
+  form = new FormGroup({
+    enableAsync: new FormControl(false),
+    asyncField: new FormControl('', null, this.asyncValidator),
+  });
+
+  toggleAsync() {
+    this.form.controls.asyncField.updateValueAndValidity();
+  }
+}
+  `);
+
+  ifValidatorSignatureCode = highlight(`
+ifValidator(
+  condition: () => boolean,
+  trueValidatorFn: ValidatorFn | ValidatorFn[],
+  falseValidatorFn?: ValidatorFn | ValidatorFn[]
+): ValidatorFn
+  `);
+
+  ifAsyncValidatorSignatureCode = highlight(`
+ifAsyncValidator(
+  condition: () => boolean,
+  asyncValidatorFn: AsyncValidatorFn
+): AsyncValidatorFn
   `);
 }

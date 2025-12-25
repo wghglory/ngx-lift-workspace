@@ -86,66 +86,90 @@ RpegRTbFn9zkb7yHHaBaVYk6pAnpF8+e
     console.log(this.form.value);
   }
 
-  htmlCode = highlight(`
-<form clrForm [formGroup]="form" (ngSubmit)="submit()">
-    <clr-control-container>
-      <label for="ca-bundle">CA Bundle</label>
-      <cll-file-reader
-        controlId="ca-bundle"
-        clrControl
-        [encoded]="false"
-        [maxSize]="certFileLimit"
-        [acceptFiles]="certAcceptedFiles"
-        [formControl]="form.controls.caCert"
-        (fileChange)="onFileChange($event)"
-      />
-      <clr-control-success *ngIf="form.controls.caCert.value">
-        Show certificate:
-        <cll-certificate-signpost
-          *ngIf="form.controls.caCert.valid"
-          [pem]="form.controls.caCert.value"
-          [pemEncoded]="false"
-          [showIcon]="true"
-          [position]="'bottom-right'"
-        />
-      </clr-control-success>
-      <clr-control-error *clrIfError="'exceedLimit'">
-        Exceed the maximum file size ({{ certFileLimit }} MB).
-      </clr-control-error>
-      <clr-control-error *clrIfError="'invalidCertificate'"> Cannot parse the file correctly </clr-control-error>
-      <clr-control-error *clrIfError="'required'"> Required </clr-control-error>
-    </clr-control-container>
+  basicExampleCode = highlight(`
+import {FileReaderComponent} from 'clr-lift';
+import {ReactiveFormsModule} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
 
-    <clr-control-container>
-      <label for="file">File</label>
-      <cll-file-reader controlId="file" clrControl [encoded]="false" [formControl]="form.controls.file" />
-      <clr-control-success *ngIf="form.controls.file.value">
-        File content has been read successfully
-      </clr-control-success>
-      <clr-control-error *clrIfError="'parse'; error as error"> {{ error }} </clr-control-error>
-      <clr-control-error *clrIfError="'required'"> Required </clr-control-error>
-    </clr-control-container>
+@Component({
+  imports: [ClarityModule, ReactiveFormsModule, FileReaderComponent],
+  template: \`
+    <form clrForm [formGroup]="form" (ngSubmit)="submit()">
+      <clr-control-container>
+        <label for="file">File</label>
+        <cll-file-reader controlId="file" clrControl [encoded]="false" [formControl]="form.controls.file" />
+        @if (form.controls.file.value) {
+          <clr-control-success>File content has been read successfully</clr-control-success>
+        }
+        <clr-control-error *clrIfError="'parse'; error as error">{{ error }}</clr-control-error>
+        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+      </clr-control-container>
 
-    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
-  </form>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
+    </form>
+  \`
+})
+export class FileReaderExampleComponent {
+  form = new FormGroup({
+    file: new FormControl('', [Validators.required]),
+  });
+
+  submit() {
+    console.log(this.form.value);
+  }
+}
   `);
 
-  tsCode = highlight(`
+  certificateExampleCode = highlight(`
 import {CertificateSignpostComponent, certificateValidator, FileReaderComponent} from 'clr-lift';
+import {ReactiveFormsModule, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
 
 @Component({
   imports: [
-    CommonModule,
     ClarityModule,
     ReactiveFormsModule,
     CertificateSignpostComponent,
     FileReaderComponent,
-  ]
+  ],
+  template: \`
+    <form clrForm [formGroup]="form" (ngSubmit)="submit()">
+      <clr-control-container>
+        <label for="ca-bundle">CA Bundle</label>
+        <cll-file-reader
+          controlId="ca-bundle"
+          clrControl
+          [encoded]="false"
+          [maxSize]="certFileLimit"
+          [acceptFiles]="certAcceptedFiles"
+          [formControl]="form.controls.caCert"
+          (fileChange)="onFileChange($event)"
+        />
+        @if (form.controls.caCert.value) {
+          <clr-control-success>
+            Show certificate:
+            @if (form.controls.caCert.valid) {
+              <cll-certificate-signpost
+                [pem]="form.controls.caCert.value"
+                [pemEncoded]="false"
+                [showIcon]="true"
+                [position]="'bottom-right'"
+              />
+            }
+          </clr-control-success>
+        }
+        <clr-control-error *clrIfError="'exceedLimit'">
+          Exceed the maximum file size ({{ certFileLimit }} MB).
+        </clr-control-error>
+        <clr-control-error *clrIfError="'invalidCertificate'; error as error">{{ error }}</clr-control-error>
+        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+      </clr-control-container>
+    </form>
+  \`
 })
-export class FileReaderDemoComponent {
+export class CertificateFileReaderExampleComponent {
   form = new FormGroup({
     caCert: new FormControl('', [certificateValidator(), Validators.required]),
-    file: new FormControl('', [Validators.required]),
   });
 
   certAcceptedFiles = '.pem, .cer, .key';
@@ -157,12 +181,6 @@ export class FileReaderDemoComponent {
 
   submit() {
     console.log(this.form.value);
-  }
-
-  ngOnInit() {
-    this.form.patchValue({
-      caCert: '-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----',
-    });
   }
 }
   `);

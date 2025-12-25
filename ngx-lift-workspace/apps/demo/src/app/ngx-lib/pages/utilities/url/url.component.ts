@@ -54,6 +54,24 @@ try {
 import {isHttps, isURL} from 'ngx-lift';
 
 console.log(isURL('http://www.example.com')); // true
+console.log(isURL('invalid-url')); // false
 console.log(isHttps('https://192.168.0.1')); // true
-    `);
+console.log(isHttps('http://www.example.com')); // false
+  `);
+
+  isIPSignatureCode = highlight(`
+isIP(hostname: string): boolean
+  `);
+
+  isFQDNSignatureCode = highlight(`
+isFQDN(hostname: string): boolean
+  `);
+
+  isURLSignatureCode = highlight(`
+isURL(url: string): boolean
+  `);
+
+  isHttpsSignatureCode = highlight(`
+isHttps(url: string): boolean
+  `);
 }

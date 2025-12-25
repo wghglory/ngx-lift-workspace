@@ -1,27 +1,54 @@
 <cll-page-container [title]="'createTrigger'" customClass="space-y-9">
-  <section class="space-y-6">
-    <p>
-      <code>createTrigger</code> provides a way to manually initiate signal re-computations by referencing the trigger
-      signal it creates. Its functionality is similar to RxJS Subject. With each event, you can notify the subject using
-      its <code>next</code> method. Using <code>createTrigger</code> is convenient for manually triggering a "refresh"
-      and responding to it in a signal-oriented manner.
-    </p>
+  <!-- Overview -->
+  <p>
+    The <code>createTrigger</code> function provides a way to manually initiate signal re-computations by referencing the
+    trigger signal it creates. Its functionality is similar to RxJS Subject. With each event, you can notify the subject
+    using its <code>next</code> method. Using <code>createTrigger</code> is convenient for manually triggering a "refresh"
+    and responding to it in a signal-oriented manner.
+  </p>
 
-    <p>
-      <code>createTrigger</code>() returns an object with two properties: <code>next</code> and <code>value</code>. The
-      <code>value</code> property indicates how many times you have triggered the signal update. The
-      <code>next</code> method is used to trigger the signal update. Consequently, you can prompt the re-computation of
-      any computed or effect (including <code>computedAsync</code> from ngx-lift) by accessing the signal returned when
-      listening.
-    </p>
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
 
-    <button class="btn btn-primary" (click)="refresh()">See Console Log</button>
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage</h3>
+      <p>Create a trigger and use it to manually trigger signal re-computations:</p>
+      <button class="btn btn-primary" (click)="refresh()">See Console Log</button>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+      <cll-callout>
+        Initially, <code>createTrigger's value()</code> returns 0. Whenever <code>next</code> is explicitly called, the
+        value adds 1.
+      </cll-callout>
+    </article>
 
-    <app-code-block [code]="triggerCode" />
+    <article class="space-y-3">
+      <h3>Example 2: Conditional Effect</h3>
+      <p>Use the trigger value conditionally to prevent running on initialization:</p>
+      <app-code-block [code]="conditionalExampleCode" lang="typescript" />
+    </article>
+  </section>
 
-    <cll-callout>
-      Initially, <code>createTrigger's value()</code> returns 0. Whenever <code>next</code> is explicitly called, the
-      value adds 1.
-    </cll-callout>
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>createTrigger</h3>
+        <p>Creates a trigger signal that can be used to manually initiate signal re-computations.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          An object with two properties:
+        </p>
+        <ul class="list-disc space-y-1 ml-6 text-sm">
+          <li><code>value</code>: A signal that returns the number of times the trigger has been called (starts at 0)</li>
+          <li><code>next</code>: A method to trigger the signal update</li>
+        </ul>
+      </div>
+    </div>
   </section>
 </cll-page-container>

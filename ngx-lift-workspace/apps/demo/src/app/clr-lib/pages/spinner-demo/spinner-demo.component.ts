@@ -11,19 +11,33 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinnerDemoComponent {
-  importCode = highlight(`
-import {SpinnerComponent} from 'clr-lift';
-
-@Component({
-  imports: [SpinnerComponent],
-})
-export class YourComponent { }
+  defaultCode = highlight(`
+<cll-spinner />
   `);
 
-  defaultCode = highlight(`<cll-spinner />`);
-  middleSizeCode = highlight(`<cll-spinner [size]="'md'" />`);
-  smallSizeCode = highlight(`<cll-spinner [size]="'sm'" />`);
-  inlineCode = highlight(`<div><cll-spinner inline [class]="'mx-2'" /><span>Loading...</span></div>`);
-  alignLeftCode = highlight(`<cll-spinner [center]="false" />`);
-  customClassCode = highlight(`<cll-spinner [center]="false" [class]="'mx-10'" />`);
+  sizeVariationsCode = highlight(`
+<!-- Large (default) -->
+<cll-spinner />
+
+<!-- Medium -->
+<cll-spinner [size]="'md'" />
+
+<!-- Small -->
+<cll-spinner [size]="'sm'" />
+  `);
+
+  alignLeftCode = highlight(`
+<cll-spinner [center]="false" />
+  `);
+
+  customClassCode = highlight(`
+<cll-spinner [center]="false" [class]="'mx-10'" />
+  `);
+
+  inlineCode = highlight(`
+<div>
+  <cll-spinner inline [class]="'mx-2'" />
+  <span>Loading...</span>
+</div>
+  `);
 }

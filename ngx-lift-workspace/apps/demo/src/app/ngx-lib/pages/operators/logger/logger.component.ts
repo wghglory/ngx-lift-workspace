@@ -18,14 +18,34 @@ export class LoggerComponent implements OnInit {
     of([1, 1, 2, 2, 3, 4, 4, 5]).pipe(logger('table')).subscribe();
   }
 
-  tsCode = highlight(
-    `
+  basicExampleCode = highlight(`
+import {logger} from 'ngx-lift';
+import {of} from 'rxjs';
+
+of([1, 2, 3]).pipe(logger()).subscribe();
+// check your console for result
+  `);
+
+  tableExampleCode = highlight(`
 import {logger} from 'ngx-lift';
 import {of} from 'rxjs';
 
 of([1, 1, 2, 2, 3, 4, 4, 5]).pipe(logger('table')).subscribe();
+// check your console for table result
+  `);
 
-// check your console for result
-    `,
-  );
+  otherMethodsCode = highlight(`
+import {logger} from 'ngx-lift';
+import {of} from 'rxjs';
+
+of([1, 2, 3]).pipe(logger('warn')).subscribe();
+of([1, 2, 3]).pipe(logger('error')).subscribe();
+of([1, 2, 3]).pipe(logger('info')).subscribe();
+  `);
+
+  signatureCode = highlight(`
+logger(
+  method?: 'log' | 'table' | 'warn' | 'error' | 'info' | 'debug'
+): MonoTypeOperatorFunction<T>
+  `);
 }

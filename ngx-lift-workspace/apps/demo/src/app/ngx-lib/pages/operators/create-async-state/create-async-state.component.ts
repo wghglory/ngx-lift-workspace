@@ -14,8 +14,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateAsyncStateComponent {
-  importCode = highlight(`import { createAsyncState } from 'ngx-lift';`);
-
   callbackCode = highlight(`
 import {createAsyncState} from 'ngx-lift';
 
@@ -107,5 +105,12 @@ userState$ = this.userService.getUser(id).pipe(createAsyncState());
     <user-card [user]="user" />
   }
 }
+  `);
+
+  signatureCode = highlight(`
+createAsyncState<T, E>(
+  observerOrNextForOrigin?: Partial<TapObserver<T>> | ((value: T) => void),
+  initialValue?: AsyncState<T, E>
+): UnaryFunction<Observable<T>, Observable<AsyncState<T, E>>>
   `);
 }

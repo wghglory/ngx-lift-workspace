@@ -157,9 +157,14 @@ export class CombineFromComponent {
   `);
 
   realCode = highlight(`
-import {combineFrom} from 'ngx-lift';
+import {combineFrom, createAsyncState} from 'ngx-lift';
+import {Component, inject, signal} from '@angular/core';
+import {pipe, switchMap} from 'rxjs';
+import {of} from 'rxjs';
+import {SpinnerComponent, AlertComponent} from 'clr-lift';
 
 @Component({
+  imports: [SpinnerComponent, AlertComponent],
   template: \`
     @if (usersState()?.loading) {
       <cll-spinner />
@@ -175,7 +180,8 @@ import {combineFrom} from 'ngx-lift';
           <app-user-card [user]="user" />
         }
       </div>
-    }\`
+    }
+  \`
 })
 export class CombineFromComponent {
   private userService = inject(UserService);
@@ -189,5 +195,13 @@ export class CombineFromComponent {
     ),
   );
 }
+  `);
+
+  signatureCode = highlight(`
+combineFrom<T>(
+  sources: Record<string, Observable<T> | Signal<T>> | Array<Observable<T> | Signal<T>>,
+  operator?: OperatorFunction,
+  options?: CombineFromOptions
+): Signal<T[] | Record<string, T>>
   `);
 }

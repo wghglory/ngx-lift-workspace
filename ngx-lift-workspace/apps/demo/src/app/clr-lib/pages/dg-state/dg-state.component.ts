@@ -22,8 +22,6 @@ import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DgStateComponent {
-  importCode = highlight(`import { dgState } from 'clr-lift';`);
-
   dataCode = highlight(`
 {
   "results": [
@@ -43,6 +41,13 @@ export class DgStateComponent {
     "total": 100
   }
 }
+  `);
+
+  signatureCode = highlight(`
+dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
+  Observable<ClrDatagridStateInterface | null>,
+  Observable<ClrDatagridStateInterface | null>
+>
   `);
 
   htmlCode = highlight(
@@ -136,16 +141,18 @@ export class DgStateComponent {
 }
     `);
 
-  typescriptCode = highlight(
-    `
-// user-datagrid.component.ts
-import {AlertComponent, convertToHttpParams, dgState, PageContainerComponent} from 'clr-lift';
+  typescriptCode = highlight(`
+import {convertToHttpParams, dgState} from 'clr-lift';
+import {Component, inject} from '@angular/core';
+import {BehaviorSubject, combineLatest} from 'rxjs';
+import {distinctUntilChanged, filter, map, share, switchMap} from 'rxjs/operators';
 import {AsyncState, createAsyncState} from 'ngx-lift';
-// ... other imports
+import {ClrDatagridStateInterface} from '@clr/angular';
+import {isEqual} from 'ngx-lift';
 
+@Component({})
 export class UserDatagridComponent {
   selectedItem: User | undefined;
-
   userService = inject(UserService);
 
   private dgBS = new BehaviorSubject<ClrDatagridStateInterface | null>(null);
@@ -171,6 +178,5 @@ export class UserDatagridComponent {
     this.dgBS.next(state);
   }
 }
-`,
-  );
+  `);
 }

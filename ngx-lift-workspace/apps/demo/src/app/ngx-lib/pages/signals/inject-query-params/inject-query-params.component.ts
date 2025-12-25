@@ -40,26 +40,82 @@ export class InjectQueryParamsComponent {
     });
   }
 
-  code = highlight(`
-import {injectParams} from 'ngx-lift';
+  allParamsCode = highlight(`
+import {injectQueryParams} from 'ngx-lift';
 
-export class InjectParamsComponent {
+export class MyComponent {
+  // Returns a signal with all query parameters
+  allQueryParams = injectQueryParams();
+}
+  `);
+
+  singleParamCode = highlight(`
+import {injectQueryParams} from 'ngx-lift';
+import {Signal} from '@angular/core';
+
+export class MyComponent {
+  // Returns a signal with the value of the "page" query parameter
+  page: Signal<string | null> = injectQueryParams('page');
+}
+  `);
+
+  transformCode = highlight(`
+import {injectQueryParams} from 'ngx-lift';
+
+export class MyComponent {
+  // Returns a signal with all keys of the query params
+  queryParamsKeys = injectQueryParams((params) => Object.keys(params));
+}
+  `);
+
+  transformWithInitialCode = highlight(`
+import {injectQueryParams} from 'ngx-lift';
+import {numberAttribute, Signal} from '@angular/core';
+
+export class MyComponent {
+  // Returns a signal with "search" querystring, convert to number, initial value is 3
+  searchParam: Signal<number> = injectQueryParams('search', {
+    initialValue: 3,
+    transform: numberAttribute,
+  });
+}
+  `);
+
+  completeExampleCode = highlight(`
+import {injectQueryParams, computedAsync} from 'ngx-lift';
+import {computed} from '@angular/core';
+import {numberAttribute, Signal} from '@angular/core';
+
+export class SearchComponent {
+  private userService = inject(UserService);
+
+  // Get all query params
   allQueryParams = injectQueryParams();
 
-  // returns a signal with all keys of the query params
-  queryParamsKeys = injectQueryParams((params) => Object.keys(params));
+  // Transform with initial value
+  searchParam: Signal<number> = injectQueryParams('search', {
+    initialValue: 3,
+    transform: numberAttribute,
+  });
 
-  // returns a signal with "search" querystring, convert the search value to number, initial value is 3
-  searchParam = injectQueryParams('search', {initialValue: 3, transform: numberAttribute});
+  // Get single param with transform
+  pageNumber: Signal<number | null> = injectQueryParams('page', {
+    transform: numberAttribute,
+  });
 
-  // whenever searchParam is changed, fetch users
+  // Use with computedAsync to fetch data when param changes
   users = computedAsync(() => this.userService.getUsers({results: this.searchParam()}));
 
-  // returns a signal with "page" querystring, convert the page value to number
-  pageNumber = injectQueryParams('page', {transform: numberAttribute});
-
-  // you can use computed with the signal returned from injectQueryParams
+  // Use with computed
   multipliedNumber = computed(() => (this.pageNumber() || 0) * 2);
 }
+  `);
+
+  signatureCode = highlight(`
+injectQueryParams(): Signal<Params>
+injectQueryParams(key: string): Signal<string | null>
+injectQueryParams<T>(key: string, options: InjectQueryParamsOptions<T>): Signal<T>
+injectQueryParams<T>(transform: (params: Params) => T): Signal<T>
+injectQueryParams<T>(transform: (params: Params) => T, options: InjectQueryParamsOptions<T>): Signal<T>
   `);
 }

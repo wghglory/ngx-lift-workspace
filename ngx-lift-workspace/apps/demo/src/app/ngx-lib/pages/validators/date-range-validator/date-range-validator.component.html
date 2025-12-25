@@ -1,159 +1,172 @@
 <cll-page-container [title]="'dateRangeValidator'" customClass="space-y-9">
-  <section class="space-y-6">
-    <h2>Overview</h2>
-    <p><code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range.</p>
+  <!-- Overview -->
+  <p>
+    The <code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range. It
+    supports validation for both date-only values and date-time values, with configurable inclusive/exclusive boundaries
+    and optional time comparison.
+  </p>
 
-    <h3>Inputs</h3>
-    <p>
-      The <code>dateRangeValidator</code> function accepts an interface, <code>DateRangeOptions</code>, which defines
-      the options for the date range validation. Here's a breakdown of the options:
-    </p>
-    <ol class="list-decimal space-y-3">
-      <li>
-        <code>minDate</code>: The minimum allowed date. If provided, the selected date must be equal to or later than
-        this date. The equality is determined based on the <code>minInclusive</code> option.
-      </li>
-      <li>
-        <code>maxDate</code>: The maximum allowed date. If provided, the selected date must be equal to or earlier than
-        this date. The equality is determined based on the <code>maxInclusive</code> option.
-      </li>
-      <li>
-        <code>minInclusive</code>: A boolean indicating whether the comparison for the minimum date can include the
-        exact date. Defaults to false.
-      </li>
-      <li>
-        <code>maxInclusive</code>: A boolean indicating whether the comparison for the maximum date can include the
-        exact date. Defaults to false.
-      </li>
-      <li>
-        <code>compareTime</code>: A boolean indicating whether to compare the time as well. If true, comparisons will
-        include the time components of the date; if false, the time parts will be ignored.
-      </li>
-    </ol>
-    <app-code-block [code]="dateRangeOptionsInterface" />
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
 
-    <h3>Outputs</h3>
-    <p>The outputs of the <code>dateRangeValidator</code> function are as follows:</p>
+    <article class="space-y-3">
+      <h3>Example 1: Date Range Validation</h3>
+      <p>
+        Validate that a date falls between a minimum and maximum date. This configuration ensures that the selected date
+        must fall between September 1st, 2024, and September 15th, 2024 (exclusive), ignoring the time components.
+        Sep. 15th is not valid since <code>maxInclusive</code> is false.
+      </p>
+      <app-code-block [code]="dateExampleCode" lang="typescript" />
+    </article>
 
-    <ol class="list-decimal space-y-3">
-      <li>
-        <code>invalidDate</code>: Indicating whether the date is invalid.
-        <ul class="list-disc indent-3">
-          <li>The user enters a date that is not in a valid format (e.g., "2023-13-01").</li>
-          <li>The user enters a non-date value (e.g., "hello world").</li>
+    <article class="space-y-3">
+      <h3>Example 2: Select a Future Date</h3>
+      <p>
+        Below example allows to select a future date and include today. To include the <code>minDate</code>, set
+        <code>minInclusive</code> to <code>true</code>.
+      </p>
+      <form clrForm [formGroup]="dateForm" clrLabelSize="3">
+        <clr-input-container class="!mt-1">
+          <label for="date-expires">Expiration Date (Raw HTML Input)</label>
+          <input
+            type="date"
+            id="date-expires"
+            class="w-[10rem]"
+            clrInput
+            [formControl]="dateForm.controls.expires"
+            [min]="todayInISO"
+          />
+          <clr-control-error *clrIfError="'minDate'; error as minDate">
+            The date cannot be earlier than {{ minDate }}
+          </clr-control-error>
+        </clr-input-container>
+
+        <clr-date-container>
+          <label class="clr-required-mark" for="date-future-days">Future 5 Days (Clarity Date Input)</label>
+          <input
+            type="date"
+            id="date-future-days"
+            clrDate
+            [formControl]="dateForm.controls.futureDays"
+            required
+            [min]="tomorrowInISO"
+            [max]="fiveDaysLaterInISO"
+          />
+          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'invalidDate'">The date is invalid</clr-control-error>
+          <clr-control-error *clrIfError="'maxDate'; error as maxDate">
+            The date cannot be later than {{ maxDate }}
+          </clr-control-error>
+          <clr-control-error *clrIfError="'minDate'; error as minDate">
+            The date cannot be earlier than {{ minDate }}
+          </clr-control-error>
+          <clr-control-error *clrIfError="'max'">The date is too late (clarity validation)</clr-control-error>
+          <clr-control-error *clrIfError="'min'">The date is too early (clarity validation)</clr-control-error>
+        </clr-date-container>
+      </form>
+      <app-code-block [code]="dateCode" lang="typescript" />
+      <cll-callout>
+        We could use the <code>min</code> and <code>max</code> pattern to validate the range. However, this validation
+        will not fail when typing a number like 12 or a string like 12hello.
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Date and Time Range Validation</h3>
+      <p>
+        To validate both the date and the time, set <code>compareTime</code> to true. With the below configuration, the
+        selected date and time must fall between September 1st, 2024, at noon UTC, and September 2nd, 2024, at noon UTC,
+        considering the time components.
+      </p>
+      <app-code-block [code]="dateTimeExampleCode" lang="typescript" />
+      <form clrForm [formGroup]="dateTimeForm">
+        <clr-input-container class="!mt-1">
+          <label class="clr-required-mark" for="datetime-expires">Expiration Date</label>
+          <input
+            type="datetime-local"
+            id="datetime-expires"
+            clrInput
+            [formControl]="dateTimeForm.controls.expires"
+            required
+            [min]="minTimestamp"
+            [max]="maxTimestamp"
+          />
+          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'minDate'; error as minDate">
+            The date time cannot be earlier than {{ minDate }}
+          </clr-control-error>
+          <clr-control-error *clrIfError="'maxDate'; error as maxDate">
+            The date time cannot be later than {{ maxDate }}
+          </clr-control-error>
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="dateTimeCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>dateRangeValidator</h3>
+        <p>Validates that a date falls within a specified range.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>options: DateRangeOptions</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Configuration options for date range validation:</p>
+              <ul class="list-disc space-y-1 ml-6 mt-1 text-sm">
+                <li>
+                  <code>minDate?: Date | string</code> - The minimum allowed date. If provided, the selected date must
+                  be equal to or later than this date.
+                </li>
+                <li>
+                  <code>maxDate?: Date | string</code> - The maximum allowed date. If provided, the selected date must
+                  be equal to or earlier than this date.
+                </li>
+                <li>
+                  <code>minInclusive?: boolean</code> - Whether the comparison for the minimum date can include the exact
+                  date. Defaults to <code>false</code>.
+                </li>
+                <li>
+                  <code>maxInclusive?: boolean</code> - Whether the comparison for the maximum date can include the exact
+                  date. Defaults to <code>false</code>.
+                </li>
+                <li>
+                  <code>compareTime?: boolean</code> - Whether to compare the time as well. If <code>true</code>,
+                  comparisons will include the time components of the date; if <code>false</code>, the time parts will
+                  be ignored. Defaults to <code>false</code>.
+                </li>
+              </ul>
+            </div>
+          </li>
         </ul>
-      </li>
 
-      <li>
-        <code>minDate</code>: This error is returned when the selected date is earlier than or equal to the minimum
-        allowed date. The value is the minimum allowed date, formatted as an ISO string (if applicable).
-        <ul class="list-disc indent-3">
-          <li>If minInclusive is false, the selected date is on or before the minDate.</li>
-          <li>If minInclusive is true, the selected date is before the minDate.</li>
+        <h4>Returns</h4>
+        <p class="text-sm">A validator function that can be used with Angular Reactive Forms.</p>
+
+        <h4>Validation Errors</h4>
+        <ul class="list-disc space-y-1 ml-6 text-sm">
+          <li>
+            <code>invalidDate</code> - Returned when the date is invalid (e.g., "2023-13-01" or "hello world")
+          </li>
+          <li>
+            <code>minDate</code> - Returned when the selected date is earlier than or equal to the minimum allowed date.
+            The error value is the minimum allowed date formatted as an ISO string.
+          </li>
+          <li>
+            <code>maxDate</code> - Returned when the selected date is later than or equal to the maximum allowed date.
+            The error value is the maximum allowed date formatted as an ISO string.
+          </li>
         </ul>
-      </li>
-
-      <li>
-        <code>maxDate</code>: This error is returned when the selected date is later than or equal to the maximum
-        allowed date. The value is the maximum allowed date, formatted as an ISO string (if applicable).
-        <ul class="list-disc indent-3">
-          <li>If maxInclusive is false, the selected date is on or after the maxDate.</li>
-          <li>If maxInclusive is true, the selected date is after the maxDate.</li>
-        </ul>
-      </li>
-    </ol>
-
-    <h2>Usage</h2>
-
-    <h3>1. Validating a Date</h3>
-    <p>
-      To validate a date, you can specify <code>minDate</code> and <code>maxDate</code>: This configuration ensures that
-      the selected date must fall between September 1st, 2024, and September 15th, 2024 (exclusive), ignoring the time
-      components. Sep. 15th is not valid since <code>maxInclusive</code> is false.
-    </p>
-    <app-code-block [code]="dateExample" />
-
-    <h4>Real Example: Select a Future Date</h4>
-    <p>
-      Below example allows to select a future date and include today. To include the <code>minDate</code>, set
-      <code>minInclusive</code> to <code>true</code>.
-    </p>
-    <form clrForm [formGroup]="dateForm" clrLabelSize="3">
-      <clr-input-container class="!mt-1">
-        <label for="date-expires">Expiration Date (Raw HTML Input)</label>
-        <input
-          type="date"
-          id="date-expires"
-          class="w-[10rem]"
-          clrInput
-          [formControl]="dateForm.controls.expires"
-          [min]="todayInISO"
-        />
-        <clr-control-error *clrIfError="'minDate'; error as minDate">
-          The date cannot be earlier than {{ minDate }}
-        </clr-control-error>
-      </clr-input-container>
-
-      <clr-date-container>
-        <label class="clr-required-mark" for="date-future-days">Future 5 Days (Clarity Date Input)</label>
-        <input
-          type="date"
-          id="date-future-days"
-          clrDate
-          [formControl]="dateForm.controls.futureDays"
-          required
-          [min]="tomorrowInISO"
-          [max]="fiveDaysLaterInISO"
-        />
-        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'invalidDate'">The date is invalid</clr-control-error>
-        <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-          The date cannot be later than {{ maxDate }}
-        </clr-control-error>
-        <clr-control-error *clrIfError="'minDate'; error as minDate">
-          The date cannot be earlier than {{ minDate }}
-        </clr-control-error>
-        <clr-control-error *clrIfError="'max'">The date is too late (clarity validation)</clr-control-error>
-        <clr-control-error *clrIfError="'min'">The date is too early (clarity validation)</clr-control-error>
-      </clr-date-container>
-    </form>
-    <app-code-block [code]="dateCode" />
-
-    <cll-callout>
-      We could use the <code>min</code> and <code>max</code> pattern to validate the range. However, this validation
-      will not fail when typing a number like 12 or a string like 12hello.
-    </cll-callout>
-
-    <h3>2. Validating a Date and Time</h3>
-    <p>
-      To validate both the date and the time, set <code>compareTime</code> to true. With the below configuration, the
-      selected date and time must fall between September 1st, 2024, at noon UTC, and September 2nd, 2024, at noon UTC,
-      considering the time components.
-    </p>
-    <app-code-block [code]="dateTimeExample" />
-
-    <h4>Real Example: Select a Date with Time Within a Range</h4>
-    <form clrForm [formGroup]="dateTimeForm">
-      <clr-input-container class="!mt-1">
-        <label class="clr-required-mark" for="datetime-expires">Expiration Date</label>
-        <input
-          type="datetime-local"
-          id="datetime-expires"
-          clrInput
-          [formControl]="dateTimeForm.controls.expires"
-          required
-          [min]="minTimestamp"
-          [max]="maxTimestamp"
-        />
-        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'minDate'; error as minDate">
-          The date time cannot be earlier than {{ minDate }}
-        </clr-control-error>
-        <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-          The date time cannot be later than {{ maxDate }}
-        </clr-control-error>
-      </clr-input-container>
-    </form>
-    <app-code-block [code]="dateTimeCode" />
+      </div>
+    </div>
   </section>
 </cll-page-container>

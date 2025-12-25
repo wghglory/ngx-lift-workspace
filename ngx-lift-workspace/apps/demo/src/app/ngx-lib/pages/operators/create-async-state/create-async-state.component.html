@@ -1,123 +1,124 @@
 <cll-page-container [title]="'createAsyncState'" customClass="space-y-9">
   <!-- Overview -->
-  <section class="space-y-4">
-    <h2>Overview</h2>
-    <p>
-      The <code>createAsyncState</code> operator is an RxJS operator designed to simplify asynchronous operation
-      handling. It transforms an observable of type <code>T</code> into an observable of
-      <code>AsyncState&lt;T&gt;</code>, encapsulating loading, error, and data states in a standardized structure. This
-      approach eliminates the need to manage separate variables for loading states, errors, and data, making your
-      codebase more organized and maintainable.
-    </p>
+  <p>
+    The <code>createAsyncState</code> operator transforms an observable of type <code>T</code> into an observable of
+    <code>AsyncState&lt;T&gt;</code>, encapsulating loading, error, and data states in a standardized structure. This
+    eliminates the need to manage separate variables for loading states, errors, and data, making your codebase more
+    organized and maintainable.
+  </p>
+  <p>The <code>AsyncState</code> interface structure that the operator returns:</p>
+  <app-code-block [code]="asyncStateCode" lang="typescript" />
 
-    <p>
-      When building interfaces that require multiple API requests, managing scattered loading and error variables
-      becomes increasingly complex. The <code>createAsyncState</code> operator provides a unified way to handle these
-      states, enabling seamless data integration into HTML components.
-    </p>
-  </section>
-
-  <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-3">
-      <h3>createAsyncState</h3>
-      <p>Transforms an Observable of type <code>T</code> into an Observable of <code>AsyncState&lt;T, E&gt;</code>.</p>
-
-      <h4>Signature</h4>
-      <div class="space-y-2">
-        <p>
-          <code
-            >createAsyncState&lt;T, E&gt;(observerOrNextForOrigin?: Partial&lt;TapObserver&lt;T&gt;&gt; | ((value: T) =>
-            void), initialValue?: AsyncState&lt;T, E&gt;): UnaryFunction&lt;Observable&lt;T&gt;,
-            Observable&lt;AsyncState&lt;T, E&gt;&gt;&gt;</code
-          >
-        </p>
-        <p><strong>Parameters:</strong></p>
-        <ul class="list-disc space-y-1 ml-6">
-          <li>
-            <code>observerOrNextForOrigin</code>: <em>(Optional)</em> A partial <code>TapObserver&lt;T&gt;</code> or a
-            function <code>(value: T) => void</code> for handling side effects. Has the same type signature as RxJS
-            <code>tap</code>.
-          </li>
-          <li>
-            <code>initialValue</code>: <em>(Optional)</em> The initial state of the asynchronous operation. Defaults to
-            <code>&#123; loading: true, error: null, data: null &#125;</code>.
-          </li>
-        </ul>
-        <p><strong>Returns:</strong> A function that transforms an observable stream into an asynchronous state</p>
-      </div>
-
-      <h4>AsyncState Interface</h4>
-      <div class="space-y-2">
-        <p>The <code>AsyncState</code> object encapsulates the following properties:</p>
-        <ul class="list-disc space-y-1 ml-6">
-          <li><code>loading</code>: <code>boolean</code> - Indicates that the asynchronous operation is in progress</li>
-          <li><code>error</code>: <code>E | null</code> - Represents any encountered errors during the operation</li>
-          <li><code>data</code>: <code>T | null</code> - Holds the successful result of the operation</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Basic Usage -->
-  <section class="space-y-4">
-    <h2>Basic Usage</h2>
-    <p>
-      Use <code>createAsyncState</code> in your observable pipeline to automatically handle loading, error, and data
-      states:
-    </p>
-    <app-code-block [code]="asyncStateCode" />
-  </section>
-
-  <!-- Examples -->
+  <!-- Examples Section -->
   <section class="space-y-4">
     <h2>Examples</h2>
 
     <article class="space-y-3">
-      <h3>Simple Request</h3>
+      <h3>Example 1: Simple Request</h3>
       <p>Handle a single API request with loading and error states:</p>
-      <app-code-block [code]="exampleCode" />
+      <app-code-block [code]="exampleCode" lang="typescript" />
       <app-user-card-list />
     </article>
 
     <article class="space-y-3">
-      <h3>With Callbacks</h3>
+      <h3>Example 2: With Callbacks</h3>
       <p>Add side effects for success and error scenarios:</p>
-      <app-code-block [code]="callbackCode" />
+      <app-code-block [code]="callbackCode" lang="typescript" />
     </article>
 
     <article class="space-y-3">
-      <h3>Providing initialValue</h3>
+      <h3>Example 3: Providing initialValue</h3>
       <p>
         In scenarios where you have initial data (e.g., from route state), you can provide an initial value to avoid
         showing a loading spinner. This is useful when navigating from a list to a detail page where you already have
         some data:
       </p>
-      <app-code-block [code]="exampleWithoutLoadingCode" />
+      <app-code-block [code]="exampleWithoutLoadingCode" lang="typescript" />
       <cll-callout>
-        <p>
-          When providing <code>initialValue</code>, set <code>loading: false</code> to prevent the loading spinner from
-          appearing. The data will be updated seamlessly when the API call completes.
-        </p>
+        When providing <code>initialValue</code>, set <code>loading: false</code> to prevent the loading spinner from
+        appearing. The data will be updated seamlessly when the API call completes.
       </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Dependent Requests</h3>
+      <p>Chain multiple requests using <code>switchMap</code>:</p>
+      <app-code-block [code]="dependentRequestsCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Template Usage</h3>
+      <p>Use the async pipe in templates to handle different states:</p>
+      <app-code-block [code]="templateUsageCode" lang="html" />
     </article>
   </section>
 
-  <!-- Advanced Usage -->
+  <!-- API Reference -->
   <section class="space-y-4">
-    <h2>Advanced Usage</h2>
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>createAsyncState</h3>
+        <p>
+          Transforms an Observable of type <code>T</code> into an Observable of <code>AsyncState&lt;T, E&gt;</code>.
+        </p>
 
-    <article class="space-y-3">
-      <h3>Dependent Requests</h3>
-      <p>Chain multiple requests using <code>switchMap</code>:</p>
-      <app-code-block [code]="dependentRequestsCode" lang="typescript"></app-code-block>
-    </article>
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
 
-    <article class="space-y-3">
-      <h3>Template Usage</h3>
-      <p>Use the async pipe in templates to handle different states:</p>
-      <app-code-block [code]="templateUsageCode" lang="html"></app-code-block>
-    </article>
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>observerOrNextForOrigin</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> Callback function or observer object for handling side effects when the observable
+                emits values or errors. Accepts either a partial <code>TapObserver&lt;T&gt;</code> object or a simple
+                function <code>(value: T) => void</code>.
+              </p>
+              <p class="text-sm !mt-1">
+                This parameter has the same type signature as RxJS <code>tap</code> operator, allowing you to perform
+                side effects like logging, caching, or triggering other actions.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>initialValue</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                <em>(Optional)</em> The initial <code>AsyncState</code> value to use before the observable emits its
+                first value.
+              </p>
+              <p class="text-sm !mt-1">
+                Defaults to <code>&#123; loading: true, error: null, data: null &#125;</code>. Useful when you have
+                pre-existing data (e.g., from route state) and want to avoid showing a loading spinner initially.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">A function that transforms an observable stream into an asynchronous state.</p>
+      </div>
+
+      <div class="space-y-3">
+        <h3>AsyncState Interface</h3>
+        <p>The <code>AsyncState</code> object encapsulates the following properties:</p>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>loading: boolean</code>
+            <p class="text-sm ml-4 !mt-1">Indicates that the asynchronous operation is in progress.</p>
+          </li>
+          <li class="space-y-1">
+            <code>error: E | null</code>
+            <p class="text-sm ml-4 !mt-1">Represents any encountered errors during the operation.</p>
+          </li>
+          <li class="space-y-1">
+            <code>data: T | null</code>
+            <p class="text-sm ml-4 !mt-1">Holds the successful result of the operation.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
   </section>
 </cll-page-container>

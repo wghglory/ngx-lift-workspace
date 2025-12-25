@@ -37,8 +37,9 @@ export class CreateTriggerComponent {
     this.refreshTrigger.next();
   }
 
-  triggerCode = highlight(`
+  basicExampleCode = highlight(`
 import {createTrigger} from 'ngx-lift';
+import {Component, effect} from '@angular/core';
 
 export class CreateTriggerComponent {
   private refreshTrigger = createTrigger();
@@ -50,7 +51,23 @@ export class CreateTriggerComponent {
       // whatever code you want to run whenever refreshTrigger.next() is called
       console.log('trigger effect');
     });
+  }
 
+  // when button clicks
+  refresh() {
+    this.refreshTrigger.next();
+  }
+}
+  `);
+
+  conditionalExampleCode = highlight(`
+import {createTrigger} from 'ngx-lift';
+import {Component, effect} from '@angular/core';
+
+export class CreateTriggerComponent {
+  private refreshTrigger = createTrigger();
+
+  constructor() {
     effect(() => {
       if (this.refreshTrigger.value()) {
         // Will NOT run on init
@@ -60,10 +77,13 @@ export class CreateTriggerComponent {
     });
   }
 
-  // when button clicks
   refresh() {
     this.refreshTrigger.next();
   }
 }
+  `);
+
+  signatureCode = highlight(`
+createTrigger(): {value: Signal<number>; next: () => void}
   `);
 }

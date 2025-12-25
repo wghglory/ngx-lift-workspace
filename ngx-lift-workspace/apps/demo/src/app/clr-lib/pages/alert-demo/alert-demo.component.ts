@@ -19,67 +19,119 @@ export class AlertDemoComponent {
   });
 
   standardApiErrorCode = highlight(`
-<!-- error is instance of HttpErrorResponse -->
-<cll-alert [error]="error" />
+import {AlertComponent} from 'clr-lift';
+
+@Component({
+  imports: [AlertComponent],
+  template: \`
+    <!-- error is instance of HttpErrorResponse -->
+    <cll-alert [error]="error" />
+  \`
+})
+export class AlertExampleComponent {
+  error = new HttpErrorResponse({
+    error: {message: 'Error message'},
+  });
+}
   `);
 
   standardContentCode = highlight(`
-<cll-alert alertType="success" content="I'm a successful content" />
-<cll-alert alertType="info" content="I'm a info content" />
-<cll-alert alertType="warning" content="I'm a warning content" />
-<cll-alert alertType="danger" content="I'm a danger content" />
+import {AlertComponent} from 'clr-lift';
 
-<!-- Pass HTML tags -->
-<cll-alert alertType="info" [content]="'<strong>Hello world</strong>, I like clr-lift!'" />
+@Component({
+  imports: [AlertComponent],
+  template: \`
+    <cll-alert alertType="success" content="I'm a successful content" />
+    <cll-alert alertType="info" content="I'm a info content" />
+    <cll-alert alertType="warning" content="I'm a warning content" />
+    <cll-alert alertType="danger" content="I'm a danger content" />
+
+    <!-- Pass HTML tags -->
+    <cll-alert alertType="info" [content]="'<strong>Hello world</strong>, I like clr-lift!'" />
+  \`
+})
+export class AlertContentExampleComponent { }
   `);
 
   standardProjectionCode = highlight(`
-<cll-alert>
-  <p class="!mt-0 !mb-2">Multiple errors are listed as below by <strong>content projection</strong>.</p>
-  <ol class="list-decimal">
-    <li>Cannot read undefined.</li>
-    <li>
-      Cannot upload a object.
-      <button
-        [cllTooltip]="'server is down'"
-        [cllTooltipPosition]="'tooltip-right'"
-        class="btn btn-sm btn-link btn-icon !my-0 !px-0"
-        aria-label="info"
-        type="button"
-      >
-        <cds-icon shape="info-circle" />
-      </button>
-    </li>
-  </ol>
-</cll-alert>
+import {AlertComponent} from 'clr-lift';
+
+@Component({
+  imports: [AlertComponent],
+  template: \`
+    <cll-alert>
+      <p class="!mt-0 !mb-2">Multiple errors are listed as below by <strong>content projection</strong>.</p>
+      <ol class="list-decimal">
+        <li>Cannot read undefined.</li>
+        <li>
+          Cannot upload a object.
+          <button
+            [cllTooltip]="'server is down'"
+            [cllTooltipPosition]="'tooltip-right'"
+            class="btn btn-sm btn-link btn-icon !my-0 !px-0"
+            aria-label="info"
+            type="button"
+          >
+            <cds-icon shape="info-circle" />
+          </button>
+        </li>
+      </ol>
+    </cll-alert>
+  \`
+})
+export class AlertProjectionExampleComponent { }
   `);
 
   standardSmallAlertCode = highlight(`
-<cll-alert alertType="danger" content="I'm a small alert" [isSmall]="true" />
+import {AlertComponent} from 'clr-lift';
+
+@Component({
+  imports: [AlertComponent],
+  template: \`
+    <cll-alert alertType="danger" content="I'm a small alert" [isSmall]="true" />
+  \`
+})
+export class SmallAlertExampleComponent { }
   `);
 
   lightweightAlertsCode = highlight(`
-<cll-alert [isLightweight]="true" [error]="error" />
-<cll-alert [isLightweight]="true" alertType="success" content="I'm a successful content" />
-<cll-alert [isLightweight]="true" alertType="info" content="I'm a info content" />
-<cll-alert [isLightweight]="true" alertType="warning" content="I'm a warning content" />
-<cll-alert [isLightweight]="true" alertType="neutral" content="I'm a neutral content" />
-<cll-alert [isLightweight]="true" alertType="loading" content="I'm a loading content" />
-<cll-alert [isLightweight]="true" alertType="unknown" content="I'm a unknown content" />
+import {AlertComponent} from 'clr-lift';
+
+@Component({
+  imports: [AlertComponent],
+  template: \`
+    <cll-alert [isLightweight]="true" [error]="error" />
+    <cll-alert [isLightweight]="true" alertType="success" content="I'm a successful content" />
+    <cll-alert [isLightweight]="true" alertType="info" content="I'm a info content" />
+    <cll-alert [isLightweight]="true" alertType="warning" content="I'm a warning content" />
+    <cll-alert [isLightweight]="true" alertType="neutral" content="I'm a neutral content" />
+    <cll-alert [isLightweight]="true" alertType="loading" content="I'm a loading content" />
+    <cll-alert [isLightweight]="true" alertType="unknown" content="I'm a unknown content" />
+  \`
+})
+export class LightweightAlertExampleComponent { }
   `);
 
   appLevelAlertsCode = highlight(`
-<cll-alert [error]="error" [isAppLevel]="true" />
-<cll-alert
-  alertType="success"
-  content="I'm a successful content <a href='javascript:void(0)' class='btn btn-outline btn-sm'>View</a>"
-  [isAppLevel]="true"
-/>
-<cll-alert alertType="success" [isAppLevel]="true">
-  I'm a successful content injected by content projection &nbsp;
-  <a href="javascript:void(0)" class="btn btn-inverse btn-sm">View</a>
-</cll-alert>
-<cll-alert alertType="info" content="I'm a info content" [isAppLevel]="true" />
-<cll-alert alertType="warning" content="I'm a warning content" [isAppLevel]="true" />
-    `);
+import {AlertComponent} from 'clr-lift';
+
+@Component({
+  imports: [AlertComponent],
+  template: \`
+    <cll-alert [error]="error" [isAppLevel]="true" />
+    <cll-alert
+      alertType="success"
+      content="I'm a successful content <a href='javascript:void(0)' class='btn btn-outline btn-sm'>View</a>"
+      [isAppLevel]="true"
+    />
+    <cll-alert alertType="success" [isAppLevel]="true">
+      I'm a successful content injected by content projection &nbsp;
+      <a href="javascript:void(0)" class="btn btn-inverse btn-sm">View</a>
+    </cll-alert>
+    <cll-alert alertType="info" content="I'm a info content" [isAppLevel]="true" />
+    <cll-alert alertType="warning" content="I'm a warning content" [isAppLevel]="true" />
+  \`
+})
+export class AppLevelAlertExampleComponent { }
+  `);
 }

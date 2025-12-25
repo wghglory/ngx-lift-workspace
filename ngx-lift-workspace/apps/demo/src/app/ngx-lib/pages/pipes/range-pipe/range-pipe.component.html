@@ -1,87 +1,56 @@
-<cll-page-container title="Range Pipe" customClass="space-y-9">
+<cll-page-container [title]="'range'" customClass="space-y-9">
   <!-- Overview -->
-  <section class="space-y-4">
-    <h2>Overview</h2>
-    <p>
-      The <code>RangePipe</code> generates an array of numbers within a specified range, making it ideal for creating
-      dropdown options, pagination controls, or any scenario requiring numeric sequences in templates. When working with
-      Angular templates, you may need to generate an array of numbers for iteration. For example, if you have the number
-      20 and want to create an array from 1 to 20 to display in a dropdown list, Angular's <code>*ngFor</code> directive
-      cannot directly iterate over a number. While you could generate this array in TypeScript, there are cases where
-      creating the array directly in the template is more convenient.
-    </p>
+  <p>
+    The <code>range</code> pipe generates an array of numbers within a specified range, making it ideal for creating
+    dropdown options, pagination controls, or any scenario requiring numeric sequences in templates. When working with
+    Angular templates, you may need to generate an array of numbers for iteration. For example, if you have the number
+    20 and want to create an array from 1 to 20 to display in a dropdown list, Angular's <code>&#64;for</code> directive
+    cannot directly iterate over a number. While you could generate this array in TypeScript, there are cases where
+    creating the array directly in the template is more convenient.
+  </p>
+  <cll-callout>
+    <ul class="list-disc space-y-1">
+      <li>
+        The <code>range</code> pipe creates an array of numbers (positive and/or negative) progressing from start up
+        to, <strong class="text-red-500 dark:text-red-300">but not including, end</strong>.
+      </li>
+      <li>A step of -1 is used if a negative start is specified without an end or step.</li>
+      <li>If end is not specified, it's set to start with start then set to 0.</li>
+      <li>
+        A <code>range</code> utility function is also available for use in TypeScript, which can be imported from
+        <code>ngx-lift</code>.
+      </li>
+    </ul>
+  </cll-callout>
 
-    <cll-callout>
-      <ul class="list-disc space-y-2">
-        <li>
-          The <code>range</code> pipe creates an array of numbers (positive and/or negative) progressing from start up
-          to, <strong class="text-red-500 dark:text-red-300">but not including, end</strong>.
-        </li>
-        <li>A step of -1 is used if a negative start is specified without an end or step.</li>
-        <li>If end is not specified, it's set to start with start then set to 0.</li>
-        <li>
-          A <code>range</code> utility function is also available for use in TypeScript, which can be imported from
-          <code>ngx-lift</code>.
-        </li>
-      </ul>
-    </cll-callout>
-  </section>
-
-  <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-3">
-      <h3>RangePipe</h3>
-      <p>Angular pipe that generates an array of numbers within a specified range.</p>
-
-      <h4>Transform Method</h4>
-      <div class="space-y-2">
-        <p><strong>Signature:</strong></p>
-        <ul class="list-disc space-y-1 ml-6">
-          <li><code>transform(value: [number]): number[]</code></li>
-          <li><code>transform(value: [number, number]): number[]</code></li>
-          <li><code>transform(value: [number, number, number]): number[]</code></li>
-          <li><code>transform(value: [number, number, number, boolean]): number[]</code></li>
-        </ul>
-        <p><strong>Parameters:</strong></p>
-        <ul class="list-disc space-y-1 ml-6">
-          <li>
-            <code>value</code>: An array containing:
-            <ul class="list-disc space-y-1 ml-6 mt-1">
-              <li><code>[number]</code>: The end value (starts from 0)</li>
-              <li><code>[number, number]</code>: The start and end values</li>
-              <li><code>[number, number, number]</code>: The start, end, and step values</li>
-              <li><code>[number, number, number, boolean]</code>: The start, end, step, and inclusive flag</li>
-            </ul>
-          </li>
-        </ul>
-        <p><strong>Returns:</strong> An array of numbers within the specified range</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Basic Usage -->
-  <section class="space-y-4">
-    <h2>Basic Usage</h2>
-    <p>
-      The pipe accepts a tuple containing a start number, an end number, a step value, and a boolean flag indicating
-      whether the array should be generated in reverse order. The default step value is 1. When only one number is
-      provided, the array starts from 0 up to (but not including) that number.
-    </p>
-    <app-code-block [code]="exampleCode" lang="html" />
-  </section>
-
-  <!-- Examples -->
+  <!-- Examples Section -->
   <section class="space-y-4">
     <h2>Examples</h2>
 
     <article class="space-y-3">
-      <h3>Dropdown Selection</h3>
+      <h3>Example 1: Basic Range</h3>
+      <p>Generate arrays with different start and end values:</p>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: With Step Value</h3>
+      <p>Generate arrays with a custom step value:</p>
+      <app-code-block [code]="stepExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Reverse Array</h3>
+      <p>Generate arrays in reverse order:</p>
+      <app-code-block [code]="reverseExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Dropdown Selection</h3>
       <p>
         Generate CPU count options for a dropdown. This is useful when displaying a list of computers with varying
         maximum CPU counts and allowing users to select a CPU range.
       </p>
-      <app-code-block [code]="cpuCode" lang="html" />
       <div class="space-x-6 p-4 border rounded">
         <label for="cpu-count">Choose CPU count</label>
         <select id="cpu-count">
@@ -90,6 +59,40 @@
           }
         </select>
       </div>
+      <app-code-block [code]="cpuCode" lang="html" />
     </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>range</h3>
+        <p>Angular pipe that generates an array of numbers within a specified range.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>value: [number] | [number, number] | [number, number, number] | [number, number, number, boolean]</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">An array containing:</p>
+              <ul class="list-disc space-y-1 ml-6 mt-1 text-sm">
+                <li><code>[number]</code>: The end value (starts from 0)</li>
+                <li><code>[number, number]</code>: The start and end values</li>
+                <li><code>[number, number, number]</code>: The start, end, and step values</li>
+                <li><code>[number, number, number, boolean]</code>: The start, end, step, and inclusive flag</li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">An array of numbers within the specified range.</p>
+      </div>
+    </div>
   </section>
 </cll-page-container>

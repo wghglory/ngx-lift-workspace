@@ -1,40 +1,82 @@
-<cll-page-container title="switchMapWithAsyncState" customClass="space-y-9">
+<cll-page-container [title]="'switchMapWithAsyncState'" customClass="space-y-9">
+  <!-- Overview -->
   <p>
-    Frequently, we find ourselves in situations where triggering an API request upon a user's button click is essential.
-    But how do we seamlessly transition between streams? Enter the solution: <code>switchMapWithAsyncState</code>. This
-    operator is tailor-made for such scenarios, effortlessly amalgamating the strengths of both the
-    <code>switchMap</code> and <code>createAsyncState</code> operators. By creating an <code>AsyncState</code> structure
-    to encapsulate your API response, this operator becomes a versatile powerhouse, delivering the combined
-    functionalities of <code>switchMap</code> and <code>createAsyncState</code> in one. The result is a seamless and
-    efficient approach to managing asynchronous operations.
+    The <code>switchMapWithAsyncState</code> operator combines the functionality of <code>switchMap</code> and
+    <code>createAsyncState</code> into a single operator. It's tailor-made for scenarios where you need to trigger an API
+    request based on user actions (like button clicks) and seamlessly transition between streams. By creating an
+    <code>AsyncState</code> structure to encapsulate your API response, this operator delivers a seamless and efficient
+    approach to managing asynchronous operations.
   </p>
 
-  <section class="space-y-6">
-    <h2>Example 1</h2>
-    <p>Selecting a different gender will populate the user list accordingly.</p>
-    <app-filter-users />
-    <app-code-block [code]="example1Code" />
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
 
-    <h2>Example 2</h2>
-    <p>
-      Submit the form using <code>switchMapWithAsyncState</code> and <code>toSignal</code>. The submission will always
-      emit an error because the API is designed to simulate an error.
-    </p>
+    <article class="space-y-3">
+      <h3>Example 1: Filter Users by Gender</h3>
+      <p>Selecting a different gender will populate the user list accordingly:</p>
+      <app-filter-users />
+      <app-code-block [code]="example1Code" lang="typescript" />
+    </article>
 
-    <form>
-      <clr-input-container>
-        <label for="switchmap-name">Name</label>
-        <input id="switchmap-name" clrInput name="username" />
-      </clr-input-container>
+    <article class="space-y-3">
+      <h3>Example 2: Form Submission with Loading State</h3>
+      <p>
+        Submit the form using <code>switchMapWithAsyncState</code> and <code>toSignal</code>. The submission will always
+        emit an error because the API is designed to simulate an error.
+      </p>
 
-      <button type="button" class="btn btn-primary mt-5" (click)="save()" [clrLoading]="saveAction()?.loading === true">
-        Save
-      </button>
-      @if (saveAction()?.error; as error) {
-        <cll-alert [error]="error" />
-      }
-    </form>
+      <form>
+        <clr-input-container>
+          <label for="switchmap-name">Name</label>
+          <input id="switchmap-name" clrInput name="username" />
+        </clr-input-container>
 
-    <app-code-block [code]="example2Code" />
+        <button type="button" class="btn btn-primary mt-5" (click)="save()" [clrLoading]="saveAction()?.loading === true">
+          Save
+        </button>
+        @if (saveAction()?.error; as error) {
+          <cll-alert [error]="error" />
+        }
+      </form>
+
+      <app-code-block [code]="example2Code" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>switchMapWithAsyncState</h3>
+        <p>
+          Combines <code>switchMap</code> and <code>createAsyncState</code> to transform an observable stream into
+          <code>AsyncState</code> while switching to a new inner observable.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>project: (value: T, index: number) => ObservableInput&lt;R&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                A function that receives each value from the source observable and returns an Observable, Promise, or
+                other ObservableInput.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          An observable that emits <code>AsyncState&lt;R&gt;</code> objects, automatically handling loading, error, and
+          data states.
+        </p>
+      </div>
+    </div>
   </section>
 </cll-page-container>

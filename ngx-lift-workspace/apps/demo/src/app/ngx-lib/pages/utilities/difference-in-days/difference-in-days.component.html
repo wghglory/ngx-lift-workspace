@@ -1,15 +1,69 @@
 <cll-page-container [title]="'differenceInDays'" customClass="space-y-9">
-  <section class="space-y-6">
-    <h2>Overview</h2>
-    <p>
-      With the <code>differenceInDays</code> utility function, handling date calculations in JavaScript becomes
-      effortless. This function simplifies the process by requiring just two parameters. The first parameter represents
-      the reference date from which the difference is measured. It accepts <code>Date</code> objects, numbers
-      representing milliseconds since the Unix epoch, or strings parseable by the <code>Date</code> constructor.
-      Similarly, the second parameter denotes the date to be compared against the reference date, accepting the same
-      types of inputs.
-    </p>
+  <!-- Overview -->
+  <p>
+    The <code>differenceInDays</code> utility function calculates the number of whole days between two dates. It
+    simplifies date calculations in JavaScript by accepting flexible input types. The first parameter represents the
+    reference date from which the difference is measured, and the second parameter denotes the date to be compared
+    against the reference date. Both parameters accept <code>Date</code> objects, numbers representing milliseconds
+    since the Unix epoch, or strings parseable by the <code>Date</code> constructor.
+  </p>
 
-    <app-code-block [code]="exampleCode" />
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Calculate Days Between Dates</h3>
+      <p>Calculate the number of whole days between two dates using different input types:</p>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Calculate Days from Today</h3>
+      <p>Calculate the number of days from today to a specific date:</p>
+      <app-code-block [code]="fromTodayExampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>differenceInDays</h3>
+        <p>Calculates the number of whole days between two dates.</p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>dateLeft: Date | number | string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                The reference date. Can be a <code>Date</code> object, a number (milliseconds since Unix epoch), or a
+                string parseable by the <code>Date</code> constructor.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>dateRight: Date | number | string</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                The date to compare against the reference date. Accepts the same types as <code>dateLeft</code>.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">
+          The number of whole days between the two dates. Returns a positive number if <code>dateLeft</code> is later
+          than <code>dateRight</code>, and a negative number if <code>dateLeft</code> is earlier than
+          <code>dateRight</code>.
+        </p>
+      </div>
+    </div>
   </section>
 </cll-page-container>

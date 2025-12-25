@@ -42,8 +42,10 @@ export class MergeFromComponent {
 
   basicCode = highlight(`
 import {mergeFrom} from 'ngx-lift';
+import {signal} from '@angular/core';
+import {of, delay} from 'rxjs';
 
-export class MergedFromComponent {
+export class MergeFromComponent {
   a = signal(1);
   b$ = of(2).pipe(delay(1000));
 
@@ -54,8 +56,10 @@ export class MergedFromComponent {
 
   pipeCode = highlight(`
 import {mergeFrom} from 'ngx-lift';
+import {signal} from '@angular/core';
+import {of, delay, pipe, switchMap} from 'rxjs';
 
-export class MergedFromComponent {
+export class MergeFromComponent {
   a = signal(1);
   b$ = of(2).pipe(delay(1000));
 
@@ -66,8 +70,10 @@ export class MergedFromComponent {
 
   asyncCode = highlight(`
 import {mergeFrom} from 'ngx-lift';
+import {signal} from '@angular/core';
+import {of, delay, pipe, switchMap, startWith} from 'rxjs';
 
-export class MergedFromComponent {
+export class MergeFromComponent {
   a = signal(1);
   b$ = of(2).pipe(delay(1000));
 
@@ -87,5 +93,13 @@ export class MergedFromComponent {
     ),
   );
 }
+  `);
+
+  signatureCode = highlight(`
+mergeFrom<T>(
+  sources: Record<string, Observable<T> | Signal<T>> | Array<Observable<T> | Signal<T>>,
+  operator?: OperatorFunction,
+  options?: MergeFromOptions
+): Signal<T>
   `);
 }

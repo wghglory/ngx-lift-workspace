@@ -41,7 +41,30 @@ export interface PageQuery {
    */
   filter?: string;
 }
-`);
+  `);
+
+  usageCode = highlight(`
+import {convertToHttpParams} from 'clr-lift';
+import {Component} from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {ClrDatagridStateInterface} from '@clr/angular';
+
+@Component({})
+export class DatagridExampleComponent {
+  private http = inject(HttpClient);
+
+  refresh(state: ClrDatagridStateInterface) {
+    const params = convertToHttpParams(state);
+    const httpParams = new HttpParams({fromObject: params as Record<string, string>});
+
+    return this.http.get('/api/users', {params: httpParams});
+  }
+}
+  `);
+
+  signatureCode = highlight(`
+convertToHttpParams(state: ClrDatagridStateInterface | null): PageQuery
+  `);
 
   stateCode = highlight(`
 // Clarity Datagrid state example

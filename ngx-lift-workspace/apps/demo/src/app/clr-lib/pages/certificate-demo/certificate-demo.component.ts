@@ -40,21 +40,35 @@ IhNzbM8m9Yop5w==
 
   pem1Code = highlight(`
 import {CertificateSignpostComponent} from 'clr-lift';
+import {Component} from '@angular/core';
 
 @Component({
   imports: [CertificateSignpostComponent],
   template: \`<cll-certificate-signpost [pem]="pem1" />\`
 })
-export class CertificateDemoComponent {}
+export class CertificateExampleComponent {
+  pem1 = \`-----BEGIN CERTIFICATE-----
+MIIDljCCAn6gAwIBAgIQC5McOtY5Z+pnI7/Dr5r0SzANBgkqhkiG9w0BAQsFADBl
+...
+-----END CERTIFICATE-----\`;
+}
   `);
 
   pem2Code = highlight(`
 import {CertificateSignpostComponent} from 'clr-lift';
+import {Component} from '@angular/core';
 
 @Component({
   imports: [CertificateSignpostComponent],
-  template: \`<cll-certificate-signpost [pem]="pem2" [pemEncoded]="true" position="left-top" />\`
+  template: \`<cll-certificate-signpost [pem]="pem2" [pemEncoded]="true" position="right-top" />\`
 })
-export class CertificateDemoComponent {}
-`);
+export class CertificateEncodedExampleComponent {
+  pem1 = \`-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----\`;
+
+  // Base64 encoded PEM string
+  pem2 = btoa(this.pem1);
+}
+  `);
 }

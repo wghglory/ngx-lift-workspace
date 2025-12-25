@@ -23,22 +23,29 @@ export class UniqueValidatorComponent {
     this.form1.controls.demo1.controls[index].updateValueAndValidity();
   }
 
-  example1 = highlight(`
+  example1Code = highlight(`
+import {UniqueValidator} from 'ngx-lift';
+import {Component, inject} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+
 @Component({
+  imports: [ReactiveFormsModule],
   template: \`
-    <form clrForm [formGroup]="form1">
+    <form [formGroup]="form1">
       <ng-container formArrayName="demo1">
-        <clr-input-container *ngFor="let control of form1.controls.demo1.controls; let i = index">
-          <label [attr.for]="i">Control {{ i + 1 }}</label>
-          <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
-          <clr-control-helper>Control value should be unique</clr-control-helper>
-          <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
-        </clr-input-container>
+        @for (control of form1.controls.demo1.controls; track control; let i = $index) {
+          <clr-input-container>
+            <label [attr.for]="i">Control {{ i + 1 }}</label>
+            <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
+            <clr-control-helper>Control value should be unique</clr-control-helper>
+            <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
+          </clr-input-container>
+        }
       </ng-container>
     </form>
-\`
+  \`
 })
-export class DemoComponent {
+export class UniqueValidatorExampleComponent {
   private fb = inject(FormBuilder);
 
   form1 = this.fb.group({
@@ -62,38 +69,41 @@ export class DemoComponent {
     control.updateValueAndValidity();
   }
 
-  example2 = highlight(`
+  example2Code = highlight(`
+import {UniqueValidator} from 'ngx-lift';
+import {Component, inject} from '@angular/core';
+import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+
 @Component({
+  imports: [ReactiveFormsModule],
   template: \`
-    <form clrForm [formGroup]="form2">
+    <form [formGroup]="form2">
       <ng-container formArrayName="demo2">
-        <div
-          *ngFor="let group of form2.controls.demo2.controls; let i = index"
-          [formGroup]="group"
-          style="display: flex; gap: 1rem"
-        >
-          <clr-input-container>
-            <label class="clr-sr-only">key</label>
-            <input
-              clrInput
-              [formControl]="group.controls.key"
-              (blur)="validateControl(group.controls.key)"
-              [size]="30"
-            />
-            <clr-control-helper>key control should be unique</clr-control-helper>
-            <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
-          </clr-input-container>
-          <clr-input-container>
-            <label class="clr-sr-only">value</label>
-            <input clrInput [formControl]="group.controls.value" [size]="30" />
-            <clr-control-helper>value control has not validation</clr-control-helper>
-          </clr-input-container>
-        </div>
+        @for (group of form2.controls.demo2.controls; track group; let i = $index) {
+          <div [formGroup]="group" style="display: flex; gap: 1rem">
+            <clr-input-container>
+              <label class="clr-sr-only">key</label>
+              <input
+                clrInput
+                [formControl]="group.controls.key"
+                (blur)="validateControl(group.controls.key)"
+                [size]="30"
+              />
+              <clr-control-helper>key control should be unique</clr-control-helper>
+              <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+              <label class="clr-sr-only">value</label>
+              <input clrInput [formControl]="group.controls.value" [size]="30" />
+              <clr-control-helper>value control has not validation</clr-control-helper>
+            </clr-input-container>
+          </div>
+        }
       </ng-container>
     </form>
-\`
+  \`
 })
-export class DemoComponent {
+export class UniqueValidatorFormGroupExampleComponent {
   private fb = inject(FormBuilder);
 
   form2 = this.fb.group({
@@ -107,5 +117,9 @@ export class DemoComponent {
     control.updateValueAndValidity();
   }
 }
+  `);
+
+  signatureCode = highlight(`
+UniqueValidator.unique(controlSelector?: (control: AbstractControl) => AbstractControl): ValidatorFn
   `);
 }

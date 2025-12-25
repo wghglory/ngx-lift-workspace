@@ -34,29 +34,33 @@ export class KeyValueInputsDemoComponent {
 
   exampleCode = highlight(`
 import {KeyValueFormGroup, KeyValueInputsComponent} from 'clr-lift';
+import {Component} from '@angular/core';
+import {FormArray, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
-  imports: [KeyValueInputsComponent],
+  imports: [KeyValueInputsComponent, ReactiveFormsModule],
   template: \`
-    <cll-key-value-inputs
-      [formArray]="form.controls.appProperties"
-      [inputSize]="30"
-      [data]="data"
-      [keyPattern]="{
-        regex: '^\\w+\\d+$',
-        message: 'custom error message: key must start with a letter and end with a number',
-      }"
-      [valuePattern]="{regex: '^\\w+\\d+$'}"
-      [smartMode]="true"
-      [uniqueKey]="true"
-      buttonClass="btn-sm btn-link"
-      keyHelper="run time property key"
-      valueHelper="run time property value"
-      addText="add key value"
-    />
+    <form [formGroup]="form">
+      <cll-key-value-inputs
+        [formArray]="form.controls.appProperties"
+        [inputSize]="30"
+        [data]="data"
+        [keyPattern]="{
+          regex: '^\\\\w+\\\\d+$',
+          message: 'custom error message: key must start with a letter and end with a number',
+        }"
+        [valuePattern]="{regex: '^\\\\w+\\\\d+$'}"
+        [smartMode]="true"
+        [uniqueKey]="true"
+        buttonClass="btn-sm btn-link"
+        keyHelper="run time property key"
+        valueHelper="run time property value"
+        addText="add key value"
+      />
+    </form>
   \`
 })
-export class KeyValueInputsDemoComponent {
+export class KeyValueInputsExampleComponent {
   form = new FormGroup({
     appProperties: new FormArray<KeyValueFormGroup>([]),
   });
@@ -66,5 +70,5 @@ export class KeyValueInputsDemoComponent {
     {key: 'key2', value: 'value2'},
   ];
 }
-    `);
+  `);
 }

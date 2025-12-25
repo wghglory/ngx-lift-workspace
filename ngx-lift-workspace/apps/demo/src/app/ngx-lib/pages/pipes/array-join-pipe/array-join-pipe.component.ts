@@ -12,28 +12,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArrayJoinPipeComponent {
-  importCode = highlight(`import { ArrayJoinPipe } from 'ngx-lift';`);
-
-  exampleCode = highlight(`
-import {ArrayJoinPipe} from 'ngx-lift';
-
-@Component({
-  imports: [ArrayJoinPipe],
-  template: \`
-    <p>{{ [1, 2, 3, 4] | arrayJoin }}</p>
-    <!-- Output: "1,2,3,4" -->
-
-    <p>{{ ['apple', 'orange', 'banana'] | arrayJoin: ';' }}</p>
-    <!-- Output: "apple;orange;banana" -->
-
-    <p>{{ ['John', 'Doe'] | arrayJoin: ' - ' }}</p>
-    <!-- Output: "John - Doe" -->
-  \`
-})
-export class ArrayJoinPipeDemoComponent { }
-  `);
-
-  commaSeparatedCode = highlight(`
+  basicExampleCode = highlight(`
 import {ArrayJoinPipe} from 'ngx-lift';
 
 @Component({
@@ -43,6 +22,7 @@ import {ArrayJoinPipe} from 'ngx-lift';
     <!-- Output: "1,2,3,4" -->
   \`
 })
+export class ArrayJoinExampleComponent {}
   `);
 
   customSeparatorsCode = highlight(`
@@ -58,5 +38,26 @@ import {ArrayJoinPipe} from 'ngx-lift';
     <!-- Output: "John - Doe" -->
   \`
 })
+export class ArrayJoinExampleComponent {}
+  `);
+
+  numericArrayCode = highlight(`
+import {ArrayJoinPipe} from 'ngx-lift';
+
+@Component({
+  imports: [ArrayJoinPipe],
+  template: \`
+    <p>{{ [10, 20, 30] | arrayJoin }}</p>
+    <!-- Output: "10,20,30" -->
+
+    <p>{{ [100, 200, 300] | arrayJoin: ' | ' }}</p>
+    <!-- Output: "100 | 200 | 300" -->
+  \`
+})
+export class ArrayJoinExampleComponent {}
+  `);
+
+  signatureCode = highlight(`
+transform(value: unknown, separator?: string): string | unknown
   `);
 }

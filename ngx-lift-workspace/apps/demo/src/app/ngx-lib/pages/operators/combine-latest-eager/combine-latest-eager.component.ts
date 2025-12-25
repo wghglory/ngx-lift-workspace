@@ -14,11 +14,27 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombineLatestEagerComponent {
-  htmlCode = highlight(
-    `
+  basicExampleCode = highlight(`
+import {combineLatestEager} from 'ngx-lift';
+import {of, Subject} from 'rxjs';
+
+export class MyComponent {
+  today$ = of(new Date());
+  private showAction = new Subject<void>();
+
+  // Using RxJS combineLatest won't work because showAction won't emit initial value
+  // combineLatestEager automatically adds startWith(null) for Subject sources
+  vm$ = combineLatestEager({
+    today: this.today$,
+    action: this.showAction$,
+  });
+}
+  `);
+
+  htmlCode = highlight(`
 @if (vm$ | async; as vm) {
   <p>
-    Today is <time> {{ vm.today | date }} </time>. Who is our today's rock star?
+    Today is <time>{{ vm.today | date }}</time>. Who is our today's rock star?
     <button (click)="showRockStar()" class="btn btn-outline">Unveil</button>
   </p>
 
@@ -32,13 +48,13 @@ export class CombineLatestEagerComponent {
     <p class="!text-xl">{{ rockStar.name }}</p>
   }
 }
-    `,
-  );
+  `);
 
-  tsCode = highlight(
-    `
+  tsCode = highlight(`
 import {AlertComponent, SpinnerComponent} from 'clr-lift';
 import {combineLatestEager, switchMapWithAsyncState} from 'ngx-lift';
+import {inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {of, Subject} from 'rxjs';
 
 export class RockStarComponent {
@@ -51,13 +67,19 @@ export class RockStarComponent {
     switchMapWithAsyncState(() => this.http.get<{name: string}>('https://jsonplaceholder.typicode.com/users/1')),
   );
 
-  // using RxJS combineLatest won't work because showStarAction won't emit initial value until button click
+  // Using RxJS combineLatest won't work because showStarAction won't emit initial value until button click
   vm$ = combineLatestEager({today: this.today$, rockStarState: this.rockStarState$});
 
   showRockStar() {
     this.showStarAction.next();
   }
 }
-    `,
-  );
+  `);
+
+  signatureCode = highlight(`
+combineLatestEager<T>(
+  sources: Record<string, Observable<T>> | Observable<T>[],
+  startWithAll?: boolean
+): Observable<T[] | Record<string, T>>
+  `);
 }

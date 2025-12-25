@@ -42,28 +42,80 @@ export class InjectParamsComponent {
     });
   }
 
-  code = highlight(`
-import {numberAttribute, Signal} from '@angular/core';
+  allParamsCode = highlight(`
 import {injectParams} from 'ngx-lift';
 
-export class InjectParamsComponent {
-  // returns a signal with the current route params
+export class MyComponent {
+  // Returns a signal with the current route params
   params = injectParams();
+}
+  `);
 
-  // returns a signal with the keys of the params
+  singleParamCode = highlight(`
+import {injectParams} from 'ngx-lift';
+import {Signal} from '@angular/core';
+
+export class MyComponent {
+  // Returns a signal with the value of the id param
+  userId: Signal<string | null> = injectParams('id');
+}
+  `);
+
+  transformCode = highlight(`
+import {injectParams} from 'ngx-lift';
+
+export class MyComponent {
+  // Returns a signal with the keys of the params
   paramsKeys = injectParams((params) => Object.keys(params));
 
-  // returns a signal with the value of the id param
+  // Pass a transform function directly
+  name = injectParams((params) => params['name'] as string);
+}
+  `);
+
+  transformWithInitialCode = highlight(`
+import {injectParams} from 'ngx-lift';
+import {numberAttribute, Signal} from '@angular/core';
+
+export class MyComponent {
+  // Returns a signal with the value of the id param, initialValue is 1
+  id: Signal<number> = injectParams('id', {
+    transform: numberAttribute,
+    initialValue: 1,
+  });
+}
+  `);
+
+  completeExampleCode = highlight(`
+import {injectParams, computedAsync} from 'ngx-lift';
+import {numberAttribute, Signal} from '@angular/core';
+
+export class UserDetailComponent {
+  // Get all params
+  params = injectParams();
+
+  // Get single param
   userId: Signal<string | null> = injectParams('id');
 
-  // returns a signal with the value of the id param, initialValue is 1
-  id: Signal<number> = injectParams('id', {transform: numberAttribute, initialValue: 1})
+  // Transform with initial value
+  id: Signal<number> = injectParams('id', {
+    transform: numberAttribute,
+    initialValue: 1,
+  });
 
-  // pass a transform function directly
-  name = injectParams((params) => params['name'] as string);
+  // Transform function
+  paramsKeys = injectParams((params) => Object.keys(params));
 
-  // whenever userId param is changed, fetch the user
+  // Use with computedAsync to fetch data when param changes
   user = computedAsync(() => this.userService.getUser(this.userId()));
 }
-    `);
+  `);
+
+  signatureCode = highlight(`
+injectParams(): Signal<Params>
+injectParams(key: string): Signal<string | null>
+injectParams<T>(key: string, options: InjectParamsOptions<T>): Signal<T>
+injectParams<T>(transform: (params: Params) => T): Signal<T>
+injectParams<T>(transform: (params: Params) => T, options: InjectParamsOptions<T>): Signal<T>
+  `);
 }

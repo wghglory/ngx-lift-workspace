@@ -11,7 +11,7 @@ pre {
 }
 
 code:not([class^='language-']) {
-  @apply bg-indigo-50 text-red-600 mx-1 p-1 rounded;
+  @apply bg-indigo-50 text-red-600 mx-0 px-1 rounded;
 }
 
 [cds-theme='dark'] {

@@ -35,9 +35,15 @@ export class SwitchMapWithAsyncStateComponent {
 
   example1Code = highlight(`
 import {switchMapWithAsyncState} from 'ngx-lift';
-// ... other imports
+import {Component, inject} from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {SpinnerComponent, AlertComponent} from 'clr-lift';
+import {filter} from 'rxjs/operators';
+import {AsyncPipe, NgIf, NgFor} from '@angular/common';
 
 @Component({
+  imports: [ReactiveFormsModule, ClarityModule, SpinnerComponent, AlertComponent, NgIf, NgFor, AsyncPipe],
   template: \`
     <clr-radio-container clrInline>
       <label>Select Gender</label>
@@ -51,34 +57,48 @@ import {switchMapWithAsyncState} from 'ngx-lift';
       </clr-radio-wrapper>
     </clr-radio-container>
 
-    <div class="mt-6" *ngIf="searchState$ | async as vm">
-      <cll-spinner *ngIf="vm.loading" />
-
-      <cll-alert *ngIf="vm.error as error" [error]="error" />
-
-      <div *ngIf="vm.data as users" class="card-grid">
-        <app-user-card *ngFor="let user of users" [user]="user" />
-      </div>
+    <div class="mt-6">
+      @if (searchState$ | async; as vm) {
+        @if (vm.loading) {
+          <cll-spinner />
+        }
+        @if (vm.error; as error) {
+          <cll-alert [error]="error" />
+        }
+        @if (vm.data; as users) {
+          <div class="card-grid">
+            @for (user of users; track user.id) {
+              <app-user-card [user]="user" />
+            }
+          </div>
+        }
+      }
     </div>
   \`
 })
 export class FilterUsersComponent {
   genderControl = new FormControl('');
 
+  private userService = inject(UserService);
+
   searchState$ = this.genderControl.valueChanges.pipe(
     filter(Boolean),
     switchMapWithAsyncState((gender) => this.userService.getUsers({gender, results: 9})),
   );
-
-  private userService = inject(UserService);
 }
   `);
 
   example2Code = highlight(`
 import {switchMapWithAsyncState} from 'ngx-lift';
+import {Component, inject} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {HttpClient} from '@angular/common/http';
+import {ClarityModule} from '@clr/angular';
+import {AlertComponent} from 'clr-lift';
+import {Subject} from 'rxjs';
 
 @Component({
+  imports: [ClarityModule, AlertComponent],
   template: \`
     <form>
       <clr-input-container>
@@ -102,7 +122,7 @@ export class SubmitFormComponent {
   saveAction = toSignal(
     this.#saveAction.pipe(
       switchMapWithAsyncState(() => {
-        return this.http.post(\`https://randomuser.me/api\`, {payload: 1});
+        return this.http.post('https://randomuser.me/api', {payload: 1});
       }),
     ),
   );
@@ -111,5 +131,11 @@ export class SubmitFormComponent {
     this.#saveAction.next();
   }
 }
+  `);
+
+  signatureCode = highlight(`
+switchMapWithAsyncState<T, R>(
+  project: (value: T, index: number) => ObservableInput<R>
+): OperatorFunction<T, AsyncState<R>>
   `);
 }

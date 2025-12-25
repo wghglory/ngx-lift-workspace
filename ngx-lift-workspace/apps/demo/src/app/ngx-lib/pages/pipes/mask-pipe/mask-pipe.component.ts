@@ -13,9 +13,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MaskPipeComponent {
-  importCode = highlight(`import { MaskPipe } from 'ngx-lift';`);
-
-  simpleCode = highlight(`
+  basicExampleCode = highlight(`
 import {MaskPipe} from 'ngx-lift';
 
 @Component({
@@ -25,6 +23,7 @@ import {MaskPipe} from 'ngx-lift';
     <!-- Output: sensit************o-mask -->
   \`
 })
+export class MaskExampleComponent {}
   `);
 
   customCode = highlight(`
@@ -61,6 +60,10 @@ import {MaskPipe} from 'ngx-lift';
     <!-- Toggle showMask to reveal/hide -->
   \`
 })
+  `);
+
+  signatureCode = highlight(`
+transform(value: string, options?: MaskOptions): string
   `);
 
   maskOptions: MaskOptions = {
