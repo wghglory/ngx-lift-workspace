@@ -1,4 +1,4 @@
-# Create Pull Request
+# Create/Update Pull Request
 
 Analyze code changes using MCP server and create a pull request with a well-formatted title and description following
 the project's PR template.
@@ -67,8 +67,7 @@ with:
      display the content
    - **CRITICAL**: The MCP server is configured and ready - use it directly without asking for confirmation or
      permission
-   - When commits are appended to the branch, running `/create-pr` again will automatically update the PR with new
-     changes
+   - When commits are appended to the branch, running `/pr` again will automatically update the PR with new changes
    - **DO NOT** ask if MCP is configured or if you should proceed - just execute the create/update action automatically
 
 ## Requirements
@@ -77,8 +76,7 @@ with:
   permission
 - **MUST assume MCP server is configured and ready** - use it directly without asking if it's available
 - **MUST check for existing PR first** - if PR exists for the current branch, update it instead of creating a new one
-- **MUST update PR when commits are appended** - re-running `/create-pr` after adding commits should update the existing
-  PR
+- **MUST update PR when commits are appended** - re-running `/pr` after adding commits should update the existing PR
 - **MUST execute the action automatically** - do not ask "should I proceed" or "do you want me to create it" - just do
   it
 - Must analyze actual git changes, not assume
@@ -169,7 +167,7 @@ Fixes # (issue if applicable)
    ASKED)**
 2. **Subsequent Runs**: Check for existing PR → Analyze new changes → **Update existing PR automatically via MCP (NO
    QUESTIONS ASKED)**
-3. **After Adding Commits**: Re-run `/create-pr` → **Update PR with new changes automatically (NO QUESTIONS ASKED)**
+3. **After Adding Commits**: Re-run `/pr` → **Update PR with new changes automatically (NO QUESTIONS ASKED)**
 
 **IMPORTANT RULES:**
 
