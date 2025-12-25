@@ -3,8 +3,29 @@
     <div class="space-y-3 max-w-[calc(100vw-48px)]">
       <h1 class="sm:!text-6xl leading-loose">ngx-lift</h1>
       <p class="sm:!text-3xl sm:!mt-16">Enhance your <code>modern</code> Angular development workflow</p>
-      <p class="sm:!text-2xl">Compatible with Angular 19 and later versions</p>
       <app-code-block [code]="'npm install ngx-lift'" lang="shell" />
+
+      <div class="space-y-2">
+        <p class="sm:!text-xl font-semibold">Version Support Matrix</p>
+        <table class="table table-compact">
+          <thead>
+            <tr>
+              <th>ngx-lift Version</th>
+              <th>Angular Version</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>v1.x</td>
+              <td>Angular 17+</td>
+            </tr>
+            <tr>
+              <td>v19.x</td>
+              <td>Angular 19+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <!-- <ng-lottie [options]="options" /> -->
     <svg-icon class="flex-1" [src]="'./assets/ngx-lift-dark.svg'" [svgStyle]="{width: '100%'}" />

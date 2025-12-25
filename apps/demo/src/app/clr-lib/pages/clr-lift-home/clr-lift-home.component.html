@@ -5,8 +5,29 @@
       <p class="sm:!text-3xl sm:!mt-16">
         Extending Clarity Design System with reusable components, utilities, and operators
       </p>
-      <p class="sm:!text-2xl">Compatible with Angular 19 and later versions</p>
       <app-code-block [code]="'npm install clr-lift ngx-lift &#64;clr/angular &#64;clr/ui'" lang="shell" />
+
+      <div class="space-y-2">
+        <p class="sm:!text-xl font-semibold">Version Support Matrix</p>
+        <table class="table table-compact">
+          <thead>
+            <tr>
+              <th>clr-lift Version</th>
+              <th>Angular Version</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>v1.x</td>
+              <td>Angular 17+</td>
+            </tr>
+            <tr>
+              <td>v19.x</td>
+              <td>Angular 19+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <svg-icon class="flex-1" [src]="'./assets/clr-lift.svg'" [svgStyle]="{width: '100%'}" />
   </section>
