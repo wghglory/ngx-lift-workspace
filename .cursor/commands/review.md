@@ -5,8 +5,10 @@ this codebase. The rules defined in `.cursor/rules/` have the highest priority a
 
 ## Objective
 
-Review all code changes (staged, unstaged, or specified files) against the comprehensive tech standards defined in this
-workspace, including:
+**IMPORTANT**: This command reviews **ONLY the changed/submitted code** (staged, unstaged, or specified files), **NOT
+the entire codebase**.
+
+Review the changed code against the comprehensive tech standards defined in this workspace, including:
 
 - TypeScript strict mode compliance
 - Angular 20 patterns and best practices
@@ -24,14 +26,19 @@ fixes, provide a summary report for manual review. The user will manually review
 ## Process
 
 1. **Identify Files to Review**
-   - If no specific files are mentioned, review all changed files (staged and unstaged)
+   - **ONLY review changed/submitted files** - do NOT review the entire codebase
+   - If no specific files are mentioned, review all changed files (staged and unstaged) from git
    - If specific files are mentioned, review only those files
-   - Include related test files for components/services being reviewed
+   - Include related test files for components/services being reviewed (only if they are also changed)
+   - Use `git status` and `git diff` to identify what has actually changed
+   - **DO NOT** scan the entire codebase for issues - only review files that have been modified
 
 2. **Read and Analyze Code**
-   - Read all relevant files (component, template, styles, spec files)
+   - Read **ONLY the changed files** and their immediate dependencies (if changed)
+   - Read related files (component, template, styles, spec files) **ONLY if they are part of the changes**
    - Understand the context and purpose of the changes
-   - Check for related files that might be affected
+   - **DO NOT** read unrelated files from the codebase
+   - Focus on what was actually modified, not the entire project
 
 3. **Comprehensive Review Checklist**
 
@@ -142,16 +149,21 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] **Error Logging**: Errors logged appropriately (no sensitive information)
    - [ ] **Reactive Error Handling**: Async errors handled gracefully with `catchError` and error signals
 
-4. **Run Automated Checks**
-   - Run TypeScript compilation check: `npx nx run [project]:build` or check for TypeScript errors
-   - Run ESLint: `npx nx lint [project]` (if project specified) or check for lint errors
-   - Check for Prettier formatting issues
-   - Review test coverage if available
+4. **Run Automated Checks** (ONLY for changed files/projects)
+   - Identify which projects contain the changed files
+   - Run TypeScript compilation check: `npx nx run [project]:build` (only for affected projects)
+   - Run ESLint: `npx nx lint [project]` (only for projects with changed files)
+   - Check for Prettier formatting issues (only in changed files)
+   - Review test coverage if available (only for changed test files)
+   - **DO NOT** run checks on the entire workspace - only check what was changed
 
-5. **Automatically Detect and Fix Issues**
+5. **Automatically Detect and Fix Issues** (ONLY in changed files)
 
-   **CRITICAL**: After identifying issues, **AUTOMATICALLY apply fixes** to the code. Do not just report issues - fix
-   them directly.
+   **CRITICAL**: After identifying issues **in the changed files**, **AUTOMATICALLY apply fixes** to the code. Do not
+   just report issues - fix them directly.
+
+   **IMPORTANT**: Only fix issues in files that are part of the current changes. Do NOT fix issues in unrelated files
+   from the codebase.
 
    ### Automatic Fix Categories
 
@@ -194,11 +206,13 @@ fixes, provide a summary report for manual review. The user will manually review
    - **Memory Leaks**: Add proper unsubscription in `ngOnDestroy`
 
    ### Fix Application Process
-   1. **For each issue found**:
+   1. **For each issue found in changed files**:
+      - Verify the file is part of the current changes (staged/unstaged)
       - Read the file containing the issue
       - Identify the exact location (line numbers)
       - Apply the fix directly to the file
       - Ensure the fix follows the codebase standards
+      - **DO NOT** fix issues in files that are not part of the current changes
 
    2. **Fix Order** (apply fixes in this order to avoid conflicts):
       - First: TypeScript compilation errors
@@ -381,19 +395,22 @@ name = input<string>();
 
 ## Requirements
 
-- **MUST** review against all rules in `.cursor/rules/` directory
-- **MUST** check TypeScript compilation
-- **MUST** check ESLint compliance
-- **MUST** verify Definition of Done checklist
-- **MUST automatically apply fixes** for all issues that can be auto-fixed
+- **MUST** review **ONLY changed/submitted files** - NOT the entire codebase
+- **MUST** use `git status` and `git diff` to identify what has actually changed
+- **MUST** review against all rules in `.cursor/rules/` directory (for changed files only)
+- **MUST** check TypeScript compilation (only for affected projects)
+- **MUST** check ESLint compliance (only for changed files)
+- **MUST** verify Definition of Done checklist (for changed files only)
+- **MUST automatically apply fixes** for all issues that can be auto-fixed (in changed files only)
 - **MUST** provide specific file paths and line numbers for issues
 - **MUST** reference specific rules when pointing out issues
 - **MUST** show before/after code for all applied fixes
 - **MUST** provide a summary of all fixes applied
 - **MUST** indicate which issues could not be auto-fixed and why
-- **SHOULD** run automated checks (TypeScript, ESLint) when possible
-- **SHOULD** check test coverage if available
-- **SHOULD** review related test files for components/services
+- **MUST NOT** review or fix files that are not part of the current changes
+- **SHOULD** run automated checks (TypeScript, ESLint) only for affected projects
+- **SHOULD** check test coverage if available (only for changed test files)
+- **SHOULD** review related test files for components/services (only if they are also changed)
 - **SHOULD** apply fixes in the correct order to avoid conflicts
 - **SHOULD** verify fixes don't introduce new issues
 
@@ -422,12 +439,13 @@ Always reference these rule files when reviewing:
 
 ## Example Review Workflow
 
-For a component file review:
+For a component file review (ONLY changed files):
 
-1. **Read the component file, template, styles, and spec file**
-2. **Check all checklist items systematically**
-3. **Run TypeScript and ESLint checks**
-4. **Automatically apply fixes**:
+1. **Identify changed files** using `git status` and `git diff`
+2. **Read ONLY the changed component file, template, styles, and spec file** (if they are part of changes)
+3. **Check all checklist items systematically** (for changed files only)
+4. **Run TypeScript and ESLint checks** (only for affected projects)
+5. **Automatically apply fixes** (only in changed files):
    - Replace `@Input() name?: string;` with `name = input<string>();`
    - Add `ChangeDetectionStrategy.OnPush` if missing
    - Replace `*ngIf` with `@if` in templates
@@ -435,11 +453,11 @@ For a component file review:
    - Replace hard-coded colors with Clarity variables
    - Add JSDoc comments to exported items
    - Format code with Prettier
-5. **Generate comprehensive report** showing:
+6. **Generate comprehensive report** showing:
    - All issues found
    - All fixes applied (with before/after code)
    - Issues that require manual review
-6. **Provide summary** for user to review before committing
+7. **Provide summary** for user to review before committing
 
 ## Automatic Fix Examples
 
@@ -515,7 +533,3 @@ color: $clr-color-neutral-700;
 
 The review should be thorough, specific, and actionable, automatically fixing issues while providing clear documentation
 of all changes made.
-
-```
-
-```
