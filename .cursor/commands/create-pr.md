@@ -52,14 +52,35 @@ with:
      - **Testing**: Describe tests run or needed
      - **Additional Notes**: Any relevant context
 
-5. **Create the PR**
-   - Use GitHub MCP server to create the pull request
+5. **Check for Existing PR**
+   - First, check if a PR already exists for the current branch using GitHub MCP server
+   - Query for existing PRs with the same head branch
+   - If PR exists, note the PR number for updating
+
+6. **Create or Update the PR**
+   - **If PR does NOT exist**: Use GitHub MCP server to create a new pull request
+   - **If PR DOES exist**: Use GitHub MCP server to update the existing PR's title and description
    - Set base branch (default: `main`)
    - Set head branch (current branch)
    - Use generated title and description
+   - **CRITICAL**: Always automatically create or update the PR using GitHub MCP server - NEVER ask the user, NEVER just
+     display the content
+   - **CRITICAL**: The MCP server is configured and ready - use it directly without asking for confirmation or
+     permission
+   - When commits are appended to the branch, running `/create-pr` again will automatically update the PR with new
+     changes
+   - **DO NOT** ask if MCP is configured or if you should proceed - just execute the create/update action automatically
 
 ## Requirements
 
+- **MUST automatically create or update the PR using GitHub MCP server** - never just display the content, never ask for
+  permission
+- **MUST assume MCP server is configured and ready** - use it directly without asking if it's available
+- **MUST check for existing PR first** - if PR exists for the current branch, update it instead of creating a new one
+- **MUST update PR when commits are appended** - re-running `/create-pr` after adding commits should update the existing
+  PR
+- **MUST execute the action automatically** - do not ask "should I proceed" or "do you want me to create it" - just do
+  it
 - Must analyze actual git changes, not assume
 - Title must follow conventional commits format
 - Description must match the project's PR template structure
@@ -140,6 +161,23 @@ Fixes # (issue if applicable)
 [Any other context about the pull request]
 ```
 
+## Automatic PR Management
+
+**CRITICAL**: This command MUST automatically create or update PRs using the GitHub MCP server. The workflow is:
+
+1. **First Run**: Analyze changes → Generate title/description → **Create PR automatically via MCP (NO QUESTIONS
+   ASKED)**
+2. **Subsequent Runs**: Check for existing PR → Analyze new changes → **Update existing PR automatically via MCP (NO
+   QUESTIONS ASKED)**
+3. **After Adding Commits**: Re-run `/create-pr` → **Update PR with new changes automatically (NO QUESTIONS ASKED)**
+
+**IMPORTANT RULES:**
+
+- The command should NEVER just display the PR content - it must always perform the create/update action
+- The command should NEVER ask if MCP is configured - assume it is and use it directly
+- The command should NEVER ask for permission to create/update - just do it automatically
+- The MCP server is configured and ready - use it without hesitation
+
 ## Example
 
 For a refactoring PR that migrates to Nx monorepo:
@@ -147,3 +185,5 @@ For a refactoring PR that migrates to Nx monorepo:
 **Title**: `refactor: migrate to nx monorepo workspace`
 
 **Description**: Comprehensive description explaining the migration, affected files, and testing approach.
+
+**Action**: The PR is automatically created or updated via GitHub MCP server, not just displayed.
