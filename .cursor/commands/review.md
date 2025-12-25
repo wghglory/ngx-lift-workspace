@@ -5,6 +5,7 @@ this codebase. The rules defined in `.cursor/rules/` have the highest priority a
 
 ## Objective
 
+<<<<<<< HEAD
 <<<<<<< HEAD **IMPORTANT**: This command reviews **ONLY the changed/submitted code** (staged, unstaged, or specified
 files), **NOT the entire codebase**.
 
@@ -12,6 +13,12 @@ files), **NOT the entire codebase**.
 
 Review all code changes (staged, unstaged, or specified files) against the comprehensive tech standards defined in this
 workspace, including:
+=======
+**IMPORTANT**: This command reviews **ONLY the changed/submitted code** (staged, unstaged, or specified files), **NOT
+the entire codebase**.
+
+Review the changed code against the comprehensive tech standards defined in this workspace, including:
+>>>>>>> 1425d68 (chore: update)
 
 > > > > > > > 1bc14d5 (chore: code review command)
 
@@ -30,6 +37,7 @@ fixes, provide a summary report for manual review. The user will manually review
 
 ## Process
 
+<<<<<<< HEAD
 1. **Identify Files to Review** <<<<<<< HEAD
    - **ONLY review changed/submitted files** - do NOT review the entire codebase
    - If no specific files are mentioned, review all changed files (staged and unstaged) from git
@@ -45,14 +53,30 @@ fixes, provide a summary report for manual review. The user will manually review
    - **DO NOT** read unrelated files from the codebase
    - # Focus on what was actually modified, not the entire project
    - If no specific files are mentioned, review all changed files (staged and unstaged)
+=======
+1. **Identify Files to Review**
+   - **ONLY review changed/submitted files** - do NOT review the entire codebase
+   - If no specific files are mentioned, review all changed files (staged and unstaged) from git
+>>>>>>> 1425d68 (chore: update)
    - If specific files are mentioned, review only those files
-   - Include related test files for components/services being reviewed
+   - Include related test files for components/services being reviewed (only if they are also changed)
+   - Use `git status` and `git diff` to identify what has actually changed
+   - **DO NOT** scan the entire codebase for issues - only review files that have been modified
 
+<<<<<<< HEAD
 3. **Read and Analyze Code**
    - Read all relevant files (component, template, styles, spec files)
    - Understand the context and purpose of the changes
    - Check for related files that might be affected
      > > > > > > > 1bc14d5 (chore: code review command)
+=======
+2. **Read and Analyze Code**
+   - Read **ONLY the changed files** and their immediate dependencies (if changed)
+   - Read related files (component, template, styles, spec files) **ONLY if they are part of the changes**
+   - Understand the context and purpose of the changes
+   - **DO NOT** read unrelated files from the codebase
+   - Focus on what was actually modified, not the entire project
+>>>>>>> 1425d68 (chore: update)
 
 4. **Comprehensive Review Checklist**
 
@@ -163,6 +187,7 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] **Error Logging**: Errors logged appropriately (no sensitive information)
    - [ ] **Reactive Error Handling**: Async errors handled gracefully with `catchError` and error signals
 
+<<<<<<< HEAD
 <<<<<<< HEAD 4. **Run Automated Checks** (ONLY for changed files/projects)
 
 - Identify which projects contain the changed files
@@ -173,6 +198,23 @@ fixes, provide a summary report for manual review. The user will manually review
 - **DO NOT** run checks on the entire workspace - only check what was changed
 
 5.  **Automatically Detect and Fix Issues** (ONLY in changed files)
+=======
+4. **Run Automated Checks** (ONLY for changed files/projects)
+   - Identify which projects contain the changed files
+   - Run TypeScript compilation check: `npx nx run [project]:build` (only for affected projects)
+   - Run ESLint: `npx nx lint [project]` (only for projects with changed files)
+   - Check for Prettier formatting issues (only in changed files)
+   - Review test coverage if available (only for changed test files)
+   - **DO NOT** run checks on the entire workspace - only check what was changed
+
+5. **Automatically Detect and Fix Issues** (ONLY in changed files)
+
+   **CRITICAL**: After identifying issues **in the changed files**, **AUTOMATICALLY apply fixes** to the code. Do not
+   just report issues - fix them directly.
+
+   **IMPORTANT**: Only fix issues in files that are part of the current changes. Do NOT fix issues in unrelated files
+   from the codebase.
+>>>>>>> 1425d68 (chore: update)
 
     **CRITICAL**: After identifying issues **in the changed files**, **AUTOMATICALLY apply fixes** to the code. Do not
     just report issues - fix them directly.
@@ -193,7 +235,18 @@ fixes, provide a summary report for manual review. The user will manually review
 
     > > > > > > > 1bc14d5 (chore: code review command)
 
+<<<<<<< HEAD
     ### Automatic Fix Categories
+=======
+   ### Fix Application Process
+   1. **For each issue found in changed files**:
+      - Verify the file is part of the current changes (staged/unstaged)
+      - Read the file containing the issue
+      - Identify the exact location (line numbers)
+      - Apply the fix directly to the file
+      - Ensure the fix follows the codebase standards
+      - **DO NOT** fix issues in files that are not part of the current changes
+>>>>>>> 1425d68 (chore: update)
 
     #### TypeScript & Code Quality Fixes
     - **Missing JSDoc**: Add comprehensive JSDoc comments to all exported functions, classes, interfaces, types, and
@@ -433,13 +486,17 @@ name = input<string>();
 ## Requirements
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1425d68 (chore: update)
 - **MUST** review **ONLY changed/submitted files** - NOT the entire codebase
 - **MUST** use `git status` and `git diff` to identify what has actually changed
 - **MUST** review against all rules in `.cursor/rules/` directory (for changed files only)
 - **MUST** check TypeScript compilation (only for affected projects)
 - **MUST** check ESLint compliance (only for changed files)
 - **MUST** verify Definition of Done checklist (for changed files only)
+<<<<<<< HEAD
 - # **MUST automatically apply fixes** for all issues that can be auto-fixed (in changed files only)
 - **MUST** review against all rules in `.cursor/rules/` directory
 - **MUST** check TypeScript compilation
@@ -447,10 +504,14 @@ name = input<string>();
 - **MUST** verify Definition of Done checklist
 - **MUST automatically apply fixes** for all issues that can be auto-fixed
   > > > > > > > 1bc14d5 (chore: code review command)
+=======
+- **MUST automatically apply fixes** for all issues that can be auto-fixed (in changed files only)
+>>>>>>> 1425d68 (chore: update)
 - **MUST** provide specific file paths and line numbers for issues
 - **MUST** reference specific rules when pointing out issues
 - **MUST** show before/after code for all applied fixes
 - **MUST** provide a summary of all fixes applied
+<<<<<<< HEAD
 - **MUST** indicate which issues could not be auto-fixed and why <<<<<<< HEAD
 - **MUST NOT** review or fix files that are not part of the current changes
 - **SHOULD** run automated checks (TypeScript, ESLint) only for affected projects
@@ -460,6 +521,13 @@ name = input<string>();
 - **SHOULD** check test coverage if available
 - **SHOULD** review related test files for components/services
   > > > > > > > 1bc14d5 (chore: code review command)
+=======
+- **MUST** indicate which issues could not be auto-fixed and why
+- **MUST NOT** review or fix files that are not part of the current changes
+- **SHOULD** run automated checks (TypeScript, ESLint) only for affected projects
+- **SHOULD** check test coverage if available (only for changed test files)
+- **SHOULD** review related test files for components/services (only if they are also changed)
+>>>>>>> 1425d68 (chore: update)
 - **SHOULD** apply fixes in the correct order to avoid conflicts
 - **SHOULD** verify fixes don't introduce new issues
 
@@ -488,12 +556,17 @@ Always reference these rule files when reviewing:
 
 ## Example Review Workflow
 
+<<<<<<< HEAD
 <<<<<<< HEAD For a component file review (ONLY changed files):
+=======
+For a component file review (ONLY changed files):
+>>>>>>> 1425d68 (chore: update)
 
 1. **Identify changed files** using `git status` and `git diff`
 2. **Read ONLY the changed component file, template, styles, and spec file** (if they are part of changes)
 3. **Check all checklist items systematically** (for changed files only)
 4. **Run TypeScript and ESLint checks** (only for affected projects)
+<<<<<<< HEAD
 5. # **Automatically apply fixes** (only in changed files):
 
    For a component file review:
@@ -503,12 +576,16 @@ Always reference these rule files when reviewing:
 8. **Run TypeScript and ESLint checks**
 9. **Automatically apply fixes**:
    > > > > > > > 1bc14d5 (chore: code review command)
+=======
+5. **Automatically apply fixes** (only in changed files):
+>>>>>>> 1425d68 (chore: update)
    - Replace `@Input() name?: string;` with `name = input<string>();`
    - Add `ChangeDetectionStrategy.OnPush` if missing
    - Replace `*ngIf` with `@if` in templates
    - Add track functions to `@for` loops
    - Replace hard-coded colors with Clarity variables
    - Add JSDoc comments to exported items
+<<<<<<< HEAD
    - Format code with Prettier <<<<<<< HEAD
 10. **Generate comprehensive report** showing:
     - All issues found
@@ -521,6 +598,14 @@ Always reference these rule files when reviewing:
     - Issues that require manual review
 13. **Provide summary** for user to review before committing
     > > > > > > > 1bc14d5 (chore: code review command)
+=======
+   - Format code with Prettier
+6. **Generate comprehensive report** showing:
+   - All issues found
+   - All fixes applied (with before/after code)
+   - Issues that require manual review
+7. **Provide summary** for user to review before committing
+>>>>>>> 1425d68 (chore: update)
 
 ## Automatic Fix Examples
 
@@ -596,7 +681,3 @@ color: $clr-color-neutral-700;
 
 The review should be thorough, specific, and actionable, automatically fixing issues while providing clear documentation
 of all changes made.
-
-```
-
-```
