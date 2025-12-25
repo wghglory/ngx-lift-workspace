@@ -2,55 +2,52 @@
 
 ## [1.10.3](https://github.com/wghglory/ngx-lift/compare/v1.10.2...v1.10.3) (2025-05-29)
 
-
 ### Bug Fixes
 
-* fix combineFrom cannot use with angular input.required ([#95](https://github.com/wghglory/ngx-lift/issues/95)) ([159f33f](https://github.com/wghglory/ngx-lift/commit/159f33f151b87d93863bc0995b1a0a2e2de0d8a6))
+- fix combineFrom cannot use with angular input.required ([#95](https://github.com/wghglory/ngx-lift/issues/95))
+  ([159f33f](https://github.com/wghglory/ngx-lift/commit/159f33f151b87d93863bc0995b1a0a2e2de0d8a6))
 
 ## [1.10.2](https://github.com/wghglory/ngx-lift/compare/v1.10.1...v1.10.2) (2025-05-19)
 
-
 ### Bug Fixes
 
-* (clr-lift): file reader should be marked as touched when control value is provided initially ([#92](https://github.com/wghglory/ngx-lift/issues/92)) ([f6083dc](https://github.com/wghglory/ngx-lift/commit/f6083dcac39ddd72794eec2dd969f540b11879a1))
-
+- (clr-lift): file reader should be marked as touched when control value is provided initially
+  ([#92](https://github.com/wghglory/ngx-lift/issues/92))
+  ([f6083dc](https://github.com/wghglory/ngx-lift/commit/f6083dcac39ddd72794eec2dd969f540b11879a1))
 
 ### Miscellaneous Chores
 
-* release 1.10.2 ([c4a8282](https://github.com/wghglory/ngx-lift/commit/c4a828264df659187b0aced70eab23ee58a36fe6))
+- release 1.10.2 ([c4a8282](https://github.com/wghglory/ngx-lift/commit/c4a828264df659187b0aced70eab23ee58a36fe6))
 
 ## [1.10.1](https://github.com/wghglory/ngx-lift/compare/v1.10.0...v1.10.1) (2025-02-26)
 
-
 ### Miscellaneous Chores
 
-* release 1.10.1 ([c5535b8](https://github.com/wghglory/ngx-lift/commit/c5535b88980975627ffd184540aba51bd70e2dc3))
+- release 1.10.1 ([c5535b8](https://github.com/wghglory/ngx-lift/commit/c5535b88980975627ffd184540aba51bd70e2dc3))
 
 ## [1.10.0](https://github.com/wghglory/ngx-lift/compare/v1.9.0...v1.10.0) (2025-02-26)
 
-
 ### Miscellaneous Chores
 
-* release 1.10.0 ([#88](https://github.com/wghglory/ngx-lift/issues/88)) ([9d0541e](https://github.com/wghglory/ngx-lift/commit/9d0541ea5ee5aae6f79da1307722205b9ccc240c))
+- release 1.10.0 ([#88](https://github.com/wghglory/ngx-lift/issues/88))
+  ([9d0541e](https://github.com/wghglory/ngx-lift/commit/9d0541ea5ee5aae6f79da1307722205b9ccc240c))
 
 ## [1.9.0](https://github.com/wghglory/ngx-lift/compare/v1.8.0...v1.9.0) (2024-12-23)
 
-
 ### Features
 
-* add kubernetes models and operator ([#85](https://github.com/wghglory/ngx-lift/issues/85)) ([399cc10](https://github.com/wghglory/ngx-lift/commit/399cc104ca334c35639460576945007935fcb907))
-
+- add kubernetes models and operator ([#85](https://github.com/wghglory/ngx-lift/issues/85))
+  ([399cc10](https://github.com/wghglory/ngx-lift/commit/399cc104ca334c35639460576945007935fcb907))
 
 ### Bug Fixes
 
-* fix UT ([b9b904a](https://github.com/wghglory/ngx-lift/commit/b9b904a47d57d5c08f88bb9bc57505e6f8dca6af))
+- fix UT ([b9b904a](https://github.com/wghglory/ngx-lift/commit/b9b904a47d57d5c08f88bb9bc57505e6f8dca6af))
 
 ## [1.8.0](https://github.com/wghglory/ngx-lift/compare/v1.7.3...v1.8.0) (2024-11-01)
 
-
 ### Miscellaneous Chores
 
-* release 1.8.0 ([9cc6264](https://github.com/wghglory/ngx-lift/commit/9cc6264a13180c1b4274f7dd150dd3e6e393ec95))
+- release 1.8.0 ([9cc6264](https://github.com/wghglory/ngx-lift/commit/9cc6264a13180c1b4274f7dd150dd3e6e393ec95))
 
 ## [1.7.3](https://github.com/wghglory/ngx-lift/compare/v1.7.2...v1.7.3) (2024-10-09)
 
