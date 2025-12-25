@@ -13,18 +13,8 @@
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
   "plugins": [
-    {
-      "plugin": "@nx/angular/plugin",
-      "options": {
-        "targetNamePrefix": ""
-      }
-    },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    {"plugin": "@nx/angular/plugin", "options": {"targetNamePrefix": ""}},
+    {"plugin": "@nx/eslint/plugin", "options": {"targetName": "lint"}},
     {
       "plugin": "@nx/vite/plugin",
       "options": {
@@ -39,12 +29,7 @@
         "watchDepsTargetName": "watch-deps"
       }
     },
-    {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    },
+    {"plugin": "@nx/playwright/plugin", "options": {"targetName": "e2e"}},
     {
       "plugin": "@nx/rspack/plugin",
       "options": {
@@ -63,11 +48,7 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "@nx/angular:package": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    }
+    "@nx/angular:package": {"cache": true, "dependsOn": ["^build"], "inputs": ["production", "^production"]}
   },
   "generators": {
     "@nx/angular:application": {
@@ -76,17 +57,9 @@
       "style": "scss",
       "unitTestRunner": "vitest"
     },
-    "@nx/angular:library": {
-      "linter": "eslint",
-      "unitTestRunner": "vitest"
-    },
-    "@nx/angular:component": {
-      "style": "scss"
-    }
+    "@nx/angular:library": {"linter": "eslint", "unitTestRunner": "vitest"},
+    "@nx/angular:component": {"style": "scss"}
   },
-  "release": {
-    "version": {
-      "preVersionCommand": "npx nx run-many -t build"
-    }
-  }
+  "release": {"version": {"preVersionCommand": "npx nx run-many -t build"}},
+  "nxCloudId": "69494438ac7b2b3a007467c0"
 }
