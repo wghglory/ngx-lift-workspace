@@ -37,20 +37,13 @@ Visit `http://localhost:4200` to see the demo!
 
 1. **COMMANDS.md** - All available commands (50+)
 2. **README.md** - Development workflows
-3. **MIGRATION_SUMMARY.md** - Technical details
+3. **TECHNOLOGY_ANALYSIS.md** - Tech stack analysis
 
 ### For DevOps/Deployment
 
 1. **DEPLOYMENT.md** - Complete deployment guide
 2. **README.md** - CI/CD section
 3. **.github/workflows/** - GitHub Actions
-
-### For Migration Understanding
-
-1. **MIGRATION_COMPLETE.md** - What was done
-2. **MIGRATION_SUMMARY.md** - Detailed changes
-3. **MIGRATION_PLAN.md** - Original strategy
-4. **MIGRATION_CHECKLIST.md** - Action items
 
 ## 🎯 Common Tasks
 
@@ -94,18 +87,14 @@ npm run format         # Format code
 
 ## 📖 Documentation Files
 
-| File                             | Purpose                | When to Read                 |
-| -------------------------------- | ---------------------- | ---------------------------- |
-| **START_HERE.md**                | Quick orientation      | First time                   |
-| **QUICK_START.md**               | Essential commands     | Daily use                    |
-| **README.md**                    | Complete documentation | Reference                    |
-| **TECHNOLOGY_ANALYSIS.md**       | Tech stack analysis    | Understanding tech choices   |
-| **COMMANDS.md**                  | All commands           | Looking for specific command |
-| **DEPLOYMENT.md**                | Deployment guide       | Setting up CI/CD             |
-| **MIGRATION_COMPLETE.md**        | Migration summary      | Understanding what changed   |
-| **MIGRATION_SUMMARY.md**         | Technical details      | Deep dive                    |
-| **MIGRATION_CHECKLIST.md**       | Action items           | Post-migration tasks         |
-| **MIGRATION_VISUAL_SUMMARY.txt** | Visual overview        | Quick reference              |
+| File                       | Purpose                | When to Read                 |
+| -------------------------- | ---------------------- | ---------------------------- |
+| **START_HERE.md**          | Quick orientation      | First time                   |
+| **QUICK_START.md**         | Essential commands     | Daily use                    |
+| **README.md**              | Complete documentation | Reference                    |
+| **TECHNOLOGY_ANALYSIS.md** | Tech stack analysis    | Understanding tech choices   |
+| **COMMANDS.md**            | All commands           | Looking for specific command |
+| **DEPLOYMENT.md**          | Deployment guide       | Setting up CI/CD             |
 
 ## 🗂️ Project Structure
 
@@ -127,7 +116,7 @@ ngx-lift-workspace/
 - ✅ CI/CD workflows created
 - ✅ Deployment configs (Netlify + Vercel)
 - ✅ 25+ npm scripts added
-- ✅ 8 documentation files written
+- ✅ 7 documentation files written
 - ✅ Path mappings configured
 - ✅ Package.json updated (Angular 20.x)
 
@@ -139,8 +128,6 @@ ngx-lift-workspace/
 4. **Start developing**: `npm start`
 5. **Set up CI/CD**: Add GitHub secrets
 6. **Configure deployments**: Set up Netlify/Vercel
-
-See **MIGRATION_CHECKLIST.md** for detailed action items.
 
 ## 🎓 Learning Path
 
@@ -236,8 +223,8 @@ After getting everything running:
 - **Main Docs**: README.md
 - **Commands**: COMMANDS.md
 - **Deployment**: DEPLOYMENT.md
-- **Migration Info**: MIGRATION_COMPLETE.md
-- **Action Items**: MIGRATION_CHECKLIST.md
+- **Quick Start**: QUICK_START.md
+- **Tech Analysis**: TECHNOLOGY_ANALYSIS.md
 
 ## 🏁 Ready to Start?
 

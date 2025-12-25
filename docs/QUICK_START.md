@@ -210,7 +210,7 @@ npm start
 - **Full Documentation**: See `README.md`
 - **All Commands**: See `COMMANDS.md`
 - **Deployment Guide**: See `DEPLOYMENT.md`
-- **Migration Details**: See `MIGRATION_SUMMARY.md`
+- **Tech Stack Analysis**: See `TECHNOLOGY_ANALYSIS.md`
 
 ## 🆘 Need Help?
 
