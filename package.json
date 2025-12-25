@@ -39,7 +39,8 @@
     "release:publish": "nx release publish",
     "publish:ngx": "nx build ngx-lift && cd dist/libs/ngx-lift && npm publish",
     "publish:clr": "nx build clr-lift && cd dist/libs/clr-lift && npm publish",
-    "publish:all": "npm run build:libs && npm run publish:ngx && npm run publish:clr"
+    "publish:all": "npm run build:libs && npm run publish:ngx && npm run publish:clr",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -108,9 +109,11 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-playwright": "^1.6.2",
     "eslint-plugin-simple-import-sort": "^10.0.0",
+    "husky": "^9.0.11",
     "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
+    "lint-staged": "^15.2.0",
     "ng-packagr": "~20.3.0",
     "nx": "22.0.0",
     "postcss": "^8.4.5",
@@ -129,5 +132,14 @@
   },
   "nx": {
     "includedScripts": []
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,scss,md,html}": [
+      "prettier --write"
+    ]
   }
 }
