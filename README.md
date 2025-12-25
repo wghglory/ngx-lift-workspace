@@ -32,7 +32,7 @@ A showcase application demonstrating the features and capabilities of both libra
 
 ### Prerequisites
 
-- Node.js 20.x or higher
+- Node.js 22.x or higher
 - npm 10.x or higher
 
 ### Installation
