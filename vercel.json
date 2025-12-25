@@ -5,10 +5,10 @@
   "framework": null,
   "installCommand": "npm ci",
   "devCommand": "npx nx serve demo",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
