@@ -4,8 +4,8 @@ A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along wit
 capabilities.
 
 [![CI](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml)
-[![npm version](https://badge.fury.io/js/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
-[![npm version](https://badge.fury.io/js/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
+[![ngx-lift npm version](https://badge.fury.io/js/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
+[![clr-lift npm version](https://badge.fury.io/js/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
 
 ## 📦 Packages
 
