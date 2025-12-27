@@ -263,7 +263,6 @@ fixes, provide a summary report for manual review. The user will manually review
    ```typescript
    [original code]
    ```
-   ````
 
    **After**:
 
@@ -280,6 +279,7 @@ fixes, provide a summary report for manual review. The user will manually review
    ## Checklist Results
 
    ### TypeScript & Code Quality
+
    - [ ] Strict mode compliance
    - [ ] No `any` types
    - [ ] JSDoc documentation
@@ -287,6 +287,7 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] Prettier formatted
 
    ### Angular 20 Patterns
+
    - [ ] Standalone components
    - [ ] OnPush strategy
    - [ ] Signal inputs/outputs
@@ -294,21 +295,25 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] Track functions in @for
 
    ### Clarity Design System
+
    - [ ] Clarity components used
    - [ ] No hard-coded colors
    - [ ] SASS variables used
 
    ### Testing
+
    - [ ] Test files exist
    - [ ] Vitest framework
    - [ ] Coverage requirements met
 
    ### Accessibility
+
    - [ ] ARIA attributes
    - [ ] Keyboard navigation
    - [ ] Labels for form controls
 
    ### Nx Workspace
+
    - [ ] Module boundaries respected
    - [ ] No circular dependencies
 
@@ -317,6 +322,7 @@ fixes, provide a summary report for manual review. The user will manually review
    [Specific recommendations for improvement]
 
    ## Definition of Done Status
+
    - [ ] UI uses `clr-*` components and Clarity variables only
    - [ ] Accessibility checked
    - [ ] Transloco keys implemented
@@ -326,10 +332,7 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] Code formatted with Prettier; ESLint clean; TypeScript compiles
    - [ ] Copyright header included
    - [ ] JSDoc comments added for all exports
-
-   ```
-
-   ```
+   ````
 
 ## Review Guidelines
 

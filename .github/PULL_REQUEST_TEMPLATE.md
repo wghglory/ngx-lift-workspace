@@ -1,49 +1,131 @@
-# Description
+## Description
 
-Please include a summary of the changes and the related issue. Please also include relevant motivation and context.
+<!-- Provide a clear and concise description of what this PR does -->
 
-Fixes # (issue)
+**Related Issue:** <!-- Link to related issue, e.g., Fixes #123 -->
 
-## Type of change
+## Summary of Changes
 
-Please delete options that are not relevant.
+<!-- Provide a high-level summary of the changes in this PR -->
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Refactoring (no functional changes)
-- [ ] Performance improvement
-- [ ] Test update
+### Key Changes
+
+- <!-- List major changes here -->
+- <!-- Use bullet points for clarity -->
+
+## Type of Change
+
+<!-- Select all that apply -->
+
+- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
+- [ ] ✨ New feature (non-breaking change which adds functionality)
+- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] 📚 Documentation update
+- [ ] ♻️ Refactoring (no functional changes)
+- [ ] ⚡ Performance improvement
+- [ ] 🧪 Test update/addition
+- [ ] 🔧 Configuration change
+- [ ] 🎨 Style/UI update
+- [ ] 🔒 Security fix
 
 ## Affected Projects
 
-- [ ] ngx-lift
-- [ ] clr-lift
-- [ ] demo app
+<!-- Select all that apply -->
 
-## Checklist
+- [ ] `ngx-lift` library
+- [ ] `clr-lift` library
+- [ ] `demo` application
+- [ ] Documentation
+- [ ] CI/CD workflows
+- [ ] Build configuration
+- [ ] Dependencies
 
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published
+## Breaking Changes
+
+<!-- If this is a breaking change, describe the impact and migration path -->
+
+- [ ] This PR introduces breaking changes
+- [ ] Migration guide provided (if applicable)
+
+**Breaking Changes:**
+
+<!-- Describe breaking changes here -->
+
+**Migration Guide:**
+
+<!-- Provide migration steps if applicable -->
 
 ## Testing
 
-Please describe the tests that you ran to verify your changes:
+### Test Coverage
 
-- [ ] Test A
-- [ ] Test B
+- [ ] Unit tests added/updated
+- [ ] E2E tests added/updated
+- [ ] Manual testing completed
+- [ ] All existing tests pass
 
-## Screenshots (if applicable)
+### Test Commands Run
 
-Add screenshots to help explain your changes.
+```bash
+# List the test commands you ran
+npm test
+npm run test:coverage
+npx nx test [project-name]
+```
 
-## Additional Notes
+### Test Results
 
-Add any other context about the pull request here.
+<!-- Describe test results or attach test output -->
+
+## Code Quality Checklist
+
+- [ ] ✅ Code follows the project's style guidelines
+- [ ] ✅ Self-review completed
+- [ ] ✅ JSDoc comments added for exported functions/classes/interfaces
+- [ ] ✅ TypeScript strict mode compliance
+- [ ] ✅ No `any` types used
+- [ ] ✅ ESLint passes without errors
+- [ ] ✅ Prettier formatting applied
+- [ ] ✅ No console.log statements left in code
+- [ ] ✅ No commented-out code
+- [ ] ✅ Accessibility considerations addressed (ARIA labels, keyboard navigation)
+- [ ] ✅ i18n keys added for user-visible text (if applicable)
+
+## Documentation
+
+- [ ] ✅ Documentation updated (README, API docs, etc.)
+- [ ] ✅ Code examples provided (if applicable)
+- [ ] ✅ CHANGELOG.md updated (if applicable)
+- [ ] ✅ Migration guide provided (for breaking changes)
+
+## Performance Impact
+
+<!-- Describe any performance implications -->
+
+- [ ] No performance impact
+- [ ] Performance improved
+- [ ] Performance considerations documented
+
+## Screenshots/Demo
+
+<!-- If applicable, add screenshots, GIFs, or links to demo -->
+
+## Additional Context
+
+<!-- Add any other context, notes, or considerations about this PR -->
+
+## Reviewer Notes
+
+<!-- Any specific areas you'd like reviewers to focus on -->
+
+## Dependencies
+
+<!-- List any new dependencies or dependency updates -->
+
+- <!-- Dependency name and version -->
+
+## Related PRs
+
+<!-- Link to related PRs -->
+
+- <!-- Related PR # -->
