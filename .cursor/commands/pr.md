@@ -131,28 +131,45 @@ with:
      - Collect all applicable labels into an array (remove duplicates, skip non-existent labels gracefully)
 
 7. **Create or Update the PR**
-   - **If PR does NOT exist**:
-     - Use `mcp_github_create_pull_request` tool to create a new pull request with:
-       - Base branch (default: `main`)
-       - Head branch (current branch)
-       - Generated title and description
-     - **After PR creation**, use `mcp_github_issue_write` tool with `method: "update"` to:
-       - Set `issue_number` to the created PR number (PRs are issues in GitHub)
-       - Set `assignees` to array containing authenticated user's username: `[username]`
-       - Set `labels` to array of determined labels from step 6
-   - **If PR DOES exist**:
-     - Use `mcp_github_update_pull_request` tool to update the existing PR's:
-       - Title and description
-     - **After PR update**, use `mcp_github_issue_write` tool with `method: "update"` to:
-       - Set `issue_number` to the existing PR number
-       - Set `assignees` to array containing authenticated user's username (only if not already assigned)
-       - Set `labels` to array combining existing labels with new determined labels (add missing, preserve existing)
-   - **CRITICAL**: Always automatically create or update the PR using GitHub MCP server - NEVER ask the user, NEVER just
-     display the content
-   - **CRITICAL**: The MCP server is configured and ready - use it directly without asking for confirmation or
-     permission
-   - When commits are appended to the branch, running `/pr` again will automatically update the PR with new changes
-   - **DO NOT** ask if MCP is configured or if you should proceed - just execute the create/update action automatically
+   - **STEP 1: Get authenticated user** (MUST DO THIS FIRST):
+     - Call `mcp_github_get_me` to get the authenticated user's GitHub username
+     - Store the username in a variable (e.g., `username = "wghglory"`)
+     - **CRITICAL**: This step is MANDATORY - do not skip it
+
+   - **STEP 2: Create or Update PR**:
+     - **If PR does NOT exist**:
+       - Use `mcp_github_create_pull_request` tool to create a new pull request with:
+         - Base branch (default: `main`)
+         - Head branch (current branch)
+         - Generated title and description
+       - **CRITICAL**: Store the returned PR number from the creation response
+     - **If PR DOES exist**:
+       - Use `mcp_github_update_pull_request` tool to update the existing PR's:
+         - Title and description
+       - **CRITICAL**: Use the existing PR number from step 5
+
+   - **STEP 3: Add Assignee and Labels** (MANDATORY - MUST DO THIS AFTER PR CREATION/UPDATE):
+     - **CRITICAL**: This step is REQUIRED and MUST NOT be skipped
+     - Use `mcp_github_issue_write` tool with `method: "update"`:
+       - Set `owner` to repository owner (e.g., `"wghglory"`)
+       - Set `repo` to repository name (e.g., `"ngx-lift-workspace"`)
+       - Set `issue_number` to the PR number (from step 2)
+       - Set `assignees` to array containing authenticated user's username: `[username]` (e.g., `["wghglory"]`)
+       - Set `labels` to array of determined labels from step 6 (e.g., `["enhancement", "ngx-lift"]`)
+     - **IMPORTANT**:
+       - For new PRs: Always set assignees and labels
+       - For existing PRs: Update assignees (if not already assigned) and merge labels (add missing, preserve existing)
+       - If labels array is empty, still call the function with an empty array `[]` to ensure assignee is set
+
+   - **CRITICAL RULES**:
+     - Always automatically create or update the PR using GitHub MCP server - NEVER ask the user, NEVER just display the
+       content
+     - The MCP server is configured and ready - use it directly without asking for confirmation or permission
+     - When commits are appended to the branch, running `/pr` again will automatically update the PR with new changes
+     - **DO NOT** ask if MCP is configured or if you should proceed - just execute the create/update action
+       automatically
+     - **MANDATORY**: Step 3 (adding assignee and labels) MUST be executed after every PR creation or update - it is NOT
+       optional
 
 ## Requirements
 
@@ -163,8 +180,15 @@ with:
 - **MUST update PR when commits are appended** - re-running `/pr` after adding commits should update the existing PR
 - **MUST execute the action automatically** - do not ask "should I proceed" or "do you want me to create it" - just do
   it
-- **MUST assign PR to authenticated user** - get username using `mcp_github_get_me` and assign the PR
-- **MUST add appropriate labels** - determine labels based on PR type, scope, and breaking changes
+- **MANDATORY: MUST get authenticated user** - ALWAYS call `mcp_github_get_me` FIRST before creating/updating PR
+- **MANDATORY: MUST assign PR to authenticated user** - ALWAYS call `mcp_github_issue_write` after PR creation/update to
+  set assignees
+- **MANDATORY: MUST add appropriate labels** - ALWAYS call `mcp_github_issue_write` after PR creation/update to set
+  labels
+- **CRITICAL**: The assignee and label assignment step (step 3) is MANDATORY and MUST be executed after EVERY PR
+  creation or update - it is NOT optional
+- **CRITICAL**: If you skip the assignee/label step, the PR will NOT have an assignee or labels - this is a bug that
+  must be fixed
 - Must analyze actual git changes, not assume
 - Title must follow conventional commits format
 - Description must match the project's PR template structure
@@ -199,11 +223,32 @@ The PR should be created with:
 
 **CRITICAL**: This command MUST automatically create or update PRs using the GitHub MCP server. The workflow is:
 
-1. **First Run**: Analyze changes → Generate title/description → **Create PR automatically via MCP (NO QUESTIONS
-   ASKED)**
-2. **Subsequent Runs**: Check for existing PR → Analyze new changes → **Update existing PR automatically via MCP (NO
-   QUESTIONS ASKED)**
-3. **After Adding Commits**: Re-run `/pr` → **Update PR with new changes automatically (NO QUESTIONS ASKED)**
+1. **First Run**:
+   - Analyze changes → Generate title/description →
+   - **Get authenticated user** (`mcp_github_get_me`) →
+   - **Create PR automatically via MCP** →
+   - **MANDATORY: Add assignee and labels** (`mcp_github_issue_write`) →
+   - Provide PR URL (NO QUESTIONS ASKED)
+
+2. **Subsequent Runs**:
+   - Check for existing PR → Analyze new changes →
+   - **Get authenticated user** (`mcp_github_get_me`) →
+   - **Update existing PR automatically via MCP** →
+   - **MANDATORY: Update assignee and labels** (`mcp_github_issue_write`) →
+   - Provide PR URL (NO QUESTIONS ASKED)
+
+3. **After Adding Commits**:
+   - Re-run `/pr` →
+   - **Get authenticated user** (`mcp_github_get_me`) →
+   - **Update PR with new changes automatically** →
+   - **MANDATORY: Update assignee and labels** (`mcp_github_issue_write`) →
+   - Provide PR URL (NO QUESTIONS ASKED)
+
+**MANDATORY WORKFLOW STEPS (MUST FOLLOW IN ORDER):**
+
+1. ✅ Get authenticated user via `mcp_github_get_me` (REQUIRED FIRST STEP)
+2. ✅ Create or update PR via `mcp_github_create_pull_request` or `mcp_github_update_pull_request`
+3. ✅ **MANDATORY**: Add assignee and labels via `mcp_github_issue_write` with `method: "update"` (REQUIRED FINAL STEP)
 
 **IMPORTANT RULES:**
 
@@ -211,8 +256,9 @@ The PR should be created with:
 - The command should NEVER ask if MCP is configured - assume it is and use it directly
 - The command should NEVER ask for permission to create/update - just do it automatically
 - The MCP server is configured and ready - use it without hesitation
-- The PR MUST be assigned to the authenticated user (get username via `mcp_github_get_me`)
-- The PR MUST have appropriate labels based on type, scope, and breaking changes
+- **STEP 3 IS MANDATORY**: You MUST call `mcp_github_issue_write` after every PR creation/update to set assignees and
+  labels
+- **DO NOT SKIP STEP 3**: If you skip it, the PR will not have an assignee or labels - this is a critical bug
 
 ## Analysis Tips
 
@@ -235,11 +281,17 @@ For a refactoring PR that migrates to Nx monorepo:
 **Description**: Comprehensive description following the PR template structure, explaining the migration, affected
 files, and testing approach.
 
-**Action**: The PR is automatically created or updated via GitHub MCP server with:
+**Action**: The PR is automatically created or updated via GitHub MCP server following this exact sequence:
 
-- Assignee: authenticated user (wghglory)
-- Labels: `enhancement`, `ngx-lift` (based on analysis)
-- Title and description as generated above
+1. Call `mcp_github_get_me` → Get username: `"wghglory"`
+2. Call `mcp_github_create_pull_request` → Create PR → Get PR number: `102`
+3. **MANDATORY**: Call `mcp_github_issue_write` with:
+   - `method: "update"`
+   - `issue_number: 102`
+   - `assignees: ["wghglory"]`
+   - `labels: ["enhancement", "ngx-lift"]`
+
+Result: PR #102 created with assignee `wghglory` and labels `enhancement`, `ngx-lift`
 
 ## Workflow
 
@@ -263,3 +315,18 @@ files, and testing approach.
 - **Breaking Changes**: `breaking-change` label if breaking changes detected
 
 The labels are added using `mcp_github_issue_write` after PR creation/update since PRs are issues in GitHub.
+
+## Execution Checklist
+
+**BEFORE executing the `/pr` command, verify you will:**
+
+- [ ] ✅ Call `mcp_github_get_me` FIRST to get the authenticated user's username
+- [ ] ✅ Determine appropriate labels based on PR type, scope, and breaking changes
+- [ ] ✅ Create or update the PR using `mcp_github_create_pull_request` or `mcp_github_update_pull_request`
+- [ ] ✅ **MANDATORY**: Call `mcp_github_issue_write` with `method: "update"` to set assignees and labels
+- [ ] ✅ Include `owner`, `repo`, `issue_number`, `assignees`, and `labels` parameters in the `mcp_github_issue_write`
+      call
+- [ ] ✅ Verify the PR has been assigned and labeled correctly
+
+**CRITICAL REMINDER**: If you skip the `mcp_github_issue_write` call, the PR will NOT have an assignee or labels. This
+step is MANDATORY and must be executed after every PR creation or update.
