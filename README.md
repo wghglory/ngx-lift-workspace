@@ -1,42 +1,99 @@
-# ngx-lift Monorepo
+<div align="center">
 
-A monorepo containing **ngx-lift** and **clr-lift** Angular libraries, along with a demo application showcasing their
-capabilities.
+# 🚀 ngx-lift Monorepo
+
+**Powerful Angular utilities and Clarity Design System components to supercharge your development**
 
 [![CI](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ffc4941a-8b33-4b95-847e-d34938036bcf/deploy-status)](https://app.netlify.com/projects/ngx-lift/deploys)
-[![ngx-lift npm version](https://img.shields.io/npm/v/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
-[![clr-lift npm version](https://img.shields.io/npm/v/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Angular](https://img.shields.io/badge/Angular-20.3.0-red.svg)](https://angular.io)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue.svg)](https://www.typescriptlang.org)
 
-## 📦 Packages
+[![ngx-lift npm version](https://img.shields.io/npm/v/ngx-lift.svg?label=ngx-lift&logo=npm)](https://www.npmjs.com/package/ngx-lift)
+[![clr-lift npm version](https://img.shields.io/npm/v/clr-lift.svg?label=clr-lift&logo=npm)](https://www.npmjs.com/package/clr-lift)
+[![npm downloads](https://img.shields.io/npm/dm/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
+[![npm downloads](https://img.shields.io/npm/dm/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
 
-### ngx-lift
+[📖 Documentation](https://ngx-lift.netlify.app) • [🎮 Live Demo](https://ngx-lift.netlify.app) •
+[🐛 Report Bug](https://github.com/wghglory/ngx-lift-workspace/issues) •
+[💡 Request Feature](https://github.com/wghglory/ngx-lift-workspace/issues)
 
-A comprehensive Angular library designed to enhance and simplify your Angular development experience with utilities,
-operators, pipes, signals, and validators.
+</div>
 
-**[View on npm](https://www.npmjs.com/package/ngx-lift)** | **[Documentation](https://ngx-lift.netlify.app)**
+---
 
-### clr-lift
+A modern monorepo containing **ngx-lift** and **clr-lift** - two powerful Angular libraries designed to enhance and
+simplify your development experience. Built with Angular 20, TypeScript 5.9, and modern best practices.
 
-An Angular library that augments VMware Clarity components with additional reusable components and utilities.
+## ✨ What's Inside?
 
-**[View on npm](https://www.npmjs.com/package/clr-lift)** | **[Documentation](https://ngx-lift.netlify.app/clr-lift)**
+### 📚 ngx-lift
 
-### Demo Application
+**A comprehensive Angular utility library** that provides essential tools for modern Angular development:
 
-A showcase application demonstrating the features and capabilities of both libraries.
+- 🚀 **RxJS Operators** - Specialized operators for async state management, polling, and reactive patterns
+- ⚡ **Signal Utilities** - Powerful signal-based utilities for Angular's Signals API
+- 🔧 **Pipes** - Ready-to-use pipes for common transformations (bytes, masking, arrays)
+- ✅ **Validators** - Advanced form validators (date ranges, URLs, unique values)
+- 🛠️ **Utilities** - Helper functions for forms, dates, objects, and more
 
-**[Live Demo](https://ngx-lift.netlify.app)**
+**[📦 View on npm](https://www.npmjs.com/package/ngx-lift)** • **[📖 Documentation](https://ngx-lift.netlify.app)** •
+**[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)**
+
+### 🎨 clr-lift
+
+**An Angular component library** built on top of VMware Clarity Design System:
+
+- 🧩 **15+ Production-Ready Components** - Alerts, toasts, spinners, wizards, and more
+- 🔧 **Clarity Utilities** - Enhanced datagrid state management and helpers
+- 🎯 **Type-Safe** - Full TypeScript support with strict mode
+- ♿ **Accessible** - Built with accessibility in mind
+- 🌓 **Theme Support** - Light and dark mode support
+
+**[📦 View on npm](https://www.npmjs.com/package/clr-lift)** •
+**[📖 Documentation](https://ngx-lift.netlify.app/clr-lift)** •
+**[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)**
+
+### 🎮 Demo Application
+
+A fully-featured showcase application demonstrating all capabilities of both libraries with live examples, code
+snippets, and interactive demos.
+
+**[🎮 Live Demo](https://ngx-lift.netlify.app)** •
+**[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/apps/demo)**
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Install the Libraries
+
+```bash
+# Install ngx-lift
+npm install ngx-lift
+
+# Install clr-lift (includes ngx-lift as peer dependency)
+npm install clr-lift @clr/angular @cds/core ngx-lift
+```
+
+### Use in Your Project
+
+```typescript
+// ngx-lift - RxJS Operators
+import {createAsyncState, poll} from 'ngx-lift';
+
+// ngx-lift - Signal Utilities
+import {injectParams, injectQueryParams, combineFrom} from 'ngx-lift';
+
+// clr-lift - Components
+import {AlertComponent, ToastService} from 'clr-lift';
+```
+
+### Development Setup
+
+**Prerequisites:**
 
 - Node.js 22.x or higher
 - npm 10.x or higher
-
-### Installation
 
 ```bash
 # Clone the repository
@@ -335,11 +392,18 @@ import {AlertComponent, ToastService} from 'clr-lift';
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes this
+project better.
+
+### How to Contribute
+
+1. **Fork the repository** and clone it locally
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Make your changes** following our [coding standards](.cursor/rules)
+4. **Write/update tests** to ensure your changes work correctly
+5. **Commit your changes** using [Conventional Commits](https://www.conventionalcommits.org/)
+6. **Push to your fork** (`git push origin feature/amazing-feature`)
+7. **Open a Pull Request** with a clear description
 
 ### Commit Convention
 
@@ -352,22 +416,50 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - `refactor:` Code refactoring
 - `test:` Test changes
 - `chore:` Build process or auxiliary tool changes
+- `perf:` Performance improvements
+- `ci:` CI/CD changes
+
+### Development Guidelines
+
+- ✅ All code must pass ESLint and TypeScript strict mode
+- ✅ Tests are required for new features (60%+ coverage minimum)
+- ✅ JSDoc comments required for all exported APIs
+- ✅ Follow Angular 20 best practices (signals, standalone components, OnPush)
+- ✅ Use Clarity Design System components where applicable
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## 📄 License
 
-MIT © [Guanghui Wang](https://github.com/wghglory)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔗 Links
+## 🔗 Links & Resources
 
-- **Homepage**: https://ngx-lift.netlify.app
-- **npm (ngx-lift)**: https://www.npmjs.com/package/ngx-lift
-- **npm (clr-lift)**: https://www.npmjs.com/package/clr-lift
-- **Issues**: https://github.com/wghglory/ngx-lift-workspace/issues
+- **🏠 Homepage**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app)
+- **📦 npm (ngx-lift)**: [npmjs.com/package/ngx-lift](https://www.npmjs.com/package/ngx-lift)
+- **📦 npm (clr-lift)**: [npmjs.com/package/clr-lift](https://www.npmjs.com/package/clr-lift)
+- **🐛 Issues**: [GitHub Issues](https://github.com/wghglory/ngx-lift-workspace/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/wghglory/ngx-lift-workspace/discussions)
+- **📝 Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
 ## 📞 Support
 
-For questions and support, please open an issue on GitHub.
+- 🐛 **Found a bug?** [Open an issue](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=bug_report.md)
+- 💡 **Have a feature request?**
+  [Request a feature](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=feature_request.md)
+- ❓ **Have a question?** [Start a discussion](https://github.com/wghglory/ngx-lift-workspace/discussions)
+
+## ⭐ Show Your Support
+
+If this project helped you, please consider giving it a ⭐ on GitHub!
 
 ---
 
-Built with ❤️ using [Nx](https://nx.dev) and [Angular](https://angular.io)
+<div align="center">
+
+**Built with ❤️ using [Nx](https://nx.dev), [Angular](https://angular.io), and
+[Clarity Design System](https://clarity.design)**
+
+Made by [Guanghui Wang](https://github.com/wghglory)
+
+</div>

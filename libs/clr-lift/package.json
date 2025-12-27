@@ -1,12 +1,28 @@
 {
   "name": "clr-lift",
   "version": "19.0.0",
-  "description": "The library is designed to augment the capabilities of the Clarity library by providing a set of reusable components built on top of clarity components.",
+  "description": "Production-ready Angular component library built on Clarity Design System. Includes 15+ reusable components, utilities, and operators for Clarity-based applications. Built for Angular 19+ with full TypeScript support.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",
   "keywords": [
     "angular",
-    "clr-lift"
+    "angular-19",
+    "angular-20",
+    "clr-lift",
+    "clarity",
+    "clarity-design-system",
+    "vmware-clarity",
+    "components",
+    "ui-components",
+    "datagrid",
+    "toast",
+    "alerts",
+    "wizard",
+    "spinner",
+    "theme-toggle",
+    "typescript",
+    "accessibility",
+    "a11y"
   ],
   "repository": {
     "type": "git",

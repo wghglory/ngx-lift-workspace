@@ -1,28 +1,44 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
       - main
       - develop
+      - 'release/**'
   pull_request:
     branches:
       - main
       - develop
+      - 'release/**'
 
-permissions:
-  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  lint-test-build:
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22.x]
-
+    outputs:
+      is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') }}
+      is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') }}
     steps:
-      - name: Checkout repository
+      - name: Display branch info
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') }}"
+          echo "is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') }}"
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -30,27 +46,190 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+      - name: Run lint (affected for non-main/release branches)
+        if: needs.setup.outputs.is-affected == 'true'
         uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: 'main'
 
       - name: Lint affected projects
+        if: needs.setup.outputs.is-affected == 'true'
         run: npx nx affected -t lint --parallel=3
 
-      - name: Test affected projects
-        run: npx nx affected -t test --parallel=3 --coverage
+      - name: Lint all projects
+        if: needs.setup.outputs.is-main-or-release == 'true'
+        run: npx nx run-many -t lint --parallel=3
+
+  unit-test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests (affected for non-main/release branches)
+        if: needs.setup.outputs.is-affected == 'true'
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: 'main'
+
+      - name: Unit test affected projects
+        if: needs.setup.outputs.is-affected == 'true'
+        run: npx nx affected -t test --parallel=3 --coverage=false
+
+      - name: Unit test all projects
+        if: needs.setup.outputs.is-main-or-release == 'true'
+        run: npx nx run-many -t test --parallel=3 --coverage=false
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [setup, lint, unit-test]
+    if:
+      always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped') && needs.unit-test.result ==
+      'success'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run build (affected for non-main/release branches)
+        if: needs.setup.outputs.is-affected == 'true'
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: 'main'
 
       - name: Build affected projects
+        if: needs.setup.outputs.is-affected == 'true'
         run: npx nx affected -t build --parallel=3
 
-      - name: Upload coverage reports
-        if: always()
-        uses: codecov/codecov-action@v4
+      - name: Build all projects
+        if: needs.setup.outputs.is-main-or-release == 'true'
+        run: npx nx run-many -t build --parallel=3
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
         with:
-          directory: ./coverage
-          fail_ci_if_error: false
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [setup, lint, unit-test, build]
+    if: always()
+    steps:
+      - name: Update CI Summary
+        run: |
+          LINT_STATUS="${{ needs.lint.result }}"
+          TEST_STATUS="${{ needs.unit-test.result }}"
+          BUILD_STATUS="${{ needs.build.result }}"
+          IS_MAIN_OR_RELEASE="${{ needs.setup.outputs.is-main-or-release }}"
+
+          get_status_icon() {
+            case "$1" in
+              "success") echo "✅" ;;
+              "failure") echo "❌" ;;
+              "cancelled") echo "🚫" ;;
+              "skipped") echo "⏭️" ;;
+              *) echo "⏳" ;;
+            esac
+          }
+
+          get_status_badge() {
+            case "$1" in
+              "success") echo "![Success](https://img.shields.io/badge/status-success-brightgreen)" ;;
+              "failure") echo "![Failure](https://img.shields.io/badge/status-failure-red)" ;;
+              "cancelled") echo "![Cancelled](https://img.shields.io/badge/status-cancelled-yellow)" ;;
+              "skipped") echo "![Skipped](https://img.shields.io/badge/status-skipped-lightgrey)" ;;
+              *) echo "![Pending](https://img.shields.io/badge/status-pending-orange)" ;;
+            esac
+          }
+
+          LINT_ICON=$(get_status_icon "$LINT_STATUS")
+          TEST_ICON=$(get_status_icon "$TEST_STATUS")
+          BUILD_ICON=$(get_status_icon "$BUILD_STATUS")
+
+          LINT_BADGE=$(get_status_badge "$LINT_STATUS")
+          TEST_BADGE=$(get_status_badge "$TEST_STATUS")
+          BUILD_BADGE=$(get_status_badge "$BUILD_STATUS")
+
+          if [ "$IS_MAIN_OR_RELEASE" = "true" ]; then
+            MODE="🔄 **All Projects**"
+            MODE_BADGE="![All](https://img.shields.io/badge/mode-all-blue)"
+          else
+            MODE="🎯 **Affected Projects**"
+            MODE_BADGE="![Affected](https://img.shields.io/badge/mode-affected-green)"
+          fi
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 🚀 CI Workflow Summary
+
+          ## 📋 Workflow Information
+
+          | Property | Value |
+          |----------|-------|
+          | **Event** | \`${{ github.event_name }}\` |
+          | **Branch** | \`${{ github.ref }}\` |
+          | **Mode** | $MODE_BADGE |
+          | **Node.js** | \`22\` |
+
+          ---
+
+          ## $MODE
+
+          $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "Running lint, unit test, and build for all projects" || echo "Running lint, unit test, and build for affected projects only")
+
+          ### Execution Strategy
+
+          - **Lint**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
+          - **Unit Test**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
+          - **Build**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
+
+          ---
+
+          ## 📊 Job Results
+
+          | Job | Status | Description |
+          |-----|--------|-------------|
+          | 🔍 **Lint** | $LINT_ICON $LINT_BADGE | Code quality checks |
+          | 🧪 **Unit Test** | $TEST_ICON $TEST_BADGE | Run unit tests |
+          | 🏗️ **Build** | $BUILD_ICON $BUILD_BADGE | Build projects |
+
+          ---
+
+          ## 📈 Overall Status
+
+          $([ "$LINT_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ] && [ "$BUILD_STATUS" = "success" ] && echo "### ✅ All jobs completed successfully!" || echo "### ⚠️ Some jobs did not complete successfully. Check individual job logs for details.")
+
+          EOF

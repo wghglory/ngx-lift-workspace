@@ -1,8 +1,33 @@
-# ngx-lift
+<div align="center">
 
-A powerful Angular utility library designed to enhance and simplify your Angular development experience. ngx-lift
-provides a comprehensive collection of utilities, operators, signals, pipes, and validators that streamline common
-Angular development tasks.
+# ⚡ ngx-lift
+
+**Powerful Angular utilities to supercharge your development workflow**
+
+[![npm version](https://img.shields.io/npm/v/ngx-lift.svg?logo=npm)](https://www.npmjs.com/package/ngx-lift)
+[![npm downloads](https://img.shields.io/npm/dm/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Angular](https://img.shields.io/badge/Angular-%3E%3D19.0.0-red.svg)](https://angular.io)
+
+[📖 Documentation](https://ngx-lift.netlify.app) • [🎮 Live Demo](https://ngx-lift.netlify.app) •
+[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
+
+</div>
+
+---
+
+A comprehensive Angular utility library designed to enhance and simplify your Angular development experience.
+**ngx-lift** provides a battle-tested collection of utilities, operators, signals, pipes, and validators that streamline
+common Angular development tasks and boost productivity.
+
+**Why ngx-lift?**
+
+- 🚀 **Production-Ready** - Used in real-world applications
+- 📦 **Tree-Shakable** - Import only what you need
+- 🎯 **Type-Safe** - Full TypeScript support with strict mode
+- ⚡ **Modern** - Built for Angular 19+ with Signals support
+- 🧪 **Well-Tested** - Comprehensive test coverage
+- 📚 **Well-Documented** - Extensive documentation and examples
 
 ## Features
 
@@ -72,12 +97,24 @@ yarn add ngx-lift
 pnpm add ngx-lift
 ```
 
-## Quick Start
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+npm install ngx-lift
+# or
+yarn add ngx-lift
+# or
+pnpm add ngx-lift
+```
 
 ### Using Operators
 
+**Async State Management** - Transform observables into loading/error/data states:
+
 ```typescript
-import {createAsyncState, poll} from 'ngx-lift';
+import {createAsyncState} from 'ngx-lift';
 import {HttpClient} from '@angular/common/http';
 
 export class UserComponent {
@@ -90,8 +127,18 @@ export class UserComponent {
       error: (err) => console.error('Error:', err),
     }),
   );
+}
+```
 
-  // Poll data at intervals
+**Polling** - Poll data at configurable intervals:
+
+```typescript
+import {poll} from 'ngx-lift';
+
+export class DataComponent {
+  private http = inject(HttpClient);
+
+  // Poll data every 5 seconds
   dataState$ = poll({
     interval: 5000,
     pollingFn: () => this.http.get('/api/data'),
@@ -102,15 +149,17 @@ export class UserComponent {
 
 ### Using Signal Utilities
 
+**Route Parameters as Signals** - Access route params reactively:
+
 ```typescript
-import {combineFrom, injectParams, injectQueryParams} from 'ngx-lift';
+import {injectParams, injectQueryParams, combineFrom} from 'ngx-lift';
 
 export class UserDetailComponent {
-  // Inject route parameters as signals
+  // Inject route parameters as signals (Angular 19+)
   userId = injectParams('id');
   searchTerm = injectQueryParams('search');
 
-  // Combine multiple sources into a signal
+  // Combine Observables and Signals into a single Signal
   vm = combineFrom({
     user: this.userService.getUser(this.userId()),
     filters: this.filtersSignal,
@@ -120,18 +169,25 @@ export class UserDetailComponent {
 
 ### Using Pipes
 
+**Template Pipes** - Ready-to-use pipes for common transformations:
+
 ```html
-<!-- Convert bytes to human-readable format -->
+<!-- Convert bytes to human-readable format (KB, MB, GB) -->
 <div>{{ fileSize | byteConverter }}</div>
+<!-- Output: "1.5 MB" -->
 
-<!-- Mask sensitive data -->
+<!-- Mask sensitive data (credit cards, emails, etc.) -->
 <div>{{ creditCard | mask: 'card' }}</div>
+<!-- Output: "**** **** **** 1234" -->
 
-<!-- Join array elements -->
+<!-- Join array elements with separator -->
 <div>{{ tags | arrayJoin: ', ' }}</div>
+<!-- Output: "angular, typescript, rxjs" -->
 ```
 
 ### Using Validators
+
+**Advanced Form Validators** - Powerful validators for complex scenarios:
 
 ```typescript
 import {FormBuilder, Validators} from '@angular/forms';
@@ -141,7 +197,10 @@ export class MyFormComponent {
   private fb = inject(FormBuilder);
 
   form = this.fb.group({
+    // URL validation
     website: ['', [Validators.required, url()]],
+
+    // Date range validation (end must be after start)
     dates: this.fb.group(
       {
         start: [''],
@@ -149,20 +208,32 @@ export class MyFormComponent {
       },
       {validators: dateRange()},
     ),
+
+    // Unique values in array
     tags: this.fb.array([], [unique()]),
   });
 }
 ```
 
-## Documentation
+## 📚 Documentation
 
-- **Demo Site**: [https://ngx-lift.netlify.app/](https://ngx-lift.netlify.app/)
-- **Source Code**:
-  [https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
-- **GitHub Repository**:
-  [https://github.com/wghglory/ngx-lift-workspace](https://github.com/wghglory/ngx-lift-workspace)
+- **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
+- **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)
+- **💻 Source Code**: [GitHub Repository](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
+- **📦 npm Package**: [npmjs.com/package/ngx-lift](https://www.npmjs.com/package/ngx-lift)
 
-## Running Tests
+## 🎯 Use Cases
+
+**ngx-lift** is perfect for:
+
+- 🔄 **Async State Management** - Simplify loading/error/success states
+- 📡 **Data Polling** - Poll APIs at intervals with manual refresh support
+- 🛣️ **Route Management** - Access route params and query params as signals
+- 📝 **Form Validation** - Advanced validators for complex forms
+- 🔧 **Data Transformation** - Pipes for common data formatting needs
+- ⚡ **Signal Integration** - Combine Observables and Signals seamlessly
+
+## 🧪 Testing
 
 Run the unit tests for ngx-lift:
 
@@ -170,18 +241,39 @@ Run the unit tests for ngx-lift:
 nx test ngx-lift
 ```
 
-## Contributing
+Run tests with coverage:
 
-We welcome contributions! If you encounter any issues, have feature requests, or would like to contribute code, please
-check out our [contribution guidelines](https://github.com/wghglory/ngx-lift-workspace/CONTRIBUTING.md).
+```bash
+nx test ngx-lift --coverage
+```
 
-## License
+## 🤝 Contributing
 
-**ngx-lift** is licensed under the MIT License.
+We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes this
+project better.
 
-## Acknowledgments
+- 🐛 **Found a bug?** [Open an issue](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=bug_report.md)
+- 💡 **Have a feature request?**
+  [Request a feature](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=feature_request.md)
+- 📝 **Want to contribute?** See our
+  [Contributing Guidelines](https://github.com/wghglory/ngx-lift-workspace/blob/main/CONTRIBUTING.md)
 
-Thank you for using ngx-lift! We hope this library enhances your Angular development experience. If you have any
-questions or feedback, please don't hesitate to reach out.
+## 📄 License
 
-Happy coding! 🚀
+**ngx-lift** is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## ⭐ Show Your Support
+
+If this library helped you, please consider giving it a ⭐ on GitHub!
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the Angular community**
+
+[Report Bug](https://github.com/wghglory/ngx-lift-workspace/issues) •
+[Request Feature](https://github.com/wghglory/ngx-lift-workspace/issues) •
+[View Documentation](https://ngx-lift.netlify.app)
+
+</div>

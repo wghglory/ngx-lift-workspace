@@ -1,8 +1,34 @@
-# clr-lift
+<div align="center">
 
-A comprehensive Angular component library built on top of the Clarity Design System. clr-lift extends Clarity's
-capabilities by providing a rich set of reusable components, utilities, and operators that simplify common development
-tasks.
+# 🎨 clr-lift
+
+**Production-ready Angular components built on Clarity Design System**
+
+[![npm version](https://img.shields.io/npm/v/clr-lift.svg?logo=npm)](https://www.npmjs.com/package/clr-lift)
+[![npm downloads](https://img.shields.io/npm/dm/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Angular](https://img.shields.io/badge/Angular-%3E%3D19.0.0-red.svg)](https://angular.io)
+[![Clarity](https://img.shields.io/badge/Clarity-%3E%3D17.0.0-blue.svg)](https://clarity.design)
+
+[📖 Documentation](https://ngx-lift.netlify.app/clr-lift) • [🎮 Live Demo](https://ngx-lift.netlify.app/clr-lift) •
+[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)
+
+</div>
+
+---
+
+A comprehensive Angular component library built on top of the **Clarity Design System**. **clr-lift** extends Clarity's
+capabilities by providing a rich set of production-ready, reusable components, utilities, and operators that simplify
+common development tasks.
+
+**Why clr-lift?**
+
+- 🎨 **15+ Components** - Alerts, toasts, wizards, spinners, and more
+- 🏗️ **Built on Clarity** - Consistent with VMware Clarity Design System
+- ♿ **Accessible** - WCAG compliant with ARIA support
+- 🎯 **Type-Safe** - Full TypeScript support with strict mode
+- 🌓 **Theme Support** - Light and dark mode out of the box
+- 📦 **Tree-Shakable** - Import only what you need
 
 ## Features
 
@@ -65,9 +91,21 @@ yarn add clr-lift @clr/angular @cds/core ngx-lift
 pnpm add clr-lift @clr/angular @cds/core ngx-lift
 ```
 
-## Quick Start
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+npm install clr-lift @clr/angular @cds/core ngx-lift
+# or
+yarn add clr-lift @clr/angular @cds/core ngx-lift
+# or
+pnpm add clr-lift @clr/angular @cds/core ngx-lift
+```
 
 ### Using the dgState Operator
+
+**Simplified Datagrid State Management** - Streamline Clarity datagrid state handling:
 
 ```typescript
 import {dgState, convertToHttpParams} from 'clr-lift';
@@ -94,13 +132,15 @@ export class UserDatagridComponent {
 
 ### Using Components
 
+**Standalone Components** - Import only what you need:
+
 ```typescript
 import {Component} from '@angular/core';
-import {ClrLiftModule} from 'clr-lift';
+import {AlertComponent, SpinnerComponent, PageContainerComponent, ToastService} from 'clr-lift';
 
 @Component({
   selector: 'app-example',
-  imports: [ClrLiftModule],
+  imports: [AlertComponent, SpinnerComponent, PageContainerComponent],
   template: `
     <cll-alert [type]="'success'" [closable]="true"> Operation completed successfully! </cll-alert>
 
@@ -114,8 +154,13 @@ import {ClrLiftModule} from 'clr-lift';
   `,
 })
 export class ExampleComponent {
+  private toastService = inject(ToastService);
+
   showToast() {
-    // Use toast service to show notifications
+    this.toastService.show({
+      type: 'success',
+      message: 'Operation completed!',
+    });
   }
 }
 ```
@@ -147,16 +192,26 @@ export class ExampleComponent {
 ></cll-timeline-wizard>
 ```
 
-## Documentation
+## 📚 Documentation
 
-- **Demo Site**: [https://ngx-lift.netlify.app/clr-lift](https://ngx-lift.netlify.app/clr-lift)
-- **Source Code**:
-  [https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)
-- **GitHub Repository**:
-  [https://github.com/wghglory/ngx-lift-workspace](https://github.com/wghglory/ngx-lift-workspace)
-- **Clarity Design System**: [https://clarity.design](https://clarity.design)
+- **📖 Full Documentation**: [ngx-lift.netlify.app/clr-lift](https://ngx-lift.netlify.app/clr-lift)
+- **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/clr-lift)
+- **💻 Source Code**: [GitHub Repository](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)
+- **📦 npm Package**: [npmjs.com/package/clr-lift](https://www.npmjs.com/package/clr-lift)
+- **🎨 Clarity Design System**: [clarity.design](https://clarity.design)
 
-## Running Tests
+## 🎯 Use Cases
+
+**clr-lift** is perfect for:
+
+- 🎨 **UI Components** - Production-ready components for Clarity-based applications
+- 📊 **Data Grids** - Simplified state management for Clarity datagrids
+- 🔔 **Notifications** - Toast notifications and alerts
+- 📝 **Forms** - Enhanced form components (file uploads, key-value inputs)
+- 🧭 **Navigation** - Wizards, timelines, and multi-step flows
+- 🎭 **Theming** - Easy theme switching between light and dark modes
+
+## 🧪 Testing
 
 Run the unit tests for clr-lift:
 
@@ -164,23 +219,44 @@ Run the unit tests for clr-lift:
 nx test clr-lift
 ```
 
-## Contributing
+Run tests with coverage:
 
-We welcome contributions! If you encounter any issues, have feature requests, or would like to contribute code, please
-check out our [contribution guidelines](https://github.com/wghglory/ngx-lift-workspace/CONTRIBUTING.md).
+```bash
+nx test clr-lift --coverage
+```
 
-## License
+## 🤝 Contributing
 
-**clr-lift** is licensed under the MIT License.
+We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes this
+project better.
 
-## Acknowledgments
+- 🐛 **Found a bug?** [Open an issue](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=bug_report.md)
+- 💡 **Have a feature request?**
+  [Request a feature](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=feature_request.md)
+- 📝 **Want to contribute?** See our
+  [Contributing Guidelines](https://github.com/wghglory/ngx-lift-workspace/blob/main/CONTRIBUTING.md)
 
-We would like to express our gratitude to the Clarity Design System maintainers and contributors for their foundational
-work that enables the development of **clr-lift**.
+## 📄 License
+
+**clr-lift** is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## 🙏 Acknowledgments
+
+We would like to express our gratitude to the **Clarity Design System** maintainers and contributors for their
+foundational work that enables the development of **clr-lift**.
+
+## ⭐ Show Your Support
+
+If this library helped you, please consider giving it a ⭐ on GitHub!
 
 ---
 
-Feel free to explore the **clr-lift** library and enhance your Clarity-based Angular applications! If you have any
-questions or concerns, please don't hesitate to reach out to us.
+<div align="center">
 
-Happy coding! 🚀
+**Made with ❤️ for the Angular and Clarity community**
+
+[Report Bug](https://github.com/wghglory/ngx-lift-workspace/issues) •
+[Request Feature](https://github.com/wghglory/ngx-lift-workspace/issues) •
+[View Documentation](https://ngx-lift.netlify.app/clr-lift)
+
+</div>
