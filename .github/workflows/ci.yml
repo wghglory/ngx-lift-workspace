@@ -27,10 +27,14 @@ jobs:
       is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') }}
       is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') }}
     steps:
-      - name: Set outputs
-        run: echo "Setup complete"
-  lint:
-    name: Lint
+      - name: Display branch info
+        run: |
+          echo "Branch: ${{ github.ref }}"
+          echo "is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') }}"
+          echo "is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') }}"
+
+  install:
+    name: Install Dependencies
     runs-on: ubuntu-latest
     needs: [setup]
     steps:
@@ -47,6 +51,34 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules/
+          retention-days: 1
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: [setup, install]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules/
 
       - name: Run lint (affected for non-main/release branches)
         if: needs.setup.outputs.is-affected == 'true'
@@ -65,7 +97,7 @@ jobs:
   unit-test:
     name: Unit Test
     runs-on: ubuntu-latest
-    needs: [setup]
+    needs: [setup, install]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -76,10 +108,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules/
 
       - name: Run unit tests (affected for non-main/release branches)
         if: needs.setup.outputs.is-affected == 'true'
@@ -98,7 +132,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [setup, lint, unit-test]
+    needs: [setup, install, lint, unit-test]
     if:
       always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped') && needs.unit-test.result ==
       'success'
@@ -112,10 +146,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules/
 
       - name: Run build (affected for non-main/release branches)
         if: needs.setup.outputs.is-affected == 'true'
