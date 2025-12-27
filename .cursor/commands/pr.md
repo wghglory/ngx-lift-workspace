@@ -3,6 +3,18 @@
 Analyze code changes using MCP server and create a pull request with a well-formatted title and description following
 the project's PR template.
 
+<<<<<<< HEAD
+=======
+## How to Use
+
+Type `/pr` in Cursor's chat input. The AI will automatically:
+
+- Analyze your code changes
+- Generate PR title and description
+- Create or update the PR on GitHub using MCP server
+- Provide you with the PR URL
+
+>>>>>>> b7bc894 (chore: refine pr command)
 ## Objective
 
 Connect to the GitHub MCP server, analyze all git changes (commits, diffs, affected files), and create a pull request
@@ -24,6 +36,7 @@ with:
 2. **Analyze Code Changes**
    - Get all commits since the base branch
    - Analyze git diff to identify changed files
+<<<<<<< HEAD
    - Categorize changes by type (added, modified, deleted)
    - Count additions and deletions
    - Identify affected projects (ngx-lift, clr-lift, demo app)
@@ -51,6 +64,74 @@ with:
      - **Checklist**: All items from the PR template
      - **Testing**: Describe tests run or needed
      - **Additional Notes**: Any relevant context
+=======
+   - Read `git diff --stat` to see which files changed
+   - Read `git diff` for key files to understand what changed
+   - Categorize changes by type (added, modified, deleted)
+   - Count additions and deletions
+   - Identify affected projects based on file paths:
+     - Files in `libs/ngx-lift/` → `ngx-lift` library
+     - Files in `libs/clr-lift/` → `clr-lift` library
+     - Files in `apps/demo/` → demo application
+     - Files in `docs/` → documentation
+     - Files in `.github/` → CI/CD
+   - Determine PR type from commit messages and file changes:
+     - New files → likely new features (`feat`)
+     - Modified existing files → fixes, refactoring, or enhancements
+     - Test files → test updates (`test`)
+     - Documentation → docs updates (`docs`)
+     - Config files → chore/ci changes (`chore`, `ci`)
+   - Detect breaking changes:
+     - Removed exports
+     - Changed function signatures
+     - Changed component APIs
+     - Major dependency updates
+
+3. **Generate PR Title**
+   - Follow conventional commits format: `<type>(<scope>): <subject>`
+   - **Types**: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `chore`, `build`, `ci`, `style`
+   - **Scope**: `ngx-lift`, `clr-lift`, `demo`, `docs`, `ci` (or empty if multiple scopes)
+   - **Subject**: Use imperative mood ("add" not "added"), lowercase first letter, no period, max 50 characters
+   - Extract meaningful description from commit messages
+   - Examples:
+     - `feat(ngx-lift): add injectQueryParams signal`
+     - `fix(clr-lift): resolve tooltip positioning issue`
+     - `refactor(demo): migrate to standalone components`
+     - `refactor: migrate to nx monorepo workspace` (multiple scopes)
+     - `docs: update API documentation`
+     - `chore: update dependencies to latest versions`
+
+4. **Generate PR Description**
+   - Follow the structure from `.github/PULL_REQUEST_TEMPLATE.md`
+   - Include all sections from the template:
+     - **Description**: Clear, concise explanation with motivation and context
+     - **Summary of Changes**: High-level summary with key changes as bullet points
+     - **Type of Change**: Pre-select checkboxes based on analysis:
+       - `🐛 Bug fix` if bugs fixed
+       - `✨ New feature` if new functionality added
+       - `💥 Breaking change` if breaking changes detected
+       - `📚 Documentation update` if docs changed
+       - `♻️ Refactoring` if code restructured
+       - `⚡ Performance improvement` if performance improved
+       - `🧪 Test update/addition` if tests added/updated
+       - `🔧 Configuration change` if config files changed
+       - `🎨 Style/UI update` if styling changed
+       - `🔒 Security fix` if security issues addressed
+     - **Affected Projects**: Check based on file paths:
+       - `ngx-lift` library (files in `libs/ngx-lift/`)
+       - `clr-lift` library (files in `libs/clr-lift/`)
+       - `demo` application (files in `apps/demo/`)
+       - Documentation (files in `docs/`)
+       - CI/CD workflows (files in `.github/`)
+       - Build configuration
+       - Dependencies
+     - **Breaking Changes**: If detected, describe impact and migration path
+     - **Testing**: Test coverage checklist and test commands run
+     - **Code Quality Checklist**: All items from the template
+     - **Documentation**: Documentation update checklist
+     - **Performance Impact**: Performance considerations
+     - **Additional Context**: Any other relevant notes
+>>>>>>> b7bc894 (chore: refine pr command)
 
 5. **Check for Existing PR**
    - First, check if a PR already exists for the current branch using GitHub MCP server
@@ -93,6 +174,7 @@ The PR should be created with:
 
 **Title**: `type: concise description`
 
+<<<<<<< HEAD
 **Description**:
 
 ```markdown
@@ -158,6 +240,23 @@ Fixes # (issue if applicable)
 
 [Any other context about the pull request]
 ```
+=======
+**Description**: Follow the complete structure from `.github/PULL_REQUEST_TEMPLATE.md` including all sections:
+
+- Description with related issue
+- Summary of Changes with key changes
+- Type of Change (with emoji checkboxes)
+- Affected Projects
+- Breaking Changes (if applicable)
+- Testing (coverage checklist and test commands)
+- Code Quality Checklist
+- Documentation checklist
+- Performance Impact
+- Additional Context
+- Reviewer Notes
+- Dependencies
+- Related PRs
+>>>>>>> b7bc894 (chore: refine pr command)
 
 ## Automatic PR Management
 
@@ -176,12 +275,42 @@ Fixes # (issue if applicable)
 - The command should NEVER ask for permission to create/update - just do it automatically
 - The MCP server is configured and ready - use it without hesitation
 
+<<<<<<< HEAD
+=======
+## Analysis Tips
+
+- **Read key files**: If many files changed, focus on the most significant ones
+- **Look for patterns**: Multiple similar changes indicate a refactoring
+- **Check commit messages**: They often contain the intent
+- **Identify scope**: Look at file paths to determine scope
+- **Detect breaking changes**:
+  - Removed exports
+  - Changed function signatures
+  - Changed component APIs
+  - Major dependency updates
+
+>>>>>>> b7bc894 (chore: refine pr command)
 ## Example
 
 For a refactoring PR that migrates to Nx monorepo:
 
 **Title**: `refactor: migrate to nx monorepo workspace`
 
+<<<<<<< HEAD
 **Description**: Comprehensive description explaining the migration, affected files, and testing approach.
 
 **Action**: The PR is automatically created or updated via GitHub MCP server, not just displayed.
+=======
+**Description**: Comprehensive description following the PR template structure, explaining the migration, affected
+files, and testing approach.
+
+**Action**: The PR is automatically created or updated via GitHub MCP server, not just displayed.
+
+## Workflow
+
+1. Make your code changes
+2. Commit your changes
+3. Type `/pr` in Cursor
+4. PR is automatically created/updated with generated title and description
+5. Review the PR on GitHub using the provided URL
+>>>>>>> b7bc894 (chore: refine pr command)
