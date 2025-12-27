@@ -1,12 +1,27 @@
 {
   "name": "ngx-lift",
   "version": "19.0.0",
-  "description": "A project has been crafted with the goal of enhancing and simplifying your Angular development experience.",
+  "description": "Powerful Angular utilities library with RxJS operators, signal utilities, pipes, and validators to supercharge your development workflow. Built for Angular 19+ with TypeScript strict mode.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",
   "keywords": [
     "angular",
-    "ngx-lift"
+    "angular-19",
+    "angular-20",
+    "ngx-lift",
+    "rxjs",
+    "rxjs-operators",
+    "signals",
+    "angular-signals",
+    "async-state",
+    "form-validators",
+    "pipes",
+    "utilities",
+    "typescript",
+    "reactive-programming",
+    "polling",
+    "route-params",
+    "query-params"
   ],
   "repository": {
     "type": "git",
