@@ -208,12 +208,12 @@ jobs:
 
           ## $MODE
 
-          $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "Running lint, test, and build for all projects" || echo "Running lint, test, and build for affected projects only")
+          $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "Running lint, unit test, and build for all projects" || echo "Running lint, unit test, and build for affected projects only")
 
           ### Execution Strategy
 
           - **Lint**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
-          - **Test**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
+          - **Unit Test**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
           - **Build**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
 
           ---

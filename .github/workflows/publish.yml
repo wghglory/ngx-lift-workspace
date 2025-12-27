@@ -18,6 +18,7 @@ on:
 
 jobs:
   publish:
+    name: Publish
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,12 +40,15 @@ jobs:
         run: npm ci
 
       - name: Build libraries
+        id: build-libs
         run: npx nx run-many -t build --projects=ngx-lift,clr-lift --parallel=2
 
-      - name: Run tests
+      - name: Run unit tests
+        id: run-unit-tests
         run: npx nx run-many -t test --projects=ngx-lift,clr-lift --parallel=2
 
       - name: Version and publish (manual trigger)
+        id: publish-manual
         if: github.event_name == 'workflow_dispatch'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -54,6 +58,7 @@ jobs:
           npx nx release publish
 
       - name: Publish from tag
+        id: publish-tag
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -61,8 +66,95 @@ jobs:
         run: npx nx release publish
 
       - name: Create GitHub Release
+        id: github-release
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true
           makeLatest: true
+
+      - name: Generate Publish Summary
+        if: always()
+        run: |
+          BUILD_STATUS="${{ steps.build-libs.outcome }}"
+          TEST_STATUS="${{ steps.run-unit-tests.outcome }}"
+          EVENT="${{ github.event_name }}"
+
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            PUBLISH_STATUS="${{ steps.publish-manual.outcome }}"
+            VERSION_TYPE="${{ github.event.inputs.version }}"
+            TRIGGER_INFO="**Version Type**: \`$VERSION_TYPE\`"
+          else
+            PUBLISH_STATUS="${{ steps.publish-tag.outcome }}"
+            TAG="${{ github.ref }}"
+            TRIGGER_INFO="**Tag**: \`$TAG\`"
+          fi
+
+          RELEASE_STATUS="${{ steps.github-release.outcome }}"
+
+          get_status_icon() {
+            case "$1" in
+              "success") echo "✅" ;;
+              "failure") echo "❌" ;;
+              "cancelled") echo "🚫" ;;
+              "skipped") echo "⏭️" ;;
+              *) echo "⏳" ;;
+            esac
+          }
+
+          get_status_badge() {
+            case "$1" in
+              "success") echo "![Success](https://img.shields.io/badge/status-success-brightgreen)" ;;
+              "failure") echo "![Failure](https://img.shields.io/badge/status-failure-red)" ;;
+              "cancelled") echo "![Cancelled](https://img.shields.io/badge/status-cancelled-yellow)" ;;
+              "skipped") echo "![Skipped](https://img.shields.io/badge/status-skipped-lightgrey)" ;;
+              *) echo "![Pending](https://img.shields.io/badge/status-pending-orange)" ;;
+            esac
+          }
+
+          BUILD_ICON=$(get_status_icon "$BUILD_STATUS")
+          TEST_ICON=$(get_status_icon "$TEST_STATUS")
+          PUBLISH_ICON=$(get_status_icon "$PUBLISH_STATUS")
+          RELEASE_ICON=$(get_status_icon "$RELEASE_STATUS")
+
+          BUILD_BADGE=$(get_status_badge "$BUILD_STATUS")
+          TEST_BADGE=$(get_status_badge "$TEST_STATUS")
+          PUBLISH_BADGE=$(get_status_badge "$PUBLISH_STATUS")
+          RELEASE_BADGE=$(get_status_badge "$RELEASE_STATUS")
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 📦 Library Publishing Summary
+
+          ## 📋 Publish Information
+
+          | Property | Value |
+          |----------|-------|
+          | **Event** | \`$EVENT\` |
+          | $TRIGGER_INFO |
+          | **Node.js** | \`22.x\` |
+
+          ---
+
+          ## 🔨 Build & Test Steps
+
+          | Step | Status | Description |
+          |------|--------|-------------|
+          | 🏗️ **Build Libraries** | $BUILD_ICON $BUILD_BADGE | Build ngx-lift and clr-lift |
+          | 🧪 **Run Unit Tests** | $TEST_ICON $TEST_BADGE | Run unit tests for both libraries |
+
+          ---
+
+          ## 📤 Publish Steps
+
+          | Step | Status | Description |
+          |------|--------|-------------|
+          | 📦 **Publish to NPM** | $PUBLISH_ICON $PUBLISH_BADGE | Publish libraries to npm registry |
+          $([ "$EVENT" = "push" ] && echo "| 🏷️ **GitHub Release** | $RELEASE_ICON $RELEASE_BADGE | Create GitHub release from tag |" || echo "")
+
+          ---
+
+          ## 📈 Overall Status
+
+          $([ "$BUILD_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ] && [ "$PUBLISH_STATUS" = "success" ] && echo "### ✅ Publishing completed successfully!" || echo "### ⚠️ Publishing did not complete successfully. Check logs for details.")
+
+          EOF

@@ -8,6 +8,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,12 +30,15 @@ jobs:
         run: npm ci
 
       - name: Build libraries
+        id: build-libs
         run: npx nx run-many -t build --projects=ngx-lift,clr-lift --parallel=2
 
       - name: Build demo app
+        id: build-demo
         run: npx nx build demo --configuration=production
 
       - name: Deploy to Netlify
+        id: netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './dist/apps/demo/browser'
@@ -50,6 +54,7 @@ jobs:
         timeout-minutes: 5
 
       - name: Deploy to Vercel
+        id: vercel
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -57,3 +62,80 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./dist/apps/demo/browser
           vercel-args: '--prod'
+
+      - name: Generate Deployment Summary
+        if: always()
+        run: |
+          BUILD_LIBS_STATUS="${{ steps.build-libs.outcome }}"
+          BUILD_DEMO_STATUS="${{ steps.build-demo.outcome }}"
+          NETLIFY_STATUS="${{ steps.netlify.outcome }}"
+          VERCEL_STATUS="${{ steps.vercel.outcome }}"
+          BRANCH="${{ github.ref }}"
+          EVENT="${{ github.event_name }}"
+
+          get_status_icon() {
+            case "$1" in
+              "success") echo "✅" ;;
+              "failure") echo "❌" ;;
+              "cancelled") echo "🚫" ;;
+              "skipped") echo "⏭️" ;;
+              *) echo "⏳" ;;
+            esac
+          }
+
+          get_status_badge() {
+            case "$1" in
+              "success") echo "![Success](https://img.shields.io/badge/status-success-brightgreen)" ;;
+              "failure") echo "![Failure](https://img.shields.io/badge/status-failure-red)" ;;
+              "cancelled") echo "![Cancelled](https://img.shields.io/badge/status-cancelled-yellow)" ;;
+              "skipped") echo "![Skipped](https://img.shields.io/badge/status-skipped-lightgrey)" ;;
+              *) echo "![Pending](https://img.shields.io/badge/status-pending-orange)" ;;
+            esac
+          }
+
+          BUILD_LIBS_ICON=$(get_status_icon "$BUILD_LIBS_STATUS")
+          BUILD_DEMO_ICON=$(get_status_icon "$BUILD_DEMO_STATUS")
+          NETLIFY_ICON=$(get_status_icon "$NETLIFY_STATUS")
+          VERCEL_ICON=$(get_status_icon "$VERCEL_STATUS")
+
+          BUILD_LIBS_BADGE=$(get_status_badge "$BUILD_LIBS_STATUS")
+          BUILD_DEMO_BADGE=$(get_status_badge "$BUILD_DEMO_STATUS")
+          NETLIFY_BADGE=$(get_status_badge "$NETLIFY_STATUS")
+          VERCEL_BADGE=$(get_status_badge "$VERCEL_STATUS")
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 🚀 Demo App Deployment Summary
+
+          ## 📋 Deployment Information
+
+          | Property | Value |
+          |----------|-------|
+          | **Event** | \`$EVENT\` |
+          | **Branch** | \`$BRANCH\` |
+          | **Node.js** | \`22.x\` |
+
+          ---
+
+          ## 🏗️ Build Steps
+
+          | Step | Status | Description |
+          |------|--------|-------------|
+          | 📦 **Build Libraries** | $BUILD_LIBS_ICON $BUILD_LIBS_BADGE | Build ngx-lift and clr-lift |
+          | 🎨 **Build Demo App** | $BUILD_DEMO_ICON $BUILD_DEMO_BADGE | Build demo app for production |
+
+          ---
+
+          ## 🌐 Deployment Targets
+
+          | Platform | Status | Description |
+          |----------|--------|-------------|
+          | 🟢 **Netlify** | $NETLIFY_ICON $NETLIFY_BADGE | Production deployment |
+          | ⚫ **Vercel** | $VERCEL_ICON $VERCEL_BADGE | Production deployment |
+
+          ---
+
+          ## 📈 Overall Status
+
+          $([ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && [ "$NETLIFY_STATUS" = "success" ] && [ "$VERCEL_STATUS" = "success" ] && echo "### ✅ Deployment completed successfully!" || echo "### ⚠️ Deployment did not complete successfully. Check logs for details.")
+
+          EOF
