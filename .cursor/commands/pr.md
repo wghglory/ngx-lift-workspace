@@ -32,6 +32,7 @@ with:
    - Use the GitHub MCP server to access repository information
    - Get current branch and base branch information
    - Retrieve repository owner and name
+   - Get authenticated user's GitHub username using `mcp_github_get_me` (for PR assignment)
 
 2. **Analyze Code Changes**
    - Get all commits since the base branch
@@ -138,12 +139,43 @@ with:
    - Query for existing PRs with the same head branch
    - If PR exists, note the PR number for updating
 
-6. **Create or Update the PR**
-   - **If PR does NOT exist**: Use GitHub MCP server to create a new pull request
-   - **If PR DOES exist**: Use GitHub MCP server to update the existing PR's title and description
-   - Set base branch (default: `main`)
-   - Set head branch (current branch)
-   - Use generated title and description
+6. **Determine PR Assignee and Labels**
+   - Get authenticated user's GitHub username using `mcp_github_get_me` tool
+   - Assign the PR to the authenticated user (assignee)
+   - Determine appropriate labels based on PR analysis:
+     - **Type-based labels**:
+       - `feat` → `enhancement`
+       - `fix` → `bug`
+       - `docs` → `documentation` (if label exists, otherwise skip)
+       - `refactor` → `refactoring` (if label exists, otherwise use `enhancement`)
+       - `perf` → `performance` (if label exists, otherwise use `enhancement`)
+       - `test` → `testing` (if label exists, otherwise skip)
+       - `chore`, `ci`, `build` → `maintenance` or `chore` (if label exists, otherwise skip)
+       - `style` → skip (usually no label needed)
+     - **Scope-based labels** (based on affected projects):
+       - Files in `libs/ngx-lift/` → `ngx-lift`
+       - Files in `libs/clr-lift/` → `clr-lift`
+       - Files in `apps/demo/` → `demo`
+     - **Breaking changes**: If breaking changes detected → `breaking-change` (if label exists)
+     - Collect all applicable labels into an array (remove duplicates, skip non-existent labels gracefully)
+
+7. **Create or Update the PR**
+   - **If PR does NOT exist**:
+     - Use `mcp_github_create_pull_request` tool to create a new pull request with:
+       - Base branch (default: `main`)
+       - Head branch (current branch)
+       - Generated title and description
+     - **After PR creation**, use `mcp_github_issue_write` tool with `method: "update"` to:
+       - Set `issue_number` to the created PR number (PRs are issues in GitHub)
+       - Set `assignees` to array containing authenticated user's username: `[username]`
+       - Set `labels` to array of determined labels from step 6
+   - **If PR DOES exist**:
+     - Use `mcp_github_update_pull_request` tool to update the existing PR's:
+       - Title and description
+     - **After PR update**, use `mcp_github_issue_write` tool with `method: "update"` to:
+       - Set `issue_number` to the existing PR number
+       - Set `assignees` to array containing authenticated user's username (only if not already assigned)
+       - Set `labels` to array combining existing labels with new determined labels (add missing, preserve existing)
    - **CRITICAL**: Always automatically create or update the PR using GitHub MCP server - NEVER ask the user, NEVER just
      display the content
    - **CRITICAL**: The MCP server is configured and ready - use it directly without asking for confirmation or
@@ -160,6 +192,8 @@ with:
 - **MUST update PR when commits are appended** - re-running `/pr` after adding commits should update the existing PR
 - **MUST execute the action automatically** - do not ask "should I proceed" or "do you want me to create it" - just do
   it
+- **MUST assign PR to authenticated user** - get username using `mcp_github_get_me` and assign the PR
+- **MUST add appropriate labels** - determine labels based on PR type, scope, and breaking changes
 - Must analyze actual git changes, not assume
 - Title must follow conventional commits format
 - Description must match the project's PR template structure
@@ -274,6 +308,8 @@ Fixes # (issue if applicable)
 - The command should NEVER ask if MCP is configured - assume it is and use it directly
 - The command should NEVER ask for permission to create/update - just do it automatically
 - The MCP server is configured and ready - use it without hesitation
+- The PR MUST be assigned to the authenticated user (get username via `mcp_github_get_me`)
+- The PR MUST have appropriate labels based on type, scope, and breaking changes
 
 <<<<<<< HEAD
 =======
@@ -304,13 +340,35 @@ For a refactoring PR that migrates to Nx monorepo:
 **Description**: Comprehensive description following the PR template structure, explaining the migration, affected
 files, and testing approach.
 
-**Action**: The PR is automatically created or updated via GitHub MCP server, not just displayed.
+**Action**: The PR is automatically created or updated via GitHub MCP server with:
+
+- Assignee: authenticated user (wghglory)
+- Labels: `enhancement`, `ngx-lift` (based on analysis)
+- Title and description as generated above
 
 ## Workflow
 
 1. Make your code changes
 2. Commit your changes
 3. Type `/pr` in Cursor
-4. PR is automatically created/updated with generated title and description
+4. PR is automatically created/updated with:
+   - Generated title and description
+   - Assigned to you (authenticated user)
+   - Appropriate labels based on type, scope, and breaking changes
 5. Review the PR on GitHub using the provided URL
+<<<<<<< HEAD
 >>>>>>> b7bc894 (chore: refine pr command)
+=======
+
+## PR Assignment and Labels
+
+**Assignee**: The PR will always be assigned to the authenticated user (obtained via `mcp_github_get_me`).
+
+**Labels**: Labels are automatically determined and applied based on:
+
+- **PR Type**: `feat` → `enhancement`, `fix` → `bug`, `docs` → `documentation`, etc.
+- **Scope**: Based on affected projects (`ngx-lift`, `clr-lift`, `demo`)
+- **Breaking Changes**: `breaking-change` label if breaking changes detected
+
+The labels are added using `mcp_github_issue_write` after PR creation/update since PRs are issues in GitHub.
+>>>>>>> de7608f (chore: add pr assignee and labels)
