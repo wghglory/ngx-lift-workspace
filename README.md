@@ -5,8 +5,8 @@ capabilities.
 
 [![CI](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ffc4941a-8b33-4b95-847e-d34938036bcf/deploy-status)](https://app.netlify.com/projects/ngx-lift/deploys)
-[![ngx-lift npm version](https://badge.fury.io/js/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
-[![clr-lift npm version](https://badge.fury.io/js/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
+[![ngx-lift npm version](https://img.shields.io/npm/v/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
+[![clr-lift npm version](https://img.shields.io/npm/v/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
 
 ## 📦 Packages
 
