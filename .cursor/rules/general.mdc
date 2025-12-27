@@ -4,10 +4,10 @@ alwaysApply: true
 
 ## Core Technologies & Versions
 
-- **Angular**: 20.3.0
+- **Angular**: 21.0.0
 - **Nx**: 22.0.0
 - **Clarity Design System**: @clr/angular 17.12.1 (for clr-lift)
-- **Testing**: Vitest 3.0.0 (unit), Playwright 1.36.0 (E2E)
+- **Testing**: Vitest 4.0.0 (unit), Playwright 1.36.0 (E2E)
 - **Linting**: ESLint 9.8.0 with custom rules
 - **TypeScript**: 5.9.2 (strict mode)
 
@@ -23,7 +23,7 @@ These principles are **mandatory** and must be followed in all code:
 - **State Management**: Signals for component state; reactive patterns for data flow
 - **Change Detection**: **ALWAYS** `ChangeDetectionStrategy.OnPush` for all components
 - **Component Decorator**: **NEVER** include `standalone: true` in `@Component` decorator (components are standalone by
-  default in Angular 20)
+  default in Angular 21)
 - **Testing**: Stable selectors (`getByRole` or `data-test-id`); 60%+ coverage minimum
 - **Lifecycle**: No subscriptions in constructor; initialization logic in `ngOnInit`
 
@@ -53,7 +53,7 @@ Before marking any task as complete, verify:
 
 For detailed guidelines, refer to:
 
-- **`angular.mdc`**: Angular 20 patterns, signals, dependency injection, templates, routing
+- **`angular.mdc`**: Angular 21 patterns, signals, dependency injection, templates, routing
 - **`testing.mdc`**: Vitest unit testing, Playwright E2E, test patterns, coverage
 - **`clarity.mdc`**: Clarity Design System components, styling, SASS variables, theming
 - **`rxjs.mdc`**: RxJS operators, async state management, subscription patterns
