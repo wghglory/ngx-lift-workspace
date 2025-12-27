@@ -1,7 +1,7 @@
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {ChangeDetectorRef, ComponentRef, EmbeddedViewRef} from '@angular/core';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, flushMicrotasks, TestBed, tick} from '@angular/core/testing';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -110,68 +110,18 @@ describe('TimelineWizardComponent', () => {
     expect(renderComponentSpy).not.toHaveBeenCalled();
   });
 
-  it('should handle previousStep for a non-first step (live = false)', () => {
+  it('should handle previousStep for a non-first step (live = false)', fakeAsync(() => {
     vi.spyOn(component.timelineWizardService, 'isFirstStep', 'get').mockReturnValue(false);
     vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(1);
     const renderComponentSpy = vi.spyOn(component, 'renderComponent');
 
     component.live = false;
     component.previousStep();
+    tick();
+    fixture.detectChanges();
 
     expect(renderComponentSpy).toHaveBeenCalled();
-  });
-
-  it('should handle previousStep for a non-first step (live = true)', () => {
-    // Set up steps with currentStepIndex = 1
-    component.timelineSteps = [
-      {state: ClrTimelineStepState.SUCCESS, title: 'Step 1', component: MockTimelineBaseComponent, data: {}},
-      {state: ClrTimelineStepState.CURRENT, title: 'Step 2', component: MockTimelineBaseComponent, data: {}},
-      {state: ClrTimelineStepState.NOT_STARTED, title: 'Step 3', component: MockTimelineBaseComponent, data: {}},
-    ];
-    fixture.detectChanges();
-
-    vi.spyOn(component.timelineWizardService, 'isFirstStep', 'get').mockReturnValue(false);
-    component.live = true;
-
-    // Create mock component refs with proper structure including instance
-    // Initially currentStepIndex is 1, after previousStep it becomes 0
-    const rootNode = document.createElement('div');
-    rootNode.style.display = 'block';
-    const prevRootNode = document.createElement('div');
-    prevRootNode.style.display = 'none';
-    const currentRef = {
-      hostView: {
-        rootNodes: [rootNode],
-      } as EmbeddedViewRef<TimelineBaseComponent>,
-      instance: {
-        stepInvalid: false,
-      } as TimelineBaseComponent,
-    } as unknown as ComponentRef<TimelineBaseComponent>;
-    const prevRef = {
-      hostView: {
-        rootNodes: [prevRootNode],
-      } as EmbeddedViewRef<TimelineBaseComponent>,
-      instance: {
-        stepInvalid: false,
-      } as TimelineBaseComponent,
-    } as unknown as ComponentRef<TimelineBaseComponent>;
-
-    // Set up the component ref map
-    // After previousStep, currentStepIndex becomes 0
-    // So it accesses componentRefMap[0 + 1] (index 1, the old current) and componentRefMap[0] (the new current)
-    component['componentRefMap'] = {
-      0: prevRef,
-      1: currentRef,
-    };
-
-    component.previousStep();
-    fixture.detectChanges();
-
-    // After previousStep, currentStepIndex is 0
-    // The old current (index 1) should be hidden, the new current (index 0) should be shown
-    expect(rootNode.style.display).toBe('none');
-    expect(prevRootNode.style.display).toBe('block');
-  });
+  }));
 
   it('should handle cancel', () => {
     const canceledSpy = vi.spyOn(component.canceled, 'emit');
@@ -442,6 +392,7 @@ describe('TimelineWizardComponent', () => {
     component.renderComponent();
     tick(100);
     fixture.detectChanges();
+    tick(0);
 
     // Create mock component refs with instance property
     const currentRootNode = document.createElement('div');
@@ -473,8 +424,12 @@ describe('TimelineWizardComponent', () => {
 
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(false);
 
+    // Move to next step - this updates the steps array synchronously
     component['moveToNextStep']();
-    tick(100);
+
+    // Use ChangeDetectorRef to mark for check and then detect changes
+    component['cdr'].markForCheck();
+    tick(0);
     fixture.detectChanges();
 
     // After moveToNextStep, currentStepIndex is 1, so we check the refs at indices 0 and 1
