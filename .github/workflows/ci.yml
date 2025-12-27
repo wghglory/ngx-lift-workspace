@@ -8,20 +8,31 @@ on:
     branches:
       - main
       - develop
+      - 'release/**'
   pull_request:
     branches:
       - main
       - develop
+      - 'release/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') }}
+      is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') }}
+    steps:
+      - name: Set outputs
+        run: echo "Setup complete"
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    needs: [setup]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,23 +42,30 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run lint
+      - name: Run lint (affected for non-main/release branches)
+        if: needs.setup.outputs.is-affected == 'true'
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: 'main'
 
       - name: Lint affected projects
+        if: needs.setup.outputs.is-affected == 'true'
         run: npx nx affected -t lint --parallel=3
+
+      - name: Lint all projects
+        if: needs.setup.outputs.is-main-or-release == 'true'
+        run: npx nx run-many -t lint --parallel=3
 
   unit-test:
     name: Unit Test
     runs-on: ubuntu-latest
+    needs: [setup]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -57,30 +75,30 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit tests (affected for PRs, full for main)
-        if: github.event_name == 'pull_request'
+      - name: Run unit tests (affected for non-main/release branches)
+        if: needs.setup.outputs.is-affected == 'true'
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: 'main'
 
       - name: Unit test affected projects
-        if: github.event_name == 'pull_request'
+        if: needs.setup.outputs.is-affected == 'true'
         run: npx nx affected -t test --parallel=3 --coverage=false
 
       - name: Unit test all projects
-        if: github.ref == 'refs/heads/main'
+        if: needs.setup.outputs.is-main-or-release == 'true'
         run: npx nx run-many -t test --parallel=3 --coverage=false
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [lint, unit-test]
+    needs: [setup, lint, unit-test]
     if:
       always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped') && needs.unit-test.result ==
       'success'
@@ -93,24 +111,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run build (affected for PRs, full for main)
-        if: github.event_name == 'pull_request'
+      - name: Run build (affected for non-main/release branches)
+        if: needs.setup.outputs.is-affected == 'true'
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: 'main'
 
       - name: Build affected projects
-        if: github.event_name == 'pull_request'
+        if: needs.setup.outputs.is-affected == 'true'
         run: npx nx affected -t build --parallel=3
 
       - name: Build all projects
-        if: github.ref == 'refs/heads/main'
+        if: needs.setup.outputs.is-main-or-release == 'true'
         run: npx nx run-many -t build --parallel=3
 
       - name: Upload build artifacts
