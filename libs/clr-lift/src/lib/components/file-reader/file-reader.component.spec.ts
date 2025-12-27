@@ -34,6 +34,11 @@ describe('FileReaderComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    // Restore original FileReader
+    delete (globalThis as {FileReader?: unknown}).FileReader;
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -139,7 +144,11 @@ describe('FileReaderComponent', () => {
           }, 0);
         }),
       };
-      vi.spyOn(window, 'FileReader').mockImplementation(() => mockFileReader as unknown as FileReader);
+      globalThis.FileReader = class MockFileReader {
+        result = mockFileReader.result;
+        onload = mockFileReader.onload;
+        readAsText = mockFileReader.readAsText;
+      } as unknown as typeof FileReader;
 
       const inputElement = createFileInput(file);
       const event = new Event('change');
@@ -177,7 +186,11 @@ describe('FileReaderComponent', () => {
           }, 0);
         }),
       };
-      vi.spyOn(window, 'FileReader').mockImplementation(() => mockFileReader as unknown as FileReader);
+      globalThis.FileReader = class MockFileReader {
+        result = mockFileReader.result;
+        onload = mockFileReader.onload;
+        readAsText = mockFileReader.readAsText;
+      } as unknown as typeof FileReader;
 
       const inputElement = createFileInput(file);
       const event = new Event('change');
@@ -214,7 +227,11 @@ describe('FileReaderComponent', () => {
           }, 0);
         }),
       };
-      vi.spyOn(window, 'FileReader').mockImplementation(() => mockFileReader as unknown as FileReader);
+      globalThis.FileReader = class MockFileReader {
+        result = mockFileReader.result;
+        onload = mockFileReader.onload;
+        readAsText = mockFileReader.readAsText;
+      } as unknown as typeof FileReader;
 
       const inputElement = createFileInput(file);
       const event = new Event('change');
@@ -232,7 +249,8 @@ describe('FileReaderComponent', () => {
     it('should clear parse error on new file selection', fakeAsync(() => {
       component['parseError'].set('previous error');
 
-      // Mock FileReader
+      // Mock FileReader - ensure btoa doesn't throw
+      const originalBtoa = window.btoa;
       const mockFileReader = {
         result: 'test content',
         onload: null as ((e: ProgressEvent<FileReader>) => void) | null,
@@ -247,7 +265,11 @@ describe('FileReaderComponent', () => {
           }, 0);
         }),
       };
-      vi.spyOn(window, 'FileReader').mockImplementation(() => mockFileReader as unknown as FileReader);
+      globalThis.FileReader = class MockFileReader {
+        result = mockFileReader.result;
+        onload = mockFileReader.onload;
+        readAsText = mockFileReader.readAsText;
+      } as unknown as typeof FileReader;
 
       const file = new File(['test content'], 'test.txt', {type: 'text/plain'});
       const inputElement = createFileInput(file);
@@ -258,6 +280,7 @@ describe('FileReaderComponent', () => {
       tick();
 
       expect(component['parseError']()).toBe('');
+      window.btoa = originalBtoa;
     }));
 
     it('should not process if no files selected', () => {

@@ -24,7 +24,7 @@ Core project rules and standards that apply to all code:
 
 ### `angular.mdc` (Always Applied)
 
-Angular 20 specific patterns and best practices:
+Angular 21 specific patterns and best practices:
 
 - Component architecture (standalone components)
 - Signal-based development
@@ -115,10 +115,10 @@ modifying code in this workspace.
 
 ## Technology Stack
 
-- **Angular**: 20.3.0
+- **Angular**: 21.0.0
 - **Nx**: 22.0.0
 - **Clarity**: @clr/angular 17.12.1
-- **Vitest**: 3.0.0
+- **Vitest**: 4.0.0
 - **Playwright**: 1.36.0
 - **TypeScript**: 5.9.2
 - **ESLint**: 9.8.0

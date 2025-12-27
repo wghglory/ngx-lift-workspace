@@ -2,12 +2,12 @@
 alwaysApply: true
 ---
 
-## Angular 20 Specific Guidelines
+## Angular 21 Specific Guidelines
 
 ### Component Architecture
 
 - **Standalone Components**: All components must be standalone (no NgModules)
-  - **DO NOT** include `standalone: true` in `@Component` decorator - components are standalone by default in Angular 20
+  - **DO NOT** include `standalone: true` in `@Component` decorator - components are standalone by default in Angular 21
   - When generating new code, **NEVER** add `standalone: true` to component decorators
 
   ```typescript
@@ -23,7 +23,7 @@ alwaysApply: true
   // ❌ Wrong - DO NOT include standalone: true
   @Component({
     selector: 'app-example',
-    standalone: true, // ❌ Remove this - not needed in Angular 20
+    standalone: true, // ❌ Remove this - not needed in Angular 21
     imports: [CommonModule, ClarityModule],
     templateUrl: './example.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -235,7 +235,7 @@ alwaysApply: true
   searchTerm = injectQueryParams('search');
   ```
 
-- **Route Guards**: Implement guards as functional guards (preferred in Angular 20)
+- **Route Guards**: Implement guards as functional guards (preferred in Angular 21)
 
 ### Performance Optimization
 

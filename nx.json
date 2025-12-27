@@ -13,13 +13,22 @@
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
   "plugins": [
-    {"plugin": "@nx/angular/plugin", "options": {"targetNamePrefix": ""}},
-    {"plugin": "@nx/eslint/plugin", "options": {"targetName": "lint"}},
+    {
+      "plugin": "@nx/angular/plugin",
+      "options": {
+        "targetNamePrefix": ""
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
     {
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "build",
-        "testTargetName": "test",
         "serveTargetName": "serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",
@@ -29,7 +38,12 @@
         "watchDepsTargetName": "watch-deps"
       }
     },
-    {"plugin": "@nx/playwright/plugin", "options": {"targetName": "e2e"}},
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
     {
       "plugin": "@nx/rspack/plugin",
       "options": {
@@ -40,6 +54,12 @@
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test"
+      }
     }
   ],
   "targetDefaults": {
@@ -48,18 +68,31 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "@nx/angular:package": {"cache": true, "dependsOn": ["^build"], "inputs": ["production", "^production"]}
+    "@nx/angular:package": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
   },
   "generators": {
     "@nx/angular:application": {
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "scss",
-      "unitTestRunner": "vitest"
+      "unitTestRunner": "vitest-analog"
     },
-    "@nx/angular:library": {"linter": "eslint", "unitTestRunner": "vitest"},
-    "@nx/angular:component": {"style": "scss"}
+    "@nx/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "vitest-analog"
+    },
+    "@nx/angular:component": {
+      "style": "scss"
+    }
   },
-  "release": {"version": {"preVersionCommand": "npx nx run-many -t build"}},
+  "release": {
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
+    }
+  },
   "nxCloudId": "69494438ac7b2b3a007467c0"
 }

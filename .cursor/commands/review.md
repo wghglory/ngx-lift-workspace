@@ -11,7 +11,7 @@ the entire codebase**.
 Review the changed code against the comprehensive tech standards defined in this workspace, including:
 
 - TypeScript strict mode compliance
-- Angular 20 patterns and best practices
+- Angular 21 patterns and best practices
 - Clarity Design System guidelines
 - Testing standards (Vitest & Playwright)
 - RxJS patterns
@@ -58,7 +58,7 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] **Prettier**: Code is properly formatted with Prettier
    - [ ] **Lint Justification**: Any lint suppressions have explicit justification
 
-   ### Angular 20 Patterns
+   ### Angular 21 Patterns
    - [ ] **Standalone Components**: All components are standalone (no NgModules)
    - [ ] **Change Detection**: All components use `ChangeDetectionStrategy.OnPush`
    - [ ] **Signal Inputs**: Use `input()` instead of `@Input()` decorators
@@ -175,7 +175,7 @@ fixes, provide a summary report for manual review. The user will manually review
    - **Type Safety**: Fix `any` types by replacing with proper types or `unknown` with type guards
    - **Return Types**: Add explicit return types to functions missing them
 
-   #### Angular 20 Pattern Fixes
+   #### Angular 21 Pattern Fixes
    - **@Input() → input()**: Replace `@Input()` decorators with `input()` signal inputs
    - **@Output() → output()**: Replace `@Output()` decorators with `output()` signal outputs
    - **@ViewChild/@ViewChildren → viewChild/viewChildren**: Replace with signal-based view queries
@@ -286,7 +286,7 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] ESLint passes
    - [ ] Prettier formatted
 
-   ### Angular 20 Patterns
+   ### Angular 21 Patterns
 
    - [ ] Standalone components
    - [ ] OnPush strategy
@@ -421,10 +421,10 @@ name = input<string>();
 
 When reviewing, ensure compliance with:
 
-- **Angular**: 20.3.0
+- **Angular**: 21.0.0
 - **Nx**: 22.0.0
 - **Clarity**: @clr/angular 17.12.1
-- **Vitest**: 3.0.0
+- **Vitest**: 4.0.0
 - **Playwright**: 1.36.0
 - **TypeScript**: 5.9.2 (strict mode)
 - **ESLint**: 9.8.0
@@ -434,7 +434,7 @@ When reviewing, ensure compliance with:
 Always reference these rule files when reviewing:
 
 - `.cursor/rules/general.mdc` - Core standards and Definition of Done
-- `.cursor/rules/angular.mdc` - Angular 20 patterns
+- `.cursor/rules/angular.mdc` - Angular 21 patterns
 - `.cursor/rules/clarity.mdc` - Clarity Design System guidelines
 - `.cursor/rules/testing.mdc` - Testing standards
 - `.cursor/rules/rxjs.mdc` - RxJS patterns
