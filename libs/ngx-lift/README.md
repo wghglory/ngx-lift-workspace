@@ -1,60 +1,187 @@
-# Welcome to [ngx-lift](https://ngx-lift.netlify.app/)!
+# ngx-lift
 
-Welcome to ngx-lift! This project has been crafted with the goal of enhancing and simplifying your Angular development
-experience. In the dynamic landscape of web development, Angular stands out as a robust framework, and ngx-lift
-complements it by offering a collection of utilities, operators, and components. Welcome to ngx-lift, a powerful Angular
-lift designed to enhance your development workflow. Explore its capabilities through our demo site and dive into the
-source code on GitHub.
+A powerful Angular utility library designed to enhance and simplify your Angular development experience. ngx-lift
+provides a comprehensive collection of utilities, operators, signals, pipes, and validators that streamline common
+Angular development tasks.
 
-## Key Objectives
+## Features
 
-- **Utility Enhancement:** ngx-lift strives to provide a set of utilities that streamline common Angular development
-  tasks. These utilities are designed to boost your productivity and efficiency.
+### 🚀 RxJS Operators
 
-- **Operator Support:** The project includes a range of operators that can be seamlessly integrated into your Angular
-  applications. These operators aim to simplify complex operations and promote cleaner, more maintainable code.
+- **`combineLatestEager`** - Combines observables with eager initial values
+- **`createAsyncState`** - Transforms observables into async state objects with loading/error/data
+- **`distinctOnChange`** - Executes callbacks when observable values change
+- **`kubernetesPagination`** - Handles Kubernetes-style pagination
+- **`logger`** - Logging operator for debugging RxJS streams
+- **`poll`** - Polling operator with configurable intervals and manual refresh triggers
+- **`startWithTap`** - Combines `startWith` and `tap` operators
+- **`switchMapWithAsyncState`** - Combines `switchMap` with async state management
 
-- **Component Repository:** ngx-lift comes bundled with a collection of reusable components. These components are
-  crafted with best practices in mind, allowing you to effortlessly integrate them into your projects and focus on
-  building outstanding user interfaces.
+### ⚡ Signal Utilities
 
-## Why Choose ngx-lift?
+- **`combineFrom`** - Combines Observables and Signals into a Signal (like `combineLatest`)
+- **`computedAsync`** - Creates computed signals from async sources (Observables, Promises)
+- **`createTrigger`** - Creates a trigger signal for manual updates
+- **`injectParams`** - Injects route parameters as signals
+- **`injectQueryParams`** - Injects query parameters as signals
+- **`mergeFrom`** - Merges Observables and Signals into a Signal (like `merge`)
 
-- **Simplified Development:** Our project is dedicated to simplifying the Angular development process, empowering
-  developers to build robust applications with ease.
+### 🔧 Pipes
 
-- **Community-Driven:** ngx-lift is an open-source project, and we welcome contributions from the community. Join us in
-  shaping the future of Angular development tools.
+- **`arrayJoin`** - Joins array elements with a separator
+- **`byteConverter`** - Converts bytes to human-readable format (KB, MB, GB, etc.)
+- **`isHttps`** - Checks if a URL uses HTTPS protocol
+- **`mask`** - Masks sensitive data (e.g., credit cards, emails)
+- **`range`** - Generates an array of numbers within a range
 
-- **Continuous Improvement:** We are committed to continuous improvement and aim to adapt to the evolving needs of the
-  Angular ecosystem. Your feedback and contributions are invaluable in this journey.
+### ✅ Validators
+
+- **`dateRange`** - Validates date ranges in forms
+- **`intersection`** - Validates array intersections
+- **`unique`** - Validates unique values in arrays
+- **`url`** - Validates URL format
+
+### 🛠️ Utilities
+
+- **Form Utilities** - Helper functions for working with Angular forms
+- **Idle Detection** - Service and utilities for detecting user idle state
+- **URL Utilities** - Functions for URL manipulation and validation
+- **Object Utilities** - `isEmpty`, `isEqual`, `isPromise`, `omitBy`, `pickBy`
+- **Date Utilities** - `differenceInDays` and other date helpers
+- **Range Utilities** - Functions for generating number ranges
+
+### 📦 Models
+
+- **`AsyncState`** - Type for managing async operation states
+- **Kubernetes Models** - Types for Kubernetes object metadata and conditions
 
 ## Requirements
 
-To ensure optimal performance and compatibility, ngx-lift requires **Angular version 17 or higher**.
+- **Angular**: >= 19.0.0
+- **RxJS**: >= 7.8.0
 
-## Get Started
+## Installation
 
-Explore its capabilities through our demo site and dive into the source code on GitHub.
+Install ngx-lift using your preferred package manager:
 
-## Running unit tests
+```bash
+npm install ngx-lift
+# or
+yarn add ngx-lift
+# or
+pnpm add ngx-lift
+```
 
-Run `nx test ngx-lift` to execute the unit tests.
+## Quick Start
 
-### Demo Site
+### Using Operators
 
-To experience the full potential of ngx-lift, visit our demo site at
-[https://ngx-lift.netlify.app/](https://ngx-lift.netlify.app/). The demo showcases various features and functionalities,
-providing an interactive way to understand the capabilities of ngx-lift.
+```typescript
+import {createAsyncState, poll} from 'ngx-lift';
+import {HttpClient} from '@angular/common/http';
 
-### Source Code
+export class UserComponent {
+  private http = inject(HttpClient);
 
-For a deeper understanding of ngx-lift, review the source code available on GitHub:
-[https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift).
-Clone the repository to your local environment and explore the demos provided. Gain insights into how ngx-lift can
-elevate your Angular development workflow by examining the codebase and incorporating it into your projects.
+  // Create async state from HTTP request
+  usersState$ = this.http.get<User[]>('/api/users').pipe(
+    createAsyncState({
+      next: (users) => console.log('Loaded users:', users),
+      error: (err) => console.error('Error:', err),
+    }),
+  );
 
-Thank you for considering ngx-lift for your Angular projects. We look forward to your involvement and feedback as we
-collectively strive to enhance the Angular development experience.
+  // Poll data at intervals
+  dataState$ = poll({
+    interval: 5000,
+    pollingFn: () => this.http.get('/api/data'),
+    initialValue: {loading: true, error: null, data: null},
+  });
+}
+```
 
-Happy coding!
+### Using Signal Utilities
+
+```typescript
+import {combineFrom, injectParams, injectQueryParams} from 'ngx-lift';
+
+export class UserDetailComponent {
+  // Inject route parameters as signals
+  userId = injectParams('id');
+  searchTerm = injectQueryParams('search');
+
+  // Combine multiple sources into a signal
+  vm = combineFrom({
+    user: this.userService.getUser(this.userId()),
+    filters: this.filtersSignal,
+  });
+}
+```
+
+### Using Pipes
+
+```html
+<!-- Convert bytes to human-readable format -->
+<div>{{ fileSize | byteConverter }}</div>
+
+<!-- Mask sensitive data -->
+<div>{{ creditCard | mask: 'card' }}</div>
+
+<!-- Join array elements -->
+<div>{{ tags | arrayJoin: ', ' }}</div>
+```
+
+### Using Validators
+
+```typescript
+import {FormBuilder, Validators} from '@angular/forms';
+import {dateRange, unique, url} from 'ngx-lift';
+
+export class MyFormComponent {
+  private fb = inject(FormBuilder);
+
+  form = this.fb.group({
+    website: ['', [Validators.required, url()]],
+    dates: this.fb.group(
+      {
+        start: [''],
+        end: [''],
+      },
+      {validators: dateRange()},
+    ),
+    tags: this.fb.array([], [unique()]),
+  });
+}
+```
+
+## Documentation
+
+- **Demo Site**: [https://ngx-lift.netlify.app/](https://ngx-lift.netlify.app/)
+- **Source Code**:
+  [https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
+- **GitHub Repository**:
+  [https://github.com/wghglory/ngx-lift-workspace](https://github.com/wghglory/ngx-lift-workspace)
+
+## Running Tests
+
+Run the unit tests for ngx-lift:
+
+```bash
+nx test ngx-lift
+```
+
+## Contributing
+
+We welcome contributions! If you encounter any issues, have feature requests, or would like to contribute code, please
+check out our [contribution guidelines](https://github.com/wghglory/ngx-lift-workspace/CONTRIBUTING.md).
+
+## License
+
+**ngx-lift** is licensed under the MIT License.
+
+## Acknowledgments
+
+Thank you for using ngx-lift! We hope this library enhances your Angular development experience. If you have any
+questions or feedback, please don't hesitate to reach out.
+
+Happy coding! 🚀
