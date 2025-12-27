@@ -360,7 +360,6 @@ MIT © [Guanghui Wang](https://github.com/wghglory)
 ## 🔗 Links
 
 - **Homepage**: https://ngx-lift.netlify.app
-- **Repository**: https://github.com/wghglory/ngx-lift-workspace
 - **npm (ngx-lift)**: https://www.npmjs.com/package/ngx-lift
 - **npm (clr-lift)**: https://www.npmjs.com/package/clr-lift
 - **Issues**: https://github.com/wghglory/ngx-lift-workspace/issues
