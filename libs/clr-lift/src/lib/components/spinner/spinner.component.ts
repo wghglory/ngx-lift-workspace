@@ -1,10 +1,9 @@
-import {CommonModule} from '@angular/common';
 import {booleanAttribute, ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 
 @Component({
   selector: 'cll-spinner',
-  imports: [CommonModule, ClarityModule],
+  imports: [ClarityModule],
   templateUrl: './spinner.component.html',
   styleUrl: './spinner.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

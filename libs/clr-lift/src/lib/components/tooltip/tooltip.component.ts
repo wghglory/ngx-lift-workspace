@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {A11yModule} from '@angular/cdk/a11y';
-import {CommonModule} from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -24,7 +24,7 @@ import {isElementClickable, isElementInsideCollection} from './tooltip.util';
 
 @Component({
   selector: 'cll-tooltip',
-  imports: [CommonModule, A11yModule],
+  imports: [A11yModule],
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
