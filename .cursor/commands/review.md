@@ -5,22 +5,10 @@ this codebase. The rules defined in `.cursor/rules/` have the highest priority a
 
 ## Objective
 
-<<<<<<< HEAD
-<<<<<<< HEAD **IMPORTANT**: This command reviews **ONLY the changed/submitted code** (staged, unstaged, or specified
-files), **NOT the entire codebase**.
-
-# Review the changed code against the comprehensive tech standards defined in this workspace, including:
-
-Review all code changes (staged, unstaged, or specified files) against the comprehensive tech standards defined in this
-workspace, including:
-=======
 **IMPORTANT**: This command reviews **ONLY the changed/submitted code** (staged, unstaged, or specified files), **NOT
 the entire codebase**.
 
 Review the changed code against the comprehensive tech standards defined in this workspace, including:
->>>>>>> 1425d68 (chore: update)
-
-> > > > > > > 1bc14d5 (chore: code review command)
 
 - TypeScript strict mode compliance
 - Angular 20 patterns and best practices
@@ -37,48 +25,22 @@ fixes, provide a summary report for manual review. The user will manually review
 
 ## Process
 
-<<<<<<< HEAD
-1. **Identify Files to Review** <<<<<<< HEAD
-   - **ONLY review changed/submitted files** - do NOT review the entire codebase
-   - If no specific files are mentioned, review all changed files (staged and unstaged) from git
-   - If specific files are mentioned, review only those files
-   - Include related test files for components/services being reviewed (only if they are also changed)
-   - Use `git status` and `git diff` to identify what has actually changed
-   - **DO NOT** scan the entire codebase for issues - only review files that have been modified
-
-2. **Read and Analyze Code**
-   - Read **ONLY the changed files** and their immediate dependencies (if changed)
-   - Read related files (component, template, styles, spec files) **ONLY if they are part of the changes**
-   - Understand the context and purpose of the changes
-   - **DO NOT** read unrelated files from the codebase
-   - # Focus on what was actually modified, not the entire project
-   - If no specific files are mentioned, review all changed files (staged and unstaged)
-=======
 1. **Identify Files to Review**
    - **ONLY review changed/submitted files** - do NOT review the entire codebase
    - If no specific files are mentioned, review all changed files (staged and unstaged) from git
->>>>>>> 1425d68 (chore: update)
    - If specific files are mentioned, review only those files
    - Include related test files for components/services being reviewed (only if they are also changed)
    - Use `git status` and `git diff` to identify what has actually changed
    - **DO NOT** scan the entire codebase for issues - only review files that have been modified
 
-<<<<<<< HEAD
-3. **Read and Analyze Code**
-   - Read all relevant files (component, template, styles, spec files)
-   - Understand the context and purpose of the changes
-   - Check for related files that might be affected
-     > > > > > > > 1bc14d5 (chore: code review command)
-=======
 2. **Read and Analyze Code**
    - Read **ONLY the changed files** and their immediate dependencies (if changed)
    - Read related files (component, template, styles, spec files) **ONLY if they are part of the changes**
    - Understand the context and purpose of the changes
    - **DO NOT** read unrelated files from the codebase
    - Focus on what was actually modified, not the entire project
->>>>>>> 1425d68 (chore: update)
 
-4. **Comprehensive Review Checklist**
+3. **Comprehensive Review Checklist**
 
    ### TypeScript & Code Quality
    - [ ] **Strict Mode**: Code compiles with TypeScript strict mode enabled
@@ -187,18 +149,6 @@ fixes, provide a summary report for manual review. The user will manually review
    - [ ] **Error Logging**: Errors logged appropriately (no sensitive information)
    - [ ] **Reactive Error Handling**: Async errors handled gracefully with `catchError` and error signals
 
-<<<<<<< HEAD
-<<<<<<< HEAD 4. **Run Automated Checks** (ONLY for changed files/projects)
-
-- Identify which projects contain the changed files
-- Run TypeScript compilation check: `npx nx run [project]:build` (only for affected projects)
-- Run ESLint: `npx nx lint [project]` (only for projects with changed files)
-- Check for Prettier formatting issues (only in changed files)
-- Review test coverage if available (only for changed test files)
-- **DO NOT** run checks on the entire workspace - only check what was changed
-
-5.  **Automatically Detect and Fix Issues** (ONLY in changed files)
-=======
 4. **Run Automated Checks** (ONLY for changed files/projects)
    - Identify which projects contain the changed files
    - Run TypeScript compilation check: `npx nx run [project]:build` (only for affected projects)
@@ -214,30 +164,47 @@ fixes, provide a summary report for manual review. The user will manually review
 
    **IMPORTANT**: Only fix issues in files that are part of the current changes. Do NOT fix issues in unrelated files
    from the codebase.
->>>>>>> 1425d68 (chore: update)
 
-    **CRITICAL**: After identifying issues **in the changed files**, **AUTOMATICALLY apply fixes** to the code. Do not
-    just report issues - fix them directly.
+   ### Automatic Fix Categories
 
-    **IMPORTANT**: Only fix issues in files that are part of the current changes. Do NOT fix issues in unrelated files
-    from the codebase. =======
+   #### TypeScript & Code Quality Fixes
+   - **Missing JSDoc**: Add comprehensive JSDoc comments to all exported functions, classes, interfaces, types, and
+     constants
+   - **Missing Copyright Header**: Add copyright header to files missing it
+   - **Prettier Formatting**: Automatically format code with Prettier
+   - **Type Safety**: Fix `any` types by replacing with proper types or `unknown` with type guards
+   - **Return Types**: Add explicit return types to functions missing them
 
-6.  **Run Automated Checks**
-    - Run TypeScript compilation check: `npx nx run [project]:build` or check for TypeScript errors
-    - Run ESLint: `npx nx lint [project]` (if project specified) or check for lint errors
-    - Check for Prettier formatting issues
-    - Review test coverage if available
+   #### Angular 20 Pattern Fixes
+   - **@Input() → input()**: Replace `@Input()` decorators with `input()` signal inputs
+   - **@Output() → output()**: Replace `@Output()` decorators with `output()` signal outputs
+   - **@ViewChild/@ViewChildren → viewChild/viewChildren**: Replace with signal-based view queries
+   - **Constructor Injection → inject()**: Replace constructor injection with `inject()` function
+   - **Missing OnPush**: Add `ChangeDetectionStrategy.OnPush` to components missing it
+   - **Old Control Flow → New Control Flow**: Replace `*ngIf` with `@if`, `*ngFor` with `@for`, etc.
+   - **Missing Track Functions**: Add track functions to `@for` loops
+   - **Manual Subscriptions → Async Pipe**: Replace manual subscriptions with async pipe in templates
+   - **Method Calls in Templates**: Replace with computed signals or pipes
+   - **Self-Closing Tags**: Convert tags to self-closing format where appropriate
+   - **ngClass/ngStyle → Property Bindings**: Replace with `[class.className]` and `[style.property]`
 
-7.  **Automatically Detect and Fix Issues**
+   #### Clarity Design System Fixes
+   - **Hard-coded Colors**: Replace hex codes and rgb values with Clarity SASS variables
+   - **Raw HTML → Clarity Components**: Replace raw HTML with appropriate Clarity components
+   - **Missing SASS Variables**: Replace hard-coded spacing/typography with Clarity variables
+   - **Global Styles**: Remove or scope `::ng-deep` usage
 
-    **CRITICAL**: After identifying issues, **AUTOMATICALLY apply fixes** to the code. Do not just report issues - fix
-    them directly.
+   #### Testing Fixes
+   - **Jasmine/Jest → Vitest**: Replace test framework imports and APIs
+   - **spyOn() → vi.spyOn()**: Replace with Vitest spies
+   - **Test Selectors**: Update to use `getByRole` or `data-test-id` attributes
+   - **Signal Input Testing**: Update to use `fixture.componentRef.setInput()`
 
-    > > > > > > > 1bc14d5 (chore: code review command)
+   #### RxJS Pattern Fixes
+   - **Manual Subscriptions**: Replace with async pipe or `DestroyRef`
+   - **Missing Error Handling**: Add `catchError` operators to observables
+   - **Memory Leaks**: Add proper unsubscription in `ngOnDestroy`
 
-<<<<<<< HEAD
-    ### Automatic Fix Categories
-=======
    ### Fix Application Process
    1. **For each issue found in changed files**:
       - Verify the file is part of the current changes (staged/unstaged)
@@ -246,180 +213,126 @@ fixes, provide a summary report for manual review. The user will manually review
       - Apply the fix directly to the file
       - Ensure the fix follows the codebase standards
       - **DO NOT** fix issues in files that are not part of the current changes
->>>>>>> 1425d68 (chore: update)
 
-    #### TypeScript & Code Quality Fixes
-    - **Missing JSDoc**: Add comprehensive JSDoc comments to all exported functions, classes, interfaces, types, and
-      constants
-    - **Missing Copyright Header**: Add copyright header to files missing it
-    - **Prettier Formatting**: Automatically format code with Prettier
-    - **Type Safety**: Fix `any` types by replacing with proper types or `unknown` with type guards
-    - **Return Types**: Add explicit return types to functions missing them
+   2. **Fix Order** (apply fixes in this order to avoid conflicts):
+      - First: TypeScript compilation errors
+      - Second: ESLint errors
+      - Third: Angular pattern fixes (signals, OnPush, etc.)
+      - Fourth: Clarity Design System fixes
+      - Fifth: Testing fixes
+      - Sixth: Code quality fixes (JSDoc, formatting, etc.)
+      - Last: Performance optimizations
 
-    #### Angular 20 Pattern Fixes
-    - **@Input() → input()**: Replace `@Input()` decorators with `input()` signal inputs
-    - **@Output() → output()**: Replace `@Output()` decorators with `output()` signal outputs
-    - **@ViewChild/@ViewChildren → viewChild/viewChildren**: Replace with signal-based view queries
-    - **Constructor Injection → inject()**: Replace constructor injection with `inject()` function
-    - **Missing OnPush**: Add `ChangeDetectionStrategy.OnPush` to components missing it
-    - **Old Control Flow → New Control Flow**: Replace `*ngIf` with `@if`, `*ngFor` with `@for`, etc.
-    - **Missing Track Functions**: Add track functions to `@for` loops
-    - **Manual Subscriptions → Async Pipe**: Replace manual subscriptions with async pipe in templates
-    - **Method Calls in Templates**: Replace with computed signals or pipes
-    - **Self-Closing Tags**: Convert tags to self-closing format where appropriate
-    - **ngClass/ngStyle → Property Bindings**: Replace with `[class.className]` and `[style.property]`
+   3. **After applying fixes**:
+      - Re-read the file to verify the fix was applied correctly
+      - Check if the fix introduced any new issues
+      - Ensure the file still compiles and passes linting
 
-    #### Clarity Design System Fixes
-    - **Hard-coded Colors**: Replace hex codes and rgb values with Clarity SASS variables
-    - **Raw HTML → Clarity Components**: Replace raw HTML with appropriate Clarity components
-    - **Missing SASS Variables**: Replace hard-coded spacing/typography with Clarity variables
-    - **Global Styles**: Remove or scope `::ng-deep` usage
+6. **Generate Review Report with Applied Fixes**
 
-    #### Testing Fixes
-    - **Jasmine/Jest → Vitest**: Replace test framework imports and APIs
-    - **spyOn() → vi.spyOn()**: Replace with Vitest spies
-    - **Test Selectors**: Update to use `getByRole` or `data-test-id` attributes
-    - **Signal Input Testing**: Update to use `fixture.componentRef.setInput()`
+   Structure the review report as follows:
 
-    #### RxJS Pattern Fixes
-    - **Manual Subscriptions**: Replace with async pipe or `DestroyRef`
-    - **Missing Error Handling**: Add `catchError` operators to observables
-    - **Memory Leaks**: Add proper unsubscription in `ngOnDestroy`
+   ````markdown
+   # Code Review Report
 
-    ### Fix Application Process
+   ## Summary
 
-    <<<<<<< HEAD
-    1.  **For each issue found in changed files**: - Verify the file is part of the current changes (staged/unstaged)
-        =======
-    1.  **For each issue found**:
+   - **Files Reviewed**: [list of files]
+   - **Overall Status**: ✅ Pass / ⚠️ Needs Attention / ❌ Fail
+   - **Issues Found**: [count]
+   - **Fixes Applied**: [count]
+   - **Issues Remaining**: [count] (if any cannot be auto-fixed)
 
-        > > > > > > > 1bc14d5 (chore: code review command)
+   ## Files Reviewed
 
-              - Read the file containing the issue
-              - Identify the exact location (line numbers)
-              - Apply the fix directly to the file
-              - Ensure the fix follows the codebase standards
+   [List each file with its status and fix count]
 
-        <<<<<<< HEAD - **DO NOT** fix issues in files that are not part of the current changes =======
+   ## Fixes Applied
 
-        > > > > > > > 1bc14d5 (chore: code review command)
+   ### [File Path]
 
-    1.  **Fix Order** (apply fixes in this order to avoid conflicts):
-        - First: TypeScript compilation errors
-        - Second: ESLint errors
-        - Third: Angular pattern fixes (signals, OnPush, etc.)
-        - Fourth: Clarity Design System fixes
-        - Fifth: Testing fixes
-        - Sixth: Code quality fixes (JSDoc, formatting, etc.)
-        - Last: Performance optimizations
+   **Status**: ✅ Fixed / ⚠️ Partially Fixed / ❌ Needs Manual Review
 
-    1.  **After applying fixes**:
-        - Re-read the file to verify the fix was applied correctly
-        - Check if the fix introduced any new issues
-        - Ensure the file still compiles and passes linting
+   **Fixes Applied**:
 
-8.  **Generate Review Report with Applied Fixes**
+   - [Fix description] (Line X)
+   - [Fix description] (Line Y)
 
-    Structure the review report as follows:
+   **Before**:
 
-    ````markdown
-    # Code Review Report
+   ```typescript
+   [original code]
+   ```
 
-    ## Summary
+   **After**:
 
-    - **Files Reviewed**: [list of files]
-    - **Overall Status**: ✅ Pass / ⚠️ Needs Attention / ❌ Fail
-    - **Issues Found**: [count]
-    - **Fixes Applied**: [count]
-    - **Issues Remaining**: [count] (if any cannot be auto-fixed)
+   ```typescript
+   [fixed code]
+   ```
 
-    ## Files Reviewed
+   **Rule Reference**: [specific rule file and section]
 
-    [List each file with its status and fix count]
+   ### Issues That Could Not Be Auto-Fixed
 
-    ## Fixes Applied
+   [List issues that require manual intervention with explanations]
 
-    ### [File Path]
+   ## Checklist Results
 
-    **Status**: ✅ Fixed / ⚠️ Partially Fixed / ❌ Needs Manual Review
+   ### TypeScript & Code Quality
 
-    **Fixes Applied**:
+   - [ ] Strict mode compliance
+   - [ ] No `any` types
+   - [ ] JSDoc documentation
+   - [ ] ESLint passes
+   - [ ] Prettier formatted
 
-    - [Fix description] (Line X)
-    - [Fix description] (Line Y)
+   ### Angular 20 Patterns
 
-    **Before**:
+   - [ ] Standalone components
+   - [ ] OnPush strategy
+   - [ ] Signal inputs/outputs
+   - [ ] New control flow syntax
+   - [ ] Track functions in @for
 
-    ```typescript
-    [original code]
-    ```
-    ````
+   ### Clarity Design System
 
-    **After**:
+   - [ ] Clarity components used
+   - [ ] No hard-coded colors
+   - [ ] SASS variables used
 
-    ```typescript
-    [fixed code]
-    ```
+   ### Testing
 
-    **Rule Reference**: [specific rule file and section]
+   - [ ] Test files exist
+   - [ ] Vitest framework
+   - [ ] Coverage requirements met
 
-    ### Issues That Could Not Be Auto-Fixed
+   ### Accessibility
 
-    [List issues that require manual intervention with explanations]
+   - [ ] ARIA attributes
+   - [ ] Keyboard navigation
+   - [ ] Labels for form controls
 
-    ## Checklist Results
+   ### Nx Workspace
 
-    ### TypeScript & Code Quality
-    - [ ] Strict mode compliance
-    - [ ] No `any` types
-    - [ ] JSDoc documentation
-    - [ ] ESLint passes
-    - [ ] Prettier formatted
+   - [ ] Module boundaries respected
+   - [ ] No circular dependencies
 
-    ### Angular 20 Patterns
-    - [ ] Standalone components
-    - [ ] OnPush strategy
-    - [ ] Signal inputs/outputs
-    - [ ] New control flow syntax
-    - [ ] Track functions in @for
+   ## Recommendations
 
-    ### Clarity Design System
-    - [ ] Clarity components used
-    - [ ] No hard-coded colors
-    - [ ] SASS variables used
+   [Specific recommendations for improvement]
 
-    ### Testing
-    - [ ] Test files exist
-    - [ ] Vitest framework
-    - [ ] Coverage requirements met
+   ## Definition of Done Status
 
-    ### Accessibility
-    - [ ] ARIA attributes
-    - [ ] Keyboard navigation
-    - [ ] Labels for form controls
-
-    ### Nx Workspace
-    - [ ] Module boundaries respected
-    - [ ] No circular dependencies
-
-    ## Recommendations
-
-    [Specific recommendations for improvement]
-
-    ## Definition of Done Status
-    - [ ] UI uses `clr-*` components and Clarity variables only
-    - [ ] Accessibility checked
-    - [ ] Transloco keys implemented
-    - [ ] Unit tests written with 60%+ coverage
-    - [ ] E2E hooks added where applicable
-    - [ ] Nx boundaries respected
-    - [ ] Code formatted with Prettier; ESLint clean; TypeScript compiles
-    - [ ] Copyright header included
-    - [ ] JSDoc comments added for all exports
-
-    ```
-
-    ```
+   - [ ] UI uses `clr-*` components and Clarity variables only
+   - [ ] Accessibility checked
+   - [ ] Transloco keys implemented
+   - [ ] Unit tests written with 60%+ coverage
+   - [ ] E2E hooks added where applicable
+   - [ ] Nx boundaries respected
+   - [ ] Code formatted with Prettier; ESLint clean; TypeScript compiles
+   - [ ] Copyright header included
+   - [ ] JSDoc comments added for all exports
+   ````
 
 ## Review Guidelines
 
@@ -485,49 +398,22 @@ name = input<string>();
 
 ## Requirements
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> 1425d68 (chore: update)
 - **MUST** review **ONLY changed/submitted files** - NOT the entire codebase
 - **MUST** use `git status` and `git diff` to identify what has actually changed
 - **MUST** review against all rules in `.cursor/rules/` directory (for changed files only)
 - **MUST** check TypeScript compilation (only for affected projects)
 - **MUST** check ESLint compliance (only for changed files)
 - **MUST** verify Definition of Done checklist (for changed files only)
-<<<<<<< HEAD
-- # **MUST automatically apply fixes** for all issues that can be auto-fixed (in changed files only)
-- **MUST** review against all rules in `.cursor/rules/` directory
-- **MUST** check TypeScript compilation
-- **MUST** check ESLint compliance
-- **MUST** verify Definition of Done checklist
-- **MUST automatically apply fixes** for all issues that can be auto-fixed
-  > > > > > > > 1bc14d5 (chore: code review command)
-=======
 - **MUST automatically apply fixes** for all issues that can be auto-fixed (in changed files only)
->>>>>>> 1425d68 (chore: update)
 - **MUST** provide specific file paths and line numbers for issues
 - **MUST** reference specific rules when pointing out issues
 - **MUST** show before/after code for all applied fixes
 - **MUST** provide a summary of all fixes applied
-<<<<<<< HEAD
-- **MUST** indicate which issues could not be auto-fixed and why <<<<<<< HEAD
-- **MUST NOT** review or fix files that are not part of the current changes
-- **SHOULD** run automated checks (TypeScript, ESLint) only for affected projects
-- **SHOULD** check test coverage if available (only for changed test files)
-- # **SHOULD** review related test files for components/services (only if they are also changed)
-- **SHOULD** run automated checks (TypeScript, ESLint) when possible
-- **SHOULD** check test coverage if available
-- **SHOULD** review related test files for components/services
-  > > > > > > > 1bc14d5 (chore: code review command)
-=======
 - **MUST** indicate which issues could not be auto-fixed and why
 - **MUST NOT** review or fix files that are not part of the current changes
 - **SHOULD** run automated checks (TypeScript, ESLint) only for affected projects
 - **SHOULD** check test coverage if available (only for changed test files)
 - **SHOULD** review related test files for components/services (only if they are also changed)
->>>>>>> 1425d68 (chore: update)
 - **SHOULD** apply fixes in the correct order to avoid conflicts
 - **SHOULD** verify fixes don't introduce new issues
 
@@ -556,56 +442,25 @@ Always reference these rule files when reviewing:
 
 ## Example Review Workflow
 
-<<<<<<< HEAD
-<<<<<<< HEAD For a component file review (ONLY changed files):
-=======
 For a component file review (ONLY changed files):
->>>>>>> 1425d68 (chore: update)
 
 1. **Identify changed files** using `git status` and `git diff`
 2. **Read ONLY the changed component file, template, styles, and spec file** (if they are part of changes)
 3. **Check all checklist items systematically** (for changed files only)
 4. **Run TypeScript and ESLint checks** (only for affected projects)
-<<<<<<< HEAD
-5. # **Automatically apply fixes** (only in changed files):
-
-   For a component file review:
-
-6. **Read the component file, template, styles, and spec file**
-7. **Check all checklist items systematically**
-8. **Run TypeScript and ESLint checks**
-9. **Automatically apply fixes**:
-   > > > > > > > 1bc14d5 (chore: code review command)
-=======
 5. **Automatically apply fixes** (only in changed files):
->>>>>>> 1425d68 (chore: update)
    - Replace `@Input() name?: string;` with `name = input<string>();`
    - Add `ChangeDetectionStrategy.OnPush` if missing
    - Replace `*ngIf` with `@if` in templates
    - Add track functions to `@for` loops
    - Replace hard-coded colors with Clarity variables
    - Add JSDoc comments to exported items
-<<<<<<< HEAD
-   - Format code with Prettier <<<<<<< HEAD
-10. **Generate comprehensive report** showing:
-    - All issues found
-    - All fixes applied (with before/after code)
-    - Issues that require manual review
-11. # **Provide summary** for user to review before committing
-12. **Generate comprehensive report** showing:
-    - All issues found
-    - All fixes applied (with before/after code)
-    - Issues that require manual review
-13. **Provide summary** for user to review before committing
-    > > > > > > > 1bc14d5 (chore: code review command)
-=======
    - Format code with Prettier
 6. **Generate comprehensive report** showing:
    - All issues found
    - All fixes applied (with before/after code)
    - Issues that require manual review
 7. **Provide summary** for user to review before committing
->>>>>>> 1425d68 (chore: update)
 
 ## Automatic Fix Examples
 

@@ -3,8 +3,6 @@
 Analyze code changes using MCP server and create a pull request with a well-formatted title and description following
 the project's PR template.
 
-<<<<<<< HEAD
-=======
 ## How to Use
 
 Type `/pr` in Cursor's chat input. The AI will automatically:
@@ -14,7 +12,6 @@ Type `/pr` in Cursor's chat input. The AI will automatically:
 - Create or update the PR on GitHub using MCP server
 - Provide you with the PR URL
 
->>>>>>> b7bc894 (chore: refine pr command)
 ## Objective
 
 Connect to the GitHub MCP server, analyze all git changes (commits, diffs, affected files), and create a pull request
@@ -25,6 +22,8 @@ with:
 - Proper categorization of changes
 - Statistics about the changes
 - Checklist items for reviewers
+- Automatic assignment to the authenticated user
+- Appropriate labels based on PR type and scope
 
 ## Process
 
@@ -36,36 +35,6 @@ with:
 
 2. **Analyze Code Changes**
    - Get all commits since the base branch
-   - Analyze git diff to identify changed files
-<<<<<<< HEAD
-   - Categorize changes by type (added, modified, deleted)
-   - Count additions and deletions
-   - Identify affected projects (ngx-lift, clr-lift, demo app)
-   - Determine PR type from commit messages (feat, fix, refactor, docs, style, test, chore, perf)
-
-3. **Generate PR Title**
-   - Follow conventional commits format: `type: description`
-   - Extract meaningful description from commit messages
-   - Capitalize first letter
-   - Keep under 72 characters
-   - Examples:
-     - `refactor: migrate to nx monorepo workspace`
-     - `feat: add new utility function`
-     - `fix: resolve memory leak in component`
-
-4. **Generate PR Description**
-   - Follow the structure from `.github/PULL_REQUEST_TEMPLATE.md`
-   - Include sections:
-     - **Description**: Summary of changes with motivation and context
-     - **Type of change**: Check appropriate boxes (Bug fix, New feature, Breaking change, Documentation, Refactoring,
-       Performance, Test)
-     - **Affected Projects**: List affected projects (ngx-lift, clr-lift, demo app)
-     - **Changes Summary**: Statistics (files changed, additions, deletions, net change)
-     - **Changed Files**: List of files grouped by status (added, modified, deleted) with line counts
-     - **Checklist**: All items from the PR template
-     - **Testing**: Describe tests run or needed
-     - **Additional Notes**: Any relevant context
-=======
    - Read `git diff --stat` to see which files changed
    - Read `git diff` for key files to understand what changed
    - Categorize changes by type (added, modified, deleted)
@@ -132,7 +101,9 @@ with:
      - **Documentation**: Documentation update checklist
      - **Performance Impact**: Performance considerations
      - **Additional Context**: Any other relevant notes
->>>>>>> b7bc894 (chore: refine pr command)
+     - **Reviewer Notes**: Areas for reviewers to focus on
+     - **Dependencies**: New dependencies or updates
+     - **Related PRs**: Links to related PRs
 
 5. **Check for Existing PR**
    - First, check if a PR already exists for the current branch using GitHub MCP server
@@ -206,75 +177,8 @@ with:
 
 The PR should be created with:
 
-**Title**: `type: concise description`
+**Title**: `<type>(<scope>): <subject>` following conventional commits format
 
-<<<<<<< HEAD
-**Description**:
-
-```markdown
-# Description
-
-[Summary of changes with motivation and context]
-
-Fixes # (issue if applicable)
-
-## Type of change
-
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Refactoring (no functional changes)
-- [ ] Performance improvement
-- [ ] Test update
-
-## Affected Projects
-
-- [ ] ngx-lift
-- [ ] clr-lift
-- [ ] demo app
-
-## Changes Summary
-
-- **Files Changed**: X
-- **Additions**: +X
-- **Deletions**: -X
-- **Net Change**: ±X
-
-## Changed Files
-
-### Added (X)
-
-- `path/to/file.ts` (+X/-X)
-
-### Modified (X)
-
-- `path/to/file.ts` (+X/-X)
-
-### Deleted (X)
-
-- `path/to/file.ts`
-
-## Checklist
-
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published
-
-## Testing
-
-[Describe tests that were run or need to be run]
-
-## Additional Notes
-
-[Any other context about the pull request]
-```
-=======
 **Description**: Follow the complete structure from `.github/PULL_REQUEST_TEMPLATE.md` including all sections:
 
 - Description with related issue
@@ -290,7 +194,6 @@ Fixes # (issue if applicable)
 - Reviewer Notes
 - Dependencies
 - Related PRs
->>>>>>> b7bc894 (chore: refine pr command)
 
 ## Automatic PR Management
 
@@ -311,8 +214,6 @@ Fixes # (issue if applicable)
 - The PR MUST be assigned to the authenticated user (get username via `mcp_github_get_me`)
 - The PR MUST have appropriate labels based on type, scope, and breaking changes
 
-<<<<<<< HEAD
-=======
 ## Analysis Tips
 
 - **Read key files**: If many files changed, focus on the most significant ones
@@ -325,18 +226,12 @@ Fixes # (issue if applicable)
   - Changed component APIs
   - Major dependency updates
 
->>>>>>> b7bc894 (chore: refine pr command)
 ## Example
 
 For a refactoring PR that migrates to Nx monorepo:
 
 **Title**: `refactor: migrate to nx monorepo workspace`
 
-<<<<<<< HEAD
-**Description**: Comprehensive description explaining the migration, affected files, and testing approach.
-
-**Action**: The PR is automatically created or updated via GitHub MCP server, not just displayed.
-=======
 **Description**: Comprehensive description following the PR template structure, explaining the migration, affected
 files, and testing approach.
 
@@ -356,9 +251,6 @@ files, and testing approach.
    - Assigned to you (authenticated user)
    - Appropriate labels based on type, scope, and breaking changes
 5. Review the PR on GitHub using the provided URL
-<<<<<<< HEAD
->>>>>>> b7bc894 (chore: refine pr command)
-=======
 
 ## PR Assignment and Labels
 
@@ -371,4 +263,3 @@ files, and testing approach.
 - **Breaking Changes**: `breaking-change` label if breaking changes detected
 
 The labels are added using `mcp_github_issue_write` after PR creation/update since PRs are issues in GitHub.
->>>>>>> de7608f (chore: add pr assignee and labels)
