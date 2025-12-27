@@ -3,9 +3,6 @@
   command = "npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production"
   publish = "dist/apps/demo/browser"
 
-[[plugins]]
-  package = "@netlify/angular-runtime"
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
