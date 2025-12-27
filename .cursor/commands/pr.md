@@ -10,6 +10,9 @@ Type `/pr` in Cursor's chat input. The AI will automatically:
 - Analyze your code changes
 - Generate PR title and description
 - Create or update the PR on GitHub using MCP server
+- Assign the PR to you and add appropriate labels
+- **Perform AI code review** - analyze the PR code changes against all tech standards
+- **Submit review comments** - leave detailed review comments on GitHub with line-specific feedback
 - Provide you with the PR URL
 
 ## Objective
@@ -161,6 +164,70 @@ with:
        - For existing PRs: Update assignees (if not already assigned) and merge labels (add missing, preserve existing)
        - If labels array is empty, still call the function with an empty array `[]` to ensure assignee is set
 
+   - **STEP 4: AI Code Review** (MANDATORY - MUST DO THIS AFTER PR CREATION/UPDATE):
+     - **CRITICAL**: This step is REQUIRED and MUST NOT be skipped
+     - **Purpose**: Automatically review the PR code changes and leave review comments on GitHub
+     - **Process**:
+       1. **Read PR Details**:
+          - Use `mcp_github_pull_request_read` with `method: "get_files"` to get all changed files
+          - Use `mcp_github_pull_request_read` with `method: "get_diff"` to get the full diff
+          - Store the PR number, owner, and repo for later use
+       2. **Analyze Code Changes**:
+          - Review all changed files against the comprehensive tech standards defined in `.cursor/rules/`
+          - Follow the same review checklist as the `/review` command (see `.cursor/commands/review.md`)
+          - Check for:
+            - TypeScript strict mode compliance, no `any` types, JSDoc documentation
+            - Angular 20 patterns (standalone components, OnPush, signal inputs/outputs, new control flow)
+            - Clarity Design System guidelines (Clarity components, SASS variables, no hard-coded colors)
+            - Testing standards (Vitest, coverage requirements)
+            - RxJS patterns (signals first, proper operators, error handling)
+            - Nx workspace boundaries (no circular dependencies)
+            - Accessibility requirements (ARIA attributes, keyboard navigation)
+            - Code quality standards (ESLint, Prettier, copyright headers)
+       3. **Identify Issues**:
+          - Categorize issues by severity:
+            - **Critical**: TypeScript errors, ESLint errors, missing OnPush, `any` types, hard-coded colors
+            - **Warnings**: ESLint warnings, old Angular patterns, missing track functions
+            - **Suggestions**: Code style improvements, performance optimizations
+          - For each issue, identify:
+            - File path and line number
+            - Issue description
+            - Rule reference from `.cursor/rules/`
+            - Suggested fix (if applicable)
+       4. **Create Review Comments**:
+          - Use `mcp_github_pull_request_review_write` with `method: "create"` to create a pending review
+          - For each issue found, use `mcp_github_add_comment_to_pending_review` to add line-specific comments:
+            - Set `owner`, `repo`, `pullNumber` from PR details
+            - Set `path` to the file path (relative to repo root)
+            - Set `line` to the line number where the issue occurs
+            - Set `side` to `"RIGHT"` (the new code side)
+            - Set `body` to a comprehensive comment including:
+              - Issue description
+              - Rule reference (e.g., "Per `.cursor/rules/angular.mdc` - Signal-Based Development")
+              - Suggested fix (if applicable)
+              - Code example showing the fix
+          - Group related comments by file
+          - Prioritize critical issues first
+       5. **Submit Review**:
+          - Determine review event based on issues found:
+            - If critical issues found → `event: "REQUEST_CHANGES"`
+            - If only warnings/suggestions → `event: "COMMENT"`
+            - If no issues found → `event: "APPROVE"`
+          - Use `mcp_github_pull_request_review_write` with `method: "submit_pending"` to submit the review:
+            - Set `owner`, `repo`, `pullNumber` from PR details
+            - Set `event` to the determined review event
+            - Set `body` to a summary comment including:
+              - Overall review status
+              - Summary of issues found (count by severity)
+              - Key recommendations
+              - Reference to the review checklist
+     - **IMPORTANT**:
+       - Always perform the review automatically - do not ask for permission
+       - Review should be thorough and follow all standards from `.cursor/rules/`
+       - Comments should be constructive and include actionable suggestions
+       - If no issues are found, still submit an approval review with positive feedback
+       - The review should reference specific rules and provide code examples
+
    - **CRITICAL RULES**:
      - Always automatically create or update the PR using GitHub MCP server - NEVER ask the user, NEVER just display the
        content
@@ -170,6 +237,7 @@ with:
        automatically
      - **MANDATORY**: Step 3 (adding assignee and labels) MUST be executed after every PR creation or update - it is NOT
        optional
+     - **MANDATORY**: Step 4 (AI code review) MUST be executed after every PR creation or update - it is NOT optional
 
 ## Requirements
 
@@ -185,10 +253,15 @@ with:
   set assignees
 - **MANDATORY: MUST add appropriate labels** - ALWAYS call `mcp_github_issue_write` after PR creation/update to set
   labels
+- **MANDATORY: MUST perform AI code review** - ALWAYS perform comprehensive code review and submit review comments after
+  PR creation/update
 - **CRITICAL**: The assignee and label assignment step (step 3) is MANDATORY and MUST be executed after EVERY PR
   creation or update - it is NOT optional
+- **CRITICAL**: The AI code review step (step 4) is MANDATORY and MUST be executed after EVERY PR creation or update -
+  it is NOT optional
 - **CRITICAL**: If you skip the assignee/label step, the PR will NOT have an assignee or labels - this is a bug that
   must be fixed
+- **CRITICAL**: If you skip the AI review step, the PR will NOT have review comments - this is a bug that must be fixed
 - Must analyze actual git changes, not assume
 - Title must follow conventional commits format
 - Description must match the project's PR template structure
@@ -228,6 +301,7 @@ The PR should be created with:
    - **Get authenticated user** (`mcp_github_get_me`) →
    - **Create PR automatically via MCP** →
    - **MANDATORY: Add assignee and labels** (`mcp_github_issue_write`) →
+   - **MANDATORY: Perform AI code review** (read PR diff, analyze code, create review comments, submit review) →
    - Provide PR URL (NO QUESTIONS ASKED)
 
 2. **Subsequent Runs**:
@@ -235,6 +309,7 @@ The PR should be created with:
    - **Get authenticated user** (`mcp_github_get_me`) →
    - **Update existing PR automatically via MCP** →
    - **MANDATORY: Update assignee and labels** (`mcp_github_issue_write`) →
+   - **MANDATORY: Perform AI code review** (read PR diff, analyze code, create review comments, submit review) →
    - Provide PR URL (NO QUESTIONS ASKED)
 
 3. **After Adding Commits**:
@@ -242,13 +317,16 @@ The PR should be created with:
    - **Get authenticated user** (`mcp_github_get_me`) →
    - **Update PR with new changes automatically** →
    - **MANDATORY: Update assignee and labels** (`mcp_github_issue_write`) →
+   - **MANDATORY: Perform AI code review** (read PR diff, analyze code, create review comments, submit review) →
    - Provide PR URL (NO QUESTIONS ASKED)
 
 **MANDATORY WORKFLOW STEPS (MUST FOLLOW IN ORDER):**
 
 1. ✅ Get authenticated user via `mcp_github_get_me` (REQUIRED FIRST STEP)
 2. ✅ Create or update PR via `mcp_github_create_pull_request` or `mcp_github_update_pull_request`
-3. ✅ **MANDATORY**: Add assignee and labels via `mcp_github_issue_write` with `method: "update"` (REQUIRED FINAL STEP)
+3. ✅ **MANDATORY**: Add assignee and labels via `mcp_github_issue_write` with `method: "update"` (REQUIRED STEP)
+4. ✅ **MANDATORY**: Perform AI code review and submit review comments via `mcp_github_pull_request_review_write`
+   (REQUIRED FINAL STEP)
 
 **IMPORTANT RULES:**
 
@@ -290,8 +368,15 @@ files, and testing approach.
    - `issue_number: 102`
    - `assignees: ["wghglory"]`
    - `labels: ["enhancement", "ngx-lift"]`
+4. **MANDATORY**: Perform AI code review:
+   - Call `mcp_github_pull_request_read` with `method: "get_files"` → Get changed files
+   - Call `mcp_github_pull_request_read` with `method: "get_diff"` → Get full diff
+   - Analyze code against `.cursor/rules/` standards
+   - Call `mcp_github_pull_request_review_write` with `method: "create"` → Create pending review
+   - For each issue: Call `mcp_github_add_comment_to_pending_review` → Add line-specific comments
+   - Call `mcp_github_pull_request_review_write` with `method: "submit_pending"` → Submit review
 
-Result: PR #102 created with assignee `wghglory` and labels `enhancement`, `ngx-lift`
+Result: PR #102 created with assignee `wghglory`, labels `enhancement`, `ngx-lift`, and AI review comments submitted
 
 ## Workflow
 
@@ -302,7 +387,10 @@ Result: PR #102 created with assignee `wghglory` and labels `enhancement`, `ngx-
    - Generated title and description
    - Assigned to you (authenticated user)
    - Appropriate labels based on type, scope, and breaking changes
+   - **AI code review comments** - comprehensive review against all tech standards
 5. Review the PR on GitHub using the provided URL
+6. Address any review comments from the AI review
+7. Push additional commits if needed - running `/pr` again will update the PR and perform a new review
 
 ## PR Assignment and Labels
 
@@ -316,6 +404,99 @@ Result: PR #102 created with assignee `wghglory` and labels `enhancement`, `ngx-
 
 The labels are added using `mcp_github_issue_write` after PR creation/update since PRs are issues in GitHub.
 
+## AI Code Review Process
+
+**MANDATORY**: After creating or updating a PR, the command automatically performs a comprehensive AI code review and
+submits review comments on GitHub.
+
+### Review Process
+
+1. **Read PR Changes**:
+   - Fetches all changed files using `mcp_github_pull_request_read` with `method: "get_files"`
+   - Retrieves the full diff using `mcp_github_pull_request_read` with `method: "get_diff"`
+
+2. **Comprehensive Code Analysis**:
+   - Reviews all changed code against the comprehensive tech standards defined in `.cursor/rules/`
+   - Follows the same review checklist as the `/review` command (see `.cursor/commands/review.md`)
+   - Checks for compliance with:
+     - **TypeScript**: Strict mode, no `any` types, JSDoc documentation, copyright headers
+     - **Angular 20**: Standalone components, OnPush strategy, signal inputs/outputs, new control flow syntax
+     - **Clarity Design System**: Clarity components, SASS variables, no hard-coded colors
+     - **Testing**: Vitest framework, coverage requirements, test selectors
+     - **RxJS**: Signals first, proper operators, error handling, subscription management
+     - **Nx Workspace**: Module boundaries, no circular dependencies
+     - **Accessibility**: ARIA attributes, keyboard navigation, labels
+     - **Code Quality**: ESLint, Prettier, DRY principle
+
+3. **Issue Categorization**:
+   - **Critical Issues**: TypeScript errors, ESLint errors, missing OnPush, `any` types, hard-coded colors, missing
+     accessibility
+   - **Warnings**: ESLint warnings, old Angular patterns, missing track functions, method calls in templates
+   - **Suggestions**: Code style improvements, performance optimizations, additional test cases
+
+4. **Review Comment Creation**:
+   - Creates a pending review using `mcp_github_pull_request_review_write` with `method: "create"`
+   - For each issue found, adds a line-specific comment using `mcp_github_add_comment_to_pending_review`:
+     - Comments include file path and line number
+     - Detailed issue description
+     - Rule reference (e.g., "Per `.cursor/rules/angular.mdc` - Signal-Based Development")
+     - Suggested fix with code example (if applicable)
+   - Groups related comments by file
+   - Prioritizes critical issues first
+
+5. **Review Submission**:
+   - Determines review event based on issues found:
+     - **`REQUEST_CHANGES`**: If critical issues are found
+     - **`COMMENT`**: If only warnings/suggestions are found
+     - **`APPROVE`**: If no issues are found
+   - Submits the review using `mcp_github_pull_request_review_write` with `method: "submit_pending"`
+   - Includes a summary comment with:
+     - Overall review status
+     - Count of issues by severity
+     - Key recommendations
+     - Reference to review checklist
+
+### Review Comment Format
+
+Each review comment follows this structure:
+
+````markdown
+**Issue**: [Brief description of the issue]
+
+**Rule Reference**: Per `.cursor/rules/[rule-file].mdc` - [Section Name]
+
+**Current Code**:
+
+```typescript
+[problematic code]
+```
+````
+
+**Suggested Fix**:
+
+```typescript
+[corrected code]
+```
+
+**Explanation**: [Detailed explanation of why this change is needed]
+
+```
+
+### Benefits
+
+- **Automatic Quality Assurance**: Every PR is automatically reviewed against all project standards
+- **Consistent Feedback**: All reviews follow the same comprehensive checklist
+- **Actionable Comments**: Each comment includes specific file paths, line numbers, and suggested fixes
+- **Rule References**: Comments reference specific rules for easy lookup
+- **Early Detection**: Issues are caught before manual review, saving time
+
+### Important Notes
+
+- The AI review is **automatic** and **mandatory** - it runs after every PR creation or update
+- Review comments are **constructive** and include actionable suggestions
+- If no issues are found, an approval review is still submitted with positive feedback
+- The review process follows the same standards as the `/review` command for consistency
+
 ## Execution Checklist
 
 **BEFORE executing the `/pr` command, verify you will:**
@@ -327,6 +508,16 @@ The labels are added using `mcp_github_issue_write` after PR creation/update sin
 - [ ] ✅ Include `owner`, `repo`, `issue_number`, `assignees`, and `labels` parameters in the `mcp_github_issue_write`
       call
 - [ ] ✅ Verify the PR has been assigned and labeled correctly
+- [ ] ✅ **MANDATORY**: Perform AI code review:
+  - [ ] Call `mcp_github_pull_request_read` with `method: "get_files"` to get changed files
+  - [ ] Call `mcp_github_pull_request_read` with `method: "get_diff"` to get full diff
+  - [ ] Analyze code against all standards in `.cursor/rules/` (TypeScript, Angular 20, Clarity, Testing, RxJS, Nx, Accessibility)
+  - [ ] Identify issues by severity (Critical, Warnings, Suggestions)
+  - [ ] Call `mcp_github_pull_request_review_write` with `method: "create"` to create pending review
+  - [ ] For each issue: Call `mcp_github_add_comment_to_pending_review` with file path, line number, and detailed comment
+  - [ ] Call `mcp_github_pull_request_review_write` with `method: "submit_pending"` to submit review with appropriate event (APPROVE, COMMENT, or REQUEST_CHANGES)
 
-**CRITICAL REMINDER**: If you skip the `mcp_github_issue_write` call, the PR will NOT have an assignee or labels. This
-step is MANDATORY and must be executed after every PR creation or update.
+**CRITICAL REMINDERS**:
+- If you skip the `mcp_github_issue_write` call, the PR will NOT have an assignee or labels. This step is MANDATORY.
+- If you skip the AI code review step, the PR will NOT have review comments. This step is MANDATORY and must be executed after every PR creation or update.
+```
