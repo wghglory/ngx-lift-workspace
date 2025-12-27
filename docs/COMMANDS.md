@@ -222,17 +222,20 @@ nx release publish --projects=clr-lift
 
 ```bash
 npm run publish:ngx
-# or
-nx build ngx-lift && cd dist/libs/ngx-lift && npm publish
+# or manually
+nx build ngx-lift && cp .npmrc dist/libs/ngx-lift/.npmrc && cd dist/libs/ngx-lift && npm publish
 ```
 
 #### Publish clr-lift
 
 ```bash
 npm run publish:clr
-# or
-nx build clr-lift && cd dist/libs/clr-lift && npm publish
+# or manually
+nx build clr-lift && cp .npmrc dist/libs/clr-lift/.npmrc && cd dist/libs/clr-lift && npm publish
 ```
+
+**Note**: When publishing manually, remember to copy `.npmrc` to the dist folder before running `npm publish`. The
+`.npmrc` file contains the authentication token configuration using `${NPM_TOKEN}` environment variable.
 
 #### Publish Both Libraries
 

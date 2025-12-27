@@ -74,16 +74,24 @@ export NPM_TOKEN=your_npm_token_here
 
 # Publish ngx-lift
 npm run build:ngx
+# Copy .npmrc to dist folder for authentication
+cp .npmrc dist/libs/ngx-lift/.npmrc
 cd dist/libs/ngx-lift
 npm publish
 cd ../../..
 
 # Publish clr-lift
 npm run build:clr
+# Copy .npmrc to dist folder for authentication
+cp .npmrc dist/libs/clr-lift/.npmrc
 cd dist/libs/clr-lift
 npm publish
 cd ../../..
 ```
+
+**Note**: The `.npmrc` file must be copied to the dist folder before running `npm publish` because npm reads the
+authentication token from `.npmrc` in the current directory. The `.npmrc` file uses `${NPM_TOKEN}` environment variable,
+so make sure `NPM_TOKEN` is set before publishing.
 
 ### Publishing Checklist
 
