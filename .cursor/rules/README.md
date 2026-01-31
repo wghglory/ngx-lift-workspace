@@ -7,7 +7,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 - **`general.mdc`** - Core standards, technologies, code quality, Definition of Done
 - **`angular.mdc`** - Angular 19 patterns: standalone components, signals, control flow, routing
 - **`clarity.mdc`** - Clarity Design System: components, SASS variables, styling, accessibility
-- **`testing.mdc`** - Jest & Playwright: unit tests, E2E tests, coverage, test patterns
+- **`testing.mdc`** - Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
 - **`rxjs.mdc`** - RxJS patterns: observables, operators, async state, subscriptions
 - **`nx.mdc`** - Nx workspace: project structure, boundaries, commands, dependencies
 
@@ -20,18 +20,18 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 5. **Clarity Components**: Always use Clarity Angular components over raw HTML
 6. **No Hard-coded Colors**: Use Clarity SASS variables for all colors
 7. **Accessibility**: ARIA attributes and keyboard navigation by default
-8. **Testing**: 60%+ coverage with Jest for unit tests, Playwright for E2E
+8. **Testing**: 60%+ coverage with Vitest for unit tests, Playwright for E2E
 9. **Linting**: All code must pass ESLint without errors or warnings
 10. **Nx Boundaries**: Respect project boundaries; no circular dependencies
 
 ## Technology Stack
 
-- **Angular**: 19.2.5
-- **Nx**: 21.0.3
-- **Clarity**: @clr/angular 17.11.9
-- **Jest**: 29.7.0
+- **Angular**: 20.0.1
+- **Nx**: 22.1.0
+- **Clarity**: @clr/angular 17.12.1
+- **Vitest**: 3.0.5
 - **Playwright**: 1.36.0
-- **TypeScript**: 5.7.3
+- **TypeScript**: 5.9.2
 - **ESLint**: 9.8.0
 - **Transloco**: @jsverse/transloco 7.5.1
 - **ngx-lift**: 1.10.3 (external package)
@@ -50,7 +50,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 - [Angular Documentation](https://angular.io/docs)
 - [Nx Documentation](https://nx.dev)
 - [Clarity Design System](https://clarity.design)
-- [Jest Documentation](https://jestjs.io)
+- [Vitest Documentation](https://vitest.dev)
 - [Playwright Documentation](https://playwright.dev)
 - [RxJS Documentation](https://rxjs.dev)
 - [Transloco Documentation](https://transloco.vercel.app)

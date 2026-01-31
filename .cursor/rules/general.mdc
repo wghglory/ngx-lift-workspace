@@ -123,7 +123,7 @@ Unlike corporate/enterprise projects, open-source libraries should not have copy
 - **Test Selectors**: Prefer `getByRole` or `data-test-id` attributes for stable selectors
 - **Coverage**: Maintain 60% or higher code coverage for all libraries
 - **Test Structure**: Follow AAA pattern (Arrange, Act, Assert)
-- **Mocking**: Mock external dependencies; use `jest.fn()` for mock functions
+- **Mocking**: Mock external dependencies; use `vi.fn()` for mock functions
 
 ## Service & Data Layer Guidelines
 

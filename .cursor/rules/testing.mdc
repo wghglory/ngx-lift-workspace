@@ -7,7 +7,7 @@ alwaysApply: true
 
 ### Unit Testing with Vitest
 
-- **Framework**: Use Vitest (not Jasmine/Jest)
+- **Framework**: Use Vitest
 - **Test Structure**: Follow AAA pattern (Arrange, Act, Assert)
 - **Test File Naming**: `*.spec.ts` (e.g., `file-reader.component.spec.ts`)
 
@@ -238,7 +238,7 @@ it('should validate form control', () => {
 
 ```typescript
 it('should emit event on click', () => {
-  const spy = jest.fn();
+  const spy = vi.fn();
   component.userChange.subscribe(spy);
   component.handleClick();
   expect(spy).toHaveBeenCalledWith(expectedValue);

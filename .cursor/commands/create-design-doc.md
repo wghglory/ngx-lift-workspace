@@ -155,4 +155,4 @@ All ASCII art boxes, diagrams, flow charts, and mockups in design documents must
 - `.cursor/rules/angular.mdc` - Component patterns and Angular 19
 - `.cursor/rules/clarity.mdc` - UI components and Clarity Design System
 - `.cursor/rules/rxjs.mdc` - RxJS patterns and observable management
-- `.cursor/rules/testing.mdc` - Testing approach with Jest and Playwright
+- `.cursor/rules/testing.mdc` - Testing approach with Vitest and Playwright
