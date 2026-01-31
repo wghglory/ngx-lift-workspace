@@ -2,19 +2,20 @@
 alwaysApply: true
 ---
 
-## Angular 20 Specific Guidelines
+## Angular Specific Guidelines
 
 ### Component Architecture
 
 - **Standalone Components**: All components must be standalone (no NgModules)
-  - **DO NOT** include `standalone: true` in `@Component` decorator - components are standalone by default in Angular 20
+
+  - **DO NOT** include `standalone: true` in `@Component` decorator - not needed since Angular 18
   - When generating new code, **NEVER** add `standalone: true` to component decorators
 
   ```typescript
   // ✅ Correct
   @Component({
     selector: 'app-example',
-    imports: [CommonModule, ClarityModule],
+    imports: [CommonModule],
     templateUrl: './example.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
   })
@@ -23,8 +24,8 @@ alwaysApply: true
   // ❌ Wrong - DO NOT include standalone: true
   @Component({
     selector: 'app-example',
-    standalone: true, // ❌ Remove this - not needed in Angular 20
-    imports: [CommonModule, ClarityModule],
+    standalone: true, // ❌ Remove this - not needed since Angular 18
+    imports: [CommonModule],
     templateUrl: './example.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
   })
@@ -146,6 +147,7 @@ alwaysApply: true
   ```
 
 - **Method Calls**: **NEVER** call component methods from templates
+
   - Use computed signals or pipes instead
   - Exception: Event handlers (`(click)="handleClick()"`)
 
@@ -168,8 +170,7 @@ alwaysApply: true
   ```
 
   - **Exception**: Custom Angular components that require content should use opening/closing tags
-  - **Exception**: HTML elements that can contain content (like `<div>`, `<span>`, `<p>`) should use opening/closing
-    tags even when empty
+  - **Exception**: HTML elements that can contain content (like `<div>`, `<span>`, `<p>`) should use opening/closing tags even when empty
 
 - **Class and Style Bindings**: Prefer `class` over `ngClass` and `style` over `ngStyle`
 
@@ -192,8 +193,7 @@ alwaysApply: true
   - Use property binding `[class.className]` for single class toggles
   - Use property binding `[style.property]` for single style properties
   - Use computed signals for complex class/style logic
-  - **Exception**: Use `ngClass` or `ngStyle` only when you need to conditionally apply multiple classes/styles
-    dynamically and computed signals would be overly complex
+  - **Exception**: Use `ngClass` or `ngStyle` only when you need to conditionally apply multiple classes/styles dynamically and computed signals would be overly complex
 
 ### Forms
 
@@ -222,20 +222,28 @@ alwaysApply: true
 ### Routing
 
 - **Standalone Routes**: Use standalone route configuration
-- **Route Params**: Use `injectParams()` from `ngx-lift` for route parameters
+- **Route Params**: Prefer `injectParams()` from `ngx-lift` for route parameters (reactive)
 
   ```typescript
-  userId = injectParams('id');
+  // ✅ Preferred - reactive
+  userId = injectParams('id', { initialValue: '' });
   allParams = injectParams();
+
+  // ⚠️ Legacy - use only when needed for snapshot access
+  name = this.route.snapshot.paramMap.get('name') || '';
   ```
 
-- **Query Params**: Use `injectQueryParams()` from `ngx-lift` for query parameters
+- **Query Params**: Prefer `injectQueryParams()` from `ngx-lift` for query parameters (reactive)
 
   ```typescript
-  searchTerm = injectQueryParams('search');
+  // ✅ Preferred - reactive
+  searchTerm = injectQueryParams('search', { initialValue: '' });
+
+  // ⚠️ Legacy - use only when needed for snapshot access
+  namespace = this.route.snapshot.queryParamMap.get('namespace') || '';
   ```
 
-- **Route Guards**: Implement guards as functional guards (preferred in Angular 20)
+- **Route Guards**: Implement guards as functional guards (preferred in Angular 19)
 
 ### Performance Optimization
 
@@ -255,15 +263,31 @@ alwaysApply: true
 
 ### Error Handling
 
-- **ErrorHandler**: Implement global error handler for unhandled errors
+- **ErrorHandler**: Implement global error handler for unhandled errors in applications
 - **Component Errors**: Use `catchError` operator for observables
-- **Error Display**: Use Clarity alert components to display errors
+- **Error Display**: Use Clarity alert components to display errors (clr-lift only)
 - **Error Logging**: Log errors appropriately (avoid sensitive information)
 
-### Accessibility
+### Accessibility (Components Only)
 
-- **ARIA Attributes**: Include appropriate ARIA attributes
+- **ARIA Attributes**: Include appropriate ARIA attributes in UI components
 - **Keyboard Navigation**: Ensure all interactive elements are keyboard accessible
 - **Focus Management**: Manage focus appropriately (modals, dialogs, dynamic content)
 - **Semantic HTML**: Use semantic HTML elements where possible
 - **Labels**: Always associate labels with form controls
+
+## Code Review Checklist - Angular Patterns
+
+Use this checklist when reviewing Angular code changes:
+
+- [ ] `ChangeDetectionStrategy.OnPush`
+- [ ] Signal inputs: `input()` not `@Input()`
+- [ ] Signal outputs: `output()` not `@Output()`
+- [ ] Signal view queries: `viewChild()` not `@ViewChild()`
+- [ ] `inject()` not constructor injection
+- [ ] `@if`, `@for`, `@switch` not `*ngIf`, `*ngFor`, `*ngSwitch`
+- [ ] Track functions in `@for` loops
+- [ ] Async pipe for observables
+- [ ] No method calls in templates (use computed signals/pipes)
+- [ ] Self-closing tags when possible (`<img />`, `<input />`, `<cds-icon />`)
+- [ ] `[class.x]` / `[style.x]` not `ngClass` / `ngStyle`

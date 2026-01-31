@@ -1,104 +1,15 @@
-# Cursor Rules Documentation
+# Cursor Rules
 
-This directory contains comprehensive cursor rules for the ngx-lift workspace. These rules guide code generation, ensure
-consistency, and enforce best practices across the project.
+Comprehensive rules for code generation, consistency, and best practices. All rules are always applied.
 
-## Rule Files Overview
+## Rule Files
 
-### `general.mdc` (Always Applied)
-
-Core project rules and standards that apply to all code:
-
-- Core technologies and versions
-- Non-negotiable standards
-- Code quality standards
-- Definition of done
-- Performance guidelines
-- TypeScript guidelines
-- Component development guidelines
-- Naming conventions
-- Styling guidelines
-- Error handling
-- Service & data layer guidelines
-- Architecture & boundaries
-
-### `angular.mdc` (Always Applied)
-
-Angular 20 specific patterns and best practices:
-
-- Component architecture (standalone components)
-- Signal-based development
-- Dependency injection patterns
-- Template syntax (new control flow)
-- Forms and validation
-- Routing patterns
-- Performance optimization
-- Component communication
-- Error handling
-- Accessibility
-
-### `testing.mdc` (Always Applied)
-
-Testing guidelines for Vitest and Playwright:
-
-- Unit testing with Vitest
-- Component testing patterns
-- Spies and mocks
-- Test utilities
-- Test selectors
-- Coverage requirements
-- E2E testing with Playwright
-- Type safety in tests
-- Common testing patterns
-
-### `clarity.mdc` (Always Applied)
-
-Clarity Design System guidelines:
-
-- Component usage
-- Common Clarity components (alerts, buttons, forms, datagrid, timeline)
-- Styling guidelines (SASS variables)
-- Component scoping
-- Icons
-- Accessibility
-- Clarity Lift components
-- Responsive design
-- Theme support
-
-### `rxjs.mdc` (Always Applied)
-
-RxJS patterns and best practices:
-
-- Observable creation
-- Common operators
-- ngx-lift operators
-- Async state management
-- Subscription management
-- Subjects
-- Error handling
-- Combining observables
-- Signals and Observables
-- Performance optimization
-
-### `nx.mdc` (Always Applied)
-
-Nx workspace guidelines:
-
-- Project structure
-- Project configuration
-- Nx commands
-- Dependency management
-- Code generation
-- Build configuration
-- Testing configuration
-- Caching
-- Affected commands
-- Library publishing
-
-## How Rules Are Applied
-
-All rule files have `alwaysApply: true` in their frontmatter, meaning they are always active when generating or
-modifying code in this workspace.
+- **`general.mdc`** - Core standards, technologies, code quality, Definition of Done
+- **`angular.mdc`** - Angular 19 patterns: standalone components, signals, control flow, routing
+- **`clarity.mdc`** - Clarity Design System: components, SASS variables, styling, accessibility
+- **`testing.mdc`** - Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
+- **`rxjs.mdc`** - RxJS patterns: observables, operators, async state, subscriptions
+- **`nx.mdc`** - Nx workspace: project structure, boundaries, commands, dependencies
 
 ## Key Principles
 
@@ -115,44 +26,24 @@ modifying code in this workspace.
 
 ## Technology Stack
 
-- **Angular**: 20.3.0
-- **Nx**: 22.0.0
+- **Angular**: 20.0.1
+- **Nx**: 22.1.0
 - **Clarity**: @clr/angular 17.12.1
-- **Vitest**: 3.0.0
+- **Vitest**: 3.0.5
 - **Playwright**: 1.36.0
 - **TypeScript**: 5.9.2
 - **ESLint**: 9.8.0
+- **Transloco**: @jsverse/transloco 7.5.1
+- **ngx-lift**: 1.10.3 (external package)
+- **clr-lift**: 1.10.2 (external package)
 
-## Quick Reference
+## Quick Checklists
 
-### Component Creation Checklist
+**Component**: Standalone, OnPush, signals, Clarity components, no hard-coded colors, ARIA, tests (60%+), ESLint passes
 
-- [ ] Standalone component
-- [ ] `ChangeDetectionStrategy.OnPush`
-- [ ] Signal inputs/outputs
-- [ ] Clarity components in template
-- [ ] No hard-coded colors
-- [ ] ARIA attributes
-- [ ] Unit tests (60%+ coverage)
-- [ ] ESLint passes
-- [ ] TypeScript compiles
+**Service**: `inject()` function, error handling, RxJS operators, tests, ESLint passes
 
-### Service Creation Checklist
-
-- [ ] Use `inject()` function
-- [ ] Proper error handling
-- [ ] RxJS operators used correctly
-- [ ] Unit tests
-- [ ] ESLint passes
-
-### Library Creation Checklist
-
-- [ ] Proper Nx project structure
-- [ ] Respects module boundaries
-- [ ] Exports in `index.ts`
-- [ ] Unit tests
-- [ ] Documentation
-- [ ] ESLint passes
+**Library**: Nx structure, module boundaries, exports in `index.ts`, tests, documentation, ESLint passes
 
 ## Resources
 
@@ -162,3 +53,6 @@ modifying code in this workspace.
 - [Vitest Documentation](https://vitest.dev)
 - [Playwright Documentation](https://playwright.dev)
 - [RxJS Documentation](https://rxjs.dev)
+- [Transloco Documentation](https://transloco.vercel.app)
+- [ngx-lift Documentation](https://github.com/vmware/ngx-lift)
+- [clr-lift Documentation](https://github.com/vmware/clr-lift)

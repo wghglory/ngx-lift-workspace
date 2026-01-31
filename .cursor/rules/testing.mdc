@@ -1,4 +1,5 @@
 ---
+globs: ['**/*.spec.ts']
 alwaysApply: true
 ---
 
@@ -6,7 +7,7 @@ alwaysApply: true
 
 ### Unit Testing with Vitest
 
-- **Framework**: Use Vitest (not Jasmine/Jest)
+- **Framework**: Use Vitest
 - **Test Structure**: Follow AAA pattern (Arrange, Act, Assert)
 - **Test File Naming**: `*.spec.ts` (e.g., `file-reader.component.spec.ts`)
 
@@ -26,7 +27,7 @@ import {Component} from '@angular/core';
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [YourComponent, ReactiveFormsModule],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{ provide: TranslationService, useClass: MockTranslationService }],
     });
     fixture = TestBed.createComponent(YourComponent);
     component = fixture.componentInstance;
@@ -55,27 +56,22 @@ import {Component} from '@angular/core';
 
 #### Spies and Mocks
 
-- **Vitest Spies**: Use `vi.spyOn()` instead of `spyOn()`
+- **Vitest Spies**: Use `vi.spyOn()` for mocking
 
   ```typescript
   // ✅ Correct
   const spy = vi.spyOn(service, 'method');
   spy.mockReturnValue(value);
   spy.mockImplementation(() => value);
-
-  // ❌ Wrong
-  spyOn(service, 'method').and.returnValue(value);
   ```
 
-- **MockInstance**: Use `MockInstance<T>` for type-safe spies
+- **Mock Functions**: Use `vi.fn()` for creating mock functions
 
   ```typescript
   // ✅ Correct
-  const mockService = MockInstance.create<MyService>();
-  vi.spyOn(mockService, 'method').mockReturnValue(value);
-
-  // ❌ Wrong
-  const mockService = {method: vi.fn()} as unknown as MyService;
+  const mockService = {
+    method: vi.fn().mockReturnValue(value),
+  } as unknown as MyService;
   ```
 
 - **Async Operations**: Use `fakeAsync` and `tick()` for time-based operations
@@ -89,8 +85,6 @@ import {Component} from '@angular/core';
 
 #### Test Utilities
 
-- **Router Mock**: Use `RouterMock` from shared-spec library when needed
-- **ActivatedRoute Mock**: Use `ActivatedRouteMock` from shared-spec library
 - **Form Controls**: Create mock form controls for testing ControlValueAccessor
   ```typescript
   const mockFormControl = new FormControl('');
@@ -105,7 +99,7 @@ import {Component} from '@angular/core';
 - **Preferred**: Use `getByRole` from Testing Library
 
   ```typescript
-  const button = screen.getByRole('button', {name: /submit/i});
+  const button = screen.getByRole('button', { name: /submit/i });
   ```
 
 - **Fallback**: Use `data-test-id` attributes for stable selectors
@@ -118,13 +112,9 @@ import {Component} from '@angular/core';
 
 #### Coverage Requirements
 
-- **Minimum Coverage**: 60% for all components
+- **Minimum Coverage**: 60% for all libraries
 - **Critical Paths**: Aim for 80%+ coverage on business logic
-- **Coverage Thresholds**: Configured in `vite.config.mts`
-  - Statements: 80%
-  - Branches: 75%
-  - Functions: 80%
-  - Lines: 80%
+- **Coverage Configuration**: Configured in `vite.config.mts` per library
 
 #### Test Organization
 
@@ -161,9 +151,9 @@ import {Component} from '@angular/core';
 #### Test Structure
 
 ```typescript
-import {test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-test('should display user list', async ({page}) => {
+test('should display user list', async ({ page }) => {
   await page.goto('/users');
   await expect(page.locator('h1')).toContainText('Users');
 });
@@ -225,11 +215,11 @@ it('should update when input changes', () => {
 
 ```typescript
 it('should handle async data', async () => {
-  const data$ = of({id: 1, name: 'Test'});
+  const data$ = of({ id: 1, name: 'Test' });
   component.data$ = data$;
   fixture.detectChanges();
   await fixture.whenStable();
-  expect(component.data()).toEqual({id: 1, name: 'Test'});
+  expect(component.data()).toEqual({ id: 1, name: 'Test' });
 });
 ```
 
@@ -254,3 +244,11 @@ it('should emit event on click', () => {
   expect(spy).toHaveBeenCalledWith(expectedValue);
 });
 ```
+
+## Code Review Checklist - Testing
+
+Use this checklist when reviewing test code changes:
+
+- [ ] Test files exist
+- [ ] 60%+ coverage
+- [ ] Stable selectors (`getByRole`, `data-test-id`)

@@ -7,20 +7,25 @@ alwaysApply: true
 ### Project Structure
 
 - **Libraries**: Place reusable code in `libs/` directory
-  - `libs/ngx-lift/`: Core utilities, operators, signals, validators
-  - `libs/clr-lift/`: Clarity-specific components and utilities
+
+  - `libs/ngx-lift/`: Core Angular utilities library (RxJS operators, signals, pipes, validators)
+  - `libs/clr-lift/`: Clarity Design System component library (depends on ngx-lift)
 
 - **Applications**: Place applications in `apps/` directory
-  - `apps/demo/`: Demo application
+
+  - `apps/demo/`: Demo application showcasing both libraries
   - `apps/demo-e2e/`: E2E tests for demo app
 
 - **Tools**: Place build tools and scripts in `tools/` directory
+  - `tools/vitest/`: Vitest configuration utilities
+  - `tools/eslint-plugin/`: Custom ESLint rules
 
 ### Project Configuration
 
 - **project.json**: Each project has a `project.json` with targets
 - **tsconfig.json**: TypeScript configuration per project
-- **vite.config.mts**: Vitest configuration for testing
+- **vite.config.mts**: Vitest configuration for testing (libraries)
+- **ng-package.json**: Angular packaging configuration (libraries)
 - **eslint.config.mjs**: ESLint configuration per project
 
 ### Nx Commands
@@ -35,22 +40,31 @@ alwaysApply: true
 ### Dependency Management
 
 - **Module Boundaries**: Respect Nx project boundaries
+
   - Configured in `eslint.config.mjs` with `@nx/enforce-module-boundaries`
   - No circular dependencies allowed
 
 - **Tags**: Use tags to organize projects
+
   - Define in `project.json` or `nx.json`
   - Enforce dependency rules based on tags
 
-- **Imports**: Use path mappings from `tsconfig.base.json`
+- **Imports**: Libraries are local packages in this monorepo
+
   ```typescript
-  import {something} from 'ngx-lift';
-  import {Component} from 'clr-lift';
+  // Import from ngx-lift library
+  import { createAsyncState, poll } from 'ngx-lift';
+
+  // Import from clr-lift library
+  import { AlertComponent, ToastService } from 'clr-lift';
+
+  // Path mappings defined in tsconfig.base.json
   ```
 
 ### Code Generation
 
 - **Generators**: Use Nx generators for consistent structure
+
   ```bash
   npx nx generate @nx/angular:library my-lib
   npx nx generate @nx/angular:component my-component --project=my-lib
@@ -69,6 +83,7 @@ alwaysApply: true
 
 - **Build Targets**: Configure build targets in `project.json`
 - **Dependencies**: Use `dependsOn` to specify build dependencies
+
   ```json
   "dependsOn": ["^build"]
   ```
@@ -81,9 +96,11 @@ alwaysApply: true
 ### Testing Configuration
 
 - **Vitest**: Configure Vitest in `vite.config.mts`
+
   - Test environment: `jsdom`
   - Setup files: `src/test-setup.ts`
-  - Coverage thresholds configured per project
+  - Uses `@analogjs/vitest-angular` for Angular component testing
+  - Transform configuration for TypeScript, HTML, and SVG files
 
 - **Playwright**: Configure E2E tests in `playwright.config.ts`
   - Use `nxE2EPreset` from `@nx/playwright`
@@ -92,6 +109,7 @@ alwaysApply: true
 ### Caching
 
 - **Build Cache**: Nx caches build outputs
+
   - Use `nx reset` to clear cache
   - Cache stored in `.nx/cache`
 
@@ -108,6 +126,7 @@ alwaysApply: true
 ### Workspace Configuration
 
 - **nx.json**: Workspace-level configuration
+
   - Plugins configuration
   - Target defaults
   - Generators defaults
@@ -118,10 +137,13 @@ alwaysApply: true
 
 ### Library Publishing
 
-- **Build Libraries**: `npm run build:libs`
-- **Publish**: Use `ng-packagr` for Angular libraries
-  - Configuration in `ng-package.json`
+- **Build Libraries**: `npm run build:libs` (builds both ngx-lift and clr-lift)
+- **Build Individual**: `npm run build:ngx` or `npm run build:clr`
+- **Watch Mode**: `npm run watch:ngx` or `npm run watch:clr`
+- **Publish**: Automated via GitHub Actions or manual `npm publish`
+  - Configuration in `ng-package.json` per library
   - Output in `dist/libs/[library-name]`
+  - Version management via `nx release` or `release-please`
 
 ### Best Practices
 
@@ -138,3 +160,10 @@ alwaysApply: true
 - **Dependency Issues**: Check `nx graph` for circular dependencies
 - **Build Issues**: Ensure all dependencies are built first
 - **Path Resolution**: Verify `tsconfig.base.json` paths
+
+## Code Review Checklist - Nx Workspace
+
+Use this checklist when reviewing workspace structure changes:
+
+- [ ] Respects module boundaries
+- [ ] No circular dependencies
