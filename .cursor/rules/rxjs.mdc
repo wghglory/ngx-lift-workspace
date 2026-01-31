@@ -1,5 +1,6 @@
 ---
 alwaysApply: true
+globs: ['**/*.ts']
 ---
 
 ## RxJS Patterns and Best Practices
@@ -29,7 +30,7 @@ alwaysApply: true
   ```typescript
   users$ = this.http
     .get<User[]>(url)
-    .pipe(map((users) => users.map((u) => ({...u, fullName: `${u.firstName} ${u.lastName}`}))));
+    .pipe(map((users) => users.map((u) => ({ ...u, fullName: `${u.firstName} ${u.lastName}` }))));
   ```
 
 - **filter**: Filter values
@@ -77,7 +78,7 @@ alwaysApply: true
   ```typescript
   data$ = this.http.get(url).pipe(
     tap((data) => console.log('Received:', data)),
-    tap({error: (err) => console.error('Error:', err)}),
+    tap({ error: (err) => console.error('Error:', err) }),
   );
   ```
 
@@ -116,7 +117,7 @@ alwaysApply: true
     interval: 5000,
     pollingFn: () => this.http.get('/data'),
     forceRefresh: this.refresh$,
-    initialValue: {loading: false, error: null, data: null},
+    initialValue: { loading: false, error: null, data: null },
   });
   ```
 
@@ -128,11 +129,6 @@ alwaysApply: true
       console.log('Value changed from', prev, 'to', curr);
     }),
   );
-  ```
-
-- **dgState**: Datagrid state management (Clarity)
-  ```typescript
-  state$ = this.datagridState$.pipe(dgState());
   ```
 
 ### Async State Management
@@ -286,7 +282,7 @@ alwaysApply: true
 
   ```typescript
   user = toSignal(this.user$);
-  user = toSignal(this.user$, {initialValue: null});
+  user = toSignal(this.user$, { initialValue: null });
   ```
 
 - **toObservable**: Convert Signal to Observable
@@ -298,7 +294,7 @@ alwaysApply: true
 - **combineFrom**: Combine signals and observables (ngx-lift)
   ```typescript
   combined = combineFrom([this.signal, this.observable$]);
-  combined = combineFrom({a: this.signal, b: this.observable$});
+  combined = combineFrom({ a: this.signal, b: this.observable$ });
   ```
 
 ### Performance Optimization

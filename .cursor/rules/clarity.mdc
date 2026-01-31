@@ -2,38 +2,133 @@
 alwaysApply: true
 ---
 
-## Clarity Design System Guidelines
+## Clarity Design System Guidelines (clr-lift Library)
+
+**Context**: These guidelines apply specifically to the **clr-lift** library and the **demo** app. The **ngx-lift** library does not use Clarity Design System.
 
 ### Component Usage
 
-- **Clarity Components**: Always use Clarity Angular components (`clr-*`) over raw HTML
+- **Clarity Components**: Always use Clarity Angular components (`clr-*`) over raw HTML in clr-lift
 - **Import ClarityModule**: Import `ClarityModule` or specific Clarity components
 
   ```typescript
-  import {ClarityModule} from '@clr/angular';
+  import { ClarityModule } from '@clr/angular';
   // or
-  import {ClrAlertModule, ClrButtonModule} from '@clr/angular';
+  import { ClrAlertModule, ClrButtonModule } from '@clr/angular';
   ```
 
-- **CDS Components**: Use `@cds/core` components when appropriate (icons, etc.)
+- **CDS Components**: Use `@cds/core` components when appropriate (icons, layout)
   ```typescript
   import '@cds/core/icon/register.js';
   ```
+
+### Component Terminology Mapping
+
+**Context:** Source of truth for mapping natural language requirements to Clarity UI components.
+
+**Goal:** Enable correct `clr-*` component selection for _any_ UI requirement.
+
+#### Most Common Mappings
+
+| User Says                       | **Canonical Component** | **Selector**   | **Rule**                            |
+| ------------------------------- | ----------------------- | -------------- | ----------------------------------- |
+| "Searchable dropdown", "Filter" | **Combobox**            | `clr-combobox` | Default for dynamic lists.          |
+| "List page", "Grid", "Table"    | **Datagrid**            | `clr-datagrid` | Use for sortable/filterable tables. |
+| "Wizard"                        | **Wizard**              | `clr-wizard`   | Multi-step flows.                   |
+| "Flow", "Steps"                 | **Stepper**             | `clr-stepper`  | Step-by-step flows.                 |
+| "Dialog", "Modal", "Popup"      | **Modal**               | `clr-modal`    | Dialogs and popups.                 |
+
+#### Form Controls Mapping
+
+**Mapping standard form requests to Clarity wrappers.**
+
+| User Says                 | Component      | Selector                 | Usage Note                         |
+| ------------------------- | -------------- | ------------------------ | ---------------------------------- |
+| "Date picker", "Calendar" | **Datepicker** | `clr-date-container`     | `type="date"` is insufficient.     |
+| "Checkbox", "Check"       | **Checkbox**   | `clr-checkbox-wrapper`   | Wrap input in wrapper for styling. |
+| "Radio button", "Option"  | **Radio**      | `clr-radio-wrapper`      | Wrap in `clr-radio-container`.     |
+| "Password field"          | **Password**   | `clr-password-container` | Includes show/hide eye icon.       |
+| "Text box", "Input"       | **Input**      | `clr-input-container`    | Standard text input wrapper.       |
+| "Text area", "Multi-line" | **Textarea**   | `clr-textarea-container` | For long text descriptions.        |
+| "Slider", "Range"         | **Range**      | `clr-range-container`    | Selection from a range of numbers. |
+
+**Code Pattern (General Form Field):**
+
+```html
+<clr-input-container>
+  <label>Username</label>
+  <input clrInput [(ngModel)]="model" name="username" />
+  <clr-control-helper>Helper text here</clr-control-helper>
+  <clr-control-error>Error message here</clr-control-error>
+</clr-input-container>
+```
+
+**Important:** Always wrap inputs (text, date, password) in their respective `clr-*-container` (e.g., `clr-date-container`). Never use bare `<input>` tags without Clarity containers.
+
+#### Layout & Grouping Mapping
+
+**How to organize content on the page.**
+
+| User Says                           | Component        | Selector           | Usage Note                             |
+| ----------------------------------- | ---------------- | ------------------ | -------------------------------------- |
+| "Tabs", "Switch view"               | **Tabs**         | `clr-tabs`         | content switching without page reload. |
+| "Card", "Box"                       | **Card**         | `.card` class      | Grouping related content.              |
+| "Accordion", "Collapsible", "Panel" | **Accordion**    | `clr-accordion`    | Expandable/collapsible sections.       |
+| "Tree", "Folder structure"          | **Tree View**    | `clr-tree`         | Hierarchical data (files, org charts). |
+| "Vertical Nav", "Sidenav"           | **Vertical Nav** | `clr-vertical-nav` | Left-side application menu.            |
+
+**Code Pattern (Card):**
+
+```html
+<div class="card">
+  <div class="card-header">Header</div>
+  <div class="card-block">
+    <div class="card-title">Title</div>
+    <div class="card-text">Content goes here...</div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-sm btn-link">Action</button>
+  </div>
+</div>
+```
+
+#### Status & Feedback Mapping
+
+**Visual indicators for state.**
+
+| User Says               | Component         | Selector            | Usage Note                                  |
+| ----------------------- | ----------------- | ------------------- | ------------------------------------------- |
+| "Loading", "Spinner"    | **Spinner**       | `clr-spinner`       | Indeterminate loading state.                |
+| "Progress bar"          | **Progress**      | `clr-progress-bar`  | 0-100% completion status.                   |
+| "Badge", "Tag", "Label" | **Badge / Label** | `.badge` / `.label` | Badges = Numbers; Labels = Text categories. |
+| "Tooltip", "Hover info" | **Tooltip**       | `clr-tooltip`       | Small info on hover.                        |
+| "Signpost", "Pop-over"  | **Signpost**      | `clr-signpost`      | Clickable info popup (larger than tooltip). |
+
+**Code Pattern (Spinner):**
+
+```html
+<span class="spinner spinner-inline">Loading...</span>
+```
+
+#### Buttons & Actions Mapping
+
+| User Says                 | Component       | CSS Class      | Usage Note                          |
+| ------------------------- | --------------- | -------------- | ----------------------------------- |
+| "Primary button", "Main"  | **Btn Primary** | `.btn-primary` | Solid color (blue). Max 1 per view. |
+| "Secondary button"        | **Btn Outline** | `.btn-outline` | Outline style.                      |
+| "Link button", "Flat"     | **Btn Link**    | `.btn-link`    | Looks like text, acts like button.  |
+| "Danger button", "Delete" | **Btn Danger**  | `.btn-danger`  | Red color for destructive actions.  |
 
 ### CDS Layout Components
 
 - **CDS Layout**: Use `cds-layout` components from `@cds/core` for layout and spacing
 - **Layout Documentation**: Always refer to Clarity Core CDS Layout documentation when using `cds-layout` attribute:
-  - [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) - Introduction to
-    CDS layout system
-  - [Layout Spacing](https://storybook.core.clarity.design/?path=/story/layout-spacing--page) - Spacing utilities and
-    patterns
-  - [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page) - Grid system and responsive
-    layouts
-  - [Layout Vertical](https://storybook.core.clarity.design/?path=/story/layout-vertical--page) - Vertical layout
-    patterns
-  - [Layout Horizontal](https://storybook.core.clarity.design/?path=/story/layout-horizontal--page) - Horizontal layout
-    patterns
+
+  - [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) - Introduction to CDS layout system
+  - [Layout Spacing](https://storybook.core.clarity.design/?path=/story/layout-spacing--page) - Spacing utilities and patterns
+  - [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page) - Grid system and responsive layouts
+  - [Layout Vertical](https://storybook.core.clarity.design/?path=/story/layout-vertical--page) - Vertical layout patterns
+  - [Layout Horizontal](https://storybook.core.clarity.design/?path=/story/layout-horizontal--page) - Horizontal layout patterns
 
 - **When to Use CDS Layout attribute**: Use `cds-layout` attribute for:
   - Page-level layouts and structure
@@ -85,7 +180,7 @@ alwaysApply: true
 - Always associate labels with form controls
 - Use `clr-control-error` for validation messages
 
-#### Data Grid
+#### Datagrid
 
 ```html
 <clr-datagrid [clrDgItems]="users()">
@@ -99,8 +194,8 @@ alwaysApply: true
 ```
 
 - Use `clr-datagrid` for data tables
-- Use `dgState` operator from `clr-lift` for state management
 - Implement pagination, sorting, and filtering using Clarity patterns
+- Consider using the `dgState` operator from `clr-lift` for state management when server-side rendering is required
 
 #### Timeline
 
@@ -194,7 +289,7 @@ alwaysApply: true
 - **ARIA Labels**: Always provide ARIA labels for interactive elements
 
   ```html
-  <button [attr.aria-label]="'Close dialog' | translate">
+  <button [attr.aria-label]="'Close dialog'">
     <cds-icon shape="times"></cds-icon>
   </button>
   ```
@@ -217,8 +312,7 @@ alwaysApply: true
 
 ### Responsive Design
 
-- **CDS Layout Grid**: Prefer CDS Layout components for responsive layouts (see
-  [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page))
+- **CDS Layout Grid**: Prefer CDS Layout components for responsive layouts (see [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page))
 
   ```html
   <cds-layout horizontal gap="md" wrap>
@@ -237,9 +331,7 @@ alwaysApply: true
 
 - **Breakpoints**: Use Clarity breakpoints for responsive behavior
 - **Mobile First**: Design mobile-first, enhance for larger screens
-- **Layout Documentation**: Refer to
-  [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) for layout patterns
-  and best practices
+- **Layout Documentation**: Refer to [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) for layout patterns and best practices
 
 ### Theme Support
 
@@ -251,8 +343,17 @@ alwaysApply: true
 
 - **Component Composition**: Compose Clarity components to build complex UIs
 - **Consistency**: Follow Clarity design patterns for consistency
-- **Layout Usage**: Always refer to
-  [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using
-  `cds-layout` components
+- **Layout Usage**: Always refer to [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using `cds-layout` components
 - **Documentation**: Refer to [Clarity Design System](https://clarity.design) for component usage
 - **Version Compatibility**: Ensure compatibility with `@clr/angular` version 17
+
+## Code Review Checklist - Clarity Design System
+
+Use this checklist when reviewing UI code changes:
+
+- [ ] Use `clr-*` components (not raw HTML)
+- [ ] No hard-coded colors (use `$clr-color-*` variables)
+- [ ] No hard-coded spacing (use `$clr-baseline-*` variables)
+- [ ] Styles scoped with `:host`
+- [ ] Avoid `::ng-deep` (unless absolutely necessary)
+- [ ] ARIA labels for interactive elements

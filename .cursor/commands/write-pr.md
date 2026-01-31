@@ -5,7 +5,7 @@ the project's PR template.
 
 ## How to Use
 
-Type `/pr` in Cursor's chat input. The AI will automatically:
+Type `/write-pr` in Cursor's chat input. The AI will automatically:
 
 - Analyze your code changes
 - Generate PR title and description
@@ -232,7 +232,8 @@ with:
      - Always automatically create or update the PR using GitHub MCP server - NEVER ask the user, NEVER just display the
        content
      - The MCP server is configured and ready - use it directly without asking for confirmation or permission
-     - When commits are appended to the branch, running `/pr` again will automatically update the PR with new changes
+     - When commits are appended to the branch, running `/write-pr` again will automatically update the PR with new
+       changes
      - **DO NOT** ask if MCP is configured or if you should proceed - just execute the create/update action
        automatically
      - **MANDATORY**: Step 3 (adding assignee and labels) MUST be executed after every PR creation or update - it is NOT
@@ -245,7 +246,8 @@ with:
   permission
 - **MUST assume MCP server is configured and ready** - use it directly without asking if it's available
 - **MUST check for existing PR first** - if PR exists for the current branch, update it instead of creating a new one
-- **MUST update PR when commits are appended** - re-running `/pr` after adding commits should update the existing PR
+- **MUST update PR when commits are appended** - re-running `/write-pr` after adding commits should update the existing
+  PR
 - **MUST execute the action automatically** - do not ask "should I proceed" or "do you want me to create it" - just do
   it
 - **MANDATORY: MUST get authenticated user** - ALWAYS call `mcp_github_get_me` FIRST before creating/updating PR
@@ -313,7 +315,7 @@ The PR should be created with:
    - Provide PR URL (NO QUESTIONS ASKED)
 
 3. **After Adding Commits**:
-   - Re-run `/pr` →
+   - Re-run `/write-pr` →
    - **Get authenticated user** (`mcp_github_get_me`) →
    - **Update PR with new changes automatically** →
    - **MANDATORY: Update assignee and labels** (`mcp_github_issue_write`) →
@@ -382,7 +384,7 @@ Result: PR #102 created with assignee `wghglory`, labels `enhancement`, `ngx-lif
 
 1. Make your code changes
 2. Commit your changes
-3. Type `/pr` in Cursor
+3. Type `/write-pr` in Cursor
 4. PR is automatically created/updated with:
    - Generated title and description
    - Assigned to you (authenticated user)
@@ -390,7 +392,7 @@ Result: PR #102 created with assignee `wghglory`, labels `enhancement`, `ngx-lif
    - **AI code review comments** - comprehensive review against all tech standards
 5. Review the PR on GitHub using the provided URL
 6. Address any review comments from the AI review
-7. Push additional commits if needed - running `/pr` again will update the PR and perform a new review
+7. Push additional commits if needed - running `/write-pr` again will update the PR and perform a new review
 
 ## PR Assignment and Labels
 
@@ -499,7 +501,7 @@ Each review comment follows this structure:
 
 ## Execution Checklist
 
-**BEFORE executing the `/pr` command, verify you will:**
+**BEFORE executing the `/write-pr` command, verify you will:**
 
 - [ ] ✅ Call `mcp_github_get_me` FIRST to get the authenticated user's username
 - [ ] ✅ Determine appropriate labels based on PR type, scope, and breaking changes
