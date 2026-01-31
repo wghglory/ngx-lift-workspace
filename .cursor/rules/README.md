@@ -22,7 +22,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 5. **Clarity Components**: Always use Clarity Angular components over raw HTML
 6. **No Hard-coded Colors**: Use Clarity SASS variables for all colors
 7. **Accessibility**: ARIA attributes and keyboard navigation by default
-8. **Testing**: 60%+ coverage with Jest for unit tests, Playwright for E2E
+8. **Testing**: 60%+ coverage with Vitest for unit tests, Playwright for E2E
 9. **Linting**: All code must pass ESLint without errors or warnings
 10. **Nx Boundaries**: Respect project boundaries; no circular dependencies
 
@@ -33,7 +33,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 - **Clarity**: @clr/angular 17.12.1
 - **Vitest**: 3.0.5
 - **Playwright**: 1.36.0
-- **TypeScript**: 5.7.3
+- **TypeScript**: 5.9.2
 - **ESLint**: 9.8.0
 - **Transloco**: @jsverse/transloco 7.5.1
 - **ngx-lift**: 1.10.3 (external package)
@@ -52,7 +52,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 - [Angular Documentation](https://angular.io/docs)
 - [Nx Documentation](https://nx.dev)
 - [Clarity Design System](https://clarity.design)
-- [Jest Documentation](https://jestjs.io)
+- [Vitest Documentation](https://vitest.dev)
 - [Playwright Documentation](https://playwright.dev)
 - [RxJS Documentation](https://rxjs.dev)
 - [Transloco Documentation](https://transloco.vercel.app)

@@ -238,7 +238,7 @@ it('should validate form control', () => {
 
 ```typescript
 it('should emit event on click', () => {
-  const spy = jest.fn();
+  const spy = vi.fn();
   component.userChange.subscribe(spy);
   component.handleClick();
   expect(spy).toHaveBeenCalledWith(expectedValue);
