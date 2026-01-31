@@ -6,13 +6,15 @@ alwaysApply: true
 
 ## Project Overview
 
-This is an **Nx monorepo** containing two Angular libraries: **ngx-lift** and **clr-lift**. This workspace focuses on building reusable Angular utilities and components for the broader Angular community.
+This is an **Nx monorepo** containing two Angular libraries: **ngx-lift** and **clr-lift**. This workspace focuses on
+building reusable Angular utilities and components for the broader Angular community.
 
 - **ngx-lift**: Core Angular utility library (RxJS operators, signal utilities, pipes, validators)
 - **clr-lift**: Clarity Design System component library (built on top of ngx-lift)
 - **demo**: Demo application showcasing both libraries
 
-Use **Angular 20** best practices, **signals** for state management, **Vitest** for unit tests, and **Playwright** for E2E tests.
+Use **Angular 20** best practices, **signals** for state management, **Vitest** for unit tests, and **Playwright** for
+E2E tests.
 
 ## Core Technologies & Versions
 
@@ -60,7 +62,8 @@ Use **Angular 20** best practices, **signals** for state management, **Vitest** 
 
 **Do NOT add copyright headers** to any files in this project. This is an MIT-licensed open-source project.
 
-Unlike corporate/enterprise projects, open-source libraries should not have copyright headers in individual source files. The LICENSE file at the root provides all necessary legal information.
+Unlike corporate/enterprise projects, open-source libraries should not have copyright headers in individual source
+files. The LICENSE file at the root provides all necessary legal information.
 
 ## Performance Guidelines
 
@@ -85,15 +88,20 @@ Unlike corporate/enterprise projects, open-source libraries should not have copy
 
 ### ⚛️ Reactivity and State Management
 
-- **Reactive Patterns**: Components should use reactive patterns, favoring Angular Signals or Observables for state and data flow
-- **Avoid Manual Subscriptions**: Do not use `.subscribe()` calls to update variables for template display. Instead, leverage reactive utilities from libraries like ngx-lift (`computedAsync`, `combineFrom`) to bind data declaratively
-- **Signal Inputs**: Use signal inputs (`input()`, `input.required()`) for component inputs instead of `@Input()` decorators
+- **Reactive Patterns**: Components should use reactive patterns, favoring Angular Signals or Observables for state and
+  data flow
+- **Avoid Manual Subscriptions**: Do not use `.subscribe()` calls to update variables for template display. Instead,
+  leverage reactive utilities from libraries like ngx-lift (`computedAsync`, `combineFrom`) to bind data declaratively
+- **Signal Inputs**: Use signal inputs (`input()`, `input.required()`) for component inputs instead of `@Input()`
+  decorators
 - **Computed Signals**: Use `computed()` for derived state that depends on other signals
-- **Effect Usage**: Use `effect()` sparingly and only for side effects (logging, external API calls); avoid DOM manipulation in effects
+- **Effect Usage**: Use `effect()` sparingly and only for side effects (logging, external API calls); avoid DOM
+  manipulation in effects
 
 ### 🏷️ Naming Conventions
 
-- **Async State Suffix**: Any signal created using `createAsyncState` must have a `State` suffix (e.g., `usersState`, `productsState`)
+- **Async State Suffix**: Any signal created using `createAsyncState` must have a `State` suffix (e.g., `usersState`,
+  `productsState`)
 - **Component Files**: Use kebab-case for file names (e.g., `user-profile.component.ts`)
 - **Component Classes**: Use PascalCase with descriptive names (e.g., `UserProfileComponent`)
 - **Variables/Methods**: Use camelCase (e.g., `userName`, `getUserData()`)
