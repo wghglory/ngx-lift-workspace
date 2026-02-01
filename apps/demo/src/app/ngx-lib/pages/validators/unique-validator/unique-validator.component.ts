@@ -33,7 +33,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
   template: \`
     <form [formGroup]="form1">
       <ng-container formArrayName="demo1">
-        @for (control of form1.controls.demo1.controls; track control; let i = $index) {
+        @for (control of form1.controls.demo1.controls; track $index; let i = $index) {
           <clr-input-container>
             <label [attr.for]="i">Control {{ i + 1 }}</label>
             <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
@@ -79,7 +79,7 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModul
   template: \`
     <form [formGroup]="form2">
       <ng-container formArrayName="demo2">
-        @for (group of form2.controls.demo2.controls; track group; let i = $index) {
+        @for (group of form2.controls.demo2.controls; track $index; let i = $index) {
           <div [formGroup]="group" style="display: flex; gap: 1rem">
             <clr-input-container>
               <label class="clr-sr-only">key</label>

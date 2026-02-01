@@ -1,7 +1,3 @@
 <form clrForm [formGroup]="form">
-  <cll-key-value-inputs
-    [formArray]="form.controls.appProperties"
-    [inputSize]="50"
-    [data]="currentStepData?.appProperties!"
-  />
+  <cll-key-value-inputs [formArray]="form.controls.appProperties" [inputSize]="50" [data]="appPropertiesData()" />
 </form>

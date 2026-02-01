@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
@@ -23,6 +23,22 @@ export class ConfigureRuntimePropComponent extends TimelineBaseComponent<Runtime
         value: FormControl<string>;
       }>
     >([]),
+  });
+
+  /**
+   * Type-safe accessor for currentStepData.
+   * Since the base class uses `unknown` for signal variance compatibility,
+   * we provide a typed computed signal for consumers.
+   */
+  typedCurrentStepData = computed<RuntimePropStepData | null>(() => {
+    return this.currentStepData() as RuntimePropStepData | null;
+  });
+
+  /**
+   * Safely get appProperties array, returning empty array if null/undefined.
+   */
+  appPropertiesData = computed<Array<{key: string; value: string}>>(() => {
+    return this.typedCurrentStepData()?.appProperties ?? [];
   });
 
   override formValueToData(): {appProperties: Record<string, string>} {

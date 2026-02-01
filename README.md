@@ -193,144 +193,6 @@ npm run affected:build
 npm run affected:lint
 ```
 
-## 📦 Publishing
-
-### Automated Publishing (Recommended)
-
-#### Using GitHub Actions
-
-1. Go to Actions tab in GitHub
-2. Select "Publish Libraries" workflow
-3. Click "Run workflow"
-4. Choose version type (major, minor, patch)
-
-#### Using Git Tags
-
-```bash
-# Create and push a version tag
-git tag v1.10.4
-git push origin v1.10.4
-```
-
-### Manual Publishing
-
-```bash
-# Version bump
-npm run release:version
-
-# Build and publish
-npm run release:publish
-```
-
-### Individual Library Publishing
-
-```bash
-# Publish ngx-lift only
-npm run publish:ngx
-
-# Publish clr-lift only
-npm run publish:clr
-
-# Publish both
-npm run publish:all
-```
-
-**Note**: You need to be logged in to npm (`npm login`) and have publish permissions.
-
-## 🚢 Deployment
-
-### Netlify
-
-#### Automatic Deployment
-
-- Push to `main` branch triggers automatic deployment
-- Pull requests get preview deployments
-
-#### Manual Deployment
-
-```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Build and deploy
-npm run build:demo
-netlify deploy --prod --dir=dist/apps/demo/browser
-```
-
-#### Configuration
-
-The `netlify.toml` file contains all deployment settings. Required secrets:
-
-- `NETLIFY_AUTH_TOKEN`
-- `NETLIFY_SITE_ID`
-
-### Vercel
-
-#### Automatic Deployment
-
-- Connected to GitHub repository
-- Deploys on push to `main`
-
-#### Manual Deployment
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Build and deploy
-npm run build:demo
-vercel --prod --cwd dist/apps/demo/browser
-```
-
-#### Configuration
-
-The `vercel.json` file contains deployment settings. Required secrets:
-
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
-## 🔄 CI/CD
-
-### GitHub Actions Workflows
-
-#### CI Workflow (`ci.yml`)
-
-- Runs on: Push to `main`/`develop`, Pull Requests
-- Actions:
-  - Lint affected projects
-  - Test affected projects with coverage
-  - Build affected projects
-  - Upload coverage reports
-
-#### Publish Workflow (`publish.yml`)
-
-- Runs on: Manual trigger, Git tags
-- Actions:
-  - Build libraries
-  - Run tests
-  - Publish to npm
-  - Create GitHub release
-
-#### Deploy Demo Workflow (`deploy-demo.yml`)
-
-- Runs on: Push to `main`, Manual trigger
-- Actions:
-  - Build libraries and demo app
-  - Deploy to Netlify
-  - Deploy to Vercel
-
-### Required GitHub Secrets
-
-```
-NPM_TOKEN              # npm authentication token
-NETLIFY_AUTH_TOKEN     # Netlify authentication token
-NETLIFY_SITE_ID        # Netlify site ID
-VERCEL_TOKEN           # Vercel authentication token
-VERCEL_ORG_ID          # Vercel organization ID
-VERCEL_PROJECT_ID      # Vercel project ID
-```
-
 ## 🧪 Testing
 
 This project uses **Vitest** with `@analogjs/vitest-angular` for testing.
@@ -364,9 +226,14 @@ Each library has its own `vite.config.mts` with test configuration. The test set
 - **`nx.json`**: Nx workspace configuration
 - **`tsconfig.base.json`**: TypeScript base configuration with path mappings
 - **`package.json`**: Dependencies and scripts
-- **`netlify.toml`**: Netlify deployment configuration
-- **`vercel.json`**: Vercel deployment configuration
-- **`.github/workflows/`**: CI/CD workflows
+
+## 📖 Additional Documentation
+
+For maintainers and contributors:
+
+- **`docs/QUICK_START.md`**: Quick start guide for new developers
+- **`docs/COMMANDS.md`**: Comprehensive command reference
+- **`docs/DEPLOYMENT.md`**: Publishing, deployment, and CI/CD guides
 
 ## 📚 Library Usage
 

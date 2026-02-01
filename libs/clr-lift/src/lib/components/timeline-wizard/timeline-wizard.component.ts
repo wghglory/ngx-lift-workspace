@@ -5,11 +5,11 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  effect,
   EmbeddedViewRef,
-  EventEmitter,
   inject,
-  Input,
-  Output,
+  input,
+  output,
   viewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -44,18 +44,26 @@ export class TimelineWizardComponent implements AfterViewInit {
    * By default, live is false, and it will destroy the step component.
    * If live is true, moving to a new step won't destroy the previous component.
    */
-  @Input() live = false;
-  @Input() confirmButtonText = '';
+  live = input(false);
 
-  @Input({required: true}) set timelineSteps(value: TimelineStep[]) {
-    this.timelineWizardService.steps = value;
-  }
+  /**
+   * Text for the confirm button in the last step.
+   * Pass a translation key (e.g., 'timeline-wizard.finish') or custom text.
+   * Defaults to 'timeline-wizard.finish'.
+   */
+  confirmButtonText = input('timeline-wizard.finish');
+
+  /**
+   * Timeline steps configuration (required).
+   * When this value changes, the timeline wizard service is updated.
+   */
+  timelineSteps = input.required<TimelineStep[]>();
 
   // Emit all data (type any) when clicking the finish button in the last step
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @Output() confirmed = new EventEmitter<any>();
-  @Output() canceled = new EventEmitter();
-  @Output() finished = new EventEmitter();
+  confirmed = output<any>();
+  canceled = output<void>();
+  finished = output<void>();
 
   // Step index as key, componentRef as value
   private componentRefMap: Record<number, ComponentRef<TimelineBaseComponent>> = {};
@@ -95,7 +103,11 @@ export class TimelineWizardComponent implements AfterViewInit {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('timeline-wizard', timelineWizardTranslations);
-    this.confirmButtonText = this.translationService.translate('timeline-wizard.confirm');
+
+    // Effect to update timeline wizard service when timelineSteps input changes
+    effect(() => {
+      this.timelineWizardService.steps = this.timelineSteps();
+    });
   }
 
   get currentComponentRef() {
@@ -117,7 +129,7 @@ export class TimelineWizardComponent implements AfterViewInit {
 
   renderComponent() {
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
-    if (!this.live) {
+    if (!this.live()) {
       this.container().clear();
     }
 
@@ -178,7 +190,7 @@ export class TimelineWizardComponent implements AfterViewInit {
     // Update dynamic components; note that currentStepIndex was changed above.
     // If live is true, change display of old and new components.
     // else renderComponent by destroying old one.
-    if (this.live) {
+    if (this.live()) {
       // change DOM display
       // Accessing DOM elements using this.container.get() can be expensive in terms of performance, especially if the DOM is large or complex.
       // const currentElement = this.container.get(this.currentStepIndex + 1) as EmbeddedViewRef<TimelineBaseComponent>;
@@ -330,7 +342,7 @@ export class TimelineWizardComponent implements AfterViewInit {
      * if live is true, change display of old and new components.
      * else renderComponent by destroying old one.
      */
-    if (this.live) {
+    if (this.live()) {
       //  Accessing DOM elements using this.container.get() can be expensive in terms of performance, especially if the DOM is large or complex.
       // const nextElement = this.container.get(this.currentStepIndex) as EmbeddedViewRef<TimelineBaseComponent>;
       // const currentElement = this.container.get(this.currentStepIndex - 1) as EmbeddedViewRef<TimelineBaseComponent>;

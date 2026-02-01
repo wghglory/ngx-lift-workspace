@@ -20,7 +20,7 @@
     }
     @if (vm.data; as users) {
       <div class="card-grid">
-        @for (user of users.results; track user) {
+        @for (user of users.results; track user.email) {
           <app-user-card [user]="user" />
         }
       </div>

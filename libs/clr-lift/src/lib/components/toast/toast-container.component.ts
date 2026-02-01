@@ -1,6 +1,6 @@
 import {animateChild, query, stagger, transition, trigger} from '@angular/animations';
 import {CommonModule} from '@angular/common';
-import {Component, HostBinding, inject, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding, inject, input} from '@angular/core';
 
 import {multiply} from '../../shared/animation.const';
 import {ToastComponent} from './toast.component';
@@ -11,6 +11,7 @@ import {Toast} from './toast.type';
   selector: 'cll-toast-container',
   templateUrl: './toast-container.component.html',
   styleUrls: ['./toast-container.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('toastContainer', [
       transition(':enter', [

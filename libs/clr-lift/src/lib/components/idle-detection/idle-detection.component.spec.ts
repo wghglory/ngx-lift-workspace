@@ -1,4 +1,5 @@
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {IdleDetectionService} from 'ngx-lift';
 import {Subject} from 'rxjs';
 import {vi} from 'vitest';
@@ -36,6 +37,7 @@ describe('IdleDetectionComponent', () => {
       providers: [
         {provide: IdleDetectionService, useValue: mockIdleDetectionService},
         {provide: TranslationService, useClass: MockTranslationService},
+        provideNoopAnimations(),
       ],
     }).compileComponents();
 

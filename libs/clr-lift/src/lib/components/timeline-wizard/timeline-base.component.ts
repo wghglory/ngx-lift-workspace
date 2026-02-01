@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 
@@ -60,9 +60,23 @@ import {Observable, of} from 'rxjs';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export abstract class TimelineBaseComponent<StepData = unknown> {
-  // These two props are available when ngOnInit, not in the constructor! If data is needed before component initializes, use TimelineWizardService
-  @Input() allStepsData: {id: string; data: StepData}[] = []; // all steps data
-  @Input() currentStepData: StepData | null = null; // data either input earlier (click next step and then previous step) OR from API
+  /**
+   * All steps data from the timeline wizard.
+   * Available after component initialization (ngOnInit), not in the constructor.
+   * If data is needed before component initializes, use TimelineWizardService.
+   */
+  allStepsData = input<{id: string; data: unknown}[]>([]);
+
+  /**
+   * Current step data - either from previous step navigation or from API.
+   * Available after component initialization (ngOnInit), not in the constructor.
+   * If data is needed before component initializes, use TimelineWizardService.
+   *
+   * Note: The generic `StepData` type parameter is for documentation and type hints in subclasses.
+   * The actual input type is `unknown` to allow TypeScript's signal variance rules to work correctly
+   * when subclasses specify more specific types.
+   */
+  currentStepData = input<unknown>(null);
 
   // Last step may be a review step without a form. ReviewComponent's form = null.
   // Override form for steps needing form action.

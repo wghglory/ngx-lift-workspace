@@ -306,7 +306,7 @@ After standardization:
 
 - [Documentation Standards](./DOCUMENTATION_STANDARDS.md) - Complete standards guide
 - [Code Block Pattern Rules](../.cursor/rules/code-block-pattern.mdc) - Code block guidelines
-- [Angular 20 Guidelines](../.cursor/rules/angular.mdc) - Angular-specific guidelines
+- [Angular Guidelines](../.cursor/rules/angular.mdc) - Angular-specific guidelines
 
 ## Notes
 
