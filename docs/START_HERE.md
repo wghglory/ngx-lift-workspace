@@ -109,17 +109,6 @@ ngx-lift-workspace/
 └── [documentation files]  # You are here!
 ```
 
-## ✅ What's Already Done
-
-- ✅ All code migrated (434+ files)
-- ✅ Vitest configured for testing
-- ✅ CI/CD workflows created
-- ✅ Deployment configs (Netlify + Vercel)
-- ✅ 25+ npm scripts added
-- ✅ 7 documentation files written
-- ✅ Path mappings configured
-- ✅ Package.json updated (Angular 20.x)
-
 ## ⏳ What You Need to Do
 
 1. **Install dependencies**: `npm install`

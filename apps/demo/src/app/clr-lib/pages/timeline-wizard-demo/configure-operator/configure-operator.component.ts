@@ -26,12 +26,12 @@ export class ConfigureOperatorComponent extends TimelineBaseComponent<Deployment
     super();
 
     // currentStepData shape comes from TimelineBaseComponent<Deployment['operator']>.
-    console.log(this.currentStepData); // not available at the time
+    console.log(this.currentStepData()); // not available at the time
     console.log(this.stepData); // available from service
   }
 
   ngOnInit() {
-    console.log(this.currentStepData); // will receive the @Input data
+    console.log(this.currentStepData()); // will receive the @Input data
     console.log(this.stepData); // available from service
   }
 }

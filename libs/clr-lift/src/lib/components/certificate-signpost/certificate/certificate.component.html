@@ -17,7 +17,7 @@
 
   <h4 class="certificate-subtitle">{{ 'certificate.issuedTo' | translate }}</h4>
   <dl class="certificate-content">
-    @for (attr of certificate().subject.attributes; track attr) {
+    @for (attr of certificate().subject.attributes; track attr.name) {
       <dt>{{ 'certificate.' + attr.name | translate }}</dt>
       <dd>{{ attr.value }}</dd>
     }
@@ -25,7 +25,7 @@
 
   <h4 class="certificate-subtitle">{{ 'certificate.issuedBy' | translate }}</h4>
   <dl class="certificate-content">
-    @for (attr of certificate().issuer.attributes; track attr) {
+    @for (attr of certificate().issuer.attributes; track attr.name) {
       <dt>{{ 'certificate.' + attr.name | translate }}</dt>
       <dd>{{ attr.value }}</dd>
     }

@@ -22,9 +22,10 @@ describe('TooltipComponent', () => {
 
   it('should set text content', () => {
     const text = 'Test Content';
-    component.content = text;
+    fixture.componentRef.setInput('content', text);
+    fixture.detectChanges();
 
-    expect(component.text).toEqual(text);
+    expect(component.text()).toEqual(text);
   });
 
   it('should emit close event when closeTooltip is called', () => {

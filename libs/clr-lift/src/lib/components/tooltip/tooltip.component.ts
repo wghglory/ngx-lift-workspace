@@ -1,18 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {A11yModule} from '@angular/cdk/a11y';
-import {CommonModule} from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  effect,
   ElementRef,
   HostListener,
   inject,
-  Input,
   input,
   output,
+  signal,
   TemplateRef,
   Type,
   viewChild,
@@ -24,14 +23,12 @@ import {isElementClickable, isElementInsideCollection} from './tooltip.util';
 
 @Component({
   selector: 'cll-tooltip',
-  imports: [CommonModule, A11yModule],
+  imports: [A11yModule],
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TooltipComponent {
-  private cdr = inject(ChangeDetectorRef);
-
   left = input(0);
   top = input(0);
   width = input<number>();
@@ -40,27 +37,12 @@ export class TooltipComponent {
 
   contentContext = input<Record<string, any>>();
 
-  @Input() set content(c: string | TemplateRef<any> | ComponentRef<any> | Type<any>) {
-    if (typeof c === 'string') {
-      this.text = c;
-    } else if (c instanceof TemplateRef) {
-      // Wait for the component to add the content container
-      setTimeout(() => {
-        this.contentContainer().createEmbeddedView(c, this.contentContext());
-        this.cdr.detectChanges();
-      });
-    } else if (c instanceof ComponentRef) {
-      setTimeout(() => {
-        this.contentContainer().insert(c.hostView, 0);
-        this.cdr.detectChanges();
-      });
-    } else if (c instanceof Type) {
-      setTimeout(() => {
-        this.contentContainer().createComponent(c);
-        this.cdr.detectChanges();
-      });
-    }
-  }
+  /**
+   * Content to display in the tooltip.
+   * Can be a string, TemplateRef, ComponentRef, or Component Type.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content = input<string | TemplateRef<any> | ComponentRef<any> | Type<any>>();
 
   // force close is true
   closePopover = output<boolean>();
@@ -69,11 +51,43 @@ export class TooltipComponent {
     read: ViewContainerRef,
   });
 
-  text? = '';
+  text = signal('');
   showClose = true;
   tooltipHovering = false;
 
   private host = inject(ElementRef); // <cll-tooltip>
+
+  constructor() {
+    const cdr = inject(ChangeDetectorRef);
+
+    // Effect to handle content changes
+    effect(() => {
+      const c = this.content();
+      if (!c) {
+        return;
+      }
+
+      if (typeof c === 'string') {
+        this.text.set(c);
+      } else if (c instanceof TemplateRef) {
+        // Wait for the component to add the content container
+        setTimeout(() => {
+          this.contentContainer().createEmbeddedView(c, this.contentContext());
+          cdr.detectChanges();
+        });
+      } else if (c instanceof ComponentRef) {
+        setTimeout(() => {
+          this.contentContainer().insert(c.hostView, 0);
+          cdr.detectChanges();
+        });
+      } else if (c instanceof Type) {
+        setTimeout(() => {
+          this.contentContainer().createComponent(c);
+          cdr.detectChanges();
+        });
+      }
+    });
+  }
 
   // get the children of the tooltip host element
   get tooltipChildren() {

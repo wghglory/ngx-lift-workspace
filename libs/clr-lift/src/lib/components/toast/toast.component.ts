@@ -1,5 +1,5 @@
 import {animate, animateChild, group, keyframes, query, style, transition, trigger} from '@angular/animations';
-import {Component, ElementRef, inject, input, NgZone, OnInit, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, inject, input, NgZone, OnInit, output} from '@angular/core';
 import {ClarityIcons, timesIcon} from '@cds/core/icon';
 import {ClarityModule} from '@clr/angular';
 import {timer} from 'rxjs';
@@ -36,6 +36,7 @@ ClarityIcons.addIcons(timesIcon);
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
   imports: [ClarityModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('launchToast', [
       transition(':enter', [

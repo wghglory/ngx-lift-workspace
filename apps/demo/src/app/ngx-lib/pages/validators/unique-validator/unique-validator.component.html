@@ -20,7 +20,7 @@
         <cll-callout>Type the same value in below controls and see the effect when blur.</cll-callout>
 
         <ng-container formArrayName="demo1">
-          @for (control of form1.controls.demo1.controls; track control; let i = $index) {
+          @for (control of form1.controls.demo1.controls; track $index; let i = $index) {
             <clr-input-container>
               <label [attr.for]="i">Control {{ i + 1 }}</label>
               <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
@@ -45,7 +45,7 @@
         <cll-callout>Type the same value in below key controls and see the effect when blur.</cll-callout>
 
         <ng-container formArrayName="demo2">
-          @for (group of form2.controls.demo2.controls; track group; let i = $index) {
+          @for (group of form2.controls.demo2.controls; track $index; let i = $index) {
             <div [formGroup]="group" style="display: flex; gap: 1rem">
               <clr-input-container>
                 <label class="clr-sr-only" [for]="'unique-key-' + i">key</label>

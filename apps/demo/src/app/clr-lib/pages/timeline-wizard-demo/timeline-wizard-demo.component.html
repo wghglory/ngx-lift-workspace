@@ -95,7 +95,6 @@
       <p>Try the interactive wizard below:</p>
       <cll-timeline-wizard
         [timelineSteps]="timelineSteps"
-        [confirmButtonText]="'Finish'"
         (canceled)="onCanceled()"
         (confirmed)="onConfirmed($event)"
         (finished)="onFinished()"
@@ -133,7 +132,9 @@
           <li class="space-y-1">
             <code>confirmButtonText?: string</code>
             <div class="ml-4">
-              <p class="text-sm !mt-1">The text for the "Confirm" button. Defaults to "Confirm".</p>
+              <p class="text-sm !mt-1">
+                The text for the "Finish" button on the last step. Defaults to "Finish" (translated).
+              </p>
             </div>
           </li>
         </ul>

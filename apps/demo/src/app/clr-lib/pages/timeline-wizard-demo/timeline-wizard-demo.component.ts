@@ -85,7 +85,6 @@ import {Deployment} from './deployment.type';
   template: \`
     <cll-timeline-wizard
       [timelineSteps]="timelineSteps"
-      [confirmButtonText]="'Finish'"
       (canceled)="onCanceled()"
       (confirmed)="onConfirmed($event)"
       (finished)="onFinished()"

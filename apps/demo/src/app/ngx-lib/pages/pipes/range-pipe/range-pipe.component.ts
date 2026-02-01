@@ -71,7 +71,7 @@ import {RangePipe} from 'ngx-lift';
     <div class="space-x-6">
       <label for="cpu-count">Choose CPU count</label>
       <select id="cpu-count">
-        @for (count of [1, 5] | range; track count) {
+        @for (count of [1, 5] | range; track $index) {
           <option [value]="count">{{ count }} CPU(s)</option>
         }
       </select>

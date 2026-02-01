@@ -177,7 +177,7 @@ with:
           - Follow the same review checklist as the `/review` command (see `.cursor/commands/review.md`)
           - Check for:
             - TypeScript strict mode compliance, no `any` types, JSDoc documentation
-            - Angular 20 patterns (standalone components, OnPush, signal inputs/outputs, new control flow)
+            - Angular patterns (standalone components, OnPush, signal inputs/outputs, new control flow)
             - Clarity Design System guidelines (Clarity components, SASS variables, no hard-coded colors)
             - Testing standards (Vitest, coverage requirements)
             - RxJS patterns (signals first, proper operators, error handling)
@@ -422,7 +422,7 @@ submits review comments on GitHub.
    - Follows the same review checklist as the `/review` command (see `.cursor/commands/review.md`)
    - Checks for compliance with:
      - **TypeScript**: Strict mode, no `any` types, JSDoc documentation, copyright headers
-     - **Angular 20**: Standalone components, OnPush strategy, signal inputs/outputs, new control flow syntax
+     - **Angular**: Standalone components, OnPush strategy, signal inputs/outputs, new control flow syntax
      - **Clarity Design System**: Clarity components, SASS variables, no hard-coded colors
      - **Testing**: Vitest framework, coverage requirements, test selectors
      - **RxJS**: Signals first, proper operators, error handling, subscription management
@@ -513,7 +513,7 @@ Each review comment follows this structure:
 - [ ] ✅ **MANDATORY**: Perform AI code review:
   - [ ] Call `mcp_github_pull_request_read` with `method: "get_files"` to get changed files
   - [ ] Call `mcp_github_pull_request_read` with `method: "get_diff"` to get full diff
-  - [ ] Analyze code against all standards in `.cursor/rules/` (TypeScript, Angular 20, Clarity, Testing, RxJS, Nx, Accessibility)
+  - [ ] Analyze code against all standards in `.cursor/rules/` (TypeScript, Angular, Clarity, Testing, RxJS, Nx, Accessibility)
   - [ ] Identify issues by severity (Critical, Warnings, Suggestions)
   - [ ] Call `mcp_github_pull_request_review_write` with `method: "create"` to create pending review
   - [ ] For each issue: Call `mcp_github_add_comment_to_pending_review` with file path, line number, and detailed comment

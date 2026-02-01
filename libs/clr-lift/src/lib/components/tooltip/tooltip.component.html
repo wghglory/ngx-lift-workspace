@@ -13,10 +13,10 @@
     (mouseenter)="mouseEnter($event)"
     (mouseleave)="mouseLeave($event)"
   >
-    <span [innerHtml]="text"></span>
+    <span [innerHtml]="text()"></span>
 
     <!-- for complex content (TemplateRef, ComponentRef), display close button, build traps -->
-    @if (!text) {
+    @if (!text()) {
       <div cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
         <div class="content-container" #contentContainer>
           @if (showClose) {

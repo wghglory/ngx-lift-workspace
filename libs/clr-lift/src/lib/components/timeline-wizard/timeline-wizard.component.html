@@ -1,5 +1,5 @@
 <clr-timeline class="timeline-container">
-  @for (step of timelineWizardService.steps; track step) {
+  @for (step of timelineWizardService.steps; track step.title) {
     <clr-timeline-step [clrState]="step.state">
       <clr-timeline-step-header>{{ step.header }}</clr-timeline-step-header>
       <clr-timeline-step-title>{{ step.title }}</clr-timeline-step-title>
@@ -32,7 +32,7 @@
       [disabled]="currentStepFormInvalid"
       (click)="nextStep()"
     >
-      {{ timelineWizardService.isLastStep ? confirmButtonText : ('timeline-wizard.next' | translate) }}
+      {{ (timelineWizardService.isLastStep ? confirmButtonText() : 'timeline-wizard.next') | translate }}
     </button>
   </div>
 }
