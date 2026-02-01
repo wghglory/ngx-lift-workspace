@@ -23,6 +23,8 @@ import {isPromise} from '../utils/is-promise.util';
 export interface ResourceRefOptions<T, E = Error> extends CreateComputedOptions<T> {
   /**
    * Initial value for the resource before first fetch.
+   * If provided, the resource will use this value during loading states.
+   * If not provided, T must include undefined.
    */
   initialValue?: T;
 
@@ -77,9 +79,14 @@ export interface ResourceRefOptions<T, E = Error> extends CreateComputedOptions<
 export interface ResourceRef<T, E = Error> {
   /**
    * The current value of the resource.
-   * Returns undefined if not yet loaded or in error state.
+   *
+   * **Important**: Unlike a typical signal, this always returns a value (T).
+   * If initialValue is provided, it returns that during loading/error states.
+   * If no initialValue is provided, T must include undefined in its type.
+   *
+   * Reading value() when in error state and no initialValue was provided will throw.
    */
-  readonly value: Signal<T | undefined>;
+  readonly value: Signal<T>;
 
   /**
    * The current error, if any.
@@ -98,43 +105,55 @@ export interface ResourceRef<T, E = Error> {
   readonly status: Signal<ResourceStatus>;
 
   /**
-   * Computed signal indicating if any fetch operation is in progress.
+   * Whether this resource is loading a new value (or reloading the existing one).
    * True when status is 'loading' or 'reloading'.
    *
-   * Matches Angular's httpResource `isLoading` which covers both initial load and reload.
+   * This is a Signal (not a method) to match Angular's httpResource API.
    * Use this to disable buttons or show loading indicators during any fetch operation.
    */
   readonly isLoading: Signal<boolean>;
 
   /**
-   * Computed signal indicating if the resource has a value available.
-   * True for 'resolved' state or 'reloading' state (has previous value).
-   */
-  readonly hasValue: Signal<boolean>;
-
-  /**
-   * Computed signal indicating if the resource is in idle state.
-   * True only when operation has never been triggered.
+   * Whether this resource is in idle state (never triggered).
+   * True only when status is 'idle'.
+   *
+   * **Note**: This is an ngx-lift extension (not in Angular's httpResource).
+   * Useful for lazy resources to check if they've been triggered yet.
    */
   readonly isIdle: Signal<boolean>;
+
+  /**
+   * Returns true if the resource has a value available (not undefined).
+   * True for 'resolved' state or 'reloading' state (has previous value).
+   *
+   * **Type predicate**: When true, narrows the value type to exclude undefined.
+   * This matches Angular's httpResource behavior.
+   *
+   * This function is reactive.
+   */
+  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;
 
   /**
    * Manually trigger a reload of the resource.
    * Cancels any pending operation before starting a new one.
    *
-   * Use `reload()` for read operations (GET requests) where "reload" makes semantic sense.
-   * Use `execute()` for mutations (POST/PUT/DELETE) where "execute" is more appropriate.
+   * Note that the resource will not enter its reloading state until the actual backend request is made.
+   *
+   * @returns true if a reload was initiated, false if a reload was unnecessary or unsupported
    */
-  reload: () => void;
+  reload(): boolean;
 
   /**
    * Manually trigger execution of the resource operation.
    * This is an alias for `reload()` with a name more appropriate for mutations.
    *
+   * **Note**: This is an ngx-lift extension (not in Angular's httpResource).
    * Use `execute()` for mutations (POST/PUT/DELETE) like form submissions, saves, deletes.
    * Use `reload()` for read operations (GET requests) where "reload" makes semantic sense.
+   *
+   * @returns true if execution was initiated, false if execution was unnecessary or unsupported
    */
-  execute: () => void;
+  execute(): boolean;
 }
 
 /**
@@ -161,24 +180,24 @@ export interface ResourceRef<T, E = Error> {
  * ```typescript
  * // Basic HTTP request
  * userId = signal(1);
- * user = resourceAsync(() =>
+ * userRef = resourceAsync(() =>
  *   this.http.get<User>(`/api/user/${this.userId()}`)
  * );
  *
  * // Template usage
- * @if (user.isLoading()) {
+ * @if (userRef.isLoading()) {
  *   <spinner />
- * } @else if (user.error()) {
- *   <error-message [error]="user.error()" />
- * } @else if (user.hasValue()) {
- *   <user-card [user]="user.value()!" />
+ * } @else if (userRef.error()) {
+ *   <error-message [error]="userRef.error()" />
+ * } @else if (userRef.hasValue()) {
+ *   <user-card [user]="userRef.value()" />
  * }
  *
  * // Manual refresh
- * <button (click)="user.reload()">Refresh</button>
+ * <button (click)="userRef.reload()">Refresh</button>
  *
  * // With error handling
- * user = resourceAsync(
+ * userRef = resourceAsync(
  *   () => this.http.get<User>(`/api/user/${this.userId()}`),
  *   {
  *     onError: (error) => {
@@ -189,7 +208,7 @@ export interface ResourceRef<T, E = Error> {
  * );
  *
  * // Lazy loading
- * searchResults = resourceAsync(
+ * searchResultsRef = resourceAsync(
  *   () => this.http.get(`/api/search?q=${this.query()}`),
  *   { lazy: true }
  * );
@@ -208,6 +227,18 @@ export function resourceAsync<T, E = Error>(
   const valueSignal = signal<T | undefined>(options.initialValue);
   const errorSignal = signal<E | null>(null);
   const statusSignal = signal<ResourceStatus>(options.lazy ? 'idle' : 'loading');
+
+  // Create a computed signal that returns T (with initialValue as fallback)
+  // This matches Angular's pattern where value() always returns T
+  const valueComputed = computed(() => {
+    const val = valueSignal();
+    if (val !== undefined) {
+      return val;
+    }
+    // Return initialValue if available, otherwise return undefined
+    // TypeScript will enforce that T includes undefined if no initialValue provided
+    return options.initialValue as T;
+  });
 
   // Trigger for manual reload
   const reloadTrigger = signal(0);
@@ -295,38 +326,56 @@ export function resourceAsync<T, E = Error>(
     }
   });
 
-  // Computed convenience signals
-  const isLoading = computed(() => {
+  // isLoading as a computed Signal (matches Angular's httpResource API)
+  const isLoadingSignal = computed(() => {
     const status = statusSignal();
     return status === 'loading' || status === 'reloading';
   });
 
-  const hasValue = computed(() => {
-    // Matches Angular's httpResource behavior:
-    // hasValue is true only when status is 'resolved' or 'reloading'
-    // (value is undefined during 'idle', 'loading', and 'error')
-    const status = statusSignal();
-    return status === 'resolved' || status === 'reloading';
+  // isIdle as a computed Signal (ngx-lift extension)
+  const isIdleSignal = computed(() => {
+    return statusSignal() === 'idle';
   });
 
-  const isIdle = computed(() => statusSignal() === 'idle');
-
-  const reload = () => {
-    // If lazy and idle, trigger first load
-    if (statusSignal() === 'idle') {
-      untracked(() => statusSignal.set('loading'));
-    }
-    reloadTrigger.update((v) => v + 1);
+  // hasValue as a method with type predicate for type narrowing
+  const hasValue = function (this: ResourceRef<T, E>): this is ResourceRef<Exclude<T, undefined>, E> {
+    // Matches Angular's httpResource behavior:
+    // hasValue is true only when we have an actual loaded value (not just initialValue)
+    // This is true for 'resolved' or 'reloading' status
+    const status = statusSignal();
+    const val = valueSignal(); // Check the actual loaded value
+    return (status === 'resolved' || status === 'reloading') && val !== undefined;
   };
 
-  return {
-    value: valueSignal.asReadonly(),
+  const reload = (): boolean => {
+    // Matches Angular's httpResource behavior:
+    // Returns true if reload was initiated, false if unnecessary
+    const status = untracked(statusSignal);
+
+    // Don't reload if already loading
+    if (status === 'loading' || status === 'reloading') {
+      return false;
+    }
+
+    // If lazy and idle, trigger first load
+    if (status === 'idle') {
+      untracked(() => statusSignal.set('loading'));
+    }
+
+    reloadTrigger.update((v) => v + 1);
+    return true;
+  };
+
+  const resourceRef: ResourceRef<T, E> = {
+    value: valueComputed,
     error: errorSignal.asReadonly(),
     status: statusSignal.asReadonly(),
-    isLoading,
+    isLoading: isLoadingSignal,
+    isIdle: isIdleSignal,
     hasValue,
-    isIdle,
     reload,
     execute: reload, // Alias for mutations - same functionality, clearer intent
   };
+
+  return resourceRef;
 }

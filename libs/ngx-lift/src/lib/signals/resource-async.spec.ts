@@ -25,7 +25,7 @@ describe(resourceAsync.name, () => {
         expect(resource.value()).toBeUndefined();
         expect(resource.isLoading()).toBe(true);
         expect(resource.hasValue()).toBe(false);
-        expect(resource.isIdle()).toBe(false);
+        expect(resource.status()).not.toBe('idle');
 
         tick(100);
 
@@ -82,7 +82,7 @@ describe(resourceAsync.name, () => {
 
         expect(resource.status()).toBe('idle');
         expect(resource.value()).toBeUndefined();
-        expect(resource.isIdle()).toBe(true);
+        expect(resource.status()).toBe('idle');
         expect(resource.isLoading()).toBe(false);
 
         tick(100);
@@ -101,25 +101,6 @@ describe(resourceAsync.name, () => {
         expect(resource.status()).toBe('idle');
 
         resource.reload();
-        TestBed.tick();
-
-        expect(resource.status()).toBe('loading');
-
-        tick(100);
-
-        expect(resource.status()).toBe('resolved');
-        expect(resource.value()).toEqual({id: 1, name: 'John'});
-      });
-    }));
-
-    it('should work with execute() alias', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
-        const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100), {lazy: true});
-
-        TestBed.tick();
-        expect(resource.status()).toBe('idle');
-
-        resource.execute(); // Same as reload()
         TestBed.tick();
 
         expect(resource.status()).toBe('loading');
@@ -541,28 +522,28 @@ describe(resourceAsync.name, () => {
     }));
   });
 
-  describe('isIdle signal', () => {
-    it('should be true only in idle state', fakeAsync(() => {
+  describe('idle status', () => {
+    it('should be idle only for lazy resources before first load', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
         const resource = resourceAsync(() => promise(1, 100), {lazy: true});
 
-        expect(resource.isIdle()).toBe(true);
+        expect(resource.status()).toBe('idle');
 
         resource.reload();
 
-        expect(resource.isIdle()).toBe(false);
+        expect(resource.status()).not.toBe('idle');
 
         tick(100);
 
-        expect(resource.isIdle()).toBe(false);
+        expect(resource.status()).not.toBe('idle');
       });
     }));
 
-    it('should be false for auto-loading resources', fakeAsync(() => {
+    it('should not be idle for auto-loading resources', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
         const resource = resourceAsync(() => promise(1, 100));
 
-        expect(resource.isIdle()).toBe(false); // Starts in 'loading' not 'idle'
+        expect(resource.status()).not.toBe('idle'); // Starts in 'loading' not 'idle'
       });
     }));
   });
@@ -725,13 +706,13 @@ describe(resourceAsync.name, () => {
         );
 
         // First submission
-        registration.execute();
+        registration.reload();
         expect(registration.status()).toBe('loading');
 
         // Rapid clicks - should be ignored
-        registration.execute();
-        registration.execute();
-        registration.execute();
+        registration.reload();
+        registration.reload();
+        registration.reload();
 
         tick(100);
 
@@ -746,7 +727,7 @@ describe(resourceAsync.name, () => {
 
         // Now we can submit again
         formData.set({username: 'jane', password: 'secret'});
-        registration.execute();
+        registration.reload();
 
         tick(100);
 

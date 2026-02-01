@@ -19,16 +19,16 @@ interface User {
 @Component({
   selector: 'app-user-profile',
   template: `
-    @if (user.isLoading()) {
+    @if (userRef.isLoading()) {
       <p>Loading user...</p>
     }
-    @if (user.error(); as error) {
+    @if (userRef.error(); as error) {
       <p class="error">Failed to load user: {{ error.message }}</p>
     }
-    @if (user.value(); as userData) {
+    @if (userRef.value(); as userData) {
       <div>
         <h2>{{ userData.name }}</h2>
-        <button (click)="user.reload()">Refresh</button>
+        <button (click)="userRef.reload()">Refresh</button>
       </div>
     }
   `,
@@ -38,7 +38,7 @@ export class UserProfileComponent {
   userId = signal(1);
 
   // Automatically fetches and refetches when userId changes
-  user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
+  userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
 }
 ```
 
@@ -119,7 +119,7 @@ export class UserComponent {
   private http = inject(HttpClient);
 
   // Automatically starts loading when component initializes
-  user = resourceAsync(() => this.http.get<User>('/api/user'));
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'));
 }
 ```
 
@@ -142,10 +142,10 @@ export class LazyUserComponent {
   private http = inject(HttpClient);
 
   // Does NOT auto-load - waits for manual trigger
-  users = resourceAsync(() => this.http.get<User[]>('/api/users'), {lazy: true});
+  usersRef = resourceAsync(() => this.http.get<User[]>('/api/users'), {lazy: true});
 
   loadUsers() {
-    this.users.reload(); // Manual trigger
+    this.usersRef.reload(); // Manual trigger
   }
 }
 ```
@@ -171,7 +171,7 @@ export class UserDetailComponent {
   userId = signal(1);
 
   // Auto-refetches when userId changes
-  user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
+  userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
 
   loadUser(id: number) {
     this.userId.set(id); // Triggers automatic refetch
@@ -199,7 +199,7 @@ resolved(user1) → reloading → resolved(user2)
 export class UserWithFallbackComponent {
   private http = inject(HttpClient);
 
-  user = resourceAsync(() => this.http.get<User>('/api/user'), {
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'), {
     onError: (error) => {
       console.error('Failed to load user:', error);
       // Return fallback user
@@ -233,7 +233,7 @@ export class SearchComponent {
   searchTerm = signal('');
 
   // Previous searches are cancelled when searchTerm changes
-  searchResults = resourceAsync(
+  searchResultsRef = resourceAsync(
     () => this.http.get<Result[]>(`/api/search?q=${this.searchTerm()}`),
     {behavior: 'switch'}, // Default behavior
   );
@@ -263,14 +263,14 @@ t=500ms: Request C completes → Shows results for "angul"
 export class RegistrationComponent {
   private http = inject(HttpClient);
 
-  registration = resourceAsync(() => this.http.post<Response>('/api/register', this.formData()), {
+  registrationRef = resourceAsync(() => this.http.post<Response>('/api/register', this.formData()), {
     behavior: 'exhaust', // Ignore new requests while loading
     lazy: true,
   });
 
   submit() {
     // If already submitting, this call is IGNORED
-    this.registration.execute();
+    this.registrationRef.execute();
   }
 }
 ```
@@ -295,10 +295,10 @@ t=600ms: User clicks again    → New request starts
 export class RetryComponent {
   private http = inject(HttpClient);
 
-  data = resourceAsync(() => this.http.get<Data>('/api/data'));
+  dataRef = resourceAsync(() => this.http.get<Data>('/api/data'));
 
   retry() {
-    this.data.reload(); // Retry the request
+    this.dataRef.reload(); // Retry the request
   }
 }
 ```
@@ -323,10 +323,10 @@ undefined undefined undefined Data
 export class DataComponent {
   private http = inject(HttpClient);
 
-  data = resourceAsync(() => this.http.get<Data>('/api/data'));
+  dataRef = resourceAsync(() => this.http.get<Data>('/api/data'));
 
   refresh() {
-    this.data.reload();
+    this.dataRef.reload();
   }
 }
 ```
@@ -361,14 +361,14 @@ export class RegistrationFormComponent {
     email: '',
   });
 
-  registration = resourceAsync(() => this.http.post<Response>('/api/register', this.form()), {
+  registrationRef = resourceAsync(() => this.http.post<Response>('/api/register', this.form()), {
     behavior: 'exhaust', // Prevent duplicate submissions
     lazy: true,
   });
 
   submit() {
     // Use execute() for semantic clarity (not reload())
-    this.registration.execute();
+    this.registrationRef.execute();
   }
 }
 ```
@@ -377,14 +377,14 @@ export class RegistrationFormComponent {
 <form (ngSubmit)="submit()">
   <input [(ngModel)]="form().username" />
   <input type="password" [(ngModel)]="form().password" />
-  <button [disabled]="registration.isLoading()">
-    @if (registration.isLoading()) { Registering... } @else { Register }
+  <button [disabled]="registrationRef.isLoading()">
+    @if (registrationRef.isLoading()) { Registering... } @else { Register }
   </button>
 </form>
 
-@if (registration.error(); as error) {
+@if (registrationRef.error(); as error) {
 <div class="error">{{ error.message }}</div>
-} @if (registration.value(); as response) {
+} @if (registrationRef.value(); as response) {
 <div class="success">Registration successful! Welcome {{ response.username }}</div>
 }
 ```
@@ -440,16 +440,103 @@ interface ResourceRefOptions<T, E = Error> {
 ```typescript
 interface ResourceRef<T, E = Error> {
   // Signals
-  value: Signal<T | undefined>;
+  value: Signal<T>; // Always returns T (with initialValue fallback)
   error: Signal<E | null>;
   status: Signal<ResourceStatus>;
-  isLoading: Signal<boolean>;
-  hasValue: Signal<boolean>;
-  isIdle: Signal<boolean>;
+  isLoading: Signal<boolean>; // Signal (not method) - matches Angular
+  isIdle: Signal<boolean>; // Signal (not method) - ngx-lift extension
 
-  // Actions
-  reload: () => void;
-  execute: () => void; // Alias for reload(), better for mutations
+  // Methods
+  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>; // Type predicate!
+  reload(): boolean; // Returns true if initiated
+  execute(): boolean; // Alias for reload() - ngx-lift extension
+}
+```
+
+---
+
+## 🔍 Type Narrowing with `hasValue()` - IT WORKS! ✅
+
+**Breakthrough**: Type narrowing now works in both TypeScript code AND Angular templates!
+
+By following Angular's `httpResource` architecture where `value` is `Signal<T>` (not `Signal<T | undefined>`), the type
+predicate actually works.
+
+### ✅ Type Narrowing in TypeScript Code
+
+```typescript
+export class UserComponent {
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'), {
+    initialValue: undefined, // T = User | undefined
+  });
+
+  processUser() {
+    // ✅ Type narrowing works!
+    if (this.userRef.hasValue()) {
+      const name = this.userRef.value().name; // No ! needed - type is User
+      return name;
+    }
+    return null;
+  }
+
+  // ✅ Works in computed too
+  userName = computed(() => {
+    if (this.userRef.hasValue()) {
+      return this.userRef.value().name; // Type is User, not User | undefined
+    }
+    return 'Loading...';
+  });
+}
+```
+
+### ✅ Type Narrowing in Templates
+
+```html
+<!-- ✅ Type narrowing works in templates! -->
+@if (userRef.hasValue()) {
+<p>{{ userRef.value().name }}</p>
+<!-- No ! needed -->
+}
+
+<!-- ✅ Alternative patterns -->
+@if (userRef.value(); as user) {
+<p>{{ user.name }}</p>
+} @if (userRef.status() === 'resolved' && userRef.hasValue()) {
+<p>{{ userRef.value().email }}</p>
+}
+```
+
+### How It Works
+
+The key is that `value` is `Signal<T>`, not `Signal<T | undefined>`:
+
+```typescript
+interface ResourceRef<T> {
+  value: Signal<T>; // Always returns T (with initialValue fallback)
+  hasValue(): this is ResourceRef<Exclude<T, undefined>>; // Narrows T
+}
+
+// When hasValue() returns true, T is narrowed to Exclude<T, undefined>
+// Since value is Signal<T>, value() now returns Exclude<T, undefined>!
+```
+
+The signal returns the loaded value if available, otherwise falls back to `initialValue`.
+
+### Usage Patterns
+
+```typescript
+// ✅ Recommended: Provide initialValue
+userRef = resourceAsync(
+  () => this.http.get<User>('/api/user'),
+  {initialValue: undefined}, // Makes T = User | undefined
+);
+
+// ✅ Alternative: Include undefined in type
+userRef = resourceAsync<User | undefined>(() => this.http.get<User>('/api/user'));
+
+// Type narrowing works in both cases
+if (userRef.hasValue()) {
+  userRef.value().name; // ✅ Type is User
 }
 ```
 
@@ -460,17 +547,17 @@ interface ResourceRef<T, E = Error> {
 ### Pattern 1: Loading → Success → Error
 
 ```html
-@if (resource.isLoading()) {
+@if (resourceRef.isLoading()) {
 <div class="spinner">Loading...</div>
-} @if (resource.error(); as error) {
+} @if (resourceRef.error(); as error) {
 <div class="error">
   <p>{{ error.message }}</p>
-  <button (click)="resource.reload()">Retry</button>
+  <button (click)="resourceRef.reload()">Retry</button>
 </div>
-} @if (resource.value(); as data) {
+} @if (resourceRef.value(); as data) {
 <div class="content">
   <h2>{{ data.title }}</h2>
-  <button (click)="resource.reload()">Refresh</button>
+  <button (click)="resourceRef.reload()">Refresh</button>
 </div>
 }
 ```
@@ -480,12 +567,12 @@ interface ResourceRef<T, E = Error> {
 ### Pattern 2: Optimistic Updates (Show Stale During Reload)
 
 ```html
-@if (resource.status() === 'reloading') {
+@if (resourceRef.status() === 'reloading') {
 <div class="refreshing-indicator">
   <span>Updating...</span>
 </div>
-} @if (resource.value(); as data) {
-<div class="content" [class.refreshing]="resource.status() === 'reloading'">
+} @if (resourceRef.value(); as data) {
+<div class="content" [class.refreshing]="resourceRef.status() === 'reloading'">
   <!-- Shows stale data during reload -->
   <h2>{{ data.title }}</h2>
 </div>
@@ -497,11 +584,11 @@ interface ResourceRef<T, E = Error> {
 ### Pattern 3: Lazy Load Button
 
 ```html
-@if (resource.isIdle()) {
-<button (click)="resource.reload()">Load Data</button>
-} @if (resource.isLoading()) {
+@if (resourceRef.isIdle()) {
+<button (click)="resourceRef.reload()">Load Data</button>
+} @if (resourceRef.isLoading()) {
 <div class="spinner">Loading...</div>
-} @if (resource.value(); as data) {
+} @if (resourceRef.value(); as data) {
 <div>{{ data.title }}</div>
 }
 ```
@@ -512,10 +599,10 @@ interface ResourceRef<T, E = Error> {
 
 ```typescript
 export class MyComponent {
-  resource = resourceAsync(/* ... */);
+  resourceRef = resourceAsync(/* ... */);
 
   statusMessage = computed(() => {
-    switch (this.resource.status()) {
+    switch (this.resourceRef.status()) {
       case 'idle':
         return 'Not loaded yet';
       case 'loading':
@@ -543,18 +630,18 @@ export class MyComponent {
 
 ```typescript
 // ✅ Good: Semantic clarity
-saveAction = resourceAsync(
+saveActionRef = resourceAsync(
   () => this.http.post('/api/save', this.data()),
   { lazy: true }
 );
 
 save() {
-  this.saveAction.execute(); // Clear intent: POST operation
+  this.saveActionRef.execute(); // Clear intent: POST operation
 }
 
 // ❌ Confusing: "reload" implies GET
 save() {
-  this.saveAction.reload(); // Works, but misleading
+  this.saveActionRef.reload(); // Works, but misleading
 }
 ```
 
@@ -564,7 +651,7 @@ save() {
 
 ```typescript
 // ✅ Good: Prevents duplicate submissions
-submitForm = resourceAsync(() => this.http.post('/api/submit', this.formData()), {
+submitFormRef = resourceAsync(() => this.http.post('/api/submit', this.formData()), {
   behavior: 'exhaust', // Ignore rapid clicks
   lazy: true,
 });
@@ -576,7 +663,7 @@ submitForm = resourceAsync(() => this.http.post('/api/submit', this.formData()),
 
 ```typescript
 // ✅ Good: Latest search wins
-searchResults = resourceAsync(
+searchResultsRef = resourceAsync(
   () => this.http.get(`/api/search?q=${this.query()}`),
   {behavior: 'switch'}, // Cancel previous searches
 );
@@ -588,7 +675,7 @@ searchResults = resourceAsync(
 
 ```typescript
 // ✅ Good: Graceful degradation
-recommendations = resourceAsync(() => this.http.get<Item[]>('/api/recommendations'), {
+recommendationsRef = resourceAsync(() => this.http.get<Item[]>('/api/recommendations'), {
   onError: () => [], // Empty array fallback
 });
 ```
@@ -599,10 +686,10 @@ recommendations = resourceAsync(() => this.http.get<Item[]>('/api/recommendation
 
 ```typescript
 // ✅ Good: User-friendly error handling
-@if (resource.error(); as error) {
+@if (resourceRef.error(); as error) {
   <div class="error">
     <p>{{ getErrorMessage(error) }}</p>
-    <button (click)="resource.reload()">Try Again</button>
+    <button (click)="resourceRef.reload()">Try Again</button>
   </div>
 }
 ```
@@ -615,10 +702,10 @@ recommendations = resourceAsync(() => this.http.get<Item[]>('/api/recommendation
 
 ```typescript
 // ❌ BAD: POST fires immediately on component init!
-submitAction = resourceAsync(() => this.http.post('/api/submit', this.data()));
+submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()));
 
 // ✅ GOOD: Waits for manual trigger
-submitAction = resourceAsync(() => this.http.post('/api/submit', this.data()), {lazy: true});
+submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()), {lazy: true});
 ```
 
 ---
@@ -627,16 +714,16 @@ submitAction = resourceAsync(() => this.http.post('/api/submit', this.data()), {
 
 ```typescript
 // ❌ BAD: Assumes data is still available after error
-@if (resource.value(); as data) {
+@if (resourceRef.value(); as data) {
   <div>{{ data.name }}</div>
 }
 // If error occurs, data is cleared! This won't show anything.
 
 // ✅ GOOD: Handle error state explicitly
-@if (resource.error()) {
+@if (resourceRef.error()) {
   <div class="error">Failed to load data</div>
 }
-@if (resource.value(); as data) {
+@if (resourceRef.value(); as data) {
   <div>{{ data.name }}</div>
 }
 ```
@@ -647,13 +734,13 @@ submitAction = resourceAsync(() => this.http.post('/api/submit', this.data()), {
 
 ```typescript
 // ❌ BAD: User can cancel their own submission by clicking twice
-submit = resourceAsync(
+submitRef = resourceAsync(
   () => this.http.post('/api/submit', this.data()),
   {behavior: 'switch', lazy: true}, // Second click cancels first!
 );
 
 // ✅ GOOD: Ignore duplicate clicks
-submit = resourceAsync(() => this.http.post('/api/submit', this.data()), {behavior: 'exhaust', lazy: true});
+submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()), {behavior: 'exhaust', lazy: true});
 ```
 
 ---
@@ -664,7 +751,7 @@ submit = resourceAsync(() => this.http.post('/api/submit', this.data()), {behavi
 
 ```typescript
 // Works with ANY Promise, not just HTTP!
-fileData = resourceAsync(async () => {
+fileDataRef = resourceAsync(async () => {
   const file = await openFileDialog();
   const content = await file.text();
   return JSON.parse(content);
@@ -676,7 +763,7 @@ fileData = resourceAsync(async () => {
 ### Chaining Operations
 
 ```typescript
-userData = resourceAsync(async () => {
+userDataRef = resourceAsync(async () => {
   const user = await firstValueFrom(this.http.get<User>(`/api/users/${this.userId()}`));
 
   const permissions = await firstValueFrom(this.http.get<Permissions>(`/api/permissions/${user.id}`));
@@ -690,7 +777,7 @@ userData = resourceAsync(async () => {
 ### Combining with RxJS Operators
 
 ```typescript
-searchResults = resourceAsync(() =>
+searchResultsRef = resourceAsync(() =>
   this.http.get<Result[]>(`/api/search?q=${this.query()}`).pipe(
     map((results) => results.slice(0, 10)), // Take top 10
     catchError(() => of([])), // Fallback to empty array
@@ -713,16 +800,16 @@ searchResults = resourceAsync(() =>
 
 ```typescript
 // BEFORE (Angular httpResource)
-user = httpResource({
+userRef = httpResource({
   url: () => `/api/users/${this.userId()}`,
   options: {method: 'GET'},
 });
 
 // AFTER (ngx-lift resourceAsync)
-user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
+userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
 
 // Bonus: Now you have cancellation strategies and error handling!
-user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`), {
+userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`), {
   behavior: 'switch',
   onError: (error) => ({id: 0, name: 'Guest'}),
 });

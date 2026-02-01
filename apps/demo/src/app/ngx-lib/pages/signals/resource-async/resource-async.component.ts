@@ -50,17 +50,17 @@ export class ResourceAsyncComponent {
 
   // Basic resource - fetch single user (using results=1)
   pageNumber = signal(1);
-  user: ResourceRef<User> = resourceAsync(() =>
+  userRef: ResourceRef<User> = resourceAsync(() =>
     this.userService.getUsers({results: 1, page: this.pageNumber()}).pipe(map((res) => res.results[0])),
   );
 
   // Lazy resource - won't load until reload() is called
-  lazyUsers: ResourceRef<PaginationResponse<User>> = resourceAsync(() => this.userService.getUsers({results: 9}), {
+  lazyUsersRef: ResourceRef<PaginationResponse<User>> = resourceAsync(() => this.userService.getUsers({results: 9}), {
     lazy: true,
   });
 
   // Resource with error handling - simulate error with invalid API call
-  userWithFallback: ResourceRef<User> = resourceAsync(
+  userWithFallbackRef: ResourceRef<User> = resourceAsync(
     () => this.http.get<User>('https://randomuser.me/api/invalid-endpoint'),
     {
       lazy: true,
@@ -94,7 +94,7 @@ export class ResourceAsyncComponent {
   });
 
   // Registration resource with exhaust + lazy
-  registration: ResourceRef<RegistrationResponse> = resourceAsync(
+  registrationRef: ResourceRef<RegistrationResponse> = resourceAsync(
     () => {
       const formValue = this.registrationForm.value;
       const payload: RegistrationPayload = {
@@ -141,7 +141,7 @@ export class ResourceAsyncComponent {
 
   onRegistrationSubmit() {
     if (this.registrationForm.valid) {
-      this.registration.execute(); // Use execute() for POST mutation
+      this.registrationRef.execute(); // Use execute() for POST mutation
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.registrationForm.controls).forEach((key) => {
@@ -162,7 +162,7 @@ export class UserDetailComponent {
   userId = signal(1);
 
   // Automatically fetches when userId changes
-  user = resourceAsync(() =>
+  userRef = resourceAsync(() =>
     this.http.get<User>(\`/api/users/\${this.userId()}\`)
   );
 }
@@ -170,36 +170,36 @@ export class UserDetailComponent {
 
   basicHtmlCode = highlight(`
 <!-- Loading state -->
-@if (user.isLoading()) {
+@if (userRef.isLoading()) {
   <cll-spinner />
 }
 
 <!-- Error state -->
-@if (user.error(); as error) {
+@if (userRef.error(); as error) {
   <cll-alert [error]="error" />
 }
 
 <!-- Success state -->
 <!-- If you want to keep previous data while loading, you can use the following code: -->
-@if (user.value(); as userData) {
+@if (userRef.value(); as userData) {
   <app-user-card [user]="userData" />
 }
 
 <!-- if you want to hide previous data while refetching, you can use the following code: -->
-@if (user.status() === 'resolved' && user.value(); as userData) {
+@if (userRef.status() === 'resolved' && userRef.value(); as userData) {
   <app-user-card [user]="userData" />
 }
 
 <!-- Or check hasValue() for loading while data exists -->
-@if (user.hasValue()) {
-  <app-user-card [user]="user.value()!" />
-  @if (user.isLoading()) {
+@if (userRef.hasValue()) {
+  <app-user-card [user]="userRef.value()!" />
+  @if (userRef.isLoading()) {
     <span>Refreshing...</span>
   }
 }
 
 <!-- Reload -->
-<button class="btn btn-sm" (click)="user.reload()">Reload</button>
+<button class="btn btn-sm" (click)="userRef.reload()">Reload</button>
     `);
 
   lazyCode = highlight(`
@@ -207,13 +207,13 @@ import {resourceAsync} from 'ngx-lift';
 import {Component} from '@angular/core';
 
 export class SearchComponent {
-  searchResults = resourceAsync(
+  searchResultsRef = resourceAsync(
     () => this.http.get(\`/api/search?q=\${this.query()}\`),
     {lazy: true} // Won't fetch until reload() is called
   );
 
   search() {
-    this.searchResults.reload(); // Trigger fetch
+    this.searchResultsRef.reload(); // Trigger fetch
   }
 }
   `);
@@ -223,7 +223,7 @@ import {resourceAsync} from 'ngx-lift';
 import {Component} from '@angular/core';
 
 export class UserDetailComponent {
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>('/api/user'),
     {
       onError: (error) => {
@@ -250,7 +250,7 @@ export class SearchComponent {
   searchTerm = signal('');
 
   // Exhaust prevents multiple concurrent searches
-  searchResults = resourceAsync(
+  searchResultsRef = resourceAsync(
     () => this.http.get(\`/api/search?q=\${this.searchTerm()}\`),
     {
       behavior: 'exhaust', // Ignore new searches while one is in progress
@@ -260,7 +260,7 @@ export class SearchComponent {
 
   search() {
     // If a search is already in progress, this will be ignored
-    this.searchResults.reload();
+    this.searchResultsRef.reload();
   }
 }
   `);
@@ -270,11 +270,11 @@ import {resourceAsync} from 'ngx-lift';
 import {Component, computed} from '@angular/core';
 
 export class UserDetailComponent {
-  user = resourceAsync(() => this.http.get<User>('/api/user'));
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'));
 
   // Use computed() instead of getter for better performance
   statusMessage = computed(() => {
-    switch (this.user.status()) {
+    switch (this.userRef.status()) {
       case 'idle': return 'Not loaded yet';
       case 'loading': return 'Loading...';
       case 'reloading': return 'Reloading...';
@@ -302,14 +302,14 @@ interface ResourceRefOptions<T, E = Error> {
 }
 
 interface ResourceRef<T, E = Error> {
-  readonly value: Signal<T | undefined>;
+  readonly value: Signal<T>;              // Always returns T (with initialValue fallback)
   readonly error: Signal<E | null>;
   readonly status: Signal<ResourceStatus>;
   readonly isLoading: Signal<boolean>;
-  readonly hasValue: Signal<boolean>;
-  readonly isIdle: Signal<boolean>;
-  reload: () => void;        // For read operations (GET)
-  execute: () => void;       // For mutations (POST/PUT/DELETE)
+  readonly isIdle: Signal<boolean>;        - ngx-lift extension
+  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;  // Type predicate method
+  reload(): boolean;                      // Returns true if initiated, for read operations (GET)
+  execute(): boolean;                     // Alias for reload() - for mutations (POST/PUT/DELETE)
 }
 
 type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
@@ -323,7 +323,7 @@ export class UserDetailComponent {
   userId = signal(1);
 
   // Default 'switch' behavior - cancels previous request
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
     {behavior: 'switch'} // default
   );
@@ -339,7 +339,7 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
 
   // Provide initial value from route state or cached data
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>('/api/user'),
     {
       initialValue: this.getInitialUser(), // Display immediately
@@ -362,7 +362,7 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
     {
       throwOnError: true,  // Errors will propagate up
@@ -405,7 +405,7 @@ export class RegistrationComponent {
   });
 
   // Registration resource with exhaust + lazy
-  registration = resourceAsync(
+  registrationRef = resourceAsync(
     () => {
       const payload: RegistrationPayload = {
         username: this.form.value.username!,
@@ -430,7 +430,7 @@ export class RegistrationComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.registration.execute();  // Use execute() for mutations
+      this.registrationRef.execute();  // Use execute() for mutations
     }
   }
 }
@@ -438,11 +438,11 @@ export class RegistrationComponent {
 
   registrationHtmlCode = highlight(`
 <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
-  @if (registration.status() === 'resolved' && registration.value(); as response) {
-    <cll-alert [content]="response.message" [alertType]="'success'" cds-layout="m-t:md" />
+  @if (registrationRef.hasValue()) {
+    <cll-alert [content]="registrationRef.value().message" [alertType]="'success'" cds-layout="m-t:md" />
   }
-  @if (registration.status() === 'error' && registration.error(); as error) {
-    <cll-alert [content]="'Registration failed: ' + error.message" [alertType]="'danger'" cds-layout="m-t:md" />
+  @if (registrationRef.error(); as error) {
+    <cll-alert [content]="'Registration failed: ' + error" [alertType]="'danger'" cds-layout="m-t:md" />
   }
 
   <clr-input-container>
@@ -467,8 +467,8 @@ export class RegistrationComponent {
     <button
       class="btn btn-primary"
       type="submit"
-      [disabled]="registration.isLoading()"
-      [clrLoading]="registration.isLoading()"
+      [disabled]="registrationRef.isLoading()"
+      [clrLoading]="registrationRef.isLoading()"
     >
       Register
     </button>

@@ -43,34 +43,34 @@
           <button class="btn btn-primary" (click)="changeUserId(1)">User 1</button>
           <button class="btn btn-primary" (click)="changeUserId(2)">User 2</button>
           <button class="btn btn-primary" (click)="changeUserId(3)">User 3</button>
-          <button class="btn" (click)="user.reload()">Reload</button>
+          <button class="btn" (click)="userRef.reload()">Reload</button>
         </div>
 
         <div class="status-bar">
           <span
             class="badge"
-            [class.badge-info]="user.status() === 'loading'"
-            [class.badge-success]="user.status() === 'resolved'"
-            [class.badge-danger]="user.status() === 'error'"
+            [class.badge-info]="userRef.status() === 'loading'"
+            [class.badge-success]="userRef.status() === 'resolved'"
+            [class.badge-danger]="userRef.status() === 'error'"
           >
-            Status: {{ user.status() }}
+            Status: {{ userRef.status() }}
           </span>
-          <span class="badge" [class.badge-info]="user.isLoading()">Loading: {{ user.isLoading() }}</span>
-          <span class="badge" [class.badge-success]="user.hasValue()">Has Value: {{ user.hasValue() }}</span>
+          <span class="badge" [class.badge-info]="userRef.isLoading()">Loading: {{ userRef.isLoading() }}</span>
+          <span class="badge" [class.badge-success]="userRef.hasValue()">Has Value: {{ userRef.hasValue() }}</span>
         </div>
 
-        @if (user.isLoading()) {
+        @if (userRef.isLoading()) {
           <cll-spinner inline />
         }
-        @if (user.error(); as error) {
+        @if (userRef.error(); as error) {
           <cll-alert [error]="error" />
         }
         <!-- If you want to keep previous data while loading, you can use the following code: -->
-        <!-- @if (user.value(); as userData) {
+        <!-- @if (userRef.value(); as userData) {
           <app-user-card [user]="userData" />
         } -->
         <!-- if you want to hide previous data while refetching, you can use the following code: -->
-        @if (user.status() === 'resolved' && user.value(); as userData) {
+        @if (userRef.status() === 'resolved' && userRef.value(); as userData) {
           <app-user-card [user]="userData" />
         }
       </div>
@@ -87,23 +87,23 @@
       <div>
         <h4>Demo: Lazy-Loaded Users</h4>
         <div>
-          <button class="btn btn-primary" (click)="lazyUsers.reload()" [clrLoading]="lazyUsers.isLoading()">
+          <button class="btn btn-primary" (click)="lazyUsersRef.reload()" [clrLoading]="lazyUsersRef.isLoading()">
             Load Users
           </button>
-          @if (lazyUsers.isIdle()) {
+          @if (lazyUsersRef.isIdle()) {
             <span class="badge badge-info">Not loaded yet (idle)</span>
           }
         </div>
 
-        @if (lazyUsers.isLoading() && !lazyUsers.hasValue()) {
+        @if (lazyUsersRef.isLoading()) {
           <cll-spinner />
         }
-        @if (lazyUsers.error(); as error) {
+        @if (lazyUsersRef.error(); as error) {
           <cll-alert [error]="error" />
         }
-        @if (lazyUsers.value()?.results; as userList) {
+        @if (lazyUsersRef.hasValue()) {
           <div class="card-grid">
-            @for (u of userList; track u.id.value) {
+            @for (u of lazyUsersRef.value().results; track u.id.value) {
               <app-user-card [user]="u" />
             }
           </div>
@@ -137,21 +137,21 @@
         <div>
           <button
             class="btn btn-primary"
-            (click)="userWithFallback.reload()"
-            [clrLoading]="userWithFallback.isLoading()"
+            (click)="userWithFallbackRef.reload()"
+            [clrLoading]="userWithFallbackRef.isLoading()"
           >
             Trigger Request (will fallback)
           </button>
         </div>
 
-        @if (userWithFallback.isLoading()) {
+        @if (userWithFallbackRef.isLoading()) {
           <cll-spinner />
         }
-        @if (user.error(); as error) {
+        @if (userRef.error(); as error) {
           <cll-alert [error]="error" />
         }
-        @if (userWithFallback.value(); as userData) {
-          <app-user-card [user]="userData" />
+        @if (userWithFallbackRef.hasValue()) {
+          <app-user-card [user]="userWithFallbackRef.value()" />
           <cll-alert [content]="'Showing fallback user after error'" [alertType]="'success'" />
         }
       </div>
@@ -213,10 +213,10 @@
         </p>
 
         <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
-          @if (registration.status() === 'resolved' && registration.value(); as response) {
+          @if (registrationRef.status() === 'resolved' && registrationRef.value(); as response) {
             <cll-alert [content]="response.message" [alertType]="'success'" cds-layout="m-t:md" />
           }
-          @if (registration.status() === 'error' && registration.error(); as error) {
+          @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
             <cll-alert [content]="'Registration failed: ' + error.message" [alertType]="'danger'" cds-layout="m-t:md" />
           }
 
@@ -242,8 +242,8 @@
             <button
               class="btn btn-primary"
               type="submit"
-              [disabled]="registration.isLoading()"
-              [clrLoading]="registration.isLoading()"
+              [disabled]="registrationRef.isLoading()"
+              [clrLoading]="registrationRef.isLoading()"
             >
               Register
             </button>
@@ -355,25 +355,27 @@
             <code>'loading'</code>, <code>'reloading'</code>, <code>'resolved'</code>, or <code>'error'</code>.
           </li>
           <li>
-            <code>isLoading: Signal&lt;boolean&gt;</code> - Computed signal indicating if any fetch operation is in
-            progress. True when status is <code>'loading'</code> or <code>'reloading'</code>. Matches Angular's
-            <code>httpResource.isLoading</code> behavior.
+            <code>isLoading: Signal&lt;boolean&gt;</code> - Signal that returns true if any fetch operation is in
+            progress (status is <code>'loading'</code> or <code>'reloading'</code>). Use this to disable buttons or show
+            loading indicators.
           </li>
           <li>
-            <code>hasValue: Signal&lt;boolean&gt;</code> - Computed signal indicating if the resource has a value
-            available.
+            <code>isIdle: Signal&lt;boolean&gt;</code> - Signal that returns true if the resource is in idle state
+            (never fetched). <strong>ngx-lift extension</strong> - not in Angular's httpResource.
           </li>
           <li>
-            <code>isIdle: Signal&lt;boolean&gt;</code> - Computed signal indicating if the resource is in idle state
-            (never fetched).
+            <code>hasValue(): this is ResourceRef&lt;Exclude&lt;T, undefined&gt;, E&gt;</code> - Returns true if the
+            resource has a value available. <strong>Type predicate</strong>: When true, TypeScript narrows
+            <code>value()</code> to exclude <code>undefined</code>.
           </li>
           <li>
-            <code>reload: () => void</code> - Manually trigger a reload of the resource. Use for read operations (GET)
-            where "reload" makes semantic sense.
+            <code>reload(): boolean</code> - Manually trigger a reload of the resource. Returns true if reload was
+            initiated, false if unnecessary. Use for read operations (GET) where "reload" makes semantic sense.
           </li>
           <li>
-            <code>execute: () => void</code> - Manually trigger execution of the resource. This is an alias for
+            <code>execute(): boolean</code> - Manually trigger execution of the resource. This is an alias for
             <code>reload()</code> but with a name more appropriate for mutations (POST/PUT/DELETE).
+            <strong>ngx-lift extension</strong> - not in Angular's httpResource.
           </li>
         </ul>
 
