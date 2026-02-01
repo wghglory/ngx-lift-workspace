@@ -13,7 +13,7 @@ systems, frameworks, tools, and their configurations.
 
 ### Angular
 
-- **Version**: 20.3.0
+- **Version**: 21
 - **Type**: Standalone components architecture
 - **Key Features**:
   - Signal-based reactivity
@@ -159,10 +159,10 @@ ngx-lift-workspace/
 
 ### Vitest (Unit Testing)
 
-- **Version**: ^3.0.0
+- **Version**: 4
 - **Configuration**: `apps/demo/vite.config.mts`
-- **Coverage**: @vitest/coverage-v8 ^3.0.5
-- **Angular Support**: @analogjs/vitest-angular ~1.19.1
+- **Coverage**: @vitest/coverage-v8 4
+- **Angular Support**: @analogjs/vitest-angular 2.1.3
 - **Coverage Thresholds**:
   - Statements: 80%
   - Branches: 75%
@@ -206,7 +206,7 @@ ngx-lift-workspace/
 - **Version**: ^9.8.0
 - **Configuration**: Flat config format (`eslint.config.mjs`)
 - **Plugins**:
-  - `angular-eslint` ^20.3.0
+  - `angular-eslint` ^21.1.0
   - `eslint-plugin-import` ^2.29.1
   - `eslint-plugin-playwright` ^1.6.2
   - `eslint-plugin-simple-import-sort` ^10.0.0
@@ -229,7 +229,7 @@ ngx-lift-workspace/
 ### npm
 
 - **Package Manager**: npm (via package-lock.json)
-- **Publishing**: ng-packagr ~20.3.0 for Angular libraries
+- **Publishing**: ng-packagr ~21.0.1 for Angular libraries
 - **Versioning**: Nx release management
 
 ### Library Publishing
