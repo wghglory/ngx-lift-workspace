@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Injector,
+  runInInjectionContext,
+  signal,
+  untracked,
+} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
@@ -27,6 +35,32 @@ interface RegistrationResponse {
   message: string;
 }
 
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+interface CacheUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface Item {
+  id: string;
+  orgId: string;
+  name: string;
+  status: 'active' | 'inactive';
+}
+
+interface Organization {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+}
+
 @Component({
   selector: 'app-resource-async',
   imports: [
@@ -47,20 +81,21 @@ interface RegistrationResponse {
 export class ResourceAsyncComponent {
   private userService = inject(UserService);
   private http = inject(HttpClient);
+  private injector = inject(Injector);
 
   // Basic resource - fetch single user (using results=1)
   pageNumber = signal(1);
-  user: ResourceRef<User> = resourceAsync(() =>
+  userRef: ResourceRef<User> = resourceAsync(() =>
     this.userService.getUsers({results: 1, page: this.pageNumber()}).pipe(map((res) => res.results[0])),
   );
 
   // Lazy resource - won't load until reload() is called
-  lazyUsers: ResourceRef<PaginationResponse<User>> = resourceAsync(() => this.userService.getUsers({results: 9}), {
+  lazyUsersRef: ResourceRef<PaginationResponse<User>> = resourceAsync(() => this.userService.getUsers({results: 9}), {
     lazy: true,
   });
 
   // Resource with error handling - simulate error with invalid API call
-  userWithFallback: ResourceRef<User> = resourceAsync(
+  userWithFallbackRef: ResourceRef<User> = resourceAsync(
     () => this.http.get<User>('https://randomuser.me/api/invalid-endpoint'),
     {
       lazy: true,
@@ -94,7 +129,7 @@ export class ResourceAsyncComponent {
   });
 
   // Registration resource with exhaust + lazy
-  registration: ResourceRef<RegistrationResponse> = resourceAsync(
+  registrationRef: ResourceRef<RegistrationResponse> = resourceAsync(
     () => {
       const formValue = this.registrationForm.value;
       const payload: RegistrationPayload = {
@@ -139,9 +174,189 @@ export class ResourceAsyncComponent {
     },
   );
 
+  // ============================================================================
+  // WritableResourceRef Examples (New!)
+  // ============================================================================
+
+  // Example 1: Optimistic Update - Todo Toggle
+  todoId = signal(1);
+  todoRef = resourceAsync(
+    () =>
+      of({
+        id: this.todoId(),
+        title: 'Learn WritableResourceRef',
+        completed: false,
+      }).pipe(delay(500)),
+    {lazy: true},
+  );
+
+  toggleTodo() {
+    // Optimistic update - UI updates immediately
+    this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+
+    // Simulate API call
+    of(null)
+      .pipe(delay(1000))
+      .subscribe({
+        next: () => {
+          console.log('Todo updated successfully');
+          // Optionally reload to get server state
+          // this.todoRef.reload();
+        },
+        error: () => {
+          // Revert on error
+          this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+          alert('Failed to update todo');
+        },
+      });
+  }
+
+  // Example 2: Cache-First Pattern
+  cacheFirstUserId = signal(1);
+  cacheFirstUserRef = resourceAsync(
+    () =>
+      of({
+        id: this.cacheFirstUserId(),
+        name: `Fresh User ${this.cacheFirstUserId()}`,
+        email: `fresh${this.cacheFirstUserId()}@example.com`,
+      }).pipe(delay(1500)), // Slow API
+    {lazy: true},
+  );
+
+  loadCacheFirstUser() {
+    // Simulate cached data
+    const cachedUser = {
+      id: this.cacheFirstUserId(),
+      name: `Cached User ${this.cacheFirstUserId()}`,
+      email: `cached${this.cacheFirstUserId()}@example.com`,
+    };
+
+    // Set cached data immediately
+    this.cacheFirstUserRef.set(cachedUser);
+
+    // Fetch fresh data in background
+    this.cacheFirstUserRef.reload();
+  }
+
+  // Example 3: Form Draft - Counter
+  counterRef = resourceAsync(
+    () => of(0).pipe(delay(300)), // Initial value from server
+    {lazy: true},
+  );
+
+  incrementCounter() {
+    this.counterRef.update((count) => count + 1);
+  }
+
+  decrementCounter() {
+    this.counterRef.update((count) => count - 1);
+  }
+
+  saveCounter() {
+    // Simulate save
+    of(null)
+      .pipe(delay(500))
+      .subscribe({
+        next: () => {
+          alert(`Counter saved: ${this.counterRef.value()}`);
+          // After save, reload to get server state
+          this.counterRef.reload();
+        },
+        error: () => {
+          alert('Failed to save counter');
+        },
+      });
+  }
+
+  discardCounterChanges() {
+    this.counterRef.reload();
+  }
+
+  // ============================================================================
+  // Nested Resource Pattern Example
+  // ============================================================================
+  //
+  // This demonstrates managing outer (list) + inner (detail) resources where
+  // each item can fetch additional related data with independent loading/error states.
+
+  // Outer resource: List of items
+  itemsRef = resourceAsync(() =>
+    of([
+      {id: '1', orgId: 'org-1', name: 'Project Alpha', status: 'active'},
+      {id: '2', orgId: 'org-2', name: 'Project Beta', status: 'active'},
+      {id: '3', orgId: 'org-1', name: 'Project Gamma', status: 'inactive'},
+    ] as Item[]).pipe(delay(800)),
+  );
+
+  // Mock organizations
+  private mockOrgs: Record<string, Organization> = {
+    'org-1': {id: 'org-1', name: 'Acme Corp', type: 'Enterprise', location: 'SF, CA'},
+    'org-2': {id: 'org-2', name: 'TechStart Inc', type: 'Startup', location: 'Austin, TX'},
+  };
+
+  // Inner resources: Map of orgId -> ResourceRef<Organization>
+  // This map caches created resources to avoid recreating them
+  private orgRefsMap = new Map<string, ResourceRef<Organization>>();
+
+  /**
+   * Get or create a resource for the given orgId.
+   * Called from template during change detection.
+   *
+   * IMPORTANT: This method requires two wrappers:
+   *
+   * 1. untracked() - Prevents NG0602 error (effect() in reactive context)
+   *    - When called from template, we're in a reactive context (signal tracking)
+   *    - resourceAsync() uses effect() internally, which can't be created during tracking
+   *    - untracked() breaks out of the reactive context
+   *
+   * 2. runInInjectionContext() - Prevents NG0203 error (no injection context)
+   *    - Template method calls happen outside the component's injection context
+   *    - resourceAsync() uses inject() internally
+   *    - runInInjectionContext() provides the needed injection context
+   *
+   * Pattern: Template-called lazy resource creation
+   */
+  getOrgRef(orgId: string): ResourceRef<Organization> {
+    // Break out of reactive context to avoid NG0602 (effect in reactive context)
+    return untracked(() => {
+      let orgRef = this.orgRefsMap.get(orgId);
+      if (!orgRef) {
+        // Provide injection context to avoid NG0203 (inject outside context)
+        orgRef = runInInjectionContext(this.injector, () =>
+          resourceAsync(
+            () =>
+              of(this.mockOrgs[orgId] || {id: orgId, name: 'Unknown', type: 'Unknown', location: 'Unknown'}).pipe(
+                delay(600),
+                map((org) => {
+                  // Simulate random errors (30% chance)
+                  if (Math.random() < 0.3) {
+                    throw new Error('Network timeout');
+                  }
+                  return org;
+                }),
+              ),
+            {lazy: true}, // Don't fetch until explicitly triggered via reload()
+          ),
+        );
+        this.orgRefsMap.set(orgId, orgRef);
+      }
+      return orgRef;
+    });
+  }
+
+  loadOrg(orgId: string) {
+    this.getOrgRef(orgId).reload();
+  }
+
+  loadAllOrgs() {
+    const items = this.itemsRef.value() ?? [];
+    const uniqueOrgIds = new Set(items.map((item) => item.orgId));
+    uniqueOrgIds.forEach((orgId) => this.loadOrg(orgId));
+  }
+
   onRegistrationSubmit() {
     if (this.registrationForm.valid) {
-      this.registration.execute(); // Use execute() for POST mutation
+      this.registrationRef.execute(); // Use execute() for POST mutation
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.registrationForm.controls).forEach((key) => {
@@ -162,7 +377,7 @@ export class UserDetailComponent {
   userId = signal(1);
 
   // Automatically fetches when userId changes
-  user = resourceAsync(() =>
+  userRef = resourceAsync(() =>
     this.http.get<User>(\`/api/users/\${this.userId()}\`)
   );
 }
@@ -170,36 +385,36 @@ export class UserDetailComponent {
 
   basicHtmlCode = highlight(`
 <!-- Loading state -->
-@if (user.isLoading()) {
+@if (userRef.isLoading()) {
   <cll-spinner />
 }
 
 <!-- Error state -->
-@if (user.error(); as error) {
+@if (userRef.error(); as error) {
   <cll-alert [error]="error" />
 }
 
 <!-- Success state -->
 <!-- If you want to keep previous data while loading, you can use the following code: -->
-@if (user.value(); as userData) {
+@if (userRef.value(); as userData) {
   <app-user-card [user]="userData" />
 }
 
 <!-- if you want to hide previous data while refetching, you can use the following code: -->
-@if (user.status() === 'resolved' && user.value(); as userData) {
+@if (userRef.status() === 'resolved' && userRef.value(); as userData) {
   <app-user-card [user]="userData" />
 }
 
 <!-- Or check hasValue() for loading while data exists -->
-@if (user.hasValue()) {
-  <app-user-card [user]="user.value()!" />
-  @if (user.isLoading()) {
+@if (userRef.hasValue()) {
+  <app-user-card [user]="userRef.value()!" />
+  @if (userRef.isLoading()) {
     <span>Refreshing...</span>
   }
 }
 
 <!-- Reload -->
-<button class="btn btn-sm" (click)="user.reload()">Reload</button>
+<button class="btn btn-sm" (click)="userRef.reload()">Reload</button>
     `);
 
   lazyCode = highlight(`
@@ -207,13 +422,13 @@ import {resourceAsync} from 'ngx-lift';
 import {Component} from '@angular/core';
 
 export class SearchComponent {
-  searchResults = resourceAsync(
+  searchResultsRef = resourceAsync(
     () => this.http.get(\`/api/search?q=\${this.query()}\`),
     {lazy: true} // Won't fetch until reload() is called
   );
 
   search() {
-    this.searchResults.reload(); // Trigger fetch
+    this.searchResultsRef.reload(); // Trigger fetch
   }
 }
   `);
@@ -223,7 +438,7 @@ import {resourceAsync} from 'ngx-lift';
 import {Component} from '@angular/core';
 
 export class UserDetailComponent {
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>('/api/user'),
     {
       onError: (error) => {
@@ -250,7 +465,7 @@ export class SearchComponent {
   searchTerm = signal('');
 
   // Exhaust prevents multiple concurrent searches
-  searchResults = resourceAsync(
+  searchResultsRef = resourceAsync(
     () => this.http.get(\`/api/search?q=\${this.searchTerm()}\`),
     {
       behavior: 'exhaust', // Ignore new searches while one is in progress
@@ -260,7 +475,7 @@ export class SearchComponent {
 
   search() {
     // If a search is already in progress, this will be ignored
-    this.searchResults.reload();
+    this.searchResultsRef.reload();
   }
 }
   `);
@@ -270,11 +485,11 @@ import {resourceAsync} from 'ngx-lift';
 import {Component, computed} from '@angular/core';
 
 export class UserDetailComponent {
-  user = resourceAsync(() => this.http.get<User>('/api/user'));
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'));
 
   // Use computed() instead of getter for better performance
   statusMessage = computed(() => {
-    switch (this.user.status()) {
+    switch (this.userRef.status()) {
       case 'idle': return 'Not loaded yet';
       case 'loading': return 'Loading...';
       case 'reloading': return 'Reloading...';
@@ -302,14 +517,14 @@ interface ResourceRefOptions<T, E = Error> {
 }
 
 interface ResourceRef<T, E = Error> {
-  readonly value: Signal<T | undefined>;
+  readonly value: Signal<T>;              // Always returns T (with initialValue fallback)
   readonly error: Signal<E | null>;
   readonly status: Signal<ResourceStatus>;
   readonly isLoading: Signal<boolean>;
-  readonly hasValue: Signal<boolean>;
-  readonly isIdle: Signal<boolean>;
-  reload: () => void;        // For read operations (GET)
-  execute: () => void;       // For mutations (POST/PUT/DELETE)
+  readonly isIdle: Signal<boolean>;        - ngx-lift extension
+  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;  // Type predicate method
+  reload(): boolean;                      // Returns true if initiated, for read operations (GET)
+  execute(): boolean;                     // Alias for reload() - for mutations (POST/PUT/DELETE)
 }
 
 type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
@@ -323,7 +538,7 @@ export class UserDetailComponent {
   userId = signal(1);
 
   // Default 'switch' behavior - cancels previous request
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
     {behavior: 'switch'} // default
   );
@@ -339,7 +554,7 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
 
   // Provide initial value from route state or cached data
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>('/api/user'),
     {
       initialValue: this.getInitialUser(), // Display immediately
@@ -362,7 +577,7 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  user = resourceAsync(
+  userRef = resourceAsync(
     () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
     {
       throwOnError: true,  // Errors will propagate up
@@ -405,7 +620,7 @@ export class RegistrationComponent {
   });
 
   // Registration resource with exhaust + lazy
-  registration = resourceAsync(
+  registrationRef = resourceAsync(
     () => {
       const payload: RegistrationPayload = {
         username: this.form.value.username!,
@@ -430,7 +645,7 @@ export class RegistrationComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.registration.execute();  // Use execute() for mutations
+      this.registrationRef.execute();  // Use execute() for mutations
     }
   }
 }
@@ -438,11 +653,11 @@ export class RegistrationComponent {
 
   registrationHtmlCode = highlight(`
 <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
-  @if (registration.status() === 'resolved' && registration.value(); as response) {
-    <cll-alert [content]="response.message" [alertType]="'success'" cds-layout="m-t:md" />
+  @if (registrationRef.hasValue()) {
+    <cll-alert [content]="registrationRef.value().message" [alertType]="'success'" cds-layout="m-t:md" />
   }
-  @if (registration.status() === 'error' && registration.error(); as error) {
-    <cll-alert [content]="'Registration failed: ' + error.message" [alertType]="'danger'" cds-layout="m-t:md" />
+  @if (registrationRef.error(); as error) {
+    <cll-alert [content]="'Registration failed: ' + error" [alertType]="'danger'" cds-layout="m-t:md" />
   }
 
   <clr-input-container>
@@ -467,12 +682,199 @@ export class RegistrationComponent {
     <button
       class="btn btn-primary"
       type="submit"
-      [disabled]="registration.isLoading()"
-      [clrLoading]="registration.isLoading()"
+      [disabled]="registrationRef.isLoading()"
+      [clrLoading]="registrationRef.isLoading()"
     >
       Register
     </button>
   </div>
 </form>
+  `);
+
+  // ============================================================================
+  // WritableResourceRef Code Blocks
+  // ============================================================================
+
+  optimisticUpdateCode = highlight(`
+import {resourceAsync} from 'ngx-lift';
+import {Component, inject, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class TodoComponent {
+  private http = inject(HttpClient);
+  todoId = signal(1);
+
+  todoRef = resourceAsync(() => 
+    this.http.get<Todo>(\`/api/todos/\${this.todoId()}\`)
+  );
+
+  toggleTodo() {
+    // 1. Update UI immediately (optimistic)
+    this.todoRef.update(todo => ({ ...todo, completed: !todo.completed }));
+
+    // 2. Send to server
+    this.http.put(\`/api/todos/\${this.todoId()}\`, this.todoRef.value())
+      .subscribe({
+        next: () => {
+          console.log('Todo updated successfully');
+        },
+        error: () => {
+          // Revert on error
+          this.todoRef.update(todo => ({ ...todo, completed: !todo.completed }));
+          alert('Failed to update todo');
+        }
+      });
+  }
+}
+  `);
+
+  cacheFirstCode = highlight(`
+import {resourceAsync} from 'ngx-lift';
+import {Component, inject, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class UserProfileComponent {
+  private http = inject(HttpClient);
+  userId = signal(1);
+
+  userRef = resourceAsync(
+    () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
+    { lazy: true }
+  );
+
+  loadUser() {
+    // 1. Set cached data immediately (from localStorage, router state, etc.)
+    const cachedUser = localStorage.getItem('user');
+    if (cachedUser) {
+      this.userRef.set(JSON.parse(cachedUser)); // Status: local
+    }
+
+    // 2. Fetch fresh data in background
+    this.userRef.reload(); // Status: reloading → resolved
+  }
+}
+
+// Template shows cached data immediately, updates when fresh data arrives
+  `);
+
+  formDraftCode = highlight(`
+import {resourceAsync} from 'ngx-lift';
+import {Component, inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class CounterComponent {
+  private http = inject(HttpClient);
+
+  counterRef = resourceAsync(
+    () => this.http.get<number>('/api/counter'),
+    { lazy: true }
+  );
+
+  incrementCounter() {
+    this.counterRef.update(count => count + 1); // Status: local
+  }
+
+  decrementCounter() {
+    this.counterRef.update(count => count - 1); // Status: local
+  }
+
+  saveCounter() {
+    this.http.put('/api/counter', { value: this.counterRef.value() })
+      .subscribe({
+        next: () => {
+          alert('Counter saved!');
+          this.counterRef.reload(); // Get server state
+        },
+        error: () => alert('Failed to save')
+      });
+  }
+
+  discardChanges() {
+    this.counterRef.reload(); // Revert to server state
+  }
+}
+
+// Show "Unsaved changes" when status === 'local'
+  `);
+
+  nestedResourceCode = highlight(`
+import {resourceAsync, ResourceRef} from 'ngx-lift';
+import {Component, inject, Injector, runInInjectionContext, untracked} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class ProjectListComponent {
+  private http = inject(HttpClient);
+  private injector = inject(Injector);
+
+  // Outer resource: List of projects
+  projectsRef = resourceAsync(() => 
+    this.http.get<Project[]>('/api/projects')
+  );
+
+  // Inner resources: Map of orgId -> ResourceRef<Organization>
+  private orgRefsMap = new Map<string, ResourceRef<Organization>>();
+
+  /**
+   * Get or create a resource for the given orgId.
+   * Called from template during change detection.
+   * 
+   * REQUIRES TWO WRAPPERS:
+   * 1. untracked() - Prevents NG0602 (effect in reactive context)
+   * 2. runInInjectionContext() - Prevents NG0203 (no injection context)
+   */
+  getOrgRef(orgId: string): ResourceRef<Organization> {
+    return untracked(() => {  // Break out of reactive context
+      let orgRef = this.orgRefsMap.get(orgId);
+      if (!orgRef) {
+        orgRef = runInInjectionContext(this.injector, () =>  // Provide injection context
+          resourceAsync(
+            () => this.http.get<Organization>(\`/api/orgs/\${orgId}\`),
+            { lazy: true }
+          )
+        );
+        this.orgRefsMap.set(orgId, orgRef);
+      }
+      return orgRef;
+    });
+  }
+
+  loadOrg(orgId: string) {
+    this.getOrgRef(orgId).reload();
+  }
+}
+  `);
+
+  nestedResourceHtmlCode = highlight(`
+<table class="table">
+  <tbody>
+    @for (project of projectsRef.value(); track project.id) {
+      <tr>
+        <td>{{ project.name }}</td>
+        <td>
+          @if (getOrgRef(project.orgId); as orgRef) {
+            <!-- Loading state for THIS row only -->
+            @if (orgRef.isLoading()) {
+              <cll-spinner size="xs" />
+            }
+
+            <!-- Error state for THIS row only -->
+            @if (orgRef.error(); as error) {
+              <cll-alert [content]="error" [compact]="true" />
+              <button (click)="orgRef.reload()">Retry</button>
+            }
+
+            <!-- Success state -->
+            @if (orgRef.hasValue()) {
+              <strong>{{ orgRef.value().name }}</strong>
+            }
+          }
+        </td>
+        <td>
+          <button (click)="loadOrg(project.orgId)">Load Org</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
   `);
 }

@@ -190,18 +190,19 @@ export class UserComponent {
   user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
 
   // Access individual signals for optimal performance
-  // user.value()     - The data (T | undefined)
+  // user.value()     - The data (T with initialValue fallback)
   // user.error()     - Error if any (E | null)
-  // user.status()    - 'idle' | 'loading' | 'success' | 'error'
+  // user.status()    - 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
   // user.isLoading() - Boolean loading state
-  // user.hasValue()  - Boolean - has data available
-  // user.isIdle()    - Boolean - never triggered
+  // user.isIdle()    - Boolean idle state (ngx-lift extension)
+  // user.hasValue()  - Type predicate - narrows value type
   // user.reload()    - Function to manually reload
+  // user.execute()   - Alias for reload() (ngx-lift extension)
 
   // Template usage
   // @if (user.isLoading()) { <spinner /> }
   // @if (user.error(); as error) { <alert [error]="error" /> }
-  // @if (user.value(); as userData) { <user-card [user]="userData" /> }
+  // @if (user.hasValue()) { <user-card [user]="user.value()" /> }
 }
 ```
 
