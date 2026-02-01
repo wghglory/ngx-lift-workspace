@@ -32,9 +32,10 @@
     <article class="space-y-3">
       <h3>Example 3: Poll with initialValue</h3>
       <p>
-        By default, the poll initial result is <code>&#123;loading: true, error: null, data: null&#125;</code>, which is
-        convenient for displaying a loading spinner. However, in some cases, you may not want to display a loading
-        spinner. You can set <code>initialValue</code> to any value you want:
+        By default, the poll initial result is
+        <code>&#123;status: 'loading', isLoading: true, error: null, data: null&#125;</code>, which is convenient for
+        displaying a loading spinner. However, in some cases, you may not want to display a loading spinner. You can set
+        <code>initialValue</code> to any value you want:
       </p>
       <app-code-block [code]="pollingInitialValue" lang="typescript" />
     </article>
@@ -86,7 +87,7 @@
       <clr-datagrid
         class="min-h-[200px]"
         (clrDgRefresh)="refresh($event)"
-        [clrDgLoading]="(usersState$ | async)?.loading === true"
+        [clrDgLoading]="(usersState$ | async)?.isLoading === true"
         [(clrDgSingleSelected)]="selectedItem"
       >
         <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
@@ -178,7 +179,7 @@
             <div class="ml-4">
               <p class="text-sm !mt-1">
                 <em>(Optional)</em> An initial <code>AsyncState</code> value. Defaults to
-                <code>&#123; loading: true, error: null, data: null &#125;</code>.
+                <code>&#123; status: 'loading', isLoading: true, error: null, data: null &#125;</code>.
               </p>
             </div>
           </li>
@@ -195,8 +196,39 @@
 
         <h4>Returns</h4>
         <p class="text-sm">
-          An observable that emits <code>AsyncState&lt;Data&gt;</code> objects with loading, error, and data properties.
+          An observable that emits <code>AsyncState&lt;Data&gt;</code> objects with status, isLoading, error, and data
+          properties.
         </p>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>status: ResourceStatus</code>
+            <p class="text-sm ml-4 !mt-1">
+              <strong>New!</strong> Granular status tracking:
+              <code>'idle' | 'loading' | 'reloading' | 'resolved' | 'error'</code>
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>isLoading: boolean</code>
+            <p class="text-sm ml-4 !mt-1">
+              <strong>Recommended!</strong> Indicates if any loading operation is in progress. Returns
+              <code>true</code> when <code>status === 'loading' || status === 'reloading'</code>.
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>isLoading: boolean</code>
+            <p class="text-sm ml-4 !mt-1">
+              <span class="badge badge-warning">Deprecated</span> Use <code>isLoading</code> instead.
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>error: E | null</code>
+            <p class="text-sm ml-4 !mt-1">Encountered errors during the operation.</p>
+          </li>
+          <li class="space-y-1">
+            <code>data: T | null</code>
+            <p class="text-sm ml-4 !mt-1">Successful result of the operation.</p>
+          </li>
+        </ul>
       </div>
     </div>
   </section>

@@ -12,6 +12,12 @@
             routerLinkActive="active"
           >
             {{ child.value }}
+            @if (child.label === 'new') {
+              <span class="badge badge-success">NEW</span>
+            }
+            @if (child.label === 'updated') {
+              <span class="badge badge-info">UPDATED</span>
+            }
           </a>
         }
       </clr-vertical-nav-group-children>

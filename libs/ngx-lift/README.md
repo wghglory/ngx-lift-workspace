@@ -50,6 +50,8 @@ common Angular development tasks and boost productivity.
 - **`injectParams`** - Injects route parameters as signals
 - **`injectQueryParams`** - Injects query parameters as signals
 - **`mergeFrom`** - Merges Observables and Signals into a Signal (like `merge`)
+- **`resourceAsync`** - 🆕 Reactive resource for managing async operations with reload, cancellation, and full state
+  tracking (similar to Angular's `httpResource`)
 
 ### 🔧 Pipes
 
@@ -77,7 +79,8 @@ common Angular development tasks and boost productivity.
 
 ### 📦 Models
 
-- **`AsyncState`** - Type for managing async operation states
+- **`AsyncState`** - Type for managing async operation states with `status` field: `idle | loading | success | error`
+- **`ResourceStatus`** - Type alias for resource status states
 - **Kubernetes Models** - Types for Kubernetes object metadata and conditions
 
 ## Requirements
@@ -96,6 +99,31 @@ yarn add ngx-lift
 # or
 pnpm add ngx-lift
 ```
+
+### Upgrading from v1.x to v19.x
+
+**Important:** v19.0.0 includes a breaking change to the `AsyncState` interface:
+
+- `loading` property renamed to `isLoading`
+- New `status` property added
+
+**Automated Migration:**
+
+We provide a migration script to automatically update your code:
+
+```bash
+# Quick one-liner (downloads and runs migration)
+curl -sSL https://raw.githubusercontent.com/wghglory/ngx-lift-workspace/main/tools/download-and-migrate.sh | bash -s -- src
+
+# Or manual download and run
+curl -o migrate-async-state.js https://raw.githubusercontent.com/wghglory/ngx-lift-workspace/main/migration/migrate-async-state.js
+node migrate-async-state.js src
+
+# Preview changes first (dry run)
+node migrate-async-state.js src --dry-run
+```
+
+See the [Migration Guide](../../docs/MIGRATION_ASYNC_STATE.md) for detailed instructions and manual migration steps.
 
 ## 🚀 Quick Start
 
@@ -148,6 +176,47 @@ export class DataComponent {
 ```
 
 ### Using Signal Utilities
+
+**Resource Async** - Modern reactive resource management (like Angular's `httpResource`):
+
+```typescript
+import {resourceAsync} from 'ngx-lift';
+
+export class UserComponent {
+  private http = inject(HttpClient);
+
+  // Automatically fetches and re-fetches when userId changes
+  userId = signal(1);
+  user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
+
+  // Access individual signals for optimal performance
+  // user.value()     - The data (T | undefined)
+  // user.error()     - Error if any (E | null)
+  // user.status()    - 'idle' | 'loading' | 'success' | 'error'
+  // user.isLoading() - Boolean loading state
+  // user.hasValue()  - Boolean - has data available
+  // user.isIdle()    - Boolean - never triggered
+  // user.reload()    - Function to manually reload
+
+  // Template usage
+  // @if (user.isLoading()) { <spinner /> }
+  // @if (user.error(); as error) { <alert [error]="error" /> }
+  // @if (user.value(); as userData) { <user-card [user]="userData" /> }
+}
+```
+
+**Computed Async** - Create computed signals from async sources:
+
+```typescript
+import {computedAsync} from 'ngx-lift';
+
+export class UserComponent {
+  userId = signal(1);
+
+  // Automatically recomputes when userId changes
+  user = computedAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
+}
+```
 
 **Route Parameters as Signals** - Access route params reactively:
 

@@ -5,14 +5,14 @@
   [clrAlertLightweight]="isLightweight()"
 >
   <clr-alert-item>
-    @if (error()) {
-      <span class="alert-text" role="alert">{{ error()?.error?.message || error()?.message }}</span>
+    @if (errorMessage()) {
+      <span class="alert-text" role="alert">{{ errorMessage() }}</span>
     }
     @if (content()) {
       <span class="alert-text" role="alert" [innerHTML]="content()"></span>
     }
 
-    @if (!error() && !content()) {
+    @if (!errorMessage() && !content()) {
       <span class="alert-text" role="alert">
         <ng-content />
       </span>

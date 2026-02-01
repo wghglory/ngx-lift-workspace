@@ -38,7 +38,7 @@
         In the "get users" request below, the response returns 9 users. We intend to display only the first 3 users. Any
         client-side filtering, sorting can use the same strategy.
       </p>
-      @if (usersState()?.loading) {
+      @if (usersState()?.isLoading) {
         <cll-spinner />
       }
 

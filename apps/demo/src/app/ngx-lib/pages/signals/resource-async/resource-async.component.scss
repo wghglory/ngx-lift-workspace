@@ -1,0 +1,29 @@
+.demo-section {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: var(--clr-global-app-background, #fafafa);
+  border-radius: 0.25rem;
+
+  h3 {
+    margin-top: 0;
+  }
+
+  button {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.status-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}

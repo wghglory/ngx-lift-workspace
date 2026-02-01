@@ -8,7 +8,7 @@ describe('createAsyncState', () => {
     const data$ = of('test').pipe(createAsyncState());
 
     const result = await lastValueFrom(data$.pipe(last()));
-    expect(result).toEqual({loading: false, error: null, data: 'test'});
+    expect(result).toEqual({status: 'resolved', isLoading: false, error: null, data: 'test'});
   });
 
   it('should handle side effects using tap for successful data', async () => {
@@ -46,7 +46,7 @@ describe('createAsyncState', () => {
     );
 
     const result = await lastValueFrom(data$.pipe(takeLast(1)));
-    expect(result).toEqual({loading: false, error: null, data: 'test'});
+    expect(result).toEqual({status: 'resolved', isLoading: false, error: null, data: 'test'});
   });
 
   it('should transform Observable data to AsyncState with custom loading state and catchError', async () => {
@@ -58,6 +58,28 @@ describe('createAsyncState', () => {
     );
 
     const result = await lastValueFrom(data$.pipe(last()));
-    expect(result).toEqual({loading: false, error: 'Error!', data: null});
+    expect(result).toEqual({status: 'error', isLoading: false, error: 'Error!', data: null});
+  });
+
+  it('should emit loading state initially with status', async () => {
+    const data$ = of('test').pipe(createAsyncState());
+    const states: unknown[] = [];
+
+    data$.subscribe((state) => states.push(state));
+
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'test'});
+  });
+
+  it('should support custom initial value with status', async () => {
+    const data$ = of('test').pipe(
+      createAsyncState(undefined, {status: 'idle', isLoading: false, error: null, data: 'initial'}),
+    );
+    const states: unknown[] = [];
+
+    data$.subscribe((state) => states.push(state));
+
+    expect(states[0]).toEqual({status: 'idle', isLoading: false, error: null, data: 'initial'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'test'});
   });
 });

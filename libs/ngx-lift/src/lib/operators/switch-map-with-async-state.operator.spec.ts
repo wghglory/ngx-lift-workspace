@@ -17,7 +17,7 @@ describe('switchMapWithAsyncState', () => {
     });
 
     tick(100);
-    expect(state).toEqual({loading: false, error: null, data: 2});
+    expect(state).toEqual({status: 'resolved', isLoading: false, error: null, data: 2});
   }));
 
   it('should transform values and handle error in async operation', fakeAsync(() => {
@@ -32,7 +32,7 @@ describe('switchMapWithAsyncState', () => {
     });
 
     tick(0);
-    expect(state).toEqual({loading: false, error: new Error('Async Error!'), data: null});
+    expect(state).toEqual({status: 'error', isLoading: false, error: new Error('Async Error!'), data: null});
   }));
 
   it('should start with loading state and handle multiple async operations', fakeAsync(() => {
@@ -47,12 +47,12 @@ describe('switchMapWithAsyncState', () => {
     });
 
     // Initial loading state
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     // Wait for async operation to complete
     tick(100);
 
-    expect(states[1]).toEqual({loading: false, error: null, data: 2});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 2});
 
     subscription.unsubscribe();
   }));

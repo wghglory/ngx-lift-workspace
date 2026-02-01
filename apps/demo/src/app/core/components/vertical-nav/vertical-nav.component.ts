@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+  WritableSignal,
+} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
@@ -12,6 +21,7 @@ import {clrLiftNavConfig, ngxLiftNavConfig} from './vertical-nav.const';
   templateUrl: './vertical-nav.component.html',
   styleUrl: './vertical-nav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class VerticalNavComponent implements OnInit {
   navConfig: WritableSignal<NavConfig[]> = signal(ngxLiftNavConfig);

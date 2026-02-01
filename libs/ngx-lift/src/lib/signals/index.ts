@@ -4,3 +4,4 @@ export * from './create-trigger';
 export * from './inject-params';
 export * from './inject-query-params';
 export * from './merge-from';
+export * from './resource-async';

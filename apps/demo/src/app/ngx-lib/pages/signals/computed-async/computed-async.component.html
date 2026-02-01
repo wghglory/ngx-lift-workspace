@@ -114,12 +114,12 @@
       <h3>Example 9: Load Data Initially</h3>
       <p>Load users initially when the component loads:</p>
       <div>
-        <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().loading === true">
+        <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().isLoading === true">
           Refresh
         </button>
       </div>
 
-      @if (usersState().loading) {
+      @if (usersState().isLoading) {
         <cll-spinner />
       }
 
@@ -146,12 +146,12 @@
       <h3>Example 10: Load Data When Button Clicks</h3>
       <p>Load users only when a button is clicked:</p>
       <div>
-        <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.loading === true">
+        <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.isLoading === true">
           Load Users
         </button>
       </div>
 
-      @if (deferredUsersState()?.loading) {
+      @if (deferredUsersState()?.isLoading) {
         <cll-spinner />
       }
 
@@ -169,6 +169,32 @@
 
       <app-code-block [code]="loadDeferHtmlCode" lang="html" />
       <app-code-block [code]="loadDeferTsCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 11: Error Handling with onError</h3>
+      <p>
+        Use the <code>onError</code> callback to handle errors gracefully and provide fallback values. When
+        <code>onError</code> returns a value, the signal will emit that value instead of throwing an error:
+      </p>
+      <app-code-block [code]="errorHandlingCode" lang="typescript" />
+      <cll-callout>
+        The <code>onError</code> callback receives the error and can return a fallback value. If it returns
+        <code>undefined</code>, the error will be stored in the signal (when used with <code>createAsyncState</code>).
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 12: Error Handling with throwOnError</h3>
+      <p>
+        Use <code>throwOnError: true</code> to propagate errors up instead of silently handling them. This is useful
+        when you want errors to bubble up to a global error handler:
+      </p>
+      <app-code-block [code]="throwOnErrorCode" lang="typescript" />
+      <cll-callout type="warning">
+        When <code>throwOnError: true</code>, errors will be thrown even if <code>onError</code> is provided. The
+        <code>onError</code> callback can still be used for logging or side effects before the error throws.
+      </cll-callout>
     </article>
   </section>
 
@@ -213,6 +239,17 @@
                 <li>
                   <code>behavior?: 'switch' | 'merge' | 'concat' | 'exhaust'</code> - The flattening strategy for
                   handling multiple computations. Defaults to <code>'switch'</code>.
+                </li>
+                <li>
+                  <code>onError?: (error: unknown) => T | undefined</code> -
+                  <span class="badge badge-success">New!</span>
+                  Error handler that receives errors from async operations. Can return a fallback value to recover from
+                  errors.
+                </li>
+                <li>
+                  <code>throwOnError?: boolean</code> - <span class="badge badge-success">New!</span> If
+                  <code>true</code>, errors will be thrown and propagate up. If <code>false</code> (default), errors can
+                  be handled by <code>onError</code>.
                 </li>
               </ul>
             </div>

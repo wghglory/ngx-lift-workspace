@@ -1,5 +1,5 @@
 <div>
-  <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="(usersState$ | async)?.loading">
+  <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="(usersState$ | async)?.isLoading">
     Refresh
   </button>
 </div>
@@ -7,7 +7,7 @@
 <clr-datagrid
   class="min-h-[200px]"
   (clrDgRefresh)="refresh($event)"
-  [clrDgLoading]="(usersState$ | async)?.loading === true"
+  [clrDgLoading]="(usersState$ | async)?.isLoading === true"
   [(clrDgSingleSelected)]="selectedItem"
 >
   <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
@@ -45,7 +45,7 @@ Another approach:
 
 @if ({usersState: usersState$ | async, total: total$ | async}; as vm) {
   <div>
-    <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="vm.usersState?.loading">
+    <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="vm.usersState?.isLoading">
       Refresh
     </button>
   </div>
@@ -53,7 +53,7 @@ Another approach:
   <clr-datagrid
     class="min-h-[200px]"
     (clrDgRefresh)="refresh($event)"
-    [clrDgLoading]="vm.usersState?.loading === true"
+    [clrDgLoading]="vm.usersState?.isLoading === true"
     [(clrDgSingleSelected)]="selectedItem"
   >
     <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>

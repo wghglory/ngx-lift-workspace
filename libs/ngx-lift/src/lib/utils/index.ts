@@ -3,6 +3,7 @@ export * from './form.util';
 export * from './idle-detection';
 export * from './is-empty.util';
 export * from './is-equal.util';
+export * from './is-promise.util';
 export * from './omit-by.util';
 export * from './pick-by.util';
 export * from './range.util';

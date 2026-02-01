@@ -51,7 +51,7 @@ export function combineFrom<Input extends readonly unknown[], Output = Input>(
   options?: CombineFromOptions<Output>,
 ): Signal<Output>;
 
-// ---------- 2 args wit array inputs -------------
+// ---------- 2 args with array inputs -------------
 // 1. no initialValue
 export function combineFrom<Input extends readonly unknown[], Output = Input>(
   sources: readonly [...ObservableSignalInputTuple<Input>],
@@ -166,9 +166,10 @@ export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal
           initialValue: options.initialValue,
           injector: options?.injector,
         })
-      : (toSignal(combineLatest(normalizedSources).pipe(operator), {
+      : // Note: requireSync is not used here to allow async sources without initialValue
+        // The signal will be undefined until all sources emit at least once
+        (toSignal(combineLatest(normalizedSources).pipe(operator), {
           injector: options?.injector,
-          // requireSync: true,
         }) as Signal<Output | undefined>);
 
   return ret;

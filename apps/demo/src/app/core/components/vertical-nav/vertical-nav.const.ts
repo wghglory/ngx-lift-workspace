@@ -7,11 +7,12 @@ export const ngxLiftNavConfig: NavConfig[] = [
     icon: 'radar',
     children: [
       {path: '/createTrigger', value: 'createTrigger'},
-      {path: '/computedAsync', value: 'computedAsync'},
+      {path: '/computedAsync', value: 'computedAsync', label: 'updated'},
       {path: '/combineFrom', value: 'combineFrom'},
       {path: '/mergeFrom', value: 'mergeFrom'},
       {path: '/injectParams/hi-param', value: 'injectParams'},
       {path: '/injectQueryParams', queryParams: {search: 7, page: 5}, value: 'injectQueryParams'},
+      {path: '/resourceAsync', value: 'resourceAsync', label: 'new'},
     ],
   },
   {
@@ -19,7 +20,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
     value: 'Operators',
     icon: 'objects',
     children: [
-      {path: '/createAsyncState', value: 'createAsyncState'},
+      {path: '/createAsyncState', value: 'createAsyncState', label: 'updated'},
       {path: '/switchMapWithAsyncState', value: 'switchMapWithAsyncState'},
       {path: '/combineLatestEager', value: 'combineLatestEager'},
       {path: '/distinctOnChange', value: 'distinctOnChange'},
@@ -48,7 +49,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/if', value: 'ifValidator / ifAsyncValidator'},
       {path: '/intersection', value: 'intersectionValidator'},
       {path: '/unique', value: 'UniqueValidator'},
-      {path: '/url', value: 'UrlValidator'},
+      {path: '/url', value: 'urlValidator'},
     ],
   },
   {

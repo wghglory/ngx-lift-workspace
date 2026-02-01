@@ -35,8 +35,8 @@
       </p>
       <app-code-block [code]="exampleWithoutLoadingCode" lang="typescript" />
       <cll-callout>
-        When providing <code>initialValue</code>, set <code>loading: false</code> to prevent the loading spinner from
-        appearing. The data will be updated seamlessly when the API call completes.
+        When providing <code>initialValue</code>, set <code>status: 'idle'</code> and <code>isLoading: false</code> to
+        prevent the loading spinner from appearing. The data will be updated seamlessly when the API call completes.
       </cll-callout>
     </article>
 
@@ -90,8 +90,9 @@
                 first value.
               </p>
               <p class="text-sm !mt-1">
-                Defaults to <code>&#123; loading: true, error: null, data: null &#125;</code>. Useful when you have
-                pre-existing data (e.g., from route state) and want to avoid showing a loading spinner initially.
+                Defaults to <code>&#123; status: 'loading', isLoading: true, error: null, data: null &#125;</code>.
+                Useful when you have pre-existing data (e.g., from route state) and want to avoid showing a loading
+                spinner initially.
               </p>
             </div>
           </li>
@@ -106,8 +107,25 @@
         <p>The <code>AsyncState</code> object encapsulates the following properties:</p>
         <ul class="list-disc space-y-2 ml-6">
           <li class="space-y-1">
-            <code>loading: boolean</code>
-            <p class="text-sm ml-4 !mt-1">Indicates that the asynchronous operation is in progress.</p>
+            <code>status: ResourceStatus</code>
+            <p class="text-sm ml-4 !mt-1">
+              <strong>New!</strong> Granular status tracking:
+              <code>'idle' | 'loading' | 'reloading' | 'resolved' | 'error'</code>
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>isLoading: boolean</code>
+            <p class="text-sm ml-4 !mt-1">
+              <strong>Recommended!</strong> Indicates if any loading operation is in progress. Returns
+              <code>true</code> when <code>status === 'loading' || status === 'reloading'</code>.
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>isLoading: boolean</code>
+            <p class="text-sm ml-4 !mt-1">
+              <span class="badge badge-warning">Deprecated</span> Use <code>isLoading</code> instead, which provides the
+              same functionality with a clearer name.
+            </p>
           </li>
           <li class="space-y-1">
             <code>error: E | null</code>

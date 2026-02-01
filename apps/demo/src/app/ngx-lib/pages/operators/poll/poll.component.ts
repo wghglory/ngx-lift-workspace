@@ -28,7 +28,7 @@ export class PollComponent implements OnInit {
 
   usersState$ = poll({
     interval: 10000,
-    pollingFn: (params) => this.userService.getUsers({...params, results: 10, seed: 'abc'}),
+    pollingFn: (params: Record<string, unknown>) => this.userService.getUsers({...params, results: 10, seed: 'abc'}),
     paramsBuilder: (dgState: ClrDatagridStateInterface | null) => convertToHttpParams(dgState),
     forceRefresh: this.dgState$,
   });
@@ -82,7 +82,7 @@ import {of, delay} from 'rxjs';
 poll({
   interval: 1000,
   pollingFn: () => of(Math.random() * 10).pipe(delay(300)),
-  initialValue: {loading: false, error: null, data: 0}, // display 0 for initial value
+  initialValue: {status: 'idle', isLoading: false, error: null, data: 0}, // display 0 for initial value
 }).subscribe(console.log);
   `);
 

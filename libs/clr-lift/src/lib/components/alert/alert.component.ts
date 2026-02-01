@@ -1,5 +1,5 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 
 import {AlertType} from '../alerts/alert.type';
@@ -13,8 +13,11 @@ import {AlertType} from '../alerts/alert.type';
  * <!-- Basic alert -->
  * <cll-alert [content]="'This is an error message'" />
  *
- * <!-- Alert with error object -->
- * <cll-alert [error]="errorResponse" />
+ * <!-- Alert with HttpErrorResponse -->
+ * <cll-alert [error]="httpError" />
+ *
+ * <!-- Alert with generic Error -->
+ * <cll-alert [error]="error" />
  *
  * <!-- Small, lightweight alert -->
  * <cll-alert
@@ -59,14 +62,35 @@ export class AlertComponent {
   isAppLevel = input(false);
 
   /**
-   * An HTTP error response object to display.
-   * If provided, the alert will automatically extract and display error information.
+   * An error object to display. Accepts HttpErrorResponse or Error.
+   * The component will extract the error message from various error formats.
    */
-  error = input<HttpErrorResponse>();
+  error = input<HttpErrorResponse | Error>();
 
   /**
    * The text content to display in the alert.
    * If both `error` and `content` are provided, `error` takes precedence.
    */
   content = input('');
+
+  /**
+   * Computed error message extracted from various error formats.
+   * Handles HttpErrorResponse, Error, and custom error objects.
+   */
+  protected errorMessage = computed(() => {
+    const err = this.error();
+    if (!err) return '';
+
+    // HttpErrorResponse: error?.error?.message || error?.message
+    if ('error' in err && err.error && typeof err.error === 'object' && 'message' in err.error) {
+      return err.error.message;
+    }
+
+    // Error or custom object with message property
+    if ('message' in err) {
+      return err.message;
+    }
+
+    return '';
+  });
 }

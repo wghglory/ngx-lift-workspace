@@ -133,10 +133,17 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
+  // AsyncState includes status field for granular state tracking
   userState: Signal<AsyncState<User>> = computedAsync(
     () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`).pipe(createAsyncState()),
     {requireSync: true},
   );
+
+  // Access state via:
+  // userState().status  // 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
+  // userState().isLoading
+  // userState().error
+  // userState().data
 }
   `);
 
@@ -176,10 +183,10 @@ export class UserDetailComponent {
 
   loadInitiallyHtmlCode = highlight(`
 <div>
-  <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().loading === true">Refresh</button>
+  <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().isLoading">Refresh</button>
 </div>
 
-@if (usersState().loading) {
+@if (usersState().isLoading) {
   <cll-spinner />
 }
 
@@ -223,12 +230,12 @@ export class UserListComponent {
 
   loadDeferHtmlCode = highlight(`
 <div>
-  <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.loading === true">
+  <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.isLoading">
     Load Users
   </button>
 </div>
 
-@if (deferredUsersState()?.loading) {
+@if (deferredUsersState()?.isLoading) {
   <cll-spinner />
 }
 
@@ -265,6 +272,53 @@ export class UserListComponent {
 }
   `);
 
+  errorHandlingCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class UserDetailComponent {
+  private http = inject(HttpClient);
+  userId = input.required<number>();
+
+  // Handle errors and provide fallback value
+  user: Signal<User | undefined> = computedAsync(
+    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
+    {
+      onError: (error) => {
+        console.error('Failed to load user:', error);
+        // Return fallback user
+        return {id: 0, name: 'Guest User', email: 'guest@example.com'} as User;
+      }
+    }
+  );
+}
+  `);
+
+  throwOnErrorCode = highlight(`
+import {computedAsync} from 'ngx-lift';
+import {Component, inject, input, Signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class UserDetailComponent {
+  private http = inject(HttpClient);
+  userId = input.required<number>();
+
+  // Throw errors instead of silently handling them
+  user: Signal<User | undefined> = computedAsync(
+    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
+    {
+      throwOnError: true,  // Errors will propagate up
+      onError: (error) => {
+        console.error('API Error:', error);
+        // Can still log/handle but error will still throw
+        return undefined;  // Won't be used since error throws
+      }
+    }
+  );
+}
+  `);
+
   signatureCode = highlight(`
 computedAsync<T>(
   computation: (previousValue?: T) => Promise<T> | Observable<T> | T,
@@ -275,6 +329,8 @@ interface ComputedAsyncOptions<T> {
   initialValue?: T;
   requireSync?: boolean;
   behavior?: 'switch' | 'merge' | 'concat' | 'exhaust';
+  onError?: (error: unknown) => T | undefined;
+  throwOnError?: boolean;
 }
   `);
 }
