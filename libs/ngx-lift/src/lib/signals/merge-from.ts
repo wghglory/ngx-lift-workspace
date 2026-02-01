@@ -87,7 +87,10 @@ export function mergeFrom<Input extends readonly unknown[], Output = Input[numbe
 
   const normalizedSources = sources.map((source) => {
     if (isSignal(source)) {
-      return toObservable(source, {injector: options.injector}).pipe(startWith(untracked(source)));
+      return toObservable(source, {injector: options.injector}).pipe(
+        startWith(untracked(source)),
+        distinctUntilChanged(),
+      );
     }
 
     if (!isObservable(source)) {

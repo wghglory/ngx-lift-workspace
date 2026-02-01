@@ -28,7 +28,7 @@
     <button
       class="btn"
       [class]="timelineWizardService.isLastStep ? 'btn-success' : 'btn-primary'"
-      [clrLoading]="(next$ | async)?.loading === true"
+      [clrLoading]="(next$ | async)?.isLoading === true"
       [disabled]="currentStepFormInvalid"
       (click)="nextStep()"
     >

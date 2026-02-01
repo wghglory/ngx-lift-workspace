@@ -2,6 +2,8 @@
 import {computed, CreateComputedOptions, DestroyRef, effect, inject, Signal, signal, untracked} from '@angular/core';
 import {concatAll, exhaustAll, isObservable, mergeAll, Observable, Subject, switchAll} from 'rxjs';
 
+import {isPromise} from '../utils/is-promise.util';
+
 /**
  * Behavior mode for handling multiple async sources in computedAsync.
  * - `switch`: Cancel previous async operations when a new one starts (default)
@@ -11,8 +13,21 @@ import {concatAll, exhaustAll, isObservable, mergeAll, Observable, Subject, swit
  */
 type ComputedAsyncBehavior = 'switch' | 'merge' | 'concat' | 'exhaust';
 
-// { equal, behavior }
-type BaseOptions<T> = CreateComputedOptions<T> & {behavior?: ComputedAsyncBehavior};
+// { equal, behavior, onError, throwOnError }
+type BaseOptions<T> = CreateComputedOptions<T> & {
+  behavior?: ComputedAsyncBehavior;
+  /**
+   * Optional error handler that receives errors from async operations.
+   * Can be used to transform errors or provide fallback values.
+   * If provided, the signal will emit the return value instead of the error.
+   */
+  onError?: (error: unknown) => T | undefined;
+  /**
+   * If true, errors will be thrown and propagate up.
+   * If false (default), errors are set on the signal and can be handled by onError.
+   */
+  throwOnError?: boolean;
+};
 
 type OptionsWithInitialValue<T> = {initialValue: T} & BaseOptions<T>;
 type OptionsWithOptionalInitialValue<T> = {initialValue?: undefined} & BaseOptions<T>;
@@ -42,6 +57,8 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  *   - `requireSync`: If `true`, requires the first computation to be synchronous (throws error for Promises)
  *   - `behavior`: How to handle multiple async operations ('switch' | 'merge' | 'concat' | 'exhaust')
  *   - `equal`: Custom equality function for signal comparison
+ *   - `onError`: Error handler that can transform errors or provide fallback values
+ *   - `throwOnError`: If true, errors will be thrown; if false (default), errors are set on the signal
  * @returns A signal that emits the computed value. May be `T | undefined` if no initial value is provided.
  *
  * @example
@@ -66,6 +83,30 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  * const data = computedAsync(
  *   () => this.dataService.getData(),
  *   { behavior: 'merge' }
+ * );
+ *
+ * // With error handling
+ * const user = computedAsync(
+ *   () => this.userService.getUser(userId()),
+ *   {
+ *     initialValue: null,
+ *     onError: (error) => {
+ *       console.error('Failed to load user:', error);
+ *       return null; // Provide fallback value
+ *     }
+ *   }
+ * );
+ *
+ * // Throw errors instead of setting them on the signal
+ * const data = computedAsync(
+ *   () => this.dataService.getData(),
+ *   {
+ *     throwOnError: true,
+ *     onError: (error) => {
+ *       this.logService.error(error);
+ *       throw error; // Re-throw after logging
+ *     }
+ *   }
  * );
  * ```
  */
@@ -121,9 +162,21 @@ export function computedAsync<T>(
   const sourceResult = source$.subscribe({
     next: (value) => sourceValue.set(value),
     error: (error) => {
-      sourceValue.set(error);
-      // Error should be handled by the user
-      // throw error;
+      // If throwOnError is true, call onError (if provided) but then throw immediately
+      if (options.throwOnError) {
+        if (options.onError) {
+          options.onError(error);
+        }
+        throw error;
+      }
+
+      // Otherwise, handle error by setting value or fallback
+      if (options.onError) {
+        const fallbackValue = options.onError(error);
+        sourceValue.set(fallbackValue);
+      } else {
+        sourceValue.set(error);
+      }
     },
   });
 
@@ -182,8 +235,4 @@ function flattenObservable<T>(
   };
 
   return source.pipe(behaviorMap[behavior]());
-}
-
-function isPromise<T>(value: any): value is Promise<T> {
-  return value && typeof value.then === 'function';
 }

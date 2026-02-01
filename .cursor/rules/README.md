@@ -6,10 +6,8 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 
 - **`general.mdc`** - Core standards, technologies, code quality, Definition of Done
 - **`angular.mdc`** - Angular 19 patterns: standalone components, signals, control flow, routing
-- **`clarity.mdc`** - Clarity Design System: components, SASS variables, styling, accessibility <<<<<<< HEAD
-- # **`testing.mdc`** - Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
-- **`testing.mdc`** - Jest & Playwright: unit tests, E2E tests, coverage, test patterns
-  > > > > > > > 31f9c6a (docs: enhance cursor workspace with commands and updated rules)
+- **`clarity.mdc`** - Clarity Design System: components, SASS variables, styling, accessibility
+- **`testing.mdc`** - Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
 - **`rxjs.mdc`** - RxJS patterns: observables, operators, async state, subscriptions
 - **`nx.mdc`** - Nx workspace: project structure, boundaries, commands, dependencies
 

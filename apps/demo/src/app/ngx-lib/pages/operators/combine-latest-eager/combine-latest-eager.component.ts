@@ -41,7 +41,7 @@ export class MyComponent {
   @if (vm.rockStarState?.error; as error) {
     <cll-alert [error]="error" />
   }
-  @if (vm.rockStarState?.loading) {
+  @if (vm.rockStarState?.isLoading) {
     <cll-spinner />
   }
   @if (vm.rockStarState?.data; as rockStar) {

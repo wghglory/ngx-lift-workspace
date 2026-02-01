@@ -1,0 +1,444 @@
+<cll-page-container [title]="'resourceAsync'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>resourceAsync</code> function creates a reactive resource that manages async operations with full state
+    tracking. Similar to Angular's <code>httpResource</code> but works with any async operation (Observable, Promise, or
+    sync value). It provides automatic request cancellation when dependencies change, manual <code>reload()</code>
+    capability, and granular status tracking (idle → loading → resolved/error → reloading → resolved/error).
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Usage with Automatic Dependency Tracking</h3>
+      <p>
+        Create a resource that automatically fetches data and re-fetches when dependencies change. Any signal read
+        inside the source function becomes a reactive dependency:
+      </p>
+      <app-code-block [code]="basicCode" lang="typescript" />
+
+      <cll-callout type="info">
+        When <code>userId()</code> changes, <code>resourceAsync</code> automatically:
+        <ul class="mt-2 list-disc">
+          <li>Cancels the previous HTTP request (if still in-flight)</li>
+          <li>Sets status to 'loading'</li>
+          <li>Makes a new request with the updated userId</li>
+          <li>Updates to 'resolved' when complete</li>
+        </ul>
+      </cll-callout>
+
+      <p>Access individual signals in templates for optimal performance:</p>
+      <app-code-block [code]="basicHtmlCode" lang="html" />
+
+      <div>
+        <h4>Demo: User Profile</h4>
+        <p>
+          Whenever different button is clicked, resource will be fetched reactively. Clicking the same button won't
+          trigger a call since the dependency doesn't change. However, you can click the reload button, which triggers
+          <code>resource.reload()</code> to force refetching.
+        </p>
+        <div>
+          <button class="btn btn-primary" (click)="changeUserId(1)">User 1</button>
+          <button class="btn btn-primary" (click)="changeUserId(2)">User 2</button>
+          <button class="btn btn-primary" (click)="changeUserId(3)">User 3</button>
+          <button class="btn" (click)="user.reload()">Reload</button>
+        </div>
+
+        <div class="status-bar">
+          <span
+            class="badge"
+            [class.badge-info]="user.status() === 'loading'"
+            [class.badge-success]="user.status() === 'resolved'"
+            [class.badge-danger]="user.status() === 'error'"
+          >
+            Status: {{ user.status() }}
+          </span>
+          <span class="badge" [class.badge-info]="user.isLoading()">Loading: {{ user.isLoading() }}</span>
+          <span class="badge" [class.badge-success]="user.hasValue()">Has Value: {{ user.hasValue() }}</span>
+        </div>
+
+        @if (user.isLoading()) {
+          <cll-spinner inline />
+        }
+        @if (user.error(); as error) {
+          <cll-alert [error]="error" />
+        }
+        <!-- If you want to keep previous data while loading, you can use the following code: -->
+        <!-- @if (user.value(); as userData) {
+          <app-user-card [user]="userData" />
+        } -->
+        <!-- if you want to hide previous data while refetching, you can use the following code: -->
+        @if (user.status() === 'resolved' && user.value(); as userData) {
+          <app-user-card [user]="userData" />
+        }
+      </div>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Lazy Loading</h3>
+      <p>
+        Use <code>lazy: true</code> to defer loading until <code>reload()</code> is called. The resource starts in
+        'idle' state and won't fetch data until explicitly triggered:
+      </p>
+      <app-code-block [code]="lazyCode" lang="typescript" />
+
+      <div>
+        <h4>Demo: Lazy-Loaded Users</h4>
+        <div>
+          <button class="btn btn-primary" (click)="lazyUsers.reload()" [clrLoading]="lazyUsers.isLoading()">
+            Load Users
+          </button>
+          @if (lazyUsers.isIdle()) {
+            <span class="badge badge-info">Not loaded yet (idle)</span>
+          }
+        </div>
+
+        @if (lazyUsers.isLoading() && !lazyUsers.hasValue()) {
+          <cll-spinner />
+        }
+        @if (lazyUsers.error(); as error) {
+          <cll-alert [error]="error" />
+        }
+        @if (lazyUsers.value()?.results; as userList) {
+          <div class="card-grid">
+            @for (u of userList; track u.id.value) {
+              <app-user-card [user]="u" />
+            }
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Initial Value</h3>
+      <p>Provide an initial value to display before the first fetch completes:</p>
+      <app-code-block [code]="initialValueCode" lang="typescript" />
+      <cll-callout>
+        Useful when navigating from a list to detail page where you already have some data to display immediately.
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Error Handling with Fallback and Error Propagation</h3>
+      <p>
+        Handle errors with <code>onError</code> callback to provide fallback values, or use
+        <code>throwOnError: true</code> to propagate errors:
+      </p>
+
+      <h4>Error Handling with Fallback</h4>
+      <app-code-block [code]="errorHandlingCode" lang="typescript" />
+
+      <div>
+        <h4>Demo: Error Handling with Fallback</h4>
+        <p>This resource attempts to fetch from an invalid endpoint and falls back to a default user:</p>
+
+        <div>
+          <button
+            class="btn btn-primary"
+            (click)="userWithFallback.reload()"
+            [clrLoading]="userWithFallback.isLoading()"
+          >
+            Trigger Request (will fallback)
+          </button>
+        </div>
+
+        @if (userWithFallback.isLoading()) {
+          <cll-spinner />
+        }
+        @if (user.error(); as error) {
+          <cll-alert [error]="error" />
+        }
+        @if (userWithFallback.value(); as userData) {
+          <app-user-card [user]="userData" />
+          <cll-alert [content]="'Showing fallback user after error'" [alertType]="'success'" />
+        }
+      </div>
+
+      <h4 class="!mt-6">Error Propagation</h4>
+      <p>Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:</p>
+      <app-code-block [code]="throwOnErrorCode" lang="typescript" />
+      <cll-callout type="warning">
+        When <code>throwOnError: true</code>, errors will be thrown even if <code>onError</code> is provided. The
+        <code>onError</code> callback can still be used for logging before the error propagates.
+      </cll-callout>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Mutations with execute() - User Registration Form</h3>
+      <p>
+        For mutations (POST/PUT/DELETE), use <code>execute()</code> method instead of <code>reload()</code>. The
+        <code>execute()</code> method is semantically appropriate for operations like form submissions, data saves, and
+        deletes.
+      </p>
+
+      <p>
+        <strong>Key Configuration for Mutations:</strong>
+      </p>
+      <ul class="list-disc ml-6 mb-4">
+        <li><code>lazy: true</code> - Don't execute until explicitly triggered</li>
+        <li>
+          <code>behavior: 'exhaust'</code> - Prevent duplicate submissions (ignore new requests while one is in
+          progress)
+        </li>
+        <li><code>execute()</code> - Use this method instead of <code>reload()</code> for mutations</li>
+      </ul>
+
+      <h4>Registration Component</h4>
+      <app-code-block [code]="registrationCode" lang="typescript" />
+
+      <h4>Registration Template</h4>
+      <app-code-block [code]="registrationHtmlCode" lang="html" />
+
+      <cll-callout type="info">
+        <strong>Why this works great for mutations:</strong>
+        <ul class="mt-2">
+          <li><code>lazy: true</code> - Form submission only happens when user clicks submit</li>
+          <li>
+            <code>behavior: 'exhaust'</code> - If user spams the submit button, subsequent clicks are ignored while
+            request is in-flight
+          </li>
+          <li><code>execute()</code> - Clearer intent than "reload" for a POST request</li>
+          <li><code>isLoading()</code> - Perfect for showing loading state and disabling button</li>
+          <li><code>status()</code> - Track success/error states for user feedback</li>
+        </ul>
+      </cll-callout>
+
+      <div>
+        <h4>Live Demo: User Registration Form</h4>
+        <p class="text-sm mb-4">
+          Try submitting the form below. It simulates a registration API with 70% success rate. With
+          <code>behavior: 'exhaust'</code>, rapid clicking the submit button is ignored while a request is in progress.
+        </p>
+
+        <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
+          @if (registration.status() === 'resolved' && registration.value(); as response) {
+            <cll-alert [content]="response.message" [alertType]="'success'" cds-layout="m-t:md" />
+          }
+          @if (registration.status() === 'error' && registration.error(); as error) {
+            <cll-alert [content]="'Registration failed: ' + error.message" [alertType]="'danger'" cds-layout="m-t:md" />
+          }
+
+          <clr-input-container>
+            <label for="username" class="clr-required-mark">Username</label>
+            <input id="username" clrInput formControlName="username" placeholder="Enter username (3-20 chars)" />
+            <clr-control-error>Username must be 3-20 characters</clr-control-error>
+          </clr-input-container>
+
+          <clr-input-container>
+            <label for="email" class="clr-required-mark">Email</label>
+            <input id="email" clrInput type="email" formControlName="email" placeholder="Enter your email" />
+            <clr-control-error>Please enter a valid email</clr-control-error>
+          </clr-input-container>
+
+          <clr-password-container>
+            <label for="password" class="clr-required-mark">Password</label>
+            <input id="password" clrPassword formControlName="password" placeholder="Enter password (min 8 chars)" />
+            <clr-control-error>Password must be at least 8 characters</clr-control-error>
+          </clr-password-container>
+
+          <div cds-layout="m-t:md">
+            <button
+              class="btn btn-primary"
+              type="submit"
+              [disabled]="registration.isLoading()"
+              [clrLoading]="registration.isLoading()"
+            >
+              Register
+            </button>
+          </div>
+        </form>
+      </div>
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 6: Behaviors (switch, exhaust)</h3>
+      <p>Control how multiple concurrent requests are handled:</p>
+      <app-code-block [code]="behaviorCode" lang="typescript" />
+
+      <h4>switch (default)</h4>
+      <p>
+        Cancels the previous request when a new one is triggered. This is the default behavior and ensures you always
+        get the latest data. Best for read operations (GET requests).
+      </p>
+
+      <h4>exhaust</h4>
+      <p>
+        Ignores new requests while one is in progress. Useful for preventing duplicate operations like rapid button
+        clicks triggering multiple searches or paginations. Also ideal for mutations (see Example 5).
+      </p>
+      <app-code-block [code]="exhaustCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 7: Status Tracking</h3>
+      <p>
+        Access granular status information with the <code>status()</code> signal. Use <code>computed()</code> for
+        derived state:
+      </p>
+      <app-code-block [code]="statusCode" lang="typescript" />
+      <cll-callout>
+        Always use <code>computed()</code> instead of getters for derived state from signals. This provides better
+        performance through memoization and integrates perfectly with Angular's reactivity system.
+      </cll-callout>
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-4">
+      <div class="space-y-3">
+        <h3>resourceAsync</h3>
+        <p>
+          Creates a reactive resource that manages async operations with full state tracking. Returns a
+          <code>ResourceRef</code> object with state signals and reload capability.
+        </p>
+
+        <h4>Signature</h4>
+        <app-code-block [code]="signatureCode" lang="typescript" />
+
+        <h4>Parameters</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>sourceFn: () => Observable&lt;T&gt; | Promise&lt;T&gt; | T</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">
+                A function that returns an Observable, Promise, or synchronous value. This function is reactive - any
+                signals read inside it will be tracked as dependencies, and the resource will automatically re-fetch
+                when they change.
+              </p>
+            </div>
+          </li>
+          <li class="space-y-1">
+            <code>options?: ResourceRefOptions&lt;T, E&gt;</code>
+            <div class="ml-4">
+              <p class="text-sm !mt-1">Configuration options:</p>
+              <ul class="list-disc space-y-1 ml-6 mt-1 text-sm">
+                <li>
+                  <code>initialValue?: T</code> - The initial value for the resource before the first fetch completes.
+                </li>
+                <li>
+                  <code>lazy?: boolean</code> - If <code>true</code>, the resource starts in 'idle' state and won't
+                  fetch until <code>reload()</code> is called. Defaults to <code>false</code>.
+                </li>
+                <li>
+                  <code>behavior?: 'switch' | 'exhaust'</code> - How to handle concurrent requests. Defaults to
+                  <code>'switch'</code> (cancel previous). Use <code>'exhaust'</code> to ignore new requests while one
+                  is in progress.
+                </li>
+                <li>
+                  <code>onError?: (error: E) => T | undefined</code> - Error handler that can provide fallback values.
+                  If it returns a value, the resource will be in 'resolved' state with that value.
+                </li>
+                <li>
+                  <code>throwOnError?: boolean</code> - If <code>true</code>, errors will be thrown instead of stored in
+                  the error signal. Defaults to <code>false</code>.
+                </li>
+                <li>
+                  <code>onSuccess?: (value: T) => void</code> - Callback invoked when operation successfully completes.
+                </li>
+                <li><code>onLoading?: () => void</code> - Callback invoked when operation starts loading.</li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+
+        <h4>Returns</h4>
+        <p class="text-sm">A <code>ResourceRef&lt;T, E&gt;</code> object with the following properties:</p>
+        <ul class="list-disc space-y-1 ml-6 mt-2 text-sm">
+          <li><code>value: Signal&lt;T | undefined&gt;</code> - The current value of the resource.</li>
+          <li><code>error: Signal&lt;E | null&gt;</code> - The current error, if any.</li>
+          <li>
+            <code>status: Signal&lt;ResourceStatus&gt;</code> - The current status: <code>'idle'</code>,
+            <code>'loading'</code>, <code>'reloading'</code>, <code>'resolved'</code>, or <code>'error'</code>.
+          </li>
+          <li>
+            <code>isLoading: Signal&lt;boolean&gt;</code> - Computed signal indicating if any fetch operation is in
+            progress. True when status is <code>'loading'</code> or <code>'reloading'</code>. Matches Angular's
+            <code>httpResource.isLoading</code> behavior.
+          </li>
+          <li>
+            <code>hasValue: Signal&lt;boolean&gt;</code> - Computed signal indicating if the resource has a value
+            available.
+          </li>
+          <li>
+            <code>isIdle: Signal&lt;boolean&gt;</code> - Computed signal indicating if the resource is in idle state
+            (never fetched).
+          </li>
+          <li>
+            <code>reload: () => void</code> - Manually trigger a reload of the resource. Use for read operations (GET)
+            where "reload" makes semantic sense.
+          </li>
+          <li>
+            <code>execute: () => void</code> - Manually trigger execution of the resource. This is an alias for
+            <code>reload()</code> but with a name more appropriate for mutations (POST/PUT/DELETE).
+          </li>
+        </ul>
+
+        <h4>Resource Status</h4>
+        <ul class="list-disc space-y-1 ml-6 text-sm">
+          <li>
+            <code>idle</code>: Initial state, operation has never been triggered (only with <code>lazy: true</code>).
+            <code>value() = undefined</code>.
+          </li>
+          <li>
+            <code>loading</code>: Initial fetch in progress (no previous value). <code>value() = undefined</code>.
+          </li>
+          <li>
+            <code>reloading</code>: Refetch in progress with previous value available. <code>value()</code> returns
+            previous data.
+          </li>
+          <li><code>resolved</code>: Operation completed successfully. <code>value()</code> contains the data.</li>
+          <li>
+            <code>error</code>: Operation failed with an error. <code>value() = undefined</code> (previous data is
+            cleared).
+          </li>
+        </ul>
+
+        <cll-callout type="info">
+          <strong>Important:</strong> When an error occurs (even during <code>reloading</code>), the previous value is
+          cleared and becomes <code>undefined</code>. This matches Angular's <code>httpResource</code> behavior.
+        </cll-callout>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="space-y-4">
+    <h2>When to Use</h2>
+
+    <h3>Use <code>resourceAsync</code> when:</h3>
+    <ul class="list-disc space-y-1 ml-6">
+      <li>
+        You're working with <strong>read operations (GET)</strong> - use <code>reload()</code> method for refetching
+      </li>
+      <li>
+        You're working with <strong>mutations (POST/PUT/DELETE)</strong> - use <code>execute()</code> method with
+        <code>lazy: true</code> and <code>behavior: 'exhaust'</code>
+      </li>
+      <li>You need manual trigger capability (<code>reload()</code> or <code>execute()</code>)</li>
+      <li>You want explicit status tracking (idle, isLoading, reloading, resolved, error)</li>
+      <li>You need lazy loading (defer initial execution)</li>
+      <li>You want individual signal accessors for optimal performance</li>
+      <li>You're looking for Angular's <code>httpResource</code>-like functionality</li>
+      <li>You need automatic cancellation of previous requests (switch behavior)</li>
+      <li>You need to prevent duplicate submissions (exhaust behavior)</li>
+    </ul>
+
+    <h3>Use <code>computedAsync</code> when:</h3>
+    <ul class="list-disc space-y-1 ml-6">
+      <li>You want automatic reactive fetching based on dependencies</li>
+      <li>You need custom merge behaviors (merge, concat, in addition to switch/exhaust)</li>
+      <li>You want a single computed signal that re-runs automatically</li>
+      <li>You're migrating from <code>computed()</code> patterns</li>
+      <li>You need to combine with <code>createAsyncState</code> operator</li>
+    </ul>
+
+    <p>
+      See also:
+      <a routerLink="/ngx-lift/signals/computedAsync">computedAsync</a>
+    </p>
+  </section>
+</cll-page-container>

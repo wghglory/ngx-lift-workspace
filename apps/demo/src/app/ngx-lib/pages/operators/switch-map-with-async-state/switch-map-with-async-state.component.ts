@@ -59,7 +59,7 @@ import {AsyncPipe, NgIf, NgFor} from '@angular/common';
 
     <div class="mt-6">
       @if (searchState$ | async; as vm) {
-        @if (vm.loading) {
+        @if (vm.isLoading) {
           <cll-spinner />
         }
         @if (vm.error; as error) {
@@ -106,7 +106,7 @@ import {Subject} from 'rxjs';
         <input clrInput name="username" />
       </clr-input-container>
 
-      <button type="button" class="btn btn-primary" (click)="save()" [clrLoading]="saveAction()?.loading === true">
+      <button type="button" class="btn btn-primary" (click)="save()" [clrLoading]="saveAction()?.isLoading === true">
         Save
       </button>
       @if (saveAction()?.error; as error) {

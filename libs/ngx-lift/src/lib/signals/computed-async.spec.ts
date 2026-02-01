@@ -15,7 +15,7 @@ describe(computedAsync.name, () => {
         const result = computedAsync(() => value());
         expect(result()).toEqual(undefined); // initial value
         value.set(null);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(result()).toEqual(null);
       });
     }));
@@ -29,10 +29,10 @@ describe(computedAsync.name, () => {
         });
 
         expect(result()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(result()).toEqual([1, 2, 3]);
         value.set(1);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(result()).toEqual([2, 3, 4]);
       });
     }));
@@ -49,10 +49,10 @@ describe(computedAsync.name, () => {
         );
 
         expect(result()).toEqual([]); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(result()).toEqual([1, 2, 3]);
         value.set(1);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(result()).toEqual([2, 3, 4]);
       });
     }));
@@ -77,7 +77,7 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         expect(logs).toEqual([]);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         expect(logs).toEqual([]);
         tick(100); // wait 100ms for promise to resolve
@@ -85,7 +85,7 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1]);
 
         value.set(3);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
         expect(logs).toEqual([1, 1000]);
         tick(100); // wait 100ms for promise to resolve
@@ -93,7 +93,7 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1, 1000, 3]);
 
         value.set(4);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(3); // still the old value
         expect(logs).toEqual([1, 1000, 3, 3000]); // previousValue is 3 and it gets pushed again
         tick(100); // wait 100ms for promise to resolve
@@ -122,7 +122,7 @@ describe(computedAsync.name, () => {
       TestBed.runInInjectionContext(() => {
         const s = computedAsync(() => of(1), {initialValue: 2});
         expect(s()).toEqual(2); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1);
       });
     });
@@ -157,14 +157,14 @@ describe(computedAsync.name, () => {
           });
         });
         expect(s()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         tick(100); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
         tick(100); // wait 100ms for promise to resolve
         expect(s()).toEqual(2);
@@ -187,14 +187,14 @@ describe(computedAsync.name, () => {
         });
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         tick(100); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
         tick(100); // wait 100ms for promise to resolve
         expect(s()).toEqual(2);
@@ -217,14 +217,14 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         tick(100); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
 
         tick(50); // wait 50ms
@@ -233,7 +233,7 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1]);
 
         value.set(3);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         tick(50); // wait 50ms
         expect(s()).toEqual(1);
@@ -262,7 +262,7 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         tick(50);
         expect(s()).toEqual(undefined); // initial value
@@ -272,14 +272,14 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
         tick(50); // wait 50ms
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         tick(50); // wait 50ms
         expect(s()).toEqual(2);
@@ -307,7 +307,7 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         tick(50);
         expect(s()).toEqual(undefined); // initial value
@@ -317,16 +317,16 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         value.set(0);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         value.set(3);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         value.set(4);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         tick(100); // wait 50ms
         expect(s()).toEqual(4);
@@ -349,7 +349,7 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         tick(50);
         expect(s()).toEqual(undefined); // initial value
@@ -359,12 +359,12 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
         tick(50); // wait 50ms
 
         value.set(3);
-        TestBed.flushEffects();
+        TestBed.tick();
 
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
@@ -425,10 +425,10 @@ describe(computedAsync.name, () => {
         expect(data()).toEqual({status: 'loaded', result: [0]});
 
         // if we don't flush effects, the effect won't run
-        TestBed.flushEffects();
+        TestBed.tick();
 
         id.set(2);
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(loadAsyncDataLogs.length).toEqual(2);
         expect(data().status).toEqual('loading');
         tick(500);
@@ -439,7 +439,7 @@ describe(computedAsync.name, () => {
 
         id.set(3);
         throwErrorFlag = true;
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(loadAsyncDataLogs).toEqual([1, 2, 3]);
         expect(data().status).toEqual('loading');
         tick(500);
@@ -454,7 +454,7 @@ describe(computedAsync.name, () => {
 
         id.set(4);
         throwErrorFlag = false; // should recover from error
-        TestBed.flushEffects();
+        TestBed.tick();
         expect(loadAsyncDataLogs).toEqual([1, 2, 3, 4]);
         expect(data().status).toEqual('loading');
         tick(500);

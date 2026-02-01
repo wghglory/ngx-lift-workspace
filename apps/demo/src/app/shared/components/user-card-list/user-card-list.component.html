@@ -1,12 +1,12 @@
 @if (usersState$ | async; as usersState) {
   <div>
-    <button class="btn btn-primary" (click)="loadExample()" [clrLoading]="usersState.loading">
+    <button class="btn btn-primary" (click)="loadExample()" [clrLoading]="usersState.isLoading">
       Click to see UI behavior
     </button>
   </div>
 
   <div class="min-h-[286px] mt-6">
-    @if (usersState.loading) {
+    @if (usersState.isLoading) {
       <cll-spinner />
     }
 

@@ -1,3 +1,19 @@
-:host {
+// Scope all styles to this component's selector to avoid global pollution
+app-vertical-nav {
   display: contents;
+
+  // Allow text wrapping in navigation links
+  .clr-vertical-nav .nav-group-text,
+  .clr-vertical-nav .nav-text {
+    white-space: pre-wrap;
+  }
+
+  // Badge styling for navigation labels
+  a[clrVerticalNavLink] {
+    .badge {
+      font-size: 0.45rem;
+      padding: 0.1rem 0.25rem;
+      font-weight: 600;
+    }
+  }
 }

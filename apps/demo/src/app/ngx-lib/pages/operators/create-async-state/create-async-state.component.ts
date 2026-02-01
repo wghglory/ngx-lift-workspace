@@ -27,10 +27,16 @@ this.userService.getUsers().pipe(
 
   asyncStateCode = highlight(`
 export interface AsyncState<T, E = HttpErrorResponse> {
-  loading: boolean;
+  status: ResourceStatus;  // 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
+  isLoading: boolean;
   error: E | null;
   data: T | null;
 }
+
+type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
+
+// For non-HTTP errors, you can override the default:
+// AsyncState<Product[], Error>
   `);
 
   exampleCode = highlight(`
@@ -40,7 +46,7 @@ import {createAsyncState} from 'ngx-lift';
 @Component({
   template: \`
     <ng-container *ngIf="usersState$ | async as usersState">
-      <cll-spinner *ngIf="usersState.loading"></cll-spinner>
+      <cll-spinner *ngIf="usersState.isLoading"></cll-spinner>
 
       <cll-alert *ngIf="usersState.error as error" [error]="error"></cll-alert>
 
@@ -74,7 +80,7 @@ export class UserDetailComponent {
 
   userState$ = this.userService
     .getUserById(1)
-    .pipe(createAsyncState<User>(noop, {loading: false, error: null, data: this.location.getState()}));
+    .pipe(createAsyncState<User>(noop, {status: 'idle', isLoading: false, error: null, data: this.location.getState()}));
 }
   `);
 
@@ -93,9 +99,39 @@ import {createAsyncState} from 'ngx-lift';
 // In component:
 userState$ = this.userService.getUser(id).pipe(createAsyncState());
 
-// In template:
+// In template (using isLoading - recommended):
 @if (userState$ | async; as state) {
-  @if (state.loading) {
+  @if (state.isLoading) {
+    <cll-spinner />
+  }
+  @if (state.error) {
+    <cll-alert [error]="state.error" />
+  }
+  @if (state.data; as user) {
+    <user-card [user]="user" />
+  }
+}
+
+// Alternative: using status for granular state tracking:
+@if (userState$ | async; as state) {
+  @if (state.status === 'loading') {
+    <p>Initial load...</p>
+  }
+  @if (state.status === 'reloading') {
+    <p>Refreshing...</p>
+  }
+  @if (state.status === 'error' && state.error) {
+    <cll-alert [error]="state.error" />
+  }
+  @if (state.status === 'resolved' && state.data; as user) {
+    <user-card [user]="user" />
+  }
+}
+
+
+// Or using deprecated loading field:
+@if (userState$ | async; as state) {
+  @if (state.isLoading) {
     <cll-spinner />
   }
   @if (state.error) {

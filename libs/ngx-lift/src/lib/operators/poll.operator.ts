@@ -56,7 +56,7 @@ import {isPromise} from '../utils/is-promise.util';
  * const dataState$ = poll({
  *   interval: 5000, // Poll every 5 seconds
  *   pollingFn: () => this.http.get('/api/data'),
- *   initialValue: { loading: true, error: null, data: null }
+ *   initialValue: { status: 'loading', isLoading: true, error: null, data: null }
  * });
  *
  * // Polling with manual refresh
@@ -79,7 +79,7 @@ import {isPromise} from '../utils/is-promise.util';
  */
 export function poll<Data>(options: {
   interval: number;
-  pollingFn: (params: any) => Observable<Data> | Promise<Data> | Data;
+  pollingFn: () => Observable<Data> | Promise<Data> | Data;
   initialValue?: AsyncState<Data>;
   delay?: number;
 }): Observable<AsyncState<Data>>;
@@ -94,25 +94,29 @@ export function poll<Data, Input>(options: {
 }): Observable<AsyncState<Data>>;
 
 // paramsBuilder exists, forceRefresh output is the paramsBuilder params' input
-export function poll<Data, Input>(options: {
+export function poll<Data, Input, Params = Input>(options: {
   interval: number;
-  pollingFn: (params: any) => Observable<Data> | Promise<Data> | Data;
+  pollingFn: (params: Params) => Observable<Data> | Promise<Data> | Data;
   forceRefresh: Observable<Input> | Signal<Input>;
-  paramsBuilder: (input: Input) => any;
+  paramsBuilder: (input: Input) => Params;
   initialValue?: AsyncState<Data>;
   delay?: number;
 }): Observable<AsyncState<Data>>;
 
-export function poll<Data, Input>(options: {
+export function poll<Data, Input = void, Params = Input>(options: {
   interval: number;
-  pollingFn: (params: any) => Observable<Data> | Promise<Data> | Data;
+  pollingFn: (params: Params) => Observable<Data> | Promise<Data> | Data;
   forceRefresh?: Observable<Input> | Signal<Input>;
-  paramsBuilder?: (input: Input) => any;
+  paramsBuilder?: (input: Input) => Params;
   initialValue?: AsyncState<Data>;
   delay?: number;
 }): Observable<AsyncState<Data>> {
-  const timerEmitValue = '__timer__emission__';
-  const timer$ = timer(options.delay || 0, options.interval).pipe(map((i) => `${timerEmitValue}${i}`));
+  // Use a Symbol to mark timer emissions for better type safety and performance
+  const TIMER_MARKER = Symbol('timer');
+  type TimerEmission = {[key: symbol]: true; index: number};
+  const timer$ = timer(options.delay || 0, options.interval).pipe(
+    map((i) => ({[TIMER_MARKER]: true, index: i}) as TimerEmission),
+  );
 
   const trigger$ =
     options.forceRefresh === undefined
@@ -126,7 +130,7 @@ export function poll<Data, Input>(options: {
   return merge(trigger$, timer$).pipe(
     exhaustMap((input) => {
       // input can be either by forceRefresh or timer
-      const isTimerTrigger = typeof input === 'string' && input.includes(timerEmitValue);
+      const isTimerTrigger = typeof input === 'object' && input !== null && TIMER_MARKER in input;
       const isManualTrigger = !isTimerTrigger;
       if (isManualTrigger) {
         inputByForceRefresh = input as Input;
@@ -135,27 +139,33 @@ export function poll<Data, Input>(options: {
       // build params by input
       // if paramsBuilder is provided, params will be the value of this function call
       // if paramsBuilder is not provided, params will be the value emitted by the forceRefresh
-      const params = options.paramsBuilder ? options.paramsBuilder(inputByForceRefresh as Input) : inputByForceRefresh;
+      const params = (
+        options.paramsBuilder ? options.paramsBuilder(inputByForceRefresh as Input) : inputByForceRefresh
+      ) as Params;
 
-      // NOTE: using exhaustMap will NOT emit ${timerEmitValue}0 if forceRefresh is not provided
-      // using concatMap will emit ${timerEmitValue}0 if forceRefresh is not provided
-      const isFirstRequest = input === `${timerEmitValue}0`; // timer first emission when forceRefresh is not provided
+      // NOTE: using exhaustMap will NOT emit first timer if forceRefresh is not provided
+      // using concatMap will emit first timer if forceRefresh is not provided
+      const isFirstRequest = isTimerTrigger && (input as TimerEmission).index === 0; // timer first emission when forceRefresh is not provided
 
       const fnResult = options.pollingFn(params);
       const fnResult$ = isObservable(fnResult) ? fnResult : isPromise(fnResult) ? from(fnResult) : of(fnResult);
 
-      let observable$ = fnResult$.pipe(
-        map((data) => ({loading: false, error: null, data})),
-        catchError((error) => of({loading: false, error, data: null})),
+      let observable$: Observable<AsyncState<Data>> = fnResult$.pipe(
+        map((data) => ({status: 'resolved' as const, isLoading: false, error: null, data})),
+        catchError((error) => of({status: 'error' as const, isLoading: false, error, data: null})),
       );
 
       if (isFirstRequest) {
         observable$ = observable$.pipe(
-          startWith(options.initialValue ?? ({loading: true, error: null, data: null} as any)),
+          startWith(
+            options.initialValue ?? ({status: 'loading' as const, isLoading: true, error: null, data: null} as any),
+          ),
         );
       }
       if (isManualTrigger) {
-        observable$ = observable$.pipe(startWith({loading: true, error: null, data: null}));
+        observable$ = observable$.pipe(
+          startWith({status: 'loading' as const, isLoading: true, error: null, data: null}),
+        );
       }
 
       return observable$;

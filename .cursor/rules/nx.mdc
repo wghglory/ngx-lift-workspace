@@ -7,12 +7,10 @@ alwaysApply: true
 ### Project Structure
 
 - **Libraries**: Place reusable code in `libs/` directory
-
   - `libs/ngx-lift/`: Core Angular utilities library (RxJS operators, signals, pipes, validators)
   - `libs/clr-lift/`: Clarity Design System component library (depends on ngx-lift)
 
 - **Applications**: Place applications in `apps/` directory
-
   - `apps/demo/`: Demo application showcasing both libraries
   - `apps/demo-e2e/`: E2E tests for demo app
 
@@ -40,12 +38,10 @@ alwaysApply: true
 ### Dependency Management
 
 - **Module Boundaries**: Respect Nx project boundaries
-
   - Configured in `eslint.config.mjs` with `@nx/enforce-module-boundaries`
   - No circular dependencies allowed
 
 - **Tags**: Use tags to organize projects
-
   - Define in `project.json` or `nx.json`
   - Enforce dependency rules based on tags
 
@@ -53,10 +49,10 @@ alwaysApply: true
 
   ```typescript
   // Import from ngx-lift library
-  import { createAsyncState, poll } from 'ngx-lift';
+  import {createAsyncState, poll} from 'ngx-lift';
 
   // Import from clr-lift library
-  import { AlertComponent, ToastService } from 'clr-lift';
+  import {AlertComponent, ToastService} from 'clr-lift';
 
   // Path mappings defined in tsconfig.base.json
   ```
@@ -96,7 +92,6 @@ alwaysApply: true
 ### Testing Configuration
 
 - **Vitest**: Configure Vitest in `vite.config.mts`
-
   - Test environment: `jsdom`
   - Setup files: `src/test-setup.ts`
   - Uses `@analogjs/vitest-angular` for Angular component testing
@@ -109,7 +104,6 @@ alwaysApply: true
 ### Caching
 
 - **Build Cache**: Nx caches build outputs
-
   - Use `nx reset` to clear cache
   - Cache stored in `.nx/cache`
 
@@ -126,7 +120,6 @@ alwaysApply: true
 ### Workspace Configuration
 
 - **nx.json**: Workspace-level configuration
-
   - Plugins configuration
   - Target defaults
   - Generators defaults
@@ -143,7 +136,7 @@ alwaysApply: true
 - **Publish**: Automated via GitHub Actions or manual `npm publish`
   - Configuration in `ng-package.json` per library
   - Output in `dist/libs/[library-name]`
-  - Version management via `nx release` or `release-please`
+  - Version management via `nx release`
 
 ### Best Practices
 

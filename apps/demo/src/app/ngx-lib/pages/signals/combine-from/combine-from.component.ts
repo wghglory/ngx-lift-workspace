@@ -166,7 +166,7 @@ import {SpinnerComponent, AlertComponent} from 'clr-lift';
 @Component({
   imports: [SpinnerComponent, AlertComponent],
   template: \`
-    @if (usersState()?.loading) {
+    @if (usersState()?.isLoading) {
       <cll-spinner />
     }
 

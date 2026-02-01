@@ -54,7 +54,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
     `
 <!-- angular v17+ user-datagrid.component.html -->
 @if ({usersState: usersState$ | async, total: total$ | async}; as vm) {
-  <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="vm.usersState?.loading">
+  <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="vm.usersState?.isLoading">
     Refresh
   </button>
 
@@ -99,7 +99,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
 
   secondHtmlCode = highlight(`
 <div>
-  <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="(usersState$ | async)?.loading">
+  <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="(usersState$ | async)?.isLoading">
     Refresh
   </button>
 </div>

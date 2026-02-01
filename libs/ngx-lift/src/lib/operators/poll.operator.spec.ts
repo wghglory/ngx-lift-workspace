@@ -22,7 +22,7 @@ describe('poll', () => {
     poll({interval, pollingFn: mockPollingFn, paramsBuilder: mockParamsBuilder, forceRefresh})
       .pipe(take(1))
       .subscribe((state) => {
-        expect(state).toEqual({loading: true, error: null, data: null});
+        expect(state).toEqual({status: 'loading', isLoading: true, error: null, data: null});
       });
 
     tick(interval + 50);
@@ -36,7 +36,7 @@ describe('poll', () => {
     poll({interval, pollingFn: mockPollingFn, paramsBuilder: mockParamsBuilder, forceRefresh})
       .pipe(take(1))
       .subscribe((state: AsyncState<unknown, Error>) => {
-        expect(state).toEqual({loading: true, error: null, data: null});
+        expect(state).toEqual({status: 'loading', isLoading: true, error: null, data: null});
       });
 
     tick(interval + 50);
@@ -47,17 +47,21 @@ describe('poll', () => {
     const interval = 100;
     const states: AsyncState<string>[] = [];
 
-    poll({interval, pollingFn: () => of('Timer Data'), initialValue: {loading: true, error: null, data: null}})
+    poll({
+      interval,
+      pollingFn: () => of('Timer Data'),
+      initialValue: {status: 'loading', isLoading: true, error: null, data: null},
+    })
       .pipe(take(2))
       .subscribe((state) => {
         states.push(state);
       });
 
     tick(0); // Initial value
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval); // First timer emission
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Timer Data'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Timer Data'});
   }));
 
   it('should work without paramsBuilder', fakeAsync(() => {
@@ -65,17 +69,17 @@ describe('poll', () => {
     const forceRefresh = of({param: 'direct'});
     const states: AsyncState<string>[] = [];
 
-    poll({interval, pollingFn: (params) => of(`Data: ${params.param}`), forceRefresh})
+    poll({interval, pollingFn: (params: {param: string}) => of(`Data: ${params.param}`), forceRefresh})
       .pipe(take(2))
       .subscribe((state) => {
         states.push(state);
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Data: direct'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Data: direct'});
   }));
 
   it('should handle Promise return values', fakeAsync(() => {
@@ -94,10 +98,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Promise Data'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Promise Data'});
   }));
 
   it('should handle primitive return values', fakeAsync(() => {
@@ -116,10 +120,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Primitive Data'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Primitive Data'});
   }));
 
   it('should handle errors', fakeAsync(() => {
@@ -139,10 +143,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error, data: null});
+    expect(states[1]).toEqual({status: 'error', isLoading: false, error, data: null});
   }));
 
   it('should work with delay option', fakeAsync(() => {
@@ -154,7 +158,7 @@ describe('poll', () => {
       interval,
       delay,
       pollingFn: () => of('Delayed Data'),
-      initialValue: {loading: true, error: null, data: null},
+      initialValue: {status: 'loading', isLoading: true, error: null, data: null},
     })
       .pipe(take(2))
       .subscribe((state) => {
@@ -162,10 +166,10 @@ describe('poll', () => {
       });
 
     tick(delay); // Wait for delay to pass, then initial value is emitted
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval); // Wait for first timer emission
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Delayed Data'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Delayed Data'});
   }));
 
   it('should use paramsBuilder when provided', fakeAsync(() => {
@@ -175,7 +179,7 @@ describe('poll', () => {
 
     poll({
       interval,
-      pollingFn: (params) => of(`Built: ${params}`),
+      pollingFn: (params: string) => of(`Built: ${params}`),
       forceRefresh,
       paramsBuilder: (input: string) => `transformed-${input}`,
     })
@@ -185,10 +189,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Built: transformed-input'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Built: transformed-input'});
   }));
 
   it('should handle first request without forceRefresh', fakeAsync(() => {
@@ -205,10 +209,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'First Request Data'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'First Request Data'});
   }));
 
   it('should handle paramsBuilder with undefined inputByForceRefresh', fakeAsync(() => {
@@ -218,7 +222,7 @@ describe('poll', () => {
 
     poll({
       interval,
-      pollingFn: (params) => of(`Params: ${params}`),
+      pollingFn: (params: string) => of(`Params: ${params}`),
       forceRefresh,
       paramsBuilder: () => 'default-params',
     })
@@ -228,10 +232,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Params: default-params'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Params: default-params'});
   }));
 
   it('should handle timer trigger without forceRefresh and without paramsBuilder', fakeAsync(() => {
@@ -240,7 +244,8 @@ describe('poll', () => {
 
     poll({
       interval,
-      pollingFn: (params) => of(`Timer: ${params}`),
+      pollingFn: () => of('Timer: no params'),
+      initialValue: {status: 'loading', isLoading: true, error: null, data: null},
     })
       .pipe(take(2))
       .subscribe((state) => {
@@ -248,10 +253,10 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Timer: undefined'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Timer: no params'});
   }));
 
   it('should handle manual trigger without paramsBuilder', fakeAsync(() => {
@@ -261,7 +266,7 @@ describe('poll', () => {
 
     poll({
       interval,
-      pollingFn: (params) => of(`Direct: ${JSON.stringify(params)}`),
+      pollingFn: (params: {id: number}) => of(`Direct: ${JSON.stringify(params)}`),
       forceRefresh,
     })
       .pipe(take(2))
@@ -270,9 +275,9 @@ describe('poll', () => {
       });
 
     tick(0);
-    expect(states[0]).toEqual({loading: true, error: null, data: null});
+    expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     tick(interval);
-    expect(states[1]).toEqual({loading: false, error: null, data: 'Direct: {"id":123}'});
+    expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Direct: {"id":123}'});
   }));
 });
