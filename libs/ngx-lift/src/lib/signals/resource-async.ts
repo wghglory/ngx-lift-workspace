@@ -130,6 +130,14 @@ export interface ResourceRef<T, E = Error> {
    * **Type predicate**: When true, narrows the value type to exclude undefined.
    * This matches Angular's httpResource behavior.
    *
+   * **Example**:
+   * ```typescript
+   * if (userRef.hasValue()) {
+   *   // TypeScript knows value() is User, not User | undefined
+   *   console.log(userRef.value().name); // No ! needed
+   * }
+   * ```
+   *
    * This function is reactive.
    */
   hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;
