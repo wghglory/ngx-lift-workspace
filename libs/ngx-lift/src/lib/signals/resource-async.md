@@ -46,18 +46,19 @@ export class UserProfileComponent {
 
 ## 📊 Comparison with Angular's `httpResource`
 
-| Feature                     | `httpResource`      | `resourceAsync`                | Notes                                               |
-| --------------------------- | ------------------- | ------------------------------ | --------------------------------------------------- |
-| **Signal-based**            | ✅                  | ✅                             | Both use Angular Signals                            |
-| **Reactive dependencies**   | ✅                  | ✅                             | Auto-refetch on dependency changes                  |
-| **Status tracking**         | ✅                  | ✅                             | `idle`, `loading`, `reloading`, `resolved`, `error` |
-| **Manual reload**           | ✅ `reload()`       | ✅ `reload()` + `execute()`    | `execute()` for mutations                           |
-| **Lazy loading**            | ✅                  | ✅                             | `lazy: true` option                                 |
-| **Cancellation strategies** | ❌                  | ✅ **switch, exhaust**         | Fine-grained control                                |
-| **Error handling**          | Basic               | ✅ **onError, throwOnError**   | Fallback values, custom logic                       |
-| **HTTP-specific**           | ✅ (built for HTTP) | ❌ (works with any Promise)    | More flexible                                       |
-| **RxJS integration**        | Limited             | ✅ **Full Observable support** | Works with any Observable                           |
-| **TypeScript generics**     | ✅                  | ✅                             | Full type safety                                    |
+| Feature                     | `httpResource`         | `resourceAsync`                            | Notes                                                        |
+| --------------------------- | ---------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| **Signal-based**            | ✅                     | ✅                                         | Both use Angular Signals                                     |
+| **Reactive dependencies**   | ✅                     | ✅                                         | Auto-refetch on dependency changes                           |
+| **Status tracking**         | ✅                     | ✅                                         | `idle`, `loading`, `reloading`, `resolved`, `error`, `local` |
+| **Manual reload**           | ✅ `reload()`          | ✅ `reload()` + `execute()`                | `execute()` for mutations                                    |
+| **Lazy loading**            | ✅                     | ✅                                         | `lazy: true` option                                          |
+| **Writable API**            | ✅ `set()`, `update()` | ✅ **`set()`, `update()`, `asReadonly()`** | Local state management                                       |
+| **Cancellation strategies** | ❌                     | ✅ **switch, exhaust**                     | Fine-grained control                                         |
+| **Error handling**          | Basic                  | ✅ **onError, throwOnError**               | Fallback values, custom logic                                |
+| **HTTP-specific**           | ✅ (built for HTTP)    | ❌ (works with any Promise)                | More flexible                                                |
+| **RxJS integration**        | Limited                | ✅ **Full Observable support**             | Works with any Observable                                    |
+| **TypeScript generics**     | ✅                     | ✅                                         | Full type safety                                             |
 
 ### 🤔 When to Use Which?
 
@@ -70,6 +71,7 @@ export class UserProfileComponent {
 
 **Use `resourceAsync` when:**
 
+- ✨ You need **local state management** (optimistic updates, cache-first, form drafts)
 - ✨ You need **cancellation strategies** (switch/exhaust)
 - ✨ You want **advanced error handling** (fallbacks, custom logic)
 - ✨ You're working with **any Promise or Observable** (not just HTTP)
@@ -102,9 +104,160 @@ type ResourceStatus =
 | `reloading` | Previous data | `true`       | `true`        | Refetching, shows stale data    |
 | `resolved`  | Current data  | `true`       | `false`       | Success                         |
 | `error`     | `undefined`   | `false`      | `false`       | **Failed - data cleared**       |
+| `local`     | Manual data   | `true`       | `false`       | **Set via set()/update()**      |
 
 ⚠️ **Important:** When an error occurs (even during `reloading`), the previous value is **cleared** and becomes
 `undefined`. This matches Angular's `httpResource` behavior.
+
+---
+
+## 🆕 Writable Resource API (Local State Management)
+
+`resourceAsync` returns a `WritableResourceRef` with methods for manual state management, matching Angular's
+`WritableResource` API:
+
+```typescript
+interface WritableResourceRef<T, E = Error> extends ResourceRef<T, E> {
+  set(value: T): void; // Set value manually → 'local' state
+  update(updater: (value: T) => T): void; // Update with function → 'local' state
+  asReadonly(): ResourceRef<T, E>; // Return read-only version
+}
+```
+
+### ✨ Core Features
+
+1. **`set(value: T)` Method**
+   - Manually set resource value
+   - Transitions to `'local'` status state
+   - Cancels pending requests
+   - Clears errors
+
+2. **`update(updater: (value: T) => T)` Method**
+   - Update value using function
+   - Transitions to `'local'` status state
+   - Supports chaining multiple updates
+   - Handles undefined values correctly
+
+3. **`asReadonly()` Method**
+   - Returns read-only `ResourceRef`
+   - No `set`/`update` methods
+   - Shares state with original resource
+
+4. **`'local'` Status State**
+   - Indicates manually-set values
+   - Distinguishes from server-fetched data
+   - `hasValue()` returns `true` for `'local'` state
+
+---
+
+### Scenario A: Optimistic Updates
+
+Update UI instantly before server confirmation, revert on error.
+
+```typescript
+export class TodoComponent {
+  todoRef = resourceAsync(() => this.http.get<Todo>(`/api/todos/${this.todoId()}`));
+
+  toggleComplete() {
+    // Update UI immediately
+    this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+
+    // Send to server
+    this.http.put(`/api/todos/${this.todoId()}`, this.todoRef.value()).subscribe({
+      error: () => {
+        // Revert on error
+        this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+      },
+    });
+  }
+}
+```
+
+```html
+<!-- Show saving indicator -->
+@if (todoRef.status() === 'local') {
+<span class="badge">Saving...</span>
+}
+```
+
+### Scenario B: Cache-First Pattern
+
+Show cached data immediately, fetch fresh data in background.
+
+```typescript
+export class UserProfileComponent {
+  userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`), {lazy: true});
+
+  ngOnInit() {
+    // Set cached data immediately
+    const cachedUser = localStorage.getItem('user');
+    if (cachedUser) {
+      this.userRef.set(JSON.parse(cachedUser));
+    }
+
+    // Fetch fresh data in background
+    this.userRef.reload();
+  }
+}
+```
+
+**State Flow:**
+
+```
+local (cached) → reloading → resolved (fresh)
+     ↓              ↓            ↓
+  CachedUser    CachedUser    FreshUser
+```
+
+### Scenario C: Form Drafts
+
+Update resource as user types, save manually.
+
+```typescript
+export class ArticleEditorComponent {
+  articleRef = resourceAsync(() => this.http.get<Article>(`/api/articles/${this.articleId()}`));
+
+  onContentChange(newContent: string) {
+    // Update draft as user types
+    this.articleRef.update((article) => ({...article, content: newContent}));
+  }
+
+  saveArticle() {
+    this.http.put(`/api/articles/${this.articleId()}`, this.articleRef.value()).subscribe();
+  }
+
+  discardChanges() {
+    this.articleRef.reload(); // Reload from server
+  }
+}
+```
+
+```html
+<!-- Show dirty indicator -->
+@if (articleRef.status() === 'local') {
+<span class="badge">Unsaved changes</span>
+}
+<button (click)="saveArticle()">Save</button>
+<button (click)="discardChanges()">Discard</button>
+```
+
+### Scenario D: Read-Only Public API
+
+Expose read-only resources while keeping write access private.
+
+```typescript
+export class UserStateService {
+  private _userRef = resourceAsync(() => this.http.get<User>('/api/user'));
+
+  // Public read-only access (no set/update)
+  public readonly userRef = this._userRef.asReadonly();
+
+  // Private write methods
+  updateUser(updates: Partial<User>) {
+    this._userRef.update((user) => ({...user, ...updates}));
+  }
+}
+```
 
 ---
 
@@ -794,6 +947,11 @@ searchResultsRef = resourceAsync(() =>
 - **`poll`** - RxJS operator for periodic polling with AsyncState
 - **`switchMapWithAsyncState`** - Combine switchMap with AsyncState tracking
 
+### Advanced Patterns
+
+- **[Nested Resources](./resource-async-advanced.md)** - Comprehensive guide for managing outer list + inner detail
+  patterns
+
 ---
 
 ## 🆚 Migration from `httpResource`
@@ -844,10 +1002,82 @@ userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`)
 
 `resourceAsync` is your **go-to utility** for managing async operations in Angular with **full control** over:
 
+- ✅ **Local state management** (`set()`, `update()`, `asReadonly()`)
 - ✅ **Cancellation strategies** (switch/exhaust)
 - ✅ **Error handling** (fallbacks, custom logic)
-- ✅ **State tracking** (idle/loading/reloading/resolved/error)
+- ✅ **State tracking** (idle/loading/reloading/resolved/error/local)
 - ✅ **Reactive dependencies** (auto-refetch)
 - ✅ **Type safety** (full TypeScript generics)
+
+### 🎯 Common Use Cases at a Glance
+
+| Use Case                 | Pattern                                     | Methods Used               |
+| ------------------------ | ------------------------------------------- | -------------------------- |
+| **Optimistic Updates**   | Update UI instantly, revert on error        | `update()`                 |
+| **Cache-First Loading**  | Show cached data, fetch fresh in background | `set()` + `reload()`       |
+| **Form Drafts**          | Track unsaved changes, save/discard         | `update()` + save logic    |
+| **Nested Data**          | List items with individual detail states    | Map pattern + lazy loading |
+| **Search**               | Cancel previous searches                    | `behavior: 'switch'`       |
+| **Form Submit**          | Prevent duplicate submissions               | `behavior: 'exhaust'`      |
+| **Error Recovery**       | Retry failed requests                       | `reload()`                 |
+| **Graceful Degradation** | Fallback for non-critical data              | `onError` with fallback    |
+
+### 🏆 Feature Parity with Angular's Resource API
+
+`resourceAsync` provides **full feature parity** with Angular's `WritableResource` API, plus additional capabilities:
+
+| Feature            | Angular Resource | resourceAsync  | Notes                          |
+| ------------------ | ---------------- | -------------- | ------------------------------ |
+| `value`            | ✅ Signal\<T\>   | ✅ Signal\<T\> | Matches exactly                |
+| `status`           | ✅               | ✅ + `'local'` | Extended with local state      |
+| `error`            | ✅               | ✅             | Generic error type             |
+| `isLoading`        | ✅               | ✅             | Signal accessor                |
+| `hasValue()`       | ✅               | ✅             | Type predicate                 |
+| `reload()`         | ✅               | ✅             | Manual refetch                 |
+| **`set(value)`**   | ✅               | ✅             | Manual value assignment        |
+| **`update(fn)`**   | ✅               | ✅             | Functional updates             |
+| **`asReadonly()`** | ✅               | ✅             | Read-only exposure             |
+| `execute()`        | ❌               | ✅             | Semantic clarity for mutations |
+| `isIdle`           | ❌               | ✅             | Lazy loading support           |
+| Observable support | ⚠️ Limited       | ✅ Native      | Full RxJS integration          |
+| `behavior` option  | ❌               | ✅             | switch/exhaust strategies      |
+| `onError` handler  | ❌               | ✅             | Fallback values, custom logic  |
+
+### 🔧 Technical Highlights
+
+**Type Safety:**
+
+```typescript
+// Without initialValue - must handle undefined
+userRef.update((user) => (user ? {...user, name: 'New'} : undefined));
+
+// With initialValue - always safe
+userRef.update((user) => ({...user, name: 'New'}));
+```
+
+**Status Transitions:**
+
+```
+idle → loading → resolved → set() → local → reload() → reloading → resolved
+```
+
+**Cancellation:**
+
+- `set()/update()` automatically cancel pending requests
+- Local state available immediately
+- No race conditions
+
+### 🎓 Interactive Examples
+
+For hands-on examples of all these patterns, check out the demo app:
+
+1. **Optimistic Updates** - Todo toggle with instant feedback
+2. **Cache-First Loading** - Show cached data immediately
+3. **Form Drafts** - Editable counter with save/discard
+4. **Nested Resources** - Items list with per-row organization loading
+
+Visit the demo at `apps/demo → Signals → resourceAsync` to see these patterns in action!
+
+---
 
 **Start simple, add complexity only when needed!** 🚀

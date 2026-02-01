@@ -7,9 +7,12 @@
     capability, and granular status tracking (idle → loading → resolved/error → reloading → resolved/error).
   </p>
 
-  <!-- Examples Section -->
+  <!-- ==================== SECTION 1: BASIC EXAMPLES ==================== -->
   <section class="space-y-4">
-    <h2>Examples</h2>
+    <h2>
+      Basic Examples
+      <span class="badge badge-success">Beginner</span>
+    </h2>
 
     <article class="space-y-3">
       <h3>Example 1: Basic Usage with Automatic Dependency Tracking</h3>
@@ -39,40 +42,48 @@
           trigger a call since the dependency doesn't change. However, you can click the reload button, which triggers
           <code>resource.reload()</code> to force refetching.
         </p>
-        <div>
-          <button class="btn btn-primary" (click)="changeUserId(1)">User 1</button>
-          <button class="btn btn-primary" (click)="changeUserId(2)">User 2</button>
-          <button class="btn btn-primary" (click)="changeUserId(3)">User 3</button>
-          <button class="btn" (click)="userRef.reload()">Reload</button>
-        </div>
+        <div class="card">
+          <div class="card-block">
+            <div cds-layout="vertical gap:md">
+              <div class="space-x-1">
+                <button class="btn btn-sm btn-primary" (click)="changeUserId(1)">User 1</button>
+                <button class="btn btn-sm btn-primary" (click)="changeUserId(2)">User 2</button>
+                <button class="btn btn-sm btn-primary" (click)="changeUserId(3)">User 3</button>
+                <button class="btn btn-sm" (click)="userRef.reload()">Reload</button>
+              </div>
 
-        <div class="status-bar">
-          <span
-            class="badge"
-            [class.badge-info]="userRef.status() === 'loading'"
-            [class.badge-success]="userRef.status() === 'resolved'"
-            [class.badge-danger]="userRef.status() === 'error'"
-          >
-            Status: {{ userRef.status() }}
-          </span>
-          <span class="badge" [class.badge-info]="userRef.isLoading()">Loading: {{ userRef.isLoading() }}</span>
-          <span class="badge" [class.badge-success]="userRef.hasValue()">Has Value: {{ userRef.hasValue() }}</span>
-        </div>
+              <div class="status-bar">
+                <span
+                  class="badge"
+                  [class.badge-info]="userRef.status() === 'loading'"
+                  [class.badge-success]="userRef.status() === 'resolved'"
+                  [class.badge-danger]="userRef.status() === 'error'"
+                >
+                  Status: {{ userRef.status() }}
+                </span>
+                <span class="badge" [class.badge-info]="userRef.isLoading()">Loading: {{ userRef.isLoading() }}</span>
+                <span class="badge" [class.badge-success]="userRef.hasValue()"
+                  >Has Value: {{ userRef.hasValue() }}</span
+                >
+              </div>
 
-        @if (userRef.isLoading()) {
-          <cll-spinner inline />
-        }
-        @if (userRef.error(); as error) {
-          <cll-alert [error]="error" />
-        }
-        <!-- If you want to keep previous data while loading, you can use the following code: -->
-        <!-- @if (userRef.value(); as userData) {
-          <app-user-card [user]="userData" />
-        } -->
-        <!-- if you want to hide previous data while refetching, you can use the following code: -->
-        @if (userRef.status() === 'resolved' && userRef.value(); as userData) {
-          <app-user-card [user]="userData" />
-        }
+              @if (userRef.isLoading()) {
+                <cll-spinner inline />
+              }
+              @if (userRef.error(); as error) {
+                <cll-alert [error]="error" [isSmall]="true" />
+              }
+              <!-- If you want to keep previous data while loading, you can use the following code: -->
+              <!-- @if (userRef.value(); as userData) {
+                <app-user-card [user]="userData" />
+              } -->
+              <!-- if you want to hide previous data while refetching, you can use the following code: -->
+              @if (userRef.status() === 'resolved' && userRef.value(); as userData) {
+                <app-user-card [user]="userData" />
+              }
+            </div>
+          </div>
+        </div>
       </div>
     </article>
 
@@ -86,28 +97,38 @@
 
       <div>
         <h4>Demo: Lazy-Loaded Users</h4>
-        <div>
-          <button class="btn btn-primary" (click)="lazyUsersRef.reload()" [clrLoading]="lazyUsersRef.isLoading()">
-            Load Users
-          </button>
-          @if (lazyUsersRef.isIdle()) {
-            <span class="badge badge-info">Not loaded yet (idle)</span>
-          }
-        </div>
+        <div class="card">
+          <div class="card-block">
+            <div cds-layout="vertical gap:md">
+              <div class="space-x-1">
+                <button
+                  class="btn btn-sm btn-primary"
+                  (click)="lazyUsersRef.reload()"
+                  [clrLoading]="lazyUsersRef.isLoading()"
+                >
+                  Load Users
+                </button>
+                @if (lazyUsersRef.isIdle()) {
+                  <span class="badge badge-info">Not loaded yet (idle)</span>
+                }
+              </div>
 
-        @if (lazyUsersRef.isLoading()) {
-          <cll-spinner />
-        }
-        @if (lazyUsersRef.error(); as error) {
-          <cll-alert [error]="error" />
-        }
-        @if (lazyUsersRef.hasValue()) {
-          <div class="card-grid">
-            @for (u of lazyUsersRef.value().results; track u.id.value) {
-              <app-user-card [user]="u" />
-            }
+              @if (lazyUsersRef.isLoading()) {
+                <cll-spinner />
+              }
+              @if (lazyUsersRef.error(); as error) {
+                <cll-alert [error]="error" [isSmall]="true" />
+              }
+              @if (lazyUsersRef.hasValue()) {
+                <div class="card-grid">
+                  @for (u of lazyUsersRef.value().results; track u.id.value) {
+                    <app-user-card [user]="u" />
+                  }
+                </div>
+              }
+            </div>
           </div>
-        }
+        </div>
       </div>
     </article>
 
@@ -119,6 +140,14 @@
         Useful when navigating from a list to detail page where you already have some data to display immediately.
       </cll-callout>
     </article>
+  </section>
+
+  <!-- ==================== SECTION 2: INTERMEDIATE EXAMPLES ==================== -->
+  <section class="space-y-4">
+    <h2>
+      Intermediate Examples
+      <span class="badge badge-info">Intermediate</span>
+    </h2>
 
     <article class="space-y-3">
       <h3>Example 4: Error Handling with Fallback and Error Propagation</h3>
@@ -134,26 +163,32 @@
         <h4>Demo: Error Handling with Fallback</h4>
         <p>This resource attempts to fetch from an invalid endpoint and falls back to a default user:</p>
 
-        <div>
-          <button
-            class="btn btn-primary"
-            (click)="userWithFallbackRef.reload()"
-            [clrLoading]="userWithFallbackRef.isLoading()"
-          >
-            Trigger Request (will fallback)
-          </button>
-        </div>
+        <div class="card">
+          <div class="card-block">
+            <div cds-layout="vertical gap:md">
+              <div>
+                <button
+                  class="btn btn-sm btn-primary"
+                  (click)="userWithFallbackRef.reload()"
+                  [clrLoading]="userWithFallbackRef.isLoading()"
+                >
+                  Trigger Request (will fallback)
+                </button>
+              </div>
 
-        @if (userWithFallbackRef.isLoading()) {
-          <cll-spinner />
-        }
-        @if (userRef.error(); as error) {
-          <cll-alert [error]="error" />
-        }
-        @if (userWithFallbackRef.hasValue()) {
-          <app-user-card [user]="userWithFallbackRef.value()" />
-          <cll-alert [content]="'Showing fallback user after error'" [alertType]="'success'" />
-        }
+              @if (userWithFallbackRef.isLoading()) {
+                <cll-spinner />
+              }
+              @if (userRef.error(); as error) {
+                <cll-alert [error]="error" [isSmall]="true" />
+              }
+              @if (userWithFallbackRef.hasValue()) {
+                <app-user-card [user]="userWithFallbackRef.value()" />
+                <cll-alert [content]="'Showing fallback user after error'" [isSmall]="true" [alertType]="'success'" />
+              }
+            </div>
+          </div>
+        </div>
       </div>
 
       <h4 class="!mt-6">Error Propagation</h4>
@@ -212,43 +247,57 @@
           <code>behavior: 'exhaust'</code>, rapid clicking the submit button is ignored while a request is in progress.
         </p>
 
-        <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
-          @if (registrationRef.status() === 'resolved' && registrationRef.value(); as response) {
-            <cll-alert [content]="response.message" [alertType]="'success'" cds-layout="m-t:md" />
-          }
-          @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
-            <cll-alert [content]="'Registration failed: ' + error.message" [alertType]="'danger'" cds-layout="m-t:md" />
-          }
+        <div class="card">
+          <div class="card-block">
+            <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
+              @if (registrationRef.status() === 'resolved' && registrationRef.value(); as response) {
+                <cll-alert [content]="response.message" [alertType]="'success'" [isSmall]="true" cds-layout="m-t:md" />
+              }
+              @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
+                <cll-alert
+                  [content]="'Registration failed: ' + error.message"
+                  [alertType]="'danger'"
+                  cds-layout="m-t:md"
+                  [isSmall]="true"
+                />
+              }
 
-          <clr-input-container>
-            <label for="username" class="clr-required-mark">Username</label>
-            <input id="username" clrInput formControlName="username" placeholder="Enter username (3-20 chars)" />
-            <clr-control-error>Username must be 3-20 characters</clr-control-error>
-          </clr-input-container>
+              <clr-input-container>
+                <label for="username" class="clr-required-mark">Username</label>
+                <input id="username" clrInput formControlName="username" placeholder="Enter username (3-20 chars)" />
+                <clr-control-error>Username must be 3-20 characters</clr-control-error>
+              </clr-input-container>
 
-          <clr-input-container>
-            <label for="email" class="clr-required-mark">Email</label>
-            <input id="email" clrInput type="email" formControlName="email" placeholder="Enter your email" />
-            <clr-control-error>Please enter a valid email</clr-control-error>
-          </clr-input-container>
+              <clr-input-container>
+                <label for="email" class="clr-required-mark">Email</label>
+                <input id="email" clrInput type="email" formControlName="email" placeholder="Enter your email" />
+                <clr-control-error>Please enter a valid email</clr-control-error>
+              </clr-input-container>
 
-          <clr-password-container>
-            <label for="password" class="clr-required-mark">Password</label>
-            <input id="password" clrPassword formControlName="password" placeholder="Enter password (min 8 chars)" />
-            <clr-control-error>Password must be at least 8 characters</clr-control-error>
-          </clr-password-container>
+              <clr-password-container>
+                <label for="password" class="clr-required-mark">Password</label>
+                <input
+                  id="password"
+                  clrPassword
+                  formControlName="password"
+                  placeholder="Enter password (min 8 chars)"
+                />
+                <clr-control-error>Password must be at least 8 characters</clr-control-error>
+              </clr-password-container>
 
-          <div cds-layout="m-t:md">
-            <button
-              class="btn btn-primary"
-              type="submit"
-              [disabled]="registrationRef.isLoading()"
-              [clrLoading]="registrationRef.isLoading()"
-            >
-              Register
-            </button>
+              <div cds-layout="m-t:md">
+                <button
+                  class="btn btn-sm btn-primary"
+                  type="submit"
+                  [disabled]="registrationRef.isLoading()"
+                  [clrLoading]="registrationRef.isLoading()"
+                >
+                  Register
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </article>
 
@@ -285,7 +334,397 @@
     </article>
   </section>
 
-  <!-- API Reference -->
+  <!-- ==================== SECTION 3: WHEN TO USE ==================== -->
+  <section class="space-y-4">
+    <h2>When to Use</h2>
+
+    <h3>Use <code>resourceAsync</code> when:</h3>
+    <ul class="list-disc space-y-1 ml-6">
+      <li>
+        You're working with <strong>read operations (GET)</strong> - use <code>reload()</code> method for refetching
+      </li>
+      <li>
+        You're working with <strong>mutations (POST/PUT/DELETE)</strong> - use <code>execute()</code> method with
+        <code>lazy: true</code> and <code>behavior: 'exhaust'</code>
+      </li>
+      <li>
+        <strong>You need local state management</strong> - use <code>set()</code>/<code>update()</code> for optimistic
+        updates, cache-first patterns, or form drafts
+      </li>
+      <li>You need manual trigger capability (<code>reload()</code> or <code>execute()</code>)</li>
+      <li>You want explicit status tracking (idle, isLoading, reloading, resolved, error, local)</li>
+      <li>You need lazy loading (defer initial execution)</li>
+      <li>You want individual signal accessors for optimal performance</li>
+      <li>You're looking for Angular's <code>httpResource</code>-like functionality</li>
+      <li>You need automatic cancellation of previous requests (switch behavior)</li>
+      <li>You need to prevent duplicate submissions (exhaust behavior)</li>
+    </ul>
+
+    <h3>Use <code>computedAsync</code> when:</h3>
+    <ul class="list-disc space-y-1 ml-6">
+      <li>You want automatic reactive fetching based on dependencies</li>
+      <li>You need custom merge behaviors (merge, concat, in addition to switch/exhaust)</li>
+      <li>You want a single computed signal that re-runs automatically</li>
+      <li>You're migrating from <code>computed()</code> patterns</li>
+      <li>You need to combine with <code>createAsyncState</code> operator</li>
+    </ul>
+
+    <p>
+      See also:
+      <a routerLink="/ngx-lift/signals/computedAsync">computedAsync</a>
+    </p>
+  </section>
+
+  <!-- ==================== SECTION 4: ADVANCED - WRITABLE RESOURCE API ==================== -->
+  <section class="space-y-4">
+    <h2>
+      WritableResourceRef - Local State Management
+      <span class="badge badge-warning">Advanced</span>
+    </h2>
+
+    <cll-callout type="success">
+      <strong>New Feature:</strong> <code>resourceAsync</code> now returns a <code>WritableResourceRef</code> with
+      <code>set()</code>, <code>update()</code>, and <code>asReadonly()</code> methods for manual state management,
+      matching Angular's <code>WritableResource</code> API!
+    </cll-callout>
+
+    <!-- Example 1: Optimistic Updates -->
+    <article class="space-y-3">
+      <h3>Example 1: Optimistic Updates - Todo Toggle</h3>
+      <p>
+        Update the UI immediately before server confirmation. If the server request fails, you can revert the change.
+        This provides instant feedback to users.
+      </p>
+
+      <app-code-block [code]="optimisticUpdateCode" lang="typescript" />
+
+      <div>
+        <h4>Demo: Todo Toggle</h4>
+        <div class="card">
+          <div class="card-block">
+            @if (todoRef.isIdle()) {
+              <button class="btn btn-sm btn-primary" (click)="todoRef.reload()">Load Todo</button>
+            }
+
+            @if (todoRef.isLoading() && !todoRef.hasValue()) {
+              <div cds-layout="horizontal gap:sm align:center">
+                <cll-spinner [size]="'sm'" />
+                <span>Loading todo...</span>
+              </div>
+            }
+
+            @if (todoRef.hasValue()) {
+              <div cds-layout="vertical gap:md">
+                <div cds-layout="horizontal gap:sm align:center">
+                  <input type="checkbox" [checked]="todoRef.value().completed" (change)="toggleTodo()" />
+                  <span>{{ todoRef.value().title }}</span>
+
+                  @if (todoRef.status() === 'local') {
+                    <span class="badge badge-warning">Saving...</span>
+                  }
+                </div>
+
+                <div class="p7">
+                  <strong>Status:</strong> {{ todoRef.status() }} | <strong>Completed:</strong>
+                  {{ todoRef.value().completed }}
+                </div>
+
+                <button class="btn btn-sm btn-outline" (click)="todoRef.reload()">Reset from Server</button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Example 2: Cache-First Pattern -->
+    <article class="space-y-3">
+      <h3>Example 2: Cache-First Loading</h3>
+      <p>
+        Show cached data immediately while fetching fresh data in the background. This eliminates loading spinners for
+        users with cached content.
+      </p>
+
+      <app-code-block [code]="cacheFirstCode" lang="typescript" />
+
+      <div>
+        <h4>Demo: Cache-First User Profile</h4>
+        <div class="card">
+          <div class="card-block">
+            <button class="btn btn-sm btn-primary" (click)="loadCacheFirstUser()">Load User (Cache-First)</button>
+
+            @if (cacheFirstUserRef.hasValue()) {
+              <div cds-layout="vertical gap:sm m-t:md">
+                <div>
+                  <strong>Name:</strong> {{ cacheFirstUserRef.value().name }}
+                  @if (cacheFirstUserRef.status() === 'local') {
+                    <span class="badge badge-info">From Cache</span>
+                  }
+                  @if (cacheFirstUserRef.status() === 'reloading') {
+                    <cll-spinner [size]="'sm'" />
+                    <span class="p7">Updating...</span>
+                  }
+                </div>
+                <div class="p7"><strong>Email:</strong> {{ cacheFirstUserRef.value().email }}</div>
+                <div class="p7"><strong>Status:</strong> {{ cacheFirstUserRef.status() }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Example 3: Form Draft / Manual Edits -->
+    <article class="space-y-3">
+      <h3>Example 3: Form Draft - Counter with Save/Discard</h3>
+      <p>
+        Allow users to edit data locally before saving to the server. They can save changes or discard them by reloading
+        from the server.
+      </p>
+
+      <app-code-block [code]="formDraftCode" lang="typescript" />
+
+      <div>
+        <h4>Demo: Editable Counter</h4>
+        <div class="card">
+          <div class="card-block">
+            @if (counterRef.isIdle()) {
+              <button class="btn btn-sm btn-primary" (click)="counterRef.reload()">Load Counter</button>
+            }
+
+            @if (counterRef.hasValue()) {
+              <div cds-layout="vertical gap:md">
+                <div cds-layout="horizontal gap:md align:center">
+                  <button class="btn btn-sm btn-icon" (click)="decrementCounter()">
+                    <cds-icon shape="minus" />
+                  </button>
+
+                  <div style="font-size: 2rem; font-weight: bold; min-width: 80px; text-align: center">
+                    {{ counterRef.value() }}
+                  </div>
+
+                  <button class="btn btn-sm btn-icon" (click)="incrementCounter()">
+                    <cds-icon shape="plus" />
+                  </button>
+                </div>
+
+                @if (counterRef.status() === 'local') {
+                  <cll-alert
+                    [alertType]="'info'"
+                    [content]="'Unsaved changes - Counter has been modified locally'"
+                    [isSmall]="true"
+                  />
+                }
+
+                <div cds-layout="horizontal gap:sm">
+                  <button
+                    class="btn btn-sm btn-success"
+                    (click)="saveCounter()"
+                    [disabled]="counterRef.status() !== 'local'"
+                  >
+                    Save to Server
+                  </button>
+
+                  <button
+                    class="btn btn-sm btn-outline"
+                    (click)="discardCounterChanges()"
+                    [disabled]="counterRef.status() !== 'local'"
+                  >
+                    Discard Changes
+                  </button>
+                </div>
+
+                <div class="p7"><strong>Status:</strong> {{ counterRef.status() }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ==================== SECTION 5: EXPERT - NESTED RESOURCES ==================== -->
+  <section class="space-y-4">
+    <h2>
+      Advanced Pattern: Nested Resources
+      <span class="badge badge-danger">Expert</span>
+    </h2>
+
+    <p>
+      A common scenario is displaying a list of items where each item can fetch additional related data (e.g.,
+      organizations, users, details). This section demonstrates <strong>one approach</strong> to managing individual
+      loading/error states for each row.
+    </p>
+
+    <cll-callout type="warning">
+      <strong>⚠️ Note:</strong> This example uses <code>untracked()</code> and <code>runInInjectionContext()</code>
+      wrappers, which add complexity. For most use cases, consider the
+      <strong>simpler hybrid approach</strong> (mixing <code>resourceAsync</code> for the outer list with manual HTTP +
+      signals for inner items). See the
+      <a
+        href="https://github.com/wghglory/ngx-lift/blob/main/libs/ngx-lift/src/lib/signals/resource-async-advanced.md"
+        target="_blank"
+        rel="noopener"
+        >advanced documentation</a
+      >
+      for comparison and recommendations.
+    </cll-callout>
+
+    <cll-callout type="info">
+      <strong>📖 Full Documentation:</strong> See
+      <a
+        href="https://github.com/wghglory/ngx-lift/blob/main/libs/ngx-lift/src/lib/signals/resource-async-advanced.md"
+        target="_blank"
+        rel="noopener"
+        >resource-async-advanced.md</a
+      >
+      for comprehensive guide with multiple approaches, decision trees, and when to use each pattern.
+    </cll-callout>
+
+    <cll-callout type="info">
+      <strong>Key Concepts:</strong>
+      <ul class="mt-2 list-disc">
+        <li><strong>Outer Resource:</strong> List of items with their own loading/error state</li>
+        <li><strong>Inner Resources:</strong> Per-item related data with individual loading/error states</li>
+        <li><strong>Lazy Loading:</strong> Only fetch when user clicks (minimizes API calls)</li>
+        <li><strong>Independent States:</strong> Each row manages its own spinner/error/data</li>
+      </ul>
+    </cll-callout>
+
+    <article class="space-y-3">
+      <h3>Implementation</h3>
+      <app-code-block [code]="nestedResourceCode" lang="typescript" />
+      <app-code-block [code]="nestedResourceHtmlCode" lang="html" />
+
+      <div>
+        <h4>Demo: Items with Organizations</h4>
+        <div class="card">
+          <div class="card-header">
+            <div cds-layout="horizontal gap:md align:center">
+              <h4 style="margin: 0">Projects</h4>
+
+              @if (itemsRef.isLoading() && !itemsRef.hasValue()) {
+                <cll-spinner [size]="'sm'" />
+                <span class="p7">Loading items...</span>
+              }
+
+              @if (itemsRef.isLoading() && itemsRef.hasValue()) {
+                <cll-spinner [size]="'sm'" />
+                <span class="p7">Refreshing...</span>
+              }
+            </div>
+          </div>
+
+          <div class="card-block">
+            @if (itemsRef.error(); as error) {
+              <cll-alert [alertType]="'danger'" [content]="'Failed to load items: ' + error.message" [isSmall]="true">
+                <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">Retry</button>
+              </cll-alert>
+            }
+
+            @if (itemsRef.hasValue()) {
+              <table class="table table-vertical table-compact">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Organization</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of itemsRef.value(); track item.id) {
+                    <tr>
+                      <td>
+                        <strong>{{ item.name }}</strong>
+                      </td>
+                      <td>
+                        <span
+                          class="badge"
+                          [class.badge-success]="item.status === 'active'"
+                          [class.badge-warning]="item.status === 'inactive'"
+                        >
+                          {{ item.status }}
+                        </span>
+                      </td>
+
+                      <!-- Organization Cell with Individual State -->
+                      <td>
+                        @if (getOrgRef(item.orgId); as orgRef) {
+                          @if (orgRef.isIdle()) {
+                            <span class="p7">Not loaded</span>
+                          }
+
+                          @if (orgRef.isLoading() && !orgRef.hasValue()) {
+                            <div cds-layout="horizontal gap:xs align:center">
+                              <cll-spinner [size]="'sm'" />
+                              <span class="p7">Loading...</span>
+                            </div>
+                          }
+
+                          @if (orgRef.error() && !orgRef.isLoading()) {
+                            <div cds-layout="vertical gap:xs">
+                              <cll-alert
+                                [alertType]="'warning'"
+                                [content]="'Failed to load organization'"
+                                [isSmall]="true"
+                              />
+                            </div>
+                          }
+
+                          @if (orgRef.hasValue() && !orgRef.error()) {
+                            <div cds-layout="vertical gap:xs">
+                              <strong>{{ orgRef.value().name }}</strong>
+                              <div>{{ orgRef.value().type }} • {{ orgRef.value().location }}</div>
+                            </div>
+                          }
+                        }
+                      </td>
+
+                      <td>
+                        @if (getOrgRef(item.orgId); as orgRef) {
+                          @if (orgRef.isIdle()) {
+                            <button class="btn btn-sm btn-primary" (click)="loadOrg(item.orgId)">Load Org</button>
+                          } @else {
+                            <button
+                              class="btn btn-sm btn-link"
+                              (click)="orgRef.reload()"
+                              [disabled]="orgRef.isLoading()"
+                            >
+                              Retry
+                            </button>
+                          }
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+
+              <div cds-layout="horizontal gap:md m-t:md">
+                <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">Refresh Items</button>
+
+                <button class="btn btn-sm btn-outline" (click)="loadAllOrgs()">Load All Orgs</button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <cll-callout type="tip" class="mt-4">
+          <strong>Pattern Benefits:</strong>
+          <ul class="mt-2 list-disc">
+            <li>✅ Minimal API calls (only fetch what's needed)</li>
+            <li>✅ Individual loading/error states per row</li>
+            <li>✅ Retry failed fetches independently</li>
+            <li>✅ Caches org data (won't refetch same orgId)</li>
+            <li>✅ Scales well for large lists</li>
+          </ul>
+        </cll-callout>
+      </div>
+    </article>
+  </section>
+
+  <!-- ==================== SECTION 6: API REFERENCE ==================== -->
   <section class="space-y-4">
     <h2>API Reference</h2>
     <div class="space-y-4">
@@ -405,42 +844,5 @@
         </cll-callout>
       </div>
     </div>
-  </section>
-
-  <!-- Comparison Section -->
-  <section class="space-y-4">
-    <h2>When to Use</h2>
-
-    <h3>Use <code>resourceAsync</code> when:</h3>
-    <ul class="list-disc space-y-1 ml-6">
-      <li>
-        You're working with <strong>read operations (GET)</strong> - use <code>reload()</code> method for refetching
-      </li>
-      <li>
-        You're working with <strong>mutations (POST/PUT/DELETE)</strong> - use <code>execute()</code> method with
-        <code>lazy: true</code> and <code>behavior: 'exhaust'</code>
-      </li>
-      <li>You need manual trigger capability (<code>reload()</code> or <code>execute()</code>)</li>
-      <li>You want explicit status tracking (idle, isLoading, reloading, resolved, error)</li>
-      <li>You need lazy loading (defer initial execution)</li>
-      <li>You want individual signal accessors for optimal performance</li>
-      <li>You're looking for Angular's <code>httpResource</code>-like functionality</li>
-      <li>You need automatic cancellation of previous requests (switch behavior)</li>
-      <li>You need to prevent duplicate submissions (exhaust behavior)</li>
-    </ul>
-
-    <h3>Use <code>computedAsync</code> when:</h3>
-    <ul class="list-disc space-y-1 ml-6">
-      <li>You want automatic reactive fetching based on dependencies</li>
-      <li>You need custom merge behaviors (merge, concat, in addition to switch/exhaust)</li>
-      <li>You want a single computed signal that re-runs automatically</li>
-      <li>You're migrating from <code>computed()</code> patterns</li>
-      <li>You need to combine with <code>createAsyncState</code> operator</li>
-    </ul>
-
-    <p>
-      See also:
-      <a routerLink="/ngx-lift/signals/computedAsync">computedAsync</a>
-    </p>
   </section>
 </cll-page-container>

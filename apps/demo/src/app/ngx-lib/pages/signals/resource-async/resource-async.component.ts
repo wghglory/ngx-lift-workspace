@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Injector,
+  runInInjectionContext,
+  signal,
+  untracked,
+} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
@@ -27,6 +35,32 @@ interface RegistrationResponse {
   message: string;
 }
 
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+interface CacheUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+interface Item {
+  id: string;
+  orgId: string;
+  name: string;
+  status: 'active' | 'inactive';
+}
+
+interface Organization {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+}
+
 @Component({
   selector: 'app-resource-async',
   imports: [
@@ -47,6 +81,7 @@ interface RegistrationResponse {
 export class ResourceAsyncComponent {
   private userService = inject(UserService);
   private http = inject(HttpClient);
+  private injector = inject(Injector);
 
   // Basic resource - fetch single user (using results=1)
   pageNumber = signal(1);
@@ -138,6 +173,186 @@ export class ResourceAsyncComponent {
       },
     },
   );
+
+  // ============================================================================
+  // WritableResourceRef Examples (New!)
+  // ============================================================================
+
+  // Example 1: Optimistic Update - Todo Toggle
+  todoId = signal(1);
+  todoRef = resourceAsync(
+    () =>
+      of({
+        id: this.todoId(),
+        title: 'Learn WritableResourceRef',
+        completed: false,
+      }).pipe(delay(500)),
+    {lazy: true},
+  );
+
+  toggleTodo() {
+    // Optimistic update - UI updates immediately
+    this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+
+    // Simulate API call
+    of(null)
+      .pipe(delay(1000))
+      .subscribe({
+        next: () => {
+          console.log('Todo updated successfully');
+          // Optionally reload to get server state
+          // this.todoRef.reload();
+        },
+        error: () => {
+          // Revert on error
+          this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+          alert('Failed to update todo');
+        },
+      });
+  }
+
+  // Example 2: Cache-First Pattern
+  cacheFirstUserId = signal(1);
+  cacheFirstUserRef = resourceAsync(
+    () =>
+      of({
+        id: this.cacheFirstUserId(),
+        name: `Fresh User ${this.cacheFirstUserId()}`,
+        email: `fresh${this.cacheFirstUserId()}@example.com`,
+      }).pipe(delay(1500)), // Slow API
+    {lazy: true},
+  );
+
+  loadCacheFirstUser() {
+    // Simulate cached data
+    const cachedUser = {
+      id: this.cacheFirstUserId(),
+      name: `Cached User ${this.cacheFirstUserId()}`,
+      email: `cached${this.cacheFirstUserId()}@example.com`,
+    };
+
+    // Set cached data immediately
+    this.cacheFirstUserRef.set(cachedUser);
+
+    // Fetch fresh data in background
+    this.cacheFirstUserRef.reload();
+  }
+
+  // Example 3: Form Draft - Counter
+  counterRef = resourceAsync(
+    () => of(0).pipe(delay(300)), // Initial value from server
+    {lazy: true},
+  );
+
+  incrementCounter() {
+    this.counterRef.update((count) => count + 1);
+  }
+
+  decrementCounter() {
+    this.counterRef.update((count) => count - 1);
+  }
+
+  saveCounter() {
+    // Simulate save
+    of(null)
+      .pipe(delay(500))
+      .subscribe({
+        next: () => {
+          alert(`Counter saved: ${this.counterRef.value()}`);
+          // After save, reload to get server state
+          this.counterRef.reload();
+        },
+        error: () => {
+          alert('Failed to save counter');
+        },
+      });
+  }
+
+  discardCounterChanges() {
+    this.counterRef.reload();
+  }
+
+  // ============================================================================
+  // Nested Resource Pattern Example
+  // ============================================================================
+  //
+  // This demonstrates managing outer (list) + inner (detail) resources where
+  // each item can fetch additional related data with independent loading/error states.
+
+  // Outer resource: List of items
+  itemsRef = resourceAsync(() =>
+    of([
+      {id: '1', orgId: 'org-1', name: 'Project Alpha', status: 'active'},
+      {id: '2', orgId: 'org-2', name: 'Project Beta', status: 'active'},
+      {id: '3', orgId: 'org-1', name: 'Project Gamma', status: 'inactive'},
+    ] as Item[]).pipe(delay(800)),
+  );
+
+  // Mock organizations
+  private mockOrgs: Record<string, Organization> = {
+    'org-1': {id: 'org-1', name: 'Acme Corp', type: 'Enterprise', location: 'SF, CA'},
+    'org-2': {id: 'org-2', name: 'TechStart Inc', type: 'Startup', location: 'Austin, TX'},
+  };
+
+  // Inner resources: Map of orgId -> ResourceRef<Organization>
+  // This map caches created resources to avoid recreating them
+  private orgRefsMap = new Map<string, ResourceRef<Organization>>();
+
+  /**
+   * Get or create a resource for the given orgId.
+   * Called from template during change detection.
+   *
+   * IMPORTANT: This method requires two wrappers:
+   *
+   * 1. untracked() - Prevents NG0602 error (effect() in reactive context)
+   *    - When called from template, we're in a reactive context (signal tracking)
+   *    - resourceAsync() uses effect() internally, which can't be created during tracking
+   *    - untracked() breaks out of the reactive context
+   *
+   * 2. runInInjectionContext() - Prevents NG0203 error (no injection context)
+   *    - Template method calls happen outside the component's injection context
+   *    - resourceAsync() uses inject() internally
+   *    - runInInjectionContext() provides the needed injection context
+   *
+   * Pattern: Template-called lazy resource creation
+   */
+  getOrgRef(orgId: string): ResourceRef<Organization> {
+    // Break out of reactive context to avoid NG0602 (effect in reactive context)
+    return untracked(() => {
+      let orgRef = this.orgRefsMap.get(orgId);
+      if (!orgRef) {
+        // Provide injection context to avoid NG0203 (inject outside context)
+        orgRef = runInInjectionContext(this.injector, () =>
+          resourceAsync(
+            () =>
+              of(this.mockOrgs[orgId] || {id: orgId, name: 'Unknown', type: 'Unknown', location: 'Unknown'}).pipe(
+                delay(600),
+                map((org) => {
+                  // Simulate random errors (30% chance)
+                  if (Math.random() < 0.3) {
+                    throw new Error('Network timeout');
+                  }
+                  return org;
+                }),
+              ),
+            {lazy: true}, // Don't fetch until explicitly triggered via reload()
+          ),
+        );
+        this.orgRefsMap.set(orgId, orgRef);
+      }
+      return orgRef;
+    });
+  }
+
+  loadOrg(orgId: string) {
+    this.getOrgRef(orgId).reload();
+  }
+
+  loadAllOrgs() {
+    const items = this.itemsRef.value() ?? [];
+    const uniqueOrgIds = new Set(items.map((item) => item.orgId));
+    uniqueOrgIds.forEach((orgId) => this.loadOrg(orgId));
+  }
 
   onRegistrationSubmit() {
     if (this.registrationForm.valid) {
@@ -474,5 +689,192 @@ export class RegistrationComponent {
     </button>
   </div>
 </form>
+  `);
+
+  // ============================================================================
+  // WritableResourceRef Code Blocks
+  // ============================================================================
+
+  optimisticUpdateCode = highlight(`
+import {resourceAsync} from 'ngx-lift';
+import {Component, inject, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class TodoComponent {
+  private http = inject(HttpClient);
+  todoId = signal(1);
+
+  todoRef = resourceAsync(() => 
+    this.http.get<Todo>(\`/api/todos/\${this.todoId()}\`)
+  );
+
+  toggleTodo() {
+    // 1. Update UI immediately (optimistic)
+    this.todoRef.update(todo => ({ ...todo, completed: !todo.completed }));
+
+    // 2. Send to server
+    this.http.put(\`/api/todos/\${this.todoId()}\`, this.todoRef.value())
+      .subscribe({
+        next: () => {
+          console.log('Todo updated successfully');
+        },
+        error: () => {
+          // Revert on error
+          this.todoRef.update(todo => ({ ...todo, completed: !todo.completed }));
+          alert('Failed to update todo');
+        }
+      });
+  }
+}
+  `);
+
+  cacheFirstCode = highlight(`
+import {resourceAsync} from 'ngx-lift';
+import {Component, inject, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class UserProfileComponent {
+  private http = inject(HttpClient);
+  userId = signal(1);
+
+  userRef = resourceAsync(
+    () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
+    { lazy: true }
+  );
+
+  loadUser() {
+    // 1. Set cached data immediately (from localStorage, router state, etc.)
+    const cachedUser = localStorage.getItem('user');
+    if (cachedUser) {
+      this.userRef.set(JSON.parse(cachedUser)); // Status: local
+    }
+
+    // 2. Fetch fresh data in background
+    this.userRef.reload(); // Status: reloading → resolved
+  }
+}
+
+// Template shows cached data immediately, updates when fresh data arrives
+  `);
+
+  formDraftCode = highlight(`
+import {resourceAsync} from 'ngx-lift';
+import {Component, inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class CounterComponent {
+  private http = inject(HttpClient);
+
+  counterRef = resourceAsync(
+    () => this.http.get<number>('/api/counter'),
+    { lazy: true }
+  );
+
+  incrementCounter() {
+    this.counterRef.update(count => count + 1); // Status: local
+  }
+
+  decrementCounter() {
+    this.counterRef.update(count => count - 1); // Status: local
+  }
+
+  saveCounter() {
+    this.http.put('/api/counter', { value: this.counterRef.value() })
+      .subscribe({
+        next: () => {
+          alert('Counter saved!');
+          this.counterRef.reload(); // Get server state
+        },
+        error: () => alert('Failed to save')
+      });
+  }
+
+  discardChanges() {
+    this.counterRef.reload(); // Revert to server state
+  }
+}
+
+// Show "Unsaved changes" when status === 'local'
+  `);
+
+  nestedResourceCode = highlight(`
+import {resourceAsync, ResourceRef} from 'ngx-lift';
+import {Component, inject, Injector, runInInjectionContext, untracked} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class ProjectListComponent {
+  private http = inject(HttpClient);
+  private injector = inject(Injector);
+
+  // Outer resource: List of projects
+  projectsRef = resourceAsync(() => 
+    this.http.get<Project[]>('/api/projects')
+  );
+
+  // Inner resources: Map of orgId -> ResourceRef<Organization>
+  private orgRefsMap = new Map<string, ResourceRef<Organization>>();
+
+  /**
+   * Get or create a resource for the given orgId.
+   * Called from template during change detection.
+   * 
+   * REQUIRES TWO WRAPPERS:
+   * 1. untracked() - Prevents NG0602 (effect in reactive context)
+   * 2. runInInjectionContext() - Prevents NG0203 (no injection context)
+   */
+  getOrgRef(orgId: string): ResourceRef<Organization> {
+    return untracked(() => {  // Break out of reactive context
+      let orgRef = this.orgRefsMap.get(orgId);
+      if (!orgRef) {
+        orgRef = runInInjectionContext(this.injector, () =>  // Provide injection context
+          resourceAsync(
+            () => this.http.get<Organization>(\`/api/orgs/\${orgId}\`),
+            { lazy: true }
+          )
+        );
+        this.orgRefsMap.set(orgId, orgRef);
+      }
+      return orgRef;
+    });
+  }
+
+  loadOrg(orgId: string) {
+    this.getOrgRef(orgId).reload();
+  }
+}
+  `);
+
+  nestedResourceHtmlCode = highlight(`
+<table class="table">
+  <tbody>
+    @for (project of projectsRef.value(); track project.id) {
+      <tr>
+        <td>{{ project.name }}</td>
+        <td>
+          @if (getOrgRef(project.orgId); as orgRef) {
+            <!-- Loading state for THIS row only -->
+            @if (orgRef.isLoading()) {
+              <cll-spinner size="xs" />
+            }
+
+            <!-- Error state for THIS row only -->
+            @if (orgRef.error(); as error) {
+              <cll-alert [content]="error" [compact]="true" />
+              <button (click)="orgRef.reload()">Retry</button>
+            }
+
+            <!-- Success state -->
+            @if (orgRef.hasValue()) {
+              <strong>{{ orgRef.value().name }}</strong>
+            }
+          }
+        </td>
+        <td>
+          <button (click)="loadOrg(project.orgId)">Load Org</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
   `);
 }

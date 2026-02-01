@@ -101,6 +101,7 @@ export interface ResourceRef<T, E = Error> {
    * - `reloading`: Refetch with previous value available
    * - `resolved`: Successfully completed
    * - `error`: Failed with error
+   * - `local`: Value set manually via set()/update()
    */
   readonly status: Signal<ResourceStatus>;
 
@@ -124,7 +125,7 @@ export interface ResourceRef<T, E = Error> {
 
   /**
    * Returns true if the resource has a value available (not undefined).
-   * True for 'resolved' state or 'reloading' state (has previous value).
+   * True for 'resolved', 'reloading', or 'local' state.
    *
    * **Type predicate**: When true, narrows the value type to exclude undefined.
    * This matches Angular's httpResource behavior.
@@ -157,13 +158,105 @@ export interface ResourceRef<T, E = Error> {
 }
 
 /**
+ * A writable resource that supports manual value updates.
+ * Extends ResourceRef with set() and update() methods.
+ * Inspired by Angular's WritableResource API.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ *
+ * @see https://angular.dev/api/core/WritableResource
+ */
+export interface WritableResourceRef<T, E = Error> extends ResourceRef<T, E> {
+  /**
+   * Manually set the resource value, transitioning to 'local' state.
+   *
+   * When you set a value:
+   * - Status becomes 'local'
+   * - Error is cleared
+   * - Value is immediately available
+   * - No fetch is triggered
+   * - Pending requests are cancelled
+   *
+   * Use cases:
+   * - Optimistic updates (update UI before server confirmation)
+   * - Prefetched/cached data (set initial value, then reload for fresh data)
+   * - Manual data management (set filtered/transformed data)
+   *
+   * @param value - The new value to set
+   *
+   * @example
+   * ```typescript
+   * // Optimistic update
+   * todoRef.set({ ...todo, completed: true });
+   *
+   * // Cache-first pattern
+   * userRef.set(cachedUser);
+   * userRef.reload(); // Fetch fresh data in background
+   * ```
+   */
+  set(value: T): void;
+
+  /**
+   * Update the resource value using an updater function.
+   * Transitions to 'local' state.
+   *
+   * Like WritableSignal.update(), this can be called with undefined values.
+   * TypeScript enforces that the updater must handle undefined if no initialValue was provided.
+   *
+   * @param updater - Function that receives current value and returns new value
+   *
+   * @example
+   * ```typescript
+   * // Toggle a boolean property
+   * userRef.update(user => ({ ...user, active: !user.active }));
+   *
+   * // Increment a counter
+   * counterRef.update(count => count + 1);
+   *
+   * // Handle undefined (when no initialValue provided)
+   * userRef.update(user => user ? { ...user, name: 'New' } : undefined);
+   * ```
+   */
+  update(updater: (value: T) => T): void;
+
+  /**
+   * Returns a read-only version of this resource.
+   * Useful for exposing resources publicly while keeping write access private.
+   *
+   * @returns A read-only ResourceRef (without set/update methods)
+   *
+   * @example
+   * ```typescript
+   * export class UserStateService {
+   *   private _userRef = resourceAsync(() => this.http.get<User>('/api/user'));
+   *   public readonly userRef = this._userRef.asReadonly();
+   *
+   *   updateUser(updates: Partial<User>) {
+   *     this._userRef.update(user => ({ ...user, ...updates }));
+   *   }
+   * }
+   * ```
+   */
+  asReadonly(): ResourceRef<T, E>;
+
+  /**
+   * Type predicate override for WritableResourceRef.
+   */
+  hasValue(): this is WritableResourceRef<Exclude<T, undefined>, E>;
+}
+
+/**
  * Creates a reactive resource that manages async operations with full state tracking.
  * Similar to Angular's httpResource but works with any async operation (Observable, Promise, or sync value).
+ *
+ * Returns a WritableResourceRef with set() and update() methods for manual value management.
  *
  * Key features:
  * - Automatic request cancellation when dependencies change
  * - Manual reload() capability
- * - Status tracking: idle → loading → success/error
+ * - Manual set()/update() for local state management (optimistic updates, caching)
+ * - Status tracking: idle → loading → resolved/error/local
  * - Lazy loading support
  * - Error handling with fallback values
  *
@@ -174,7 +267,7 @@ export interface ResourceRef<T, E = Error> {
  *   This function is reactive and will re-execute when any signals it depends on change.
  * @param options - Optional configuration for the resource behavior.
  *
- * @returns A ResourceRef object with state signals and reload capability.
+ * @returns A WritableResourceRef object with state signals, reload capability, and set/update methods.
  *
  * @example
  * ```typescript
@@ -195,6 +288,14 @@ export interface ResourceRef<T, E = Error> {
  *
  * // Manual refresh
  * <button (click)="userRef.reload()">Refresh</button>
+ *
+ * // Optimistic update
+ * userRef.update(user => ({ ...user, name: 'New Name' }));
+ * this.http.put('/api/user', userRef.value()).subscribe();
+ *
+ * // Cache-first pattern
+ * userRef.set(cachedUser); // Show cached data immediately
+ * userRef.reload(); // Fetch fresh data in background
  *
  * // With error handling
  * userRef = resourceAsync(
@@ -218,7 +319,7 @@ export interface ResourceRef<T, E = Error> {
 export function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
   options: ResourceRefOptions<T, E> = {},
-): ResourceRef<T, E> {
+): WritableResourceRef<T, E> {
   assertInInjectionContext(resourceAsync);
 
   const destroyRef = inject(DestroyRef);
@@ -338,13 +439,13 @@ export function resourceAsync<T, E = Error>(
   });
 
   // hasValue as a method with type predicate for type narrowing
-  const hasValue = function (this: ResourceRef<T, E>): this is ResourceRef<Exclude<T, undefined>, E> {
+  const hasValue = function (this: WritableResourceRef<T, E>): this is WritableResourceRef<Exclude<T, undefined>, E> {
     // Matches Angular's httpResource behavior:
-    // hasValue is true only when we have an actual loaded value (not just initialValue)
-    // This is true for 'resolved' or 'reloading' status
+    // hasValue is true when we have an actual loaded value (not just initialValue)
+    // This is true for 'resolved', 'reloading', or 'local' status
     const status = statusSignal();
     const val = valueSignal(); // Check the actual loaded value
-    return (status === 'resolved' || status === 'reloading') && val !== undefined;
+    return (status === 'resolved' || status === 'reloading' || status === 'local') && val !== undefined;
   };
 
   const reload = (): boolean => {
@@ -366,7 +467,55 @@ export function resourceAsync<T, E = Error>(
     return true;
   };
 
-  const resourceRef: ResourceRef<T, E> = {
+  // Manually set the resource value (transitions to 'local' state)
+  const set = (value: T): void => {
+    // Cancel any pending request
+    if (currentSubscription && !currentSubscription.closed) {
+      currentSubscription.unsubscribe();
+      currentSubscription = null;
+    }
+
+    // Update state to 'local'
+    untracked(() => {
+      valueSignal.set(value);
+      errorSignal.set(null);
+      statusSignal.set('local');
+    });
+  };
+
+  // Update the resource value using an updater function
+  const update = (updater: (value: T) => T): void => {
+    // Get current value (may be undefined if no initialValue)
+    const currentValue = untracked(() => valueComputed());
+
+    // Call updater with current value
+    const newValue = updater(currentValue);
+
+    // Set the new value (transitions to 'local')
+    set(newValue);
+  };
+
+  // Return read-only version
+  const asReadonly = (): ResourceRef<T, E> => {
+    // Create a wrapper function that preserves the type predicate
+    const readonlyHasValue = function (this: ResourceRef<T, E>): this is ResourceRef<Exclude<T, undefined>, E> {
+      return hasValue.call(this as WritableResourceRef<T, E>);
+    };
+
+    // Return a new object without set/update methods
+    return {
+      value: valueComputed,
+      error: errorSignal.asReadonly(),
+      status: statusSignal.asReadonly(),
+      isLoading: isLoadingSignal,
+      isIdle: isIdleSignal,
+      hasValue: readonlyHasValue,
+      reload,
+      execute: reload,
+    };
+  };
+
+  const resourceRef: WritableResourceRef<T, E> = {
     value: valueComputed,
     error: errorSignal.asReadonly(),
     status: statusSignal.asReadonly(),
@@ -375,6 +524,9 @@ export function resourceAsync<T, E = Error>(
     hasValue,
     reload,
     execute: reload, // Alias for mutations - same functionality, clearer intent
+    set,
+    update,
+    asReadonly,
   };
 
   return resourceRef;
