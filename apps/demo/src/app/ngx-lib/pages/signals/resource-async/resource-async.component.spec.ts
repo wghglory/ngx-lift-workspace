@@ -1,7 +1,10 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ResourceAsyncComponent} from './resource-async.component';
+import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {provideRouter} from '@angular/router';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
 
 describe('ResourceAsyncComponent', () => {
   let component: ResourceAsyncComponent;
@@ -10,7 +13,7 @@ describe('ResourceAsyncComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ResourceAsyncComponent],
-      providers: [provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ResourceAsyncComponent);
