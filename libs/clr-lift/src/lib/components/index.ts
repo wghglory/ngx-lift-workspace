@@ -9,6 +9,7 @@ export * from './page-container';
 export * from './spinner';
 export * from './status-indicator';
 export * from './theme-toggle';
+export * from './timepicker';
 export * from './timeline-wizard';
 export * from './toast';
 export * from './tooltip';

@@ -1,0 +1,63 @@
+:host {
+  display: contents;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  margin: 0 !important;
+  min-width: 1.5rem;
+  height: 1rem;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: var(--clr-forms-text-color, #565656);
+  transition: all 0.2s ease;
+  border-radius: var(--clr-global-borderradius, 3px);
+
+  &:hover:not(:disabled) {
+    color: var(--clr-link-hover-color, #0072a3);
+    background-color: var(--clr-btn-default-hover-bg-color, rgba(0, 0, 0, 0.05));
+  }
+
+  &:focus {
+    outline: 1px solid #0072a3 !important;
+    outline-offset: 0;
+  }
+
+  &:active:not(:disabled) {
+    color: var(--clr-link-active-color, #0072a3);
+  }
+
+  &:disabled {
+    color: var(--clr-forms-disabled-color, #999999);
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  cds-icon,
+  ::ng-deep cds-icon {
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+    --color: currentColor;
+  }
+}
+
+// Dark theme support
+:host-context(.dark-theme) {
+  .btn {
+    color: var(--clr-forms-text-color, #cccccc);
+
+    &:hover:not(:disabled) {
+      color: var(--clr-link-hover-color, #49afd9);
+      background-color: var(--clr-btn-default-hover-bg-color, rgba(255, 255, 255, 0.1));
+    }
+
+    &:disabled {
+      color: var(--clr-forms-disabled-color, #666666);
+    }
+  }
+}

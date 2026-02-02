@@ -11,6 +11,7 @@ import {MultiAlertsDemoComponent} from './clr-lib/pages/multi-alerts-demo/multi-
 import {SpinnerDemoComponent} from './clr-lib/pages/spinner-demo/spinner-demo.component';
 import {StatusIndicatorDemoComponent} from './clr-lib/pages/status-indicator-demo/status-indicator-demo.component';
 import {TimelineWizardDemoComponent} from './clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component';
+import {TimepickerDemoComponent} from './clr-lib/pages/timepicker-demo/timepicker-demo.component';
 import {ToastDemoComponent} from './clr-lib/pages/toast-demo/toast-demo.component';
 import {TooltipDemoComponent} from './clr-lib/pages/tooltip-demo/tooltip-demo.component';
 import {NgxLiftHomeComponent} from './ngx-lib/pages/ngx-lift-home/ngx-lift-home.component';
@@ -245,6 +246,10 @@ export const routes: Routes = [
           {
             path: 'timeline-wizard',
             component: TimelineWizardDemoComponent,
+          },
+          {
+            path: 'timepicker',
+            component: TimepickerDemoComponent,
           },
           {
             path: 'toast',

@@ -1,0 +1,503 @@
+<cll-page-container [title]="'Timepicker'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>TimepickerComponent</code> allows users to select a time from a dropdown or enter it manually. It supports
+    customizable intervals, min/max validation, keyboard navigation, and integrates seamlessly with Angular reactive
+    forms and Clarity Design System.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <!-- Example 1: Basic Timepicker -->
+    <article class="space-y-3">
+      <h3>Example 1: Basic Timepicker</h3>
+      <p>Basic usage with form control integration and default 30-minute intervals:</p>
+      <form clrForm [formGroup]="basicForm" (ngSubmit)="submitBasicForm()">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Select Time</label>
+          <div
+            class="clr-control-container"
+            [class.clr-error]="basicForm.get('time')?.invalid && basicForm.get('time')?.touched"
+          >
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="basicTimepicker"
+                  formControlName="time"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="basicTimepicker" class="clr-input-group-icon-action" />
+              </div>
+              @if (basicForm.get('time')?.invalid && basicForm.get('time')?.touched) {
+                <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon>
+              }
+              <cll-timepicker #basicTimepicker />
+            </div>
+            @if (basicForm.get('time')?.invalid && basicForm.get('time')?.touched) {
+              <span class="clr-subtext error">Time is required</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-6" [disabled]="basicForm.invalid">
+          Submit and view console log
+        </button>
+      </form>
+      <p class="text-sm">Selected value: {{ basicForm.value.time | json }}</p>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <!-- Example 2: Custom Intervals -->
+    <article class="space-y-3">
+      <h3>Example 2: Custom Time Intervals</h3>
+      <p>Timepicker with different interval configurations:</p>
+      <form clrForm [formGroup]="intervalsForm" class="mt-0-important">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Every 15 minutes</label>
+          <div class="clr-control-container">
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="timepicker15"
+                  formControlName="time15m"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="timepicker15" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #timepicker15 [interval]="'15m'" />
+            </div>
+          </div>
+        </div>
+
+        <div class="clr-form-control">
+          <label class="clr-control-label">Every 1 hour</label>
+          <div class="clr-control-container">
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="timepicker1h"
+                  formControlName="time1h"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="timepicker1h" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #timepicker1h [interval]="'1h'" />
+            </div>
+          </div>
+        </div>
+
+        <div class="clr-form-control">
+          <label class="clr-control-label">Every 3.5 hours</label>
+          <div class="clr-control-container">
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="timepicker3_5h"
+                  formControlName="time3_5h"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="timepicker3_5h" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #timepicker3_5h [interval]="'3.5 hours'" />
+            </div>
+          </div>
+        </div>
+      </form>
+      <app-code-block [code]="intervalsExampleCode" lang="html" />
+    </article>
+
+    <!-- Example 3: Min/Max Validation -->
+    <article class="space-y-3">
+      <h3>Example 3: Time Range Validation</h3>
+      <p>Timepicker with min/max bounds (business hours: 9 AM - 5 PM):</p>
+      <form clrForm [formGroup]="validationForm" class="mt-0-important" (ngSubmit)="submitValidationForm()">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Meeting Time (9 AM - 5 PM)</label>
+          <div
+            class="clr-control-container"
+            [class.clr-error]="validationForm.get('meetingTime')?.invalid && validationForm.get('meetingTime')?.touched"
+          >
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="validationTimepicker"
+                  [cllTimepickerMin]="'9:00 AM'"
+                  [cllTimepickerMax]="'5:00 PM'"
+                  formControlName="meetingTime"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="validationTimepicker" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #validationTimepicker [min]="'9:00 AM'" [max]="'5:00 PM'" />
+              @if (validationForm.get('meetingTime')?.invalid && validationForm.get('meetingTime')?.touched) {
+                <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon>
+              }
+            </div>
+            <span class="clr-subtext error">Enter a time between 9:00 AM and 5:00 PM</span>
+            @if (
+              validationForm.get('meetingTime')?.hasError('cllTimepickerParse') &&
+              validationForm.get('meetingTime')?.touched
+            ) {
+              <span class="clr-subtext error">Invalid time format</span>
+            }
+            @if (
+              validationForm.get('meetingTime')?.hasError('cllTimepickerMin') &&
+              validationForm.get('meetingTime')?.touched
+            ) {
+              <span class="clr-subtext error">Time must be after 9:00 AM</span>
+            }
+            @if (
+              validationForm.get('meetingTime')?.hasError('cllTimepickerMax') &&
+              validationForm.get('meetingTime')?.touched
+            ) {
+              <span class="clr-subtext error">Time must be before 5:00 PM</span>
+            }
+            @if (
+              validationForm.get('meetingTime')?.hasError('required') && validationForm.get('meetingTime')?.touched
+            ) {
+              <span class="clr-subtext error">Time is required</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-6" [disabled]="validationForm.invalid">
+          Submit and view console log
+        </button>
+      </form>
+      <app-code-block [code]="validationExampleCode" lang="html" />
+    </article>
+
+    <!-- Example 4: Custom Options -->
+    <article class="space-y-3">
+      <h3>Example 4: Custom Time Options</h3>
+      <p>Timepicker with a predefined list of time options:</p>
+      <form clrForm [formGroup]="customOptionsForm" class="mt-0-important">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Pick a time of day</label>
+          <div class="clr-control-container">
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="customTimepicker"
+                  formControlName="timeOfDay"
+                  placeholder="Select time"
+                />
+                <cll-timepicker-toggle [for]="customTimepicker" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #customTimepicker [options]="customTimeOptions" />
+            </div>
+            <span class="clr-subtext error">Choose from predefined times</span>
+          </div>
+        </div>
+      </form>
+      <app-code-block [code]="customOptionsExampleCode" lang="typescript" />
+    </article>
+
+    <!-- Example 5: Datepicker Integration -->
+    <article class="space-y-3">
+      <h3>Example 5: Datepicker + Timepicker Integration</h3>
+      <p>Using Clarity's date container with timepicker for seamless date and time selection:</p>
+      <form clrForm [formGroup]="dateTimeForm" class="mt-0-important">
+        <clr-date-container>
+          <label>Meeting Date & Time</label>
+          <input clrDate formControlName="meetingDateTime" placeholder="MM/DD/YYYY" />
+          <div class="clr-input-wrapper">
+            <div class="clr-input-group">
+              <input
+                class="clr-input"
+                [cllTimepicker]="dateTimeTimepicker"
+                formControlName="meetingDateTime"
+                placeholder="HH:MM AM/PM"
+              />
+              <cll-timepicker-toggle [for]="dateTimeTimepicker" class="clr-input-group-icon-action" />
+            </div>
+            <cll-timepicker #dateTimeTimepicker />
+          </div>
+          <clr-control-helper>Both date and time share the same form control</clr-control-helper>
+        </clr-date-container>
+      </form>
+      <p class="text-sm">Selected value: {{ dateTimeForm.value.meetingDateTime | json }}</p>
+      <app-code-block [code]="dateTimeIntegrationCode" lang="html" />
+    </article>
+
+    <!-- Example 6: Custom Toggle Icon -->
+    <article class="space-y-3">
+      <h3>Example 6: Custom Toggle Icon</h3>
+      <p>Customize the toggle button icon using content projection:</p>
+      <form clrForm [formGroup]="customIconForm" class="mt-0-important">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Time with Calendar Icon</label>
+          <div class="clr-control-container">
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="customIconTimepicker"
+                  formControlName="time"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="customIconTimepicker" class="clr-input-group-icon-action">
+                  <cds-icon shape="calendar" cllTimepickerToggleIcon />
+                </cll-timepicker-toggle>
+              </div>
+              <cll-timepicker #customIconTimepicker />
+            </div>
+          </div>
+        </div>
+      </form>
+      <app-code-block [code]="customIconExampleCode" lang="html" />
+    </article>
+
+    <!-- Example 7: Locale Support (info only) -->
+    <article class="space-y-3">
+      <h3>Example 7: Locale-Aware Formatting</h3>
+      <p>
+        The timepicker automatically formats time based on the browser's locale. US locales display 12-hour format (2:30
+        PM) while European locales display 24-hour format (14:30).
+      </p>
+      <form clrForm [formGroup]="localeForm" class="mt-0-important">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Time (Browser Locale)</label>
+          <div class="clr-control-container">
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="localeTimepicker"
+                  formControlName="timeUS"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="localeTimepicker" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #localeTimepicker />
+            </div>
+            <span class="clr-subtext error">Format adapts to your browser's locale setting</span>
+          </div>
+        </div>
+      </form>
+      <p class="text-sm">
+        <strong>Note:</strong> The component supports 12+ locales including English, German, Spanish, French, Italian,
+        Japanese, Korean, Portuguese, Chinese (Simplified & Traditional), Dutch, and Russian.
+      </p>
+    </article>
+
+    <!-- Example 8: Complex Form -->
+    <article class="space-y-3">
+      <h3>Example 8: Reactive Forms with Multiple Timepickers</h3>
+      <p>Multiple timepicker fields in a single reactive form with validation:</p>
+      <form clrForm [formGroup]="complexForm" class="mt-0-important" (ngSubmit)="submitComplexForm()">
+        <div class="clr-form-control">
+          <label class="clr-control-label">Start Time</label>
+          <div
+            class="clr-control-container"
+            [class.clr-error]="complexForm.get('startTime')?.invalid && complexForm.get('startTime')?.touched"
+          >
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="startTimepicker"
+                  formControlName="startTime"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="startTimepicker" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #startTimepicker />
+              @if (complexForm.get('startTime')?.invalid && complexForm.get('startTime')?.touched) {
+                <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon>
+              }
+            </div>
+            @if (complexForm.get('startTime')?.hasError('required') && complexForm.get('startTime')?.touched) {
+              <span class="clr-subtext error">Start time is required</span>
+            }
+          </div>
+        </div>
+
+        <div class="clr-form-control">
+          <label class="clr-control-label">End Time</label>
+          <div
+            class="clr-control-container"
+            [class.clr-error]="complexForm.get('endTime')?.invalid && complexForm.get('endTime')?.touched"
+          >
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  class="clr-input"
+                  [cllTimepicker]="endTimepicker"
+                  formControlName="endTime"
+                  placeholder="HH:MM AM/PM"
+                />
+                <cll-timepicker-toggle [for]="endTimepicker" class="clr-input-group-icon-action" />
+              </div>
+              <cll-timepicker #endTimepicker />
+              @if (complexForm.get('endTime')?.invalid && complexForm.get('endTime')?.touched) {
+                <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon>
+              }
+            </div>
+            @if (complexForm.get('endTime')?.hasError('required') && complexForm.get('endTime')?.touched) {
+              <span class="clr-subtext error">End time is required</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-6" [disabled]="complexForm.invalid">
+          Submit and view console log
+        </button>
+      </form>
+      <p class="text-sm">Form status: {{ complexForm.status }} | Values: {{ complexForm.value | json }}</p>
+      <app-code-block [code]="complexFormExampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+
+    <div class="space-y-4">
+      <!-- TimepickerComponent API -->
+      <div class="space-y-3">
+        <h3>TimepickerComponent (cll-timepicker)</h3>
+        <p>Dropdown component displaying time options for selection.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>interval: string</code>
+            <p class="text-sm ml-4 mt-1-important">
+              Time interval between options (e.g., '30m', '1h', '90 minutes'). Defaults to '30m'.
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>options: TimepickerOption[]</code>
+            <p class="text-sm ml-4 mt-1-important">
+              Custom array of time options. Overrides interval-based generation.
+            </p>
+          </li>
+          <li class="space-y-1">
+            <code>min: Date | string | null</code>
+            <p class="text-sm ml-4 mt-1-important">Minimum allowed time. Times before this will be disabled.</p>
+          </li>
+          <li class="space-y-1">
+            <code>max: Date | string | null</code>
+            <p class="text-sm ml-4 mt-1-important">Maximum allowed time. Times after this will be disabled.</p>
+          </li>
+          <li class="space-y-1">
+            <code>ariaLabel: string</code>
+            <p class="text-sm ml-4 mt-1-important">ARIA label for the dropdown (for accessibility).</p>
+          </li>
+          <li class="space-y-1">
+            <code>ariaLabelledby: string</code>
+            <p class="text-sm ml-4 mt-1-important">ARIA labelledby attribute for the dropdown.</p>
+          </li>
+        </ul>
+
+        <h4>Outputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>timeSelected: Date</code>
+            <p class="text-sm ml-4 mt-1-important">Emitted when a time option is selected.</p>
+          </li>
+          <li class="space-y-1">
+            <code>opened: void</code>
+            <p class="text-sm ml-4 mt-1-important">Emitted when the dropdown is opened.</p>
+          </li>
+          <li class="space-y-1">
+            <code>closed: void</code>
+            <p class="text-sm ml-4 mt-1-important">Emitted when the dropdown is closed.</p>
+          </li>
+        </ul>
+
+        <h4>Features</h4>
+        <ul class="list-disc space-y-1 ml-6">
+          <li>Customizable time intervals</li>
+          <li>Keyboard navigation (Arrow keys, Enter, Escape, Home, End)</li>
+          <li>Min/max time bounds</li>
+          <li>Custom options support</li>
+          <li>ARIA combobox pattern</li>
+          <li>Locale-aware formatting</li>
+        </ul>
+      </div>
+
+      <!-- TimepickerInputDirective API -->
+      <div class="space-y-3">
+        <h3>TimepickerInputDirective ([cllTimepicker])</h3>
+        <p>Directive that connects an input element to the timepicker dropdown.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>cllTimepicker: TimepickerComponent</code>
+            <p class="text-sm ml-4 mt-1-important">Reference to the timepicker component (required).</p>
+          </li>
+          <li class="space-y-1">
+            <code>cllTimepickerMin: Date | string | null</code>
+            <p class="text-sm ml-4 mt-1-important">Minimum time validation bound.</p>
+          </li>
+          <li class="space-y-1">
+            <code>cllTimepickerMax: Date | string | null</code>
+            <p class="text-sm ml-4 mt-1-important">Maximum time validation bound.</p>
+          </li>
+        </ul>
+
+        <h4>Validation Errors</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li><code>cllTimepickerParse</code> - Invalid time format</li>
+          <li><code>cllTimepickerMin</code> - Time before minimum bound</li>
+          <li><code>cllTimepickerMax</code> - Time after maximum bound</li>
+        </ul>
+
+        <h4>Features</h4>
+        <ul class="list-disc space-y-1 ml-6">
+          <li>ControlValueAccessor implementation</li>
+          <li>Parses multiple time formats (12h/24h)</li>
+          <li>Form control integration</li>
+          <li>Auto-format on blur</li>
+          <li>Keyboard navigation support</li>
+        </ul>
+      </div>
+
+      <!-- TimepickerToggleComponent API -->
+      <div class="space-y-3">
+        <h3>TimepickerToggleComponent (cll-timepicker-toggle)</h3>
+        <p>Toggle button for opening/closing the timepicker dropdown.</p>
+
+        <h4>Inputs</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li class="space-y-1">
+            <code>for: TimepickerComponent</code>
+            <p class="text-sm ml-4 mt-1-important">Reference to the timepicker to control (required).</p>
+          </li>
+          <li class="space-y-1">
+            <code>disabled: boolean</code>
+            <p class="text-sm ml-4 mt-1-important">Whether the toggle button is disabled. Defaults to false.</p>
+          </li>
+        </ul>
+
+        <h4>Content Projection</h4>
+        <ul class="list-disc space-y-2 ml-6">
+          <li>
+            <code>[cllTimepickerToggleIcon]</code> - Project custom icon inside the toggle button (defaults to clock
+            icon)
+          </li>
+        </ul>
+
+        <h4>Features</h4>
+        <ul class="list-disc space-y-1 ml-6">
+          <li>Clock icon by default</li>
+          <li>Custom icon support</li>
+          <li>Disabled state management</li>
+          <li>ARIA attributes for accessibility</li>
+          <li>Integrates with Clarity form fields</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</cll-page-container>

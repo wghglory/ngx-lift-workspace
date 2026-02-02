@@ -86,6 +86,7 @@ export const clrLiftNavConfig: NavConfig[] = [
       {path: '/spinner', value: 'Spinner'},
       {path: '/status-indicator', value: 'Status Indicator'},
       {path: '/timeline-wizard', value: 'Timeline Wizard'},
+      {path: '/timepicker', value: 'Timepicker', label: 'new'},
       {path: '/toast', value: 'Toast'},
       {path: '/tooltip', value: 'Tooltip'},
       {path: '/file-reader', value: 'File Reader'},

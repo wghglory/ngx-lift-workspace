@@ -1,0 +1,87 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.timepicker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  min-width: 150px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--clr-dropdown-bg-color, #ffffff);
+  border: 1px solid var(--clr-dropdown-border-color, #cccccc);
+  border-radius: var(--clr-border-radius, 3px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 2px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.timepicker-option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  user-select: none;
+
+  &:hover:not([aria-disabled='true']) {
+    background-color: var(--clr-dropdown-hover-color, #f5f5f5);
+  }
+
+  &.focused:not([aria-disabled='true']) {
+    background-color: var(--clr-dropdown-hover-color, #f5f5f5);
+  }
+
+  &.selected {
+    background-color: var(--clr-dropdown-selection-color, #e8f2f8);
+    font-weight: 600;
+  }
+
+  &[aria-disabled='true'] {
+    color: var(--clr-forms-disabled-color, #999999);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.timepicker-empty {
+  padding: 0.75rem;
+  text-align: center;
+  color: var(--clr-forms-text-color, #666666);
+  font-style: italic;
+}
+
+// Dark theme support
+:host-context(.dark-theme) {
+  .timepicker-dropdown {
+    background-color: var(--clr-dropdown-bg-color, #313131);
+    border-color: var(--clr-dropdown-border-color, #555555);
+  }
+
+  .timepicker-option {
+    &:hover:not([aria-disabled='true']) {
+      background-color: var(--clr-dropdown-hover-color, #3d3d3d);
+    }
+
+    &.focused:not([aria-disabled='true']) {
+      background-color: var(--clr-dropdown-hover-color, #3d3d3d);
+    }
+
+    &.selected {
+      background-color: var(--clr-dropdown-selection-color, #324f62);
+    }
+
+    &[aria-disabled='true'] {
+      color: var(--clr-forms-disabled-color, #999999);
+    }
+  }
+
+  .timepicker-empty {
+    color: var(--clr-forms-text-color, #aaaaaa);
+  }
+}

@@ -1,0 +1,12 @@
+<button
+  type="button"
+  class="btn btn-sm btn-icon"
+  [disabled]="disabled()"
+  [attr.aria-label]="getAriaLabel()"
+  [attr.aria-pressed]="isOpen()"
+  (click)="toggle()"
+>
+  <ng-content select="[cllTimepickerToggleIcon]">
+    <cds-icon shape="clock" />
+  </ng-content>
+</button>

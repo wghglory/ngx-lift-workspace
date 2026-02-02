@@ -1,0 +1,35 @@
+@if (isOpen()) {
+  <div
+    class="timepicker-dropdown"
+    role="listbox"
+    [attr.aria-label]="computedAriaLabel()"
+    [attr.aria-labelledby]="ariaLabelledby() || null"
+    (keydown)="onKeyDown($event)"
+    tabindex="-1"
+  >
+    @if (timeOptions().length === 0) {
+      <div class="timepicker-empty">
+        {{ 'timepicker.noOptionsAvailable' | translate }}
+      </div>
+    } @else {
+      @for (option of timeOptions(); track option.value.getTime(); let i = $index) {
+        <div
+          #option
+          class="timepicker-option"
+          role="option"
+          tabindex="-1"
+          [class.selected]="isSelected(option)"
+          [class.focused]="isFocused(i)"
+          [attr.aria-selected]="isSelected(option)"
+          [attr.aria-disabled]="option.disabled || null"
+          [attr.aria-label]="getOptionLabel(option)"
+          (click)="!option.disabled && selectOption(option)"
+          (keydown)="onKeyDown($event)"
+          (mouseenter)="focusedIndex.set(i)"
+        >
+          {{ getOptionLabel(option) }}
+        </div>
+      }
+    }
+  </div>
+}
