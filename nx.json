@@ -60,6 +60,11 @@
     "@nx/angular:library": {"linter": "eslint", "unitTestRunner": "vitest"},
     "@nx/angular:component": {"style": "scss"}
   },
-  "release": {"version": {"preVersionCommand": "npx nx run-many -t build"}},
+  "release": {
+    "projectsRelationship": "independent",
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
+    }
+  },
   "nxCloudId": "69494438ac7b2b3a007467c0"
 }
