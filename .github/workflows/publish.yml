@@ -67,6 +67,11 @@ jobs:
         id: run-unit-tests
         run: npx nx run-many -t test --projects=${{ env.PROJECTS }} --parallel=2
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Version and publish (manual trigger)
         id: publish-manual
         if: github.event_name == 'workflow_dispatch'
