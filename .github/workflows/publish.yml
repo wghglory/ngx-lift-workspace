@@ -139,7 +139,7 @@ jobs:
           RELEASE_ICON=$(get_status_icon "$RELEASE_STATUS")
 
           BUILD_BADGE=$(get_status_badge "$BUILD_STATUS")
-          TEST_BADGE=$(get_status_badge "$TEST_BADGE")
+          TEST_BADGE=$(get_status_badge "$TEST_STATUS")
           PUBLISH_BADGE=$(get_status_badge "$PUBLISH_STATUS")
           RELEASE_BADGE=$(get_status_badge "$RELEASE_STATUS")
 
