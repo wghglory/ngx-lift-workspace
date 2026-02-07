@@ -12,6 +12,15 @@ on:
           - major
           - minor
           - patch
+      project:
+        description: 'Project to publish'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - ngx-lift
+          - clr-lift
   push:
     tags:
       - 'v*'
@@ -39,13 +48,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Determine projects
+        id: projects
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] || [ "${{ github.event.inputs.project }}" == "all" ]; then
+            echo "PROJECTS=ngx-lift,clr-lift" >> $GITHUB_ENV
+            echo "PROJECT_FLAG=" >> $GITHUB_ENV
+          else
+            echo "PROJECTS=${{ github.event.inputs.project }}" >> $GITHUB_ENV
+            echo "PROJECT_FLAG=--projects=${{ github.event.inputs.project }}" >> $GITHUB_ENV
+          fi
+
       - name: Build libraries
         id: build-libs
-        run: npx nx run-many -t build --projects=ngx-lift,clr-lift --parallel=2
+        run: npx nx run-many -t build --projects=${{ env.PROJECTS }} --parallel=2
 
       - name: Run unit tests
         id: run-unit-tests
-        run: npx nx run-many -t test --projects=ngx-lift,clr-lift --parallel=2
+        run: npx nx run-many -t test --projects=${{ env.PROJECTS }} --parallel=2
 
       - name: Version and publish (manual trigger)
         id: publish-manual
@@ -54,8 +74,8 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
-          npx nx release version ${{ github.event.inputs.version }}
-          npx nx release publish
+          npx nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }}
+          npx nx release publish ${{ env.PROJECT_FLAG }}
 
       - name: Publish from tag
         id: publish-tag
@@ -83,7 +103,8 @@ jobs:
           if [ "$EVENT" = "workflow_dispatch" ]; then
             PUBLISH_STATUS="${{ steps.publish-manual.outcome }}"
             VERSION_TYPE="${{ github.event.inputs.version }}"
-            TRIGGER_INFO="**Version Type**: \`$VERSION_TYPE\`"
+            PROJECT="${{ github.event.inputs.project }}"
+            TRIGGER_INFO="**Version Type**: \`$VERSION_TYPE\`<br>**Project**: \`$PROJECT\`"
           else
             PUBLISH_STATUS="${{ steps.publish-tag.outcome }}"
             TAG="${{ github.ref }}"
@@ -139,8 +160,8 @@ jobs:
 
           | Step | Status | Description |
           |------|--------|-------------|
-          | 🏗️ **Build Libraries** | $BUILD_ICON $BUILD_BADGE | Build ngx-lift and clr-lift |
-          | 🧪 **Run Unit Tests** | $TEST_ICON $TEST_BADGE | Run unit tests for both libraries |
+          | 🏗️ **Build Libraries** | $BUILD_ICON $BUILD_BADGE | Build selected libraries |
+          | 🧪 **Run Unit Tests** | $TEST_ICON $TEST_BADGE | Run unit tests for selected libraries |
 
           ---
 
