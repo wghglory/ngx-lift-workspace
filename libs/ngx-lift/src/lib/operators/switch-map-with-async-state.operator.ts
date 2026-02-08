@@ -29,7 +29,7 @@ import {createAsyncState} from './create-async-state.operator';
  *
  * const result$ = userId$.pipe(switchMapWithAsyncState(fetchUser));
  * result$.subscribe((state) => {
- *   console.log(state); // Outputs AsyncState objects with loading, data, and error properties.
+ *   console.log(state); // Outputs AsyncState objects with isLoading, data, and error properties.
  * });
  *
  * @example

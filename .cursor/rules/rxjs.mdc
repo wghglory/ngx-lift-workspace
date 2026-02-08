@@ -30,7 +30,7 @@ globs: ['**/*.ts']
   ```typescript
   users$ = this.http
     .get<User[]>(url)
-    .pipe(map((users) => users.map((u) => ({ ...u, fullName: `${u.firstName} ${u.lastName}` }))));
+    .pipe(map((users) => users.map((u) => ({...u, fullName: `${u.firstName} ${u.lastName}`}))));
   ```
 
 - **filter**: Filter values
@@ -78,7 +78,7 @@ globs: ['**/*.ts']
   ```typescript
   data$ = this.http.get(url).pipe(
     tap((data) => console.log('Received:', data)),
-    tap({ error: (err) => console.error('Error:', err) }),
+    tap({error: (err) => console.error('Error:', err)}),
   );
   ```
 
@@ -117,7 +117,7 @@ globs: ['**/*.ts']
     interval: 5000,
     pollingFn: () => this.http.get('/data'),
     forceRefresh: this.refresh$,
-    initialValue: { loading: false, error: null, data: null },
+    initialValue: {isLoading: false, error: null, data: null},
   });
   ```
 
@@ -137,7 +137,8 @@ globs: ['**/*.ts']
 
   ```typescript
   interface AsyncState<T, E = Error> {
-    loading: boolean;
+    status: ResourceStatus;
+    isLoading: boolean;
     error: E | null;
     data: T | null;
   }
@@ -145,7 +146,7 @@ globs: ['**/*.ts']
 
 - **Template Usage**: Use async pipe with AsyncState
   ```html
-  @if (userState$ | async; as state) { @if (state.loading) {
+  @if (userState$ | async; as state) { @if (state.isLoading) {
   <cll-spinner />
   } @if (state.error) {
   <cll-alert [error]="state.error" />
@@ -282,7 +283,7 @@ globs: ['**/*.ts']
 
   ```typescript
   user = toSignal(this.user$);
-  user = toSignal(this.user$, { initialValue: null });
+  user = toSignal(this.user$, {initialValue: null});
   ```
 
 - **toObservable**: Convert Signal to Observable
@@ -294,7 +295,7 @@ globs: ['**/*.ts']
 - **combineFrom**: Combine signals and observables (ngx-lift)
   ```typescript
   combined = combineFrom([this.signal, this.observable$]);
-  combined = combineFrom({ a: this.signal, b: this.observable$ });
+  combined = combineFrom({a: this.signal, b: this.observable$});
   ```
 
 ### Performance Optimization

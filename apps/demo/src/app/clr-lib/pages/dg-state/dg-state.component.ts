@@ -61,7 +61,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
   <clr-datagrid
     class="min-h-[200px]"
     (clrDgRefresh)="refresh($event)"
-    [clrDgLoading]="vm.usersState?.loading === true"
+    [clrDgLoading]="vm.usersState?.isLoading === true"
     [(clrDgSingleSelected)]="selectedItem"
   >
     <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
@@ -107,7 +107,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
 <clr-datagrid
   class="min-h-[200px]"
   (clrDgRefresh)="refresh($event)"
-  [clrDgLoading]="(usersState$ | async)?.loading === true"
+  [clrDgLoading]="(usersState$ | async)?.isLoading === true"
   [(clrDgSingleSelected)]="selectedItem"
 >
   <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>

@@ -127,20 +127,6 @@ userState$ = this.userService.getUser(id).pipe(createAsyncState());
     <user-card [user]="user" />
   }
 }
-
-
-// Or using deprecated loading field:
-@if (userState$ | async; as state) {
-  @if (state.isLoading) {
-    <cll-spinner />
-  }
-  @if (state.error) {
-    <cll-alert [error]="state.error" />
-  }
-  @if (state.data; as user) {
-    <user-card [user]="user" />
-  }
-}
   `);
 
   signatureCode = highlight(`

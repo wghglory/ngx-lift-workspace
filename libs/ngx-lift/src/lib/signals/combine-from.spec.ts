@@ -472,13 +472,13 @@ describe(combineFrom.name, () => {
       TestBed.runInInjectionContext(() => {
         // Simulate a component with multiple data sources
         const users$ = new BehaviorSubject([{id: 1, name: 'Alice'}]);
-        const loading$ = new BehaviorSubject(false);
+        const isLoading$ = new BehaviorSubject(false);
         const searchTerm = signal('');
         const page = signal(1);
 
         const vm = combineFrom({
           users: users$,
-          loading: loading$,
+          isLoading: isLoading$,
           searchTerm,
           page,
         });
@@ -486,14 +486,14 @@ describe(combineFrom.name, () => {
         tick();
         expect(vm()).toEqual({
           users: [{id: 1, name: 'Alice'}],
-          loading: false,
+          isLoading: false,
           searchTerm: '',
           page: 1,
         });
 
-        loading$.next(true);
+        isLoading$.next(true);
         tick();
-        expect(vm()?.loading).toBe(true);
+        expect(vm()?.isLoading).toBe(true);
 
         searchTerm.set('ali');
         tick();

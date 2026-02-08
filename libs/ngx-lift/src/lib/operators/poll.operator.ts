@@ -48,7 +48,7 @@ import {isPromise} from '../utils/is-promise.util';
  *   - `delay`: Optional delay in milliseconds to wait before starting the first poll.
  *
  * @returns An observable that emits `AsyncState<Data>` objects representing the polling results.
- *   Each emission includes `loading`, `error`, and `data` properties.
+ *   Each emission includes `isLoading`, `error`, and `data` properties.
  *
  * @example
  * ```typescript
