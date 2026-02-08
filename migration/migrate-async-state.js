@@ -85,13 +85,19 @@ const patterns = [
     replacement: 'isLoading: boolean',
     description: 'Type definition (loading: boolean → isLoading: boolean)',
   },
-  // Pattern 3: Object literal with loading property (common in tests and initial values)
+  // Pattern 3: Object literal with loading: true (adds status: 'loading')
   {
-    regex: /loading:\s*(?:true|false)/g,
-    replacement: (match) => match.replace('loading:', 'isLoading:'),
-    description: 'Object literal (loading: true → isLoading: true)',
+    regex: /loading:\s*true/g,
+    replacement: "status: 'loading', isLoading: true",
+    description: "Object literal (loading: true → status: 'loading', isLoading: true)",
   },
-  // Pattern 4: Destructuring {loading, ...} -> {isLoading, ...}
+  // Pattern 4: Object literal with loading: false (renames to isLoading: false)
+  {
+    regex: /loading:\s*false/g,
+    replacement: 'isLoading: false',
+    description: 'Object literal (loading: false → isLoading: false)',
+  },
+  // Pattern 5: Destructuring {loading, ...} -> {isLoading, ...}
   {
     regex: /\{\s*loading\s*,/g,
     replacement: '{ isLoading,',
@@ -206,14 +212,22 @@ try {
   const targetPath = path.resolve(targetDir);
 
   if (!fs.existsSync(targetPath)) {
-    console.error(`❌ Error: Directory '${targetDir}' does not exist`);
+    console.error(`❌ Error: Path '${targetDir}' does not exist`);
     process.exit(1);
   }
 
   console.log(`📂 Scanning: ${targetPath}\n`);
   console.log('Looking for AsyncState usage with old "loading" property...\n');
 
-  scanDirectory(targetPath);
+  const stat = fs.statSync(targetPath);
+  if (stat.isDirectory()) {
+    scanDirectory(targetPath);
+  } else if (stat.isFile() && shouldProcessFile(targetPath)) {
+    processFile(targetPath);
+  } else {
+    console.error(`❌ Error: '${targetDir}' is not a directory or supported file`);
+    process.exit(1);
+  }
 
   console.log('\n================================');
   console.log('📊 Migration Summary');

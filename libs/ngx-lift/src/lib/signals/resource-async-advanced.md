@@ -62,7 +62,7 @@ import {HttpClient} from '@angular/common/http';
 import {resourceAsync} from 'ngx-lift';
 
 interface AsyncState<T> {
-  loading: boolean;
+  isLoading: boolean;
   error: Error | null;
   data: T | null;
 }
@@ -84,7 +84,7 @@ export class ProjectListComponent {
     let orgSignal = this.orgDataMap.get(orgId);
     if (!orgSignal) {
       orgSignal = signal({
-        loading: false,
+        isLoading: false,
         error: null,
         data: null,
       });
@@ -103,7 +103,7 @@ export class ProjectListComponent {
 
     // Set loading state
     orgSignal.set({
-      loading: true,
+      isLoading: true,
       error: null,
       data: orgSignal().data, // Keep existing data during reload
     });
@@ -112,14 +112,14 @@ export class ProjectListComponent {
     this.http.get<Organization>(`/api/orgs/${orgId}`).subscribe({
       next: (org) => {
         orgSignal.set({
-          loading: false,
+          isLoading: false,
           error: null,
           data: org,
         });
       },
       error: (error) => {
         orgSignal.set({
-          loading: false,
+          isLoading: false,
           error: error,
           data: null,
         });
@@ -150,18 +150,18 @@ export class ProjectListComponent {
       <td>
         @if (getOrgData(project.orgId); as orgData) {
         <!-- Idle state -->
-        @if (!orgData().loading && !orgData().data) {
+        @if (!orgData().isLoading && !orgData().data) {
         <span class="text-muted">Not loaded</span>
         }
 
         <!-- Loading state -->
-        @if (orgData().loading) {
+        @if (orgData().isLoading) {
         <cll-spinner size="sm" />
         <span>Loading...</span>
         }
 
         <!-- Error state -->
-        @if (orgData().error && !orgData().loading; as error) {
+        @if (orgData().error && !orgData().isLoading; as error) {
         <cll-alert [content]="error.message" type="danger" />
         }
 
@@ -341,7 +341,7 @@ export class ProjectListComponent {
 ```typescript
 // Simple on-demand loading - no reactive dependencies
 loadOrgDetails(orgId: string) {
-  orgSignal.set({ loading: true, error: null, data: null });
+  orgSignal.set({ isLoading: true, error: null, data: null });
   this.http.get(`/api/orgs/${orgId}`).subscribe(...);
 }
 ```
@@ -380,7 +380,7 @@ export class ProductListComponent {
     let reviewsSignal = this.reviewsCache.get(productId);
     if (!reviewsSignal) {
       reviewsSignal = signal({
-        loading: false,
+        isLoading: false,
         error: null,
         data: null,
       });
@@ -393,11 +393,11 @@ export class ProductListComponent {
     const reviewsSignal = this.reviewsCache.get(productId);
     if (!reviewsSignal) return;
 
-    reviewsSignal.set({loading: true, error: null, data: null});
+    reviewsSignal.set({isLoading: true, error: null, data: null});
 
     this.http.get<Review[]>(`/api/reviews/${productId}`).subscribe({
-      next: (reviews) => reviewsSignal.set({loading: false, error: null, data: reviews}),
-      error: (error) => reviewsSignal.set({loading: false, error, data: null}),
+      next: (reviews) => reviewsSignal.set({isLoading: false, error: null, data: reviews}),
+      error: (error) => reviewsSignal.set({isLoading: false, error, data: null}),
     });
   }
 }
@@ -419,7 +419,7 @@ export class UserDashboardComponent {
     let avatarSignal = this.avatarCache.get(userId);
     if (!avatarSignal) {
       avatarSignal = signal({
-        loading: false,
+        isLoading: false,
         error: null,
         data: null,
       });
@@ -432,11 +432,11 @@ export class UserDashboardComponent {
     const avatarSignal = this.avatarCache.get(userId);
     if (!avatarSignal) return;
 
-    avatarSignal.set({loading: true, error: null, data: null});
+    avatarSignal.set({isLoading: true, error: null, data: null});
 
     this.http.get<Avatar>(`/api/avatars/${userId}`).subscribe({
-      next: (avatar) => avatarSignal.set({loading: false, error: null, data: avatar}),
-      error: (error) => avatarSignal.set({loading: false, error, data: null}),
+      next: (avatar) => avatarSignal.set({isLoading: false, error: null, data: avatar}),
+      error: (error) => avatarSignal.set({isLoading: false, error, data: null}),
     });
   }
 }
@@ -469,7 +469,7 @@ private dataCache = new Map<string, WritableSignal<AsyncState<Data>>>();
 getData(id: string) {
   let dataSignal = this.dataCache.get(id);
   if (!dataSignal) {
-    dataSignal = signal({ loading: false, error: null, data: null });
+    dataSignal = signal({ isLoading: false, error: null, data: null });
     this.dataCache.set(id, dataSignal);
   }
   return dataSignal;

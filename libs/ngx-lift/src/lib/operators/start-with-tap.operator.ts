@@ -19,8 +19,8 @@ import {Observable} from 'rxjs';
  *
  * // Update loading state
  * data$.pipe(
- *   startWithTap(() => this.loading.set(true)),
- *   finalize(() => this.loading.set(false))
+ *   startWithTap(() => this.isLoading.set(true)),
+ *   finalize(() => this.isLoading.set(false))
  * ).subscribe();
  * ```
  */
