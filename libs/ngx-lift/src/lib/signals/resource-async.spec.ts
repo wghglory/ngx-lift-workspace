@@ -1,6 +1,7 @@
 import {signal} from '@angular/core';
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {delay, Observable, of, throwError} from 'rxjs';
+import {delay, Observable, of, throwError, timer} from 'rxjs';
+import {ignoreElements} from 'rxjs/operators';
 
 import {resourceAsync} from './resource-async';
 
@@ -13,7 +14,7 @@ interface User {
   name: string;
 }
 
-describe(resourceAsync.name, () => {
+describe('resourceAsync', () => {
   describe('basic functionality', () => {
     it('should auto-load data on init', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
@@ -636,7 +637,14 @@ describe(resourceAsync.name, () => {
 
     it('should handle empty observable (complete without value)', fakeAsync(() => {
       TestBed.runInInjectionContext(() => {
-        const resource = resourceAsync(() => of().pipe(delay(100)));
+        const resource = resourceAsync(
+          () =>
+            new Observable((observer) => {
+              setTimeout(() => {
+                observer.complete();
+              }, 100);
+            }),
+        );
 
         TestBed.tick();
         expect(resource.status()).toBe('loading');
