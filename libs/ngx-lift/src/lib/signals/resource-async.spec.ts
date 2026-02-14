@@ -633,6 +633,43 @@ describe(resourceAsync.name, () => {
         expect(resource.error()).toBeNull();
       });
     }));
+
+    it('should handle empty observable (complete without value)', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        const resource = resourceAsync(() => of().pipe(delay(100)));
+
+        TestBed.tick();
+        expect(resource.status()).toBe('loading');
+
+        tick(100);
+
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value()).toBeUndefined();
+        expect(resource.error()).toBeNull();
+      });
+    }));
+  });
+
+  describe('error clearing', () => {
+    it('should clear error state immediately when reloading', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        const error = new Error('Fail');
+        const resource = resourceAsync(() => promiseError(error, 100));
+
+        TestBed.tick();
+        tick(100);
+        expect(resource.status()).toBe('error');
+        expect(resource.error()).toBe(error);
+
+        // Reload
+        resource.reload();
+        TestBed.tick();
+
+        // Error should be cleared immediately
+        expect(resource.status()).toBe('loading');
+        expect(resource.error()).toBeNull();
+      });
+    }));
   });
 
   describe('type safety', () => {
