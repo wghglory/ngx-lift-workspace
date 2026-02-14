@@ -1,6 +1,6 @@
 {
   "name": "ngx-lift",
-  "version": "19.1.0",
+  "version": "19.1.1",
   "description": "Powerful Angular utilities library with RxJS operators, signal utilities, pipes, and validators to supercharge your development workflow. Built for Angular 19+ with TypeScript strict mode.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",

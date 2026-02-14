@@ -79,7 +79,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
-          npx nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }}
+          npx nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }} --git-push
           npx nx release publish ${{ env.PROJECT_FLAG }}
 
       - name: Publish from tag
