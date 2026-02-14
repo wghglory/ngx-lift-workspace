@@ -84,7 +84,7 @@ export interface ResourceRef<T, E = Error> {
    * If initialValue is provided, it returns that during loading/error states.
    * If no initialValue is provided, T must include undefined in its type.
    *
-   * Reading value() when in error state and no initialValue was provided will throw.
+   * When in error state with no initialValue, value() returns undefined (T must include undefined).
    */
   readonly value: Signal<T>;
 
@@ -383,17 +383,20 @@ export function resourceAsync<T, E = Error>(
     const hasExistingValue = untracked(() => valueSignal() !== undefined);
     const newStatus: ResourceStatus = hasExistingValue ? 'reloading' : 'loading';
 
-    // Set loading/reloading state
+    // Set loading/reloading state and clear previous error when starting a new request
     untracked(() => {
       statusSignal.set(newStatus);
+      errorSignal.set(null);
       options.onLoading?.();
     });
 
     // Convert source to observable
     const source$ = isObservable(source) ? source : isPromise(source) ? from(source) : from([source]);
 
+    let receivedValue = false;
     currentSubscription = source$.subscribe({
       next: (value) => {
+        receivedValue = true;
         untracked(() => {
           valueSignal.set(value);
           errorSignal.set(null);
@@ -424,6 +427,16 @@ export function resourceAsync<T, E = Error>(
             throw error;
           }
         });
+      },
+      complete: () => {
+        // Empty observable: complete without next leaves resource stuck in loading
+        if (!receivedValue) {
+          untracked(() => {
+            valueSignal.set(undefined as T);
+            errorSignal.set(null);
+            statusSignal.set('resolved');
+          });
+        }
       },
     });
   });
