@@ -186,9 +186,8 @@ ngx-lift-workspace/
 
 ### Clarity Design System
 
-- **@clr/angular**: ^17.12.1
-- **@clr/ui**: ^17.12.1
-- **@cds/core**: ^6.16.1
+- **@clr/angular**: ^18.0.0
+- **@clr/ui**: ^18.0.0
 - **Purpose**: Primary UI component library
 - **Styling**: SASS with Clarity variables (no hard-coded colors)
 

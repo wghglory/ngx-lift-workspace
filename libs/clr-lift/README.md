@@ -73,10 +73,9 @@ common development tasks.
 
 ## Requirements
 
-- **Angular**: >= 19.0.0
-- **@clr/angular**: >= 17.0.0
-- **@cds/core**: >= 6.0.0
-- **ngx-lift**: >= 19.0.0
+- **Angular**: >= 21.0.0
+- **@clr/angular**: >= 18.0.0
+- **ngx-lift**: >= 21.0.0
 - **RxJS**: >= 7.8.0
 
 ## Installation
@@ -84,11 +83,11 @@ common development tasks.
 Install clr-lift and its peer dependencies:
 
 ```bash
-npm install clr-lift @clr/angular @cds/core ngx-lift
+npm install clr-lift @clr/angular ngx-lift
 # or
-yarn add clr-lift @clr/angular @cds/core ngx-lift
+yarn add clr-lift @clr/angular ngx-lift
 # or
-pnpm add clr-lift @clr/angular @cds/core ngx-lift
+pnpm add clr-lift @clr/angular ngx-lift
 ```
 
 ## 🚀 Quick Start
@@ -96,11 +95,11 @@ pnpm add clr-lift @clr/angular @cds/core ngx-lift
 ### Installation
 
 ```bash
-npm install clr-lift @clr/angular @cds/core ngx-lift
+npm install clr-lift @clr/angular ngx-lift
 # or
-yarn add clr-lift @clr/angular @cds/core ngx-lift
+yarn add clr-lift @clr/angular ngx-lift
 # or
-pnpm add clr-lift @clr/angular @cds/core ngx-lift
+pnpm add clr-lift @clr/angular ngx-lift
 ```
 
 ### Using the dgState Operator

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, inject, input, output, signal} from '@angular/core';
-import {ClarityIcons, moonIcon, sunIcon} from '@cds/core/icon';
+import {ClarityIcons, moonIcon, sunIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 
 import {TranslationService} from '../../services/translation.service';

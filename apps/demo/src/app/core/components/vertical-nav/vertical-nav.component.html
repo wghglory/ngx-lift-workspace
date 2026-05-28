@@ -1,7 +1,7 @@
 <clr-vertical-nav [clrVerticalNavCollapsible]="true" [clr-nav-level]="2">
   @for (data of navConfig(); track data.value) {
     <clr-vertical-nav-group routerLinkActive="active">
-      <cds-icon [attr.shape]="data.icon" clrVerticalNavIcon />
+      <clr-icon [shape]="data.icon" clrVerticalNavIcon />
       {{ data.value }}
       <clr-vertical-nav-group-children *clrIfExpanded="true">
         @for (child of data.children; track child.value) {

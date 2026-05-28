@@ -19,7 +19,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollComponent implements OnInit {
-  selectedItem: User | undefined;
+  selectedItem: User[] = [];
 
   userService = inject(UserService);
 

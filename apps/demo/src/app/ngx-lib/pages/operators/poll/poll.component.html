@@ -88,7 +88,8 @@
         class="min-h-[200px]"
         (clrDgRefresh)="refresh($event)"
         [clrDgLoading]="(usersState$ | async)?.isLoading === true"
-        [(clrDgSingleSelected)]="selectedItem"
+        [clrDgSelectionType]="'single'"
+        [(clrDgSelected)]="selectedItem"
       >
         <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
         <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>

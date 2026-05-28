@@ -4,7 +4,8 @@ alwaysApply: true
 
 ## Clarity Design System Guidelines (clr-lift Library)
 
-**Context**: These guidelines apply specifically to the **clr-lift** library and the **demo** app. The **ngx-lift** library does not use Clarity Design System.
+**Context**: These guidelines apply specifically to the **clr-lift** library and the **demo** app. The **ngx-lift**
+library does not use Clarity Design System.
 
 ### Component Usage
 
@@ -12,14 +13,9 @@ alwaysApply: true
 - **Import ClarityModule**: Import `ClarityModule` or specific Clarity components
 
   ```typescript
-  import { ClarityModule } from '@clr/angular';
+  import {ClarityModule} from '@clr/angular';
   // or
-  import { ClrAlertModule, ClrButtonModule } from '@clr/angular';
-  ```
-
-- **CDS Components**: Use `@cds/core` components when appropriate (icons, layout)
-  ```typescript
-  import '@cds/core/icon/register.js';
+  import {ClrAlertModule, ClrButtonModule} from '@clr/angular';
   ```
 
 ### Component Terminology Mapping
@@ -63,7 +59,8 @@ alwaysApply: true
 </clr-input-container>
 ```
 
-**Important:** Always wrap inputs (text, date, password) in their respective `clr-*-container` (e.g., `clr-date-container`). Never use bare `<input>` tags without Clarity containers.
+**Important:** Always wrap inputs (text, date, password) in their respective `clr-*-container` (e.g.,
+`clr-date-container`). Never use bare `<input>` tags without Clarity containers.
 
 #### Layout & Grouping Mapping
 
@@ -121,14 +118,17 @@ alwaysApply: true
 
 ### CDS Layout Components
 
-- **CDS Layout**: Use `cds-layout` components from `@cds/core` for layout and spacing
 - **Layout Documentation**: Always refer to Clarity Core CDS Layout documentation when using `cds-layout` attribute:
-
-  - [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) - Introduction to CDS layout system
-  - [Layout Spacing](https://storybook.core.clarity.design/?path=/story/layout-spacing--page) - Spacing utilities and patterns
-  - [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page) - Grid system and responsive layouts
-  - [Layout Vertical](https://storybook.core.clarity.design/?path=/story/layout-vertical--page) - Vertical layout patterns
-  - [Layout Horizontal](https://storybook.core.clarity.design/?path=/story/layout-horizontal--page) - Horizontal layout patterns
+  - [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) - Introduction to
+    CDS layout system
+  - [Layout Spacing](https://storybook.core.clarity.design/?path=/story/layout-spacing--page) - Spacing utilities and
+    patterns
+  - [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page) - Grid system and responsive
+    layouts
+  - [Layout Vertical](https://storybook.core.clarity.design/?path=/story/layout-vertical--page) - Vertical layout
+    patterns
+  - [Layout Horizontal](https://storybook.core.clarity.design/?path=/story/layout-horizontal--page) - Horizontal layout
+    patterns
 
 - **When to Use CDS Layout attribute**: Use `cds-layout` attribute for:
   - Page-level layouts and structure
@@ -273,15 +273,10 @@ alwaysApply: true
 
 ### Icons
 
-- **CDS Icons**: Use `@cds/core` icons
+- **CDS Icons**:
 
   ```html
-  <cds-icon shape="user"></cds-icon> <cds-icon shape="check" status="success"></cds-icon>
-  ```
-
-- **Icon Registration**: Ensure icons are registered in the application
-  ```typescript
-  import '@cds/core/icon/register.js';
+  <clr-icon shape="user"></clr-icon> <clr-icon shape="check" status="success"></clr-icon>
   ```
 
 ### Accessibility
@@ -290,7 +285,7 @@ alwaysApply: true
 
   ```html
   <button [attr.aria-label]="'Close dialog'">
-    <cds-icon shape="times"></cds-icon>
+    <clr-icon shape="times"></clr-icon>
   </button>
   ```
 
@@ -312,7 +307,8 @@ alwaysApply: true
 
 ### Responsive Design
 
-- **CDS Layout Grid**: Prefer CDS Layout components for responsive layouts (see [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page))
+- **CDS Layout Grid**: Prefer CDS Layout components for responsive layouts (see
+  [Layout Grid](https://storybook.core.clarity.design/?path=/story/layout-grid--page))
 
   ```html
   <cds-layout horizontal gap="md" wrap>
@@ -331,7 +327,9 @@ alwaysApply: true
 
 - **Breakpoints**: Use Clarity breakpoints for responsive behavior
 - **Mobile First**: Design mobile-first, enhance for larger screens
-- **Layout Documentation**: Refer to [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) for layout patterns and best practices
+- **Layout Documentation**: Refer to
+  [Layout Get Started](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) for layout patterns
+  and best practices
 
 ### Theme Support
 
@@ -343,7 +341,9 @@ alwaysApply: true
 
 - **Component Composition**: Compose Clarity components to build complex UIs
 - **Consistency**: Follow Clarity design patterns for consistency
-- **Layout Usage**: Always refer to [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using `cds-layout` components
+- **Layout Usage**: Always refer to
+  [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using
+  `cds-layout` components
 - **Documentation**: Refer to [Clarity Design System](https://clarity.design) for component usage
 - **Version Compatibility**: Ensure compatibility with `@clr/angular` version 17
 
