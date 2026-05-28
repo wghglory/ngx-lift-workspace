@@ -62,7 +62,8 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
     class="min-h-[200px]"
     (clrDgRefresh)="refresh($event)"
     [clrDgLoading]="vm.usersState?.isLoading === true"
-    [(clrDgSingleSelected)]="selectedItem"
+    [clrDgSelectionType]="'single'"
+    [(clrDgSelected)]="selectedItems"
   >
     <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
     <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
@@ -109,7 +110,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
   (clrDgRefresh)="refresh($event)"
   [clrDgLoading]="(usersState$ | async)?.isLoading === true"
   [clrDgSelectionType]="'single'"
-  [(clrDgSelected)]="selectedItem"
+  [(clrDgSelected)]="selectedItems"
 >
   <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
   <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
@@ -153,7 +154,7 @@ import {isEqual} from 'ngx-lift';
 
 @Component({})
 export class UserDatagridComponent {
-  selectedItem: User[] = [];
+  selectedItems: User[] = [];
   userService = inject(UserService);
 
   private dgBS = new BehaviorSubject<ClrDatagridStateInterface | null>(null);
