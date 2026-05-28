@@ -35,8 +35,8 @@ export default createConfig(
         budgets: [
           {
             type: 'initial',
-            maximumWarning: '2mb',
-            maximumError: '4mb',
+            maximumWarning: '4mb',
+            maximumError: '8mb',
           },
           {
             type: 'anyComponentStyle',

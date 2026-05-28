@@ -339,7 +339,7 @@ ngx-lift-workspace/
 ### Bundle Size
 
 - **Budget Limits**: Configured in `rspack.config.ts`
-  - Initial bundle: 2MB warning, 4MB error
+  - Initial bundle: 4MB warning, 8MB error
   - Component styles: 4KB warning, 8KB error
 
 ## Migration Notes
