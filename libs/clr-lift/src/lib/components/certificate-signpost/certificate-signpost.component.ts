@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, inject, input, signal, untracked} from '@angular/core';
-import {certificateIcon, ClarityIcons} from '@cds/core/icon';
+import {certificateIcon, ClarityIcons} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {pki} from 'node-forge';
 

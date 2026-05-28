@@ -18,7 +18,7 @@ import {UserService} from '../../../../shared/services/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserDatagridComponent {
-  selectedItem: User | undefined;
+  selectedItems: User[] = [];
 
   userService = inject(UserService);
 

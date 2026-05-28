@@ -72,7 +72,7 @@ snippets, and interactive demos.
 npm install ngx-lift
 
 # Install clr-lift (includes ngx-lift as peer dependency)
-npm install clr-lift @clr/angular @cds/core ngx-lift
+npm install clr-lift @clr/angular ngx-lift
 ```
 
 ### Use in Your Project

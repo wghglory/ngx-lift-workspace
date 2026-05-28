@@ -1,27 +1,19 @@
 {
   "name": "ngx-lift",
-  "version": "19.1.1",
-  "description": "Powerful Angular utilities library with RxJS operators, signal utilities, pipes, and validators to supercharge your development workflow. Built for Angular 19+ with TypeScript strict mode.",
+  "version": "21.0.0",
+  "description": "Powerful Angular utilities library with RxJS operators, signal utilities, pipes, and validators to supercharge your development workflow. Built for Angular 21+ with TypeScript strict mode.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",
   "keywords": [
     "angular",
-    "angular-19",
-    "angular-20",
     "ngx-lift",
     "rxjs",
-    "rxjs-operators",
     "signals",
     "angular-signals",
     "async-state",
     "form-validators",
-    "pipes",
-    "utilities",
     "typescript",
-    "reactive-programming",
-    "polling",
-    "route-params",
-    "query-params"
+    "reactive-programming"
   ],
   "repository": {
     "type": "git",
@@ -29,10 +21,10 @@
   },
   "homepage": "https://ngx-lift.netlify.app",
   "peerDependencies": {
-    "@angular/common": ">=19",
-    "@angular/core": ">=19",
-    "@angular/router": ">=19",
-    "@angular/forms": ">=19",
+    "@angular/common": ">=21",
+    "@angular/core": ">=21",
+    "@angular/router": ">=21",
+    "@angular/forms": ">=21",
     "rxjs": ">=7.8.0"
   },
   "dependencies": {},

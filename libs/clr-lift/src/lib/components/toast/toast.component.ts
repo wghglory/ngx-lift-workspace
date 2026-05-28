@@ -1,6 +1,6 @@
 import {animate, animateChild, group, keyframes, query, style, transition, trigger} from '@angular/animations';
 import {ChangeDetectionStrategy, Component, ElementRef, inject, input, NgZone, OnInit, output} from '@angular/core';
-import {ClarityIcons, timesIcon} from '@cds/core/icon';
+import {ClarityIcons, timesIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {timer} from 'rxjs';
 import {take} from 'rxjs/operators';

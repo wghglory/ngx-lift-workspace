@@ -72,7 +72,7 @@ import {AlertComponent} from 'clr-lift';
             aria-label="info"
             type="button"
           >
-            <cds-icon shape="info-circle" />
+            <clr-icon shape="info-circle" />
           </button>
         </li>
       </ol>

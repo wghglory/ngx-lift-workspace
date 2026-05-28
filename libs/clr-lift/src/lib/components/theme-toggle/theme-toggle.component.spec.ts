@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {ClarityIcons, moonIcon, sunIcon} from '@cds/core/icon';
+import {ClarityIcons, moonIcon, sunIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {vi} from 'vitest';
 

@@ -8,7 +8,7 @@ import {
   syncIcon,
   unknownStatusIcon,
   warningStandardIcon,
-} from '@cds/core/icon';
+} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
@@ -37,7 +37,7 @@ export class StatusIndicatorComponent {
   private translationService = inject(TranslationService);
 
   iconStatus = input.required<'success' | 'error' | 'pending' | 'warning' | 'inactive' | 'unknown'>();
-  iconSize = input<'lg' | 'md' | 'sm' | number>('sm');
+  iconSize = input<'lg' | 'md' | 'sm' | string>('sm');
   tooltip = input('');
   tooltipPosition = input<TooltipPosition>('tooltip-bottom-right');
 

@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {certificateIcon, ClarityIcons, heatMapIcon, objectsIcon, radarIcon, wrenchIcon} from '@cds/core/icon';
+import {certificateIcon, ClarityIcons, heatMapIcon, objectsIcon, radarIcon, wrenchIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {SvgIconComponent} from 'angular-svg-icon';
 import {ClarityTheme, ThemeToggleComponent, ToastContainerComponent} from 'clr-lift';

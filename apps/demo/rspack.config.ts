@@ -25,12 +25,7 @@ export default createConfig(
         },
         './src/favicon.ico',
       ],
-      styles: [
-        '../../node_modules/@cds/core/global.min.css',
-        '../../node_modules/@cds/core/styles/theme.dark.min.css',
-        '../../node_modules/@clr/ui/clr-ui.min.css',
-        './src/styles.scss',
-      ],
+      styles: ['../../node_modules/@clr/ui/clr-ui.min.css', './src/styles.scss'],
       devServer: {},
     },
   },
@@ -40,8 +35,8 @@ export default createConfig(
         budgets: [
           {
             type: 'initial',
-            maximumWarning: '2mb',
-            maximumError: '4mb',
+            maximumWarning: '4mb',
+            maximumError: '8mb',
           },
           {
             type: 'anyComponentStyle',

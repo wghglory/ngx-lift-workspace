@@ -52,7 +52,7 @@ import {IsHttpsPipe} from 'ngx-lift';
     <div>
       <span>{{ url }}</span>
       @if(url | isHttps) {
-        <cds-icon shape="shield" status="success" />
+        <clr-icon shape="shield" status="success" />
       }
     </div>
   \`

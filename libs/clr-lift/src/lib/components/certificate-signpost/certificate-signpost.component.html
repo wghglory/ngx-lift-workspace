@@ -6,7 +6,7 @@
     clrSignpostTrigger
     [disabled]="!certificate()"
   >
-    <cds-icon shape="certificate" size="16" />
+    <clr-icon shape="certificate" size="16" />
   </button>
   <clr-signpost-content [clrPosition]="position()" *clrIfOpen>
     @if (certificate() && certificateStatus() && hash()) {
@@ -17,7 +17,7 @@
 
 @if (showIcon() && certificateStatus()) {
   <div class="certificate-status">
-    <cds-icon [attr.shape]="certificateStatus().shape" [attr.status]="certificateStatus().status" />
+    <clr-icon [shape]="certificateStatus().shape" [attr.status]="certificateStatus().status" />
     <span [class]="certificateStatusClass()">{{ certificateStatus().labelText }}</span>
   </div>
 }

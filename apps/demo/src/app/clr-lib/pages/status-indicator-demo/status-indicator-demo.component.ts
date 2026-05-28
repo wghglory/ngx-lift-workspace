@@ -20,7 +20,7 @@ import {Component} from '@angular/core';
   imports: [StatusIndicatorComponent],
   template: \`
     <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
-    <cll-status-indicator [iconStatus]="'success'" [iconSize]="24"> Success </cll-status-indicator>
+    <cll-status-indicator [iconStatus]="'success'" [iconSize]="'24'"> Success </cll-status-indicator>
     <cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator>
   \`
 })

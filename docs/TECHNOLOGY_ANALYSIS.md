@@ -186,9 +186,8 @@ ngx-lift-workspace/
 
 ### Clarity Design System
 
-- **@clr/angular**: ^17.12.1
-- **@clr/ui**: ^17.12.1
-- **@cds/core**: ^6.16.1
+- **@clr/angular**: ^18.0.0
+- **@clr/ui**: ^18.0.0
 - **Purpose**: Primary UI component library
 - **Styling**: SASS with Clarity variables (no hard-coded colors)
 
@@ -340,7 +339,7 @@ ngx-lift-workspace/
 ### Bundle Size
 
 - **Budget Limits**: Configured in `rspack.config.ts`
-  - Initial bundle: 2MB warning, 4MB error
+  - Initial bundle: 4MB warning, 8MB error
   - Component styles: 4KB warning, 8KB error
 
 ## Migration Notes
