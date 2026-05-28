@@ -1,6 +1,6 @@
 {
   "name": "@ngx-lift-workspace/source",
-  "version": "19.0.0",
+  "version": "21.0.0",
   "license": "MIT",
   "author": "Derek Wang <guanghui-wang@foxmail.com>",
   "keywords": [
@@ -53,9 +53,8 @@
     "@angular/platform-browser": "~20.3.0",
     "@angular/platform-browser-dynamic": "~20.3.0",
     "@angular/router": "~20.3.0",
-    "@cds/core": "^6.16.1",
-    "@clr/angular": "^17.12.1",
-    "@clr/ui": "^17.12.1",
+    "@clr/angular": "^18.0.0",
+    "@clr/ui": "^18.0.0",
     "angular-svg-icon": "^19.1.1",
     "highlight.js": "^11.11.1",
     "lottie-web": "^5.13.0",
