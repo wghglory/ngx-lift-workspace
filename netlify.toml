@@ -1,6 +1,6 @@
 [build]
   base = "."
-  command = "npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production"
+  command = "npx nx run-many -t build --projects=ngx-lift,clr-lift --no-cloud && npx nx build demo --configuration=production --no-cloud"
   publish = "dist/apps/demo/browser"
 
 [[redirects]]
@@ -11,6 +11,8 @@
 [build.environment]
   NODE_VERSION = "24"
   NPM_VERSION = "10"
+  NX_DAEMON = "false"
+  NX_NO_CLOUD = "true"
 
 [[headers]]
   for = "/*"
