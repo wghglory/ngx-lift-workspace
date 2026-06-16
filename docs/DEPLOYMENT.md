@@ -6,7 +6,7 @@ This guide covers deploying the demo application to Netlify and Vercel, as well 
 
 ### Prerequisites
 
-- **Node.js**: 22.x or higher
+- **Node.js**: 24.x or higher
 - **npm**: 10.x or higher
 - **npm Account**: Create an account at [npmjs.com](https://www.npmjs.com/)
 - **npm Token**: Create an automation token for publishing
@@ -305,7 +305,7 @@ All workflows are in `.github/workflows/`:
 
 1. **`ci.yml`**: Continuous Integration
    - Runs on: Push to `main`/`develop`, Pull Requests
-   - Node Version: 22.x
+   - Node Version: 24.x
    - Actions:
      - Lint affected projects (parallel: 3)
      - Test affected projects with coverage (parallel: 3)
@@ -314,7 +314,7 @@ All workflows are in `.github/workflows/`:
 
 2. **`publish.yml`**: Library Publishing
    - Runs on: Manual trigger (with version type selection), Git tags (v\*)
-   - Node Version: 22.x
+   - Node Version: 24.x
    - Actions:
      - Build libraries (parallel: 2)
      - Run tests (parallel: 2)
@@ -324,7 +324,7 @@ All workflows are in `.github/workflows/`:
 
 3. **`deploy-demo.yml`**: Demo Deployment
    - Runs on: Push to `main`, Manual trigger
-   - Node Version: 22.x
+   - Node Version: 24.x
    - Actions:
      - Build libraries (parallel: 2)
      - Build demo app (production configuration)

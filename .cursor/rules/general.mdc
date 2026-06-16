@@ -13,15 +13,15 @@ building reusable Angular utilities and components for the broader Angular commu
 - **clr-lift**: Clarity Design System component library (built on top of ngx-lift)
 - **demo**: Demo application showcasing both libraries
 
-Use **Angular 20** best practices, **signals** for state management, **Vitest** for unit tests, and **Playwright** for
+Use **Angular 21** best practices, **signals** for state management, **Vitest** for unit tests, and **Playwright** for
 E2E tests.
 
 ## Core Technologies & Versions
 
-- Angular 20
+- Angular 21
 - Nx 22
-- VMware Clarity Design System (@clr/angular 17) - clr-lift only
-- Vitest 3 for testing
+- VMware Clarity Design System - clr-lift only
+- Vitest 4 for testing
 - ESLint 9 with TypeScript ESLint
 - Playwright for E2E testing
 

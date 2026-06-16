@@ -24,6 +24,7 @@ export default createConfig(
           output: '/assets',
         },
         './src/favicon.ico',
+        './src/favicon.svg',
       ],
       styles: ['../../node_modules/@clr/ui/clr-ui.min.css', './src/styles.scss'],
       devServer: {},

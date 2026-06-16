@@ -345,7 +345,7 @@ library does not use Clarity Design System.
   [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using
   `cds-layout` components
 - **Documentation**: Refer to [Clarity Design System](https://clarity.design) for component usage
-- **Version Compatibility**: Ensure compatibility with `@clr/angular` version 17
+- **Version Compatibility**: Ensure compatibility with `@clr/angular` version 18
 
 ## Code Review Checklist - Clarity Design System
 

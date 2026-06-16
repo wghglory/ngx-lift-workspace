@@ -1,7 +1,6 @@
 import {signal} from '@angular/core';
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {delay, Observable, of, throwError, timer} from 'rxjs';
-import {ignoreElements} from 'rxjs/operators';
+import {delay, Observable, of, throwError} from 'rxjs';
 
 import {resourceAsync} from './resource-async';
 

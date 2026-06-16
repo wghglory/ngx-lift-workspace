@@ -5,7 +5,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 ## Rule Files
 
 - **`general.mdc`** - Core standards, technologies, code quality, Definition of Done
-- **`angular.mdc`** - Angular 19 patterns: standalone components, signals, control flow, routing
+- **`angular.mdc`** - Angular 21 patterns: standalone components, signals, control flow, routing
 - **`clarity.mdc`** - Clarity Design System: components, SASS variables, styling, accessibility
 - **`testing.mdc`** - Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
 - **`rxjs.mdc`** - RxJS patterns: observables, operators, async state, subscriptions
@@ -26,16 +26,15 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 
 ## Technology Stack
 
-- **Angular**: 20.0.1
-- **Nx**: 22.1.0
-- **Clarity**: @clr/angular 17.12.1
-- **Vitest**: 3.0.5
+- **Angular**: 21.2.17
+- **Nx**: 22.7.5
+- **Clarity**: @clr/angular 18.2.0
+- **Vitest**: 4.1.7
 - **Playwright**: 1.36.0
 - **TypeScript**: 5.9.2
 - **ESLint**: 9.8.0
-- **Transloco**: @jsverse/transloco 7.5.1
-- **ngx-lift**: 1.10.3 (external package)
-- **clr-lift**: 1.10.2 (external package)
+- **ngx-lift**: 21.0.0 (workspace package)
+- **clr-lift**: 21.0.0 (workspace package)
 
 ## Quick Checklists
 
@@ -53,6 +52,5 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 - [Vitest Documentation](https://vitest.dev)
 - [Playwright Documentation](https://playwright.dev)
 - [RxJS Documentation](https://rxjs.dev)
-- [Transloco Documentation](https://transloco.vercel.app)
-- [ngx-lift Documentation](https://github.com/vmware/ngx-lift)
-- [clr-lift Documentation](https://github.com/vmware/clr-lift)
+- [ngx-lift Documentation](https://github.com/wghglory/ngx-lift-workspace)
+- [clr-lift Documentation](https://github.com/wghglory/ngx-lift-workspace)

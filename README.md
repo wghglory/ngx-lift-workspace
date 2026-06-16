@@ -7,7 +7,7 @@
 [![CI](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ffc4941a-8b33-4b95-847e-d34938036bcf/deploy-status)](https://app.netlify.com/projects/ngx-lift/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Angular](https://img.shields.io/badge/Angular-20.3.0-red.svg)](https://angular.io)
+[![Angular](https://img.shields.io/badge/Angular-21.2.17-red.svg)](https://angular.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue.svg)](https://www.typescriptlang.org)
 
 [![ngx-lift npm version](https://img.shields.io/npm/v/ngx-lift.svg?label=ngx-lift&logo=npm)](https://www.npmjs.com/package/ngx-lift)
@@ -24,7 +24,7 @@
 ---
 
 A modern monorepo containing **ngx-lift** and **clr-lift** - two powerful Angular libraries designed to enhance and
-simplify your development experience. Built with Angular 20, TypeScript 5.9, and modern best practices.
+simplify your development experience. Built with Angular 21, TypeScript 5.9, and modern best practices.
 
 ## ✨ What's Inside?
 
@@ -92,7 +92,7 @@ import {AlertComponent, ToastService} from 'clr-lift';
 
 **Prerequisites:**
 
-- Node.js 22.x or higher
+- Node.js 24.x or higher
 - npm 10.x or higher
 
 ```bash
@@ -291,7 +291,7 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - ✅ All code must pass ESLint and TypeScript strict mode
 - ✅ Tests are required for new features (60%+ coverage minimum)
 - ✅ JSDoc comments required for all exported APIs
-- ✅ Follow Angular 20 best practices (signals, standalone components, OnPush)
+- ✅ Follow Angular 21 best practices (signals, standalone components, OnPush)
 - ✅ Use Clarity Design System components where applicable
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
