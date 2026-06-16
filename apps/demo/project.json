@@ -13,9 +13,9 @@
         "outputPath": "dist/apps/demo",
         "index": "apps/demo/src/index.html",
         "browser": "apps/demo/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/demo/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
+        "allowedCommonJsDependencies": ["lottie-web", "node-forge"],
         "assets": [
           {
             "glob": "**/*",
@@ -27,7 +27,6 @@
             "input": "apps/demo/src/assets",
             "output": "/assets"
           },
-          "apps/demo/src/favicon.ico",
           "apps/demo/src/favicon.svg"
         ],
         "styles": ["node_modules/@clr/ui/clr-ui.min.css", "apps/demo/src/styles.scss"],

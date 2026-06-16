@@ -1,19 +1,28 @@
+import {flushEffects} from '../../../test-setup';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {ChangeDetectorRef, ComponentRef, EmbeddedViewRef} from '@angular/core';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ClarityModule, ClrTimelineStepState} from '@clr/angular';
 import {delay, of, Subscription, throwError} from 'rxjs';
-import {vi} from 'vitest';
+import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {TimelineBaseComponent} from './timeline-base.component';
 import {TimelineWizardComponent} from './timeline-wizard.component';
 import {TimelineWizardService} from './timeline-wizard.service';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 class MockTimelineBaseComponent extends TimelineBaseComponent {
   override form = new FormGroup({
@@ -79,11 +88,11 @@ describe('TimelineWizardComponent', () => {
     }
   });
 
-  it('should create', () => {
+  it('should create', async () => {
     expect(component).toBeTruthy();
   });
 
-  it('should handle nextStep for the last step', () => {
+  it('should handle nextStep for the last step', async () => {
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(true);
     const confirmedSpy = vi.spyOn(component.confirmed, 'emit');
 
@@ -92,7 +101,7 @@ describe('TimelineWizardComponent', () => {
     expect(confirmedSpy).toHaveBeenCalled();
   });
 
-  it('should handle nextStep for non-last step', () => {
+  it('should handle nextStep for non-last step', async () => {
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(false);
     const nextActionSpy = vi.spyOn(component['nextAction'], 'next');
 
@@ -101,7 +110,7 @@ describe('TimelineWizardComponent', () => {
     expect(nextActionSpy).toHaveBeenCalled();
   });
 
-  it('should handle previousStep for the first step', () => {
+  it('should handle previousStep for the first step', async () => {
     vi.spyOn(component.timelineWizardService, 'isFirstStep', 'get').mockReturnValue(true);
     const renderComponentSpy = vi.spyOn(component, 'renderComponent');
 
@@ -110,7 +119,7 @@ describe('TimelineWizardComponent', () => {
     expect(renderComponentSpy).not.toHaveBeenCalled();
   });
 
-  it('should handle previousStep for a non-first step (live = false)', () => {
+  it('should handle previousStep for a non-first step (live = false)', async () => {
     vi.spyOn(component.timelineWizardService, 'isFirstStep', 'get').mockReturnValue(false);
     vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(1);
     const renderComponentSpy = vi.spyOn(component, 'renderComponent');
@@ -126,7 +135,7 @@ describe('TimelineWizardComponent', () => {
   // and it changes when the steps array is updated. Mocking this behavior correctly
   // is challenging because the mock needs to adapt to the state changes dynamically.
   // Consider testing the previousStep behavior through integration tests instead.
-  it.skip('should handle previousStep for a non-first step (live = true)', () => {
+  it.skip('should handle previousStep for a non-first step (live = true)', async () => {
     // Set up steps with currentStepIndex = 1
     fixture.componentRef.setInput('timelineSteps', [
       {state: ClrTimelineStepState.SUCCESS, title: 'Step 1', component: MockTimelineBaseComponent, data: {}},
@@ -180,7 +189,7 @@ describe('TimelineWizardComponent', () => {
     expect(prevRootNode.style.display).toBe('block');
   });
 
-  it('should handle cancel', () => {
+  it('should handle cancel', async () => {
     const canceledSpy = vi.spyOn(component.canceled, 'emit');
 
     component.cancel();
@@ -188,7 +197,7 @@ describe('TimelineWizardComponent', () => {
     expect(canceledSpy).toHaveBeenCalled();
   });
 
-  it('should handle ngAfterViewInit', () => {
+  it('should handle ngAfterViewInit', async () => {
     const renderComponentSpy = vi.spyOn(component, 'renderComponent');
     const detectChangesSpy = vi.spyOn(component['cdr'], 'detectChanges');
 
@@ -198,7 +207,7 @@ describe('TimelineWizardComponent', () => {
     expect(detectChangesSpy).toHaveBeenCalled();
   });
 
-  it('should handle renderComponent (live = false)', () => {
+  it('should handle renderComponent (live = false)', async () => {
     const clearSpy = vi.spyOn(component.container(), 'clear');
 
     fixture.componentRef.setInput('live', false);
@@ -207,7 +216,7 @@ describe('TimelineWizardComponent', () => {
     expect(clearSpy).toHaveBeenCalled();
   });
 
-  it('should handle renderComponent (live = true)', () => {
+  it('should handle renderComponent (live = true)', async () => {
     const clearSpy = vi.spyOn(component.container(), 'clear');
 
     fixture.componentRef.setInput('live', true);
@@ -221,11 +230,11 @@ describe('TimelineWizardComponent', () => {
   // The form.patchValue should have been called with dataToFormValue result, but the component ref
   // is not available at the expected time. Need to investigate the timing of component initialization
   // and form data patching in the timeline wizard component.
-  it.skip('should initialize component with form data', fakeAsync(() => {
+  it.skip('should initialize component with form data', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
     fixture.detectChanges(); // Let Angular initialize the component
-    tick(1); // Flush setTimeout from initComponent (setTimeout with 0ms delay)
+    await flushEffects(1);
     fixture.detectChanges(); // Let change detection run after patchValue
 
     const currentRef = component.currentComponentRef;
@@ -240,27 +249,27 @@ describe('TimelineWizardComponent', () => {
       // The form should have the control and the value should be set
       expect(currentRef.instance.form?.get('field1')?.value).toBe('value1');
     }
-  }));
+  });
 
-  it('should sync form value changes to step data', fakeAsync(() => {
+  it('should sync form value changes to step data', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     if (currentRef && currentRef.instance.form) {
       currentRef.instance.form.get('field1')?.setValue('new value');
-      tick(400); // Wait for debounceTime(300)
+      await flushEffects(400);
 
       const currentStep = component.timelineWizardService.steps[component.timelineWizardService.currentStepIndex];
       expect(currentStep.data).toEqual({field1: 'new value'});
     }
-  }));
+  });
 
-  it('should handle next$ observable with success', fakeAsync(() => {
+  it('should handle next$ observable with success', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     if (currentRef) {
@@ -268,18 +277,18 @@ describe('TimelineWizardComponent', () => {
       const moveToNextStepSpy = vi.spyOn(component as never, 'moveToNextStep');
 
       component.nextStep();
-      tick();
+      await flushEffects();
 
       expect(moveToNextStepSpy).toHaveBeenCalled();
     }
-  }));
+  });
 
   // TODO: Revisit this test - failing due to "Current component reference is not available" error
   // Issue: When next$ observable emits an error, the component reference is not available in the
   // switchMap operator. The currentComponentRef is undefined when trying to access it during error
   // handling. Need to investigate the lifecycle and timing of component reference management when
   // handling observable errors in the timeline wizard.
-  it.skip('should handle next$ observable with error', fakeAsync(() => {
+  it.skip('should handle next$ observable with error', async () => {
     class ErrorComponent extends TimelineBaseComponent {
       override form = new FormGroup({
         field1: new FormControl(''),
@@ -297,7 +306,7 @@ describe('TimelineWizardComponent', () => {
 
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick(1); // Flush setTimeout from initComponent
+    await flushEffects(1);
     fixture.detectChanges();
 
     // Ensure component ref exists and is properly set up in componentRefMap
@@ -320,7 +329,7 @@ describe('TimelineWizardComponent', () => {
     });
 
     component.nextStep();
-    tick(100); // Let the observable chain execute
+    await flushEffects(100);
     fixture.detectChanges();
 
     const currentStep = component.timelineWizardService.steps[currentStepIndex];
@@ -328,21 +337,21 @@ describe('TimelineWizardComponent', () => {
     expect(currentStep.description).toContain('Test error');
 
     errorSubscription.unsubscribe();
-  }));
+  });
 
   // TODO: Revisit this test - failing due to "Current component reference is not available" error
   // Issue: When finishing the wizard on the last step, the component reference is not available
   // when the next$ observable chain executes. The currentComponentRef is undefined in the switchMap
   // operator. Need to investigate how component references are managed during the final step
   // completion and ensure the reference is properly maintained throughout the observable chain.
-  it.skip('should finish wizard on last step', fakeAsync(() => {
+  it.skip('should finish wizard on last step', async () => {
     // Ensure ngAfterViewInit has been called so the container is available
     component.ngAfterViewInit();
     fixture.detectChanges();
 
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick(1); // Flush setTimeout from initComponent
+    await flushEffects(1);
     fixture.detectChanges();
 
     // Ensure component ref exists and is properly set up in componentRefMap
@@ -364,13 +373,13 @@ describe('TimelineWizardComponent', () => {
     const finishedSpy = vi.spyOn(component.finished, 'emit');
 
     component.nextStep();
-    tick(100); // Let the observable chain execute
+    await flushEffects(100);
     fixture.detectChanges();
 
     expect(finishedSpy).toHaveBeenCalled();
     const currentStep = component.timelineWizardService.steps[currentStepIndex];
     expect(currentStep.state).toBe(ClrTimelineStepState.SUCCESS);
-  }));
+  });
 
   // TODO: Revisit this test - failing due to "Current component reference is not available" error
   // Issue: When setting step as processing before an async operation, the component reference is
@@ -378,7 +387,7 @@ describe('TimelineWizardComponent', () => {
   // in the switchMap operator. Need to investigate the timing of component reference availability
   // during async operations and ensure the reference is properly maintained when processing states
   // are set.
-  it.skip('should set step as processing before async operation', fakeAsync(() => {
+  it.skip('should set step as processing before async operation', async () => {
     // Use a delayed observable so we can check the PROCESSING state before it completes
     class DelayedComponent extends TimelineBaseComponent {
       override form = new FormGroup({
@@ -397,7 +406,7 @@ describe('TimelineWizardComponent', () => {
 
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick(1); // Flush setTimeout from initComponent
+    await flushEffects(1);
     fixture.detectChanges();
 
     // Ensure component ref exists and is properly set up
@@ -417,7 +426,7 @@ describe('TimelineWizardComponent', () => {
     // The beforeAsyncOperation is called synchronously in tap when nextAction emits
     // Since tap executes synchronously, we can check immediately without ticking
     // But we need to ensure the steps array has been updated
-    tick(0); // Allow synchronous operations to complete
+    await flushEffects();
     fixture.detectChanges();
 
     // Check state immediately - before the delayed observable completes
@@ -427,27 +436,27 @@ describe('TimelineWizardComponent', () => {
     const currentStep = component.timelineWizardService.steps[currentStepIndex];
     expect(currentStep.state).toBe(ClrTimelineStepState.PROCESSING);
     expect(currentStep.description).toBe('');
-  }));
+  });
 
-  it('should move to next step correctly (live = false)', fakeAsync(() => {
+  it('should move to next step correctly (live = false)', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(false);
     vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(0);
 
     component['moveToNextStep']();
-    tick();
+    await flushEffects();
 
     expect(component.timelineWizardService.steps[0].state).toBe(ClrTimelineStepState.SUCCESS);
     expect(component.timelineWizardService.steps[1].state).toBe(ClrTimelineStepState.CURRENT);
-  }));
+  });
 
-  it('should move to next step correctly (live = true)', fakeAsync(() => {
+  it('should move to next step correctly (live = true)', async () => {
     fixture.componentRef.setInput('live', true);
     component.renderComponent();
-    tick(100);
+    await flushEffects(100);
 
     // Create mock component refs with instance property
     const currentRootNode = document.createElement('div');
@@ -480,7 +489,7 @@ describe('TimelineWizardComponent', () => {
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(false);
 
     component['moveToNextStep']();
-    tick(100);
+    await flushEffects(100);
 
     // After moveToNextStep, currentStepIndex is 1, so we check the refs at indices 0 and 1
     const prevRef = component['componentRefMap'][0];
@@ -493,9 +502,9 @@ describe('TimelineWizardComponent', () => {
         'block',
       );
     }
-  }));
+  });
 
-  it('should not move to next step if already on last step', () => {
+  it('should not move to next step if already on last step', async () => {
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(true);
     const renderComponentSpy = vi.spyOn(component, 'renderComponent');
 
@@ -504,7 +513,7 @@ describe('TimelineWizardComponent', () => {
     expect(renderComponentSpy).not.toHaveBeenCalled();
   });
 
-  it('should handle component without form', fakeAsync(() => {
+  it('should handle component without form', async () => {
     class NoFormComponent extends TimelineBaseComponent {
       override form = null;
     }
@@ -514,42 +523,42 @@ describe('TimelineWizardComponent', () => {
     ]);
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     expect(currentRef).toBeDefined();
     if (currentRef) {
       expect(currentRef.instance.form).toBeNull();
     }
-  }));
+  });
 
-  it('should set allStepsData and currentStepData on component', fakeAsync(() => {
+  it('should set allStepsData and currentStepData on component', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     if (currentRef) {
       expect(currentRef.instance.allStepsData).toBeDefined();
       expect(currentRef.instance.currentStepData).toBeDefined();
     }
-  }));
+  });
 
-  it('should unsubscribe from subscriptions when rendering new component', fakeAsync(() => {
+  it('should unsubscribe from subscriptions when rendering new component', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     const initialSubscriptionsLength = component['subscriptions'].length;
 
     component.renderComponent();
-    tick();
+    await flushEffects();
 
     // Subscriptions should be unsubscribed and reset
     expect(component['subscriptions'].length).toBeLessThanOrEqual(initialSubscriptionsLength);
-  }));
+  });
 
-  it('should handle currentStepFormInvalid getter', () => {
+  it('should handle currentStepFormInvalid getter', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
 

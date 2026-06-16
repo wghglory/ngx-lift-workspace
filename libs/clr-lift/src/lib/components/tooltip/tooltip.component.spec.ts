@@ -1,7 +1,16 @@
-import {ComponentFixture, TestBed, fakeAsync, tick} from '@angular/core/testing';
-import {vi} from 'vitest';
+import {flushEffects} from '../../../test-setup';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TooltipComponent} from './tooltip.component';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('TooltipComponent', () => {
   let component: TooltipComponent;
@@ -16,11 +25,11 @@ describe('TooltipComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', async () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set text content', () => {
+  it('should set text content', async () => {
     const text = 'Test Content';
     fixture.componentRef.setInput('content', text);
     fixture.detectChanges();
@@ -28,7 +37,7 @@ describe('TooltipComponent', () => {
     expect(component.text()).toEqual(text);
   });
 
-  it('should emit close event when closeTooltip is called', () => {
+  it('should emit close event when closeTooltip is called', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
 
     component.closeTooltip();
@@ -36,7 +45,7 @@ describe('TooltipComponent', () => {
     expect(spy).toHaveBeenCalledWith(true);
   });
 
-  it('should emit close event on window click outside the tooltip', () => {
+  it('should emit close event on window click outside the tooltip', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
 
     // Create a clickable element outside the tooltip
@@ -49,7 +58,7 @@ describe('TooltipComponent', () => {
     expect(spy).toHaveBeenCalledWith(true);
   });
 
-  it('should not emit close event on click inside tooltip', () => {
+  it('should not emit close event on click inside tooltip', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
 
     // Mock tooltipChildren to contain the target
@@ -70,7 +79,7 @@ describe('TooltipComponent', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('should emit close event on escape key press', () => {
+  it('should emit close event on escape key press', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
 
     component.onEscape({} as KeyboardEvent);
@@ -78,34 +87,34 @@ describe('TooltipComponent', () => {
     expect(spy).toHaveBeenCalledWith(true);
   });
 
-  it('should handle mouseEnter', () => {
+  it('should handle mouseEnter', async () => {
     component.mouseEnter(new MouseEvent('mouseenter'));
     expect(component.tooltipHovering).toBe(true);
   });
 
-  it('should handle mouseLeave and emit close after delay if trigger not hovering', fakeAsync(() => {
+  it('should handle mouseLeave and emit close after delay if trigger not hovering', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
     fixture.componentRef.setInput('triggerElementHovering', false);
 
     component.mouseLeave(new MouseEvent('mouseleave'));
     expect(component.tooltipHovering).toBe(false);
 
-    tick(300);
+    await flushEffects(300);
     expect(spy).toHaveBeenCalledWith(false);
-  }));
+  });
 
-  it('should not emit close on mouseLeave if trigger element is hovering', fakeAsync(() => {
+  it('should not emit close on mouseLeave if trigger element is hovering', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
     fixture.componentRef.setInput('triggerElementHovering', true);
 
     component.mouseLeave(new MouseEvent('mouseleave'));
     expect(component.tooltipHovering).toBe(false);
 
-    tick(300);
+    await flushEffects(300);
     expect(spy).not.toHaveBeenCalled();
-  }));
+  });
 
-  it('should handle null event target in click handler', () => {
+  it('should handle null event target in click handler', async () => {
     const spy = vi.spyOn(component.closePopover, 'emit');
 
     const event = {target: null} as unknown as MouseEvent;

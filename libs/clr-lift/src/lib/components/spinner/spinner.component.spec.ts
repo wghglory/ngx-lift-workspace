@@ -1,16 +1,25 @@
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import {beforeEach, afterEach, vi} from 'vitest';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SpinnerComponent} from './spinner.component';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('SpinnerComponent', () => {
   let component: SpinnerComponent;
   let fixture: ComponentFixture<SpinnerComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [SpinnerComponent],
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SpinnerComponent);
@@ -18,7 +27,7 @@ describe('SpinnerComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', async () => {
     expect(component).toBeTruthy();
   });
 });

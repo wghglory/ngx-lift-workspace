@@ -1,14 +1,23 @@
+import {beforeEach, afterEach, vi} from 'vitest';
 import {signal} from '@angular/core';
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {delay, map} from 'rxjs/operators';
 import {interval, of, pipe, Subject} from 'rxjs';
 
 import {mergeFrom} from './merge-from';
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe(mergeFrom.name, () => {
   describe('basic functionality', () => {
-    it('should merge multiple observables into a signal', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge multiple observables into a signal', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const source1$ = of(1).pipe(delay(100));
         const source2$ = of(2).pipe(delay(200));
 
@@ -16,16 +25,20 @@ describe(mergeFrom.name, () => {
 
         expect(merged()).toBe(0);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(1);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(2);
       });
-    }));
+    });
 
-    it('should merge multiple signals into a signal', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge multiple signals into a signal', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const signal1 = signal(1);
         const signal2 = signal(2);
 
@@ -39,8 +52,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should merge observables and signals together', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge observables and signals together', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const observable$ = of(1).pipe(delay(100));
         const sig = signal(2);
 
@@ -49,16 +62,20 @@ describe(mergeFrom.name, () => {
         expect(merged()).toBe(2);
 
         sig.set(3);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(3);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(1);
       });
-    }));
+    });
 
-    it('should emit values from any source as they occur', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should emit values from any source as they occur', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const subject1$ = new Subject<number>();
         const subject2$ = new Subject<number>();
 
@@ -67,53 +84,65 @@ describe(mergeFrom.name, () => {
         expect(merged()).toBe(0);
 
         subject1$.next(1);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(1);
 
         subject2$.next(2);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(2);
 
         subject1$.next(3);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(3);
 
         subject2$.next(4);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(4);
       });
-    }));
+    });
 
-    it('should work with Promise sources', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with Promise sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const promise = Promise.resolve(42);
 
         const merged = mergeFrom([promise], {initialValue: 0});
 
         expect(merged()).toBe(0);
 
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(42);
       });
-    }));
+    });
 
-    it('should work with array sources', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with array sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const array = [1, 2, 3];
 
         const merged = mergeFrom([array], {initialValue: 0});
 
         // Array emissions are synchronous, so it emits immediately
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         // Should emit the last value from the array
         expect(merged()).toBe(3);
       });
-    }));
+    });
   });
 
   describe('with operators', () => {
-    it('should apply operator to merged values', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should apply operator to merged values', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const source1$ = of(1).pipe(delay(100));
         const source2$ = of(2).pipe(delay(200));
 
@@ -121,16 +150,20 @@ describe(mergeFrom.name, () => {
 
         expect(merged()).toBe(0);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(10);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(20);
       });
-    }));
+    });
 
-    it('should transform values using map operator', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should transform values using map operator', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const signal1 = signal(5);
         const signal2 = signal(10);
 
@@ -144,8 +177,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should chain multiple operators', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should chain multiple operators', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const subject$ = new Subject<number>();
 
         const merged = mergeFrom(
@@ -160,21 +193,25 @@ describe(mergeFrom.name, () => {
         expect(merged()).toBe(0);
 
         subject$.next(5);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         // (5 * 2) + 1 = 11
         expect(merged()).toBe(11);
 
         subject$.next(10);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         // (10 * 2) + 1 = 21
         expect(merged()).toBe(21);
       });
-    }));
+    });
   });
 
   describe('options', () => {
-    it('should use initialValue when provided', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should use initialValue when provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const signal1 = signal(1);
 
         const merged = mergeFrom([signal1], {initialValue: 99});
@@ -183,8 +220,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should use requireSync when initialValue is not provided', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should use requireSync when initialValue is not provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const signal1 = signal(42);
 
         const merged = mergeFrom([signal1]);
@@ -194,8 +231,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should throw error when requireSync cannot be satisfied', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should throw error when requireSync cannot be satisfied', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const async$ = of(1).pipe(delay(100));
 
         expect(() => {
@@ -204,8 +241,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should work with custom injector', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with custom injector', async () => {
+      await TestBed.runInInjectionContext(async () => {
         // The injector option is tested implicitly in other tests
         // This test verifies the function signature accepts the injector option
         const sig = signal(1);
@@ -216,8 +253,8 @@ describe(mergeFrom.name, () => {
   });
 
   describe('function overloads', () => {
-    it('should support (sources) overload', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should support (sources) overload', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const signal1 = signal(1);
 
         const merged = mergeFrom([signal1]);
@@ -226,21 +263,23 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should support (sources, options) overload', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should support (sources, options) overload', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const observable$ = of(1).pipe(delay(100));
 
         const merged = mergeFrom([observable$], {initialValue: 0});
 
         expect(merged()).toBe(0);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(1);
       });
-    }));
+    });
 
-    it('should support (sources, operator) overload', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should support (sources, operator) overload', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const signal1 = signal(1);
 
         const merged = mergeFrom([signal1], pipe(map((value) => value * 2)));
@@ -249,23 +288,25 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should support (sources, operator, options) overload', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should support (sources, operator, options) overload', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const observable$ = of(5).pipe(delay(100));
 
         const merged = mergeFrom([observable$], pipe(map((value) => value * 2)), {initialValue: 0});
 
         expect(merged()).toBe(0);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(10);
       });
-    }));
+    });
   });
 
   describe('signal behavior', () => {
-    it('should use startWith for signal sources to emit initial value', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should use startWith for signal sources to emit initial value', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const sig = signal(42);
 
         const merged = mergeFrom([sig]);
@@ -274,8 +315,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should apply distinctUntilChanged to prevent duplicate emissions', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should apply distinctUntilChanged to prevent duplicate emissions', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const sig = signal(1);
         let emissionCount = 0;
 
@@ -306,10 +347,10 @@ describe(mergeFrom.name, () => {
         // Should have only 2 unique emissions: 1 and 2
         expect(emissionCount).toBeLessThanOrEqual(2);
       });
-    }));
+    });
 
-    it('should handle rapid signal updates', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle rapid signal updates', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const sig = signal(0);
 
         const merged = mergeFrom([sig]);
@@ -318,16 +359,18 @@ describe(mergeFrom.name, () => {
 
         for (let i = 1; i <= 10; i++) {
           sig.set(i);
-          tick();
+          TestBed.tick();
+          await vi.advanceTimersByTimeAsync(0);
+          TestBed.tick();
           expect(merged()).toBe(i);
         }
       });
-    }));
+    });
   });
 
   describe('multiple sources', () => {
-    it('should merge three sources', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge three sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const source1$ = of(1).pipe(delay(100));
         const source2$ = of(2).pipe(delay(200));
         const source3$ = of(3).pipe(delay(300));
@@ -336,19 +379,25 @@ describe(mergeFrom.name, () => {
 
         expect(merged()).toBe(0);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(1);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(2);
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe(3);
       });
-    }));
+    });
 
-    it('should merge five sources with mixed types', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge five sources with mixed types', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const observable1$ = of('a').pipe(delay(100));
         const signal1 = signal('b');
         const observable2$ = of('c').pipe(delay(200));
@@ -361,21 +410,27 @@ describe(mergeFrom.name, () => {
 
         expect(['', 'b', 'd']).toContain(merged());
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(['a', 'b', 'd']).toContain(merged());
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(['c']).toContain(merged());
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(merged()).toBe('e');
       });
-    }));
+    });
   });
 
   describe('edge cases', () => {
-    it('should throw error when no sources provided', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should throw error when no sources provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
         expect(() => {
           // @ts-expect-error - Testing runtime error
           mergeFrom();
@@ -383,23 +438,23 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should throw error when empty array provided', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should throw error when empty array provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
         expect(() => {
           mergeFrom([]);
         }).toThrow();
       });
     });
 
-    it('should require injection context', () => {
+    it('should require injection context', async () => {
       expect(() => {
         const sig = signal(1);
         mergeFrom([sig]);
       }).toThrow();
     });
 
-    it('should handle completed observables', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle completed observables', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const subject$ = new Subject<number>();
 
         const merged = mergeFrom([subject$], {initialValue: 0});
@@ -407,19 +462,23 @@ describe(mergeFrom.name, () => {
         expect(merged()).toBe(0);
 
         subject$.next(1);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(1);
 
         subject$.complete();
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
         // Signal should retain last value after source completes
         expect(merged()).toBe(1);
       });
-    }));
+    });
 
-    it('should handle sources that emit undefined', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle sources that emit undefined', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const subject$ = new Subject<undefined>();
 
         const merged = mergeFrom([subject$], {initialValue: null});
@@ -427,13 +486,15 @@ describe(mergeFrom.name, () => {
         expect(merged()).toBe(null);
 
         subject$.next(undefined);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(undefined);
       });
-    }));
+    });
 
-    it('should handle sources that emit null', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle sources that emit null', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const subject$ = new Subject<null | number>();
 
         const merged = mergeFrom([subject$], {initialValue: 0});
@@ -441,17 +502,21 @@ describe(mergeFrom.name, () => {
         expect(merged()).toBe(0);
 
         subject$.next(null);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(null);
 
         subject$.next(42);
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(merged()).toBe(42);
       });
-    }));
+    });
 
-    it('should handle mix of synchronous and asynchronous sources', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle mix of synchronous and asynchronous sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const sync$ = of(1);
         const async$ = of(2).pipe(delay(100));
         const sig = signal(3);
@@ -461,16 +526,18 @@ describe(mergeFrom.name, () => {
         // Initial value
         expect([0, 1, 3]).toContain(merged());
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         // After async emission
         expect([1, 2, 3]).toContain(merged());
       });
-    }));
+    });
   });
 
   describe('real-world scenarios', () => {
-    it('should merge user actions from multiple sources', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge user actions from multiple sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const buttonClick$ = new Subject<string>();
         const keyPress$ = new Subject<string>();
         const touchEvent$ = new Subject<string>();
@@ -482,21 +549,27 @@ describe(mergeFrom.name, () => {
         expect(userAction()).toBe('none');
 
         buttonClick$.next('clicked');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(userAction()).toBe('clicked');
 
         keyPress$.next('enter');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(userAction()).toBe('enter');
 
         touchEvent$.next('tap');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(userAction()).toBe('tap');
       });
-    }));
+    });
 
-    it('should merge data from multiple API sources', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge data from multiple API sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const api1$ = of({source: 'api1', data: 100}).pipe(delay(100));
         const api2$ = of({source: 'api2', data: 200}).pipe(delay(200));
         const cache = signal({source: 'cache', data: 0});
@@ -505,16 +578,20 @@ describe(mergeFrom.name, () => {
 
         expect(data()).toEqual({source: 'cache', data: 0});
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(data()).toEqual({source: 'api1', data: 100});
 
-        tick(100);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick();
         expect(data()).toEqual({source: 'api2', data: 200});
       });
-    }));
+    });
 
-    it('should merge polling and refresh triggers', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge polling and refresh triggers', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const poll$ = interval(1000).pipe(map(() => 'poll'));
         const refresh$ = new Subject<string>();
         const manual = signal('manual');
@@ -523,21 +600,27 @@ describe(mergeFrom.name, () => {
 
         expect(['initial', 'manual']).toContain(trigger());
 
-        tick(1000);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(1000);
+        TestBed.tick();
         expect(trigger()).toBe('poll');
 
         refresh$.next('refresh');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(trigger()).toBe('refresh');
 
         manual.set('manual-2');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(trigger()).toBe('manual-2');
       });
-    }));
+    });
 
-    it('should merge form value changes from multiple controls', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge form value changes from multiple controls', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const firstName$ = new Subject<string>();
         const lastName$ = new Subject<string>();
         const email$ = new Subject<string>();
@@ -549,21 +632,27 @@ describe(mergeFrom.name, () => {
         expect(formChange()).toBe('No changes');
 
         firstName$.next('John');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(formChange()).toBe('Changed: John');
 
         lastName$.next('Doe');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(formChange()).toBe('Changed: Doe');
 
         email$.next('john@example.com');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(formChange()).toBe('Changed: john@example.com');
       });
-    }));
+    });
 
-    it('should merge reactive search from input and filter selection', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should merge reactive search from input and filter selection', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const searchInput$ = new Subject<string>();
         const filterSelection = signal('all');
 
@@ -573,20 +662,24 @@ describe(mergeFrom.name, () => {
         expect(['', 'all']).toContain(searchTrigger());
 
         searchInput$.next('angular');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         // Observable emissions work correctly
         expect(['angular', 'all']).toContain(searchTrigger());
 
         searchInput$.next('rxjs');
-        tick();
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(['rxjs', 'all', 'angular']).toContain(searchTrigger());
       });
-    }));
+    });
   });
 
   describe('type safety', () => {
-    it('should infer union type from multiple sources', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should infer union type from multiple sources', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const num$ = of(1);
         const str$ = of('hello');
 
@@ -598,8 +691,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should transform output type with operator', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should transform output type with operator', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const num$ = of(1);
 
         const merged = mergeFrom([num$], pipe(map((value) => value.toString())));
@@ -610,8 +703,8 @@ describe(mergeFrom.name, () => {
       });
     });
 
-    it('should handle different signal types', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle different signal types', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const boolSignal = signal(true);
         const numSignal = signal(42);
         const strSignal = signal('test');

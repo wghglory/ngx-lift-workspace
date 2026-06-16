@@ -1,23 +1,33 @@
+import {flushEffects} from '../../test-setup';
+import {beforeEach, afterEach, vi} from 'vitest';
 import {effect, signal} from '@angular/core';
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {toObservable} from '@angular/core/rxjs-interop';
 import {delay, map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 
 import {createTrigger} from './create-trigger';
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe(createTrigger.name, () => {
   describe('basic functionality', () => {
-    it('should create a trigger with initial value of 0', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should create a trigger with initial value of 0', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
 
         expect(trigger.value()).toBe(0);
       });
     });
 
-    it('should increment counter when next() is called', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should increment counter when next() is called', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
 
         expect(trigger.value()).toBe(0);
@@ -33,8 +43,8 @@ describe(createTrigger.name, () => {
       });
     });
 
-    it('should be a readonly signal', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should be a readonly signal', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
 
         // Verify it's readonly by checking it doesn't have 'set' or 'update' methods
@@ -47,8 +57,8 @@ describe(createTrigger.name, () => {
   });
 
   describe('integration with effects', () => {
-    it('should trigger effects when next() is called', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should trigger effects when next() is called', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
         const callLog: number[] = [];
 
@@ -56,23 +66,23 @@ describe(createTrigger.name, () => {
           callLog.push(trigger.value());
         });
 
-        TestBed.tick();
+        await flushEffects();
 
         // Initial effect run
         expect(callLog).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(callLog).toEqual([0, 1]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(callLog).toEqual([0, 1, 2]);
       });
     });
 
-    it('should work with computed signals', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with computed signals', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
         const multiplier = signal(10);
 
@@ -94,8 +104,8 @@ describe(createTrigger.name, () => {
   });
 
   describe('integration with observables', () => {
-    it('should work with toObservable', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with toObservable', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
         const values: number[] = [];
 
@@ -103,21 +113,21 @@ describe(createTrigger.name, () => {
 
         trigger$.subscribe((value) => values.push(value));
 
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([0, 1]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([0, 1, 2]);
       });
-    }));
+    });
 
-    it('should trigger observable emissions', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should trigger observable emissions', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
         const apiCallCount: number[] = [];
 
@@ -132,27 +142,27 @@ describe(createTrigger.name, () => {
         const results: string[] = [];
         data$.subscribe((result) => results.push(result));
 
-        TestBed.tick();
-        tick(100);
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual(['data-0']);
         expect(apiCallCount).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
-        tick(100);
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual(['data-0', 'data-1']);
         expect(apiCallCount).toEqual([0, 1]);
 
         trigger.next();
-        TestBed.tick();
-        tick(100);
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual(['data-0', 'data-1', 'data-2']);
         expect(apiCallCount).toEqual([0, 1, 2]);
       });
-    }));
+    });
 
-    it('should work with RxJS operators', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with RxJS operators', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
 
         const doubled$ = toObservable(trigger.value).pipe(map((v) => v * 2));
@@ -160,23 +170,23 @@ describe(createTrigger.name, () => {
         const results: number[] = [];
         doubled$.subscribe((result) => results.push(result));
 
-        TestBed.tick();
+        await flushEffects();
         expect(results).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(results).toEqual([0, 2]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(results).toEqual([0, 2, 4]);
       });
-    }));
+    });
   });
 
   describe('use cases', () => {
-    it('should work as a refresh trigger', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work as a refresh trigger', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const refreshTrigger = createTrigger();
         let fetchCount = 0;
 
@@ -191,14 +201,14 @@ describe(createTrigger.name, () => {
         data$.subscribe((result) => results.push(result));
 
         // Initial fetch
-        TestBed.tick();
-        tick(100);
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual([{id: 1, data: 'Data 1'}]);
 
         // Manual refresh
         refreshTrigger.next();
-        TestBed.tick();
-        tick(100);
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual([
           {id: 1, data: 'Data 1'},
           {id: 2, data: 'Data 2'},
@@ -206,18 +216,18 @@ describe(createTrigger.name, () => {
 
         // Another refresh
         refreshTrigger.next();
-        TestBed.tick();
-        tick(100);
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual([
           {id: 1, data: 'Data 1'},
           {id: 2, data: 'Data 2'},
           {id: 3, data: 'Data 3'},
         ]);
       });
-    }));
+    });
 
-    it('should work for polling control', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work for polling control', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const pollTrigger = createTrigger();
         let apiCallCount = 0;
 
@@ -231,28 +241,28 @@ describe(createTrigger.name, () => {
         const values: number[] = [];
         polledData$.subscribe((value) => values.push(value));
 
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([1]);
         expect(apiCallCount).toBe(1);
 
         // Trigger poll
         pollTrigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([1, 2]);
         expect(apiCallCount).toBe(2);
 
         // Trigger poll multiple times
         pollTrigger.next();
-        TestBed.tick();
+        await flushEffects();
         pollTrigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([1, 2, 3, 4]);
         expect(apiCallCount).toBe(4);
       });
-    }));
+    });
 
-    it('should work as a manual trigger for side effects', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should work as a manual trigger for side effects', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const saveTrigger = createTrigger();
         const saveLog: string[] = [];
 
@@ -263,23 +273,23 @@ describe(createTrigger.name, () => {
           }
         });
 
-        TestBed.tick();
+        await flushEffects();
         expect(saveLog).toEqual([]);
 
         saveTrigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(saveLog).toEqual(['Save triggered: 1']);
 
         saveTrigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(saveLog).toEqual(['Save triggered: 1', 'Save triggered: 2']);
       });
     });
   });
 
   describe('multiple triggers', () => {
-    it('should maintain independent counters', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should maintain independent counters', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger1 = createTrigger();
         const trigger2 = createTrigger();
 
@@ -303,8 +313,8 @@ describe(createTrigger.name, () => {
       });
     });
 
-    it('should trigger independent effects', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should trigger independent effects', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger1 = createTrigger();
         const trigger2 = createTrigger();
         const log1: number[] = [];
@@ -318,17 +328,17 @@ describe(createTrigger.name, () => {
           log2.push(trigger2.value());
         });
 
-        TestBed.tick();
+        await flushEffects();
         expect(log1).toEqual([0]);
         expect(log2).toEqual([0]);
 
         trigger1.next();
-        TestBed.tick();
+        await flushEffects();
         expect(log1).toEqual([0, 1]);
         expect(log2).toEqual([0]);
 
         trigger2.next();
-        TestBed.tick();
+        await flushEffects();
         expect(log1).toEqual([0, 1]);
         expect(log2).toEqual([0, 1]);
       });
@@ -336,8 +346,8 @@ describe(createTrigger.name, () => {
   });
 
   describe('edge cases', () => {
-    it('should handle rapid calls to next()', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should handle rapid calls to next()', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
 
         // Rapid calls
@@ -349,8 +359,8 @@ describe(createTrigger.name, () => {
       });
     });
 
-    it('should work with multiple subscribers', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('should work with multiple subscribers', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
         const trigger$ = toObservable(trigger.value);
 
@@ -362,23 +372,23 @@ describe(createTrigger.name, () => {
         trigger$.subscribe((v) => values2.push(v));
         trigger$.subscribe((v) => values3.push(v));
 
-        TestBed.tick();
+        await flushEffects();
         expect(values1).toEqual([0]);
         expect(values2).toEqual([0]);
         expect(values3).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
+        await flushEffects();
         expect(values1).toEqual([0, 1]);
         expect(values2).toEqual([0, 1]);
         expect(values3).toEqual([0, 1]);
       });
-    }));
+    });
   });
 
   describe('type safety', () => {
-    it('should have correct types', () => {
-      TestBed.runInInjectionContext(() => {
+    it('should have correct types', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const trigger = createTrigger();
 
         // value is a Signal<number>
