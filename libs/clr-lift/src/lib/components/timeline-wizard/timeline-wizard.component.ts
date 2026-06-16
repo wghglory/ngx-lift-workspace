@@ -2,6 +2,7 @@ import {AsyncPipe} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ComponentRef,
@@ -30,6 +31,7 @@ import {TimelineWizardService} from './timeline-wizard.service';
   providers: [TimelineWizardService],
   templateUrl: './timeline-wizard.component.html',
   styleUrls: ['./timeline-wizard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineWizardComponent implements AfterViewInit {
   private translationService = inject(TranslationService);
@@ -151,6 +153,17 @@ export class TimelineWizardComponent implements AfterViewInit {
 
   // Click next step button
   nextStep() {
+    const currentRef = this.currentComponentRef;
+    if (currentRef && currentRef.instance.form) {
+      const form = currentRef.instance.form;
+      if (form.invalid) {
+        // Mark all fields as touched to trigger Clarity validation error displays
+        form.markAllAsTouched();
+        this.cdr.detectChanges();
+        return;
+      }
+    }
+
     if (this.timelineWizardService.isLastStep) {
       // Emit all previous steps' data to the parent
       this.confirmed.emit(this.timelineWizardService.allStepsData);

@@ -1,6 +1,6 @@
 # Technology Stack Analysis
 
-**Last Updated**: December 2025
+**Last Updated**: June 2026
 
 **Project**: ngx-lift-workspace
 
@@ -13,7 +13,7 @@ systems, frameworks, tools, and their configurations.
 
 ### Angular
 
-- **Version**: 20.3.0
+- **Version**: 21.2.17
 - **Type**: Standalone components architecture
 - **Key Features**:
   - Signal-based reactivity
@@ -29,7 +29,7 @@ systems, frameworks, tools, and their configurations.
 
 ### Zone.js
 
-- **Version**: ~0.15.0
+- **Version**: 0.16.2
 - **Purpose**: Angular change detection
 
 ## Build Systems & Bundlers
@@ -39,7 +39,7 @@ systems, frameworks, tools, and their configurations.
 - **Version**: @rspack/core ^1.5.0, @rspack/cli ^1.5.0, @rspack/dev-server ^1.1.4
 - **Purpose**: Primary bundler for application builds and development server
 - **Configuration**: `apps/demo/rspack.config.ts`
-- **Nx Plugin**: `@nx/angular-rspack` 22.0.0
+- **Nx Plugin**: `@nx/angular-rspack` 22.7.5
 - **Targets Handled**:
   - `build` - Production builds
   - `serve` - Development server
@@ -60,7 +60,7 @@ systems, frameworks, tools, and their configurations.
 - **Version**: ^7.0.0
 - **Purpose**: Test runner infrastructure for Vitest
 - **Configuration**: `apps/demo/vite.config.mts`
-- **Nx Plugin**: `@nx/vite` 22.0.0 (configured for `test` target only)
+- **Nx Plugin**: `@nx/vite` 22.7.5 (configured for `test` target only)
 - **Targets Handled**:
   - `test` - Unit testing with Vitest
 
@@ -132,7 +132,7 @@ systems, frameworks, tools, and their configurations.
 
 ### Nx
 
-- **Version**: 22.0.0
+- **Version**: 22.7.5
 - **Purpose**: Monorepo tooling and build orchestration
 - **Key Plugins**:
   - `@nx/angular` - Angular-specific tooling
@@ -159,10 +159,10 @@ ngx-lift-workspace/
 
 ### Vitest (Unit Testing)
 
-- **Version**: ^3.0.0
+- **Version**: 4.1.7
 - **Configuration**: `apps/demo/vite.config.mts`
-- **Coverage**: @vitest/coverage-v8 ^3.0.5
-- **Angular Support**: @analogjs/vitest-angular ~1.19.1
+- **Coverage**: @vitest/coverage-v8 4.1.7
+- **Angular Support**: @analogjs/vitest-angular 2.1.3
 - **Coverage Thresholds**:
   - Statements: 80%
   - Branches: 75%
@@ -172,7 +172,7 @@ ngx-lift-workspace/
 ### Playwright (E2E Testing)
 
 - **Version**: ^1.36.0
-- **Nx Plugin**: @nx/playwright 22.0.0
+- **Nx Plugin**: @nx/playwright 22.7.5
 - **Configuration**: `apps/demo-e2e/playwright.config.ts`
 - **Browsers**: Chromium, Firefox, WebKit
 
@@ -186,8 +186,8 @@ ngx-lift-workspace/
 
 ### Clarity Design System
 
-- **@clr/angular**: ^18.0.0
-- **@clr/ui**: ^18.0.0
+- **@clr/angular**: ^18.2.0
+- **@clr/ui**: ^18.2.0
 - **Purpose**: Primary UI component library
 - **Styling**: SASS with Clarity variables (no hard-coded colors)
 
@@ -228,7 +228,7 @@ ngx-lift-workspace/
 ### npm
 
 - **Package Manager**: npm (via package-lock.json)
-- **Publishing**: ng-packagr ~20.3.0 for Angular libraries
+- **Publishing**: ng-packagr 21.2.5 for Angular libraries
 - **Versioning**: Nx release management
 
 ### Library Publishing
@@ -241,8 +241,8 @@ ngx-lift-workspace/
 
 ### SWC
 
-- **@swc/core**: ^1.5.7
-- **@swc-node/register**: ~1.9.1
+- **@swc/core**: 1.15.8
+- **@swc-node/register**: 1.11.1
 - **Purpose**: Fast TypeScript/JavaScript compiler
 - **Usage**: Used by Rspack for faster compilation
 
@@ -262,7 +262,7 @@ ngx-lift-workspace/
 ### Animation
 
 - **lottie-web**: ^5.13.0
-- **ngx-lottie**: ^20.0.0
+- **ngx-lottie**: ^21.2.0
 - **Purpose**: Lottie animations
 
 ### Icons
@@ -272,7 +272,7 @@ ngx-lift-workspace/
 
 ### Cryptography
 
-- **node-forge**: ^1.3.3
+- **node-forge**: ^1.4.0
 - **Purpose**: Certificate generation and cryptography
 
 ## CI/CD & Deployment
@@ -361,7 +361,7 @@ ngx-lift-workspace/
 ### Potential Upgrades
 
 - Monitor Rspack updates for new features
-- Consider Angular 21+ when available
+- Consider Angular 22+ when available
 - Evaluate new testing tools as they emerge
 
 ### Maintenance

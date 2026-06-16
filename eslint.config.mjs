@@ -9,6 +9,9 @@ export default [
   {
     ignores: [
       '**/dist',
+      '**/.nx',
+      '**/.agents',
+      '**/.opencode',
       '**/vite.config.*.timestamp*',
       '**/vitest.config.*.timestamp*',
     ],

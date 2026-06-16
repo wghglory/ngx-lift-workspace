@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="lift-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c1d5" />
+      <stop offset="50%" stop-color="#0091da" />
+      <stop offset="100%" stop-color="#1d428a" />
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#lift-grad)" />
+  <!-- Stylized Lift Icon -->
+  <g fill="#ffffff">
+    <!-- Stylized L -->
+    <path d="M140 140 C140 128.95 148.95 120 160 120 H180 C191.05 120 200 128.95 200 140 V320 C200 331.05 208.95 340 320 340 H340 C351.05 340 360 348.95 360 360 V380 C360 391.05 351.05 400 340 400 H160 C148.95 400 140 391.05 140 380 Z" />
+    <!-- Upward Arrow representing "Lift" -->
+    <path d="M280 220 L360 140 L440 220 L410 250 L360 200 L310 250 Z" />
+    <path d="M335 210 H385 V300 C385 311.05 376.05 320 365 320 H355 C343.95 320 335 311.05 335 300 Z" opacity="0.9" />
+  </g>
+</svg>

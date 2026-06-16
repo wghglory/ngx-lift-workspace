@@ -1,11 +1,6 @@
 :host {
   display: inline-flex;
   align-items: center;
-
-  ::ng-deep .signpost-content {
-    max-width: unset;
-    max-height: unset;
-  }
 }
 
 .text-success {
@@ -24,4 +19,9 @@
   & > * + * {
     margin-left: 0.25rem;
   }
+}
+
+// Scoped globally via ::ng-deep to target the CDK overlay container
+::ng-deep .certificate-signpost-content {
+  max-width: unset;
 }

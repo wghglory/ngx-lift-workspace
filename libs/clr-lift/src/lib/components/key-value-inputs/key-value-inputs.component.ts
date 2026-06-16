@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, inject, input, OnInit, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, OnInit, output} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -36,6 +36,7 @@ import {KeyValueFormGroup} from './key-value-form-group.type';
   imports: [TranslatePipe, ClarityModule, ReactiveFormsModule],
   templateUrl: './key-value-inputs.component.html',
   styleUrls: ['./key-value-inputs.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KeyValueInputsComponent implements OnInit {
   private translationService = inject(TranslationService);

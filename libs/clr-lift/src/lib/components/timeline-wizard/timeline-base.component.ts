@@ -57,8 +57,9 @@ import {Observable, of} from 'rxjs';
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export abstract class TimelineBaseComponent<StepData = unknown> {
   /**
    * All steps data from the timeline wizard.

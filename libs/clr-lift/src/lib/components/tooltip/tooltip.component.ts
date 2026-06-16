@@ -35,6 +35,7 @@ export class TooltipComponent {
   position = input<TooltipPosition>();
   triggerElementHovering = input(true); // if the trigger element (e.g. button) is being hovered
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentContext = input<Record<string, any>>();
 
   /**
@@ -113,11 +114,11 @@ export class TooltipComponent {
     }
   }
 
-  mouseEnter(event: MouseEvent) {
+  mouseEnter() {
     this.tooltipHovering = true;
   }
 
-  mouseLeave(event: MouseEvent) {
+  mouseLeave() {
     this.tooltipHovering = false;
 
     // Use a timeout to allow mouse to move to trigger element
@@ -129,8 +130,8 @@ export class TooltipComponent {
     }, 300);
   }
 
-  @HostListener('body:keydown.escape', ['$event'])
-  onEscape(event: Event) {
+  @HostListener('body:keydown.escape')
+  onEscape() {
     this.closePopover.emit(true);
   }
 }

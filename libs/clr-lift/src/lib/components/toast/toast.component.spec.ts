@@ -27,14 +27,13 @@ describe('ToastComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set animation as false when close method is called', () => {
+  it('should emit closed event when close method is called', () => {
     fixture.componentRef.setInput('manualClosable', true);
-    // const closedSpy = vi.spyOn(component.closed, 'emit');
+    const closedSpy = vi.spyOn(component.closed, 'emit');
 
-    component.close();
+    component.close(true);
 
-    // expect(closedSpy).toHaveBeenCalledWith(false);  // due to setTimeout
-    expect(component.animate).toBeFalsy();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('should emit primaryButtonClick when primary button is clicked', () => {

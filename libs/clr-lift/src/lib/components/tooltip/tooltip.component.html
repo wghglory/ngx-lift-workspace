@@ -7,12 +7,7 @@
   role="tooltip"
   aria-haspopup="true"
 >
-  <span
-    class="tooltip-content"
-    [style.width.px]="width()"
-    (mouseenter)="mouseEnter($event)"
-    (mouseleave)="mouseLeave($event)"
-  >
+  <span class="tooltip-content" [style.width.px]="width()" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
     <span [innerHtml]="text()"></span>
 
     <!-- for complex content (TemplateRef, ComponentRef), display close button, build traps -->

@@ -45,17 +45,6 @@
       }
     },
     {
-      "plugin": "@nx/rspack/plugin",
-      "options": {
-        "buildTargetName": "build",
-        "serveTargetName": "serve",
-        "serveStaticTargetName": "serve-static",
-        "previewTargetName": "preview",
-        "buildDepsTargetName": "build-deps",
-        "watchDepsTargetName": "watch-deps"
-      }
-    },
-    {
       "plugin": "@nx/vitest",
       "options": {
         "testTargetName": "test"

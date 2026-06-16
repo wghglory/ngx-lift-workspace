@@ -312,7 +312,7 @@ import { OtherModule } from 'other-library';
 
 ### Import with Module
 
-If importing from a module (rare in Angular 18+):
+If importing from a module:
 
 ```typescript
 exampleCode = highlight(`

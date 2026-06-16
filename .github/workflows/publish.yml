@@ -42,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           cache: 'npm'
 
       - name: Install dependencies
@@ -157,7 +157,7 @@ jobs:
           |----------|-------|
           | **Event** | \`$EVENT\` |
           | $TRIGGER_INFO |
-          | **Node.js** | \`22.x\` |
+          | **Node.js** | \`24.x\` |
 
           ---
 

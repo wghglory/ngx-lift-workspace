@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
@@ -56,6 +57,7 @@ import {fileReaderTranslations} from './file-reader.l10n';
   imports: [TranslatePipe, ClarityModule, FormsModule],
   templateUrl: './file-reader.component.html',
   styleUrls: ['./file-reader.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
