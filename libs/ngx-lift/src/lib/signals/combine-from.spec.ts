@@ -4,6 +4,7 @@ import {TestBed} from '@angular/core/testing';
 import {BehaviorSubject, delay, map, of} from 'rxjs';
 import {pipe} from 'rxjs';
 
+import {flushEffects} from '../../test-setup';
 import {combineFrom} from './combine-from';
 
 beforeEach(() => {
@@ -24,27 +25,19 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([sig1, sig2, sig3]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([1, 'hello', true]);
 
         sig1.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([2, 'hello', true]);
 
         sig2.set('world');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([2, 'world', true]);
 
         sig3.set(false);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([2, 'world', false]);
       });
     });
