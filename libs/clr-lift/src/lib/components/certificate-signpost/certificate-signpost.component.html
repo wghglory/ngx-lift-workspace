@@ -8,7 +8,7 @@
   >
     <clr-icon shape="certificate" size="16" />
   </button>
-  <clr-signpost-content [clrPosition]="position()" *clrIfOpen>
+  <clr-signpost-content class="certificate-signpost-content" [clrPosition]="position()" *clrIfOpen>
     @if (certificate() && certificateStatus() && hash()) {
       <cll-certificate [certificate]="certificate()!" [certificateStatus]="certificateStatus()" [hash]="hash()" />
     }

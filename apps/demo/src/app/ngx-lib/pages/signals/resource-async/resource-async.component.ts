@@ -12,7 +12,7 @@ import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
-import {resourceAsync, ResourceRef} from 'ngx-lift';
+import {resourceAsync, ResourceRef, WritableResourceRef} from 'ngx-lift';
 import {delay, map, of} from 'rxjs';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -180,7 +180,7 @@ export class ResourceAsyncComponent {
 
   // Example 1: Optimistic Update - Todo Toggle
   todoId = signal(1);
-  todoRef = resourceAsync(
+  todoRef: WritableResourceRef<Todo> = resourceAsync(
     () =>
       of({
         id: this.todoId(),
@@ -213,7 +213,7 @@ export class ResourceAsyncComponent {
 
   // Example 2: Cache-First Pattern
   cacheFirstUserId = signal(1);
-  cacheFirstUserRef = resourceAsync(
+  cacheFirstUserRef: WritableResourceRef<CacheUser> = resourceAsync(
     () =>
       of({
         id: this.cacheFirstUserId(),

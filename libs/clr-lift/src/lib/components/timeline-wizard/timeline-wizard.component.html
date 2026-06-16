@@ -29,7 +29,6 @@
       class="btn"
       [class]="timelineWizardService.isLastStep ? 'btn-success' : 'btn-primary'"
       [clrLoading]="(next$ | async)?.isLoading === true"
-      [disabled]="currentStepFormInvalid"
       (click)="nextStep()"
     >
       {{ (timelineWizardService.isLastStep ? confirmButtonText() : 'timeline-wizard.next') | translate }}
