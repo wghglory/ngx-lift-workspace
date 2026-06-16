@@ -1,7 +1,16 @@
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {beforeEach, afterEach, vi} from 'vitest';
+import {TestBed} from '@angular/core/testing';
 
 import {IdleDetectionConfig} from './idle-detection.config';
 import {IdleDetectionService} from './idle-detection.service';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('IdleDetectionService', () => {
   let service: IdleDetectionService;
@@ -21,11 +30,11 @@ describe('IdleDetectionService', () => {
     service.clearTimers();
   });
 
-  it('should be created', () => {
+  it('should be created', async () => {
     expect(service).toBeTruthy();
   });
 
-  it('should reset timer on user activity', () => {
+  it('should reset timer on user activity', async () => {
     service.startWatching();
     const event = new MouseEvent('mousemove');
     document.dispatchEvent(event);
@@ -33,16 +42,20 @@ describe('IdleDetectionService', () => {
     expect(service['isCountingDown']).toBeFalsy();
   });
 
-  it('should start countdown after idle end', fakeAsync(() => {
+  it('should start countdown after idle end', async () => {
     service.startWatching();
-    tick(service['idleDuration'] * 1000 + 100);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 100);
+    TestBed.tick();
     expect(service['isCountingDown']).toBeTruthy();
-  }));
+  });
 
-  it('should stop countdown on user activity during countdown', fakeAsync(() => {
+  it('should stop countdown on user activity during countdown', async () => {
     service.startWatching();
     // Wait for idle duration to pass (countdown starts) + a bit more to ensure we're in countdown phase
-    tick(service['idleDuration'] * 1000 + 200);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 200);
+    TestBed.tick();
 
     // Countdown should be active
     expect(service['isCountingDown']).toBeTruthy();
@@ -50,17 +63,21 @@ describe('IdleDetectionService', () => {
     // User activity during countdown - dispatch multiple events to ensure one gets through throttling
     document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
     // Also dispatch a mousemove to ensure an event gets through
-    tick(50);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(50);
+    TestBed.tick();
     document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
 
     // Wait a bit for the events to be processed
-    tick(200);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(200);
+    TestBed.tick();
 
     expect(service['isCountingDown']).toBeFalsy();
     expect(service['countdown']).toBe(service['timeoutDuration']);
-  }));
+  });
 
-  it('should emit countdown value every second', fakeAsync(() => {
+  it('should emit countdown value every second', async () => {
     service.setConfig({
       timeoutDurationInSeconds: 3,
       idleDurationInSeconds: 1,
@@ -73,15 +90,19 @@ describe('IdleDetectionService', () => {
     });
 
     // Wait for idle duration (1s) + countdown starts and emits initial value (3)
-    tick(1000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(1000);
+    TestBed.tick();
     expect(countdownValues.length).toBeGreaterThan(0);
     // First emission is the initial countdown value (3), which equals timeoutDuration
     // Wait for next second to get a value less than timeoutDuration
-    tick(1000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(1000);
+    TestBed.tick();
     expect(countdownValues.some((val) => val < service['timeoutDuration'])).toBeTruthy();
-  }));
+  });
 
-  it('should emit countdown end event after timeout duration', fakeAsync(() => {
+  it('should emit countdown end event after timeout duration', async () => {
     service.startWatching();
 
     let timeoutEndReceived = false;
@@ -90,11 +111,13 @@ describe('IdleDetectionService', () => {
     });
 
     // Wait for idle duration (1s) + timeout duration (1s) = 2s
-    tick(2000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(2000);
+    TestBed.tick();
     expect(timeoutEndReceived).toBeTruthy();
-  }));
+  });
 
-  it('should set config correctly', () => {
+  it('should set config correctly', async () => {
     const config: IdleDetectionConfig = {
       idleDurationInSeconds: 10,
       timeoutDurationInSeconds: 5,
@@ -105,7 +128,7 @@ describe('IdleDetectionService', () => {
     expect(service['countdown']).toBe(5);
   });
 
-  it('should set config with only idleDurationInSeconds', () => {
+  it('should set config with only idleDurationInSeconds', async () => {
     const config: IdleDetectionConfig = {
       idleDurationInSeconds: 15,
     };
@@ -114,7 +137,7 @@ describe('IdleDetectionService', () => {
     expect(service['timeoutDuration']).toBe(1); // Default value
   });
 
-  it('should set config with only timeoutDurationInSeconds', () => {
+  it('should set config with only timeoutDurationInSeconds', async () => {
     const config: IdleDetectionConfig = {
       timeoutDurationInSeconds: 8,
     };
@@ -124,9 +147,11 @@ describe('IdleDetectionService', () => {
     expect(service['countdown']).toBe(8);
   });
 
-  it('should reset timer with countdown reset', fakeAsync(() => {
+  it('should reset timer with countdown reset', async () => {
     service.startWatching();
-    tick(service['idleDuration'] * 1000 + 100);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 100);
+    TestBed.tick();
 
     // After idle period, countdown should start
     expect(service['isCountingDown']).toBeTruthy();
@@ -135,11 +160,13 @@ describe('IdleDetectionService', () => {
     service.resetTimer(true);
     expect(service['isCountingDown']).toBeFalsy();
     expect(service['countdown']).toBe(service['timeoutDuration']);
-  }));
+  });
 
-  it('should reset timer without countdown reset during countdown', fakeAsync(() => {
+  it('should reset timer without countdown reset during countdown', async () => {
     service.startWatching();
-    tick(service['idleDuration'] * 1000 + 100);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 100);
+    TestBed.tick();
 
     // After idle period, countdown should start
     expect(service['isCountingDown']).toBeTruthy();
@@ -147,9 +174,9 @@ describe('IdleDetectionService', () => {
     // Reset without countdown reset
     service.resetTimer(false);
     expect(service['isCountingDown']).toBeTruthy(); // Countdown should continue
-  }));
+  });
 
-  it('should clear all timers', () => {
+  it('should clear all timers', async () => {
     service.startWatching();
     const interruptionSubscription = service['interruptionSubscription'];
 
@@ -161,7 +188,7 @@ describe('IdleDetectionService', () => {
     expect(interruptionSubscription?.closed).toBe(true);
   });
 
-  it('should emit onIdleEnd event', fakeAsync(() => {
+  it('should emit onIdleEnd event', async () => {
     service.startWatching();
 
     let idleEndReceived = false;
@@ -170,14 +197,16 @@ describe('IdleDetectionService', () => {
     });
 
     // Wait for idle duration to pass (the observable will emit when idle ends)
-    tick(service['idleDuration'] * 1000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000);
+    TestBed.tick();
     expect(idleEndReceived).toBeTruthy();
     // startCountdown() is called synchronously after idleEndSubject.next()
     // Check that countdown has started
     expect(service['isCountingDown']).toBeTruthy();
-  }));
+  });
 
-  it('should emit onTimeoutEnd event', fakeAsync(() => {
+  it('should emit onTimeoutEnd event', async () => {
     service.setConfig({
       idleDurationInSeconds: 1,
       timeoutDurationInSeconds: 1,
@@ -191,11 +220,13 @@ describe('IdleDetectionService', () => {
     });
 
     // Wait for idle duration (1s) + timeout duration (1s) = 2s
-    tick(2000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(2000);
+    TestBed.tick();
     expect(timeoutEndReceived).toBeTruthy();
-  }));
+  });
 
-  it('should emit countdown values', fakeAsync(() => {
+  it('should emit countdown values', async () => {
     service.setConfig({
       idleDurationInSeconds: 1,
       timeoutDurationInSeconds: 3,
@@ -208,13 +239,15 @@ describe('IdleDetectionService', () => {
     });
 
     // Wait for idle duration (1s) + first countdown (1s) + second countdown (1s) = 3s
-    tick(3000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(3000);
+    TestBed.tick();
     expect(countdownValues.length).toBeGreaterThanOrEqual(2);
     expect(countdownValues[0]).toBe(3);
     expect(countdownValues[1]).toBe(2);
-  }));
+  });
 
-  it('should handle multiple interruption events', () => {
+  it('should handle multiple interruption events', async () => {
     service.startWatching();
 
     // Simulate multiple events
@@ -227,7 +260,7 @@ describe('IdleDetectionService', () => {
     expect(service['isCountingDown']).toBeFalsy();
   });
 
-  it('should throttle interruption events', fakeAsync(() => {
+  it('should throttle interruption events', async () => {
     service.startWatching();
     let timerResetCount = 0;
     const originalResetTimer = service['resetTimer'];
@@ -241,14 +274,18 @@ describe('IdleDetectionService', () => {
       document.dispatchEvent(new MouseEvent('mousemove'));
     }
 
-    tick(2000);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(2000);
+    TestBed.tick();
     // Should be throttled, so resetTimer should not be called 10 times
     expect(timerResetCount).toBeLessThan(10);
-  }));
+  });
 
-  it('should stop countdown when user activity detected during countdown', fakeAsync(() => {
+  it('should stop countdown when user activity detected during countdown', async () => {
     service.startWatching();
-    tick(service['idleDuration'] * 1000 + 200);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 200);
+    TestBed.tick();
 
     // Countdown should be active
     expect(service['isCountingDown']).toBeTruthy();
@@ -256,17 +293,21 @@ describe('IdleDetectionService', () => {
     // User activity during countdown - dispatch multiple events to ensure one gets through throttling
     document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
     // Also dispatch a mousemove to ensure an event gets through
-    tick(50);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(50);
+    TestBed.tick();
     document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
 
     // Wait a bit for the events to be processed
-    tick(200);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(200);
+    TestBed.tick();
 
     expect(service['isCountingDown']).toBeFalsy();
     expect(service['countdown']).toBe(service['timeoutDuration']);
-  }));
+  });
 
-  it('should handle all interruption event types', () => {
+  it('should handle all interruption event types', async () => {
     service.startWatching();
     const events = [
       'click',
@@ -294,7 +335,7 @@ describe('IdleDetectionService', () => {
     expect(service['isCountingDown']).toBeFalsy();
   });
 
-  it('should not start watching if already watching', () => {
+  it('should not start watching if already watching', async () => {
     service.startWatching();
     const firstSubscription = service['interruptionSubscription'];
 
@@ -305,7 +346,7 @@ describe('IdleDetectionService', () => {
     expect(firstSubscription).toBe(secondSubscription);
   });
 
-  it('should reset countdown to timeoutDuration when stopped', () => {
+  it('should reset countdown to timeoutDuration when stopped', async () => {
     service.setConfig({
       timeoutDurationInSeconds: 5,
     });

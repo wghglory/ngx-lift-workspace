@@ -69,8 +69,7 @@
     "ngx-lottie": "^21.2.0",
     "node-forge": "^1.4.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.6.3",
-    "zone.js": "0.16.2"
+    "tslib": "^2.6.3"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "2.1.3",

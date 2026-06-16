@@ -1,10 +1,18 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormControl, FormControlDirective, NgControl, ReactiveFormsModule} from '@angular/forms';
-import {vi} from 'vitest';
+import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
 import {MockTranslationService} from '../../services/translation.service.mock';
 import {FileReaderComponent} from './file-reader.component';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('FileReaderComponent', () => {
   let component: FileReaderComponent;
@@ -39,12 +47,12 @@ describe('FileReaderComponent', () => {
     delete (globalThis as {FileReader?: unknown}).FileReader;
   });
 
-  it('should create', () => {
+  it('should create', async () => {
     expect(component).toBeTruthy();
   });
 
   describe('ControlValueAccessor', () => {
-    it('should register onChange callback', () => {
+    it('should register onChange callback', async () => {
       const onChangeFn = vi.fn();
       component.registerOnChange(onChangeFn);
 
@@ -52,7 +60,7 @@ describe('FileReaderComponent', () => {
       expect(onChangeFn).toHaveBeenCalledWith('test');
     });
 
-    it('should register onTouched callback', () => {
+    it('should register onTouched callback', async () => {
       const onTouchedFn = vi.fn();
       component.registerOnTouched(onTouchedFn);
 
@@ -60,7 +68,7 @@ describe('FileReaderComponent', () => {
       expect(onTouchedFn).toHaveBeenCalled();
     });
 
-    it('should set disabled state', () => {
+    it('should set disabled state', async () => {
       component.setDisabledState(true);
       expect(component.isDisabled()).toBe(true);
 
@@ -68,31 +76,35 @@ describe('FileReaderComponent', () => {
       expect(component.isDisabled()).toBe(false);
     });
 
-    it('should write value for encoded content', fakeAsync(() => {
+    it('should write value for encoded content', async () => {
       const encodedValue = btoa('test content');
       fixture.componentRef.setInput('encoded', true);
       fixture.detectChanges();
 
       component.writeValue(encodedValue);
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component['encodedContent']()).toBe(encodedValue);
       expect(component['rawContent']()).toBe('test content');
-    }));
+    });
 
-    it('should write value for raw content', fakeAsync(() => {
+    it('should write value for raw content', async () => {
       const rawValue = 'test content';
       fixture.componentRef.setInput('encoded', false);
       fixture.detectChanges();
 
       component.writeValue(rawValue);
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component['rawContent']()).toBe(rawValue);
       expect(component['encodedContent']()).toBe(btoa(rawValue));
-    }));
+    });
 
-    it('should not write value if value is empty', () => {
+    it('should not write value if value is empty', async () => {
       const initialRawContent = component['rawContent']();
       const initialEncodedContent = component['encodedContent']();
 
@@ -122,7 +134,7 @@ describe('FileReaderComponent', () => {
       return inputElement;
     };
 
-    it('should handle file selection and read as text', fakeAsync(() => {
+    it('should handle file selection and read as text', async () => {
       const file = new File(['test content'], 'test.txt', {type: 'text/plain'});
       const fileChangeSpy = vi.spyOn(component.fileChange, 'emit');
       const onChangeSpy = vi.spyOn(component as never, 'onChange');
@@ -155,16 +167,18 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.selectedFile()).toEqual(file);
       expect(component['rawContent']()).toBe('test content');
       expect(fileChangeSpy).toHaveBeenCalledWith('test content');
       expect(onChangeSpy).toHaveBeenCalled();
       expect(onTouchedSpy).toHaveBeenCalled();
-    }));
+    });
 
-    it('should handle file selection with encoded content', fakeAsync(() => {
+    it('should handle file selection with encoded content', async () => {
       const file = new File(['test content'], 'test.txt', {type: 'text/plain'});
       fixture.componentRef.setInput('encoded', true);
       fixture.detectChanges();
@@ -197,13 +211,15 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component['encodedContent']()).toBe(btoa('test content'));
       expect(fileChangeSpy).toHaveBeenCalledWith(btoa('test content'));
-    }));
+    });
 
-    it('should handle file selection error', fakeAsync(() => {
+    it('should handle file selection error', async () => {
       const file = new File(['test'], 'test.txt', {type: 'text/plain'});
       const originalBtoa = window.btoa;
       window.btoa = vi.fn(() => {
@@ -238,15 +254,17 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component['parseError']()).toBe('Encoding error');
       expect(onChangeSpy).toHaveBeenCalledWith(' ');
 
       window.btoa = originalBtoa;
-    }));
+    });
 
-    it('should clear parse error on new file selection', fakeAsync(() => {
+    it('should clear parse error on new file selection', async () => {
       component['parseError'].set('previous error');
 
       // Mock FileReader - ensure btoa doesn't throw
@@ -277,13 +295,15 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component['parseError']()).toBe('');
       window.btoa = originalBtoa;
-    }));
+    });
 
-    it('should not process if no files selected', () => {
+    it('should not process if no files selected', async () => {
       const inputElement = document.createElement('input');
       inputElement.type = 'file';
       inputElement.files = null as never;
@@ -298,7 +318,7 @@ describe('FileReaderComponent', () => {
   });
 
   describe('removeFile', () => {
-    it('should remove selected file and reset state', fakeAsync(() => {
+    it('should remove selected file and reset state', async () => {
       const file = new File(['test'], 'test.txt', {type: 'text/plain'});
       component.selectedFile.set(file);
       component['rawContent'].set('test content');
@@ -310,7 +330,9 @@ describe('FileReaderComponent', () => {
       const onTouchedSpy = vi.spyOn(component as never, 'onTouched');
 
       component.removeFile();
-      tick();
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(fileElement.nativeElement.value).toBe('');
       expect(component.selectedFile()).toBeUndefined();
@@ -318,11 +340,11 @@ describe('FileReaderComponent', () => {
       expect(component['encodedContent']()).toBe('');
       expect(onChangeSpy).toHaveBeenCalledWith('');
       expect(onTouchedSpy).toHaveBeenCalled();
-    }));
+    });
   });
 
   describe('Validator', () => {
-    it('should return null when file is valid', () => {
+    it('should return null when file is valid', async () => {
       const file = new File(['test'], 'test.txt', {type: 'text/plain'});
       component.selectedFile.set(file);
       fixture.componentRef.setInput('maxSize', 10);
@@ -332,7 +354,7 @@ describe('FileReaderComponent', () => {
       expect(result).toBeNull();
     });
 
-    it('should return exceedLimit error when file size exceeds maxSize', () => {
+    it('should return exceedLimit error when file size exceeds maxSize', async () => {
       const file = new File(['test content'], 'test.txt', {type: 'text/plain'});
       // Create a file with size > 1MB
       Object.defineProperty(file, 'size', {value: 2 * 1024 * 1024, writable: false});
@@ -344,14 +366,14 @@ describe('FileReaderComponent', () => {
       expect(result).toEqual({exceedLimit: true});
     });
 
-    it('should return parse error when parseError is set', () => {
+    it('should return parse error when parseError is set', async () => {
       component['parseError'].set('Parse error message');
 
       const result = component.validate(mockFormControl);
       expect(result).toEqual({parse: 'Parse error message'});
     });
 
-    it('should return null when no file is selected', () => {
+    it('should return null when no file is selected', async () => {
       component.selectedFile.set(undefined);
 
       const result = component.validate(mockFormControl);
@@ -360,12 +382,12 @@ describe('FileReaderComponent', () => {
   });
 
   describe('sizeInvalid computed', () => {
-    it('should return false when no file is selected', () => {
+    it('should return false when no file is selected', async () => {
       component.selectedFile.set(undefined);
       expect(component.sizeInvalid()).toBe(false);
     });
 
-    it('should return false when file size is within limit', () => {
+    it('should return false when file size is within limit', async () => {
       const file = new File(['test'], 'test.txt', {type: 'text/plain'});
       Object.defineProperty(file, 'size', {value: 500 * 1024, writable: false});
       component.selectedFile.set(file);
@@ -375,7 +397,7 @@ describe('FileReaderComponent', () => {
       expect(component.sizeInvalid()).toBe(false);
     });
 
-    it('should return true when file size exceeds limit', () => {
+    it('should return true when file size exceeds limit', async () => {
       const file = new File(['test'], 'test.txt', {type: 'text/plain'});
       Object.defineProperty(file, 'size', {value: 2 * 1024 * 1024, writable: false});
       component.selectedFile.set(file);
@@ -387,35 +409,35 @@ describe('FileReaderComponent', () => {
   });
 
   describe('Inputs', () => {
-    it('should set controlId input', () => {
+    it('should set controlId input', async () => {
       fixture.componentRef.setInput('controlId', 'test-id');
       fixture.detectChanges();
 
       expect(component.controlId()).toBe('test-id');
     });
 
-    it('should set acceptFiles input', () => {
+    it('should set acceptFiles input', async () => {
       fixture.componentRef.setInput('acceptFiles', '.txt,.pdf');
       fixture.detectChanges();
 
       expect(component.acceptFiles()).toBe('.txt,.pdf');
     });
 
-    it('should set encoded input', () => {
+    it('should set encoded input', async () => {
       fixture.componentRef.setInput('encoded', true);
       fixture.detectChanges();
 
       expect(component.encoded()).toBe(true);
     });
 
-    it('should set maxSize input', () => {
+    it('should set maxSize input', async () => {
       fixture.componentRef.setInput('maxSize', 5);
       fixture.detectChanges();
 
       expect(component.maxSize()).toBe(5);
     });
 
-    it('should set disabled input', () => {
+    it('should set disabled input', async () => {
       fixture.componentRef.setInput('disabled', true);
       fixture.detectChanges();
 

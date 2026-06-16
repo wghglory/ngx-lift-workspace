@@ -1,10 +1,18 @@
 import {Component, ComponentRef, DebugElement} from '@angular/core';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {vi} from 'vitest';
+import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TooltipComponent} from './tooltip.component';
 import {TooltipDirective} from './tooltip.directive';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('TooltipDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
@@ -51,28 +59,34 @@ describe('TooltipDirective', () => {
     expect(directive).toBeTruthy();
   });
 
-  it('should show and hide tooltip on mouse enter and leave', fakeAsync(() => {
+  it('should show and hide tooltip on mouse enter and leave', async () => {
     const directive = directiveElement.injector.get(TooltipDirective);
 
     // Trigger mouse enter
     directive.onMouseEnter();
     fixture.detectChanges();
-    tick();
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(0);
+    TestBed.tick();
 
     // Tooltip should be created
     expect(directive['tooltipComponent']).toBeTruthy();
 
     // Wait for positionTooltip setTimeout to complete
-    tick();
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(0);
+    TestBed.tick();
 
     // Trigger mouse leave
     directive.onMouseLeave();
     fixture.detectChanges();
-    tick(directive['cllTooltipHideDelay']());
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(directive['cllTooltipHideDelay']());
+    TestBed.tick();
 
     // Tooltip should be removed
     expect(directive['tooltipComponent']).toBeFalsy();
-  }));
+  });
 
   it('should handle showTooltip when content is empty', () => {
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {

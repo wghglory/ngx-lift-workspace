@@ -1,26 +1,37 @@
+import {beforeEach, afterEach, vi} from 'vitest';
 import {Signal, signal} from '@angular/core';
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {catchError, delay, map, Observable, of, startWith} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {computedAsync} from './computed-async';
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 const promise = <T>(value: T, time = 0): Promise<T> => new Promise((resolve) => setTimeout(() => resolve(value), time));
 
 describe(computedAsync.name, () => {
   describe('works with raw values', () => {
-    it('null & undefined', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('null & undefined', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const value = signal(null);
         const result = computedAsync(() => value());
         expect(result()).toEqual(undefined); // initial value
         value.set(null);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(result()).toEqual(null);
       });
-    }));
-    it('objects', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('objects', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const value = signal(0);
         const data = signal([1, 2, 3]);
 
@@ -30,14 +41,18 @@ describe(computedAsync.name, () => {
 
         expect(result()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(result()).toEqual([1, 2, 3]);
         value.set(1);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(result()).toEqual([2, 3, 4]);
       });
-    }));
-    it('initialValue', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('initialValue', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const value = signal(0);
         const data = signal([1, 2, 3]);
 
@@ -50,17 +65,21 @@ describe(computedAsync.name, () => {
 
         expect(result()).toEqual([]); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(result()).toEqual([1, 2, 3]);
         value.set(1);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(result()).toEqual([2, 3, 4]);
       });
-    }));
+    });
   });
 
   describe('works with previousValue', () => {
-    it('and can be retrieved in the callback fn', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('and can be retrieved in the callback fn', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -78,62 +97,76 @@ describe(computedAsync.name, () => {
         expect(s()).toEqual(undefined); // initial value
         expect(logs).toEqual([]);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
         expect(logs).toEqual([]);
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
         expect(logs).toEqual([1, 1000]);
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(3);
         expect(logs).toEqual([1, 1000, 3]);
 
         value.set(4);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(3); // still the old value
         expect(logs).toEqual([1, 1000, 3, 3000]); // previousValue is 3 and it gets pushed again
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(4);
         expect(logs).toEqual([1, 1000, 3, 3000, 4]);
       });
-    }));
+    });
   });
 
   describe('works with requireSync', () => {
-    it('returns undefined for sync observables if not enabled', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('returns undefined for sync observables if not enabled', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const value = signal(1);
         const s = computedAsync(() => of(value()));
         expect(s()).toEqual(undefined); // initial value
       });
-    }));
-    it('returns correct value and does not throw error if enabled', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('returns correct value and does not throw error if enabled', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const value = signal(1);
         const s = computedAsync(() => of(value()), {requireSync: true});
         expect(s()).toEqual(1); // initial value
       });
-    }));
-    it('returns correct value and does not throw error with initial value provided', () => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('returns correct value and does not throw error with initial value provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const s = computedAsync(() => of(1), {initialValue: 2});
         expect(s()).toEqual(2); // initial value
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
         TestBed.tick();
         expect(s()).toEqual(1);
       });
     });
-    it('returns correct value and does not throw error with normal variable when enabled', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('returns correct value and does not throw error with normal variable when enabled', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const s = computedAsync(() => 1, {requireSync: true});
         expect(s()).toEqual(1); // initial value
       });
-    }));
-    it('throws error for promises', () => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('throws error for promises', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const value = signal(1);
         expect(() => {
           computedAsync(() => promise(value()), {
@@ -145,8 +178,8 @@ describe(computedAsync.name, () => {
   });
 
   describe('works with promises', () => {
-    it('waits for them to resolve', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('waits for them to resolve', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -158,24 +191,32 @@ describe(computedAsync.name, () => {
         });
         expect(s()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
       });
-    }));
+    });
   });
 
   describe('works with observables', () => {
-    it('waits for them to resolve', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('waits for them to resolve', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -188,21 +229,29 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
       });
-    }));
-    it('behavior: switch (default) -> previous computation', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('behavior: switch (default) -> previous computation', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -218,36 +267,50 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(100); // wait 100ms for promise to resolve
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 100ms for promise to resolve
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
 
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
 
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(3);
         expect(logs).toEqual([1, 3]);
 
         // 2 was skipped -> the computation was cancelled
       });
-    }));
-    it('behavior: concat -> does not cancel previous computation', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('behavior: concat -> does not cancel previous computation', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -263,36 +326,52 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(50);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(50);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick();
         // now we have 100ms passed
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
 
         // now the next computation starts again, so we need to wait 100ms
-        tick(100); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(3);
         expect(logs).toEqual([1, 2, 3]);
       });
-    }));
-    it('behavior: merge -> runs everything in parallel', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('behavior: merge -> runs everything in parallel', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -308,33 +387,49 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(50);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(50);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick();
         // now we have 100ms passed
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
         value.set(0);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
         TestBed.tick();
 
         value.set(3);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
         value.set(4);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
-        tick(100); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(4);
         expect(logs).toEqual([1, 2, 0, 3, 4]);
       });
-    }));
-    it('behavior: exhaust -> skips new computations until last one completes', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    });
+    it('behavior: exhaust -> skips new computations until last one completes', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
         const value = signal(1);
 
@@ -350,40 +445,56 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(50);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick();
         expect(s()).toEqual(undefined); // initial value
-        tick(50);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick();
         // now we have 100ms passed
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(s()).toEqual(1); // still the old value
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
 
         value.set(3);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
         TestBed.tick();
 
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
-        tick(50); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(50);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
 
         // now the next computation starts again, so we need to wait 100ms
-        tick(100); // wait 50ms
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(100);
+        TestBed.tick(); // wait 50ms
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
       });
-    }));
+    });
   });
 
   describe('works with contextual observables + requireSync', () => {
-    it('and recovers from errors', fakeAsync(() => {
-      TestBed.runInInjectionContext(() => {
+    it('and recovers from errors', async () => {
+      await TestBed.runInInjectionContext(async () => {
         const loadAsyncDataLogs: number[] = [];
         function loadAsyncData(number: number, throwError = false): Observable<number[]> {
           if (throwError) {
@@ -418,33 +529,51 @@ describe(computedAsync.name, () => {
 
         expect(data()).toEqual({status: 'loading', result: []});
         expect(loadAsyncDataLogs).toEqual([1]);
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data()).toEqual({status: 'loading', result: []});
         expect(loadAsyncDataLogs).toEqual([1]);
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data()).toEqual({status: 'loaded', result: [0]});
 
         // if we don't flush effects, the effect won't run
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
 
         id.set(2);
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(loadAsyncDataLogs.length).toEqual(2);
         expect(data().status).toEqual('loading');
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data().status).toEqual('loading');
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data()).toEqual({status: 'loaded', result: [0, 1]});
         expect(loadAsyncDataLogs).toEqual([1, 2]);
 
         id.set(3);
         throwErrorFlag = true;
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(loadAsyncDataLogs).toEqual([1, 2, 3]);
         expect(data().status).toEqual('loading');
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data().status).toEqual('loading');
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
 
         // TODO:
         // expect(data()).toEqual({
@@ -455,19 +584,25 @@ describe(computedAsync.name, () => {
         id.set(4);
         throwErrorFlag = false; // should recover from error
         TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
         expect(loadAsyncDataLogs).toEqual([1, 2, 3, 4]);
         expect(data().status).toEqual('loading');
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data().status).toEqual('loading');
-        tick(500);
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(500);
+        TestBed.tick();
         expect(data()).toEqual({status: 'loaded', result: [0, 1, 2, 3]});
       });
-    }));
+    });
   });
 
   describe('is typesafe', () => {
-    it('initial value', () => {
-      TestBed.runInInjectionContext(() => {
+    it('initial value', async () => {
+      await TestBed.runInInjectionContext(async () => {
         // promise
         const onePromise: Signal<number | undefined> = computedAsync(() => promise(1));
         const onlyPromises: Signal<number | undefined> = computedAsync(() => {

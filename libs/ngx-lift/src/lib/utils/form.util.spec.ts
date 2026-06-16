@@ -1,11 +1,19 @@
 import {Component} from '@angular/core';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {AsyncValidatorFn, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {firstValueFrom, Observable, of, switchMap, timer} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {vi} from 'vitest';
+import {vi, beforeEach, afterEach} from 'vitest';
 
 import {ifAsyncValidator, ifValidator} from './form.util';
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 @Component({
   template: `
@@ -29,7 +37,7 @@ describe('ifValidator', () => {
     fixture.detectChanges();
   });
 
-  it('should apply the validator when the condition is met', () => {
+  it('should apply the validator when the condition is met', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('valid value');
 
@@ -49,7 +57,7 @@ describe('ifValidator', () => {
     expect(falseValidatorFnMock).not.toHaveBeenCalled();
   });
 
-  it('should apply the falseValidatorFn when the condition is not met', () => {
+  it('should apply the falseValidatorFn when the condition is not met', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('invalid value');
 
@@ -78,7 +86,7 @@ describe('ifAsyncValidator', () => {
     fixture.detectChanges();
   });
 
-  it('should apply the async validator when the condition is met', fakeAsync(() => {
+  it('should apply the async validator when the condition is met', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('valid value');
 
@@ -95,10 +103,12 @@ describe('ifAsyncValidator', () => {
         result = value;
       });
 
-    tick(500);
+    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(500);
+    TestBed.tick();
     expect(result).toEqual({yourCustomAsyncError: true});
     expect(asyncValidatorFnMock).toHaveBeenCalledWith(control);
-  }));
+  });
 
   it('should not apply the async validator when the condition is not met', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
@@ -122,7 +132,7 @@ describe('ifValidator edge cases', () => {
     fixture.detectChanges();
   });
 
-  it('should handle array of validators in trueValidatorFn', () => {
+  it('should handle array of validators in trueValidatorFn', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('valid value');
 
@@ -137,7 +147,7 @@ describe('ifValidator edge cases', () => {
     expect(validator2).toHaveBeenCalledWith(control);
   });
 
-  it('should handle array of validators in falseValidatorFn', () => {
+  it('should handle array of validators in falseValidatorFn', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('invalid value');
 
@@ -156,7 +166,7 @@ describe('ifValidator edge cases', () => {
     expect(validator2).toHaveBeenCalledWith(control);
   });
 
-  it('should return null when falseValidatorFn is not provided and condition is false', () => {
+  it('should return null when falseValidatorFn is not provided and condition is false', async () => {
     const control = fixture.componentInstance.form.controls.testControl;
     control.setValue('invalid value');
 
