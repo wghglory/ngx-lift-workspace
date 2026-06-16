@@ -6,6 +6,77 @@
   "sourceRoot": "apps/demo/src",
   "tags": [],
   "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/demo",
+        "index": "apps/demo/src/index.html",
+        "browser": "apps/demo/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/demo/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/demo/public",
+            "output": "/"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/demo/src/assets",
+            "output": "/assets"
+          },
+          "apps/demo/src/favicon.ico",
+          "apps/demo/src/favicon.svg"
+        ],
+        "styles": ["node_modules/@clr/ui/clr-ui.min.css", "apps/demo/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "5mb",
+              "maximumError": "8mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ]
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular/build:dev-server",
+      "options": {
+        "buildTarget": "demo:build:development"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "demo:build:production"
+        },
+        "development": {
+          "buildTarget": "demo:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {

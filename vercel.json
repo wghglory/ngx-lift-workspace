@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx nx run-many -t build --projects=ngx-lift,clr-lift --no-cloud && npx nx build demo --configuration=production --no-cloud",
+  "buildCommand": "npx nx run-many -t build --no-cloud",
   "outputDirectory": "dist/apps/demo/browser",
   "framework": null,
   "installCommand": "npm ci",

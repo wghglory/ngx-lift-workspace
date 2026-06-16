@@ -1,6 +1,6 @@
 [build]
   base = "."
-  command = "npx nx run-many -t build --projects=ngx-lift,clr-lift --no-cloud && npx nx build demo --configuration=production --no-cloud"
+  command = "npx nx run-many -t build --no-cloud"
   publish = "dist/apps/demo/browser"
 
 [[redirects]]
