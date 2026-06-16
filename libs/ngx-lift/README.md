@@ -25,7 +25,7 @@ common Angular development tasks and boost productivity.
 - 🚀 **Production-Ready** - Used in real-world applications
 - 📦 **Tree-Shakable** - Import only what you need
 - 🎯 **Type-Safe** - Full TypeScript support with strict mode
-- ⚡ **Modern** - Built for Angular 19+ with Signals support
+- ⚡ **Modern** - Built for Angular with Signals support
 - 🧪 **Well-Tested** - Comprehensive test coverage
 - 📚 **Well-Documented** - Extensive documentation and examples
 
@@ -225,7 +225,7 @@ export class UserComponent {
 import {injectParams, injectQueryParams, combineFrom} from 'ngx-lift';
 
 export class UserDetailComponent {
-  // Inject route parameters as signals (Angular 19+)
+  // Inject route parameters as signals
   userId = injectParams('id');
   searchTerm = injectQueryParams('search');
 

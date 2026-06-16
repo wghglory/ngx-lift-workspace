@@ -152,7 +152,7 @@ All ASCII art boxes, diagrams, flow charts, and mockups in design documents must
 
 - `.cursor/rules/nx.mdc` - Module boundaries and Nx workspace
 - `.cursor/rules/general.mdc` - Core standards and service patterns
-- `.cursor/rules/angular.mdc` - Component patterns and Angular 19
+- `.cursor/rules/angular.mdc` - Component patterns and Angular
 - `.cursor/rules/clarity.mdc` - UI components and Clarity Design System
 - `.cursor/rules/rxjs.mdc` - RxJS patterns and observable management
 - `.cursor/rules/testing.mdc` - Testing approach with Vitest and Playwright

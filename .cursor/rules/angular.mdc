@@ -218,7 +218,7 @@ alwaysApply: true
   namespace = this.route.snapshot.queryParamMap.get('namespace') || '';
   ```
 
-- **Route Guards**: Implement guards as functional guards (preferred in Angular 19)
+- **Route Guards**: Implement guards as functional guards
 
 ### Performance Optimization
 
