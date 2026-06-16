@@ -1,3 +1,4 @@
+import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
 import {Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
@@ -24,9 +25,7 @@ describe(computedAsync.name, () => {
         const result = computedAsync(() => value());
         expect(result()).toEqual(undefined); // initial value
         value.set(null);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(result()).toEqual(null);
       });
     });
@@ -40,14 +39,10 @@ describe(computedAsync.name, () => {
         });
 
         expect(result()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(result()).toEqual([1, 2, 3]);
         value.set(1);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(result()).toEqual([2, 3, 4]);
       });
     });
@@ -64,14 +59,10 @@ describe(computedAsync.name, () => {
         );
 
         expect(result()).toEqual([]); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(result()).toEqual([1, 2, 3]);
         value.set(1);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(result()).toEqual([2, 3, 4]);
       });
     });
@@ -96,38 +87,26 @@ describe(computedAsync.name, () => {
 
         expect(s()).toEqual(undefined); // initial value
         expect(logs).toEqual([]);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
         expect(logs).toEqual([]);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1); // still the old value
         expect(logs).toEqual([1, 1000]);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(3);
         expect(logs).toEqual([1, 1000, 3]);
 
         value.set(4);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(3); // still the old value
         expect(logs).toEqual([1, 1000, 3, 3000]); // previousValue is 3 and it gets pushed again
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(4);
         expect(logs).toEqual([1, 1000, 3, 3000, 4]);
       });
@@ -153,9 +132,7 @@ describe(computedAsync.name, () => {
       await TestBed.runInInjectionContext(async () => {
         const s = computedAsync(() => of(1), {initialValue: 2});
         expect(s()).toEqual(2); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1);
       });
     });
@@ -190,24 +167,16 @@ describe(computedAsync.name, () => {
           });
         });
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1); // still the old value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
       });
@@ -228,24 +197,16 @@ describe(computedAsync.name, () => {
         });
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1); // still the old value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
       });
@@ -266,43 +227,29 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 100ms for promise to resolve
+        await flushEffects(100);
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1); // still the old value
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
 
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
         expect(s()).toEqual(3);
         expect(logs).toEqual([1, 3]);
 
@@ -325,47 +272,31 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
         // now we have 100ms passed
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1); // still the old value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
 
         // now the next computation starts again, so we need to wait 100ms
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(100);
         expect(s()).toEqual(3);
         expect(logs).toEqual([1, 2, 3]);
       });
@@ -386,44 +317,28 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
         // now we have 100ms passed
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         value.set(0);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         value.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         value.set(4);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(100);
         expect(s()).toEqual(4);
         expect(logs).toEqual([1, 2, 0, 3, 4]);
       });
@@ -444,48 +359,32 @@ describe(computedAsync.name, () => {
         );
 
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
         expect(s()).toEqual(undefined); // initial value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
         // now we have 100ms passed
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
         value.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(s()).toEqual(1); // still the old value
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
 
         value.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         expect(s()).toEqual(1);
         expect(logs).toEqual([1]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(50);
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
 
         // now the next computation starts again, so we need to wait 100ms
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick(); // wait 50ms
+        await flushEffects(100);
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
       });
@@ -529,51 +428,33 @@ describe(computedAsync.name, () => {
 
         expect(data()).toEqual({status: 'loading', result: []});
         expect(loadAsyncDataLogs).toEqual([1]);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data()).toEqual({status: 'loading', result: []});
         expect(loadAsyncDataLogs).toEqual([1]);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data()).toEqual({status: 'loaded', result: [0]});
 
         // if we don't flush effects, the effect won't run
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         id.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(loadAsyncDataLogs.length).toEqual(2);
         expect(data().status).toEqual('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data().status).toEqual('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data()).toEqual({status: 'loaded', result: [0, 1]});
         expect(loadAsyncDataLogs).toEqual([1, 2]);
 
         id.set(3);
         throwErrorFlag = true;
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(loadAsyncDataLogs).toEqual([1, 2, 3]);
         expect(data().status).toEqual('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data().status).toEqual('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
 
         // TODO:
         // expect(data()).toEqual({
@@ -583,18 +464,12 @@ describe(computedAsync.name, () => {
 
         id.set(4);
         throwErrorFlag = false; // should recover from error
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(loadAsyncDataLogs).toEqual([1, 2, 3, 4]);
         expect(data().status).toEqual('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data().status).toEqual('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(500);
-        TestBed.tick();
+        await flushEffects(500);
         expect(data()).toEqual({status: 'loaded', result: [0, 1, 2, 3]});
       });
     });

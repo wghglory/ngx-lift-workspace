@@ -1,3 +1,4 @@
+import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
 import {signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
@@ -28,9 +29,7 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick(); // Flush the effect that starts the request
+        await flushEffects();
 
         expect(resource.status()).toBe('loading');
         expect(resource.value()).toBeUndefined();
@@ -38,9 +37,7 @@ describe('resourceAsync', () => {
         expect(resource.hasValue()).toBe(false);
         expect(resource.status()).not.toBe('idle');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 1, name: 'John'});
@@ -54,16 +51,12 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => of({id: 1, name: 'John'}).pipe(delay(100)));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         expect(resource.status()).toBe('loading');
         expect(resource.value()).toBeUndefined();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 1, name: 'John'});
@@ -75,16 +68,12 @@ describe('resourceAsync', () => {
         const error = new Error('API Error');
         const resource = resourceAsync(() => promiseError(error, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         expect(resource.status()).toBe('loading');
         expect(resource.error()).toBeNull();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('error');
         expect(resource.error()).toBe(error);
@@ -99,18 +88,14 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100), {lazy: true});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         expect(resource.status()).toBe('idle');
         expect(resource.value()).toBeUndefined();
         expect(resource.status()).toBe('idle');
         expect(resource.isLoading()).toBe(false);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Still idle, no automatic fetch
         expect(resource.status()).toBe('idle');
@@ -122,21 +107,15 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100), {lazy: true});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('idle');
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         expect(resource.status()).toBe('loading');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 1, name: 'John'});
@@ -151,24 +130,18 @@ describe('resourceAsync', () => {
         const resource = resourceAsync(() => promise<User>({id: userId(), name: `User${userId()}`}, 100));
 
         expect(resource.status()).toBe('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.value()).toEqual({id: 1, name: 'User1'});
         expect(resource.status()).toBe('resolved');
 
         // Change dependency - should trigger refetch
         userId.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         expect(resource.status()).toBe('reloading'); // Now 'reloading' because we have previous data
         expect(resource.value()).toEqual({id: 1, name: 'User1'}); // Still showing old data
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 2, name: 'User2'});
@@ -182,23 +155,17 @@ describe('resourceAsync', () => {
 
         // Initial load
         expect(resource.status()).toBe('loading');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toBe(1);
 
         // Refetch
         count.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading'); // Has previous value
         expect(resource.value()).toBe(1); // Stale data still visible
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toBe(2);
       });
@@ -215,9 +182,7 @@ describe('resourceAsync', () => {
         resource.reload();
         expect(resource.status()).toBe('loading');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
       });
     });
@@ -228,9 +193,7 @@ describe('resourceAsync', () => {
 
         expect(resource.status()).toBe('loading');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('error');
         expect(resource.value()).toBeUndefined();
       });
@@ -240,23 +203,15 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise(1, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
       });
     });
@@ -269,27 +224,19 @@ describe('resourceAsync', () => {
           return promise(1, 100);
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toBe(1);
 
         // Trigger error on reload
         shouldFail = true;
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
         expect(resource.value()).toBe(1); // Still has old value during reload
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('error');
         expect(resource.value()).toBeUndefined(); // Value cleared!
         expect(resource.hasValue()).toBe(false);
@@ -304,26 +251,18 @@ describe('resourceAsync', () => {
           return promise(1, 100);
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('error');
         expect(resource.value()).toBeUndefined();
 
         // Retry with success
         shouldFail = false;
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('loading'); // 'loading' not 'reloading' because no previous success
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toBe(1);
       });
@@ -336,29 +275,19 @@ describe('resourceAsync', () => {
         const count = signal(1);
         const resource = resourceAsync(() => promise(count(), 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
 
         // Change signal before first request completes
         count.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
 
         // Change again
         count.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Only the last value (3) is reflected
         expect(resource.value()).toBe(3);
@@ -386,9 +315,7 @@ describe('resourceAsync', () => {
         resource.reload();
         resource.reload();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Only 1 request was made
         expect(requestCount).toBe(1);
@@ -397,9 +324,7 @@ describe('resourceAsync', () => {
 
         // Now we can make another request
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(requestCount).toBe(2);
         expect(resource.value()).toBe(2);
       });
@@ -417,9 +342,7 @@ describe('resourceAsync', () => {
           },
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved'); // Resolved with fallback
         expect(resource.value()).toEqual(fallbackUser);
@@ -434,9 +357,7 @@ describe('resourceAsync', () => {
           onError: () => undefined, // No fallback
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('error');
         expect(resource.error()).toBe(error);
@@ -492,27 +413,19 @@ describe('resourceAsync', () => {
         });
 
         // Initial success
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toEqual({id: 1, name: 'John'});
         expect(resource.hasValue()).toBe(true);
 
         // Reload with error
         shouldFail = true;
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
         expect(resource.value()).toEqual({id: 1, name: 'John'}); // Still has value during reload
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Value is cleared on error
         expect(resource.status()).toBe('error');
@@ -525,12 +438,8 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promiseError(new Error('Fail'), 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('error');
         expect(resource.value()).toBeUndefined();
@@ -544,14 +453,10 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise(1, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.isLoading()).toBe(true);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.isLoading()).toBe(false);
       });
@@ -561,23 +466,15 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise(1, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.isLoading()).toBe(false);
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.isLoading()).toBe(true);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.isLoading()).toBe(false);
       });
     });
@@ -586,19 +483,13 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise(1, 100), {lazy: true});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         // idle
         expect(resource.isLoading()).toBe(false);
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         // resolved
         expect(resource.isLoading()).toBe(false);
@@ -614,9 +505,7 @@ describe('resourceAsync', () => {
         // loading
         expect(resource.hasValue()).toBe(false);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // resolved
         expect(resource.hasValue()).toBe(true);
@@ -626,9 +515,7 @@ describe('resourceAsync', () => {
         // reloading
         expect(resource.hasValue()).toBe(true);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // resolved
         expect(resource.hasValue()).toBe(true);
@@ -639,9 +526,7 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promiseError(new Error('Fail'), 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.hasValue()).toBe(false);
         expect(resource.value()).toBeUndefined();
@@ -660,9 +545,7 @@ describe('resourceAsync', () => {
 
         expect(resource.status()).not.toBe('idle');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).not.toBe('idle');
       });
@@ -683,30 +566,18 @@ describe('resourceAsync', () => {
         let count = 1;
         const resource = resourceAsync(() => promise(count++, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toBe(1);
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toBe(2);
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toBe(3);
       });
     });
@@ -715,18 +586,12 @@ describe('resourceAsync', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise(1, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading'); // Not 'loading'
       });
     });
@@ -739,20 +604,14 @@ describe('resourceAsync', () => {
           return promise(1, 100);
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('error');
 
         // Retry after error
         shouldFail = false;
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('loading'); // Not 'reloading' because no previous successful data
       });
     });
@@ -764,9 +623,7 @@ describe('resourceAsync', () => {
         const error = new Error('Observable Error');
         const resource = resourceAsync(() => throwError(() => error).pipe(delay(100)));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('error');
         expect(resource.error()).toBe(error);
@@ -781,9 +638,7 @@ describe('resourceAsync', () => {
           onError: () => 'fallback',
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toBe('fallback');
@@ -802,14 +657,10 @@ describe('resourceAsync', () => {
             }),
         );
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('loading');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toBeUndefined();
@@ -824,20 +675,14 @@ describe('resourceAsync', () => {
         const error = new Error('Fail');
         const resource = resourceAsync(() => promiseError(error, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('error');
         expect(resource.error()).toBe(error);
 
         // Reload
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         // Error should be cleared immediately
         expect(resource.status()).toBe('loading');
@@ -856,9 +701,7 @@ describe('resourceAsync', () => {
         const valueBefore: User | undefined = resource.value();
         expect(valueBefore).toBeUndefined();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // After resolution
         const valueAfter: User | undefined = resource.value();
@@ -879,34 +722,20 @@ describe('resourceAsync', () => {
         const resource = resourceAsync(() => promise({id: userId(), name: `User${userId()}`}, 100));
 
         // Initial request
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(50);
-        TestBed.tick();
+        await flushEffects(50);
 
         // Change signal multiple times rapidly
         userId.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(25);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(25);
 
         userId.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(25);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(25);
 
         userId.set(4);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         // Only the last request should be reflected
         expect(resource.value()).toEqual({id: 4, name: 'User4'});
@@ -941,9 +770,7 @@ describe('resourceAsync', () => {
         registration.reload();
         registration.reload();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // With exhaust, all calls after the first should be ignored during loading
         // However, the first execute() and possibly the immediate subsequent ones
@@ -958,9 +785,7 @@ describe('resourceAsync', () => {
         formData.set({username: 'jane', password: 'secret'});
         registration.reload();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         expect(submissionCount).toBe(countBeforeNext + 1);
         expect(registration.value()).toEqual({username: 'jane', success: true});
@@ -975,9 +800,7 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100), {lazy: true});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('idle');
 
         // Set value manually
@@ -994,12 +817,8 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promiseError<User>(new Error('API Error'), 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('error');
         expect(resource.error()).toBeTruthy();
 
@@ -1028,9 +847,7 @@ describe('WritableResourceRef', () => {
           return obs;
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('loading');
 
         // Set value while request is pending
@@ -1042,9 +859,7 @@ describe('WritableResourceRef', () => {
         // Subscription should be cancelled
         subscriptionActive = false;
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Status should still be local
         expect(resource.status()).toBe('local'); // Still local
@@ -1056,12 +871,8 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync<User | undefined>(() => promise<User>({id: 1, name: 'John'}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toEqual({id: 1, name: 'John'});
 
         // Set to undefined
@@ -1079,12 +890,8 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toEqual({id: 1, name: 'John'});
 
         // Update value
@@ -1100,9 +907,7 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync<User | undefined>(() => promise<User>({id: 1, name: 'John'}, 100), {lazy: true});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.value()).toBeUndefined();
 
         // Update undefined value
@@ -1120,9 +925,7 @@ describe('WritableResourceRef', () => {
           initialValue: defaultUser,
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.value()).toEqual(defaultUser);
 
         // Update using initialValue
@@ -1137,12 +940,8 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<number>(1, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toBe(1);
 
         resource.update((n) => n + 1);
@@ -1174,9 +973,7 @@ describe('WritableResourceRef', () => {
           return obs;
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('loading');
 
         // Update while request is pending
@@ -1188,9 +985,7 @@ describe('WritableResourceRef', () => {
         // Subscription should be cancelled
         subscriptionActive = false;
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Status should still be local
         expect(resource.status()).toBe('local');
@@ -1203,12 +998,8 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
 
         // Set manually
@@ -1218,15 +1009,11 @@ describe('WritableResourceRef', () => {
 
         // Reload - should transition to reloading
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
         expect(resource.value()).toEqual({id: 2, name: 'Jane'}); // Keeps local value during reload
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 1, name: 'John'}); // Server value
       });
@@ -1236,28 +1023,20 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'Server'}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         resource.set({id: 2, name: 'Local'});
         expect(resource.status()).toBe('local');
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         // During reload, should show local value
         expect(resource.status()).toBe('reloading');
         expect(resource.value()).toEqual({id: 2, name: 'Local'});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // After reload completes, show server value
         expect(resource.status()).toBe('resolved');
@@ -1269,22 +1048,16 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync(() => promiseError<User>(new Error('API Error'), 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         resource.set({id: 1, name: 'Local'});
         expect(resource.status()).toBe('local');
 
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
 
         // Error should clear value
         expect(resource.status()).toBe('error');
@@ -1300,12 +1073,8 @@ describe('WritableResourceRef', () => {
         const userId = signal(1);
         const resource = resourceAsync(() => promise<User>({id: userId(), name: `User${userId()}`}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toEqual({id: 1, name: 'User1'});
 
         // Set local value
@@ -1314,15 +1083,11 @@ describe('WritableResourceRef', () => {
 
         // Change signal - should trigger refetch
         userId.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
         expect(resource.value()).toEqual({id: 99, name: 'Local'}); // Keeps local during reload
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 2, name: 'User2'});
       });
@@ -1336,9 +1101,7 @@ describe('WritableResourceRef', () => {
           lazy: true,
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.hasValue()).toBe(false);
 
         resource.set({id: 1, name: 'Local'});
@@ -1351,12 +1114,8 @@ describe('WritableResourceRef', () => {
       await TestBed.runInInjectionContext(async () => {
         const resource = resourceAsync<User | undefined>(() => promise<User>({id: 1, name: 'John'}, 100));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.hasValue()).toBe(true);
 
         resource.set(undefined);
@@ -1372,12 +1131,8 @@ describe('WritableResourceRef', () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100));
         const readonly = resource.asReadonly();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         // Should have read-only properties
         expect(readonly.value()).toEqual({id: 1, name: 'John'});
@@ -1404,12 +1159,8 @@ describe('WritableResourceRef', () => {
         const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 100));
         const readonly = resource.asReadonly();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         expect(readonly.value()).toEqual({id: 1, name: 'John'});
 
@@ -1428,22 +1179,14 @@ describe('WritableResourceRef', () => {
         const resource = resourceAsync(() => promise<number>(count++, 100));
         const readonly = resource.asReadonly();
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(readonly.value()).toBe(1);
 
         // Reload via readonly
         readonly.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         expect(readonly.value()).toBe(2);
         expect(resource.value()).toBe(2); // Both share state
@@ -1465,12 +1208,8 @@ describe('WritableResourceRef', () => {
 
         // Initial fetch
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(resource.value()).toEqual({id: 1, name: 'John'});
 
         // Optimistic update
@@ -1480,12 +1219,8 @@ describe('WritableResourceRef', () => {
         // Simulate save failure
         shouldFail = true;
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
 
         // Error occurs - value cleared
         expect(resource.status()).toBe('error');
@@ -1509,15 +1244,11 @@ describe('WritableResourceRef', () => {
 
         // Fetch fresh data in background
         resource.reload();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(resource.status()).toBe('reloading');
         expect(resource.value()).toEqual(cachedUser); // Still shows cached
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 1, name: 'Fresh'});
       });

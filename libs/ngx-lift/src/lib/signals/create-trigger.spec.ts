@@ -1,3 +1,4 @@
+import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
 import {effect, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
@@ -65,23 +66,17 @@ describe(createTrigger.name, () => {
           callLog.push(trigger.value());
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
 
         // Initial effect run
         expect(callLog).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(callLog).toEqual([0, 1]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(callLog).toEqual([0, 1, 2]);
       });
     });
@@ -118,21 +113,15 @@ describe(createTrigger.name, () => {
 
         trigger$.subscribe((value) => values.push(value));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([0, 1]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([0, 1, 2]);
       });
     });
@@ -153,32 +142,20 @@ describe(createTrigger.name, () => {
         const results: string[] = [];
         data$.subscribe((result) => results.push(result));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual(['data-0']);
         expect(apiCallCount).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual(['data-0', 'data-1']);
         expect(apiCallCount).toEqual([0, 1]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual(['data-0', 'data-1', 'data-2']);
         expect(apiCallCount).toEqual([0, 1, 2]);
       });
@@ -193,21 +170,15 @@ describe(createTrigger.name, () => {
         const results: number[] = [];
         doubled$.subscribe((result) => results.push(result));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(results).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(results).toEqual([0, 2]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(results).toEqual([0, 2, 4]);
       });
     });
@@ -230,22 +201,14 @@ describe(createTrigger.name, () => {
         data$.subscribe((result) => results.push(result));
 
         // Initial fetch
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual([{id: 1, data: 'Data 1'}]);
 
         // Manual refresh
         refreshTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual([
           {id: 1, data: 'Data 1'},
           {id: 2, data: 'Data 2'},
@@ -253,12 +216,8 @@ describe(createTrigger.name, () => {
 
         // Another refresh
         refreshTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects();
+        await flushEffects(100);
         expect(results).toEqual([
           {id: 1, data: 'Data 1'},
           {id: 2, data: 'Data 2'},
@@ -282,29 +241,21 @@ describe(createTrigger.name, () => {
         const values: number[] = [];
         polledData$.subscribe((value) => values.push(value));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([1]);
         expect(apiCallCount).toBe(1);
 
         // Trigger poll
         pollTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([1, 2]);
         expect(apiCallCount).toBe(2);
 
         // Trigger poll multiple times
         pollTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         pollTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values).toEqual([1, 2, 3, 4]);
         expect(apiCallCount).toBe(4);
       });
@@ -322,21 +273,15 @@ describe(createTrigger.name, () => {
           }
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(saveLog).toEqual([]);
 
         saveTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(saveLog).toEqual(['Save triggered: 1']);
 
         saveTrigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(saveLog).toEqual(['Save triggered: 1', 'Save triggered: 2']);
       });
     });
@@ -383,23 +328,17 @@ describe(createTrigger.name, () => {
           log2.push(trigger2.value());
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(log1).toEqual([0]);
         expect(log2).toEqual([0]);
 
         trigger1.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(log1).toEqual([0, 1]);
         expect(log2).toEqual([0]);
 
         trigger2.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(log1).toEqual([0, 1]);
         expect(log2).toEqual([0, 1]);
       });
@@ -433,17 +372,13 @@ describe(createTrigger.name, () => {
         trigger$.subscribe((v) => values2.push(v));
         trigger$.subscribe((v) => values3.push(v));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values1).toEqual([0]);
         expect(values2).toEqual([0]);
         expect(values3).toEqual([0]);
 
         trigger.next();
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(values1).toEqual([0, 1]);
         expect(values2).toEqual([0, 1]);
         expect(values3).toEqual([0, 1]);

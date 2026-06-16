@@ -1,4 +1,4 @@
-import {TestBed} from '@angular/core/testing';
+import {flushEffects} from '../../test-setup';
 import {of, throwError} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {vi, beforeEach, afterEach} from 'vitest';
@@ -33,9 +33,7 @@ describe('poll', () => {
         expect(state).toEqual({status: 'loading', isLoading: true, error: null, data: null});
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval + 50);
-    TestBed.tick();
+    await flushEffects(interval + 50);
     expect(mockPollingFn).toHaveBeenCalledWith({param: 'value'});
   });
 
@@ -49,9 +47,7 @@ describe('poll', () => {
         expect(state).toEqual({status: 'loading', isLoading: true, error: null, data: null});
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval + 50);
-    TestBed.tick();
+    await flushEffects(interval + 50);
     expect(mockPollingFn).toHaveBeenCalledWith({param: 'value'});
   });
 
@@ -69,14 +65,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick(); // Initial value
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick(); // First timer emission
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Timer Data'});
   });
 
@@ -91,14 +83,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Data: direct'});
   });
 
@@ -117,14 +105,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Promise Data'});
   });
 
@@ -143,14 +127,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Primitive Data'});
   });
 
@@ -170,14 +150,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'error', isLoading: false, error, data: null});
   });
 
@@ -197,14 +173,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(delay);
-    TestBed.tick(); // Wait for delay to pass, then initial value is emitted
+    await flushEffects(delay);
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick(); // Wait for first timer emission
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Delayed Data'});
   });
 
@@ -224,14 +196,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Built: transformed-input'});
   });
 
@@ -248,14 +216,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'First Request Data'});
   });
 
@@ -275,14 +239,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Params: default-params'});
   });
 
@@ -300,14 +260,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Timer: no params'});
   });
 
@@ -326,14 +282,10 @@ describe('poll', () => {
         states.push(state);
       });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(interval);
-    TestBed.tick();
+    await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Direct: {"id":123}'});
   });
 });

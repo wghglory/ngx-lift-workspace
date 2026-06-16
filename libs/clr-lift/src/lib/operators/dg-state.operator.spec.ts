@@ -1,4 +1,4 @@
-import {TestBed} from '@angular/core/testing';
+import {flushEffects} from '../../test-setup';
 import {ClrDatagridStateInterface} from '@clr/angular';
 import {BehaviorSubject} from 'rxjs';
 import {TestScheduler} from 'rxjs/testing';
@@ -83,28 +83,18 @@ describe('dgState', () => {
     });
 
     // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(results[0]).toEqual(null);
 
     // Emit newState1 after 100ms
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState1);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce
-    TestBed.tick();
+    await flushEffects(500);
 
     // Emit newState2 after 700ms total
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState2);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce
-    TestBed.tick();
+    await flushEffects(500);
 
     expect(results[1]).toEqual(newState1);
     expect(results[2]).toEqual(newState2);
@@ -130,27 +120,17 @@ describe('dgState', () => {
     });
 
     // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(results[0]).toEqual(null);
 
     // Emit newState1 after 100ms
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState1);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100); // Wait 100ms before next change
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState2);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100); // Wait 100ms before changing back
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState1);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce - should only emit newState1 once
-    TestBed.tick();
+    await flushEffects(500);
 
     expect(results.length).toBe(2); // Only initial and final newState1
     expect(results[1]).toEqual(newState1);
@@ -176,28 +156,18 @@ describe('dgState', () => {
     });
 
     // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(results[0]).toEqual(null);
 
     // Emit newState1 after 100ms
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState1);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce
-    TestBed.tick();
+    await flushEffects(500);
 
     // Emit newState2 (same filter value) after 700ms total
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState2);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce - should not emit since filter didn't change
-    TestBed.tick();
+    await flushEffects(500);
 
     expect(results.length).toBe(2); // Only initial and newState1
     expect(results[1]).toEqual(newState1);
@@ -223,28 +193,18 @@ describe('dgState', () => {
     });
 
     // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(results[0]).toEqual(null);
 
     // Emit newState1 after 100ms
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState1);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce
-    TestBed.tick();
+    await flushEffects(500);
 
     // Emit newState2 (same state) after 700ms total
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState2);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce - should emit since distinctUntilChanged is disabled
-    TestBed.tick();
+    await flushEffects(500);
 
     expect(results.length).toBe(3); // initial, newState1, newState2
     expect(results[1]).toEqual(clrDgState);
@@ -271,28 +231,18 @@ describe('dgState', () => {
     });
 
     // BehaviorSubject emits immediately on subscribe, ensure subscription callback ran
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(results[0]).toEqual(null);
 
     // Emit newState1 after 100ms
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState1);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce
-    TestBed.tick();
+    await flushEffects(500);
 
     // Emit newState2 (same state) after 700ms total
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     source$.next(newState2);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(500); // Wait for debounce - should not emit since distinctUntilChanged is enabled
-    TestBed.tick();
+    await flushEffects(500);
 
     expect(results.length).toBe(2); // Only initial and newState1
     expect(results[1]).toEqual(clrDgState);

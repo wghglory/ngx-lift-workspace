@@ -99,7 +99,7 @@ forces Angular's reactive engine to execute pending effects and synchronize stat
 Tests utilizing `TestBed.runInInjectionContext` with asynchronous assertions (such as awaiting timers or promises) must
 make both the test block and the injection callback asynchronous, and prefix with `await`.
 
-- **Legay Pattern**:
+- **Legacy Pattern**:
 
   ```typescript
   it('should work with trigger', fakeAsync(() => {
@@ -112,7 +112,7 @@ make both the test block and the injection callback asynchronous, and prefix wit
   }));
   ```
 
-- **Modern Zoneless Vitest Pattern**:
+- **Modern Zoneless Vitest Pattern (Manual)**:
 
   ```typescript
   it('should work with trigger', async () => {
@@ -129,17 +129,50 @@ make both the test block and the injection callback asynchronous, and prefix wit
   });
   ```
 
+- **Modern Zoneless Vitest Pattern (Using `flushEffects` Helper)**:
+
+  ```typescript
+  import {flushEffects} from '../../test-setup';
+
+  it('should work with trigger', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const trigger = createTrigger();
+      trigger.next();
+
+      await flushEffects(100);
+
+      expect(trigger.value()).toBe(1);
+    });
+  });
+  ```
+
 ---
 
-## 3. Dealing with Complex Asynchronous Scenarios
+## 3. The `flushEffects` Utility
 
-### A. Testing Promise Resolution
+To eliminate repetitive, low-level boilerplate in asynchronous reactive tests, the workspace provides a unified
+`flushEffects` helper exported from the project's `test-setup.ts` file.
+
+This helper cleanly wraps the 3-step synchronization pattern required to bridge Signals and asynchronous streams:
+
+```typescript
+/**
+ * Helper to flush Angular zoneless reactive state/effects and advance Vitest fake timers.
+ */
+export async function flushEffects(delay = 0): Promise<void> {
+  TestBed.tick(); // 1. Flush signal updates to effects
+  await vi.advanceTimersByTimeAsync(delay); // 2. Cycle event loop to let RxJS microtasks run
+  TestBed.tick(); // 3. Flush downstream reactive conversions back to signals
+}
+```
+
+### A. Testing Promise Resolution (With `flushEffects`)
 
 Since native `Promise` chains are run as microtasks, they cannot be flushed using simple synchronous timer advancement.
-We must utilize **`vi.advanceTimersByTimeAsync(delay)`** to allow the JavaScript event loop to cycle and resolve promise
+We utilize **`flushEffects(delay)`** to allow the JavaScript event loop to cycle and resolve promise
 resolutions/rejections seamlessly.
 
-- **Correct Pattern**:
+- **Legacy / Manual Pattern**:
 
   ```typescript
   it('should resolve async data', async () => {
@@ -148,6 +181,20 @@ resolutions/rejections seamlessly.
     TestBed.tick();
     await vi.advanceTimersByTimeAsync(100); // Wait for promise delay to run event loop
     TestBed.tick();
+
+    expect(someService.data()).toEqual(expectedData);
+  });
+  ```
+
+- **Clean `flushEffects` Pattern**:
+
+  ```typescript
+  import {flushEffects} from '../../test-setup';
+
+  it('should resolve async data', async () => {
+    const dataPromise = someService.fetchData(); // returns Promise
+
+    await flushEffects(100);
 
     expect(someService.data()).toEqual(expectedData);
   });
@@ -186,8 +233,10 @@ When writing new `.spec.ts` files or features in this monorepo, follow these rul
    `it('should work', async () => { ... })`).
 3. **Say NO to `fakeAsync` / `tick()` Imports**: Ensure you do not import `fakeAsync` or `tick` from
    `@angular/core/testing` or `zone.js`.
-4. **Use `TestBed.tick()`**: Whenever you change signals, inputs, or trigger observables that update signal state, use
-   `TestBed.tick()` to force Angular's reactive system to synchronize. Do not use the deprecated
-   `TestBed.flushEffects()`.
-5. **Use Async Timer Helpers**: Use `await vi.advanceTimersByTimeAsync(delay)` for promises, and
-   `vi.advanceTimersByTime(delay)` for purely synchronous timer advancement.
+4. **Prefer `flushEffects`**: For any test that involves converting between signals and observables (e.g.,
+   `computedAsync`, `resourceAsync`, `combineFrom`, etc.), use the `await flushEffects(delay)` helper from the project's
+   `test-setup.ts` to eliminate manual 3-step synchronization boilerplate.
+5. **Use `TestBed.tick()`**: Whenever you change signals or inputs directly (without async streams) and need to force
+   Angular's reactive system to synchronize, use `TestBed.tick()`. Do not use the deprecated `TestBed.flushEffects()`.
+6. **Use Async Timer Helpers**: Use `await vi.advanceTimersByTimeAsync(delay)` for promises when not using
+   `flushEffects`, and `vi.advanceTimersByTime(delay)` for purely synchronous timer advancement.

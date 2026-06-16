@@ -1,5 +1,5 @@
+import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
-import {TestBed} from '@angular/core/testing';
 import {BehaviorSubject, of, throwError} from 'rxjs';
 import {delay, skip, take} from 'rxjs/operators';
 
@@ -25,9 +25,7 @@ describe('switchMapWithAsyncState', () => {
       state = s;
     });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     expect(state).toEqual({status: 'resolved', isLoading: false, error: null, data: 2});
   });
 
@@ -42,9 +40,7 @@ describe('switchMapWithAsyncState', () => {
       state = s;
     });
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
     expect(state).toEqual({status: 'error', isLoading: false, error: new Error('Async Error!'), data: null});
   });
 
@@ -63,9 +59,7 @@ describe('switchMapWithAsyncState', () => {
     expect(states[0]).toEqual({status: 'loading', isLoading: true, error: null, data: null});
 
     // Wait for async operation to complete
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 2});
 

@@ -1,3 +1,4 @@
+import {flushEffects} from '../../../test-setup';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {vi, beforeEach, afterEach} from 'vitest';
 
@@ -98,9 +99,7 @@ describe('TooltipComponent', () => {
     component.mouseLeave(new MouseEvent('mouseleave'));
     expect(component.tooltipHovering).toBe(false);
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(300);
-    TestBed.tick();
+    await flushEffects(300);
     expect(spy).toHaveBeenCalledWith(false);
   });
 
@@ -111,9 +110,7 @@ describe('TooltipComponent', () => {
     component.mouseLeave(new MouseEvent('mouseleave'));
     expect(component.tooltipHovering).toBe(false);
 
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(300);
-    TestBed.tick();
+    await flushEffects(300);
     expect(spy).not.toHaveBeenCalled();
   });
 

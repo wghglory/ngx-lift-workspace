@@ -1,3 +1,4 @@
+import {flushEffects} from '../../../test-setup';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {ChangeDetectorRef, ComponentRef, EmbeddedViewRef} from '@angular/core';
@@ -233,9 +234,7 @@ describe('TimelineWizardComponent', () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
     fixture.detectChanges(); // Let Angular initialize the component
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(1);
-    TestBed.tick(); // Flush setTimeout from initComponent (setTimeout with 0ms delay)
+    await flushEffects(1);
     fixture.detectChanges(); // Let change detection run after patchValue
 
     const currentRef = component.currentComponentRef;
@@ -255,16 +254,12 @@ describe('TimelineWizardComponent', () => {
   it('should sync form value changes to step data', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     if (currentRef && currentRef.instance.form) {
       currentRef.instance.form.get('field1')?.setValue('new value');
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(400);
-      TestBed.tick(); // Wait for debounceTime(300)
+      await flushEffects(400);
 
       const currentStep = component.timelineWizardService.steps[component.timelineWizardService.currentStepIndex];
       expect(currentStep.data).toEqual({field1: 'new value'});
@@ -274,9 +269,7 @@ describe('TimelineWizardComponent', () => {
   it('should handle next$ observable with success', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     if (currentRef) {
@@ -284,9 +277,7 @@ describe('TimelineWizardComponent', () => {
       const moveToNextStepSpy = vi.spyOn(component as never, 'moveToNextStep');
 
       component.nextStep();
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(moveToNextStepSpy).toHaveBeenCalled();
     }
@@ -315,9 +306,7 @@ describe('TimelineWizardComponent', () => {
 
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(1);
-    TestBed.tick(); // Flush setTimeout from initComponent
+    await flushEffects(1);
     fixture.detectChanges();
 
     // Ensure component ref exists and is properly set up in componentRefMap
@@ -340,9 +329,7 @@ describe('TimelineWizardComponent', () => {
     });
 
     component.nextStep();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick(); // Let the observable chain execute
+    await flushEffects(100);
     fixture.detectChanges();
 
     const currentStep = component.timelineWizardService.steps[currentStepIndex];
@@ -364,9 +351,7 @@ describe('TimelineWizardComponent', () => {
 
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(1);
-    TestBed.tick(); // Flush setTimeout from initComponent
+    await flushEffects(1);
     fixture.detectChanges();
 
     // Ensure component ref exists and is properly set up in componentRefMap
@@ -388,9 +373,7 @@ describe('TimelineWizardComponent', () => {
     const finishedSpy = vi.spyOn(component.finished, 'emit');
 
     component.nextStep();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick(); // Let the observable chain execute
+    await flushEffects(100);
     fixture.detectChanges();
 
     expect(finishedSpy).toHaveBeenCalled();
@@ -423,9 +406,7 @@ describe('TimelineWizardComponent', () => {
 
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(1);
-    TestBed.tick(); // Flush setTimeout from initComponent
+    await flushEffects(1);
     fixture.detectChanges();
 
     // Ensure component ref exists and is properly set up
@@ -445,9 +426,7 @@ describe('TimelineWizardComponent', () => {
     // The beforeAsyncOperation is called synchronously in tap when nextAction emits
     // Since tap executes synchronously, we can check immediately without ticking
     // But we need to ensure the steps array has been updated
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick(); // Allow synchronous operations to complete
+    await flushEffects();
     fixture.detectChanges();
 
     // Check state immediately - before the delayed observable completes
@@ -462,17 +441,13 @@ describe('TimelineWizardComponent', () => {
   it('should move to next step correctly (live = false)', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(false);
     vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(0);
 
     component['moveToNextStep']();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     expect(component.timelineWizardService.steps[0].state).toBe(ClrTimelineStepState.SUCCESS);
     expect(component.timelineWizardService.steps[1].state).toBe(ClrTimelineStepState.CURRENT);
@@ -481,9 +456,7 @@ describe('TimelineWizardComponent', () => {
   it('should move to next step correctly (live = true)', async () => {
     fixture.componentRef.setInput('live', true);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     // Create mock component refs with instance property
     const currentRootNode = document.createElement('div');
@@ -516,9 +489,7 @@ describe('TimelineWizardComponent', () => {
     vi.spyOn(component.timelineWizardService, 'isLastStep', 'get').mockReturnValue(false);
 
     component['moveToNextStep']();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     // After moveToNextStep, currentStepIndex is 1, so we check the refs at indices 0 and 1
     const prevRef = component['componentRefMap'][0];
@@ -552,9 +523,7 @@ describe('TimelineWizardComponent', () => {
     ]);
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     expect(currentRef).toBeDefined();
@@ -566,9 +535,7 @@ describe('TimelineWizardComponent', () => {
   it('should set allStepsData and currentStepData on component', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     const currentRef = component.currentComponentRef;
     if (currentRef) {
@@ -580,16 +547,12 @@ describe('TimelineWizardComponent', () => {
   it('should unsubscribe from subscriptions when rendering new component', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     const initialSubscriptionsLength = component['subscriptions'].length;
 
     component.renderComponent();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     // Subscriptions should be unsubscribed and reset
     expect(component['subscriptions'].length).toBeLessThanOrEqual(initialSubscriptionsLength);

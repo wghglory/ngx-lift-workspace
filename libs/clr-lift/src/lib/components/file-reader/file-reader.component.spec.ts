@@ -1,3 +1,4 @@
+import {flushEffects} from '../../../test-setup';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormControl, FormControlDirective, NgControl, ReactiveFormsModule} from '@angular/forms';
 import {vi, beforeEach, afterEach} from 'vitest';
@@ -82,9 +83,7 @@ describe('FileReaderComponent', () => {
       fixture.detectChanges();
 
       component.writeValue(encodedValue);
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(component['encodedContent']()).toBe(encodedValue);
       expect(component['rawContent']()).toBe('test content');
@@ -96,9 +95,7 @@ describe('FileReaderComponent', () => {
       fixture.detectChanges();
 
       component.writeValue(rawValue);
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(component['rawContent']()).toBe(rawValue);
       expect(component['encodedContent']()).toBe(btoa(rawValue));
@@ -167,9 +164,7 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(component.selectedFile()).toEqual(file);
       expect(component['rawContent']()).toBe('test content');
@@ -211,9 +206,7 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(component['encodedContent']()).toBe(btoa('test content'));
       expect(fileChangeSpy).toHaveBeenCalledWith(btoa('test content'));
@@ -254,9 +247,7 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(component['parseError']()).toBe('Encoding error');
       expect(onChangeSpy).toHaveBeenCalledWith(' ');
@@ -295,9 +286,7 @@ describe('FileReaderComponent', () => {
       Object.defineProperty(event, 'target', {value: inputElement, enumerable: true});
 
       component.onFileSelected(event);
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(component['parseError']()).toBe('');
       window.btoa = originalBtoa;
@@ -330,9 +319,7 @@ describe('FileReaderComponent', () => {
       const onTouchedSpy = vi.spyOn(component as never, 'onTouched');
 
       component.removeFile();
-      TestBed.tick();
-      await vi.advanceTimersByTimeAsync(0);
-      TestBed.tick();
+      await flushEffects();
 
       expect(fileElement.nativeElement.value).toBe('');
       expect(component.selectedFile()).toBeUndefined();

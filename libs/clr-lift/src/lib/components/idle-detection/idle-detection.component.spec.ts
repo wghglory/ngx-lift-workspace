@@ -1,3 +1,4 @@
+import {flushEffects} from '../../../test-setup';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {IdleDetectionService} from 'ngx-lift';
@@ -73,9 +74,7 @@ describe('IdleDetectionComponent', () => {
   it('should set config when idleDurationInSeconds input changes', async () => {
     fixture.componentRef.setInput('idleDurationInSeconds', 10);
     fixture.detectChanges();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     expect(idleDetectionService.setConfig).toHaveBeenCalledWith({idleDurationInSeconds: 10});
   });
@@ -83,9 +82,7 @@ describe('IdleDetectionComponent', () => {
   it('should set config when timeoutDurationInSeconds input changes', async () => {
     fixture.componentRef.setInput('timeoutDurationInSeconds', 5);
     fixture.detectChanges();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     expect(idleDetectionService.setConfig).toHaveBeenCalledWith({timeoutDurationInSeconds: 5});
   });
@@ -94,9 +91,7 @@ describe('IdleDetectionComponent', () => {
     fixture.componentRef.setInput('idleDurationInSeconds', 10);
     fixture.componentRef.setInput('timeoutDurationInSeconds', 5);
     fixture.detectChanges();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     expect(idleDetectionService.setConfig).toHaveBeenCalledWith({
       idleDurationInSeconds: 10,
@@ -108,9 +103,7 @@ describe('IdleDetectionComponent', () => {
     fixture.componentRef.setInput('idleDurationInSeconds', undefined);
     fixture.componentRef.setInput('timeoutDurationInSeconds', undefined);
     fixture.detectChanges();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     // Should not call setConfig with empty object
     const calls = (idleDetectionService.setConfig as ReturnType<typeof vi.fn>).mock.calls;
@@ -125,9 +118,7 @@ describe('IdleDetectionComponent', () => {
     const timeoutSpy = vi.spyOn(component.timeout, 'emit');
 
     timeoutEndSubject.next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(timeoutSpy).toHaveBeenCalled();
   });
@@ -139,9 +130,7 @@ describe('IdleDetectionComponent', () => {
     });
 
     idleEndSubject.next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(openValue).toBe(true);
     subscription.unsubscribe();
@@ -154,9 +143,7 @@ describe('IdleDetectionComponent', () => {
     });
 
     timeoutEndSubject.next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(openValue).toBe(false);
     subscription.unsubscribe();
@@ -169,9 +156,7 @@ describe('IdleDetectionComponent', () => {
     });
 
     component['closeSubject'].next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(openValue).toBe(false);
     subscription.unsubscribe();
@@ -184,9 +169,7 @@ describe('IdleDetectionComponent', () => {
     });
 
     countdownSubject.next(10);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(countdownValue).toBe(10);
     subscription.unsubscribe();
@@ -215,17 +198,11 @@ describe('IdleDetectionComponent', () => {
     });
 
     idleEndSubject.next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     component['closeSubject'].next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     timeoutEndSubject.next();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(openValues.length).toBeGreaterThan(0);
     subscription.unsubscribe();
@@ -238,17 +215,11 @@ describe('IdleDetectionComponent', () => {
     });
 
     countdownSubject.next(5);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     countdownSubject.next(4);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
     countdownSubject.next(3);
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(100);
-    TestBed.tick();
+    await flushEffects(100);
 
     expect(countdownValues).toEqual([5, 4, 3]);
     subscription.unsubscribe();

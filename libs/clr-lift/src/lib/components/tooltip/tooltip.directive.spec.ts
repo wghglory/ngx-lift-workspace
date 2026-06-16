@@ -1,3 +1,4 @@
+import {flushEffects} from '../../../test-setup';
 import {Component, ComponentRef, DebugElement} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
@@ -65,17 +66,13 @@ describe('TooltipDirective', () => {
     // Trigger mouse enter
     directive.onMouseEnter();
     fixture.detectChanges();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     // Tooltip should be created
     expect(directive['tooltipComponent']).toBeTruthy();
 
     // Wait for positionTooltip setTimeout to complete
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(0);
-    TestBed.tick();
+    await flushEffects();
 
     // Trigger mouse leave
     directive.onMouseLeave();

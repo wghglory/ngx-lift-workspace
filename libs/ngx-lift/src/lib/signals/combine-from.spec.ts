@@ -49,21 +49,15 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([obs1$, obs2$]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([10, 'test']);
 
         obs1$.next(20);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([20, 'test']);
 
         obs2$.next('updated');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([20, 'updated']);
       });
     });
@@ -75,21 +69,15 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([sig, obs$]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([5, 'data']);
 
         sig.set(10);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([10, 'data']);
 
         obs$.next('updated');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([10, 'updated']);
       });
     });
@@ -112,21 +100,15 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([sig1, sig2], pipe(map(([a, b]: [number, number]) => a * b)));
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toBe(6);
 
         sig1.set(4);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toBe(12);
 
         sig2.set(5);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toBe(20);
       });
     });
@@ -140,9 +122,7 @@ describe(combineFrom.name, () => {
 
         expect(combined()).toBe(0);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(100);
-        TestBed.tick();
+        await flushEffects(100);
         expect(combined()).toBe(5);
       });
     });
@@ -157,21 +137,15 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom({name, age, active});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({name: 'John', age: 30, active: true});
 
         name.set('Jane');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({name: 'Jane', age: 30, active: true});
 
         age.set(25);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({name: 'Jane', age: 25, active: true});
       });
     });
@@ -183,21 +157,15 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom({count: count$, text: text$});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({count: 1, text: 'hello'});
 
         count$.next(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({count: 2, text: 'hello'});
 
         text$.next('world');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({count: 2, text: 'world'});
       });
     });
@@ -209,21 +177,15 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom({userId, userData: userData$});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({userId: 123, userData: {name: 'Alice'}});
 
         userId.set(456);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({userId: 456, userData: {name: 'Alice'}});
 
         userData$.next({name: 'Bob'});
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({userId: 456, userData: {name: 'Bob'}});
       });
     });
@@ -249,21 +211,15 @@ describe(combineFrom.name, () => {
           pipe(map(({firstName, lastName}: {firstName: string; lastName: string}) => `${firstName} ${lastName}`)),
         );
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toBe('John Doe');
 
         firstName.set('Jane');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toBe('Jane Doe');
 
         lastName.set('Smith');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toBe('Jane Smith');
       });
     });
@@ -277,15 +233,11 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([count, doubled]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([5, 10]);
 
         count.set(10);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([10, 20]);
       });
     });
@@ -298,15 +250,11 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom({price, tax, total});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({price: 100, tax: 10, total: 110});
 
         price.set(200);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual({price: 200, tax: 20, total: 220});
       });
     });
@@ -320,15 +268,11 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([sig, fn]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([5, 10]);
 
         sig.set(15);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([15, 10]);
       });
     });
@@ -340,15 +284,11 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([count, multiplier]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([3, 6]);
 
         count.set(5);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([5, 10]);
       });
     });
@@ -359,9 +299,7 @@ describe(combineFrom.name, () => {
       await TestBed.runInInjectionContext(async () => {
         const combined = combineFrom([], {initialValue: []});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([]);
       });
     });
@@ -372,15 +310,11 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([sig]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([42]);
 
         sig.set(100);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([100]);
       });
     });
@@ -448,16 +382,12 @@ describe(combineFrom.name, () => {
           if (val) results.push([...val]);
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop(); // Trigger initial computation
         expect(results).toEqual([[1, 2, 3]]);
 
         sig1.set(10);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop();
         expect(results).toEqual([
           [1, 2, 3],
@@ -465,9 +395,7 @@ describe(combineFrom.name, () => {
         ]);
 
         sig2.set(20);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop();
         expect(results).toEqual([
           [1, 2, 3],
@@ -476,9 +404,7 @@ describe(combineFrom.name, () => {
         ]);
 
         sig3.set(30);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop();
         expect(results).toEqual([
           [1, 2, 3],
@@ -496,28 +422,20 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([obs1$, obs2$]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([1, 2]);
 
         obs1$.next(10);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([10, 2]);
 
         obs2$.next(20);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([10, 20]);
 
         obs1$.next(100);
         obs2$.next(200);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(combined()).toEqual([100, 200]);
       });
     });
@@ -537,25 +455,19 @@ describe(combineFrom.name, () => {
           }
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop();
         expect(results).toEqual([[1, 'test']]);
 
         // Emit same value - should be filtered by distinctUntilChanged
         obs$.next(1);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop();
         expect(results).toEqual([[1, 'test']]); // No new emission
 
         // Emit different value
         obs$.next(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         stop();
         expect(results).toEqual([
           [1, 'test'],
@@ -581,9 +493,7 @@ describe(combineFrom.name, () => {
           page,
         });
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(vm()).toEqual({
           users: [{id: 1, name: 'Alice'}],
           isLoading: false,
@@ -592,21 +502,15 @@ describe(combineFrom.name, () => {
         });
 
         isLoading$.next(true);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(vm()?.isLoading).toBe(true);
 
         searchTerm.set('ali');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(vm()?.searchTerm).toBe('ali');
 
         page.set(2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(vm()?.page).toBe(2);
       });
     });
@@ -629,24 +533,18 @@ describe(combineFrom.name, () => {
           ),
         );
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(filteredUsers()?.length).toBe(3);
 
         minAge.set(30);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(filteredUsers()).toEqual([
           {id: 2, name: 'Bob', age: 30},
           {id: 3, name: 'Charlie', age: 35},
         ]);
 
         minAge.set(40);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(filteredUsers()).toEqual([]);
       });
     });
@@ -666,27 +564,19 @@ describe(combineFrom.name, () => {
           ),
         );
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(formValid()).toBe(false);
 
         username.set('john');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(formValid()).toBe(false);
 
         password.set('secret123');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(formValid()).toBe(false);
 
         email.set('john@example.com');
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(formValid()).toBe(true);
       });
     });
@@ -709,21 +599,15 @@ describe(combineFrom.name, () => {
           ),
         );
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(invoice()).toEqual({subtotal: 200, tax: 20, total: 220});
 
         quantity.set(3);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(invoice()).toEqual({subtotal: 300, tax: 30, total: 330});
 
         taxRate.set(0.2);
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         expect(invoice()).toEqual({subtotal: 300, tax: 60, total: 360});
       });
     });
@@ -738,9 +622,7 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom([num, str, bool]);
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         // TypeScript should infer: Signal<[number, string, boolean] | undefined>
         const result: [number, string, boolean] | undefined = combined();
         expect(result).toEqual([1, 'hello', true]);
@@ -754,9 +636,7 @@ describe(combineFrom.name, () => {
 
         const combined = combineFrom({id, name});
 
-        TestBed.tick();
-        await vi.advanceTimersByTimeAsync(0);
-        TestBed.tick();
+        await flushEffects();
         // TypeScript should infer: Signal<{id: number, name: string} | undefined>
         const result: {id: number; name: string} | undefined = combined();
         expect(result).toEqual({id: 123, name: 'Test'});
