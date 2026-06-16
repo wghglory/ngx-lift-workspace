@@ -27,7 +27,6 @@
             "input": "apps/demo/src/assets",
             "output": "/assets"
           },
-          "apps/demo/src/favicon.ico",
           "apps/demo/src/favicon.svg"
         ],
         "styles": ["node_modules/@clr/ui/clr-ui.min.css", "apps/demo/src/styles.scss"],
