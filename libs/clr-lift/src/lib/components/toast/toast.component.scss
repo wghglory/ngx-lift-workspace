@@ -3,11 +3,88 @@ $inactiveGray: #95a4b2;
 $bgColor: #25333d;
 $bgColorDark: #0f171c;
 
+$componentPrimaryEnterTiming: 400ms;
+$componentPrimaryEnterCurve: cubic-bezier(0, 0.99, 0, 0.99);
+$componentPrimaryLeaveTiming: 300ms;
+$componentPrimaryLeaveCurve: cubic-bezier(0, 0.99, 0, 0.99);
+
+$linePrimaryEnterTiming: 250ms;
+$linePrimaryEnterDelay: 200ms;
+$linePrimaryEnterCurve: linear;
+
+$lineSecondaryEnterTiming: 400ms;
+$lineSecondaryEnterDelay: 200ms;
+$lineSecondaryEnterCurve: linear;
+
+$CLOSE_ICON_DURATION: 300ms;
+$CLOSE_ICON_DELAY: 350ms;
+$CLOSE_ICON_CURVE: cubic-bezier(0, 1.2, 0.7, 1);
+
+$GRADIENT_DURATION: 500ms;
+$GRADIENT_DELAY: 100ms;
+$GRADIENT_LEAVE_CURVE: cubic-bezier(0, 1.2, 0.7, 1);
+
 :host {
+  display: block;
   max-width: 75vw;
+  transform-origin: 100% 0;
 
   @media screen and (min-width: 576px) {
     max-width: unset;
+  }
+}
+
+// Enter and Leave Animations on Host
+:host(.toast-enter) {
+  animation: toast-enter-anim $componentPrimaryEnterTiming $componentPrimaryEnterCurve forwards;
+
+  .gradient {
+    animation: gradient-move-anim $GRADIENT_DURATION $GRADIENT_DELAY $GRADIENT_LEAVE_CURVE forwards;
+  }
+
+  #info-icon-line {
+    animation: info-line-anim $linePrimaryEnterTiming $linePrimaryEnterDelay $linePrimaryEnterCurve forwards;
+  }
+
+  #info-icon-dot {
+    animation: scale-up-anim $lineSecondaryEnterTiming $lineSecondaryEnterDelay $lineSecondaryEnterCurve forwards;
+  }
+
+  #error-icon-line {
+    animation: error-line-anim $linePrimaryEnterTiming $linePrimaryEnterDelay $linePrimaryEnterCurve forwards;
+  }
+
+  #error-icon-dot {
+    animation: scale-up-anim $lineSecondaryEnterTiming $lineSecondaryEnterDelay $lineSecondaryEnterCurve forwards;
+  }
+
+  #warn-icon-line {
+    animation: warn-line-anim $linePrimaryEnterTiming $linePrimaryEnterDelay $linePrimaryEnterCurve forwards;
+  }
+
+  #warn-icon-dot {
+    animation: scale-up-anim $lineSecondaryEnterTiming $lineSecondaryEnterDelay $lineSecondaryEnterCurve forwards;
+  }
+
+  #check-mark {
+    animation: check-mark-anim $linePrimaryEnterTiming $linePrimaryEnterDelay $linePrimaryEnterCurve forwards;
+  }
+
+  .close-button span {
+    animation: fade-in-anim $CLOSE_ICON_DURATION $CLOSE_ICON_DELAY $CLOSE_ICON_CURVE forwards;
+  }
+}
+
+:host(.toast-leave) {
+  animation: toast-leave-anim $componentPrimaryLeaveTiming $componentPrimaryLeaveCurve forwards;
+
+  .toast-description,
+  .toast-title,
+  .icon-container,
+  .button-container,
+  .close-button,
+  .toast-date {
+    animation: fade-out-anim 10ms forwards;
   }
 }
 
@@ -23,10 +100,6 @@ $bgColorDark: #0f171c;
   right: 18px;
   padding: 12px;
   margin: 0 0 12px 0;
-
-  // animation - steady state of component
-  transform: scale(1, 1);
-  transform-origin: 100% 0;
 }
 
 .gradient {
@@ -119,5 +192,95 @@ $bgColorDark: #0f171c;
 
   .close-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Keyframe Definitions
+@keyframes toast-enter-anim {
+  from {
+    transform: translateX(48px) scale(0, 1);
+  }
+  to {
+    transform: translateX(0) scale(1, 1);
+  }
+}
+
+@keyframes toast-leave-anim {
+  from {
+    transform: translateX(0) scale(1, 1);
+    margin-top: 0;
+  }
+  to {
+    transform: translateX(18px) scale(0, 1);
+    margin-top: calc(-1 * var(--toast-height, 80px));
+  }
+}
+
+@keyframes gradient-move-anim {
+  from {
+    transform: scale(1, 1);
+  }
+  to {
+    transform: scale(0, 1);
+  }
+}
+
+@keyframes scale-up-anim {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in-anim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out-anim {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes info-line-anim {
+  from {
+    stroke-dashoffset: 16;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes error-line-anim {
+  from {
+    stroke-dashoffset: 7.919999599456787;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes warn-line-anim {
+  from {
+    stroke-dashoffset: 7.919999599456787;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes check-mark-anim {
+  from {
+    stroke-dashoffset: 31.386688232421875;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }

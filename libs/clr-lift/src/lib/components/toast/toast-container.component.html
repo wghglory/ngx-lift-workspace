@@ -1,4 +1,4 @@
-<div class="toast-container" [@toastContainer]>
+<div class="toast-container">
   @for (toast of toasts$ | async; track trackById($index, toast)) {
     <cll-toast
       [toastType]="toast.toastType"
