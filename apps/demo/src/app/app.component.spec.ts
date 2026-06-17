@@ -3,13 +3,12 @@ import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
 
 import {AppComponent} from './app.component';
-import {provideTestSvgIcon} from '../test-helpers';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideRouter([]), provideNoopAnimations(), ...provideTestSvgIcon()],
+      providers: [provideRouter([]), provideNoopAnimations()],
     }).compileComponents();
   });
 

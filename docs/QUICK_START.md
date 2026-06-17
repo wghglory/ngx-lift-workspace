@@ -7,7 +7,7 @@ Get up and running with the ngx-lift monorepo in minutes!
 ### Prerequisites
 
 - Node.js 24.x or higher
-- npm 10.x or higher
+- pnpm 10.x or higher
 
 ### Installation
 
@@ -16,13 +16,13 @@ Get up and running with the ngx-lift monorepo in minutes!
 cd ngx-lift-workspace
 
 # 2. Install dependencies
-npm install
+pnpm install
 
 # 3. Build libraries
-npm run build:libs
+pnpm run build:libs
 
 # 4. Start demo app
-npm start
+pnpm start
 ```
 
 Visit `http://localhost:4200` to see the demo app.
@@ -32,49 +32,49 @@ Visit `http://localhost:4200` to see the demo app.
 ### Development
 
 ```bash
-npm start              # Start demo app
-npm run watch:ngx      # Watch ngx-lift changes
-npm run watch:clr      # Watch clr-lift changes
+pnpm start              # Start demo app
+pnpm run watch:ngx      # Watch ngx-lift changes
+pnpm run watch:clr      # Watch clr-lift changes
 ```
 
 ### Building
 
 ```bash
-npm run build          # Build everything
-npm run build:libs     # Build both libraries
-npm run build:ngx      # Build ngx-lift only
-npm run build:clr      # Build clr-lift only
-npm run build:demo     # Build demo app for production
+pnpm run build          # Build everything
+pnpm run build:libs     # Build both libraries
+pnpm run build:ngx      # Build ngx-lift only
+pnpm run build:clr      # Build clr-lift only
+pnpm run build:demo     # Build demo app for production
 ```
 
 ### Testing
 
 ```bash
-npm test               # Run all tests
-npm run test:ngx       # Test ngx-lift
-npm run test:clr       # Test clr-lift
-npm run test:coverage  # Run tests with coverage
+pnpm test               # Run all tests
+pnpm run test:ngx       # Test ngx-lift
+pnpm run test:clr       # Test clr-lift
+pnpm run test:coverage  # Run tests with coverage
 ```
 
 ### Code Quality
 
 ```bash
-npm run lint           # Lint all projects
-npm run lint:fix       # Lint and auto-fix
-npm run format         # Format code with Prettier
+pnpm run lint           # Lint all projects
+pnpm run lint:fix       # Lint and auto-fix
+pnpm run format         # Format code with Prettier
 ```
 
 ### Publishing
 
 ```bash
-npm run release:version   # Bump version
-npm run release:publish   # Publish to npm
+pnpm run release:version   # Bump version
+pnpm run release:publish   # Publish to npm
 ```
 
 ### Deployment
 
 ```bash
-npm run build:demo     # Build for production
+pnpm run build:demo     # Build for production
 # Then deploy to Netlify or Vercel
 ```
 
@@ -84,16 +84,16 @@ npm run build:demo     # Build for production
 
 ```bash
 # 1. Start demo app
-npm start
+pnpm start
 
 # 2. In another terminal, watch library
-npm run watch:ngx
+pnpm run watch:ngx
 
 # 3. Make changes to library
 # 4. Changes auto-reload in demo app
 
 # 5. Run tests
-npm run test:ngx
+pnpm run test:ngx
 
 # 6. Commit changes
 git add .
@@ -104,16 +104,16 @@ git commit -m "feat: add new feature"
 
 ```bash
 # 1. Ensure all tests pass
-npm test
+pnpm test
 
 # 2. Build libraries
-npm run build:libs
+pnpm run build:libs
 
 # 3. Version bump
-npm run release:version
+pnpm run release:version
 
 # 4. Publish
-npm run release:publish
+pnpm run release:publish
 ```
 
 ### Deploying Demo App
@@ -130,8 +130,8 @@ git push origin main
 
 ```bash
 # 1. Build everything
-npm run build:libs
-npm run build:demo
+pnpm run build:libs
+pnpm run build:demo
 
 # 2. Deploy to Netlify
 netlify deploy --prod --dir=dist/apps/demo/browser
@@ -190,7 +190,7 @@ import {AlertComponent, ToastService} from 'clr-lift';
 # Clear cache and rebuild
 nx reset
 rm -rf dist
-npm run build:libs
+pnpm run build:libs
 ```
 
 ### Tests Fail
@@ -201,15 +201,15 @@ nx reset
 
 # Reinstall dependencies
 rm -rf node_modules
-npm install
+pnpm install
 ```
 
 ### Demo App Won't Start
 
 ```bash
 # Ensure libraries are built first
-npm run build:libs
-npm start
+pnpm run build:libs
+pnpm start
 ```
 
 ## 📚 Learn More
@@ -229,7 +229,7 @@ npm start
 ## ⚡ Pro Tips
 
 1. **Use Nx Console**: Install the Nx Console extension for VS Code
-2. **View Project Graph**: Run `npm run graph` to visualize dependencies
+2. **View Project Graph**: Run `pnpm run graph` to visualize dependencies
 3. **Run Affected Only**: Use `nx affected -t test` to test only changed code
 4. **Parallel Execution**: Nx runs tasks in parallel by default
 5. **Cache**: Nx caches builds for faster rebuilds
@@ -239,7 +239,7 @@ npm start
 Start developing with:
 
 ```bash
-npm start
+pnpm start
 ```
 
 Happy coding! 🚀

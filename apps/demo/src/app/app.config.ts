@@ -4,9 +4,6 @@ import localeEn from '@angular/common/locales/en';
 import {ApplicationConfig, LOCALE_ID, provideZonelessChangeDetection} from '@angular/core';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
-import {provideAngularSvgIcon} from 'angular-svg-icon';
-import player from 'lottie-web';
-import {provideLottieOptions} from 'ngx-lottie';
 
 import {routes} from './app.routes';
 
@@ -24,9 +21,5 @@ export const appConfig: ApplicationConfig = {
       provide: LOCALE_ID,
       useValue: 'en',
     },
-    provideLottieOptions({
-      player: () => player,
-    }),
-    provideAngularSvgIcon(),
   ],
 };

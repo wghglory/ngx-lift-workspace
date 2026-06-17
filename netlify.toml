@@ -1,6 +1,6 @@
 [build]
   base = "."
-  command = "npx nx run-many -t build --no-cloud"
+  command = "pnpm nx run-many -t build --no-cloud"
   publish = "dist/apps/demo/browser"
 
 [[redirects]]
@@ -10,7 +10,7 @@
 
 [build.environment]
   NODE_VERSION = "24"
-  NPM_VERSION = "10"
+  PNPM_VERSION = "10"
   NX_DAEMON = "false"
   NX_NO_CLOUD = "true"
 

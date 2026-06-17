@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {SvgIconComponent} from 'angular-svg-icon';
 import {CalloutComponent} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -8,7 +7,7 @@ import {TileWithIconComponent} from '../../../shared/components/tile-with-icon/t
 
 @Component({
   selector: 'app-clr-lift-home',
-  imports: [ClarityModule, CalloutComponent, SvgIconComponent, TileWithIconComponent, CodeBlockComponent],
+  imports: [ClarityModule, CalloutComponent, TileWithIconComponent, CodeBlockComponent],
   templateUrl: './clr-lift-home.component.html',
   styleUrl: './clr-lift-home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

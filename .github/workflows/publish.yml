@@ -25,6 +25,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   publish:
     name: Publish
@@ -39,14 +42,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Determine projects
         id: projects
@@ -61,11 +67,11 @@ jobs:
 
       - name: Build libraries
         id: build-libs
-        run: npx nx run-many -t build --projects=${{ env.PROJECTS }} --parallel=2
+        run: pnpm nx run-many -t build --projects=${{ env.PROJECTS }} --parallel=2
 
       - name: Run unit tests
         id: run-unit-tests
-        run: npx nx run-many -t test --projects=${{ env.PROJECTS }} --parallel=2
+        run: pnpm nx run-many -t test --projects=${{ env.PROJECTS }} --parallel=2
 
       - name: Configure Git
         run: |
@@ -79,8 +85,8 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
-          npx nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }} --git-push
-          npx nx release publish ${{ env.PROJECT_FLAG }}
+          pnpm nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }} --git-push
+          pnpm nx release publish ${{ env.PROJECT_FLAG }}
 
       - name: Publish from tag
         id: publish-tag
@@ -88,7 +94,7 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-        run: npx nx release publish
+        run: pnpm nx release publish
 
       - name: Create GitHub Release
         id: github-release

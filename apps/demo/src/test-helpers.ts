@@ -2,7 +2,6 @@ import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
-import {SvgIconRegistryService} from 'angular-svg-icon';
 
 /**
  * Common test providers for components that need HTTP client
@@ -20,20 +19,6 @@ export const provideTestAnimations = () => [provideNoopAnimations()];
 export const provideTestRouter = () => [provideRouter([])];
 
 /**
- * Common test providers for components that need SvgIconRegistryService
- */
-export const provideTestSvgIcon = () => [
-  {
-    provide: SvgIconRegistryService,
-    useValue: {
-      loadSvg: () => {
-        // Mock implementation
-      },
-    },
-  },
-];
-
-/**
  * Comprehensive test providers for common Angular dependencies
  */
 export const provideCommonTesting = () => [
@@ -41,12 +26,4 @@ export const provideCommonTesting = () => [
   provideHttpClientTesting(),
   provideNoopAnimations(),
   provideRouter([]),
-  {
-    provide: SvgIconRegistryService,
-    useValue: {
-      loadSvg: () => {
-        // Mock implementation
-      },
-    },
-  },
 ];

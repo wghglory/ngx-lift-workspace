@@ -15,7 +15,7 @@
         "browser": "apps/demo/src/main.ts",
         "tsConfig": "apps/demo/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "allowedCommonJsDependencies": ["lottie-web", "node-forge"],
+        "allowedCommonJsDependencies": ["node-forge"],
         "assets": [
           {
             "glob": "**/*",

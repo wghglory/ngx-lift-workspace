@@ -14,13 +14,13 @@ This is the **ngx-lift-workspace** - a modern Nx monorepo containing:
 
 ```bash
 # 1. Install dependencies
-npm install
+pnpm install
 
 # 2. Build libraries
-npm run build:libs
+pnpm run build:libs
 
 # 3. Start demo app
-npm start
+pnpm start
 ```
 
 Visit `http://localhost:4200` to see the demo!
@@ -50,39 +50,39 @@ Visit `http://localhost:4200` to see the demo!
 ### Development
 
 ```bash
-npm start              # Start demo app
-npm run watch:ngx      # Watch ngx-lift changes
-npm run watch:clr      # Watch clr-lift changes
+pnpm start              # Start demo app
+pnpm run watch:ngx      # Watch ngx-lift changes
+pnpm run watch:clr      # Watch clr-lift changes
 ```
 
 ### Testing
 
 ```bash
-npm test               # Run all tests
-npm run test:ngx       # Test ngx-lift
-npm run test:clr       # Test clr-lift
+pnpm test               # Run all tests
+pnpm run test:ngx       # Test ngx-lift
+pnpm run test:clr       # Test clr-lift
 ```
 
 ### Building
 
 ```bash
-npm run build          # Build everything
-npm run build:libs     # Build both libraries
-npm run build:demo     # Build demo for production
+pnpm run build          # Build everything
+pnpm run build:libs     # Build both libraries
+pnpm run build:demo     # Build demo for production
 ```
 
 ### Publishing
 
 ```bash
-npm run release:version   # Bump version
-npm run release:publish   # Publish to npm
+pnpm run release:version   # Bump version
+pnpm run release:publish   # Publish to npm
 ```
 
 ### Code Quality
 
 ```bash
-npm run lint           # Lint all projects
-npm run format         # Format code
+pnpm run lint           # Lint all projects
+pnpm run format         # Format code
 ```
 
 ## 📖 Documentation Files
@@ -111,10 +111,10 @@ ngx-lift-workspace/
 
 ## ⏳ What You Need to Do
 
-1. **Install dependencies**: `npm install`
-2. **Build libraries**: `npm run build:libs`
-3. **Run tests**: `npm test` (may need test conversion)
-4. **Start developing**: `npm start`
+1. **Install dependencies**: `pnpm install`
+2. **Build libraries**: `pnpm run build:libs`
+3. **Run tests**: `pnpm test` (may need test conversion)
+4. **Start developing**: `pnpm start`
 5. **Set up CI/CD**: Add GitHub secrets
 6. **Configure deployments**: Set up Netlify/Vercel
 
@@ -130,8 +130,8 @@ ngx-lift-workspace/
 ### Day 2: Understand the System
 
 1. Read README.md
-2. Try different npm scripts
-3. View project graph: `npm run graph`
+2. Try different pnpm scripts
+3. View project graph: `pnpm run graph`
 4. Explore library source code
 
 ### Day 3: Deep Dive
@@ -145,9 +145,9 @@ ngx-lift-workspace/
 
 ### Quick Answers
 
-- **Build fails?** → Run `nx reset && npm install && npm run build:libs`
+- **Build fails?** → Run `nx reset && pnpm install && pnpm run build:libs`
 - **Tests fail?** → Check test imports, may need Vitest conversion
-- **Demo won't start?** → Build libraries first: `npm run build:libs`
+- **Demo won't start?** → Build libraries first: `pnpm run build:libs`
 - **Import errors?** → Check `tsconfig.base.json` paths
 
 ### Documentation
@@ -177,13 +177,13 @@ Run these commands to verify everything works:
 cd ngx-lift-workspace
 
 # Install dependencies
-npm install
+pnpm install
 
 # Build libraries
-npm run build:libs
+pnpm run build:libs
 
 # Start demo
-npm start
+pnpm start
 ```
 
 If all commands succeed, you're ready to develop! 🎉
@@ -191,7 +191,7 @@ If all commands succeed, you're ready to develop! 🎉
 ## 💡 Pro Tips
 
 1. **Use Nx Console**: Install the VS Code extension for a GUI
-2. **View Graph**: Run `npm run graph` to see project dependencies
+2. **View Graph**: Run `pnpm run graph` to see project dependencies
 3. **Affected Commands**: Use `nx affected -t test` to test only changed code
 4. **Watch Mode**: Use watch commands during development
 5. **Read Documentation**: Each doc file serves a specific purpose
@@ -218,7 +218,7 @@ After getting everything running:
 ## 🏁 Ready to Start?
 
 ```bash
-npm install && npm run build:libs && npm start
+pnpm install && pnpm run build:libs && pnpm start
 ```
 
 Then open `http://localhost:4200` and start exploring!
