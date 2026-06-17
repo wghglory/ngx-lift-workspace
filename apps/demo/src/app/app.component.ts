@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {certificateIcon, ClarityIcons, heatMapIcon, objectsIcon, radarIcon, wrenchIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
-import {SvgIconComponent} from 'angular-svg-icon';
 import {ClarityTheme, ThemeToggleComponent, ToastContainerComponent} from 'clr-lift';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -35,7 +34,6 @@ ClarityIcons.addIcons([
     VerticalNavComponent,
     ThemeToggleComponent,
     ToastContainerComponent,
-    SvgIconComponent,
     ClarityModule,
   ],
   templateUrl: './app.component.html',
