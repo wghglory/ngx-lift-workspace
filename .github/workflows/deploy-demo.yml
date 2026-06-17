@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   deploy:
     name: Deploy
@@ -20,22 +23,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build libraries
         id: build-libs
-        run: npx nx run-many -t build --projects=ngx-lift,clr-lift --parallel=2
+        run: pnpm nx run-many -t build --projects=ngx-lift,clr-lift --parallel=2
 
       - name: Build demo app
         id: build-demo
-        run: npx nx build demo --configuration=production
+        run: pnpm nx build demo --configuration=production
 
       - name: Deploy to Netlify
         id: netlify
