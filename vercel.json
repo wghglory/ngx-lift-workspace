@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "npx nx run-many -t build --no-cloud",
+  "buildCommand": "pnpm nx run-many -t build --no-cloud",
   "outputDirectory": "dist/apps/demo/browser",
   "framework": null,
-  "installCommand": "npm ci",
-  "devCommand": "npx nx serve demo",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "devCommand": "pnpm nx serve demo",
   "rewrites": [
     {
       "source": "/(.*)",

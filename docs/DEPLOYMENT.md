@@ -123,8 +123,7 @@ This project follows [Semantic Versioning](https://semver.org/):
    - Connect to GitHub repository
 
 2. **Configure Build Settings**:
-   - Build command:
-     `npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production`
+   - Build command: `pnpm install --frozen-lockfile && pnpm nx run-many -t build --no-cloud`
    - Publish directory: `dist/apps/demo/browser`
    - Base directory: (leave empty)
 
@@ -155,8 +154,8 @@ npm install -g netlify-cli
 netlify login
 
 # Build the project
-npm run build:libs
-npm run build:demo
+pnpm run build:libs
+pnpm run build:demo
 
 # Deploy to production
 netlify deploy --prod --dir=dist/apps/demo/browser
@@ -172,7 +171,7 @@ The `netlify.toml` file contains:
 ```toml
 [build]
   base = "."
-  command = "npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production"
+  command = "pnpm nx run-many -t build --no-cloud"
   publish = "dist/apps/demo/browser"
 
 [[redirects]]
@@ -181,8 +180,10 @@ The `netlify.toml` file contains:
   status = 200
 
 [build.environment]
-  NODE_VERSION = "22"
-  NPM_VERSION = "10"
+  NODE_VERSION = "24"
+  PNPM_VERSION = "10"
+  NX_DAEMON = "false"
+  NX_NO_CLOUD = "true"
 ```
 
 ### Netlify CLI Commands
@@ -217,10 +218,9 @@ netlify link
 
 2. **Configure Build Settings**:
    - Framework Preset: Other
-   - Build Command:
-     `npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production`
+   - Build Command: `pnpm nx run-many -t build --no-cloud`
    - Output Directory: `dist/apps/demo/browser`
-   - Install Command: `npm ci`
+   - Install Command: `pnpm install --frozen-lockfile`
 
 3. **Get Project IDs**:
    - Project ID: Project Settings → General
@@ -250,8 +250,8 @@ npm install -g vercel
 vercel login
 
 # Build the project
-npm run build:libs
-npm run build:demo
+pnpm run build:libs
+pnpm run build:demo
 
 # Deploy to production
 vercel --prod --cwd dist/apps/demo/browser
@@ -267,11 +267,11 @@ The `vercel.json` file contains:
 ```json
 {
   "version": 2,
-  "buildCommand": "npm ci && npx nx run-many -t build --projects=ngx-lift,clr-lift && npx nx build demo --configuration=production",
+  "buildCommand": "pnpm nx run-many -t build --no-cloud",
   "outputDirectory": "dist/apps/demo/browser",
   "framework": null,
-  "installCommand": "npm ci",
-  "devCommand": "npx nx serve demo"
+  "installCommand": "pnpm install --frozen-lockfile",
+  "devCommand": "pnpm nx serve demo"
 }
 ```
 
