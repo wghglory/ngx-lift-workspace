@@ -7,7 +7,7 @@
  * - `reloading`: Refetch in progress while previous value is still available
  * - `resolved`: Operation completed successfully with data
  * - `error`: Operation failed with an error
- * - `local`: Value was set manually via set() or update() (ngx-lift extension)
+ * - `local`: Value was set manually via set() or update()
  *
  * @see https://angular.dev/api/core/ResourceStatus
  */
