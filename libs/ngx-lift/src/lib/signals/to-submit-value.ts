@@ -144,10 +144,10 @@ export function toSubmitValue<TInput extends object = Record<string, unknown>, T
     } else {
       sanitized = rawData;
     }
-  } else if (rawData === null && !options?.omitNull) {
-    sanitized = null;
+  } else if (rawData === null) {
+    sanitized = options?.omitNull ? undefined : null;
   } else {
-    sanitized = {};
+    sanitized = undefined;
   }
 
   if (options?.transform) {

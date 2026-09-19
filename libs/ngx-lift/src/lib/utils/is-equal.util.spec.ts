@@ -54,4 +54,10 @@ describe('isEqual function', () => {
     expect(isEqual({} as Date, d1)).toBe(false);
     expect(isEqual(invalid1, invalid2)).toBe(true);
   });
+
+  it('should correctly compare NaN values', () => {
+    expect(isEqual(NaN, NaN)).toBe(true);
+    expect(isEqual(NaN, 0)).toBe(false);
+    expect(isEqual(0, NaN)).toBe(false);
+  });
 });

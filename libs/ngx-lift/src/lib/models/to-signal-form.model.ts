@@ -305,14 +305,14 @@ export type SignalEnhancedControl<C extends AbstractControl = AbstractControl> =
       value: C extends AbstractControl<infer V> ? V : unknown,
       prevValue?: C extends AbstractControl<infer V> ? V : unknown,
     ) => void,
-    options?: WatchControlOptions,
+    options?: WatchControlOptions<C extends AbstractControl<infer V> ? V : unknown>,
   ): EffectRef;
 };
 
 /**
  * Options for `watchControl` and `sf.watch`.
  */
-export interface WatchControlOptions {
+export interface WatchControlOptions<T = unknown> {
   /**
    * The Angular `Injector` to use for creating the underlying effect.
    * If not provided, the current injection context is used.
@@ -325,6 +325,12 @@ export interface WatchControlOptions {
    * @default false
    */
   immediate?: boolean;
+
+  /**
+   * Optional custom equality comparator to determine whether the value has changed.
+   * Defaults to strict inequality (`!==`).
+   */
+  equal?: (prev: T, current: T) => boolean;
 }
 
 /**
@@ -435,7 +441,9 @@ export interface SignalForm<
       value: K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown,
       prevValue?: K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown,
     ) => void,
-    options?: WatchControlOptions,
+    options?: WatchControlOptions<
+      K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown
+    >,
   ): EffectRef;
 
   /** Returns a reactive `Signal` of a child control's value with optional debouncing. */

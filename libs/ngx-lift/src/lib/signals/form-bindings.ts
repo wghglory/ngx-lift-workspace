@@ -63,14 +63,14 @@ export function bindControlDisabled<T = unknown>(
       untracked(() => {
         if (shouldDisable) {
           if (control.enabled) {
-            control.disable({emitEvent});
             if (resetOnDisable) {
               if (options?.resetValue !== undefined) {
-                control.reset(options.resetValue, {emitEvent});
+                control.reset(options.resetValue, {emitEvent: false});
               } else {
-                control.reset(undefined, {emitEvent});
+                control.reset(undefined, {emitEvent: false});
               }
             }
+            control.disable({emitEvent});
           }
         } else {
           if (control.disabled) {
@@ -145,10 +145,12 @@ export function bindControlValidators(
   return effect(
     () => {
       const valFns = resolveValidators(validators);
-      control.setValidators(valFns);
-      if (updateValueAndValidity) {
-        control.updateValueAndValidity({emitEvent});
-      }
+      untracked(() => {
+        control.setValidators(valFns);
+        if (updateValueAndValidity) {
+          control.updateValueAndValidity({emitEvent});
+        }
+      });
     },
     {injector},
   );
@@ -447,7 +449,7 @@ export function revalidateOnChange(
 export function watchControl<T>(
   source: AbstractControl<T> | Signal<T> | (() => T),
   callback: (value: T, prevValue: T | undefined) => void,
-  options?: WatchControlOptions,
+  options?: WatchControlOptions<T>,
 ): EffectRef {
   let injector = options?.injector;
   if (!injector) {
@@ -482,7 +484,9 @@ export function watchControl<T>(
         return;
       }
 
-      if (currentValue !== prevValue) {
+      const isChanged = options?.equal ? !options.equal(prevValue as T, currentValue) : currentValue !== prevValue;
+
+      if (isChanged) {
         const old = prevValue;
         prevValue = currentValue;
         untracked(() => {

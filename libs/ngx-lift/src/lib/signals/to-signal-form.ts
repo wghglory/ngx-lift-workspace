@@ -289,6 +289,32 @@ export function toSignalForm<
     controlsVersion.update((v) => v + 1);
   };
 
+  // Intercept direct form control mutations to ensure full reactivity
+  const rawForm = form as unknown as FormGroup;
+  const origAddControl = rawForm.addControl.bind(rawForm);
+  const origRemoveControl = rawForm.removeControl.bind(rawForm);
+  const origSetControl = rawForm.setControl.bind(rawForm);
+
+  rawForm.addControl = (name: string, control: AbstractControl, opts?: {emitEvent?: boolean}) => {
+    origAddControl(name, control, opts);
+    notifyControlsChange();
+  };
+  rawForm.removeControl = (name: string, opts?: {emitEvent?: boolean}) => {
+    origRemoveControl(name, opts);
+    notifyControlsChange();
+  };
+  rawForm.setControl = (name: string, control: AbstractControl, opts?: {emitEvent?: boolean}) => {
+    origSetControl(name, control, opts);
+    notifyControlsChange();
+  };
+
+  const destroyRef = injector.get(DestroyRef);
+  destroyRef.onDestroy(() => {
+    rawForm.addControl = origAddControl;
+    rawForm.removeControl = origRemoveControl;
+    rawForm.setControl = origSetControl;
+  });
+
   const bindIfImpl = (
     arg1: string | Signal<boolean> | (() => boolean),
     arg2: Signal<boolean> | (() => boolean) | (() => Record<string, AbstractControl>),
@@ -419,14 +445,14 @@ export function toSignalForm<
             untracked(() => {
               if (shouldDisable) {
                 if (targetCtrl.enabled) {
-                  targetCtrl.disable({emitEvent});
                   if (resetOnDisable) {
                     if (opts?.resetValue !== undefined) {
-                      targetCtrl.reset(opts.resetValue, {emitEvent});
+                      targetCtrl.reset(opts.resetValue, {emitEvent: false});
                     } else {
-                      targetCtrl.reset(undefined, {emitEvent});
+                      targetCtrl.reset(undefined, {emitEvent: false});
                     }
                   }
+                  targetCtrl.disable({emitEvent});
                 }
               } else {
                 if (targetCtrl.disabled) {

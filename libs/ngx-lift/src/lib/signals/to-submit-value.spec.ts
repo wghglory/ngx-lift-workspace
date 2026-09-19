@@ -139,6 +139,16 @@ describe('to-submit-value utilities', () => {
 
     const emptyCtrl = new FormControl('');
     expect(toSubmitValue(emptyCtrl, {omitEmptyStrings: true})).toBeUndefined();
+
+    const nullCtrl = new FormControl(null);
+    expect(toSubmitValue(nullCtrl)).toBeNull();
+    expect(toSubmitValue(nullCtrl, {omitNull: true})).toBeUndefined();
+
+    // In Angular Forms, FormControl(undefined).value defaults to null:
+    const undefinedCtrl = new FormControl(undefined);
+    expect(toSubmitValue(undefinedCtrl)).toBeNull();
+    expect(toSubmitValue(undefinedCtrl, {omitNull: true})).toBeUndefined();
+    expect(toSubmitValue(undefined as unknown as object)).toBeUndefined();
   });
 
   it('should respect includeDisabled: false option', () => {

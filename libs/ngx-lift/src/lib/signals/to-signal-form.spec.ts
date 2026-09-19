@@ -155,6 +155,7 @@ describe('toSignalForm', () => {
       expect('title' in sf.controls).toBe(true);
       expect('unknownField' in sf.controls).toBe(false);
       expect(Object.keys(sf.controls)).toEqual(['title', 'count']);
+      expect(Object.keys(sf.fields)).toEqual(['title', 'count']);
 
       // Enhanced control proxy reflection traps
       expect('state' in sf.controls.title).toBe(true);
@@ -723,6 +724,35 @@ describe('toSignalForm', () => {
       isForbidden.set(false);
       TestBed.flushEffects();
       expect(sf.controls.dynamicField?.hasError('forbidden')).toBe(false);
+    });
+  });
+
+  it('should reactively update sf.hasControl and sf.fields when controls are added or removed directly on form', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup<{
+        staticField: FormControl<string>;
+        dynamicField?: FormControl<string>;
+      }>({
+        staticField: new FormControl('static', {nonNullable: true}),
+      });
+
+      const sf = toSignalForm(form);
+
+      expect(sf.hasControl('dynamicField')).toBe(false);
+      expect(sf.fields.dynamicField).toBeUndefined();
+
+      // Directly add control to Angular FormGroup outside bindIf
+      form.addControl('dynamicField', new FormControl('dynamicValue', {nonNullable: true}));
+
+      expect(sf.hasControl('dynamicField')).toBe(true);
+      expect(sf.fields.dynamicField).toBeDefined();
+      expect(sf.fields.dynamicField?.value()).toBe('dynamicValue');
+
+      // Directly remove control
+      form.removeControl('dynamicField');
+
+      expect(sf.hasControl('dynamicField')).toBe(false);
+      expect(sf.fields.dynamicField).toBeUndefined();
     });
   });
 });

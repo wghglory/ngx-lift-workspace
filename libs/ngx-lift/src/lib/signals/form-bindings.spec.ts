@@ -343,4 +343,34 @@ describe('form-bindings utilities', () => {
       expect(remountedGroup.getRawValue()).toEqual({username: 'admin', apiKey: 'key-123'});
     });
   });
+
+  it('should support custom equal comparator in watchControl', () => {
+    TestBed.runInInjectionContext(() => {
+      const sig = signal({id: 1, name: 'Alice'});
+      const history: Array<{id: number; name: string}> = [];
+
+      watchControl(
+        sig,
+        (val) => {
+          history.push(val);
+        },
+        {
+          equal: (prev, curr) => prev.id === curr.id && prev.name === curr.name,
+        },
+      );
+
+      TestBed.flushEffects();
+      expect(history).toEqual([]);
+
+      // Set new object reference with identical content: equal returns true -> callback skipped
+      sig.set({id: 1, name: 'Alice'});
+      TestBed.flushEffects();
+      expect(history).toEqual([]);
+
+      // Set different content: equal returns false -> callback invoked
+      sig.set({id: 2, name: 'Bob'});
+      TestBed.flushEffects();
+      expect(history).toEqual([{id: 2, name: 'Bob'}]);
+    });
+  });
 });
