@@ -1,5 +1,6 @@
 import {
   assertInInjectionContext,
+  computed,
   DestroyRef,
   effect,
   EffectRef,
@@ -17,7 +18,9 @@ import {
   BindControlIfOptions,
   BindControlValidatorsOptions,
   RevalidateSubscription,
+  WatchControlOptions,
 } from '../models/to-signal-form.model';
+import {controlValue} from './form-signals';
 
 /**
  * Declaratively binds an Angular `AbstractControl`'s enabled/disabled state to a boolean `Signal` or predicate function.
@@ -202,6 +205,7 @@ export function bindControlIf(
   const preserveValue = options?.preserveValue ?? false;
   const preservedValues = new Map<string, unknown>();
   const mountedKeys = new Set<string>();
+  const controlCache = new Map<string, AbstractControl>();
 
   effect(
     () => {
@@ -209,48 +213,84 @@ export function bindControlIf(
 
       untracked(() => {
         if (isSingleMode && controlName && controlFactory) {
-          const isCurrentlyPresent = parent.contains(controlName);
+          const isCurrentlyPresent = Boolean(parent.get(controlName));
 
           if (shouldBePresent && !isCurrentlyPresent) {
-            const factory = controlFactory;
-            const ctrl = untracked(() => factory());
+            let ctrl = controlCache.get(controlName);
+            if (!ctrl) {
+              const factory = controlFactory;
+              ctrl = untracked(() => factory());
+              if (preserveValue) {
+                controlCache.set(controlName, ctrl);
+              }
+            }
             if (preserveValue && preservedValues.has(controlName)) {
               ctrl.setValue(preservedValues.get(controlName));
             }
             parent.addControl(controlName, ctrl);
+            options?.onControlsChange?.();
           } else if (!shouldBePresent && isCurrentlyPresent) {
             if (preserveValue) {
               preservedValues.set(controlName, parent.get(controlName)?.value);
+            } else {
+              controlCache.delete(controlName);
             }
             parent.removeControl(controlName);
+            options?.onControlsChange?.();
           }
         } else if (!isSingleMode && controlsFactory) {
           if (shouldBePresent) {
-            const isAlreadyMounted = mountedKeys.size > 0 && Array.from(mountedKeys).every((k) => parent.contains(k));
+            const isAlreadyMounted =
+              mountedKeys.size > 0 && Array.from(mountedKeys).every((k) => Boolean(parent.get(k)));
             if (isAlreadyMounted) {
               return;
             }
 
-            const factory = controlsFactory;
-            const controls = untracked(() => factory());
+            let controls: Record<string, AbstractControl> = {};
+            if (preserveValue && controlCache.size > 0) {
+              for (const [k, c] of controlCache.entries()) {
+                controls[k] = c;
+              }
+            } else {
+              const factory = controlsFactory;
+              controls = untracked(() => factory());
+              if (preserveValue) {
+                for (const [k, c] of Object.entries(controls)) {
+                  controlCache.set(k, c);
+                }
+              }
+            }
+
+            let changed = false;
             for (const [key, ctrl] of Object.entries(controls)) {
-              if (!parent.contains(key)) {
+              if (!parent.get(key)) {
                 if (preserveValue && preservedValues.has(key)) {
                   ctrl.setValue(preservedValues.get(key));
                 }
                 parent.addControl(key, ctrl);
                 mountedKeys.add(key);
+                changed = true;
               }
             }
+            if (changed) {
+              options?.onControlsChange?.();
+            }
           } else {
+            let changed = false;
             for (const key of Array.from(mountedKeys)) {
-              if (parent.contains(key)) {
+              if (parent.get(key)) {
                 if (preserveValue) {
                   preservedValues.set(key, parent.get(key)?.value);
+                } else {
+                  controlCache.delete(key);
                 }
                 parent.removeControl(key);
+                changed = true;
               }
               mountedKeys.delete(key);
+            }
+            if (changed) {
+              options?.onControlsChange?.();
             }
           }
         }
@@ -344,4 +384,77 @@ export function revalidateOnChange(
     unsubscribe: safeCleanup,
     destroy: safeCleanup,
   };
+}
+
+/**
+ * Reactively watches a control's value signal or any getter/Signal and executes a callback
+ * whenever the value changes. The callback is executed outside the tracking context (`untracked`)
+ * so state mutations or control value updates can be made safely without `NG0600` signal write restrictions.
+ *
+ * @example
+ * ```typescript
+ * // Watch control directly
+ * watchControl(this.form.controls.engine, (engine) => {
+ *   this.syncVersionForEngine(engine);
+ * });
+ *
+ * // Watch any Signal or getter
+ * watchControl(() => this.engine(), (engine) => {
+ *   this.syncVersionForEngine(engine);
+ * });
+ * ```
+ *
+ * @param source An `AbstractControl`, `Signal`, or getter function.
+ * @param callback Function to execute with `(newValue, oldValue)`.
+ * @param options Optional configuration including `Injector` and `immediate`.
+ * @returns An Angular `EffectRef` that can be destroyed if manual teardown is needed.
+ */
+export function watchControl<T>(
+  source: AbstractControl<T> | Signal<T> | (() => T),
+  callback: (value: T, prevValue: T | undefined) => void,
+  options?: WatchControlOptions,
+): EffectRef {
+  let injector = options?.injector;
+  if (!injector) {
+    assertInInjectionContext(watchControl);
+    injector = inject(Injector);
+  }
+
+  let sig: Signal<T>;
+  if (source instanceof AbstractControl) {
+    sig = controlValue(source, {injector});
+  } else if (isSignal(source)) {
+    sig = source;
+  } else {
+    sig = computed(source);
+  }
+
+  const immediate = options?.immediate ?? false;
+  let prevValue: T | undefined = undefined;
+  let isFirst = true;
+
+  return effect(
+    () => {
+      const currentValue = sig();
+      if (isFirst) {
+        isFirst = false;
+        if (immediate) {
+          untracked(() => {
+            callback(currentValue, undefined);
+          });
+        }
+        prevValue = currentValue;
+        return;
+      }
+
+      if (currentValue !== prevValue) {
+        const old = prevValue;
+        prevValue = currentValue;
+        untracked(() => {
+          callback(currentValue, old);
+        });
+      }
+    },
+    {injector},
+  );
 }

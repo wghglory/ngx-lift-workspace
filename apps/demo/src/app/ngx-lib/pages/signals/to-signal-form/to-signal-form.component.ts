@@ -1,5 +1,6 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
@@ -40,7 +41,18 @@ export class ToSignalFormComponent {
   };
 
   // Main enterprise form simulating cloud database creation
-  readonly form = new FormGroup({
+  readonly form = new FormGroup<{
+    region: FormControl<'us-west-1' | 'eu-central-1' | 'ap-east-1' | ''>;
+    engine: FormControl<'postgres' | 'mysql' | 'sqlserver' | ''>;
+    version: FormControl<string>;
+    clusterName: FormControl<string>;
+    autoScaling: FormControl<boolean>;
+    storageGb: FormControl<number | ''>;
+    authMode: FormControl<'sql' | 'windows' | ''>;
+    certType: FormControl<'managed' | 'custom' | ''>;
+    password?: FormControl<string>;
+    confirmPassword?: FormControl<string>;
+  }>({
     region: new FormControl<'us-west-1' | 'eu-central-1' | 'ap-east-1' | ''>('', {
       nonNullable: true,
       validators: [Validators.required],
@@ -153,15 +165,20 @@ export class ToSignalFormComponent {
   );
 
   constructor() {
-    // A. Engine Version Reset when Engine changes
-    this.sf.revalidate('version', () => {
-      const versions = this.availableVersions();
-      const currentVersion = this.form.controls.version.value;
-      if (versions.length > 0 && !versions.includes(currentVersion)) {
-        this.form.controls.version.setValue(versions[0] ?? '');
-      } else if (versions.length === 0 && currentVersion !== '') {
-        this.form.controls.version.setValue('');
-      }
+    // A. Cascading Version Selection when Engine changes:
+    //
+    // Approach 1 (Regular Production Approach): Standard RxJS valueChanges with takeUntilDestroyed
+    // Retained in demo code as the standard reactive forms pattern.
+    this.form.controls.engine.valueChanges.pipe(takeUntilDestroyed()).subscribe((engine) => {
+      this.syncVersionForEngine(engine);
+    });
+
+    // Approach 2 (Modern Signal-Based Approach - Angular 22 Style):
+    // Uses sf.controls.engine.watch (or sf.watch), which runs inside an Angular effect under the hood.
+    // It automatically runs the callback in an untracked context, allowing safe control updates
+    // without NG0600 signal write restrictions and without needing manual DestroyRef cleanup:
+    this.sf.controls.engine.watch((engine) => {
+      this.syncVersionForEngine(engine);
     });
 
     // B. Declarative Enable/Disable with Auto-Reset (bindDisabled)
@@ -236,6 +253,16 @@ export class ToSignalFormComponent {
     }
     // Triggers simulated 1-second backend provisioning with current sanitized submission value
     this.createClusterRef.execute();
+  }
+
+  private syncVersionForEngine(engine: string): void {
+    const versions = this.engineVersionMap[engine] ?? [];
+    const currentVersion = this.form.controls.version.value;
+    if (versions.length > 0 && !versions.includes(currentVersion)) {
+      this.form.controls.version.setValue(versions[0] ?? '');
+    } else if (versions.length === 0 && currentVersion !== '') {
+      this.form.controls.version.setValue('');
+    }
   }
 
   resetForm(): void {
@@ -364,5 +391,26 @@ this.sf.bindIf(
 
 // 3. SubmitValue automatically includes or omits controls when capability changes:
 const submitData = this.sf.submitValue();
+`);
+
+  readonly cascadingSnippet = highlight(`
+// Approach 1 (Traditional Reactive Forms): valueChanges + takeUntilDestroyed
+this.form.controls.engine.valueChanges
+  .pipe(takeUntilDestroyed())
+  .subscribe((engine) => {
+    this.syncVersionForEngine(engine);
+  });
+
+// Approach 2 (Modern Signal-Based - Angular 22 Style): sf.controls.engine.watch / sf.watch
+// Uses Angular effect() internally with untracked isolation, allowing safe cascading writes
+// without NG0600 signal write restrictions and without manual DestroyRef cleanup:
+this.sf.controls.engine.watch((engine) => {
+  this.syncVersionForEngine(engine);
+});
+
+// Or using sf.watch directly:
+this.sf.watch('engine', (engine) => {
+  this.syncVersionForEngine(engine);
+});
 `);
 }

@@ -49,7 +49,7 @@ describe('to-submit-value utilities', () => {
 
     const submitVal = toSubmitValue(data, {
       omitEmptyStrings: true,
-      omitNil: true,
+      omitNull: true,
     });
 
     expect(submitVal).toEqual({
@@ -104,6 +104,29 @@ describe('to-submit-value utilities', () => {
 
       form.controls.query.setValue('updatedQuery');
       expect(submitSig()).toEqual({query: 'updatedQuery'});
+    });
+  });
+
+  it('should sanitize array primitive values with omitEmptyStrings and omitNull', () => {
+    const rawArray = ['angular', '', null, undefined, 'signals'];
+    expect(
+      toSubmitValue(rawArray as unknown as object, {
+        omitEmptyStrings: true,
+        omitNull: true,
+      }),
+    ).toEqual(['angular', 'signals']);
+
+    const rawObject = {
+      tags: ['angular', '', null, undefined, 'signals'],
+    };
+    expect(
+      toSubmitValue(rawObject, {
+        deep: true,
+        omitEmptyStrings: true,
+        omitNull: true,
+      }),
+    ).toEqual({
+      tags: ['angular', 'signals'],
     });
   });
 });

@@ -53,7 +53,7 @@
 
               <!-- 2. Engine Selection -->
               <clr-radio-container clrInline>
-                <label for="engine-pg">Database Engine</label>
+                <label for="engine-selection">Database Engine</label>
                 <clr-radio-wrapper>
                   <input
                     type="radio"
@@ -89,14 +89,14 @@
                 </clr-radio-wrapper>
                 <clr-control-error *clrIfError="'required'">Database engine is required.</clr-control-error>
                 <clr-control-helper>
-                  Options below are reactively derived from <code>sf.controls.engine.signals.value</code>.
+                  Options below are reactively derived from <code>sf.fields.engine.value</code>.
                 </clr-control-helper>
               </clr-radio-container>
 
               <!-- Dynamic Multi-Zone HA Controls (Mounted via sf.bindIf + computedAsync) -->
               @if (sf.hasControl('haTopology')) {
                 <clr-radio-container clrInline>
-                  <label for="ha-topology-cross">Multi-Zone HA Topology</label>
+                  <label for="ha-topology-group">Multi-Zone HA Topology</label>
                   <clr-radio-wrapper>
                     <input
                       type="radio"
@@ -152,8 +152,7 @@
                 </select>
                 <clr-control-error *clrIfError="'required'">Engine version is required.</clr-control-error>
                 <clr-control-helper>
-                  Automatically resets to first available version when engine changes via
-                  <code>sf.revalidate</code>.
+                  Automatically resets to first available version when engine changes.
                 </clr-control-helper>
               </clr-select-container>
 
@@ -228,7 +227,7 @@
 
               <!-- 6. Dynamic Presence for SQL Credentials (sf.bindIf) -->
               <clr-radio-container clrInline>
-                <label for="auth-sql">Authentication Mode</label>
+                <label for="auth-mode-group">Authentication Mode</label>
                 <clr-radio-wrapper>
                   <input
                     type="radio"
@@ -280,7 +279,7 @@
 
               <!-- 6. Dynamic Control Presence for TLS Certificates -->
               <clr-radio-container clrInline>
-                <label for="cert-managed">TLS Certificates</label>
+                <label for="cert-type-group">TLS Certificates</label>
                 <clr-radio-wrapper>
                   <input
                     type="radio"
@@ -435,19 +434,19 @@
 
             <!-- Password Diagnostics -->
             <div>
-              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">SQL Credentials State (sf.field)</div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">SQL Credentials State (sf.fields)</div>
               <ul class="list-none text-xs space-y-1 p-0 m-0">
                 <li><strong>Auth Mode:</strong> {{ authMode() }}</li>
                 <li><strong>Controls Attached:</strong> {{ sf.hasControl('password') }}</li>
                 @if (sf.hasControl('password')) {
-                  <li><strong>Password Valid:</strong> {{ sf.field('password').valid() }}</li>
-                  @if (sf.field('password').errors(); as errs) {
+                  <li><strong>Password Valid:</strong> {{ sf.fields.password?.valid() }}</li>
+                  @if (sf.fields.password?.errors(); as errs) {
                     <li class="text-danger"><strong>Password Errors:</strong> {{ errs | json }}</li>
                   }
                 }
                 @if (sf.hasControl('confirmPassword')) {
-                  <li><strong>Confirm Valid:</strong> {{ sf.field('confirmPassword').valid() }}</li>
-                  @if (sf.field('confirmPassword').errors(); as errs) {
+                  <li><strong>Confirm Valid:</strong> {{ sf.fields.confirmPassword?.valid() }}</li>
+                  @if (sf.fields.confirmPassword?.errors(); as errs) {
                     <li class="text-danger"><strong>Confirm Errors:</strong> {{ errs | json }}</li>
                   }
                 }
@@ -538,6 +537,19 @@
         engine, which passes directly into <code>sf.bindIf</code> to mount or unmount capability controls on the fly.
       </p>
       <app-code-block [code]="featureGatingSnippet" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>6. Cascading Updates: Signal Watch vs RxJS valueChanges (Angular 22 Style)</h3>
+      <p>
+        When a form control's change triggers cascading updates in another control (e.g. resetting available versions
+        when the database engine changes), you can use the traditional RxJS
+        <code>valueChanges.pipe(takeUntilDestroyed())</code> pattern or the signal-first
+        <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code> utility. <code>watch</code> operates
+        inside an Angular <code>effect()</code> with automatic <code>untracked</code> isolation, preventing
+        <code>NG0600</code> signal write errors while eliminating manual subscription teardown.
+      </p>
+      <app-code-block [code]="cascadingSnippet" lang="typescript" />
     </article>
   </section>
 </cll-page-container>

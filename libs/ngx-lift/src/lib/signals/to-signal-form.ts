@@ -1,11 +1,13 @@
 import {
   assertInInjectionContext,
+  computed,
   DestroyRef,
   effect,
   inject,
   Injector,
   isSignal,
   Signal,
+  signal,
   untracked,
 } from '@angular/core';
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
@@ -24,10 +26,19 @@ import {
   SignalFormFields,
   ToSignalFormOptions,
   ToSubmitValueOptions,
+  WatchControlOptions,
 } from '../models/to-signal-form.model';
-import {bindControlDisabled, bindControlIf, bindControlValidators, revalidateOnChange} from './form-bindings';
+import {
+  bindControlDisabled,
+  bindControlIf,
+  bindControlValidators,
+  revalidateOnChange,
+  watchControl,
+} from './form-bindings';
 import {controlState, controlStatus, controlValue, formState} from './form-signals';
 import {formSubmitValue} from './to-submit-value';
+
+const ENHANCED_CONTROL_PROPS = new Set(['state', 'bindDisabled', 'bindValidators', 'revalidateOn', 'watch']);
 
 /**
  * Creates a non-mutating Proxy over an `AbstractControl` that exposes `.state`, `.bindDisabled()`, `.bindValidators()`, and `.revalidateOn()`.
@@ -38,7 +49,7 @@ function createControlProxy<C extends AbstractControl = AbstractControl>(
 ): SignalEnhancedControl<C> {
   let cachedState: ControlStateSignals<C extends AbstractControl<infer V> ? V : unknown> | undefined;
 
-  return new Proxy(ctrl, {
+  const handlers: ProxyHandler<C> = {
     get(target, prop, receiver) {
       if (prop === 'state') {
         if (!cachedState) {
@@ -76,13 +87,47 @@ function createControlProxy<C extends AbstractControl = AbstractControl>(
         };
       }
 
+      if (prop === 'watch') {
+        return (callback: (value: unknown, prevValue?: unknown) => void, options?: WatchControlOptions) => {
+          return watchControl(target, callback, {...options, injector});
+        };
+      }
+
       const original = Reflect.get(target, prop, receiver);
       if (typeof original === 'function') {
         return original.bind(target);
       }
       return original;
     },
-  }) as SignalEnhancedControl<C>;
+    has(target, prop) {
+      if (typeof prop === 'string' && ENHANCED_CONTROL_PROPS.has(prop)) {
+        return true;
+      }
+      return Reflect.has(target, prop);
+    },
+    ownKeys(target) {
+      const keys = Reflect.ownKeys(target);
+      for (const prop of ENHANCED_CONTROL_PROPS) {
+        if (!keys.includes(prop)) {
+          keys.push(prop);
+        }
+      }
+      return keys;
+    },
+    getOwnPropertyDescriptor(target, prop) {
+      if (typeof prop === 'string' && ENHANCED_CONTROL_PROPS.has(prop)) {
+        return {
+          enumerable: true,
+          configurable: true,
+          writable: false,
+          value: (handlers.get as (t: C, p: string | symbol, r: unknown) => unknown)(target, prop, target),
+        };
+      }
+      return Reflect.getOwnPropertyDescriptor(target, prop);
+    },
+  };
+
+  return new Proxy(ctrl, handlers) as SignalEnhancedControl<C>;
 }
 
 /**
@@ -134,7 +179,7 @@ export function toSignalForm<
     includeDisabled: options?.includeDisabled ?? options?.submitValue?.includeDisabled,
     omit: options?.omit ?? options?.submitValue?.omit,
     omitEmptyStrings: options?.omitEmptyStrings ?? options?.submitValue?.omitEmptyStrings,
-    omitNil: options?.omitNil ?? options?.submitValue?.omitNil,
+    omitNull: options?.omitNull ?? options?.submitValue?.omitNull,
     omitIf: options?.omitIf ?? options?.submitValue?.omitIf,
     deep: options?.deep ?? options?.submitValue?.deep,
     transform: options?.transform ?? options?.submitValue?.transform,
@@ -175,7 +220,7 @@ export function toSignalForm<
       return getOrCreateControlProxy(ctrl);
     },
     has(target, prop: string | symbol) {
-      return typeof prop === 'string' && form.contains(prop);
+      return typeof prop === 'string' && Boolean(form.get(prop));
     },
     ownKeys() {
       return Object.keys(form.controls);
@@ -208,7 +253,7 @@ export function toSignalForm<
       return getOrCreateControlProxy(ctrl).state;
     },
     has(target, prop: string | symbol) {
-      return typeof prop === 'string' && form.contains(prop);
+      return typeof prop === 'string' && Boolean(form.get(prop));
     },
     ownKeys() {
       return Object.keys(form.controls);
@@ -228,6 +273,11 @@ export function toSignalForm<
     },
   });
 
+  const controlsVersion = signal(0);
+  const notifyControlsChange = () => {
+    controlsVersion.update((v) => v + 1);
+  };
+
   const bindIfImpl = (
     arg1: string | Signal<boolean> | (() => boolean),
     arg2: Signal<boolean> | (() => boolean) | (() => Record<string, AbstractControl>),
@@ -239,12 +289,26 @@ export function toSignalForm<
       const cond = arg2 as Signal<boolean> | (() => boolean);
       const factory = arg3 as () => AbstractControl;
       const opts = arg4;
-      bindControlIf(form, ctrlName, cond, factory, {...opts, injector});
+      bindControlIf(form, ctrlName, cond, factory, {
+        ...opts,
+        injector,
+        onControlsChange: () => {
+          opts?.onControlsChange?.();
+          notifyControlsChange();
+        },
+      });
     } else {
       const cond = arg1;
       const factory = arg2 as () => Record<string, AbstractControl>;
       const opts = arg3 as BindControlIfOptions | undefined;
-      bindControlIf(form, cond, factory, {...opts, injector});
+      bindControlIf(form, cond, factory, {
+        ...opts,
+        injector,
+        onControlsChange: () => {
+          opts?.onControlsChange?.();
+          notifyControlsChange();
+        },
+      });
     }
   };
 
@@ -270,21 +334,31 @@ export function toSignalForm<
     submitValue: submitValueSig,
 
     // Control Inspection & Signal Helpers
-    control(name: string) {
-      return form.get(name) as never;
-    },
-
     hasControl(name: string) {
-      return form.contains(name);
+      return Boolean(form.get(name));
     },
 
-    field(name: string) {
-      const ctrl = form.get(name);
-      if (!ctrl) {
-        throw new Error(`[toSignalForm] Control "${name}" not found in FormGroup.`);
+    watch: ((
+      control: string | AbstractControl | Signal<unknown> | (() => unknown),
+      callback: (value: unknown, prevValue?: unknown) => void,
+      opts?: WatchControlOptions,
+    ) => {
+      const cb = callback as (value: unknown, prevValue?: unknown) => void;
+      if (typeof control === 'string') {
+        const ctrl = form.get(control);
+        if (ctrl) {
+          return watchControl<unknown>(ctrl, cb, {...opts, injector});
+        }
+        // Support dynamic controls mounted later via bindIf
+        const dynamicSig = computed(() => {
+          controlsVersion();
+          const c = form.get(control);
+          return c ? controlValue(c, {injector})() : undefined;
+        });
+        return watchControl<unknown>(dynamicSig, cb, {...opts, injector});
       }
-      return getOrCreateControlProxy(ctrl).state as never;
-    },
+      return watchControl<unknown>(control as AbstractControl | Signal<unknown>, cb, {...opts, injector});
+    }) as never,
 
     controlValue(name: string, opts?: {debounceTime?: number}) {
       const ctrl = form.get(name);
@@ -316,11 +390,49 @@ export function toSignalForm<
       condition: Signal<boolean> | (() => boolean),
       opts?: BindControlDisabledOptions<unknown>,
     ) {
-      const ctrl = control instanceof AbstractControl ? control : form.get(String(control));
-      if (!ctrl) {
-        throw new Error(`[toSignalForm] Control "${String(control)}" not found for bindDisabled.`);
+      if (control instanceof AbstractControl) {
+        bindControlDisabled(control, condition, {...opts, injector});
+        return;
       }
-      bindControlDisabled(ctrl, condition, {...opts, injector});
+
+      const ctrl = form.get(String(control));
+      if (ctrl) {
+        bindControlDisabled(ctrl, condition, {...opts, injector});
+        return;
+      }
+
+      const ctrlName = String(control);
+      const emitEvent = opts?.emitEvent ?? true;
+      const resetOnDisable = opts?.resetOnDisable ?? false;
+
+      effect(
+        () => {
+          controlsVersion();
+          const shouldDisable = Boolean(condition());
+          const targetCtrl = form.get(ctrlName);
+          if (targetCtrl) {
+            untracked(() => {
+              if (shouldDisable) {
+                if (targetCtrl.enabled) {
+                  targetCtrl.disable({emitEvent});
+                  if (resetOnDisable) {
+                    if (opts?.resetValue !== undefined) {
+                      targetCtrl.reset(opts.resetValue, {emitEvent});
+                    } else {
+                      targetCtrl.reset(undefined, {emitEvent});
+                    }
+                  }
+                }
+              } else {
+                if (targetCtrl.disabled) {
+                  targetCtrl.enable({emitEvent});
+                }
+              }
+            });
+          }
+        },
+        {injector},
+      );
     },
 
     bindValidators(
@@ -333,11 +445,36 @@ export function toSignalForm<
         | (() => ValidatorFn | ValidatorFn[] | null),
       opts?: BindControlValidatorsOptions,
     ) {
-      const ctrl = control instanceof AbstractControl ? control : form.get(String(control));
-      if (!ctrl) {
-        throw new Error(`[toSignalForm] Control "${String(control)}" not found for bindValidators.`);
+      if (control instanceof AbstractControl) {
+        return bindControlValidators(control, validators, {...opts, injector});
       }
-      return bindControlValidators(ctrl, validators, {...opts, injector});
+
+      const ctrl = form.get(String(control));
+      if (ctrl) {
+        return bindControlValidators(ctrl, validators, {...opts, injector});
+      }
+
+      const ctrlName = String(control);
+      const emitEvent = opts?.emitEvent ?? true;
+      const updateValueAndValidity = opts?.updateValueAndValidity ?? true;
+
+      return effect(
+        () => {
+          controlsVersion();
+          const valFns =
+            typeof validators === 'function' ? (validators as () => ValidatorFn | ValidatorFn[] | null)() : validators;
+          const targetCtrl = form.get(ctrlName);
+          if (targetCtrl) {
+            untracked(() => {
+              targetCtrl.setValidators(valFns);
+              if (updateValueAndValidity) {
+                targetCtrl.updateValueAndValidity({emitEvent});
+              }
+            });
+          }
+        },
+        {injector},
+      );
     },
 
     bindIf: bindIfImpl as SignalForm<TControls, TValue, TSubmitValue>['bindIf'],
@@ -360,8 +497,13 @@ export function toSignalForm<
 
         const sub: Subscription = merge(form.valueChanges as Observable<unknown>, form.statusChanges).subscribe(() => {
           const srcCtrl = form.get(source);
-          const currentVal = srcCtrl ? srcCtrl.value : form.value;
-          const currentStatus = srcCtrl ? srcCtrl.status : form.status;
+          if (!srcCtrl) {
+            prevVal = undefined;
+            prevStatus = '';
+            return;
+          }
+          const currentVal = srcCtrl.value;
+          const currentStatus = srcCtrl.status;
           if (currentVal !== prevVal || currentStatus !== prevStatus) {
             prevVal = currentVal;
             prevStatus = currentStatus;

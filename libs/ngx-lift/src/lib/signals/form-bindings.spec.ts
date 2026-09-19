@@ -1,9 +1,15 @@
 import {signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {describe, expect, it, vi} from 'vitest';
 
-import {bindControlDisabled, bindControlIf, bindControlValidators, revalidateOnChange} from './form-bindings';
+import {
+  bindControlDisabled,
+  bindControlIf,
+  bindControlValidators,
+  revalidateOnChange,
+  watchControl,
+} from './form-bindings';
 
 describe('form-bindings utilities', () => {
   it('should dynamically disable and enable control with bindControlDisabled', () => {
@@ -66,7 +72,7 @@ describe('form-bindings utilities', () => {
 
   it('should mount and unmount controls with bindControlIf in dictionary mode and respect preserveValue', () => {
     TestBed.runInInjectionContext(() => {
-      const form = new FormGroup({});
+      const form = new FormGroup<Record<string, AbstractControl>>({});
       const isSql = signal(true);
       const factorySpy = vi.fn(() => ({
         password: new FormControl('secret123'),
@@ -102,7 +108,7 @@ describe('form-bindings utilities', () => {
 
   it('should mount and unmount single control with bindControlIf in single control mode', () => {
     TestBed.runInInjectionContext(() => {
-      const form = new FormGroup({});
+      const form = new FormGroup<Record<string, AbstractControl>>({});
       const showSecret = signal(false);
 
       bindControlIf(form, 'secretField', showSecret, () => new FormControl('mySecret'), {preserveValue: true});
@@ -146,6 +152,94 @@ describe('form-bindings utilities', () => {
       expect(confirm.errors).toBeNull();
 
       sub.unsubscribe();
+    });
+  });
+
+  it('should preserve control instances and existing bindings across unmount/remount cycles when preserveValue is true', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup<Record<string, AbstractControl>>({});
+      const isVisible = signal(true);
+      const isLocked = signal(false);
+
+      const passwordCtrl = new FormControl('mySecret');
+      bindControlIf(form, 'password', isVisible, () => passwordCtrl, {preserveValue: true});
+      bindControlDisabled(passwordCtrl, isLocked);
+
+      TestBed.flushEffects();
+      expect(form.contains('password')).toBe(true);
+      expect(form.get('password')).toBe(passwordCtrl);
+      expect(passwordCtrl.enabled).toBe(true);
+
+      // Unmount
+      isVisible.set(false);
+      TestBed.flushEffects();
+      expect(form.contains('password')).toBe(false);
+
+      // Lock while unmounted
+      isLocked.set(true);
+
+      // Remount
+      isVisible.set(true);
+      TestBed.flushEffects();
+
+      expect(form.get('password')).toBe(passwordCtrl);
+      expect('password' in form.controls).toBe(true);
+      expect(passwordCtrl.disabled).toBe(true);
+    });
+  });
+
+  it('should reactively watch control value with watchControl', () => {
+    TestBed.runInInjectionContext(() => {
+      const ctrl = new FormControl('first');
+      const history: Array<{val: string | null; prev: string | null | undefined}> = [];
+
+      const effectRef = watchControl(ctrl, (val, prev) => {
+        history.push({val, prev});
+      });
+
+      TestBed.flushEffects();
+      expect(history).toEqual([]);
+
+      ctrl.setValue('second');
+      TestBed.flushEffects();
+
+      expect(history).toEqual([{val: 'second', prev: 'first'}]);
+
+      ctrl.setValue('third');
+      TestBed.flushEffects();
+
+      expect(history).toEqual([
+        {val: 'second', prev: 'first'},
+        {val: 'third', prev: 'second'},
+      ]);
+
+      effectRef.destroy();
+      ctrl.setValue('fourth');
+      TestBed.flushEffects();
+
+      expect(history.length).toBe(2);
+    });
+  });
+
+  it('should support immediate: true when watching a Signal with watchControl', () => {
+    TestBed.runInInjectionContext(() => {
+      const sig = signal(10);
+      const history: number[] = [];
+
+      watchControl(
+        sig,
+        (val) => {
+          history.push(val);
+        },
+        {immediate: true},
+      );
+
+      TestBed.flushEffects();
+      expect(history).toEqual([10]);
+
+      sig.set(20);
+      TestBed.flushEffects();
+      expect(history).toEqual([10, 20]);
     });
   });
 });

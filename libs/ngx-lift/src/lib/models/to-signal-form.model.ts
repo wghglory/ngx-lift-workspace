@@ -64,6 +64,11 @@ export interface BindControlIfOptions {
    * @default false
    */
   preserveValue?: boolean;
+
+  /**
+   * Optional callback invoked whenever controls are mounted or unmounted.
+   */
+  onControlsChange?: () => void;
 }
 
 /**
@@ -222,7 +227,7 @@ export interface ToSubmitValueOptions<TInput extends object = Record<string, unk
    *
    * @default false
    */
-  omitNil?: boolean;
+  omitNull?: boolean;
 
   /**
    * Custom predicate to conditionally omit properties based on value, key, or the entire form object.
@@ -290,10 +295,41 @@ export type SignalEnhancedControl<C extends AbstractControl = AbstractControl> =
     sourceControl: AbstractControl | Signal<unknown> | (() => unknown),
     options?: {injector?: Injector},
   ): RevalidateSubscription;
+
+  /**
+   * Reactively executes a callback outside the tracking context (`untracked`) whenever this control's value changes.
+   * Safe for setting other control values or updating state without `NG0600` signal write errors.
+   */
+  watch(
+    callback: (
+      value: C extends AbstractControl<infer V> ? V : unknown,
+      prevValue?: C extends AbstractControl<infer V> ? V : unknown,
+    ) => void,
+    options?: WatchControlOptions,
+  ): EffectRef;
 };
 
 /**
+ * Options for `watchControl` and `sf.watch`.
+ */
+export interface WatchControlOptions {
+  /**
+   * The Angular `Injector` to use for creating the underlying effect.
+   * If not provided, the current injection context is used.
+   */
+  injector?: Injector;
+
+  /**
+   * Whether to execute the callback immediately with the initial value upon creation.
+   *
+   * @default false
+   */
+  immediate?: boolean;
+}
+
+/**
  * Mapped type for `sf.controls`.
+ * Provides strongly typed dot-notation access for all registered controls.
  */
 export type SignalFormControls<TControls extends {[K in keyof TControls]: AbstractControl}> = {
   readonly [K in keyof TControls]: SignalEnhancedControl<TControls[K]>;
@@ -301,6 +337,7 @@ export type SignalFormControls<TControls extends {[K in keyof TControls]: Abstra
 
 /**
  * Mapped type for `sf.fields`.
+ * Provides strongly typed dot-notation access for all registered control signals.
  */
 export type SignalFormFields<TControls extends {[K in keyof TControls]: AbstractControl}> = {
   readonly [K in keyof TControls]: ControlStateSignals<TControls[K] extends AbstractControl<infer V> ? V : unknown>;
@@ -379,18 +416,27 @@ export interface SignalForm<
   readonly submitValue: Signal<TSubmitValue>;
 
   // Control Inspection & Signal Helpers
-  /** Retrieves a control by name or path. */
-  control<K extends keyof TControls>(name: K): TControls[K];
-  control(name: string): AbstractControl | null;
-
   /** Checks whether a control with the given name currently exists in the form. */
   hasControl(name: keyof TControls | (string & {})): boolean;
 
-  /** Returns strongly typed reactive field signals for a control (`value()`, `valid()`, `invalid()`, `touched()`, etc.). */
-  field<K extends keyof TControls>(
-    name: K,
-  ): ControlStateSignals<TControls[K] extends AbstractControl<infer V> ? V : unknown>;
-  field(name: string): ControlStateSignals<unknown>;
+  /**
+   * Reactively watches a control's value signal or any Signal/getter and executes a callback
+   * whenever the value changes. The callback is executed outside the tracking context (`untracked`)
+   * to safely allow setting other control values or mutating state without `NG0600` signal write restrictions.
+   *
+   * @param control The control key (e.g. `'engine'`), control instance, Signal, or getter to watch.
+   * @param callback The function executed when the value changes.
+   * @param options Optional configuration including `injector` and `immediate`.
+   * @returns An `EffectRef` that can be destroyed if manual teardown is needed.
+   */
+  watch<K extends string = keyof TControls & string>(
+    control: K | AbstractControl | Signal<unknown> | (() => unknown),
+    callback: (
+      value: K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown,
+      prevValue?: K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown,
+    ) => void,
+    options?: WatchControlOptions,
+  ): EffectRef;
 
   /** Returns a reactive `Signal` of a child control's value with optional debouncing. */
   controlValue<K extends keyof TControls>(
@@ -411,30 +457,17 @@ export interface SignalForm<
 
   // Declarative Behavior Bindings
   /** Declaratively binds a child control's disabled state to a boolean signal. Strongly typed to registered control keys or control instances. */
-  bindDisabled<K extends keyof TControls>(
-    control: K,
+  bindDisabled<K extends string = keyof TControls & string>(
+    control: K | AbstractControl,
     condition: Signal<boolean> | (() => boolean),
-    options?: BindControlDisabledOptions<TControls[K] extends AbstractControl<infer V> ? V : unknown>,
-  ): void;
-  bindDisabled<C extends AbstractControl>(
-    control: C,
-    condition: Signal<boolean> | (() => boolean),
-    options?: BindControlDisabledOptions<C extends AbstractControl<infer V> ? V : unknown>,
+    options?: BindControlDisabledOptions<
+      K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown
+    >,
   ): void;
 
   /** Declaratively synchronizes a control's validators with a reactive Signal or getter. */
-  bindValidators<K extends keyof TControls>(
-    control: K,
-    validators:
-      | ValidatorFn
-      | ValidatorFn[]
-      | null
-      | Signal<ValidatorFn | ValidatorFn[] | null>
-      | (() => ValidatorFn | ValidatorFn[] | null),
-    options?: BindControlValidatorsOptions,
-  ): EffectRef;
-  bindValidators<C extends AbstractControl>(
-    control: C,
+  bindValidators<K extends string = keyof TControls & string>(
+    control: K | AbstractControl,
     validators:
       | ValidatorFn
       | ValidatorFn[]

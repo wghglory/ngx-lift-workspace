@@ -1,7 +1,7 @@
 import {signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 
 import {toSignalForm} from './to-signal-form';
 
@@ -58,7 +58,11 @@ describe('toSignalForm', () => {
 
   it('should support dynamic controls with bindIf and revalidate on the facade', () => {
     TestBed.runInInjectionContext(() => {
-      const form = new FormGroup({
+      const form = new FormGroup<{
+        authMode: FormControl<string | null>;
+        password?: FormControl<string | null>;
+        confirmPassword?: FormControl<string | null>;
+      }>({
         authMode: new FormControl('windows'),
       });
 
@@ -90,12 +94,12 @@ describe('toSignalForm', () => {
       expect(sf.hasControl('password')).toBe(true);
       expect(sf.hasControl('confirmPassword')).toBe(true);
 
-      form.get('password')?.setValue('pass1');
-      form.get('confirmPassword')?.setValue('pass2');
-      expect(form.get('confirmPassword')?.hasError('mismatch')).toBe(true);
+      sf.controls.password?.setValue('pass1');
+      sf.controls.confirmPassword?.setValue('pass2');
+      expect(sf.controls.confirmPassword?.hasError('mismatch')).toBe(true);
 
-      form.get('password')?.setValue('pass2');
-      expect(form.get('confirmPassword')?.hasError('mismatch')).toBe(false);
+      sf.controls.password?.setValue('pass2');
+      expect(sf.controls.confirmPassword?.hasError('mismatch')).toBe(false);
     });
   });
 
@@ -152,6 +156,14 @@ describe('toSignalForm', () => {
       expect('unknownField' in sf.controls).toBe(false);
       expect(Object.keys(sf.controls)).toEqual(['title', 'count']);
 
+      // Enhanced control proxy reflection traps
+      expect('state' in sf.controls.title).toBe(true);
+      expect('bindDisabled' in sf.controls.title).toBe(true);
+      expect('bindValidators' in sf.controls.title).toBe(true);
+      expect('revalidateOn' in sf.controls.title).toBe(true);
+      expect(Object.keys(sf.controls.title)).toContain('state');
+      expect(Object.getOwnPropertyDescriptor(sf.controls.title, 'state')?.configurable).toBe(true);
+
       // Symbol property accesses must not throw
       const testSymbol = Symbol('custom');
       expect((sf.controls as Record<string | symbol, unknown>)[testSymbol]).toBeUndefined();
@@ -191,21 +203,16 @@ describe('toSignalForm', () => {
         resetValue: 'premium',
       });
 
-      // Runtime check: throwing if control is not found
-      expect(() => sf.bindDisabled('storageGbb' as never, isAutoScaling)).toThrow(
-        '[toSignalForm] Control "storageGbb" not found for bindDisabled.',
-      );
-
       // Compile-time type safety assertions:
-      // @ts-expect-error - resetValue must be number, not string
       sf.bindDisabled('storageGb', isAutoScaling, {
         resetOnDisable: true,
+        // @ts-expect-error - resetValue must be number, not string
         resetValue: 'not-a-number',
       });
 
-      // @ts-expect-error - resetValue on enhanced control must be number, not boolean
       sf.controls.storageGb.bindDisabled(isAutoScaling, {
         resetOnDisable: true,
+        // @ts-expect-error - resetValue on enhanced control must be number, not boolean
         resetValue: true,
       });
 
@@ -283,7 +290,11 @@ describe('toSignalForm', () => {
       const isFeatureEnabled = signal(false);
       const isLocked = signal(false);
 
-      const form = new FormGroup({
+      const form = new FormGroup<{
+        name: FormControl<string | null>;
+        settings: FormControl<string | null>;
+        extraParam?: FormControl<string | null>;
+      }>({
         name: new FormControl(''),
         settings: new FormControl('default'),
       });
@@ -317,6 +328,176 @@ describe('toSignalForm', () => {
       expect(sf.controls.settings.value).toBe('locked-default');
       expect(sf.hasControl('extraParam')).toBe(true);
       expect(sf.controls.extraParam?.value).toBe('extraVal');
+    });
+  });
+
+  it('should update form-level and field-level signals on markAllAsTouched, markAsPristine, and markAsUntouched', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        name: new FormControl('initial'),
+        age: new FormControl(25),
+      });
+
+      const sf = toSignalForm(form);
+
+      expect(sf.touched()).toBe(false);
+      expect(sf.untouched()).toBe(true);
+
+      sf.markAllAsTouched();
+      expect(sf.touched()).toBe(true);
+      expect(sf.untouched()).toBe(false);
+      expect(sf.fields.name.touched()).toBe(true);
+      expect(sf.fields.age.touched()).toBe(true);
+
+      sf.controls.name.markAsDirty();
+      expect(sf.dirty()).toBe(true);
+      expect(sf.pristine()).toBe(false);
+
+      sf.markAsPristine();
+      expect(sf.dirty()).toBe(false);
+      expect(sf.pristine()).toBe(true);
+
+      sf.markAsUntouched();
+      expect(sf.touched()).toBe(false);
+      expect(sf.untouched()).toBe(true);
+    });
+  });
+
+  it('should bindDisabled on dynamically mounted controls without throwing before control is added', () => {
+    TestBed.runInInjectionContext(() => {
+      const isSql = signal(false);
+      const isPasswordLocked = signal(true);
+      const form = new FormGroup<{
+        password?: FormControl<string | null>;
+      }>({});
+
+      const sf = toSignalForm(form);
+
+      // Register binding BEFORE control is mounted: should not throw!
+      expect(() => {
+        sf.bindDisabled('password', isPasswordLocked);
+      }).not.toThrow();
+
+      sf.bindIf(
+        isSql,
+        () => ({
+          password: new FormControl('initialPass'),
+        }),
+        {preserveValue: true},
+      );
+
+      TestBed.flushEffects();
+      expect(sf.hasControl('password')).toBe(false);
+
+      // Mount control: password should immediately be disabled because isPasswordLocked is true
+      isSql.set(true);
+      TestBed.flushEffects();
+
+      expect(sf.hasControl('password')).toBe(true);
+      expect(sf.controls.password?.disabled).toBe(true);
+
+      // Unlock password
+      isPasswordLocked.set(false);
+      TestBed.flushEffects();
+      expect(sf.controls.password?.enabled).toBe(true);
+    });
+  });
+
+  it('should not trigger target revalidation on unrelated control changes when source control is not mounted', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup<{
+        name: FormControl<string>;
+        target?: FormControl<string>;
+      }>({
+        name: new FormControl('John', {nonNullable: true}),
+      });
+
+      const sf = toSignalForm(form);
+      const validatorSpy = vi.fn((ctrl: FormControl) => (ctrl.value === 'bad' ? {bad: true} : null));
+
+      (form as FormGroup).addControl('target', new FormControl('good', [validatorSpy as never]));
+
+      // Revalidate target on dynamic source 'secret' which does NOT exist in form yet
+      sf.revalidate('target', 'secret');
+
+      validatorSpy.mockClear();
+
+      // Changing unrelated control 'name' should NOT trigger target revalidation
+      sf.controls.name.setValue('Jane');
+      expect(validatorSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should reactively watch control value changes via sf.watch and safely update another control', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        engine: new FormControl(''),
+        version: new FormControl(''),
+      });
+
+      const sf = toSignalForm(form);
+      const engineHistory: string[] = [];
+
+      sf.watch('engine', (newVal) => {
+        engineHistory.push(newVal as string);
+        // Safe cascading write outside tracking context
+        sf.controls.version.setValue(`v-${newVal}`);
+      });
+
+      TestBed.flushEffects();
+      // Should not trigger on initial run with default immediate: false
+      expect(engineHistory).toEqual([]);
+      expect(sf.controls.version.value).toBe('');
+
+      // Change engine
+      sf.controls.engine.setValue('postgres');
+      TestBed.flushEffects();
+
+      expect(engineHistory).toEqual(['postgres']);
+      expect(sf.controls.version.value).toBe('v-postgres');
+
+      // Change engine again
+      sf.controls.engine.setValue('mysql');
+      TestBed.flushEffects();
+
+      expect(engineHistory).toEqual(['postgres', 'mysql']);
+      expect(sf.controls.version.value).toBe('v-mysql');
+    });
+  });
+
+  it('should support sf.watch with immediate: true and enhanced control .watch()', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        tier: new FormControl('standard'),
+      });
+
+      const sf = toSignalForm(form);
+      const immediateHistory: unknown[] = [];
+      const controlProxyHistory: unknown[] = [];
+
+      sf.watch(
+        'tier',
+        (val) => {
+          immediateHistory.push(val);
+        },
+        {immediate: true},
+      );
+
+      sf.controls.tier.watch((val) => {
+        controlProxyHistory.push(val);
+      });
+
+      TestBed.flushEffects();
+      // immediate: true triggers on initial run
+      expect(immediateHistory).toEqual(['standard']);
+      expect(controlProxyHistory).toEqual([]);
+
+      // Update value
+      sf.controls.tier.setValue('enterprise');
+      TestBed.flushEffects();
+
+      expect(immediateHistory).toEqual(['standard', 'enterprise']);
+      expect(controlProxyHistory).toEqual(['enterprise']);
     });
   });
 });

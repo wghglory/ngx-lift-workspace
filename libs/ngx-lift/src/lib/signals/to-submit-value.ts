@@ -24,15 +24,26 @@ function isPlainObject(val: unknown): val is Record<string, unknown> {
  * Recursively sanitizes elements of an array.
  */
 function sanitizeArray(arr: unknown[], options?: ToSubmitValueOptions): unknown[] {
-  return arr.map((item) => {
-    if (isPlainObject(item)) {
-      return sanitizeObject(item, options);
-    }
-    if (Array.isArray(item)) {
-      return sanitizeArray(item, options);
-    }
-    return item;
-  });
+  const shouldOmitNull = options?.omitNull ?? false;
+  return arr
+    .filter((item) => {
+      if (options?.omitEmptyStrings && item === '') {
+        return false;
+      }
+      if (shouldOmitNull && (item === null || item === undefined)) {
+        return false;
+      }
+      return true;
+    })
+    .map((item) => {
+      if (isPlainObject(item)) {
+        return sanitizeObject(item, options);
+      }
+      if (Array.isArray(item)) {
+        return sanitizeArray(item, options);
+      }
+      return item;
+    });
 }
 
 /**
@@ -42,6 +53,7 @@ function sanitizeObject(obj: Record<string, unknown>, options?: ToSubmitValueOpt
   const result: Record<string, unknown> = {};
   const omitList = options?.omit;
   const excludeSet = omitList ? new Set<string>(omitList.map(String)) : undefined;
+  const shouldOmitNull = options?.omitNull ?? false;
 
   for (const [key, value] of Object.entries(obj)) {
     if (excludeSet?.has(key)) {
@@ -50,7 +62,7 @@ function sanitizeObject(obj: Record<string, unknown>, options?: ToSubmitValueOpt
     if (options?.omitEmptyStrings && value === '') {
       continue;
     }
-    if (options?.omitNil && (value === null || value === undefined)) {
+    if (shouldOmitNull && (value === null || value === undefined)) {
       continue;
     }
     if (options?.omitIf && options.omitIf(value, key, obj)) {
