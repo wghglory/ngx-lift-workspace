@@ -2,7 +2,7 @@ import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
 import {Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {catchError, delay, map, Observable, of, startWith} from 'rxjs';
+import {catchError, delay, map, Observable, of, startWith, throwError} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {computedAsync} from './computed-async';
@@ -678,6 +678,34 @@ describe(computedAsync.name, () => {
         all.forEach((g) => {
           expect(g()).toBe(g());
         });
+      });
+    });
+  });
+
+  describe('error handling and stream resilience', () => {
+    it('should continue emitting when a new source is provided after an inner error', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const trigger = signal<string>('initial');
+        const s = computedAsync(() => {
+          const val = trigger();
+          if (val === 'error') {
+            return throwError(() => new Error('Request canceled'));
+          }
+          return of(`Data for ${val}`);
+        });
+
+        await flushEffects();
+        expect(s()).toBe('Data for initial');
+
+        // Simulate request error/cancel
+        trigger.set('error');
+        await flushEffects();
+        expect(s()).toBeInstanceOf(Error);
+
+        // Subsequent valid source should continue to work and not be frozen
+        trigger.set('recovered');
+        await flushEffects();
+        expect(s()).toBe('Data for recovered');
       });
     });
   });

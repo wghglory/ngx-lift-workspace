@@ -1,6 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {computed, CreateComputedOptions, DestroyRef, effect, inject, Signal, signal, untracked} from '@angular/core';
-import {concatAll, exhaustAll, isObservable, mergeAll, Observable, Subject, switchAll} from 'rxjs';
+import {
+  catchError,
+  concatAll,
+  exhaustAll,
+  from,
+  isObservable,
+  map,
+  mergeAll,
+  Observable,
+  of,
+  OperatorFunction,
+  Subject,
+  switchAll,
+} from 'rxjs';
 
 import {isPromise} from '../utils/is-promise.util';
 
@@ -160,22 +173,26 @@ export function computedAsync<T>(
   const sourceValue = signal<T | undefined>(options.initialValue);
 
   const sourceResult = source$.subscribe({
-    next: (value) => sourceValue.set(value),
-    error: (error) => {
-      // If throwOnError is true, call onError (if provided) but then throw immediately
-      if (options.throwOnError) {
-        if (options.onError) {
-          options.onError(error);
-        }
-        throw error;
-      }
-
-      // Otherwise, handle error by setting value or fallback
-      if (options.onError) {
-        const fallbackValue = options.onError(error);
-        sourceValue.set(fallbackValue);
+    next: (event) => {
+      if (event.type === 'value') {
+        sourceValue.set(event.value);
       } else {
-        sourceValue.set(error);
+        const error = event.error;
+        // If throwOnError is true, call onError (if provided) but then throw immediately
+        if (options.throwOnError) {
+          if (options.onError) {
+            options.onError(error);
+          }
+          throw error;
+        }
+
+        // Otherwise, handle error by setting value or fallback
+        if (options.onError) {
+          const fallbackValue = options.onError(error);
+          sourceValue.set(fallbackValue);
+        } else {
+          sourceValue.set(error as T);
+        }
       }
     },
   });
@@ -223,16 +240,33 @@ export function computedAsync<T>(
   return computed(() => sourceValue() as T, {equal: options.equal});
 }
 
+type StreamEvent<T> = {type: 'value'; value: T} | {type: 'error'; error: unknown};
+
 function flattenObservable<T>(
   source: Subject<Promise<T> | Observable<T>>,
   behavior: ComputedAsyncBehavior,
-): Observable<T> {
-  const behaviorMap = {
-    switch: switchAll,
-    merge: mergeAll,
-    concat: concatAll,
-    exhaust: exhaustAll,
-  };
+): Observable<StreamEvent<T>> {
+  const behaviorMap: Record<ComputedAsyncBehavior, () => OperatorFunction<Observable<StreamEvent<T>>, StreamEvent<T>>> =
+    {
+      switch: switchAll,
+      merge: mergeAll,
+      concat: concatAll,
+      exhaust: exhaustAll,
+    };
 
-  return source.pipe(behaviorMap[behavior]());
+  return source.pipe(
+    map((sourceItem): Observable<StreamEvent<T>> => {
+      const source$: Observable<T> = isObservable(sourceItem)
+        ? (sourceItem as Observable<T>)
+        : isPromise(sourceItem)
+          ? from(sourceItem)
+          : of(sourceItem as T);
+
+      return source$.pipe(
+        map((value): StreamEvent<T> => ({type: 'value', value})),
+        catchError((error: unknown) => of<StreamEvent<T>>({type: 'error', error})),
+      );
+    }),
+    behaviorMap[behavior](),
+  );
 }

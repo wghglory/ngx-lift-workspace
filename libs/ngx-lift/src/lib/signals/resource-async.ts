@@ -394,50 +394,52 @@ export function resourceAsync<T, E = Error>(
     const source$ = isObservable(source) ? source : isPromise(source) ? from(source) : from([source]);
 
     let receivedValue = false;
-    currentSubscription = source$.subscribe({
-      next: (value) => {
-        receivedValue = true;
-        untracked(() => {
-          valueSignal.set(value);
-          errorSignal.set(null);
-          statusSignal.set('resolved'); // Use 'resolved' to match httpResource
-          options.onSuccess?.(value);
-        });
-      },
-      error: (error: E) => {
-        untracked(() => {
-          // Try error handler if provided
-          if (options.onError) {
-            const fallbackValue = options.onError(error);
-            if (fallbackValue !== undefined) {
-              valueSignal.set(fallbackValue);
-              errorSignal.set(null);
-              statusSignal.set('resolved'); // Success with fallback
-              return;
-            }
-          }
-
-          // Set error state - clear value to match Angular's httpResource behavior
-          valueSignal.set(undefined as T);
-          errorSignal.set(error);
-          statusSignal.set('error');
-
-          // Optionally throw after handling
-          if (options.throwOnError) {
-            throw error;
-          }
-        });
-      },
-      complete: () => {
-        // Empty observable: complete without next leaves resource stuck in loading
-        if (!receivedValue) {
+    untracked(() => {
+      currentSubscription = source$.subscribe({
+        next: (value) => {
+          receivedValue = true;
           untracked(() => {
-            valueSignal.set(undefined as T);
+            valueSignal.set(value);
             errorSignal.set(null);
-            statusSignal.set('resolved');
+            statusSignal.set('resolved'); // Use 'resolved' to match httpResource
+            options.onSuccess?.(value);
           });
-        }
-      },
+        },
+        error: (error: E) => {
+          untracked(() => {
+            // Try error handler if provided
+            if (options.onError) {
+              const fallbackValue = options.onError(error);
+              if (fallbackValue !== undefined) {
+                valueSignal.set(fallbackValue);
+                errorSignal.set(null);
+                statusSignal.set('resolved'); // Success with fallback
+                return;
+              }
+            }
+
+            // Set error state - clear value to match Angular's httpResource behavior
+            valueSignal.set(undefined as T);
+            errorSignal.set(error);
+            statusSignal.set('error');
+
+            // Optionally throw after handling
+            if (options.throwOnError) {
+              throw error;
+            }
+          });
+        },
+        complete: () => {
+          // Empty observable: complete without next leaves resource stuck in loading
+          if (!receivedValue) {
+            untracked(() => {
+              valueSignal.set(undefined as T);
+              errorSignal.set(null);
+              statusSignal.set('resolved');
+            });
+          }
+        },
+      });
     });
   });
 
@@ -474,8 +476,8 @@ export function resourceAsync<T, E = Error>(
     // Returns true if reload was initiated, false if unnecessary
     const status = untracked(statusSignal);
 
-    // Don't reload if already loading
-    if (status === 'loading' || status === 'reloading') {
+    // Don't reload if already loading with exhaust behavior
+    if (options.behavior === 'exhaust' && (status === 'loading' || status === 'reloading')) {
       return false;
     }
 

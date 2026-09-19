@@ -48,7 +48,6 @@
     "prepare": "husky"
   },
   "private": true,
-  "packageManager": "pnpm@10.5.2",
   "engines": {
     "node": ">=24.0.0"
   },
