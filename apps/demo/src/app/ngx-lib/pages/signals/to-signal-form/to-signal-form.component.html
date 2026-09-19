@@ -1,0 +1,543 @@
+<cll-page-container [title]="'Reactive Form Signals & Bindings (toSignalForm)'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>toSignalForm</code> provides a single, unified entry point to bridge Angular Reactive Forms and Signals.
+    Controls under <code>sf.controls</code> are authentic <code>FormControl</code> instances enhanced with signals,
+    eliminating boilerplate while remaining 100% compatible with Angular directives and Clarity components.
+  </p>
+
+  <!-- Interactive Demo Section -->
+  <section class="space-y-4">
+    <h2>
+      Interactive Demo: Cloud Database Provisioning Form
+      <span class="badge badge-success">Enterprise Pattern</span>
+    </h2>
+    <p>
+      This interactive wizard demonstrates <code>toSignalForm</code> handling: dynamic multi-control presence for SQL
+      credentials, automatic version cascades, debounced uniqueness checking via <code>resourceAsync</code>, conditional
+      disabling with auto-reset, cross-control password re-validation, and backend-ready payload sanitization.
+    </p>
+
+    <div class="clr-row">
+      <!-- Left: Interactive Form -->
+      <div class="clr-col-12 clr-col-lg-7">
+        <div class="card">
+          <div class="card-header">
+            <strong>Database Provisioning Specification</strong>
+          </div>
+          <div class="card-block">
+            <form clrForm [formGroup]="form" (ngSubmit)="onSubmit()">
+              <!-- 1. Deployment Region (Infrastructure Gating) -->
+              <clr-select-container>
+                <label for="region-select">Deployment Region / Appliance</label>
+                <select id="region-select" clrSelect [formControl]="sf.controls.region">
+                  <option value="" disabled>Select target region...</option>
+                  <option value="us-west-1">US West (Cloud v2 - Multi-Zone HA Supported)</option>
+                  <option value="ap-east-1">Asia Pacific (Regional Cloud - Multi-Zone HA for PG & MySQL)</option>
+                  <option value="eu-central-1">Europe Central (Legacy Region - Single-Zone Only)</option>
+                </select>
+                <clr-control-error *clrIfError="'required'">Deployment region is required.</clr-control-error>
+                <clr-control-helper>
+                  Asynchronously checks regional appliance capabilities via <code>computedAsync</code>.
+                  @if (region()) {
+                    <span class="ml-2 font-semibold">
+                      @if (isMultiZoneSupported()) {
+                        <span class="label label-success">✓ Multi-Zone HA Supported</span>
+                      } @else {
+                        <span class="label label-warning">Single-Zone Only (HA Gated)</span>
+                      }
+                    </span>
+                  }
+                </clr-control-helper>
+              </clr-select-container>
+
+              <!-- 2. Engine Selection -->
+              <clr-radio-container clrInline>
+                <label for="engine-pg">Database Engine</label>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="engine-pg"
+                    clrRadio
+                    name="engine"
+                    value="postgres"
+                    [formControl]="sf.controls.engine"
+                  />
+                  <label for="engine-pg">PostgreSQL</label>
+                </clr-radio-wrapper>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="engine-mysql"
+                    clrRadio
+                    name="engine"
+                    value="mysql"
+                    [formControl]="sf.controls.engine"
+                  />
+                  <label for="engine-mysql">MySQL</label>
+                </clr-radio-wrapper>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="engine-sqlserver"
+                    clrRadio
+                    name="engine"
+                    value="sqlserver"
+                    [formControl]="sf.controls.engine"
+                  />
+                  <label for="engine-sqlserver">SQL Server</label>
+                </clr-radio-wrapper>
+                <clr-control-error *clrIfError="'required'">Database engine is required.</clr-control-error>
+                <clr-control-helper>
+                  Options below are reactively derived from <code>sf.controls.engine.signals.value</code>.
+                </clr-control-helper>
+              </clr-radio-container>
+
+              <!-- Dynamic Multi-Zone HA Controls (Mounted via sf.bindIf + computedAsync) -->
+              @if (sf.hasControl('haTopology')) {
+                <clr-radio-container clrInline>
+                  <label for="ha-topology-cross">Multi-Zone HA Topology</label>
+                  <clr-radio-wrapper>
+                    <input
+                      type="radio"
+                      id="ha-topology-cross"
+                      clrRadio
+                      name="haTopology"
+                      value="cross-az"
+                      formControlName="haTopology"
+                    />
+                    <label for="ha-topology-cross">Cross-AZ Spread (3 Zones)</label>
+                  </clr-radio-wrapper>
+                  <clr-radio-wrapper>
+                    <input
+                      type="radio"
+                      id="ha-topology-dedicated"
+                      clrRadio
+                      name="haTopology"
+                      value="dedicated-host"
+                      formControlName="haTopology"
+                    />
+                    <label for="ha-topology-dedicated">Dedicated Anti-Affinity Hosts</label>
+                  </clr-radio-wrapper>
+                  <clr-control-helper>
+                    Dynamically mounted by <code>sf.bindIf(isMultiZoneSupported, ...)</code>.
+                  </clr-control-helper>
+                </clr-radio-container>
+
+                <clr-input-container>
+                  <label for="replica-count-input">Replica Node Count</label>
+                  <input
+                    id="replica-count-input"
+                    clrInput
+                    type="number"
+                    min="2"
+                    max="5"
+                    formControlName="replicaCount"
+                  />
+                  <clr-control-error *clrIfError="'required'">Replica count is required.</clr-control-error>
+                  <clr-control-error *clrIfError="'min'">Minimum 2 replicas for Multi-Zone HA.</clr-control-error>
+                  <clr-control-error *clrIfError="'max'">Maximum 5 replicas permitted.</clr-control-error>
+                  <clr-control-helper>Values are preserved across region toggles.</clr-control-helper>
+                </clr-input-container>
+              }
+
+              <!-- 3. Cascading Version Select -->
+              <clr-select-container>
+                <label for="version-select">Engine Version</label>
+                <select id="version-select" clrSelect [formControl]="sf.controls.version">
+                  <option value="" disabled>Select version</option>
+                  @for (ver of availableVersions(); track ver) {
+                    <option [value]="ver">{{ ver }}</option>
+                  }
+                </select>
+                <clr-control-error *clrIfError="'required'">Engine version is required.</clr-control-error>
+                <clr-control-helper>
+                  Automatically resets to first available version when engine changes via
+                  <code>sf.revalidate</code>.
+                </clr-control-helper>
+              </clr-select-container>
+
+              <!-- 4. Debounced Cluster Name with Live Validation Probe -->
+              <clr-input-container>
+                <label for="cluster-name-input">Cluster Name</label>
+                <input
+                  id="cluster-name-input"
+                  clrInput
+                  type="text"
+                  placeholder="e.g. production-cluster"
+                  [formControl]="sf.controls.clusterName"
+                />
+                <clr-control-error *clrIfError="'required'">Cluster name is required.</clr-control-error>
+                <clr-control-error *clrIfError="'minlength'"
+                  >Cluster name must have at least 4 characters.</clr-control-error
+                >
+                <clr-control-helper>
+                  Debounced (400ms) with <code>sf.controlValue('clusterName', &#123; debounceTime: 400 &#125;)</code>.
+                </clr-control-helper>
+              </clr-input-container>
+
+              <!-- Live Async Uniqueness Probe Feedback (resourceAsync) -->
+              <div class="mt-2 text-xs">
+                @if (nameAvailabilityRef.isLoading()) {
+                  <div class="text-gray-500 flex items-center gap-2">
+                    <cll-spinner [inline]="true" [size]="'sm'" />
+                    <span>Checking availability across data centers...</span>
+                  </div>
+                } @else if (nameAvailabilityRef.value(); as result) {
+                  @if (result.name && result.available) {
+                    <span class="label label-success">✓ {{ result.message }}</span>
+                  } @else if (result.name && !result.available) {
+                    <span class="label label-danger">✗ {{ result.message }}</span>
+                  }
+                }
+              </div>
+
+              <!-- 5. Declarative Enable/Disable with Auto-Reset (sf.bindDisabled) -->
+              <clr-toggle-container>
+                <label for="auto-scaling-toggle">Storage Auto-scaling</label>
+                <clr-toggle-wrapper>
+                  <input type="checkbox" id="auto-scaling-toggle" clrToggle [formControl]="sf.controls.autoScaling" />
+                </clr-toggle-wrapper>
+                <clr-control-helper>
+                  When enabled, manual storage input is automatically disabled and reset to 250 GB.
+                </clr-control-helper>
+              </clr-toggle-container>
+
+              <clr-input-container>
+                <label for="storage-gb-input">Allocated Storage (GB)</label>
+                <input id="storage-gb-input" clrInput type="number" [formControl]="sf.controls.storageGb" />
+                <clr-control-error *clrIfError="'required'">Storage size is required.</clr-control-error>
+                <clr-control-error *clrIfError="'min'">Minimum allocation is 20 GB.</clr-control-error>
+                <clr-control-helper>
+                  Bound via
+                  <code
+                    >sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250
+                    &#125;)</code
+                  >.
+                </clr-control-helper>
+              </clr-input-container>
+
+              <!-- Declarative Enable/Disable Status Badge -->
+              <div class="mt-2 text-xs">
+                @if (sf.fields.storageGb.disabled()) {
+                  <span class="label label-warning">🔒 Auto-scaling Managed (Disabled, locked to 250 GB)</span>
+                } @else {
+                  <span class="label label-success">✓ Manual Allocation Allowed</span>
+                }
+              </div>
+
+              <!-- 6. Dynamic Presence for SQL Credentials (sf.bindIf) -->
+              <clr-radio-container clrInline>
+                <label for="auth-sql">Authentication Mode</label>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="auth-sql"
+                    clrRadio
+                    name="authMode"
+                    value="sql"
+                    [formControl]="sf.controls.authMode"
+                  />
+                  <label for="auth-sql">Database Native User</label>
+                </clr-radio-wrapper>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="auth-windows"
+                    clrRadio
+                    name="authMode"
+                    value="windows"
+                    [formControl]="sf.controls.authMode"
+                  />
+                  <label for="auth-windows">Directory Service / Windows Principal</label>
+                </clr-radio-wrapper>
+                <clr-control-error *clrIfError="'required'">Authentication mode is required.</clr-control-error>
+                <clr-control-helper>
+                  Native users require strong credentials; Windows principals use domain authentication.
+                </clr-control-helper>
+              </clr-radio-container>
+
+              @if (authMode() === 'sql') {
+                <clr-password-container>
+                  <label for="admin-password-input">Admin Password</label>
+                  <input id="admin-password-input" clrPassword type="password" formControlName="password" />
+                  <clr-control-error *clrIfError="'required'">Password is required for Native Users.</clr-control-error>
+                  <clr-control-error *clrIfError="'minlength'"
+                    >Password must be at least 8 characters.</clr-control-error
+                  >
+                </clr-password-container>
+
+                <clr-password-container>
+                  <label for="confirm-password-input">Confirm Password</label>
+                  <input id="confirm-password-input" clrPassword type="password" formControlName="confirmPassword" />
+                  <clr-control-error *clrIfError="'required'">Confirmation is required.</clr-control-error>
+                  <clr-control-error *clrIfError="'passwordMismatch'">Passwords do not match.</clr-control-error>
+                  <clr-control-helper>
+                    Re-validated automatically on every password stroke via <code>sf.revalidate</code>.
+                  </clr-control-helper>
+                </clr-password-container>
+              }
+
+              <!-- 6. Dynamic Control Presence for TLS Certificates -->
+              <clr-radio-container clrInline>
+                <label for="cert-managed">TLS Certificates</label>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="cert-managed"
+                    clrRadio
+                    name="certType"
+                    value="managed"
+                    [formControl]="sf.controls.certType"
+                  />
+                  <label for="cert-managed">Cloud Auto-Generated (Let's Encrypt)</label>
+                </clr-radio-wrapper>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    id="cert-custom"
+                    clrRadio
+                    name="certType"
+                    value="custom"
+                    [formControl]="sf.controls.certType"
+                  />
+                  <label for="cert-custom">Custom Enterprise Certificate</label>
+                </clr-radio-wrapper>
+                <clr-control-error *clrIfError="'required'">Certificate type is required.</clr-control-error>
+                <clr-control-helper>
+                  Custom mode dynamically mounts the certificate input and retains typed text across toggles.
+                </clr-control-helper>
+              </clr-radio-container>
+
+              @if (sf.hasControl('tlsCertificate')) {
+                <clr-textarea-container>
+                  <label for="tls-certificate-textarea">PEM Certificate Chain</label>
+                  <textarea
+                    id="tls-certificate-textarea"
+                    clrTextarea
+                    rows="3"
+                    placeholder="-----BEGIN CERTIFICATE----- ... -----END CERTIFICATE-----"
+                    formControlName="tlsCertificate"
+                  ></textarea>
+                  <clr-control-error *clrIfError="'required'">Certificate chain is required.</clr-control-error>
+                  <clr-control-error *clrIfError="'minlength'"
+                    >Certificate must be at least 20 characters.</clr-control-error
+                  >
+                  <clr-control-helper>
+                    Type some text, switch to "Auto-Generated", and switch back: text is preserved!
+                  </clr-control-helper>
+                </clr-textarea-container>
+              }
+
+              <div class="mt-4 space-x-2">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [clrLoading]="createClusterRef.isLoading()"
+                  [disabled]="
+                    sf.invalid() ||
+                    (nameAvailabilityRef.value() && !nameAvailabilityRef.value()?.available) ||
+                    createClusterRef.isLoading()
+                  "
+                >
+                  Create Cluster
+                </button>
+                <button type="button" class="btn btn-outline" (click)="resetForm()">Reset Form</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        @if (createClusterRef.isLoading()) {
+          <div class="mt-4">
+            <cll-alert [alertType]="'info'">
+              <div class="flex items-center gap-2">
+                <cll-spinner [inline]="true" [size]="'sm'" />
+                <span>Submitting cluster provisioning request to control plane... (1.0s simulation)</span>
+              </div>
+            </cll-alert>
+          </div>
+        }
+
+        @if (createClusterRef.value(); as result) {
+          <div class="mt-4">
+            <cll-alert [alertType]="'success'">
+              <div class="font-semibold text-base mb-1">
+                ✓ Cluster Provisioning Request Succeeded (ID: {{ result.id }})
+              </div>
+              <p class="text-xs mb-2">Simulated backend response received in 1.0 second:</p>
+              <pre class="mt-2 text-xs bg-gray-100 p-2 rounded overflow-x-auto">{{ result | json }}</pre>
+            </cll-alert>
+          </div>
+        }
+      </div>
+
+      <!-- Right: Real-time Reactive Diagnostics Panel -->
+      <div class="clr-col-12 clr-col-lg-5">
+        <div class="card">
+          <div class="card-header">
+            <strong>Real-time Signal Diagnostics (toSignalForm)</strong>
+          </div>
+          <div class="card-block space-y-4">
+            <!-- Form Level Status -->
+            <div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">Overall Form Status (sf)</div>
+              <div class="space-x-1">
+                <span
+                  class="badge"
+                  [class.badge-success]="sf.valid()"
+                  [class.badge-danger]="sf.invalid()"
+                  [class.badge-warning]="sf.disabled()"
+                >
+                  Status: {{ sf.status() }}
+                </span>
+                <span class="badge" [class.badge-info]="sf.dirty()"> Dirty: {{ sf.dirty() }} </span>
+                <span class="badge" [class.badge-info]="sf.touched()"> Touched: {{ sf.touched() }} </span>
+              </div>
+            </div>
+
+            <!-- Regional Capability Diagnostics -->
+            <div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">Regional Capability (computedAsync)</div>
+              <ul class="list-none text-xs space-y-1 p-0 m-0">
+                <li><strong>Region:</strong> "{{ sf.fields.region.value() || '(none selected)' }}"</li>
+                <li>
+                  <strong>Multi-Zone Supported:</strong>
+                  <span
+                    class="badge"
+                    [class.badge-success]="isMultiZoneSupported()"
+                    [class.badge-warning]="!isMultiZoneSupported()"
+                  >
+                    {{ isMultiZoneSupported() }}
+                  </span>
+                </li>
+                <li><strong>HA Controls Attached:</strong> {{ sf.hasControl('haTopology') }}</li>
+              </ul>
+            </div>
+
+            <!-- Cluster Name Diagnostics -->
+            <div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">
+                Cluster Name State (sf.fields.clusterName)
+              </div>
+              <ul class="list-none text-xs space-y-1 p-0 m-0">
+                <li><strong>Value:</strong> "{{ sf.fields.clusterName.value() }}"</li>
+                <li><strong>Debounced (400ms):</strong> "{{ clusterNameDebounced() }}"</li>
+                <li>
+                  <strong>Valid:</strong> {{ sf.fields.clusterName.valid() }} | <strong>Touched:</strong>
+                  {{ sf.fields.clusterName.touched() }}
+                </li>
+                @if (sf.fields.clusterName.errors(); as errs) {
+                  <li class="text-danger"><strong>Errors:</strong> {{ errs | json }}</li>
+                }
+              </ul>
+            </div>
+
+            <!-- Password Diagnostics -->
+            <div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">SQL Credentials State (sf.field)</div>
+              <ul class="list-none text-xs space-y-1 p-0 m-0">
+                <li><strong>Auth Mode:</strong> {{ authMode() }}</li>
+                <li><strong>Controls Attached:</strong> {{ sf.hasControl('password') }}</li>
+                @if (sf.hasControl('password')) {
+                  <li><strong>Password Valid:</strong> {{ sf.field('password').valid() }}</li>
+                  @if (sf.field('password').errors(); as errs) {
+                    <li class="text-danger"><strong>Password Errors:</strong> {{ errs | json }}</li>
+                  }
+                }
+                @if (sf.hasControl('confirmPassword')) {
+                  <li><strong>Confirm Valid:</strong> {{ sf.field('confirmPassword').valid() }}</li>
+                  @if (sf.field('confirmPassword').errors(); as errs) {
+                    <li class="text-danger"><strong>Confirm Errors:</strong> {{ errs | json }}</li>
+                  }
+                }
+              </ul>
+            </div>
+
+            <!-- rawValue Preview -->
+            <div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">Raw Form Values (sf.rawValue)</div>
+              <pre class="text-xs bg-gray-100 p-2 rounded max-h-36 overflow-y-auto mt-1">{{
+                sf.rawValue() | json
+              }}</pre>
+            </div>
+
+            <!-- Live Submission Value Preview (sf.submitValue) -->
+            <div>
+              <div class="text-xs font-semibold uppercase text-gray-500 mb-1">
+                Sanitized Submission Value (sf.submitValue)
+              </div>
+              <cll-callout type="info" class="text-xs">
+                Auto-omits UI-only <code>confirmPassword</code> and omits detached <code>password</code> on Windows
+                auth.
+              </cll-callout>
+              <pre class="text-xs bg-gray-100 p-2 rounded max-h-48 overflow-y-auto mt-2">{{
+                sf.submitValue() | json
+              }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code & Architecture Reference -->
+  <section class="space-y-6">
+    <h2>Architecture & API Guide</h2>
+
+    <article class="space-y-3">
+      <h3>1. toSignalForm: The Unified Facade</h3>
+      <p>
+        Provides a single, strongly-typed entry point for all reactive form signals, control diagnostics, declarative
+        bindings, and backend payload preparation. Controls under <code>sf.controls</code> are authentic
+        <code>FormControl</code> instances with attached signals.
+      </p>
+      <app-code-block [code]="toSignalFormSnippet" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>2. bindIf: Dynamic Control Presence with Memory</h3>
+      <p>
+        Mounts or unmounts a group of related controls (such as database credentials) together based on a reactive
+        condition. Detached controls are automatically excluded from validation and backend payloads, and their input is
+        preserved across switches when <code>preserveValue: true</code> is configured.
+      </p>
+      <app-code-block [code]="bindIfSnippet" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>3. bindDisabled: Declarative Enable/Disable</h3>
+      <p>
+        Binds a control's enabled/disabled state directly to a boolean signal or reactive getter function (<code
+          >() =&gt; boolean</code
+        >). It supports strongly-typed control keys, direct <code>sf.controls.&lt;name&gt;</code> enhanced controls, and
+        <code>AbstractControl</code> instances. Defaults to <code>emitEvent: true</code> to ensure reactive status
+        signals update synchronously, and supports optional reset-on-disable with a strongly-typed
+        <code>resetValue</code>.
+      </p>
+      <app-code-block [code]="bindDisabledSnippet" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>4. sf.submitValue: Clean Submission Value Preparation</h3>
+      <p>
+        Solves the tension between <code>form.value</code> (which drops disabled controls) and
+        <code>form.getRawValue()</code> (which dumps UI-only fields like <code>confirmPassword</code>).
+        <code>sf.submitValue()</code> provides a continuous reactive signal that is always sanitized and ready for
+        submission or <code>resourceAsync</code>.
+      </p>
+      <app-code-block [code]="submitValueSnippet" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>5. Async Capability Gating (computedAsync + bindIf)</h3>
+      <p>
+        In cloud and enterprise applications, available form fields often depend on regional capabilities or feature
+        flags resolved asynchronously from API endpoints.
+        <code>computedAsync</code> derives a reactive <code>Signal&lt;boolean&gt;</code> from the selected region and
+        engine, which passes directly into <code>sf.bindIf</code> to mount or unmount capability controls on the fly.
+      </p>
+      <app-code-block [code]="featureGatingSnippet" lang="typescript" />
+    </article>
+  </section>
+</cll-page-container>

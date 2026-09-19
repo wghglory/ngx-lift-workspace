@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {AsyncValidatorFn, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {firstValueFrom, Observable, of, switchMap, timer} from 'rxjs';
@@ -75,6 +75,32 @@ describe('ifValidator', () => {
     expect(result).toEqual({yourCustomError: false});
     expect(trueValidatorFnMock).not.toHaveBeenCalled();
     expect(falseValidatorFnMock).toHaveBeenCalledWith(control);
+  });
+
+  it('should support Signal<boolean> as condition', () => {
+    const control = fixture.componentInstance.form.controls.testControl;
+    const isConditionMet = signal(true);
+
+    const trueValidatorMock = vi.fn().mockReturnValue({required: true});
+    const conditionalValidator = ifValidator(isConditionMet, trueValidatorMock);
+
+    expect(conditionalValidator(control)).toEqual({required: true});
+
+    isConditionMet.set(false);
+    expect(conditionalValidator(control)).toBeNull();
+  });
+
+  it('should support a 0-argument boolean getter condition', () => {
+    const control = fixture.componentInstance.form.controls.testControl;
+    let enabled = true;
+
+    const trueValidatorMock = vi.fn().mockReturnValue({required: true});
+    const conditionalValidator = ifValidator(() => enabled, trueValidatorMock);
+
+    expect(conditionalValidator(control)).toEqual({required: true});
+
+    enabled = false;
+    expect(conditionalValidator(control)).toBeNull();
   });
 });
 

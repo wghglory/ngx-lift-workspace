@@ -1,0 +1,347 @@
+import {
+  assertInInjectionContext,
+  DestroyRef,
+  effect,
+  EffectRef,
+  inject,
+  Injector,
+  isSignal,
+  Signal,
+  untracked,
+} from '@angular/core';
+import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {merge, Observable} from 'rxjs';
+
+import {
+  BindControlDisabledOptions,
+  BindControlIfOptions,
+  BindControlValidatorsOptions,
+  RevalidateSubscription,
+} from '../models/to-signal-form.model';
+
+/**
+ * Declaratively binds an Angular `AbstractControl`'s enabled/disabled state to a boolean `Signal` or predicate function.
+ *
+ * Runs inside an Angular reactive effect and automatically updates the control whenever the condition changes.
+ * Defaults to `emitEvent: true` so reactive status signals and validation states update immediately.
+ *
+ * @example
+ * ```typescript
+ * bindControlDisabled(this.form.controls.storageGb, this.isAutoScalingEnabled, {
+ *   resetOnDisable: true,
+ *   resetValue: 250,
+ * });
+ * ```
+ *
+ * @param control The `AbstractControl` (or `FormControl`, `FormGroup`, `FormArray`) to manage.
+ * @param condition A boolean `Signal` or getter function that evaluates whether the control should be disabled.
+ * @param options Configuration for injector, resetOnDisable, and event emission.
+ */
+export function bindControlDisabled<T = unknown>(
+  control: AbstractControl<T> | AbstractControl,
+  condition: Signal<boolean> | (() => boolean),
+  options?: BindControlDisabledOptions<T>,
+): void {
+  let injector = options?.injector;
+  if (!injector) {
+    assertInInjectionContext(bindControlDisabled);
+    injector = inject(Injector);
+  }
+
+  const emitEvent = options?.emitEvent ?? true;
+  const resetOnDisable = options?.resetOnDisable ?? false;
+
+  effect(
+    () => {
+      const shouldDisable = Boolean(condition());
+
+      untracked(() => {
+        if (shouldDisable) {
+          if (control.enabled) {
+            control.disable({emitEvent});
+            if (resetOnDisable) {
+              if (options?.resetValue !== undefined) {
+                control.reset(options.resetValue, {emitEvent});
+              } else {
+                control.reset(undefined, {emitEvent});
+              }
+            }
+          }
+        } else {
+          if (control.disabled) {
+            control.enable({emitEvent});
+          }
+        }
+      });
+    },
+    {injector},
+  );
+}
+
+/**
+ * Declaratively synchronizes an `AbstractControl`'s validators with a reactive signal or getter.
+ *
+ * Replaces the control's synchronous validators and re-evaluates validity whenever the signal emits.
+ *
+ * @example
+ * ```typescript
+ * bindControlValidators(this.form.controls.password, () =>
+ *   this.authMode() === 'sql' ? [Validators.required, Validators.minLength(8)] : null
+ * );
+ * ```
+ *
+ * @param control The `AbstractControl` whose validators should be managed.
+ * @param validators A `Signal` or getter returning the active `ValidatorFn`, array of validators, or `null`.
+ * @param options Configuration options.
+ * @returns An `EffectRef` for lifecycle management.
+ */
+export function bindControlValidators(
+  control: AbstractControl,
+  validators:
+    | ValidatorFn
+    | ValidatorFn[]
+    | null
+    | Signal<ValidatorFn | ValidatorFn[] | null>
+    | (() => ValidatorFn | ValidatorFn[] | null),
+  options?: BindControlValidatorsOptions,
+): EffectRef {
+  let injector = options?.injector;
+  if (!injector) {
+    assertInInjectionContext(bindControlValidators);
+    injector = inject(Injector);
+  }
+
+  const emitEvent = options?.emitEvent ?? true;
+  const updateValueAndValidity = options?.updateValueAndValidity ?? true;
+
+  return effect(
+    () => {
+      const valFns =
+        typeof validators === 'function' ? (validators as () => ValidatorFn | ValidatorFn[] | null)() : validators;
+      control.setValidators(valFns);
+      if (updateValueAndValidity) {
+        control.updateValueAndValidity({emitEvent});
+      }
+    },
+    {injector},
+  );
+}
+
+/**
+ * Conditionally mounts or unmounts a single control or dictionary of controls to an Angular `FormGroup`
+ * based on a reactive boolean `Signal` or predicate.
+ *
+ * Automatically wraps factory invocation in `untracked()` to avoid unwanted reactive dependencies.
+ * If `preserveValue` is `true`, preserves control values in memory while unmounted and restores them upon remounting.
+ *
+ * @example
+ * ```typescript
+ * bindControlIf(
+ *   this.form,
+ *   () => this.authMode() === 'sql',
+ *   () => ({
+ *     password: new FormControl('', [Validators.required]),
+ *     confirmPassword: new FormControl('', [Validators.required]),
+ *   }),
+ *   {preserveValue: true}
+ * );
+ * ```
+ *
+ * @param parent The parent `FormGroup` to add/remove controls from.
+ * @param conditionOrName Control name (single mode) or boolean Signal/predicate (dictionary mode).
+ * @param conditionOrControlsFactory Condition (single mode) or factory returning control dictionary.
+ * @param controlFactoryOrOptions Control factory (single mode) or options (dictionary mode).
+ * @param options Options for single control mode.
+ */
+export function bindControlIf<K extends string, C extends AbstractControl>(
+  parent: FormGroup,
+  condition: Signal<boolean> | (() => boolean),
+  controlsFactory: () => Record<K, C>,
+  options?: BindControlIfOptions,
+): void;
+export function bindControlIf<C extends AbstractControl>(
+  parent: FormGroup,
+  controlName: string,
+  condition: Signal<boolean> | (() => boolean),
+  controlFactory: () => C,
+  options?: BindControlIfOptions,
+): void;
+export function bindControlIf(
+  parent: FormGroup,
+  arg1: string | Signal<boolean> | (() => boolean),
+  arg2: Signal<boolean> | (() => boolean) | (() => Record<string, AbstractControl>),
+  arg3?: (() => AbstractControl) | BindControlIfOptions,
+  arg4?: BindControlIfOptions,
+): void {
+  let isSingleMode = false;
+  let controlName = '';
+  let condition: Signal<boolean> | (() => boolean);
+  let controlFactory: (() => AbstractControl) | undefined;
+  let controlsFactory: (() => Record<string, AbstractControl>) | undefined;
+  let options: BindControlIfOptions | undefined;
+
+  if (typeof arg1 === 'string') {
+    isSingleMode = true;
+    controlName = arg1;
+    condition = arg2 as Signal<boolean> | (() => boolean);
+    controlFactory = arg3 as () => AbstractControl;
+    options = arg4;
+  } else {
+    isSingleMode = false;
+    condition = arg1;
+    controlsFactory = arg2 as () => Record<string, AbstractControl>;
+    options = arg3 as BindControlIfOptions | undefined;
+  }
+
+  let injector = options?.injector;
+  if (!injector) {
+    assertInInjectionContext(bindControlIf);
+    injector = inject(Injector);
+  }
+
+  const preserveValue = options?.preserveValue ?? false;
+  const preservedValues = new Map<string, unknown>();
+  const mountedKeys = new Set<string>();
+
+  effect(
+    () => {
+      const shouldBePresent = Boolean(condition());
+
+      untracked(() => {
+        if (isSingleMode && controlName && controlFactory) {
+          const isCurrentlyPresent = parent.contains(controlName);
+
+          if (shouldBePresent && !isCurrentlyPresent) {
+            const factory = controlFactory;
+            const ctrl = untracked(() => factory());
+            if (preserveValue && preservedValues.has(controlName)) {
+              ctrl.setValue(preservedValues.get(controlName));
+            }
+            parent.addControl(controlName, ctrl);
+          } else if (!shouldBePresent && isCurrentlyPresent) {
+            if (preserveValue) {
+              preservedValues.set(controlName, parent.get(controlName)?.value);
+            }
+            parent.removeControl(controlName);
+          }
+        } else if (!isSingleMode && controlsFactory) {
+          if (shouldBePresent) {
+            const isAlreadyMounted = mountedKeys.size > 0 && Array.from(mountedKeys).every((k) => parent.contains(k));
+            if (isAlreadyMounted) {
+              return;
+            }
+
+            const factory = controlsFactory;
+            const controls = untracked(() => factory());
+            for (const [key, ctrl] of Object.entries(controls)) {
+              if (!parent.contains(key)) {
+                if (preserveValue && preservedValues.has(key)) {
+                  ctrl.setValue(preservedValues.get(key));
+                }
+                parent.addControl(key, ctrl);
+                mountedKeys.add(key);
+              }
+            }
+          } else {
+            for (const key of Array.from(mountedKeys)) {
+              if (parent.contains(key)) {
+                if (preserveValue) {
+                  preservedValues.set(key, parent.get(key)?.value);
+                }
+                parent.removeControl(key);
+              }
+              mountedKeys.delete(key);
+            }
+          }
+        }
+      });
+    },
+    {injector},
+  );
+}
+
+/**
+ * Automatically re-triggers validation on a target control whenever a source control,
+ * Signal, or Observable value or status changes.
+ *
+ * Returns a `RevalidateSubscription` for manual unregistration if needed.
+ *
+ * @example
+ * ```typescript
+ * revalidateOnChange(this.form.controls.confirmPassword, this.form.controls.password);
+ * ```
+ *
+ * @param target The control to be re-validated.
+ * @param source The trigger source (control, Signal, or getter).
+ * @param options Configuration for injector.
+ * @returns A `RevalidateSubscription` handle.
+ */
+export function revalidateOnChange(
+  target: AbstractControl | AbstractControl[],
+  source: AbstractControl | Signal<unknown> | (() => unknown),
+  options?: {injector?: Injector},
+): RevalidateSubscription {
+  let injector = options?.injector;
+  if (!injector) {
+    assertInInjectionContext(revalidateOnChange);
+    injector = inject(Injector);
+  }
+
+  const targets = Array.isArray(target) ? target : [target];
+  const trigger = () => {
+    for (const t of targets) {
+      t.updateValueAndValidity({emitEvent: true});
+    }
+  };
+
+  const destroyRef = injector.get(DestroyRef);
+  let cleanup = () => {
+    // Initial no-op until assigned
+  };
+
+  if (source instanceof AbstractControl) {
+    let prevVal = source.value;
+    let prevStatus = source.status;
+    const sub = merge(source.valueChanges as Observable<unknown>, source.statusChanges).subscribe(() => {
+      const currentVal = source.value;
+      const currentStatus = source.status;
+      if (currentVal !== prevVal || currentStatus !== prevStatus) {
+        prevVal = currentVal;
+        prevStatus = currentStatus;
+        trigger();
+      }
+    });
+    cleanup = () => sub.unsubscribe();
+  } else if (isSignal(source) || typeof source === 'function') {
+    const effectRef = effect(
+      () => {
+        source();
+        untracked(() => {
+          trigger();
+        });
+      },
+      {injector},
+    );
+    cleanup = () => effectRef.destroy();
+  }
+
+  let isCleanedUp = false;
+  const unreg = destroyRef.onDestroy(() => {
+    if (!isCleanedUp) {
+      isCleanedUp = true;
+      cleanup();
+    }
+  });
+
+  const safeCleanup = (): void => {
+    if (isCleanedUp) return;
+    isCleanedUp = true;
+    cleanup();
+    unreg();
+  };
+
+  return {
+    unsubscribe: safeCleanup,
+    destroy: safeCleanup,
+  };
+}

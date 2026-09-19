@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent} from 'clr-lift';
-import {ifValidator} from 'ngx-lift';
+import {ifValidator, revalidateOnChange} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -27,14 +27,20 @@ export class IfValidatorComponent {
     reason: new FormControl('', this.validator),
   });
 
-  // updateValueAndValidity whenever the condition is changed.
+  constructor() {
+    // Automatically revalidate email & reason whenever choice changes!
+    // Eliminates the need for manual (change)="changeChoice()" template handlers.
+    revalidateOnChange([this.form.controls.email, this.form.controls.reason], this.form.controls.choice);
+  }
+
+  // Optional manual trigger (kept for legacy reference)
   changeChoice() {
     this.form.controls.email.updateValueAndValidity();
     this.form.controls.reason.updateValueAndValidity();
   }
 
   ifValidatorCode = highlight(`
-import {ifValidator} from 'ngx-lift';
+import {ifValidator, revalidateOnChange} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -45,11 +51,11 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
       <clr-radio-container>
         <label>Do you like this tool?</label>
         <clr-radio-wrapper>
-          <input type="radio" clrRadio name="choice" value="LIKE" [formControl]="form.controls.choice" (change)="changeChoice()" />
+          <input type="radio" clrRadio name="choice" value="LIKE" [formControl]="form.controls.choice" />
           <label>Of course 😜</label>
         </clr-radio-wrapper>
         <clr-radio-wrapper>
-          <input type="radio" clrRadio name="choice" value="UNLIKE" [formControl]="form.controls.choice" (change)="changeChoice()" />
+          <input type="radio" clrRadio name="choice" value="UNLIKE" [formControl]="form.controls.choice" />
           <label>Sorry 😅</label>
         </clr-radio-wrapper>
       </clr-radio-container>
@@ -72,8 +78,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 export class IfValidatorComponent {
   validator = ifValidator(
     () => this.form?.controls.choice.value === 'UNLIKE',
-    [Validators.required],
-    // add mismatch validation functions if needed
+    [Validators.required]
   );
 
   form = new FormGroup({
@@ -82,10 +87,12 @@ export class IfValidatorComponent {
     reason: new FormControl('', this.validator),
   });
 
-  // updateValueAndValidity whenever the condition is changed.
-  changeChoice() {
-    this.form.controls.email.updateValueAndValidity();
-    this.form.controls.reason.updateValueAndValidity();
+  constructor() {
+    // Automatically revalidate dependent fields when choice changes
+    revalidateOnChange(
+      [this.form.controls.email, this.form.controls.reason],
+      this.form.controls.choice
+    );
   }
 }
   `);

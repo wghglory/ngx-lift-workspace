@@ -11,6 +11,18 @@ export function isEqual<T>(value1: T, value2: T): boolean {
     return false;
   }
 
+  if (Array.isArray(value1) !== Array.isArray(value2)) {
+    return false;
+  }
+
+  if (Array.isArray(value1) && Array.isArray(value2)) {
+    if (value1.length !== value2.length) return false;
+    for (let i = 0; i < value1.length; i++) {
+      if (!isEqual(value1[i], value2[i])) return false;
+    }
+    return true;
+  }
+
   const keys1 = Object.keys(value1) as Array<keyof T>;
   const keys2 = Object.keys(value2) as Array<keyof T>;
 
