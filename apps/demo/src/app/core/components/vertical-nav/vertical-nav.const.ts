@@ -7,12 +7,12 @@ export const ngxLiftNavConfig: NavConfig[] = [
     icon: 'radar',
     children: [
       {path: '/createTrigger', value: 'createTrigger'},
-      {path: '/computedAsync', value: 'computedAsync', label: 'updated'},
+      {path: '/computedAsync', value: 'computedAsync'},
       {path: '/combineFrom', value: 'combineFrom'},
       {path: '/mergeFrom', value: 'mergeFrom'},
       {path: '/injectParams/hi-param', value: 'injectParams'},
       {path: '/injectQueryParams', queryParams: {search: 7, page: 5}, value: 'injectQueryParams'},
-      {path: '/resourceAsync', value: 'resourceAsync', label: 'new'},
+      {path: '/resourceAsync', value: 'resourceAsync'},
     ],
   },
   {
@@ -20,7 +20,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
     value: 'Operators',
     icon: 'objects',
     children: [
-      {path: '/createAsyncState', value: 'createAsyncState', label: 'updated'},
+      {path: '/createAsyncState', value: 'createAsyncState'},
       {path: '/switchMapWithAsyncState', value: 'switchMapWithAsyncState'},
       {path: '/combineLatestEager', value: 'combineLatestEager'},
       {path: '/distinctOnChange', value: 'distinctOnChange'},
