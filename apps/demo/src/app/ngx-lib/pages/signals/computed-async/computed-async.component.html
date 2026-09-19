@@ -196,6 +196,84 @@
         <code>onError</code> callback can still be used for logging or side effects before the error throws.
       </cll-callout>
     </article>
+
+    <article class="space-y-3">
+      <h3>Example 13: Tab Switching with Request Cancellation (Stream Resilience)</h3>
+      <p>
+        In multi-tab UIs, switching tabs rapidly can trigger concurrent requests where in-flight requests get aborted or
+        fail (e.g. browser navigation cancellations).
+      </p>
+      <cll-callout type="info">
+        <strong>Before Fix:</strong> An inner error (such as a canceled HTTP request) would propagate through
+        <code>switchAll</code> and permanently terminate the outer observable subscription. The UI stayed stuck in
+        loading forever and could never load subsequent tabs.<br />
+        <strong>After Fix:</strong> The inner error is safely caught and handled, keeping the outer stream alive.
+        Switching to any tab or retrying immediately fetches and displays new data!
+      </cll-callout>
+
+      <div class="space-x-2">
+        <button
+          type="button"
+          class="btn btn-sm"
+          [class.btn-primary]="selectedTab() === 'activeDirectory'"
+          [class.btn-outline]="selectedTab() !== 'activeDirectory'"
+          (click)="selectTab('activeDirectory')"
+        >
+          Active Directory
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm"
+          [class.btn-primary]="selectedTab() === 'backupLocations'"
+          [class.btn-outline]="selectedTab() !== 'backupLocations'"
+          (click)="selectTab('backupLocations')"
+        >
+          Backup Locations
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm"
+          [class.btn-primary]="selectedTab() === 'certificates'"
+          [class.btn-outline]="selectedTab() !== 'certificates'"
+          (click)="selectTab('certificates')"
+        >
+          Trusted Root Certs
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-warning"
+          [class.btn-outline]="selectedTab() !== 'aborted'"
+          (click)="selectTab('aborted')"
+        >
+          Simulate Canceled Request
+        </button>
+      </div>
+
+      <div class="card p-4">
+        @if (tabState().isLoading) {
+          <cll-spinner />
+        }
+        @if (tabState().error; as error) {
+          <cll-alert [error]="error" [alertType]="'danger'" />
+          <p class="text-sm mt-2">
+            Notice: Even after this simulated aborted request, the stream remains alive! Click any tab above to see it
+            seamlessly recover.
+          </p>
+        }
+        @if (tabState().data; as data) {
+          <div class="card-block">
+            <h4 class="card-title">{{ data.title }} ({{ data.count }})</h4>
+            <ul class="list-disc ml-6 mt-2">
+              @for (item of data.items; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+
+      <app-code-block [code]="tabSwitchingCode" lang="typescript" />
+    </article>
   </section>
 
   <!-- API Reference -->

@@ -24,4 +24,30 @@ describe('ComputedAsyncComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should handle tab switching, survive aborted request, and recover on subsequent tab switch', async () => {
+    // Initial tab loads active directory
+    expect(component.selectedTab()).toBe('activeDirectory');
+
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    fixture.detectChanges();
+    expect(component.tabState().data?.title).toBe('Active Directory Domains');
+
+    // Switch to simulated aborted request (simulates canceled HTTP request)
+    component.selectTab('aborted');
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    fixture.detectChanges();
+
+    expect(component.tabState().error).toBeTruthy();
+
+    // Verify stream resilience: subsequent tab switch still executes and recovers
+    component.selectTab('backupLocations');
+    fixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    fixture.detectChanges();
+
+    expect(component.tabState().error).toBeNull();
+    expect(component.tabState().data?.title).toBe('Backup & Storage Locations');
+  });
 });

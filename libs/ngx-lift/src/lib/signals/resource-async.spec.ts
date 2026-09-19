@@ -615,6 +615,41 @@ describe('resourceAsync', () => {
         expect(resource.status()).toBe('loading'); // Not 'reloading' because no previous successful data
       });
     });
+
+    it('should allow reload while loading with switch behavior and re-execute', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let count = 0;
+        const resource = resourceAsync(() => promise(++count, 100));
+
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        // Reload while still loading
+        const initiated = resource.reload();
+        expect(initiated).toBe(true);
+
+        await flushEffects();
+        await flushEffects(100);
+        expect(resource.value()).toBe(2);
+      });
+    });
+
+    it('should ignore reload while loading with exhaust behavior', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let count = 0;
+        const resource = resourceAsync(() => promise(++count, 100), {behavior: 'exhaust'});
+
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        // Reload while still loading should be ignored with exhaust
+        const initiated = resource.reload();
+        expect(initiated).toBe(false);
+
+        await flushEffects(100);
+        expect(resource.value()).toBe(1);
+      });
+    });
   });
 
   describe('observable error handling', () => {

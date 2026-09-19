@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component, inject, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, Signal, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
+import {delay, of, throwError} from 'rxjs';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
@@ -46,6 +47,49 @@ export class ComputedAsyncComponent {
   deferredUsersState: Signal<AsyncState<PaginationResponse<User>> | undefined> = computedAsync(() => {
     return this.fetchTrigger.value() ? this.userService.getUsers({results: 9}).pipe(createAsyncState()) : undefined;
   });
+
+  // Tab switching resilience demo
+  selectedTab = signal<'activeDirectory' | 'backupLocations' | 'certificates' | 'aborted'>('activeDirectory');
+
+  tabState: Signal<AsyncState<{title: string; count: number; items: string[]}>> = computedAsync(
+    () => {
+      const tab = this.selectedTab();
+      if (tab === 'aborted') {
+        // Simulates an HTTP request aborted by browser when rapidly switching tabs
+        return throwError(() => new Error('Request canceled / aborted (net::ERR_ABORTED)')).pipe(
+          delay(100),
+          createAsyncState(),
+        );
+      }
+
+      const dataMap: Record<string, {title: string; count: number; items: string[]}> = {
+        activeDirectory: {
+          title: 'Active Directory Domains',
+          count: 2,
+          items: ['corp.local (Configured)', 'internal.ad (Configured)'],
+        },
+        backupLocations: {
+          title: 'Backup & Storage Locations',
+          count: 3,
+          items: ['s3-primary (us-west-2)', 'minio-backup (local)', 'azure-blob (eastus)'],
+        },
+        certificates: {
+          title: 'Trusted Root Certificates',
+          count: 4,
+          items: ['vCenter Root CA', 'Internal Root CA', 'MinIO Self-Signed CA', 'Proxy Root CA'],
+        },
+      };
+
+      return of(dataMap[tab]).pipe(delay(200), createAsyncState());
+    },
+    {
+      initialValue: {isLoading: false, data: null, error: null, status: 'idle'},
+    },
+  );
+
+  selectTab(tab: 'activeDirectory' | 'backupLocations' | 'certificates' | 'aborted') {
+    this.selectedTab.set(tab);
+  }
 
   refresh() {
     this.refreshTrigger.next();
@@ -316,6 +360,34 @@ export class UserDetailComponent {
       }
     }
   );
+}
+  `);
+
+  tabSwitchingCode = highlight(`
+import {computedAsync, createAsyncState} from 'ngx-lift';
+import {Component, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class MultiTabPageComponent {
+  selectedTab = signal<'activeDirectory' | 'backupLocations' | 'certificates'>('activeDirectory');
+
+  // When switching tabs rapidly, the previous HTTP request might be canceled
+  // by the browser / abort controller (throwing an AbortError or HttpError).
+  //
+  // BEFORE FIX: The inner abort error permanently killed the outer RxJS switchAll
+  // pipeline, unsubscribing from subsequent signal changes. The page got stuck
+  // in loading state forever!
+  //
+  // AFTER FIX: The inner error is safely captured, leaving the pipeline open.
+  // Clicking another tab or retrying continues to fetch and display fresh data!
+  tabState = computedAsync(() => {
+    const tab = this.selectedTab();
+    return this.http.get(\`/api/\${tab}\`).pipe(createAsyncState());
+  });
+
+  selectTab(tab: 'activeDirectory' | 'backupLocations' | 'certificates') {
+    this.selectedTab.set(tab);
+  }
 }
   `);
 

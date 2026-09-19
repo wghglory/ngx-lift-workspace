@@ -49,6 +49,13 @@
   },
   "private": true,
   "packageManager": "pnpm@10.5.2",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.5.2",
+      "onFail": "ignore"
+    }
+  },
   "engines": {
     "node": ">=24.0.0"
   },
