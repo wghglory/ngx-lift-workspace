@@ -1,131 +1,99 @@
+<!--
+  Thank you for contributing to ngx-lift!
+  Please fill out this template to help reviewers understand and review your PR efficiently.
+-->
+
 ## Description
 
-<!-- Provide a clear and concise description of what this PR does -->
+<!-- Provide a clear and concise explanation of what this PR does and the motivation behind it -->
 
-**Related Issue:** <!-- Link to related issue, e.g., Fixes #123 -->
+**Issue Link:** <!-- e.g. Fixes #42, Resolves #108, or "N/A" -->
 
-## Summary of Changes
-
-<!-- Provide a high-level summary of the changes in this PR -->
-
-### Key Changes
-
-- <!-- List major changes here -->
-- <!-- Use bullet points for clarity -->
+---
 
 ## Type of Change
 
-<!-- Select all that apply -->
+<!-- Mark the appropriate type with [x] -->
 
-- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
-- [ ] ✨ New feature (non-breaking change which adds functionality)
-- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] 📚 Documentation update
-- [ ] ♻️ Refactoring (no functional changes)
-- [ ] ⚡ Performance improvement
-- [ ] 🧪 Test update/addition
-- [ ] 🔧 Configuration change
-- [ ] 🎨 Style/UI update
-- [ ] 🔒 Security fix
+- [ ] ✨ `feat`: New feature or utility (non-breaking change adding functionality)
+- [ ] 🐛 `fix`: Bug fix (non-breaking change addressing an issue)
+- [ ] ♻️ `refactor`: Code change that neither fixes a bug nor adds a feature
+- [ ] ⚡ `perf`: Performance improvement
+- [ ] 💥 `breaking`: Breaking change (fix or feature modifying existing public API/behavior)
+- [ ] 📚 `docs`: Documentation-only change
+- [ ] 🧪 `test`: Adding missing tests or correcting existing tests
+- [ ] 🔧 `chore` / `build` / `ci`: Tooling, build pipeline, or dependency updates
 
-## Affected Projects
+---
 
-<!-- Select all that apply -->
+## Affected Workspace Projects
 
-- [ ] `ngx-lift` library
-- [ ] `clr-lift` library
-- [ ] `demo` application
-- [ ] Documentation
-- [ ] CI/CD workflows
-- [ ] Build configuration
-- [ ] Dependencies
+<!-- Select all affected targets with [x] -->
 
-## Breaking Changes
+- [ ] `ngx-lift` (core utilities library)
+- [ ] `clr-lift` (Clarity Design System component library)
+- [ ] `demo` (documentation & showcase app)
+- [ ] `.github` / `tools` (tooling, workflows, configs)
 
-<!-- If this is a breaking change, describe the impact and migration path -->
+---
 
-- [ ] This PR introduces breaking changes
-- [ ] Migration guide provided (if applicable)
+## Summary of Changes
 
-**Breaking Changes:**
+<!-- Provide a concise bulleted list of the key technical changes in this PR -->
 
-<!-- Describe breaking changes here -->
+- <!-- Key change 1 -->
+- <!-- Key change 2 -->
 
-**Migration Guide:**
+---
 
-<!-- Provide migration steps if applicable -->
+## Breaking Changes & Migration Guide
 
-## Testing
+<!-- If this is a breaking change, check the box and provide clear migration instructions -->
 
-### Test Coverage
+- [ ] **This PR introduces breaking changes**
 
-- [ ] Unit tests added/updated
-- [ ] E2E tests added/updated
-- [ ] Manual testing completed
-- [ ] All existing tests pass
+<!-- If yes, detail the breaking changes and how users should migrate:
+### Breaking Changes
+- ...
+
+### Migration Guide
+```typescript
+// Before
+// ...
+
+// After
+// ...
+```
+-->
+
+---
+
+## Testing & Verification
+
+### Verification Checklist
+
+- [ ] Unit tests added / updated
+- [ ] All unit tests pass (`npm test` or `npx nx run-many -t test`)
+- [ ] Lint checks pass with zero errors (`npx nx run-many -t lint`)
+- [ ] Production build succeeds (`npm run build:libs` / `npx nx build demo`)
+- [ ] Interactive demo page updated and verified (if applicable)
 
 ### Test Commands Run
 
 ```bash
-# List the test commands you ran
-npm test
-npm run test:coverage
-npx nx test [project-name]
+npx nx test ngx-lift
+npx nx lint ngx-lift
+npx nx test demo
+npx nx build demo
 ```
 
-### Test Results
+---
 
-<!-- Describe test results or attach test output -->
+## Quality Checklist
 
-## Code Quality Checklist
-
-- [ ] ✅ Code follows the project's style guidelines
-- [ ] ✅ Self-review completed
-- [ ] ✅ JSDoc comments added for exported functions/classes/interfaces
-- [ ] ✅ TypeScript strict mode compliance
-- [ ] ✅ No `any` types used
-- [ ] ✅ ESLint passes without errors
-- [ ] ✅ Prettier formatting applied
-- [ ] ✅ No console.log statements left in code
-- [ ] ✅ No commented-out code
-- [ ] ✅ Accessibility considerations addressed (ARIA labels, keyboard navigation)
-- [ ] ✅ i18n keys added for user-visible text (if applicable)
-
-## Documentation
-
-- [ ] ✅ Documentation updated (README, API docs, etc.)
-- [ ] ✅ Code examples provided (if applicable)
-- [ ] ✅ CHANGELOG.md updated (if applicable)
-- [ ] ✅ Migration guide provided (for breaking changes)
-
-## Performance Impact
-
-<!-- Describe any performance implications -->
-
-- [ ] No performance impact
-- [ ] Performance improved
-- [ ] Performance considerations documented
-
-## Screenshots/Demo
-
-<!-- If applicable, add screenshots, GIFs, or links to demo -->
-
-## Additional Context
-
-<!-- Add any other context, notes, or considerations about this PR -->
-
-## Reviewer Notes
-
-<!-- Any specific areas you'd like reviewers to focus on -->
-
-## Dependencies
-
-<!-- List any new dependencies or dependency updates -->
-
-- <!-- Dependency name and version -->
-
-## Related PRs
-
-<!-- Link to related PRs -->
-
-- <!-- Related PR # -->
+- [ ] Code strictly complies with TypeScript strict mode (no `any` types)
+- [ ] All exported public APIs have comprehensive JSDoc comments with `@example`
+- [ ] Components use `ChangeDetectionStrategy.OnPush`
+- [ ] Signal inputs (`input()`), signal outputs (`output()`), and modern control flow (`@if`, `@for`) are used
+- [ ] Clarity Angular components and design tokens used without hard-coded styles (`clr-lift`)
+- [ ] No residual `console.log` or debug statements

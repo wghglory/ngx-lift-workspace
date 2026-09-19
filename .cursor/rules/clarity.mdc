@@ -194,8 +194,10 @@ library does not use Clarity Design System.
 ```
 
 - Use `clr-datagrid` for data tables
-- Implement pagination, sorting, and filtering using Clarity patterns
+- **Note**: It is acceptable and required to use the structural directive `*clrDgItems` instead of Angular's `@for`
+  control flow to enable Clarity's built-in datagrid features (sorting, filtering, pagination).
 - Consider using the `dgState` operator from `clr-lift` for state management when server-side rendering is required
+- Implement pagination, sorting, and filtering using Clarity patterns
 
 #### Timeline
 
@@ -281,6 +283,18 @@ library does not use Clarity Design System.
 
 ### Accessibility
 
+- **Label and Input Association**: Every `<clr-toggle-container>` (or `<clr-checkbox-container>` with `clrToggle`) MUST
+  explicitly bind its `<label>` to `<input clrToggle>` using matching `for="<id>"` and `id="<id>"` attributes.
+
+  ```html
+  <clr-toggle-container>
+    <label for="enableFeature">Enable feature</label>
+    <clr-toggle-wrapper>
+      <input type="checkbox" id="enableFeature" clrToggle [formControl]="control" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  ```
+
 - **ARIA Labels**: Always provide ARIA labels for interactive elements
 
   ```html
@@ -345,7 +359,7 @@ library does not use Clarity Design System.
   [CDS Layout documentation](https://storybook.core.clarity.design/?path=/story/layout-get-started--page) when using
   `cds-layout` components
 - **Documentation**: Refer to [Clarity Design System](https://clarity.design) for component usage
-- **Version Compatibility**: Ensure compatibility with `@clr/angular` version 18
+- **Component Standards**: Ensure compatibility with modern `@clr/angular`
 
 ## Code Review Checklist - Clarity Design System
 

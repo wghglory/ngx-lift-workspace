@@ -5,7 +5,7 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 ## Rule Files
 
 - **`general.mdc`** - Core standards, technologies, code quality, Definition of Done
-- **`angular.mdc`** - Angular 21 patterns: standalone components, signals, control flow, routing
+- **`angular.mdc`** - Modern Angular patterns: standalone components, signals, control flow, routing
 - **`clarity.mdc`** - Clarity Design System: components, SASS variables, styling, accessibility
 - **`testing.mdc`** - Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
 - **`rxjs.mdc`** - RxJS patterns: observables, operators, async state, subscriptions
@@ -26,15 +26,15 @@ Comprehensive rules for code generation, consistency, and best practices. All ru
 
 ## Technology Stack
 
-- **Angular**: 21.2.17
-- **Nx**: 22.7.5
-- **Clarity**: @clr/angular 18.2.0
-- **Vitest**: 4.1.7
-- **Playwright**: 1.36.0
-- **TypeScript**: 5.9.2
-- **ESLint**: 9.8.0
-- **ngx-lift**: 21.0.0 (workspace package)
-- **clr-lift**: 21.0.0 (workspace package)
+- **Angular**: Modern Angular
+- **Nx**: Modern Nx monorepo
+- **Clarity**: Modern Clarity Design System (@clr/angular)
+- **Vitest**: Unit testing with `@analogjs/vitest-angular`
+- **Playwright**: E2E testing
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Flat config
+- **ngx-lift**: Core utility library
+- **clr-lift**: Clarity component library
 
 ## Quick Checklists
 
