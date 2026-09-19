@@ -5,6 +5,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  Injector,
   Signal,
   signal,
   untracked,
@@ -67,6 +68,11 @@ export interface ResourceRefOptions<T, E = Error> extends CreateComputedOptions<
    * Default: false (eager fetching)
    */
   lazy?: boolean;
+
+  /**
+   * Optional custom injector. If provided, allows resourceAsync to be called outside an ambient injection context.
+   */
+  injector?: Injector;
 }
 
 /**
@@ -328,9 +334,11 @@ export function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
   options: ResourceRefOptions<T, E> = {},
 ): WritableResourceRef<T, E> {
-  assertInInjectionContext(resourceAsync);
+  if (!options.injector) {
+    assertInInjectionContext(resourceAsync);
+  }
 
-  const destroyRef = inject(DestroyRef);
+  const destroyRef = options.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
 
   // State signals
   const valueSignal = signal<T | undefined>(options.initialValue);
@@ -356,92 +364,123 @@ export function resourceAsync<T, E = Error>(
   let currentSubscription: Subscription | null = null;
 
   // Main effect that handles fetching
-  effect(() => {
-    // Track reload trigger to re-execute on reload()
-    const currentTrigger = reloadTrigger();
+  effect(
+    () => {
+      // Track reload trigger to re-execute on reload()
+      const currentTrigger = reloadTrigger();
 
-    // Skip if lazy and never triggered
-    // Use untracked to read status without creating a dependency
-    if (options.lazy && untracked(() => statusSignal()) === 'idle' && currentTrigger === 0) {
-      return;
-    }
+      // Skip if lazy and never triggered
+      // Use untracked to read status without creating a dependency
+      if (options.lazy && untracked(() => statusSignal()) === 'idle' && currentTrigger === 0) {
+        return;
+      }
 
-    // Handle exhaust behavior - ignore new requests while loading
-    if (options.behavior === 'exhaust' && currentSubscription && !currentSubscription.closed) {
-      return;
-    }
+      // Handle exhaust behavior - ignore new requests while loading
+      if (options.behavior === 'exhaust' && currentSubscription && !currentSubscription.closed) {
+        return;
+      }
 
-    // Execute source function (tracks reactive dependencies)
-    const source = sourceFn();
-
-    // Cancel previous request (important for 'switch' behavior)
-    if (currentSubscription && !currentSubscription.closed) {
-      currentSubscription.unsubscribe();
-    }
-
-    // Determine if this is initial loading or reloading
-    const hasExistingValue = untracked(() => valueSignal() !== undefined);
-    const newStatus: ResourceStatus = hasExistingValue ? 'reloading' : 'loading';
-
-    // Set loading/reloading state and clear previous error when starting a new request
-    untracked(() => {
-      statusSignal.set(newStatus);
-      errorSignal.set(null);
-      options.onLoading?.();
-    });
-
-    // Convert source to observable
-    const source$ = isObservable(source) ? source : isPromise(source) ? from(source) : from([source]);
-
-    let receivedValue = false;
-    untracked(() => {
-      currentSubscription = source$.subscribe({
-        next: (value) => {
-          receivedValue = true;
-          untracked(() => {
-            valueSignal.set(value);
-            errorSignal.set(null);
-            statusSignal.set('resolved'); // Use 'resolved' to match httpResource
-            options.onSuccess?.(value);
-          });
-        },
-        error: (error: E) => {
-          untracked(() => {
-            // Try error handler if provided
-            if (options.onError) {
-              const fallbackValue = options.onError(error);
-              if (fallbackValue !== undefined) {
-                valueSignal.set(fallbackValue);
-                errorSignal.set(null);
-                statusSignal.set('resolved'); // Success with fallback
-                return;
-              }
-            }
-
-            // Set error state - clear value to match Angular's httpResource behavior
-            valueSignal.set(undefined as T);
-            errorSignal.set(error);
-            statusSignal.set('error');
-
-            // Optionally throw after handling
-            if (options.throwOnError) {
-              throw error;
-            }
-          });
-        },
-        complete: () => {
-          // Empty observable: complete without next leaves resource stuck in loading
-          if (!receivedValue) {
-            untracked(() => {
-              valueSignal.set(undefined as T);
+      // Execute source function (tracks reactive dependencies)
+      let source: Observable<T> | Promise<T> | T;
+      try {
+        source = sourceFn();
+      } catch (error: unknown) {
+        if (currentSubscription && !currentSubscription.closed) {
+          currentSubscription.unsubscribe();
+          currentSubscription = null;
+        }
+        untracked(() => {
+          if (options.onError) {
+            const fallbackValue = options.onError(error as E);
+            if (fallbackValue !== undefined) {
+              valueSignal.set(fallbackValue);
               errorSignal.set(null);
               statusSignal.set('resolved');
-            });
+              return;
+            }
           }
-        },
+
+          valueSignal.set(undefined as T);
+          errorSignal.set(error as E);
+          statusSignal.set('error');
+
+          if (options.throwOnError) {
+            throw error;
+          }
+        });
+        return;
+      }
+
+      // Cancel previous request (important for 'switch' behavior)
+      if (currentSubscription && !currentSubscription.closed) {
+        currentSubscription.unsubscribe();
+      }
+
+      // Determine if this is initial loading or reloading
+      const hasExistingValue = untracked(() => valueSignal() !== undefined);
+      const newStatus: ResourceStatus = hasExistingValue ? 'reloading' : 'loading';
+
+      // Set loading/reloading state and clear previous error when starting a new request
+      untracked(() => {
+        statusSignal.set(newStatus);
+        errorSignal.set(null);
+        options.onLoading?.();
       });
-    });
-  });
+
+      // Convert source to observable
+      const source$ = isObservable(source) ? source : isPromise(source) ? from(source) : from([source]);
+
+      let receivedValue = false;
+      untracked(() => {
+        currentSubscription = source$.subscribe({
+          next: (value) => {
+            receivedValue = true;
+            untracked(() => {
+              valueSignal.set(value);
+              errorSignal.set(null);
+              statusSignal.set('resolved'); // Use 'resolved' to match httpResource
+              options.onSuccess?.(value);
+            });
+          },
+          error: (error: E) => {
+            untracked(() => {
+              // Try error handler if provided
+              if (options.onError) {
+                const fallbackValue = options.onError(error);
+                if (fallbackValue !== undefined) {
+                  valueSignal.set(fallbackValue);
+                  errorSignal.set(null);
+                  statusSignal.set('resolved'); // Success with fallback
+                  return;
+                }
+              }
+
+              // Set error state - clear value to match Angular's httpResource behavior
+              valueSignal.set(undefined as T);
+              errorSignal.set(error);
+              statusSignal.set('error');
+
+              // Optionally throw after handling
+              if (options.throwOnError) {
+                throw error;
+              }
+            });
+          },
+          complete: () => {
+            // Empty observable: complete without next leaves resource stuck in loading
+            if (!receivedValue) {
+              untracked(() => {
+                valueSignal.set(undefined as T);
+                errorSignal.set(null);
+                statusSignal.set('resolved');
+              });
+            }
+          },
+        });
+      });
+    },
+    options.injector ? {injector: options.injector} : undefined,
+  );
 
   // Cleanup subscription on destroy
   destroyRef.onDestroy(() => {

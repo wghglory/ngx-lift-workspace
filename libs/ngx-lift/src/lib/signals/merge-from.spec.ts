@@ -1,5 +1,5 @@
 import {beforeEach, afterEach, vi} from 'vitest';
-import {signal} from '@angular/core';
+import {Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {delay, map} from 'rxjs/operators';
 import {interval, of, pipe, Subject} from 'rxjs';
@@ -714,6 +714,72 @@ describe(mergeFrom.name, () => {
         // TypeScript should infer type as Signal<boolean | number | string | null>
         const value: boolean | number | string | null = merged();
         expect([null, true, 42, 'test']).toContain(value);
+      });
+    });
+
+    it('should work outside injection context when custom injector is provided', async () => {
+      const injector = TestBed.inject(Injector);
+      const sig1 = signal('initial');
+      const sig2 = signal('fallback');
+
+      // Called outside TestBed.runInInjectionContext
+      const merged = mergeFrom([sig1, sig2], {injector});
+
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
+
+      expect(['initial', 'fallback']).toContain(merged());
+
+      sig1.set('updated');
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
+
+      expect(merged()).toBe('updated');
+    });
+
+    it('should work outside injection context with operator when custom injector is provided', async () => {
+      const injector = TestBed.inject(Injector);
+      const sig = signal(5);
+
+      // Called outside TestBed.runInInjectionContext with operator and options
+      const merged = mergeFrom([sig], pipe(map((v) => v * 10)), {injector});
+
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
+
+      expect(merged()).toBe(50);
+
+      sig.set(7);
+      TestBed.tick();
+      await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
+
+      expect(merged()).toBe(70);
+    });
+
+    it('should support Promise sources without redundant distinctUntilChanged', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const sig = signal(1);
+        const promiseSource = Promise.resolve(99);
+
+        const merged = mergeFrom([sig, promiseSource]);
+
+        TestBed.tick();
+        await vi.advanceTimersByTimeAsync(0);
+        TestBed.tick();
+
+        expect(merged()).toBe(99);
+      });
+    });
+
+    it('should throw a clear TypeError when a source is null or undefined', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        expect(() => mergeFrom([signal(1), null as unknown as Signal<number>])).toThrowError(
+          /mergeFrom: Invalid source at index 1. Expected a Signal, Observable, or Promise/,
+        );
       });
     });
   });

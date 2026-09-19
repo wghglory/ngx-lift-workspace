@@ -1,4 +1,4 @@
-import {assertInInjectionContext, inject, type Signal} from '@angular/core';
+import {assertInInjectionContext, inject, Injector, type Signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, type Params} from '@angular/router';
 import {map} from 'rxjs';
@@ -23,6 +23,11 @@ export interface ParamsOptions<Output> {
    * The initial value to use if the parameter is not present or undefined.
    */
   initialValue?: Output;
+
+  /**
+   * Optional custom injector. If provided, allows injectParams to be called outside an ambient injection context.
+   */
+  injector?: Injector;
 }
 
 /**
@@ -39,72 +44,78 @@ export interface ParamsOptions<Output> {
  *
  * @param keyOrParamsTransform OPTIONAL The key of the param to return, or a transform function to apply to the params object
  */
-export function injectParams(): Signal<Params>;
+export function injectParams(options?: ParamsOptions<Params>): Signal<Params>;
 
-export function injectParams<Output>(fn: ParamsTransformFn<Output>): Signal<Output>;
+export function injectParams<Output>(fn: ParamsTransformFn<Output>, options?: ParamsOptions<Output>): Signal<Output>;
 
 export function injectParams(key: string): Signal<string | null>;
 
 // for boolean or number, if initialValue is provided, transform is a must
 export function injectParams(
   key: string,
-  options: {transform: (v: string) => boolean; initialValue: boolean},
+  options: {transform: (v: string) => boolean; initialValue: boolean; injector?: Injector},
 ): Signal<boolean>;
 export function injectParams(
   key: string,
-  options: {transform: (v: string) => number; initialValue: number},
+  options: {transform: (v: string) => number; initialValue: number; injector?: Injector},
 ): Signal<number>;
 // for string, transform is optional
 export function injectParams(
   key: string,
-  options: {transform?: (v: string) => string; initialValue: string},
+  options: {transform?: (v: string) => string; initialValue: string; injector?: Injector},
 ): Signal<string>;
 
 // initialValue not provided, must provide transform fn
 export function injectParams(
   key: string,
-  options: {transform: (v: string) => boolean; initialValue?: undefined},
+  options: {transform: (v: string) => boolean; initialValue?: undefined; injector?: Injector},
 ): Signal<boolean | null>;
 export function injectParams(
   key: string,
-  options: {transform: (v: string) => number; initialValue?: undefined},
+  options: {transform: (v: string) => number; initialValue?: undefined; injector?: Injector},
 ): Signal<number | null>;
 export function injectParams(
   key: string,
-  options: {transform: (v: string) => string; initialValue?: undefined},
+  options: {transform: (v: string) => string; initialValue?: undefined; injector?: Injector},
 ): Signal<string | null>;
 
+export function injectParams(key: string, options?: ParamsOptions<string>): Signal<string | null>;
+
 export function injectParams<Output>(
-  keyOrParamsTransform?: string | ParamsTransformFn<Output>,
+  keyOrParamsTransformOrOptions?: string | ParamsTransformFn<Output> | ParamsOptions<Output>,
   options: ParamsOptions<Output> = {},
 ): Signal<Output | Params | string | boolean | number | null> {
-  assertInInjectionContext(injectParams);
+  const isOptionsObject = typeof keyOrParamsTransformOrOptions === 'object' && keyOrParamsTransformOrOptions !== null;
+  const effectiveOptions: ParamsOptions<Output> = isOptionsObject
+    ? (keyOrParamsTransformOrOptions as ParamsOptions<Output>)
+    : options;
 
-  const route = inject(ActivatedRoute);
+  if (!effectiveOptions.injector) {
+    assertInInjectionContext(injectParams);
+  }
+
+  const route = effectiveOptions.injector ? effectiveOptions.injector.get(ActivatedRoute) : inject(ActivatedRoute);
   const initialParams = route.snapshot.params;
 
-  const {transform, initialValue} = options;
+  const {transform, initialValue, injector} = effectiveOptions;
 
-  // injectParams(): Signal<Params>
-  if (!keyOrParamsTransform) {
-    return toSignal(route.params, {initialValue: initialParams});
+  // injectParams(): Signal<Params> or injectParams({ injector }): Signal<Params>
+  if (!keyOrParamsTransformOrOptions || isOptionsObject) {
+    return toSignal(route.params, {initialValue: initialParams, injector});
   }
 
-  // injectParams<Output>(fn: ParamsTransformFn<Output>): Signal<Output>
-  if (typeof keyOrParamsTransform === 'function') {
-    return toSignal(route.params.pipe(map(keyOrParamsTransform)), {initialValue: keyOrParamsTransform(initialParams)});
+  // injectParams<Output>(fn: ParamsTransformFn<Output>, options?: ParamsOptions<Output>): Signal<Output>
+  if (typeof keyOrParamsTransformOrOptions === 'function') {
+    return toSignal(route.params.pipe(map(keyOrParamsTransformOrOptions)), {
+      initialValue: keyOrParamsTransformOrOptions(initialParams),
+      injector,
+    });
   }
 
-  // keyOrParamsTransform is string.
-  // export function injectParams(key: string): Signal<string | null>;
-  // export function injectParams(key: string, options: { transform: (v: string) => boolean; initialValue: boolean }): Signal<boolean>;
-  // export function injectParams(key: string, options: { transform: (v: string) => number; initialValue: number }): Signal<number>;
-  // export function injectParams(key: string, options: { transform?: (v: string) => string; initialValue: string }): Signal<string>;
-  // export function injectParams(key: string, options: { transform: (v: string) => boolean; initialValue?: undefined }): Signal<boolean | null>;
-  // export function injectParams(key: string, options: { transform: (v: string) => number; initialValue?: undefined }): Signal<number | null>;
-  // export function injectParams(key: string, options: { transform: (v: string) => string; initialValue?: undefined }): Signal<string | null>;
+  // keyOrParamsTransformOrOptions is string.
+  const paramKey = keyOrParamsTransformOrOptions as string;
   const getParam = (params: Params) => {
-    const param = params?.[keyOrParamsTransform] as string | undefined;
+    const param = params?.[paramKey] as string | undefined;
 
     if (!param) {
       return initialValue ?? null;
@@ -113,5 +124,5 @@ export function injectParams<Output>(
     return transform ? transform(param) : param;
   };
 
-  return toSignal(route.params.pipe(map(getParam)), {initialValue: getParam(initialParams)});
+  return toSignal(route.params.pipe(map(getParam)), {initialValue: getParam(initialParams), injector});
 }

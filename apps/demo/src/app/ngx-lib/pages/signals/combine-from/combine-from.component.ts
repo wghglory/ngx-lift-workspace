@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
 import {combineFrom, createAsyncState} from 'ngx-lift';
@@ -73,7 +73,11 @@ export class CombineFromComponent {
   );
 
   private userService = inject(UserService);
+  private injector = inject(Injector);
   count = signal(3);
+
+  // Example: Decoupled Injector & glitch-free initialization
+  decoupledSignal = combineFrom([this.a, this.count], {injector: this.injector});
 
   usersState = combineFrom(
     [this.count, this.userService.getUsers({results: 9})],
@@ -82,6 +86,18 @@ export class CombineFromComponent {
       createAsyncState(),
     ),
   );
+
+  constructor() {
+    effect(() => {
+      console.log('[combineFrom] Example 1 (array):', this.combinedArray());
+      console.log('[combineFrom] Example 1 (object):', this.combinedObject());
+      console.log('[combineFrom] Example 2 (pipe operator):', this.combineOperator());
+      console.log('[combineFrom] Example 3 (with initialValue):', this.combinedWithInitialValue());
+      console.log('[combineFrom] Example 3 (startWith):', this.combinedStartWith());
+      console.log('[combineFrom] Example 4 (usersState):', this.usersState());
+      console.log('[combineFrom] Example 5 (decoupled injector):', this.decoupledSignal());
+    });
+  }
 
   basicCode = highlight(`
 import {combineFrom} from 'ngx-lift';
@@ -193,6 +209,26 @@ export class CombineFromComponent {
       switchMap(([count, users]) => of(users.results.slice(0, count))),
       createAsyncState(),
     ),
+  );
+}
+  `);
+
+  glitchFreeCode = highlight(`
+import {combineFrom} from 'ngx-lift';
+import {Component, inject, Injector, signal} from '@angular/core';
+
+export class CombineFromComponent {
+  private injector = inject(Injector);
+  count = signal(1);
+  multiplier = signal(2);
+
+  // 1. Glitch-Free: Signal values are deduplicated via distinctUntilChanged,
+  // preventing duplicate emissions between initial synchronous read and toObservable microtask.
+  // 2. Decoupled Injector: Can be instantiated dynamically or outside component constructor
+  // by passing an explicit injector in the options object.
+  calculation = combineFrom(
+    {count: this.count, multiplier: this.multiplier},
+    {injector: this.injector},
   );
 }
   `);

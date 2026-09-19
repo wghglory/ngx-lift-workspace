@@ -43,6 +43,15 @@
       <p>Complete example showing various usage patterns:</p>
       <app-code-block [code]="completeExampleCode" lang="typescript" />
     </article>
+
+    <article class="space-y-3">
+      <h3>Example 6: Custom Injector</h3>
+      <p>
+        Pass a custom <code>Injector</code> via the options object to access route parameters outside an ambient
+        injection context (such as inside composable helper functions or dynamic services):
+      </p>
+      <app-code-block [code]="customInjectorCode" lang="typescript" />
+    </article>
   </section>
 
   <!-- API Reference -->

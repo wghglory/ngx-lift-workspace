@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, numberAttribute, Signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, Injector, numberAttribute, Signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent} from 'clr-lift';
 import {injectParams} from 'ngx-lift';
@@ -14,6 +14,8 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InjectParamsComponent {
+  private injector = inject(Injector);
+
   // returns a signal with the current route params
   params = injectParams();
 
@@ -32,13 +34,17 @@ export class InjectParamsComponent {
   // pass a transform function directly
   idByTransformFn = injectParams((params) => params['id'] as string);
 
+  // decoupled injector: can be called outside component constructor
+  customInjectorParam = injectParams('id', {injector: this.injector});
+
   constructor() {
     effect(() => {
-      console.log(this.params(), 'params');
-      console.log(this.paramsKeys(), 'paramsKeys');
-      console.log(this.userId(), 'userId');
-      console.log(this.id(), 'id');
-      console.log(this.idByTransformFn(), 'idByTransformFn');
+      console.log('[injectParams] params:', this.params());
+      console.log('[injectParams] paramsKeys:', this.paramsKeys());
+      console.log('[injectParams] userId:', this.userId());
+      console.log('[injectParams] id:', this.id());
+      console.log('[injectParams] idByTransformFn:', this.idByTransformFn());
+      console.log('[injectParams] customInjectorParam (custom injector):', this.customInjectorParam());
     });
   }
 
@@ -108,6 +114,19 @@ export class UserDetailComponent {
 
   // Use with computedAsync to fetch data when param changes
   user = computedAsync(() => this.userService.getUser(this.userId()));
+}
+  `);
+
+  customInjectorCode = highlight(`
+import {injectParams} from 'ngx-lift';
+import {Component, inject, Injector, Signal} from '@angular/core';
+
+export class UserDetailComponent {
+  private injector = inject(Injector);
+
+  // Decoupled Injector: By passing { injector }, injectParams can be called
+  // outside the constructor (e.g. inside helper methods, custom composables, or services).
+  userId: Signal<string | null> = injectParams('id', {injector: this.injector});
 }
   `);
 
