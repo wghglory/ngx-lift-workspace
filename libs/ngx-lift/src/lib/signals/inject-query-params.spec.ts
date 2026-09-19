@@ -1,4 +1,4 @@
-import {Component, numberAttribute} from '@angular/core';
+import {Component, Injector, numberAttribute} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {provideRouter} from '@angular/router';
 import {RouterTestingHarness} from '@angular/router/testing';
@@ -102,5 +102,22 @@ describe(injectQueryParams.name, () => {
     expect(instance.searchParam()).toEqual(null);
     expect(instance.idParam()).toEqual(NaN);
     expect(instance.paramKeysList()).toEqual(['id']);
+  });
+
+  it('should work outside injection context when custom injector is provided', async () => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/search?query=CustomInjector', SearchComponent);
+
+    const injector = TestBed.inject(Injector);
+    const querySignal = injectQueryParams('query', {injector});
+    expect(querySignal()).toEqual('CustomInjector');
+
+    // Test injectQueryParams({ injector }) for full query params map
+    const fullParamsSignal = injectQueryParams({injector});
+    expect(fullParamsSignal()).toEqual({query: 'CustomInjector'});
+
+    // Test injectQueryParams(fn, { injector }) for transform function
+    const transformedSignal = injectQueryParams((params) => `Query:${params['query']}`, {injector});
+    expect(transformedSignal()).toBe('Query:CustomInjector');
   });
 });

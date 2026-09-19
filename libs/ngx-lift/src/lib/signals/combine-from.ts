@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {assertInInjectionContext, computed, Injector, isSignal, Signal, untracked} from '@angular/core';
+import {
+  assertInInjectionContext,
+  computed,
+  Injector,
+  isSignal,
+  runInInjectionContext,
+  Signal,
+  untracked,
+} from '@angular/core';
 import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {
   combineLatest,
@@ -12,6 +20,8 @@ import {
   OperatorFunction,
   startWith,
 } from 'rxjs';
+
+import {isPromise} from '../utils/is-promise.util';
 
 type ObservableSignalInput<T> = ObservableInput<T> | Signal<T>;
 
@@ -105,24 +115,35 @@ export function combineFrom<Input extends object, Output = Input>(
 ): Signal<Output>;
 
 /**
- * Combines multiple `Observable` or `Signal` sources into a `Signal` that emits their combined values.
- * This function is similar to RxJS `combineLatest`, but works with both Observables and Signals,
- * and returns a Signal instead of an Observable.
+ * Combines multiple `Signal`, `Observable`, `Promise`, or getter function sources into a single `Signal`.
+ * Similar to RxJS `combineLatest`, but returns an Angular Signal and seamlessly handles Signals,
+ * Observables, and functions with glitch-free initialization.
+ *
+ * Supported source types:
+ * - **Signal**: Converted via `toObservable()`, initialized with the current value to prevent dropped emissions,
+ *   and deduplicated via `distinctUntilChanged()`.
+ * - **Observable**: Deduplicated via `distinctUntilChanged()`.
+ * - **Function `() => T`**: Evaluated and wrapped in Angular `computed()`, then converted via `toObservable()`.
+ * - **Promise**: Converted via `from(promise)` without redundant `distinctUntilChanged()`. Note that Promises
+ *   resolve asynchronously in a microtask; therefore, the combined Signal will hold `undefined` (or `initialValue`)
+ *   until the Promise resolves.
+ * - **Other `ObservableInput`**: Converted via `from()`.
  *
  * The function supports:
- * - Array of sources: Returns a Signal of an array
- * - Object of sources: Returns a Signal of an object with the same keys
- * - Optional RxJS operator: Apply transformations to the combined values
- * - Optional initial value: Provide an initial value for the Signal
+ * - Array of sources: Returns a Signal emitting an array of combined values.
+ * - Object of sources: Returns a Signal emitting an object with matching keys.
+ * - Optional RxJS operator: Apply transformations or side-effects to the combined emissions.
+ * - Optional initial value: Set an initial value for the resulting Signal before all async sources emit.
+ * - Optional custom injector: Pass `{ injector }` to create signals outside of a component constructor.
  *
  * @template Input - The type of the input sources (array or object).
  * @template Output - The type of the output Signal (defaults to Input).
  *
- * @param sources - Array or object of `Observable` or `Signal` values to combine.
+ * @param sources - Array or object of Signal, Observable, Promise, or function values to combine.
  * @param operator - Optional RxJS operator function to transform the combined values.
  * @param options - Optional configuration object:
- *   - `initialValue`: Initial value for the Signal (required if sources don't emit synchronously)
- *   - `injector`: Angular injector to use for signal conversion
+ *   - `initialValue`: Initial value for the Signal (recommended when combining async sources without sync emission).
+ *   - `injector`: Angular Injector to use for signal conversion when called outside an injection context.
  * @returns A Signal that emits the combined values from all sources.
  *
  * @example
@@ -153,12 +174,20 @@ export function combineFrom<Input extends object, Output = Input>(
  *   [source1$, source2$],
  *   { initialValue: [null, null] }
  * );
+ *
+ * // With Promise and custom Injector
+ * const userWithConfig = combineFrom(
+ *   { user: userSignal, config: fetchConfigPromise },
+ *   { injector: customInjector, initialValue: { user: null, config: null } }
+ * );
  * ```
  */
 export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal<Output | null | undefined> {
-  assertInInjectionContext(combineFrom);
-
   const {normalizedSources, hasInitValue, operator, options} = normalizeArgs<Input, Output>(args);
+
+  if (!options?.injector) {
+    assertInInjectionContext(combineFrom);
+  }
 
   const ret =
     hasInitValue && options?.initialValue !== undefined
@@ -187,20 +216,15 @@ function normalizeArgs<Input, Output>(
     throw new TypeError('combineFrom needs sources');
   }
 
+  const sources = args[0];
   const hasOperator = typeof args[1] === 'function';
 
   if (args.length === 3 && !hasOperator) {
     throw new TypeError('combineFrom needs a pipe operator as the second argument');
   }
 
-  // pass sources and options
-  if (!hasOperator) {
-    // add identity function to args at index 1 as operator function as x=>x
-    args.splice(1, 0, identity);
-  }
-
-  // if no operator passed, identity will be operator
-  const [sources, operator, options] = args;
+  const operator = (hasOperator ? args[1] : identity) as OperatorFunction<Input, Output>;
+  const options = (hasOperator ? args[2] : args[1]) as CombineFromOptions<Output> | undefined;
 
   const hasInitValue = options?.initialValue !== undefined;
 
@@ -209,28 +233,53 @@ function normalizeArgs<Input, Output>(
       if (isSignal(source)) {
         // fix angular NG0950: Input is required but no value is available yet.
         // when input.required is used as combineFrom's input, its value is undefined, untracked(source) will throw error
-        let initialValue: any;
+        let initialValue: unknown;
+        let hasInitialVal = false;
         try {
           initialValue = untracked(source);
+          hasInitialVal = true;
         } catch {
-          // If the input is not set, skip startWith or provide a fallback
-          initialValue = undefined;
+          hasInitialVal = false;
         }
-        // toObservable doesn't immediately emit initialValue of the signal
-        acc[keyOrIndex] = toObservable(source, {
+        const obs$ = toObservable(source, {
           injector: options?.injector,
-        }).pipe(startWith(initialValue));
+        });
+        acc[keyOrIndex] = hasInitialVal
+          ? obs$.pipe(startWith(initialValue), distinctUntilChanged())
+          : obs$.pipe(distinctUntilChanged());
       } else if (isObservable(source)) {
         acc[keyOrIndex] = source.pipe(distinctUntilChanged());
       } else if (typeof source === 'function') {
         // seldom use: pass function like () => 5
-        const computedRes = computed(source as () => unknown);
-        acc[keyOrIndex] = toObservable(computedRes, {
+        const fn = source as () => unknown;
+        let initialVal: unknown;
+        let hasInitialVal = false;
+        try {
+          initialVal = options?.injector ? runInInjectionContext(options.injector, fn) : fn();
+          hasInitialVal = true;
+        } catch {
+          hasInitialVal = false;
+        }
+        const computedRes = options?.injector
+          ? runInInjectionContext(options.injector, () => computed(fn))
+          : computed(fn);
+        const obs$ = toObservable(computedRes, {
           injector: options?.injector,
-        }).pipe(startWith(source()));
-      } else {
-        // seldom use: pass promise, Map, array, etc that from accepts
+        });
+        acc[keyOrIndex] = hasInitialVal
+          ? obs$.pipe(startWith(initialVal), distinctUntilChanged())
+          : obs$.pipe(distinctUntilChanged());
+      } else if (isPromise(source)) {
+        // Promises emit a single resolved value asynchronously (microtask) and complete.
+        // distinctUntilChanged is omitted as redundant for single-emission sources.
+        acc[keyOrIndex] = from(source);
+      } else if (source != null) {
+        // pass other ObservableInput (iterables, etc.)
         acc[keyOrIndex] = from(source as any).pipe(distinctUntilChanged());
+      } else {
+        throw new TypeError(
+          `combineFrom: Invalid source at "${keyOrIndex}". Expected a Signal, Observable, Promise, or function, but received ${source}.`,
+        );
       }
       return acc;
     },

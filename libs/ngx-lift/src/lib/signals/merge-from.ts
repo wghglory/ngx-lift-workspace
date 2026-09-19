@@ -11,6 +11,8 @@ import {
   startWith,
 } from 'rxjs';
 
+import {isPromise} from '../utils/is-promise.util';
+
 type ObservableSignalInput<T> = ObservableInput<T> | Signal<T>;
 
 type ObservableSignalInputTuple<T> = {
@@ -81,19 +83,39 @@ export function mergeFrom<Input extends readonly unknown[], Output = Input[numbe
  * ```
  */
 export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(...args: unknown[]) {
-  assertInInjectionContext(mergeFrom);
-
   const [sources, operator = identity, options = {}] = parseArgs<Input, Output>(args);
 
-  const normalizedSources = sources.map((source) => {
+  if (!options.injector) {
+    assertInInjectionContext(mergeFrom);
+  }
+
+  const normalizedSources = sources.map((source, index) => {
     if (isSignal(source)) {
-      return toObservable(source, {injector: options.injector}).pipe(
-        startWith(untracked(source)),
-        distinctUntilChanged(),
-      );
+      let initialValue: unknown;
+      let hasInitialVal = false;
+      try {
+        initialValue = untracked(source);
+        hasInitialVal = true;
+      } catch {
+        hasInitialVal = false;
+      }
+      const obs$ = toObservable(source, {injector: options.injector});
+      return hasInitialVal
+        ? obs$.pipe(startWith(initialValue), distinctUntilChanged())
+        : obs$.pipe(distinctUntilChanged());
+    }
+
+    if (isPromise(source)) {
+      // Promises emit once upon resolution and complete; distinctUntilChanged is redundant.
+      return from(source);
     }
 
     if (!isObservable(source)) {
+      if (source == null) {
+        throw new TypeError(
+          `mergeFrom: Invalid source at index ${index}. Expected a Signal, Observable, or Promise, but received ${source}.`,
+        );
+      }
       source = from(source);
     }
 

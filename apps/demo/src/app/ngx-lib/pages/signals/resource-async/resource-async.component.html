@@ -556,18 +556,11 @@
       loading/error states for each row.
     </p>
 
-    <cll-callout type="warning">
-      <strong>⚠️ Note:</strong> This example uses <code>untracked()</code> and <code>runInInjectionContext()</code>
-      wrappers, which add complexity. For most use cases, consider the
-      <strong>simpler hybrid approach</strong> (mixing <code>resourceAsync</code> for the outer list with manual HTTP +
-      signals for inner items). See the
-      <a
-        href="https://github.com/wghglory/ngx-lift/blob/main/libs/ngx-lift/src/lib/signals/resource-async-advanced.md"
-        target="_blank"
-        rel="noopener"
-        >advanced documentation</a
-      >
-      for comparison and recommendations.
+    <cll-callout type="info">
+      <strong>✨ Decoupled Injector:</strong> With the <code>injector</code> option in <code>ResourceRefOptions</code>,
+      you can instantiate <code>resourceAsync</code> dynamically (e.g., inside on-demand template helper methods or
+      services) by simply passing <code>&#123; injector: this.injector &#125;</code>, eliminating the need for
+      <code>runInInjectionContext()</code>.
     </cll-callout>
 
     <cll-callout type="info">

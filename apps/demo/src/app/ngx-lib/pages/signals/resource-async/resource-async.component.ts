@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  Injector,
-  runInInjectionContext,
-  signal,
-  untracked,
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, Injector, signal, untracked} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
@@ -272,6 +264,37 @@ export class ResourceAsyncComponent {
     this.counterRef.reload();
   }
 
+  constructor() {
+    effect(() => {
+      console.log('[resourceAsync] userRef:', {
+        value: this.userRef.value(),
+        status: this.userRef.status(),
+        isLoading: this.userRef.isLoading(),
+      });
+      console.log('[resourceAsync] lazyUsersRef:', {
+        value: this.lazyUsersRef.value(),
+        status: this.lazyUsersRef.status(),
+        isLoading: this.lazyUsersRef.isLoading(),
+      });
+      console.log('[resourceAsync] registrationRef:', {
+        value: this.registrationRef.value(),
+        status: this.registrationRef.status(),
+      });
+      console.log('[resourceAsync] itemsRef:', {
+        value: this.itemsRef.value(),
+        status: this.itemsRef.status(),
+      });
+      console.log('[resourceAsync] todoRef:', {
+        value: this.todoRef.value(),
+        status: this.todoRef.status(),
+      });
+      console.log('[resourceAsync] counterRef:', {
+        value: this.counterRef.value(),
+        status: this.counterRef.status(),
+      });
+    });
+  }
+
   // ============================================================================
   // Nested Resource Pattern Example
   // ============================================================================
@@ -321,22 +344,20 @@ export class ResourceAsyncComponent {
     return untracked(() => {
       let orgRef = this.orgRefsMap.get(orgId);
       if (!orgRef) {
-        // Provide injection context to avoid NG0203 (inject outside context)
-        orgRef = runInInjectionContext(this.injector, () =>
-          resourceAsync(
-            () =>
-              of(this.mockOrgs[orgId] || {id: orgId, name: 'Unknown', type: 'Unknown', location: 'Unknown'}).pipe(
-                delay(600),
-                map((org) => {
-                  // Simulate random errors (30% chance)
-                  if (Math.random() < 0.3) {
-                    throw new Error('Network timeout');
-                  }
-                  return org;
-                }),
-              ),
-            {lazy: true}, // Don't fetch until explicitly triggered via reload()
-          ),
+        // Pass injector directly in options to run outside ambient injection context
+        orgRef = resourceAsync(
+          () =>
+            of(this.mockOrgs[orgId] || {id: orgId, name: 'Unknown', type: 'Unknown', location: 'Unknown'}).pipe(
+              delay(600),
+              map((org) => {
+                // Simulate random errors (30% chance)
+                if (Math.random() < 0.3) {
+                  throw new Error('Network timeout');
+                }
+                return org;
+              }),
+            ),
+          {lazy: true, injector: this.injector}, // Decoupled injector + lazy
         );
         this.orgRefsMap.set(orgId, orgRef);
       }
@@ -820,17 +841,15 @@ export class ProjectListComponent {
    * 
    * REQUIRES TWO WRAPPERS:
    * 1. untracked() - Prevents NG0602 (effect in reactive context)
-   * 2. runInInjectionContext() - Prevents NG0203 (no injection context)
+   * 2. { injector: this.injector } - Directly decouples the injector without runInInjectionContext()!
    */
   getOrgRef(orgId: string): ResourceRef<Organization> {
     return untracked(() => {  // Break out of reactive context
       let orgRef = this.orgRefsMap.get(orgId);
       if (!orgRef) {
-        orgRef = runInInjectionContext(this.injector, () =>  // Provide injection context
-          resourceAsync(
-            () => this.http.get<Organization>(\`/api/orgs/\${orgId}\`),
-            { lazy: true }
-          )
+        orgRef = resourceAsync(
+          () => this.http.get<Organization>(\`/api/orgs/\${orgId}\`),
+          { lazy: true, injector: this.injector }
         );
         this.orgRefsMap.set(orgId, orgRef);
       }

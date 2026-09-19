@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, numberAttribute} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, numberAttribute} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent} from 'clr-lift';
 import {computedAsync, injectQueryParams} from 'ngx-lift';
@@ -16,6 +16,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 })
 export class InjectQueryParamsComponent {
   private userService = inject(UserService);
+  private injector = inject(Injector);
 
   queryParamsKeys = injectQueryParams((params) => Object.keys(params)); // returns a signal with all keys of the query params
 
@@ -23,6 +24,9 @@ export class InjectQueryParamsComponent {
     initialValue: 3,
     transform: numberAttribute,
   });
+
+  // Decoupled Injector: Can be called outside component constructor
+  customInjectorQuery = injectQueryParams('search', {injector: this.injector});
 
   users = computedAsync(() => this.userService.getUsers({results: this.searchParam()}));
 
@@ -32,11 +36,12 @@ export class InjectQueryParamsComponent {
 
   constructor() {
     effect(() => {
-      console.log(this.queryParamsKeys(), 'queryParamsKeys');
-      console.log(this.searchParam(), 'searchParam');
-      console.log(this.users(), 'users');
-      console.log(this.pageNumber(), 'pageNumber');
-      console.log(this.multipliedNumber(), 'multipliedNumber');
+      console.log('[injectQueryParams] queryParamsKeys:', this.queryParamsKeys());
+      console.log('[injectQueryParams] searchParam:', this.searchParam());
+      console.log('[injectQueryParams] users:', this.users());
+      console.log('[injectQueryParams] pageNumber:', this.pageNumber());
+      console.log('[injectQueryParams] multipliedNumber:', this.multipliedNumber());
+      console.log('[injectQueryParams] customInjectorQuery (custom injector):', this.customInjectorQuery());
     });
   }
 
@@ -108,6 +113,19 @@ export class SearchComponent {
 
   // Use with computed
   multipliedNumber = computed(() => (this.pageNumber() || 0) * 2);
+}
+  `);
+
+  customInjectorCode = highlight(`
+import {injectQueryParams} from 'ngx-lift';
+import {Component, inject, Injector, Signal} from '@angular/core';
+
+export class SearchComponent {
+  private injector = inject(Injector);
+
+  // Decoupled Injector: By passing { injector }, injectQueryParams can be called
+  // outside the constructor (e.g. inside helper methods, custom composables, or services).
+  searchParam: Signal<string | null> = injectQueryParams('search', {injector: this.injector});
 }
   `);
 

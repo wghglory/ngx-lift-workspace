@@ -1,6 +1,6 @@
 import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
-import {signal} from '@angular/core';
+import {Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {delay, Observable, of, throwError} from 'rxjs';
 
@@ -1286,6 +1286,68 @@ describe('WritableResourceRef', () => {
         await flushEffects(100);
         expect(resource.status()).toBe('resolved');
         expect(resource.value()).toEqual({id: 1, name: 'Fresh'});
+      });
+    });
+  });
+
+  describe('decoupled injector', () => {
+    it('should work outside injection context when custom injector is provided', async () => {
+      const injector = TestBed.inject(Injector);
+      const id = signal(1);
+
+      // Called outside TestBed.runInInjectionContext
+      const resource = resourceAsync(() => of(`User ${id()}`), {injector});
+
+      await flushEffects();
+      expect(resource.status()).toBe('resolved');
+      expect(resource.value()).toBe('User 1');
+
+      id.set(2);
+      await flushEffects();
+      expect(resource.value()).toBe('User 2');
+    });
+
+    it('should handle synchronous error inside sourceFn and recover on subsequent signal change', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const id = signal(1);
+        const resource = resourceAsync(() => {
+          if (id() === 1) {
+            throw new Error('Sync initialization error');
+          }
+          return of(`User ${id()}`);
+        });
+
+        await flushEffects();
+        expect(resource.status()).toBe('error');
+        expect(resource.error()?.message).toBe('Sync initialization error');
+
+        // Verify recovery without broken effect
+        id.set(2);
+        await flushEffects();
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value()).toBe('User 2');
+        expect(resource.error()).toBeNull();
+      });
+    });
+
+    it('should cancel in-flight request when set() is called so delayed response does not overwrite manual value', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => of('network-value').pipe(delay(100)));
+
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        // Optimistic / manual update while request is in-flight
+        resource.set('optimistic-value');
+        expect(resource.status()).toBe('local');
+        expect(resource.value()).toBe('optimistic-value');
+
+        // Advance time past the 100ms network delay
+        await flushEffects(120);
+
+        // Verify network response does NOT clobber optimistic update
+        expect(resource.status()).toBe('local');
+        expect(resource.value()).toBe('optimistic-value');
       });
     });
   });

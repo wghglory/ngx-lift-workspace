@@ -55,6 +55,15 @@
       }
       <app-code-block [code]="realCode" lang="typescript" />
     </article>
+
+    <article class="space-y-3">
+      <h3>Example 5: Glitch-Free Single Emission & Decoupled Injector</h3>
+      <p>
+        <code>combineFrom</code> ensures glitch-free behavior by deduplicating signal emissions on initialization, and
+        supports passing a custom <code>Injector</code> to run outside an ambient injection context:
+      </p>
+      <app-code-block [code]="glitchFreeCode" lang="typescript" />
+    </article>
   </section>
 
   <!-- API Reference -->

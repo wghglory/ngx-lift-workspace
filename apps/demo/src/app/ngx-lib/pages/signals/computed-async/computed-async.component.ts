@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, Signal, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, Injector, Signal, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
@@ -30,8 +30,14 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 })
 export class ComputedAsyncComponent {
   private userService = inject(UserService);
+  private injector = inject(Injector);
   private refreshTrigger = createTrigger();
   private fetchTrigger = createTrigger();
+
+  // Decoupled Injector example: Can be created dynamically outside component constructor
+  decoupledUserState = computedAsync(() => this.userService.getUsers({results: 3}).pipe(createAsyncState()), {
+    injector: this.injector,
+  });
 
   // user list will initially be fetched
   usersState: Signal<AsyncState<PaginationResponse<User>>> = computedAsync(
@@ -86,6 +92,15 @@ export class ComputedAsyncComponent {
       initialValue: {isLoading: false, data: null, error: null, status: 'idle'},
     },
   );
+
+  constructor() {
+    effect(() => {
+      console.log('[computedAsync] usersState:', this.usersState());
+      console.log('[computedAsync] deferredUsersState:', this.deferredUsersState());
+      console.log('[computedAsync] tabState:', this.tabState());
+      console.log('[computedAsync] decoupledUserState (custom injector):', this.decoupledUserState());
+    });
+  }
 
   selectTab(tab: 'activeDirectory' | 'backupLocations' | 'certificates' | 'aborted') {
     this.selectedTab.set(tab);
@@ -391,6 +406,24 @@ export class MultiTabPageComponent {
 }
   `);
 
+  decoupledInjectorCode = highlight(`
+import {computedAsync, createAsyncState} from 'ngx-lift';
+import {Component, inject, Injector} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+export class UserProfileComponent {
+  private http = inject(HttpClient);
+  private injector = inject(Injector);
+
+  // Decoupled Injector: By passing { injector }, computedAsync can be instantiated
+  // outside the constructor (e.g. inside helper methods, composable functions, or services).
+  userState = computedAsync(
+    () => this.http.get('/api/user/current').pipe(createAsyncState()),
+    {injector: this.injector},
+  );
+}
+  `);
+
   signatureCode = highlight(`
 computedAsync<T>(
   computation: (previousValue?: T) => Promise<T> | Observable<T> | T,
@@ -403,6 +436,7 @@ interface ComputedAsyncOptions<T> {
   behavior?: 'switch' | 'merge' | 'concat' | 'exhaust';
   onError?: (error: unknown) => T | undefined;
   throwOnError?: boolean;
+  injector?: Injector;
 }
   `);
 }

@@ -29,6 +29,15 @@
       <p>Use <code>startWith</code> or <code>initialValue</code> option to handle async observables:</p>
       <app-code-block [code]="asyncCode" lang="typescript" />
     </article>
+
+    <article class="space-y-3">
+      <h3>Example 4: Decoupled Injector</h3>
+      <p>
+        Pass a custom <code>Injector</code> via the options object to create a merged signal outside an ambient
+        injection context (such as inside utility functions, custom factories, or dynamic services):
+      </p>
+      <app-code-block [code]="customInjectorCode" lang="typescript" />
+    </article>
   </section>
 
   <!-- API Reference -->

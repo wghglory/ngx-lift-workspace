@@ -1,6 +1,6 @@
 import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
-import {Signal, signal} from '@angular/core';
+import {Injector, Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {catchError, delay, map, Observable, of, startWith, throwError} from 'rxjs';
 import {tap} from 'rxjs/operators';
@@ -301,6 +301,102 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1, 2, 3]);
       });
     });
+
+    it('behavior: concat -> continues executing subsequent queued requests when an intermediate request fails', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const value = signal(1);
+        const logs: (number | string)[] = [];
+
+        const s = computedAsync(
+          () => {
+            const val = value();
+            if (val === 2) {
+              return of(null).pipe(
+                delay(50),
+                map(() => {
+                  logs.push('error-2');
+                  throw new Error('Intermediate error for 2');
+                }),
+              );
+            }
+            return of(val).pipe(
+              delay(50),
+              tap((v) => logs.push(v)),
+            );
+          },
+          {behavior: 'concat'},
+        );
+
+        // Initial emission for 1
+        await flushEffects();
+        expect(s()).toBeUndefined();
+
+        // Queue 2 (which will fail) and 3 (which will succeed) while 1 is in-flight
+        value.set(2);
+        await flushEffects();
+        value.set(3);
+        await flushEffects();
+
+        // After 50ms: request 1 completes
+        await flushEffects(50);
+        expect(s()).toBe(1);
+        expect(logs).toEqual([1]);
+
+        // After next 50ms: request 2 runs and fails, emitting the Error object into the signal
+        await flushEffects(50);
+        expect(s()).toBeInstanceOf(Error);
+        expect((s() as Error).message).toBe('Intermediate error for 2');
+        expect(logs).toEqual([1, 'error-2']);
+
+        // After next 50ms: request 3 runs and succeeds
+        await flushEffects(50);
+        expect(s()).toBe(3);
+        expect(logs).toEqual([1, 'error-2', 3]);
+      });
+    });
+
+    it('behavior: concat -> continues executing subsequent queued requests with onError fallback when intermediate fails', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const value = signal(1);
+
+        const s = computedAsync(
+          () => {
+            const val = value();
+            if (val === 2) {
+              return of(null).pipe(
+                delay(50),
+                map(() => {
+                  throw new Error('Failed request 2');
+                }),
+              );
+            }
+            return of(`Success ${val}`).pipe(delay(50));
+          },
+          {
+            behavior: 'concat',
+            onError: (err) => `Fallback for ${(err as Error).message}`,
+          },
+        );
+
+        await flushEffects();
+        value.set(2);
+        await flushEffects();
+        value.set(3);
+        await flushEffects();
+
+        // Request 1 completes
+        await flushEffects(50);
+        expect(s()).toBe('Success 1');
+
+        // Request 2 completes with error, caught by onError
+        await flushEffects(50);
+        expect(s()).toBe('Fallback for Failed request 2');
+
+        // Request 3 completes with success
+        await flushEffects(50);
+        expect(s()).toBe('Success 3');
+      });
+    });
     it('behavior: merge -> runs everything in parallel', async () => {
       await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
@@ -387,6 +483,31 @@ describe(computedAsync.name, () => {
         await flushEffects(100);
         expect(s()).toEqual(2);
         expect(logs).toEqual([1, 2]);
+      });
+    });
+
+    it('behavior: exhaust -> unlocks after error so subsequent computations can run', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const trigger = signal(1);
+
+        const s = computedAsync(
+          () => {
+            const val = trigger();
+            if (val === 1) {
+              return throwError(() => new Error('First attempt failed'));
+            }
+            return of(`Success ${val}`);
+          },
+          {behavior: 'exhaust'},
+        );
+
+        await flushEffects();
+        expect(s()).toBeInstanceOf(Error);
+
+        // When trigger changes, exhaust gate should be unlocked because the error completed
+        trigger.set(2);
+        await flushEffects();
+        expect(s()).toBe('Success 2');
       });
     });
   });
@@ -706,6 +827,141 @@ describe(computedAsync.name, () => {
         trigger.set('recovered');
         await flushEffects();
         expect(s()).toBe('Data for recovered');
+      });
+    });
+
+    it('should throw error when reading signal with throwOnError: true, and recover on subsequent success', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const trigger = signal<string>('initial');
+        const onErrorSpy = vi.fn();
+
+        const s = computedAsync(
+          () => {
+            const val = trigger();
+            if (val === 'error') {
+              return throwError(() => new Error('API failure'));
+            }
+            return of(`Success ${val}`);
+          },
+          {
+            throwOnError: true,
+            onError: onErrorSpy,
+          },
+        );
+
+        await flushEffects();
+        expect(s()).toBe('Success initial');
+
+        trigger.set('error');
+        await flushEffects();
+        expect(onErrorSpy).toHaveBeenCalledTimes(1);
+        expect(() => s()).toThrow('API failure');
+
+        // Verify it recovers seamlessly from error state
+        trigger.set('recovered');
+        await flushEffects();
+        expect(s()).toBe('Success recovered');
+      });
+    });
+
+    it('should use fallback value from onError without throwing', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const trigger = signal<string>('initial');
+
+        const s = computedAsync(
+          () => {
+            const val = trigger();
+            if (val === 'error') {
+              return throwError(() => new Error('Network timeout'));
+            }
+            return of(`Data: ${val}`);
+          },
+          {
+            onError: () => 'fallback data',
+          },
+        );
+
+        await flushEffects();
+        expect(s()).toBe('Data: initial');
+
+        trigger.set('error');
+        await flushEffects();
+        expect(s()).toBe('fallback data');
+
+        trigger.set('recovered');
+        await flushEffects();
+        expect(s()).toBe('Data: recovered');
+      });
+    });
+
+    it('should handle synchronous throw inside computeFn and recover', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const trigger = signal<'valid' | 'throw'>('valid');
+
+        const s = computedAsync(
+          () => {
+            if (trigger() === 'throw') {
+              throw new Error('Sync calculation error');
+            }
+            return of('Valid calculation');
+          },
+          {
+            onError: (err: unknown) => `Recovered from: ${(err as Error).message}`,
+          },
+        );
+
+        await flushEffects();
+        expect(s()).toBe('Valid calculation');
+
+        trigger.set('throw');
+        await flushEffects();
+        expect(s()).toBe('Recovered from: Sync calculation error');
+
+        trigger.set('valid');
+        await flushEffects();
+        expect(s()).toBe('Valid calculation');
+      });
+    });
+
+    it('should work outside injection context when custom injector is provided', async () => {
+      const injector = TestBed.inject(Injector);
+      const trigger = signal('initial');
+
+      // Called outside TestBed.runInInjectionContext
+      const s = computedAsync(() => of(`Result: ${trigger()}`), {injector});
+
+      await flushEffects();
+      expect(s()).toBe('Result: initial');
+
+      trigger.set('updated');
+      await flushEffects();
+      expect(s()).toBe('Result: updated');
+    });
+
+    it('should cancel prior in-flight async request when switching to a synchronous primitive value', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const mode = signal<'async' | 'sync'>('async');
+
+        const s = computedAsync(() => {
+          if (mode() === 'async') {
+            return of('slow-async-data').pipe(delay(50));
+          }
+          return 'immediate-sync-data';
+        });
+
+        await flushEffects();
+        expect(s()).toBeUndefined();
+
+        // Switch to synchronous primitive before the 50ms async completes
+        mode.set('sync');
+        await flushEffects();
+        expect(s()).toBe('immediate-sync-data');
+
+        // Advance past the 50ms delay of the initial async request
+        await flushEffects(60);
+
+        // Crucial assertion: the slow async request must NOT clobber the synchronous data
+        expect(s()).toBe('immediate-sync-data');
       });
     });
   });

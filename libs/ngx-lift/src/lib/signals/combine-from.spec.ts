@@ -1,7 +1,7 @@
 import {beforeEach, afterEach, vi} from 'vitest';
-import {computed, signal} from '@angular/core';
+import {computed, Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {BehaviorSubject, delay, map, of} from 'rxjs';
+import {BehaviorSubject, delay, map, of, tap} from 'rxjs';
 import {pipe} from 'rxjs';
 
 import {flushEffects} from '../../test-setup';
@@ -652,6 +652,105 @@ describe(combineFrom.name, () => {
         // With initialValue, type should not include undefined
         const result = combined();
         expect(result).toEqual([0]);
+      });
+    });
+  });
+
+  describe('glitch-free single emission and injector decoupling', () => {
+    it('should not emit duplicate values on initialization when combining signals', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let emissionCount = 0;
+        const sig = signal('hello');
+
+        const combined = combineFrom(
+          [sig],
+          tap(() => emissionCount++),
+        );
+
+        await flushEffects();
+        expect(emissionCount).toBe(1);
+        expect(combined()).toEqual(['hello']);
+      });
+    });
+
+    it('should not re-emit when a signal source is set to an identical value', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let emissionCount = 0;
+        const sig = signal(42);
+
+        const combined = combineFrom(
+          [sig],
+          tap(() => emissionCount++),
+        );
+
+        await flushEffects();
+        expect(emissionCount).toBe(1);
+
+        sig.set(42);
+        await flushEffects();
+        expect(emissionCount).toBe(1);
+
+        sig.set(99);
+        await flushEffects();
+        expect(emissionCount).toBe(2);
+        expect(combined()).toEqual([99]);
+      });
+    });
+
+    it('should work outside injection context when custom injector is provided', async () => {
+      const injector = TestBed.inject(Injector);
+      const sig = signal(100);
+
+      // Called outside TestBed.runInInjectionContext
+      const combined = combineFrom([sig], {injector});
+
+      await flushEffects();
+      expect(combined()).toEqual([100]);
+
+      sig.set(200);
+      await flushEffects();
+      expect(combined()).toEqual([200]);
+    });
+
+    it('should support function sources outside injection context when custom injector is provided', async () => {
+      const injector = TestBed.inject(Injector);
+      const sig = signal(10);
+      const fnSource = () => sig() * 2;
+
+      // Called outside TestBed.runInInjectionContext
+      const combined = combineFrom([fnSource], {injector});
+
+      await flushEffects();
+      expect(combined()).toEqual([20]);
+
+      sig.set(25);
+      await flushEffects();
+      expect(combined()).toEqual([50]);
+    });
+
+    it('should support Promise sources without redundant distinctUntilChanged', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const sig = signal('active');
+        const promiseSource = Promise.resolve(42);
+
+        const combined = combineFrom([sig, promiseSource], {initialValue: ['idle', 0]});
+
+        expect(combined()).toEqual(['idle', 0]);
+
+        await flushEffects();
+        expect(combined()).toEqual(['active', 42]);
+      });
+    });
+
+    it('should throw a clear TypeError when a source is null or undefined', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        expect(() => combineFrom([signal(1), null as unknown as Signal<number>])).toThrowError(
+          /combineFrom: Invalid source at "1". Expected a Signal, Observable, Promise, or function/,
+        );
+
+        expect(() => combineFrom({a: signal(1), b: undefined as unknown as Signal<number>})).toThrowError(
+          /combineFrom: Invalid source at "b". Expected a Signal, Observable, Promise, or function/,
+        );
       });
     });
   });

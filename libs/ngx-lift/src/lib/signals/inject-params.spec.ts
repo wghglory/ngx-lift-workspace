@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, Injector, numberAttribute} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {provideRouter} from '@angular/router';
+import {ActivatedRoute, provideRouter} from '@angular/router';
 import {RouterTestingHarness} from '@angular/router/testing';
-import {numberAttribute} from '@angular/core';
+import {of} from 'rxjs';
 
 import {injectParams} from './inject-params';
 
@@ -171,6 +171,28 @@ describe(injectParams.name, () => {
     const instance = await harness.navigateByUrl('/users', StringTransformOptionalComponent);
 
     expect(instance.transformedId()).toBeNull();
+  });
+
+  it('should work outside injection context when custom injector is provided', async () => {
+    const mockRoute = {
+      snapshot: {params: {id: '42'}},
+      params: of({id: '42'}),
+    } as unknown as ActivatedRoute;
+
+    const customInjector = Injector.create({
+      providers: [{provide: ActivatedRoute, useValue: mockRoute}],
+    });
+
+    const idSignal = injectParams('id', {injector: customInjector});
+    expect(idSignal()).toBe('42');
+
+    // Test injectParams({ injector }) for full params map
+    const fullParamsSignal = injectParams({injector: customInjector});
+    expect(fullParamsSignal()).toEqual({id: '42'});
+
+    // Test injectParams(fn, { injector }) for transform function
+    const transformedSignal = injectParams((params) => `User#${params['id']}`, {injector: customInjector});
+    expect(transformedSignal()).toBe('User#42');
   });
 });
 

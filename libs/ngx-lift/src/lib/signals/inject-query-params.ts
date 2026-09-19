@@ -1,4 +1,4 @@
-import {assertInInjectionContext, inject, type Signal} from '@angular/core';
+import {assertInInjectionContext, inject, Injector, type Signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, type Params} from '@angular/router';
 import {map} from 'rxjs';
@@ -23,6 +23,11 @@ export interface QueryParamsOptions<Output> {
    * The initial value to use if the query parameter is not present or undefined.
    */
   initialValue?: Output;
+
+  /**
+   * Optional custom injector. If provided, allows injectQueryParams to be called outside an ambient injection context.
+   */
+  injector?: Injector;
 }
 
 /**
@@ -30,7 +35,7 @@ export interface QueryParamsOptions<Output> {
  *
  * @returns A `Signal` that emits the entire query parameters object.
  */
-export function injectQueryParams(): Signal<Params>;
+export function injectQueryParams(options?: QueryParamsOptions<Params>): Signal<Params>;
 
 /**
  * The `injectQueryParams` function allows you to access and manipulate query parameters from the current route.
@@ -38,12 +43,16 @@ export function injectQueryParams(): Signal<Params>;
  *
  * @template Output - The expected type of the read value.
  * @param {QueryParamsTransformFn<Output>} fn - A transform function that takes the query parameters object (`params: Params`) and returns the desired value.
+ * @param {QueryParamsOptions<Output>} [options] - Optional configuration options.
  * @returns {Signal} A `Signal` that emits the transformed value based on the provided custom transform function.
  *
  * @example
  * const searchValue = injectQueryParams((params) => params['search'] as string);
  */
-export function injectQueryParams<Output>(fn: QueryParamsTransformFn<Output>): Signal<Output>;
+export function injectQueryParams<Output>(
+  fn: QueryParamsTransformFn<Output>,
+  options?: QueryParamsOptions<Output>,
+): Signal<Output>;
 
 /**
  * The `injectQueryParams` function allows you to access and manipulate query parameters from the current route.
@@ -56,39 +65,41 @@ export function injectQueryParams(key: string): Signal<string | null>;
 // for boolean or number, if initialValue is provided, transform is a must
 export function injectQueryParams(
   key: string,
-  options: {transform: (v: string) => boolean; initialValue: boolean},
+  options: {transform: (v: string) => boolean; initialValue: boolean; injector?: Injector},
 ): Signal<boolean>;
 export function injectQueryParams(
   key: string,
-  options: {transform: (v: string) => number; initialValue: number},
+  options: {transform: (v: string) => number; initialValue: number; injector?: Injector},
 ): Signal<number>;
 // for string, transform is optional
 export function injectQueryParams(
   key: string,
-  options: {transform?: (v: string) => string; initialValue: string},
+  options: {transform?: (v: string) => string; initialValue: string; injector?: Injector},
 ): Signal<string>;
 
 // initialValue not provided, must provide transform fn
 export function injectQueryParams(
   key: string,
-  options: {transform: (v: string) => boolean; initialValue?: undefined},
+  options: {transform: (v: string) => boolean; initialValue?: undefined; injector?: Injector},
 ): Signal<boolean | null>;
 export function injectQueryParams(
   key: string,
-  options: {transform: (v: string) => number; initialValue?: undefined},
+  options: {transform: (v: string) => number; initialValue?: undefined; injector?: Injector},
 ): Signal<number | null>;
 export function injectQueryParams(
   key: string,
-  options: {transform: (v: string) => string; initialValue?: undefined},
+  options: {transform: (v: string) => string; initialValue?: undefined; injector?: Injector},
 ): Signal<string | null>;
+
+export function injectQueryParams(key: string, options?: QueryParamsOptions<string>): Signal<string | null>;
 
 /**
  * The `injectQueryParams` function allows you to access and manipulate query parameters from the current route.
  *
  * @template Output - The expected type of the read value.
- * @param {string} keyOrParamsTransform - The name of the query parameter to retrieve, or a transform function to apply to the query parameters object.
- * @param {QueryParamsOptions} options - Optional configuration options for the query parameter.
- * @returns {QueryParamsOptions} A `Signal` that emits the transformed value of the specified query parameter, or the entire query parameters object if no key is provided.
+ * @param {string | QueryParamsTransformFn<Output> | QueryParamsOptions<Output>} [keyOrParamsTransformOrOptions] - The query param key, transform function, or options object.
+ * @param {QueryParamsOptions<Output>} [options] - Optional configuration options for the query parameter.
+ * @returns {Signal} A `Signal` that emits the transformed value, query parameter value, or entire query parameters object.
  *
  * @example
  * const search = injectQueryParams('search'); // returns the value of the 'search' query param
@@ -98,31 +109,40 @@ export function injectQueryParams(
  * const queryParams = injectQueryParams(); // returns the entire query params object
  */
 export function injectQueryParams<Output>(
-  keyOrParamsTransform?: string | QueryParamsTransformFn<Output>,
+  keyOrParamsTransformOrOptions?: string | QueryParamsTransformFn<Output> | QueryParamsOptions<Output>,
   options: QueryParamsOptions<Output> = {},
 ): Signal<Output | Params | string | boolean | number | null> {
-  assertInInjectionContext(injectQueryParams);
+  const isOptionsObject = typeof keyOrParamsTransformOrOptions === 'object' && keyOrParamsTransformOrOptions !== null;
+  const effectiveOptions: QueryParamsOptions<Output> = isOptionsObject
+    ? (keyOrParamsTransformOrOptions as QueryParamsOptions<Output>)
+    : options;
 
-  const route = inject(ActivatedRoute);
+  if (!effectiveOptions.injector) {
+    assertInInjectionContext(injectQueryParams);
+  }
+
+  const route = effectiveOptions.injector ? effectiveOptions.injector.get(ActivatedRoute) : inject(ActivatedRoute);
   const initialQueryParams = route.snapshot.queryParams;
 
-  const {transform, initialValue} = options;
+  const {transform, initialValue, injector} = effectiveOptions;
 
-  // injectQueryParams(): Signal<Params>
-  if (!keyOrParamsTransform) {
-    return toSignal(route.queryParams, {initialValue: initialQueryParams});
+  // injectQueryParams(): Signal<Params> or injectQueryParams({ injector }): Signal<Params>
+  if (!keyOrParamsTransformOrOptions || isOptionsObject) {
+    return toSignal(route.queryParams, {initialValue: initialQueryParams, injector});
   }
 
   // injectQueryParams<Output>(fn: QueryParamsTransformFn<Output>): Signal<Output>
-  if (typeof keyOrParamsTransform === 'function') {
-    return toSignal(route.queryParams.pipe(map(keyOrParamsTransform)), {
-      initialValue: keyOrParamsTransform(initialQueryParams),
+  if (typeof keyOrParamsTransformOrOptions === 'function') {
+    return toSignal(route.queryParams.pipe(map(keyOrParamsTransformOrOptions)), {
+      initialValue: keyOrParamsTransformOrOptions(initialQueryParams),
+      injector,
     });
   }
 
-  // keyOrParamsTransform is string.
+  // keyOrParamsTransformOrOptions is string.
+  const paramKey = keyOrParamsTransformOrOptions as string;
   const getParam = (params: Params) => {
-    const param = params?.[keyOrParamsTransform] as string | string[] | undefined;
+    const param = params?.[paramKey] as string | string[] | undefined;
 
     if (!param) {
       return initialValue ?? null;
@@ -140,5 +160,6 @@ export function injectQueryParams<Output>(
 
   return toSignal(route.queryParams.pipe(map(getParam)), {
     initialValue: getParam(initialQueryParams),
+    injector,
   });
 }

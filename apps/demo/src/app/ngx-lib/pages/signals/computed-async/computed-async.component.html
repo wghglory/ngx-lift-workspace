@@ -274,6 +274,16 @@
 
       <app-code-block [code]="tabSwitchingCode" lang="typescript" />
     </article>
+
+    <article class="space-y-3">
+      <h3>Example 14: Decoupled Injector</h3>
+      <p>
+        By passing an optional <code>injector</code> in the options object, <code>computedAsync</code> can be
+        instantiated outside an ambient injection context—for instance, inside composable helper functions, custom
+        services, or dynamic factory methods:
+      </p>
+      <app-code-block [code]="decoupledInjectorCode" lang="typescript" />
+    </article>
   </section>
 
   <!-- API Reference -->

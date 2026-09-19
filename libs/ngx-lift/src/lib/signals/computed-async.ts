@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {computed, CreateComputedOptions, DestroyRef, effect, inject, Signal, signal, untracked} from '@angular/core';
+import {
+  assertInInjectionContext,
+  computed,
+  CreateComputedOptions,
+  DestroyRef,
+  effect,
+  inject,
+  Injector,
+  Signal,
+  signal,
+  untracked,
+} from '@angular/core';
 import {
   catchError,
   concatAll,
@@ -29,6 +40,7 @@ type ComputedAsyncBehavior = 'switch' | 'merge' | 'concat' | 'exhaust';
 // { equal, behavior, onError, throwOnError }
 type BaseOptions<T> = CreateComputedOptions<T> & {
   behavior?: ComputedAsyncBehavior;
+  injector?: Injector;
   /**
    * Optional error handler that receives errors from async operations.
    * Can be used to transform errors or provide fallback values.
@@ -36,8 +48,10 @@ type BaseOptions<T> = CreateComputedOptions<T> & {
    */
   onError?: (error: unknown) => T | undefined;
   /**
-   * If true, errors will be thrown and propagate up.
-   * If false (default), errors are set on the signal and can be handled by onError.
+   * If true, errors will be thrown and propagate up when the signal is read.
+   * If false (default), errors are set on the signal (or handled via `onError` if provided).
+   * Note: When `onError` is omitted and `throwOnError` is false, the error object is emitted
+   * into the signal as its value.
    */
   throwOnError?: boolean;
 };
@@ -123,6 +137,8 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  * );
  * ```
  */
+type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; error: unknown};
+
 // without options
 export function computedAsync<T>(
   computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
@@ -165,33 +181,33 @@ export function computedAsync<T>(
   computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
   options: any = {},
 ): Signal<T | undefined> {
-  const destroyRef = inject(DestroyRef);
+  if (!options?.injector) {
+    assertInInjectionContext(computedAsync);
+  }
+
+  const destroyRef = options?.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
 
   const sourceSubject = new Subject<Promise<T> | Observable<T>>();
   const source$ = flattenObservable(sourceSubject, options.behavior || 'switch');
 
-  const sourceValue = signal<T | undefined>(options.initialValue);
+  const sourceState = signal<SignalState<T>>({kind: 'value', value: options.initialValue});
 
   const sourceResult = source$.subscribe({
     next: (event) => {
       if (event.type === 'value') {
-        sourceValue.set(event.value);
+        sourceState.set({kind: 'value', value: event.value});
       } else {
         const error = event.error;
-        // If throwOnError is true, call onError (if provided) but then throw immediately
         if (options.throwOnError) {
           if (options.onError) {
             options.onError(error);
           }
-          throw error;
-        }
-
-        // Otherwise, handle error by setting value or fallback
-        if (options.onError) {
+          sourceState.set({kind: 'error', error});
+        } else if (options.onError) {
           const fallbackValue = options.onError(error);
-          sourceValue.set(fallbackValue);
+          sourceState.set({kind: 'value', value: fallbackValue});
         } else {
-          sourceValue.set(error as T);
+          sourceState.set({kind: 'error', error});
         }
       }
     },
@@ -210,34 +226,65 @@ export function computedAsync<T>(
       sourceSubject.next(initialEmission);
     } else {
       // primitive value T
-      sourceValue.set(initialEmission);
+      sourceSubject.next(of(initialEmission as T));
     }
   }
 
-  if (options.requireSync && sourceValue() === undefined) {
+  const currentState = sourceState();
+  if (options.requireSync && currentState.kind === 'value' && currentState.value === undefined) {
     throw new Error(`The observable doesn't emit synchronously. Set requireSync to false or pass an initialValue.`);
   }
 
   let shouldSkipFirstComputation = options.requireSync === true;
 
-  effect(() => {
-    const currentValue = untracked(() => sourceValue());
+  effect(
+    () => {
+      const state = untracked(() => sourceState());
+      const currentValue = state.kind === 'value' ? state.value : undefined;
 
-    const newSource = computeFn(currentValue);
+      let newSource: Observable<T> | Promise<T> | T | undefined;
+      try {
+        newSource = computeFn(currentValue);
+      } catch (error: unknown) {
+        shouldSkipFirstComputation = false;
+        if (options.throwOnError) {
+          if (options.onError) {
+            options.onError(error);
+          }
+          sourceState.set({kind: 'error', error});
+        } else if (options.onError) {
+          const fallbackValue = options.onError(error);
+          sourceState.set({kind: 'value', value: fallbackValue});
+        } else {
+          sourceState.set({kind: 'error', error});
+        }
+        return;
+      }
 
-    if (shouldSkipFirstComputation) {
-      shouldSkipFirstComputation = false;
-      return;
-    }
+      if (shouldSkipFirstComputation) {
+        shouldSkipFirstComputation = false;
+        return;
+      }
 
-    if (isPromise(newSource) || isObservable(newSource)) {
-      untracked(() => sourceSubject.next(newSource));
-    } else {
-      untracked(() => sourceValue.set(newSource));
-    }
-  });
+      const streamSource = isPromise(newSource) || isObservable(newSource) ? newSource : of(newSource as T);
+      untracked(() => sourceSubject.next(streamSource as Promise<T> | Observable<T>));
+    },
+    options?.injector ? {injector: options.injector} : undefined,
+  );
 
-  return computed(() => sourceValue() as T, {equal: options.equal});
+  return computed(
+    () => {
+      const state = sourceState();
+      if (state.kind === 'error') {
+        if (options.throwOnError) {
+          throw state.error;
+        }
+        return state.error as T;
+      }
+      return state.value as T;
+    },
+    {equal: options.equal},
+  );
 }
 
 type StreamEvent<T> = {type: 'value'; value: T} | {type: 'error'; error: unknown};
