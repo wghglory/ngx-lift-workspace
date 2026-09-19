@@ -22,7 +22,7 @@ month-by-month execution plan.
 
 ## Output Format
 
-```markdown
+````markdown
 # Project Execution Plan: [Project Name]
 
 ## 1. Executive Summary
@@ -34,9 +34,17 @@ month-by-month execution plan.
 
 ## 2. Visual Timeline
 
-\`\`\`mermaid gantt dateFormat YYYY-MM-DD title Project Execution Timeline section Month 1 Core Foundation :done, m1_1,
-2026-10-01, 14d Initial Components :active, m1_2, after m1_1, 14d section Month 2 Feature Integration : m2_1, after
-m1_2, 21d Testing & Hardening : m2_2, after m2_1, 7d \`\`\`
+```mermaid
+gantt
+    dateFormat YYYY-MM-DD
+    title Project Execution Timeline
+    section Month 1
+    Core Foundation    :done, m1_1, 2026-10-01, 14d
+    Initial Components :active, m1_2, after m1_1, 14d
+    section Month 2
+    Feature Integration :m2_1, after m1_2, 21d
+    Testing & Hardening :m2_2, after m2_1, 7d
+```
 
 ## 3. Detailed Monthly Breakdown
 
@@ -56,4 +64,4 @@ m1_2, 21d Testing & Hardening : m2_2, after m2_1, 7d \`\`\`
 ## 4. Parking Lot / Out of Scope
 
 Items from the requirements that are deferred to later phases.
-```
+````

@@ -26,7 +26,7 @@ Reviews local changes or branch commits against workspace standards using the ad
 
 ### 2 — Adversarial Review
 
-Follow the instructions in `.cursor/skills/review-adversarial/SKILL.md`. Examine every changed line for:
+Activate the `review-adversarial` skill. Examine every changed line for:
 
 - Signal reactive context violations and memory leaks
 - Public API contract changes or broken TypeScript generics
