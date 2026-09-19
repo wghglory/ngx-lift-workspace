@@ -10,7 +10,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import {from, isObservable, Observable, Subscription} from 'rxjs';
+import {from, isObservable, noop, Observable, Subscription} from 'rxjs';
 
 import {ResourceStatus} from '../models';
 import {isPromise} from '../utils/is-promise.util';
@@ -124,7 +124,6 @@ export interface ResourceRef<T, E = Error> {
    * Whether this resource is in idle state (never triggered).
    * True only when status is 'idle'.
    *
-   * **Note**: This is an ngx-lift extension (not in Angular's httpResource).
    * Useful for lazy resources to check if they've been triggered yet.
    */
   readonly isIdle: Signal<boolean>;
@@ -159,16 +158,28 @@ export interface ResourceRef<T, E = Error> {
   reload(): boolean;
 
   /**
-   * Manually trigger execution of the resource operation.
-   * This is an alias for `reload()` with a name more appropriate for mutations.
+   * Manually trigger execution of the resource operation and return a Promise of the result.
    *
-   * **Note**: This is an ngx-lift extension (not in Angular's httpResource).
-   * Use `execute()` for mutations (POST/PUT/DELETE) like form submissions, saves, deletes.
-   * Use `reload()` for read operations (GET requests) where "reload" makes semantic sense.
+   * Designed specifically for mutations (POST/PUT/DELETE) like form submissions, saves, deletes.
    *
-   * @returns true if execution was initiated, false if execution was unnecessary or unsupported
+   * - Returns a Promise resolving to the exact result written to `resource.value()`.
+   * - Safe for fire-and-forget calls (e.g. `ref.execute()`) without causing unhandled promise rejections.
+   * - Can be awaited: `const result = await ref.execute();`
+   * - Clears stale previous value on re-execution so UI displays loading state cleanly.
+   *
+   * @returns A Promise that resolves with the operation result, or rejects if an error occurs.
    */
-  execute(): boolean;
+  execute(): Promise<T>;
+
+  /**
+   * Resets the resource to its initial idle state.
+   *
+   * - Cancels any pending in-flight operation
+   * - Resets the value back to initialValue (or undefined)
+   * - Clears any error
+   * - Transitions status back to 'idle'
+   */
+  reset(): void;
 }
 
 /**
@@ -363,15 +374,44 @@ export function resourceAsync<T, E = Error>(
   // Track current subscription for cancellation
   let currentSubscription: Subscription | null = null;
 
+  // Track whether lazy resource has been triggered by reload() or execute()
+  const isTriggered = signal(false);
+
+  // Pending execution promises to resolve/reject when fetch completes
+  interface Deferred<T> {
+    resolve: (value: T) => void;
+    reject: (error: unknown) => void;
+  }
+  let pendingDeferreds: Deferred<T>[] = [];
+
+  const resolvePending = (value: T) => {
+    if (pendingDeferreds.length > 0) {
+      const list = pendingDeferreds;
+      pendingDeferreds = [];
+      for (const d of list) {
+        d.resolve(value);
+      }
+    }
+  };
+
+  const rejectPending = (error: unknown) => {
+    if (pendingDeferreds.length > 0) {
+      const list = pendingDeferreds;
+      pendingDeferreds = [];
+      for (const d of list) {
+        d.reject(error);
+      }
+    }
+  };
+
   // Main effect that handles fetching
   effect(
     () => {
       // Track reload trigger to re-execute on reload()
-      const currentTrigger = reloadTrigger();
+      reloadTrigger();
 
       // Skip if lazy and never triggered
-      // Use untracked to read status without creating a dependency
-      if (options.lazy && untracked(() => statusSignal()) === 'idle' && currentTrigger === 0) {
+      if (options.lazy && !isTriggered()) {
         return;
       }
 
@@ -396,6 +436,7 @@ export function resourceAsync<T, E = Error>(
               valueSignal.set(fallbackValue);
               errorSignal.set(null);
               statusSignal.set('resolved');
+              resolvePending(fallbackValue);
               return;
             }
           }
@@ -403,6 +444,7 @@ export function resourceAsync<T, E = Error>(
           valueSignal.set(undefined as T);
           errorSignal.set(error as E);
           statusSignal.set('error');
+          rejectPending(error);
 
           if (options.throwOnError) {
             throw error;
@@ -414,6 +456,8 @@ export function resourceAsync<T, E = Error>(
       // Cancel previous request (important for 'switch' behavior)
       if (currentSubscription && !currentSubscription.closed) {
         currentSubscription.unsubscribe();
+        currentSubscription = null;
+        rejectPending(new Error('Operation cancelled by dependency change'));
       }
 
       // Determine if this is initial loading or reloading
@@ -440,6 +484,7 @@ export function resourceAsync<T, E = Error>(
               errorSignal.set(null);
               statusSignal.set('resolved'); // Use 'resolved' to match httpResource
               options.onSuccess?.(value);
+              resolvePending(value);
             });
           },
           error: (error: E) => {
@@ -451,6 +496,7 @@ export function resourceAsync<T, E = Error>(
                   valueSignal.set(fallbackValue);
                   errorSignal.set(null);
                   statusSignal.set('resolved'); // Success with fallback
+                  resolvePending(fallbackValue);
                   return;
                 }
               }
@@ -459,6 +505,7 @@ export function resourceAsync<T, E = Error>(
               valueSignal.set(undefined as T);
               errorSignal.set(error);
               statusSignal.set('error');
+              rejectPending(error);
 
               // Optionally throw after handling
               if (options.throwOnError) {
@@ -473,6 +520,7 @@ export function resourceAsync<T, E = Error>(
                 valueSignal.set(undefined as T);
                 errorSignal.set(null);
                 statusSignal.set('resolved');
+                resolvePending(undefined as T);
               });
             }
           },
@@ -487,6 +535,7 @@ export function resourceAsync<T, E = Error>(
     if (currentSubscription && !currentSubscription.closed) {
       currentSubscription.unsubscribe();
     }
+    rejectPending(new Error('Resource was destroyed'));
   });
 
   // isLoading as a computed Signal (matches Angular's httpResource API)
@@ -495,7 +544,7 @@ export function resourceAsync<T, E = Error>(
     return status === 'loading' || status === 'reloading';
   });
 
-  // isIdle as a computed Signal (ngx-lift extension)
+  // isIdle as a computed Signal
   const isIdleSignal = computed(() => {
     return statusSignal() === 'idle';
   });
@@ -511,6 +560,7 @@ export function resourceAsync<T, E = Error>(
   };
 
   const reload = (): boolean => {
+    isTriggered.set(true);
     // Matches Angular's httpResource behavior:
     // Returns true if reload was initiated, false if unnecessary
     const status = untracked(statusSignal);
@@ -527,6 +577,60 @@ export function resourceAsync<T, E = Error>(
 
     reloadTrigger.update((v) => v + 1);
     return true;
+  };
+
+  // Reset the resource to its initial idle state
+  const reset = (): void => {
+    // Cancel any pending request
+    if (currentSubscription && !currentSubscription.closed) {
+      currentSubscription.unsubscribe();
+      currentSubscription = null;
+    }
+
+    rejectPending(new Error('Resource was reset'));
+    untracked(() => {
+      isTriggered.set(false);
+      valueSignal.set(undefined as T);
+      errorSignal.set(null);
+      statusSignal.set('idle');
+    });
+  };
+
+  // Manually trigger execution of mutation operation and return an awaitable Promise
+  const execute = (): Promise<T> => {
+    isTriggered.set(true);
+    const status = untracked(statusSignal);
+
+    // If exhaust behavior and already loading, reuse active in-flight execution promise
+    if (options.behavior === 'exhaust' && (status === 'loading' || status === 'reloading')) {
+      const p = new Promise<T>((resolve, reject) => {
+        pendingDeferreds.push({resolve, reject});
+      });
+      p.catch(noop); // Prevent unhandled rejection if caller does not await or catch
+      return p;
+    }
+
+    // If switch behavior (default) and already in-flight or pending, cancel the previous request
+    if (currentSubscription && !currentSubscription.closed) {
+      currentSubscription.unsubscribe();
+      currentSubscription = null;
+    }
+    rejectPending(new Error('Operation cancelled by newer execution'));
+
+    // For a mutation, clear previous value and error so UI displays loading state cleanly
+    untracked(() => {
+      valueSignal.set(undefined as T);
+      errorSignal.set(null);
+      statusSignal.set('loading');
+    });
+
+    const p = new Promise<T>((resolve, reject) => {
+      pendingDeferreds.push({resolve, reject});
+    });
+    p.catch(noop); // Prevent unhandled rejection if caller does not await or catch
+
+    reloadTrigger.update((v) => v + 1);
+    return p;
   };
 
   // Manually set the resource value (transitions to 'local' state)
@@ -573,7 +677,8 @@ export function resourceAsync<T, E = Error>(
       isIdle: isIdleSignal,
       hasValue: readonlyHasValue,
       reload,
-      execute: reload,
+      execute,
+      reset,
     };
   };
 
@@ -585,7 +690,8 @@ export function resourceAsync<T, E = Error>(
     isIdle: isIdleSignal,
     hasValue,
     reload,
-    execute: reload, // Alias for mutations - same functionality, clearer intent
+    execute,
+    reset,
     set,
     update,
     asReadonly,

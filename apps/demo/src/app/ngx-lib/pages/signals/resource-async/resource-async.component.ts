@@ -375,9 +375,15 @@ export class ResourceAsyncComponent {
     uniqueOrgIds.forEach((orgId) => this.loadOrg(orgId));
   }
 
-  onRegistrationSubmit() {
+  async onRegistrationSubmit(): Promise<void> {
     if (this.registrationForm.valid) {
-      this.registrationRef.execute(); // Use execute() for POST mutation
+      try {
+        // execute() returns an awaitable Promise<T> resolving to the exact value in registrationRef.value()
+        const response = await this.registrationRef.execute();
+        console.log('Registration succeeded via await:', response);
+      } catch (error) {
+        console.error('Registration failed caught by caller:', error);
+      }
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.registrationForm.controls).forEach((key) => {
@@ -542,10 +548,11 @@ interface ResourceRef<T, E = Error> {
   readonly error: Signal<E | null>;
   readonly status: Signal<ResourceStatus>;
   readonly isLoading: Signal<boolean>;
-  readonly isIdle: Signal<boolean>;        - ngx-lift extension
+  readonly isIdle: Signal<boolean>;       
   hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;  // Type predicate method
   reload(): boolean;                      // Returns true if initiated, for read operations (GET)
-  execute(): boolean;                     // Alias for reload() - for mutations (POST/PUT/DELETE)
+  execute(): Promise<T>;                  // Awaitable mutation trigger - returns Promise<T>
+  reset(): void;                          // Resets resource to idle state, cancels in-flight
 }
 
 type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
@@ -664,9 +671,11 @@ export class RegistrationComponent {
     }
   );
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      this.registrationRef.execute();  // Use execute() for mutations
+      // execute() returns an awaitable Promise<T> resolving to the exact value in registrationRef.value()
+      const response = await this.registrationRef.execute();
+      console.log('Registration successful:', response);
     }
   }
 }

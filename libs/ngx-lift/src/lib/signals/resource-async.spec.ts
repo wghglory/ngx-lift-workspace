@@ -2,7 +2,7 @@ import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
 import {Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {delay, Observable, of, throwError} from 'rxjs';
+import {delay, map, Observable, of, throwError} from 'rxjs';
 
 import {resourceAsync} from './resource-async';
 
@@ -1175,9 +1175,10 @@ describe('WritableResourceRef', () => {
         expect(readonly.error()).toBeNull();
         expect(readonly.hasValue()).toBe(true);
 
-        // Should have reload/execute
+        // Should have reload/execute/reset
         expect(typeof readonly.reload).toBe('function');
         expect(typeof readonly.execute).toBe('function');
+        expect(typeof readonly.reset).toBe('function');
 
         // Should not have set/update
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1348,6 +1349,241 @@ describe('WritableResourceRef', () => {
         // Verify network response does NOT clobber optimistic update
         expect(resource.status()).toBe('local');
         expect(resource.value()).toBe('optimistic-value');
+      });
+    });
+  });
+
+  describe('reset()', () => {
+    it('should reset lazy resource to idle state and clear previous value and error', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let count = 0;
+        const resource = resourceAsync(() => of(`Result ${++count}`).pipe(delay(50)), {lazy: true});
+
+        await flushEffects();
+        expect(resource.status()).toBe('idle');
+        expect(resource.isIdle()).toBe(true);
+
+        // Execute resource
+        resource.execute();
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        await flushEffects(60);
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value()).toBe('Result 1');
+
+        // Reset resource
+        resource.reset();
+        await flushEffects();
+        expect(resource.status()).toBe('idle');
+        expect(resource.isIdle()).toBe(true);
+        expect(resource.value()).toBeUndefined();
+        expect(resource.error()).toBeNull();
+
+        // Should be able to execute again after reset
+        resource.execute();
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        await flushEffects(60);
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value()).toBe('Result 2');
+      });
+    });
+
+    it('should cancel in-flight request when reset() is called', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => of('completed-data').pipe(delay(100)), {lazy: true});
+
+        resource.execute();
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        // Reset while loading
+        resource.reset();
+        expect(resource.status()).toBe('idle');
+        expect(resource.value()).toBeUndefined();
+
+        // Advance timers: cancelled request must not update value or status
+        await flushEffects(120);
+        expect(resource.status()).toBe('idle');
+        expect(resource.value()).toBeUndefined();
+      });
+    });
+
+    it('should clear error state on reset', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => throwError(() => new Error('Submission failed')), {lazy: true});
+
+        resource.execute();
+        await flushEffects();
+        expect(resource.status()).toBe('error');
+        expect(resource.error()?.message).toBe('Submission failed');
+
+        resource.reset();
+        await flushEffects();
+        expect(resource.status()).toBe('idle');
+        expect(resource.error()).toBeNull();
+      });
+    });
+
+    it('should refetch on non-lazy resource when signal dependency changes after reset()', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const userId = signal(1);
+        const resource = resourceAsync(() => of(`User ${userId()}`).pipe(delay(20)));
+
+        await flushEffects(30);
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value()).toBe('User 1');
+
+        // Reset non-lazy resource
+        resource.reset();
+        expect(resource.status()).toBe('idle');
+        expect(resource.value()).toBeUndefined();
+
+        // Changing reactive signal dependency should trigger refetch
+        userId.set(2);
+        await flushEffects(30);
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value()).toBe('User 2');
+      });
+    });
+  });
+
+  describe('execute() mutation', () => {
+    it('should return a Promise resolving to the exact value written to resource.value()', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => of({id: 123, status: 'SAVED'}).pipe(delay(50)), {lazy: true});
+
+        await flushEffects();
+        expect(resource.status()).toBe('idle');
+
+        // Await the returned promise
+        const execPromise = resource.execute();
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+
+        await flushEffects(60);
+        const result = await execPromise;
+
+        expect(result).toEqual({id: 123, status: 'SAVED'});
+        expect(resource.value()).toEqual(result);
+        expect(resource.status()).toBe('resolved');
+      });
+    });
+
+    it('should clear stale previous value on re-execution so UI shows loading state cleanly', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let count = 0;
+        const resource = resourceAsync(() => of(`Attempt ${++count}`).pipe(delay(50)), {lazy: true});
+
+        const res1 = await (async () => {
+          const p = resource.execute();
+          await flushEffects(60);
+          return p;
+        })();
+        expect(res1).toBe('Attempt 1');
+        expect(resource.value()).toBe('Attempt 1');
+        expect(resource.status()).toBe('resolved');
+
+        // Second execution: must immediately clear previous value and transition to 'loading'
+        const p2 = resource.execute();
+        expect(resource.value()).toBeUndefined();
+        expect(resource.status()).toBe('loading');
+
+        await flushEffects(60);
+        const res2 = await p2;
+        expect(res2).toBe('Attempt 2');
+        expect(resource.value()).toBe('Attempt 2');
+      });
+    });
+
+    it('should reject the Promise on error when awaited, but remain safe for fire-and-forget callers', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => throwError(() => new Error('Server 500')).pipe(delay(50)), {
+          lazy: true,
+        });
+
+        // 1. Fire-and-forget (caller does not await or catch) - must NOT trigger unhandled rejection
+        resource.execute();
+        await flushEffects(60);
+        expect(resource.status()).toBe('error');
+        expect(resource.error()?.message).toBe('Server 500');
+
+        // 2. Awaited execution - must throw to caller's try/catch
+        const p = resource.execute();
+        await flushEffects(60);
+
+        let caughtError: Error | null = null;
+        try {
+          await p;
+        } catch (err) {
+          caughtError = err as Error;
+        }
+
+        expect(caughtError).not.toBeNull();
+        expect(caughtError?.message).toBe('Server 500');
+      });
+    });
+
+    it('should reuse in-flight execution promise when behavior is exhaust', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let calls = 0;
+        const resource = resourceAsync(
+          () =>
+            of(null).pipe(
+              delay(50),
+              map(() => `Call ${++calls}`),
+            ),
+          {lazy: true, behavior: 'exhaust'},
+        );
+
+        const p1 = resource.execute();
+        const p2 = resource.execute(); // Ignored duplicate click, reuses p1
+
+        await flushEffects(60);
+
+        const [r1, r2] = await Promise.all([p1, p2]);
+        expect(r1).toBe('Call 1');
+        expect(r2).toBe('Call 1');
+        expect(calls).toBe(1);
+      });
+    });
+
+    it('should reject previous execution promise when new execution is started with switch behavior', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        let callCount = 0;
+        const resource = resourceAsync(
+          () => {
+            const currentCall = ++callCount;
+            return of(null).pipe(
+              delay(50),
+              map(() => `Response ${currentCall}`),
+            );
+          },
+          {lazy: true, behavior: 'switch'},
+        );
+
+        const p1 = resource.execute();
+        await flushEffects(); // Start in-flight request
+
+        // Immediately start second execution while first is in-flight
+        const p2 = resource.execute();
+
+        let p1Error: Error | null = null;
+        try {
+          await p1;
+        } catch (err) {
+          p1Error = err as Error;
+        }
+
+        expect(p1Error).not.toBeNull();
+        expect(p1Error?.message).toContain('Operation cancelled by newer execution');
+
+        await flushEffects(60);
+        const r2 = await p2;
+        expect(r2).toBe('Response 2');
+        expect(resource.value()).toBe('Response 2');
       });
     });
   });

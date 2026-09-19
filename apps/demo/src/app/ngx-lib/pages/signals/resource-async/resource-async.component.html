@@ -203,9 +203,10 @@
     <article class="space-y-3">
       <h3>Example 5: Mutations with execute() - User Registration Form</h3>
       <p>
-        For mutations (POST/PUT/DELETE), use <code>execute()</code> method instead of <code>reload()</code>. The
-        <code>execute()</code> method is semantically appropriate for operations like form submissions, data saves, and
-        deletes.
+        For mutations (POST/PUT/DELETE), use the <code>execute()</code> method instead of <code>reload()</code>.
+        <code>execute()</code> returns an awaitable <code>Promise&lt;T&gt;</code> that resolves to the exact value
+        written to <code>resource.value()</code>, clears stale values and errors upon re-execution, and is safe for
+        fire-and-forget calls without unhandled rejections.
       </p>
 
       <p>
@@ -215,9 +216,12 @@
         <li><code>lazy: true</code> - Don't execute until explicitly triggered</li>
         <li>
           <code>behavior: 'exhaust'</code> - Prevent duplicate submissions (ignore new requests while one is in
-          progress)
+          progress, sharing the active in-flight Promise)
         </li>
-        <li><code>execute()</code> - Use this method instead of <code>reload()</code> for mutations</li>
+        <li>
+          <code>execute(): Promise&lt;T&gt;</code> - Awaitable mutation trigger that returns a Promise resolving to the
+          result, or fire-and-forget
+        </li>
       </ul>
 
       <h4>Registration Component</h4>
@@ -234,7 +238,10 @@
             <code>behavior: 'exhaust'</code> - If user spams the submit button, subsequent clicks are ignored while
             request is in-flight
           </li>
-          <li><code>execute()</code> - Clearer intent than "reload" for a POST request</li>
+          <li>
+            <code>execute(): Promise&lt;T&gt;</code> - Awaitable with <code>const res = await ref.execute()</code>, or
+            fire-and-forget; clears stale previous value so loading UI is clean
+          </li>
           <li><code>isLoading()</code> - Perfect for showing loading state and disabling button</li>
           <li><code>status()</code> - Track success/error states for user feedback</li>
         </ul>
@@ -351,7 +358,9 @@
         <strong>You need local state management</strong> - use <code>set()</code>/<code>update()</code> for optimistic
         updates, cache-first patterns, or form drafts
       </li>
-      <li>You need manual trigger capability (<code>reload()</code> or <code>execute()</code>)</li>
+      <li>
+        You need manual trigger capability (<code>reload()</code>, <code>execute()</code>, or <code>reset()</code>)
+      </li>
       <li>You want explicit status tracking (idle, isLoading, reloading, resolved, error, local)</li>
       <li>You need lazy loading (defer initial execution)</li>
       <li>You want individual signal accessors for optimal performance</li>
@@ -793,7 +802,7 @@
           </li>
           <li>
             <code>isIdle: Signal&lt;boolean&gt;</code> - Signal that returns true if the resource is in idle state
-            (never fetched). <strong>ngx-lift extension</strong> - not in Angular's httpResource.
+            (never fetched).
           </li>
           <li>
             <code>hasValue(): this is ResourceRef&lt;Exclude&lt;T, undefined&gt;, E&gt;</code> - Returns true if the
@@ -805,9 +814,16 @@
             initiated, false if unnecessary. Use for read operations (GET) where "reload" makes semantic sense.
           </li>
           <li>
-            <code>execute(): boolean</code> - Manually trigger execution of the resource. This is an alias for
-            <code>reload()</code> but with a name more appropriate for mutations (POST/PUT/DELETE).
-            <strong>ngx-lift extension</strong> - not in Angular's httpResource.
+            <code>execute(): Promise&lt;T&gt;</code> - Manually trigger execution of the resource and return an
+            awaitable Promise of the result. Designed specifically for mutations (POST/PUT/DELETE) like form
+            submissions, saves, and deletes. Resolves to the exact value written to <code>resource.value()</code>,
+            clears stale previous state on re-execution, and is safe for fire-and-forget calls without unhandled
+            rejections.
+          </li>
+          <li>
+            <code>reset(): void</code> - Resets the resource to its initial idle state, cancels any pending in-flight
+            operation, resets <code>value()</code> to initialValue (or undefined), clears errors, and transitions status
+            back to <code>'idle'</code>.
           </li>
         </ul>
 

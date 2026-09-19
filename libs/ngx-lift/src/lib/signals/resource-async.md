@@ -51,7 +51,7 @@ export class UserProfileComponent {
 | **Signal-based**            | ✅                     | ✅                                         | Both use Angular Signals                                     |
 | **Reactive dependencies**   | ✅                     | ✅                                         | Auto-refetch on dependency changes                           |
 | **Status tracking**         | ✅                     | ✅                                         | `idle`, `loading`, `reloading`, `resolved`, `error`, `local` |
-| **Manual reload**           | ✅ `reload()`          | ✅ `reload()` + `execute()`                | `execute()` for mutations                                    |
+| **Manual reload**           | ✅ `reload()`          | ✅ `reload()` + `execute()` + `reset()`    | `execute(): Promise<T>` for mutations, `reset()` for idle    |
 | **Lazy loading**            | ✅                     | ✅                                         | `lazy: true` option                                          |
 | **Writable API**            | ✅ `set()`, `update()` | ✅ **`set()`, `update()`, `asReadonly()`** | Local state management                                       |
 | **Cancellation strategies** | ❌                     | ✅ **switch, exhaust**                     | Fine-grained control                                         |
@@ -597,12 +597,13 @@ interface ResourceRef<T, E = Error> {
   error: Signal<E | null>;
   status: Signal<ResourceStatus>;
   isLoading: Signal<boolean>; // Signal (not method) - matches Angular
-  isIdle: Signal<boolean>; // Signal (not method) - ngx-lift extension
+  isIdle: Signal<boolean>; // Signal
 
   // Methods
   hasValue(): this is ResourceRef<Exclude<T, undefined>, E>; // Type predicate!
   reload(): boolean; // Returns true if initiated
-  execute(): boolean; // Alias for reload() - ngx-lift extension
+  execute(): Promise<T>; // Awaitable mutation trigger
+  reset(): void; // Resets resource back to idle state
 }
 ```
 
@@ -782,14 +783,16 @@ export class MyComponent {
 ### 1. Use `execute()` for Mutations
 
 ```typescript
-// ✅ Good: Semantic clarity
+// ✅ Good: Semantic clarity & awaitable Promise
 saveActionRef = resourceAsync(
-  () => this.http.post('/api/save', this.data()),
+  () => this.http.post<SaveResult>('/api/save', this.data()),
   { lazy: true }
 );
 
-save() {
-  this.saveActionRef.execute(); // Clear intent: POST operation
+async save() {
+  // Can be awaited directly:
+  const result = await this.saveActionRef.execute();
+  // Or fire-and-forget: this.saveActionRef.execute();
 }
 
 // ❌ Confusing: "reload" implies GET
@@ -1026,22 +1029,23 @@ userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`)
 
 `resourceAsync` provides **full feature parity** with Angular's `WritableResource` API, plus additional capabilities:
 
-| Feature            | Angular Resource | resourceAsync  | Notes                          |
-| ------------------ | ---------------- | -------------- | ------------------------------ |
-| `value`            | ✅ Signal\<T\>   | ✅ Signal\<T\> | Matches exactly                |
-| `status`           | ✅               | ✅ + `'local'` | Extended with local state      |
-| `error`            | ✅               | ✅             | Generic error type             |
-| `isLoading`        | ✅               | ✅             | Signal accessor                |
-| `hasValue()`       | ✅               | ✅             | Type predicate                 |
-| `reload()`         | ✅               | ✅             | Manual refetch                 |
-| **`set(value)`**   | ✅               | ✅             | Manual value assignment        |
-| **`update(fn)`**   | ✅               | ✅             | Functional updates             |
-| **`asReadonly()`** | ✅               | ✅             | Read-only exposure             |
-| `execute()`        | ❌               | ✅             | Semantic clarity for mutations |
-| `isIdle`           | ❌               | ✅             | Lazy loading support           |
-| Observable support | ⚠️ Limited       | ✅ Native      | Full RxJS integration          |
-| `behavior` option  | ❌               | ✅             | switch/exhaust strategies      |
-| `onError` handler  | ❌               | ✅             | Fallback values, custom logic  |
+| Feature            | Angular Resource | resourceAsync  | Notes                            |
+| ------------------ | ---------------- | -------------- | -------------------------------- |
+| `value`            | ✅ Signal\<T\>   | ✅ Signal\<T\> | Matches exactly                  |
+| `status`           | ✅               | ✅ + `'local'` | Extended with local state        |
+| `error`            | ✅               | ✅             | Generic error type               |
+| `isLoading`        | ✅               | ✅             | Signal accessor                  |
+| `hasValue()`       | ✅               | ✅             | Type predicate                   |
+| `reload()`         | ✅               | ✅             | Manual refetch                   |
+| **`set(value)`**   | ✅               | ✅             | Manual value assignment          |
+| **`update(fn)`**   | ✅               | ✅             | Functional updates               |
+| **`asReadonly()`** | ✅               | ✅             | Read-only exposure               |
+| `execute()`        | ❌               | ✅             | Awaitable Promise for mutations  |
+| `reset()`          | ❌               | ✅             | Reset back to initial idle state |
+| `isIdle`           | ❌               | ✅             | Lazy loading support             |
+| Observable support | ⚠️ Limited       | ✅ Native      | Full RxJS integration            |
+| `behavior` option  | ❌               | ✅             | switch/exhaust strategies        |
+| `onError` handler  | ❌               | ✅             | Fallback values, custom logic    |
 
 ### 🔧 Technical Highlights
 

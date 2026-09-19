@@ -194,10 +194,11 @@ export class UserComponent {
   // user.error()     - Error if any (E | null)
   // user.status()    - 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
   // user.isLoading() - Boolean loading state
-  // user.isIdle()    - Boolean idle state (ngx-lift extension)
+  // user.isIdle()    - Boolean idle state
   // user.hasValue()  - Type predicate - narrows value type
   // user.reload()    - Function to manually reload
-  // user.execute()   - Alias for reload() (ngx-lift extension)
+  // user.execute()   - Awaitable mutation trigger returning Promise<T>
+  // user.reset()     - Reset resource to idle state
 
   // Template usage
   // @if (user.isLoading()) { <spinner /> }
