@@ -53,7 +53,7 @@ function createControlProxy<C extends AbstractControl = AbstractControl>(
   let cachedState: ControlStateSignals<C extends AbstractControl<infer V> ? V : unknown> | undefined;
 
   const handlers: ProxyHandler<C> = {
-    get(target, prop, receiver) {
+    get(target, prop) {
       if (prop === 'state') {
         if (!cachedState) {
           cachedState = controlState(target, {injector}) as never;
@@ -96,7 +96,7 @@ function createControlProxy<C extends AbstractControl = AbstractControl>(
         };
       }
 
-      const original = Reflect.get(target, prop, receiver);
+      const original = Reflect.get(target, prop, target);
       if (typeof original === 'function') {
         return original.bind(target);
       }
@@ -167,7 +167,7 @@ export function toSignalForm<
   TSubmitValue = Partial<TValue>,
 >(
   form: FormGroup<TControls>,
-  options?: ToSignalFormOptions<TValue, TSubmitValue>,
+  options?: ToSignalFormOptions<NoInfer<TValue>, TSubmitValue>,
 ): SignalForm<TControls, TValue, TSubmitValue> {
   const injector = options?.injector ?? (assertInInjectionContext(toSignalForm), inject(Injector));
 
@@ -270,6 +270,7 @@ export function toSignalForm<
     },
     getOwnPropertyDescriptor(target, prop: string | symbol) {
       if (typeof prop === 'string') {
+        controlsVersion();
         const ctrl = form.get(prop);
         if (ctrl) {
           return {
@@ -574,6 +575,7 @@ export function toSignalForm<
       } else if (isSignal(source) || typeof source === 'function') {
         const effectRef = effect(
           () => {
+            controlsVersion();
             source();
             untracked(() => {
               const target = getTarget();

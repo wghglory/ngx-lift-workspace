@@ -51,7 +51,7 @@ export class ToSignalFormComponent {
     certType: FormControl<'managed' | 'custom' | ''>;
     password?: FormControl<string>;
     confirmPassword?: FormControl<string>;
-    haTopology?: FormControl<'cross-az' | 'dedicated-host'>;
+    haTopology?: FormControl<'cross-az' | 'dedicated-host' | ''>;
     replicaCount?: FormControl<number>;
     tlsCertificate?: FormControl<string>;
   }>({
@@ -242,7 +242,7 @@ export class ToSignalFormComponent {
     this.sf.bindIf(
       () => this.isMultiZoneSupported(),
       () => ({
-        haTopology: new FormControl<'cross-az' | 'dedicated-host'>('cross-az', {
+        haTopology: new FormControl<'cross-az' | 'dedicated-host' | ''>('', {
           nonNullable: true,
           validators: [Validators.required],
         }),
@@ -392,7 +392,7 @@ readonly isMultiZoneSupported = computedAsync(
 this.sf.bindIf(
   () => this.isMultiZoneSupported(),
   () => ({
-    haTopology: new FormControl('cross-az', [Validators.required]),
+    haTopology: new FormControl('', [Validators.required]),
     replicaCount: new FormControl(2, [Validators.required, Validators.min(2)]),
   }),
   { preserveValue: true }

@@ -151,10 +151,16 @@ describe('ToSignalFormComponent', () => {
     expect(component.sf.controls.haTopology).toBeDefined();
     expect(component.sf.controls.replicaCount).toBeDefined();
 
+    // Verify initially unselected ('') and invalid until user selects
+    expect(component.form.controls.haTopology?.value).toBe('');
+    expect(component.form.controls.haTopology?.valid).toBe(false);
+
     // Set HA values via strongly typed dot notation
     component.form.controls.haTopology?.setValue('dedicated-host');
     component.form.controls.replicaCount?.setValue(4);
     fixture.detectChanges();
+
+    expect(component.form.controls.haTopology?.valid).toBe(true);
 
     // Switch to eu-central-1: Single-Zone only
     component.form.controls.region.setValue('eu-central-1');

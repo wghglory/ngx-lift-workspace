@@ -119,6 +119,7 @@
                     />
                     <label for="ha-topology-dedicated">Dedicated Anti-Affinity Hosts</label>
                   </clr-radio-wrapper>
+                  <clr-control-error *clrIfError="'required'">HA topology is required.</clr-control-error>
                   <clr-control-helper>
                     Dynamically mounted by <code>sf.bindIf(isMultiZoneSupported, ...)</code>.
                   </clr-control-helper>

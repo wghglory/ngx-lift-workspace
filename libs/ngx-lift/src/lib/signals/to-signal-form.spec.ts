@@ -598,7 +598,11 @@ describe('toSignalForm', () => {
     TestBed.runInInjectionContext(() => {
       const isStrict = signal(false);
       const targetCtrl = new FormControl('', [(c) => (isStrict() && !c.value ? {strictRequired: true} : null)]);
-      const form = new FormGroup({
+      const form = new FormGroup<{
+        target: FormControl<string | null>;
+        source?: FormControl<string | null>;
+        target2?: FormControl<string | null>;
+      }>({
         target: targetCtrl,
       });
 
@@ -620,16 +624,16 @@ describe('toSignalForm', () => {
       // Test enhanced control .revalidateOn()
       const sourceCtrl = new FormControl('val1');
       const target2 = new FormControl('val2', [(c) => (c.value === sourceCtrl.value ? null : {diff: true})]);
-      (form as FormGroup).addControl('source', sourceCtrl);
-      (form as FormGroup).addControl('target2', target2);
+      form.addControl('source', sourceCtrl);
+      form.addControl('target2', target2);
 
-      const sub2 = sf.controls['target2' as never].revalidateOn(sourceCtrl);
+      const sub2 = sf.controls.target2?.revalidateOn(sourceCtrl);
       expect(target2.valid).toBe(false);
 
       sourceCtrl.setValue('val2');
       expect(target2.valid).toBe(true);
 
-      sub2.unsubscribe();
+      sub2?.unsubscribe();
     });
   });
 
@@ -685,6 +689,40 @@ describe('toSignalForm', () => {
       isMounted.set(false);
       TestBed.flushEffects();
       expect(sf.controls.dynamic).toBeDefined();
+    });
+  });
+
+  it('should revalidate dynamically mounted control when source is a Signal', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup<{dynamicField?: FormControl<string | null>}>({});
+      const sf = toSignalForm(form);
+
+      const isForbidden = signal(false);
+      const isFieldMounted = signal(false);
+
+      // Revalidate target against a Signal before target even exists:
+      sf.revalidate('dynamicField', isForbidden);
+
+      // Mount dynamic field with validator checking isForbidden
+      sf.bindIf(isFieldMounted, () => ({
+        dynamicField: new FormControl('value', [() => (isForbidden() ? {forbidden: true} : null)]),
+      }));
+
+      TestBed.flushEffects();
+      expect(sf.hasControl('dynamicField')).toBe(false);
+
+      // Trigger condition to true:
+      isForbidden.set(true);
+      // Mount field:
+      isFieldMounted.set(true);
+      TestBed.flushEffects();
+
+      expect(sf.hasControl('dynamicField')).toBe(true);
+      expect(sf.controls.dynamicField?.hasError('forbidden')).toBe(true);
+
+      isForbidden.set(false);
+      TestBed.flushEffects();
+      expect(sf.controls.dynamicField?.hasError('forbidden')).toBe(false);
     });
   });
 });

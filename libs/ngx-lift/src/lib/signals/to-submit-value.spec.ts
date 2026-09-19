@@ -199,4 +199,28 @@ describe('to-submit-value utilities', () => {
       vi.useRealTimers();
     }
   });
+
+  it('should preserve File, Blob, Date, and custom class instances without corrupting them into plain objects', () => {
+    class Certificate {
+      constructor(public raw: string) {}
+    }
+
+    const testDate = new Date('2026-09-19T10:00:00Z');
+    const testBlob = new Blob(['test content'], {type: 'text/plain'});
+    const testCert = new Certificate('cert-payload');
+
+    const form = new FormGroup({
+      date: new FormControl(testDate),
+      blob: new FormControl(testBlob),
+      cert: new FormControl(testCert),
+      name: new FormControl('Test'),
+    });
+
+    const submitVal = toSubmitValue(form, {deep: true});
+
+    expect(submitVal.date).toBe(testDate);
+    expect(submitVal.blob).toBe(testBlob);
+    expect(submitVal.cert).toBe(testCert);
+    expect(submitVal.name).toBe('Test');
+  });
 });

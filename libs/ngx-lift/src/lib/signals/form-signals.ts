@@ -39,18 +39,23 @@ export function safeToSignal<T>(source$: Observable<T>, initialValue: T, injecto
   const state = signal<T>(initialValue);
   const destroyRef = injector.get(DestroyRef);
 
-  let isFirst = true;
-  const sub = source$.subscribe((val) => {
-    if (isFirst) {
-      isFirst = false;
-      if (val === initialValue || isEqual(val, initialValue)) {
-        return;
+  let isSubscribing = true;
+  const sub = source$.subscribe({
+    next: (val) => {
+      if (isSubscribing) {
+        if (val === initialValue || isEqual(val, initialValue)) {
+          return;
+        }
       }
-    }
-    untracked(() => {
-      state.set(val);
-    });
+      untracked(() => {
+        state.set(val);
+      });
+    },
+    error: (err) => {
+      console.error('[safeToSignal] Unhandled stream error:', err);
+    },
   });
+  isSubscribing = false;
 
   destroyRef.onDestroy(() => {
     sub.unsubscribe();

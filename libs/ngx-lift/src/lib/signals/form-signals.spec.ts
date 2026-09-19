@@ -81,4 +81,26 @@ describe('form-signals utilities', () => {
       expect(fState.rawValue()).toEqual({active: 'newActive', disabledCtrl: 'secretVal'});
     });
   });
+
+  it('should not drop legitimate asynchronous emissions that match initialValue', () => {
+    TestBed.runInInjectionContext(() => {
+      const ctrl = new FormControl('init');
+      const valSig = controlValue(ctrl);
+
+      expect(valSig()).toBe('init');
+
+      // Silently update value without emitting events:
+      ctrl.setValue('silent', {emitEvent: false});
+      expect(ctrl.value).toBe('silent');
+      expect(valSig()).toBe('init');
+
+      // First asynchronous emission restores value back to 'init':
+      ctrl.setValue('init', {emitEvent: true});
+      expect(valSig()).toBe('init');
+
+      // Update to 'next' should be processed cleanly:
+      ctrl.setValue('next', {emitEvent: true});
+      expect(valSig()).toBe('next');
+    });
+  });
 });

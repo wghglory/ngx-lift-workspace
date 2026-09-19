@@ -304,4 +304,43 @@ describe('form-bindings utilities', () => {
       expect(form.controls.dynamic).toBeDefined();
     });
   });
+
+  it('should preserve disabled child controls in nested FormGroup when preserveValue is true', () => {
+    TestBed.runInInjectionContext(() => {
+      const parent = new FormGroup<Record<string, AbstractControl>>({});
+      const isVisible = signal(true);
+
+      bindControlIf(
+        parent,
+        'credentials',
+        isVisible,
+        () => {
+          const group = new FormGroup({
+            username: new FormControl('admin'),
+            apiKey: new FormControl('key-123'),
+          });
+          group.controls.apiKey.disable();
+          return group;
+        },
+        {preserveValue: true},
+      );
+
+      TestBed.flushEffects();
+      const mountedGroup = parent.get('credentials') as FormGroup;
+      expect(mountedGroup).toBeDefined();
+      expect(mountedGroup.getRawValue()).toEqual({username: 'admin', apiKey: 'key-123'});
+
+      // Unmount
+      isVisible.set(false);
+      TestBed.flushEffects();
+      expect(parent.contains('credentials')).toBe(false);
+
+      // Remount
+      isVisible.set(true);
+      TestBed.flushEffects();
+      const remountedGroup = parent.get('credentials') as FormGroup;
+      expect(remountedGroup).toBeDefined();
+      expect(remountedGroup.getRawValue()).toEqual({username: 'admin', apiKey: 'key-123'});
+    });
+  });
 });

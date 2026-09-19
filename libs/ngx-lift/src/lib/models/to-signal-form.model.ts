@@ -213,7 +213,7 @@ export interface ToSubmitValueOptions<TInput extends object = Record<string, unk
    * Keys to unconditionally omit from the prepared submit value.
    * Useful for stripping UI-only form controls (e.g., `confirmPassword`, `termsAccepted`).
    */
-  omit?: (keyof TInput | string)[];
+  omit?: (keyof NoInfer<TInput> | (string & {}))[];
 
   /**
    * Whether to omit properties whose value is an empty string (`""`).
@@ -417,7 +417,7 @@ export interface SignalForm<
 
   // Control Inspection & Signal Helpers
   /** Checks whether a control with the given name currently exists in the form. Strongly typed to control keys. */
-  hasControl(name: keyof TControls & string): boolean;
+  hasControl(name: (keyof TControls & string) | (string & {})): boolean;
 
   /**
    * Reactively watches a control's value signal or any Signal/getter and executes a callback
@@ -494,9 +494,9 @@ export interface SignalForm<
   /**
    * Automatically re-validates a target control whenever a source control or Signal emits a new value.
    */
-  revalidate<TTarget extends keyof TControls, TSource extends keyof TControls>(
-    targetControl: TTarget | AbstractControl,
-    source: TSource | AbstractControl | Signal<unknown> | (() => unknown),
+  revalidate<TTarget extends keyof TControls = keyof TControls, TSource extends keyof TControls = keyof TControls>(
+    targetControl: TTarget | (string & {}) | AbstractControl,
+    source: TSource | (string & {}) | AbstractControl | Signal<unknown> | (() => unknown),
   ): RevalidateSubscription;
   revalidate(
     targetControl: keyof TControls | string | AbstractControl,

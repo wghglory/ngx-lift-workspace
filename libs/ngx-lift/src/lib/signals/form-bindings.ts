@@ -256,7 +256,12 @@ export function bindControlIf(
             options?.onControlsChange?.();
           } else if (!shouldBePresent && isCurrentlyPresent) {
             if (preserveValue) {
-              preservedValues.set(controlName, parent.get(controlName)?.value);
+              const currentCtrl = parent.get(controlName);
+              const val =
+                currentCtrl && typeof (currentCtrl as FormGroup).getRawValue === 'function'
+                  ? (currentCtrl as FormGroup).getRawValue()
+                  : currentCtrl?.value;
+              preservedValues.set(controlName, val);
             } else {
               controlCache.delete(controlName);
             }
@@ -303,9 +308,14 @@ export function bindControlIf(
           } else {
             let changed = false;
             for (const key of Array.from(mountedKeys)) {
-              if (parent.get(key)) {
+              const currentCtrl = parent.get(key);
+              if (currentCtrl) {
                 if (preserveValue) {
-                  preservedValues.set(key, parent.get(key)?.value);
+                  const val =
+                    typeof (currentCtrl as FormGroup).getRawValue === 'function'
+                      ? (currentCtrl as FormGroup).getRawValue()
+                      : currentCtrl.value;
+                  preservedValues.set(key, val);
                 } else {
                   controlCache.delete(key);
                 }

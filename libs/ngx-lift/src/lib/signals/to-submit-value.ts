@@ -2,7 +2,7 @@ import {assertInInjectionContext, inject, Injector, Signal} from '@angular/core'
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs';
 
-import {FormSubmitValueOptions, ToSubmitValueOptions} from '../models/to-signal-form.model';
+import {FormRawValue, FormSubmitValueOptions, ToSubmitValueOptions} from '../models/to-signal-form.model';
 import {isEqual} from '../utils/is-equal.util';
 import {createControlEventStream, safeToSignal} from './form-signals';
 
@@ -14,10 +14,14 @@ function isAbstractControl(val: unknown): val is AbstractControl {
 }
 
 /**
- * Type guard for plain javascript objects (excluding arrays, dates, null).
+ * Type guard for plain javascript objects (excluding arrays, dates, File, Blob, custom classes).
  */
 function isPlainObject(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null && !Array.isArray(val) && !(val instanceof Date);
+  if (typeof val !== 'object' || val === null || Array.isArray(val)) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(val);
+  return proto === Object.prototype || proto === null;
 }
 
 /**
@@ -100,6 +104,18 @@ function sanitizeObject(obj: Record<string, unknown>, options?: ToSubmitValueOpt
  * @param options Configuration options for omission, pruning, and transformation.
  * @returns The sanitized submission value ready for HTTP requests or mutation resources.
  */
+export function toSubmitValue<
+  TControls extends {[K in keyof TControls]: AbstractControl},
+  TOutput = Partial<FormRawValue<TControls>>,
+>(source: FormGroup<TControls>, options?: ToSubmitValueOptions<FormRawValue<TControls>, TOutput>): TOutput;
+export function toSubmitValue<TItem = unknown, TOutput = TItem[]>(
+  source: FormArray,
+  options?: ToSubmitValueOptions<Record<string, unknown>, TOutput>,
+): TOutput;
+export function toSubmitValue<TInput extends object = Record<string, unknown>, TOutput = Partial<TInput>>(
+  source: AbstractControl | TInput,
+  options?: ToSubmitValueOptions<TInput, TOutput>,
+): TOutput;
 export function toSubmitValue<TInput extends object = Record<string, unknown>, TOutput = Partial<TInput>>(
   source: FormGroup | FormArray | AbstractControl | TInput,
   options?: ToSubmitValueOptions<TInput, TOutput>,
@@ -156,6 +172,18 @@ export function toSubmitValue<TInput extends object = Record<string, unknown>, T
  * @param options Options for omission, pruning, transformation, and debouncing.
  * @returns A reactive `Signal<TOutput>` emitting the latest sanitized submission value.
  */
+export function formSubmitValue<
+  TControls extends {[K in keyof TControls]: AbstractControl},
+  TOutput = Partial<FormRawValue<TControls>>,
+>(form: FormGroup<TControls>, options?: FormSubmitValueOptions<FormRawValue<TControls>, TOutput>): Signal<TOutput>;
+export function formSubmitValue<TItem = unknown, TOutput = TItem[]>(
+  form: FormArray,
+  options?: FormSubmitValueOptions<Record<string, unknown>, TOutput>,
+): Signal<TOutput>;
+export function formSubmitValue<TInput extends object = Record<string, unknown>, TOutput = Partial<TInput>>(
+  form: FormGroup | FormArray | AbstractControl,
+  options?: FormSubmitValueOptions<TInput, TOutput>,
+): Signal<TOutput>;
 export function formSubmitValue<TInput extends object = Record<string, unknown>, TOutput = Partial<TInput>>(
   form: FormGroup | FormArray | AbstractControl,
   options?: FormSubmitValueOptions<TInput, TOutput>,
