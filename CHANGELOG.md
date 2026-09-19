@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [21.1.0] - 2026-09-20
+
+### 🎉 Added
+
+- **`toSignalForm`** - Comprehensive reactive signal facade for Angular reactive forms (`FormGroup`):
+  - Dynamic type-safe signal access for control values (`sf.value.<field>()`), dirty state (`sf.dirty.<field>()`),
+    touched state (`sf.touched.<field>()`), valid/invalid state (`sf.valid.<field>()`, `sf.invalid.<field>()`), pending
+    state (`sf.pending.<field>()`), and errors (`sf.errors.<field>()`)
+  - Form-level reactive signals: `value`, `valid`, `invalid`, `dirty`, `touched`, `pristine`, `pending`, `errors`
+  - Declarative bindings:
+    - `bindIf`: conditionally enable/disable form controls based on reactive boolean signals or predicates
+    - `bindDisabled`: declaratively disable controls based on signals or predicates
+    - `revalidate`: automatically re-run validation when dependent signals change
+  - `toSubmitValue`: extract sanitized submit payloads with `omit` fields, `pick` fields, and nested group unwrapping
+  - Automatic lifecycle cleanup tied to the active injection context (`DestroyRef`)
+- **`resourceAsync` enhancements:**
+  - `execute()` now returns a typed `Promise<T | null>` resolving upon mutation completion or rejecting on error
+    ([#131](https://github.com/wghglory/ngx-lift/pull/131))
+  - `reset()` method to restore the resource to its initial state or a specified custom value
+    ([#131](https://github.com/wghglory/ngx-lift/pull/131))
+  - Support for `onSuccess` and `onError` callbacks inside `execute({ onSuccess, onError })` for per-call mutation
+    handling
+
+### 🔄 Changed
+
+- **Signal utilities:**
+  - Decoupled manual injector requirements and improved reactivity across `computedAsync`, `resourceAsync`,
+    `combineFrom`, and `mergeFrom` ([#129](https://github.com/wghglory/ngx-lift/pull/129))
+  - Migrated workspace to zoneless change detection and modern Vitest environment
+    ([#122](https://github.com/wghglory/ngx-lift/pull/122))
+
+### 🐛 Fixed
+
+- **`computedAsync`**: Keep reactive pipeline alive when inner source observable errors
+  ([#128](https://github.com/wghglory/ngx-lift/pull/128))
+- **`resourceAsync`**: Prevent dropped emissions when `reload()` is triggered rapidly during active requests
+  ([#128](https://github.com/wghglory/ngx-lift/pull/128))
+
+## [21.0.0] - 2026-05-28
+
+### 💥 Breaking Changes
+
+- **Angular 21 & Clarity 18 upgrade:** Upgraded workspace and peer dependencies to Angular 21, TypeScript 5.9, and
+  Clarity 18 ([#118](https://github.com/wghglory/ngx-lift/pull/118),
+  [#121](https://github.com/wghglory/ngx-lift/pull/121))
+
 ## [19.1.0] - 2026-02-07
 
 ### 🎉 Added

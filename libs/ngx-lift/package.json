@@ -1,6 +1,6 @@
 {
   "name": "ngx-lift",
-  "version": "21.0.0",
+  "version": "21.1.0",
   "description": "Powerful Angular utilities library with RxJS operators, signal utilities, pipes, and validators to supercharge your development workflow. Built for Angular 21+ with TypeScript strict mode.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",
