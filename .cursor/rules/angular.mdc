@@ -2,12 +2,14 @@
 alwaysApply: true
 ---
 
-## Angular Specific Guidelines
+## Modern Angular Guidelines
 
 ### Component Architecture
 
-- **Imports**: Use `imports` array in `@Component` decorator, not `@NgModule`
-- **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush` for all components
+- **Standalone Components**: All components are standalone by default in modern Angular.
+  - **NEVER** add `standalone: true` to `@Component` decorators.
+- **Imports**: Use `imports` array in `@Component` decorator, not `@NgModule`.
+- **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush` for all components.
 - **Component Lifecycle**: Use lifecycle hooks appropriately:
   - `ngOnInit`: Component initialization, data fetching setup
   - `ngAfterViewInit`: View-related initialization (ViewChild, ElementRef)
@@ -55,10 +57,32 @@ alwaysApply: true
   fullName = computed(() => `${this.firstName()} ${this.lastName()}`);
   ```
 
+- **Async Resources (`resourceAsync`)**:
+  - Prefer `resourceAsync()` from `ngx-lift` for asynchronous data fetching and mutations (replacing `computedAsync` for
+    resources).
+  - Provides `value`, `isLoading`, `error`, `status`, `reload()`, `execute()`, and `reset()`.
+
+  ```typescript
+  // In component:
+  userRef = resourceAsync(() => this.userService.getUser(this.userId()));
+
+  // In template:
+  @if (userRef.isLoading()) { <cll-spinner /> }
+  @if (userRef.error(); as err) { <cll-alert [error]="err" /> }
+  @if (userRef.value(); as user) { <p>{{ user.name }}</p> }
+  ```
+
 - **Effects**: Use `effect()` only for side effects (logging, external API calls)
   - **Never** manipulate DOM in effects
   - **Never** update signals that trigger effects (avoid circular dependencies)
   - Use `untracked()` when reading signals that shouldn't trigger re-computation
+
+- **Boolean State Inputs & Signals**:
+  - Name component inputs and properties representing state using adjectives or status nouns (e.g.,
+    `createDisabled = input(false)`, `loading = input(false)`), NOT imperative action verbs (e.g., avoid
+    `disableCreate`, `showModal`).
+  - Use `is*` / `has*` prefixes for internal boolean computed signals or flags (e.g., `isSaveDisabled`, `isFormInvalid`,
+    `hasErrors`).
 
 ### Dependency Injection
 
@@ -81,9 +105,56 @@ alwaysApply: true
 
 - **Injection Context**: Use `runInInjectionContext()` when accessing injectors outside constructor/injection context
 
+### Forms
+
+- **Signal-Driven Forms (`toSignalForm`)**:
+  - Prefer wrapping reactive forms with `toSignalForm(form)` from `ngx-lift` to access reactive field signals,
+    form-level status signals, declarative bindings (`bindIf`, `bindDisabled`, `revalidate`), and sanitized submission
+    values.
+
+  ```typescript
+  readonly sf = toSignalForm(this.form, {
+    omit: ['confirmPassword'],
+  });
+  ```
+
+- **Reactive Form Validity in Signals**: When bridging reactive forms (`FormGroup`) to signals without `toSignalForm`,
+  note that `form.invalid` or `form.valid` alone is NOT reactive inside `computed()`. Bridge via `toSignal()` with
+  `statusChanges`:
+
+  ```typescript
+  isFormInvalid = toSignal(this.form.statusChanges.pipe(map((status) => status !== 'VALID')), {
+    initialValue: this.form.invalid,
+  });
+  ```
+
+- **Action Disabled State**: Encapsulate button/action disabled conditions in a `computed()` signal (e.g.,
+  `isSaveDisabled = computed(() => this.sf.invalid() || this.createRef.isLoading())`) instead of long composite boolean
+  expressions in templates.
+
+- **ControlValueAccessor**: Implement for custom form controls with strict types (no `any`):
+
+  ```typescript
+  export class CustomControl implements ControlValueAccessor {
+    private onChange: (value: string) => void = () => {};
+    private onTouched: () => void = () => {};
+
+    writeValue(value: string | null): void {}
+    registerOnChange(fn: (value: string) => void): void {
+      this.onChange = fn;
+    }
+    registerOnTouched(fn: () => void): void {
+      this.onTouched = fn;
+    }
+    setDisabledState(isDisabled: boolean): void {}
+  }
+  ```
+
 ### Template Syntax
 
 - **Control Flow**: Use new Angular control flow syntax (`@if`, `@for`, `@switch`)
+  - **Exception**: Use `*clrDgItems` for Clarity datagrids (`clr-datagrid`) as it is required for built-in sorting,
+    filtering, and pagination.
 
   ```typescript
   // ✅ Correct
@@ -107,9 +178,6 @@ alwaysApply: true
   @if (user$ | async; as user) {
     <p>{{ user.name }}</p>
   }
-
-  // ❌ Wrong
-  // Don't subscribe in component and store in property
   ```
 
 - **Track Functions**: Always provide track function for `@for` loops
@@ -142,82 +210,19 @@ alwaysApply: true
   <clr-icon shape="check"></clr-icon>
   ```
 
-  - **Exception**: Custom Angular components that require content should use opening/closing tags
-  - **Exception**: HTML elements that can contain content (like `<div>`, `<span>`, `<p>`) should use opening/closing
-    tags even when empty
-
 - **Class and Style Bindings**: Prefer `class` over `ngClass` and `style` over `ngStyle`
 
   ```html
   <!-- ✅ Correct -->
   <div [class.active]="isActive()" [class.disabled]="isDisabled()">
-    <div [style.color]="textColor()" [style.font-size.px]="fontSize()">
-      <div [class]="computedClass()">
-        <div [style]="computedStyle()">
-          <!-- ❌ Wrong -->
-          <div [ngClass]="{active: isActive(), disabled: isDisabled()}">
-            <div [ngStyle]="{color: textColor(), 'font-size': fontSize() + 'px'}"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div [style.color]="textColor()" [style.font-size.px]="fontSize()"></div>
   </div>
   ```
 
-  - Use property binding `[class.className]` for single class toggles
-  - Use property binding `[style.property]` for single style properties
-  - Use computed signals for complex class/style logic
-  - **Exception**: Use `ngClass` or `ngStyle` only when you need to conditionally apply multiple classes/styles
-    dynamically and computed signals would be overly complex
-
-### Forms
-
-- **Reactive Forms**: Prefer reactive forms over template-driven forms
-- **ControlValueAccessor**: Implement for custom form controls
-
-  ```typescript
-  export class CustomControl implements ControlValueAccessor {
-    private onChange = (value: any) => {};
-    private onTouched = () => {};
-
-    writeValue(value: any): void {}
-    registerOnChange(fn: any): void {
-      this.onChange = fn;
-    }
-    registerOnTouched(fn: any): void {
-      this.onTouched = fn;
-    }
-    setDisabledState(isDisabled: boolean): void {}
-  }
-  ```
-
-- **Form Validation**: Use validators from `@angular/forms` and custom validators from `ngx-lift`
-- **Form State**: Access form control state reactively using signals or observables
-
 ### Routing
 
-- **Standalone Routes**: Use standalone route configuration
 - **Route Params**: Prefer `injectParams()` from `ngx-lift` for route parameters (reactive)
-
-  ```typescript
-  // ✅ Preferred - reactive
-  userId = injectParams('id', {initialValue: ''});
-  allParams = injectParams();
-
-  // ⚠️ Legacy - use only when needed for snapshot access
-  name = this.route.snapshot.paramMap.get('name') || '';
-  ```
-
 - **Query Params**: Prefer `injectQueryParams()` from `ngx-lift` for query parameters (reactive)
-
-  ```typescript
-  // ✅ Preferred - reactive
-  searchTerm = injectQueryParams('search', {initialValue: ''});
-
-  // ⚠️ Legacy - use only when needed for snapshot access
-  namespace = this.route.snapshot.queryParamMap.get('namespace') || '';
-  ```
-
 - **Route Guards**: Implement guards as functional guards
 
 ### Performance Optimization
@@ -229,40 +234,19 @@ alwaysApply: true
 - **Change Detection**: Minimize by using signals and computed values
 - **Memory Leaks**: Always clean up subscriptions, timers, and event listeners in `ngOnDestroy`
 
-### Component Communication
-
-- **Parent to Child**: Use signal inputs
-- **Child to Parent**: Use signal outputs
-- **Sibling Communication**: Use shared service or state management
-- **Cross-Component**: Use services with signals or observables
-
-### Error Handling
-
-- **ErrorHandler**: Implement global error handler for unhandled errors in applications
-- **Component Errors**: Use `catchError` operator for observables
-- **Error Display**: Use Clarity alert components to display errors (clr-lift only)
-- **Error Logging**: Log errors appropriately (avoid sensitive information)
-
-### Accessibility (Components Only)
-
-- **ARIA Attributes**: Include appropriate ARIA attributes in UI components
-- **Keyboard Navigation**: Ensure all interactive elements are keyboard accessible
-- **Focus Management**: Manage focus appropriately (modals, dialogs, dynamic content)
-- **Semantic HTML**: Use semantic HTML elements where possible
-- **Labels**: Always associate labels with form controls
-
 ## Code Review Checklist - Angular Patterns
 
 Use this checklist when reviewing Angular code changes:
 
-- [ ] `ChangeDetectionStrategy.OnPush`
+- [ ] `ChangeDetectionStrategy.OnPush` on all components
+- [ ] No `standalone: true` on component decorators (default in modern Angular)
 - [ ] Signal inputs: `input()` not `@Input()`
 - [ ] Signal outputs: `output()` not `@Output()`
 - [ ] Signal view queries: `viewChild()` not `@ViewChild()`
 - [ ] `inject()` not constructor injection
+- [ ] `resourceAsync()` for async state (not `computedAsync`)
 - [ ] `@if`, `@for`, `@switch` not `*ngIf`, `*ngFor`, `*ngSwitch`
 - [ ] Track functions in `@for` loops
-- [ ] Async pipe for observables
 - [ ] No method calls in templates (use computed signals/pipes)
 - [ ] Self-closing tags when possible (`<img />`, `<input />`, `<clr-icon />`)
 - [ ] `[class.x]` / `[style.x]` not `ngClass` / `ngStyle`

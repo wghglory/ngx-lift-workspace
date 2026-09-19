@@ -27,11 +27,30 @@ import {Component} from '@angular/core';
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [YourComponent, ReactiveFormsModule],
-      providers: [{ provide: TranslationService, useClass: MockTranslationService }],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}],
     });
     fixture = TestBed.createComponent(YourComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+  ```
+
+- **Clarity Modals**: When testing components containing a `clr-modal`, add the `InteractivityChecker` override to
+  prevent the `[cdkFocusInitial] is not focusable` warning:
+
+  ```typescript
+  import {InteractivityChecker} from '@angular/cdk/a11y';
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [YourModalComponent, ClarityModule],
+    })
+      .overrideProvider(InteractivityChecker, {
+        useValue: {
+          isFocusable: () => true, // avoid warning: Element matching '[cdkFocusInitial]' is not focusable
+        },
+      })
+      .compileComponents();
   });
   ```
 
@@ -99,7 +118,7 @@ import {Component} from '@angular/core';
 - **Preferred**: Use `getByRole` from Testing Library
 
   ```typescript
-  const button = screen.getByRole('button', { name: /submit/i });
+  const button = screen.getByRole('button', {name: /submit/i});
   ```
 
 - **Fallback**: Use `data-test-id` attributes for stable selectors
@@ -151,9 +170,9 @@ import {Component} from '@angular/core';
 #### Test Structure
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import {test, expect} from '@playwright/test';
 
-test('should display user list', async ({ page }) => {
+test('should display user list', async ({page}) => {
   await page.goto('/users');
   await expect(page.locator('h1')).toContainText('Users');
 });
@@ -215,11 +234,11 @@ it('should update when input changes', () => {
 
 ```typescript
 it('should handle async data', async () => {
-  const data$ = of({ id: 1, name: 'Test' });
+  const data$ = of({id: 1, name: 'Test'});
   component.data$ = data$;
   fixture.detectChanges();
   await fixture.whenStable();
-  expect(component.data()).toEqual({ id: 1, name: 'Test' });
+  expect(component.data()).toEqual({id: 1, name: 'Test'});
 });
 ```
 
