@@ -24,6 +24,8 @@ on:
   push:
     tags:
       - 'v*'
+      - 'ngx-lift@*'
+      - 'clr-lift@*'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
@@ -42,6 +44,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Use official npm registry
+        run: |
+          sed -i 's|registry=https://repo.huaweicloud.com/repository/npm/|registry=https://registry.npmjs.org/|' .npmrc
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6
 
@@ -57,7 +63,19 @@ jobs:
       - name: Determine projects
         id: projects
         run: |
-          if [ "${{ github.event_name }}" == "push" ] || [ "${{ github.event.inputs.project }}" == "all" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
+            REF="${{ github.ref }}"
+            if [[ "$REF" == refs/tags/ngx-lift@* ]]; then
+              echo "PROJECTS=ngx-lift" >> $GITHUB_ENV
+              echo "PROJECT_FLAG=--projects=ngx-lift" >> $GITHUB_ENV
+            elif [[ "$REF" == refs/tags/clr-lift@* ]]; then
+              echo "PROJECTS=clr-lift" >> $GITHUB_ENV
+              echo "PROJECT_FLAG=--projects=clr-lift" >> $GITHUB_ENV
+            else
+              echo "PROJECTS=ngx-lift,clr-lift" >> $GITHUB_ENV
+              echo "PROJECT_FLAG=" >> $GITHUB_ENV
+            fi
+          elif [ "${{ github.event.inputs.project }}" == "all" ]; then
             echo "PROJECTS=ngx-lift,clr-lift" >> $GITHUB_ENV
             echo "PROJECT_FLAG=" >> $GITHUB_ENV
           else
@@ -83,18 +101,20 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
           pnpm nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }} --git-push
-          pnpm nx release publish ${{ env.PROJECT_FLAG }}
+          pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
 
       - name: Publish from tag
         id: publish-tag
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-        run: pnpm nx release publish
+        run: pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
 
       - name: Create GitHub Release
         id: github-release
@@ -103,6 +123,7 @@ jobs:
         with:
           generateReleaseNotes: true
           makeLatest: true
+          allowUpdates: true
 
       - name: Generate Publish Summary
         if: always()

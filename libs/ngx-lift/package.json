@@ -27,6 +27,10 @@
     "@angular/forms": ">=21",
     "rxjs": ">=7.8.0"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "dependencies": {},
   "sideEffects": false
 }
