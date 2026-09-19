@@ -301,6 +301,102 @@ describe(computedAsync.name, () => {
         expect(logs).toEqual([1, 2, 3]);
       });
     });
+
+    it('behavior: concat -> continues executing subsequent queued requests when an intermediate request fails', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const value = signal(1);
+        const logs: (number | string)[] = [];
+
+        const s = computedAsync(
+          () => {
+            const val = value();
+            if (val === 2) {
+              return of(null).pipe(
+                delay(50),
+                map(() => {
+                  logs.push('error-2');
+                  throw new Error('Intermediate error for 2');
+                }),
+              );
+            }
+            return of(val).pipe(
+              delay(50),
+              tap((v) => logs.push(v)),
+            );
+          },
+          {behavior: 'concat'},
+        );
+
+        // Initial emission for 1
+        await flushEffects();
+        expect(s()).toBeUndefined();
+
+        // Queue 2 (which will fail) and 3 (which will succeed) while 1 is in-flight
+        value.set(2);
+        await flushEffects();
+        value.set(3);
+        await flushEffects();
+
+        // After 50ms: request 1 completes
+        await flushEffects(50);
+        expect(s()).toBe(1);
+        expect(logs).toEqual([1]);
+
+        // After next 50ms: request 2 runs and fails, emitting the Error object into the signal
+        await flushEffects(50);
+        expect(s()).toBeInstanceOf(Error);
+        expect((s() as Error).message).toBe('Intermediate error for 2');
+        expect(logs).toEqual([1, 'error-2']);
+
+        // After next 50ms: request 3 runs and succeeds
+        await flushEffects(50);
+        expect(s()).toBe(3);
+        expect(logs).toEqual([1, 'error-2', 3]);
+      });
+    });
+
+    it('behavior: concat -> continues executing subsequent queued requests with onError fallback when intermediate fails', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const value = signal(1);
+
+        const s = computedAsync(
+          () => {
+            const val = value();
+            if (val === 2) {
+              return of(null).pipe(
+                delay(50),
+                map(() => {
+                  throw new Error('Failed request 2');
+                }),
+              );
+            }
+            return of(`Success ${val}`).pipe(delay(50));
+          },
+          {
+            behavior: 'concat',
+            onError: (err) => `Fallback for ${(err as Error).message}`,
+          },
+        );
+
+        await flushEffects();
+        value.set(2);
+        await flushEffects();
+        value.set(3);
+        await flushEffects();
+
+        // Request 1 completes
+        await flushEffects(50);
+        expect(s()).toBe('Success 1');
+
+        // Request 2 completes with error, caught by onError
+        await flushEffects(50);
+        expect(s()).toBe('Fallback for Failed request 2');
+
+        // Request 3 completes with success
+        await flushEffects(50);
+        expect(s()).toBe('Success 3');
+      });
+    });
     it('behavior: merge -> runs everything in parallel', async () => {
       await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
