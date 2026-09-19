@@ -65,9 +65,11 @@
         <button type="submit" class="btn-primary btn" [disabled]="form.invalid">Submit</button>
       </form>
       <app-code-block [code]="ifValidatorCode" lang="typescript" />
-      <cll-callout>
-        Invoke the <code>updateValueAndValidity()</code> method on the associated control whenever there is a change in
-        the specified condition for either <code>ifValidator</code> or <code>ifAsyncValidator</code>.
+      <cll-callout type="info">
+        <strong>Automatic Re-validation:</strong> By default, Angular only re-evaluates a control's validators when that
+        control's own value changes. Pair with <code>revalidateOnChange([email, reason], choice)</code> or pass a
+        <code>Signal&lt;boolean&gt;</code> with <code>revalidateOnChange</code> to automatically trigger re-validation
+        whenever the condition source updates!
       </cll-callout>
     </article>
 

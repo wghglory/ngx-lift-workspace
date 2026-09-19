@@ -52,6 +52,9 @@ common Angular development tasks and boost productivity.
 - **`mergeFrom`** - Merges Observables and Signals into a Signal (like `merge`)
 - **`resourceAsync`** - 🆕 Reactive resource for managing async operations with reload, cancellation, and full state
   tracking (similar to Angular's `httpResource`)
+- **`toSignalForm`** - 🆕 Reactive signal facade for Angular `FormGroup` with strongly-typed field signals, dynamic
+  control bindings (`bindIf`, `bindDisabled`, `bindValidators`, `revalidate`), and clean sanitized submission value
+  (`submitValue`)
 
 ### 🔧 Pipes
 
@@ -235,6 +238,44 @@ export class UserDetailComponent {
     user: this.userService.getUser(this.userId()),
     filters: this.filtersSignal,
   });
+}
+```
+
+**Reactive Form Facade (toSignalForm)** - Bridge Reactive Forms and Angular Signals seamlessly:
+
+```typescript
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {toSignalForm} from 'ngx-lift';
+
+export class RegistrationComponent {
+  readonly form = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
+    confirmPassword: new FormControl('', [Validators.required]),
+  });
+
+  // Wrap form with reactive signal facade
+  readonly sf = toSignalForm(this.form, {
+    omit: ['confirmPassword'],
+  });
+
+  // 1. Reactive field & form signals
+  // sf.valid() -> Signal<boolean>
+  // sf.fields.username.value() -> Signal<string>
+  // sf.fields.username.invalid() -> Signal<boolean>
+
+  // 2. Declarative bindings
+  constructor() {
+    this.sf.revalidate('confirmPassword', 'password');
+  }
+
+  // 3. Sanitized submission value ready for APIs
+  onSubmit() {
+    if (this.sf.valid()) {
+      const data = this.sf.submitValue(); // omits confirmPassword automatically
+      this.authService.register(data);
+    }
+  }
 }
 ```
 

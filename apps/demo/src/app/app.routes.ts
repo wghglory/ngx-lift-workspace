@@ -32,6 +32,7 @@ import {InjectParamsComponent} from './ngx-lib/pages/signals/inject-params/injec
 import {InjectQueryParamsComponent} from './ngx-lib/pages/signals/inject-query-params/inject-query-params.component';
 import {MergeFromComponent} from './ngx-lib/pages/signals/merge-from/merge-from.component';
 import {ResourceAsyncComponent} from './ngx-lib/pages/signals/resource-async/resource-async.component';
+import {ToSignalFormComponent} from './ngx-lib/pages/signals/to-signal-form/to-signal-form.component';
 import {DifferenceInDaysComponent} from './ngx-lib/pages/utilities/difference-in-days/difference-in-days.component';
 import {IdleDetectionDemoComponent} from './ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component';
 import {IsEmptyComponent} from './ngx-lib/pages/utilities/is-empty/is-empty.component';
@@ -70,6 +71,10 @@ export const routes: Routes = [
           {
             path: 'resourceAsync',
             component: ResourceAsyncComponent,
+          },
+          {
+            path: 'toSignalForm',
+            component: ToSignalFormComponent,
           },
           {
             path: 'createTrigger',
