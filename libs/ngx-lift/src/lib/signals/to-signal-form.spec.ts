@@ -75,7 +75,7 @@ describe('toSignalForm', () => {
           password: new FormControl('', [Validators.required]),
           confirmPassword: new FormControl('', [
             Validators.required,
-            (c) => (c.value === form.get('password')?.value ? null : {mismatch: true}),
+            (c) => (c.value === form.controls.password?.value ? null : {mismatch: true}),
           ]),
         }),
         {preserveValue: true},
@@ -498,6 +498,193 @@ describe('toSignalForm', () => {
 
       expect(immediateHistory).toEqual(['standard', 'enterprise']);
       expect(controlProxyHistory).toEqual(['enterprise']);
+    });
+  });
+
+  it('should accept a direct ValidatorFn or array of ValidatorFn in sf.bindValidators', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        username: new FormControl(''),
+        bio: new FormControl(''),
+      });
+
+      const sf = toSignalForm(form);
+
+      // Direct ValidatorFn with string key
+      sf.bindValidators('username', Validators.required);
+      // Direct array of ValidatorFn on enhanced control
+      sf.controls.bio.bindValidators([Validators.required, Validators.minLength(3)]);
+
+      TestBed.flushEffects();
+      expect(sf.fields.username.valid()).toBe(false);
+      expect(sf.fields.bio.valid()).toBe(false);
+
+      sf.controls.username.setValue('john');
+      sf.controls.bio.setValue('abc');
+      TestBed.flushEffects();
+
+      expect(sf.fields.username.valid()).toBe(true);
+      expect(sf.fields.bio.valid()).toBe(true);
+    });
+  });
+
+  it('should watch dynamically mounted controls via sf.watch', () => {
+    TestBed.runInInjectionContext(() => {
+      const isSql = signal(false);
+      const form = new FormGroup<{
+        password?: FormControl<string | null>;
+      }>({});
+
+      const sf = toSignalForm(form);
+      const watchedHistory: unknown[] = [];
+
+      sf.watch('password', (val) => {
+        watchedHistory.push(val);
+      });
+
+      sf.bindIf(
+        isSql,
+        () => ({
+          password: new FormControl('initialPass'),
+        }),
+        {preserveValue: true},
+      );
+
+      TestBed.flushEffects();
+      expect(watchedHistory).toEqual([]);
+
+      // Mount password
+      isSql.set(true);
+      TestBed.flushEffects();
+
+      expect(watchedHistory).toEqual(['initialPass']);
+
+      // Change password
+      sf.controls.password?.setValue('newPass');
+      TestBed.flushEffects();
+
+      expect(watchedHistory).toEqual(['initialPass', 'newPass']);
+    });
+  });
+
+  it('should throw descriptive errors when controlValue, controlStatus, or controlState are called with non-existent control name', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        name: new FormControl(''),
+      });
+
+      const sf = toSignalForm(form);
+
+      expect(() => sf.controlValue('missing')).toThrow('[toSignalForm] Control "missing" not found in FormGroup.');
+      expect(() => sf.controlStatus('missing')).toThrow('[toSignalForm] Control "missing" not found in FormGroup.');
+      expect(() => sf.controlState('missing')).toThrow('[toSignalForm] Control "missing" not found in FormGroup.');
+    });
+  });
+
+  it('should return undefined when accessing non-existent controls or fields on proxies', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        name: new FormControl(''),
+      });
+
+      const sf = toSignalForm(form);
+
+      expect(sf.controls['nonExistent' as never]).toBeUndefined();
+      expect(sf.fields['nonExistent' as never]).toBeUndefined();
+    });
+  });
+
+  it('should support revalidate with Signal and getter functions as source, and enhanced control .revalidateOn()', () => {
+    TestBed.runInInjectionContext(() => {
+      const isStrict = signal(false);
+      const targetCtrl = new FormControl('', [(c) => (isStrict() && !c.value ? {strictRequired: true} : null)]);
+      const form = new FormGroup({
+        target: targetCtrl,
+      });
+
+      const sf = toSignalForm(form);
+
+      // Revalidate on Signal source
+      const sub = sf.revalidate('target', isStrict);
+
+      TestBed.flushEffects();
+      expect(targetCtrl.valid).toBe(true);
+
+      isStrict.set(true);
+      TestBed.flushEffects();
+      expect(targetCtrl.valid).toBe(false);
+      expect(targetCtrl.hasError('strictRequired')).toBe(true);
+
+      sub.unsubscribe();
+
+      // Test enhanced control .revalidateOn()
+      const sourceCtrl = new FormControl('val1');
+      const target2 = new FormControl('val2', [(c) => (c.value === sourceCtrl.value ? null : {diff: true})]);
+      (form as FormGroup).addControl('source', sourceCtrl);
+      (form as FormGroup).addControl('target2', target2);
+
+      const sub2 = sf.controls['target2' as never].revalidateOn(sourceCtrl);
+      expect(target2.valid).toBe(false);
+
+      sourceCtrl.setValue('val2');
+      expect(target2.valid).toBe(true);
+
+      sub2.unsubscribe();
+    });
+  });
+
+  it('should support debounced toSignalForm value signals', () => {
+    vi.useFakeTimers();
+    try {
+      TestBed.runInInjectionContext(() => {
+        const form = new FormGroup({
+          search: new FormControl('initial'),
+        });
+
+        const sf = toSignalForm(form, {debounceTime: 200});
+
+        expect(sf.value()).toEqual({search: 'initial'});
+        expect(sf.rawValue()).toEqual({search: 'initial'});
+
+        form.controls.search.setValue('updated');
+        expect(sf.value()).toEqual({search: 'initial'});
+
+        vi.advanceTimersByTime(200);
+        expect(sf.value()).toEqual({search: 'updated'});
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should return EffectRef from facade.bindDisabled, facade.bindIf, and control.bindDisabled', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup<{
+        status: FormControl<string | null>;
+        dynamic?: FormControl<string | null>;
+      }>({
+        status: new FormControl('active'),
+      });
+
+      const sf = toSignalForm(form);
+      const isLocked = signal(false);
+
+      const ctrlRef = sf.controls.status.bindDisabled(isLocked);
+      expect(ctrlRef).toBeDefined();
+      expect(typeof ctrlRef.destroy).toBe('function');
+
+      const isMounted = signal(true);
+      const ifRef = sf.bindIf(isMounted, () => ({dynamic: new FormControl('data')}));
+      expect(ifRef).toBeDefined();
+      expect(typeof ifRef.destroy).toBe('function');
+
+      TestBed.flushEffects();
+      expect(sf.controls.dynamic).toBeDefined();
+
+      ifRef.destroy();
+      isMounted.set(false);
+      TestBed.flushEffects();
+      expect(sf.controls.dynamic).toBeDefined();
     });
   });
 });

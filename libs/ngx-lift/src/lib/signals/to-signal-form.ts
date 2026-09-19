@@ -3,9 +3,11 @@ import {
   computed,
   DestroyRef,
   effect,
+  EffectRef,
   inject,
   Injector,
   isSignal,
+  runInInjectionContext,
   Signal,
   signal,
   untracked,
@@ -32,6 +34,7 @@ import {
   bindControlDisabled,
   bindControlIf,
   bindControlValidators,
+  resolveValidators,
   revalidateOnChange,
   watchControl,
 } from './form-bindings';
@@ -60,7 +63,7 @@ function createControlProxy<C extends AbstractControl = AbstractControl>(
 
       if (prop === 'bindDisabled') {
         return (condition: Signal<boolean> | (() => boolean), options?: BindControlDisabledOptions) => {
-          bindControlDisabled(target, condition, {...options, injector});
+          return bindControlDisabled(target, condition, {...options, injector});
         };
       }
 
@@ -213,6 +216,7 @@ export function toSignalForm<
       if (typeof prop !== 'string') {
         return Reflect.get(target, prop);
       }
+      controlsVersion();
       const ctrl = form.get(prop);
       if (!ctrl) {
         return undefined;
@@ -220,13 +224,16 @@ export function toSignalForm<
       return getOrCreateControlProxy(ctrl);
     },
     has(target, prop: string | symbol) {
+      controlsVersion();
       return typeof prop === 'string' && Boolean(form.get(prop));
     },
     ownKeys() {
+      controlsVersion();
       return Object.keys(form.controls);
     },
     getOwnPropertyDescriptor(target, prop: string | symbol) {
       if (typeof prop === 'string') {
+        controlsVersion();
         const ctrl = form.get(prop);
         if (ctrl) {
           return {
@@ -246,6 +253,7 @@ export function toSignalForm<
       if (typeof prop !== 'string') {
         return Reflect.get(target, prop);
       }
+      controlsVersion();
       const ctrl = form.get(prop);
       if (!ctrl) {
         return undefined;
@@ -253,9 +261,11 @@ export function toSignalForm<
       return getOrCreateControlProxy(ctrl).state;
     },
     has(target, prop: string | symbol) {
+      controlsVersion();
       return typeof prop === 'string' && Boolean(form.get(prop));
     },
     ownKeys() {
+      controlsVersion();
       return Object.keys(form.controls);
     },
     getOwnPropertyDescriptor(target, prop: string | symbol) {
@@ -283,13 +293,13 @@ export function toSignalForm<
     arg2: Signal<boolean> | (() => boolean) | (() => Record<string, AbstractControl>),
     arg3?: (() => AbstractControl) | BindControlIfOptions,
     arg4?: BindControlIfOptions,
-  ): void => {
+  ): EffectRef => {
     if (typeof arg1 === 'string') {
       const ctrlName = arg1;
       const cond = arg2 as Signal<boolean> | (() => boolean);
       const factory = arg3 as () => AbstractControl;
       const opts = arg4;
-      bindControlIf(form, ctrlName, cond, factory, {
+      return bindControlIf(form, ctrlName, cond, factory, {
         ...opts,
         injector,
         onControlsChange: () => {
@@ -301,7 +311,7 @@ export function toSignalForm<
       const cond = arg1;
       const factory = arg2 as () => Record<string, AbstractControl>;
       const opts = arg3 as BindControlIfOptions | undefined;
-      bindControlIf(form, cond, factory, {
+      return bindControlIf(form, cond, factory, {
         ...opts,
         injector,
         onControlsChange: () => {
@@ -335,6 +345,7 @@ export function toSignalForm<
 
     // Control Inspection & Signal Helpers
     hasControl(name: string) {
+      controlsVersion();
       return Boolean(form.get(name));
     },
 
@@ -345,16 +356,16 @@ export function toSignalForm<
     ) => {
       const cb = callback as (value: unknown, prevValue?: unknown) => void;
       if (typeof control === 'string') {
-        const ctrl = form.get(control);
-        if (ctrl) {
-          return watchControl<unknown>(ctrl, cb, {...opts, injector});
-        }
-        // Support dynamic controls mounted later via bindIf
-        const dynamicSig = computed(() => {
-          controlsVersion();
-          const c = form.get(control);
-          return c ? controlValue(c, {injector})() : undefined;
-        });
+        const dynamicSig = runInInjectionContext(injector, () =>
+          computed(() => {
+            controlsVersion();
+            const c = form.get(control);
+            if (!c) {
+              return undefined;
+            }
+            return getOrCreateControlProxy(c).state.value();
+          }),
+        );
         return watchControl<unknown>(dynamicSig, cb, {...opts, injector});
       }
       return watchControl<unknown>(control as AbstractControl | Signal<unknown>, cb, {...opts, injector});
@@ -389,23 +400,16 @@ export function toSignalForm<
       control: keyof TControls | string | AbstractControl,
       condition: Signal<boolean> | (() => boolean),
       opts?: BindControlDisabledOptions<unknown>,
-    ) {
+    ): EffectRef {
       if (control instanceof AbstractControl) {
-        bindControlDisabled(control, condition, {...opts, injector});
-        return;
-      }
-
-      const ctrl = form.get(String(control));
-      if (ctrl) {
-        bindControlDisabled(ctrl, condition, {...opts, injector});
-        return;
+        return bindControlDisabled(control, condition, {...opts, injector});
       }
 
       const ctrlName = String(control);
       const emitEvent = opts?.emitEvent ?? true;
       const resetOnDisable = opts?.resetOnDisable ?? false;
 
-      effect(
+      return effect(
         () => {
           controlsVersion();
           const shouldDisable = Boolean(condition());
@@ -449,11 +453,6 @@ export function toSignalForm<
         return bindControlValidators(control, validators, {...opts, injector});
       }
 
-      const ctrl = form.get(String(control));
-      if (ctrl) {
-        return bindControlValidators(ctrl, validators, {...opts, injector});
-      }
-
       const ctrlName = String(control);
       const emitEvent = opts?.emitEvent ?? true;
       const updateValueAndValidity = opts?.updateValueAndValidity ?? true;
@@ -461,8 +460,7 @@ export function toSignalForm<
       return effect(
         () => {
           controlsVersion();
-          const valFns =
-            typeof validators === 'function' ? (validators as () => ValidatorFn | ValidatorFn[] | null)() : validators;
+          const valFns = resolveValidators(validators);
           const targetCtrl = form.get(ctrlName);
           if (targetCtrl) {
             untracked(() => {
@@ -492,18 +490,31 @@ export function toSignalForm<
 
       if (typeof source === 'string') {
         const destroyRef = injector.get(DestroyRef);
-        let prevVal: unknown = undefined;
-        let prevStatus = '';
+        const initialSrc = form.get(source);
+        let prevVal: unknown = initialSrc ? initialSrc.value : undefined;
+        let prevStatus = initialSrc ? initialSrc.status : '';
+        let isSourceKnown = Boolean(initialSrc);
 
         const sub: Subscription = merge(form.valueChanges as Observable<unknown>, form.statusChanges).subscribe(() => {
           const srcCtrl = form.get(source);
           if (!srcCtrl) {
             prevVal = undefined;
             prevStatus = '';
+            isSourceKnown = false;
             return;
           }
           const currentVal = srcCtrl.value;
           const currentStatus = srcCtrl.status;
+          if (!isSourceKnown) {
+            isSourceKnown = true;
+            prevVal = currentVal;
+            prevStatus = currentStatus;
+            const target = getTarget();
+            if (target) {
+              target.updateValueAndValidity({emitEvent: true});
+            }
+            return;
+          }
           if (currentVal !== prevVal || currentStatus !== prevStatus) {
             prevVal = currentVal;
             prevStatus = currentStatus;
@@ -535,9 +546,8 @@ export function toSignalForm<
         };
       }
 
-      const initialTarget = getTarget();
-      if (initialTarget) {
-        return revalidateOnChange(initialTarget, source as AbstractControl | Signal<unknown>, {injector});
+      if (targetControl instanceof AbstractControl) {
+        return revalidateOnChange(targetControl, source as AbstractControl | Signal<unknown>, {injector});
       }
 
       const destroyRef = injector.get(DestroyRef);

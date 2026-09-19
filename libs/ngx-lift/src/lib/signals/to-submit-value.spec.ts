@@ -129,4 +129,74 @@ describe('to-submit-value utilities', () => {
       tags: ['angular', 'signals'],
     });
   });
+
+  it('should preserve primitive values from a single FormControl', () => {
+    const numCtrl = new FormControl(42);
+    expect(toSubmitValue(numCtrl)).toBe(42);
+
+    const strCtrl = new FormControl('test-val');
+    expect(toSubmitValue(strCtrl)).toBe('test-val');
+
+    const emptyCtrl = new FormControl('');
+    expect(toSubmitValue(emptyCtrl, {omitEmptyStrings: true})).toBeUndefined();
+  });
+
+  it('should respect includeDisabled: false option', () => {
+    const form = new FormGroup({
+      enabledField: new FormControl('enabled'),
+      disabledField: new FormControl('disabled'),
+    });
+
+    form.controls.disabledField.disable();
+
+    // Default includeDisabled: true includes disabled controls
+    expect(toSubmitValue(form)).toEqual({
+      enabledField: 'enabled',
+      disabledField: 'disabled',
+    });
+
+    // includeDisabled: false omits disabled controls
+    expect(toSubmitValue(form, {includeDisabled: false})).toEqual({
+      enabledField: 'enabled',
+    });
+  });
+
+  it('should conditionally omit fields with custom omitIf predicate', () => {
+    const form = new FormGroup({
+      keep: new FormControl('visible'),
+      removeMe: new FormControl('temp-flag'),
+      score: new FormControl(-1),
+    });
+
+    const submitVal = toSubmitValue(form, {
+      omitIf: (value, key) => key === 'removeMe' || value === -1,
+    });
+
+    expect(submitVal).toEqual({
+      keep: 'visible',
+    });
+  });
+
+  it('should support debounced formSubmitValue', async () => {
+    vi.useFakeTimers();
+    try {
+      TestBed.runInInjectionContext(() => {
+        const form = new FormGroup({
+          search: new FormControl('abc'),
+        });
+
+        const submitSig = formSubmitValue(form, {debounceTime: 200});
+        expect(submitSig()).toEqual({search: 'abc'});
+
+        form.controls.search.setValue('def');
+        // Before debounce duration:
+        expect(submitSig()).toEqual({search: 'abc'});
+
+        vi.advanceTimersByTime(200);
+        expect(submitSig()).toEqual({search: 'def'});
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

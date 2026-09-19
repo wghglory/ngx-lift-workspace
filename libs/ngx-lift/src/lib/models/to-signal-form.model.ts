@@ -277,7 +277,7 @@ export type SignalEnhancedControl<C extends AbstractControl = AbstractControl> =
   bindDisabled(
     condition: Signal<boolean> | (() => boolean),
     options?: BindControlDisabledOptions<C extends AbstractControl<infer V> ? V : unknown>,
-  ): void;
+  ): EffectRef;
 
   /** Declaratively synchronizes this control's validators with a reactive Signal or getter. */
   bindValidators(
@@ -416,8 +416,8 @@ export interface SignalForm<
   readonly submitValue: Signal<TSubmitValue>;
 
   // Control Inspection & Signal Helpers
-  /** Checks whether a control with the given name currently exists in the form. */
-  hasControl(name: keyof TControls | (string & {})): boolean;
+  /** Checks whether a control with the given name currently exists in the form. Strongly typed to control keys. */
+  hasControl(name: keyof TControls & string): boolean;
 
   /**
    * Reactively watches a control's value signal or any Signal/getter and executes a callback
@@ -429,7 +429,7 @@ export interface SignalForm<
    * @param options Optional configuration including `injector` and `immediate`.
    * @returns An `EffectRef` that can be destroyed if manual teardown is needed.
    */
-  watch<K extends string = keyof TControls & string>(
+  watch<K extends keyof TControls & string>(
     control: K | AbstractControl | Signal<unknown> | (() => unknown),
     callback: (
       value: K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown,
@@ -439,17 +439,18 @@ export interface SignalForm<
   ): EffectRef;
 
   /** Returns a reactive `Signal` of a child control's value with optional debouncing. */
-  controlValue<K extends keyof TControls>(
+  controlValue<K extends keyof TControls & string>(
     name: K,
     options?: {debounceTime?: number},
   ): Signal<TControls[K] extends AbstractControl<infer V> ? V : unknown>;
   controlValue<T = unknown>(name: string, options?: {debounceTime?: number}): Signal<T>;
 
   /** Returns a reactive `Signal` of a child control's status. */
+  controlStatus<K extends keyof TControls & string>(name: K): Signal<FormControlStatus>;
   controlStatus(name: string): Signal<FormControlStatus>;
 
   /** Returns a comprehensive set of reactive signals for a child control. */
-  controlState<K extends keyof TControls>(
+  controlState<K extends keyof TControls & string>(
     name: K,
     options?: {debounceTime?: number},
   ): ControlStateSignals<TControls[K] extends AbstractControl<infer V> ? V : unknown>;
@@ -457,16 +458,14 @@ export interface SignalForm<
 
   // Declarative Behavior Bindings
   /** Declaratively binds a child control's disabled state to a boolean signal. Strongly typed to registered control keys or control instances. */
-  bindDisabled<K extends string = keyof TControls & string>(
+  bindDisabled<K extends keyof TControls & string>(
     control: K | AbstractControl,
     condition: Signal<boolean> | (() => boolean),
-    options?: BindControlDisabledOptions<
-      K extends keyof TControls ? (TControls[K] extends AbstractControl<infer V> ? V : unknown) : unknown
-    >,
-  ): void;
+    options?: BindControlDisabledOptions<TControls[K] extends AbstractControl<infer V> ? V : unknown>,
+  ): EffectRef;
 
   /** Declaratively synchronizes a control's validators with a reactive Signal or getter. */
-  bindValidators<K extends string = keyof TControls & string>(
+  bindValidators<K extends keyof TControls & string>(
     control: K | AbstractControl,
     validators:
       | ValidatorFn
@@ -484,13 +483,13 @@ export interface SignalForm<
     condition: Signal<boolean> | (() => boolean),
     controlsFactory: () => Record<K, C>,
     options?: BindControlIfOptions,
-  ): void;
+  ): EffectRef;
   bindIf<C extends AbstractControl>(
     controlName: string,
     condition: Signal<boolean> | (() => boolean),
     controlFactory: () => C,
     options?: BindControlIfOptions,
-  ): void;
+  ): EffectRef;
 
   /**
    * Automatically re-validates a target control whenever a source control or Signal emits a new value.

@@ -60,25 +60,25 @@ describe('ToSignalFormComponent', () => {
   });
 
   it('should dynamically mount tlsCertificate and preserve value across toggles', () => {
-    expect(component.sf.hasControl('tlsCertificate')).toBe(false);
+    expect(component.sf.controls.tlsCertificate).toBeUndefined();
 
     component.form.controls.certType.setValue('custom');
     fixture.detectChanges();
 
-    expect(component.sf.hasControl('tlsCertificate')).toBe(true);
+    expect(component.sf.controls.tlsCertificate).toBeDefined();
 
-    component.form.get('tlsCertificate')?.setValue('-----BEGIN MY CERTIFICATE-----');
+    component.form.controls.tlsCertificate?.setValue('-----BEGIN MY CERTIFICATE-----');
 
     component.form.controls.certType.setValue('managed');
     fixture.detectChanges();
 
-    expect(component.sf.hasControl('tlsCertificate')).toBe(false);
+    expect(component.sf.controls.tlsCertificate).toBeUndefined();
 
     component.form.controls.certType.setValue('custom');
     fixture.detectChanges();
 
-    expect(component.sf.hasControl('tlsCertificate')).toBe(true);
-    expect(component.form.get('tlsCertificate')?.value).toBe('-----BEGIN MY CERTIFICATE-----');
+    expect(component.sf.controls.tlsCertificate).toBeDefined();
+    expect(component.form.controls.tlsCertificate?.value).toBe('-----BEGIN MY CERTIFICATE-----');
   });
 
   it('should preserve disabled storageGb in rawValue', () => {
@@ -139,7 +139,7 @@ describe('ToSignalFormComponent', () => {
 
   it('should dynamically mount and unmount Multi-Zone HA controls based on computedAsync regional capability', async () => {
     // Initially no region -> isMultiZoneSupported is false -> haTopology not mounted
-    expect(component.sf.hasControl('haTopology')).toBe(false);
+    expect(component.sf.controls.haTopology).toBeUndefined();
 
     // Select us-west-1: supports Multi-AZ
     component.form.controls.region.setValue('us-west-1');
@@ -148,12 +148,12 @@ describe('ToSignalFormComponent', () => {
     fixture.detectChanges();
 
     expect(component.isMultiZoneSupported()).toBe(true);
-    expect(component.sf.hasControl('haTopology')).toBe(true);
-    expect(component.sf.hasControl('replicaCount')).toBe(true);
+    expect(component.sf.controls.haTopology).toBeDefined();
+    expect(component.sf.controls.replicaCount).toBeDefined();
 
-    // Set HA values
-    component.form.get('haTopology')?.setValue('dedicated-host');
-    component.form.get('replicaCount')?.setValue(4);
+    // Set HA values via strongly typed dot notation
+    component.form.controls.haTopology?.setValue('dedicated-host');
+    component.form.controls.replicaCount?.setValue(4);
     fixture.detectChanges();
 
     // Switch to eu-central-1: Single-Zone only
@@ -163,8 +163,8 @@ describe('ToSignalFormComponent', () => {
     fixture.detectChanges();
 
     expect(component.isMultiZoneSupported()).toBe(false);
-    expect(component.sf.hasControl('haTopology')).toBe(false);
-    expect(component.sf.hasControl('replicaCount')).toBe(false);
+    expect(component.sf.controls.haTopology).toBeUndefined();
+    expect(component.sf.controls.replicaCount).toBeUndefined();
 
     // Switch back to us-west-1: controls remounted with preserved values!
     component.form.controls.region.setValue('us-west-1');
@@ -173,9 +173,10 @@ describe('ToSignalFormComponent', () => {
     fixture.detectChanges();
 
     expect(component.isMultiZoneSupported()).toBe(true);
-    expect(component.sf.hasControl('haTopology')).toBe(true);
-    expect(component.form.get('haTopology')?.value).toBe('dedicated-host');
-    expect(component.form.get('replicaCount')?.value).toBe(4);
+    expect(component.sf.controls.haTopology).toBeDefined();
+    expect(component.sf.controls.replicaCount).toBeDefined();
+    expect(component.form.controls.haTopology?.value).toBe('dedicated-host');
+    expect(component.form.controls.replicaCount?.value).toBe(4);
   });
 
   it('should omit password and confirmPassword from submitted payload when authMode is windows', async () => {
@@ -291,5 +292,23 @@ describe('ToSignalFormComponent', () => {
     expect(newResult).toBeDefined();
     const payload = newResult?.payload as Record<string, unknown>;
     expect(payload['clusterName']).toBe('second-cluster');
+  });
+
+  it('should reactively reflect dynamic control presence and submit disabled state via computed signals', () => {
+    expect(component.isSubmitDisabled()).toBe(true);
+    expect(component.isHaTopologyMounted()).toBe(false);
+    expect(component.isTlsCertificateMounted()).toBe(false);
+    expect(component.isPasswordMounted()).toBe(false);
+
+    component.form.controls.authMode.setValue('sql');
+    fixture.detectChanges();
+
+    expect(component.isPasswordMounted()).toBe(true);
+    expect(component.isConfirmPasswordMounted()).toBe(true);
+
+    component.form.controls.certType.setValue('custom');
+    fixture.detectChanges();
+
+    expect(component.isTlsCertificateMounted()).toBe(true);
   });
 });

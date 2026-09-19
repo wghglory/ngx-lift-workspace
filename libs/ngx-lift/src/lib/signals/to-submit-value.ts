@@ -111,7 +111,7 @@ export function toSubmitValue<TInput extends object = Record<string, unknown>, T
     if (includeDisabled && typeof (source as FormGroup).getRawValue === 'function') {
       rawData = (source as FormGroup).getRawValue();
     } else {
-      rawData = source.value ?? {};
+      rawData = source.value;
     }
   } else {
     rawData = source;
@@ -122,6 +122,14 @@ export function toSubmitValue<TInput extends object = Record<string, unknown>, T
     sanitized = sanitizeArray(rawData, options as ToSubmitValueOptions);
   } else if (isPlainObject(rawData)) {
     sanitized = sanitizeObject(rawData, options as ToSubmitValueOptions);
+  } else if (rawData !== undefined && rawData !== null) {
+    if (options?.omitEmptyStrings && rawData === '') {
+      sanitized = undefined;
+    } else {
+      sanitized = rawData;
+    }
+  } else if (rawData === null && !options?.omitNull) {
+    sanitized = null;
   } else {
     sanitized = {};
   }

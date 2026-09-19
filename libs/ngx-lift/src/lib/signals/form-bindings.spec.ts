@@ -242,4 +242,66 @@ describe('form-bindings utilities', () => {
       expect(history).toEqual([10, 20]);
     });
   });
+
+  it('should accept a direct ValidatorFn or array of ValidatorFn in bindControlValidators without crashing', () => {
+    TestBed.runInInjectionContext(() => {
+      const ctrl = new FormControl('');
+
+      // Passing standard ValidatorFn directly (length === 1)
+      bindControlValidators(ctrl, Validators.required);
+      TestBed.flushEffects();
+
+      expect(ctrl.valid).toBe(false);
+      expect(ctrl.hasError('required')).toBe(true);
+
+      ctrl.setValue('valid text');
+      expect(ctrl.valid).toBe(true);
+
+      // Passing array of ValidatorFn
+      bindControlValidators(ctrl, [Validators.required, Validators.minLength(5)]);
+      TestBed.flushEffects();
+
+      ctrl.setValue('abc');
+      expect(ctrl.valid).toBe(false);
+      expect(ctrl.hasError('minlength')).toBe(true);
+
+      // Clearing validators with null
+      bindControlValidators(ctrl, null);
+      TestBed.flushEffects();
+      expect(ctrl.valid).toBe(true);
+    });
+  });
+
+  it('should return an EffectRef from bindControlDisabled and bindControlIf allowing early manual teardown', () => {
+    TestBed.runInInjectionContext(() => {
+      const ctrl = new FormControl('test');
+      const isDisabled = signal(false);
+      const disableRef = bindControlDisabled(ctrl, isDisabled);
+      TestBed.flushEffects();
+      expect(ctrl.enabled).toBe(true);
+
+      isDisabled.set(true);
+      TestBed.flushEffects();
+      expect(ctrl.disabled).toBe(true);
+
+      // Early teardown
+      disableRef.destroy();
+      isDisabled.set(false);
+      TestBed.flushEffects();
+      // Should remain disabled because the effect was destroyed
+      expect(ctrl.disabled).toBe(true);
+
+      const form = new FormGroup<{dynamic?: FormControl<string | null>}>({});
+      const isMounted = signal(true);
+      const ifRef = bindControlIf(form, 'dynamic', isMounted, () => new FormControl('hello'));
+      TestBed.flushEffects();
+      expect(form.controls.dynamic).toBeDefined();
+
+      ifRef.destroy();
+      isMounted.set(false);
+      TestBed.flushEffects();
+      // Should remain mounted because effect was destroyed
+      expect(form.controls.dynamic).toBeDefined();
+    });
+  });
 });

@@ -11,6 +11,14 @@ export function isEqual<T>(value1: T, value2: T): boolean {
     return false;
   }
 
+  if (value1 instanceof Date && value2 instanceof Date) {
+    return value1.getTime() === value2.getTime() || (Number.isNaN(value1.getTime()) && Number.isNaN(value2.getTime()));
+  }
+
+  if (value1 instanceof Date || value2 instanceof Date) {
+    return false;
+  }
+
   if (Array.isArray(value1) !== Array.isArray(value2)) {
     return false;
   }

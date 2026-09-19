@@ -7,6 +7,7 @@ import {
   inject,
   Injector,
   isSignal,
+  runInInjectionContext,
   Signal,
   untracked,
 } from '@angular/core';
@@ -39,12 +40,13 @@ import {controlValue} from './form-signals';
  * @param control The `AbstractControl` (or `FormControl`, `FormGroup`, `FormArray`) to manage.
  * @param condition A boolean `Signal` or getter function that evaluates whether the control should be disabled.
  * @param options Configuration for injector, resetOnDisable, and event emission.
+ * @returns An Angular `EffectRef` that can be destroyed if manual teardown is needed.
  */
 export function bindControlDisabled<T = unknown>(
   control: AbstractControl<T> | AbstractControl,
   condition: Signal<boolean> | (() => boolean),
   options?: BindControlDisabledOptions<T>,
-): void {
+): EffectRef {
   let injector = options?.injector;
   if (!injector) {
     assertInInjectionContext(bindControlDisabled);
@@ -54,7 +56,7 @@ export function bindControlDisabled<T = unknown>(
   const emitEvent = options?.emitEvent ?? true;
   const resetOnDisable = options?.resetOnDisable ?? false;
 
-  effect(
+  return effect(
     () => {
       const shouldDisable = Boolean(condition());
 
@@ -79,6 +81,29 @@ export function bindControlDisabled<T = unknown>(
     },
     {injector},
   );
+}
+
+/**
+ * Resolves a validator argument into `ValidatorFn | ValidatorFn[] | null`.
+ * Supports a raw `ValidatorFn`, array of validators, `null`, `Signal`, or a 0-argument getter function.
+ */
+export function resolveValidators(
+  validators:
+    | ValidatorFn
+    | ValidatorFn[]
+    | null
+    | Signal<ValidatorFn | ValidatorFn[] | null>
+    | (() => ValidatorFn | ValidatorFn[] | null),
+): ValidatorFn | ValidatorFn[] | null {
+  if (isSignal(validators)) {
+    return validators();
+  }
+  if (typeof validators === 'function') {
+    return validators.length === 0
+      ? (validators as () => ValidatorFn | ValidatorFn[] | null)()
+      : (validators as ValidatorFn);
+  }
+  return validators;
 }
 
 /**
@@ -119,8 +144,7 @@ export function bindControlValidators(
 
   return effect(
     () => {
-      const valFns =
-        typeof validators === 'function' ? (validators as () => ValidatorFn | ValidatorFn[] | null)() : validators;
+      const valFns = resolveValidators(validators);
       control.setValidators(valFns);
       if (updateValueAndValidity) {
         control.updateValueAndValidity({emitEvent});
@@ -155,27 +179,28 @@ export function bindControlValidators(
  * @param conditionOrControlsFactory Condition (single mode) or factory returning control dictionary.
  * @param controlFactoryOrOptions Control factory (single mode) or options (dictionary mode).
  * @param options Options for single control mode.
+ * @returns An Angular `EffectRef` that can be destroyed if manual teardown is needed.
  */
 export function bindControlIf<K extends string, C extends AbstractControl>(
   parent: FormGroup,
   condition: Signal<boolean> | (() => boolean),
   controlsFactory: () => Record<K, C>,
   options?: BindControlIfOptions,
-): void;
+): EffectRef;
 export function bindControlIf<C extends AbstractControl>(
   parent: FormGroup,
   controlName: string,
   condition: Signal<boolean> | (() => boolean),
   controlFactory: () => C,
   options?: BindControlIfOptions,
-): void;
+): EffectRef;
 export function bindControlIf(
   parent: FormGroup,
   arg1: string | Signal<boolean> | (() => boolean),
   arg2: Signal<boolean> | (() => boolean) | (() => Record<string, AbstractControl>),
   arg3?: (() => AbstractControl) | BindControlIfOptions,
   arg4?: BindControlIfOptions,
-): void {
+): EffectRef {
   let isSingleMode = false;
   let controlName = '';
   let condition: Signal<boolean> | (() => boolean);
@@ -207,7 +232,7 @@ export function bindControlIf(
   const mountedKeys = new Set<string>();
   const controlCache = new Map<string, AbstractControl>();
 
-  effect(
+  return effect(
     () => {
       const shouldBePresent = Boolean(condition());
 
@@ -426,7 +451,7 @@ export function watchControl<T>(
   } else if (isSignal(source)) {
     sig = source;
   } else {
-    sig = computed(source);
+    sig = runInInjectionContext(injector, () => computed(source));
   }
 
   const immediate = options?.immediate ?? false;

@@ -53,7 +53,7 @@
 
               <!-- 2. Engine Selection -->
               <clr-radio-container clrInline>
-                <label for="engine-selection">Database Engine</label>
+                <label>Database Engine</label>
                 <clr-radio-wrapper>
                   <input
                     type="radio"
@@ -94,9 +94,9 @@
               </clr-radio-container>
 
               <!-- Dynamic Multi-Zone HA Controls (Mounted via sf.bindIf + computedAsync) -->
-              @if (sf.hasControl('haTopology')) {
+              @if (isHaTopologyMounted()) {
                 <clr-radio-container clrInline>
-                  <label for="ha-topology-group">Multi-Zone HA Topology</label>
+                  <label>Multi-Zone HA Topology</label>
                   <clr-radio-wrapper>
                     <input
                       type="radio"
@@ -227,7 +227,7 @@
 
               <!-- 6. Dynamic Presence for SQL Credentials (sf.bindIf) -->
               <clr-radio-container clrInline>
-                <label for="auth-mode-group">Authentication Mode</label>
+                <label>Authentication Mode</label>
                 <clr-radio-wrapper>
                   <input
                     type="radio"
@@ -279,7 +279,7 @@
 
               <!-- 6. Dynamic Control Presence for TLS Certificates -->
               <clr-radio-container clrInline>
-                <label for="cert-type-group">TLS Certificates</label>
+                <label>TLS Certificates</label>
                 <clr-radio-wrapper>
                   <input
                     type="radio"
@@ -308,7 +308,7 @@
                 </clr-control-helper>
               </clr-radio-container>
 
-              @if (sf.hasControl('tlsCertificate')) {
+              @if (isTlsCertificateMounted()) {
                 <clr-textarea-container>
                   <label for="tls-certificate-textarea">PEM Certificate Chain</label>
                   <textarea
@@ -333,11 +333,7 @@
                   type="submit"
                   class="btn btn-primary"
                   [clrLoading]="createClusterRef.isLoading()"
-                  [disabled]="
-                    sf.invalid() ||
-                    (nameAvailabilityRef.value() && !nameAvailabilityRef.value()?.available) ||
-                    createClusterRef.isLoading()
-                  "
+                  [disabled]="isSubmitDisabled()"
                 >
                   Create Cluster
                 </button>
@@ -410,7 +406,7 @@
                     {{ isMultiZoneSupported() }}
                   </span>
                 </li>
-                <li><strong>HA Controls Attached:</strong> {{ sf.hasControl('haTopology') }}</li>
+                <li><strong>HA Controls Attached:</strong> {{ isHaTopologyMounted() }}</li>
               </ul>
             </div>
 
@@ -437,14 +433,14 @@
               <div class="text-xs font-semibold uppercase text-gray-500 mb-1">SQL Credentials State (sf.fields)</div>
               <ul class="list-none text-xs space-y-1 p-0 m-0">
                 <li><strong>Auth Mode:</strong> {{ authMode() }}</li>
-                <li><strong>Controls Attached:</strong> {{ sf.hasControl('password') }}</li>
-                @if (sf.hasControl('password')) {
+                <li><strong>Controls Attached:</strong> {{ isPasswordMounted() }}</li>
+                @if (isPasswordMounted()) {
                   <li><strong>Password Valid:</strong> {{ sf.fields.password?.valid() }}</li>
                   @if (sf.fields.password?.errors(); as errs) {
                     <li class="text-danger"><strong>Password Errors:</strong> {{ errs | json }}</li>
                   }
                 }
-                @if (sf.hasControl('confirmPassword')) {
+                @if (isConfirmPasswordMounted()) {
                   <li><strong>Confirm Valid:</strong> {{ sf.fields.confirmPassword?.valid() }}</li>
                   @if (sf.fields.confirmPassword?.errors(); as errs) {
                     <li class="text-danger"><strong>Confirm Errors:</strong> {{ errs | json }}</li>

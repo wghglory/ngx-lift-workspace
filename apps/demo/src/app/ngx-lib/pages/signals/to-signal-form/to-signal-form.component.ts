@@ -1,6 +1,5 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
@@ -52,6 +51,9 @@ export class ToSignalFormComponent {
     certType: FormControl<'managed' | 'custom' | ''>;
     password?: FormControl<string>;
     confirmPassword?: FormControl<string>;
+    haTopology?: FormControl<'cross-az' | 'dedicated-host'>;
+    replicaCount?: FormControl<number>;
+    tlsCertificate?: FormControl<string>;
   }>({
     region: new FormControl<'us-west-1' | 'eu-central-1' | 'ap-east-1' | ''>('', {
       nonNullable: true,
@@ -164,16 +166,23 @@ export class ToSignalFormComponent {
     {lazy: true, behavior: 'exhaust'},
   );
 
-  constructor() {
-    // A. Cascading Version Selection when Engine changes:
-    //
-    // Approach 1 (Regular Production Approach): Standard RxJS valueChanges with takeUntilDestroyed
-    // Retained in demo code as the standard reactive forms pattern.
-    this.form.controls.engine.valueChanges.pipe(takeUntilDestroyed()).subscribe((engine) => {
-      this.syncVersionForEngine(engine);
-    });
+  // Dynamic Control Presence signals (uses strongly typed dot notation on sf.fields)
+  readonly isHaTopologyMounted = computed(() => Boolean(this.sf.fields.haTopology));
+  readonly isTlsCertificateMounted = computed(() => Boolean(this.sf.fields.tlsCertificate));
+  readonly isPasswordMounted = computed(() => Boolean(this.sf.fields.password));
+  readonly isConfirmPasswordMounted = computed(() => Boolean(this.sf.fields.confirmPassword));
 
-    // Approach 2 (Modern Signal-Based Approach - Angular 22 Style):
+  // Action disabled state encapsulated in a computed signal
+  readonly isSubmitDisabled = computed(() => {
+    const isInvalid = this.sf.invalid();
+    const probe = this.nameAvailabilityRef.value();
+    const isNameUnavailable = Boolean(probe && !probe.available);
+    const isLoading = this.createClusterRef.isLoading();
+    return isInvalid || isNameUnavailable || isLoading;
+  });
+
+  constructor() {
+    // Cascading Version Selection when Engine changes (Modern Signal-Based Approach):
     // Uses sf.controls.engine.watch (or sf.watch), which runs inside an Angular effect under the hood.
     // It automatically runs the callback in an untracked context, allowing safe control updates
     // without NG0600 signal write restrictions and without needing manual DestroyRef cleanup:
@@ -203,7 +212,7 @@ export class ToSignalFormComponent {
           validators: [
             Validators.required,
             (ctrl: AbstractControl) =>
-              ctrl.value === this.form.get('password')?.value ? null : {passwordMismatch: true},
+              ctrl.value === this.form.controls.password?.value ? null : {passwordMismatch: true},
           ],
         }),
       }),
@@ -313,7 +322,7 @@ this.sf.bindIf(
     password: new FormControl('', [Validators.required, Validators.minLength(8)]),
     confirmPassword: new FormControl('', [
       Validators.required,
-      (ctrl) => (ctrl.value === this.form.get('password')?.value ? null : { passwordMismatch: true }),
+      (ctrl) => (ctrl.value === this.form.controls.password?.value ? null : { passwordMismatch: true }),
     ]),
   }),
   { preserveValue: true }
