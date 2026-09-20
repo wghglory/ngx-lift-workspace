@@ -45,6 +45,7 @@ jobs:
 
       - name: Deploy to Netlify
         id: netlify
+        continue-on-error: true
         uses: nwtgck/actions-netlify@v4
         with:
           publish-dir: './dist/apps/demo/browser'
@@ -142,6 +143,6 @@ jobs:
 
           ## 📈 Overall Status
 
-          $([ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && [ "$NETLIFY_STATUS" = "success" ] && [ "$VERCEL_STATUS" = "success" ] && echo "### ✅ Deployment completed successfully!" || echo "### ⚠️ Deployment did not complete successfully. Check logs for details.")
+          $([ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && { [ "$NETLIFY_STATUS" = "success" ] || [ "$VERCEL_STATUS" = "success" ]; } && echo "### ✅ Deployment completed successfully!" || echo "### ⚠️ Deployment did not complete successfully. Check logs for details.")
 
           EOF

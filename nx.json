@@ -52,6 +52,11 @@
     }
   ],
   "targetDefaults": {
+    "nx-release-publish": {
+      "options": {
+        "registry": "https://registry.npmjs.org/"
+      }
+    },
     "@angular-devkit/build-angular:browser": {
       "cache": true,
       "dependsOn": ["^build"],

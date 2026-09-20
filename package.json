@@ -42,8 +42,8 @@
     "validate": "pnpm run format && pnpm run lint:fix && pnpm run typecheck && pnpm run test && pnpm run build",
     "release:version": "nx release version",
     "release:publish": "nx release publish",
-    "publish:ngx": "nx build ngx-lift && cd dist/libs/ngx-lift && pnpm publish",
-    "publish:clr": "nx build clr-lift && cd dist/libs/clr-lift && pnpm publish",
+    "publish:ngx": "nx build ngx-lift && cd dist/libs/ngx-lift && pnpm publish --registry=https://registry.npmjs.org/",
+    "publish:clr": "nx build clr-lift && cd dist/libs/clr-lift && pnpm publish --registry=https://registry.npmjs.org/",
     "publish:all": "pnpm run build:libs && pnpm run publish:ngx && pnpm run publish:clr",
     "prepare": "husky"
   },
