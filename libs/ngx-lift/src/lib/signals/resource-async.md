@@ -612,7 +612,7 @@ interface ResourceRefOptions<T, E = Error> {
 // Overload 1: When initialValue or defaultValue is provided
 function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
-  options: {initialValue: T} | ({defaultValue: T} & BaseOptions),
+  options: ({initialValue: T} | {defaultValue: T}) & BaseResourceRefOptions<T, E>,
 ): WritableResourceRef<T, E>;
 
 // Overload 2: When no initial/default value is provided

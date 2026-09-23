@@ -1711,5 +1711,59 @@ describe('WritableResourceRef', () => {
         expect(counterRef.value()).toBe(1);
       });
     });
+
+    it('should give precedence to defaultValue when both defaultValue and initialValue are provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => of('fetched'), {
+          lazy: true,
+          defaultValue: 'winner-default',
+          initialValue: 'loser-initial',
+        });
+
+        await flushEffects();
+        expect(resource.value()).toBe('winner-default');
+      });
+    });
+
+    it('should correctly preserve falsy default values (false, empty string, null)', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const booleanRef = resourceAsync(() => of(true), {
+          lazy: true,
+          defaultValue: false,
+        });
+        const stringRef = resourceAsync(() => of('active'), {
+          lazy: true,
+          defaultValue: '',
+        });
+        const nullRef = resourceAsync<User | null>(() => of({id: 1, name: 'User'}), {
+          lazy: true,
+          defaultValue: null,
+        });
+
+        await flushEffects();
+        expect(booleanRef.value()).toBe(false);
+        expect(stringRef.value()).toBe('');
+        expect(nullRef.value()).toBeNull();
+      });
+    });
+
+    it('should narrow resource type when hasValue() is checked, allowing non-undefined update', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => promise<number>(21, 50));
+
+        await flushEffects();
+        await flushEffects(50);
+
+        expect(resource.status()).toBe('resolved');
+        expect(resource.hasValue()).toBe(true);
+
+        if (resource.hasValue()) {
+          // Type guard narrows resource to WritableResourceRef<number, Error>
+          // updater function receives number directly without undefined check
+          resource.update((n: number) => n * 2);
+          expect(resource.value()).toBe(42);
+        }
+      });
+    });
   });
 });

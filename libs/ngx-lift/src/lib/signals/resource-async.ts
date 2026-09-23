@@ -385,13 +385,20 @@ export interface WritableResourceRef<T, E = Error> extends ResourceRef<T, E> {
  * userRef.set(cachedUser); // Show cached data immediately
  * userRef.reload(); // Fetch fresh data in background
  *
+ * // With defaultValue (non-nullable value() signal)
+ * usersRef = resourceAsync(
+ *   () => this.http.get<User[]>('/api/users'),
+ *   { defaultValue: [] }
+ * );
+ * // usersRef.value() is Signal<User[]> (never undefined)
+ *
  * // With error handling
  * userRef = resourceAsync(
  *   () => this.http.get<User>(`/api/user/${this.userId()}`),
  *   {
  *     onError: (error) => {
  *       console.error('Failed to load user:', error);
- *       return null; // Fallback value
+ *       return { id: 0, name: 'Anonymous' } as User; // Fallback value
  *     }
  *   }
  * );
@@ -409,11 +416,36 @@ export function resourceAsync<T, E = Error>(
   options: ResourceRefOptionsWithInitialValue<T, E> | ResourceRefOptionsWithDefaultValue<T, E>,
 ): WritableResourceRef<T, E>;
 
+/**
+ * Creates a reactive resource without an initial value.
+ *
+ * `value()` is typed as `Signal<T | undefined>` and returns `undefined` during initial loading and error states.
+ * Use the `hasValue()` type guard to narrow the value to `T`.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ *
+ * @param sourceFn - Function returning the async source.
+ * @param options - Configuration options without initialValue or defaultValue.
+ *
+ * @returns A WritableResourceRef whose value signal includes undefined.
+ */
 export function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
   options?: ResourceRefOptionsWithoutInitial<T, E>,
 ): WritableResourceRef<T | undefined, E>;
 
+/**
+ * Creates a reactive resource with optional initial/default configuration.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ *
+ * @param sourceFn - Function returning the async source.
+ * @param options - General resource configuration options.
+ *
+ * @returns A WritableResourceRef whose value signal includes undefined if not proven non-null.
+ */
 export function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
   options?: ResourceRefOptions<T, E>,
