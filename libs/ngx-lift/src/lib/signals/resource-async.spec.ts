@@ -979,13 +979,13 @@ describe('WritableResourceRef', () => {
         await flushEffects(100);
         expect(resource.value()).toBe(1);
 
-        resource.update((n) => n + 1);
+        resource.update((n) => (n !== undefined ? n + 1 : undefined));
         expect(resource.value()).toBe(2);
 
-        resource.update((n) => n * 2);
+        resource.update((n) => (n !== undefined ? n * 2 : undefined));
         expect(resource.value()).toBe(4);
 
-        resource.update((n) => n - 1);
+        resource.update((n) => (n !== undefined ? n - 1 : undefined));
         expect(resource.value()).toBe(3);
 
         expect(resource.status()).toBe('local');
