@@ -17,30 +17,56 @@ This guide covers deploying the demo application to Netlify and Vercel, as well 
 
 ### Automated Publishing (Recommended)
 
-#### Method 1: GitHub Actions Workflow
+#### Method 1: Tag-Driven Release (Recommended)
 
-1. **Set up npm Token**:
-   - Go to npmjs.com → Account Settings → Access Tokens
-   - Generate a new token with "Automation" type
-   - Add to GitHub Secrets as `NPM_TOKEN`
+This is the standard flow. Pushing a version tag automatically triggers GitHub Actions to build, test, publish the
+targeted library to the npm registry, and create a GitHub Release with auto-generated release notes.
 
-2. **Trigger Workflow**:
-   - Go to GitHub Actions tab
-   - Select "Publish Libraries" workflow
-   - Click "Run workflow"
-   - Choose version type (major, minor, patch)
+1. **Update version and changelog**:
+   - Bump `"version"` in `libs/ngx-lift/package.json` (or `libs/clr-lift/package.json`).
+   - Document new additions, changes, and fixes in `CHANGELOG.md` under the new version header.
 
-#### Method 2: Git Tags
+2. **Commit and push to `main`**:
 
-```bash
-# Create a new version tag
-git tag v1.10.4
+   ```bash
+   git add libs/ngx-lift/package.json CHANGELOG.md
+   git commit -m "chore(release): publish ngx-lift@21.1.1"
+   git push origin main
+   ```
 
-# Push the tag
-git push origin v1.10.4
-```
+3. **Create and push the git tag**: For `ngx-lift`:
 
-This automatically triggers the publish workflow.
+   ```bash
+   git tag ngx-lift@21.1.1
+   git push origin ngx-lift@21.1.1
+   ```
+
+   For `clr-lift`:
+
+   ```bash
+   git tag clr-lift@21.0.1
+   git push origin clr-lift@21.0.1
+   ```
+
+4. **Automated CI/CD**:
+   - The workflow detects the tag prefix (`ngx-lift@*` or `clr-lift@*`).
+   - Runs unit tests and builds the target library.
+   - Publishes the artifact from `dist/` directly to npm.
+   - Creates a GitHub Release with release notes matching the tag.
+
+#### Method 2: GitHub Actions Workflow Dispatch (Manual Trigger)
+
+Use this method to publish directly from GitHub without pushing a tag locally:
+
+1. Go to the repository's **Actions** tab on GitHub.
+2. Select the **Publish Libraries** workflow.
+3. Click **Run workflow**:
+   - **Version type**:
+     - `patch`, `minor`, or `major`: Nx calculates the next version, creates the git tag, pushes it to remote, and
+       publishes.
+     - `skip`: Publishes the existing version already in manifest without bumping or retagging.
+   - **Project to publish**: Choose `ngx-lift`, `clr-lift`, or `all`.
+4. Click **Run workflow** to execute.
 
 ### Manual Publishing
 

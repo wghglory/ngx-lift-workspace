@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [21.1.1] - 2026-09-23
+
+### 🎉 Added
+
+- **`resourceAsync` enhancements:**
+  - Added function overloads to accurately type `value()` as `Signal<T>` when `initialValue` or `defaultValue` is
+    provided, and `Signal<T | undefined>` when omitted ([#135](https://github.com/wghglory/ngx-lift/pull/135),
+    [#136](https://github.com/wghglory/ngx-lift/pull/136))
+  - Added `defaultValue` option as an alias for `initialValue` matching Angular's `resource()` API
+    ([#135](https://github.com/wghglory/ngx-lift/pull/135))
+  - Updated JSDoc documentation and examples with complete type signatures and edge-case coverage
+    ([#136](https://github.com/wghglory/ngx-lift/pull/136))
+
 ## [21.1.0] - 2026-09-20
 
 ### 🎉 Added
