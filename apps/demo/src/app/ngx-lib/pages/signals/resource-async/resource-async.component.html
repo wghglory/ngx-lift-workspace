@@ -674,10 +674,10 @@
                             </div>
                           }
 
-                          @if (orgRef.hasValue() && !orgRef.error()) {
+                          @if (orgRef.value(); as org) {
                             <div cds-layout="vertical gap:xs">
-                              <strong>{{ orgRef.value().name }}</strong>
-                              <div>{{ orgRef.value().type }} • {{ orgRef.value().location }}</div>
+                              <strong>{{ org.name }}</strong>
+                              <div>{{ org.type }} • {{ org.location }}</div>
                             </div>
                           }
                         }

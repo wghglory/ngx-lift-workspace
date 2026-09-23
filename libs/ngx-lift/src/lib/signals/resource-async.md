@@ -561,6 +561,19 @@ export class RegistrationFormComponent {
 ```typescript
 interface ResourceRefOptions<T, E = Error> {
   /**
+   * Initial value before first fetch.
+   * When provided, value() returns Signal<T> (never undefined).
+   */
+  initialValue?: T;
+
+  /**
+   * Default value before first fetch.
+   * Alias for initialValue matching Angular's resource() API.
+   * When provided, value() returns Signal<T> (never undefined).
+   */
+  defaultValue?: T;
+
+  /**
    * Lazy loading: if true, does not execute until reload() is called
    * @default false
    */
@@ -585,26 +598,28 @@ interface ResourceRefOptions<T, E = Error> {
    * @default false
    */
   throwOnError?: boolean;
+
+  /**
+   * Optional custom injector. If provided, allows resourceAsync to be called outside an ambient injection context.
+   */
+  injector?: Injector;
 }
 ```
 
-#### Returns `ResourceRef<T, E>`
+#### Returns `WritableResourceRef<T, E>`
 
 ```typescript
-interface ResourceRef<T, E = Error> {
-  // Signals
-  value: Signal<T>; // Always returns T (with initialValue fallback)
-  error: Signal<E | null>;
-  status: Signal<ResourceStatus>;
-  isLoading: Signal<boolean>; // Signal (not method) - matches Angular
-  isIdle: Signal<boolean>; // Signal
+// Overload 1: When initialValue or defaultValue is provided
+function resourceAsync<T, E = Error>(
+  sourceFn: () => Observable<T> | Promise<T> | T,
+  options: {initialValue: T} | ({defaultValue: T} & BaseOptions),
+): WritableResourceRef<T, E>;
 
-  // Methods
-  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>; // Type predicate!
-  reload(): boolean; // Returns true if initiated
-  execute(): Promise<T>; // Awaitable mutation trigger
-  reset(): void; // Resets resource back to idle state
-}
+// Overload 2: When no initial/default value is provided
+function resourceAsync<T, E = Error>(
+  sourceFn: () => Observable<T> | Promise<T> | T,
+  options?: OptionsWithoutInitial,
+): WritableResourceRef<T | undefined, E>;
 ```
 
 ---
@@ -679,18 +694,24 @@ The signal returns the loaded value if available, otherwise falls back to `initi
 ### Usage Patterns
 
 ```typescript
-// ✅ Recommended: Provide initialValue
-userRef = resourceAsync(
-  () => this.http.get<User>('/api/user'),
-  {initialValue: undefined}, // Makes T = User | undefined
-);
+// ✅ Pattern A: Collections / Grids (Non-nullable)
+// Providing initialValue: [] or defaultValue: [] guarantees value() is never undefined.
+// Safe for template array iteration and length access without ?. or || [] and without NG8107 warnings!
+usersRef = resourceAsync(() => this.userService.getUsers(), {
+  defaultValue: [],
+});
+// usersRef.value() is Signal<User[]>
+// Template: *clrDgItems="let user of usersRef.value()"
+// Template: [clrDgTotalItems]="usersRef.value().length"
 
-// ✅ Alternative: Include undefined in type
-userRef = resourceAsync<User | undefined>(() => this.http.get<User>('/api/user'));
+// ✅ Pattern B: Single Entities (Nullable until loaded)
+// Omitting initialValue automatically types value() as Signal<User | undefined>.
+userRef = resourceAsync(() => this.http.get<User>('/api/user'));
+// userRef.value() is Signal<User | undefined>
 
-// Type narrowing works in both cases
+// Type narrowing with hasValue():
 if (userRef.hasValue()) {
-  userRef.value().name; // ✅ Type is User
+  console.log(userRef.value().name); // ✅ Type is narrowed to User
 }
 ```
 
