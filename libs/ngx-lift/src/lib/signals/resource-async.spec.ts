@@ -930,7 +930,7 @@ describe('WritableResourceRef', () => {
         expect(resource.value()).toEqual({id: 1, name: 'John'});
 
         // Update value
-        resource.update((user) => ({...user, name: 'Jane'}));
+        resource.update((user) => (user ? {...user, name: 'Jane'} : undefined));
 
         expect(resource.status()).toBe('local');
         expect(resource.value()).toEqual({id: 1, name: 'Jane'});
@@ -1249,7 +1249,7 @@ describe('WritableResourceRef', () => {
         expect(resource.value()).toEqual({id: 1, name: 'John'});
 
         // Optimistic update
-        resource.update((user) => ({...user, name: 'Updated'}));
+        resource.update((user) => (user ? {...user, name: 'Updated'} : undefined));
         expect(resource.value()).toEqual({id: 1, name: 'Updated'});
 
         // Simulate save failure
@@ -1584,6 +1584,131 @@ describe('WritableResourceRef', () => {
         const r2 = await p2;
         expect(r2).toBe('Response 2');
         expect(resource.value()).toBe('Response 2');
+      });
+    });
+  });
+
+  describe('initialValue and defaultValue typing and runtime behavior', () => {
+    it('should return non-undefined value signal when initialValue is provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const guest: User = {id: 0, name: 'Guest'};
+        const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 50), {
+          initialValue: guest,
+        });
+
+        await flushEffects();
+
+        // Compile-time assertion: value() is Signal<User>, assignable to User without undefined
+        const initialVal: User = resource.value();
+        expect(initialVal).toEqual(guest);
+        expect(resource.value().name).toBe('Guest');
+
+        await flushEffects(50);
+
+        expect(resource.status()).toBe('resolved');
+        const resolvedVal: User = resource.value();
+        expect(resolvedVal).toEqual({id: 1, name: 'John'});
+      });
+    });
+
+    it('should return non-undefined value signal when defaultValue is provided (alias for initialValue)', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const emptyList: User[] = [];
+        const resource = resourceAsync(() => promise<User[]>([{id: 1, name: 'John'}], 50), {
+          defaultValue: emptyList,
+        });
+
+        await flushEffects();
+
+        // Compile-time assertion: value() is Signal<User[]>, allowing direct .length access without ?. or || []
+        const list: User[] = resource.value();
+        expect(list).toEqual([]);
+        expect(resource.value().length).toBe(0);
+
+        await flushEffects(50);
+
+        expect(resource.status()).toBe('resolved');
+        expect(resource.value().length).toBe(1);
+        expect(resource.value()[0].name).toBe('John');
+      });
+    });
+
+    it('should return T | undefined when neither initialValue nor defaultValue is provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => promise<User>({id: 1, name: 'John'}, 50));
+
+        await flushEffects();
+
+        // Initially undefined
+        expect(resource.value()).toBeUndefined();
+        expect(resource.hasValue()).toBe(false);
+
+        await flushEffects(50);
+
+        expect(resource.status()).toBe('resolved');
+        expect(resource.hasValue()).toBe(true);
+
+        // hasValue() acts as type guard narrowing resource.value() to User
+        if (resource.hasValue()) {
+          const narrowedUser: User = resource.value();
+          expect(narrowedUser.name).toBe('John');
+        }
+      });
+    });
+
+    it('should reset back to defaultValue / initialValue when reset() is called', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => of('fetched-data'), {
+          lazy: true,
+          defaultValue: 'initial-fallback',
+        });
+
+        await flushEffects();
+        expect(resource.value()).toBe('initial-fallback');
+
+        resource.execute();
+        await flushEffects();
+        expect(resource.value()).toBe('fetched-data');
+
+        resource.reset();
+        await flushEffects();
+        expect(resource.status()).toBe('idle');
+        expect(resource.value()).toBe('initial-fallback');
+      });
+    });
+
+    it('should retain initialValue / defaultValue fallback on error', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const defaultUser: User = {id: 0, name: 'Default'};
+        const resource = resourceAsync(() => promiseError<User>(new Error('Fetch failed'), 50), {
+          defaultValue: defaultUser,
+        });
+
+        await flushEffects();
+        expect(resource.status()).toBe('loading');
+        expect(resource.value()).toEqual(defaultUser);
+
+        await flushEffects(50);
+
+        expect(resource.status()).toBe('error');
+        expect(resource.error()).toBeTruthy();
+        expect(resource.value()).toEqual(defaultUser);
+      });
+    });
+
+    it('should allow updater to receive non-undefined value when defaultValue is provided', async () => {
+      await TestBed.runInInjectionContext(async () => {
+        const counterRef = resourceAsync(() => of(100), {
+          lazy: true,
+          defaultValue: 0,
+        });
+
+        await flushEffects();
+        expect(counterRef.value()).toBe(0);
+
+        // Safe direct increment without undefined check
+        counterRef.update((c) => c + 1);
+        expect(counterRef.value()).toBe(1);
       });
     });
   });

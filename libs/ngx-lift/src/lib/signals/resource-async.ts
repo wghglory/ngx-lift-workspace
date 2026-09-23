@@ -16,19 +16,12 @@ import {ResourceStatus} from '../models';
 import {isPromise} from '../utils/is-promise.util';
 
 /**
- * Configuration options for resourceAsync.
+ * Base configuration options for resourceAsync.
  *
  * @template T - The type of the resource value.
  * @template E - The type of errors (defaults to Error).
  */
-export interface ResourceRefOptions<T, E = Error> extends CreateComputedOptions<T> {
-  /**
-   * Initial value for the resource before first fetch.
-   * If provided, the resource will use this value during loading states.
-   * If not provided, T must include undefined.
-   */
-  initialValue?: T;
-
+export interface BaseResourceRefOptions<T, E = Error> extends CreateComputedOptions<T> {
   /**
    * Behavior for handling multiple concurrent async operations.
    * - `switch`: Cancel previous operation when new one starts (default)
@@ -76,6 +69,79 @@ export interface ResourceRefOptions<T, E = Error> extends CreateComputedOptions<
 }
 
 /**
+ * Options for resourceAsync when an initialValue is provided.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ */
+export interface ResourceRefOptionsWithInitialValue<T, E = Error> extends BaseResourceRefOptions<T, E> {
+  /**
+   * Initial value for the resource before first fetch.
+   * When provided, value() is guaranteed to return T (never undefined).
+   */
+  initialValue: T;
+
+  /**
+   * Default value for the resource before first fetch.
+   * Alias for initialValue to match Angular's resource() API.
+   */
+  defaultValue?: T;
+}
+
+/**
+ * Options for resourceAsync when a defaultValue is provided.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ */
+export interface ResourceRefOptionsWithDefaultValue<T, E = Error> extends BaseResourceRefOptions<T, E> {
+  /**
+   * Default value for the resource before first fetch.
+   * Alias for initialValue to match Angular's resource() API.
+   * When provided, value() is guaranteed to return T (never undefined).
+   */
+  defaultValue: T;
+
+  /**
+   * Initial value for the resource before first fetch.
+   */
+  initialValue?: T;
+}
+
+/**
+ * Options for resourceAsync when neither initialValue nor defaultValue is provided.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ */
+export interface ResourceRefOptionsWithoutInitial<T, E = Error> extends BaseResourceRefOptions<T, E> {
+  initialValue?: undefined;
+  defaultValue?: undefined;
+}
+
+/**
+ * Configuration options for resourceAsync.
+ *
+ * @template T - The type of the resource value.
+ * @template E - The type of errors (defaults to Error).
+ */
+export interface ResourceRefOptions<T, E = Error> extends BaseResourceRefOptions<T, E> {
+  /**
+   * Initial value for the resource before first fetch.
+   * If provided, the resource will use this value during loading states.
+   * If not provided, value() will return undefined during initial loading/error states.
+   */
+  initialValue?: T;
+
+  /**
+   * Default value for the resource before first fetch.
+   * Alias for initialValue to match Angular's resource() API.
+   * If provided, the resource will use this value during loading states.
+   */
+  defaultValue?: T;
+}
+
+/**
  * Reactive resource that manages async operations with full lifecycle tracking.
  * Matches Angular's httpResource API for consistency.
  *
@@ -86,11 +152,8 @@ export interface ResourceRef<T, E = Error> {
   /**
    * The current value of the resource.
    *
-   * **Important**: Unlike a typical signal, this always returns a value (T).
-   * If initialValue is provided, it returns that during loading/error states.
-   * If no initialValue is provided, T must include undefined in its type.
-   *
-   * When in error state with no initialValue, value() returns undefined (T must include undefined).
+   * - If `initialValue` or `defaultValue` is provided, returns `T` (never `undefined`).
+   * - If no initial value is provided, returns `T | undefined` (returns `undefined` during initial loading and error states).
    */
   readonly value: Signal<T>;
 
@@ -343,29 +406,45 @@ export interface WritableResourceRef<T, E = Error> extends ResourceRef<T, E> {
  */
 export function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
+  options: ResourceRefOptionsWithInitialValue<T, E> | ResourceRefOptionsWithDefaultValue<T, E>,
+): WritableResourceRef<T, E>;
+
+export function resourceAsync<T, E = Error>(
+  sourceFn: () => Observable<T> | Promise<T> | T,
+  options?: ResourceRefOptionsWithoutInitial<T, E>,
+): WritableResourceRef<T | undefined, E>;
+
+export function resourceAsync<T, E = Error>(
+  sourceFn: () => Observable<T> | Promise<T> | T,
+  options?: ResourceRefOptions<T, E>,
+): WritableResourceRef<T | undefined, E>;
+
+export function resourceAsync<T, E = Error>(
+  sourceFn: () => Observable<T> | Promise<T> | T,
   options: ResourceRefOptions<T, E> = {},
-): WritableResourceRef<T, E> {
+): WritableResourceRef<T, E> | WritableResourceRef<T | undefined, E> {
   if (!options.injector) {
     assertInInjectionContext(resourceAsync);
   }
 
   const destroyRef = options.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
 
-  // State signals
-  const valueSignal = signal<T | undefined>(options.initialValue);
+  const resolvedInitialValue: T | undefined =
+    options.defaultValue !== undefined ? options.defaultValue : options.initialValue;
+
+  // State signals - valueSignal tracks actual received/local values, falling back to initialValue in valueComputed
+  const valueSignal = signal<T | undefined>(undefined);
   const errorSignal = signal<E | null>(null);
   const statusSignal = signal<ResourceStatus>(options.lazy ? 'idle' : 'loading');
 
-  // Create a computed signal that returns T (with initialValue as fallback)
-  // This matches Angular's pattern where value() always returns T
+  // Create a computed signal that returns T (with resolvedInitialValue as fallback)
+  // This matches Angular's pattern where value() returns initial value or undefined
   const valueComputed = computed(() => {
     const val = valueSignal();
     if (val !== undefined) {
       return val;
     }
-    // Return initialValue if available, otherwise return undefined
-    // TypeScript will enforce that T includes undefined if no initialValue provided
-    return options.initialValue as T;
+    return resolvedInitialValue as T;
   });
 
   // Trigger for manual reload
@@ -665,7 +744,7 @@ export function resourceAsync<T, E = Error>(
   const asReadonly = (): ResourceRef<T, E> => {
     // Create a wrapper function that preserves the type predicate
     const readonlyHasValue = function (this: ResourceRef<T, E>): this is ResourceRef<Exclude<T, undefined>, E> {
-      return hasValue.call(this as WritableResourceRef<T, E>);
+      return hasValue.call(this as unknown as WritableResourceRef<T, E>);
     };
 
     // Return a new object without set/update methods

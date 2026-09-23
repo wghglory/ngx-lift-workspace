@@ -4,12 +4,11 @@ import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
-import {resourceAsync, ResourceRef, WritableResourceRef} from 'ngx-lift';
+import {resourceAsync, ResourceRef} from 'ngx-lift';
 import {delay, map, of} from 'rxjs';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
-import {PaginationResponse} from '../../../../shared/models/pagination.model';
 import {User} from '../../../../shared/models/user.model';
 import {UserService} from '../../../../shared/services/user.service';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -25,18 +24,6 @@ interface RegistrationResponse {
   username: string;
   email: string;
   message: string;
-}
-
-interface Todo {
-  id: number;
-  title: string;
-  completed: boolean;
-}
-
-interface CacheUser {
-  id: number;
-  name: string;
-  email: string;
 }
 
 interface Item {
@@ -77,41 +64,38 @@ export class ResourceAsyncComponent {
 
   // Basic resource - fetch single user (using results=1)
   pageNumber = signal(1);
-  userRef: ResourceRef<User> = resourceAsync(() =>
+  userRef = resourceAsync(() =>
     this.userService.getUsers({results: 1, page: this.pageNumber()}).pipe(map((res) => res.results[0])),
   );
 
   // Lazy resource - won't load until reload() is called
-  lazyUsersRef: ResourceRef<PaginationResponse<User>> = resourceAsync(() => this.userService.getUsers({results: 9}), {
+  lazyUsersRef = resourceAsync(() => this.userService.getUsers({results: 9}), {
     lazy: true,
   });
 
   // Resource with error handling - simulate error with invalid API call
-  userWithFallbackRef: ResourceRef<User> = resourceAsync(
-    () => this.http.get<User>('https://randomuser.me/api/invalid-endpoint'),
-    {
-      lazy: true,
-      onError: (error) => {
-        console.error('Failed to load user:', error);
-        // Return fallback value
-        return {
-          gender: 'male',
-          name: {first: 'Fallback', last: 'User', title: 'Mr'},
-          email: 'fallback@example.com',
-          picture: {large: 'https://via.placeholder.com/150', medium: '', thumbnail: ''},
-          id: {name: '', value: '0'},
-          phone: '',
-          cell: '',
-        } as User;
-      },
-      onSuccess: (user) => {
-        console.log('User loaded:', user);
-      },
-      onLoading: () => {
-        console.log('Loading user...');
-      },
+  userWithFallbackRef = resourceAsync(() => this.http.get<User>('https://randomuser.me/api/invalid-endpoint'), {
+    lazy: true,
+    onError: (error) => {
+      console.error('Failed to load user:', error);
+      // Return fallback value
+      return {
+        gender: 'male',
+        name: {first: 'Fallback', last: 'User', title: 'Mr'},
+        email: 'fallback@example.com',
+        picture: {large: 'https://via.placeholder.com/150', medium: '', thumbnail: ''},
+        id: {name: '', value: '0'},
+        phone: '',
+        cell: '',
+      } as User;
     },
-  );
+    onSuccess: (user) => {
+      console.log('User loaded:', user);
+    },
+    onLoading: () => {
+      console.log('Loading user...');
+    },
+  });
 
   // Registration form
   registrationForm = new FormGroup({
@@ -121,7 +105,7 @@ export class ResourceAsyncComponent {
   });
 
   // Registration resource with exhaust + lazy
-  registrationRef: ResourceRef<RegistrationResponse> = resourceAsync(
+  registrationRef = resourceAsync(
     () => {
       const formValue = this.registrationForm.value;
       const payload: RegistrationPayload = {
@@ -172,14 +156,21 @@ export class ResourceAsyncComponent {
 
   // Example 1: Optimistic Update - Todo Toggle
   todoId = signal(1);
-  todoRef: WritableResourceRef<Todo> = resourceAsync(
+  todoRef = resourceAsync(
     () =>
       of({
         id: this.todoId(),
         title: 'Learn WritableResourceRef',
         completed: false,
       }).pipe(delay(500)),
-    {lazy: true},
+    {
+      lazy: true,
+      defaultValue: {
+        id: 1,
+        title: 'Learn WritableResourceRef',
+        completed: false,
+      },
+    },
   );
 
   toggleTodo() {
@@ -205,7 +196,7 @@ export class ResourceAsyncComponent {
 
   // Example 2: Cache-First Pattern
   cacheFirstUserId = signal(1);
-  cacheFirstUserRef: WritableResourceRef<CacheUser> = resourceAsync(
+  cacheFirstUserRef = resourceAsync(
     () =>
       of({
         id: this.cacheFirstUserId(),
@@ -233,7 +224,7 @@ export class ResourceAsyncComponent {
   // Example 3: Form Draft - Counter
   counterRef = resourceAsync(
     () => of(0).pipe(delay(300)), // Initial value from server
-    {lazy: true},
+    {lazy: true, defaultValue: 0},
   );
 
   incrementCounter() {
@@ -317,9 +308,9 @@ export class ResourceAsyncComponent {
     'org-2': {id: 'org-2', name: 'TechStart Inc', type: 'Startup', location: 'Austin, TX'},
   };
 
-  // Inner resources: Map of orgId -> ResourceRef<Organization>
+  // Inner resources: Map of orgId -> ResourceRef<Organization | undefined>
   // This map caches created resources to avoid recreating them
-  private orgRefsMap = new Map<string, ResourceRef<Organization>>();
+  private orgRefsMap = new Map<string, ResourceRef<Organization | undefined>>();
 
   /**
    * Get or create a resource for the given orgId.
@@ -339,7 +330,7 @@ export class ResourceAsyncComponent {
    *
    * Pattern: Template-called lazy resource creation
    */
-  getOrgRef(orgId: string): ResourceRef<Organization> {
+  getOrgRef(orgId: string): ResourceRef<Organization | undefined> {
     // Break out of reactive context to avoid NG0602 (effect in reactive context)
     return untracked(() => {
       let orgRef = this.orgRefsMap.get(orgId);
@@ -528,34 +519,43 @@ export class UserDetailComponent {
   `);
 
   signatureCode = highlight(`
-resourceAsync<T, E = Error>(
+// 1. With initialValue or defaultValue -> value() is Signal<T> (never undefined)
+function resourceAsync<T, E = Error>(
   sourceFn: () => Observable<T> | Promise<T> | T,
-  options?: ResourceRefOptions<T, E>
-): ResourceRef<T, E>
+  options: ({ initialValue: T } | { defaultValue: T }) & BaseResourceRefOptions<T, E>
+): WritableResourceRef<T, E>;
+
+// 2. Without initialValue -> value() is Signal<T | undefined>
+function resourceAsync<T, E = Error>(
+  sourceFn: () => Observable<T> | Promise<T> | T,
+  options?: ResourceRefOptionsWithoutInitial<T, E>
+): WritableResourceRef<T | undefined, E>;
 
 interface ResourceRefOptions<T, E = Error> {
-  initialValue?: T;
+  initialValue?: T;                       // Initial value before first fetch
+  defaultValue?: T;                       // Alias matching Angular's resource() API
   behavior?: 'switch' | 'exhaust';
   onError?: (error: E) => T | undefined;
   throwOnError?: boolean;
   onSuccess?: (value: T) => void;
   onLoading?: () => void;
   lazy?: boolean;
+  injector?: Injector;
 }
 
 interface ResourceRef<T, E = Error> {
-  readonly value: Signal<T>;              // Always returns T (with initialValue fallback)
+  readonly value: Signal<T>;              // T when initial/default provided, else T | undefined
   readonly error: Signal<E | null>;
   readonly status: Signal<ResourceStatus>;
   readonly isLoading: Signal<boolean>;
-  readonly isIdle: Signal<boolean>;       
-  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;  // Type predicate method
+  readonly isIdle: Signal<boolean>;
+  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;  // Type guard narrows T | undefined -> T
   reload(): boolean;                      // Returns true if initiated, for read operations (GET)
   execute(): Promise<T>;                  // Awaitable mutation trigger - returns Promise<T>
   reset(): void;                          // Resets resource to idle state, cancels in-flight
 }
 
-type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
+type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error' | 'local';
   `);
 
   behaviorCode = highlight(`
@@ -734,7 +734,7 @@ export class TodoComponent {
   private http = inject(HttpClient);
   todoId = signal(1);
 
-  todoRef = resourceAsync(() => 
+  todoRef = resourceAsync(() =>
     this.http.get<Todo>(\`/api/todos/\${this.todoId()}\`)
   );
 
@@ -837,7 +837,7 @@ export class ProjectListComponent {
   private injector = inject(Injector);
 
   // Outer resource: List of projects
-  projectsRef = resourceAsync(() => 
+  projectsRef = resourceAsync(() =>
     this.http.get<Project[]>('/api/projects')
   );
 
@@ -847,7 +847,7 @@ export class ProjectListComponent {
   /**
    * Get or create a resource for the given orgId.
    * Called from template during change detection.
-   * 
+   *
    * REQUIRES TWO WRAPPERS:
    * 1. untracked() - Prevents NG0602 (effect in reactive context)
    * 2. { injector: this.injector } - Directly decouples the injector without runInInjectionContext()!
