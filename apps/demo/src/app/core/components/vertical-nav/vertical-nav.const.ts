@@ -93,6 +93,15 @@ export const clrLiftNavConfig: NavConfig[] = [
     ],
   },
   {
+    path: '/clr-lift/directives',
+    value: 'Directives',
+    icon: 'compass',
+    children: [
+      {path: '/scroll-to-step-top', value: 'cllScrollToStepTop'},
+      {path: '/datagrid-filter-label-reset', value: 'cllDatagridFilterLabelReset'},
+    ],
+  },
+  {
     path: '/clr-lift/utilities',
     value: 'Utilities',
     icon: 'wrench',
