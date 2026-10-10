@@ -1,0 +1,25 @@
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.copy-btn {
+  margin: 0 !important;
+  padding: 0 4px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.disabled {
+  color: var(--clr-btn-link-disabled-color, #999);
+  cursor: not-allowed;
+}
+
+clr-tooltip-content {
+  text-transform: initial;
+  text-align: initial;
+  font-size: initial;
+  word-break: break-word;
+  white-space: normal;
+  z-index: 1000;
+}

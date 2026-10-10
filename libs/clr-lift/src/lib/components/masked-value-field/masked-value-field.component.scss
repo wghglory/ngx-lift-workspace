@@ -1,0 +1,28 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.masked-value-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.toggle-btn {
+  margin: 0 !important;
+  padding: 0 4px;
+  height: 20px;
+  min-width: auto;
+  vertical-align: middle;
+}
+
+.value-text {
+  font-family: inherit;
+  vertical-align: middle;
+}
+
+.empty-placeholder {
+  color: var(--clr-color-neutral-600, #666);
+}

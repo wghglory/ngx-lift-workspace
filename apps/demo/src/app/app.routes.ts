@@ -4,6 +4,9 @@ import {AlertDemoComponent} from './clr-lib/pages/alert-demo/alert-demo.componen
 import {CertificateDemoComponent} from './clr-lib/pages/certificate-demo/certificate-demo.component';
 import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component';
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
+import {CopyToClipboardDemoComponent} from './clr-lib/pages/components/copy-to-clipboard-demo/copy-to-clipboard-demo.component';
+import {InfoButtonDemoComponent} from './clr-lib/pages/components/info-button-demo/info-button-demo.component';
+import {MaskedValueFieldDemoComponent} from './clr-lib/pages/components/masked-value-field-demo/masked-value-field-demo.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
@@ -262,6 +265,18 @@ export const routes: Routes = [
           {
             path: 'file-reader',
             component: FileReaderDemoComponent,
+          },
+          {
+            path: 'copy-to-clipboard',
+            component: CopyToClipboardDemoComponent,
+          },
+          {
+            path: 'masked-value-field',
+            component: MaskedValueFieldDemoComponent,
+          },
+          {
+            path: 'info-button',
+            component: InfoButtonDemoComponent,
           },
         ],
       },

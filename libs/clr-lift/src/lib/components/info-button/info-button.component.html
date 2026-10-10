@@ -1,0 +1,16 @@
+<button
+  type="button"
+  class="action-item"
+  [class]="className()"
+  [disabled]="disabled()"
+  [attr.aria-disabled]="disabled()"
+  [cllTooltip]="effectiveTooltip()"
+  [cllTooltipPosition]="tooltipPosition()"
+  [cllTooltipWidth]="tooltipWidth()"
+  (click)="onButtonClick()"
+>
+  <span [class.disabled]="disabled()">{{ text() }}</span>
+  @if (disabled() && effectiveTooltip()) {
+    <clr-icon shape="info-circle" [size]="iconSize()" aria-hidden="true" status="info" />
+  }
+</button>

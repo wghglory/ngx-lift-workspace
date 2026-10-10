@@ -1,0 +1,122 @@
+<cll-page-container title="Info Button" customClass="space-y-9">
+  <p>
+    <code>&lt;cll-info-button&gt;</code> renders a stylized action or navigation button. When disabled, it can display
+    an informative icon and hover tooltip explaining why the operation is unavailable to the user.
+  </p>
+
+  <section class="space-y-6">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Action Trigger</h3>
+      <p>Use the <code>(clicked)</code> event output to execute arbitrary component callbacks.</p>
+
+      <div class="card p-4 space-y-3">
+        <div class="flex items-center gap-4">
+          <cll-info-button text="Trigger Maintenance Task" (clicked)="onTriggerAction()" />
+          <span class="badge badge-info">Clicks: {{ actionCount() }}</span>
+        </div>
+      </div>
+
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Router Link Navigation</h3>
+      <p>
+        Provide a <code>link</code> input (with optional <code>queryParams</code> and <code>state</code>) to
+        automatically navigate via Angular Router.
+      </p>
+
+      <div class="card p-4">
+        <cll-info-button text="Inspect Alert Documentation" [link]="['/clr-lift', 'components', 'alert']" />
+      </div>
+
+      <app-code-block [code]="routerExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Disabled with Reason Tooltip</h3>
+      <p>
+        When <code>[disabled]="true"</code> and a <code>tooltipText</code> is provided, an info icon appears and
+        hovering the button shows the explanatory tooltip.
+      </p>
+
+      <div class="card p-4">
+        <cll-info-button
+          text="Scale Down Replicas"
+          [disabled]="true"
+          tooltipText="Scaling down is disabled while maintenance mode is active."
+        />
+      </div>
+
+      <app-code-block [code]="disabledTooltipCode" lang="html" />
+    </article>
+  </section>
+
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="clr-table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>text</code></td>
+            <td><code>string</code></td>
+            <td>required</td>
+            <td>Button label.</td>
+          </tr>
+          <tr>
+            <td><code>tooltipText</code></td>
+            <td><code>string</code></td>
+            <td><code>''</code></td>
+            <td>Explanatory tooltip displayed when disabled.</td>
+          </tr>
+          <tr>
+            <td><code>tooltipPosition</code></td>
+            <td><code>TooltipPosition</code></td>
+            <td><code>'tooltip-right'</code></td>
+            <td>Tooltip placement relative to button.</td>
+          </tr>
+          <tr>
+            <td><code>tooltipWidth</code></td>
+            <td><code>number</code></td>
+            <td><code>240</code></td>
+            <td>Tooltip box width in pixels.</td>
+          </tr>
+          <tr>
+            <td><code>link</code></td>
+            <td><code>string | string[] | null</code></td>
+            <td><code>null</code></td>
+            <td>Router navigation path or segment array.</td>
+          </tr>
+          <tr>
+            <td><code>queryParams</code></td>
+            <td><code>Record&lt;string, unknown&gt; | null</code></td>
+            <td><code>null</code></td>
+            <td>Router query parameters.</td>
+          </tr>
+          <tr>
+            <td><code>disabled</code></td>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+            <td>Whether the button is disabled.</td>
+          </tr>
+          <tr>
+            <td><code>clicked</code></td>
+            <td><code>OutputEmitterRef&lt;void&gt;</code></td>
+            <td>-</td>
+            <td>Emitted on click when <code>link</code> is not set.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</cll-page-container>

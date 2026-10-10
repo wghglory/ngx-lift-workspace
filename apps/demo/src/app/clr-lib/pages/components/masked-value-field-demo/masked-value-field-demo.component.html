@@ -1,0 +1,111 @@
+<cll-page-container title="Masked Value Field" customClass="space-y-9">
+  <p>
+    <code>&lt;cll-masked-value-field&gt;</code> is a presentational component that masks sensitive values (passwords,
+    tokens, credentials, connection strings) by default. Users can toggle visibility using an accessible show/hide
+    button and optionally copy the value directly to the clipboard.
+  </p>
+
+  <section class="space-y-6">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Password Masking</h3>
+      <p>
+        By default, the value is obscured with dots (<code>●●●●●●●●●●</code>). Clicking the eye icon reveals the
+        plaintext value.
+      </p>
+
+      <div class="card p-4">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold">Master Password:</span>
+          <cll-masked-value-field [value]="password()" />
+        </div>
+      </div>
+
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Copyable Secret Key</h3>
+      <p>Set <code>[copyable]="true"</code> to render an integrated copy button next to the reveal toggle.</p>
+
+      <div class="card p-4">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold">API Secret:</span>
+          <cll-masked-value-field [value]="apiSecret()" [copyable]="true" copyTooltip="Copy Secret Key" />
+        </div>
+      </div>
+
+      <app-code-block [code]="copyableExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Empty Placeholder Handling</h3>
+      <p>
+        When the value is empty, null, or undefined, the component renders a configurable placeholder (defaults to
+        <code>-</code>).
+      </p>
+
+      <div class="card p-4 space-y-2">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold">Default empty placeholder:</span>
+          <cll-masked-value-field [value]="emptyValue()" />
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-semibold">Custom empty placeholder:</span>
+          <cll-masked-value-field [value]="emptyValue()" emptyPlaceholder="No secret configured" />
+        </div>
+      </div>
+
+      <app-code-block [code]="customPlaceholderCode" lang="html" />
+    </article>
+  </section>
+
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="clr-table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>value</code></td>
+            <td><code>string | number | null | undefined</code></td>
+            <td>-</td>
+            <td>The sensitive value to mask.</td>
+          </tr>
+          <tr>
+            <td><code>placeholder</code></td>
+            <td><code>string</code></td>
+            <td><code>'●●●●●●●●●●'</code></td>
+            <td>Placeholder shown when masked.</td>
+          </tr>
+          <tr>
+            <td><code>emptyPlaceholder</code></td>
+            <td><code>string</code></td>
+            <td><code>'-'</code></td>
+            <td>String displayed when value is empty or null.</td>
+          </tr>
+          <tr>
+            <td><code>copyable</code></td>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+            <td>Whether to render an integrated copy button.</td>
+          </tr>
+          <tr>
+            <td><code>copyTooltip</code></td>
+            <td><code>string</code></td>
+            <td><code>''</code></td>
+            <td>Tooltip for copy button when copyable is true.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</cll-page-container>

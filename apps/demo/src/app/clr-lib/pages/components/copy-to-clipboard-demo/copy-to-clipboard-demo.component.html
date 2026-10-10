@@ -1,0 +1,138 @@
+<cll-page-container title="Copy to Clipboard" customClass="space-y-9">
+  <p>
+    <code>&lt;cll-copy-to-clipboard&gt;</code> provides a standardized, accessible copy-to-clipboard button using
+    Clarity Design System icons and tooltips. It integrates with Angular CDK Clipboard and displays visual loading and
+    success states automatically.
+  </p>
+
+  <section class="space-y-6">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Inline Usage</h3>
+      <p>
+        Attach to tokens, URLs, connection strings, or table cells. Hovering shows a helpful tooltip, and clicking
+        copies the value into the user's system clipboard with instant visual confirmation.
+      </p>
+
+      <div class="card p-4 space-y-3">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold">API Key:</span>
+          <code>{{ sampleApiKey() }}</code>
+          <cll-copy-to-clipboard [value]="sampleApiKey()" tooltip="Copy API Key" (copied)="onCopied($event)" />
+        </div>
+
+        @if (lastCopied()) {
+          <div class="alert alert-success" role="alert">
+            <div class="alert-items">
+              <div class="alert-item static">
+                <div class="alert-icon-wrapper">
+                  <clr-icon class="alert-icon" shape="check-circle" />
+                </div>
+                <span class="alert-text">
+                  Successfully copied to clipboard: <code>{{ lastCopied() }}</code>
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: With Text Label</h3>
+      <p>Provide a <code>text</code> input to display a clear call-to-action button alongside the icon.</p>
+
+      <div class="card p-4">
+        <cll-copy-to-clipboard
+          value="kubectl get pods -n kube-system"
+          text="Copy Command"
+          tooltip="Copy kubectl CLI snippet"
+          (copied)="onCopied($event)"
+        />
+      </div>
+
+      <app-code-block [code]="buttonTextExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 3: Disabled State</h3>
+      <p>
+        When disabled, the component switches its icon to an info indicator and displays the
+        <code>disabledTooltip</code>.
+      </p>
+
+      <div class="card p-4">
+        <cll-copy-to-clipboard
+          value="https://internal.corp/admin"
+          [disabled]="true"
+          disabledTooltip="You do not have administrative permission to copy this URL"
+        />
+      </div>
+
+      <app-code-block [code]="disabledExampleCode" lang="html" />
+    </article>
+  </section>
+
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="clr-table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>value</code></td>
+            <td><code>string | number</code></td>
+            <td>required</td>
+            <td>The value copied to clipboard.</td>
+          </tr>
+          <tr>
+            <td><code>text</code></td>
+            <td><code>string</code></td>
+            <td><code>''</code></td>
+            <td>Optional text label next to the icon.</td>
+          </tr>
+          <tr>
+            <td><code>tooltip</code></td>
+            <td><code>string</code></td>
+            <td><code>'Copy to clipboard'</code></td>
+            <td>Tooltip shown when hovering over enabled button.</td>
+          </tr>
+          <tr>
+            <td><code>tooltipPosition</code></td>
+            <td><code>string</code></td>
+            <td><code>'right'</code></td>
+            <td>Clarity tooltip placement.</td>
+          </tr>
+          <tr>
+            <td><code>disabled</code></td>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+            <td>Whether the button is disabled.</td>
+          </tr>
+          <tr>
+            <td><code>disabledTooltip</code></td>
+            <td><code>string</code></td>
+            <td><code>''</code></td>
+            <td>Tooltip displayed when disabled.</td>
+          </tr>
+          <tr>
+            <td><code>copied</code></td>
+            <td><code>OutputEmitterRef&lt;string&gt;</code></td>
+            <td>-</td>
+            <td>Event emitted when value is successfully copied.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</cll-page-container>

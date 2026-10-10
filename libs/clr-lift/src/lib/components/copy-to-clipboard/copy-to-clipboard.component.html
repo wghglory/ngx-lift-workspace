@@ -1,0 +1,21 @@
+<clr-tooltip>
+  <button
+    type="button"
+    class="btn btn-icon btn-link copy-btn"
+    [class.btn-sm]="size() === 'sm'"
+    clrTooltipTrigger
+    [clrLoading]="copyBtnState()"
+    [disabled]="disabled()"
+    [attr.aria-disabled]="disabled()"
+    [attr.aria-label]="effectiveAriaLabel()"
+    (click)="copy()"
+  >
+    @if (text()) {
+      <span [class.disabled]="disabled()">{{ text() }}</span>
+    }
+    <clr-icon [shape]="disabled() ? 'info-standard' : 'copy-to-clipboard'" status="info" />
+    <clr-tooltip-content *clrIfOpen [clrPosition]="tooltipPosition()" [clrSize]="tooltipSize()">
+      <span>{{ disabled() ? disabledTooltip() : effectiveTooltip() }}</span>
+    </clr-tooltip-content>
+  </button>
+</clr-tooltip>

@@ -1,0 +1,21 @@
+@if (hasValue()) {
+  <span class="masked-value-field">
+    <span [attr.aria-hidden]="!isVisible()" class="value-text">
+      {{ isVisible() ? value() : placeholder() }}
+    </span>
+    <button
+      type="button"
+      class="btn btn-sm btn-icon btn-link toggle-btn"
+      [attr.aria-label]="effectiveAriaLabel()"
+      [title]="effectiveAriaLabel()"
+      (click)="toggle()"
+    >
+      <clr-icon [shape]="isVisible() ? 'eye-hide' : 'eye'" size="sm" />
+    </button>
+    @if (copyable()) {
+      <cll-copy-to-clipboard [value]="stringValue()" [tooltip]="copyTooltip() || ''" />
+    }
+  </span>
+} @else {
+  <span class="empty-placeholder">{{ emptyPlaceholder() }}</span>
+}
