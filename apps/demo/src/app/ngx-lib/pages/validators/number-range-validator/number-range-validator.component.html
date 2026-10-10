@@ -1,0 +1,56 @@
+<cll-page-container [title]="'numberRangeValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>numberRangeValidator</code> validates that the minimum numeric value is less than or equal to the maximum
+    numeric value within a <code>FormGroup</code>. If <code>min &gt; max</code>, it flags both controls with
+    <code>minGreaterThanMax: true</code>.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Min & Max Range Boundaries</h3>
+      <p>Adjust the values below so that Minimum &gt; Maximum (e.g. min: 10, max: 5):</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="range-min">Minimum</label>
+          <input id="range-min" type="number" clrInput formControlName="min" />
+          <clr-control-helper>Lower bound</clr-control-helper>
+          @if (form.controls.min.errors?.['minGreaterThanMax']) {
+            <clr-control-error>Minimum cannot be greater than Maximum</clr-control-error>
+          }
+        </clr-input-container>
+
+        <clr-input-container>
+          <label for="range-max">Maximum</label>
+          <input id="range-max" type="number" clrInput formControlName="max" />
+          <clr-control-helper>Upper bound</clr-control-helper>
+          @if (form.controls.max.errors?.['minGreaterThanMax']) {
+            <clr-control-error>Maximum cannot be less than Minimum</clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>numberRangeValidator</h3>
+      <p>FormGroup validator checking that <code>min &le; max</code>.</p>
+
+      <h4>Signature</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        A validator function returning <code>&#123;minGreaterThanMax: true&#125;</code> if min &gt; max, or
+        <code>null</code> if valid.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

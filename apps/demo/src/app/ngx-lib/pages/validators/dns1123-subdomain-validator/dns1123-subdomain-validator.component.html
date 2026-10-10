@@ -1,0 +1,64 @@
+<cll-page-container [title]="'dns1123SubdomainValidator & k8sNameValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>dns1123SubdomainValidator</code> and <code>k8sNameValidator</code> enforce RFC 1123 subdomain and Kubernetes
+    resource naming standards. They check for lowercase alphanumerics, hyphens, boundary characters, and maximum length
+    constraints (253 characters for subdomains, 63 characters for Kubernetes resource names).
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Kubernetes Cluster & Resource Names</h3>
+      <p>Test valid and invalid Kubernetes identifiers:</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="dns-subdomain">DNS-1123 Subdomain</label>
+          <input id="dns-subdomain" clrInput formControlName="subdomain" />
+          <clr-control-helper>Lowercase alphanumerics, '-', and '.' up to 253 chars</clr-control-helper>
+          @if (form.controls.subdomain.errors?.['dns1123Subdomain']) {
+            <clr-control-error>
+              Must consist of lowercase letters, numbers, or '-', and start/end with an alphanumeric character.
+            </clr-control-error>
+          }
+          @if (form.controls.subdomain.errors?.['dns1123SubdomainLength']) {
+            <clr-control-error>DNS subdomain cannot exceed 253 characters.</clr-control-error>
+          }
+        </clr-input-container>
+
+        <clr-input-container>
+          <label for="dns-k8s">Kubernetes Name</label>
+          <input id="dns-k8s" clrInput formControlName="k8sResource" />
+          <clr-control-helper>Lowercase alphanumerics and '-' up to 63 chars (no dots)</clr-control-helper>
+          @if (form.controls.k8sResource.errors?.['k8sName']) {
+            <clr-control-error>
+              Must be a valid Kubernetes name (lowercase alphanumeric characters or '-', max 63 characters, starting and
+              ending with an alphanumeric character).
+            </clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>RFC 1123 & K8s Validators</h3>
+      <p>Angular validators for Kubernetes resource and domain names.</p>
+
+      <h4>Signatures</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        Returns <code>&#123;dns1123Subdomain: true&#125;</code>, <code>&#123;dns1123SubdomainLength: true&#125;</code>,
+        or <code>&#123;k8sName: true&#125;</code> on violation, or <code>null</code> if valid.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

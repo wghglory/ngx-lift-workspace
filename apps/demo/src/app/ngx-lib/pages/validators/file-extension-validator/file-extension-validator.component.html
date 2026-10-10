@@ -1,0 +1,48 @@
+<cll-page-container [title]="'fileExtensionValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>fileExtensionValidator</code> validates that a filename string ends with one of the allowed extensions (e.g.,
+    <code>['crt', 'pem', 'key']</code> or <code>['.png', '.jpg']</code>). Matching is case-insensitive.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Certificate File Upload Name</h3>
+      <p>Test allowed certificate extensions (.crt, .pem, .key) versus invalid extensions (.exe, .txt):</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="fe-filename">Filename</label>
+          <input id="fe-filename" clrInput formControlName="filename" />
+          <clr-control-helper>Allowed extensions: .crt, .pem, .key</clr-control-helper>
+          @if (form.controls.filename.errors?.['invalidFileExtension']; as err) {
+            <clr-control-error>
+              Invalid file extension. Allowed extensions: {{ err.allowedExtensions.join(', ') }}
+            </clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>fileExtensionValidator</h3>
+      <p>Factory creating a validator checking if a filename ends with one of the specified extensions.</p>
+
+      <h4>Signature</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        Returns <code>&#123;invalidFileExtension: &#123;allowedExtensions&#125;&#125;</code> if the extension does not
+        match, or <code>null</code> if valid.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

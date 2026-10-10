@@ -39,9 +39,17 @@ import {IsEmptyComponent} from './ngx-lib/pages/utilities/is-empty/is-empty.comp
 import {IsEqualComponent} from './ngx-lib/pages/utilities/is-equal/is-equal.component';
 import {PickByComponent} from './ngx-lib/pages/utilities/pick-by/pick-by.component';
 import {UrlComponent} from './ngx-lib/pages/utilities/url/url.component';
+import {ComposeValidatorComponent} from './ngx-lib/pages/validators/compose-validator/compose-validator.component';
 import {DateRangeValidatorComponent} from './ngx-lib/pages/validators/date-range-validator/date-range-validator.component';
+import {Dns1123SubdomainValidatorComponent} from './ngx-lib/pages/validators/dns1123-subdomain-validator/dns1123-subdomain-validator.component';
+import {FileExtensionValidatorComponent} from './ngx-lib/pages/validators/file-extension-validator/file-extension-validator.component';
 import {IfValidatorComponent} from './ngx-lib/pages/validators/if-validator/if-validator.component';
+import {IntegerValidatorComponent} from './ngx-lib/pages/validators/integer-validator/integer-validator.component';
 import {IntersectionValidatorComponent} from './ngx-lib/pages/validators/intersection-validator/intersection-validator.component';
+import {JsonValidatorComponent} from './ngx-lib/pages/validators/json-validator/json-validator.component';
+import {NumberRangeValidatorComponent} from './ngx-lib/pages/validators/number-range-validator/number-range-validator.component';
+import {PasswordMatchValidatorComponent} from './ngx-lib/pages/validators/password-match-validator/password-match-validator.component';
+import {TextPatternValidatorComponent} from './ngx-lib/pages/validators/text-pattern-validator/text-pattern-validator.component';
 import {UniqueValidatorComponent} from './ngx-lib/pages/validators/unique-validator/unique-validator.component';
 import {UrlValidatorComponent} from './ngx-lib/pages/validators/url-validator/url-validator.component';
 
@@ -152,16 +160,48 @@ export const routes: Routes = [
         path: 'validators',
         children: [
           {
+            path: 'compose',
+            component: ComposeValidatorComponent,
+          },
+          {
             path: 'date-range',
             component: DateRangeValidatorComponent,
+          },
+          {
+            path: 'dns1123-subdomain',
+            component: Dns1123SubdomainValidatorComponent,
+          },
+          {
+            path: 'file-extension',
+            component: FileExtensionValidatorComponent,
           },
           {
             path: 'if',
             component: IfValidatorComponent,
           },
           {
+            path: 'integer',
+            component: IntegerValidatorComponent,
+          },
+          {
             path: 'intersection',
             component: IntersectionValidatorComponent,
+          },
+          {
+            path: 'json',
+            component: JsonValidatorComponent,
+          },
+          {
+            path: 'number-range',
+            component: NumberRangeValidatorComponent,
+          },
+          {
+            path: 'password-match',
+            component: PasswordMatchValidatorComponent,
+          },
+          {
+            path: 'text-pattern',
+            component: TextPatternValidatorComponent,
           },
           {
             path: 'unique',
