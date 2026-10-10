@@ -83,6 +83,7 @@ export const clrLiftNavConfig: NavConfig[] = [
       {path: '/alert', value: 'Alert'},
       {path: '/multi-alerts', value: 'Alerts (Multiple)'},
       {path: '/certificate', value: 'Certificate View'},
+      {path: '/confirm-modal', value: 'Confirm Modal'},
       {path: '/key-value-inputs', value: 'Key Value Inputs'},
       {path: '/spinner', value: 'Spinner'},
       {path: '/status-indicator', value: 'Status Indicator'},

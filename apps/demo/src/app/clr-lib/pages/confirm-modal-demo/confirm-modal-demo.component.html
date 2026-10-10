@@ -1,0 +1,85 @@
+<cll-page-container [title]="'Confirm Modal'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>ConfirmModalComponent</code> (<code>&lt;cll-confirm-modal&gt;</code>) is a turnkey confirmation dialog
+    with integrated loading states, inline error feedback, customizable buttons, and optional toast notifications on
+    completion.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Destructive Action (Delete Confirmation)</h3>
+      <p>Demonstrates a dangerous deletion workflow with a danger button and success toast:</p>
+      <div class="card p-4 space-y-4 max-w-lg">
+        <div>
+          <button class="btn btn-danger" (click)="openDeleteModal()">Delete Database Cluster</button>
+        </div>
+        <div class="text-sm">
+          <strong>Last Action Status:</strong>
+          <span class="label label-info ml-2">{{ lastActionMessage() }}</span>
+        </div>
+      </div>
+
+      <cll-confirm-modal
+        [(open)]="isDeleteModalOpen"
+        title="Delete Database Cluster"
+        toastHeader="Database Deleted"
+        toastDescription="Database db-production-01 has been permanently decommissioned."
+        [action$]="deleteAction$"
+        confirmButtonText="Delete Cluster"
+        confirmButtonClass="btn-danger"
+        (completed)="onDeleteCompleted($event)"
+      >
+        <p>
+          Are you sure you want to permanently delete cluster <strong>db-production-01</strong>? All data and backups
+          will be lost.
+        </p>
+      </cll-confirm-modal>
+
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: General Action Confirmation & Inline Error Handling</h3>
+      <p>
+        Demonstrates standard confirmation with a primary button and simulates an async failure to showcase inline error
+        display:
+      </p>
+      <div class="card p-4 space-y-4 max-w-lg">
+        <div class="space-x-2">
+          <button class="btn btn-primary" (click)="openPrimaryModal()">Promote Release</button>
+          <button class="btn btn-outline" (click)="openErrorModal()">Simulate Action Failure</button>
+        </div>
+      </div>
+
+      <!-- Successful primary action modal -->
+      <cll-confirm-modal
+        [(open)]="isPrimaryModalOpen"
+        title="Promote Release to Production"
+        toastHeader="Release Promoted"
+        toastDescription="Release v2.4.0 is now live in production."
+        [action$]="promoteAction$"
+        confirmButtonText="Promote Release"
+        confirmButtonClass="btn-primary"
+        (completed)="onPromoteCompleted($event)"
+      >
+        <p>Are you ready to promote version <strong>v2.4.0</strong> to the production cluster?</p>
+      </cll-confirm-modal>
+
+      <!-- Failing action modal showing inline error -->
+      <cll-confirm-modal
+        [(open)]="isErrorModalOpen"
+        title="Lock Remote Database"
+        [action$]="failingAction$"
+        confirmButtonText="Attempt Lock"
+      >
+        <p>This operation will simulate an API error to show how inline alerts are rendered inside the modal.</p>
+      </cll-confirm-modal>
+
+      <app-code-block [code]="errorExampleCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

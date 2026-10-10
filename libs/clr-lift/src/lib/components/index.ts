@@ -2,6 +2,7 @@ export * from './alert';
 export * from './alerts';
 export * from './callout';
 export * from './certificate-signpost';
+export * from './confirm-modal';
 export * from './file-reader';
 export * from './idle-detection';
 export * from './key-value-inputs';

@@ -1,0 +1,25 @@
+<clr-modal [(clrModalOpen)]="open" [clrModalClosable]="closable()" [clrModalSize]="size()">
+  <h3 class="modal-title">{{ title() }}</h3>
+  <div class="modal-body">
+    @if (error(); as err) {
+      <cll-alert [error]="err" [isSmall]="true" class="mb-4 block" />
+    }
+
+    <ng-content />
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="cancel()">
+      {{ resolvedCancelText() }}
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [class]="confirmButtonClass()"
+      [clrLoading]="isLoading()"
+      [disabled]="isLoading()"
+      (click)="confirm()"
+    >
+      {{ resolvedConfirmText() }}
+    </button>
+  </div>
+</clr-modal>
