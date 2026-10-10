@@ -3069,4 +3069,43 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.optionsLabHintOmitIf': 'Supprimer les champs internes avec un prédicat sur la clé.',
   'toSignalForm.optionsLabHintOmit': "Supprimer le champ confirmEmail, utilisé uniquement par l'interface.",
   'toSignalForm.optionsLabHintDeep': 'Appliquer les règles aux objets et tableaux imbriqués.',
+
+  'objectPath.overview':
+    '<code>getValueByPath</code> lit une valeur imbriquée propre via un chemin à points ; <code>deleteValueByPath</code> la supprime sur place. Les segments hérités et liés au prototype ne sont jamais résolus.',
+  'objectPath.playgroundTitle': 'Lire et supprimer une valeur imbriquée',
+  'objectPath.playgroundDescription':
+    'Modifiez les chemins ci-dessous, puis appliquez la suppression à l’objet d’exemple.',
+  'objectPath.sampleTitle': 'Objet d’exemple',
+  'objectPath.readPathLabel': 'Chemin de lecture',
+  'objectPath.deletePathLabel': 'Chemin de suppression',
+  'objectPath.resolvedTitle': 'Valeur résolue',
+  'objectPath.emptyValue': 'Aucune valeur propre à ce chemin',
+  'objectPath.unsafePath': 'Le chemin est vide, mal formé ou contient un segment lié au prototype.',
+  'objectPath.applyDelete': 'Appliquer la suppression',
+  'objectPath.deleteSuccess': 'Propriété propre supprimée.',
+  'objectPath.deleteFailure': 'Rien n’a été supprimé.',
+  'objectPath.reset': 'Réinitialiser l’exemple',
+  'objectPath.apiSummary': 'Lit ou supprime une propriété imbriquée propre via un chemin à points.',
+  'objectPath.paramObj': 'Objet source à lire ou à modifier sur place.',
+  'objectPath.paramPath':
+    'Chemin de propriétés propres séparé par des points ; les segments numériques désignent des index de tableau.',
+  'objectPath.returnsGet': 'La valeur au chemin indiqué, ou aucune valeur si elle ne peut pas être résolue.',
+  'objectPath.returnsDelete': 'Un booléen vrai uniquement lorsqu’une propriété propre a été supprimée.',
+
+  'downloadFile.overview':
+    '<code>downloadFile</code> lance un téléchargement du navigateur à partir d’une chaîne ou d’un Blob. Le lien temporaire est retiré et l’URL d’objet libérée à la tâche suivante ; côté serveur, rien ne se passe.',
+  'downloadFile.playgroundTitle': 'Créer un fichier texte',
+  'downloadFile.playgroundDescription': 'Modifiez le nom et le contenu du fichier, puis lancez le téléchargement.',
+  'downloadFile.fileNameLabel': 'Nom du fichier',
+  'downloadFile.contentLabel': 'Contenu du fichier',
+  'downloadFile.startButton': 'Lancer le téléchargement',
+  'downloadFile.emptyNameError': 'Saisissez un nom de fichier avant de lancer le téléchargement.',
+  'downloadFile.startedStatus': 'Téléchargement lancé pour {0}.',
+  'downloadFile.advancedTitle': 'Utiliser un Blob typé',
+  'downloadFile.advancedDescription': 'Un Blob conserve son propre type MIME lorsqu’il est passé comme contenu.',
+  'downloadFile.apiSummary': 'Lance un téléchargement du navigateur à partir d’une chaîne ou d’un Blob.',
+  'downloadFile.paramContent': 'Texte ou Blob à télécharger.',
+  'downloadFile.paramFileName': 'Nom de fichier suggéré non vide ; le navigateur peut l’ajuster.',
+  'downloadFile.paramMimeType': 'Type MIME utilisé quand le contenu est une chaîne ; ignoré pour un Blob.',
+  'downloadFile.returnsDesc': 'Aucune valeur de retour ; la fonction ne confirme pas l’enregistrement du fichier.',
 };

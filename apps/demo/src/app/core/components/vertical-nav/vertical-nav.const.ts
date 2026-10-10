@@ -85,9 +85,11 @@ export const ngxLiftNavConfig: NavConfig[] = [
     icon: 'wrench',
     children: [
       {path: '/difference-in-days', value: 'differenceInDays', i18nKey: 'nav.differenceInDays'},
+      {path: '/file-download', value: 'downloadFile'},
       {path: '/is-empty', value: 'isEmpty'},
       {path: '/is-equal', value: 'isEqual'},
       {path: '/is-promise', value: 'isPromise'},
+      {path: '/object-path', value: 'objectPath (get & delete)'},
       {path: '/pick-by', value: 'pickBy & omitBy'},
       {path: '/idle-detection', value: 'Idle Detection', i18nKey: 'nav.idleDetection'},
       {path: '/url', value: 'URL'},

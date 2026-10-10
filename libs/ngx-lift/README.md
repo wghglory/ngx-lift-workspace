@@ -102,9 +102,34 @@ installed version; source changes under Unreleased are not yet on npm.
 - **Form Utilities** - Helper functions for working with Angular forms
 - **Idle Detection** - Service and utilities for detecting user idle state
 - **URL Utilities** - Functions for URL manipulation and validation
-- **Object Utilities** - `isEmpty`, `isEqual`, `isPromise`, `omitBy`, `pickBy`
+- **Object Utilities** - `isEmpty`, `isEqual`, `isPromise`, `omitBy`, `pickBy`, `getValueByPath`, `deleteValueByPath`
+- **File Utilities** - `downloadFile`
 - **Date Utilities** - `differenceInDays` and other date helpers
 - **Range Utilities** - Functions for generating number ranges
+
+#### Object path and file download API
+
+Both helpers are exported from the `ngx-lift` root entry point. See the
+[design spec](../../docs/design/ngx-lift/core-utilities-design-spec.md) for the full contract.
+
+| Function                      | Signature                                                                                    | Returns                                    | Errors / no-op                                                                      |
+| ----------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `getValueByPath<T = unknown>` | `(obj: unknown, path: string) => T \| undefined`                                             | Own value at the dot path, or `undefined`  | Blank, malformed, inherited or unsafe path → `undefined`                            |
+| `deleteValueByPath`           | `(obj: unknown, path: string) => boolean`                                                    | `true` only if an own property was deleted | Missing, locked, inherited or unsafe path → `false`                                 |
+| `downloadFile`                | `(content: string \| Blob, fileName: string, mimeType = 'text/plain;charset=utf-8') => void` | Nothing (fire-and-forget)                  | Blank name → `RangeError`; invalid content → `TypeError`; SSR/no object URL → no-op |
+
+```typescript
+import {deleteValueByPath, downloadFile, getValueByPath} from 'ngx-lift';
+
+const config = {server: {host: 'localhost', port: 8080}};
+const host = getValueByPath<string>(config, 'server.host'); // 'localhost'
+deleteValueByPath(config, 'server.port'); // true
+downloadFile(JSON.stringify(config), 'config.json', 'application/json');
+```
+
+Paths are dot-separated own-property segments (numeric segments address array indices). `__proto__`, `prototype` and
+`constructor` are always rejected. `downloadFile` revokes its blob URL on the next task, removes the temporary anchor,
+and does not confirm that the browser saved the file.
 
 ### 📦 Models
 
