@@ -1,8 +1,8 @@
 import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
-import {Injector, Signal, signal} from '@angular/core';
+import {computed, effect, Injector, Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {catchError, delay, map, Observable, of, startWith, throwError} from 'rxjs';
+import {catchError, delay, map, Observable, of, startWith, Subject, throwError} from 'rxjs';
 import {tap} from 'rxjs/operators';
 
 import {computedAsync} from './computed-async';
@@ -18,6 +18,41 @@ afterEach(() => {
 const promise = <T>(value: T, time = 0): Promise<T> => new Promise((resolve) => setTimeout(() => resolve(value), time));
 
 describe(computedAsync.name, () => {
+  describe.each([false, true])('factory compatibility with requireSync=%s', (requireSync) => {
+    it('allows service loading writes while tracking request parameters once', async () => {
+      const parameter = signal(1);
+      const loading = signal(false);
+      const requests: number[] = [];
+      const factory = () => {
+        loading.set(true);
+        const id = parameter();
+        requests.push(id);
+        return of(id);
+      };
+      const result = TestBed.runInInjectionContext(() =>
+        requireSync ? computedAsync(factory, {requireSync: true}) : computedAsync(factory),
+      );
+
+      if (requireSync) {
+        expect(result()).toBe(1);
+        expect(requests).toEqual([1]);
+      }
+      await flushEffects();
+      expect(result()).toBe(1);
+      expect(loading()).toBe(true);
+      expect(requests).toEqual([1]);
+
+      loading.set(false);
+      await flushEffects();
+      expect(requests).toEqual([1]);
+      parameter.set(2);
+      await flushEffects();
+      expect(result()).toBe(2);
+      expect(loading()).toBe(true);
+      expect(requests).toEqual([1, 2]);
+    });
+  });
+
   describe('works with raw values', () => {
     it('null & undefined', async () => {
       await TestBed.runInInjectionContext(async () => {
@@ -114,6 +149,179 @@ describe(computedAsync.name, () => {
   });
 
   describe('works with requireSync', () => {
+    it('adds and removes dynamic request dependencies without repeating the initializer', async () => {
+      const useFirst = signal(true);
+      const first = signal(1);
+      const second = signal(10);
+      const requests: number[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            const value = useFirst() ? first() : second();
+            requests.push(value);
+            return of(value);
+          },
+          {requireSync: true},
+        ),
+      );
+      expect(result()).toBe(1);
+      await flushEffects();
+      second.set(20);
+      await flushEffects();
+      expect(requests).toEqual([1]);
+
+      useFirst.set(false);
+      await flushEffects();
+      expect(result()).toBe(20);
+      first.set(2);
+      await flushEffects();
+      expect(requests).toEqual([1, 20]);
+      second.set(30);
+      await flushEffects();
+      expect(result()).toBe(30);
+      expect(requests).toEqual([1, 20, 30]);
+    });
+
+    it('does not repeat a request when a computed parameter stays equal', async () => {
+      const input = signal(1);
+      const parameter = computed(() => input() % 2);
+      const requests: number[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            const captured = parameter();
+            requests.push(captured);
+            return of(captured);
+          },
+          {requireSync: true},
+        ),
+      );
+      input.set(3);
+      await flushEffects();
+      expect(result()).toBe(1);
+      expect(requests).toEqual([1]);
+      input.set(4);
+      await flushEffects();
+      expect(result()).toBe(0);
+      expect(requests).toEqual([1, 0]);
+    });
+
+    it('keeps subscription and error callback reads outside its request dependencies', async () => {
+      const parameter = signal(1);
+      const callbackValue = signal(10);
+      const requests: number[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            const captured = parameter();
+            requests.push(captured);
+            return captured === 2
+              ? throwError(() => new Error('Request failed'))
+              : of(captured).pipe(tap(() => callbackValue()));
+          },
+          {requireSync: true, onError: () => callbackValue()},
+        ),
+      );
+      callbackValue.set(20);
+      await flushEffects();
+      expect(requests).toEqual([1]);
+      parameter.set(2);
+      await flushEffects();
+      expect(result()).toBe(20);
+      callbackValue.set(30);
+      await flushEffects();
+      expect(result()).toBe(20);
+      expect(requests).toEqual([1, 2]);
+      parameter.set(3);
+      await flushEffects();
+      expect(result()).toBe(3);
+      expect(requests).toEqual([1, 2, 3]);
+    });
+
+    it('disconnects synchronous dependencies and its active Observable on injector destruction', async () => {
+      const injector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
+      const parameter = signal(1);
+      const requests: number[] = [];
+      let activeSubscriptions = 0;
+      const result = computedAsync(
+        () => {
+          const captured = parameter();
+          requests.push(captured);
+          return new Observable<number>((subscriber) => {
+            activeSubscriptions++;
+            subscriber.next(captured);
+            return () => activeSubscriptions--;
+          });
+        },
+        {requireSync: true, injector},
+      );
+      expect(result()).toBe(1);
+      await flushEffects();
+      expect(requests).toEqual([1]);
+      parameter.set(2);
+      await flushEffects();
+      expect(result()).toBe(2);
+      expect(activeSubscriptions).toBe(1);
+      injector.destroy();
+      expect(activeSubscriptions).toBe(0);
+      parameter.set(3);
+      await flushEffects();
+      expect(requests).toEqual([1, 2]);
+      expect(result()).toBe(2);
+    });
+
+    it('uses dependencies changed before the first effect instead of discarding their new source', async () => {
+      const parameter = signal(1);
+      const result = TestBed.runInInjectionContext(() => computedAsync(() => of(parameter()), {requireSync: true}));
+      expect(result()).toBe(1);
+      parameter.set(2);
+      await flushEffects();
+      expect(result()).toBe(2);
+    });
+
+    it('starts the first fetch when requireSync is combined with an initial value', async () => {
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(() => of(2), {requireSync: true, initialValue: 1}),
+      );
+      expect(result()).toBe(1);
+      await flushEffects();
+      expect(result()).toBe(2);
+    });
+
+    it('releases an asynchronous Observable immediately when synchronous initialization fails', () => {
+      let activeSubscriptions = 0;
+      const stream = new Observable<number>(() => {
+        activeSubscriptions++;
+        return () => activeSubscriptions--;
+      });
+      expect(() => TestBed.runInInjectionContext(() => computedAsync(() => stream, {requireSync: true}))).toThrow(
+        /doesn't emit synchronously/,
+      );
+      expect(activeSubscriptions).toBe(0);
+    });
+
+    it('evaluates a synchronous initializer once and only starts new work when its dependencies change', async () => {
+      const parameter = signal(1);
+      const startedRequests: number[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            const captured = parameter();
+            startedRequests.push(captured);
+            return of(captured);
+          },
+          {requireSync: true},
+        ),
+      );
+      expect(result()).toBe(1);
+      await flushEffects();
+      expect(startedRequests).toEqual([1]);
+      parameter.set(2);
+      await flushEffects();
+      expect(result()).toBe(2);
+      expect(startedRequests).toEqual([1, 2]);
+    });
+
     it('returns undefined for sync observables if not enabled', async () => {
       await TestBed.runInInjectionContext(async () => {
         const value = signal(1);
@@ -155,6 +363,101 @@ describe(computedAsync.name, () => {
   });
 
   describe('works with promises', () => {
+    it('observes a queued Promise rejection before concat subscribes to it and then continues the queue', async () => {
+      const parameter = signal(1);
+      const failure = new Error('Queued request failed');
+      let finishActive!: (value: number) => void;
+      const active = new Promise<number>((resolve) => {
+        finishActive = resolve;
+      });
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            const captured = parameter();
+            return captured === 1 ? active : captured === 2 ? Promise.reject(failure) : Promise.resolve(captured);
+          },
+          {behavior: 'concat'},
+        ),
+      );
+      await flushEffects();
+      parameter.set(2);
+      await flushEffects();
+      expect(result()).toBeUndefined();
+      finishActive(1);
+      await flushEffects();
+      expect(result()).toBe(failure);
+      parameter.set(3);
+      await flushEffects();
+      expect(result()).toBe(3);
+    });
+
+    it('ignores an older Promise result after switching to a new parameter', async () => {
+      const parameter = signal(1);
+      const finish: ((value: number) => void)[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(() => {
+          parameter();
+          return new Promise<number>((resolve) => {
+            finish.push(resolve);
+          });
+        }),
+      );
+      await flushEffects();
+      parameter.set(2);
+      await flushEffects();
+      finish[1](2);
+      await flushEffects();
+      expect(result()).toBe(2);
+      finish[0](1);
+      await flushEffects();
+      expect(result()).toBe(2);
+    });
+
+    it('stops accepting a Promise result after its injector is destroyed', async () => {
+      const injector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
+      let finish!: (value: number) => void;
+      const result = computedAsync(
+        () =>
+          new Promise<number>((resolve) => {
+            finish = resolve;
+          }),
+        {injector, initialValue: 1},
+      );
+      await flushEffects();
+      injector.destroy();
+      finish(2);
+      await flushEffects();
+      expect(result()).toBe(1);
+    });
+
+    it('handles rejected eager Promises discarded by exhaust without replacing the active result', async () => {
+      const parameter = signal(1);
+      let finishActive!: (value: number) => void;
+      const active = new Promise<number>((resolve) => {
+        finishActive = resolve;
+      });
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            const captured = parameter();
+            if (captured === 1) return active;
+            if (captured === 2) return Promise.reject(new Error('Discarded eager request failed'));
+            return Promise.resolve(captured);
+          },
+          {behavior: 'exhaust'},
+        ),
+      );
+      await flushEffects();
+      parameter.set(2);
+      await flushEffects();
+      finishActive(1);
+      await flushEffects();
+      expect(result()).toBe(1);
+      parameter.set(3);
+      await flushEffects();
+      expect(result()).toBe(3);
+    });
+
     it('waits for them to resolve', async () => {
       await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
@@ -184,6 +487,29 @@ describe(computedAsync.name, () => {
   });
 
   describe('works with observables', () => {
+    for (const behavior of ['switch', 'merge', 'concat', 'exhaust'] as const) {
+      it(`releases active and queued Observable work on destruction with ${behavior}`, async () => {
+        const injector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
+        const parameter = signal(1);
+        const first = new Subject<number>();
+        const second = new Subject<number>();
+        const result = computedAsync(() => (parameter() === 1 ? first : second), {injector, behavior});
+        await flushEffects();
+        first.next(10);
+        expect(result()).toBe(10);
+        parameter.set(2);
+        await flushEffects();
+        injector.destroy();
+        expect(first.observed).toBe(false);
+        expect(second.observed).toBe(false);
+        first.next(99);
+        first.complete();
+        second.next(100);
+        await flushEffects();
+        expect(result()).toBe(10);
+      });
+    }
+
     it('waits for them to resolve', async () => {
       await TestBed.runInInjectionContext(async () => {
         const logs: number[] = [];
@@ -307,7 +633,7 @@ describe(computedAsync.name, () => {
         const value = signal(1);
         const logs: (number | string)[] = [];
 
-        const s = computedAsync(
+        const s = computedAsync<number | Error>(
           () => {
             const val = value();
             if (val === 2) {
@@ -345,7 +671,7 @@ describe(computedAsync.name, () => {
         // After next 50ms: request 2 runs and fails, emitting the Error object into the signal
         await flushEffects(50);
         expect(s()).toBeInstanceOf(Error);
-        expect((s() as Error).message).toBe('Intermediate error for 2');
+        expect(s()).toMatchObject({message: 'Intermediate error for 2'});
         expect(logs).toEqual([1, 'error-2']);
 
         // After next 50ms: request 3 runs and succeeds
@@ -804,6 +1130,91 @@ describe(computedAsync.name, () => {
   });
 
   describe('error handling and stream resilience', () => {
+    it('throws an onError callback failure only on read with throwOnError and still recovers', async () => {
+      const parameter = signal(false);
+      const failure = new Error('Handler transformed the failure');
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(() => (parameter() ? of(2) : throwError(() => new Error('Network failure'))), {
+          throwOnError: true,
+          onError: () => {
+            throw failure;
+          },
+        }),
+      );
+      await expect(flushEffects()).resolves.toBeUndefined();
+      expect(() => result()).toThrow(failure);
+      parameter.set(true);
+      await flushEffects();
+      expect(result()).toBe(2);
+    });
+
+    it('does not treat signal reads in the error handler as request dependencies', async () => {
+      const request = signal(1);
+      const fallback = signal('fallback-a');
+      const capturedRequests: number[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            capturedRequests.push(request());
+            throw new Error('Computation failed');
+          },
+          {onError: () => fallback()},
+        ),
+      );
+      await flushEffects();
+      expect(result()).toBe('fallback-a');
+      fallback.set('fallback-b');
+      await flushEffects();
+      expect(capturedRequests).toEqual([1]);
+      expect(result()).toBe('fallback-a');
+      request.set(2);
+      await flushEffects();
+      expect(capturedRequests).toEqual([1, 2]);
+      expect(result()).toBe('fallback-b');
+    });
+
+    it('cancels an older switch source when the latest computation throws synchronously', async () => {
+      const shouldFail = signal(false);
+      const previousSource = new Subject<string>();
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(
+          () => {
+            if (shouldFail()) {
+              throw new Error('Latest computation failed');
+            }
+            return previousSource;
+          },
+          {onError: () => 'fallback'},
+        ),
+      );
+      await flushEffects();
+      previousSource.next('initial');
+      expect(result()).toBe('initial');
+      shouldFail.set(true);
+      await flushEffects();
+      expect(result()).toBe('fallback');
+      previousSource.next('late old result');
+      await flushEffects();
+      expect(result()).toBe('fallback');
+    });
+
+    it('stores an onError callback failure without an uncaught RxJS error and recovers on later data', async () => {
+      const trigger = signal(false);
+      const handlerFailure = new Error('Error handler failed');
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync(() => (trigger() ? of('recovered') : throwError(() => new Error('Request failed'))), {
+          onError: () => {
+            throw handlerFailure;
+          },
+        }),
+      );
+      await expect(flushEffects()).resolves.toBeUndefined();
+      expect(result()).toBe(handlerFailure);
+      trigger.set(true);
+      await flushEffects();
+      expect(result()).toBe('recovered');
+    });
+
     it('should continue emitting when a new source is provided after an inner error', async () => {
       await TestBed.runInInjectionContext(async () => {
         const trigger = signal<string>('initial');
@@ -964,5 +1375,45 @@ describe(computedAsync.name, () => {
         expect(s()).toBe('immediate-sync-data');
       });
     });
+  });
+
+  it('applies equality to consumer values while still capturing each changed request parameter', async () => {
+    const id = signal(1);
+    const revision = signal(1);
+    const observed: {id: number; revision: number}[] = [];
+    const requests: {id: number; revision: number}[] = [];
+    const result = TestBed.runInInjectionContext(() =>
+      computedAsync(
+        () => {
+          const params = {id: id(), revision: revision()};
+          requests.push(params);
+          return of(params);
+        },
+        {equal: (previous, next) => previous?.id === next?.id},
+      ),
+    );
+    TestBed.runInInjectionContext(() =>
+      effect(() => {
+        const value = result();
+        if (value) observed.push(value);
+      }),
+    );
+    await flushEffects();
+    revision.set(2);
+    await flushEffects();
+    expect(result()).toEqual({id: 1, revision: 1});
+    expect(observed).toEqual([{id: 1, revision: 1}]);
+    id.set(2);
+    await flushEffects();
+    expect(result()).toEqual({id: 2, revision: 2});
+    expect(requests).toEqual([
+      {id: 1, revision: 1},
+      {id: 1, revision: 2},
+      {id: 2, revision: 2},
+    ]);
+    expect(observed).toEqual([
+      {id: 1, revision: 1},
+      {id: 2, revision: 2},
+    ]);
   });
 });

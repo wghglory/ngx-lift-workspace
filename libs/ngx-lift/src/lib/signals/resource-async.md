@@ -1,8 +1,83 @@
 # resourceAsync
 
-A powerful Signal-based utility for managing asynchronous resources in Angular applications. Think of it as **Angular's
-`httpResource` with superpowers** 🚀 - providing fine-grained control over request behaviors, cancellation strategies,
-and error handling.
+A Signal-based utility for managing Promise, Observable, and synchronous sources in Angular, with request replacement,
+local values, explicit execution, and operation cleanup.
+
+## Reactive parameters and operation lifecycle
+
+For reactive sources, prefer separating pure parameter capture from work:
+
+```typescript
+userRef = resourceAsync(
+  {
+    params: () => ({id: this.userId()}),
+    loader: ({id}, {abortSignal}) =>
+      fetch(`/api/users/${id}`, {signal: abortSignal}).then((response) => response.json()),
+  },
+  {behavior: 'exhaust', preserveValueOnError: true},
+);
+```
+
+Only `params` tracks Signal dependencies. `loader` receives the captured parameters and runs untracked. With `exhaust`,
+parameter changes during an active operation are dropped without invoking the loader; tracking survives so a later
+parameter change starts a new operation. Changes are not queued for execution when the current operation finishes.
+
+The existing function form remains supported, including zero-argument factories:
+
+```typescript
+userRef = resourceAsync(({abortSignal}) =>
+  fetch('/api/user', {signal: abortSignal}).then((response) => response.json()),
+);
+```
+
+An arbitrary function can create an eager Promise or perform a write before returning. The library cannot evaluate such
+a factory just to discover dependencies without starting that work. In the legacy function form, an `exhaust` skip does
+not call the factory and can drop its tracked dependencies until an explicit `reload()` or `execute()`. Use the
+`params`/`loader` form for reliable reactive `exhaust` behavior. Legacy factories still run inside an Angular effect, so
+existing synchronous Signal writes remain supported. `params` runs inside a computed Signal and must remain pure.
+
+For mutations that must run only after an explicit trigger, combine `lazy: true` with `reactive: false`. `lazy` alone
+defers initialization and remains reactive after the first trigger:
+
+```typescript
+saveRef = resourceAsync(() => this.http.post('/api/settings', this.formValue()), {
+  lazy: true,
+  reactive: false,
+  behavior: 'exhaust',
+});
+await saveRef.execute();
+```
+
+`reset()`, `set()`, and `update()` cancel pending work and suppress a manual reload already queued before that call.
+Existing reactive dependencies can still fetch on a later change for an eager resource; reset lazy resources require a
+new explicit trigger. A local override made before a legacy factory has ever run cannot discover that factory's
+dependencies without evaluating it; use explicit reloads or the parameter form in that case. For an eager parameter
+resource, initial capture can establish dependencies after a local override without invoking the loader.
+
+Each `execute()` Promise belongs to one operation. An `exhaust` execution joining a live Observable after its last
+emission resolves with the current public value when that stream completes. Replacement, reset, and local override
+reject it with `ResourceAsyncCancelledError`; it cannot receive a later operation's value. `destroy()` permanently stops
+observation and rejects pending or future executions with `ResourceAsyncDisposedError`. It is also available through
+`asReadonly()` and runs automatically when the owning injector is destroyed. After destruction, `reload()` returns
+`false`, `reset()` does nothing, and `set()`/`update()` throw the disposal error. `destroy()` is idempotent.
+
+`onSuccess` runs before an execution is resolved. A callback that resets, replaces, or destroys the current operation
+cancels its execution Promise. Callback failures follow the same `onError` / `throwOnError` policy as source errors,
+including the default value clearing or opt-in retention; they do not resolve an execution successfully first.
+
+Cancellation unsubscribes Observables and aborts the source context's signal. A Promise's underlying work stops only
+when its source honors `abortSignal`; results from replaced operations are ignored. Cancellation cannot undo a server
+write that has already been accepted.
+
+`preserveValueOnError` defaults to `false`. When enabled, a failed background reload retains received or local data
+while exposing `status() === 'error'` and `error()`; `hasValue()` remains true when that retained data is defined. An
+`onError` fallback takes precedence. A configured initial/default value still supplies the usual value fallback but does
+not count as received data for `hasValue()`.
+
+`equal` controls value notifications, not operation execution, status changes, or `onSuccess`. Undefined boundaries use
+`Object.is` so custom equality functions receive defined values. An Observable completing without an emission resolves
+`execute()` with the configured default/initial value, or `undefined` when neither exists, and sets status to
+`resolved`.
 
 ## 🎯 Quick Start
 
@@ -84,15 +159,16 @@ export class UserProfileComponent {
 
 ### Resource Status States
 
-`resourceAsync` uses the same status model as Angular's `httpResource`:
+`resourceAsync` exposes these statuses:
 
 ```typescript
 type ResourceStatus =
-  | 'idle' // Not triggered yet (lazy: true only)
+  | 'idle' // Not triggered yet, or reset
   | 'loading' // Initial fetch in progress
   | 'reloading' // Refetch in progress (has previous data)
   | 'resolved' // Success
-  | 'error'; // Failed
+  | 'error' // Failed
+  | 'local'; // Set or updated locally
 ```
 
 ### Value Behavior Matrix
@@ -106,8 +182,8 @@ type ResourceStatus =
 | `error`     | `undefined`   | `false`      | `false`       | **Failed - data cleared**       |
 | `local`     | Manual data   | `true`       | `false`       | **Set via set()/update()**      |
 
-⚠️ **Important:** When an error occurs (even during `reloading`), the previous value is **cleared** and becomes
-`undefined`. This matches Angular's `httpResource` behavior.
+By default, an error clears the received value and `value()` falls back to the configured initial/default value, or
+`undefined`. Use `preserveValueOnError: true` to retain received or local data alongside an explicit error.
 
 ---
 
@@ -517,6 +593,7 @@ export class RegistrationFormComponent {
   registrationRef = resourceAsync(() => this.http.post<Response>('/api/register', this.form()), {
     behavior: 'exhaust', // Prevent duplicate submissions
     lazy: true,
+    reactive: false,
   });
 
   submit() {
@@ -550,11 +627,12 @@ export class RegistrationFormComponent {
 
 #### Parameters
 
-**`fetchFn: () => Observable<T> | Promise<T>`**
+**`fetchFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T`**
 
 - Function that returns an Observable or Promise
-- Called immediately (or on `reload()` if `lazy: true`)
-- Automatically tracks Signal dependencies inside `fetchFn`
+- Called when the resource effect runs, or after an explicit trigger if `lazy: true`
+- Automatically tracks Signal dependencies unless `reactive: false`; see the legacy `exhaust` boundary above
+- Alternatively accepts `{params: () => P, loader: (params: P, context: ResourceAsyncContext) => ...}`
 
 **`options?: ResourceRefOptions<T, E>`**
 
@@ -578,6 +656,15 @@ interface ResourceRefOptions<T, E = Error> {
    * @default false
    */
   lazy?: boolean;
+
+  /** Track parameters/source dependencies after activation. Defaults to true. */
+  reactive?: boolean;
+
+  /** Retain received/local data on errors. Defaults to false. */
+  preserveValueOnError?: boolean;
+
+  /** Compare defined values for signal notifications; undefined boundaries use Object.is. */
+  equal?: (left: T, right: T) => boolean;
 
   /**
    * Cancellation behavior
@@ -611,13 +698,13 @@ interface ResourceRefOptions<T, E = Error> {
 ```typescript
 // Overload 1: When initialValue or defaultValue is provided
 function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
   options: ({initialValue: T} | {defaultValue: T}) & BaseResourceRefOptions<T, E>,
 ): WritableResourceRef<T, E>;
 
 // Overload 2: When no initial/default value is provided
 function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
   options?: OptionsWithoutInitial,
 ): WritableResourceRef<T | undefined, E>;
 ```
@@ -807,7 +894,7 @@ export class MyComponent {
 // ✅ Good: Semantic clarity & awaitable Promise
 saveActionRef = resourceAsync(
   () => this.http.post<SaveResult>('/api/save', this.data()),
-  { lazy: true }
+  { lazy: true, reactive: false }
 );
 
 async save() {
@@ -831,6 +918,7 @@ save() {
 submitFormRef = resourceAsync(() => this.http.post('/api/submit', this.formData()), {
   behavior: 'exhaust', // Ignore rapid clicks
   lazy: true,
+  reactive: false,
 });
 ```
 
@@ -875,14 +963,14 @@ recommendationsRef = resourceAsync(() => this.http.get<Item[]>('/api/recommendat
 
 ## 🐛 Common Pitfalls
 
-### ❌ Pitfall 1: Forgetting `lazy: true` for Mutations
+### ❌ Pitfall 1: Forgetting explicit triggering for mutations
 
 ```typescript
 // ❌ BAD: POST fires immediately on component init!
 submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()));
 
 // ✅ GOOD: Waits for manual trigger
-submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()), {lazy: true});
+submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()), {lazy: true, reactive: false});
 ```
 
 ---
@@ -917,7 +1005,11 @@ submitRef = resourceAsync(
 );
 
 // ✅ GOOD: Ignore duplicate clicks
-submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()), {behavior: 'exhaust', lazy: true});
+submitRef = resourceAsync(() => this.http.post('/api/submit', this.data()), {
+  behavior: 'exhaust',
+  lazy: true,
+  reactive: false,
+});
 ```
 
 ---
@@ -1048,7 +1140,7 @@ userRef = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`)
 
 ### 🏆 Feature Parity with Angular's Resource API
 
-`resourceAsync` provides **full feature parity** with Angular's `WritableResource` API, plus additional capabilities:
+`resourceAsync` provides writable resource methods and additional lifecycle options:
 
 | Feature            | Angular Resource | resourceAsync  | Notes                            |
 | ------------------ | ---------------- | -------------- | -------------------------------- |

@@ -1,8 +1,8 @@
 import {flushEffects} from '../../test-setup';
 import {beforeEach, afterEach, vi} from 'vitest';
-import {Injector, signal} from '@angular/core';
+import {effect, Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {delay, map, Observable, of, throwError} from 'rxjs';
+import {delay, EMPTY, map, Observable, of, Subject, throwError} from 'rxjs';
 
 import {resourceAsync} from './resource-async';
 
@@ -22,6 +22,397 @@ interface User {
   id: number;
   name: string;
 }
+
+describe('resourceAsync lifecycle regressions', () => {
+  it.each([false, true])(
+    'handles success callback failures before settling execute with retention %s',
+    async (retain) => {
+      await TestBed.runInInjectionContext(async () => {
+        const failure = new Error('success callback failed');
+        const resource = resourceAsync(() => of('rows'), {
+          lazy: true,
+          preserveValueOnError: retain,
+          onSuccess: () => {
+            throw failure;
+          },
+        });
+        const settled = vi.fn();
+        resource.execute().then(settled, settled);
+        await flushEffects();
+        expect(settled).toHaveBeenCalledOnce();
+        expect(settled).toHaveBeenCalledWith(failure);
+        expect(resource.status()).toBe('error');
+        expect(resource.error()).toBe(failure);
+        expect(resource.value()).toBe(retain ? 'rows' : undefined);
+        expect(resource.hasValue()).toBe(retain);
+      });
+    },
+  );
+
+  it('allows onError to recover a success callback failure', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const resource = resourceAsync(() => of('rows'), {
+        lazy: true,
+        onSuccess: () => {
+          throw new Error('success callback failed');
+        },
+        onError: () => 'fallback',
+      });
+      const execution = resource.execute();
+      await flushEffects();
+      expect(await execution).toBe('fallback');
+      expect(resource.value()).toBe('fallback');
+      expect(resource.error()).toBeNull();
+      expect(resource.status()).toBe('resolved');
+    });
+  });
+
+  it('rejects the owning execution when its success callback resets the resource', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const onSuccess = vi.fn();
+      const resource = resourceAsync(() => of('rows'), {lazy: true, onSuccess});
+      onSuccess.mockImplementation(() => resource.reset());
+      const settled = vi.fn();
+      resource.execute().then(settled, settled);
+      await flushEffects();
+      expect(settled).toHaveBeenCalledOnce();
+      expect(settled.mock.calls[0][0]).toMatchObject({name: 'ResourceAsyncCancelledError'});
+      expect(resource.status()).toBe('idle');
+      expect(resource.value()).toBeUndefined();
+    });
+  });
+
+  it('settles an exhaust execution joining a live stream after its last emission', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const stream = new Subject<number>();
+      const resource = resourceAsync(() => stream, {behavior: 'exhaust'});
+      await flushEffects();
+      stream.next(1);
+      const settled = vi.fn();
+      resource.execute().then(settled, settled);
+      stream.complete();
+      await Promise.resolve();
+      expect(settled).toHaveBeenCalledOnce();
+      expect(settled).toHaveBeenCalledWith(1);
+      expect(resource.value()).toBe(1);
+    });
+  });
+
+  it('establishes pure params after an initial local override without starting the loader', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const loader = vi.fn((value: number) => of(value));
+      const resource = resourceAsync({params: () => id(), loader});
+      resource.set(10);
+      await flushEffects();
+      expect(loader).not.toHaveBeenCalled();
+      expect(resource.value()).toBe(10);
+      id.set(2);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledOnce();
+      expect(resource.value()).toBe(2);
+    });
+  });
+
+  it('coalesces a simultaneous dependency change and manual reload into one accepted operation', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const source = vi.fn(() => promise(id(), 10));
+      const resource = resourceAsync(source);
+      await flushEffects(10);
+      resource.reload();
+      id.set(2);
+      await flushEffects(10);
+      expect(source).toHaveBeenCalledTimes(2);
+      expect(resource.value()).toBe(2);
+    });
+  });
+
+  it('preserves fallback equality when resolving an execution Promise', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const resource = resourceAsync(() => throwError(() => new Error('offline')), {
+        lazy: true,
+        defaultValue: {id: 1},
+        equal: (left, right) => left.id === right.id,
+        onError: () => ({id: 1}),
+      });
+      const initial = resource.value();
+      const execution = resource.execute();
+      await flushEffects();
+      expect(await execution).toBe(initial);
+      expect(resource.value()).toBe(initial);
+    });
+  });
+
+  it.each(['before', 'after'] as const)(
+    'allows legacy factory signal writes %s reading reactive dependencies',
+    async (position) => {
+      await TestBed.runInInjectionContext(async () => {
+        const id = signal(1);
+        const loading = signal(false);
+        const source = vi.fn(() => {
+          if (position === 'before') loading.set(true);
+          const value = id();
+          if (position === 'after') loading.set(true);
+          return of(value);
+        });
+        const resource = resourceAsync(source);
+        await flushEffects();
+        expect(resource.error()).toBeNull();
+        expect(resource.value()).toBe(1);
+        expect(loading()).toBe(true);
+        id.set(2);
+        await flushEffects();
+        expect(resource.error()).toBeNull();
+        expect(resource.value()).toBe(2);
+        expect(source).toHaveBeenCalledTimes(2);
+      });
+    },
+  );
+
+  it('tracks pure params across exhaust skips without invoking an eager loader', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const loader = vi.fn((value: number) => promise(value, 100));
+      const resource = resourceAsync({params: () => id(), loader}, {behavior: 'exhaust'});
+      await flushEffects();
+      id.set(2);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(1);
+      await flushEffects(100);
+      expect(resource.value()).toBe(1);
+      id.set(3);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      expect(loader.mock.calls[1][0]).toBe(3);
+      await flushEffects(100);
+      expect(resource.value()).toBe(3);
+    });
+  });
+
+  it('keeps reactive writes explicitly triggered when reactive is false', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const payload = signal('first');
+      const source = vi.fn(() => promise(payload(), 10));
+      const resource = resourceAsync(source, {lazy: true, reactive: false});
+      await flushEffects();
+      const first = resource.execute();
+      await flushEffects(10);
+      expect(await first).toBe('first');
+      payload.set('edited draft');
+      await flushEffects(20);
+      expect(source).toHaveBeenCalledTimes(1);
+      const second = resource.execute();
+      await flushEffects(10);
+      expect(await second).toBe('edited draft');
+    });
+  });
+
+  it.each(['set', 'update'] as const)(
+    'rejects execute on %s without settling it from an unrelated later request',
+    async (method) => {
+      await TestBed.runInInjectionContext(async () => {
+        const resource = resourceAsync(() => promise('remote', 100), {lazy: true});
+        const settled = vi.fn();
+        resource.execute().then(settled, settled);
+        await flushEffects();
+        if (method === 'set') resource.set('local');
+        else resource.update(() => 'local');
+        await flushEffects();
+        expect(settled).toHaveBeenCalledTimes(1);
+        expect(settled.mock.calls[0][0]).toMatchObject({name: 'ResourceAsyncCancelledError'});
+        resource.reload();
+        await flushEffects(100);
+        expect(settled).toHaveBeenCalledTimes(1);
+      });
+    },
+  );
+
+  it.each(['reset', 'set', 'update'] as const)(
+    'suppresses an eager reload queued before %s while preserving later parameter changes',
+    async (method) => {
+      await TestBed.runInInjectionContext(async () => {
+        const id = signal(1);
+        const loader = vi.fn(() => of(id()));
+        const resource = resourceAsync(loader);
+        await flushEffects();
+        resource.reload();
+        if (method === 'reset') resource.reset();
+        else if (method === 'set') resource.set(10);
+        else resource.update(() => 10);
+        await flushEffects();
+        expect(loader).toHaveBeenCalledTimes(1);
+        expect(resource.status()).toBe(method === 'reset' ? 'idle' : 'local');
+        id.set(2);
+        await flushEffects();
+        expect(loader).toHaveBeenCalledTimes(2);
+        expect(resource.value()).toBe(2);
+      });
+    },
+  );
+
+  it('rejects execution promptly and refuses reload after disposal', async () => {
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(() => promise(1, 10), {lazy: true}));
+    TestBed.resetTestingModule();
+    const result = vi.fn();
+    resource.execute().then(result, result);
+    await Promise.resolve();
+    expect(result).toHaveBeenCalledTimes(1);
+    expect(result.mock.calls[0][0]).toMatchObject({name: 'ResourceAsyncDisposedError'});
+    expect(resource.reload()).toBe(false);
+    expect(() => resource.set(2)).toThrow('destroyed');
+  });
+
+  it.each(['observable', 'promise', 'factory'] as const)(
+    'retains a successful value with an explicit %s refresh error when opted in',
+    async (kind) => {
+      await TestBed.runInInjectionContext(async () => {
+        const failure = new Error('offline');
+        let fail = false;
+        const resource = resourceAsync(
+          () => {
+            if (!fail) return of('rows');
+            if (kind === 'factory') throw failure;
+            return kind === 'promise' ? promiseError(failure) : throwError(() => failure);
+          },
+          {preserveValueOnError: true},
+        );
+        await flushEffects();
+        fail = true;
+        resource.reload();
+        await flushEffects();
+        expect(resource.status()).toBe('error');
+        expect(resource.error()).toBe(failure);
+        expect(resource.value()).toBe('rows');
+        expect(resource.hasValue()).toBe(true);
+        expect(resource.asReadonly().hasValue()).toBe(true);
+      });
+    },
+  );
+
+  it('passes AbortSignal to compatible factories and aborts replacement, reset, and disposal', async () => {
+    const signals: AbortSignal[] = [];
+    const resource = TestBed.runInInjectionContext(() =>
+      resourceAsync(({abortSignal}) => {
+        signals.push(abortSignal);
+        return promise(signals.length, 100);
+      }),
+    );
+    await flushEffects();
+    resource.reload();
+    await flushEffects();
+    expect(signals[0].aborted).toBe(true);
+    resource.reset();
+    expect(signals[1].aborted).toBe(true);
+    resource.execute();
+    await flushEffects();
+    TestBed.resetTestingModule();
+    expect(signals[2].aborted).toBe(true);
+  });
+
+  it('honors equal for value notifications without hiding statuses or success callbacks', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const seen = vi.fn();
+      const onSuccess = vi.fn();
+      const resource = resourceAsync(() => of({id: 1}), {
+        defaultValue: {id: 0},
+        equal: (left, right) => left.id === right.id,
+        onSuccess,
+      });
+      effect(() => seen(resource.value()));
+      await flushEffects();
+      const count = seen.mock.calls.length;
+      resource.reload();
+      await flushEffects();
+      expect(seen).toHaveBeenCalledTimes(count);
+      expect(onSuccess).toHaveBeenCalledTimes(2);
+      expect(resource.status()).toBe('resolved');
+    });
+  });
+
+  it('resolves an empty execution with its configured fallback', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const resource = resourceAsync(() => EMPTY, {defaultValue: 'fallback', lazy: true});
+      const execution = resource.execute();
+      await flushEffects();
+      expect(await execution).toBe('fallback');
+      expect(resource.value()).toBe('fallback');
+      expect(resource.status()).toBe('resolved');
+    });
+  });
+
+  it('never calls a value equality function with undefined boundaries', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const equal = vi.fn((left: {id: number}, right: {id: number}) => left.id === right.id);
+      const resource = resourceAsync(() => of({id: 1}), {lazy: true, equal});
+      const seen = vi.fn();
+      effect(() => seen(resource.value()));
+      await flushEffects();
+      expect(resource.value()).toBeUndefined();
+      resource.execute();
+      await flushEffects();
+      expect(resource.value()).toEqual({id: 1});
+      resource.reset();
+      await flushEffects();
+      expect(resource.value()).toBeUndefined();
+      expect(equal.mock.calls.every(([left, right]) => left !== undefined && right !== undefined)).toBe(true);
+    });
+  });
+
+  it('destroys a readonly resource explicitly and settles a queued execution without invoking its source', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const source = vi.fn(() => promise(1, 10));
+      const resource = resourceAsync(source, {lazy: true});
+      const execution = resource.execute();
+      resource.asReadonly().destroy();
+      resource.destroy();
+      await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncDisposedError'});
+      await flushEffects();
+      expect(source).not.toHaveBeenCalled();
+      expect(resource.reload()).toBe(false);
+    });
+  });
+
+  it('does not track incidental signal reads inside the params loader', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const incidental = signal('a');
+      const loader = vi.fn((value: number) => of(`${value}:${incidental()}`));
+      const resource = resourceAsync({params: () => id(), loader});
+      await flushEffects();
+      incidental.set('b');
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(1);
+      id.set(2);
+      await flushEffects();
+      expect(resource.value()).toBe('2:b');
+    });
+  });
+
+  it('settles execution errors from pure parameter capture and recovers when parameters become valid', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const valid = signal(false);
+      const loader = vi.fn((value: number) => of(value));
+      const resource = resourceAsync(
+        {
+          params: () => {
+            if (!valid()) throw new Error('invalid parameters');
+            return 1;
+          },
+          loader,
+        },
+        {lazy: true},
+      );
+      const execution = resource.execute();
+      await flushEffects();
+      await expect(execution).rejects.toThrow('invalid parameters');
+      expect(loader).not.toHaveBeenCalled();
+      valid.set(true);
+      await flushEffects();
+      expect(resource.value()).toBe(1);
+    });
+  });
+});
 
 describe('resourceAsync', () => {
   describe('basic functionality', () => {

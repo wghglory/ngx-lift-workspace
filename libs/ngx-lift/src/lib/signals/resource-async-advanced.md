@@ -3,6 +3,41 @@
 This guide covers advanced patterns for managing nested data with `resourceAsync`, where you have an outer list and each
 item can load additional related data.
 
+## Parameter capture, cleanup, and shared data
+
+For reactive child resources, capture their identity through `params` and perform work in `loader`:
+
+```typescript
+const organizationRef = resourceAsync(
+  {
+    params: () => selectedOrganizationId(),
+    loader: (id, {abortSignal}) =>
+      fetch(`/api/organizations/${id}`, {signal: abortSignal}).then((response) => response.json()),
+  },
+  {lazy: true, behavior: 'exhaust', preserveValueOnError: true, injector},
+);
+```
+
+This form retains parameter tracking when `exhaust` drops a change while loading, and never invokes the loader merely to
+track its dependencies. Dropped changes are not queued. Loader signal reads are untracked; capture all reactive inputs
+in `params`. Legacy source factories cannot safely discover dependencies without executing eager Promise creation or
+writes, so use the parameter form when reliable reactive `exhaust` behavior is required. Existing factories run inside
+an Angular effect and may still write Signals synchronously; `params` must remain pure.
+
+Resources created for removed rows should call `destroy()` to release their subscriptions and abort pending work;
+injector destruction handles any remaining resources. `reset()` returns to idle but leaves the resource available for
+future explicit triggers and, for eager resources with known dependencies, future parameter changes. Each child resource
+owns its lifecycle; multiple child resources with the same id do not automatically share data or requests. Use a
+separate shared query client when deduplication and mutation invalidation are required across rows or components.
+
+For a child mutation, use `{lazy: true, reactive: false}` and call `execute()` explicitly. Lazy resources otherwise
+remain reactive after their first trigger. Local `set()`/`update()` and reset reject pending execute Promises with
+`ResourceAsyncCancelledError`; destruction rejects them with `ResourceAsyncDisposedError`. Handle these cancellation
+results when awaiting a child operation. AbortSignal cancels transport only if the loader honors it.
+
+For background refreshes, `preserveValueOnError: true` keeps existing rows while exposing a refresh error. Check
+`hasValue()` independently of `error()` so retained data remains visible. This option defaults to false.
+
 ---
 
 ## 📋 Table of Contents

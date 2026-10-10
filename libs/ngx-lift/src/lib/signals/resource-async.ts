@@ -4,6 +4,7 @@ import {
   CreateComputedOptions,
   DestroyRef,
   effect,
+  EffectRef,
   inject,
   Injector,
   Signal,
@@ -14,6 +15,32 @@ import {from, isObservable, noop, Observable, Subscription} from 'rxjs';
 
 import {ResourceStatus} from '../models';
 import {isPromise} from '../utils/is-promise.util';
+
+export interface ResourceAsyncContext {
+  /** Aborted when the operation is replaced, reset, locally overridden, or destroyed. */
+  readonly abortSignal: AbortSignal;
+}
+
+export interface ResourceAsyncDefinition<P, T> {
+  /** Pure reactive parameter capture; must not start requests or perform writes. */
+  params: () => P;
+  /** Runs only when the resource accepts a new operation. Signal reads here are untracked. */
+  loader: (params: P, context: ResourceAsyncContext) => Observable<T> | Promise<T> | T;
+}
+
+export class ResourceAsyncCancelledError extends Error {
+  constructor(message = 'Resource operation was cancelled') {
+    super(message);
+    this.name = 'ResourceAsyncCancelledError';
+  }
+}
+
+export class ResourceAsyncDisposedError extends Error {
+  constructor() {
+    super('Resource was destroyed');
+    this.name = 'ResourceAsyncDisposedError';
+  }
+}
 
 /**
  * Base configuration options for resourceAsync.
@@ -61,6 +88,12 @@ export interface BaseResourceRefOptions<T, E = Error> extends CreateComputedOpti
    * Default: false (eager fetching)
    */
   lazy?: boolean;
+
+  /** Disable automatic dependency-driven execution, including after the first explicit trigger. */
+  reactive?: boolean;
+
+  /** Retain the last received or local value on error. Defaults to false. */
+  preserveValueOnError?: boolean;
 
   /**
    * Optional custom injector. If provided, allows resourceAsync to be called outside an ambient injection context.
@@ -243,6 +276,9 @@ export interface ResourceRef<T, E = Error> {
    * - Transitions status back to 'idle'
    */
   reset(): void;
+
+  /** Permanently stop observation and cancel pending work. Calling this repeatedly is safe. */
+  destroy(): void;
 }
 
 /**
@@ -411,8 +447,20 @@ export interface WritableResourceRef<T, E = Error> extends ResourceRef<T, E> {
  * // Only fetches when reload() called or dependencies change after first access
  * ```
  */
+export function resourceAsync<T, P, E = Error>(
+  definition: ResourceAsyncDefinition<P, T>,
+  options: ResourceRefOptionsWithInitialValue<T, E> | ResourceRefOptionsWithDefaultValue<T, E>,
+): WritableResourceRef<T, E>;
+export function resourceAsync<T, P, E = Error>(
+  definition: ResourceAsyncDefinition<P, T>,
+  options?: ResourceRefOptionsWithoutInitial<T, E>,
+): WritableResourceRef<T | undefined, E>;
+export function resourceAsync<T, P, E = Error>(
+  definition: ResourceAsyncDefinition<P, T>,
+  options?: ResourceRefOptions<T, E>,
+): WritableResourceRef<T | undefined, E>;
 export function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
   options: ResourceRefOptionsWithInitialValue<T, E> | ResourceRefOptionsWithDefaultValue<T, E>,
 ): WritableResourceRef<T, E>;
 
@@ -431,7 +479,7 @@ export function resourceAsync<T, E = Error>(
  * @returns A WritableResourceRef whose value signal includes undefined.
  */
 export function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
   options?: ResourceRefOptionsWithoutInitial<T, E>,
 ): WritableResourceRef<T | undefined, E>;
 
@@ -447,339 +495,363 @@ export function resourceAsync<T, E = Error>(
  * @returns A WritableResourceRef whose value signal includes undefined if not proven non-null.
  */
 export function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
   options?: ResourceRefOptions<T, E>,
 ): WritableResourceRef<T | undefined, E>;
 
-export function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
+export function resourceAsync<T, P, E = Error>(
+  source: ((context: ResourceAsyncContext) => Observable<T> | Promise<T> | T) | ResourceAsyncDefinition<P, T>,
   options: ResourceRefOptions<T, E> = {},
 ): WritableResourceRef<T, E> | WritableResourceRef<T | undefined, E> {
   if (!options.injector) {
     assertInInjectionContext(resourceAsync);
   }
-
-  const destroyRef = options.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
-
-  const resolvedInitialValue: T | undefined =
-    options.defaultValue !== undefined ? options.defaultValue : options.initialValue;
-
-  // State signals - valueSignal tracks actual received/local values, falling back to initialValue in valueComputed
+  const injector = options.injector ?? inject(Injector);
+  const destroyRef = injector.get(DestroyRef);
+  const resolvedInitialValue = options.defaultValue !== undefined ? options.defaultValue : options.initialValue;
   const valueSignal = signal<T | undefined>(undefined);
   const errorSignal = signal<E | null>(null);
   const statusSignal = signal<ResourceStatus>(options.lazy ? 'idle' : 'loading');
-
-  // Create a computed signal that returns T (with resolvedInitialValue as fallback)
-  // This matches Angular's pattern where value() returns initial value or undefined
-  const valueComputed = computed(() => {
-    const val = valueSignal();
-    if (val !== undefined) {
-      return val;
-    }
-    return resolvedInitialValue as T;
+  const valueComputed = computed(() => (valueSignal() !== undefined ? valueSignal() : resolvedInitialValue) as T, {
+    equal: (left, right) =>
+      left === undefined || right === undefined
+        ? Object.is(left, right)
+        : (options.equal?.(left, right) ?? Object.is(left, right)),
   });
-
-  // Trigger for manual reload
   const reloadTrigger = signal(0);
+  const definition = typeof source === 'function' ? undefined : source;
+  const factory = typeof source === 'function' ? source : undefined;
+  const paramsCapture = definition ? computed(definition.params) : undefined;
 
-  // Track current subscription for cancellation
-  let currentSubscription: Subscription | null = null;
+  interface Evaluation {
+    controller: AbortController;
+    source?: Observable<T> | Promise<T> | T;
+    failed: boolean;
+    error?: unknown;
+  }
+  let suppressedTrigger: number | undefined;
+  let lastHandledTrigger = 0;
+  let sequence = 0;
+  let queuedExecution: number | undefined;
+  let cancellationGeneration = 0;
+  let disposed = false;
+  let dependencyEffect: EffectRef | undefined;
+  const pendingDependencyEffects = new Set<EffectRef>();
 
-  // Track whether lazy resource has been triggered by reload() or execute()
-  const isTriggered = signal(false);
-
-  // Pending execution promises to resolve/reject when fetch completes
-  interface Deferred<T> {
+  interface Deferred {
+    operation: number;
     resolve: (value: T) => void;
     reject: (error: unknown) => void;
   }
-  let pendingDeferreds: Deferred<T>[] = [];
+  interface Operation {
+    id: number;
+    controller: AbortController;
+    subscription: Subscription;
+  }
+  let currentOperation: Operation | undefined;
+  let deferreds: Deferred[] = [];
 
-  const resolvePending = (value: T) => {
-    if (pendingDeferreds.length > 0) {
-      const list = pendingDeferreds;
-      pendingDeferreds = [];
-      for (const d of list) {
-        d.resolve(value);
-      }
+  const settle = (id: number, value: T, error?: {reason: unknown}) => {
+    const owned = deferreds.filter((deferred) => deferred.operation === id);
+    deferreds = deferreds.filter((deferred) => deferred.operation !== id);
+    for (const deferred of owned) {
+      if (error) deferred.reject(error.reason);
+      else deferred.resolve(value);
     }
   };
-
-  const rejectPending = (error: unknown) => {
-    if (pendingDeferreds.length > 0) {
-      const list = pendingDeferreds;
-      pendingDeferreds = [];
-      for (const d of list) {
-        d.reject(error);
-      }
+  const stopOperation = (reason: Error) => {
+    const operation = currentOperation;
+    currentOperation = undefined;
+    if (operation) {
+      operation.controller.abort(reason);
+      operation.subscription.unsubscribe();
+      settle(operation.id, undefined as T, {reason});
     }
   };
+  const cancelAll = (reason: Error) => {
+    cancellationGeneration++;
+    stopOperation(reason);
+    queuedExecution = undefined;
+    const cancelled = deferreds;
+    deferreds = [];
+    for (const deferred of cancelled) deferred.reject(reason);
+  };
+  const isCurrent = (operation: Operation) => !disposed && currentOperation === operation;
+  const handleError = (operation: Operation, originalError: unknown) => {
+    if (!isCurrent(operation)) return;
+    let error = originalError;
+    let fallback: T | undefined;
+    try {
+      fallback = options.onError?.(error as E);
+    } catch (handlerError) {
+      error = handlerError;
+    }
+    if (!isCurrent(operation)) return;
+    if (fallback !== undefined) {
+      valueSignal.set(fallback);
+      errorSignal.set(null);
+      statusSignal.set('resolved');
+      settle(operation.id, valueComputed());
+    } else {
+      if (!options.preserveValueOnError) valueSignal.set(undefined);
+      errorSignal.set(error as E);
+      statusSignal.set('error');
+      settle(operation.id, undefined as T, {reason: error});
+    }
+    currentOperation = undefined;
+    operation.subscription.unsubscribe();
+    if (options.throwOnError && fallback === undefined) throw error;
+  };
 
-  // Main effect that handles fetching
-  effect(
-    () => {
-      // Track reload trigger to re-execute on reload()
-      reloadTrigger();
-
-      // Skip if lazy and never triggered
-      if (options.lazy && !isTriggered()) {
-        return;
-      }
-
-      // Handle exhaust behavior - ignore new requests while loading
-      if (options.behavior === 'exhaust' && currentSubscription && !currentSubscription.closed) {
-        return;
-      }
-
-      // Execute source function (tracks reactive dependencies)
-      let source: Observable<T> | Promise<T> | T;
+  const effectOptions = {injector, manualCleanup: true};
+  const runSource = () => {
+    if (disposed) return;
+    const read = <V>(capture: Signal<V>): V => (options.reactive === false ? untracked(capture) : capture());
+    let selection: P | undefined;
+    let parameterError: {reason: unknown} | undefined;
+    if (paramsCapture) {
+      // Track pure parameters even when exhaust refuses to execute a new loader.
       try {
-        source = sourceFn();
-      } catch (error: unknown) {
-        if (currentSubscription && !currentSubscription.closed) {
-          currentSubscription.unsubscribe();
-          currentSubscription = null;
-        }
-        untracked(() => {
-          if (options.onError) {
-            const fallbackValue = options.onError(error as E);
-            if (fallbackValue !== undefined) {
-              valueSignal.set(fallbackValue);
-              errorSignal.set(null);
-              statusSignal.set('resolved');
-              resolvePending(fallbackValue);
-              return;
-            }
-          }
-
-          valueSignal.set(undefined as T);
-          errorSignal.set(error as E);
-          statusSignal.set('error');
-          rejectPending(error);
-
-          if (options.throwOnError) {
-            throw error;
-          }
-        });
+        selection = read(paramsCapture);
+      } catch (error) {
+        parameterError = {reason: error};
+      }
+    }
+    // Legacy factories may eagerly start work, so exhaust must refuse them before invocation.
+    if (options.behavior === 'exhaust' && currentOperation) return;
+    lastHandledTrigger = untracked(reloadTrigger);
+    suppressedTrigger = undefined;
+    const generation = ++cancellationGeneration;
+    for (const pendingEffect of pendingDependencyEffects) pendingEffect.destroy();
+    pendingDependencyEffects.clear();
+    stopOperation(new ResourceAsyncCancelledError('Operation cancelled by dependency change'));
+    const evaluation: Evaluation = {
+      controller: new AbortController(),
+      failed: !!parameterError,
+      error: parameterError?.reason,
+    };
+    if (factory) {
+      try {
+        // Preserve the legacy effect contract: factories may synchronously write signals.
+        evaluation.source =
+          options.reactive === false
+            ? untracked(() => factory({abortSignal: evaluation.controller.signal}))
+            : factory({abortSignal: evaluation.controller.signal});
+        if (isPromise(evaluation.source)) void evaluation.source.catch(noop);
+      } catch (error) {
+        evaluation.failed = true;
+        evaluation.error = error;
+      }
+    }
+    if (disposed || generation !== cancellationGeneration) {
+      evaluation.controller.abort(new ResourceAsyncCancelledError('Operation cancelled during source creation'));
+      return;
+    }
+    const operation: Operation = {
+      id: queuedExecution ?? ++sequence,
+      controller: evaluation.controller,
+      subscription: new Subscription(),
+    };
+    queuedExecution = undefined;
+    currentOperation = operation;
+    untracked(() => {
+      statusSignal.set(valueSignal() !== undefined ? 'reloading' : 'loading');
+      errorSignal.set(null);
+      let asyncSource: Observable<T> | Promise<T> | T;
+      try {
+        options.onLoading?.();
+        if (!isCurrent(operation)) return;
+      } catch (error) {
+        handleError(operation, error);
         return;
       }
-
-      // Cancel previous request (important for 'switch' behavior)
-      if (currentSubscription && !currentSubscription.closed) {
-        currentSubscription.unsubscribe();
-        currentSubscription = null;
-        rejectPending(new Error('Operation cancelled by dependency change'));
+      if (evaluation.failed) {
+        handleError(operation, evaluation.error);
+        return;
       }
-
-      // Determine if this is initial loading or reloading
-      const hasExistingValue = untracked(() => valueSignal() !== undefined);
-      const newStatus: ResourceStatus = hasExistingValue ? 'reloading' : 'loading';
-
-      // Set loading/reloading state and clear previous error when starting a new request
-      untracked(() => {
-        statusSignal.set(newStatus);
-        errorSignal.set(null);
-        options.onLoading?.();
-      });
-
-      // Convert source to observable
-      const source$ = isObservable(source) ? source : isPromise(source) ? from(source) : from([source]);
-
-      let receivedValue = false;
-      untracked(() => {
-        currentSubscription = source$.subscribe({
-          next: (value) => {
-            receivedValue = true;
+      try {
+        asyncSource = definition
+          ? definition.loader(selection as P, {abortSignal: operation.controller.signal})
+          : (evaluation.source as Observable<T> | Promise<T> | T);
+      } catch (error) {
+        handleError(operation, error);
+        return;
+      }
+      if (!isCurrent(operation)) {
+        // Eager promises already exist, so attach a rejection observer even after a reentrant cancellation.
+        if (isPromise(asyncSource)) void asyncSource.catch(noop);
+        return;
+      }
+      const source$ = isObservable(asyncSource)
+        ? asyncSource
+        : isPromise(asyncSource)
+          ? from(asyncSource)
+          : from([asyncSource]);
+      let received = false;
+      operation.subscription.add(
+        source$.subscribe({
+          next: (value) =>
             untracked(() => {
+              if (!isCurrent(operation)) return;
+              received = true;
               valueSignal.set(value);
               errorSignal.set(null);
-              statusSignal.set('resolved'); // Use 'resolved' to match httpResource
-              options.onSuccess?.(value);
-              resolvePending(value);
-            });
-          },
-          error: (error: E) => {
+              statusSignal.set('resolved');
+              try {
+                options.onSuccess?.(value);
+              } catch (error) {
+                handleError(operation, error);
+                return;
+              }
+              if (isCurrent(operation)) settle(operation.id, valueComputed());
+            }),
+          error: (error: E) => untracked(() => handleError(operation, error)),
+          complete: () =>
             untracked(() => {
-              // Try error handler if provided
-              if (options.onError) {
-                const fallbackValue = options.onError(error);
-                if (fallbackValue !== undefined) {
-                  valueSignal.set(fallbackValue);
-                  errorSignal.set(null);
-                  statusSignal.set('resolved'); // Success with fallback
-                  resolvePending(fallbackValue);
-                  return;
-                }
-              }
-
-              // Set error state - clear value to match Angular's httpResource behavior
-              valueSignal.set(undefined as T);
-              errorSignal.set(error);
-              statusSignal.set('error');
-              rejectPending(error);
-
-              // Optionally throw after handling
-              if (options.throwOnError) {
-                throw error;
-              }
-            });
-          },
-          complete: () => {
-            // Empty observable: complete without next leaves resource stuck in loading
-            if (!receivedValue) {
-              untracked(() => {
-                valueSignal.set(undefined as T);
+              if (!isCurrent(operation)) return;
+              if (!received) {
+                valueSignal.set(undefined);
                 errorSignal.set(null);
                 statusSignal.set('resolved');
-                resolvePending(undefined as T);
-              });
-            }
-          },
-        });
-      });
-    },
-    options.injector ? {injector: options.injector} : undefined,
-  );
-
-  // Cleanup subscription on destroy
-  destroyRef.onDestroy(() => {
-    if (currentSubscription && !currentSubscription.closed) {
-      currentSubscription.unsubscribe();
-    }
-    rejectPending(new Error('Resource was destroyed'));
-  });
-
-  // isLoading as a computed Signal (matches Angular's httpResource API)
-  const isLoadingSignal = computed(() => {
-    const status = statusSignal();
-    return status === 'loading' || status === 'reloading';
-  });
-
-  // isIdle as a computed Signal
-  const isIdleSignal = computed(() => {
-    return statusSignal() === 'idle';
-  });
-
-  // hasValue as a method with type predicate for type narrowing
-  const hasValue = function (this: WritableResourceRef<T, E>): this is WritableResourceRef<Exclude<T, undefined>, E> {
-    // Matches Angular's httpResource behavior:
-    // hasValue is true when we have an actual loaded value (not just initialValue)
-    // This is true for 'resolved', 'reloading', or 'local' status
-    const status = statusSignal();
-    const val = valueSignal(); // Check the actual loaded value
-    return (status === 'resolved' || status === 'reloading' || status === 'local') && val !== undefined;
+              }
+              // An exhaust caller can join after the stream's final emission and still needs completion settlement.
+              settle(operation.id, valueComputed());
+              currentOperation = undefined;
+              operation.subscription.unsubscribe();
+            }),
+        }),
+      );
+    });
   };
+  const createDependencyEffect = () => {
+    const generation = cancellationGeneration;
+    let firstRun = true;
+    const created = effect(() => {
+      if (disposed) return;
+      if (firstRun) {
+        pendingDependencyEffects.delete(created);
+        if (generation !== cancellationGeneration) {
+          if (paramsCapture && !options.lazy && !dependencyEffect) {
+            // Pure params can establish initial dependencies without undoing a local override or reset.
+            dependencyEffect = created;
+            firstRun = false;
+            try {
+              if (options.reactive === false) untracked(paramsCapture);
+              else paramsCapture();
+            } catch {
+              // The cancelled operation must not replace local/idle state with a capture error.
+            }
+          } else created.destroy();
+          return;
+        }
+        dependencyEffect?.destroy();
+        dependencyEffect = created;
+        firstRun = false;
+      }
+      runSource();
+    }, effectOptions);
+    pendingDependencyEffects.add(created);
+  };
+  // Manual scheduling is independent of source tracking, so a suppressed reload cannot discard known dependencies.
+  const schedulingEffect = effect(() => {
+    const trigger = reloadTrigger();
+    if (disposed || trigger === lastHandledTrigger) return;
+    lastHandledTrigger = trigger;
+    if (suppressedTrigger !== trigger) untracked(createDependencyEffect);
+  }, effectOptions);
+  if (!options.lazy) createDependencyEffect();
 
-  const reload = (): boolean => {
-    isTriggered.set(true);
-    // Matches Angular's httpResource behavior:
-    // Returns true if reload was initiated, false if unnecessary
-    const status = untracked(statusSignal);
-
-    // Don't reload if already loading with exhaust behavior
-    if (options.behavior === 'exhaust' && (status === 'loading' || status === 'reloading')) {
+  const destroy = () => {
+    if (disposed) return;
+    disposed = true;
+    cancelAll(new ResourceAsyncDisposedError());
+    schedulingEffect.destroy();
+    dependencyEffect?.destroy();
+    for (const pendingEffect of pendingDependencyEffects) pendingEffect.destroy();
+    pendingDependencyEffects.clear();
+    unregisterDestroy();
+  };
+  const unregisterDestroy = destroyRef.onDestroy(destroy);
+  const isLoadingSignal = computed(() => statusSignal() === 'loading' || statusSignal() === 'reloading');
+  const isIdleSignal = computed(() => statusSignal() === 'idle');
+  const hasValue = function (this: WritableResourceRef<T, E>): this is WritableResourceRef<Exclude<T, undefined>, E> {
+    const status = statusSignal();
+    return (
+      valueSignal() !== undefined &&
+      (status === 'resolved' ||
+        status === 'reloading' ||
+        status === 'local' ||
+        (status === 'error' && !!options.preserveValueOnError))
+    );
+  };
+  const resume = () => {
+    suppressedTrigger = undefined;
+    reloadTrigger.update((value) => value + 1);
+  };
+  const reload = () => {
+    if (disposed || (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)))
       return false;
-    }
-
-    // If lazy and idle, trigger first load
-    if (status === 'idle') {
-      untracked(() => statusSignal.set('loading'));
-    }
-
-    reloadTrigger.update((v) => v + 1);
+    cancelAll(new ResourceAsyncCancelledError('Operation cancelled by reload'));
+    if (untracked(statusSignal) === 'idle') statusSignal.set('loading');
+    resume();
     return true;
   };
-
-  // Reset the resource to its initial idle state
-  const reset = (): void => {
-    // Cancel any pending request
-    if (currentSubscription && !currentSubscription.closed) {
-      currentSubscription.unsubscribe();
-      currentSubscription = null;
-    }
-
-    rejectPending(new Error('Resource was reset'));
-    untracked(() => {
-      isTriggered.set(false);
-      valueSignal.set(undefined as T);
-      errorSignal.set(null);
-      statusSignal.set('idle');
-    });
+  const suppressQueued = () => {
+    suppressedTrigger = untracked(reloadTrigger);
   };
-
-  // Manually trigger execution of mutation operation and return an awaitable Promise
-  const execute = (): Promise<T> => {
-    isTriggered.set(true);
-    const status = untracked(statusSignal);
-
-    // If exhaust behavior and already loading, reuse active in-flight execution promise
-    if (options.behavior === 'exhaust' && (status === 'loading' || status === 'reloading')) {
-      const p = new Promise<T>((resolve, reject) => {
-        pendingDeferreds.push({resolve, reject});
-      });
-      p.catch(noop); // Prevent unhandled rejection if caller does not await or catch
-      return p;
+  const reset = () => {
+    if (disposed) return;
+    suppressQueued();
+    cancelAll(new ResourceAsyncCancelledError('Resource was reset'));
+    if (options.lazy) {
+      dependencyEffect?.destroy();
+      dependencyEffect = undefined;
+      for (const pendingEffect of pendingDependencyEffects) pendingEffect.destroy();
+      pendingDependencyEffects.clear();
     }
-
-    // If switch behavior (default) and already in-flight or pending, cancel the previous request
-    if (currentSubscription && !currentSubscription.closed) {
-      currentSubscription.unsubscribe();
-      currentSubscription = null;
+    valueSignal.set(undefined);
+    errorSignal.set(null);
+    statusSignal.set('idle');
+  };
+  const executionPromise = (id: number) => {
+    const promise = new Promise<T>((resolve, reject) => deferreds.push({operation: id, resolve, reject}));
+    void promise.catch(noop);
+    return promise;
+  };
+  const execute = () => {
+    if (disposed) {
+      const promise = Promise.reject<T>(new ResourceAsyncDisposedError());
+      void promise.catch(noop);
+      return promise;
     }
-    rejectPending(new Error('Operation cancelled by newer execution'));
-
-    // For a mutation, clear previous value and error so UI displays loading state cleanly
-    untracked(() => {
-      valueSignal.set(undefined as T);
-      errorSignal.set(null);
-      statusSignal.set('loading');
-    });
-
-    const p = new Promise<T>((resolve, reject) => {
-      pendingDeferreds.push({resolve, reject});
-    });
-    p.catch(noop); // Prevent unhandled rejection if caller does not await or catch
-
-    reloadTrigger.update((v) => v + 1);
-    return p;
-  };
-
-  // Manually set the resource value (transitions to 'local' state)
-  const set = (value: T): void => {
-    // Cancel any pending request
-    if (currentSubscription && !currentSubscription.closed) {
-      currentSubscription.unsubscribe();
-      currentSubscription = null;
+    if (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)) {
+      return executionPromise(currentOperation?.id ?? (queuedExecution as number));
     }
-
-    // Update state to 'local'
-    untracked(() => {
-      valueSignal.set(value);
-      errorSignal.set(null);
-      statusSignal.set('local');
-    });
+    cancelAll(new ResourceAsyncCancelledError('Operation cancelled by newer execution'));
+    queuedExecution = ++sequence;
+    const promise = executionPromise(queuedExecution);
+    valueSignal.set(undefined);
+    errorSignal.set(null);
+    statusSignal.set('loading');
+    resume();
+    return promise;
   };
-
-  // Update the resource value using an updater function
-  const update = (updater: (value: T) => T): void => {
-    // Get current value (may be undefined if no initialValue)
-    const currentValue = untracked(() => valueComputed());
-
-    // Call updater with current value
-    const newValue = updater(currentValue);
-
-    // Set the new value (transitions to 'local')
-    set(newValue);
+  const set = (value: T) => {
+    if (disposed) throw new ResourceAsyncDisposedError();
+    suppressQueued();
+    cancelAll(new ResourceAsyncCancelledError('Operation cancelled by local override'));
+    valueSignal.set(value);
+    errorSignal.set(null);
+    statusSignal.set('local');
   };
-
-  // Return read-only version
+  const update = (updater: (value: T) => T) => {
+    if (disposed) throw new ResourceAsyncDisposedError();
+    set(updater(untracked(valueComputed)));
+  };
   const asReadonly = (): ResourceRef<T, E> => {
-    // Create a wrapper function that preserves the type predicate
     const readonlyHasValue = function (this: ResourceRef<T, E>): this is ResourceRef<Exclude<T, undefined>, E> {
-      return hasValue.call(this as unknown as WritableResourceRef<T, E>);
+      return hasValue.call(this as WritableResourceRef<T, E>);
     };
-
-    // Return a new object without set/update methods
     return {
       value: valueComputed,
       error: errorSignal.asReadonly(),
@@ -790,23 +862,14 @@ export function resourceAsync<T, E = Error>(
       reload,
       execute,
       reset,
+      destroy,
     };
   };
-
-  const resourceRef: WritableResourceRef<T, E> = {
-    value: valueComputed,
-    error: errorSignal.asReadonly(),
-    status: statusSignal.asReadonly(),
-    isLoading: isLoadingSignal,
-    isIdle: isIdleSignal,
+  return {
+    ...asReadonly(),
     hasValue,
-    reload,
-    execute,
-    reset,
     set,
     update,
     asReadonly,
   };
-
-  return resourceRef;
 }
