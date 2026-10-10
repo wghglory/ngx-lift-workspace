@@ -1,0 +1,54 @@
+<cll-page-container [title]="'getValueByPath & deleteValueByPath'" customClass="space-y-9">
+  <p>
+    <code>getValueByPath</code> and <code>deleteValueByPath</code> provide safe, zero-dependency traversal and mutation
+    of deep nested object structures using standard dot-notation paths (e.g. <code>'user.profile.name'</code>).
+  </p>
+
+  <section class="space-y-4">
+    <h2>Interactive Playground</h2>
+
+    <div class="card">
+      <div class="card-block space-y-4">
+        <h4>Target Object</h4>
+        <pre class="bg-gray-100 p-3 rounded text-sm">{{ formattedSample() }}</pre>
+
+        <div class="clr-row clr-align-items-end">
+          <div class="clr-col-12 clr-col-md-6">
+            <clr-input-container>
+              <label>Query Path (getValueByPath)</label>
+              <input clrInput [(ngModel)]="queryPath" placeholder="e.g. user.profile.name" />
+            </clr-input-container>
+            <div class="mt-2 text-sm">
+              <strong>Resolved Value:</strong> <code>{{ resolvedValue() }}</code>
+            </div>
+          </div>
+
+          <div class="clr-col-12 clr-col-md-6">
+            <clr-input-container>
+              <label>Delete Path (deleteValueByPath)</label>
+              <input clrInput [(ngModel)]="deletePath" placeholder="e.g. user.profile.contact.phone" />
+            </clr-input-container>
+            <div class="mt-2 space-x-2">
+              <button class="btn btn-sm btn-danger" (click)="handleDelete()">Delete Property</button>
+              <button class="btn btn-sm btn-outline" (click)="resetObject()">Reset Object</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: getValueByPath</h3>
+      <app-code-block [code]="getValueCode" lang="typescript" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: deleteValueByPath</h3>
+      <app-code-block [code]="deleteValueCode" lang="typescript" />
+    </article>
+  </section>
+</cll-page-container>

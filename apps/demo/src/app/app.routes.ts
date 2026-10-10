@@ -34,9 +34,14 @@ import {MergeFromComponent} from './ngx-lib/pages/signals/merge-from/merge-from.
 import {ResourceAsyncComponent} from './ngx-lib/pages/signals/resource-async/resource-async.component';
 import {ToSignalFormComponent} from './ngx-lib/pages/signals/to-signal-form/to-signal-form.component';
 import {DifferenceInDaysComponent} from './ngx-lib/pages/utilities/difference-in-days/difference-in-days.component';
+import {FileDownloadComponent} from './ngx-lib/pages/utilities/file-download/file-download.component';
+import {FlattenObjectComponent} from './ngx-lib/pages/utilities/flatten-object/flatten-object.component';
 import {IdleDetectionDemoComponent} from './ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component';
 import {IsEmptyComponent} from './ngx-lib/pages/utilities/is-empty/is-empty.component';
 import {IsEqualComponent} from './ngx-lib/pages/utilities/is-equal/is-equal.component';
+import {JwtDemoComponent} from './ngx-lib/pages/utilities/jwt/jwt.component';
+import {K8sQuantityComponent} from './ngx-lib/pages/utilities/k8s-quantity/k8s-quantity.component';
+import {ObjectPathComponent} from './ngx-lib/pages/utilities/object-path/object-path.component';
 import {PickByComponent} from './ngx-lib/pages/utilities/pick-by/pick-by.component';
 import {UrlComponent} from './ngx-lib/pages/utilities/url/url.component';
 import {DateRangeValidatorComponent} from './ngx-lib/pages/validators/date-range-validator/date-range-validator.component';
@@ -181,6 +186,14 @@ export const routes: Routes = [
             component: DifferenceInDaysComponent,
           },
           {
+            path: 'file-download',
+            component: FileDownloadComponent,
+          },
+          {
+            path: 'flatten-object',
+            component: FlattenObjectComponent,
+          },
+          {
             path: 'idle-detection',
             component: IdleDetectionDemoComponent,
           },
@@ -191,6 +204,18 @@ export const routes: Routes = [
           {
             path: 'is-equal',
             component: IsEqualComponent,
+          },
+          {
+            path: 'jwt',
+            component: JwtDemoComponent,
+          },
+          {
+            path: 'k8s-quantity',
+            component: K8sQuantityComponent,
+          },
+          {
+            path: 'object-path',
+            component: ObjectPathComponent,
           },
           {
             path: 'pick-by',
