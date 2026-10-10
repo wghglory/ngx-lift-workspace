@@ -1,0 +1,114 @@
+<cll-page-container title="String Array Input" customClass="space-y-9">
+  <p>
+    <code>&lt;cll-string-array-input&gt;</code> is a reactive form control that transforms comma-delimited user input
+    into a native TypeScript <code>string[]</code>. It implements <code>ControlValueAccessor</code>, supports custom
+    delimiters, whitespace trimming, deduplication, and full validation synchronization.
+  </p>
+
+  <section class="space-y-6">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Basic Reactive Form Binding</h3>
+      <p>
+        Type tags separated by commas. Notice how the underlying form state dynamically updates to an array of trimmed
+        strings.
+      </p>
+
+      <div class="card p-4 space-y-4">
+        <form [formGroup]="demoForm" class="clr-form clr-form-horizontal">
+          <cll-string-array-input
+            formControlName="tags"
+            label="Repository Topics"
+            placeholder="e.g. angular, clarity, typescript"
+          />
+        </form>
+
+        <div class="bg-slate-100 p-3 rounded">
+          <span class="font-mono text-sm font-semibold">Form Model Value:</span>
+          <pre class="mt-1 font-mono text-xs">{{ demoForm.get('tags')?.value | json }}</pre>
+        </div>
+      </div>
+
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Automatic Deduplication</h3>
+      <p>Set <code>[unique]="true"</code> to automatically eliminate duplicates from the parsed array.</p>
+
+      <div class="card p-4 space-y-4">
+        <form [formGroup]="demoForm" class="clr-form clr-form-horizontal">
+          <cll-string-array-input
+            formControlName="domains"
+            label="Allowed Domains"
+            placeholder="api.domain.com, auth.domain.com"
+            [unique]="true"
+            helperText="Duplicate domains will automatically be removed"
+          />
+        </form>
+
+        <div class="bg-slate-100 p-3 rounded">
+          <span class="font-mono text-sm font-semibold">Form Model Value:</span>
+          <pre class="mt-1 font-mono text-xs">{{ demoForm.get('domains')?.value | json }}</pre>
+        </div>
+      </div>
+
+      <app-code-block [code]="uniqueExampleCode" lang="html" />
+    </article>
+  </section>
+
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="clr-table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>label</code></td>
+            <td><code>string</code></td>
+            <td><code>''</code></td>
+            <td>Input label text.</td>
+          </tr>
+          <tr>
+            <td><code>placeholder</code></td>
+            <td><code>string</code></td>
+            <td><code>''</code></td>
+            <td>Input placeholder.</td>
+          </tr>
+          <tr>
+            <td><code>helperText</code></td>
+            <td><code>string</code></td>
+            <td><code>'Separate values with commas'</code></td>
+            <td>Helper text displayed below input.</td>
+          </tr>
+          <tr>
+            <td><code>delimiter</code></td>
+            <td><code>string</code></td>
+            <td><code>','</code></td>
+            <td>Delimiter character used to separate values.</td>
+          </tr>
+          <tr>
+            <td><code>trim</code></td>
+            <td><code>boolean</code></td>
+            <td><code>true</code></td>
+            <td>Whether to trim whitespace around values.</td>
+          </tr>
+          <tr>
+            <td><code>unique</code></td>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+            <td>Whether to eliminate duplicate values.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</cll-page-container>

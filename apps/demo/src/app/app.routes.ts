@@ -4,6 +4,8 @@ import {AlertDemoComponent} from './clr-lib/pages/alert-demo/alert-demo.componen
 import {CertificateDemoComponent} from './clr-lib/pages/certificate-demo/certificate-demo.component';
 import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component';
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
+import {KeyValueGridDemoComponent} from './clr-lib/pages/components/key-value-grid-demo/key-value-grid-demo.component';
+import {StringArrayInputDemoComponent} from './clr-lib/pages/components/string-array-input-demo/string-array-input-demo.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
@@ -262,6 +264,14 @@ export const routes: Routes = [
           {
             path: 'file-reader',
             component: FileReaderDemoComponent,
+          },
+          {
+            path: 'key-value-grid',
+            component: KeyValueGridDemoComponent,
+          },
+          {
+            path: 'string-array-input',
+            component: StringArrayInputDemoComponent,
           },
         ],
       },

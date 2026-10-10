@@ -1,0 +1,18 @@
+<clr-input-container>
+  @if (label()) {
+    <label [attr.for]="inputId()">{{ label() }}</label>
+  } @else {
+    <label class="clr-sr-only" [attr.for]="inputId()">Items</label>
+  }
+  <input
+    [id]="inputId()"
+    clrInput
+    type="text"
+    [placeholder]="placeholder()"
+    [formControl]="internalControl"
+    (blur)="onTouched()"
+  />
+  @if (effectiveHelperText()) {
+    <clr-control-helper>{{ effectiveHelperText() }}</clr-control-helper>
+  }
+</clr-input-container>

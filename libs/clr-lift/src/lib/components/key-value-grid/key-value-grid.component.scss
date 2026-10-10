@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.key-value-grid {
+  display: grid;
+  width: 100%;
+
+  &.grid-auto {
+    grid-template-columns: 1fr;
+
+    @media (min-width: 769px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 1025px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (min-width: 1441px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}

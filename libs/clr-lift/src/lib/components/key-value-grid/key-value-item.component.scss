@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+.key-value-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.key {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--clr-color-neutral-700, #565656);
+}
+
+.value {
+  font-size: 0.8rem;
+  color: var(--clr-color-neutral-1000, #1b1b1b);
+  word-break: break-word;
+}

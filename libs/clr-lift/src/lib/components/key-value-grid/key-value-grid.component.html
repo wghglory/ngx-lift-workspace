@@ -1,0 +1,8 @@
+<div
+  class="key-value-grid"
+  [class.grid-auto]="columns() === 'auto'"
+  [style.gap]="gap()"
+  [style.grid-template-columns]="columns() !== 'auto' ? 'repeat(' + columns() + ', 1fr)' : null"
+>
+  <ng-content />
+</div>

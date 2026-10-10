@@ -1,0 +1,14 @@
+<div class="key-value-item">
+  <div class="key">
+    @if (key()) {
+      <span class="key-label">{{ key() }}</span>
+    }
+    <ng-content select="[key]" />
+  </div>
+  <div class="value">
+    @if (value() !== undefined && value() !== null) {
+      <span class="value-text">{{ value() }}</span>
+    }
+    <ng-content select="[value]" />
+  </div>
+</div>
