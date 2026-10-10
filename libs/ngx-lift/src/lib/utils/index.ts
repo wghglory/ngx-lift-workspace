@@ -7,4 +7,5 @@ export * from './is-promise.util';
 export * from './omit-by.util';
 export * from './pick-by.util';
 export * from './range.util';
+export * from './resource-state.util';
 export * from './url.util';

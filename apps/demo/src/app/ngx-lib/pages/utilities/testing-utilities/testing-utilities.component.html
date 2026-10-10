@@ -1,0 +1,53 @@
+<cll-page-container [title]="'Testing Utilities (ngx-lift/testing)'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>ngx-lift/testing</code> provides lightweight, zero-boilerplate testing harnesses for Angular signals, routing,
+    and side effects. Because it is published under its own secondary entry point, testing utilities are never bundled
+    into production builds.
+  </p>
+
+  <cll-callout>
+    Install or import testing utilities directly via <code>ngx-lift/testing</code> in your test specs.
+  </cll-callout>
+
+  <app-code-block [code]="installCode" lang="typescript" />
+
+  <!-- Features Section -->
+  <section class="space-y-6">
+    <h2>Testing Utilities</h2>
+
+    <!-- flushEffects -->
+    <article class="space-y-3">
+      <h3>1. Synchronous Signal Effects with <code>flushEffects()</code></h3>
+      <p>
+        Angular's <code>effect()</code> runs asynchronously as microtasks or during change detection.
+        <code>flushEffects()</code> force-flushes the internal <code>EffectScheduler</code> synchronously without
+        requiring <code>fakeAsync</code>, <code>tick()</code>, or boilerplate <code>fixture.detectChanges()</code>.
+      </p>
+      <app-code-block [code]="flushEffectsCode" lang="typescript" />
+    </article>
+
+    <!-- ActivatedRouteMock -->
+    <article class="space-y-3">
+      <h3>2. Reactive Route Mock with <code>ActivatedRouteMock</code></h3>
+      <p>
+        Mocks Angular's <code>ActivatedRoute</code> with reactive <code>paramMap</code>, <code>params</code>,
+        <code>queryParamMap</code>, <code>queryParams</code>, and <code>data</code>. Includes
+        <code>setParams()</code> and <code>setQueryParams()</code> helper methods to test live navigation changes
+        mid-test.
+      </p>
+      <app-code-block [code]="routeMockCode" lang="typescript" />
+    </article>
+
+    <!-- RouterMock -->
+    <article class="space-y-3">
+      <h3>3. Mock Router with <code>RouterMock</code></h3>
+      <p>
+        A drop-in mock for Angular's <code>Router</code> that provides full spies for <code>navigate()</code>,
+        <code>navigateByUrl()</code>, an active <code>events</code> Subject that emits <code>NavigationEnd</code>, and
+        url trackers.
+      </p>
+      <app-code-block [code]="routerMockCode" lang="typescript" />
+    </article>
+  </section>
+</cll-page-container>

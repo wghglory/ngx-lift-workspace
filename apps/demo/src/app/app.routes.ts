@@ -20,6 +20,10 @@ import {DistinctOnChangeComponent} from './ngx-lib/pages/operators/distinct-on-c
 import {LoggerComponent} from './ngx-lib/pages/operators/logger/logger.component';
 import {PollComponent} from './ngx-lib/pages/operators/poll/poll.component';
 import {SwitchMapWithAsyncStateComponent} from './ngx-lib/pages/operators/switch-map-with-async-state/switch-map-with-async-state.component';
+import {ForkJoinWithRollbackComponent} from './ngx-lib/pages/operators/fork-join-with-rollback/fork-join-with-rollback.component';
+import {MergeWithTrackComponent} from './ngx-lib/pages/operators/merge-with-track/merge-with-track.component';
+import {WithCleanupComponent} from './ngx-lib/pages/operators/with-cleanup/with-cleanup.component';
+import {TestingUtilitiesComponent} from './ngx-lib/pages/utilities/testing-utilities/testing-utilities.component';
 import {ArrayJoinPipeComponent} from './ngx-lib/pages/pipes/array-join-pipe/array-join-pipe.component';
 import {ByteConverterPipeComponent} from './ngx-lib/pages/pipes/byte-converter-pipe/byte-converter-pipe.component';
 import {IsHttpsPipeComponent} from './ngx-lib/pages/pipes/is-https-pipe/is-https-pipe.component';
@@ -121,6 +125,18 @@ export const routes: Routes = [
             path: 'poll',
             component: PollComponent,
           },
+          {
+            path: 'mergeWithTrack',
+            component: MergeWithTrackComponent,
+          },
+          {
+            path: 'forkJoinWithRollback',
+            component: ForkJoinWithRollbackComponent,
+          },
+          {
+            path: 'withCleanup',
+            component: WithCleanupComponent,
+          },
         ],
       },
       {
@@ -199,6 +215,10 @@ export const routes: Routes = [
           {
             path: 'url',
             component: UrlComponent,
+          },
+          {
+            path: 'testing-utilities',
+            component: TestingUtilitiesComponent,
           },
         ],
       },

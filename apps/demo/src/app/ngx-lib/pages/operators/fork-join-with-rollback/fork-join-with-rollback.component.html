@@ -1,0 +1,48 @@
+<cll-page-container [title]="'forkJoinWithRollback'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>forkJoinWithRollback</code> executes an array or dictionary of asynchronous creation tasks in parallel. If any
+    task fails, all newly created resources (tagged with <code>isNew: true</code>) that succeeded before or during the
+    failure are automatically rolled back and deleted via the provided <code>deleteHandler</code> before the error is
+    surfaced.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Transactional Multi-Resource Provisioning</h3>
+      <p>Simulate successful provisioning versus partial failure with automatic rollback cleanup:</p>
+
+      <div class="flex gap-2">
+        <button class="btn btn-primary" type="button" [disabled]="isRunning()" (click)="runSimulation(false)">
+          Simulate All Succeed
+        </button>
+        <button class="btn btn-danger" type="button" [disabled]="isRunning()" (click)="runSimulation(true)">
+          Simulate Partial Failure (Trigger Rollback)
+        </button>
+      </div>
+
+      <div class="card p-4 bg-gray-50 font-mono text-xs max-h-60 overflow-y-auto space-y-1">
+        @if (logs().length === 0) {
+          <div class="text-gray-400">Click a simulation button to view execution log...</div>
+        }
+        @for (log of logs(); track log) {
+          <div>{{ log }}</div>
+        }
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>forkJoinWithRollback</h3>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+    </div>
+  </section>
+</cll-page-container>

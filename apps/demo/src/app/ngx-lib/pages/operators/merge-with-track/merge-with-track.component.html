@@ -1,0 +1,49 @@
+<cll-page-container [title]="'mergeWithTrack'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>mergeWithTrack</code> merges multiple observables while maintaining a map of the latest values emitted by each
+    source observable and identifying which specific source observable produced the most recent emission.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Multi-Stream Trigger Tracking</h3>
+      <p>Emit from Source A or Source B to observe the recorded stream state and last trigger origin:</p>
+
+      <div class="flex gap-2">
+        <button class="btn btn-primary" type="button" (click)="emitA()">Emit from Source A (Index 0)</button>
+        <button class="btn btn-outline" type="button" (click)="emitB()">Emit from Source B (Index 1)</button>
+      </div>
+
+      <div class="card p-4 space-y-2">
+        <div>
+          Last Trigger Origin:
+          @if (lastSourceIndex() !== null) {
+            <span class="badge badge-info"> Source {{ lastSourceIndex() === 0 ? 'A (Index 0)' : 'B (Index 1)' }} </span>
+          } @else {
+            <span class="text-gray-500">None</span>
+          }
+        </div>
+
+        <div>
+          <strong>Cumulative Latest Values:</strong>
+          <pre class="bg-gray-100 p-2 rounded text-xs mt-1">{{ trackedValues() | json }}</pre>
+        </div>
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>mergeWithTrack</h3>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+    </div>
+  </section>
+</cll-page-container>
