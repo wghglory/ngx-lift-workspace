@@ -1,0 +1,53 @@
+<cll-page-container [title]="'ScrollIntoViewDirective'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>[ngxScrollIntoView]</code> smoothly scrolls the target element into the user's viewport upon creation or when
+    its bound boolean expression evaluates to true. It is ideal for error banners, confirmation dialogs, or dynamically
+    expanded sections.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Dynamic Scroll Target</h3>
+      <p>
+        Click the button below to display the simulated error banner and watch the viewport scroll automatically to it.
+      </p>
+
+      <button class="btn btn-primary" type="button" (click)="triggerError()">Trigger Error Banner &amp; Scroll</button>
+
+      <div class="h-32 border border-dashed rounded p-4 flex items-center justify-center text-gray-500">
+        (Spacer block simulating long form content)
+      </div>
+
+      @if (showErrorBanner()) {
+        <div [ngxScrollIntoView]="showErrorBanner()" [scrollOptions]="{behavior: 'smooth', block: 'center'}">
+          <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+            <clr-alert-item>
+              <span class="alert-text">Target element smoothly brought into view automatically!</span>
+            </clr-alert-item>
+          </clr-alert>
+        </div>
+      }
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>Directive Properties</h3>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Inputs</h4>
+      <ul class="list-disc pl-5 text-sm space-y-1">
+        <li><code>ngxScrollIntoView: boolean | ''</code> — Whether to scroll. Defaults to <code>true</code>.</li>
+        <li><code>scrollOptions: ScrollIntoViewOptions</code> — Options passed to <code>scrollIntoView()</code>.</li>
+      </ul>
+    </div>
+  </section>
+</cll-page-container>

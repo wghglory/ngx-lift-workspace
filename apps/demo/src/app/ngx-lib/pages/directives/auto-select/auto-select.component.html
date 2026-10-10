@@ -1,0 +1,57 @@
+<cll-page-container [title]="'AutoSelectDirective'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>[ngxAutoSelect]</code> monitors a collection of options and automatically selects the value when exactly one
+    item is present in the list. This eliminates redundant clicks for users when a dropdown or selector has only a
+    single valid choice (e.g. only one tenant region or storage policy configured).
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Single vs Multiple Options</h3>
+      <p>
+        Click "Simulate Single Option Available" to see the control automatically pick the value without manual click.
+      </p>
+
+      <div class="flex gap-2">
+        <button class="btn btn-sm btn-primary" type="button" (click)="setSingle()">
+          Simulate Single Option Available
+        </button>
+        <button class="btn btn-sm btn-outline" type="button" (click)="setMultiple()">Reset to Multiple Options</button>
+      </div>
+
+      <form [formGroup]="form" clrForm>
+        <clr-select-container>
+          <label for="as-region">Target Region</label>
+          <select id="as-region" clrSelect formControlName="region" [ngxAutoSelect]="regions()">
+            <option [ngValue]="null">Select a region...</option>
+            @for (r of regions(); track r) {
+              <option [value]="r">{{ r }}</option>
+            }
+          </select>
+          <clr-control-helper>Current selected: {{ form.controls.region.value ?? '(none)' }}</clr-control-helper>
+        </clr-select-container>
+      </form>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>Directive Properties</h3>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Inputs</h4>
+      <ul class="list-disc pl-5 text-sm space-y-1">
+        <li><code>ngxAutoSelect: T[]</code> — Required array of options to monitor.</li>
+        <li><code>compareWith?: (a: T, b: T) =&gt; boolean</code> — Optional comparator for complex objects.</li>
+      </ul>
+    </div>
+  </section>
+</cll-page-container>

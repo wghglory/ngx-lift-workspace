@@ -30,6 +30,15 @@ export const ngxLiftNavConfig: NavConfig[] = [
     ],
   },
   {
+    path: '/ngx-lift/directives',
+    value: 'Directives',
+    icon: 'cursor-hand-click',
+    children: [
+      {path: '/auto-select', value: 'AutoSelectDirective'},
+      {path: '/scroll-into-view', value: 'ScrollIntoViewDirective'},
+    ],
+  },
+  {
     path: '/ngx-lift/pipes',
     value: 'Pipes',
     icon: 'pipes',
@@ -39,6 +48,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/is-https', value: 'Is Https'},
       {path: '/mask', value: 'Mask'},
       {path: '/range', value: 'Range'},
+      {path: '/touched-and-invalid', value: 'Touched and Invalid'},
     ],
   },
   {
