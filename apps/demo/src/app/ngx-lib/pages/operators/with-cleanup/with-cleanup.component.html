@@ -1,0 +1,48 @@
+<cll-page-container [title]="'withCleanup'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>withCleanup</code> manages the lifecycle of resources across complex update pipelines. When the projected
+    operation succeeds, all superseded resources (identified by <code>replacedOldName</code>) are deleted. If the
+    projected operation fails, any newly created resources (<code>isNew: true</code>) are rolled back and deleted,
+    preventing partial state leaks.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Safe Pipeline Update with Deprecation & Rollback</h3>
+      <p>Simulate a certificate rotation pipeline with automatic superseded resource cleanup or rollback:</p>
+
+      <div class="flex gap-2">
+        <button class="btn btn-primary" type="button" [disabled]="isRunning()" (click)="runSimulation(false)">
+          Simulate Pipeline Success (Purge Tombstones)
+        </button>
+        <button class="btn btn-danger" type="button" [disabled]="isRunning()" (click)="runSimulation(true)">
+          Simulate Pipeline Failure (Roll Back New Resources)
+        </button>
+      </div>
+
+      <div class="card p-4 bg-gray-50 font-mono text-xs max-h-60 overflow-y-auto space-y-1">
+        @if (logs().length === 0) {
+          <div class="text-gray-400">Click a button to run the simulation...</div>
+        }
+        @for (log of logs(); track log) {
+          <div>{{ log }}</div>
+        }
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>withCleanup</h3>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+    </div>
+  </section>
+</cll-page-container>

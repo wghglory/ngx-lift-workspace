@@ -27,6 +27,9 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/distinctOnChange', value: 'distinctOnChange'},
       {path: '/logger', value: 'logger'},
       {path: '/poll', value: 'poll'},
+      {path: '/mergeWithTrack', value: 'mergeWithTrack'},
+      {path: '/forkJoinWithRollback', value: 'forkJoinWithRollback'},
+      {path: '/withCleanup', value: 'withCleanup'},
     ],
   },
   {
@@ -64,6 +67,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/is-equal', value: 'isEqual'},
       {path: '/pick-by', value: 'pickBy & omitBy'},
       {path: '/url', value: 'URL'},
+      {path: '/testing-utilities', value: 'Testing (ngx-lift/testing)'},
     ],
   },
 ];

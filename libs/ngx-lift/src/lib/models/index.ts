@@ -3,5 +3,6 @@ export * from './kubernetes-list.model';
 export * from './kubernetes-object.model';
 export * from './kubernetes-object-condition.model';
 export * from './kubernetes-object-meta.model';
+export * from './resource-state.model';
 export * from './resource-status.model';
 export * from './to-signal-form.model';
