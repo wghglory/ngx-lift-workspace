@@ -1,0 +1,33 @@
+<cll-page-container [title]="'downloadFile'" customClass="space-y-9">
+  <p>
+    <code>downloadFile</code> triggers programmatic client-side file downloads from raw string content or
+    <code>Blob</code>
+    instances, automatically attaching to the DOM for cross-browser safety (including Firefox) and cleaning up object
+    URLs.
+  </p>
+
+  <section class="space-y-4">
+    <h2>Interactive Playground</h2>
+
+    <div class="card">
+      <div class="card-block space-y-4">
+        <clr-input-container>
+          <label>File Name</label>
+          <input clrInput class="w-full" [(ngModel)]="fileName" />
+        </clr-input-container>
+
+        <div>
+          <label class="font-semibold block mb-2">File Content</label>
+          <textarea clrTextarea class="w-full font-mono text-sm" rows="6" [(ngModel)]="fileContent"></textarea>
+        </div>
+
+        <button class="btn btn-primary" (click)="handleDownload()">Download File</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Usage Example</h2>
+    <app-code-block [code]="codeSnippet" lang="typescript" />
+  </section>
+</cll-page-container>

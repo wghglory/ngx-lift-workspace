@@ -1,0 +1,47 @@
+<cll-page-container [title]="'quantityToScalar'" customClass="space-y-9">
+  <p>
+    <code>quantityToScalar</code> converts Kubernetes-style resource strings (<code>'21402Mi'</code>,
+    <code>'100Gi'</code>, <code>'1Ti'</code>) into standard <code>bigint</code> byte scalars, allowing seamless
+    arithmetic and comparison across mismatched units.
+  </p>
+
+  <section class="space-y-4">
+    <h2>Interactive Playground</h2>
+
+    <div class="card">
+      <div class="card-block space-y-4">
+        <div class="clr-row">
+          <div class="clr-col-12 clr-col-md-6">
+            <clr-input-container>
+              <label>Quantity 1</label>
+              <input clrInput [(ngModel)]="quantityInput1" />
+            </clr-input-container>
+            <p class="text-sm mt-1">
+              Scalar Bytes: <code>{{ scalar1().toString() }}</code>
+            </p>
+          </div>
+
+          <div class="clr-col-12 clr-col-md-6">
+            <clr-input-container>
+              <label>Quantity 2</label>
+              <input clrInput [(ngModel)]="quantityInput2" />
+            </clr-input-container>
+            <p class="text-sm mt-1">
+              Scalar Bytes: <code>{{ scalar2().toString() }}</code>
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded border bg-blue-50">
+          <h4 class="font-bold mb-1">Unit Comparison</h4>
+          <p class="text-lg font-semibold text-blue-900">{{ comparison() }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Usage Example</h2>
+    <app-code-block [code]="codeSnippet" lang="typescript" />
+  </section>
+</cll-page-container>

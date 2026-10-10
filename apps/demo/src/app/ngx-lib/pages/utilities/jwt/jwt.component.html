@@ -1,0 +1,49 @@
+<cll-page-container [title]="'decodeJwtPayload & isJwtExpiredByClaims'" customClass="space-y-9">
+  <p>
+    <code>decodeJwtPayload</code> and <code>isJwtExpiredByClaims</code> provide client-side JWT token inspection with
+    UTF-8 base64url decoding and configurable expiry buffer checks, without external dependencies.
+  </p>
+
+  <section class="space-y-4">
+    <h2>Interactive Playground</h2>
+
+    <div class="card">
+      <div class="card-block space-y-4">
+        <div>
+          <label class="font-semibold block mb-2">JWT Token Input</label>
+          <textarea clrTextarea class="w-full font-mono text-sm" rows="3" [(ngModel)]="tokenInput"></textarea>
+        </div>
+
+        <clr-input-container>
+          <label>Expiry Safety Buffer (seconds)</label>
+          <input clrInput type="number" [(ngModel)]="offsetSeconds" />
+        </clr-input-container>
+
+        <div class="clr-row">
+          <div class="clr-col-12 clr-col-md-6">
+            <label class="font-semibold block mb-2">Decoded Claims Payload</label>
+            <pre class="bg-gray-100 p-3 rounded text-sm overflow-auto h-40">{{ decodedPayload() }}</pre>
+          </div>
+
+          <div class="clr-col-12 clr-col-md-6 flex flex-col justify-center">
+            <div class="p-4 rounded border" [class.bg-green-50]="!isExpired()" [class.bg-red-50]="isExpired()">
+              <h4 class="font-bold mb-1">Token Status</h4>
+              <p class="text-lg">
+                @if (isExpired()) {
+                  <span class="text-danger font-semibold">❌ Expired (or invalid)</span>
+                } @else {
+                  <span class="text-success font-semibold">✅ Valid & Active</span>
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Usage Example</h2>
+    <app-code-block [code]="codeSnippet" lang="typescript" />
+  </section>
+</cll-page-container>

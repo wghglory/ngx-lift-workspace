@@ -1,0 +1,36 @@
+<cll-page-container [title]="'flattenObject'" customClass="space-y-9">
+  <p>
+    <code>flattenObject</code> transforms deeply nested objects into a single-level key-path map with customizable
+    separators (default: <code>'.'</code>), preserving arrays and primitives as terminal values.
+  </p>
+
+  <section class="space-y-4">
+    <h2>Interactive Playground</h2>
+
+    <div class="card">
+      <div class="card-block space-y-4">
+        <clr-input-container>
+          <label>Key Path Separator</label>
+          <input clrInput [(ngModel)]="separator" placeholder="." />
+        </clr-input-container>
+
+        <div class="clr-row">
+          <div class="clr-col-12 clr-col-md-6">
+            <label class="font-semibold block mb-2">Nested JSON Input</label>
+            <textarea clrTextarea class="w-full font-mono text-sm" rows="10" [(ngModel)]="nestedInput"></textarea>
+          </div>
+
+          <div class="clr-col-12 clr-col-md-6">
+            <label class="font-semibold block mb-2">Flattened Object Output</label>
+            <pre class="bg-gray-100 p-3 rounded text-sm overflow-auto h-48">{{ flattenedOutput() }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Usage Example</h2>
+    <app-code-block [code]="codeSnippet" lang="typescript" />
+  </section>
+</cll-page-container>
