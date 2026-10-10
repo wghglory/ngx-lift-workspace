@@ -1,0 +1,46 @@
+<cll-page-container [title]="'integerValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>integerValidator</code> ensures that a control value represents a whole number (integer), rejecting floating
+    point numbers, decimals, and non-numeric inputs.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Pod Replicas Count</h3>
+      <p>Enter whole integers vs decimals (e.g., 2 vs 2.5):</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="int-replicas">Replicas</label>
+          <input id="int-replicas" type="number" clrInput formControlName="replicas" />
+          <clr-control-helper>Whole number of replica pods</clr-control-helper>
+          @if (form.controls.replicas.errors?.['integer']) {
+            <clr-control-error>Value must be an integer (no decimals allowed)</clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>integerValidator</h3>
+      <p>Angular validator checking if the value is an integer via <code>Number.isInteger()</code>.</p>
+
+      <h4>Signature</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        Returns <code>&#123;integer: true&#125;</code> if the input is not a whole number, or <code>null</code> if
+        valid.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

@@ -1,0 +1,56 @@
+<cll-page-container [title]="'noSpaceAllowed & onlyAsciiCharsAllowed'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>noSpaceAllowed</code> ensures that a text control contains no whitespace characters.
+    <code>onlyAsciiCharsAllowed</code> ensures that a control contains only ASCII characters in the range
+    <code>\u0020 - \u007E</code>.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Identifier & ASCII Restrictions</h3>
+      <p>Test inputs with spaces or non-ASCII characters (e.g., emojis or unicode letters):</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="tp-identifier">Identifier</label>
+          <input id="tp-identifier" clrInput formControlName="identifier" />
+          <clr-control-helper>Must not contain spaces</clr-control-helper>
+          @if (form.controls.identifier.errors?.['noSpaceAllowed']) {
+            <clr-control-error>Spaces are not allowed in identifiers</clr-control-error>
+          }
+        </clr-input-container>
+
+        <clr-input-container>
+          <label for="tp-ascii">ASCII Only Text</label>
+          <input id="tp-ascii" clrInput formControlName="asciiOnly" />
+          <clr-control-helper>Only standard ASCII characters allowed</clr-control-helper>
+          @if (form.controls.asciiOnly.errors?.['onlyAsciiCharsAllowed']) {
+            <clr-control-error>Non-ASCII characters or unicode symbols are not permitted</clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>Text Pattern Validators</h3>
+      <p>Angular validators for common string character constraints.</p>
+
+      <h4>Signatures</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        Returns <code>&#123;noSpaceAllowed: true&#125;</code> or <code>&#123;onlyAsciiCharsAllowed: true&#125;</code> on
+        violation, or <code>null</code> if valid.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

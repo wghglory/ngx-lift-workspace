@@ -1,0 +1,45 @@
+<cll-page-container [title]="'jsonValidator'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>jsonValidator</code> verifies that a text input contains syntactically valid JSON. Empty or whitespace-only
+    values are ignored (pair with <code>Validators.required</code> if mandatory).
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Configuration Editor</h3>
+      <p>Edit the JSON below or introduce syntax errors (e.g., trailing comma or missing quote):</p>
+      <form [formGroup]="form" clrForm>
+        <clr-textarea-container>
+          <label for="json-config">JSON Configuration</label>
+          <textarea id="json-config" clrTextarea formControlName="config" rows="6" class="font-mono text-sm"></textarea>
+          <clr-control-helper>Enter valid JSON object or array</clr-control-helper>
+          @if (form.controls.config.errors?.['invalidJson']) {
+            <clr-control-error>Invalid JSON format. Please verify quotation marks and commas.</clr-control-error>
+          }
+        </clr-textarea-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>jsonValidator</h3>
+      <p>Angular validator verifying valid JSON syntax via <code>JSON.parse()</code>.</p>
+
+      <h4>Signature</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        Returns <code>&#123;invalidJson: true&#125;</code> on syntax parse error, or <code>null</code> if valid.
+      </p>
+    </div>
+  </section>
+</cll-page-container>

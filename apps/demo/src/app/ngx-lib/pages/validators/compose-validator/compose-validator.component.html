@@ -1,0 +1,51 @@
+<cll-page-container [title]="'composeValidators'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>composeValidators</code> sequentially executes an array of validation rules and returns immediately upon the
+    first failing validator with a single configured <code>errorKey</code> mapping to the failed rule's
+    <code>message</code>. This short-circuits further evaluation and cleanly displays a single targeted error message at
+    a time.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Sequential Username Validation</h3>
+      <p>Short-circuits validation: checks min length &rarr; max length &rarr; no spaces.</p>
+      <form [formGroup]="form" clrForm>
+        <clr-input-container>
+          <label for="compose-username">Username</label>
+          <input id="compose-username" clrInput formControlName="username" />
+          <clr-control-helper>Between 3 and 15 characters, no spaces</clr-control-helper>
+          @if (form.controls.username.errors?.['required']) {
+            <clr-control-error>Username is required</clr-control-error>
+          }
+          @if (form.controls.username.errors?.['usernameError']; as errorMsg) {
+            <clr-control-error>{{ errorMsg }}</clr-control-error>
+          }
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="exampleCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section class="space-y-4">
+    <h2>API Reference</h2>
+    <div class="space-y-3">
+      <h3>composeValidators</h3>
+      <p>Composes multiple validation rules and stops at the first failure.</p>
+
+      <h4>Signature</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>Returns</h4>
+      <p class="text-sm">
+        A validator function returning <code>&#123; [errorKey]: message &#125;</code> for the first failing rule or
+        <code>null</code> if all pass.
+      </p>
+    </div>
+  </section>
+</cll-page-container>
