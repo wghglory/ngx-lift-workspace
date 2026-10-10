@@ -1,0 +1,17 @@
+:host {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.time-info {
+  text-transform: lowercase;
+}
+
+.text-error {
+  color: var(--clr-color-danger-700, #c92c00);
+  font-weight: 600;
+}
+
+.empty-placeholder {
+  color: var(--clr-color-neutral-600, #666);
+}

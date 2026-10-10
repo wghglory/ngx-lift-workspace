@@ -1,0 +1,38 @@
+:host {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.clr-input-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.autocomplete-menu {
+  .dropdown-menu {
+    max-height: 240px;
+    overflow-y: auto;
+    min-width: 100%;
+    margin-top: 2px;
+    background-color: var(--clr-dropdown-bg-color, #ffffff);
+    box-shadow: var(--clr-dropdown-box-shadow, 0 3px 6px rgba(0, 0, 0, 0.16));
+    border: 1px solid var(--clr-dropdown-border-color, #cccccc);
+    border-radius: var(--clr-global-border-radius, 3px);
+  }
+
+  .dropdown-item {
+    cursor: pointer;
+    overflow: visible;
+
+    &.active {
+      background-color: var(--clr-dropdown-active-bg-color, #e1f1f6);
+      color: var(--clr-dropdown-active-color, #004a6b);
+    }
+
+    &.empty {
+      color: var(--clr-color-neutral-600, #666666);
+      cursor: default;
+    }
+  }
+}

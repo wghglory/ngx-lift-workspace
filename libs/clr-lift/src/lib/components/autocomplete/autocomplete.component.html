@@ -1,0 +1,52 @@
+<div class="clr-input-wrapper">
+  <div class="clr-input-group">
+    <clr-icon shape="search" clrInputPrefix />
+    <input
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin"
+      class="clr-input"
+      type="text"
+      [value]="inputValue()"
+      [placeholder]="effectivePlaceholder()"
+      [disabled]="disabled()"
+      [size]="size()"
+      autocomplete="off"
+      (input)="onInput($event)"
+      (keyup.enter)="onEnter()"
+      (keydown.arrowdown)="onArrowDown($event)"
+      (keydown.arrowup)="onArrowUp($event)"
+      (keydown.escape)="onBlur()"
+      (focus)="isOpen.set(true)"
+      (blur)="onBlur()"
+    />
+  </div>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  (detach)="isOpen.set(false)"
+>
+  <div class="dropdown open autocomplete-menu">
+    <div class="dropdown-menu" role="menu">
+      @for (item of suggestions(); track item; let i = $index) {
+        <div
+          class="dropdown-item"
+          role="menuitem"
+          tabindex="-1"
+          aria-haspopup="menu"
+          [attr.aria-expanded]="i === activeItemIndex()"
+          [class.active]="i === activeItemIndex()"
+          (mousedown)="onSelect(item)"
+        >
+          {{ item }}
+        </div>
+      } @empty {
+        <div class="dropdown-item empty" role="status">
+          {{ effectiveEmptyPlaceholder() }}
+        </div>
+      }
+    </div>
+  </div>
+</ng-template>

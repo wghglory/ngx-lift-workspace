@@ -1,0 +1,57 @@
+<cll-page-container [title]="'Autocomplete'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>AutocompleteComponent</code> provides an overlay-driven dropdown input built on top of Angular CDK Overlay
+    and Clarity Design System. It supports real-time text filtering, keyboard navigation (ArrowUp, ArrowDown, Enter,
+    Escape), blur and click-outside dismissal, and two-way integration with Angular Reactive Forms
+    (<code>ControlValueAccessor</code>).
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Reactive Form Control</h3>
+      <p>Seamlessly bind an autocomplete input using <code>[formControl]</code>:</p>
+      <div class="card p-4 space-y-4 max-w-md">
+        <div>
+          <label class="font-semibold block mb-2" for="languageInput">Programming Language:</label>
+          <cll-autocomplete
+            id="languageInput"
+            [options]="languages"
+            [formControl]="languageControl"
+            placeholder="Select or search a language..."
+          />
+        </div>
+        <div class="text-sm">
+          <strong>Current Form Value:</strong> <code>{{ languageControl.value }}</code>
+        </div>
+      </div>
+      <app-code-block [code]="reactiveFormCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Selection Events & Custom Placeholder</h3>
+      <p>Listen directly to selection changes with the <code>(selected)</code> output event:</p>
+      <div class="card p-4 space-y-4 max-w-md">
+        <div>
+          <label class="font-semibold block mb-2" for="namespaceInput">Target Namespace:</label>
+          <cll-autocomplete
+            id="namespaceInput"
+            [options]="k8sNamespaces"
+            placeholder="Type namespace name..."
+            emptyPlaceholder="No matching namespace found"
+            (selected)="onSelectedLanguage($event)"
+          />
+        </div>
+        @if (selectedStandaloneValue(); as val) {
+          <div class="text-sm">
+            <strong>Last Selected Event:</strong> <span class="label label-info">{{ val }}</span>
+          </div>
+        }
+      </div>
+      <app-code-block [code]="eventsCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

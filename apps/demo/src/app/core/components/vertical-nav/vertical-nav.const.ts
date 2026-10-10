@@ -82,7 +82,9 @@ export const clrLiftNavConfig: NavConfig[] = [
     children: [
       {path: '/alert', value: 'Alert'},
       {path: '/multi-alerts', value: 'Alerts (Multiple)'},
+      {path: '/autocomplete', value: 'Autocomplete'},
       {path: '/certificate', value: 'Certificate View'},
+      {path: '/expiration-time', value: 'Expiration Time'},
       {path: '/key-value-inputs', value: 'Key Value Inputs'},
       {path: '/spinner', value: 'Spinner'},
       {path: '/status-indicator', value: 'Status Indicator'},

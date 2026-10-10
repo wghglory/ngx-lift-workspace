@@ -1,10 +1,12 @@
 import {Routes} from '@angular/router';
 
 import {AlertDemoComponent} from './clr-lib/pages/alert-demo/alert-demo.component';
+import {AutocompleteDemoComponent} from './clr-lib/pages/autocomplete-demo/autocomplete-demo.component';
 import {CertificateDemoComponent} from './clr-lib/pages/certificate-demo/certificate-demo.component';
 import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component';
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
+import {ExpirationTimeDemoComponent} from './clr-lib/pages/expiration-time-demo/expiration-time-demo.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
 import {MultiAlertsDemoComponent} from './clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component';
@@ -236,8 +238,16 @@ export const routes: Routes = [
             component: MultiAlertsDemoComponent,
           },
           {
+            path: 'autocomplete',
+            component: AutocompleteDemoComponent,
+          },
+          {
             path: 'certificate',
             component: CertificateDemoComponent,
+          },
+          {
+            path: 'expiration-time',
+            component: ExpirationTimeDemoComponent,
           },
           {
             path: 'key-value-inputs',

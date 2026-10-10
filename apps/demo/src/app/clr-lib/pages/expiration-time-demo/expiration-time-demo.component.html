@@ -1,0 +1,64 @@
+<cll-page-container [title]="'Expiration Time'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>ExpirationTimeComponent</code> displays a human-readable countdown to an expiration timestamp. When the
+    timestamp has passed, it automatically switches to an expired indicator styled with Clarity design tokens.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Standard Countdown & Expiration</h3>
+      <p>Countdown rendered in days or hours, transitioning to "Expired" when past:</p>
+      <div class="card p-4 space-y-3">
+        <div>
+          <strong>Expires in ~3 days:</strong>
+          <span class="ml-2">
+            <cll-expiration-time [expiresAt]="futureDateInDays" />
+          </span>
+        </div>
+        <div>
+          <strong>Expires in ~2 hours:</strong>
+          <span class="ml-2">
+            <cll-expiration-time [expiresAt]="futureDateInHours" />
+          </span>
+        </div>
+        <div>
+          <strong>Expires in ~5 minutes (with seconds):</strong>
+          <span class="ml-2">
+            <cll-expiration-time [expiresAt]="futureDateInSeconds" />
+          </span>
+        </div>
+        <div>
+          <strong>Already Expired:</strong>
+          <span class="ml-2">
+            <cll-expiration-time [expiresAt]="expiredDate" />
+          </span>
+        </div>
+        <div>
+          <strong>Null / No Expiration:</strong>
+          <span class="ml-2">
+            <cll-expiration-time [expiresAt]="null" emptyPlaceholder="Never" />
+          </span>
+        </div>
+      </div>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Custom Expired Class</h3>
+      <p>Customize the CSS class applied when expired:</p>
+      <div class="card p-4 space-y-3">
+        <div>
+          <strong>Custom Expired Badge:</strong>
+          <span class="ml-2">
+            <cll-expiration-time [expiresAt]="expiredDate" expiredClass="label label-danger" />
+          </span>
+        </div>
+      </div>
+      <app-code-block [code]="customExampleCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

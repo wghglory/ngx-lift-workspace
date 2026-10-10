@@ -1,0 +1,24 @@
+@if (expiresAt()) {
+  @if (isExpired()) {
+    <span [class]="expiredClass()">
+      {{ expiredLabel() }}
+    </span>
+  } @else if (timeUntil(); as t) {
+    <span class="time-info">
+      @if (t.days > 0) {
+        {{ t.days }} {{ daysUnit() }}
+      }
+      @if (t.hours > 0) {
+        {{ t.hours }} {{ hoursUnit() }}
+      }
+      @if (t.minutes > 0) {
+        {{ t.minutes }} {{ minsUnit() }}
+      }
+      @if (showSeconds() && t.seconds > 0 && t.days === 0 && t.hours === 0 && t.minutes <= 10) {
+        {{ t.seconds }} {{ secondsUnit() }}
+      }
+    </span>
+  }
+} @else {
+  <span class="empty-placeholder">{{ emptyPlaceholder() }}</span>
+}
