@@ -1,0 +1,49 @@
+<cll-page-container [title]="'Kubernetes Object Status Signpost'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>K8sObjectStatusSignpostComponent</code> (<code>&lt;cll-k8s-object-status-signpost&gt;</code>) extracts and
+    displays the overall health reason from a set of Kubernetes conditions, dynamically applying semantic Clarity status
+    colors (success, error, warning, info), with an interactive signpost to inspect raw condition payloads.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Semantic Status Types</h3>
+      <p>Display status reasons with automated color coding and condition inspection popovers:</p>
+      <div class="card p-4 space-y-4 max-w-lg">
+        <div class="flex items-center justify-between border-b pb-2">
+          <span>Production Database:</span>
+          <cll-k8s-object-status-signpost [conditions]="readyConditions" resourceName="prod-db" [bold]="true" />
+        </div>
+        <div class="flex items-center justify-between border-b pb-2">
+          <span>Staging Ingress:</span>
+          <cll-k8s-object-status-signpost
+            [conditions]="failedConditions"
+            resourceName="staging-ingress"
+            [bold]="true"
+          />
+        </div>
+        <div class="flex items-center justify-between border-b pb-2">
+          <span>Redis Cluster:</span>
+          <cll-k8s-object-status-signpost
+            [conditions]="upgradingConditions"
+            resourceName="redis-cluster"
+            [bold]="true"
+          />
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Kafka Broker:</span>
+          <cll-k8s-object-status-signpost
+            [conditions]="degradedConditions"
+            resourceName="kafka-broker-0"
+            [bold]="true"
+          />
+        </div>
+      </div>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

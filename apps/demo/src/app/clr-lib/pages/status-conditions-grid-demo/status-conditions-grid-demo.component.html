@@ -1,0 +1,30 @@
+<cll-page-container [title]="'Status Conditions Grid'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    The <code>StatusConditionsGridComponent</code> (<code>&lt;cll-status-conditions-grid&gt;</code>) visualizes
+    Kubernetes resource status conditions (<code>KubernetesObjectCondition[]</code>) in a Clarity Datagrid with
+    timestamp sorting, hideable columns, pagination, and a JSON export function.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Examples</h2>
+
+    <article class="space-y-3">
+      <h3>Example 1: Kubernetes Conditions Datagrid</h3>
+      <p>Render status conditions with automatic timestamp sorting and JSON export capability:</p>
+      <div class="card p-4 space-y-4">
+        <cll-status-conditions-grid [conditions]="sampleConditions" exportFileName="postgres-demo-cluster" />
+      </div>
+      <app-code-block [code]="basicExampleCode" lang="html" />
+    </article>
+
+    <article class="space-y-3">
+      <h3>Example 2: Empty Conditions Placeholder</h3>
+      <p>When conditions are not yet reported by the controller, a friendly placeholder is displayed:</p>
+      <div class="card p-4 space-y-4">
+        <cll-status-conditions-grid [conditions]="emptyConditions" exportFileName="empty-cluster" />
+      </div>
+    </article>
+  </section>
+</cll-page-container>

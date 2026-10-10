@@ -6,9 +6,11 @@ import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-da
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
+import {K8sObjectStatusSignpostDemoComponent} from './clr-lib/pages/k8s-object-status-signpost-demo/k8s-object-status-signpost-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
 import {MultiAlertsDemoComponent} from './clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component';
 import {SpinnerDemoComponent} from './clr-lib/pages/spinner-demo/spinner-demo.component';
+import {StatusConditionsGridDemoComponent} from './clr-lib/pages/status-conditions-grid-demo/status-conditions-grid-demo.component';
 import {StatusIndicatorDemoComponent} from './clr-lib/pages/status-indicator-demo/status-indicator-demo.component';
 import {TimelineWizardDemoComponent} from './clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component';
 import {ToastDemoComponent} from './clr-lib/pages/toast-demo/toast-demo.component';
@@ -240,8 +242,16 @@ export const routes: Routes = [
             component: CertificateDemoComponent,
           },
           {
+            path: 'k8s-object-status-signpost',
+            component: K8sObjectStatusSignpostDemoComponent,
+          },
+          {
             path: 'key-value-inputs',
             component: KeyValueInputsDemoComponent,
+          },
+          {
+            path: 'status-conditions-grid',
+            component: StatusConditionsGridDemoComponent,
           },
           {
             path: 'status-indicator',

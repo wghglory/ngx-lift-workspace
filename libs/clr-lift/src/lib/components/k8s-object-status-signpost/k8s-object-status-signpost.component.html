@@ -1,0 +1,19 @@
+<span [class]="statusClasses()" [style.font-weight]="bold() ? '500' : 'normal'">
+  {{ statusReason() }}
+</span>
+@if (shouldShowSignpost()) {
+  <clr-signpost class="k8s-status-signpost">
+    <button clrSignpostTrigger type="button" class="btn btn-sm btn-link btn-icon" [attr.aria-label]="signpostTitle()">
+      <clr-icon shape="info-circle" [size]="iconSize()" />
+    </button>
+    <clr-signpost-content *clrIfOpen [clrPosition]="position()">
+      <h4 class="signpost-title">
+        {{ signpostTitle() }}
+        @if (resourceName()) {
+          - {{ resourceName() }}
+        }
+      </h4>
+      <pre class="signpost-raw-conditions">{{ conditions() | json }}</pre>
+    </clr-signpost-content>
+  </clr-signpost>
+}

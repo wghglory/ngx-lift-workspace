@@ -1,0 +1,41 @@
+<div class="status-conditions-actions">
+  <button type="button" class="btn btn-sm btn-outline" [disabled]="conditions().length === 0" (click)="exportJson()">
+    <clr-icon shape="download" />
+    {{ 'StatusConditionsGrid.exportJson' | translate }}
+  </button>
+</div>
+
+<clr-datagrid>
+  <clr-dg-column [clrDgField]="'type'">{{ 'StatusConditionsGrid.type' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgField]="'status'">{{ 'StatusConditionsGrid.status' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgField]="'reason'">{{ 'StatusConditionsGrid.reason' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgField]="'message'">{{ 'StatusConditionsGrid.message' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgSortBy]="timeComparator" [clrDgSortOrder]="descSort">
+    {{ 'StatusConditionsGrid.lastTransitionTime' | translate }}
+  </clr-dg-column>
+  <clr-dg-column [clrDgField]="'observedGeneration'">
+    <ng-container *clrDgHideableColumn="{hidden: true}">
+      {{ 'StatusConditionsGrid.observedGeneration' | translate }}
+    </ng-container>
+  </clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let condition of conditions()">
+    <clr-dg-cell>{{ condition.type }}</clr-dg-cell>
+    <clr-dg-cell>{{ condition.status }}</clr-dg-cell>
+    <clr-dg-cell>{{ condition.reason || '-' }}</clr-dg-cell>
+    <clr-dg-cell>{{ condition.message || '-' }}</clr-dg-cell>
+    <clr-dg-cell>
+      {{ condition.lastTransitionTime ? (condition.lastTransitionTime | date: 'medium') : '-' }}
+    </clr-dg-cell>
+    <clr-dg-cell>{{ condition.observedGeneration ?? '-' }}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-placeholder>{{ 'StatusConditionsGrid.noConditions' | translate }}</clr-dg-placeholder>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="10">
+      <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]">Conditions per page</clr-dg-page-size>
+      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of {{ pagination.totalItems }} conditions
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
