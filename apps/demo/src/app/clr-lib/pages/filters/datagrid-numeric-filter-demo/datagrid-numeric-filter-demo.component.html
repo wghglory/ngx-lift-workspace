@@ -1,0 +1,57 @@
+<cll-page-container [title]="'DatagridCustomNumericFilter'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>DatagridCustomNumericFilter</code> implements Clarity's <code>ClrDatagridNumericFilterInterface</code>. It
+    provides range filtering (inclusive min/max) with native support for dot-notation paths on deeply nested objects.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Interactive Numeric Filter Demo</h2>
+
+    <article class="space-y-4">
+      <p>
+        Click the numeric filter icon in the <strong>CPU</strong> or <strong>Memory</strong> columns to filter clusters
+        by custom resource bounds:
+      </p>
+
+      <div class="card p-4">
+        <clr-datagrid>
+          <clr-dg-column [clrDgField]="'name'">Cluster Name</clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'spec.resources.cpu'">
+            CPU Cores
+            <clr-dg-numeric-filter [clrDgNumericFilter]="cpuFilter" />
+          </clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'spec.resources.memoryGb'">
+            Memory (GB)
+            <clr-dg-numeric-filter [clrDgNumericFilter]="memoryFilter" />
+          </clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'nodeCount'">
+            Node Count
+            <clr-dg-numeric-filter [clrDgNumericFilter]="nodeCountFilter" />
+          </clr-dg-column>
+
+          <clr-dg-row *clrDgItems="let cluster of clusters()">
+            <clr-dg-cell>{{ cluster.name }}</clr-dg-cell>
+            <clr-dg-cell>{{ cluster.spec.resources.cpu }} Cores</clr-dg-cell>
+            <clr-dg-cell>{{ cluster.spec.resources.memoryGb }} GB</clr-dg-cell>
+            <clr-dg-cell>{{ cluster.nodeCount }} Nodes</clr-dg-cell>
+          </clr-dg-row>
+
+          <clr-dg-footer>
+            <clr-dg-pagination [clrDgPageSize]="5">
+              <clr-dg-page-size [clrPageSizeOptions]="[5, 10]">Clusters per page</clr-dg-page-size>
+              {{ clusters().length }} clusters
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+      <app-code-block [code]="htmlCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

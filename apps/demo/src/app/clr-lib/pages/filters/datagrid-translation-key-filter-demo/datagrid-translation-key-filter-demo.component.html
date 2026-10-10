@@ -1,0 +1,61 @@
+<cll-page-container [title]="'DatagridTranslationKeyFilter'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>DatagridTranslationKeyFilter</code> allows filtering on columns where the underlying data model stores
+    constant enum keys (e.g. <code>"ADMIN"</code> or <code>"PROVISIONING"</code>), but the rendered cell displays
+    human-readable translated labels (e.g. <code>"Administrator"</code> or <code>"In Progress"</code>).
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Interactive Translation Key Filter Demo</h2>
+
+    <article class="space-y-4">
+      <p>
+        Try searching the <strong>Role</strong> or <strong>Status</strong> filter by the translated display label (e.g.
+        <code>"Admin"</code>, <code>"Operator"</code>, or <code>"Progress"</code>):
+      </p>
+
+      <div class="card p-4">
+        <clr-datagrid>
+          <clr-dg-column [clrDgField]="'username'">User Email</clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'role'">
+            Role
+            <clr-dg-string-filter [clrDgStringFilter]="roleFilter" />
+          </clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'status'">
+            Status
+            <clr-dg-string-filter [clrDgStringFilter]="statusFilter" />
+          </clr-dg-column>
+
+          <clr-dg-row *clrDgItems="let user of users()">
+            <clr-dg-cell>{{ user.username }}</clr-dg-cell>
+            <clr-dg-cell>{{ roleMap[user.role] }}</clr-dg-cell>
+            <clr-dg-cell>
+              <span
+                class="badge"
+                [class.badge-success]="user.status === 'READY'"
+                [class.badge-warning]="user.status === 'PROVISIONING'"
+                [class.badge-danger]="user.status === 'SUSPENDED'"
+              >
+                {{ statusMap[user.status] }}
+              </span>
+            </clr-dg-cell>
+          </clr-dg-row>
+
+          <clr-dg-footer>
+            <clr-dg-pagination [clrDgPageSize]="5">
+              <clr-dg-page-size [clrPageSizeOptions]="[5, 10]">Users per page</clr-dg-page-size>
+              {{ users().length }} users
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+      <app-code-block [code]="htmlCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

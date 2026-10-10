@@ -3,6 +3,7 @@
  */
 
 export * from './lib/components';
+export * from './lib/filters';
 export * from './lib/models';
 export * from './lib/operators';
 export * from './lib/utils';

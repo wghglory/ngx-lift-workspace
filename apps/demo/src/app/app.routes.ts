@@ -5,6 +5,9 @@ import {CertificateDemoComponent} from './clr-lib/pages/certificate-demo/certifi
 import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component';
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
+import {DatagridDateFilterDemoComponent} from './clr-lib/pages/filters/datagrid-date-filter-demo/datagrid-date-filter-demo.component';
+import {DatagridNumericFilterDemoComponent} from './clr-lib/pages/filters/datagrid-numeric-filter-demo/datagrid-numeric-filter-demo.component';
+import {DatagridTranslationKeyFilterDemoComponent} from './clr-lib/pages/filters/datagrid-translation-key-filter-demo/datagrid-translation-key-filter-demo.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
 import {MultiAlertsDemoComponent} from './clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component';
@@ -262,6 +265,23 @@ export const routes: Routes = [
           {
             path: 'file-reader',
             component: FileReaderDemoComponent,
+          },
+        ],
+      },
+      {
+        path: 'filters',
+        children: [
+          {
+            path: 'numeric-filter',
+            component: DatagridNumericFilterDemoComponent,
+          },
+          {
+            path: 'date-filter',
+            component: DatagridDateFilterDemoComponent,
+          },
+          {
+            path: 'translation-key-filter',
+            component: DatagridTranslationKeyFilterDemoComponent,
           },
         ],
       },

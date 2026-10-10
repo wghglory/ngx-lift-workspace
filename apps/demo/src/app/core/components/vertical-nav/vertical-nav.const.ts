@@ -93,6 +93,16 @@ export const clrLiftNavConfig: NavConfig[] = [
     ],
   },
   {
+    path: '/clr-lift/filters',
+    value: 'Filters',
+    icon: 'filter-grid',
+    children: [
+      {path: '/numeric-filter', value: 'DatagridCustomNumericFilter'},
+      {path: '/date-filter', value: 'DatagridDateFilter'},
+      {path: '/translation-key-filter', value: 'DatagridTranslationKeyFilter'},
+    ],
+  },
+  {
     path: '/clr-lift/utilities',
     value: 'Utilities',
     icon: 'wrench',

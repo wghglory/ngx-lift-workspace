@@ -1,0 +1,54 @@
+<cll-page-container [title]="'DatagridDateFilter'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>DatagridDateFilter</code> enables search filtering on date/datetime columns by matching both the localized,
+    formatted date string displayed to the user (e.g. <code>"Mar 15"</code>) and the underlying raw ISO format.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Interactive Date Filter Demo</h2>
+
+    <article class="space-y-4">
+      <p>
+        Try searching dates in the filter by typing a month (e.g. <code>"Mar"</code> or <code>"Oct"</code>) or year
+        (<code>"2026"</code>):
+      </p>
+
+      <div class="card p-4">
+        <clr-datagrid>
+          <clr-dg-column [clrDgField]="'name'">Snapshot Name</clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'createdAt'">
+            Created Date
+            <clr-dg-string-filter [clrDgStringFilter]="createdFilter" />
+          </clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'retentionUntil'">
+            Retention Until
+            <clr-dg-string-filter [clrDgStringFilter]="retentionFilter" />
+          </clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'sizeGb'">Size (GB)</clr-dg-column>
+
+          <clr-dg-row *clrDgItems="let snap of snapshots()">
+            <clr-dg-cell>{{ snap.name }}</clr-dg-cell>
+            <clr-dg-cell>{{ snap.createdAt | date: 'medium' }}</clr-dg-cell>
+            <clr-dg-cell>{{ snap.retentionUntil | date: 'mediumDate' }}</clr-dg-cell>
+            <clr-dg-cell>{{ snap.sizeGb }} GB</clr-dg-cell>
+          </clr-dg-row>
+
+          <clr-dg-footer>
+            <clr-dg-pagination [clrDgPageSize]="5">
+              <clr-dg-page-size [clrPageSizeOptions]="[5, 10]">Snapshots per page</clr-dg-page-size>
+              {{ snapshots().length }} snapshots
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="typescript" />
+      <app-code-block [code]="htmlCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>
