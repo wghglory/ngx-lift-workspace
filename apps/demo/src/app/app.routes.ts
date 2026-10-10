@@ -20,11 +20,14 @@ import {DistinctOnChangeComponent} from './ngx-lib/pages/operators/distinct-on-c
 import {LoggerComponent} from './ngx-lib/pages/operators/logger/logger.component';
 import {PollComponent} from './ngx-lib/pages/operators/poll/poll.component';
 import {SwitchMapWithAsyncStateComponent} from './ngx-lib/pages/operators/switch-map-with-async-state/switch-map-with-async-state.component';
+import {AutoSelectComponent} from './ngx-lib/pages/directives/auto-select/auto-select.component';
+import {ScrollIntoViewComponent} from './ngx-lib/pages/directives/scroll-into-view/scroll-into-view.component';
 import {ArrayJoinPipeComponent} from './ngx-lib/pages/pipes/array-join-pipe/array-join-pipe.component';
 import {ByteConverterPipeComponent} from './ngx-lib/pages/pipes/byte-converter-pipe/byte-converter-pipe.component';
 import {IsHttpsPipeComponent} from './ngx-lib/pages/pipes/is-https-pipe/is-https-pipe.component';
 import {MaskPipeComponent} from './ngx-lib/pages/pipes/mask-pipe/mask-pipe.component';
 import {RangePipeComponent} from './ngx-lib/pages/pipes/range-pipe/range-pipe.component';
+import {TouchedAndInvalidComponent} from './ngx-lib/pages/pipes/touched-and-invalid/touched-and-invalid.component';
 import {CombineFromComponent} from './ngx-lib/pages/signals/combine-from/combine-from.component';
 import {ComputedAsyncComponent} from './ngx-lib/pages/signals/computed-async/computed-async.component';
 import {CreateTriggerComponent} from './ngx-lib/pages/signals/create-trigger/create-trigger.component';
@@ -124,6 +127,19 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'directives',
+        children: [
+          {
+            path: 'auto-select',
+            component: AutoSelectComponent,
+          },
+          {
+            path: 'scroll-into-view',
+            component: ScrollIntoViewComponent,
+          },
+        ],
+      },
+      {
         path: 'pipes',
         children: [
           {
@@ -145,6 +161,10 @@ export const routes: Routes = [
           {
             path: 'range',
             component: RangePipeComponent,
+          },
+          {
+            path: 'touched-and-invalid',
+            component: TouchedAndInvalidComponent,
           },
         ],
       },

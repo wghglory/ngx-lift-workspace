@@ -2,6 +2,7 @@
  * Public API Surface of ngx-lift
  */
 
+export * from './lib/directives';
 export * from './lib/models';
 export * from './lib/operators';
 export * from './lib/pipes';

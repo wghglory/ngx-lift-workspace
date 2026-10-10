@@ -31,7 +31,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'lib',
+          prefix: ['ngx', 'lib'],
           style: 'camelCase',
         },
       ],
@@ -39,7 +39,7 @@ export default [
         'error',
         {
           type: 'element',
-          prefix: 'lib',
+          prefix: ['ngx', 'lib'],
           style: 'kebab-case',
         },
       ],
