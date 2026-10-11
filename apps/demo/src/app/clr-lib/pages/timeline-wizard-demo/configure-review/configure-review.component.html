@@ -1,12 +1,12 @@
-<section class="@container">
+<section>
   @if (operatorStep) {
     <div class="card">
-      <div class="card-block p-4">
-        <h3 class="card-title !mb-6" cds-text>Configure Operator</h3>
+      <div class="card-block">
+        <h3 class="card-title" cds-text>{{ 'timelineWizard.configureOperator' | translate }}</h3>
         <dl class="keyvalue-grid">
-          <dt class="clr-control-label">Name</dt>
+          <dt class="clr-control-label">{{ 'timelineWizard.name' | translate }}</dt>
           <dd>{{ operatorStep.operator.name }}</dd>
-          <dt class="clr-control-label">Namespace</dt>
+          <dt class="clr-control-label">{{ 'timelineWizard.namespace' | translate }}</dt>
           <dd>{{ operatorStep.operator.namespace }}</dd>
         </dl>
       </div>
@@ -14,14 +14,14 @@
   }
   @if (serviceStep) {
     <div class="card">
-      <div class="card-block p-4">
-        <h3 class="card-title !mb-6" cds-text>Configure Service</h3>
+      <div class="card-block">
+        <h3 class="card-title" cds-text>{{ 'timelineWizard.configureService' | translate }}</h3>
         <dl class="keyvalue-grid">
-          <dt class="clr-control-label">CPU</dt>
+          <dt class="clr-control-label">{{ 'timelineWizard.cpu' | translate }}</dt>
           <dd>{{ serviceStep.service.cpu }}</dd>
-          <dt class="clr-control-label">Replicas</dt>
+          <dt class="clr-control-label">{{ 'timelineWizard.replicas' | translate }}</dt>
           <dd>{{ serviceStep.service.replicas }}</dd>
-          <dt class="clr-control-label">URL</dt>
+          <dt class="clr-control-label">{{ 'timelineWizard.url' | translate }}</dt>
           <dd>{{ serviceStep.service.url }}</dd>
         </dl>
       </div>
@@ -29,8 +29,8 @@
   }
   @if (runtimePropertiesStep) {
     <div class="card">
-      <div class="card-block p-4">
-        <h3 class="card-title !mb-6" cds-text>Configure Runtime Properties</h3>
+      <div class="card-block">
+        <h3 class="card-title" cds-text>{{ 'timelineWizard.configureRuntimeProperties' | translate }}</h3>
         <dl class="keyvalue-grid">
           @for (item of runtimePropertiesStep.appProperties | keyvalue; track item.key) {
             <dt class="clr-control-label">{{ item.key }}</dt>

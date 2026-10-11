@@ -1,11 +1,11 @@
-import {flushEffects} from '../../test-setup';
-import {beforeEach, afterEach, vi} from 'vitest';
 import {computed, effect, Injector, Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {catchError, delay, map, Observable, of, startWith, Subject, throwError} from 'rxjs';
 import {tap} from 'rxjs/operators';
+import {afterEach, beforeEach, vi} from 'vitest';
 
 import {computedAsync} from './computed-async';
+import {flushEffects} from '../../test-setup';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -18,6 +18,28 @@ afterEach(() => {
 const promise = <T>(value: T, time = 0): Promise<T> => new Promise((resolve) => setTimeout(() => resolve(value), time));
 
 describe(computedAsync.name, () => {
+  it('infers the resolved type of a Promise-like source without a catch method', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const promise = Promise.resolve('thenable value');
+      const thenable: PromiseLike<string> = {then: promise.then.bind(promise)};
+      const result = computedAsync(() => thenable);
+      expectTypeOf(result).toEqualTypeOf<Signal<string | undefined>>();
+      await flushEffects();
+      expect(result()).toBe('thenable value');
+    });
+  });
+
+  it('rejects Promise-like sources under requireSync without an initial value', () => {
+    TestBed.runInInjectionContext(() => {
+      const promise = Promise.resolve('thenable value');
+      const thenable: PromiseLike<string> = {then: promise.then.bind(promise)};
+      expect(() => {
+        const result: never = computedAsync(() => thenable, {requireSync: true});
+        void result;
+      }).toThrow(/Promises cannot work with requireSync/);
+    });
+  });
+
   describe.each([false, true])('factory compatibility with requireSync=%s', (requireSync) => {
     it('allows service loading writes while tracking request parameters once', async () => {
       const parameter = signal(1);
@@ -366,7 +388,7 @@ describe(computedAsync.name, () => {
     it('observes a queued Promise rejection before concat subscribes to it and then continues the queue', async () => {
       const parameter = signal(1);
       const failure = new Error('Queued request failed');
-      let finishActive!: (value: number) => void;
+      let finishActive: ((value: number) => void) | undefined;
       const active = new Promise<number>((resolve) => {
         finishActive = resolve;
       });
@@ -383,6 +405,7 @@ describe(computedAsync.name, () => {
       parameter.set(2);
       await flushEffects();
       expect(result()).toBeUndefined();
+      if (!finishActive) throw new Error('The active Promise did not capture its resolver');
       finishActive(1);
       await flushEffects();
       expect(result()).toBe(failure);
@@ -415,7 +438,7 @@ describe(computedAsync.name, () => {
 
     it('stops accepting a Promise result after its injector is destroyed', async () => {
       const injector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
-      let finish!: (value: number) => void;
+      let finish: ((value: number) => void) | undefined;
       const result = computedAsync(
         () =>
           new Promise<number>((resolve) => {
@@ -425,6 +448,7 @@ describe(computedAsync.name, () => {
       );
       await flushEffects();
       injector.destroy();
+      if (!finish) throw new Error('The Promise did not capture its resolver');
       finish(2);
       await flushEffects();
       expect(result()).toBe(1);
@@ -432,7 +456,7 @@ describe(computedAsync.name, () => {
 
     it('handles rejected eager Promises discarded by exhaust without replacing the active result', async () => {
       const parameter = signal(1);
-      let finishActive!: (value: number) => void;
+      let finishActive: ((value: number) => void) | undefined;
       const active = new Promise<number>((resolve) => {
         finishActive = resolve;
       });
@@ -450,6 +474,7 @@ describe(computedAsync.name, () => {
       await flushEffects();
       parameter.set(2);
       await flushEffects();
+      if (!finishActive) throw new Error('The active Promise did not capture its resolver');
       finishActive(1);
       await flushEffects();
       expect(result()).toBe(1);
@@ -976,7 +1001,9 @@ describe(computedAsync.name, () => {
           initialValue: undefined,
         });
         const promiseWithInitialValue2: Signal<number> = computedAsync(() => promise(1), {initialValue: 1});
-        const promiseWithInitialValue3: Signal<number[]> = computedAsync(() => promise([1, 2, 3]), {initialValue: []});
+        const promiseWithInitialValue3: Signal<number[]> = computedAsync(() => promise([1, 2, 3]), {
+          initialValue: [],
+        });
 
         // initialValue + observable
         const observableWithInitialValue = computedAsync(() => of(1), {

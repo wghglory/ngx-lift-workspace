@@ -60,4 +60,41 @@ describe('isEqual function', () => {
     expect(isEqual(NaN, 0)).toBe(false);
     expect(isEqual(0, NaN)).toBe(false);
   });
+
+  it('compares Map values instead of treating all maps as empty objects', () => {
+    expect(isEqual(new Map([['key', 1]]), new Map([['key', 2]]))).toBe(false);
+    expect(isEqual(new Map([['key', {value: 1}]]), new Map([['key', {value: 1}]]))).toBe(true);
+  });
+
+  it('compares Set contents independently of insertion order', () => {
+    expect(isEqual(new Set([1, 2]), new Set([2, 1]))).toBe(true);
+    expect(isEqual(new Set([1, 2]), new Set([1, 3]))).toBe(false);
+  });
+
+  it('compares RegExp patterns and flags', () => {
+    expect(isEqual(/hello/i, /world/i)).toBe(false);
+    expect(isEqual(/hello/i, /hello/g)).toBe(false);
+    expect(isEqual(/hello/i, /hello/i)).toBe(true);
+  });
+
+  it('compares binary views by their type and contents', () => {
+    expect(isEqual(new Uint8Array([1, 2]), new Uint8Array([1, 3]))).toBe(false);
+    expect(isEqual(new DataView(new Uint8Array([1]).buffer), new DataView(new Uint8Array([2]).buffer))).toBe(false);
+    expect(isEqual<unknown>(new Uint8Array([1]), new Int8Array([1]))).toBe(false);
+  });
+
+  it('handles cyclic object graphs without overflowing the stack', () => {
+    const left: {value: number; self?: unknown} = {value: 1};
+    const right: {value: number; self?: unknown} = {value: 1};
+    left.self = left;
+    right.self = right;
+    expect(isEqual(left, right)).toBe(true);
+    right.value = 2;
+    expect(isEqual(left, right)).toBe(false);
+  });
+
+  it('does not equate distinct opaque objects with no enumerable properties', () => {
+    expect(isEqual(Promise.resolve(1), Promise.resolve(2))).toBe(false);
+    expect(isEqual(new File(['first'], 'file'), new File(['second'], 'file'))).toBe(false);
+  });
 });

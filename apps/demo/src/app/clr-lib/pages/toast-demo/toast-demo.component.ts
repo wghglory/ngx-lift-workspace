@@ -1,17 +1,130 @@
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {PageContainerComponent, ToastService} from 'clr-lift';
+import {PageContainerComponent, ToastService, TranslatePipe} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-toast-demo',
-  imports: [CodeBlockComponent, PageContainerComponent],
+  imports: [ApiTableComponent, CodeBlockComponent, PageContainerComponent, TranslatePipe],
   templateUrl: './toast-demo.component.html',
   styleUrl: './toast-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastDemoComponent {
+  readonly methods: ApiProperty[] = [
+    {
+      name: 'addToast(options: ToastOptions)',
+      type: 'void',
+      description: 'Creates a toast with the specified options.',
+    },
+    {
+      name: 'success(options: ToastOptions)',
+      type: 'void',
+      description: 'Creates a success toast with the specified options.',
+    },
+    {
+      name: 'info(options: ToastOptions)',
+      type: 'void',
+      description: 'Creates an info toast with the specified options.',
+    },
+    {
+      name: 'warning(options: ToastOptions)',
+      type: 'void',
+      description: 'Creates a warning toast with the specified options.',
+    },
+    {
+      name: 'error(options: ToastOptions)',
+      type: 'void',
+      description: 'Creates an error toast with the specified options.',
+    },
+  ];
+
+  readonly toastOptions: ApiProperty[] = [
+    {
+      name: 'title',
+      type: 'string',
+      required: true,
+      description: 'The title of the toast message.',
+    },
+    {
+      name: 'description',
+      type: 'string',
+      required: true,
+      description: 'The description of the toast message.',
+    },
+    {
+      name: 'toastType',
+      type: "'success' | 'info' | 'warning' | 'error'",
+      defaultValue: "'info'",
+      description: 'The type of toast.',
+    },
+    {
+      name: 'date',
+      type: 'string',
+      description: 'A relative timestamp (e.g., "1hr ago").',
+    },
+    {
+      name: 'manualClosable',
+      type: 'boolean',
+      defaultValue: 'true',
+      description: 'Whether the toast can be manually closed.',
+    },
+    {
+      name: 'timeoutSeconds',
+      type: 'number',
+      description:
+        "The number of seconds before the toast automatically closes. If not provided, uses the container's default.",
+    },
+    {
+      name: 'primaryButtonText',
+      type: 'string',
+      description: 'Text for the primary action button.',
+    },
+    {
+      name: 'primaryButtonClick',
+      type: '() => void',
+      description: 'Callback function for the primary button click.',
+    },
+    {
+      name: 'secondaryButtonText',
+      type: 'string',
+      description: 'Text for the secondary action button.',
+    },
+    {
+      name: 'secondaryButtonClick',
+      type: '() => void',
+      description: 'Callback function for the secondary button click.',
+    },
+    {
+      name: 'closed',
+      type: '() => void',
+      description: 'Callback function called when the toast is closed.',
+    },
+  ];
+
+  readonly containerInputs: ApiProperty[] = [
+    {
+      name: 'timeoutSeconds',
+      type: 'number',
+      defaultValue: '8',
+      description: 'Default timeout in seconds for toasts.',
+    },
+    {
+      name: 'manualClosable',
+      type: 'boolean',
+      defaultValue: 'true',
+      description: 'Whether toasts can be manually closed by default.',
+    },
+    {
+      name: 'topOffset',
+      type: 'number',
+      defaultValue: '0',
+      description: 'Distance from the top of the screen in pixels.',
+    },
+  ];
+
   private toastService = inject(ToastService);
 
   containerCode = highlight(`

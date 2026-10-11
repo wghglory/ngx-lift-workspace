@@ -1,18 +1,22 @@
 <clr-alerts>
-  @for (alert of alerts(); track alert.id) {
+  @for (alert of alerts(); track alert.id ?? $index) {
     <clr-alert
       [clrAlertClosable]="true"
       [clrAlertType]="alert.alertType"
       [clrAlertAppLevel]="alert.isAppLevel"
+      [clrAlertLightweight]="alert.isLightweight ?? false"
       [clrCloseButtonAriaLabel]="'alert.close' | translate"
       (clrAlertClosedChange)="onCloseAlert(alert.id)"
     >
-      <clr-alert-item>
-        <span class="alert-text" role="alert" [innerHTML]="alert.content"></span>
-        <!-- This can be placed inside alert-text span
-      <div class="alert-actions">
-        <button class="btn alert-action">Fix</button>
-      </div> -->
+      <clr-alert-item (click)="onContentClick($event, alert, content)">
+        <span #content class="alert-text" role="alert" [innerHTML]="alert.content"></span>
+        @if (alert.actions?.length) {
+          <div class="alert-actions">
+            @for (action of alert.actions; track $index) {
+              <button type="button" class="btn alert-action" (click)="action.onClick()">{{ action.label }}</button>
+            }
+          </div>
+        }
       </clr-alert-item>
     </clr-alert>
   }

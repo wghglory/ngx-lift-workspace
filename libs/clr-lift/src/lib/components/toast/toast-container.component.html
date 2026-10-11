@@ -1,14 +1,14 @@
 <div class="toast-container">
-  @for (toast of toasts$ | async; track trackById($index, toast)) {
+  @for (toast of toasts$ | async; track toast.id) {
     <cll-toast
       [toastType]="toast.toastType"
       [manualClosable]="toast.manualClosable ?? manualClosable()"
       [timeoutSeconds]="toast.timeoutSeconds ?? timeoutSeconds()"
-      [primaryButtonText]="$any(toast.primaryButtonText)"
+      [primaryButtonText]="toast.primaryButtonText ?? ''"
       (primaryButtonClick)="toast.primaryButtonClick?.()"
-      [secondaryButtonText]="$any(toast.secondaryButtonText)"
+      [secondaryButtonText]="toast.secondaryButtonText ?? ''"
       (secondaryButtonClick)="toast.secondaryButtonClick?.()"
-      (closed)="deleteToast(toast.id)"
+      (closed)="deleteToast(toast.id); toast.closed?.()"
     >
       <p class="toast-title" [innerHTML]="toast.title"></p>
       <span class="toast-date">{{ toast.date }}</span>

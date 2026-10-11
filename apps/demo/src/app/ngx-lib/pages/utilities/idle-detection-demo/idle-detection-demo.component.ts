@@ -1,21 +1,73 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnDestroy, OnInit} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {Router} from '@angular/router';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {IdleDetectionService} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-idle-detection-demo',
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './idle-detection-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdleDetectionDemoComponent implements OnInit, OnDestroy {
-  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private translationService = inject(TranslationService);
+
+  serviceMethods = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'setConfig',
+        type: '(config: IdleDetectionConfig) => void',
+        description: this.translationService.translate('idleDetection.methodSetConfig'),
+      },
+      {
+        name: 'startWatching',
+        type: '() => void',
+        description: this.translationService.translate('idleDetection.methodStartWatching'),
+      },
+      {
+        name: 'clearTimers',
+        type: '() => void',
+        description: this.translationService.translate('idleDetection.methodClearTimers'),
+      },
+      {
+        name: 'onIdleEnd',
+        type: '() => Observable<void>',
+        description: this.translationService.translate('idleDetection.methodOnIdleEnd'),
+      },
+      {
+        name: 'onTimeoutEnd',
+        type: '() => Observable<void>',
+        description: this.translationService.translate('idleDetection.methodOnTimeoutEnd'),
+      },
+      {
+        name: 'onCountDown',
+        type: '() => Observable<number>',
+        description: this.translationService.translate('idleDetection.methodOnCountDown'),
+      },
+    ];
+  });
+
+  configProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'idleDurationInSeconds',
+        type: 'number',
+        description: this.translationService.translate('idleDetection.configIdleDuration'),
+      },
+      {
+        name: 'timeoutDurationInSeconds',
+        type: 'number',
+        description: this.translationService.translate('idleDetection.configTimeoutDuration'),
+      },
+    ];
+  });
 
   configCode = highlight(`
 export class IdleDetectionConfig {

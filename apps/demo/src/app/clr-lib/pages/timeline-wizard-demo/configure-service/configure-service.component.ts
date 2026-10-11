@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {TimelineBaseComponent} from 'clr-lift';
+import {TimelineBaseComponent, TranslatePipe} from 'clr-lift';
 
 import {Deployment} from '../deployment.type';
 
 @Component({
   selector: 'app-configure-service',
-  imports: [ClarityModule, ReactiveFormsModule],
+  imports: [ClarityModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './configure-service.component.html',
   styleUrl: './configure-service.component.scss',
 })

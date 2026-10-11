@@ -22,18 +22,40 @@ type ObservableSignalInputTuple<T> = {
 // pick from ToSignalOptions
 export type MergeFromOptions<T> = {
   readonly injector?: Injector;
-  readonly initialValue?: T | null;
+  readonly initialValue?: T;
 };
 
 export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
   sources: readonly [...ObservableSignalInputTuple<Input>],
   operator?: OperatorFunction<Input[number], Output>,
-  options?: MergeFromOptions<Output>,
+  options?: MergeFromOptions<undefined>,
 ): Signal<Output>;
 
 export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
   sources: readonly [...ObservableSignalInputTuple<Input>],
-  options?: MergeFromOptions<Output>,
+  operator: OperatorFunction<Input[number], Output> | undefined,
+  options: MergeFromOptions<null>,
+): Signal<Output | null>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  operator: OperatorFunction<Input[number], Output> | undefined,
+  options: MergeFromOptions<Output>,
+): Signal<Output>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  options?: MergeFromOptions<undefined>,
+): Signal<Output>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  options: MergeFromOptions<null>,
+): Signal<Output | null>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  options: MergeFromOptions<Output>,
 ): Signal<Output>;
 
 // No object inputs

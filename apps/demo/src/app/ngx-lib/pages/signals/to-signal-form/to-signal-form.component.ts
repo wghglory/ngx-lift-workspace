@@ -2,11 +2,13 @@ import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
 import {computedAsync, resourceAsync, toSignalForm} from 'ngx-lift';
 import {delay, of} from 'rxjs';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {StateInspectorComponent} from '../../../../shared/components/state-inspector/state-inspector.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 export interface ClusterNameCheckResult {
@@ -26,12 +28,39 @@ export interface ClusterNameCheckResult {
     CodeBlockComponent,
     SpinnerComponent,
     AlertComponent,
+    DemoPlaygroundComponent,
+    StateInspectorComponent,
+    TranslatePipe,
   ],
   templateUrl: './to-signal-form.component.html',
   styleUrl: './to-signal-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToSignalFormComponent {
+  // Quickstart minimal form (Beginner friendly)
+  readonly quickForm = new FormGroup({
+    username: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    notifications: new FormControl(true, {nonNullable: true}),
+  });
+
+  readonly quickSf = toSignalForm(this.quickForm);
+
+  readonly quickFormState = computed(() => ({
+    valid: this.quickSf.valid(),
+    invalid: this.quickSf.invalid(),
+    dirty: this.quickSf.dirty(),
+    username: this.quickSf.fields.username.value(),
+    email: this.quickSf.fields.email.value(),
+    notifications: this.quickSf.fields.notifications.value(),
+  }));
+
   // Available versions per database engine
   readonly engineVersionMap: Record<string, string[]> = {
     postgres: ['PostgreSQL 16.2', 'PostgreSQL 15.6', 'PostgreSQL 14.11'],
@@ -181,6 +210,19 @@ export class ToSignalFormComponent {
     return isInvalid || isNameUnavailable || isLoading;
   });
 
+  // Enterprise form status summary for state inspector
+  readonly enterpriseFormState = computed(() => ({
+    valid: this.sf.valid(),
+    invalid: this.sf.invalid(),
+    dirty: this.sf.dirty(),
+    region: this.sf.fields.region.value() || '(none)',
+    engine: this.sf.fields.engine.value() || '(none)',
+    storageGb: this.sf.fields.storageGb.value() || 0,
+    storageDisabled: this.sf.fields.storageGb.disabled(),
+    authMode: this.sf.fields.authMode.value() || '(none)',
+    status: this.createClusterRef.status(),
+  }));
+
   constructor() {
     // Cascading Version Selection when Engine changes (Modern Signal-Based Approach):
     // Uses sf.controls.engine.watch (or sf.watch), which runs inside an Angular effect under the hood.
@@ -290,6 +332,49 @@ export class ToSignalFormComponent {
   }
 
   // Code snippets for documentation tabs
+  readonly quickStartTs = highlight(`
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { toSignalForm } from 'ngx-lift';
+
+const form = new FormGroup({
+  username: new FormControl('', [Validators.required, Validators.minLength(3)]),
+  email: new FormControl('', [Validators.required, Validators.email]),
+  notifications: new FormControl(true, { nonNullable: true }),
+});
+
+// Create signal-enhanced facade
+export const sf = toSignalForm(form);
+
+// Read fields as native Signals in components and templates:
+sf.fields.username.value() // Signal<string>
+sf.valid()                 // Signal<boolean>
+sf.submitValue()           // Signal<TSubmitValue>
+`);
+
+  readonly quickStartHtml = highlight(
+    `
+<form clrForm [formGroup]="quickForm">
+  <clr-input-container>
+    <label>Username</label>
+    <input clrInput [formControl]="quickSf.controls.username" />
+    <clr-control-error *clrIfError="'required'">Username is required.</clr-control-error>
+  </clr-input-container>
+
+  <clr-input-container>
+    <label>Email</label>
+    <input clrInput type="email" [formControl]="quickSf.controls.email" />
+    <clr-control-error *clrIfError="'email'">Valid email is required.</clr-control-error>
+  </clr-input-container>
+
+  <!-- Submit button bound directly to reactive invalid signal -->
+  <button class="btn btn-primary" [disabled]="quickSf.invalid()">
+    Save Profile
+  </button>
+</form>
+`,
+    'xml',
+  );
+
   readonly toSignalFormSnippet = highlight(`
 // 1. Single entry-point for the entire form:
 readonly sf = toSignalForm(this.form, {

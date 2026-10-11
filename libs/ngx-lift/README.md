@@ -36,11 +36,20 @@ common Angular development tasks and boost productivity.
 - **`combineLatestEager`** - Combines observables with eager initial values
 - **`createAsyncState`** - Transforms observables into async state objects with loading/error/data
 - **`distinctOnChange`** - Executes callbacks when observable values change
-- **`kubernetesPagination`** - Handles Kubernetes-style pagination
+- **`kubernetesPagination`** - Handles Kubernetes-style pagination with automatic HTTP 429 retry backoff
 - **`logger`** - Logging operator for debugging RxJS streams
 - **`poll`** - Polling operator with configurable intervals and manual refresh triggers
+- **`retryOnK8sBackoff`** - Retries on HTTP 429 ("storage is (re)initializing") with backoff based on `Retry-After`
+  header or `details.retryAfterSeconds`
 - **`startWithTap`** - Combines `startWith` and `tap` operators
 - **`switchMapWithAsyncState`** - Combines `switchMap` with async state management
+
+### 🌐 HTTP Interceptors
+
+- **`k8sRetryBackoffInterceptor`** - Functional HTTP interceptor (`HttpInterceptorFn`) for retrying Kubernetes HTTP 429
+  responses with backoff
+- **`createK8sRetryBackoffInterceptor`** - Factory to create an interceptor with custom default backoff settings
+- **`K8S_RETRY_BACKOFF_CONFIG`** - HttpContext token to customize or bypass 429 retry on specific requests
 
 ### ⚡ Signal Utilities
 
@@ -93,14 +102,12 @@ common Angular development tasks and boost productivity.
 
 ## Installation
 
-Install ngx-lift using your preferred package manager:
-
 ```bash
 npm install ngx-lift
 # or
-yarn add ngx-lift
-# or
 pnpm add ngx-lift
+# or
+yarn add ngx-lift
 ```
 
 ### Upgrading from v1.x to v19.x

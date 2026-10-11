@@ -1,17 +1,35 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-difference-in-days',
-  imports: [PageContainerComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './difference-in-days.component.html',
   styleUrl: './difference-in-days.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DifferenceInDaysComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'dateLeft',
+        type: 'Date | number | string',
+        description: this.translationService.translate('differenceInDays.paramDateLeft'),
+      },
+      {
+        name: 'dateRight',
+        type: 'Date | number | string',
+        description: this.translationService.translate('differenceInDays.paramDateRight'),
+      },
+    ];
+  });
   basicExampleCode = highlight(`
 import {differenceInDays} from 'ngx-lift';
 

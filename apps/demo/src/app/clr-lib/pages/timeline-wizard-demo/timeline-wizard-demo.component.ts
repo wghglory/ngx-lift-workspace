@@ -1,9 +1,11 @@
 import {Component} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClrTimelineStepState} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TimelineStep, TimelineWizardComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TimelineStep, TimelineWizardComponent, TranslatePipe} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {highlight} from '../../../shared/utils/highlight.util';
 import {ConfigureOperatorComponent} from './configure-operator/configure-operator.component';
 import {ConfigureReviewComponent} from './configure-review/configure-review.component';
@@ -13,7 +15,16 @@ import {Deployment} from './deployment.type';
 
 @Component({
   selector: 'app-timeline-wizard-demo',
-  imports: [CodeBlockComponent, CalloutComponent, PageContainerComponent, TimelineWizardComponent, RouterLink],
+  imports: [
+    CodeBlockComponent,
+    CalloutComponent,
+    PageContainerComponent,
+    TimelineWizardComponent,
+    RouterLink,
+    DemoPlaygroundComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './timeline-wizard-demo.component.html',
   styleUrl: './timeline-wizard-demo.component.scss',
 })
@@ -361,4 +372,194 @@ export class ConfigureReviewComponent extends TimelineBaseComponent {
   }
 }
   `);
+
+  readonly wizardInputs: ApiProperty[] = [
+    {
+      name: 'timelineSteps',
+      type: 'TimelineStep[]',
+      required: true,
+      description: 'An array of <code>TimelineStep</code> objects representing the steps in the wizard.',
+    },
+    {
+      name: 'live',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: 'Controls whether to destroy step components when clicking prev/next buttons.',
+    },
+    {
+      name: 'confirmButtonText',
+      type: 'string',
+      defaultValue: "'Finish'",
+      description: 'The text for the "Finish" button on the last step.',
+    },
+  ];
+
+  readonly wizardOutputs: ApiProperty[] = [
+    {
+      name: 'confirmed',
+      type: 'EventEmitter<unknown>',
+      description: "Emits all previous steps' data when clicking the finish button in the last step.",
+    },
+    {
+      name: 'canceled',
+      type: 'EventEmitter<void>',
+      description: 'Emits when the wizard is canceled.',
+    },
+    {
+      name: 'finished',
+      type: 'EventEmitter<void>',
+      description: 'Emits when the wizard is successfully completed.',
+    },
+  ];
+
+  readonly wizardMethods: ApiProperty[] = [
+    {
+      name: 'cancel()',
+      type: 'void',
+      description: 'Cancels the wizard and emits the <code>canceled</code> event.',
+    },
+    {
+      name: 'nextStep()',
+      type: 'void',
+      description: 'Moves to the next step in the wizard.',
+    },
+    {
+      name: 'previousStep()',
+      type: 'void',
+      description: 'Moves to the previous step in the wizard.',
+    },
+  ];
+
+  readonly baseProperties: ApiProperty[] = [
+    {
+      name: 'allStepsData',
+      type: 'unknown[]',
+      description:
+        'An array containing the data of all wizard steps. Available as an input property, accessible in <code>ngOnInit</code> and later lifecycle hooks.',
+    },
+    {
+      name: 'currentStepData',
+      type: 'T | null',
+      description:
+        'The data of the current step or <code>null</code> if not available. Available as an input property, accessible in <code>ngOnInit</code> and later lifecycle hooks.',
+    },
+    {
+      name: 'form',
+      type: 'FormGroup | null',
+      description:
+        'The form group associated with the step. Set to <code>null</code> for steps without a form. Override this property in your step component.',
+    },
+    {
+      name: 'next$',
+      type: 'Observable<unknown>',
+      description:
+        'An observable that emits when the "Next" button is clicked. Override it to perform custom actions, such as API calls.',
+    },
+    {
+      name: 'stepInvalid',
+      type: 'boolean',
+      description: "Indicates whether the step's form is invalid.",
+    },
+  ];
+
+  readonly baseMethods: ApiProperty[] = [
+    {
+      name: 'formValueToData()',
+      type: 'unknown',
+      description:
+        "Converts the step's form value to data. Override this method if your form structure doesn't match the step data structure.",
+    },
+    {
+      name: 'dataToFormValue(data)',
+      type: 'any',
+      description:
+        "Converts step data to the form value that can be used for <code>patchValue</code>. Override this method if your form structure doesn't match the step data structure.",
+    },
+  ];
+
+  readonly stepProperties: ApiProperty[] = [
+    {
+      name: 'state',
+      type: 'ClrTimelineStepState',
+      description: "The state of the timeline step (e.g., 'not-started', 'current', 'success', 'error').",
+    },
+    {
+      name: 'header',
+      type: 'string',
+      description: 'The header of the timeline step.',
+    },
+    {
+      name: 'title',
+      type: 'string',
+      required: true,
+      description:
+        'The title of the timeline step, acting as an identifier (should be unique). Can be used to find step data via <code>getStepData</code>.',
+    },
+    {
+      name: 'id',
+      type: 'string',
+      description:
+        'The id of the timeline step, acting as a primary identifier. If id is not provided, will use title as identifier instead. Can be used to find step data via <code>getStepData</code>.',
+    },
+    {
+      name: 'description',
+      type: 'string',
+      description: 'The description of the timeline step.',
+    },
+    {
+      name: 'component',
+      type: 'Type<any>',
+      required: true,
+      description:
+        'The Angular component associated with the timeline step. Must extend <code>TimelineBaseComponent</code>.',
+    },
+    {
+      name: 'data',
+      type: 'unknown',
+      description:
+        'Step data, which will be converted to form data by the timeline wizard component and passed to the step component as <code>currentStepData</code>.',
+    },
+  ];
+
+  readonly serviceProperties: ApiProperty[] = [
+    {
+      name: 'currentStepIndex',
+      type: 'number',
+      description: 'Get the index of the current step.',
+    },
+    {
+      name: 'isFirstStep',
+      type: 'boolean',
+      description: 'Check if the current step is the first step.',
+    },
+    {
+      name: 'isLastStep',
+      type: 'boolean',
+      description: 'Check if the current step is the last step.',
+    },
+    {
+      name: 'currentStep',
+      type: 'TimelineStep | null',
+      description: 'Get the current step object.',
+    },
+    {
+      name: 'currentStepData',
+      type: 'unknown | null',
+      description: 'Get the data of the current step.',
+    },
+    {
+      name: 'allStepsData',
+      type: 'Array<{id?: string; title: string; data: unknown}>',
+      description: 'Get all steps data to be reviewed. Returns an array with step identifiers and data.',
+    },
+  ];
+
+  readonly serviceMethods: ApiProperty[] = [
+    {
+      name: 'getStepData<T>(key: string)',
+      type: 'T | null',
+      description:
+        'Get the data of a specific step by its id or title. Returns <code>null</code> if the step is not found.',
+    },
+  ];
 }

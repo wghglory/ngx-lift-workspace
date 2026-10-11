@@ -1,7 +1,7 @@
 # resourceAsync
 
-A Signal-based utility for managing Promise, Observable, and synchronous sources in Angular, with request replacement,
-local values, explicit execution, and operation cleanup.
+A Signal-based utility for managing Promise-like, Observable, and synchronous sources in Angular, with request
+replacement, local values, explicit execution, and operation cleanup.
 
 ## Reactive parameters and operation lifecycle
 
@@ -64,6 +64,9 @@ observation and rejects pending or future executions with `ResourceAsyncDisposed
 `onSuccess` runs before an execution is resolved. A callback that resets, replaces, or destroys the current operation
 cancels its execution Promise. Callback failures follow the same `onError` / `throwOnError` policy as source errors,
 including the default value clearing or opt-in retention; they do not resolve an execution successfully first.
+
+Sources may return `PromiseLike<T>` objects, including thenables without `.catch()`. Rejection observers are normalized
+through `Promise.resolve`; `execute()` still returns a native `Promise<T>`.
 
 Cancellation unsubscribes Observables and aborts the source context's signal. A Promise's underlying work stops only
 when its source honors `abortSignal`; results from replaced operations are ignored. Cancellation cannot undo a server
@@ -627,7 +630,7 @@ export class RegistrationFormComponent {
 
 #### Parameters
 
-**`fetchFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T`**
+**`fetchFn: (context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T`**
 
 - Function that returns an Observable or Promise
 - Called when the resource effect runs, or after an explicit trigger if `lazy: true`
@@ -698,13 +701,13 @@ interface ResourceRefOptions<T, E = Error> {
 ```typescript
 // Overload 1: When initialValue or defaultValue is provided
 function resourceAsync<T, E = Error>(
-  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T,
   options: ({initialValue: T} | {defaultValue: T}) & BaseResourceRefOptions<T, E>,
 ): WritableResourceRef<T, E>;
 
 // Overload 2: When no initial/default value is provided
 function resourceAsync<T, E = Error>(
-  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T,
   options?: OptionsWithoutInitial,
 ): WritableResourceRef<T | undefined, E>;
 ```

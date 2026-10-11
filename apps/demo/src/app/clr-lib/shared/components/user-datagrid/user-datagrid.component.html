@@ -1,6 +1,6 @@
 <div>
   <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="(usersState$ | async)?.isLoading">
-    Refresh
+    {{ 'common.refresh' | translate }}
   </button>
 </div>
 
@@ -11,12 +11,12 @@
   [clrDgSelectionType]="'single'"
   [(clrDgSelected)]="selectedItems"
 >
-  <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
-  <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
-  <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
-  <clr-dg-column [clrDgField]="'gender'">Gender</clr-dg-column>
+  <clr-dg-column [clrDgField]="'firstName'">{{ 'common.firstName' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgField]="'lastName'">{{ 'common.lastName' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgField]="'email'">{{ 'common.email' | translate }}</clr-dg-column>
+  <clr-dg-column [clrDgField]="'gender'">{{ 'common.gender' | translate }}</clr-dg-column>
 
-  <clr-dg-placeholder>No data found</clr-dg-placeholder>
+  <clr-dg-placeholder>{{ 'common.noDataFound' | translate }}</clr-dg-placeholder>
 
   @for (user of (usersState$ | async)?.data?.results; track user.id.value) {
     <clr-dg-row [clrDgItem]="user">
@@ -28,17 +28,17 @@
   }
 
   <clr-dg-footer>
-    @if (total$ | async) {
-      {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of {{ total$ | async }} items
+    @if (total$ | async; as total) {
+      {{ 'common.paginationOf' | translate: [pagination.firstItem + 1, pagination.lastItem + 1, total] }}
     } @else {
-      No items
+      {{ 'common.noItems' | translate }}
     }
     <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="(total$ | async) || 0" />
   </clr-dg-footer>
 </clr-datagrid>
 
 @if ((usersState$ | async)?.error; as error) {
-  <cll-alert [error]="error" class="mb-4" />
+  <cll-alert [error]="error" cds-layout="m-b:md" />
 }
 
 <!--
@@ -85,6 +85,6 @@ Another approach:
   </clr-datagrid>
 
   @if (vm.usersState?.error; as error) {
-    <cll-alert [error]="error" class="mb-4" />
+    <cll-alert [error]="error" cds-layout="m-b:md" />
   }
 } -->

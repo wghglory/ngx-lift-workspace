@@ -2,7 +2,7 @@
   @for (data of navConfig(); track data.value) {
     <clr-vertical-nav-group routerLinkActive="active">
       <clr-icon [shape]="data.icon" clrVerticalNavIcon />
-      {{ data.value }}
+      {{ getGroupKey(data.value) | translate }}
       <clr-vertical-nav-group-children *clrIfExpanded="true">
         @for (child of data.children; track child.value) {
           <a
@@ -11,12 +11,18 @@
             [queryParams]="child?.queryParams"
             routerLinkActive="active"
           >
-            {{ child.value }}
+            <span class="nav-label-text">{{ child.i18nKey ? (child.i18nKey | translate) : child.value }}</span>
             @if (child.label === 'new') {
-              <span class="badge badge-success">NEW</span>
+              <span class="badge badge-success">{{ 'nav.badgeNew' | translate }}</span>
             }
             @if (child.label === 'updated') {
-              <span class="badge badge-info">UPDATED</span>
+              <span class="badge badge-info">{{ 'nav.badgeUpdated' | translate }}</span>
+            }
+            @if (child.label === 'popular') {
+              <span class="badge badge-warning">{{ 'nav.badgePopular' | translate }}</span>
+            }
+            @if (child.label === 'core') {
+              <span class="badge badge-purple">{{ 'nav.badgeCore' | translate }}</span>
             }
           </a>
         }

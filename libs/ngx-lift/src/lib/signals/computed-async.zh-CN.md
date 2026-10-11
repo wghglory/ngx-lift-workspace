@@ -2,7 +2,8 @@
 
 对应英文说明：[computed-async.md](./computed-async.md)，实现：[computed-async.ts](./computed-async.ts)。
 
-`computedAsync` 把普通值、Observable 或 Promise 转成只读 Angular Signal。它根据 factory
+`computedAsync` 把普通值、Observable 或 Promise-like source 转成只读 Angular Signal。source 类型现在正式接受
+`PromiseLike<T>`，与既有 thenable 解析行为一致；`requireSync` 仍拒绝没有同步初值的 thenable。它根据 factory
 **同步读取**的 Signal 重新计算。需要独立的 loading/error 状态或手动执行时，应使用 `resourceAsync`。
 
 ## 已完成的修复
@@ -93,12 +94,12 @@ factory 的 `previousValue` 来自上次保存的 source 值；未处理的错�
 
 ## 验证结果
 
-`computed-async.spec.ts` 的 **49 项测试通过**，包括原有行为和新增的初始化、服务 loading
+`computed-async.spec.ts` 的 **51 项测试通过**，包括原有行为和新增的初始化、服务 loading
 Signal 写入、动态依赖增删、参数比较不变时不重发、订阅和错误回调依赖隔离、取消、错误恢复、四种模式销毁、Promise 迟到/排队/丢弃与 equality 回归。
 
-库的类型检查与本测试文件的独立类型检查也通过。原有默认错误测试把 `number | undefined` 强转成 `Error`，本次改为明确声明
-`number | Error`，与实际默认行为一致。额外的全库测试文件类型检查仍报告其他未修改文件的 6 处既有错误，位于
-`poll`、`start-with-tap`、`combine-from` 和 `merge-from` 测试；这些错误不属于本次新增。
+库的类型检查与全部测试源码类型检查也通过。原有默认错误测试现在明确声明
+`number | Error`，与既有实际行为一致。上一轮剩余的 6 个其它测试类型错误已修复；当前全项目测试源码类型检查通过。实现 options 也改为明确类型，不再使用
+`any`，公开 overload 不变。详见 [质量审计说明](../quality-audit.zh-CN.md)。
 
 ```bash
 pnpm nx test ngx-lift --args='src/lib/signals/computed-async.spec.ts'

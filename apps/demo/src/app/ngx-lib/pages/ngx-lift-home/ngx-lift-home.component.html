@@ -1,17 +1,17 @@
-<div class="space-y-9 sm:p-10 relative">
-  <section class="grid xl:grid-cols-2 sm:gap-10">
-    <div class="space-y-3 max-w-[calc(100vw-48px)]">
-      <h1 class="sm:!text-6xl leading-loose">ngx-lift</h1>
-      <p class="sm:!text-3xl sm:!mt-16">Enhance your <code>modern</code> Angular development workflow</p>
+<div cds-layout="vertical gap:xl p:lg">
+  <section class="clr-row clr-align-items-center">
+    <div class="clr-col-12 clr-col-xl-6" cds-layout="vertical gap:md">
+      <h1 cds-text="display">{{ 'home.ngxLift.title' | translate }}</h1>
+      <p cds-text="title" cds-layout="m-t:sm" [innerHTML]="'home.ngxLift.subtitle' | translate"></p>
       <app-code-block [code]="'npm install ngx-lift'" lang="shell" />
 
-      <div class="space-y-2">
-        <p class="sm:!text-xl font-semibold">Version Support Matrix</p>
+      <div cds-layout="vertical gap:xs">
+        <p cds-text="section font:semibold">{{ 'home.ngxLift.supportMatrix' | translate }}</p>
         <table class="table table-compact">
           <thead>
             <tr>
-              <th>ngx-lift Version</th>
-              <th>Angular Version</th>
+              <th>{{ 'home.ngxLift.thVersion' | translate }}</th>
+              <th>{{ 'home.ngxLift.thNgVersion' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -31,24 +31,32 @@
         </table>
       </div>
     </div>
-    <img class="flex-1 w-full h-full p-3" src="./assets/ngx-lift-dark.svg" alt="ngx-lift" />
+    <div class="clr-col-12 clr-col-xl-6">
+      <img class="hero-image" cds-layout="p:sm" src="./assets/ngx-lift-dark.svg" alt="ngx-lift" />
+    </div>
   </section>
 
-  <section class="grid lg:grid-cols-3 gap-5">
-    <app-tile-with-icon
-      icon="⚒️"
-      title="Utility Functions"
-      description="Comprehensive utility functions designed to accelerate common development tasks"
-    />
-    <app-tile-with-icon
-      icon="📦"
-      title="RxJS Operators"
-      description="Specialized operators that simplify complex reactive operations and improve code maintainability"
-    />
-    <app-tile-with-icon
-      icon="🚨"
-      title="Signal Utilities"
-      description="Powerful signal-based utilities that complement Angular's Signals API"
-    />
+  <section class="clr-row">
+    <div class="clr-col-12 clr-col-lg-4">
+      <app-tile-with-icon
+        icon="⚒️"
+        [title]="'home.ngxLift.utilityTitle' | translate"
+        [description]="'home.ngxLift.utilityDesc' | translate"
+      />
+    </div>
+    <div class="clr-col-12 clr-col-lg-4">
+      <app-tile-with-icon
+        icon="📦"
+        [title]="'home.ngxLift.rxjsTitle' | translate"
+        [description]="'home.ngxLift.rxjsDesc' | translate"
+      />
+    </div>
+    <div class="clr-col-12 clr-col-lg-4">
+      <app-tile-with-icon
+        icon="🚨"
+        [title]="'home.ngxLift.signalTitle' | translate"
+        [description]="'home.ngxLift.signalDesc' | translate"
+      />
+    </div>
   </section>
 </div>

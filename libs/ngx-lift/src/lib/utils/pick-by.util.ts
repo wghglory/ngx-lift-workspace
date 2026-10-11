@@ -9,7 +9,7 @@ export function pickBy<T>(source: T, predicate: (value: T[keyof T], key: string)
 
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key) && predicate(source[key], key)) {
-      result[key] = source[key];
+      Object.defineProperty(result, key, {value: source[key], enumerable: true, configurable: true, writable: true});
     }
   }
 

@@ -111,3 +111,10 @@ describe('ByteConverterPipe in Chinese', () => {
     expect(element.textContent).toBe('1.02 千字节');
   });
 });
+
+describe('ByteConverterPipe locale fallback', () => {
+  it('uses the language translations when the locale contains an unlisted region', () => {
+    TestBed.configureTestingModule({providers: [ByteConverterPipe, {provide: LOCALE_ID, useValue: 'fr-FR'}]});
+    expect(TestBed.inject(ByteConverterPipe).transform(1024)).toBe('1 Ko');
+  });
+});

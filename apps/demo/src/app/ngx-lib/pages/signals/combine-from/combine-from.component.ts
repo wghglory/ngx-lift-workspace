@@ -1,9 +1,10 @@
-import {ChangeDetectionStrategy, Component, effect, inject, Injector, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {combineFrom, createAsyncState} from 'ngx-lift';
 import {BehaviorSubject, delay, of, pipe, startWith, switchMap} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -18,12 +19,37 @@ import {UserService} from './../../../../shared/services/user.service';
     SpinnerComponent,
     AlertComponent,
     UserCardComponent,
+    TranslatePipe,
+    ApiTableComponent,
   ],
   templateUrl: './combine-from.component.html',
   styleUrl: './combine-from.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombineFromComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'sources',
+        type: 'Record<string, Observable<T> | Signal<T>> | Array<Observable<T> | Signal<T>>',
+        required: true,
+        description: this.translationService.translate('combineFrom.paramSources'),
+      },
+      {
+        name: 'operator',
+        type: 'OperatorFunction',
+        description: this.translationService.translate('combineFrom.paramOperator'),
+      },
+      {
+        name: 'options',
+        type: 'CombineFromOptions',
+        description: this.translationService.translate('combineFrom.paramOptions'),
+      },
+    ];
+  });
   a = signal(1);
   b$ = new BehaviorSubject(2);
 

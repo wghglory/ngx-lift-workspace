@@ -36,7 +36,7 @@ const DEFAULT_PAGE_SIZE = 10;
  */
 export function convertToHttpParams(state: ClrDatagridStateInterface | null) {
   // If the state is empty, return default values.
-  if (isEmpty(state)) {
+  if (state === null || isEmpty(state)) {
     return {
       page: 1,
       pageSize: DEFAULT_PAGE_SIZE,
@@ -62,7 +62,7 @@ export function convertToHttpParams(state: ClrDatagridStateInterface | null) {
  * @returns {{ page: number, pageSize: number }} - Page and pageSize information.
  */
 function extractPageInfo(state: ClrDatagridStateInterface<unknown>) {
-  let page = 0;
+  let page = 1;
   let pageSize = DEFAULT_PAGE_SIZE;
 
   if (state.page) {

@@ -1,58 +1,53 @@
-<cll-page-container [title]="'FileReader'" customClass="space-y-9">
+<cll-page-container [title]="'fileReader.title' | translate">
   <!-- Overview -->
-  <p>
-    The <code>FileReaderComponent</code> allows you to easily browse and read the contents of text files. It supports
-    file selection, content reading as plain text or base64 encoded string, file size validation, and emits events when
-    files are selected or removed. If the selected file is a certificate, you can utilize the
-    <code>CertificateSignpost</code> component to display its contents effectively.
-  </p>
+  <p [innerHTML]="'fileReader.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Basic File Reader</h3>
-      <p>Basic usage with form control integration:</p>
-      <form clrForm [formGroup]="form" class="!mt-0" (ngSubmit)="submit()">
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'fileReader.example1' | translate }}</h3>
+      <p>{{ 'fileReader.example1Desc' | translate }}</p>
+      <form clrForm [formGroup]="basicForm" cds-layout="m-t:none" (ngSubmit)="submitBasic()">
         <clr-control-container>
-          <label for="file">File</label>
-          <cll-file-reader controlId="file" clrControl [encoded]="false" [formControl]="form.controls.file" />
-          @if (form.controls.file.value) {
-            <clr-control-success>File content has been read successfully</clr-control-success>
+          <label for="file">{{ 'fileReader.file' | translate }}</label>
+          <cll-file-reader controlId="file" clrControl [encoded]="false" [formControl]="basicForm.controls.file" />
+          @if (basicForm.controls.file.value) {
+            <clr-control-success>{{ 'fileReader.readSuccess' | translate }}</clr-control-success>
           }
           <clr-control-error *clrIfError="'parse'; error as error">{{ error }}</clr-control-error>
-          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
         </clr-control-container>
 
-        <button type="submit" class="btn btn-primary mt-6" [disabled]="form.invalid">
-          Submit and view console log
+        <button type="submit" class="btn btn-primary" cds-layout="m-t:md" [disabled]="basicForm.invalid">
+          {{ 'fileReader.submitAndLog' | translate }}
         </button>
       </form>
       <app-code-block [code]="basicExampleCode" lang="html" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Certificate File Reader with Validation</h3>
-      <p>File reader with certificate validation and certificate signpost display:</p>
-      <form clrForm [formGroup]="form" class="!mt-0" (ngSubmit)="submit()">
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'fileReader.example2' | translate }}</h3>
+      <p>{{ 'fileReader.example2Desc' | translate }}</p>
+      <form clrForm [formGroup]="certForm" cds-layout="m-t:none" (ngSubmit)="submitCert()">
         <clr-control-container>
-          <label for="ca-bundle">CA Bundle</label>
+          <label for="ca-bundle">{{ 'fileReader.caBundle' | translate }}</label>
           <cll-file-reader
             controlId="ca-bundle"
             clrControl
             [encoded]="false"
             [maxSize]="certFileLimit"
             [acceptFiles]="certAcceptedFiles"
-            [formControl]="form.controls.caCert"
+            [formControl]="certForm.controls.caCert"
             (fileChange)="onFileChange($event)"
           />
-          @if (form.controls.caCert.value) {
+          @if (certForm.controls.caCert.value) {
             <clr-control-success>
-              Show certificate:
-              @if (form.controls.caCert.valid) {
+              {{ 'fileReader.showCertificate' | translate }}
+              @if (certForm.controls.caCert.valid) {
                 <cll-certificate-signpost
-                  [pem]="form.controls.caCert.value"
+                  [pem]="certForm.controls.caCert.value"
                   [pemEncoded]="false"
                   [showIcon]="true"
                   [position]="'bottom-right'"
@@ -61,82 +56,41 @@
             </clr-control-success>
           }
           <clr-control-error *clrIfError="'exceedLimit'">
-            Exceed the maximum file size ({{ certFileLimit }} MB).
+            {{ 'fileReader.exceedLimit' | translate: [certFileLimit] }}
           </clr-control-error>
           <clr-control-error *clrIfError="'invalidCertificate'; error as error">{{ error }}</clr-control-error>
-          <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
         </clr-control-container>
+
+        <button type="submit" class="btn btn-primary" cds-layout="m-t:md" [disabled]="certForm.invalid">
+          {{ 'fileReader.submitAndLog' | translate }}
+        </button>
       </form>
       <app-code-block [code]="certificateExampleCode" lang="html" />
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>FileReaderComponent</h3>
-        <p>Component for browsing and reading file contents with validation support.</p>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>FileReaderComponent (<code>cll-file-reader</code>)</h3>
+      <p>{{ 'fileReader.apiSummary' | translate }}</p>
 
-        <h4>Inputs</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>controlId: string</code>
-            <p class="text-sm ml-4 !mt-1">
-              Sets the id attribute for the file input element. Useful for associating a label with the file input.
-            </p>
-          </li>
-          <li class="space-y-1">
-            <code>acceptFiles: string</code>
-            <p class="text-sm ml-4 !mt-1">
-              Specifies the types of files that the file input should accept. Uses the same format as the accept
-              attribute of a standard HTML file input (e.g., <code>'.pem, .cer, .key'</code>).
-            </p>
-          </li>
-          <li class="space-y-1">
-            <code>encoded: boolean</code>
-            <p class="text-sm ml-4 !mt-1">
-              Determines whether the file content should be read and output as a base64 encoded string. If
-              <code>true</code>, the file content will be encoded; if <code>false</code>, the raw text content will be
-              used.
-            </p>
-          </li>
-          <li class="space-y-1">
-            <code>maxSize: number</code>
-            <p class="text-sm ml-4 !mt-1">
-              Sets the maximum allowed file size in megabytes. If the selected file exceeds this size, a validation
-              error will be triggered.
-            </p>
-          </li>
-          <li class="space-y-1">
-            <code>disabled: boolean</code>
-            <p class="text-sm ml-4 !mt-1">
-              Disables the file input when set to <code>true</code>. The user will not be able to select or remove files
-              while the component is disabled.
-            </p>
-          </li>
-        </ul>
+      <h4>{{ 'common.inputs' | translate }}</h4>
+      <app-api-table [properties]="inputs" />
 
-        <h4>Outputs</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>fileChange: string</code>
-            <p class="text-sm ml-4 !mt-1">
-              Emits the file content (as plain text or base64 encoded string) when a file is selected or removed.
-            </p>
-          </li>
-        </ul>
+      <h4>{{ 'common.outputs' | translate }}</h4>
+      <app-api-table [properties]="outputs" />
 
-        <h4>Features</h4>
-        <ul class="list-disc space-y-1 ml-6">
-          <li>File browsing and selection</li>
-          <li>Content reading as plain text or base64 encoded string</li>
-          <li>File size validation</li>
-          <li>Content parsing error handling</li>
-          <li>Form control integration</li>
-        </ul>
-      </div>
+      <h4>{{ 'common.features' | translate }}</h4>
+      <ul cds-layout="vertical gap:xs" class="list">
+        <li>{{ 'fileReader.feature1' | translate }}</li>
+        <li>{{ 'fileReader.feature2' | translate }}</li>
+        <li>{{ 'fileReader.feature3' | translate }}</li>
+        <li>{{ 'fileReader.feature4' | translate }}</li>
+        <li>{{ 'fileReader.feature5' | translate }}</li>
+      </ul>
     </div>
   </section>
 </cll-page-container>

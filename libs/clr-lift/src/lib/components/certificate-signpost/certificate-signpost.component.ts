@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, signal, untracked} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal} from '@angular/core';
 import {certificateIcon, ClarityIcons} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {pki} from 'node-forge';
@@ -41,18 +41,22 @@ export class CertificateSignpostComponent {
   pemEncoded = input(false); // encode pem string or not
   pem = input.required<string>();
 
-  error = signal('');
-
-  certificate = computed(() => {
+  private certificateResult = computed(() => {
     try {
-      return this.certificateService.getCertificateFromPem(this.pem(), this.pemEncoded());
+      return {
+        certificate: this.certificateService.getCertificateFromPem(this.pem(), this.pemEncoded()),
+        error: '',
+      };
     } catch (error: unknown) {
-      untracked(() => {
-        this.error.set(error as string);
-      });
-      return undefined;
+      return {
+        certificate: undefined,
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
   });
+
+  error = linkedSignal(() => this.certificateResult().error);
+  certificate = computed(() => this.certificateResult().certificate);
 
   certificateStatus = computed<CertificateStatus>(() => {
     const cert = this.certificate();
@@ -90,7 +94,7 @@ export class CertificateSignpostComponent {
   private getCertificateStatus(certificate: pki.Certificate): CertificateStatus {
     const daysDiff = this.certificateService.getDayDifferences(certificate.validity.notAfter);
 
-    if (daysDiff < 0) {
+    if (certificate.validity.notAfter.getTime() <= Date.now()) {
       return {
         labelText: this.translationService.translate('certificate.expired'),
         labelClass: 'label-danger',

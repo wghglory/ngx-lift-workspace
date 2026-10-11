@@ -1,0 +1,38 @@
+<aside class="state-inspector-container" aria-label="Signal State Inspector">
+  <div class="inspector-header">
+    <div class="header-left">
+      <span class="inspector-pulse" aria-hidden="true"></span>
+      <h4 class="inspector-title">{{ displayTitle() }}</h4>
+    </div>
+    @if (data()) {
+      <button type="button" class="btn btn-link btn-sm toggle-raw-btn" (click)="toggleRaw()">
+        {{ (isRawExpanded() ? 'inspector.hideJson' : 'inspector.rawJson') | translate }}
+      </button>
+    }
+  </div>
+
+  @if (displayDescription()) {
+    <p class="inspector-description">{{ displayDescription() }}</p>
+  }
+
+  @if (items().length > 0) {
+    <div class="inspector-grid">
+      @for (item of items(); track item.label) {
+        <div class="state-pill" [class]="'status-' + item.status">
+          <span class="state-label">{{ item.label }}:</span>
+          <span class="state-val" [title]="formatValue(item.value)">
+            {{ formatValue(item.value) }}
+          </span>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="custom-content">
+    <ng-content />
+  </div>
+
+  @if (isRawExpanded() && data()) {
+    <pre class="raw-json-panel"><code>{{ data() | json }}</code></pre>
+  }
+</aside>

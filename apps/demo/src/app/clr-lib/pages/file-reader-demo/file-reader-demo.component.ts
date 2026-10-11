@@ -6,28 +6,77 @@ import {
   certificateValidator,
   FileReaderComponent,
   PageContainerComponent,
+  TranslatePipe,
 } from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-file-reader-demo',
   imports: [
+    ApiTableComponent,
     ClarityModule,
     ReactiveFormsModule,
     CertificateSignpostComponent,
     FileReaderComponent,
     PageContainerComponent,
     CodeBlockComponent,
+    TranslatePipe,
   ],
   templateUrl: './file-reader-demo.component.html',
   styleUrl: './file-reader-demo.component.scss',
 })
 export class FileReaderDemoComponent implements OnInit {
-  form = new FormGroup({
-    caCert: new FormControl('', [certificateValidator(), Validators.required]),
+  readonly inputs: ApiProperty[] = [
+    {
+      name: 'controlId',
+      type: 'string',
+      description:
+        'Sets the id attribute for the file input element. Useful for associating a label with the file input.',
+    },
+    {
+      name: 'acceptFiles',
+      type: 'string',
+      description:
+        "Specifies the types of files that the file input should accept (e.g., <code>'.pem, .cer, .key'</code>).",
+    },
+    {
+      name: 'encoded',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: 'Determines whether the file content should be read and output as a base64 encoded string.',
+    },
+    {
+      name: 'maxSize',
+      type: 'number',
+      description:
+        'Sets the maximum allowed file size in megabytes. If the selected file exceeds this size, a validation error will be triggered.',
+    },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: 'Disables the file input when set to <code>true</code>.',
+    },
+  ];
+
+  readonly outputs: ApiProperty[] = [
+    {
+      name: 'fileChange',
+      type: 'EventEmitter<string>',
+      description:
+        'Emits the file content (as plain text or base64 encoded string) when a file is selected or removed.',
+    },
+  ];
+
+  basicForm = new FormGroup({
     file: new FormControl('', [Validators.required]),
+  });
+
+  certForm = new FormGroup({
+    caCert: new FormControl('', [certificateValidator(), Validators.required]),
   });
 
   certAcceptedFiles = '.pem, .cer, .key';
@@ -38,7 +87,7 @@ export class FileReaderDemoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form.patchValue({
+    this.certForm.patchValue({
       caCert: `-----BEGIN CERTIFICATE-----
 MIIHBDCCBeygAwIBAgIQBHqqtr/xOf8GW7q69OJ0XjANBgkqhkiG9w0BAQsFADBP
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMSkwJwYDVQQDEyBE
@@ -80,10 +129,16 @@ jYaejivHnl5H+Wd0Jgp3CBEoPv7ajv/LlfOlFTHDeSxRPg1InCmI+qny+g2rjN4+
 RpegRTbFn9zkb7yHHaBaVYk6pAnpF8+e
 -----END CERTIFICATE-----`,
     });
+    this.certForm.controls.caCert.markAsTouched();
+    this.certForm.controls.caCert.markAsDirty();
   }
 
-  submit() {
-    console.log(this.form.value);
+  submitBasic() {
+    console.log(this.basicForm.value);
+  }
+
+  submitCert() {
+    console.log(this.certForm.value);
   }
 
   basicExampleCode = highlight(`

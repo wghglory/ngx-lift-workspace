@@ -1,24 +1,45 @@
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {switchMapWithAsyncState} from 'ngx-lift';
 import {Subject} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {FilterUsersComponent} from '../../../../shared/components/filter-users/filter-users.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-switch-map-with-async-state',
-  imports: [ClarityModule, AlertComponent, PageContainerComponent, CodeBlockComponent, FilterUsersComponent],
+  imports: [
+    ClarityModule,
+    AlertComponent,
+    PageContainerComponent,
+    CodeBlockComponent,
+    FilterUsersComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './switch-map-with-async-state.component.html',
   styleUrl: './switch-map-with-async-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SwitchMapWithAsyncStateComponent {
   private http = inject(HttpClient);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'project',
+        type: '(value: T, index: number) => ObservableInput<R>',
+        description: this.translationService.translate('switchMapWithAsyncState.paramProject'),
+      },
+    ];
+  });
 
   #saveAction = new Subject<void>();
   saveAction = toSignal(
@@ -57,7 +78,7 @@ import {AsyncPipe, NgIf, NgFor} from '@angular/common';
       </clr-radio-wrapper>
     </clr-radio-container>
 
-    <div class="mt-6">
+    <div cds-layout="m-t:lg">
       @if (searchState$ | async; as vm) {
         @if (vm.isLoading) {
           <cll-spinner />

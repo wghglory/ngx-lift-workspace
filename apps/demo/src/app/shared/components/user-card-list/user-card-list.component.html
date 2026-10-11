@@ -1,11 +1,11 @@
 @if (usersState$ | async; as usersState) {
   <div>
     <button class="btn btn-primary" (click)="loadExample()" [clrLoading]="usersState.isLoading">
-      Click to see UI behavior
+      {{ 'common.seeUiBehavior' | translate }}
     </button>
   </div>
 
-  <div class="min-h-[286px] mt-6">
+  <div class="min-h-[286px]" cds-layout="m-t:lg">
     @if (usersState.isLoading) {
       <cll-spinner />
     }

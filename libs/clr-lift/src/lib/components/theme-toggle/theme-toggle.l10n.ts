@@ -47,6 +47,18 @@ export const themeToggleTranslations: Record<string, Record<string, string>> = {
     toggleDark: '다크 테마로 전환',
     toggleLight: '라이트 테마로 전환',
   },
+  nl: {
+    dark: 'Donker',
+    light: 'Licht',
+    toggleDark: 'Overschakelen naar donker thema',
+    toggleLight: 'Overschakelen naar licht thema',
+  },
+  pt: {
+    dark: 'Escuro',
+    light: 'Claro',
+    toggleDark: 'Alternar para o tema escuro',
+    toggleLight: 'Alternar para o tema claro',
+  },
   'pt-BR': {
     dark: 'Escuro',
     light: 'Claro',

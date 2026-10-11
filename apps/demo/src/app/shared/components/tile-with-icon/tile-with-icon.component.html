@@ -1,8 +1,10 @@
-<app-tile [customClass]="'flex gap-5'">
-  <div class="text-3xl">{{ icon() }}</div>
-  <div>
-    <h2 class="!mt-0 !text-2xl">{{ title() }}</h2>
-    <p [innerHTML]="description()"></p>
-    <ng-content />
+<app-tile>
+  <div cds-layout="horizontal gap:md align:top">
+    <div cds-text="display" cds-layout="m:none">{{ icon() }}</div>
+    <div cds-layout="vertical gap:xs">
+      <h2 cds-text="title" cds-layout="m-t:none">{{ title() }}</h2>
+      <p [innerHTML]="description()"></p>
+      <ng-content />
+    </div>
   </div>
 </app-tile>

@@ -39,6 +39,16 @@ export const idleDetectionTranslations: Record<string, Record<string, string>> =
     description: '{0} 초 후 세션이 종료됩니다.',
     keepMeSignedIn: '로그인 상태 유지',
   },
+  nl: {
+    title: 'Sessie time-out waarschuwing',
+    description: 'Uw sessie verloopt over {0} seconden.',
+    keepMeSignedIn: 'Aangemeld blijven',
+  },
+  pt: {
+    title: 'Aviso de tempo limite da sessão',
+    description: 'Sua sessão expirará em {0} segundos.',
+    keepMeSignedIn: 'Manter-me conectado',
+  },
   'pt-BR': {
     title: 'Aviso de tempo limite da sessão',
     description: 'Sua sessão expirará em {0} segundos.',

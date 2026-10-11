@@ -19,4 +19,13 @@ describe('AlertComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('shows the error message instead of content when both are supplied', () => {
+    fixture.componentRef.setInput('error', new Error('API failed'));
+    fixture.componentRef.setInput('content', 'Fallback content');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('API failed');
+    expect(fixture.nativeElement.textContent).not.toContain('Fallback content');
+  });
 });

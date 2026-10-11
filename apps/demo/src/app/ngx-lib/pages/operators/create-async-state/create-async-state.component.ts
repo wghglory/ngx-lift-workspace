@@ -1,19 +1,76 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardListComponent} from '../../../../shared/components/user-card-list/user-card-list.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-create-async-state',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, UserCardListComponent, CalloutComponent],
+  imports: [
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    UserCardListComponent,
+    CalloutComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './create-async-state.component.html',
   styleUrl: './create-async-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateAsyncStateComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'observerOrNextForOrigin',
+        type: 'Partial<TapObserver<T>> | ((value: T) => void)',
+        description: this.translationService.translate('createAsyncState.paramObserver'),
+      },
+      {
+        name: 'initialValue',
+        type: 'AsyncState<T, E>',
+        defaultValue: "{ status: 'loading', isLoading: true, error: null, data: null }",
+        description: this.translationService.translate('createAsyncState.paramInitialValue'),
+      },
+    ];
+  });
+
+  asyncStateProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'status',
+        type: "'idle' | 'loading' | 'reloading' | 'resolved' | 'error'",
+        required: true,
+        description: this.translationService.translate('createAsyncState.stateStatus'),
+      },
+      {
+        name: 'isLoading',
+        type: 'boolean',
+        required: true,
+        description: this.translationService.translate('createAsyncState.stateIsLoading'),
+      },
+      {
+        name: 'error',
+        type: 'E | null',
+        required: true,
+        description: this.translationService.translate('createAsyncState.stateError'),
+      },
+      {
+        name: 'data',
+        type: 'T | null',
+        required: true,
+        description: this.translationService.translate('createAsyncState.stateData'),
+      },
+    ];
+  });
   callbackCode = highlight(`
 import {createAsyncState} from 'ngx-lift';
 

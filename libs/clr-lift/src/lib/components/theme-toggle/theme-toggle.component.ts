@@ -29,17 +29,19 @@ export class ThemeToggleComponent {
   theme = this.themeService.theme;
 
   themeDisplayName = computed(() => {
-    return this.translationService.translate(
-      this.theme() === 'light' ? 'theme-toggle.dark' : 'theme-toggle.light',
-      this.lang(),
-    );
+    const key = this.theme() === 'light' ? 'theme-toggle.dark' : 'theme-toggle.light';
+    const customLang = this.lang();
+    return customLang
+      ? this.translationService.translateWithLanguage(key, customLang)
+      : this.translationService.translate(key);
   });
 
   ariaLabel = computed(() => {
-    return this.translationService.translate(
-      this.theme() === 'light' ? 'theme-toggle.toggleDark' : 'theme-toggle.toggleLight',
-      this.lang(),
-    );
+    const key = this.theme() === 'light' ? 'theme-toggle.toggleDark' : 'theme-toggle.toggleLight';
+    const customLang = this.lang();
+    return customLang
+      ? this.translationService.translateWithLanguage(key, customLang)
+      : this.translationService.translate(key);
   });
 
   iconShape = computed(() => {

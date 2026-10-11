@@ -1,0 +1,57 @@
+<div class="api-table-wrapper">
+  <table class="api-table">
+    <thead>
+      <tr>
+        <th class="col-name">{{ 'common.name' | translate }}</th>
+        @if (hasType()) {
+          <th class="col-type">{{ 'common.type' | translate }}</th>
+        }
+        @if (hasDefault()) {
+          <th class="col-default">{{ 'common.default' | translate }}</th>
+        }
+        <th class="col-description">{{ 'common.description' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (prop of properties(); track prop.name) {
+        <tr>
+          <td class="col-name">
+            <div class="name-container">
+              <span class="prop-name"
+                ><code>{{ prop.name }}</code></span
+              >
+              @if (prop.required) {
+                <span class="badge badge-danger prop-required">{{ 'common.required' | translate }}</span>
+              }
+            </div>
+          </td>
+          @if (hasType()) {
+            <td class="col-type">
+              @if (prop.type) {
+                <span class="prop-type"
+                  ><code>{{ prop.type }}</code></span
+                >
+              } @else {
+                <span class="prop-empty">-</span>
+              }
+            </td>
+          }
+          @if (hasDefault()) {
+            <td class="col-default">
+              @if (prop.defaultValue !== undefined && prop.defaultValue !== '') {
+                <span class="prop-default"
+                  ><code>{{ prop.defaultValue }}</code></span
+                >
+              } @else {
+                <span class="prop-empty">-</span>
+              }
+            </td>
+          }
+          <td class="col-description">
+            <div class="prop-description" [innerHTML]="prop.description"></div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

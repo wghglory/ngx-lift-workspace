@@ -1,10 +1,10 @@
-import {flushEffects} from '../../test-setup';
-import {beforeEach, afterEach, vi} from 'vitest';
 import {effect, Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {delay, EMPTY, map, Observable, of, Subject, throwError} from 'rxjs';
+import {afterEach, beforeEach, vi} from 'vitest';
 
-import {resourceAsync} from './resource-async';
+import {resourceAsync, WritableResourceRef} from './resource-async';
+import {flushEffects} from '../../test-setup';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -24,6 +24,41 @@ interface User {
 }
 
 describe('resourceAsync lifecycle regressions', () => {
+  it('accepts a Promise-like source without a catch method and infers the resolved value type', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const promise = Promise.resolve('thenable value');
+      const thenable: PromiseLike<string> = {then: promise.then.bind(promise)};
+      const resource = resourceAsync(() => thenable);
+      expectTypeOf(resource.value).returns.toEqualTypeOf<string | undefined>();
+      await flushEffects();
+      expect(resource.status()).toBe('resolved');
+      expect(resource.value()).toBe('thenable value');
+    });
+  });
+
+  it('handles a thenable returned after a loader resets its operation', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const promise = Promise.resolve('late value');
+      const thenable: PromiseLike<string> = {then: promise.then.bind(promise)};
+      const resource: WritableResourceRef<string | undefined> = resourceAsync<string, void>(
+        {
+          params: () => undefined,
+          loader: () => {
+            resource.reset();
+            return thenable;
+          },
+        },
+        {lazy: true},
+      );
+      const rejection = vi.fn();
+      resource.execute().catch(rejection);
+      await flushEffects();
+      expect(resource.status()).toBe('idle');
+      expect(resource.value()).toBeUndefined();
+      expect(rejection).toHaveBeenCalledOnce();
+    });
+  });
+
   it.each([false, true])(
     'handles success callback failures before settling execute with retention %s',
     async (retain) => {
@@ -1331,7 +1366,9 @@ describe('WritableResourceRef', () => {
 
     it('should handle undefined in updater when no initialValue', async () => {
       await TestBed.runInInjectionContext(async () => {
-        const resource = resourceAsync<User | undefined>(() => promise<User>({id: 1, name: 'John'}, 100), {lazy: true});
+        const resource = resourceAsync<User | undefined>(() => promise<User>({id: 1, name: 'John'}, 100), {
+          lazy: true,
+        });
 
         await flushEffects();
         expect(resource.value()).toBeUndefined();

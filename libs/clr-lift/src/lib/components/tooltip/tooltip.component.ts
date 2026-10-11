@@ -5,6 +5,7 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  DestroyRef,
   effect,
   ElementRef,
   HostListener,
@@ -16,14 +17,18 @@ import {
   Type,
   viewChild,
   ViewContainerRef,
+  ViewRef,
 } from '@angular/core';
 
+import {TranslatePipe} from '../../pipes/translate.pipe';
+import {TranslationService} from '../../services/translation.service';
+import {tooltipTranslations} from './tooltip.l10n';
 import {TooltipPosition} from './tooltip.model';
 import {isElementClickable, isElementInsideCollection} from './tooltip.util';
 
 @Component({
   selector: 'cll-tooltip',
-  imports: [A11yModule],
+  imports: [A11yModule, TranslatePipe],
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,59 +40,114 @@ export class TooltipComponent {
   position = input<TooltipPosition>();
   triggerElementHovering = input(true); // if the trigger element (e.g. button) is being hovered
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  contentContext = input<Record<string, any>>();
+  contentContext = input<Record<string, unknown>>();
 
   /**
    * Content to display in the tooltip.
    * Can be a string, TemplateRef, ComponentRef, or Component Type.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  content = input<string | TemplateRef<any> | ComponentRef<any> | Type<any>>();
+  content = input<string | TemplateRef<unknown> | ComponentRef<unknown> | Type<unknown>>();
 
   // force close is true
   closePopover = output<boolean>();
 
-  contentContainer = viewChild.required('contentContainer', {
-    read: ViewContainerRef,
-  });
+  contentContainer = viewChild.required('contentContainer', {read: ViewContainerRef});
+  private contentContainerQuery = viewChild('contentContainer', {read: ViewContainerRef});
 
   text = signal('');
   showClose = true;
   tooltipHovering = false;
 
-  private host = inject(ElementRef); // <cll-tooltip>
+  private host = inject<ElementRef<HTMLElement>>(ElementRef); // <cll-tooltip>
+
+  private contentView?: ViewRef;
+  private contentViewContainer?: ViewContainerRef;
+  private borrowedElement?: Element;
+  private borrowedView?: ViewRef;
+  private borrowedParent?: Node | null;
+  private borrowedNextSibling?: Node | null;
+  private leaveTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
+    inject(TranslationService).loadTranslationsForComponent('tooltip', tooltipTranslations);
     const cdr = inject(ChangeDetectorRef);
+    inject(DestroyRef).onDestroy(() => {
+      clearTimeout(this.leaveTimer);
+      this.releaseContent();
+    });
 
-    // Effect to handle content changes
-    effect(() => {
-      const c = this.content();
-      if (!c) {
+    effect((onCleanup) => {
+      const content = this.content();
+      const context = this.contentContext();
+      this.releaseContent();
+      this.text.set(typeof content === 'string' ? content : '');
+      if (!content || typeof content === 'string') {
         return;
       }
 
-      if (typeof c === 'string') {
-        this.text.set(c);
-      } else if (c instanceof TemplateRef) {
-        // Wait for the component to add the content container
-        setTimeout(() => {
-          this.contentContainer().createEmbeddedView(c, this.contentContext());
-          cdr.detectChanges();
-        });
-      } else if (c instanceof ComponentRef) {
-        setTimeout(() => {
-          this.contentContainer().insert(c.hostView, 0);
-          cdr.detectChanges();
-        });
-      } else if (c instanceof Type) {
-        setTimeout(() => {
-          this.contentContainer().createComponent(c);
-          cdr.detectChanges();
-        });
-      }
+      const timer = setTimeout(() => {
+        const container = this.contentContainerQuery();
+        if (!container) {
+          return;
+        }
+        this.contentViewContainer = container;
+        if (content instanceof TemplateRef) {
+          this.contentView = container.createEmbeddedView(content, context);
+        } else if (content instanceof ComponentRef) {
+          if (content.hostView.destroyed) {
+            return;
+          }
+          const element: unknown = content.location.nativeElement;
+          const target: unknown = container.element.nativeElement;
+          if (element instanceof Element && target instanceof Element) {
+            this.borrowedElement = element;
+            this.borrowedView = content.hostView;
+            this.borrowedParent = element.parentNode;
+            this.borrowedNextSibling = element.nextSibling;
+            if (target.parentNode) {
+              target.parentNode.insertBefore(element, target.nextSibling);
+            } else {
+              target.appendChild(element);
+            }
+            // The caller retains ownership of its view and change detection.
+            content.changeDetectorRef.detectChanges();
+          }
+        } else if (content instanceof Type) {
+          this.contentView = container.createComponent(content).hostView;
+        }
+        cdr.detectChanges();
+      });
+      onCleanup(() => {
+        clearTimeout(timer);
+        this.releaseContent();
+      });
     });
+  }
+
+  /** Restores borrowed DOM and destroys only views created by this tooltip. */
+  releaseContent() {
+    const view = this.contentView;
+    const container = this.contentViewContainer;
+    if (view && container && !view.destroyed) {
+      const index = container.indexOf(view);
+      if (index !== -1) {
+        container.remove(index);
+      }
+    }
+    this.contentView = undefined;
+    this.contentViewContainer = undefined;
+    if (this.borrowedElement) {
+      const sibling = this.borrowedNextSibling?.parentNode === this.borrowedParent ? this.borrowedNextSibling : null;
+      if (this.borrowedParent && !this.borrowedView?.destroyed) {
+        this.borrowedParent.insertBefore(this.borrowedElement, sibling ?? null);
+      } else {
+        this.borrowedElement.remove();
+      }
+    }
+    this.borrowedElement = undefined;
+    this.borrowedView = undefined;
+    this.borrowedParent = undefined;
+    this.borrowedNextSibling = undefined;
   }
 
   // get the children of the tooltip host element
@@ -102,19 +162,24 @@ export class TooltipComponent {
 
   @HostListener('window:click', ['$event'])
   click(event: MouseEvent) {
-    const target = event.target as HTMLElement;
+    const target = event.target;
 
-    if (!target) {
+    if (!(target instanceof Element)) {
       return;
     }
 
     // Close the tooltip if the user clicks the mouse outside the tooltip or the user clicks a clickable element inside the tooltip
-    if (isElementClickable(target) || !isElementInsideCollection(target, this.tooltipChildren)) {
+    if (
+      isElementClickable(target, this.host.nativeElement.firstElementChild ?? undefined) ||
+      !isElementInsideCollection(target, this.tooltipChildren)
+    ) {
       this.closePopover.emit(true);
     }
   }
 
   mouseEnter() {
+    clearTimeout(this.leaveTimer);
+    this.leaveTimer = undefined;
     this.tooltipHovering = true;
   }
 
@@ -122,7 +187,9 @@ export class TooltipComponent {
     this.tooltipHovering = false;
 
     // Use a timeout to allow mouse to move to trigger element
-    setTimeout(() => {
+    clearTimeout(this.leaveTimer);
+    this.leaveTimer = setTimeout(() => {
+      this.leaveTimer = undefined;
       // if mouse out and not place onto the trigger element, close the tooltip
       if (!this.triggerElementHovering()) {
         this.closePopover.emit(false);
@@ -130,7 +197,7 @@ export class TooltipComponent {
     }, 300);
   }
 
-  @HostListener('body:keydown.escape')
+  @HostListener('document:keydown.escape')
   onEscape() {
     this.closePopover.emit(true);
   }

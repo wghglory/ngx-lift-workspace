@@ -23,4 +23,11 @@ describe('StatusIndicatorComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('uses a non-submit button for tooltip interaction inside forms', () => {
+    fixture.componentRef.setInput('tooltip', 'Status details');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('button').type).toBe('button');
+  });
 });

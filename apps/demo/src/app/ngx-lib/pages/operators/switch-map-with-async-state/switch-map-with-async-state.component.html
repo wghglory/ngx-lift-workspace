@@ -1,45 +1,38 @@
-<cll-page-container [title]="'switchMapWithAsyncState'" customClass="space-y-9">
+<cll-page-container [title]="'switchMapWithAsyncState'">
   <!-- Overview -->
-  <p>
-    The <code>switchMapWithAsyncState</code> operator combines the functionality of <code>switchMap</code> and
-    <code>createAsyncState</code> into a single operator. It's tailor-made for scenarios where you need to trigger an
-    API request based on user actions (like button clicks) and seamlessly transition between streams. By creating an
-    <code>AsyncState</code> structure to encapsulate your API response, this operator delivers a seamless and efficient
-    approach to managing asynchronous operations.
-  </p>
+  <p [innerHTML]="'switchMapWithAsyncState.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Filter Users by Gender</h3>
-      <p>Selecting a different gender will populate the user list accordingly:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'switchMapWithAsyncState.example1Title' | translate }}</h3>
+      <p>{{ 'switchMapWithAsyncState.example1Desc' | translate }}</p>
       <app-filter-users />
       <app-code-block [code]="example1Code" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Form Submission with Loading State</h3>
-      <p>
-        Submit the form using <code>switchMapWithAsyncState</code> and <code>toSignal</code>. The submission will always
-        emit an error because the API is designed to simulate an error.
-      </p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'switchMapWithAsyncState.example2Title' | translate }}</h3>
+      <p [innerHTML]="'switchMapWithAsyncState.example2Desc' | translate"></p>
 
-      <form>
+      <form cds-layout="vertical gap:sm">
         <clr-input-container>
-          <label for="switchmap-name">Name</label>
+          <label for="switchmap-name">{{ 'common.name' | translate }}</label>
           <input id="switchmap-name" clrInput name="username" />
         </clr-input-container>
 
-        <button
-          type="button"
-          class="btn btn-primary mt-5"
-          (click)="save()"
-          [clrLoading]="saveAction()?.isLoading === true"
-        >
-          Save
-        </button>
+        <div cds-layout="horizontal gap:xs">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="save()"
+            [clrLoading]="saveAction()?.isLoading === true"
+          >
+            {{ 'common.save' | translate }}
+          </button>
+        </div>
         @if (saveAction()?.error; as error) {
           <cll-alert [error]="error" />
         }
@@ -50,38 +43,20 @@
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>switchMapWithAsyncState</h3>
-        <p>
-          Combines <code>switchMap</code> and <code>createAsyncState</code> to transform an observable stream into
-          <code>AsyncState</code> while switching to a new inner observable.
-        </p>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>switchMapWithAsyncState</h3>
+      <p>{{ 'switchMapWithAsyncState.apiSummary' | translate }}</p>
 
-        <h4>Signature</h4>
-        <app-code-block [code]="signatureCode" lang="typescript" />
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
 
-        <h4>Parameters</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>project: (value: T, index: number) => ObservableInput&lt;R&gt;</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                A function that receives each value from the source observable and returns an Observable, Promise, or
-                other ObservableInput.
-              </p>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="parameters()" />
 
-        <h4>Returns</h4>
-        <p class="text-sm">
-          An observable that emits <code>AsyncState&lt;R&gt;</code> objects, automatically handling loading, error, and
-          data states.
-        </p>
-      </div>
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'switchMapWithAsyncState.returnsDesc' | translate }}</p>
     </div>
   </section>
 </cll-page-container>

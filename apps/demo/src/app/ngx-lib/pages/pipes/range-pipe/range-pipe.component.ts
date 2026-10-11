@@ -1,18 +1,31 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {RangePipe} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-range-pipe',
-  imports: [CodeBlockComponent, PageContainerComponent, CalloutComponent, RangePipe],
+  imports: [CodeBlockComponent, PageContainerComponent, CalloutComponent, RangePipe, TranslatePipe, ApiTableComponent],
   templateUrl: './range-pipe.component.html',
   styleUrl: './range-pipe.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RangePipeComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'value',
+        type: '[number] | [number, number] | [number, number, number] | [number, number, number, boolean]',
+        description: this.translationService.translate('rangePipe.paramValue'),
+      },
+    ];
+  });
   basicExampleCode = highlight(`
 import {RangePipe} from 'ngx-lift';
 

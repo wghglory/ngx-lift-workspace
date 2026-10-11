@@ -1,17 +1,36 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-array-join-pipe',
-  imports: [CodeBlockComponent, PageContainerComponent],
+  imports: [CodeBlockComponent, PageContainerComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './array-join-pipe.component.html',
   styleUrl: './array-join-pipe.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArrayJoinPipeComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'value',
+        type: 'unknown',
+        description: this.translationService.translate('arrayJoinPipe.paramValue'),
+      },
+      {
+        name: 'separator',
+        type: 'string',
+        default: "','",
+        description: this.translationService.translate('arrayJoinPipe.paramSeparator'),
+      },
+    ];
+  });
   basicExampleCode = highlight(`
 import {ArrayJoinPipe} from 'ngx-lift';
 

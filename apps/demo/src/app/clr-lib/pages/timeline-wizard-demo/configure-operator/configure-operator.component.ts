@@ -1,13 +1,13 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
+import {TimelineBaseComponent, TimelineWizardService, TranslatePipe} from 'clr-lift';
 
 import {Deployment} from '../deployment.type';
 
 @Component({
   selector: 'app-configure-operator',
-  imports: [ClarityModule, ReactiveFormsModule],
+  imports: [ClarityModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './configure-operator.component.html',
   styleUrl: './configure-operator.component.scss',
 })

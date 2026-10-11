@@ -191,13 +191,6 @@ ngx-lift-workspace/
 - **Purpose**: Primary UI component library
 - **Styling**: SASS with Clarity variables (no hard-coded colors)
 
-### Tailwind CSS
-
-- **Version**: ^3.4.13
-- **Purpose**: Utility-first CSS framework
-- **Plugin**: @tailwindcss/container-queries ^0.1.1
-- **Configuration**: `apps/demo/tailwind.config.js`
-
 ## Code Quality & Linting
 
 ### ESLint
@@ -214,7 +207,6 @@ ngx-lift-workspace/
 ### Prettier
 
 - **Version**: ^3.3.3
-- **Plugins**: prettier-plugin-tailwindcss ^0.6.8
 - **Configuration**: `.prettierrc` or `prettier.config.js`
 
 ### TypeScript Compiler

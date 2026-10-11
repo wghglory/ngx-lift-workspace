@@ -1,18 +1,65 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-clr-datagrid-util',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './clr-datagrid-util.component.html',
   styleUrl: './clr-datagrid-util.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClrDatagridUtilComponent {
+  private translationService = inject(TranslationService);
+
+  paramProps = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'state',
+        type: 'ClrDatagridStateInterface | null',
+        required: true,
+        description: this.translationService.translate('datagridUtil.paramState'),
+      },
+    ];
+  });
+
+  pageQueryProps = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'page',
+        type: 'number',
+        required: true,
+        description: this.translationService.translate('datagridUtil.propPage'),
+      },
+      {
+        name: 'pageSize',
+        type: 'number',
+        required: true,
+        description: this.translationService.translate('datagridUtil.propPageSize'),
+      },
+      {
+        name: 'sortAsc',
+        type: 'string',
+        description: this.translationService.translate('datagridUtil.propSortAsc'),
+      },
+      {
+        name: 'sortDesc',
+        type: 'string',
+        description: this.translationService.translate('datagridUtil.propSortDesc'),
+      },
+      {
+        name: 'filter',
+        type: 'string',
+        description: this.translationService.translate('datagridUtil.propFilter'),
+      },
+    ];
+  });
   pageQueryModelCode = highlight(`
 export interface PageQuery {
   /**

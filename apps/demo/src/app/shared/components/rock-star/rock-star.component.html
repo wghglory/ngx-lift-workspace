@@ -1,7 +1,7 @@
 @if (vm$ | async; as vm) {
   <p>
-    Today is <time> {{ vm.today | date }} </time>. Who is our today's rock star?
-    <button (click)="showRockStar()" class="btn btn-outline">Unveil</button>
+    {{ 'rockStar.todayIs' | translate }} <time> {{ vm.today | date }} </time>. {{ 'rockStar.whoIsStar' | translate }}
+    <button (click)="showRockStar()" class="btn btn-outline">{{ 'rockStar.unveil' | translate }}</button>
   </p>
 
   @if (vm.rockStarState?.error; as error) {

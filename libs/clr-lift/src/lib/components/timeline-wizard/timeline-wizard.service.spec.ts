@@ -361,4 +361,33 @@ describe('TimelineWizardService', () => {
 
     expect(() => service.currentStepData).toThrow();
   });
+  it('prefers an exact step id over an earlier matching title', () => {
+    service.steps = [
+      {state: ClrTimelineStepState.SUCCESS, title: 'shared', component: MockTimelineBaseComponent, data: 'title match'},
+      {
+        state: ClrTimelineStepState.CURRENT,
+        title: 'Other',
+        id: 'shared',
+        component: MockTimelineBaseComponent,
+        data: 'id match',
+      },
+    ];
+
+    expect(service.getStepData<string>('shared')).toBe('id match');
+  });
+
+  it('does not consider an empty wizard to be at its last step', () => {
+    expect(service.isLastStep).toBe(false);
+  });
+
+  it('retains false, zero, and empty-string step payloads', () => {
+    service.steps = [false, 0, ''].map((data, index) => ({
+      state: ClrTimelineStepState.SUCCESS,
+      title: String(index),
+      component: MockTimelineBaseComponent,
+      data,
+    }));
+
+    expect(service.allStepsData.map((step) => step.data)).toEqual([false, 0, '']);
+  });
 });

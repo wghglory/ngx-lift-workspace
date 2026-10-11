@@ -36,6 +36,22 @@ describe('TranslationService', () => {
     expect(translationService['translations']['es']['testComponent.key2']).toBe('Spanish translation 2');
   });
 
+  it('should load translations with empty componentKey (root-level translations)', () => {
+    const translationsToAdd = {
+      en: {
+        'root.key1': 'Root English 1',
+      },
+      de: {
+        'root.key1': 'Root Deutsch 1',
+      },
+    };
+
+    translationService.loadTranslationsForComponent('', translationsToAdd);
+
+    expect(translationService['translations']['en']['root.key1']).toBe('Root English 1');
+    expect(translationService['translations']['de']['root.key1']).toBe('Root Deutsch 1');
+  });
+
   it('should translate a key using default English', () => {
     translationService.loadTranslationsForComponent('testComponent', {
       en: {
@@ -123,5 +139,50 @@ describe('TranslationService', () => {
     const formattedTranslation = translationService.translate('testComponent.greeting', 'John');
 
     expect(formattedTranslation).toBe('Hello, John!');
+  });
+  it('falls back from a regional browser locale to its supported base language', () => {
+    translationService.loadTranslationsForComponent('example', {
+      en: {greeting: 'Hello'},
+      es: {greeting: 'Hola'},
+    });
+    translationService['language'] = 'es-MX';
+
+    expect(translationService.translate('example.greeting')).toBe('Hola');
+  });
+
+  it('preserves intentionally empty translations', () => {
+    translationService.loadTranslationsForComponent('example', {
+      en: {greeting: 'Hello'},
+      es: {greeting: ''},
+    });
+    translationService['language'] = 'es';
+
+    expect(translationService.translate('example.greeting')).toBe('');
+  });
+
+  it('updates language reactively with setLanguage and currentLanguage signal', () => {
+    translationService.loadTranslationsForComponent('example', {
+      en: {greeting: 'Hello'},
+      'zh-CN': {greeting: '你好'},
+    });
+
+    translationService.setLanguage('zh-CN', false);
+
+    expect(translationService.currentLanguage()).toBe('zh-CN');
+    expect(translationService.getLanguage()).toBe('zh-CN');
+    expect(translationService.translate('example.greeting')).toBe('你好');
+  });
+
+  it('supports explicit target language with translateWithLanguage', () => {
+    translationService.loadTranslationsForComponent('example', {
+      en: {greeting: 'Hello'},
+      es: {greeting: 'Hola'},
+      fr: {greeting: 'Bonjour'},
+    });
+
+    translationService.setLanguage('en', false);
+
+    expect(translationService.translateWithLanguage('example.greeting', 'fr')).toBe('Bonjour');
+    expect(translationService.translateWithLanguage('example.greeting', 'es')).toBe('Hola');
   });
 });

@@ -1,11 +1,20 @@
 import {CommonModule} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
-import {AlertComponent, CalloutComponent, convertToHttpParams, dgState, PageContainerComponent} from 'clr-lift';
+import {
+  AlertComponent,
+  CalloutComponent,
+  convertToHttpParams,
+  dgState,
+  PageContainerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 import {AsyncState, isEqual, poll} from 'ngx-lift';
 import {BehaviorSubject, delay, distinctUntilChanged, filter, map, of, Subject, switchMap, takeWhile} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {PaginationResponse} from '../../../../shared/models/pagination.model';
 import {User} from '../../../../shared/models/user.model';
@@ -14,7 +23,16 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-poll',
-  imports: [CommonModule, ClarityModule, PageContainerComponent, CodeBlockComponent, AlertComponent, CalloutComponent],
+  imports: [
+    CommonModule,
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    AlertComponent,
+    CalloutComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './poll.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,6 +40,73 @@ export class PollComponent implements OnInit {
   selectedItems: User[] = [];
 
   userService = inject(UserService);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'pollingFn',
+        type: '(input?: Input) => Observable<Data> | Promise<Data> | Data',
+        required: true,
+        description: this.translationService.translate('poll.paramPollingFn'),
+      },
+      {
+        name: 'interval',
+        type: 'number',
+        required: true,
+        description: this.translationService.translate('poll.paramInterval'),
+      },
+      {
+        name: 'forceRefresh',
+        type: 'Observable<Input> | Signal<Input>',
+        description: this.translationService.translate('poll.paramForceRefresh'),
+      },
+      {
+        name: 'paramsBuilder',
+        type: '(input: Input) => any',
+        description: this.translationService.translate('poll.paramParamsBuilder'),
+      },
+      {
+        name: 'initialValue',
+        type: 'AsyncState<Data>',
+        defaultValue: "{ status: 'loading', isLoading: true, error: null, data: null }",
+        description: this.translationService.translate('poll.paramInitialValue'),
+      },
+      {
+        name: 'delay',
+        type: 'number',
+        defaultValue: '0',
+        description: this.translationService.translate('poll.paramDelay'),
+      },
+    ];
+  });
+
+  returnProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'status',
+        type: 'ResourceStatus',
+        description: this.translationService.translate('createAsyncState.stateStatus'),
+      },
+      {
+        name: 'isLoading',
+        type: 'boolean',
+        description: this.translationService.translate('createAsyncState.stateIsLoading'),
+      },
+      {
+        name: 'error',
+        type: 'E | null',
+        description: this.translationService.translate('createAsyncState.stateError'),
+      },
+      {
+        name: 'data',
+        type: 'T | null',
+        description: this.translationService.translate('createAsyncState.stateData'),
+      },
+    ];
+  });
 
   private dgBS = new BehaviorSubject<ClrDatagridStateInterface | null>(null);
   private dgState$ = this.dgBS.pipe(dgState(false)); // When the dgState parameter is set to false, it signals the execution of an API call even when the current state is identical to the previous state. Conversely, emission is suppressed when dgState is true, thanks to the application of distinctUntilChanged.

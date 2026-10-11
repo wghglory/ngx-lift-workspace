@@ -1,8 +1,9 @@
 # computedAsync
 
-`computedAsync` derives a read-only Angular signal from a value, Observable, or Promise. It tracks the signals read
-synchronously by the factory and updates when those dependencies change. Use `resourceAsync` when you also need explicit
-loading/error signals or manual execution.
+`computedAsync` derives a read-only Angular signal from a value, Observable, or Promise-like source. The source contract
+explicitly accepts `PromiseLike<T>`, matching existing thenable parsing; `requireSync` still rejects a thenable without
+an initial value. It tracks the signals read synchronously by the factory and updates when those dependencies change.
+Use `resourceAsync` when you also need explicit loading/error signals or manual execution.
 
 ```typescript
 const userId = signal(1);
@@ -112,14 +113,15 @@ values used by your application.
 
 ## Validation
 
-`computed-async.spec.ts` contains 49 passing tests, including initialization reuse and cleanup, factory signal writes,
+`computed-async.spec.ts` contains 51 passing tests, including initialization reuse and cleanup, factory signal writes,
 dynamic/equal request dependencies, callback dependency isolation, changed parameter snapshots, callback failures,
 switch error cancellation, queued/discarded Promise rejection handling, all four Observable disposal policies, late
 Promise suppression, previous values, equality, and recovery.
 
-The library typecheck and an isolated typecheck of this spec also pass. The default-error test now declares
-`number | Error` explicitly, replacing an existing incompatible cast. A workspace-wide spec typecheck still reports six
-unchanged errors in other specs (`poll`, `start-with-tap`, `combine-from`, and `merge-from`).
+The library typecheck and the complete test-source typecheck also pass. The default-error test declares `number | Error`
+explicitly, matching the existing error-as-value contract. The six previously reported errors in other specs have been
+corrected. The implementation options now have an explicit type instead of `any`, without changing public overloads. See
+the [quality audit](../quality-audit.md).
 
 ```bash
 pnpm nx test ngx-lift --args='src/lib/signals/computed-async.spec.ts'

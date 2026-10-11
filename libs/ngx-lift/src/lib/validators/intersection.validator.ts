@@ -40,19 +40,30 @@ export function intersectionValidator<T = string>(controlName1: string, controlN
 
     // Assuming both values are arrays
     if (!Array.isArray(value1) || !Array.isArray(value2)) {
+      updateIntersectionError(control1, false);
+      updateIntersectionError(control2, false);
       return null;
     }
 
     const intersection = value1.filter((value: T) => value2.includes(value));
 
     if (intersection.length > 0) {
-      control1.setErrors({intersection: true});
-      control2.setErrors({intersection: true});
+      updateIntersectionError(control1, true);
+      updateIntersectionError(control2, true);
       return {intersection: true};
     } else {
-      control1.setErrors(null);
-      control2.setErrors(null);
+      updateIntersectionError(control1, false);
+      updateIntersectionError(control2, false);
       return null;
     }
   };
+}
+
+function updateIntersectionError(control: AbstractControl, invalid: boolean): void {
+  const errors = {...control.errors};
+  delete errors['intersection'];
+  if (invalid) {
+    errors['intersection'] = true;
+  }
+  control.setErrors(Object.keys(errors).length > 0 ? errors : null);
 }

@@ -1,95 +1,53 @@
-<cll-page-container [title]="'pickBy & omitBy'" customClass="space-y-9">
+<cll-page-container [title]="'pickBy & omitBy'">
   <!-- Overview -->
-  <p>
-    The <code>pickBy</code> and <code>omitBy</code> utility functions allow you to create new objects by selecting or
-    excluding properties based on a predicate function. <code>pickBy</code> creates an object composed of properties
-    that satisfy a given condition, while <code>omitBy</code> is the opposite, creating an object composed of properties
-    that do not satisfy the condition.
-  </p>
+  <p [innerHTML]="'pickBy.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: pickBy</h3>
-      <p>Create an object composed of object properties that satisfy a given condition:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'pickBy.example1Title' | translate }}</h3>
+      <p>{{ 'pickBy.example1Desc' | translate }}</p>
       <app-code-block [code]="pickByCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: omitBy</h3>
-      <p>
-        <code>omitBy</code> is the opposite of <code>pickBy</code>, creating an object composed of properties that do
-        not satisfy the given condition.
-      </p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'pickBy.example2Title' | translate }}</h3>
+      <p [innerHTML]="'pickBy.example2Desc' | translate"></p>
       <app-code-block [code]="omitByCode" lang="typescript" />
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>pickBy</h3>
-        <p>Creates an object composed of object properties that satisfy a given condition.</p>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>pickBy</h3>
+      <p>{{ 'pickBy.apiSummary' | translate }}</p>
 
-        <h4>Signature</h4>
-        <app-code-block [code]="pickBySignatureCode" lang="typescript" />
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="pickBySignatureCode" lang="typescript" />
 
-        <h4>Parameters</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>object: Record&lt;string, T&gt;</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">The source object to pick properties from.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>predicate: (value: T, key: string) => boolean</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                A function that determines which properties to include. Returns <code>true</code> to include the
-                property, <code>false</code> to exclude it.
-              </p>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="pickByParameters()" />
 
-        <h4>Returns</h4>
-        <p class="text-sm">A new object containing only the properties that satisfy the predicate.</p>
-      </div>
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'pickBy.returnsDesc' | translate }}</p>
+    </div>
 
-      <div class="space-y-3">
-        <h3>omitBy</h3>
-        <p>Creates an object composed of object properties that do not satisfy a given condition.</p>
+    <div cds-layout="vertical gap:sm">
+      <h3>omitBy</h3>
+      <p>{{ 'omitBy.apiSummary' | translate }}</p>
 
-        <h4>Signature</h4>
-        <app-code-block [code]="omitBySignatureCode" lang="typescript" />
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="omitBySignatureCode" lang="typescript" />
 
-        <h4>Parameters</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>object: Record&lt;string, T&gt;</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">The source object to omit properties from.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>predicate: (value: T, key: string) => boolean</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                A function that determines which properties to exclude. Returns <code>true</code> to exclude the
-                property, <code>false</code> to include it.
-              </p>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="omitByParameters()" />
 
-        <h4>Returns</h4>
-        <p class="text-sm">A new object containing only the properties that do not satisfy the predicate.</p>
-      </div>
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'omitBy.returnsDesc' | translate }}</p>
     </div>
   </section>
 </cll-page-container>

@@ -1,4 +1,5 @@
-import {Injectable, signal} from '@angular/core';
+import {DOCUMENT} from '@angular/common';
+import {inject, Injectable, signal} from '@angular/core';
 
 import {ClarityTheme} from './theme.type';
 
@@ -16,6 +17,7 @@ import {ClarityTheme} from './theme.type';
   providedIn: 'root',
 })
 export class ThemeService {
+  private document = inject(DOCUMENT);
   /**
    * Reactive signal containing the current theme.
    * Defaults to 'light' if no theme is stored in localStorage.
@@ -39,8 +41,12 @@ export class ThemeService {
    */
   setTheme(newTheme: ClarityTheme) {
     this.theme.set(newTheme);
-    localStorage['cds-theme'] = newTheme;
-    document.body.setAttribute('cds-theme', newTheme);
+    this.document.body?.setAttribute('cds-theme', newTheme);
+    try {
+      this.document.defaultView?.localStorage.setItem('cds-theme', newTheme);
+    } catch {
+      // The selected theme still applies when storage is blocked or full.
+    }
   }
 
   /**
@@ -49,11 +55,14 @@ export class ThemeService {
    * If a theme is found in localStorage, it is applied to the document body.
    */
   private initTheme() {
-    const themeInUse = localStorage['cds-theme'];
-
-    if (themeInUse) {
-      this.theme.set(themeInUse);
-      document.body.setAttribute('cds-theme', themeInUse);
+    let storedTheme: string | null | undefined;
+    try {
+      storedTheme = this.document.defaultView?.localStorage.getItem('cds-theme');
+    } catch {
+      // Server rendering and restricted browsers use the default theme.
     }
+    const theme = storedTheme === 'dark' ? 'dark' : 'light';
+    this.theme.set(theme);
+    this.document.body?.setAttribute('cds-theme', theme);
   }
 }

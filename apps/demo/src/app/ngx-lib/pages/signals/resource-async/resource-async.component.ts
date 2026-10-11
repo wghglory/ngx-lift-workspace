@@ -1,13 +1,23 @@
-import {ChangeDetectionStrategy, Component, effect, inject, Injector, signal, untracked} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal, untracked} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {
+  AlertComponent,
+  CalloutComponent,
+  PageContainerComponent,
+  SpinnerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 import {resourceAsync, ResourceRef} from 'ngx-lift';
 import {delay, map, of} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {StateInspectorComponent} from '../../../../shared/components/state-inspector/state-inspector.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
 import {User} from '../../../../shared/models/user.model';
 import {UserService} from '../../../../shared/services/user.service';
@@ -52,6 +62,10 @@ interface Organization {
     SpinnerComponent,
     AlertComponent,
     UserCardComponent,
+    DemoPlaygroundComponent,
+    StateInspectorComponent,
+    TranslatePipe,
+    ApiTableComponent,
   ],
   templateUrl: './resource-async.component.html',
   styleUrl: './resource-async.component.scss',
@@ -61,6 +75,119 @@ export class ResourceAsyncComponent {
   private userService = inject(UserService);
   private http = inject(HttpClient);
   private injector = inject(Injector);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'sourceFn',
+        type: '() => Observable<T> | Promise<T> | T',
+        required: true,
+        description: this.translationService.translate('resourceAsync.paramSourceFn'),
+      },
+      {
+        name: 'options',
+        type: 'ResourceRefOptions<T, E>',
+        description: this.translationService.translate('resourceAsync.paramOptions'),
+      },
+    ];
+  });
+
+  optionsProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'initialValue',
+        type: 'T',
+        description: this.translationService.translate('resourceAsync.propInitialValue'),
+      },
+      {
+        name: 'lazy',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('resourceAsync.propLazy'),
+      },
+      {
+        name: 'behavior',
+        type: "'switch' | 'exhaust'",
+        defaultValue: "'switch'",
+        description: this.translationService.translate('resourceAsync.propBehavior'),
+      },
+      {
+        name: 'onError',
+        type: '(error: E) => T | undefined',
+        description: this.translationService.translate('resourceAsync.propOnError'),
+      },
+      {
+        name: 'throwOnError',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('resourceAsync.propThrowOnError'),
+      },
+      {
+        name: 'onSuccess',
+        type: '(value: T) => void',
+        description: this.translationService.translate('resourceAsync.propOnSuccess'),
+      },
+      {
+        name: 'onLoading',
+        type: '() => void',
+        description: this.translationService.translate('resourceAsync.propOnLoading'),
+      },
+    ];
+  });
+
+  returnsProperties = computed<ApiProperty[]>(() => {
+    return [
+      {
+        name: 'value',
+        type: 'Signal<T | undefined>',
+        description: 'The current value of the resource.',
+      },
+      {
+        name: 'error',
+        type: 'Signal<E | null>',
+        description: 'The current error, if any.',
+      },
+      {
+        name: 'status',
+        type: 'Signal<ResourceStatus>',
+        description: "The current status: 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'.",
+      },
+      {
+        name: 'isLoading',
+        type: 'Signal<boolean>',
+        description: "Signal that returns true if any fetch operation is in progress ('loading' or 'reloading').",
+      },
+      {
+        name: 'isIdle',
+        type: 'Signal<boolean>',
+        description: 'Signal that returns true if the resource is in idle state (never fetched).',
+      },
+      {
+        name: 'hasValue()',
+        type: '() => boolean',
+        description: 'Type predicate narrowing value() to exclude undefined when true.',
+      },
+      {
+        name: 'reload()',
+        type: '() => boolean',
+        description: 'Manually trigger a reload of the resource. Ideal for queries (GET).',
+      },
+      {
+        name: 'execute()',
+        type: '() => Promise<T>',
+        description:
+          'Manually trigger execution returning an awaitable Promise. Ideal for mutations (POST/PUT/DELETE).',
+      },
+      {
+        name: 'reset()',
+        type: '() => void',
+        description: 'Resets the resource to its initial idle state and cancels in-flight operations.',
+      },
+    ];
+  });
 
   // Basic resource - fetch single user (using results=1)
   pageNumber = signal(1);

@@ -1,0 +1,152 @@
+<section class="demo-playground-card" [class.is-split]="currentLayout() === 'split'" [attr.aria-label]="title()">
+  <!-- Header Area -->
+  <div class="playground-header">
+    <div class="header-main">
+      <div class="title-row">
+        <div class="title-left">
+          <h3 class="playground-title">{{ title() }}</h3>
+          <div class="badges-row">
+            @if (level(); as lvl) {
+              @switch (lvl) {
+                @case ('beginner') {
+                  <span class="badge badge-success">{{ 'playground.beginner' | translate }}</span>
+                }
+                @case ('intermediate') {
+                  <span class="badge badge-warning">{{ 'playground.intermediate' | translate }}</span>
+                }
+                @case ('advanced') {
+                  <span class="badge badge-danger">{{ 'playground.advanced' | translate }}</span>
+                }
+              }
+            }
+            @if (badgeText()) {
+              <span class="badge badge-info">{{ badgeText() }}</span>
+            }
+          </div>
+        </div>
+
+        @if (hasAnyCode()) {
+          <div class="layout-toggle-group">
+            <button
+              type="button"
+              class="layout-btn"
+              [class.active]="currentLayout() === 'stacked'"
+              (click)="setLayout('stacked')"
+              [title]="'playground.stackedLayout' | translate"
+              [attr.aria-label]="'playground.stackedLayout' | translate"
+            >
+              <clr-icon shape="view-list" />
+            </button>
+            <button
+              type="button"
+              class="layout-btn"
+              [class.active]="currentLayout() === 'split'"
+              (click)="setLayout('split')"
+              [title]="'playground.splitLayout' | translate"
+              [attr.aria-label]="'playground.splitLayout' | translate"
+            >
+              <clr-icon shape="view-columns" />
+            </button>
+          </div>
+        }
+      </div>
+      @if (description()) {
+        <p class="playground-description">{{ description() }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="playground-body" [class.layout-split]="currentLayout() === 'split'">
+    <!-- Primary Area: Interactive Live Preview & State Inspector -->
+    <div class="preview-pane">
+      <div class="playground-canvas">
+        <ng-content select="[preview]" />
+      </div>
+
+      <div class="playground-inspector-slot">
+        <ng-content select="[inspector]" />
+      </div>
+    </div>
+
+    <!-- Code Action Bar & View Panel -->
+    @if (hasAnyCode()) {
+      <div class="code-pane">
+        <div class="playground-code-toolbar">
+          <div class="code-tabs">
+            @if (tsCode()) {
+              <button
+                type="button"
+                class="tab-btn"
+                [class.active]="effectiveActiveTab() === 'typescript'"
+                (click)="setTab('typescript')"
+              >
+                TypeScript
+              </button>
+            }
+            @if (htmlCode()) {
+              <button
+                type="button"
+                class="tab-btn"
+                [class.active]="effectiveActiveTab() === 'html'"
+                (click)="setTab('html')"
+              >
+                HTML
+              </button>
+            }
+            @if (scssCode()) {
+              <button
+                type="button"
+                class="tab-btn"
+                [class.active]="effectiveActiveTab() === 'scss'"
+                (click)="setTab('scss')"
+              >
+                SCSS
+              </button>
+            }
+          </div>
+
+          <div class="code-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-link copy-btn"
+              (click)="copyCurrentCode()"
+              [title]="copied() ? ('playground.copied' | translate) : ('playground.copy' | translate)"
+              [attr.aria-label]="copied() ? ('playground.copied' | translate) : ('playground.copy' | translate)"
+            >
+              @if (copied()) {
+                <clr-icon shape="check" class="is-success" />
+                <span class="btn-text">{{ 'playground.copied' | translate }}</span>
+              } @else {
+                <clr-icon shape="copy" />
+                <span class="btn-text">{{ 'playground.copy' | translate }}</span>
+              }
+            </button>
+
+            @if (currentLayout() === 'stacked') {
+              <button type="button" class="btn btn-sm btn-link toggle-btn" (click)="toggleCode()">
+                <clr-icon shape="angle" [dir]="isCodeExpanded() ? 'up' : 'down'" />
+                <span class="btn-text">{{
+                  (isCodeExpanded() ? 'playground.hideCode' : 'playground.viewCode') | translate
+                }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (isCodeExpanded() || currentLayout() === 'split') {
+          <div class="playground-code-body">
+            @if (effectiveActiveTab() === 'typescript' && tsCode()) {
+              <pre class="code-pre"><code class="language-typescript" [innerHTML]="tsCode()"></code></pre>
+            }
+            @if (effectiveActiveTab() === 'html' && htmlCode()) {
+              <pre class="code-pre"><code class="language-html" [innerHTML]="htmlCode()"></code></pre>
+            }
+            @if (effectiveActiveTab() === 'scss' && scssCode()) {
+              <pre class="code-pre"><code class="language-scss" [innerHTML]="scssCode()"></code></pre>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

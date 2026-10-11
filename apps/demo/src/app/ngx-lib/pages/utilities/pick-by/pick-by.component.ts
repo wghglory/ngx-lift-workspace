@@ -1,17 +1,51 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-pick-by',
-  imports: [PageContainerComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './pick-by.component.html',
   styleUrl: './pick-by.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PickByComponent {
+  private translationService = inject(TranslationService);
+
+  pickByParameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'object',
+        type: 'Record<string, T>',
+        description: this.translationService.translate('pickBy.paramObject'),
+      },
+      {
+        name: 'predicate',
+        type: '(value: T, key: string) => boolean',
+        description: this.translationService.translate('pickBy.paramPredicate'),
+      },
+    ];
+  });
+
+  omitByParameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'object',
+        type: 'Record<string, T>',
+        description: this.translationService.translate('omitBy.paramObject'),
+      },
+      {
+        name: 'predicate',
+        type: '(value: T, key: string) => boolean',
+        description: this.translationService.translate('omitBy.paramPredicate'),
+      },
+    ];
+  });
   pickByCode = highlight(`
 import {pickBy} from 'ngx-lift';
 

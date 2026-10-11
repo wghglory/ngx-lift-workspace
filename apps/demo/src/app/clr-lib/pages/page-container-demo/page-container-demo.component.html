@@ -1,0 +1,79 @@
+<cll-page-container [title]="'pageContainer.title' | translate">
+  <!-- Overview -->
+  <p [innerHTML]="'pageContainer.overview' | translate"></p>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <app-demo-playground
+      [title]="'pageContainer.example1' | translate"
+      [description]="'pageContainer.example1Desc' | translate"
+      level="beginner"
+      [badgeText]="'pageContainer.example1Badge' | translate"
+      layout="split"
+      [tsCode]="basicUsageCode"
+    >
+      <div preview>
+        <div class="preview-box">
+          <cll-page-container [title]="'pageContainer.demoUserManagement' | translate">
+            <p>{{ 'pageContainer.demoBodyContent' | translate }}</p>
+          </cll-page-container>
+        </div>
+      </div>
+    </app-demo-playground>
+
+    <app-demo-playground
+      [title]="'pageContainer.example2' | translate"
+      [description]="'pageContainer.example2Desc' | translate"
+      level="intermediate"
+      [badgeText]="'pageContainer.example2Badge' | translate"
+      layout="split"
+      [tsCode]="customClassCode"
+    >
+      <div preview>
+        <div class="preview-box">
+          <cll-page-container [title]="'pageContainer.demoClusterSettings' | translate">
+            <div class="card">
+              <div class="card-block">
+                <p class="card-text">{{ 'pageContainer.demoConfigured' | translate }}</p>
+              </div>
+            </div>
+          </cll-page-container>
+        </div>
+      </div>
+    </app-demo-playground>
+
+    <app-demo-playground
+      [title]="'pageContainer.example3' | translate"
+      [description]="'pageContainer.example3Desc' | translate"
+      level="intermediate"
+      [badgeText]="'pageContainer.example3Badge' | translate"
+      layout="split"
+      [tsCode]="htmlTitleCode"
+    >
+      <div preview>
+        <div class="preview-box">
+          <cll-page-container [title]="'pageContainer.demoAuditLog' | translate">
+            <p>{{ 'pageContainer.demoLogStream' | translate }}</p>
+          </cll-page-container>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>PageContainerComponent (<code>cll-page-container</code>)</h3>
+      <p>{{ 'pageContainer.apiSummary' | translate }}</p>
+
+      <h4>{{ 'common.inputs' | translate }}</h4>
+      <app-api-table [properties]="pageContainerInputs()" />
+
+      <h4>{{ 'common.contentProjection' | translate }}</h4>
+      <p>{{ 'pageContainer.contentProjectionDesc' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

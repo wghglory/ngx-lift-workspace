@@ -1,13 +1,13 @@
 import {KeyValuePipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
+import {TimelineBaseComponent, TimelineWizardService, TranslatePipe} from 'clr-lift';
 
 import {Deployment} from '../deployment.type';
 
 @Component({
   selector: 'app-configure-review',
-  imports: [KeyValuePipe],
+  imports: [KeyValuePipe, TranslatePipe],
   templateUrl: './configure-review.component.html',
   styleUrls: ['./configure-review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

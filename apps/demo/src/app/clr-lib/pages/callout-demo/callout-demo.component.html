@@ -1,0 +1,83 @@
+<cll-page-container [title]="'callout.title' | translate">
+  <!-- Overview -->
+  <p [innerHTML]="'callout.overview' | translate"></p>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <app-demo-playground
+      [title]="'callout.example1' | translate"
+      level="beginner"
+      [description]="'callout.example1Desc' | translate"
+      [tsCode]="basicCalloutCode"
+    >
+      <div preview>
+        <cll-callout>
+          <p class="font-medium" cds-layout="m-t:none">{{ 'callout.example1Note' | translate }}</p>
+        </cll-callout>
+      </div>
+    </app-demo-playground>
+
+    <app-demo-playground
+      [title]="'callout.example2' | translate"
+      level="intermediate"
+      [description]="'callout.example2Desc' | translate"
+      [tsCode]="listAndLinksCode"
+    >
+      <div preview>
+        <cll-callout>
+          <ul class="list" cds-layout="vertical gap:xs">
+            <li>{{ 'callout.example2Theme' | translate }}</li>
+            <li>
+              <a href="https://clarity.design" target="_blank" rel="noopener noreferrer">{{
+                'callout.example2Docs' | translate
+              }}</a>
+            </li>
+          </ul>
+        </cll-callout>
+      </div>
+    </app-demo-playground>
+
+    <app-demo-playground
+      [title]="'callout.example3' | translate"
+      level="advanced"
+      [description]="'callout.example3Desc' | translate"
+      [tsCode]="richContentCode"
+    >
+      <div preview>
+        <cll-callout>
+          <div cds-layout="vertical gap:xs">
+            <h4 class="font-semibold text-base" cds-layout="m-t:none">{{ 'callout.example3Tip' | translate }}</h4>
+            <p>{{ 'callout.example3DescText' | translate }}</p>
+            <div cds-layout="horizontal gap:xs align:center m-t:xs">
+              <span class="label label-info">{{ 'callout.example3LabelDeployment' | translate }}</span>
+              <span class="label label-success">{{ 'callout.example3LabelValidated' | translate }}</span>
+            </div>
+          </div>
+        </cll-callout>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>CalloutComponent (<code>cll-callout</code>)</h3>
+      <p>{{ 'callout.apiSummary' | translate }}</p>
+
+      <h4>{{ 'common.selector' | translate }}</h4>
+      <p><code>cll-callout</code></p>
+
+      <h4>{{ 'common.contentProjection' | translate }}</h4>
+      <p>{{ 'callout.contentProjectionDesc' | translate }}</p>
+
+      <h4>{{ 'callout.responsiveTitle' | translate }}</h4>
+      <p>{{ 'callout.responsiveDesc' | translate }}</p>
+
+      <h4>{{ 'callout.themingTitle' | translate }}</h4>
+      <p>{{ 'callout.themingDesc' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

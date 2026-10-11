@@ -1,10 +1,10 @@
 import {fqdnRegex, httpsPattern, ipRegex, urlPattern} from '../const';
 
 /**
- * Checks if a hostname is a valid IP address (IPv4 or IPv6).
+ * Checks if a hostname is a valid IPv4 address.
  *
  * @param hostname - The hostname to check. Should be extracted from `new URL(url).hostname`
- * @returns `true` if the hostname is a valid IP address, `false` otherwise
+ * @returns `true` if the hostname is a valid IPv4 address, `false` otherwise
  *
  * @example
  * ```typescript

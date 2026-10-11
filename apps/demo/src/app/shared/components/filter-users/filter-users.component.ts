@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, SpinnerComponent} from 'clr-lift';
+import {AlertComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
 import {switchMapWithAsyncState} from 'ngx-lift';
 import {filter} from 'rxjs';
 
@@ -11,7 +11,15 @@ import {UserCardComponent} from '../user-card/user-card.component';
 
 @Component({
   selector: 'app-filter-users',
-  imports: [CommonModule, ReactiveFormsModule, ClarityModule, SpinnerComponent, AlertComponent, UserCardComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ClarityModule,
+    SpinnerComponent,
+    AlertComponent,
+    UserCardComponent,
+    TranslatePipe,
+  ],
   templateUrl: './filter-users.component.html',
   styleUrl: './filter-users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

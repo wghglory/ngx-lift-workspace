@@ -1,20 +1,42 @@
-import {Component, inject} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {UniqueValidator} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-unique-validator',
-  imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [
+    ClarityModule,
+    ReactiveFormsModule,
+    PageContainerComponent,
+    CalloutComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './unique-validator.component.html',
   styleUrl: './unique-validator.component.scss',
 })
 export class UniqueValidatorComponent {
   private fb = inject(FormBuilder);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'key',
+        type: 'string',
+        default: 'undefined',
+        description: this.translationService.translate('uniqueValidator.paramKey'),
+      },
+    ];
+  });
   form1 = this.fb.group({
     demo1: this.fb.array([this.fb.control(null), this.fb.control('')], UniqueValidator.unique()),
   });
@@ -80,7 +102,7 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModul
     <form [formGroup]="form2">
       <ng-container formArrayName="demo2">
         @for (group of form2.controls.demo2.controls; track $index; let i = $index) {
-          <div [formGroup]="group" style="display: flex; gap: 1rem">
+          <div [formGroup]="group" cds-layout="horizontal gap:md">
             <clr-input-container>
               <label class="clr-sr-only">key</label>
               <input

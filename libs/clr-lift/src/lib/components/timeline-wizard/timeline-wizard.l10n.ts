@@ -55,6 +55,20 @@ export const timelineWizardTranslations: Record<string, Record<string, string>> 
     confirm: '확인',
     finish: '완료',
   },
+  nl: {
+    next: 'Volgende',
+    previous: 'Vorige',
+    cancel: 'Annuleren',
+    confirm: 'Bevestigen',
+    finish: 'Voltooien',
+  },
+  pt: {
+    next: 'Próximo',
+    previous: 'Anterior',
+    cancel: 'Cancelar',
+    confirm: 'Confirmar',
+    finish: 'Concluir',
+  },
   'pt-BR': {
     next: 'Próximo',
     previous: 'Anterior',

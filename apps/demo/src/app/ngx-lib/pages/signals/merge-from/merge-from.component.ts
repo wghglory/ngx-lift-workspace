@@ -1,21 +1,45 @@
-import {ChangeDetectionStrategy, Component, effect, inject, Injector, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mergeFrom} from 'ngx-lift';
 import {delay, of, pipe, startWith, switchMap} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-merge-from',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './merge-from.component.html',
   styleUrl: './merge-from.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MergeFromComponent {
   private injector = inject(Injector);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'sources',
+        type: 'Record<string, Observable<T> | Signal<T>> | Array<Observable<T> | Signal<T>>',
+        required: true,
+        description: this.translationService.translate('mergeFrom.paramSources'),
+      },
+      {
+        name: 'operator',
+        type: 'OperatorFunction',
+        description: this.translationService.translate('mergeFrom.paramOperator'),
+      },
+      {
+        name: 'options',
+        type: 'MergeFromOptions',
+        description: this.translationService.translate('mergeFrom.paramOptions'),
+      },
+    ];
+  });
 
   a = signal(1);
   b$ = of(2).pipe(delay(1000));

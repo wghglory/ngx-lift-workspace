@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Type guard that checks if a value is array-like (has a numeric length property).
  * Array-like objects include arrays, strings, NodeLists, and similar structures.
@@ -15,14 +14,14 @@
  * isArrayLike(() => {}); // false
  * ```
  */
-export function isArrayLike(value: any): value is {length: number} {
-  return (
-    value != null &&
-    typeof value !== 'function' &&
-    typeof value.length === 'number' &&
-    value.length >= 0 &&
-    value.length <= Number.MAX_SAFE_INTEGER
-  );
+export function isArrayLike(value: unknown): value is {length: number} {
+  const length =
+    typeof value === 'string'
+      ? value.length
+      : value !== null && typeof value === 'object' && 'length' in value
+        ? value.length
+        : undefined;
+  return typeof length === 'number' && length >= 0 && length <= Number.MAX_SAFE_INTEGER;
 }
 
 /**
@@ -39,7 +38,10 @@ export function isArrayLike(value: any): value is {length: number} {
  * isPrototype({}); // false
  * ```
  */
-export function isPrototype(value: any): boolean {
-  const Ctor = value?.constructor;
-  return Ctor && Ctor.prototype === value;
+export function isPrototype(value: unknown): boolean {
+  if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
+    return false;
+  }
+  const constructor = value.constructor;
+  return typeof constructor === 'function' && constructor.prototype === value;
 }

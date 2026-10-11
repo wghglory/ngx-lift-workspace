@@ -1,61 +1,39 @@
-<cll-page-container [title]="'isEqual'" customClass="space-y-9">
+<cll-page-container [title]="'isEqual'">
   <!-- Overview -->
-  <p>
-    The <code>isEqual</code> utility function performs a deep equality check between two values. It compares primitive
-    values, arrays, and objects recursively to determine if they are structurally equal, regardless of reference
-    equality.
-  </p>
+  <p [innerHTML]="'isEqual.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Basic Usage</h3>
-      <p>Compare various types of values for deep equality:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'isEqual.example1Title' | translate }}</h3>
+      <p>{{ 'isEqual.example1Desc' | translate }}</p>
       <app-code-block [code]="basicExampleCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Deep Object Comparison</h3>
-      <p>Compare nested objects and arrays:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'isEqual.example2Title' | translate }}</h3>
+      <p>{{ 'isEqual.example2Desc' | translate }}</p>
       <app-code-block [code]="deepComparisonCode" lang="typescript" />
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>isEqual</h3>
-        <p>Performs a deep equality check between two values.</p>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>isEqual</h3>
+      <p>{{ 'isEqual.apiSummary' | translate }}</p>
 
-        <h4>Signature</h4>
-        <app-code-block [code]="signatureCode" lang="typescript" />
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
 
-        <h4>Parameters</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>value1: unknown</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">The first value to compare.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>value2: unknown</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">The second value to compare.</p>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="parameters()" />
 
-        <h4>Returns</h4>
-        <p class="text-sm">
-          <code>true</code> if the values are deeply equal, <code>false</code> otherwise. Performs recursive comparison
-          for objects and arrays.
-        </p>
-      </div>
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'isEqual.returnsDesc' | translate }}</p>
     </div>
   </section>
 </cll-page-container>

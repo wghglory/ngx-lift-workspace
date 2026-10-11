@@ -15,7 +15,12 @@
       <div cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
         <div class="content-container" #contentContainer>
           @if (showClose) {
-            <button class="close-btn" aria-label="Close (TODO: To be translated)" (click)="closeTooltip()">
+            <button
+              type="button"
+              class="close-btn"
+              [attr.aria-label]="'tooltip.close' | translate"
+              (click)="closeTooltip()"
+            >
               <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path
                   fill="currentColor"

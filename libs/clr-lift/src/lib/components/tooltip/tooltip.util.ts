@@ -43,12 +43,12 @@ export function getTooltipCoords(triggerElement: HTMLElement, tooltipClass: stri
  * Check if the given element is clickable (button, link, or element with role="button").
  *
  * @param {HTMLElement} el - The element to check.
+ * @param {Element} [boundary] - Optional container that is not itself treated as clickable.
  * @returns {boolean} True if the element is clickable, otherwise false.
  */
-export function isElementClickable(el: HTMLElement) {
-  return (
-    el.tagName.toLowerCase() === 'button' || el.tagName.toLowerCase() === 'a' || el.getAttribute('role') === 'button'
-  );
+export function isElementClickable(el: Element, boundary?: Element) {
+  const clickable = el.closest('button, a, [role="button"]');
+  return clickable !== null && (!boundary || (clickable !== boundary && boundary.contains(clickable)));
 }
 
 /**
@@ -58,7 +58,7 @@ export function isElementClickable(el: HTMLElement) {
  * @param {HTMLCollection} collection - The collection to check against.
  * @returns {boolean} True if the element is inside the collection, otherwise false.
  */
-export function isElementInsideCollection(el: HTMLElement, collection: HTMLCollection) {
+export function isElementInsideCollection(el: Element, collection: HTMLCollection) {
   return Array.from(collection).some((element) => element.contains(el));
 }
 

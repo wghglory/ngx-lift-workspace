@@ -23,6 +23,12 @@ export const alertTranslations: Record<string, Record<string, string>> = {
   ko: {
     close: '닫기',
   },
+  nl: {
+    close: 'Sluiten',
+  },
+  pt: {
+    close: 'Fechar',
+  },
   'pt-BR': {
     close: 'Fechar',
   },

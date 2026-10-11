@@ -68,4 +68,14 @@ describe('ToastContainerComponent', () => {
 
     expect(deleteToastSpy).toHaveBeenCalledWith(toastId);
   });
+  it('notifies the configured callback after a toast closes', () => {
+    const closed = vi.fn();
+    const toast: CreatedToast = {title: 'Title', description: 'Description', toastType: 'info', id: Symbol(), closed};
+    component.toasts$ = of([toast]);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('cll-toast')).triggerEventHandler('closed', false);
+
+    expect(deleteToastSpy).toHaveBeenCalledWith(toast.id);
+    expect(closed).toHaveBeenCalledOnce();
+  });
 });

@@ -1,19 +1,45 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {RockStarComponent} from '../../../../shared/components/rock-star/rock-star.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-combine-latest-eager',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, RockStarComponent],
+  imports: [
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    RockStarComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './combine-latest-eager.component.html',
   styleUrl: './combine-latest-eager.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombineLatestEagerComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'sources',
+        type: 'ObservableInput<any>[] | Record<string, ObservableInput<any>>',
+        description: this.translationService.translate('combineLatestEager.paramSources'),
+      },
+      {
+        name: 'startWithAll',
+        type: 'boolean',
+        default: 'false',
+        description: this.translationService.translate('combineLatestEager.paramStartWithAll'),
+      },
+    ];
+  });
   basicExampleCode = highlight(`
 import {combineLatestEager} from 'ngx-lift';
 import {of, Subject} from 'rxjs';

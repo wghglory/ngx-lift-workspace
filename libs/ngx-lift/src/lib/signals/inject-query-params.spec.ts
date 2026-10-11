@@ -66,6 +66,12 @@ describe(injectQueryParams.name, () => {
     expect(instance.paramKeysList()).toEqual(['query']);
   });
 
+  it('preserves a present empty query parameter instead of returning the missing-value fallback', async () => {
+    const harness = await RouterTestingHarness.create();
+    const instance = await harness.navigateByUrl('/search?query=', SearchComponent);
+    expect(instance.searchParam()).toBe('');
+  });
+
   it('returns a signal for numeric query parameters', async () => {
     const harness = await RouterTestingHarness.create();
     const instance = await harness.navigateByUrl('/search?id=2', SearchComponent);

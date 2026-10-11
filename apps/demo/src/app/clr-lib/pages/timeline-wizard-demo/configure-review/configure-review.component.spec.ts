@@ -34,7 +34,7 @@ describe('ConfigureReviewComponent', () => {
             name: '',
             namespace: '',
           },
-        } as Pick<Deployment, 'operator'>,
+        } satisfies Pick<Deployment, 'operator'>,
       },
       {
         id: 'service',
@@ -43,11 +43,11 @@ describe('ConfigureReviewComponent', () => {
         component: ConfigureServiceComponent,
         data: {
           service: {
-            cpu: '',
-            replicas: '',
+            cpu: 0,
+            replicas: 1,
             url: '',
           },
-        } as Pick<Deployment, 'service'>,
+        } satisfies Pick<Deployment, 'service'>,
       },
       {
         id: 'runtime-properties',
@@ -55,8 +55,8 @@ describe('ConfigureReviewComponent', () => {
         state: ClrTimelineStepState.SUCCESS,
         component: ConfigureRuntimePropComponent,
         data: {
-          appProperties: [],
-        } as {appProperties: Array<{key: string; value: string}>},
+          appProperties: {},
+        } satisfies Pick<Deployment, 'appProperties'>,
       },
     ];
 

@@ -358,4 +358,33 @@ describe('IdleDetectionService', () => {
     expect(service['countdown']).toBe(5);
     expect(service['isCountingDown']).toBeFalsy();
   });
+
+  it('starts a full countdown after stopping and restarting while a countdown is active', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    const values: number[] = [];
+    service.onCountDown().subscribe((value) => values.push(value));
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(values.at(-1)).toBe(3);
+
+    service.clearTimers();
+    expect(service['isCountingDown']).toBe(false);
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(values.at(-1)).toBe(5);
+  });
+
+  it('removes timers and activity listeners when its injector is destroyed', async () => {
+    service.startWatching();
+    const reset = vi.spyOn(service, 'resetTimer');
+    const timeout = vi.fn();
+    service.onTimeoutEnd().subscribe(timeout);
+
+    TestBed.resetTestingModule();
+    document.dispatchEvent(new MouseEvent('click'));
+    await vi.advanceTimersByTimeAsync(5000);
+
+    expect(reset).not.toHaveBeenCalled();
+    expect(timeout).not.toHaveBeenCalled();
+  });
 });

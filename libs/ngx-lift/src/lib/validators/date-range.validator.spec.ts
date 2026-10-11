@@ -181,4 +181,28 @@ describe('dateRangeValidator', () => {
       minDate: '2024-09-01T12:00:00.000Z',
     });
   });
+
+  it('rejects a previous calendar day even if it is fewer than 24 hours before the inclusive minimum', () => {
+    const minimum = new Date(2024, 8, 2, 0, 30);
+    const control = new FormControl(
+      new Date(2024, 8, 1, 23, 30),
+      dateRangeValidator({minDate: minimum, minInclusive: true}),
+    );
+    expect(control.errors).toEqual({minDate: minimum.toISOString()});
+  });
+
+  it('accepts the next calendar day for an exclusive minimum even if fewer than 24 hours elapsed', () => {
+    const minimum = new Date(2024, 8, 1, 23, 30);
+    const control = new FormControl(new Date(2024, 8, 2, 0, 30), dateRangeValidator({minDate: minimum}));
+    expect(control.errors).toBeNull();
+  });
+
+  it('rejects the next calendar day after an inclusive maximum', () => {
+    const maximum = new Date(2024, 8, 1, 23, 30);
+    const control = new FormControl(
+      new Date(2024, 8, 2, 0, 30),
+      dateRangeValidator({maxDate: maximum, maxInclusive: true}),
+    );
+    expect(control.errors).toEqual({maxDate: maximum.toISOString()});
+  });
 });

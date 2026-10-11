@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   assertInInjectionContext,
   computed,
@@ -15,8 +14,9 @@ import {
   from,
   identity,
   isObservable,
+  map,
+  Observable,
   ObservableInput,
-  ObservableInputTuple,
   OperatorFunction,
   startWith,
 } from 'rxjs';
@@ -38,7 +38,7 @@ export type CombineFromOptions<IValue> = {
 // array inputs only
 export function combineFrom<Input extends readonly unknown[], Output = Input>(
   sources: readonly [...ObservableSignalInputTuple<Input>],
-): Signal<Output>;
+): Signal<Output | undefined>;
 
 // ---------- 3 args with array inputs -------------
 // combineFrom([signal, obs$], pipeOperator, { initialValue: [1,2] }), Input is [signal, obs$]
@@ -81,7 +81,7 @@ export function combineFrom<Input extends readonly unknown[], Output = Input>(
 // object input only, e.g. Input is { a: signal, b: obs$ }
 export function combineFrom<Input extends object, Output = Input>(
   sources: ObservableSignalInputTuple<Input>,
-): Signal<Output>;
+): Signal<Output | undefined>;
 
 // ----------------- 3 args with object input --------------------
 export function combineFrom<Input extends object, Output = Input>(
@@ -117,7 +117,7 @@ export function combineFrom<Input extends object, Output = Input>(
 /**
  * Combines multiple `Signal`, `Observable`, `Promise`, or getter function sources into a single `Signal`.
  * Similar to RxJS `combineLatest`, but returns an Angular Signal and seamlessly handles Signals,
- * Observables, and functions with glitch-free initialization.
+ * Observables, and functions with synchronous Signal initialization.
  *
  * Supported source types:
  * - **Signal**: Converted via `toObservable()`, initialized with the current value to prevent dropped emissions,
@@ -182,22 +182,32 @@ export function combineFrom<Input extends object, Output = Input>(
  * );
  * ```
  */
-export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal<Output | null | undefined> {
+export function combineFrom<Input, Output = Input>(...args: unknown[]): Signal<Output | null | undefined> {
   const {normalizedSources, hasInitValue, operator, options} = normalizeArgs<Input, Output>(args);
 
   if (!options?.injector) {
     assertInInjectionContext(combineFrom);
   }
 
+  let combinedSources$: Observable<unknown>;
+  if (Array.isArray(normalizedSources)) {
+    combinedSources$ = combineLatest(normalizedSources);
+  } else {
+    const sourceEntries = Object.entries(normalizedSources);
+    combinedSources$ = combineLatest(sourceEntries.map(([, source$]) => source$)).pipe(
+      map((values) => Object.fromEntries(sourceEntries.map(([key], index) => [key, values[index]]))),
+    );
+  }
+  const combined$ = combinedSources$ as Observable<Input>;
   const ret =
     hasInitValue && options?.initialValue !== undefined
-      ? toSignal(combineLatest(normalizedSources).pipe(operator), {
+      ? toSignal(combined$.pipe(operator), {
           initialValue: options.initialValue,
           injector: options?.injector,
         })
       : // Note: requireSync is not used here to allow async sources without initialValue
         // The signal will be undefined until all sources emit at least once
-        (toSignal(combineLatest(normalizedSources).pipe(operator), {
+        (toSignal(combined$.pipe(operator), {
           injector: options?.injector,
         }) as Signal<Output | undefined>);
 
@@ -205,14 +215,14 @@ export function combineFrom<Input = any, Output = Input>(...args: any[]): Signal
 }
 
 function normalizeArgs<Input, Output>(
-  args: any[],
+  args: unknown[],
 ): {
-  normalizedSources: ObservableInputTuple<Input>;
+  normalizedSources: Observable<unknown>[] | Record<string, Observable<unknown>>;
   operator: OperatorFunction<Input, Output>;
   hasInitValue: boolean;
   options: CombineFromOptions<Output> | undefined;
 } {
-  if (!args || args.length < 1 || typeof args[0] !== 'object') {
+  if (args.length < 1 || typeof args[0] !== 'object' || args[0] === null) {
     throw new TypeError('combineFrom needs sources');
   }
 
@@ -228,8 +238,9 @@ function normalizeArgs<Input, Output>(
 
   const hasInitValue = options?.initialValue !== undefined;
 
-  const normalizedSources = Object.entries(sources).reduce(
-    (acc, [keyOrIndex, source]) => {
+  const entries = Object.entries(sources).map(
+    ([keyOrIndex, source]: [string, unknown]): [string, Observable<unknown>] => {
+      let normalized: Observable<unknown>;
       if (isSignal(source)) {
         // fix angular NG0950: Input is required but no value is available yet.
         // when input.required is used as combineFrom's input, its value is undefined, untracked(source) will throw error
@@ -244,47 +255,49 @@ function normalizeArgs<Input, Output>(
         const obs$ = toObservable(source, {
           injector: options?.injector,
         });
-        acc[keyOrIndex] = hasInitialVal
+        normalized = hasInitialVal
           ? obs$.pipe(startWith(initialValue), distinctUntilChanged())
           : obs$.pipe(distinctUntilChanged());
       } else if (isObservable(source)) {
-        acc[keyOrIndex] = source.pipe(distinctUntilChanged());
+        normalized = source.pipe(distinctUntilChanged());
       } else if (typeof source === 'function') {
         // seldom use: pass function like () => 5
         const fn = source as () => unknown;
+        const computedRes = options?.injector
+          ? runInInjectionContext(options.injector, () => computed(fn))
+          : computed(fn);
         let initialVal: unknown;
         let hasInitialVal = false;
         try {
-          initialVal = options?.injector ? runInInjectionContext(options.injector, fn) : fn();
+          initialVal = options?.injector
+            ? runInInjectionContext(options.injector, () => untracked(computedRes))
+            : untracked(computedRes);
           hasInitialVal = true;
         } catch {
           hasInitialVal = false;
         }
-        const computedRes = options?.injector
-          ? runInInjectionContext(options.injector, () => computed(fn))
-          : computed(fn);
         const obs$ = toObservable(computedRes, {
           injector: options?.injector,
         });
-        acc[keyOrIndex] = hasInitialVal
+        normalized = hasInitialVal
           ? obs$.pipe(startWith(initialVal), distinctUntilChanged())
           : obs$.pipe(distinctUntilChanged());
       } else if (isPromise(source)) {
         // Promises emit a single resolved value asynchronously (microtask) and complete.
         // distinctUntilChanged is omitted as redundant for single-emission sources.
-        acc[keyOrIndex] = from(source);
+        normalized = from(source);
       } else if (source != null) {
         // pass other ObservableInput (iterables, etc.)
-        acc[keyOrIndex] = from(source as any).pipe(distinctUntilChanged());
+        normalized = from(source as ObservableInput<unknown>).pipe(distinctUntilChanged());
       } else {
         throw new TypeError(
           `combineFrom: Invalid source at "${keyOrIndex}". Expected a Signal, Observable, Promise, or function, but received ${source}.`,
         );
       }
-      return acc;
+      return [keyOrIndex, normalized];
     },
-    (Array.isArray(sources) ? [] : {}) as any,
   );
+  const normalizedSources = Array.isArray(sources) ? entries.map(([, source]) => source) : Object.fromEntries(entries);
 
   return {normalizedSources, operator, hasInitValue, options};
 }

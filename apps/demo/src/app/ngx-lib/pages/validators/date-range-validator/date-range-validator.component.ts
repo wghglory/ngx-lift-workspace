@@ -1,20 +1,64 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {dateRangeValidator} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-date-range-validator',
-  imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [
+    ClarityModule,
+    ReactiveFormsModule,
+    PageContainerComponent,
+    CalloutComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './date-range-validator.component.html',
   styleUrl: './date-range-validator.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateRangeValidatorComponent {
+  private translationService = inject(TranslationService);
+
+  optionsProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'minDate',
+        type: 'Date | string',
+        description: this.translationService.translate('dateRangeValidator.optMinDate'),
+      },
+      {
+        name: 'maxDate',
+        type: 'Date | string',
+        description: this.translationService.translate('dateRangeValidator.optMaxDate'),
+      },
+      {
+        name: 'minInclusive',
+        type: 'boolean',
+        default: 'false',
+        description: this.translationService.translate('dateRangeValidator.optMinInclusive'),
+      },
+      {
+        name: 'maxInclusive',
+        type: 'boolean',
+        default: 'false',
+        description: this.translationService.translate('dateRangeValidator.optMaxInclusive'),
+      },
+      {
+        name: 'compareTime',
+        type: 'boolean',
+        default: 'false',
+        description: 'Whether to compare the time as well. Defaults to false.',
+      },
+    ];
+  });
   today = new Date();
   tomorrow = new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000);
   fiveDaysLater = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000); // 5 days from now

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   assertInInjectionContext,
   computed,
@@ -149,24 +148,24 @@ type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; er
 
 // without options
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
 ): Signal<T | undefined>;
 
 // with optional initialValue
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
   options: OptionsWithOptionalInitialValue<T>,
 ): Signal<T | undefined>;
 
 // with initialValue
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
   options: OptionsWithInitialValue<T>,
 ): Signal<T>;
 
 // for promise, without initialValue but set requireSync as true, throw error
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Promise<T>,
+  computeFn: (previousValue?: T) => PromiseLike<T>,
   options: OptionsWithOptionalInitialValue<T> & {requireSync: true},
 ): never;
 
@@ -186,8 +185,8 @@ export function computedAsync<T>(
 ): Signal<T>;
 
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
-  options: any = {},
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
+  options: BaseOptions<T> & {initialValue?: T; requireSync?: boolean} = {},
 ): Signal<T | undefined> {
   if (!options?.injector) {
     assertInInjectionContext(computedAsync);
@@ -195,7 +194,7 @@ export function computedAsync<T>(
 
   const destroyRef = options?.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
 
-  const sourceSubject = new Subject<Promise<T> | Observable<T>>();
+  const sourceSubject = new Subject<PromiseLike<T> | Observable<T>>();
   const source$ = flattenObservable(sourceSubject, options.behavior || 'switch');
 
   const sourceState = signal<SignalState<T>>({kind: 'value', value: options.initialValue});
@@ -238,7 +237,7 @@ export function computedAsync<T>(
   const runComputation = () => {
     const state = untracked(sourceState);
     const currentValue = state.kind === 'value' ? state.value : undefined;
-    let newSource: Observable<T> | Promise<T> | T | undefined;
+    let newSource: Observable<T> | PromiseLike<T> | T | undefined;
     try {
       newSource = computeFn(currentValue);
     } catch (error: unknown) {
@@ -257,7 +256,7 @@ export function computedAsync<T>(
     }
 
     const streamSource = isPromise(newSource) || isObservable(newSource) ? newSource : of(newSource as T);
-    untracked(() => sourceSubject.next(streamSource as Promise<T> | Observable<T>));
+    untracked(() => sourceSubject.next(streamSource as PromiseLike<T> | Observable<T>));
   };
 
   try {
@@ -313,7 +312,7 @@ export function computedAsync<T>(
 type StreamEvent<T> = {type: 'value'; value: T} | {type: 'error'; error: unknown};
 
 function flattenObservable<T>(
-  source: Subject<Promise<T> | Observable<T>>,
+  source: Subject<PromiseLike<T> | Observable<T>>,
   behavior: ComputedAsyncBehavior,
 ): Observable<StreamEvent<T>> {
   const behaviorMap: Record<ComputedAsyncBehavior, () => OperatorFunction<Observable<StreamEvent<T>>, StreamEvent<T>>> =

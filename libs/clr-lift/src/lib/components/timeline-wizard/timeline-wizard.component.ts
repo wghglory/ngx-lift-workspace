@@ -6,6 +6,7 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  DestroyRef,
   effect,
   EmbeddedViewRef,
   inject,
@@ -14,9 +15,10 @@ import {
   viewChild,
   ViewContainerRef,
 } from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ClarityModule, ClrTimelineStepState} from '@clr/angular';
 import {createAsyncState, isEqual} from 'ngx-lift';
-import {debounceTime, distinctUntilChanged, Subject, Subscription, switchMap, tap} from 'rxjs';
+import {debounceTime, distinctUntilChanged, shareReplay, Subject, Subscription, switchMap, tap} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
@@ -36,6 +38,8 @@ import {TimelineWizardService} from './timeline-wizard.service';
 export class TimelineWizardComponent implements AfterViewInit {
   private translationService = inject(TranslationService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
+  private patchTimers = new Set<ReturnType<typeof setTimeout>>();
   public timelineWizardService = inject(TimelineWizardService);
 
   // Dynamic component container
@@ -101,10 +105,19 @@ export class TimelineWizardComponent implements AfterViewInit {
         }),
       );
     }),
+    takeUntilDestroyed(this.destroyRef),
+    shareReplay({bufferSize: 1, refCount: true}),
   );
 
   constructor() {
     this.translationService.loadTranslationsForComponent('timeline-wizard', timelineWizardTranslations);
+    this.destroyRef.onDestroy(() => {
+      this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+      this.subscriptions = [];
+      this.patchTimers.forEach((timer) => clearTimeout(timer));
+      this.patchTimers.clear();
+      this.nextAction.complete();
+    });
 
     // Effect to update timeline wizard service when timelineSteps input changes
     effect(() => {
@@ -130,9 +143,13 @@ export class TimelineWizardComponent implements AfterViewInit {
   }
 
   renderComponent() {
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     if (!this.live()) {
+      this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+      this.subscriptions = [];
+      this.patchTimers.forEach((timer) => clearTimeout(timer));
+      this.patchTimers.clear();
       this.container().clear();
+      this.componentRefMap = {};
     }
 
     // Create dynamic component
@@ -154,7 +171,16 @@ export class TimelineWizardComponent implements AfterViewInit {
   // Click next step button
   nextStep() {
     const currentRef = this.currentComponentRef;
-    if (currentRef && currentRef.instance.form) {
+    if (!currentRef || this.timelineWizardService.currentStep.state === ClrTimelineStepState.PROCESSING) {
+      return;
+    }
+    if (currentRef.instance.stepInvalid) {
+      currentRef.instance.form?.markAllAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
+    this.syncCurrentStepData();
+    if (currentRef.instance.form) {
       const form = currentRef.instance.form;
       if (form.invalid) {
         // Mark all fields as touched to trigger Clarity validation error displays
@@ -174,9 +200,15 @@ export class TimelineWizardComponent implements AfterViewInit {
 
   // Click previous step button
   previousStep() {
-    if (this.timelineWizardService.isFirstStep) {
+    if (
+      !this.currentComponentRef ||
+      this.timelineWizardService.isFirstStep ||
+      this.timelineWizardService.currentStep.state === ClrTimelineStepState.PROCESSING
+    ) {
       return;
     }
+
+    this.syncCurrentStepData();
 
     // Change data source, update timeline; this should execute first before other logic
     // it change CURRENT, which affect currentStepIndex!
@@ -220,29 +252,39 @@ export class TimelineWizardComponent implements AfterViewInit {
     }
   }
 
-  /**
-   * container.clear() will destroy the component, but we want to display the previous form data like clicking prev button.
-   * This function will save and populate data.
-   * each component's form data will be saved into the corresponding step. Again, steps are the single source of truth.
-   * If the last step is a review component, input all previous steps' data into it. So review component can display them and send API.
-   * @param cmpRef a component ref
-   */
+  /** Saves edits before navigation so a pending debounce cannot lose the latest form data. */
+  private syncCurrentStepData() {
+    const index = this.timelineWizardService.currentStepIndex;
+    const component = this.currentComponentRef?.instance;
+    if (component?.form) {
+      this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, stepIndex) =>
+        stepIndex === index ? {...step, data: component.formValueToData()} : step,
+      );
+    }
+  }
+
+  /** Binds form changes and delayed initialization to their owning step. */
   private initComponent(cmpRef: ComponentRef<TimelineBaseComponent>) {
+    const stepIndex = this.timelineWizardService.currentStepIndex;
+    const stepData = this.timelineWizardService.currentStep.data;
     // for a form step component, fill in the step data
     if (cmpRef.instance.form) {
       const form = cmpRef.instance.form;
       // defer patchValue, wait for component's form initialization
-      setTimeout(
-        () => form.patchValue(cmpRef.instance.dataToFormValue(this.timelineWizardService.currentStep.data)),
-        // 1. execute
-      );
+      const timer = setTimeout(() => {
+        this.patchTimers.delete(timer);
+        if (!cmpRef.hostView.destroyed) {
+          form.patchValue(cmpRef.instance.dataToFormValue(stepData));
+        }
+      });
+      this.patchTimers.add(timer);
 
       // hook form data into step data
       this.subscriptions.push(
         // 2. patchValue will pass dataToFormValue result
         cmpRef.instance.form.valueChanges.pipe(debounceTime(300), distinctUntilChanged(isEqual)).subscribe(() => {
           this.timelineWizardService.steps = this.timelineWizardService.steps.map((step, index) => {
-            if (index === this.timelineWizardService.currentStepIndex) {
+            if (index === stepIndex) {
               return {
                 ...step,
                 data: cmpRef.instance.formValueToData(), // 3. simple step form value is the emitted data (form shape is the data model shape). For complex form like FormArray, need the step component to override formValueToData function
@@ -251,6 +293,7 @@ export class TimelineWizardComponent implements AfterViewInit {
               return step;
             }
           });
+          this.cdr.markForCheck();
         }),
       );
     }

@@ -1,64 +1,45 @@
-<cll-page-container [title]="'logger'" customClass="space-y-9">
+<cll-page-container [title]="'logger'">
   <!-- Overview -->
-  <p>
-    The <code>logger</code> operator is a utility function for RxJS observables that simplifies logging emitted values
-    using different console functions. This operator is useful for debugging and monitoring the behavior of your
-    observables during development.
-  </p>
+  <p [innerHTML]="'logger.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Basic Logging</h3>
-      <p>Log emitted values using console.log:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'logger.example1Title' | translate }}</h3>
+      <p>{{ 'logger.example1Desc' | translate }}</p>
       <app-code-block [code]="basicExampleCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Table Logging</h3>
-      <p>Log emitted values using console.table for better visualization:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'logger.example2Title' | translate }}</h3>
+      <p>{{ 'logger.example2Desc' | translate }}</p>
       <app-code-block [code]="tableExampleCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 3: Other Console Methods</h3>
-      <p>Use other console methods like warn, error, or info:</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'logger.example3Title' | translate }}</h3>
+      <p>{{ 'logger.example3Desc' | translate }}</p>
       <app-code-block [code]="otherMethodsCode" lang="typescript" />
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>logger</h3>
-        <p>RxJS operator that logs emitted values using different console functions.</p>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>logger</h3>
+      <p>{{ 'logger.apiSummary' | translate }}</p>
 
-        <h4>Signature</h4>
-        <app-code-block [code]="signatureCode" lang="typescript" />
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
 
-        <h4>Parameters</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>method?: 'log' | 'table' | 'warn' | 'error' | 'info' | 'debug'</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> The console method to use for logging. Defaults to <code>'log'</code>.
-              </p>
-              <p class="text-sm !mt-1">
-                Available methods: <code>log</code>, <code>table</code>, <code>warn</code>, <code>error</code>,
-                <code>info</code>, <code>debug</code>.
-              </p>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="parameters()" />
 
-        <h4>Returns</h4>
-        <p class="text-sm">An observable that passes through all values while logging them to the console.</p>
-      </div>
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'logger.returnsDesc' | translate }}</p>
     </div>
   </section>
 </cll-page-container>

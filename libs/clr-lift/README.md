@@ -2,260 +2,238 @@
 
 # 🎨 clr-lift
 
-**Production-ready Angular components built on Clarity Design System**
+**Enterprise Angular components, utilities, and operators built on Clarity Design System**
 
 [![npm version](https://img.shields.io/npm/v/clr-lift.svg?logo=npm)](https://www.npmjs.com/package/clr-lift)
 [![npm downloads](https://img.shields.io/npm/dm/clr-lift.svg)](https://www.npmjs.com/package/clr-lift)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Angular](https://img.shields.io/badge/Angular-%3E%3D19.0.0-red.svg)](https://angular.io)
-[![Clarity](https://img.shields.io/badge/Clarity-%3E%3D17.0.0-blue.svg)](https://clarity.design)
+[![Angular](https://img.shields.io/badge/Angular-%3E%3D21.0.0-red.svg)](https://angular.dev)
+[![Clarity](https://img.shields.io/badge/Clarity-%3E%3D18.0.0-blue.svg)](https://clarity.design)
 
 [📖 Documentation](https://ngx-lift.netlify.app/clr-lift) • [🎮 Live Demo](https://ngx-lift.netlify.app/clr-lift) •
-[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)
+[💻 GitHub Repository](https://github.com/wghglory/ngx-lift-workspace) • [🇨🇳 中文文档](README.zh-CN.md)
 
 </div>
 
 ---
 
-A comprehensive Angular component library built on top of the **Clarity Design System**. **clr-lift** extends Clarity's
-capabilities by providing a rich set of production-ready, reusable components, utilities, and operators that simplify
-common development tasks.
+**clr-lift** supercharges VMware's **Clarity Design System** with battle-tested enterprise primitives. It fills the gaps
+in standard Clarity by delivering flicker-free datagrid state management, reactive notification systems, async
+multi-step wizards, type-safe form controls, zero-config dark mode, and built-in 12+ language localization.
 
-**Why clr-lift?**
+```html
+<!-- Enhanced Clarity alert with automatic Error/HttpErrorResponse extraction -->
+<cll-alert [error]="userError()" [isLightweight]="true" />
 
-- 🎨 **15+ Components** - Alerts, toasts, wizards, spinners, and more
-- 🏗️ **Built on Clarity** - Consistent with VMware Clarity Design System
-- ♿ **Accessible** - WCAG compliant with ARIA support
-- 🎯 **Type-Safe** - Full TypeScript support with strict mode
-- 🌓 **Theme Support** - Light and dark mode out of the box
-- 📦 **Tree-Shakable** - Import only what you need
+<!-- Zero-config light/dark theme switcher -->
+<cll-theme-toggle />
+```
 
-## Features
+---
 
-### 🎨 Components
+## ⚡ Highlights
 
-- **`cll-alert`** - Enhanced alert component with customizable types and styling
-- **`cll-alerts`** - Alert container service for managing multiple alerts
-- **`cll-callout`** - Callout component for highlighting important information
-- **`cll-certificate-signpost`** - Certificate display and validation component
-- **`cll-file-reader`** - File input component with drag-and-drop support
-- **`cll-idle-detection`** - Idle detection component with configurable timeouts
-- **`cll-key-value-inputs`** - Key-value pair input component for forms
-- **`cll-page-container`** - Page layout container component
-- **`cll-spinner`** - Loading spinner component
-- **`cll-status-indicator`** - Status indicator component with various states
-- **`cll-theme-toggle`** - Theme toggle component for light/dark mode
-- **`cll-timeline-wizard`** - Timeline wizard component for multi-step flows
-- **`cll-toast`** - Toast notification component
-- **`cll-tooltip`** - Advanced tooltip component with rich content support
+- ⚡ **Flicker-Free Datagrids** - `dgState` eliminates search debounce lag and race conditions in server-side datagrids.
+- 🔔 **Reactive Feedback Engine** - Signal-backed `cll-alert`, `AlertService`, and global `ToastService` with action
+  buttons.
+- 🧙 **Async Timeline Wizard** - `cll-timeline-wizard` with step-level async validation, guard hooks, and reactive
+  progress.
+- 📝 **Modern Form Controls** - Native `ControlValueAccessor` components: `cll-file-reader` (drag-and-drop file upload)
+  & `cll-key-value-inputs`.
+- 🌓 **Zero-Config Theming** - `cll-theme-toggle` seamlessly flips Clarity light/dark themes with instant `localStorage`
+  persistence.
+- 🌍 **Built-in 12+ Language Localization** - Zero external dependencies needed; supports English, 简体中文, 繁體中文,
+  Deutsch, Español, Français, Italiano, 日本語, 한국어, Nederlands, and Português out of the box.
+- 📦 **100% Standalone & Tree-Shakable** - Built for Angular Signals and `OnPush` change detection.
 
-### 🔧 Operators
+---
 
-- **`dgState`** - Streamlines Clarity datagrid state management, making it easier to work with datagrid state changes
+## 🚀 Quick Start (60 Seconds)
 
-### 🛠️ Utilities
-
-- **`convertToHttpParams`** - Converts Clarity datagrid state to HTTP query parameters
-- **Datagrid Utilities** - Helper functions for working with Clarity datagrids
-
-### 📦 Models
-
-- **`PageQuery`** - Type for pagination query parameters
-- **`Rde`** - Type for RDE (Resource Definition Entity) objects
-
-### 🌐 Services
-
-- **`TranslationService`** - Service for managing translations and i18n
-
-### 🔤 Pipes
-
-- **`translate`** - Translation pipe for displaying translated text
-
-## Requirements
-
-- **Angular**: >= 21.0.0
-- **@clr/angular**: >= 18.0.0
-- **ngx-lift**: >= 21.0.0
-- **RxJS**: >= 7.8.0
-
-## Installation
-
-Install clr-lift and its peer dependencies:
+### 1. Install
 
 ```bash
-npm install clr-lift @clr/angular ngx-lift
-# or
-yarn add clr-lift @clr/angular ngx-lift
-# or
-pnpm add clr-lift @clr/angular ngx-lift
+npm install clr-lift ngx-lift @clr/angular @clr/ui
 ```
 
-## 🚀 Quick Start
+### 2. Add Clarity Styles
 
-### Installation
-
-```bash
-npm install clr-lift @clr/angular ngx-lift
-# or
-yarn add clr-lift @clr/angular ngx-lift
-# or
-pnpm add clr-lift @clr/angular ngx-lift
+```scss
+// styles.scss
+@import '@clr/ui/clr-ui.min.css';
 ```
 
-### Using the dgState Operator
-
-**Simplified Datagrid State Management** - Streamline Clarity datagrid state handling:
+### 3. Use in Your Standalone Component
 
 ```typescript
-import {dgState, convertToHttpParams} from 'clr-lift';
-import {BehaviorSubject, switchMap, share} from 'rxjs';
-import {ClrDatagridStateInterface} from '@clr/angular';
-
-export class UserDatagridComponent {
-  private dgSource = new BehaviorSubject<ClrDatagridStateInterface | null>(null);
-  private dgState$ = this.dgSource.pipe(dgState());
-
-  usersState$ = this.dgState$.pipe(
-    switchMap((state) => {
-      const params = convertToHttpParams(state);
-      return this.userService.getUsers(params);
-    }),
-    share(),
-  );
-
-  refresh(state: ClrDatagridStateInterface) {
-    this.dgSource.next(state);
-  }
-}
-```
-
-### Using Components
-
-**Standalone Components** - Import only what you need:
-
-```typescript
-import {Component} from '@angular/core';
-import {AlertComponent, SpinnerComponent, PageContainerComponent, ToastService} from 'clr-lift';
+import {Component, inject, signal} from '@angular/core';
+import {AlertComponent, ToastService, ThemeToggleComponent} from 'clr-lift';
 
 @Component({
-  selector: 'app-example',
-  imports: [AlertComponent, SpinnerComponent, PageContainerComponent],
+  selector: 'app-dashboard',
+  imports: [AlertComponent, ThemeToggleComponent],
   template: `
-    <cll-alert [type]="'success'" [closable]="true"> Operation completed successfully! </cll-alert>
+    <header class="flex justify-between p-4">
+      <h2>Cluster Overview</h2>
+      <cll-theme-toggle />
+    </header>
 
-    <cll-spinner [size]="'lg'"></cll-spinner>
+    <main class="p-4">
+      @if (errorMessage()) {
+        <cll-alert [error]="errorMessage()" [clrAlertClosable]="true" />
+      }
 
-    <cll-page-container>
-      <h1>Page Content</h1>
-    </cll-page-container>
-
-    <button (click)="showToast()">Show Toast</button>
+      <button class="btn btn-primary" (click)="notifySuccess()">Dispatch Notification</button>
+    </main>
   `,
 })
-export class ExampleComponent {
+export class DashboardComponent {
   private toastService = inject(ToastService);
+  readonly errorMessage = signal<string | null>(null);
 
-  showToast() {
-    this.toastService.show({
-      type: 'success',
-      message: 'Operation completed!',
-    });
+  notifySuccess(): void {
+    this.toastService.success('Cluster backup initiated successfully!');
   }
 }
 ```
 
-### Using File Reader Component
+---
 
-```html
-<cll-file-reader
-  [(ngModel)]="file"
-  [accept]="'.pdf,.doc,.docx'"
-  [maxSize]="5242880"
-  [multiple]="false"
-></cll-file-reader>
+## 🌟 Flagship Features
+
+### 1. `dgState` — Server-Driven Datagrids without the Headache
+
+Clarity's default `(clrDgRefresh)` fires on every filter and pagination tick, causing jarring UI flickers and
+out-of-order race conditions. `dgState` manages debouncing, state caching, and cancellation automatically:
+
+```typescript
+import {Component, inject} from '@angular/core';
+import {ClrDatagridStateInterface} from '@clr/angular';
+import {dgState} from 'clr-lift';
+import {UserService} from './user.service';
+
+@Component({
+  selector: 'app-users-grid',
+  template: `
+    <clr-datagrid (clrDgRefresh)="usersState.refresh($event)" [clrDgLoading]="usersState.isLoading()">
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Email</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let user of usersState.data()?.items">
+        <clr-dg-cell>{{ user.name }}</clr-dg-cell>
+        <clr-dg-cell>{{ user.email }}</clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        <clr-dg-pagination [clrDgTotalItems]="usersState.data()?.total ?? 0" />
+      </clr-dg-footer>
+    </clr-datagrid>
+  `,
+})
+export class UsersGridComponent {
+  private userService = inject(UserService);
+
+  readonly usersState = dgState((state: ClrDatagridStateInterface) => this.userService.fetchUsers(state), {
+    debounceTime: 300,
+  });
+}
 ```
 
-### Using Theme Toggle
+### 2. `cll-timeline-wizard` — Declarative Multi-Step Workflows
 
-```html
-<cll-theme-toggle></cll-theme-toggle>
-```
-
-### Using Timeline Wizard
+Build complex provisioning wizards with per-step asynchronous validation:
 
 ```html
 <cll-timeline-wizard
   [steps]="wizardSteps"
-  [currentStep]="currentStep"
-  (stepChange)="onStepChange($event)"
-></cll-timeline-wizard>
+  (finish)="onProvisionComplete($event)"
+  (stepChange)="onStepNavigated($event)"
+>
+  <ng-template cllStepContent="credentials">
+    <app-credentials-step [form]="credentialsForm" />
+  </ng-template>
+
+  <ng-template cllStepContent="network">
+    <app-network-step [form]="networkForm" />
+  </ng-template>
+</cll-timeline-wizard>
 ```
 
-## 📚 Documentation
+### 3. `cll-file-reader` — Native Form-Controlled File Ingestion
 
-- **📖 Full Documentation**: [ngx-lift.netlify.app/clr-lift](https://ngx-lift.netlify.app/clr-lift)
-- **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/clr-lift)
-- **💻 Source Code**: [GitHub Repository](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)
-- **📦 npm Package**: [npmjs.com/package/clr-lift](https://www.npmjs.com/package/clr-lift)
-- **🎨 Clarity Design System**: [clarity.design](https://clarity.design)
+No need to mess with native `<input type="file">` change events or manual Base64 reading:
 
-## 🎯 Use Cases
-
-**clr-lift** is perfect for:
-
-- 🎨 **UI Components** - Production-ready components for Clarity-based applications
-- 📊 **Data Grids** - Simplified state management for Clarity datagrids
-- 🔔 **Notifications** - Toast notifications and alerts
-- 📝 **Forms** - Enhanced form components (file uploads, key-value inputs)
-- 🧭 **Navigation** - Wizards, timelines, and multi-step flows
-- 🎭 **Theming** - Easy theme switching between light and dark modes
-
-## 🧪 Testing
-
-Run the unit tests for clr-lift:
-
-```bash
-nx test clr-lift
+```html
+<clr-input-container>
+  <label>Upload TLS Certificate</label>
+  <cll-file-reader [formControl]="certFileControl" accept=".pem,.crt" readAs="text" [maxSizeMb]="5" />
+</clr-input-container>
 ```
-
-Run tests with coverage:
-
-```bash
-nx test clr-lift --coverage
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes this
-project better.
-
-- 🐛 **Found a bug?** [Open an issue](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=bug_report.md)
-- 💡 **Have a feature request?**
-  [Request a feature](https://github.com/wghglory/ngx-lift-workspace/issues/new?template=feature_request.md)
-- 📝 **Want to contribute?** See our
-  [Contributing Guidelines](https://github.com/wghglory/ngx-lift-workspace/blob/main/CONTRIBUTING.md)
-
-## 📄 License
-
-**clr-lift** is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## 🙏 Acknowledgments
-
-We would like to express our gratitude to the **Clarity Design System** maintainers and contributors for their
-foundational work that enables the development of **clr-lift**.
-
-## ⭐ Show Your Support
-
-If this library helped you, please consider giving it a ⭐ on GitHub!
 
 ---
 
-<div align="center">
+## 🧩 Component & Operator Quick Reference
 
-**Made with ❤️ for the Angular and Clarity community**
+| Category           | Export                         | Selector / API             | Description                                                                               |
+| :----------------- | :----------------------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
+| **Datagrid**       | `dgState`                      | Operator / Utility         | Flicker-free reactive datagrid state manager with debounce & race-condition cancellation. |
+| **Feedback**       | `AlertComponent`               | `cll-alert`                | Intelligent alert container with auto-unwrapping for `Error` and `HttpErrorResponse`.     |
+|                    | `AlertContainerComponent`      | `cll-alert-container`      | Multi-alert reactive stack controlled declaratively by `AlertService`.                    |
+|                    | `ToastService`                 | Injectable Service         | Global toast dispatcher supporting `success`, `error`, `warning`, `info`.                 |
+|                    | `ToastContainerComponent`      | `cll-toast-container`      | Root toast overlay host with positioning and auto-dismiss timing.                         |
+|                    | `SpinnerComponent`             | `cll-spinner`              | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                     |
+|                    | `StatusIndicatorComponent`     | `cll-status-indicator`     | Semantic operational state badges (`success`, `warning`, `error`, `pending`).             |
+| **Navigation**     | `TimelineWizardComponent`      | `cll-timeline-wizard`      | Multi-step asynchronous wizard with timeline navigation and async step hooks.             |
+|                    | `PageContainerComponent`       | `cll-page-container`       | Standardized header, breadcrumb, action bar, and content responsive shell.                |
+| **Forms**          | `FileReaderComponent`          | `cll-file-reader`          | `ControlValueAccessor` drag-and-drop file ingestion (Text, DataURL, ArrayBuffer).         |
+|                    | `KeyValueInputsComponent`      | `cll-key-value-inputs`     | Dynamic key-value label/environment variable editor with duplicate key validation.        |
+| **Theming & i18n** | `ThemeToggleComponent`         | `cll-theme-toggle`         | Light/dark theme switch with Clarity token synchronization & persistence.                 |
+|                    | `TranslationService`           | Injectable Service         | Built-in localization service supporting 12+ enterprise locales without external libs.    |
+|                    | `TranslatePipe`                | `translate`                | Reactive pipe for localized component labels and messages.                                |
+| **Overlays**       | `CalloutComponent`             | `cll-callout`              | Lightweight contextual notice box with subtle borders.                                    |
+|                    | `CertificateSignpostComponent` | `cll-certificate-signpost` | Interactive X.509 certificate inspector showing SAN, expiry, and issuer details.          |
+|                    | `TooltipDirective`             | `[cllTooltip]`             | Dynamic declarative popover tooltip.                                                      |
 
-[Report Bug](https://github.com/wghglory/ngx-lift-workspace/issues) •
-[Request Feature](https://github.com/wghglory/ngx-lift-workspace/issues) •
-[View Documentation](https://ngx-lift.netlify.app/clr-lift)
+---
 
-</div>
+## 🌍 Built-in Localization
+
+All interactive messages, placeholders, and labels in `clr-lift` are fully localized in:
+
+| English (`en`)     | 简体中文 (`zh-CN`)    | 繁體中文 (`zh-TW`)            | Deutsch (`de`)     |
+| :----------------- | :-------------------- | :---------------------------- | :----------------- |
+| **Español (`es`)** | **Français (`fr`)**   | **Italiano (`it`)**           | **日本語 (`ja`)**  |
+| **한국어 (`ko`)**  | **Nederlands (`nl`)** | **Português (`pt`, `pt-BR`)** | **Русский (`ru`)** |
+
+Switch language on the fly via `TranslationService`:
+
+```typescript
+const translationService = inject(TranslationService);
+
+// Change locale at runtime - all clr-lift components react immediately!
+translationService.setLanguage('zh-CN');
+```
+
+---
+
+## 🧪 Testing
+
+`clr-lift` is built with 100% test focus. When testing components that consume `clr-lift`:
+
+```typescript
+import {TestBed} from '@angular/core/testing';
+import {TranslationService} from 'clr-lift';
+
+beforeEach(async () => {
+  await TestBed.configureTestingModule({
+    imports: [MyComponent],
+    providers: [TranslationService],
+  }).compileComponents();
+});
+```
+
+---
+
+## 📄 License
+
+MIT © [Guanghui Wang](https://github.com/wghglory)

@@ -1,121 +1,73 @@
-<cll-page-container [title]="'computedAsync'" customClass="space-y-9">
+<cll-page-container [title]="'computedAsync.title' | translate">
   <!-- Overview -->
-  <p>
-    The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises,
-    Observables, or regular values. It provides flexibility in computational behavior through selectable flattening
-    strategies (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>,
-    provide a function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting
-    the computed value.
-  </p>
+  <p [innerHTML]="'computedAsync.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Works with Promises</h3>
-      <p>Compute values from Promises:</p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example1' | translate }}</h3>
+      <p>{{ 'computedAsync.example1Desc' | translate }}</p>
       <app-code-block [code]="promiseCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Works with Observables</h3>
-      <p>
-        When returning an Observable, it is automatically subscribed to and will be unsubscribed when the component is
-        destroyed or when the computation is re-triggered. In the following example, if the userId changes, the previous
-        computation will be cancelled (including any ongoing API calls), and a new computation will be initiated.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example2' | translate }}</h3>
+      <p>{{ 'computedAsync.example2Desc' | translate }}</p>
       <app-code-block [code]="observableCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 3: Works with Regular Values</h3>
-      <p>
-        This doesn't offer any advantage over employing a standard computed <code>signal</code>. However, it does allow
-        the return of regular values (those not consisting of Promises or Observables) from the callback function. The
-        callback function executes in the microtask queue, hence it won't promptly emit the value (by default, it
-        returns undefined). To emit the value immediately, you can utilize the requireSync option within the second
-        argument options object.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example3' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example3Desc' | translate"></p>
       <app-code-block [code]="regularCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 4: Works with initialValue</h3>
-      <p>
-        If we wish to establish an initial value for the computed value, we can provide it as the second argument within
-        the options object.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example4' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example4Desc' | translate"></p>
       <app-code-block [code]="promiseInitialValueCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 5: Works with requireSync</h3>
-      <p>
-        If we possess an Observable that synchronously emits the value, we can utilize the requireSync option to ensure
-        immediate emission of the value. This feature is also beneficial for ensuring the <code>signal</code> type
-        excludes undefined by default. Without requireSync, the <code>signal</code> type would be
-        <code>Signal&lt;User | undefined&gt;</code>. However, with requireSync enabled, the <code>signal</code> type
-        will be <code>Signal&lt;User&gt;</code>.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example5' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example5Desc' | translate"></p>
       <app-code-block [code]="requireSyncCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 6: Work with createAsyncState Operator</h3>
-      <p>
-        In the example below, we have a <code>Signal</code> that represents the state of an API call. We use
-        <code>computedAsync</code> and <code>createAsyncState</code> operator to compute the state of the API call based
-        on the <code>userId</code>.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example6' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example6Desc' | translate"></p>
       <app-code-block [code]="createAsyncStateCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 7: Behaviors (switch, merge, concat, exhaust)</h3>
-      <p>
-        By default, <code>computedAsync</code> employs the switch behavior, which entails that if the computation is
-        re-triggered before the prior one concludes, the former will be canceled. Should you wish to alter this
-        behavior, you can provide the behavior option within the second argument options object.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example7' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example7Desc' | translate"></p>
       <app-code-block [code]="behaviorCode" lang="typescript" />
-      <h4>switch (default)</h4>
-      <p>
-        When desiring to cancel the prior computation, the switch behavior is utilized, which is the default. If a new
-        computation is triggered before the previous one concludes, the former will be terminated.
-      </p>
-      <h4>merge</h4>
-      <p>
-        To retain the preceding computation, the merge behavior is employed. If a new computation is initiated before
-        the previous one is finished, the former is preserved while the latter is started.
-      </p>
-      <h4>concat</h4>
-      <p>
-        If preservation of the prior computation is desired along with waiting for its completion before initiating the
-        new one, the concat behavior is chosen.
-      </p>
-      <h4>exhaust</h4>
-      <p>
-        In instances where disregarding the new computation while the prior one remains ongoing is necessary, the
-        exhaust behavior is selected.
-      </p>
+      <h4>{{ 'computedAsync.behaviorSwitch' | translate }}</h4>
+      <p>{{ 'computedAsync.behaviorSwitchDesc' | translate }}</p>
+      <h4>{{ 'computedAsync.behaviorMerge' | translate }}</h4>
+      <p>{{ 'computedAsync.behaviorMergeDesc' | translate }}</p>
+      <h4>{{ 'computedAsync.behaviorConcat' | translate }}</h4>
+      <p>{{ 'computedAsync.behaviorConcatDesc' | translate }}</p>
+      <h4>{{ 'computedAsync.behaviorExhaust' | translate }}</h4>
+      <p>{{ 'computedAsync.behaviorExhaustDesc' | translate }}</p>
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 8: Use with Previous Computed Value</h3>
-      <p>
-        Should there be a necessity to utilize the previously computed value in the subsequent computation, it can be
-        accessed within the callback function as the first argument.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example8' | translate }}</h3>
+      <p>{{ 'computedAsync.example8Desc' | translate }}</p>
       <app-code-block [code]="previousCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 9: Load Data Initially</h3>
-      <p>Load users initially when the component loads:</p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example9' | translate }}</h3>
+      <p>{{ 'computedAsync.example9Desc' | translate }}</p>
       <div>
         <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().isLoading === true">
-          Refresh
+          {{ 'computedAsync.refresh' | translate }}
         </button>
       </div>
 
@@ -137,17 +89,15 @@
 
       <app-code-block [code]="loadInitiallyHtmlCode" lang="html" />
       <app-code-block [code]="loadInitiallyTsCode" lang="typescript" />
-      <cll-callout>
-        Learn <a [routerLink]="['../createTrigger']"><code>createTrigger</code> here</a>.
-      </cll-callout>
+      <cll-callout [innerHTML]="'computedAsync.learnTrigger' | translate: '../createTrigger'"></cll-callout>
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 10: Load Data When Button Clicks</h3>
-      <p>Load users only when a button is clicked:</p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example10' | translate }}</h3>
+      <p>{{ 'computedAsync.example10Desc' | translate }}</p>
       <div>
         <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.isLoading === true">
-          Load Users
+          {{ 'computedAsync.loadUsers' | translate }}
         </button>
       </div>
 
@@ -171,47 +121,29 @@
       <app-code-block [code]="loadDeferTsCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 11: Error Handling with onError</h3>
-      <p>
-        Use the <code>onError</code> callback to handle errors gracefully and provide fallback values. When
-        <code>onError</code> returns a value, the signal will emit that value instead of throwing an error:
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example11' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example11Desc' | translate"></p>
       <app-code-block [code]="errorHandlingCode" lang="typescript" />
-      <cll-callout>
-        The <code>onError</code> callback receives the error and can return a fallback value. If it returns
-        <code>undefined</code>, the error will be stored in the signal (when used with <code>createAsyncState</code>).
-      </cll-callout>
+      <cll-callout [innerHTML]="'computedAsync.onErrorCallout' | translate"></cll-callout>
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 12: Error Handling with throwOnError</h3>
-      <p>
-        Use <code>throwOnError: true</code> to propagate errors up instead of silently handling them. This is useful
-        when you want errors to bubble up to a global error handler:
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example12' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example12Desc' | translate"></p>
       <app-code-block [code]="throwOnErrorCode" lang="typescript" />
-      <cll-callout type="warning">
-        When <code>throwOnError: true</code>, errors will be thrown even if <code>onError</code> is provided. The
-        <code>onError</code> callback can still be used for logging or side effects before the error throws.
-      </cll-callout>
+      <cll-callout type="warning" [innerHTML]="'computedAsync.throwOnErrorCallout' | translate"></cll-callout>
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 13: Tab Switching with Request Cancellation (Stream Resilience)</h3>
-      <p>
-        In multi-tab UIs, switching tabs rapidly can trigger concurrent requests where in-flight requests get aborted or
-        fail (e.g. browser navigation cancellations).
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example13' | translate }}</h3>
+      <p>{{ 'computedAsync.example13Desc' | translate }}</p>
       <cll-callout type="info">
-        <strong>Before Fix:</strong> An inner error (such as a canceled HTTP request) would propagate through
-        <code>switchAll</code> and permanently terminate the outer observable subscription. The UI stayed stuck in
-        loading forever and could never load subsequent tabs.<br />
-        <strong>After Fix:</strong> The inner error is safely caught and handled, keeping the outer stream alive.
-        Switching to any tab or retrying immediately fetches and displays new data!
+        <p [innerHTML]="'computedAsync.tabResilienceBefore' | translate" cds-layout="m-t:none"></p>
+        <p [innerHTML]="'computedAsync.tabResilienceAfter' | translate" cds-layout="m-t:xs"></p>
       </cll-callout>
 
-      <div class="space-x-2">
+      <div cds-layout="horizontal gap:xs align:center">
         <button
           type="button"
           class="btn btn-sm"
@@ -219,7 +151,7 @@
           [class.btn-outline]="selectedTab() !== 'activeDirectory'"
           (click)="selectTab('activeDirectory')"
         >
-          Active Directory
+          {{ 'computedAsync.tabActiveDirectory' | translate }}
         </button>
         <button
           type="button"
@@ -228,7 +160,7 @@
           [class.btn-outline]="selectedTab() !== 'backupLocations'"
           (click)="selectTab('backupLocations')"
         >
-          Backup Locations
+          {{ 'computedAsync.tabBackupLocations' | translate }}
         </button>
         <button
           type="button"
@@ -237,7 +169,7 @@
           [class.btn-outline]="selectedTab() !== 'certificates'"
           (click)="selectTab('certificates')"
         >
-          Trusted Root Certs
+          {{ 'computedAsync.tabCertificates' | translate }}
         </button>
         <button
           type="button"
@@ -245,120 +177,80 @@
           [class.btn-outline]="selectedTab() !== 'aborted'"
           (click)="selectTab('aborted')"
         >
-          Simulate Canceled Request
+          {{ 'computedAsync.tabSimulateAborted' | translate }}
         </button>
       </div>
 
-      <div class="card p-4">
-        @if (tabState().isLoading) {
-          <cll-spinner />
-        }
-        @if (tabState().error; as error) {
-          <cll-alert [error]="error" [alertType]="'danger'" />
-          <p class="text-sm mt-2">
-            Notice: Even after this simulated aborted request, the stream remains alive! Click any tab above to see it
-            seamlessly recover.
-          </p>
-        }
-        @if (tabState().data; as data) {
-          <div class="card-block">
+      <div class="card">
+        <div class="card-block">
+          @if (tabState().isLoading) {
+            <cll-spinner />
+          }
+          @if (tabState().error; as error) {
+            <cll-alert [error]="error" [alertType]="'danger'" />
+            <p cds-text="body" cds-layout="m-t:xs">
+              {{ 'computedAsync.tabNotice' | translate }}
+            </p>
+          }
+          @if (tabState().data; as data) {
             <h4 class="card-title">{{ data.title }} ({{ data.count }})</h4>
-            <ul class="list-disc ml-6 mt-2">
+            <ul class="list" cds-layout="m-t:xs">
               @for (item of data.items; track item) {
                 <li>{{ item }}</li>
               }
             </ul>
-          </div>
-        }
+          }
+        </div>
       </div>
 
       <app-code-block [code]="tabSwitchingCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 14: Decoupled Injector</h3>
-      <p>
-        By passing an optional <code>injector</code> in the options object, <code>computedAsync</code> can be
-        instantiated outside an ambient injection context—for instance, inside composable helper functions, custom
-        services, or dynamic factory methods:
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'computedAsync.example14' | translate }}</h3>
+      <p [innerHTML]="'computedAsync.example14Desc' | translate"></p>
       <app-code-block [code]="decoupledInjectorCode" lang="typescript" />
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>computedAsync</h3>
-        <p>
-          Computes values from Promises, Observables, or regular values, returning a Signal that emits the computed
-          value.
-        </p>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>computedAsync</h3>
+      <p>{{ 'computedAsync.apiSummary' | translate }}</p>
 
-        <h4>Signature</h4>
-        <app-code-block [code]="signatureCode" lang="typescript" />
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
 
-        <h4>Parameters</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>computation: (previousValue?: T) => Promise&lt;T&gt; | Observable&lt;T&gt; | T</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                A function that returns a Promise, Observable, or regular value. The function receives the previous
-                computed value as an optional first argument.
-              </p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>options?: ComputedAsyncOptions&lt;T&gt;</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">Configuration options:</p>
-              <ul class="list-disc space-y-1 ml-6 mt-1 text-sm">
-                <li>
-                  <code>initialValue?: T</code> - The initial value for the computed signal before the computation
-                  completes.
-                </li>
-                <li>
-                  <code>requireSync?: boolean</code> - If <code>true</code>, requires the computation to emit
-                  synchronously. This ensures the signal type excludes <code>undefined</code>.
-                </li>
-                <li>
-                  <code>behavior?: 'switch' | 'merge' | 'concat' | 'exhaust'</code> - The flattening strategy for
-                  handling multiple computations. Defaults to <code>'switch'</code>.
-                </li>
-                <li>
-                  <code>onError?: (error: unknown) => T | undefined</code> -
-                  <span class="badge badge-success">New!</span>
-                  Error handler that receives errors from async operations. Can return a fallback value to recover from
-                  errors.
-                </li>
-                <li>
-                  <code>throwOnError?: boolean</code> - <span class="badge badge-success">New!</span> If
-                  <code>true</code>, errors will be thrown and propagate up. If <code>false</code> (default), errors can
-                  be handled by <code>onError</code>.
-                </li>
-              </ul>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="parameters()" />
 
-        <h4>Returns</h4>
-        <p class="text-sm">
-          A <code>Signal</code> that emits the computed value. The signal type depends on the
-          <code>requireSync</code> option: <code>Signal&lt;T | undefined&gt;</code> if <code>requireSync</code> is false
-          or omitted, <code>Signal&lt;T&gt;</code> if <code>requireSync</code> is true.
-        </p>
+      <h4>ComputedAsyncOptions</h4>
+      <app-api-table [properties]="optionsProperties()" />
 
-        <h4>Behaviors</h4>
-        <ul class="list-disc space-y-1 ml-6 text-sm">
-          <li><code>switch</code> (default): Cancels the previous computation when a new one is triggered.</li>
-          <li><code>merge</code>: Preserves the previous computation while starting a new one when triggered.</li>
-          <li><code>concat</code>: Waits for the previous computation to complete before starting a new one.</li>
-          <li><code>exhaust</code>: Ignores new computations while a previous one is still ongoing.</li>
-        </ul>
-      </div>
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p cds-text="body">{{ 'computedAsync.returnsDesc' | translate }}</p>
+
+      <h4>{{ 'common.behaviors' | translate }}</h4>
+      <ul class="list" cds-layout="vertical gap:xs">
+        <li>
+          <strong>{{ 'computedAsync.behaviorSwitch' | translate }}:</strong>
+          {{ 'computedAsync.behaviorSwitchDesc' | translate }}
+        </li>
+        <li>
+          <strong>{{ 'computedAsync.behaviorMerge' | translate }}:</strong>
+          {{ 'computedAsync.behaviorMergeDesc' | translate }}
+        </li>
+        <li>
+          <strong>{{ 'computedAsync.behaviorConcat' | translate }}:</strong>
+          {{ 'computedAsync.behaviorConcatDesc' | translate }}
+        </li>
+        <li>
+          <strong>{{ 'computedAsync.behaviorExhaust' | translate }}:</strong>
+          {{ 'computedAsync.behaviorExhaustDesc' | translate }}
+        </li>
+      </ul>
     </div>
   </section>
 </cll-page-container>

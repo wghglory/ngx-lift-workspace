@@ -1,0 +1,79 @@
+<cll-page-container [title]="'startWithTap'">
+  <!-- Overview -->
+  <p [innerHTML]="'startWithTap.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none" [innerHTML]="'startWithTap.callout' | translate"></p>
+  </cll-callout>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'startWithTap.example1Title' | translate }}</h3>
+      <p [innerHTML]="'startWithTap.example1Desc' | translate"></p>
+
+      <div class="preview-box" cds-layout="vertical gap:md">
+        <div cds-layout="horizontal gap:sm align:center">
+          <button type="button" class="btn btn-primary btn-sm" [disabled]="isLoading()" (click)="executeFetch()">
+            {{ 'startWithTap.btnTrigger' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [disabled]="isLoading() || logs().length === 0"
+            (click)="clearLogs()"
+          >
+            {{ 'startWithTap.btnClearLog' | translate }}
+          </button>
+          @if (isLoading()) {
+            <cll-spinner [size]="'sm'" />
+            <span>{{ 'startWithTap.fetchingData' | translate }}</span>
+          }
+        </div>
+
+        @if (fetchedData()) {
+          <div cds-layout="p:sm">
+            {{ 'startWithTap.loadedPayload' | translate }} <strong>{{ fetchedData() }}</strong>
+          </div>
+        }
+
+        @if (logs().length > 0) {
+          <div cds-layout="vertical gap:xs p:sm">
+            @for (log of logs(); track $index) {
+              <div>{{ log }}</div>
+            }
+          </div>
+        }
+      </div>
+      <app-code-block [code]="basicUsageCode" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'startWithTap.example2Title' | translate }}</h3>
+      <p>
+        {{ 'startWithTap.example2Desc' | translate }}
+      </p>
+      <app-code-block [code]="lazyExecutionCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>startWithTap</h3>
+      <p>{{ 'startWithTap.apiSummary' | translate }}</p>
+
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="parameters()" />
+
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'startWithTap.returnsDesc' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

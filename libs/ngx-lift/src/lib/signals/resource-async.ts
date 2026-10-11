@@ -13,8 +13,8 @@ import {
 } from '@angular/core';
 import {from, isObservable, noop, Observable, Subscription} from 'rxjs';
 
-import {ResourceStatus} from '../models';
 import {isPromise} from '../utils/is-promise.util';
+import {ResourceStatus} from '../models';
 
 export interface ResourceAsyncContext {
   /** Aborted when the operation is replaced, reset, locally overridden, or destroyed. */
@@ -25,7 +25,7 @@ export interface ResourceAsyncDefinition<P, T> {
   /** Pure reactive parameter capture; must not start requests or perform writes. */
   params: () => P;
   /** Runs only when the resource accepts a new operation. Signal reads here are untracked. */
-  loader: (params: P, context: ResourceAsyncContext) => Observable<T> | Promise<T> | T;
+  loader: (params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T;
 }
 
 export class ResourceAsyncCancelledError extends Error {
@@ -460,7 +460,7 @@ export function resourceAsync<T, P, E = Error>(
   options?: ResourceRefOptions<T, E>,
 ): WritableResourceRef<T | undefined, E>;
 export function resourceAsync<T, E = Error>(
-  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T,
   options: ResourceRefOptionsWithInitialValue<T, E> | ResourceRefOptionsWithDefaultValue<T, E>,
 ): WritableResourceRef<T, E>;
 
@@ -479,7 +479,7 @@ export function resourceAsync<T, E = Error>(
  * @returns A WritableResourceRef whose value signal includes undefined.
  */
 export function resourceAsync<T, E = Error>(
-  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T,
   options?: ResourceRefOptionsWithoutInitial<T, E>,
 ): WritableResourceRef<T | undefined, E>;
 
@@ -495,12 +495,12 @@ export function resourceAsync<T, E = Error>(
  * @returns A WritableResourceRef whose value signal includes undefined if not proven non-null.
  */
 export function resourceAsync<T, E = Error>(
-  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T,
   options?: ResourceRefOptions<T, E>,
 ): WritableResourceRef<T | undefined, E>;
 
 export function resourceAsync<T, P, E = Error>(
-  source: ((context: ResourceAsyncContext) => Observable<T> | Promise<T> | T) | ResourceAsyncDefinition<P, T>,
+  source: ((context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T) | ResourceAsyncDefinition<P, T>,
   options: ResourceRefOptions<T, E> = {},
 ): WritableResourceRef<T, E> | WritableResourceRef<T | undefined, E> {
   if (!options.injector) {
@@ -525,7 +525,7 @@ export function resourceAsync<T, P, E = Error>(
 
   interface Evaluation {
     controller: AbortController;
-    source?: Observable<T> | Promise<T> | T;
+    source?: Observable<T> | PromiseLike<T> | T;
     failed: boolean;
     error?: unknown;
   }
@@ -637,7 +637,7 @@ export function resourceAsync<T, P, E = Error>(
           options.reactive === false
             ? untracked(() => factory({abortSignal: evaluation.controller.signal}))
             : factory({abortSignal: evaluation.controller.signal});
-        if (isPromise(evaluation.source)) void evaluation.source.catch(noop);
+        if (isPromise(evaluation.source)) void Promise.resolve(evaluation.source).catch(noop);
       } catch (error) {
         evaluation.failed = true;
         evaluation.error = error;
@@ -657,7 +657,7 @@ export function resourceAsync<T, P, E = Error>(
     untracked(() => {
       statusSignal.set(valueSignal() !== undefined ? 'reloading' : 'loading');
       errorSignal.set(null);
-      let asyncSource: Observable<T> | Promise<T> | T;
+      let asyncSource: Observable<T> | PromiseLike<T> | T;
       try {
         options.onLoading?.();
         if (!isCurrent(operation)) return;
@@ -672,14 +672,14 @@ export function resourceAsync<T, P, E = Error>(
       try {
         asyncSource = definition
           ? definition.loader(selection as P, {abortSignal: operation.controller.signal})
-          : (evaluation.source as Observable<T> | Promise<T> | T);
+          : (evaluation.source as Observable<T> | PromiseLike<T> | T);
       } catch (error) {
         handleError(operation, error);
         return;
       }
       if (!isCurrent(operation)) {
         // Eager promises already exist, so attach a rejection observer even after a reentrant cancellation.
-        if (isPromise(asyncSource)) void asyncSource.catch(noop);
+        if (isPromise(asyncSource)) void Promise.resolve(asyncSource).catch(noop);
         return;
       }
       const source$ = isObservable(asyncSource)

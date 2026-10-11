@@ -1,5 +1,5 @@
 import {beforeEach, afterEach, vi} from 'vitest';
-import {Injector, signal} from '@angular/core';
+import {Injector, Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {delay, map} from 'rxjs/operators';
 import {interval, of, pipe, Subject} from 'rxjs';
@@ -15,6 +15,14 @@ afterEach(() => {
 });
 
 describe(mergeFrom.name, () => {
+  it('includes a null initial value in its signal type', () => {
+    TestBed.runInInjectionContext(() => {
+      const merged = mergeFrom<[number]>([of(1).pipe(delay(1))], {initialValue: null});
+      expectTypeOf(merged).toEqualTypeOf<Signal<number | null>>();
+      expect(merged()).toBeNull();
+    });
+  });
+
   describe('basic functionality', () => {
     it('should merge multiple observables into a signal', async () => {
       await TestBed.runInInjectionContext(async () => {

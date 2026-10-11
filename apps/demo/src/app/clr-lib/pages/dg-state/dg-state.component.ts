@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-datagrid.component';
@@ -16,12 +17,27 @@ import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-
     CodeBlockComponent,
     CalloutComponent,
     UserDatagridComponent,
+    TranslatePipe,
+    ApiTableComponent,
   ],
   templateUrl: './dg-state.component.html',
   styleUrl: './dg-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DgStateComponent {
+  private translationService = inject(TranslationService);
+
+  paramProps = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'enableDistinctUntilChanged',
+        type: 'boolean',
+        default: 'true',
+        description: this.translationService.translate('dgState.paramDesc'),
+      },
+    ];
+  });
   dataCode = highlight(`
 {
   "results": [
@@ -92,7 +108,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
   </clr-datagrid>
 
   @if (vm.usersState?.error; as error) {
-    <cll-alert [error]="error" class="mb-4" />
+    <cll-alert [error]="error" cds-layout="m-b:md" />
   }
 }
   `,
@@ -139,7 +155,7 @@ dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
 </clr-datagrid>
 
 @if ((usersState$ | async)?.error; as error) {
-  <cll-alert [error]="error" class="mb-4" />
+  <cll-alert [error]="error" cds-layout="m-b:md" />
 }
     `);
 

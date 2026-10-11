@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   inject,
   input,
@@ -11,6 +12,7 @@ import {
 } from '@angular/core';
 import {ClarityIcons, timesIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {timer} from 'rxjs';
 import {take} from 'rxjs/operators';
 
@@ -36,6 +38,7 @@ ClarityIcons.addIcons(timesIcon);
 })
 export class ToastComponent implements OnInit, AfterViewInit {
   private element = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
   private ngZone = inject(NgZone);
   private translationService = inject(TranslationService);
 
@@ -85,7 +88,7 @@ export class ToastComponent implements OnInit, AfterViewInit {
     if (this.timeoutSeconds() > 0) {
       this.ngZone.runOutsideAngular(() => {
         timer(this.timeoutSeconds() * multiply(1000))
-          .pipe(take(1))
+          .pipe(take(1), takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             this.ngZone.run(() => {
               if (this.disableAutoClose) {

@@ -1,4 +1,4 @@
-import {firstValueFrom, of} from 'rxjs';
+import {firstValueFrom, of, Subject} from 'rxjs';
 import {toArray} from 'rxjs/operators';
 import {vi} from 'vitest';
 
@@ -54,5 +54,30 @@ describe('distinctOnChange', () => {
     const result = await firstValueFrom(source$);
     expect(result).toEqual([]);
     expect(onChangeCallbackSpy).not.toHaveBeenCalled(); // Callback should not be called for an empty observable
+  });
+
+  it.each(['comparator', 'callback'])('delivers %s errors downstream and unsubscribes', (failingPart) => {
+    const source = new Subject<number>();
+    const error = new Error('Comparison failed');
+    const received = vi.fn();
+    const fail = () => {
+      throw error;
+    };
+    const subscription = source
+      .pipe(
+        distinctOnChange(
+          failingPart === 'callback' ? fail : vi.fn(),
+          failingPart === 'comparator' ? fail : (a, b) => a === b,
+        ),
+      )
+      .subscribe({error: received});
+
+    source.next(1);
+    source.next(2);
+
+    expect(received).toHaveBeenCalledWith(error);
+    expect(subscription.closed).toBe(true);
+    expect(source.observed).toBe(false);
+    subscription.unsubscribe();
   });
 });

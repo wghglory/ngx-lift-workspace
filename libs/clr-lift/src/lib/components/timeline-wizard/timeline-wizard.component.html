@@ -17,15 +17,21 @@
 
 @if (timelineWizardService.currentStepIndex !== -1) {
   <div class="button-container">
-    <button class="btn btn-link" (click)="cancel()">
+    <button type="button" class="btn btn-link" (click)="cancel()">
       {{ 'timeline-wizard.cancel' | translate }}
     </button>
     @if (!timelineWizardService.isFirstStep) {
-      <button class="btn btn-outline" (click)="previousStep()">
+      <button
+        type="button"
+        class="btn btn-outline"
+        [disabled]="timelineWizardService.currentStep.state === 'processing'"
+        (click)="previousStep()"
+      >
         {{ 'timeline-wizard.previous' | translate }}
       </button>
     }
     <button
+      type="button"
       class="btn"
       [class]="timelineWizardService.isLastStep ? 'btn-success' : 'btn-primary'"
       [clrLoading]="(next$ | async)?.isLoading === true"

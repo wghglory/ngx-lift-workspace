@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {DOCUMENT} from '@angular/common';
 import {
   ApplicationRef,
@@ -6,6 +5,8 @@ import {
   computed,
   createComponent,
   Directive,
+  DestroyRef,
+  effect,
   ElementRef,
   HostListener,
   inject,
@@ -18,6 +19,8 @@ import {TooltipComponent} from './tooltip.component';
 import {TooltipPosition} from './tooltip.model';
 import {collisionDetection, getTooltipCoords} from './tooltip.util';
 
+let nextTooltipId = 0;
+
 @Directive({
   selector: '[cllTooltip]',
 })
@@ -27,8 +30,8 @@ export class TooltipDirective {
   private document = inject(DOCUMENT);
 
   cllTooltip = input('');
-  cllTooltipContent = input<string | TemplateRef<any> | ComponentRef<any> | Type<any>>('');
-  cllTooltipContentContext = input<Record<string, any>>(); // when cllTooltipContent is TemplateRef, context may be needed
+  cllTooltipContent = input<string | TemplateRef<unknown> | ComponentRef<unknown> | Type<unknown>>('');
+  cllTooltipContentContext = input<Record<string, unknown>>(); // when cllTooltipContent is TemplateRef, context may be needed
   cllTooltipHideDelay = input(0);
   cllTooltipWidth = input(240);
   cllTooltipPosition = input<TooltipPosition>();
@@ -38,6 +41,70 @@ export class TooltipDirective {
   });
 
   private tooltipComponent?: ComponentRef<TooltipComponent>;
+  private hideTimer?: ReturnType<typeof setTimeout>;
+  private positionTimer?: ReturnType<typeof setTimeout>;
+  private readonly tooltipId = `cll-tooltip-${nextTooltipId++}`;
+  private readonly onScroll = () => this.removeTooltip(true);
+
+  @HostListener('window:resize')
+  onResize() {
+    this.removeTooltip(true);
+  }
+
+  private removeDescription() {
+    const descriptions = this.triggerElement
+      .getAttribute('aria-describedby')
+      ?.split(/\s+/)
+      .filter((id) => id && id !== this.tooltipId);
+    if (descriptions?.length) {
+      this.triggerElement.setAttribute('aria-describedby', descriptions.join(' '));
+    } else {
+      this.triggerElement.removeAttribute('aria-describedby');
+    }
+  }
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.destroyTooltip());
+    effect(() => {
+      const content = this.tooltipContent();
+      // Capture dependencies even while closed; creation remains controlled by interaction.
+      this.cllTooltipContentContext();
+      this.cllTooltipWidth();
+      const position = this.cllTooltipPosition();
+      if (!this.tooltipComponent) {
+        return;
+      }
+      if (!content) {
+        this.destroyTooltip();
+        return;
+      }
+      const calculatedPosition = this.calculateTooltipPosition(position);
+      this.setTooltipProps(calculatedPosition);
+      this.positionTooltip(calculatedPosition);
+    });
+  }
+
+  private clearTimers() {
+    clearTimeout(this.hideTimer);
+    clearTimeout(this.positionTimer);
+    this.hideTimer = undefined;
+    this.positionTimer = undefined;
+  }
+
+  private destroyTooltip() {
+    this.clearTimers();
+    this.document.removeEventListener('scroll', this.onScroll, true);
+    this.removeDescription();
+    const ref = this.tooltipComponent;
+    this.tooltipComponent = undefined;
+    if (ref) {
+      // Restore caller-owned content before destroying the tooltip.
+      ref.instance.releaseContent();
+      this.appRef.detachView(ref.hostView);
+      ref.location.nativeElement.remove();
+      ref.destroy();
+    }
+  }
 
   get triggerElement() {
     return this.elementRef.nativeElement as HTMLElement;
@@ -63,6 +130,8 @@ export class TooltipDirective {
   @HostListener('mouseenter')
   @HostListener('focus')
   onMouseEnter() {
+    clearTimeout(this.hideTimer);
+    this.hideTimer = undefined;
     if (this.tooltipComponent) {
       // if tooltip hasn't been removed due to delay, update triggerElementHovering as true, meaning mouse moved from tooltip to trigger element
       this.tooltipComponent.setInput('triggerElementHovering', true);
@@ -82,6 +151,9 @@ export class TooltipDirective {
    * Show tooltip and position it on the screen.
    */
   showTooltip() {
+    if (this.tooltipComponent) {
+      return;
+    }
     if (!this.tooltipContent()) {
       console.warn('Tooltip content not defined, cannot show tooltip');
       return;
@@ -92,14 +164,23 @@ export class TooltipDirective {
       environmentInjector,
     });
 
+    this.appRef.attachView(this.tooltipComponent.hostView);
+    this.tooltipComponent.instance.closePopover.subscribe((force) => this.removeTooltip(force));
+
     const tooltipContent = this.tooltipContentElement;
     if (tooltipContent) {
       tooltipContent.style.visibility = 'hidden'; // fix flicker issue because we want to delay the tooltip a while due to auto positioning
     }
     const hostElement = this.hostElement;
     if (hostElement) {
+      hostElement.id = this.tooltipId;
       this.document.body.appendChild(hostElement);
+      const descriptions = this.triggerElement.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
+      this.triggerElement.setAttribute('aria-describedby', [...new Set([...descriptions, this.tooltipId])].join(' '));
+      this.document.addEventListener('scroll', this.onScroll, true);
     }
+
+    this.tooltipComponent.setInput('triggerElementHovering', true);
 
     // calculatedPosition is the 1st render expected tooltip class.
     const calculatedPosition = this.calculateTooltipPosition(this.cllTooltipPosition());
@@ -118,23 +199,23 @@ export class TooltipDirective {
    * @return {void}
    */
   removeTooltip(force = false) {
-    setTimeout(
-      () => {
-        if (!this.tooltipComponent) {
-          return;
-        }
-        // if mouse moves from trigger to tooltip, keep the tooltip.
-        // tooltipHovering means not moving onto the tooltip, remove the tooltip
-        if (force || this.tooltipComponent.instance.tooltipHovering === false) {
-          // No need unsubscribe here, since angular will auto unsubscribe when the component is destroyed
-
-          this.appRef.detachView(this.tooltipComponent.hostView);
-          // this.tooltipComponent.destroy();  // avoid doing this because dynamic component inside tooltip will also be destroyed. 2nd hover will raise error
-          this.tooltipComponent = undefined;
-        }
-      },
-      force ? 0 : this.cllTooltipHideDelay(),
-    );
+    clearTimeout(this.hideTimer);
+    if (force) {
+      this.destroyTooltip();
+      return;
+    }
+    const ref = this.tooltipComponent;
+    this.hideTimer = setTimeout(() => {
+      this.hideTimer = undefined;
+      if (
+        ref &&
+        this.tooltipComponent === ref &&
+        !ref.instance.tooltipHovering &&
+        !ref.instance.triggerElementHovering()
+      ) {
+        this.destroyTooltip();
+      }
+    }, this.cllTooltipHideDelay());
   }
 
   /**
@@ -144,7 +225,9 @@ export class TooltipDirective {
    * @return {void}
    */
   private positionTooltip(previousTooltipPosition: string) {
-    setTimeout(() => {
+    clearTimeout(this.positionTimer);
+    this.positionTimer = setTimeout(() => {
+      this.positionTimer = undefined;
       if (!this.tooltipComponent) {
         return;
       }
@@ -179,20 +262,12 @@ export class TooltipDirective {
     }
     const coords = getTooltipCoords(this.triggerElement, calculatedPosition);
 
-    this.tooltipComponent.setInput('triggerElementHovering', true);
     this.tooltipComponent.setInput('content', this.tooltipContent());
-    const contentContext = this.cllTooltipContentContext();
-    if (contentContext) {
-      this.tooltipComponent.setInput('contentContext', contentContext);
-    }
+    this.tooltipComponent.setInput('contentContext', this.cllTooltipContentContext());
     this.tooltipComponent.setInput('width', this.cllTooltipWidth());
     this.tooltipComponent.setInput('position', calculatedPosition);
     this.tooltipComponent.setInput('left', coords.x);
     this.tooltipComponent.setInput('top', coords.y);
-
-    this.tooltipComponent.instance.closePopover.subscribe((force) => {
-      this.removeTooltip(force);
-    });
   }
 
   /**

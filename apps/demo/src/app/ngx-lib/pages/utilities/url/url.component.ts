@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {RouterLink} from '@angular/router';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe} from 'clr-lift';
 import {isFQDN, isHttps, isIP, isURL} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -8,7 +7,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-url',
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent, RouterLink],
+  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent, TranslatePipe],
   templateUrl: './url.component.html',
   styleUrl: './url.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
