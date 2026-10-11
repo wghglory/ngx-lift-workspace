@@ -1,9 +1,11 @@
+/** JSON-compatible values supported in a canonical query key. */
 export type QueryKeyValue =
   string | number | boolean | null | readonly QueryKeyValue[] | {readonly [key: string]: QueryKeyValue};
 
 /** Include every parameter and authorization scope that can change the response. */
 export type QueryKey = readonly QueryKeyValue[];
 
+/** Invalidation dependency scoped to a resource type and optional entity. */
 export interface QueryTag {
   readonly type: string;
   readonly id?: string | number;
@@ -11,6 +13,7 @@ export interface QueryTag {
   readonly scope?: string;
 }
 
+/** Cancellation and freshness context for a shared transport request. */
 export interface QueryLoaderContext {
   readonly abortSignal: AbortSignal;
   /** Forward this to dependent queries when a refresh must bypass completed data. */
@@ -30,8 +33,10 @@ export interface QueryDefinition<T> {
   readonly cancelOnNoObservers?: boolean;
 }
 
+/** Lifecycle state of the current shared query generation. */
 export type QueryStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
 
+/** Immutable state published to observers, retaining successful data during refreshes. */
 export interface QuerySnapshot<T> {
   readonly value: T | undefined;
   /** Distinguishes a successful undefined result from the absence of successful data. */
@@ -42,16 +47,19 @@ export interface QuerySnapshot<T> {
   readonly isStale: boolean;
 }
 
+/** Controls whether a read bypasses completed cached data. */
 export interface QueryFetchOptions {
   /** Bypass fresh completed data, while still joining the current pending request. */
   readonly refresh?: boolean;
 }
 
+/** Fetch and polling policy for one active query observer. */
 export interface QueryObserverOptions extends QueryFetchOptions {
   /** Milliseconds between completed requests; omitted means no polling. */
   readonly pollInterval?: number;
 }
 
+/** Callable observer disposer with same-key definition and scheduling updates. */
 export interface QueryObserverHandle {
   (): void;
   isAttached(): boolean;
@@ -61,6 +69,7 @@ export interface QueryObserverHandle {
   updateOptions(options: QueryObserverOptions): void;
 }
 
+/** Clock, visibility, and capacity policies for a QueryClient. */
 export interface QueryClientOptions {
   readonly now?: () => number;
   readonly isVisible?: () => boolean;

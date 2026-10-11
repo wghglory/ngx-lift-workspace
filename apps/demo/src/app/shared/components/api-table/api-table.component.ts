@@ -3,6 +3,7 @@ import {TranslatePipe} from 'clr-lift';
 
 import {ApiProperty} from './api-table.model';
 
+/** Renders documented API properties in a responsive table. */
 @Component({
   selector: 'app-api-table',
   templateUrl: './api-table.component.html',

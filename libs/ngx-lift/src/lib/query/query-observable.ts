@@ -89,6 +89,8 @@ export function observeQueryObservable<T>(
       },
       options,
     );
+    // Removal can happen during the initial snapshots, before the handle exists.
+    if (!handle.isAttached()) subscriber.complete();
     return handle;
   });
 }

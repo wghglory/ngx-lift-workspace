@@ -16,7 +16,7 @@ test.describe('Tooltip component & directive', () => {
     // Expect tooltip content to appear with the expected text
     const tooltipContent = page.locator('cll-tooltip .tooltip-content');
     await expect(tooltipContent).toBeVisible();
-    await expect(tooltipContent).toContainText('This is our cllTooltip text');
+    await expect(tooltipContent).toContainText('Basic Tooltip 1');
 
     // Move mouse away
     await page.mouse.move(0, 0);

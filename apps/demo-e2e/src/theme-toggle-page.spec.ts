@@ -6,7 +6,7 @@ test.describe('ThemeToggle demo page', () => {
   });
 
   test('toggles theme when clicking component button in example', async ({page}) => {
-    const exampleToggle = page.locator('article cll-theme-toggle button').first();
+    const exampleToggle = page.locator('app-demo-playground cll-theme-toggle button').first();
     await expect(exampleToggle).toBeVisible();
 
     const initialTheme = await page.evaluate(() => document.body.getAttribute('cds-theme') ?? 'light');

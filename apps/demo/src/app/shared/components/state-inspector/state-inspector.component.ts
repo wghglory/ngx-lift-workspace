@@ -3,12 +3,14 @@ import {ChangeDetectionStrategy, Component, computed, inject, input, signal} fro
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe, TranslationService} from 'clr-lift';
 
+/** A formatted entry in the live state inspector. */
 export interface StateInspectorItem {
   label: string;
   value: unknown;
   status?: 'success' | 'danger' | 'warning' | 'info' | 'neutral';
 }
 
+/** Displays reactive demo state with optional raw JSON inspection. */
 @Component({
   selector: 'app-state-inspector',
   imports: [ClarityModule, JsonPipe, TranslatePipe],

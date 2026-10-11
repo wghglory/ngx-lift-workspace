@@ -72,6 +72,7 @@ export class QueryClient {
     this.unsubscribeVisibility = options.subscribeVisibility?.(() => this.visibilityChanged());
   }
 
+  /** Read cached fresh data or join/start a shared request; refresh bypasses completed data. */
   fetchQuery<T>(definition: QueryDefinition<T>, options: QueryFetchOptions = {}): Promise<T> {
     const entry = this.ensureEntry(definition);
     if (!entry.observers.size) {
@@ -88,6 +89,7 @@ export class QueryClient {
     return this.startRequest(entry, options.refresh ?? false);
   }
 
+  /** Publish current state synchronously and attach an observer until its handle is disposed. */
   observeQuery<T>(
     definition: QueryDefinition<T>,
     listener: (snapshot: QuerySnapshot<T>) => void,
@@ -100,11 +102,14 @@ export class QueryClient {
     entry.inactiveSince = null;
     this.clearTimer(entry, 'gcTimer');
     listener(this.snapshot(entry));
-    if (options.refresh || this.isStale(entry)) {
-      this.startRequest(entry, options.refresh ?? false);
-    } else {
-      this.schedulePoll(entry);
-      this.scheduleStaleness(entry);
+    // The initial synchronous listener may remove this query or destroy the client.
+    if (this.isAttached(entry)) {
+      if (options.refresh || this.isStale(entry)) {
+        this.startRequest(entry, options.refresh ?? false);
+      } else {
+        this.schedulePoll(entry);
+        this.scheduleStaleness(entry);
+      }
     }
     let attached = true;
     const unsubscribe = (() => {
@@ -159,6 +164,7 @@ export class QueryClient {
     return unsubscribe;
   }
 
+  /** Return current cached state without fetching or extending retention. */
   getSnapshot<T>(key: QueryKey): QuerySnapshot<T> | undefined {
     const entry = this.entries.get(serializeQueryKey(key)) as QueryEntry<T> | undefined;
     return entry ? this.snapshot(entry) : undefined;
@@ -207,6 +213,7 @@ export class QueryClient {
     }
   }
 
+  /** Abort all requests, clear cache and scheduling, and reject future reads. */
   destroy(): void {
     if (this.destroyed) {
       return;

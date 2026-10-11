@@ -313,6 +313,26 @@ describe('fetchPaginatedKubernetesResources', () => {
     req1.flush(mockResponse);
   });
 
+  it.each(['initialParams', 'retryConfig'])(
+    'preserves a legacy HTTP parameter named %s on every page',
+    async (name) => {
+      const result = firstValueFrom(
+        fetchPaginatedKubernetesResources(httpClient, '/items', {[name]: 'server-value', limit: 50}),
+      );
+      const initial = httpTestingController.expectOne(
+        (request) => request.url === '/items' && !request.params.has('continue'),
+      );
+      expect(initial.request.params.get(name)).toBe('server-value');
+      expect(initial.request.params.get('limit')).toBe('50');
+      initial.flush({apiVersion: 'v1', kind: 'List', metadata: {continue: 'next'}, items: []});
+      const next = httpTestingController.expectOne((request) => request.params.get('continue') === 'next');
+      expect(next.request.params.get(name)).toBe('server-value');
+      expect(next.request.params.get('limit')).toBe('50');
+      next.flush({apiVersion: 'v1', kind: 'List', metadata: {continue: ''}, items: []});
+      expect((await result).items).toEqual([]);
+    },
+  );
+
   it('normalizes omitted items returned by the initial HTTP request', async () => {
     const result = firstValueFrom(fetchPaginatedKubernetesResources(httpClient, '/items'));
     httpTestingController.expectOne('/items').flush({

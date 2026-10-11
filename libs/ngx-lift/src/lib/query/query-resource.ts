@@ -17,12 +17,14 @@ import {QUERY_CLIENT} from './query-client.token';
 import {serializeQueryKey} from './query-key';
 import {resourceAsync} from './resource-async';
 
+/** Injection, shared-client, and reactive polling configuration for queryResource. */
 export interface QueryResourceOptions {
   pollInterval?: number | (() => number | undefined);
   injector?: Injector;
   client?: QueryClient;
 }
 
+/** Readonly signals and explicit refresh controls for one shared query observer. */
 export interface QueryResourceRef<T, E = Error> {
   readonly value: Signal<T>;
   readonly error: Signal<E | null>;

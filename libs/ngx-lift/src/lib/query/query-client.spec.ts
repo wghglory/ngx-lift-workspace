@@ -58,6 +58,22 @@ describe('QueryClient', () => {
     expect(loader).toHaveBeenCalledTimes(2);
   });
 
+  it.each(['remove', 'destroy'] as const)('does not start detached transport after initial listener %s', (action) => {
+    const client = createClient();
+    const loader = vi.fn(async () => 'old scope');
+    let removed = false;
+    const handle = client.observeQuery({key: ['bindings'], loader}, () => {
+      if (removed) return;
+      removed = true;
+      if (action === 'remove') client.removeQueries();
+      else client.destroy();
+    });
+    expect(loader).not.toHaveBeenCalled();
+    expect(handle.isAttached()).toBe(false);
+    expect(client.getSnapshot(['bindings'])).toBeUndefined();
+    handle();
+  });
+
   it('starts transport synchronously while allowing a reentrant caller to join pending work', async () => {
     const client = createClient();
     const pending = deferred<string>();

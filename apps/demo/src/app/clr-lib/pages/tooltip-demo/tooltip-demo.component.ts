@@ -70,11 +70,6 @@ export class TooltipDemoComponent implements OnInit {
       type: 'number',
       description: 'Delay in milliseconds before hiding the tooltip after mouse leave.',
     },
-    {
-      name: 'cllTooltipShowDelay',
-      type: 'number',
-      description: 'Delay in milliseconds before showing the tooltip on mouse enter.',
-    },
   ];
   basicTooltipCode = highlight(`
 import {TooltipModule} from 'clr-lift';

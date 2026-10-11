@@ -16,11 +16,13 @@ import {from, isObservable, noop, Observable, Subscription} from 'rxjs';
 import {isPromise} from '../utils/is-promise.util';
 import {ResourceStatus} from '../models';
 
+/** Cancellation context supplied to an accepted resource operation. */
 export interface ResourceAsyncContext {
   /** Aborted when the operation is replaced, reset, locally overridden, or destroyed. */
   readonly abortSignal: AbortSignal;
 }
 
+/** Separates reactive parameter capture from untracked async transport execution. */
 export interface ResourceAsyncDefinition<P, T> {
   /** Pure reactive parameter capture; must not start requests or perform writes. */
   params: () => P;
@@ -28,6 +30,7 @@ export interface ResourceAsyncDefinition<P, T> {
   loader: (params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T;
 }
 
+/** Rejection returned to execute callers when their resource operation is cancelled. */
 export class ResourceAsyncCancelledError extends Error {
   constructor(message = 'Resource operation was cancelled') {
     super(message);
@@ -35,6 +38,7 @@ export class ResourceAsyncCancelledError extends Error {
   }
 }
 
+/** Rejection returned when an operation is requested after resource disposal. */
 export class ResourceAsyncDisposedError extends Error {
   constructor() {
     super('Resource was destroyed');

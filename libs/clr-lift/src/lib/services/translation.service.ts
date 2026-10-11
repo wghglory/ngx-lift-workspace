@@ -1,6 +1,8 @@
 import {ApplicationRef, inject, Injectable, signal} from '@angular/core';
 
+/** English fallback used when a requested translation is unavailable. */
 export const DEFAULT_LANGUAGE = 'en';
+/** Browser storage key for the selected clr-lift language. */
 export const STORAGE_KEY_LANGUAGE = 'clr-lift-lang';
 
 /**

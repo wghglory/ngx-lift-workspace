@@ -1,5 +1,5 @@
 import {flushEffects} from '../../../test-setup';
-import {Component, createComponent, EnvironmentInjector} from '@angular/core';
+import {ApplicationRef, Component, createComponent, EnvironmentInjector, input, signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {vi, beforeEach, afterEach} from 'vitest';
 
@@ -169,6 +169,46 @@ describe('TooltipComponent', () => {
     expect(ownedView?.destroyed).toBe(true);
   });
 
+  it('renders later input and signal changes in detached caller-owned content', async () => {
+    const contentRef = createComponent(ReactiveTooltipContentComponent, {
+      environmentInjector: TestBed.inject(EnvironmentInjector),
+    });
+    const appRef = TestBed.inject(ApplicationRef);
+    const viewCount = appRef.viewCount;
+    fixture.componentRef.setInput('content', contentRef);
+    fixture.detectChanges();
+    await flushEffects();
+    expect(fixture.nativeElement.textContent).toContain('Initial 0');
+
+    contentRef.setInput('label', 'Updated');
+    contentRef.instance.count.set(1);
+    TestBed.tick();
+
+    expect(fixture.nativeElement.textContent).toContain('Updated 1');
+    expect(appRef.viewCount).toBe(viewCount);
+    fixture.destroy();
+    expect(contentRef.hostView.destroyed).toBe(false);
+    contentRef.destroy();
+  });
+
+  it('preserves application attachment of borrowed component content', async () => {
+    const contentRef = createComponent(ReactiveTooltipContentComponent, {
+      environmentInjector: TestBed.inject(EnvironmentInjector),
+    });
+    const appRef = TestBed.inject(ApplicationRef);
+    appRef.attachView(contentRef.hostView);
+    const viewCount = appRef.viewCount;
+    fixture.componentRef.setInput('content', contentRef);
+    fixture.detectChanges();
+    await flushEffects();
+    expect(appRef.viewCount).toBe(viewCount);
+    fixture.destroy();
+    expect(appRef.viewCount).toBe(viewCount);
+    expect(contentRef.hostView.destroyed).toBe(false);
+    appRef.detachView(contentRef.hostView);
+    contentRef.destroy();
+  });
+
   it('does not destroy caller-owned content when its fixture is destroyed', async () => {
     const contentRef = createComponent(DynamicTooltipContentComponent, {
       environmentInjector: TestBed.inject(EnvironmentInjector),
@@ -255,3 +295,9 @@ describe('TooltipComponent', () => {
 
 @Component({template: 'Dynamic content'})
 class DynamicTooltipContentComponent {}
+
+@Component({template: '{{ label() }} {{ count() }}'})
+class ReactiveTooltipContentComponent {
+  label = input('Initial');
+  count = signal(0);
+}

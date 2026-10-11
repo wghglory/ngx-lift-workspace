@@ -336,6 +336,9 @@ export class MyFormComponent {
 
 ## 📚 Documentation
 
+- [Shared queries and mutations](src/lib/query/query.md) ([中文](src/lib/query/query.zh-CN.md))
+- [Async and query migration](../../docs/MIGRATION_ASYNC_QUERY.md) ([中文](../../docs/MIGRATION_ASYNC_QUERY.zh-CN.md))
+
 - **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
 - **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)
 - **💻 Source Code**: [GitHub Repository](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)

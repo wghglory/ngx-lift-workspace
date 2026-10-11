@@ -23,7 +23,7 @@ of use for public users.
 All documentation pages MUST follow this structure:
 
 ```html
-<cll-page-container [title]="'ComponentName'" customClass="space-y-9">
+<cll-page-container [title]="'ComponentName'">
   <!-- Overview -->
   <p>
     Clear, concise description of what the component/utility/operator/pipe/validator does, when to use it, and why it's
@@ -31,30 +31,30 @@ All documentation pages MUST follow this structure:
   </p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
+  <section cds-layout="vertical gap:md">
     <h2>Examples</h2>
 
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 1: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="basicUsageCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 2: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="example1Code" lang="typescript" />
       <!-- Live demo if applicable -->
     </article>
 
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 3: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="example2Code" lang="html" />
     </article>
 
     <!-- Additional examples (optional) -->
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 4: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="advancedCode" lang="typescript" />
@@ -62,7 +62,7 @@ All documentation pages MUST follow this structure:
   </section>
 
   <!-- API Reference Section (if applicable) -->
-  <section class="space-y-4">
+  <section cds-layout="vertical gap:md">
     <h2>API Reference</h2>
     <!-- API details here -->
   </section>
@@ -73,12 +73,16 @@ All documentation pages MUST follow this structure:
 
 ## Spacing and Layout
 
-### Standard Spacing Classes
+Use Clarity `cds-layout` attributes and design tokens. Tailwind was removed; do not add Tailwind utility classes to new
+examples. Keep the page container's built-in spacing and use native list indentation. `app-demo-playground` can replace
+an article when an interactive example needs controls, preview, and code tabs.
 
-- **Page Container**: `customClass="space-y-9"` (spacing between major sections)
-- **Sections**: `class="space-y-4"` (spacing between elements within a section)
-- **Articles**: `class="space-y-3"` (spacing between elements within an example/article)
-- **Lists**: `class="list-disc space-y-1 ml-6"` (for unordered lists)
+### Standard Clarity Layout Attributes
+
+- **Page Container**: the built-in page container spacing (spacing between major sections)
+- **Sections**: `cds-layout="vertical gap:md"` (spacing between elements within a section)
+- **Articles**: `cds-layout="vertical gap:sm"` (spacing between elements within an example/article)
+- **Lists**: `cds-layout="vertical gap:xs"` (for unordered lists)
 
 ### Section Hierarchy
 
@@ -98,17 +102,16 @@ Use the exact name of the component/utility/operator/pipe/validator as it appear
 
 ```html
 <!-- For components -->
-<cll-page-container [title]="'Alert'" customClass="space-y-9">
+<cll-page-container [title]="'Alert'">
   <!-- For operators -->
-  <cll-page-container [title]="'createAsyncState'" customClass="space-y-9">
+  <cll-page-container [title]="'createAsyncState'">
     <!-- For pipes -->
-    <cll-page-container [title]="'ArrayJoinPipe'" customClass="space-y-9">
+    <cll-page-container [title]="'ArrayJoinPipe'">
       <!-- For validators -->
-      <cll-page-container [title]="'urlValidator'" customClass="space-y-9">
+      <cll-page-container [title]="'urlValidator'">
         <!-- For utilities -->
         <cll-page-container
           [title]="'injectParams'"
-          customClass="space-y-9"
         ></cll-page-container></cll-page-container></cll-page-container></cll-page-container
 ></cll-page-container>
 ```
@@ -143,17 +146,17 @@ Use the exact name of the component/utility/operator/pipe/validator as it appear
 **Structure**:
 
 ```html
-<section class="space-y-4">
+<section cds-layout="vertical gap:md">
   <h2>Examples</h2>
 
-  <article class="space-y-3">
+  <article cds-layout="vertical gap:sm">
     <h3>Example 1: Title</h3>
     <p>Description of what this example demonstrates:</p>
     <app-code-block [code]="basicUsageCode" lang="typescript" />
     <!-- Optional: Live demo -->
   </article>
 
-  <article class="space-y-3">
+  <article cds-layout="vertical gap:sm">
     <h3>Example 2: Title</h3>
     <p>Description of what this example demonstrates:</p>
     <app-code-block [code]="exampleCode" lang="typescript" />
@@ -161,7 +164,7 @@ Use the exact name of the component/utility/operator/pipe/validator as it appear
   </article>
 
   <!-- Additional examples -->
-  <article class="space-y-3">
+  <article cds-layout="vertical gap:sm">
     <h3>Example 3: Title</h3>
     <p>Description of what this example demonstrates:</p>
     <app-code-block [code]="advancedCode" lang="typescript" />
@@ -179,19 +182,19 @@ sequentially (Example 1, Example 2, etc.), with the first example typically show
 **Structure for Components**:
 
 ```html
-<section class="space-y-4">
+<section cds-layout="vertical gap:md">
   <h2>API Reference</h2>
-  <div class="space-y-3">
+  <div cds-layout="vertical gap:sm">
     <h3>ComponentName</h3>
     <p>Brief description of the component.</p>
 
     <h4>Inputs</h4>
-    <ul class="list-disc space-y-1 ml-6">
+    <ul cds-layout="vertical gap:xs">
       <li><code>inputName</code>: <em>(Type)</em> Description of the input. Defaults to <code>defaultValue</code>.</li>
     </ul>
 
     <h4>Outputs</h4>
-    <ul class="list-disc space-y-1 ml-6">
+    <ul cds-layout="vertical gap:xs">
       <li><code>outputName</code>: <em>(Type)</em> Description of when this output is emitted.</li>
     </ul>
   </div>
@@ -201,17 +204,17 @@ sequentially (Example 1, Example 2, etc.), with the first example typically show
 **Structure for Functions/Operators**:
 
 ```html
-<section class="space-y-4">
+<section cds-layout="vertical gap:md">
   <h2>API Reference</h2>
-  <div class="space-y-3">
+  <div cds-layout="vertical gap:sm">
     <h3>functionName</h3>
     <p>Brief description of the function.</p>
 
     <h4>Signature</h4>
-    <div class="space-y-2">
+    <div cds-layout="vertical gap:xs">
       <p><code>functionName&lt;T&gt;(param1: Type1, param2?: Type2): ReturnType</code></p>
       <p><strong>Parameters:</strong></p>
-      <ul class="list-disc space-y-1 ml-6">
+      <ul cds-layout="vertical gap:xs">
         <li><code>param1</code>: <em>(Required)</em> Description.</li>
         <li><code>param2</code>: <em>(Optional)</em> Description. Defaults to <code>defaultValue</code>.</li>
       </ul>
@@ -347,24 +350,24 @@ export class ExampleComponent { }
 ### For Components
 
 ```html
-<section class="space-y-4">
+<section cds-layout="vertical gap:md">
   <h2>API Reference</h2>
-  <div class="space-y-3">
+  <div cds-layout="vertical gap:sm">
     <h3>ComponentName</h3>
     <p>Brief description of what the component does.</p>
 
     <h4>Inputs</h4>
-    <ul class="list-disc space-y-1 ml-6">
+    <ul cds-layout="vertical gap:xs">
       <li><code>inputName</code>: <em>(Type)</em> Description. Defaults to <code>defaultValue</code>.</li>
     </ul>
 
     <h4>Outputs</h4>
-    <ul class="list-disc space-y-1 ml-6">
+    <ul cds-layout="vertical gap:xs">
       <li><code>outputName</code>: <em>(Type)</em> Description of when emitted.</li>
     </ul>
 
     <h4>Methods</h4>
-    <ul class="list-disc space-y-1 ml-6">
+    <ul cds-layout="vertical gap:xs">
       <li><code>methodName(param: Type): ReturnType</code> - Description.</li>
     </ul>
   </div>
@@ -374,19 +377,19 @@ export class ExampleComponent { }
 ### For Functions/Operators
 
 ```html
-<section class="space-y-4">
+<section cds-layout="vertical gap:md">
   <h2>API Reference</h2>
-  <div class="space-y-3">
+  <div cds-layout="vertical gap:sm">
     <h3>functionName</h3>
     <p>Brief description of the function.</p>
 
     <h4>Signature</h4>
-    <div class="space-y-2">
+    <div cds-layout="vertical gap:xs">
       <p>
         <code>functionName&lt;T, E&gt;(param1: Type1, param2?: Type2): ReturnType</code>
       </p>
       <p><strong>Parameters:</strong></p>
-      <ul class="list-disc space-y-1 ml-6">
+      <ul cds-layout="vertical gap:xs">
         <li><code>param1</code>: <em>(Required)</em> Description.</li>
         <li><code>param2</code>: <em>(Optional)</em> Description. Defaults to <code>defaultValue</code>.</li>
       </ul>
@@ -399,18 +402,18 @@ export class ExampleComponent { }
 ### For Pipes
 
 ```html
-<section class="space-y-4">
+<section cds-layout="vertical gap:md">
   <h2>API Reference</h2>
-  <div class="space-y-3">
+  <div cds-layout="vertical gap:sm">
     <h3>PipeName</h3>
     <p>Angular pipe that does X.</p>
 
     <h4>Transform Method</h4>
-    <div class="space-y-2">
+    <div cds-layout="vertical gap:xs">
       <p><strong>Signature:</strong></p>
       <p><code>transform(value: Type, param?: ParamType): ReturnType</code></p>
       <p><strong>Parameters:</strong></p>
-      <ul class="list-disc space-y-1 ml-6">
+      <ul cds-layout="vertical gap:xs">
         <li><code>value</code>: Description.</li>
         <li><code>param</code>: <em>(Optional)</em> Description. Defaults to <code>defaultValue</code>.</li>
       </ul>
@@ -483,7 +486,7 @@ export class ExampleComponent { }
 When applicable, include live, interactive demos:
 
 ```html
-<article class="space-y-3">
+<article cds-layout="vertical gap:sm">
   <h3>Example Title</h3>
   <p>Description:</p>
   <!-- Live demo component -->
@@ -497,7 +500,7 @@ When applicable, include live, interactive demos:
 For utilities, operators, and validators, code examples are usually sufficient:
 
 ```html
-<article class="space-y-3">
+<article cds-layout="vertical gap:sm">
   <h3>Example Title</h3>
   <p>Description:</p>
   <app-code-block [code]="exampleCode" lang="typescript" />
@@ -521,17 +524,17 @@ Use `<cll-callout>` for important notes:
 When standardizing an existing page:
 
 - [ ] **Title**: Use signal input syntax `[title]="'Name'"`
-- [ ] **Container**: Use `customClass="space-y-9"`
-- [ ] **Sections**: All sections use `class="space-y-4"`
-- [ ] **Articles**: All articles use `class="space-y-3"`
+- [ ] **Container**: Use the built-in page container spacing
+- [ ] **Sections**: All sections use `cds-layout="vertical gap:md"`
+- [ ] **Articles**: All articles use `cds-layout="vertical gap:sm"`
 - [ ] **Overview**: Clear, concise description (2-4 sentences)
 - [ ] **Examples**: Section with multiple examples, numbered sequentially (Example 1, Example 2, etc.)
 - [ ] **API Reference**: Complete documentation at the end (after Examples)
 - [ ] **Code Blocks**: All use `highlight()` utility, proper `lang` attribute
 - [ ] **Imports in Code**: All code examples include import statements at the top
-- [ ] **Spacing**: Consistent spacing classes throughout
+- [ ] **Spacing**: Consistent Clarity layout attributes throughout
 - [ ] **Headings**: Proper hierarchy (H2 for sections, H3 for examples)
-- [ ] **Lists**: Use `class="list-disc space-y-1 ml-6"` for unordered lists
+- [ ] **Lists**: Use `cds-layout="vertical gap:xs"` for unordered lists
 - [ ] **Code Naming**: Descriptive names (basicUsageCode, example1Code, etc.)
 
 ---
@@ -582,7 +585,7 @@ export class ExampleComponent {
 ### HTML Template
 
 ```html
-<cll-page-container [title]="'exampleUtility'" customClass="space-y-9">
+<cll-page-container [title]="'exampleUtility'">
   <!-- Overview -->
   <p>
     The <code>exampleUtility</code> function does X, Y, and Z. Use it when you need to... It provides benefits such
@@ -590,29 +593,29 @@ export class ExampleComponent {
   </p>
 
   <!-- Examples -->
-  <section class="space-y-4">
+  <section cds-layout="vertical gap:md">
     <h2>Examples</h2>
 
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 1: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="basicUsageCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 2: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="example1Code" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 3: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="example2Code" lang="typescript" />
     </article>
 
     <!-- Additional examples (optional) -->
-    <article class="space-y-3">
+    <article cds-layout="vertical gap:sm">
       <h3>Example 4: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="advancedCode" lang="typescript" />
@@ -620,17 +623,17 @@ export class ExampleComponent {
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
+  <section cds-layout="vertical gap:md">
     <h2>API Reference</h2>
-    <div class="space-y-3">
+    <div cds-layout="vertical gap:sm">
       <h3>exampleUtility</h3>
       <p>Brief description of the utility.</p>
 
       <h4>Signature</h4>
-      <div class="space-y-2">
+      <div cds-layout="vertical gap:xs">
         <p><code>exampleUtility(param: Type): ReturnType</code></p>
         <p><strong>Parameters:</strong></p>
-        <ul class="list-disc space-y-1 ml-6">
+        <ul cds-layout="vertical gap:xs">
           <li><code>param</code>: <em>(Required)</em> Description.</li>
         </ul>
         <p><strong>Returns:</strong> Description of return value.</p>
@@ -644,12 +647,12 @@ export class ExampleComponent {
 
 ## Quick Reference
 
-### Spacing Classes
+### Clarity Layout Attributes
 
-- Page container: `space-y-9`
-- Sections: `space-y-4`
-- Articles: `space-y-3`
-- Lists: `list-disc space-y-1 ml-6`
+- Page container: built-in page container spacing
+- Sections: `cds-layout="vertical gap:md"`
+- Articles: `cds-layout="vertical gap:sm"`
+- Lists: `cds-layout="vertical gap:xs"`
 
 ### Section Order
 
@@ -670,7 +673,7 @@ codeName = highlight(`code here`);
 ### Title Format
 
 ```html
-<cll-page-container [title]="'ExactExportName'" customClass="space-y-9"></cll-page-container>
+<cll-page-container [title]="'ExactExportName'"></cll-page-container>
 ```
 
 ---

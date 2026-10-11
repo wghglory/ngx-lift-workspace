@@ -14,6 +14,7 @@ import {QueryTag} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 
+/** Invalidation and concurrency policy for explicit server writes. */
 export interface MutationResourceOptions<TArgs, TResult> {
   invalidatesTags?: readonly QueryTag[] | ((result: TResult, args: TArgs) => readonly QueryTag[]);
   client?: QueryClient;
@@ -22,6 +23,7 @@ export interface MutationResourceOptions<TArgs, TResult> {
   concurrency?: 'parallel' | 'exhaust' | 'concat';
 }
 
+/** Mutation result signals and an explicit Promise-returning write operation. */
 export interface MutationResourceRef<TArgs, TResult, E = Error> {
   readonly value: Signal<TResult | undefined>;
   readonly error: Signal<E | null>;
@@ -142,5 +144,7 @@ export function mutationResource<TArgs, TResult, E = Error>(
 
 /** Alias for `mutationResource` for consumers preferring `mutateResource` naming. */
 export const mutateResource = mutationResource;
+/** Alias of MutationResourceOptions for the mutateResource spelling. */
 export type MutateResourceOptions<TArgs, TResult> = MutationResourceOptions<TArgs, TResult>;
+/** Alias of MutationResourceRef for the mutateResource spelling. */
 export type MutateResourceRef<TArgs, TResult, E = Error> = MutationResourceRef<TArgs, TResult, E>;

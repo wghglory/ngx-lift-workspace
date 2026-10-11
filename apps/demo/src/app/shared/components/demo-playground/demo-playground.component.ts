@@ -5,10 +5,14 @@ import {TranslatePipe} from 'clr-lift';
 
 ClarityIcons.addIcons(viewColumnsIcon, viewListIcon, copyIcon, checkIcon, angleIcon);
 
+/** Supported source-code tabs in the demo playground. */
 export type CodeTab = 'typescript' | 'html' | 'scss';
+/** Difficulty label for a documented example. */
 export type SkillLevel = 'beginner' | 'intermediate' | 'advanced';
+/** Arrangement of the live preview and source code. */
 export type PlaygroundLayout = 'stacked' | 'split';
 
+/** Presents a live example alongside expandable source-code tabs. */
 @Component({
   selector: 'app-demo-playground',
   imports: [ClarityModule, TranslatePipe],

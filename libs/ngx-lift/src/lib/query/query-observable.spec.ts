@@ -132,6 +132,23 @@ describe('query Observable adapters', () => {
     expect(loader).toHaveBeenCalledTimes(1);
   });
 
+  it('completes when its initial snapshot removes the query synchronously', () => {
+    const loader = vi.fn(async () => 'old scope');
+    const complete = vi.fn();
+    let removed = false;
+    const subscription = observeQueryObservable(client, {key: ['bindings'], loader}).subscribe({
+      next: () => {
+        if (removed) return;
+        removed = true;
+        client.removeQueries();
+      },
+      complete,
+    });
+    expect(loader).not.toHaveBeenCalled();
+    expect(complete).toHaveBeenCalledTimes(1);
+    expect(subscription.closed).toBe(true);
+  });
+
   it('completes on explicit removal and can observe a recreated query after resubscription', async () => {
     const loader = vi.fn(async () => loader.mock.calls.length);
     const definition = {key: ['bindings'], loader, staleTime: 60000};

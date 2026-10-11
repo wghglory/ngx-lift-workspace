@@ -12,7 +12,7 @@ test.describe('New ngx-lift demos', () => {
     await triggerBtn.click();
 
     // Verify stream log updates
-    const logSection = page.locator('article .space-y-1');
+    const logSection = page.locator('article .preview-box').first();
     await expect(logSection).toContainText('startWithTap executed on subscription');
 
     // Verify final loaded payload appears
@@ -30,9 +30,9 @@ test.describe('New ngx-lift demos', () => {
     await fetchBtn.click();
 
     // Verify aggregated pod table renders
-    const table = page.locator('table');
+    const table = page.locator('article table');
     await expect(table).toBeVisible();
-    await expect(page.locator('tbody tr')).toHaveCount(5);
+    await expect(table.locator('tbody tr')).toHaveCount(5);
 
     // Verify first and last pod names
     await expect(table).toContainText('coredns-6f6b67-w211');
@@ -44,7 +44,7 @@ test.describe('New ngx-lift demos', () => {
 
     await expect(page.locator('h1')).toContainText('isPromise');
 
-    const table = page.locator('table');
+    const table = page.locator('article table');
     await expect(table).toBeVisible();
 
     // Check true labels and false labels

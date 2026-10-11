@@ -1,6 +1,7 @@
 import {A11yModule} from '@angular/cdk/a11y';
 
 import {
+  afterEveryRender,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -64,6 +65,7 @@ export class TooltipComponent {
   private contentViewContainer?: ViewContainerRef;
   private borrowedElement?: Element;
   private borrowedView?: ViewRef;
+  private borrowedComponent?: ComponentRef<unknown>;
   private borrowedParent?: Node | null;
   private borrowedNextSibling?: Node | null;
   private leaveTimer?: ReturnType<typeof setTimeout>;
@@ -71,6 +73,14 @@ export class TooltipComponent {
   constructor() {
     inject(TranslationService).loadTranslationsForComponent('tooltip', tooltipTranslations);
     const cdr = inject(ChangeDetectorRef);
+    afterEveryRender(() => {
+      // Detached caller-owned components still need to render input/signal updates.
+      // Keep their application/container attachment and destruction ownership intact.
+      const borrowed = this.borrowedComponent;
+      if (borrowed && !borrowed.hostView.destroyed) {
+        borrowed.changeDetectorRef.detectChanges();
+      }
+    });
     inject(DestroyRef).onDestroy(() => {
       clearTimeout(this.leaveTimer);
       this.releaseContent();
@@ -102,6 +112,7 @@ export class TooltipComponent {
           if (element instanceof Element && target instanceof Element) {
             this.borrowedElement = element;
             this.borrowedView = content.hostView;
+            this.borrowedComponent = content;
             this.borrowedParent = element.parentNode;
             this.borrowedNextSibling = element.nextSibling;
             if (target.parentNode) {
@@ -146,6 +157,7 @@ export class TooltipComponent {
     }
     this.borrowedElement = undefined;
     this.borrowedView = undefined;
+    this.borrowedComponent = undefined;
     this.borrowedParent = undefined;
     this.borrowedNextSibling = undefined;
   }

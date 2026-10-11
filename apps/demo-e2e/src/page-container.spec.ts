@@ -10,15 +10,15 @@ test.describe('PageContainer component', () => {
   });
 
   test('renders nested demonstration containers with titles and body content', async ({page}) => {
-    const exampleContainers = page.locator('article cll-page-container');
+    const exampleContainers = page.locator('app-demo-playground cll-page-container');
     await expect(exampleContainers).toHaveCount(3);
 
     // Example 1 title
     await expect(exampleContainers.first().locator('h1')).toContainText('User Management');
 
-    // Example 2 with customClass
-    const customContainer = exampleContainers.nth(1).locator('.page-container');
-    await expect(customContainer).toHaveClass(/space-y-4/);
+    // Example 2 renders its projected card content.
+    await expect(exampleContainers.nth(1).locator('h1')).toContainText('Cluster Settings');
+    await expect(exampleContainers.nth(1).locator('.card-text')).toContainText('Configured');
 
     // Example 3 with HTML markup in title
     const htmlTitleContainer = exampleContainers.nth(2);

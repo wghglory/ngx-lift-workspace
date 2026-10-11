@@ -35,7 +35,13 @@ function parsePaginationOptions(
   initialParams: Record<string, string | number | boolean | (string | number | boolean)[]>;
   retryConfig?: K8sBackoffRetryConfig | false;
 } {
-  if ('initialParams' in options || 'retryConfig' in options) {
+  // Legacy HTTP parameter names may coincide with option names; discriminate by value shape.
+  const isOptionsObject = (value: unknown): boolean =>
+    value === undefined || (value !== null && typeof value === 'object' && !Array.isArray(value));
+  if (
+    ('initialParams' in options && isOptionsObject(options.initialParams)) ||
+    ('retryConfig' in options && (options.retryConfig === false || isOptionsObject(options.retryConfig)))
+  ) {
     const paginationOptions = options as KubernetesPaginationOptions;
     return {
       initialParams: paginationOptions.initialParams ?? {},
