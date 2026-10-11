@@ -341,6 +341,146 @@
         performance through memoization and integrates perfectly with Angular's reactivity system.
       </cll-callout>
     </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'resourceAsync.example8' | translate }}</h3>
+      <p [innerHTML]="'resourceAsync.example8Desc' | translate"></p>
+      <app-code-block [code]="declarativeCode" lang="typescript" />
+
+      <div>
+        <h4>{{ 'resourceAsync.declarativeTitle' | translate }}</h4>
+        <div class="card">
+          <div class="card-block">
+            <div cds-layout="vertical gap:md">
+              <div cds-layout="horizontal gap:xs align:center wrap">
+                <span cds-text="secondary">Query Preset:</span>
+                <button
+                  class="btn btn-sm"
+                  [class.btn-primary]="searchKeyword() === 'Angular'"
+                  [class.btn-outline]="searchKeyword() !== 'Angular'"
+                  (click)="searchKeyword.set('Angular')"
+                >
+                  Angular
+                </button>
+                <button
+                  class="btn btn-sm"
+                  [class.btn-primary]="searchKeyword() === 'Signals'"
+                  [class.btn-outline]="searchKeyword() !== 'Signals'"
+                  (click)="searchKeyword.set('Signals')"
+                >
+                  Signals
+                </button>
+                <button
+                  class="btn btn-sm"
+                  [class.btn-primary]="searchKeyword() === 'Clarity'"
+                  [class.btn-outline]="searchKeyword() !== 'Clarity'"
+                  (click)="searchKeyword.set('Clarity')"
+                >
+                  Clarity
+                </button>
+                <button
+                  class="btn btn-sm"
+                  [class.btn-primary]="searchKeyword() === 'RxJS'"
+                  [class.btn-outline]="searchKeyword() !== 'RxJS'"
+                  (click)="searchKeyword.set('RxJS')"
+                >
+                  RxJS
+                </button>
+
+                <button
+                  class="btn btn-sm btn-warning-outline"
+                  (click)="rapidSwitchQuery()"
+                  [disabled]="searchDefinitionRef.isLoading()"
+                >
+                  {{ 'resourceAsync.quickSwitchDemo' | translate }}
+                </button>
+                <button class="btn btn-sm btn-outline" (click)="searchDefinitionRef.reload()">
+                  {{ 'resourceAsync.reload' | translate }}
+                </button>
+                <button class="btn btn-sm btn-danger-outline" (click)="searchDefinitionRef.reset()">Reset</button>
+                <button
+                  class="btn btn-sm btn-outline"
+                  (click)="runAwaitableSearch()"
+                  [clrLoading]="searchDefinitionRef.isLoading()"
+                >
+                  Await execute()
+                </button>
+              </div>
+
+              <div cds-layout="horizontal gap:md align:center wrap">
+                <span
+                  >Status: <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
+                >
+                <span
+                  >Active Query: <strong>{{ searchKeyword() }}</strong></span
+                >
+                @if (searchDefinitionRef.isLoading()) {
+                  <span cds-layout="horizontal gap:xs align:center">
+                    <cll-spinner inline />
+                    <span cds-text="secondary">Fetching with AbortSignal...</span>
+                  </span>
+                }
+              </div>
+
+              @if (searchDefinitionRef.value(); as items) {
+                <div class="table-responsive">
+                  <table class="table table-compact">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Topic / Title</th>
+                        <th>Category</th>
+                        <th>Last Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of items; track item.id) {
+                        <tr>
+                          <td>{{ item.id }}</td>
+                          <td>
+                            <strong>{{ item.title }}</strong>
+                          </td>
+                          <td>
+                            <span class="badge">{{ item.category }}</span>
+                          </td>
+                          <td>{{ item.updatedAt }}</td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="4" class="text-center">No data</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+
+              <div cds-layout="m-t:sm">
+                <h5>{{ 'resourceAsync.activeSearchLogs' | translate }}</h5>
+                <ul class="list-unstyled" cds-layout="vertical gap:xs">
+                  @for (log of searchLogs(); track log.id) {
+                    <li cds-layout="horizontal gap:sm align:center">
+                      <span cds-text="secondary">[{{ log.timestamp }}]</span>
+                      <span
+                        >Request #{{ log.id }} (query: "<strong>{{ log.keyword }}</strong
+                        >"):</span
+                      >
+                      @if (log.status === 'in-flight') {
+                        <span class="badge badge-info">In-Flight (signal active)</span>
+                      } @else if (log.status === 'aborted') {
+                        <span class="badge badge-danger">Aborted (AbortSignal cancelled)</span>
+                      } @else {
+                        <span class="badge badge-success">Resolved</span>
+                      }
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
   </section>
 
   <!-- ==================== SECTION 3: WHEN TO USE ==================== -->
@@ -752,6 +892,9 @@
 
       <h4>{{ 'common.parameters' | translate }}</h4>
       <app-api-table [properties]="parameters()" />
+
+      <h4>ResourceAsyncDefinition (Declarative Definition)</h4>
+      <app-api-table [properties]="definitionProperties()" />
 
       <h4>ResourceRefOptions</h4>
       <app-api-table [properties]="optionsProperties()" />

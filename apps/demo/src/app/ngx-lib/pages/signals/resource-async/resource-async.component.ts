@@ -50,6 +50,20 @@ interface Organization {
   location: string;
 }
 
+interface SearchItem {
+  id: number;
+  title: string;
+  category: string;
+  updatedAt: string;
+}
+
+interface RequestLog {
+  id: number;
+  keyword: string;
+  status: 'in-flight' | 'aborted' | 'resolved';
+  timestamp: string;
+}
+
 @Component({
   selector: 'app-resource-async',
   imports: [
@@ -81,8 +95,8 @@ export class ResourceAsyncComponent {
     this.translationService.currentLanguage();
     return [
       {
-        name: 'sourceFn',
-        type: '() => Observable<T> | Promise<T> | T',
+        name: 'source',
+        type: '((context: ResourceAsyncContext) => Observable<T> | Promise<T> | T) | ResourceAsyncDefinition<P, T>',
         required: true,
         description: this.translationService.translate('resourceAsync.paramSourceFn'),
       },
@@ -93,6 +107,21 @@ export class ResourceAsyncComponent {
       },
     ];
   });
+
+  definitionProperties = computed<ApiProperty[]>(() => [
+    {
+      name: 'params',
+      type: '() => P',
+      required: true,
+      description: 'Pure reactive parameter capture function. Signal reads here are tracked.',
+    },
+    {
+      name: 'loader',
+      type: '(params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T',
+      required: true,
+      description: 'Factory receiving latest params and context.abortSignal. Signal reads here are untracked.',
+    },
+  ]);
 
   optionsProperties = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();
@@ -514,6 +543,77 @@ export class ResourceAsyncComponent {
     this.pageNumber.set(pageNum);
   }
 
+  // Example 8: Declarative definition & AbortSignal concurrency cancellation
+  searchKeyword = signal('Angular');
+  searchLogs = signal<RequestLog[]>([]);
+  private searchSeq = 0;
+
+  searchDefinitionRef = resourceAsync<SearchItem[], string>(
+    {
+      params: () => this.searchKeyword(),
+      loader: (keyword, {abortSignal}) => {
+        const currentSeq = ++this.searchSeq;
+        const entry: RequestLog = {
+          id: currentSeq,
+          keyword,
+          status: 'in-flight',
+          timestamp: new Date().toLocaleTimeString(),
+        };
+        this.searchLogs.update((logs) => [entry, ...logs.slice(0, 5)]);
+
+        return new Promise<SearchItem[]>((resolve, reject) => {
+          const timer = setTimeout(() => {
+            this.searchLogs.update((logs) =>
+              logs.map((item) => (item.id === currentSeq ? {...item, status: 'resolved'} : item)),
+            );
+            resolve([
+              {id: 1, title: `${keyword} - Reactive Signals Deep Dive`, category: 'Guides', updatedAt: 'Just now'},
+              {
+                id: 2,
+                title: `${keyword} - Resource Concurrency & Cancellation`,
+                category: 'Architecture',
+                updatedAt: 'Just now',
+              },
+              {
+                id: 3,
+                title: `${keyword} - High Performance UI Patterns`,
+                category: 'Design',
+                updatedAt: 'Just now',
+              },
+            ]);
+          }, 850);
+
+          abortSignal.addEventListener('abort', () => {
+            clearTimeout(timer);
+            this.searchLogs.update((logs) =>
+              logs.map((item) => (item.id === currentSeq ? {...item, status: 'aborted'} : item)),
+            );
+            reject(new DOMException('Operation aborted by ResourceAsync', 'AbortError'));
+          });
+        });
+      },
+    },
+    {
+      defaultValue: [],
+    },
+  );
+
+  rapidSwitchQuery() {
+    this.searchKeyword.set('Signals');
+    setTimeout(() => {
+      this.searchKeyword.set('Clarity');
+    }, 150);
+  }
+
+  async runAwaitableSearch(): Promise<void> {
+    try {
+      const items = await this.searchDefinitionRef.execute();
+      console.log('Search resolved via execute():', items);
+    } catch (err) {
+      console.warn('Execution cancelled or error:', err);
+    }
+  }
+
   basicCode = highlight(`
 import {resourceAsync} from 'ngx-lift';
 import {Component, signal} from '@angular/core';
@@ -645,18 +745,52 @@ export class UserDetailComponent {
 }
   `);
 
+  declarativeCode = highlight(`
+import {resourceAsync, ResourceAsyncDefinition} from 'ngx-lift';
+import {Component, signal} from '@angular/core';
+
+export class CatalogSearchComponent {
+  query = signal('Angular');
+
+  // Declarative ResourceAsyncDefinition with params + loader receiving context.abortSignal
+  searchRef = resourceAsync<SearchResult[], string>(
+    {
+      params: () => this.query(),
+      loader: (searchQuery, {abortSignal}) => {
+        // Pass abortSignal to fetch or HTTP clients for true network/operation cancellation
+        return fetch(\`/api/search?q=\${encodeURIComponent(searchQuery)}\`, {
+          signal: abortSignal,
+        }).then((res) => res.json());
+      },
+    },
+    {
+      defaultValue: [],
+    }
+  );
+}
+  `);
+
   signatureCode = highlight(`
-// 1. With initialValue or defaultValue -> value() is Signal<T> (never undefined)
-function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
-  options: ({ initialValue: T } | { defaultValue: T }) & BaseResourceRefOptions<T, E>
+// 1. Declarative definition (ResourceAsyncDefinition<P, T>)
+function resourceAsync<T, P, E = Error>(
+  definition: ResourceAsyncDefinition<P, T>,
+  options?: ResourceRefOptions<T, E>
 ): WritableResourceRef<T, E>;
 
-// 2. Without initialValue -> value() is Signal<T | undefined>
+// 2. Functional loader with AbortSignal context
 function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
-  options?: ResourceRefOptionsWithoutInitial<T, E>
-): WritableResourceRef<T | undefined, E>;
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  options?: ResourceRefOptions<T, E>
+): WritableResourceRef<T, E>;
+
+interface ResourceAsyncDefinition<P, T> {
+  params: () => P;
+  loader: (params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T;
+}
+
+interface ResourceAsyncContext {
+  readonly abortSignal: AbortSignal;
+}
 
 interface ResourceRefOptions<T, E = Error> {
   initialValue?: T;                       // Initial value before first fetch

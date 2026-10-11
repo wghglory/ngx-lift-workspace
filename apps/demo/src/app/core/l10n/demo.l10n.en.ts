@@ -468,6 +468,12 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.example7': 'Example 7: Status Tracking',
   'resourceAsync.example7Desc':
     'Access granular status information with the <code>status()</code> signal. Use <code>computed()</code> for derived state:',
+  'resourceAsync.example8': 'Example 8: Declarative Definition & AbortSignal Propagation',
+  'resourceAsync.example8Desc':
+    '<code>resourceAsync</code> supports declarative definition via <code>ResourceAsyncDefinition&lt;P, T&gt;</code> with <code>params</code> and <code>loader</code>, propagating <code>context.abortSignal</code> for cancellation generation tracking and deferred promise settling.',
+  'resourceAsync.declarativeTitle': 'Live Showcase: Declarative Definition & Cancellation',
+  'resourceAsync.quickSwitchDemo': 'Rapid Switch (Trigger Abort)',
+  'resourceAsync.activeSearchLogs': 'Real-Time AbortSignal & Request Lifecycle Log',
   'resourceAsync.optimisticTitle': 'Example 1: Optimistic Updates - Todo Toggle',
   'resourceAsync.optimisticDesc':
     'Update the UI immediately before server confirmation. If the server request fails, you can revert the change. This provides instant feedback to users.',
@@ -995,6 +1001,10 @@ export const enTranslations: Record<string, string> = {
   'poll.example5Title': 'Example 5: Force Refresh',
   'poll.example5Desc':
     'Use the <code>forceRefresh</code> observable or signal to trigger the execution of <code>pollingFn</code> whenever necessary, such as in response to user actions. The emitted value from <code>forceRefresh</code> will be passed as the input to <code>paramsBuilder</code> (if provided) or directly to <code>pollingFn</code>.',
+  'poll.example5SignalTitle': 'Signal-based Force Refresh & Parameter Retention',
+  'poll.example5SignalDesc':
+    '<code>forceRefresh</code> directly accepts Angular Signals. If multiple updates occur while a request is in progress, <code>exhaustMap</code> drops intermediate triggers but preserves the newest parameter for the next scheduled tick.',
+  'poll.btnRapidFilters': 'Rapid Filter Changes (Burst 3x)',
   'poll.example6Title': 'Example 6: Advanced Example - Datagrid with Polling',
   'poll.example6Desc':
     "The datagrid below will automatically refresh every 10 seconds. Additionally, whenever there's a change in the input, triggering filtering, sorting, or pagination, the API will be promptly called, accompanied by a spinner indicating loading.",

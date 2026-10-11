@@ -24,4 +24,17 @@ describe('ResourceAsyncComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('updates search keyword and handles declarative resource operations', async () => {
+    component.searchKeyword.set('Signals');
+    expect(component.searchKeyword()).toBe('Signals');
+    expect(component.searchDefinitionRef).toBeDefined();
+
+    component.rapidSwitchQuery();
+    expect(component.searchKeyword()).toBe('Signals');
+  });
+
+  it('runs awaitable execute on declarative search resource', async () => {
+    await expect(component.runAwaitableSearch()).resolves.toBeUndefined();
+  });
 });

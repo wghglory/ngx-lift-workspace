@@ -1,6 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
 import {
   AlertComponent,
@@ -8,11 +8,12 @@ import {
   convertToHttpParams,
   dgState,
   PageContainerComponent,
+  SpinnerComponent,
   TranslatePipe,
   TranslationService,
 } from 'clr-lift';
 import {AsyncState, isEqual, poll} from 'ngx-lift';
-import {BehaviorSubject, delay, distinctUntilChanged, filter, map, of, Subject, switchMap, takeWhile} from 'rxjs';
+import {BehaviorSubject, delay, distinctUntilChanged, filter, map, of, Subject, switchMap, takeWhile, tap} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -20,6 +21,13 @@ import {PaginationResponse} from '../../../../shared/models/pagination.model';
 import {User} from '../../../../shared/models/user.model';
 import {UserService} from '../../../../shared/services/user.service';
 import {highlight} from '../../../../shared/utils/highlight.util';
+
+interface SignalPollData {
+  seq: number;
+  status: string;
+  timestamp: string;
+  totalItems: number;
+}
 
 @Component({
   selector: 'app-poll',
@@ -29,6 +37,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     PageContainerComponent,
     CodeBlockComponent,
     AlertComponent,
+    SpinnerComponent,
     CalloutComponent,
     TranslatePipe,
     ApiTableComponent,
@@ -117,6 +126,53 @@ export class PollComponent implements OnInit {
     paramsBuilder: (dgState: ClrDatagridStateInterface | null) => convertToHttpParams(dgState),
     forceRefresh: this.dgState$,
   });
+
+  signalFilter = signal<'all' | 'active' | 'inactive'>('all');
+  signalPollLogs = signal<{time: string; filter: string; status: 'in-flight' | 'settled'}[]>([]);
+  private signalPollSeq = 0;
+
+  signalPollState$ = poll<SignalPollData, 'all' | 'active' | 'inactive', {status: string; limit: number}>({
+    interval: 8000,
+    forceRefresh: this.signalFilter,
+    paramsBuilder: (filterValue: 'all' | 'active' | 'inactive') => ({
+      status: filterValue,
+      limit: filterValue === 'all' ? 30 : 15,
+    }),
+    pollingFn: (params: {status: string; limit: number}) => {
+      const seq = ++this.signalPollSeq;
+      this.signalPollLogs.update((logs) => [
+        {time: new Date().toLocaleTimeString(), filter: params.status, status: 'in-flight'},
+        ...logs.slice(0, 4),
+      ]);
+      return of({
+        seq,
+        status: params.status,
+        timestamp: new Date().toLocaleTimeString(),
+        totalItems: params.limit,
+      }).pipe(
+        delay(1000),
+        tap(() => {
+          this.signalPollLogs.update((logs) => logs.map((log, idx) => (idx === 0 ? {...log, status: 'settled'} : log)));
+        }),
+      );
+    },
+    initialValue: {
+      status: 'idle',
+      isLoading: false,
+      error: null,
+      data: {seq: 0, status: 'all', timestamp: '--', totalItems: 0},
+    },
+  });
+
+  setSignalFilter(filter: 'all' | 'active' | 'inactive') {
+    this.signalFilter.set(filter);
+  }
+
+  triggerRapidRefreshes() {
+    this.signalFilter.set('active');
+    setTimeout(() => this.signalFilter.set('inactive'), 80);
+    setTimeout(() => this.signalFilter.set('all'), 200);
+  }
 
   total$ = this.usersState$.pipe(
     filter((state) => Boolean(state.data)),
@@ -249,6 +305,31 @@ export class MyComponent {
 
   refresh() {
     this.refresh$.next();
+  }
+}
+  `);
+
+  signalForceRefreshCode = highlight(`
+import {poll} from 'ngx-lift';
+import {signal} from '@angular/core';
+import {of, delay} from 'rxjs';
+
+export class DeviceMonitorComponent {
+  // 1. Pass an Angular Signal directly to forceRefresh
+  statusFilter = signal<'all' | 'active' | 'inactive'>('all');
+
+  devicePollState$ = poll({
+    interval: 8000,
+    forceRefresh: this.statusFilter,
+    paramsBuilder: (status) => ({ status, limit: status === 'all' ? 50 : 20 }),
+    pollingFn: (params) => this.api.getDevices(params)
+  });
+
+  // 2. Updating the Signal immediately triggers pollingFn.
+  // If multiple updates happen while a request is in flight, exhaustMap skips
+  // the redundant intermediate calls, but RETAINS the newest parameter for the next tick!
+  changeFilter(status: 'all' | 'active' | 'inactive') {
+    this.statusFilter.set(status);
   }
 }
   `);

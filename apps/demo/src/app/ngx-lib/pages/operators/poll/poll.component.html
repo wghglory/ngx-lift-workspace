@@ -40,6 +40,109 @@
       <h3>{{ 'poll.example5Title' | translate }}</h3>
       <p [innerHTML]="'poll.example5Desc' | translate"></p>
       <app-code-block [code]="forceRefreshCode" lang="typescript" />
+
+      <h4 cds-layout="m-t:md">{{ 'poll.example5SignalTitle' | translate }}</h4>
+      <p [innerHTML]="'poll.example5SignalDesc' | translate"></p>
+      <app-code-block [code]="signalForceRefreshCode" lang="typescript" />
+
+      <div class="card">
+        <div class="card-block">
+          <div cds-layout="vertical gap:md">
+            <div cds-layout="horizontal gap:xs align:center wrap">
+              <span cds-text="secondary">Filter Parameter (Signal):</span>
+              <button
+                class="btn btn-sm"
+                [class.btn-primary]="signalFilter() === 'all'"
+                [class.btn-outline]="signalFilter() !== 'all'"
+                (click)="setSignalFilter('all')"
+              >
+                All (30 items)
+              </button>
+              <button
+                class="btn btn-sm"
+                [class.btn-primary]="signalFilter() === 'active'"
+                [class.btn-outline]="signalFilter() !== 'active'"
+                (click)="setSignalFilter('active')"
+              >
+                Active (15 items)
+              </button>
+              <button
+                class="btn btn-sm"
+                [class.btn-primary]="signalFilter() === 'inactive'"
+                [class.btn-outline]="signalFilter() !== 'inactive'"
+                (click)="setSignalFilter('inactive')"
+              >
+                Inactive (15 items)
+              </button>
+              <button class="btn btn-sm btn-warning-outline" (click)="triggerRapidRefreshes()">
+                {{ 'poll.btnRapidFilters' | translate }}
+              </button>
+            </div>
+
+            @if (signalPollState$ | async; as state) {
+              <div cds-layout="horizontal gap:md align:center wrap">
+                <span
+                  >Status: <span class="badge badge-info">{{ state.status }}</span></span
+                >
+                <span
+                  >Active Filter: <strong>{{ signalFilter() }}</strong></span
+                >
+                @if (state.isLoading) {
+                  <span cds-layout="horizontal gap:xs align:center">
+                    <cll-spinner inline />
+                    <span cds-text="secondary">Polling in progress...</span>
+                  </span>
+                }
+              </div>
+
+              @if (state.data; as data) {
+                <div class="card card-block">
+                  <div cds-layout="horizontal gap:lg align:center wrap">
+                    <div>
+                      <div cds-text="secondary caption">Poll Sequence #</div>
+                      <div cds-text="heading">{{ data.seq }}</div>
+                    </div>
+                    <div>
+                      <div cds-text="secondary caption">Filtered By</div>
+                      <div>
+                        <span class="badge">{{ data.status }}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div cds-text="secondary caption">Total Results</div>
+                      <div cds-text="heading">{{ data.totalItems }}</div>
+                    </div>
+                    <div>
+                      <div cds-text="secondary caption">Last Server Timestamp</div>
+                      <div>{{ data.timestamp }}</div>
+                    </div>
+                  </div>
+                </div>
+              }
+            }
+
+            <div>
+              <h5>Recent Poll Trigger & Execution Log:</h5>
+              <ul class="list-unstyled" cds-layout="vertical gap:xs">
+                @for (log of signalPollLogs(); track $index) {
+                  <li cds-layout="horizontal gap:sm align:center">
+                    <span cds-text="secondary">[{{ log.time }}]</span>
+                    <span
+                      >Trigger with filter: "<strong>{{ log.filter }}</strong
+                      >"</span
+                    >
+                    @if (log.status === 'in-flight') {
+                      <span class="badge badge-info">Executing (HTTP delay)</span>
+                    } @else {
+                      <span class="badge badge-success">Settled</span>
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </article>
 
     <article cds-layout="vertical gap:sm">

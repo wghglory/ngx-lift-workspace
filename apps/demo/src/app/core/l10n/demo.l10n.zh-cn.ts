@@ -440,6 +440,12 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.example7': '示例 7：细粒度状态追踪 (Status Tracking)',
   'resourceAsync.example7Desc':
     '使用 <code>status()</code> Signal 获取详细状态枚举，结合 <code>computed()</code> 派生业务逻辑：',
+  'resourceAsync.example8': '示例 8：声明式定义与 AbortSignal 并发取消',
+  'resourceAsync.example8Desc':
+    '<code>resourceAsync</code> 支持通过 <code>ResourceAsyncDefinition&lt;P, T&gt;</code>（<code>params</code> 与 <code>loader</code>）进行声明式定义，并向外传递 <code>context.abortSignal</code> 用于世代取消追踪与延迟 Promise 结算。',
+  'resourceAsync.declarativeTitle': '交互演示：声明式定义与并发请求取消',
+  'resourceAsync.quickSwitchDemo': '快速切换（触发中止前序请求）',
+  'resourceAsync.activeSearchLogs': '实时 AbortSignal 与请求生命周期日志',
   'resourceAsync.optimisticTitle': '实战 1：乐观更新 (Optimistic Updates)——待办事项切换',
   'resourceAsync.optimisticDesc':
     '在服务端确认前立即更新 UI 呈现，若网络请求失败则自动回滚，为用户带来零延迟交互体验。',
@@ -914,6 +920,10 @@ export const zhCNTranslations: Record<string, string> = {
   'poll.example5Title': '示例 5：强制即时刷新 (Force Refresh)',
   'poll.example5Desc':
     '通过 <code>forceRefresh</code> Observable 或 Signal 可随时在需要时（如响应用户点击按钮）立即唤起 <code>pollingFn</code> 的执行。发射的值将作为参数传递给 <code>paramsBuilder</code>（如已配置）或直接传入 <code>pollingFn</code>。',
+  'poll.example5SignalTitle': '基于 Signal 的强制刷新与参数保留机制',
+  'poll.example5SignalDesc':
+    '<code>forceRefresh</code> 原生支持 Angular Signal。当请求正在执行期间发生多次更新时，<code>exhaustMap</code> 会跳过冗余请求，同时为下一次轮询完整保留最新参数。',
+  'poll.btnRapidFilters': '快速连续切换（连发 3 次）',
   'poll.example6Title': '示例 6：高级示例 - 结合 Clarity 数据表格轮询',
   'poll.example6Desc':
     '下方数据表格每 10 秒自动静默轮询最新数据。此外，当在搜索框中键入筛选、触发排序或切换分页时，将立即重新拉取对应数据并展示加载微调器。',
