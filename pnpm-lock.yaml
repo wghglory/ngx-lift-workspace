@@ -41,9 +41,6 @@ importers:
       '@clr/ui':
         specifier: ^18.4.0
         version: 18.4.0
-      highlight.js:
-        specifier: ^11.12.0
-        version: 11.12.0
       node-forge:
         specifier: ^1.4.0
         version: 1.4.0
@@ -171,6 +168,9 @@ importers:
       eslint-plugin-simple-import-sort:
         specifier: ^10.0.0
         version: 10.0.0(eslint@9.39.5(jiti@2.4.2))
+      highlight.js:
+        specifier: ^11.12.0
+        version: 11.12.0
       husky:
         specifier: ^9.0.11
         version: 9.1.7

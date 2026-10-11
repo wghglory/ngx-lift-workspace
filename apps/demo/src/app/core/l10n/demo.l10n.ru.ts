@@ -4,6 +4,7 @@ export const ruTranslations: Record<string, string> = {
   'header.codeLicensed': 'Код под лицензией',
 
   'nav.signalUtils': 'Утилиты сигналов',
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Операторы',
   'nav.validators': 'Валидаторы',
   'nav.pipes': 'Пайпы',

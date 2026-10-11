@@ -37,6 +37,7 @@ import {CreateTriggerComponent} from './ngx-lib/pages/signals/create-trigger/cre
 import {InjectParamsComponent} from './ngx-lib/pages/signals/inject-params/inject-params.component';
 import {InjectQueryParamsComponent} from './ngx-lib/pages/signals/inject-query-params/inject-query-params.component';
 import {MergeFromComponent} from './ngx-lib/pages/signals/merge-from/merge-from.component';
+import {QueryResourceDemoComponent} from './ngx-lib/pages/query/query-resource/query-resource.component';
 import {ResourceAsyncComponent} from './ngx-lib/pages/signals/resource-async/resource-async.component';
 import {ToSignalFormComponent} from './ngx-lib/pages/signals/to-signal-form/to-signal-form.component';
 import {DifferenceInDaysComponent} from './ngx-lib/pages/utilities/difference-in-days/difference-in-days.component';
@@ -98,6 +99,32 @@ export const routes: Routes = [
           {
             path: 'injectQueryParams',
             component: InjectQueryParamsComponent,
+          },
+          {
+            path: 'queryResource',
+            component: QueryResourceDemoComponent,
+          },
+        ],
+      },
+      {
+        path: 'query',
+        children: [
+          {
+            path: 'queryResource',
+            component: QueryResourceDemoComponent,
+          },
+          {
+            path: 'mutationResource',
+            component: QueryResourceDemoComponent,
+          },
+          {
+            path: 'mutateResource',
+            component: QueryResourceDemoComponent,
+          },
+          {
+            path: '',
+            redirectTo: 'queryResource',
+            pathMatch: 'full',
           },
         ],
       },

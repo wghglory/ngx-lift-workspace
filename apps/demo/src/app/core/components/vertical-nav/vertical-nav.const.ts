@@ -17,6 +17,15 @@ export const ngxLiftNavConfig: NavConfig[] = [
     ],
   },
   {
+    path: '/ngx-lift/query',
+    value: 'Query & Mutation',
+    icon: 'data-cluster',
+    children: [
+      {path: '/queryResource', value: 'queryResource', label: 'new'},
+      {path: '/mutationResource', value: 'mutationResource', label: 'new'},
+    ],
+  },
+  {
     path: '/ngx-lift/operators',
     value: 'Operators',
     icon: 'objects',

@@ -4,6 +4,7 @@ export const esTranslations: Record<string, string> = {
   'header.codeLicensed': 'Código bajo licencia',
 
   'nav.signalUtils': 'Utilidades de Signal',
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Operadores',
   'nav.validators': 'Validadores',
   'nav.pipes': 'Pipes',

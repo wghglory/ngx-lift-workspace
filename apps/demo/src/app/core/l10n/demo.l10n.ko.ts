@@ -4,6 +4,7 @@ export const koTranslations: Record<string, string> = {
   'header.codeLicensed': '코드 라이선스:',
 
   'nav.signalUtils': 'Signal 유틸리티',
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': '연산자',
   'nav.validators': '유효성 검사기',
   'nav.pipes': '파이프',

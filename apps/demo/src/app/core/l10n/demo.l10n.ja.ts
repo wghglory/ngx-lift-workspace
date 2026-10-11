@@ -4,6 +4,7 @@ export const jaTranslations: Record<string, string> = {
   'header.codeLicensed': 'ライセンス：',
 
   'nav.signalUtils': 'Signal ユーティリティ',
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'オペレーター',
   'nav.validators': 'バリデーター',
   'nav.pipes': 'パイプ',

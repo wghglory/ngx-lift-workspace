@@ -4,6 +4,7 @@ export const nlTranslations: Record<string, string> = {
   'header.codeLicensed': 'Code gelicentieerd onder',
 
   'nav.signalUtils': "Signal-hulpprogramma's",
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Operatoren',
   'nav.validators': 'Validatoren',
   'nav.pipes': 'Pipes',

@@ -4,6 +4,7 @@ export const ptBRTranslations: Record<string, string> = {
   'header.codeLicensed': 'Código sob licença',
 
   'nav.signalUtils': 'Utilitários de Signal',
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Operadores',
   'nav.validators': 'Validadores',
   'nav.pipes': 'Pipes',

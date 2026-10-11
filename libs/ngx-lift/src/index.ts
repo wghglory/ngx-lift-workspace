@@ -6,6 +6,7 @@ export * from './lib/interceptors';
 export * from './lib/models';
 export * from './lib/operators';
 export * from './lib/pipes';
+export * from './lib/query';
 export * from './lib/signals';
 export * from './lib/utils';
 export * from './lib/validators';

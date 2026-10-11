@@ -1,0 +1,487 @@
+<cll-page-container [title]="'queryResource.title' | translate">
+  <!-- Overview -->
+  <p class="p1" [innerHTML]="'queryResource.overview' | translate"></p>
+
+  <!-- ==================== ARCHITECTURE & COMPARISON SECTION ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-md">
+    <h2>{{ 'queryResource.comparisonTitle' | translate }}</h2>
+
+    <div class="card">
+      <div class="card-block">
+        <p class="card-text">{{ 'queryResource.comparisonIntro' | translate }}</p>
+
+        <div class="clr-row m-t-sm">
+          <div class="clr-col-12 clr-col-md-6">
+            <div class="card card-outline-primary" style="height: 100%">
+              <div class="card-header">
+                <strong><code>resourceAsync</code> ({{ 'queryResource.cardResourceAsyncTitle' | translate }})</strong>
+              </div>
+              <div class="card-block">
+                <ul class="list">
+                  <li>
+                    <strong>{{ 'queryResource.scope' | translate }}:</strong>
+                    {{ 'queryResource.resourceAsyncScopeDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.cache' | translate }}:</strong>
+                    {{ 'queryResource.resourceAsyncCacheDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.mutations' | translate }}:</strong>
+                    {{ 'queryResource.resourceAsyncMutationsDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.bestFor' | translate }}:</strong>
+                    {{ 'queryResource.resourceAsyncBestForDesc' | translate }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="clr-col-12 clr-col-md-6">
+            <div class="card card-outline-success" style="height: 100%">
+              <div class="card-header">
+                <strong><code>queryResource</code> ({{ 'queryResource.cardQueryResourceTitle' | translate }})</strong>
+              </div>
+              <div class="card-block">
+                <ul class="list">
+                  <li>
+                    <strong>{{ 'queryResource.scope' | translate }}:</strong>
+                    {{ 'queryResource.queryResourceScopeDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.cache' | translate }}:</strong>
+                    {{ 'queryResource.queryResourceCacheDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.freshness' | translate }}:</strong>
+                    {{ 'queryResource.queryResourceFreshnessDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.polling' | translate }}:</strong>
+                    {{ 'queryResource.queryResourcePollingDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.invalidation' | translate }}:</strong>
+                    {{ 'queryResource.queryResourceInvalidationDesc' | translate }}
+                  </li>
+                  <li>
+                    <strong>{{ 'queryResource.bestFor' | translate }}:</strong>
+                    {{ 'queryResource.queryResourceBestForDesc' | translate }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table class="table table-noborder m-t-md">
+          <thead>
+            <tr>
+              <th>{{ 'queryResource.thFeature' | translate }}</th>
+              <th><code>resourceAsync</code></th>
+              <th><code>queryResource</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>{{ 'queryResource.rowPrimaryLayer' | translate }}</strong>
+              </td>
+              <td>{{ 'queryResource.rowPrimaryLayerResource' | translate }}</td>
+              <td>{{ 'queryResource.rowPrimaryLayerQuery' | translate }}</td>
+            </tr>
+            <tr>
+              <td>
+                <strong>{{ 'queryResource.rowSharedMemory' | translate }}</strong>
+              </td>
+              <td>
+                <span class="badge badge-1">{{ 'queryResource.badgeNoneComponent' | translate }}</span>
+              </td>
+              <td>
+                <span class="badge badge-success">{{ 'queryResource.badgeGlobalKey' | translate }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>{{ 'queryResource.rowDeduplication' | translate }}</strong>
+              </td>
+              <td>
+                <span class="badge badge-1">{{ 'queryResource.badgePerInstance' | translate }}</span>
+              </td>
+              <td>
+                <span class="badge badge-success">{{ 'queryResource.badgeClientCoalesced' | translate }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>{{ 'queryResource.rowStaleWhileRevalidate' | translate }}</strong>
+              </td>
+              <td>
+                <span class="badge badge-1">{{ 'queryResource.badgeManualPreserve' | translate }}</span>
+              </td>
+              <td>
+                <span class="badge badge-success">{{ 'queryResource.badgeAutoStale' | translate }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>{{ 'queryResource.rowBackgroundPolling' | translate }}</strong>
+              </td>
+              <td>
+                <span class="badge badge-1">{{ 'queryResource.badgeNoneBuiltIn' | translate }}</span>
+              </td>
+              <td>
+                <span class="badge badge-success">{{ 'queryResource.badgeCoordinatedVisibility' | translate }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>{{ 'queryResource.rowTagInvalidation' | translate }}</strong>
+              </td>
+              <td>
+                <span class="badge badge-1">{{ 'queryResource.badgeManualReload' | translate }}</span>
+              </td>
+              <td>
+                <span class="badge badge-success">{{ 'queryResource.badgeAutoMutate' | translate }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== DEMO 1: REQUEST COALESCING ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2>{{ 'queryResource.demo1Section' | translate }}</h2>
+    <p [innerHTML]="'queryResource.demo1SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'queryResource.demo1PlaygroundTitle' | translate"
+      [description]="'queryResource.demo1PlaygroundDesc' | translate"
+      level="intermediate"
+      [badgeText]="'queryResource.badgeDeduplication' | translate"
+      layout="split"
+      [tsCode]="coalesceCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:sm">
+          <div cds-layout="horizontal gap:sm align:center">
+            <span class="badge badge-info">{{
+              'queryResource.actualHttpCalls' | translate: [coalesceFetchCount()]
+            }}</span>
+            <button class="btn btn-sm btn-primary" (click)="refreshMetrics()">
+              {{ 'queryResource.reloadQuery' | translate }}
+            </button>
+          </div>
+
+          <div class="clr-row m-t-xs">
+            <!-- Widget A -->
+            <div class="clr-col-6 widget-col">
+              <div class="card widget-card">
+                <div class="card-header">
+                  <div class="widget-header-text">
+                    <div class="card-title">{{ 'queryResource.widgetATitle' | translate }}</div>
+                    <div class="card-subtitle text-muted">{{ 'queryResource.widgetASubtitle' | translate }}</div>
+                  </div>
+                  @if (metricsQueryA.isLoading()) {
+                    <cll-spinner inline [size]="'sm'" class="m-l-xs" />
+                  }
+                </div>
+                <div class="card-block">
+                  @if (metricsQueryA.value(); as data) {
+                    <div class="widget-metrics">
+                      <p class="p7">
+                        {{ 'queryResource.activeUsers' | translate }}: <strong>{{ data.activeUsers }}</strong>
+                      </p>
+                      <p class="p7">
+                        {{ 'queryResource.cpuLoad' | translate }}: <strong>{{ data.cpuLoad }}%</strong>
+                      </p>
+                      <p class="p7">
+                        {{ 'queryResource.status' | translate }}:
+                        <span class="badge badge-success">{{ metricsQueryA.status() }}</span>
+                      </p>
+                      <p class="p7 text-muted">{{ 'queryResource.updated' | translate }}: {{ data.timestamp }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Widget B -->
+            <div class="clr-col-6 widget-col">
+              <div class="card widget-card">
+                <div class="card-header">
+                  <div class="widget-header-text">
+                    <div class="card-title">{{ 'queryResource.widgetBTitle' | translate }}</div>
+                    <div class="card-subtitle text-muted">{{ 'queryResource.widgetBSubtitle' | translate }}</div>
+                  </div>
+                  @if (metricsQueryB.isLoading()) {
+                    <cll-spinner inline [size]="'sm'" class="m-l-xs" />
+                  }
+                </div>
+                <div class="card-block">
+                  @if (metricsQueryB.value(); as data) {
+                    <div class="widget-metrics">
+                      <p class="p7">
+                        {{ 'queryResource.memoryUsage' | translate }}: <strong>{{ data.memoryUsage }}%</strong>
+                      </p>
+                      <p class="p7">
+                        {{ 'queryResource.cpuLoad' | translate }}: <strong>{{ data.cpuLoad }}%</strong>
+                      </p>
+                      <p class="p7">
+                        {{ 'queryResource.status' | translate }}:
+                        <span class="badge badge-success">{{ metricsQueryB.status() }}</span>
+                      </p>
+                      <p class="p7 text-muted">{{ 'queryResource.updated' | translate }}: {{ data.timestamp }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- ==================== DEMO 2: STALE-WHILE-REVALIDATE ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2>{{ 'queryResource.demo2Section' | translate }}</h2>
+    <p [innerHTML]="'queryResource.demo2SectionDesc' | translate"></p>
+
+    <div class="card">
+      <div class="card-block">
+        <div cds-layout="horizontal gap:md align:center">
+          <div>
+            <span class="p7">{{ 'queryResource.configuredStaleTime' | translate: [staleTimeSeconds()] }}</span>
+          </div>
+          <div>
+            <span class="p7">{{ 'queryResource.freshness' | translate }}: </span>
+            <span
+              class="badge"
+              [class.badge-success]="!cacheQuery.isStale()"
+              [class.badge-warning]="cacheQuery.isStale()"
+            >
+              {{
+                (cacheQuery.isStale() ? 'queryResource.freshnessBadgeStale' : 'queryResource.freshnessBadgeFresh')
+                  | translate
+              }}
+            </span>
+          </div>
+          <div>
+            <span class="badge badge-info">{{ 'queryResource.networkCalls' | translate: [cacheNetworkCount()] }}</span>
+          </div>
+          <button class="btn btn-sm btn-outline" (click)="cacheQuery.reload()">
+            {{ 'queryResource.triggerReadReload' | translate }}
+          </button>
+        </div>
+
+        @if (cacheQuery.isLoading() && !cacheQuery.value()) {
+          <div class="text-center p-y-md">
+            <cll-spinner [size]="'md'" />
+          </div>
+        }
+
+        @if (cacheQuery.value(); as nodeData) {
+          <div class="m-t-md">
+            @if (cacheQuery.status() === 'reloading') {
+              <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="revalidate-alert">
+                <clr-alert-item>
+                  <span class="alert-text">
+                    <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                    {{ 'queryResource.revalidatingAlert' | translate }}
+                  </span>
+                </clr-alert-item>
+              </clr-alert>
+            }
+
+            <div class="clr-row">
+              <div class="clr-col-4">
+                <span class="p7 text-muted">{{ 'queryResource.clusterNodes' | translate }}:</span>
+                <h5>{{ 'queryResource.healthyNodes' | translate: [nodeData.nodeCount, nodeData.healthy] }}</h5>
+              </div>
+              <div class="clr-col-4">
+                <span class="p7 text-muted">{{ 'queryResource.region' | translate }}:</span>
+                <h5>{{ nodeData.region }}</h5>
+              </div>
+              <div class="clr-col-4">
+                <span class="p7 text-muted">{{ 'queryResource.snapshotTime' | translate }}:</span>
+                <h5>{{ nodeData.lastUpdated }}</h5>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== DEMO 3: COORDINATED POLLING ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2>{{ 'queryResource.demo3Section' | translate }}</h2>
+    <p [innerHTML]="'queryResource.demo3SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'queryResource.demo3PlaygroundTitle' | translate"
+      [description]="'queryResource.demo3PlaygroundDesc' | translate"
+      level="intermediate"
+      [badgeText]="'queryResource.badgePolling' | translate"
+      layout="split"
+      [tsCode]="pollCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:sm">
+          <div cds-layout="horizontal gap:sm align:center">
+            <button
+              class="btn btn-sm"
+              [class.btn-success]="!pollingEnabled()"
+              [class.btn-danger]="pollingEnabled()"
+              (click)="togglePolling()"
+            >
+              {{ (pollingEnabled() ? 'queryResource.stopPolling' : 'queryResource.startPolling') | translate }}
+            </button>
+            <span class="badge badge-info">{{
+              'queryResource.totalPollCycles' | translate: [pollNetworkCount()]
+            }}</span>
+          </div>
+
+          @if (pollingEnabled() && pollingQuery.value(); as hb) {
+            <div class="card card-block m-t-xs">
+              <div cds-layout="horizontal gap:md align:center">
+                <span class="badge badge-success">{{ hb.status }}</span>
+                <span
+                  >{{ 'queryResource.ping' | translate }}: <strong>{{ hb.pingMs }}ms</strong></span
+                >
+                <span class="text-muted">{{ 'queryResource.lastPulse' | translate }}: {{ hb.lastPing }}</span>
+                @if (pollingQuery.isLoading()) {
+                  <cll-spinner inline [size]="'sm'" />
+                }
+              </div>
+            </div>
+          }
+
+          @if (!pollingEnabled()) {
+            <div class="p7 text-muted">
+              {{ 'queryResource.pollingIdleMsg' | translate }}
+            </div>
+          }
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- ==================== DEMO 4: MUTATIONS & TAG INVALIDATION ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2>{{ 'queryResource.demo4Section' | translate }}</h2>
+    <p [innerHTML]="'queryResource.demo4SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'queryResource.demo4PlaygroundTitle' | translate"
+      [description]="'queryResource.demo4PlaygroundDesc' | translate"
+      level="intermediate"
+      [badgeText]="'queryResource.badgeMutations' | translate"
+      layout="split"
+      [tsCode]="mutationCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <!-- Add User Form -->
+          <div class="card card-block">
+            <div class="card-title">{{ 'queryResource.addTeamMember' | translate }}</div>
+            <form clrForm clrLayout="horizontal" class="member-form">
+              <clr-input-container>
+                <label>{{ 'queryResource.nameLabel' | translate }}</label>
+                <input
+                  clrInput
+                  type="text"
+                  name="newUserName"
+                  [placeholder]="'queryResource.namePlaceholder' | translate"
+                  [ngModel]="newUserName()"
+                  (ngModelChange)="newUserName.set($event)"
+                />
+              </clr-input-container>
+
+              <clr-select-container>
+                <label>{{ 'queryResource.roleLabel' | translate }}</label>
+                <select
+                  clrSelect
+                  name="newUserRole"
+                  [ngModel]="newUserRole()"
+                  (ngModelChange)="newUserRole.set($event)"
+                >
+                  <option value="Platform Engineer">{{ 'queryResource.rolePlatformEngineer' | translate }}</option>
+                  <option value="Site Reliability Engineer">{{ 'queryResource.roleSre' | translate }}</option>
+                  <option value="Product Designer">{{ 'queryResource.roleProductDesigner' | translate }}</option>
+                </select>
+              </clr-select-container>
+
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  [disabled]="!newUserName().trim() || addUserMutation.isLoading()"
+                  (click)="submitNewUser()"
+                >
+                  @if (addUserMutation.isLoading()) {
+                    <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                  }
+                  {{
+                    (addUserMutation.isLoading() ? 'queryResource.savingBtn' : 'queryResource.addMemberBtn') | translate
+                  }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Active Users Table -->
+          <div>
+            <h5>
+              {{ 'queryResource.activeMembersTitle' | translate }}
+              @if (usersQuery.isLoading()) {
+                <cll-spinner inline [size]="'sm'" class="m-l-xs" />
+              }
+            </h5>
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>{{ 'queryResource.thId' | translate }}</th>
+                  <th>{{ 'queryResource.thName' | translate }}</th>
+                  <th>{{ 'queryResource.thRole' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of usersQuery.value(); track user.id) {
+                  <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                      <strong>{{ user.name }}</strong>
+                    </td>
+                    <td>
+                      <span class="label label-info">{{ user.role }}</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- ==================== API REFERENCE ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2>{{ 'queryResource.apiReference' | translate }}</h2>
+
+    <h3><code>queryResource(definition, options)</code></h3>
+    <app-api-table [properties]="queryResourceApiProps" />
+
+    <h3 class="m-t-md"><code>QueryResourceRef&lt;T, E&gt;</code></h3>
+    <app-api-table [properties]="queryResourceRefApiProps" />
+
+    <h3 class="m-t-md"><code>mutateResource(mutation, options)</code> / <code>mutationResource(...)</code></h3>
+    <app-api-table [properties]="mutationResourceApiProps" />
+  </section>
+</cll-page-container>

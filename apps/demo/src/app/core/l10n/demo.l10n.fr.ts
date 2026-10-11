@@ -4,6 +4,7 @@ export const frTranslations: Record<string, string> = {
   'header.codeLicensed': 'Code sous licence',
 
   'nav.signalUtils': 'Utilitaires Signal',
+  'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Opérateurs',
   'nav.validators': 'Validateurs',
   'nav.pipes': 'Pipes',

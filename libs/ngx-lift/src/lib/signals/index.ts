@@ -6,6 +6,5 @@ export * from './form-signals';
 export * from './inject-params';
 export * from './inject-query-params';
 export * from './merge-from';
-export * from './resource-async';
 export * from './to-signal-form';
 export * from './to-submit-value';

@@ -29,6 +29,7 @@ export class VerticalNavComponent implements OnInit {
 
   readonly groupKeyMap: Record<string, string> = {
     'Signal Utils': 'nav.signalUtils',
+    'Query & Mutation': 'nav.queryMutation',
     Operators: 'nav.operators',
     Validators: 'nav.validators',
     Pipes: 'nav.pipes',
