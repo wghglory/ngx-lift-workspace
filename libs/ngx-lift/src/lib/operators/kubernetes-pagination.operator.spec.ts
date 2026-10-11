@@ -214,6 +214,24 @@ describe('aggregatePaginatedKubernetesResources', () => {
       vi.useRealTimers();
     }
   });
+
+  it('handles response without metadata property gracefully', () => {
+    const rawResponse = {
+      apiVersion: 'v1',
+      kind: 'List',
+      items: [{apiVersion: 'v1', kind: 'Pod', metadata: {name: 'pod-1'}}],
+    } as unknown as KubernetesListResponse<KubernetesObject>;
+
+    let result: KubernetesList<KubernetesObject> | undefined;
+    of(rawResponse)
+      .pipe(aggregatePaginatedKubernetesResources(httpClient, '/items'))
+      .subscribe((val) => {
+        result = val;
+      });
+
+    expect(result?.items).toHaveLength(1);
+    expect(result?.items[0].metadata.name).toBe('pod-1');
+  });
 });
 
 describe('fetchPaginatedKubernetesResources', () => {

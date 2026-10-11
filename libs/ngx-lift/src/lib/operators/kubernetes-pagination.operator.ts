@@ -91,8 +91,7 @@ export function aggregatePaginatedKubernetesResources<T extends KubernetesObject
 
     return retriedSource$.pipe(
       expand((response) => {
-        const {metadata} = response;
-        const {continue: continueToken} = metadata;
+        const continueToken = response.metadata?.continue;
         if (continueToken) {
           const params = {...initialParams, continue: continueToken};
           const page$ = http.get<KubernetesListResponse<T>>(endpoint, {params});
