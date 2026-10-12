@@ -7,6 +7,7 @@ import {
   heatMapIcon,
   objectsIcon,
   radarIcon,
+  shieldIcon,
   wrenchIcon,
 } from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
@@ -26,7 +27,7 @@ hljs.registerLanguage('typescript', typescript);
 hljs.registerLanguage('javascript', javascript);
 
 // register clarity icons
-ClarityIcons.addIcons(objectsIcon, wrenchIcon, certificateIcon, heatMapIcon, radarIcon, dataClusterIcon);
+ClarityIcons.addIcons(objectsIcon, wrenchIcon, certificateIcon, heatMapIcon, radarIcon, dataClusterIcon, shieldIcon);
 
 ClarityIcons.addIcons([
   'pipes',

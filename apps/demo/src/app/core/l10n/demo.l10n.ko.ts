@@ -6,6 +6,7 @@ export const koTranslations: Record<string, string> = {
   'nav.signalUtils': 'Signal 유틸리티',
   'nav.queryMutation': 'Query & Mutation',
   'nav.operators': '연산자',
+  'nav.interceptors': '인터셉터',
   'nav.validators': '유효성 검사기',
   'nav.pipes': '파이프',
   'nav.utilities': '유틸리티',
@@ -72,4 +73,92 @@ export const koTranslations: Record<string, string> = {
   'mergeFrom.example4Desc':
     '인젝션 컨텍스트 외부에서 병합된 신호를 생성하기 위해 사용자 정의 <code>Injector</code> 전달:',
   'mergeFrom.apiSummary': '여러 Observable 또는 Signal을 단일 Signal로 병합합니다.',
+
+  // k8sRetryBackoff Operator (ko)
+  'k8sRetryBackoff.configSummary': '연산자 및 인터셉터 팩토리에서 공유하는 선택적 구성입니다.',
+  'k8sRetryBackoff.paramMaxAttempts': '초기 요청을 포함한 총 시도 횟수입니다. 1로 설정하면 재시도가 비활성화됩니다.',
+  'k8sRetryBackoff.errorShape':
+    'HttpErrorResponse 또는 <code>{ status, headers?, error? }</code> 형태의 객체(<code>error</code>의 JSON 문자열 포함)를 허용합니다. 네이티브 fetch는 HTTP 429에서 reject되지 않으므로 Response를 확인하고 status, headers, 파싱된 본문을 변환해야 합니다. Axios는 이를 <code>error.response</code>에 제공하므로 도우미를 호출하기 전에 변환하세요. 도우미는 지연 시간만 계산합니다.',
+  'k8sRetryBackoffInterceptor.overrideRules':
+    '<code>null</code>은 인터셉터 기본값을 사용하고, <code>false</code>는 재시도를 비활성화합니다. 팩토리는 요청별 구성과 기본 구성을 병합합니다. 이 인터셉터는 URL이나 HTTP 메서드에 관계없이 모든 HttpClient 429를 처리하므로 즉시 실패해야 하는 요청은 명시적으로 제외하세요.',
+  'k8sRetryBackoffInterceptor.overrideSimulation':
+    '첫 번째 429에서 즉시 실패하는 프로브나 성공하기 전에 두 번의 429를 수신하는 워크로드 읽기를 테스트해 보세요. 사용자 지정 읽기는 maxAttempts: 10과 200ms 대체 지연을 사용하여 최대 9번의 재시도를 허용합니다.',
+  'k8sRetryBackoffInterceptor.btnWorkloads': '워크로드 읽기 테스트 (10회 시도)',
+  'k8sRetryBackoffInterceptor.btnProbe': '빠른 프로브 테스트 (제외)',
+
+  'k8sRetryBackoff.overview':
+    '<code>retryOnK8sBackoff</code>는 <strong>Kubernetes API 요청 제한 (HTTP 429 Too Many Requests)</strong>을 위해 설계된 RxJS 재시도 연산자입니다. Kubernetes API 서버에서 반환하는 <code>Retry-After</code> HTTP 헤더 또는 <code>details.retryAfterSeconds</code> 필드를 동적으로 우선 처리하며, 둘 다 없는 경우 설정 가능한 대체 지연 시간을 적용합니다.',
+  'k8sRetryBackoff.callout':
+    '모든 <code>HttpClient</code> 호출에 대한 전역 재시도 보호가 필요하신가요? 요청별 파이프 없이 작동하는 <a href="/ngx-lift/interceptors/k8sRetryBackoff"><code>k8sRetryBackoffInterceptor</code></a>를 확인해 보세요.',
+  'k8sRetryBackoff.diffTitle': '아키텍처 비교: 연산자 vs 인터셉터',
+  'k8sRetryBackoff.diffDesc':
+    '두 도구는 동일한 재시도 지연 시간 계산 엔진을 공유하지만 상호 보완적인 역할을 수행합니다:',
+  'k8sRetryBackoff.diffColFeature': '기능',
+  'k8sRetryBackoff.diffColOperator': 'retryOnK8sBackoff (연산자)',
+  'k8sRetryBackoff.diffColInterceptor': 'k8sRetryBackoffInterceptor (인터셉터)',
+  'k8sRetryBackoff.diffScope': '범위',
+  'k8sRetryBackoff.diffScopeOp':
+    '로컬: <code>.pipe(retryOnK8sBackoff(...))</code>를 통해 지정된 특정 Observable에만 적용.',
+  'k8sRetryBackoff.diffScopeInt': '전역: 애플리케이션의 모든 나가는 HTTP 요청을 자동으로 가로채어 보호.',
+  'k8sRetryBackoff.diffUseCases': '주요 사용 사례',
+  'k8sRetryBackoff.diffUseCasesOp': '폴링 스트림, 백그라운드 작업, HttpClient 이외의 Observable.',
+  'k8sRetryBackoff.diffUseCasesInt': '개별 서비스를 수정하지 않고 모든 REST/Kubernetes 호출에 적용되는 기본 보호.',
+  'k8sRetryBackoff.diffConfig': '설정 및 제외 옵션',
+  'k8sRetryBackoff.diffConfigOp': '연산자 인수를 통해 스트림별로 직접 설정.',
+  'k8sRetryBackoff.diffConfigInt':
+    '<code>app.config.ts</code>에서 전역 설정하고, <code>HttpContext</code>를 통해 요청별 재정의 또는 비활성화.',
+  'k8sRetryBackoff.example1Title': '예제 1: 대화형 시뮬레이터 및 파이프라인 사용법',
+  'k8sRetryBackoff.example1Desc':
+    '다양한 Kubernetes API 응답을 시뮬레이션하고 retryOnK8sBackoff의 재시도 지연 처리 및 코드 스니펫을 확인해 보세요:',
+  'k8sRetryBackoff.selectScenario': '응답 시나리오 선택:',
+  'k8sRetryBackoff.scenarioHeader': '429 (Retry-After: 1 헤더)',
+  'k8sRetryBackoff.scenarioBody': '429 (details.retryAfterSeconds: 1.5 JSON 본문)',
+  'k8sRetryBackoff.scenarioFallback': '429 (헤더 없음, 1초 대체 지연)',
+  'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (재시도 불가, 즉시 실패)',
+  'k8sRetryBackoff.scenarioExhausted': '429 연속 5회 (최대 재시도 횟수 초과)',
+  'k8sRetryBackoff.btnSimulate': '요청 시뮬레이션 및 재시도',
+  'k8sRetryBackoff.btnClearLogs': '로그 지우기',
+  'k8sRetryBackoff.logTitle': '실행 로그:',
+  'k8sRetryBackoff.example2Title': '예제 2: 독립형 지연 추출 도우미 (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.example2Desc':
+    '사용자 정의 재시도 루프나 Promise에서 지연 시간을 직접 추출하려면 getK8sRetryDelayMs를 사용하세요:',
+  'k8sRetryBackoff.sampleErrorLabel': '샘플 오류 응답:',
+  'k8sRetryBackoff.helperHeader': '429 (Retry-After: 3초)',
+  'k8sRetryBackoff.helperBody': '429 (retryAfterSeconds: 2초)',
+  'k8sRetryBackoff.helperFallback': '429 (힌트 없음, 1초 대체)',
+  'k8sRetryBackoff.helperNon429': '500 (비-429 오류)',
+  'k8sRetryBackoff.btnExtractDelay': '지연 추출 (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.retryableError': '재시도 가능한 Kubernetes 429 백오프',
+  'k8sRetryBackoff.nonRetryableError': '재시도할 수 없는 오류',
+  'k8sRetryBackoff.apiSummary': 'Kubernetes 대기 힌트를 준수하여 HTTP 429 시 Observable을 재시도합니다.',
+  'k8sRetryBackoff.paramConfig': '최대 재시도 횟수 및 대체 지연 시간에 대한 선택적 구성.',
+  'k8sRetryBackoff.delaySummary':
+    '오류 개체에서 대기 지연 시간(밀리초)을 추출하거나 재시도할 수 없는 경우 null을 반환합니다.',
+  'k8sRetryBackoff.paramError': '검사할 오류(HttpErrorResponse 또는 status/headers/error가 있는 객체).',
+  'k8sRetryBackoff.paramFallbackDelay': '응답에 재시도 힌트가 없는 경우 적용할 대체 지연 시간(밀리초).',
+
+  // k8sRetryBackoffInterceptor (ko)
+  'k8sRetryBackoffInterceptor.overview':
+    '<code>k8sRetryBackoffInterceptor</code>는 Angular 함수형 HTTP 인터셉터(<code>HttpInterceptorFn</code>)입니다. <code>Retry-After</code> 헤더와 <code>details.retryAfterSeconds</code>를 자동으로 분석하여 <strong>HTTP 429 (Too Many Requests)</strong>에 대한 전역 보호를 제공합니다.',
+  'k8sRetryBackoffInterceptor.callout':
+    '개별 스트림 수준의 재시도 제어나 폴링이 필요하신가요? 전용 연산자 <a href="/ngx-lift/operators/k8sRetryBackoff"><code>retryOnK8sBackoff</code></a>를 확인해 보세요.',
+  'k8sRetryBackoffInterceptor.example1Title': '예제 1: 전역 인터셉터 등록 및 대화형 시뮬레이터',
+  'k8sRetryBackoffInterceptor.example1Desc':
+    'app.config.ts에 등록하면 모든 HttpClient 요청이 HTTP 429 발생 시 자동으로 재시도됩니다:',
+  'k8sRetryBackoffInterceptor.selectMode': '인터셉터 컨텍스트 모드:',
+  'k8sRetryBackoffInterceptor.modeDefault': '기본 전역 인터셉터 (429를 1초 지연 후 재시도, 200 OK 수신)',
+  'k8sRetryBackoffInterceptor.modeCustom': '사용자 정의 HttpContext (400ms 대체 지연 적용)',
+  'k8sRetryBackoffInterceptor.modeDisabled': 'HttpContext로 비활성화 (HttpContextToken = false, 즉시 실패)',
+  'k8sRetryBackoffInterceptor.btnSend': '인터셉트 요청 전송',
+  'k8sRetryBackoffInterceptor.example2Title': '예제 2: 요청별 사용자 정의 및 HttpContext를 통한 제외',
+  'k8sRetryBackoffInterceptor.example2Desc':
+    'HttpContext에서 K8S_RETRY_BACKOFF_CONFIG를 사용하여 개별 제한을 설정하거나 헬스 체크 요청에서 재시도를 건너뛸 수 있습니다:',
+  'k8sRetryBackoffInterceptor.apiSummary':
+    'Kubernetes 백오프 지연을 사용하여 HTTP 429 응답을 재시도하는 함수형 HTTP 인터셉터입니다.',
+  'k8sRetryBackoffInterceptor.factorySummary':
+    '사용자 정의 기본 설정을 갖는 함수형 인터셉터를 생성하는 팩토리 함수입니다.',
+  'k8sRetryBackoffInterceptor.tokenSummary':
+    '개별 요청에 대한 재시도 구성을 재정의하거나 비활성화하기 위한 HttpContextToken입니다.',
+  'k8sRetryBackoffInterceptor.paramDefaultConfig':
+    'HttpContext를 통해 재정의되지 않는 한 모든 요청에 적용되는 기본 구성입니다.',
 };

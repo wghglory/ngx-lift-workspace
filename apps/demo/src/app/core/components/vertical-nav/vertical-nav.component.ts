@@ -31,6 +31,7 @@ export class VerticalNavComponent implements OnInit {
     'Signal Utils': 'nav.signalUtils',
     'Query & Mutation': 'nav.queryMutation',
     Operators: 'nav.operators',
+    Interceptors: 'nav.interceptors',
     Validators: 'nav.validators',
     Pipes: 'nav.pipes',
     Utilities: 'nav.utilities',

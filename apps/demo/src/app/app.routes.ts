@@ -26,6 +26,8 @@ import {LoggerComponent} from './ngx-lib/pages/operators/logger/logger.component
 import {PollComponent} from './ngx-lib/pages/operators/poll/poll.component';
 import {StartWithTapComponent} from './ngx-lib/pages/operators/start-with-tap/start-with-tap.component';
 import {SwitchMapWithAsyncStateComponent} from './ngx-lib/pages/operators/switch-map-with-async-state/switch-map-with-async-state.component';
+import {K8sRetryBackoffComponent} from './ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component';
+import {K8sRetryBackoffInterceptorComponent} from './ngx-lib/pages/interceptors/k8s-retry-backoff-interceptor/k8s-retry-backoff-interceptor.component';
 import {ArrayJoinPipeComponent} from './ngx-lib/pages/pipes/array-join-pipe/array-join-pipe.component';
 import {ByteConverterPipeComponent} from './ngx-lib/pages/pipes/byte-converter-pipe/byte-converter-pipe.component';
 import {IsHttpsPipeComponent} from './ngx-lib/pages/pipes/is-https-pipe/is-https-pipe.component';
@@ -153,8 +155,21 @@ export const routes: Routes = [
             component: PollComponent,
           },
           {
+            path: 'k8sRetryBackoff',
+            component: K8sRetryBackoffComponent,
+          },
+          {
             path: 'startWithTap',
             component: StartWithTapComponent,
+          },
+        ],
+      },
+      {
+        path: 'interceptors',
+        children: [
+          {
+            path: 'k8sRetryBackoff',
+            component: K8sRetryBackoffInterceptorComponent,
           },
         ],
       },

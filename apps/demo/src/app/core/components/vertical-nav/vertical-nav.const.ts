@@ -38,7 +38,14 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/startWithTap', value: 'startWithTap'},
       {path: '/logger', value: 'logger'},
       {path: '/kubernetesPagination', value: 'kubernetesPagination'},
+      {path: '/k8sRetryBackoff', value: 'retryOnK8sBackoff', label: 'new'},
     ],
+  },
+  {
+    path: '/ngx-lift/interceptors',
+    value: 'Interceptors',
+    icon: 'shield',
+    children: [{path: '/k8sRetryBackoff', value: 'k8sRetryBackoffInterceptor', label: 'new'}],
   },
   {
     path: '/ngx-lift/validators',

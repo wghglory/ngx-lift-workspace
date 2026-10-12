@@ -6,6 +6,7 @@ export const zhTWTranslations: Record<string, string> = {
   'nav.signalUtils': 'Signal 工具',
   'nav.queryMutation': '查詢與變更 (Query & Mutation)',
   'nav.operators': '操作符 (Operators)',
+  'nav.interceptors': '攔截器 (Interceptors)',
   'nav.validators': '驗證器 (Validators)',
   'nav.pipes': '管道 (Pipes)',
   'nav.utilities': '通用工具 (Utilities)',
@@ -797,4 +798,86 @@ export const zhTWTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU 核心數',
   'timelineWizard.replicas': '複本數',
   'timelineWizard.url': '服務位址 (URL)',
+
+  // k8sRetryBackoff Operator (zh-TW)
+  'k8sRetryBackoff.configSummary': 'Operator 和 interceptor factory 共用的可選設定。',
+  'k8sRetryBackoff.paramMaxAttempts': '總嘗試次數，包含首次請求。設為 1 可停用重試。',
+  'k8sRetryBackoff.errorShape':
+    '接受 HttpErrorResponse 或 <code>{ status, headers?, error? }</code> 物件，error 也可以是 JSON 字串。原生 fetch 遇到 HTTP 429 不會自動拒絕，需檢查 Response 並轉換狀態、headers 和解析後的 body。Axios 的這些欄位在 <code>error.response</code> 中，需先轉換。Helper 只計算延遲。',
+  'k8sRetryBackoffInterceptor.overrideRules':
+    '<code>null</code> 使用預設設定，<code>false</code> 停用重試。Factory 將請求級設定與預設設定合併。攔截器處理所有 URL 和 HTTP 方法的 HttpClient 429；需要立即失敗的請求應明確停用重試。',
+  'k8sRetryBackoffInterceptor.overrideSimulation':
+    '探針在首次 429 時立即失敗；工作負載讀取先收到兩次 429，再成功。自訂讀取使用 maxAttempts: 10 和 200ms 備援延遲，最多重試九次。',
+  'k8sRetryBackoffInterceptor.btnWorkloads': '測試工作負載讀取（10 次嘗試）',
+  'k8sRetryBackoffInterceptor.btnProbe': '測試探針（停用重試）',
+
+  'k8sRetryBackoff.overview':
+    '<code>retryOnK8sBackoff</code> 是專為 Kubernetes API Server 設計的 RxJS 重試退避操作符。專門針對 HTTP 429 (<code>TooManyRequests</code>) 回應（例如 Watch 快取正在重建並提示 "storage is (re)initializing"）進行智慧退避重試。只有 HTTP 429 會觸發重試，其他任何錯誤（4xx、5xx、網路中斷）均會立即且原樣向上拋出。',
+  'k8sRetryBackoff.callout':
+    '<strong>操作符與攔截器的選型建議：</strong> <code>retryOnK8sBackoff</code> 是局部的顯式操作符，適合對特定 Observable 流進行精準控制。若你希望全應用的所有出站 HTTP 請求均預設自動重試 429，請參考 <code>k8sRetryBackoffInterceptor</code> 攔截器。',
+  'k8sRetryBackoff.diffTitle': '操作符與攔截器對比',
+  'k8sRetryBackoff.diffDesc': '根據作用域範圍與架構分工進行選型：',
+  'k8sRetryBackoff.diffColFeature': '對比維度',
+  'k8sRetryBackoff.diffColOperator': 'retryOnK8sBackoff (操作符)',
+  'k8sRetryBackoff.diffColInterceptor': 'k8sRetryBackoffInterceptor (攔截器)',
+  'k8sRetryBackoff.diffScope': '作用範圍',
+  'k8sRetryBackoff.diffScopeOp': '局部：精準綁定到具體的 Observable 管道',
+  'k8sRetryBackoff.diffScopeInt': '全域：自動攔截整個應用的 Angular HttpClient 請求',
+  'k8sRetryBackoff.diffUseCases': '典型應用場景',
+  'k8sRetryBackoff.diffUseCasesOp': '自訂輪詢流、特定背景長任務、非 HttpClient 資料來源',
+  'k8sRetryBackoff.diffUseCasesInt': '標準 Kubernetes SPA/微服務控制台，全域增強網路強韌性',
+  'k8sRetryBackoff.diffConfig': '配置方式',
+  'k8sRetryBackoff.diffConfigOp': '直接傳參：<code>retryOnK8sBackoff({ maxAttempts, fallbackDelayMs })</code>',
+  'k8sRetryBackoff.diffConfigInt':
+    '在 <code>app.config.ts</code> 全域配置，或在單次請求透過 <code>HttpContextToken</code> 覆寫',
+  'k8sRetryBackoff.example1Title': '範例 1：互動式模擬器與管道調用',
+  'k8sRetryBackoff.example1Desc':
+    '模擬 Kubernetes 伺服端不同的回應情況，直觀觀察退避延遲計算、重試次數遞增與錯誤透傳過程，並在下方展示操作符調用程式碼：',
+  'k8sRetryBackoff.selectScenario': '選擇回應場景：',
+  'k8sRetryBackoff.scenarioHeader': '帶有 Retry-After 回應標頭的 429 (1 秒延遲)',
+  'k8sRetryBackoff.scenarioBody': '帶有 details.retryAfterSeconds 回應主體的 429 (1.5 秒延遲)',
+  'k8sRetryBackoff.scenarioFallback': '無重試提示的 429 (採用保底 1 秒退避延遲)',
+  'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (非 429，立即失敗不重試)',
+  'k8sRetryBackoff.scenarioExhausted': '達到最大重試次數 (連續 5 次 429 耗盡)',
+  'k8sRetryBackoff.btnSimulate': '觸發模擬請求',
+  'k8sRetryBackoff.logTitle': '模擬時序與執行日誌：',
+  'k8sRetryBackoff.btnClearLogs': '清除日誌',
+  'k8sRetryBackoff.example2Title': '範例 2：獨立退避延遲提取函式',
+  'k8sRetryBackoff.example2Desc': '使用 getK8sRetryDelayMs 在自訂重試邏輯、原生 fetch 或 Axios 處理器中提取退避延遲：',
+  'k8sRetryBackoff.sampleErrorLabel': '範例錯誤回應：',
+  'k8sRetryBackoff.helperHeader': '429 (Retry-After: 3 秒)',
+  'k8sRetryBackoff.helperBody': '429 (retryAfterSeconds: 2 秒)',
+  'k8sRetryBackoff.helperFallback': '429 (無重試提示，1 秒保底)',
+  'k8sRetryBackoff.helperNon429': '500 (非 429 錯誤)',
+  'k8sRetryBackoff.btnExtractDelay': '提取延遲 (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.retryableError': '可重試的 Kubernetes 429 退避',
+  'k8sRetryBackoff.nonRetryableError': '不可重試的錯誤',
+  'k8sRetryBackoff.apiSummary':
+    '智慧重試 Kubernetes 429 回應的 RxJS 操作符，優先尊重伺服端提示延遲，提供預設保底退避。',
+  'k8sRetryBackoff.paramConfig': '配置選項，支援設定最大允許嘗試次數與保底延遲時間。',
+  'k8sRetryBackoff.delaySummary': '輔助工具函式，用於從 Kubernetes 429 錯誤回應中提取毫秒級延遲，不可重試時返回 null。',
+  'k8sRetryBackoff.paramError': '待檢測的錯誤物件 (HttpErrorResponse 或包含 status/headers/error 的物件)。',
+  'k8sRetryBackoff.paramFallbackDelay': '當回應未提供重試提示時的預設保底退避毫秒數。',
+
+  // k8sRetryBackoffInterceptor (zh-TW)
+  'k8sRetryBackoffInterceptor.overview':
+    '<code>k8sRetryBackoffInterceptor</code> 是 Angular 函數式 HTTP 攔截器 (<code>HttpInterceptorFn</code>)，能夠自動為全站出站請求提供 Kubernetes HTTP 429 (<code>TooManyRequests</code>) 退避重試能力。它自動優先解析 <code>Retry-After</code> 回應標頭與 <code>details.retryAfterSeconds</code> 回應主體，並支援單次請求自訂設定或透過 <code>K8S_RETRY_BACKOFF_CONFIG</code> 聲明跳過。',
+  'k8sRetryBackoffInterceptor.callout':
+    '<strong>全域防護與單次請求靈活控制：</strong> 在 <code>app.config.ts</code> 中註冊一次即可保護所有介面。若某介面需要跳過重試或調整策略，只需在調用 <code>HttpClient</code> 時設定 <code>K8S_RETRY_BACKOFF_CONFIG</code>。若需單流手動管道控制，請見 <code>retryOnK8sBackoff</code> 操作符。',
+  'k8sRetryBackoffInterceptor.example1Title': '範例 1：全域攔截器註冊與互動式模擬',
+  'k8sRetryBackoffInterceptor.example1Desc':
+    '在 app.config.ts 中全域註冊攔截器後，所有標準 HttpClient 請求遇到 429 均會自動退避重試，元件程式碼無需改動：',
+  'k8sRetryBackoffInterceptor.selectMode': '攔截器上下文模式：',
+  'k8sRetryBackoffInterceptor.modeDefault': '全域預設攔截器 (429 自動退避重試)',
+  'k8sRetryBackoffInterceptor.modeCustom': '請求級 HttpContext 覆寫 (maxAttempts: 2, fallback: 400ms)',
+  'k8sRetryBackoffInterceptor.modeDisabled': '透過 HttpContext 停用 (K8S_RETRY_BACKOFF_CONFIG: false)',
+  'k8sRetryBackoffInterceptor.btnSend': '發送受攔截請求',
+  'k8sRetryBackoffInterceptor.example2Title': '範例 2：請求級自訂設定與 HttpContext 退出機制',
+  'k8sRetryBackoffInterceptor.example2Desc':
+    '在單次請求中透過 HttpContext 傳入 K8S_RETRY_BACKOFF_CONFIG，實現單介面重試參數覆寫或為健康探針停用重試：',
+  'k8sRetryBackoffInterceptor.apiSummary': '為 Kubernetes HTTP 429 回應提供退避重試的函數式 HTTP 攔截器。',
+  'k8sRetryBackoffInterceptor.factorySummary': '建立帶有自訂預設退避設定的 HttpInterceptorFn 攔截器工廠函式。',
+  'k8sRetryBackoffInterceptor.paramDefaultConfig':
+    '應用於請求的預設 K8sBackoffRetryConfig，優先權低於請求級 K8S_RETRY_BACKOFF_CONFIG。',
+  'k8sRetryBackoffInterceptor.tokenSummary': '用於在單次請求中覆寫退避設定或直接停用重試的 HttpContextToken。',
 };

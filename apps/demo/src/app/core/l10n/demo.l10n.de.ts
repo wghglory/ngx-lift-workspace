@@ -6,6 +6,7 @@ export const deTranslations: Record<string, string> = {
   'nav.signalUtils': 'Signal-Utilities',
   'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Operatoren',
+  'nav.interceptors': 'Interzeptoren',
   'nav.validators': 'Validatoren',
   'nav.pipes': 'Pipes',
   'nav.utilities': 'Dienstprogramme',
@@ -143,4 +144,95 @@ export const deTranslations: Record<string, string> = {
   'themeToggle.title': 'Design-Umschalter (Theme Toggle)',
   'themeToggle.overview':
     'Nahtloser Wechsel zwischen Clarity Hell- und Dunkelmodus mit reaktiven Signalen und Speicherung.',
+
+  // k8sRetryBackoff Operator (de)
+  'k8sRetryBackoff.configSummary': 'Optionale Konfiguration, die von Operator und Interzeptor-Factory geteilt wird.',
+  'k8sRetryBackoff.paramMaxAttempts':
+    'Gesamtzahl der Versuche inklusive der Erstanfrage. Auf 1 setzen, um Wiederholungen zu deaktivieren.',
+  'k8sRetryBackoff.errorShape':
+    'Akzeptiert HttpErrorResponse oder ein Objekt in der Form <code>{ status, headers?, error? }</code>, einschließlich JSON-String in <code>error</code>. Natives fetch wird bei HTTP 429 nicht abgelehnt: Prüfen Sie die Response und passen Sie Status, Header und Body an. Axios legt diese unter <code>error.response</code> ab; passen Sie diese vor dem Aufruf an. Der Helper berechnet nur die Verzögerung.',
+  'k8sRetryBackoffInterceptor.overrideRules':
+    '<code>null</code> verwendet Interzeptor-Standardwerte; <code>false</code> deaktiviert Wiederholungen. Die Factory führt anfragespezifische Konfigurationen mit ihren Standardwerten zusammen. Dieser Interzeptor verarbeitet jedes HttpClient 429 unabhängig von URL oder HTTP-Methode; schließen Sie Anfragen aus, die sofort fehlschlagen sollen.',
+  'k8sRetryBackoffInterceptor.overrideSimulation':
+    'Testen Sie einen Probe, der beim ersten 429 sofort fehlschlägt, oder ein Workload-Lesen, das nach zwei 429-Fehlern erfolgreich ist. Der angepasste Lesevorgang verwendet maxAttempts: 10 und 200 ms Fallback; dies erlaubt maximal neun Wiederholungen.',
+  'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-Lesen testen (10 Versuche)',
+  'k8sRetryBackoffInterceptor.btnProbe': 'Schnellen Probe testen (Opt-out)',
+
+  'k8sRetryBackoff.overview':
+    '<code>retryOnK8sBackoff</code> ist ein RxJS-Wiederholungsoperator, der speziell für <strong>Kubernetes-API-Ratenbegrenzungen (HTTP 429 Too Many Requests)</strong> entwickelt wurde. Er priorisiert dynamisch den HTTP-Header <code>Retry-After</code> oder das vom Kubernetes-API-Server zurückgegebene Feld <code>details.retryAfterSeconds</code> und greift auf eine konfigurierbare Verzögerung zurück, falls keine Angabe vorhanden ist.',
+  'k8sRetryBackoff.callout':
+    'Suchen Sie nach automatischen Wiederholungen für alle <code>HttpClient</code>-Aufrufe? Nutzen Sie <a href="/ngx-lift/interceptors/k8sRetryBackoff"><code>k8sRetryBackoffInterceptor</code></a> für einen globalen funktionalen Interzeptor.',
+  'k8sRetryBackoff.diffTitle': 'Architekturvergleich: Operator vs. Interzeptor',
+  'k8sRetryBackoff.diffDesc':
+    'Beide Werkzeuge teilen dieselbe Logik zur Verzögerungsberechnung, erfüllen jedoch komplementäre Aufgaben:',
+  'k8sRetryBackoff.diffColFeature': 'Merkmal',
+  'k8sRetryBackoff.diffColOperator': 'retryOnK8sBackoff (Operator)',
+  'k8sRetryBackoff.diffColInterceptor': 'k8sRetryBackoffInterceptor (Interzeptor)',
+  'k8sRetryBackoff.diffScope': 'Geltungsbereich',
+  'k8sRetryBackoff.diffScopeOp':
+    'Lokal: Selektiv auf bestimmte Observables angewendet via <code>.pipe(retryOnK8sBackoff(...))</code>.',
+  'k8sRetryBackoff.diffScopeInt': 'Global: Fängt automatisch alle ausgehenden HTTP-Anfragen der Anwendung ab.',
+  'k8sRetryBackoff.diffUseCases': 'Ziel-Anwendungsfälle',
+  'k8sRetryBackoff.diffUseCasesOp': 'Polling-Streams, Hintergrund-Worker oder Observables außerhalb von HttpClient.',
+  'k8sRetryBackoff.diffUseCasesInt':
+    'Basisabsicherung über alle REST/Kubernetes-Aufrufe ohne Eingriff in einzelne Services.',
+  'k8sRetryBackoff.diffConfig': 'Konfiguration & Opt-Out',
+  'k8sRetryBackoff.diffConfigOp': 'Inline pro Stream über Operator-Argument konfiguriert.',
+  'k8sRetryBackoff.diffConfigInt':
+    'Global in <code>app.config.ts</code> konfiguriert; pro Anfrage via <code>HttpContext</code> überschreibbar oder deaktivierbar.',
+  'k8sRetryBackoff.example1Title': 'Beispiel 1: Interaktiver Simulator und Pipeline-Nutzung',
+  'k8sRetryBackoff.example1Desc':
+    'Simulieren Sie verschiedene Kubernetes-API-Antworten und beobachten Sie die Wiederholungsverzögerung von retryOnK8sBackoff, gefolgt vom passenden Code-Snippet:',
+  'k8sRetryBackoff.selectScenario': 'Antwortszenario auswählen:',
+  'k8sRetryBackoff.scenarioHeader': '429 (Retry-After: 1 Header)',
+  'k8sRetryBackoff.scenarioBody': '429 (details.retryAfterSeconds: 1.5 JSON-Body)',
+  'k8sRetryBackoff.scenarioFallback': '429 (Kein Header, 1s Fallback-Verzögerung)',
+  'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (Nicht wiederholbar, sofortiger Fehler)',
+  'k8sRetryBackoff.scenarioExhausted': '5x aufeinanderfolgende 429er (Maximale Versuche erschöpft)',
+  'k8sRetryBackoff.btnSimulate': 'Anfrage simulieren & wiederholen',
+  'k8sRetryBackoff.btnClearLogs': 'Protokolle leeren',
+  'k8sRetryBackoff.logTitle': 'Ausführungsprotokoll:',
+  'k8sRetryBackoff.example2Title': 'Beispiel 2: Eigenständige Verzögerungs-Hilfsfunktion (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.example2Desc':
+    'Nutzen Sie getK8sRetryDelayMs direkt, um Wartezeiten in benutzerdefinierten Wiederholungsschleifen oder Promises zu extrahieren:',
+  'k8sRetryBackoff.sampleErrorLabel': 'Beispielhafte Fehlerantwort:',
+  'k8sRetryBackoff.helperHeader': '429 (Retry-After: 3s)',
+  'k8sRetryBackoff.helperBody': '429 (retryAfterSeconds: 2s)',
+  'k8sRetryBackoff.helperFallback': '429 (Kein Hinweis, 1s Fallback)',
+  'k8sRetryBackoff.helperNon429': '500 (Nicht-429-Fehler)',
+  'k8sRetryBackoff.btnExtractDelay': 'Verzögerung extrahieren (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.retryableError': 'Wiederholbares Kubernetes-429-Backoff',
+  'k8sRetryBackoff.nonRetryableError': 'Nicht wiederholbarer Fehler',
+  'k8sRetryBackoff.apiSummary': 'Wiederholt ein Observable bei HTTP 429 anhand von Kubernetes-Wartehinweisen.',
+  'k8sRetryBackoff.paramConfig': 'Optionale Konfiguration für maximale Versuche und Fallback-Verzögerung.',
+  'k8sRetryBackoff.delaySummary':
+    'Extrahiert die Warteverzögerung in Millisekunden aus einem Fehlerobjekt oder liefert null.',
+  'k8sRetryBackoff.paramError': 'Zu prüfender Fehler (HttpErrorResponse oder Objekt mit status/headers/error).',
+  'k8sRetryBackoff.paramFallbackDelay':
+    'Fallback-Verzögerung in Millisekunden, falls die Antwort keinen Hinweis enthält.',
+
+  // k8sRetryBackoffInterceptor (de)
+  'k8sRetryBackoffInterceptor.overview':
+    '<code>k8sRetryBackoffInterceptor</code> ist ein funktionaler Angular-HTTP-Interzeptor (<code>HttpInterceptorFn</code>). Er bietet globalen Schutz vor <strong>HTTP 429 (Too Many Requests)</strong> durch automatische Auswertung von <code>Retry-After</code> und <code>details.retryAfterSeconds</code>.',
+  'k8sRetryBackoffInterceptor.callout':
+    'Benötigen Sie granulare Wiederholungen für einzelne Streams oder Polling? Nutzen Sie <a href="/ngx-lift/operators/k8sRetryBackoff"><code>retryOnK8sBackoff</code></a>.',
+  'k8sRetryBackoffInterceptor.example1Title': 'Beispiel 1: Globale Interzeptor-Registrierung & interaktiver Simulator',
+  'k8sRetryBackoffInterceptor.example1Desc':
+    'Registrieren Sie den Interzeptor global in app.config.ts. Alle HttpClient-Aufrufe wiederholen automatisch bei HTTP 429:',
+  'k8sRetryBackoffInterceptor.selectMode': 'Interzeptor-Kontextmodus:',
+  'k8sRetryBackoffInterceptor.modeDefault': 'Standard-Interzeptor (Wiederholt 429 mit 1s Verzögerung, dann 200 OK)',
+  'k8sRetryBackoffInterceptor.modeCustom': 'Benutzerdefinierter HttpContext (400ms Fallback-Verzögerung)',
+  'k8sRetryBackoffInterceptor.modeDisabled': 'Deaktiviert via HttpContext (HttpContextToken = false, bricht sofort ab)',
+  'k8sRetryBackoffInterceptor.btnSend': 'Abgefangene Anfrage senden',
+  'k8sRetryBackoffInterceptor.example2Title': 'Beispiel 2: Anfrage-spezifische Anpassung & Opt-Out via HttpContext',
+  'k8sRetryBackoffInterceptor.example2Desc':
+    'Verwenden Sie K8S_RETRY_BACKOFF_CONFIG in HttpContext, um Limits anzupassen oder Wiederholungen für schnelle Liveness-Checks zu deaktivieren:',
+  'k8sRetryBackoffInterceptor.apiSummary':
+    'Funktionaler HTTP-Interzeptor zur Wiederholung von HTTP 429-Antworten mit Kubernetes-Backoff.',
+  'k8sRetryBackoffInterceptor.factorySummary':
+    'Erstellt einen Interzeptor mit benutzerdefinierten Standard-Wiederholungseinstellungen.',
+  'k8sRetryBackoffInterceptor.tokenSummary':
+    'HttpContextToken zur Konfiguration oder Deaktivierung der Wiederholung für einzelne Anfragen.',
+  'k8sRetryBackoffInterceptor.paramDefaultConfig':
+    'Standardkonfiguration für alle Anfragen, sofern nicht via HttpContext überschrieben.',
 };
