@@ -23,7 +23,7 @@ export class TimelineWizardService {
   }
 
   get isLastStep() {
-    return this.currentStepIndex === this.steps.length - 1;
+    return this.currentStepIndex >= 0 && this.currentStepIndex === this.steps.length - 1;
   }
 
   /**
@@ -54,7 +54,9 @@ export class TimelineWizardService {
    * If the last step is a review component which doesn't have a form, filter it out.
    */
   get allStepsData() {
-    return this.steps.map((step) => ({id: step.id || step.title, data: step.data})).filter((step) => step.data);
+    return this.steps
+      .map((step) => ({id: step.id || step.title, data: step.data}))
+      .filter((step) => step.data !== null && step.data !== undefined);
   }
 
   /**
@@ -63,7 +65,7 @@ export class TimelineWizardService {
    * @throws Error if the step with the given title is not found.
    */
   getStepData<T>(key: string): T {
-    const stepFound = this.steps.find((step) => step.id === key || step.title === key);
+    const stepFound = this.steps.find((step) => step.id === key) ?? this.steps.find((step) => step.title === key);
     if (!stepFound) {
       throw new Error(`Step with identifier ${key} not found`);
     }

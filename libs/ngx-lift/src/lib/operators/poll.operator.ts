@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Signal} from '@angular/core';
 import {toObservable} from '@angular/core/rxjs-interop';
 import {
   catchError,
+  defer,
   EMPTY,
   exhaustMap,
   from,
@@ -13,6 +13,7 @@ import {
   of,
   share,
   startWith,
+  tap,
   timer,
 } from 'rxjs';
 
@@ -32,7 +33,8 @@ import {isPromise} from '../utils/is-promise.util';
  *
  * The polling function can return an Observable, Promise, or synchronous value.
  * The operator uses `exhaustMap` internally, which means if a poll is in progress when a new
- * trigger arrives, the new trigger will be ignored until the current poll completes.
+ * trigger arrives, no additional request starts. Manual parameter changes are retained for the next accepted tick.
+ * Synchronous factory/parameter-builder failures become error states without terminating future polling.
  *
  * @template Data - The type of the data emitted by the polling function.
  * @template Input - The type of the input parameter used to build polling parameters (when using `forceRefresh`).
@@ -111,12 +113,8 @@ export function poll<Data, Input = void, Params = Input>(options: {
   initialValue?: AsyncState<Data>;
   delay?: number;
 }): Observable<AsyncState<Data>> {
-  // Use a Symbol to mark timer emissions for better type safety and performance
-  const TIMER_MARKER = Symbol('timer');
-  type TimerEmission = {[key: symbol]: true; index: number};
-  const timer$ = timer(options.delay || 0, options.interval).pipe(
-    map((i) => ({[TIMER_MARKER]: true, index: i}) as TimerEmission),
-  );
+  type Trigger = {kind: 'timer'; index: number} | {kind: 'manual'; input: Input};
+  const timer$ = timer(options.delay ?? 0, options.interval).pipe(map((index): Trigger => ({kind: 'timer', index})));
 
   const trigger$ =
     options.forceRefresh === undefined
@@ -125,51 +123,40 @@ export function poll<Data, Input = void, Params = Input>(options: {
         ? options.forceRefresh
         : toObservable(options.forceRefresh);
 
-  let inputByForceRefresh: Input | undefined = undefined; // if forceRefresh is not provided, input will be undefined
+  return defer(() => {
+    let inputByForceRefresh: Input | undefined;
+    const manual$ = trigger$.pipe(map((input): Trigger => ({kind: 'manual', input})));
 
-  return merge(trigger$, timer$).pipe(
-    exhaustMap((input) => {
-      // input can be either by forceRefresh or timer
-      const isTimerTrigger = typeof input === 'object' && input !== null && TIMER_MARKER in input;
-      const isManualTrigger = !isTimerTrigger;
-      if (isManualTrigger) {
-        inputByForceRefresh = input as Input;
-      }
-
-      // build params by input
-      // if paramsBuilder is provided, params will be the value of this function call
-      // if paramsBuilder is not provided, params will be the value emitted by the forceRefresh
-      const params = (
-        options.paramsBuilder ? options.paramsBuilder(inputByForceRefresh as Input) : inputByForceRefresh
-      ) as Params;
-
-      // NOTE: using exhaustMap will NOT emit first timer if forceRefresh is not provided
-      // using concatMap will emit first timer if forceRefresh is not provided
-      const isFirstRequest = isTimerTrigger && (input as TimerEmission).index === 0; // timer first emission when forceRefresh is not provided
-
-      const fnResult = options.pollingFn(params);
-      const fnResult$ = isObservable(fnResult) ? fnResult : isPromise(fnResult) ? from(fnResult) : of(fnResult);
-
-      let observable$: Observable<AsyncState<Data>> = fnResult$.pipe(
-        map((data) => ({status: 'resolved' as const, isLoading: false, error: null, data})),
-        catchError((error) => of({status: 'error' as const, isLoading: false, error, data: null})),
-      );
-
-      if (isFirstRequest) {
-        observable$ = observable$.pipe(
-          startWith(
-            options.initialValue ?? ({status: 'loading' as const, isLoading: true, error: null, data: null} as any),
-          ),
+    return merge(manual$, timer$).pipe(
+      // Keep parameters current even when exhaustMap skips a busy trigger.
+      tap((trigger) => {
+        if (trigger.kind === 'manual') {
+          inputByForceRefresh = trigger.input;
+        }
+      }),
+      exhaustMap((trigger) => {
+        let observable$: Observable<AsyncState<Data>> = defer(() => {
+          const params = (
+            options.paramsBuilder ? options.paramsBuilder(inputByForceRefresh as Input) : inputByForceRefresh
+          ) as Params;
+          const result = options.pollingFn(params);
+          return isObservable(result) ? result : isPromise(result) ? from(result) : of(result);
+        }).pipe(
+          map((data) => ({status: 'resolved' as const, isLoading: false, error: null, data})),
+          catchError((error) => of({status: 'error' as const, isLoading: false, error, data: null})),
         );
-      }
-      if (isManualTrigger) {
-        observable$ = observable$.pipe(
-          startWith({status: 'loading' as const, isLoading: true, error: null, data: null}),
-        );
-      }
 
-      return observable$;
-    }),
-    share(),
-  );
+        if (trigger.kind === 'timer' && trigger.index === 0) {
+          observable$ = observable$.pipe(
+            startWith(options.initialValue ?? {status: 'loading' as const, isLoading: true, error: null, data: null}),
+          );
+        } else if (trigger.kind === 'manual') {
+          observable$ = observable$.pipe(
+            startWith({status: 'loading' as const, isLoading: true, error: null, data: null}),
+          );
+        }
+        return observable$;
+      }),
+    );
+  }).pipe(share());
 }

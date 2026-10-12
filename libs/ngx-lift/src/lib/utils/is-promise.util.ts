@@ -2,7 +2,7 @@
  * Type guard that checks if a value is a Promise.
  *
  * @param obj - The value to check.
- * @returns `true` if the value is a Promise (has a `then` method), `false` otherwise.
+ * @returns `true` if the value is Promise-like (has a `then` method), `false` otherwise.
  *
  * @example
  * ```typescript
@@ -13,7 +13,13 @@
  * isPromise(notPromise); // false
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isPromise(obj: any): obj is Promise<any> {
-  return !!obj && typeof obj.then === 'function';
+export function isPromise<T>(obj: T | PromiseLike<T>): obj is PromiseLike<T>;
+export function isPromise(obj: unknown): obj is PromiseLike<unknown>;
+export function isPromise(obj: unknown): obj is PromiseLike<unknown> {
+  return (
+    obj !== null &&
+    (typeof obj === 'object' || typeof obj === 'function') &&
+    'then' in obj &&
+    typeof obj.then === 'function'
+  );
 }

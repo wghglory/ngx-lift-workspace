@@ -1,0 +1,210 @@
+<cll-page-container [title]="'k8sRetryBackoffInterceptor'">
+  <!-- Overview -->
+  <p [innerHTML]="'k8sRetryBackoffInterceptor.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none" [innerHTML]="'k8sRetryBackoffInterceptor.callout' | translate"></p>
+    <a routerLink="/ngx-lift/operators/k8sRetryBackoff">retryOnK8sBackoff</a>
+  </cll-callout>
+
+  <!-- Interactive Simulator Section -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <app-demo-playground
+      [title]="'k8sRetryBackoffInterceptor.example1Title' | translate"
+      [description]="'k8sRetryBackoffInterceptor.example1Desc' | translate"
+      level="intermediate"
+      badgeText="HttpInterceptorFn"
+      layout="stacked"
+      [tsCode]="interceptorUsageCode"
+    >
+      <div preview class="preview-box" cds-layout="vertical gap:md">
+        <clr-radio-container clrInline>
+          <label>{{ 'k8sRetryBackoffInterceptor.selectMode' | translate }}</label>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="interceptorMode"
+              value="default"
+              [ngModel]="selectedMode()"
+              (ngModelChange)="selectedMode.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoffInterceptor.modeDefault' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="interceptorMode"
+              value="custom"
+              [ngModel]="selectedMode()"
+              (ngModelChange)="selectedMode.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoffInterceptor.modeCustom' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="interceptorMode"
+              value="disabled"
+              [ngModel]="selectedMode()"
+              (ngModelChange)="selectedMode.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoffInterceptor.modeDisabled' | translate }}</label>
+          </clr-radio-wrapper>
+        </clr-radio-container>
+
+        <div cds-layout="horizontal gap:sm align:vertical-center">
+          <button type="button" class="btn btn-primary btn-sm" [clrLoading]="isLoading()" (click)="executeRequest()">
+            {{ 'k8sRetryBackoffInterceptor.btnSend' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [disabled]="isLoading() || logs().length === 0"
+            (click)="clearLogs()"
+          >
+            {{ 'k8sRetryBackoff.btnClearLogs' | translate }}
+          </button>
+        </div>
+
+        @if (simulationResult(); as result) {
+          <div cds-layout="horizontal gap:sm align:vertical-center">
+            @if (result.success) {
+              <span class="badge badge-success">Success (HTTP {{ result.statusCode }})</span>
+            } @else {
+              <span class="badge badge-danger">Failure (HTTP {{ result.statusCode }})</span>
+            }
+            <span cds-text="body font:medium">{{ result.message }}</span>
+            <span cds-text="caption">(Total Attempts: {{ result.totalAttempts }})</span>
+          </div>
+        }
+
+        @if (logs().length > 0) {
+          <div cds-layout="vertical gap:xs">
+            <span cds-text="caption font:medium">{{ 'k8sRetryBackoff.logTitle' | translate }}</span>
+            <div class="card card-block font-mono text-xs" style="max-height: 200px; overflow-y: auto">
+              @for (log of logs(); track $index) {
+                <div>{{ log }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </app-demo-playground>
+
+    <!-- Example 2: Per-Request Customization & Opt-Out via HttpContext -->
+    <app-demo-playground
+      [title]="'k8sRetryBackoffInterceptor.example2Title' | translate"
+      [description]="'k8sRetryBackoffInterceptor.example2Desc' | translate"
+      level="advanced"
+      badgeText="HttpContextToken"
+      layout="stacked"
+      [tsCode]="contextOverrideCode"
+    >
+      <div preview class="preview-box" cds-layout="vertical gap:md">
+        <p>{{ 'k8sRetryBackoffInterceptor.overrideSimulation' | translate }}</p>
+        <div cds-layout="horizontal gap:sm align:vertical-center">
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [clrLoading]="activeOverrideTest() === 'probe'"
+            [disabled]="isTestingOverride()"
+            (click)="testProbeOptOut()"
+          >
+            {{ 'k8sRetryBackoffInterceptor.btnProbe' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [clrLoading]="activeOverrideTest() === 'workload'"
+            [disabled]="isTestingOverride()"
+            (click)="testWorkloadCustom()"
+          >
+            {{ 'k8sRetryBackoffInterceptor.btnWorkloads' | translate }}
+          </button>
+        </div>
+
+        @if (overrideResult(); as res) {
+          <div cds-layout="horizontal gap:sm align:vertical-center">
+            @if (res.bypassed) {
+              <span class="badge badge-danger">HTTP {{ res.statusCode }} (Fail Fast)</span>
+            } @else {
+              <span class="badge badge-success">HTTP {{ res.statusCode }} (Succeeded)</span>
+            }
+            <span cds-text="body font:medium">{{ res.message }}</span>
+            <span cds-text="caption">(Attempts: {{ res.attempts }})</span>
+          </div>
+        }
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>k8sRetryBackoffInterceptor</h3>
+      <p>{{ 'k8sRetryBackoffInterceptor.apiSummary' | translate }}</p>
+      <app-api-table [properties]="interceptorProperties()" />
+    </div>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>createK8sRetryBackoffInterceptor</h3>
+      <p>{{ 'k8sRetryBackoffInterceptor.factorySummary' | translate }}</p>
+      <app-code-block [code]="factoryCode" lang="typescript" />
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="factoryParameters()" />
+    </div>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>K8S_RETRY_BACKOFF_CONFIG</h3>
+      <p>{{ 'k8sRetryBackoffInterceptor.tokenSummary' | translate }}</p>
+      <p [innerHTML]="'k8sRetryBackoffInterceptor.overrideRules' | translate"></p>
+      <app-api-table [properties]="tokenProperties()" />
+    </div>
+  </section>
+
+  <!-- Architectural Comparison Section -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'k8sRetryBackoff.diffTitle' | translate }}</h2>
+    <p>{{ 'k8sRetryBackoff.diffDesc' | translate }}</p>
+
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'k8sRetryBackoff.diffColFeature' | translate }}</th>
+          <th>{{ 'k8sRetryBackoff.diffColInterceptor' | translate }}</th>
+          <th>{{ 'k8sRetryBackoff.diffColOperator' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>{{ 'k8sRetryBackoff.diffScope' | translate }}</strong>
+          </td>
+          <td>{{ 'k8sRetryBackoff.diffScopeInt' | translate }}</td>
+          <td>{{ 'k8sRetryBackoff.diffScopeOp' | translate }}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>{{ 'k8sRetryBackoff.diffUseCases' | translate }}</strong>
+          </td>
+          <td>{{ 'k8sRetryBackoff.diffUseCasesInt' | translate }}</td>
+          <td>{{ 'k8sRetryBackoff.diffUseCasesOp' | translate }}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>{{ 'k8sRetryBackoff.diffConfig' | translate }}</strong>
+          </td>
+          <td [innerHTML]="'k8sRetryBackoff.diffConfigInt' | translate"></td>
+          <td [innerHTML]="'k8sRetryBackoff.diffConfigOp' | translate"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</cll-page-container>

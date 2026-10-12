@@ -4,6 +4,17 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup} from '@angular/for
 import {UniqueValidator} from './unique.validator';
 
 describe('UniqueValidator', () => {
+  it('validates duplicate values in a FormGroup and removes only its own errors', () => {
+    const first = new FormControl('same');
+    const second = new FormControl('same');
+    const form = new FormGroup({first, second}, UniqueValidator.unique());
+    expect(form.errors).toEqual({notUnique: true});
+    first.setErrors({...first.errors, server: true});
+    second.setValue('different');
+    expect(form.errors).toBeNull();
+    expect(first.errors).toEqual({server: true});
+  });
+
   it('should validate uniqueness for FormControl in FormArray', () => {
     const fb: FormBuilder = TestBed.inject(FormBuilder);
     const formArray = fb.array(

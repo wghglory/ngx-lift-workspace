@@ -1,13 +1,23 @@
-import {ChangeDetectionStrategy, Component, effect, inject, Injector, signal, untracked} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal, untracked} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {
+  AlertComponent,
+  CalloutComponent,
+  PageContainerComponent,
+  SpinnerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 import {resourceAsync, ResourceRef} from 'ngx-lift';
 import {delay, map, of} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {StateInspectorComponent} from '../../../../shared/components/state-inspector/state-inspector.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
 import {User} from '../../../../shared/models/user.model';
 import {UserService} from '../../../../shared/services/user.service';
@@ -40,6 +50,20 @@ interface Organization {
   location: string;
 }
 
+interface SearchItem {
+  id: number;
+  title: string;
+  category: string;
+  updatedAt: string;
+}
+
+interface RequestLog {
+  id: number;
+  keyword: string;
+  status: 'in-flight' | 'aborted' | 'resolved';
+  timestamp: string;
+}
+
 @Component({
   selector: 'app-resource-async',
   imports: [
@@ -52,6 +76,10 @@ interface Organization {
     SpinnerComponent,
     AlertComponent,
     UserCardComponent,
+    DemoPlaygroundComponent,
+    StateInspectorComponent,
+    TranslatePipe,
+    ApiTableComponent,
   ],
   templateUrl: './resource-async.component.html',
   styleUrl: './resource-async.component.scss',
@@ -61,6 +89,134 @@ export class ResourceAsyncComponent {
   private userService = inject(UserService);
   private http = inject(HttpClient);
   private injector = inject(Injector);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'source',
+        type: '((context: ResourceAsyncContext) => Observable<T> | Promise<T> | T) | ResourceAsyncDefinition<P, T>',
+        required: true,
+        description: this.translationService.translate('resourceAsync.paramSourceFn'),
+      },
+      {
+        name: 'options',
+        type: 'ResourceRefOptions<T, E>',
+        description: this.translationService.translate('resourceAsync.paramOptions'),
+      },
+    ];
+  });
+
+  definitionProperties = computed<ApiProperty[]>(() => [
+    {
+      name: 'params',
+      type: '() => P',
+      required: true,
+      description: 'Pure reactive parameter capture function. Signal reads here are tracked.',
+    },
+    {
+      name: 'loader',
+      type: '(params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T',
+      required: true,
+      description: 'Factory receiving latest params and context.abortSignal. Signal reads here are untracked.',
+    },
+  ]);
+
+  optionsProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'initialValue',
+        type: 'T',
+        description: this.translationService.translate('resourceAsync.propInitialValue'),
+      },
+      {
+        name: 'lazy',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('resourceAsync.propLazy'),
+      },
+      {
+        name: 'behavior',
+        type: "'switch' | 'exhaust'",
+        defaultValue: "'switch'",
+        description: this.translationService.translate('resourceAsync.propBehavior'),
+      },
+      {
+        name: 'onError',
+        type: '(error: E) => T | undefined',
+        description: this.translationService.translate('resourceAsync.propOnError'),
+      },
+      {
+        name: 'throwOnError',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('resourceAsync.propThrowOnError'),
+      },
+      {
+        name: 'onSuccess',
+        type: '(value: T) => void',
+        description: this.translationService.translate('resourceAsync.propOnSuccess'),
+      },
+      {
+        name: 'onLoading',
+        type: '() => void',
+        description: this.translationService.translate('resourceAsync.propOnLoading'),
+      },
+    ];
+  });
+
+  returnsProperties = computed<ApiProperty[]>(() => {
+    return [
+      {
+        name: 'value',
+        type: 'Signal<T | undefined>',
+        description: 'The current value of the resource.',
+      },
+      {
+        name: 'error',
+        type: 'Signal<E | null>',
+        description: 'The current error, if any.',
+      },
+      {
+        name: 'status',
+        type: 'Signal<ResourceStatus>',
+        description: "The current status: 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'.",
+      },
+      {
+        name: 'isLoading',
+        type: 'Signal<boolean>',
+        description: "Signal that returns true if any fetch operation is in progress ('loading' or 'reloading').",
+      },
+      {
+        name: 'isIdle',
+        type: 'Signal<boolean>',
+        description: 'Signal that returns true if the resource is in idle state (never fetched).',
+      },
+      {
+        name: 'hasValue()',
+        type: '() => boolean',
+        description: 'Type predicate narrowing value() to exclude undefined when true.',
+      },
+      {
+        name: 'reload()',
+        type: '() => boolean',
+        description: 'Manually trigger a reload of the resource. Ideal for queries (GET).',
+      },
+      {
+        name: 'execute()',
+        type: '() => Promise<T>',
+        description:
+          'Manually trigger execution returning an awaitable Promise. Ideal for mutations (POST/PUT/DELETE).',
+      },
+      {
+        name: 'reset()',
+        type: '() => void',
+        description: 'Resets the resource to its initial idle state and cancels in-flight operations.',
+      },
+    ];
+  });
 
   // Basic resource - fetch single user (using results=1)
   pageNumber = signal(1);
@@ -387,6 +543,77 @@ export class ResourceAsyncComponent {
     this.pageNumber.set(pageNum);
   }
 
+  // Example 8: Declarative definition & AbortSignal concurrency cancellation
+  searchKeyword = signal('Angular');
+  searchLogs = signal<RequestLog[]>([]);
+  private searchSeq = 0;
+
+  searchDefinitionRef = resourceAsync<SearchItem[], string>(
+    {
+      params: () => this.searchKeyword(),
+      loader: (keyword, {abortSignal}) => {
+        const currentSeq = ++this.searchSeq;
+        const entry: RequestLog = {
+          id: currentSeq,
+          keyword,
+          status: 'in-flight',
+          timestamp: new Date().toLocaleTimeString(),
+        };
+        this.searchLogs.update((logs) => [entry, ...logs.slice(0, 5)]);
+
+        return new Promise<SearchItem[]>((resolve, reject) => {
+          const timer = setTimeout(() => {
+            this.searchLogs.update((logs) =>
+              logs.map((item) => (item.id === currentSeq ? {...item, status: 'resolved'} : item)),
+            );
+            resolve([
+              {id: 1, title: `${keyword} - Reactive Signals Deep Dive`, category: 'Guides', updatedAt: 'Just now'},
+              {
+                id: 2,
+                title: `${keyword} - Resource Concurrency & Cancellation`,
+                category: 'Architecture',
+                updatedAt: 'Just now',
+              },
+              {
+                id: 3,
+                title: `${keyword} - High Performance UI Patterns`,
+                category: 'Design',
+                updatedAt: 'Just now',
+              },
+            ]);
+          }, 850);
+
+          abortSignal.addEventListener('abort', () => {
+            clearTimeout(timer);
+            this.searchLogs.update((logs) =>
+              logs.map((item) => (item.id === currentSeq ? {...item, status: 'aborted'} : item)),
+            );
+            reject(new DOMException('Operation aborted by ResourceAsync', 'AbortError'));
+          });
+        });
+      },
+    },
+    {
+      defaultValue: [],
+    },
+  );
+
+  rapidSwitchQuery() {
+    this.searchKeyword.set('Signals');
+    setTimeout(() => {
+      this.searchKeyword.set('Clarity');
+    }, 150);
+  }
+
+  async runAwaitableSearch(): Promise<void> {
+    try {
+      const items = await this.searchDefinitionRef.execute();
+      console.log('Search resolved via execute():', items);
+    } catch (err) {
+      console.warn('Execution cancelled or error:', err);
+    }
+  }
+
   basicCode = highlight(`
 import {resourceAsync} from 'ngx-lift';
 import {Component, signal} from '@angular/core';
@@ -518,18 +745,52 @@ export class UserDetailComponent {
 }
   `);
 
+  declarativeCode = highlight(`
+import {resourceAsync, ResourceAsyncDefinition} from 'ngx-lift';
+import {Component, signal} from '@angular/core';
+
+export class CatalogSearchComponent {
+  query = signal('Angular');
+
+  // Declarative ResourceAsyncDefinition with params + loader receiving context.abortSignal
+  searchRef = resourceAsync<SearchResult[], string>(
+    {
+      params: () => this.query(),
+      loader: (searchQuery, {abortSignal}) => {
+        // Pass abortSignal to fetch or HTTP clients for true network/operation cancellation
+        return fetch(\`/api/search?q=\${encodeURIComponent(searchQuery)}\`, {
+          signal: abortSignal,
+        }).then((res) => res.json());
+      },
+    },
+    {
+      defaultValue: [],
+    }
+  );
+}
+  `);
+
   signatureCode = highlight(`
-// 1. With initialValue or defaultValue -> value() is Signal<T> (never undefined)
-function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
-  options: ({ initialValue: T } | { defaultValue: T }) & BaseResourceRefOptions<T, E>
+// 1. Declarative definition (ResourceAsyncDefinition<P, T>)
+function resourceAsync<T, P, E = Error>(
+  definition: ResourceAsyncDefinition<P, T>,
+  options?: ResourceRefOptions<T, E>
 ): WritableResourceRef<T, E>;
 
-// 2. Without initialValue -> value() is Signal<T | undefined>
+// 2. Functional loader with AbortSignal context
 function resourceAsync<T, E = Error>(
-  sourceFn: () => Observable<T> | Promise<T> | T,
-  options?: ResourceRefOptionsWithoutInitial<T, E>
-): WritableResourceRef<T | undefined, E>;
+  sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
+  options?: ResourceRefOptions<T, E>
+): WritableResourceRef<T, E>;
+
+interface ResourceAsyncDefinition<P, T> {
+  params: () => P;
+  loader: (params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T;
+}
+
+interface ResourceAsyncContext {
+  readonly abortSignal: AbortSignal;
+}
 
 interface ResourceRefOptions<T, E = Error> {
   initialValue?: T;                       // Initial value before first fetch

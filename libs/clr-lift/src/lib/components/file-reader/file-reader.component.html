@@ -5,6 +5,7 @@
   class="clr-file"
   (change)="onFileSelected($event)"
   [accept]="acceptFiles()"
+  [disabled]="isDisabled()"
 />
 
 <button type="button" [disabled]="isDisabled()" class="btn btn-outline btn-sm" (click)="file.click()">
@@ -12,10 +13,11 @@
 </button>
 <span>{{ selectedFile()?.name }}</span>
 
-@if (selectedFile() || formControl().value) {
+@if (selectedFile() || formControl()?.value) {
   <button
     type="button"
     class="btn btn-sm btn-icon btn-link btn-close"
+    [disabled]="isDisabled()"
     (click)="removeFile()"
     [attr.aria-label]="'FileReader.removeFile' | translate"
   >

@@ -14,6 +14,16 @@ on:
       - main
       - develop
       - 'release/**'
+  schedule:
+    # Run daily at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      run_e2e:
+        description: 'Run E2E tests'
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,8 +37,9 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') }}
-      is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') }}
+      is-main-or-release: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/') || github.event_name == 'schedule' }}
+      is-affected: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/release/') && github.event_name != 'schedule' }}
+      is-daily-or-e2e: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_e2e == true) }}
     steps:
       - name: Display branch info
         run: |
@@ -155,10 +166,47 @@ jobs:
           path: dist/
           retention-days: 7
 
+  e2e:
+    name: E2E Test
+    runs-on: ubuntu-latest
+    needs: [setup, build]
+    if: always() && needs.build.result == 'success' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_e2e == true))
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers and dependencies
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run E2E tests
+        run: pnpm run e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-report
+          path: dist/.playwright/apps/demo-e2e/playwright-report/
+          retention-days: 7
+
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [setup, lint, unit-test, build]
+    needs: [setup, lint, unit-test, build, e2e]
     if: always()
     steps:
       - name: Update CI Summary
@@ -166,7 +214,9 @@ jobs:
           LINT_STATUS="${{ needs.lint.result }}"
           TEST_STATUS="${{ needs.unit-test.result }}"
           BUILD_STATUS="${{ needs.build.result }}"
+          E2E_STATUS="${{ needs.e2e.result }}"
           IS_MAIN_OR_RELEASE="${{ needs.setup.outputs.is-main-or-release }}"
+          IS_DAILY_OR_E2E="${{ needs.setup.outputs.is-daily-or-e2e }}"
 
           get_status_icon() {
             case "$1" in
@@ -191,10 +241,12 @@ jobs:
           LINT_ICON=$(get_status_icon "$LINT_STATUS")
           TEST_ICON=$(get_status_icon "$TEST_STATUS")
           BUILD_ICON=$(get_status_icon "$BUILD_STATUS")
+          E2E_ICON=$(get_status_icon "$E2E_STATUS")
 
           LINT_BADGE=$(get_status_badge "$LINT_STATUS")
           TEST_BADGE=$(get_status_badge "$TEST_STATUS")
           BUILD_BADGE=$(get_status_badge "$BUILD_STATUS")
+          E2E_BADGE=$(get_status_badge "$E2E_STATUS")
 
           if [ "$IS_MAIN_OR_RELEASE" = "true" ]; then
             MODE="🔄 **All Projects**"
@@ -227,6 +279,7 @@ jobs:
           - **Lint**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
           - **Unit Test**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
           - **Build**: $([ "$IS_MAIN_OR_RELEASE" = "true" ] && echo "All projects" || echo "Affected projects")
+          $([ "$IS_DAILY_OR_E2E" = "true" ] && echo "- **E2E Test**: Demo app Playwright tests" || echo "")
 
           ---
 
@@ -237,11 +290,12 @@ jobs:
           | 🔍 **Lint** | $LINT_ICON $LINT_BADGE | Code quality checks |
           | 🧪 **Unit Test** | $TEST_ICON $TEST_BADGE | Run unit tests |
           | 🏗️ **Build** | $BUILD_ICON $BUILD_BADGE | Build projects |
+          $([ "$IS_DAILY_OR_E2E" = "true" ] && echo "| 🎭 **E2E Test** | $E2E_ICON $E2E_BADGE | Run Playwright E2E tests |" || echo "")
 
           ---
 
           ## 📈 Overall Status
 
-          $([ "$LINT_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ] && [ "$BUILD_STATUS" = "success" ] && echo "### ✅ All jobs completed successfully!" || echo "### ⚠️ Some jobs did not complete successfully. Check individual job logs for details.")
+          $([ "$LINT_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ] && [ "$BUILD_STATUS" = "success" ] && { [ "$E2E_STATUS" = "success" ] || [ "$E2E_STATUS" = "skipped" ]; } && echo "### ✅ All jobs completed successfully!" || echo "### ⚠️ Some jobs did not complete successfully. Check individual job logs for details.")
 
           EOF

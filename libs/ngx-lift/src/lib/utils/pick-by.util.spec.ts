@@ -56,4 +56,12 @@ describe('pickBy function', () => {
 
     expect(result).toEqual(inputObject);
   });
+
+  it('preserves an own __proto__ data property without changing the result prototype', () => {
+    const source: Record<string, unknown> = JSON.parse('{"__proto__":{"unexpected":true},"safe":1}');
+    const result = pickBy(source, () => true);
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(Object.hasOwn(result, '__proto__')).toBe(true);
+    expect(result['__proto__']).toEqual({unexpected: true});
+  });
 });

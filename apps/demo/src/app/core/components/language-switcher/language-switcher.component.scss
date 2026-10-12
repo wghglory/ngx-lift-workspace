@@ -1,0 +1,48 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.language-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--clr-header-font-color, #ffffff);
+  text-decoration: none;
+  padding: 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  height: 100%;
+
+  clr-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dropdown-caret {
+    width: 12px;
+    height: 12px;
+    margin-left: -0.1rem;
+    opacity: 0.85;
+  }
+
+  .lang-text {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    color: var(--clr-header-font-color, #ffffff);
+    opacity: 0.9;
+  }
+}
+
+.dropdown-item-label {
+  flex: 1;
+}
+
+.active-check {
+  margin-left: 0.5rem;
+}

@@ -1,4 +1,14 @@
-import {ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, OnInit, output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  input,
+  OnInit,
+  output,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -15,6 +25,8 @@ import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {keyValueTranslations} from './key-value.l10n';
 import {KeyValueFormGroup} from './key-value-form-group.type';
+
+let nextControlId = 0;
 
 /**
  * A component for managing dynamic key-value pair inputs in a form.
@@ -41,7 +53,9 @@ import {KeyValueFormGroup} from './key-value-form-group.type';
 export class KeyValueInputsComponent implements OnInit {
   private translationService = inject(TranslationService);
   private fb = inject(NonNullableFormBuilder);
-  private hostElement = inject(ElementRef).nativeElement;
+  private hostElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private focusTimer?: ReturnType<typeof setTimeout>;
+  readonly controlIdPrefix = `cll-key-value-${nextControlId++}`;
 
   /**
    * The FormArray containing key-value form groups.
@@ -139,6 +153,7 @@ export class KeyValueInputsComponent implements OnInit {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('key-value', keyValueTranslations);
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.focusTimer));
   }
 
   removeKeyValuePair(index: number) {
@@ -211,10 +226,12 @@ export class KeyValueInputsComponent implements OnInit {
   }
 
   private focusOnLastKeyControl() {
-    setTimeout(() => {
+    clearTimeout(this.focusTimer);
+    this.focusTimer = setTimeout(() => {
+      this.focusTimer = undefined;
       const inputs = this.hostElement.getElementsByTagName('input');
       const lastKeyControl = inputs[inputs.length - 2];
-      lastKeyControl.focus();
+      lastKeyControl?.focus();
     });
   }
 }

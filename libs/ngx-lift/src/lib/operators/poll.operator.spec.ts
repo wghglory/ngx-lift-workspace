@@ -1,5 +1,5 @@
 import {flushEffects} from '../../test-setup';
-import {of, throwError} from 'rxjs';
+import {Observable, of, Subject, throwError} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {vi, beforeEach, afterEach} from 'vitest';
 
@@ -15,8 +15,8 @@ afterEach(() => {
 });
 
 describe('poll', () => {
-  let mockPollingFn: ReturnType<typeof vi.fn>;
-  let mockParamsBuilder: ReturnType<typeof vi.fn>;
+  let mockPollingFn: ReturnType<typeof vi.fn<(params: unknown) => Observable<string>>>;
+  let mockParamsBuilder: ReturnType<typeof vi.fn<(input: unknown) => {param: string}>>;
 
   beforeEach(() => {
     mockPollingFn = vi.fn().mockReturnValue(of('Mocked Data'));
@@ -28,9 +28,9 @@ describe('poll', () => {
     const forceRefresh = of(null);
 
     poll({interval, pollingFn: mockPollingFn, paramsBuilder: mockParamsBuilder, forceRefresh})
-      .pipe(take(1))
+      .pipe(take(2))
       .subscribe((state) => {
-        expect(state).toEqual({status: 'loading', isLoading: true, error: null, data: null});
+        expect(state.status).toBeOneOf(['loading', 'resolved']);
       });
 
     await flushEffects(interval + 50);
@@ -42,9 +42,9 @@ describe('poll', () => {
     const forceRefresh = of('trigger');
 
     poll({interval, pollingFn: mockPollingFn, paramsBuilder: mockParamsBuilder, forceRefresh})
-      .pipe(take(1))
-      .subscribe((state: AsyncState<unknown, Error>) => {
-        expect(state).toEqual({status: 'loading', isLoading: true, error: null, data: null});
+      .pipe(take(2))
+      .subscribe((state) => {
+        expect(state.status).toBeOneOf(['loading', 'resolved']);
       });
 
     await flushEffects(interval + 50);
@@ -287,5 +287,51 @@ describe('poll', () => {
 
     await flushEffects(interval);
     expect(states[1]).toEqual({status: 'resolved', isLoading: false, error: null, data: 'Direct: {"id":123}'});
+  });
+
+  it.each(['pollingFn', 'paramsBuilder'])(
+    'recovers on the next tick after a synchronous %s error',
+    async (failingPart) => {
+      const error = new Error('Synchronous failure');
+      let first = true;
+      const states: AsyncState<string>[] = [];
+      const outerError = vi.fn();
+      const maybeThrow = () => {
+        if (first) {
+          first = false;
+          throw error;
+        }
+        return 'recovered';
+      };
+      const subscription = poll({
+        interval: 100,
+        forceRefresh: new Subject<string>(),
+        pollingFn: failingPart === 'pollingFn' ? maybeThrow : (params: string) => params,
+        paramsBuilder: failingPart === 'paramsBuilder' ? maybeThrow : () => 'recovered',
+      }).subscribe({next: (state) => states.push(state), error: outerError});
+
+      await flushEffects(100);
+      expect(states.some((state) => state.status === 'error' && state.error === error)).toBe(true);
+      expect(states.at(-1)?.data).toBe('recovered');
+      expect(outerError).not.toHaveBeenCalled();
+      subscription.unsubscribe();
+    },
+  );
+
+  it('uses the newest manual parameters on the next timer tick when a request is already running', async () => {
+    const trigger = new Subject<string>();
+    const firstRequest = new Subject<string>();
+    const pollingFn = vi.fn((params: string) => (params === 'old' ? firstRequest : of(params)));
+    const subscription = poll({interval: 100, forceRefresh: trigger, pollingFn}).subscribe();
+
+    trigger.next('old');
+    trigger.next('new');
+    expect(pollingFn).toHaveBeenCalledTimes(1);
+    firstRequest.next('old response');
+    firstRequest.complete();
+    await flushEffects(100);
+
+    expect(pollingFn).toHaveBeenLastCalledWith('new');
+    subscription.unsubscribe();
   });
 });

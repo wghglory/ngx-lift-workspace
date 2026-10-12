@@ -1,5 +1,5 @@
 // This directive is used to position the tooltip automatically. Now it's not being used.
-import {AfterViewInit, Directive, ElementRef, inject} from '@angular/core';
+import {AfterViewInit, Directive, DestroyRef, ElementRef, inject} from '@angular/core';
 
 import {collisionDetection} from './tooltip.util';
 
@@ -8,9 +8,11 @@ import {collisionDetection} from './tooltip.util';
 })
 export class PositioningTooltipDirective implements AfterViewInit {
   private tooltipContainerElement = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
 
   ngAfterViewInit() {
-    setTimeout(() => this.updateTooltipClass(), 0);
+    const timer = setTimeout(() => this.updateTooltipClass(), 0);
+    this.destroyRef.onDestroy(() => clearTimeout(timer));
   }
 
   private updateTooltipClass() {

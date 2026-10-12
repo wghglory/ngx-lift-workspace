@@ -1,5 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormArray, ReactiveFormsModule} from '@angular/forms';
+import {vi} from 'vitest';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
@@ -63,5 +64,32 @@ describe('KeyValueInputsComponent', () => {
     component.removeKeyValuePair(0);
 
     expect(component.formArray().length).toBe(initialLength - 1);
+  });
+  it('cancels queued focus work when destroyed', () => {
+    vi.useFakeTimers();
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    try {
+      component.addKeyValuePair();
+      fixture.destroy();
+      vi.runOnlyPendingTimers();
+
+      expect(focus).not.toHaveBeenCalled();
+    } finally {
+      focus.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
+  it('assigns different label targets to separate component instances', () => {
+    const otherFixture = TestBed.createComponent(KeyValueInputsComponent);
+    otherFixture.componentRef.setInput('formArray', new FormArray<KeyValueFormGroup>([]));
+    otherFixture.componentRef.setInput('data', [{key: 'other', value: 'value'}]);
+    otherFixture.detectChanges();
+    const firstInput: HTMLInputElement = fixture.nativeElement.querySelector('input');
+    const secondInput: HTMLInputElement = otherFixture.nativeElement.querySelector('input');
+    const secondLabel: HTMLLabelElement = otherFixture.nativeElement.querySelector('label');
+
+    expect(firstInput.id).not.toBe(secondInput.id);
+    expect(secondLabel.htmlFor).toBe(secondInput.id);
   });
 });

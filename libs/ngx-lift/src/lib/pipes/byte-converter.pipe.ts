@@ -68,7 +68,8 @@ export class ByteConverterPipe implements PipeTransform {
       unitIndex++;
     }
 
-    const translationObject = translations[this.locale] || translations['en'];
+    const language = this.locale.split('-')[0];
+    const translationObject = translations[this.locale] || translations[language] || translations['en'];
     const key = units[unitIndex];
 
     return this.formatNumber(value) + ' ' + translationObject[key];

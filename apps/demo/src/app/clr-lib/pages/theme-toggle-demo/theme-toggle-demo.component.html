@@ -1,0 +1,104 @@
+<cll-page-container [title]="'themeToggle.title' | translate">
+  <!-- Overview -->
+  <p [innerHTML]="'themeToggle.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none">
+      {{ 'themeToggle.callout' | translate }}
+    </p>
+  </cll-callout>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <app-demo-playground
+      [title]="'common.example1' | translate"
+      level="beginner"
+      [badgeText]="'themeToggle.example1Badge' | translate"
+      [description]="'themeToggle.example1Desc' | translate"
+      [htmlCode]="basicComponentCode"
+    >
+      <div preview>
+        <div class="preview-box" cds-layout="horizontal gap:md align:center">
+          <cll-theme-toggle (changeTheme)="onThemeChange($event)" />
+          <span cds-text="body">
+            {{ 'themeToggle.currentTheme' | translate }} <strong>{{ currentTheme() }}</strong>
+          </span>
+        </div>
+      </div>
+
+      <div inspector>
+        <app-state-inspector
+          [title]="'themeToggle.inspectorTitle' | translate"
+          [description]="'themeToggle.inspectorDesc' | translate"
+          [data]="toggleInspectorData()"
+        />
+      </div>
+    </app-demo-playground>
+
+    <app-demo-playground
+      [title]="'common.example2' | translate"
+      level="intermediate"
+      [badgeText]="'themeToggle.example2Badge' | translate"
+      [description]="'themeToggle.example2Desc' | translate"
+      [tsCode]="programmaticServiceCode"
+    >
+      <div preview>
+        <div class="preview-box" cds-layout="horizontal gap:sm align:center">
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="currentTheme() === 'light'"
+            [class.btn-outline]="currentTheme() !== 'light'"
+            (click)="setTheme('light')"
+          >
+            {{ 'themeToggle.setLight' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="currentTheme() === 'dark'"
+            [class.btn-outline]="currentTheme() !== 'dark'"
+            (click)="setTheme('dark')"
+          >
+            {{ 'themeToggle.setDark' | translate }}
+          </button>
+        </div>
+      </div>
+    </app-demo-playground>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'themeToggle.example3' | translate }}</h3>
+      <p>
+        {{ 'themeToggle.example3Desc' | translate }}
+      </p>
+      <app-code-block [code]="themingStylesCode" lang="css" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>ThemeToggleComponent (<code>cll-theme-toggle</code>)</h3>
+
+      <h4>{{ 'common.inputs' | translate }}</h4>
+      <app-api-table [properties]="componentInputs" />
+
+      <h4>{{ 'common.outputs' | translate }}</h4>
+      <app-api-table [properties]="componentOutputs" />
+    </div>
+
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>ThemeService</h3>
+      <p>{{ 'themeToggle.serviceSummary' | translate }}</p>
+
+      <h4>{{ 'common.properties' | translate }}</h4>
+      <app-api-table [properties]="serviceProperties" />
+
+      <h4>{{ 'common.methods' | translate }}</h4>
+      <app-api-table [properties]="serviceMethods" />
+    </div>
+  </section>
+</cll-page-container>

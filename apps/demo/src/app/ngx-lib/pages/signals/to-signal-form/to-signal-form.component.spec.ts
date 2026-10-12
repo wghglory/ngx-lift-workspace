@@ -29,6 +29,19 @@ describe('ToSignalFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should initialize and validate quickstart form reactively', () => {
+    expect(component.quickSf.invalid()).toBe(true);
+    expect(component.quickFormState().valid).toBe(false);
+
+    component.quickForm.controls.username.setValue('johndoe');
+    component.quickForm.controls.email.setValue('john@example.com');
+    fixture.detectChanges();
+
+    expect(component.quickSf.valid()).toBe(true);
+    expect(component.quickFormState().username).toBe('johndoe');
+    expect(component.quickFormState().email).toBe('john@example.com');
+  });
+
   it('should filter versions reactively when engine changes', () => {
     expect(component.engine()).toBe('');
     expect(component.availableVersions()).toEqual([]);

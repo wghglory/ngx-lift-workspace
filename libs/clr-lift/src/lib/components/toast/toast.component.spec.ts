@@ -57,4 +57,29 @@ describe('ToastComponent', () => {
     secondaryButton.triggerEventHandler('click', null);
     expect(secondaryButtonClickSpy).toHaveBeenCalled();
   });
+  it('cancels auto-close timers when destroyed', () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput('timeoutSeconds', 1);
+      fixture.detectChanges();
+      expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+      fixture.destroy();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('ToastComponent accessible translations', () => {
+  it('uses the available success icon label', () => {
+    TestBed.configureTestingModule({imports: [ToastComponent, NoopAnimationsModule]});
+    const fixture = TestBed.createComponent(ToastComponent);
+    fixture.componentRef.setInput('toastType', 'success');
+    fixture.componentRef.setInput('timeoutSeconds', 0);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('svg').getAttribute('aria-label')).toBe('Success Icon');
+  });
 });

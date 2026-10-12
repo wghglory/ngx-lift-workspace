@@ -1,20 +1,54 @@
-import {ChangeDetectionStrategy, Component, effect, inject, Injector, numberAttribute, Signal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  numberAttribute,
+  Signal,
+} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {injectParams} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-inject-params',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, CalloutComponent],
+  imports: [
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    CalloutComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './inject-params.component.html',
   styleUrl: './inject-params.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InjectParamsComponent {
   private injector = inject(Injector);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'keyOrTransform',
+        type: 'string | ((params: Params) => T)',
+        description: this.translationService.translate('injectParams.paramKeyOrTransform'),
+      },
+      {
+        name: 'options',
+        type: 'InjectParamsOptions<T>',
+        description: this.translationService.translate('injectParams.paramOptions'),
+      },
+    ];
+  });
 
   // returns a signal with the current route params
   params = injectParams();

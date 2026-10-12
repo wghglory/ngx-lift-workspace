@@ -1,0 +1,223 @@
+export const ruTranslations: Record<string, string> = {
+  'header.selectLanguage': 'Выберите язык',
+  'header.openGitHub': 'Открыть на GitHub',
+  'header.codeLicensed': 'Код под лицензией',
+
+  'nav.signalUtils': 'Утилиты сигналов',
+  'nav.queryMutation': 'Query & Mutation',
+  'nav.operators': 'Операторы',
+  'nav.interceptors': 'Интерцепторы',
+  'nav.validators': 'Валидаторы',
+  'nav.pipes': 'Пайпы',
+  'nav.utilities': 'Утилиты',
+  'nav.components': 'Компоненты',
+  'nav.pageContainer': 'Контейнер страницы',
+  'nav.timelineWizard': 'Мастер временной шкалы',
+  'nav.alert': 'Оповещение',
+  'nav.multiAlerts': 'Оповещения (Несколько)',
+  'nav.callout': 'Выноска',
+  'nav.spinner': 'Спиннер',
+  'nav.toast': 'Тост-уведомление',
+  'nav.tooltip': 'Подсказка',
+  'nav.themeToggle': 'Переключение темы',
+  'nav.fileReader': 'Чтение файлов',
+  'nav.keyValueInputs': 'Ввод ключ-значение',
+  'nav.statusIndicator': 'Индикатор состояния',
+  'nav.idleDetection': 'Определение неактивности',
+  'nav.certificate': 'Просмотр сертификатов',
+  'nav.datagrid': 'Таблица данных',
+  'nav.byteConverter': 'Конвертер байтов',
+  'nav.mask': 'Маска',
+  'nav.arrayJoin': 'Объединение массива',
+  'nav.range': 'Диапазон',
+  'nav.isHttps': 'Проверка Https',
+  'nav.differenceInDays': 'Разница в днях',
+  'nav.badgeNew': 'НОВОЕ',
+  'nav.badgeUpdated': 'ОБНОВЛЕНО',
+  'nav.badgePopular': 'ПОПУЛЯРНОЕ',
+  'nav.badgeCore': 'ЯДРО',
+
+  'common.examples': 'Примеры',
+  'common.apiReference': 'Справочник API',
+  'common.overview': 'Обзор',
+  'common.parameters': 'Параметры',
+  'common.returns': 'Возвращает',
+  'common.signature': 'Сигнатура',
+  'common.description': 'Описание',
+  'common.basicUsage': 'Базовое использование',
+  'common.inputs': 'Входные свойства (Inputs)',
+  'common.outputs': 'Выходные события (Outputs)',
+  'common.contentProjection': 'Проекция контента (Content Projection)',
+  'common.example': 'Пример',
+  'common.example1': 'Пример 1: Базовое использование',
+  'common.example2': 'Пример 2: С RxJS Pipe оператором',
+  'common.example3': 'Пример 3: Асинхронный код',
+  'common.example4': 'Пример 4: Отдельный Injector',
+
+  'playground.beginner': 'Начальный',
+  'playground.intermediate': 'Средний',
+  'playground.advanced': 'Продвинутый',
+  'playground.copy': 'Копировать',
+  'playground.copied': 'Скопировано',
+  'playground.viewCode': 'Показать код',
+  'playground.hideCode': 'Скрыть код',
+  'playground.stackedLayout': 'Вертикальный вид',
+  'playground.splitLayout': 'Вид бок о бок',
+
+  'inspector.liveState': 'Состояние сигналов онлайн',
+  'inspector.rawJson': 'Исходный JSON',
+  'inspector.hideJson': 'Скрыть JSON',
+
+  'mergeFrom.overview':
+    'Функция <code>mergeFrom</code> объединяет значения Observables или сигналов и выдает последнее значение. Она также позволяет изменять выдаваемое значение с помощью операторов RxJS перед отправкой. Хотя она похожа на <code>merge()</code>, она также учитывает сигналы.',
+  'mergeFrom.example1Desc': 'Объединение нескольких сигналов или observables:',
+  'mergeFrom.example2Desc': 'Передача RxJS pipe оператора для изменения выдаваемых значений:',
+  'mergeFrom.example3Desc':
+    'Используйте <code>startWith</code> или <code>initialValue</code> для асинхронных observables:',
+  'mergeFrom.example4Desc':
+    'Передайте пользовательский <code>Injector</code> для создания объединенного сигнала вне контекста внедрения:',
+  'mergeFrom.apiSummary':
+    'Объединяет несколько Observables или сигналов в один сигнал, выдающий последнее значение из любого источника.',
+
+  'toSignalForm.pageTitle': 'Реактивные сигналы форм и привязки (toSignalForm)',
+  'toSignalForm.bannerTitle': 'Связывание Angular Reactive Forms и современных сигналов',
+  'toSignalForm.bannerDesc':
+    '<code>toSignalForm</code> оборачивает стандартные <code>FormGroup</code> Angular в реактивные сигналы, декларативные привязки (<code>bindIf</code>, <code>bindDisabled</code>), ревалидацию и очищенные значения отправки (<code>submitValue</code>).',
+  'toSignalForm.quickTitle': 'Уровень 1: Быстрый старт с сигналами форм',
+  'toSignalForm.quickBadge': '30-секундный Hello World',
+  'toSignalForm.quickDesc':
+    'Основы: оберните FormGroup с помощью toSignalForm, считывайте значения реактивно через сигналы и блокируйте действия с sf.invalid().',
+  'toSignalForm.username': 'Имя пользователя',
+  'toSignalForm.usernamePlaceholder': 'Не менее 3 символов',
+  'toSignalForm.usernameRequired': 'Имя пользователя обязательно.',
+  'toSignalForm.usernameMinLength': 'Должно быть не менее 3 символов.',
+  'toSignalForm.email': 'Адрес эл. почты',
+  'toSignalForm.emailPlaceholder': 'name@domain.com',
+  'toSignalForm.emailRequired': 'Эл. почта обязательна.',
+  'toSignalForm.emailInvalid': 'Пожалуйста, введите действительный адрес эл. почты.',
+  'toSignalForm.receiveUpdates': 'Получать обновления по эл. почте',
+  'toSignalForm.saveProfile': 'Сохранить профиль',
+  'toSignalForm.reset': 'Сбросить',
+  'toSignalForm.quickFormState': 'Состояние сигналов быстрой формы',
+  'toSignalForm.quickFormStateDesc': 'Сигналы обновляются синхронно по мере ввода в форме выше',
+  'toSignalForm.enterpriseTitle': 'Уровень 2: Enterprise Showcase - Подготовка облачной БД',
+  'toSignalForm.enterpriseBadge': 'Реальная спецификация',
+  'toSignalForm.enterpriseDesc':
+    'Сложное наличие полей, асинхронная проверка через resourceAsync, каскадные обновления версий и блокировки масштабирования.',
+  'toSignalForm.enterpriseState': 'Онлайн сигналы Enterprise-формы',
+  'toSignalForm.enterpriseStateDesc':
+    'Отслеживает валидацию формы, блокировки автомасштабирования и статус подготовки бэкенда в реальном времени',
+  'toSignalForm.region': 'Регион развертывания / Узел',
+  'toSignalForm.regionSelect': 'Выберите целевой регион...',
+  'toSignalForm.regionRequired': 'Регион развертывания обязателен.',
+  'toSignalForm.regionHelper': 'Асинхронно проверяет возможности регионального узла через <code>computedAsync</code>.',
+  'toSignalForm.multiZoneSupported': '✓ Поддерживается многозонная HA',
+  'toSignalForm.singleZoneOnly': 'Только одна зона (HA заблокирована)',
+  'toSignalForm.engine': 'СУБД',
+  'toSignalForm.engineRequired': 'СУБД обязательна.',
+  'toSignalForm.engineHelper': 'Опции ниже реактивно выводятся из <code>sf.fields.engine.value</code>.',
+  'toSignalForm.patternsTitle': 'Специализированные архитектурные шаблоны',
+  'toSignalForm.pattern1Title': 'Шаблон 1: Зависимые / Условные деревья полей',
+  'toSignalForm.pattern1Desc':
+    'Динамическое включение, отключение, отображение или скрытие зависимых полей формы на основе выбора родителя с помощью bindIf и bindDisabled.',
+  'toSignalForm.pattern2Title': 'Шаблон 2: Межполевая перевалидация',
+  'toSignalForm.pattern2Desc':
+    'Автоматическая перевалидация зависимых полей при изменении основных без ручных циклов updateValueAndValidity.',
+  'toSignalForm.pattern3Title': 'Шаблон 3: Программное управление состояниями Dirty и Touched',
+  'toSignalForm.pattern3Desc': 'Помощники на основе сигналов для единообразных правил отображения ошибок.',
+  'toSignalForm.pattern4Title': 'Шаблон 4: Отправка очищенных полезных нагрузок',
+  'toSignalForm.pattern4Desc':
+    'sf.submitValue() автоматически удаляет исключенные, скрытые или отключенные поля для чистого приема бэкендом.',
+  'toSignalForm.pattern5Title': 'Шаблон 5: Паритет контейнеров форм Clarity',
+  'toSignalForm.pattern5Desc':
+    'Безупречно работает с Clarity clr-input-container, clr-control-error и валидаторами Angular.',
+
+  // k8sRetryBackoff Operator (ru)
+  'k8sRetryBackoff.configSummary': 'Опциональная конфигурация, разделяемая оператором и фабрикой интерцептора.',
+  'k8sRetryBackoff.paramMaxAttempts':
+    'Общее количество попыток, включая начальный запрос. Установите 1 для отключения повторов.',
+  'k8sRetryBackoff.errorShape':
+    'Принимает HttpErrorResponse или объект вида <code>{ status, headers?, error? }</code>, включая JSON-строку в <code>error</code>. Нативный fetch не отклоняет промис при HTTP 429: проверьте Response и адаптируйте его статус, заголовки и тело. Axios возвращает эти данные в <code>error.response</code>; преобразуйте их перед вызовом. Хелпер вычисляет только задержку.',
+  'k8sRetryBackoffInterceptor.overrideRules':
+    '<code>null</code> использует значения по умолчанию интерцептора; <code>false</code> отключает повторные попытки. Фабрика объединяет конфигурацию конкретного запроса с настройками по умолчанию. Интерцептор обрабатывает каждый HTTP 429 от HttpClient независимо от URL или HTTP-метода; явно отключайте повторы для запросов, которые должны завершаться сбоем немедленно.',
+  'k8sRetryBackoffInterceptor.overrideSimulation':
+    'Проверьте пробу, которая немедленно завершается сбоем при первом 429, или чтение рабочей нагрузки, которое успешно завершается после двух ответов 429. Настраиваемое чтение использует maxAttempts: 10 и резервную задержку 200 мс, допуская до 9 повторных попыток.',
+  'k8sRetryBackoffInterceptor.btnWorkloads': 'Тест чтения нагрузки (10 попыток)',
+  'k8sRetryBackoffInterceptor.btnProbe': 'Тест быстрой пробы (Исключение)',
+
+  'k8sRetryBackoff.overview':
+    '<code>retryOnK8sBackoff</code> — оператор повторных попыток RxJS, созданный специально для <strong>ограничений скорости Kubernetes API (HTTP 429 Too Many Requests)</strong>. Он динамически отдает приоритет HTTP-заголовку <code>Retry-After</code> или полю <code>details.retryAfterSeconds</code>, возвращаемому серверами API Kubernetes, с переходом на настраиваемую задержку при их отсутствии.',
+  'k8sRetryBackoff.callout':
+    'Ищете глобальную защиту для всех вызовов <code>HttpClient</code>? Ознакомьтесь с <a href="/ngx-lift/interceptors/k8sRetryBackoff"><code>k8sRetryBackoffInterceptor</code></a>.',
+  'k8sRetryBackoff.diffTitle': 'Архитектурное сравнение: Оператор vs Интерцептор',
+  'k8sRetryBackoff.diffDesc':
+    'Оба инструмента используют один и тот же механизм вычисления задержки, но решают взаимодополняющие задачи:',
+  'k8sRetryBackoff.diffColFeature': 'Характеристика',
+  'k8sRetryBackoff.diffColOperator': 'retryOnK8sBackoff (Оператор)',
+  'k8sRetryBackoff.diffColInterceptor': 'k8sRetryBackoffInterceptor (Интерцептор)',
+  'k8sRetryBackoff.diffScope': 'Область действия',
+  'k8sRetryBackoff.diffScopeOp':
+    'Локальная: Применяется выборочно к отдельным Observable через <code>.pipe(retryOnK8sBackoff(...))</code>.',
+  'k8sRetryBackoff.diffScopeInt': 'Глобальная: Автоматически перехватывает все исходящие HTTP-запросы приложения.',
+  'k8sRetryBackoff.diffUseCases': 'Сценарии использования',
+  'k8sRetryBackoff.diffUseCasesOp': 'Потоки опроса, фоновые задачи или Observable вне HttpClient.',
+  'k8sRetryBackoff.diffUseCasesInt':
+    'Базовая защита для всех вызовов REST/Kubernetes без изменения отдельных сервисов.',
+  'k8sRetryBackoff.diffConfig': 'Конфигурация и отключение',
+  'k8sRetryBackoff.diffConfigOp': 'Настраивается локально для потока через аргумент оператора.',
+  'k8sRetryBackoff.diffConfigInt':
+    'Настраивается глобально в <code>app.config.ts</code>; переопределяется или отключается для запроса через <code>HttpContext</code>.',
+  'k8sRetryBackoff.example1Title': 'Пример 1: Интерактивный симулятор и использование в пайплайне',
+  'k8sRetryBackoff.example1Desc':
+    'Имитируйте ответы Kubernetes API и наблюдайте за задержками и обработкой ошибок с retryOnK8sBackoff (с примером кода ниже):',
+  'k8sRetryBackoff.selectScenario': 'Выберите сценарий ответа:',
+  'k8sRetryBackoff.scenarioHeader': '429 (Заголовок Retry-After: 1)',
+  'k8sRetryBackoff.scenarioBody': '429 (JSON-тело details.retryAfterSeconds: 1.5)',
+  'k8sRetryBackoff.scenarioFallback': '429 (Без заголовка, резервная задержка 1 с)',
+  'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (Без повторов, мгновенная ошибка)',
+  'k8sRetryBackoff.scenarioExhausted': '5x подряд 429 (Исчерпаны максимальные попытки)',
+  'k8sRetryBackoff.btnSimulate': 'Имитировать запрос и повторить',
+  'k8sRetryBackoff.btnClearLogs': 'Очистить журнал',
+  'k8sRetryBackoff.logTitle': 'Журнал выполнения:',
+  'k8sRetryBackoff.example2Title': 'Пример 2: Отдельная функция извлечения задержки (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.example2Desc':
+    'Используйте getK8sRetryDelayMs для извлечения задержки в пользовательских циклах повторов или Promise:',
+  'k8sRetryBackoff.sampleErrorLabel': 'Пример ошибочного ответа:',
+  'k8sRetryBackoff.helperHeader': '429 (Retry-After: 3 с)',
+  'k8sRetryBackoff.helperBody': '429 (retryAfterSeconds: 2 с)',
+  'k8sRetryBackoff.helperFallback': '429 (Без подсказки, резерв 1 с)',
+  'k8sRetryBackoff.helperNon429': '500 (Ошибка не 429)',
+  'k8sRetryBackoff.btnExtractDelay': 'Извлечь задержку (getK8sRetryDelayMs)',
+  'k8sRetryBackoff.retryableError': 'Повторяемый откат 429 Kubernetes',
+  'k8sRetryBackoff.nonRetryableError': 'Неповторяемая ошибка',
+  'k8sRetryBackoff.apiSummary': 'Повторяет Observable при HTTP 429 с учетом указаний Kubernetes.',
+  'k8sRetryBackoff.paramConfig': 'Опциональная конфигурация максимального числа попыток и резервной задержки.',
+  'k8sRetryBackoff.delaySummary': 'Извлекает задержку в миллисекундах из объекта ошибки или возвращает null.',
+  'k8sRetryBackoff.paramError': 'Проверяемая ошибка (HttpErrorResponse или объект с полями status/headers/error).',
+  'k8sRetryBackoff.paramFallbackDelay': 'Резервная задержка в миллисекундах, если в ответе нет указаний.',
+
+  // k8sRetryBackoffInterceptor (ru)
+  'k8sRetryBackoffInterceptor.overview':
+    '<code>k8sRetryBackoffInterceptor</code> — функциональный HTTP-интерцептор Angular (<code>HttpInterceptorFn</code>). Он обеспечивает автоматическую защиту от <strong>HTTP 429 (Too Many Requests)</strong>, анализируя заголовки <code>Retry-After</code> и поле <code>details.retryAfterSeconds</code>.',
+  'k8sRetryBackoffInterceptor.callout':
+    'Нужен детальный контроль на уровне отдельного потока? Ознакомьтесь с <a href="/ngx-lift/operators/k8sRetryBackoff"><code>retryOnK8sBackoff</code></a>.',
+  'k8sRetryBackoffInterceptor.example1Title': 'Пример 1: Глобальная регистрация интерцептора и симулятор',
+  'k8sRetryBackoffInterceptor.example1Desc':
+    'Зарегистрируйте интерцептор в app.config.ts, и все запросы HttpClient будут автоматически повторяться при 429:',
+  'k8sRetryBackoffInterceptor.selectMode': 'Режим контекста интерцептора:',
+  'k8sRetryBackoffInterceptor.modeDefault': 'Интерцептор по умолчанию (Повтор 429 через 1 с, затем 200 OK)',
+  'k8sRetryBackoffInterceptor.modeCustom': 'Пользовательский HttpContext (Резервная задержка 400 мс)',
+  'k8sRetryBackoffInterceptor.modeDisabled': 'Отключено через HttpContext (HttpContextToken = false, мгновенный сбой)',
+  'k8sRetryBackoffInterceptor.btnSend': 'Отправить перехваченный запрос',
+  'k8sRetryBackoffInterceptor.example2Title':
+    'Пример 2: Настройка для отдельных запросов и отключение через HttpContext',
+  'k8sRetryBackoffInterceptor.example2Desc':
+    'Используйте K8S_RETRY_BACKOFF_CONFIG в HttpContext для настройки лимитов или отключения повторов для быстрых проверок:',
+  'k8sRetryBackoffInterceptor.apiSummary':
+    'Функциональный HTTP-интерцептор, повторяющий ответы HTTP 429 с задержкой Kubernetes.',
+  'k8sRetryBackoffInterceptor.factorySummary': 'Создает интерцептор с пользовательскими настройками по умолчанию.',
+  'k8sRetryBackoffInterceptor.tokenSummary':
+    'HttpContextToken для настройки или отключения повторов для конкретного запроса.',
+  'k8sRetryBackoffInterceptor.paramDefaultConfig':
+    'Конфигурация по умолчанию для всех запросов, если не переопределена через HttpContext.',
+};

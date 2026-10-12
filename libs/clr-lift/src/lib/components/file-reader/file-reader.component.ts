@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  effect,
   ElementRef,
   forwardRef,
   inject,
@@ -10,15 +12,13 @@ import {
   linkedSignal,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
   FormControl,
-  FormControlDirective,
-  FormControlName,
-  FormGroupDirective,
   FormsModule,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
@@ -74,8 +74,10 @@ import {fileReaderTranslations} from './file-reader.l10n';
 export class FileReaderComponent implements ControlValueAccessor, Validator {
   private injector = inject(Injector);
   private translationService = inject(TranslationService);
+  private activeReader?: FileReader;
 
   fileElement = viewChild.required<ElementRef<HTMLInputElement>>('file');
+  private fileInput = viewChild<ElementRef<HTMLInputElement>>('file');
 
   /**
    * The unique identifier for the file input element.
@@ -121,15 +123,9 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
    */
   isDisabled = linkedSignal(() => this.disabled());
 
-  // @Input({ required: true }) formControl: FormControl;
   formControl = computed(() => {
-    const ngControl = this.injector.get(NgControl);
-
-    if (ngControl instanceof FormControlName) {
-      return this.injector.get(FormGroupDirective).getControl(ngControl);
-    } else {
-      return (ngControl as FormControlDirective).form as FormControl;
-    }
+    const control = this.injector.get(NgControl, null)?.control;
+    return control instanceof FormControl ? control : null;
   });
 
   selectedFile = signal<File | undefined>(undefined);
@@ -139,10 +135,19 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('FileReader', fileReaderTranslations);
+    inject(DestroyRef).onDestroy(() => this.cancelRead());
+    effect(() => {
+      this.sizeInvalid();
+      this.parseError();
+      untracked(() => this.onValidatorChange());
+    });
   }
 
   private onChange: (value: string) => void = () => {
     // ControlValueAccessor onChange callback
+  };
+  private onValidatorChange: () => void = () => {
+    // Angular Validator callback for changes to validation inputs or state.
   };
   private onTouched: () => void = () => {
     // ControlValueAccessor onTouched callback
@@ -157,66 +162,117 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   });
 
   onFileSelected(event: Event) {
+    if (this.isDisabled()) {
+      return;
+    }
+    this.cancelRead();
     this.parseError.set('');
 
-    const inputElement = event.target as HTMLInputElement;
-    if (inputElement.files && inputElement.files.length > 0) {
-      const selectedFile = inputElement.files[0];
-      this.selectedFile.set(selectedFile);
-
-      const reader = new FileReader();
-
-      reader.onload = (e: ProgressEvent) => {
-        const fileReader = e.target as FileReader;
-        const fileContent = fileReader.result as string;
-
-        this.rawContent.set(fileContent);
-        try {
-          this.encodedContent.set(btoa(fileContent));
-          const content = this.encoded() ? this.encodedContent() : this.rawContent();
-          this.onChange(content); // Notify the form control
-          this.onTouched();
-
-          this.fileChange.emit(content);
-        } catch (error) {
-          this.parseError.set((error as Error).message);
-          this.onChange(' '); // use 1 space string to avoid required error, onChange will trigger validate method
-          this.onTouched();
-        }
-      };
-
-      reader.readAsText(selectedFile);
+    const inputElement = event.target;
+    if (!(inputElement instanceof HTMLInputElement)) {
+      return;
     }
+    const selectedFile = inputElement.files?.[0];
+    if (!selectedFile) {
+      return;
+    }
+    this.selectedFile.set(selectedFile);
+
+    const reader = new FileReader();
+    this.activeReader = reader;
+    reader.onload = () => {
+      if (this.activeReader !== reader) {
+        return;
+      }
+      const fileContent = reader.result;
+      if (typeof fileContent !== 'string') {
+        return;
+      }
+
+      try {
+        this.setContent(fileContent);
+        const content = this.encoded() ? this.encodedContent() : this.rawContent();
+        this.onChange(content);
+        this.onTouched();
+        this.fileChange.emit(content);
+      } catch (error: unknown) {
+        this.handleReadError(error instanceof Error ? error.message : String(error));
+      }
+      this.cancelRead(reader);
+    };
+    reader.onerror = () => {
+      if (this.activeReader === reader) {
+        this.handleReadError(reader.error?.message ?? this.translationService.translate('FileReader.readError'));
+        this.cancelRead(reader);
+      }
+    };
+    reader.readAsText(selectedFile);
   }
 
   removeFile() {
-    this.fileElement().nativeElement.value = '';
-    this.selectedFile.set(undefined);
-    this.rawContent.set('');
-    this.encodedContent.set('');
+    if (this.isDisabled()) {
+      return;
+    }
+    this.writeValue('');
     this.onChange('');
     this.onTouched();
   }
 
-  // value passed from new FormControl()
-  writeValue(value: string) {
+  /** Model-to-view updates never mark the form touched or emit another change. */
+  writeValue(value: string | null | undefined) {
+    this.cancelRead();
+    this.parseError.set('');
+    this.selectedFile.set(undefined);
+    const inputElement = this.fileInput();
+    if (inputElement) {
+      inputElement.nativeElement.value = '';
+    }
     if (!value) {
+      this.rawContent.set('');
+      this.encodedContent.set('');
       return;
     }
 
-    if (this.encoded()) {
-      this.encodedContent.set(value);
-      this.rawContent.set(atob(value));
-    } else {
-      this.rawContent.set(value);
-      this.encodedContent.set(btoa(value));
+    try {
+      if (this.encoded()) {
+        this.encodedContent.set(value);
+        this.rawContent.set(atob(value));
+      } else {
+        this.setContent(value);
+      }
+    } catch (error: unknown) {
+      this.parseError.set(error instanceof Error ? error.message : String(error));
     }
+  }
 
-    setTimeout(() => {
-      const content = this.encoded() ? this.encodedContent() : this.rawContent();
-      this.onChange(content);
-      this.onTouched();
-    });
+  private setContent(value: string) {
+    this.rawContent.set(value);
+    try {
+      this.encodedContent.set(btoa(value));
+    } catch (error: unknown) {
+      this.encodedContent.set('');
+      // Unencoded text must not fail simply because it contains Unicode.
+      if (this.encoded()) {
+        throw error;
+      }
+    }
+  }
+
+  private handleReadError(message: string) {
+    this.parseError.set(message);
+    this.onChange(' '); // Keep parse validation distinct from a required error.
+    this.onTouched();
+  }
+
+  private cancelRead(reader = this.activeReader) {
+    if (reader && this.activeReader === reader) {
+      this.activeReader = undefined;
+      reader.onload = null;
+      reader.onerror = null;
+      if (reader.readyState === FileReader.LOADING) {
+        reader.abort();
+      }
+    }
   }
 
   registerOnChange(fn: (value: string) => void) {
@@ -225,6 +281,10 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
 
   registerOnTouched(fn: () => void) {
     this.onTouched = fn;
+  }
+
+  registerOnValidatorChange(fn: () => void) {
+    this.onValidatorChange = fn;
   }
 
   setDisabledState(isDisabled: boolean) {

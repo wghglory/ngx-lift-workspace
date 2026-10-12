@@ -1,141 +1,67 @@
-<cll-page-container [title]="'Multi Alerts'" customClass="space-y-9">
+<cll-page-container [title]="'multiAlerts.title' | translate">
   <!-- Overview -->
-  <p>
-    Frequently, there is a need to showcase multiple alerts, particularly those at the application level positioned at
-    the top. The clr-lift offers two highly beneficial components for this purpose:
-    <code>AlertContainerComponent</code> and <code>AlertService</code>. The service provides methods to add, delete, and
-    clear alerts programmatically.
-  </p>
+  <p [innerHTML]="'multiAlerts.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Setup Alert Container</h3>
-      <p>
-        Import <code>AlertContainerComponent</code> and include <code>&lt;cll-alert-container&gt;</code> above the
-        Clarity header tag within the main container.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'multiAlerts.example1' | translate }}</h3>
+      <p [innerHTML]="'multiAlerts.example1Desc' | translate"></p>
       <app-code-block [code]="htmlCode" lang="html" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Basic Usage</h3>
-      <p>
-        Import <code>AlertService</code> and utilize its <code>addAlert()</code>, <code>deleteAlert()</code>, or
-        <code>clearAlerts()</code> methods for effective management of alerts. The <code>addAlert</code> function takes
-        an object as its parameter, with the <code>content</code> field being mandatory and representing the alert
-        content in string format. Additionally, you have the option to include other properties, such as
-        <code>alertType</code>, to specify the type of alert, and indicate whether it is an application-level alert
-        through <code>isAppLevel</code>. The default value for <code>isAppLevel</code> is true, as in most cases, you
-        would prefer to display multiple alerts at the application level.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'multiAlerts.example2' | translate }}</h3>
+      <p [innerHTML]="'multiAlerts.example2Desc' | translate"></p>
       <app-code-block [code]="tsCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 3: Advanced Usage with Interactive Elements</h3>
-      <p>
-        In certain scenarios, you may want to include a button or link within an alert's content. To handle button
-        clicks or navigate to an internal route through link clicks, you can use the <code>onTargetClick</code> and
-        <code>targetSelector</code> properties. The <code>targetSelector</code> represents the selector of the clickable
-        element (ID, class, etc.), and the <code>onTargetClick</code> specifies the function to be executed upon
-        clicking the element.
-      </p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'multiAlerts.example3' | translate }}</h3>
+      <p [innerHTML]="'multiAlerts.example3Desc' | translate"></p>
       <app-code-block [code]="advancedCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 4: Interactive Demo</h3>
-      <p>Try adding and clearing alerts using the buttons below:</p>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'multiAlerts.example4' | translate }}</h3>
+      <p>{{ 'multiAlerts.example4Desc' | translate }}</p>
       <cll-alert-container />
-      <div class="space-x-2">
-        <button class="btn btn-outline" (click)="addAlert()">Add Alert</button>
-        <button class="btn btn-outline" (click)="clearAlerts()">Clear All Alerts</button>
+      <div cds-layout="horizontal gap:xs align:center wrap">
+        <button type="button" class="btn btn-outline" (click)="addAlert()">
+          {{ 'multiAlerts.addStandard' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="addAlertWithInlineButton()">
+          {{ 'multiAlerts.addInlineBtn' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="addAlertWithAction()">
+          {{ 'multiAlerts.addAction' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="clearAlerts()">
+          {{ 'multiAlerts.clearAll' | translate }}
+        </button>
       </div>
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>AlertService</h3>
-        <p>Service for managing multiple alerts programmatically.</p>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>AlertService</h3>
+      <p>{{ 'multiAlerts.serviceSummary' | translate }}</p>
 
-        <h4>Methods</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>addAlert(options: AlertOptions): void</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">Adds a new alert with the specified options.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>deleteAlert(id: string): void</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">Deletes an alert by its ID.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>clearAlerts(): void</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">Clears all alerts.</p>
-            </div>
-          </li>
-        </ul>
+      <h4>{{ 'common.methods' | translate }}</h4>
+      <app-api-table [properties]="methods" />
 
-        <h4>AlertOptions Interface</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>content: string</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1"><em>(Required)</em> The alert content in string format. Can include HTML.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>alertType?: 'danger' | 'info' | 'success' | 'warning'</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1"><em>(Optional)</em> The type of alert. Defaults to 'info'.</p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>isAppLevel?: boolean</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> Whether this is an application-level alert. Defaults to <code>true</code>.
-              </p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>targetSelector?: string</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> The selector (ID, class, etc.) of a clickable element within the alert content.
-              </p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>onTargetClick?: () => void</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> Function to be executed when the element specified by <code>targetSelector</code> is
-                clicked.
-              </p>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <h4>{{ 'multiAlerts.alertTypeTitle' | translate }}</h4>
+      <app-api-table [properties]="alertProperties" />
+    </div>
 
-      <div class="space-y-3">
-        <h3>AlertContainerComponent</h3>
-        <p>
-          Container component that displays all alerts. Should be placed above the Clarity header tag within the main
-          container.
-        </p>
-      </div>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>AlertContainerComponent (<code>cll-alert-container</code>)</h3>
+      <p>{{ 'multiAlerts.containerSummary' | translate }}</p>
     </div>
   </section>
 </cll-page-container>

@@ -1,20 +1,39 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {distinctOnChange} from 'ngx-lift';
 import {from} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-distinct-on-change',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './distinct-on-change.component.html',
   styleUrl: './distinct-on-change.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DistinctOnChangeComponent implements OnInit {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'callback',
+        type: '(previous: T, current: T) => void',
+        description: this.translationService.translate('distinctOnChange.paramCallback'),
+      },
+      {
+        name: 'comparator',
+        type: '(previous: T, current: T) => boolean',
+        default: '===',
+        description: this.translationService.translate('distinctOnChange.paramComparator'),
+      },
+    ];
+  });
   data = [1, 1, 2, 2, 3, 4, 4, 5];
 
   ngOnInit() {

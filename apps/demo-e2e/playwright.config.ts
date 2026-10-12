@@ -27,6 +27,7 @@ export default defineConfig({
     command: 'npx nx run demo:serve',
     url: 'http://localhost:4200',
     reuseExistingServer: true,
+    timeout: 120 * 1000,
     cwd: workspaceRoot,
   },
   projects: [

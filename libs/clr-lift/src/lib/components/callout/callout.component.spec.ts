@@ -21,6 +21,10 @@ describe('CalloutComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have default cds-layout attribute set to m-y:md', () => {
+    expect(fixture.nativeElement.getAttribute('cds-layout')).toBe('m-y:md');
+  });
 });
 
 @Component({

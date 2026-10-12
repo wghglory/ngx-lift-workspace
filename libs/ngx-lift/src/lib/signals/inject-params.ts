@@ -100,7 +100,7 @@ export function injectParams<Output>(
   const {transform, initialValue, injector} = effectiveOptions;
 
   // injectParams(): Signal<Params> or injectParams({ injector }): Signal<Params>
-  if (!keyOrParamsTransformOrOptions || isOptionsObject) {
+  if (keyOrParamsTransformOrOptions === undefined || isOptionsObject) {
     return toSignal(route.params, {initialValue: initialParams, injector});
   }
 
@@ -117,7 +117,7 @@ export function injectParams<Output>(
   const getParam = (params: Params) => {
     const param = params?.[paramKey] as string | undefined;
 
-    if (!param) {
+    if (param === undefined || param === null) {
       return initialValue ?? null;
     }
 

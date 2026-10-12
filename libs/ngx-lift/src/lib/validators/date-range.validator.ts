@@ -1,7 +1,5 @@
 import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 
-import {differenceInDays} from '../utils/difference-in-days.util';
-
 /**
  * Interface defining the options for the date range validator.
  */
@@ -106,7 +104,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
           ? selectedDate.getTime() < minDate.getTime()
           : selectedDate.getTime() <= minDate.getTime();
       } else {
-        const diff = differenceInDays(selectedDate, minDate);
+        const diff = calendarDate(selectedDate) - calendarDate(minDate);
         errorCondition = options.minInclusive ? diff < 0 : diff <= 0;
       }
 
@@ -125,7 +123,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
           ? selectedDate.getTime() > maxDate.getTime()
           : selectedDate.getTime() >= maxDate.getTime();
       } else {
-        const diff = differenceInDays(selectedDate, maxDate);
+        const diff = calendarDate(selectedDate) - calendarDate(maxDate);
         errorCondition = options.maxInclusive ? diff > 0 : diff >= 0;
       }
 
@@ -138,4 +136,8 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
 
     return null;
   };
+}
+
+function calendarDate(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }

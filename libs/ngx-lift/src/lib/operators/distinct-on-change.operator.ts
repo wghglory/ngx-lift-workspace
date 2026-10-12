@@ -1,4 +1,4 @@
-import {Observable, OperatorFunction, Subscriber, TeardownLogic} from 'rxjs';
+import {distinctUntilChanged, Observable, OperatorFunction} from 'rxjs';
 
 /**
  * Creates an operator function for RxJS Observables that filters out consecutive
@@ -58,28 +58,13 @@ export function distinctOnChange<T>(
   comparator: (previousValue: T, currentValue: T) => boolean = (prev, curr) => prev === curr,
 ): OperatorFunction<T, T> {
   return (source: Observable<T>) =>
-    new Observable<T>((subscriber: Subscriber<T>): TeardownLogic => {
-      let hasFirstValue = false;
-      let previousValue: T;
-
-      const subscription = source.subscribe({
-        next: (currentValue: T) => {
-          if (hasFirstValue) {
-            if (!comparator(previousValue, currentValue)) {
-              onChangeCallback(previousValue, currentValue);
-              previousValue = currentValue;
-              subscriber.next(currentValue);
-            }
-          } else {
-            previousValue = currentValue;
-            hasFirstValue = true;
-            subscriber.next(currentValue);
-          }
-        },
-        error: (err: unknown) => subscriber.error(err),
-        complete: () => subscriber.complete(),
-      });
-
-      return () => subscription.unsubscribe();
-    });
+    source.pipe(
+      distinctUntilChanged((previousValue, currentValue) => {
+        const equal = comparator(previousValue, currentValue);
+        if (!equal) {
+          onChangeCallback(previousValue, currentValue);
+        }
+        return equal;
+      }),
+    );
 }

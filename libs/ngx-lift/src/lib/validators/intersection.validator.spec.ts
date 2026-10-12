@@ -1,4 +1,4 @@
-import {FormControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 
 import {intersectionValidator} from './intersection.validator';
 
@@ -69,5 +69,36 @@ describe('intersectionValidator', () => {
     formGroup.updateValueAndValidity();
 
     expect(formGroup.errors).toBeNull();
+  });
+
+  it('preserves unrelated control errors while adding and removing intersection errors', () => {
+    const field1 = new FormControl(['shared']);
+    const field2 = new FormControl(['shared']);
+    const group = new FormGroup({field1, field2}, {validators: validator});
+    field1.setErrors({...field1.errors, server: true});
+    group.updateValueAndValidity();
+    expect(field1.errors).toEqual({server: true, intersection: true});
+
+    field2.setValue(['different']);
+    expect(field1.errors).toEqual({server: true});
+    expect(field2.errors).toBeNull();
+  });
+
+  it('does not clear a required error when both selections are empty', () => {
+    const field1 = new FormControl([], Validators.required);
+    const field2 = new FormControl([]);
+    new FormGroup({field1, field2}, {validators: validator});
+
+    expect(field1.errors).toEqual({required: true});
+  });
+
+  it('clears stale intersection errors when a control changes to a non-array value', () => {
+    const field1 = new FormControl<unknown>(['shared']);
+    const field2 = new FormControl<unknown>(['shared']);
+    const group = new FormGroup({field1, field2}, {validators: validator});
+    field2.setValue(null);
+
+    expect(group.errors).toBeNull();
+    expect(field1.errors).toBeNull();
   });
 });

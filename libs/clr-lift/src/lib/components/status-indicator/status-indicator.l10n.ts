@@ -63,6 +63,22 @@ export const statusIndicatorTranslations: Record<string, Record<string, string>>
     inactive: '비활성 상태',
     unknown: '알 수 없는 상태',
   },
+  nl: {
+    success: 'Geslaagde status',
+    error: 'Foutstatus',
+    pending: 'In behandeling status',
+    warning: 'Waarschuwingsstatus',
+    inactive: 'Inactieve status',
+    unknown: 'Onbekende status',
+  },
+  pt: {
+    success: 'Status bem-sucedido',
+    error: 'Status de erro',
+    pending: 'Status pendente',
+    warning: 'Status de aviso',
+    inactive: 'Status inativo',
+    unknown: 'Status desconhecido',
+  },
   'pt-BR': {
     success: 'Status bem-sucedido',
     error: 'Status de erro',

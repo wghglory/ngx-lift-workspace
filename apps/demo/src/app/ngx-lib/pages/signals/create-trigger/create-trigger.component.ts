@@ -1,20 +1,45 @@
-import {ChangeDetectionStrategy, Component, effect} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {createTrigger} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-create-trigger',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, CalloutComponent],
+  imports: [
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    CalloutComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './create-trigger.component.html',
   styleUrl: './create-trigger.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateTriggerComponent {
   private refreshTrigger = createTrigger();
+  private translationService = inject(TranslationService);
+
+  properties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'value',
+        type: 'Signal<number>',
+        description: this.translationService.translate('createTrigger.propValue'),
+      },
+      {
+        name: 'next',
+        type: '() => void',
+        description: this.translationService.translate('createTrigger.propNext'),
+      },
+    ];
+  });
 
   constructor() {
     effect(() => {

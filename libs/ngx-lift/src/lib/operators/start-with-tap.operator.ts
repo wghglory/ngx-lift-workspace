@@ -1,7 +1,8 @@
-import {Observable} from 'rxjs';
+import {defer, Observable, MonoTypeOperatorFunction} from 'rxjs';
 
 /**
- * RxJS operator that executes a callback function before the source Observable starts emitting values.
+ * RxJS operator that executes a callback before each subscription to the source Observable.
+ * Constructing the pipeline does not execute the callback. Callback failures enter the Observable error channel.
  * This operator is useful for triggering side effects (like logging, state updates, or initialization)
  * before the main Observable begins emitting.
  *
@@ -24,9 +25,10 @@ import {Observable} from 'rxjs';
  * ).subscribe();
  * ```
  */
-export function startWithTap<T>(callback: () => void) {
-  return (source: Observable<T>) => {
-    callback();
-    return source;
-  };
+export function startWithTap<T>(callback: () => void): MonoTypeOperatorFunction<T> {
+  return (source: Observable<T>) =>
+    defer(() => {
+      callback();
+      return source;
+    });
 }

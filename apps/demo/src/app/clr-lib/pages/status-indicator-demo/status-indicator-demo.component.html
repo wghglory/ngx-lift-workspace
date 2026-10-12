@@ -1,130 +1,156 @@
-<cll-page-container [title]="'Status Indicator'" customClass="space-y-9">
+<cll-page-container [title]="'statusIndicator.title' | translate">
   <!-- Overview -->
-  <p>
-    The <code>StatusIndicatorComponent</code> displays a status indicator with an icon and text. It supports various
-    status types (error, success, warning, unknown, inactive, pending), customizable icon sizes, and optional tooltips
-    for additional information.
-  </p>
+  <p [innerHTML]="'statusIndicator.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Basic Usage</h3>
-      <p>Display status indicators with different status types:</p>
-      <div class="grid lg:grid-cols-3 gap-5">
-        <section class="space-y-3">
-          <h4>Status Types</h4>
-          <ul class="space-y-2">
-            <li>
-              <cll-status-indicator [iconStatus]="'error'"> Error </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'success'"> Success </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'unknown'"> unknown </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'inactive'"> Inactive </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'pending'"> Pending </cll-status-indicator>
-            </li>
-          </ul>
-        </section>
-        <section class="space-y-3">
-          <h4>Icon Size (T-Shirt Sizing)</h4>
-          <ul class="space-y-2">
-            <li>
-              <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'success'" iconSize="md"> Success </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'warning'" iconSize="lg"> Warning </cll-status-indicator>
-            </li>
-          </ul>
-        </section>
-        <section class="space-y-3">
-          <h4>Icon Size (Number)</h4>
-          <ul class="space-y-2">
-            <li>
-              <cll-status-indicator [iconStatus]="'unknown'" [iconSize]="'20'"> unknown </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'inactive'" [iconSize]="'30'"> Inactive </cll-status-indicator>
-            </li>
-            <li>
-              <cll-status-indicator [iconStatus]="'pending'" [iconSize]="'40'"> Pending </cll-status-indicator>
-            </li>
-          </ul>
-        </section>
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'statusIndicator.example1' | translate }}</h3>
+      <p>{{ 'statusIndicator.example1Desc' | translate }}</p>
+      <div class="clr-row">
+        <div class="clr-col-12 clr-col-md-4">
+          <section cds-layout="vertical gap:xs align:stretch">
+            <h4>{{ 'statusIndicator.types' | translate }}</h4>
+            <ul class="list-unstyled" cds-layout="vertical gap:xs">
+              <li>
+                <cll-status-indicator [iconStatus]="'error'">
+                  {{ 'statusIndicator.statusError' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'success'">
+                  {{ 'statusIndicator.statusSuccess' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'warning'">
+                  {{ 'statusIndicator.statusWarning' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'unknown'">
+                  {{ 'statusIndicator.statusUnknown' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'inactive'">
+                  {{ 'statusIndicator.statusInactive' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'pending'">
+                  {{ 'statusIndicator.statusPending' | translate }}
+                </cll-status-indicator>
+              </li>
+            </ul>
+          </section>
+        </div>
+        <div class="clr-col-12 clr-col-md-4">
+          <section cds-layout="vertical gap:xs align:stretch">
+            <h4>{{ 'statusIndicator.iconSizeTshirt' | translate }}</h4>
+            <ul class="list-unstyled" cds-layout="vertical gap:xs">
+              <li>
+                <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'">
+                  {{ 'statusIndicator.statusError' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'success'" iconSize="md">
+                  {{ 'statusIndicator.statusSuccess' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'warning'" iconSize="lg">
+                  {{ 'statusIndicator.statusWarning' | translate }}
+                </cll-status-indicator>
+              </li>
+            </ul>
+          </section>
+        </div>
+        <div class="clr-col-12 clr-col-md-4">
+          <section cds-layout="vertical gap:xs align:stretch">
+            <h4>{{ 'statusIndicator.iconSizeNumber' | translate }}</h4>
+            <ul class="list-unstyled" cds-layout="vertical gap:xs">
+              <li>
+                <cll-status-indicator [iconStatus]="'unknown'" [iconSize]="'20'">
+                  {{ 'statusIndicator.statusUnknown' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'inactive'" [iconSize]="'30'">
+                  {{ 'statusIndicator.statusInactive' | translate }}
+                </cll-status-indicator>
+              </li>
+              <li>
+                <cll-status-indicator [iconStatus]="'pending'" [iconSize]="'40'">
+                  {{ 'statusIndicator.statusPending' | translate }}
+                </cll-status-indicator>
+              </li>
+            </ul>
+          </section>
+        </div>
       </div>
       <app-code-block [code]="basicExampleCode" lang="html" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Icon with Tooltip</h3>
-      <p>Add tooltips to status indicators for additional information. Hover your mouse over the icons below:</p>
-      <ul class="space-y-2">
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'statusIndicator.example2' | translate }}</h3>
+      <p>{{ 'statusIndicator.example2Desc' | translate }}</p>
+      <ul class="list-unstyled" cds-layout="vertical gap:xs">
         <li>
           <cll-status-indicator
             [iconStatus]="'error'"
-            [tooltip]="'describe the error reason'"
+            [tooltip]="'statusIndicator.tooltipError' | translate"
             [tooltipPosition]="'tooltip-top-left'"
           >
-            Error
+            {{ 'statusIndicator.statusError' | translate }}
           </cll-status-indicator>
         </li>
         <li>
           <cll-status-indicator
             [iconStatus]="'success'"
-            [tooltip]="'status is success'"
+            [tooltip]="'statusIndicator.tooltipSuccess' | translate"
             [tooltipPosition]="'tooltip-bottom-left'"
           >
-            Success
+            {{ 'statusIndicator.statusSuccess' | translate }}
           </cll-status-indicator>
         </li>
         <li>
           <cll-status-indicator
             [iconStatus]="'warning'"
-            [tooltip]="'status is warning'"
+            [tooltip]="'statusIndicator.tooltipWarning' | translate"
             [tooltipPosition]="'tooltip-bottom-right'"
           >
-            Warning
+            {{ 'statusIndicator.statusWarning' | translate }}
           </cll-status-indicator>
         </li>
         <li>
           <cll-status-indicator
             [iconStatus]="'unknown'"
-            [tooltip]="'unknown status'"
+            [tooltip]="'statusIndicator.tooltipUnknown' | translate"
             [tooltipPosition]="'tooltip-top-right'"
           >
-            unknown
+            {{ 'statusIndicator.statusUnknown' | translate }}
           </cll-status-indicator>
         </li>
         <li>
           <cll-status-indicator
             [iconStatus]="'inactive'"
-            [tooltip]="'inactive status'"
+            [tooltip]="'statusIndicator.tooltipInactive' | translate"
             [tooltipPosition]="'tooltip-top-left'"
           >
-            Inactive
+            {{ 'statusIndicator.statusInactive' | translate }}
           </cll-status-indicator>
         </li>
         <li>
           <cll-status-indicator
             [iconStatus]="'pending'"
-            [tooltip]="'some pending happen'"
+            [tooltip]="'statusIndicator.tooltipPending' | translate"
             [tooltipPosition]="'tooltip-left'"
           >
-            Pending
+            {{ 'statusIndicator.statusPending' | translate }}
           </cll-status-indicator>
         </li>
       </ul>
@@ -133,52 +159,14 @@
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>StatusIndicatorComponent</h3>
-        <p>Component for displaying status indicators with icons and text.</p>
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>StatusIndicatorComponent (<code>cll-status-indicator</code>)</h3>
+      <p>{{ 'statusIndicator.apiSummary' | translate }}</p>
 
-        <h4>Inputs</h4>
-        <ul class="list-disc space-y-2 ml-6">
-          <li class="space-y-1">
-            <code>iconStatus: 'error' | 'success' | 'warning' | 'unknown' | 'inactive' | 'pending'</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Required)</em> The status type that determines the icon and color displayed.
-              </p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>iconSize?: 'sm' | 'md' | 'lg' | number</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> The size of the icon. Can be a t-shirt size ('sm', 'md', 'lg') or a number in
-                pixels. Defaults to 'md'.
-              </p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>tooltip?: string</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> Tooltip text to display when hovering over the icon. If provided, a tooltip will be
-                shown.
-              </p>
-            </div>
-          </li>
-          <li class="space-y-1">
-            <code>tooltipPosition?: string</code>
-            <div class="ml-4">
-              <p class="text-sm !mt-1">
-                <em>(Optional)</em> Position of the tooltip relative to the icon. Options include 'tooltip-top-left',
-                'tooltip-top-right', 'tooltip-bottom-left', 'tooltip-bottom-right', 'tooltip-left', etc.
-              </p>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <h4>{{ 'common.inputs' | translate }}</h4>
+      <app-api-table [properties]="inputs()" />
     </div>
   </section>
 </cll-page-container>

@@ -1,21 +1,74 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent, TooltipModule} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, TooltipModule, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../shared/utils/highlight.util';
-import {CodeBlockComponent} from './../../../shared/components/code-block/code-block.component';
 
 @Component({
   selector: 'app-alert-demo',
-  imports: [AlertComponent, PageContainerComponent, TooltipModule, CodeBlockComponent, ClarityModule],
+  imports: [
+    AlertComponent,
+    PageContainerComponent,
+    TooltipModule,
+    ClarityModule,
+    DemoPlaygroundComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './alert-demo.component.html',
   styleUrl: './alert-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertDemoComponent {
+  private translationService = inject(TranslationService);
+
   error = new HttpErrorResponse({
     error: {message: 'angular http error response'},
+  });
+
+  alertInputs = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'alertType',
+        type: `'info' | 'warning' | 'success' | 'danger' | 'neutral' | 'loading' | 'unknown'`,
+        defaultValue: `'danger'`,
+        description: this.translationService.translate('alert.inputAlertType'),
+      },
+      {
+        name: 'isAppLevel',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('alert.inputIsAppLevel'),
+      },
+      {
+        name: 'isSmall',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('alert.inputIsSmall'),
+      },
+      {
+        name: 'isLightweight',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('alert.inputIsLightweight'),
+      },
+      {
+        name: 'error',
+        type: 'HttpErrorResponse | Error | null',
+        defaultValue: 'null',
+        description: this.translationService.translate('alert.inputError'),
+      },
+      {
+        name: 'content',
+        type: 'string',
+        defaultValue: `''`,
+        description: this.translationService.translate('alert.inputContent'),
+      },
+    ];
   });
 
   standardApiErrorCode = highlight(`
@@ -60,15 +113,16 @@ import {AlertComponent} from 'clr-lift';
   imports: [AlertComponent],
   template: \`
     <cll-alert>
-      <p class="!mt-0 !mb-2">Multiple errors are listed as below by <strong>content projection</strong>.</p>
-      <ol class="list-decimal">
+      <p cds-layout="m-t:none m-b:xs">Multiple errors are listed as below by <strong>content projection</strong>.</p>
+      <ol class="list">
         <li>Cannot read undefined.</li>
         <li>
           Cannot upload a object.
           <button
             [cllTooltip]="'server is down'"
             [cllTooltipPosition]="'tooltip-right'"
-            class="btn btn-sm btn-link btn-icon !my-0 !px-0"
+            class="btn btn-sm btn-link btn-icon"
+            cds-layout="m-y:none p-x:none"
             aria-label="info"
             type="button"
           >

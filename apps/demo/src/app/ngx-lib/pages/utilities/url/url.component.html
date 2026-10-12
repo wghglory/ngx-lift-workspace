@@ -1,70 +1,58 @@
-<cll-page-container [title]="'URL Utilities'" customClass="space-y-9">
+<cll-page-container [title]="'url.title' | translate">
   <!-- Overview -->
-  <p>
-    ngx-lift provides several utility functions for working with URLs: <code>isIP</code> and <code>isFQDN</code> for
-    checking hostname types, <code>isURL</code> for validating URLs, and <code>isHttps</code> for checking HTTPS
-    protocol. These utilities are useful for URL validation, security checks, and conditional logic based on URL
-    properties.
-  </p>
+  <p [innerHTML]="'url.overview' | translate"></p>
 
   <!-- Examples Section -->
-  <section class="space-y-4">
-    <h2>Examples</h2>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article class="space-y-3">
-      <h3>Example 1: Check Hostname Type (isIP & isFQDN)</h3>
-      <p>Check if a URL hostname is an IP address or a fully qualified domain name (FQDN):</p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'url.example1' | translate }}</h3>
+      <p>{{ 'url.example1Desc' | translate }}</p>
       <app-code-block [code]="ipAndFqdnCode" lang="typescript" />
-      <cll-callout>
-        You may use <code>URL</code> constructor to get the hostname, but remember to use try-catch for error handling.
-      </cll-callout>
+      <cll-callout [innerHTML]="'url.example1Callout' | translate"> </cll-callout>
       <app-code-block [code]="tryCatchCode" lang="typescript" />
     </article>
 
-    <article class="space-y-3">
-      <h3>Example 2: Validate URLs (isURL & isHttps)</h3>
-      <p>
-        <code>isURL</code> is used to check if a URL is valid. <code>isHttps</code> is used to check if the URL starts
-        with https.
-      </p>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'url.example2' | translate }}</h3>
+      <p [innerHTML]="'url.example2Desc' | translate"></p>
       <app-code-block [code]="urlCode" lang="typescript" />
       <cll-callout>
-        We also provide <a [routerLink]="'../../pipes/is-https'"><code>isHttps</code></a> pipe for use in templates.
+        {{ 'url.example2Callout' | translate }}
       </cll-callout>
     </article>
   </section>
 
   <!-- API Reference -->
-  <section class="space-y-4">
-    <h2>API Reference</h2>
-    <div class="space-y-4">
-      <div class="space-y-3">
-        <h3>isIP</h3>
-        <p>Checks if a hostname is an IP address.</p>
-        <h4>Signature</h4>
-        <app-code-block [code]="isIPSignatureCode" lang="typescript" />
-      </div>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>isIP</h3>
+      <p>{{ 'url.isIPSummary' | translate }}</p>
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="isIPSignatureCode" lang="typescript" />
+    </div>
 
-      <div class="space-y-3">
-        <h3>isFQDN</h3>
-        <p>Checks if a hostname is a fully qualified domain name (FQDN).</p>
-        <h4>Signature</h4>
-        <app-code-block [code]="isFQDNSignatureCode" lang="typescript" />
-      </div>
+    <div cds-layout="vertical gap:sm">
+      <h3>isFQDN</h3>
+      <p>{{ 'url.isFQDNSummary' | translate }}</p>
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="isFQDNSignatureCode" lang="typescript" />
+    </div>
 
-      <div class="space-y-3">
-        <h3>isURL</h3>
-        <p>Checks if a string is a valid URL.</p>
-        <h4>Signature</h4>
-        <app-code-block [code]="isURLSignatureCode" lang="typescript" />
-      </div>
+    <div cds-layout="vertical gap:sm">
+      <h3>isURL</h3>
+      <p>{{ 'url.isURLSummary' | translate }}</p>
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="isURLSignatureCode" lang="typescript" />
+    </div>
 
-      <div class="space-y-3">
-        <h3>isHttps</h3>
-        <p>Checks if a URL string uses the HTTPS protocol.</p>
-        <h4>Signature</h4>
-        <app-code-block [code]="isHttpsSignatureCode" lang="typescript" />
-      </div>
+    <div cds-layout="vertical gap:sm">
+      <h3>isHttps</h3>
+      <p>{{ 'url.isHttpsSummary' | translate }}</p>
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="isHttpsSignatureCode" lang="typescript" />
     </div>
   </section>
 </cll-page-container>

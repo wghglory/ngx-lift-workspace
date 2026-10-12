@@ -1,6 +1,7 @@
 export * from './combine-latest-eager.operator';
 export * from './create-async-state.operator';
 export * from './distinct-on-change.operator';
+export * from './k8s-retry-backoff.operator';
 export * from './kubernetes-pagination.operator';
 export * from './logger.operator';
 export * from './poll.operator';

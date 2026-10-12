@@ -1,19 +1,33 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {logger} from 'ngx-lift';
 import {of} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-logger',
-  imports: [PageContainerComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './logger.component.html',
   styleUrl: './logger.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoggerComponent implements OnInit {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'method',
+        type: "'log' | 'table' | 'warn' | 'error' | 'info' | 'debug'",
+        default: "'log'",
+        description: this.translationService.translate('logger.paramMethod'),
+      },
+    ];
+  });
   ngOnInit() {
     of([1, 1, 2, 2, 3, 4, 4, 5]).pipe(logger('table')).subscribe();
   }

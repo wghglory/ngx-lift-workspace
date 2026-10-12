@@ -1,30 +1,21 @@
-# Deployment Guide
+# Deployment & Publishing Guide
 
-This guide covers deploying the demo application to Netlify and Vercel, as well as publishing the libraries to npm.
+This guide covers publishing `ngx-lift` and `clr-lift` to npm, as well as deploying the demo application.
+
+---
 
 ## 📦 Publishing Libraries to npm
 
-### Prerequisites
+### 1. Automated Tag-Driven Publishing (Recommended)
 
-- **Node.js**: 24.x or higher
-- **npm**: 10.x or higher
-- **npm Account**: Create an account at [npmjs.com](https://www.npmjs.com/)
-- **npm Token**: Create an automation token for publishing
-  1. Go to npmjs.com → Account Settings → Access Tokens
-  2. Generate a new token with "Automation" type
-  3. Add to GitHub Secrets as `NPM_TOKEN`
-- **Publishing Rights**: Ensure you have publish permissions for `ngx-lift` and `clr-lift`
+Pushing a semver git tag triggers GitHub Actions to test, build, publish the targeted library directly to npm, and
+create a GitHub Release with auto-generated release notes.
 
-### Automated Publishing (Recommended)
-
-#### Method 1: Tag-Driven Release (Recommended)
-
-This is the standard flow. Pushing a version tag automatically triggers GitHub Actions to build, test, publish the
-targeted library to the npm registry, and create a GitHub Release with auto-generated release notes.
+#### Step-by-Step Flow:
 
 1. **Update version and changelog**:
-   - Bump `"version"` in `libs/ngx-lift/package.json` (or `libs/clr-lift/package.json`).
-   - Document new additions, changes, and fixes in `CHANGELOG.md` under the new version header.
+   - Update `"version"` in `libs/ngx-lift/package.json` (or `libs/clr-lift/package.json`).
+   - Document changes in `CHANGELOG.md` under the new version header.
 
 2. **Commit and push to `main`**:
 
@@ -34,452 +25,74 @@ targeted library to the npm registry, and create a GitHub Release with auto-gene
    git push origin main
    ```
 
-3. **Create and push the git tag**: For `ngx-lift`:
-
-   ```bash
-   git tag ngx-lift@21.1.1
-   git push origin ngx-lift@21.1.1
-   ```
-
-   For `clr-lift`:
-
-   ```bash
-   git tag clr-lift@21.0.1
-   git push origin clr-lift@21.0.1
-   ```
-
-4. **Automated CI/CD**:
-   - The workflow detects the tag prefix (`ngx-lift@*` or `clr-lift@*`).
-   - Runs unit tests and builds the target library.
-   - Publishes the artifact from `dist/` directly to npm.
-   - Creates a GitHub Release with release notes matching the tag.
-
-#### Method 2: GitHub Actions Workflow Dispatch (Manual Trigger)
-
-Use this method to publish directly from GitHub without pushing a tag locally:
-
-1. Go to the repository's **Actions** tab on GitHub.
-2. Select the **Publish Libraries** workflow.
-3. Click **Run workflow**:
-   - **Version type**:
-     - `patch`, `minor`, or `major`: Nx calculates the next version, creates the git tag, pushes it to remote, and
-       publishes.
-     - `skip`: Publishes the existing version already in manifest without bumping or retagging.
-   - **Project to publish**: Choose `ngx-lift`, `clr-lift`, or `all`.
-4. Click **Run workflow** to execute.
-
-### Manual Publishing
-
-#### Using Nx Release (Recommended)
-
-```bash
-# Set npm token (required for publishing)
-export NPM_TOKEN=your_npm_token_here
-
-# 1. Version bump (interactive)
-nx release version
-
-# Or specify version type
-nx release version patch
-nx release version minor
-nx release version major
-
-# 2. Build and publish
-nx release publish
-
-# Publish specific library
-nx release publish --projects=ngx-lift
-nx release publish --projects=clr-lift
-```
-
-#### Traditional npm Publish
-
-```bash
-# Set npm token (required for publishing)
-export NPM_TOKEN=your_npm_token_here
-
-# Publish ngx-lift
-npm run build:ngx
-# Copy .npmrc to dist folder for authentication
-cp .npmrc dist/libs/ngx-lift/.npmrc
-cd dist/libs/ngx-lift
-npm publish
-cd ../../..
-
-# Publish clr-lift
-npm run build:clr
-# Copy .npmrc to dist folder for authentication
-cp .npmrc dist/libs/clr-lift/.npmrc
-cd dist/libs/clr-lift
-npm publish
-cd ../../..
-```
-
-**Note**: The `.npmrc` file must be copied to the dist folder before running `npm publish` because npm reads the
-authentication token from `.npmrc` in the current directory. The `.npmrc` file uses `${NPM_TOKEN}` environment variable,
-so make sure `NPM_TOKEN` is set before publishing.
-
-### Publishing Checklist
-
-- [ ] All tests pass (`npm test`)
-- [ ] Linting passes (`npm run lint`)
-- [ ] Version updated in `package.json`
-- [ ] CHANGELOG updated
-- [ ] README updated if needed
-- [ ] Build successful (`npm run build:libs`)
-- [ ] npm token configured (`NPM_TOKEN` environment variable or GitHub secret)
-
-### Version Strategy
-
-This project follows [Semantic Versioning](https://semver.org/):
-
-- **Major (x.0.0)**: Breaking changes
-- **Minor (1.x.0)**: New features, backward compatible
-- **Patch (1.0.x)**: Bug fixes, backward compatible
-
-## 🌐 Deploying Demo App to Netlify
-
-### Automated Deployment
-
-#### Setup
-
-1. **Connect Repository**:
-   - Go to [Netlify](https://app.netlify.com/)
-   - Click "Add new site" → "Import an existing project"
-   - Connect to GitHub repository
-
-2. **Configure Build Settings**:
-   - Build command: `pnpm install --frozen-lockfile && pnpm nx run-many -t build --no-cloud`
-   - Publish directory: `dist/apps/demo/browser`
-   - Base directory: (leave empty)
-
-3. **Add Environment Variables** (if needed):
-   - Go to Site settings → Environment variables
-   - Add any required variables
-
-4. **Get Site ID and Auth Token**:
-   - Site ID: Site settings → General → Site details → API ID
-   - Auth Token: User settings → Applications → Personal access tokens
-
-5. **Add GitHub Secrets**:
-   - `NETLIFY_AUTH_TOKEN`: Your personal access token
-   - `NETLIFY_SITE_ID`: Your site ID
-
-#### Automatic Deployment Triggers
-
-- **Push to `main`**: Deploys to production
-- **Pull Requests**: Creates preview deployments
-
-### Manual Deployment
-
-```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Login
-netlify login
-
-# Build the project
-pnpm run build:libs
-pnpm run build:demo
-
-# Deploy to production
-netlify deploy --prod --dir=dist/apps/demo/browser
-
-# Deploy preview
-netlify deploy --dir=dist/apps/demo/browser
-```
-
-### Netlify Configuration
-
-The `netlify.toml` file contains:
-
-```toml
-[build]
-  base = "."
-  command = "pnpm nx run-many -t build --no-cloud"
-  publish = "dist/apps/demo/browser"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[build.environment]
-  NODE_VERSION = "24"
-  PNPM_VERSION = "10"
-  NX_DAEMON = "false"
-  NX_NO_CLOUD = "true"
-```
-
-### Netlify CLI Commands
-
-```bash
-# Check deployment status
-netlify status
-
-# View site info
-netlify sites:list
-
-# Open site in browser
-netlify open
-
-# View deployment logs
-netlify logs
-
-# Link to existing site
-netlify link
-```
-
-## ▲ Deploying Demo App to Vercel
-
-### Automated Deployment
-
-#### Setup
-
-1. **Connect Repository**:
-   - Go to [Vercel](https://vercel.com/)
-   - Click "Add New Project"
-   - Import your GitHub repository
-
-2. **Configure Build Settings**:
-   - Framework Preset: Other
-   - Build Command: `pnpm nx run-many -t build --no-cloud`
-   - Output Directory: `dist/apps/demo/browser`
-   - Install Command: `pnpm install --frozen-lockfile`
-
-3. **Get Project IDs**:
-   - Project ID: Project Settings → General
-   - Org ID: Account Settings → General
-
-4. **Get Auth Token**:
-   - Account Settings → Tokens
-   - Create new token
-
-5. **Add GitHub Secrets**:
-   - `VERCEL_TOKEN`: Your authentication token
-   - `VERCEL_ORG_ID`: Your organization ID
-   - `VERCEL_PROJECT_ID`: Your project ID
-
-#### Automatic Deployment Triggers
-
-- **Push to `main`**: Deploys to production
-- **Pull Requests**: Creates preview deployments
-
-### Manual Deployment
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Login
-vercel login
-
-# Build the project
-pnpm run build:libs
-pnpm run build:demo
-
-# Deploy to production
-vercel --prod --cwd dist/apps/demo/browser
-
-# Deploy preview
-vercel --cwd dist/apps/demo/browser
-```
-
-### Vercel Configuration
-
-The `vercel.json` file contains:
-
-```json
-{
-  "version": 2,
-  "buildCommand": "pnpm nx run-many -t build --no-cloud",
-  "outputDirectory": "dist/apps/demo/browser",
-  "framework": null,
-  "installCommand": "pnpm install --frozen-lockfile",
-  "devCommand": "pnpm nx serve demo"
-}
-```
-
-### Vercel CLI Commands
-
-```bash
-# Check deployment status
-vercel ls
-
-# View project info
-vercel inspect
-
-# View deployment logs
-vercel logs
-
-# Link to existing project
-vercel link
-
-# Pull environment variables
-vercel env pull
-
-# Set environment variable
-vercel env add
-```
-
-## 🔄 CI/CD Workflows
-
-### GitHub Actions Setup
-
-All workflows are in `.github/workflows/`:
-
-1. **`ci.yml`**: Continuous Integration
-   - Runs on: Push to `main`/`develop`, Pull Requests
-   - Node Version: 24.x
-   - Actions:
-     - Lint affected projects (parallel: 3)
-     - Test affected projects with coverage (parallel: 3)
-     - Build affected projects (parallel: 3)
-     - Upload coverage reports to Codecov
-
-2. **`publish.yml`**: Library Publishing
-   - Runs on: Manual trigger (with version type selection), Git tags (v\*)
-   - Node Version: 24.x
-   - Actions:
-     - Build libraries (parallel: 2)
-     - Run tests (parallel: 2)
-     - Version bump (manual trigger only)
-     - Publish to npm (with provenance)
-     - Create GitHub release (tag-based only)
-
-3. **`deploy-demo.yml`**: Demo Deployment
-   - Runs on: Push to `main`, Manual trigger
-   - Node Version: 24.x
-   - Actions:
-     - Build libraries (parallel: 2)
-     - Build demo app (production configuration)
-     - Deploy to Netlify (with PR comments)
-     - Deploy to Vercel (production)
-
-### Required GitHub Secrets
-
-Add these in: Repository Settings → Secrets and variables → Actions
-
-```
-NPM_TOKEN              # npm authentication token
-NETLIFY_AUTH_TOKEN     # Netlify authentication token
-NETLIFY_SITE_ID        # Netlify site ID
-VERCEL_TOKEN           # Vercel authentication token
-VERCEL_ORG_ID          # Vercel organization ID
-VERCEL_PROJECT_ID      # Vercel project ID
-```
-
-## 🔍 Monitoring Deployments
-
-### Netlify
-
-- **Dashboard**: https://app.netlify.com/
-- **Deployment Logs**: Site → Deploys → Click on deployment
-- **Analytics**: Site → Analytics
-- **Functions**: Site → Functions (if using)
-
-### Vercel
-
-- **Dashboard**: https://vercel.com/dashboard
-- **Deployment Logs**: Project → Deployments → Click on deployment
-- **Analytics**: Project → Analytics
-- **Logs**: Project → Logs
-
-### npm
-
-- **Package Page**: https://www.npmjs.com/package/ngx-lift
-- **Download Stats**: Package page → Statistics
-- **Versions**: Package page → Versions
-
-## 🐛 Troubleshooting
-
-### Build Fails on Netlify/Vercel
-
-1. **Check Node Version**:
-
-   ```toml
-   # netlify.toml
-   [build.environment]
-     NODE_VERSION = "22"
-   ```
-
-2. **Clear Build Cache**:
-   - Netlify: Site settings → Build & deploy → Clear cache
-   - Vercel: Redeploy with "Clear cache"
-
-3. **Check Build Logs**:
-   - Review error messages in deployment logs
-   - Ensure all dependencies are installed
-
-### npm Publish Fails
-
-1. **Check Authentication**:
-   - **For automated publishing**: Verify `NPM_TOKEN` is set in GitHub Secrets
-   - **For manual publishing**: Verify `NPM_TOKEN` environment variable is set
+3. **Tag and push**:
+   - For `ngx-lift`:
      ```bash
-     echo $NPM_TOKEN  # Should show your token
+     git tag ngx-lift@21.1.1
+     git push origin ngx-lift@21.1.1
      ```
-   - **Verify token permissions**: Ensure the token has "Automation" type and publish permissions
+   - For `clr-lift`:
+     ```bash
+     git tag clr-lift@21.0.1
+     git push origin clr-lift@21.0.1
+     ```
 
-2. **Check Package Name**:
-   - Ensure package name is available
-   - Check for typos in package.json
-
-3. **Check Version**:
-   - Version must be higher than published version
-   - Use `npm version patch/minor/major`
-
-### Deployment Preview Not Working
-
-1. **Check PR Settings**:
-   - Netlify: Site settings → Build & deploy → Deploy contexts
-   - Vercel: Project settings → Git → Deploy Previews
-
-2. **Check Branch Protection**:
-   - Ensure CI checks are passing
-   - Review required status checks
-
-## 📊 Best Practices
-
-### Pre-Deployment Checklist
-
-- [ ] Run all tests locally
-- [ ] Check linting
-- [ ] Test build locally
-- [ ] Review changes
-- [ ] Update version numbers
-- [ ] Update CHANGELOG
-- [ ] Create git tag (for releases)
-
-### Post-Deployment Verification
-
-- [ ] Check deployment logs
-- [ ] Test deployed application
-- [ ] Verify npm package
-- [ ] Check analytics
-- [ ] Monitor error logs
-
-### Security
-
-- [ ] Keep secrets secure
-- [ ] Rotate tokens regularly
-- [ ] Use environment variables for sensitive data
-- [ ] Enable 2FA on npm, Netlify, Vercel
-- [ ] Review access permissions
-
-## 📞 Support
-
-For deployment issues:
-
-1. Check deployment logs
-2. Review this guide
-3. Check platform status pages:
-   - [Netlify Status](https://www.netlifystatus.com/)
-   - [Vercel Status](https://www.vercel-status.com/)
-   - [npm Status](https://status.npmjs.org/)
-4. Open an issue on GitHub
+4. **CI/CD Pipeline**:
+   - The workflow detects the tag prefix (`ngx-lift@*` or `clr-lift@*`).
+   - Executes unit tests and builds the targeted library.
+   - Publishes to the npm registry with provenance.
+   - Generates the GitHub release.
 
 ---
 
-**Happy Deploying! 🚀**
+### 2. Manual Workflow Dispatch (GitHub Actions UI)
+
+If publishing without a local git tag:
+
+1. Go to **Actions** → **Publish to npm** in GitHub.
+2. Click **Run workflow**.
+3. Select:
+   - Branch (`main`).
+   - Target library (`ngx-lift` or `clr-lift`).
+   - Version bump type (`patch`, `minor`, `major`) or specific version.
+4. Click **Run workflow** to execute.
+
+---
+
+### 3. Local Verification & Packaging
+
+Before publishing, you can verify package contents locally:
+
+```bash
+# 1. Build the library
+pnpm run build:ngx
+
+# 2. Package into tarball
+cd dist/libs/ngx-lift
+npm pack
+
+# 3. Inspect tarball contents
+tar -tf ngx-lift-*.tgz
+```
+
+---
+
+## 🌐 Deploying the Demo Application
+
+The demo application showcases both `ngx-lift` and `clr-lift` in an interactive environment.
+
+### Production Build
+
+```bash
+pnpm run build:demo
+```
+
+The production bundle is generated in `dist/apps/demo`.
+
+### Automated Hosting (Netlify & Vercel)
+
+- **Netlify**: Connected via GitHub webhook. Every push to `main` deploys to
+  [ngx-lift.netlify.app](https://ngx-lift.netlify.app).
+- **Configuration**: Managed via `netlify.toml` in the repository root.
+  - Build command: `pnpm run build:demo`
+  - Publish directory: `dist/apps/demo`

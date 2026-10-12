@@ -14,6 +14,7 @@ export default [
             'vite',
             '@analogjs/vite-plugin-angular',
             '@nx/vite',
+            'tslib',
           ],
         },
       ],

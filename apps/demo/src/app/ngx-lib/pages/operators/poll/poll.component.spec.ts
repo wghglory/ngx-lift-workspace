@@ -22,4 +22,12 @@ describe('PollComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('updates signal filter and handles rapid refreshes', () => {
+    component.setSignalFilter('active');
+    expect(component.signalFilter()).toBe('active');
+
+    component.triggerRapidRefreshes();
+    expect(component.signalFilter()).toBe('active');
+  });
 });

@@ -1,5 +1,7 @@
 import {flushEffects} from '../../../test-setup';
+import {Component, signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
 import {FormControl, FormControlDirective, NgControl, ReactiveFormsModule} from '@angular/forms';
 import {vi, beforeEach, afterEach} from 'vitest';
 
@@ -101,13 +103,31 @@ describe('FileReaderComponent', () => {
       expect(component['encodedContent']()).toBe(btoa(rawValue));
     });
 
-    it('should not write value if value is empty', async () => {
-      const initialRawContent = component['rawContent']();
-      const initialEncodedContent = component['encodedContent']();
-
+    it('clears existing content when the form resets its value', () => {
+      component.writeValue('previous content');
+      component.parseError.set('previous error');
       component.writeValue('');
-      expect(component['rawContent']()).toBe(initialRawContent);
-      expect(component['encodedContent']()).toBe(initialEncodedContent);
+
+      expect(component.rawContent()).toBe('');
+      expect(component.encodedContent()).toBe('');
+      expect(component.parseError()).toBe('');
+    });
+
+    it('does not emit change or touched callbacks for model-to-view updates', async () => {
+      const onChange = vi.fn();
+      const onTouched = vi.fn();
+      component.registerOnChange(onChange);
+      component.registerOnTouched(onTouched);
+      component.writeValue('server value');
+      await flushEffects();
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(onTouched).not.toHaveBeenCalled();
+    });
+
+    it('accepts Unicode text when writing an unencoded form value', () => {
+      expect(() => component.writeValue('中文 🚀')).not.toThrow();
+      expect(component.rawContent()).toBe('中文 🚀');
     });
   });
 
@@ -154,6 +174,8 @@ describe('FileReaderComponent', () => {
         }),
       };
       globalThis.FileReader = class MockFileReader {
+        static LOADING = 1;
+        readyState = 2;
         result = mockFileReader.result;
         onload = mockFileReader.onload;
         readAsText = mockFileReader.readAsText;
@@ -196,6 +218,8 @@ describe('FileReaderComponent', () => {
         }),
       };
       globalThis.FileReader = class MockFileReader {
+        static LOADING = 1;
+        readyState = 2;
         result = mockFileReader.result;
         onload = mockFileReader.onload;
         readAsText = mockFileReader.readAsText;
@@ -213,6 +237,7 @@ describe('FileReaderComponent', () => {
     });
 
     it('should handle file selection error', async () => {
+      fixture.componentRef.setInput('encoded', true);
       const file = new File(['test'], 'test.txt', {type: 'text/plain'});
       const originalBtoa = window.btoa;
       window.btoa = vi.fn(() => {
@@ -237,6 +262,8 @@ describe('FileReaderComponent', () => {
         }),
       };
       globalThis.FileReader = class MockFileReader {
+        static LOADING = 1;
+        readyState = 2;
         result = mockFileReader.result;
         onload = mockFileReader.onload;
         readAsText = mockFileReader.readAsText;
@@ -275,6 +302,8 @@ describe('FileReaderComponent', () => {
         }),
       };
       globalThis.FileReader = class MockFileReader {
+        static LOADING = 1;
+        readyState = 2;
         result = mockFileReader.result;
         onload = mockFileReader.onload;
         readAsText = mockFileReader.readAsText;
@@ -430,5 +459,177 @@ describe('FileReaderComponent', () => {
 
       expect(component.isDisabled()).toBe(true);
     });
+  });
+  describe('file read lifetime', () => {
+    class ControlledReader {
+      static LOADING = 1;
+      readyState = 1;
+      result: string | null = null;
+      error: DOMException | null = null;
+      onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
+      onerror: (() => void) | null = null;
+      abort = vi.fn();
+      readAsText = vi.fn();
+      constructor() {
+        readers.push(this);
+      }
+    }
+    let readers: ControlledReader[];
+
+    beforeEach(() => {
+      readers = [];
+      globalThis.FileReader = ControlledReader as unknown as typeof FileReader;
+    });
+
+    function selectFile(name: string) {
+      const input = document.createElement('input');
+      Object.defineProperty(input, 'files', {value: [new File(['content'], name)]});
+      component.onFileSelected({target: input} as unknown as Event);
+    }
+
+    function complete(reader: ControlledReader, text: string) {
+      reader.result = text;
+      reader.onload?.({target: reader} as unknown as ProgressEvent<FileReader>);
+    }
+
+    it('accepts Unicode files without encoding in plain-text mode', () => {
+      const onChange = vi.fn();
+      component.registerOnChange(onChange);
+      selectFile('unicode.txt');
+      complete(readers[0], '中文 🚀');
+
+      expect(component.parseError()).toBe('');
+      expect(onChange).toHaveBeenCalledWith('中文 🚀');
+    });
+
+    it('cancels an old read when another file is selected', () => {
+      const onChange = vi.fn();
+      component.registerOnChange(onChange);
+      selectFile('old.txt');
+      const oldReader = readers[0];
+      const staleLoad = oldReader.onload;
+      selectFile('new.txt');
+      complete(readers[1], 'new value');
+      oldReader.result = 'stale value';
+      staleLoad?.({target: oldReader} as unknown as ProgressEvent<FileReader>);
+
+      expect(oldReader.abort).toHaveBeenCalled();
+      expect(component.rawContent()).toBe('new value');
+      expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('prevents a removed file from returning after its read completes', () => {
+      selectFile('removed.txt');
+      const reader = readers[0];
+      const staleLoad = reader.onload;
+      component.removeFile();
+      reader.result = 'late value';
+      staleLoad?.({target: reader} as unknown as ProgressEvent<FileReader>);
+
+      expect(component.rawContent()).toBe('');
+      expect(reader.abort).toHaveBeenCalled();
+    });
+
+    it('cancels the active read when destroyed', () => {
+      selectFile('pending.txt');
+      fixture.destroy();
+
+      expect(readers[0].abort).toHaveBeenCalled();
+      expect(readers[0].onload).toBeNull();
+    });
+
+    it('exposes FileReader errors to form validation', () => {
+      selectFile('broken.txt');
+      readers[0].error = new DOMException('Read failed');
+      readers[0].onerror?.();
+
+      expect(component.validate(mockFormControl)).toEqual({parse: 'Read failed'});
+    });
+
+    it('keeps a new read started synchronously by a fileChange handler', () => {
+      component.fileChange.subscribe((content) => {
+        if (content === 'first value') {
+          selectFile('second.txt');
+        }
+      });
+      selectFile('first.txt');
+      complete(readers[0], 'first value');
+      expect(readers).toHaveLength(2);
+      expect(readers[1].abort).not.toHaveBeenCalled();
+      complete(readers[1], 'second value');
+
+      expect(component.rawContent()).toBe('second value');
+      expect(component.selectedFile()?.name).toBe('second.txt');
+    });
+  });
+});
+
+@Component({
+  imports: [FileReaderComponent, ReactiveFormsModule],
+  template: '<cll-file-reader [formControl]="form" [maxSize]="maxSize()" />',
+})
+class FileReaderFormHost {
+  form = new FormControl('initial value');
+  maxSize = signal(2);
+}
+
+describe('FileReaderComponent real form integration', () => {
+  it('updates from the model without marking the control touched or writing back', async () => {
+    TestBed.configureTestingModule({
+      imports: [FileReaderFormHost],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+    });
+    const fixture = TestBed.createComponent(FileReaderFormHost);
+    fixture.detectChanges();
+    const host = fixture.componentInstance;
+    const changes = vi.fn();
+    const subscription = host.form.valueChanges.subscribe(changes);
+    host.form.setValue('server update');
+    await flushEffects();
+
+    expect(changes).toHaveBeenCalledTimes(1);
+    expect(host.form.untouched).toBe(true);
+    expect(host.form.pristine).toBe(true);
+    subscription.unsubscribe();
+  });
+
+  it('revalidates the real form when the file size limit or parsing state changes', () => {
+    TestBed.configureTestingModule({
+      imports: [FileReaderFormHost],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+    });
+    const fixture = TestBed.createComponent(FileReaderFormHost);
+    fixture.detectChanges();
+    const host = fixture.componentInstance;
+    const reader = fixture.debugElement.query(By.directive(FileReaderComponent)).injector.get(FileReaderComponent);
+    const file = new File(['data'], 'data.txt');
+    Object.defineProperty(file, 'size', {value: 1.5 * 1024 * 1024});
+    reader.selectedFile.set(file);
+    host.form.updateValueAndValidity();
+    expect(host.form.errors).toBeNull();
+
+    host.maxSize.set(1);
+    fixture.detectChanges();
+    expect(host.form.errors).toEqual({exceedLimit: true});
+    host.maxSize.set(2);
+    fixture.detectChanges();
+    expect(host.form.errors).toBeNull();
+    reader.parseError.set('Parsing failed');
+    fixture.detectChanges();
+    expect(host.form.errors).toEqual({parse: 'Parsing failed'});
+    reader.parseError.set('');
+    fixture.detectChanges();
+    expect(host.form.errors).toBeNull();
+  });
+
+  it('renders without NgControl when only the fileChange output is used', () => {
+    TestBed.configureTestingModule({
+      imports: [FileReaderComponent],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+    });
+    const fixture = TestBed.createComponent(FileReaderComponent);
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(fixture.componentInstance.formControl()).toBeNull();
   });
 });

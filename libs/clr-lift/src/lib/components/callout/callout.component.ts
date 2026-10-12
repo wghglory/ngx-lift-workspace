@@ -16,5 +16,8 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
   templateUrl: './callout.component.html',
   styleUrl: './callout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    'cds-layout': 'm-y:md',
+  },
 })
 export class CalloutComponent {}

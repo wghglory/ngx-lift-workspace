@@ -1,15 +1,16 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, numberAttribute} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {computedAsync, injectQueryParams} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserService} from '../../../../shared/services/user.service';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-inject-query-params',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent],
+  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './inject-query-params.component.html',
   styleUrl: './inject-query-params.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +18,23 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 export class InjectQueryParamsComponent {
   private userService = inject(UserService);
   private injector = inject(Injector);
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'keyOrTransform',
+        type: 'string | ((params: Params) => T)',
+        description: this.translationService.translate('injectQueryParams.paramKeyOrTransform'),
+      },
+      {
+        name: 'options',
+        type: 'InjectQueryParamsOptions<T>',
+        description: this.translationService.translate('injectQueryParams.paramOptions'),
+      },
+    ];
+  });
 
   queryParamsKeys = injectQueryParams((params) => Object.keys(params)); // returns a signal with all keys of the query params
 

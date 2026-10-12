@@ -1,18 +1,64 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, CertificateSignpostComponent, PageContainerComponent} from 'clr-lift';
+import {
+  CalloutComponent,
+  CertificateSignpostComponent,
+  PageContainerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-certificate-demo',
-  imports: [CalloutComponent, PageContainerComponent, CodeBlockComponent, ClarityModule, CertificateSignpostComponent],
+  imports: [
+    ApiTableComponent,
+    CalloutComponent,
+    PageContainerComponent,
+    CodeBlockComponent,
+    ClarityModule,
+    CertificateSignpostComponent,
+    TranslatePipe,
+  ],
   templateUrl: './certificate-demo.component.html',
   styleUrl: './certificate-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateDemoComponent {
+  private translationService = inject(TranslationService);
+
+  inputs = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'pem',
+        type: 'string',
+        required: true,
+        description: this.translationService.translate('certificate.inputPem'),
+      },
+      {
+        name: 'pemEncoded',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('certificate.inputPemEncoded'),
+      },
+      {
+        name: 'position',
+        type: 'string',
+        defaultValue: "'right-middle'",
+        description: this.translationService.translate('certificate.inputPosition'),
+      },
+      {
+        name: 'showIcon',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('certificate.inputShowIcon'),
+      },
+    ];
+  });
   pem1 = `-----BEGIN CERTIFICATE-----
 MIIDljCCAn6gAwIBAgIQC5McOtY5Z+pnI7/Dr5r0SzANBgkqhkiG9w0BAQsFADBl
 MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3

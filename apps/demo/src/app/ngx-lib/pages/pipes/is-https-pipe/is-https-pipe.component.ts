@@ -1,17 +1,30 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-is-https-pipe',
-  imports: [CodeBlockComponent, PageContainerComponent],
+  imports: [CodeBlockComponent, PageContainerComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './is-https-pipe.component.html',
   styleUrl: './is-https-pipe.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsHttpsPipeComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'value',
+        type: 'string',
+        description: this.translationService.translate('isHttpsPipe.paramValue'),
+      },
+    ];
+  });
   basicExampleCode = highlight(`
 import {IsHttpsPipe} from 'ngx-lift';
 

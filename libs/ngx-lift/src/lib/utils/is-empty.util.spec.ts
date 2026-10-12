@@ -1,6 +1,35 @@
 import {isEmpty, isNotEmpty} from './is-empty.util';
 
+it('does not narrow either branch of a nullable collection emptiness check', () => {
+  const classify = (items: string[] | null | undefined) => {
+    if (isNotEmpty(items)) {
+      expectTypeOf(items).toEqualTypeOf<string[] | null | undefined>();
+      return 'nonempty';
+    } else {
+      expectTypeOf(items).toEqualTypeOf<string[] | null | undefined>();
+      return 'empty';
+    }
+  };
+  expect(classify([])).toBe('empty');
+  expect(classify(null)).toBe('empty');
+  expect(classify(undefined)).toBe('empty');
+  expect(classify(['item'])).toBe('nonempty');
+});
+
 describe('isEmpty function', () => {
+  it('does not narrow an empty collection to null or undefined', () => {
+    const value: number[] = [];
+    if (isEmpty(value)) {
+      expectTypeOf(value).toEqualTypeOf<number[]>();
+      expect(value.length).toBe(0);
+    }
+  });
+
+  it('preserves the exact result for null and undefined', () => {
+    expectTypeOf(isEmpty(null)).toEqualTypeOf<true>();
+    expectTypeOf(isEmpty(undefined)).toEqualTypeOf<true>();
+  });
+
   it('should return true for empty string', () => {
     expect(isEmpty('')).toBe(true);
   });
@@ -41,16 +70,11 @@ describe('isEmpty function', () => {
   });
 
   it('should return true for numbers, booleans, and functions', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(isEmpty(0 as any)).toBe(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(isEmpty(42 as any)).toBe(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(isEmpty(false as any)).toBe(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(isEmpty(true as any)).toBe(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(isEmpty((() => undefined) as any)).toBe(true);
+    expect(isEmpty(0)).toBe(true);
+    expect(isEmpty(42)).toBe(true);
+    expect(isEmpty(false)).toBe(true);
+    expect(isEmpty(true)).toBe(true);
+    expect(isEmpty(() => undefined)).toBe(true);
   });
 
   it('should handle array-like objects with splice', () => {
@@ -65,6 +89,27 @@ describe('isEmpty function', () => {
 });
 
 describe('isNotEmpty function', () => {
+  it('supports an explicit nullability check before checking emptiness', () => {
+    const value: number[] | undefined = [1, 2];
+    if (value != null && isNotEmpty(value)) {
+      expectTypeOf(value).toEqualTypeOf<number[]>();
+      expect(value.length).toBe(2);
+    }
+  });
+
+  it('does not narrow an empty collection away in the false branch', () => {
+    const value: number[] = [];
+    if (!isNotEmpty(value)) {
+      expectTypeOf(value).toEqualTypeOf<number[]>();
+      expect(value.length).toBe(0);
+    }
+  });
+
+  it('preserves the exact result for null and undefined', () => {
+    expectTypeOf(isNotEmpty(null)).toEqualTypeOf<false>();
+    expectTypeOf(isNotEmpty(undefined)).toEqualTypeOf<false>();
+  });
+
   it('should return false for empty string', () => {
     expect(isNotEmpty('')).toBe(false);
   });

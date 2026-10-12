@@ -1,15 +1,19 @@
 import {Routes} from '@angular/router';
 
 import {AlertDemoComponent} from './clr-lib/pages/alert-demo/alert-demo.component';
+import {CalloutDemoComponent} from './clr-lib/pages/callout-demo/callout-demo.component';
 import {CertificateDemoComponent} from './clr-lib/pages/certificate-demo/certificate-demo.component';
 import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component';
+import {ClrIdleDetectionDemoComponent} from './clr-lib/pages/idle-detection-demo/idle-detection-demo.component';
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
 import {MultiAlertsDemoComponent} from './clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component';
+import {PageContainerDemoComponent} from './clr-lib/pages/page-container-demo/page-container-demo.component';
 import {SpinnerDemoComponent} from './clr-lib/pages/spinner-demo/spinner-demo.component';
 import {StatusIndicatorDemoComponent} from './clr-lib/pages/status-indicator-demo/status-indicator-demo.component';
+import {ThemeToggleDemoComponent} from './clr-lib/pages/theme-toggle-demo/theme-toggle-demo.component';
 import {TimelineWizardDemoComponent} from './clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component';
 import {ToastDemoComponent} from './clr-lib/pages/toast-demo/toast-demo.component';
 import {TooltipDemoComponent} from './clr-lib/pages/tooltip-demo/tooltip-demo.component';
@@ -17,9 +21,13 @@ import {NgxLiftHomeComponent} from './ngx-lib/pages/ngx-lift-home/ngx-lift-home.
 import {CombineLatestEagerComponent} from './ngx-lib/pages/operators/combine-latest-eager/combine-latest-eager.component';
 import {CreateAsyncStateComponent} from './ngx-lib/pages/operators/create-async-state/create-async-state.component';
 import {DistinctOnChangeComponent} from './ngx-lib/pages/operators/distinct-on-change/distinct-on-change.component';
+import {KubernetesPaginationComponent} from './ngx-lib/pages/operators/kubernetes-pagination/kubernetes-pagination.component';
 import {LoggerComponent} from './ngx-lib/pages/operators/logger/logger.component';
 import {PollComponent} from './ngx-lib/pages/operators/poll/poll.component';
+import {StartWithTapComponent} from './ngx-lib/pages/operators/start-with-tap/start-with-tap.component';
 import {SwitchMapWithAsyncStateComponent} from './ngx-lib/pages/operators/switch-map-with-async-state/switch-map-with-async-state.component';
+import {K8sRetryBackoffComponent} from './ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component';
+import {K8sRetryBackoffInterceptorComponent} from './ngx-lib/pages/interceptors/k8s-retry-backoff-interceptor/k8s-retry-backoff-interceptor.component';
 import {ArrayJoinPipeComponent} from './ngx-lib/pages/pipes/array-join-pipe/array-join-pipe.component';
 import {ByteConverterPipeComponent} from './ngx-lib/pages/pipes/byte-converter-pipe/byte-converter-pipe.component';
 import {IsHttpsPipeComponent} from './ngx-lib/pages/pipes/is-https-pipe/is-https-pipe.component';
@@ -31,12 +39,15 @@ import {CreateTriggerComponent} from './ngx-lib/pages/signals/create-trigger/cre
 import {InjectParamsComponent} from './ngx-lib/pages/signals/inject-params/inject-params.component';
 import {InjectQueryParamsComponent} from './ngx-lib/pages/signals/inject-query-params/inject-query-params.component';
 import {MergeFromComponent} from './ngx-lib/pages/signals/merge-from/merge-from.component';
+import {MutateResourceDemoComponent} from './ngx-lib/pages/query/mutate-resource/mutate-resource.component';
+import {QueryResourceDemoComponent} from './ngx-lib/pages/query/query-resource/query-resource.component';
 import {ResourceAsyncComponent} from './ngx-lib/pages/signals/resource-async/resource-async.component';
 import {ToSignalFormComponent} from './ngx-lib/pages/signals/to-signal-form/to-signal-form.component';
 import {DifferenceInDaysComponent} from './ngx-lib/pages/utilities/difference-in-days/difference-in-days.component';
 import {IdleDetectionDemoComponent} from './ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component';
 import {IsEmptyComponent} from './ngx-lib/pages/utilities/is-empty/is-empty.component';
 import {IsEqualComponent} from './ngx-lib/pages/utilities/is-equal/is-equal.component';
+import {IsPromiseComponent} from './ngx-lib/pages/utilities/is-promise/is-promise.component';
 import {PickByComponent} from './ngx-lib/pages/utilities/pick-by/pick-by.component';
 import {UrlComponent} from './ngx-lib/pages/utilities/url/url.component';
 import {DateRangeValidatorComponent} from './ngx-lib/pages/validators/date-range-validator/date-range-validator.component';
@@ -95,6 +106,24 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'query',
+        children: [
+          {
+            path: 'queryResource',
+            component: QueryResourceDemoComponent,
+          },
+          {
+            path: 'mutateResource',
+            component: MutateResourceDemoComponent,
+          },
+          {
+            path: '',
+            redirectTo: 'queryResource',
+            pathMatch: 'full',
+          },
+        ],
+      },
+      {
         path: 'operators',
         children: [
           {
@@ -114,12 +143,33 @@ export const routes: Routes = [
             component: DistinctOnChangeComponent,
           },
           {
+            path: 'kubernetesPagination',
+            component: KubernetesPaginationComponent,
+          },
+          {
             path: 'logger',
             component: LoggerComponent,
           },
           {
             path: 'poll',
             component: PollComponent,
+          },
+          {
+            path: 'k8sRetryBackoff',
+            component: K8sRetryBackoffComponent,
+          },
+          {
+            path: 'startWithTap',
+            component: StartWithTapComponent,
+          },
+        ],
+      },
+      {
+        path: 'interceptors',
+        children: [
+          {
+            path: 'k8sRetryBackoff',
+            component: K8sRetryBackoffInterceptorComponent,
           },
         ],
       },
@@ -193,6 +243,10 @@ export const routes: Routes = [
             component: IsEqualComponent,
           },
           {
+            path: 'is-promise',
+            component: IsPromiseComponent,
+          },
+          {
             path: 'pick-by',
             component: PickByComponent,
           },
@@ -236,16 +290,36 @@ export const routes: Routes = [
             component: MultiAlertsDemoComponent,
           },
           {
+            path: 'callout',
+            component: CalloutDemoComponent,
+          },
+          {
             path: 'certificate',
             component: CertificateDemoComponent,
+          },
+          {
+            path: 'file-reader',
+            component: FileReaderDemoComponent,
+          },
+          {
+            path: 'idle-detection',
+            component: ClrIdleDetectionDemoComponent,
           },
           {
             path: 'key-value-inputs',
             component: KeyValueInputsDemoComponent,
           },
           {
+            path: 'page-container',
+            component: PageContainerDemoComponent,
+          },
+          {
             path: 'status-indicator',
             component: StatusIndicatorDemoComponent,
+          },
+          {
+            path: 'theme-toggle',
+            component: ThemeToggleDemoComponent,
           },
           {
             path: 'timeline-wizard',
@@ -258,10 +332,6 @@ export const routes: Routes = [
           {
             path: 'tooltip',
             component: TooltipDemoComponent,
-          },
-          {
-            path: 'file-reader',
-            component: FileReaderDemoComponent,
           },
         ],
       },

@@ -1,0 +1,99 @@
+<cll-page-container [title]="'kubernetesPagination'">
+  <!-- Overview -->
+  <p [innerHTML]="'kubernetesPagination.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none" [innerHTML]="'kubernetesPagination.callout' | translate"></p>
+  </cll-callout>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'kubernetesPagination.example1Title' | translate }}</h3>
+      <p>
+        {{ 'kubernetesPagination.example1Desc' | translate }}
+      </p>
+
+      <div class="preview-box" cds-layout="vertical gap:md">
+        <div cds-layout="horizontal gap:sm align:center">
+          <button type="button" class="btn btn-primary btn-sm" [disabled]="isLoading()" (click)="fetchAggregatedPods()">
+            {{ 'kubernetesPagination.btnFetchPods' | translate }}
+          </button>
+          @if (isLoading()) {
+            <cll-spinner [size]="'sm'" />
+            <span cds-text="body font:medium">{{ 'kubernetesPagination.fetchingPages' | translate }}</span>
+          }
+        </div>
+
+        @if (pagesFetched() > 0) {
+          <div cds-text="caption">
+            {{ 'kubernetesPagination.pagesFetched' | translate }} <strong>{{ pagesFetched() }}</strong>
+          </div>
+        }
+
+        @if (aggregatedList(); as list) {
+          <div cds-layout="vertical gap:sm">
+            <div cds-layout="horizontal gap:xs align:center">
+              <span class="badge badge-success">{{ 'kubernetesPagination.aggregationComplete' | translate }}</span>
+              <span cds-text="body font:medium"
+                >{{ 'kubernetesPagination.totalResources' | translate }} {{ list.items.length }}</span
+              >
+            </div>
+
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>{{ 'kubernetesPagination.thPodName' | translate }}</th>
+                  <th>{{ 'kubernetesPagination.thNamespace' | translate }}</th>
+                  <th>{{ 'kubernetesPagination.thStatus' | translate }}</th>
+                  <th>{{ 'kubernetesPagination.thPodIp' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (pod of list.items; track pod.metadata.name) {
+                  <tr>
+                    <td class="font-mono text-xs">{{ pod.metadata.name }}</td>
+                    <td>{{ pod.metadata.namespace }}</td>
+                    <td>
+                      <span class="label label-success">{{ pod.status?.phase }}</span>
+                    </td>
+                    <td class="font-mono text-xs">{{ pod.status?.podIP }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+      <app-code-block [code]="operatorCode" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'kubernetesPagination.example2Title' | translate }}</h3>
+      <p [innerHTML]="'kubernetesPagination.example2Desc' | translate"></p>
+      <app-code-block [code]="convenienceCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>aggregatePaginatedKubernetesResources</h3>
+      <p>{{ 'kubernetesPagination.aggregateSummary' | translate }}</p>
+
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="aggregateParameters()" />
+    </div>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>fetchPaginatedKubernetesResources</h3>
+      <p>{{ 'kubernetesPagination.fetchSummary' | translate }}</p>
+
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="fetchParameters()" />
+    </div>
+  </section>
+</cll-page-container>

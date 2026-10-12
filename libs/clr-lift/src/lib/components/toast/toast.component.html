@@ -86,7 +86,7 @@
         </svg>
       }
       @case ('success') {
-        <svg width="24" height="24" viewBox="0 0 24 24" [attr.aria-label]="'toast.success-info' | translate">
+        <svg width="24" height="24" viewBox="0 0 24 24" [attr.aria-label]="'toast.success-icon' | translate">
           <circle class="success-bg" fill="#60B515" cx="12" cy="12" r="10.67" />
           <path
             id="check-mark"
@@ -110,6 +110,7 @@
         <ng-content select=".toast-date" />
         @if (manualClosable()) {
           <button
+            type="button"
             class="close-button"
             [attr.aria-label]="'toast.close-notification' | translate"
             (click)="close(true)"

@@ -1,0 +1,70 @@
+<cll-page-container [title]="'isPromise'">
+  <!-- Overview -->
+  <p [innerHTML]="'isPromise.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none" [innerHTML]="'isPromise.callout' | translate"></p>
+  </cll-callout>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'isPromise.example1Title' | translate }}</h3>
+      <p>{{ 'isPromise.example1Desc' | translate }}</p>
+
+      <div class="preview-box">
+        <table class="table table-compact w-full">
+          <thead>
+            <tr>
+              <th>{{ 'isPromise.thDescription' | translate }}</th>
+              <th>{{ 'isPromise.thExpression' | translate }}</th>
+              <th>{{ 'isPromise.thResult' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of checkCases; track item.label) {
+              <tr>
+                <td>{{ item.label }}</td>
+                <td class="font-mono text-xs">{{ item.expression }}</td>
+                <td>
+                  @if (testIsPromise(item.value)) {
+                    <span class="label label-success">true</span>
+                  } @else {
+                    <span class="label label-danger">false</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'isPromise.example2Title' | translate }}</h3>
+      <p [innerHTML]="'isPromise.example2Desc' | translate"></p>
+      <app-code-block [code]="typeNarrowingCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm">
+      <h3>isPromise</h3>
+      <p>{{ 'isPromise.apiSummary' | translate }}</p>
+
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="parameters()" />
+
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'isPromise.returnsDesc' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

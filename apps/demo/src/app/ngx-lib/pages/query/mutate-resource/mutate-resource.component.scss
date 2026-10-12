@@ -1,0 +1,97 @@
+:host {
+  display: block;
+}
+
+.features-section {
+  margin-top: 1.5rem;
+  margin-bottom: 2.75rem;
+
+  .features-intro {
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--clr-color-neutral-700, #565656);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .feature-card {
+      margin: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+      .card-header {
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+      }
+
+      .card-block {
+        flex: 1 1 auto;
+        padding: 0.85rem 1rem;
+
+        .card-text {
+          font-size: 0.8rem;
+          line-height: 1.5;
+          margin: 0;
+          color: var(--clr-color-neutral-800, #333333);
+        }
+      }
+    }
+  }
+}
+
+.stat-card {
+  text-align: center;
+  padding: 0.75rem;
+
+  .stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--clr-color-neutral-700, #565656);
+    margin-top: 0.25rem;
+  }
+}
+
+.log-box {
+  max-height: 12rem;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.75rem;
+  background-color: var(--clr-color-neutral-100, #f8f8f8);
+  border: 1px solid var(--clr-color-neutral-300, #e0e0e0);
+  border-radius: 4px;
+  padding: 0.5rem;
+
+  .log-entry {
+    padding: 0.15rem 0;
+    border-bottom: 1px dashed var(--clr-color-neutral-200, #eee);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.member-form {
+  .clr-form-control {
+    margin-top: 0.5rem;
+  }
+
+  .form-actions {
+    margin-top: 1rem;
+    padding-top: 0.25rem;
+  }
+}

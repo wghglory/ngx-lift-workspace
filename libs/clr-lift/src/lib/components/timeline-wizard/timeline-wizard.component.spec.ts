@@ -1,13 +1,13 @@
 import {flushEffects} from '../../../test-setup';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
-import {ChangeDetectorRef, ComponentRef, EmbeddedViewRef} from '@angular/core';
+import {ChangeDetectorRef, Component, ComponentRef, EmbeddedViewRef} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ClarityModule, ClrTimelineStepState} from '@clr/angular';
-import {delay, of, Subscription, throwError} from 'rxjs';
+import {delay, of, Subject, Subscription, throwError} from 'rxjs';
 import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
@@ -24,6 +24,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+@Component({template: ''})
 class MockTimelineBaseComponent extends TimelineBaseComponent {
   override form = new FormGroup({
     field1: new FormControl(''),
@@ -119,74 +120,34 @@ describe('TimelineWizardComponent', () => {
     expect(renderComponentSpy).not.toHaveBeenCalled();
   });
 
-  it('should handle previousStep for a non-first step (live = false)', async () => {
-    vi.spyOn(component.timelineWizardService, 'isFirstStep', 'get').mockReturnValue(false);
-    vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(1);
+  it('renders the previous component when navigating back with live disabled', async () => {
+    fixture.componentRef.setInput('live', false);
+    await flushEffects();
+    component.nextStep();
+    await flushEffects();
+    const secondRef = component.currentComponentRef;
     const renderComponentSpy = vi.spyOn(component, 'renderComponent');
 
-    fixture.componentRef.setInput('live', false);
     component.previousStep();
 
-    expect(renderComponentSpy).toHaveBeenCalled();
+    expect(renderComponentSpy).toHaveBeenCalledOnce();
+    expect(secondRef?.hostView.destroyed).toBe(true);
+    expect(component.timelineWizardService.currentStepIndex).toBe(0);
   });
 
-  // TODO: Revisit this test - difficult to properly mock currentStepIndex behavior
-  // Issue: The currentStepIndex is a getter that returns the index of the CURRENT step,
-  // and it changes when the steps array is updated. Mocking this behavior correctly
-  // is challenging because the mock needs to adapt to the state changes dynamically.
-  // Consider testing the previousStep behavior through integration tests instead.
-  it.skip('should handle previousStep for a non-first step (live = true)', async () => {
-    // Set up steps with currentStepIndex = 1
-    fixture.componentRef.setInput('timelineSteps', [
-      {state: ClrTimelineStepState.SUCCESS, title: 'Step 1', component: MockTimelineBaseComponent, data: {}},
-      {state: ClrTimelineStepState.CURRENT, title: 'Step 2', component: MockTimelineBaseComponent, data: {}},
-      {state: ClrTimelineStepState.NOT_STARTED, title: 'Step 3', component: MockTimelineBaseComponent, data: {}},
-    ]);
-    // Don't call fixture.detectChanges() here - it causes ExpressionChangedAfterItHasBeenCheckedError
-    // when previousStep() modifies the steps array during the same change detection cycle
-
-    vi.spyOn(component.timelineWizardService, 'isFirstStep', 'get').mockReturnValue(false);
-    // Mock currentStepIndex to return 1 initially
-    vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(1);
+  it('navigates back to the same live component without recreating its form', async () => {
     fixture.componentRef.setInput('live', true);
-
-    // Create mock component refs with proper structure including instance
-    // Initially currentStepIndex is 1, after previousStep it becomes 0
-    const rootNode = document.createElement('div');
-    rootNode.style.display = 'block';
-    const prevRootNode = document.createElement('div');
-    prevRootNode.style.display = 'none';
-    const currentRef = {
-      hostView: {
-        rootNodes: [rootNode],
-      } as EmbeddedViewRef<TimelineBaseComponent>,
-      instance: {
-        stepInvalid: false,
-      } as TimelineBaseComponent,
-    } as unknown as ComponentRef<TimelineBaseComponent>;
-    const prevRef = {
-      hostView: {
-        rootNodes: [prevRootNode],
-      } as EmbeddedViewRef<TimelineBaseComponent>,
-      instance: {
-        stepInvalid: false,
-      } as TimelineBaseComponent,
-    } as unknown as ComponentRef<TimelineBaseComponent>;
-
-    // Set up the component ref map
-    // After previousStep, currentStepIndex becomes 0
-    // So it accesses componentRefMap[0 + 1] (index 1, the old current) and componentRefMap[0] (the new current)
-    component['componentRefMap'] = {
-      0: prevRef,
-      1: currentRef,
-    };
+    await flushEffects();
+    const firstRef = component.currentComponentRef;
+    component.nextStep();
+    await flushEffects();
+    const secondRef = component.currentComponentRef;
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
 
     component.previousStep();
-
-    // After previousStep, currentStepIndex is 0
-    // The old current (index 1) should be hidden, the new current (index 0) should be shown
-    expect(rootNode.style.display).toBe('none');
-    expect(prevRootNode.style.display).toBe('block');
+    expect(component.currentComponentRef).toBe(firstRef);
+    expect(firstRef?.location.nativeElement.style.display).toBe('block');
+    expect(secondRef?.location.nativeElement.style.display).toBe('none');
   });
 
   it('should handle cancel', async () => {
@@ -225,12 +186,7 @@ describe('TimelineWizardComponent', () => {
     expect(clearSpy).not.toHaveBeenCalled();
   });
 
-  // TODO: Revisit this test - failing due to component reference not being properly initialized
-  // Issue: currentComponentRef is undefined when trying to access form data
-  // The form.patchValue should have been called with dataToFormValue result, but the component ref
-  // is not available at the expected time. Need to investigate the timing of component initialization
-  // and form data patching in the timeline wizard component.
-  it.skip('should initialize component with form data', async () => {
+  it('should initialize component with form data', async () => {
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
     fixture.detectChanges(); // Let Angular initialize the component
@@ -283,12 +239,8 @@ describe('TimelineWizardComponent', () => {
     }
   });
 
-  // TODO: Revisit this test - failing due to "Current component reference is not available" error
-  // Issue: When next$ observable emits an error, the component reference is not available in the
-  // switchMap operator. The currentComponentRef is undefined when trying to access it during error
-  // handling. Need to investigate the lifecycle and timing of component reference management when
-  // handling observable errors in the timeline wizard.
-  it.skip('should handle next$ observable with error', async () => {
+  it('should handle next$ observable with error', async () => {
+    @Component({template: ''})
     class ErrorComponent extends TimelineBaseComponent {
       override form = new FormGroup({
         field1: new FormControl(''),
@@ -334,17 +286,12 @@ describe('TimelineWizardComponent', () => {
 
     const currentStep = component.timelineWizardService.steps[currentStepIndex];
     expect(currentStep.state).toBe(ClrTimelineStepState.ERROR);
-    expect(currentStep.description).toContain('Test error');
+    expect(currentStep.description).toContain('500');
 
     errorSubscription.unsubscribe();
   });
 
-  // TODO: Revisit this test - failing due to "Current component reference is not available" error
-  // Issue: When finishing the wizard on the last step, the component reference is not available
-  // when the next$ observable chain executes. The currentComponentRef is undefined in the switchMap
-  // operator. Need to investigate how component references are managed during the final step
-  // completion and ensure the reference is properly maintained throughout the observable chain.
-  it.skip('should finish wizard on last step', async () => {
+  it('should finish wizard on last step', async () => {
     // Ensure ngAfterViewInit has been called so the container is available
     component.ngAfterViewInit();
     fixture.detectChanges();
@@ -381,14 +328,9 @@ describe('TimelineWizardComponent', () => {
     expect(currentStep.state).toBe(ClrTimelineStepState.SUCCESS);
   });
 
-  // TODO: Revisit this test - failing due to "Current component reference is not available" error
-  // Issue: When setting step as processing before an async operation, the component reference is
-  // not available when the next$ observable chain executes. The currentComponentRef is undefined
-  // in the switchMap operator. Need to investigate the timing of component reference availability
-  // during async operations and ensure the reference is properly maintained when processing states
-  // are set.
-  it.skip('should set step as processing before async operation', async () => {
+  it('should set step as processing before async operation', async () => {
     // Use a delayed observable so we can check the PROCESSING state before it completes
+    @Component({template: ''})
     class DelayedComponent extends TimelineBaseComponent {
       override form = new FormGroup({
         field1: new FormControl(''),
@@ -514,6 +456,7 @@ describe('TimelineWizardComponent', () => {
   });
 
   it('should handle component without form', async () => {
+    @Component({template: ''})
     class NoFormComponent extends TimelineBaseComponent {
       override form = null;
     }
@@ -521,6 +464,7 @@ describe('TimelineWizardComponent', () => {
     fixture.componentRef.setInput('timelineSteps', [
       {state: ClrTimelineStepState.CURRENT, title: 'Step 1', component: NoFormComponent, data: {}},
     ]);
+    fixture.detectChanges();
     fixture.componentRef.setInput('live', false);
     component.renderComponent();
     await flushEffects();
@@ -575,5 +519,92 @@ describe('TimelineWizardComponent', () => {
     component['componentRefMap'] = {0: mockRef};
     vi.spyOn(component.timelineWizardService, 'currentStepIndex', 'get').mockReturnValue(0);
     expect(component.currentStepFormInvalid).toBe(true);
+  });
+  it('saves the latest form data when next is clicked before the debounce finishes', async () => {
+    await flushEffects();
+    const ref = component.currentComponentRef;
+    expect(ref?.instance.form).toBeDefined();
+    ref?.instance.form?.get('field1')?.setValue('typed immediately');
+    component.nextStep();
+
+    expect(component.timelineWizardService.steps[0].data).toEqual({field1: 'typed immediately'});
+  });
+
+  it('saves edits when navigating back before the debounce finishes', async () => {
+    await flushEffects();
+    component.nextStep();
+    await flushEffects();
+    const ref = component.currentComponentRef;
+    expect(ref?.instance.form).toBeDefined();
+    ref?.instance.form?.get('field1')?.setValue('second step edit');
+    component.previousStep();
+
+    expect(component.timelineWizardService.steps[1].data).toEqual({field1: 'second step edit'});
+  });
+
+  it('closes form subscriptions when the wizard is destroyed', async () => {
+    await flushEffects();
+    const subscriptions = [...component['subscriptions']];
+    expect(subscriptions.length).toBeGreaterThan(0);
+    fixture.destroy();
+
+    expect(subscriptions.every((subscription) => subscription.closed)).toBe(true);
+  });
+
+  it('runs one transition when both the template and another subscriber observe next$', async () => {
+    await flushEffects();
+    component.nextStep();
+
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
+  });
+
+  it('keeps a hidden live form bound to its original step', async () => {
+    fixture.componentRef.setInput('live', true);
+    await flushEffects();
+    const firstRef = component.currentComponentRef;
+    component.nextStep();
+    await flushEffects();
+    firstRef?.instance.form?.get('field1')?.setValue('background edit');
+    await flushEffects(400);
+
+    expect(component.timelineWizardService.steps[0].data).toEqual({field1: 'background edit'});
+    expect(component.timelineWizardService.steps[1].data).not.toEqual({field1: 'background edit'});
+  });
+
+  it('keeps the owning step current and disables previous navigation during a pending next operation', async () => {
+    await flushEffects();
+    component.nextStep();
+    await flushEffects();
+    const ref = component.currentComponentRef;
+    if (!ref) {
+      throw new Error('Expected the second step component');
+    }
+    const pending = new Subject<boolean>();
+    ref.instance.next$ = pending;
+    component.nextStep();
+    fixture.detectChanges();
+    expect(component.timelineWizardService.currentStep.state).toBe(ClrTimelineStepState.PROCESSING);
+    expect(fixture.nativeElement.querySelector('.btn-outline').disabled).toBe(true);
+
+    component.previousStep();
+
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
+    pending.next(true);
+    expect(component.timelineWizardService.currentStepIndex).toBe(2);
+  });
+
+  it('cancels a pending next operation when destroyed', async () => {
+    await flushEffects();
+    const pending = new Subject<boolean>();
+    const ref = component.currentComponentRef;
+    expect(ref).toBeDefined();
+    if (ref) {
+      ref.instance.next$ = pending;
+    }
+    component.nextStep();
+    expect(pending.observed).toBe(true);
+    fixture.destroy();
+
+    expect(pending.observed).toBe(false);
   });
 });

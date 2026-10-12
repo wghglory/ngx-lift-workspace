@@ -1,0 +1,262 @@
+<cll-page-container [title]="'retryOnK8sBackoff'">
+  <!-- Overview -->
+  <p [innerHTML]="'k8sRetryBackoff.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none" [innerHTML]="'k8sRetryBackoff.callout' | translate"></p>
+    <a routerLink="/ngx-lift/interceptors/k8sRetryBackoff">k8sRetryBackoffInterceptor</a>
+  </cll-callout>
+
+  <!-- Interactive Simulator Section -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <app-demo-playground
+      [title]="'k8sRetryBackoff.example1Title' | translate"
+      [description]="'k8sRetryBackoff.example1Desc' | translate"
+      level="intermediate"
+      badgeText="RxJS Operator"
+      layout="stacked"
+      [tsCode]="operatorCode"
+    >
+      <div preview class="preview-box" cds-layout="vertical gap:md">
+        <clr-radio-container clrInline>
+          <label>{{ 'k8sRetryBackoff.selectScenario' | translate }}</label>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="scenario"
+              value="header"
+              [ngModel]="selectedScenario()"
+              (ngModelChange)="selectedScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.scenarioHeader' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="scenario"
+              value="body"
+              [ngModel]="selectedScenario()"
+              (ngModelChange)="selectedScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.scenarioBody' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="scenario"
+              value="fallback"
+              [ngModel]="selectedScenario()"
+              (ngModelChange)="selectedScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.scenarioFallback' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="scenario"
+              value="non429"
+              [ngModel]="selectedScenario()"
+              (ngModelChange)="selectedScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.scenarioNon429' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="scenario"
+              value="exhausted"
+              [ngModel]="selectedScenario()"
+              (ngModelChange)="selectedScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.scenarioExhausted' | translate }}</label>
+          </clr-radio-wrapper>
+        </clr-radio-container>
+
+        <div cds-layout="horizontal gap:sm align:vertical-center">
+          <button type="button" class="btn btn-primary btn-sm" [clrLoading]="isLoading()" (click)="executeSimulation()">
+            {{ 'k8sRetryBackoff.btnSimulate' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [disabled]="isLoading() || logs().length === 0"
+            (click)="clearLogs()"
+          >
+            {{ 'k8sRetryBackoff.btnClearLogs' | translate }}
+          </button>
+        </div>
+
+        @if (simulationResult(); as result) {
+          <div cds-layout="horizontal gap:sm align:vertical-center">
+            @if (result.success) {
+              <span class="badge badge-success">Success (HTTP {{ result.statusCode }})</span>
+            } @else {
+              <span class="badge badge-danger">Failed (HTTP {{ result.statusCode }})</span>
+            }
+            <span cds-text="body font:medium">{{ result.message }}</span>
+            <span cds-text="caption">(Total Attempts: {{ result.totalAttempts }})</span>
+          </div>
+        }
+
+        @if (logs().length > 0) {
+          <div cds-layout="vertical gap:xs">
+            <span cds-text="caption font:medium">{{ 'k8sRetryBackoff.logTitle' | translate }}</span>
+            <div class="card card-block font-mono text-xs" style="max-height: 200px; overflow-y: auto">
+              @for (log of logs(); track $index) {
+                <div>{{ log }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </app-demo-playground>
+
+    <!-- Example 2: Standalone Delay Extraction Helper -->
+    <app-demo-playground
+      [title]="'k8sRetryBackoff.example2Title' | translate"
+      [description]="'k8sRetryBackoff.example2Desc' | translate"
+      level="beginner"
+      badgeText="Helper Function"
+      layout="stacked"
+      [tsCode]="delayHelperCode"
+    >
+      <div preview class="preview-box" cds-layout="vertical gap:md">
+        <clr-radio-container clrInline>
+          <label>{{ 'k8sRetryBackoff.sampleErrorLabel' | translate }}</label>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="helperScenario"
+              value="header"
+              [ngModel]="helperScenario()"
+              (ngModelChange)="helperScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.helperHeader' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="helperScenario"
+              value="body"
+              [ngModel]="helperScenario()"
+              (ngModelChange)="helperScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.helperBody' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="helperScenario"
+              value="fallback"
+              [ngModel]="helperScenario()"
+              (ngModelChange)="helperScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.helperFallback' | translate }}</label>
+          </clr-radio-wrapper>
+          <clr-radio-wrapper>
+            <input
+              type="radio"
+              clrRadio
+              name="helperScenario"
+              value="non429"
+              [ngModel]="helperScenario()"
+              (ngModelChange)="helperScenario.set($event)"
+            />
+            <label>{{ 'k8sRetryBackoff.helperNon429' | translate }}</label>
+          </clr-radio-wrapper>
+        </clr-radio-container>
+
+        <div cds-layout="horizontal gap:sm align:vertical-center">
+          <button type="button" class="btn btn-sm btn-outline" (click)="calculateDelay()">
+            {{ 'k8sRetryBackoff.btnExtractDelay' | translate }}
+          </button>
+          @if (extractedDelayResult(); as res) {
+            @if (res.delayMs !== null) {
+              <span class="badge badge-success">{{ res.delayMs }}ms</span>
+              <span cds-text="caption font:medium">{{ 'k8sRetryBackoff.retryableError' | translate }}</span>
+            } @else {
+              <span class="badge badge-danger">null</span>
+              <span cds-text="caption font:medium">{{ 'k8sRetryBackoff.nonRetryableError' | translate }}</span>
+            }
+          }
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>retryOnK8sBackoff</h3>
+      <p>{{ 'k8sRetryBackoff.apiSummary' | translate }}</p>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="operatorParameters()" />
+    </div>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>K8sBackoffRetryConfig</h3>
+      <p>{{ 'k8sRetryBackoff.configSummary' | translate }}</p>
+      <h4>{{ 'common.properties' | translate }}</h4>
+      <app-api-table [properties]="configProperties()" />
+    </div>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>getK8sRetryDelayMs</h3>
+      <p>{{ 'k8sRetryBackoff.delaySummary' | translate }}</p>
+      <p [innerHTML]="'k8sRetryBackoff.errorShape' | translate"></p>
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <app-api-table [properties]="delayParameters()" />
+    </div>
+  </section>
+
+  <!-- Architectural Comparison Section -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'k8sRetryBackoff.diffTitle' | translate }}</h2>
+    <p>{{ 'k8sRetryBackoff.diffDesc' | translate }}</p>
+
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'k8sRetryBackoff.diffColFeature' | translate }}</th>
+          <th>{{ 'k8sRetryBackoff.diffColOperator' | translate }}</th>
+          <th>{{ 'k8sRetryBackoff.diffColInterceptor' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>{{ 'k8sRetryBackoff.diffScope' | translate }}</strong>
+          </td>
+          <td>{{ 'k8sRetryBackoff.diffScopeOp' | translate }}</td>
+          <td>{{ 'k8sRetryBackoff.diffScopeInt' | translate }}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>{{ 'k8sRetryBackoff.diffUseCases' | translate }}</strong>
+          </td>
+          <td>{{ 'k8sRetryBackoff.diffUseCasesOp' | translate }}</td>
+          <td>{{ 'k8sRetryBackoff.diffUseCasesInt' | translate }}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>{{ 'k8sRetryBackoff.diffConfig' | translate }}</strong>
+          </td>
+          <td [innerHTML]="'k8sRetryBackoff.diffConfigOp' | translate"></td>
+          <td [innerHTML]="'k8sRetryBackoff.diffConfigInt' | translate"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</cll-page-container>

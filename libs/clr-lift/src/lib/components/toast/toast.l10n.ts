@@ -62,6 +62,13 @@ export const toastTranslations: Record<string, Record<string, string>> = {
     'error-icon': 'Ícone de falha',
     'warning-icon': 'Ícone de aviso',
   },
+  'pt-BR': {
+    'close-notification': 'Descartar notificação',
+    'success-icon': 'Ícone de êxito',
+    'info-icon': 'Ícone de informação',
+    'error-icon': 'Ícone de falha',
+    'warning-icon': 'Ícone de aviso',
+  },
   'zh-CN': {
     'close-notification': '关闭通知',
     'success-icon': '成功图标',

@@ -1,16 +1,47 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-spinner',
-  imports: [SpinnerComponent, PageContainerComponent, CodeBlockComponent],
+  imports: [ApiTableComponent, SpinnerComponent, PageContainerComponent, CodeBlockComponent, TranslatePipe],
   templateUrl: './spinner-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinnerDemoComponent {
+  private translationService = inject(TranslationService);
+
+  inputs = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'size',
+        type: "'lg' | 'md' | 'sm'",
+        defaultValue: "'lg'",
+        description: this.translationService.translate('spinner.inputSize'),
+      },
+      {
+        name: 'center',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('spinner.inputCenter'),
+      },
+      {
+        name: 'inline',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('spinner.inputInline'),
+      },
+      {
+        name: 'customClass',
+        type: 'string',
+        description: this.translationService.translate('spinner.inputCustomClass'),
+      },
+    ];
+  });
   defaultCode = highlight(`
 <cll-spinner />
   `);

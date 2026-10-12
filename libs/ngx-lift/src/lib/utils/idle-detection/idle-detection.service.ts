@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {DestroyRef, inject, Injectable} from '@angular/core';
 import {fromEvent, merge, Subject, Subscription, throttleTime} from 'rxjs';
 
 import {IdleDetectionConfig} from './idle-detection.config';
@@ -77,6 +77,7 @@ export class IdleDetectionService {
    * @param config - Optional configuration for idle and timeout durations.
    */
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.clearTimers());
     const config = inject(IdleDetectionConfig, {optional: true});
     if (config) {
       this.setConfig(config);
@@ -140,6 +141,7 @@ export class IdleDetectionService {
    * Starts the countdown.
    */
   private startCountdown() {
+    this.stopCountdown();
     this.isCountingDown = true;
     this.countdownSubject.next(this.countdown);
 
@@ -159,6 +161,7 @@ export class IdleDetectionService {
    */
   private stopCountdown() {
     clearInterval(this.countdownTimer);
+    this.countdownTimer = undefined;
     this.isCountingDown = false;
 
     // reset countdown
@@ -201,7 +204,7 @@ export class IdleDetectionService {
    */
   clearTimers() {
     clearTimeout(this.idleTimer);
-    clearInterval(this.countdownTimer);
+    this.stopCountdown();
 
     this.idleTimer = undefined;
     this.countdownTimer = undefined;

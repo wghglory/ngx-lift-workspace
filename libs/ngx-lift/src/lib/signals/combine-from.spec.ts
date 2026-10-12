@@ -1,7 +1,7 @@
 import {beforeEach, afterEach, vi} from 'vitest';
-import {computed, Injector, signal} from '@angular/core';
+import {computed, Injector, Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {BehaviorSubject, delay, map, of, tap} from 'rxjs';
+import {BehaviorSubject, delay, map, of, Subject, tap} from 'rxjs';
 import {pipe} from 'rxjs';
 
 import {flushEffects} from '../../test-setup';
@@ -16,6 +16,41 @@ afterEach(() => {
 });
 
 describe(combineFrom.name, () => {
+  it('includes undefined in the type when no initial value is provided', () => {
+    TestBed.runInInjectionContext(() => {
+      const source = new Subject<number>();
+      const combined = combineFrom<[number]>([source]);
+      expectTypeOf(combined).toEqualTypeOf<Signal<[number] | undefined>>();
+      expect(combined()).toBeUndefined();
+      source.next(1);
+      expect(combined()).toEqual([1]);
+    });
+  });
+
+  it('evaluates a getter once during initialization and retains its dependencies', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const source = signal(1);
+      const getter = vi.fn(() => source());
+      const combined = combineFrom([getter]);
+      expect(combined()).toEqual([1]);
+      await flushEffects();
+      expect(getter).toHaveBeenCalledTimes(1);
+      source.set(2);
+      await flushEffects();
+      expect(combined()).toEqual([2]);
+      expect(getter).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('preserves an own __proto__ source key', () => {
+    TestBed.runInInjectionContext(() => {
+      const sources = Object.fromEntries([['__proto__', signal(1)]]) as Record<string, Signal<number>>;
+      const combined = combineFrom(sources);
+      expect(Object.hasOwn(combined() ?? {}, '__proto__')).toBe(true);
+      expect(combined()).toEqual(Object.fromEntries([['__proto__', 1]]));
+    });
+  });
+
   describe('array inputs', () => {
     it('should combine signals into an array', async () => {
       await TestBed.runInInjectionContext(async () => {

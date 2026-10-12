@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe} from 'clr-lift';
 import {httpsValidator, urlValidator} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -9,7 +9,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-url-validator',
-  imports: [PageContainerComponent, ClarityModule, ReactiveFormsModule, CodeBlockComponent],
+  imports: [PageContainerComponent, ClarityModule, ReactiveFormsModule, CodeBlockComponent, TranslatePipe],
   templateUrl: './url-validator.component.html',
   styleUrl: './url-validator.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,10 +1,17 @@
-import {ChangeDetectionStrategy, Component, effect, inject, Injector, Signal, signal} from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, Signal, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent} from 'clr-lift';
+import {
+  AlertComponent,
+  CalloutComponent,
+  PageContainerComponent,
+  SpinnerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
 import {delay, of, throwError} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
 import {PaginationResponse} from '../../../../shared/models/pagination.model';
@@ -16,13 +23,14 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   selector: 'app-computed-async',
   imports: [
     ClarityModule,
-    RouterLink,
     PageContainerComponent,
     CalloutComponent,
     CodeBlockComponent,
     SpinnerComponent,
     AlertComponent,
     UserCardComponent,
+    TranslatePipe,
+    ApiTableComponent,
   ],
   templateUrl: './computed-async.component.html',
   styleUrl: './computed-async.component.scss',
@@ -31,8 +39,60 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 export class ComputedAsyncComponent {
   private userService = inject(UserService);
   private injector = inject(Injector);
+  private translationService = inject(TranslationService);
   private refreshTrigger = createTrigger();
   private fetchTrigger = createTrigger();
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'computation',
+        type: '(previousValue?: T) => Promise<T> | Observable<T> | T',
+        required: true,
+        description: this.translationService.translate('computedAsync.paramComputation'),
+      },
+      {
+        name: 'options',
+        type: 'ComputedAsyncOptions<T>',
+        description: this.translationService.translate('computedAsync.paramOptions'),
+      },
+    ];
+  });
+
+  optionsProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'initialValue',
+        type: 'T',
+        description: this.translationService.translate('computedAsync.propInitialValue'),
+      },
+      {
+        name: 'requireSync',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('computedAsync.propRequireSync'),
+      },
+      {
+        name: 'behavior',
+        type: "'switch' | 'merge' | 'concat' | 'exhaust'",
+        defaultValue: "'switch'",
+        description: this.translationService.translate('computedAsync.propBehavior'),
+      },
+      {
+        name: 'onError',
+        type: '(error: unknown) => T | undefined',
+        description: this.translationService.translate('computedAsync.propOnError'),
+      },
+      {
+        name: 'throwOnError',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('computedAsync.propThrowOnError'),
+      },
+    ];
+  });
 
   // Decoupled Injector example: Can be created dynamically outside component constructor
   decoupledUserState = computedAsync(() => this.userService.getUsers({results: 3}).pipe(createAsyncState()), {

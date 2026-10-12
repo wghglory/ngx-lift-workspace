@@ -1,3 +1,5 @@
-<div class="border rounded-md p-5" [class]="customClass()">
-  <ng-content />
+<div class="card" [class]="customClass()" cds-layout="m:none">
+  <div class="card-block">
+    <ng-content />
+  </div>
 </div>

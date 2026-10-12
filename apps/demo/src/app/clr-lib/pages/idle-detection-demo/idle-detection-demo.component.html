@@ -1,0 +1,73 @@
+<cll-page-container [title]="'idleDetection.title' | translate">
+  <!-- Overview -->
+  <p [innerHTML]="'idleDetection.overview' | translate"></p>
+
+  <cll-callout>
+    <p cds-layout="m-t:none">
+      {{ 'idleDetection.callout' | translate }}
+    </p>
+  </cll-callout>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'idleDetection.example1' | translate }}</h3>
+      <p>{{ 'idleDetection.example1Desc' | translate }}</p>
+
+      <div class="preview-box" cds-layout="vertical gap:sm">
+        <div cds-layout="horizontal gap:sm align:center">
+          @if (!isMonitoring()) {
+            <button type="button" class="btn btn-primary btn-sm" (click)="startSimulation()">
+              {{ 'idleDetection.startSimulation' | translate }}
+            </button>
+          } @else {
+            <button type="button" class="btn btn-danger btn-sm" (click)="stopSimulation()">
+              {{ 'idleDetection.stopSimulation' | translate }}
+            </button>
+          }
+        </div>
+
+        <div cds-layout="horizontal gap:md align:center wrap" cds-text="body">
+          <span>
+            {{ 'idleDetection.simActive' | translate }}
+            <strong>{{ (isMonitoring() ? 'idleDetection.yes' : 'idleDetection.no') | translate }}</strong>
+          </span>
+          <span>
+            {{ 'idleDetection.sessionStatus' | translate }} <strong>{{ sessionStatus() }}</strong>
+          </span>
+          <span>
+            {{ 'idleDetection.totalTimeouts' | translate }} <strong>{{ timeoutCount() }}</strong>
+          </span>
+        </div>
+
+        @if (isMonitoring()) {
+          <cll-idle-detection [idleDurationInSeconds]="3" [timeoutDurationInSeconds]="10" (timeout)="onTimeout()" />
+        }
+      </div>
+      <app-code-block [code]="basicUsageCode" lang="html" />
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'idleDetection.example2' | translate }}</h3>
+      <p [innerHTML]="'idleDetection.example2Desc' | translate"></p>
+      <app-code-block [code]="appConfigCode" lang="typescript" />
+    </article>
+  </section>
+
+  <!-- API Reference -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>IdleDetectionComponent (<code>cll-idle-detection</code>)</h3>
+      <p>{{ 'idleDetection.apiSummary' | translate }}</p>
+
+      <h4>{{ 'common.inputs' | translate }}</h4>
+      <app-api-table [properties]="idleInputs()" />
+
+      <h4>{{ 'common.outputs' | translate }}</h4>
+      <app-api-table [properties]="idleOutputs()" />
+    </div>
+  </section>
+</cll-page-container>

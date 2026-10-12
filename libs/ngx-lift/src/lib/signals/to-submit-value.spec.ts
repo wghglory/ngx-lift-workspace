@@ -5,6 +5,14 @@ import {describe, expect, it} from 'vitest';
 import {formSubmitValue, toSubmitValue} from './to-submit-value';
 
 describe('to-submit-value utilities', () => {
+  it('preserves own __proto__ fields during sanitization without changing the output prototype', () => {
+    const source: Record<string, unknown> = JSON.parse('{"__proto__":{"unexpected":true},"safe":1}');
+    const result = toSubmitValue(source, {deep: true});
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(Object.hasOwn(result, '__proto__')).toBe(true);
+    expect(result['__proto__']).toEqual({unexpected: true});
+  });
+
   it('should correctly sanitize a FormArray without converting it to an indexed object', () => {
     const array = new FormArray([
       new FormGroup({

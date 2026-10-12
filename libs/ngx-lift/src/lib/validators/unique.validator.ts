@@ -1,4 +1,4 @@
-import {AbstractControl, FormArray, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms';
 
 /**
  * Validator for checking uniqueness across multiple fields in a FormArray or FormGroup.
@@ -51,11 +51,13 @@ export class UniqueValidator {
     keySelector: (control: AbstractControl) => AbstractControl<T> = (control: AbstractControl<T>) => control,
   ): ValidatorFn {
     return (formArray: AbstractControl): ValidationErrors | null => {
-      if (!(formArray instanceof FormArray)) {
+      if (!(formArray instanceof FormArray) && !(formArray instanceof FormGroup)) {
         return null;
       }
 
-      const targetControls = formArray.controls.map(keySelector);
+      const children: AbstractControl[] =
+        formArray instanceof FormArray ? formArray.controls : Object.values(formArray.controls);
+      const targetControls = children.map(keySelector);
       const valueControlMap = new Map<T, AbstractControl<T>>();
       const invalidControls: AbstractControl<T>[] = [];
 
@@ -93,8 +95,9 @@ export class UniqueValidator {
           if (errors === null) {
             control.setErrors(null);
           } else {
-            delete errors['notUnique'];
-            control.setErrors(Object.keys(errors).length > 0 ? errors : null);
+            const remainingErrors = {...errors};
+            delete remainingErrors['notUnique'];
+            control.setErrors(Object.keys(remainingErrors).length > 0 ? remainingErrors : null);
           }
         }
       }

@@ -73,17 +73,15 @@ function sanitizeObject(obj: Record<string, unknown>, options?: ToSubmitValueOpt
       continue;
     }
 
+    let sanitized = value;
     if (options?.deep) {
       if (isPlainObject(value)) {
-        result[key] = sanitizeObject(value as Record<string, unknown>, options);
+        sanitized = sanitizeObject(value, options);
       } else if (Array.isArray(value)) {
-        result[key] = sanitizeArray(value, options);
-      } else {
-        result[key] = value;
+        sanitized = sanitizeArray(value, options);
       }
-    } else {
-      result[key] = value;
     }
+    Object.defineProperty(result, key, {value: sanitized, enumerable: true, configurable: true, writable: true});
   }
 
   return result;

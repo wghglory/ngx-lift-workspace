@@ -20,6 +20,10 @@ $callout-border-radius: 0 0 2px 2px;
   border-radius: $callout-border-radius;
   color: $text-color;
   padding: $callout-padding;
+
+  ::ng-deep p:first-of-type {
+    margin-top: 0;
+  }
 }
 
 .callout-icon {
@@ -28,7 +32,7 @@ $callout-border-radius: 0 0 2px 2px;
   width: 1.5rem;
   color: $primary-color;
 
-  display: hidden;
+  display: none;
 
   @media screen and (min-width: 576px) {
     display: block;

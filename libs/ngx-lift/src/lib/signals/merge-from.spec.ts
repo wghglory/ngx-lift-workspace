@@ -1,10 +1,10 @@
 import {beforeEach, afterEach, vi} from 'vitest';
-import {Injector, signal} from '@angular/core';
+import {Injector, Signal, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {delay, map} from 'rxjs/operators';
 import {interval, of, pipe, Subject} from 'rxjs';
 
-import {mergeFrom} from './merge-from';
+import {mergeFrom, MergeFromOptions} from './merge-from';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -15,6 +15,46 @@ afterEach(() => {
 });
 
 describe(mergeFrom.name, () => {
+  it('keeps no-initial signatures defined through its synchronous emission requirement', () => {
+    TestBed.runInInjectionContext(() => {
+      const direct = mergeFrom<[number]>([of(1)]);
+      const transformed = mergeFrom<[number], string>([of(1)], map(String));
+      const options: MergeFromOptions<number> = {};
+      const genericOptions = mergeFrom<[number]>([of(1)], options);
+      expectTypeOf(direct).toEqualTypeOf<Signal<number>>();
+      expectTypeOf(transformed).toEqualTypeOf<Signal<string>>();
+      expectTypeOf(genericOptions).toEqualTypeOf<Signal<number>>();
+      expect(direct()).toBe(1);
+      expect(transformed()).toBe('1');
+      expect(genericOptions()).toBe(1);
+      expect(() => mergeFrom<[number]>([new Subject<number>()])).toThrow();
+      expect(() => mergeFrom<[number]>([new Subject<number>()], options)).toThrow();
+    });
+  });
+
+  it('keeps an explicit initial value defined for asynchronous sources with and without an operator', () => {
+    TestBed.runInInjectionContext(() => {
+      const source = new Subject<number>();
+      const direct = mergeFrom<[number]>([source], {initialValue: 0});
+      const transformed = mergeFrom<[number], string>([source], map(String), {initialValue: 'waiting'});
+      expectTypeOf(direct).toEqualTypeOf<Signal<number>>();
+      expectTypeOf(transformed).toEqualTypeOf<Signal<string>>();
+      expect(direct()).toBe(0);
+      expect(transformed()).toBe('waiting');
+      source.next(2);
+      expect(direct()).toBe(2);
+      expect(transformed()).toBe('2');
+    });
+  });
+
+  it('includes a null initial value in its signal type', () => {
+    TestBed.runInInjectionContext(() => {
+      const merged = mergeFrom<[number]>([of(1).pipe(delay(1))], {initialValue: null});
+      expectTypeOf(merged).toEqualTypeOf<Signal<number | null>>();
+      expect(merged()).toBeNull();
+    });
+  });
+
   describe('basic functionality', () => {
     it('should merge multiple observables into a signal', async () => {
       await TestBed.runInInjectionContext(async () => {

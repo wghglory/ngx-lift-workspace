@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   assertInInjectionContext,
   computed,
@@ -11,6 +10,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import {createWatch, Watch} from '@angular/core/primitives/signals';
 import {
   catchError,
   concatAll,
@@ -24,16 +24,20 @@ import {
   OperatorFunction,
   Subject,
   switchAll,
+  throwError,
 } from 'rxjs';
 
 import {isPromise} from '../utils/is-promise.util';
 
 /**
  * Behavior mode for handling multiple async sources in computedAsync.
- * - `switch`: Cancel previous async operations when a new one starts (default)
- * - `merge`: Process all async operations concurrently
- * - `concat`: Process async operations sequentially
- * - `exhaust`: Ignore new async operations while one is in progress
+ * - `switch`: Unsubscribe the previous source; ignore its late Promise result (default)
+ * - `merge`: Subscribe to all sources concurrently; each emission updates the value
+ * - `concat`: Queue source subscriptions until the previous source completes
+ * - `exhaust`: Ignore new source subscriptions while a source is active
+ *
+ * The factory still runs when its signal dependencies change. Eager Promises start
+ * before these subscription policies apply; use a cold Observable for deferred work.
  */
 type ComputedAsyncBehavior = 'switch' | 'merge' | 'concat' | 'exhaust';
 
@@ -45,6 +49,7 @@ type BaseOptions<T> = CreateComputedOptions<T> & {
    * Optional error handler that receives errors from async operations.
    * Can be used to transform errors or provide fallback values.
    * If provided, the signal will emit the return value instead of the error.
+   * If the handler throws, its error follows throwOnError without escaping the subscription.
    */
   onError?: (error: unknown) => T | undefined;
   /**
@@ -67,26 +72,28 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  *
  * This function extends Angular's `computed()` to support async operations. It handles:
  * - Observables: Automatically subscribes and unsubscribes
- * - Promises: Converts to Observable and handles resolution
+ * - Promises: Converts to Observable and handles resolution; unsubscribing does not stop the Promise
  * - Synchronous values: Returns immediately
  *
  * The function supports different behaviors for handling multiple async operations:
- * - `switch`: Cancel previous operations when a new one starts (default)
+ * - `switch`: Unsubscribe previous sources when a new one starts (default)
  * - `merge`: Process all operations concurrently
- * - `concat`: Process operations sequentially
- * - `exhaust`: Ignore new operations while one is in progress
+ * - `concat`: Process source subscriptions sequentially
+ * - `exhaust`: Ignore new source subscriptions while one is in progress
  *
  * @template T - The type of the computed value.
  * @param computeFn - A function that computes the value. Can return an Observable, Promise, or synchronous value.
  *   The function receives the previous value as a parameter (if available).
+ *   Capture signal parameters synchronously. Changes rerun this function in every behavior mode.
  * @param options - Optional configuration:
  *   - `initialValue`: Initial value for the Signal
- *   - `requireSync`: If `true`, requires the first computation to be synchronous (throws error for Promises)
+ *   - `requireSync`: Without an initialValue, synchronously initializes once and rejects Promises or async-only sources
  *   - `behavior`: How to handle multiple async operations ('switch' | 'merge' | 'concat' | 'exhaust')
  *   - `equal`: Custom equality function for signal comparison
  *   - `onError`: Error handler that can transform errors or provide fallback values
  *   - `throwOnError`: If true, errors will be thrown; if false (default), errors are set on the signal
  * @returns A signal that emits the computed value. May be `T | undefined` if no initial value is provided.
+ *   Without onError or throwOnError, an error object becomes the signal value for compatibility.
  *
  * @example
  * ```typescript
@@ -141,24 +148,24 @@ type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; er
 
 // without options
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
 ): Signal<T | undefined>;
 
 // with optional initialValue
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
   options: OptionsWithOptionalInitialValue<T>,
 ): Signal<T | undefined>;
 
 // with initialValue
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
   options: OptionsWithInitialValue<T>,
 ): Signal<T>;
 
 // for promise, without initialValue but set requireSync as true, throw error
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Promise<T>,
+  computeFn: (previousValue?: T) => PromiseLike<T>,
   options: OptionsWithOptionalInitialValue<T> & {requireSync: true},
 ): never;
 
@@ -178,8 +185,8 @@ export function computedAsync<T>(
 ): Signal<T>;
 
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | Promise<T> | T | undefined,
-  options: any = {},
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
+  options: BaseOptions<T> & {initialValue?: T; requireSync?: boolean} = {},
 ): Signal<T | undefined> {
   if (!options?.injector) {
     assertInInjectionContext(computedAsync);
@@ -187,87 +194,102 @@ export function computedAsync<T>(
 
   const destroyRef = options?.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
 
-  const sourceSubject = new Subject<Promise<T> | Observable<T>>();
+  const sourceSubject = new Subject<PromiseLike<T> | Observable<T>>();
   const source$ = flattenObservable(sourceSubject, options.behavior || 'switch');
 
   const sourceState = signal<SignalState<T>>({kind: 'value', value: options.initialValue});
+  const watchTrigger = signal(0);
+  let computationWatch: Watch | undefined;
+  let synchronousInitialization = options.requireSync && options.initialValue === undefined;
+  const handleError = (error: unknown) =>
+    untracked(() => {
+      let failure = error;
+      try {
+        if (options.onError) {
+          const fallbackValue = options.onError(error);
+          if (!options.throwOnError) {
+            sourceState.set({kind: 'value', value: fallbackValue});
+            return;
+          }
+        }
+      } catch (handlerError: unknown) {
+        failure = handlerError;
+      }
+      sourceState.set({kind: 'error', error: failure});
+    });
 
   const sourceResult = source$.subscribe({
     next: (event) => {
       if (event.type === 'value') {
         sourceState.set({kind: 'value', value: event.value});
       } else {
-        const error = event.error;
-        if (options.throwOnError) {
-          if (options.onError) {
-            options.onError(error);
-          }
-          sourceState.set({kind: 'error', error});
-        } else if (options.onError) {
-          const fallbackValue = options.onError(error);
-          sourceState.set({kind: 'value', value: fallbackValue});
-        } else {
-          sourceState.set({kind: 'error', error});
-        }
+        handleError(event.error);
       }
     },
   });
 
-  destroyRef.onDestroy(() => sourceResult.unsubscribe());
+  const dispose = () => {
+    computationWatch?.destroy();
+    sourceResult.unsubscribe();
+    sourceSubject.complete();
+  };
 
-  if (options.requireSync && options.initialValue === undefined) {
-    const initialEmission = computeFn(undefined);
+  const runComputation = () => {
+    const state = untracked(sourceState);
+    const currentValue = state.kind === 'value' ? state.value : undefined;
+    let newSource: Observable<T> | PromiseLike<T> | T | undefined;
+    try {
+      newSource = computeFn(currentValue);
+    } catch (error: unknown) {
+      if (synchronousInitialization) {
+        throw error;
+      }
+      // Preserve the flattening policy even when the factory fails before returning a source.
+      untracked(() => sourceSubject.next(throwError(() => error)));
+      return;
+    }
 
-    if (isPromise(initialEmission)) {
+    if (synchronousInitialization && isPromise(newSource)) {
+      // The eager Promise may already be running. Its rejected result must remain handled.
+      void Promise.resolve(newSource).catch(() => undefined);
       throw new Error(`Promises cannot work with requireSync. Set requireSync to false or pass an initialValue.`);
     }
 
-    if (isObservable(initialEmission)) {
-      sourceSubject.next(initialEmission);
-    } else {
-      // primitive value T
-      sourceSubject.next(of(initialEmission as T));
+    const streamSource = isPromise(newSource) || isObservable(newSource) ? newSource : of(newSource as T);
+    untracked(() => sourceSubject.next(streamSource as PromiseLike<T> | Observable<T>));
+  };
+
+  try {
+    if (synchronousInitialization) {
+      // This exported primitive can capture dependencies immediately while allowing legacy
+      // factories to write service signals. The effect below still owns Angular scheduling.
+      computationWatch = createWatch(
+        runComputation,
+        () => untracked(() => watchTrigger.update((version) => version + 1)),
+        true,
+      );
+      untracked(() => computationWatch?.run());
     }
-  }
 
-  const currentState = sourceState();
-  if (options.requireSync && currentState.kind === 'value' && currentState.value === undefined) {
-    throw new Error(`The observable doesn't emit synchronously. Set requireSync to false or pass an initialValue.`);
+    const currentState = sourceState();
+    if (options.requireSync && currentState.kind === 'value' && currentState.value === undefined) {
+      throw new Error(`The observable doesn't emit synchronously. Set requireSync to false or pass an initialValue.`);
+    }
+  } catch (error) {
+    dispose();
+    throw error;
   }
-
-  let shouldSkipFirstComputation = options.requireSync === true;
+  synchronousInitialization = false;
+  destroyRef.onDestroy(dispose);
 
   effect(
     () => {
-      const state = untracked(() => sourceState());
-      const currentValue = state.kind === 'value' ? state.value : undefined;
-
-      let newSource: Observable<T> | Promise<T> | T | undefined;
-      try {
-        newSource = computeFn(currentValue);
-      } catch (error: unknown) {
-        shouldSkipFirstComputation = false;
-        if (options.throwOnError) {
-          if (options.onError) {
-            options.onError(error);
-          }
-          sourceState.set({kind: 'error', error});
-        } else if (options.onError) {
-          const fallbackValue = options.onError(error);
-          sourceState.set({kind: 'value', value: fallbackValue});
-        } else {
-          sourceState.set({kind: 'error', error});
-        }
-        return;
+      if (computationWatch) {
+        watchTrigger();
+        untracked(() => computationWatch?.run());
+      } else {
+        runComputation();
       }
-
-      if (shouldSkipFirstComputation) {
-        shouldSkipFirstComputation = false;
-        return;
-      }
-
-      const streamSource = isPromise(newSource) || isObservable(newSource) ? newSource : of(newSource as T);
-      untracked(() => sourceSubject.next(streamSource as Promise<T> | Observable<T>));
     },
     options?.injector ? {injector: options.injector} : undefined,
   );
@@ -290,7 +312,7 @@ export function computedAsync<T>(
 type StreamEvent<T> = {type: 'value'; value: T} | {type: 'error'; error: unknown};
 
 function flattenObservable<T>(
-  source: Subject<Promise<T> | Observable<T>>,
+  source: Subject<PromiseLike<T> | Observable<T>>,
   behavior: ComputedAsyncBehavior,
 ): Observable<StreamEvent<T>> {
   const behaviorMap: Record<ComputedAsyncBehavior, () => OperatorFunction<Observable<StreamEvent<T>>, StreamEvent<T>>> =
@@ -303,11 +325,17 @@ function flattenObservable<T>(
 
   return source.pipe(
     map((sourceItem): Observable<StreamEvent<T>> => {
-      const source$: Observable<T> = isObservable(sourceItem)
-        ? (sourceItem as Observable<T>)
-        : isPromise(sourceItem)
-          ? from(sourceItem)
-          : of(sourceItem as T);
+      let source$: Observable<T>;
+      if (isObservable(sourceItem)) {
+        source$ = sourceItem;
+      } else if (isPromise(sourceItem)) {
+        const promise = Promise.resolve(sourceItem);
+        // Concat may queue this Promise; exhaust may never subscribe to it.
+        void promise.catch(() => undefined);
+        source$ = from(promise);
+      } else {
+        source$ = of(sourceItem as T);
+      }
 
       return source$.pipe(
         map((value): StreamEvent<T> => ({type: 'value', value})),

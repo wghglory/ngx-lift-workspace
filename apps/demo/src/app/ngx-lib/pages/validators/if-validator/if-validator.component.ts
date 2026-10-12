@@ -1,20 +1,67 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {ifValidator, revalidateOnChange} from 'ngx-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-if-validator',
-  imports: [ClarityModule, ReactiveFormsModule, PageContainerComponent, CalloutComponent, CodeBlockComponent],
+  imports: [
+    ClarityModule,
+    ReactiveFormsModule,
+    PageContainerComponent,
+    CalloutComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './if-validator.component.html',
   styleUrl: './if-validator.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IfValidatorComponent {
+  private translationService = inject(TranslationService);
+
+  ifValidatorParameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'condition',
+        type: '() => boolean',
+        description: this.translationService.translate('ifValidator.paramCondition'),
+      },
+      {
+        name: 'trueValidatorFn',
+        type: 'ValidatorFn | ValidatorFn[]',
+        description: this.translationService.translate('ifValidator.paramTrueValidatorFn'),
+      },
+      {
+        name: 'falseValidatorFn',
+        type: 'ValidatorFn | ValidatorFn[]',
+        description: this.translationService.translate('ifValidator.paramFalseValidatorFn'),
+      },
+    ];
+  });
+
+  ifAsyncValidatorParameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'condition',
+        type: '() => boolean',
+        description: this.translationService.translate('ifAsyncValidator.paramCondition'),
+      },
+      {
+        name: 'asyncValidatorFn',
+        type: 'AsyncValidatorFn',
+        description: this.translationService.translate('ifAsyncValidator.paramAsyncValidatorFn'),
+      },
+    ];
+  });
   validator = ifValidator(
     () => this.form?.controls.choice.value === 'UNLIKE',
     [Validators.required],

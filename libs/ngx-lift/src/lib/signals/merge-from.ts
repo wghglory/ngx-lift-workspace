@@ -19,21 +19,46 @@ type ObservableSignalInputTuple<T> = {
   [K in keyof T]: ObservableSignalInput<T[K]>;
 };
 
-// pick from ToSignalOptions
+/**
+ * Injector and initial signal value for mergeFrom. Without a defined initialValue,
+ * at least one merged source must emit synchronously or construction throws.
+ */
 export type MergeFromOptions<T> = {
   readonly injector?: Injector;
-  readonly initialValue?: T | null;
+  readonly initialValue?: T;
 };
 
 export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
   sources: readonly [...ObservableSignalInputTuple<Input>],
   operator?: OperatorFunction<Input[number], Output>,
-  options?: MergeFromOptions<Output>,
+  options?: MergeFromOptions<undefined>,
 ): Signal<Output>;
 
 export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
   sources: readonly [...ObservableSignalInputTuple<Input>],
-  options?: MergeFromOptions<Output>,
+  operator: OperatorFunction<Input[number], Output> | undefined,
+  options: MergeFromOptions<null>,
+): Signal<Output | null>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  operator: OperatorFunction<Input[number], Output> | undefined,
+  options: MergeFromOptions<Output>,
+): Signal<Output>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  options?: MergeFromOptions<undefined>,
+): Signal<Output>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  options: MergeFromOptions<null>,
+): Signal<Output | null>;
+
+export function mergeFrom<Input extends readonly unknown[], Output = Input[number]>(
+  sources: readonly [...ObservableSignalInputTuple<Input>],
+  options: MergeFromOptions<Output>,
 ): Signal<Output>;
 
 // No object inputs
@@ -45,6 +70,8 @@ export function mergeFrom<Input extends readonly unknown[], Output = Input[numbe
  *
  * When any source emits a value, the Signal will emit that value. This is useful for
  * combining multiple event streams or reactive sources.
+ * Without a defined initialValue, construction requires a synchronous emission.
+ * Async-only sources must supply an initial value, including null when appropriate.
  *
  * @template Input - The type of values in the input sources array.
  * @template Output - The type of the output Signal (defaults to Input[number]).

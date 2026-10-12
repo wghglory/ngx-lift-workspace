@@ -1,17 +1,30 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {PageContainerComponent} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-is-empty',
-  imports: [PageContainerComponent, CodeBlockComponent],
+  imports: [PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './is-empty.component.html',
   styleUrl: './is-empty.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsEmptyComponent {
+  private translationService = inject(TranslationService);
+
+  parameters = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'value',
+        type: 'unknown',
+        description: this.translationService.translate('isEmpty.paramValue'),
+      },
+    ];
+  });
   basicExampleCode = highlight(`
 import {isEmpty} from 'ngx-lift';
 

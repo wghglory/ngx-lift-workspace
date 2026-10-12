@@ -127,7 +127,7 @@ export function injectQueryParams<Output>(
   const {transform, initialValue, injector} = effectiveOptions;
 
   // injectQueryParams(): Signal<Params> or injectQueryParams({ injector }): Signal<Params>
-  if (!keyOrParamsTransformOrOptions || isOptionsObject) {
+  if (keyOrParamsTransformOrOptions === undefined || isOptionsObject) {
     return toSignal(route.queryParams, {initialValue: initialQueryParams, injector});
   }
 
@@ -144,7 +144,7 @@ export function injectQueryParams<Output>(
   const getParam = (params: Params) => {
     const param = params?.[paramKey] as string | string[] | undefined;
 
-    if (!param) {
+    if (param === undefined || param === null) {
       return initialValue ?? null;
     }
 
