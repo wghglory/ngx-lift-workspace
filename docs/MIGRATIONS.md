@@ -73,12 +73,15 @@ const state = mergeFrom([response$], {initialValue: [] as string[]});
 
 ### D. Kubernetes Pagination Operator
 
-Pagination automatically retries HTTP 429 status codes by default with exponential backoff.
+Pagination automatically retries HTTP 429 status codes by default using server-provided delays or a fixed fallback
+delay.
 
 - Use `{initialParams, retryConfig: false}` if you need immediate error propagation without retry.
 - The aggregate result carries the final page metadata, clears continuation tokens, and normalizes null or missing items
   to `[]`.
-- Scalar parameters named `initialParams` or `retryConfig` remain supported.
+- Scalar parameters named `initialParams` or `retryConfig` remain supported alongside other HTTP parameters.
+- A lone `{retryConfig: false}` is reserved as the retry opt-out shorthand. To send that boolean as an HTTP parameter,
+  use `{initialParams: {retryConfig: false}}`.
 
 ---
 

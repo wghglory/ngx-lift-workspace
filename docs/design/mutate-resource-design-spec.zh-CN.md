@@ -17,4 +17,6 @@ handler，维护已有同步错误处理行为。
 验证命令：`pnpm nx run ngx-lift:test --run`、 `pnpm nx run-many -t typecheck lint -p ngx-lift`、
 `pnpm nx exec -p ngx-lift -- pnpm exec tsc --noEmit -p tsconfig.spec.json`。
 
-验证结果：689 个 library 测试全部通过，包含 18 个 mutation 测试；源码和测试类型检查、lint 均通过。
+验证结果：698 个 library 测试全部通过，包含 18 个 mutation 测试；源码和测试类型检查、lint 均通过。
+
+最终评审纠正英文 API 表格与默认 client 说明：使用显式 client 或根 QUERY_CLIENT，未实现的 reset 不再列入 API。

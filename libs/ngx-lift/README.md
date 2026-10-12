@@ -133,7 +133,8 @@ node migrate-async-state.js src
 node migrate-async-state.js src --dry-run
 ```
 
-See the [Migration Guide](../../docs/MIGRATION_ASYNC_STATE.md) for detailed instructions and manual migration steps.
+See the [Migration Guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/MIGRATION_ASYNC_STATE.md) for
+detailed instructions and manual migration steps.
 
 ## 🚀 Quick Start
 
@@ -336,12 +337,12 @@ export class MyFormComponent {
 
 ## 📚 Documentation
 
-- [Async & Query Design Specifications](../../docs/design/README.md)
-  - [resourceAsync Design Spec](../../docs/design/resource-async-design-spec.md)
-  - [queryResource & QueryClient Design Spec](../../docs/design/query-resource-design-spec.md)
-  - [mutateResource Design Spec](../../docs/design/mutate-resource-design-spec.md)
-  - [computedAsync Design Spec](../../docs/design/computed-async-design-spec.md)
-- [Migration Guides](../../docs/MIGRATIONS.md)
+- [Async & Query Design Specifications](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/README.md)
+  - [resourceAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/resource-async-design-spec.md)
+  - [queryResource & QueryClient Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/query-resource-design-spec.md)
+  - [mutateResource Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/mutate-resource-design-spec.md)
+  - [computedAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/computed-async-design-spec.md)
+- [Migration Guides](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/MIGRATIONS.md)
 
 - **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
 - **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)

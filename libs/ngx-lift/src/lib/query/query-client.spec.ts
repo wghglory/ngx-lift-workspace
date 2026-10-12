@@ -37,6 +37,55 @@ describe('QueryClient', () => {
     vi.useRealTimers();
   });
 
+  it('does not republish removed data after an observer synchronously clears the cache', async () => {
+    const client = createClient();
+    const definition = {key: ['private'], loader: async () => 'secret', staleTime: Infinity};
+    await client.fetchQuery(definition);
+    client.observeQuery(definition, (snapshot) => {
+      if (snapshot.status === 'reloading') client.removeQueries();
+    });
+    const snapshots: QuerySnapshot<string>[] = [];
+    client.observeQuery(definition, (snapshot) => snapshots.push(snapshot));
+    await expect(client.fetchQuery(definition, {refresh: true})).rejects.toMatchObject({name: 'AbortError'});
+    expect(snapshots.at(-1)).toMatchObject({status: 'idle', value: undefined, hasValue: false});
+    expect(snapshots.map((snapshot) => snapshot.status)).toEqual(['resolved', 'idle']);
+  });
+
+  it('does not deliver an older resolved snapshot after a reentrant refresh starts', async () => {
+    const client = createClient();
+    const pending = deferred<string>();
+    const loader = vi.fn<() => Promise<string>>().mockResolvedValueOnce('initial').mockReturnValue(pending.promise);
+    const definition = {key: ['reentrant-refresh'], loader, staleTime: Infinity};
+    let refreshed = false;
+    client.observeQuery(definition, (snapshot) => {
+      if (snapshot.status === 'resolved' && !refreshed) {
+        refreshed = true;
+        void client.fetchQuery(definition, {refresh: true});
+      }
+    });
+    const snapshots: QuerySnapshot<string>[] = [];
+    client.observeQuery(definition, (snapshot) => snapshots.push(snapshot));
+    await flushRequests();
+    expect(snapshots.at(-1)?.status).toBe('reloading');
+    pending.resolve('refreshed');
+    await flushRequests();
+    expect(snapshots.at(-1)).toMatchObject({status: 'resolved', value: 'refreshed'});
+  });
+
+  it('skips observers detached synchronously by an earlier listener', async () => {
+    const client = createClient();
+    const definition = {key: ['detach-during-publish'], loader: async () => 1, staleTime: Infinity};
+    await client.fetchQuery(definition);
+    client.observeQuery(definition, (snapshot) => {
+      if (snapshot.status === 'reloading') detachSecond?.();
+    });
+    const second = vi.fn();
+    const detachSecond = client.observeQuery(definition, second);
+    second.mockClear();
+    await client.fetchQuery(definition, {refresh: true});
+    expect(second).not.toHaveBeenCalled();
+  });
+
   it('shares pending requests after freshness expires and across explicit refreshes', async () => {
     const client = createClient();
     const pending = deferred<string>();

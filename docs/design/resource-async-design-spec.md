@@ -22,7 +22,7 @@ fine-grained concurrency control, automatic cleanup, and bidirectional local sta
                      │ passes pure param
                      ▼
          ┌───────────────────────┐
-         │ loader(id, { signal })│ ◄─── Concurrency Policy (switch / exhaust / concat)
+         │ loader(id, { signal })│ ◄─── Concurrency Policy (switch / exhaust)
          └───────────┬───────────┘
                      │
      ┌───────────────┴───────────────┐
@@ -99,7 +99,7 @@ export function resourceAsync<T, E = Error>(
 
 | Property / Method | Type                           | Description                                                                                  |
 | :---------------- | :----------------------------- | :------------------------------------------------------------------------------------------- |
-| `value`           | `Signal<T>`                    | Current resource value. Returns `T                                                           | undefined` if no default value was provided. |
+| `value`           | `Signal<T>`                    | Current value. Returns `T \| undefined` if no default value was provided.                    |
 | `status`          | `Signal<ResourceStatus>`       | Current status: `'idle' \| 'loading' \| 'reloading' \| 'resolved' \| 'error' \| 'local'`.    |
 | `isLoading`       | `Signal<boolean>`              | `true` when status is `'loading'` or `'reloading'`.                                          |
 | `isIdle`          | `Signal<boolean>`              | `true` only when status is `'idle'`.                                                         |
@@ -122,7 +122,6 @@ export function resourceAsync<T, E = Error>(
 - **`switch` (Default)**: Cancels in-flight operations when parameters change or `reload()` is triggered.
 - **`exhaust`**: Ignores new requests while an operation is in flight. An `execute()` call joins the active in-flight
   Promise.
-- **`concat`**: Queues incoming executions sequentially.
 
 ### 3.2 Operation Cancellation Matrix
 
@@ -239,7 +238,7 @@ function removeRow(orgId: string) {
 | Requirement / Spec Item             | Implementation in Code                 | Gap / Finding                                          | Assessment     |
 | :---------------------------------- | :------------------------------------- | :----------------------------------------------------- | :------------- |
 | **Pure params & loader separation** | `ResourceAsyncDefinition<P, T>`        | None. Pure tracking is strictly enforced.              | ✅ Exact match |
-| **All Concurrency Behaviors**       | `switch`, `exhaust`, `concat`          | None. Reentrant calls and scheduling verified.         | ✅ Exact match |
+| **All Concurrency Behaviors**       | `switch`, `exhaust`                    | None. Reentrant calls and scheduling verified.         | ✅ Exact match |
 | **AbortSignal Propagation**         | `AbortController` linked per execution | None. Emits on cancellation, destruction, and reset.   | ✅ Exact match |
 | **Background Value Retention**      | `preserveValueOnError: boolean`        | None. Previous data retained with error status.        | ✅ Exact match |
 | **Type-Safe Nullability**           | Function overloads on `defaultValue`   | None. Precise `Signal<T>` vs `Signal<T \| undefined>`. | ✅ Exact match |

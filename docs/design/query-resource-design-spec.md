@@ -3,7 +3,7 @@
 **Status**: Implemented & Production-ready  
 **Module**: `libs/ngx-lift/src/lib/query/query-resource.ts`, `query-client.ts`, `query-observable.ts`,
 `query-client.token.ts`  
-**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts` (30 tests), `query-client.spec.ts` (35 tests),
+**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts` (30 tests), `query-client.spec.ts` (38 tests),
 `query-observable.spec.ts` (9 tests)
 
 ---
@@ -198,11 +198,14 @@ export class UserProfileComponent {
 
   // Defined directly in the component, capturing userId() reactively
   readonly userQuery = queryResource(
-    () => ({
-      key: ['users', this.userId()],
-      tags: [{type: 'User', id: this.userId()}],
-      loader: () => this.http.get<User>(`/api/users/${this.userId()}`),
-    }),
+    () => {
+      const id = this.userId();
+      return {
+        key: ['users', id],
+        tags: [{type: 'User', id}],
+        loader: () => this.http.get<User>(`/api/users/${id}`),
+      };
+    },
     {pollInterval: 30_000},
   );
 
@@ -265,7 +268,7 @@ You only need custom registration in specific architectural scenarios:
      providers: [
        {
          provide: QUERY_CLIENT,
-         useFactory: () => new QueryClient({maxCapacity: 200}),
+         useFactory: () => new QueryClient({maxEntries: 200}),
        },
      ],
    };
@@ -287,7 +290,7 @@ You only need custom registration in specific architectural scenarios:
 | **Retention (`gcTime`)**       | `gcTime` controls how long unused entries linger in memory after their last observer detaches (default: 5 minutes). Eviction protects active observers and in-flight requests.                                                                           |
 | **Bypass Refresh**             | `reload()` or `execute()` bypasses completed cached data while still coalescing with any valid pending in-flight request.                                                                                                                                |
 | **Generation Isolation**       | Tag invalidation increments the cache entry's generation counter and detaches obsolete generations before refetching. In-flight requests initiated prior to invalidation are cleanly discarded and cannot overwrite newer state.                         |
-| **Race Protection**            | Obsolete asynchronous responses/errors cannot publish to active observers or overwrite newer cache state.                                                                                                                                                |
+| **Race Protection**            | Obsolete responses/errors and reentrant notification batches cannot overwrite newer state. Removed or detached observers do not receive earlier snapshots.                                                                                               |
 | **Error Resilience**           | A background revalidation failure preserves the last successful cached data in `.value()` while exposing the error in `.error()`. Initial fetch failures have `undefined` value.                                                                         |
 | **Context Switching**          | Changing the query key immediately sets previous data to `undefined` on the observer, guaranteeing stale or cross-tenant data is never displayed while the new key loads.                                                                                |
 | **Coordinated Polling**        | Only one background timer runs per unique key, synchronized to the minimum active observer interval. Polling automatically pauses when the browser tab is hidden and resumes when visible. SSR never runs background polling.                            |

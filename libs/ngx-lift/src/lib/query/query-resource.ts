@@ -51,7 +51,21 @@ function idleSnapshot<T>(): QuerySnapshot<T> {
   return {value: undefined, hasValue: false, error: null, status: 'idle', updatedAt: null, isStale: true};
 }
 
-/** Signal observer of a shared query entry. The definition captures one consistent parameter snapshot. */
+/**
+ * Signal observer of a shared query entry. The definition captures one consistent parameter snapshot.
+ *
+ * @example
+ * ```typescript
+ * // In an Angular injection context, with HttpClient provided:
+ * const http = inject(HttpClient);
+ * const userId = signal('42');
+ * const user = queryResource(() => {
+ *   const id = userId();
+ *   return {key: ['user', id], loader: () => http.get<User>(`/api/users/${id}`)};
+ * });
+ * // Read user.value(), user.isLoading(), and user.error() from the template.
+ * ```
+ */
 export function queryResource<T, E = Error>(
   definition: () => QueryResourceDefinition<T> | undefined,
   options: QueryResourceOptions = {},

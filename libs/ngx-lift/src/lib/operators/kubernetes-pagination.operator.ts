@@ -40,7 +40,9 @@ function parsePaginationOptions(
     value === undefined || (value !== null && typeof value === 'object' && !Array.isArray(value));
   if (
     ('initialParams' in options && isOptionsObject(options.initialParams)) ||
-    ('retryConfig' in options && (options.retryConfig === false || isOptionsObject(options.retryConfig)))
+    ('retryConfig' in options &&
+      Object.keys(options).every((key) => key === 'retryConfig') &&
+      (options.retryConfig === false || isOptionsObject(options.retryConfig)))
   ) {
     const paginationOptions = options as KubernetesPaginationOptions;
     return {

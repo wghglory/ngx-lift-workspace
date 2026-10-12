@@ -36,7 +36,20 @@ export interface MutateResourceRef<TArgs, TResult, E = Error> {
   mutate(args: TArgs): Promise<TResult>;
 }
 
-/** Explicit mutation state; disposal does not pretend to roll back an already submitted server write. */
+/**
+ * Explicit mutation state; disposal does not pretend to roll back an already submitted server write.
+ *
+ * @example
+ * ```typescript
+ * // In an Angular injection context, with HttpClient provided:
+ * const http = inject(HttpClient);
+ * const save = mutateResource(
+ *   (user: User) => http.put<User>(`/api/users/${user.id}`, user),
+ *   {invalidatesTags: (user) => [{type: 'User', id: user.id}], concurrency: 'exhaust'},
+ * );
+ * await save.mutate(updatedUser);
+ * ```
+ */
 export function mutateResource<TArgs, TResult, E = Error>(
   mutation: (args: TArgs) => Observable<TResult> | PromiseLike<TResult> | TResult,
   options: MutateResourceOptions<TArgs, TResult> = {},

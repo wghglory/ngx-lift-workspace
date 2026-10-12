@@ -5,10 +5,15 @@
  * @returns {boolean} - Returns true if the values are deeply equal, otherwise false.
  */
 export function isEqual<T>(value1: T, value2: T): boolean {
-  return compare(value1, value2, new WeakMap<object, object>());
+  return compare(value1, value2, {leftToRight: new WeakMap(), rightToLeft: new WeakMap()});
 }
 
-function compare(value1: unknown, value2: unknown, ancestors: WeakMap<object, object>): boolean {
+interface Ancestors {
+  leftToRight: WeakMap<object, object>;
+  rightToLeft: WeakMap<object, object>;
+}
+
+function compare(value1: unknown, value2: unknown, ancestors: Ancestors): boolean {
   if (value1 === value2) return true;
 
   if (typeof value1 === 'number' && typeof value2 === 'number') {
@@ -35,20 +40,23 @@ function compare(value1: unknown, value2: unknown, ancestors: WeakMap<object, ob
     return false;
   }
 
-  const previous = ancestors.get(value1);
-  if (previous !== undefined) {
-    return previous === value2;
+  const previousRight = ancestors.leftToRight.get(value1);
+  const previousLeft = ancestors.rightToLeft.get(value2);
+  if (previousRight !== undefined || previousLeft !== undefined) {
+    return previousRight === value2 && previousLeft === value1;
   }
-  ancestors.set(value1, value2);
+  ancestors.leftToRight.set(value1, value2);
+  ancestors.rightToLeft.set(value2, value1);
 
   try {
     return compareObjects(value1, value2, ancestors);
   } finally {
-    ancestors.delete(value1);
+    ancestors.leftToRight.delete(value1);
+    ancestors.rightToLeft.delete(value2);
   }
 }
 
-function compareObjects(value1: object, value2: object, ancestors: WeakMap<object, object>): boolean {
+function compareObjects(value1: object, value2: object, ancestors: Ancestors): boolean {
   if (Array.isArray(value1) && Array.isArray(value2)) {
     if (value1.length !== value2.length) return false;
     for (let i = 0; i < value1.length; i++) {

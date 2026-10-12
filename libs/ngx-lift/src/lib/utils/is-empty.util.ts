@@ -84,27 +84,9 @@ export function isNotEmpty(value?: null | undefined): false;
  */
 export function isNotEmpty(value: string): boolean;
 /**
- * Checks if a defined collection or object is not empty.
- *
- * Returns boolean so non-nullable collections do not collapse to `never` in false branches.
- * @param value - The collection or object to check.
- * @returns `true` if the collection/object is not empty, `false` otherwise.
- */
-export function isNotEmpty<T extends object | ArrayLike<unknown> | Map<unknown, unknown> | Set<unknown>>(
-  value: T,
-): boolean;
-/**
- * Type guard that checks if a nullable collection or object is not empty.
- *
- * Narrows nullable values to their defined type when true.
- * @param value - The value to check.
- * @returns `true` if the value is defined and not empty, `false` otherwise.
- */
-export function isNotEmpty<T extends object | ArrayLike<unknown> | Map<unknown, unknown> | Set<unknown>>(
-  value: T | null | undefined,
-): value is T;
-/**
  * Checks if a value is not empty (not null, undefined, or empty collection).
+ *
+ * Returns boolean: an empty collection is still defined, so neither branch narrows nullability.
  *
  * @param value - The value to check.
  * @returns `true` if the value is not null, undefined, or empty, `false` otherwise.

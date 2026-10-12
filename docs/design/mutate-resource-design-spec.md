@@ -77,7 +77,6 @@ Source failures still reject `mutate()` and do not invalidate tags.
 | `status`          | `Signal<ResourceStatus>`            | Current mutation status: `'idle' \| 'loading' \| 'resolved' \| 'error'`. |
 | `isLoading`       | `Signal<boolean>`                   | `true` while any accepted mutation is pending.                           |
 | `error`           | `Signal<E \| null>`                 | Error from the latest mutation failure.                                  |
-| `reset()`         | `() => void`                        | Resets status back to `'idle'` and clears value/error.                   |
 
 ---
 
@@ -119,9 +118,9 @@ declaring duplicate invalidation tags in the calling component.
 | :------------------------------ | :------------------------------------------ | :----------------------------------------------------- | :------------------- |
 | **Strict On-Demand Execution**  | Only executes via `mutate(args)`            | None. Never triggers on signal shifts.                 | ✅ Exact match       |
 | **Concurrency Modes**           | Implemented `exhaust`, `concat`, `parallel` | None. Synchronous reentrancy tested.                   | ✅ Exact match       |
-| **Tag Invalidation**            | Reads optional `QueryClient` via DI         | None. Safely degrades if QueryClient is omitted.       | ✅ Exact match       |
+| **Tag Invalidation**            | Explicit client or root `QUERY_CLIENT`      | None. Root token supplies the default shared client.   | ✅ Exact match       |
 | **Unhandled Rejection Safety**  | Chained silent catch                        | None. Fire-and-forget calls do not log console errors. | ✅ Exact match       |
-| **Optimistic Rollback Context** | Manual snapshot via `resource.set`          | Automated `onMutate` rollback hook not yet built.      | ⚠️ Planned next step |
+| **Optimistic Rollback Context** | Caller-managed external snapshots           | Automated `onMutate` rollback hook not yet built.      | ⚠️ Planned next step |
 
 ---
 

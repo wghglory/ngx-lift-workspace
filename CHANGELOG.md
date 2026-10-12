@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Shared `QueryClient` caching, `queryResource`, Observable query bridges, and explicit `mutateResource` writes.
+- Direct Observable query loaders with first-value resolution and shared-request cancellation support.
+- Kubernetes HTTP 429 retry operator/interceptor and pagination retry configuration.
+- Reactive localization and expanded interactive demos, with scheduled/manual browser verification.
+
+### Fixed
+
+- Async resource settlement, cancellation, reactive tracking, and subscriber isolation.
+- Reentrant query notifications no longer restore removed data or overwrite newer loading state.
+- Pagination preserves legacy HTTP parameters that collide with retry option names.
+- Cyclic object equality is symmetric; Clarity tooltip, file-reader, and wizard lifecycles clean up correctly.
+
+### Breaking changes
+
+- Nullable collection emptiness checks return boolean; check nullability explicitly before using the collection.
+- `combineFrom` without an initial value can return `undefined`; asynchronous `mergeFrom` sources need an initial value.
+- Cancelled `resourceAsync.execute()` calls reject with explicit cancellation/disposal errors.
+- Pagination retries 429 responses by default; opt out with `{retryConfig: false}`.
+
+See [the migration guide](docs/MIGRATIONS.md). Independent release versions have not yet been selected.
+
 ## [21.1.1] - 2026-09-23
 
 ### 🎉 Added

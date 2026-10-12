@@ -29,6 +29,15 @@ describe('aggregatePaginatedKubernetesResources', () => {
     httpTestingController.verify();
   });
 
+  it('preserves a legacy boolean retryConfig parameter alongside other HTTP params', async () => {
+    const result = firstValueFrom(
+      fetchPaginatedKubernetesResources(httpClient, '/items', {retryConfig: false, limit: 50}),
+    );
+    const request = httpTestingController.expectOne('/items?retryConfig=false&limit=50');
+    request.flush({apiVersion: 'v1', kind: 'List', metadata: {continue: ''}, items: []});
+    expect((await result).items).toEqual([]);
+  });
+
   it('should aggregate paginated Kubernetes resources correctly', () => {
     const endpoint = '/test-endpoint';
     const initialParams = {};

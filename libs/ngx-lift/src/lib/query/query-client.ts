@@ -41,6 +41,7 @@ interface QueryEntry<T> {
   updatedAt: number | null;
   invalidated: boolean;
   generation: number;
+  publicationRevision: number;
   pending?: QueryRequest<T>;
   lastAccess: number;
   inactiveSince: number | null;
@@ -264,6 +265,7 @@ export class QueryClient {
         updatedAt: null,
         invalidated: true,
         generation: 0,
+        publicationRevision: 0,
         lastAccess: ++this.accessSequence,
         inactiveSince: this.now(),
         pollBaselineAt: this.now(),
@@ -379,8 +381,12 @@ export class QueryClient {
   }
 
   private publish<T>(entry: QueryEntry<T>): void {
+    const revision = ++entry.publicationRevision;
     const snapshot = this.snapshot(entry);
     for (const observer of [...entry.observers]) {
+      // Listeners may publish newer state or detach peers before this loop continues.
+      if (entry.publicationRevision !== revision) break;
+      if (!entry.observers.has(observer)) continue;
       observer.listener(snapshot);
     }
   }

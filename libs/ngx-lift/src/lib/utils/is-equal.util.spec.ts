@@ -93,6 +93,26 @@ describe('isEqual function', () => {
     expect(isEqual(left, right)).toBe(false);
   });
 
+  it('compares cyclic topology symmetrically', () => {
+    const self: {next?: unknown} = {};
+    self.next = self;
+    const first: {next?: unknown} = {};
+    const second: {next?: unknown} = {};
+    first.next = second;
+    second.next = first;
+    expect(isEqual(self, first)).toBe(false);
+    expect(isEqual(first, self)).toBe(false);
+    const otherSelf: {next?: unknown} = {};
+    otherSelf.next = otherSelf;
+    expect(isEqual(self, otherSelf)).toBe(true);
+    const otherFirst: {next?: unknown} = {};
+    const otherSecond: {next?: unknown} = {};
+    otherFirst.next = otherSecond;
+    otherSecond.next = otherFirst;
+    expect(isEqual(first, otherFirst)).toBe(true);
+    expect(isEqual(otherFirst, first)).toBe(true);
+  });
+
   it('does not equate distinct opaque objects with no enumerable properties', () => {
     expect(isEqual(Promise.resolve(1), Promise.resolve(2))).toBe(false);
     expect(isEqual(new File(['first'], 'file'), new File(['second'], 'file'))).toBe(false);

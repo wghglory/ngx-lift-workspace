@@ -3,7 +3,14 @@ import {defer, EmptyError, from, Observable, Subscriber} from 'rxjs';
 import {QueryDefinition, QueryLoaderContext, QueryObserverHandle, QuerySnapshot} from './query.models';
 import {QueryClient} from './query-client';
 
-/** Adapt an HttpClient/Observable read without losing interceptor or cancellation behavior. */
+/**
+ * Adapt an HttpClient/Observable read without losing interceptor or cancellation behavior.
+ * @example
+ * ```typescript
+ * const definition = {key: ['users'], loader: observableLoader(() => http.get<User[]>('/api/users'))};
+ * const users = await client.fetchQuery(definition);
+ * ```
+ */
 export function observableLoader<T>(
   factory: (context: QueryLoaderContext) => Observable<T>,
 ): QueryDefinition<T>['loader'] {
@@ -61,7 +68,14 @@ export function observableLoader<T>(
     });
 }
 
-/** Cold subscription to a shared read; unsubscribing one caller does not cancel other callers. */
+/**
+ * Cold subscription to a shared read; unsubscribing one caller does not cancel other callers.
+ * @example
+ * ```typescript
+ * const definition = {key: ['users'], loader: observableLoader(() => http.get<User[]>('/api/users'))};
+ * const users = await firstValueFrom(fetchQueryObservable(client, definition));
+ * ```
+ */
 export function fetchQueryObservable<T>(
   client: QueryClient,
   definition: QueryDefinition<T>,
@@ -70,7 +84,17 @@ export function fetchQueryObservable<T>(
   return defer(() => from(client.fetchQuery(definition, options)));
 }
 
-/** Observe shared state. Explicit removal completes this stream; resubscribe to observe a recreated query. */
+/**
+ * Observe shared state. Explicit removal completes this stream; resubscribe to observe a recreated query.
+ * @example
+ * ```typescript
+ * const definition = {key: ['users'], loader: observableLoader(() => http.get<User[]>('/api/users'))};
+ * const subscription = observeQueryObservable(client, definition).subscribe((snapshot) => {
+ *   render(snapshot.value, snapshot.status, snapshot.error);
+ * });
+ * subscription.unsubscribe();
+ * ```
+ */
 export function observeQueryObservable<T>(
   client: QueryClient,
   definition: QueryDefinition<T>,

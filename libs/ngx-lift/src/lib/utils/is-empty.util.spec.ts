@@ -1,5 +1,21 @@
 import {isEmpty, isNotEmpty} from './is-empty.util';
 
+it('does not narrow either branch of a nullable collection emptiness check', () => {
+  const classify = (items: string[] | null | undefined) => {
+    if (isNotEmpty(items)) {
+      expectTypeOf(items).toEqualTypeOf<string[] | null | undefined>();
+      return 'nonempty';
+    } else {
+      expectTypeOf(items).toEqualTypeOf<string[] | null | undefined>();
+      return 'empty';
+    }
+  };
+  expect(classify([])).toBe('empty');
+  expect(classify(null)).toBe('empty');
+  expect(classify(undefined)).toBe('empty');
+  expect(classify(['item'])).toBe('nonempty');
+});
+
 describe('isEmpty function', () => {
   it('does not narrow an empty collection to null or undefined', () => {
     const value: number[] = [];
@@ -73,9 +89,9 @@ describe('isEmpty function', () => {
 });
 
 describe('isNotEmpty function', () => {
-  it('narrows a nullable collection in the true branch', () => {
+  it('supports an explicit nullability check before checking emptiness', () => {
     const value: number[] | undefined = [1, 2];
-    if (isNotEmpty(value)) {
+    if (value != null && isNotEmpty(value)) {
       expectTypeOf(value).toEqualTypeOf<number[]>();
       expect(value.length).toBe(2);
     }

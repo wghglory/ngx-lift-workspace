@@ -1,6 +1,13 @@
 import {QueryKey, QueryKeyValue} from './query.models';
 
-/** Canonical, typed JSON encoding without delimiter collisions or object-order differences. */
+/**
+ * Canonical, typed JSON encoding without delimiter collisions or object-order differences.
+ * @example
+ * ```typescript
+ * serializeQueryKey(['users', {page: 1, tenant: 'a'}]);
+ * // Same result regardless of the parameter object's property order.
+ * ```
+ */
 export function serializeQueryKey(key: QueryKey): string {
   if (!Array.isArray(key)) {
     throw new TypeError('A query key must be an array of JSON-compatible values.');
