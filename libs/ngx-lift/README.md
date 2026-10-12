@@ -336,8 +336,12 @@ export class MyFormComponent {
 
 ## 📚 Documentation
 
-- [Shared queries and mutations](src/lib/query/query.md) ([中文](src/lib/query/query.zh-CN.md))
-- [Async and query migration](../../docs/MIGRATION_ASYNC_QUERY.md) ([中文](../../docs/MIGRATION_ASYNC_QUERY.zh-CN.md))
+- [Async & Query Design Specifications](../../docs/design/README.md)
+  - [resourceAsync Design Spec](../../docs/design/resource-async-design-spec.md)
+  - [queryResource & QueryClient Design Spec](../../docs/design/query-resource-design-spec.md)
+  - [mutateResource Design Spec](../../docs/design/mutate-resource-design-spec.md)
+  - [computedAsync Design Spec](../../docs/design/computed-async-design-spec.md)
+- [Migration Guides](../../docs/MIGRATIONS.md)
 
 - **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
 - **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)

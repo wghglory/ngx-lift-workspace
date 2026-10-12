@@ -9,13 +9,20 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {isObservable, Observable, Subject} from 'rxjs';
 
-import {QueryDefinition, QueryObserverHandle, QuerySnapshot, QueryStatus} from './query.models';
+import {QueryDefinition, QueryLoaderContext, QueryObserverHandle, QuerySnapshot, QueryStatus} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {serializeQueryKey} from './query-key';
+import {observableLoader} from './query-observable';
 import {resourceAsync} from './resource-async';
+
+/** Angular query definition accepting Promise or first-value Observable reads. */
+export interface QueryResourceDefinition<T> extends Omit<QueryDefinition<T>, 'loader'> {
+  /** Observable reads unsubscribe after the first value or when the shared request is aborted. */
+  readonly loader: (context: QueryLoaderContext) => Promise<T> | Observable<T>;
+}
 
 /** Injection, shared-client, and reactive polling configuration for queryResource. */
 export interface QueryResourceOptions {
@@ -46,7 +53,7 @@ function idleSnapshot<T>(): QuerySnapshot<T> {
 
 /** Signal observer of a shared query entry. The definition captures one consistent parameter snapshot. */
 export function queryResource<T, E = Error>(
-  definition: () => QueryDefinition<T> | undefined,
+  definition: () => QueryResourceDefinition<T> | undefined,
   options: QueryResourceOptions = {},
 ): QueryResourceRef<T | undefined, E> {
   if (!options.injector) {
@@ -56,7 +63,15 @@ export function queryResource<T, E = Error>(
   const client = options.client ?? injector.get(QUERY_CLIENT);
   const requested = computed(() => {
     const query = definition();
-    return query ? {query, key: serializeQueryKey(query.key)} : undefined;
+    if (!query) return undefined;
+    const adapted: QueryDefinition<T> = {
+      ...query,
+      loader: (context) => {
+        const source = query.loader(context);
+        return isObservable(source) ? observableLoader(() => source)(context) : source;
+      },
+    };
+    return {query: adapted, key: serializeQueryKey(query.key)};
   });
   const requestedKey = computed(() => requested()?.key);
   const observedKey = signal<string | undefined>(undefined);
@@ -87,7 +102,7 @@ export function queryResource<T, E = Error>(
             const latest = untracked(requested);
             if (!latest || latest.key !== key) return;
             observedKey.set(key);
-            handle = client.observeQuery(
+            const returnedHandle = client.observeQuery(
               latest.query,
               (snapshot) => {
                 untracked(() => {
@@ -96,6 +111,12 @@ export function queryResource<T, E = Error>(
               },
               {pollInterval: observedInterval, refresh},
             );
+            // A synchronous snapshot can destroy the resource while recovery is attaching.
+            if (destroyed || subscriber.closed) {
+              returnedHandle();
+              return;
+            }
+            handle = returnedHandle;
             unsubscribe = handle;
           };
           attach();
@@ -118,6 +139,8 @@ export function queryResource<T, E = Error>(
       return idleSnapshot<T>();
     }
     if (current.key !== observedKey()) {
+      const cached = client.getSnapshot<T>(current.query.key);
+      if (cached?.hasValue) return cached.isStale ? {...cached, status: 'reloading' as const} : cached;
       return {...idleSnapshot<T>(), status: 'loading' as const};
     }
     const snapshot = sharedState.value();

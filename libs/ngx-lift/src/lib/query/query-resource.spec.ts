@@ -1,11 +1,14 @@
 import {DOCUMENT} from '@angular/common';
+import {HttpClient, provideHttpClient, withInterceptors} from '@angular/common/http';
+import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {effect, Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {firstValueFrom, Subject} from 'rxjs';
+import {EMPTY, EmptyError, firstValueFrom, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
+import {observableLoader} from './query-observable';
 import {queryResource} from './query-resource';
 
 async function settle(): Promise<void> {
@@ -50,6 +53,217 @@ describe('queryResource', () => {
     expect(loader).toHaveBeenCalledTimes(2);
     expect(first.value()).toBe(2);
     expect(second.value()).toBe(2);
+  });
+
+  it.each(['initial', 'recovery'] as const)(
+    'detaches when destroyed during a synchronous %s snapshot',
+    async (phase) => {
+      const observe = client.observeQuery.bind(client);
+      const definition = {
+        key: ['synchronous-destroy'],
+        loader: vi.fn(async () => 1),
+        tags: [{type: 'SyncDestroy'}],
+        staleTime: Infinity,
+      };
+      const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+      if (phase === 'recovery') {
+        await settle();
+        client.removeQueries();
+        await settle();
+      }
+      let attached: (() => boolean) | undefined;
+      vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) => {
+        const handle = observe(
+          query,
+          (snapshot) => {
+            listener(snapshot);
+            resource.destroy();
+          },
+          options,
+        );
+        attached = handle.isAttached;
+        return handle;
+      });
+      if (phase === 'recovery') resource.reload();
+      await settle();
+      expect(attached?.()).toBe(false);
+      const calls = definition.loader.mock.calls.length;
+      client.invalidateTags(definition.tags);
+      await settle();
+      expect(definition.loader).toHaveBeenCalledTimes(calls);
+    },
+  );
+
+  it('reads a fresh cached value immediately before the observer effect runs', async () => {
+    const definition = {key: ['warm-cache'], loader: vi.fn(async () => 7), staleTime: Infinity};
+    await client.fetchQuery(definition);
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    expect(resource.value()).toBe(7);
+    expect(resource.status()).toBe('resolved');
+    expect(resource.isLoading()).toBe(false);
+    await settle();
+    expect(definition.loader).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([0, 1])('retains stale cached data synchronously on mount (staleTime: %s)', async (staleTime) => {
+    let now = 0;
+    client.destroy();
+    client = new QueryClient({now: () => now});
+    TestBed.overrideProvider(QUERY_CLIENT, {useValue: client});
+    const source = new Subject<number>();
+    const loader = vi.fn(() => source);
+    const definition = {key: ['stale-cache'], loader, staleTime};
+    await client.fetchQuery({...definition, loader: async () => 7});
+    now = 2;
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => ({...definition, loader})));
+    expect(resource.value()).toBe(7);
+    expect(resource.hasValue()).toBe(true);
+    expect(resource.status()).toBe('reloading');
+    expect(resource.isLoading()).toBe(true);
+    expect(resource.isStale()).toBe(true);
+    await settle();
+    // Keep the revalidation pending so cached data remains visible throughout attachment.
+    expect(resource.value()).toBe(7);
+    source.next(9);
+    await settle();
+    expect(resource.value()).toBe(9);
+    expect(resource.status()).toBe('resolved');
+  });
+
+  it('takes the first synchronous Observable value and supports Promise refreshes', async () => {
+    const contexts: boolean[] = [];
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({
+        key: ['mixed-source'],
+        loader: ({refresh}) => {
+          contexts.push(refresh);
+          return refresh ? Promise.resolve(3) : of(1, 2);
+        },
+      })),
+    );
+    await settle();
+    expect(resource.value()).toBe(1);
+    expect(await resource.execute()).toBe(3);
+    await settle();
+    expect(resource.value()).toBe(3);
+    expect(contexts).toEqual([false, true]);
+  });
+
+  it('keeps explicit observableLoader definitions compatible', async () => {
+    const definition = {key: ['adapted'], loader: observableLoader(() => of(7))};
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    expect(resource.value()).toBe(7);
+    expect(await client.fetchQuery(definition)).toBe(7);
+  });
+
+  it('reports empty Observable reads and retains data on Observable refresh errors', async () => {
+    const failure = new Error('refresh failed');
+    const version = signal(0);
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => {
+        const current = version();
+        return {
+          key: ['observable-errors'],
+          loader: () => (current === 0 ? EMPTY : current === 1 ? of(1) : throwError(() => failure)),
+        };
+      }),
+    );
+    await settle();
+    expect(resource.error()).toBeInstanceOf(EmptyError);
+    expect(resource.status()).toBe('error');
+    version.set(1);
+    await settle();
+    expect(await resource.execute()).toBe(1);
+    version.set(2);
+    await settle();
+    await expect(resource.execute()).rejects.toBe(failure);
+    await settle();
+    expect(resource.value()).toBe(1);
+    expect(resource.error()).toBe(failure);
+  });
+
+  it('cancels scoped Observable reads when the key changes, disables, or destroys', async () => {
+    const scope = signal<string | undefined>('a');
+    const sources = new Map<string, Subject<string>>();
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => {
+        const key = scope();
+        if (!key) return undefined;
+        return {
+          key: ['scoped-observable', key],
+          cancelOnNoObservers: true,
+          loader: () => {
+            const source = new Subject<string>();
+            sources.set(key, source);
+            return source;
+          },
+        };
+      }),
+    );
+    await settle();
+    expect(sources.get('a')?.observed).toBe(true);
+    scope.set('b');
+    await settle();
+    expect(sources.get('a')?.observed).toBe(false);
+    expect(sources.get('b')?.observed).toBe(true);
+    sources.get('a')?.next('obsolete');
+    expect(resource.value()).toBeUndefined();
+    scope.set(undefined);
+    await settle();
+    expect(sources.get('b')?.observed).toBe(false);
+    expect(resource.status()).toBe('idle');
+    scope.set('c');
+    await settle();
+    expect(sources.get('c')?.observed).toBe(true);
+    TestBed.resetTestingModule();
+    expect(sources.get('c')?.observed).toBe(false);
+  });
+
+  it('lets default shared Observable reads finish after observer destruction', async () => {
+    const source = new Subject<number>();
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['shared-observable'], loader: () => source})),
+    );
+    await settle();
+    resource.destroy();
+    expect(source.observed).toBe(true);
+    source.next(9);
+    await settle();
+    expect(source.observed).toBe(false);
+    expect(client.getSnapshot<number>(['shared-observable'])?.value).toBe(9);
+  });
+
+  it('deduplicates direct HttpClient loaders and cancels only after the last scoped observer leaves', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(
+          withInterceptors([(request, next) => next(request.clone({setHeaders: {'X-Query': 'test'}}))]),
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+    const http = TestBed.inject(HttpClient);
+    const controller = TestBed.inject(HttpTestingController);
+    const loader = vi.fn(() => http.get<number>('/api/value'));
+    const definition = {key: ['http-value'], loader, cancelOnNoObservers: true};
+    const first = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    const second = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    const request = controller.expectOne('/api/value');
+    expect(request.request.headers.get('X-Query')).toBe('test');
+    expect(loader).toHaveBeenCalledTimes(1);
+    first.destroy();
+    expect(request.cancelled).toBe(false);
+    request.flush(7);
+    await settle();
+    expect(second.value()).toBe(7);
+    second.reload();
+    await settle();
+    const refresh = controller.expectOne('/api/value');
+    second.destroy();
+    expect(refresh.cancelled).toBe(true);
+    controller.verify();
   });
 
   it('retains the last successful value alongside a background refresh error', async () => {
@@ -181,7 +395,7 @@ describe('queryResource', () => {
     await expect(resource.execute()).rejects.toThrow('destroyed');
   });
 
-  it('reports loading immediately when a disabled query is re-enabled with the same key', async () => {
+  it('reads a fresh cache immediately when a disabled query is re-enabled with the same key', async () => {
     const enabled = signal(true);
     const loader = vi.fn(async () => 1);
     const resource = TestBed.runInInjectionContext(() =>
@@ -195,10 +409,10 @@ describe('queryResource', () => {
     expect(resource.value()).toBeUndefined();
 
     enabled.set(true);
-    expect(resource.status()).toBe('loading');
-    expect(resource.isLoading()).toBe(true);
-    expect(resource.hasValue()).toBe(false);
-    expect(resource.value()).toBeUndefined();
+    expect(resource.status()).toBe('resolved');
+    expect(resource.isLoading()).toBe(false);
+    expect(resource.hasValue()).toBe(true);
+    expect(resource.value()).toBe(1);
     await settle();
     expect(resource.value()).toBe(1);
     expect(resource.status()).toBe('resolved');
@@ -298,6 +512,52 @@ describe('queryResource', () => {
     await settle();
     expect(resource.value()).toBe(2);
     expect(resource.status()).toBe('resolved');
+  });
+
+  it('joins rapid and reentrant reloads during recovery without leaking an observer', async () => {
+    const source = new Subject<number>();
+    const loader = vi.fn(() => source);
+    const definition = {
+      key: ['reentrant-recovery'],
+      loader,
+      tags: [{type: 'Recovery'}],
+      cancelOnNoObservers: true,
+    };
+    const observe = client.observeQuery.bind(client);
+    const observeSpy = vi.spyOn(client, 'observeQuery');
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    source.next(1);
+    await settle();
+    client.removeQueries();
+    await settle();
+    let reentered = false;
+    observeSpy.mockImplementation((query, listener, options) =>
+      observe(
+        query,
+        (snapshot) => {
+          listener(snapshot);
+          if (!reentered) {
+            reentered = true;
+            expect(resource.reload()).toBe(true);
+          }
+        },
+        options,
+      ),
+    );
+    expect(resource.reload()).toBe(true);
+    expect(resource.reload()).toBe(true);
+    expect(resource.reload()).toBe(true);
+    await settle();
+    expect(reentered).toBe(true);
+    expect(observeSpy).toHaveBeenCalledTimes(2);
+    expect(loader).toHaveBeenCalledTimes(2);
+    expect(source.observed).toBe(true);
+    resource.destroy();
+    expect(source.observed).toBe(false);
+    client.invalidateTags(definition.tags);
+    await settle();
+    expect(loader).toHaveBeenCalledTimes(2);
   });
 
   it('reattaches after another observer has recreated the removed key', async () => {

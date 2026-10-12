@@ -230,6 +230,8 @@ For maintainers and contributors:
 - **`docs/QUICK_START.md`**: Quick start guide for new developers
 - **`docs/COMMANDS.md`**: Comprehensive command reference
 - **`docs/DEPLOYMENT.md`**: Publishing, deployment, and CI/CD guides
+- **`docs/MIGRATIONS.md`**: Migration notes across versions
+- **`docs/design/README.md`**: Architectural design specifications for async and query primitives
 
 ## 📚 Library Usage
 

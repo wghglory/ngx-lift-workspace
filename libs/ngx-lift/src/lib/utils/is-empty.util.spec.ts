@@ -73,6 +73,14 @@ describe('isEmpty function', () => {
 });
 
 describe('isNotEmpty function', () => {
+  it('narrows a nullable collection in the true branch', () => {
+    const value: number[] | undefined = [1, 2];
+    if (isNotEmpty(value)) {
+      expectTypeOf(value).toEqualTypeOf<number[]>();
+      expect(value.length).toBe(2);
+    }
+  });
+
   it('does not narrow an empty collection away in the false branch', () => {
     const value: number[] = [];
     if (!isNotEmpty(value)) {

@@ -11,7 +11,7 @@
 [![Clarity](https://img.shields.io/badge/Clarity-%3E%3D18.0.0-blue.svg)](https://clarity.design)
 
 [📖 Documentation](https://ngx-lift.netlify.app/clr-lift) • [🎮 Live Demo](https://ngx-lift.netlify.app/clr-lift) •
-[💻 GitHub Repository](https://github.com/wghglory/ngx-lift-workspace) • [🇨🇳 中文文档](README.zh-CN.md)
+[💻 GitHub Repository](https://github.com/wghglory/ngx-lift-workspace)
 
 </div>
 

@@ -497,9 +497,9 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.nestedRefreshItems': 'Refresh Items',
   'resourceAsync.nestedLoadAllOrgs': 'Load All Orgs',
 
-  'queryResource.title': 'queryResource & mutateResource',
+  'queryResource.title': 'queryResource',
   'queryResource.overview':
-    '<code>queryResource</code> provides declarative, cached, and deduplicated server-state management in Angular Signals. Paired with <code>mutateResource</code> (aliased as <code>mutationResource</code>) and <code>QueryClient</code>, it coordinates background polling, stale-while-revalidate caching, request coalescing, and tag-based invalidation.',
+    '<code>queryResource</code> provides declarative, cached, and deduplicated server-state management in Angular Signals. Paired with <code>mutateResource</code> and <code>QueryClient</code>, it coordinates background polling, stale-while-revalidate caching, request coalescing, and tag-based invalidation.',
   'queryResource.comparisonTitle': 'When to Use: queryResource vs. resourceAsync',
   'queryResource.comparisonIntro':
     'Both primitives use Angular Signals for reactive UI bindings, but they address different layers of your application architecture:',
@@ -588,9 +588,9 @@ export const enTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Last Pulse',
   'queryResource.pollingIdleMsg':
     'Polling is currently idle. Click "Start Polling" to observe live coordinated background checks.',
-  'queryResource.demo4Section': '4. Mutations & Tag Invalidation (mutateResource / mutationResource)',
+  'queryResource.demo4Section': '4. Mutations & Tag Invalidation (mutateResource)',
   'queryResource.demo4SectionDesc':
-    '<code>mutateResource</code> (or <code>mutationResource</code>) handles asynchronous writes. Upon successful mutation, it invalidates matching tags, causing all active queries with those tags to automatically refetch the latest server data in the background.',
+    '<code>mutateResource</code> handles asynchronous writes. Upon successful mutation, it invalidates matching tags, causing all active queries with those tags to automatically refetch the latest server data in the background.',
   'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
   'queryResource.demo4PlaygroundDesc':
     'Add a new member. Upon mutation completion, usersQuery automatically refetches in the background!',
@@ -609,6 +609,76 @@ export const enTranslations: Record<string, string> = {
   'queryResource.thName': 'Name',
   'queryResource.thRole': 'Role',
   'queryResource.apiReference': 'API Reference',
+
+  'mutateResource.title': 'mutateResource',
+  'mutateResource.overview':
+    '<code>mutateResource</code> coordinates asynchronous server writes (POST, PUT, PATCH, DELETE) with automatic tag-based cache invalidation, built-in concurrency strategies (exhaust, concat, parallel), and reactive Angular Signals.',
+  'mutateResource.featuresTitle': 'Key Capabilities',
+  'mutateResource.featuresIntro':
+    'Unlike read-only queries that trigger reactively from parameter changes, mutations run strictly upon explicit user interaction.',
+  'mutateResource.cardTagInvalidationTitle': 'Automatic Tag Invalidation',
+  'mutateResource.cardTagInvalidationDesc':
+    'Invalidate tags on write success to automatically refresh all active queryResource observers across the application without manual reload plumbing.',
+  'mutateResource.cardConcurrencyTitle': 'Configurable Concurrency',
+  'mutateResource.cardConcurrencyDesc':
+    'Control simultaneous submissions via "exhaust" (ignore/join duplicate clicks), "concat" (FIFO queue), or "parallel" (default).',
+  'mutateResource.cardSignalsTitle': 'Reactive State Signals',
+  'mutateResource.cardSignalsDesc':
+    'Provides reactive value, error, status ("idle" | "loading" | "resolved" | "error"), and isLoading signals optimized for OnPush change detection.',
+  'mutateResource.cardPromiseTitle': 'Direct Promise Returns',
+  'mutateResource.cardPromiseDesc':
+    'The mutate() call returns a standard Promise, allowing async/await and try/catch syntax in component event handlers.',
+  'mutateResource.demo1Section': '1. Tag Invalidation with Active Queries',
+  'mutateResource.demo1SectionDesc':
+    'Submitting a mutation invalidates matching tags, immediately triggering background refreshes for any active queryResource instances observing those tags.',
+  'mutateResource.demo1PlaygroundTitle': 'Create Item & Observe Query Update',
+  'mutateResource.demo1PlaygroundDesc':
+    'Submit the form to add a user. Notice how the user table updates automatically through tag invalidation without any manual reload calls!',
+  'mutateResource.badgeInvalidation': 'Tag Invalidation',
+  'mutateResource.addTeamMember': 'Add Team Member',
+  'mutateResource.nameLabel': 'Name',
+  'mutateResource.namePlaceholder': 'e.g. Dana Scully',
+  'mutateResource.roleLabel': 'Role',
+  'mutateResource.rolePlatformEngineer': 'Platform Engineer',
+  'mutateResource.roleSre': 'Site Reliability Engineer',
+  'mutateResource.roleProductDesigner': 'Product Designer',
+  'mutateResource.addMemberBtn': 'Add Member',
+  'mutateResource.savingBtn': 'Saving...',
+  'mutateResource.activeMembersTitle': 'Active Team Members',
+  'mutateResource.thId': 'ID',
+  'mutateResource.thName': 'Name',
+  'mutateResource.thRole': 'Role',
+  'mutateResource.demo2Section': '2. Concurrency Modes: exhaust, concat, and parallel',
+  'mutateResource.demo2SectionDesc':
+    'Test how different concurrency strategies handle rapid button clicks. "exhaust" prevents accidental double-submission by discarding or joining duplicate clicks while a mutation is already running.',
+  'mutateResource.demo2PlaygroundTitle': 'Rapid Click & Concurrency Simulation',
+  'mutateResource.demo2PlaygroundDesc':
+    'Choose a mode, then rapidly click "Trigger 800ms Mutation" several times to see how executions are handled.',
+  'mutateResource.badgeConcurrency': 'Concurrency',
+  'mutateResource.modeLabel': 'Concurrency Strategy',
+  'mutateResource.modeExhaust': 'exhaust (Drop rapid duplicate clicks - double submit guard)',
+  'mutateResource.modeConcat': 'concat (Queue invocations in sequence)',
+  'mutateResource.modeParallel': 'parallel (Execute each invocation independently)',
+  'mutateResource.triggerMutationBtn': 'Trigger 800ms Mutation',
+  'mutateResource.totalClicks': 'Total Button Clicks: {0}',
+  'mutateResource.actualExecutions': 'Actual Executions: {0}',
+  'mutateResource.inFlight': 'Currently In-Flight: {0}',
+  'mutateResource.recentLogs': 'Execution Log',
+  'mutateResource.clearLogs': 'Clear Log',
+  'mutateResource.noLogsYet': 'No mutations executed yet. Click the button above to begin.',
+  'mutateResource.demo3Section': '3. Reactive Status Signals & Error Recovery',
+  'mutateResource.demo3SectionDesc':
+    '<code>mutateResource</code> manages errors cleanly. When a write fails, the error signal is populated, status becomes "error", and the returned Promise rejects for try/catch handling.',
+  'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',
+  'mutateResource.demo3PlaygroundDesc':
+    'Toggle the failure simulation and trigger the action to inspect the reactive error state.',
+  'mutateResource.badgeError': 'Error Handling',
+  'mutateResource.simulateErrorLabel': 'Simulate 500 Server Error',
+  'mutateResource.saveSettingsBtn': 'Save Configuration',
+  'mutateResource.statusLabel': 'Status',
+  'mutateResource.isLoadingLabel': 'isLoading',
+  'mutateResource.errorSuccessMsg': 'Configuration saved successfully!',
+  'mutateResource.apiReference': 'API Reference',
 
   'injectParams.example1Title': 'Example 1: Get All Route Parameters',
   'injectParams.example1Desc':

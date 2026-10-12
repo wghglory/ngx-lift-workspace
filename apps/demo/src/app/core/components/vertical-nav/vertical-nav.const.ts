@@ -22,7 +22,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
     icon: 'data-cluster',
     children: [
       {path: '/queryResource', value: 'queryResource', label: 'new'},
-      {path: '/mutationResource', value: 'mutationResource', label: 'new'},
+      {path: '/mutateResource', value: 'mutateResource', label: 'new'},
     ],
   },
   {

@@ -199,14 +199,14 @@ const userRef = resourceAsync(() => this.http.get<User>('/api/profile'));
 const profileQuery = queryResource(() => ({
   key: ['user', userId()],
   tags: [{ type: 'users', id: userId() }],
-  loader: ({ abortSignal }) => this.http.get<User>('/api/profile', { signal: abortSignal }),
+  loader: () => this.http.get<User>('/api/profile'),
   staleTime: 30_000,     // 30s freshness
   gcTime: 300_000,       // 5m cache retention
 }), {
   pollInterval: 10_000,  // Background polling coordinated across observers
 });
 
-// 3. mutateResource / mutationResource: Invalidate cached queries automatically
+// 3. mutateResource: Invalidate cached queries automatically
 const updateProfile = mutateResource(
   (data: UpdateUserDto) => this.http.patch('/api/profile', data),
   {
@@ -252,7 +252,7 @@ const usersQuery = queryResource(() => ({
 }));
 
 // Define mutation that invalidates 'users' tag on success
-// Provides mutateResource (or mutationResource)
+// Provides mutateResource
 const addUser = mutateResource(
   (payload: NewUser) => this.userService.create(payload),
   {
@@ -271,8 +271,8 @@ const addUser = mutateResource(
   readonly queryResourceApiProps: ApiProperty[] = [
     {
       name: 'definition',
-      type: '() => QueryDefinition<T> | undefined',
-      description: 'Reactive factory returning the query configuration snapshot, or undefined to disable.',
+      type: '() => QueryResourceDefinition<T> | undefined',
+      description: 'Reactive factory with an Observable or Promise loader, or undefined to disable.',
     },
     {
       name: 'options.pollInterval',
@@ -331,29 +331,6 @@ const addUser = mutateResource(
       name: 'destroy()',
       type: '() => void',
       description: 'Detaches this observer without canceling shared queries if other observers remain.',
-    },
-  ];
-
-  readonly mutationResourceApiProps: ApiProperty[] = [
-    {
-      name: 'mutation',
-      type: '(args: TArgs) => Observable<TResult> | Promise<TResult>',
-      description: 'Async function or observable executing the server-side write.',
-    },
-    {
-      name: 'options.invalidatesTags',
-      type: 'QueryTag[] | ((result, args) => QueryTag[])',
-      description: 'Tags to invalidate upon successful write. Immediately schedules refetches for active queries.',
-    },
-    {
-      name: 'options.concurrency',
-      type: "'parallel' | 'exhaust' | 'concat'",
-      description: 'Strategy for overlapping calls: parallel (default), exhaust (joins in-flight), concat (queues).',
-    },
-    {
-      name: 'options.injector / client',
-      type: 'Injector / QueryClient',
-      description: 'Optional explicit Injector or QueryClient instance.',
     },
   ];
 }

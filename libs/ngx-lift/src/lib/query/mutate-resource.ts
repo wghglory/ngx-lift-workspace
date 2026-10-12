@@ -15,7 +15,7 @@ import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 
 /** Invalidation and concurrency policy for explicit server writes. */
-export interface MutationResourceOptions<TArgs, TResult> {
+export interface MutateResourceOptions<TArgs, TResult> {
   invalidatesTags?: readonly QueryTag[] | ((result: TResult, args: TArgs) => readonly QueryTag[]);
   client?: QueryClient;
   injector?: Injector;
@@ -24,7 +24,7 @@ export interface MutationResourceOptions<TArgs, TResult> {
 }
 
 /** Mutation result signals and an explicit Promise-returning write operation. */
-export interface MutationResourceRef<TArgs, TResult, E = Error> {
+export interface MutateResourceRef<TArgs, TResult, E = Error> {
   readonly value: Signal<TResult | undefined>;
   readonly error: Signal<E | null>;
   readonly status: Signal<'idle' | 'loading' | 'resolved' | 'error'>;
@@ -37,12 +37,12 @@ export interface MutationResourceRef<TArgs, TResult, E = Error> {
 }
 
 /** Explicit mutation state; disposal does not pretend to roll back an already submitted server write. */
-export function mutationResource<TArgs, TResult, E = Error>(
-  mutation: (args: TArgs) => Observable<TResult> | Promise<TResult>,
-  options: MutationResourceOptions<TArgs, TResult> = {},
-): MutationResourceRef<TArgs, TResult, E> {
+export function mutateResource<TArgs, TResult, E = Error>(
+  mutation: (args: TArgs) => Observable<TResult> | PromiseLike<TResult> | TResult,
+  options: MutateResourceOptions<TArgs, TResult> = {},
+): MutateResourceRef<TArgs, TResult, E> {
   if (!options.injector) {
-    assertInInjectionContext(mutationResource);
+    assertInInjectionContext(mutateResource);
   }
   const injector = options.injector ?? inject(Injector);
   const client = options.client ?? injector.get(QUERY_CLIENT);
@@ -65,7 +65,7 @@ export function mutationResource<TArgs, TResult, E = Error>(
     try {
       const resultPromise = untracked(() => {
         const source = mutation(args);
-        return isObservable(source) ? firstValueFrom(source) : source;
+        return isObservable(source) ? firstValueFrom(source) : Promise.resolve(source);
       });
       // Mark synchronous Observable failures handled before Promise assimilation in Zone.js.
       void resultPromise.catch(() => undefined);
@@ -141,10 +141,3 @@ export function mutationResource<TArgs, TResult, E = Error>(
     },
   };
 }
-
-/** Alias for `mutationResource` for consumers preferring `mutateResource` naming. */
-export const mutateResource = mutationResource;
-/** Alias of MutationResourceOptions for the mutateResource spelling. */
-export type MutateResourceOptions<TArgs, TResult> = MutationResourceOptions<TArgs, TResult>;
-/** Alias of MutationResourceRef for the mutateResource spelling. */
-export type MutateResourceRef<TArgs, TResult, E = Error> = MutationResourceRef<TArgs, TResult, E>;

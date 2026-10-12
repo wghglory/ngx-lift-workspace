@@ -1,0 +1,347 @@
+<cll-page-container [title]="'mutateResource.title' | translate">
+  <!-- Overview -->
+  <p class="p1" [innerHTML]="'mutateResource.overview' | translate"></p>
+
+  <!-- ==================== CORE CAPABILITIES SECTION ==================== -->
+  <section class="features-section">
+    <h2>{{ 'mutateResource.featuresTitle' | translate }}</h2>
+    <p class="features-intro">{{ 'mutateResource.featuresIntro' | translate }}</p>
+
+    <div class="features-grid">
+      <div class="card feature-card card-outline-primary">
+        <div class="card-header">
+          <strong>{{ 'mutateResource.cardTagInvalidationTitle' | translate }}</strong>
+        </div>
+        <div class="card-block">
+          <p class="card-text">{{ 'mutateResource.cardTagInvalidationDesc' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="card feature-card card-outline-success">
+        <div class="card-header">
+          <strong>{{ 'mutateResource.cardConcurrencyTitle' | translate }}</strong>
+        </div>
+        <div class="card-block">
+          <p class="card-text">{{ 'mutateResource.cardConcurrencyDesc' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="card feature-card card-outline-warning">
+        <div class="card-header">
+          <strong>{{ 'mutateResource.cardSignalsTitle' | translate }}</strong>
+        </div>
+        <div class="card-block">
+          <p class="card-text">{{ 'mutateResource.cardSignalsDesc' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="card feature-card card-outline-info">
+        <div class="card-header">
+          <strong>{{ 'mutateResource.cardPromiseTitle' | translate }}</strong>
+        </div>
+        <div class="card-block">
+          <p class="card-text">{{ 'mutateResource.cardPromiseDesc' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== DEMO 1: TAG INVALIDATION ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'mutateResource.demo1Section' | translate }}</h2>
+    <p [innerHTML]="'mutateResource.demo1SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'mutateResource.demo1PlaygroundTitle' | translate"
+      [description]="'mutateResource.demo1PlaygroundDesc' | translate"
+      level="intermediate"
+      [badgeText]="'mutateResource.badgeInvalidation' | translate"
+      layout="split"
+      [tsCode]="invalidationCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <!-- Add Member Form -->
+          <div class="card card-block">
+            <div class="card-title">{{ 'mutateResource.addTeamMember' | translate }}</div>
+            <form clrForm clrLayout="horizontal" class="member-form">
+              <clr-input-container>
+                <label>{{ 'mutateResource.nameLabel' | translate }}</label>
+                <input
+                  clrInput
+                  type="text"
+                  name="newMemberName"
+                  [placeholder]="'mutateResource.namePlaceholder' | translate"
+                  [ngModel]="newMemberName()"
+                  (ngModelChange)="newMemberName.set($event)"
+                />
+              </clr-input-container>
+
+              <clr-select-container>
+                <label>{{ 'mutateResource.roleLabel' | translate }}</label>
+                <select
+                  clrSelect
+                  name="newMemberRole"
+                  [ngModel]="newMemberRole()"
+                  (ngModelChange)="newMemberRole.set($event)"
+                >
+                  <option value="Platform Engineer">{{ 'mutateResource.rolePlatformEngineer' | translate }}</option>
+                  <option value="Site Reliability Engineer">{{ 'mutateResource.roleSre' | translate }}</option>
+                  <option value="Product Designer">{{ 'mutateResource.roleProductDesigner' | translate }}</option>
+                </select>
+              </clr-select-container>
+
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  [disabled]="!newMemberName().trim() || addMemberMutation.isLoading()"
+                  (click)="submitNewMember()"
+                >
+                  @if (addMemberMutation.isLoading()) {
+                    <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                  }
+                  {{
+                    (addMemberMutation.isLoading() ? 'mutateResource.savingBtn' : 'mutateResource.addMemberBtn')
+                      | translate
+                  }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Active Members Table -->
+          <div>
+            <h5>
+              {{ 'mutateResource.activeMembersTitle' | translate }}
+              @if (membersQuery.isLoading()) {
+                <cll-spinner inline [size]="'sm'" class="m-l-xs" />
+              }
+            </h5>
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>{{ 'mutateResource.thId' | translate }}</th>
+                  <th>{{ 'mutateResource.thName' | translate }}</th>
+                  <th>{{ 'mutateResource.thRole' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of membersQuery.value(); track user.id) {
+                  <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                      <strong>{{ user.name }}</strong>
+                    </td>
+                    <td>
+                      <span class="label label-info">{{ user.role }}</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- ==================== DEMO 2: CONCURRENCY MODES ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'mutateResource.demo2Section' | translate }}</h2>
+    <p [innerHTML]="'mutateResource.demo2SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'mutateResource.demo2PlaygroundTitle' | translate"
+      [description]="'mutateResource.demo2PlaygroundDesc' | translate"
+      level="advanced"
+      [badgeText]="'mutateResource.badgeConcurrency' | translate"
+      layout="split"
+      [tsCode]="concurrencyCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <!-- Concurrency Controls -->
+          <div class="card card-block">
+            <clr-radio-container clrInline>
+              <label>{{ 'mutateResource.modeLabel' | translate }}</label>
+              <clr-radio-wrapper>
+                <input
+                  type="radio"
+                  clrRadio
+                  name="concurrency"
+                  value="exhaust"
+                  [ngModel]="selectedConcurrency()"
+                  (ngModelChange)="selectedConcurrency.set($event)"
+                />
+                <label>{{ 'mutateResource.modeExhaust' | translate }}</label>
+              </clr-radio-wrapper>
+              <clr-radio-wrapper>
+                <input
+                  type="radio"
+                  clrRadio
+                  name="concurrency"
+                  value="concat"
+                  [ngModel]="selectedConcurrency()"
+                  (ngModelChange)="selectedConcurrency.set($event)"
+                />
+                <label>{{ 'mutateResource.modeConcat' | translate }}</label>
+              </clr-radio-wrapper>
+              <clr-radio-wrapper>
+                <input
+                  type="radio"
+                  clrRadio
+                  name="concurrency"
+                  value="parallel"
+                  [ngModel]="selectedConcurrency()"
+                  (ngModelChange)="selectedConcurrency.set($event)"
+                />
+                <label>{{ 'mutateResource.modeParallel' | translate }}</label>
+              </clr-radio-wrapper>
+            </clr-radio-container>
+
+            <div class="m-t-sm" cds-layout="horizontal gap:sm align:center">
+              <button type="button" class="btn btn-primary" (click)="triggerConcurrencyTest()">
+                @if (inFlightCount() > 0) {
+                  <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                }
+                {{ 'mutateResource.triggerMutationBtn' | translate }}
+              </button>
+
+              <button type="button" class="btn btn-outline" (click)="clearLogs()">
+                {{ 'mutateResource.clearLogs' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Counter Stats -->
+          <div class="clr-row">
+            <div class="clr-col-4">
+              <div class="card card-block stat-card">
+                <div class="stat-number">{{ clickCount() }}</div>
+                <div class="stat-label">{{ 'mutateResource.totalClicks' | translate: [clickCount()] }}</div>
+              </div>
+            </div>
+            <div class="clr-col-4">
+              <div class="card card-block stat-card">
+                <div class="stat-number text-success">{{ executionCount() }}</div>
+                <div class="stat-label">{{ 'mutateResource.actualExecutions' | translate: [executionCount()] }}</div>
+              </div>
+            </div>
+            <div class="clr-col-4">
+              <div class="card card-block stat-card">
+                <div class="stat-number text-info">{{ inFlightCount() }}</div>
+                <div class="stat-label">{{ 'mutateResource.inFlight' | translate: [inFlightCount()] }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Execution Logs -->
+          <div class="card card-block">
+            <div class="card-title">{{ 'mutateResource.recentLogs' | translate }}</div>
+            <div class="log-box">
+              @if (concurrencyLogs().length === 0) {
+                <p class="text-muted">{{ 'mutateResource.noLogsYet' | translate }}</p>
+              } @else {
+                @for (log of concurrencyLogs(); track $index) {
+                  <div class="log-entry">{{ log }}</div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- ==================== DEMO 3: STATUS SIGNALS & ERROR RECOVERY ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'mutateResource.demo3Section' | translate }}</h2>
+    <p [innerHTML]="'mutateResource.demo3SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'mutateResource.demo3PlaygroundTitle' | translate"
+      [description]="'mutateResource.demo3PlaygroundDesc' | translate"
+      level="intermediate"
+      [badgeText]="'mutateResource.badgeError' | translate"
+      layout="split"
+      [tsCode]="errorCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <div class="card card-block">
+            <clr-checkbox-container>
+              <clr-checkbox-wrapper>
+                <input
+                  type="checkbox"
+                  clrCheckbox
+                  name="simulateError"
+                  [ngModel]="simulateError()"
+                  (ngModelChange)="simulateError.set($event)"
+                />
+                <label>{{ 'mutateResource.simulateErrorLabel' | translate }}</label>
+              </clr-checkbox-wrapper>
+            </clr-checkbox-container>
+
+            <div class="m-t-sm">
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="saveSettingsMutation.isLoading()"
+                (click)="onSaveSettings()"
+              >
+                @if (saveSettingsMutation.isLoading()) {
+                  <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                }
+                {{ 'mutateResource.saveSettingsBtn' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <!-- State Signal Badges -->
+          <div cds-layout="horizontal gap:sm align:center">
+            <span
+              class="label"
+              [class.label-danger]="saveSettingsMutation.status() === 'error'"
+              [class.label-success]="saveSettingsMutation.status() === 'resolved'"
+              [class.label-info]="saveSettingsMutation.status() === 'loading'"
+            >
+              {{ 'mutateResource.statusLabel' | translate }}: {{ saveSettingsMutation.status() }}
+            </span>
+            <span class="label label-light">
+              {{ 'mutateResource.isLoadingLabel' | translate }}: {{ saveSettingsMutation.isLoading() }}
+            </span>
+          </div>
+
+          <!-- Alert Display -->
+          @if (saveSettingsMutation.error(); as err) {
+            <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+              <clr-alert-item>
+                <span class="alert-text">{{ err.message }}</span>
+              </clr-alert-item>
+            </clr-alert>
+          }
+
+          @if (saveSuccessMessage()) {
+            <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false">
+              <clr-alert-item>
+                <span class="alert-text">{{ 'mutateResource.errorSuccessMsg' | translate }}</span>
+              </clr-alert-item>
+            </clr-alert>
+          }
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <!-- ==================== API REFERENCE ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'mutateResource.apiReference' | translate }}</h2>
+
+    <h3><code>mutateResource(mutation, options)</code></h3>
+    <app-api-table [properties]="mutateResourceApiProps" />
+
+    <h3 class="m-t-md"><code>MutateResourceRef&lt;TArgs, TResult, E&gt;</code></h3>
+    <app-api-table [properties]="mutateResourceRefApiProps" />
+  </section>
+</cll-page-container>

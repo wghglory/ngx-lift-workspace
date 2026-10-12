@@ -467,9 +467,9 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.nestedRefreshItems': '刷新列表',
   'resourceAsync.nestedLoadAllOrgs': '批量加载所有组织',
 
-  'queryResource.title': 'queryResource 与 mutateResource',
+  'queryResource.title': 'queryResource',
   'queryResource.overview':
-    '<code>queryResource</code> 为 Angular Signals 提供声明式、带缓存且去重的服务端状态管理。配合 <code>mutateResource</code>（别名 <code>mutationResource</code>）与 <code>QueryClient</code>，协同管理后台轮询、Stale-While-Revalidate 缓存策略、并发请求合并与基于标签的数据失效机制。',
+    '<code>queryResource</code> 为 Angular Signals 提供声明式、带缓存且去重的服务端状态管理。配合 <code>mutateResource</code> 与 <code>QueryClient</code>，协同管理后台轮询、Stale-While-Revalidate 缓存策略、并发请求合并与基于标签的数据失效机制。',
   'queryResource.comparisonTitle': '选型指南：queryResource 与 resourceAsync',
   'queryResource.comparisonIntro':
     '两者均利用 Angular Signals 实现响应式 UI 绑定，但针对应用架构中不同层次的异步场景：',
@@ -553,9 +553,9 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.ping': '网络延迟',
   'queryResource.lastPulse': '最后心跳',
   'queryResource.pollingIdleMsg': '轮询目前处于空闲状态。点击“开启轮询”以观察实时协同后台检测。',
-  'queryResource.demo4Section': '4. 变更操作与标签失效 (mutateResource / mutationResource)',
+  'queryResource.demo4Section': '4. 变更操作与标签失效 (mutateResource)',
   'queryResource.demo4SectionDesc':
-    '<code>mutateResource</code>（或 <code>mutationResource</code>）处理异步写操作。变更成功后，自动使关联的标签失效，从而触发所有具有相应标签的活跃查询在后台自动重新获取最新数据。',
+    '<code>mutateResource</code> 处理异步写操作。变更成功后，自动使关联的标签失效，从而触发所有具有相应标签的活跃查询在后台自动重新获取最新数据。',
   'queryResource.demo4PlaygroundTitle': '基于标签的自动失效与重拉',
   'queryResource.demo4PlaygroundDesc': '添加新团队成员。变更成功后，usersQuery 将自动在后台重拉最新列表！',
   'queryResource.badgeMutations': '数据变更',
@@ -573,6 +573,75 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.thName': '姓名',
   'queryResource.thRole': '职位角色',
   'queryResource.apiReference': 'API 参考',
+
+  'mutateResource.title': 'mutateResource',
+  'mutateResource.overview':
+    '<code>mutateResource</code> 用于管理显式的异步服务端变更写操作（POST、PUT、PATCH、DELETE）。内置基于标签的自动缓存失效机制、多策略并发控制（exhaust、concat、parallel）以及与 Angular Signals 深度结合的响应式状态信号。',
+  'mutateResource.featuresTitle': '核心特性',
+  'mutateResource.featuresIntro':
+    '与随参数变化自动响应式触发的读操作（queryResource）不同，变更操作（mutateResource）严格由显式用户交互（如按钮点击、表单提交）触发。',
+  'mutateResource.cardTagInvalidationTitle': '自动标签失效 (Tag Invalidation)',
+  'mutateResource.cardTagInvalidationDesc':
+    '写操作成功后自动失效指定的标签，触发全应用所有关联的活跃 queryResource 实例在后台无感刷新，无需繁琐的手动 reload 胶水代码。',
+  'mutateResource.cardConcurrencyTitle': '可配置的并发策略',
+  'mutateResource.cardConcurrencyDesc':
+    '支持 "exhaust"（进行中忽略重复点击，天然防重复提交）、"concat"（先进先出顺序排队执行）与 "parallel"（独立并发执行）。',
+  'mutateResource.cardSignalsTitle': '响应式状态信号',
+  'mutateResource.cardSignalsDesc':
+    '提供 value、error、status（"idle" | "loading" | "resolved" | "error"）和 isLoading 信号，深度优化 OnPush 变更检测。',
+  'mutateResource.cardPromiseTitle': '原生 Promise 返回',
+  'mutateResource.cardPromiseDesc':
+    'mutate() 调用返回标准 Promise，支持在组件事件处理逻辑中使用 async/await 及 try/catch 语法。',
+  'mutateResource.demo1Section': '1. 变更操作与标签失效',
+  'mutateResource.demo1SectionDesc':
+    '提交变更操作后，自动失效相匹配的标签，立即触发观察这些标签的活跃 queryResource 实例在后台静默获取最新数据。',
+  'mutateResource.demo1PlaygroundTitle': '创建团队成员并观察查询自动刷新',
+  'mutateResource.demo1PlaygroundDesc':
+    '提交表单新增成员。保存成功后，用户列表通过标签失效机制自动重拉刷新，无需任何手动刷新代码！',
+  'mutateResource.badgeInvalidation': '标签失效',
+  'mutateResource.addTeamMember': '添加团队成员',
+  'mutateResource.nameLabel': '姓名',
+  'mutateResource.namePlaceholder': '例如：张三',
+  'mutateResource.roleLabel': '职位角色',
+  'mutateResource.rolePlatformEngineer': '平台工程师 (Platform Engineer)',
+  'mutateResource.roleSre': '网站可靠性工程师 (Site Reliability Engineer)',
+  'mutateResource.roleProductDesigner': '产品设计师 (Product Designer)',
+  'mutateResource.addMemberBtn': '添加成员',
+  'mutateResource.savingBtn': '保存中...',
+  'mutateResource.activeMembersTitle': '当前团队成员列表',
+  'mutateResource.thId': '序号',
+  'mutateResource.thName': '姓名',
+  'mutateResource.thRole': '职位角色',
+  'mutateResource.demo2Section': '2. 并发策略：exhaust、concat 与 parallel',
+  'mutateResource.demo2SectionDesc':
+    '测试不同并发策略在快速频繁点击时的处理表现。"exhaust" 策略在请求处理期间会自动忽略后续重复点击，有效防止重复提交。',
+  'mutateResource.demo2PlaygroundTitle': '快速连击与并发模式仿真',
+  'mutateResource.demo2PlaygroundDesc':
+    '选择不同并发模式，然后快速连续点击“触发 800ms 变更”按钮，观察实际执行次数与队列机制。',
+  'mutateResource.badgeConcurrency': '并发控制',
+  'mutateResource.modeLabel': '并发策略',
+  'mutateResource.modeExhaust': 'exhaust（丢弃进行中的重复点击，天然防重复提交）',
+  'mutateResource.modeConcat': 'concat（严格按顺序先进先出排队执行）',
+  'mutateResource.modeParallel': 'parallel（每次调用独立并行执行）',
+  'mutateResource.triggerMutationBtn': '触发 800ms 变更',
+  'mutateResource.totalClicks': '按钮点击总次数：{0}',
+  'mutateResource.actualExecutions': '实际触发执行次数：{0}',
+  'mutateResource.inFlight': '当前进行中请求数：{0}',
+  'mutateResource.recentLogs': '执行日志',
+  'mutateResource.clearLogs': '清空日志',
+  'mutateResource.noLogsYet': '暂未触发任何变更操作。请点击上方按钮进行体验。',
+  'mutateResource.demo3Section': '3. 响应式状态信号与错误恢复',
+  'mutateResource.demo3SectionDesc':
+    '<code>mutateResource</code> 提供完善的异常捕获。写操作失败时，error 信号自动填充，status 转变为 "error"，且返回的 Promise 会 reject 供 try/catch 处理。',
+  'mutateResource.demo3PlaygroundTitle': '状态信号与失败恢复',
+  'mutateResource.demo3PlaygroundDesc': '开启模拟失败开关并触发保存，观察响应式状态信号的变化与告警提示。',
+  'mutateResource.badgeError': '错误处理',
+  'mutateResource.simulateErrorLabel': '模拟服务端 500 异常',
+  'mutateResource.saveSettingsBtn': '保存配置',
+  'mutateResource.statusLabel': '状态',
+  'mutateResource.isLoadingLabel': 'isLoading',
+  'mutateResource.errorSuccessMsg': '配置保存成功！',
+  'mutateResource.apiReference': 'API 参考',
 
   'injectParams.example1Title': '示例 1：获取全部路由参数',
   'injectParams.example1Desc': '不传递任何参数调用时，返回包含整个 params 键值对象的 Signal：',

@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {defer, Observable, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
-import {mutateResource, mutationResource} from './mutation-resource';
+import {mutateResource} from './mutate-resource';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 
@@ -13,7 +13,7 @@ async function settle(): Promise<void> {
   }
 }
 
-describe('mutationResource', () => {
+describe('mutateResource', () => {
   let client: QueryClient;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('mutationResource', () => {
     const mutation = vi.fn((id: number) => of({id}));
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
-      mutationResource(mutation, {
+      mutateResource(mutation, {
         invalidatesTags: (result, id) => [{type: 'Binding', id: result.id, scope: `org-${id}`}],
       }),
     );
@@ -47,21 +47,46 @@ describe('mutationResource', () => {
     expect(resource.isLoading()).toBe(false);
   });
 
-  it('supports mutateResource alias with identical behavior', async () => {
-    const mutation = vi.fn((name: string) => Promise.resolve(`hello ${name}`));
-    const resource = TestBed.runInInjectionContext(() => mutateResource(mutation));
-    expect(resource.status()).toBe('idle');
-    const result = await resource.mutate('world');
-    expect(result).toBe('hello world');
-    expect(resource.value()).toBe('hello world');
+  it('assimilates a thenable without catch and invalidates on success', async () => {
+    const promise = Promise.resolve(7);
+    const thenable: PromiseLike<number> = {then: promise.then.bind(promise)};
+    const invalidate = vi.spyOn(client, 'invalidateTags');
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource(() => thenable, {invalidatesTags: [{type: 'Thenable'}]}),
+    );
+    expect(await resource.mutate(undefined)).toBe(7);
+    expect(resource.value()).toBe(7);
     expect(resource.status()).toBe('resolved');
+    expect(invalidate).toHaveBeenCalledWith([{type: 'Thenable'}]);
+  });
+
+  it.each([7, undefined])('accepts a synchronous mutation result: %s', async (result) => {
+    const resource = TestBed.runInInjectionContext(() => mutateResource(() => result));
+    expect(await resource.mutate(undefined)).toBe(result);
+    expect(resource.value()).toBe(result);
+    expect(resource.status()).toBe('resolved');
+  });
+
+  it('propagates thenable rejection without invalidating', async () => {
+    const failure = new Error('thenable failed');
+    const invalidate = vi.spyOn(client, 'invalidateTags');
+    const thenable: PromiseLike<number> = {
+      then: (resolve, reject) => Promise.reject<number>(failure).then(resolve, reject),
+    };
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource(() => thenable, {invalidatesTags: [{type: 'Thenable'}]}),
+    );
+    await expect(resource.mutate(undefined)).rejects.toBe(failure);
+    expect(resource.error()).toBe(failure);
+    expect(resource.status()).toBe('error');
+    expect(invalidate).not.toHaveBeenCalled();
   });
 
   it('joins submissions only with explicit exhaust without applying the second arguments', async () => {
     const source = new Subject<number>();
     const mutation = vi.fn(() => source);
     const resource = TestBed.runInInjectionContext(() =>
-      mutationResource<number, number>(mutation, {concurrency: 'exhaust'}),
+      mutateResource<number, number>(mutation, {concurrency: 'exhaust'}),
     );
     const first = resource.mutate(1);
     const duplicate = resource.mutate(2);
@@ -78,7 +103,7 @@ describe('mutationResource', () => {
     async (concurrency) => {
       const source = new Subject<number>();
       const mutation = vi.fn<(id: number) => Observable<number>>();
-      const resource = TestBed.runInInjectionContext(() => mutationResource(mutation, {concurrency}));
+      const resource = TestBed.runInInjectionContext(() => mutateResource(mutation, {concurrency}));
       let nested: Promise<number> | undefined;
       mutation.mockImplementation((id) => {
         if (id === 1) {
@@ -104,7 +129,7 @@ describe('mutationResource', () => {
     const mutation = vi.fn((id: number) => (id === 1 ? firstSource : secondSource));
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
-      mutationResource(mutation, {
+      mutateResource(mutation, {
         invalidatesTags: (_result, id) => [{type: 'Item', id}],
       }),
     );
@@ -132,7 +157,7 @@ describe('mutationResource', () => {
       const secondSource = new Subject<number>();
       const failure = new Error('write failed');
       const resource = TestBed.runInInjectionContext(() =>
-        mutationResource((id: number) => (id === 1 ? firstSource : secondSource)),
+        mutateResource((id: number) => (id === 1 ? firstSource : secondSource)),
       );
       const first = resource.mutate(1);
       const second = resource.mutate(2);
@@ -158,7 +183,7 @@ describe('mutationResource', () => {
   it('does not add synchronous deferred transport dependencies to an invoking effect', async () => {
     const context = signal(1);
     const mutation = vi.fn(() => defer(() => of(context())));
-    const resource = TestBed.runInInjectionContext(() => mutationResource(mutation));
+    const resource = TestBed.runInInjectionContext(() => mutateResource(mutation));
     TestBed.runInInjectionContext(() => effect(() => void resource.mutate(undefined)));
     TestBed.tick();
     await settle();
@@ -174,7 +199,7 @@ describe('mutationResource', () => {
     const failure = new Error('permission denied');
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
-      mutationResource(() => throwError(() => failure), {invalidatesTags: [{type: 'Bindings'}]}),
+      mutateResource(() => throwError(() => failure), {invalidatesTags: [{type: 'Bindings'}]}),
     );
     await expect(resource.mutate(undefined)).rejects.toBe(failure);
     expect(resource.error()).toBe(failure);
@@ -191,7 +216,7 @@ describe('mutationResource', () => {
         throw failure;
       })
       .mockResolvedValue(2);
-    const resource = TestBed.runInInjectionContext(() => mutationResource(mutation));
+    const resource = TestBed.runInInjectionContext(() => mutateResource(mutation));
     await expect(resource.mutate(1)).rejects.toBe(failure);
     expect(await resource.mutate(2)).toBe(2);
     expect(resource.error()).toBeNull();
@@ -205,7 +230,7 @@ describe('mutationResource', () => {
       .fn<(id: number) => Promise<number> | Subject<number>>()
       .mockReturnValueOnce(firstSource)
       .mockResolvedValueOnce(2);
-    const resource = TestBed.runInInjectionContext(() => mutationResource(mutation, {concurrency: 'concat'}));
+    const resource = TestBed.runInInjectionContext(() => mutateResource(mutation, {concurrency: 'concat'}));
     const first = resource.mutate(1);
     const rejected = expect(first).rejects.toBe(failure);
     const second = resource.mutate(2);
@@ -231,7 +256,7 @@ describe('mutationResource', () => {
     const unsubscribe = client.observeQuery(definition, () => undefined);
     await settle();
     const resource = TestBed.runInInjectionContext(() =>
-      mutationResource(async () => 'saved', {invalidatesTags: [{type: 'Bindings'}]}),
+      mutateResource(async () => 'saved', {invalidatesTags: [{type: 'Bindings'}]}),
     );
     expect(await resource.mutate(undefined)).toBe('saved');
     await settle();
@@ -247,7 +272,7 @@ describe('mutationResource', () => {
     const componentInjector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
     const source = new Subject<number>();
     const invalidate = vi.spyOn(client, 'invalidateTags');
-    const resource = mutationResource(() => source, {
+    const resource = mutateResource(() => source, {
       injector: componentInjector,
       client,
       invalidatesTags: [{type: 'Bindings'}],
@@ -267,7 +292,7 @@ describe('mutationResource', () => {
     const componentInjector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
     const source = new Subject<number>();
     const mutation = vi.fn((id: number) => (id === 1 ? source : of(id)));
-    const resource = mutationResource(mutation, {injector: componentInjector, client, concurrency: 'concat'});
+    const resource = mutateResource(mutation, {injector: componentInjector, client, concurrency: 'concat'});
     const first = resource.mutate(1);
     const queued = resource.mutate(2);
     const rejected = expect(queued).rejects.toThrow('destroyed');

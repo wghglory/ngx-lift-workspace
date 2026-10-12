@@ -37,6 +37,7 @@ import {CreateTriggerComponent} from './ngx-lib/pages/signals/create-trigger/cre
 import {InjectParamsComponent} from './ngx-lib/pages/signals/inject-params/inject-params.component';
 import {InjectQueryParamsComponent} from './ngx-lib/pages/signals/inject-query-params/inject-query-params.component';
 import {MergeFromComponent} from './ngx-lib/pages/signals/merge-from/merge-from.component';
+import {MutateResourceDemoComponent} from './ngx-lib/pages/query/mutate-resource/mutate-resource.component';
 import {QueryResourceDemoComponent} from './ngx-lib/pages/query/query-resource/query-resource.component';
 import {ResourceAsyncComponent} from './ngx-lib/pages/signals/resource-async/resource-async.component';
 import {ToSignalFormComponent} from './ngx-lib/pages/signals/to-signal-form/to-signal-form.component';
@@ -100,10 +101,6 @@ export const routes: Routes = [
             path: 'injectQueryParams',
             component: InjectQueryParamsComponent,
           },
-          {
-            path: 'queryResource',
-            component: QueryResourceDemoComponent,
-          },
         ],
       },
       {
@@ -114,12 +111,8 @@ export const routes: Routes = [
             component: QueryResourceDemoComponent,
           },
           {
-            path: 'mutationResource',
-            component: QueryResourceDemoComponent,
-          },
-          {
             path: 'mutateResource',
-            component: QueryResourceDemoComponent,
+            component: MutateResourceDemoComponent,
           },
           {
             path: '',

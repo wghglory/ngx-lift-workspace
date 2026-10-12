@@ -445,6 +445,44 @@ describe('QueryClient', () => {
     expect(client.getSnapshot(definition.key)).toBeUndefined();
   });
 
+  it('keeps conservative entry policies after a conflicting observer leaves', async () => {
+    const client = createClient();
+    const pending = deferred<string>();
+    let abortSignal: AbortSignal | undefined;
+    const definition = {
+      key: ['shared-policies'],
+      loader: async () => 'initial',
+      staleTime: 60_000,
+      gcTime: 100,
+      cancelOnNoObservers: true,
+    };
+    const first = client.observeQuery(definition, vi.fn());
+    await flushRequests();
+    const second = client.observeQuery(
+      {
+        ...definition,
+        staleTime: 0,
+        gcTime: 1000,
+        cancelOnNoObservers: false,
+        loader: (context) => {
+          abortSignal = context.abortSignal;
+          return pending.promise;
+        },
+      },
+      vi.fn(),
+    );
+    second();
+    expect(client.getSnapshot(definition.key)?.isStale).toBe(true);
+    first();
+    expect(abortSignal?.aborted).toBe(false);
+    pending.resolve('finished');
+    await flushRequests();
+    await vi.advanceTimersByTimeAsync(100);
+    expect(client.getSnapshot(definition.key)?.value).toBe('finished');
+    await vi.advanceTimersByTimeAsync(900);
+    expect(client.getSnapshot(definition.key)).toBeUndefined();
+  });
+
   it('separates freshness from retention and restarts retention on subsequent use', async () => {
     const client = createClient();
     const loader = vi.fn().mockResolvedValue('rows');
