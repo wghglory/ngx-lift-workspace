@@ -5,30 +5,96 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [21.2.0] (ngx-lift) / [21.1.0] (clr-lift) - 2026-10-12
 
-### Added
+### 🎉 Added
 
-- Shared `QueryClient` caching, `queryResource`, Observable query bridges, and explicit `mutateResource` writes.
-- Direct Observable query loaders with first-value resolution and shared-request cancellation support.
-- Kubernetes HTTP 429 retry operator/interceptor and pagination retry configuration.
-- Reactive localization and expanded interactive demos, with scheduled/manual browser verification.
+- **`ngx-lift` - Shared multi-observer query caching architecture (`QueryClient`, `queryResource`, `mutateResource`):**
+  - **`QueryClient`**: Centralized multi-observer query cache manager providing request deduplication, stale time, cache
+    time, manual/automatic invalidation, garbage collection, and query observer notifications
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`queryResource`**: Reactive signal resource integrated with `QueryClient`, supporting typed query keys, background
+    revalidation, multi-subscriber sharing, and optimistic updates
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`mutateResource`**: Standardized mutation primitive for executing async writes, cache invalidations, and
+    optimistic cache updates with full lifecycle tracking (`isPending`, `isSuccess`, `isError`, `data`, `error`)
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`queryObservable`**: Adapter for bridging RxJS Observables into `QueryClient` queries with first-value resolution
+    and shared-request cancellation ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **Query models & tokens**: Full TypeScript definitions (`QueryKey`, `QueryOptions`, `MutationOptions`, `QueryState`)
+    and `QUERY_CLIENT` injection token ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+- **`ngx-lift` - Kubernetes resilience operators & interceptor:**
+  - **`k8sRetryBackoff` operator**: Specialized RxJS operator that handles Kubernetes HTTP 429 (Too Many Requests)
+    errors with exponential backoff and server-sent `Retry-After` header inspection
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`k8sRetryBackoffInterceptor`**: Angular HTTP interceptor for automatic, transparent Kubernetes 429 retry backoff
+    across HTTP calls ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`kubernetesPagination` operator enhancements**: Built-in 429 retry support enabled by default
+    (`{retryConfig: true}`), legacy HTTP parameter preservation, and robust continuation token handling
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`KubernetesStatus` model**: Type-safe parser and model definitions for Kubernetes status responses
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+- **`clr-lift` - Reactive localization architecture:**
+  - **`TranslationService`**: Reactive internationalization service supporting dynamic runtime language switching,
+    fallback locales, dictionary registration, and placeholder interpolation (`{param}`)
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`TranslatePipe`**: Template pipe for reactive inline translation lookups
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **Component localization (`*.l10n.ts`)**: Built-in localized message bundles across all Clarity Lift components
+    (`Alert`, `CertificateSignpost`, `FileReader`, `IdleDetection`, `KeyValueInputs`, `StatusIndicator`, `ThemeToggle`,
+    `TimelineWizard`, `Toast`, `Tooltip`) ([#142](https://github.com/wghglory/ngx-lift/pull/142))
 
-### Fixed
+### 🔄 Changed
 
-- Async resource settlement, cancellation, reactive tracking, and subscriber isolation.
-- Reentrant query notifications no longer restore removed data or overwrite newer loading state.
-- Pagination preserves legacy HTTP parameters that collide with retry option names.
-- Cyclic object equality is symmetric; Clarity tooltip, file-reader, and wizard lifecycles clean up correctly.
+- **`resourceAsync` parameters & architecture:**
+  - Structured separation between tracked reactive parameters and untracked network execution via `{params, loader}`
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - Relocated public query resources to dedicated `query/` path while maintaining unified root package exports
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+- **Emptiness utilities:**
+  - `isEmpty` and `isNotEmpty` return `boolean` without unsound type narrowing on nullable empty collections (`[]`,
+    `{}`) ([#142](https://github.com/wghglory/ngx-lift/pull/142))
 
-### Breaking changes
+### 🐛 Fixed
 
-- Nullable collection emptiness checks return boolean; check nullability explicitly before using the collection.
-- `combineFrom` without an initial value can return `undefined`; asynchronous `mergeFrom` sources need an initial value.
-- Cancelled `resourceAsync.execute()` calls reject with explicit cancellation/disposal errors.
-- Pagination retries 429 responses by default; opt out with `{retryConfig: false}`.
+- **`resourceAsync` lifecycle & settlement:**
+  - Prevented race conditions, dropped emissions, and zombie callbacks; superseded or reset `.execute()` calls reject
+    with `ResourceAsyncCancelledError`, and executions on disposed resources reject with `ResourceAsyncDisposedError`
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - Subscriber isolation ensuring detached observers are not notified of subsequent cache revisions
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+- **`computedAsync` error recovery:**
+  - Keeps reactive stream alive when inner source observable errors, restoring proper dependency tracking
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+- **`isEqual` cycle symmetry:**
+  - Fixed symmetric circular object graph equality comparison to handle self-cycles and multi-node cycles symmetrically
+    regardless of parameter order ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+- **`clr-lift` component lifecycles & memory cleanup:**
+  - **`Tooltip`**: Corrected overlay positioning, focus management, manual visibility toggling, and cleanup on component
+    destruction ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`FileReader`**: Fixed file input resetting, touched states, and memory cleanup
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`TimelineWizard`**: Fixed step transitions, lifecycle cleanup on unmount, and reactive step validation
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`Alerts`**: Fixed multi-alert container positioning and auto-dismissal timers
+    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
 
-See [the migration guide](docs/MIGRATIONS.md). Independent release versions have not yet been selected.
+### 💥 Breaking Changes
+
+- **Nullable collection emptiness predicates:**
+  - `isEmpty()` and `isNotEmpty()` return `boolean` and no longer narrow nullable collections to non-empty types; check
+    nullability (`items != null`) explicitly prior to accessing collection members.
+- **Signal combinators initialization:**
+  - `combineFrom()` without an initial value returns `undefined` until async sources emit.
+  - `mergeFrom()` requires at least one synchronous emission or an explicit `{initialValue}` option for purely
+    asynchronous streams; preserves explicit `null` initial values.
+- **`resourceAsync` execution rejection:**
+  - Cancelled or superseded `resourceAsync.execute()` calls reject with `ResourceAsyncCancelledError` instead of
+    resolving to stale data.
+- **Kubernetes pagination retry default:**
+  - `kubernetesPagination` retries HTTP 429 status codes by default; opt out explicitly via `{retryConfig: false}`.
+
+See [the migration guide](docs/MIGRATIONS.md) for detailed upgrade steps and code samples.
 
 ## [21.1.1] - 2026-09-23
 
