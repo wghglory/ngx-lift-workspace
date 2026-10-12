@@ -1,0 +1,69 @@
+<cll-page-container [title]="'cllDatagridFilterLabelReset'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>[cllDatagridFilterLabelReset]</code> resolves common layout squeezing and truncation issues when standard
+    Clarity form controls (like <code>clr-input-container</code> or <code>clr-select-container</code>) are placed inside
+    Clarity Datagrid filter popovers. By dynamically overriding responsive grid constraints on filter activation and
+    cleaning up upon close, it ensures full-width inputs and visible labels.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Interactive Datagrid Filter Demo</h2>
+
+    <article class="space-y-4">
+      <p>
+        Click the filter icon in the <strong>Name</strong> column header below to view the properly sized input filter
+        without squeezed layout artifacts:
+      </p>
+
+      <div class="card p-4">
+        <clr-datagrid>
+          <clr-dg-column [clrDgField]="'name'">
+            <ng-container *clrDgHideableColumn>Name</ng-container>
+            <clr-dg-filter [clrDgFilter]="nameFilter">
+              <div clrControl cllDatagridFilterLabelReset>
+                <clr-input-container>
+                  <label>Filter by Name</label>
+                  <input
+                    clrInput
+                    [(ngModel)]="nameFilter.searchTerm"
+                    (ngModelChange)="nameFilter.update($event)"
+                    placeholder="Search names..."
+                  />
+                </clr-input-container>
+              </div>
+            </clr-dg-filter>
+          </clr-dg-column>
+
+          <clr-dg-column [clrDgField]="'role'">Role</clr-dg-column>
+          <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+
+          <clr-dg-row *clrDgItems="let user of users()">
+            <clr-dg-cell>{{ user.name }}</clr-dg-cell>
+            <clr-dg-cell>{{ user.role }}</clr-dg-cell>
+            <clr-dg-cell>
+              <span
+                class="badge"
+                [class.badge-success]="user.status === 'Active'"
+                [class.badge-warning]="user.status === 'Pending'"
+                [class.badge-danger]="user.status === 'Inactive'"
+              >
+                {{ user.status }}
+              </span>
+            </clr-dg-cell>
+          </clr-dg-row>
+
+          <clr-dg-footer>
+            <clr-dg-pagination [clrDgPageSize]="5">
+              <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">Users per page</clr-dg-page-size>
+              {{ users().length }} users
+            </clr-dg-pagination>
+          </clr-dg-footer>
+        </clr-datagrid>
+      </div>
+
+      <app-code-block [code]="exampleCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

@@ -1,0 +1,95 @@
+<cll-page-container [title]="'cllScrollToStepTop'" customClass="space-y-9">
+  <!-- Overview -->
+  <p>
+    <code>[cllScrollToStepTop]</code> enhances Clarity steppers (<code>clrStepper</code>) by automatically scrolling the
+    viewport to the newly active step panel upon transitions. In addition, when the user clicks the "Next" button on an
+    invalid step, the directive smoothly scrolls directly to the first validation error (<code>clr-control-error</code>)
+    and focuses the invalid control.
+  </p>
+
+  <!-- Examples Section -->
+  <section class="space-y-4">
+    <h2>Interactive Stepper Demo</h2>
+
+    <article class="space-y-4">
+      <p>
+        Try clicking <strong>Next</strong> without filling required fields to see auto-scrolling to the first validation
+        error, or complete the fields to experience smooth auto-scrolling to the next active step header.
+      </p>
+
+      <div class="card p-4">
+        <form clrStepper cllScrollToStepTop [formGroup]="stepperForm">
+          <clr-stepper-panel formGroupName="step1">
+            <clr-step-title>Step 1: Cluster Configuration</clr-step-title>
+            <clr-step-description>Basic cluster settings</clr-step-description>
+            <clr-step-content *clrIfExpanded>
+              <div class="space-y-4">
+                <clr-input-container>
+                  <label>Cluster Name</label>
+                  <input clrInput formControlName="clusterName" placeholder="e.g. production-db-01" />
+                  <clr-control-error>Cluster Name is required!</clr-control-error>
+                </clr-input-container>
+
+                <clr-input-container>
+                  <label>Region</label>
+                  <input clrInput formControlName="region" />
+                  <clr-control-error>Region is required!</clr-control-error>
+                </clr-input-container>
+
+                <div class="pt-2">
+                  <button class="btn btn-primary" clrStepButton="next" type="button">Next</button>
+                </div>
+              </div>
+            </clr-step-content>
+          </clr-stepper-panel>
+
+          <clr-stepper-panel formGroupName="step2">
+            <clr-step-title>Step 2: Capacity & Storage</clr-step-title>
+            <clr-step-description>Node count and disk</clr-step-description>
+            <clr-step-content *clrIfExpanded>
+              <div class="space-y-4">
+                <clr-input-container>
+                  <label>Number of Nodes</label>
+                  <input clrInput type="number" formControlName="nodes" />
+                  <clr-control-error>At least 1 node required</clr-control-error>
+                </clr-input-container>
+
+                <clr-input-container>
+                  <label>Storage Class</label>
+                  <input clrInput formControlName="storageClass" placeholder="e.g. fast-nvme" />
+                  <clr-control-error>Storage Class is required</clr-control-error>
+                </clr-input-container>
+
+                <div class="pt-2">
+                  <button class="btn btn-primary" clrStepButton="next" type="button">Next</button>
+                </div>
+              </div>
+            </clr-step-content>
+          </clr-stepper-panel>
+
+          <clr-stepper-panel formGroupName="step3">
+            <clr-step-title>Step 3: Review & Confirmation</clr-step-title>
+            <clr-step-description>Confirm provisioning</clr-step-description>
+            <clr-step-content *clrIfExpanded>
+              <div class="space-y-4">
+                <clr-checkbox-container>
+                  <clr-checkbox-wrapper>
+                    <input clrCheckbox type="checkbox" formControlName="confirm" />
+                    <label>I confirm creation of this cluster</label>
+                  </clr-checkbox-wrapper>
+                  <clr-control-error>You must confirm to proceed</clr-control-error>
+                </clr-checkbox-container>
+
+                <div class="pt-2">
+                  <button class="btn btn-success" clrStepButton="submit" type="button">Provision Cluster</button>
+                </div>
+              </div>
+            </clr-step-content>
+          </clr-stepper-panel>
+        </form>
+      </div>
+
+      <app-code-block [code]="directiveUsageCode" lang="html" />
+    </article>
+  </section>
+</cll-page-container>

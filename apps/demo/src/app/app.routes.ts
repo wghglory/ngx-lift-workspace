@@ -7,6 +7,8 @@ import {ClrDatagridUtilComponent} from './clr-lib/pages/clr-datagrid-util/clr-da
 import {ClrIdleDetectionDemoComponent} from './clr-lib/pages/idle-detection-demo/idle-detection-demo.component';
 import {ClrLiftHomeComponent} from './clr-lib/pages/clr-lift-home/clr-lift-home.component';
 import {DgStateComponent} from './clr-lib/pages/dg-state/dg-state.component';
+import {DatagridFilterLabelResetDemoComponent} from './clr-lib/pages/directives/datagrid-filter-label-reset-demo/datagrid-filter-label-reset-demo.component';
+import {ScrollToStepTopDemoComponent} from './clr-lib/pages/directives/scroll-to-step-top-demo/scroll-to-step-top-demo.component';
 import {FileReaderDemoComponent} from './clr-lib/pages/file-reader-demo/file-reader-demo.component';
 import {KeyValueInputsDemoComponent} from './clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component';
 import {MultiAlertsDemoComponent} from './clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component';
@@ -332,6 +334,19 @@ export const routes: Routes = [
           {
             path: 'tooltip',
             component: TooltipDemoComponent,
+          },
+        ],
+      },
+      {
+        path: 'directives',
+        children: [
+          {
+            path: 'scroll-to-step-top',
+            component: ScrollToStepTopDemoComponent,
+          },
+          {
+            path: 'datagrid-filter-label-reset',
+            component: DatagridFilterLabelResetDemoComponent,
           },
         ],
       },
