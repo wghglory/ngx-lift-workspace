@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, computed, inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
@@ -7,6 +7,7 @@ import {
   FileReaderComponent,
   PageContainerComponent,
   TranslatePipe,
+  TranslationService,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -29,47 +30,52 @@ import {highlight} from '../../../shared/utils/highlight.util';
   styleUrl: './file-reader-demo.component.scss',
 })
 export class FileReaderDemoComponent implements OnInit {
-  readonly inputs: ApiProperty[] = [
+  private readonly translationService = inject(TranslationService);
+  readonly inputs = computed<ApiProperty[]>(() => [
     {
       name: 'controlId',
       type: 'string',
-      description:
-        'Sets the id attribute for the file input element. Useful for associating a label with the file input.',
+      defaultValue: "''",
+      description: this.translationService.translate('fileReader.inputControlId'),
     },
     {
       name: 'acceptFiles',
       type: 'string',
-      description:
-        "Specifies the types of files that the file input should accept (e.g., <code>'.pem, .cer, .key'</code>).",
+      defaultValue: "'*'",
+      description: this.translationService.translate('fileReader.inputAcceptFiles'),
     },
     {
       name: 'encoded',
       type: 'boolean',
       defaultValue: 'false',
-      description: 'Determines whether the file content should be read and output as a base64 encoded string.',
+      description: this.translationService.translate('fileReader.inputEncoded'),
+    },
+    {
+      name: 'textEncoding',
+      type: "'utf-8' | 'latin1'",
+      defaultValue: "'utf-8'",
+      description: this.translationService.translate('fileReader.inputTextEncoding'),
     },
     {
       name: 'maxSize',
       type: 'number',
-      description:
-        'Sets the maximum allowed file size in megabytes. If the selected file exceeds this size, a validation error will be triggered.',
+      defaultValue: 'Infinity',
+      description: this.translationService.translate('fileReader.inputMaxSize'),
     },
     {
       name: 'disabled',
       type: 'boolean',
       defaultValue: 'false',
-      description: 'Disables the file input when set to <code>true</code>.',
+      description: this.translationService.translate('fileReader.inputDisabled'),
     },
-  ];
-
-  readonly outputs: ApiProperty[] = [
+  ]);
+  readonly outputs = computed<ApiProperty[]>(() => [
     {
       name: 'fileChange',
-      type: 'EventEmitter<string>',
-      description:
-        'Emits the file content (as plain text or base64 encoded string) when a file is selected or removed.',
+      type: 'OutputEmitterRef<string>',
+      description: this.translationService.translate('fileReader.outputChange'),
     },
-  ];
+  ]);
 
   basicForm = new FormGroup({
     file: new FormControl('', [Validators.required]),

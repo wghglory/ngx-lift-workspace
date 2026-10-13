@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/cor
 import {ClarityModule} from '@clr/angular';
 import {angleIcon, checkIcon, ClarityIcons, worldIcon} from '@clr/angular/icon';
 import {TranslatePipe, TranslationService} from 'clr-lift';
+import {resolveDemoLanguage} from '../../l10n/demo-language-loader';
 
 ClarityIcons.addIcons(worldIcon, angleIcon, checkIcon);
 
@@ -36,42 +37,14 @@ export class LanguageSwitcherComponent {
 
   readonly currentLang = this.translationService.currentLanguage;
 
-  readonly currentLabel = computed(() => {
-    const code = (this.currentLang() || '').toLowerCase();
-    const exactMatch = this.languages.find((l) => l.code.toLowerCase() === code);
-    if (exactMatch) {
-      return exactMatch.label;
-    }
-    const baseCode = code.split('-')[0];
-    const baseMatch = this.languages.find((l) => l.code.toLowerCase() === baseCode);
-    if (baseMatch) {
-      return baseMatch.label;
-    }
-    if (baseCode === 'zh') {
-      return '简体中文';
-    }
-    if (baseCode === 'pt') {
-      return 'Português';
-    }
-    return 'English';
-  });
+  readonly activeLanguageCode = computed(() => resolveDemoLanguage(this.currentLang()));
+  readonly currentLabel = computed(
+    () => this.languages.find((language) => language.code === this.activeLanguageCode())?.label ?? 'English',
+  );
+  readonly isPartialLanguage = computed(() => !['en', 'zh-CN'].includes(this.activeLanguageCode()));
 
   isLanguageActive(code: string): boolean {
-    const current = (this.currentLang() || '').toLowerCase();
-    const target = code.toLowerCase();
-    if (current === target) {
-      return true;
-    }
-    if (current === 'zh' && target === 'zh-cn') {
-      return true;
-    }
-    if (current === 'pt' && target === 'pt-br') {
-      return true;
-    }
-    if (current.startsWith(`${target}-`)) {
-      return true;
-    }
-    return false;
+    return this.activeLanguageCode() === code;
   }
 
   selectLanguage(code: string): void {

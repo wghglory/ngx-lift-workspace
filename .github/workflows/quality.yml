@@ -1,0 +1,33 @@
+name: Quality gates
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run validate
+      - name: Upload coverage even when validation fails
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: error
+      - run: pnpm exec playwright install --with-deps
+      - run: pnpm nx e2e demo-e2e
+      - name: Upload browser report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: dist/.playwright/apps/demo-e2e/playwright-report/
+          if-no-files-found: ignore

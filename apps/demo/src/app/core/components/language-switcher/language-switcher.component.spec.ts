@@ -40,4 +40,24 @@ describe('LanguageSwitcherComponent', () => {
 
     expect(component.currentLabel()).toBe('Français');
   });
+  it.each([
+    ['zh-Hant', '繁體中文', 'zh-TW'],
+    ['zh-HK', '繁體中文', 'zh-TW'],
+    ['zh-Hans', '简体中文', 'zh-CN'],
+    ['pt-PT', 'Português', 'pt-BR'],
+    ['ja-JP', '日本語', 'ja'],
+    ['bad_locale', 'English', 'en'],
+  ])('matches script/region locale %s consistently in label and menu', (locale, label, active) => {
+    translationService.setLanguage(locale, false);
+    fixture.detectChanges();
+    expect(component.currentLabel()).toBe(label);
+    expect(component.isLanguageActive(active)).toBe(true);
+    expect(component.isLanguageActive('ru')).toBe(false);
+  });
+  it('marks incomplete languages and keeps full English/Chinese dictionaries unmarked', () => {
+    translationService.setLanguage('de', false);
+    expect(component.isPartialLanguage()).toBe(true);
+    translationService.setLanguage('zh-CN', false);
+    expect(component.isPartialLanguage()).toBe(false);
+  });
 });

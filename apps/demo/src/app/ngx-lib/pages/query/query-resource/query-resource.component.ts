@@ -291,6 +291,43 @@ const addUser = mutateResource(
     },
   ];
 
+  readonly queryResourceDefinitionProps: ApiProperty[] = [
+    {
+      name: 'key',
+      type: 'QueryKey',
+      description: 'Array of JSON-compatible values uniquely identifying the query (e.g. ["user", id]).',
+    },
+    {
+      name: 'loader',
+      type: '(context: QueryLoaderContext) => Promise<T> | Observable<T>',
+      description:
+        'Data fetcher receiving { abortSignal, refresh }. Observable reads automatically complete after the first emission.',
+    },
+    {
+      name: 'tags',
+      type: 'readonly QueryTag[]',
+      description: 'Optional tags for cache invalidation (e.g. [{ type: "users" }]).',
+    },
+    {
+      name: 'staleTime',
+      type: 'number',
+      defaultValue: '0',
+      description: 'Duration in milliseconds before cached data is considered stale.',
+    },
+    {
+      name: 'gcTime',
+      type: 'number',
+      defaultValue: '300000',
+      description: 'Duration in milliseconds (default 5 minutes) to retain unused queries in cache.',
+    },
+    {
+      name: 'cancelOnNoObservers',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: 'Whether to abort an in-flight transport request if all observers unmount before completion.',
+    },
+  ];
+
   readonly queryResourceRefApiProps: ApiProperty[] = [
     {
       name: 'value',
@@ -316,6 +353,11 @@ const addUser = mutateResource(
       name: 'isStale',
       type: 'Signal<boolean>',
       description: 'True when data has exceeded staleTime or was invalidated by a mutation.',
+    },
+    {
+      name: 'hasValue()',
+      type: '() => boolean',
+      description: 'Type predicate narrowing value() to exclude undefined when valid data is present.',
     },
     {
       name: 'reload()',

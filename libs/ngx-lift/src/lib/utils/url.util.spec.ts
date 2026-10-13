@@ -71,3 +71,19 @@ describe('isHttps', () => {
     expect(isHttps('ftp://example.com')).toBe(false);
   });
 });
+
+describe('URL parsing boundaries', () => {
+  it('accepts long suffixes, international domains and IPv6 hosts', () => {
+    for (const url of ['https://example.technology', 'https://例子.中国', 'https://[::1]/']) {
+      expect(isURL(url)).toBe(true);
+      expect(isHttps(url)).toBe(true);
+    }
+  });
+  it('rejects invalid ports, malformed protocols and non-string inputs', () => {
+    for (const url of ['https://example.com:99999', 'https:/example.com', 'javascript:alert(1)']) {
+      expect(isURL(url)).toBe(false);
+      expect(isHttps(url)).toBe(false);
+    }
+    expect(isURL(null as unknown as string)).toBe(false);
+  });
+});

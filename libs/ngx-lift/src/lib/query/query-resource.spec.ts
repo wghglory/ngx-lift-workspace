@@ -470,6 +470,35 @@ describe('queryResource', () => {
     expect(resource.value()).toBe(3);
   });
 
+  it('eagerly passes initial pollInterval to client.observeQuery on first attach', async () => {
+    const observeSpy = vi.spyOn(client, 'observeQuery');
+    const loader = vi.fn(async () => 1);
+    TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['eager-poll'], loader, staleTime: 60000}), {pollInterval: 2500}),
+    );
+    await settle();
+    expect(observeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({key: ['eager-poll']}),
+      expect.any(Function),
+      expect.objectContaining({pollInterval: 2500}),
+    );
+  });
+
+  it('eagerly passes initial pollInterval from a signal to client.observeQuery on first attach', async () => {
+    const observeSpy = vi.spyOn(client, 'observeQuery');
+    const loader = vi.fn(async () => 1);
+    const interval = signal(3000);
+    TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['eager-poll-signal'], loader, staleTime: 60000}), {pollInterval: interval}),
+    );
+    await settle();
+    expect(observeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({key: ['eager-poll-signal']}),
+      expect.any(Function),
+      expect.objectContaining({pollInterval: 3000}),
+    );
+  });
+
   it('disposes one observer while keeping another observer synchronized', async () => {
     const loader = vi.fn(async () => loader.mock.calls.length);
     const definition = {key: ['bindings'], loader, tags: [{type: 'Bindings'}]};

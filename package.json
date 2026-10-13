@@ -26,7 +26,7 @@
     "test": "nx run-many -t test",
     "test:ngx": "nx test ngx-lift",
     "test:clr": "nx test clr-lift",
-    "test:coverage": "nx run-many -t test --coverage --parallel=1 && node tools/vitest/show-coverage-summary.mjs",
+    "test:coverage": "node tools/vitest/run-coverage.mjs",
     "lint": "nx run-many -t lint",
     "lint:fix": "nx run-many -t lint --fix",
     "typecheck": "nx run-many -t typecheck",
@@ -34,30 +34,27 @@
     "e2e:ui": "nx e2e demo-e2e --ui",
     "e2e:lint": "nx lint demo-e2e",
     "e2e:verify": "pnpm run e2e:lint && pnpm run e2e",
-    "format": "prettier --write \"**/*.{ts,json,css,scss,md,html}\"",
-    "format:check": "prettier --check \"**/*.{ts,json,css,scss,md,html}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md,html,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md,html,yml,yaml}\"",
     "affected:test": "nx affected -t test",
     "affected:build": "nx affected -t build",
     "affected:lint": "nx affected -t lint",
     "graph": "nx graph",
     "clean": "nx reset && rm -rf dist tmp .nx/cache",
-    "validate": "pnpm run format && pnpm run lint:fix && pnpm run typecheck && pnpm run test && pnpm run build",
+    "validate": "pnpm run format:check && pnpm run test:tools && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run verify:packages",
     "release:version": "nx release version",
     "release:publish": "nx release publish",
     "publish:ngx": "nx build ngx-lift && cd dist/libs/ngx-lift && pnpm publish --registry=https://registry.npmjs.org/",
     "publish:clr": "nx build clr-lift && cd dist/libs/clr-lift && pnpm publish --registry=https://registry.npmjs.org/",
     "publish:all": "pnpm run build:libs && pnpm run publish:ngx && pnpm run publish:clr",
-    "prepare": "husky"
+    "prepare": "husky",
+    "fix": "pnpm run format && pnpm run lint:fix",
+    "test:tools": "nx run @ngx-lift-workspace/source:tooling-test",
+    "i18n:check": "nx run @ngx-lift-workspace/source:i18n-check",
+    "verify:packages": "nx run @ngx-lift-workspace/source:package-verify"
   },
   "private": true,
-  "packageManager": "pnpm@10.5.2",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "10.5.2",
-      "onFail": "ignore"
-    }
-  },
+  "packageManager": "pnpm@11.7.0",
   "engines": {
     "node": ">=24.0.0"
   },
@@ -137,7 +134,36 @@
     "vitest": "4.1.7"
   },
   "nx": {
-    "includedScripts": []
+    "includedScripts": [],
+    "targets": {
+      "tooling-test": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs"
+        }
+      },
+      "i18n-check": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node tools/i18n/check-translations.mjs"
+        }
+      },
+      "package-verify": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          {
+            "projects": [
+              "ngx-lift",
+              "clr-lift"
+            ],
+            "target": "build"
+          }
+        ],
+        "options": {
+          "command": "node tools/package/verify-packages.mjs"
+        }
+      }
+    }
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

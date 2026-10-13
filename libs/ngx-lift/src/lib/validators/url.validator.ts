@@ -1,6 +1,6 @@
 import {AbstractControl, ValidationErrors} from '@angular/forms';
 
-import {httpsPattern, urlPattern} from '../const';
+import {isHttps, isURL} from '../utils/url.util';
 
 /**
  * Validator function that checks if a form control value is a valid URL.
@@ -16,7 +16,7 @@ import {httpsPattern, urlPattern} from '../const';
  * ```
  */
 export function urlValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value || !urlPattern.test(control.value)) {
+  if (!control.value || !isURL(control.value)) {
     return {invalidUrl: true};
   }
   return null;
@@ -36,7 +36,7 @@ export function urlValidator(control: AbstractControl): ValidationErrors | null 
  * ```
  */
 export function httpsValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value || !httpsPattern.test(control.value)) {
+  if (!control.value || !isHttps(control.value)) {
     return {invalidUrl: true};
   }
   return null;

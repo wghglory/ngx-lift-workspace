@@ -148,3 +148,44 @@ it('should react to signal changes', () => {
   expect(component.derivedValue()).toBe('new value');
 });
 ```
+
+## 3. Unreleased quality audit hardening (2026-10-13)
+
+This branch has not been published. Review these consumer-facing changes before selecting a release version:
+
+- HTTP(S) validation now parses absolute URLs. Long domain suffixes and IPv6 are accepted; invalid ports are rejected.
+  Single-label hostnames remain rejected for compatibility. URL parsing does not implement an application access policy.
+- `range` rejects non-finite inputs and output larger than 1,000,000 elements. Zero-step repetition remains supported.
+  Invalid date-range boundaries now throw during validator creation instead of silently disabling constraints.
+- FileReader encoded text defaults to UTF-8. Existing ASCII PEM/base64 remains unchanged. For legacy Latin-1 byte
+  strings, set `[textEncoding]="'latin1'"`. This text reader does not provide binary-file roundtripping.
+- Interactive tooltip content now exposes a named dialog, while text remains a tooltip. Consumers can set
+  `cllTooltipLabel`; keyboard focus, Escape, scroll positioning and restored trigger attributes are covered by tests.
+- Spinner stays decorative by default. Set `[decorative]="false"` to expose loading status; override `label` with a
+  localized operation-specific message. The existing `class` input now forwards classes to the visible spinner.
+- ByteConverter accepts an optional explicit locale: `bytes | byteConverter: locale`. The historical 1024 scaling and
+  KB/MB labels are preserved; non-finite values return null.
+- `mutateResource` reports post-success cache failures through optional `invalidationError`; successful server writes
+  stay resolved even when tag mapping or cache synchronization fails. Observe that signal to offer a query refresh
+  instead of retrying the write. Transport/write errors still reject as before.
+- Internal form bridge helpers and the root-exported translation mock remain available, with deprecation guidance.
+  `computedAsync` retains its legacy default error-as-value behavior. Use `onError` or `throwOnError`, or choose an
+  explicit resource state; a typed result/default-error redesign belongs in a separately reviewed major release.
+- Peer ranges now stop at the next major of Angular/Clarity/RxJS/forge/ngx-lift. Angular 22 requires a new tested
+  compatibility update. The workspace pins pnpm 11.7.0 through a single package-manager declaration.
+- `validate` is read-only; `fix` performs formatting and ESLint fixes. CI, publish and deploy use a shared quality
+  workflow, with coverage and all three browsers. Package smoke checks consume real tarballs but reuse installed host
+  dependencies; they do not prove fresh peer installation or SSR/hydration compatibility.
+
+The UTF-8 default and narrower peer support need an explicit SemVer review; do not automatically treat this entire
+branch as a patch release. See [Chinese implementation notes](design/quality-audit-hardening.zh-CN.md).
+
+## Kubernetes retry defaults (unreleased)
+
+Kubernetes retry interceptors now restrict automatic retries to GET/HEAD/OPTIONS/PUT/DELETE. POST/PATCH need an explicit
+`retryMethods` override and verified endpoint idempotency. Fallback waits now increase exponentially with equal jitter;
+use `jitter: 'none'` for deterministic timing. Server hints add up to 250ms jitter by default (`hintJitterMs: 0`
+disables it). The defaults limit a single wait to 30s and cumulative scheduled waits to 60s; they do not limit network
+duration. An oversized server hint stops retrying with the original error instead of shortening the server's minimum
+wait. Invalid operator configuration now throws an explicit RangeError/TypeError. See
+[the consumer contract and retry guide](./design/dsm-consumer-contracts-and-retry.md).

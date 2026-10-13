@@ -167,4 +167,5 @@ export const esTranslations: Record<string, string> = {
     'HttpContextToken para configurar o desactivar el retroceso de reintento para una petición individual.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'Configuración predeterminada aplicada a todas las peticiones a menos que se anule mediante HttpContext.',
+  'header.partialLanguage': 'Traducción parcial; los textos faltantes se muestran en inglés.',
 };

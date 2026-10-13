@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, input, OnInit, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal} from '@angular/core';
 import {angleIcon, checkIcon, ClarityIcons, copyIcon, viewColumnsIcon, viewListIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
@@ -38,6 +38,17 @@ export class DemoPlaygroundComponent implements OnInit {
   readonly isCodeExpanded = signal<boolean>(true);
   readonly currentLayout = signal<PlaygroundLayout>('stacked');
   readonly copied = signal<boolean>(false);
+  readonly copyFailed = signal(false);
+  private readonly destroyRef = inject(DestroyRef);
+  private copyTimer?: ReturnType<typeof setTimeout>;
+  private copyVersion = 0;
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      ++this.copyVersion;
+      clearTimeout(this.copyTimer);
+    });
+  }
 
   readonly effectiveActiveTab = computed<CodeTab>(() => {
     const current = this.activeTab();
@@ -118,12 +129,25 @@ export class DemoPlaygroundComponent implements OnInit {
 
     const cleanCode = this.extractCleanCode(target);
 
-    if (navigator?.clipboard) {
-      navigator.clipboard.writeText(cleanCode).then(() => {
-        this.copied.set(true);
-        setTimeout(() => this.copied.set(false), 2000);
-      });
+    const version = ++this.copyVersion;
+    clearTimeout(this.copyTimer);
+    this.copied.set(false);
+    this.copyFailed.set(false);
+    const clipboard = typeof navigator === 'undefined' ? undefined : navigator.clipboard;
+    if (!clipboard) {
+      this.copyFailed.set(true);
+      return;
     }
+    void clipboard
+      .writeText(cleanCode)
+      .then(() => {
+        if (this.destroyRef.destroyed || version !== this.copyVersion) return;
+        this.copied.set(true);
+        this.copyTimer = setTimeout(() => this.copied.set(false), 2000);
+      })
+      .catch(() => {
+        if (!this.destroyRef.destroyed && version === this.copyVersion) this.copyFailed.set(true);
+      });
   }
 
   private extractCleanCode(code: string): string {

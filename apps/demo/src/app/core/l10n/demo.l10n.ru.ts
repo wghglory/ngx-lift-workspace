@@ -220,4 +220,5 @@ export const ruTranslations: Record<string, string> = {
     'HttpContextToken для настройки или отключения повторов для конкретного запроса.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'Конфигурация по умолчанию для всех запросов, если не переопределена через HttpContext.',
+  'header.partialLanguage': 'Перевод неполный; отсутствующий текст отображается на английском.',
 };

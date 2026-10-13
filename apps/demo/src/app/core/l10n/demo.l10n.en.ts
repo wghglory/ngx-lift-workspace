@@ -420,11 +420,11 @@ export const enTranslations: Record<string, string> = {
   'combineFrom.example4': 'Example 4: Real Example - Filtered Data',
   'combineFrom.example4Desc':
     'Combine search criteria with an API resource to perform client-side filtering and sorting:',
-  'combineFrom.example5': 'Example 5: Glitch-Free Single Emission & Decoupled Injector',
+  'combineFrom.example5': 'Example 5: Deduplicated Initialization & Explicit Injector',
   'combineFrom.example5Desc':
-    'Atomic updates ensure no intermediate glitches when multiple dependencies update simultaneously:',
+    'Deduplicates the initial signal emission. Separate sources can still produce intermediate combinations; use computed() for synchronous signal-only derivation.',
   'combineFrom.apiSummary':
-    'Combines multiple Observables and Signals into a unified Signal with glitch-free evaluation.',
+    'Combines Observable and Signal sources with combineLatest semantics and per-source deduplication.',
   'combineFrom.paramSources':
     'An object or array of Observables or Signals to combine. When an object is provided, the result will be an object with the same keys.',
   'combineFrom.paramOperator': 'An RxJS pipe operator to manipulate the emitted values before they are emitted.',
@@ -1234,9 +1234,6 @@ export const enTranslations: Record<string, string> = {
     'Indicates if any loading operation is in progress (true when status is "loading" or "reloading").',
   'createAsyncState.stateError': 'Error details if the asynchronous operation failed, or null.',
   'createAsyncState.stateData': 'Data emitted by the observable, or null.',
-
-  'resourceAsync.apiSummary':
-    'Creates a ResourceRef that manages asynchronous data fetching, state tracking, and lifecycle operations reactively.',
   'resourceAsync.paramSourceFn': 'A reactive function that returns an Observable, Promise, or synchronous value.',
   'resourceAsync.paramOptions': 'Configuration options for the resource.',
   'resourceAsync.propInitialValue': 'Initial value before the first fetch completes.',
@@ -1498,16 +1495,16 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Accepts HttpErrorResponse or an object shaped as <code>{ status, headers?, error? }</code>, including a JSON string in <code>error</code>. Native fetch does not reject on HTTP 429: check the Response and adapt its status, headers, and parsed body. Axios exposes these under <code>error.response</code>; adapt them before calling the helper. The helper computes a delay only.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    '<code>null</code> uses interceptor defaults; <code>false</code> disables retries. The factory merges a per-request config with its defaults. This interceptor handles every HttpClient 429 regardless of URL or HTTP method; opt out for requests that should fail immediately.',
+    'null uses interceptor defaults; false disables retries. Context overrides merge with global or factory defaults. GET/HEAD/OPTIONS/PUT/DELETE are eligible by default; POST/PATCH require an explicit retryMethods override and endpoint idempotency.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
-    'Try a probe that fails on its first 429, or a workload read that receives two 429s before succeeding. The custom read uses maxAttempts: 10 and a 200ms fallback; that allows at most nine retries, not ten.',
+    'Try a probe that fails on its first 429, or a workload read that receives two 429s before succeeding. The custom read uses maxAttempts: 10 and a 200ms exponential base with equal jitter; at most nine retries are allowed.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Test Workload Read (10 Attempts)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Test Fast Probe (Opt-out)',
 
   'k8sRetryBackoff.overview':
     'The <code>retryOnK8sBackoff</code> RxJS operator implements automated retry-with-backoff for Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) responses (such as when the apiserver watch cache is bootstrapping with "storage is (re)initializing"). Only HTTP 429 triggers a retry; all other errors (4xx, 5xx, network failures) propagate immediately and unchanged to the subscriber.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor:</strong> <code>retryOnK8sBackoff</code> is a local, explicit operator for fine-grained control over specific Observable pipelines. If you want automatic 429 retry on <em>all</em> outgoing HTTP requests across your entire application, see the <code>k8sRetryBackoffInterceptor</code>.',
+    '<strong>Operator vs. Interceptor:</strong> The operator controls specific Observable pipelines. The interceptor applies 429 retry across eligible HttpClient methods; writes require verified idempotency.',
   'k8sRetryBackoff.diffTitle': 'Operator vs Interceptor',
   'k8sRetryBackoff.diffDesc': 'Choose between local pipeline composition and ambient global application protection:',
   'k8sRetryBackoff.diffColFeature': 'Feature',
@@ -1528,9 +1525,9 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.example1Desc':
     'Simulate various Kubernetes API responses to observe retry delays, attempt counts, and error propagation, followed by the operator pipeline snippet:',
   'k8sRetryBackoff.selectScenario': 'Select Response Scenario:',
-  'k8sRetryBackoff.scenarioHeader': '429 with Retry-After header (1s delay)',
-  'k8sRetryBackoff.scenarioBody': '429 with details.retryAfterSeconds body (1.5s delay)',
-  'k8sRetryBackoff.scenarioFallback': '429 with fallback delay (no hint, 1s)',
+  'k8sRetryBackoff.scenarioHeader': '429 with Retry-After header (1s minimum + jitter)',
+  'k8sRetryBackoff.scenarioBody': '429 with details.retryAfterSeconds body (1.5s minimum + jitter)',
+  'k8sRetryBackoff.scenarioFallback': '429 without a hint (1s base, equal jitter)',
   'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (immediate fail)',
   'k8sRetryBackoff.scenarioExhausted': 'Exhausted attempts (5 consecutive 429s)',
   'k8sRetryBackoff.btnSimulate': 'Simulate Request',
@@ -1553,18 +1550,19 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.delaySummary':
     'Helper function that extracts the retry delay in milliseconds from a Kubernetes 429 error response, or returns null if not retryable.',
   'k8sRetryBackoff.paramError': 'The error to inspect (HttpErrorResponse or object with status/headers/error).',
-  'k8sRetryBackoff.paramFallbackDelay': 'Fallback delay in milliseconds if the response provides no retry hint.',
+  'k8sRetryBackoff.paramFallbackDelay':
+    'Base fallback delay in milliseconds. The operator increases it exponentially; the delay helper returns it directly when no hint exists.',
 
   'k8sRetryBackoffInterceptor.overview':
-    '<code>k8sRetryBackoffInterceptor</code> is a functional Angular HTTP interceptor (<code>HttpInterceptorFn</code>) that automatically retries Kubernetes HTTP 429 (<code>TooManyRequests</code>) responses across all application requests. It respects the <code>Retry-After</code> header and <code>details.retryAfterSeconds</code> response body, with per-request customization and opt-out via <code>K8S_RETRY_BACKOFF_CONFIG</code>.',
+    '<code>k8sRetryBackoffInterceptor</code> automatically retries Kubernetes 429 responses for idempotent methods. It honors Retry-After and details.retryAfterSeconds, with exponential fallback, jitter, wait budgets and HttpContext opt-out. POST/PATCH require explicit opt-in.',
   'k8sRetryBackoffInterceptor.callout':
     '<strong>Global Protection with Request Overrides:</strong> Register the interceptor once in <code>app.config.ts</code> to protect all endpoints. For individual requests that should bypass retry or use custom limits, set the <code>K8S_RETRY_BACKOFF_CONFIG</code> context token on the <code>HttpClient</code> call. For local pipeline control instead, see the <code>retryOnK8sBackoff</code> operator.',
   'k8sRetryBackoffInterceptor.example1Title': 'Example 1: Global Interceptor Registration & Interactive Simulator',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Provide the interceptor globally in app.config.ts so all standard HttpClient calls automatically retry on HTTP 429 without modifying component code:',
+    'Register globally in app.config.ts to retry eligible idempotent HttpClient requests on HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Interceptor Context Mode:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Default Global Interceptor (429 retried automatically)',
-  'k8sRetryBackoffInterceptor.modeCustom': 'Custom HttpContext (maxAttempts: 2, fallback: 400ms)',
+  'k8sRetryBackoffInterceptor.modeCustom': 'Custom HttpContext (maxAttempts: 2, base: 400ms, equal jitter)',
   'k8sRetryBackoffInterceptor.modeDisabled': 'Disabled via HttpContext (K8S_RETRY_BACKOFF_CONFIG: false)',
   'k8sRetryBackoffInterceptor.btnSend': 'Send Intercepted Request',
   'k8sRetryBackoffInterceptor.example2Title': 'Example 2: Per-Request Customization & Opt-Out via HttpContext',
@@ -1793,4 +1791,80 @@ export const enTranslations: Record<string, string> = {
   'datagridUtil.inputTitle': 'Input: Clarity Datagrid State',
   'datagridUtil.outputTitle': 'Output: PageQuery Object',
   'datagridUtil.usageDesc': 'Use convertToHttpParams in your component to convert datagrid state for API requests:',
+  'common.save': 'Save',
+  'common.submit': 'Submit',
+  'statusIndicator.inputIconStatus': 'Status represented by the icon.',
+  'statusIndicator.inputIconSize': 'Icon size, including sm, md, lg or a pixel size string.',
+  'statusIndicator.inputTooltip': 'Optional text shown on hover or focus.',
+  'statusIndicator.inputTooltipPosition': 'Tooltip position relative to its trigger.',
+  'tooltip.componentTypeExample': 'Component type content',
+  'idleDetection.configIdleDuration': 'Seconds of inactivity before the countdown starts.',
+  'idleDetection.configTimeoutDuration': 'Countdown duration in seconds before timeout.',
+  'playground.copyFailed': 'Copy failed. Select and copy the code manually.',
+  'header.partialLanguage': 'Partial translation; missing text uses English.',
+  'form.masterPassword': 'Master Password',
+  'form.masterPasswordRequired': 'Master password is required.',
+  'grid.refresh': 'Refresh',
+  'grid.firstName': 'First Name',
+  'grid.lastName': 'Last Name',
+  'grid.email': 'Email',
+  'home.claritySetup': 'For guidance on setting up Clarity Design System in your project, refer to the',
+  'home.clarityDocumentation': 'Clarity Design System documentation',
+  'resourceAsync.useResource': 'Use resourceAsync when:',
+  'resourceAsync.useComputed': 'Use computedAsync when:',
+  'resourceAsync.preferMutation':
+    'For server writes, prefer mutateResource. Legacy execute() submissions must set lazy: true, reactive: false and behavior: exhaust.',
+  'resourceAsync.useRead': 'Manage local read operations (GET), with reload() for refetching.',
+  'resourceAsync.useLocal': 'Manage optimistic local state, cached values or form drafts with set()/update().',
+  'resourceAsync.useManual': 'Explicitly trigger or reset an operation with reload(), execute() or reset().',
+  'resourceAsync.useStatus': 'Track idle, loading, reloading, resolved, error and local states.',
+  'resourceAsync.useLazy': 'Defer initial execution with lazy loading.',
+  'resourceAsync.useCancel': 'Cancel replaced reads with switch or suppress overlapping operations with exhaust.',
+  'resourceAsync.useComputedReactive': 'Automatically recompute async data when signal dependencies change.',
+  'resourceAsync.useComputedConcurrency': 'Choose switch, merge, concat or exhaust behavior explicitly.',
+  'resourceAsync.useComputedValue': 'Expose a single signal, with an explicit error fallback or throwOnError policy.',
+  'resourceAsync.apiSummary':
+    'Creates a local reactive resource with async state, cancellation, explicit execution and local updates.',
+  'resourceAsync.errorValuePolicy':
+    'On error, the previous value is cleared by default. Use preserveValueOnError: true to retain it.',
+  'resourceAsync.notLoaded': 'Not loaded',
+  'resourceAsync.noData': 'No data',
+  'resourceAsync.lastUpdated': 'Last Updated',
+  'resourceAsync.topicTitle': 'Topic / Title',
+  'resourceAsync.keyConcepts': 'Key Concepts:',
+  'resourceAsync.patternBenefits': 'Pattern Benefits:',
+  'spinner.inputDecorative': 'Decorative by default. Set false to announce loading as a status.',
+  'spinner.inputLabel': 'Localized status label; defaults to the built-in loading message.',
+  'fileReader.inputControlId': 'ID of the native input, for association with a form label.',
+  'fileReader.inputAcceptFiles': 'Accepted text file types. This component reads text, not arbitrary binary files.',
+  'fileReader.inputEncoded': 'Emit text as base64 when enabled.',
+  'fileReader.inputTextEncoding': 'UTF-8 by default; choose latin1 when consuming legacy base64 byte strings.',
+  'fileReader.inputMaxSize': 'Maximum size in MiB. Oversized files are rejected before reading.',
+  'fileReader.inputDisabled': 'Disable file selection and removal.',
+  'fileReader.outputChange': 'Emits text or base64 after a successful file selection.',
+  'k8sRetryBackoff.paramJitter':
+    'Fallback jitter strategy. Equal jitter waits between half and the full exponential ceiling.',
+  'k8sRetryBackoff.paramHintJitter': 'Additional random wait after a server hint, in milliseconds.',
+  'k8sRetryBackoff.paramMaxDelay':
+    'Maximum individual wait. A longer server hint stops retries without shortening the hint.',
+  'k8sRetryBackoff.paramWaitBudget': 'Cumulative scheduled wait budget; excludes time spent on network requests.',
+  'k8sRetryBackoff.paramMethods':
+    'Interceptor-only method allowlist. POST/PATCH require explicit opt-in and endpoint idempotency.',
+  'k8sRetryBackoff.paramRandom': 'Random source returning a finite number in [0, 1), for deterministic scheduling.',
+  'k8sRetryBackoff.retryContract':
+    'Defaults: five attempts, exponential fallback with equal jitter, up to 250ms extra on server hints, 30s per wait and 60s total scheduled waits. Oversized hints stop retries. Interceptors retry idempotent methods by default; POST/PATCH require an endpoint guarantee.',
+  'k8sRetryBackoff.paramMinDelay':
+    'Minimum fallback wait for every jitter strategy; cannot exceed maxDelayMs. Server hints are unchanged.',
+  'k8sRetryBackoff.paramStatuses':
+    'Eligible HTTP statuses. Other errors propagate unchanged; additional statuses require endpoint review.',
+  'k8sRetryBackoff.paramPredicate':
+    'Extra error filter, applied after the status check. It does not enable POST/PATCH by itself.',
+  'k8sRetryBackoff.paramLogRetries': 'Enable retry logging after the delay passes the wait budget checks.',
+  'k8sRetryBackoff.paramLabel':
+    'Log label. Generated interceptor labels omit query strings and fragments; redact custom labels.',
+  'k8sRetryBackoff.paramLogger':
+    'Optional logger with attempt, maxRetries, delayMs, error and label. Redact error data; logger failures do not stop retries.',
+  'k8sRetryBackoffInterceptor.postDefault': 'POST: default (no retry)',
+  'k8sRetryBackoffInterceptor.postOptIn': 'POST: explicit Kubernetes opt-in',
+  'k8sRetryBackoffInterceptor.postGateway': 'POST: gateway 429 (rejected)',
 };

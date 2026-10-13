@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal} from '@angular/core';
 import {certificateIcon, ClarityIcons} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
-import {pki} from 'node-forge';
+import type {pki} from 'node-forge';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';

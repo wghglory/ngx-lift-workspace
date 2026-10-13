@@ -1,20 +1,30 @@
 <clr-dropdown [clrCloseMenuOnItemClick]="true">
-  <button type="button" class="nav-link btn btn-link language-trigger" clrDropdownTrigger aria-label="Change Language">
+  <button
+    type="button"
+    class="nav-link btn btn-link language-trigger"
+    clrDropdownTrigger
+    [attr.aria-label]="'header.selectLanguage' | translate"
+  >
     <clr-icon shape="world" />
     <span class="lang-text">{{ currentLabel() }}</span>
+    @if (isPartialLanguage()) {
+      <span [title]="'header.partialLanguage' | translate" [attr.aria-label]="'header.partialLanguage' | translate"
+        >*</span
+      >
+    }
     <clr-icon shape="angle" dir="down" class="dropdown-caret" size="12" />
   </button>
   <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>
-    <label class="dropdown-header">{{ 'header.selectLanguage' | translate }}</label>
+    <span class="dropdown-header">{{ 'header.selectLanguage' | translate }}</span>
     @for (lang of languages; track lang.code) {
       <button
         type="button"
         clrDropdownItem
-        [class.active]="isLanguageActive(lang.code)"
+        [class.active]="activeLanguageCode() === lang.code"
         (click)="selectLanguage(lang.code)"
       >
         <span class="dropdown-item-label">{{ lang.label }}</span>
-        @if (isLanguageActive(lang.code)) {
+        @if (activeLanguageCode() === lang.code) {
           <clr-icon shape="check" class="is-success active-check" />
         }
       </button>

@@ -1,3 +1,4 @@
+import {computed} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {vi} from 'vitest';
 
@@ -184,5 +185,96 @@ describe('TranslationService', () => {
 
     expect(translationService.translateWithLanguage('example.greeting', 'fr')).toBe('Bonjour');
     expect(translationService.translateWithLanguage('example.greeting', 'es')).toBe('Hola');
+  });
+});
+
+describe('TranslationService dictionary and script updates', () => {
+  it('refreshes cached computed messages when a dictionary is loaded or replaced', () => {
+    const service = TestBed.inject(TranslationService);
+    service.setLanguage('en', false);
+    const message = computed(() => service.translate('lazy.greeting'));
+    expect(message()).toContain('not found');
+    service.loadTranslationsForComponent('lazy', {en: {greeting: 'Hello'}});
+    expect(message()).toBe('Hello');
+    service.loadTranslationsForComponent('lazy', {en: {greeting: 'Updated'}});
+    expect(message()).toBe('Updated');
+  });
+  it('resolves Traditional Chinese script tags before generic Chinese', () => {
+    const service = TestBed.inject(TranslationService);
+    service.loadTranslationsForComponent('test', {
+      zh: {text: '简体'},
+      'zh-CN': {text: '简体'},
+      'zh-TW': {text: '繁體'},
+    });
+    for (const locale of ['zh-Hant', 'zh-HK', 'zh-MO'])
+      expect(service.translateWithLanguage('test.text', locale)).toBe('繁體');
+    expect(service.translateWithLanguage('test.text', 'zh-Hans')).toBe('简体');
+  });
+  it('deduplicates warnings and allows new warnings after a dictionary update', () => {
+    const service = TestBed.inject(TranslationService);
+    service.setLanguage('en', false);
+    service.loadTranslationsForComponent('test', {en: {text: 'ok'}});
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    service.translate('missing.key');
+    service.translate('missing.key');
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
+  });
+});
+
+describe('Translation locale metadata', () => {
+  it('sets document language and writing direction for selected locales', () => {
+    const service = TestBed.inject(TranslationService);
+    service.setLanguage('ar-EG', false);
+    TestBed.tick();
+    expect(document.documentElement.lang).toBe('ar-EG');
+    expect(document.documentElement.dir).toBe('rtl');
+    service.setLanguage('bad_locale', false);
+    TestBed.tick();
+    expect(service.locale()).toBe('en');
+    expect(document.documentElement.dir).toBe('ltr');
+  });
+});
+
+describe('Translation storage and safe lookup', () => {
+  it('keeps the selected language when browser persistence is blocked', () => {
+    const service = TestBed.inject(TranslationService);
+    const storage = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('Blocked');
+    });
+    try {
+      expect(() => service.setLanguage('fr')).not.toThrow();
+      expect(service.getLanguage()).toBe('fr');
+      service.setLanguage('', false);
+      expect(service.getLanguage()).toBe('fr');
+    } finally {
+      storage.mockRestore();
+    }
+  });
+  it('does not treat inherited object names as messages or language dictionaries', () => {
+    const service = TestBed.inject(TranslationService);
+    service.loadTranslationsForComponent('', {en: {text: 'English'}});
+    expect(service.translateWithLanguage('text', '')).toBe('English');
+    expect(service.translateWithLanguage('toString', 'en')).toContain('not found');
+    service.loadTranslationsForComponent('', JSON.parse('{"__proto__":{"__proto__":"safe"}}'));
+    expect(service.translateWithLanguage('__proto__', '__proto__')).toBe('safe');
+    expect(Object.getPrototypeOf({})).toBe(Object.prototype);
+  });
+});
+
+describe('Translation cache stability', () => {
+  it('does not invalidate consumers when identical component dictionaries are registered again', () => {
+    const service = TestBed.inject(TranslationService);
+    service.setLanguage('en-US', false);
+    service.loadTranslationsForComponent('test', {en: {message: 'Hello'}});
+    let reads = 0;
+    const message = computed(() => {
+      ++reads;
+      return service.translate('test.message');
+    });
+    expect(message()).toBe('Hello');
+    service.loadTranslationsForComponent('test', {en: {message: 'Hello'}});
+    expect(message()).toBe('Hello');
+    expect(reads).toBe(1);
   });
 });

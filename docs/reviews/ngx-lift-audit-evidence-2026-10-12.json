@@ -1,0 +1,421 @@
+{
+  "date": "2026-10-12",
+  "timezone": "Asia/Shanghai",
+  "baselineSha": "f8cb5b558b05d9673b3e584e3b62d5a803497fa2",
+  "environment": {
+    "node": "v24.18.0",
+    "pnpmInstalled": "11.7.0",
+    "pnpmDeclared": "10.5.2",
+    "angular": "21.2.17",
+    "nx": "22.7.5"
+  },
+  "validation": {
+    "uncachedTaskCommand": "pnpm nx run-many -t test lint typecheck build --parallel=3 --skipNxCache",
+    "uncachedTaskResult": "passed",
+    "unitTests": {
+      "ngx-lift": {
+        "files": 44,
+        "tests": 698
+      },
+      "clr-lift": {
+        "files": 25,
+        "tests": 223
+      },
+      "demo": {
+        "files": 73,
+        "tests": 170
+      }
+    },
+    "e2eCommand": "pnpm nx e2e demo-e2e --skipNxCache",
+    "e2eResult": {
+      "passed": 84,
+      "browsers": ["chromium", "firefox", "webkit"]
+    },
+    "coverageCommand": "pnpm nx run-many -t test --coverage --parallel=1 --skipNxCache",
+    "coverageResult": {
+      "failedProjects": ["clr-lift", "demo"],
+      "branchThreshold": 75
+    },
+    "productionDemoBuild": {
+      "initial": "4.61 MB",
+      "estimatedTransfer": "883.32 kB",
+      "browserMeasurement": false
+    },
+    "coverage": {
+      "libs/ngx-lift": {
+        "total": {
+          "lines": {
+            "total": 1985,
+            "covered": 1886,
+            "skipped": 0,
+            "pct": 95.01
+          },
+          "statements": {
+            "total": 2124,
+            "covered": 1999,
+            "skipped": 0,
+            "pct": 94.11
+          },
+          "functions": {
+            "total": 429,
+            "covered": 409,
+            "skipped": 0,
+            "pct": 95.33
+          },
+          "branches": {
+            "total": 1466,
+            "covered": 1318,
+            "skipped": 0,
+            "pct": 89.9
+          },
+          "branchesTrue": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "leastCoveredBranches": [
+          {
+            "file": "libs/ngx-lift/src/lib/signals/to-signal-form.ts",
+            "percent": 76.02,
+            "missed": 35,
+            "total": 146
+          },
+          {
+            "file": "libs/ngx-lift/src/lib/signals/form-bindings.ts",
+            "percent": 82.94,
+            "missed": 22,
+            "total": 129
+          },
+          {
+            "file": "libs/ngx-lift/src/lib/query/query-client.ts",
+            "percent": 91.7,
+            "missed": 17,
+            "total": 205
+          },
+          {
+            "file": "libs/ngx-lift/src/lib/query/resource-async.ts",
+            "percent": 90.97,
+            "missed": 13,
+            "total": 144
+          },
+          {
+            "file": "libs/ngx-lift/src/lib/signals/inject-query-params.ts",
+            "percent": 77.41,
+            "missed": 7,
+            "total": 31
+          },
+          {
+            "file": "libs/ngx-lift/src/lib/utils/is-equal.util.ts",
+            "percent": 91.95,
+            "missed": 7,
+            "total": 87
+          },
+          {
+            "file": "libs/ngx-lift/src/lib/operators/k8s-retry-backoff.operator.ts",
+            "percent": 91.11,
+            "missed": 4,
+            "total": 45
+          }
+        ]
+      },
+      "libs/clr-lift": {
+        "total": {
+          "lines": {
+            "total": 1006,
+            "covered": 921,
+            "skipped": 0,
+            "pct": 91.55
+          },
+          "statements": {
+            "total": 1065,
+            "covered": 977,
+            "skipped": 0,
+            "pct": 91.73
+          },
+          "functions": {
+            "total": 246,
+            "covered": 225,
+            "skipped": 0,
+            "pct": 91.46
+          },
+          "branches": {
+            "total": 443,
+            "covered": 326,
+            "skipped": 0,
+            "pct": 73.58
+          },
+          "branchesTrue": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "leastCoveredBranches": [
+          {
+            "file": "libs/clr-lift/src/lib/components/tooltip/tooltip.directive.ts",
+            "percent": 75.34,
+            "missed": 18,
+            "total": 73
+          },
+          {
+            "file": "libs/clr-lift/src/lib/components/tooltip/tooltip.util.ts",
+            "percent": 62.85,
+            "missed": 13,
+            "total": 35
+          },
+          {
+            "file": "libs/clr-lift/src/lib/components/tooltip/tooltip.component.ts",
+            "percent": 78.94,
+            "missed": 12,
+            "total": 57
+          },
+          {
+            "file": "libs/clr-lift/src/lib/services/translation.service.ts",
+            "percent": 73.17,
+            "missed": 11,
+            "total": 41
+          },
+          {
+            "file": "libs/clr-lift/src/lib/components/file-reader/file-reader.component.ts",
+            "percent": 77.77,
+            "missed": 10,
+            "total": 45
+          },
+          {
+            "file": "libs/clr-lift/src/lib/components/timeline-wizard/timeline-wizard.component.ts",
+            "percent": 84.74,
+            "missed": 9,
+            "total": 59
+          },
+          {
+            "file": "libs/clr-lift/src/lib/components/key-value-inputs/key-value-inputs.component.ts",
+            "percent": 55.55,
+            "missed": 8,
+            "total": 18
+          }
+        ]
+      },
+      "apps/demo": {
+        "total": {
+          "lines": {
+            "total": 1514,
+            "covered": 1335,
+            "skipped": 0,
+            "pct": 88.17
+          },
+          "statements": {
+            "total": 1693,
+            "covered": 1491,
+            "skipped": 0,
+            "pct": 88.06
+          },
+          "functions": {
+            "total": 428,
+            "covered": 318,
+            "skipped": 0,
+            "pct": 74.29
+          },
+          "branches": {
+            "total": 302,
+            "covered": 176,
+            "skipped": 0,
+            "pct": 58.27
+          },
+          "branchesTrue": {
+            "total": 0,
+            "covered": 0,
+            "skipped": 0,
+            "pct": 100
+          }
+        },
+        "leastCoveredBranches": [
+          {
+            "file": "apps/demo/src/app/shared/components/demo-playground/demo-playground.component.ts",
+            "percent": 50.94,
+            "missed": 26,
+            "total": 53
+          },
+          {
+            "file": "apps/demo/src/app/core/components/language-switcher/language-switcher.component.ts",
+            "percent": 16.66,
+            "missed": 20,
+            "total": 24
+          },
+          {
+            "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.ts",
+            "percent": 22.72,
+            "missed": 17,
+            "total": 22
+          },
+          {
+            "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.ts",
+            "percent": 6.25,
+            "missed": 15,
+            "total": 16
+          },
+          {
+            "file": "apps/demo/src/app/core/components/vertical-nav/vertical-nav.component.ts",
+            "percent": 12.5,
+            "missed": 7,
+            "total": 8
+          },
+          {
+            "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.ts",
+            "percent": 30,
+            "missed": 7,
+            "total": 10
+          },
+          {
+            "file": "apps/demo/src/app/ngx-lib/pages/signals/to-signal-form/to-signal-form.component.ts",
+            "percent": 83.72,
+            "missed": 7,
+            "total": 43
+          }
+        ]
+      }
+    },
+    "documentChecks": {
+      "workspaceFormatCheck": "passed after documentation formatting",
+      "gitDiffWhitespaceCheck": "passed",
+      "localMarkdownLinks": "all resolved",
+      "standaloneToolFormatCheck": {
+        "file": "tools/eslint-plugin/eslint-plugin-label.mjs",
+        "result": "failed",
+        "includedInWorkspaceFormatGlob": false
+      }
+    }
+  },
+  "sourceProbes": [
+    {
+      "probe": "url",
+      "input": "https://example.technology",
+      "isURL": false,
+      "isHttps": false,
+      "URL": "https://example.technology/"
+    },
+    {
+      "probe": "url",
+      "input": "https://[::1]/",
+      "isURL": false,
+      "isHttps": false,
+      "URL": "https://[::1]/"
+    },
+    {
+      "probe": "url",
+      "input": "https://localhost:4200",
+      "isURL": false,
+      "isHttps": false,
+      "URL": "https://localhost:4200/"
+    },
+    {
+      "probe": "url",
+      "input": "https://example.com:99999",
+      "isURL": true,
+      "isHttps": true,
+      "URL": "TypeError"
+    },
+    {
+      "probe": "url",
+      "input": "https://example.com",
+      "isURL": true,
+      "isHttps": true,
+      "URL": "https://example.com/"
+    },
+    {
+      "probe": "range",
+      "input": [0, 3, 0],
+      "result": [0, 0, 0]
+    },
+    {
+      "probe": "range",
+      "input": [0, "Infinity", 1],
+      "error": "RangeError: Invalid array length"
+    },
+    {
+      "probe": "range",
+      "input": ["NaN"],
+      "error": "RangeError: Invalid array length"
+    },
+    {
+      "probe": "range",
+      "input": [0, 5, -1],
+      "result": []
+    },
+    {
+      "probe": "dateRange",
+      "options": {
+        "minDate": "not-a-date"
+      },
+      "result": null
+    },
+    {
+      "probe": "dateRange",
+      "options": {
+        "maxDate": "not-a-date"
+      },
+      "result": null
+    },
+    {
+      "probe": "dateRange",
+      "options": {
+        "minDate": "2027-01-01",
+        "maxDate": "2026-01-01"
+      },
+      "result": {
+        "minDate": "2027-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "probe": "base64",
+      "input": "你好😀",
+      "error": "InvalidCharacterError: Invalid character"
+    }
+  ],
+  "eslint": {
+    "recommendedPresetError": "Key \"label-has-associated-control\": Expected severity of \"off\", 0, \"warn\", 1, \"error\", or 2.",
+    "unassociatedLabel": {
+      "input": "<label>Orphan</label>",
+      "customRuleMessages": [],
+      "upstreamRuleError": "A label component must be associated with a form element"
+    },
+    "visitorMismatch": {
+      "custom": "Element$1",
+      "upstreamInstalled": "Element",
+      "angularEslint": "21.4.0"
+    }
+  },
+  "dependencyAudit": {
+    "scope": "production",
+    "mirror": {
+      "status": {
+        "code": 1,
+        "signal": null,
+        "stderr": ""
+      },
+      "response": {
+        "error": {
+          "code": "ERR_PNPM_AUDIT_BAD_RESPONSE",
+          "message": "The audit endpoint (at https://repo.huaweicloud.com/repository/npm/-/npm/v1/security/advisories/bulk) responded with 405: {\"errors\":[{\"status\":405,\"message\":\"Request method 'POST' is not supported\"}]}"
+        }
+      }
+    },
+    "official": {
+      "status": {
+        "code": null,
+        "signal": "SIGTERM",
+        "stderr": ""
+      },
+      "method": "Isolated temporary cwd with copies of package.json and pnpm-lock.yaml and official-registry-only .npmrc; terminated after 30 seconds.",
+      "result": "inconclusive, no response before timeout"
+    },
+    "securityCleared": false
+  },
+  "limitations": [
+    "Remote CI, deployment, npm published version and formal approval not verified",
+    "Full SSR/hydration and manual screen-reader testing not performed",
+    "No application/library fixes made"
+  ]
+}

@@ -66,7 +66,7 @@ export interface BaseResourceRefOptions<T, E = Error> extends CreateComputedOpti
   /**
    * Error handler that receives errors from async operations.
    * Can transform errors or provide fallback values.
-   * If it returns a value, the resource will be in 'success' state with that value.
+   * If it returns a value, the resource will be in 'resolved' state with that value.
    */
   onError?: (error: E) => T | undefined;
 
@@ -230,10 +230,13 @@ export interface ResourceRef<T, E = Error> {
 
   /**
    * Returns true if the resource has a value available (not undefined).
-   * True for 'resolved', 'reloading', or 'local' state.
+   * True for 'resolved', 'reloading', 'local', or 'error' (when preserveValueOnError is enabled) states.
    *
    * **Type predicate**: When true, narrows the value type to exclude undefined.
-   * This matches Angular's httpResource behavior.
+   *
+   * Note on `defaultValue`: While `value()` returns `defaultValue` synchronously before the
+   * first fetch, `hasValue()` returns `false` during the initial `idle` or `loading` state to signal
+   * that data has not yet been fetched from the remote source or updated locally.
    *
    * **Example**:
    * ```typescript

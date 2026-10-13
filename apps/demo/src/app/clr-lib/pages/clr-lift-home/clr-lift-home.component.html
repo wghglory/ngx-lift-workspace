@@ -25,7 +25,7 @@
             </tr>
             <tr>
               <td>v21.x</td>
-              <td>Angular 21+</td>
+              <td>Angular 21</td>
             </tr>
           </tbody>
         </table>
@@ -65,8 +65,11 @@
       <li [innerHTML]="'home.clrLift.tipPeer' | translate"></li>
       <li [innerHTML]="'home.clrLift.tipSkipLib' | translate"></li>
       <li>
-        For guidance on setting up Clarity Design System in your project, refer to the
-        <a href="https://clarity.design/pages/developing" target="_blank">Clarity Design System documentation</a>.
+        {{ 'home.claritySetup' | translate }}
+        <a href="https://clarity.design/pages/developing" target="_blank">{{
+          'home.clarityDocumentation' | translate
+        }}</a
+        >.
       </li>
     </ul>
   </cll-callout>

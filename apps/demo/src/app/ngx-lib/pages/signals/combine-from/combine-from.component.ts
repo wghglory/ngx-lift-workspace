@@ -102,7 +102,7 @@ export class CombineFromComponent {
   private injector = inject(Injector);
   count = signal(3);
 
-  // Example: Decoupled Injector & glitch-free initialization
+  // Example: Decoupled Injector & deduplicated initialization
   decoupledSignal = combineFrom([this.a, this.count], {injector: this.injector});
 
   usersState = combineFrom(
@@ -239,7 +239,7 @@ export class CombineFromComponent {
 }
   `);
 
-  glitchFreeCode = highlight(`
+  initializationCode = highlight(`
 import {combineFrom} from 'ngx-lift';
 import {Component, inject, Injector, signal} from '@angular/core';
 
@@ -248,7 +248,7 @@ export class CombineFromComponent {
   count = signal(1);
   multiplier = signal(2);
 
-  // 1. Glitch-Free: Signal values are deduplicated via distinctUntilChanged,
+  // 1. Initial deduplication: Signal values are deduplicated via distinctUntilChanged,
   // preventing duplicate emissions between initial synchronous read and toObservable microtask.
   // 2. Decoupled Injector: Can be instantiated dynamically or outside component constructor
   // by passing an explicit injector in the options object.

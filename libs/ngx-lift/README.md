@@ -65,6 +65,15 @@ common Angular development tasks and boost productivity.
   control bindings (`bindIf`, `bindDisabled`, `bindValidators`, `revalidate`), and clean sanitized submission value
   (`submitValue`)
 
+### 🔄 Query & Caching
+
+- **`QueryClient`** - Shared transport and cache manager coordinating request deduplication, cache invalidation via
+  tags/keys, garbage collection, and multi-observer polling
+- **`queryResource`** - Reactive Signal adapter connecting Angular views to shared cached queries with automatic
+  deduplication, stale-while-revalidate, and coordinated polling
+- **`mutateResource`** - Reactive mutation adapter providing optimistic updates, error rollbacks, and automatic cache
+  invalidation by query keys or tags
+
 ### 🔧 Pipes
 
 - **`arrayJoin`** - Joins array elements with a separator
@@ -284,6 +293,38 @@ export class RegistrationComponent {
       this.authService.register(data);
     }
   }
+}
+```
+
+### Using Query & Caching
+
+**Query Resource** - Shared cached queries with multi-observer deduplication and coordinated polling:
+
+```typescript
+import {queryResource} from 'ngx-lift';
+
+export class UserProfileComponent {
+  private http = inject(HttpClient);
+  userId = signal('42');
+
+  // Shared query with automatic deduplication, caching, and reactive polling
+  user = queryResource(
+    () => {
+      const id = this.userId();
+      return {
+        key: ['users', id],
+        loader: () => this.http.get<User>(`/api/users/${id}`),
+        tags: [{type: 'users', id}],
+        staleTime: 60_000,
+      };
+    },
+    {pollInterval: 10_000},
+  );
+
+  // Template usage:
+  // @if (user.isLoading()) { <spinner /> }
+  // @if (user.error(); as error) { <alert [error]="error" /> }
+  // @if (user.hasValue()) { <user-card [user]="user.value()" /> }
 }
 ```
 

@@ -27,11 +27,14 @@ export interface MutateResourceOptions<TArgs, TResult> {
 export interface MutateResourceRef<TArgs, TResult, E = Error> {
   readonly value: Signal<TResult | undefined>;
   readonly error: Signal<E | null>;
+  /** Post-success cache synchronization failure. Optional for compatibility with structural test refs. */
+  readonly invalidationError?: Signal<unknown | null>;
   readonly status: Signal<'idle' | 'loading' | 'resolved' | 'error'>;
   readonly isLoading: Signal<boolean>;
   /**
    * Runs only on explicit invocation. Pass an immutable argument snapshot, especially with concat.
-   * Successful writes invalidate without awaiting background refetch.
+   * Successful writes invalidate without awaiting background refetch. Cache synchronization failures
+   * are reported through invalidationError and never reject an already successful write.
    */
   mutate(args: TArgs): Promise<TResult>;
 }
@@ -61,6 +64,7 @@ export function mutateResource<TArgs, TResult, E = Error>(
   const client = options.client ?? injector.get(QUERY_CLIENT);
   const value = signal<TResult | undefined>(undefined);
   const error = signal<E | null>(null);
+  const invalidationError = signal<unknown | null>(null);
   const settledStatus = signal<'idle' | 'resolved' | 'error'>('idle');
   const outstanding = signal(0);
   let pending: Promise<TResult> | undefined;
@@ -83,10 +87,15 @@ export function mutateResource<TArgs, TResult, E = Error>(
       // Mark synchronous Observable failures handled before Promise assimilation in Zone.js.
       void resultPromise.catch(() => undefined);
       const result = await resultPromise;
-      const tags =
-        typeof options.invalidatesTags === 'function' ? options.invalidatesTags(result, args) : options.invalidatesTags;
-      if (tags?.length) {
-        client.invalidateTags(tags);
+      try {
+        const tags =
+          typeof options.invalidatesTags === 'function'
+            ? options.invalidatesTags(result, args)
+            : options.invalidatesTags;
+        if (tags?.length) client.invalidateTags(tags);
+      } catch (failure) {
+        // Never classify a completed server write as failed or encourage retrying it.
+        if (!destroyed && invocation === latestInvocation) invalidationError.set(failure);
       }
       if (!destroyed && invocation === latestInvocation) {
         value.set(result);
@@ -106,6 +115,7 @@ export function mutateResource<TArgs, TResult, E = Error>(
   return {
     value: value.asReadonly(),
     error: error.asReadonly(),
+    invalidationError: invalidationError.asReadonly(),
     status: computed(() => (outstanding() > 0 ? 'loading' : settledStatus())),
     isLoading: computed(() => outstanding() > 0),
     mutate: (args) => {
@@ -119,6 +129,7 @@ export function mutateResource<TArgs, TResult, E = Error>(
       }
       outstanding.update((count) => count + 1);
       error.set(null);
+      invalidationError.set(null);
       const preceding = pending;
       const invocation = ++latestInvocation;
       let callbacks:

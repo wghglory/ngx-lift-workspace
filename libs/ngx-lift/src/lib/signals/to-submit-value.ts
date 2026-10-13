@@ -1,10 +1,10 @@
 import {assertInInjectionContext, inject, Injector, Signal} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, map} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, merge, Observable, startWith} from 'rxjs';
 
 import {FormRawValue, FormSubmitValueOptions, ToSubmitValueOptions} from '../models/to-signal-form.model';
 import {isEqual} from '../utils/is-equal.util';
-import {createControlEventStream, safeToSignal} from './form-signals';
 
 /**
  * Type guard for Angular AbstractControl instances.
@@ -194,18 +194,26 @@ export function formSubmitValue<TInput extends object = Record<string, unknown>,
 
   const compute = (): TOutput => toSubmitValue<TInput, TOutput>(form, options);
 
-  let stream$ = createControlEventStream(form).pipe(
+  const eventStream$: Observable<unknown> =
+    'events' in form && form.events
+      ? form.events.pipe(startWith(null))
+      : merge(form.valueChanges as Observable<unknown>, form.statusChanges).pipe(startWith(null));
+
+  let stream$: Observable<TOutput> = eventStream$.pipe(
     map(() => compute()),
     distinctUntilChanged((a, b) => isEqual(a, b)),
   );
 
   if (options?.debounceTime !== undefined && options.debounceTime > 0) {
-    stream$ = createControlEventStream(form).pipe(
+    stream$ = eventStream$.pipe(
       debounceTime(options.debounceTime),
       map(() => compute()),
       distinctUntilChanged((a, b) => isEqual(a, b)),
     );
   }
 
-  return safeToSignal(stream$, compute(), injector);
+  return toSignal(stream$, {
+    initialValue: compute(),
+    injector,
+  });
 }

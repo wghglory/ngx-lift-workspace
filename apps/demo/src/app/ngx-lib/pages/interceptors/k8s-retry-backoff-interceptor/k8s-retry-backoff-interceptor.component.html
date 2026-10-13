@@ -1,4 +1,6 @@
 <cll-page-container [title]="'k8sRetryBackoffInterceptor'">
+  <cll-callout>{{ 'k8sRetryBackoff.retryContract' | translate }}</cll-callout>
+
   <!-- Overview -->
   <p [innerHTML]="'k8sRetryBackoffInterceptor.overview' | translate"></p>
 
@@ -55,6 +57,19 @@
             />
             <label>{{ 'k8sRetryBackoffInterceptor.modeDisabled' | translate }}</label>
           </clr-radio-wrapper>
+          @for (mode of writeModes; track mode.value) {
+            <clr-radio-wrapper>
+              <input
+                type="radio"
+                clrRadio
+                name="interceptorMode"
+                [value]="mode.value"
+                [ngModel]="selectedMode()"
+                (ngModelChange)="selectedMode.set($event)"
+              />
+              <label>{{ mode.label | translate }}</label>
+            </clr-radio-wrapper>
+          }
         </clr-radio-container>
 
         <div cds-layout="horizontal gap:sm align:vertical-center">

@@ -1,5 +1,8 @@
 name: Deploy Demo App
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -10,7 +13,10 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
   deploy:
+    needs: quality
     name: Deploy
     runs-on: ubuntu-latest
     permissions:

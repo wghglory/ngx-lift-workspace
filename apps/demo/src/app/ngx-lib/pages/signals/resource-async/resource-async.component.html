@@ -174,7 +174,7 @@
               @if (userWithFallbackRef.isLoading()) {
                 <cll-spinner />
               }
-              @if (userRef.error(); as error) {
+              @if (userWithFallbackRef.error(); as error) {
                 <cll-alert [error]="error" [isSmall]="true" />
               }
               @if (userWithFallbackRef.hasValue()) {
@@ -194,8 +194,9 @@
       <p>Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:</p>
       <app-code-block [code]="throwOnErrorCode" lang="typescript" />
       <cll-callout type="warning">
-        When <code>throwOnError: true</code>, errors will be thrown even if <code>onError</code> is provided. The
-        <code>onError</code> callback can still be used for logging before the error propagates.
+        When <code>throwOnError: true</code>, errors will be thrown if <code>onError</code> returns
+        <code>undefined</code> or is omitted. If <code>onError</code> returns a fallback value, the error is handled and
+        will not propagate.
       </cll-callout>
     </article>
 
@@ -428,9 +429,9 @@
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Topic / Title</th>
+                        <th>{{ 'resourceAsync.topicTitle' | translate }}</th>
                         <th>Category</th>
-                        <th>Last Updated</th>
+                        <th>{{ 'resourceAsync.lastUpdated' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -447,7 +448,7 @@
                         </tr>
                       } @empty {
                         <tr>
-                          <td colspan="4" class="text-center">No data</td>
+                          <td colspan="4" class="text-center">{{ 'resourceAsync.noData' | translate }}</td>
                         </tr>
                       }
                     </tbody>
@@ -487,43 +488,22 @@
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'resourceAsync.whenToUseSection' | translate }}</h2>
 
-    <h3>Use <code>resourceAsync</code> when:</h3>
+    <h3>{{ 'resourceAsync.useResource' | translate }}</h3>
     <ul class="list" cds-layout="vertical gap:xs">
-      <li>
-        You're working with <strong>read operations (GET)</strong> - use <code>reload()</code> method for refetching
-      </li>
-      <li>
-        You're working with <strong>mutations (POST/PUT/DELETE)</strong> - use <code>execute()</code> method with
-        <code>lazy: true</code> and <code>behavior: 'exhaust'</code>
-      </li>
-      <li>
-        <strong>You need local state management</strong> - use <code>set()</code>/<code>update()</code> for optimistic
-        updates, cache-first patterns, or form drafts
-      </li>
-      <li>
-        You need manual trigger capability (<code>reload()</code>, <code>execute()</code>, or <code>reset()</code>)
-      </li>
-      <li>You want explicit status tracking (idle, isLoading, reloading, resolved, error, local)</li>
-      <li>You need lazy loading (defer initial execution)</li>
-      <li>You want individual signal accessors for optimal performance</li>
-      <li>You're looking for Angular's <code>httpResource</code>-like functionality</li>
-      <li>You need automatic cancellation of previous requests (switch behavior)</li>
-      <li>You need to prevent duplicate submissions (exhaust behavior)</li>
+      <li>{{ 'resourceAsync.useRead' | translate }}</li>
+      <li>{{ 'resourceAsync.useLocal' | translate }}</li>
+      <li>{{ 'resourceAsync.useManual' | translate }}</li>
+      <li>{{ 'resourceAsync.useStatus' | translate }}</li>
+      <li>{{ 'resourceAsync.useLazy' | translate }}</li>
+      <li>{{ 'resourceAsync.useCancel' | translate }}</li>
     </ul>
-
-    <h3>Use <code>computedAsync</code> when:</h3>
+    <cll-callout>{{ 'resourceAsync.preferMutation' | translate }}</cll-callout>
+    <h3>{{ 'resourceAsync.useComputed' | translate }}</h3>
     <ul class="list" cds-layout="vertical gap:xs">
-      <li>You want automatic reactive fetching based on dependencies</li>
-      <li>You need custom merge behaviors (merge, concat, in addition to switch/exhaust)</li>
-      <li>You want a single computed signal that re-runs automatically</li>
-      <li>You're migrating from <code>computed()</code> patterns</li>
-      <li>You need to combine with <code>createAsyncState</code> operator</li>
+      <li>{{ 'resourceAsync.useComputedReactive' | translate }}</li>
+      <li>{{ 'resourceAsync.useComputedConcurrency' | translate }}</li>
+      <li>{{ 'resourceAsync.useComputedValue' | translate }}</li>
     </ul>
-
-    <p>
-      See also:
-      <a routerLink="/ngx-lift/signals/computedAsync">computedAsync</a>
-    </p>
   </section>
 
   <!-- ==================== SECTION 4: ADVANCED - WRITABLE RESOURCE API ==================== -->
@@ -727,7 +707,7 @@
     </cll-callout>
 
     <cll-callout type="info">
-      <strong>Key Concepts:</strong>
+      <strong>{{ 'resourceAsync.keyConcepts' | translate }}</strong>
       <ul class="list" cds-layout="m-t:xs">
         <li><strong>Outer Resource:</strong> List of items with their own loading/error state</li>
         <li><strong>Inner Resources:</strong> Per-item related data with individual loading/error states</li>
@@ -799,7 +779,7 @@
                       <td>
                         @if (getOrgRef(item.orgId); as orgRef) {
                           @if (orgRef.isIdle()) {
-                            <span class="p7">Not loaded</span>
+                            <span class="p7">{{ 'resourceAsync.notLoaded' | translate }}</span>
                           }
 
                           @if (orgRef.isLoading() && !orgRef.hasValue()) {
@@ -864,7 +844,7 @@
         </div>
 
         <cll-callout type="tip">
-          <strong>Pattern Benefits:</strong>
+          <strong>{{ 'resourceAsync.patternBenefits' | translate }}</strong>
           <ul class="list" cds-layout="m-t:xs">
             <li>✅ Minimal API calls (only fetch what's needed)</li>
             <li>✅ Individual loading/error states per row</li>
@@ -879,15 +859,12 @@
 
   <!-- ==================== SECTION 6: API REFERENCE ==================== -->
   <section cds-layout="vertical gap:md align:stretch">
-    <h2>API Reference</h2>
+    <h2>{{ 'common.apiReference' | translate }}</h2>
     <div cds-layout="vertical gap:sm align:stretch">
       <h3>resourceAsync</h3>
-      <p>
-        Creates a reactive resource that manages async operations with full state tracking. Returns a
-        <code>ResourceRef</code> object with state signals and reload capability.
-      </p>
+      <p>{{ 'resourceAsync.apiSummary' | translate }}</p>
 
-      <h4>Signature</h4>
+      <h4>{{ 'common.signature' | translate }}</h4>
       <app-code-block [code]="signatureCode" lang="typescript" />
 
       <h4>{{ 'common.parameters' | translate }}</h4>
@@ -921,10 +898,7 @@
         </li>
       </ul>
 
-      <cll-callout type="info">
-        <strong>Important:</strong> When an error occurs (even during <code>reloading</code>), the previous value is
-        cleared and becomes <code>undefined</code>. This matches Angular's <code>httpResource</code> behavior.
-      </cll-callout>
+      <cll-callout type="info">{{ 'resourceAsync.errorValuePolicy' | translate }}</cll-callout>
     </div>
   </section>
 </cll-page-container>

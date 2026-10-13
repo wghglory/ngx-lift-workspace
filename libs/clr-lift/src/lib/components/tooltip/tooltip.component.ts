@@ -6,6 +6,7 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentRef,
+  computed,
   DestroyRef,
   effect,
   ElementRef,
@@ -42,6 +43,11 @@ export class TooltipComponent {
   triggerElementHovering = input(true); // if the trigger element (e.g. button) is being hovered
 
   contentContext = input<Record<string, unknown>>();
+  /** Accessible name for interactive template/component content. */
+  accessibleLabel = input('');
+  readonly interactive = computed(() => !!this.content() && typeof this.content() !== 'string');
+  readonly dialogLabel = computed(() => this.accessibleLabel() || this.translationService.translate('tooltip.details'));
+  private readonly translationService = inject(TranslationService);
 
   /**
    * Content to display in the tooltip.

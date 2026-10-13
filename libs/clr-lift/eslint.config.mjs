@@ -10,12 +10,7 @@ export default [
         'error',
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
-          ignoredDependencies: [
-            'vite',
-            '@analogjs/vite-plugin-angular',
-            '@nx/vite',
-            'tslib',
-          ],
+          ignoredDependencies: ['vite', '@analogjs/vite-plugin-angular', '@nx/vite', 'tslib'],
         },
       ],
     },

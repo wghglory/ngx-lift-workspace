@@ -238,6 +238,47 @@ describe('TooltipDirective', () => {
     expect(trigger.getAttribute('aria-describedby')).toBe('existing-help');
   });
 
+  it('uses dialog relationships for interactive content and restores caller attributes', async () => {
+    const contentRef = createComponent(TooltipContentComponent, {
+      environmentInjector: TestBed.inject(EnvironmentInjector),
+    });
+    const trigger: HTMLElement = directiveElement.nativeElement;
+    trigger.setAttribute('aria-describedby', 'existing-help');
+    trigger.setAttribute('aria-haspopup', 'menu');
+    trigger.setAttribute('aria-expanded', 'false');
+    fixture.componentInstance.content.set(contentRef);
+    fixture.detectChanges();
+    const directive = directiveElement.injector.get(TooltipDirective);
+    directive.showTooltip();
+    await flushEffects();
+    const popup = directive.hostElement;
+    expect(popup?.querySelector('[role="dialog"]')).not.toBeNull();
+    expect(trigger.getAttribute('aria-controls')).toBe(popup?.id);
+    expect(trigger.getAttribute('aria-describedby')).toBe('existing-help');
+    expect(trigger.getAttribute('aria-haspopup')).toBe('dialog');
+    directive.removeTooltip(true);
+    expect(trigger.getAttribute('aria-haspopup')).toBe('menu');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(trigger.hasAttribute('aria-controls')).toBe(false);
+    contentRef.destroy();
+  });
+
+  it('keeps focused help open across mouse leave and scroll, then closes on blur', async () => {
+    const trigger: HTMLElement = directiveElement.nativeElement;
+    trigger.tabIndex = 0;
+    trigger.focus();
+    const directive = directiveElement.injector.get(TooltipDirective);
+    directive.onMouseLeave();
+    await flushEffects();
+    expect(directive.hostElement).toBeDefined();
+    trigger.dispatchEvent(new Event('scroll'));
+    await flushEffects();
+    expect(directive.hostElement).toBeDefined();
+    trigger.blur();
+    await flushEffects();
+    expect(directive.hostElement).toBeUndefined();
+  });
+
   it('hides a viewport-positioned tooltip when a scroll container moves', () => {
     const directive = directiveElement.injector.get(TooltipDirective);
     directive.onMouseEnter();

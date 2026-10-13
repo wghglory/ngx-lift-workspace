@@ -32,6 +32,8 @@ export class TooltipDirective {
   cllTooltip = input('');
   cllTooltipContent = input<string | TemplateRef<unknown> | ComponentRef<unknown> | Type<unknown>>('');
   cllTooltipContentContext = input<Record<string, unknown>>(); // when cllTooltipContent is TemplateRef, context may be needed
+  /** Accessible name used when content is an interactive template/component. */
+  cllTooltipLabel = input('');
   cllTooltipHideDelay = input(0);
   cllTooltipWidth = input(240);
   cllTooltipPosition = input<TooltipPosition>();
@@ -44,7 +46,22 @@ export class TooltipDirective {
   private hideTimer?: ReturnType<typeof setTimeout>;
   private positionTimer?: ReturnType<typeof setTimeout>;
   private readonly tooltipId = `cll-tooltip-${nextTooltipId++}`;
-  private readonly onScroll = () => this.removeTooltip(true);
+  private previousPopup: string | null = null;
+  private previousExpanded: string | null = null;
+  private ownsPopup = false;
+  private suppressRestoredFocus = false;
+  private readonly onScroll = () => {
+    if (this.tooltipComponent && this.hasFocus()) {
+      const position = this.calculateTooltipPosition(this.cllTooltipPosition());
+      this.setTooltipProps(position);
+      this.positionTooltip(position);
+    } else this.removeTooltip(true);
+  };
+
+  private hasFocus(): boolean {
+    const active = this.document.activeElement;
+    return !!active && (this.triggerElement.contains(active) || !!this.hostElement?.contains(active));
+  }
 
   @HostListener('window:resize')
   onResize() {
@@ -52,14 +69,38 @@ export class TooltipDirective {
   }
 
   private removeDescription() {
-    const descriptions = this.triggerElement
-      .getAttribute('aria-describedby')
-      ?.split(/\s+/)
-      .filter((id) => id && id !== this.tooltipId);
-    if (descriptions?.length) {
-      this.triggerElement.setAttribute('aria-describedby', descriptions.join(' '));
-    } else {
-      this.triggerElement.removeAttribute('aria-describedby');
+    for (const attribute of ['aria-describedby', 'aria-controls']) {
+      const values = this.triggerElement
+        .getAttribute(attribute)
+        ?.split(/\s+/)
+        .filter((id) => id && id !== this.tooltipId);
+      if (values?.length) this.triggerElement.setAttribute(attribute, values.join(' '));
+      else this.triggerElement.removeAttribute(attribute);
+    }
+    if (this.ownsPopup) {
+      for (const [attribute, previous] of [
+        ['aria-haspopup', this.previousPopup],
+        ['aria-expanded', this.previousExpanded],
+      ]) {
+        if (previous === null) this.triggerElement.removeAttribute(attribute as string);
+        else this.triggerElement.setAttribute(attribute as string, previous as string);
+      }
+      this.ownsPopup = false;
+    }
+  }
+
+  private updateRelationship() {
+    this.removeDescription();
+    const interactive = typeof this.tooltipContent() !== 'string';
+    const attribute = interactive ? 'aria-controls' : 'aria-describedby';
+    const values = this.triggerElement.getAttribute(attribute)?.split(/\s+/).filter(Boolean) ?? [];
+    this.triggerElement.setAttribute(attribute, [...new Set([...values, this.tooltipId])].join(' '));
+    if (interactive) {
+      this.previousPopup = this.triggerElement.getAttribute('aria-haspopup');
+      this.previousExpanded = this.triggerElement.getAttribute('aria-expanded');
+      this.ownsPopup = true;
+      this.triggerElement.setAttribute('aria-haspopup', 'dialog');
+      this.triggerElement.setAttribute('aria-expanded', 'true');
     }
   }
 
@@ -69,6 +110,7 @@ export class TooltipDirective {
       const content = this.tooltipContent();
       // Capture dependencies even while closed; creation remains controlled by interaction.
       this.cllTooltipContentContext();
+      this.cllTooltipLabel();
       this.cllTooltipWidth();
       const position = this.cllTooltipPosition();
       if (!this.tooltipComponent) {
@@ -102,7 +144,14 @@ export class TooltipDirective {
       ref.instance.releaseContent();
       this.appRef.detachView(ref.hostView);
       ref.location.nativeElement.remove();
-      ref.destroy();
+      this.suppressRestoredFocus = true;
+      try {
+        ref.destroy();
+      } finally {
+        queueMicrotask(() => {
+          this.suppressRestoredFocus = false;
+        });
+      }
     }
   }
 
@@ -127,8 +176,12 @@ export class TooltipDirective {
     return host.querySelector('.tooltip-content') as HTMLSpanElement; // span.tooltip-content
   }
 
-  @HostListener('mouseenter')
   @HostListener('focus')
+  onFocus() {
+    if (!this.suppressRestoredFocus) this.onMouseEnter();
+  }
+
+  @HostListener('mouseenter')
   onMouseEnter() {
     clearTimeout(this.hideTimer);
     this.hideTimer = undefined;
@@ -175,8 +228,6 @@ export class TooltipDirective {
     if (hostElement) {
       hostElement.id = this.tooltipId;
       this.document.body.appendChild(hostElement);
-      const descriptions = this.triggerElement.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
-      this.triggerElement.setAttribute('aria-describedby', [...new Set([...descriptions, this.tooltipId])].join(' '));
       this.document.addEventListener('scroll', this.onScroll, true);
     }
 
@@ -211,7 +262,8 @@ export class TooltipDirective {
         ref &&
         this.tooltipComponent === ref &&
         !ref.instance.tooltipHovering &&
-        !ref.instance.triggerElementHovering()
+        !ref.instance.triggerElementHovering() &&
+        !this.hasFocus()
       ) {
         this.destroyTooltip();
       }
@@ -260,10 +312,12 @@ export class TooltipDirective {
     if (!this.tooltipComponent) {
       return;
     }
+    this.updateRelationship();
     const coords = getTooltipCoords(this.triggerElement, calculatedPosition);
 
     this.tooltipComponent.setInput('content', this.tooltipContent());
     this.tooltipComponent.setInput('contentContext', this.cllTooltipContentContext());
+    this.tooltipComponent.setInput('accessibleLabel', this.cllTooltipLabel());
     this.tooltipComponent.setInput('width', this.cllTooltipWidth());
     this.tooltipComponent.setInput('position', calculatedPosition);
     this.tooltipComponent.setInput('left', coords.x);

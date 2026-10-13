@@ -11,6 +11,7 @@ describe('K8sRetryBackoffComponent', () => {
 
   beforeEach(async () => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     await TestBed.configureTestingModule({
       providers: [provideRouter([]), provideNoopAnimations()],
       imports: [K8sRetryBackoffComponent],
@@ -22,6 +23,7 @@ describe('K8sRetryBackoffComponent', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -88,7 +90,7 @@ describe('K8sRetryBackoffComponent', () => {
   });
   it.each([
     ['body', 1500],
-    ['fallback', 1000],
+    ['fallback', 500],
   ] as const)('retries the %s scenario after its actual configured delay', async (scenario, delay) => {
     component.selectedScenario.set(scenario);
     component.executeSimulation();

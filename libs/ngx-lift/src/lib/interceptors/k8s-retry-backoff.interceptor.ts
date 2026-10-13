@@ -1,4 +1,6 @@
 import {HttpContextToken, HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
+import {inject, InjectionToken, makeEnvironmentProviders} from '@angular/core';
+import {defer} from 'rxjs';
 
 import {K8sBackoffRetryConfig, retryOnK8sBackoff} from '../operators/k8s-retry-backoff.operator';
 
@@ -23,30 +25,53 @@ import {K8sBackoffRetryConfig, retryOnK8sBackoff} from '../operators/k8s-retry-b
  */
 export const K8S_RETRY_BACKOFF_CONFIG = new HttpContextToken<K8sBackoffRetryConfig | false | null>(() => null);
 
+/** Global defaults for Kubernetes retry. Override with provideK8sRetryBackoffConfig. */
+export const K8S_RETRY_BACKOFF_DEFAULTS = new InjectionToken<K8sBackoffRetryConfig>('K8S_RETRY_BACKOFF_DEFAULTS', {
+  providedIn: 'root',
+  factory: () => ({}),
+});
+
+/** Configure application-wide defaults without replacing the interceptor. */
+export function provideK8sRetryBackoffConfig(config: K8sBackoffRetryConfig) {
+  return makeEnvironmentProviders([{provide: K8S_RETRY_BACKOFF_DEFAULTS, useValue: {...config}}]);
+}
+
+const DEFAULT_RETRY_METHODS = ['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'] as const;
+
 /**
  * Functional HTTP interceptor that automatically retries Kubernetes HTTP 429 responses
- * with backoff (respecting `Retry-After` header and `details.retryAfterSeconds`).
+ * with exponential backoff and jitter (respecting `Retry-After` header and `details.retryAfterSeconds`).
  *
- * Register globally via Angular's `provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor]))`.
+ * Register before authentication interceptors in `withInterceptors([...])` so that each retry attempt
+ * rebuilds the downstream chain with fresh headers and tokens.
  *
- * @example
- * ```typescript
- * // In app.config.ts
- * export const appConfig: ApplicationConfig = {
- *   providers: [
- *     provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])),
- *   ],
- * };
- * ```
+ * POST/PATCH require an explicit method allowlist and an endpoint idempotency guarantee.
+ * A Kubernetes Status body alone does not prove a write was rejected before execution.
+ *
+ * Generated log labels omit query strings and fragments. Custom labels and logger error data
+ * remain the caller's responsibility to redact.
  */
-export const k8sRetryBackoffInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-  const contextConfig = req.context.get(K8S_RETRY_BACKOFF_CONFIG);
-  if (contextConfig === false) {
-    return next(req);
-  }
+export const k8sRetryBackoffInterceptor: HttpInterceptorFn = (req, next) =>
+  interceptWithBackoff(req, next, inject(K8S_RETRY_BACKOFF_DEFAULTS));
 
-  return next(req).pipe(retryOnK8sBackoff(contextConfig ?? undefined));
-};
+function interceptWithBackoff(req: HttpRequest<unknown>, next: HttpHandlerFn, defaults?: K8sBackoffRetryConfig) {
+  const override = req.context.get(K8S_RETRY_BACKOFF_CONFIG);
+  if (override === false) return next(req);
+  const config = {...defaults, ...override};
+  const method = req.method.toUpperCase();
+  const methods = config.retryMethods ?? DEFAULT_RETRY_METHODS;
+  if (!methods.some((m) => m.toUpperCase() === method)) return next(req);
+
+  // Path only: query strings may carry tokens, pre-signed parameters, or user identifiers.
+  const label = config.label ?? `${method} ${req.url.split(/[?#]/)[0]}`;
+
+  return defer(() => next(req)).pipe(
+    retryOnK8sBackoff({
+      ...config,
+      label,
+    }),
+  );
+}
 
 /**
  * Factory function to create a configured `HttpInterceptorFn` with custom default backoff settings.
@@ -69,13 +94,5 @@ export const k8sRetryBackoffInterceptor: HttpInterceptorFn = (req: HttpRequest<u
  * ```
  */
 export function createK8sRetryBackoffInterceptor(defaultConfig?: K8sBackoffRetryConfig): HttpInterceptorFn {
-  return (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-    const contextConfig = req.context.get(K8S_RETRY_BACKOFF_CONFIG);
-    if (contextConfig === false) {
-      return next(req);
-    }
-
-    const effectiveConfig = contextConfig !== null ? {...defaultConfig, ...contextConfig} : defaultConfig;
-    return next(req).pipe(retryOnK8sBackoff(effectiveConfig));
-  };
+  return (req, next) => interceptWithBackoff(req, next, defaultConfig);
 }

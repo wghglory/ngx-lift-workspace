@@ -235,4 +235,5 @@ export const deTranslations: Record<string, string> = {
     'HttpContextToken zur Konfiguration oder Deaktivierung der Wiederholung für einzelne Anfragen.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'Standardkonfiguration für alle Anfragen, sofern nicht via HttpContext überschrieben.',
+  'header.partialLanguage': 'Teilweise Übersetzung; fehlende Texte werden auf Englisch angezeigt.',
 };

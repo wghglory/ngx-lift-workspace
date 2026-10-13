@@ -162,4 +162,5 @@ export const nlTranslations: Record<string, string> = {
     'HttpContextToken om retry-gedrag per verzoek aan te passen of uit te schakelen.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'Standaardconfiguratie toegepast op alle verzoeken tenzij overschreven via HttpContext.',
+  'header.partialLanguage': 'Gedeeltelijke vertaling; ontbrekende tekst wordt in het Engels getoond.',
 };

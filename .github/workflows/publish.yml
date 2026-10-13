@@ -1,5 +1,8 @@
 name: Publish Libraries
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
@@ -32,7 +35,10 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
   publish:
+    needs: quality
     name: Publish
     runs-on: ubuntu-latest
     permissions:

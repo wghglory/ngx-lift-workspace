@@ -179,8 +179,9 @@ export class ToSignalFormComponent {
   );
 
   // 6. Asynchronous Submission using resourceAsync:
-  // MUST use { lazy: true, behavior: 'exhaust' } for form submissions:
-  // - lazy: true: prevents firing on component init or on every keystroke
+  // MUST use { lazy: true, reactive: false, behavior: 'exhaust' } for form submissions:
+  // - lazy: true: prevents execution on initialization
+  // - reactive: false: prevents resubmitting when form fields change
   // - behavior: 'exhaust': ignores accidental double-clicks during in-flight network requests
   // - Reads this.sf.submitValue() directly inside the fetch function
   readonly createClusterRef = resourceAsync<{id: string; status: string; payload: unknown} | null>(
@@ -192,7 +193,7 @@ export class ToSignalFormComponent {
         payload,
       }).pipe(delay(1000));
     },
-    {lazy: true, behavior: 'exhaust'},
+    {lazy: true, reactive: false, behavior: 'exhaust'},
   );
 
   // Dynamic Control Presence signals (uses strongly typed dot notation on sf.fields)
@@ -446,13 +447,13 @@ readonly sf = toSignalForm(this.form, {
   omit: ['confirmPassword'],
 });
 
-// 2. Asynchronous submission via resourceAsync with { lazy: true, behavior: 'exhaust' }:
+// 2. Asynchronous submission via resourceAsync with { lazy: true, reactive: false, behavior: 'exhaust' }:
 // - lazy: true prevents premature execution on component load or typing
 // - behavior: 'exhaust' drops duplicate clicks during in-flight submission
 // - sf.submitValue() provides the sanitized, backend-ready object directly to the API
 readonly createClusterRef = resourceAsync(
   () => this.api.createCluster(this.sf.submitValue()),
-  { lazy: true, behavior: 'exhaust' }
+  { lazy: true, reactive: false, behavior: 'exhaust' }
 );
 
 // 3. Trigger simulated submission on button click:

@@ -144,3 +144,8 @@ code:not([class^='language-']) {
     }
   }
 }
+
+// Global utility used by the spinner class-forwarding example.
+.demo-spinner-space {
+  margin-inline: 1rem;
+}

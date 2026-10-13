@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {differenceInDays} from 'ngx-lift';
-import {md, pki} from 'node-forge';
+import forge from 'node-forge';
 
 /**
  * pem example:
@@ -45,10 +45,10 @@ export class CertificateService {
   getCertificateHashes(pem: string, pemEncoded = true) {
     const decodedPem = pemEncoded ? atob(pem) : pem;
 
-    const md5 = md.md5.create();
-    const sha1 = md.sha1.create();
+    const md5 = forge.md.md5.create();
+    const sha1 = forge.md.sha1.create();
 
-    const csrBytes = pki.pemToDer(decodedPem).getBytes();
+    const csrBytes = forge.pki.pemToDer(decodedPem).getBytes();
 
     md5.update(csrBytes, 'raw');
     sha1.update(csrBytes, 'raw');
@@ -68,7 +68,7 @@ export class CertificateService {
    */
   getCertificateFromPem(pem: string, pemEncoded = true) {
     const decodedPem = pemEncoded ? atob(pem) : pem;
-    return pki.certificateFromPem(decodedPem);
+    return forge.pki.certificateFromPem(decodedPem);
   }
 
   /**

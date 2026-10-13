@@ -160,4 +160,5 @@ export const jaTranslations: Record<string, string> = {
     'リクエスト単位でリトライ設定を上書きまたは無効化するための HttpContextToken。',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'HttpContext で上書きされない限りすべてのリクエストに適用されるデフォルト設定。',
+  'header.partialLanguage': '一部のみ翻訳されています。未翻訳の文章は英語で表示されます。',
 };

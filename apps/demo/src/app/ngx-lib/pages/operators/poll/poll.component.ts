@@ -1,6 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
 import {
   AlertComponent,
@@ -47,6 +48,11 @@ interface SignalPollData {
 })
 export class PollComponent implements OnInit {
   selectedItems: User[] = [];
+  private readonly destroyRef = inject(DestroyRef);
+  private refreshTimers: ReturnType<typeof setTimeout>[] = [];
+  constructor() {
+    this.destroyRef.onDestroy(() => this.refreshTimers.forEach(clearTimeout));
+  }
 
   userService = inject(UserService);
   private translationService = inject(TranslationService);
@@ -170,8 +176,11 @@ export class PollComponent implements OnInit {
 
   triggerRapidRefreshes() {
     this.signalFilter.set('active');
-    setTimeout(() => this.signalFilter.set('inactive'), 80);
-    setTimeout(() => this.signalFilter.set('all'), 200);
+    this.refreshTimers.forEach(clearTimeout);
+    this.refreshTimers = [
+      setTimeout(() => this.signalFilter.set('inactive'), 80),
+      setTimeout(() => this.signalFilter.set('all'), 200),
+    ];
   }
 
   total$ = this.usersState$.pipe(
@@ -384,6 +393,7 @@ export class PollComponent {
             pollingFn: () => of(Math.random() * 10).pipe(delay(300)),
           }).pipe(takeWhile((state) => state.data === null || state.data <= 8, true));
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(console.log);
   }

@@ -52,11 +52,11 @@ export class ByteConverterPipe implements PipeTransform {
   //   this.locale = navigator.language || 'en';
   // }
 
-  transform(value: number): string;
-  transform(value?: number): string | null;
-  transform(value?: number | null): string | null;
-  transform(value?: null | number | undefined): string | null {
-    if (value === null || value === undefined || isNaN(value)) {
+  transform(value: number, locale?: string): string;
+  transform(value?: number, locale?: string): string | null;
+  transform(value?: number | null, locale?: string): string | null;
+  transform(value?: null | number | undefined, locale = this.locale): string | null {
+    if (value === null || value === undefined || !Number.isFinite(value)) {
       return null;
     }
 
@@ -68,15 +68,21 @@ export class ByteConverterPipe implements PipeTransform {
       unitIndex++;
     }
 
-    const language = this.locale.split('-')[0];
-    const translationObject = translations[this.locale] || translations[language] || translations['en'];
+    try {
+      locale = Intl.getCanonicalLocales(locale)[0] ?? 'en';
+    } catch {
+      locale = 'en';
+    }
+    const language = locale.split('-')[0];
+    const chinese = language === 'zh' ? (/-Hant|-TW|-HK|-MO/.test(locale) ? 'zh-TW' : 'zh-CN') : locale;
+    const translationObject = translations[chinese] || translations[language] || translations['en'];
     const key = units[unitIndex];
 
-    return this.formatNumber(value) + ' ' + translationObject[key];
+    return this.formatNumber(value, locale) + ' ' + translationObject[key];
   }
 
-  private formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.locale, {
+  private formatNumber(value: number, locale: string): string {
+    return new Intl.NumberFormat(locale, {
       maximumFractionDigits: 2,
     }).format(value);
   }

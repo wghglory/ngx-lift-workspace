@@ -9,7 +9,7 @@
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'spinner.example1' | translate }}</h3>
       <p>{{ 'spinner.example1Desc' | translate }}</p>
-      <cll-spinner />
+      <cll-spinner [decorative]="false" [label]="'spinner.loading' | translate" />
       <app-code-block [code]="defaultCode" lang="html" />
     </article>
 
@@ -52,7 +52,7 @@
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'spinner.example4' | translate }}</h3>
       <p>{{ 'spinner.example4Desc' | translate }}</p>
-      <cll-spinner [center]="false" [class]="'mx-10'" />
+      <cll-spinner [center]="false" [class]="'demo-spinner-space'" />
       <app-code-block [code]="customClassCode" lang="html" />
     </article>
 

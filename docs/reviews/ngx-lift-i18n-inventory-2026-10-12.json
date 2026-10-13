@@ -1,0 +1,3223 @@
+{
+  "date": "2026-10-12",
+  "timezone": "Asia/Shanghai",
+  "baselineSha": "f8cb5b558b05d9673b3e584e3b62d5a803497fa2",
+  "method": "Static dictionaries transpiled with TypeScript; compare English keys; literal translate and HTML text regex. Dynamic expressions and all attributes are not exhaustively covered. Candidate literals require human review.",
+  "englishKeys": 1398,
+  "languages": {
+    "de": {
+      "count": 188,
+      "missingCount": 1210,
+      "keyPresencePercent": 13.4,
+      "placeholderMismatch": []
+    },
+    "en": {
+      "count": 1398,
+      "missingCount": 0,
+      "keyPresencePercent": 100,
+      "placeholderMismatch": []
+    },
+    "es": {
+      "count": 130,
+      "missingCount": 1268,
+      "keyPresencePercent": 9.3,
+      "placeholderMismatch": []
+    },
+    "fr": {
+      "count": 130,
+      "missingCount": 1268,
+      "keyPresencePercent": 9.3,
+      "placeholderMismatch": []
+    },
+    "ja": {
+      "count": 130,
+      "missingCount": 1268,
+      "keyPresencePercent": 9.3,
+      "placeholderMismatch": []
+    },
+    "ko": {
+      "count": 130,
+      "missingCount": 1268,
+      "keyPresencePercent": 9.3,
+      "placeholderMismatch": []
+    },
+    "nl": {
+      "count": 130,
+      "missingCount": 1268,
+      "keyPresencePercent": 9.3,
+      "placeholderMismatch": []
+    },
+    "pt-br": {
+      "count": 130,
+      "missingCount": 1268,
+      "keyPresencePercent": 9.3,
+      "placeholderMismatch": []
+    },
+    "ru": {
+      "count": 178,
+      "missingCount": 1220,
+      "keyPresencePercent": 12.7,
+      "placeholderMismatch": []
+    },
+    "zh-cn": {
+      "count": 1398,
+      "missingCount": 0,
+      "keyPresencePercent": 100,
+      "placeholderMismatch": []
+    },
+    "zh-tw": {
+      "count": 778,
+      "missingCount": 620,
+      "keyPresencePercent": 55.7,
+      "placeholderMismatch": []
+    }
+  },
+  "missingUsedKeys": [
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/status-indicator-demo/status-indicator-demo.component.ts",
+      "line": 23,
+      "key": "statusIndicator.inputIconStatus"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/status-indicator-demo/status-indicator-demo.component.ts",
+      "line": 29,
+      "key": "statusIndicator.inputIconSize"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/status-indicator-demo/status-indicator-demo.component.ts",
+      "line": 34,
+      "key": "statusIndicator.inputTooltip"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/status-indicator-demo/status-indicator-demo.component.ts",
+      "line": 40,
+      "key": "statusIndicator.inputTooltipPosition"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/tooltip-demo/tooltip-demo.component.html",
+      "line": 81,
+      "key": "tooltip.componentTypeExample"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/switch-map-with-async-state/switch-map-with-async-state.component.html",
+      "line": 33,
+      "key": "common.save"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component.ts",
+      "line": 62,
+      "key": "idleDetection.configIdleDuration"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component.ts",
+      "line": 67,
+      "key": "idleDetection.configTimeoutDuration"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/if-validator/if-validator.component.html",
+      "line": 60,
+      "key": "common.submit"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 58,
+      "key": "common.submit"
+    }
+  ],
+  "libraryLanguages": [
+    {
+      "file": "libs/clr-lift/src/lib/components/alerts/alert.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/certificate-signpost/certificate.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "pt", "pt-BR", "zh-CN", "zh-TW", "nl", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "nl": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/file-reader/file-reader.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "pt", "pt-BR", "zh-CN", "zh-TW", "nl", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "nl": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/idle-detection/idle-detection.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/key-value-inputs/key-value.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/status-indicator/status-indicator.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/theme-toggle/theme-toggle.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/timeline-wizard/timeline-wizard.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/toast/toast.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "pt", "pt-BR", "zh-CN", "zh-TW", "nl", "ru"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": [],
+        "nl": [],
+        "ru": []
+      }
+    },
+    {
+      "file": "libs/clr-lift/src/lib/components/tooltip/tooltip.l10n.ts",
+      "languages": ["en", "en-US", "de", "es", "fr", "it", "ja", "ko", "nl", "pt", "pt-BR", "zh-CN", "zh-TW"],
+      "missingByLanguage": {
+        "en": [],
+        "en-US": [],
+        "de": [],
+        "es": [],
+        "fr": [],
+        "it": [],
+        "ja": [],
+        "ko": [],
+        "nl": [],
+        "pt": [],
+        "pt-BR": [],
+        "zh-CN": [],
+        "zh-TW": []
+      }
+    }
+  ],
+  "missingByKey": {
+    "home.ngxLift.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.subtitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.supportMatrix": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.thVersion": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.thNgVersion": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.utilityTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.utilityDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.rxjsTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.rxjsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.signalTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.ngxLift.signalDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.subtitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.supportMatrix": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.thVersion": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.thNgVersion": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.utilitiesTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.utilitiesDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.rxjsTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.rxjsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.componentsTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.componentsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.tipPeer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.tipSkipLib": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "home.clrLift.tipIcon": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "rockStar.todayIs": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rockStar.whoIsStar": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rockStar.unveil": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.type": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.default": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.methods": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.selector": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.behaviors": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.behavior": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.features": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.properties": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.validationErrors": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.usageNotes": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.liveDemo": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.required": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.refresh": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.firstName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.lastName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.email": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.gender": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.male": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.female": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.name": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.noDataFound": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.noItems": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.paginationOf": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "common.seeUiBehavior": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "filterUsers.selectGender": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.file": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.readSuccess": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.submitAndLog": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.caBundle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.showCertificate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.exceedLimit": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.addStandard": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.addInlineBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.addAction": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.clearAll": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.successBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.infoBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.errorBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.warningBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.startSimulation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.stopSimulation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.simActive": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.sessionStatus": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.totalTimeouts": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.yes": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.no": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.userN": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.reload": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regUsernamePlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regUsernameError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regEmailPlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regEmailError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regPasswordPlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regPasswordError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.loadingTodo": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.loadTodo": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.saving": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.resetFromServer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.loadUserCacheFirst": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.fromCache": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.updating": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.loadCounter": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.unsavedChanges": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.saveToServer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.discardChanges": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mergeFrom.paramSources": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "mergeFrom.paramOperator": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "mergeFrom.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "mergeFrom.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toSignalForm.regionUSWest": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.regionApEast": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.regionEuCentral": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.enginePostgres": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.engineMysql": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.engineSqlServer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.haTopology": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.haCrossAz": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.haDedicated": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.haRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.haHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.replicaCount": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.replicaRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.replicaMin": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.replicaMax": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.replicaHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.version": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.versionSelect": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.versionRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.versionHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterNamePlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterNameRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterNameMinLength": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterNameHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterNameChecking": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.autoScaling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.autoScalingHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.storageGb": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.storageGbRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.storageGbMin": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.storageGbHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.storageLocked": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.storageManual": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.authMode": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.authSql": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.authWindows": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.authModeRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.authModeHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.password": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.passwordPlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.passwordRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.passwordMinLength": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.confirmPassword": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.confirmPasswordPlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.confirmPasswordRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.passwordMismatch": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.confirmPasswordHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.tlsCert": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.certManaged": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.certCustom": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.certRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.certHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.tlsChain": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.tlsChainPlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.tlsChainRequired": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.tlsChainMinLength": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.tlsChainHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.createCluster": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.resetForm": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.submitting": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.successTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.simulatedResponse": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.diagnosticsTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.clusterNameState": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.value": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.debounced": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.valid": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.touched": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.errors": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.sqlCredState": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.authModeLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.controlsAttached": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.passwordValid": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.passwordErrors": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.confirmValid": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.confirmErrors": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.sanitizedPayload": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toSignalForm.sanitizedDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example6": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example6Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example7": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example7Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorSwitch": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorSwitchDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorMerge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorMergeDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorConcat": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorConcatDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorExhaust": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.behaviorExhaustDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example8": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example8Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example9": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example9Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.refresh": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.learnTrigger": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example10": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example10Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.loadUsers": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example11": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example11Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.onErrorCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example12": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example12Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.throwOnErrorCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example13": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example13Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabResilienceBefore": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabResilienceAfter": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabActiveDirectory": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabBackupLocations": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabCertificates": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabSimulateAborted": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.tabNotice": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example14": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.example14Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "computedAsync.paramComputation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.propInitialValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.propRequireSync": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.propBehavior": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.propOnError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.propThrowOnError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "computedAsync.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineFrom.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "combineFrom.paramSources": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineFrom.paramOperator": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineFrom.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineFrom.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.basicSection": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.intermediateSection": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.whenToUseSection": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.advancedSection": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedSection": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.loadUsers": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.notLoadedIdle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example3Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.triggerFallback": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.showingFallback": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.errorPropagation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regUsername": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regEmail": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regPassword": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.regSubmit": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example6": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example6Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example7": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example7Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.example8": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.example8Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.declarativeTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.quickSwitchDemo": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.activeSearchLogs": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.optimisticTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.optimisticDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.cacheFirstTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.cacheFirstDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.formDraftTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.formDraftDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedProjects": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedLoadingItems": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedRefreshing": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedThName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedThStatus": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedThOrg": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedThActions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedLoadOrg": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedRetry": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedRefreshItems": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.nestedLoadAllOrgs": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.comparisonTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.comparisonIntro": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.cardResourceAsyncTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.cardQueryResourceTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.scope": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.cache": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.mutations": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.freshness": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.polling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.invalidation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.bestFor": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.resourceAsyncScopeDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.resourceAsyncCacheDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.resourceAsyncMutationsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.resourceAsyncBestForDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.queryResourceScopeDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.queryResourceCacheDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.queryResourceFreshnessDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.queryResourcePollingDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.queryResourceInvalidationDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.queryResourceBestForDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.thFeature": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowPrimaryLayer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowPrimaryLayerResource": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowPrimaryLayerQuery": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowSharedMemory": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeNoneComponent": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeGlobalKey": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowDeduplication": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgePerInstance": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeClientCoalesced": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowStaleWhileRevalidate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeManualPreserve": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeAutoStale": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowBackgroundPolling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeNoneBuiltIn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeCoordinatedVisibility": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rowTagInvalidation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeManualReload": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeAutoMutate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo1Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo1SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo1PlaygroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo1PlaygroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeDeduplication": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.actualHttpCalls": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.reloadQuery": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.widgetATitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.widgetASubtitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.widgetBTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.widgetBSubtitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.activeUsers": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.cpuLoad": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.memoryUsage": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.status": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.updated": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo2Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo2SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.configuredStaleTime": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.freshnessBadgeFresh": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.freshnessBadgeStale": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.networkCalls": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.triggerReadReload": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.revalidatingAlert": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.clusterNodes": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.healthyNodes": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.region": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.snapshotTime": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo3Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo3SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo3PlaygroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo3PlaygroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgePolling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.startPolling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.stopPolling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.totalPollCycles": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.ping": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.lastPulse": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.pollingIdleMsg": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo4Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo4SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo4PlaygroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.demo4PlaygroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.badgeMutations": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.addTeamMember": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.nameLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.namePlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.roleLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.rolePlatformEngineer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.roleSre": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.roleProductDesigner": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.addMemberBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.savingBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.activeMembersTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.thId": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.thName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.thRole": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "queryResource.apiReference": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.featuresTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.featuresIntro": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardTagInvalidationTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardTagInvalidationDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardConcurrencyTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardConcurrencyDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardSignalsTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardSignalsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardPromiseTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.cardPromiseDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo1Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo1SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo1PlaygroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo1PlaygroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.badgeInvalidation": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.addTeamMember": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.nameLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.namePlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.roleLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.rolePlatformEngineer": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.roleSre": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.roleProductDesigner": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.addMemberBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.savingBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.activeMembersTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.thId": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.thName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.thRole": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo2Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo2SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo2PlaygroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo2PlaygroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.badgeConcurrency": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.modeLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.modeExhaust": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.modeConcat": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.modeParallel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.triggerMutationBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.totalClicks": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.actualExecutions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.inFlight": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.recentLogs": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.clearLogs": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.noLogsYet": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo3Section": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo3SectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo3PlaygroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.demo3PlaygroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.badgeError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.simulateErrorLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.saveSettingsBtn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.statusLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.isLoadingLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.errorSuccessMsg": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "mutateResource.apiReference": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "injectParams.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example4Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example5Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example6Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.example6Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "injectParams.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "injectParams.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.paramKeyOrTransform": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.usagePatterns": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.pattern1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.pattern2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.pattern3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectParams.pattern4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "injectQueryParams.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "injectQueryParams.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.paramKeyOrTransform": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example5Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example6Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "injectQueryParams.example6Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createTrigger.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "createTrigger.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "createTrigger.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createTrigger.propValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createTrigger.propNext": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createTrigger.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createTrigger.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "createTrigger.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "createTrigger.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "createTrigger.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "createTrigger.btnSeeConsole": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createTrigger.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example1Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example2Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.example3Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.demoUserManagement": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.demoBodyContent": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.demoClusterSettings": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.demoConfigured": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.demoAuditLog": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.demoLogStream": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "pageContainer.inputTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.inputCustomClass": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pageContainer.contentProjectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example1Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example2Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example3Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example4Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example5Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example6": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example6Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.example6Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "alert.inputAlertType": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.inputIsAppLevel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.inputIsSmall": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.inputIsLightweight": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.inputError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.inputContent": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentProjectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.projectionNotice": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.errUndefined": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.errObject": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.serverDown": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentSuccess": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentInfo": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentWarning": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentDanger": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentHtml": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentSmall": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentNeutral": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentLoading": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentUnknown": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentAppLevel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.contentAppProjection": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "alert.btnView": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example1Note": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example2Theme": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example2Docs": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example3Tip": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example3DescText": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example3LabelDeployment": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.example3LabelValidated": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.example1Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.currentTheme": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.inspectorTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.inspectorDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.example2Badge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.setLight": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.setDark": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "themeToggle.serviceSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "spinner.large": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.medium": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.small": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.centered": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.leftAligned": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.loading": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "tooltip.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.basic1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.basic2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.empty": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.templateHover": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.templateText": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.templateCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.contextCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "tooltip.componentRefHover": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "toast.serviceSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.guidelinesTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.doTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.do1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.do2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.do3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.do4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.dontTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.dont1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.dont2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.dont3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.dont4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.dont5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.optionsTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "toast.containerSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "multiAlerts.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "multiAlerts.serviceSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "multiAlerts.alertTypeTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "multiAlerts.containerSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "fileReader.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "fileReader.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "fileReader.feature1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "fileReader.feature2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "fileReader.feature3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "fileReader.feature4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "fileReader.feature5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "keyValueInputs.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "keyValueInputs.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "keyValueInputs.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "keyValueInputs.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "keyValueInputs.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "keyValueInputs.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "keyValueInputs.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "keyValueInputs.formOutput": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "keyValueInputs.keyHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "keyValueInputs.valueHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "keyValueInputs.addText": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "keyValueInputs.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "statusIndicator.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "statusIndicator.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "statusIndicator.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "statusIndicator.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "statusIndicator.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "statusIndicator.types": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.iconSizeTshirt": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.iconSizeNumber": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.statusError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.statusSuccess": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.statusWarning": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.statusUnknown": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.statusInactive": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.statusPending": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.tooltipError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.tooltipSuccess": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.tooltipWarning": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.tooltipUnknown": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.tooltipInactive": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.tooltipPending": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "statusIndicator.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "certificate.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "certificate.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "certificate.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "certificate.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "certificate.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.utilOverview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilOverviewDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilPhaseCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilPhase1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilPhase2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample5Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilExample5ParamDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.utilDialogPreview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "idleDetection.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.inputIdleDuration": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.inputTimeoutDuration": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.outputTimeout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.serviceSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.methodSetConfig": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.methodStartWatching": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.methodClearTimers": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.methodOnIdleEnd": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.methodOnTimeoutEnd": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "idleDetection.methodOnCountDown": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "datagridUtil.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "datagridUtil.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "datagridUtil.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "datagridUtil.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.paramState": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.propPage": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.propPageSize": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.propSortAsc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.propSortDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.propFilter": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dgState.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example1DataDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.calloutPrefix": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.calloutSuffix": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.apiDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.paramDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.behavior1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.behavior2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.behavior3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "dgState.behavior4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.example4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.example4Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.example5": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.example5Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.componentSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.baseSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.stepSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.serviceSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "timelineWizard.playgroundTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.playgroundDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.playgroundBadge": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.requiredInfo": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.configureOperator": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.configureService": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.configureRuntimeProperties": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.name": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.namespace": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.cpu": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.replicas": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "timelineWizard.url": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "poll.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example2Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example4AltDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.btnStartPolling": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example5Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example5SignalTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example5SignalDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.btnRapidFilters": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example6Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.example6Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.searchByFirstName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.apiDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.paramPollingFn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.paramInterval": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.paramForceRefresh": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.paramParamsBuilder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.paramInitialValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.paramDelay": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "poll.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.interfaceStructure": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example3Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example5Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.example5Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.paramObserver": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.paramInitialValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.stateStatus": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.stateIsLoading": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.stateError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "createAsyncState.stateData": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "resourceAsync.paramSourceFn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propInitialValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propLazy": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propBehavior": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propOnError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propThrowOnError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propOnSuccess": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.propOnLoading": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "resourceAsync.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.inputSize": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.inputCenter": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.inputInline": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "spinner.inputCustomClass": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.contentProjectionDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.responsiveTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.responsiveDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.themingTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "callout.themingDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.pemNote": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.clickIcon": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.clickCert": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.inputPem": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.inputPemEncoded": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.inputPosition": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "certificate.inputShowIcon": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.thDescription": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.thExpression": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.thResult": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.paramObj": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isPromise.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.paramValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEmpty.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.paramValue1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.paramValue2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isEqual.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.paramDateLeft": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.paramDateRight": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "differenceInDays.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.paramObject": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.paramPredicate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "pickBy.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "omitBy.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "omitBy.paramObject": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "omitBy.paramPredicate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "omitBy.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.example1Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.example2Callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.isIPSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.isFQDNSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.isURLSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "url.isHttpsSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.example1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.example2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.example3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.urlLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.urlHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.urlError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.httpsLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.httpsHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.httpsError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.summary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.httpsSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.returns": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "urlValidator.httpsReturns": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.btnTrigger": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.btnClearLog": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.fetchingData": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.loadedPayload": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.paramCallback": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "startWithTap.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.paramProject": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "switchMapWithAsyncState.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.paramSources": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.paramStartWithAll": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "combineLatestEager.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.paramCallback": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.paramComparator": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "distinctOnChange.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.paramMethod": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "logger.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.callout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.btnFetchPods": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.fetchingPages": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.pagesFetched": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.aggregationComplete": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.totalResources": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.thPodName": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.thNamespace": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.thStatus": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.thPodIp": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.aggregateSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.fetchSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.paramHttp": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.paramEndpoint": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "kubernetesPagination.paramInitialParams": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.question": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.optLike": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.optUnlike": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.emailHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.invalidEmail": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.reasonLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.autoRevalidationTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.autoRevalidationDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.paramCondition": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.paramTrueValidatorFn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifValidator.paramFalseValidatorFn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifAsyncValidator.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifAsyncValidator.paramCondition": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "ifAsyncValidator.paramAsyncValidatorFn": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.includedNamespaces": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.excludedNamespaces": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.overlapError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.overlapAlert": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.paramArray1Key": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "intersectionValidator.paramArray2Key": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.calloutSameValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.controlLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.controlHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.duplicated": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.keyCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.keyPlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.keyHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.valuePlaceholder": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.valueHelper": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.usageNotes": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.usageNotesDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "uniqueValidator.paramKey": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.expiresRawLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.minDateError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.futureDaysLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.invalidDate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.maxDateError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.clarityMax": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.clarityMin": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.minMaxCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.dateTimeExpires": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.dateTimeMinError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.dateTimeMaxError": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.validationErrors": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.errInvalidDate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.errMinDate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.errMaxDate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.optMinDate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.optMaxDate": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.optMinInclusive": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "dateRangeValidator.optMaxInclusive": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.callout1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.callout2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.callout3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.callout4": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.cpuLabel": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.cpuOption": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "rangePipe.paramValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.paramValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "isHttpsPipe.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.paramValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.paramSeparator": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "arrayJoinPipe.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example4Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.example4Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.maskingConditions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.conditionsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.cond1": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.cond2": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.cond3": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.condFallback": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.paramValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.paramOptions": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.optUnmaskedPrefixLength": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.optUnmaskedSuffixLength": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.optMaskChar": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "maskPipe.optEnabled": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.overview": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.example1Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.example1Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.example2Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.example2Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.example3Title": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.example3Desc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.languageSupport": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.languageSupportDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.i18nCallout": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.apiSummary": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.paramValue": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "byteConverterPipe.returnsDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.transformDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.inputTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.outputTitle": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "datagridUtil.usageDesc": ["de", "es", "fr", "ja", "ko", "nl", "pt-br", "ru", "zh-tw"],
+    "common.inputs": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "common.outputs": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "common.contentProjection": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "inspector.hideJson": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pageTitle": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.bannerTitle": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.bannerDesc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.quickTitle": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.quickBadge": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.quickDesc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.username": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.usernamePlaceholder": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.usernameRequired": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.usernameMinLength": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.email": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.emailPlaceholder": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.emailRequired": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.emailInvalid": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.receiveUpdates": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.saveProfile": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.reset": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.quickFormState": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.quickFormStateDesc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.enterpriseTitle": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.enterpriseBadge": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.enterpriseDesc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.enterpriseState": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.enterpriseStateDesc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.region": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.regionSelect": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.regionRequired": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.regionHelper": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.multiZoneSupported": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.singleZoneOnly": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.engine": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.engineRequired": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.engineHelper": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.patternsTitle": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern1Title": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern1Desc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern2Title": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern2Desc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern3Title": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern3Desc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern4Title": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern4Desc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern5Title": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "toSignalForm.pattern5Desc": ["es", "fr", "ja", "ko", "nl", "pt-br"],
+    "callout.title": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.overview": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.example1": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.example1Desc": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.example2": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.example2Desc": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.example3": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "callout.example3Desc": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "themeToggle.title": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"],
+    "themeToggle.overview": ["es", "fr", "ja", "ko", "nl", "pt-br", "ru"]
+  },
+  "literalHtmlCandidates": [
+    {
+      "file": "apps/demo/src/app/app.component.html",
+      "line": 4,
+      "text": "Angular Lift"
+    },
+    {
+      "file": "apps/demo/src/app/app.component.html",
+      "line": 8,
+      "text": "ngx-lift"
+    },
+    {
+      "file": "apps/demo/src/app/app.component.html",
+      "line": 11,
+      "text": "clr-lift"
+    },
+    {
+      "file": "apps/demo/src/app/app.component.html",
+      "line": 40,
+      "text": "MIT License"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/alert-demo/alert-demo.component.html",
+      "line": 138,
+      "text": "AlertComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/alert-demo/alert-demo.component.html",
+      "line": 138,
+      "text": "cll-alert"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/callout-demo/callout-demo.component.html",
+      "line": 67,
+      "text": "CalloutComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/callout-demo/callout-demo.component.html",
+      "line": 67,
+      "text": "cll-callout"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/callout-demo/callout-demo.component.html",
+      "line": 71,
+      "text": "cll-callout"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/certificate-demo/certificate-demo.component.html",
+      "line": 39,
+      "text": "CertificateSignpostComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/certificate-demo/certificate-demo.component.html",
+      "line": 39,
+      "text": "cll-certificate-signpost"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component.html",
+      "line": 37,
+      "text": "convertToHttpParams"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-datagrid-util/clr-datagrid-util.component.html",
+      "line": 49,
+      "text": "PageQuery Interface"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 19,
+      "text": "v1.x"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 20,
+      "text": "Angular 17+"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 23,
+      "text": "v19.x"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 24,
+      "text": "Angular 19, 20"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 27,
+      "text": "v21.x"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 28,
+      "text": "Angular 21+"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 67,
+      "text": "For guidance on setting up Clarity Design System in your project, refer to the"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/clr-lift-home/clr-lift-home.component.html",
+      "line": 69,
+      "text": "Clarity Design System documentation"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/dg-state/dg-state.component.html",
+      "line": 39,
+      "text": "convertToHttpParams"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/dg-state/dg-state.component.html",
+      "line": 48,
+      "text": "dgState"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/file-reader-demo/file-reader-demo.component.html",
+      "line": 77,
+      "text": "FileReaderComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/file-reader-demo/file-reader-demo.component.html",
+      "line": 77,
+      "text": "cll-file-reader"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/idle-detection-demo/idle-detection-demo.component.html",
+      "line": 63,
+      "text": "IdleDetectionComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/idle-detection-demo/idle-detection-demo.component.html",
+      "line": 63,
+      "text": "cll-idle-detection"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component.html",
+      "line": 6,
+      "text": "UniqueValidator"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component.html",
+      "line": 49,
+      "text": "KeyValueInputsComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component.html",
+      "line": 49,
+      "text": "cll-key-value-inputs"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component.html",
+      "line": 52,
+      "text": "AlertService"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component.html",
+      "line": 63,
+      "text": "AlertContainerComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/multi-alerts-demo/multi-alerts-demo.component.html",
+      "line": 63,
+      "text": "cll-alert-container"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/page-container-demo/page-container-demo.component.html",
+      "line": 69,
+      "text": "PageContainerComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/page-container-demo/page-container-demo.component.html",
+      "line": 69,
+      "text": "cll-page-container"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/spinner-demo/spinner-demo.component.html",
+      "line": 73,
+      "text": "SpinnerComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/spinner-demo/spinner-demo.component.html",
+      "line": 73,
+      "text": "cll-spinner"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/status-indicator-demo/status-indicator-demo.component.html",
+      "line": 165,
+      "text": "StatusIndicatorComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/status-indicator-demo/status-indicator-demo.component.html",
+      "line": 165,
+      "text": "cll-status-indicator"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/theme-toggle-demo/theme-toggle-demo.component.html",
+      "line": 84,
+      "text": "ThemeToggleComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/theme-toggle-demo/theme-toggle-demo.component.html",
+      "line": 84,
+      "text": "cll-theme-toggle"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/theme-toggle-demo/theme-toggle-demo.component.html",
+      "line": 94,
+      "text": "ThemeService"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component.html",
+      "line": 34,
+      "text": "Key Value Inputs"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component.html",
+      "line": 71,
+      "text": "TimelineWizardComponent"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component.html",
+      "line": 85,
+      "text": "TimelineBaseComponent"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component.html",
+      "line": 96,
+      "text": "TimelineStep Interface"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/timeline-wizard-demo/timeline-wizard-demo.component.html",
+      "line": 104,
+      "text": "TimelineWizardService"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/toast-demo/toast-demo.component.html",
+      "line": 64,
+      "text": "ToastService"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/toast-demo/toast-demo.component.html",
+      "line": 75,
+      "text": "ToastContainerComponent ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/toast-demo/toast-demo.component.html",
+      "line": 75,
+      "text": "cll-toast-container"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/pages/tooltip-demo/tooltip-demo.component.html",
+      "line": 91,
+      "text": "TooltipDirective ("
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/shared/components/user-datagrid/user-datagrid.component.html",
+      "line": 49,
+      "text": "Refresh"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/shared/components/user-datagrid/user-datagrid.component.html",
+      "line": 61,
+      "text": "First Name"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/shared/components/user-datagrid/user-datagrid.component.html",
+      "line": 62,
+      "text": "Last Name"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/shared/components/user-datagrid/user-datagrid.component.html",
+      "line": 63,
+      "text": "Email"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/shared/components/user-datagrid/user-datagrid.component.html",
+      "line": 64,
+      "text": "Gender"
+    },
+    {
+      "file": "apps/demo/src/app/clr-lib/shared/components/user-datagrid/user-datagrid.component.html",
+      "line": 66,
+      "text": "No data found"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/interceptors/k8s-retry-backoff-interceptor/k8s-retry-backoff-interceptor.component.html",
+      "line": 7,
+      "text": "retryOnK8sBackoff"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/interceptors/k8s-retry-backoff-interceptor/k8s-retry-backoff-interceptor.component.html",
+      "line": 151,
+      "text": "k8sRetryBackoffInterceptor"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/interceptors/k8s-retry-backoff-interceptor/k8s-retry-backoff-interceptor.component.html",
+      "line": 157,
+      "text": "createK8sRetryBackoffInterceptor"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/interceptors/k8s-retry-backoff-interceptor/k8s-retry-backoff-interceptor.component.html",
+      "line": 165,
+      "text": "K8S_RETRY_BACKOFF_CONFIG"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/ngx-lift-home/ngx-lift-home.component.html",
+      "line": 19,
+      "text": "v1.x"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/ngx-lift-home/ngx-lift-home.component.html",
+      "line": 20,
+      "text": "Angular 17+"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/ngx-lift-home/ngx-lift-home.component.html",
+      "line": 23,
+      "text": "v19.x"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/ngx-lift-home/ngx-lift-home.component.html",
+      "line": 24,
+      "text": "Angular 19, 20"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/ngx-lift-home/ngx-lift-home.component.html",
+      "line": 27,
+      "text": "v21.x"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/ngx-lift-home/ngx-lift-home.component.html",
+      "line": 28,
+      "text": "Angular 21+"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/combine-latest-eager/combine-latest-eager.component.html",
+      "line": 28,
+      "text": "combineLatestEager"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/create-async-state/create-async-state.component.html",
+      "line": 50,
+      "text": "createAsyncState"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/create-async-state/create-async-state.component.html",
+      "line": 64,
+      "text": "AsyncState Interface"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/distinct-on-change/distinct-on-change.component.html",
+      "line": 26,
+      "text": "distinctOnChange"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component.html",
+      "line": 7,
+      "text": "k8sRetryBackoffInterceptor"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component.html",
+      "line": 188,
+      "text": "null"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component.html",
+      "line": 202,
+      "text": "retryOnK8sBackoff"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component.html",
+      "line": 209,
+      "text": "K8sBackoffRetryConfig"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/k8s-retry-backoff/k8s-retry-backoff.component.html",
+      "line": 216,
+      "text": "getK8sRetryDelayMs"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/kubernetes-pagination/kubernetes-pagination.component.html",
+      "line": 84,
+      "text": "aggregatePaginatedKubernetesResources"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/kubernetes-pagination/kubernetes-pagination.component.html",
+      "line": 92,
+      "text": "fetchPaginatedKubernetesResources"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/logger/logger.component.html",
+      "line": 32,
+      "text": "logger"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 52,
+      "text": "Filter Parameter (Signal):"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 58,
+      "text": "All (30 items)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 66,
+      "text": "Active (15 items)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 74,
+      "text": "Inactive (15 items)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 85,
+      "text": "Status:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 88,
+      "text": "Active Filter:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 93,
+      "text": "Polling in progress..."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 102,
+      "text": "Poll Sequence #"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 106,
+      "text": "Filtered By"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 112,
+      "text": "Total Results"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 116,
+      "text": "Last Server Timestamp"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 125,
+      "text": "Recent Poll Trigger & Execution Log:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 131,
+      "text": "Trigger with filter: \""
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 135,
+      "text": "Executing (HTTP delay)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 137,
+      "text": "Settled"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/poll/poll.component.html",
+      "line": 209,
+      "text": "poll"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/start-with-tap/start-with-tap.component.html",
+      "line": 66,
+      "text": "startWithTap"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/operators/switch-map-with-async-state/switch-map-with-async-state.component.html",
+      "line": 49,
+      "text": "switchMapWithAsyncState"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/pipes/array-join-pipe/array-join-pipe.component.html",
+      "line": 32,
+      "text": "arrayJoin"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/pipes/byte-converter-pipe/byte-converter-pipe.component.html",
+      "line": 32,
+      "text": "byteConverter"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/pipes/is-https-pipe/is-https-pipe.component.html",
+      "line": 32,
+      "text": "isHttps"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/pipes/mask-pipe/mask-pipe.component.html",
+      "line": 38,
+      "text": "mask"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/pipes/mask-pipe/mask-pipe.component.html",
+      "line": 50,
+      "text": "MaskOptions"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/pipes/range-pipe/range-pipe.component.html",
+      "line": 54,
+      "text": "range"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/mutate-resource/mutate-resource.component.html",
+      "line": 341,
+      "text": "mutateResource(mutation, options)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/mutate-resource/mutate-resource.component.html",
+      "line": 344,
+      "text": "MutateResourceRef&lt;TArgs, TResult, E&gt;"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.html",
+      "line": 17,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.html",
+      "line": 45,
+      "text": "queryResource"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.html",
+      "line": 83,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.html",
+      "line": 84,
+      "text": "queryResource"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.html",
+      "line": 478,
+      "text": "queryResource(definition, options)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/query/query-resource/query-resource.component.html",
+      "line": 481,
+      "text": "QueryResourceRef&lt;T, E&gt;"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/combine-from/combine-from.component.html",
+      "line": 59,
+      "text": "combineFrom"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/computed-async/computed-async.component.html",
+      "line": 220,
+      "text": "computedAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/computed-async/computed-async.component.html",
+      "line": 229,
+      "text": "ComputedAsyncOptions"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/create-trigger/create-trigger.component.html",
+      "line": 30,
+      "text": "createTrigger"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/inject-params/inject-params.component.html",
+      "line": 51,
+      "text": "injectParams"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/inject-query-params/inject-query-params.component.html",
+      "line": 50,
+      "text": "injectQueryParams"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/merge-from/merge-from.component.html",
+      "line": 38,
+      "text": "mergeFrom"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 80,
+      "text": "When"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 81,
+      "text": "userId()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 81,
+      "text": "changes,"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 81,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 81,
+      "text": "automatically:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 83,
+      "text": "Cancels the previous HTTP request (if still in-flight)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 84,
+      "text": "Sets status to 'loading'"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 85,
+      "text": "Makes a new request with the updated userId"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 86,
+      "text": "Updates to 'resolved' when complete"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 97,
+      "text": "Demo: Lazy-Loaded Users"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 154,
+      "text": "Error Handling with Fallback"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 158,
+      "text": "Demo: Error Handling with Fallback"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 159,
+      "text": "This resource attempts to fetch from an invalid endpoint and falls back to a default user:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 194,
+      "text": "Use"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 194,
+      "text": "throwOnError: true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 194,
+      "text": "to propagate errors instead of storing them in the error signal:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 196,
+      "text": "When"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 197,
+      "text": "throwOnError: true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 197,
+      "text": "onError"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 197,
+      "text": "is provided. The"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 198,
+      "text": "onError"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 198,
+      "text": "callback can still be used for logging before the error propagates."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 207,
+      "text": "Key Configuration for Mutations:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 210,
+      "text": "lazy: true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 212,
+      "text": "behavior: 'exhaust'"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 216,
+      "text": "execute(): Promise&lt;T&gt;"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 221,
+      "text": "Registration Component"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 224,
+      "text": "Registration Template"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 228,
+      "text": "Why this works great for mutations:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 230,
+      "text": "lazy: true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 232,
+      "text": "behavior: 'exhaust'"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 236,
+      "text": "execute(): Promise&lt;T&gt;"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 236,
+      "text": "const res = await ref.execute()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 239,
+      "text": "isLoading()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 240,
+      "text": "status()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 245,
+      "text": "Live Demo: User Registration Form"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 246,
+      "text": "Try submitting the form below. It simulates a registration API with 70% success rate. With"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 248,
+      "text": "behavior: 'exhaust'"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 321,
+      "text": "switch (default)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 327,
+      "text": "exhaust"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 339,
+      "text": "Always use"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 340,
+      "text": "computed()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 356,
+      "text": "Query Preset:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 362,
+      "text": "Angular"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 370,
+      "text": "Signals"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 378,
+      "text": "Clarity"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 386,
+      "text": "RxJS"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 400,
+      "text": "Reset"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 405,
+      "text": "Await execute()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 412,
+      "text": "Status:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 415,
+      "text": "Active Query:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 420,
+      "text": "Fetching with AbortSignal..."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 430,
+      "text": "ID"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 431,
+      "text": "Topic / Title"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 432,
+      "text": "Category"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 433,
+      "text": "Last Updated"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 450,
+      "text": "No data"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 469,
+      "text": "In-Flight (signal active)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 471,
+      "text": "Aborted (AbortSignal cancelled)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 473,
+      "text": "Resolved"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 490,
+      "text": "Use"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 490,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 490,
+      "text": "when:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 492,
+      "text": "You're working with"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 493,
+      "text": "read operations (GET)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 493,
+      "text": "reload()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 493,
+      "text": "method for refetching"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 495,
+      "text": "You're working with"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 496,
+      "text": "mutations (POST/PUT/DELETE)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 496,
+      "text": "execute()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 496,
+      "text": "method with"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 497,
+      "text": "lazy: true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 497,
+      "text": "and"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 497,
+      "text": "behavior: 'exhaust'"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 500,
+      "text": "You need local state management"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 500,
+      "text": "set()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 500,
+      "text": "update()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 503,
+      "text": "You need manual trigger capability ("
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 504,
+      "text": "reload()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 504,
+      "text": "execute()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 504,
+      "text": "reset()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 506,
+      "text": "You want explicit status tracking (idle, isLoading, reloading, resolved, error, local)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 507,
+      "text": "You need lazy loading (defer initial execution)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 508,
+      "text": "You want individual signal accessors for optimal performance"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 509,
+      "text": "You're looking for Angular's"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 509,
+      "text": "httpResource"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 510,
+      "text": "You need automatic cancellation of previous requests (switch behavior)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 511,
+      "text": "You need to prevent duplicate submissions (exhaust behavior)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 514,
+      "text": "Use"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 514,
+      "text": "computedAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 514,
+      "text": "when:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 516,
+      "text": "You want automatic reactive fetching based on dependencies"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 517,
+      "text": "You need custom merge behaviors (merge, concat, in addition to switch/exhaust)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 518,
+      "text": "You want a single computed signal that re-runs automatically"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 519,
+      "text": "You're migrating from"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 519,
+      "text": "computed()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 519,
+      "text": "patterns"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 520,
+      "text": "You need to combine with"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 520,
+      "text": "createAsyncState"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 520,
+      "text": "operator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 523,
+      "text": "See also:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 525,
+      "text": "computedAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 537,
+      "text": "New Feature:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 537,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 537,
+      "text": "now returns a"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 537,
+      "text": "WritableResourceRef"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 537,
+      "text": "with"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 538,
+      "text": "set()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 538,
+      "text": "update()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 538,
+      "text": "asReadonly()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 539,
+      "text": "WritableResource"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 539,
+      "text": "API!"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 550,
+      "text": "Demo: Todo Toggle"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 578,
+      "text": "Status:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 578,
+      "text": "Completed:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 600,
+      "text": "Demo: Cache-First User Profile"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 622,
+      "text": "Status:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 638,
+      "text": "Demo: Editable Counter"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 689,
+      "text": "Status:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 700,
+      "text": "Advanced Pattern: Nested Resources"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 702,
+      "text": "Expert"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 707,
+      "text": "one approach"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 712,
+      "text": "With the"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 712,
+      "text": "injector"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 712,
+      "text": "option in"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 712,
+      "text": "ResourceRefOptions"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 713,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 715,
+      "text": "runInInjectionContext()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 719,
+      "text": "See"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 724,
+      "text": "resource-async-design-spec.md"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 725,
+      "text": "for comprehensive guide with multiple approaches, decision trees, and when to use each pattern."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 730,
+      "text": "Key Concepts:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 732,
+      "text": "Outer Resource:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 732,
+      "text": "List of items with their own loading/error state"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 733,
+      "text": "Inner Resources:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 733,
+      "text": "Per-item related data with individual loading/error states"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 734,
+      "text": "Lazy Loading:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 734,
+      "text": "Only fetch when user clicks (minimizes API calls)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 735,
+      "text": "Independent States:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 735,
+      "text": "Each row manages its own spinner/error/data"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 740,
+      "text": "Implementation"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 745,
+      "text": "Demo: Items with Organizations"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 802,
+      "text": "Not loaded"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 867,
+      "text": "Pattern Benefits:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 882,
+      "text": "API Reference"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 884,
+      "text": "resourceAsync"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 885,
+      "text": "Creates a reactive resource that manages async operations with full state tracking. Returns a"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 887,
+      "text": "ResourceRef"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 887,
+      "text": "object with state signals and reload capability."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 890,
+      "text": "Signature"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 896,
+      "text": "ResourceAsyncDefinition (Declarative Definition)"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 899,
+      "text": "ResourceRefOptions"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 906,
+      "text": "Resource Status"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 909,
+      "text": "idle"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 909,
+      "text": "lazy: true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 910,
+      "text": "value() = undefined"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 912,
+      "text": "loading"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 912,
+      "text": "value() = undefined"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 914,
+      "text": "reloading"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 914,
+      "text": "value()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 917,
+      "text": "resolved"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 917,
+      "text": "value()"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 917,
+      "text": "contains the data."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 919,
+      "text": "error"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 919,
+      "text": "value() = undefined"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 925,
+      "text": "Important:"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 925,
+      "text": "When an error occurs (even during"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 925,
+      "text": "reloading"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 926,
+      "text": "undefined"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 926,
+      "text": "httpResource"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/resource-async/resource-async.component.html",
+      "line": 926,
+      "text": "behavior."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/to-signal-form/to-signal-form.component.html",
+      "line": 320,
+      "text": "Master Password"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/signals/to-signal-form/to-signal-form.component.html",
+      "line": 322,
+      "text": "Master password is required."
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/difference-in-days/difference-in-days.component.html",
+      "line": 26,
+      "text": "differenceInDays"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component.html",
+      "line": 55,
+      "text": "IdleDetectionService"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component.html",
+      "line": 61,
+      "text": "IdleDetectionConfig Interface"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/is-empty/is-empty.component.html",
+      "line": 26,
+      "text": "isEmpty"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/is-equal/is-equal.component.html",
+      "line": 26,
+      "text": "isEqual"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/is-promise/is-promise.component.html",
+      "line": 33,
+      "text": "true"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/is-promise/is-promise.component.html",
+      "line": 35,
+      "text": "false"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/is-promise/is-promise.component.html",
+      "line": 57,
+      "text": "isPromise"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/pick-by/pick-by.component.html",
+      "line": 26,
+      "text": "pickBy"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/pick-by/pick-by.component.html",
+      "line": 40,
+      "text": "omitBy"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/url/url.component.html",
+      "line": 31,
+      "text": "isIP"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/url/url.component.html",
+      "line": 38,
+      "text": "isFQDN"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/url/url.component.html",
+      "line": 45,
+      "text": "isURL"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/utilities/url/url.component.html",
+      "line": 52,
+      "text": "isHttps"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/date-range-validator/date-range-validator.component.html",
+      "line": 100,
+      "text": "dateRangeValidator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/date-range-validator/date-range-validator.component.html",
+      "line": 106,
+      "text": "DateRangeOptions"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/date-range-validator/date-range-validator.component.html",
+      "line": 114,
+      "text": "invalidDate"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/date-range-validator/date-range-validator.component.html",
+      "line": 115,
+      "text": "minDate"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/date-range-validator/date-range-validator.component.html",
+      "line": 116,
+      "text": "maxDate"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/if-validator/if-validator.component.html",
+      "line": 81,
+      "text": "ifValidator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/if-validator/if-validator.component.html",
+      "line": 92,
+      "text": "ifAsyncValidator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 23,
+      "text": "default"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 24,
+      "text": "kube-system"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 25,
+      "text": "kube-public"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 43,
+      "text": "default"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 44,
+      "text": "kube-system"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 45,
+      "text": "kube-public"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/intersection-validator/intersection-validator.component.html",
+      "line": 70,
+      "text": "intersectionValidator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/unique-validator/unique-validator.component.html",
+      "line": 82,
+      "text": "UniqueValidator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/url-validator/url-validator.component.html",
+      "line": 54,
+      "text": "urlValidator"
+    },
+    {
+      "file": "apps/demo/src/app/ngx-lib/pages/validators/url-validator/url-validator.component.html",
+      "line": 65,
+      "text": "httpsValidator"
+    },
+    {
+      "file": "apps/demo/src/app/shared/components/demo-playground/demo-playground.component.html",
+      "line": 82,
+      "text": "TypeScript"
+    },
+    {
+      "file": "apps/demo/src/app/shared/components/demo-playground/demo-playground.component.html",
+      "line": 92,
+      "text": "HTML"
+    },
+    {
+      "file": "apps/demo/src/app/shared/components/demo-playground/demo-playground.component.html",
+      "line": 102,
+      "text": "SCSS"
+    }
+  ]
+}

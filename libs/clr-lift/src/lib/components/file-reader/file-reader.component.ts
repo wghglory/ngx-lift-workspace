@@ -98,6 +98,9 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
    */
   encoded = input(false);
 
+  /** Encoding used for base64 text. Set latin1 to retain the legacy byte-string format. */
+  textEncoding = input<'utf-8' | 'latin1'>('utf-8');
+
   /**
    * Maximum file size in megabytes.
    * Files exceeding this size will trigger a validation error.
@@ -177,6 +180,14 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
       return;
     }
     this.selectedFile.set(selectedFile);
+    if (this.sizeInvalid()) {
+      this.rawContent.set('');
+      this.encodedContent.set('');
+      this.onChange('');
+      this.onTouched();
+      this.onValidatorChange();
+      return;
+    }
 
     const reader = new FileReader();
     this.activeReader = reader;
@@ -233,10 +244,16 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
       return;
     }
 
+    this.rawContent.set('');
     try {
       if (this.encoded()) {
         this.encodedContent.set(value);
-        this.rawContent.set(atob(value));
+        const bytes = atob(value);
+        this.rawContent.set(
+          this.textEncoding() === 'latin1'
+            ? bytes
+            : new TextDecoder('utf-8', {fatal: true}).decode(Uint8Array.from(bytes, (char) => char.charCodeAt(0))),
+        );
       } else {
         this.setContent(value);
       }
@@ -248,7 +265,19 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   private setContent(value: string) {
     this.rawContent.set(value);
     try {
-      this.encodedContent.set(btoa(value));
+      let byteString: string;
+      if (this.textEncoding() === 'latin1') {
+        byteString = value;
+      } else {
+        const bytes = new TextEncoder().encode(value);
+        const CHUNK_SIZE = 8192;
+        let binary = '';
+        for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+          binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK_SIZE));
+        }
+        byteString = binary;
+      }
+      this.encodedContent.set(btoa(byteString));
     } catch (error: unknown) {
       this.encodedContent.set('');
       // Unencoded text must not fail simply because it contains Unicode.

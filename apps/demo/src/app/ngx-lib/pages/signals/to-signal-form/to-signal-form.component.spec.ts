@@ -330,4 +330,16 @@ describe('ToSignalFormComponent', () => {
 
     expect(component.isTlsCertificateMounted()).toBe(true);
   });
+  it('does not submit again when the form changes after an explicit submission', async () => {
+    const submitted = component.createClusterRef.execute();
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(1000);
+    await submitted;
+    const result = component.createClusterRef.value();
+    component.form.controls.clusterName.setValue('edited-after-submit');
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(1500);
+    expect(component.createClusterRef.value()).toBe(result);
+    expect(component.createClusterRef.isLoading()).toBe(false);
+  });
 });

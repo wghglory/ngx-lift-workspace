@@ -165,4 +165,5 @@ export const frTranslations: Record<string, string> = {
     'HttpContextToken pour configurer ou désactiver le réessai pour une requête individuelle.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'Configuration par défaut appliquée à toutes les requêtes sauf surcharge via HttpContext.',
+  'header.partialLanguage': 'Traduction partielle ; les textes manquants sont affichés en anglais.',
 };

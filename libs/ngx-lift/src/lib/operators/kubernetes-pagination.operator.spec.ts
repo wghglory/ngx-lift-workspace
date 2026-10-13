@@ -183,6 +183,7 @@ describe('aggregatePaginatedKubernetesResources', () => {
 
   it('retries next page request on HTTP 429 with backoff and aggregates items', async () => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     try {
       const first: KubernetesList<KubernetesObject> = {
         apiVersion: 'v1',
@@ -220,6 +221,7 @@ describe('aggregatePaginatedKubernetesResources', () => {
       expect(result?.items[0].metadata.name).toBe('pod-1');
       expect(result?.items[1].metadata.name).toBe('pod-2');
     } finally {
+      vi.restoreAllMocks();
       vi.useRealTimers();
     }
   });
@@ -355,6 +357,7 @@ describe('fetchPaginatedKubernetesResources', () => {
 
   it('retries initial request on HTTP 429 with backoff and succeeds', async () => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     try {
       let result: KubernetesList<KubernetesObject> | undefined;
 
@@ -383,6 +386,7 @@ describe('fetchPaginatedKubernetesResources', () => {
       expect(result?.items).toHaveLength(1);
       expect(result?.items[0].metadata.name).toBe('recovered-pod');
     } finally {
+      vi.restoreAllMocks();
       vi.useRealTimers();
     }
   });

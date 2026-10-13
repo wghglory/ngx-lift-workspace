@@ -84,9 +84,9 @@ export function isNotEmpty(value?: null | undefined): false;
  */
 export function isNotEmpty(value: string): boolean;
 /**
- * Checks if a value is not empty (not null, undefined, or empty collection).
- *
- * Returns boolean: an empty collection is still defined, so neither branch narrows nullability.
+ * Checks whether a collection has content. This is not a nullability type guard:
+ * a defined empty collection returns false and must remain accessible in that branch.
+ * Use `value != null && isNotEmpty(value)` when narrowing an optional collection.
  *
  * @param value - The value to check.
  * @returns `true` if the value is not null, undefined, or empty, `false` otherwise.
