@@ -114,7 +114,6 @@
     "upstream Clarity common strings integration",
     "computedAsync default typed-error major redesign",
     "secondary entry points",
-    "fresh peer matrix and Angular 22",
     "complete SSR/hydration and manual screen-reader evidence"
   ],
   "parallelEditsPreserved": ["libs/ngx-lift/src/lib/utils/is-empty.util.ts"],

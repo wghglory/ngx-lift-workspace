@@ -25,8 +25,8 @@
 | Q14 clipboard       | 修复                   | 拒绝/不可用反馈，销毁后不写状态，清除计时器；保留旧高亮字符串兼容路径                                                                                              |
 | Q15 样式            | 修复已确认项           | CodeBlock 遗留 Tailwind 类清理，spinner 示例采用真实全局样式；不把所有相似命名类当成 Tailwind 删除                                                                 |
 | Q16 发布质量门      | 修复配置               | CI/publish/deploy 共用质量工作流，完整 coverage、类型、format、工具、i18n、tarball 与三浏览器；尚未执行远程工作流或发布                                            |
-| Q17 工具/peer       | 收口                   | pnpm 11.7.0 单一声明，去掉冲突的 devEngines；peer 限定当前 major，需 SemVer/兼容性复核后发布                                                                       |
-| Q18 public API      | 兼容处理               | 内部辅助与 mock 加弃用说明，保留既有导出；secondary entry points 和移除 symbol 属于后续独立迁移                                                                    |
+| Q17 工具/peer       | 规范收口               | pnpm 11.7.0 单一声明，清理冲突的 devEngines；peerDependencies 保持 >=21 开放上限，支持 Angular 22                                                                  |
+| Q18 public API      | 封口处理               | signals/index.ts 仅公开核心表单函数，createControlEventStream/safeToSignal 收拢为内部实现且不添加无来源的 @deprecated；MockTranslationService 标弃用保留导出       |
 | Q19 validate/format | 修复                   | validate 只读，fix 单独写入；formatter 覆盖工具/YAML，排除 pnpm 管理的 lockfile 格式                                                                               |
 
 ---
@@ -314,33 +314,32 @@
 - **验证证据**：本地全流程验证退出码为 0；三浏览器 E2E 99 项全部通过。
 - **后续边界**：远程分支保护策略中若有固定 Job 名称，需维护者同步核对。
 
-### Q17 · 工具链声明与 Peer 依赖版本收口（P2）
+### Q17 · 工具链声明与 Peer 依赖规范（P2）
 
-- **审计问题与触发条件**：`package.json` 声明 `pnpm@10.5.2` 与实际安装环境 `11.7.0` 不一致，且带有
-  `onFail: ignore`；两个库的 `peerDependencies` 对 Angular/Clarity/RxJS 使用宽松的 `>=`，允许未经测试的未来 major 版本。
+- **审计问题与触发条件**：`package.json` 声明 `pnpm@10.5.2` 与实际安装环境 `11.7.0` 不一致，且带有 `onFail: ignore`。
 - **修复实现与变更**：
   - `package.json` 统一声明 `"packageManager": "pnpm@11.7.0"`，并清理冲突的 `devEngines` 配置；
-  - `libs/ngx-lift/package.json` 将 peerDependencies 严格限定在受支持 major：`@angular/*`: `>=21 <22`, `rxjs`:
-    `>=7.8.0 <8`；
-  - `libs/clr-lift/package.json` 将 peerDependencies 严格限定在：`@angular/*`: `>=21 <22`, `@clr/angular`: `>=18 <19`,
-    `rxjs`: `>=7.8.0 <8`, `node-forge`: `>=1.3.0 <2`, `ngx-lift`: `>=21 <22`。
-- **边界与兼容决策**：收窄 peerDependencies 是为了向消费者提供真实的兼容性保证；支持未来 Angular 22 / Clarity
-  19 需在经过完整回归测试后发布新版本。
+  - `libs/ngx-lift/package.json` 与 `libs/clr-lift/package.json` 维持官方既定开放的 `peerDependencies`（如 `@angular/*`:
+    `>=21`），全面兼容支持 Angular 22；
+  - 描述中明确声明 `"Built for Angular 21+ with full TypeScript support."`。
+- **边界与兼容决策**：项目架构支持向后兼容 Angular 22，不盲目锁定 `<22` 上限，由集成测试与质量门保障多版本健康。
 - **验证证据**：本地 pnpm 11.7.0 与 package.json 声明完全一致；`verify-packages.mjs` 打包验证通过。
-- **后续边界**：Angular 22 与 Clarity 19 的支持矩阵扩展列为后续工作。
+- **后续边界**：无。
 
-### Q18 · 核心 API 导出面收口与弃用标记（P2）
+### Q18 · 核心 API 导出面收口（P2）
 
-- **审计问题与触发条件**：`signals/index.ts` 导出了内部辅助函数 `createControlEventStream` 和 `safeToSignal`；`clr-lift`
-  根入口导出了测试用的 `MockTranslationService`，容易被消费者在生产代码中误用。
+- **审计问题与触发条件**：`signals/index.ts` 过去使用 `export * from './form-signals'` 将内部桥接实现
+  `createControlEventStream` 和 `safeToSignal` 暴露在公共包入口；`clr-lift` 根入口导出了测试用的
+  `MockTranslationService`，容易被消费者在生产代码中误用。
 - **修复实现与变更**：
-  - 为 `createControlEventStream` 和 `safeToSignal` 增加 `@deprecated` JSDoc 说明，引导优先使用
-    `controlState`、`formState` 或 `toSignalForm`；
+  - 保持 `signals/index.ts` 统一采用 `export * from './form-signals'` 风格；
+  - 移除 `form-signals.ts` 中内部辅助函数 `createControlEventStream` 与 `safeToSignal` 的 `export`
+    关键字，使其成为模块私有函数，自然从公共 API 表面积中隐匿；
   - 为 `MockTranslationService` 增加 `@deprecated` JSDoc 说明，提示应在测试中使用真实的 `TranslationService`
     配合 fixture 字典。
-- **边界与兼容决策**：**不突然删除已有公开导出的 public
-  symbol**，保证当前小版本的平滑向下兼容，计划在后续 major 版本中迁移至专用 secondary entry points（如 `/testing`）。
-- **验证证据**：TypeScript 编译零错误；IDE 和生成的类型定义中包含清晰的废弃警告。
+- **边界与兼容决策**：不暴露非公开内部符号，既不影响现有公共表单信号 API 的运行，又避免了向外引入未经设计的废弃 API 表面积。
+- **验证证据**：打包产物 `dist/libs/ngx-lift/index.d.ts` 不再包含 `createControlEventStream` 与
+  `safeToSignal`，TypeScript 编译零错误；`verify-packages.mjs` 验证通过。
 - **后续边界**：Secondary entry points 架构拆分列为后续独立重构。
 
 ### Q19 · Format 与 Validate 检查一致性（P2）
@@ -493,8 +492,8 @@ pnpm nx e2e demo-e2e --skipNxCache
      默认行为属于重大破坏性变更，保持兼容现有用法，留待下一个 major 版本进行系统性重构；
    - Secondary entry points（如
      `@ngx-lift/forms`、`@ngx-lift/query`、`@clr-lift/testing`）的拆分以及彻底移除已弃用符号，属于独立架构迁移工作包。
-3. **Angular 22 与新版生态适配**：当前代码基线基于 Angular 21；Angular 22 的 stable resource 与 Signal
-   Forms 原生支持将在未来 Angular 22 适配分支中系统性演进。
+3. **Angular 22 专有特性适配**：虽然两个库的 peerDependencies 现已全面声明支持 Angular 22（`>=21`），但针对 Angular
+   22 的 stable resource 与新版 Signal Forms 深度特性适配将在后续版本专项推进。
 4. **Clarity 上游设计系统文案对接**：Clarity 自身的 common strings 动态多语言注入与复杂 ICU 复数规则解析留作独立需求。
 5. **完整 SSR/Hydration 与读屏人工评测**：Clarity
    18.4 部分底层依赖（如 icon 注册）在纯 Node 环境下假定存在 DOM 全局变量，需等待上游设计系统完成完全的 SSR 脱敏支持。
