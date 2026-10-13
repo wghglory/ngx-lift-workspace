@@ -77,4 +77,5 @@ export const themeToggleTranslations: Record<string, Record<string, string>> = {
     toggleDark: '切換到深色主題',
     toggleLight: '切換到淺色主題',
   },
+  ru: {dark: 'Тёмная', light: 'Светлая', toggleDark: 'Включить тёмную тему', toggleLight: 'Включить светлую тему'},
 };

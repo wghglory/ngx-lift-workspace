@@ -118,3 +118,14 @@ describe('ByteConverterPipe locale fallback', () => {
     expect(TestBed.inject(ByteConverterPipe).transform(1024)).toBe('1 Ko');
   });
 });
+
+describe('ByteConverter explicit locale', () => {
+  it('responds to explicit locale changes and normalizes Chinese script tags', () => {
+    const pipe = TestBed.runInInjectionContext(() => new ByteConverterPipe());
+    expect(pipe.transform(1024, 'zh-cn')).toBe('1 千字节');
+    expect(pipe.transform(1024, 'zh-Hant')).toBe('1 千位元組');
+    expect(pipe.transform(1024, 'fr')).toBe('1 Ko');
+    expect(pipe.transform(1024, 'bad_locale')).toBe('1 KB');
+    expect(pipe.transform(Infinity)).toBeNull();
+  });
+});

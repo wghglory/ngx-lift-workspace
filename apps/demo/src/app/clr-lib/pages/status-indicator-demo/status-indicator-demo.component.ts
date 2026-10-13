@@ -24,8 +24,8 @@ export class StatusIndicatorDemoComponent {
     },
     {
       name: 'iconSize',
-      type: "'sm' | 'md' | 'lg' | number",
-      defaultValue: "'md'",
+      type: "string (including 'sm' | 'md' | 'lg')",
+      defaultValue: "'sm'",
       description: this.translationService.translate('statusIndicator.inputIconSize'),
     },
     {
@@ -36,7 +36,7 @@ export class StatusIndicatorDemoComponent {
     {
       name: 'tooltipPosition',
       type: 'string',
-      defaultValue: "'tooltip-top-right'",
+      defaultValue: "'tooltip-bottom-right'",
       description: this.translationService.translate('statusIndicator.inputTooltipPosition'),
     },
   ]);

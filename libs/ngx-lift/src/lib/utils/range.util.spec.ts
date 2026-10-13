@@ -37,3 +37,14 @@ describe('range function', () => {
     expect(range(5, 5)).toEqual([]);
   });
 });
+
+describe('range input limits', () => {
+  it('rejects non-finite arguments with an actionable error', () => {
+    for (const args of [[NaN], [0, Infinity], [0, 2, NaN], [0, 2, Infinity]]) {
+      expect(() => range(args[0], args[1], args[2])).toThrow('finite');
+    }
+  });
+  it('rejects unbounded allocation before constructing the result', () => {
+    expect(() => range(0, 1_000_001)).toThrow('1,000,000');
+  });
+});

@@ -8,6 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const rootDir = join(__dirname, '../..');
 
+let failed = false;
+
 const projects = [
   {name: 'ngx-lift', path: 'coverage/libs/ngx-lift/coverage-summary.json'},
   {name: 'clr-lift', path: 'coverage/libs/clr-lift/coverage-summary.json'},
@@ -19,7 +21,7 @@ function formatPercentage(pct) {
   return pct.toFixed(2) + '%';
 }
 
-// Industry-standard thresholds
+// Project coverage policy (enforced by Vitest).
 const THRESHOLDS = {
   statements: 80,
   branches: 75,
@@ -39,6 +41,9 @@ function displayCoverage(project) {
     const filePath = join(rootDir, project.path);
     const data = JSON.parse(readFileSync(filePath, 'utf-8'));
     const total = data.total;
+    for (const [metric, threshold] of Object.entries(THRESHOLDS)) {
+      if (total[metric].pct < threshold) failed = true;
+    }
 
     console.log(`\n📊 ${project.name.toUpperCase()} Coverage Summary`);
     console.log('─'.repeat(60));
@@ -56,7 +61,8 @@ function displayCoverage(project) {
     );
     console.log('─'.repeat(60));
   } catch {
-    // File doesn't exist or invalid JSON, skip
+    failed = true;
+    console.error(`Missing or invalid coverage report: ${project.path}`);
   }
 }
 
@@ -108,3 +114,5 @@ if (totalStats.statements.total > 0) {
   console.log(`Lines      : ${formatPercentage(linesPct)} (${totalStats.lines.covered}/${totalStats.lines.total})`);
   console.log('═'.repeat(60));
 }
+
+if (failed) process.exitCode = 1;

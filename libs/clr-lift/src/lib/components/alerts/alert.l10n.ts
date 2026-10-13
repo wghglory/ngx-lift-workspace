@@ -38,4 +38,5 @@ export const alertTranslations: Record<string, Record<string, string>> = {
   'zh-TW': {
     close: '關閉',
   },
+  ru: {close: 'Закрыть'},
 };

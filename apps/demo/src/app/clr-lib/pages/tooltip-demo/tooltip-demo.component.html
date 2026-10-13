@@ -11,9 +11,12 @@
       <p>{{ 'tooltip.example1Desc' | translate }}</p>
       <app-code-block [code]="basicTooltipCode" lang="html" />
       <div cds-layout="horizontal gap:md align:center wrap">
-        <a href="javascript:void(0)" [cllTooltip]="'tooltip.basic1' | translate">{{ 'tooltip.basic1' | translate }}</a>
+        <a href="#" (click)="$event.preventDefault()" [cllTooltip]="'tooltip.basic1' | translate">{{
+          'tooltip.basic1' | translate
+        }}</a>
         <a
-          href="javascript:void(0)"
+          href="#"
+          (click)="$event.preventDefault()"
           cllTooltip
           [cllTooltipContent]="'tooltip.basic2' | translate"
           [cllTooltipHideDelay]="500"
@@ -21,7 +24,9 @@
         >
           {{ 'tooltip.basic2' | translate }}
         </a>
-        <a href="javascript:void(0)" cllTooltip cllTooltipContent="">{{ 'tooltip.empty' | translate }}</a>
+        <a href="#" (click)="$event.preventDefault()" cllTooltip cllTooltipContent="">{{
+          'tooltip.empty' | translate
+        }}</a>
       </div>
     </article>
 
@@ -31,7 +36,8 @@
       <app-code-block [code]="templateRefCode" lang="html" />
       <div>
         <a
-          href="javascript:void(0)"
+          href="#"
+          (click)="$event.preventDefault()"
           cllTooltip
           [cllTooltipContent]="content"
           [cllTooltipContentContext]="{
@@ -60,7 +66,8 @@
       <div>
         @if (alertComponentRef) {
           <a
-            href="javascript:void(0)"
+            href="#"
+            (click)="$event.preventDefault()"
             cllTooltip
             [cllTooltipContent]="alertComponentRef"
             [cllTooltipWidth]="600"
@@ -77,7 +84,13 @@
       <p>{{ 'tooltip.example4Desc' | translate }}</p>
       <app-code-block [code]="componentTypeCode" lang="html" />
       <div>
-        <a href="javascript:void(0)" cllTooltip [cllTooltipContent]="SpinnerComponent" [cllTooltipHideDelay]="1000">
+        <a
+          href="#"
+          (click)="$event.preventDefault()"
+          cllTooltip
+          [cllTooltipContent]="SpinnerComponent"
+          [cllTooltipHideDelay]="1000"
+        >
           {{ 'tooltip.componentTypeExample' | translate }}
         </a>
       </div>

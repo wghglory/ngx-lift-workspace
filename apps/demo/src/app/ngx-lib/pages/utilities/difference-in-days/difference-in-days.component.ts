@@ -34,9 +34,9 @@ export class DifferenceInDaysComponent {
 import {differenceInDays} from 'ngx-lift';
 
 // How many whole days are between '2022-09-08' and '2023-09-18'?
-console.log(differenceInDays(new Date('2022-09-08'), new Date('2023-09-18'))); // 375
-console.log(differenceInDays('2022-09-08', '2023-09-18')); // 375
-console.log(differenceInDays('2022-09-08', new Date('2023-09-18'))); // 375
+console.log(differenceInDays(new Date('2022-09-08'), new Date('2023-09-18'))); // -375
+console.log(differenceInDays('2022-09-08', '2023-09-18')); // -375
+console.log(differenceInDays('2022-09-08', new Date('2023-09-18'))); // -375
   `);
 
   fromTodayExampleCode = highlight(`

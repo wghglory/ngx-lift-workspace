@@ -161,4 +161,5 @@ export const koTranslations: Record<string, string> = {
     '개별 요청에 대한 재시도 구성을 재정의하거나 비활성화하기 위한 HttpContextToken입니다.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'HttpContext를 통해 재정의되지 않는 한 모든 요청에 적용되는 기본 구성입니다.',
+  'header.partialLanguage': '일부만 번역되었습니다. 번역되지 않은 내용은 영어로 표시됩니다.',
 };

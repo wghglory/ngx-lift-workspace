@@ -36,7 +36,18 @@ export class SpinnerDemoComponent {
         description: this.translationService.translate('spinner.inputInline'),
       },
       {
-        name: 'customClass',
+        name: 'decorative',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('spinner.inputDecorative'),
+      },
+      {
+        name: 'label',
+        type: 'string',
+        description: this.translationService.translate('spinner.inputLabel'),
+      },
+      {
+        name: 'class',
         type: 'string',
         description: this.translationService.translate('spinner.inputCustomClass'),
       },
@@ -62,12 +73,12 @@ export class SpinnerDemoComponent {
   `);
 
   customClassCode = highlight(`
-<cll-spinner [center]="false" [class]="'mx-10'" />
+<cll-spinner [center]="false" [class]="'demo-spinner-space'" />
   `);
 
   inlineCode = highlight(`
 <div>
-  <cll-spinner inline [class]="'mx-2'" />
+  <cll-spinner inline [class]="'demo-spinner-space'" />
   <span>Loading...</span>
 </div>
   `);

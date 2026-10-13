@@ -1,6 +1,7 @@
 @if (vm$ | async; as vm) {
   <p>
-    {{ 'rockStar.todayIs' | translate }} <time> {{ vm.today | date }} </time>. {{ 'rockStar.whoIsStar' | translate }}
+    {{ 'rockStar.todayIs' | translate }} <time> {{ formatDate(vm.today) }} </time>.
+    {{ 'rockStar.whoIsStar' | translate }}
     <button (click)="showRockStar()" class="btn btn-outline">{{ 'rockStar.unveil' | translate }}</button>
   </p>
 
@@ -11,6 +12,6 @@
     <cll-spinner />
   }
   @if (vm.rockStarState?.data; as rockStar) {
-    <p class="!text-xl">{{ rockStar.name }}</p>
+    <p class="rock-star-name">{{ rockStar.name }}</p>
   }
 }

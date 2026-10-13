@@ -167,4 +167,5 @@ export const ptBRTranslations: Record<string, string> = {
     'HttpContextToken para configurar ou desativar a repetição em requisições individuais.',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'Configuração padrão aplicada a todas as requisições, exceto quando sobrescrita via HttpContext.',
+  'header.partialLanguage': 'Tradução parcial; textos não traduzidos são exibidos em inglês.',
 };

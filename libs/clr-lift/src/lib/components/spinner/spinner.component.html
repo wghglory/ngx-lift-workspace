@@ -1,11 +1,7 @@
 <div
   class="spinner"
-  [class]="{
-    'spinner-lg': size() === 'lg',
-    'spinner-md': size() === 'md',
-    'spinner-sm': size() === 'sm',
-    'mx-auto': inline() ? false : center(),
-    'spinner-inline': inline(),
-    'spinner-block': !inline(),
-  }"
+  [attr.role]="decorative() ? null : 'status'"
+  [attr.aria-hidden]="decorative() ? 'true' : null"
+  [attr.aria-label]="decorative() ? null : statusLabel()"
+  [class]="cssClasses()"
 ></div>

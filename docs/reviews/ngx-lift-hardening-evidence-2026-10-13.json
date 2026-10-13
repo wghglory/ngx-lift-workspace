@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "branch": "fix/quality-audit-hardening",
+  "baseCommit": "f8cb5b558b05d9673b3e584e3b62d5a803497fa2",
+  "validation": {
+    "command": "pnpm run validate",
+    "exitCode": 0,
+    "coverageReranWithoutCache": true,
+    "tests": {
+      "ngx-lift": {
+        "files": 44,
+        "tests": 707,
+        "branches": 90.03
+      },
+      "clr-lift": {
+        "files": 25,
+        "tests": 238,
+        "branches": 77.04
+      },
+      "demo": {
+        "files": 75,
+        "tests": 206,
+        "branches": 75.47
+      }
+    },
+    "toolTests": 7,
+    "format": "passed",
+    "lint": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "i18n": "passed",
+    "packageConsumer": {
+      "result": "passed",
+      "realTarballs": true,
+      "hostDependenciesReused": true,
+      "browserDOMProvidedForClarity": true,
+      "freshPeerInstallVerified": false,
+      "SSRVerified": false
+    },
+    "e2e": {
+      "command": "pnpm nx e2e demo-e2e --skipNxCache",
+      "exitCode": 0,
+      "tests": 96,
+      "browsers": ["chromium", "firefox", "webkit"],
+      "defaultPort": 4307
+    }
+  },
+  "productionDemo": {
+    "baselineInitialMB": 4.61,
+    "initialMB": 3.2,
+    "estimatedTransferKB": 636.61,
+    "browserPerformanceMeasurement": false
+  },
+  "translationCoverage": {
+    "de": {
+      "present": 188,
+      "total": 1436,
+      "complete": false
+    },
+    "en": {
+      "present": 1436,
+      "total": 1436,
+      "complete": true
+    },
+    "es": {
+      "present": 130,
+      "total": 1436,
+      "complete": false
+    },
+    "fr": {
+      "present": 130,
+      "total": 1436,
+      "complete": false
+    },
+    "ja": {
+      "present": 130,
+      "total": 1436,
+      "complete": false
+    },
+    "ko": {
+      "present": 130,
+      "total": 1436,
+      "complete": false
+    },
+    "nl": {
+      "present": 130,
+      "total": 1436,
+      "complete": false
+    },
+    "pt-br": {
+      "present": 130,
+      "total": 1436,
+      "complete": false
+    },
+    "ru": {
+      "present": 178,
+      "total": 1436,
+      "complete": false
+    },
+    "zh-cn": {
+      "present": 1436,
+      "total": 1436,
+      "complete": true
+    },
+    "zh-tw": {
+      "present": 778,
+      "total": 1436,
+      "complete": false
+    }
+  },
+  "deferredContracts": [
+    "complete translations for partial demo locales and advanced prose",
+    "upstream Clarity common strings integration",
+    "computedAsync default typed-error major redesign",
+    "secondary entry points",
+    "fresh peer matrix and Angular 22",
+    "complete SSR/hydration and manual screen-reader evidence"
+  ],
+  "parallelEditsPreserved": ["libs/ngx-lift/src/lib/utils/is-empty.util.ts"],
+  "remoteCIVerified": false,
+  "published": false,
+  "supplementalFixes": [
+    "explicit form submission does not repeat on subsequent edits",
+    "post-success invalidation failure is separate from mutation transport error",
+    "polling and refresh timers stop on page disposal",
+    "CommonJS forge default import works in packed ESM consumers",
+    "deduplicated initialization is documented without a cross-source atomicity guarantee"
+  ]
+}

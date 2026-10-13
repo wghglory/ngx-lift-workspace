@@ -41,3 +41,27 @@ test.describe('Tooltip component & directive', () => {
     expect(insideContentContainer).toBe(0);
   });
 });
+
+test('keyboard focus opens a text tooltip and Escape closes it', async ({page}) => {
+  await page.goto('/clr-lift/components/tooltip');
+  const trigger = page.getByRole('link', {name: 'Basic Tooltip 1'});
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.focus();
+  await expect(page.getByRole('tooltip')).toContainText('Basic Tooltip 1');
+  await expect(trigger).toBeFocused();
+  await trigger.press('Escape');
+  await expect(page.locator('cll-tooltip')).toHaveCount(0);
+});
+
+test('interactive content exposes a dialog with a trigger relationship', async ({page}) => {
+  await page.goto('/clr-lift/components/tooltip');
+  const trigger = page.getByRole('link', {name: 'Component Ref Example'});
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.focus();
+  await expect(page.getByRole('dialog', {name: 'Details'})).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(trigger).toHaveAttribute('aria-controls', /cll-tooltip-/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('cll-tooltip')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});

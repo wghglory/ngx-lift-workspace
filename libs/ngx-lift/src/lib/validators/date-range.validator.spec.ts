@@ -206,3 +206,13 @@ describe('dateRangeValidator', () => {
     expect(control.errors).toEqual({maxDate: maximum.toISOString()});
   });
 });
+
+describe('dateRangeValidator configuration', () => {
+  it('rejects invalid boundaries instead of silently accepting all input', () => {
+    expect(() => dateRangeValidator({minDate: 'not-a-date'})).toThrow('minDate');
+    expect(() => dateRangeValidator({maxDate: new Date(NaN)})).toThrow('maxDate');
+  });
+  it('rejects an inverted date range', () => {
+    expect(() => dateRangeValidator({minDate: '2027-01-01', maxDate: '2026-01-01'})).toThrow('minDate');
+  });
+});

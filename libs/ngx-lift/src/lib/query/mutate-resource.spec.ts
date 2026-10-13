@@ -26,6 +26,35 @@ describe('mutateResource', () => {
     client.destroy();
   });
 
+  it('keeps a successful write successful when its invalidation callback fails', async () => {
+    const failure = new Error('Tag mapping failed');
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource(() => of('saved'), {
+        invalidatesTags: () => {
+          throw failure;
+        },
+      }),
+    );
+    await expect(resource.mutate(undefined)).resolves.toBe('saved');
+    expect(resource.status()).toBe('resolved');
+    expect(resource.error()).toBeNull();
+    expect(resource.invalidationError?.()).toBe(failure);
+  });
+
+  it('returns the server result when the client was disposed before invalidation', async () => {
+    const result = new Subject<string>();
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource(() => result, {
+        invalidatesTags: [{type: 'User'}],
+      }),
+    );
+    const saved = resource.mutate(undefined);
+    client.destroy();
+    result.next('saved');
+    await expect(saved).resolves.toBe('saved');
+    expect(resource.invalidationError?.()).toBeInstanceOf(Error);
+  });
+
   it('runs only when explicitly invoked and invalidates tags from the successful result and arguments', async () => {
     const mutation = vi.fn((id: number) => of({id}));
     const invalidate = vi.spyOn(client, 'invalidateTags');

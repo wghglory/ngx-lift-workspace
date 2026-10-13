@@ -47,7 +47,7 @@ Another approach:
 @if ({usersState: usersState$ | async, total: total$ | async}; as vm) {
   <div>
     <button class="btn btn-outline" (click)="userService.refreshList()" [disabled]="vm.usersState?.isLoading">
-      Refresh
+      {{ 'grid.refresh' | translate }}
     </button>
   </div>
 
@@ -58,9 +58,9 @@ Another approach:
     [clrDgSelectionType]="'single'"
     [(clrDgSelected)]="selectedItems"
   >
-    <clr-dg-column [clrDgField]="'firstName'">First Name</clr-dg-column>
-    <clr-dg-column [clrDgField]="'lastName'">Last Name</clr-dg-column>
-    <clr-dg-column [clrDgField]="'email'">Email</clr-dg-column>
+    <clr-dg-column [clrDgField]="'firstName'">{{ 'grid.firstName' | translate }}</clr-dg-column>
+    <clr-dg-column [clrDgField]="'lastName'">{{ 'grid.lastName' | translate }}</clr-dg-column>
+    <clr-dg-column [clrDgField]="'email'">{{ 'grid.email' | translate }}</clr-dg-column>
     <clr-dg-column [clrDgField]="'gender'">Gender</clr-dg-column>
 
     <clr-dg-placeholder>No data found</clr-dg-placeholder>

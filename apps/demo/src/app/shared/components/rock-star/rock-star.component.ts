@@ -1,9 +1,9 @@
 import {CommonModule} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {AlertComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {AlertComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {combineLatestEager, switchMapWithAsyncState} from 'ngx-lift';
-import {of, Subject} from 'rxjs';
+import {map, of, Subject} from 'rxjs';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-rock-star',
@@ -14,12 +14,19 @@ import {of, Subject} from 'rxjs';
 })
 export class RockStarComponent {
   today$ = of(new Date());
+  private readonly translations = inject(TranslationService);
+  formatDate(value: Date | null): string {
+    if (!value) return '';
+    return new Intl.DateTimeFormat(this.translations.locale(), {dateStyle: 'medium'}).format(value);
+  }
 
   private showStarAction = new Subject<void>();
-  private http = inject(HttpClient);
+  private users = inject(UserService);
 
   rockStarState$ = this.showStarAction.pipe(
-    switchMapWithAsyncState(() => this.http.get<{name: string}>(`https://jsonplaceholder.typicode.com/users/1`)),
+    switchMapWithAsyncState(() =>
+      this.users.getUsers({results: 1}).pipe(map((response) => ({name: response.results[0].name.first}))),
+    ),
   );
 
   vm$ = combineLatestEager({

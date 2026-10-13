@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {signal} from '@angular/core';
+import {computed, signal} from '@angular/core';
 
-// Mock TranslationService
+/** @deprecated Compatibility test mock. Use the real TranslationService with fixture dictionaries to test localization. */
 export class MockTranslationService {
   readonly currentLanguage = signal('en');
+  readonly locale = computed(() => this.currentLanguage());
 
   translate(key: string, ...args: unknown[]): string {
     return 'TranslatedText';

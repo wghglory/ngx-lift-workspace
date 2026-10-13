@@ -6,3 +6,8 @@
 .angular
 
 .nx/self-healing
+.agents
+.opencode
+
+# pnpm owns the canonical lockfile formatting.
+pnpm-lock.yaml

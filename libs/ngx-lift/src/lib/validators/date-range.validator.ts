@@ -80,6 +80,15 @@ interface DateRangeOptions {
  * ```
  */
 export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
+  const minDate = parseBoundary(options.minDate, 'minDate');
+  const maxDate = parseBoundary(options.maxDate, 'maxDate');
+  if (
+    minDate &&
+    maxDate &&
+    (options.compareTime ? minDate.getTime() > maxDate.getTime() : calendarDate(minDate) > calendarDate(maxDate))
+  ) {
+    throw new RangeError('minDate must not be after maxDate.');
+  }
   return (control: AbstractControl): ValidationErrors | null => {
     // if control doesn't have any value, pass validation. Developer should use Angular required validator.
     if (!control.value) {
@@ -92,9 +101,6 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
     if (isNaN(selectedDate.getTime())) {
       return {invalidDate: true};
     }
-
-    const minDate = options.minDate ? new Date(options.minDate) : null;
-    const maxDate = options.maxDate ? new Date(options.maxDate) : null;
 
     if (minDate) {
       let errorCondition = false;
@@ -140,4 +146,11 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
 
 function calendarDate(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+}
+
+function parseBoundary(value: Date | string | undefined, name: string): Date | null {
+  if (value === undefined) return null;
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) throw new TypeError(`${name} must be a valid date.`);
+  return date;
 }

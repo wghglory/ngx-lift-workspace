@@ -1,5 +1,6 @@
 /**
- * Calculates the difference in whole days between two dates.
+ * Calculates elapsed whole 24-hour periods as dateLeft minus dateRight.
+ * This is not a calendar-day or daylight-saving-aware difference.
  *
  * @param {Date | number | string} dateLeft - The date from which the difference is measured (the reference date).
  *   Can be a Date object, a number representing milliseconds since the Unix epoch,
@@ -14,7 +15,7 @@
  * const result = differenceInDays('2022-09-08', new Date('2023-09-18'));
  *
  * The result is 0 if the diff is within a full day
- * const result = differenceInDays('2022-09-08T00:00:00', new Date('2023-09-08T14:00:00'));
+ * const result = differenceInDays('2023-09-08T00:00:00', new Date('2023-09-08T14:00:00'));
  */
 export function differenceInDays(dateLeft: Date | number | string, dateRight: Date | number | string) {
   const _dateLeft = new Date(dateLeft);

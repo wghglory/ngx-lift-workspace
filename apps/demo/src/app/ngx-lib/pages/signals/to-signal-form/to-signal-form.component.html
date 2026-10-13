@@ -317,9 +317,11 @@
             <!-- Dynamically Mounted Password & Confirm Fields -->
             @if (isPasswordMounted()) {
               <clr-password-container>
-                <label for="password-input">Master Password</label>
+                <label for="password-input">{{ 'form.masterPassword' | translate }}</label>
                 <input id="password-input" clrPassword formControlName="password" placeholder="Min 8 characters" />
-                <clr-control-error *clrIfError="'required'">Master password is required.</clr-control-error>
+                <clr-control-error *clrIfError="'required'">{{
+                  'form.masterPasswordRequired' | translate
+                }}</clr-control-error>
                 <clr-control-error *clrIfError="'minlength'">{{
                   'toSignalForm.passwordMinLength' | translate
                 }}</clr-control-error>

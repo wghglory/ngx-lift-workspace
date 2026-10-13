@@ -1,7 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {pki} from 'node-forge';
+import type {pki} from 'node-forge';
 
 import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {TranslationService} from '../../../services/translation.service';
@@ -17,6 +17,11 @@ import {CertificateStatus} from '../certificate.model';
 })
 export class CertificateComponent {
   private translationService = inject(TranslationService);
+  formatDate(value: Date): string {
+    return new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium', timeStyle: 'medium'}).format(
+      value,
+    );
+  }
 
   certificate = input.required<pki.Certificate>();
   certificateStatus = input.required<CertificateStatus>();

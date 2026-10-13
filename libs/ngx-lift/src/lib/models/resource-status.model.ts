@@ -1,6 +1,6 @@
 /**
  * Status of a resource's async operation lifecycle.
- * Extends Angular's httpResource ResourceStatus with additional 'local' state.
+ * Uses resource-style status names, including local writes; this is an ngx-lift contract.
  *
  * - `idle`: Initial state, operation has never been triggered (lazy resources only)
  * - `loading`: Initial fetch in progress with no previous value available

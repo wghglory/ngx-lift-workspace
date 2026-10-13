@@ -328,3 +328,19 @@ If this project helped you, please consider giving it a ⭐ on GitHub!
 Made by [Guanghui Wang](https://github.com/wghglory)
 
 </div>
+
+### Quality checks
+
+Use pnpm **11.7.0** and Node **24** for the workspace. `pnpm run validate` checks formatting, tool regressions,
+translation contracts, lint, types, coverage, builds and packed-library consumers. It does not rewrite source files; use
+`pnpm run fix` for formatting/lint fixes. Run `pnpm run e2e` for Chromium, Firefox and WebKit. E2E starts its own server
+on port 4307; set `BASE_URL` explicitly to test an external deployment.
+
+Demo routes and locale dictionaries load on demand. English and Simplified Chinese message dictionaries are checked for
+complete key sets; other demo languages are explicitly marked partial and fall back to English. Key completeness is not
+a claim that every advanced example or upstream Clarity string has been translated. Built-in clr-lift control labels are
+checked across all promised locales. Default user examples use local fixtures; opt into `DEMO_LIVE_USERS` only when
+demonstrating external HTTP transport.
+
+See the [audit hardening notes](docs/design/quality-audit-hardening.zh-CN.md) and
+[unreleased migration guidance](docs/MIGRATIONS.md#3-unreleased-quality-audit-hardening-2026-10-13).

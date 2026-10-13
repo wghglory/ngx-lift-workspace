@@ -106,6 +106,9 @@
           </div>
 
           <div class="code-actions">
+            @if (copyFailed()) {
+              <span role="status">{{ 'playground.copyFailed' | translate }}</span>
+            }
             <button
               type="button"
               class="btn btn-sm btn-link copy-btn"

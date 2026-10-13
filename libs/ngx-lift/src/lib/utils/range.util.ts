@@ -7,9 +7,14 @@
  * @param {number} end The end of the range.
  * @param {number} step The value to increment or decrement by.
  * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @throws RangeError for non-finite arguments or more than 1,000,000 output elements.
+ * A zero step repeats the start value for compatibility.
  * @returns {Array} Returns the range of numbers.
  */
 export function range(start: number, end?: number | undefined, step?: number | undefined, fromRight = false) {
+  if (![start, end ?? start, step ?? 1].every(Number.isFinite)) {
+    throw new RangeError('range requires finite start, end, and step values.');
+  }
   // if range takes only 1 input, that input is end, start with 0
   if (end === undefined) {
     end = start;
@@ -20,6 +25,9 @@ export function range(start: number, end?: number | undefined, step?: number | u
 
   let index = -1;
   let length = Math.max(Math.ceil((end - start) / (step || 1)), 0);
+  if (!Number.isFinite(length) || length > 1_000_000) {
+    throw new RangeError('range cannot allocate more than 1,000,000 elements.');
+  }
   const result = new Array(length);
 
   while (length--) {

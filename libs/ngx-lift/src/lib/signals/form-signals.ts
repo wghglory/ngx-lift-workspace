@@ -22,6 +22,7 @@ import {
 import {isEqual} from '../utils/is-equal.util';
 
 /**
+ * @deprecated Internal bridge helper. Prefer controlState or formState.
  * Creates an Observable stream that emits on both value changes and status changes of a control.
  */
 export function createControlEventStream(control: AbstractControl): Observable<unknown> {
@@ -32,6 +33,7 @@ export function createControlEventStream(control: AbstractControl): Observable<u
 }
 
 /**
+ * @deprecated Internal bridge helper. Prefer controlValue, controlState, or toSignalForm.
  * Safe conversion from an Observable to a Signal that can be invoked from within
  * reactive contexts without triggering Angular NG0602 errors.
  */

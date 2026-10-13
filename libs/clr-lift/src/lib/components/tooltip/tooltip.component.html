@@ -1,13 +1,12 @@
-<a
-  [class]="position()"
-  class="tooltip"
-  [style.left.px]="left()"
-  [style.top.px]="top()"
-  [style.z-index]="5001"
-  role="tooltip"
-  aria-haspopup="true"
->
-  <span class="tooltip-content" [style.width.px]="width()" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+<a [class]="position()" class="tooltip" [style.left.px]="left()" [style.top.px]="top()" [style.z-index]="5001">
+  <span
+    [attr.role]="interactive() ? 'dialog' : 'tooltip'"
+    [attr.aria-label]="interactive() ? dialogLabel() : null"
+    class="tooltip-content"
+    [style.width.px]="width()"
+    (mouseenter)="mouseEnter()"
+    (mouseleave)="mouseLeave()"
+  >
     <span [innerHtml]="text()"></span>
 
     <!-- for complex content (TemplateRef, ComponentRef), display close button, build traps -->

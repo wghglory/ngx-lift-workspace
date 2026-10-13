@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal, untracked} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
-import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {
   AlertComponent,
@@ -69,7 +68,6 @@ interface RequestLog {
   imports: [
     ClarityModule,
     ReactiveFormsModule,
-    RouterLink,
     PageContainerComponent,
     CalloutComponent,
     CodeBlockComponent,

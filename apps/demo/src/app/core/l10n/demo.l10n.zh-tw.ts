@@ -357,7 +357,7 @@ export const zhTWTranslations: Record<string, string> = {
 
   'combineFrom.title': 'combineFrom',
   'combineFrom.overview':
-    '<code>combineFrom</code> 接收 Observable 或 Signal 的陣列或物件字典，產生發出所有來源最新聚合狀態的 Signal。具備原子防抖防突變更新（Glitch-free）。',
+    '<code>combineFrom</code> 聚合 Observable 與 Signal，遵循 <code>combineLatest</code> 語義。單一來源會去重，不保證跨來源的原子更新。',
   'combineFrom.example1': '範例 1：基本用法',
   'combineFrom.example1Desc': '組合多個 Signal 或 Observable：',
   'combineFrom.example2': '範例 2：搭配 RxJS 管道操作符',
@@ -365,10 +365,11 @@ export const zhTWTranslations: Record<string, string> = {
   'combineFrom.example3': '範例 3：處理非同步資料流',
   'combineFrom.example3Desc': '使用 startWith 或 initialValue 初始化非同步資料：',
   'combineFrom.example4': '範例 4：實戰應用——多重條件篩選',
-  'combineFrom.example4Desc': '將搜尋關鍵字、狀態篩選與 API 資料來源聚合，完成無閃爍的客戶端過濾與排序：',
-  'combineFrom.example5': '範例 5：Glitch-Free 單次觸發與解耦 Injector',
-  'combineFrom.example5Desc': '多個相依項目同時變更時確保單次原子更新：',
-  'combineFrom.apiSummary': '將多個 Observable 與 Signal 聚合成單一 Signal，具備 Glitch-Free 機制。',
+  'combineFrom.example4Desc': '聚合搜尋關鍵字、狀態與 API 資料，實作客戶端篩選與排序。',
+  'combineFrom.example5': '範例 5：初始化去重與明確 Injector',
+  'combineFrom.example5Desc':
+    '初始 Signal 發射會去重，但多個來源仍可能產生中間組合。純同步 Signal 衍生應使用 computed()。',
+  'combineFrom.apiSummary': '聚合 Observable 與 Signal，採用 combineLatest 語義及單一來源去重。',
 
   'resourceAsync.title': 'resourceAsync',
   'resourceAsync.overview':
@@ -880,4 +881,5 @@ export const zhTWTranslations: Record<string, string> = {
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     '應用於請求的預設 K8sBackoffRetryConfig，優先權低於請求級 K8S_RETRY_BACKOFF_CONFIG。',
   'k8sRetryBackoffInterceptor.tokenSummary': '用於在單次請求中覆寫退避設定或直接停用重試的 HttpContextToken。',
+  'header.partialLanguage': '翻譯尚未完整，缺漏文字使用英語。',
 };

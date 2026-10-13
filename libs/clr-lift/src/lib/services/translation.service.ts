@@ -1,4 +1,5 @@
-import {ApplicationRef, inject, Injectable, signal} from '@angular/core';
+import {DOCUMENT} from '@angular/common';
+import {computed, effect, inject, Injectable, signal} from '@angular/core';
 
 /** English fallback used when a requested translation is unavailable. */
 export const DEFAULT_LANGUAGE = 'en';
@@ -17,8 +18,21 @@ export const STORAGE_KEY_LANGUAGE = 'clr-lift-lang';
   providedIn: 'root',
 })
 export class TranslationService {
-  private appRef = inject(ApplicationRef, {optional: true});
-  private translations: Record<string, Record<string, string>> = {};
+  private document = inject(DOCUMENT);
+  private readonly dictionaryVersion = signal(0);
+  private readonly warnings = new Set<string>();
+
+  /** Canonical locale for number/date formatting; independent of message fallback. */
+  readonly locale = computed(() => canonicalLocale(this.currentLanguageSignal()));
+
+  constructor() {
+    effect(() => {
+      const locale = this.locale();
+      this.document.documentElement?.setAttribute('lang', locale);
+      this.document.documentElement?.setAttribute('dir', /^(ar|fa|he|ur)(-|$)/i.test(locale) ? 'rtl' : 'ltr');
+    });
+  }
+  private translations: Record<string, Record<string, string>> = Object.create(null);
 
   private initialLanguage(): string {
     if (typeof localStorage !== 'undefined') {
@@ -63,15 +77,25 @@ export class TranslationService {
    *   Format: `{ [language: string]: { [key: string]: string } }`
    */
   loadTranslationsForComponent(componentKey: string, translationsToAdd: Record<string, Record<string, string>>) {
-    for (const lang in translationsToAdd) {
+    let changed = false;
+    for (const lang of Object.keys(translationsToAdd)) {
       if (!this.translations[lang]) {
-        this.translations[lang] = {};
+        this.translations[lang] = Object.create(null);
+        changed = true;
       }
 
-      for (const translationKey in translationsToAdd[lang]) {
+      for (const translationKey of Object.keys(translationsToAdd[lang])) {
         const newKey = componentKey ? `${componentKey}.${translationKey}` : translationKey;
-        this.translations[lang][newKey] = translationsToAdd[lang][translationKey];
+        const value = translationsToAdd[lang][translationKey];
+        if (this.translations[lang][newKey] !== value) {
+          this.translations[lang][newKey] = value;
+          changed = true;
+        }
       }
+    }
+    if (changed) {
+      this.warnings.clear();
+      this.dictionaryVersion.update((version) => version + 1);
     }
   }
 
@@ -93,15 +117,6 @@ export class TranslationService {
         // ignore storage errors
       }
     }
-    if (this.appRef) {
-      queueMicrotask(() => {
-        try {
-          this.appRef?.tick();
-        } catch {
-          // ignore error if tick called during existing cycle or destroyed app
-        }
-      });
-    }
   }
 
   /**
@@ -119,16 +134,21 @@ export class TranslationService {
    * @param args - Optional arguments to substitute into `{0}`, `{1}` placeholders.
    */
   translateWithLanguage(key: string, targetLang: string, ...args: unknown[]): string {
+    this.dictionaryVersion();
     const language = this.resolveLanguage(targetLang);
 
     // Check if the current language or its resolved fallback is supported.
     if (!this.translations[language]) {
-      console.warn(`${targetLang} is not supported yet.`);
+      this.warnOnce(`language:${targetLang}`, `${targetLang} is not supported yet.`);
     }
 
     // Check if the translation for the given key exists in the current language
-    if (this.translations[language]?.[key] === undefined) {
-      console.warn(
+    if (
+      this.translations[language]?.[key] === undefined &&
+      !(canonicalLocale(targetLang).split('-')[0] === 'en' && this.translations[DEFAULT_LANGUAGE]?.[key] !== undefined)
+    ) {
+      this.warnOnce(
+        `${targetLang}:${key}`,
         `${key} is not translated in ${targetLang} yet. Will fallback to English to see if translation is available.`,
       );
     }
@@ -172,6 +192,12 @@ export class TranslationService {
       return caseMatch;
     }
 
+    const chinese = chineseLocale(targetLang);
+    if (chinese) {
+      const scriptMatch = availableKeys.find((key) => key.toLowerCase() === chinese.toLowerCase());
+      if (scriptMatch) return scriptMatch;
+    }
+
     // 2. Base language match (e.g. 'en-US' -> 'en', 'zh-CN' -> 'zh')
     const baseLang = lowerTarget.split('-')[0];
     const baseMatch = availableKeys.find((k) => k.toLowerCase() === baseLang);
@@ -188,13 +214,34 @@ export class TranslationService {
     return targetLang;
   }
 
-  /**
-   * Formats a string by replacing placeholders with provided arguments.
-   */
+  /** Reports each missing language/key once per dictionary revision. */
+  private warnOnce(identity: string, message: string): void {
+    if (this.warnings.has(identity)) return;
+    this.warnings.add(identity);
+    console.warn(message);
+  }
+
+  /** Formats positional placeholders without dropping unknown arguments. */
   private format(format: string, ...args: unknown[]) {
     return format.replace(/{(\d+)}/g, function (match, number) {
       const value = args[Number(number)];
       return value === undefined ? match : String(value);
     });
   }
+}
+
+/** Canonicalizes a language tag with an English fallback for invalid tags. */
+export function canonicalLocale(language: string): string {
+  try {
+    return Intl.getCanonicalLocales(language)[0] ?? DEFAULT_LANGUAGE;
+  } catch {
+    return DEFAULT_LANGUAGE;
+  }
+}
+
+/** Resolves Chinese script/region variants for the two built-in dictionaries. */
+export function chineseLocale(language: string): 'zh-CN' | 'zh-TW' | undefined {
+  const tag = canonicalLocale(language).toLowerCase();
+  if (!/^zh(-|$)/.test(tag)) return undefined;
+  return /-(hant|tw|hk|mo)(-|$)/.test(tag) ? 'zh-TW' : 'zh-CN';
 }

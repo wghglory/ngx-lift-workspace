@@ -80,4 +80,82 @@ describe('DemoPlaygroundComponent', () => {
     component.toggleLayout();
     expect(component.currentLayout()).toBe('stacked');
   });
+  it('handles clipboard rejection and absence without reporting false success', async () => {
+    fixture.componentRef.setInput('tsCode', 'const x = 1;');
+    Object.assign(navigator, {clipboard: {writeText: vi.fn().mockRejectedValue(new Error('Permission denied'))}});
+    component.copyCurrentCode();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(component.copyFailed()).toBe(true);
+    expect(component.copied()).toBe(false);
+    Object.assign(navigator, {clipboard: undefined});
+    component.copyCurrentCode();
+    expect(component.copyFailed()).toBe(true);
+  });
+
+  it('clears feedback timers and ignores late clipboard completion after disposal', async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput('tsCode', 'const x = 1;');
+      let resolveCopy!: () => void;
+      Object.assign(navigator, {
+        clipboard: {
+          writeText: () =>
+            new Promise<void>((resolve) => {
+              resolveCopy = resolve;
+            }),
+        },
+      });
+      component.copyCurrentCode();
+      fixture.destroy();
+      resolveCopy();
+      await Promise.resolve();
+      expect(component.copied()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it.each([
+    ['typescript', 'const x = 1;', '', '', 'typescript', 'const x = 1;'],
+    ['html', '', '<div>hello</div>', '', 'html', '<div>hello</div>'],
+    ['scss', '', '', 'body {color: red;}', 'scss', 'body {color: red;}'],
+    ['html', 'const x = 1;', '', '', 'typescript', 'const x = 1;'],
+    ['typescript', '', '<p>fallback</p>', '', 'html', '<p>fallback</p>'],
+    ['html', '', '', 'p {color: blue;}', 'scss', 'p {color: blue;}'],
+  ] as const)(
+    'copies available source when selected tab is %s',
+    async (selected, tsCode, htmlCode, scssCode, expectedTab, expectedCode) => {
+      fixture.componentRef.setInput('tsCode', tsCode);
+      fixture.componentRef.setInput('htmlCode', htmlCode);
+      fixture.componentRef.setInput('scssCode', scssCode);
+      component.setTab(selected);
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, {clipboard: {writeText}});
+      component.copyCurrentCode();
+      await Promise.resolve();
+      expect(component.effectiveActiveTab()).toBe(expectedTab);
+      expect(writeText).toHaveBeenCalledWith(expectedCode);
+      expect(component.hasAnyCode()).toBe(true);
+    },
+  );
+
+  it('resets successful copy feedback and allows empty examples without crashing', async () => {
+    vi.useFakeTimers();
+    try {
+      expect(component.hasAnyCode()).toBe(false);
+      component.setTab('scss');
+      expect(component.effectiveActiveTab()).toBe('typescript');
+      component.copyCurrentCode();
+      fixture.componentRef.setInput('tsCode', 'source');
+      Object.assign(navigator, {clipboard: {writeText: vi.fn().mockResolvedValue(undefined)}});
+      component.copyCurrentCode();
+      await Promise.resolve();
+      expect(component.copied()).toBe(true);
+      await vi.advanceTimersByTimeAsync(2000);
+      expect(component.copied()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

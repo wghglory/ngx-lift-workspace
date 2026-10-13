@@ -502,6 +502,50 @@ describe('FileReaderComponent', () => {
       expect(onChange).toHaveBeenCalledWith('中文 🚀');
     });
 
+    it('roundtrips Unicode text through encoded form values', () => {
+      fixture.componentRef.setInput('encoded', true);
+      fixture.detectChanges();
+      const onChange = vi.fn();
+      component.registerOnChange(onChange);
+      selectFile('unicode.txt');
+      complete(readers[0], '中文 🚀');
+      expect(component.parseError()).toBe('');
+      const encoded = onChange.mock.calls[0][0];
+      component.writeValue(encoded);
+      expect(component.rawContent()).toBe('中文 🚀');
+    });
+
+    it('supports explicit legacy Latin-1 values without changing their byte encoding', () => {
+      fixture.componentRef.setInput('encoded', true);
+      fixture.componentRef.setInput('textEncoding', 'latin1');
+      fixture.detectChanges();
+      component.writeValue(btoa('café'));
+      expect(component.rawContent()).toBe('café');
+      expect(component.parseError()).toBe('');
+    });
+
+    it('reports malformed UTF-8 as validation state without writing back or touching', () => {
+      fixture.componentRef.setInput('encoded', true);
+      fixture.detectChanges();
+      const changed = vi.fn(),
+        touched = vi.fn();
+      component.registerOnChange(changed);
+      component.registerOnTouched(touched);
+      component.writeValue(btoa(String.fromCharCode(255)));
+      expect(component.parseError()).not.toBe('');
+      expect(component.validate(mockFormControl)).toHaveProperty('parse');
+      expect(changed).not.toHaveBeenCalled();
+      expect(touched).not.toHaveBeenCalled();
+    });
+
+    it('rejects oversized files before starting FileReader', () => {
+      fixture.componentRef.setInput('maxSize', 0);
+      fixture.detectChanges();
+      selectFile('oversized.txt');
+      expect(readers).toHaveLength(0);
+      expect(component.validate(mockFormControl)).toEqual({exceedLimit: true});
+    });
+
     it('cancels an old read when another file is selected', () => {
       const onChange = vi.fn();
       component.registerOnChange(onChange);

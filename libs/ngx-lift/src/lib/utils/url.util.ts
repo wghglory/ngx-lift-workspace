@@ -1,4 +1,4 @@
-import {fqdnRegex, httpsPattern, ipRegex, urlPattern} from '../const';
+import {fqdnRegex, ipRegex} from '../const';
 
 /**
  * Checks if a hostname is a valid IPv4 address.
@@ -51,7 +51,7 @@ export function isFQDN(hostname: string): boolean {
  * ```
  */
 export function isURL(url: string): boolean {
-  return urlPattern.test(url);
+  return parseHttpUrl(url) !== null;
 }
 
 /**
@@ -68,5 +68,19 @@ export function isURL(url: string): boolean {
  * ```
  */
 export function isHttps(url: string): boolean {
-  return httpsPattern.test(url);
+  return parseHttpUrl(url)?.protocol === 'https:';
+}
+
+/** Strict absolute HTTP(S) parsing. Single-label hostnames remain rejected for compatibility. */
+function parseHttpUrl(value: string): URL | null {
+  if (typeof value !== 'string' || !/^https?:\/\//i.test(value) || /\s/.test(value)) return null;
+  try {
+    const url = new URL(value);
+    const host = url.hostname;
+    return (url.protocol === 'http:' || url.protocol === 'https:') && (host.includes('.') || host.startsWith('['))
+      ? url
+      : null;
+  } catch {
+    return null;
+  }
 }

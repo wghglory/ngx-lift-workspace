@@ -66,7 +66,7 @@ export interface BaseResourceRefOptions<T, E = Error> extends CreateComputedOpti
   /**
    * Error handler that receives errors from async operations.
    * Can transform errors or provide fallback values.
-   * If it returns a value, the resource will be in 'success' state with that value.
+   * If it returns a value, the resource will be in 'resolved' state with that value.
    */
   onError?: (error: E) => T | undefined;
 
