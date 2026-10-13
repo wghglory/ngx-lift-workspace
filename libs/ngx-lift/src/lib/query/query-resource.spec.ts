@@ -41,18 +41,27 @@ describe('queryResource', () => {
     const second = TestBed.runInInjectionContext(() => queryResource(() => definition));
     expect(first.status()).toBe('loading');
     expect(first.isLoading()).toBe(true);
+    expect(first.isInitialLoading()).toBe(true);
+    expect(first.isRefreshing()).toBe(false);
     await settle();
     expect(loader).toHaveBeenCalledTimes(1);
     expect(first.value()).toBe(1);
     expect(second.value()).toBe(1);
+    expect(first.isInitialLoading()).toBe(false);
+    expect(first.isRefreshing()).toBe(false);
     first.reload();
     second.reload();
     expect(first.status()).toBe('reloading');
+    expect(first.isLoading()).toBe(true);
+    expect(first.isInitialLoading()).toBe(false);
+    expect(first.isRefreshing()).toBe(true);
     expect(first.hasValue()).toBe(true);
     await settle();
     expect(loader).toHaveBeenCalledTimes(2);
     expect(first.value()).toBe(2);
     expect(second.value()).toBe(2);
+    expect(first.isInitialLoading()).toBe(false);
+    expect(first.isRefreshing()).toBe(false);
   });
 
   it.each(['initial', 'recovery'] as const)(

@@ -10,6 +10,7 @@ import {
   QueryTag,
 } from './query.models';
 import {serializeQueryKey} from './query-key';
+import {normalizeQueryResult} from './query-normalizer';
 
 const MAX_TIMER_DELAY = 2_147_483_647;
 
@@ -345,7 +346,10 @@ export class QueryClient {
     // Install pending state first, then preserve HttpClient's synchronous dispatch semantics.
     try {
       controller.signal.throwIfAborted();
-      Promise.resolve(loader({abortSignal: controller.signal, refresh})).then(resolveTransport, rejectTransport);
+      normalizeQueryResult(loader({abortSignal: controller.signal, refresh}), {
+        abortSignal: controller.signal,
+        refresh,
+      }).then(resolveTransport, rejectTransport);
     } catch (error) {
       rejectTransport(error);
     }

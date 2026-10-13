@@ -9,20 +9,19 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import {isObservable, Observable, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
-import {QueryDefinition, QueryLoaderContext, QueryObserverHandle, QuerySnapshot, QueryStatus} from './query.models';
+import {QueryDefinition, QueryObserverHandle, QuerySnapshot, QueryStatus} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {serializeQueryKey} from './query-key';
-import {observableLoader} from './query-observable';
 import {resourceAsync} from './resource-async';
 
-/** Angular query definition accepting Promise or first-value Observable reads. */
-export interface QueryResourceDefinition<T> extends Omit<QueryDefinition<T>, 'loader'> {
-  /** Observable reads unsubscribe after the first value or when the shared request is aborted. */
-  readonly loader: (context: QueryLoaderContext) => Promise<T> | Observable<T>;
-}
+/**
+ * Angular query definition accepting Promise or Observable reads.
+ * Alias for QueryDefinition.
+ */
+export type QueryResourceDefinition<T> = QueryDefinition<T>;
 
 /** Injection, shared-client, and reactive polling configuration for queryResource. */
 export interface QueryResourceOptions {
@@ -37,6 +36,8 @@ export interface QueryResourceRef<T, E = Error> {
   readonly error: Signal<E | null>;
   readonly status: Signal<QueryStatus>;
   readonly isLoading: Signal<boolean>;
+  readonly isInitialLoading: Signal<boolean>;
+  readonly isRefreshing: Signal<boolean>;
   readonly isStale: Signal<boolean>;
   hasValue(): this is QueryResourceRef<Exclude<T, undefined>, E>;
   /** Force fresh data while joining a valid request already in flight. */
@@ -65,6 +66,10 @@ function idleSnapshot<T>(): QuerySnapshot<T> {
  * });
  * // Read user.value(), user.isLoading(), and user.error() from the template.
  * ```
+ *
+ * @param definition Reactive factory returning a QueryDefinition or undefined when prerequisites are missing.
+ * @param options Polling interval, custom injector, or custom query client.
+ * @returns QueryResourceRef exposing signals and execution controls.
  */
 export function queryResource<T, E = Error>(
   definition: () => QueryResourceDefinition<T> | undefined,
@@ -78,14 +83,7 @@ export function queryResource<T, E = Error>(
   const requested = computed(() => {
     const query = definition();
     if (!query) return undefined;
-    const adapted: QueryDefinition<T> = {
-      ...query,
-      loader: (context) => {
-        const source = query.loader(context);
-        return isObservable(source) ? observableLoader(() => source)(context) : source;
-      },
-    };
-    return {query: adapted, key: serializeQueryKey(query.key)};
+    return {query, key: serializeQueryKey(query.key)};
   });
   const requestedKey = computed(() => requested()?.key);
   const observedKey = signal<string | undefined>(undefined);
@@ -162,6 +160,7 @@ export function queryResource<T, E = Error>(
     const snapshot = sharedState.value();
     return sharedState.error() ? {...snapshot, error: sharedState.error(), status: 'error' as const} : snapshot;
   });
+
   const observerEffect = effect(
     () => {
       const current = requested();
@@ -209,6 +208,8 @@ export function queryResource<T, E = Error>(
     error: computed(() => visibleState().error as E | null),
     status: computed(() => visibleState().status),
     isLoading: computed(() => ['loading', 'reloading'].includes(visibleState().status)),
+    isInitialLoading: computed(() => visibleState().status === 'loading'),
+    isRefreshing: computed(() => visibleState().status === 'reloading'),
     isStale: computed(() => visibleState().isStale),
     hasValue(): this is QueryResourceRef<Exclude<T, undefined>, E> {
       return visibleState().hasValue && visibleState().value !== undefined;

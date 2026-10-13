@@ -22,6 +22,10 @@ All scattered markdown specifications from the library implementation directorie
 
 ## Architectural Taxonomy: When to Use Which Primitive
 
+For proposed API enhancements and practical request composition, see
+[Query API developer experience](query-api-dx-proposal.md) and its [Chinese companion](query-api-dx-proposal.zh-CN.md).
+This is a proposal, not an implemented API contract.
+
 ```
                              Is the operation a write (POST/PUT/DELETE)?
                                           /          \

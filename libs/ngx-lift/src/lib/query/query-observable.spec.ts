@@ -5,6 +5,7 @@ import {EMPTY, EmptyError, firstValueFrom, of, Subject} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClient} from './query-client';
+import {QuerySnapshot} from './query.models';
 import {fetchQueryObservable, observableLoader, observeQueryObservable} from './query-observable';
 
 async function settle(): Promise<void> {
@@ -167,5 +168,33 @@ describe('query Observable adapters', () => {
     await settle();
     expect(values.at(-1)).toBe(2);
     recreated.unsubscribe();
+  });
+
+  it('supports direct Observable loader in fetchQueryObservable without observableLoader wrapper', async () => {
+    const definition = {
+      key: ['direct-fetch'],
+      loader: () => http.get('/api/direct-fetch'),
+    };
+    const source = fetchQueryObservable(client, definition);
+    const resultPromise = firstValueFrom(source);
+    await settle();
+    const req = controller.expectOne('/api/direct-fetch');
+    expect(req.request.headers.get('X-Query')).toBe('test');
+    req.flush({success: true});
+    expect(await resultPromise).toEqual({success: true});
+  });
+
+  it('supports direct Observable loader in observeQueryObservable without observableLoader wrapper', async () => {
+    const definition = {
+      key: ['direct-observe'],
+      loader: () => of({count: 42}),
+    };
+    const snapshots: QuerySnapshot<{count: number}>[] = [];
+    const sub = observeQueryObservable(client, definition).subscribe((snapshot) => {
+      snapshots.push(snapshot);
+    });
+    await settle();
+    expect(snapshots.some((s) => s.status === 'resolved' && s.value?.count === 42)).toBe(true);
+    sub.unsubscribe();
   });
 });

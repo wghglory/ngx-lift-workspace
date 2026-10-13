@@ -1,3 +1,5 @@
+import {Observable} from 'rxjs';
+
 /** JSON-compatible values supported in a canonical query key. */
 export type QueryKeyValue =
   string | number | boolean | null | readonly QueryKeyValue[] | {readonly [key: string]: QueryKeyValue};
@@ -20,10 +22,13 @@ export interface QueryLoaderContext {
   readonly refresh: boolean;
 }
 
+/** Return type of a query loader: natively accepts an Observable, Promise, or PromiseLike value. */
+export type QueryResult<T> = Observable<T> | Promise<T> | PromiseLike<T>;
+
 /** Definitions sharing a key describe the same data; timing policies reconcile conservatively. */
 export interface QueryDefinition<T> {
   readonly key: QueryKey;
-  readonly loader: (context: QueryLoaderContext) => Promise<T>;
+  readonly loader: (context: QueryLoaderContext) => QueryResult<T>;
   readonly tags?: readonly QueryTag[];
   /** Freshness starts after a successful response. The default is zero. */
   readonly staleTime?: number;
