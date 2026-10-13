@@ -1,5 +1,8 @@
 name: Deploy Demo App
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:

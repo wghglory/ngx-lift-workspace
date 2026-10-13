@@ -1,5 +1,8 @@
 name: Publish Libraries
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
