@@ -126,4 +126,20 @@ describe('K8sRetryBackoffInterceptorComponent', () => {
     expect(component.isTestingOverride()).toBe(false);
     expect(component.logs().filter((line) => line.includes('Attempt'))).toHaveLength(1);
   });
+  it.each(['postDefault', 'postGateway'] as const)('does not retry the %s write scenario', async (mode) => {
+    component.selectedMode.set(mode);
+    component.executeRequest();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(component.simulationResult()).toMatchObject({success: false, totalAttempts: 1, statusCode: 429});
+  });
+
+  it('recovers an explicitly opted-in Kubernetes write and shows retry metadata', async () => {
+    component.selectedMode.set('postOptIn');
+    component.executeRequest();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(component.simulationResult()).toMatchObject({success: true, totalAttempts: 2});
+    expect(component.logs().some((line) => line.includes('POST /api/v1/namespaces/default/pods status 429'))).toBe(
+      true,
+    );
+  });
 });

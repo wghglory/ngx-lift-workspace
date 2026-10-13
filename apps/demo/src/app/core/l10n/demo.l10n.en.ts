@@ -1853,4 +1853,18 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramRandom': 'Random source returning a finite number in [0, 1), for deterministic scheduling.',
   'k8sRetryBackoff.retryContract':
     'Defaults: five attempts, exponential fallback with equal jitter, up to 250ms extra on server hints, 30s per wait and 60s total scheduled waits. Oversized hints stop retries. Interceptors retry idempotent methods by default; POST/PATCH require an endpoint guarantee.',
+  'k8sRetryBackoff.paramMinDelay':
+    'Minimum fallback wait for every jitter strategy; cannot exceed maxDelayMs. Server hints are unchanged.',
+  'k8sRetryBackoff.paramStatuses':
+    'Eligible HTTP statuses. Other errors propagate unchanged; additional statuses require endpoint review.',
+  'k8sRetryBackoff.paramPredicate':
+    'Extra error filter, applied after the status check. It does not enable POST/PATCH by itself.',
+  'k8sRetryBackoff.paramLogRetries': 'Enable retry logging after the delay passes the wait budget checks.',
+  'k8sRetryBackoff.paramLabel':
+    'Log label. Generated interceptor labels omit query strings and fragments; redact custom labels.',
+  'k8sRetryBackoff.paramLogger':
+    'Optional logger with attempt, maxRetries, delayMs, error and label. Redact error data; logger failures do not stop retries.',
+  'k8sRetryBackoffInterceptor.postDefault': 'POST: default (no retry)',
+  'k8sRetryBackoffInterceptor.postOptIn': 'POST: explicit Kubernetes opt-in',
+  'k8sRetryBackoffInterceptor.postGateway': 'POST: gateway 429 (rejected)',
 };

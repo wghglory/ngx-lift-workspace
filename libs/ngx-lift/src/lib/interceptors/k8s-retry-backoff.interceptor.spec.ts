@@ -9,6 +9,7 @@ import {
   k8sRetryBackoffInterceptor,
   provideK8sRetryBackoffConfig,
 } from './k8s-retry-backoff.interceptor';
+import {isK8sStatusThrottled, K8sRetryLogContext} from '../operators/k8s-retry-backoff.operator';
 
 describe('k8sRetryBackoffInterceptor', () => {
   let httpClient: HttpClient;
@@ -204,6 +205,19 @@ describe('retry method and interceptor lifecycle contracts', () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
+  it.each(['POST', 'PATCH'])('does not infer %s idempotency from a Kubernetes Status body', (method) => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])), provideHttpClientTesting()],
+    });
+    const caught = vi.fn();
+    TestBed.inject(HttpClient).request(method, '/write').subscribe({error: caught});
+    TestBed.inject(HttpTestingController)
+      .expectOne('/write')
+      .flush({kind: 'Status', reason: 'TooManyRequests'}, {status: 429, statusText: 'throttled'});
+    expect(caught).toHaveBeenCalledOnce();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it('rebuilds downstream authentication on every attempt and permits explicit POST opt-in', async () => {
     let token = 'first';
     TestBed.configureTestingModule({
@@ -235,6 +249,95 @@ describe('retry method and interceptor lifecycle contracts', () => {
     expect(second.request.headers.get('Authorization')).toBe('fresh');
     second.flush({ok: true});
     expect(result).toHaveBeenCalledWith({ok: true});
+  });
+
+  it.each(['POST', 'PATCH'])('retries %s on K8s Status with explicit method and predicate opt-in', async (method) => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])), provideHttpClientTesting()],
+    });
+    const result = vi.fn();
+    TestBed.inject(HttpClient)
+      .request(method, '/api/v1/pods', {
+        body: {name: 'my-pod'},
+        context: new HttpContext().set(K8S_RETRY_BACKOFF_CONFIG, {
+          retryMethods: [method],
+          isRetryable: isK8sStatusThrottled,
+        }),
+      })
+      .subscribe(result);
+    const controller = TestBed.inject(HttpTestingController);
+
+    // K8s APF rejection before execution
+    controller
+      .expectOne('/api/v1/pods')
+      .flush(
+        {kind: 'Status', reason: 'TooManyRequests', details: {retryAfterSeconds: 1}},
+        {status: 429, statusText: 'Too Many Requests'},
+      );
+
+    await vi.advanceTimersByTimeAsync(1250);
+
+    const second = controller.expectOne('/api/v1/pods');
+    expect(second.request.body).toEqual({name: 'my-pod'});
+    second.flush({metadata: {name: 'my-pod'}}, {status: 201, statusText: 'Created'});
+
+    expect(result).toHaveBeenCalledWith({metadata: {name: 'my-pod'}});
+  });
+
+  it('retries POST on serialized JSON string containing K8s Status TooManyRequests', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])), provideHttpClientTesting()],
+    });
+    const result = vi.fn();
+    TestBed.inject(HttpClient)
+      .post(
+        '/api/v1/pods',
+        {},
+        {
+          context: new HttpContext().set(K8S_RETRY_BACKOFF_CONFIG, {
+            retryMethods: ['POST'],
+            isRetryable: isK8sStatusThrottled,
+          }),
+        },
+      )
+      .subscribe(result);
+    const controller = TestBed.inject(HttpTestingController);
+
+    controller
+      .expectOne('/api/v1/pods')
+      .flush(JSON.stringify({kind: 'Status', reason: 'TooManyRequests', details: {retryAfterSeconds: 1}}), {
+        status: 429,
+        statusText: 'Too Many Requests',
+      });
+
+    await vi.advanceTimersByTimeAsync(1250);
+
+    controller.expectOne('/api/v1/pods').flush({ok: true});
+    expect(result).toHaveBeenCalledWith({ok: true});
+  });
+
+  it('sanitizes URL query parameters and fragments in logger labels to prevent secret leaks', async () => {
+    const loggerSpy = vi.fn();
+    TestBed.configureTestingModule({
+      providers: [
+        provideK8sRetryBackoffConfig({logRetries: true, logger: loggerSpy, hintJitterMs: 0}),
+        provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])),
+        provideHttpClientTesting(),
+      ],
+    });
+    TestBed.inject(HttpClient).get('/api/v1/pods?token=super-secret-token#hash-fragment').subscribe();
+    const controller = TestBed.inject(HttpTestingController);
+
+    controller
+      .expectOne('/api/v1/pods?token=super-secret-token#hash-fragment')
+      .flush({}, {status: 429, statusText: 'throttled', headers: {'Retry-After': '1'}});
+
+    expect(loggerSpy).toHaveBeenCalledOnce();
+    const [msg, context] = loggerSpy.mock.calls[0] as [string, K8sRetryLogContext];
+    expect(msg).toContain('GET /api/v1/pods status 429');
+    expect(msg).not.toContain('super-secret-token');
+    expect(msg).not.toContain('hash-fragment');
+    expect(context.label).toBe('GET /api/v1/pods');
   });
 });
 

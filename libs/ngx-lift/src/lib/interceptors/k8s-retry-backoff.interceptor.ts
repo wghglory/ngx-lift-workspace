@@ -1,5 +1,4 @@
 import {HttpContextToken, HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
-
 import {inject, InjectionToken, makeEnvironmentProviders} from '@angular/core';
 import {defer} from 'rxjs';
 
@@ -37,10 +36,20 @@ export function provideK8sRetryBackoffConfig(config: K8sBackoffRetryConfig) {
   return makeEnvironmentProviders([{provide: K8S_RETRY_BACKOFF_DEFAULTS, useValue: {...config}}]);
 }
 
+const DEFAULT_RETRY_METHODS = ['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'] as const;
+
 /**
- * Retry Kubernetes 429 responses for idempotent methods. Register before authentication interceptors
- * so every attempt rebuilds the downstream chain. POST/PATCH require an explicit method allowlist
- * and an endpoint idempotency guarantee; retrying writes can otherwise duplicate side effects.
+ * Functional HTTP interceptor that automatically retries Kubernetes HTTP 429 responses
+ * with exponential backoff and jitter (respecting `Retry-After` header and `details.retryAfterSeconds`).
+ *
+ * Register before authentication interceptors in `withInterceptors([...])` so that each retry attempt
+ * rebuilds the downstream chain with fresh headers and tokens.
+ *
+ * POST/PATCH require an explicit method allowlist and an endpoint idempotency guarantee.
+ * A Kubernetes Status body alone does not prove a write was rejected before execution.
+ *
+ * Generated log labels omit query strings and fragments. Custom labels and logger error data
+ * remain the caller's responsibility to redact.
  */
 export const k8sRetryBackoffInterceptor: HttpInterceptorFn = (req, next) =>
   interceptWithBackoff(req, next, inject(K8S_RETRY_BACKOFF_DEFAULTS));
@@ -49,9 +58,19 @@ function interceptWithBackoff(req: HttpRequest<unknown>, next: HttpHandlerFn, de
   const override = req.context.get(K8S_RETRY_BACKOFF_CONFIG);
   if (override === false) return next(req);
   const config = {...defaults, ...override};
-  const methods = config.retryMethods ?? ['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'];
-  if (!methods.some((method) => method.toUpperCase() === req.method.toUpperCase())) return next(req);
-  return defer(() => next(req)).pipe(retryOnK8sBackoff(config));
+  const method = req.method.toUpperCase();
+  const methods = config.retryMethods ?? DEFAULT_RETRY_METHODS;
+  if (!methods.some((m) => m.toUpperCase() === method)) return next(req);
+
+  // Path only: query strings may carry tokens, pre-signed parameters, or user identifiers.
+  const label = config.label ?? `${method} ${req.url.split(/[?#]/)[0]}`;
+
+  return defer(() => next(req)).pipe(
+    retryOnK8sBackoff({
+      ...config,
+      label,
+    }),
+  );
 }
 
 /**

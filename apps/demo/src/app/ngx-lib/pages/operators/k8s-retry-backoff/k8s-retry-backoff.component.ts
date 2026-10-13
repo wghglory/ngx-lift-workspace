@@ -75,7 +75,13 @@ export class PodListComponent {
   // resourceAsync subscribes and cleans up when the component is destroyed.
   readonly pods = resourceAsync(() =>
     this.http.get<PodList>('/api/v1/namespaces/default/pods').pipe(
-      retryOnK8sBackoff({ maxAttempts: 5, fallbackDelayMs: 1000 })
+      retryOnK8sBackoff({
+        maxAttempts: 5, fallbackDelayMs: 1000, minDelayMs: 100,
+        // Add 503 only if this endpoint permits retrying it.
+        retryStatusCodes: [429],
+        logRetries: true,
+        logger: (message, { attempt, delayMs }) => console.info(message, { attempt, delayMs }),
+      })
     )
   );
 }`);
@@ -149,6 +155,19 @@ getK8sRetryDelayMs({ status: 500 }); // null — do not retry
       default: "['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE']",
       description: this.translationService.translate('k8sRetryBackoff.paramMethods'),
     },
+    ...[
+      ['minDelayMs', 'number', '0', 'paramMinDelay'],
+      ['retryStatusCodes', 'readonly number[]', '[429]', 'paramStatuses'],
+      ['isRetryable', '(error: unknown) => boolean', 'undefined', 'paramPredicate'],
+      ['logRetries', 'boolean', 'false', 'paramLogRetries'],
+      ['label', 'string', 'undefined', 'paramLabel'],
+      ['logger', '(message, context: K8sRetryLogContext) => void', 'console.warn', 'paramLogger'],
+    ].map(([name, type, defaultValue, key]) => ({
+      name,
+      type,
+      default: defaultValue,
+      description: this.translationService.translate(`k8sRetryBackoff.${key}`),
+    })),
     {
       name: 'random',
       type: '() => number',
@@ -170,6 +189,12 @@ getK8sRetryDelayMs({ status: 500 }); // null — do not retry
         type: 'number',
         default: '1000',
         description: this.translationService.translate('k8sRetryBackoff.paramFallbackDelay'),
+      },
+      {
+        name: 'retryStatusCodes',
+        type: 'readonly number[]',
+        default: '[429]',
+        description: this.translationService.translate('k8sRetryBackoff.paramStatuses'),
       },
     ];
   });
@@ -271,7 +296,13 @@ getK8sRetryDelayMs({ status: 500 }); // null — do not retry
 
     source$
       .pipe(
-        retryOnK8sBackoff({maxAttempts: 5, fallbackDelayMs: 1000}),
+        retryOnK8sBackoff({
+          maxAttempts: 5,
+          fallbackDelayMs: 1000,
+          minDelayMs: 100,
+          logRetries: true,
+          logger: (message) => this.logs.update((logs) => [...logs, message]),
+        }),
         takeUntilDestroyed(this.destroyRef),
         tap((res) => {
           this.simulationResult.set({

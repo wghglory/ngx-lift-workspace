@@ -103,4 +103,22 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
     await expect(compTable).toContainText('retryOnK8sBackoff');
     await expect(compTable).toContainText('k8sRetryBackoffInterceptor');
   });
+  test('write retries require explicit endpoint opt-in and reject gateway errors', async ({page}) => {
+    await page.goto('/ngx-lift/interceptors/k8sRetryBackoff');
+    const preview = page.locator('app-demo-playground').first();
+    const send = page.getByRole('button', {name: 'Send Intercepted Request'});
+    await page.getByRole('radio', {name: 'POST: default (no retry)', exact: true}).check();
+    await send.click();
+    await expect(preview).toContainText('Total Attempts: 1');
+    await expect(preview).toContainText('write retries require explicit endpoint opt-in');
+    await page.getByRole('radio', {name: 'POST: explicit Kubernetes opt-in', exact: true}).check();
+    await send.click();
+    await expect(preview).toContainText('Success (HTTP 200)');
+    await expect(preview).toContainText('Total Attempts: 2');
+    await expect(preview).toContainText('POST /api/v1/namespaces/default/pods status 429');
+    await page.getByRole('radio', {name: 'POST: gateway 429 (rejected)', exact: true}).check();
+    await send.click();
+    await expect(preview).toContainText('Total Attempts: 1');
+    await expect(preview).toContainText('configured Kubernetes predicate rejected it');
+  });
 });

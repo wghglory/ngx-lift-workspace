@@ -1717,4 +1717,14 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramRandom': '返回 [0, 1) 有限数值的随机源，可用于确定性调度。',
   'k8sRetryBackoff.retryContract':
     '默认总共尝试 5 次；无提示时指数退避并使用 equal jitter；服务器提示额外最多等待 250ms；单次最多 30s、累计计划等待最多 60s。提示过大时停止重试。拦截器默认仅重试幂等方法，POST/PATCH 需端点保证。',
+  'k8sRetryBackoff.paramMinDelay': '所有 jitter 策略的 fallback 最短等待；不得超过 maxDelayMs，不改变服务器提示。',
+  'k8sRetryBackoff.paramStatuses': '可重试 HTTP 状态码，其他错误原样返回；扩展状态码前需确认端点契约。',
+  'k8sRetryBackoff.paramPredicate': '状态码检查后的额外错误过滤条件；单独设置不会启用 POST/PATCH。',
+  'k8sRetryBackoff.paramLogRetries': '等待预算检查通过后记录重试。',
+  'k8sRetryBackoff.paramLabel': '日志标签。拦截器生成的标签去掉查询和片段；自定义标签需自行脱敏。',
+  'k8sRetryBackoff.paramLogger':
+    '可接收 attempt、maxRetries、delayMs、error、label。error 需自行脱敏；日志回调失败不终止重试。',
+  'k8sRetryBackoffInterceptor.postDefault': 'POST：默认不重试',
+  'k8sRetryBackoffInterceptor.postOptIn': 'POST：显式 Kubernetes 策略',
+  'k8sRetryBackoffInterceptor.postGateway': 'POST：网关 429 不重试',
 };

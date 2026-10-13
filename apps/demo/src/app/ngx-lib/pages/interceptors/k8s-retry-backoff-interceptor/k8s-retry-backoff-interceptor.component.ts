@@ -21,7 +21,7 @@ import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import {K8S_RETRY_BACKOFF_CONFIG, k8sRetryBackoffInterceptor} from 'ngx-lift';
+import {isK8sStatusThrottled, K8S_RETRY_BACKOFF_CONFIG, k8sRetryBackoffInterceptor} from 'ngx-lift';
 import {defer, finalize, of, throwError} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -29,7 +29,7 @@ import {CodeBlockComponent} from '../../../../shared/components/code-block/code-
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
-export type InterceptorMode = 'default' | 'custom' | 'disabled';
+export type InterceptorMode = 'default' | 'custom' | 'disabled' | 'postDefault' | 'postOptIn' | 'postGateway';
 
 export interface InterceptorResult {
   success: boolean;
@@ -60,6 +60,11 @@ export class K8sRetryBackoffInterceptorComponent {
   private injector = inject(Injector);
 
   readonly selectedMode = signal<InterceptorMode>('default');
+  readonly writeModes = [
+    {value: 'postDefault', label: 'k8sRetryBackoffInterceptor.postDefault'},
+    {value: 'postOptIn', label: 'k8sRetryBackoffInterceptor.postOptIn'},
+    {value: 'postGateway', label: 'k8sRetryBackoffInterceptor.postGateway'},
+  ] as const;
   readonly isLoading = signal(false);
   readonly logs = signal<string[]>([]);
   readonly simulationResult = signal<InterceptorResult | null>(null);
@@ -106,7 +111,7 @@ interface PodList {
 })
 export class PodListComponent {
   private http = inject(HttpClient);
-  // All HTTP calls automatically retry on 429 using Retry-After headers
+  // Idempotent methods retry on 429; POST/PATCH require explicit opt-in.
   readonly pods = resourceAsync(() =>
     this.http.get<PodList>('/api/v1/namespaces/default/pods')
   );
@@ -124,7 +129,7 @@ export const appConfig: ApplicationConfig = {
 
   readonly contextOverrideCode = highlight(`import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { K8S_RETRY_BACKOFF_CONFIG } from 'ngx-lift';
+import { isK8sStatusThrottled, K8S_RETRY_BACKOFF_CONFIG } from 'ngx-lift';
 
 @Injectable({ providedIn: 'root' })
 export class WorkloadService {
@@ -134,6 +139,16 @@ export class WorkloadService {
   probeStatus() {
     return this.http.get('/api/v1/namespaces/default/pods/probe', {
       context: new HttpContext().set(K8S_RETRY_BACKOFF_CONFIG, false),
+    });
+  }
+
+  // Only for an endpoint with an explicit idempotency / rejection-before-execution guarantee.
+  createPod(body: unknown) {
+    return this.http.post('/api/v1/namespaces/default/pods', body, {
+      context: new HttpContext().set(K8S_RETRY_BACKOFF_CONFIG, {
+        retryMethods: ['POST'],
+        isRetryable: isK8sStatusThrottled,
+      }),
     });
   }
 
@@ -190,7 +205,22 @@ export class WorkloadService {
       context = context.set(K8S_RETRY_BACKOFF_CONFIG, {maxAttempts: 2, fallbackDelayMs: 400});
     }
 
-    const request = new HttpRequest<unknown>('GET', '/api/v1/namespaces/default/pods', null, {context});
+    if (mode === 'postOptIn' || mode === 'postGateway') {
+      context = context.set(K8S_RETRY_BACKOFF_CONFIG, {
+        retryMethods: ['POST'],
+        isRetryable: isK8sStatusThrottled,
+      });
+    }
+    if (mode !== 'disabled') {
+      const retryConfig = context.get(K8S_RETRY_BACKOFF_CONFIG);
+      context = context.set(K8S_RETRY_BACKOFF_CONFIG, {
+        ...(retryConfig === false ? {} : retryConfig),
+        logRetries: true,
+        logger: (message) => this.logs.update((logs) => [...logs, message]),
+      });
+    }
+    const method = mode.startsWith('post') ? 'POST' : 'GET';
+    const request = new HttpRequest<unknown>(method, '/api/v1/namespaces/default/pods', null, {context});
 
     let attemptCount = 0;
     const next: HttpHandlerFn = () =>
@@ -213,7 +243,10 @@ export class WorkloadService {
                 status: 429,
                 statusText: 'Too Many Requests',
                 headers,
-                error: {message: 'storage is (re)initializing'},
+                error:
+                  mode === 'postGateway'
+                    ? {message: 'Gateway rate limit'}
+                    : {kind: 'Status', reason: 'TooManyRequests'},
               }),
           );
         }
@@ -255,7 +288,11 @@ export class WorkloadService {
             message:
               mode === 'disabled'
                 ? 'HTTP 429 error returned immediately: Retry backoff was disabled via HttpContext.'
-                : `Error ${err.status}: Exceeded maximum attempts without recovery.`,
+                : mode === 'postDefault'
+                  ? 'POST was not retried: write retries require explicit endpoint opt-in.'
+                  : mode === 'postGateway'
+                    ? 'Gateway 429 was not retried: the configured Kubernetes predicate rejected it.'
+                    : `Error ${err.status}: Exceeded maximum attempts without recovery.`,
             totalAttempts: attemptCount,
             statusCode: err.status,
           });
