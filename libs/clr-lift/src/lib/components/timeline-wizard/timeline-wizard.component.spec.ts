@@ -3,7 +3,7 @@ import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {ChangeDetectorRef, Component, ComponentRef, EmbeddedViewRef} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ClarityModule, ClrTimelineStepState} from '@clr/angular';
@@ -606,5 +606,155 @@ describe('TimelineWizardComponent', () => {
     fixture.destroy();
 
     expect(pending.observed).toBe(false);
+  });
+
+  it('transitions to ERROR state on async failure and allows user retry to succeed', async () => {
+    await flushEffects();
+    const ref = component.currentComponentRef;
+    if (!ref) {
+      throw new Error('Expected currentComponentRef');
+    }
+
+    // First attempt fails
+    ref.instance.next$ = throwError(() => new Error('Server validation timeout'));
+    component.nextStep();
+    await flushEffects();
+
+    expect(component.timelineWizardService.currentStep.state).toBe(ClrTimelineStepState.ERROR);
+    expect(component.timelineWizardService.currentStep.description).toBe('Server validation timeout');
+    expect(component.timelineWizardService.currentStepIndex).toBe(0);
+
+    // Retry attempt succeeds
+    ref.instance.next$ = of(true);
+    component.nextStep();
+    await flushEffects();
+
+    expect(component.timelineWizardService.steps[0].state).toBe(ClrTimelineStepState.SUCCESS);
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
+  });
+
+  it('ignores repeated next clicks while an async step operation is already in PROCESSING state', async () => {
+    await flushEffects();
+    const ref = component.currentComponentRef;
+    if (!ref) {
+      throw new Error('Expected currentComponentRef');
+    }
+
+    const pending = new Subject<boolean>();
+    ref.instance.next$ = pending;
+
+    // First click puts step into PROCESSING
+    component.nextStep();
+    expect(component.timelineWizardService.currentStep.state).toBe(ClrTimelineStepState.PROCESSING);
+    expect(component.timelineWizardService.currentStepIndex).toBe(0);
+
+    // Second click during PROCESSING should return early
+    component.nextStep();
+    expect(component.timelineWizardService.currentStep.state).toBe(ClrTimelineStepState.PROCESSING);
+
+    // Resolving pending completes single transition
+    pending.next(true);
+    await flushEffects();
+
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
+    expect(component.timelineWizardService.steps[0].state).toBe(ClrTimelineStepState.SUCCESS);
+  });
+
+  it('dynamically adapts to updated timelineSteps signal input (branching wizard)', async () => {
+    await flushEffects();
+    expect(component.timelineWizardService.steps.length).toBe(3);
+
+    // Dynamic branching: Insert an approval compliance step between step 1 and step 2
+    fixture.componentRef.setInput('timelineSteps', [
+      {
+        state: ClrTimelineStepState.CURRENT,
+        title: 'Step 1: Configuration',
+        component: MockTimelineBaseComponent,
+        data: {field1: 'prod-cluster'},
+      },
+      {
+        state: ClrTimelineStepState.NOT_STARTED,
+        title: 'Step 1.5: Security Approval',
+        component: MockTimelineBaseComponent,
+        data: {complianceChecked: true},
+      },
+      {
+        state: ClrTimelineStepState.NOT_STARTED,
+        title: 'Step 2: Deployment',
+        component: MockTimelineBaseComponent,
+        data: {},
+      },
+      {
+        state: ClrTimelineStepState.NOT_STARTED,
+        title: 'Step 3: Verification',
+        component: MockTimelineBaseComponent,
+        data: {},
+      },
+    ]);
+    fixture.detectChanges();
+    await flushEffects();
+
+    expect(component.timelineWizardService.steps.length).toBe(4);
+    expect(component.timelineWizardService.steps[1].title).toBe('Step 1.5: Security Approval');
+
+    // Advance to the newly inserted step
+    component.nextStep();
+    await flushEffects();
+
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
+    expect(component.timelineWizardService.currentStep.title).toBe('Step 1.5: Security Approval');
+    expect(component.timelineWizardService.currentStep.data).toEqual({complianceChecked: true});
+  });
+
+  it('blocks next transition and does not enter PROCESSING when current form is invalid', async () => {
+    await flushEffects();
+    const ref = component.currentComponentRef;
+    if (!ref) {
+      throw new Error('Expected currentComponentRef');
+    }
+
+    const form = ref.instance.form;
+    if (!form) {
+      throw new Error('Expected form instance');
+    }
+
+    // Mark form as invalid by adding required validator with empty value
+    form.get('field1')?.setValidators(Validators.required);
+    form.get('field1')?.setValue('');
+    form.updateValueAndValidity();
+    expect(form.invalid).toBe(true);
+
+    const markAllTouchedSpy = vi.spyOn(form, 'markAllAsTouched');
+
+    component.nextStep();
+    await flushEffects();
+
+    expect(markAllTouchedSpy).toHaveBeenCalled();
+    expect(component.timelineWizardService.currentStep.state).not.toBe(ClrTimelineStepState.PROCESSING);
+    expect(component.timelineWizardService.currentStepIndex).toBe(0);
+  });
+
+  it('preserves component instances in live mode when navigating back and forth', async () => {
+    fixture.componentRef.setInput('live', true);
+    await flushEffects();
+
+    const initialRef = component.currentComponentRef;
+    expect(initialRef).toBeDefined();
+
+    // Navigate to step 2
+    component.nextStep();
+    await flushEffects();
+    expect(component.timelineWizardService.currentStepIndex).toBe(1);
+    const secondRef = component.currentComponentRef;
+    expect(secondRef).toBeDefined();
+    expect(secondRef).not.toBe(initialRef);
+
+    // Navigate back to step 1
+    component.previousStep();
+    await flushEffects();
+    expect(component.timelineWizardService.currentStepIndex).toBe(0);
+
+    // Initial component ref should be preserved and re-used
+    expect(component.currentComponentRef).toBe(initialRef);
   });
 });

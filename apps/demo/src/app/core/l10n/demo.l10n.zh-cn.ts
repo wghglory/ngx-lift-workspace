@@ -315,6 +315,39 @@ export const zhCNTranslations: Record<string, string> = {
   'toSignalForm.pattern5Desc':
     '当某个表单控件的变更触发其他控件的级联更新时（例如数据库引擎切换时重置其可用版本列表），可以使用传统的 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 模式，或者更推荐的 Signal 优先工具 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>。<code>watch</code> 运行在 Angular <code>effect()</code> 内部，带有自动的 <code>untracked</code> 隔离保护，消除手动取消订阅的同时，彻底杜绝 <code>NG0600</code> 信号写入错误。',
 
+  'toSignalForm.apiReferenceTitle': 'API 参考',
+  'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+
+  'toSignalForm.apiPropForm': '用于包装响应式信号与声明式绑定的 Angular FormGroup 实例。',
+  'toSignalForm.apiPropOmit': '在 submitValue 载荷中剔除的控件名列表。',
+  'toSignalForm.apiPropEmitEvent': '状态或值变更时是否派发 Angular 控件事件。',
+  'toSignalForm.apiPropValue': '当前表单值的只读响应式 Signal。',
+  'toSignalForm.apiPropStatus': "表单总体状态的响应式 Signal ('VALID' | 'INVALID' | 'PENDING' | 'DISABLED')。",
+  'toSignalForm.apiPropValid': '表单当前是否合法的计算 Signal。',
+  'toSignalForm.apiPropInvalid': '表单当前是否非法的计算 Signal。',
+  'toSignalForm.apiPropSubmitValue': '自动剔除禁用、忽略及未挂载字段后的清洗后提交载荷 Signal。',
+  'toSignalForm.apiPropIsSubmitting': '用于跟踪异步表单提交是否正在进行的可写 Signal。',
+
+  'toSignalForm.apiBindIfControl': '按条件动态挂载/卸载的目标控件名称或实例。',
+  'toSignalForm.apiBindIfCondition': '控制控件是否挂载的布尔 Signal 或函数条件谓词。',
+  'toSignalForm.apiBindIfPreserveValue': '控件卸载与重新挂载期间是否在内存中暂存并恢复控件值。',
+  'toSignalForm.apiBindIfDefaultValue': '挂载或重置控件时应用的初始默认值。',
+  'toSignalForm.apiBindIfEmitEvent': '添加或移除控件时是否触发 FormGroup 的值与状态事件。',
+
+  'toSignalForm.apiBindDisabledControl': '需要绑定启用/禁用状态的目标控件。',
+  'toSignalForm.apiBindDisabledCondition': '返回 true 禁用、false 启用的布尔 Signal 或条件谓词。',
+  'toSignalForm.apiBindDisabledResetOnDisable': '进入禁用状态时是否自动重置控件值。',
+  'toSignalForm.apiBindDisabledResetValue': '禁用重置时赋予的特定重置值；省略时重置为初始值或 null。',
+  'toSignalForm.apiBindDisabledEmitEvent': '启用/禁用切换时是否派发值与状态事件。',
+
+  'toSignalForm.apiRevalidateTarget': '当依赖源变化时需要重新执行校验的目标控件。',
+  'toSignalForm.apiRevalidateSources': '一个或多个触发目标重新校验的关联控件。',
+  'toSignalForm.apiRevalidateOnlyIfTouched': '仅在目标控件已被用户触碰（touched）时才触发重新校验。',
+  'toSignalForm.apiRevalidateOnlyIfDirty': '仅在目标控件已被修改（dirty）时才触发重新校验。',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     '<code>computedAsync</code> 是一个多功能工具函数，可从 Promise、Observable 或普通值中计算派生出响应式值。它提供多种策略（switch、merge、concat、exhaust）和初始值支持。只需传入返回 Promise、Observable 或值的回调函数，即可得到发出计算结果的 <code>Signal</code>。',

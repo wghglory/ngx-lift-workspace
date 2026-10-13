@@ -300,6 +300,39 @@ export const zhTWTranslations: Record<string, string> = {
   'toSignalForm.pattern5Desc':
     '當某個表單控制項的變更觸發其他控制項的級聯更新時（例如資料庫引擎切換時重設其可用版本清單），可以使用傳統的 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 模式，或者更推薦的 Signal 優先工具 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>。<code>watch</code> 運行在 Angular <code>effect()</code> 內部，帶有自動的 <code>untracked</code> 隔離保護，消除手動取消訂閱的同時，徹底杜絕 <code>NG0600</code> 信號寫入錯誤。',
 
+  'toSignalForm.apiReferenceTitle': 'API 參考',
+  'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+
+  'toSignalForm.apiPropForm': '用於包裝響應式信號與宣告式綁定的 Angular FormGroup 實例。',
+  'toSignalForm.apiPropOmit': '在 submitValue 載荷中剔除的控制項名稱清單。',
+  'toSignalForm.apiPropEmitEvent': '狀態或值變更時是否派發 Angular 控制項事件。',
+  'toSignalForm.apiPropValue': '當前表單值的唯讀響應式 Signal。',
+  'toSignalForm.apiPropStatus': "表單總體狀態的響應式 Signal ('VALID' | 'INVALID' | 'PENDING' | 'DISABLED')。",
+  'toSignalForm.apiPropValid': '表單當前是否合法的計算 Signal。',
+  'toSignalForm.apiPropInvalid': '表單當前是否非法的計算 Signal。',
+  'toSignalForm.apiPropSubmitValue': '自動剔除停用、忽略及未掛載欄位後的清洗後提交載荷 Signal。',
+  'toSignalForm.apiPropIsSubmitting': '用於追蹤非同步表單提交是否正在進行的可寫 Signal。',
+
+  'toSignalForm.apiBindIfControl': '按條件動態掛載/卸載的目標控制項名稱或實例。',
+  'toSignalForm.apiBindIfCondition': '控制控制項是否掛載的布林 Signal 或函數條件謂詞。',
+  'toSignalForm.apiBindIfPreserveValue': '控制項卸載與重新掛載期間是否在記憶體中暫存並恢復控制項值。',
+  'toSignalForm.apiBindIfDefaultValue': '掛載或重設控制項時套用的初始預設值。',
+  'toSignalForm.apiBindIfEmitEvent': '新增或移除控制項時是否觸發 FormGroup 的值與狀態事件。',
+
+  'toSignalForm.apiBindDisabledControl': '需要綁定啟用/停用狀態的目標控制項。',
+  'toSignalForm.apiBindDisabledCondition': '返回 true 停用、false 啟用的布林 Signal 或條件謂詞。',
+  'toSignalForm.apiBindDisabledResetOnDisable': '進入停用狀態時是否自動重設控制項值。',
+  'toSignalForm.apiBindDisabledResetValue': '停用重設時賦予的特定重設值；省略時重設為初始值或 null。',
+  'toSignalForm.apiBindDisabledEmitEvent': '啟用/停用切換時是否派發值與狀態事件。',
+
+  'toSignalForm.apiRevalidateTarget': '當相依源變化時需要重新執行校驗的目標控制項。',
+  'toSignalForm.apiRevalidateSources': '一個或多個觸發目標重新校驗的關聯控制項。',
+  'toSignalForm.apiRevalidateOnlyIfTouched': '僅在目標控制項已被使用者觸碰（touched）時才觸發重新校驗。',
+  'toSignalForm.apiRevalidateOnlyIfDirty': '僅在目標控制項已被修改（dirty）時才觸發重新校驗。',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     '<code>computedAsync</code> 是一個多功能工具函式，可從 Promise、Observable 或一般值計算衍生出響應式值。提供 switch、merge、concat、exhaust 多種策略與初始值支援。',

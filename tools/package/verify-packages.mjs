@@ -95,6 +95,8 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
     'esnext',
     '--target',
     'es2022',
+    '--types',
+    'node',
     'consumer.ts',
   ]);
   writeFileSync(
@@ -129,6 +131,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
           jsdom: '^27.0.0',
         },
         devDependencies: {
+          '@types/node': '^22.0.0',
           '@types/node-forge': '^1.3.11',
           typescript: '^5.9.0',
         },
@@ -176,6 +179,8 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, re
       'esnext',
       '--target',
       'es2022',
+      '--types',
+      'node',
       'consumer.ts',
     ],
     freshConsumer,

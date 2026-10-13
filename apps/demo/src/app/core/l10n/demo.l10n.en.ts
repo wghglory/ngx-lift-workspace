@@ -323,6 +323,42 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.pattern5Desc':
     "When a form control's change triggers cascading updates in another control (e.g. resetting available versions when the database engine changes), you can use the traditional RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> pattern or the signal-first <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code> utility. <code>watch</code> operates inside an Angular <code>effect()</code> with automatic <code>untracked</code> isolation, preventing <code>NG0600</code> signal write errors while eliminating manual subscription teardown.",
 
+  'toSignalForm.apiReferenceTitle': 'API Reference',
+  'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+
+  'toSignalForm.apiPropForm': 'The Angular FormGroup instance to wrap with reactive signals and bindings.',
+  'toSignalForm.apiPropOmit': 'Control names to omit from submitValue payloads.',
+  'toSignalForm.apiPropEmitEvent': 'Whether status/value changes emit Angular control events.',
+  'toSignalForm.apiPropValue': 'Reactive signal of current form value.',
+  'toSignalForm.apiPropStatus':
+    "Reactive signal of overall form status ('VALID' | 'INVALID' | 'PENDING' | 'DISABLED').",
+  'toSignalForm.apiPropValid': 'Computed signal indicating whether the form is valid.',
+  'toSignalForm.apiPropInvalid': 'Computed signal indicating whether the form is invalid.',
+  'toSignalForm.apiPropSubmitValue': 'Sanitized payload excluding disabled, omitted, or unmounted controls.',
+  'toSignalForm.apiPropIsSubmitting': 'Writable signal tracking whether an async submission operation is in-flight.',
+
+  'toSignalForm.apiBindIfControl': 'Name or instance of the control to mount/unmount conditionally.',
+  'toSignalForm.apiBindIfCondition': 'Boolean signal or predicate governing whether the control is mounted.',
+  'toSignalForm.apiBindIfPreserveValue': 'Preserves control value in memory across unmount/remount cycles.',
+  'toSignalForm.apiBindIfDefaultValue': 'Default value assigned when mounting or resetting the control.',
+  'toSignalForm.apiBindIfEmitEvent': 'Whether control addition/removal emits FormGroup value and status events.',
+
+  'toSignalForm.apiBindDisabledControl': 'Target control whose enabled/disabled state is bound.',
+  'toSignalForm.apiBindDisabledCondition': 'Boolean signal or predicate returning true to disable, false to enable.',
+  'toSignalForm.apiBindDisabledResetOnDisable': 'Automatically resets the control value when entering disabled state.',
+  'toSignalForm.apiBindDisabledResetValue':
+    'Specific reset value when resetOnDisable is active; defaults to control initial/null.',
+  'toSignalForm.apiBindDisabledEmitEvent': 'Whether enable/disable changes emit value/status events.',
+
+  'toSignalForm.apiRevalidateTarget': 'Target control to re-evaluate validation upon source changes.',
+  'toSignalForm.apiRevalidateSources':
+    'One or more dependency controls whose value/status changes trigger target revalidation.',
+  'toSignalForm.apiRevalidateOnlyIfTouched': 'Only trigger target revalidation if target has been touched by user.',
+  'toSignalForm.apiRevalidateOnlyIfDirty': 'Only trigger target revalidation if target has been modified (dirty).',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises, Observables, or regular values. It provides flexibility in computational behavior through selectable flattening strategies (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>, provide a function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting the computed value.',
