@@ -10,8 +10,8 @@
     "tests": {
       "ngx-lift": {
         "files": 44,
-        "tests": 707,
-        "branches": 90.03
+        "tests": 756,
+        "branches": 90.6
       },
       "clr-lift": {
         "files": 25,
@@ -41,7 +41,7 @@
     "e2e": {
       "command": "pnpm nx e2e demo-e2e --skipNxCache",
       "exitCode": 0,
-      "tests": 96,
+      "tests": 99,
       "browsers": ["chromium", "firefox", "webkit"],
       "defaultPort": 4307
     }
@@ -54,58 +54,58 @@
   },
   "translationCoverage": {
     "de": {
-      "present": 188,
-      "total": 1436,
+      "present": 189,
+      "total": 1461,
       "complete": false
     },
     "en": {
-      "present": 1436,
-      "total": 1436,
+      "present": 1461,
+      "total": 1461,
       "complete": true
     },
     "es": {
-      "present": 130,
-      "total": 1436,
+      "present": 131,
+      "total": 1461,
       "complete": false
     },
     "fr": {
-      "present": 130,
-      "total": 1436,
+      "present": 131,
+      "total": 1461,
       "complete": false
     },
     "ja": {
-      "present": 130,
-      "total": 1436,
+      "present": 131,
+      "total": 1461,
       "complete": false
     },
     "ko": {
-      "present": 130,
-      "total": 1436,
+      "present": 131,
+      "total": 1461,
       "complete": false
     },
     "nl": {
-      "present": 130,
-      "total": 1436,
+      "present": 131,
+      "total": 1461,
       "complete": false
     },
     "pt-br": {
-      "present": 130,
-      "total": 1436,
+      "present": 131,
+      "total": 1461,
       "complete": false
     },
     "ru": {
-      "present": 178,
-      "total": 1436,
+      "present": 179,
+      "total": 1461,
       "complete": false
     },
     "zh-cn": {
-      "present": 1436,
-      "total": 1436,
+      "present": 1461,
+      "total": 1461,
       "complete": true
     },
     "zh-tw": {
-      "present": 778,
-      "total": 1436,
+      "present": 779,
+      "total": 1461,
       "complete": false
     }
   },
@@ -125,6 +125,8 @@
     "post-success invalidation failure is separate from mutation transport error",
     "polling and refresh timers stop on page disposal",
     "CommonJS forge default import works in packed ESM consumers",
-    "deduplicated initialization is documented without a cross-source atomicity guarantee"
+    "deduplicated initialization is documented without a cross-source atomicity guarantee",
+    "configurable Kubernetes 429 retry-backoff with method allowlist and wait budgets",
+    "sound boolean predicate for isEmpty/isNotEmpty across defined empty collections"
   ]
 }
