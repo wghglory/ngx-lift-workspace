@@ -1,11 +1,19 @@
 import {JsonPipe} from '@angular/common';
-import {ChangeDetectionStrategy, Component, computed} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {
+  AlertComponent,
+  CalloutComponent,
+  PageContainerComponent,
+  SpinnerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 import {computedAsync, resourceAsync, toSignalForm} from 'ngx-lift';
 import {delay, of} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {StateInspectorComponent} from '../../../../shared/components/state-inspector/state-inspector.component';
@@ -31,12 +39,168 @@ export interface ClusterNameCheckResult {
     DemoPlaygroundComponent,
     StateInspectorComponent,
     TranslatePipe,
+    ApiTableComponent,
   ],
   templateUrl: './to-signal-form.component.html',
   styleUrl: './to-signal-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToSignalFormComponent {
+  private readonly translationService = inject(TranslationService);
+
+  readonly toSignalFormProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'form',
+        type: 'FormGroup<T>',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiPropForm'),
+      },
+      {
+        name: 'options.omit',
+        type: 'Array<keyof T>',
+        description: this.translationService.translate('toSignalForm.apiPropOmit'),
+      },
+      {
+        name: 'options.emitEvent',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('toSignalForm.apiPropEmitEvent'),
+      },
+      {
+        name: 'value',
+        type: 'Signal<T>',
+        description: this.translationService.translate('toSignalForm.apiPropValue'),
+      },
+      {
+        name: 'status',
+        type: 'Signal<FormControlStatus>',
+        description: this.translationService.translate('toSignalForm.apiPropStatus'),
+      },
+      {
+        name: 'valid',
+        type: 'Signal<boolean>',
+        description: this.translationService.translate('toSignalForm.apiPropValid'),
+      },
+      {
+        name: 'invalid',
+        type: 'Signal<boolean>',
+        description: this.translationService.translate('toSignalForm.apiPropInvalid'),
+      },
+      {
+        name: 'submitValue',
+        type: 'Signal<Partial<T>>',
+        description: this.translationService.translate('toSignalForm.apiPropSubmitValue'),
+      },
+      {
+        name: 'isSubmitting',
+        type: 'WritableSignal<boolean>',
+        description: this.translationService.translate('toSignalForm.apiPropIsSubmitting'),
+      },
+    ];
+  });
+
+  readonly bindIfProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'control',
+        type: 'string | AbstractControl',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiBindIfControl'),
+      },
+      {
+        name: 'condition',
+        type: 'Signal<boolean> | (() => boolean)',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiBindIfCondition'),
+      },
+      {
+        name: 'options.preserveValue',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiBindIfPreserveValue'),
+      },
+      {
+        name: 'options.defaultValue',
+        type: 'any',
+        description: this.translationService.translate('toSignalForm.apiBindIfDefaultValue'),
+      },
+      {
+        name: 'options.emitEvent',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('toSignalForm.apiBindIfEmitEvent'),
+      },
+    ];
+  });
+
+  readonly bindDisabledProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'control',
+        type: 'string | AbstractControl',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiBindDisabledControl'),
+      },
+      {
+        name: 'condition',
+        type: 'Signal<boolean> | (() => boolean)',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiBindDisabledCondition'),
+      },
+      {
+        name: 'options.resetOnDisable',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiBindDisabledResetOnDisable'),
+      },
+      {
+        name: 'options.resetValue',
+        type: 'any',
+        description: this.translationService.translate('toSignalForm.apiBindDisabledResetValue'),
+      },
+      {
+        name: 'options.emitEvent',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('toSignalForm.apiBindDisabledEmitEvent'),
+      },
+    ];
+  });
+
+  readonly revalidateProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'target',
+        type: 'string | AbstractControl',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiRevalidateTarget'),
+      },
+      {
+        name: 'sources',
+        type: 'string | AbstractControl | Array<string | AbstractControl>',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiRevalidateSources'),
+      },
+      {
+        name: 'options.onlyIfTouched',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiRevalidateOnlyIfTouched'),
+      },
+      {
+        name: 'options.onlyIfDirty',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiRevalidateOnlyIfDirty'),
+      },
+    ];
+  });
+
   // Quickstart minimal form (Beginner friendly)
   readonly quickForm = new FormGroup({
     username: new FormControl('', {

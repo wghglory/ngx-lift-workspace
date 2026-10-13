@@ -342,4 +342,31 @@ describe('ToSignalFormComponent', () => {
     expect(component.createClusterRef.value()).toBe(result);
     expect(component.createClusterRef.isLoading()).toBe(false);
   });
+
+  it('exposes populated API reference tables for toSignalForm, bindIf, bindDisabled, and revalidate', () => {
+    expect(component.toSignalFormProperties().length).toBeGreaterThanOrEqual(8);
+    expect(component.bindIfProperties().length).toBeGreaterThanOrEqual(4);
+    expect(component.bindDisabledProperties().length).toBeGreaterThanOrEqual(4);
+    expect(component.revalidateProperties().length).toBeGreaterThanOrEqual(3);
+
+    // Verify critical properties are documented
+    const formPropNames = component.toSignalFormProperties().map((p) => p.name);
+    expect(formPropNames).toContain('form');
+    expect(formPropNames).toContain('submitValue');
+    expect(formPropNames).toContain('isSubmitting');
+
+    const bindIfPropNames = component.bindIfProperties().map((p) => p.name);
+    expect(bindIfPropNames).toContain('control');
+    expect(bindIfPropNames).toContain('condition');
+    expect(bindIfPropNames).toContain('options.preserveValue');
+
+    const bindDisabledPropNames = component.bindDisabledProperties().map((p) => p.name);
+    expect(bindDisabledPropNames).toContain('control');
+    expect(bindDisabledPropNames).toContain('condition');
+    expect(bindDisabledPropNames).toContain('options.resetOnDisable');
+
+    const revalidatePropNames = component.revalidateProperties().map((p) => p.name);
+    expect(revalidatePropNames).toContain('target');
+    expect(revalidatePropNames).toContain('sources');
+  });
 });

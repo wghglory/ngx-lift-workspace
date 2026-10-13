@@ -563,4 +563,29 @@
       <app-code-block [code]="cascadingSnippet" lang="typescript" />
     </article>
   </section>
+
+  <!-- ==================== SECTION 4: API REFERENCE ==================== -->
+  <section cds-layout="vertical gap:md align:stretch" class="m-t-md">
+    <h2>{{ 'toSignalForm.apiReferenceTitle' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'toSignalForm.apiToSignalFormTitle' | translate }}</h3>
+      <app-api-table [properties]="toSignalFormProperties()" />
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'toSignalForm.apiBindIfTitle' | translate }}</h3>
+      <app-api-table [properties]="bindIfProperties()" />
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'toSignalForm.apiBindDisabledTitle' | translate }}</h3>
+      <app-api-table [properties]="bindDisabledProperties()" />
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'toSignalForm.apiRevalidateTitle' | translate }}</h3>
+      <app-api-table [properties]="revalidateProperties()" />
+    </article>
+  </section>
 </cll-page-container>
