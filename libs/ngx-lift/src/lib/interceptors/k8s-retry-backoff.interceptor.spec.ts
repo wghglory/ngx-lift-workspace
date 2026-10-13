@@ -7,6 +7,7 @@ import {
   createK8sRetryBackoffInterceptor,
   K8S_RETRY_BACKOFF_CONFIG,
   k8sRetryBackoffInterceptor,
+  provideK8sRetryBackoffConfig,
 } from './k8s-retry-backoff.interceptor';
 
 describe('k8sRetryBackoffInterceptor', () => {
@@ -15,6 +16,7 @@ describe('k8sRetryBackoffInterceptor', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
 
     TestBed.configureTestingModule({
       providers: [provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])), provideHttpClientTesting()],
@@ -26,6 +28,7 @@ describe('k8sRetryBackoffInterceptor', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -136,6 +139,7 @@ describe('createK8sRetryBackoffInterceptor', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
 
     TestBed.configureTestingModule({
       providers: [
@@ -157,6 +161,7 @@ describe('createK8sRetryBackoffInterceptor', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -178,5 +183,101 @@ describe('createK8sRetryBackoffInterceptor', () => {
 
     expect(caughtError).toBeDefined();
     httpTestingController.expectNone('/api/v1/services');
+  });
+});
+
+describe('retry method and interceptor lifecycle contracts', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => {
+    TestBed.inject(HttpTestingController).verify();
+    vi.useRealTimers();
+  });
+
+  it.each(['POST', 'PATCH'])('does not retry %s without an explicit idempotency opt-in', (method) => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(withInterceptors([k8sRetryBackoffInterceptor])), provideHttpClientTesting()],
+    });
+    const error = vi.fn();
+    TestBed.inject(HttpClient).request(method, '/write').subscribe({error});
+    TestBed.inject(HttpTestingController).expectOne('/write').flush({}, {status: 429, statusText: 'throttled'});
+    expect(error).toHaveBeenCalledOnce();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('rebuilds downstream authentication on every attempt and permits explicit POST opt-in', async () => {
+    let token = 'first';
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(
+          withInterceptors([
+            k8sRetryBackoffInterceptor,
+            (req, next) => next(req.clone({setHeaders: {Authorization: token}})),
+          ]),
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+    const result = vi.fn();
+    TestBed.inject(HttpClient)
+      .post(
+        '/write',
+        {},
+        {context: new HttpContext().set(K8S_RETRY_BACKOFF_CONFIG, {retryMethods: ['POST'], hintJitterMs: 0})},
+      )
+      .subscribe(result);
+    const controller = TestBed.inject(HttpTestingController);
+    const first = controller.expectOne('/write');
+    expect(first.request.headers.get('Authorization')).toBe('first');
+    first.flush({}, {status: 429, statusText: 'throttled', headers: {'Retry-After': '1'}});
+    token = 'fresh';
+    await vi.advanceTimersByTimeAsync(1000);
+    const second = controller.expectOne('/write');
+    expect(second.request.headers.get('Authorization')).toBe('fresh');
+    second.flush({ok: true});
+    expect(result).toHaveBeenCalledWith({ok: true});
+  });
+});
+
+describe('retry configuration layering', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => {
+    TestBed.inject(HttpTestingController).verify();
+    vi.useRealTimers();
+  });
+
+  it.each([false, true])('merges per-request overrides over global/factory defaults (factory: %s)', async (factory) => {
+    const config = {maxAttempts: 3, fallbackDelayMs: 400, jitter: 'none' as const};
+    TestBed.configureTestingModule({
+      providers: [
+        provideK8sRetryBackoffConfig(config),
+        provideHttpClient(
+          withInterceptors([factory ? createK8sRetryBackoffInterceptor(config) : k8sRetryBackoffInterceptor]),
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+    const http = TestBed.inject(HttpClient);
+    const controller = TestBed.inject(HttpTestingController);
+    const error = vi.fn();
+    http
+      .get('/override', {
+        context: new HttpContext().set(K8S_RETRY_BACKOFF_CONFIG, {maxAttempts: 2, fallbackDelayMs: 100}),
+      })
+      .subscribe({error});
+    controller.expectOne('/override').flush({}, {status: 429, statusText: 'throttled'});
+    await vi.advanceTimersByTimeAsync(99);
+    controller.expectNone('/override');
+    await vi.advanceTimersByTimeAsync(1);
+    controller.expectOne('/override').flush({}, {status: 429, statusText: 'throttled'});
+    expect(error).toHaveBeenCalledOnce();
+
+    const result = vi.fn();
+    http.get('/default').subscribe(result);
+    controller.expectOne('/default').flush({}, {status: 429, statusText: 'throttled'});
+    await vi.advanceTimersByTimeAsync(399);
+    controller.expectNone('/default');
+    await vi.advanceTimersByTimeAsync(1);
+    controller.expectOne('/default').flush({ok: true});
+    expect(result).toHaveBeenCalledWith({ok: true});
   });
 });

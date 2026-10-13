@@ -119,6 +119,42 @@ getK8sRetryDelayMs({ status: 500 }); // null — do not retry
       default: '1000',
       description: this.translationService.translate('k8sRetryBackoff.paramFallbackDelay'),
     },
+    {
+      name: 'jitter',
+      type: "'equal' | 'full' | 'none'",
+      default: "'equal'",
+      description: this.translationService.translate('k8sRetryBackoff.paramJitter'),
+    },
+    {
+      name: 'hintJitterMs',
+      type: 'number',
+      default: '250',
+      description: this.translationService.translate('k8sRetryBackoff.paramHintJitter'),
+    },
+    {
+      name: 'maxDelayMs',
+      type: 'number',
+      default: '30000',
+      description: this.translationService.translate('k8sRetryBackoff.paramMaxDelay'),
+    },
+    {
+      name: 'maxTotalDelayMs',
+      type: 'number',
+      default: '60000',
+      description: this.translationService.translate('k8sRetryBackoff.paramWaitBudget'),
+    },
+    {
+      name: 'retryMethods',
+      type: 'readonly string[]',
+      default: "['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE']",
+      description: this.translationService.translate('k8sRetryBackoff.paramMethods'),
+    },
+    {
+      name: 'random',
+      type: '() => number',
+      default: 'Math.random',
+      description: this.translationService.translate('k8sRetryBackoff.paramRandom'),
+    },
   ]);
 
   delayParameters = computed<ApiProperty[]>(() => {
@@ -199,7 +235,7 @@ getK8sRetryDelayMs({ status: 500 }); // null — do not retry
         if (currentAttempt === 1) {
           this.logs.update((l) => [
             ...l,
-            `[${now}] Attempt ${currentAttempt}: Server returned HTTP 429 without Retry-After hint. Using fallback: 1000ms...`,
+            `[${now}] Attempt ${currentAttempt}: Server returned HTTP 429 without Retry-After hint. Using a 1000ms exponential base with equal jitter...`,
           ]);
           return throwError(() => ({
             status: 429,

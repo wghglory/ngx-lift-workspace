@@ -36,7 +36,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, ByteConverterPipe, controlValue} from 'ngx-lift';
+import {isURL, QueryClient, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
@@ -46,7 +46,24 @@ const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}
 function form() {return controlValue<string>(new FormControl('', {nonNullable: true}));}
 function translations(service: TranslationService) {return service.locale();}
-void [valid, client, spinner, tooltip, format, form, translations];
+function emptiness(items: string[] | undefined) {
+  if (isNotEmpty(items)) {
+    // @ts-expect-error An emptiness predicate cannot safely narrow nullability in both branches.
+    const defined: string[] = items;
+    void defined;
+  } else {
+    // @ts-expect-error A defined empty collection can enter this branch.
+    const absent: undefined = items;
+    void absent;
+  }
+  if (items != null && isNotEmpty(items)) { const defined: string[] = items; void defined; }
+}
+function emptyArrays(items: number[]) {
+  if (!isNotEmpty(items)) { const array: number[] = items; items.length; void array; }
+  if (isEmpty(items)) { items.length; }
+}
+const retryProviders = provideK8sRetryBackoffConfig({maxAttempts: 3, jitter: 'none'});
+void [valid, client, spinner, tooltip, format, form, translations, emptiness, emptyArrays, retryProviders];
 `,
   );
   run(process.execPath, [

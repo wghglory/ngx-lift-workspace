@@ -1343,16 +1343,16 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     '接受 HttpErrorResponse 或 <code>{ status, headers?, error? }</code> 对象，error 也可以是 JSON 字符串。原生 fetch 遇到 HTTP 429 不会自动拒绝，需检查 Response 并转换状态、headers 和解析后的 body。Axios 的这些字段在 <code>error.response</code> 中，需先转换。Helper 只计算延迟。',
   'k8sRetryBackoffInterceptor.overrideRules':
-    '<code>null</code> 使用默认配置，<code>false</code> 禁用重试。Factory 将请求级配置与默认配置合并。拦截器处理所有 URL 和 HTTP 方法的 HttpClient 429；需要立即失败的请求应显式退出。',
+    'null 使用默认配置；false 禁用重试。请求级配置覆盖全局或工厂默认配置。默认允许 GET/HEAD/OPTIONS/PUT/DELETE；POST/PATCH 必须显式配置 retryMethods 并确认端点幂等。',
   'k8sRetryBackoffInterceptor.overrideSimulation':
-    '探针在首次 429 时立即失败；工作负载读取先收到两次 429，再成功。自定义读取使用 maxAttempts: 10 和 200ms 兜底延迟，最多重试九次。',
+    'probe 首次 429 立即失败；workload read 收到两次 429 后成功。自定义读取配置 maxAttempts: 10、200ms 指数退避基数和 equal jitter，最多重试 9 次。',
   'k8sRetryBackoffInterceptor.btnWorkloads': '测试工作负载读取（10 次尝试）',
   'k8sRetryBackoffInterceptor.btnProbe': '测试探针（禁用重试）',
 
   'k8sRetryBackoff.overview':
     '<code>retryOnK8sBackoff</code> 是专为 Kubernetes API Server 设计的 RxJS 重试退避操作符。专门针对 HTTP 429 (<code>TooManyRequests</code>) 响应（例如 Watch 缓存正在重建并提示 "storage is (re)initializing"）进行智能退避重试。只有 HTTP 429 会触发重试，其他任何错误（4xx、5xx、网络中断）均会立即且原样向上抛出。',
   'k8sRetryBackoff.callout':
-    '<strong>操作符与拦截器的选型建议：</strong> <code>retryOnK8sBackoff</code> 是局部的显式操作符，适合对特定 Observable 流进行精细控制。若你希望全应用的所有出站 HTTP 请求均默认自动重试 429，请参考 <code>k8sRetryBackoffInterceptor</code> 拦截器。',
+    '<strong>操作符与拦截器：</strong>操作符控制特定 Observable 管道；拦截器对符合方法白名单的 HttpClient 请求自动重试 429。写请求需要确认幂等性。',
   'k8sRetryBackoff.diffTitle': '操作符与拦截器对比',
   'k8sRetryBackoff.diffDesc': '根据作用域范围与架构分工进行选型：',
   'k8sRetryBackoff.diffColFeature': '对比维度',
@@ -1372,9 +1372,9 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoff.example1Desc':
     '模拟 Kubernetes 服务端不同的响应情况，直观观察退避延迟计算、重试次数递增与错误透传过程，并在下方展示操作符调用代码：',
   'k8sRetryBackoff.selectScenario': '选择响应场景：',
-  'k8sRetryBackoff.scenarioHeader': '带有 Retry-After 响应头的 429 (1 秒延迟)',
-  'k8sRetryBackoff.scenarioBody': '带有 details.retryAfterSeconds 响应体的 429 (1.5 秒延迟)',
-  'k8sRetryBackoff.scenarioFallback': '无重试提示的 429 (采用保底 1 秒退避延迟)',
+  'k8sRetryBackoff.scenarioHeader': '带有 Retry-After 响应头的 429（至少 1 秒，再加 jitter）',
+  'k8sRetryBackoff.scenarioBody': '带有 details.retryAfterSeconds 的 429（至少 1.5 秒，再加 jitter）',
+  'k8sRetryBackoff.scenarioFallback': '无服务器提示的 429（基数 1 秒，equal jitter）',
   'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (非 429，立即失败不重试)',
   'k8sRetryBackoff.scenarioExhausted': '达到最大重试次数 (连续 5 次 429 耗尽)',
   'k8sRetryBackoff.btnSimulate': '触发模拟请求',
@@ -1396,18 +1396,19 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramConfig': '配置选项，支持设置最大允许尝试次数与保底延迟时间。',
   'k8sRetryBackoff.delaySummary': '辅助工具函数，用于从 Kubernetes 429 错误响应中提取毫秒级延迟，不可重试时返回 null。',
   'k8sRetryBackoff.paramError': '待检测的错误对象 (HttpErrorResponse 或包含 status/headers/error 的对象)。',
-  'k8sRetryBackoff.paramFallbackDelay': '当响应未提供重试提示时的默认保底退避毫秒数。',
+  'k8sRetryBackoff.paramFallbackDelay':
+    '无服务器提示时的毫秒基数。操作符按指数递增；delay helper 在无提示时直接返回该值。',
 
   'k8sRetryBackoffInterceptor.overview':
-    '<code>k8sRetryBackoffInterceptor</code> 是 Angular 函数式 HTTP 拦截器 (<code>HttpInterceptorFn</code>)，能够自动为全站出站请求提供 Kubernetes HTTP 429 (<code>TooManyRequests</code>) 退避重试能力。它自动优先解析 <code>Retry-After</code> 响应头与 <code>details.retryAfterSeconds</code> 响应体，并支持单次请求自定义配置或通过 <code>K8S_RETRY_BACKOFF_CONFIG</code> 声明跳过。',
+    '<code>k8sRetryBackoffInterceptor</code> 默认对幂等方法自动重试 Kubernetes 429，尊重 Retry-After 与 details.retryAfterSeconds，支持指数退避、jitter、等待预算和 HttpContext 禁用。POST/PATCH 需显式配置。',
   'k8sRetryBackoffInterceptor.callout':
     '<strong>全局防护与单次请求灵活控制：</strong> 在 <code>app.config.ts</code> 中注册一次即可保护所有接口。若某接口需要跳过重试或调整策略，只需在调用 <code>HttpClient</code> 时设置 <code>K8S_RETRY_BACKOFF_CONFIG</code>。若需单流手动管道控制，请见 <code>retryOnK8sBackoff</code> 操作符。',
   'k8sRetryBackoffInterceptor.example1Title': '示例 1：全局拦截器注册与交互式模拟',
   'k8sRetryBackoffInterceptor.example1Desc':
-    '在 app.config.ts 中全局注册拦截器后，所有标准 HttpClient 请求遇到 429 均会自动退避重试，组件代码无需改动：',
+    '在 app.config.ts 全局注册，对符合方法白名单的幂等 HttpClient 请求自动重试 429。',
   'k8sRetryBackoffInterceptor.selectMode': '拦截器上下文模式：',
   'k8sRetryBackoffInterceptor.modeDefault': '全局默认拦截器 (429 自动退避重试)',
-  'k8sRetryBackoffInterceptor.modeCustom': '请求级 HttpContext 覆盖 (maxAttempts: 2, fallback: 400ms)',
+  'k8sRetryBackoffInterceptor.modeCustom': '请求级 HttpContext 覆盖 (maxAttempts: 2, base: 400ms, equal jitter)',
   'k8sRetryBackoffInterceptor.modeDisabled': '通过 HttpContext 禁用 (K8S_RETRY_BACKOFF_CONFIG: false)',
   'k8sRetryBackoffInterceptor.btnSend': '发送受拦截请求',
   'k8sRetryBackoffInterceptor.example2Title': '示例 2：请求级自定义配置与 HttpContext 退出机制',
@@ -1708,4 +1709,12 @@ export const zhCNTranslations: Record<string, string> = {
   'fileReader.inputMaxSize': '最大文件大小（MiB）。超过限制的文件在读取前被拒绝。',
   'fileReader.inputDisabled': '禁用文件选择和移除操作。',
   'fileReader.outputChange': '成功选择文件后输出文本或 base64。',
+  'k8sRetryBackoff.paramJitter': '无服务器提示时的 jitter 策略。equal 等待指数退避上限的一半到全部。',
+  'k8sRetryBackoff.paramHintJitter': '在服务器要求的最短等待之后额外增加的随机等待，单位毫秒。',
+  'k8sRetryBackoff.paramMaxDelay': '单次等待上限。服务器提示超过上限时停止重试，不缩短服务器要求。',
+  'k8sRetryBackoff.paramWaitBudget': '累计计划等待预算，不包括网络请求本身的耗时。',
+  'k8sRetryBackoff.paramMethods': '仅拦截器使用的方法白名单。POST/PATCH 需要显式配置并确认端点幂等。',
+  'k8sRetryBackoff.paramRandom': '返回 [0, 1) 有限数值的随机源，可用于确定性调度。',
+  'k8sRetryBackoff.retryContract':
+    '默认总共尝试 5 次；无提示时指数退避并使用 equal jitter；服务器提示额外最多等待 250ms；单次最多 30s、累计计划等待最多 60s。提示过大时停止重试。拦截器默认仅重试幂等方法，POST/PATCH 需端点保证。',
 };

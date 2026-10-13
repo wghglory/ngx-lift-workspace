@@ -6,7 +6,16 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  Injector,
+  runInInjectionContext,
+  signal,
+} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
@@ -48,6 +57,7 @@ export interface InterceptorResult {
 export class K8sRetryBackoffInterceptorComponent {
   private translationService = inject(TranslationService);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   readonly selectedMode = signal<InterceptorMode>('default');
   readonly isLoading = signal(false);
@@ -190,7 +200,8 @@ export class WorkloadService {
         const now = new Date().toLocaleTimeString();
 
         if (current === 1) {
-          const delayNotice = mode === 'custom' ? 'no hint (fallback: 400ms)' : 'Retry-After: 1 (delay: 1000ms)';
+          const delayNotice =
+            mode === 'custom' ? 'no hint (base: 400ms, equal jitter)' : 'Retry-After: 1 (minimum: 1000ms, plus jitter)';
           this.logs.update((l) => [
             ...l,
             `[${now}] Attempt ${current}: Mock server response HTTP 429 TooManyRequests (${delayNotice}).`,
@@ -219,7 +230,7 @@ export class WorkloadService {
         );
       });
 
-    k8sRetryBackoffInterceptor(request, next)
+    runInInjectionContext(this.injector, () => k8sRetryBackoffInterceptor(request, next))
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
@@ -286,7 +297,7 @@ export class WorkloadService {
           ? throwError(() => new HttpErrorResponse({status: 429}))
           : of(new HttpResponse({status: 200, body: {items: []}}));
       });
-    k8sRetryBackoffInterceptor(request, next)
+    runInInjectionContext(this.injector, () => k8sRetryBackoffInterceptor(request, next))
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
@@ -301,7 +312,8 @@ export class WorkloadService {
               bypassed: false,
               attempts,
               statusCode: event.status,
-              message: 'Request succeeded after 2 retries with maxAttempts: 10 and 200ms fallback.',
+              message:
+                'Request succeeded after 2 retries with maxAttempts: 10 and 200ms exponential base and equal jitter.',
             });
           }
         },

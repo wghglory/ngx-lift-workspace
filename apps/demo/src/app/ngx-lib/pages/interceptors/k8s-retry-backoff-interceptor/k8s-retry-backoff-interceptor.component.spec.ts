@@ -11,6 +11,7 @@ describe('K8sRetryBackoffInterceptorComponent', () => {
 
   beforeEach(async () => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     await TestBed.configureTestingModule({
       providers: [provideRouter([]), provideNoopAnimations()],
       imports: [K8sRetryBackoffInterceptorComponent],
@@ -22,6 +23,7 @@ describe('K8sRetryBackoffInterceptorComponent', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -56,8 +58,8 @@ describe('K8sRetryBackoffInterceptorComponent', () => {
     component.executeRequest();
     expect(component.isLoading()).toBe(true);
 
-    // Custom fallback delay is 400ms
-    await vi.advanceTimersByTimeAsync(400);
+    // A 400ms base with equal jitter and random=0 waits 200ms
+    await vi.advanceTimersByTimeAsync(200);
 
     expect(component.isLoading()).toBe(false);
     expect(component.simulationResult()?.success).toBe(true);
@@ -102,7 +104,7 @@ describe('K8sRetryBackoffInterceptorComponent', () => {
     component.testWorkloadCustom();
     expect(component.isTestingOverride()).toBe(true);
     expect(component.activeOverrideTest()).toBe('workload');
-    await vi.advanceTimersByTimeAsync(399);
+    await vi.advanceTimersByTimeAsync(299);
     expect(component.overrideResult()).toBeNull();
     expect(component.isTestingOverride()).toBe(true);
     await vi.advanceTimersByTimeAsync(1);

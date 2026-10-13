@@ -122,7 +122,7 @@ state lifetime, and architecture boundaries:
 Encapsulate query definitions and shared write operations inside an `@Injectable` service:
 
 ```typescript
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {queryResource, mutateResource} from 'ngx-lift';
 
@@ -139,18 +139,21 @@ export class UserService {
   /**
    * Returns a reactive query observer parameterized by a Signal or getter.
    */
-  getUserQuery(id: () => string | undefined) {
-    return queryResource(() => {
-      const userId = id();
-      if (!userId) return undefined;
+  getUserQuery(id: () => string | undefined, injector: Injector) {
+    return queryResource(
+      () => {
+        const userId = id();
+        if (!userId) return undefined;
 
-      return {
-        key: ['users', userId],
-        tags: [{type: 'User', id: userId}],
-        staleTime: 60_000,
-        loader: () => this.http.get<User>(`/api/users/${userId}`),
-      };
-    });
+        return {
+          key: ['users', userId],
+          tags: [{type: 'User', id: userId}],
+          staleTime: 60_000,
+          loader: () => this.http.get<User>(`/api/users/${userId}`),
+        };
+      },
+      {injector},
+    );
   }
 
   /**
@@ -164,6 +167,20 @@ export class UserService {
   );
 }
 ```
+
+A service method does not create an injection context just because its class is injectable. Pass the caller injector
+when creating a view-owned observer, including calls made later from event handlers:
+
+```typescript
+private injector = inject(Injector);
+private users = inject(UserService);
+readonly userQuery = this.users.getUserQuery(() => this.userId(), this.injector);
+```
+
+This shares cached data through the application `QueryClient` while destroying the observer with the component. A
+service field uses its own provider injector instead; a root service field can live until application teardown.
+`resourceAsync` follows the same `{injector}` and `DestroyRef` rules, but does not share a cache automatically. Service
+placement is therefore supported for all three APIs; placement and lifecycle ownership are separate decisions.
 
 ### Pattern 2: Component-Direct Binding (Recommended for View-Specific Queries)
 
@@ -219,9 +236,9 @@ export class UserProfileComponent {
 }
 ```
 
-> **Note on Injection Context**: Both `queryResource` and `mutateResource` use `inject(Injector)` internally to resolve
-> `QUERY_CLIENT`. Therefore, they must be called during component/service instantiation (property initializers or
-> constructors), or passed an explicit `{ injector }` option.
+> **Note on Injection Context**: `resourceAsync` and both `queryResource` and `mutateResource` use `inject(Injector)`
+> internally to resolve `QUERY_CLIENT`. Therefore, they must be called during component/service instantiation (property
+> initializers or constructors), or passed an explicit `{ injector }` option.
 
 ---
 

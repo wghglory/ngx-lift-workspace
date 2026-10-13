@@ -179,3 +179,13 @@ This branch has not been published. Review these consumer-facing changes before 
 
 The UTF-8 default and narrower peer support need an explicit SemVer review; do not automatically treat this entire
 branch as a patch release. See [Chinese implementation notes](design/quality-audit-hardening.zh-CN.md).
+
+## Kubernetes retry defaults (unreleased)
+
+Kubernetes retry interceptors now restrict automatic retries to GET/HEAD/OPTIONS/PUT/DELETE. POST/PATCH need an explicit
+`retryMethods` override and verified endpoint idempotency. Fallback waits now increase exponentially with equal jitter;
+use `jitter: 'none'` for deterministic timing. Server hints add up to 250ms jitter by default (`hintJitterMs: 0`
+disables it). The defaults limit a single wait to 30s and cumulative scheduled waits to 60s; they do not limit network
+duration. An oversized server hint stops retrying with the original error instead of shortening the server's minimum
+wait. Invalid operator configuration now throws an explicit RangeError/TypeError. See
+[the consumer contract and retry guide](./design/dsm-consumer-contracts-and-retry.md).

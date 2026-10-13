@@ -1495,16 +1495,16 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Accepts HttpErrorResponse or an object shaped as <code>{ status, headers?, error? }</code>, including a JSON string in <code>error</code>. Native fetch does not reject on HTTP 429: check the Response and adapt its status, headers, and parsed body. Axios exposes these under <code>error.response</code>; adapt them before calling the helper. The helper computes a delay only.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    '<code>null</code> uses interceptor defaults; <code>false</code> disables retries. The factory merges a per-request config with its defaults. This interceptor handles every HttpClient 429 regardless of URL or HTTP method; opt out for requests that should fail immediately.',
+    'null uses interceptor defaults; false disables retries. Context overrides merge with global or factory defaults. GET/HEAD/OPTIONS/PUT/DELETE are eligible by default; POST/PATCH require an explicit retryMethods override and endpoint idempotency.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
-    'Try a probe that fails on its first 429, or a workload read that receives two 429s before succeeding. The custom read uses maxAttempts: 10 and a 200ms fallback; that allows at most nine retries, not ten.',
+    'Try a probe that fails on its first 429, or a workload read that receives two 429s before succeeding. The custom read uses maxAttempts: 10 and a 200ms exponential base with equal jitter; at most nine retries are allowed.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Test Workload Read (10 Attempts)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Test Fast Probe (Opt-out)',
 
   'k8sRetryBackoff.overview':
     'The <code>retryOnK8sBackoff</code> RxJS operator implements automated retry-with-backoff for Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) responses (such as when the apiserver watch cache is bootstrapping with "storage is (re)initializing"). Only HTTP 429 triggers a retry; all other errors (4xx, 5xx, network failures) propagate immediately and unchanged to the subscriber.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor:</strong> <code>retryOnK8sBackoff</code> is a local, explicit operator for fine-grained control over specific Observable pipelines. If you want automatic 429 retry on <em>all</em> outgoing HTTP requests across your entire application, see the <code>k8sRetryBackoffInterceptor</code>.',
+    '<strong>Operator vs. Interceptor:</strong> The operator controls specific Observable pipelines. The interceptor applies 429 retry across eligible HttpClient methods; writes require verified idempotency.',
   'k8sRetryBackoff.diffTitle': 'Operator vs Interceptor',
   'k8sRetryBackoff.diffDesc': 'Choose between local pipeline composition and ambient global application protection:',
   'k8sRetryBackoff.diffColFeature': 'Feature',
@@ -1525,9 +1525,9 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.example1Desc':
     'Simulate various Kubernetes API responses to observe retry delays, attempt counts, and error propagation, followed by the operator pipeline snippet:',
   'k8sRetryBackoff.selectScenario': 'Select Response Scenario:',
-  'k8sRetryBackoff.scenarioHeader': '429 with Retry-After header (1s delay)',
-  'k8sRetryBackoff.scenarioBody': '429 with details.retryAfterSeconds body (1.5s delay)',
-  'k8sRetryBackoff.scenarioFallback': '429 with fallback delay (no hint, 1s)',
+  'k8sRetryBackoff.scenarioHeader': '429 with Retry-After header (1s minimum + jitter)',
+  'k8sRetryBackoff.scenarioBody': '429 with details.retryAfterSeconds body (1.5s minimum + jitter)',
+  'k8sRetryBackoff.scenarioFallback': '429 without a hint (1s base, equal jitter)',
   'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (immediate fail)',
   'k8sRetryBackoff.scenarioExhausted': 'Exhausted attempts (5 consecutive 429s)',
   'k8sRetryBackoff.btnSimulate': 'Simulate Request',
@@ -1550,18 +1550,19 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.delaySummary':
     'Helper function that extracts the retry delay in milliseconds from a Kubernetes 429 error response, or returns null if not retryable.',
   'k8sRetryBackoff.paramError': 'The error to inspect (HttpErrorResponse or object with status/headers/error).',
-  'k8sRetryBackoff.paramFallbackDelay': 'Fallback delay in milliseconds if the response provides no retry hint.',
+  'k8sRetryBackoff.paramFallbackDelay':
+    'Base fallback delay in milliseconds. The operator increases it exponentially; the delay helper returns it directly when no hint exists.',
 
   'k8sRetryBackoffInterceptor.overview':
-    '<code>k8sRetryBackoffInterceptor</code> is a functional Angular HTTP interceptor (<code>HttpInterceptorFn</code>) that automatically retries Kubernetes HTTP 429 (<code>TooManyRequests</code>) responses across all application requests. It respects the <code>Retry-After</code> header and <code>details.retryAfterSeconds</code> response body, with per-request customization and opt-out via <code>K8S_RETRY_BACKOFF_CONFIG</code>.',
+    '<code>k8sRetryBackoffInterceptor</code> automatically retries Kubernetes 429 responses for idempotent methods. It honors Retry-After and details.retryAfterSeconds, with exponential fallback, jitter, wait budgets and HttpContext opt-out. POST/PATCH require explicit opt-in.',
   'k8sRetryBackoffInterceptor.callout':
     '<strong>Global Protection with Request Overrides:</strong> Register the interceptor once in <code>app.config.ts</code> to protect all endpoints. For individual requests that should bypass retry or use custom limits, set the <code>K8S_RETRY_BACKOFF_CONFIG</code> context token on the <code>HttpClient</code> call. For local pipeline control instead, see the <code>retryOnK8sBackoff</code> operator.',
   'k8sRetryBackoffInterceptor.example1Title': 'Example 1: Global Interceptor Registration & Interactive Simulator',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Provide the interceptor globally in app.config.ts so all standard HttpClient calls automatically retry on HTTP 429 without modifying component code:',
+    'Register globally in app.config.ts to retry eligible idempotent HttpClient requests on HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Interceptor Context Mode:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Default Global Interceptor (429 retried automatically)',
-  'k8sRetryBackoffInterceptor.modeCustom': 'Custom HttpContext (maxAttempts: 2, fallback: 400ms)',
+  'k8sRetryBackoffInterceptor.modeCustom': 'Custom HttpContext (maxAttempts: 2, base: 400ms, equal jitter)',
   'k8sRetryBackoffInterceptor.modeDisabled': 'Disabled via HttpContext (K8S_RETRY_BACKOFF_CONFIG: false)',
   'k8sRetryBackoffInterceptor.btnSend': 'Send Intercepted Request',
   'k8sRetryBackoffInterceptor.example2Title': 'Example 2: Per-Request Customization & Opt-Out via HttpContext',
@@ -1841,4 +1842,15 @@ export const enTranslations: Record<string, string> = {
   'fileReader.inputMaxSize': 'Maximum size in MiB. Oversized files are rejected before reading.',
   'fileReader.inputDisabled': 'Disable file selection and removal.',
   'fileReader.outputChange': 'Emits text or base64 after a successful file selection.',
+  'k8sRetryBackoff.paramJitter':
+    'Fallback jitter strategy. Equal jitter waits between half and the full exponential ceiling.',
+  'k8sRetryBackoff.paramHintJitter': 'Additional random wait after a server hint, in milliseconds.',
+  'k8sRetryBackoff.paramMaxDelay':
+    'Maximum individual wait. A longer server hint stops retries without shortening the hint.',
+  'k8sRetryBackoff.paramWaitBudget': 'Cumulative scheduled wait budget; excludes time spent on network requests.',
+  'k8sRetryBackoff.paramMethods':
+    'Interceptor-only method allowlist. POST/PATCH require explicit opt-in and endpoint idempotency.',
+  'k8sRetryBackoff.paramRandom': 'Random source returning a finite number in [0, 1), for deterministic scheduling.',
+  'k8sRetryBackoff.retryContract':
+    'Defaults: five attempts, exponential fallback with equal jitter, up to 250ms extra on server hints, 30s per wait and 60s total scheduled waits. Oversized hints stop retries. Interceptors retry idempotent methods by default; POST/PATCH require an endpoint guarantee.',
 };

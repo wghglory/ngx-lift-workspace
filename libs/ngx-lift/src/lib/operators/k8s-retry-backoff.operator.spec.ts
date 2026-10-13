@@ -93,9 +93,11 @@ describe('getK8sRetryDelayMs', () => {
 describe('retryOnK8sBackoff', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -199,7 +201,7 @@ describe('retryOnK8sBackoff', () => {
     });
 
     let result: string | undefined;
-    source$.pipe(retryOnK8sBackoff({fallbackDelayMs: 2000})).subscribe((val) => {
+    source$.pipe(retryOnK8sBackoff({fallbackDelayMs: 2000, jitter: 'none'})).subscribe((val) => {
       result = val;
     });
 
@@ -214,4 +216,116 @@ describe('retryOnK8sBackoff', () => {
     expect(attempts).toBe(2);
     expect(result).toBe('done');
   });
+});
+
+describe('bounded exponential retry', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it.each(['0.5', '-1', '+1', '1/2', 'Mon, 0.5', 'Mon, 1/2', 'Monday 1', '9'.repeat(400)])(
+    'ignores malformed Retry-After %s and uses the body',
+    (hint) => {
+      const error = new HttpErrorResponse({
+        status: 429,
+        headers: new HttpHeaders({'Retry-After': hint}),
+        error: {details: {retryAfterSeconds: 5}},
+      });
+      expect(getK8sRetryDelayMs(error)).toBe(5000);
+    },
+  );
+
+  it('clamps past HTTP dates to zero and rejects nonfinite body hints', () => {
+    expect(
+      getK8sRetryDelayMs(
+        new HttpErrorResponse({
+          status: 429,
+          headers: new HttpHeaders({'Retry-After': 'Wed, 21 Oct 2015 07:28:00 GMT'}),
+        }),
+      ),
+    ).toBe(0);
+    expect(
+      getK8sRetryDelayMs(new HttpErrorResponse({status: 429, error: {details: {retryAfterSeconds: Infinity}}})),
+    ).toBe(1000);
+  });
+
+  it('uses exponentially increasing equal jitter and a fresh wait budget for each subscriber', async () => {
+    const error = new HttpErrorResponse({status: 429});
+    let calls = 0;
+    const source = defer(() => {
+      calls++;
+      return throwError(() => error);
+    });
+    const retried = source.pipe(retryOnK8sBackoff({random: () => 0, maxAttempts: 4, maxTotalDelayMs: 1499}));
+    const first = vi.fn();
+    retried.subscribe({error: first});
+    await vi.advanceTimersByTimeAsync(499);
+    expect(calls).toBe(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(calls).toBe(2);
+    expect(first).toHaveBeenCalledWith(error); // Next 1000ms wait exceeds the remaining budget.
+    const second = vi.fn();
+    retried.subscribe({error: second});
+    await vi.advanceTimersByTimeAsync(500);
+    expect(calls).toBe(4);
+    expect(second).toHaveBeenCalledWith(error);
+  });
+
+  it('increases deterministic fallback delays across retries', async () => {
+    let calls = 0;
+    const source = defer(() => {
+      calls++;
+      return calls < 4 ? throwError(() => ({status: 429})) : of('ok');
+    });
+    const next = vi.fn();
+    source.pipe(retryOnK8sBackoff({fallbackDelayMs: 100, jitter: 'none'})).subscribe(next);
+    await vi.advanceTimersByTimeAsync(100);
+    expect(calls).toBe(2);
+    await vi.advanceTimersByTimeAsync(199);
+    expect(calls).toBe(2);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(calls).toBe(3);
+    await vi.advanceTimersByTimeAsync(400);
+    expect(next).toHaveBeenCalledWith('ok');
+  });
+
+  it.each([{maxDelayMs: 30000}, {maxDelayMs: 200000, maxTotalDelayMs: 60000}])(
+    'never truncates a server hint to fit %j',
+    (config) => {
+      const error = new HttpErrorResponse({status: 429, headers: new HttpHeaders({'Retry-After': '120'})});
+      let calls = 0;
+      const caught = vi.fn();
+      defer(() => {
+        calls++;
+        return throwError(() => error);
+      })
+        .pipe(retryOnK8sBackoff(config))
+        .subscribe({error: caught});
+      expect(calls).toBe(1);
+      expect(caught).toHaveBeenCalledWith(error);
+      expect(vi.getTimerCount()).toBe(0);
+    },
+  );
+
+  it('cancels a pending wait on unsubscribe and preserves errors from faulty random callbacks', async () => {
+    const error = new HttpErrorResponse({status: 429});
+    let calls = 0;
+    const source = defer(() => {
+      calls++;
+      return throwError(() => error);
+    });
+    const subscription = source.pipe(retryOnK8sBackoff({jitter: 'none'})).subscribe({error: vi.fn()});
+    subscription.unsubscribe();
+    await vi.advanceTimersByTimeAsync(10000);
+    expect(calls).toBe(1);
+    const caught = vi.fn();
+    source.pipe(retryOnK8sBackoff({random: () => NaN})).subscribe({error: caught});
+    expect(caught).toHaveBeenCalledWith(error);
+  });
+
+  it.each([{maxAttempts: Infinity}, {maxAttempts: 0}, {fallbackDelayMs: NaN}, {maxDelayMs: -1}, {maxDelayMs: 2 ** 31}])(
+    'rejects invalid configuration %j',
+    (config) => {
+      expect(() => retryOnK8sBackoff(config)).toThrow(RangeError);
+    },
+  );
 });
