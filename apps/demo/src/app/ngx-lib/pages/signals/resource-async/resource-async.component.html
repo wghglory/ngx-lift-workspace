@@ -174,7 +174,7 @@
               @if (userWithFallbackRef.isLoading()) {
                 <cll-spinner />
               }
-              @if (userRef.error(); as error) {
+              @if (userWithFallbackRef.error(); as error) {
                 <cll-alert [error]="error" [isSmall]="true" />
               }
               @if (userWithFallbackRef.hasValue()) {
@@ -194,8 +194,9 @@
       <p>Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:</p>
       <app-code-block [code]="throwOnErrorCode" lang="typescript" />
       <cll-callout type="warning">
-        When <code>throwOnError: true</code>, errors will be thrown even if <code>onError</code> is provided. The
-        <code>onError</code> callback can still be used for logging before the error propagates.
+        When <code>throwOnError: true</code>, errors will be thrown if <code>onError</code> returns
+        <code>undefined</code> or is omitted. If <code>onError</code> returns a fallback value, the error is handled and
+        will not propagate.
       </cll-callout>
     </article>
 

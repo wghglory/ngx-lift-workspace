@@ -130,6 +130,12 @@ export class ResourceAsyncComponent {
         description: this.translationService.translate('resourceAsync.propInitialValue'),
       },
       {
+        name: 'defaultValue',
+        type: 'T',
+        description:
+          'Default value before first fetch; guarantees value() returns T (never undefined). Alias for initialValue.',
+      },
+      {
         name: 'lazy',
         type: 'boolean',
         defaultValue: 'false',
@@ -153,6 +159,18 @@ export class ResourceAsyncComponent {
         description: this.translationService.translate('resourceAsync.propThrowOnError'),
       },
       {
+        name: 'preserveValueOnError',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: 'Retain the last received or local value when an error occurs.',
+      },
+      {
+        name: 'reactive',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: 'Whether parameter/source dependencies trigger automatic re-execution.',
+      },
+      {
         name: 'onSuccess',
         type: '(value: T) => void',
         description: this.translationService.translate('resourceAsync.propOnSuccess'),
@@ -161,6 +179,16 @@ export class ResourceAsyncComponent {
         name: 'onLoading',
         type: '() => void',
         description: this.translationService.translate('resourceAsync.propOnLoading'),
+      },
+      {
+        name: 'injector',
+        type: 'Injector',
+        description: 'Optional custom injector if called outside an ambient injection context.',
+      },
+      {
+        name: 'equal',
+        type: '(a: T, b: T) => boolean',
+        description: 'Custom equality comparator passed to underlying computed signal.',
       },
     ];
   });
@@ -209,9 +237,24 @@ export class ResourceAsyncComponent {
           'Manually trigger execution returning an awaitable Promise. Ideal for mutations (POST/PUT/DELETE).',
       },
       {
+        name: 'set()',
+        type: '(value: T) => void',
+        description: 'Manually update the resource value, transitioning status to "local".',
+      },
+      {
+        name: 'update()',
+        type: '(updater: (value: T) => T) => void',
+        description: 'Update the resource value using an updater function, transitioning status to "local".',
+      },
+      {
         name: 'reset()',
         type: '() => void',
         description: 'Resets the resource to its initial idle state and cancels in-flight operations.',
+      },
+      {
+        name: 'destroy()',
+        type: '() => void',
+        description: 'Permanently stop observation and cancel pending work.',
       },
     ];
   });

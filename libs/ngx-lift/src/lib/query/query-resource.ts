@@ -90,7 +90,9 @@ export function queryResource<T, E = Error>(
   const requestedKey = computed(() => requested()?.key);
   const observedKey = signal<string | undefined>(undefined);
   let unsubscribe: QueryObserverHandle | undefined;
-  let observedInterval: number | undefined;
+  const initialInterval =
+    typeof options.pollInterval === 'function' ? untracked(options.pollInterval) : options.pollInterval;
+  let observedInterval: number | undefined = initialInterval;
   let destroyed = false;
   const recoverObserver = new Subject<void>();
 
