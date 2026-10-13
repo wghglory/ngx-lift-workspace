@@ -1,6 +1,8 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {differenceInDays} from 'ngx-lift';
 import forge from 'node-forge';
+
+import {CERTIFICATE_CLOCK, CertificateClock} from './certificate.model';
 
 /**
  * pem example:
@@ -35,6 +37,8 @@ import forge from 'node-forge';
   providedIn: 'root',
 })
 export class CertificateService {
+  private readonly injectedClock = inject(CERTIFICATE_CLOCK, {optional: true});
+
   /**
    * Calculates the MD5 and SHA1 hashes of a certificate.
    *
@@ -72,13 +76,43 @@ export class CertificateService {
   }
 
   /**
-   * Calculates the difference in days between the given certificate expiration date and the current date.
+   * Calculates the difference in days between the given certificate expiration date and the reference date.
    *
-   * @param {string} certNotAfterDate - The expiration date of the certificate in string format. this.certificate?.validity.notAfter
-   * @param {Date} [referenceDate=new Date()] - The reference date to calculate the difference from. Defaults to the current date.
+   * @param {Date} certNotAfterDate - The expiration date of the certificate.
+   * @param {Date | number | CertificateClock} [referenceDate] - The reference date or clock function. Defaults to CERTIFICATE_CLOCK or new Date().
    * @return {number} The difference in days between the certificate expiration date and the reference date.
    */
-  getDayDifferences(certNotAfterDate: Date, referenceDate = new Date()) {
-    return differenceInDays(new Date(certNotAfterDate), referenceDate);
+  getDayDifferences(certNotAfterDate: Date, referenceDate?: Date | number | CertificateClock) {
+    let resolvedDate: Date;
+    if (typeof referenceDate === 'function') {
+      const result = referenceDate();
+      resolvedDate = result instanceof Date ? result : new Date(result);
+    } else if (referenceDate !== undefined) {
+      resolvedDate = referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
+    } else if (this.injectedClock) {
+      const result = this.injectedClock();
+      resolvedDate = result instanceof Date ? result : new Date(result);
+    } else {
+      resolvedDate = new Date();
+    }
+    return differenceInDays(new Date(certNotAfterDate), resolvedDate);
+  }
+
+  /**
+   * Resolves the current timestamp in milliseconds using the provided clock, injected CERTIFICATE_CLOCK, or Date.now().
+   *
+   * @param {CertificateClock} [clock] - Optional override clock function.
+   * @return {number} Current timestamp in milliseconds.
+   */
+  getCurrentTime(clock?: CertificateClock): number {
+    if (clock) {
+      const result = clock();
+      return result instanceof Date ? result.getTime() : result;
+    }
+    if (this.injectedClock) {
+      const result = this.injectedClock();
+      return result instanceof Date ? result.getTime() : result;
+    }
+    return Date.now();
   }
 }

@@ -77,3 +77,59 @@ export interface QueryClientOptions {
   /** Active observers and finite pending requests are protected from capacity eviction. */
   readonly maxEntries?: number;
 }
+
+/** Diagnostics snapshot for a single cached query entry. */
+export interface QueryEntryDiagnostics {
+  /** The serialized canonical string form of the query key. */
+  readonly serializedKey: string;
+  /** The original query key structure. */
+  readonly key: QueryKey;
+  /** Current query lifecycle status. */
+  readonly status: QueryStatus;
+  /** Whether the entry currently holds a resolved value. */
+  readonly hasValue: boolean;
+  /** Number of active observer subscriptions. */
+  readonly observerCount: number;
+  /** Number of in-flight network requests. */
+  readonly requestCount: number;
+  /** Whether a network request is currently pending. */
+  readonly isPending: boolean;
+  /** Whether the cached value is stale according to current clock and staleTime. */
+  readonly isStale: boolean;
+  /** Freshness lifetime in milliseconds. */
+  readonly staleTime: number;
+  /** Retention duration in milliseconds after becoming inactive. */
+  readonly gcTime: number;
+  /** Timestamp when data was last updated or resolved, or null if never resolved. */
+  readonly updatedAt: number | null;
+  /** Timestamp when the entry became inactive (0 observers), or null if active. */
+  readonly inactiveSince: number | null;
+  /** Estimated milliseconds until garbage collection, if inactive and scheduled. Null if active or infinite. */
+  readonly remainingGcTime: number | null;
+  /** Estimated milliseconds until the next scheduled poll execution, if polling is active. */
+  readonly remainingPollDelay: number | null;
+  /** Invalidation tags registered for this entry. */
+  readonly tagMemberships: readonly string[];
+}
+
+/** Aggregate diagnostics snapshot for a QueryClient instance. */
+export interface QueryClientDiagnostics {
+  /** Total number of cached query entries in memory. */
+  readonly entryCount: number;
+  /** Number of query entries that currently have active observers. */
+  readonly activeEntryCount: number;
+  /** Number of query entries without observers awaiting garbage collection. */
+  readonly inactiveEntryCount: number;
+  /** Total number of in-flight requests across all queries. */
+  readonly pendingRequestCount: number;
+  /** Total number of active observer subscriptions across all queries. */
+  readonly totalObserverCount: number;
+  /** Configured maximum capacity before LRU eviction. */
+  readonly maxEntries: number;
+  /** Whether the query client has been destroyed. */
+  readonly isDestroyed: boolean;
+  /** Whether document visibility is currently active for polling. */
+  readonly isVisible: boolean;
+  /** Snapshot list of all individual query entries. */
+  readonly entries: readonly QueryEntryDiagnostics[];
+}

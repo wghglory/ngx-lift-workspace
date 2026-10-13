@@ -184,11 +184,17 @@ describe('IdleDetectionComponent', () => {
     expect(idleDetectionService.resetTimer).toHaveBeenCalledWith(true);
   });
 
-  it('should clear timers on destroy', async () => {
-    // Trigger destroy
+  it('should not clear shared root timers on destroy when not scoped', async () => {
     fixture.destroy();
+    expect(idleDetectionService.clearTimers).not.toHaveBeenCalled();
+  });
 
-    expect(idleDetectionService.clearTimers).toHaveBeenCalled();
+  it('should clear scoped timers on destroy when scoped is true', async () => {
+    fixture.componentRef.setInput('scoped', true);
+    fixture.detectChanges();
+    const clearSpy = vi.spyOn(component['activeService'], 'clearTimers');
+    fixture.destroy();
+    expect(clearSpy).toHaveBeenCalled();
   });
 
   it('should handle multiple open$ emissions', async () => {

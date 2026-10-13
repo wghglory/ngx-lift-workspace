@@ -1,6 +1,8 @@
 import {
+  QueryClientDiagnostics,
   QueryClientOptions,
   QueryDefinition,
+  QueryEntryDiagnostics,
   QueryFetchOptions,
   QueryKey,
   QueryObserverHandle,
@@ -169,6 +171,80 @@ export class QueryClient {
   getSnapshot<T>(key: QueryKey): QuerySnapshot<T> | undefined {
     const entry = this.entries.get(serializeQueryKey(key)) as QueryEntry<T> | undefined;
     return entry ? this.snapshot(entry) : undefined;
+  }
+
+  /** Return a point-in-time snapshot of all cached query entries and their runtime metrics. */
+  getEntriesSnapshot(): QueryEntryDiagnostics[] {
+    const now = this.now();
+    const visible = this.isVisible();
+    const list: QueryEntryDiagnostics[] = [];
+
+    for (const entry of this.entries.values()) {
+      let remainingGcTime: number | null = null;
+      if (
+        !entry.observers.size &&
+        !entry.requests.size &&
+        entry.inactiveSince !== null &&
+        Number.isFinite(entry.gcTime)
+      ) {
+        remainingGcTime = Math.max(0, entry.inactiveSince + entry.gcTime - now);
+      }
+
+      let remainingPollDelay: number | null = null;
+      if (entry.nextPollAt !== null && entry.observers.size > 0 && !entry.pending && visible) {
+        remainingPollDelay = Math.max(0, entry.nextPollAt - now);
+      }
+
+      list.push({
+        serializedKey: entry.serializedKey,
+        key: entry.key,
+        status: entry.status,
+        hasValue: entry.hasValue,
+        observerCount: entry.observers.size,
+        requestCount: entry.requests.size,
+        isPending: entry.pending !== undefined,
+        isStale: this.isStale(entry),
+        staleTime: entry.staleTime,
+        gcTime: entry.gcTime,
+        updatedAt: entry.updatedAt,
+        inactiveSince: entry.inactiveSince,
+        remainingGcTime,
+        remainingPollDelay,
+        tagMemberships: Array.from(entry.tagMemberships),
+      });
+    }
+
+    return list;
+  }
+
+  /** Return aggregate metrics and entry states for developer tools and diagnostic inspection. */
+  getDiagnostics(): QueryClientDiagnostics {
+    const entries = this.getEntriesSnapshot();
+    let activeEntryCount = 0;
+    let pendingRequestCount = 0;
+    let totalObserverCount = 0;
+
+    for (const entry of entries) {
+      if (entry.observerCount > 0) {
+        activeEntryCount++;
+      }
+      if (entry.isPending) {
+        pendingRequestCount++;
+      }
+      totalObserverCount += entry.observerCount;
+    }
+
+    return {
+      entryCount: entries.length,
+      activeEntryCount,
+      inactiveEntryCount: entries.length - activeEntryCount,
+      pendingRequestCount,
+      totalObserverCount,
+      maxEntries: this.maxEntries,
+      isDestroyed: this.destroyed,
+      isVisible: this.isVisible(),
+      entries,
+    };
   }
 
   /** An omitted id matches every entity id of this type within the same scope. */

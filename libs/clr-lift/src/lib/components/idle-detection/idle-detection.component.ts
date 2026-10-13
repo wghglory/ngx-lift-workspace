@@ -1,8 +1,20 @@
 import {AsyncPipe} from '@angular/common';
-import {ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, OnInit, output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  Injector,
+  input,
+  OnInit,
+  output,
+  runInInjectionContext,
+} from '@angular/core';
+import {toObservable} from '@angular/core/rxjs-interop';
 import {ClarityModule} from '@clr/angular';
 import {IdleDetectionConfig, IdleDetectionService, isEmpty, pickBy} from 'ngx-lift';
-import {map, merge, Subject, tap} from 'rxjs';
+import {map, merge, Subject, switchMap, tap} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
@@ -16,36 +28,69 @@ import {idleDetectionTranslations} from './idle-detection.l10n';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdleDetectionComponent implements OnInit {
-  private idleDetectionService = inject(IdleDetectionService);
-  private translationService = inject(TranslationService);
-  private closeSubject = new Subject<void>();
+  private readonly rootIdleDetectionService = inject(IdleDetectionService);
+  private readonly translationService = inject(TranslationService);
+  private readonly injector = inject(Injector);
+  private readonly closeSubject = new Subject<void>();
 
+  private scopedService?: IdleDetectionService;
+  private previousService?: IdleDetectionService;
+
+  scoped = input(false);
   idleDurationInSeconds = input<number>();
   timeoutDurationInSeconds = input<number>();
 
   timeout = output<void>();
 
-  open$ = merge(
-    // Idle detection phase ends, pop up timeout countdown dialog
-    this.idleDetectionService.onIdleEnd().pipe(map(() => true)),
+  private getOrCreateScopedService(): IdleDetectionService {
+    if (!this.scopedService) {
+      this.scopedService = runInInjectionContext(this.injector, () => new IdleDetectionService());
+    }
+    return this.scopedService;
+  }
 
-    // Timeout phase ends, session timeout. It will redirect to login page.
-    this.idleDetectionService.onTimeoutEnd().pipe(
-      map(() => false),
-      tap(() => {
-        this.timeout.emit();
-      }),
-    ),
+  private get activeService(): IdleDetectionService {
+    return this.scoped() ? this.getOrCreateScopedService() : this.rootIdleDetectionService;
+  }
 
-    this.closeSubject.pipe(map(() => false)),
+  private readonly activeService$ = toObservable(this.scoped).pipe(
+    map((isScoped) => (isScoped ? this.getOrCreateScopedService() : this.rootIdleDetectionService)),
   );
 
-  countdown$ = this.idleDetectionService.onCountDown();
+  open$ = this.activeService$.pipe(
+    switchMap((service) =>
+      merge(
+        // Idle detection phase ends, pop up timeout countdown dialog
+        service.onIdleEnd().pipe(map(() => true)),
+
+        // Timeout phase ends, session timeout. It will redirect to login page.
+        service.onTimeoutEnd().pipe(
+          map(() => false),
+          tap(() => {
+            this.timeout.emit();
+          }),
+        ),
+
+        this.closeSubject.pipe(map(() => false)),
+      ),
+    ),
+  );
+
+  countdown$ = this.activeService$.pipe(switchMap((service) => service.onCountDown()));
 
   constructor() {
     this.translationService.loadTranslationsForComponent('idleDetection', idleDetectionTranslations);
 
     effect(() => {
+      const service = this.activeService;
+      if (this.previousService && this.previousService !== service) {
+        if (this.previousService === this.scopedService) {
+          this.scopedService?.clearTimers();
+        }
+        service.startWatching();
+      }
+      this.previousService = service;
+
       const config = pickBy(
         {
           idleDurationInSeconds: this.idleDurationInSeconds(),
@@ -55,21 +100,23 @@ export class IdleDetectionComponent implements OnInit {
       );
 
       if (!isEmpty(config)) {
-        this.idleDetectionService.setConfig(config);
+        service.setConfig(config);
       }
     });
 
     inject(DestroyRef).onDestroy(() => {
-      this.idleDetectionService.clearTimers();
+      if (this.scoped()) {
+        this.scopedService?.clearTimers();
+      }
     });
   }
 
   ngOnInit() {
-    this.idleDetectionService.startWatching();
+    this.activeService.startWatching();
   }
 
   keepMeSignedIn() {
     this.closeSubject.next();
-    this.idleDetectionService.resetTimer(true);
+    this.activeService.resetTimer(true);
   }
 }

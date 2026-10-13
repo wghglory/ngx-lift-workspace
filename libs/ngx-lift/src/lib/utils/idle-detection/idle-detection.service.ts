@@ -1,7 +1,27 @@
-import {DestroyRef, inject, Injectable} from '@angular/core';
+import {DestroyRef, inject, Injectable, Provider} from '@angular/core';
 import {fromEvent, merge, Subject, Subscription, throttleTime} from 'rxjs';
 
 import {IdleDetectionConfig} from './idle-detection.config';
+
+/**
+ * Provides an isolated IdleDetectionService instance with optional initial configuration.
+ * Useful for component- or route-level scoping to avoid modifying the root singleton timers.
+ *
+ * @param config Optional initial idle and timeout duration configuration.
+ * @returns Array of Angular providers for component or environment injection.
+ *
+ * @example
+ * ```typescript
+ * @Component({
+ *   selector: 'app-user-portal',
+ *   providers: [provideIdleDetectionService({ idleDurationInSeconds: 300 })],
+ * })
+ * export class UserPortalComponent {}
+ * ```
+ */
+export function provideIdleDetectionService(config?: IdleDetectionConfig): Provider[] {
+  return [...(config ? [{provide: IdleDetectionConfig, useValue: config}] : []), IdleDetectionService];
+}
 
 /**
  * Service for detecting user idle time and implementing a countdown.

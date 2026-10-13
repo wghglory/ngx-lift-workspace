@@ -2,7 +2,7 @@ import {beforeEach, afterEach, vi} from 'vitest';
 import {TestBed} from '@angular/core/testing';
 
 import {IdleDetectionConfig} from './idle-detection.config';
-import {IdleDetectionService} from './idle-detection.service';
+import {IdleDetectionService, provideIdleDetectionService} from './idle-detection.service';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -386,5 +386,21 @@ describe('IdleDetectionService', () => {
 
     expect(reset).not.toHaveBeenCalled();
     expect(timeout).not.toHaveBeenCalled();
+  });
+
+  it('provides an isolated IdleDetectionService instance with provideIdleDetectionService', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideIdleDetectionService({
+          idleDurationInSeconds: 15,
+          timeoutDurationInSeconds: 45,
+        }),
+      ],
+    });
+
+    const scopedInstance = TestBed.inject(IdleDetectionService);
+    expect(scopedInstance['idleDuration']).toBe(15);
+    expect(scopedInstance['timeoutDuration']).toBe(45);
   });
 });

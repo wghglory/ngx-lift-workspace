@@ -1,5 +1,6 @@
 import {computed} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
+import {ClrCommonStringsService} from '@clr/angular/utils';
 import {vi} from 'vitest';
 
 import {TranslationService} from './translation.service';
@@ -276,5 +277,65 @@ describe('Translation cache stability', () => {
     service.loadTranslationsForComponent('test', {en: {message: 'Hello'}});
     expect(message()).toBe('Hello');
     expect(reads).toBe(1);
+  });
+});
+
+describe('Clarity Common Strings dynamic synchronization', () => {
+  it('synchronizes Clarity common strings when language changes', () => {
+    const commonStringsMock = {
+      localize: vi.fn(),
+    };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{provide: ClrCommonStringsService, useValue: commonStringsMock}],
+    });
+    const service = TestBed.inject(TranslationService);
+    TestBed.flushEffects();
+
+    service.setLanguage('zh-CN', false);
+    TestBed.flushEffects();
+
+    expect(commonStringsMock.localize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        open: '打开',
+        close: '关闭',
+        firstPage: '第一页',
+        nextPage: '下一页',
+      }),
+    );
+
+    service.setLanguage('de', false);
+    TestBed.flushEffects();
+
+    expect(commonStringsMock.localize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        open: 'Öffnen',
+        close: 'Schließen',
+        firstPage: 'Erste Seite',
+      }),
+    );
+  });
+
+  it('allows registering and applying custom Clarity common string overrides', () => {
+    const commonStringsMock = {
+      localize: vi.fn(),
+    };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{provide: ClrCommonStringsService, useValue: commonStringsMock}],
+    });
+    const service = TestBed.inject(TranslationService);
+    service.setLanguage('en', false);
+    TestBed.flushEffects();
+
+    service.loadClarityCommonStrings('en', {
+      firstPage: 'Beginning',
+    });
+
+    expect(commonStringsMock.localize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        firstPage: 'Beginning',
+      }),
+    );
   });
 });

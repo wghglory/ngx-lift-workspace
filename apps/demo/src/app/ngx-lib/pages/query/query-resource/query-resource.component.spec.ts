@@ -54,4 +54,11 @@ describe('QueryResourceDemoComponent', () => {
     component.submitNewUser();
     expect(component.newUserName()).toBe('');
   });
+
+  it('updates live diagnostics snapshot', () => {
+    expect(component.diagnostics()).toBeDefined();
+    expect(component.diagnostics().entryCount).toBeGreaterThanOrEqual(0);
+    component.refreshDiagnostics();
+    expect(component.diagnostics().isVisible).toBe(true);
+  });
 });

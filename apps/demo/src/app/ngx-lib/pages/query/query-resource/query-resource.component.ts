@@ -3,7 +3,7 @@ import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core'
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
-import {mutateResource, QUERY_CLIENT, queryResource, QueryResourceRef} from 'ngx-lift';
+import {mutateResource, QUERY_CLIENT, QueryClientDiagnostics, queryResource, QueryResourceRef} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
@@ -40,6 +40,12 @@ interface DemoUser {
 })
 export class QueryResourceDemoComponent {
   private readonly queryClient = inject(QUERY_CLIENT);
+
+  diagnostics = signal<QueryClientDiagnostics>(this.queryClient.getDiagnostics());
+
+  refreshDiagnostics() {
+    this.diagnostics.set(this.queryClient.getDiagnostics());
+  }
 
   // ---------------------------------------------------------------------------
   // Demo 1: Request Coalescing / Deduplication
@@ -81,6 +87,7 @@ export class QueryResourceDemoComponent {
 
   refreshMetrics() {
     this.metricsQueryA.reload();
+    this.refreshDiagnostics();
   }
 
   // ---------------------------------------------------------------------------
@@ -137,6 +144,7 @@ export class QueryResourceDemoComponent {
 
   togglePolling() {
     this.pollingEnabled.update((v) => !v);
+    this.refreshDiagnostics();
   }
 
   // ---------------------------------------------------------------------------
@@ -185,11 +193,31 @@ export class QueryResourceDemoComponent {
       role: this.newUserRole(),
     });
     this.newUserName.set('');
+    this.refreshDiagnostics();
   }
 
   // ---------------------------------------------------------------------------
   // Code Snippets for DemoPlayground
   // ---------------------------------------------------------------------------
+  readonly diagnosticsCode = highlight(`// 5. Developer Diagnostics & Cache Inspector
+// QueryClient provides inspection hooks for developer tools, telemetry, and debugging
+const diagnostics = queryClient.getDiagnostics();
+console.log('Total entries:', diagnostics.entryCount);
+console.log('Active queries:', diagnostics.activeEntryCount);
+console.log('Total observers:', diagnostics.totalObserverCount);
+
+// Inspect individual cache entry metrics & scheduling
+const entries = queryClient.getEntriesSnapshot();
+for (const entry of entries) {
+  console.log(entry.key, {
+    status: entry.status,
+    observers: entry.observerCount,
+    isStale: entry.isStale,
+    remainingGc: entry.remainingGcTime,
+    remainingPoll: entry.remainingPollDelay,
+  });
+}`);
+
   readonly compareCode = highlight(`// 1. resourceAsync: Local component async state
 // Best for: component-owned form submissions, local search inputs, transient state
 const userRef = resourceAsync(() => this.http.get<User>('/api/profile'));
