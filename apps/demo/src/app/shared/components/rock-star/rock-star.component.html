@@ -1,6 +1,6 @@
 @if (vm$ | async; as vm) {
   <p>
-    {{ 'rockStar.todayIs' | translate }} <time> {{ formatDate(vm.today) }} </time>.
+    {{ 'rockStar.todayIs' | translate }} <time> {{ formattedToday() }} </time>.
     {{ 'rockStar.whoIsStar' | translate }}
     <button (click)="showRockStar()" class="btn btn-outline">{{ 'rockStar.unveil' | translate }}</button>
   </p>

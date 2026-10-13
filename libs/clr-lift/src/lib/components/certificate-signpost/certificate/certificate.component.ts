@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import type {pki} from 'node-forge';
 
@@ -17,14 +17,21 @@ import {CertificateStatus} from '../certificate.model';
 })
 export class CertificateComponent {
   private translationService = inject(TranslationService);
-  formatDate(value: Date): string {
-    return new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium', timeStyle: 'medium'}).format(
-      value,
-    );
-  }
 
   certificate = input.required<pki.Certificate>();
   certificateStatus = input.required<CertificateStatus>();
+
+  readonly formattedNotBefore = computed(() =>
+    new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium', timeStyle: 'medium'}).format(
+      this.certificate().validity.notBefore,
+    ),
+  );
+
+  readonly formattedNotAfter = computed(() =>
+    new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium', timeStyle: 'medium'}).format(
+      this.certificate().validity.notAfter,
+    ),
+  );
 
   hash = input.required<{
     md5: string;

@@ -228,8 +228,6 @@ export class TooltipDirective {
     if (hostElement) {
       hostElement.id = this.tooltipId;
       this.document.body.appendChild(hostElement);
-      const descriptions = this.triggerElement.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
-      this.triggerElement.setAttribute('aria-describedby', [...new Set([...descriptions, this.tooltipId])].join(' '));
       this.document.addEventListener('scroll', this.onScroll, true);
     }
 

@@ -265,10 +265,18 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   private setContent(value: string) {
     this.rawContent.set(value);
     try {
-      const byteString =
-        this.textEncoding() === 'latin1'
-          ? value
-          : Array.from(new TextEncoder().encode(value), (byte) => String.fromCharCode(byte)).join('');
+      let byteString: string;
+      if (this.textEncoding() === 'latin1') {
+        byteString = value;
+      } else {
+        const bytes = new TextEncoder().encode(value);
+        const CHUNK_SIZE = 8192;
+        let binary = '';
+        for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+          binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK_SIZE));
+        }
+        byteString = binary;
+      }
       this.encodedContent.set(btoa(byteString));
     } catch (error: unknown) {
       this.encodedContent.set('');

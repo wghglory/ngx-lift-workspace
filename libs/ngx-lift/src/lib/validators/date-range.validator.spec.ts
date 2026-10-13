@@ -208,6 +208,11 @@ describe('dateRangeValidator', () => {
 });
 
 describe('dateRangeValidator configuration', () => {
+  it('accepts null and undefined as unconstrained boundaries', () => {
+    const validator = dateRangeValidator({minDate: null, maxDate: undefined});
+    const control = new FormControl(new Date(1960, 0, 1));
+    expect(validator(control)).toBeNull();
+  });
   it('rejects invalid boundaries instead of silently accepting all input', () => {
     expect(() => dateRangeValidator({minDate: 'not-a-date'})).toThrow('minDate');
     expect(() => dateRangeValidator({maxDate: new Date(NaN)})).toThrow('maxDate');

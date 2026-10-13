@@ -2,11 +2,11 @@
   <h4 class="certificate-subtitle">{{ 'certificate.validityPeriod' | translate }}</h4>
   <dl class="certificate-content">
     <dt>{{ 'certificate.issuedOn' | translate }}</dt>
-    <dd>{{ formatDate(certificate().validity.notBefore) }}</dd>
+    <dd>{{ formattedNotBefore() }}</dd>
 
     <dt>{{ 'certificate.expiresOn' | translate }}</dt>
     <dd>
-      {{ formatDate(certificate().validity.notAfter) }}
+      {{ formattedNotAfter() }}
       @if (certificateStatus()) {
         <span class="label ml-2 align-middle" [class]="certificateStatus().labelClass">
           {{ certificateStatus().labelText }}

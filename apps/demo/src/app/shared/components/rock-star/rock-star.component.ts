@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {AlertComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {combineLatestEager, switchMapWithAsyncState} from 'ngx-lift';
 import {map, of, Subject} from 'rxjs';
@@ -15,6 +15,11 @@ import {UserService} from '../../services/user.service';
 export class RockStarComponent {
   today$ = of(new Date());
   private readonly translations = inject(TranslationService);
+
+  readonly formattedToday = computed(() =>
+    new Intl.DateTimeFormat(this.translations.locale(), {dateStyle: 'medium'}).format(new Date()),
+  );
+
   formatDate(value: Date | null): string {
     if (!value) return '';
     return new Intl.DateTimeFormat(this.translations.locale(), {dateStyle: 'medium'}).format(value);

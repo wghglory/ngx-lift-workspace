@@ -37,14 +37,14 @@ export class LanguageSwitcherComponent {
 
   readonly currentLang = this.translationService.currentLanguage;
 
+  readonly activeLanguageCode = computed(() => resolveDemoLanguage(this.currentLang()));
   readonly currentLabel = computed(
-    () =>
-      this.languages.find((language) => language.code === resolveDemoLanguage(this.currentLang()))?.label ?? 'English',
+    () => this.languages.find((language) => language.code === this.activeLanguageCode())?.label ?? 'English',
   );
-  readonly isPartialLanguage = computed(() => !['en', 'zh-CN'].includes(resolveDemoLanguage(this.currentLang())));
+  readonly isPartialLanguage = computed(() => !['en', 'zh-CN'].includes(this.activeLanguageCode()));
 
   isLanguageActive(code: string): boolean {
-    return resolveDemoLanguage(this.currentLang()) === code;
+    return this.activeLanguageCode() === code;
   }
 
   selectLanguage(code: string): void {

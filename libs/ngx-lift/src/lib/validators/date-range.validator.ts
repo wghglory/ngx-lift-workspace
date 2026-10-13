@@ -8,13 +8,13 @@ interface DateRangeOptions {
    * The minimum allowed date. The control value must be greater than (or equal to, if `minInclusive` is true) this date.
    * Can be a Date object or a string that can be parsed by the Date constructor.
    */
-  minDate?: Date | string;
+  minDate?: Date | string | null;
 
   /**
    * The maximum allowed date. The control value must be less than (or equal to, if `maxInclusive` is true) this date.
    * Can be a Date object or a string that can be parsed by the Date constructor.
    */
-  maxDate?: Date | string;
+  maxDate?: Date | string | null;
 
   /**
    * Whether the comparison for the minimum date can include the exact date.
@@ -148,8 +148,8 @@ function calendarDate(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }
 
-function parseBoundary(value: Date | string | undefined, name: string): Date | null {
-  if (value === undefined) return null;
+function parseBoundary(value: Date | string | null | undefined, name: string): Date | null {
+  if (value == null) return null;
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) throw new TypeError(`${name} must be a valid date.`);
   return date;
