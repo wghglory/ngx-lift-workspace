@@ -12,19 +12,10 @@ import {
 } from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {ClarityTheme, ThemeToggleComponent, ToastContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-import typescript from 'highlight.js/lib/languages/typescript';
-import xml from 'highlight.js/lib/languages/xml';
 
 import {LanguageSwitcherComponent} from './core/components/language-switcher/language-switcher.component';
 import {VerticalNavComponent} from './core/components/vertical-nav/vertical-nav.component';
 import {initialDemoTranslations, loadDemoLanguage} from './core/l10n/demo-language-loader';
-
-// register the languages you need
-hljs.registerLanguage('xml', xml);
-hljs.registerLanguage('typescript', typescript);
-hljs.registerLanguage('javascript', javascript);
 
 // register clarity icons
 ClarityIcons.addIcons(objectsIcon, wrenchIcon, certificateIcon, heatMapIcon, radarIcon, dataClusterIcon, shieldIcon);

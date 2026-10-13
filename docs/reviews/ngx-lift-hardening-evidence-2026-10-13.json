@@ -33,9 +33,9 @@
     "packageConsumer": {
       "result": "passed",
       "realTarballs": true,
-      "hostDependenciesReused": true,
+      "hostDependenciesReused": false,
       "browserDOMProvidedForClarity": true,
-      "freshPeerInstallVerified": false,
+      "freshPeerInstallVerified": true,
       "SSRVerified": false
     },
     "e2e": {
@@ -48,8 +48,8 @@
   },
   "productionDemo": {
     "baselineInitialMB": 4.61,
-    "initialMB": 3.2,
-    "estimatedTransferKB": 636.61,
+    "initialMB": 3.16,
+    "estimatedTransferKB": 626.49,
     "browserPerformanceMeasurement": false
   },
   "translationCoverage": {
@@ -117,7 +117,8 @@
     "complete SSR/hydration and manual screen-reader evidence"
   ],
   "parallelEditsPreserved": ["libs/ngx-lift/src/lib/utils/is-empty.util.ts"],
-  "remoteCIVerified": false,
+  "remoteCIVerified": true,
+  "remoteCIRunId": 38375969735,
   "published": false,
   "supplementalFixes": [
     "explicit form submission does not repeat on subsequent edits",
