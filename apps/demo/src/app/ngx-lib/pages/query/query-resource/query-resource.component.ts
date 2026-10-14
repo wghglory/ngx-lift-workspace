@@ -8,6 +8,7 @@ import {mutateResource, QUERY_CLIENT, queryResource, QueryResourceRef} from 'ngx
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
+import {QueryUsageExamplesComponent} from './query-usage-examples.component';
 
 interface ServerMetrics {
   activeUsers: number;
@@ -33,6 +34,7 @@ interface DemoUser {
     TranslatePipe,
     DemoPlaygroundComponent,
     ApiTableComponent,
+    QueryUsageExamplesComponent,
   ],
   templateUrl: './query-resource.component.html',
   styleUrls: ['./query-resource.component.scss'],
@@ -329,6 +331,8 @@ const addUser = mutateResource(
   ];
 
   readonly queryResourceRefApiProps: ApiProperty[] = [
+    {name: 'isInitialLoading', type: 'Signal<boolean>', description: 'True during loading without successful data.'},
+    {name: 'isRefreshing', type: 'Signal<boolean>', description: 'True during refresh while retaining cached data.'},
     {
       name: 'value',
       type: 'Signal<T>',

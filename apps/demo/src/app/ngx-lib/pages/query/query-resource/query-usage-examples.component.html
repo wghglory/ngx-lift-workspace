@@ -1,0 +1,81 @@
+<section cds-layout="vertical gap:md" data-testid="observable-query-examples">
+  <h2>Observable-first queries in practice</h2>
+  <p>
+    These examples use HttpClient with a local mock API. Switch tenants to see scoped data and independent cache
+    entries.
+  </p>
+  <label
+    >Tenant
+    <select [ngModel]="tenantId()" (ngModelChange)="tenantId.set($event)" data-testid="query-demo-tenant">
+      <option value="a">Tenant A</option>
+      <option value="b">Tenant B</option>
+    </select>
+  </label>
+  <article class="card card-block" data-testid="query-demo-parallel">
+    <h3>1. Independent parallel requests</h3>
+    <p>Tenant: {{ tenantQuery.value()?.name }} — {{ tenantQuery.status() }}</p>
+    <p>Health: {{ healthQuery.value()?.state }} — {{ healthQuery.status() }}</p>
+    <p data-testid="query-demo-loading">
+      isInitialLoading: {{ tenantQuery.isInitialLoading() }}; isRefreshing: {{ tenantQuery.isRefreshing() }}
+    </p>
+    <button class="btn btn-sm" (click)="tenantQuery.reload()">Refresh tenant</button>
+    <button class="btn btn-sm" (click)="failTenant()">Fail next tenant read</button>
+    @if (tenantQuery.error()) {
+      <p role="alert">Tenant read failed; cached data remains available.</p>
+      <button class="btn btn-sm" (click)="tenantQuery.reload()">Retry tenant</button>
+    }
+  </article>
+  <article class="card card-block" data-testid="query-demo-dependent">
+    <h3>2. Dependent request and mutation refresh</h3>
+    <p data-testid="query-demo-dependent-status">Databases: {{ databasesQuery.status() }}</p>
+    <p>
+      The database query stays idle until tenant data is available. Refreshing the tenant can keep its cached
+      dependencies usable.
+    </p>
+    <ul>
+      @for (database of databasesQuery.value(); track database.id) {
+        <li>{{ database.name }}</li>
+      }
+    </ul>
+    <label
+      >Database name
+      <input [ngModel]="databaseName()" (ngModelChange)="databaseName.set($event)" data-testid="query-demo-name" />
+    </label>
+    <button class="btn btn-sm btn-primary" [disabled]="createDisabled()" (click)="createDatabase()">
+      Create database
+    </button>
+    @if (createMutation.error()) {
+      <p role="alert">Create failed. Retry the operation.</p>
+    }
+    @if (databasesQuery.error()) {
+      <p role="alert">Database refresh failed.</p>
+      <button class="btn btn-sm" (click)="databasesQuery.reload()">Retry databases</button>
+    }
+    @if (snapshots$() | async; as snapshot) {
+      <p data-testid="query-demo-snapshot">
+        observeQueryObservable: {{ snapshot.status }}, {{ snapshot.value?.length ?? 0 }} databases
+      </p>
+    }
+  </article>
+  <article class="card card-block" data-testid="query-demo-service">
+    <h3>3. Three service callers share one request</h3>
+    <p>
+      fetchQueryObservable returns one result. defineQuery centralizes definitions. Use observeQueryObservable for
+      ongoing updates.
+    </p>
+    <button class="btn btn-sm" (click)="widgetsShown.set(true)">Mount service widgets</button>
+    <button class="btn btn-sm" [disabled]="!widgetsShown()" (click)="refreshWidgets()">Refresh service widgets</button>
+    @if (widgetsShown()) {
+      @for (name of widgetNames; track name) {
+        @if (widgetReads$() | async; as preference) {
+          <p data-testid="query-demo-widget">
+            Widget {{ name }}: tenant {{ preference.tenantId }}, {{ preference.theme }}
+          </p>
+        }
+      }
+    }
+  </article>
+  <p>HTTP request counts:</p>
+  <pre data-testid="query-demo-counts">{{ backend.requests() | json }}</pre>
+  <app-code-block [code]="usageCode" lang="typescript" />
+</section>
