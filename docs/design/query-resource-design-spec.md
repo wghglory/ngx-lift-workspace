@@ -4,7 +4,7 @@
 **Module**: `libs/ngx-lift/src/lib/query/query-resource.ts`, `query-client.ts`, `query-observable.ts`,
 `query-client.token.ts`  
 **Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts`, `query-client.spec.ts`, `query-normalizer.spec.ts`,
-`query-observable.spec.ts`, and `query-definition.spec.ts`.
+`query-observable.spec.ts`, and `query-resources.spec.ts`.
 
 ---
 

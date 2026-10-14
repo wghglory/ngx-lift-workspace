@@ -1,8 +1,10 @@
 # Query API Developer Experience: Observable-First Reads, Architecture Patterns, and Request Composition
 
-**Status:** Core API and practical examples implemented; dynamic collections remain a follow-up RFC.  
-**Reviewed:** October 14, 2026. PR #146 implementation and review fixes; DSM UI reference snapshot `e377fa09ea`.  
-**Audience:** Angular application developers and ngx-lift maintainers.  
+**Status:** Core API and practical examples implemented; dynamic collections implement pattern B only. **Reviewed:**
+October 14, 2026. PR #146 implementation and review fixes; DSM UI reference snapshot `e377fa09ea`.
+
+**Audience:** Angular application developers and ngx-lift maintainers.
+
 **Companion:** [中文完整设计方案](query-api-dx-proposal.zh-CN.md).
 
 ---
@@ -643,30 +645,22 @@ export class BuildService {
 
 ---
 
-### Use Case 5: Dynamic Parallel Requests (Future `queryResources` Candidate)
+### Use Case 5: Dynamic Parallel Requests (Implemented Pattern B)
 
-**Scenario:** A datagrid displays 10 selected database instances. The user needs to load real-time metrics for each
-selected instance.
+Pattern B is sufficient for dynamic ID collections: `queryResources(items, definition, options?)`. Pattern A accepts
+prebuilt definition arrays; defer it until an actual prebuilt-array or heterogeneous-query use case justifies another
+entry point. No artificial item ID or nested definition wrapper is required.
 
-#### Are `definition:` and `id:` Required? Why React Query Omits `id`
-
-- **Why early drafts had `id` and `definition:`:** Initial thoughts proposed wrapping queries as
-  `{ id, definition: { ... } }` to facilitate Angular template tracking via `@for (item of list; track item.id)`.
-  However, this introduced artificial nesting and redundant fields.
-- **Why React Query omits `id`:** In React Query (`useQueries`), developers pass standard `{ queryKey, queryFn }`
-  objects. **The `queryKey` (serialized internally via `hashKey(queryKey)`) already serves as the globally unique Stable
-  ID!** The reconciliation engine uses `queryKey` directly to match existing observers, mount new queries, and dispose
-  removed ones.
-- **Verdict: Eliminate artificial `id` and nested `definition:`. Align with React Query's elegance.**
-
-Two recommended patterns for `queryResources` (neither requires an extra `id` prop):
-
-**Pattern A (100% Aligned with React Query `useQueries` — Array of QueryDefinitions):**
+The result is a readable `QueryResourcesRef<T>` signal. Each item has the single-resource state/refresh methods plus a
+stable canonical serialized `key` for template tracking. Reordering retains refs; removal hides rows immediately and
+disposes observers during effect reconciliation. Empty arrays have no observers. Duplicate canonical keys throw
+explicitly; individual failures remain independent. New items appear after Angular effect scheduling, rather than
+creating every request synchronously.
 
 ```typescript
-import {Component, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {queryResources} from 'ngx-lift'; // Proposed candidate API
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {queryResources} from 'ngx-lift';
 
 interface HostMetrics {
   hostId: string;
@@ -675,52 +669,25 @@ interface HostMetrics {
 
 @Component({
   selector: 'app-host-monitor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <!-- Track using query.key directly in Angular @for -->
     @for (query of metricQueries(); track query.key) {
-      <div class="host-row">
-        @if (query.isLoading()) {
-          <span>Loading...</span>
-        }
-        @if (query.value(); as m) {
-          <span>Host {{ m.hostId }} Load: {{ m.loadAverage }}</span>
-        }
-      </div>
+      @if (query.value(); as metrics) {
+        <p>{{ metrics.hostId }}: {{ metrics.loadAverage }}</p>
+      }
     }
   `,
 })
 export class HostMonitorComponent {
   private readonly http = inject(HttpClient);
-  readonly selectedHostIds = signal<string[]>(['host-1', 'host-2', 'host-3']);
-
-  // Direct array of QueryDefinitions: key itself acts as the internal Stable ID!
-  readonly metricQueries = queryResources(() =>
-    this.selectedHostIds().map((hostId) => ({
-      key: ['hosts', hostId, 'metrics'],
-      loader: () => this.http.get<HostMetrics>(`/api/hosts/${hostId}/metrics`),
-      staleTime: 5_000,
-    })),
-  );
+  readonly selectedHostIds = signal<string[]>(['host-1', 'host-2']);
+  readonly metricQueries = queryResources(this.selectedHostIds, (hostId) => ({
+    key: ['hosts', hostId, 'metrics'],
+    loader: () => this.http.get<HostMetrics>(`/api/hosts/${hostId}/metrics`),
+    staleTime: 5_000,
+  }));
 }
 ```
-
-**Pattern B (Functional Reactive Mapper — Tailored for Angular Signals):**
-
-```typescript
-  // Arg 1: Reactive items Signal; Arg 2: Item mapping factory
-  // Eliminates manual .map(...) boilerplate. Reconciles dynamically by generated key!
-  readonly metricQueries = queryResources(
-    () => this.selectedHostIds(),
-    (hostId) => ({
-      key: ['hosts', hostId, 'metrics'],
-      loader: () => this.http.get<HostMetrics>(`/api/hosts/${hostId}/metrics`),
-      staleTime: 5_000,
-    })
-  );
-```
-
-In Pattern B, developers simply provide the collection signal and the per-item query definition. It offers maximum
-conciseness and zero redundant fields!
 
 ---
 
@@ -1040,6 +1007,18 @@ export declare function queryResource<T, E = Error>(
   options?: QueryResourceOptions,
 ): QueryResourceRef<T | undefined, E>;
 
+export interface QueryResourceItem<T> extends QueryResourceRef<T | undefined> {
+  readonly key: string;
+}
+export interface QueryResourcesRef<T> extends Signal<readonly QueryResourceItem<T>[]> {
+  destroy(): void;
+}
+export declare function queryResources<I, T>(
+  items: () => readonly I[],
+  definition: (item: I) => QueryDefinition<T>,
+  options?: QueryResourceOptions,
+): QueryResourcesRef<T>;
+
 export declare function fetchQueryObservable<T>(
   client: QueryClient,
   definition: QueryDefinition<T>,
@@ -1056,6 +1035,21 @@ export declare function observeQueryObservable<T>(
 ---
 
 ## 9. Internal Normalization and Lifecycle Guarantees
+
+The prose and table are the complete contract even when Mermaid is not rendered. The definition factory captures
+parameters and identity. QueryClient selects one entry per canonical key and joins valid in-flight work. It calls the
+loader only when a read is needed, then normalizeQueryResult bridges Observable/PromiseLike results into the Promise
+scheduler. Angular observers own their lifecycle without duplicating cache state.
+
+| Case              | Behavior and boundary                                                                                                                                                                     |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Observable        | First value wins and unsubscribes; empty completion rejects with EmptyError; source errors are retained.                                                                                  |
+| Throwing teardown | The attempt settles; original errors take precedence; cleanup failure after a value rejects and permits retry.                                                                            |
+| PromiseLike       | Promise.resolve assimilates the result; the loader must pass abortSignal to transport for network cancellation.                                                                           |
+| Same key          | Share cache and valid pending work; refresh bypasses completed fresh data but joins pending reads.                                                                                        |
+| Key/scope changes | Immediately hide old identity data; obsolete generations cannot overwrite newer cache state.                                                                                              |
+| queryResources    | Reconcile by canonical key, retain refs on reorder, dispose removed items and destroy all observers with the owner; definition updates do not implicitly force refresh.                   |
+| Cancellation      | Finite shared reads finish by default; only the last observer leaving with the shared opt-in policy aborts transport. Fetch-stream unsubscription alone does not cancel shared transport. |
 
 ```mermaid
 flowchart TD
@@ -1096,9 +1090,9 @@ flowchart TD
     - Observable-first HTTP query demo.
     - Dependent query demo with readiness gates.
     - Mutation with automatic tag invalidation.
-- **Phase 3: Dynamic Collections RFC (`queryResources`)**
-  - Formalize RFC for keyed dynamic query collections.
-  - Implement reconciliation engine with stable ID tracking and automatic deletion cleanup.
+- **Phase 3: Dynamic Collections (`queryResources`, implemented B)**
+  - Reactive items plus a per-item definition factory; canonical-key reconciliation and deletion cleanup.
+  - Pattern A is deferred until prebuilt-definition or heterogeneous-query use cases justify it.
 
 ---
 
@@ -1142,5 +1136,26 @@ completed `resourceAsync` or async-pipe consumer does not automatically receive 
 
 The queryResource demo now includes a local mock HttpClient backend, parallel tenant/health reads, a tenant-to-databases
 readiness gate, scoped mutation refresh, snapshot observation, and three Observable service callers sharing one request.
-Existing Promise examples remain. The API table includes both loading signals. `queryResources` remains a follow-up RFC,
-not an implemented export.
+Existing Promise examples remain. The API table includes both loading signals. `queryResources` implements pattern B;
+pattern A is deferred.
+
+## Why retain both Observable entry points?
+
+| API                    | Output                       | Completion                                                        | Use cases                                                                                                                                          |
+| ---------------------- | ---------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| fetchQueryObservable   | Observable<T>                | Completes after one result; request errors reject the subscriber. | Finite service reads, forkJoin, switchMap workflows, firstValueFrom.                                                                               |
+| observeQueryObservable | Observable<QuerySnapshot<T>> | Unsubscribe or explicit cache removal.                            | Mounted views observing loading/error/value, mutation-driven refresh, polling. Request errors appear in snapshot.error without ending observation. |
+
+Both are cold and share the same client and definitions. Do not use forkJoin with ongoing snapshot streams; use
+combineLatest. These are two consumption lifecycles, not two independent caches.
+
+## Definition factories and Promise handling
+
+The identity-only defineQuery helper is removed. It adds no runtime behavior and widens literal keys and concrete
+transport types. A regular factory returning QueryDefinition<T> is sufficient; use satisfies QueryDefinition<T> when
+preserving the concrete inferred object matters.
+
+Use void mutation.mutate(args) for event handlers that have no follow-up action. mutateResource records errors in
+signals and attaches a rejection handler while preserving rejection for callers that await it. Use async/await with
+try/catch when success must precede navigation or another action. void alone does not catch rejection and must not be
+treated as general Promise error handling.

@@ -1,8 +1,10 @@
 # Query API 开发者体验：Observable 优先、架构实践与请求编排设计方案
 
-**状态：核心 API 与实际示例已实现；动态集合保留为后续 RFC。**  
-**审核日期：** 2026-10-14。针对 PR #146 的实现和回归修复；DSM UI 参考快照为 `e377fa09ea`。  
-**读者对象：** Angular 应用开发工程师、架构师及 ngx-lift 核心维护者。  
+**状态：核心 API 与实际示例已实现；动态集合已实现 B 方案。** **审核日期：** 2026-10-14。针对 PR
+#146 的实现和回归修复；DSM UI 参考快照为 `e377fa09ea`。
+
+**读者对象：** Angular 应用开发工程师、架构师及 ngx-lift 核心维护者。
+
 **配套英文文档：** [Query API Developer Experience Specification](query-api-dx-proposal.md)。
 
 ---
@@ -630,27 +632,19 @@ export class ExportService {
 
 ---
 
-### 场景 5：动态列表并行请求 (动态 ID 集合 - `queryResources` 候选方案)
+### 场景 5：动态列表并行请求（已实现 B 方案）
 
-**业务场景：** 数据表格中用户多选了 N 台主机，需要并发加载这 N 台主机的实时性能指标，并支持动态勾选增删。
+B 方案足够覆盖动态 ID 集合：`queryResources(items, definition, options?)`。A 方案接收查询定义数组，只有当已有查询数组或异构查询出现实际需求时再考虑，不同时增加两个入口。这里不需要人为的 id 或 definition 包装。
 
-#### 追问解答：`definition:` 和 `id:` 是必须的吗？为什么 React Query 不需要？
-
-- **为什么早期草案有 `id` 和 `definition:`？** 在初期思考中，曾设想让每个项包装成 `{ id, definition: { ... } }`
-  以便配合 Angular 模板 `@for (item of list; track item.id)`。但这引入了层级嵌套和人造字段，导致 DX 变得繁琐。
-- **React Query 为什么不需要额外的 `id`？** 在 React Query (`useQueries`) 中，开发者只需提供
-  `{ queryKey, queryFn }`。**因为 `queryKey`（序列化后）本身就是天然的唯一标识（Stable ID）！** 底层协调器完全基于
-  `queryKey` 识别新增、复用和销毁。
-- **结论：彻底剔除人造 `id` 与 `definition:` 嵌套，我们和 React Query 一样轻盈！**
-
-后续推荐落地的两种优雅形态（均不需要写 `id` 属性）：
-
-**方案 A（100% 对齐 React Query `useQueries` 风格，纯粹的 QueryDefinition 数组）：**
+返回的是可读取的 `QueryResourcesRef<T>` signal。每项含有与单体资源相同的状态/刷新方法，以及用于 `@for track` 的稳定
+`key` 字符串（canonical
+key 序列化结果）。重排保留 ref；删除 ID 立即从结果中隐藏该项，随后 effect 销毁观察者。空数组没有观察者。重复 canonical
+key 明确抛错；单项失败不影响其他项。新增项在 Angular effect 调度后出现，并不是同步创建全部请求。
 
 ```typescript
-import {Component, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {queryResources} from 'ngx-lift'; // 规划中的动态集合 API
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {queryResources} from 'ngx-lift';
 
 interface HostMetrics {
   hostId: string;
@@ -659,52 +653,25 @@ interface HostMetrics {
 
 @Component({
   selector: 'app-host-monitor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <!-- 直接基于 query.key 进行 Angular @for 跟踪，或结合外部数组跟踪 -->
     @for (query of metricQueries(); track query.key) {
-      <div class="host-row">
-        @if (query.isLoading()) {
-          <span>加载中...</span>
-        }
-        @if (query.value(); as m) {
-          <span>主机 {{ m.hostId }} 负载：{{ m.loadAverage }}</span>
-        }
-      </div>
+      @if (query.value(); as metrics) {
+        <p>{{ metrics.hostId }}: {{ metrics.loadAverage }}</p>
+      }
     }
   `,
 })
 export class HostMonitorComponent {
   private readonly http = inject(HttpClient);
-  readonly selectedHostIds = signal<string[]>(['host-1', 'host-2', 'host-3']);
-
-  // 对齐 React Query：只写 key 和 loader，无任何额外 id 或 definition 嵌套！
-  // 底层基于 serializeQueryKey(key) 充当 Stable ID 自动比对与回收
-  readonly metricQueries = queryResources(() =>
-    this.selectedHostIds().map((hostId) => ({
-      key: ['hosts', hostId, 'metrics'],
-      loader: () => this.http.get<HostMetrics>(`/api/hosts/${hostId}/metrics`),
-      staleTime: 5_000,
-    })),
-  );
+  readonly selectedHostIds = signal<string[]>(['host-1', 'host-2']);
+  readonly metricQueries = queryResources(this.selectedHostIds, (hostId) => ({
+    key: ['hosts', hostId, 'metrics'],
+    loader: () => this.http.get<HostMetrics>(`/api/hosts/${hostId}/metrics`),
+    staleTime: 5_000,
+  }));
 }
 ```
-
-**方案 B（函数式响应式映射器，为 Angular Signals 量身定制的终极 DX）：**
-
-```typescript
-  // 入参 1: 响应式集合信号；入参 2: 单项工厂映射函数
-  // 省去手动写 .map(...)，底层自动以生成的 key 作为 Stable ID 进行增量比对与内存回收！
-  readonly metricQueries = queryResources(
-    () => this.selectedHostIds(),
-    (hostId) => ({
-      key: ['hosts', hostId, 'metrics'],
-      loader: () => this.http.get<HostMetrics>(`/api/hosts/${hostId}/metrics`),
-      staleTime: 5_000,
-    })
-  );
-```
-
-在方案 B 中，开发者只需提供一个 ID 列表 Signal 和针对单个 ID 的生成配置，代码最精炼，无任何冗余字段！
 
 ---
 
@@ -1041,6 +1008,18 @@ export declare function queryResource<T, E = Error>(
   options?: QueryResourceOptions,
 ): QueryResourceRef<T | undefined, E>;
 
+export interface QueryResourceItem<T> extends QueryResourceRef<T | undefined> {
+  readonly key: string;
+}
+export interface QueryResourcesRef<T> extends Signal<readonly QueryResourceItem<T>[]> {
+  destroy(): void;
+}
+export declare function queryResources<I, T>(
+  items: () => readonly I[],
+  definition: (item: I) => QueryDefinition<T>,
+  options?: QueryResourceOptions,
+): QueryResourcesRef<T>;
+
 export declare function fetchQueryObservable<T>(
   client: QueryClient,
   definition: QueryDefinition<T>,
@@ -1058,9 +1037,23 @@ export declare function observeQueryObservable<T>(
 
 ## 9. 内部规范化与生命周期保证
 
+本节的文字和表格就是完整契约，不依赖下方 Mermaid 的渲染。定义工厂捕获参数和 key；QueryClient 以 canonical
+key 查找唯一缓存条目并合并在途请求。只有真正需要读取时才调用 loader，由内部 `normalizeQueryResult` 将 Observable /
+PromiseLike 统一交给 Promise 调度器。Angular 桥接层拥有观察者生命周期，不创建第二份缓存。
+
+| 场景              | 行为与边界                                                                                                                               |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Observable        | 第一个值决定结果并 unsubscribe；空完成产生 EmptyError；请求错误保留。                                                                    |
+| teardown 抛错     | 请求仍会结束；已有错误优先保留；成功值后的 cleanup 错误令该次请求失败且可重试。                                                          |
+| PromiseLike       | Promise.resolve 解析；loader 必须主动向 fetch 等 transport 传递 abortSignal 才能停止网络请求。                                           |
+| 相同 key          | 共享缓存与当前有效在途请求；refresh 跳过已完成的 fresh cache，但仍合并在途请求。                                                         |
+| key 或 scope 改变 | 立即隐藏旧身份的数据；旧代际结果不能覆盖新缓存。                                                                                         |
+| queryResources    | canonical key 决定身份；重排复用、删除释放、销毁清理；单项定义更新不隐式触发强制 refresh。                                               |
+| 取消              | 默认允许有限共享读取完成；仅在最后观察者离开且 cancelOnNoObservers 生效时 abort。fetch stream unsubscribe 本身不等于取消共享 transport。 |
+
 ```mermaid
 flowchart TD
-  UserLoader["开发者 Loader: () => Observable<T> | Promise<T>"] --> Normalizer["内部 Loader 规范化器 (normalizeQueryLoader)"]
+  UserLoader["开发者 Loader: () => Observable<T> | Promise<T>"] --> Normalizer["内部 Loader 规范化器 (normalizeQueryResult)"]
   Normalizer -->|isObservable| RxAdapter["RxJS 自动转接 (取首值, 自动 Unsubscribe, 捕获 EmptyError)"]
   Normalizer -->|PromiseLike| PromiseAdapter["Promise 自动转接 (loader 主动使用 AbortSignal)"]
   RxAdapter --> Engine["QueryClient 核心 Promise 调度器"]
@@ -1091,7 +1084,7 @@ flowchart TD
 | ------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **第一阶段** | 统一 `QueryDefinition.loader` 契约，引入内部透明规范化器，移除公开适配器。                      | 1. `HttpClient`、`of()`、`throwError()`、`EMPTY` 及原生 `fetch` 全链路覆盖单测；<br>2. 业务使用 `fetchQueryObservable` 时直接使用 Observable loader，不保留 deprecated 适配器。 |
 | **第二阶段** | 为 `QueryResourceRef` 增加 `isInitialLoading` 和 `isRefreshing` 细粒度状态信号；补充完整 Demo。 | 1. 完善 demo 应用中的 Observable HTTP 示例与依赖查询示例；<br>2. 增加基于状态的有条件轮询与自动失效演示。                                                                       |
-| **第三阶段** | 启动动态集合 API `queryResources` 的深度 RFC 与原型设计。                                       | 1. 验证根据 Stable ID 动态增删、重排与销毁的协调引擎；<br>2. 彻底解决组件内动态多查询并发的内存与生命周期管理。                                                                 |
+| **第三阶段** | 已实现 B：items signal 与单项 definition 工厂。                                                 | canonical key 协调增删、重排、销毁；A 留待已有查询定义数组或异构集合的实际需求。                                                                                                |
 
 ---
 
@@ -1132,15 +1125,34 @@ pipe 不会自动更新。需要显式 reload（强制刷新时向每一步传 `
 
 queryResource demo 页面现在有本地 mock HttpClient API、并行 tenant/health、tenant 到数据库的 readiness gate、scoped
 mutation 刷新、持续 snapshot 观察和三个 Observable 服务调用者的去重。原有 Promise demo 保留。API 表新增两种 loading
-signal。`queryResources` 仍是后续 RFC，未作为已实现 API。
+signal。`queryResources` 已实现 B 方案；A 方案延后。
 
 ### 本次验证
 
-2026-10-14 本地验证通过：ngx-lift 774、clr-lift 243、demo
+2026-10-14 本地验证通过：ngx-lift 780、clr-lift 243、demo
 214 个单元测试；覆盖率门禁；源码与测试类型检查；lint、production
-builds、i18n/tooling 检查；105 个 Chromium/Firefox/WebKit
+builds、i18n/tooling 检查；111 个 Chromium/Firefox/WebKit
 E2E；tarball 导出与独立消费者安装验证。英文/中文轮询与 service 示例、live demo 代码示例均经过 strict
 TypeScript 验证。独立复审未发现剩余运行时或文档 blocker。
 
 发布门禁独立于代码验证：配置中的镜像 audit endpoint 返回 HTTP 405；官方 npm
 audit 请求在 60 秒内未完成。本次不执行 npm 发布，不能将依赖审计记为通过。
+
+## Observable 两个入口为什么都保留
+
+| API                    | 返回                         | 完成条件                         | 使用场景                                                                                                              |
+| ---------------------- | ---------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| fetchQueryObservable   | Observable<T>                | 一次结果后完成；错误向订阅者抛出 | service 单次读取、forkJoin、switchMap 流水线、firstValueFrom。                                                        |
+| observeQueryObservable | Observable<QuerySnapshot<T>> | unsubscribe 或显式移除缓存条目   | mounted view 的 loading/error/value、mutation 失效后的持续更新、polling。请求错误在 snapshot.error 中，不终止观察流。 |
+
+两者都是 cold：订阅才开始参与查询。不要将持续 snapshot 流放进 forkJoin；用 combineLatest。两者使用同一客户端和定义，共享缓存，不能理解成两套查询工具。
+
+## defineQuery 与事件处理的选择
+
+`defineQuery` 只是返回原对象，没有运行时行为，也不保留 literal key 或具体 transport 类型，因此已移除。普通工厂返回
+`QueryDefinition<T>` 即可；需要保留具体对象推断时使用 `satisfies QueryDefinition<T>`。
+
+事件处理不需要无意义的 async。没有后续动作时写 `void this.createMutation.mutate(args)`；该工具会记录 error
+signal 并标记 rejection 已处理，await 调用者仍会收到 rejection。有成功后导航等动作时，用
+`try { await mutation.mutate(args); ... } catch (error) { ... }`。`void`
+本身不会捕获 rejection，不能推广为所有 Promise 的错误处理方案。
