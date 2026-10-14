@@ -30,3 +30,8 @@ run 不验证实际 npm 凭据，也没有发布任何包或合并 PR。本地�
 
 `computedAsync`
 实现和类型保持不变。错误被当作 T、onError 返回 undefined 与 initialValue 重载之间的类型债务保留到独立 major 或新命名 API。Result 包装会要求现有赋值、属性读取、模板和 previous-value 回调解包；默认抛错会改变运行时行为；本次均未引入。
+
+## 已确认的依赖风险
+
+GitHub main 上有 96 条现存 Dependabot 告警：4 critical、40 high、44 medium、8
+low，其中 81 条开发依赖、15 条运行时依赖，部分在 manifest 和 lockfile 中重复。本 PR 未修改 lockfile。node-forge 的 RSA 签名验证告警尚未列出修复版本；当前证书帮助方法只解析 PEM 和计算指纹，不调用该签名验证路径，但不能据此证明整个依赖树安全。实际发布前须完成告警评估、修复与审计。
