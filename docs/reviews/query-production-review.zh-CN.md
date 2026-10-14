@@ -5,7 +5,7 @@
 
 ## 结论
 
-query 核心可用于有明确作用域、deadline 和 retry 策略的 Angular 浏览器业务。本 PR 改进 demo、文档和消费验证，不修改 query 引擎。本轮未发现新的阻塞运行时问题；这不代表整个库可以立即 npm 发布。依赖风险处理、独立人工语言验收、版本和凭据仍需完成。SSR/hydration、ZoneJS、完整 peer-version 矩阵没有因此得到证明。
+query 核心可用于有明确作用域、deadline 和 retry 策略的 Angular 浏览器业务。本 PR 改进 demo、文档和消费验证，不修改 query 引擎。本轮未发现新的阻塞运行时问题；这不代表整个库可以立即 npm 发布。维护者已授权按准备好的 minor 版本发布；凭据及发布流程结果仍待验证。依赖风险和独立人工语言验收仍是未完成的后续事项，发布不代表它们已解决。SSR/hydration、ZoneJS、完整 peer-version 矩阵没有因此得到证明。
 
 ## 已交付
 
@@ -27,6 +27,10 @@ Priority 1 的发布工作流、独立消费者、重量依赖加载已交付；
 replay 与共享 rollback 没有实现。Priority 3 的 SSR/hydration、版本矩阵、entry
 points 与 computedAsync 类型设计继续独立推进。
 
-建议下一发布为 ngx-lift 22.0.0 / clr-lift
-22.0.0，但本 PR 不修改版本或发布。已有 runtime 告警涉及 Angular（列出修复版本最高 21.2.24）和 node-forge（high，未列出修复版本）；官方 production
+已选择下一发布为 ngx-lift 21.3.0 / clr-lift 21.2.0，并更新版本与 clr-lift 的 ngx-lift
+peer 下限。npm 状态另行验证。已有 runtime 告警涉及 Angular（列出修复版本最高 21.2.24）和 node-forge（high，未列出修复版本）；官方 production
 audit 在 45 秒上限后超时，不能记作通过。现有 4200 checkout 未修改；本轮预览为 4317 / 4318。
+
+维护者明确选择 ngx-lift 21.3.0、clr-lift
+21.2.0，并保持 observableLoader 移除。这是早期 API 的 minor 版本兼容性例外；旧 adapter
+import 必须迁移，旧字节编码须显式选择 latin1。版本准备不代表 npm 已发布。

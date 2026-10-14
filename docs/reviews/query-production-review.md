@@ -11,8 +11,9 @@ notes. Historical fixes are distinguished from this PR's changes; remote checks 
 
 The query core is suitable for bounded Angular browser server-state reads with explicit scope, deadline and retry
 policies. This PR improves documentation, demos and installed-consumer evidence; it does not change the query engine. No
-new blocking runtime defect was found in the local review. **Actual npm publication is not ready:** dependency
-triage/remediation, independent linguistic acceptance, version selection and authentication remain open.
+new blocking runtime defect was found in the local review. The maintainer has authorized publication of the prepared
+minor versions. Registry authentication and release-workflow completion remain to be verified. Dependency advisories and
+independent linguistic acceptance remain open follow-up items; publication does not certify that they are resolved.
 
 SSR/hydration, ZoneJS and every version admitted by peer ranges are not established by the current browser evidence.
 Large dynamic lists have no concurrency limiter. Persistence, infinite queries, offline queues and shared optimistic
@@ -34,7 +35,8 @@ rollback are deferred, not advertised features.
   cancellation, retained refresh data/recovery, collection lifecycle, scoped writes and destruction.
 
 The user selected this GitHub checkout. The other checkout's port-4200 server was left intact; local previews use 4317
-(development) and 4318 (production). No version manifest, dependency lockfile or package publication changed.
+(development) and 4318 (production). Release preparation updates both library version manifests and clr-lift's ngx-lift
+peer minimum. The dependency lockfile is unchanged; npm publication is verified separately.
 
 ## Validation
 
@@ -73,10 +75,11 @@ historical, not current badges. Unrelated whole-library audit evidence remains i
 
 ## Release conditions
 
-Proposed next versions are **ngx-lift 22.0.0** for the removed public adapter and other post-21.2.0 contract changes,
-and **clr-lift 22.0.0** for the changed FileReader encoding default. These are proposals, not manifest bumps or npm
-availability claims. Align clr-lift's ngx-lift peer requirement to the tested new API baseline and validate the real
-versioned tarballs before publishing.
+The selected release versions are **ngx-lift 21.3.0** and **clr-lift 21.2.0**. The maintainer explicitly chose minor
+releases for the recently introduced APIs, keeping `observableLoader` removed. This is an intentional exception to
+backward-compatible minor-version semantics: existing adapter imports must migrate, and FileReader consumers using
+legacy encoded byte strings must select `textEncoding="latin1"`. clr-lift requires ngx-lift `>=21.3.0 <22` for the
+tested API baseline. Version manifests are prepared; npm publication must be verified separately.
 
 Merge readiness, consumer readiness and publication readiness are separate gates. The source support matrix currently
 records Angular 21.2 zoneless browser/DOM evidence; broader rendering claims require their own fixtures.

@@ -7,7 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-Changes after `ngx-lift@21.2.0` / `clr-lift@21.1.0`. No new version is assigned by this record.
+Release targets: `ngx-lift@21.3.0` / `clr-lift@21.2.0`, after `ngx-lift@21.2.0` / `clr-lift@21.1.0`.
+
+**Compatibility notice:** the maintainer selected minor versions for these recent APIs despite the removed
+`observableLoader` export and changed FileReader encoding default. Migrate adapter imports to native loaders; set
+`[textEncoding]="'latin1'"` for legacy encoded byte strings. clr-lift now requires ngx-lift `>=21.3.0 <22`. Publication
+status is tracked separately from these prepared versions.
 
 ### Added
 
