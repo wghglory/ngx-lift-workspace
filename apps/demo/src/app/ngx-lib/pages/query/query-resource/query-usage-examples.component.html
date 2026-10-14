@@ -1,0 +1,109 @@
+<section cds-layout="vertical gap:md" data-testid="observable-query-examples">
+  <h2>{{ 'queryExamples.title' | translate }}</h2>
+  <p>
+    {{ 'queryExamples.intro' | translate }}
+  </p>
+  <label
+    >{{ 'queryExamples.tenant' | translate }}
+    <select [ngModel]="tenantId()" (ngModelChange)="tenantId.set($event)" data-testid="query-demo-tenant">
+      <option value="a">{{ 'queryExamples.tenantA' | translate }}</option>
+      <option value="b">{{ 'queryExamples.tenantB' | translate }}</option>
+    </select>
+  </label>
+  <article class="card card-block" data-testid="query-demo-parallel">
+    <h3>{{ 'queryExamples.parallel' | translate }}</h3>
+    <p>
+      {{ 'queryExamples.tenant' | translate }}: {{ tenantQuery.value()?.name ?? 'queryExamples.tenant' | translate }} —
+      {{ tenantQuery.status() }}
+    </p>
+    <p>{{ 'queryExamples.health' | translate }}: {{ healthQuery.value()?.state }} — {{ healthQuery.status() }}</p>
+    <p data-testid="query-demo-loading">
+      isInitialLoading: {{ tenantQuery.isInitialLoading() }}; isRefreshing: {{ tenantQuery.isRefreshing() }}
+    </p>
+    <button class="btn btn-sm" (click)="tenantQuery.reload()">{{ 'queryExamples.refresh' | translate }}</button>
+    <button class="btn btn-sm" (click)="failTenant()">{{ 'queryExamples.fail' | translate }}</button>
+    @if (tenantQuery.status() === 'error') {
+      <p role="alert">{{ 'queryExamples.tenantError' | translate }}</p>
+      <button class="btn btn-sm" (click)="tenantQuery.reload()">{{ 'queryExamples.retry' | translate }}</button>
+    }
+  </article>
+  <article class="card card-block" data-testid="query-demo-dependent">
+    <h3>{{ 'queryExamples.dependent' | translate }}</h3>
+    <p data-testid="query-demo-dependent-status">
+      {{ 'queryExamples.databases' | translate }}: {{ databasesQuery.status() }}
+    </p>
+    <p>
+      {{ 'queryExamples.gate' | translate }}
+    </p>
+    <ul>
+      @for (database of databasesQuery.value(); track database.id) {
+        <li>
+          @if (database.labelKey; as key) {
+            {{ key | translate }}
+          } @else {
+            {{ database.name }}
+          }
+        </li>
+      }
+    </ul>
+    <label
+      >{{ 'queryExamples.name' | translate }}
+      <input [ngModel]="databaseName()" (ngModelChange)="databaseName.set($event)" data-testid="query-demo-name" />
+    </label>
+    <button class="btn btn-sm btn-primary" [disabled]="createDisabled()" (click)="createDatabase()">
+      {{ 'queryExamples.create' | translate }}
+    </button>
+    @if (createMutation.status() === 'error') {
+      <p role="alert">{{ 'queryExamples.createError' | translate }}</p>
+    }
+    @if (databasesQuery.status() === 'error') {
+      <p role="alert">{{ 'queryExamples.databaseError' | translate }}</p>
+      <button class="btn btn-sm" (click)="databasesQuery.reload()">
+        {{ 'queryExamples.retryDatabases' | translate }}
+      </button>
+    }
+    @if (snapshots$() | async; as snapshot) {
+      <p data-testid="query-demo-snapshot">
+        {{ 'queryExamples.snapshot' | translate: snapshot.status : snapshot.value?.length ?? 0 }}
+      </p>
+    }
+  </article>
+  <article class="card card-block" data-testid="query-demo-service">
+    <h3>{{ 'queryExamples.service' | translate }}</h3>
+    <p>
+      {{ 'queryExamples.serviceIntro' | translate }}
+    </p>
+    <button class="btn btn-sm" (click)="widgetsShown.set(true)">{{ 'queryExamples.mount' | translate }}</button>
+    <button class="btn btn-sm" [disabled]="!widgetsShown()" (click)="refreshWidgets()">
+      {{ 'queryExamples.refreshWidgets' | translate }}
+    </button>
+    @if (widgetsShown()) {
+      @for (name of widgetNames; track name) {
+        @if (widgetReads$() | async; as preference) {
+          <p data-testid="query-demo-widget">
+            {{ 'queryExamples.widget' | translate: name : preference.tenantId : preference.theme }}
+          </p>
+        }
+      }
+    }
+  </article>
+  <article class="card card-block" data-testid="query-demo-dynamic">
+    <h3>{{ 'queryExamples.dynamic' | translate }}</h3>
+    <p>{{ 'queryExamples.dynamicIntro' | translate }}</p>
+    <button class="btn btn-sm" (click)="selectedTenants.set(['a'])">{{ 'queryExamples.one' | translate }}</button>
+    <button class="btn btn-sm" (click)="selectedTenants.set(['a', 'b'])">{{ 'queryExamples.both' | translate }}</button>
+    <button class="btn btn-sm" (click)="selectedTenants.set(['b', 'a'])">
+      {{ 'queryExamples.reverse' | translate }}
+    </button>
+    <button class="btn btn-sm" (click)="selectedTenants.set([])">{{ 'queryExamples.empty' | translate }}</button>
+    @for (query of tenantQueries(); track query.key) {
+      <p data-testid="query-demo-dynamic-row">
+        {{ query.value()?.name ?? 'queryExamples.tenant' | translate }} — {{ query.status() }}
+      </p>
+    }
+    <app-code-block [code]="dynamicCode" lang="typescript" />
+  </article>
+  <p>{{ 'queryExamples.counts' | translate }}</p>
+  <pre data-testid="query-demo-counts">{{ backend.requests() | json }}</pre>
+  <app-code-block [code]="usageCode" lang="typescript" />
+</section>

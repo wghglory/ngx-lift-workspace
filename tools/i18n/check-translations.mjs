@@ -87,6 +87,11 @@ export function checkWorkspace(root = process.cwd()) {
         (error) => `${locale}: ${error}`,
       ),
     );
+    const queryMessages = (messages) =>
+      Object.fromEntries(Object.entries(messages).filter(([key]) => key.startsWith('queryExamples.')));
+    errors.push(
+      ...validateDictionary(queryMessages(english), queryMessages(messages)).map((error) => `${locale}: ${error}`),
+    );
     coverage[locale] = {
       present: Object.keys(messages).length,
       total: Object.keys(english).length,

@@ -1,3 +1,4 @@
+import {EMPTY, EmptyError, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClientOptions, QueryDefinition, QuerySnapshot} from './query.models';
@@ -732,5 +733,66 @@ describe('QueryClient', () => {
     expect(() => client.observeQuery(definition, vi.fn(), {pollInterval: 0})).toThrow(RangeError);
     client.destroy();
     expect(() => client.fetchQuery(definition)).toThrow('destroyed');
+  });
+
+  describe('direct Observable loaders', () => {
+    it('fetches direct Observable loader and resolves its first emitted value', async () => {
+      const client = createClient();
+      const definition = {
+        key: ['obs-fetch'],
+        loader: () => of({id: 1, name: 'Alice'}),
+      };
+      const result = await client.fetchQuery(definition);
+      expect(result).toEqual({id: 1, name: 'Alice'});
+      expect(client.getSnapshot(definition.key)?.value).toEqual({id: 1, name: 'Alice'});
+    });
+
+    it('rejects with EmptyError if the Observable completes without emitting', async () => {
+      const client = createClient();
+      const definition = {
+        key: ['obs-empty'],
+        loader: () => EMPTY,
+      };
+      await expect(client.fetchQuery(definition)).rejects.toBeInstanceOf(EmptyError);
+    });
+
+    it('rejects if the Observable emits an error', async () => {
+      const client = createClient();
+      const definition = {
+        key: ['obs-error'],
+        loader: () => throwError(() => new Error('Observable network error')),
+      };
+      await expect(client.fetchQuery(definition)).rejects.toThrow('Observable network error');
+    });
+
+    it('observes direct Observable loader and updates query snapshot', async () => {
+      const client = createClient();
+      const definition = {
+        key: ['obs-observe'],
+        loader: () => of('stream-value'),
+      };
+      const snapshots: QuerySnapshot<string>[] = [];
+      const unsubscribe = client.observeQuery(definition, (snapshot) => {
+        snapshots.push(snapshot);
+      });
+      await flushRequests();
+      expect(snapshots.map((s) => s.status)).toContain('resolved');
+      expect(snapshots.at(-1)?.value).toBe('stream-value');
+      unsubscribe();
+    });
+
+    it('unsubscribes from in-flight Observable when request is aborted', async () => {
+      const client = createClient();
+      const subject = new Subject<string>();
+      const definition = {
+        key: ['obs-abort'],
+        loader: () => subject.asObservable(),
+      };
+      const fetchPromise = client.fetchQuery(definition);
+      expect(subject.observed).toBe(true);
+      client.removeQueries();
+      await expect(fetchPromise).rejects.toMatchObject({name: 'AbortError'});
+      expect(subject.observed).toBe(false);
+    });
   });
 });
