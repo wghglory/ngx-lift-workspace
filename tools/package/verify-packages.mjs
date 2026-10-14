@@ -53,17 +53,24 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, defineQuery, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {isURL, QueryClient, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
 const client = new QueryClient();
-const definition = defineQuery({key: ['package-users'], loader: () => of([{id: 1}])});
+const definition = {key: ['package-users'], loader: () => of([{id: 1}])};
 const users: Promise<{id: number}[]> = client.fetchQuery(definition);
 const users$: Observable<{id: number}[]> = fetchQueryObservable(client, definition);
 const snapshots$ = observeQueryObservable(client, definition);
-void [users, users$, snapshots$];
+void [users, users$, snapshots$, queryResources];
+function collection() {
+  const rows = queryResources(() => [1, 2], id => ({key: ['items', id], loader: () => of({id})}));
+  const values: readonly QueryResourceItem<{id: number}>[] = rows();
+  rows.destroy();
+  return values;
+}
+void collection;
 const spinner: typeof SpinnerComponent = SpinnerComponent;
 const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}

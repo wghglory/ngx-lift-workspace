@@ -2,7 +2,8 @@ import {AsyncPipe, JsonPipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {mutateResource, QUERY_CLIENT, QueryClient, queryResource} from 'ngx-lift';
+import {TranslatePipe} from 'clr-lift';
+import {mutateResource, QUERY_CLIENT, QueryClient, queryResource, queryResources} from 'ngx-lift';
 import {of} from 'rxjs';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -13,7 +14,7 @@ import {DemoTenant, QueryDemoBackend} from './query-demo-backend';
 /** Executable HttpClient examples isolated from the application's real HTTP configuration. */
 @Component({
   selector: 'app-query-usage-examples',
-  imports: [AsyncPipe, JsonPipe, FormsModule, CodeBlockComponent],
+  imports: [AsyncPipe, JsonPipe, FormsModule, CodeBlockComponent, TranslatePipe],
   providers: [
     QueryDemoBackend,
     QueryDemoApiService,
@@ -35,10 +36,16 @@ export class QueryUsageExamplesComponent {
   private readonly http = inject(HttpClient);
   private readonly api = inject(QueryDemoApiService);
   readonly tenantId = signal('a');
-  readonly databaseName = signal('New database');
+  readonly databaseName = signal('');
   readonly widgetsShown = signal(false);
   readonly widgetRevision = signal(0);
   readonly widgetNames = ['A', 'B', 'C'];
+  readonly selectedTenants = signal(['a']);
+  readonly tenantQueries = queryResources(this.selectedTenants, (id) => ({
+    key: ['query-demo', id, 'tenant'],
+    staleTime: 30_000,
+    loader: () => this.http.get<DemoTenant>(`/query-demo/tenants/${id}`),
+  }));
 
   readonly tenantQuery = queryResource(() => {
     const id = this.tenantId();
@@ -78,7 +85,7 @@ export class QueryUsageExamplesComponent {
   );
 
   createDatabase() {
-    this.createMutation.mutate({tenantId: this.tenantId(), name: this.databaseName()});
+    void this.createMutation.mutate({tenantId: this.tenantId(), name: this.databaseName()});
   }
 
   failTenant() {
@@ -91,7 +98,7 @@ export class QueryUsageExamplesComponent {
   }
 
   readonly usageCode =
-    highlight(`import {queryResource, defineQuery, fetchQueryObservable, QUERY_CLIENT} from 'ngx-lift';
+    highlight(`import {queryResource, QueryDefinition, fetchQueryObservable, QUERY_CLIENT} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, Injectable, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -102,9 +109,9 @@ interface Database { id: number; name: string; }
 export class DatabaseService {
   private readonly http = inject(HttpClient);
   private readonly client = inject(QUERY_CLIENT);
-  databaseQuery(id: string) {
-    return defineQuery({key: ['databases', id], tags: [{type: 'Databases', scope: id}],
-      loader: () => this.http.get<Database[]>(\`/api/tenants/\${id}/databases\`)});
+  databaseQuery(id: string): QueryDefinition<Database[]> {
+    return {key: ['databases', id], tags: [{type: 'Databases', scope: id}],
+      loader: () => this.http.get<Database[]>(\`/api/tenants/\${id}/databases\`)};
   }
   databases$(id: string) {
     return fetchQueryObservable(this.client, this.databaseQuery(id));
@@ -125,5 +132,23 @@ export class ExampleComponent {
     const tenant = this.tenantQuery.value();
     return tenant ? this.api.databaseQuery(tenant.id) : undefined;
   });
+}`);
+
+  readonly dynamicCode = highlight(`import {HttpClient} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {queryResources} from 'ngx-lift';
+
+@Component({selector: 'app-tenants', changeDetection: ChangeDetectionStrategy.OnPush,
+  template: \`@for (query of tenantQueries(); track query.key) {
+    <p>{{ query.value()?.id }}: {{ query.status() }}</p>
+  }\`})
+export class TenantsComponent {
+  private readonly http = inject(HttpClient);
+  readonly selectedIds = signal<string[]>(['a']);
+  readonly tenantQueries = queryResources(this.selectedIds, id => ({
+    key: ['tenants', id],
+    loader: () => this.http.get<{id: string}>(\`/api/tenants/\${id}\`),
+    staleTime: 30_000,
+  }));
 }`);
 }

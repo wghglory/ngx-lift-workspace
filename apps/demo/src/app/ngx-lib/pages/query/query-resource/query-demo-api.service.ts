@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
-import {defineQuery, fetchQueryObservable, observeQueryObservable, QUERY_CLIENT} from 'ngx-lift';
+import {fetchQueryObservable, observeQueryObservable, QUERY_CLIENT, QueryDefinition} from 'ngx-lift';
 
 import {DemoDatabase} from './query-demo-backend';
 
@@ -10,13 +10,13 @@ export class QueryDemoApiService {
   private readonly http = inject(HttpClient);
   private readonly client = inject(QUERY_CLIENT);
 
-  databaseQuery(tenantId: string) {
-    return defineQuery({
+  databaseQuery(tenantId: string): QueryDefinition<DemoDatabase[]> {
+    return {
       key: ['query-demo', tenantId, 'databases'],
       tags: [{type: 'DemoDatabases', scope: tenantId}],
       staleTime: 30_000,
       loader: () => this.http.get<DemoDatabase[]>(`/query-demo/tenants/${tenantId}/databases`),
-    });
+    };
   }
 
   observeDatabases$(tenantId: string) {
@@ -26,11 +26,11 @@ export class QueryDemoApiService {
   preferences$(tenantId: string, options: {refresh?: boolean} = {}) {
     return fetchQueryObservable(
       this.client,
-      defineQuery({
+      {
         key: ['query-demo', tenantId, 'preferences'],
         staleTime: 30_000,
         loader: () => this.http.get<{theme: string; tenantId: string}>(`/query-demo/tenants/${tenantId}/preferences`),
-      }),
+      },
       options,
     );
   }
