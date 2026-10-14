@@ -1,16 +1,20 @@
 import {
   QueryClientOptions,
   QueryDefinition,
+  QueryDiagnosticContext,
   QueryFetchOptions,
   QueryKey,
   QueryObserverHandle,
   QueryObserverOptions,
+  QueryReadPolicy,
+  QueryRequestTrigger,
   QuerySnapshot,
   QueryStatus,
   QueryTag,
 } from './query.models';
 import {serializeQueryKey} from './query-key';
-import {normalizeQueryResult} from './query-normalizer';
+import {QueryTimeoutError} from './query-errors';
+import {executeQueryRequest, resolveQueryReadPolicy} from './query-request';
 
 const MAX_TIMER_DELAY = 2_147_483_647;
 
@@ -18,6 +22,7 @@ interface QueryRequest<T> {
   readonly promise: Promise<T>;
   readonly controller: AbortController;
   readonly generation: number;
+  attemptCount: number;
 }
 
 interface QueryObserver<T> {
@@ -29,6 +34,10 @@ interface QueryEntry<T> {
   readonly serializedKey: string;
   readonly key: QueryKey;
   loader: QueryDefinition<T>['loader'];
+  readPolicy: QueryReadPolicy;
+  failureCount: number;
+  failureReason: unknown | null;
+  nextRetryAt: number | null;
   staleTime: number;
   gcTime: number;
   cancelOnNoObservers: boolean;
@@ -62,11 +71,17 @@ export class QueryClient {
   private readonly maxEntries: number;
   private readonly unsubscribeVisibility?: () => void;
   private readonly onDiagnostic: QueryClientOptions['onDiagnostic'];
+  private readonly onQueryError: QueryClientOptions['onQueryError'];
+  private readonly queryDefaults: QueryReadPolicy;
+  private readonly elapsedNow: () => number;
   private accessSequence = 0;
   private destroyed = false;
 
   constructor(options: QueryClientOptions = {}) {
     this.onDiagnostic = options.onDiagnostic;
+    this.onQueryError = options.onQueryError;
+    this.queryDefaults = resolveQueryReadPolicy(options.queryDefaults ?? {});
+    this.elapsedNow = options.elapsedNow ?? (() => globalThis.performance?.now() ?? Date.now());
     this.now = options.now ?? (() => Date.now());
     this.isVisible = options.isVisible ?? (() => true);
     this.maxEntries = options.maxEntries ?? 200;
@@ -109,7 +124,7 @@ export class QueryClient {
     // The initial synchronous listener may remove this query or destroy the client.
     if (this.isAttached(entry)) {
       if (options.refresh || this.isStale(entry)) {
-        this.startRequest(entry, options.refresh ?? false);
+        this.startRequest(entry, options.refresh ?? false, 'initial');
       } else {
         this.schedulePoll(entry);
         this.scheduleStaleness(entry);
@@ -129,6 +144,7 @@ export class QueryClient {
           entry.pending = undefined;
           entry.invalidated = true;
           entry.status = entry.hasValue ? 'resolved' : 'idle';
+          this.resetRetryState(entry);
           for (const request of entry.requests) {
             request.controller.abort();
           }
@@ -193,6 +209,7 @@ export class QueryClient {
       // Older callers can finish, but their results no longer belong to this query generation.
       entry.pending = undefined;
       entry.status = entry.hasValue ? 'resolved' : 'idle';
+      this.resetRetryState(entry);
       this.clearTimer(entry, 'pollTimer');
       this.clearTimer(entry, 'staleTimer');
     }
@@ -203,7 +220,7 @@ export class QueryClient {
     }
     for (const entry of affectedEntries) {
       if (this.isAttached(entry) && entry.observers.size) {
-        this.startRequest(entry, true);
+        this.startRequest(entry, true, 'invalidation');
       }
     }
   }
@@ -233,6 +250,7 @@ export class QueryClient {
     const staleTime = definition.staleTime ?? 0;
     const gcTime = definition.gcTime ?? 300_000;
     const cancelOnNoObservers = definition.cancelOnNoObservers ?? false;
+    const readPolicy = resolveQueryReadPolicy(definition, this.queryDefaults);
     this.validateDuration(staleTime, 'staleTime');
     this.validateDuration(gcTime, 'gcTime');
     for (const tag of definition.tags ?? []) {
@@ -246,6 +264,7 @@ export class QueryClient {
       entry.gcTime = Math.max(entry.gcTime, gcTime);
       entry.cancelOnNoObservers = entry.cancelOnNoObservers && cancelOnNoObservers;
       entry.loader = definition.loader;
+      entry.readPolicy = readPolicy;
       entry.lastAccess = ++this.accessSequence;
       this.scheduleStaleness(entry);
       if (previouslyStale !== this.isStale(entry)) this.publish(entry);
@@ -255,6 +274,10 @@ export class QueryClient {
         // Capture a key snapshot so caller mutations cannot alter removal predicates.
         key: JSON.parse(serializedKey),
         loader: definition.loader,
+        readPolicy,
+        failureCount: 0,
+        failureReason: null,
+        nextRetryAt: null,
         staleTime,
         gcTime,
         cancelOnNoObservers,
@@ -282,12 +305,14 @@ export class QueryClient {
     return entry;
   }
 
-  private startRequest<T>(entry: QueryEntry<T>, refresh: boolean): Promise<T> {
+  private startRequest<T>(entry: QueryEntry<T>, refresh: boolean, trigger: QueryRequestTrigger = 'manual'): Promise<T> {
     if (entry.pending) {
       return entry.pending.promise;
     }
     const controller = new AbortController();
+    const startedAt = this.elapsedNow();
     const loader = entry.loader;
+    const policy = entry.readPolicy;
     let transportCallbacks:
       {resolve: (value: T | PromiseLike<T>) => void; reject: (error: unknown) => void} | undefined;
     const transport = new Promise<T>((resolve, reject) => {
@@ -297,48 +322,71 @@ export class QueryClient {
     const {resolve: resolveTransport, reject: rejectTransport} = transportCallbacks;
     const onAbort = () => rejectTransport(controller.signal.reason);
     controller.signal.addEventListener('abort', onAbort, {once: true});
-    const promise: Promise<T> = transport.then(
-      (value) => {
-        controller.signal.removeEventListener('abort', onAbort);
-        entry.requests.delete(request);
-        if (this.isCurrent(entry, request)) {
-          entry.pending = undefined;
-          entry.value = value;
-          entry.hasValue = true;
-          entry.error = null;
-          entry.status = 'resolved';
-          entry.updatedAt = this.now();
-          entry.invalidated = false;
-          entry.pollBaselineAt = this.now();
-          this.publish(entry);
-          this.scheduleStaleness(entry);
-          this.schedulePoll(entry);
+    const failedTransport = (error: unknown): never => {
+      controller.signal.removeEventListener('abort', onAbort);
+      entry.requests.delete(request);
+      if (this.isCurrent(entry, request)) {
+        entry.pending = undefined;
+        entry.error = error;
+        entry.status = 'error';
+        entry.invalidated = true;
+        entry.failureReason = error;
+        entry.nextRetryAt = null;
+        entry.pollBaselineAt = this.now();
+        this.publish(entry);
+        this.schedulePoll(entry);
+        if (
+          this.isAttached(entry) &&
+          entry.generation === request.generation &&
+          (!controller.signal.aborted || error instanceof QueryTimeoutError)
+        ) {
+          this.invokeCallback(
+            () =>
+              this.onQueryError?.(error, {
+                key: entry.key,
+                attemptCount: request.attemptCount,
+                hasValue: entry.hasValue,
+                trigger,
+              }),
+            (reportingError) => this.reportDiagnostic(reportingError, {key: entry.key, phase: 'error-reporter'}),
+          );
         }
-        this.scheduleGc(entry);
-        this.enforceCapacity();
-        return value;
-      },
-      (error: unknown) => {
-        controller.signal.removeEventListener('abort', onAbort);
-        entry.requests.delete(request);
-        if (this.isCurrent(entry, request)) {
-          entry.pending = undefined;
-          entry.error = error;
-          entry.status = 'error';
-          entry.invalidated = true;
-          entry.pollBaselineAt = this.now();
-          this.publish(entry);
-          this.schedulePoll(entry);
-        }
-        this.scheduleGc(entry);
-        this.enforceCapacity();
-        throw error;
-      },
-    );
-    const request: QueryRequest<T> = {promise, controller, generation: entry.generation};
+      }
+      this.scheduleGc(entry);
+      this.enforceCapacity();
+      throw error;
+    };
+    const promise: Promise<T> = transport.then((value) => {
+      if (policy.deadlineMs !== undefined && this.elapsedNow() - startedAt >= policy.deadlineMs) {
+        const timeout = new QueryTimeoutError(policy.deadlineMs);
+        controller.abort(timeout);
+        return failedTransport(timeout);
+      }
+      controller.signal.removeEventListener('abort', onAbort);
+      entry.requests.delete(request);
+      if (this.isCurrent(entry, request)) {
+        entry.pending = undefined;
+        entry.value = value;
+        entry.hasValue = true;
+        entry.error = null;
+        entry.status = 'resolved';
+        entry.updatedAt = this.now();
+        entry.invalidated = false;
+        this.resetRetryState(entry);
+        entry.pollBaselineAt = this.now();
+        this.publish(entry);
+        this.scheduleStaleness(entry);
+        this.schedulePoll(entry);
+      }
+      this.scheduleGc(entry);
+      this.enforceCapacity();
+      return value;
+    }, failedTransport);
+    const request: QueryRequest<T> = {promise, controller, generation: entry.generation, attemptCount: 0};
     entry.requests.add(request);
     entry.pending = request;
     entry.error = null;
+    this.resetRetryState(entry);
     entry.status = entry.hasValue ? 'reloading' : 'loading';
     this.clearTimer(entry, 'pollTimer');
     this.clearTimer(entry, 'gcTimer');
@@ -348,9 +396,23 @@ export class QueryClient {
     // Install pending state first, then preserve HttpClient's synchronous dispatch semantics.
     try {
       controller.signal.throwIfAborted();
-      normalizeQueryResult(loader({abortSignal: controller.signal, refresh}), {
-        abortSignal: controller.signal,
+      executeQueryRequest({
+        key: entry.key,
+        loader,
+        policy,
         refresh,
+        controller,
+        now: this.now,
+        elapsedNow: this.elapsedNow,
+        startedAt,
+        onProgress: (state, attempt) => {
+          request.attemptCount = attempt;
+          if (!this.isCurrent(entry, request)) return;
+          const schedulingChanged = entry.nextRetryAt !== state.nextRetryAt;
+          Object.assign(entry, state);
+          if (schedulingChanged) this.publish(entry);
+        },
+        onDiagnostic: (error) => this.reportDiagnostic(error, {key: entry.key, phase: 'retry-policy'}),
       }).then(resolveTransport, rejectTransport);
     } catch (error) {
       rejectTransport(error);
@@ -383,6 +445,9 @@ export class QueryClient {
       status: entry.status,
       updatedAt: entry.updatedAt,
       isStale: this.isStale(entry),
+      failureCount: entry.failureCount,
+      failureReason: entry.failureReason,
+      nextRetryAt: entry.nextRetryAt,
     };
   }
 
@@ -398,16 +463,34 @@ export class QueryClient {
   }
 
   private notify<T>(entry: QueryEntry<T>, observer: QueryObserver<T>, snapshot: QuerySnapshot<T>): void {
+    this.invokeCallback(
+      () => observer.listener(snapshot),
+      (error) => this.reportDiagnostic(error, {key: entry.key, phase: 'observer'}),
+    );
+  }
+
+  private reportDiagnostic(error: unknown, context: QueryDiagnosticContext): void {
+    this.invokeCallback(
+      () => (this.onDiagnostic ? this.onDiagnostic(error, context) : this.reportToHost(error)),
+      (error) => this.reportToHost(error),
+    );
+  }
+
+  private invokeCallback(callback: () => unknown, failed: (error: unknown) => void): void {
     try {
-      observer.listener(snapshot);
-    } catch (error) {
-      try {
-        if (this.onDiagnostic) this.onDiagnostic(error, {key: entry.key, phase: 'observer'});
-        else this.reportToHost(error);
-      } catch (reportingError) {
-        this.reportToHost(reportingError);
+      const result = callback();
+      if (result !== null && (typeof result === 'object' || typeof result === 'function')) {
+        void Promise.resolve(result).catch(failed);
       }
+    } catch (error) {
+      failed(error);
     }
+  }
+
+  private resetRetryState<T>(entry: QueryEntry<T>): void {
+    entry.failureCount = 0;
+    entry.failureReason = null;
+    entry.nextRetryAt = null;
   }
 
   private reportToHost(error: unknown): void {
@@ -476,7 +559,7 @@ export class QueryClient {
           if (entry.nextPollAt !== null && entry.nextPollAt > this.now()) {
             this.schedulePoll(entry);
           } else {
-            this.startRequest(entry, true);
+            this.startRequest(entry, true, 'poll');
           }
         }
       },
@@ -489,7 +572,7 @@ export class QueryClient {
       if (!this.isVisible()) {
         this.clearTimer(entry, 'pollTimer');
       } else if (entry.nextPollAt !== null && entry.nextPollAt <= this.now() && entry.observers.size) {
-        this.startRequest(entry, true);
+        this.startRequest(entry, true, 'poll');
       } else {
         this.schedulePoll(entry);
       }
@@ -575,6 +658,7 @@ export class QueryClient {
     entry.value = undefined;
     entry.hasValue = false;
     entry.error = null;
+    this.resetRetryState(entry);
     entry.status = 'idle';
     entry.updatedAt = null;
     entry.invalidated = true;

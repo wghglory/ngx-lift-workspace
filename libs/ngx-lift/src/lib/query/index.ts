@@ -1,5 +1,6 @@
 export * from './mutate-resource';
 export * from './query.models';
+export * from './query-errors';
 export * from './query-client';
 export * from './query-client.token';
 export * from './query-key';

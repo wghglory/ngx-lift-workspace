@@ -25,8 +25,53 @@ export interface QueryLoaderContext {
 /** Return type of a query loader: natively accepts an Observable, Promise, or PromiseLike value. */
 export type QueryResult<T> = Observable<T> | PromiseLike<T>;
 
+/** Context of the failed attempt; attempts start at one and include the initial read. */
+export interface QueryAttemptContext {
+  readonly key: QueryKey;
+  readonly attempt: number;
+  readonly elapsedMs: number;
+}
+
+/** Opt-in bounded read retries. Invoke the loader again, never reuse a rejected Promise. */
+export interface QueryRetryOptions {
+  readonly maxAttempts: number;
+  readonly shouldRetry: (error: unknown, context: QueryAttemptContext) => boolean;
+  readonly delayMs: number | ((error: unknown, context: QueryAttemptContext) => number);
+}
+
+/** Read policy shared by Observable and PromiseLike loaders. Both options are disabled by default. */
+export interface QueryReadPolicy {
+  readonly retry?: false | QueryRetryOptions;
+  /** Total elapsed-time budget for the logical read, including retry waits. */
+  readonly deadlineMs?: number;
+}
+
+/** Progress of the current logical read, not a separate retry per observer. */
+export interface QueryRetryState {
+  readonly failureCount: number;
+  readonly failureReason: unknown | null;
+  /** Wall-clock timestamp of the next retry; null while fetching or after settlement. */
+  readonly nextRetryAt: number | null;
+}
+
+export type QueryRequestTrigger = 'initial' | 'manual' | 'poll' | 'invalidation' | 'focus' | 'reconnect';
+
+/** One terminal failure event for a current shared logical read. */
+export interface QueryErrorContext {
+  readonly key: QueryKey;
+  readonly attemptCount: number;
+  readonly hasValue: boolean;
+  readonly trigger: QueryRequestTrigger;
+}
+
+/** Application callback failures, reported independently of transport outcomes. */
+export interface QueryDiagnosticContext {
+  readonly key: QueryKey;
+  readonly phase: 'observer' | 'retry-policy' | 'error-reporter';
+}
+
 /** Definitions sharing a key describe the same data; timing policies reconcile conservatively. */
-export interface QueryDefinition<T> {
+export interface QueryDefinition<T> extends QueryReadPolicy {
   readonly key: QueryKey;
   readonly loader: (context: QueryLoaderContext) => QueryResult<T>;
   readonly tags?: readonly QueryTag[];
@@ -42,7 +87,7 @@ export interface QueryDefinition<T> {
 export type QueryStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
 
 /** Immutable state published to observers, retaining successful data during refreshes. */
-export interface QuerySnapshot<T> {
+export interface QuerySnapshot<T> extends QueryRetryState {
   readonly value: T | undefined;
   /** Distinguishes a successful undefined result from the absence of successful data. */
   readonly hasValue: boolean;
@@ -77,7 +122,12 @@ export interface QueryObserverHandle {
 /** Clock, visibility, and capacity policies for a QueryClient. */
 export interface QueryClientOptions {
   /** Consumer exceptions are isolated from query results. Defaults to host error reporting. */
-  readonly onDiagnostic?: (error: unknown, context: {readonly key: QueryKey; readonly phase: 'observer'}) => void;
+  readonly onDiagnostic?: (error: unknown, context: QueryDiagnosticContext) => void;
+  /** Once per failed current logical read; normal lifecycle cancellation is excluded. */
+  readonly onQueryError?: (error: unknown, context: QueryErrorContext) => void;
+  readonly queryDefaults?: QueryReadPolicy;
+  /** Monotonic elapsed-time clock for deadlines. Independent of wall-clock cache timestamps. */
+  readonly elapsedNow?: () => number;
   readonly now?: () => number;
   readonly isVisible?: () => boolean;
   readonly subscribeVisibility?: (listener: () => void) => () => void;

@@ -31,7 +31,16 @@ export interface QueryResourceOptions {
 }
 
 /** Readonly signals and explicit refresh controls for one shared query observer. */
-export interface QueryResourceRef<T, E = Error> {
+export interface QueryFailureSignals {
+  readonly isInitialError: Signal<boolean>;
+  readonly isRefreshError: Signal<boolean>;
+  readonly updatedAt: Signal<number | null>;
+  readonly failureCount: Signal<number>;
+  readonly failureReason: Signal<unknown | null>;
+  readonly nextRetryAt: Signal<number | null>;
+}
+
+export interface QueryResourceRef<T, E = Error> extends QueryFailureSignals {
   readonly value: Signal<T>;
   readonly error: Signal<E | null>;
   readonly status: Signal<QueryStatus>;
@@ -49,7 +58,17 @@ export interface QueryResourceRef<T, E = Error> {
 }
 
 function idleSnapshot<T>(): QuerySnapshot<T> {
-  return {value: undefined, hasValue: false, error: null, status: 'idle', updatedAt: null, isStale: true};
+  return {
+    value: undefined,
+    hasValue: false,
+    error: null,
+    status: 'idle',
+    updatedAt: null,
+    isStale: true,
+    failureCount: 0,
+    failureReason: null,
+    nextRetryAt: null,
+  };
 }
 
 /**
@@ -210,6 +229,12 @@ export function queryResource<T, E = Error>(
     isLoading: computed(() => ['loading', 'reloading'].includes(visibleState().status)),
     isInitialLoading: computed(() => visibleState().status === 'loading'),
     isRefreshing: computed(() => visibleState().status === 'reloading'),
+    isInitialError: computed(() => visibleState().status === 'error' && !visibleState().hasValue),
+    isRefreshError: computed(() => visibleState().status === 'error' && visibleState().hasValue),
+    updatedAt: computed(() => visibleState().updatedAt),
+    failureCount: computed(() => visibleState().failureCount),
+    failureReason: computed(() => visibleState().failureReason),
+    nextRetryAt: computed(() => visibleState().nextRetryAt),
     isStale: computed(() => visibleState().isStale),
     hasValue(): this is QueryResourceRef<Exclude<T, undefined>, E> {
       return visibleState().hasValue && visibleState().value !== undefined;

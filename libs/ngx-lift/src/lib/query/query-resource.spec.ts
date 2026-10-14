@@ -33,6 +33,39 @@ describe('queryResource', () => {
     vi.restoreAllMocks();
   });
 
+  it('distinguishes falsy initial errors from refresh errors after successful undefined data', async () => {
+    const enabled = signal(true);
+    const failure = new Error('refresh failed');
+    const loader = vi
+      .fn<() => Promise<number | undefined>>()
+      .mockRejectedValueOnce(null)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(failure);
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => (enabled() ? {key: ['failure-signals'], loader} : undefined)),
+    );
+    await settle();
+    expect(resource.error()).toBeNull();
+    expect(resource.isInitialError()).toBe(true);
+    expect(resource.isRefreshError()).toBe(false);
+    expect(resource.failureCount()).toBe(1);
+    await resource.execute();
+    await settle();
+    expect(resource.updatedAt()).not.toBeNull();
+    expect(resource.failureCount()).toBe(0);
+    expect(resource.hasValue()).toBe(false);
+    await expect(resource.execute()).rejects.toBe(failure);
+    await settle();
+    expect(resource.isInitialError()).toBe(false);
+    expect(resource.isRefreshError()).toBe(true);
+    expect(resource.failureReason()).toBe(failure);
+    enabled.set(false);
+    expect(resource.status()).toBe('idle');
+    expect(resource.failureCount()).toBe(0);
+    expect(resource.nextRetryAt()).toBeNull();
+    expect(resource.updatedAt()).toBeNull();
+  });
+
   it('shares initial reads and refresh results across Signal observers', async () => {
     const loader = vi.fn(async () => loader.mock.calls.length);
     const definition = {key: ['bindings'], loader, staleTime: 5000};
