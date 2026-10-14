@@ -329,28 +329,28 @@ interface SystemStatus {
     <div class="dashboard-grid">
       <!-- Profile Card -->
       <div class="card">
-        @if (profile.isLoading()) {
+        @if (profileQuery.isLoading()) {
           <span>Loading profile...</span>
         }
-        @if (profile.value(); as p) {
+        @if (profileQuery.value(); as p) {
           <h3>{{ p.name }}</h3>
           <p>{{ p.email }}</p>
         }
-        @if (profile.error()) {
-          <button (click)="profile.reload()">Retry Profile</button>
+        @if (profileQuery.error()) {
+          <button (click)="profileQuery.reload()">Retry Profile</button>
         }
       </div>
 
       <!-- System Status Card -->
       <div class="card">
-        @if (status.isLoading()) {
+        @if (statusQuery.isLoading()) {
           <span>Loading system status...</span>
         }
-        @if (status.value(); as s) {
+        @if (statusQuery.value(); as s) {
           <div>Health: {{ s.healthy ? 'OK' : 'Degraded' }}</div>
         }
-        @if (status.error()) {
-          <button (click)="status.reload()">Retry Status</button>
+        @if (statusQuery.error()) {
+          <button (click)="statusQuery.reload()">Retry Status</button>
         }
       </div>
     </div>
@@ -360,20 +360,20 @@ export class DashboardComponent {
   private readonly http = inject(HttpClient);
 
   // Both queries launch concurrently upon initialization
-  readonly profile = queryResource(() => ({
+  readonly profileQuery = queryResource(() => ({
     key: ['user', 'profile'],
     loader: () => this.http.get<UserProfile>('/api/profile'),
     staleTime: 60_000,
   }));
 
-  readonly status = queryResource(() => ({
+  readonly statusQuery = queryResource(() => ({
     key: ['system', 'status'],
     loader: () => this.http.get<SystemStatus>('/api/system/status'),
     staleTime: 10_000,
   }));
 
   // Combined state helper
-  readonly isAnyLoading = computed(() => this.profile.isLoading() || this.status.isLoading());
+  readonly isAnyLoading = computed(() => this.profileQuery.isLoading() || this.statusQuery.isLoading());
 }
 ```
 
@@ -403,17 +403,17 @@ interface Project {
 @Component({
   selector: 'app-org-view',
   template: `
-    @if (org.isLoading()) {
+    @if (orgQuery.isLoading()) {
       <p>Loading Organization...</p>
     }
-    @if (org.value(); as o) {
+    @if (orgQuery.value(); as o) {
       <h2>Org: {{ o.name }}</h2>
 
       <!-- Dependent Project Section -->
-      @if (project.isLoading()) {
+      @if (projectQuery.isLoading()) {
         <p>Loading Default Project...</p>
       }
-      @if (project.value(); as p) {
+      @if (projectQuery.value(); as p) {
         <div class="project-box">
           <h4>Project: {{ p.title }}</h4>
           <p>Quota: {{ p.quota }}</p>
@@ -427,7 +427,7 @@ export class OrgViewComponent {
   readonly selectedOrgId = signal<string>('org-101');
 
   // Step 1: Organization Query
-  readonly org = queryResource(() => {
+  readonly orgQuery = queryResource(() => {
     const orgId = this.selectedOrgId();
     if (!orgId) return undefined;
     return {
@@ -437,9 +437,9 @@ export class OrgViewComponent {
     };
   });
 
-  // Step 2: Dependent Project Query (waits for org.value())
-  readonly project = queryResource(() => {
-    const orgData = this.org.value();
+  // Step 2: Dependent Project Query (waits for orgQuery.value())
+  readonly projectQuery = queryResource(() => {
+    const orgData = this.orgQuery.value();
     // Gate: returns undefined until Step 1 resolves
     if (!orgData?.defaultProjectId) return undefined;
 
@@ -751,11 +751,11 @@ interface CreateDbDto {
       {{ createMutation.isLoading() ? 'Creating...' : 'Add Database' }}
     </button>
 
-    @if (databases.isLoading()) {
+    @if (databasesQuery.isLoading()) {
       <p>Updating database list...</p>
     }
     <ul>
-      @for (db of databases.value() ?? []; track db.id) {
+      @for (db of databasesQuery.value() ?? []; track db.id) {
         <li>{{ db.name }} ({{ db.engine }})</li>
       }
     </ul>
@@ -765,7 +765,7 @@ export class DatabasesComponent {
   private readonly http = inject(HttpClient);
 
   // 1. Query: List of databases tagged with 'Databases'
-  readonly databases = queryResource(() => ({
+  readonly databasesQuery = queryResource(() => ({
     key: ['databases'],
     tags: [{type: 'Databases'}],
     loader: () => this.http.get<Database[]>('/api/databases'),
@@ -780,7 +780,7 @@ export class DatabasesComponent {
 
   async createDatabase() {
     await this.createMutation.mutate({name: 'analytics-db', engine: 'postgres'});
-    // 'databases' query automatically refetches in the background!
+    // 'databasesQuery' automatically refetches in the background!
   }
 }
 ```
@@ -805,7 +805,7 @@ interface BackupJob {
 @Component({
   selector: 'app-backup-status',
   template: `
-    @if (backup.value(); as job) {
+    @if (backupQuery.value(); as job) {
       <div>Status: {{ job.status }}</div>
       @if (job.status === 'IN_PROGRESS') {
         <span>Auto-polling active...</span>
@@ -817,7 +817,7 @@ export class BackupStatusComponent {
   private readonly http = inject(HttpClient);
   readonly jobId = signal('job-999');
 
-  readonly backup = queryResource(
+  readonly backupQuery = queryResource(
     () => {
       const jobId = this.jobId();
       return {key: ['backups', jobId], loader: () => this.http.get<BackupJob>(`/api/backups/${jobId}`)};
@@ -825,7 +825,7 @@ export class BackupStatusComponent {
     {
       // Reactive pollInterval function: stops polling when completed
       pollInterval: (): number | undefined => {
-        const status = this.backup?.value()?.status;
+        const status = this.backupQuery?.value()?.status;
         return status === 'PENDING' || status === 'IN_PROGRESS' ? 3000 : undefined;
       },
     },
@@ -929,7 +929,7 @@ export class UserService {
 }
 
 // In Component:
-readonly user = queryResource(() => this.userService.userQuery(this.id()));
+readonly userQuery = queryResource(() => this.userService.userQuery(this.id()));
 ```
 
 #### Pattern C: Cached Observable Service (DSM `VcfTmService` Pattern)

@@ -53,7 +53,7 @@ interface Pod {
 const http = inject(HttpClient);
 const tenant = signal('tenant-a');
 
-const pods = queryResource(
+const podsQuery = queryResource(
   () => {
     const scope = tenant();
     if (!scope) return undefined; // An undefined definition disables the query
@@ -67,7 +67,7 @@ const pods = queryResource(
   {pollInterval: 60_000},
 );
 
-await pods.execute();
+await podsQuery.execute();
 ```
 
 ### 2.2 Observable and Promise Loaders

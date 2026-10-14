@@ -60,11 +60,11 @@ function idleSnapshot<T>(): QuerySnapshot<T> {
  * // In an Angular injection context, with HttpClient provided:
  * const http = inject(HttpClient);
  * const userId = signal('42');
- * const user = queryResource(() => {
+ * const userQuery = queryResource(() => {
  *   const id = userId();
  *   return {key: ['user', id], loader: () => http.get<User>(`/api/users/${id}`)};
  * });
- * // Read user.value(), user.isLoading(), and user.error() from the template.
+ * // Read userQuery.value(), userQuery.isLoading(), and userQuery.error() from the template.
  * ```
  *
  * @param definition Reactive factory returning a QueryDefinition or undefined when prerequisites are missing.

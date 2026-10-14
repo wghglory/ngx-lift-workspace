@@ -219,13 +219,13 @@ const updateProfile = mutateResource(
 
   readonly coalesceCode = highlight(`// Component A and Component B observe the SAME query key
 // Even when mounted concurrently, QueryClient executes only 1 HTTP request!
-const statsA = queryResource(() => ({
+const statsQueryA = queryResource(() => ({
   key: ['metrics', 'cluster-overview'],
   loader: ({ abortSignal }) => fetch('/api/metrics', { signal: abortSignal }),
   staleTime: 5000,
 }));
 
-const statsB = queryResource(() => ({
+const statsQueryB = queryResource(() => ({
   key: ['metrics', 'cluster-overview'],
   loader: ({ abortSignal }) => fetch('/api/metrics', { signal: abortSignal }),
   staleTime: 5000,

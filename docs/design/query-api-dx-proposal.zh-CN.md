@@ -311,27 +311,27 @@ interface SystemHealth {
     <div class="dashboard-grid">
       <!-- 模块 1：用户设置 -->
       <div class="card">
-        @if (settings.isLoading()) {
+        @if (settingsQuery.isLoading()) {
           <span>加载设置中...</span>
         }
-        @if (settings.value(); as s) {
+        @if (settingsQuery.value(); as s) {
           <div>主题：{{ s.theme }}</div>
         }
-        @if (settings.error()) {
-          <button (click)="settings.reload()">重试设置</button>
+        @if (settingsQuery.error()) {
+          <button (click)="settingsQuery.reload()">重试设置</button>
         }
       </div>
 
       <!-- 模块 2：系统状态 -->
       <div class="card">
-        @if (health.isLoading()) {
+        @if (healthQuery.isLoading()) {
           <span>监测健康状态中...</span>
         }
-        @if (health.value(); as h) {
+        @if (healthQuery.value(); as h) {
           <div>系统状态：{{ h.status }} (CPU: {{ h.cpu }}%)</div>
         }
-        @if (health.error()) {
-          <button (click)="health.reload()">重试健康检查</button>
+        @if (healthQuery.error()) {
+          <button (click)="healthQuery.reload()">重试健康检查</button>
         }
       </div>
     </div>
@@ -341,20 +341,20 @@ export class DashboardComponent {
   private readonly http = inject(HttpClient);
 
   // 两个查询在组件初始化时自动并发启动
-  readonly settings = queryResource(() => ({
+  readonly settingsQuery = queryResource(() => ({
     key: ['user', 'settings'],
     loader: () => this.http.get<UserSettings>('/api/user/settings'),
     staleTime: 60_000,
   }));
 
-  readonly health = queryResource(() => ({
+  readonly healthQuery = queryResource(() => ({
     key: ['system', 'health'],
     loader: () => this.http.get<SystemHealth>('/api/system/health'),
     staleTime: 10_000,
   }));
 
   // 计算聚合状态
-  readonly isAnyLoading = computed(() => this.settings.isLoading() || this.health.isLoading());
+  readonly isAnyLoading = computed(() => this.settingsQuery.isLoading() || this.healthQuery.isLoading());
 }
 ```
 
@@ -384,24 +384,24 @@ interface DbMetrics {
 @Component({
   selector: 'app-tenant-monitor',
   template: `
-    @if (tenant.isLoading()) {
+    @if (tenantQuery.isLoading()) {
       <p>加载租户信息...</p>
     }
-    @if (tenant.value(); as t) {
+    @if (tenantQuery.value(); as t) {
       <h3>租户：{{ t.name }}</h3>
 
       <!-- 依赖的数据库指标展示 -->
-      @if (metrics.isLoading()) {
+      @if (metricsQuery.isLoading()) {
         <p>加载默认数据库监控数据...</p>
       }
-      @if (metrics.value(); as m) {
+      @if (metricsQuery.value(); as m) {
         <div class="metric-box">
           <p>当前活动连接数：{{ m.connections }}</p>
           <p>内存占用：{{ m.memoryUsage }}</p>
         </div>
       }
-      @if (metrics.error()) {
-        <button (click)="metrics.reload()">重新加载指标</button>
+      @if (metricsQuery.error()) {
+        <button (click)="metricsQuery.reload()">重新加载指标</button>
       }
     }
   `,
@@ -411,7 +411,7 @@ export class TenantMonitorComponent {
   readonly selectedTenantId = signal<string>('tenant-888');
 
   // 第一步：根据租户 ID 查询详情
-  readonly tenant = queryResource(() => {
+  readonly tenantQuery = queryResource(() => {
     const tenantId = this.selectedTenantId();
     if (!tenantId) return undefined;
     return {
@@ -422,8 +422,8 @@ export class TenantMonitorComponent {
   });
 
   // 第二步：依赖第一步产出的 defaultDbId，就绪门禁自动拦截
-  readonly metrics = queryResource(() => {
-    const defaultDbId = this.tenant.value()?.defaultDbId;
+  readonly metricsQuery = queryResource(() => {
+    const defaultDbId = this.tenantQuery.value()?.defaultDbId;
     if (!defaultDbId) return undefined; // 第一步没准备好之前，保持 idle，不发起请求
 
     return {
@@ -727,11 +727,11 @@ interface ClusterNode {
 @Component({
   selector: 'app-cluster-nodes',
   template: `
-    @if (nodes.isLoading()) {
+    @if (nodesQuery.isLoading()) {
       <p>刷新节点列表中...</p>
     }
     <ul>
-      @for (node of nodes.value() ?? []; track node.id) {
+      @for (node of nodesQuery.value() ?? []; track node.id) {
         <li>
           {{ node.name }} ({{ node.ip }})
           <button (click)="deleteNode(node.id)" [disabled]="deleteMutation.isLoading()">删除</button>
@@ -744,7 +744,7 @@ export class ClusterNodesComponent {
   private readonly http = inject(HttpClient);
 
   // 1. 查询：绑定标签 'ClusterNodes'
-  readonly nodes = queryResource(() => ({
+  readonly nodesQuery = queryResource(() => ({
     key: ['cluster', 'nodes'],
     tags: [{type: 'ClusterNodes'}],
     loader: () => this.http.get<ClusterNode[]>('/api/cluster/nodes'),
@@ -759,7 +759,7 @@ export class ClusterNodesComponent {
 
   async deleteNode(id: string) {
     await this.deleteMutation.mutate(id);
-    // 成功后，上面的 nodes 查询将自动在后台触发静默重新拉取！
+    // 成功后，上面的 nodesQuery 查询将自动在后台触发静默重新拉取！
   }
 }
 ```
@@ -785,7 +785,7 @@ interface ProvisionJob {
 @Component({
   selector: 'app-provision-tracker',
   template: `
-    @if (job.value(); as currentJob) {
+    @if (jobQuery.value(); as currentJob) {
       <div class="status-banner">
         状态：{{ currentJob.status }}
         @if (currentJob.status === 'PROVISIONING') {
@@ -799,7 +799,7 @@ export class ProvisionTrackerComponent {
   private readonly http = inject(HttpClient);
   readonly jobId = signal('job-12345');
 
-  readonly job = queryResource(
+  readonly jobQuery = queryResource(
     () => {
       const jobId = this.jobId();
       return {key: ['jobs', jobId], loader: () => this.http.get<ProvisionJob>(`/api/jobs/${jobId}`)};
@@ -807,7 +807,7 @@ export class ProvisionTrackerComponent {
     {
       // 传入响应式函数：根据当前数据状态动态判定轮询周期
       pollInterval: (): number | undefined => {
-        const status = this.job?.value()?.status;
+        const status = this.jobQuery?.value()?.status;
         return status === 'PROVISIONING' ? 3000 : undefined; // 返回 undefined 即刻挂起轮询
       },
     },
@@ -898,7 +898,7 @@ export class ClusterService {
 }
 
 // 组件中优雅消费：
-readonly cluster = queryResource(() => {
+readonly clusterQuery = queryResource(() => {
   const id = this.clusterId();
   if (!id) return undefined;
   return {
@@ -931,7 +931,7 @@ export class ClusterService {
 }
 
 // 组件中极致精简：
-readonly cluster = queryResource(() => this.clusterService.clusterQuery(this.clusterId()));
+readonly clusterQuery = queryResource(() => this.clusterService.clusterQuery(this.clusterId()));
 ```
 
 #### 范式 C：全局缓存领域 Service（类似 DSM `VcfTmService` 场景）
