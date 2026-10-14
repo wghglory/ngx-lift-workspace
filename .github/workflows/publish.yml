@@ -70,6 +70,7 @@ jobs:
         with:
           node-version: '24.x'
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org/'
 
       - name: Configure npm authentication
         if: github.event_name == 'push' || !inputs.dry_run
@@ -80,8 +81,6 @@ jobs:
             echo "::error::NPM_TOKEN secret is not configured or empty!"
             exit 1
           fi
-          pnpm config set registry "https://registry.npmjs.org/"
-          pnpm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
 
       - name: Verify npm credentials
         if: github.event_name == 'push' || !inputs.dry_run

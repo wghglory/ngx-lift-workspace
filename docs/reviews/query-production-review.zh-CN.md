@@ -34,3 +34,6 @@ audit 在 45 秒上限后超时，不能记作通过。现有 4200 checkout 未�
 维护者明确选择 ngx-lift 21.3.0、clr-lift
 21.2.0，并保持 observableLoader 移除。这是早期 API 的 minor 版本兼容性例外；旧 adapter
 import 必须迁移，旧字节编码须显式选择 latin1。版本准备不代表 npm 已发布。
+
+发布认证修复：setup-node 显式设置官方 registry-url，生成 npm 与 pnpm 共用的认证配置，并在 whoami /
+publish 步骤通过 NODE_AUTH_TOKEN 提供凭据。原先仅 pnpm config set 写入的配置没有被 npm whoami 读取；失败发生在上传前。
