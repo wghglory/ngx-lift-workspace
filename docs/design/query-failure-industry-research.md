@@ -1,6 +1,8 @@
 # Query failure behavior: industry research and ngx-lift gaps
 
-Checked October 14, 2026. This is research and API design input, not implemented behavior. External findings use primary
+Checked October 14, 2026 against historical baseline `98d8918`, before the resilience implementation. This is research
+and API design input; its local gap analysis describes that baseline. See
+[implemented failure contracts](query-failure-design.md) for current behavior. External findings use primary
 documentation or upstream source. Local findings below come from reading the current query models, client, resource, and
 result normalizer; no test suite was run for this research artifact.
 

@@ -27,18 +27,18 @@ export declare function queryResource<T, E = Error>(
 
 ### Parameter Breakdown
 
-| Parameter / Property               | Type                                                           | Required? | Meaning and Default Behavior                                                                                                                                                                  |
-| ---------------------------------- | -------------------------------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`definition`**                   | `() => QueryResourceDefinition<T> \| undefined`                | **Yes**   | A reactive factory executed in an Angular reactive tracking context. Reads signals, captures parameters, and returns definition object. Returning `undefined` disables the query (idle gate). |
-| `definition().key`                 | `QueryKey` (`readonly QueryKeyValue[]`)                        | **Yes**   | Canonical tuple uniquely identifying the cached resource, including all filtering, paging, and authorization scope variables.                                                                 |
-| `definition().loader`              | `(context: QueryLoaderContext) => Observable<T> \| Promise<T>` | **Yes**   | Lazy transport function. **Directly accepts either `Observable<T>` or `Promise<T>` out of the box.** Receives `{ abortSignal, refresh }`.                                                     |
-| `definition().tags`                | `readonly QueryTag[]`                                          | No        | Invalidation tags used by `mutateResource` or `client.invalidateTags()`.                                                                                                                      |
-| `definition().staleTime`           | `number`                                                       | No        | Freshness window in milliseconds. Default `0` (stale immediately, but served while revalidating).                                                                                             |
-| `definition().gcTime`              | `number`                                                       | No        | Cache retention window in milliseconds after last observer disconnects. Default `300_000` (5 minutes).                                                                                        |
-| `definition().cancelOnNoObservers` | `boolean`                                                      | No        | Whether to abort in-flight transport if all component observers unmount before completion. Default `false`.                                                                                   |
-| **`options.pollInterval`**         | `number \| (() => number \| undefined)`                        | No        | Periodic polling interval in milliseconds, or a reactive signal function. Default `undefined` (no polling).                                                                                   |
-| **`options.injector`**             | `Injector`                                                     | No        | Custom lifecycle owner. Required only when called outside an Angular injection context.                                                                                                       |
-| **`options.client`**               | `QueryClient`                                                  | No        | Custom query client instance. Defaults to the injected `QUERY_CLIENT`.                                                                                                                        |
+| Parameter / Property               | Type                                                               | Required? | Meaning and Default Behavior                                                                                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`definition`**                   | `() => QueryResourceDefinition<T> \| undefined`                    | **Yes**   | A reactive factory executed in an Angular reactive tracking context. Reads signals, captures parameters, and returns definition object. Returning `undefined` disables the query (idle gate). |
+| `definition().key`                 | `QueryKey` (`readonly QueryKeyValue[]`)                            | **Yes**   | Canonical tuple uniquely identifying the cached resource, including all filtering, paging, and authorization scope variables.                                                                 |
+| `definition().loader`              | `(context: QueryLoaderContext) => Observable<T> \| PromiseLike<T>` | **Yes**   | Lazy transport function. **Directly accepts either `Observable<T>` or `PromiseLike<T>` out of the box.** Receives `{ abortSignal, refresh }`.                                                 |
+| `definition().tags`                | `readonly QueryTag[]`                                              | No        | Invalidation tags used by `mutateResource` or `client.invalidateTags()`.                                                                                                                      |
+| `definition().staleTime`           | `number`                                                           | No        | Freshness window in milliseconds. Default `0` (stale immediately, but served while revalidating).                                                                                             |
+| `definition().gcTime`              | `number`                                                           | No        | Cache retention window in milliseconds after last observer disconnects. Default `300_000` (5 minutes).                                                                                        |
+| `definition().cancelOnNoObservers` | `boolean`                                                          | No        | Whether to abort in-flight transport if all component observers unmount before completion. Default `false`.                                                                                   |
+| **`options.pollInterval`**         | `number \| (() => number \| undefined)`                            | No        | Periodic polling interval in milliseconds, or a reactive signal function. Default `undefined` (no polling).                                                                                   |
+| **`options.injector`**             | `Injector`                                                         | No        | Custom lifecycle owner. Required only when called outside an Angular injection context.                                                                                                       |
+| **`options.client`**               | `QueryClient`                                                      | No        | Custom query client instance. Defaults to the injected `QUERY_CLIENT`.                                                                                                                        |
 
 ### Return Value (`QueryResourceRef`)
 
@@ -653,8 +653,8 @@ Pattern B is sufficient for dynamic ID collections: `queryResources(items, defin
 prebuilt definition arrays; defer it until an actual prebuilt-array or heterogeneous-query use case justifies another
 entry point. No artificial item ID or nested definition wrapper is required.
 
-The result is a readable `QueryResourcesRef<T>` signal. Each item has the single-resource state/refresh methods plus a
-stable canonical serialized `key` for template tracking. Reordering retains refs; removal hides rows immediately and
+The result is a readable `QueryResourcesRef<T, I>` signal. Each item has the single-resource state/refresh methods plus
+a stable canonical serialized `key` for template tracking. Reordering retains refs; removal hides rows immediately and
 disposes observers during effect reconciliation. Empty arrays have no observers. Duplicate canonical keys throw
 explicitly; individual failures remain independent. New items appear after Angular effect scheduling, rather than
 creating every request synchronously.
@@ -947,11 +947,19 @@ export class VcfTmService {
 
 ---
 
-## 8. Proposed Target API Contract
+## 8. Implemented API Contract
 
 ```typescript
 import type {Injector, Signal} from '@angular/core';
 import type {Observable} from 'rxjs';
+import type {
+  QueryClient,
+  QueryFailureSignals,
+  QueryReadPolicy,
+  QueryRecoveryOptions,
+  QuerySnapshot,
+  QueryStatus,
+} from 'ngx-lift';
 
 export type QueryKeyValue =
   string | number | boolean | null | readonly QueryKeyValue[] | {readonly [key: string]: QueryKeyValue};
@@ -972,7 +980,7 @@ export interface QueryLoaderContext {
 /** Universal loader return type: natively accepts Observable or Promise */
 export type QueryResult<T> = Observable<T> | PromiseLike<T>;
 
-export interface QueryDefinition<T> {
+export interface QueryDefinition<T> extends QueryReadPolicy {
   readonly key: QueryKey;
   readonly loader: (context: QueryLoaderContext) => QueryResult<T>;
   readonly tags?: readonly QueryTag[];
@@ -983,13 +991,13 @@ export interface QueryDefinition<T> {
 
 export type QueryResourceDefinition<T> = QueryDefinition<T>;
 
-export interface QueryResourceOptions {
+export interface QueryResourceOptions extends QueryRecoveryOptions {
   pollInterval?: number | (() => number | undefined);
   injector?: Injector;
   client?: QueryClient;
 }
 
-export interface QueryResourceRef<T, E = Error> {
+export interface QueryResourceRef<T, E = Error> extends QueryFailureSignals {
   readonly value: Signal<T>;
   readonly error: Signal<E | null>;
   readonly status: Signal<QueryStatus>;
@@ -1009,17 +1017,18 @@ export declare function queryResource<T, E = Error>(
   options?: QueryResourceOptions,
 ): QueryResourceRef<T | undefined, E>;
 
-export interface QueryResourceItem<T> extends QueryResourceRef<T | undefined> {
+export interface QueryResourceItem<T, I = unknown> extends QueryResourceRef<T | undefined> {
   readonly key: string;
+  readonly item: Signal<I>;
 }
-export interface QueryResourcesRef<T> extends Signal<readonly QueryResourceItem<T>[]> {
+export interface QueryResourcesRef<T, I = unknown> extends Signal<readonly QueryResourceItem<T, I>[]> {
   destroy(): void;
 }
 export declare function queryResources<I, T>(
   items: () => readonly I[],
   definition: (item: I) => QueryDefinition<T>,
   options?: QueryResourceOptions,
-): QueryResourcesRef<T>;
+): QueryResourcesRef<T, I>;
 
 export declare function fetchQueryObservable<T>(
   client: QueryClient,
@@ -1030,7 +1039,7 @@ export declare function fetchQueryObservable<T>(
 export declare function observeQueryObservable<T>(
   client: QueryClient,
   definition: QueryDefinition<T>,
-  options?: {pollInterval?: number; refresh?: boolean},
+  options?: QueryRecoveryOptions & {pollInterval?: number; refresh?: boolean},
 ): Observable<QuerySnapshot<T>>;
 ```
 
@@ -1163,3 +1172,13 @@ Use void mutation.mutate(args) for event handlers that have no follow-up action.
 signals and attaches a rejection handler while preserving rejection for callers that await it. Use async/await with
 try/catch when success must precede navigation or another action. void alone does not catch rejection and must not be
 treated as general Promise error handling.
+
+## Implemented failure recovery extensions
+
+[Failure design and public API](query-failure-design.md) defines the Angular client provider, opt-in shared read retries
+and total deadlines, initial/refresh error flags, retry progress, terminal error reporting, diagnostic isolation, and
+stale-observed focus/reconnect recovery. Native Observable and PromiseLike loaders share these contracts; mutation
+replay remains disabled.
+
+B-only dynamic collections also expose typed `row.item()` (Signal<I>) before a successful result. Updating the same-key
+input preserves its resource ref. The failure demo supports all 11 languages.

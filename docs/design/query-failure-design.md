@@ -1,36 +1,36 @@
 # Query failure design: recovery, bounded work, and useful UI state
 
-Status: implementation in progress. Observer exception isolation and onDiagnostic are implemented; resilience policy
-additions below are next. Checked October 14, 2026 against commit `98d8918`. [中文说明](query-failure-design.zh-CN.md) ·
+Status: implemented and locally validated on October 14, 2026. Native Observable and PromiseLike loaders share the same
+bounded read lifecycle. [中文说明](query-failure-design.zh-CN.md) ·
 [Primary-source comparison](query-failure-industry-research.md)
 
 ## Decision
 
 ngx-lift already has a useful basic failure contract. Preserve native Observable and PromiseLike loaders, retained data
 on refresh failure, independent collection results, scoped invalidation, and explicit rejected execution promises.
-Prioritize one reproduced correctness defect before adding retry or offline machinery. A green CI run validates covered
-scenarios; it does not prove every failure path is safe.
+Observer exceptions are isolated from transport results. Read retries, deadlines, terminal reporting, and stale-observed
+recovery are opt-in; writes are never automatically retried.
 
 Do not automatically turn errors into successful empty arrays. A domain fallback is appropriate only when empty data
 really represents the intended result; otherwise it conceals the failure and can enter the shared success cache.
 
-## Existing behavior and gaps
+## Implemented behavior and remaining scope
 
-| Concern                             | Current behavior                                                                        | Recommendation                                                                          |
-| ----------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Initial failure                     | Error snapshot; manual reload/execute can retry                                         | Document blocking-error UI; add convenience flags later                                 |
-| Failed refresh                      | Last value, hasValue, and updatedAt survive; status becomes error and data stays stale  | Render retained content plus a warning and Retry; expose updatedAt on resource          |
-| Parallel partial failure            | queryResources keeps per-row results/errors                                             | Retry the failed row; avoid making an entire page one composite query                   |
-| Dependent failure                   | Returning undefined disables a child                                                    | Show the parent failure separately; idle child does not mean an empty successful result |
-| Observable normalization            | First value, empty completion, cancellation, and observable teardown exceptions handled | Keep existing contract and RxJS-internal suppression boundary                           |
-| Observer exceptions                 | Can interrupt publication/startup and strand shared work                                | P0 correctness fix and adversarial regressions                                          |
-| Automatic read retry                | None in QueryClient; possible inside Observable loaders                                 | Bounded, opt-in shared policy for both transports                                       |
-| Query deadline                      | None; a never-emitting source can stay pending                                          | Opt-in logical deadline; distinguish it from transport timeout                          |
-| Visibility recovery                 | Visibility-aware polling only                                                           | Optional stale-observed focus/reconnect refresh                                         |
-| Shared diagnostics                  | No client-level terminal error hook                                                     | Report once per failed logical read, not per observer                                   |
-| Mutation failure                    | Error signal and rejected Promise; no automatic retry                                   | Preserve submitted arguments, show local error, retry only when safe                    |
-| Successful write, failed cache sync | invalidationError is separate from write error                                          | Offer read refresh; never label the completed write failed                              |
-| Write optimism/reset/cancel         | No shared optimistic cache API or mutation reset; no nondestructive cancelQueries       | Later increments with explicit ownership/concurrency contracts                          |
+| Concern                             | Contract                                                                                                               |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Initial failure                     | `isInitialError()` supports a blocking error panel with `reload()` recovery.                                           |
+| Failed refresh                      | Retain successful data and `updatedAt`; `isRefreshError()` supports a local warning.                                   |
+| Parallel partial failure            | B-only `queryResources`; stable refs and typed `row.item()` identify failed rows without parsing keys.                 |
+| Dependent failure                   | `undefined` disables a child; show the parent error and explain prerequisites.                                         |
+| Observable normalization            | First value, empty completion, cancellation, and teardown exceptions at the subscription boundary are handled.         |
+| Observer exceptions                 | Initial and subsequent callbacks are isolated; peers and transport continue.                                           |
+| Automatic read retry                | Opt-in bounded shared policy for both transports; loader factory runs for each attempt.                                |
+| Query deadline                      | Opt-in total logical deadline includes attempts and waits; hanging sources settle and late results cannot publish.     |
+| Focus/reconnect                     | Opt-in refresh of observed stale entries, joining existing pending work.                                               |
+| Shared diagnostics                  | One terminal `onQueryError` per current logical read; callback faults go to `onDiagnostic`.                            |
+| Mutation failure                    | Error state and rejected Promise; preserve input and submitted arguments, with no automatic write replay.              |
+| Successful write, failed cache sync | `invalidationError` remains separate; refresh reads instead of resubmitting writes.                                    |
+| Deferred                            | Offline queue, shared optimistic rollback, mutation reset, and nondestructive `cancelQueries` need separate contracts. |
 
 Sources: [models](../../libs/ngx-lift/src/lib/query/query.models.ts),
 [client](../../libs/ngx-lift/src/lib/query/query-client.ts),
@@ -38,9 +38,10 @@ Sources: [models](../../libs/ngx-lift/src/lib/query/query.models.ts),
 [collection](../../libs/ngx-lift/src/lib/query/query-resources.ts),
 [mutation](../../libs/ngx-lift/src/lib/query/mutate-resource.ts).
 
-## P0: isolate observer exceptions
+## Fixed regression: observer exceptions
 
-Reproduced against the actual TypeScript client. A listener throwing only on the loading notification produces:
+Historical reproduction against baseline `98d8918`, before this fix. A listener throwing only on the loading
+notification produces:
 
 ```text
 attachmentError: "UI listener failed"
@@ -69,7 +70,7 @@ Required design:
 
 Regression gates: throw on initial/loading/resolved/error/removal notifications; verify finite calls settle, healthy
 peers receive state, polling/GC still run, all removed requests abort, and reentrant generations remain safe. This audit
-records the defect; it does not implement the fix.
+is covered by the implemented regression tests in `query-client-failure.spec.ts`.
 
 ## Developer pattern available today
 
@@ -134,10 +135,10 @@ For dynamic independent reads, keep B-only `queryResources` and per-row Retry. A
 read unless errors are converted to typed per-item results inside each source; `Promise.all` also fails fast. Neither
 failing a composite nor unsubscribing a finite bridge proves that every underlying shared cache read was canceled.
 
-## Proposed API additions
+## Public API
 
-These are design declarations, not exports or implemented behavior. Add fields to the existing definitions; keep
-`queryResource(() => definition)` and direct HttpClient loaders.
+These APIs are implemented and exported. Definitions retain direct HttpClient loaders and
+`queryResource(() => definition)`; no public transport adapter is required.
 
 ```typescript
 export interface QueryAttemptContext {
@@ -154,12 +155,12 @@ export interface QueryRetryOptions {
 
 export interface QueryReadPolicy {
   readonly retry?: false | QueryRetryOptions;
-  readonly deadlineMs?: number; // total logical read, including loader and retry waits
+  readonly deadlineMs?: number | false; // total logical read, including loader and retry waits
 }
 
-// Planned: QueryDefinition<T> extends QueryReadPolicy.
-// Planned: QueryClientOptions.queryDefaults?: QueryReadPolicy.
-// Planned: QueryResourceRef adds the following readonly signals:
+// QueryDefinition<T> extends QueryReadPolicy.
+// QueryClientOptions.queryDefaults accepts QueryReadPolicy & QueryRecoveryOptions.
+// QueryResourceRef extends these signals:
 export interface QueryFailureSignals {
   readonly isInitialError: Signal<boolean>;
   readonly isRefreshError: Signal<boolean>;
@@ -176,15 +177,25 @@ export interface QueryErrorContext {
   readonly trigger: 'initial' | 'manual' | 'poll' | 'invalidation' | 'focus' | 'reconnect';
 }
 
-// Planned client callbacks:
+export interface QueryDiagnosticContext {
+  readonly key: QueryKey;
+  readonly phase: 'observer' | 'retry-policy' | 'error-reporter';
+}
+
+export interface QueryRecoveryOptions {
+  readonly refetchOnFocus?: boolean;
+  readonly refetchOnReconnect?: boolean;
+}
+
+// QueryClientOptions callbacks:
 // onQueryError?: (error: unknown, context: QueryErrorContext) => void;
-// onDiagnostic?: (error: unknown, context: {key?: QueryKey; phase: string}) => void;
+// onDiagnostic?: (error: unknown, context: QueryDiagnosticContext) => void;
 ```
 
 Policy defaults: no automatic retry, no deadline, no offline queue. Per-definition policy overrides client defaults;
-`retry: false` explicitly disables inherited retries. Keep query and mutation defaults separate. Convenience error flags
-derive from snapshot status and snapshot.hasValue, not truthiness of value/error. `hasValue()` on the resource
-separately narrows undefined out of the data type.
+`retry: false` explicitly disables inherited retries and `deadlineMs: false` disables an inherited deadline. Keep query
+and mutation defaults separate. Convenience error flags derive from snapshot status and snapshot.hasValue, not
+truthiness of value/error. `hasValue()` on the resource separately narrows undefined out of the data type.
 
 Retry mechanics:
 
@@ -250,11 +261,12 @@ different owners.
 
 ## Recovery and mutations
 
-Optional next increment: `refetchOnFocus` and `refetchOnReconnect` for observed stale queries only, joining valid
-pending work. Returning visible currently only resumes overdue polling. Do not claim a paused fetch state until
-queue-and-resume semantics exist; a later fetchStatus can distinguish idle/fetching/paused if that capability is
-actually implemented. Default network-independent execution preserves local Observable/Promise loaders. Browser online
-state is a hint.
+Implemented: `refetchOnFocus` and `refetchOnReconnect` refresh observed stale queries only, joining valid pending work.
+Both default to false and can be overridden per observer/resource. Focus is ignored while hidden; reconnect remains a
+hint and can refresh observed stale reads while hidden. Returning visible resumes overdue polling and then applies focus
+recovery without duplicating pending work. Do not claim a paused fetch state until queue-and-resume semantics exist; a
+later fetchStatus can distinguish idle/fetching/paused if that capability is actually implemented. Default
+network-independent execution preserves local Observable/Promise loaders. Browser online state is a hint.
 
 Mutation timeout/lost response can leave server outcome unknown. Do not automatically resubmit POST/PATCH or replay
 offline writes. Backend idempotency keys or reading the operation result are required for safe retry of uncertain
@@ -265,19 +277,55 @@ Defer shared optimistic updates until rollback, overlap, and cancellation owners
 often enough. Future mutation.reset must clear presentation without pretending to abort an already submitted write;
 in-flight tracking and successful scoped invalidation must remain truthful.
 
+## Application configuration
+
+Use the Angular provider to retain visibility, browser event, ErrorHandler, and injector-destruction integration:
+
+```typescript
+import {HttpErrorResponse, provideHttpClient} from '@angular/common/http';
+import {ApplicationConfig} from '@angular/core';
+import {provideQueryClient} from 'ngx-lift';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(),
+    provideQueryClient({
+      queryDefaults: {
+        deadlineMs: 10_000,
+        retry: {
+          maxAttempts: 3,
+          shouldRetry: (error) => error instanceof HttpErrorResponse && error.status === 503,
+          delayMs: 500,
+        },
+        refetchOnFocus: true,
+        refetchOnReconnect: true,
+      },
+      onQueryError: (error, context) => console.error(context.trigger, error),
+    }),
+  ],
+};
+```
+
+Apply retries only to safe reads. This small example does not handle server Retry-After hints; use an application policy
+that honors those hints when the endpoint provides them. Per-definition `retry: false` and `deadlineMs: false` opt out.
+A plain `new QueryClient(options)` is also supported; non-Angular hosts supply event subscriptions when needed. The
+Angular provider removes listeners and destroys the client with its injector. Server rendering has no browser listeners
+or background polling; isolate the injector/client per server request.
+
+For click handlers that render mutation signals, `void createMutation.mutate({...})` communicates fire-and-forget
+intent. When later actions depend on the result, use
+`try { await createMutation.mutate({...}); } catch (error) { ... }`. Snapshot submitted parameters before calling; do
+not automatically replay uncertain writes.
+
 ## Delivery and evidence
 
-1. Correctness: observer isolation and diagnostic safety; add focused reproductions before fixes.
-2. Current-API failure recipes and localized demos: initial/refresh errors, partial rows, parent failures, mutation
-   errors.
-3. Bounded shared retries plus logical deadline and once-per-read reporting, with Observable/Promise parity tests.
-4. Optional focus/reconnect recovery; defer offline replay, React-style error boundaries, and complex optimism.
+Implemented regression coverage includes listener exceptions, retry/deadline boundaries, superseded reads, PromiseLike
+and Observable parity, retained data, falsy errors, provider disposal, and stale-observed recovery. The localized
+HttpClient demo covers initial failure, retained refresh data, retry progress, Promise retry, hanging-source
+cancellation, failed-row recovery, observer diagnostics, and safe explicit mutation recovery in all 11 languages.
 
-The research comparison is source-backed. The listener defect is independently reproduced in this audit. Proposed new
-fields are not exported, and no production source was changed in this design pass. The preceding normalizer fix
-`98d8918` is CI-green (16 passed, 2 skipped), but that does not cover the newly discovered observer-exception defect.
-
-The current-API UsersComponent example passed strict TypeScript checking with zero diagnostics. All three new Markdown
-artifacts passed formatting checks. No runtime changes or new runtime test claims are part of this design pass.
-
-Implementation checkpoint: observer exception isolation passed 5 new regression cases and 43 existing QueryClient tests.
+Local full validation passed: 826 ngx-lift, 243 clr-lift, and 218 demo unit tests; coverage thresholds, source/test type
+checks, lint, formatting, i18n/tooling checks, production builds, and a fresh tarball consumer installation. 117
+Chromium/Firefox/WebKit E2E tests passed. Independent runtime and spec review found no concrete blockers. Remote CI is a
+separate gate and must pass on the submitted head. Dependency audit remains unverified; no npm publication was
+performed.

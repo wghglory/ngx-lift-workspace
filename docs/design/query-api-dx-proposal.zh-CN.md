@@ -27,18 +27,18 @@ export declare function queryResource<T, E = Error>(
 
 ### 参数深度解析
 
-| 参数 / 属性                        | 类型                                                           | 是否必填 | 含义与默认行为                                                                                                                                                                          |
-| ---------------------------------- | -------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`definition`**                   | `() => QueryResourceDefinition<T> \| undefined`                | **是**   | 响应式定义工厂函数。在 Angular 响应式追踪上下文中运行，读取 signal 参数并返回查询配置。**当依赖前置条件未满足时返回 `undefined`，直接进入 `'idle'` 空闲就绪状态，不发起任何网络请求**。 |
-| `definition().key`                 | `QueryKey` (`readonly QueryKeyValue[]`)                        | **是**   | 唯一标识该缓存资源的规范化元组。**必须包含所有影响返回数据的参数与授权租户范围**（例如 `['users', tenantId, userId]`）。                                                                |
-| `definition().loader`              | `(context: QueryLoaderContext) => Observable<T> \| Promise<T>` | **是**   | 延迟加载函数。**原生支持返回 `Observable<T>` 或 `Promise<T>`，无需任何外部适配器**。入参提供 `{ abortSignal, refresh }`。                                                               |
-| `definition().tags`                | `readonly QueryTag[]`                                          | 否       | 缓存失效依赖标签（例如 `[{ type: 'Users', id }]`），供 `mutateResource` 或 `client.invalidateTags()` 批量失效。                                                                         |
-| `definition().staleTime`           | `number`                                                       | 否       | 数据保鲜期（毫秒）。在此期间的再次读取直接返回缓存。默认 `0`（立即视为过期，但后台静默重校验期间仍优先显示缓存）。                                                                      |
-| `definition().gcTime`              | `number`                                                       | 否       | 孤立缓存保留期（毫秒）。当所有组件观察者注销后开始倒计时，默认 `300_000`（5 分钟）。                                                                                                    |
-| `definition().cancelOnNoObservers` | `boolean`                                                      | 否       | 当所有组件销毁时，是否中断正在飞行中的 HTTP 请求。默认 `false`（共享请求默认允许完成并存入缓存）。                                                                                      |
-| **`options.pollInterval`**         | `number \| (() => number \| undefined)`                        | 否       | 定时轮询间隔（毫秒）。支持响应式函数，返回 `undefined` 时动态暂停轮询。                                                                                                                 |
-| **`options.injector`**             | `Injector`                                                     | 否       | 依赖注入容器。仅在脱离 Angular 构造注入上下文调用时需要手动传入。                                                                                                                       |
-| **`options.client`**               | `QueryClient`                                                  | 否       | 自定义 QueryClient 实例。默认注入全局单例 `QUERY_CLIENT`。                                                                                                                              |
+| 参数 / 属性                        | 类型                                                               | 是否必填 | 含义与默认行为                                                                                                                                                                          |
+| ---------------------------------- | ------------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`definition`**                   | `() => QueryResourceDefinition<T> \| undefined`                    | **是**   | 响应式定义工厂函数。在 Angular 响应式追踪上下文中运行，读取 signal 参数并返回查询配置。**当依赖前置条件未满足时返回 `undefined`，直接进入 `'idle'` 空闲就绪状态，不发起任何网络请求**。 |
+| `definition().key`                 | `QueryKey` (`readonly QueryKeyValue[]`)                            | **是**   | 唯一标识该缓存资源的规范化元组。**必须包含所有影响返回数据的参数与授权租户范围**（例如 `['users', tenantId, userId]`）。                                                                |
+| `definition().loader`              | `(context: QueryLoaderContext) => Observable<T> \| PromiseLike<T>` | **是**   | 延迟加载函数。**原生支持返回 `Observable<T>` 或 `PromiseLike<T>`，无需任何外部适配器**。入参提供 `{ abortSignal, refresh }`。                                                           |
+| `definition().tags`                | `readonly QueryTag[]`                                              | 否       | 缓存失效依赖标签（例如 `[{ type: 'Users', id }]`），供 `mutateResource` 或 `client.invalidateTags()` 批量失效。                                                                         |
+| `definition().staleTime`           | `number`                                                           | 否       | 数据保鲜期（毫秒）。在此期间的再次读取直接返回缓存。默认 `0`（立即视为过期，但后台静默重校验期间仍优先显示缓存）。                                                                      |
+| `definition().gcTime`              | `number`                                                           | 否       | 孤立缓存保留期（毫秒）。当所有组件观察者注销后开始倒计时，默认 `300_000`（5 分钟）。                                                                                                    |
+| `definition().cancelOnNoObservers` | `boolean`                                                          | 否       | 当所有组件销毁时，是否中断正在飞行中的 HTTP 请求。默认 `false`（共享请求默认允许完成并存入缓存）。                                                                                      |
+| **`options.pollInterval`**         | `number \| (() => number \| undefined)`                            | 否       | 定时轮询间隔（毫秒）。支持响应式函数，返回 `undefined` 时动态暂停轮询。                                                                                                                 |
+| **`options.injector`**             | `Injector`                                                         | 否       | 依赖注入容器。仅在脱离 Angular 构造注入上下文调用时需要手动传入。                                                                                                                       |
+| **`options.client`**               | `QueryClient`                                                      | 否       | 自定义 QueryClient 实例。默认注入全局单例 `QUERY_CLIENT`。                                                                                                                              |
 
 ### 返回对象能力矩阵 (`QueryResourceRef`)
 
@@ -639,7 +639,7 @@ export class ExportService {
 
 B 方案足够覆盖动态 ID 集合：`queryResources(items, definition, options?)`。A 方案接收查询定义数组，只有当已有查询数组或异构查询出现实际需求时再考虑，不同时增加两个入口。这里不需要人为的 id 或 definition 包装。
 
-返回的是可读取的 `QueryResourcesRef<T>` signal。每项含有与单体资源相同的状态/刷新方法，以及用于 `@for track` 的稳定
+返回的是可读取的 `QueryResourcesRef<T, I>` signal。每项含有与单体资源相同的状态/刷新方法，以及用于 `@for track` 的稳定
 `key` 字符串（canonical
 key 序列化结果）。重排保留 ref；删除 ID 立即从结果中隐藏该项，随后 effect 销毁观察者。空数组没有观察者。重复 canonical
 key 明确抛错；单项失败不影响其他项。新增项在 Angular effect 调度后出现，并不是同步创建全部请求。
@@ -954,6 +954,14 @@ export class VcfTmService {
 ```typescript
 import type {Injector, Signal} from '@angular/core';
 import type {Observable} from 'rxjs';
+import type {
+  QueryClient,
+  QueryFailureSignals,
+  QueryReadPolicy,
+  QueryRecoveryOptions,
+  QuerySnapshot,
+  QueryStatus,
+} from 'ngx-lift';
 
 export type QueryKeyValue =
   string | number | boolean | null | readonly QueryKeyValue[] | {readonly [key: string]: QueryKeyValue};
@@ -974,7 +982,7 @@ export interface QueryLoaderContext {
 /** 核心统一加载函数返回类型：原生支持 Observable 与 Promise */
 export type QueryResult<T> = Observable<T> | PromiseLike<T>;
 
-export interface QueryDefinition<T> {
+export interface QueryDefinition<T> extends QueryReadPolicy {
   readonly key: QueryKey;
   readonly loader: (context: QueryLoaderContext) => QueryResult<T>;
   readonly tags?: readonly QueryTag[];
@@ -985,13 +993,13 @@ export interface QueryDefinition<T> {
 
 export type QueryResourceDefinition<T> = QueryDefinition<T>;
 
-export interface QueryResourceOptions {
+export interface QueryResourceOptions extends QueryRecoveryOptions {
   pollInterval?: number | (() => number | undefined);
   injector?: Injector;
   client?: QueryClient;
 }
 
-export interface QueryResourceRef<T, E = Error> {
+export interface QueryResourceRef<T, E = Error> extends QueryFailureSignals {
   readonly value: Signal<T>;
   readonly error: Signal<E | null>;
   readonly status: Signal<QueryStatus>;
@@ -1011,17 +1019,18 @@ export declare function queryResource<T, E = Error>(
   options?: QueryResourceOptions,
 ): QueryResourceRef<T | undefined, E>;
 
-export interface QueryResourceItem<T> extends QueryResourceRef<T | undefined> {
+export interface QueryResourceItem<T, I = unknown> extends QueryResourceRef<T | undefined> {
   readonly key: string;
+  readonly item: Signal<I>;
 }
-export interface QueryResourcesRef<T> extends Signal<readonly QueryResourceItem<T>[]> {
+export interface QueryResourcesRef<T, I = unknown> extends Signal<readonly QueryResourceItem<T, I>[]> {
   destroy(): void;
 }
 export declare function queryResources<I, T>(
   items: () => readonly I[],
   definition: (item: I) => QueryDefinition<T>,
   options?: QueryResourceOptions,
-): QueryResourcesRef<T>;
+): QueryResourcesRef<T, I>;
 
 export declare function fetchQueryObservable<T>(
   client: QueryClient,
@@ -1032,7 +1041,7 @@ export declare function fetchQueryObservable<T>(
 export declare function observeQueryObservable<T>(
   client: QueryClient,
   definition: QueryDefinition<T>,
-  options?: {pollInterval?: number; refresh?: boolean},
+  options?: QueryRecoveryOptions & {pollInterval?: number; refresh?: boolean},
 ): Observable<QuerySnapshot<T>>;
 ```
 
@@ -1133,9 +1142,9 @@ signal。`queryResources` 已实现 B 方案；A 方案延后。
 
 ### 本次验证
 
-2026-10-14 本地验证通过：ngx-lift 787、clr-lift 243、demo
-214 个单元测试；覆盖率门禁；源码与测试类型检查；lint、production
-builds、i18n/tooling 检查；111 个 Chromium/Firefox/WebKit
+2026-10-14 本地验证通过：ngx-lift 826、clr-lift 243、demo
+218 个单元测试；覆盖率门禁；源码与测试类型检查；lint、production
+builds、i18n/tooling 检查；117 个 Chromium/Firefox/WebKit
 E2E；tarball 导出与独立消费者安装验证。英文/中文轮询与 service 示例、live demo 代码示例均经过 strict
 TypeScript 验证。独立复审未发现剩余运行时或文档 blocker。
 
@@ -1160,3 +1169,12 @@ audit 请求在 60 秒内未完成。本次不执行 npm 发布，不能将依�
 signal 并标记 rejection 已处理，await 调用者仍会收到 rejection。有成功后导航等动作时，用
 `try { await mutation.mutate(args); ... } catch (error) { ... }`。`void`
 本身不会捕获 rejection，不能推广为所有 Promise 的错误处理方案。
+
+## 已实现的失败恢复扩展
+
+[失败设计与完整 API](query-failure-design.zh-CN.md) 记录了当前契约：客户端 provider、可选共享 read retry
+/ 总 deadline、首次与刷新错误 flags、重试进度、终态错误 hook、诊断隔离、stale-observed focus /
+reconnect 恢复。原生 Observable / PromiseLike 都支持；没有自动 mutation replay。
+
+动态列表 B 方案新增 `row.item()`（Signal<I>），失败前也能显示原始输入；同 key 更新输入仍保留 row
+ref。失败 demo 覆盖所有 11 种语言。
