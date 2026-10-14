@@ -76,6 +76,8 @@ export interface QueryObserverHandle {
 
 /** Clock, visibility, and capacity policies for a QueryClient. */
 export interface QueryClientOptions {
+  /** Consumer exceptions are isolated from query results. Defaults to host error reporting. */
+  readonly onDiagnostic?: (error: unknown, context: {readonly key: QueryKey; readonly phase: 'observer'}) => void;
   readonly now?: () => number;
   readonly isVisible?: () => boolean;
   readonly subscribeVisibility?: (listener: () => void) => () => void;

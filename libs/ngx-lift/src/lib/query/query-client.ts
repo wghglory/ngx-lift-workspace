@@ -61,10 +61,12 @@ export class QueryClient {
   private readonly isVisible: () => boolean;
   private readonly maxEntries: number;
   private readonly unsubscribeVisibility?: () => void;
+  private readonly onDiagnostic: QueryClientOptions['onDiagnostic'];
   private accessSequence = 0;
   private destroyed = false;
 
   constructor(options: QueryClientOptions = {}) {
+    this.onDiagnostic = options.onDiagnostic;
     this.now = options.now ?? (() => Date.now());
     this.isVisible = options.isVisible ?? (() => true);
     this.maxEntries = options.maxEntries ?? 200;
@@ -103,7 +105,7 @@ export class QueryClient {
     entry.observers.add(observer);
     entry.inactiveSince = null;
     this.clearTimer(entry, 'gcTimer');
-    listener(this.snapshot(entry));
+    this.notify(entry, observer, this.snapshot(entry));
     // The initial synchronous listener may remove this query or destroy the client.
     if (this.isAttached(entry)) {
       if (options.refresh || this.isStale(entry)) {
@@ -391,7 +393,28 @@ export class QueryClient {
       // Listeners may publish newer state or detach peers before this loop continues.
       if (entry.publicationRevision !== revision) break;
       if (!entry.observers.has(observer)) continue;
+      this.notify(entry, observer, snapshot);
+    }
+  }
+
+  private notify<T>(entry: QueryEntry<T>, observer: QueryObserver<T>, snapshot: QuerySnapshot<T>): void {
+    try {
       observer.listener(snapshot);
+    } catch (error) {
+      try {
+        if (this.onDiagnostic) this.onDiagnostic(error, {key: entry.key, phase: 'observer'});
+        else this.reportToHost(error);
+      } catch (reportingError) {
+        this.reportToHost(reportingError);
+      }
+    }
+  }
+
+  private reportToHost(error: unknown): void {
+    try {
+      console.error('[ngx-lift query] callback failed', error);
+    } catch {
+      // Host reporting must never interrupt shared request settlement or disposal.
     }
   }
 
