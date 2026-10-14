@@ -7,6 +7,7 @@ import {
   QueryObserverHandle,
   QueryObserverOptions,
   QueryReadPolicy,
+  QueryRecoveryOptions,
   QueryRequestTrigger,
   QuerySnapshot,
   QueryStatus,
@@ -70,9 +71,12 @@ export class QueryClient {
   private readonly isVisible: () => boolean;
   private readonly maxEntries: number;
   private readonly unsubscribeVisibility?: () => void;
+  private readonly unsubscribeFocus?: () => void;
+  private readonly unsubscribeReconnect?: () => void;
   private readonly onDiagnostic: QueryClientOptions['onDiagnostic'];
   private readonly onQueryError: QueryClientOptions['onQueryError'];
   private readonly queryDefaults: QueryReadPolicy;
+  private readonly recoveryDefaults: QueryRecoveryOptions;
   private readonly elapsedNow: () => number;
   private accessSequence = 0;
   private destroyed = false;
@@ -81,6 +85,11 @@ export class QueryClient {
     this.onDiagnostic = options.onDiagnostic;
     this.onQueryError = options.onQueryError;
     this.queryDefaults = resolveQueryReadPolicy(options.queryDefaults ?? {});
+    this.validateObserverOptions(options.queryDefaults ?? {});
+    this.recoveryDefaults = {
+      refetchOnFocus: options.queryDefaults?.refetchOnFocus ?? false,
+      refetchOnReconnect: options.queryDefaults?.refetchOnReconnect ?? false,
+    };
     this.elapsedNow = options.elapsedNow ?? (() => globalThis.performance?.now() ?? Date.now());
     this.now = options.now ?? (() => Date.now());
     this.isVisible = options.isVisible ?? (() => true);
@@ -89,6 +98,8 @@ export class QueryClient {
       throw new RangeError('maxEntries must be a positive integer.');
     }
     this.unsubscribeVisibility = options.subscribeVisibility?.(() => this.visibilityChanged());
+    this.unsubscribeFocus = options.subscribeFocus?.(() => this.recover('focus'));
+    this.unsubscribeReconnect = options.subscribeReconnect?.(() => this.recover('reconnect'));
   }
 
   /** Read cached fresh data or join/start a shared request; refresh bypasses completed data. */
@@ -240,7 +251,9 @@ export class QueryClient {
       return;
     }
     this.destroyed = true;
-    this.unsubscribeVisibility?.();
+    for (const unsubscribe of [this.unsubscribeVisibility, this.unsubscribeFocus, this.unsubscribeReconnect]) {
+      if (unsubscribe) this.invokeCallback(unsubscribe, (error) => this.reportToHost(error));
+    }
     this.removeQueries();
   }
 
@@ -357,7 +370,7 @@ export class QueryClient {
       throw error;
     };
     const promise: Promise<T> = transport.then((value) => {
-      if (policy.deadlineMs !== undefined && this.elapsedNow() - startedAt >= policy.deadlineMs) {
+      if (typeof policy.deadlineMs === 'number' && this.elapsedNow() - startedAt >= policy.deadlineMs) {
         const timeout = new QueryTimeoutError(policy.deadlineMs);
         controller.abort(timeout);
         return failedTransport(timeout);
@@ -577,6 +590,18 @@ export class QueryClient {
         this.schedulePoll(entry);
       }
     }
+    if (this.isVisible()) this.recover('focus');
+  }
+
+  private recover(trigger: 'focus' | 'reconnect'): void {
+    if (this.destroyed || (trigger === 'focus' && !this.isVisible())) return;
+    const option = trigger === 'focus' ? 'refetchOnFocus' : 'refetchOnReconnect';
+    for (const entry of [...this.entries.values()]) {
+      if (!this.isAttached(entry) || entry.pending || !this.isStale(entry)) continue;
+      if ([...entry.observers].some((observer) => observer.options[option] ?? this.recoveryDefaults[option])) {
+        this.startRequest(entry, true, trigger);
+      }
+    }
   }
 
   private scheduleStaleness<T>(entry: QueryEntry<T>): void {
@@ -677,6 +702,10 @@ export class QueryClient {
   private validateObserverOptions(options: QueryObserverOptions): void {
     if (options.pollInterval !== undefined && (!Number.isFinite(options.pollInterval) || options.pollInterval <= 0)) {
       throw new RangeError('pollInterval must be a positive finite duration.');
+    }
+    for (const flag of [options.refetchOnFocus, options.refetchOnReconnect]) {
+      if (flag !== undefined && typeof flag !== 'boolean')
+        throw new TypeError('Query recovery options must be booleans.');
     }
   }
 

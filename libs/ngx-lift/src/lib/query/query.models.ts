@@ -43,7 +43,7 @@ export interface QueryRetryOptions {
 export interface QueryReadPolicy {
   readonly retry?: false | QueryRetryOptions;
   /** Total elapsed-time budget for the logical read, including retry waits. */
-  readonly deadlineMs?: number;
+  readonly deadlineMs?: number | false;
 }
 
 /** Progress of the current logical read, not a separate retry per observer. */
@@ -104,7 +104,12 @@ export interface QueryFetchOptions {
 }
 
 /** Fetch and polling policy for one active query observer. */
-export interface QueryObserverOptions extends QueryFetchOptions {
+export interface QueryRecoveryOptions {
+  readonly refetchOnFocus?: boolean;
+  readonly refetchOnReconnect?: boolean;
+}
+
+export interface QueryObserverOptions extends QueryFetchOptions, QueryRecoveryOptions {
   /** Milliseconds between completed requests; omitted means no polling. */
   readonly pollInterval?: number;
 }
@@ -125,12 +130,14 @@ export interface QueryClientOptions {
   readonly onDiagnostic?: (error: unknown, context: QueryDiagnosticContext) => void;
   /** Once per failed current logical read; normal lifecycle cancellation is excluded. */
   readonly onQueryError?: (error: unknown, context: QueryErrorContext) => void;
-  readonly queryDefaults?: QueryReadPolicy;
+  readonly queryDefaults?: QueryReadPolicy & QueryRecoveryOptions;
   /** Monotonic elapsed-time clock for deadlines. Independent of wall-clock cache timestamps. */
   readonly elapsedNow?: () => number;
   readonly now?: () => number;
   readonly isVisible?: () => boolean;
   readonly subscribeVisibility?: (listener: () => void) => () => void;
+  readonly subscribeFocus?: (listener: () => void) => () => void;
+  readonly subscribeReconnect?: (listener: () => void) => () => void;
   /** Active observers and finite pending requests are protected from capacity eviction. */
   readonly maxEntries?: number;
 }

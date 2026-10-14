@@ -53,7 +53,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {isURL, QueryClient, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
@@ -63,10 +63,17 @@ const definition = {key: ['package-users'], loader: () => of([{id: 1}])};
 const users: Promise<{id: number}[]> = client.fetchQuery(definition);
 const users$: Observable<{id: number}[]> = fetchQueryObservable(client, definition);
 const snapshots$ = observeQueryObservable(client, definition);
-void [users, users$, snapshots$, queryResources];
+const providers = provideQueryClient({queryDefaults: {
+  retry: {maxAttempts: 3, shouldRetry: () => false, delayMs: 100}, deadlineMs: 5000, refetchOnReconnect: true,
+}});
+const timeoutError = new QueryTimeoutError(20);
+void [users, users$, snapshots$, queryResources, providers, timeoutError];
 function collection() {
   const rows = queryResources(() => [1, 2], id => ({key: ['items', id], loader: () => of({id})}));
   const values: readonly QueryResourceItem<{id: number}>[] = rows();
+  const selectedId: number = rows()[0].item();
+  const failures: number = rows()[0].failureCount();
+  void [selectedId, failures];
   rows.destroy();
   return values;
 }

@@ -7,7 +7,7 @@ import {EMPTY, EmptyError, firstValueFrom, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClient} from './query-client';
-import {QUERY_CLIENT} from './query-client.token';
+import {provideQueryClient, QUERY_CLIENT} from './query-client.token';
 import {queryResource} from './query-resource';
 
 async function settle(): Promise<void> {
@@ -676,6 +676,53 @@ describe('QUERY_CLIENT browser and server lifecycle', () => {
     TestBed.resetTestingModule();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('configures defaults while retaining browser recovery and disposing every listener', async () => {
+    TestBed.configureTestingModule({providers: [provideQueryClient({queryDefaults: {refetchOnReconnect: true}})]});
+    const document = TestBed.inject(DOCUMENT);
+    const view = document.defaultView;
+    if (!view) throw new Error('Browser test requires a window');
+    const add = vi.spyOn(view, 'addEventListener');
+    const remove = vi.spyOn(view, 'removeEventListener');
+    const client = TestBed.inject(QUERY_CLIENT);
+    const loader = vi.fn(async () => 42);
+    const definition = {key: ['provider-recovery'], loader};
+    client.observeQuery(definition, () => undefined);
+    await client.fetchQuery(definition);
+    view.dispatchEvent(new Event('online'));
+    await client.fetchQuery(definition);
+    expect(loader).toHaveBeenCalledTimes(2);
+    expect(add).toHaveBeenCalledWith('focus', expect.any(Function));
+    expect(add).toHaveBeenCalledWith('online', expect.any(Function));
+    TestBed.resetTestingModule();
+    expect(remove).toHaveBeenCalledWith('focus', expect.any(Function));
+    expect(remove).toHaveBeenCalledWith('online', expect.any(Function));
+    expect(() => client.fetchQuery(definition)).toThrow('destroyed');
+  });
+
+  it('preserves provider SSR defaults when optional overrides are explicitly undefined', async () => {
+    vi.useFakeTimers();
+    const document = {defaultView: null, addEventListener: vi.fn(), removeEventListener: vi.fn()};
+    TestBed.configureTestingModule({
+      providers: [
+        {provide: DOCUMENT, useValue: document},
+        provideQueryClient({
+          isVisible: undefined,
+          subscribeVisibility: undefined,
+          subscribeFocus: undefined,
+          queryDefaults: {refetchOnFocus: true},
+        }),
+      ],
+    });
+    const client = TestBed.inject(QUERY_CLIENT);
+    const loader = vi.fn(async () => 42);
+    const definition = {key: ['provider-ssr'], loader};
+    client.observeQuery(definition, () => undefined, {pollInterval: 10});
+    await client.fetchQuery(definition);
+    await vi.advanceTimersByTimeAsync(30);
+    expect(loader).toHaveBeenCalledTimes(1);
+    expect(document.addEventListener).not.toHaveBeenCalled();
   });
 
   it('pauses polling while the document is hidden and removes its listener on injector destruction', async () => {

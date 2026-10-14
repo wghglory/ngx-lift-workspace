@@ -14,6 +14,26 @@ async function settle() {
 }
 
 describe('queryResources', () => {
+  it('keeps typed input identity available before data and after a failed read', async () => {
+    const items = signal([{id: 1, label: 'first'}]);
+    const pending = new Subject<string>();
+    const rows = TestBed.runInInjectionContext(() =>
+      queryResources(items, (item) => ({key: ['identity', item.id], loader: () => pending})),
+    );
+    await settle();
+    const row = rows()[0];
+    expectTypeOf(row.item()).toEqualTypeOf<{id: number; label: string}>();
+    expect(row.item().label).toBe('first');
+    expect(row.value()).toBeUndefined();
+    pending.error(new Error('unavailable'));
+    await settle();
+    expect(row.isInitialError()).toBe(true);
+    items.set([{id: 1, label: 'updated'}]);
+    await settle();
+    expect(rows()[0]).toBe(row);
+    expect(row.item().label).toBe('updated');
+    expect(row.value()).toBeUndefined();
+  });
   it('does nothing for empty inputs and cannot restart after explicit destruction', async () => {
     const ids = signal<number[]>([]);
     const loader = vi.fn(() => of(1));
@@ -108,7 +128,7 @@ describe('queryResources', () => {
         staleTime: 30_000,
       })),
     );
-    expectTypeOf(rows()).toEqualTypeOf<readonly QueryResourceItem<{id: number}>[]>();
+    expectTypeOf(rows()).toEqualTypeOf<readonly QueryResourceItem<{id: number}, number>[]>();
     await settle();
     const [one, two] = rows();
     expect(rows().map((row) => row.value()?.id)).toEqual([1, 2]);

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 
-import {QueryDefinition, QueryObserverHandle, QuerySnapshot, QueryStatus} from './query.models';
+import {QueryDefinition, QueryObserverHandle, QueryRecoveryOptions, QuerySnapshot, QueryStatus} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {serializeQueryKey} from './query-key';
@@ -24,7 +24,7 @@ import {resourceAsync} from './resource-async';
 export type QueryResourceDefinition<T> = QueryDefinition<T>;
 
 /** Injection, shared-client, and reactive polling configuration for queryResource. */
-export interface QueryResourceOptions {
+export interface QueryResourceOptions extends QueryRecoveryOptions {
   pollInterval?: number | (() => number | undefined);
   injector?: Injector;
   client?: QueryClient;
@@ -142,7 +142,12 @@ export function queryResource<T, E = Error>(
                   if (!destroyed && observedKey() === key) subscriber.next(snapshot);
                 });
               },
-              {pollInterval: observedInterval, refresh},
+              {
+                pollInterval: observedInterval,
+                refresh,
+                refetchOnFocus: options.refetchOnFocus,
+                refetchOnReconnect: options.refetchOnReconnect,
+              },
             );
             // A synchronous snapshot can destroy the resource while recovery is attaching.
             if (destroyed || subscriber.closed) {
@@ -192,7 +197,12 @@ export function queryResource<T, E = Error>(
         observedInterval = interval;
         if (current?.key === observedKey() && current) {
           unsubscribe?.updateDefinition(current.query);
-          if (intervalChanged) unsubscribe?.updateOptions({pollInterval: interval});
+          if (intervalChanged)
+            unsubscribe?.updateOptions({
+              pollInterval: interval,
+              refetchOnFocus: options.refetchOnFocus,
+              refetchOnReconnect: options.refetchOnReconnect,
+            });
         }
       });
     },

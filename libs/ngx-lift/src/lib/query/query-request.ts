@@ -7,7 +7,8 @@ const MAX_TIMER_DELAY = 2_147_483_647;
 /** Validate before registering pending work, and capture policy against caller mutations. */
 export function resolveQueryReadPolicy(policy: QueryReadPolicy, defaults: QueryReadPolicy = {}): QueryReadPolicy {
   const retry = policy.retry ?? defaults.retry ?? false;
-  const deadlineMs = policy.deadlineMs ?? defaults.deadlineMs;
+  const configuredDeadline = policy.deadlineMs ?? defaults.deadlineMs;
+  const deadlineMs = configuredDeadline === false ? undefined : configuredDeadline;
   if (deadlineMs !== undefined && (!Number.isFinite(deadlineMs) || deadlineMs <= 0)) {
     throw new RangeError('deadlineMs must be a positive finite duration.');
   }
@@ -40,6 +41,7 @@ interface QueryRequestOptions<T> {
 export function executeQueryRequest<T>(options: QueryRequestOptions<T>): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const {controller, policy} = options;
+    const deadlineMs = policy.deadlineMs === false ? undefined : policy.deadlineMs;
     const {signal} = controller;
     const startedAt = options.startedAt;
     let settled = false;
@@ -49,7 +51,7 @@ export function executeQueryRequest<T>(options: QueryRequestOptions<T>): Promise
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
     const elapsed = () => Math.max(0, options.elapsedNow() - startedAt);
-    const remaining = () => (policy.deadlineMs === undefined ? Infinity : policy.deadlineMs - elapsed());
+    const remaining = () => (deadlineMs === undefined ? Infinity : deadlineMs - elapsed());
     const finish = (result: {value: T} | {error: unknown}) => {
       if (settled) return;
       if (!signal.aborted && remaining() <= 0) {
@@ -65,13 +67,13 @@ export function executeQueryRequest<T>(options: QueryRequestOptions<T>): Promise
     };
     const onAbort = () => finish({error: signal.reason});
     const expire = () => {
-      if (policy.deadlineMs === undefined) return;
-      const timeout = new QueryTimeoutError(policy.deadlineMs, failureCount ? failureReason : undefined);
+      if (deadlineMs === undefined) return;
+      const timeout = new QueryTimeoutError(deadlineMs, failureCount ? failureReason : undefined);
       progress(null);
       controller.abort(timeout);
     };
     const scheduleDeadline = () => {
-      if (settled || policy.deadlineMs === undefined) return;
+      if (settled || deadlineMs === undefined) return;
       if (remaining() <= 0) expire();
       else deadlineTimer = setTimeout(scheduleDeadline, Math.min(MAX_TIMER_DELAY, remaining()));
     };

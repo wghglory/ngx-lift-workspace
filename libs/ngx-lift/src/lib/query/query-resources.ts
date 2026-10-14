@@ -16,12 +16,14 @@ import {serializeQueryKey} from './query-key';
 import {queryResource, QueryResourceOptions, QueryResourceRef} from './query-resource';
 
 /** A collection item with canonical cache identity for Angular template tracking. */
-export interface QueryResourceItem<T> extends QueryResourceRef<T | undefined> {
+export interface QueryResourceItem<T, I = unknown> extends QueryResourceRef<T | undefined> {
   readonly key: string;
+  /** Input identity/labels remain available before loading and after failure. */
+  readonly item: Signal<I>;
 }
 
 /** Ordered query observers owned by the caller's injector. */
-export interface QueryResourcesRef<T> extends Signal<readonly QueryResourceItem<T>[]> {
+export interface QueryResourcesRef<T, I = unknown> extends Signal<readonly QueryResourceItem<T, I>[]> {
   destroy(): void;
 }
 
@@ -40,7 +42,7 @@ export function queryResources<I, T>(
   items: () => readonly I[],
   definition: (item: I) => QueryDefinition<T>,
   options: QueryResourceOptions = {},
-): QueryResourcesRef<T> {
+): QueryResourcesRef<T, I> {
   if (!options.injector) assertInInjectionContext(queryResources);
   const injector = options.injector ?? inject(Injector);
   const requested = computed(() => {
@@ -50,10 +52,10 @@ export function queryResources<I, T>(
       const key = serializeQueryKey(query.key);
       if (seen.has(key)) throw new Error(`Duplicate queryResources key: ${key}`);
       seen.add(key);
-      return {query, key};
+      return {query, key, item};
     });
   });
-  type Entry = {definition: WritableSignal<QueryDefinition<T>>; ref: QueryResourceItem<T>};
+  type Entry = {definition: WritableSignal<QueryDefinition<T>>; item: WritableSignal<I>; ref: QueryResourceItem<T, I>};
   const active = signal<ReadonlyMap<string, Entry>>(new Map());
   let destroyed = false;
   const reconcile = effect(
@@ -63,13 +65,16 @@ export function queryResources<I, T>(
         if (destroyed) return;
         const previous = active();
         const next = new Map<string, Entry>();
-        for (const {query, key} of queries) {
+        for (const {query, key, item} of queries) {
           let entry = previous.get(key);
-          if (entry) entry.definition.set(query);
-          else {
+          if (entry) {
+            entry.definition.set(query);
+            entry.item.set(item);
+          } else {
             const current = signal(query);
             const ref = queryResource(() => current(), {...options, injector});
-            entry = {definition: current, ref: {...ref, key}};
+            const currentItem = signal(item);
+            entry = {definition: current, item: currentItem, ref: {...ref, key, item: currentItem.asReadonly()}};
           }
           next.set(key, entry);
         }
