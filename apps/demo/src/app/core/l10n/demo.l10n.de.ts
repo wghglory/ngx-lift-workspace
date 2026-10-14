@@ -579,7 +579,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Tag-basierte Invalidierung',
   'queryResource.badgeManualReload': 'manueller Neustart-Auslöser',
   'queryResource.badgeAutoMutate': 'Automatisch über mutateResource',
-  'queryResource.demo1Section': '1. Bitten Sie um Kohlebildung und Deduplikation',
+  'queryResource.demo1Section': 'Bitten Sie um Kohlebildung und Deduplikation',
   'queryResource.demo1SectionDesc':
     'Wenn zwei oder mehr Komponenten gleichzeitig montieren und den gleichen Abfrageschlüssel anfordern, teilt <code>QueryClient</code> die einzelne In-Flight-Netzwerkanforderung. Beide Komponenten erhalten die exakt gleiche Antwort mit null redundantem Datenverkehr.',
   'queryResource.demo1PlaygroundTitle': 'Gleichzeitige Beobachter teilen sich in der Flugarbeit',
@@ -597,7 +597,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Speichernutzung',
   'queryResource.status': 'Status',
   'queryResource.updated': 'Aktualisiert',
-  'queryResource.demo2Section': '2. Stile-While-Revalidate & Freshness Politik',
+  'queryResource.demo2Section': 'Stile-While-Revalidate & Freshness Politik',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> steuert, wie lange gespeicherte Daten frisch bleiben. Wenn ein Beobachter Daten während des frischen Anfrages anfordert, werden sie sofort aus der Speicherung geladen. Wenn veraltet, werden die gespeicherten Daten sofort angezeigt, während ein Hintergrund-Refresh im Hintergrund ausführt, ohne die UI (indiziert durch <code>status: 'reloading'</code>) zu löschen.",
   'queryResource.configuredStaleTime': 'Konfiguriert staleTime: {0} Sekunden',
@@ -610,7 +610,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Gesund',
   'queryResource.region': 'Region',
   'queryResource.snapshotTime': 'Snapshot Zeit',
-  'queryResource.demo3Section': '3. Koordiniertes Polling mit Sichtbewusstsein',
+  'queryResource.demo3Section': 'Koordiniertes Polling mit Sichtbewusstsein',
   'queryResource.demo3SectionDesc':
     'Konfigurieren Sie <code>pollInterval</code>, um aktive Abfragen regelmäßig zu aktualisieren. Mehrere Beobachter, die unterschiedliche Intervalle anfordern, werden auf das schnellste Intervall koordiniert. Polling pausiert automatisch, wenn der Browser-Fenster versteckt ist, und wird sofort wieder aufgenommen, wenn es zurückkehrt.',
   'queryResource.demo3PlaygroundTitle': 'Hintergrundbefragung',
@@ -624,7 +624,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Letzter Puls',
   'queryResource.pollingIdleMsg':
     'Das Polling ist derzeit im Leerlauf. Klicken Sie auf "Polling starten", um Live-koordinierte Hintergrundüberprüfungen zu beobachten.',
-  'queryResource.demo4Section': '4. Mutationen & Tag-Invalidierung (mutateResource)',
+  'queryResource.demo4Section': 'Mutationen & Tag-Invalidierung (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> verarbeitet asynchrone Schreibvorgänge. Nach erfolgreicher Mutation werden passende Tags ungültig, wodurch alle aktiven Abfragen mit diesen Tags automatisch die neuesten Serverdaten im Hintergrund widerlegen.',
   'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
@@ -2229,7 +2229,7 @@ export const deTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Dienst-Widgets aktualisieren',
   'queryExamples.widget': 'Widget {0}: Mandant {1}, {2}',
   'queryExamples.counts': 'Anzahl der HTTP-Anfragen:',
-  'queryExamples.dynamic': '4. Dynamische parallele Abfragen',
+  'queryExamples.dynamic': 'Dynamische parallele Abfragen',
   'queryExamples.dynamicIntro':
     'queryResources ordnet ausgewählte IDs unabhängigen Beobachtern zu. Umsortieren erhält Beobachter; Entfernen einer ID beendet ihren Beobachter.',
   'queryExamples.one': 'Nur Mandant A',
@@ -2242,4 +2242,21 @@ export const deTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'True beim Aktualisieren mit erhaltenen Cache-Daten.',
   'queryResource.thFailures': 'Fehlgeschlagene Versuche',
   'queryResource.thNextRetry': 'Nächster Wiederholungsversuch',
+  'queryGuide.selection': 'Verwandte Werkzeuge:',
+  'queryGuide.basic': '1. Mit einem zwischengespeicherten Lesezugriff beginnen',
+  'queryGuide.basicIntro':
+    'Den Mandanten einmal erfassen, in key und loader verwenden und die Ergebnissignale lesen. Beim Aktualisieren bleibt der letzte erfolgreiche Wert erhalten.',
+  'queryGuide.configure': 'Anwendungskonfiguration',
+  'queryGuide.collectionIntro':
+    'queryResources eignet sich für wechselnde Listen unabhängiger Lesezugriffe. Jeder Eintrag hat ein eigenes Cache-Ergebnis, einen Ladezustand und Wiederherstellungsaktionen.',
+  'queryGuide.empty': 'Keine Einträge ausgewählt. Keine Lesezugriffe der Sammlung sind aktiv.',
+  'queryGuide.partialIntro':
+    'Eine Zeile schlägt fehl, während die andere verfügbar bleibt. Nur die fehlgeschlagene Zeile erneut laden.',
+  'queryGuide.collectionContract':
+    'Die Sammlung ist ein Signal geordneter Query-Referenzen. Umsortieren erhält Referenzen; Entfernen blendet Zeilen sofort aus und gibt Beobachter bei der effect-Ausführung frei. Doppelte kanonische Schlüssel werden abgewiesen.',
+  'queryGuide.collectionLimits':
+    'Pro Sammlung einen Datentyp verwenden und noch nicht bereite Einträge filtern. Anfragen starten parallel ohne Parallelitätsgrenze; große Auswahlen begrenzen oder paginieren. maxEntries entfernt keine aktiven oder ausstehenden Einträge.',
+  'queryGuide.namingTitle': 'Benennung von Query- und Mutation-Referenzen',
+  'queryGuide.namingHandles':
+    'Verwenden Sie <code>userQuery</code> für eine Query, <code>tenantQueries</code> für eine Sammlung und <code>createMutation</code> für einen Schreibvorgang. <code>user</code> oder <code>tenant</code> bezeichnet die aufgelösten Daten.',
 };

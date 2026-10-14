@@ -525,7 +525,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': '標籤失效機制',
   'queryResource.badgeManualReload': '需手動觸發 reload',
   'queryResource.badgeAutoMutate': '透過 mutateResource 自動觸發',
-  'queryResource.demo1Section': '1. 並發請求合併與去重 (Request Coalescing)',
+  'queryResource.demo1Section': '並發請求合併與去重 (Request Coalescing)',
   'queryResource.demo1SectionDesc':
     '當兩個或多個元件同時掛載並請求相同的 query key 時，<code>QueryClient</code> 會共享同一個進行中的網路請求，所有元件獲取同一份結果，杜絕重複流量。',
   'queryResource.demo1PlaygroundTitle': '並發觀察者共享在途網路請求',
@@ -542,7 +542,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.memoryUsage': '記憶體使用率',
   'queryResource.status': '狀態',
   'queryResource.updated': '更新時間',
-  'queryResource.demo2Section': '2. Stale-While-Revalidate 與新鮮度策略',
+  'queryResource.demo2Section': 'Stale-While-Revalidate 與新鮮度策略',
   'queryResource.demo2SectionDesc':
     '<code>staleTime</code> 決定快取資料的新鮮時長。如果在資料新鮮期內請求，直接從記憶體即時渲染；如果已過期（stale），先立即展示舊資料，同時在背景靜默發起重新整理，無需清空介面（狀態為 <code>reloading</code>）。',
   'queryResource.configuredStaleTime': '設定的 staleTime: {0} 秒',
@@ -555,7 +555,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} 健康',
   'queryResource.region': '所屬區域',
   'queryResource.snapshotTime': '快照時間',
-  'queryResource.demo3Section': '3. 具備頁面可見性感知的協同輪詢',
+  'queryResource.demo3Section': '具備頁面可見性感知的協同輪詢',
   'queryResource.demo3SectionDesc':
     '設定 <code>pollInterval</code> 可對活躍查詢定時輪詢。多個觀察者請求不同間隔時，自動協同按最快頻率輪詢；當切換或最小化分頁時自動暫停，切回後立即恢復。',
   'queryResource.demo3PlaygroundTitle': '協同背景輪詢',
@@ -567,7 +567,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.ping': '網路延遲',
   'queryResource.lastPulse': '最後心跳',
   'queryResource.pollingIdleMsg': '輪詢目前處於閒置狀態。點擊「開啟輪詢」以觀察即時協同背景偵測。',
-  'queryResource.demo4Section': '4. 變更操作與標籤失效 (mutateResource)',
+  'queryResource.demo4Section': '變更操作與標籤失效 (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> 處理非同步寫入操作。變更成功後，自動使關聯的標籤失效，從而觸發所有具有相應標籤的活躍查詢在背景自動重新獲取最新資料。',
   'queryResource.demo4PlaygroundTitle': '基於標籤的自動失效與重拉',
@@ -1923,7 +1923,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': '更新服務元件',
   'queryExamples.widget': '元件 {0}：租戶 {1}，{2}',
   'queryExamples.counts': 'HTTP 請求次數：',
-  'queryExamples.dynamic': '4. 動態並行查詢',
+  'queryExamples.dynamic': '動態並行查詢',
   'queryExamples.dynamicIntro':
     'queryResources 將所選 ID 對應至獨立觀察者。重新排序保留觀察者；移除 ID 會銷毀對應觀察者。',
   'queryExamples.one': '僅租戶 A',
@@ -1936,4 +1936,19 @@ export const zhTWTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': '保留快取資料的更新過程中為 true。',
   'queryResource.thFailures': '失敗嘗試',
   'queryResource.thNextRetry': '下次重試',
+  'queryGuide.selection': '相關工具：',
+  'queryGuide.basic': '1. 從快取讀取開始',
+  'queryGuide.basicIntro': '一次擷取租戶參數，並同時用於 key 和 loader，再讀取結果訊號。重新整理時保留上次成功的資料。',
+  'queryGuide.configure': '應用程式設定',
+  'queryGuide.collectionIntro':
+    'queryResources 用於動態變化的獨立查詢清單。每個輸入都有自己的快取結果、載入狀態和復原操作。',
+  'queryGuide.empty': '尚未選取項目，沒有作用中的集合讀取。',
+  'queryGuide.partialIntro': '一列失敗時，其他列的資料仍然可用。只重試失敗列，不重新讀取成功列。',
+  'queryGuide.collectionContract':
+    '集合是有序查詢參照的訊號。重新排序保留參照；移除時立即隱藏列，並在 effect 排程時釋放觀察者。重複的標準化 key 會被拒絕。',
+  'queryGuide.collectionLimits':
+    '每個集合使用一種資料類型，並篩除尚未就緒的項目。請求並行啟動，沒有並行上限；大型清單應分頁或限制選取數量。maxEntries 不會移除作用中或待完成的項目。',
+  'queryGuide.namingTitle': '查詢和 mutation 參照命名',
+  'queryGuide.namingHandles':
+    '單個查詢使用 <code>userQuery</code>，集合使用 <code>tenantQueries</code>，寫入操作使用 <code>createMutation</code>。<code>user</code> 或 <code>tenant</code> 留給解析後的資料。',
 };

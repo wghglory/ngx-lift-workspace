@@ -569,7 +569,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'タグベースの無効化',
   'queryResource.badgeManualReload': '手動で再読み込みをトリガー',
   'queryResource.badgeAutoMutate': 'mutateResourceを通じて自動的に',
-  'queryResource.demo1Section': '1. リクエストコールドプ & 重複除去',
+  'queryResource.demo1Section': 'リクエストコールドプ & 重複除去',
   'queryResource.demo1SectionDesc':
     '2つ以上のコンポーネントが同じ時間にマウントし、同じクエリキーでリクエストを発信する場合、<code>QueryClient</code>は単一のネットワークリクエストを共有します。両方のコンポーネントは同じ応答を正確に受け取り、ゼロの冗長なトラフィックになります。',
   'queryResource.demo1PlaygroundTitle': 'コンカレントなオブザーバーがインフラーワークを共有',
@@ -587,7 +587,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'メモリ使用量',
   'queryResource.status': '状態',
   'queryResource.updated': '更新',
-  'queryResource.demo2Section': '2. ステーリー・アンド・フレッシュネス ポリシー',
+  'queryResource.demo2Section': 'ステーリー・アンド・フレッシュネス ポリシー',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> はキャッシュデータが新鮮である期間を制御します。観察者が新鮮なデータを要求する際には、メモリから瞬時に表示されます。もし古いデータである場合、キャッシュデータが即座に表示されながらバックグラウンドで静黙的に再取得が実行され、UI がクリアされないことを示す <code>status: 'reloading'</code> が表示されます。",
   'queryResource.configuredStaleTime': '設定された staleTime: {0} 秒',
@@ -600,7 +600,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} 健全',
   'queryResource.region': '地域',
   'queryResource.snapshotTime': 'スナップショット時間',
-  'queryResource.demo3Section': '3. 可視性意識のあるポーリング',
+  'queryResource.demo3Section': '可視性意識のあるポーリング',
   'queryResource.demo3SectionDesc':
     'ポーリング間隔を<code>pollInterval</code>に設定して、アクティブなクエリを定期的にリフレッシュしてください。複数の観察者が異なる間隔を要求する場合、最も速いレートで調整されます。タブが隠れている間、ポーリングは自動的に一時停止され、タブが戻ったときに即座に再開されます。',
   'queryResource.demo3PlaygroundTitle': 'バックグラウンドポーリング',
@@ -614,7 +614,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.lastPulse': '最後の脈撃',
   'queryResource.pollingIdleMsg':
     'ポーリングは現在無作為です。『ポーリングを開始』をクリックして、リアルタイムで調整されたバックグラウンドチェックを観察してください。',
-  'queryResource.demo4Section': '4. ミューテーションとタグ無効化 (mutateResource)',
+  'queryResource.demo4Section': 'ミューテーションとタグ無効化 (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code>は非同期の書き込みを処理します。ミューテーションが成功した場合、一致するタグを無効化し、そのタグを持つすべてのアクティブなクエリが自動的に最新のサーバーデータをバックグラウンドで再取得します。',
   'queryResource.demo4PlaygroundTitle': 'タグベースの無効化',
@@ -2108,7 +2108,7 @@ export const jaTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'サービスウィジェットを更新',
   'queryExamples.widget': 'ウィジェット {0}: テナント {1}、{2}',
   'queryExamples.counts': 'HTTP リクエスト数:',
-  'queryExamples.dynamic': '4. 動的な並列クエリ',
+  'queryExamples.dynamic': '動的な並列クエリ',
   'queryExamples.dynamicIntro':
     'queryResources は選択した ID を独立したオブザーバーに対応付けます。並べ替えでは保持し、ID の削除時に破棄します。',
   'queryExamples.one': 'テナント A のみ',
@@ -2121,4 +2121,21 @@ export const jaTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'キャッシュを保持した更新中に true になります。',
   'queryResource.thFailures': '失敗した試行',
   'queryResource.thNextRetry': '次の再試行',
+  'queryGuide.selection': '関連ツール：',
+  'queryGuide.basic': '1. キャッシュされた読み取りから始める',
+  'queryGuide.basicIntro':
+    'テナントを一度取得し、key と loader の両方で使って結果のシグナルを読み取ります。更新中も最後に成功した値を保持します。',
+  'queryGuide.configure': 'アプリケーション設定',
+  'queryGuide.collectionIntro':
+    'queryResources は変化する独立した読み取りの一覧に使用します。各入力には独自のキャッシュ結果、読み込み状態、復旧操作があります。',
+  'queryGuide.empty': '項目が選択されていません。実行中のコレクション読み取りはありません。',
+  'queryGuide.partialIntro':
+    '一方の行が失敗しても、他方は利用できます。成功した行を再取得せず、失敗した行だけを再試行します。',
+  'queryGuide.collectionContract':
+    'コレクションは順序付きクエリ参照のシグナルです。並べ替えで参照を維持し、削除すると行をすぐに非表示にして effect の実行時にオブザーバーを解放します。重複する正規化キーは拒否されます。',
+  'queryGuide.collectionLimits':
+    'コレクションごとに一つのデータ型を使い、準備ができていない項目を除外します。リクエストは同時実行数の制限なく並列に開始します。大量の選択はページ分割するか件数を制限してください。maxEntries は実行中や未完了の項目を削除しません。',
+  'queryGuide.namingTitle': 'クエリとミューテーション参照の命名',
+  'queryGuide.namingHandles':
+    '単一クエリには <code>userQuery</code>、コレクションには <code>tenantQueries</code>、書き込みには <code>createMutation</code> を使います。<code>user</code> や <code>tenant</code> は取得したデータに使います。',
 };

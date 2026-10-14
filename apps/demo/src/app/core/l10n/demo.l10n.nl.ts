@@ -581,7 +581,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Tag-gebaseerde ongeldigheid',
   'queryResource.badgeManualReload': 'Handmatig herladen trigger',
   'queryResource.badgeAutoMutate': 'Automatisch via mutateResource',
-  'queryResource.demo1Section': '1. Coalescing en deduplicatie aanvragen',
+  'queryResource.demo1Section': 'Coalescing en deduplicatie aanvragen',
   'queryResource.demo1SectionDesc':
     'Wanneer twee of meer componenten tegelijkertijd mounten en dezelfde query key aanvragen, deelt <code>QueryClient</code> het enkele netwerkverzoek tijdens de vlucht. Beide componenten ontvangen exact dezelfde respons met nul redundant verkeer.',
   'queryResource.demo1PlaygroundTitle': 'Gelijktijdige waarnemers delen in-flight werk',
@@ -599,7 +599,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Geheugengebruik',
   'queryResource.status': 'Status',
   'queryResource.updated': 'Bijgewerkt',
-  'queryResource.demo2Section': '2. Stam-While-Revalidate & versheid beleid',
+  'queryResource.demo2Section': 'Stam-While-Revalidate & versheid beleid',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> beheert hoe lang gecachede data nog fris is. Als een observer data vraagt terwijl het fris is, wordt het direct uit de geheugen opgehaald. Als het verder is, wordt de gecachede data onmiddellijk weergegeven terwijl een achtergrondherlaad actief wordt uitgevoerd zonder de UI te veranderen (aangeduid door <code>status: 'reloading'</code>).",
   'queryResource.configuredStaleTime': 'Geconfigureerde staleTime: {0} seconden',
@@ -612,7 +612,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Gezond',
   'queryResource.region': 'Gebieden',
   'queryResource.snapshotTime': 'Snapshot-tijd',
-  'queryResource.demo3Section': '3. Gecoördineerde polling met zichtbaar bewustzijn',
+  'queryResource.demo3Section': 'Gecoördineerde polling met zichtbaar bewustzijn',
   'queryResource.demo3SectionDesc':
     'Stel <code>pollInterval</code> in om actieve queries periodiek te herladen. Meelieve observers met verschillende intervallen worden gecoördineerd op het snelste interval. Polling pauzeert automatisch wanneer de browser tab verborgen is en herstart zich direct bij het retourneren.',
   'queryResource.demo3PlaygroundTitle': 'Achtergrondbespreking',
@@ -626,7 +626,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Laatste pulse',
   'queryResource.pollingIdleMsg':
     'Polling is momenteel inactief. Klik op "Start Polling" om live gecoördineerde achtergrondchecks te observeren.',
-  'queryResource.demo4Section': '4. mutaties & tag ongeldigheid (mutateResource)',
+  'queryResource.demo4Section': 'mutaties & tag ongeldigheid (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> behandelt asynchrone schrijfsels. Bij succesvolle mutatie ongeldig maakt bijpassende tags, waardoor alle actieve queries met deze tags automatisch de nieuwste servergegevens op de achtergrond opnieuw opvragen.',
   'queryResource.demo4PlaygroundTitle': 'Tag-based ongeldigheid',
@@ -2200,7 +2200,7 @@ export const nlTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Servicewidgets vernieuwen',
   'queryExamples.widget': 'Widget {0}: tenant {1}, {2}',
   'queryExamples.counts': 'Aantal HTTP-verzoeken:',
-  'queryExamples.dynamic': '4. Dynamische parallelle query’s',
+  'queryExamples.dynamic': 'Dynamische parallelle query’s',
   'queryExamples.dynamicIntro':
     'queryResources koppelt geselecteerde ID’s aan onafhankelijke observers. Herschikken behoudt observers; verwijderen van een ID ruimt de observer op.',
   'queryExamples.one': 'Alleen tenant A',
@@ -2213,4 +2213,21 @@ export const nlTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'True tijdens vernieuwen met behoud van cachegegevens.',
   'queryResource.thFailures': 'Mislukte pogingen',
   'queryResource.thNextRetry': 'Volgende poging',
+  'queryGuide.selection': 'Gerelateerde hulpmiddelen:',
+  'queryGuide.basic': '1. Begin met een leesactie uit de cache',
+  'queryGuide.basicIntro':
+    'Leg de tenant eenmaal vast, gebruik deze in key en loader en lees de resultaatsignalen. Vernieuwen behoudt de laatste geslaagde waarde.',
+  'queryGuide.configure': 'Applicatieconfiguratie',
+  'queryGuide.collectionIntro':
+    'Gebruik queryResources voor een veranderende lijst onafhankelijke leesacties. Elke invoer heeft een eigen cacheresultaat, laadstatus en herstelacties.',
+  'queryGuide.empty': 'Geen items geselecteerd. Geen leesacties van de verzameling zijn actief.',
+  'queryGuide.partialIntro':
+    'Eén rij mislukt terwijl de andere beschikbaar blijft. Probeer alleen de mislukte rij opnieuw.',
+  'queryGuide.collectionContract':
+    'De verzameling is een signaal van geordende queryreferenties. Herschikken behoudt referenties; verwijderen verbergt rijen direct en geeft waarnemers vrij bij uitvoering van het effect. Dubbele canonieke sleutels worden geweigerd.',
+  'queryGuide.collectionLimits':
+    'Gebruik één gegevenstype per verzameling en filter items die niet klaar zijn. Verzoeken starten parallel zonder gelijktijdigheidslimiet; pagineer of beperk grote selecties. maxEntries verwijdert geen actieve of wachtende items.',
+  'queryGuide.namingTitle': 'Query- en mutatiereferenties benoemen',
+  'queryGuide.namingHandles':
+    'Gebruik <code>userQuery</code> voor één query, <code>tenantQueries</code> voor een verzameling en <code>createMutation</code> voor een schrijfopdracht. Reserveer <code>user</code> of <code>tenant</code> voor de opgeloste gegevens.',
 };

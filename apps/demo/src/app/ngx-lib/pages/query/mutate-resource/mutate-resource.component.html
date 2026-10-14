@@ -1,6 +1,10 @@
 <cll-page-container [title]="'mutateResource.title' | translate">
   <!-- Overview -->
   <p class="p1" [innerHTML]="'mutateResource.overview' | translate"></p>
+  <cll-callout data-testid="query-naming-convention">
+    <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
+    <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
+  </cll-callout>
 
   <!-- ==================== CORE CAPABILITIES SECTION ==================== -->
   <section class="features-section">

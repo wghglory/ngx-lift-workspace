@@ -1,103 +1,236 @@
-<section cds-layout="vertical gap:md" data-testid="query-failure-examples">
+<section class="query-section" data-testid="query-failure-examples">
   <h2>{{ 'queryExamples.failureTitle' | translate }}</h2>
   <p>{{ 'queryExamples.failureIntro' | translate }}</p>
-  <article class="card card-block" data-testid="failure-initial">
-    <h3>{{ 'queryExamples.initialFailure' | translate }}</h3>
-    <p>{{ initialQuery.status() }}</p>
-    @if (initialQuery.isInitialError()) {
-      <p role="alert">{{ 'queryExamples.initialFailureMessage' | translate }}</p>
-    }
-    @if (initialQuery.hasValue()) {
-      <p>{{ 'queryExamples.failureData' | translate: initialQuery.value()?.value }}</p>
-    }
-    <button class="btn btn-sm" [disabled]="initialQuery.isLoading()" (click)="initialQuery.reload()">
-      {{ 'queryExamples.retryRead' | translate }}
-    </button>
-  </article>
-  <article class="card card-block" data-testid="failure-refresh">
-    <h3>{{ 'queryExamples.refreshFailure' | translate }}</h3>
-    @if (refreshQuery.hasValue()) {
-      <p data-testid="failure-retained">{{ 'queryExamples.failureData' | translate: refreshQuery.value()?.value }}</p>
-    }
-    @if (refreshQuery.isRefreshError()) {
-      <p role="status">{{ 'queryExamples.refreshFailureMessage' | translate }}</p>
-    }
-    <p>{{ refreshQuery.status() }}</p>
-    <button class="btn btn-sm" [disabled]="refreshQuery.isLoading()" (click)="failRefresh()">
-      {{ 'queryExamples.failRefresh' | translate }}
-    </button>
-    <button class="btn btn-sm" [disabled]="refreshQuery.isLoading()" (click)="refreshQuery.reload()">
-      {{ 'queryExamples.retryRead' | translate }}
-    </button>
-    <button class="btn btn-sm" [disabled]="refreshQuery.isLoading()" (click)="failObserver()">
-      {{ 'queryExamples.failObserver' | translate }}
-    </button>
-  </article>
-  <article class="card card-block" data-testid="failure-retry">
-    <h3>{{ 'queryExamples.automaticRetry' | translate }}</h3>
-    <p>{{ 'queryExamples.retryIntro' | translate }}</p>
-    <button class="btn btn-sm" [disabled]="retryQuery.isLoading()" (click)="startRetry()">
-      {{ 'queryExamples.startRetry' | translate }}
-    </button>
-    <p data-testid="failure-retry-state">
-      {{ retryQuery.status() }}; failureCount: {{ retryQuery.failureCount() }}; nextRetryAt:
-      {{ retryQuery.nextRetryAt() }}
-    </p>
-    <button class="btn btn-sm" [disabled]="promiseQuery.isLoading()" (click)="startPromise()">
-      {{ 'queryExamples.startPromise' | translate }}
-    </button>
-    <p data-testid="failure-promise-state">Promise: {{ promiseQuery.status() }}</p>
-  </article>
-  <article class="card card-block" data-testid="failure-deadline">
-    <h3>{{ 'queryExamples.deadline' | translate }}</h3>
-    <p>{{ 'queryExamples.deadlineIntro' | translate }}</p>
-    <button class="btn btn-sm" [disabled]="deadlineQuery.isLoading()" (click)="startDeadline()">
-      {{ 'queryExamples.startDeadline' | translate }}
-    </button>
-    @if (deadlineQuery.isInitialError()) {
-      <p role="alert">{{ 'queryExamples.deadlineMessage' | translate }}</p>
-    }
-    <p data-testid="failure-deadline-state">
-      {{ deadlineQuery.status() }}; {{ 'queryExamples.canceledReads' | translate: backend.canceled() }}
-    </p>
-  </article>
-  <article class="card card-block" data-testid="failure-rows">
-    <h3>{{ 'queryExamples.partialFailure' | translate }}</h3>
-    @for (row of rowQueries(); track row.key) {
-      <div data-testid="failure-row">
-        <p>{{ row.item() }} — {{ row.status() }}</p>
-        @if (row.hasValue()) {
-          <p>{{ 'queryExamples.failureData' | translate: row.value()?.value }}</p>
-        }
-        @if (row.isInitialError()) {
-          <button class="btn btn-sm" (click)="row.reload()">{{ 'queryExamples.retryRead' | translate }}</button>
-        }
-      </div>
-    }
-  </article>
-  <article class="card card-block" data-testid="failure-mutation">
-    <h3>{{ 'queryExamples.mutationFailure' | translate }}</h3>
-    <p>{{ 'queryExamples.mutationIntro' | translate }}</p>
-    <input
-      [ngModel]="name()"
-      (ngModelChange)="name.set($event)"
-      [attr.aria-label]="'queryExamples.name' | translate"
-      data-testid="failure-name"
-    />
-    <button class="btn btn-sm" [disabled]="!name().trim() || saveMutation.isLoading()" (click)="save(true)">
-      {{ 'queryExamples.failWrite' | translate }}
-    </button>
-    <button class="btn btn-sm" [disabled]="!name().trim() || saveMutation.isLoading()" (click)="save()">
-      {{ 'queryExamples.submitWrite' | translate }}
-    </button>
-    @if (saveMutation.status() === 'error') {
-      <p role="alert">{{ 'queryExamples.writeMessage' | translate }}</p>
-    }
-    <p data-testid="failure-mutation-state">{{ saveMutation.status() }}</p>
-  </article>
+  <div class="query-table">
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'queryResource.status' | translate }}</th>
+          <th>{{ 'queryResource.bestFor' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>isInitialError()</code></td>
+          <td>{{ 'queryExamples.initialFailureMessage' | translate }}</td>
+        </tr>
+        <tr>
+          <td><code>isRefreshError()</code></td>
+          <td>{{ 'queryExamples.refreshFailureMessage' | translate }}</td>
+        </tr>
+        <tr>
+          <td><code>failureCount() / nextRetryAt()</code></td>
+          <td>{{ 'queryExamples.retryIntro' | translate }}</td>
+        </tr>
+        <tr>
+          <td><code>deadlineMs</code></td>
+          <td>{{ 'queryExamples.deadlineIntro' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <clr-tabs>
+    <clr-tab>
+      <button clrTabLink>{{ 'queryExamples.initialFailure' | translate }}</button>
+      <clr-tab-content *clrIfActive>
+        <article class="query-example" data-testid="failure-initial">
+          <h3>{{ 'queryExamples.initialFailure' | translate }}</h3>
+          <p>
+            <span [appQueryStatus]="initialQuery.status()">{{ initialQuery.status() }}</span>
+          </p>
+          @if (initialQuery.isInitialError()) {
+            <clr-alert clrAlertType="danger" [clrAlertClosable]="false"
+              ><clr-alert-item
+                ><span class="alert-text" role="alert">{{
+                  'queryExamples.initialFailureMessage' | translate
+                }}</span></clr-alert-item
+              ></clr-alert
+            >
+          }
+          @if (initialQuery.hasValue()) {
+            <p>{{ 'queryExamples.failureData' | translate: initialQuery.value().value }}</p>
+          }
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="initialQuery.isLoading()"
+              (click)="initialQuery.reload()"
+            >
+              {{ 'queryExamples.retryRead' | translate }}
+            </button>
+          </div>
+        </article>
+        <article class="query-example" data-testid="failure-refresh">
+          <h3>{{ 'queryExamples.refreshFailure' | translate }}</h3>
+          @if (refreshQuery.hasValue()) {
+            <p data-testid="failure-retained">
+              {{ 'queryExamples.failureData' | translate: refreshQuery.value().value }}
+            </p>
+          }
+          @if (refreshQuery.isRefreshError()) {
+            <clr-alert clrAlertType="warning" [clrAlertClosable]="false"
+              ><clr-alert-item
+                ><span class="alert-text" role="status">{{
+                  'queryExamples.refreshFailureMessage' | translate
+                }}</span></clr-alert-item
+              ></clr-alert
+            >
+          }
+          <p>
+            <span [appQueryStatus]="refreshQuery.status()">{{ refreshQuery.status() }}</span>
+          </p>
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="refreshQuery.isLoading()"
+              (click)="failRefresh()"
+            >
+              {{ 'queryExamples.failRefresh' | translate }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="refreshQuery.isLoading()"
+              (click)="refreshQuery.reload()"
+            >
+              {{ 'queryExamples.retryRead' | translate }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="refreshQuery.isLoading()"
+              (click)="failObserver()"
+            >
+              {{ 'queryExamples.failObserver' | translate }}
+            </button>
+          </div>
+        </article>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'queryExamples.automaticRetry' | translate }}</button>
+      <clr-tab-content *clrIfActive>
+        <article class="query-example" data-testid="failure-retry">
+          <p>{{ 'queryExamples.retryIntro' | translate }}</p>
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="retryQuery.isLoading()"
+              (click)="startRetry()"
+            >
+              {{ 'queryExamples.startRetry' | translate }}
+            </button>
+          </div>
+          <p data-testid="failure-retry-state">
+            <span [appQueryStatus]="retryQuery.status()">{{ retryQuery.status() }}</span
+            >; failureCount: {{ retryQuery.failureCount() }}; nextRetryAt: {{ retryQuery.nextRetryAt() }}
+          </p>
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="promiseQuery.isLoading()"
+              (click)="startPromise()"
+            >
+              {{ 'queryExamples.startPromise' | translate }}
+            </button>
+          </div>
+          <p data-testid="failure-promise-state">
+            Promise: <span [appQueryStatus]="promiseQuery.status()">{{ promiseQuery.status() }}</span>
+          </p>
+        </article>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'queryExamples.deadline' | translate }}</button>
+      <clr-tab-content *clrIfActive>
+        <article class="query-example" data-testid="failure-deadline">
+          <p>{{ 'queryExamples.deadlineIntro' | translate }}</p>
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="deadlineQuery.isLoading()"
+              (click)="startDeadline()"
+            >
+              {{ 'queryExamples.startDeadline' | translate }}
+            </button>
+          </div>
+          @if (deadlineQuery.isInitialError()) {
+            <clr-alert clrAlertType="danger" [clrAlertClosable]="false"
+              ><clr-alert-item
+                ><span class="alert-text" role="alert">{{
+                  'queryExamples.deadlineMessage' | translate
+                }}</span></clr-alert-item
+              ></clr-alert
+            >
+          }
+          <p data-testid="failure-deadline-state">
+            <span [appQueryStatus]="deadlineQuery.status()">{{ deadlineQuery.status() }}</span
+            >; {{ 'queryExamples.canceledReads' | translate: backend.canceled() }}
+          </p>
+        </article>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'queryExamples.mutationFailure' | translate }}</button>
+      <clr-tab-content *clrIfActive>
+        <article class="query-example" data-testid="failure-mutation">
+          <p>{{ 'queryExamples.mutationIntro' | translate }}</p>
+          <form clrForm clrLayout="vertical">
+            <clr-input-container>
+              <label for="failure-name">{{ 'queryExamples.name' | translate }}</label>
+              <input
+                clrInput
+                id="failure-name"
+                name="name"
+                #writeName
+                [value]="name()"
+                (input)="name.set(writeName.value)"
+                data-testid="failure-name"
+              />
+            </clr-input-container>
+          </form>
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="!name().trim() || saveMutation.isLoading()"
+              (click)="save(true)"
+            >
+              {{ 'queryExamples.failWrite' | translate }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary"
+              [disabled]="!name().trim() || saveMutation.isLoading()"
+              (click)="save()"
+            >
+              {{ 'queryExamples.submitWrite' | translate }}
+            </button>
+          </div>
+          @if (saveMutation.status() === 'error') {
+            <p role="alert">{{ 'queryExamples.writeMessage' | translate }}</p>
+          }
+          <p data-testid="failure-mutation-state">
+            <span [appQueryStatus]="saveMutation.status()">{{ saveMutation.status() }}</span>
+          </p>
+        </article>
+      </clr-tab-content>
+    </clr-tab>
+  </clr-tabs>
   <p data-testid="failure-reporting">
     {{ 'queryExamples.failureEvents' | translate: terminalFailures() : diagnostics() }}
   </p>
-  <pre data-testid="failure-request-counts">{{ backend.requests() | json }}</pre>
-  <app-code-block [code]="failureCode" lang="typescript" />
+  <details>
+    <summary>{{ 'queryExamples.counts' | translate }}</summary>
+    <pre data-testid="failure-request-counts">{{ backend.requests() | json }}</pre>
+  </details>
+  <details>
+    <summary>{{ 'queryGuide.configure' | translate }}</summary>
+    <app-code-block [code]="failureCode" lang="typescript" />
+  </details>
 </section>

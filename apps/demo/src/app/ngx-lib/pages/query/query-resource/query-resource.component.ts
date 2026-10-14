@@ -1,8 +1,10 @@
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {QueryStatusDirective} from '../query-status.directive';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, QUERY_CLIENT, QueryClientDiagnostics, queryResource, QueryResourceRef} from 'ngx-lift';
 
 import {QueryFailureExamplesComponent} from './query-failure-examples.component';
@@ -28,8 +30,11 @@ interface DemoUser {
   selector: 'app-query-resource-demo',
   imports: [
     CommonModule,
+    RouterLink,
+    QueryStatusDirective,
     FormsModule,
     ClarityModule,
+    CalloutComponent,
     PageContainerComponent,
     SpinnerComponent,
     TranslatePipe,
@@ -76,7 +81,7 @@ export class QueryResourceDemoComponent {
     };
   }
 
-  metricsQueryA: QueryResourceRef<ServerMetrics | undefined> = queryResource(() =>
+  metricsAQuery: QueryResourceRef<ServerMetrics | undefined> = queryResource(() =>
     this.widgetAShown()
       ? {
           key: ['metrics', 'cluster-overview'],
@@ -86,7 +91,7 @@ export class QueryResourceDemoComponent {
       : undefined,
   );
 
-  metricsQueryB: QueryResourceRef<ServerMetrics | undefined> = queryResource(() =>
+  metricsBQuery: QueryResourceRef<ServerMetrics | undefined> = queryResource(() =>
     this.widgetBShown()
       ? {
           key: ['metrics', 'cluster-overview'],
@@ -97,7 +102,7 @@ export class QueryResourceDemoComponent {
   );
 
   refreshMetrics() {
-    this.metricsQueryA.reload();
+    this.metricsAQuery.reload();
     this.refreshDiagnostics();
   }
 
@@ -177,8 +182,7 @@ export class QueryResourceDemoComponent {
   }));
 
   newUserName = signal('');
-  newUserRole = signal('Developer');
-  mutationConcurrency = signal<'exhaust' | 'concat' | 'parallel'>('exhaust');
+  newUserRole = signal('Platform Engineer');
 
   addUserMutation = mutateResource(
     async (payload: {name: string; role: string}) => {
@@ -193,7 +197,7 @@ export class QueryResourceDemoComponent {
     },
     {
       invalidatesTags: [{type: 'users'}],
-      concurrency: this.mutationConcurrency(),
+      concurrency: 'exhaust',
     },
   );
 
@@ -210,63 +214,33 @@ export class QueryResourceDemoComponent {
   // ---------------------------------------------------------------------------
   // Code Snippets for DemoPlayground
   // ---------------------------------------------------------------------------
-  readonly diagnosticsCode = highlight(`// 5. Developer Diagnostics & Cache Inspector
-// QueryClient provides inspection hooks for developer tools, telemetry, and debugging
-const diagnostics = queryClient.getDiagnostics();
-console.log('Total entries:', diagnostics.entryCount);
-console.log('Active queries:', diagnostics.activeEntryCount);
-console.log('Total observers:', diagnostics.totalObserverCount);
+  readonly diagnosticsCode = highlight(`private readonly queryClient = inject(QUERY_CLIENT);
+readonly diagnostics = signal(this.queryClient.getDiagnostics());
 
-// Inspect individual cache entry metrics & scheduling
-const entries = queryClient.getEntriesSnapshot();
-for (const entry of entries) {
-  console.log(entry.key, {
-    status: entry.status,
-    observers: entry.observerCount,
-    isStale: entry.isStale,
-    remainingGc: entry.remainingGcTime,
-    remainingPoll: entry.remainingPollDelay,
-    failures: entry.failureCount,
-    retryAt: entry.nextRetryAt,
-  });
-}`);
-
-  readonly compareCode = highlight(`// 1. resourceAsync: Local component async state
-// Best for: component-owned form submissions, local search inputs, transient state
-const userRef = resourceAsync(() => this.http.get<User>('/api/profile'));
-
-// 2. queryResource: Shared entity state with client-wide caching & deduplication
-// Best for: server state shared across routes/components, polling, tag invalidation
-const profileQuery = queryResource(() => ({
-  key: ['user', userId()],
-  tags: [{ type: 'users', id: userId() }],
-  loader: () => this.http.get<User>('/api/profile'),
-  staleTime: 30_000,     // 30s freshness
-  gcTime: 300_000,       // 5m cache retention
-}), {
-  pollInterval: 10_000,  // Background polling coordinated across observers
-});
-
-// 3. mutateResource: Invalidate cached queries automatically
-const updateProfile = mutateResource(
-  (data: UpdateUserDto) => this.http.patch('/api/profile', data),
-  {
-    invalidatesTags: (result) => [{ type: 'users', id: result.id }],
-    concurrency: 'exhaust', // 'parallel' | 'exhaust' | 'concat'
+refreshDiagnostics(): void {
+  this.diagnostics.set(this.queryClient.getDiagnostics());
+  const entries = this.queryClient.getEntriesSnapshot();
+  for (const entry of entries) {
+    console.log(entry.key, {
+      status: entry.status,
+      observers: entry.observerCount,
+      failures: entry.failureCount,
+      retryAt: entry.nextRetryAt,
+    });
   }
-);`);
+}`);
 
   readonly coalesceCode = highlight(`// Component A and Component B observe the SAME query key
 // Even when mounted concurrently, QueryClient executes only 1 HTTP request!
-const statsQueryA = queryResource(() => ({
+readonly statsAQuery = queryResource(() => ({
   key: ['metrics', 'cluster-overview'],
-  loader: ({ abortSignal }) => fetch('/api/metrics', { signal: abortSignal }),
+  loader: () => this.http.get<ServerMetrics>('/api/metrics'),
   staleTime: 5000,
 }));
 
-const statsQueryB = queryResource(() => ({
+readonly statsBQuery = queryResource(() => ({
   key: ['metrics', 'cluster-overview'],
-  loader: ({ abortSignal }) => fetch('/api/metrics', { signal: abortSignal }),
+  loader: () => this.http.get<ServerMetrics>('/api/metrics'),
   staleTime: 5000,
 }));`);
 
@@ -274,36 +248,32 @@ const statsQueryB = queryResource(() => ({
 // - Multiple observers join the fastest requested interval.
 // - Automatically pauses when document visibility is hidden.
 // - Resumes on visibility return without duplicate bursts.
-const statusQuery = queryResource(
+readonly statusQuery = queryResource(
   () => ({
     key: ['system', 'heartbeat'],
     loader: () => this.api.checkHealth(),
   }),
   {
     pollInterval: 3000, // polls every 3 seconds
-  }
+  },
 );`);
 
   readonly mutationCode = highlight(`// Define query with cache tags
-const usersQuery = queryResource(() => ({
+readonly usersQuery = queryResource(() => ({
   key: ['users', 'list'],
-  tags: [{ type: 'users' }],
+  tags: [{type: 'users'}],
   loader: () => this.userService.getAll(),
   staleTime: 60_000,
 }));
 
 // Define mutation that invalidates 'users' tag on success
-// Provides mutateResource
-const addUser = mutateResource(
-  (payload: NewUser) => this.userService.create(payload),
-  {
-    invalidatesTags: [{ type: 'users' }],
-    concurrency: 'exhaust', // prevents double-submit
-  }
-);
+readonly addUserMutation = mutateResource((payload: NewUser) => this.userService.create(payload), {
+  invalidatesTags: [{type: 'users'}],
+  concurrency: 'exhaust', // prevents double-submit
+});
 
 // In template or handler:
-// await addUser.mutate({ name: 'Alice', role: 'Admin' });
+// await this.addUserMutation.mutate({ name: 'Alice', role: 'Admin' });
 // -> usersQuery automatically refetches fresh data in the background!`);
 
   // ---------------------------------------------------------------------------
@@ -439,7 +409,7 @@ const addUser = mutateResource(
     },
     {
       name: 'value',
-      type: 'Signal<T>',
+      type: 'Signal<T | undefined>',
       description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.value'),
     },
     {

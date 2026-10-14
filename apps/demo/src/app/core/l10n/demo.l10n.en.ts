@@ -563,7 +563,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Tag-based Invalidation',
   'queryResource.badgeManualReload': 'Manual reload trigger',
   'queryResource.badgeAutoMutate': 'Automatic via mutateResource',
-  'queryResource.demo1Section': '1. Request Coalescing & Deduplication',
+  'queryResource.demo1Section': 'Request Coalescing & Deduplication',
   'queryResource.demo1SectionDesc':
     'When two or more components mount at the same time and request the same query key, <code>QueryClient</code> shares the single in-flight network request. Both components receive the exact same response with zero redundant traffic.',
   'queryResource.demo1PlaygroundTitle': 'Concurrent Observers Share In-Flight Work',
@@ -581,7 +581,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Memory Usage',
   'queryResource.status': 'Status',
   'queryResource.updated': 'Updated',
-  'queryResource.demo2Section': '2. Stale-While-Revalidate & Freshness Policies',
+  'queryResource.demo2Section': 'Stale-While-Revalidate & Freshness Policies',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> controls how long cached data remains fresh. If an observer requests data while fresh, it renders instantly from memory. If stale, the cached data is displayed immediately while a background refresh executes silently without clearing the UI (indicated by <code>status: 'reloading'</code>).",
   'queryResource.configuredStaleTime': 'Configured staleTime: {0} seconds',
@@ -594,7 +594,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Healthy',
   'queryResource.region': 'Region',
   'queryResource.snapshotTime': 'Snapshot Time',
-  'queryResource.demo3Section': '3. Coordinated Polling with Visibility Awareness',
+  'queryResource.demo3Section': 'Coordinated Polling with Visibility Awareness',
   'queryResource.demo3SectionDesc':
     'Configure <code>pollInterval</code> to periodically refresh active queries. Multiple observers requesting different intervals are coordinated at the fastest rate. Polling automatically pauses when the browser tab is hidden and resumes immediately upon returning.',
   'queryResource.demo3PlaygroundTitle': 'Background Polling',
@@ -608,7 +608,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Last Pulse',
   'queryResource.pollingIdleMsg':
     'Polling is currently idle. Click "Start Polling" to observe live coordinated background checks.',
-  'queryResource.demo4Section': '4. Mutations & Tag Invalidation (mutateResource)',
+  'queryResource.demo4Section': 'Mutations & Tag Invalidation (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> handles asynchronous writes. Upon successful mutation, it invalidates matching tags, causing all active queries with those tags to automatically refetch the latest server data in the background.',
   'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
@@ -2112,7 +2112,7 @@ export const enTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Refresh service widgets',
   'queryExamples.widget': 'Widget {0}: tenant {1}, {2}',
   'queryExamples.counts': 'HTTP request counts:',
-  'queryExamples.dynamic': '4. Dynamic parallel queries',
+  'queryExamples.dynamic': 'Dynamic parallel queries',
   'queryExamples.dynamicIntro':
     'queryResources maps selected IDs to independent observers. Reordering preserves observers; removing an ID disposes its observer.',
   'queryExamples.one': 'Tenant A only',
@@ -2125,4 +2125,21 @@ export const enTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'True during refresh while retaining cached data.',
   'queryResource.thFailures': 'Failed attempts',
   'queryResource.thNextRetry': 'Next retry',
+  'queryGuide.selection': 'Related tools:',
+  'queryGuide.basic': '1. Start with a cached read',
+  'queryGuide.basicIntro':
+    'Capture the tenant once, use it in both the key and loader, then read the result signals. Refresh keeps the last successful value.',
+  'queryGuide.configure': 'Application configuration',
+  'queryGuide.collectionIntro':
+    'Use queryResources for a changing list of independent reads. Each input has its own cached result, loading state and recovery controls.',
+  'queryGuide.empty': 'No items selected. No collection reads are active.',
+  'queryGuide.partialIntro':
+    'One row fails while its sibling stays available. Retry the failed row without refetching successful rows.',
+  'queryGuide.collectionContract':
+    'The collection is a signal of ordered query refs. Reordering preserves refs; removal hides rows immediately and releases observers during effect scheduling. Duplicate canonical keys are rejected.',
+  'queryGuide.collectionLimits':
+    'Use one data type per collection and filter out items that are not ready. Requests start in parallel with no concurrency limit; paginate or limit large selections. maxEntries does not evict active or pending entries.',
+  'queryGuide.namingTitle': 'Naming query and mutation handles',
+  'queryGuide.namingHandles':
+    'Use <code>userQuery</code> for one query, <code>tenantQueries</code> for a collection, and <code>createMutation</code> for a write. Reserve <code>user</code> or <code>tenant</code> for the resolved data.',
 };

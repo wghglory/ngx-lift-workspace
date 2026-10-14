@@ -587,7 +587,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': "Invalidation fondée sur l'étiquette",
   'queryResource.badgeManualReload': 'Déclencheur manuel de recharge',
   'queryResource.badgeAutoMutate': 'Automatique via mutateResource',
-  'queryResource.demo1Section': '1. Demande de coalcage et de déduplication',
+  'queryResource.demo1Section': 'Demande de coalcage et de déduplication',
   'queryResource.demo1SectionDesc':
     'Lorsque deux ou plusieurs composants se montent en même temps et demandent la même clé de requête, <code>QueryClient</code> partage la seule demande de réseau en vol. Les deux composants reçoivent exactement la même réponse avec aucun trafic redondant.',
   'queryResource.demo1PlaygroundTitle': 'Cocurrent Observers Part in-Flight Work',
@@ -605,7 +605,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Utilisation de la mémoire',
   'queryResource.status': 'État',
   'queryResource.updated': 'Mise à jour',
-  'queryResource.demo2Section': '2. Politiques relatives à la revalidation et à la fraîcheur',
+  'queryResource.demo2Section': 'Politiques relatives à la revalidation et à la fraîcheur',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> contrôle pendant combien les données en cache restent fraiches. Si un observateur demande des données pendant qu'elles sont fraiches, elles sont rendues instantanément à partir de la mémoire. Si elles sont périmées, les données en cache sont affichées immédiatement pendant qu'une réinitialisation de fond s'exécute en silence sans effacer le UI (indiqué par <code>status: 'reloading'</code>).",
   'queryResource.configuredStaleTime': 'Configuration de staleTime : {0} secondes',
@@ -618,7 +618,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Santé',
   'queryResource.region': 'Région',
   'queryResource.snapshotTime': "Heure d'instantané",
-  'queryResource.demo3Section': '3. Sondage coordonné avec sensibilisation à la visibilité',
+  'queryResource.demo3Section': 'Sondage coordonné avec sensibilisation à la visibilité',
   'queryResource.demo3SectionDesc':
     "Configurez <code>pollInterval</code> pour actualiser périodiquement les requêtes actives. Plusieurs observateurs demandant des intervalles différents sont synchronisés à la plus grande vitesse. L'interrogation périodique s'arrête automatiquement lorsque l'onglet du navigateur est masqué et se reprend immédiatement lorsqu'il est réactivé.",
   'queryResource.demo3PlaygroundTitle': 'Historique du scrutin',
@@ -632,7 +632,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Dernier pouls',
   'queryResource.pollingIdleMsg':
     'Le sondage est actuellement inactif. Cliquez sur "Démarrer le sondage" pour observer en direct les vérifications coordonnées des antécédents.',
-  'queryResource.demo4Section': "4. Mutations et invalidation de l'étiquette (mutateResource)",
+  'queryResource.demo4Section': "Mutations et invalidation de l'étiquette (mutateResource)",
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> gère les écritures asynchrones. Une fois la mutation réussie, elle invalide les balises correspondantes, ce qui fait que toutes les requêtes actives avec ces balises permettent de récupérer automatiquement les dernières données du serveur en arrière-plan.',
   'queryResource.demo4PlaygroundTitle': 'Invalidation par étiquette',
@@ -2240,7 +2240,7 @@ export const frTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Actualiser les widgets du service',
   'queryExamples.widget': 'Widget {0} : locataire {1}, {2}',
   'queryExamples.counts': 'Nombre de requêtes HTTP :',
-  'queryExamples.dynamic': '4. Requêtes parallèles dynamiques',
+  'queryExamples.dynamic': 'Requêtes parallèles dynamiques',
   'queryExamples.dynamicIntro':
     'queryResources associe les ID sélectionnés à des observateurs indépendants. Le réordonnancement les conserve ; retirer un ID libère son observateur.',
   'queryExamples.one': 'Locataire A uniquement',
@@ -2253,4 +2253,21 @@ export const frTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'True pendant l’actualisation avec conservation du cache.',
   'queryResource.thFailures': 'Tentatives échouées',
   'queryResource.thNextRetry': 'Prochaine tentative',
+  'queryGuide.selection': 'Outils associés :',
+  'queryGuide.basic': '1. Commencer par une lecture en cache',
+  'queryGuide.basicIntro':
+    'Capturez le locataire une seule fois, utilisez-le dans key et loader, puis lisez les signaux du résultat. Une actualisation conserve la dernière valeur obtenue.',
+  'queryGuide.configure': 'Configuration de l’application',
+  'queryGuide.collectionIntro':
+    'Utilisez queryResources pour une liste variable de lectures indépendantes. Chaque entrée possède son résultat en cache, son état de chargement et ses actions de récupération.',
+  'queryGuide.empty': 'Aucun élément sélectionné. Aucune lecture de la collection n’est active.',
+  'queryGuide.partialIntro':
+    'Une ligne échoue tandis que l’autre reste disponible. Relancez uniquement la ligne en échec.',
+  'queryGuide.collectionContract':
+    'La collection est un signal de références ordonnées. Réordonner conserve les références ; supprimer masque immédiatement les lignes et libère les observateurs lors de l’exécution de l’effect. Les clés canoniques dupliquées sont rejetées.',
+  'queryGuide.collectionLimits':
+    'Utilisez un type de données par collection et filtrez les éléments non prêts. Les requêtes démarrent en parallèle sans limite de concurrence ; paginez ou limitez les grandes sélections. maxEntries ne supprime pas les entrées actives ou en attente.',
+  'queryGuide.namingTitle': 'Nommer les références de requêtes et de mutations',
+  'queryGuide.namingHandles':
+    'Utilisez <code>userQuery</code> pour une requête, <code>tenantQueries</code> pour une collection et <code>createMutation</code> pour une écriture. Réservez <code>user</code> ou <code>tenant</code> aux données obtenues.',
 };

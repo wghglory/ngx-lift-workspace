@@ -33,20 +33,14 @@ describe('query failure examples', () => {
     vi.useRealTimers();
   });
 
-  it('recovers only failed rows and keeps input identity available without successful data', async () => {
+  it('recovers an initial failure without losing its error state contract', async () => {
     await advance();
     expect(component.initialQuery.isInitialError()).toBe(true);
-    const [a, b] = component.rowQueries();
-    expect(a.value()?.value).toBe(42);
-    expect(b.item()).toBe('b');
-    expect(b.isInitialError()).toBe(true);
-    b.reload();
     component.initialQuery.reload();
     await advance();
-    expect(b.value()?.value).toBe(42);
     expect(component.initialQuery.isInitialError()).toBe(false);
-    expect(component.backend.requests()['GET rows/a']).toBe(1);
-    expect(component.backend.requests()['GET rows/b']).toBe(2);
+    expect(component.initialQuery.value()?.value).toBe(42);
+    expect(component.backend.requests()['GET initial']).toBe(2);
   });
 
   it('shows shared retry progress for HttpClient and native Promise reads without terminal errors', async () => {
@@ -61,7 +55,7 @@ describe('query failure examples', () => {
     expect(component.retryQuery.failureCount()).toBe(0);
     expect(component.promiseQuery.value()?.value).toBe(42);
     expect(component.backend.requests()['GET retry']).toBe(3);
-    expect(component.terminalFailures()).toBe(2);
+    expect(component.terminalFailures()).toBe(1);
   });
 
   it('retains data on refresh failure and separates observer diagnostics from query errors', async () => {
@@ -72,12 +66,12 @@ describe('query failure examples', () => {
     expect(component.refreshQuery.isRefreshError()).toBe(true);
     expect(component.refreshQuery.value()?.value).toBe(42);
     expect(component.refreshQuery.updatedAt()).toBe(updatedAt);
-    expect(component.terminalFailures()).toBe(3);
+    expect(component.terminalFailures()).toBe(2);
     component.failObserver();
     await advance();
     expect(component.refreshQuery.status()).toBe('resolved');
     expect(component.diagnostics()).toBe(1);
-    expect(component.terminalFailures()).toBe(3);
+    expect(component.terminalFailures()).toBe(2);
   });
 
   it('bounds a hanging subscription and never automatically repeats a failed write', async () => {

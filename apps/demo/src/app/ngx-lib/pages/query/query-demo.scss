@@ -1,0 +1,49 @@
+:host {
+  display: block;
+}
+
+.query-section {
+  margin-block: var(--cds-global-space-9);
+}
+.query-actions,
+.query-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cds-global-space-5);
+  margin-block: var(--cds-global-space-6);
+}
+.query-actions .btn {
+  margin: 0;
+}
+.query-example {
+  margin-block: var(--cds-global-space-7);
+}
+.query-example h3 {
+  margin-top: 0;
+}
+.query-table {
+  overflow-x: auto;
+}
+.query-table .table {
+  margin-top: var(--cds-global-space-6);
+}
+.query-state p {
+  margin: 0;
+}
+details {
+  margin-block: var(--cds-global-space-6);
+}
+summary {
+  cursor: pointer;
+}
+pre {
+  overflow-x: auto;
+}
+
+.query-naming-title {
+  margin: 0 0 var(--cds-global-space-6);
+}
+.query-naming-copy {
+  margin: 0;
+}

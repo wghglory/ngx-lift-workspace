@@ -3,10 +3,12 @@ import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe} from 'clr-lift';
-import {mutateResource, QUERY_CLIENT, QueryClient, queryResource, queryResources} from 'ngx-lift';
+import {mutateResource, QUERY_CLIENT, QueryClient, queryResource} from 'ngx-lift';
 import {of} from 'rxjs';
 
-import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
+import {ClarityModule} from '@clr/angular';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {QueryStatusDirective} from '../query-status.directive';
 import {highlight} from '../../../../shared/utils/highlight.util';
 import {QueryDemoApiService} from './query-demo-api.service';
 import {DemoTenant, QueryDemoBackend} from './query-demo-backend';
@@ -14,7 +16,15 @@ import {DemoTenant, QueryDemoBackend} from './query-demo-backend';
 /** Executable HttpClient examples isolated from the application's real HTTP configuration. */
 @Component({
   selector: 'app-query-usage-examples',
-  imports: [AsyncPipe, JsonPipe, FormsModule, CodeBlockComponent, TranslatePipe],
+  imports: [
+    AsyncPipe,
+    JsonPipe,
+    FormsModule,
+    ClarityModule,
+    DemoPlaygroundComponent,
+    QueryStatusDirective,
+    TranslatePipe,
+  ],
   providers: [
     QueryDemoBackend,
     QueryDemoApiService,
@@ -29,6 +39,7 @@ import {DemoTenant, QueryDemoBackend} from './query-demo-backend';
     },
   ],
   templateUrl: './query-usage-examples.component.html',
+  styleUrl: '../query-demo.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryUsageExamplesComponent {
@@ -40,13 +51,6 @@ export class QueryUsageExamplesComponent {
   readonly widgetsShown = signal(false);
   readonly widgetRevision = signal(0);
   readonly widgetNames = ['A', 'B', 'C'];
-  readonly selectedTenants = signal(['a']);
-  readonly tenantQueries = queryResources(this.selectedTenants, (id) => ({
-    key: ['query-demo', id, 'tenant'],
-    staleTime: 30_000,
-    loader: () => this.http.get<DemoTenant>(`/query-demo/tenants/${id}`),
-  }));
-
   readonly tenantQuery = queryResource(() => {
     const id = this.tenantId();
     return {
@@ -97,58 +101,62 @@ export class QueryUsageExamplesComponent {
     this.widgetRevision.update((value) => value + 1);
   }
 
-  readonly usageCode =
-    highlight(`import {queryResource, QueryDefinition, fetchQueryObservable, QUERY_CLIENT} from 'ngx-lift';
-import {ChangeDetectionStrategy, Component, Injectable, inject, signal} from '@angular/core';
+  readonly basicCode = highlight(`import {Component, ChangeDetectionStrategy, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {queryResource} from 'ngx-lift';
 
-interface Tenant { id: string; }
-interface Database { id: number; name: string; }
-
-@Injectable({providedIn: 'root'})
-export class DatabaseService {
-  private readonly http = inject(HttpClient);
-  private readonly client = inject(QUERY_CLIENT);
-  databaseQuery(id: string): QueryDefinition<Database[]> {
-    return {key: ['databases', id], tags: [{type: 'Databases', scope: id}],
-      loader: () => this.http.get<Database[]>(\`/api/tenants/\${id}/databases\`)};
-  }
-  databases$(id: string) {
-    return fetchQueryObservable(this.client, this.databaseQuery(id));
-  }
+interface Tenant {
+  id: string;
+  name: string;
 }
 
-@Component({selector: 'app-example', template: '{{ databasesQuery.status() }}',
-  changeDetection: ChangeDetectionStrategy.OnPush})
-export class ExampleComponent {
+// Configure provideHttpClient() in application providers.
+@Component({
+  selector: 'app-tenant',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: \`<p>{{ tenantQuery.value()?.name }}: {{ tenantQuery.status() }}</p>
+    <button (click)="tenantQuery.reload()">Refresh</button>\`,
+})
+export class TenantComponent {
   private readonly http = inject(HttpClient);
-  private readonly api = inject(DatabaseService);
   readonly tenantId = signal('a');
   readonly tenantQuery = queryResource(() => {
     const id = this.tenantId();
-    return {key: ['tenants', id], loader: () => this.http.get<Tenant>(\`/api/tenants/\${id}\`)};
-  });
-  readonly databasesQuery = queryResource(() => {
-    const tenant = this.tenantQuery.value();
-    return tenant ? this.api.databaseQuery(tenant.id) : undefined;
+    return {
+      key: ['tenants', id],
+      loader: () => this.http.get<Tenant>(\`/api/tenants/\${id}\`),
+      staleTime: 30_000,
+    };
   });
 }`);
 
-  readonly dynamicCode = highlight(`import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {queryResources} from 'ngx-lift';
+  readonly dependentCode = highlight(`// Component fields (alongside tenantQuery, http and api).
+readonly databasesQuery = queryResource(() => {
+  const tenant = this.tenantQuery.value();
+  if (!tenant) return undefined; // No request until ready.
+  return {
+    key: ['databases', tenant.id],
+    tags: [{type: 'Databases', scope: tenant.id}],
+    loader: () => this.http.get<Database[]>(\`/api/tenants/\${tenant.id}/databases\`),
+  };
+});
+readonly createMutation = mutateResource((args: {tenantId: string; name: string}) => this.api.createDatabase$(args), {
+  concurrency: 'exhaust',
+  invalidatesTags: (_result, args) => [{type: 'Databases', scope: args.tenantId}],
+});`);
 
-@Component({selector: 'app-tenants', changeDetection: ChangeDetectionStrategy.OnPush,
-  template: \`@for (query of tenantQueries(); track query.key) {
-    <p>{{ query.value()?.id }}: {{ query.status() }}</p>
-  }\`})
-export class TenantsComponent {
-  private readonly http = inject(HttpClient);
-  readonly selectedIds = signal<string[]>(['a']);
-  readonly tenantQueries = queryResources(this.selectedIds, id => ({
-    key: ['tenants', id],
-    loader: () => this.http.get<{id: string}>(\`/api/tenants/\${id}\`),
-    staleTime: 30_000,
-  }));
-}`);
+  readonly serviceCode = highlight(`// A service returns a cold Observable backed by the shared cache.
+preferences$(id: string, refresh = false) {
+  return fetchQueryObservable(
+    this.client,
+    {
+      key: ['preferences', id],
+      loader: () => this.http.get<Preferences>(\`/api/tenants/\${id}/preferences\`),
+      staleTime: 30_000,
+    },
+    {refresh},
+  );
+}
+// Three async-pipe subscribers join the same in-flight request.
+// For ongoing invalidation updates, use observeQueryObservable instead.`);
 }

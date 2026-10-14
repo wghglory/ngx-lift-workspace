@@ -1,0 +1,120 @@
+<cll-page-container title="queryResources">
+  <p class="p1">{{ 'queryGuide.collectionIntro' | translate }}</p>
+  <cll-callout data-testid="query-naming-convention">
+    <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
+    <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
+  </cll-callout>
+
+  <p>
+    {{ 'queryGuide.selection' | translate }}
+    <a routerLink="/ngx-lift/query/queryResource"><code>queryResource</code></a>
+  </p>
+  <section class="query-section" data-testid="query-demo-dynamic">
+    <h2>{{ 'queryExamples.dynamic' | translate }}</h2>
+    <app-demo-playground
+      [title]="'queryExamples.dynamic' | translate"
+      [description]="'queryExamples.dynamicIntro' | translate"
+      level="beginner"
+      [tsCode]="dynamicCode"
+    >
+      <div preview>
+        <div class="query-actions">
+          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['a'])">
+            {{ 'queryExamples.one' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['a', 'b'])">
+            {{ 'queryExamples.both' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['b', 'a'])">
+            {{ 'queryExamples.reverse' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set([])">
+            {{ 'queryExamples.empty' | translate }}
+          </button>
+        </div>
+        @for (query of tenantQueries(); track query.key) {
+          <div class="query-state" data-testid="query-demo-dynamic-row">
+            <span>{{ query.value()?.name ?? 'queryExamples.tenant' | translate }}</span>
+            <span [appQueryStatus]="query.status()">{{ query.status() }}</span>
+          </div>
+        } @empty {
+          <p role="status">{{ 'queryGuide.empty' | translate }}</p>
+        }
+      </div>
+    </app-demo-playground>
+  </section>
+  <section class="query-section" data-testid="failure-rows">
+    <h2>{{ 'queryExamples.partialFailure' | translate }}</h2>
+    <app-demo-playground
+      [title]="'queryExamples.partialFailure' | translate"
+      [description]="'queryGuide.partialIntro' | translate"
+      level="intermediate"
+      [htmlCode]="rowCode"
+    >
+      <div preview>
+        @for (row of rowQueries(); track row.key) {
+          <div class="query-example" data-testid="failure-row">
+            <div class="query-state">
+              <span>{{ row.item() }}</span
+              ><span [appQueryStatus]="row.status()">{{ row.status() }}</span>
+            </div>
+            @if (row.hasValue()) {
+              <p>{{ 'queryExamples.failureData' | translate: row.value()?.value }}</p>
+            }
+            @if (row.isInitialError()) {
+              <p role="alert">{{ 'queryExamples.initialFailureMessage' | translate }}</p>
+              <div class="query-actions">
+                <button type="button" class="btn btn-sm btn-outline" (click)="row.reload()">
+                  {{ 'queryExamples.retryRead' | translate }}
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </app-demo-playground>
+  </section>
+  <section class="query-section">
+    <h2>{{ 'queryResource.apiReference' | translate }}</h2>
+    <p><code>queryResources(items, definition, options?)</code></p>
+    <p>{{ 'queryGuide.collectionContract' | translate }}</p>
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>API</th>
+            <th>{{ 'queryResource.status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>items: () => readonly I[]</code></td>
+            <td>{{ 'queryExamples.dynamicIntro' | translate }}</td>
+          </tr>
+          <tr>
+            <td><code>definition: (item: I) => QueryDefinition&lt;T&gt;</code></td>
+            <td><code>key, loader, tags, staleTime, gcTime, cancelOnNoObservers, retry, deadlineMs</code></td>
+          </tr>
+          <tr>
+            <td><code>options: QueryResourceOptions</code></td>
+            <td><code>injector, client, pollInterval, refetchOnFocus, refetchOnReconnect</code></td>
+          </tr>
+          <tr>
+            <td><code>rows(): readonly QueryResourceItem&lt;T, I&gt;[]</code></td>
+            <td><code>key, item(), value(), error(), status(), hasValue(), reload(), execute(), destroy()</code></td>
+          </tr>
+          <tr>
+            <td><code>rows.destroy()</code></td>
+            <td>{{ 'demoApi.query-resource.queryResourceRefApiProps.destroy()' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>{{ 'queryGuide.collectionLimits' | translate }}</p>
+  </section>
+  <details>
+    <summary>{{ 'queryExamples.counts' | translate }}</summary>
+    <pre data-testid="query-demo-counts">{{ backend.requests() | json }}</pre>
+    <pre data-testid="failure-request-counts">{{ failureBackend.requests() | json }}</pre>
+  </details>
+</cll-page-container>

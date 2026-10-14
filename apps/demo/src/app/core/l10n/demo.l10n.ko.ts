@@ -561,7 +561,7 @@ export const koTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': '태그 기반 무효화',
   'queryResource.badgeManualReload': '수동 재로드 트리거',
   'queryResource.badgeAutoMutate': '자동으로 mutateResource를 통해',
-  'queryResource.demo1Section': '1. 요청 코일리즈 & 중복 제거',
+  'queryResource.demo1Section': '요청 코일리즈 & 중복 제거',
   'queryResource.demo1SectionDesc':
     '두 개 이상의 컴포넌트가 동시에 마운트되고 동일한 쿼리 키를 요청할 경우, <code>QueryClient</code>는 단일 네트워크 요청을 공유합니다. 두 컴포넌트 모두 정확한 동일한 응답을 받고, 제로 레디던트 트래픽을 생성합니다.',
   'queryResource.demo1PlaygroundTitle': '동시 관찰자들이 중간 작업을 공유합니다',
@@ -579,7 +579,7 @@ export const koTranslations: Record<string, string> = {
   'queryResource.memoryUsage': '메모리 사용량',
   'queryResource.status': '상태',
   'queryResource.updated': '업데이트',
-  'queryResource.demo2Section': '2. 스테이트-while-재검증 및 신선도 정책',
+  'queryResource.demo2Section': '스테이트-while-재검증 및 신선도 정책',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code>은 캐시된 데이터가 신선한지 얼마나 오래 유지하는지를 제어합니다. 관찰자가 신선한 데이터를 요청할 경우 즉시 메모리에서 렌더링됩니다. 만약 캐시된 데이터가 오래된 경우, 즉시 캐시된 데이터를 표시하면서 배경에서 자동으로 재검증이 실행됩니다. 이는 UI를 클리어하지 않고 (상태: 'reloading'으로 표시됨) 수행됩니다.",
   'queryResource.configuredStaleTime': '설정된 staleTime: {0} 초',
@@ -592,7 +592,7 @@ export const koTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} 건강',
   'queryResource.region': '지역',
   'queryResource.snapshotTime': '스냅샷 시간',
-  'queryResource.demo3Section': '3. 시각 인식을 고려한 좌표 폴링',
+  'queryResource.demo3Section': '시각 인식을 고려한 좌표 폴링',
   'queryResource.demo3SectionDesc':
     'pollInterval을 구성하여 활성 쿼리의 주기적인 새로고침을 수행합니다. 여러 관찰자가 다른 간격을 요청하는 경우 가장 빠른 속도로 조율됩니다. 탭이 숨어 있는 경우 폴링은 자동으로 중지되고, 다시 돌아올 때 즉시 재개됩니다.',
   'queryResource.demo3PlaygroundTitle': '배경 폴링',
@@ -605,7 +605,7 @@ export const koTranslations: Record<string, string> = {
   'queryResource.lastPulse': '최근 파울스',
   'queryResource.pollingIdleMsg':
     '폴링은 현재 비어 있습니다. "폴링 시작"을 클릭하여 실시간으로 조율된 배경 검사를 관찰할 수 있습니다.',
-  'queryResource.demo4Section': '4. 변경 작업 및 태그 유효성 검사 (mutateResource)',
+  'queryResource.demo4Section': '변경 작업 및 태그 유효성 검사 (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code>는 비동기 작성 작업을 처리합니다. 변경 작업이 성공적으로 완료되면, 일치하는 태그를 무효화하여 모든 활성 쿼리와 함께 해당 태그를 사용하는 쿼리가 배경에서 자동으로 최신 서버 데이터를 다시 가져옵니다.',
   'queryResource.demo4PlaygroundTitle': '태그 기반 유효성 검사',
@@ -2070,7 +2070,7 @@ export const koTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': '서비스 위젯 새로 고침',
   'queryExamples.widget': '위젯 {0}: 테넌트 {1}, {2}',
   'queryExamples.counts': 'HTTP 요청 수:',
-  'queryExamples.dynamic': '4. 동적 병렬 쿼리',
+  'queryExamples.dynamic': '동적 병렬 쿼리',
   'queryExamples.dynamicIntro':
     'queryResources는 선택한 ID를 독립적인 관찰자에 매핑합니다. 순서를 바꿔도 유지되며 ID를 제거하면 관찰자를 해제합니다.',
   'queryExamples.one': '테넌트 A만',
@@ -2083,4 +2083,21 @@ export const koTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': '캐시 데이터를 유지하며 새로 고치는 동안 true입니다.',
   'queryResource.thFailures': '실패한 시도',
   'queryResource.thNextRetry': '다음 재시도',
+  'queryGuide.selection': '관련 도구:',
+  'queryGuide.basic': '1. 캐시된 읽기로 시작하기',
+  'queryGuide.basicIntro':
+    '테넌트를 한 번 캡처하여 key와 loader에 함께 사용한 다음 결과 시그널을 읽습니다. 새로 고침 중에도 마지막으로 성공한 값을 유지합니다.',
+  'queryGuide.configure': '애플리케이션 설정',
+  'queryGuide.collectionIntro':
+    'queryResources는 변경되는 독립적인 읽기 목록에 사용합니다. 각 입력에는 자체 캐시 결과, 로딩 상태, 복구 작업이 있습니다.',
+  'queryGuide.empty': '선택한 항목이 없습니다. 활성 컬렉션 읽기가 없습니다.',
+  'queryGuide.partialIntro':
+    '한 행이 실패해도 다른 행은 계속 사용할 수 있습니다. 성공한 행을 다시 읽지 않고 실패한 행만 재시도합니다.',
+  'queryGuide.collectionContract':
+    '컬렉션은 순서가 있는 쿼리 참조의 시그널입니다. 재정렬 시 참조를 유지하며 삭제 시 행을 즉시 숨기고 effect 실행 시 관찰자를 해제합니다. 중복된 정규화 키는 거부됩니다.',
+  'queryGuide.collectionLimits':
+    '컬렉션마다 하나의 데이터 타입을 사용하고 준비되지 않은 항목은 필터링하세요. 요청은 동시 실행 제한 없이 병렬로 시작합니다. 큰 목록은 페이지를 나누거나 선택 수를 제한하세요. maxEntries는 활성 또는 대기 중인 항목을 제거하지 않습니다.',
+  'queryGuide.namingTitle': '쿼리 및 뮤테이션 참조 이름',
+  'queryGuide.namingHandles':
+    '단일 쿼리는 <code>userQuery</code>, 컬렉션은 <code>tenantQueries</code>, 쓰기 작업은 <code>createMutation</code>으로 이름을 지정합니다. <code>user</code> 또는 <code>tenant</code>는 반환된 데이터에 사용합니다.',
 };

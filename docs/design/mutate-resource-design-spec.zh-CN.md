@@ -20,3 +20,10 @@ handler，维护已有同步错误处理行为。
 验证结果：698 个 library 测试全部通过，包含 18 个 mutation 测试；源码和测试类型检查、lint 均通过。
 
 最终评审纠正英文 API 表格与默认 client 说明：使用显式 client 或根 QUERY_CLIENT，未实现的 reset 不再列入 API。
+
+当前生产约定、演示学习顺序和消费验证边界见 [Query 生产使用说明](query-resource-design-spec.zh-CN.md)。共享 optimistic
+rollback、持久化、无限查询等仍按真实需求设计；当前浏览器验证不等于 SSR/hydration 支持。
+
+命名约定：单个查询为 `userQuery`，独立查询集合为 `tenantQueries`，写操作句柄为 `createMutation`。组件/服务字段使用
+`readonly`，TypeScript 中通过 `this` 访问成员；模板不写 `this`，方法/loader 内的局部变量可以用 `const`。详见
+[统一规范](query-resource-design-spec.zh-CN.md#选择与命名)。

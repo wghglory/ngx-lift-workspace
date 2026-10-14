@@ -1,7 +1,7 @@
 # Priority 1、2 生产契约
 
 完整接口与证据入口见 [英文设计说明](./priority-1-2-completion.md) 和
-[生产审查报告](../reviews/pr-147-production-review-2026-10-14.md)。
+[生产审查报告](../reviews/query-production-review.md)。
 
 ## 加载与发布验证
 
