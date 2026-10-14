@@ -1,7 +1,7 @@
 # Query API 开发者体验：Observable 优先、架构实践与请求编排设计方案
 
-**状态：设计提案与架构规范文档。**  
-**审核日期：** 2026-10-13。参考 ngx-lift `main` 分支（`c2722ae`）及 DSM UI（`e377fa09ea`）。  
+**状态：核心 API 与实际示例已实现；动态集合保留为后续 RFC。**  
+**审核日期：** 2026-10-14。针对 PR #146 的实现和回归修复；DSM UI 参考快照为 `e377fa09ea`。  
 **读者对象：** Angular 应用开发工程师、架构师及 ngx-lift 核心维护者。  
 **配套英文文档：** [Query API Developer Experience Specification](query-api-dx-proposal.md)。
 
@@ -61,8 +61,7 @@ export declare function queryResource<T, E = Error>(
    必定引用完全一致的入参快照，绝不会出现网络请求发送的是新 ID、缓存 Key 却还记录旧 ID 的竞态 Bug。
 2. **`undefined` 优雅充当就绪门禁（Readiness Gate）：** 开发者不需要学习额外的 `enabled: boolean` 属性或复杂的
    `skipToken`。当前置依赖缺失时（如 `if (!orgId) return undefined;`），返回 `undefined` 即可让查询自然处于待机状态。
-3. **零适配成本，还开发者清爽体验：** 直接写 `loader: () => this.http.get(...)`，彻底告别恶心的 `observableLoader`
-   包装。
+3. **零适配成本，还开发者清爽体验：** 直接写 `loader: () => this.http.get(...)`，无需额外的 Observable 适配器包装。
 
 ### 推荐变量命名规范 (Naming Conventions: `userQuery` vs `userRef`)
 
@@ -86,36 +85,10 @@ export declare function queryResource<T, E = Error>(
 
 ## 2. 澄清开发者反馈、确认共识与技术边界探讨
 
-### 澄清 `observableLoader` 痛点反馈
+### 原生 loader 契约
 
-在现存代码与前期讨论中，用户指出了如下真实困扰：
-
-```typescript
-// 业务服务中充斥着这种别扭的代码：
-return fetchQueryObservable(
-  this.queryClient,
-  {
-    key: ['vcf', 'dsm-bindings', this.targetOrigin, this.jwt, this.scope, this.organization],
-    tags: DSM_BINDINGS_TAG,
-    staleTime: DSM_BINDING_CACHE_TTL_MS,
-    loader: observableLoader(() => this.http.get<VcfRDEList<VcfDsmBindingEntity>>(url, {headers})), // <-- 开发者极度反感此处
-  },
-  {refresh},
-);
-```
-
-开发者明确指出：**“我的意思不是要 Promise，而是为什么 `fetchQueryObservable` 要求传一个
-`observableLoader`？Angular 大部分接口本来就是 Observable，这样的代码太复杂，天然应该直接支持 Observable。”**
-
-**结论：开发者的观点 100% 成立且切中要害！**
-
-- Angular 生态的核心就是 `HttpClient`，其返回值就是 `Observable`。
-- 在当前 ngx-lift 底层，`queryResource` 组件层虽然在内部做了自愈适配，但核心类型 `QueryDefinition` 却将 `loader` 限制为
-  `(context) => Promise<T>`。这导致所有直接调用 `fetchQueryObservable`、`observeQueryObservable` 或
-  `queryClient.fetchQuery` 的服务代码，都必须显式引入并调用 `observableLoader(...)`。
-- **改进方案：** 将 `QueryDefinition.loader` 的类型全面升级为
-  `(context) => Observable<T> | Promise<T>`。`observableLoader`
-  从公开必写代码中彻底隐去，变为内部自动判定转化的透明基础设施！
+所有查询入口直接接受
+`Observable<T> | PromiseLike<T>`。应用不需要公开适配器；内部 normalizer 负责首次值、空完成、错误和取消。teardown 失败不会使共享请求一直 pending。已有请求错误优先保留；收到值后的 cleanup 失败进入可重试 error 状态。
 
 ### 技术边界与架构考量（Challenge 与澄清）
 
@@ -148,12 +121,8 @@ React Query 采用的是**层级前缀模糊比对（Hierarchical Prefix Invalid
 - 声明：`queryKey: ['todos', 'list', { status: 'all' }]`
 - 失效：`queryClient.invalidateQueries({ queryKey: ['todos'] })`
 - 底层机制：只要在内存字典中检索到以 `['todos']` 开头的 Key，无论后面的参数是什么，全部打上 Stale 标记并触发重新请求。
-- **缺点与痛点：**
-  - **Key 结构必须严格受限于单向层级树。**
-  - **难以表达正交多维关系：** 假设系统中有查询 A `['dashboard', 'summary']`、查询 B
-    `['orgs', orgId, 'users']`，它们返回的数据都包含当前用户 User 的信息。当用户修改了自己的名字时，用 Key 失效就必须手动逐一调用
-    `invalidateQueries(['dashboard', 'summary'])` 和
-    `invalidateQueries(['orgs', orgId, 'users'])`，一旦页面增多极易遗漏。
+- 前缀匹配适合层级 key；TanStack 也支持 exact 和 predicate filters，不强制树状结构。参见
+  [官方 filters 文档](https://tanstack.com/query/latest/docs/framework/react/guides/filters)。
 
 #### 2. ngx-lift 为什么引入 Tags？（汲取自 RTK Query 的精华）
 
@@ -186,10 +155,10 @@ Query 是怎么做的？我怕有人搞不懂 exhaust 的意思，不用它或�
 
 #### 2. React Query 是怎么做的？
 
-- **React Query 的 `useMutation` 根本没有 `concurrency` 配置！**
-- React Query 默认就是并发执行（相当于 `'parallel'`）。官方要求开发者自己在 UI 上通过 `[disabled]="mutation.isPending"`
-  来防重复点击。但如果用户在前端变更检测生效前快速连击两次，React Query 无法阻止两次网络请求的发送。
-- `ngx-lift` 吸收了 RxJS 成熟的并发控制哲学，在底层 JS Promise 级别提供了 `'exhaust'`，提供了真正的防重复提交保障。
+- TanStack mutation 默认并行；相同 `scope: {id}` 的调用串行排队。参见
+  [官方 mutation API](https://tanstack.com/query/latest/docs/framework/react/reference/functions/useMutation)。
+- 排队会执行每次调用；ngx-lift 的 `exhaust`
+  则复用当前 Promise，不执行新调用。参数不同时必须明确选择。这些策略不能替代后端幂等性。
 
 #### 3. 团队开发者搞不懂 `exhaust` 怎么办？
 
@@ -201,14 +170,14 @@ Query 是怎么做的？我怕有人搞不懂 exhaust 的意思，不用它或�
 
 ## 3. 业界主流查询库如何处理并行与串行/依赖请求
 
-| 查询库                       | 固定并行请求 (Fixed Parallel)                              | 动态并行请求 (Dynamic Parallel)                             | 依赖/串行请求 (Dependent / Sequential)                          | 对 ngx-lift 的启示与借鉴                                                |
-| ---------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **TanStack Query (React)**   | 并列声明多个 `useQuery` 即可并发执行。                     | 使用专门的 `useQueries({ queries: ids.map(...) })`。        | 通过 `enabled: !!parentId` 控制下游查询等待前置数据完成。       | 独立缓存节点各自维护状态；动态列表需要专属管理函数。                    |
-| **TanStack Query (Angular)** | 并列声明多个 `injectQuery()`。                             | 早期通过自定义 loop，目前有配套 Angular `useQueries` 试验。 | `enabled: computed(() => !!parent.data())`。                    | 官方文档曾要求使用 `firstValueFrom` 转换 Observable，DX 略有割裂。      |
-| **SWR (Vercel)**             | 并列调用 `useSWR` 自动并发。                               | 推荐拆分子组件或循环 Hook。                                 | 传入 `null` 或返回 `null` 的函数即自动暂停执行。                | ngx-lift 的 `undefined` 工厂模式与 SWR 的简洁性高度契合。               |
-| **RTK Query**                | 多个 `useXQuery` 自动并发。                                | 动态循环分发 hooks。                                        | 使用 `skip: !userId` 或 `skipToken` 暂停下游。                  | 区分单条复合接口（复合查询）与独立缓存实体的界限。                      |
-| **RxJS 原生**                | `forkJoin`（等待全部完成）或 `combineLatest`（流式聚合）。 | `from(ids).pipe(mergeMap(...))`。                           | `switchMap`（切换最新）、`concatMap`（排队执行）。              | 适合服务层管道编排，但缺乏多组件间去重、缓存、标签失效与 Signals 响应。 |
-| **Angular `rxResource`**     | 并列声明多个 `rxResource`。                                | 循环声明受限于注入上下文。                                  | `params: () => parent.value()?.id`，入参为 undefined 时不加载。 | 原生响应式体验极佳，但缺乏全局缓存键与跨组件共享去重机制。              |
+| 查询库                       | 固定并行请求 (Fixed Parallel)                              | 动态并行请求 (Dynamic Parallel)                      | 依赖/串行请求 (Dependent / Sequential)                          | 对 ngx-lift 的启示与借鉴                                                |
+| ---------------------------- | ---------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **TanStack Query (React)**   | 并列声明多个 `useQuery` 即可并发执行。                     | 使用专门的 `useQueries({ queries: ids.map(...) })`。 | 通过 `enabled: !!parentId` 控制下游查询等待前置数据完成。       | 独立缓存节点各自维护状态；动态列表需要专属管理函数。                    |
+| **TanStack Query (Angular)** | 并列声明多个 `injectQuery()`。                             | `injectQueries`，需核对安装的包版本。                | `enabled: computed(() => !!parent.data())`。                    | 官方文档曾要求使用 `firstValueFrom` 转换 Observable，DX 略有割裂。      |
+| **SWR (Vercel)**             | 并列调用 `useSWR` 自动并发。                               | 使用 keyed 子组件，不在循环中调用 Hook。             | 传入 `null` 或返回 `null` 的函数即自动暂停执行。                | ngx-lift 的 `undefined` 工厂模式与 SWR 的简洁性高度契合。               |
+| **RTK Query**                | 多个 `useXQuery` 自动并发。                                | 使用 keyed 子组件或 imperative initiate。            | 使用 `skip: !userId` 或 `skipToken` 暂停下游。                  | 区分单条复合接口（复合查询）与独立缓存实体的界限。                      |
+| **RxJS 原生**                | `forkJoin`（等待全部完成）或 `combineLatest`（流式聚合）。 | `from(ids).pipe(mergeMap(...))`。                    | `switchMap`（切换最新）、`concatMap`（排队执行）。              | 适合服务层管道编排，但缺乏多组件间去重、缓存、标签失效与 Signals 响应。 |
+| **Angular `rxResource`**     | 并列声明多个 `rxResource`。                                | 循环声明受限于注入上下文。                           | `params: () => parent.value()?.id`，入参为 undefined 时不加载。 | 原生响应式体验极佳，但缺乏全局缓存键与跨组件共享去重机制。              |
 
 ---
 
@@ -307,7 +276,7 @@ readonly dynamicQueries = computed(() => {
 4. **重排（Reordering）防抖：**
    - 当列表从 `['A', 'B']` 变成 `['B', 'A']` 时，仅进行引用重排序，不应导致底层查询重新初试化。
 5. **强类型推断（Type Inference）：**
-   - 统一推断为 `Signal<QueryResourceRef<T>[]>`，让开发者在模板的 `@for (q of dynamicQueries(); track q.id)`
+   - 统一推断为 `Signal<QueryResourceRef<T>[]>`，让开发者在模板的 `@for (q of dynamicQueries(); track q.key)`
      中享受到完整的 TypeScript 类型补全。
 
 因此，**动态列表不能简单通过循环调用单体 `queryResource` 实现，而需要专门设计一套类似于 Angular `@for track`
@@ -480,12 +449,12 @@ export class TenantMonitorComponent {
 - **使用 `fetchQueryObservable(queryClient, ...)` 的核心价值：**
   1. **跨组件/跨调用全局缓存共享：** 设定了
      `staleTime: 60_000`。在 60 秒内，无论当前页面切到哪个 Tab、无论哪个组件再次调用
-     `getUserSecurityContext(userId)`，**直接从内存缓存秒级返回，不发网络请求**！
+     `getUserSecurityContext(userId, scope)`，**直接从内存缓存秒级返回，不发网络请求**！
   2. **在途请求合并去重 (Coalescing / Deduplication)：**
      如果页面加载瞬间，顶部导航栏、侧边栏菜单和个人主页 3 个组件在同一时间毫秒内调用此方法，`queryClient`
      会自动合并，**只向后端发出 1 次 roles 和 1 次 permissions 请求**，3 个组件共享同一批响应！
   3. **标签声明式失效联动：** 一旦发生用户权限变更，`mutateResource` 触发
-     `invalidatesTags: [{ type: 'Permissions' }]`，该缓存自动失效。
+     `invalidatesTags: [{ type: 'Permissions', scope }]`，该缓存自动失效。
 
 #### 2. 服务端实现代码
 
@@ -505,16 +474,18 @@ export class SecurityService {
   private readonly http = inject(HttpClient);
   private readonly queryClient = inject(QUERY_CLIENT);
 
-  getUserSecurityContext(userId: string): Observable<UserPermissionContext> {
+  getUserSecurityContext(userId: string, scope: string): Observable<UserPermissionContext> {
     // 两个查询共享全局 QueryClient 缓存与在途请求去重
     const roles$ = fetchQueryObservable(this.queryClient, {
-      key: ['users', userId, 'roles'],
+      key: ['users', scope, userId, 'roles'],
+      tags: [{type: 'Roles', scope}],
       loader: () => this.http.get<string[]>(`/api/users/${userId}/roles`),
       staleTime: 60_000,
     });
 
     const permissions$ = fetchQueryObservable(this.queryClient, {
-      key: ['users', userId, 'permissions'],
+      key: ['users', scope, userId, 'permissions'],
+      tags: [{type: 'Permissions', scope}],
       loader: () => this.http.get<string[]>(`/api/users/${userId}/permissions`),
       staleTime: 60_000,
     });
@@ -555,22 +526,28 @@ import {SecurityService} from './security.service';
 export class UserProfileComponent {
   private readonly securityService = inject(SecurityService);
   readonly currentUserId = signal('user-888');
+  // Example only: production scope comes from the authenticated session.
+  readonly sessionScope = signal('session-a');
 
   // 将服务返回的 Observable 转为组件内的 Signals 资源
-  readonly authContextRef = resourceAsync(() => this.securityService.getUserSecurityContext(this.currentUserId()));
+  readonly authContextRef = resourceAsync(() =>
+    this.securityService.getUserSecurityContext(this.currentUserId(), this.sessionScope()),
+  );
 }
 ```
 
 **方式 B（传统 RxJS Async Pipe 用法）：**
 
 ```typescript
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
+import {AsyncPipe} from '@angular/common';
 import {toObservable} from '@angular/core/rxjs-interop';
 import {switchMap} from 'rxjs';
 import {SecurityService} from './security.service';
 
 @Component({
   selector: 'app-user-profile-rxjs',
+  imports: [AsyncPipe],
   template: `
     @if (authContext$ | async; as ctx) {
       <p>所属角色：{{ ctx.roles.join(', ') }}</p>
@@ -580,9 +557,12 @@ import {SecurityService} from './security.service';
 export class UserProfileRxjsComponent {
   private readonly securityService = inject(SecurityService);
   readonly currentUserId = signal('user-888');
+  // Example only: production scope comes from the authenticated session.
+  readonly sessionScope = signal('session-a');
 
-  readonly authContext$ = toObservable(this.currentUserId).pipe(
-    switchMap((id) => this.securityService.getUserSecurityContext(id)),
+  readonly authParams = computed(() => ({id: this.currentUserId(), scope: this.sessionScope()}));
+  readonly authContext$ = toObservable(this.authParams).pipe(
+    switchMap(({id, scope}) => this.securityService.getUserSecurityContext(id, scope)),
   );
 }
 ```
@@ -636,6 +616,7 @@ export class ExportService {
           // 如果该进度需要共享至全局缓存池供抽屉/通知栏组件复用：
           fetchQueryObservable(this.queryClient, {
             key: ['exports', task.taskId, 'progress'],
+            tags: [{type: 'Exports'}],
             loader: () => this.http.get<TaskProgress>(`/api/exports/${task.taskId}/progress`),
             staleTime: 5_000,
           }),
@@ -819,13 +800,13 @@ export class ProvisionTrackerComponent {
   readonly jobId = signal('job-12345');
 
   readonly job = queryResource(
-    () => ({
-      key: ['jobs', this.jobId()],
-      loader: () => this.http.get<ProvisionJob>(`/api/jobs/${this.jobId()}`),
-    }),
+    () => {
+      const jobId = this.jobId();
+      return {key: ['jobs', jobId], loader: () => this.http.get<ProvisionJob>(`/api/jobs/${jobId}`)};
+    },
     {
       // 传入响应式函数：根据当前数据状态动态判定轮询周期
-      pollInterval: () => {
+      pollInterval: (): number | undefined => {
         const status = this.job?.value()?.status;
         return status === 'PROVISIONING' ? 3000 : undefined; // 返回 undefined 即刻挂起轮询
       },
@@ -846,6 +827,7 @@ import {inject} from '@angular/core';
 import {CanActivateFn, Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {QUERY_CLIENT} from 'ngx-lift';
+import {SessionService} from './session.service';
 
 interface AccountEntitlement {
   hasAccess: boolean;
@@ -856,12 +838,15 @@ export const featureGuard: CanActivateFn = async (route) => {
   const queryClient = inject(QUERY_CLIENT);
   const http = inject(HttpClient);
   const router = inject(Router);
-  const tenantId = route.paramMap.get('tenantId') ?? 'default';
+  const sessionId = inject(SessionService).id();
+  if (sessionId === undefined) return router.parseUrl('/login');
+  const tenantId = route.paramMap.get('tenantId');
+  if (tenantId === null) return router.parseUrl('/login');
 
   try {
     // 编程式预取并写入全局共享缓存
     const entitlement = await queryClient.fetchQuery({
-      key: ['tenants', tenantId, 'entitlement'],
+      key: ['tenants', sessionId, tenantId, 'entitlement'],
       loader: () => http.get<AccountEntitlement>(`/api/tenants/${tenantId}/entitlement`),
       staleTime: 180_000,
     });
@@ -954,22 +939,40 @@ readonly cluster = queryResource(() => this.clusterService.clusterQuery(this.clu
 当 Service 本身需要作为数据总线，直接向 iframe 插件、全局拦截器或无界面逻辑提供带缓存的 Observable 时：
 
 ```typescript
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {fetchQueryObservable, QUERY_CLIENT} from 'ngx-lift';
+import {defer, Observable} from 'rxjs';
+
+interface Binding {
+  id: string;
+}
+interface BindingScope {
+  origin: string;
+  sessionId: string;
+  organization: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class VcfTmService {
   private readonly http = inject(HttpClient);
-  private readonly queryClient = inject(QUERY_CLIENT);
+  private readonly client = inject(QUERY_CLIENT);
 
-  getDsmBinding({refresh = false}: {refresh?: boolean} = {}): Observable<DsmBinding> {
-    return fetchQueryObservable(
-      this.queryClient,
-      {
-        key: ['vcf', 'dsm-bindings', this.scope],
-        tags: [{type: 'DsmBindings'}],
-        staleTime: 300_000,
-        loader: () => this.http.get<DsmBinding>(this.endpointUrl), // 直接返回 Observable！
-      },
-      {refresh},
-    );
+  getDsmBinding(scope: () => BindingScope, options: {refresh?: boolean} = {}): Observable<Binding[]> {
+    return defer(() => {
+      const {origin, sessionId, organization} = scope();
+      const url = `${origin}/api/organizations/${encodeURIComponent(organization)}/bindings`;
+      return fetchQueryObservable(
+        this.client,
+        {
+          key: ['vcf', 'dsm-bindings', origin, sessionId, organization],
+          tags: [{type: 'DsmBindings', scope: sessionId}],
+          staleTime: 30_000,
+          loader: () => this.http.get<Binding[]>(url),
+        },
+        options,
+      );
+    });
   }
 }
 ```
@@ -999,7 +1002,7 @@ export interface QueryLoaderContext {
 }
 
 /** 核心统一加载函数返回类型：原生支持 Observable 与 Promise */
-export type QueryResult<T> = Observable<T> | Promise<T> | PromiseLike<T>;
+export type QueryResult<T> = Observable<T> | PromiseLike<T>;
 
 export interface QueryDefinition<T> {
   readonly key: QueryKey;
@@ -1059,7 +1062,7 @@ export declare function observeQueryObservable<T>(
 flowchart TD
   UserLoader["开发者 Loader: () => Observable<T> | Promise<T>"] --> Normalizer["内部 Loader 规范化器 (normalizeQueryLoader)"]
   Normalizer -->|isObservable| RxAdapter["RxJS 自动转接 (取首值, 自动 Unsubscribe, 捕获 EmptyError)"]
-  Normalizer -->|isPromise| PromiseAdapter["Promise 自动转接 (监听 AbortSignal)"]
+  Normalizer -->|PromiseLike| PromiseAdapter["Promise 自动转接 (loader 主动使用 AbortSignal)"]
   RxAdapter --> Engine["QueryClient 核心 Promise 调度器"]
   PromiseAdapter --> Engine
   Engine --> Cache["规范化 Key 缓存池与在途去重"]
@@ -1084,18 +1087,19 @@ flowchart TD
 
 ## 10. 分期实施计划与评审里程碑
 
-| 阶段         | 里程碑与交付物                                                                                  | 验收标准与测试保障                                                                                                                                                         |
-| ------------ | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **第一阶段** | 统一 `QueryDefinition.loader` 契约，引入内部透明规范化器，抹除业务代码中的 `observableLoader`。 | 1. `HttpClient`、`of()`、`throwError()`、`EMPTY` 及原生 `fetch` 全链路覆盖单测；<br>2. 业务使用 `fetchQueryObservable` 时无需再写 `observableLoader`，旧代码保持向后兼容。 |
-| **第二阶段** | 为 `QueryResourceRef` 增加 `isInitialLoading` 和 `isRefreshing` 细粒度状态信号；补充完整 Demo。 | 1. 完善 demo 应用中的 Observable HTTP 示例与依赖查询示例；<br>2. 增加基于状态的有条件轮询与自动失效演示。                                                                  |
-| **第三阶段** | 启动动态集合 API `queryResources` 的深度 RFC 与原型设计。                                       | 1. 验证根据 Stable ID 动态增删、重排与销毁的协调引擎；<br>2. 彻底解决组件内动态多查询并发的内存与生命周期管理。                                                            |
+| 阶段         | 里程碑与交付物                                                                                  | 验收标准与测试保障                                                                                                                                                              |
+| ------------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **第一阶段** | 统一 `QueryDefinition.loader` 契约，引入内部透明规范化器，移除公开适配器。                      | 1. `HttpClient`、`of()`、`throwError()`、`EMPTY` 及原生 `fetch` 全链路覆盖单测；<br>2. 业务使用 `fetchQueryObservable` 时直接使用 Observable loader，不保留 deprecated 适配器。 |
+| **第二阶段** | 为 `QueryResourceRef` 增加 `isInitialLoading` 和 `isRefreshing` 细粒度状态信号；补充完整 Demo。 | 1. 完善 demo 应用中的 Observable HTTP 示例与依赖查询示例；<br>2. 增加基于状态的有条件轮询与自动失效演示。                                                                       |
+| **第三阶段** | 启动动态集合 API `queryResources` 的深度 RFC 与原型设计。                                       | 1. 验证根据 Stable ID 动态增删、重排与销毁的协调引擎；<br>2. 彻底解决组件内动态多查询并发的内存与生命周期管理。                                                                 |
 
 ---
 
 ## 11. Demo 应用落地示范规划 (Demo Application Implementation Guidance)
 
-目前 `apps/demo` 中主要是基于 Promise 模拟延时的演示，缺乏真实的 Observable `HttpClient`
-示范与高级企业级场景展示。后续 Demo 应规划落地以下演示模块：
+queryResource 页面已加入直接 HttpClient、依赖查询、scoped
+mutation 刷新、持续 snapshot 和三个服务调用者去重示例，同时保留原有 Promise 演示。下列列表描述教学目标；可切换的 concurrency
+playground 仍是后续增强，不属于本次交付。
 
 1. **Observable `HttpClient` 真实读取示例卡片：**
    - 演示直接写 `loader: () => this.http.get<User>('/api/users/1')`，不使用任何外部包装器。
@@ -1114,5 +1118,29 @@ flowchart TD
    - 引导用户在短时间内疯狂连击按钮：展示 `'exhaust'` 如何死守底线只发 1 次真实请求，而 `'parallel'` 会发出多次请求。
 5. **服务层共享总线与请求去重验证 (Service Coalescing Demo)：**
    - 模拟场景 3 的 `SecurityService`：页面上渲染 3 个不同的 Widget 子组件，它们各自在 `ngOnInit` 中调用
-     `securityService.getUserSecurityContext('user-1')`；
+     `securityService.getUserSecurityContext('user-1', scope)`；
    - 在控制面板中记录并显示全局 HTTP 请求计数器，直观展示 3 个组件同时调用时，**网络请求数仅增加 1**，向开发者证明跨组件在途去重的巨大威力。
+
+## 本次修复与可执行示例
+
+守卫示例中的 `SessionService.id()` 由应用认证层提供。账号、租户或授权 session 切换时必须变化，不得包含 bearer
+token。退出时通过 `client.removeQueries()` 清理旧缓存。路由守卫只是 UI 门禁，后端仍须执行授权。
+
+`fetchQueryObservable` 是单次快照；匹配 scoped tags 的失效会让下一次 fetch 重新读取。已完成的 `resourceAsync` 或 async
+pipe 不会自动更新。需要显式 reload（强制刷新时向每一步传 `{refresh: true}`），或使用 `observeQueryObservable` /
+`queryResource` 持续观察。
+
+queryResource demo 页面现在有本地 mock HttpClient API、并行 tenant/health、tenant 到数据库的 readiness gate、scoped
+mutation 刷新、持续 snapshot 观察和三个 Observable 服务调用者的去重。原有 Promise demo 保留。API 表新增两种 loading
+signal。`queryResources` 仍是后续 RFC，未作为已实现 API。
+
+### 本次验证
+
+2026-10-14 本地验证通过：ngx-lift 774、clr-lift 243、demo
+214 个单元测试；覆盖率门禁；源码与测试类型检查；lint、production
+builds、i18n/tooling 检查；105 个 Chromium/Firefox/WebKit
+E2E；tarball 导出与独立消费者安装验证。英文/中文轮询与 service 示例、live demo 代码示例均经过 strict
+TypeScript 验证。独立复审未发现剩余运行时或文档 blocker。
+
+发布门禁独立于代码验证：配置中的镜像 audit endpoint 返回 HTTP 405；官方 npm
+audit 请求在 60 秒内未完成。本次不执行 npm 发布，不能将依赖审计记为通过。

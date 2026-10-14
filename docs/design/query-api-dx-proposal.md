@@ -1,7 +1,7 @@
 # Query API Developer Experience: Observable-First Reads, Architecture Patterns, and Request Composition
 
-**Status:** Proposal for discussion; architecture specification and design document.  
-**Reviewed:** October 13, 2026. Local ngx-lift `main` at `c2722ae`; DSM UI at `e377fa09ea`.  
+**Status:** Core API and practical examples implemented; dynamic collections remain a follow-up RFC.  
+**Reviewed:** October 14, 2026. PR #146 implementation and review fixes; DSM UI reference snapshot `e377fa09ea`.  
 **Audience:** Angular application developers and ngx-lift maintainers.  
 **Companion:** [中文完整设计方案](query-api-dx-proposal.zh-CN.md).
 
@@ -49,7 +49,7 @@ export declare function queryResource<T, E = Error>(
 | `error`            | `Signal<E \| null>`      | Error returned by the latest failed attempt.                                                                |
 | `status`           | `Signal<QueryStatus>`    | `'idle' \| 'loading' \| 'reloading' \| 'resolved' \| 'error'`.                                              |
 | `isStale`          | `Signal<boolean>`        | Whether cached data has exceeded `staleTime`.                                                               |
-| `hasValue()`       | Type guard method        | Returns `true` if `value()` is defined, narrowing `T                                                        | undefined`to`T`. |
+| `hasValue()`       | Type guard method        | Returns `true` if `value()` is defined, narrowing the value to exclude undefined.                           |
 | `reload()`         | `() => boolean`          | Imperatively triggers a background revalidation, bypassing `staleTime`.                                     |
 | `execute()`        | `() => Promise<T>`       | Imperatively triggers a revalidation and returns an awaitable Promise.                                      |
 | `destroy()`        | `() => void`             | Disposes the observer immediately without waiting for component destruction.                                |
@@ -62,7 +62,7 @@ export declare function queryResource<T, E = Error>(
 2. **Returning `undefined` as a Natural Readiness Gate:** Developers do not need to learn a separate `enabled: boolean`
    property or `skipToken`. If prerequisites are missing (e.g. `if (!orgId) return undefined;`), returning `undefined`
    cleanly halts the query in `'idle'` state without making network requests.
-3. **No Leaky Adapters:** Developers return `this.http.get<User>(...)` directly. No `observableLoader`, no
+3. **No Leaky Adapters:** Developers return `this.http.get<User>(...)` directly. No adapter wrapper, no
    `firstValueFrom`, no manual conversion needed.
 
 ### Recommended Naming Conventions (`userQuery` vs `userRef`)
@@ -87,37 +87,12 @@ When calling `queryResource` in an Angular component, how should the variable be
 
 ## 2. Developer Feedback, Clarifications, and Points to Challenge
 
-### Clarifying Developer Feedback on `observableLoader`
+### Native loader contract
 
-In previous discussions, developer feedback pointed out:
-
-```typescript
-// The frustrating code currently found in services:
-return fetchQueryObservable(
-  this.queryClient,
-  {
-    key: ['vcf', 'dsm-bindings', this.targetOrigin, this.jwt, this.scope, this.organization],
-    tags: DSM_BINDINGS_TAG,
-    staleTime: DSM_BINDING_CACHE_TTL_MS,
-    loader: observableLoader(() => this.http.get<VcfRDEList<VcfDsmBindingEntity>>(url, {headers})),
-  },
-  {refresh},
-);
-```
-
-The user rightly objected: **Why must developers write `loader: observableLoader(...)`? Shouldn't Observables be
-natively supported out of the box?**
-
-**Verdict: The developer's criticism is 100% correct.**
-
-- In Angular applications, 95% of data access is built on `HttpClient`, which returns RxJS `Observable`.
-- In ngx-lift's current implementation, `queryResource` already supported direct Observables by wrapping them
-  internally, but `QueryDefinition` itself strictly typed `loader` as `(context) => Promise<T>`. As a result, anyone
-  calling `fetchQueryObservable`, `observeQueryObservable`, or `queryClient.fetchQuery` directly was forced to manually
-  import and wrap `observableLoader(...)`.
-- **The Fix:** Elevate `Observable<T> | Promise<T>` to the core `QueryDefinition.loader` contract everywhere.
-  `observableLoader` must become an invisible internal normalization step, completely removing the cognitive burden from
-  application developers.
+All query entry points accept `Observable<T> | PromiseLike<T>` directly. There is no public adapter wrapper. The
+internal normalizer owns first-value resolution, empty completion, error propagation, and cancellation. Throwing
+teardown cannot strand a request: original transport errors take precedence; cleanup failure after a value rejects the
+attempt so the next read can retry.
 
 ### Points to Challenge and Architectural Guardrails
 
@@ -160,11 +135,9 @@ React Query uses **hierarchical prefix fuzzy matching**:
 - Invalidation: `queryClient.invalidateQueries({ queryKey: ['todos'] })`
 - Mechanism: Any active or cached query whose key begins with `['todos']` is invalidated regardless of remaining
   parameters.
-- **Limitations:**
-  - Enforces a strict, tree-like key hierarchy.
-  - Struggles with orthogonal relationships. For example, if both `['dashboard', 'summary']` and
-    `['projects', projectId, 'members']` contain user data, updating a user requires manually invalidating multiple
-    unrelated key paths.
+- Prefix matching is convenient for hierarchical keys. TanStack also supports exact matching and predicate filters for
+  orthogonal relationships; a tree hierarchy is not mandatory. See the
+  [official filters guide](https://tanstack.com/query/latest/docs/framework/react/guides/filters).
 
 #### 2. Why ngx-lift Introduces Tags (Inspired by RTK Query)
 
@@ -198,12 +171,10 @@ someone doesn't understand exhaust, or leaves concurrency unset?"_
 
 #### 2. How Does React Query Handle This?
 
-- **React Query's `useMutation` has NO concurrency configuration!**
-- It behaves exclusively like `'parallel'`. React Query relies entirely on developers disabling buttons in templates via
-  `disabled={mutation.isPending}`. If a user clicks rapidly before re-rendering disables the button, React Query
-  executes duplicate server writes.
-- `ngx-lift` borrows the battle-tested RxJS concurrency paradigm, providing `'exhaust'` at the JavaScript engine level
-  as a failsafe against double submissions.
+- TanStack mutations run in parallel by default; mutations sharing `scope: {id}` run serially. See the
+  [official mutation reference](https://tanstack.com/query/latest/docs/framework/react/reference/functions/useMutation).
+- Serial queuing executes every invocation. ngx-lift's `exhaust` instead joins pending work and does not start the new
+  invocation. Choose deliberately when arguments differ. Neither strategy replaces server-side idempotency.
 
 #### 3. What if a Team Member Does Not Understand `exhaust`?
 
@@ -494,11 +465,11 @@ model to non-component callers (e.g. functional route guards, interceptors, or c
   once and call this method, 6 requests hit the backend with zero caching.
 - **With `fetchQueryObservable(queryClient, ...)`:**
   1. **Global Cache Sharing:** With `staleTime: 60_000`, any other component or route guard requesting
-     `getUserAuthContext(userId)` within 60 seconds resolves instantaneously from memory without network traffic.
+     `getUserAuthContext(userId, scope)` within 60 seconds resolves instantaneously from memory without network traffic.
   2. **In-Flight Request Coalescing (Deduplication):** If 3 widgets initialize at the same instant and request the same
      user's context, `queryClient` fires **only 1 request for roles and 1 for permissions**. All 3 callers share the
      exact same pending Promise.
-  3. **Tag Invalidation:** When an admin modifies roles, mutating with `invalidatesTags: [{ type: 'Roles' }]`
+  3. **Tag Invalidation:** When an admin modifies roles, mutating with `invalidatesTags: [{ type: 'Roles', scope }]`
      immediately marks this cached context stale.
 
 #### 2. Service Implementation
@@ -519,16 +490,18 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly queryClient = inject(QUERY_CLIENT);
 
-  getUserAuthContext(userId: string): Observable<UserAuthContext> {
+  getUserAuthContext(userId: string, scope: string): Observable<UserAuthContext> {
     // Both queries share global cache and deduplicate in-flight requests
     const permissions$ = fetchQueryObservable(this.queryClient, {
-      key: ['users', userId, 'permissions'],
+      key: ['users', scope, userId, 'permissions'],
+      tags: [{type: 'Permissions', scope}],
       loader: () => this.http.get<string[]>(`/api/users/${userId}/permissions`),
       staleTime: 60_000,
     });
 
     const roles$ = fetchQueryObservable(this.queryClient, {
-      key: ['users', userId, 'roles'],
+      key: ['users', scope, userId, 'roles'],
+      tags: [{type: 'Roles', scope}],
       loader: () => this.http.get<string[]>(`/api/users/${userId}/roles`),
       staleTime: 60_000,
     });
@@ -569,22 +542,28 @@ import {AuthService} from './auth.service';
 export class UserProfileComponent {
   private readonly authService = inject(AuthService);
   readonly currentUserId = signal('user-888');
+  // Example only: production scope comes from the authenticated session.
+  readonly sessionScope = signal('session-a');
 
   // Bridges the service's cached Observable into reactive Signals
-  readonly authContextRef = resourceAsync(() => this.authService.getUserAuthContext(this.currentUserId()));
+  readonly authContextRef = resourceAsync(() =>
+    this.authService.getUserAuthContext(this.currentUserId(), this.sessionScope()),
+  );
 }
 ```
 
 **Approach B (Traditional RxJS `async` Pipe):**
 
 ```typescript
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
+import {AsyncPipe} from '@angular/common';
 import {toObservable} from '@angular/core/rxjs-interop';
 import {switchMap} from 'rxjs';
 import {AuthService} from './auth.service';
 
 @Component({
   selector: 'app-user-profile-rxjs',
+  imports: [AsyncPipe],
   template: `
     @if (authContext$ | async; as ctx) {
       <p>Roles: {{ ctx.roles.join(', ') }}</p>
@@ -594,9 +573,12 @@ import {AuthService} from './auth.service';
 export class UserProfileRxjsComponent {
   private readonly authService = inject(AuthService);
   readonly currentUserId = signal('user-888');
+  // Example only: production scope comes from the authenticated session.
+  readonly sessionScope = signal('session-a');
 
-  readonly authContext$ = toObservable(this.currentUserId).pipe(
-    switchMap((id) => this.authService.getUserAuthContext(id)),
+  readonly authParams = computed(() => ({id: this.currentUserId(), scope: this.sessionScope()}));
+  readonly authContext$ = toObservable(this.authParams).pipe(
+    switchMap(({id, scope}) => this.authService.getUserAuthContext(id, scope)),
   );
 }
 ```
@@ -836,13 +818,13 @@ export class BackupStatusComponent {
   readonly jobId = signal('job-999');
 
   readonly backup = queryResource(
-    () => ({
-      key: ['backups', this.jobId()],
-      loader: () => this.http.get<BackupJob>(`/api/backups/${this.jobId()}`),
-    }),
+    () => {
+      const jobId = this.jobId();
+      return {key: ['backups', jobId], loader: () => this.http.get<BackupJob>(`/api/backups/${jobId}`)};
+    },
     {
       // Reactive pollInterval function: stops polling when completed
-      pollInterval: () => {
+      pollInterval: (): number | undefined => {
         const status = this.backup?.value()?.status;
         return status === 'PENDING' || status === 'IN_PROGRESS' ? 3000 : undefined;
       },
@@ -863,16 +845,19 @@ import {inject} from '@angular/core';
 import {CanActivateFn, Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {QUERY_CLIENT} from 'ngx-lift';
+import {SessionService} from './session.service';
 
 export const adminGuard: CanActivateFn = async (route, state) => {
   const queryClient = inject(QUERY_CLIENT);
   const http = inject(HttpClient);
   const router = inject(Router);
+  const sessionId = inject(SessionService).id();
+  if (sessionId === undefined) return router.parseUrl('/login');
 
   try {
     // Imperatively fetch or read fresh from cache
     const permissions = await queryClient.fetchQuery({
-      key: ['user', 'permissions'],
+      key: ['session', sessionId, 'permissions'],
       loader: () => http.get<string[]>('/api/user/permissions'),
       staleTime: 60_000,
     });
@@ -953,22 +938,40 @@ Used when the service itself is a shared domain cache for non-component consumer
 resolvers, interceptors):
 
 ```typescript
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {fetchQueryObservable, QUERY_CLIENT} from 'ngx-lift';
+import {defer, Observable} from 'rxjs';
+
+interface Binding {
+  id: string;
+}
+interface BindingScope {
+  origin: string;
+  sessionId: string;
+  organization: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class VcfTmService {
   private readonly http = inject(HttpClient);
-  private readonly queryClient = inject(QUERY_CLIENT);
+  private readonly client = inject(QUERY_CLIENT);
 
-  getDsmBinding({refresh = false}: {refresh?: boolean} = {}): Observable<DsmBinding> {
-    return fetchQueryObservable(
-      this.queryClient,
-      {
-        key: ['vcf', 'dsm-bindings', this.scope],
-        tags: [{type: 'DsmBindings'}],
-        staleTime: 300_000,
-        loader: () => this.http.get<DsmBinding>(this.bindingsUrl), // Clean direct Observable!
-      },
-      {refresh},
-    );
+  getDsmBinding(scope: () => BindingScope, options: {refresh?: boolean} = {}): Observable<Binding[]> {
+    return defer(() => {
+      const {origin, sessionId, organization} = scope();
+      const url = `${origin}/api/organizations/${encodeURIComponent(organization)}/bindings`;
+      return fetchQueryObservable(
+        this.client,
+        {
+          key: ['vcf', 'dsm-bindings', origin, sessionId, organization],
+          tags: [{type: 'DsmBindings', scope: sessionId}],
+          staleTime: 30_000,
+          loader: () => this.http.get<Binding[]>(url),
+        },
+        options,
+      );
+    });
   }
 }
 ```
@@ -998,7 +1001,7 @@ export interface QueryLoaderContext {
 }
 
 /** Universal loader return type: natively accepts Observable or Promise */
-export type QueryResult<T> = Observable<T> | Promise<T> | PromiseLike<T>;
+export type QueryResult<T> = Observable<T> | PromiseLike<T>;
 
 export interface QueryDefinition<T> {
   readonly key: QueryKey;
@@ -1058,7 +1061,7 @@ export declare function observeQueryObservable<T>(
 flowchart TD
   UserLoader["User Loader: () => Observable<T> | Promise<T>"] --> Normalizer["Internal Loader Normalizer"]
   Normalizer -->|isObservable| RxAdapter["RxJS Subscriber (First value, EmptyError, AbortSignal)"]
-  Normalizer -->|isPromise| PromiseAdapter["Promise Resolution (AbortSignal listener)"]
+  Normalizer -->|PromiseLike| PromiseAdapter["Promise Resolution (loader consumes AbortSignal)"]
   RxAdapter --> Engine["QueryClient Core Promise Scheduler"]
   PromiseAdapter --> Engine
   Engine --> Cache["Shared Key Cache & De-duplication"]
@@ -1085,7 +1088,7 @@ flowchart TD
 - **Phase 1: Universal Loader Contract & Normalizer**
   - Update `QueryDefinition.loader` to accept `QueryResult<T>`.
   - Implement internal loader normalizer.
-  - Maintain backwards compatibility for existing `observableLoader` usage while removing it from happy-path docs.
+  - Use one native loader contract; no deprecated public adapter is retained.
   - Verify unit tests across `HttpClient`, `of()`, `throwError()`, `EMPTY`, and native `fetch`.
 - **Phase 2: Additive Signals & Demo Pages**
   - Add `isInitialLoading` and `isRefreshing` signals to `QueryResourceRef`.
@@ -1101,8 +1104,9 @@ flowchart TD
 
 ## 11. Demo Application Implementation Guidance
 
-The existing demos in `apps/demo` rely primarily on synthetic timers and Promise simulations, leaving a gap for
-real-world `HttpClient` usage and advanced caching interactions. Subsequent demo enhancements should implement:
+The queryResource page now provides direct HttpClient loaders, dependent database reads, scoped mutation refresh, live
+snapshots, and three coalesced service callers alongside the original Promise examples. The list below describes the
+teaching goals; a configurable concurrency playground remains a follow-up, not a delivered feature:
 
 1. **Observable `HttpClient` Query Card:**
    - Demonstrates `loader: () => this.http.get<User>('/api/users/1')` directly without any wrapper.
@@ -1121,6 +1125,22 @@ real-world `HttpClient` usage and advanced caching interactions. Subsequent demo
      single network call.
 5. **Shared Service Bus & Coalescing Inspector:**
    - Emulates Scenario 3's `SecurityService`. Mounts 3 separate widgets that all call
-     `securityService.getUserSecurityContext('user-1')` on mount.
+     `securityService.getUserSecurityContext('user-1', scope)` on mount.
    - Displays a live network request counter confirming that only a single HTTP call is dispatched, visually proving
      cross-component coalescing.
+
+## Review fixes and executable examples
+
+`SessionService.id()` in guard examples is supplied by the application authentication layer. It must change on account,
+tenant, or authorization-session changes and must not contain bearer credentials. Clear old session entries with
+`client.removeQueries()` on logout. Route guards control navigation; backend authorization remains required.
+
+`fetchQueryObservable` returns a finite snapshot. Matching scoped tags invalidate cached data for the next fetch; a
+completed `resourceAsync` or async-pipe consumer does not automatically receive a later refresh. Explicitly reload with
+`{refresh: true}` forwarded to each fetch when freshness must be bypassed, or use `observeQueryObservable` /
+`queryResource` for live state.
+
+The queryResource demo now includes a local mock HttpClient backend, parallel tenant/health reads, a tenant-to-databases
+readiness gate, scoped mutation refresh, snapshot observation, and three Observable service callers sharing one request.
+Existing Promise examples remain. The API table includes both loading signals. `queryResources` remains a follow-up RFC,
+not an implemented export.
