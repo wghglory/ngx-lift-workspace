@@ -19,6 +19,14 @@ No merge or npm publication is part of this delivery. Merge readiness, isolated-
 readiness are separate gates. The official npm audit endpoint timed out after 60 seconds; audit remains unverified. A
 successful publication dry run does not verify npm credentials or establish a real published release.
 
+GitHub also reports 96 existing open Dependabot alerts on main: 4 critical, 40 high, 44 medium and 8 low (81
+development-scope, 15 runtime-scope; some advisories appear in both manifests and the lockfile). The lockfile is
+unchanged by this PR. These include Angular patches and a
+[node-forge signature-verification advisory](https://github.com/advisories/GHSA-86w9-cpqp-85rv) with no listed patched
+version. The certificate helpers inspected here parse PEM and compute fingerprints; they do not call RSA signature
+verification. That observation does not certify the dependency tree. Production publication requires explicit advisory
+triage/remediation as well as a successful audit; green CI cannot substitute for it.
+
 ## Standards review
 
 The review found and repaired these defects:
