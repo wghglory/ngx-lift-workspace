@@ -8,6 +8,7 @@ import {mutateResource, QUERY_CLIENT, queryResource, QueryResourceRef} from 'ngx
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
+import {QueryFailureExamplesComponent} from './query-failure-examples.component';
 import {QueryUsageExamplesComponent} from './query-usage-examples.component';
 
 interface ServerMetrics {
@@ -35,6 +36,7 @@ interface DemoUser {
     DemoPlaygroundComponent,
     ApiTableComponent,
     QueryUsageExamplesComponent,
+    QueryFailureExamplesComponent,
   ],
   templateUrl: './query-resource.component.html',
   styleUrls: ['./query-resource.component.scss'],
@@ -271,7 +273,19 @@ const addUser = mutateResource(
   // ---------------------------------------------------------------------------
   // API Reference Tables
   // ---------------------------------------------------------------------------
-  readonly queryResourceApiProps: ApiProperty[] = [
+  readonly queryResourceApiProps = computed<ApiProperty[]>(() => [
+    {
+      name: 'options.refetchOnFocus',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translation.translate('queryExamples.recoveryFocusDescription'),
+    },
+    {
+      name: 'options.refetchOnReconnect',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translation.translate('queryExamples.recoveryReconnectDescription'),
+    },
     {
       name: 'definition',
       type: '() => QueryResourceDefinition<T> | undefined',
@@ -292,9 +306,21 @@ const addUser = mutateResource(
       type: 'QueryClient',
       description: 'Optional explicit QueryClient override (defaults to QUERY_CLIENT token).',
     },
-  ];
+  ]);
 
-  readonly queryResourceDefinitionProps: ApiProperty[] = [
+  readonly queryResourceDefinitionProps = computed<ApiProperty[]>(() => [
+    {
+      name: 'retry',
+      type: 'false | QueryRetryOptions',
+      defaultValue: 'false',
+      description: this.translation.translate('queryExamples.retryDescription'),
+    },
+    {
+      name: 'deadlineMs',
+      type: 'number | false',
+      defaultValue: 'undefined',
+      description: this.translation.translate('queryExamples.deadlineDescription'),
+    },
     {
       name: 'key',
       type: 'QueryKey',
@@ -302,7 +328,7 @@ const addUser = mutateResource(
     },
     {
       name: 'loader',
-      type: '(context: QueryLoaderContext) => Promise<T> | Observable<T>',
+      type: '(context: QueryLoaderContext) => PromiseLike<T> | Observable<T>',
       description:
         'Data fetcher receiving { abortSignal, refresh }. Observable reads automatically complete after the first emission.',
     },
@@ -329,9 +355,39 @@ const addUser = mutateResource(
       defaultValue: 'false',
       description: 'Whether to abort an in-flight transport request if all observers unmount before completion.',
     },
-  ];
+  ]);
 
   readonly queryResourceRefApiProps = computed<ApiProperty[]>(() => [
+    {
+      name: 'isInitialError',
+      type: 'Signal<boolean>',
+      description: this.translation.translate('queryExamples.isInitialErrorDescription'),
+    },
+    {
+      name: 'isRefreshError',
+      type: 'Signal<boolean>',
+      description: this.translation.translate('queryExamples.isRefreshErrorDescription'),
+    },
+    {
+      name: 'updatedAt',
+      type: 'Signal<number | null>',
+      description: this.translation.translate('queryExamples.updatedAtDescription'),
+    },
+    {
+      name: 'failureCount',
+      type: 'Signal<number>',
+      description: this.translation.translate('queryExamples.failureCountDescription'),
+    },
+    {
+      name: 'failureReason',
+      type: 'Signal<unknown | null>',
+      description: this.translation.translate('queryExamples.failureReasonDescription'),
+    },
+    {
+      name: 'nextRetryAt',
+      type: 'Signal<number | null>',
+      description: this.translation.translate('queryExamples.nextRetryAtDescription'),
+    },
     {
       name: 'isInitialLoading',
       type: 'Signal<boolean>',

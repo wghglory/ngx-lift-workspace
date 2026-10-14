@@ -2,6 +2,7 @@
   <!-- Overview -->
   <p class="p1" [innerHTML]="'queryResource.overview' | translate"></p>
   <app-query-usage-examples />
+  <app-query-failure-examples />
 
   <!-- ==================== ARCHITECTURE & COMPARISON SECTION ==================== -->
   <section cds-layout="vertical gap:md align:stretch" class="m-t-md">
@@ -477,10 +478,10 @@
     <h2>{{ 'queryResource.apiReference' | translate }}</h2>
 
     <h3><code>queryResource(definition, options)</code></h3>
-    <app-api-table [properties]="queryResourceApiProps" />
+    <app-api-table [properties]="queryResourceApiProps()" />
 
     <h3 class="m-t-md"><code>QueryResourceDefinition&lt;T&gt;</code></h3>
-    <app-api-table [properties]="queryResourceDefinitionProps" />
+    <app-api-table [properties]="queryResourceDefinitionProps()" />
 
     <h3 class="m-t-md"><code>QueryResourceRef&lt;T, E&gt;</code></h3>
     <app-api-table [properties]="queryResourceRefApiProps()" />

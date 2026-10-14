@@ -22,7 +22,7 @@
     </p>
     <button class="btn btn-sm" (click)="tenantQuery.reload()">{{ 'queryExamples.refresh' | translate }}</button>
     <button class="btn btn-sm" (click)="failTenant()">{{ 'queryExamples.fail' | translate }}</button>
-    @if (tenantQuery.error()) {
+    @if (tenantQuery.status() === 'error') {
       <p role="alert">{{ 'queryExamples.tenantError' | translate }}</p>
       <button class="btn btn-sm" (click)="tenantQuery.reload()">{{ 'queryExamples.retry' | translate }}</button>
     }
@@ -53,10 +53,10 @@
     <button class="btn btn-sm btn-primary" [disabled]="createDisabled()" (click)="createDatabase()">
       {{ 'queryExamples.create' | translate }}
     </button>
-    @if (createMutation.error()) {
+    @if (createMutation.status() === 'error') {
       <p role="alert">{{ 'queryExamples.createError' | translate }}</p>
     }
-    @if (databasesQuery.error()) {
+    @if (databasesQuery.status() === 'error') {
       <p role="alert">{{ 'queryExamples.databaseError' | translate }}</p>
       <button class="btn btn-sm" (click)="databasesQuery.reload()">
         {{ 'queryExamples.retryDatabases' | translate }}

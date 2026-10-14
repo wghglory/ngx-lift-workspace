@@ -43,7 +43,60 @@ test('new query examples are localized in every supported language', async ({pag
     await expect(demo).toContainText(translated['queryExamples.dynamicIntro']);
     await expect(demo).not.toContainText('!! Key');
     await expect(demo).not.toContainText(/\{\d+\}/);
+    const failure = page.getByTestId('query-failure-examples');
+    await expect(failure.locator('h2')).toHaveText(translated['queryExamples.failureTitle']);
+    await expect(
+      failure.getByRole('button', {name: translated['queryExamples.startRetry'], exact: true}),
+    ).toBeVisible();
+    await expect(failure).not.toContainText('!! Key');
+    await expect(failure).not.toContainText(/\{\d+\}/);
   }
+});
+
+test('failure patterns retain data, isolate observers, and retry only failed reads', async ({page}) => {
+  const demo = page.getByTestId('query-failure-examples');
+  const initial = demo.getByTestId('failure-initial');
+  await expect(initial.getByRole('alert')).toBeVisible();
+  await initial.getByRole('button', {name: 'Retry read', exact: true}).click();
+  await expect(initial).toContainText('Last successful value: 42');
+  const refresh = demo.getByTestId('failure-refresh');
+  await refresh.getByRole('button', {name: 'Fail one refresh', exact: true}).click();
+  await expect(refresh.getByRole('status')).toContainText('Refresh failed');
+  await expect(refresh.getByTestId('failure-retained')).toContainText('42');
+  await refresh.getByRole('button', {name: 'Simulate observer failure', exact: true}).click();
+  await expect(demo.getByTestId('failure-reporting')).toContainText('observer diagnostics: 1');
+  await expect(refresh).toContainText('resolved');
+  await demo.getByRole('button', {name: 'Start Observable retry', exact: true}).click();
+  await expect(demo.getByTestId('failure-retry-state')).toContainText('failureCount: 1');
+  await expect(demo.getByTestId('failure-retry-state')).toContainText('resolved; failureCount: 0');
+  await expect(demo.getByTestId('failure-request-counts')).toContainText('"GET retry": 3');
+  await demo.getByRole('button', {name: 'Start Promise retry', exact: true}).click();
+  await expect(demo.getByTestId('failure-promise-state')).toContainText('Promise: resolved');
+  const rows = demo.getByTestId('failure-row');
+  await expect(rows.last()).toContainText('b — error');
+  await rows.last().getByRole('button', {name: 'Retry read', exact: true}).click();
+  await expect(rows.last()).toContainText('b — resolved');
+  await expect(demo.getByTestId('failure-request-counts')).toContainText('"GET rows/a": 1');
+  await expect(demo.getByTestId('failure-reporting')).toContainText('Terminal read errors: 3');
+});
+
+test('deadlines cancel hanging subscriptions and write failures preserve input without automatic retry', async ({
+  page,
+}) => {
+  const demo = page.getByTestId('query-failure-examples');
+  await demo.getByRole('button', {name: 'Start hanging read', exact: true}).click();
+  await expect(demo.getByTestId('failure-deadline').getByRole('alert')).toContainText('timed out');
+  await expect(demo.getByTestId('failure-deadline-state')).toContainText('Canceled subscriptions: 1');
+  await expect(demo.getByTestId('failure-request-counts')).toContainText('"GET deadline": 1');
+  await demo.getByTestId('failure-name').fill('Retained browser input');
+  await demo.getByRole('button', {name: 'Submit failed write', exact: true}).click();
+  await expect(demo.getByTestId('failure-mutation-state')).toHaveText('error');
+  await expect(demo.getByTestId('failure-name')).toHaveValue('Retained browser input');
+  await expect(demo.getByTestId('failure-request-counts')).toContainText('"POST mutation": 1');
+  await demo.getByRole('button', {name: 'Submit write', exact: true}).click();
+  await expect(demo.getByTestId('failure-mutation-state')).toHaveText('resolved');
+  await expect(demo.getByTestId('failure-request-counts')).toContainText('"POST mutation": 2');
+  await expect(demo.getByTestId('failure-retained')).toContainText('43');
 });
 
 test('Observable queries gate dependencies, distinguish refresh, and recover from errors', async ({page}) => {
