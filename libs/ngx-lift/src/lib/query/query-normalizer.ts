@@ -7,6 +7,7 @@ import {QueryLoaderContext, QueryResult} from './query.models';
  *
  * If the source is an Observable:
  * - Unsubscribes after the first emitted value (taking the first value like RxJS firstValueFrom).
+ * - Waits for subscription setup to finish before settling, so teardown failures escaping subscribe/unsubscribe reject successful reads.
  * - Rejects with EmptyError if the Observable completes without emitting a value.
  * - Rejects immediately if the request's AbortSignal is aborted, and cancels the Observable subscription.
  * - Rejects on Observable error.
@@ -30,20 +31,27 @@ export function normalizeQueryResult<T>(source: QueryResult<T>, context: QueryLo
       }
 
       let settled = false;
+      let subscribing = true;
+      let outcome: {value: T} | {error: unknown} | undefined;
+
+      const finish = () => {
+        if (subscribing || !outcome) return;
+        if ('error' in outcome) reject(outcome.error);
+        else resolve(outcome.value);
+      };
 
       const settle = (result: {value: T} | {error: unknown}) => {
         if (settled) return;
         settled = true;
+        outcome = result;
         abortSignal.removeEventListener('abort', onAbort);
         try {
           subscriber.unsubscribe();
         } catch (error) {
           // A teardown failure must not strand the shared request or mask its original error.
-          reject('error' in result ? result.error : error);
-          return;
+          outcome = {error: 'error' in result ? result.error : error};
         }
-        if ('error' in result) reject(result.error);
-        else resolve(result.value);
+        finish();
       };
 
       const onAbort = () => {
@@ -69,7 +77,13 @@ export function normalizeQueryResult<T>(source: QueryResult<T>, context: QueryLo
       try {
         source.subscribe(subscriber);
       } catch (error) {
-        subscriber.error(error);
+        // Synchronous emissions close the subscriber before returned teardown is registered.
+        // Wait for subscribe() to return so a teardown failure cannot publish successful data.
+        if (!settled) settle({error});
+        else if (outcome && 'value' in outcome) outcome = {error};
+      } finally {
+        subscribing = false;
+        finish();
       }
     });
   }

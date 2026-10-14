@@ -90,13 +90,16 @@ export declare function queryResource<T, E = Error>(
 ### 原生 loader 契约
 
 所有查询入口直接接受
-`Observable<T> | PromiseLike<T>`。应用不需要公开适配器；内部 normalizer 负责首次值、空完成、错误和取消。teardown 失败不会使共享请求一直 pending。已有请求错误优先保留；收到值后的 cleanup 失败进入可重试 error 状态。
+`Observable<T> | PromiseLike<T>`。应用不需要公开适配器；内部 normalizer 负责首次值、空完成、错误和取消。teardown 失败不会使共享请求一直 pending。已有请求错误优先保留；收到值后，从
+`subscribe()` 或 `unsubscribe()`
+传出的 cleanup 错误令请求进入可重试 error 状态。RxJS 的某些算子链会在 subscriber 关闭后内部吞掉同步 cleanup 异常（例如同步
+`finalize`）；这类异常不会到达 normalizer，与 `firstValueFrom` 行为一致。
 
 ### 技术边界与架构考量（Challenge 与澄清）
 
 1. **有限快照（Query Snapshot）vs. 无限数据流（Infinite Stream）：**
    - 缓存查询（Query）本质是对后端服务端状态在某一时刻的**有限快照**。因此，当 Observable
-     loader 发送**第一个值**时，即视为查询成功并立即自动 unsubscribe 取消订阅。
+     loader 发送**第一个值**时，立即 unsubscribe 取消订阅；成功结算要等订阅初始化完成。
    - 如果某个场景是持久推送流（如 WebSocket、SSE、实时日志长连接），**切勿**强行使用 `queryResource`，而应使用
      `resourceAsync` 或原生 RxJS 结合 Signal 管理。
 2. **切勿在每一个 Service 中滥用 `QueryClient`：**
@@ -1044,7 +1047,7 @@ PromiseLike 统一交给 Promise 调度器。Angular 桥接层拥有观察者生
 | 场景              | 行为与边界                                                                                                                               |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | Observable        | 第一个值决定结果并 unsubscribe；空完成产生 EmptyError；请求错误保留。                                                                    |
-| teardown 抛错     | 请求仍会结束；已有错误优先保留；成功值后的 cleanup 错误令该次请求失败且可重试。                                                          |
+| teardown 抛错     | 请求仍会结束；已有错误优先保留；成功值后传到订阅边界的 cleanup 错误令该次请求失败且可重试。                                              |
 | PromiseLike       | Promise.resolve 解析；loader 必须主动向 fetch 等 transport 传递 abortSignal 才能停止网络请求。                                           |
 | 相同 key          | 共享缓存与当前有效在途请求；refresh 跳过已完成的 fresh cache，但仍合并在途请求。                                                         |
 | key 或 scope 改变 | 立即隐藏旧身份的数据；旧代际结果不能覆盖新缓存。                                                                                         |
@@ -1066,9 +1069,10 @@ flowchart TD
 
 ### 运行时硬性保障
 
-1. **首值即决断（First-value Resolution）：**
-   Observable 命中首个数据后立即 resolve 并触发 teardown 取消订阅，杜绝长流无意义驻留。
-2. **同步发射安全（Synchronous Safety）：** 针对 `of(value)`，在订阅返回前同步完成解析并清理。
+1. **首值即决断（First-value Resolution）：** Observable 命中首个数据后立即取消订阅，忽略后续值。
+2. **同步发射安全（Synchronous Safety）：** 等 `subscribe()`
+   返回并完成返回 teardown 的注册后再结算。teardown 异常从订阅边界传出时，成功值转为 rejection，不写入成功缓存；已有请求错误、`EmptyError`
+   和 `AbortError` 优先保留。回归测试覆盖四种同步终止路径及 QueryClient 清理失败后的重试。
 3. **空流处理（Empty Error Handling）：** 遇到没有发射任何值就 complete 的流，明确 reject
    `EmptyError`，绝不处于挂起状态。
 4. **中断协同（Abort Signal Forwarding）：** 外部 abort 时，不仅解除监听，还会同步向底层的 RxJS
@@ -1129,7 +1133,7 @@ signal。`queryResources` 已实现 B 方案；A 方案延后。
 
 ### 本次验证
 
-2026-10-14 本地验证通过：ngx-lift 780、clr-lift 243、demo
+2026-10-14 本地验证通过：ngx-lift 787、clr-lift 243、demo
 214 个单元测试；覆盖率门禁；源码与测试类型检查；lint、production
 builds、i18n/tooling 检查；111 个 Chromium/Firefox/WebKit
 E2E；tarball 导出与独立消费者安装验证。英文/中文轮询与 service 示例、live demo 代码示例均经过 strict

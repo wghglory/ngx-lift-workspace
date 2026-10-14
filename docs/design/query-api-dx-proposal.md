@@ -93,8 +93,10 @@ When calling `queryResource` in an Angular component, how should the variable be
 
 All query entry points accept `Observable<T> | PromiseLike<T>` directly. There is no public adapter wrapper. The
 internal normalizer owns first-value resolution, empty completion, error propagation, and cancellation. Throwing
-teardown cannot strand a request: original transport errors take precedence; cleanup failure after a value rejects the
-attempt so the next read can retry.
+teardown cannot strand a request: original transport errors take precedence; cleanup failure escaping `subscribe()` or
+`unsubscribe()` after a value rejects the attempt so the next read can retry. RxJS may internally suppress cleanup
+errors in operator chains after a subscriber is closed (for example synchronous `finalize`); those errors never reach
+normalization, matching `firstValueFrom`.
 
 ### Points to Challenge and Architectural Guardrails
 
@@ -102,7 +104,7 @@ While we agree that developer ergonomics should be seamless, several architectur
 
 1. **A Query Snapshot vs. An Infinite Stream:**
    - A query represents a **point-in-time cached snapshot of server state**. When an Observable loader emits its first
-     value, the query resolves and unsubscribes from the source.
+     value, it immediately unsubscribes. Successful settlement waits for subscription setup to finish.
    - If an endpoint represents a persistent stream (e.g. WebSocket, Server-Sent Events, or continuous signal emissions),
      it should **not** be forced into `queryResource`. Use `resourceAsync`, an Angular Signal effect, or native RxJS
      streams instead.
@@ -1044,7 +1046,7 @@ scheduler. Angular observers own their lifecycle without duplicating cache state
 | Case              | Behavior and boundary                                                                                                                                                                     |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Observable        | First value wins and unsubscribes; empty completion rejects with EmptyError; source errors are retained.                                                                                  |
-| Throwing teardown | The attempt settles; original errors take precedence; cleanup failure after a value rejects and permits retry.                                                                            |
+| Throwing teardown | The attempt settles; original errors take precedence; cleanup failure reaching the subscription boundary after a value rejects and permits retry.                                         |
 | PromiseLike       | Promise.resolve assimilates the result; the loader must pass abortSignal to transport for network cancellation.                                                                           |
 | Same key          | Share cache and valid pending work; refresh bypasses completed fresh data but joins pending reads.                                                                                        |
 | Key/scope changes | Immediately hide old identity data; obsolete generations cannot overwrite newer cache state.                                                                                              |
@@ -1066,9 +1068,11 @@ flowchart TD
 
 ### Normalization Guarantees
 
-1. **First Value Wins:** For Observable loaders, the first emitted value resolves the query and immediately triggers
-   unsubscription, preventing memory leaks on infinite streams.
-2. **Synchronous Emission:** Sources like `of(data)` resolve synchronously before subscription returns.
+1. **First Value Wins:** The first emitted value immediately triggers unsubscription, ignoring later values.
+2. **Synchronous Emission:** Settlement waits until `subscribe()` returns, including registration of returned teardown.
+   If that teardown throws through the subscription boundary, a successful value becomes a rejection and is not cached.
+   Original source errors, `EmptyError`, and `AbortError` take precedence over cleanup errors. Regression tests cover
+   all four synchronous terminal paths and QueryClient retry after failed cleanup.
 3. **Empty Stream Handling:** An Observable completing without emitting any value rejects with `EmptyError` instead of
    leaving the query hanging in loading state.
 4. **Abort Signal Forwarding:** Aborting transport removes the abort event listener and unsubscribes from the active

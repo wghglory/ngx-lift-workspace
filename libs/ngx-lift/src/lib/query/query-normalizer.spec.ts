@@ -1,10 +1,91 @@
-import {EMPTY, EmptyError, Observable, of, Subject} from 'rxjs';
+import {EMPTY, EmptyError, finalize, firstValueFrom, map, Observable, of, Subject} from 'rxjs';
 import {describe, expect, it} from 'vitest';
 
 import {normalizeQueryResult} from './query-normalizer';
 import {QueryClient} from './query-client';
 
 describe('query result normalization', () => {
+  it.each(['map', 'finalize'] as const)(
+    'matches firstValueFrom when RxJS %s suppresses cleanup errors',
+    async (operator) => {
+      let cleanups = 0;
+      const cleanup = () => {
+        cleanups++;
+        throw new Error('operator cleanup failed');
+      };
+      const source =
+        operator === 'map'
+          ? new Observable<number>((subscriber) => {
+              subscriber.next(42);
+              return cleanup;
+            }).pipe(map((value) => value))
+          : of(42).pipe(finalize(cleanup));
+      // RxJS catches these exceptions internally and sends them to a closed subscriber.
+      // Neither subscription consumer can observe that error at its boundary.
+      await expect(
+        normalizeQueryResult(source, {abortSignal: new AbortController().signal, refresh: false}),
+      ).resolves.toBe(42);
+      await expect(firstValueFrom(source)).resolves.toBe(42);
+      expect(cleanups).toBe(2);
+    },
+  );
+
+  it.each(['next', 'error', 'complete', 'abort'] as const)(
+    'handles returned teardown failures during synchronous %s',
+    async (event) => {
+      const controller = new AbortController();
+      const sourceError = new Error('request failed');
+      let cleanups = 0;
+      const result = normalizeQueryResult(
+        new Observable<number>((subscriber) => {
+          if (event === 'next') {
+            subscriber.next(42);
+            expect(subscriber.closed).toBe(true);
+            subscriber.next(99);
+          }
+          if (event === 'error') subscriber.error(sourceError);
+          if (event === 'complete') subscriber.complete();
+          if (event === 'abort') controller.abort();
+          return () => {
+            cleanups++;
+            throw new Error('returned cleanup failed');
+          };
+        }),
+        {abortSignal: controller.signal, refresh: false},
+      );
+      if (event === 'next') await expect(result).rejects.toThrow('returned cleanup failed');
+      if (event === 'error') await expect(result).rejects.toBe(sourceError);
+      if (event === 'complete') await expect(result).rejects.toBeInstanceOf(EmptyError);
+      if (event === 'abort') await expect(result).rejects.toMatchObject({name: 'AbortError'});
+      expect(cleanups).toBe(1);
+    },
+  );
+
+  it('does not cache synchronous success when returned teardown fails, and allows retry', async () => {
+    const client = new QueryClient();
+    try {
+      let fail = true;
+      const definition = {
+        key: ['synchronous-cleanup-recovery'],
+        loader: () =>
+          new Observable<number>((subscriber) => {
+            subscriber.next(42);
+            return () => {
+              if (fail) throw new Error('returned cleanup failed');
+            };
+          }),
+      };
+      await expect(client.fetchQuery(definition)).rejects.toThrow('returned cleanup failed');
+      expect(client.getSnapshot(definition.key)?.status).toBe('error');
+      expect(client.getSnapshot(definition.key)?.value).toBeUndefined();
+      fail = false;
+      await expect(client.fetchQuery(definition)).resolves.toBe(42);
+      expect(client.getSnapshot(definition.key)?.status).toBe('resolved');
+    } finally {
+      client.destroy();
+    }
+  });
+
   it('makes a query retryable after a teardown failure rather than joining stuck work', async () => {
     const client = new QueryClient();
     try {
