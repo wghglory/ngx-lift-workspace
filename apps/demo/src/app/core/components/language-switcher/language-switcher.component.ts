@@ -41,7 +41,6 @@ export class LanguageSwitcherComponent {
   readonly currentLabel = computed(
     () => this.languages.find((language) => language.code === this.activeLanguageCode())?.label ?? 'English',
   );
-  readonly isPartialLanguage = computed(() => !['en', 'zh-CN'].includes(this.activeLanguageCode()));
 
   isLanguageActive(code: string): boolean {
     return this.activeLanguageCode() === code;

@@ -1,5 +1,7 @@
 import {DOCUMENT} from '@angular/common';
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
+import {ClrCommonStrings, ClrCommonStringsService, commonStringsDefault} from '@clr/angular/utils';
+import {defaultClarityCommonStrings} from './clarity-common-strings.l10n';
 
 /** English fallback used when a requested translation is unavailable. */
 export const DEFAULT_LANGUAGE = 'en';
@@ -9,7 +11,7 @@ export const STORAGE_KEY_LANGUAGE = 'clr-lift-lang';
 /**
  * Service for managing translations and localization in the application.
  * Supports multiple languages, reactive language switching, persistence,
- * and component-scoped translation keys.
+ * component-scoped translation keys, and dynamic synchronization with Clarity Design System common strings.
  *
  * Automatically resolves initial language from localStorage or `navigator.language`
  * with fallback to English ('en').
@@ -19,8 +21,13 @@ export const STORAGE_KEY_LANGUAGE = 'clr-lift-lang';
 })
 export class TranslationService {
   private document = inject(DOCUMENT);
+  private clrCommonStrings = inject(ClrCommonStringsService, {optional: true});
   private readonly dictionaryVersion = signal(0);
   private readonly warnings = new Set<string>();
+
+  private clarityCommonStrings: Record<string, Partial<ClrCommonStrings>> = {
+    ...defaultClarityCommonStrings,
+  };
 
   /** Canonical locale for number/date formatting; independent of message fallback. */
   readonly locale = computed(() => canonicalLocale(this.currentLanguageSignal()));
@@ -30,6 +37,7 @@ export class TranslationService {
       const locale = this.locale();
       this.document.documentElement?.setAttribute('lang', locale);
       this.document.documentElement?.setAttribute('dir', /^(ar|fa|he|ur)(-|$)/i.test(locale) ? 'rtl' : 'ltr');
+      this.syncClrCommonStrings(this.currentLanguageSignal());
     });
   }
   private translations: Record<string, Record<string, string>> = Object.create(null);
@@ -124,6 +132,54 @@ export class TranslationService {
    */
   getLanguage(): string {
     return this.currentLanguageSignal();
+  }
+
+  /**
+   * Registers custom or overriding Clarity common strings for a specific language tag.
+   *
+   * @param lang - Target language tag (e.g. 'zh-CN', 'de', 'es').
+   * @param strings - Dictionary of Clarity common strings.
+   */
+  loadClarityCommonStrings(lang: string, strings: Partial<ClrCommonStrings>): void {
+    if (!lang || !strings) return;
+    const locale = canonicalLocale(lang);
+    this.clarityCommonStrings[locale] = {
+      ...(this.clarityCommonStrings[locale] ?? {}),
+      ...strings,
+    };
+    this.syncClrCommonStrings();
+  }
+
+  /**
+   * Synchronizes Clarity's native common strings with the given or active language.
+   *
+   * @param lang - Target language tag (defaults to active language).
+   * @param overrides - Optional additional overrides for specific Clarity common string keys.
+   */
+  syncClrCommonStrings(lang: string = this.currentLanguageSignal(), overrides?: Partial<ClrCommonStrings>): void {
+    if (!this.clrCommonStrings) {
+      return;
+    }
+    const resolved = this.resolveClarityStrings(lang);
+    this.clrCommonStrings.localize({...commonStringsDefault, ...resolved, ...overrides});
+  }
+
+  /**
+   * Resolves the Clarity common strings dictionary for a language code with regional fallback.
+   *
+   * @param lang - Target language tag.
+   * @returns Resolved partial ClrCommonStrings dictionary.
+   */
+  resolveClarityStrings(lang: string): Partial<ClrCommonStrings> {
+    const locale = canonicalLocale(lang);
+    const base = locale.split('-')[0];
+    const chinese = chineseLocale(locale);
+    return {
+      ...this.clarityCommonStrings[DEFAULT_LANGUAGE],
+      ...this.clarityCommonStrings[base],
+      ...(chinese ? this.clarityCommonStrings[chinese] : undefined),
+      ...this.clarityCommonStrings[locale],
+    };
   }
 
   /**

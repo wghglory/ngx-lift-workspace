@@ -1142,7 +1142,7 @@ signal。`queryResources` 已实现 B 方案；A 方案延后。
 
 ### 本次验证
 
-2026-10-14 本地验证通过：ngx-lift 826、clr-lift 243、demo
+2026-10-14 #146 独立 head `6128d54` 验证通过：ngx-lift 826、clr-lift 243、demo
 218 个单元测试；覆盖率门禁；源码与测试类型检查；lint、production
 builds、i18n/tooling 检查；117 个 Chromium/Firefox/WebKit
 E2E；tarball 导出与独立消费者安装验证。英文/中文轮询与 service 示例、live demo 代码示例均经过 strict

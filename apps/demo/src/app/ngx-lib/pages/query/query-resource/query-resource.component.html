@@ -473,6 +473,149 @@
     </app-demo-playground>
   </section>
 
+  <!-- ==================== DEMO 5: DEVELOPER DIAGNOSTICS ==================== -->
+  <section data-testid="query-diagnostics" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2>{{ 'queryResource.diagnosticsSection' | translate }}</h2>
+    <p>{{ 'queryResource.diagnosticsSectionDesc' | translate }}</p>
+
+    <app-demo-playground
+      [title]="'queryResource.diagnosticsPlaygroundTitle' | translate"
+      [description]="'queryResource.diagnosticsPlaygroundDesc' | translate"
+      [tsCode]="diagnosticsCode"
+      [badgeText]="'queryResource.badgeDiagnostics' | translate"
+    >
+      <div inspector>
+        <button type="button" class="btn btn-sm btn-outline" (click)="refreshDiagnostics()">
+          <clr-icon shape="refresh" class="m-r-xs" />
+          {{ 'queryResource.refreshDiagnostics' | translate }}
+        </button>
+      </div>
+
+      <div preview>
+        <!-- Metric Cards -->
+        <div class="clr-row">
+          <div class="clr-col-6 clr-col-md-2">
+            <div class="card card-block text-center p-y-sm">
+              <span class="text-secondary font-weight-light">{{ 'queryResource.diagTotalEntries' | translate }}</span>
+              <h3 class="m-t-xs">{{ diagnostics().entryCount }}</h3>
+            </div>
+          </div>
+          <div class="clr-col-6 clr-col-md-2">
+            <div class="card card-block text-center p-y-sm">
+              <span class="text-secondary font-weight-light">{{ 'queryResource.diagActiveQueries' | translate }}</span>
+              <h3 class="m-t-xs text-success">{{ diagnostics().activeEntryCount }}</h3>
+            </div>
+          </div>
+          <div class="clr-col-6 clr-col-md-2">
+            <div class="card card-block text-center p-y-sm">
+              <span class="text-secondary font-weight-light">{{
+                'queryResource.diagInactiveQueries' | translate
+              }}</span>
+              <h3 class="m-t-xs text-warning">{{ diagnostics().inactiveEntryCount }}</h3>
+            </div>
+          </div>
+          <div class="clr-col-6 clr-col-md-2">
+            <div class="card card-block text-center p-y-sm">
+              <span class="text-secondary font-weight-light">{{
+                'queryResource.diagPendingRequests' | translate
+              }}</span>
+              <h3 class="m-t-xs text-info">{{ diagnostics().pendingRequestCount }}</h3>
+            </div>
+          </div>
+          <div class="clr-col-6 clr-col-md-2">
+            <div class="card card-block text-center p-y-sm">
+              <span class="text-secondary font-weight-light">{{ 'queryResource.diagTotalObservers' | translate }}</span>
+              <h3 class="m-t-xs">{{ diagnostics().totalObserverCount }}</h3>
+            </div>
+          </div>
+          <div class="clr-col-6 clr-col-md-2">
+            <div class="card card-block text-center p-y-sm">
+              <span class="text-secondary font-weight-light">{{ 'queryResource.diagVisibility' | translate }}</span>
+              <h4 class="m-t-xs">
+                @if (diagnostics().isVisible) {
+                  <span class="badge badge-success">{{ 'queryResource.diagVisible' | translate }}</span>
+                } @else {
+                  <span class="badge badge-warning">{{ 'queryResource.diagHidden' | translate }}</span>
+                }
+              </h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entries Table -->
+        <table class="table table-compact m-t-md">
+          <thead>
+            <tr>
+              <th>{{ 'queryResource.thQueryKey' | translate }}</th>
+              <th>{{ 'queryResource.status' | translate }}</th>
+              <th>{{ 'queryResource.thObservers' | translate }}</th>
+              <th>{{ 'queryResource.thFailures' | translate }}</th>
+              <th>{{ 'queryResource.thNextRetry' | translate }}</th>
+              <th>{{ 'queryResource.freshness' | translate }}</th>
+              <th>{{ 'queryResource.thRemainingGc' | translate }}</th>
+              <th>{{ 'queryResource.thRemainingPoll' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of diagnostics().entries; track entry.serializedKey) {
+              <tr>
+                <td>
+                  <code>{{ entry.serializedKey }}</code>
+                </td>
+                <td>
+                  <span
+                    class="label"
+                    [class.label-success]="entry.status === 'resolved'"
+                    [class.label-info]="entry.status === 'loading' || entry.status === 'reloading'"
+                    [class.label-danger]="entry.status === 'error'"
+                  >
+                    {{ entry.status }}
+                  </span>
+                </td>
+                <td>{{ entry.observerCount }}</td>
+                <td>{{ entry.failureCount }}</td>
+                <td>
+                  @if (entry.nextRetryAt !== null) {
+                    {{ entry.nextRetryAt | date: 'mediumTime' }}
+                  } @else {
+                    -
+                  }
+                </td>
+                <td>
+                  @if (entry.isStale) {
+                    <span class="badge badge-warning">{{ 'queryResource.freshnessBadgeStale' | translate }}</span>
+                  } @else {
+                    <span class="badge badge-success">{{ 'queryResource.freshnessBadgeFresh' | translate }}</span>
+                  }
+                </td>
+                <td>
+                  @if (entry.remainingGcTime !== null) {
+                    {{ (entry.remainingGcTime / 1000).toFixed(1) }}s
+                  } @else {
+                    -
+                  }
+                </td>
+                <td>
+                  @if (entry.remainingPollDelay !== null) {
+                    {{ (entry.remainingPollDelay / 1000).toFixed(1) }}s
+                  } @else {
+                    -
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="text-center p-y-sm text-secondary">
+                  {{ 'queryResource.noQueriesCached' | translate }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-demo-playground>
+  </section>
+
   <!-- ==================== API REFERENCE ==================== -->
   <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2>{{ 'queryResource.apiReference' | translate }}</h2>

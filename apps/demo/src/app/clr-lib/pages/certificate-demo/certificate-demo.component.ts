@@ -1,16 +1,11 @@
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {
-  CalloutComponent,
-  CertificateSignpostComponent,
-  PageContainerComponent,
-  TranslatePipe,
-  TranslationService,
-} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
+import {CertificateExampleComponent} from '../../../shared/components/certificate-example/certificate-example.component';
 
 @Component({
   selector: 'app-certificate-demo',
@@ -19,8 +14,8 @@ import {highlight} from '../../../shared/utils/highlight.util';
     CalloutComponent,
     PageContainerComponent,
     CodeBlockComponent,
+    CertificateExampleComponent,
     ClarityModule,
-    CertificateSignpostComponent,
     TranslatePipe,
   ],
   templateUrl: './certificate-demo.component.html',

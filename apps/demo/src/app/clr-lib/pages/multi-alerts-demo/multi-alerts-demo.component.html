@@ -53,10 +53,10 @@
       <p>{{ 'multiAlerts.serviceSummary' | translate }}</p>
 
       <h4>{{ 'common.methods' | translate }}</h4>
-      <app-api-table [properties]="methods" />
+      <app-api-table [properties]="methods()" />
 
       <h4>{{ 'multiAlerts.alertTypeTitle' | translate }}</h4>
-      <app-api-table [properties]="alertProperties" />
+      <app-api-table [properties]="alertProperties()" />
     </div>
 
     <div cds-layout="vertical gap:sm align:stretch">

@@ -11,6 +11,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/demo",
+        "statsJson": true,
         "index": "apps/demo/src/index.html",
         "browser": "apps/demo/src/main.ts",
         "tsConfig": "apps/demo/tsconfig.app.json",

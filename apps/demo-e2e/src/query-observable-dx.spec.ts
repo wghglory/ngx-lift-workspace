@@ -50,6 +50,17 @@ test('new query examples are localized in every supported language', async ({pag
     ).toBeVisible();
     await expect(failure).not.toContainText('!! Key');
     await expect(failure).not.toContainText(/\{\d+\}/);
+    const diagnostics = page.getByTestId('query-diagnostics');
+    await expect(
+      diagnostics.getByRole('columnheader', {name: translated['queryResource.thFailures'], exact: true}),
+    ).toBeVisible();
+    await expect(
+      diagnostics.getByRole('columnheader', {name: translated['queryResource.thNextRetry'], exact: true}),
+    ).toBeVisible();
+    await expect(diagnostics).toContainText(translated['queryResource.diagPendingRequests']);
+    await diagnostics.getByRole('button', {name: translated['queryResource.refreshDiagnostics'], exact: true}).click();
+    await expect(diagnostics.locator('tbody tr')).not.toHaveCount(0);
+    await expect(diagnostics).not.toContainText('!! Key');
   }
 });
 

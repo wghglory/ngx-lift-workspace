@@ -2,7 +2,7 @@ import {beforeEach, afterEach, vi} from 'vitest';
 import {TestBed} from '@angular/core/testing';
 
 import {IdleDetectionConfig} from './idle-detection.config';
-import {IdleDetectionService} from './idle-detection.service';
+import {IdleDetectionService, provideIdleDetectionService} from './idle-detection.service';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -30,8 +30,127 @@ describe('IdleDetectionService', () => {
     service.clearTimers();
   });
 
+  it('replays an active countdown to late consumers and publishes the activity reset', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(2000);
+    const states: {isCountingDown: boolean; countdown: number | null}[] = [];
+    const subscription = service.observeState().subscribe((state) => states.push(state));
+    expect(states).toEqual([{isCountingDown: true, countdown: 4}]);
+    service.resetTimer(true);
+    expect(states.at(-1)).toEqual({isCountingDown: false, countdown: null});
+    subscription.unsubscribe();
+  });
+
+  it('clears replayed warning state on release and completes it with the injector', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    const release = service.watch();
+    await vi.advanceTimersByTimeAsync(1000);
+    const states = vi.fn();
+    const completed = vi.fn();
+    service.observeState().subscribe({next: states, complete: completed});
+    expect(states).toHaveBeenLastCalledWith({isCountingDown: true, countdown: 5});
+    release();
+    expect(states).toHaveBeenLastCalledWith({isCountingDown: false, countdown: null});
+    TestBed.resetTestingModule();
+    expect(completed).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['release', 'clear', 'reset'] as const)(
+    'honors synchronous %s from the first warning state',
+    async (action) => {
+      service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+      const release = service.watch();
+      const timeout = vi.fn();
+      const countdown = vi.fn();
+      service.onTimeoutEnd().subscribe(timeout);
+      service.onCountDown().subscribe(countdown);
+      service.observeState().subscribe((state) => {
+        if (!state.isCountingDown) return;
+        if (action === 'release') release();
+        else if (action === 'clear') service.clearTimers();
+        else service.resetTimer(true);
+      });
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(service['countdownTimer']).toBeUndefined();
+      expect(service['isCountingDown']).toBe(false);
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(timeout).not.toHaveBeenCalled();
+      expect(countdown).not.toHaveBeenCalled();
+    },
+  );
+
+  it('does not deliver stale countdown events after a state observer resets an active tick', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    service.watch();
+    const countdowns: number[] = [];
+    service.onCountDown().subscribe((value) => countdowns.push(value));
+    service.observeState().subscribe((state) => {
+      if (state.isCountingDown && state.countdown === 4) service.resetTimer(true);
+    });
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(countdowns).toEqual([5]);
+    expect(service['countdownTimer']).toBeUndefined();
+  });
+
+  it('does not start a countdown after an idle event releases its owner', async () => {
+    const release = service.watch();
+    const timeout = vi.fn();
+    service.onIdleEnd().subscribe(release);
+    service.onTimeoutEnd().subscribe(timeout);
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(service['countdownTimer']).toBeUndefined();
+    expect(timeout).not.toHaveBeenCalled();
+  });
+
+  it('cannot restart timers from a state callback during injector destruction', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    service.watch();
+    await vi.advanceTimersByTimeAsync(1000);
+    service.observeState().subscribe((state) => {
+      if (!state.isCountingDown) {
+        service.startWatching();
+        service.watch();
+      }
+    });
+    TestBed.resetTestingModule();
+    expect(service['idleTimer']).toBeUndefined();
+    expect(service['countdownTimer']).toBeUndefined();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(['release', 'reset'] as const)(
+    'does not deliver superseded warning state to peers after synchronous %s',
+    async (action) => {
+      service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+      const release = service.watch();
+      service.observeState().subscribe((state) => {
+        if (!state.isCountingDown) return;
+        if (action === 'release') release();
+        else service.resetTimer(true);
+      });
+      const peer = vi.fn();
+      service.observeState().subscribe(peer);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(peer).toHaveBeenLastCalledWith({isCountingDown: false, countdown: null});
+      expect(peer.mock.calls.every(([state]) => !state.isCountingDown)).toBe(true);
+    },
+  );
+
   it('should be created', async () => {
     expect(service).toBeTruthy();
+  });
+
+  it('does not restart or stop a manually owned watcher when managed owners join and leave', async () => {
+    const idle = vi.fn();
+    service.onIdleEnd().subscribe(idle);
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(500);
+    const release = service.watch();
+    release();
+    release();
+    await vi.advanceTimersByTimeAsync(500);
+    expect(idle).toHaveBeenCalledTimes(1);
   });
 
   it('should reset timer on user activity', async () => {
@@ -386,5 +505,21 @@ describe('IdleDetectionService', () => {
 
     expect(reset).not.toHaveBeenCalled();
     expect(timeout).not.toHaveBeenCalled();
+  });
+
+  it('provides an isolated IdleDetectionService instance with provideIdleDetectionService', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideIdleDetectionService({
+          idleDurationInSeconds: 15,
+          timeoutDurationInSeconds: 45,
+        }),
+      ],
+    });
+
+    const scopedInstance = TestBed.inject(IdleDetectionService);
+    expect(scopedInstance['idleDuration']).toBe(15);
+    expect(scopedInstance['timeoutDuration']).toBe(45);
   });
 });

@@ -1,6 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {DemoPlaygroundComponent} from './demo-playground.component';
+import {highlight} from '../../utils/highlight.util';
 
 describe('DemoPlaygroundComponent', () => {
   let component: DemoPlaygroundComponent;
@@ -80,6 +81,16 @@ describe('DemoPlaygroundComponent', () => {
     component.toggleLayout();
     expect(component.currentLayout()).toBe('stacked');
   });
+  it.each(['<span title="&amp;">example</span>', 'const value: Box<string> = a < b && b > c;'])(
+    'copies the original source from prepared markup: %s',
+    (source) => {
+      fixture.componentRef.setInput('tsCode', highlight(source));
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, {clipboard: {writeText}});
+      component.copyCurrentCode();
+      expect(writeText).toHaveBeenCalledWith(source);
+    },
+  );
   it('handles clipboard rejection and absence without reporting false success', async () => {
     fixture.componentRef.setInput('tsCode', 'const x = 1;');
     Object.assign(navigator, {clipboard: {writeText: vi.fn().mockRejectedValue(new Error('Permission denied'))}});

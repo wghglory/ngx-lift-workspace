@@ -23,9 +23,10 @@
 
 所有查询入口直接接受 `Observable<T> | PromiseLike<T>`
 loader；内部统一 normalize，调度器使用 Promise，应用不需要公开适配器。Observable 取第一个值后 unsubscribe；空完成产生
-`EmptyError`。teardown 抛错时请求仍会结束，错误后可以重试。 `isInitialLoading` 表示无成功数据时的读取，`isRefreshing`
-表示保留旧值的刷新。 `fetchQueryObservable` 是单次快照；需要随失效持续更新时使用 `observeQueryObservable` 或
-`queryResource`。
+`EmptyError`。subscribe
+setup 完成后才结算；逃逸到订阅边界的 teardown 错误会拒绝成功缓存，原始传输错误优先。RxJS 内部主动吞掉的 operator
+cleanup 异常仍遵循 RxJS 行为。 `isInitialLoading` 表示无成功数据时的读取，`isRefreshing` 表示保留旧值的刷新。
+`fetchQueryObservable` 是单次快照；需要随失效持续更新时使用 `observeQueryObservable` 或 `queryResource`。
 
 ## 验证
 
@@ -35,3 +36,14 @@ loader；内部统一 normalize，调度器使用 Promise，应用不需要公�
 `reload()`：后者无需实现修改，已验证只产生一个替代观察者和一次共享请求，并正确退订。
 
 最终评审新增 QueryClient 发布序号：观察者同步移除缓存、触发刷新或退订其他观察者时，旧批次停止投递，避免已移除数据再次出现或旧 resolved 状态覆盖新 reloading 状态。新增三项回归测试。
+
+## 当前失败策略与诊断
+
+`provideQueryClient(options)` 设置全局策略并保留 Angular ErrorHandler、浏览器事件与销毁清理。原生 Observable /
+PromiseLike 使用共享 retry / 总 deadline；两者默认关闭。isInitialError /
+isRefreshError 和重试 metadata 支持失败页面。focus /
+reconnect 恢复只针对有观察者且 stale 的条目。Mutation 不自动重放。详见[失败设计](query-failure-design.zh-CN.md)。
+
+诊断是单一时刻的独立快照，计数的是缓存条目待结算的逻辑读取，包含 retry 等待与旧代际；不是 HTTP
+subscription 数。新 failureCount /
+nextRetryAt 可供 inspector 展示。最终组合验证见[#146 / #147 整合复审](../reviews/query-pr146-pr147-integration.zh-CN.md)。上述早期 698 项测试是历史检查点，不是当前组合的验证数量。

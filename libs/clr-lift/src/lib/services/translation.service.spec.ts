@@ -1,8 +1,10 @@
 import {computed} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
+import {ClrCommonStringsService, commonStringsDefault} from '@clr/angular/utils';
 import {vi} from 'vitest';
 
 import {TranslationService} from './translation.service';
+import {defaultClarityCommonStrings} from './clarity-common-strings.l10n';
 
 describe('TranslationService', () => {
   let translationService: TranslationService;
@@ -16,6 +18,13 @@ describe('TranslationService', () => {
 
   it('should be created', () => {
     expect(translationService).toBeTruthy();
+  });
+  it('covers every upstream Clarity common string in every built-in locale', () => {
+    const expected = Object.keys(commonStringsDefault).sort();
+    for (const [locale, strings] of Object.entries(defaultClarityCommonStrings)) {
+      expect(Object.keys(strings).sort(), locale).toEqual(expected);
+      for (const text of Object.values(strings)) expect(text.trim(), locale).not.toBe('');
+    }
   });
 
   it('should load translations for a component', () => {
@@ -276,5 +285,85 @@ describe('Translation cache stability', () => {
     service.loadTranslationsForComponent('test', {en: {message: 'Hello'}});
     expect(message()).toBe('Hello');
     expect(reads).toBe(1);
+  });
+});
+
+describe('Clarity Common Strings dynamic synchronization', () => {
+  it('synchronizes Clarity common strings when language changes', () => {
+    const commonStringsMock = {
+      localize: vi.fn(),
+    };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{provide: ClrCommonStringsService, useValue: commonStringsMock}],
+    });
+    const service = TestBed.inject(TranslationService);
+    TestBed.flushEffects();
+
+    service.setLanguage('zh-CN', false);
+    TestBed.flushEffects();
+
+    expect(commonStringsMock.localize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        open: '打开',
+        close: '关闭',
+        firstPage: '第一页',
+        nextPage: '下一页',
+      }),
+    );
+
+    service.setLanguage('de', false);
+    TestBed.flushEffects();
+
+    expect(commonStringsMock.localize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        open: 'Öffnen',
+        close: 'Schließen',
+        firstPage: 'Erste Seite',
+      }),
+    );
+  });
+
+  it('allows registering and applying custom Clarity common string overrides', () => {
+    const commonStringsMock = {
+      localize: vi.fn(),
+    };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{provide: ClrCommonStringsService, useValue: commonStringsMock}],
+    });
+    const service = TestBed.inject(TranslationService);
+    service.setLanguage('en', false);
+    TestBed.flushEffects();
+
+    service.loadClarityCommonStrings('en', {
+      firstPage: 'Beginning',
+    });
+
+    expect(commonStringsMock.localize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        firstPage: 'Beginning',
+      }),
+    );
+  });
+  it('resets missing Clarity strings to English when switching to a partial custom locale', () => {
+    const translationService = TestBed.inject(TranslationService);
+    const clarity = TestBed.inject(ClrCommonStringsService);
+    translationService.setLanguage('de', false);
+    TestBed.tick();
+    translationService.loadClarityCommonStrings('it', {close: 'Chiudi'});
+    translationService.setLanguage('it', false);
+    TestBed.tick();
+    expect(clarity.keys.close).toBe('Chiudi');
+    expect(clarity.keys.open).toBe('Open');
+  });
+
+  it('canonicalizes Clarity registrations and prefers exact regional overrides', () => {
+    const translationService = TestBed.inject(TranslationService);
+    translationService.loadTranslationsForComponent('', {de: {test: 'Test'}});
+    translationService.loadClarityCommonStrings('DE-de', {close: 'Regional close'});
+    expect(translationService.resolveClarityStrings('de-DE').close).toBe('Regional close');
+    translationService.loadClarityCommonStrings('zh-cn', {close: 'Custom close'});
+    expect(translationService.resolveClarityStrings('zh-CN').close).toBe('Custom close');
   });
 });

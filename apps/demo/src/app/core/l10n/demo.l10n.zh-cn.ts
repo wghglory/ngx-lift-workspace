@@ -2,7 +2,6 @@ export const zhCNTranslations: Record<string, string> = {
   'header.selectLanguage': '选择语言',
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '代码开源协议',
-
   'nav.signalUtils': 'Signal 工具',
   'nav.queryMutation': '查询与变更 (Query & Mutation)',
   'nav.operators': '操作符 (Operators)',
@@ -36,7 +35,6 @@ export const zhCNTranslations: Record<string, string> = {
   'nav.badgeUpdated': '更新',
   'nav.badgePopular': '热门',
   'nav.badgeCore': '核心',
-
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': '提升你的 <code>现代化</code> Angular 开发体验与工作流',
   'home.ngxLift.supportMatrix': '版本支持矩阵',
@@ -48,7 +46,6 @@ export const zhCNTranslations: Record<string, string> = {
   'home.ngxLift.rxjsDesc': '专为响应式流打造的操作符，化繁为简，提升代码可读性与健壮性',
   'home.ngxLift.signalTitle': 'Signal 响应式工具',
   'home.ngxLift.signalDesc': '基于 Angular 核心 Signals API 构建的强力工具集，无缝处理异步状态与衍生信号',
-
   'home.clrLift.title': 'clr-lift',
   'home.clrLift.subtitle': '基于 Clarity 设计系统深度扩展的可复用组件、实用工具与响应式操作符库',
   'home.clrLift.supportMatrix': '版本支持矩阵',
@@ -67,7 +64,6 @@ export const zhCNTranslations: Record<string, string> = {
   'home.clrLift.tipSkipLib':
     '若未升级到最新 Angular 版本，建议在 tsconfig.json 中开启 <code>skipLibCheck: true</code> 以避免潜在类型检查报错。',
   'home.clrLift.tipIcon': '请确保使用 <code>ClarityIcons.addIcons(...)</code> 正确注册并引入所需的 Clarity 图标。',
-
   'common.examples': '示例',
   'common.apiReference': 'API 参考',
   'common.overview': '概述',
@@ -152,7 +148,6 @@ export const zhCNTranslations: Record<string, string> = {
   'common.validationErrors': '校验错误',
   'common.usageNotes': '使用注意事项',
   'common.liveDemo': '实时演示',
-
   'playground.beginner': '初学者',
   'playground.intermediate': '中级进阶',
   'playground.advanced': '高级实战',
@@ -162,11 +157,9 @@ export const zhCNTranslations: Record<string, string> = {
   'playground.hideCode': '隐藏代码',
   'playground.stackedLayout': '上下堆叠布局',
   'playground.splitLayout': '左右并排布局',
-
   'inspector.liveState': '实时 Signal 状态',
   'inspector.rawJson': '原始 JSON 状态',
   'inspector.hideJson': '隐藏 JSON',
-
   'mergeFrom.overview':
     '<code>mergeFrom</code> 函数将多个 Observable 或 Signal 的值合并并在任意源产生新值时发出最新值。支持在发出前使用 RxJS 操作符对值进行转换。类似于 RxJS 原生 <code>merge()</code>，但具备 Signal 的无缝感知。与 <code>combineFrom</code> 类似，但它不是合并所有源的当前状态，而是基于合并策略发出单次最新事件。',
   'mergeFrom.example1Desc': '合并多个 Signal 或 Observable：',
@@ -174,13 +167,13 @@ export const zhCNTranslations: Record<string, string> = {
   'mergeFrom.example3Desc': '使用 <code>startWith</code> 或 <code>initialValue</code> 处理异步流：',
   'mergeFrom.example4Desc':
     '通过配置项传入自定义 <code>Injector</code>，可在非依赖注入上下文（如工具函数、动态工厂）中安全创建合并 Signal：',
-  'mergeFrom.apiSummary': '将多个 Observable 和 Signal 合并为单一 Signal，任意源触发时均发出最新值。',
+  'mergeFrom.apiSummary':
+    '将多个 Observable 或 Signal 合并为单个 Signal，发出任意来源的最新值；类似 <code>merge</code>，同时支持 Signal。',
   'mergeFrom.paramSources':
     '要并发合并的 Observable 或 Signal 数组或对象字典。传入对象时，返回结果也将保持对应的键名结构。',
   'mergeFrom.paramOperator': '可选的 RxJS 管道操作符，用于在合并值发出前对其进行变换或处理。',
   'mergeFrom.paramOptions': '可选配置项，支持自定义 initialValue 和 injector 注入上下文。',
   'mergeFrom.returnsDesc': '返回一个在任一数据源发出新值时即发出更新的 Signal。',
-
   'toSignalForm.pageTitle': '响应式表单 Signal 与绑定 (toSignalForm)',
   'toSignalForm.bannerTitle': '连接 Angular 响应式表单与现代 Signals',
   'toSignalForm.bannerDesc':
@@ -314,13 +307,11 @@ export const zhCNTranslations: Record<string, string> = {
   'toSignalForm.pattern5Title': '模式 5：级联联动与变更监听 (sf.watch)',
   'toSignalForm.pattern5Desc':
     '当某个表单控件的变更触发其他控件的级联更新时（例如数据库引擎切换时重置其可用版本列表），可以使用传统的 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 模式，或者更推荐的 Signal 优先工具 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>。<code>watch</code> 运行在 Angular <code>effect()</code> 内部，带有自动的 <code>untracked</code> 隔离保护，消除手动取消订阅的同时，彻底杜绝 <code>NG0600</code> 信号写入错误。',
-
   'toSignalForm.apiReferenceTitle': 'API 参考',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
   'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
-
   'toSignalForm.apiPropForm': '用于包装响应式信号与声明式绑定的 Angular FormGroup 实例。',
   'toSignalForm.apiPropOmit': '在 submitValue 载荷中剔除的控件名列表。',
   'toSignalForm.apiPropEmitEvent': '状态或值变更时是否派发 Angular 控件事件。',
@@ -330,24 +321,20 @@ export const zhCNTranslations: Record<string, string> = {
   'toSignalForm.apiPropInvalid': '表单当前是否非法的计算 Signal。',
   'toSignalForm.apiPropSubmitValue': '自动剔除禁用、忽略及未挂载字段后的清洗后提交载荷 Signal。',
   'toSignalForm.apiPropIsSubmitting': '用于跟踪异步表单提交是否正在进行的可写 Signal。',
-
   'toSignalForm.apiBindIfControl': '按条件动态挂载/卸载的目标控件名称或实例。',
   'toSignalForm.apiBindIfCondition': '控制控件是否挂载的布尔 Signal 或函数条件谓词。',
   'toSignalForm.apiBindIfPreserveValue': '控件卸载与重新挂载期间是否在内存中暂存并恢复控件值。',
   'toSignalForm.apiBindIfDefaultValue': '挂载或重置控件时应用的初始默认值。',
   'toSignalForm.apiBindIfEmitEvent': '添加或移除控件时是否触发 FormGroup 的值与状态事件。',
-
   'toSignalForm.apiBindDisabledControl': '需要绑定启用/禁用状态的目标控件。',
   'toSignalForm.apiBindDisabledCondition': '返回 true 禁用、false 启用的布尔 Signal 或条件谓词。',
   'toSignalForm.apiBindDisabledResetOnDisable': '进入禁用状态时是否自动重置控件值。',
   'toSignalForm.apiBindDisabledResetValue': '禁用重置时赋予的特定重置值；省略时重置为初始值或 null。',
   'toSignalForm.apiBindDisabledEmitEvent': '启用/禁用切换时是否派发值与状态事件。',
-
   'toSignalForm.apiRevalidateTarget': '当依赖源变化时需要重新执行校验的目标控件。',
   'toSignalForm.apiRevalidateSources': '一个或多个触发目标重新校验的关联控件。',
   'toSignalForm.apiRevalidateOnlyIfTouched': '仅在目标控件已被用户触碰（touched）时才触发重新校验。',
   'toSignalForm.apiRevalidateOnlyIfDirty': '仅在目标控件已被修改（dirty）时才触发重新校验。',
-
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     '<code>computedAsync</code> 是一个多功能工具函数，可从 Promise、Observable 或普通值中计算派生出响应式值。它提供多种策略（switch、merge、concat、exhaust）和初始值支持。只需传入返回 Promise、Observable 或值的回调函数，即可得到发出计算结果的 <code>Signal</code>。',
@@ -363,12 +350,13 @@ export const zhCNTranslations: Record<string, string> = {
   'computedAsync.example4Desc': '在选项对象中传入 initialValue，为计算派生值提供首次就绪前的默认占位。',
   'computedAsync.example5': '示例 5：要求同步就绪 (requireSync)',
   'computedAsync.example5Desc':
-    '当 Observable 能同步发出值时，开启 requireSync 确保无任何微任务延迟并缩小类型为非 undefined。',
+    '对于同步发出值的 Observable，可通过 requireSync 立即取得结果，并让 <code>signal</code> 的类型排除 undefined：<code>Signal<T></code>，而非 <code>Signal<T | undefined></code>。',
   'computedAsync.example6': '示例 6：搭配 createAsyncState 操作符',
   'computedAsync.example6Desc':
-    '配合 createAsyncState 操作符将 API 请求的 loading、error、data 完整状态封包并反映到 Signal 中。',
+    '下面用 <code>Signal</code> 表示 API 调用状态，通过 <code>computedAsync</code> 和 <code>createAsyncState</code>，根据 <code>userId</code> 计算状态。',
   'computedAsync.example7': '示例 7：执行行为模式 (switch, merge, concat, exhaust)',
-  'computedAsync.example7Desc': '默认采用 switch 策略。可通过 behavior 选项自定义应对并发请求时的策略。',
+  'computedAsync.example7Desc':
+    '<code>computedAsync</code> 默认采用 switch 策略，可通过第二个参数中的 behavior 配置更改。',
   'computedAsync.behaviorSwitch': 'switch（默认）',
   'computedAsync.behaviorSwitchDesc': '丢弃并取消前一次未完成的计算，仅保留并响应最新的计算任务。',
   'computedAsync.behaviorMerge': 'merge',
@@ -388,7 +376,8 @@ export const zhCNTranslations: Record<string, string> = {
   'computedAsync.loadUsers': '加载用户',
   'computedAsync.example11': '示例 11：利用 onError 进行优雅降级',
   'computedAsync.example11Desc': '配置 onError 回调，当异步请求发生异常时提供后备容错数据，防止 Signal 崩溃：',
-  'computedAsync.onErrorCallout': 'onError 回调接收捕获到的错误对象并可返回兜底降级数据。',
+  'computedAsync.onErrorCallout':
+    '<code>onError</code> 回调接收错误并返回兜底值。返回 <code>undefined</code> 时，signal 的值会变成 undefined。未提供处理器时，旧版默认行为将错误对象当作 signal 值；请提供有效兜底值或使用 <code>throwOnError</code>。',
   'computedAsync.example12': '示例 12：错误向外抛出 (throwOnError)',
   'computedAsync.example12Desc': '设置 throwOnError: true 将错误向上抛出给全局 ErrorHandler 集中捕获。',
   'computedAsync.throwOnErrorCallout': '开启 throwOnError: true 时，即使配置了 onError，错误依然会向外抛出。',
@@ -418,7 +407,6 @@ export const zhCNTranslations: Record<string, string> = {
   'computedAsync.propOnError': '异步任务出错时的异常捕获回调函数。',
   'computedAsync.propThrowOnError': '若设为 true，错误将直接抛出向上冒泡。',
   'computedAsync.returnsDesc': '返回发出最新计算结果的 Signal。',
-
   'combineFrom.title': 'combineFrom',
   'combineFrom.overview':
     '<code>combineFrom</code> 将 Observable 或 Signal 数组/字典聚合成 Signal，遵循 <code>combineLatest</code> 语义。单个来源会去重，但不保证跨来源的原子更新。',
@@ -439,7 +427,6 @@ export const zhCNTranslations: Record<string, string> = {
   'combineFrom.paramOperator': '可选的 RxJS 管道操作符，用于在聚合值发出前对其进行变换或处理。',
   'combineFrom.paramOptions': '可选配置项，支持自定义 initialValue 和 injector 注入上下文。',
   'combineFrom.returnsDesc': '返回一个包含所有数据源最新聚合值的 Signal（结构与输入的数组或对象一致）。',
-
   'resourceAsync.title': 'resourceAsync',
   'resourceAsync.overview':
     '<code>resourceAsync</code> 创建一个管理异步操作并跟踪完整生命周期状态的响应式资源。兼容任何异步操作（Observable、Promise 或同步值），内置自动取消过时请求、手动 reload、支持 execute() 变更突变、以及粒度极细的状态追踪。',
@@ -501,7 +488,6 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.nestedRetry': '重试',
   'resourceAsync.nestedRefreshItems': '刷新列表',
   'resourceAsync.nestedLoadAllOrgs': '批量加载所有组织',
-
   'queryResource.title': 'queryResource',
   'queryResource.overview':
     '<code>queryResource</code> 为 Angular Signals 提供声明式、带缓存且去重的服务端状态管理。配合 <code>mutateResource</code> 与 <code>QueryClient</code>，协同管理后台轮询、Stale-While-Revalidate 缓存策略、并发请求合并与基于标签的数据失效机制。',
@@ -607,8 +593,28 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.thId': '序号',
   'queryResource.thName': '姓名',
   'queryResource.thRole': '职位角色',
+  'queryResource.diagnosticsSection': '5. 开发者诊断与缓存检查器',
+  'queryResource.diagnosticsSectionDesc':
+    '查看此 QueryClient 的缓存、观察者、待结算逻辑读取、重试进度、GC 与轮询。失败和 Observable 服务示例使用独立 client。',
+  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient 实时运行诊断',
+  'queryResource.diagnosticsPlaygroundDesc':
+    '点击“刷新诊断”通过 getDiagnostics() 与 getEntriesSnapshot() 获取 QueryClient 的最新内部状态。',
+  'queryResource.badgeDiagnostics': '诊断',
+  'queryResource.refreshDiagnostics': '刷新诊断',
+  'queryResource.diagTotalEntries': '总缓存条目',
+  'queryResource.diagActiveQueries': '活跃查询',
+  'queryResource.diagInactiveQueries': '待回收条目 (GC)',
+  'queryResource.diagPendingRequests': '待完成读取',
+  'queryResource.diagTotalObservers': '观察者总数',
+  'queryResource.diagVisibility': '页面可见性',
+  'queryResource.diagVisible': '活跃',
+  'queryResource.diagHidden': '后台 / 隐藏',
+  'queryResource.thQueryKey': '查询键 (QueryKey)',
+  'queryResource.thObservers': '观察者数',
+  'queryResource.thRemainingGc': 'GC 倒计时',
+  'queryResource.thRemainingPoll': '下次轮询倒计时',
+  'queryResource.noQueriesCached': '当前缓存中无查询条目。',
   'queryResource.apiReference': 'API 参考',
-
   'mutateResource.title': 'mutateResource',
   'mutateResource.overview':
     '<code>mutateResource</code> 用于管理显式的异步服务端变更写操作（POST、PUT、PATCH、DELETE）。内置基于标签的自动缓存失效机制、多策略并发控制（exhaust、concat、parallel）以及与 Angular Signals 深度结合的响应式状态信号。',
@@ -677,7 +683,6 @@ export const zhCNTranslations: Record<string, string> = {
   'mutateResource.isLoadingLabel': 'isLoading',
   'mutateResource.errorSuccessMsg': '配置保存成功！',
   'mutateResource.apiReference': 'API 参考',
-
   'injectParams.example1Title': '示例 1：获取全部路由参数',
   'injectParams.example1Desc': '不传递任何参数调用时，返回包含整个 params 键值对象的 Signal：',
   'injectParams.example2Title': '示例 2：获取单一路由参数',
@@ -693,7 +698,6 @@ export const zhCNTranslations: Record<string, string> = {
   'injectParams.example6Title': '示例 6：自定义 Injector 上下文',
   'injectParams.example6Desc':
     '通过 options 传入自定义 <code>Injector</code>，支持在非直接依赖注入环境（如自定义辅助函数或动态服务）中安全访问路由参数：',
-
   'injectParams.title': 'injectParams',
   'injectParams.overview': '<code>injectParams</code> 返回路由参数的响应式 Signal，路由发生跳转时自动无缝更新。',
   'injectParams.apiSummary': '将路由路径参数注入为全响应式 Signal，支持类型转换与默认值。',
@@ -706,7 +710,6 @@ export const zhCNTranslations: Record<string, string> = {
   'injectParams.pattern2': '字符串键名：返回指定参数值的 Signal（不存在时为 null）',
   'injectParams.pattern3': '转换函数：返回经过转换后的衍生计算结果 Signal',
   'injectParams.pattern4': '带配置项：支持设置初始默认值与强制类型转换',
-
   'injectQueryParams.title': 'injectQueryParams',
   'injectQueryParams.overview': '<code>injectQueryParams</code> 返回 URL 查询参数（Query Parameters）的响应式 Signal。',
   'injectQueryParams.apiSummary': '将 URL 查询参数 (Query Parameters) 注入为全响应式 Signal，支持类型转换与默认值。',
@@ -714,7 +717,6 @@ export const zhCNTranslations: Record<string, string> = {
     '传入字符串时提取指定查询参数；传入函数时对全部查询参数进行转换；不传则返回所有查询参数。',
   'injectQueryParams.paramOptions': '配置选项，支持 transform 转换函数、initialValue 初始值与 injector 注入上下文。',
   'injectQueryParams.returnsDesc': '返回包含查询参数值或转换结果的 Signal。',
-
   'injectQueryParams.example1Title': '示例 1：获取全部查询参数',
   'injectQueryParams.example1Desc': '将所有查询参数作为 Signal 读取：',
   'injectQueryParams.example2Title': '示例 2：获取单一查询参数',
@@ -728,7 +730,6 @@ export const zhCNTranslations: Record<string, string> = {
   'injectQueryParams.example6Title': '示例 6：自定义 Injector 上下文',
   'injectQueryParams.example6Desc':
     '通过 options 传入自定义 <code>Injector</code>，支持在非直接依赖注入环境（如自定义辅助函数或动态服务）中安全访问查询参数：',
-
   'createTrigger.title': 'createTrigger',
   'createTrigger.overview':
     '<code>createTrigger</code> 提供手动触发 Signal 重新计算的机制。类似于 RxJS 的 Subject，调用 <code>next()</code> 会递增触发计数器并通知所有关联的 effect 和 computed。',
@@ -743,7 +744,6 @@ export const zhCNTranslations: Record<string, string> = {
   'createTrigger.btnSeeConsole': '查看控制台日志',
   'createTrigger.callout':
     '初始时，<code>createTrigger</code> 的 <code>value()</code> 返回 0。每次显式调用 <code>next()</code> 时，其数值递增 1。',
-
   'pageContainer.title': '页面容器 (Page Container)',
   'pageContainer.overview':
     '<code>cll-page-container</code> 为 Clarity 体系应用提供规范统一、响应式的页面外壳。封装了标准标题排版、流式间距，并提供强大的内容投影槽位支持卡片、表单与网格等任意内容。',
@@ -766,7 +766,6 @@ export const zhCNTranslations: Record<string, string> = {
   'pageContainer.inputTitle': '页面顶部标题，支持通过 [innerHTML] 渲染 HTML 标签与徽章。',
   'pageContainer.inputCustomClass': '应用于页面容器根节点的自定义 CSS 类名。',
   'pageContainer.contentProjectionDesc': '默认的 <ng-content /> 投影插槽，用于承载标题下方的主体内容。',
-
   'alert.title': '警告框 (Alert)',
   'alert.overview':
     '警告框是通过醒目横幅向用户传达重要信息的组件。通过不同颜色与图标清晰表达消息的重要程度与紧急状态。',
@@ -814,7 +813,6 @@ export const zhCNTranslations: Record<string, string> = {
   'alert.contentAppLevel': '这是通过 content 属性传入的应用级别内容',
   'alert.contentAppProjection': '这是通过内容投影注入的应用级别内容',
   'alert.btnView': '查看',
-
   'callout.title': '标注框 (Callout)',
   'callout.overview':
     '<code>cll-callout</code> 用于突出显示操作提示、温馨建议、注意事项或前置条件，自适应明暗主题与图标展示。',
@@ -831,7 +829,6 @@ export const zhCNTranslations: Record<string, string> = {
   'callout.example3DescText': '在触发上线流程前，请确保已显式配置资源配额限制。',
   'callout.example3LabelDeployment': '部署',
   'callout.example3LabelValidated': '已验证',
-
   'themeToggle.title': '主题切换 (Theme Toggle)',
   'themeToggle.overview':
     '<code>cll-theme-toggle</code> 组件与 <code>ThemeService</code> 提供在 Clarity 明亮主题与暗黑主题之间平滑切换的能力，支持 Signal 响应式与 localStorage 记忆持久化。',
@@ -850,7 +847,6 @@ export const zhCNTranslations: Record<string, string> = {
   'themeToggle.example3Desc':
     '组件和全局样式可以在 body 上使用 [cds-theme="dark"] 选择器，或通过 :host-context([cds-theme="dark"]) 进行样式定制：',
   'themeToggle.serviceSummary': '在根模块中提供的可注入服务，用于管理和切换应用程序的明暗主题状态。',
-
   'spinner.title': '加载指示器 (Spinner)',
   'spinner.overview':
     'Spinner 是一种视觉指示器，用于提示用户操作正在处理中。Clarity 提供两种 Spinner：用于页面级加载的 <strong>Page Spinner</strong>，以及用于局部组件的 <strong>Inline Spinner</strong>。',
@@ -870,7 +866,6 @@ export const zhCNTranslations: Record<string, string> = {
   'spinner.centered': '居中（默认）：',
   'spinner.leftAligned': '左对齐：',
   'spinner.loading': '正在加载...',
-
   'tooltip.title': '文字提示 (Tooltip)',
   'tooltip.overview':
     'Tooltip 组件提供了展示辅助说明、交互提示或富文本悬浮框的灵活方式。支持鼠标悬停、文本复制、延迟隐藏、12 种自动防碰撞方位、焦点捕获以及暗黑模式支持。',
@@ -892,7 +887,6 @@ export const zhCNTranslations: Record<string, string> = {
   'tooltip.templateCallout': '你也可以在 ng-template 中放置自定义组件',
   'tooltip.contextCallout': 'cllTooltipContentContext 为可选参数，用于在创建嵌入视图时传入 ng-template。',
   'tooltip.componentRefHover': 'Component Ref 动态组件示例',
-
   'toast.title': '吐司通知 (Toast)',
   'toast.overview': 'Toast 通知用于向用户反馈中低优先级的系统事件。浮动在屏幕角落，超时自动消失或手动关闭。',
   'toast.example1': '示例 1：接入 Toast 容器',
@@ -916,7 +910,6 @@ export const zhCNTranslations: Record<string, string> = {
   'toast.dont5': '避免弹出不相关通知：仅在信息对当前用户确实有价值时显示 Toast。',
   'toast.optionsTitle': 'ToastOptions 配置项',
   'toast.containerSummary': '承载并渲染所有 Toast 浮动通知的容器组件。建议在根组件中挂载一次。',
-
   'multiAlerts.title': '多重警告框 (Alerts)',
   'multiAlerts.overview':
     '在企业级系统中，常需要在页面顶端展示多条警告消息。clr-lift 提供了 <code>AlertContainerComponent</code> 和 <code>AlertService</code>，支持以声明式或编程式批量管理警告框。',
@@ -932,7 +925,6 @@ export const zhCNTranslations: Record<string, string> = {
   'multiAlerts.alertTypeTitle': 'Alert 数据模型',
   'multiAlerts.containerSummary':
     '统一承载并渲染所有多重警告消息的容器组件。建议挂载在主容器中的 Clarity Header 标签上方。',
-
   'fileReader.title': '文件读取器 (File Reader)',
   'fileReader.overview':
     '<code>FileReaderComponent</code> 帮助用户在浏览器端轻松选择并读取文本文件内容。支持纯文本与 Base64 编码、文件大小限制，并在选定或清除文件时触发相应事件。',
@@ -946,7 +938,6 @@ export const zhCNTranslations: Record<string, string> = {
   'fileReader.feature3': '内置文件大小超限校验',
   'fileReader.feature4': '内容解析与格式错误提示',
   'fileReader.feature5': '无缝接入 Angular 响应式表单 (ControlValueAccessor)',
-
   'keyValueInputs.title': '键值对输入 (Key Value Inputs)',
   'keyValueInputs.overview':
     '<code>KeyValueInputsComponent</code> 专为编辑键值对设计。与 FormArray 深度集成，支持用户动态新增、编辑和删除条目，提供即时校验与流畅的键盘快捷导航。',
@@ -961,7 +952,6 @@ export const zhCNTranslations: Record<string, string> = {
   'keyValueInputs.valueHelper': '运行时属性键值',
   'keyValueInputs.addText': '添加键值对',
   'keyValueInputs.apiSummary': '用于在 Angular 表单中动态管理键值对编辑输入的组件。',
-
   'statusIndicator.title': '状态指示器 (Status Indicator)',
   'statusIndicator.overview':
     '<code>StatusIndicatorComponent</code> 以统一的图标和文本展示实体运行状态。支持多种语义类型（error, success, warning, unknown, inactive, pending）、图标尺寸微调及悬浮 Tooltip 扩展。',
@@ -985,7 +975,6 @@ export const zhCNTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': '当前为非活跃状态',
   'statusIndicator.tooltipPending': '正在处理某项事务',
   'statusIndicator.apiSummary': '集成 Clarity 图标与文本说明的状态指示器组件。',
-
   'certificate.title': '证书详情视图 (Certificate View)',
   'certificate.overview':
     '<code>CertificateSignpostComponent</code> 能够解析 PEM 格式证书文本，点击证书图标即可在 Clarity 弹窗中展示证书主体、有效期、颁发者、指纹哈希等核心信息。',
@@ -993,7 +982,6 @@ export const zhCNTranslations: Record<string, string> = {
   'certificate.example1Desc': '解析并展示原始 PEM 格式的 SSL/TLS 证书：',
   'certificate.example2': '示例 2：解析 Base64 编码的 PEM',
   'certificate.example2Desc': '当证书内容为 Base64 字符串时，开启 pemEncoded 即可先解码再解析：',
-
   'idleDetection.utilOverview':
     '空闲检测是监听用户活跃度并判定用户何时处于无操作静止状态的过程。这对于需要维护登录鉴权有效性的应用系统尤为关键，能够在用户停止交互时及时给出超时预警，或在长时间不活动后自动登出以保障系统安全。',
   'idleDetection.utilOverviewDesc':
@@ -1018,7 +1006,6 @@ export const zhCNTranslations: Record<string, string> = {
   'idleDetection.utilExample5ParamDesc':
     '属性 <code>idleDurationInSeconds</code> 与 <code>timeoutDurationInSeconds</code> 均为可选输入。传入时将自动覆盖 <code>provideIdleDetectionConfig</code> 所设定的全局默认值。',
   'idleDetection.utilDialogPreview': '弹窗展示效果如下：',
-
   'idleDetection.title': '空闲检测 (Idle Detection)',
   'idleDetection.overview':
     '<code>cll-idle-detection</code> 监听用户的多维度无操作状态（鼠标移动、按键、滚动和触控）。空闲超时时弹出 Clarity 无障碍倒计时对话框，并触发 (timeout) 事件保护会话安全。',
@@ -1039,7 +1026,6 @@ export const zhCNTranslations: Record<string, string> = {
   'idleDetection.methodOnIdleEnd': '当空闲等待期结束、即将进入倒计时阶段时触发的 Observable。',
   'idleDetection.methodOnTimeoutEnd': '当倒计时彻底结束、会话超时发生时触发的 Observable。',
   'idleDetection.methodOnCountDown': '在倒计时阶段实时发射剩余秒数的 Observable。',
-
   'datagridUtil.title': '数据网格工具 (Datagrid)',
   'datagridUtil.overview':
     'Clarity Datagrid 在用户进行分页、筛选或排序交互时会抛出状态。<code>convertToHttpParams</code> 将该状态无缝转换为适合 HttpClient 的 PageQuery 查询对象。',
@@ -1053,7 +1039,6 @@ export const zhCNTranslations: Record<string, string> = {
   'datagridUtil.propSortAsc': '需要升序排列的字段名。',
   'datagridUtil.propSortDesc': '需要降序排列的字段名。',
   'datagridUtil.propFilter': '格式化为 FIQL 规范的过滤表达式。',
-
   'dgState.overview':
     '<code>dgState</code> 是一个专为 Clarity Datagrid 状态转换设计的 RxJS 操作符，具备智能防抖和重复状态过滤功能。它能精准识别表格筛选器的变化并高效触发 API 请求。当筛选条件改变时，操作符会自动引入 500ms 的防抖延迟，避免用户在输入时频繁发起无效请求；而当进行排序或翻页操作时，则会立即触发 API 调用无需等待。此外，该操作符还提供可选参数控制 <code>distinctUntilChanged</code> 行为，默认开启（<code>true</code>），确保在表格状态未发生实质改变时不重复发起请求。',
   'dgState.example1Title': '示例 1：基础用法',
@@ -1076,7 +1061,6 @@ export const zhCNTranslations: Record<string, string> = {
   'dgState.behavior2': '进行排序或分页操作时立即触发 API 请求（无防抖延迟）',
   'dgState.behavior3': '当 <code>enableDistinctUntilChanged</code> 为 <code>true</code> 时，自动过滤连续相同的重复状态',
   'dgState.behavior4': '初始以 null 状态启动，以支持首屏初始化加载场景',
-
   'timelineWizard.title': '时间线向导 (Timeline Wizard)',
   'timelineWizard.overview':
     'TimelineWizard 组件助力在 Angular 中构建基于 Clarity 时间线的多步骤向导。每个步骤为一个继承自 TimelineBaseComponent 的组件，支持异步表单校验、动态步骤导航及组件渲染。',
@@ -1113,7 +1097,6 @@ export const zhCNTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU 核心数',
   'timelineWizard.replicas': '副本数',
   'timelineWizard.url': '服务地址 (URL)',
-
   'poll.overview':
     '<code>poll</code> 操作符是一个高效的自定义 RxJS 操作符，专门用于按固定周期轮询后端接口并同步最新数据。它将定时管理、数据加载和接口请求细节抽象为统一响应式流，在服务端不支持实时推送（如 WebSockets、SSE）的场景下尤为实用。同时可与各类 RxJS 操作符无缝组合使用。',
   'poll.example1Title': '示例 1：基础轮询',
@@ -1127,7 +1110,7 @@ export const zhCNTranslations: Record<string, string> = {
     "默认情况下，轮询的初始发射值为 <code>&#123;status: 'loading', isLoading: true, error: null, data: null&#125;</code>，便于展示 Spinner 加载微调器。但在某些无需首屏加载指示器的场景下，你可通过 <code>initialValue</code> 自定义任意初始状态：",
   'poll.example4Title': '示例 4：延迟启动轮询',
   'poll.example4Desc': '默认配置下轮询立即开始。使用 <code>delay</code> 选项可配置首次执行的延迟时间：',
-  'poll.example4AltDesc': '或者，可以通过与其他 RxJS 操作符联动，在用户触发操作之后再开启轮询：',
+  'poll.example4AltDesc': '也可将 <code>poll</code> 与其他 RxJS 操作符组合，在用户操作后开始轮询：',
   'poll.btnStartPolling': '开启轮询（请查看控制台日志）',
   'poll.example5Title': '示例 5：强制即时刷新 (Force Refresh)',
   'poll.example5Desc':
@@ -1140,7 +1123,6 @@ export const zhCNTranslations: Record<string, string> = {
   'poll.example6Desc':
     '下方数据表格每 10 秒自动静默轮询最新数据。此外，当在搜索框中键入筛选、触发排序或切换分页时，将立即重新拉取对应数据并展示加载微调器。',
   'poll.searchByFirstName': '按名搜索 (First Name)',
-
   'poll.apiDesc': '按指定时间间隔自动轮询数据，并支持手动触发即时刷新。返回发出 AsyncState 对象的 Observable。',
   'poll.paramPollingFn': '轮询请求函数，返回 Observable、Promise 或基础数据。',
   'poll.paramInterval': '轮询周期间隔（毫秒）。',
@@ -1149,7 +1131,6 @@ export const zhCNTranslations: Record<string, string> = {
   'poll.paramInitialValue': '初始 AsyncState 状态值。',
   'poll.paramDelay': '首次轮询执行前的延迟等待时间（毫秒），默认为 0（立即启动）。',
   'poll.returnsDesc': '返回发出包含 status、isLoading、error 和 data 属性的 AsyncState<Data> 的 Observable。',
-
   'createAsyncState.overview':
     '<code>createAsyncState</code> 操作符将类型为 <code>T</code> 的 Observable 转换为 <code>AsyncState&lt;T&gt;</code> 状态流，将加载状态、错误以及数据封装为标准化结构。这消除了为每个请求单独管理加载状态、错误和数据变量的冗余代码，使项目结构更加清晰可维护。',
   'createAsyncState.interfaceStructure': '操作符返回的 <code>AsyncState</code> 接口结构如下：',
@@ -1185,13 +1166,11 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.propOnLoading': '加载开始时的回调函数。',
   'resourceAsync.returnsDesc':
     '返回包含 value、error、status、isLoading 信号以及 reload/execute 方法的 ResourceRef<T, E>。',
-
   'spinner.apiSummary': '加载指示器组件，支持多种尺寸与块级居中或行内布局。',
   'spinner.inputSize': '指定加载图标的尺寸："lg"（默认）、"md" 或 "sm"。',
   'spinner.inputCenter': '是否作为块级元素居中显示。传入 false 可取消居中。',
   'spinner.inputInline': '是否以内联块（inline-block）方式显示，便于与文本或按钮行内混排。',
   'spinner.inputCustomClass': '附加在加载组件上的自定义 CSS 类名。',
-
   'callout.apiSummary': '基于 Clarity Design System 打造的信息提示框组件。',
   'callout.contentProjectionDesc': '提供默认的 <ng-content /> 插槽，可自由嵌入自定义 HTML 内容、富文本、列表及组件。',
   'callout.responsiveTitle': '自适应响应式行为',
@@ -1199,7 +1178,6 @@ export const zhCNTranslations: Record<string, string> = {
   'callout.themingTitle': '主题适配',
   'callout.themingDesc':
     "天然继承 Clarity 主题上下文，自适应 [cds-theme='dark'] 暗黑模式的背景、边框及超链接色彩规范。",
-
   'certificate.pemNote':
     'PEM 代表隐私增强邮件（Privacy Enhanced Mail）。它是一种常用于存储加密密钥、证书及其他安全数据的文件格式，扩展名通常为 .pem、.crt、.cer 或 .key，内容采用 Base64 编码。',
   'certificate.apiSummary': '以 Clarity Signpost 浮层形式展示 X.509 证书详细信息的组件。',
@@ -1209,7 +1187,6 @@ export const zhCNTranslations: Record<string, string> = {
   'certificate.inputPemEncoded': '传入的 PEM 文本是否为 Base64 编码字符串。',
   'certificate.inputPosition': 'Signpost 浮层相对于触发图标的弹出对齐方位。',
   'certificate.inputShowIcon': '控制是否显示证书状态图标的布尔标识。',
-
   'isPromise.overview':
     '<code>isPromise</code> 工具函数是 TypeScript 类型守卫（Type Guard），用于判断任意输入值是否为 <code>Promise</code> 或 <code>PromiseLike</code> 对象（具备可调用 <code>then</code> 方法的对象或函数）。它可以在运行时安全检测并收窄类型，且不会因传入 null 或基础类型值引发异常。',
   'isPromise.callout':
@@ -1225,7 +1202,6 @@ export const zhCNTranslations: Record<string, string> = {
   'isPromise.apiSummary': '检查值是否符合 PromiseLike 契约的 TypeScript 类型守卫函数。',
   'isPromise.paramObj': '要检查的值。',
   'isPromise.returnsDesc': '若输入非空、为对象或函数且实现了可调用的 then 方法则返回 true，否则返回 false。',
-
   'isEmpty.overview':
     '<code>isEmpty</code> 工具函数用于检测字符串、对象或数组是否为空。对于空值返回 <code>true</code>，对非空值返回 <code>false</code>。',
   'isEmpty.example1Title': '示例 1：基础用法',
@@ -1235,7 +1211,6 @@ export const zhCNTranslations: Record<string, string> = {
   'isEmpty.apiSummary': '检查字符串、对象或数组是否为空。',
   'isEmpty.paramValue': '要检查的值，支持字符串、对象、数组等。',
   'isEmpty.returnsDesc': '如果值为空（空字符串、空对象、空数组、null 或 undefined）则返回 true，否则返回 false。',
-
   'isEqual.overview':
     '<code>isEqual</code> 工具函数用于在两个值之间执行深度相等性检查。它递归比对基本类型值、数组与多层嵌套对象，判断它们在数据结构与内容上是否完全等同，而不单纯依赖对象内存引用。',
   'isEqual.example1Title': '示例 1：基础用法',
@@ -1246,7 +1221,6 @@ export const zhCNTranslations: Record<string, string> = {
   'isEqual.paramValue1': '要比较的第一个值。',
   'isEqual.paramValue2': '要比较的第二个值。',
   'isEqual.returnsDesc': '如果两个值深度相等则返回 true，否则返回 false。对对象和数组执行递归比较。',
-
   'differenceInDays.overview':
     '<code>differenceInDays</code> 工具函数用于计算两日期之间的完整天数差距。它接受非常灵活的输入格式，极大简化了 JavaScript 中的日常日期运算。第一个参数代表基准参考日期，第二个参数表示待与基准比对的目标日期。两者均支持 <code>Date</code> 对象、Unix 毫秒时间戳或可被解析的日期字符串。',
   'differenceInDays.example1Title': '示例 1：计算两日期之间的天数',
@@ -1257,24 +1231,20 @@ export const zhCNTranslations: Record<string, string> = {
   'differenceInDays.paramDateLeft': '参考日期，支持 Date 对象、时间戳（毫秒）或可解析的日期字符串。',
   'differenceInDays.paramDateRight': '与参考日期比较的目标日期，类型与 dateLeft 相同。',
   'differenceInDays.returnsDesc': '两日期之间的完整天数。若 dateLeft 晚于 dateRight 则为正数，若早于则为负数。',
-
   'pickBy.overview':
     '<code>pickBy</code> 与 <code>omitBy</code> 工具函数支持基于断言判断函数动态构建新对象。<code>pickBy</code> 挑选出满足条件的属性生成新对象；而 <code>omitBy</code> 恰好相反，排除满足条件的属性，保留其余属性构建新对象。',
   'pickBy.example1Title': '示例 1：pickBy 筛选保留',
   'pickBy.example1Desc': '挑选满足条件的属性生成新对象：',
   'pickBy.example2Title': '示例 2：omitBy 排除剔除',
   'pickBy.example2Desc': '<code>omitBy</code> 的行为与 <code>pickBy</code> 相反，它会排除满足断言条件的属性：',
-
   'pickBy.apiSummary': '根据条件筛选对象属性创建新对象。',
   'pickBy.paramObject': '要从中提取属性的源对象。',
   'pickBy.paramPredicate': '决定是否保留属性的函数，返回 true 保留，返回 false 排除。',
   'pickBy.returnsDesc': '仅包含满足条件属性的新对象。',
-
   'omitBy.apiSummary': '排除满足条件的属性并创建新对象。',
   'omitBy.paramObject': '要从中排除属性的源对象。',
   'omitBy.paramPredicate': '决定是否排除属性的函数，返回 true 排除，返回 false 保留。',
   'omitBy.returnsDesc': '排除了满足条件的属性后的新对象。',
-
   'startWithTap.overview':
     '<code>startWithTap</code> 操作符在每次源 Observable 开始发射值之前同步执行一次回调函数。与即时执行的副作用代码不同，构建数据流管道本身并不会触发回调，只有当产生实际订阅时才会调用。若回调执行产生异常，将安全地进入 Observable 的错误流通道。',
   'startWithTap.callout':
@@ -1292,7 +1262,6 @@ export const zhCNTranslations: Record<string, string> = {
   'startWithTap.apiSummary': '在订阅时同步执行回调函数的 RxJS MonoType 操作符。',
   'startWithTap.paramCallback': '在源 Observable 开始发射之前同步执行的函数。',
   'startWithTap.returnsDesc': '在订阅时执行回调并按原样返回源 Observable 的 RxJS 操作符函数。',
-
   'switchMapWithAsyncState.overview':
     '<code>switchMapWithAsyncState</code> 操作符将 <code>switchMap</code> 与 <code>createAsyncState</code> 的功能融为一体。它特别适合于响应用户交互（如按钮点击或搜索过滤）并发起新请求的场景，能够在切换内部数据流的同时，将响应自动包装为标准的 <code>AsyncState</code> 状态结构，省去手动维护加载状态与错误的样板代码。',
   'switchMapWithAsyncState.example1Title': '示例 1：按性别筛选用户',
@@ -1305,32 +1274,27 @@ export const zhCNTranslations: Record<string, string> = {
   'switchMapWithAsyncState.paramProject':
     '接收源 Observable 发射的值并返回 Observable、Promise 或其他 ObservableInput 的投影函数。',
   'switchMapWithAsyncState.returnsDesc': '发射 AsyncState<R> 对象的 Observable，自动处理 loading、error 和 data 状态。',
-
   'combineLatestEager.overview':
     'RxJS 的 <code>combineLatest</code> 操作符要求所有源数据流至少发射一次值才开始发出组合结果。如果源中包含未初始发射的 <code>Subject</code>，可能导致组合流始终挂起。<code>combineLatestEager</code> 扩展了 <code>combineLatest</code>，自动为源中的每个 <code>Subject</code> 预置 <code>startWith(null)</code>，确保组合流能够立即正常初始化。你还可以将第二个参数设为 <code>true</code> 为所有数据流统一补充 <code>startWith(null)</code>。',
   'combineLatestEager.example1Title': '示例 1：基础用法',
   'combineLatestEager.example1Desc': '组合包含未初始发射的 Subject 在内的多个 Observable：',
   'combineLatestEager.example2Title': '示例 2：配合模板的完整示例',
   'combineLatestEager.example2Desc': '结合 Angular 模板与 async 管道使用 combineLatestEager 的完整场景：',
-
   'combineLatestEager.apiSummary': '急切发射地组合多个 Observable，自动处理未发射初始值的源。',
   'combineLatestEager.paramSources': '要组合的 Observable 数组或字典对象。',
   'combineLatestEager.paramStartWithAll':
     '（可选）设为 true 时对所有源（不仅是 Subject）追加 startWith(null)，默认为 false。',
   'combineLatestEager.returnsDesc': '发射包含所有源最新值数组或对象的 Observable。',
-
   'distinctOnChange.overview':
     '<code>distinctOnChange</code> 操作符对 RxJS Observable 进行了强化，它不仅防止连续重复的值发射（与 <code>distinctUntilChanged</code> 类似），还会在值发生变化时立即触发回调函数。这对于在首屏发射之后，响应数据变更执行副作用（如展示 Toast 提示框）非常有效。',
   'distinctOnChange.example1Title': '示例 1：基础用法',
   'distinctOnChange.example1Desc': '检测到连续不同值时触发回调执行：',
   'distinctOnChange.example2Title': '示例 2：自定义比较器',
   'distinctOnChange.example2Desc': '使用自定义比较函数确定两值是否相等：',
-
   'distinctOnChange.apiSummary': '返回发射连续不重复值的 Observable，并在值发生变化时执行回调函数。',
   'distinctOnChange.paramCallback': '值改变时执行的函数，接收上一个值和当前值。',
   'distinctOnChange.paramComparator': '（可选）判断两值是否相等的比较函数，默认全等比较 (===)。',
   'distinctOnChange.returnsDesc': '发射不重复值并在值改变时执行回调的 Observable。',
-
   'logger.overview':
     '<code>logger</code> 操作符是一个高效实用的 RxJS 工具函数，简化了使用各类控制台打印方法（如 log, table, warn, error 等）记录发射值的流程。在日常开发与调试过程中能够便捷观察与追踪数据流的行为。',
   'logger.example1Title': '示例 1：基础日志记录',
@@ -1343,7 +1307,6 @@ export const zhCNTranslations: Record<string, string> = {
   'logger.paramMethod':
     '（可选）使用的 console 方法："log" | "table" | "warn" | "error" | "info" | "debug"，默认为 "log"。',
   'logger.returnsDesc': '在将值记录到控制台的同时透传所有值的 Observable。',
-
   'kubernetesPagination.overview':
     '<code>aggregatePaginatedKubernetesResources</code> 操作符与 <code>fetchPaginatedKubernetesResources</code> 便捷函数自动化了 Kubernetes REST API 的客户端分页处理。它们会自动检查响应中的 <code>metadata.continue</code> 延续标记，递归请求后续各个分页直到全部拉取完毕，安全规整缺失项，最终聚合成单一完整的 <code>KubernetesList&lt;T&gt;</code>。',
   'kubernetesPagination.callout':
@@ -1363,14 +1326,12 @@ export const zhCNTranslations: Record<string, string> = {
   'kubernetesPagination.example2Title': '示例 2：一站式便捷拉取函数',
   'kubernetesPagination.example2Desc':
     '如果你希望在一次函数调用中直接发起请求并自动完成分页聚合，无需手动构造初始 Observable，请使用 <code>fetchPaginatedKubernetesResources</code>：',
-
   'kubernetesPagination.aggregateSummary':
     '将初始 Kubernetes 列表响应 Observable 转换为聚合所有分页数据列表的 RxJS 操作符。',
   'kubernetesPagination.fetchSummary': '在单次调用中直接发起并自动完成 Kubernetes 资源分页聚合的便捷函数。',
   'kubernetesPagination.paramHttp': '用于请求后续分页的 Angular HttpClient。',
   'kubernetesPagination.paramEndpoint': 'Kubernetes 资源的 REST URL 端点。',
   'kubernetesPagination.paramInitialParams': '查询参数（例如 limit）。',
-
   'k8sRetryBackoff.configSummary': 'Operator 和 interceptor factory 共用的可选配置。',
   'k8sRetryBackoff.paramMaxAttempts': '总尝试次数，包含首次请求。设为 1 可禁用重试。',
   'k8sRetryBackoff.errorShape':
@@ -1381,7 +1342,6 @@ export const zhCNTranslations: Record<string, string> = {
     'probe 首次 429 立即失败；workload read 收到两次 429 后成功。自定义读取配置 maxAttempts: 10、200ms 指数退避基数和 equal jitter，最多重试 9 次。',
   'k8sRetryBackoffInterceptor.btnWorkloads': '测试工作负载读取（10 次尝试）',
   'k8sRetryBackoffInterceptor.btnProbe': '测试探针（禁用重试）',
-
   'k8sRetryBackoff.overview':
     '<code>retryOnK8sBackoff</code> 是专为 Kubernetes API Server 设计的 RxJS 重试退避操作符。专门针对 HTTP 429 (<code>TooManyRequests</code>) 响应（例如 Watch 缓存正在重建并提示 "storage is (re)initializing"）进行智能退避重试。只有 HTTP 429 会触发重试，其他任何错误（4xx、5xx、网络中断）均会立即且原样向上抛出。',
   'k8sRetryBackoff.callout':
@@ -1431,7 +1391,6 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramError': '待检测的错误对象 (HttpErrorResponse 或包含 status/headers/error 的对象)。',
   'k8sRetryBackoff.paramFallbackDelay':
     '无服务器提示时的毫秒基数。操作符按指数递增；delay helper 在无提示时直接返回该值。',
-
   'k8sRetryBackoffInterceptor.overview':
     '<code>k8sRetryBackoffInterceptor</code> 默认对幂等方法自动重试 Kubernetes 429，尊重 Retry-After 与 details.retryAfterSeconds，支持指数退避、jitter、等待预算和 HttpContext 禁用。POST/PATCH 需显式配置。',
   'k8sRetryBackoffInterceptor.callout':
@@ -1452,7 +1411,6 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     '应用于请求的默认 K8sBackoffRetryConfig，优先级低于请求级 K8S_RETRY_BACKOFF_CONFIG。',
   'k8sRetryBackoffInterceptor.tokenSummary': '用于在单次请求中覆盖退避配置或直接禁用重试的 HttpContextToken。',
-
   'ifValidator.overview':
     'ngx-lift 为 Angular 响应式表单提供了功能强大的条件验证器。条件验证器支持根据动态布尔条件决定是否激活并应用指定的验证规则。库中导出了两大核心函数：用于同步校验的 <code>ifValidator</code> 与用于异步校验的 <code>ifAsyncValidator</code>。',
   'ifValidator.example1Title': '示例 1：条件必填验证器',
@@ -1470,7 +1428,6 @@ export const zhCNTranslations: Record<string, string> = {
   'ifValidator.example2Title': '示例 2：ifAsyncValidator 异步条件校验',
   'ifValidator.example2Desc':
     '<code>ifAsyncValidator</code> 与 <code>ifValidator</code> 设计思想一致，但专门接收条件判定函数与异步验证器（AsyncValidatorFn），用于支持异步接口校验场景。',
-
   'ifValidator.apiSummary': '根据条件动态应用验证器函数的条件验证器。',
   'ifValidator.paramCondition':
     '返回布尔值的条件函数，为 true 时应用 trueValidatorFn，为 false 时应用 falseValidatorFn。',
@@ -1479,7 +1436,6 @@ export const zhCNTranslations: Record<string, string> = {
   'ifAsyncValidator.apiSummary': '根据条件动态应用异步验证器函数的条件异步验证器。',
   'ifAsyncValidator.paramCondition': '决定是否应用异步验证器的条件函数。',
   'ifAsyncValidator.paramAsyncValidatorFn': '条件为 true 时执行的异步验证器函数。',
-
   'intersectionValidator.overview':
     '<code>intersectionValidator</code> 是一款专为 Angular 表单定制的验证器，用于确保两个表单控件不存在重叠的值。例如，在两个列表间校验以防止出现相同条目。当数组之间出现交集时，两个字段及表单对象均会携带 <code>{intersection: true}</code> 错误。',
   'intersectionValidator.example1Title': '示例 1：校验无重叠的数组',
@@ -1490,11 +1446,9 @@ export const zhCNTranslations: Record<string, string> = {
   'intersectionValidator.overlapAlert': '包含命名空间和排除命名空间存在重叠元素',
   'intersectionValidator.returnsDesc':
     "返回一个验证器函数，若数组出现交集则返回 <code>{intersection: true}</code>，无重叠则返回 <code>null</code>。可通过访问 <code>form.errors?.['intersection']</code> 读取该表单错误。",
-
   'intersectionValidator.apiSummary': '验证两个数组类型表单控件不包含重复或重叠元素。',
   'intersectionValidator.paramArray1Key': '第一个表单控件的名称。',
   'intersectionValidator.paramArray2Key': '第二个表单控件的名称。',
-
   'uniqueValidator.overview':
     '<code>uniqueValidator</code> 是一款专为 Angular 表单定制的验证器，用于检测 <code>FormArray</code> 或 <code>FormGroup</code> 中多个控件的值是否保持唯一，确保数组或分组内任意控件的值不与其他控件冲突。',
   'uniqueValidator.example1Title': '示例 1：FormControls 数组',
@@ -1517,10 +1471,8 @@ export const zhCNTranslations: Record<string, string> = {
   'uniqueValidator.usageNotes': '使用提示',
   'uniqueValidator.usageNotesDesc':
     '在值改变时，可根据需要主动调用控件的 <code>updateValueAndValidity()</code> 方法触发重新校验。',
-
   'uniqueValidator.apiSummary': '验证 FormArray 控件或数组中各元素的唯一性。',
   'uniqueValidator.paramKey': '（可选）对象类型元素的唯一性检查属性名。若省略则检查原始值相等性。',
-
   'dateRangeValidator.overview':
     '<code>dateRangeValidator</code> 是一款用于验证日期是否在指定范围内的自定义验证器。它支持纯日期与带时间的日期格式校验，具备可配置的边界包含性（闭区间/开区间）以及可选的时间精度对比。',
   'dateRangeValidator.example1Title': '示例 1：日期范围校验',
@@ -1551,14 +1503,12 @@ export const zhCNTranslations: Record<string, string> = {
     '所选日期早于或等于允许的最小日期时返回。错误对象的值为 ISO 格式的最小允许日期字符串。',
   'dateRangeValidator.errMaxDate':
     '所选日期晚于或等于允许的最大日期时返回。错误对象的值为 ISO 格式的最大允许日期字符串。',
-
   'dateRangeValidator.apiSummary': '验证日期值是否在指定的 minDate 和/或 maxDate 范围之内。',
   'dateRangeValidator.paramOptions': '配置 minDate、maxDate 及其包含性标志的 DateRangeOptions 配置项。',
   'dateRangeValidator.optMinDate': '最小允许日期。',
   'dateRangeValidator.optMaxDate': '最大允许日期。',
   'dateRangeValidator.optMinInclusive': '是否包含最小日期边界，默认为 true。',
   'dateRangeValidator.optMaxInclusive': '是否包含最大日期边界，默认为 true。',
-
   'rangePipe.overview':
     '<code>range</code> 管道在指定范围内生成数字序列数组，非常适合用于在模板中构建下拉选项、分页控件或任意需要数字序列的场景。在 Angular 模板中，有时需要针对一系列数字进行循环。例如拥有数字 20 并希望生成 1 到 20 的列表项在下拉菜单中显示，但 Angular 的 <code>@for</code> 指令无法直接遍历数字标量。尽管可以在 TypeScript 中预生成数组，但直接在模板中声明往往更简洁灵活。',
   'rangePipe.callout1':
@@ -1578,10 +1528,8 @@ export const zhCNTranslations: Record<string, string> = {
   'rangePipe.cpuLabel': '选择 CPU 核心数',
   'rangePipe.cpuOption': '{{ count }} 核',
   'rangePipe.returnsDesc': '在指定范围内的数字序列数组。',
-
   'rangePipe.apiSummary': '生成指定范围内数字数组的 Angular 管道。',
   'rangePipe.paramValue': '指定范围的数组：[end]、[start, end]、[start, end, step] 或 [start, end, step, inclusive]。',
-
   'isHttpsPipe.overview':
     '<code>isHttps</code> 管道用于检查 URL 字符串是否使用 HTTPS 协议，非常适用于模板中的条件渲染、表单校验或安全检查。<code>ngx-lift</code> 同时提供了可在 TypeScript 中直接使用的同名工具函数 <code>isHttps</code>。',
   'isHttpsPipe.example1Title': '示例 1：基础用法',
@@ -1590,11 +1538,9 @@ export const zhCNTranslations: Record<string, string> = {
   'isHttpsPipe.example2Desc': '根据 HTTPS 状态条件性渲染页面元素：',
   'isHttpsPipe.example3Title': '示例 3：安全标识',
   'isHttpsPipe.example3Desc': '根据协议类型展示安全指示灯或提示：',
-
   'isHttpsPipe.apiSummary': '检查 URL 字符串是否使用 HTTPS 协议的 Angular 管道。',
   'isHttpsPipe.paramValue': '要检查的 URL 字符串。',
   'isHttpsPipe.returnsDesc': '若 URL 使用 HTTPS 协议则返回 true，否则返回 false。',
-
   'arrayJoinPipe.overview':
     '<code>arrayJoin</code> 管道用于将数组元素按照指定分隔符连接成字符串，提供在模板中便捷展示逗号分隔或自定义符号分隔内容的方案。',
   'arrayJoinPipe.example1Title': '示例 1：基础用法',
@@ -1603,12 +1549,10 @@ export const zhCNTranslations: Record<string, string> = {
   'arrayJoinPipe.example2Desc': '针对多样化场景使用自定义分隔符：',
   'arrayJoinPipe.example3Title': '示例 3：数值数组',
   'arrayJoinPipe.example3Desc': '使用不同分隔符连接纯数字数组：',
-
   'arrayJoinPipe.apiSummary': '使用指定分隔符将数组元素拼接为字符串的 Angular 管道。',
   'arrayJoinPipe.paramValue': '要拼接的数组。若非数组则原样返回。',
   'arrayJoinPipe.paramSeparator': '（可选）数组元素之间的分隔符字符串，默认为 ","。',
   'arrayJoinPipe.returnsDesc': '包含拼接数组元素的字符串，若非数组则返回原始值。',
-
   'maskPipe.overview':
     '<code>mask</code> 管道用于对敏感字符串数据进行脱敏处理，通过星号替换中间字符，同时保留首尾可配置长度的明文字符。非常适合在界面中遮盖银行卡号、手机号或 API Key 等机密信息。',
   'maskPipe.example1Title': '示例 1：基础用法',
@@ -1626,7 +1570,6 @@ export const zhCNTranslations: Record<string, string> = {
   'maskPipe.cond2': '<code>unmaskedPrefixLength</code> 与 <code>unmaskedSuffixLength</code> 不得为负数。',
   'maskPipe.cond3': '<code>masked</code> 选项配置值必须为 <code>true</code>。',
   'maskPipe.condFallback': '若任意一项条件未满足，将原样返回原始字符串不做遮蔽。',
-
   'maskPipe.apiSummary': '通过用星号替换字符来遮盖敏感字符串数据的 Angular 管道。',
   'maskPipe.paramValue': '待遮盖的输入字符串。',
   'maskPipe.paramOptions': '遮盖行为的配置选项。',
@@ -1635,7 +1578,6 @@ export const zhCNTranslations: Record<string, string> = {
   'maskPipe.optUnmaskedSuffixLength': '尾部保留明文的字符数，默认为 6。',
   'maskPipe.optMaskChar': '遮盖字符，默认为 "*"。',
   'maskPipe.optEnabled': '是否启用遮盖，默认为 true。',
-
   'byteConverterPipe.overview':
     '<code>byteConverter</code> 管道将数值字节大小转换成人类易读的文件大小字符串（例如 "1.5 MB"、"2.3 GB"），支持基于区域语言环境的格式化。它自动处理单位进阶（BYTE、KB、MB、GB、TB），并内建对多语言国际化的支持，涵盖英语、法语、简体中文、繁体中文、日语、韩语、德语、西班牙语、意大利语、巴西葡萄牙语和俄语。',
   'byteConverterPipe.example1Title': '示例 1：基础用法',
@@ -1649,11 +1591,9 @@ export const zhCNTranslations: Record<string, string> = {
     '该管道根据 Angular 应用上下文中的 <code>LOCALE_ID</code> 决定最合适的单位文案。目前支持英语、法语、中文（简体与繁体）、日语、韩语、德语、西班牙语、意大利语、葡萄牙语（巴西）以及俄语。若浏览器语言未在支持列表内，将回退采用英语作为兜底默认值。',
   'byteConverterPipe.i18nCallout':
     '关于本地化区域设置的完整指引，请参阅 <a href="https://angular.io/guide/i18n" target="_blank">Angular i18n 官方文档</a>。',
-
   'byteConverterPipe.apiSummary': '将字节数转换为人类可读字符串格式并支持本地化语言单位的 Angular 管道。',
   'byteConverterPipe.paramValue': '（可选）待转换的字节数。若为 null、undefined 或 NaN 则返回 null。',
   'byteConverterPipe.returnsDesc': '根据语言环境带相应单位（B, KB, MB, GB, TB）的格式化字符串；若输入无效则返回 null。',
-
   'url.title': 'URL 工具集 (URL Utilities)',
   'url.overview':
     'ngx-lift 提供了数个实用的 URL 校验与解析函数：<code>isIP</code> 与 <code>isFQDN</code> 用于判断主机名格式，<code>isURL</code> 用于校验完整 URL，<code>isHttps</code> 用于验证 HTTPS 协议。',
@@ -1667,7 +1607,6 @@ export const zhCNTranslations: Record<string, string> = {
   'url.isFQDNSummary': '检测主机名是否为合法的完全限定域名 (FQDN)。',
   'url.isURLSummary': '检测字符串是否为合法的 HTTP 或 HTTPS URL。',
   'url.isHttpsSummary': '检测 URL 字符串是否采用 HTTPS 协议。',
-
   'urlValidator.title': 'urlValidator 与 httpsValidator',
   'urlValidator.overview':
     '<code>urlValidator</code> 与 <code>httpsValidator</code> 函数是专为 Angular 表单设计的 URL 验证器。<code>urlValidator</code> 校验以 http 或 https 开头的地址，而 <code>httpsValidator</code> 专用于 HTTPS 地址校验。',
@@ -1687,7 +1626,6 @@ export const zhCNTranslations: Record<string, string> = {
   'urlValidator.httpsSummary': 'Angular 表单验证器，验证输入字符串是否为合法的 HTTPS URL。',
   'urlValidator.returns': '验证器函数：如果 URL 非法返回 {invalidUrl: true}，合法返回 null。',
   'urlValidator.httpsReturns': '验证器函数：如果非 HTTPS 地址返回 {invalidUrl: true}，合法返回 null。',
-
   'datagridUtil.transformDesc':
     '该函数将 Clarity 数据表格状态（包含分页、排序和过滤信息）转换为 PageQuery 对象。转换示例如下：',
   'datagridUtil.inputTitle': '输入：Clarity 数据表格状态 (Datagrid State)',
@@ -1760,6 +1698,179 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoffInterceptor.postDefault': 'POST：默认不重试',
   'k8sRetryBackoffInterceptor.postOptIn': 'POST：显式 Kubernetes 策略',
   'k8sRetryBackoffInterceptor.postGateway': 'POST：网关 429 不重试',
+  'demoApi.key-value-inputs-demo.inputs.formArray': '父组件提供的 FormArray 实例，用于管理键值对。',
+  'demoApi.key-value-inputs-demo.inputs.data': '用于预先填充表单的初始键值对数据。',
+  'demoApi.key-value-inputs-demo.inputs.uniqueKey':
+    '设为 <code>true</code> 时启用键唯一性校验，使用 ngx-lift 的 <code>UniqueValidator</code>。',
+  'demoApi.key-value-inputs-demo.inputs.keyHelper': '键输入框的帮助文本。',
+  'demoApi.key-value-inputs-demo.inputs.valueHelper': '值输入框的帮助文本。',
+  'demoApi.key-value-inputs-demo.inputs.addText': '“添加键值对”按钮的文本。',
+  'demoApi.key-value-inputs-demo.inputs.inputSize': '输入框的尺寸。',
+  'demoApi.key-value-inputs-demo.inputs.buttonClass': '“添加键值对”按钮的自定义 class。',
+  'demoApi.key-value-inputs-demo.inputs.smartMode':
+    '设为 <code>true</code> 时，如果没有键值输入项，组件会自动创建一个键值对。',
+  'demoApi.key-value-inputs-demo.inputs.keyPattern':
+    '键控件的自定义正则校验规则。可传入包含 <code>regex</code> 和 <code>message</code> 的对象；message 属性可省略。',
+  'demoApi.key-value-inputs-demo.inputs.valuePattern': '与 <code>keyPattern</code> 类似，但用于值控件的校验。',
+  'demoApi.key-value-inputs-demo.outputs.removeKeyValue': '移除键值对时触发，提供被移除项的索引。',
+  'demoApi.key-value-inputs-demo.outputs.addKeyValue': '添加键值对时触发。',
+  'demoApi.multi-alerts-demo.methods.addAlert(options: Alert)': '根据指定选项添加提醒。',
+  'demoApi.multi-alerts-demo.methods.deleteAlert(id: symbol)': '按 ID 删除提醒。',
+  'demoApi.multi-alerts-demo.methods.clearAlerts()': '清除所有提醒。',
+  'demoApi.multi-alerts-demo.alertProperties.content': '提醒消息，支持安全的 HTML 格式。',
+  'demoApi.multi-alerts-demo.alertProperties.alertType': '提醒类型。',
+  'demoApi.multi-alerts-demo.alertProperties.actions':
+    '原生按钮。每个操作包含 <code>label: string</code> 和 <code>onClick: () => void</code>。',
+  'demoApi.multi-alerts-demo.alertProperties.isAppLevel': '是否为应用级提醒。',
+  'demoApi.multi-alerts-demo.alertProperties.targetSelector':
+    '提醒内容中可点击元素（按钮、链接等）的选择器，可使用 ID、class 等。',
+  'demoApi.multi-alerts-demo.alertProperties.onTargetClick':
+    '点击提醒内容中匹配 <code>targetSelector</code> 的元素时执行的回调。',
+  'demoApi.theme-toggle-demo.componentInputs.lang': '用于本地化提示文本的显式语言代码。',
+  'demoApi.theme-toggle-demo.componentOutputs.changeTheme':
+    "切换主题时发出 <code>ClarityTheme</code>（'light' 或 'dark'）。",
+  'demoApi.theme-toggle-demo.serviceProperties.theme': "当前启用的主题（'light' 或 'dark'）。",
+  'demoApi.theme-toggle-demo.serviceMethods.setTheme(newTheme: ClarityTheme)': '设置主题、持久化到存储并更新 DOM。',
+  'demoApi.timeline-wizard-demo.wizardInputs.timelineSteps': '表示向导步骤的 <code>TimelineStep</code> 对象数组。',
+  'demoApi.timeline-wizard-demo.wizardInputs.live': '控制点击上一步/下一步时是否销毁步骤组件。',
+  'demoApi.timeline-wizard-demo.wizardInputs.confirmButtonText': '最后一步“完成”按钮的文本。',
+  'demoApi.timeline-wizard-demo.wizardOutputs.confirmed': '点击最后一步的完成按钮时，发出所有此前步骤的数据。',
+  'demoApi.timeline-wizard-demo.wizardOutputs.canceled': '取消向导时触发。',
+  'demoApi.timeline-wizard-demo.wizardOutputs.finished': '向导成功完成时触发。',
+  'demoApi.timeline-wizard-demo.wizardMethods.cancel()': '取消向导并发出 <code>canceled</code> 事件。',
+  'demoApi.timeline-wizard-demo.wizardMethods.nextStep()': '前进到向导的下一步。',
+  'demoApi.timeline-wizard-demo.wizardMethods.previousStep()': '返回向导的上一步。',
+  'demoApi.timeline-wizard-demo.baseProperties.allStepsData':
+    '包含所有向导步骤数据的数组。作为输入属性提供，可在 <code>ngOnInit</code> 及后续生命周期钩子中访问。',
+  'demoApi.timeline-wizard-demo.baseProperties.currentStepData':
+    '当前步骤的数据；不可用时为 <code>null</code>。作为输入属性提供，可在 <code>ngOnInit</code> 及后续生命周期钩子中访问。',
+  'demoApi.timeline-wizard-demo.baseProperties.form':
+    '步骤对应的表单组。没有表单的步骤应设为 <code>null</code>。在步骤组件中重写此属性。',
+  'demoApi.timeline-wizard-demo.baseProperties.next$':
+    '点击“下一步”时发出值的 Observable。可重写此属性以执行 API 调用等自定义操作。',
+  'demoApi.timeline-wizard-demo.baseProperties.stepInvalid': '表示当前步骤的表单是否无效。',
+  'demoApi.timeline-wizard-demo.baseMethods.formValueToData()':
+    '将步骤表单的值转换为步骤数据。表单结构与步骤数据结构不同时，可重写此方法。',
+  'demoApi.timeline-wizard-demo.baseMethods.dataToFormValue(data)':
+    '将步骤数据转换为可用于 <code>patchValue</code> 的表单值。表单结构与步骤数据结构不同时，可重写此方法。',
+  'demoApi.timeline-wizard-demo.stepProperties.state':
+    "时间线步骤的状态，例如 'not-started'、'current'、'success'、'error'。",
+  'demoApi.timeline-wizard-demo.stepProperties.header': '时间线步骤的标题文本。',
+  'demoApi.timeline-wizard-demo.stepProperties.title':
+    '步骤标题，同时用作标识符，应保持唯一。可通过 <code>getStepData</code> 查找步骤数据。',
+  'demoApi.timeline-wizard-demo.stepProperties.id':
+    '步骤的主标识符。未提供 id 时使用 title 作为标识符。可通过 <code>getStepData</code> 查找步骤数据。',
+  'demoApi.timeline-wizard-demo.stepProperties.description': '时间线步骤的说明。',
+  'demoApi.timeline-wizard-demo.stepProperties.component':
+    '步骤对应的 Angular 组件，必须继承 <code>TimelineBaseComponent</code>。',
+  'demoApi.timeline-wizard-demo.stepProperties.data':
+    '步骤数据，将由向导组件转换为表单数据，并作为 <code>currentStepData</code> 传给步骤组件。',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStepIndex': '获取当前步骤的索引。',
+  'demoApi.timeline-wizard-demo.serviceProperties.isFirstStep': '判断当前步骤是否为第一步。',
+  'demoApi.timeline-wizard-demo.serviceProperties.isLastStep': '判断当前步骤是否为最后一步。',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStep': '获取当前步骤对象。',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStepData': '获取当前步骤的数据。',
+  'demoApi.timeline-wizard-demo.serviceProperties.allStepsData':
+    '获取待审阅的所有步骤数据，返回包含步骤标识符及其数据的数组。',
+  'demoApi.timeline-wizard-demo.serviceMethods.getStepData<T>(key: string)':
+    '按步骤 id 或 title 获取指定步骤的数据。未找到步骤时返回 <code>null</code>。',
+  'demoApi.toast-demo.methods.addToast(options: ToastOptions)': '根据指定选项创建 Toast。',
+  'demoApi.toast-demo.methods.success(options: ToastOptions)': '根据指定选项创建成功 Toast。',
+  'demoApi.toast-demo.methods.info(options: ToastOptions)': '根据指定选项创建信息 Toast。',
+  'demoApi.toast-demo.methods.warning(options: ToastOptions)': '根据指定选项创建警告 Toast。',
+  'demoApi.toast-demo.methods.error(options: ToastOptions)': '根据指定选项创建错误 Toast。',
+  'demoApi.toast-demo.toastOptions.title': 'Toast 消息的标题。',
+  'demoApi.toast-demo.toastOptions.description': 'Toast 消息的说明。',
+  'demoApi.toast-demo.toastOptions.toastType': 'Toast 类型。',
+  'demoApi.toast-demo.toastOptions.date': '相对时间戳，例如“1 小时前”。',
+  'demoApi.toast-demo.toastOptions.manualClosable': '是否允许手动关闭 Toast。',
+  'demoApi.toast-demo.toastOptions.timeoutSeconds': 'Toast 自动关闭前的秒数；未提供时使用容器的默认值。',
+  'demoApi.toast-demo.toastOptions.primaryButtonText': '主要操作按钮的文本。',
+  'demoApi.toast-demo.toastOptions.primaryButtonClick': '点击主要按钮时执行的回调。',
+  'demoApi.toast-demo.toastOptions.secondaryButtonText': '次要操作按钮的文本。',
+  'demoApi.toast-demo.toastOptions.secondaryButtonClick': '点击次要按钮时执行的回调。',
+  'demoApi.toast-demo.toastOptions.closed': 'Toast 关闭时执行的回调。',
+  'demoApi.toast-demo.containerInputs.timeoutSeconds': 'Toast 默认超时秒数。',
+  'demoApi.toast-demo.containerInputs.manualClosable': '默认是否允许手动关闭 Toast。',
+  'demoApi.toast-demo.containerInputs.topOffset': '距离屏幕顶部的像素数。',
+  'demoApi.tooltip-demo.inputs.cllTooltip': '简单字符串提示内容，可作为 <code>cllTooltipContent</code> 的简写。',
+  'demoApi.tooltip-demo.inputs.cllTooltipContent': '提示内容，可以是字符串、模板引用、组件引用或组件类型。',
+  'demoApi.tooltip-demo.inputs.cllTooltipContentContext': '使用 <code>TemplateRef</code> 内容时传入模板的上下文对象。',
+  'demoApi.tooltip-demo.inputs.cllTooltipWidth': '提示框宽度，单位为像素。',
+  'demoApi.tooltip-demo.inputs.cllTooltipPosition':
+    "提示框相对元素的位置，例如 'tooltip-top-right'、'tooltip-top-left' 等。",
+  'demoApi.tooltip-demo.inputs.cllTooltipHideDelay': '鼠标移出后隐藏提示框的延迟，单位为毫秒。',
+  'demoApi.mutate-resource.mutateResourceApiProps.mutation': '执行服务端写入操作的异步函数或 Observable。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+    '写入成功后使对应 tag 失效，并立即为活跃查询安排重新获取。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
+    '重叠调用的策略：parallel（默认，并行）、exhaust（加入进行中的操作）、concat（排队）。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.injector':
+    '可显式指定 Angular Injector，用于在注入上下文之外注册 Signal。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.client':
+    '可显式指定 QueryClient；默认使用 QUERY_CLIENT token。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.value': '保存最近一次成功 mutation 结果的 Signal。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.error': '保存最近一次 mutation 错误的 Signal；没有错误时为 null。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.status': '细分的 mutation 生命周期状态。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.isLoading': 'mutation 操作执行期间为 true。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.mutate(args)':
+    '使用指定参数执行 mutation，返回随结果成功或失败而结束的 Promise。',
+  'demoApi.query-resource.queryResourceApiProps.definition':
+    '响应式工厂，可提供 Observable 或 Promise loader；返回 undefined 时禁用查询。',
+  'demoApi.query-resource.queryResourceApiProps.options.pollInterval':
+    '已完成请求之间的间隔，单位为毫秒；由所有活跃观察者协调。',
+  'demoApi.query-resource.queryResourceApiProps.options.injector':
+    '可显式指定 Angular Injector，用于在注入上下文之外注册 Signal。',
+  'demoApi.query-resource.queryResourceApiProps.options.client':
+    '可显式指定 QueryClient；默认使用 QUERY_CLIENT token。',
+  'demoApi.query-resource.queryResourceDefinitionProps.key': '唯一标识查询的 JSON 兼容值数组，例如 ["user", id]。',
+  'demoApi.query-resource.queryResourceDefinitionProps.loader':
+    '接收 { abortSignal, refresh } 的数据获取器。Observable 读取在首次发出值后自动完成。',
+  'demoApi.query-resource.queryResourceDefinitionProps.tags': '可选的缓存失效 tag，例如 [{ type: "users" }]。',
+  'demoApi.query-resource.queryResourceDefinitionProps.staleTime': '缓存数据被视为过期之前的时间，单位为毫秒。',
+  'demoApi.query-resource.queryResourceDefinitionProps.gcTime':
+    '未使用查询在缓存中的保留时间，单位为毫秒，默认 5 分钟。',
+  'demoApi.query-resource.queryResourceDefinitionProps.cancelOnNoObservers':
+    '所有观察者在请求完成前卸载时，是否中止进行中的传输请求。',
+  'demoApi.query-resource.queryResourceRefApiProps.value': '保存最近一次成功查询数据的 Signal。',
+  'demoApi.query-resource.queryResourceRefApiProps.error': '保存最近一次错误的 Signal；没有错误时为 null。',
+  'demoApi.query-resource.queryResourceRefApiProps.status':
+    '细分状态："idle" | "loading" | "reloading" | "resolved" | "error"。',
+  'demoApi.query-resource.queryResourceRefApiProps.isLoading': '状态为 "loading" 或 "reloading" 时为 true。',
+  'demoApi.query-resource.queryResourceRefApiProps.isStale': '数据超过 staleTime 或被 mutation 标记失效时为 true。',
+  'demoApi.query-resource.queryResourceRefApiProps.hasValue()':
+    '存在有效数据时，将 value() 类型收窄为不含 undefined 的类型谓词。',
+  'demoApi.query-resource.queryResourceRefApiProps.reload()': '触发后台刷新而不清除现有数据，状态变为 "reloading"。',
+  'demoApi.query-resource.queryResourceRefApiProps.execute()': '立即强制重新获取数据，并返回随结果结束的 Promise。',
+  'demoApi.query-resource.queryResourceRefApiProps.destroy()': '解除当前观察者；仍有其他观察者时不取消共享查询。',
+  'demoApi.resource-async.definitionProperties.params': '纯响应式参数捕获函数，其中的 Signal 读取会被跟踪。',
+  'demoApi.resource-async.definitionProperties.loader':
+    '接收最新参数及 context.abortSignal 的工厂，其中的 Signal 读取不会被跟踪。',
+  'demoApi.resource-async.optionsProperties.defaultValue':
+    '首次获取前的默认值；保证 value() 返回 T，而非 undefined。是 initialValue 的别名。',
+  'demoApi.resource-async.optionsProperties.preserveValueOnError': '发生错误时保留最近收到的值或本地值。',
+  'demoApi.resource-async.optionsProperties.reactive': '参数或数据源依赖变化时，是否自动重新执行。',
+  'demoApi.resource-async.optionsProperties.injector': '在当前注入上下文之外调用时，可指定自定义 injector。',
+  'demoApi.resource-async.optionsProperties.equal': '传给底层 computed Signal 的自定义相等性比较函数。',
+  'demoApi.resource-async.returnsProperties.value': '资源的当前值。',
+  'demoApi.resource-async.returnsProperties.error': '当前错误（如有）。',
+  'demoApi.resource-async.returnsProperties.status':
+    "当前状态：'idle' | 'loading' | 'reloading' | 'resolved' | 'local' | 'error'。",
+  'demoApi.resource-async.returnsProperties.isLoading':
+    "获取操作进行期间（'loading' 或 'reloading'）返回 true 的 Signal。",
+  'demoApi.resource-async.returnsProperties.isIdle': '资源处于 idle 状态（尚未获取）时返回 true 的 Signal。',
+  'demoApi.resource-async.returnsProperties.hasValue()': '为 true 时，将 value() 类型收窄为不含 undefined 的类型谓词。',
+  'demoApi.resource-async.returnsProperties.reload()': '手动触发资源重新加载，适用于查询（GET）。',
+  'demoApi.resource-async.returnsProperties.execute()':
+    '手动执行并返回可 await 的 Promise，适用于 mutation（POST/PUT/DELETE）。',
+  'demoApi.resource-async.returnsProperties.set()': '手动设置资源值，将状态切换为 "local"。',
+  'demoApi.resource-async.returnsProperties.update()': '使用更新函数修改资源值，将状态切换为 "local"。',
+  'demoApi.resource-async.returnsProperties.reset()': '将资源重置为初始 idle 状态并取消进行中的操作。',
+  'demoApi.resource-async.returnsProperties.destroy()': '永久停止观察并取消待完成的操作。',
+  'demoApi.date-range-validator.optionsProperties.compareTime': '是否同时比较时间，默认为 false。',
+  'certificate.loadExample': '加载证书示例',
+  'certificate.loadFailed': '无法加载证书详情，请刷新页面重试。',
+  'fileReader.validationUnavailable': '无法加载证书校验，请刷新页面重试。',
   'queryExamples.failureTitle': '失败与恢复模式',
   'queryExamples.failureIntro': '保留成功数据，为读取设置期限，只恢复失败的部分。',
   'queryExamples.initialFailure': '首次读取失败',
@@ -1832,4 +1943,6 @@ export const zhCNTranslations: Record<string, string> = {
   'queryExamples.databaseB': '租户 B 数据库',
   'queryExamples.initialLoadingDescription': '没有成功数据时，读取过程中为 true。',
   'queryExamples.refreshingDescription': '保留缓存数据的刷新过程中为 true。',
+  'queryResource.thFailures': '失败尝试',
+  'queryResource.thNextRetry': '下次重试',
 };

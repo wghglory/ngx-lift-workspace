@@ -72,9 +72,11 @@ cancelQueries。这些需要明确的并发、所有权和恢复契约，不能�
 失败 demo 覆盖首次恢复、刷新保留数据、Observable 与 Promise 重试、总期限取消、部分失败行、observer 诊断隔离、mutation 输入保留与 scoped 刷新；所有新增文本支持 11 种语言，72 个 queryExamples
 keys 无缺失或占位符错误。
 
-完整本地验证通过：ngx-lift 826、clr-lift 243、demo
+#146 独立 head `6128d54` 完整本地验证通过：ngx-lift 826、clr-lift 243、demo
 218 项单元测试；覆盖率门禁、源码与测试类型检查、lint、格式、i18n/tooling、production
 builds 和独立 tarball 消费者安装；117 项 Chromium/Firefox/WebKit
 E2E。独立运行时与 spec 复审没有具体 blocker。提交后仍需检查该 head 的远程 CI。
 
 依赖 audit 未确认通过；未执行 npm 发布。代码验证、PR CI 与发布门禁分别报告。
+
+当前诊断整合与最终组合验证见[#146/#147 整合复审](../reviews/query-pr146-pr147-integration.zh-CN.md)。

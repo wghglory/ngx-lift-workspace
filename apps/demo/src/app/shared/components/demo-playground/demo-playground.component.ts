@@ -3,6 +3,9 @@ import {angleIcon, checkIcon, ClarityIcons, copyIcon, viewColumnsIcon, viewListI
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
 
+import {CodeBlockComponent} from '../code-block/code-block.component';
+import {sourceText} from '../../utils/highlight.util';
+
 ClarityIcons.addIcons(viewColumnsIcon, viewListIcon, copyIcon, checkIcon, angleIcon);
 
 /** Supported source-code tabs in the demo playground. */
@@ -15,7 +18,7 @@ export type PlaygroundLayout = 'stacked' | 'split';
 /** Presents a live example alongside expandable source-code tabs. */
 @Component({
   selector: 'app-demo-playground',
-  imports: [ClarityModule, TranslatePipe],
+  imports: [ClarityModule, TranslatePipe, CodeBlockComponent],
   templateUrl: './demo-playground.component.html',
   styleUrl: './demo-playground.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -151,16 +154,6 @@ export class DemoPlaygroundComponent implements OnInit {
   }
 
   private extractCleanCode(code: string): string {
-    if (!code) {
-      return '';
-    }
-    if (code.includes('<span') || code.includes('hljs-')) {
-      if (typeof document !== 'undefined') {
-        const temp = document.createElement('div');
-        temp.innerHTML = code;
-        return temp.textContent || temp.innerText || '';
-      }
-    }
-    return code;
+    return sourceText(code);
   }
 }

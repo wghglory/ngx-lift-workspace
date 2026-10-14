@@ -2,9 +2,8 @@ export const jaTranslations: Record<string, string> = {
   'header.selectLanguage': '言語を選択',
   'header.openGitHub': 'GitHub で開く',
   'header.codeLicensed': 'ライセンス：',
-
   'nav.signalUtils': 'Signal ユーティリティ',
-  'nav.queryMutation': 'Query & Mutation',
+  'nav.queryMutation': 'クエリとミューテーション',
   'nav.operators': 'オペレーター',
   'nav.interceptors': 'インターセプター',
   'nav.validators': 'バリデーター',
@@ -36,21 +35,121 @@ export const jaTranslations: Record<string, string> = {
   'nav.badgeUpdated': '更新',
   'nav.badgePopular': '人気',
   'nav.badgeCore': 'コア',
-
+  'home.ngxLift.title': 'ngx-lift',
+  'home.ngxLift.subtitle': '現代のAngular開発ワークフローを向上させる',
+  'home.ngxLift.supportMatrix': 'バージョンサポートマトリクス',
+  'home.ngxLift.thVersion': 'ngx-lift バージョン',
+  'home.ngxLift.thNgVersion': 'Angularバージョン',
+  'home.ngxLift.utilityTitle': 'ユーティリティ関数',
+  'home.ngxLift.utilityDesc': '開発タスクを加速するための包括的なユーティリティ関数',
+  'home.ngxLift.rxjsTitle': 'RxJS 演算子',
+  'home.ngxLift.rxjsDesc': '複雑なリアクティブ操作を単純化し、コードの保守性を向上させる専用操作子',
+  'home.ngxLift.signalTitle': 'シグナルユーティリティ',
+  'home.ngxLift.signalDesc': 'AngularのシグナルAPIを補完する強力なシグナルベースのユーティリティ',
+  'home.clrLift.title': 'clr-lift',
+  'home.clrLift.subtitle': 'Clarityデザインシステムを拡張する再利用可能なコンポーネント、ユーティリティ、操作子',
+  'home.clrLift.supportMatrix': 'バージョンサポートマトリクス',
+  'home.clrLift.thVersion': 'clr-lift バージョン',
+  'home.clrLift.thNgVersion': 'Angularバージョン',
+  'home.clrLift.utilitiesTitle': 'ユーティリティ',
+  'home.clrLift.utilitiesDesc':
+    'Clarity コンポーネントに特化したユーティリティで、一般的なタスクと操作を単純化し、スムーズな開発体験を提供します',
+  'home.clrLift.rxjsTitle': 'RxJS 演算子',
+  'home.clrLift.rxjsDesc':
+    'Clarity の機能を拡張する強化された RxJS オペレータ。<code>dgState</code> オペレータはデータグリッドの状態管理をスムーズにし、Clarity データグリッドで作業するための直感的で効率的なアプローチを提供します',
+  'home.clrLift.componentsTitle': 'コンポーネント',
+  'home.clrLift.componentsDesc':
+    'Clarity デザインシステムに基づいた本格的なコンポーネントで、トースト通知、アラート、コールアウト、ページコンテナ、テーマトグル、などがあります',
+  'home.clrLift.tipPeer':
+    '一部のケースでは、&#64;clr/angular のペア依存関係がプロジェクトの Angular バージョンと異なる場合、<strong>強制インストール</strong> が必要になることがあります',
+  'home.clrLift.tipSkipLib':
+    '最新の Angular バージョンを使用していない場合は、tsconfig.json で <code>skipLibCheck: true</code> を設定して、潜在的なビルドエラーを避けることをお勧めします',
+  'home.clrLift.tipIcon':
+    'Clarity イコンを適切にインポートするには <code>ClarityIcons.addIcons(...)</code> を使用してください',
   'common.examples': '使用例',
   'common.apiReference': 'API リファレンス',
   'common.overview': '概要',
   'common.parameters': 'パラメーター',
   'common.returns': '戻り値',
+  'rockStar.todayIs': '今日は',
+  'rockStar.whoIsStar': '今日のスターは誰ですか？',
+  'rockStar.unveil': '公開',
   'common.signature': 'シグネチャ',
   'common.description': '説明',
   'common.basicUsage': '基本的な使い方',
+  'common.inputs': '入力プロパティ (Inputs)',
+  'common.outputs': '出力イベント (Outputs)',
+  'common.type': '型',
+  'common.default': 'デフォルト',
+  'common.contentProjection': 'コンテンツ投影 (Content Projection)',
   'common.example': '例',
   'common.example1': '例 1: 基本的な使い方',
   'common.example2': '例 2: RxJS パイプオペレーターの使用',
   'common.example3': '例 3: 非同期コードの処理',
   'common.example4': '例 4: 分離されたインジェクター',
-
+  'common.methods': 'メソッド',
+  'common.selector': 'セレクター',
+  'common.behaviors': '動作ポリシー',
+  'common.behavior': '振る舞い',
+  'common.features': '主な機能',
+  'common.properties': 'プロパティ一覧',
+  'common.validationErrors': '検証エラー',
+  'common.usageNotes': '使用上の注意',
+  'common.liveDemo': 'ライブデモ',
+  'common.required': '必須',
+  'common.refresh': '更新',
+  'common.firstName': '名 (First Name)',
+  'common.lastName': '姓 (Last Name)',
+  'common.email': 'メールアドレス',
+  'common.gender': '性別',
+  'common.male': '男性',
+  'common.female': '女性',
+  'common.name': '氏名',
+  'common.noDataFound': 'データが見つかりません',
+  'common.noItems': '項目がありません',
+  'common.paginationOf': '{0} - {1} / 全 {2} 件',
+  'common.seeUiBehavior': 'クリックして UI の動作を確認',
+  'filterUsers.selectGender': '性別を選択してユーザーを読み込み',
+  'fileReader.file': 'ファイル',
+  'fileReader.readSuccess': 'ファイル内容が成功で読み込まれました',
+  'fileReader.submitAndLog': '送信してコンソールログを表示',
+  'fileReader.caBundle': 'CAバインディング',
+  'fileReader.showCertificate': '証明書を表示:',
+  'fileReader.exceedLimit': '最大ファイルサイズを超過しています ({0} MB).',
+  'multiAlerts.addStandard': '標準アラートを追加',
+  'multiAlerts.addInlineBtn': 'インラインボタン付きアラートを追加',
+  'multiAlerts.addAction': 'アクション付きアラートを追加',
+  'multiAlerts.clearAll': 'すべてのアラートをクリア',
+  'toast.successBtn': '成功トースト',
+  'toast.infoBtn': '情報トースト',
+  'toast.errorBtn': 'エラートースト',
+  'toast.warningBtn': '警告トースト',
+  'idleDetection.startSimulation': '高速シミュレーションを開始 (3秒空いた状態)',
+  'idleDetection.stopSimulation': 'シミュレーションを停止',
+  'idleDetection.simActive': 'シミュレーションがアクティブです:',
+  'idleDetection.sessionStatus': '状態:',
+  'idleDetection.totalTimeouts': '合計タイムアウト:',
+  'idleDetection.yes': 'はい',
+  'idleDetection.no': 'いいえ',
+  'resourceAsync.userN': 'ユーザー {0}',
+  'resourceAsync.reload': '再読み込み',
+  'resourceAsync.regUsernamePlaceholder': 'ユーザー名（3-20文字）',
+  'resourceAsync.regUsernameError': 'ユーザー名は3-20文字でなければなりません',
+  'resourceAsync.regEmailPlaceholder': 'メールアドレスを入力してください',
+  'resourceAsync.regEmailError': '有効なメールアドレスを入力してください',
+  'resourceAsync.regPasswordPlaceholder': 'パスワードを入力してください（最小8文字）',
+  'resourceAsync.regPasswordError': 'パスワードは少なくとも8文字でなければなりません',
+  'resourceAsync.loadingTodo': 'Todoを読み込み中...',
+  'resourceAsync.loadTodo': 'Todoを読み込む',
+  'resourceAsync.saving': '保存中...',
+  'resourceAsync.resetFromServer': 'サーバーからリセット',
+  'resourceAsync.loadUserCacheFirst': 'ユーザーを読み込む（キャッシュ優先）',
+  'resourceAsync.fromCache': 'キャッシュから',
+  'resourceAsync.updating': '更新中...',
+  'resourceAsync.loadCounter': '読み込みカウンター',
+  'resourceAsync.unsavedChanges': '未保存の変更 - カウンターがローカルで変更されました',
+  'resourceAsync.saveToServer': 'サーバーに保存',
+  'resourceAsync.discardChanges': '変更を破棄',
   'playground.beginner': '初級',
   'playground.intermediate': '中級',
   'playground.advanced': '上級',
@@ -60,36 +159,1339 @@ export const jaTranslations: Record<string, string> = {
   'playground.hideCode': 'コードを非表示',
   'playground.stackedLayout': '縦積みレイアウト',
   'playground.splitLayout': '左右分割レイアウト',
-
   'inspector.liveState': 'リアルタイム Signal 状態',
   'inspector.rawJson': '未加工の JSON 状態',
-
+  'inspector.hideJson': 'JSON を隠す',
   'mergeFrom.overview':
-    '<code>mergeFrom</code> 関数は Observable または Signal の値をマージし、最新の値を発行します。発行前に RxJS オペレーターを使用して値を変更することもできます。',
+    '<code>mergeFrom</code> は Observable または Signal をマージし、いずれかのソースの最新値を発行します。RxJS 演算子で出力を変換することもできます。<code>merge()</code> に似ていますが、Signal もサポートします。<code>combineFrom</code> とは異なり、combineLatest で値を組み合わせるのではなく、merge で直近の単一値を発行します。',
   'mergeFrom.example1Desc': '複数の Signal または Observable をマージする：',
   'mergeFrom.example2Desc': 'RxJS パイプオペレーターを渡して発行された値を操作する：',
   'mergeFrom.example3Desc':
     '<code>startWith</code> または <code>initialValue</code> オプションを使用して非同期 Observable を処理する：',
   'mergeFrom.example4Desc':
     'オプションオブジェクト経由でカスタム <code>Injector</code> を渡してマージされた Signal を作成する：',
-  'mergeFrom.apiSummary': '複数の Observable または Signal を単一の Signal にマージします。',
-
-  // k8sRetryBackoff Operator (ja)
+  'mergeFrom.apiSummary':
+    '複数の Observable または Signal を単一の Signal にマージし、いずれかのソースの最新値を発行します。<code>merge</code> に似ていますが、Signal もサポートします。',
+  'mergeFrom.paramSources':
+    '結合するオブジェクトまたはオブザーバブル/シグナルの配列。オブジェクトが提供されると、結果は同じキーを持つオブジェクトになります。',
+  'mergeFrom.paramOperator':
+    'オブザーバブルを処理するための RxJS パイプラインオペレータ。発行される値が発行される前に処理されます。',
+  'mergeFrom.paramOptions': '初期値や injector などの構成オプション。',
+  'mergeFrom.returnsDesc': '結合/マージされた値を発行するシグナル。',
+  'toSignalForm.pageTitle': 'リアクティブフォームシグナルとバインディング（toSignalForm）',
+  'toSignalForm.bannerTitle': 'Angular リアクティブフォームと現代のシグナル間の橋渡し',
+  'toSignalForm.bannerDesc':
+    '<code>toSignalForm</code> は標準の Angular <code>FormGroup</code> インスタンスをリアクティブなシグナルと宣言的なバインディング (<code>bindIf</code>, <code>bindDisabled</code>)、コントロール間の再検証、およびクリーンアップされたサブミット値 (<code>submitValue</code>) でラップします。Clarity フォームコンテナと Angular バリデータとの100％互換性を保ちます。',
+  'toSignalForm.quickTitle': 'レベル1: フォームシグナルの初心者向け',
+  'toSignalForm.quickBadge': '30秒のハローワールド',
+  'toSignalForm.quickDesc':
+    '基本を学ぶ：FormGroup を toSignalForm でラップし、シグナルを通じて値をリアクティブに読み込み、sf.invalid() を使用してアクションを無効化します。',
+  'toSignalForm.username': 'ユーザー名',
+  'toSignalForm.usernamePlaceholder': '3文字以上が必要',
+  'toSignalForm.usernameRequired': 'ユーザー名は必要です。',
+  'toSignalForm.usernameMinLength': '3文字以上が必要です。',
+  'toSignalForm.email': 'メールアドレス',
+  'toSignalForm.emailPlaceholder': 'name@domain.com',
+  'toSignalForm.emailRequired': 'メールアドレスは必要です。',
+  'toSignalForm.emailInvalid': '有効なメールアドレスを入力してください。',
+  'toSignalForm.receiveUpdates': 'メールアドレスの更新を受信',
+  'toSignalForm.saveProfile': 'プロフィールを保存',
+  'toSignalForm.reset': 'リセット',
+  'toSignalForm.quickFormState': '高速フォームシグナル状態',
+  'toSignalForm.quickFormStateDesc': '上記のフォームに入力しながらシグナルが同期的に更新されます',
+  'toSignalForm.enterpriseTitle': 'レベル2: エンタープライズ展示 - クラウドデータベースプロビジョニング',
+  'toSignalForm.enterpriseBadge': 'フルリアルワールド仕様',
+  'toSignalForm.enterpriseDesc':
+    '複雑なマルチコントロール存在、リソースAsyncを通じて非同期デバイス探知、連鎖バージョンアップ、および条件付き自動スケーリングロック。',
+  'toSignalForm.enterpriseState': 'エンタープライズフォームリアルタイムシグナル',
+  'toSignalForm.enterpriseStateDesc':
+    'リアルタイムでフォームの検証、自動スケーラのロック、バックエンドのプロビジョニングステータスを追跡します',
+  'toSignalForm.region': 'デプロイメント領域 / アパリエンス',
+  'toSignalForm.regionSelect': 'ターゲット領域を選んで...',
+  'toSignalForm.regionUSWest': 'アメリカ西（クラウドv2 - マルチゾーンHAをサポートします）',
+  'toSignalForm.regionApEast': 'アジア太平洋（地域クラウド - PGとMySQL用のマルチゾーンHAをサポートします）',
+  'toSignalForm.regionEuCentral': 'ヨーロッパ中央（レガシー領域 - シングルゾーンのみ）',
+  'toSignalForm.regionRequired': 'デプロイメント領域は必須です。',
+  'toSignalForm.regionHelper': '非同期で、<code>computedAsync</code>を介して地域アパリエンスの能力をチェックします。',
+  'toSignalForm.multiZoneSupported': '✓ マルチゾーンHAをサポートします',
+  'toSignalForm.singleZoneOnly': 'シングルゾーンのみ（HA制御あり）',
+  'toSignalForm.engine': 'データベースエンジン',
+  'toSignalForm.enginePostgres': 'PostgreSQL',
+  'toSignalForm.engineMysql': 'MySQL',
+  'toSignalForm.engineSqlServer': 'SQL Server',
+  'toSignalForm.engineRequired': 'データベースエンジンは必須です。',
+  'toSignalForm.engineHelper': '以下オプションは、<code>sf.fields.engine.value</code>からリアクティブに導出されます。',
+  'toSignalForm.haTopology': 'マルチゾーン HA テポロジ',
+  'toSignalForm.haCrossAz': '跨ゾーン可用性',
+  'toSignalForm.haDedicated': '専用のアンチアフィニティホスト',
+  'toSignalForm.haRequired': 'HA テポロジは必要です。',
+  'toSignalForm.haHelper': '動的に <code>sf.bindIf(isMultiZoneSupported, ...)</code> によってマウントされます。',
+  'toSignalForm.replicaCount': 'レプリカノード数',
+  'toSignalForm.replicaRequired': 'レプリカ数は必要です。',
+  'toSignalForm.replicaMin': 'マルチゾーン HA には最低2つのレプリカが必要です。',
+  'toSignalForm.replicaMax': '最大5つのレプリカが許可されます。',
+  'toSignalForm.replicaHelper': '値は地域のスイッチオフにも保持されます。',
+  'toSignalForm.version': 'エンジンバージョン',
+  'toSignalForm.versionSelect': 'バージョンを選択',
+  'toSignalForm.versionRequired': 'エンジンバージョンは必要です。',
+  'toSignalForm.versionHelper': 'エンジンが変更されるたびに自動的に最初の利用可能なバージョンに戻ります。',
+  'toSignalForm.clusterName': 'クラスタ名',
+  'toSignalForm.clusterNamePlaceholder': '例: billing-db-primary',
+  'toSignalForm.clusterNameRequired': 'クラスタ名は必要です。',
+  'toSignalForm.clusterNameMinLength': '少なくとも4文字が必要です。',
+  'toSignalForm.clusterNameHelper': '400msデバウンスで、予約された名前（prod-db、test-clusterなど）と異なります。',
+  'toSignalForm.clusterNameChecking': '名前が利用可能かどうか確認中...（400msデバウンス）',
+  'toSignalForm.autoScaling': 'ストレージ自動スケーリング',
+  'toSignalForm.autoScalingHelper': '有効にすると、手動のストレージ入力は自動で無効になり、250GBにリセットされます。',
+  'toSignalForm.storageGb': '割り当てたストレージ（GB）',
+  'toSignalForm.storageGbRequired': 'ストレージサイズは必要です。',
+  'toSignalForm.storageGbMin': '最小割り当ては20GBです。',
+  'toSignalForm.storageGbHelper':
+    "<code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), { resetOnDisable: true, resetValue: 250 })</code> でバインドされています。",
+  'toSignalForm.storageLocked': '🔒 自動スケーリング管理（無効、250GBにロック）',
+  'toSignalForm.storageManual': '✓ 手動割り当てが可能',
+  'toSignalForm.authMode': '認証モード',
+  'toSignalForm.authSql': 'データベースネイティブユーザー',
+  'toSignalForm.authWindows': '企業ディレクトリ / Windows認証',
+  'toSignalForm.authModeRequired': '認証モードは必要です。',
+  'toSignalForm.authModeHelper': 'データベースネイティブユーザーがパスワードと確認をメモリに保持して選択します。',
+  'toSignalForm.password': 'マスターパスワード',
+  'toSignalForm.passwordPlaceholder': '最小8文字',
+  'toSignalForm.passwordRequired': 'マスターパスワードは必要です。',
+  'toSignalForm.passwordMinLength': '少なくとも8文字が必要です。',
+  'toSignalForm.confirmPassword': '確認パスワード',
+  'toSignalForm.confirmPasswordPlaceholder': 'マスターパスワードを再入力',
+  'toSignalForm.confirmPasswordRequired': 'パスワードの確認は必要です。',
+  'toSignalForm.passwordMismatch': 'パスワードが一致していません。',
+  'toSignalForm.confirmPasswordHelper':
+    'マスターパスワードが変更されるたびに自動的に再検証されます。<code>sf.revalidate</code>を介して。',
+  'toSignalForm.tlsCert': 'TLS / SSL証明書',
+  'toSignalForm.certManaged': 'プラットフォームで自動生成',
+  'toSignalForm.certCustom': 'カスタム企業証明書',
+  'toSignalForm.certRequired': '証明書のタイプは必要です。',
+  'toSignalForm.certHelper':
+    'カスタムモードは動的に証明書の入力を設定し、トグルを切り替えるたびに入力されたテキストを保持します。',
+  'toSignalForm.tlsChain': 'PEM証明書連鎖',
+  'toSignalForm.tlsChainPlaceholder': '-----BEGIN CERTIFICATE----- ... -----END CERTIFICATE-----',
+  'toSignalForm.tlsChainRequired': '証明書チェーンが必要です。',
+  'toSignalForm.tlsChainMinLength': '証明書は少なくとも20文字以上でなければなりません。',
+  'toSignalForm.tlsChainHelper':
+    'テキストを入力し、「自動生成」に切り替えてから戻してみてください：テキストは保持されます！',
+  'toSignalForm.createCluster': 'クラスター作成',
+  'toSignalForm.resetForm': 'フォームをリセット',
+  'toSignalForm.submitting':
+    'クラスターのプロビジョニング要求をコントロールプレーンに送信中... (1.0秒のシミュレーション)',
+  'toSignalForm.successTitle': '✓ クラスタープロビジョニング要求が成功しました (ID: {0})',
+  'toSignalForm.simulatedResponse': 'シミュレートされたバックエンド応答が1.0秒後に受信されました:',
+  'toSignalForm.diagnosticsTitle': 'リアルタイムシグナル診断',
+  'toSignalForm.clusterNameState': 'クラスター名状態 (sf.fields.clusterName)',
+  'toSignalForm.value': '値:',
+  'toSignalForm.debounced': 'デバウンス (400ms):',
+  'toSignalForm.valid': '有効:',
+  'toSignalForm.touched': 'タッチ:',
+  'toSignalForm.errors': 'エラー:',
+  'toSignalForm.sqlCredState': 'SQL認証状態',
+  'toSignalForm.authModeLabel': '認証モード:',
+  'toSignalForm.controlsAttached': '接続されているコントロール:',
+  'toSignalForm.passwordValid': 'パスワードが有効:',
+  'toSignalForm.passwordErrors': 'パスワードのエラー:',
+  'toSignalForm.confirmValid': '確認用パスワードが有効:',
+  'toSignalForm.confirmErrors': '確認用パスワードのエラー:',
+  'toSignalForm.sanitizedPayload': 'クリーンアップされた送信パラメータ (sf.submitValue)',
+  'toSignalForm.sanitizedDesc':
+    'Windows認証では、UIのみの <code>confirmPassword</code> を自動的に省略し、分離された <code>password</code> を省略します。',
+  'toSignalForm.patternsTitle': '専用のアーキテクチャパターン',
+  'toSignalForm.pattern1Title': 'パターン1: 依存/条件付きフィールドツリー (bindIf)',
+  'toSignalForm.pattern1Desc':
+    '反復条件に基づいて関連するコントロール（例：データベース認証）をマウントまたはアンマウントします。デタッチされたコントロールは自動的に検証から除外され、設定された <code>preserveValue: true</code> でスイッチ時に入力が保持されます。',
+  'toSignalForm.pattern2Title': 'パターン2: リアクティブな無効化と自動リセット (bindDisabled)',
+  'toSignalForm.pattern2Desc':
+    'コントロールの有効/無効状態をブール値シグナルまたはリアクティブな取得関数 (<code>() =&gt; boolean</code>) に直接バインドします。強型のコントロールキー、直接 <code>sf.controls.&lt;name&gt;</code> 増強されたコントロール、および <code>AbstractControl</code> インスタンスをサポートします。デフォルトでは <code>emitEvent: true</code> で設定され、リアクティブなステータスシグナルが同期的に更新されるようにします。強型の <code>resetValue</code> を使用してオプションで無効化時にリセットすることも可能です。',
+  'toSignalForm.pattern3Title': 'パターン3: クリーンアップされた送信 (sf.submitValue)',
+  'toSignalForm.pattern3Desc':
+    'form.value（無効なコントロールを削除）と form.getRawValue()（UIのみのフィールド、例: <code>confirmPassword</code> を含む）の間の緊張を解決します。<code>sf.submitValue()</code> は連続的なリアクティブなシグナルを提供し、常にクリーンアップされ、送信または <code>resourceAsync</code> に準備されています。',
+  'toSignalForm.pattern4Title': 'パターン4: 非同期機能ゲート (computedAsync + bindIf)',
+  'toSignalForm.pattern4Desc':
+    'クラウドや企業アプリケーションでは、利用可能なフォームフィールドはしばしば地域の能力や非同期で解決される機能フラグに依存します。<code>computedAsync</code>は選択された地域とエンジンからリアクティブな<code>Signal&lt;boolean&gt;</code>を導出します。これは直接<code>sf.bindIf</code>に渡され、機能コントロールを即座にマウントまたはアンマウントします。',
+  'toSignalForm.pattern5Title': 'パターン5: キャスケーディングアップデートと変更ウォッチ (sf.watch)',
+  'toSignalForm.pattern5Desc':
+    'フォームコントロールの変更が他のコントロールにキャスケーディングアップデートを引き起こす場合（例: データベースエンジンが変更されたときに有効なバージョンがリセットされる場合）、従来のRxJSパターン<code>valueChanges.pipe(takeUntilDestroyed())</code>またはシグナルファーストの<code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>ユーティリティを使用できます。<code>watch</code>はAngularの<code>effect()</code>内で動作し、自動的に<code>untracked</code>の隔離を提供し、<code>NG0600</code>のシグナル書き込みエラーを防ぎ、手動の購読クリーンアップを排除します。',
+  'toSignalForm.apiReferenceTitle': 'API参照',
+  'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+  'toSignalForm.apiPropForm':
+    'Angular FormGroupインスタンスをリアクティブなシグナルとバインディングにラップするためのフォーム。',
+  'toSignalForm.apiPropOmit': 'サブミット値パッケージから省略するコントロール名。',
+  'toSignalForm.apiPropEmitEvent': 'ステータス/値の変更がAngularコントロールイベントを発生させるかどうか。',
+  'toSignalForm.apiPropValue': '現在のフォーム値のリアクティブシグナル。',
+  'toSignalForm.apiPropStatus':
+    "全体のフォームステータス（'VALID' | 'INVALID' | 'PENDING' | 'DISABLED'）のリアクティブシグナル。",
+  'toSignalForm.apiPropValid': 'フォームが有効かどうかを示す計算されたシグナル。',
+  'toSignalForm.apiPropInvalid': 'フォームが無効かどうかを示す計算されたシグナル。',
+  'toSignalForm.apiPropSubmitValue': '無効、省略、またはアンマウントされたコントロールを除いたクリーンなペイロード。',
+  'toSignalForm.apiPropIsSubmitting': '非同期のサブミット操作が進行中の場合を示す可変信号。',
+  'toSignalForm.apiBindIfControl': '条件的にマウントまたはアンマウントするコントロールの名前またはインスタンス。',
+  'toSignalForm.apiBindIfCondition': 'コントロールがマウントされているかどうかを制御するブール信号または述語。',
+  'toSignalForm.apiBindIfPreserveValue': 'コントロールの値をアンマウント/リマウントサイクルにおいてメモリに保持する。',
+  'toSignalForm.apiBindIfDefaultValue': 'コントロールをマウントまたはリセットするときに割り当てられるデフォルト値。',
+  'toSignalForm.apiBindIfEmitEvent':
+    'コントロールの追加/削除がフォームグループの値とステータスイベントを発行するかどうか。',
+  'toSignalForm.apiBindDisabledControl': '有効/無効状態がバインドされているターゲットコントロール。',
+  'toSignalForm.apiBindDisabledCondition': '無効にする場合は真、有効にする場合は偽を返すブール信号または述語。',
+  'toSignalForm.apiBindDisabledResetOnDisable': '無効状態に入ったときに自動的にコントロールの値をリセットする。',
+  'toSignalForm.apiBindDisabledResetValue':
+    'resetOnDisableが有効な場合に特定のリセット値; デフォルトはコントロールの初期値またはnull。',
+  'toSignalForm.apiBindDisabledEmitEvent': '有効/無効の変化が値/ステータスイベントを発行するかどうか。',
+  'toSignalForm.apiRevalidateTarget': 'ソース変化によって再検証されるターゲットコントロール。',
+  'toSignalForm.apiRevalidateSources': 'ターゲットコントロールを再検証させるための1つ以上の依存関係コントロール。',
+  'toSignalForm.apiRevalidateOnlyIfTouched':
+    'ユーザーがターゲットコントロールに触れた場合にのみターゲットを再検証する。',
+  'toSignalForm.apiRevalidateOnlyIfDirty':
+    'ターゲットコントロールが変更されている（dirty）場合にのみターゲットを再検証する。',
+  'computedAsync.title': 'computedAsync',
+  'computedAsync.overview':
+    'computedAsync関数は、Promise、Observable、または通常の値から値を計算するための柔軟なユーティリティです。計算の動作を柔軟に制御するためには、フラット化戦略（switch、merge、concat、exhaust）を選択し、初期値を指定できます。computedAsyncを使用するには、Promise、Observable、または通常の値を返す関数を提供します。これにより、computedAsyncはSignalを返します。',
+  'computedAsync.example1': '例1: Promiseとの互換性',
+  'computedAsync.example1Desc': 'Promiseから値を計算:',
+  'computedAsync.example2': '例2: Observableとの互換性',
+  'computedAsync.example2Desc':
+    'Observableを返す場合、自動的に購読され、コンポーネントが破棄されるか、計算が再実行されるたびに自動的にアンサブスクリプションされます。以下の例では、userIdが変化すると、以前の計算がキャンセルされます（含まれるongoingのAPI呼び出しも含む）そして新しい計算が開始されます。',
+  'computedAsync.example3': '例3: 通常の値との互換性',
+  'computedAsync.example3Desc':
+    'これは、コールバック関数が通常の値（PromiseやObservableを含まない）を返すことを許容します。コールバック関数はマイクロタスクキューに実行されるため、すぐに値を発行しません（デフォルトではundefinedを返します）。値を即座に発行したい場合は、第二引数のオプションオブジェクト内のrequireSyncオプションを使用してください。',
+  'computedAsync.example4': '例4: initialValueとの互換性',
+  'computedAsync.example4Desc':
+    'computedAsyncの計算値に初期値を設定したい場合は、オプションオブジェクトの第二引数にそれを提供します。',
+  'computedAsync.example5': '例5: requireSyncとの互換性',
+  'computedAsync.example5Desc':
+    '同期で値を発行するObservableを保有している場合、requireSyncオプションを使用して値を即座に発行できます。この機能は、signal型がデフォルトでundefinedを含まない（Signal<T>ではなくSignal<T | undefined>）ことを保証するにも役立ちます。',
+  'computedAsync.example6': '例6: createAsyncStateオペレータとの互換性',
+  'computedAsync.example6Desc':
+    '以下の例では、API呼び出しの状態を表すSignalがあります。computedAsyncとcreateAsyncStateオペレータを使用して、userIdに基づいてAPI呼び出しの状態を計算します。',
+  'computedAsync.example7': '例7: 行為（switch、merge、concat、exhaust）',
+  'computedAsync.example7Desc':
+    'デフォルトではcomputedAsyncはswitchの動作を採用しています。この動作を変更したい場合は、第二引数のオプションオブジェクト内でbehaviorオプションを提供してください。',
+  'computedAsync.behaviorSwitch': 'switch (既定)',
+  'computedAsync.behaviorSwitchDesc':
+    '従来の計算をキャンセルしたい場合、switchの動作が利用されます。新しい計算が以前の計算が完了する前にトリガーされる場合は、前者は終了されます。',
+  'computedAsync.behaviorMerge': 'merge',
+  'computedAsync.behaviorMergeDesc':
+    '以前の計算を保持したい場合、mergeの動作が利用されます。新しい計算が以前の計算が完了する前に開始される場合、前者は保持され、後者は開始されます。',
+  'computedAsync.behaviorConcat': 'concat',
+  'computedAsync.behaviorConcatDesc':
+    '以前の計算を保持し、その完了を待ってから新しい計算を開始したい場合、concatの動作が選ばれます。',
+  'computedAsync.behaviorExhaust': 'exhaust',
+  'computedAsync.behaviorExhaustDesc':
+    '以前の計算が進行中である場合に新しい計算を無視する必要がある場合は、exhaustの動作が選ばれます。',
+  'computedAsync.example8': '例8: 以前の計算値を使用する',
+  'computedAsync.example8Desc':
+    'その後の計算で以前に計算された値を使用する必要がある場合、コールバック関数内で最初の引数としてアクセスできます。',
+  'computedAsync.example9': '例9: 初期データの読み込み',
+  'computedAsync.example9Desc': 'コンポーネントが読み込まれるときにユーザーを読み込みます:',
+  'computedAsync.refresh': 'リフレッシュ',
+  'computedAsync.learnTrigger': 'ここでは<a href="{0}"><code>createTrigger</code></a>を学んでください。',
+  'computedAsync.example10': '例10: ボタンクリック時にデータを読み込む',
+  'computedAsync.example10Desc': 'ボタンがクリックされたときにユーザーのみを読み込みます:',
+  'computedAsync.loadUsers': 'ユーザーを読み込む',
+  'computedAsync.example11': '例11: onErrorを使用したエラーハンドリング',
+  'computedAsync.example11Desc':
+    'onErrorコールバックを使用してエラーを穏やかに処理し、フォールバック値を提供してください。onErrorが値を返すと、シグナルはその値を発行し、エラーを投げなくなります:',
+  'computedAsync.onErrorCallout':
+    '<code>onError</code> コールバックはエラーを受け取り、フォールバック値を返します。<code>undefined</code> を返すと、signal の値も undefined になります。ハンドラーがない場合、従来の既定動作ではエラーオブジェクトが signal の値になります。有効なフォールバック値を返すか、<code>throwOnError</code> を使用してください。',
+  'computedAsync.example12': '例12: throwOnErrorを使用したエラーハンドリング',
+  'computedAsync.example12Desc':
+    'throwOnError: trueを使用してエラーを上に伝播させ、静默的に処理しないようにします。これはグローバルなエラーハンドラーにエラーが上に伝播する場合に役立ちます:',
+  'computedAsync.throwOnErrorCallout':
+    'throwOnError: trueの場合、onErrorが提供されている場合でもエラーは投げられます。onErrorコールバックはエラーが投げられる前にログや副作用を処理するために使用できます。',
+  'computedAsync.example13': '例13: タブ切り替えとリクエストキャンセル（ストリームの耐性）',
+  'computedAsync.example13Desc':
+    '複数タブのUIにおいて、タブを頻繁に切り替えると、同時に送信されるリクエストがキャンセルされるか失敗する（例: ブラウザのナビゲーションキャンセル）。',
+  'computedAsync.tabResilienceBefore':
+    '<strong>修正前:</strong> 内部エラー（例: キャンセルされたHTTPリクエスト）はswitchAllを通じて伝播し、外側のオブザーバブル購読を永久に終了します。UIは永遠にロード状態にとどまり、次のタブを読み込むことができませんでした。',
+  'computedAsync.tabResilienceAfter':
+    '<strong>修正後:</strong> 内部エラーは安全にキャッチされ、処理され、外側のストリームが生き残ります。どのタブにも切り替えるか、即座に再試行すると新しいデータが読み込まれて表示されます！',
+  'computedAsync.tabActiveDirectory': 'アクティブドメイン',
+  'computedAsync.tabBackupLocations': 'バックアップ場所',
+  'computedAsync.tabCertificates': '証明書',
+  'computedAsync.tabSimulateAborted': '中止されたリクエストをシミュレート',
+  'computedAsync.tabNotice':
+    '注意: このシミュレートされた中止されたリクエストの後でも、ストリームは生き continues! 上のタブのいずれかをクリックすると、それをスムーズに回復できます。',
+  'computedAsync.example14': '例14: 分離されたインジェクター',
+  'computedAsync.example14Desc':
+    'オプションで <code>injector</code> をオプションオブジェクトに渡ることで、<code>computedAsync</code> は環境インジェクションコンテキスト外でインスタンス化できます。例えば、コンポジ table ヘルパー関数、カスタムサービス、または動的ファクトリメソッド内で使用できます。',
+  'computedAsync.apiSummary':
+    'Promises、Observables、または通常の値から値を計算し、Signal が計算された値を発行するように返します。',
+  'computedAsync.paramComputation':
+    'Promise、Observable、または通常の値を返す関数。関数は前の計算された値をオプションで最初の引数として受け取ります。',
+  'computedAsync.paramOptions': 'Async コンピュテーションの構成オプション。',
+  'computedAsync.propInitialValue': '計算が完了する前における計算された信号の初期値。',
+  'computedAsync.propRequireSync': '真の場合、計算が同期的に発行される必要があります。',
+  'computedAsync.propBehavior':
+    '複数の計算を処理するフラット化戦略: "switch", "merge", "concat", または "exhaust"。デフォルトは "switch" です。',
+  'computedAsync.propOnError': 'エラーハンドラーのコールバックがアсинクロン操作からのエラーを受け取ります。',
+  'computedAsync.propThrowOnError': '真の場合、エラーは投げられ、上へ伝播します。',
+  'computedAsync.returnsDesc': '計算された値を発行する Signal。',
+  'combineFrom.title': 'combineFrom',
+  'combineFrom.overview':
+    '<code>combineFrom</code>関数は、観測値またはシグナルの配列またはオブジェクトを受け取り、これらのソースから集約された値を発行するシグナルを生成します。<code>combineLatest</code>に似ていますが、シグナルにもスムーズにサポートしています。カスタムインジェクターと初期値をサポートします。',
+  'combineFrom.example1': '例1: 基本的な使用法',
+  'combineFrom.example1Desc': '複数の信号またはオバザーベルを組み合わせます:',
+  'combineFrom.example2': '例2: RxJSパイプラインオペレータと一緒に',
+  'combineFrom.example2Desc': 'RxJSのパイプラインオペレータを渡して発行される値を操作してください：',
+  'combineFrom.example3': '例3: 非同期コードの処理',
+  'combineFrom.example3Desc': 'startWithまたはinitialValueオプションを使用して非同期オブザーバブルを処理してください：',
+  'combineFrom.example4': '例4: 実例 - フィルタリングされたデータ',
+  'combineFrom.example4Desc':
+    '検索条件をAPIリソースと組み合わせて、クライアント側のフィルタリングとソートを実行してください：',
+  'combineFrom.example5': '例5: 重複した初期化と明示的なインジェクター',
+  'combineFrom.example5Desc':
+    '初期シグナル発行を重複させます。別途のソースからも中間の組み合わせが生成される可能性がありますが、computed()を使用して同期的なシグナルのみを導出してください。',
+  'combineFrom.apiSummary':
+    'オブザーバブルとシグナルの両方を組み合わせ、combineLatestのセマンティクスと各ソースごとの重複除去を提供します。',
+  'combineFrom.paramSources':
+    '組み合わせるオブジェクトまたはオブザーバブルやシグナルの配列。オブジェクトが提供されると、結果は同じキーを持つオブジェクトになります。',
+  'combineFrom.paramOperator': '発行される値を操作するRxJSのパイプラインオペレータ。',
+  'combineFrom.paramOptions': '初期値とインジェクターを含む構成オプション。',
+  'combineFrom.returnsDesc':
+    'すべてのソースオブザーバブルとシグナルから最新の値を含む配列またはオブジェクトを発行するシグナル。',
+  'resourceAsync.title': 'resourceAsync',
+  'resourceAsync.overview':
+    '<code>resourceAsync</code> は、状態を追跡しながら非同期処理を管理するリアクティブなリソースを作成します。Observable、Promise、同期値に対応し、リクエストの自動キャンセル、手動の再読み込み、詳細な状態の追跡を提供します。',
+  'resourceAsync.basicSection': '基本的な例',
+  'resourceAsync.intermediateSection': '中間的な例',
+  'resourceAsync.whenToUseSection': 'いつ使用するか',
+  'resourceAsync.advancedSection': 'WritableResourceRef - ローカルステート管理',
+  'resourceAsync.nestedSection': '高度なパターン: ネストされたリソース',
+  'resourceAsync.example1': '例1: 基本的なリアクティブクエリと自動依存関係の追跡',
+  'resourceAsync.example1Desc':
+    '依存関係が変化するたびにデータを再取得するリソースを生成します。ソース関数内の任意のシグナルはリアクティブな依存関係になります。',
+  'resourceAsync.example2': '例2: ラズリロード',
+  'resourceAsync.example2Desc':
+    'コードlazy: trueを用いて、reload()が呼ばれるまでロードを遅らせることができます。リソースは初期状態で開始され、明示的にトリガーされたまでデータを取得しません:',
+  'resourceAsync.loadUsers': 'ユーザーをロード',
+  'resourceAsync.notLoadedIdle': 'まだ読み込まれていない（idle）',
+  'resourceAsync.example3': '例3: 初期値',
+  'resourceAsync.example3Desc': '最初の取得が完了する前に表示する初期値を提供します:',
+  'resourceAsync.example3Callout':
+    'リストからデ tailページにナビゲートする際、すでに表示するデータがある場合に役立ちます。',
+  'resourceAsync.example4': '例4: エラーハンドリングとフォールバック値とエラープロパゲーション',
+  'resourceAsync.example4Desc':
+    'onErrorコールバックを使用してエラーハンドリングを行い、フォールバック値を提供するか、throwOnError: trueを使用してエラープロパゲーションを行うことができます:',
+  'resourceAsync.triggerFallback': 'リクエストをトリガー（フォールバックあり）',
+  'resourceAsync.showingFallback': 'エラー後表示されるフォールバックユーザー',
+  'resourceAsync.errorPropagation': 'エラーパラメータの伝播',
+  'resourceAsync.example5': '例5: execute()を使用したミューテーション - ユーザー登録フォーム',
+  'resourceAsync.example5Desc':
+    'ミューテーション（POST/PUT/DELETE）では、<code>execute()</code>メソッドを使用してください。<code>execute()</code>は、<code>resource.value()</code>に正確に書き込まれた値を返すawait可能な<code>Promise&lt;T&gt;</code>を返します。再実行時に古い値とエラーをクリアし、未処理の拒絶なしにfire-and-forget呼び出しにも安全です。',
+  'resourceAsync.regUsername': 'ユーザー名',
+  'resourceAsync.regEmail': 'メールアドレス',
+  'resourceAsync.regPassword': 'パスワード',
+  'resourceAsync.regSubmit': '登録',
+  'resourceAsync.example6': '例6: ビヘイビア（スイッチ、エクスーティング）',
+  'resourceAsync.example6Desc': '複数の並行要求の処理方法を制御します：',
+  'resourceAsync.example7': '例7: 状態追跡',
+  'resourceAsync.example7Desc':
+    '状態情報にアクセスするには、<code>status()</code>シグナルを使用します。導出状態には<code>computed()</code>を使用してください：',
+  'resourceAsync.example8': '例8: 宣言的な定義とAbortSignalの伝播',
+  'resourceAsync.example8Desc':
+    '<code>resourceAsync</code>は、<code>ResourceAsyncDefinition&lt;P, T&gt;</code>を介して宣言的な定義をサポートし、<code>params</code>と<code>loader</code>を使用して、<code>context.abortSignal</code>を伝播し、キャンセル生成の追跡と遅延されたPromiseの解決を実現します。',
+  'resourceAsync.declarativeTitle': 'リアルタイムショーケース: 宣言的な定義とキャンセル',
+  'resourceAsync.quickSwitchDemo': '高速スイッチ（アブортトリガー）',
+  'resourceAsync.activeSearchLogs': 'リアルタイムアブортSignalとリクエストライフサイクルログ',
+  'resourceAsync.optimisticTitle': '例1: 希望的な更新 - Todoのトグル',
+  'resourceAsync.optimisticDesc':
+    'サーバー確認前にUIをすぐに更新します。サーバーのリクエストが失敗した場合、変更を逆転できます。これによりユーザーに即時フィードバックを提供できます。',
+  'resourceAsync.cacheFirstTitle': '例2: キャッシュ優先の読み込み',
+  'resourceAsync.cacheFirstDesc':
+    '新しいデータをバックグラウンドで取得しながら、キャッシュデータをすぐに表示します。これにより、キャッシュデータを持っているユーザーにはローディングスピナーが表示されなくなります。',
+  'resourceAsync.formDraftTitle': '例3: フォームのドラフト - セーブ/ディスカードカウンター',
+  'resourceAsync.formDraftDesc':
+    'サーバーに保存する前にユーザーがローカルでデータを編集できるようにします。変更をセーブするか、サーバーから再読み込むことで変更を破棄できます。',
+  'resourceAsync.nestedTitle': '実装とデモ',
+  'resourceAsync.nestedProjects': 'プロジェクト',
+  'resourceAsync.nestedLoadingItems': 'アイテムの読み込み中...',
+  'resourceAsync.nestedRefreshing': 'リロード中...',
+  'resourceAsync.nestedThName': '名前',
+  'resourceAsync.nestedThStatus': 'ステータス',
+  'resourceAsync.nestedThOrg': '組織',
+  'resourceAsync.nestedThActions': 'アクション',
+  'resourceAsync.nestedLoadOrg': '組織読み込み',
+  'resourceAsync.nestedRetry': '再試行',
+  'resourceAsync.nestedRefreshItems': 'アイテムを再読み込み',
+  'resourceAsync.nestedLoadAllOrgs': 'すべての組織を読み込む',
+  'queryResource.title': 'queryResource',
+  'queryResource.overview':
+    '<code>queryResource</code> は、Angular Signals で宣言的なサーバー状態管理を提供し、キャッシュとリクエストの重複排除に対応します。<code>mutateResource</code> と <code>QueryClient</code> を組み合わせると、バックグラウンドポーリング、古い値を表示しながら再検証するキャッシュ、同じリクエストの共有、タグによるキャッシュ無効化を調整できます。',
+  'queryResource.comparisonTitle': 'どの場合に使用するか：queryResourceとresourceAsync',
+  'queryResource.comparisonIntro':
+    '両方のプリミティブはAngular Signalsを使用してリアクティブUIバインディングを実現しますが、アプリケーションアーキテクチャの異なるレイヤーを対応しています：',
+  'queryResource.cardResourceAsyncTitle': 'resourceAsync（コンポーネントローカルのアсинクロンな状態）',
+  'queryResource.cardQueryResourceTitle': 'queryResource（共有するサーバーとエンティティキャッシュ）',
+  'queryResource.scope': 'スコープ',
+  'queryResource.cache': 'キャッシュ',
+  'queryResource.mutations': 'ミューテーション',
+  'queryResource.freshness': '新鮮さ',
+  'queryResource.polling': 'ポーリング',
+  'queryResource.invalidation': '無効化',
+  'queryResource.bestFor': '最適な使用対象',
+  'queryResource.resourceAsyncScopeDesc': '単一のコンポーネントインスタンスのライフサイクルに厳密に結合されている',
+  'queryResource.resourceAsyncCacheDesc':
+    'グローバルキャッシュはありません。コンポーネントを破棄するとデータも破棄されます。',
+  'queryResource.resourceAsyncMutationsDesc': '直接一時的なトリガー用のexecute()が内蔵されています。',
+  'queryResource.resourceAsyncBestForDesc':
+    'フォーム送信状態、ローカルタイプヘッド検索フィルター、モーダルに隔离されたデータフェッチ、ファイルエクスポート。',
+  'queryResource.queryResourceScopeDesc': 'QueryClientによってルートとコンポーネント間で管理されます。',
+  'queryResource.queryResourceCacheDesc':
+    '同じクエリキーを持つクエリは、進行中のHTTPリクエストとメモリキャッシュを共有します。',
+  'queryResource.queryResourceFreshnessDesc': 'staleTimeとgcTime（Stale-While-Revalidate）は設定可能です。',
+  'queryResource.queryResourcePollingDesc': 'ポーリング間隔がタブの表示状態を自動的に尊重します。',
+  'queryResource.queryResourceInvalidationDesc': 'mutateResourceからタグ無効化により自動的に再取得されます。',
+  'queryResource.queryResourceBestForDesc':
+    'サーバーのエンティティ（ユーザー、ダッシュボード、プロジェクト、クラスタ状態）が複数のビュー間で共有されます。',
+  'queryResource.thFeature': '機能',
+  'queryResource.rowPrimaryLayer': '主要レイヤー',
+  'queryResource.rowPrimaryLayerResource': 'コンポーネントレベルのローカルアсинクロンな状態',
+  'queryResource.rowPrimaryLayerQuery': 'クライアント全体で共有されるサーバーの状態',
+  'queryResource.rowSharedMemory': '共有メモリキャッシュ',
+  'queryResource.badgeNoneComponent': 'なし（コンポーネントに束縛）',
+  'queryResource.badgeGlobalKey': 'クエリキーによってグローバル',
+  'queryResource.rowDeduplication': 'コンカレントなリクエストの重複除去',
+  'queryResource.badgePerInstance': 'インスタンスごとの（switch/exhaust）',
+  'queryResource.badgeClientCoalesced': 'クライアント全体でのコールドプ',
+  'queryResource.rowStaleWhileRevalidate': '古いデータを再検証する',
+  'queryResource.badgeManualPreserve': '手動（preserveValueOnError）',
+  'queryResource.badgeAutoStale': 'staleTimeを通じて自動的に',
+  'queryResource.rowBackgroundPolling': 'バックグラウンドポーリング',
+  'queryResource.badgeNoneBuiltIn': '内蔵されていない（または外部ポーリング）',
+  'queryResource.badgeCoordinatedVisibility': '協調 + ビジュアルに意識',
+  'queryResource.rowTagInvalidation': 'タグベースの無効化',
+  'queryResource.badgeManualReload': '手動で再読み込みをトリガー',
+  'queryResource.badgeAutoMutate': 'mutateResourceを通じて自動的に',
+  'queryResource.demo1Section': '1. リクエストコールドプ & 重複除去',
+  'queryResource.demo1SectionDesc':
+    '2つ以上のコンポーネントが同じ時間にマウントし、同じクエリキーでリクエストを発信する場合、<code>QueryClient</code>は単一のネットワークリクエストを共有します。両方のコンポーネントは同じ応答を正確に受け取り、ゼロの冗長なトラフィックになります。',
+  'queryResource.demo1PlaygroundTitle': 'コンカレントなオブザーバーがインフラーワークを共有',
+  'queryResource.demo1PlaygroundDesc':
+    'トグルコンポーネントまたはリロードをクリックしてください。ネットワークフェッチカウンターが両方のウィジェットのために一度だけ増加することに注意してください！',
+  'queryResource.badgeDeduplication': '重複除去',
+  'queryResource.actualHttpCalls': '実際の HTTP 呼び出し: {0}',
+  'queryResource.reloadQuery': 'クエリ再読み込み',
+  'queryResource.widgetATitle': 'ウィジェット A',
+  'queryResource.widgetASubtitle': 'ダッシュボード概要',
+  'queryResource.widgetBTitle': 'ウィジェット B',
+  'queryResource.widgetBSubtitle': 'リソースモニタ',
+  'queryResource.activeUsers': 'アクティブなユーザー',
+  'queryResource.cpuLoad': 'CPU 負荷',
+  'queryResource.memoryUsage': 'メモリ使用量',
+  'queryResource.status': '状態',
+  'queryResource.updated': '更新',
+  'queryResource.demo2Section': '2. ステーリー・アンド・フレッシュネス ポリシー',
+  'queryResource.demo2SectionDesc':
+    "<code>staleTime</code> はキャッシュデータが新鮮である期間を制御します。観察者が新鮮なデータを要求する際には、メモリから瞬時に表示されます。もし古いデータである場合、キャッシュデータが即座に表示されながらバックグラウンドで静黙的に再取得が実行され、UI がクリアされないことを示す <code>status: 'reloading'</code> が表示されます。",
+  'queryResource.configuredStaleTime': '設定された staleTime: {0} 秒',
+  'queryResource.freshnessBadgeFresh': '新鮮',
+  'queryResource.freshnessBadgeStale': '古い',
+  'queryResource.networkCalls': 'ネットワーク呼び出し: {0}',
+  'queryResource.triggerReadReload': '読み込み/再読み込みをトリガーにする',
+  'queryResource.revalidatingAlert': 'バックグラウンドで再有効化が進行中... 現在のUIはインタラクティブです！',
+  'queryResource.clusterNodes': 'クラスタノード',
+  'queryResource.healthyNodes': '{0} / {1} 健全',
+  'queryResource.region': '地域',
+  'queryResource.snapshotTime': 'スナップショット時間',
+  'queryResource.demo3Section': '3. 可視性意識のあるポーリング',
+  'queryResource.demo3SectionDesc':
+    'ポーリング間隔を<code>pollInterval</code>に設定して、アクティブなクエリを定期的にリフレッシュしてください。複数の観察者が異なる間隔を要求する場合、最も速いレートで調整されます。タブが隠れている間、ポーリングは自動的に一時停止され、タブが戻ったときに即座に再開されます。',
+  'queryResource.demo3PlaygroundTitle': 'バックグラウンドポーリング',
+  'queryResource.demo3PlaygroundDesc':
+    'ポーリングを有効にして、ハートビートの脈動を確認してください。タブを切るとポーリングが一時停止します！',
+  'queryResource.badgePolling': 'ポーリング',
+  'queryResource.startPolling': 'ポーリングを開始 (3s)',
+  'queryResource.stopPolling': 'ポーリングを停止',
+  'queryResource.totalPollCycles': '総ポーリングサイクル数: {0}',
+  'queryResource.ping': 'パング',
+  'queryResource.lastPulse': '最後の脈撃',
+  'queryResource.pollingIdleMsg':
+    'ポーリングは現在無作為です。『ポーリングを開始』をクリックして、リアルタイムで調整されたバックグラウンドチェックを観察してください。',
+  'queryResource.demo4Section': '4. ミューテーションとタグ無効化 (mutateResource)',
+  'queryResource.demo4SectionDesc':
+    '<code>mutateResource</code>は非同期の書き込みを処理します。ミューテーションが成功した場合、一致するタグを無効化し、そのタグを持つすべてのアクティブなクエリが自動的に最新のサーバーデータをバックグラウンドで再取得します。',
+  'queryResource.demo4PlaygroundTitle': 'タグベースの無効化',
+  'queryResource.demo4PlaygroundDesc':
+    '新しいメンバーを追加。ミューテーションが完了した後、ユーザークエリは自動的にバックグラウンドで再取得します！',
+  'queryResource.badgeMutations': 'ミューテーション',
+  'queryResource.addTeamMember': 'チームメンバーを追加',
+  'queryResource.nameLabel': '名前',
+  'queryResource.namePlaceholder': '例: Charlie Brown',
+  'queryResource.roleLabel': '役職',
+  'queryResource.rolePlatformEngineer': 'プラットフォームエンジニア',
+  'queryResource.roleSre': 'サイトリリーティビリティエンジニア',
+  'queryResource.roleProductDesigner': '製品デザイナー',
+  'queryResource.addMemberBtn': 'メンバーを追加',
+  'queryResource.savingBtn': '保存中...',
+  'queryResource.activeMembersTitle': 'アクティブなチームメンバー',
+  'queryResource.thId': 'ID',
+  'queryResource.thName': '名前',
+  'queryResource.thRole': '役割',
+  'queryResource.diagnosticsSection': '5. 開発者診断 & キャッシュインスペクター',
+  'queryResource.diagnosticsSectionDesc':
+    'この QueryClient のキャッシュ、オブザーバー、処理中の論理読み取り、再試行、GC、ポーリングを確認します。失敗例と Observable サービスの例は別のクライアントを使用します。',
+  'queryResource.diagnosticsPlaygroundTitle': 'QueryClientライブ診断',
+  'queryResource.diagnosticsPlaygroundDesc':
+    '「診断をリフレッシュ」をクリックして、getDiagnostics()およびgetEntriesSnapshot()を介して内部のQueryClient状態をポーリングします。',
+  'queryResource.badgeDiagnostics': '診断',
+  'queryResource.refreshDiagnostics': '診断をリフレッシュ',
+  'queryResource.diagTotalEntries': '総数',
+  'queryResource.diagActiveQueries': 'アクティブなクエリ',
+  'queryResource.diagInactiveQueries': '非アクティブ（GC待機中）',
+  'queryResource.diagPendingRequests': '処理中の読み取り',
+  'queryResource.diagTotalObservers': '総オブザーバー数',
+  'queryResource.diagVisibility': '表示',
+  'queryResource.diagVisible': 'アクティブ',
+  'queryResource.diagHidden': '非表示 / 不活性',
+  'queryResource.thQueryKey': 'クエリキー',
+  'queryResource.thObservers': 'オブザーバー',
+  'queryResource.thRemainingGc': 'ガベージコレクションカウントダウン',
+  'queryResource.thRemainingPoll': '次のポーリング',
+  'queryResource.noQueriesCached': '現在のキャッシュにクエリエントリは存在しません。',
+  'queryResource.apiReference': 'API参照',
+  'mutateResource.title': 'mutateResource',
+  'mutateResource.overview':
+    '<code>mutateResource</code>は、自動タグベースのキャッシュ無効化、組み込みのコンカレントストラテジ（エクスハスト、コンカト、パラレル）、およびリアクティブなAngularシグナルを含む、非同期サーバー書き込み（POST、PUT、PATCH、DELETE）を座標化します。',
+  'mutateResource.featuresTitle': '主要機能',
+  'mutateResource.featuresIntro':
+    '読み取り専用クエリとは異なり、ミューテーションは明示的なユーザーの操作にのみ実行されます。',
+  'mutateResource.cardTagInvalidationTitle': '自動タグ無効化',
+  'mutateResource.cardTagInvalidationDesc':
+    '書き込み成功時にタグを無効化し、アプリケーション全体のアクティブなqueryResourceオブザーバーを自動的に再読み込みすることなく、手動で再読み込みのパイプラインを設置せずにすべてのアクティブなクエリリソースオブザーバーを自動的にリフレッシュします。',
+  'mutateResource.cardConcurrencyTitle': '設定可能なコンカレントストラテジ',
+  'mutateResource.cardConcurrencyDesc':
+    '「exhaust」（重複クリックを無視/結合）、「concat」（FIFOキュー）、「parallel」（デフォルト）により、同時に送信を制御します。',
+  'mutateResource.cardSignalsTitle': 'リアクティブな状態シグナル',
+  'mutateResource.cardSignalsDesc':
+    'リアクティブな値、エラー、ステータス（「idle」|「loading」|「resolved」|「error」）を提供し、OnPush変更検出に最適化されたシグナルです。',
+  'mutateResource.cardPromiseTitle': '直接のPromiseの返し',
+  'mutateResource.cardPromiseDesc':
+    'mutate()呼び出しは標準のPromiseを返し、コンポーネントイベントハンドラ内でasync/awaitやtry/catch構文を使用できます。',
+  'mutateResource.demo1Section': 'アクティブなクエリとのタグ無効化',
+  'mutateResource.demo1SectionDesc':
+    'ミューテーションを送信すると、一致するタグが無効化され、そのタグを観察しているアクティブなqueryResourceインスタンスの背景でのリフレッシュが即座にトリガーされます。',
+  'mutateResource.demo1PlaygroundTitle': 'アイテムの作成とクエリの更新の観察',
+  'mutateResource.demo1PlaygroundDesc':
+    'フォームを送信してユーザーを追加してください。注意してください。ユーザーテーブルはタグ無効化によって自動的に更新されます。手動のリロード呼び出しは一切ありません！',
+  'mutateResource.badgeInvalidation': 'タグ無効化',
+  'mutateResource.addTeamMember': 'チームメンバーの追加',
+  'mutateResource.nameLabel': '名前',
+  'mutateResource.namePlaceholder': '例: Dana Scully',
+  'mutateResource.roleLabel': '役割',
+  'mutateResource.rolePlatformEngineer': 'プラットフォームエンジニア',
+  'mutateResource.roleSre': 'サイトリリーフエンジニア',
+  'mutateResource.roleProductDesigner': '製品デザイナー',
+  'mutateResource.addMemberBtn': 'メンバーを追加',
+  'mutateResource.savingBtn': '保存中...',
+  'mutateResource.activeMembersTitle': 'アクティブなチームメンバー',
+  'mutateResource.thId': 'ID',
+  'mutateResource.thName': '名前',
+  'mutateResource.thRole': '役職',
+  'mutateResource.demo2Section': '2. コンカレントモード: exhaust, concat, および parallel',
+  'mutateResource.demo2SectionDesc':
+    '高速なボタンクリックで異なるコンカレント戦略がどのように処理するかテストしてください。"exhaust"は、ミューテーションがすでに実行されている間、誤って二度の送信を防ぐために重複クリックを破棄または結合します。',
+  'mutateResource.demo2PlaygroundTitle': '高速クリックとコンカレントシミュレーション',
+  'mutateResource.demo2PlaygroundDesc':
+    'モードを選択し、"800msミューテーションをトリガー"を数回高速にクリックして、実行がどのように処理されるか見てください。',
+  'mutateResource.badgeConcurrency': 'コンカレント',
+  'mutateResource.modeLabel': 'コンカレント戦略',
+  'mutateResource.modeExhaust': 'exhaust (高速な重複クリックを破棄 - ダブル送信ガード)',
+  'mutateResource.modeConcat': 'concat (呼び出しを順序に並べる)',
+  'mutateResource.modeParallel': 'parallel (各呼び出しを独立して実行する)',
+  'mutateResource.triggerMutationBtn': '800ms ミューテーションをトリガー',
+  'mutateResource.totalClicks': 'トータルのボタンクリック数: {0}',
+  'mutateResource.actualExecutions': '実際の実行数: {0}',
+  'mutateResource.inFlight': '現在進行中の実行数: {0}',
+  'mutateResource.recentLogs': '実行ログ',
+  'mutateResource.clearLogs': 'ログをクリア',
+  'mutateResource.noLogsYet': 'まだミューテーションが実行されていません。上のボタンをクリックして開始してください。',
+  'mutateResource.demo3Section': '3. リアクティブなステータスシグナルとエラーリカバリー',
+  'mutateResource.demo3SectionDesc':
+    '<code>mutateResource</code> はエラーを分離して管理します。書き込みが失敗すると error signal にエラーが入り、status は "error" になり、返された Promise は拒否されます。try/catch で処理できます。',
+  'mutateResource.demo3PlaygroundTitle': 'ステータスシグナルとエラーリカバリー',
+  'mutateResource.demo3PlaygroundDesc':
+    'エラーアクションをシミュレートして、アクションをトリガーして、リアクティブなエラーステートを確認してください。',
+  'mutateResource.badgeError': 'エラーハンドリング',
+  'mutateResource.simulateErrorLabel': '500サーバーエラーをシミュレート',
+  'mutateResource.saveSettingsBtn': '設定を保存',
+  'mutateResource.statusLabel': 'ステータス',
+  'mutateResource.isLoadingLabel': 'isLoading',
+  'mutateResource.errorSuccessMsg': '設定が成功して保存されました！',
+  'mutateResource.apiReference': 'APIリファレンス',
+  'injectParams.example1Title': '例1: 全てのルートパラメータを取得',
+  'injectParams.example1Desc': '引数を指定せずに呼び出すと、全体のparamsオブジェクトを含むシグナルが返ります:',
+  'injectParams.example2Title': '例2: 個別パラメータを取得',
+  'injectParams.example2Desc': 'キーが指定された場合、対応するパラメータの値をシグナルとして返します:',
+  'injectParams.example3Title': '例3: パラメータを変換',
+  'injectParams.example3Desc': '変換関数を使用してパラメータを変換:',
+  'injectParams.example4Title': '例4: 初期値とともに変換',
+  'injectParams.example4Desc': '初期値と型変換とともにパラメータを変換:',
+  'injectParams.example4Callout':
+    '<code>initialValue</code>がブーリアンまたは数値として提供される場合、<code>transform</code>関数は同じタイプを返す必要があります。',
+  'injectParams.example5Title': '例5: 完全な使用例',
+  'injectParams.example5Desc': 'さまざまな使用パターンを示す完全な例:',
+  'injectParams.example6Title': '例6: カスタムインジェクター',
+  'injectParams.example6Desc':
+    'オプションオブジェクトを介してカスタム<code>Injector</code>を渡して、アモビエントインジェクションコンテキスト外でルートパラメータにアクセスできます（例：コモポジブルヘルパー関数やダイナミックサービス内）:',
+  'injectParams.title': 'injectParams',
+  'injectParams.overview':
+    'injectParams関数は、ナビゲーションが行われるたびに自動的に更新されるルートパラメータのリアクティブシグナルを提供します。',
+  'injectParams.apiSummary': 'ルートパラメータをリアクティブシグナルとしてインジェクションし、変換します。',
+  'injectParams.paramKeyOrTransform':
+    '文字列が提供されると、そのルートパラメータの値を返します。関数が提供されると、すべてのルートパラメータを処理します。省略されている場合、すべてのパラメータを返します。',
+  'injectParams.paramOptions': '変換関数、初期値、および/またはインジェクターを含む構成オブジェクト。',
+  'injectParams.returnsDesc': 'ルートパラメータの値や変換結果を含むシグナル。',
+  'injectParams.usagePatterns': '使用パターン',
+  'injectParams.pattern1': '引数なし: 全てのルートパラメータを含むシグナルを返します',
+  'injectParams.pattern2': '文字列キー: 特定のパラメータ値を含むシグナルを返します（存在しない場合はnull）',
+  'injectParams.pattern3': '変換関数: 変換されたパラメータを含むシグナルを返します',
+  'injectParams.pattern4': 'オプション付き: 初期値と型変換を許可します',
+  'injectQueryParams.title': 'injectQueryParams',
+  'injectQueryParams.overview': 'injectQueryParams関数は、URLクエリパラメータのリアクティブシグナルを提供します。',
+  'injectQueryParams.apiSummary': 'ルートクエリパラメータをリアクティブシグナルとしてインジェクションし、変換します。',
+  'injectQueryParams.paramKeyOrTransform':
+    '文字列が提供されると、そのクエリパラメータの値を返します。関数が提供されると、すべてのクエリパラメータを処理します。省略されている場合、すべてのクエリパラメータを返します。',
+  'injectQueryParams.paramOptions': '変換関数、初期値、および/またはインジェクターを含む構成オブジェクト。',
+  'injectQueryParams.returnsDesc': 'クエリパラメータの値や変換結果を含むシグナル。',
+  'injectQueryParams.example1Title': '例1: クエリパラメータをすべて取得',
+  'injectQueryParams.example1Desc': 'クエリパラメータをシグナルとして取得:',
+  'injectQueryParams.example2Title': '例2: 1つのクエリパラメータを取得',
+  'injectQueryParams.example2Desc': '名前で特定のクエリパラメータを取得:',
+  'injectQueryParams.example3Title': '例3: クエリパラメータを変換',
+  'injectQueryParams.example3Desc': '変換関数を使用してクエリパラメータを変換:',
+  'injectQueryParams.example4Title': '例4: 初期値とともに変換',
+  'injectQueryParams.example4Desc': '初期値と型変換を伴ってクエリパラメータを変換:',
+  'injectQueryParams.example5Title': '例5: 完全な使用例',
+  'injectQueryParams.example5Desc': 'さまざまな使用パターンを示す完全な例:',
+  'injectQueryParams.example6Title': '例6: カスタムインジェクター',
+  'injectQueryParams.example6Desc':
+    'オプションオブジェクトを介してカスタム <code>Injector</code> を渡して、アビエントインジェクションコンテキスト外でルートクエリパラメータにアクセスする（例としてコムポジブルヘルパー関数や動的サービス内で使用する）:',
+  'createTrigger.title': 'createTrigger',
+  'createTrigger.overview':
+    '<code>createTrigger</code> 関数は、トリガーシグナルを参照することにより、手動でシグナル再計算を開始する方法を提供します。RxJS Subject に似た呼び出し <code>next()</code> はカウンターシグナルをインクリメントし、依存関係のある効果または計算されたシグナルに通知します。',
+  'createTrigger.apiSummary': '再計算を手動で開始できるトリガーシグナルを生成します。',
+  'createTrigger.propValue': 'トリガーが何回呼ばれたかを返すシグナル（初期値は0から始まる）',
+  'createTrigger.propNext': 'シグナルの更新をトリガーにするメソッド。',
+  'createTrigger.returnsDesc': '値シグナルとnext()トリガーメソッドを公開するオブジェクト。',
+  'createTrigger.example1': '例1: 基本的な使用法',
+  'createTrigger.example1Desc': 'トリガーを作成して、手動でシグナルの再計算をトリガーにする:',
+  'createTrigger.example2': '例2: 条件付き効果',
+  'createTrigger.example2Desc': 'トリガー値を条件付きで使用して、初期化時に実行を防ぐ:',
+  'createTrigger.btnSeeConsole': 'コンソールログを確認する',
+  'createTrigger.callout':
+    "最初に<code>createTrigger's value()</code>は0を返します。<code>next</code>が明示的に呼び出されたたびに、値は1を加えます。",
+  'pageContainer.title': 'ページコンテナ',
+  'pageContainer.overview':
+    '<code>cll-page-container</code>コンポーネントは、Clarityアプリケーション全体で標準化された、レスポンシブなページシェルを提供します。これは一貫したタイトルのフォント、流動的なパディング、そして一貫したスペースを包み、任意のビュー、カード、フォーム、グリッドなどのコンテンツプロジェクションスロットを提供します。',
+  'pageContainer.example1': '例1: 基本的なページコンテナ',
+  'pageContainer.example1Desc': '必須のタイトルを設定し、メインページスロットに任意のビュー要素を投影します。',
+  'pageContainer.example1Badge': 'ページシェル',
+  'pageContainer.example2': '例2: カスタムスペースと最大幅',
+  'pageContainer.example2Desc':
+    'ClarityレイアウトまたはカスタムユーティリティクラスをcustomClassに渡してレイアウト密度を制御します。',
+  'pageContainer.example2Badge': 'レスポンシブ',
+  'pageContainer.example3': '例3: ページタイトル内の動的HTMLマーカップ',
+  'pageContainer.example3Desc':
+    'タイトル入力はinnerHTMLでレンダリングされ、ヘッダーにバッジ、ステータスインジケーター、またはタグを直接表示できます。',
+  'pageContainer.example3Badge': 'HTMLタイトル',
+  'pageContainer.demoUserManagement': 'ユーザー管理',
+  'pageContainer.demoBodyContent': 'デフォルトのスロット内にページ本文コンテンツがレンダリングされます。',
+  'pageContainer.demoClusterSettings': 'クラスタ設定',
+  'pageContainer.demoConfigured': 'カスタムスタイルクラスで構成されています。',
+  'pageContainer.demoAuditLog': "アудイットログ <span class='badge badge-info'>リアルタイム</span>",
+  'pageContainer.demoLogStream': 'ログエントリがリアルタイムでここにストリームされます。',
+  'pageContainer.apiSummary':
+    '標準化されたページラッパーサーフェイスで、レスポンシブなマージンとヘッダーテキストスタイルが含まれています。',
+  'pageContainer.inputTitle': 'コンテナの上部に表示されるタイトル。[innerHTML]でレンダリングされます。',
+  'pageContainer.inputCustomClass': '追加のCSSクラスが直接コンテナのルート要素に適用されます。',
+  'pageContainer.contentProjectionDesc':
+    'デフォルトの<ng-content />スロットで、タイトルの下にすべてのメインページコンテンツを配置します。',
+  'alert.title': 'アラート',
+  'alert.overview':
+    'アラートはユーザーの注意を引くために重要なメッセージを表示するバナーです。アイコンや色などの視覚的な要素は、伝えられる情報の種類と緊急性を示します。現在のコンテキスト内でユーザーの即時注意を要する重要な情報を提供するために使用します。',
+  'alert.example1': '例1: APIエラーレスポンスの表示',
+  'alert.example1Desc':
+    'APIからのエラーレスポンスを表示する際は、エラーメッセージを渡すためにerror入力を使用してください。アラートは応答オブジェクトのエラーメッセージを表示するか、HttpErrorResponseにフォールバックします。',
+  'alert.example1Badge': 'APIエラー',
+  'alert.example2': '例2: カスタムコンテンツの表示',
+  'alert.example2Desc':
+    'コンテンツはinnerHTMLを使用してレンダリングされ、さまざまなアラートレベルにおいて豊富なフォーマットと埋め込まれたHTMLタグをサポートします。',
+  'alert.example2Badge': '豊富なテキスト',
+  'alert.example3': '例3: コンテントの投影',
+  'alert.example3Desc':
+    'アラートコンポーネントはng-contentを介してコンテントの投影をサポートしており、複雑なHTML構造や子コンポーネントを含めることができます。',
+  'alert.example3Badge': 'ng-content',
+  'alert.example4': '例4: コンパクトなサイズ（isSmall）',
+  'alert.example4Desc':
+    'isSmall入力を使用して、ドロップダウンや小さいコンテナに適したコンパクトなアラートを表示できます。',
+  'alert.example4Badge': 'コンパクト',
+  'alert.example5': '例5: ライトウェイghtアラート',
+  'alert.example5Desc':
+    'カード、表、ネストされたステータスレイアウト内で境界線のないライトウェイghtアラートを使用してください。',
+  'alert.example5Badge': 'ライトウェイght',
+  'alert.example6': '例6: アプリレベルのアラート',
+  'alert.example6Desc':
+    '高優先度のアプリレベルのアラートは、すべてのコンテンツとナビゲーションの最上部に配置してください。',
+  'alert.example6Badge': 'アプリレベル',
+  'alert.apiSummary':
+    '重要なメッセージを表示するために various types と Clarity テーマスタイルを持つアラートコンポーネントです。',
+  'alert.inputAlertType':
+    '「info」、「warning」、「success」、「danger」、「neutral」、「loading」、または「unknown」のいずれかです。',
+  'alert.inputIsAppLevel': 'viewport のトップに表示されるアプリレベルのアラートのためにブールフラグです。',
+  'alert.inputIsSmall': 'タイトなコンテナやドラワーバー内でコンパクトなサイズを表示するためのブールフラグです。',
+  'alert.inputIsLightweight': '境界線がない軽量なスタイルを表示するためのブールフラグです。',
+  'alert.inputError': '表示するエラーメッセージを表す HttpErrorResponse またはエラーオブジェクトです。',
+  'alert.inputContent': 'アラートメッセージのコンテンツを表す文字列。innerHTML で HTML タグをサポートします。',
+  'alert.contentProjectionDesc':
+    '複雑な HTML バッファと Angular コンポーネントをサポートする ng-content の投影をサポートしています。',
+  'alert.projectionNotice': '複数のエラーは以下のようになっています。',
+  'alert.errUndefined': 'undefined が読み込まれません。',
+  'alert.errObject': 'オブジェクトをアップロードできません。',
+  'alert.serverDown': 'サーバーがダウンしています',
+  'alert.contentSuccess': '私は成功したコンテンツです',
+  'alert.contentInfo': '私は情報コンテンツです',
+  'alert.contentWarning': '私は警告コンテンツです',
+  'alert.contentDanger': '私は危険なコンテンツです',
+  'alert.contentHtml': '<strong>Hello world</strong>、私はclr-liftを好きです！',
+  'alert.contentSmall': '私は小さなアラートです',
+  'alert.contentNeutral': '私は中立的なコンテンツです',
+  'alert.contentLoading': '私はロード中のコンテンツです',
+  'alert.contentUnknown': '私は未知のコンテンツです',
+  'alert.contentAppLevel': 'コンテンツ入力からアプリレベルのアラート',
+  'alert.contentAppProjection': 'プロジェクションからアプリレベルのアラート',
+  'alert.btnView': 'ビュー',
+  'callout.title': 'コールアウト',
+  'callout.overview':
+    '<code>cll-callout</code> コンポーネントは、重要な注意事項、ヒント、警告、または事前条件の指示を強調するための情報表示ボックスを表示します。これは、レスポンシブなアイコン表示とテーマの意識を考慮して設計されています。',
+  'callout.example1': '例1: 基本的な情報的なコールアウト',
+  'callout.example1Desc':
+    'デフォルトのコンテンツプロジェクションを使用してシンプルなテキストメッセージまたはハイライトを表示します。',
+  'callout.example2': '例2: リストとリンク',
+  'callout.example2Desc':
+    'コールアウトはライトモードとダークモードの両方でフォーマットされたリストと外部ハイパーリンクをスムーズに処理します。',
+  'callout.example3': '例3: リッチなコンテンツと見出しとバッジ',
+  'callout.example3Desc':
+    'コールアウトプロJECTIONコンテナ内でヘッダー、説明的なパラグラフ、およびClarityバッジを構成してください。',
+  'callout.example1Note': 'すべての構成変更は即座に有効になります。',
+  'callout.example2Theme': '自動的にライトとダークテーマをサポートしています。',
+  'callout.example2Docs': '詳しくはClarityデザインシステムドキュメントを参照してください。',
+  'callout.example3Tip': 'プロダクションデプロイ向けのヒント',
+  'callout.example3DescText':
+    'リソース制限が明示的に構成されていることを確認してからリリースプロセスをトリガーしてください。',
+  'callout.example3LabelDeployment': 'デプロイ',
+  'callout.example3LabelValidated': '検証済み',
+  'themeToggle.title': 'テーマスイッチ',
+  'themeToggle.overview':
+    '＜code＞cll-theme-toggle＜/code＞コンポーネントと＜code＞ThemeService＜/code＞は、Signalリアクティブ性とlocalStorageの永続性を活用してClarityライトとダークモード間のスムーズなテーマ切替を提供します。',
+  'themeToggle.callout':
+    'トグルボタンはライトモードでは月のアイコン、ダークモードでは太陽のアイコンを自動的にレンダリングし、ローカライズされたツールチップとアクセス可能なaria-labelアナウンスも含みます。',
+  'themeToggle.example1Badge': 'インタラクティブトグル',
+  'themeToggle.example1Desc':
+    'トグルボタンをクリックしてテーマを切り替え、リアクティブなイベント発行を観察してください。',
+  'themeToggle.currentTheme': '現在のテーマシグナル:',
+  'themeToggle.inspectorTitle': 'テーマシグナルインスペクター',
+  'themeToggle.inspectorDesc': 'ドキュメント.bodyとlocalStorageと同期されたリアルタイムステート',
+  'themeToggle.example2Badge': 'プログラミックな制御',
+  'themeToggle.example2Desc':
+    'テーマサービスを使用して、現在のテーマをリアクティブに読み取るか、特定のテーマをプログラム的に設定できます:',
+  'themeToggle.setLight': '明るいテーマを設定',
+  'themeToggle.setDark': '暗いテーマを設定',
+  'themeToggle.example3': '例3: サイズ/SCSSセレクターのためのテーマスタイル',
+  'themeToggle.example3Desc':
+    'コンポーネントとグローバルスタイルは、bodyに[cds-theme="dark"]をターゲットにしたり、:host-context([cds-theme="dark"]): を通じて設定できます',
+  'themeToggle.serviceSummary': 'アプリケーションテーマ状態を管理するためのルートで提供されるインジェクタブルサービス',
+  'spinner.title': 'スピナー',
+  'spinner.overview':
+    'スピナーは、ユーザーが開始した ongoing プロセスの視覚的なインジケーターです。Clarityには2種類のスピナーがあり、それぞれ異なる使用ケースがあります: <strong>ページスピナー</strong> は、ページ全体に関連する操作の進行を追跡するために使用し、<strong>インラインスピナー</strong> は、特定のコンポーネントに関連する操作の進行を追跡するために使用します。',
+  'spinner.example1': '例1: デフォルトスピナー',
+  'spinner.example1Desc': 'デフォルトスピナーは中心に配置され、大きく、ブロック表示しています。',
+  'spinner.example2': '例2: サイズの変化',
+  'spinner.example2Desc': 'スピナーは異なるサイズで表示できます: 大きな(デフォルト), 中, 小。',
+  'spinner.example3': '例3: アライメントオプション',
+  'spinner.example3Desc': 'センター入力を使用してスピナーのアライメントを制御します。',
+  'spinner.example4': '例4: カスタムスタイル',
+  'spinner.example4Desc': 'カスタムCSSクラスをスピンナーエレメントに適用して、追加のスタイルを適用してください。',
+  'spinner.example5': '例5: ライン内スピンナーエレメント',
+  'spinner.example5Desc':
+    'インライン入力を使用して、スピンナーエレメントをインラインブロック要素として表示し、テキストやその他のインライン要素内でのスピンナーエレメントの並び付けに役立てることができます。',
+  'spinner.large': '大 (既定):',
+  'spinner.medium': '中:',
+  'spinner.small': '小:',
+  'spinner.centered': '中央寄せ (既定):',
+  'spinner.leftAligned': '左寄せ:',
+  'spinner.loading': '読み込み中...',
+  'tooltip.title': 'ツールチップ',
+  'tooltip.overview':
+    'ツールチップコンポーネントは、追加の情報、ヒント、またはインタラクティブなコンテンツを柔軟に表示する方法を提供します。コンテンツポップオーバー内でホバーとコピー操作をサポートし、設定可能な遅延オプション、自動ポジショニング、アクセシビリティを考慮したフォーセストラッキング、クリックアウトインタラクション、キーボード操作、およびダークモードサポートをサポートします。',
+  'tooltip.example1': '例1: 基本的なツールチップ',
+  'tooltip.example1Desc':
+    'この使用例では、直接コンテンツを指定するか、属性ディレクティブ cllTooltipContent を使用してツールチップを追加できます。さらに、隠す遅延時間や幅などの追加の設定を必要に応じてカスタマイズできます。',
+  'tooltip.example2': '例2: ディナミックコンテンツのツールチップ',
+  'tooltip.example2Desc':
+    'ツールチップはAngularテンプレートを通じて動的なコンテンツを受け取ることができます。ng-templateを使用してテンプレートを指定し、それをツールチップコンポーネントにバインドすることで動的な表示が可能です。',
+  'tooltip.example3': '例3: ディナミックコンポーネントの作成',
+  'tooltip.example3Desc':
+    'ツールチップはComponentRefまたはコンポーネントタイプを使用して動的に作成されたAngularコンポーネントをレンダリングできます。',
+  'tooltip.example4': '例4: ツールチップの位置',
+  'tooltip.example4Desc': '12種類の異なる配置方向をサポートし、知的な衝突検出を実現しています。',
+  'tooltip.apiSummary': '自動配置と衝突検出を備えた要素にツールチップ機能を追加するためのディレクティブ。',
+  'tooltip.basic1': '基本的なツールチップ1',
+  'tooltip.basic2': '500msの遅延を含む基本的なツールチップ2',
+  'tooltip.empty': '空のコンテンツはツールチップを表示しない',
+  'tooltip.templateHover': 'テンプレートリーフの例（ホバー）',
+  'tooltip.templateText': '良いツールチップ:',
+  'tooltip.templateCallout': 'ng-template内にコンポーネントを置くこともできます',
+  'tooltip.contextCallout':
+    'cllTooltipContentContextはオプションです。これはビュー作成時にng-templateに渡されるコンテキストです。',
+  'tooltip.componentRefHover': 'コンポーネントリーフの例',
+  'toast.title': 'トースト',
+  'toast.overview':
+    'トーストメッセージは、ユーザーが後で参照したい中程度のイベントをユーザーにわかりやすく伝えるための手段です。これらのメッセージは一時的にスクリーン上に表示され、通知パネルに保存され、閉じられたり期限切れたりするまで表示されます。',
+  'toast.example1': '例1: トーストコンテナの設定',
+  'toast.example1Desc':
+    'トーストメッセージを実装するには、clr-liftからToastContainerComponentをインポートし、ルートコンポーネントに<cll-toast-container [timeoutSeconds]="8" />を含めます。',
+  'toast.example2': '例2: addToastを使用したトーストの作成',
+  'toast.example2Desc':
+    'addToastを使用して、タイトルと説明が必要なプロパティを含むトーストオブジェクトと、オプションの構成を渡します。',
+  'toast.example3': '例3: シンタックスショートカット',
+  'toast.example3Desc': '4つのシンタックスショートカットが提供され、異なるステータスタイプのトーストを作成できます。',
+  'toast.serviceSummary': 'トースト通知の作成と管理に使用されるサービス。',
+  'toast.guidelinesTitle': '使用ガイドライン',
+  'toast.doTitle': '行うべきこと',
+  'toast.do1': 'ナビゲーションを提供する: トーストからユーザーにアクセスできるリンクまたは場所を含める。',
+  'toast.do2':
+    '相対タイムスタンプを使用する: ユーザーの視点からタイムスタンプを表示する（例: "1時間前"ではなく絶対日付）。',
+  'toast.do3': 'タイトルを短くする: タイトルは短く、明確なメッセージを迅速に伝えるために最大35文字までにする。',
+  'toast.do4': '消費可能な説明を作成する: 説明は簡潔に（最大156文字）して、簡単に消費できるようにする。',
+  'toast.dontTitle': '行わないこと',
+  'toast.dont1': '「閉じる」をアクションとして使用する: 閉じるボタンをクリックするとトーストが閉じる。',
+  'toast.dont2':
+    'アクションを過剰に含める: トーストメッセージにはアクションを最大2つまで制限し、最も重要なアクションを優先する。',
+  'toast.dont3': 'タイトルにオブジェクト識別子を含める: タイトルにはオブジェクト識別子を含めない；説明にのみ使用する。',
+  'toast.dont4': 'アイコンを追加する: クリア性を維持するため、トーストメッセージにアイコンを追加しない。',
+  'toast.dont5': '不要なトーストを表示しない：ユーザーにとって依然として関係がある情報だけを表示してください。',
+  'toast.optionsTitle': 'トーストオプションインターフェース',
+  'toast.containerSummary':
+    'すべてのトースト通知を保持するコンテナコンポーネント。アプリケーション内で一度だけ出現すべきです。',
+  'multiAlerts.title': 'アラート（複数種類）',
+  'multiAlerts.overview':
+    '頻繁に複数のアラートを表示する必要がある場合があります。特にアプリケーションレベルでトップに配置されるアラートの場合です。clr-liftライブラリは、<code>AlertContainerComponent</code>と<code>AlertService</code>という2つの主要なユーティリティを提供しています。これらを使用して、プログラム的にアラートを追加、削除、管理できます。',
+  'multiAlerts.example1': '例1: アラートコンテナの設定',
+  'multiAlerts.example1Desc':
+    'AlertContainerComponentをインポートし、メインコンテナ内のClarityヘッダータグの上に<cll-alert-container />を配置してください。',
+  'multiAlerts.example2': '例2: 基本的な使用法',
+  'multiAlerts.example2Desc':
+    'AlertServiceをインポートし、addAlert()、deleteAlert()、またはclearAlerts()メソッドを使用してアラートを効果的に管理してください。',
+  'multiAlerts.example3': '例3: インタラクティブな要素との高度な使用法',
+  'multiAlerts.example3Desc':
+    'メッセージ内のどの位置にもインタラクティブな要素（ボタンやリンクなど）を配置し、ターゲットセレクターを使用してコンテンツに追加できます。または構造化されたアクションボタンを提供することも可能です。',
+  'multiAlerts.example4': '例4: インタラクティブなデモ',
+  'multiAlerts.example4Desc': '下のボタンを使用してさまざまなタイプのアラートを追加し、アラートをクリアしてください。',
+  'multiAlerts.serviceSummary': '複数のアラートをプログラム的に管理するためのサービス',
+  'multiAlerts.alertTypeTitle': 'アラートタイプ',
+  'multiAlerts.containerSummary':
+    'すべてのアラートを表示するコンテナコンポーネント。メインコンテナ内のClarityヘッダータグの上に配置すべきです。',
+  'fileReader.title': 'ファイルリーダー',
+  'fileReader.overview':
+    '<FileReaderComponent>は、テキストファイルのブラウズと内容の読み込みを簡単に実行するためのコンポーネントです。ファイル選択、plain textまたはbase64エンコードされた文字列での内容読み込み、ファイルサイズの検証、ファイルが選択または削除されたときにイベントを発行する機能を提供します。',
+  'fileReader.example1': '例1: 基本的なファイルリーダー',
+  'fileReader.example1Desc': 'フォームコントロールとの基本的な統合使用:',
+  'fileReader.example2': '例2: 資格証明ファイルリーダーと検証',
+  'fileReader.example2Desc': '証明書の検証と証明書のサインポスト表示を含むファイルリーダー:',
+  'fileReader.apiSummary': '検証機能をサポートするファイルのブラウズと内容の読み込み用コンポーネント。',
+  'fileReader.feature1': 'ファイルのブラウズと選択',
+  'fileReader.feature2': 'plain textまたはbase64エンコードされた文字列での内容読み込み',
+  'fileReader.feature3': 'ファイルサイズの検証',
+  'fileReader.feature4': '内容のパースエラー処理',
+  'fileReader.feature5': 'フォームコントロールとの統合',
+  'keyValueInputs.title': 'キー値入力',
+  'keyValueInputs.overview':
+    '<code>KeyValueInputsComponent</code>は、キー値ペアの入力に特化したAngularコンポーネントです。ユーザーがFormArrayとの統合により、キー値ペアを追加、編集、削除できるダイナミックフォームを提供し、リアルタイムでの検証とスマートなキーボードナビゲーションをサポートします。',
+  'keyValueInputs.example1': '例1: 基本的な使用',
+  'keyValueInputs.example1Desc': 'FormArrayを持つフォームを作成し、KeyValueInputsComponentを使用してキー値ペアを管理:',
+  'keyValueInputs.example2': '例2: インタラクティブなデモ',
+  'keyValueInputs.example2Desc': '以下のフォームでキーと値のペアを追加、編集、削除してみてください:',
+  'keyValueInputs.callout':
+    'KeyValueInputsComponentは、UniqueValidatorを活用してキー制御に対して検証を行う方法を探索してください。ここでは、キー入力フィールドで一意性がどのように強制されるかを学んでください。',
+  'keyValueInputs.formOutput': 'あなたのフォームの値出力:',
+  'keyValueInputs.keyHelper': 'ランタイムプロパティキー',
+  'keyValueInputs.valueHelper': 'ランタイムプロパティ値',
+  'keyValueInputs.addText': 'キー値を追加',
+  'keyValueInputs.apiSummary': 'Angularフォームで動的なキー値ペア入力を管理するコンポーネント。',
+  'statusIndicator.title': 'ステータスインジケーター',
+  'statusIndicator.overview':
+    '<code>StatusIndicatorComponent</code>は、アイコンとテキストを持つステータスインジケーターを表示します。エラーや成功、警告、未知、無効、処理中などのさまざまなステータスタイプをサポートし、アイコンサイズをカスタマイズ可能で、追加のコンテキストのためにオプションのツールチップをサポートします。',
+  'statusIndicator.example1': '例1: 基本的な使用法',
+  'statusIndicator.example1Desc': 'さまざまなステータスタイプとアイコンサイズのステータスインジケーターを表示:',
+  'statusIndicator.example2': '例2: ツールチップ付き',
+  'statusIndicator.example2Desc': 'ステータスインジケーターにツールチップを追加して、追加のコンテキスト情報を提供:',
+  'statusIndicator.types': 'ステータスタイプ',
+  'statusIndicator.iconSizeTshirt': 'アイコンサイズ（Tシャツサイズ）',
+  'statusIndicator.iconSizeNumber': 'アイコンサイズ（数値）',
+  'statusIndicator.statusError': 'エラー',
+  'statusIndicator.statusSuccess': '成功',
+  'statusIndicator.statusWarning': '警告',
+  'statusIndicator.statusUnknown': '不明',
+  'statusIndicator.statusInactive': '無効',
+  'statusIndicator.statusPending': '進行中',
+  'statusIndicator.tooltipError': 'エラーの理由を説明してください',
+  'statusIndicator.tooltipSuccess': '状態が成功',
+  'statusIndicator.tooltipWarning': '状態が警告',
+  'statusIndicator.tooltipUnknown': '不明な状態',
+  'statusIndicator.tooltipInactive': '無効な状態',
+  'statusIndicator.tooltipPending': '何かが進行中である',
+  'statusIndicator.apiSummary': 'アイコンとテキストを含む状態インジケーターを表示するコンポーネント',
+  'certificate.title': '証明書のサインポスト（ビューアー）',
+  'certificate.overview':
+    '<code>CertificateSignpostComponent</code>は、Angularのコンポーネントであり、PEM文字列を解釈し、証明書の内容をクリックして表示します。Clarityと密接に統合されており、証明書の状態、有効期間、発行者情報、ハッシュ値などの重要な詳細情報を示します。',
+  'certificate.example1': '例1: パースする原始PEM',
+  'certificate.example1Desc': 'Base64エンコードされていない原始PEM証明書文字列をパースして表示:',
+  'certificate.example2': '例2: PEM（Base64エンコード）のパース',
+  'certificate.example2Desc':
+    'PEM文字列がBase64エンコードされている場合、pemEncodedをトグルして解碼してからパースする:',
+  'idleDetection.utilOverview':
+    'アクティブな検出は、ユーザーのアクティビティを監視し、ユーザーが不活動になるときに何をしますか。これは、ユーザーがログインを維持する必要があるアプリケーションにおいて特に役立ちます。ユーザーがアプリケーションと相互作用を停止するときに、システムが適切なアクションを取るための機能を提供します。例えば、ユーザーがタイムアウトが近づくことを警告するか、一定時間の不活動後に自動的にログアウトするなどの処理を可能にします。',
+  'idleDetection.utilOverviewDesc':
+    'アクティブな検出サービスは、設定可能な不活動およびタイムアウトの持続時間、ユーザーのアクティビティによる自動リセット、不活動およびタイムアウトフェーズにおけるイベントの発行、およびRxJSの観測可能なプログラミングをサポートします。',
+  'idleDetection.utilExample1Title': '例1: グローバルにアクティブな検出を構成',
+  'idleDetection.utilExample1Desc': '構成クラスを使用してグローバルに不活動およびタイムアウトの持続時間を構成:',
+  'idleDetection.utilPhaseCallout':
+    'アクティブな検出には2つのフェーズがあります: <strong>不活動検出フェーズ</strong> と <strong>タイムアウトフェーズ</strong>。',
+  'idleDetection.utilPhase1':
+    '<strong>不活動検出フェーズ</strong>: 例えば、<code>idleDurationInSeconds</code> を 5 * 60 (5分) に設定します。ウェブサイトにアクションがなくなると、このフェーズに入ります。5分後に不活動検出フェーズが終了し、長時間不活動していることを示します。<code>onIdleEnd()</code> のオブザーバブルにサブスクライブし、この時点で発行されます。このフェーズが完了すると、次のフェーズに進みます。',
+  'idleDetection.utilPhase2':
+    '<strong>タイムアウトフェーズ</strong>: このフェーズに入ったとき、カウントダウンは直ちに <code>timeoutDurationInSeconds</code> の値から始まります。<code>onCountDown()</code> のオブザーバブルにサブスクライブしてカウントダウンの値を取得できます。カウントダウンが0になるまで、<strong>タイムアウトフェーズ</strong> が終了します。この時点で、<strong>タイムアウトフェーズ</ストレートが終了します。このとき、ユーザーをログアウトするか、他のアクションを行うことができます。',
+  'idleDetection.utilExample2Title': '例2: モジュール構成',
+  'idleDetection.utilExample2Desc': 'あなたのNgModuleに構成を提供:',
+  'idleDetection.utilExample3Title': '例3: ステンドアロンアプリケーションの構成',
+  'idleDetection.utilExample3Desc': 'ステンドアロンアプリケーションに構成を提供:',
+  'idleDetection.utilExample4Title': '例4: コンポーネントでアクティブな検出サービスを使用',
+  'idleDetection.utilExample4Desc': 'サービスのオブザーバブルに登録して無活動イベントに反応してください：',
+  'idleDetection.utilExample5Title': '例5: IdleDetectionComponentの使用',
+  'idleDetection.utilExample5Desc':
+    '我々は<code>clr-lift</code>に含まれるコンポーネントを提供しており、ユーザーが無活動であるときにClarityのモーダルダイアログを表示します。ダイアログは無活動検出フェーズが終わると表示され、カウントダウンを開始します。カウントダウンが終わると、コンポーネント内の<code>timeout</code>ハンドラに接続して、たとえばlocalStorageのトークンをクリアしてログインページにリダイレクトするなどのカスタムロジックを実行できます。',
+  'idleDetection.utilExample5ParamDesc':
+    '<code>idleDurationInSeconds</code>と<code>timeoutDurationInSeconds</code>のパラメータはオプションです。これらのパラメータが渡されると、<code>provideIdleDetectionConfig</code>で渡された設定を上書きします。',
+  'idleDetection.utilDialogPreview': 'ダイアログは以下のように見えます：',
+  'idleDetection.title': 'アイドリーデテクション',
+  'idleDetection.overview':
+    '<code>cll-idle-detection</code> コンポーネントは、マウスの移動、キー入力、スクロール、タッチなどの DOM イベントからユーザーの非アクティブ状態を監視します。設定したアイドル時間を過ぎると、アクセシブルな Clarity のカウントダウンダイアログを表示し、(timeout) イベントを発行します。',
+  'idleDetection.example1': '例1: インタラクティブなアイドリーデータのシミュレーション',
+  'idleDetection.example1Desc': '3秒の高速シミュレーションを開始して、Clarityのカウントダウンモーダルを実際に見る：',
+  'idleDetection.example2': '例2: provideIdleDetectionConfigによるグローバル設定',
+  'idleDetection.example2Desc': 'appConfigでグローバルなアイドリーデータとタイムアウト間隔を定義します。',
+  'idleDetection.apiSummary':
+    '不活動時のセッションタイムアウトカウントダウンを表示するClarityのモーダルダイアログコンポーネント。',
+  'idleDetection.inputIdleDuration':
+    'カウントダウンモーダルが表示されるまでの不活動時間（秒）。指定された場合、グローバル設定を上書きします。',
+  'idleDetection.callout':
+    'モーダルには「Keep Me Signed In」というアクションがあり、ユーザーのインタラクションによってすべてのタイマーをリセットします。ユーザーが反応しない場合、(timeout)イベントが発生し、安全なログアウトまたはルートリダイレクトを可能にします。',
+  'idleDetection.inputTimeoutDuration':
+    'セッションタイムアウトが発生するまでのカウントダウンフェーズの時間（秒）。指定された場合、グローバル設定を上書きします。',
+  'idleDetection.outputTimeout': 'ユーザーの承認なしにカウントダウンが0に達すると、voidを発行します。',
+  'idleDetection.serviceSummary': 'ユーザーの活動を監視し、無活動期間を検出するサービス。',
+  'idleDetection.methodSetConfig': 'アイドル検出の構成を設定します。提供された場合はグローバル構成を上書きします。',
+  'idleDetection.methodStartWatching': 'ユーザーのアクティビティを監視してアイドル検出を開始します。',
+  'idleDetection.methodClearTimers': 'すべてのアクティブなタイマーをクリアし、監視を停止します。',
+  'idleDetection.methodOnIdleEnd': 'アイドルフェーズが終わってカウントダウンが始まるときに発行するオバザーベル。',
+  'idleDetection.methodOnTimeoutEnd': 'タイムアウトカウントダウンが終わるときに発行するオバザーベル。',
+  'idleDetection.methodOnCountDown': 'カウントダウンフェーズ中に残りの秒数を発行するオバザーベル。',
+  'datagridUtil.title': 'データグリッドユーティリティ',
+  'datagridUtil.overview':
+    'Clarityデータグリッドはユーザーがページネーション、フィルタ、ソートにインタラクションを取るたびに状態を発行します。APIリクエストとのスムーズな統合を促進するために、convertToHttpParamsはデータグリッドの状態をHttpParams用のクエリオブジェクトに変換します。',
+  'datagridUtil.example1': '例1: convertToHttpParamsの使用',
+  'datagridUtil.example1Desc':
+    'convertToHttpParams関数はClarityデータグリッドの状態をPageQueryオブジェクトに変換し、HttpParamsに適した形式でAPIリクエストに使用可能にします。',
+  'datagridUtil.apiSummary':
+    'Clarityデータグリッドの状態オブジェクトをPageQueryオブジェクトに変換し、APIリクエストに適した形式でHttpParamsに使用可能にします。',
+  'datagridUtil.paramState':
+    'ページネーション、ソート、フィルタ情報が含まれるClarityデータグリッドの状態オブジェクト。最初の読み込みではnullになることも可能です。',
+  'datagridUtil.returnsDesc':
+    'ページ、ページサイズ、ソート方向、フィルタ文字列（FIQL形式）を含むPageQueryオブジェクト。',
+  'datagridUtil.propPage': 'ページネーション用の1-basedページ番号。',
+  'datagridUtil.propPageSize': '1ページに表示するアイテム数。',
+  'datagridUtil.propSortAsc': '昇順にソートするフィールド名。',
+  'datagridUtil.propSortDesc': '降順でソートするフィールド名。',
+  'datagridUtil.propFilter': 'FIQL形式でフォーマットされたフィルタ式。',
+  'dgState.overview':
+    '<code>dgState</code>演算子は、Clarity Datagridの状態変換をスマートなデバウンスと重複フィルタリングで管理するためのRxJS演算子です。この演算子は、Datagridのフィルタ変更を評価し、APIトリガーイベントを効率的に処理します。フィルタが変更された場合、演算子は500msのデバウンスを導入してAPI呼び出しを開始し、迅速な入力中に過剰なリクエストを防ぎます。ソートやページネーションなどのアクションでは、API呼び出しを即座に実行します。この演算子は、<code>distinctUntilChanged</code>の使用を制御するオプションパラメータを提供します。有効に設定されている場合（デフォルト: <code>true</code>）は、Datagridの状態が同じ場合はAPI呼び出しを抑制し、重複のリクエストを防ぎます。',
+  'dgState.example1Title': '例1: 基本的な使用法',
+  'dgState.example1Desc':
+    'あなたのobservableパイプラインで<code>dgState</code>を使用して、Datagridの状態変化を効率的に管理してください:',
+  'dgState.example1DataDesc': '仮にAPIが以下のようなデータ形状を返すサーバー駆動のDatagridがあるとします:',
+  'dgState.example2Title': '例2: テンプレートでの型安全な実装',
+  'dgState.example2Desc': 'asyncパイプラインと<code>@if</code>を使用してより良い型安全性を実現してください:',
+  'dgState.example3Title': '例3: オプションのテンプレート実装',
+  'dgState.example3Desc': '直接asyncパイプラインをテンプレートに使用してください:',
+  'dgState.example4Title': '例4: 実時間の例',
+  'dgState.example4Desc': '以下は、<code>dgState</code>演算子を使用したサーバー駆動のDatagridの実時間の例です:',
+  'dgState.calloutPrefix': '-vousは使用できます。 ',
+  'dgState.calloutSuffix':
+    ' ユーティリティ関数をDatagridの状態をHTTPパラメータに変換するために使用できます。詳しくはドキュメントをご参照ください。',
+  'dgState.apiDesc':
+    'Clarity Datagridの状態変換をデバウンスとオプションのdistinctUntilChanged動作で処理するためのRxJS演算子。',
+  'dgState.paramDesc':
+    '<em>(オプション)</em> distinctUntilChangedフィルタリングを有効にするかどうか。デフォルトは<code>true</code>です。<code>true</code>の場合、同じ状態の場合はAPI呼び出しを抑制します。<code>false</code>の場合、同じ状態でもAPI呼び出しを許可します。',
+  'dgState.returnsDesc': '状態発行を変換するオペレーター関数。',
+  'dgState.behavior1': 'フィルタが変化するときに500msのデバウンスを追加（迅速な入力中に過剰なAPI呼び出しを防ぐため）',
+  'dgState.behavior2': 'ソートまたはページネーションアクションのためにAPIをすぐに呼び出す（デバウンスなし）',
+  'dgState.behavior3':
+    '<code>enableDistinctUntilChanged</code>が<code>true</code>の場合、連続する状態をフィルタリングして除外するオプション',
+  'dgState.behavior4': 'null状態から始めて、初期ロードのシナリオを処理する',
+  'timelineWizard.title': 'タイムラインウィザード',
+  'timelineWizard.overview':
+    'タイムラインウィザードコンポーネントは、Angularアプリケーションでタイムラインベースの多段階ウィザードを構築するのに役立ちます。各ステップは、タイムラインベースコンポーネントを拡張した専用コンポーネントで表され、ステップナビゲーション、非同期検証、動的なコンポーネントレンダリングをサポートします。',
+  'timelineWizard.example1': '例1: 基本的なウィザード設定',
+  'timelineWizard.example1Desc':
+    '以下の例では、ウィザードには4つの異なるステップがあります。タイムラインステップ配列は各ステップの順序を定義します。3つのステップはフォーム入力に関与し、最終ステップはデータを要約します。',
+  'timelineWizard.example2': '例2: 基本的なステップコンポーネント',
+  'timelineWizard.example2Desc':
+    '各ステップコンポーネントはタイムラインベースコンポーネントを拡張し、関係するステップタイプを指定し、FormGroupを初期化します。',
+  'timelineWizard.example3': '例3: カスタムデータマッピング',
+  'timelineWizard.example3Desc':
+    'あなたのFormGroupモデルがタイムラインステップ構造と異なりうる場合、formValueToDataとdataToFormValueを上書きして両方向のマッピングを実現します。',
+  'timelineWizard.example4': '例4: キーバリュー入力との高度なデータマッピング',
+  'timelineWizard.example4Desc':
+    'KeyValueInputsComponentとの統合を示す高度な使用例：dataToFormValueとformValueToDataの統合',
+  'timelineWizard.example4Callout':
+    'KeyValueInputsComponentについて詳しく知りたい場合は、Key Value Inputsドキュメントページを参照してください。',
+  'timelineWizard.example5': '例5: リビューステップとAPIの提出',
+  'timelineWizard.example5Desc':
+    'TimelineWizardServiceを使用して以前のステップからのデータを統合し、next$を上書きしてあなたのサブミットAPIストリームを構築します。',
+  'timelineWizard.example5Callout':
+    '任意のステップでnext$オブザーバブルをカスタマイズできるため、同期および非同期操作（例: HTTPリクエスト）が可能です。',
+  'timelineWizard.componentSummary': 'タイムラインワイズの管理に責任がある主要なコンポーネント。',
+  'timelineWizard.baseSummary':
+    'タイムラインワイズ内のすべてのステップコンポーネントのベースクラス。基本的なプロパティとメソッドを提供します。',
+  'timelineWizard.stepSummary': 'タイムラインワイズの構成におけるステップのプロパティを定義するインターフェース。',
+  'timelineWizard.serviceSummary': 'タイムラインワイズのステップコンポーネント間で状態とデータを管理するサービス。',
+  'timelineWizard.playgroundTitle': 'インタラクティブなデプロイワイズプレイグランド',
+  'timelineWizard.playgroundDesc':
+    'オペレータの構成、サービスのスケーリング、ランタイムプロパティ（キー-値エディタ）、そして最終確認にステップごとに進みます。',
+  'timelineWizard.playgroundBadge': '企業ワークフロー',
+  'timelineWizard.requiredInfo': '必要な情報',
+  'timelineWizard.configureOperator': 'オペレータの構成',
+  'timelineWizard.configureService': 'サービスの構成',
+  'timelineWizard.configureRuntimeProperties': 'ランタイムプロパティの構成',
+  'timelineWizard.name': '名前',
+  'timelineWizard.namespace': '名前空間',
+  'timelineWizard.cpu': 'CPU',
+  'timelineWizard.replicas': 'レプリケーション',
+  'timelineWizard.url': 'URL',
+  'poll.overview':
+    '＜code＞poll＜/code＞オペレータは、カスタムのRxJSオペレータであり、APIをポーリングしてデータを最新に保つプロセスを単純化します。これは、指定された間隔でデータを定期的に発行する観測可能なオブジェクトを作成するのを許容し、ポーリング間隔やAPIリクエストの管理の複雑性を抽象化します。このオペレータは、リアルタイムの更新が必要であるが、サーバーがプッシュ通知（WebSockets、サーバー送信イベントなど）をサポートしていない場合に特に役立ちます。また、他のRxJSオペレータとスムーズに統合され、データストリームの処理に使用されるリアクティブなパイプラインを構築するための開発者に便利です。',
+  'poll.example1Title': '例1: 基本的なポーリング',
+  'poll.example1Desc':
+    '指定された間隔でデータをポーリングします。ポーリング関数はPromise、Observable、またはプリミティブな値をサポートします：',
+  'poll.example2Title': '例2: 条件が満たされるまでポーリングを停止',
+  'poll.example2Desc':
+    '条件が満たされるまでポーリングを停止するために、＜code＞takeWhile＜/code＞などのRxJSオペレータを使用します：',
+  'poll.example2Callout':
+    'ポーリングが終わるときに使用できる＜code＞takeUntil＜/code＞、＜code＞takeWhile＜/code＞、または他のRxJSオペレータを追加できます。',
+  'poll.example3Title': '例3: initialValueを使用したポーリング',
+  'poll.example3Desc':
+    "デフォルトでは、pollの初期結果は＜code＞{status: 'loading', isLoading: true, error: null, data: null}＜/code＞であり、ローディングスピナーを表示するには便利です。ただし、場合によってはローディングスピナーを表示したくない場合があります。その場合は、＜code＞initialValue＜/code＞を任意の値に設定できます：",
+  'poll.example4Title': '例4: ポーリングを遅延',
+  'poll.example4Desc':
+    'デフォルトではポーリングは即座に開始されます。＜code＞delay＜/code＞オプションを使用してポーリングの開始を遅らせることができます：',
+  'poll.example4AltDesc':
+    '代替として、ユーザーのアクション後にポーリングを開始するために、＜code＞poll＜/code＞と他のRxJSオペレータを組み合わせることができます：',
+  'poll.btnStartPolling': 'ポーリングを開始（コンソールを参照）',
+  'poll.example5Title': '例5: フォースリフレッシュ',
+  'poll.example5Desc':
+    '使用 <code>forceRefresh</code> 可观察对象或信号来触发 <code>pollingFn</code> 的执行，例如在响应用户操作时。从 <code>forceRefresh</code> 发出的值将作为输入传递给 <code>paramsBuilder</code>（如果提供的话）或直接传递给 <code>pollingFn</code>。',
+  'poll.example5SignalTitle': '基于信号的强制刷新与参数保留',
+  'poll.example5SignalDesc':
+    '<code>forceRefresh</code> 直接接受 Angular 信号。如果在请求进行过程中发生多个更新，<code>exhaustMap</code> 会丢弃中间触发器，但保留最新的参数用于下一次计划的 tick。',
+  'poll.btnRapidFilters': '快速过滤变化（突发 3x)',
+  'poll.example6Title': '示例 6: 高级示例 - 带有轮询的 Datagrid',
+  'poll.example6Desc':
+    '下面的 Datagrid 会自动每 10 秒刷新一次。此外，每当输入发生更改，触发过滤、排序或分页时，API 会立即被调用，并伴有表示加载的旋转图标。',
+  'poll.searchByFirstName': '按姓氏搜索',
+  'poll.apiDesc': '在指定的时间间隔内轮询数据，并可以手动触发。返回一个发出结果作为 AsyncState 对象的可观察对象。',
+  'poll.paramPollingFn': '返回 Observable、Promise 或原始值的函数。',
+  'poll.paramInterval': '每次轮询之间的间隔时间（以毫秒为单位）',
+  'poll.paramForceRefresh': '触发手动刷新的 Observable 或信号。',
+  'poll.paramParamsBuilder': '根据 forceRefresh 值构建轮询函数参数的函数。',
+  'poll.paramInitialValue': '初始的 AsyncState 值。',
+  'poll.paramDelay': '开始第一次轮询前的延迟时间（以毫秒为单位）',
+  'poll.returnsDesc': '一个发出包含 status、isLoading、error 和 data 属性的 AsyncState<Data> 对象的可观察对象。',
+  'createAsyncState.overview':
+    '<code>createAsyncState</code> 操作符将类型为 <code>T</code> 的可观察对象转换为类型为 <code>AsyncState&lt;T&gt;</code> 的可观察对象，将加载、错误和数据状态封装在标准化的结构中。这消除了需要单独管理加载状态、错误和数据变量的必要，使你的代码库更加整洁和易于维护。',
+  'createAsyncState.interfaceStructure': '操作が返す <code>AsyncState</code> インターフェース構造:',
+  'createAsyncState.example1Title': '例1: 簡単なリクエスト',
+  'createAsyncState.example1Desc': '読み込みとエラー状態を扱う単一の API リクエスト:',
+  'createAsyncState.example2Title': '例2: コールバック付き',
+  'createAsyncState.example2Desc': '成功およびエラーのシナリオに副作用を追加:',
+  'createAsyncState.example3Title': '例3: initialValue の提供',
+  'createAsyncState.example3Desc':
+    '初期データ（例：ルート状態から）がある場合、初期値を提供して読み込みスピナーを表示しないことができます。リストからデタールページにナビゲートする際、既にデータがある場合に特に有用です:',
+  'createAsyncState.example3Callout':
+    "initialValue を提供する際には、status: 'idle' および isLoading: false を設定して読み込みスピナーが表示されないようにします。API コールが完了するとデータがスムーズに更新されます。",
+  'createAsyncState.example4Title': '例4: 依存関係のあるリクエスト',
+  'createAsyncState.example4Desc': 'switchMap を使用して複数のリクエストをチェーン:',
+  'createAsyncState.example5Title': '例5: テンプレートでの使用',
+  'createAsyncState.example5Desc': 'テンプレートで async パイプを使用してさまざまな状態を処理:',
+  'createAsyncState.apiSummary': '型 T の Observable を型 AsyncState<T, E> の Observable に変換します。',
+  'createAsyncState.paramObserver':
+    '値またはエラーが発行されるときに副作用を処理するコールバック関数またはオブザーバーオブジェクト。',
+  'createAsyncState.paramInitialValue': 'オブザーバブルが最初の値を発行する前に使用する初期 AsyncState 値。',
+  'createAsyncState.returnsDesc': 'オブザーバブルストリームをアсинクロンな状態に変換する関数。',
+  'createAsyncState.stateStatus': '細かい状態追跡: "idle" | "loading" | "reloading" | "resolved" | "error".',
+  'createAsyncState.stateIsLoading':
+    'ローディング操作が進行中かどうかを示します (状態が "loading" または "reloading" のときに true になります).',
+  'createAsyncState.stateError': '非同期操作が失敗した場合のエラーデータ、または null.',
+  'createAsyncState.stateData': 'observable から発行されるデータ、または null.',
+  'resourceAsync.paramSourceFn': 'リアクティブな関数で、Observable、Promise、または同期的な値を返す関数.',
+  'resourceAsync.paramOptions': 'リソースの構成オプション.',
+  'resourceAsync.propInitialValue': '最初の取得が完了する前の初期値.',
+  'resourceAsync.propLazy': 'true の場合、状態が "idle" から始まり、reload() が呼ばれるまで待つ.',
+  'resourceAsync.propBehavior':
+    'コンカレントの挙動: "switch" (前の操作をキャンセル) または "exhaust" (新しい操作を無視). デフォルトは "switch" です.',
+  'resourceAsync.propOnError': 'エラーハンドラーのコールバックでフォールバック値を提供できます.',
+  'resourceAsync.propThrowOnError':
+    'true の場合、エラーは例外として投げられるのではなく、エラーサインアルに保存されます.',
+  'resourceAsync.propOnSuccess': '操作が成功して終了したときに呼び出されるコールバック.',
+  'resourceAsync.propOnLoading': '操作がローディングを開始したときに呼び出されるコールバック.',
+  'resourceAsync.returnsDesc':
+    'value, error, status, isLoading, および mutation メソッドを提供する ResourceRef<T, E> オブジェクト.',
+  'spinner.apiSummary': 'カスタマイズ可能なサイズとアライメントのローディングスピナーを表示するコンポーネント.',
+  'spinner.inputSize': 'スピナーのサイズを決定します: "lg" (デフォルト), "md", または "sm".',
+  'spinner.inputCenter':
+    'スピンナーアニメーションをブロック要素として中央に配置します。falseを渡すと中央配置を無効にします。',
+  'spinner.inputInline': 'スピンナーアニメーションをインラインブロック要素として表示するかどうかを指定します。',
+  'spinner.inputCustomClass': 'スピンナーアニメーションに追加で適用するCSSクラスの文字列を指定します。',
+  'callout.apiSummary': 'Clarityデザインシステムに基づいたコールアウトコンポーネントです。',
+  'callout.contentProjectionDesc':
+    'カスタムHTMLコンテンツ、テキスト、リスト、コンポーネントをレンダリングするためにデフォルトの<ng-content />スロットを提供します。',
+  'callout.responsiveTitle': 'リソースレスポンシブ性',
+  'callout.responsiveDesc':
+    'デコレータアイコンは576px以下のスクリーンでは非表示となり、広いスクリーンでは自動的に表示されます。',
+  'callout.themingTitle': 'テーマ',
+  'callout.themingDesc':
+    "Clarityテーマコンテキストを継承し、[cds-theme='dark']で背景、ボーダー、リンクスタイルを対比させます。",
+  'certificate.pemNote':
+    'PEMはプライバシー強化メールの略です。これは暗号化鍵、証明書、その他の安全なデータを保存するために使用されるファイルフォーマットです。PEMファイルには.pem、.crt、.cer、.keyなどの拡張子が一般的です。',
+  'certificate.apiSummary': 'Clarityサインポストに証明書情報を表示するコンポーネントです。',
+  'certificate.clickIcon': '下の証明書アイコンをクリックして証明書の詳細情報を表示してください:',
+  'certificate.clickCert': '証明書アイコンをクリック:',
+  'certificate.inputPem': '確認するPEM形式の証明書文字列',
+  'certificate.inputPemEncoded': '提供されたPEM文字列がbase64エンコードされているかどうか',
+  'certificate.inputPosition': 'サインポストのトリガーアイコンに対する位置',
+  'certificate.inputShowIcon': '証明書の状態アイコンの表示を管理するためのブール値。',
+  'isPromise.overview':
+    'isPromiseユーティリティは、TypeScriptの型ガードであり、任意の値がPromiseまたはPromiseLike（オブジェクトまたは関数でthenメソッドを呼び出すことができる）であるかどうかを判定します。これにより、安全なランタイムでの確認と型の狭めを行うことができます。nullまたはプリミティブな値に対してもエラーを送出しません。',
+  'isPromise.callout':
+    '非同期リソースローダーやカスタムオペレータ、柔軟なサービスAPIで使用できます。これらは静的な値または非同期のPromiseを受付けることができます。',
+  'isPromise.example1Title': '例1: インタラクティブな値評価マトリクス',
+  'isPromise.example1Desc': '一般的なJavaScriptデータ型やthenableオブジェクト間のランタイム型チェックを観察します:',
+  'isPromise.thDescription': '説明',
+  'isPromise.thExpression': '評価式',
+  'isPromise.thResult': 'isPromise()結果',
+  'isPromise.example2Title': '例2: 安全な型狭めパターン',
+  'isPromise.example2Desc': 'TypeScriptでは、if (isPromise(val))で型を狭めることができます。',
+  'isPromise.apiSummary': 'PromiseLike契約をチェックするTypeScriptの型ガード関数。',
+  'isPromise.paramObj': 'チェックする値。',
+  'isPromise.returnsDesc':
+    '入力がnullでない、オブジェクトまたは関数であり、callable thenメソッドを実装している場合、true。それ以外はfalse。',
+  'isEmpty.overview':
+    'isEmptyユーティリティ関数は、文字列、オブジェクト、または配列が空かどうかをチェックします。空の値にはtrueを返し、非空の値にはfalseを返します。',
+  'isEmpty.example1Title': '例1: 基本的な使用法',
+  'isEmpty.example1Desc': 'さまざまなタイプの値が空かどうかを確認します:',
+  'isEmpty.example2Title': '例2: 一般的な使用例',
+  'isEmpty.example2Desc': '条件論理でisEmptyを使用:',
+  'isEmpty.apiSummary': '文字列、オブジェクト、または配列が空かどうかを確認します。',
+  'isEmpty.paramValue': '確認する値。文字列、オブジェクト、配列、または他の値でも可能です。',
+  'isEmpty.returnsDesc':
+    '値が空の場合（空文字列、空オブジェクト、空配列、null、またはundefined）はtrue、そうでない場合はfalseです。',
+  'isEqual.overview':
+    'isEqualユーティリティ関数は、2つの値の深い等値性を確認します。これは、プリミティブな値、配列、およびオブジェクトを再帰的に比較して、構造的に等しいかどうかを判断します。参照等しさにかかわらず、それらが構造的に等しいかどうかを確認します。',
+  'isEqual.example1Title': '例1: 基本的な使用法',
+  'isEqual.example1Desc': 'さまざまなタイプの値を深層等値性で比較:',
+  'isEqual.example2Title': '例2: 深層オブジェクト比較',
+  'isEqual.example2Desc': 'ネストされたオブジェクトと配列を比較:',
+  'isEqual.apiSummary': '2つの値の深層等値性を確認します。',
+  'isEqual.paramValue1': '比較する最初の値。',
+  'isEqual.paramValue2': '比較する第二の値。',
+  'isEqual.returnsDesc':
+    '値が深層で等しい場合true、そうでない場合はfalseです。オブジェクトと配列には再帰的な比較を行います。',
+  'differenceInDays.overview':
+    'differenceInDaysユーティリティ関数は、2つの日付間の日数を計算します。これはJavaScriptでの日付計算を単純化するために、柔軟な入力タイプを受け取ることができます。最初のパラメータは差分を測定する参照日付であり、第二のパラメータは参照日付と比較する日付を表します。両方のパラメータはDateオブジェクト、Unixエポックからのミリ秒数を表す数値、またはDateコンストラクターで解析可能な文字列を受け取ることができます。',
+  'differenceInDays.example1Title': '例1: 日付間の日数を計算',
+  'differenceInDays.example1Desc': '異なる入力タイプを使用して、2つの日付間の日数を計算します:',
+  'differenceInDays.example2Title': '例2: 今日からの日数計算',
+  'differenceInDays.example2Desc': '今日から特定の日付までの日数を計算します:',
+  'differenceInDays.apiSummary': '2つの日付間の日数を計算します。',
+  'differenceInDays.paramDateLeft':
+    '参照日。Dateオブジェクト、タイムスタンプ（ミリ秒）またはパース可能な日付文字列の中のいずれかです。',
+  'differenceInDays.paramDateRight': '参照日と比較する日付。dateLeftと同じタイプを受け取ることができます。',
+  'differenceInDays.returnsDesc':
+    '2つの日付間の日数。dateLeftがdateRightより後に位置する場合、正の数を返します。逆の場合には負の数を返します。',
+  'pickBy.overview':
+    'pickByとomitByユーティリティ関数は、条件を満たすプロパティを選択して新しいオブジェクトを作成するか、条件を満たさないプロパティを排除して新しいオブジェクトを作成するためのものです。pickByは与えられた条件を満たすプロパティからオブジェクトを作成し、omitByはその逆で、条件を満たさないプロパティからオブジェクトを作成します。',
+  'pickBy.example1Title': '例1: pickBy',
+  'pickBy.example1Desc': '与えられた条件を満たすオブジェクトプロパティからオブジェクトを作成します:',
+  'pickBy.example2Title': '例2: omitBy',
+  'pickBy.example2Desc': 'omitByはpickByの逆で、与えられた条件を満たさないプロパティからオブジェクトを作成します。',
+  'pickBy.apiSummary': '与えられた条件を満たすオブジェクトプロパティからオブジェクトを作成します。',
+  'pickBy.paramObject': 'プロパティを選択する元のオブジェクト。',
+  'pickBy.paramPredicate': '含まれるプロパティを決定する関数。真を返すと含まれ、偽を返すと含まれません。',
+  'pickBy.returnsDesc': '条件を満たすプロパティのみを含む新しいオブジェクト。',
+  'omitBy.apiSummary': '条件を満たさないオブジェクトのプロパティからなるオブジェクトを作成します。',
+  'omitBy.paramObject': 'プロパティを省略したいソースオブジェクト。',
+  'omitBy.paramPredicate': '省略するプロパティを決定する関数。真を返すと省略し、偽を返すと保持します。',
+  'omitBy.returnsDesc': '条件を満たさないプロパティのみを含む新しいオブジェクト。',
+  'url.title': 'URLユーティリティ',
+  'url.overview':
+    'ngx-liftは、URLに作業するためのいくつかのユーティリティ関数を提供します：<code>isIP</code>と<code>isFQDN</code>でホスト名のタイプを確認し、<code>isURL</code>でURLを検証し、<code>isHttps</code>でHTTPSプロトコルを確認するもので、これらのユーティリティはURL検証、セキュリティチェック、URLのプロパティに基づく条件的な論理に役立ちます。',
+  'url.example1': '例1: ホスト名のタイプの確認 (isIP & isFQDN)',
+  'url.example1Desc': 'URLのホスト名がIPアドレスか、完全に指定されたドメイン名 (FQDN) かを確認します。',
+  'url.example1Callout':
+    'URLコンストラクターを使用してホスト名を取得できますが、エラーハンドリングのためにtry-catchを使用してください。',
+  'url.example2': '例2: URLの検証 (isURL & isHttps)',
+  'url.example2Desc':
+    '<code>isURL</code>は有効なURLかどうかを確認します。<code>isHttps</code>はURLがhttpsで始まっているかを確認します。',
+  'url.example2Callout': 'テンプレートで使用するための<code>isHttps</code>パイプラインも提供しています。',
+  'url.isIPSummary': 'ホスト名がIPアドレスかどうかを確認します。',
+  'url.isFQDNSummary': 'ホスト名が完全に指定されたドメイン名 (FQDN) かどうかを確認します。',
+  'url.isURLSummary': '文字列が有効なURLかどうかを確認します。',
+  'url.isHttpsSummary': 'URL文字列がHTTPSプロトコルを使用しているかを確認します。',
+  'urlValidator.title': 'urlValidator および httpsValidator',
+  'urlValidator.overview':
+    'urlValidator および httpsValidator は、Angular で使用されるバリデーション関数で、与えられた文字列が特定の URL パターンに合致しているかを確認します。urlValidator は http または https で始まる URL を検証し、httpsValidator は только HTTPS URL を検証します。',
+  'urlValidator.example1': '例 1: URL バリデーション',
+  'urlValidator.example1Desc': 'http または https で始まる URL を検証:',
+  'urlValidator.example2': '例 2: HTTPS バリデーション',
+  'urlValidator.example2Desc': 'のみ HTTPS URL を検証:',
+  'urlValidator.example3': '例 3: 完全なフォーム例',
+  'urlValidator.example3Desc': 'リアクティブなフォームに両方のバリデーション関数を組み込んだ完全な例:',
+  'urlValidator.urlLabel': 'URL',
+  'urlValidator.urlHelper': '有効な URL を入力してください',
+  'urlValidator.urlError': '有効な URL（https または http で始まる）を入力してください',
+  'urlValidator.httpsLabel': 'HTTPS だけの URL',
+  'urlValidator.httpsHelper': 'HTTPS の URL を入力してください',
+  'urlValidator.httpsError': 'HTTPS の URL を入力してください',
+  'urlValidator.summary': 'http または https で始まる有効な URL であることを確認する Angular バリデーション関数。',
+  'urlValidator.httpsSummary': 'HTTPS だけの有効な URL であることを確認する Angular バリデーション関数。',
+  'urlValidator.returns': 'URLが無効な場合、{invalidUrl: true}を返すバリデーション関数。有効な場合、nullを返す。',
+  'urlValidator.httpsReturns':
+    'URLがHTTPSでない場合、{invalidUrl: true}を返すバリデーション関数。有効な場合、nullを返す。',
+  'startWithTap.overview':
+    '<code>startWithTap</code>演算子は、ソースObservableがエミートを開始する前に同期的にコールバックを実行します。エAGERなtap操作やパイプラインの初期化コードとは異なり、パイプラインを構成する際にはコールバックを実行するまで実行されません。コールバックの例外はObservableのエラーチャンネルに届きます。',
+  'startWithTap.callout':
+    'Observableストリームが購読されるときに即座に初期化の副作用を発生させる、ローディングインジケーターを設定する、以前のエラーをリセットする、またはリクエスト送信のタイムスタンプを記録するのに最適です。',
+  'startWithTap.example1Title': '例1: インタラクティブなリクエスト送信とローディングインジケーター',
+  'startWithTap.example1Desc':
+    '「Trigger Request」をクリックすると、900ms遅延するシミュレートされたObservableに購読します。<code>startWithTap</code>は購読の瞬間に同期的に実行され、ローディングスピナーを点滅します：',
+  'startWithTap.btnTrigger': 'Trigger Request',
+  'startWithTap.btnClearLog': 'Clear Log',
+  'startWithTap.fetchingData': 'データを取得中...',
+  'startWithTap.loadedPayload': 'Loaded payload:',
+  'startWithTap.example2Title': '例2: 延滞したパイプライン実行',
+  'startWithTap.example2Desc':
+    'コールバックは購読時間まで遅延されるため、再利用可能なストリームや共有パイプラインを事前に定義することができるため、副作用が早期に実行されないようにすることができる：',
+  'startWithTap.apiSummary': 'RxJS MonoTypeOperatorFunctionが購読時にコールバックを実行する。',
+  'startWithTap.paramCallback': 'ソースObservableがエミートを開始する前に同期的に実行される関数。',
+  'startWithTap.returnsDesc': 'RxJS演算子関数で購読時にコールバックを実行し、ソースObservableを変更しない。',
+  'switchMapWithAsyncState.overview':
+    '<code>switchMapWithAsyncState</code>演算子は、<code>switchMap</code>と<code>createAsyncState</code>の機能を1つの演算子に組み合わせます。ユーザーの操作（例えばボタンクリック）に基づいてAPIリクエストをトリガーし、ストリーム間のスムーズな移行を実現するための特別な用途に最適です。<code>AsyncState</code>構造をAPI応答に包むことで、この演算子は非同期操作を効率的かつスムーズに管理するための方法を提供します。',
+  'switchMapWithAsyncState.example1Title': '例1: 性別でユーザーをフィルタリング',
+  'switchMapWithAsyncState.example1Desc': '別の性別を選択すると、ユーザー一覧が自動的に更新されます:',
+  'switchMapWithAsyncState.example2Title': '例2: フォームの送信とローディング状態',
+  'switchMapWithAsyncState.example2Desc':
+    'switchMapWithAsyncStateとtoSignalを使用してフォームを送信します。APIはエラーをシミュレートしているため、常にエラーが発行されます。',
+  'switchMapWithAsyncState.apiSummary':
+    'switchMapとcreateAsyncStateを組み合わせることで、オブザーバブルストリームをAsyncStateに変換し、新しい内部オブザーバブルに切り替えることができます。',
+  'switchMapWithAsyncState.paramProject':
+    'ソースオブザーバブルからの各値を受け取る関数で、オブザーバブル、プロミス、または他のオブザーバブルインプットを返す関数。',
+  'switchMapWithAsyncState.returnsDesc':
+    'AsyncState<R>オブジェクトを発行するオブザーバブルで、自動的にローディング、エラー、データの状態を処理します。',
+  'combineLatestEager.overview':
+    'RxJSのcombineLatestオペレーターは、すべてのソースが少なくとも一度発行する必要があり、Subjectソースが最初に発行しない可能性があるため、問題になります。combineLatestEagerはcombineLatestを拡張し、ソースの各Subjectに自動的にstartWith(null)を追加することで、結合されたオブザーバブルが正しく初期化されるようにします。すべてのソースオブザーバブルにstartWith(null)を追加するため、第二のパラメータをtrueに設定することも可能です。これは、初期発行が保証されていない多くのオブザーバブルを扱う場合に役立ちます。',
+  'combineLatestEager.example1Title': '例1: 基本的な使用法',
+  'combineLatestEager.example1Desc':
+    'Subjectsを含む複数のオブザーバブルを結合します。これらは最初から発行しない可能性があります:',
+  'combineLatestEager.example2Title': '例2: テンプレートとの完全な例',
+  'combineLatestEager.example2Desc': 'combineLatestEagerとテンプレート内のasyncパイプの使用方法を示す完全な例:',
+  'combineLatestEager.apiSummary':
+    '複数のオブザーバブルをエージャー発行で結合し、初期値が発行されないソースを自動的に処理します。',
+  'combineLatestEager.paramSources': '結合するオブザーバブルの配列または辞書オブジェクト。',
+  'combineLatestEager.paramStartWithAll':
+    '(オプション) 真の場合、すべてのソースにstartWith(null)を追加します。デフォルトは偽です。',
+  'combineLatestEager.returnsDesc':
+    'すべてのソースからの最新の値を含む配列またはオブジェクトを発行するオブザーバブル。',
+  'distinctOnChange.overview':
+    'distinctOnChange演算子は、RxJSのオブザーバブルを強化し、値が変化したときにコールバック関数を実行するようにします。この演算子は、distinctUntilChangedと同様に重複した発行を防ぎながら、値が変化したときにコールバック関数を実行します。これは、初期発行後に値が変化したときに副作用を実行する必要があるシナリオに役立ちます。',
+  'distinctOnChange.example1Title': '例1: 基本的な使用法',
+  'distinctOnChange.example1Desc': '値が変化したときにコールバック関数を実行:',
+  'distinctOnChange.example2Title': '例2: カスタム比較関数を使用して',
+  'distinctOnChange.example2Desc': 'カスタム比較関数を使用して等価性を判定:',
+  'distinctOnChange.apiSummary':
+    '異なる連続値を発行し、値が変化したときにコールバック関数を実行するオブザーバブルを返します。',
+  'distinctOnChange.paramCallback': '値が変化したときに実行する関数。前の値と現在の値を受け取ります。',
+  'distinctOnChange.paramComparator':
+    '(オプション) 2つの値が等しいかどうかを判定する関数。デフォルトは厳密な等価性(===)です。',
+  'distinctOnChange.returnsDesc': '値が変化したときにコールバック関数を実行するオブザーバブルを返します。',
+  'logger.overview':
+    'logger演算子は、RxJSのオブザーバブルに便利なユーティリティ関数で、さまざまなコンソール関数を使用して発行された値をログ出力するための簡易的な方法を提供します。この演算子は、開発中にオブザーバブルの挙動をデバッグおよびモニタリングするために役立ちます。',
+  'logger.example1Title': '例1: 基本的なログ出力',
+  'logger.example1Desc': 'console.logを使用して発行された値をログ出力:',
+  'logger.example2Title': '例2: テーブル形式のログ出力',
+  'logger.example2Desc': 'console.tableを使用して発行された値をログ出力し、より良い可視化を実現:',
+  'logger.example3Title': '例3: その他のコンソールメソッド',
+  'logger.example3Desc': 'warn、error、またはinfoなどの他のコンソールメソッドを使用:',
+  'logger.apiSummary':
+    'エミッションをコンソールにログとして出力するデバッグオペレータ。さまざまなコンソールメソッドを使用してログを出力します。',
+  'logger.paramMethod':
+    '(オプション) 使用するコンソールメソッド: "log" | "table" | "warn" | "error" | "info" | "debug"。デフォルトは "log" です。',
+  'logger.returnsDesc': 'すべての値を通過しながら、それらをコンソールにログとして出力するオブザーバブル。',
+  'kubernetesPagination.overview':
+    '<code>aggregatePaginatedKubernetesResources</code> オペレータと <code>fetchPaginatedKubernetesResources</code> 関数は、Kubernetes REST API のクライアントサイドのページネーションを自動化します。それらは、入力する応答の <code>metadata.continue</code> タンクルを調べ、連続的にページを要求してすべてのページを取得するまで再帰的に処理し、欠損または null なアイテムを安全に正規化し、すべてのリソースを単一の <code>KubernetesList&lt;T&gt;</code> に集約します。',
+  'kubernetesPagination.callout':
+    'Kubernetes API は、総記録数が求められた <code>limit</code> を超える場合、応答メタデータに <code>continue</code> タンクルを含むページネーションコレクションを返します。このオペレータは、単一のオブザーバブルストリームの背後でスムーズに多リクエストループを処理します。',
+  'kubernetesPagination.example1Title': '例1: インタラクティブな Kubernetes ページネーションの traversal',
+  'kubernetesPagination.example1Desc':
+    '「Fetch Paginated Pods」をクリックして、3つのモック Kubernetes API ページを渡して自動的に多ページを取得します:',
+  'kubernetesPagination.btnFetchPods': 'Fetch Paginated Pods',
+  'kubernetesPagination.fetchingPages': 'ページの取得 (continue token)...',
+  'kubernetesPagination.pagesFetched': '再帰的に取得されたページ:',
+  'kubernetesPagination.aggregationComplete': '集約完了',
+  'kubernetesPagination.totalResources': '総リソース:',
+  'kubernetesPagination.thPodName': 'Pod 名',
+  'kubernetesPagination.thNamespace': 'Namespace',
+  'kubernetesPagination.thStatus': 'Status',
+  'kubernetesPagination.thPodIp': 'Pod IP',
+  'kubernetesPagination.example2Title': '例2: 自立型のフェッチ関数',
+  'kubernetesPagination.example2Desc':
+    'あなたが一括で開始し、ページネーションを実行する単一の関数呼び出しで実行したい場合、<code>fetchPaginatedKubernetesResources</code>を使用してください:',
+  'kubernetesPagination.aggregateSummary':
+    'RxJS演算子で、初期のKubernetesリストレスポンスオブザーバーを agregated list に変換します。このaggregated list はすべてのページからアイテムを含みます。',
+  'kubernetesPagination.fetchSummary':
+    '単一の呼び出しでKubernetesリソースを開始し、ページネーションするための便利な関数です。',
+  'kubernetesPagination.paramHttp': 'Angular HttpClientを使用して、次のページを要求します。',
+  'kubernetesPagination.paramEndpoint': 'KubernetesリソースのRESTURL',
+  'kubernetesPagination.paramInitialParams': 'クエリパラメータ（例: limit）',
   'k8sRetryBackoff.configSummary': 'オペレーターとインターセプターファクトリで共有されるオプション設定。',
   'k8sRetryBackoff.paramMaxAttempts': '初回リクエストを含む最大試行回数。1 に設定するとリトライが無効になります。',
   'k8sRetryBackoff.errorShape':
     'HttpErrorResponse または <code>{ status, headers?, error? }</code> の形式のオブジェクト（<code>error</code> 内の JSON 文字列を含む）を受け入れます。ネイティブ fetch は HTTP 429 で reject しないため、Response を確認して status、headers、解析済み body を変換してください。Axios はこれらを <code>error.response</code> に格納するため、ヘルパーを呼び出す前に変換してください。ヘルパーは遅延のみを計算します。',
   'k8sRetryBackoffInterceptor.overrideRules':
-    '<code>null</code> はインターセプターのデフォルトを使用し、<code>false</code> はリトライを無効化します。ファクトリはリクエストごとの設定をデフォルトとマージします。このインターセプターは URL や HTTP メソッドに関係なくすべての HttpClient 429 を処理するため、即座に失敗させる必要があるリクエストではオプトアウトしてください。',
+    'null はインターセプターのデフォルトを使用し、false はリトライを無効化します。リクエストの設定はグローバル設定またはファクトリーのデフォルトとマージされます。デフォルトでは GET/HEAD/OPTIONS/PUT/DELETE が対象です。POST/PATCH には retryMethods による明示的な許可と、エンドポイントの冪等性が必要です。',
   'k8sRetryBackoffInterceptor.overrideSimulation':
-    '最初の 429 で即座に失敗するプローブや、成功する前に 2 回の 429 を受信するワークロード読み取りを試すことができます。カスタム読み取りは maxAttempts: 10 と 200ms のフォールバックを使用し、最大 9 回のリトライを許可します。',
+    '最初の 429 で失敗するプローブ、または 2 回の 429 の後で成功するワークロード読み取りを試してください。カスタム読み取りでは maxAttempts: 10、基準値 200ms の指数バックオフと equal jitter を使用し、最大 9 回のリトライを許可します。',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'ワークロード読み取りテスト (10回試行)',
   'k8sRetryBackoffInterceptor.btnProbe': '高速プローブテスト (オプトアウト)',
-
   'k8sRetryBackoff.overview':
-    '<code>retryOnK8sBackoff</code> は、<strong>Kubernetes API のレート制限 (HTTP 429 Too Many Requests)</strong> 専用に設計された RxJS リトライオペレーターです。Kubernetes API サーバーから返される <code>Retry-After</code> HTTP ヘッダーまたは <code>details.retryAfterSeconds</code> フィールドを優先して遅延し、どちらも提供されていない場合は設定可能なフォールバック遅延を使用します。',
+    '<code>retryOnK8sBackoff</code> RxJS オペレーターは、Kubernetes API サーバーの HTTP 429（<code>TooManyRequests</code>）応答に対してバックオフ付きの自動リトライを行います。例えば、watch キャッシュの初期化時に「storage is (re)initializing」が返される場合に使用します。リトライするのは HTTP 429 のみで、それ以外のエラー（4xx、5xx、ネットワーク障害）は変更せず直ちに購読者へ伝播します。',
   'k8sRetryBackoff.callout':
-    'すべての <code>HttpClient</code> 呼び出しにグローバルなリトライ保護が必要ですか？リクエストごとの配線が不要な <a href="/ngx-lift/interceptors/k8sRetryBackoff"><code>k8sRetryBackoffInterceptor</code></a> をご覧ください。',
+    '<strong>オペレーターとインターセプター：</strong>オペレーターは特定の Observable パイプラインを制御します。インターセプターは対象となる HttpClient メソッドに 429 リトライを適用します。書き込み処理には、確認済みの冪等性が必要です。',
   'k8sRetryBackoff.diffTitle': 'アーキテクチャ比較：Operator と Interceptor',
   'k8sRetryBackoff.diffDesc': '両ツールは同じリトライ遅延計算ロジックを共有していますが、適用範囲と役割が異なります：',
   'k8sRetryBackoff.diffColFeature': '機能',
@@ -106,19 +1508,19 @@ export const jaTranslations: Record<string, string> = {
   'k8sRetryBackoff.diffConfig': '設定とオプトアウト',
   'k8sRetryBackoff.diffConfigOp': 'オペレーター引数を通じてストリームごとにインライン設定。',
   'k8sRetryBackoff.diffConfigInt':
-    '<code>app.config.ts</code> でグローバル設定し、<code>HttpContext</code> でリクエスト単位の上書きや無効化が可能。',
+    '<code>app.config.ts</code> でグローバルに設定するか、<code>HttpContextToken</code> でリクエストごとに設定します。',
   'k8sRetryBackoff.example1Title': '例 1：インタラクティブ・シミュレーターとパイプライン利用',
   'k8sRetryBackoff.example1Desc':
     'さまざまな Kubernetes API レスポンスをシミュレートし、retryOnK8sBackoff による遅延解決やエラー伝播を確認できます（コード例併記）：',
   'k8sRetryBackoff.selectScenario': 'レスポンスシナリオを選択：',
-  'k8sRetryBackoff.scenarioHeader': '429 (Retry-After: 1 ヘッダー)',
-  'k8sRetryBackoff.scenarioBody': '429 (details.retryAfterSeconds: 1.5 JSON ボディ)',
-  'k8sRetryBackoff.scenarioFallback': '429 (ヘッダーなし、1秒フォールバック遅延)',
+  'k8sRetryBackoff.scenarioHeader': 'Retry-After ヘッダー付き 429（最小 1 秒 + ジッター）',
+  'k8sRetryBackoff.scenarioBody': 'details.retryAfterSeconds ボディ付き 429（最小 1.5 秒 + ジッター）',
+  'k8sRetryBackoff.scenarioFallback': 'ヒントなしの 429（基準値 1 秒、equal jitter）',
   'k8sRetryBackoff.scenarioNon429': '500 Internal Server Error (リトライ不可、即座にエラー)',
   'k8sRetryBackoff.scenarioExhausted': '429 連続5回 (最大試行回数の超過)',
   'k8sRetryBackoff.btnSimulate': 'リクエストをシミュレートしてリトライ',
-  'k8sRetryBackoff.btnClearLogs': 'ログを消去',
   'k8sRetryBackoff.logTitle': '実行ログ：',
+  'k8sRetryBackoff.btnClearLogs': 'ログを消去',
   'k8sRetryBackoff.example2Title': '例 2：スタンドアロン遅延抽出ヘルパー (getK8sRetryDelayMs)',
   'k8sRetryBackoff.example2Desc':
     '独自のリトライループや Promise 内で Kubernetes バックオフ遅延を抽出するには getK8sRetryDelayMs を直接使用します：',
@@ -135,19 +1537,18 @@ export const jaTranslations: Record<string, string> = {
   'k8sRetryBackoff.delaySummary':
     'エラーオブジェクトからバックオフ遅延（ミリ秒）を抽出します（リトライ不可時は null）。',
   'k8sRetryBackoff.paramError': '検査対象のエラー (HttpErrorResponse または status/headers/error を持つオブジェクト)。',
-  'k8sRetryBackoff.paramFallbackDelay': 'レスポンスにリトライ指示がない場合のフォールバック遅延 (ミリ秒)。',
-
-  // k8sRetryBackoffInterceptor (ja)
+  'k8sRetryBackoff.paramFallbackDelay':
+    'フォールバック待機時間の基準値（ミリ秒）。オペレーターはこの値を指数的に増加させます。遅延ヘルパーはサーバーのヒントがない場合、この値をそのまま返します。',
   'k8sRetryBackoffInterceptor.overview':
-    '<code>k8sRetryBackoffInterceptor</code> は Angular 関数型 HTTP インターセプター (<code>HttpInterceptorFn</code>) です。<code>Retry-After</code> ヘッダーや <code>details.retryAfterSeconds</code> を自動解析し、<strong>HTTP 429 (Too Many Requests)</strong> に対するグローバルな保護を提供します。',
+    '<code>k8sRetryBackoffInterceptor</code> は、冪等な HTTP メソッドで Kubernetes の 429 応答を自動的にリトライします。Retry-After と details.retryAfterSeconds を尊重し、指数バックオフ、ジッター、待機時間の上限、HttpContext による無効化に対応します。POST/PATCH は明示的に許可する必要があります。',
   'k8sRetryBackoffInterceptor.callout':
-    '特定のストリーム単位のリトライやポーリング制御が必要ですか？専用オペレーター <a href="/ngx-lift/operators/k8sRetryBackoff"><code>retryOnK8sBackoff</code></a> をご覧ください。',
+    '<strong>リクエストごとの上書きに対応した共通設定:</strong> <code>app.config.ts</code> でインターセプターを一度登録します。再試行を無効にするか制限を変える場合は、<code>HttpClient</code> の呼び出しに <code>K8S_RETRY_BACKOFF_CONFIG</code> コンテキストトークンを指定します。個別のパイプラインを制御する場合は <code>retryOnK8sBackoff</code> 演算子を使用します。',
   'k8sRetryBackoffInterceptor.example1Title': '例 1：グローバル登録とインタラクティブ・シミュレーター',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'app.config.ts でインターセプターを登録すると、すべての HttpClient コールが HTTP 429 時に自動リトライされます：',
+    'app.config.ts でグローバルに登録すると、対象となる冪等な HttpClient リクエストを HTTP 429 時にリトライします。',
   'k8sRetryBackoffInterceptor.selectMode': 'インターセプターコンテキストモード：',
   'k8sRetryBackoffInterceptor.modeDefault': 'デフォルトのグローバル保護 (429 を1秒遅延でリトライ後、200 OK)',
-  'k8sRetryBackoffInterceptor.modeCustom': 'カスタム HttpContext (400ms のフォールバック遅延)',
+  'k8sRetryBackoffInterceptor.modeCustom': 'カスタム HttpContext（maxAttempts: 2、基準値: 400ms、equal jitter）',
   'k8sRetryBackoffInterceptor.modeDisabled': 'HttpContext で無効化 (HttpContextToken = false、即座に失敗)',
   'k8sRetryBackoffInterceptor.btnSend': 'インターセプト対象リクエストを送信',
   'k8sRetryBackoffInterceptor.example2Title': '例 2：リクエスト単位のカスタマイズとオプトアウト',
@@ -156,11 +1557,493 @@ export const jaTranslations: Record<string, string> = {
   'k8sRetryBackoffInterceptor.apiSummary':
     'Kubernetes バックオフを用いて HTTP 429 レスポンスをリトライする関数型インターセプター。',
   'k8sRetryBackoffInterceptor.factorySummary': 'カスタムデフォルト設定を持つインターセプターを生成するファクトリ関数。',
-  'k8sRetryBackoffInterceptor.tokenSummary':
-    'リクエスト単位でリトライ設定を上書きまたは無効化するための HttpContextToken。',
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     'HttpContext で上書きされない限りすべてのリクエストに適用されるデフォルト設定。',
+  'k8sRetryBackoffInterceptor.tokenSummary':
+    'リクエスト単位でリトライ設定を上書きまたは無効化するための HttpContextToken。',
+  'ifValidator.overview':
+    'ngx-liftはAngular Reactive Formsで条件付きバリデータを作成するためのユーティリティ関数を提供します。条件付きバリデータは、与えられた条件に基づいて指定されたバリデータ関数を適用します。主要な関数は2つあります：<code>ifValidator</code>は同期バリデータ用で、<code>ifAsyncValidator</code>はアсинクロンバリデータ用です。',
+  'ifValidator.example1Title': '例1: 条件付き必須バリデータ',
+  'ifValidator.example1Desc':
+    '「ごめん」のオプションが選ばれたときに、理由入力とメール入力が必要になります。テキスト入力コントロールに必須バリデータが適用されるのは、「ごめん」のオプションが選ばれたときだけです。',
+  'ifValidator.question': 'このツールに気に入っていますか？',
+  'ifValidator.optLike': 'もちろんです 😜',
+  'ifValidator.optUnlike': 'ごめん 😅',
+  'ifValidator.emailHelper': '「ごめん」を選んだときにのみフィールドが必須',
+  'ifValidator.invalidEmail': '無効なメールアドレス',
+  'ifValidator.reasonLabel': '気に入らない理由',
+  'ifValidator.autoRevalidationTitle': '自動再検証:',
+  'ifValidator.autoRevalidationDesc':
+    'デフォルトでは、Angularは制御の値が変化したときにのみ制御のバリデーションを再評価します。<code>revalidateOnChange([email, reason], choice)</code>とペアにしたり、<code>revalidateOnChange</code>に<code>Signal&lt;boolean&gt;</code>を渡すことで、条件ソースが更新されたときに自動的に再検証をトリガーします！',
+  'ifValidator.example2Title': '例2: ifAsyncValidator',
+  'ifValidator.example2Desc':
+    '<code>ifAsyncValidator</code>は<code>ifValidator</code>と似ていますが、2つのパラメータを受け取る点が異なります。条件とアсинクロンバリデーション関数を受取り、特にアシンクロン操作を処理するため設計されています。',
+  'ifValidator.apiSummary':
+    '条件に基づくバリデーションを生成する関数。条件が真の場合、バリデーション関数を適用します。',
+  'ifValidator.paramCondition': '条件が真の場合に適用されるバリデーション関数。',
+  'ifValidator.paramTrueValidatorFn': '条件が真の場合に適用されるバリデーション関数。',
+  'ifValidator.paramFalseValidatorFn': '(オプション) 条件が偽の場合に適用されるバリデーション関数。',
+  'ifAsyncValidator.apiSummary': '条件に基づくアシンクロンバリデーションを生成する関数。',
+  'ifAsyncValidator.paramCondition': 'アシンクロンバリデーション関数が適用されるかどうかを決定する関数。',
+  'ifAsyncValidator.paramAsyncValidatorFn': '条件が真の場合に実行されるアシンクロンバリデーション関数。',
+  'intersectionValidator.overview':
+    'intersectionValidatorは、Angular Formsのカスタムバリデーションで、2つのフォームコントロールが重複する値を持たないことを保証するためのもの입니다。例えば、2つのアイテムリストがあり、重複がないようにする場合があります。配列間に重複がある場合、両方のフィールドとフォームには<code>{intersection: true}</code>エラーが発生します。',
+  'intersectionValidator.example1Title': '例1: 非重複配列の検証',
+  'intersectionValidator.example1Desc':
+    '含まれる名前空間と除外する名前空間が重複しないようにする。両方のフィールドが配列を返す必要があります。',
+  'intersectionValidator.includedNamespaces': '含まれる名前空間',
+  'intersectionValidator.excludedNamespaces': '除外する名前空間',
+  'intersectionValidator.overlapError': '含まれる名前空間と除外される名前空間は重複できません',
+  'intersectionValidator.overlapAlert': '含まれる名前空間と除外される名前空間が重複しています',
+  'intersectionValidator.returnsDesc':
+    "配列に共通する値がある場合は <code>{intersection: true}</code>、ない場合は <code>null</code> を返すバリデーターです。<code>form.errors?.['intersection']</code> でこのエラーを確認できます。",
+  'intersectionValidator.apiSummary': '2つの配列値のフォームコントロールが重複しないように検証します。',
+  'intersectionValidator.paramArray1Key': '最初のフォームコントロールの名前。',
+  'intersectionValidator.paramArray2Key': '第二个のフォームコントロールの名前。',
+  'uniqueValidator.overview':
+    'uniqueValidatorは、<code>FormArray</code>または<code>FormGroup</code>内の複数のフィールドで一意性を確認するためのカスタムAngular Formsバリデーションです。これにより、配列またはグループ内の各コントロールの値が他のコントロールの値と一意であることを保証します。',
+  'uniqueValidator.example1Title': '例1: フォームコントロールの配列',
+  'uniqueValidator.example1Desc':
+    '個々のフォームコントロールの配列があり、一意性を確保したい場合、検証したいフォーム配列に<code>UniqueValidator.unique()</code>を付けることができます。',
+  'uniqueValidator.calloutSameValue':
+    '下のコントロールに同じ値を入力して、フォーカスアウト時に効果を確認してください。',
+  'uniqueValidator.controlLabel': 'コントロール',
+  'uniqueValidator.controlHelper': 'コントロールの値は一意でなければなりません',
+  'uniqueValidator.duplicated': '重複',
+  'uniqueValidator.example2Title': '例2: キー-値ペアを持つフォームグループの配列',
+  'uniqueValidator.example2Desc':
+    'より複雑なシナリオでは、イメージしてみましょう。あなたは、キー-値ペアを持つ<code>FormGroups</code>の配列を持っています。各グループには、キー-値ペアとして<code>FormControls</code>が含まれています。この場合、すべてのグループのキーコントロールの値（下のコントロール）が一意であることを保証したいです。この場合、<code>UniqueValidator.unique(controlSelector)</code>の引数としてコントロールセレクターを渡すことができます。',
+  'uniqueValidator.keyCallout': '下のキーコントロールに同じ値を入力して、フォーカスアウト時に効果を確認してください。',
+  'uniqueValidator.keyPlaceholder': 'キー制御',
+  'uniqueValidator.keyHelper': 'キー制御は一意であるべき',
+  'uniqueValidator.valuePlaceholder': '値制御',
+  'uniqueValidator.valueHelper': '値制御には検証がありません',
+  'uniqueValidator.returnsDesc':
+    '重複した値が見つかった場合、<code>{notUnique: true}</code>を返す_validator関数。すべての値が一意である場合、<code>null</code>を返す。',
+  'uniqueValidator.usageNotes': '使用に関する注意',
+  'uniqueValidator.usageNotesDesc':
+    '値が変化するたびに制御の<code>updateValueAndValidity()</code>メソッドを呼び出す必要がある。',
+  'uniqueValidator.apiSummary': 'FormArray制御または配列値の間で一意性を検証します。',
+  'uniqueValidator.paramKey':
+    '(オプション)オブジェクトアイテムで一意性を確認するプロパティキー。省略するとプリミティブ等価性を確認します。',
+  'dateRangeValidator.overview':
+    'dateRangeValidatorはカスタムバリデーターで、指定された範囲内の日付を検証します。日付のみまたは日時をサポートし、含まれる/含まれない境界を設定可能で、オプションで時間比較をサポートします。',
+  'dateRangeValidator.example1Title': '例1: 日付範囲検証',
+  'dateRangeValidator.example1Desc':
+    '日付が最小日と最大日之间にない場合を検証します。この構成では、選択された日付は2024年9月1日から2024年9月15日（排他的）之间にあり、時間成分は無視されます。9月15日は、<code>maxInclusive</code>がfalseであるため有効ではありません。',
+  'dateRangeValidator.example2Title': '例2: 未来の日付を選択',
+  'dateRangeValidator.example2Desc':
+    '以下例は未来の日付を選択できるようにします。今日を含めるには、<code>minDate</code>を含めるために<code>minInclusive</code>を<code>true</code>に設定します。',
+  'dateRangeValidator.expiresRawLabel': '有効期限日（原始HTML入力）',
+  'dateRangeValidator.minDateError': '日付は{{ minDate }}以降でなければなりません',
+  'dateRangeValidator.futureDaysLabel': '5日後（明確な日付入力）',
+  'dateRangeValidator.invalidDate': '日付が無効です',
+  'dateRangeValidator.maxDateError': '{{ maxDate }}より後に設定できません',
+  'dateRangeValidator.clarityMax': '日付が遅すぎます（明確な検証）',
+  'dateRangeValidator.clarityMin': '日付が早すぎます（明確な検証）',
+  'dateRangeValidator.minMaxCallout':
+    '範囲を検証するためには、<code>min</code>と<code>max</code>のパターンを使用できます。ただし、数字のように12や文字列のように12helloを入力するときには、この検証が失敗しません。',
+  'dateRangeValidator.example3Title': '例3: 日付と時間の範囲検証',
+  'dateRangeValidator.example3Desc':
+    '日付と時間を検証するには、<code>compareTime</code>をtrueに設定します。以下の構成では、選択された日付と時間は、2024年9月1日正午UTCから2024年9月2日正午UTCまでの間でなければなりません。時間の成分を考慮します。',
+  'dateRangeValidator.dateTimeExpires': '有効期限日',
+  'dateRangeValidator.dateTimeMinError': '{{ minDate }}より前に設定できません',
+  'dateRangeValidator.dateTimeMaxError': '{{ maxDate }}より後に設定できません',
+  'dateRangeValidator.returnsDesc': 'Angular Reactive Formsで使用できる検証関数',
+  'dateRangeValidator.validationErrors': '検証エラー',
+  'dateRangeValidator.errInvalidDate': '日付が無効な場合（例："2023-13-01"や"hello world"）',
+  'dateRangeValidator.errMinDate':
+    '選択された日付が許可された最小日付以下の場合は返されます。エラー値はISO文字列形式で許可された最小日付が表示されます。',
+  'dateRangeValidator.errMaxDate':
+    '選択された日付が許可された最大日付以上の場合は返されます。エラー値はISO文字列形式で許可された最大日付が表示されます。',
+  'dateRangeValidator.apiSummary': '指定されたminDateおよび/またはmaxDate範囲内に日付値が存在することを検証します。',
+  'dateRangeValidator.paramOptions': 'minDate、maxDate、および包含性フラグを設定するDateRangeOptions。',
+  'dateRangeValidator.optMinDate': '最小の許容可能な日付。',
+  'dateRangeValidator.optMaxDate': '最大の許容可能な日付。',
+  'dateRangeValidator.optMinInclusive': '最小日付が包含されるかどうか。デフォルトはtrueです。',
+  'dateRangeValidator.optMaxInclusive': '最大日付が包含されるかどうか。デフォルトはtrueです。',
+  'rangePipe.overview':
+    '<code>range</code> パイプは指定した範囲の数値配列を作成します。ドロップダウン、ページネーション、テンプレート内の数値列に利用できます。<code>@for</code> は数値を直接反復できないため、たとえば 1 から 20 の配列が必要な場合に使用します。TypeScript で作成する代わりに、テンプレート内で直接配列を生成できます。',
+  'rangePipe.callout1':
+    'rangeパイプは、startから始まり、endに達するまで、但しendは含めない、正のおよび/または負の数値を含む数値の配列を生成します。',
+  'rangePipe.callout2': 'endが指定されない場合、startが負の値である場合はstepが-1になります。',
+  'rangePipe.callout3': 'endが指定されない場合、startが設定され、その後0に設定されます。',
+  'rangePipe.callout4':
+    'TypeScriptで使用できるrangeユーティリティ関数も提供されています。これはngx-liftからインポートできます。',
+  'rangePipe.example1Title': '例1: 基本的な範囲',
+  'rangePipe.example1Desc': '異なるstartとend値で配列を生成:',
+  'rangePipe.example2Title': '例2: ステップ値付き',
+  'rangePipe.example2Desc': 'カスタムステップ値で配列を生成:',
+  'rangePipe.example3Title': '例3: 反転配列',
+  'rangePipe.example3Desc': '逆順に配列を生成します:',
+  'rangePipe.example4Title': '例4: ドロップダウン選択',
+  'rangePipe.example4Desc':
+    'ドロップダウンにCPU数のオプションを生成します。これは、最大CPU数が異なるコンピュータの一覧を表示し、ユーザーがCPU範囲を選択できる場合に役立ちます。',
+  'rangePipe.cpuLabel': '選ぶCPU数',
+  'rangePipe.cpuOption': '{{ count }} CPU(s)',
+  'rangePipe.returnsDesc': '指定された範囲内の数値の配列です。',
+  'rangePipe.apiSummary': '指定された範囲内の数値の配列を生成するAngularパイプです。',
+  'rangePipe.paramValue':
+    '配列が [end], [start, end], [start, end, step], または [start, end, step, inclusive] のいずれかを指定する必要があります。',
+  'isHttpsPipe.overview':
+    '＜code＞isHttps＜/code＞パイプは、URL文字列がHTTPSプロトコルを使用しているかを確認するAngularパイプです。テンプレートでの条件的レンダリング、検証、またはセキュリティチェックに役立ちます。TypeScriptで使用できる対応する＜code＞isHttps＜/code＞ユーティリティ関数も利用可能です。',
+  'isHttpsPipe.example1Title': '例1: 基本的な使用法',
+  'isHttpsPipe.example1Desc': 'URLがHTTPSプロトコルを使用しているかを確認します:',
+  'isHttpsPipe.example2Title': '例2: 条件的レンダリング',
+  'isHttpsPipe.example2Desc': 'HTTPSの状態に基づいてコンポーネントを条件的にレンダリングします:',
+  'isHttpsPipe.example3Title': '例3: セキュリティ検証',
+  'isHttpsPipe.example3Desc': 'プロトコルに基づいてセキュリティインジケーターを表示します:',
+  'isHttpsPipe.apiSummary': 'URL文字列がHTTPSプロトコルを使用しているかを確認するAngularパイプです。',
+  'isHttpsPipe.paramValue': '確認するURL文字列。',
+  'isHttpsPipe.returnsDesc': 'URLがHTTPSプロトコルを使用しているかどうか。trueであればtrue、そうでなければfalse。',
+  'arrayJoinPipe.overview':
+    '<code>arrayJoin</code>パイプは、指定されたセパレータを使用して配列要素を文字列に変換するAngularパイプです。テンプレートで配列データをカンマ区切りまたはカスタム区切りの文字列として表示するための便利な方法を提供します。',
+  'arrayJoinPipe.example1Title': '例1: 基本的な使用法',
+  'arrayJoinPipe.example1Desc': 'デフォルトのカンマセパレータを使用して配列要素を結合:',
+  'arrayJoinPipe.example2Title': '例2: カスタムセパレータ',
+  'arrayJoinPipe.example2Desc': 'さまざまな使用ケースに異なるセパレータを使用:',
+  'arrayJoinPipe.example3Title': '例3: 数値配列',
+  'arrayJoinPipe.example3Desc': '異なるセパレータを使用して数値配列を結合:',
+  'arrayJoinPipe.apiSummary': '指定されたセパレータを使用して配列要素を文字列に変換するAngularパイプ。',
+  'arrayJoinPipe.paramValue': '結合する配列。配列でない場合、その値をそのまま返します。',
+  'arrayJoinPipe.paramSeparator': '(オプション) 要素間に使用するセパレータ文字列。デフォルトは","です。',
+  'arrayJoinPipe.returnsDesc': '結合された配列要素の文字列、または配列でない場合のオリジナル値。',
+  'maskPipe.overview':
+    '<code>mask</code>パイプは、敏感な文字列データを隠すために、キャラクターをアスタリスクに置き換えることを目的としたAngularパイプです。開始と終了に設定可能な数のキャラクターを保持しながら、例としてクレジットカード番号、電話番号、またはAPIキーなどの敏感な情報を隠すために適しています。',
+  'maskPipe.example1Title': '例1: 基本的な使用法',
+  'maskPipe.example1Desc': 'デフォルトの設定で敏感な文字列をマスク（開始と終了に6つのキャラクターを表示）:',
+  'maskPipe.example2Title': '例2: カスタムマスクオプション',
+  'maskPipe.example2Desc': '文字列の開始と終了に表示する可視文字数をカスタマイズ:',
+  'maskPipe.example3Title': '例3: クレジットカードマスク',
+  'maskPipe.example3Desc': 'クレジットカード番号をマスクしながら最後の4桁は表示:',
+  'maskPipe.example4Title': '例4: マスクのスイッチ',
+  'maskPipe.example4Desc': '条件付きで敏感なデータを表示/非表示:',
+  'maskPipe.maskingConditions': 'マスク条件',
+  'maskPipe.conditionsDesc': 'パイプは以下の条件に基づいてマスクを適用:',
+  'maskPipe.cond1':
+    '入力文字列の長さが <code>unmaskedPrefixLength</code> と <code>unmaskedSuffixLength</code> の合計より長くなければなりません。',
+  'maskPipe.cond2':
+    '<code>unmaskedPrefixLength</code> と <code>unmaskedSuffixLength</code> は負数でなければなりません。',
+  'maskPipe.cond3': 'オプション <code>masked</code> は <code>true</code> でなければなりません。',
+  'maskPipe.condFallback': 'これらの条件のいずれかが満たされていない場合、元の文字列が返されます。',
+  'maskPipe.apiSummary': '敏感な文字列データをマスクするためのAngularパイプ。',
+  'maskPipe.paramValue': 'マスクする入力文字列。',
+  'maskPipe.paramOptions': 'マスクの動作を設定するオプション。',
+  'maskPipe.returnsDesc': 'マスクされた文字列、またはマスクが無効または文字列が短すぎる場合の元の文字列。',
+  'maskPipe.optUnmaskedPrefixLength': '先頭に非隠しに表示する文字数。デフォルトは6です。',
+  'maskPipe.optUnmaskedSuffixLength': '末尾に非隠しに表示する文字数。デフォルトは6です。',
+  'maskPipe.optMaskChar': 'マスキングに使用する文字。デフォルトは"*"です。',
+  'maskPipe.optEnabled': 'マスキングが有効かどうか。デフォルトはtrueです。',
+  'byteConverterPipe.overview':
+    '＜code＞byteConverter＜/code＞パイプは、数値のバイト値を人間が読みやすいファイルサイズの文字列（例："1.5 MB"、"2.3 GB"）に変換します。これはロケールに依存するフォーマットを自動的に処理します（BYTE、KB、MB、GB、TB）そして英語、フランス語、中国語（簡体字と繁体字）、日本語、韓語、ドイツ語、スペイン語、イタリア語、ポルトガル語（ブラジル語）、ロシア語など、複数の言語に翻訳をサポートします。',
+  'byteConverterPipe.example1Title': '例1: 基本的な使用法',
+  'byteConverterPipe.example1Desc': 'バイト値を人間が読みやすい形式に変換:',
+  'byteConverterPipe.example2Title': '例2: ファイルサイズの表示',
+  'byteConverterPipe.example2Desc': 'ユーザーに親しみやすい形式でファイルサイズを表示:',
+  'byteConverterPipe.example3Title': '例3: 異なる単位の変換',
+  'byteConverterPipe.example3Desc': 'パイプは自動的に適切な単位に変換します:',
+  'byteConverterPipe.languageSupport': '言語のサポート',
+  'byteConverterPipe.languageSupportDesc':
+    'パイプはアプリケーションの＜code＞LOCALE_ID＜/code＞を使用して適切な単位の翻訳を決定します。サポートされている言語には英語、フランス語、中国語（簡体字と繁体字）、日本語、韓語、ドイツ語、スペイン語、イタリア語、ポルトガル語（ブラジル語）、ロシア語があります。ブラウザの言語がサポートされていない場合、英語がデフォルトになります。',
+  'byteConverterPipe.i18nCallout':
+    'ロケールのサポートを構成するには、＜a href="https://angular.io/guide/i18n" target="_blank">Angular i18nドキュメント＜/a＞を参照してください。',
+  'byteConverterPipe.apiSummary': '数値のバイトを人間が読みやすい文字列形式に変換するAngularパイプ。',
+  'byteConverterPipe.paramValue': '(オプション) 変換するバイト数。null、undefined、NaNの場合にはnullを返します。',
+  'byteConverterPipe.returnsDesc':
+    '適切な単位（B, KB, MB, GB, TB）に基づいたフォーマットされた文字列、または無効な場合にnull。',
+  'datagridUtil.transformDesc':
+    '関数は、Clarityデータグリッドの状態（ページネーション、ソート、フィルタ情報）をPageQueryオブジェクトに変換します。以下は変換の例です：',
+  'datagridUtil.inputTitle': '入力: Clarityデータグリッドの状態',
+  'datagridUtil.outputTitle': '出力: PageQueryオブジェクト',
+  'datagridUtil.usageDesc':
+    'コンポーネントでデータグリッドの状態をAPIリクエストに変換するためにconvertToHttpParamsを使用してください：',
+  'common.save': '保存',
+  'common.submit': '送信',
+  'statusIndicator.inputIconStatus': 'アイコンで表されるステータス。',
+  'statusIndicator.inputIconSize': 'アイコンのサイズ、含むsm, md, lgまたはピクセルサイズの文字列。',
+  'statusIndicator.inputTooltip': 'ホバーまたはフォーカス時に表示されるオプションのテキスト。',
+  'statusIndicator.inputTooltipPosition': 'ツールチップの位置、トリガーに対して相対的に。',
+  'tooltip.componentTypeExample': 'コンポーネントのタイプのコンテンツ',
+  'idleDetection.configIdleDuration': '不活動の秒数が経過した後にカウントダウンが開始される。',
+  'idleDetection.configTimeoutDuration': 'タイムアウト前のカウントダウンの秒数。',
+  'playground.copyFailed': 'コピーに失敗しました。コードを手動で選択してコピーしてください。',
   'header.partialLanguage': '一部のみ翻訳されています。未翻訳の文章は英語で表示されます。',
+  'form.masterPassword': 'マスターパスワード',
+  'form.masterPasswordRequired': 'マスターパスワードは必須です。',
+  'grid.refresh': '更新',
+  'grid.firstName': '名',
+  'grid.lastName': '姓',
+  'grid.email': 'メール',
+  'home.claritySetup': 'Clary Design Systemをプロジェクトに設定するためのガイドについては、',
+  'home.clarityDocumentation': 'Clary Design Systemドキュメント',
+  'resourceAsync.useResource': 'resourceAsyncを使用する場合：',
+  'resourceAsync.useComputed': 'computedAsyncを使用する場合：',
+  'resourceAsync.preferMutation':
+    'サーバー書き込みには、mutateResourceを優先してください。legacyのexecute()での提出には、lazy: true、reactive: false、behavior: exhaustを設定する必要があります。',
+  'resourceAsync.useRead': 'ローカルの読み込み操作（GET）を管理し、再読み込みにはreload()を使用してください。',
+  'resourceAsync.useLocal':
+    'オプティミスティックなローカル状態、キャッシュされた値またはフォームのドラフトをset()/update()で管理してください。',
+  'resourceAsync.useManual':
+    'reload()、execute()またはreset()を使用して操作を明示的にトリガーまたはリセットしてください。',
+  'resourceAsync.useStatus': '空闲、読み込み中、再読み込み中、解決済み、エラーおよびローカル状態を追跡してください。',
+  'resourceAsync.useLazy': '初期実行を遅延させるためにlazy loadingを採用してください。',
+  'resourceAsync.useCancel':
+    'switchで置き換わった読み込みをキャンセルし、exhaustで重複する操作を押さえ込むことができます。',
+  'resourceAsync.useComputedReactive': 'シグナルの依存関係が変化すると、非同期データを自動的に再計算してください。',
+  'resourceAsync.useComputedConcurrency': 'switch、merge、concatまたはexhaustの動作を明示的に選択してください。',
+  'resourceAsync.useComputedValue':
+    '1つのシグナルを公開し、明示的なエラーフォールバックまたはthrowOnErrorポリシーを使用してください。',
+  'resourceAsync.apiSummary':
+    '非同期状態、キャンセル、明示的な実行およびローカル更新を持つローカルリアクティブリソースを作成してください。',
+  'resourceAsync.errorValuePolicy':
+    'エラー発生時にデフォルトでは前の値がクリアされます。preserveValueOnError: trueを設定してその値を保持してください。',
+  'resourceAsync.notLoaded': '読み込み中ではない',
+  'resourceAsync.noData': 'データなし',
+  'resourceAsync.lastUpdated': '最終更新日時',
+  'resourceAsync.topicTitle': 'トピック / タイトル',
+  'resourceAsync.keyConcepts': '主要概念：',
+  'resourceAsync.patternBenefits': 'パターンの利点：',
+  'spinner.inputDecorative': 'デフォルトで装飾的。falseに設定すると読み込み状態を通知します。',
+  'spinner.inputLabel': 'ローカル化された状態ラベル；既定値は内蔵の読み込みメッセージです。',
+  'fileReader.inputControlId': 'ネイティブの入力のID。フォームラベルと関連付けます。',
+  'fileReader.inputAcceptFiles':
+    '受付可能なテキストファイルタイプ。このコンポーネントはテキストではなく、任意の二進数ファイルを読み込みません。',
+  'fileReader.inputEncoded': '有効にするとテキストをbase64形式で発行します。',
+  'fileReader.inputTextEncoding':
+    'デフォルトはUTF-8；legacy base64バイト文字列を消費するときはlatin1を選択してください。',
+  'fileReader.inputMaxSize': 'メガバイト単位の最大サイズ。読み込み前にサイズが大きいファイルは拒否されます。',
+  'fileReader.inputDisabled': 'ファイル選択と削除を無効にします。',
+  'fileReader.outputChange': '成功したファイル選択後にテキストまたはbase64を発行します。',
+  'k8sRetryBackoff.paramJitter':
+    'フォールバックのジッター方式。equal jitter は指数バックオフの上限値の半分から上限値までの範囲で待機します。',
+  'k8sRetryBackoff.paramHintJitter': 'サーバーのヒント後に追加のランダムな待機時間（ミリ秒）。',
+  'k8sRetryBackoff.paramMaxDelay':
+    '個別最大の待機時間。サーバーのヒントが長くなると再試行が停止し、ヒントを短くしない。',
+  'k8sRetryBackoff.paramWaitBudget': '累積のスケジュールされた待機予算；ネットワークリクエストにかかる時間は除く。',
+  'k8sRetryBackoff.paramMethods':
+    'インターセプター専用の HTTP メソッド許可リスト。POST/PATCH には明示的な許可と、エンドポイントの冪等性が必要です。',
+  'k8sRetryBackoff.paramRandom':
+    '決定的なスケジュールをテストするための乱数源。[0, 1) の有限値を返します（0 を含み、1 を含みません）。',
+  'k8sRetryBackoff.retryContract':
+    'デフォルト: 5回の試行、指数的なフォールバックで同じジャッターを用いる。サーバーのヒントでは250msを超える追加が可能で、待機時間は30秒、総合計スケジュールされた待機時間は60秒。ヒントが大きすぎる場合、再試行は停止する。インターセプターは既定でアイデモプトなメソッドを再試行する；POST/PATCHはエンドポイントの保証が必要。',
+  'k8sRetryBackoff.paramMinDelay':
+    'ジャッター戦略のための最小フォールバック待機時間；maxDelayMsを超えない。サーバーのヒントは変更しない。',
+  'k8sRetryBackoff.paramStatuses':
+    '有効なHTTPステータス。他のエラーは変更せずに伝搬する；追加のステータスはエンドポイントのレビューが必要。',
+  'k8sRetryBackoff.paramPredicate':
+    '追加のエラーフィルター。ステータスチェック後に適用される。これによりPOST/PATCHが自動的に有効にはならない。',
+  'k8sRetryBackoff.paramLogRetries': '遅延がバケットチェックを通った後で再試行ログを有効にする。',
+  'k8sRetryBackoff.paramLabel':
+    'ログラベル。生成されたインターセプターのラベルはクエリ文字列やフラグメントを省略し、カスタムラベルは赤黒する。',
+  'k8sRetryBackoff.paramLogger':
+    'attempt、maxRetries、delayMs、error、label を受け取る任意のロガーです。機密性のあるエラーデータをマスキングしてください。ロガーのエラーはリトライを停止しません。',
+  'k8sRetryBackoffInterceptor.postDefault': 'POST: デフォルト（再試行しない）',
+  'k8sRetryBackoffInterceptor.postOptIn': 'POST: 明示的なKubernetesのオプトイン',
+  'k8sRetryBackoffInterceptor.postGateway': 'POST: ゲ이ートウェイ429（拒否）',
+  'demoApi.key-value-inputs-demo.inputs.formArray':
+    '親コンポーネントから使用されるFormArrayインスタンスで、キーと値のペアを管理するもの。',
+  'demoApi.key-value-inputs-demo.inputs.data': '既存のキーと値のペアを事前で埋め込むための初期データ。',
+  'demoApi.key-value-inputs-demo.inputs.uniqueKey':
+    'ngx-liftのUniqueValidatorを使用して、唯一のキーの検証を有効にするには、<code>true</code>に設定する。',
+  'demoApi.key-value-inputs-demo.inputs.keyHelper': 'キー入力フィールドのヘルパーテキスト。',
+  'demoApi.key-value-inputs-demo.inputs.valueHelper': '値入力フィールドのヘルパーテキスト。',
+  'demoApi.key-value-inputs-demo.inputs.addText': '「キー-値ペアを追加」ボタンのテキスト。',
+  'demoApi.key-value-inputs-demo.inputs.inputSize': '入力フィールドのサイズ。',
+  'demoApi.key-value-inputs-demo.inputs.buttonClass': '「キー-値ペアを追加」ボタンに適用するカスタムクラス。',
+  'demoApi.key-value-inputs-demo.inputs.smartMode':
+    '設定が <code>true</code> である場合、キー-値入力が存在しないときに自動的に一つのキー-値ペアを作成します。',
+  'demoApi.key-value-inputs-demo.inputs.keyPattern':
+    'キー制御がカスタム正規表現パターンを渡す必要がある場合に使用します。<code>regex</code> と <code>message</code> の両方を含むオブジェクトを渡すことができます。メッセージプロパティはオプションです。',
+  'demoApi.key-value-inputs-demo.inputs.valuePattern':
+    '<code>keyPattern</code> と同様ですが、値のコントロールを検証します。',
+  'demoApi.key-value-inputs-demo.outputs.removeKeyValue':
+    'キー-値ペアが削除されたときに発行されるイベント。削除されたペアのインデックスを提供します。',
+  'demoApi.key-value-inputs-demo.outputs.addKeyValue': '新しいキー-値ペアが追加されたときに発行されるイベント。',
+  'demoApi.multi-alerts-demo.methods.addAlert(options: Alert)': '指定されたオプションで新しいアラートを追加します。',
+  'demoApi.multi-alerts-demo.methods.deleteAlert(id: symbol)': 'IDに応じてアラートを削除します。',
+  'demoApi.multi-alerts-demo.methods.clearAlerts()': 'すべてのアラートをクリアします。',
+  'demoApi.multi-alerts-demo.alertProperties.content':
+    'アラートメッセージ。安全なHTMLフォーマットはサポートされています。',
+  'demoApi.multi-alerts-demo.alertProperties.alertType': 'アラートのタイプ。',
+  'demoApi.multi-alerts-demo.alertProperties.actions':
+    'ナイティブなボタン。各アクションには <code>label: string</code> と <code>onClick: () => void</code> が提供されます。',
+  'demoApi.multi-alerts-demo.alertProperties.isAppLevel': 'これはアプリケーションレベルのアラートかどうか。',
+  'demoApi.multi-alerts-demo.alertProperties.targetSelector':
+    'アラートコンテンツ内のどこかのクリック可能な要素（ボタン、リンクなど）のセレクター（ID、クラスなど）。',
+  'demoApi.multi-alerts-demo.alertProperties.onTargetClick':
+    '要素が一致する <code>targetSelector</code> にクリックされたときに実行されるコールバック。',
+  'demoApi.theme-toggle-demo.componentInputs.lang': 'ローカライズされたツールチップ用の明示的な言語コード。',
+  'demoApi.theme-toggle-demo.componentOutputs.changeTheme':
+    "テーマがスイッチされるたびに <code>ClarityTheme</code> ('light' | 'dark') を発行します。",
+  'demoApi.theme-toggle-demo.serviceProperties.theme': "現在アクティブなテーマ ('light' | 'dark')。",
+  'demoApi.theme-toggle-demo.serviceMethods.setTheme(newTheme: ClarityTheme)':
+    'テーマを設定し、ストレージに保存し、DOMを更新します。',
+  'demoApi.timeline-wizard-demo.wizardInputs.timelineSteps':
+    'ウォーキングのステップを表す <code>TimelineStep</code> オブジェクトの配列。',
+  'demoApi.timeline-wizard-demo.wizardInputs.live':
+    '前のステップ/次のステップボタンをクリックしたときにステップコンポーネントを破棄するかどうかを制御します。',
+  'demoApi.timeline-wizard-demo.wizardInputs.confirmButtonText': '最後のステップの「完了」ボタンのテキスト。',
+  'demoApi.timeline-wizard-demo.wizardOutputs.confirmed':
+    '最後のステップの「完了」ボタンをクリックしたときに以前のすべてのステップのデータを発行します。',
+  'demoApi.timeline-wizard-demo.wizardOutputs.canceled': 'ウォーキングがキャンセルされたときに発行します。',
+  'demoApi.timeline-wizard-demo.wizardOutputs.finished': 'ウォーキングが成功して完了したときに発行します。',
+  'demoApi.timeline-wizard-demo.wizardMethods.cancel()':
+    'ウォーキングをキャンセルし、<code>canceled</code> イベントを発行します。',
+  'demoApi.timeline-wizard-demo.wizardMethods.nextStep()': 'ウォーキングの次のステップに移動します。',
+  'demoApi.timeline-wizard-demo.wizardMethods.previousStep()': 'ウォーキングの前のステップに移動します。',
+  'demoApi.timeline-wizard-demo.baseProperties.allStepsData':
+    'すべてのウォーキングステップのデータを含む配列。これは入力プロパティとして利用可能であり、<code>ngOnInit</code> 以降のライフサイクルホークにアクセス可能です。',
+  'demoApi.timeline-wizard-demo.baseProperties.currentStepData':
+    '現在のステップのデータまたはデータが利用できない場合の <code>null</code>。これは入力プロパティとして利用可能であり、<code>ngOnInit</code> 以降のライフサイクルホークにアクセス可能です。',
+  'demoApi.timeline-wizard-demo.baseProperties.form':
+    'ステップに関連するフォームグループ。フォームがないステップには<code>null</code>を設定してください。ステップコンポーネントでこのプロパティを上書きしてください。',
+  'demoApi.timeline-wizard-demo.baseProperties.next$':
+    '「次へ」ボタンがクリックされたときに発行するオブザーバブル。カスタムアクションを実行するために上書きしてください。たとえば、API呼び出しを実行する場合があります。',
+  'demoApi.timeline-wizard-demo.baseProperties.stepInvalid': 'ステップのフォームが無効かどうかを示します。',
+  'demoApi.timeline-wizard-demo.baseMethods.formValueToData()':
+    'ステップのフォーム値をデータに変換します。フォーム構造がステップデータ構造と一致しない場合、このメソッドを上書きしてください。',
+  'demoApi.timeline-wizard-demo.baseMethods.dataToFormValue(data)':
+    'ステップデータを、<code>patchValue</code>に使用できるフォーム値に変換します。フォーム構造がステップデータ構造と一致しない場合、このメソッドを上書きしてください。',
+  'demoApi.timeline-wizard-demo.stepProperties.state':
+    "タイムラインステップの状態（例：'not-started', 'current', 'success', 'error'）。",
+  'demoApi.timeline-wizard-demo.stepProperties.header': 'タイムラインステップのヘッダー。',
+  'demoApi.timeline-wizard-demo.stepProperties.title':
+    'タイムラインステップのタイトル、識別子として機能します（一意であるべき）。<code>getStepData</code>を呼び出すために使用できます。',
+  'demoApi.timeline-wizard-demo.stepProperties.id':
+    'タイムラインステップのID、主な識別子として機能します。IDが提供されない場合、タイトルを使用します。<code>getStepData</code>を呼び出すために使用できます。',
+  'demoApi.timeline-wizard-demo.stepProperties.description': 'タイムラインステップの説明。',
+  'demoApi.timeline-wizard-demo.stepProperties.component':
+    'タイムラインステップに関連するAngularコンポーネント。<code>TimelineBaseComponent</code>を継承する必要があります。',
+  'demoApi.timeline-wizard-demo.stepProperties.data':
+    'ステップデータ、これはタイムラインウィザードコンポーネントによってフォームデータに変換され、ステップコンポーネントに<code>currentStepData</code>として渡されます。',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStepIndex': '現在のステップのインデックスを取得します。',
+  'demoApi.timeline-wizard-demo.serviceProperties.isFirstStep': '現在のステップが最初のステップかどうかを確認します。',
+  'demoApi.timeline-wizard-demo.serviceProperties.isLastStep': '現在のステップが最後のステップかどうかを確認します。',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStep': '現在のステップオブジェクトを取得します。',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStepData': '現在のステップのデータを取得します。',
+  'demoApi.timeline-wizard-demo.serviceProperties.allStepsData':
+    'レビューする必要があるすべてのステップのデータを取得します。ステップの識別子とデータを含む配列を返します。',
+  'demoApi.timeline-wizard-demo.serviceMethods.getStepData<T>(key: string)':
+    '特定のステップのデータをIDまたはタイトルに依存して取得します。ステップが見つからない場合、<code>null</code>を返します。',
+  'demoApi.toast-demo.methods.addToast(options: ToastOptions)': '指定されたオプションでトーストを作成します。',
+  'demoApi.toast-demo.methods.success(options: ToastOptions)': '指定されたオプションで成功トーストを作成します。',
+  'demoApi.toast-demo.methods.info(options: ToastOptions)': '指定されたオプションで情報トーストを作成します。',
+  'demoApi.toast-demo.methods.warning(options: ToastOptions)': '指定されたオプションで警告トーストを作成します。',
+  'demoApi.toast-demo.methods.error(options: ToastOptions)': '指定されたオプションでエラートオストを作成します。',
+  'demoApi.toast-demo.toastOptions.title': 'トーストメッセージのタイトル。',
+  'demoApi.toast-demo.toastOptions.description': 'トーストメッセージの説明。',
+  'demoApi.toast-demo.toastOptions.toastType': 'トーストのタイプ。',
+  'demoApi.toast-demo.toastOptions.date': '相対タイムスタンプ（例："1時間前"）。',
+  'demoApi.toast-demo.toastOptions.manualClosable': 'トーストが手動で閉じられるかどうか。',
+  'demoApi.toast-demo.toastOptions.timeoutSeconds':
+    'トーストが自動的に閉じるまでの秒数。指定しない場合はコンテナの既定値を使用します。',
+  'demoApi.toast-demo.toastOptions.primaryButtonText': '主要アクションボタンのテキスト。',
+  'demoApi.toast-demo.toastOptions.primaryButtonClick': '主要ボタンクリックのコールバック関数。',
+  'demoApi.toast-demo.toastOptions.secondaryButtonText': 'セカンダリーアクションボタンのテキスト。',
+  'demoApi.toast-demo.toastOptions.secondaryButtonClick': 'セカンダリーアクションボタンクリック時のコールバック関数。',
+  'demoApi.toast-demo.toastOptions.closed': 'トーストが閉じられるときに呼び出されるコールバック関数。',
+  'demoApi.toast-demo.containerInputs.timeoutSeconds': 'トーストのデフォルトタイムアウト（秒）。',
+  'demoApi.toast-demo.containerInputs.manualClosable': 'デフォルトで手動で閉じることができるかどうか。',
+  'demoApi.toast-demo.containerInputs.topOffset': 'スクリーンの上部からの距離（ピクセル）。',
+  'demoApi.tooltip-demo.inputs.cllTooltip':
+    'シンプルな文字列コンテンツ。<code>cllTooltipContent</code>の略として使用できます。',
+  'demoApi.tooltip-demo.inputs.cllTooltipContent':
+    'ツールチップに表示するコンテンツ。文字列、テンプレート参照、コンポーネント参照、またはコンポーネントタイプを指定できます。',
+  'demoApi.tooltip-demo.inputs.cllTooltipContentContext':
+    'コンテンツに <code>TemplateRef</code> を使用する場合、テンプレートに渡すコンテキストオブジェクト。',
+  'demoApi.tooltip-demo.inputs.cllTooltipWidth': 'ツールチップの幅（ピクセル）。',
+  'demoApi.tooltip-demo.inputs.cllTooltipPosition':
+    '要素に対してツールチップの位置。オプションには「tooltip-top-right」、「tooltip-top-left」などがあります。',
+  'demoApi.tooltip-demo.inputs.cllTooltipHideDelay': 'マウスを離れた後にツールチップを隠すまでの遅延（ミリ秒）。',
+  'demoApi.mutate-resource.mutateResourceApiProps.mutation':
+    'サーバーサイドの書き込み操作を実行するアсинクロン関数またはオバザーバブル。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+    '成功した書き込み後に無効にするタグ。アクティブなクエリに対して即座に再取得をスケジュールします。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
+    '重複する呼び出しの戦略：並列（デフォルト）、エクスーティ（進行中の呼び出しを結合）、コンカト（キューイング）。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.injector':
+    'シグナル登録のためにオプションの明示的なAngular Injector。インジェクションコンテキスト外でのシグナル登録用。',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.client':
+    'オプションで明示的なQueryClientの上書き（デフォルトはQUERY_CLIENTトークンに設定されます）。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.value':
+    '最新で成功して解決されたミューテーション結果を保持するシグナル。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.error':
+    '最も新しいミューテーションエラーを保持するシグナル、healthyな場合nullを返します。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.status':
+    '細かくミューテーションライフサイクルステータスを保持します。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.isLoading': 'ミューテーション操作が実行されている間、真です。',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.mutate(args)':
+    '引数と 함께ミューテーションをトリガーし、結果または拒否で解決するPromiseを返します。',
+  'demoApi.query-resource.queryResourceApiProps.definition':
+    'Observable または Promise ローダーを持つリアクティブなファクトリー。undefined を返すとリソースを無効にします。',
+  'demoApi.query-resource.queryResourceApiProps.options.pollInterval':
+    '完了したリクエスト間のミリ秒数。アクティブなオブザーバー間で調整されます。',
+  'demoApi.query-resource.queryResourceApiProps.options.injector':
+    'オプションで明示的なAngular Injectorで、インジェクションコンテキスト外でのシグナル登録を可能にします。',
+  'demoApi.query-resource.queryResourceApiProps.options.client':
+    'オプションで明示的なQueryClientの上書き（デフォルトはQUERY_CLIENTトークンに設定されます）。',
+  'demoApi.query-resource.queryResourceDefinitionProps.key':
+    '一意にクエリを識別するJSON互換の値の配列（例: ["user", id]）。',
+  'demoApi.query-resource.queryResourceDefinitionProps.loader':
+    'データフェッチャーが{ abortSignal, refresh }を受け取ります。オブザーバブルの読み込みは最初の発行後に自動的に完了します。',
+  'demoApi.query-resource.queryResourceDefinitionProps.tags':
+    'キャッシュの有効化のためにオプションのタグ（例: [{ type: "users" }]).',
+  'demoApi.query-resource.queryResourceDefinitionProps.staleTime':
+    'キャッシュデータが古いと見なされる前の時間の経過時間（ミリ秒）。',
+  'demoApi.query-resource.queryResourceDefinitionProps.gcTime':
+    '使用されていないクエリをキャッシュに保持する時間（デフォルトは5分）。',
+  'demoApi.query-resource.queryResourceDefinitionProps.cancelOnNoObservers':
+    'すべてのオブザーバーが完了する前に、進行中のトランスポーテーションリクエストを中止するかどうか。',
+  'demoApi.query-resource.queryResourceRefApiProps.value': '最新で成功したクエリデータを保持するシグナル。',
+  'demoApi.query-resource.queryResourceRefApiProps.error':
+    '最新のエラーを保持するシグナル。エラーが発生していない場合はnullを返す。',
+  'demoApi.query-resource.queryResourceRefApiProps.status':
+    '詳細なステータス: "idle" | "loading" | "reloading" | "resolved" | "error"。',
+  'demoApi.query-resource.queryResourceRefApiProps.isLoading': 'ステータスが"loading"または"reloading"のときに真。',
+  'demoApi.query-resource.queryResourceRefApiProps.isStale':
+    'データがstaleTimeを超えたり、ミューテーションによって無効化された場合に真。',
+  'demoApi.query-resource.queryResourceRefApiProps.hasValue()':
+    '型述語を用いてvalue()を限定し、有効なデータが存在する場合にundefinedを排除する。',
+  'demoApi.query-resource.queryResourceRefApiProps.reload()':
+    'バックグラウンドでリフレッシュをトリガーし、既存のデータを削除せずに実行する（ステータス: "reloading"）。',
+  'demoApi.query-resource.queryResourceRefApiProps.execute()': '即座に新しいデータを取得し、結果を返すPromiseを返す。',
+  'demoApi.query-resource.queryResourceRefApiProps.destroy()':
+    'このオバザーバーを分離するが、他のオバザーバーが存在する場合、共有クエリをキャンセルしない。',
+  'demoApi.resource-async.definitionProperties.params':
+    '純粋なリアクティブパラメータキャプチャ関数。シグナルの読み込みは記録される。',
+  'demoApi.resource-async.definitionProperties.loader':
+    'ファクトリーが最新のパラメータとcontext.abortSignalを受け取る。シグナルの読み込みは記録されない。',
+  'demoApi.resource-async.optionsProperties.defaultValue':
+    '最初のフェッチ前のデフォルト値。value()がTを返すことを保証する。initialValueの別名。',
+  'demoApi.resource-async.optionsProperties.preserveValueOnError':
+    'エラーが発生した際、最後に受け取ったまたはローカルの値を保持する。',
+  'demoApi.resource-async.optionsProperties.reactive': 'パラメータ/ソース依存関係が自動再実行をトリガーするかどうか。',
+  'demoApi.resource-async.optionsProperties.injector':
+    'アモビントなインジェクションコンテキスト外で呼び出された場合のオプションのカスタムインジェクター。',
+  'demoApi.resource-async.optionsProperties.equal': '下位のcomputed signalに渡されるカスタム等価比較関数。',
+  'demoApi.resource-async.returnsProperties.value': 'リソースの現在の値。',
+  'demoApi.resource-async.returnsProperties.error': 'エラーが発生した場合の現在のエラー。',
+  'demoApi.resource-async.returnsProperties.status':
+    "現在のステータス: 'idle' | 'loading' | 'reloading' | 'resolved' | 'local' | 'error'。",
+  'demoApi.resource-async.returnsProperties.isLoading':
+    "フェッチ操作が進行中であることを示すシグナル（'loading' または 'reloading' である場合）。",
+  'demoApi.resource-async.returnsProperties.isIdle': 'リソースが idle 状態であることを示すシグナル（未取得）。',
+  'demoApi.resource-async.returnsProperties.hasValue()':
+    'true の場合に value() の型から undefined を除外する型述語です。',
+  'demoApi.resource-async.returnsProperties.reload()': 'リソースを手動で再読み込みする。クエリ（GET）に最適。',
+  'demoApi.resource-async.returnsProperties.execute()':
+    '手動で実行を開始し、awaitable な Promise を返す。ミューテーション（POST/PUT/DELETE）に最適。',
+  'demoApi.resource-async.returnsProperties.set()': 'リソースの値を手動で更新し、ステータスを "local" に変更する。',
+  'demoApi.resource-async.returnsProperties.update()':
+    'アップダーファンクションを使用してリソースの値を更新し、ステータスを "local" に変更する。',
+  'demoApi.resource-async.returnsProperties.reset()':
+    'リソースを初期の idle 状態に戻し、進行中の操作をキャンセルする。',
+  'demoApi.resource-async.returnsProperties.destroy()': '永続的に観察を停止し、待機中の作業をキャンセルする。',
+  'demoApi.date-range-validator.optionsProperties.compareTime': '時間も比較するかどうか。デフォルトは false。',
+  'certificate.loadExample': '証明書の例を読み込む',
+  'certificate.loadFailed': '証明書の詳細を読み込めませんでした。ページを再読み込みして、もう一度お試しください。',
+  'fileReader.validationUnavailable':
+    '証明書の検証を読み込めませんでした。ページを再読み込みして、もう一度お試しください。',
   'queryExamples.failureTitle': '失敗と復旧のパターン',
   'queryExamples.failureIntro': '成功データを保持し、読み取りに期限を設け、失敗した処理だけを復旧します。',
   'queryExamples.initialFailure': '初回読み取りの失敗',
@@ -236,4 +2119,6 @@ export const jaTranslations: Record<string, string> = {
   'queryExamples.databaseB': 'テナント B のデータベース',
   'queryExamples.initialLoadingDescription': '成功したデータがない読み込み中に true になります。',
   'queryExamples.refreshingDescription': 'キャッシュを保持した更新中に true になります。',
+  'queryResource.thFailures': '失敗した試行',
+  'queryResource.thNextRetry': '次の再試行',
 };

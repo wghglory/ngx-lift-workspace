@@ -1,6 +1,8 @@
 import {
+  QueryClientDiagnostics,
   QueryClientOptions,
   QueryDefinition,
+  QueryEntryDiagnostics,
   QueryDiagnosticContext,
   QueryFetchOptions,
   QueryKey,
@@ -199,6 +201,84 @@ export class QueryClient {
   getSnapshot<T>(key: QueryKey): QuerySnapshot<T> | undefined {
     const entry = this.entries.get(serializeQueryKey(key)) as QueryEntry<T> | undefined;
     return entry ? this.snapshot(entry) : undefined;
+  }
+
+  /** Return a point-in-time snapshot of all cached query entries and their runtime metrics. */
+  getEntriesSnapshot(): QueryEntryDiagnostics[] {
+    return this.collectEntriesSnapshot(this.now(), this.isVisible());
+  }
+
+  private collectEntriesSnapshot(now: number, visible: boolean): QueryEntryDiagnostics[] {
+    const list: QueryEntryDiagnostics[] = [];
+
+    for (const entry of this.entries.values()) {
+      let remainingGcTime: number | null = null;
+      if (
+        !entry.observers.size &&
+        !entry.requests.size &&
+        entry.inactiveSince !== null &&
+        Number.isFinite(entry.gcTime)
+      ) {
+        remainingGcTime = Math.max(0, entry.inactiveSince + entry.gcTime - now);
+      }
+
+      let remainingPollDelay: number | null = null;
+      if (entry.nextPollAt !== null && entry.observers.size > 0 && !entry.pending && visible) {
+        remainingPollDelay = Math.max(0, entry.nextPollAt - now);
+      }
+
+      list.push({
+        serializedKey: entry.serializedKey,
+        key: JSON.parse(entry.serializedKey),
+        status: entry.status,
+        hasValue: entry.hasValue,
+        observerCount: entry.observers.size,
+        requestCount: entry.requests.size,
+        isPending: entry.pending !== undefined,
+        isStale: this.isStale(entry, now),
+        failureCount: entry.failureCount,
+        nextRetryAt: entry.nextRetryAt,
+        staleTime: entry.staleTime,
+        gcTime: entry.gcTime,
+        updatedAt: entry.updatedAt,
+        inactiveSince: entry.inactiveSince,
+        remainingGcTime,
+        remainingPollDelay,
+        tagMemberships: Array.from(entry.tagMemberships),
+      });
+    }
+
+    return list;
+  }
+
+  /** Return aggregate metrics and entry states for developer tools and diagnostic inspection. */
+  getDiagnostics(): QueryClientDiagnostics {
+    const now = this.now();
+    const visible = this.isVisible();
+    const entries = this.collectEntriesSnapshot(now, visible);
+    let activeEntryCount = 0;
+    let pendingRequestCount = 0;
+    let totalObserverCount = 0;
+
+    for (const entry of entries) {
+      if (entry.observerCount > 0) {
+        activeEntryCount++;
+      }
+      pendingRequestCount += entry.requestCount;
+      totalObserverCount += entry.observerCount;
+    }
+
+    return {
+      entryCount: entries.length,
+      activeEntryCount,
+      inactiveEntryCount: entries.length - activeEntryCount,
+      pendingRequestCount,
+      totalObserverCount,
+      maxEntries: this.maxEntries,
+      isDestroyed: this.destroyed,
+      isVisible: visible,
+      entries,
+    };
   }
 
   /** An omitted id matches every entity id of this type within the same scope. */
@@ -442,11 +522,11 @@ export class QueryClient {
     return !this.destroyed && this.entries.get(entry.serializedKey) === entry;
   }
 
-  private isStale<T>(entry: QueryEntry<T>): boolean {
+  private isStale<T>(entry: QueryEntry<T>, now?: number): boolean {
     return (
       !entry.hasValue ||
       entry.invalidated ||
-      (entry.updatedAt !== null && this.now() - entry.updatedAt >= entry.staleTime)
+      (entry.updatedAt !== null && (now ?? this.now()) - entry.updatedAt >= entry.staleTime)
     );
   }
 

@@ -324,8 +324,11 @@ and Observable parity, retained data, falsy errors, provider disposal, and stale
 HttpClient demo covers initial failure, retained refresh data, retry progress, Promise retry, hanging-source
 cancellation, failed-row recovery, observer diagnostics, and safe explicit mutation recovery in all 11 languages.
 
-Local full validation passed: 826 ngx-lift, 243 clr-lift, and 218 demo unit tests; coverage thresholds, source/test type
-checks, lint, formatting, i18n/tooling checks, production builds, and a fresh tarball consumer installation. 117
-Chromium/Firefox/WebKit E2E tests passed. Independent runtime and spec review found no concrete blockers. Remote CI is a
-separate gate and must pass on the submitted head. Dependency audit remains unverified; no npm publication was
-performed.
+PR #146 standalone validation at `6128d54` passed: 826 ngx-lift, 243 clr-lift, and 218 demo unit tests; coverage
+thresholds, source/test type checks, lint, formatting, i18n/tooling checks, production builds, and a fresh tarball
+consumer installation. 117 Chromium/Firefox/WebKit E2E tests passed. Independent runtime and spec review found no
+concrete blockers. Remote CI is a separate gate and must pass on the submitted head. Dependency audit remains
+unverified; no npm publication was performed.
+
+Current diagnostics integration and combination evidence are in
+[the #146/#147 review](../reviews/query-pr146-pr147-integration.md).

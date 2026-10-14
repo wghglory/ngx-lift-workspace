@@ -795,4 +795,95 @@ describe('QueryClient', () => {
       expect(subject.observed).toBe(false);
     });
   });
+  it('provides developer diagnostics and entry snapshots for active and inactive queries', async () => {
+    const client = createClient({maxEntries: 10});
+    expect(client.getDiagnostics()).toEqual({
+      entryCount: 0,
+      activeEntryCount: 0,
+      inactiveEntryCount: 0,
+      pendingRequestCount: 0,
+      totalObserverCount: 0,
+      maxEntries: 10,
+      isDestroyed: false,
+      isVisible: true,
+      entries: [],
+    });
+
+    const pending = deferred<string>();
+    const loader = vi.fn<() => Promise<string>>().mockReturnValue(pending.promise);
+    const definition: QueryDefinition<string> = {
+      key: ['diagnostics', 'users'],
+      tags: [{type: 'user', id: 42}],
+      loader,
+      staleTime: 5000,
+      gcTime: 60000,
+    };
+
+    const unsubscribe = client.observeQuery(definition, vi.fn(), {pollInterval: 10000});
+    let diag = client.getDiagnostics();
+    expect(diag.entryCount).toBe(1);
+    expect(diag.activeEntryCount).toBe(1);
+    expect(diag.pendingRequestCount).toBe(1);
+    expect(diag.totalObserverCount).toBe(1);
+
+    const snapshot = client.getEntriesSnapshot()[0];
+    expect(snapshot.key).toEqual(['diagnostics', 'users']);
+    expect(snapshot.status).toBe('loading');
+    expect(snapshot.isPending).toBe(true);
+    expect(snapshot.observerCount).toBe(1);
+    expect(snapshot.remainingGcTime).toBeNull();
+    expect(snapshot.tagMemberships.length).toBeGreaterThan(0);
+
+    pending.resolve('data');
+    await flushRequests();
+
+    diag = client.getDiagnostics();
+    expect(diag.pendingRequestCount).toBe(0);
+    expect(diag.entries[0].status).toBe('resolved');
+    expect(diag.entries[0].hasValue).toBe(true);
+    expect(diag.entries[0].remainingPollDelay).toBe(10000);
+
+    unsubscribe();
+    diag = client.getDiagnostics();
+    expect(diag.activeEntryCount).toBe(0);
+    expect(diag.inactiveEntryCount).toBe(1);
+    expect(diag.totalObserverCount).toBe(0);
+    expect(diag.entries[0].observerCount).toBe(0);
+    expect(diag.entries[0].remainingGcTime).toBe(60000);
+    expect(diag.entries[0].remainingPollDelay).toBeNull();
+
+    await vi.advanceTimersByTimeAsync(10000);
+    expect(client.getDiagnostics().entries[0].remainingGcTime).toBe(50000);
+
+    client.destroy();
+    expect(client.getDiagnostics().isDestroyed).toBe(true);
+    expect(client.getDiagnostics().entryCount).toBe(0);
+  });
+  it('keeps cache identity isolated from mutations to diagnostic snapshots', async () => {
+    const client = createClient();
+    await client.fetchQuery({key: ['diagnostics', {scope: 'original'}], loader: async () => 1});
+    const snapshot = client.getEntriesSnapshot()[0];
+    (snapshot.key[1] as {scope: string}).scope = 'mutated';
+    expect(client.getEntriesSnapshot()[0].key).toEqual(['diagnostics', {scope: 'original'}]);
+    client.removeQueries((key) => (key[1] as {scope: string}).scope === 'original');
+    expect(client.getDiagnostics().entryCount).toBe(0);
+  });
+  it('counts both obsolete and current transports during pending invalidation', async () => {
+    const client = createClient();
+    const obsolete = deferred<string>();
+    const current = deferred<string>();
+    const loader = vi.fn().mockReturnValueOnce(obsolete.promise).mockReturnValueOnce(current.promise);
+    const definition = {key: ['overlapping-diagnostics'], loader, tags: [{type: 'Diagnostics'}]};
+    const first = client.fetchQuery(definition);
+    client.invalidateTags([{type: 'Diagnostics'}]);
+    const second = client.fetchQuery(definition);
+    expect(client.getDiagnostics()).toMatchObject({entryCount: 1, pendingRequestCount: 2});
+    current.resolve('current');
+    await second;
+    expect(client.getDiagnostics().pendingRequestCount).toBe(1);
+    obsolete.resolve('obsolete');
+    await first;
+    expect(client.getDiagnostics().pendingRequestCount).toBe(0);
+    expect(client.getSnapshot(definition.key)?.value).toBe('current');
+  });
 });

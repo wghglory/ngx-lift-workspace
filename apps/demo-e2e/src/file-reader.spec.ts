@@ -30,7 +30,14 @@ test.describe('FileReader component', () => {
     await expect(submitBtn).toBeEnabled();
 
     // Click submit and wait for console log
-    const [msg1] = await Promise.all([page.waitForEvent('console', (msg) => msg.type() === 'log'), submitBtn.click()]);
+    const [msg1] = await Promise.all([
+      page.waitForEvent(
+        'console',
+        async (msg) =>
+          msg.type() === 'log' && (JSON.stringify(await msg.args()[0]?.jsonValue()) ?? '').includes('port=8080'),
+      ),
+      submitBtn.click(),
+    ]);
 
     // Verify that the logged data contains the file content but NOT caCert from Example 2
     const values1 = await Promise.all(msg1.args().map((arg) => arg.jsonValue().catch(() => msg1.text())));
@@ -47,6 +54,7 @@ test.describe('FileReader component', () => {
 
   test('Example 2: displays pre-filled certificate and certificate signpost', async ({page}) => {
     const example2 = page.locator('article', {hasText: 'Example 2: Certificate File Reader'});
+    await example2.locator('[data-test-id="load-certificate"]').click();
     const signpostTrigger = example2.locator('cll-certificate-signpost button');
 
     // Verify certificate signpost is present
@@ -67,7 +75,15 @@ test.describe('FileReader component', () => {
     await expect(submitBtn).toBeEnabled();
 
     // Click submit and wait for console log
-    const [msg2] = await Promise.all([page.waitForEvent('console', (msg) => msg.type() === 'log'), submitBtn.click()]);
+    const [msg2] = await Promise.all([
+      page.waitForEvent(
+        'console',
+        async (msg) =>
+          msg.type() === 'log' &&
+          (JSON.stringify(await msg.args()[0]?.jsonValue()) ?? '').includes('BEGIN CERTIFICATE'),
+      ),
+      submitBtn.click(),
+    ]);
     const values2 = await Promise.all(msg2.args().map((arg) => arg.jsonValue().catch(() => msg2.text())));
     const lastLog = JSON.stringify(values2);
     expect(lastLog).toContain('BEGIN CERTIFICATE');

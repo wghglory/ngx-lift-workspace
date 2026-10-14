@@ -339,9 +339,9 @@
     <h2>{{ 'mutateResource.apiReference' | translate }}</h2>
 
     <h3><code>mutateResource(mutation, options)</code></h3>
-    <app-api-table [properties]="mutateResourceApiProps" />
+    <app-api-table [properties]="mutateResourceApiProps()" />
 
     <h3 class="m-t-md"><code>MutateResourceRef&lt;TArgs, TResult, E&gt;</code></h3>
-    <app-api-table [properties]="mutateResourceRefApiProps" />
+    <app-api-table [properties]="mutateResourceRefApiProps()" />
   </section>
 </cll-page-container>

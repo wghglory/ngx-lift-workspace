@@ -7,6 +7,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
+  computed,
 } from '@angular/core';
 import {
   AlertComponent,
@@ -15,6 +16,7 @@ import {
   SpinnerComponent,
   TooltipModule,
   TranslatePipe,
+  TranslationService,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -36,41 +38,40 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TooltipDemoComponent implements OnInit {
-  readonly inputs: ApiProperty[] = [
+  private readonly translationService = inject(TranslationService);
+
+  readonly inputs = computed<ApiProperty[]>(() => [
     {
       name: 'cllTooltip',
       type: 'string',
-      description:
-        'Simple string content for the tooltip. Can be used as a shorthand for <code>cllTooltipContent</code>.',
+      description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltip'),
     },
     {
       name: 'cllTooltipContent',
       type: 'string | TemplateRef<any> | ComponentRef<any> | Type<any>',
-      description:
-        'The content to display in the tooltip. Can be a string, template reference, component reference, or component type.',
+      description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltipContent'),
     },
     {
       name: 'cllTooltipContentContext',
       type: 'any',
-      description: 'Context object to pass to the template when using <code>TemplateRef</code> as content.',
+      description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltipContentContext'),
     },
     {
       name: 'cllTooltipWidth',
       type: 'number',
-      description: 'Width of the tooltip in pixels.',
+      description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltipWidth'),
     },
     {
       name: 'cllTooltipPosition',
       type: 'string',
-      description:
-        "Position of the tooltip relative to the element. Options include 'tooltip-top-right', 'tooltip-top-left', etc.",
+      description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltipPosition'),
     },
     {
       name: 'cllTooltipHideDelay',
       type: 'number',
-      description: 'Delay in milliseconds before hiding the tooltip after mouse leave.',
+      description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltipHideDelay'),
     },
-  ];
+  ]);
   basicTooltipCode = highlight(`
 import {TooltipModule} from 'clr-lift';
 import {Component} from '@angular/core';

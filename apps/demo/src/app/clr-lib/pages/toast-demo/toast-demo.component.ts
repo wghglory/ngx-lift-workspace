@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {PageContainerComponent, ToastService, TranslatePipe} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, inject, computed} from '@angular/core';
+import {PageContainerComponent, ToastService, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -13,117 +13,118 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastDemoComponent {
-  readonly methods: ApiProperty[] = [
+  private readonly translationService = inject(TranslationService);
+
+  readonly methods = computed<ApiProperty[]>(() => [
     {
       name: 'addToast(options: ToastOptions)',
       type: 'void',
-      description: 'Creates a toast with the specified options.',
+      description: this.translationService.translate('demoApi.toast-demo.methods.addToast(options: ToastOptions)'),
     },
     {
       name: 'success(options: ToastOptions)',
       type: 'void',
-      description: 'Creates a success toast with the specified options.',
+      description: this.translationService.translate('demoApi.toast-demo.methods.success(options: ToastOptions)'),
     },
     {
       name: 'info(options: ToastOptions)',
       type: 'void',
-      description: 'Creates an info toast with the specified options.',
+      description: this.translationService.translate('demoApi.toast-demo.methods.info(options: ToastOptions)'),
     },
     {
       name: 'warning(options: ToastOptions)',
       type: 'void',
-      description: 'Creates a warning toast with the specified options.',
+      description: this.translationService.translate('demoApi.toast-demo.methods.warning(options: ToastOptions)'),
     },
     {
       name: 'error(options: ToastOptions)',
       type: 'void',
-      description: 'Creates an error toast with the specified options.',
+      description: this.translationService.translate('demoApi.toast-demo.methods.error(options: ToastOptions)'),
     },
-  ];
+  ]);
 
-  readonly toastOptions: ApiProperty[] = [
+  readonly toastOptions = computed<ApiProperty[]>(() => [
     {
       name: 'title',
       type: 'string',
       required: true,
-      description: 'The title of the toast message.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.title'),
     },
     {
       name: 'description',
       type: 'string',
       required: true,
-      description: 'The description of the toast message.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.description'),
     },
     {
       name: 'toastType',
       type: "'success' | 'info' | 'warning' | 'error'",
       defaultValue: "'info'",
-      description: 'The type of toast.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.toastType'),
     },
     {
       name: 'date',
       type: 'string',
-      description: 'A relative timestamp (e.g., "1hr ago").',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.date'),
     },
     {
       name: 'manualClosable',
       type: 'boolean',
       defaultValue: 'true',
-      description: 'Whether the toast can be manually closed.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.manualClosable'),
     },
     {
       name: 'timeoutSeconds',
       type: 'number',
-      description:
-        "The number of seconds before the toast automatically closes. If not provided, uses the container's default.",
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.timeoutSeconds'),
     },
     {
       name: 'primaryButtonText',
       type: 'string',
-      description: 'Text for the primary action button.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.primaryButtonText'),
     },
     {
       name: 'primaryButtonClick',
       type: '() => void',
-      description: 'Callback function for the primary button click.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.primaryButtonClick'),
     },
     {
       name: 'secondaryButtonText',
       type: 'string',
-      description: 'Text for the secondary action button.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.secondaryButtonText'),
     },
     {
       name: 'secondaryButtonClick',
       type: '() => void',
-      description: 'Callback function for the secondary button click.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.secondaryButtonClick'),
     },
     {
       name: 'closed',
       type: '() => void',
-      description: 'Callback function called when the toast is closed.',
+      description: this.translationService.translate('demoApi.toast-demo.toastOptions.closed'),
     },
-  ];
+  ]);
 
-  readonly containerInputs: ApiProperty[] = [
+  readonly containerInputs = computed<ApiProperty[]>(() => [
     {
       name: 'timeoutSeconds',
       type: 'number',
       defaultValue: '8',
-      description: 'Default timeout in seconds for toasts.',
+      description: this.translationService.translate('demoApi.toast-demo.containerInputs.timeoutSeconds'),
     },
     {
       name: 'manualClosable',
       type: 'boolean',
       defaultValue: 'true',
-      description: 'Whether toasts can be manually closed by default.',
+      description: this.translationService.translate('demoApi.toast-demo.containerInputs.manualClosable'),
     },
     {
       name: 'topOffset',
       type: 'number',
       defaultValue: '0',
-      description: 'Distance from the top of the screen in pixels.',
+      description: this.translationService.translate('demoApi.toast-demo.containerInputs.topOffset'),
     },
-  ];
+  ]);
 
   private toastService = inject(ToastService);
 

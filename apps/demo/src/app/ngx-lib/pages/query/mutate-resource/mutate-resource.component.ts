@@ -1,8 +1,8 @@
 import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, signal, computed, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -32,6 +32,8 @@ interface TeamMember {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MutateResourceDemoComponent {
+  private readonly translationService = inject(TranslationService);
+
   // ---------------------------------------------------------------------------
   // Demo 1: Tag Invalidation with Active Queries
   // ---------------------------------------------------------------------------
@@ -224,59 +226,63 @@ try {
   // ---------------------------------------------------------------------------
   // API Reference Tables
   // ---------------------------------------------------------------------------
-  readonly mutateResourceApiProps: ApiProperty[] = [
+  readonly mutateResourceApiProps = computed<ApiProperty[]>(() => [
     {
       name: 'mutation',
       type: '(args: TArgs) => Observable<TResult> | Promise<TResult>',
-      description: 'Async function or observable executing the server-side write operation.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceApiProps.mutation'),
     },
     {
       name: 'options.invalidatesTags',
       type: 'QueryTag[] | ((result, args) => QueryTag[])',
-      description: 'Tags to invalidate upon successful write. Immediately schedules refetches for active queries.',
+      description: this.translationService.translate(
+        'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags',
+      ),
     },
     {
       name: 'options.concurrency',
       type: "'parallel' | 'exhaust' | 'concat'",
-      description: 'Strategy for overlapping calls: parallel (default), exhaust (joins in-flight), concat (queues).',
+      description: this.translationService.translate(
+        'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency',
+      ),
     },
     {
       name: 'options.injector',
       type: 'Injector',
-      description: 'Optional explicit Angular Injector for signal registration outside injection context.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceApiProps.options.injector'),
     },
     {
       name: 'options.client',
       type: 'QueryClient',
-      description: 'Optional explicit QueryClient override (defaults to QUERY_CLIENT token).',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceApiProps.options.client'),
     },
-  ];
+  ]);
 
-  readonly mutateResourceRefApiProps: ApiProperty[] = [
+  readonly mutateResourceRefApiProps = computed<ApiProperty[]>(() => [
     {
       name: 'value',
       type: 'Signal<TResult | undefined>',
-      description: 'Signal holding the latest successfully resolved mutation result.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceRefApiProps.value'),
     },
     {
       name: 'error',
       type: 'Signal<E | null>',
-      description: 'Signal holding the most recent mutation error, or null when healthy.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceRefApiProps.error'),
     },
     {
       name: 'status',
       type: "Signal<'idle' | 'loading' | 'resolved' | 'error'>",
-      description: 'Granular mutation lifecycle status.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceRefApiProps.status'),
     },
     {
       name: 'isLoading',
       type: 'Signal<boolean>',
-      description: 'True while the mutation operation is executing.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceRefApiProps.isLoading'),
     },
     {
       name: 'mutate(args)',
       type: '(args: TArgs) => Promise<TResult>',
-      description: 'Triggers the mutation with arguments and returns a Promise settling with the result or rejection.',
+      description: this.translationService.translate('demoApi.mutate-resource.mutateResourceRefApiProps.mutate(args)'),
     },
-  ];
+  ]);
 }

@@ -1,14 +1,5 @@
 import assert from 'node:assert/strict';
-import {
-  mkdtempSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-  symlinkSync,
-  rmSync,
-  copyFileSync,
-} from 'node:fs';
+import {mkdtempSync, mkdirSync, readdirSync, readFileSync, writeFileSync, symlinkSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -53,7 +44,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
@@ -126,7 +117,14 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   run(process.execPath, ['consumer.mjs']);
 
   // Phase 2: Fresh isolated consumer without host node_modules symlinking
-  copyFileSync(join(root, '.npmrc'), join(freshConsumer, '.npmrc'));
+  const registryConfig = readFileSync(join(root, '.npmrc'), 'utf8')
+    .split('\n')
+    .filter((line) => !/^(legacy-peer-deps|strict-peer-dependencies|auto-install-peers)=/.test(line))
+    .join('\n');
+  writeFileSync(
+    join(freshConsumer, '.npmrc'),
+    `${registryConfig}\nstrict-peer-dependencies=true\nauto-install-peers=false\n`,
+  );
   writeFileSync(
     join(freshConsumer, 'package.json'),
     JSON.stringify(
@@ -166,11 +164,43 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   writeFileSync(
     join(freshConsumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
 const client = new QueryClient();
+const definition = {key: ['fresh-users'], loader: () => of([{id: 1}])};
+const users: Promise<{id: number}[]> = client.fetchQuery(definition);
+const users$: Observable<{id: number}[]> = fetchQueryObservable(client, definition);
+const snapshots$ = observeQueryObservable(client, definition);
+const queryProviders = provideQueryClient({queryDefaults: {
+  retry: {maxAttempts: 2, shouldRetry: () => false, delayMs: 10}, deadlineMs: 5000, refetchOnFocus: true,
+}});
+const diagnostics: QueryClientDiagnostics = client.getDiagnostics();
+function resources() {
+  const query = queryResource(() => definition, {refetchOnReconnect: true});
+  const initialError: boolean = query.isInitialError();
+  const refreshError: boolean = query.isRefreshError();
+  const rows = queryResources(() => [1, 2], id => ({key: ['fresh-items', id], loader: () => of({id})}));
+  const row: QueryResourceItem<{id: number}, number> = rows()[0];
+  const id: number = row.item();
+  const count: number = row.failureCount();
+  const retryAt: number | null = row.nextRetryAt();
+  for (const entry of diagnostics.entries) {
+    const failures: number = entry.failureCount;
+    const nextRetry: number | null = entry.nextRetryAt;
+    void [failures, nextRetry];
+  }
+  rows.destroy(); query.destroy();
+  return [initialError, refreshError, id, count, retryAt];
+}
+void [users, users$, snapshots$, queryProviders, diagnostics, resources, new QueryTimeoutError(5)];
+function idleState(service: IdleDetectionService) {
+  const state$: Observable<IdleDetectionState> = service.observeState();
+  return state$;
+}
+void idleState;
 const spinner: typeof SpinnerComponent = SpinnerComponent;
 const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}
@@ -208,7 +238,38 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, re
 
   writeFileSync(
     join(freshConsumer, 'consumer.mjs'),
-    `import '@angular/compiler'; import assert from 'node:assert/strict'; import {isURL, range, serializeQueryKey} from 'ngx-lift'; import {JSDOM} from 'jsdom'; const dom = new JSDOM('<html><body></body></html>'); for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key]; const {SpinnerComponent} = await import('clr-lift'); assert.equal(isURL('https://example.technology'), true); assert.deepEqual(range(3), [0,1,2]); assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}])); assert.equal(typeof SpinnerComponent, 'function'); dom.window.close();`,
+    `import '@angular/compiler';
+import assert from 'node:assert/strict';
+import {isURL, range, serializeQueryKey, QueryClient, QueryTimeoutError, provideQueryClient, queryResources, fetchQueryObservable, observeQueryObservable} from 'ngx-lift';
+import {of, throwError, firstValueFrom} from 'rxjs';
+import {JSDOM} from 'jsdom';
+const dom = new JSDOM('<html><body></body></html>');
+for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key];
+const {SpinnerComponent} = await import('clr-lift');
+assert.equal(isURL('https://example.technology'), true);
+assert.deepEqual(range(3), [0,1,2]);
+assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}]));
+assert.equal(typeof SpinnerComponent, 'function');
+for (const api of [provideQueryClient, queryResources, observeQueryObservable]) assert.equal(typeof api, 'function');
+const client = new QueryClient();
+try {
+  const definition = {key: ['installed-native'], loader: () => of(42), staleTime: Infinity};
+  assert.equal(await firstValueFrom(fetchQueryObservable(client, definition)), 42);
+  let attempts = 0;
+  assert.equal(await client.fetchQuery({key: ['installed-retry'],
+    loader: () => ++attempts === 1 ? throwError(() => new Error('temporary')) : of(43),
+    retry: {maxAttempts: 2, shouldRetry: () => true, delayMs: 0},
+  }), 43);
+  assert.equal(attempts, 2);
+  const diagnostics = client.getDiagnostics();
+  assert.equal(diagnostics.pendingRequestCount, 0);
+  assert.equal(diagnostics.entryCount, 2);
+  assert.ok(diagnostics.entries.every(entry => entry.failureCount === 0 && entry.nextRetryAt === null));
+  await assert.rejects(client.fetchQuery({key: ['installed-deadline'],
+    loader: () => new Promise(() => {}), deadlineMs: 5,
+  }), QueryTimeoutError);
+} finally {client.destroy(); dom.window.close();}
+`,
   );
   run(process.execPath, ['consumer.mjs'], freshConsumer);
 
