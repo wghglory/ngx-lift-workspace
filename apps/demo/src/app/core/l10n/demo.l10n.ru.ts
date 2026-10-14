@@ -581,7 +581,7 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Неверность на основе метки',
   'queryResource.badgeManualReload': 'Спусковой механизм ручной перегрузки',
   'queryResource.badgeAutoMutate': 'Автоматически через mutateResource',
-  'queryResource.demo1Section': '1. Просьба об использовании угля и его осложнении',
+  'queryResource.demo1Section': 'Просьба об использовании угля и его осложнении',
   'queryResource.demo1SectionDesc':
     'Когда два или более компонентов монтируются одновременно и запрашивают один и тот же ключ запроса, <code>QueryClient</code> делит один запрос на влетную сеть. Оба компонента получают тот же ответ с нулевым избыточным движением.',
   'queryResource.demo1PlaygroundTitle': 'Сопутствующие наблюдатели совместно выполняют рейсные работы',
@@ -599,7 +599,7 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Использование памяти',
   'queryResource.status': 'Статус',
   'queryResource.updated': 'Обновление',
-  'queryResource.demo2Section': '2. Политика &quot; затмения - время - изменение &quot; и &quot; свежести &quot;',
+  'queryResource.demo2Section': 'Политика &quot; затмения - время - изменение &quot; и &quot; свежести &quot;',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> контролирует, насколько долго кэшированные данные остаются свежими. Если наблюдатель запрашивает данные, когда они свежие, они мгновенно отображаются из памяти. Если устаревшие, кэшированные данные отображаются сразу, пока выполняется фоновая перезагрузка без очистки UI (обозначается <code>status: 'reloading'</code>).",
   'queryResource.configuredStaleTime': 'Настройка staleTime: {0} секунд',
@@ -612,7 +612,7 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Здоровый',
   'queryResource.region': 'Регион',
   'queryResource.snapshotTime': 'Время снимков',
-  'queryResource.demo3Section': '3. Скоординированное проведение опросов с повышением информированности общественности',
+  'queryResource.demo3Section': 'Скоординированное проведение опросов с повышением информированности общественности',
   'queryResource.demo3SectionDesc':
     'Настройте <code>pollInterval</code>, чтобы периодически обновлять активные запросы. Несколько наблюдателей с разными интервалами синхронизируются с максимальной скоростью. Периодический опрос автоматически приостанавливается, когда вкладка браузера скрыта, и возобновляется сразу, когда вкладка возвращается.',
   'queryResource.demo3PlaygroundTitle': 'Справочная информация',
@@ -625,7 +625,7 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.ping': 'Пинг',
   'queryResource.lastPulse': 'Последний импульс',
   'queryResource.pollingIdleMsg': 'Щелчок "Start Polling" для наблюдения за скоординированными проверками фона.',
-  'queryResource.demo4Section': '4. Неверность мутации и метки (mutateResource)',
+  'queryResource.demo4Section': 'Неверность мутации и метки (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> обрабатывает асинхронные записи. После успешной мутации она отменяет совпадающие метки, в результате чего все активные запросы с этими метками автоматически передают последние данные сервера на фоне.',
   'queryResource.demo4PlaygroundTitle': 'Неверность на основе метки',
@@ -2185,7 +2185,7 @@ export const ruTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Обновить виджеты сервиса',
   'queryExamples.widget': 'Виджет {0}: арендатор {1}, {2}',
   'queryExamples.counts': 'Количество HTTP-запросов:',
-  'queryExamples.dynamic': '4. Динамические параллельные запросы',
+  'queryExamples.dynamic': 'Динамические параллельные запросы',
   'queryExamples.dynamicIntro':
     'queryResources сопоставляет выбранные ID независимым наблюдателям. Перестановка сохраняет их; удаление ID освобождает наблюдателя.',
   'queryExamples.one': 'Только арендатор A',
@@ -2198,4 +2198,21 @@ export const ruTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'True при обновлении с сохранением кэша.',
   'queryResource.thFailures': 'Неудачные попытки',
   'queryResource.thNextRetry': 'Следующая попытка',
+  'queryGuide.selection': 'Связанные инструменты:',
+  'queryGuide.basic': '1. Начните с чтения из кеша',
+  'queryGuide.basicIntro':
+    'Зафиксируйте арендатора один раз, используйте его в key и loader и читайте сигналы результата. Обновление сохраняет последнее успешное значение.',
+  'queryGuide.configure': 'Конфигурация приложения',
+  'queryGuide.collectionIntro':
+    'Используйте queryResources для изменяемого списка независимых запросов. Каждый элемент имеет свой результат в кеше, состояние загрузки и действия восстановления.',
+  'queryGuide.empty': 'Элементы не выбраны. Активных запросов коллекции нет.',
+  'queryGuide.partialIntro':
+    'Ошибка одной строки не мешает другой. Повторите только неудачный запрос, не загружая успешные строки заново.',
+  'queryGuide.collectionContract':
+    'Коллекция — сигнал упорядоченных ссылок на запросы. Перестановка сохраняет ссылки; удаление сразу скрывает строки и освобождает наблюдателей при выполнении effect. Повторяющиеся канонические ключи отклоняются.',
+  'queryGuide.collectionLimits':
+    'Используйте один тип данных в коллекции и отфильтровывайте неготовые элементы. Запросы запускаются параллельно без ограничения одновременности; большие списки разбивайте на страницы или ограничивайте выбор. maxEntries не удаляет активные или незавершенные записи.',
+  'queryGuide.namingTitle': 'Имена ссылок на запросы и мутации',
+  'queryGuide.namingHandles':
+    'Используйте <code>userQuery</code> для одного запроса, <code>tenantQueries</code> для коллекции и <code>createMutation</code> для записи. Имена <code>user</code> или <code>tenant</code> оставляйте для полученных данных.',
 };

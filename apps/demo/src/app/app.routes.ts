@@ -88,6 +88,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'queryResources',
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-resources/query-resources.component').then(
+                (module) => module.QueryResourcesDemoComponent,
+              ),
+          },
+          {
             path: 'mutateResource',
             loadComponent: () =>
               import('./ngx-lib/pages/query/mutate-resource/mutate-resource.component').then(

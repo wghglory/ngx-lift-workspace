@@ -532,7 +532,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': '标签失效机制',
   'queryResource.badgeManualReload': '需手动触发 reload',
   'queryResource.badgeAutoMutate': '通过 mutateResource 自动触发',
-  'queryResource.demo1Section': '1. 并发请求合并与去重 (Request Coalescing)',
+  'queryResource.demo1Section': '并发请求合并与去重 (Request Coalescing)',
   'queryResource.demo1SectionDesc':
     '当两个或多个组件同时挂载并请求相同的 query key 时，<code>QueryClient</code> 会共享同一个在途网络请求，所有组件获取同一份结果，杜绝重复流量。',
   'queryResource.demo1PlaygroundTitle': '并发观察者共享在途网络请求',
@@ -549,7 +549,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.memoryUsage': '内存占用',
   'queryResource.status': '状态',
   'queryResource.updated': '更新时间',
-  'queryResource.demo2Section': '2. Stale-While-Revalidate 与新鲜度策略',
+  'queryResource.demo2Section': 'Stale-While-Revalidate 与新鲜度策略',
   'queryResource.demo2SectionDesc':
     '<code>staleTime</code> 决定缓存数据的新鲜时长。如果在数据新鲜期内请求，直接从内存即时渲染；如果已过期（stale），先立即展示旧数据，同时在后台静默发起刷新，无需清空界面（状态为 <code>reloading</code>）。',
   'queryResource.configuredStaleTime': '配置的 staleTime: {0} 秒',
@@ -562,7 +562,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} 健康',
   'queryResource.region': '所属区域',
   'queryResource.snapshotTime': '快照时间',
-  'queryResource.demo3Section': '3. 具备页面可见性感知的协同轮询',
+  'queryResource.demo3Section': '具备页面可见性感知的协同轮询',
   'queryResource.demo3SectionDesc':
     '配置 <code>pollInterval</code> 可对活跃查询定时轮询。多个观察者请求不同间隔时，自动协同按最快频率轮询；当切换或最小化标签页时自动暂停，切回后立即恢复。',
   'queryResource.demo3PlaygroundTitle': '协同后台轮询',
@@ -574,7 +574,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.ping': '网络延迟',
   'queryResource.lastPulse': '最后心跳',
   'queryResource.pollingIdleMsg': '轮询目前处于空闲状态。点击“开启轮询”以观察实时协同后台检测。',
-  'queryResource.demo4Section': '4. 变更操作与标签失效 (mutateResource)',
+  'queryResource.demo4Section': '变更操作与标签失效 (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> 处理异步写操作。变更成功后，自动使关联的标签失效，从而触发所有具有相应标签的活跃查询在后台自动重新获取最新数据。',
   'queryResource.demo4PlaygroundTitle': '基于标签的自动失效与重拉',
@@ -1933,7 +1933,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': '刷新服务组件',
   'queryExamples.widget': '组件 {0}：租户 {1}，{2}',
   'queryExamples.counts': 'HTTP 请求次数：',
-  'queryExamples.dynamic': '4. 动态并行查询',
+  'queryExamples.dynamic': '动态并行查询',
   'queryExamples.dynamicIntro': 'queryResources 将所选 ID 映射为独立观察者。重排保留观察者；移除 ID 会销毁对应观察者。',
   'queryExamples.one': '仅租户 A',
   'queryExamples.both': '两个租户',
@@ -1945,4 +1945,19 @@ export const zhCNTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': '保留缓存数据的刷新过程中为 true。',
   'queryResource.thFailures': '失败尝试',
   'queryResource.thNextRetry': '下次重试',
+  'queryGuide.selection': '相关工具：',
+  'queryGuide.basic': '1. 从缓存读取开始',
+  'queryGuide.basicIntro': '一次捕获租户参数，并同时用于 key 和 loader，再读取结果信号。刷新时保留上次成功的数据。',
+  'queryGuide.configure': '应用配置',
+  'queryGuide.collectionIntro':
+    'queryResources 用于动态变化的独立查询列表。每个输入都有自己的缓存结果、加载状态和恢复操作。',
+  'queryGuide.empty': '尚未选择项目，没有活动的集合读取。',
+  'queryGuide.partialIntro': '一行失败时，其他行的数据仍然可用。只重试失败行，不重新读取成功行。',
+  'queryGuide.collectionContract':
+    '集合是有序查询引用的信号。重新排序保留引用；移除时立即隐藏行，并在 effect 调度时释放观察者。重复的规范化 key 会被拒绝。',
+  'queryGuide.collectionLimits':
+    '每个集合使用一种数据类型，并过滤尚未就绪的项目。请求并行启动，没有并发上限；大型列表应分页或限制选择数量。maxEntries 不会淘汰活动或待完成的条目。',
+  'queryGuide.namingTitle': '查询和 mutation 句柄命名',
+  'queryGuide.namingHandles':
+    '单个查询使用 <code>userQuery</code>，集合使用 <code>tenantQueries</code>，写操作使用 <code>createMutation</code>。<code>user</code> 或 <code>tenant</code> 留给解析后的数据。',
 };

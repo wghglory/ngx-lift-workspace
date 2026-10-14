@@ -584,7 +584,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Invalidación basada en las velocidades',
   'queryResource.badgeManualReload': 'Activador de recarga manual',
   'queryResource.badgeAutoMutate': 'Automático a través de mutateResource',
-  'queryResource.demo1Section': '1. Solicitar coalescing',
+  'queryResource.demo1Section': 'Solicitar coalescing',
   'queryResource.demo1SectionDesc':
     'Cuando dos o más componentes montan al mismo tiempo y solicitan la misma clave de consulta, <code>QueryClient</code> comparte la solicitud de red única en vuelo. Ambos componentes reciben la misma respuesta con cero tráfico redundante.',
   'queryResource.demo1PlaygroundTitle': 'Los observadores concurrentes comparten un trabajo de vuelo',
@@ -602,7 +602,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Uso de la memoria',
   'queryResource.status': 'Situación',
   'queryResource.updated': 'Actualizado',
-  'queryResource.demo2Section': '2. Las políticas de frescura de Stale-While-Ralliate',
+  'queryResource.demo2Section': 'Las políticas de frescura de Stale-While-Ralliate',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> controla cuánto tiempo permanece los datos en caché actualizados. Si un observador solicita datos mientras están actualizados, se renderizan instantáneamente desde la memoria. Si están vencidos, los datos en caché se muestran inmediatamente mientras un refresco de fondo se ejecuta silenciosamente sin limpiar la interfaz (indicado por <code>status: 'reloading'</code>).",
   'queryResource.configuredStaleTime': 'Configurado staleTime: {0} segundos',
@@ -616,7 +616,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Sano',
   'queryResource.region': 'Región',
   'queryResource.snapshotTime': 'Hora de la instantánea',
-  'queryResource.demo3Section': '3. Polling coordinado con conciencia de visibilidad',
+  'queryResource.demo3Section': 'Polling coordinado con conciencia de visibilidad',
   'queryResource.demo3SectionDesc':
     'Configure <code>pollInterval</code> para refrescar periódicamente consultas activas. Varios observadores solicitando intervalos diferentes se coordinan a la máxima velocidad. El sondeo se pausa automáticamente cuando la pestaña del navegador está oculta y se reinicia inmediatamente al volver.',
   'queryResource.demo3PlaygroundTitle': 'Polling de fondo',
@@ -630,7 +630,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Último Pulso',
   'queryResource.pollingIdleMsg':
     'Polling está ahora inactivo. Haga clic en Inicio Polling para observar controles de fondo coordinados en vivo.',
-  'queryResource.demo4Section': '4. Mutaciones de invalidación de etiqueta (mutateResource)',
+  'queryResource.demo4Section': 'Mutaciones de invalidación de etiqueta (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> maneja asíncrono escribe. Tras una mutación exitosa, invalida las etiquetas de juego, causando que todas las consultas activas con esas etiquetas retejan automáticamente los últimos datos del servidor en el fondo.',
   'queryResource.demo4PlaygroundTitle': 'Invalidación basada en velocidades',
@@ -2223,7 +2223,7 @@ export const esTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Actualizar widgets del servicio',
   'queryExamples.widget': 'Widget {0}: inquilino {1}, {2}',
   'queryExamples.counts': 'Número de solicitudes HTTP:',
-  'queryExamples.dynamic': '4. Consultas paralelas dinámicas',
+  'queryExamples.dynamic': 'Consultas paralelas dinámicas',
   'queryExamples.dynamicIntro':
     'queryResources asigna los ID seleccionados a observadores independientes. Reordenar conserva los observadores; eliminar un ID libera su observador.',
   'queryExamples.one': 'Solo inquilino A',
@@ -2236,4 +2236,21 @@ export const esTranslations: Record<string, string> = {
   'queryExamples.refreshingDescription': 'True durante la actualización conservando la caché.',
   'queryResource.thFailures': 'Intentos fallidos',
   'queryResource.thNextRetry': 'Próximo reintento',
+  'queryGuide.selection': 'Herramientas relacionadas:',
+  'queryGuide.basic': '1. Empezar con una lectura en caché',
+  'queryGuide.basicIntro':
+    'Capture el inquilino una vez, úselo en key y loader y lea las señales del resultado. Al actualizar se conserva el último valor correcto.',
+  'queryGuide.configure': 'Configuración de la aplicación',
+  'queryGuide.collectionIntro':
+    'Use queryResources para listas cambiantes de lecturas independientes. Cada entrada tiene su propio resultado en caché, estado de carga y controles de recuperación.',
+  'queryGuide.empty': 'No hay elementos seleccionados ni lecturas activas de la colección.',
+  'queryGuide.partialIntro':
+    'Una fila falla mientras la otra sigue disponible. Reintente solo la fila fallida sin volver a consultar las correctas.',
+  'queryGuide.collectionContract':
+    'La colección es una señal de referencias ordenadas. Reordenar conserva las referencias; eliminar oculta las filas de inmediato y libera observadores al ejecutar el effect. Se rechazan claves canónicas duplicadas.',
+  'queryGuide.collectionLimits':
+    'Use un tipo de datos por colección y filtre los elementos que no estén listos. Las solicitudes se ejecutan en paralelo sin límite de concurrencia; pagine o limite las selecciones grandes. maxEntries no elimina entradas activas o pendientes.',
+  'queryGuide.namingTitle': 'Nombres de referencias de consultas y mutaciones',
+  'queryGuide.namingHandles':
+    'Use <code>userQuery</code> para una consulta, <code>tenantQueries</code> para una colección y <code>createMutation</code> para una escritura. Reserve <code>user</code> o <code>tenant</code> para los datos resueltos.',
 };
