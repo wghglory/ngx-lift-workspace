@@ -137,6 +137,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
           'clr-lift': `file:${packFiles['clr-lift']}`,
           '@angular/core': '~21.2.0',
           '@angular/common': '~21.2.0',
+          '@angular/platform-browser': '~21.2.0',
           '@angular/forms': '~21.2.0',
           '@angular/compiler': '~21.2.0',
           '@angular/animations': '~21.2.0',
@@ -160,6 +161,11 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   );
 
   run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 60000);
+  writeFileSync(
+    join(freshConsumer, 'query-browser.mjs'),
+    readFileSync(join(root, 'tools/package/fixtures/query-browser.mjs'), 'utf8'),
+  );
+  process.stdout.write(run(process.execPath, ['query-browser.mjs'], freshConsumer));
 
   writeFileSync(
     join(freshConsumer, 'consumer.ts'),
