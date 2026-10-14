@@ -9,6 +9,8 @@ This document consolidates migration guides and breaking change notes across maj
 
 1. [Async & Shared Query Architecture (PR #142)](#1-async--shared-query-architecture-pr-142)
 2. [Zoneless Angular & Native Vitest Migration](#2-zoneless-angular--native-vitest-migration)
+3. [Unreleased quality audit hardening](#3-unreleased-quality-audit-hardening-2026-10-13)
+4. [Native query loaders and dynamic collections](#4-native-query-loaders-and-dynamic-collections-unreleased)
 
 ---
 
@@ -189,3 +191,40 @@ disables it). The defaults limit a single wait to 30s and cumulative scheduled w
 duration. An oversized server hint stops retrying with the original error instead of shortening the server's minimum
 wait. Invalid operator configuration now throws an explicit RangeError/TypeError. See
 [the consumer contract and retry guide](./design/dsm-consumer-contracts-and-retry.md).
+
+## 4. Native query loaders and dynamic collections (unreleased)
+
+These changes are in source after `ngx-lift@21.2.0`; this heading does not designate a published version. PR #146
+removes `observableLoader` from the public API. Replace its imports and wrappers with native loader factories:
+
+```typescript
+// Before: loader: observableLoader(() => http.get<User>(url))
+const definition = {
+  key: ['users', sessionScope, userId],
+  loader: () => http.get<User>(url),
+};
+```
+
+Native loaders work with `QueryClient`, `queryResource`, `queryResources`, `fetchQueryObservable` and
+`observeQueryObservable`. Observables resolve their first value; empty completion rejects. Continuous streams require a
+separate streaming lifecycle. `fetchQueryObservable` remains finite and does not independently cancel shared work on
+unsubscription. Live observers update on invalidation; explicit removal completes `observeQueryObservable`.
+
+`queryResources` accepts an item getter and a definition factory, with one result type per collection. It rejects
+duplicate canonical keys, retains refs on reorder, and releases removed observers during effect scheduling. Filter
+unready items before passing them in; the definition callback does not accept `undefined`. The new demo has its own
+route: `/ngx-lift/query/queryResources`.
+
+Read retries, total deadlines and focus/reconnect recovery are disabled by default. Configure application defaults with
+`provideQueryClient`; override each query with `retry: false` / `deadlineMs: false` when needed. Choose retry ownership
+between the query layer and HTTP interceptor deliberately; nested retry loops multiply attempts. Retry predicates must
+respect read safety and server minimum waits.
+
+Mutation signals are `value`, `error`, `invalidationError`, `status` and `isLoading`; there are no `data`, `isPending`,
+`isSuccess` or `isError` aliases. A successful write remains successful if cache synchronization fails. Do not repeat
+the write to repair `invalidationError`; refresh the reads. Automatic write replay and shared optimistic rollback are
+absent.
+
+Validate real consumers before selecting a release version: removing an adapter export is breaking even when its
+replacement is simpler. See [the production guide](design/query-resource-design-spec.md) for session transitions, known
+limits, support evidence and publication gates.

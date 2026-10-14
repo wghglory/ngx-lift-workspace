@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+Changes after `ngx-lift@21.2.0` / `clr-lift@21.1.0`. No new version is assigned by this record.
+
+### Added
+
+- Native `Observable<T> | PromiseLike<T>` loaders across query entry points, with first-value Observable settlement.
+- `queryResources(items, definition, options?)` for homogeneous dynamic collections, with stable refs and typed
+  `item()`.
+- Opt-in read retries, total deadlines, focus/reconnect recovery and client-level terminal error reporting.
+- Initial/refresh error signals, retry metadata, application configuration through `provideQueryClient`, and detached
+  diagnostics.
+- A separate queryResources demo, a progressive queryResource guide, Clarity controls and consistent state labels.
+- Strict installed-package consumer coverage, including a mounted zoneless Angular query consumer for session isolation,
+  cancellation, refresh recovery, collection lifecycle and scoped writes.
+
+### Changed
+
+- Query adapters no longer require the public `observableLoader` wrapper. This removes a public export; migrate to
+  native loaders and select a release version with an explicit SemVer review. See
+  [migration steps](docs/MIGRATIONS.md#4-native-query-loaders-and-dynamic-collections-unreleased).
+- #143–#147 also contain retry-policy, validation, file encoding, localization, scoped-service and package-quality
+  changes. See the existing unreleased migration sections for their consumer effects.
+
+### Fixed
+
+- Query observer/reporter exceptions cannot strand reads or replace transport results; deadlines and obsolete
+  generations preserve settlement and publication boundaries.
+- Query diagnostics use one clock/visibility sample and count unsettled logical reads, including retry waits.
+- Public documentation now reflects actual mutation signals and tag invalidation. Shared optimistic rollback is
+  deferred.
+
+### Release boundary
+
+The current source and demo are ahead of the last tagged release. Actual publication still requires a version decision,
+dependency advisory triage, final-revision quality checks and registry authentication. SSR/hydration and a broad
+peer-version matrix are not established by the browser consumer fixture.
+
 ## [21.2.0] (ngx-lift) / [21.1.0] (clr-lift) - 2026-10-12
 
 ### 🎉 Added
@@ -14,15 +52,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
     time, manual/automatic invalidation, garbage collection, and query observer notifications
     ([#142](https://github.com/wghglory/ngx-lift/pull/142))
   - **`queryResource`**: Reactive signal resource integrated with `QueryClient`, supporting typed query keys, background
-    revalidation, multi-subscriber sharing, and optimistic updates
+    revalidation and multi-subscriber sharing ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **`mutateResource`**: Standardized mutation primitive for executing async writes, cache invalidations, and state
+    tracking (`isLoading`, `status`, `value`, `error`) ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **Observable facades**: `fetchQueryObservable` exposes one result and `observeQueryObservable` streams snapshots
     ([#142](https://github.com/wghglory/ngx-lift/pull/142))
-  - **`mutateResource`**: Standardized mutation primitive for executing async writes, cache invalidations, and
-    optimistic cache updates with full lifecycle tracking (`isPending`, `isSuccess`, `isError`, `data`, `error`)
-    ([#142](https://github.com/wghglory/ngx-lift/pull/142))
-  - **`queryObservable`**: Adapter for bridging RxJS Observables into `QueryClient` queries with first-value resolution
-    and shared-request cancellation ([#142](https://github.com/wghglory/ngx-lift/pull/142))
-  - **Query models & tokens**: Full TypeScript definitions (`QueryKey`, `QueryOptions`, `MutationOptions`, `QueryState`)
-    and `QUERY_CLIENT` injection token ([#142](https://github.com/wghglory/ngx-lift/pull/142))
+  - **Query models & tokens**: Full TypeScript definitions (`QueryKey`, `QueryDefinition`, `MutateResourceOptions`,
+    `QuerySnapshot`) and `QUERY_CLIENT` injection token ([#142](https://github.com/wghglory/ngx-lift/pull/142))
 - **`ngx-lift` - Kubernetes resilience operators & interceptor:**
   - **`k8sRetryBackoff` operator**: Specialized RxJS operator that handles Kubernetes HTTP 429 (Too Many Requests)
     errors with exponential backoff and server-sent `Retry-After` header inspection

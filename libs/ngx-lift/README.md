@@ -68,11 +68,15 @@ common Angular development tasks and boost productivity.
 ### 🔄 Query & Caching
 
 - **`QueryClient`** - Shared transport and cache manager coordinating request deduplication, cache invalidation via
-  tags/keys, garbage collection, and multi-observer polling
+  scoped tags, garbage collection, and multi-observer polling
 - **`queryResource`** - Reactive Signal adapter connecting Angular views to shared cached queries with automatic
   deduplication, stale-while-revalidate, and coordinated polling
-- **`mutateResource`** - Reactive mutation adapter providing optimistic updates, error rollbacks, and automatic cache
-  invalidation by query keys or tags
+- **`queryResources`** - Dynamic collections of independent query observers, preserving refs on reorder and exposing
+  per-row loading, failure and recovery state
+- **`mutateResource`** - Explicit writes with mutation state, parallel/exhaust/concat concurrency and scoped tag
+  invalidation. Shared optimistic cache updates and rollback are not implemented
+- **Observable services** - `fetchQueryObservable` emits one cached read; `observeQueryObservable` streams live
+  snapshots
 
 ### 🔧 Pipes
 
@@ -448,5 +452,12 @@ If this library helped you, please consider giving it a ⭐ on GitHub!
 
 ## Lifecycle and production contracts
 
-See [service scoping, clocks, localization and query diagnostics](../../docs/design/priority-1-2-completion.md) for
-ownership and loading contracts. [中文说明](../../docs/design/priority-1-2-completion.zh-CN.md).
+See
+[service scoping, clocks, localization and query diagnostics](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/priority-1-2-completion.md)
+for ownership and loading contracts. [中文说明](../../docs/design/priority-1-2-completion.zh-CN.md).
+
+For the query learning path, session isolation recipe, tested consumer scope and release boundary, see the
+[query production guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/query-resource-design-spec.md).
+The demos for [queryResource](https://ngx-lift.netlify.app/ngx-lift/query/queryResource) and
+[queryResources](https://ngx-lift.netlify.app/ngx-lift/query/queryResources) are separate pages. These links describe
+the current source; deployment and npm publication are separate steps.
