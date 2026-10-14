@@ -3,6 +3,20 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import ts from 'typescript';
 
+function readTranslations(locale: string) {
+  const file = resolve(__dirname, '../../demo/src/app/core/l10n', `demo.l10n.${locale.toLowerCase()}.ts`);
+  const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+  const translated: Record<string, string> = {};
+  function read(node: ts.Node) {
+    if (ts.isPropertyAssignment(node) && ts.isStringLiteral(node.name) && ts.isStringLiteral(node.initializer)) {
+      translated[node.name.text] = node.initializer.text;
+    }
+    ts.forEachChild(node, read);
+  }
+  read(source);
+  return translated;
+}
+
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {
     if (!localStorage.getItem('clr-lift-lang')) localStorage.setItem('clr-lift-lang', 'en');
@@ -11,11 +25,12 @@ test.beforeEach(async ({page}) => {
 });
 
 test('dynamic collection adds, reorders, and removes rows', async ({page}) => {
+  await page.goto('/ngx-lift/query/queryResources');
   const demo = page.getByTestId('query-demo-dynamic');
   await expect(demo.getByTestId('query-demo-dynamic-row')).toHaveCount(1);
   await demo.getByRole('button', {name: 'Both tenants', exact: true}).click();
   await expect(demo.getByTestId('query-demo-dynamic-row')).toHaveCount(2);
-  await expect(demo.getByTestId('query-demo-dynamic-row').last()).toContainText('Tenant B — resolved');
+  await expect(demo.getByTestId('query-demo-dynamic-row').last()).toContainText(/Tenant B\s*resolved/);
   await demo.getByRole('button', {name: 'Reverse order', exact: true}).click();
   await expect(demo.getByTestId('query-demo-dynamic-row').first()).toContainText('Tenant B');
   await demo.getByRole('button', {name: 'Clear selection', exact: true}).click();
@@ -27,24 +42,16 @@ test('new query examples are localized in every supported language', async ({pag
   for (const locale of ['en', 'zh-CN', 'zh-TW', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt-BR', 'ru']) {
     await page.evaluate((locale) => localStorage.setItem('clr-lift-lang', locale), locale);
     await page.reload();
-    const file = resolve(__dirname, '../../demo/src/app/core/l10n', `demo.l10n.${locale.toLowerCase()}.ts`);
-    const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
-    const translated: Record<string, string> = {};
-    function read(node: ts.Node) {
-      if (ts.isPropertyAssignment(node) && ts.isStringLiteral(node.name) && ts.isStringLiteral(node.initializer)) {
-        translated[node.name.text] = node.initializer.text;
-      }
-      ts.forEachChild(node, read);
-    }
-    read(source);
+    const translated = readTranslations(locale);
     const demo = page.getByTestId('observable-query-examples');
     await expect(demo.locator('h2')).toHaveText(translated['queryExamples.title']);
     await expect(demo.getByRole('button', {name: translated['queryExamples.create'], exact: true})).toBeVisible();
-    await expect(demo).toContainText(translated['queryExamples.dynamicIntro']);
+    await expect(demo).toContainText(translated['queryGuide.basicIntro']);
     await expect(demo).not.toContainText('!! Key');
     await expect(demo).not.toContainText(/\{\d+\}/);
     const failure = page.getByTestId('query-failure-examples');
     await expect(failure.locator('h2')).toHaveText(translated['queryExamples.failureTitle']);
+    await failure.getByRole('tab', {name: translated['queryExamples.automaticRetry'], exact: true}).click();
     await expect(
       failure.getByRole('button', {name: translated['queryExamples.startRetry'], exact: true}),
     ).toBeVisible();
@@ -77,28 +84,26 @@ test('failure patterns retain data, isolate observers, and retry only failed rea
   await refresh.getByRole('button', {name: 'Simulate observer failure', exact: true}).click();
   await expect(demo.getByTestId('failure-reporting')).toContainText('observer diagnostics: 1');
   await expect(refresh).toContainText('resolved');
+  await demo.getByRole('tab', {name: 'Bounded automatic retries', exact: true}).click();
   await demo.getByRole('button', {name: 'Start Observable retry', exact: true}).click();
   await expect(demo.getByTestId('failure-retry-state')).toContainText('failureCount: 1');
   await expect(demo.getByTestId('failure-retry-state')).toContainText('resolved; failureCount: 0');
   await expect(demo.getByTestId('failure-request-counts')).toContainText('"GET retry": 3');
   await demo.getByRole('button', {name: 'Start Promise retry', exact: true}).click();
   await expect(demo.getByTestId('failure-promise-state')).toContainText('Promise: resolved');
-  const rows = demo.getByTestId('failure-row');
-  await expect(rows.last()).toContainText('b — error');
-  await rows.last().getByRole('button', {name: 'Retry read', exact: true}).click();
-  await expect(rows.last()).toContainText('b — resolved');
-  await expect(demo.getByTestId('failure-request-counts')).toContainText('"GET rows/a": 1');
-  await expect(demo.getByTestId('failure-reporting')).toContainText('Terminal read errors: 3');
+  await expect(demo.getByTestId('failure-reporting')).toContainText('Terminal read errors: 2');
 });
 
 test('deadlines cancel hanging subscriptions and write failures preserve input without automatic retry', async ({
   page,
 }) => {
   const demo = page.getByTestId('query-failure-examples');
+  await demo.getByRole('tab', {name: 'Logical read deadline', exact: true}).click();
   await demo.getByRole('button', {name: 'Start hanging read', exact: true}).click();
   await expect(demo.getByTestId('failure-deadline').getByRole('alert')).toContainText('timed out');
   await expect(demo.getByTestId('failure-deadline-state')).toContainText('Canceled subscriptions: 1');
   await expect(demo.getByTestId('failure-request-counts')).toContainText('"GET deadline": 1');
+  await demo.getByRole('tab', {name: 'Write failure', exact: true}).click();
   await demo.getByTestId('failure-name').fill('Retained browser input');
   await demo.getByRole('button', {name: 'Submit failed write', exact: true}).click();
   await expect(demo.getByTestId('failure-mutation-state')).toHaveText('error');
@@ -107,21 +112,22 @@ test('deadlines cancel hanging subscriptions and write failures preserve input w
   await demo.getByRole('button', {name: 'Submit write', exact: true}).click();
   await expect(demo.getByTestId('failure-mutation-state')).toHaveText('resolved');
   await expect(demo.getByTestId('failure-request-counts')).toContainText('"POST mutation": 2');
+  await demo.getByRole('tab', {name: 'Initial read failure', exact: true}).click();
   await expect(demo.getByTestId('failure-retained')).toContainText('43');
 });
 
 test('Observable queries gate dependencies, distinguish refresh, and recover from errors', async ({page}) => {
   const parallel = page.getByTestId('query-demo-parallel');
-  await expect(parallel).toContainText('Tenant A — resolved');
+  await expect(parallel).toContainText(/Tenant A\s*resolved/);
   await expect(page.getByTestId('query-demo-dependent')).toContainText('Tenant A database');
   await page.getByRole('button', {name: 'Refresh tenant', exact: true}).click();
   await expect(page.getByTestId('query-demo-loading')).toContainText('isRefreshing: true');
   await expect(page.getByTestId('query-demo-loading')).toContainText('isInitialLoading: false');
-  await expect(parallel).toContainText('Tenant A — resolved');
+  await expect(parallel).toContainText(/Tenant A\s*resolved/);
   await page.getByRole('button', {name: 'Fail next tenant read', exact: true}).click();
   await expect(parallel.getByRole('alert')).toContainText('Tenant read failed');
   await page.getByRole('button', {name: 'Retry tenant', exact: true}).click();
-  await expect(parallel).toContainText('Tenant A — resolved');
+  await expect(parallel).toContainText(/Tenant A\s*resolved/);
   await expect(parallel.getByRole('alert')).toHaveCount(0);
 });
 
@@ -141,4 +147,26 @@ test('three service callers coalesce and a mutation refreshes live scoped observ
   await expect(databases).toContainText('Tenant B database');
   await expect(databases).not.toContainText('Browser-created database');
   await expect(page.getByTestId('query-demo-widget').first()).toContainText('tenant b');
+});
+
+test('collection recovery retries one failed row and preserves successful siblings', async ({page}) => {
+  await page.goto('/ngx-lift/query/queryResources');
+  const rows = page.getByTestId('failure-row');
+  await expect(rows.last()).toContainText(/b\s*error/);
+  await rows.last().getByRole('button', {name: 'Retry read', exact: true}).click();
+  await expect(rows.last()).toContainText(/b\s*resolved/);
+  await expect(page.getByTestId('failure-request-counts')).toContainText('"GET rows/a": 1');
+  await expect(page.getByTestId('failure-request-counts')).toContainText('"GET rows/b": 2');
+});
+
+test('query guide controls have spacing, Clarity labels and a separate collection menu', async ({page}) => {
+  const select = page.getByTestId('query-demo-tenant');
+  await expect(select.locator('xpath=ancestor::clr-select-container')).toBeVisible();
+  const first = await page.getByRole('button', {name: 'Refresh tenant', exact: true}).boundingBox();
+  const second = await page.getByRole('button', {name: 'Fail next tenant read', exact: true}).boundingBox();
+  expect(first && second && second.x - (first.x + first.width)).toBeGreaterThan(4);
+  await expect(page.getByTestId('query-demo-parallel').locator('.label-success')).toHaveCount(2);
+  await page.getByRole('link', {name: 'queryResources', exact: true}).first().click();
+  await expect(page).toHaveURL(/queryResources$/);
+  await expect(page.locator('h1')).toHaveText('queryResources');
 });

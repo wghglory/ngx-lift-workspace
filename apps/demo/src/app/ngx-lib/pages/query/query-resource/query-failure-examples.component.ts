@@ -3,20 +3,23 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, DestroyRef, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {TranslatePipe} from 'clr-lift';
-import {mutateResource, QueryClient, queryResource, queryResources} from 'ngx-lift';
+import {mutateResource, QueryClient, queryResource} from 'ngx-lift';
 
+import {ClarityModule} from '@clr/angular';
+import {QueryStatusDirective} from '../query-status.directive';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 import {FailureDemoData, QueryFailureBackend} from './query-failure-backend';
 
 @Component({
   selector: 'app-query-failure-examples',
-  imports: [JsonPipe, FormsModule, TranslatePipe, CodeBlockComponent],
+  imports: [JsonPipe, FormsModule, TranslatePipe, CodeBlockComponent, ClarityModule, QueryStatusDirective],
   providers: [
     QueryFailureBackend,
     {provide: HttpClient, useFactory: () => new HttpClient(inject(QueryFailureBackend))},
   ],
   templateUrl: './query-failure-examples.component.html',
+  styleUrl: '../query-demo.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryFailureExamplesComponent {
@@ -89,14 +92,6 @@ export class QueryFailureExamplesComponent {
         : undefined,
     {client: this.client},
   );
-  readonly rowQueries = queryResources(
-    () => ['a', 'b'],
-    (id) => ({
-      key: ['failure-demo', 'rows', id],
-      loader: () => this.http.get<FailureDemoData>(`/query-failure/rows/${id}`),
-    }),
-    {client: this.client},
-  );
   readonly saveMutation = mutateResource(
     (args: {name: string}) => this.http.post<FailureDemoData>('/query-failure/mutation', args),
     {
@@ -143,20 +138,29 @@ export class QueryFailureExamplesComponent {
 import {HttpClient, HttpErrorResponse, provideHttpClient} from '@angular/common/http';
 import {provideQueryClient, queryResource} from 'ngx-lift';
 
-export const appConfig: ApplicationConfig = {providers: [provideHttpClient(), provideQueryClient({
-  queryDefaults: {
-    deadlineMs: 15_000, refetchOnReconnect: true,
-    retry: {maxAttempts: 3,
-      shouldRetry: error => error instanceof HttpErrorResponse && error.status === 503,
-      delayMs: (_error, context) => Math.min(1000 * 2 ** (context.attempt - 1), 30_000)},
-  },
-})]};
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(),
+    provideQueryClient({
+      queryDefaults: {
+        deadlineMs: 15_000,
+        refetchOnReconnect: true,
+        retry: {
+          maxAttempts: 3,
+          shouldRetry: (error) => error instanceof HttpErrorResponse && error.status === 503,
+          delayMs: (_error, context) => Math.min(1000 * 2 ** (context.attempt - 1), 30_000),
+        },
+      },
+    }),
+  ],
+};
 
 @Component({selector: 'app-recovery', template: '{{ rowsQuery.status() }}'})
 export class RecoveryComponent {
   private readonly http = inject(HttpClient);
   readonly rowsQuery = queryResource(() => ({
-    key: ['rows'], loader: () => this.http.get<{id: string}[]>('/api/rows'),
+    key: ['rows'],
+    loader: () => this.http.get<{id: string}[]>('/api/rows'),
   }));
 }`);
 }

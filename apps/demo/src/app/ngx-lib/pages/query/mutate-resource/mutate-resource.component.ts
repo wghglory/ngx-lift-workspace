@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal, computed, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -21,6 +21,7 @@ interface TeamMember {
     CommonModule,
     FormsModule,
     ClarityModule,
+    CalloutComponent,
     PageContainerComponent,
     SpinnerComponent,
     TranslatePipe,
@@ -91,15 +92,15 @@ export class MutateResourceDemoComponent {
   inFlightCount = signal(0);
   concurrencyLogs = signal<string[]>([]);
 
-  private readonly testMutationExhaust = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
+  private readonly exhaustMutation = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
     concurrency: 'exhaust',
   });
 
-  private readonly testMutationConcat = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
+  private readonly concatMutation = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
     concurrency: 'concat',
   });
 
-  private readonly testMutationParallel = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
+  private readonly parallelMutation = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
     concurrency: 'parallel',
   });
 
@@ -123,11 +124,11 @@ export class MutateResourceDemoComponent {
     const mode = this.selectedConcurrency();
 
     if (mode === 'exhaust') {
-      void this.testMutationExhaust.mutate(currentSeq);
+      void this.exhaustMutation.mutate(currentSeq);
     } else if (mode === 'concat') {
-      void this.testMutationConcat.mutate(currentSeq);
+      void this.concatMutation.mutate(currentSeq);
     } else {
-      void this.testMutationParallel.mutate(currentSeq);
+      void this.parallelMutation.mutate(currentSeq);
     }
   }
 
@@ -169,58 +170,55 @@ export class MutateResourceDemoComponent {
   // Code Snippets for DemoPlayground
   // ---------------------------------------------------------------------------
   readonly invalidationCode = highlight(`// 1. Define query observing 'team' tags
-const teamQuery = queryResource(() => ({
+readonly teamQuery = queryResource(() => ({
   key: ['team', 'members'],
-  tags: [{ type: 'team' }],
+  tags: [{type: 'team'}],
   loader: () => this.teamService.getAll(),
 }));
 
 // 2. Define mutation invalidating 'team' tags on write success
-const addMember = mutateResource(
-  (payload: NewMember) => this.teamService.create(payload),
-  {
-    invalidatesTags: [{ type: 'team' }],
-    concurrency: 'exhaust', // prevents double-submit
-  }
-);
+readonly addMemberMutation = mutateResource((payload: NewMember) => this.teamService.create(payload), {
+  invalidatesTags: [{type: 'team'}],
+  concurrency: 'exhaust', // prevents double-submit
+});
 
 // 3. In click handler or form submit:
-await addMember.mutate({ name: 'Alice', role: 'Engineer' });
+async addMember(): Promise<void> {
+  await this.addMemberMutation.mutate({name: 'Alice', role: 'Engineer'});
+}
 // -> teamQuery automatically refetches in the background!`);
 
   readonly concurrencyCode = highlight(`// Concurrency strategies:
 // 'exhaust': Ignores or coalesces rapid clicks while in-flight (double-submit guard)
-const saveProfile = mutateResource(
-  (data: UserDto) => this.userService.update(data),
-  { concurrency: 'exhaust' }
-);
+readonly saveProfileMutation = mutateResource((data: UserDto) => this.userService.update(data), {
+  concurrency: 'exhaust',
+});
 
 // 'concat': Queues submissions strictly sequentially in FIFO order without losing arguments
-const appendLog = mutateResource(
-  (entry: LogEntry) => this.logService.append(entry),
-  { concurrency: 'concat' }
-);
+readonly appendLogMutation = mutateResource((entry: LogEntry) => this.logService.append(entry), {
+  concurrency: 'concat',
+});
 
 // 'parallel': Executes every invocation independently concurrently (default)
-const uploadFile = mutateResource(
-  (file: File) => this.fileService.upload(file),
-  { concurrency: 'parallel' }
-);`);
+readonly uploadFileMutation = mutateResource((file: File) => this.fileService.upload(file), {
+  concurrency: 'parallel',
+});`);
 
-  readonly errorCode = highlight(`const saveSettings = mutateResource(
-  (settings: Settings) => this.settingsService.save(settings)
-);
+  readonly errorCode =
+    highlight(`readonly saveSettingsMutation = mutateResource((settings: Settings) => this.settingsService.save(settings));
 
 // In template:
-// @if (saveSettings.isLoading()) { <cll-spinner /> }
-// @if (saveSettings.error(); as err) { <clr-alert [clrAlertType]="'danger'">{{ err.message }}</clr-alert> }
+// @if (saveSettingsMutation.isLoading()) { <cll-spinner /> }
+// @if (saveSettingsMutation.error(); as err) { <clr-alert [clrAlertType]="'danger'">{{ err.message }}</clr-alert> }
 
-// In handler:
-try {
-  const result = await saveSettings.mutate({ timeout: 30 });
-  console.log('Saved successfully:', result);
-} catch (error) {
-  // Handled cleanly via Promise rejection and saveSettings.error() signal!
+// Component method:
+async saveSettings(): Promise<void> {
+  try {
+    const result = await this.saveSettingsMutation.mutate({timeout: 30});
+    console.log('Saved successfully:', result);
+  } catch (error) {
+    // The template reads this.saveSettingsMutation.error().
+  }
 }`);
 
   // ---------------------------------------------------------------------------
