@@ -44,6 +44,11 @@ strictly on demand when `.mutate(args)` is called.
 
 ## 2. API Contract & Concurrency Policies
 
+Name mutation handles with an action plus `Mutation`, such as `createMutation` or `saveSettingsMutation`. Use
+`readonly createMutation = mutateResource(...)` in component/service fields; use `this.createMutation.mutate(...)` in
+methods and `createMutation.isLoading()` in templates. Plain verbs identify action methods, not mutation handles. See
+the [shared naming convention](query-resource-design-spec.md#naming).
+
 ### 2.1 Signatures
 
 ```typescript
@@ -114,20 +119,18 @@ declaring duplicate invalidation tags in the calling component.
 
 ## 4. Code vs. Spec Gap Analysis
 
-| Requirement / Spec Item         | Implementation in Code                      | Gap / Finding                                          | Assessment           |
-| :------------------------------ | :------------------------------------------ | :----------------------------------------------------- | :------------------- |
-| **Strict On-Demand Execution**  | Only executes via `mutate(args)`            | None. Never triggers on signal shifts.                 | ✅ Exact match       |
-| **Concurrency Modes**           | Implemented `exhaust`, `concat`, `parallel` | None. Synchronous reentrancy tested.                   | ✅ Exact match       |
-| **Tag Invalidation**            | Explicit client or root `QUERY_CLIENT`      | None. Root token supplies the default shared client.   | ✅ Exact match       |
-| **Unhandled Rejection Safety**  | Chained silent catch                        | None. Fire-and-forget calls do not log console errors. | ✅ Exact match       |
-| **Optimistic Rollback Context** | Caller-managed external snapshots           | Automated `onMutate` rollback hook not yet built.      | ⚠️ Planned next step |
+| Requirement / Spec Item         | Implementation in Code                      | Gap / Finding                                          | Assessment                            |
+| :------------------------------ | :------------------------------------------ | :----------------------------------------------------- | :------------------------------------ |
+| **Strict On-Demand Execution**  | Only executes via `mutate(args)`            | None. Never triggers on signal shifts.                 | ✅ Exact match                        |
+| **Concurrency Modes**           | Implemented `exhaust`, `concat`, `parallel` | None. Synchronous reentrancy tested.                   | ✅ Exact match                        |
+| **Tag Invalidation**            | Explicit client or root `QUERY_CLIENT`      | None. Root token supplies the default shared client.   | ✅ Exact match                        |
+| **Unhandled Rejection Safety**  | Chained silent catch                        | None. Fire-and-forget calls do not log console errors. | ✅ Exact match                        |
+| **Optimistic Rollback Context** | Caller-managed external snapshots           | Automated `onMutate` rollback hook not yet built.      | Deferred until a consumer requires it |
 
 ---
 
-## 5. Evolutionary Roadmap & Next Steps
+## 5. Deferred extensions
 
-1. **`onMutate` Rollback Context**:
-   - Add an optional `onMutate?: (args: TArgs) => Promise<TContext> | TContext` hook providing a snapshot to `onError`
-     for automatic cache rollback.
-2. **Global In-Flight Mutation Counter**:
-   - Expose a global `isMutating()` Signal on `QueryClient` to power top-level progress bars.
+Shared optimistic cache updates/rollback and a global mutation counter are not implemented. They need overlapping-write,
+cancellation and rollback ownership contracts before becoming public APIs. For now, use local pending UI, explicit write
+results and scoped invalidation. See the [query production guide](query-resource-design-spec.md).

@@ -1,7 +1,7 @@
 # Priority 1 and 2 production contracts
 
 This document records the loading, localization and lifecycle contracts completed for PR #147. Current validation and
-release evidence are in [the production review](../reviews/pr-147-production-review-2026-10-14.md).
+release evidence are in [the production review](../reviews/query-production-review.md).
 [简体中文说明](./priority-1-2-completion.zh-CN.md).
 
 ## Loading and package consumers

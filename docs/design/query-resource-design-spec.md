@@ -1,339 +1,382 @@
-# Design Specification: `queryResource` & `QueryClient`
+# Query design and production contracts
 
-**Status**: Implemented; package publication readiness is assessed separately.  
-**Module**: `libs/ngx-lift/src/lib/query/query-resource.ts`, `query-client.ts`, `query-observable.ts`,
-`query-client.token.ts`  
-**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts`, `query-client.spec.ts`, `query-normalizer.spec.ts`,
-`query-observable.spec.ts`, and `query-resources.spec.ts`.
+Implemented APIs: `QueryClient`, `queryResource`, `queryResources`, `fetchQueryObservable`, `observeQueryObservable` and
+`provideQueryClient`. [中文说明](query-resource-design-spec.zh-CN.md) ·
+[Current validation and release assessment](../reviews/query-production-review.md).
 
----
+This is the single query design entry point. Mutation execution has its own
+[specification](mutate-resource-design-spec.md); published-version changes belong in [MIGRATIONS](../MIGRATIONS.md).
 
-## 1. Vision & Architecture
+## Choosing an API
 
-While `resourceAsync` manages component-scoped asynchronous lifecycles, **`queryResource`** connects to an
-application-scoped **`QueryClient`** cache. It provides coordinated cross-component caching, deterministic query-key
-normalization, scoped tag invalidation, deduplication across concurrent observers, background data retention, and smart
-coordinated background polling.
+| Need                                                                      | API                      |
+| ------------------------------------------------------------------------- | ------------------------ |
+| One cached server read, shared state, invalidation or coordinated polling | `queryResource`          |
+| A changing homogeneous collection of independent cached reads             | `queryResources`         |
+| Independent async state with local overrides or streaming behavior        | `resourceAsync`          |
+| One finite cached result in an RxJS service                               | `fetchQueryObservable`   |
+| Live cached snapshots in an RxJS service                                  | `observeQueryObservable` |
+| An explicitly submitted server write                                      | `mutateResource`         |
 
-```mermaid
-flowchart TB
-  HTTP[HttpClient Transport & Interceptors] --> Definitions[Domain Query Definitions]
-  Definitions --> Client[Shared QueryClient Engine]
-  Client --> Resource[queryResource Signal Observers]
-  Client --> Observables[Observable Stream Adapters]
-  Mutation[Explicit mutateResource Writes] --> Tags[Scoped Tag Invalidation]
-  Tags --> Client
-```
+Each canonical query key identifies one cache entry. `QueryClient` owns cache state, in-flight work, generations and
+scheduling; Angular resources own observers. Multiple observers share data without sharing their component lifetimes.
 
-### Core Architecture Highlights
+## Naming
 
-- **Pure TypeScript Engine**: `QueryClient` is a framework-agnostic TypeScript class managing cache entries, generation
-  counters, deduplication, garbage collection, and polling timers.
-- **Angular Integration Layer**: Adapters bridge `QueryClient` into Angular Signals (`queryResource`) and Observables
-  (`observeQueryObservable`, `fetchQueryObservable`), while integrating with Angular Dependency Injection
-  (`QUERY_CLIENT`), the browser visibility API, and component lifecycles (`DestroyRef`).
-- **Single Source of Truth**: Each unique query key maps to exactly one cache entry storing the latest successful data,
-  error state, in-flight Promise, generation counter, active observers, and scheduling state.
+| Value                                            | Example                                  |
+| ------------------------------------------------ | ---------------------------------------- |
+| One query handle, even if its result is an array | `userQuery`, `databasesQuery`            |
+| Collection of independent query handles          | `tenantQueries`                          |
+| Write handle                                     | `createMutation`, `saveSettingsMutation` |
+| Resolved data / event method                     | `user`, `tenant`, `createDatabase()`     |
 
----
+Avoid calling a resource handle `user`, `tenants` or `create`: the name should distinguish its controls from the data or
+an action method. The same convention appears in the demo callouts.
 
-## 2. API Contract & Core Capabilities
+## Basic read and dependent requests
 
-### 2.1 Basic Usage Pattern
+Configure `provideHttpClient()` in application providers. The root query client requires no extra registration.
 
 ```typescript
-import {inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {queryResource} from 'ngx-lift';
 
-interface Pod {
-  name: string;
-}
-
-const http = inject(HttpClient);
-const tenant = signal('tenant-a');
-
-const podsQuery = queryResource(
-  () => {
-    const scope = tenant();
-    if (!scope) return undefined; // An undefined definition disables the query
-    return {
-      key: ['pods', scope],
-      loader: () => http.get<Pod[]>(`/api/tenants/${scope}/pods`),
-      tags: [{type: 'Pods', scope}],
-      staleTime: 30_000,
-    };
-  },
-  {pollInterval: 60_000},
-);
-
-await podsQuery.execute();
-```
-
-### 2.2 Observable and Promise Loaders
-
-All query entry points accept `QueryDefinition<T>` loaders returning `Observable<T> | PromiseLike<T>` directly.
-`QueryResourceDefinition<T>` names the same definition type for signal resources. The internal normalizer resolves
-Observable reads on the first value and unsubscribes; empty completion rejects with `EmptyError`. Promise-like results
-are assimilated with `Promise.resolve`. The scheduler remains Promise-based without requiring public adapters. If
-teardown exceptions escape the subscription boundary, the request still settles: original transport errors are retained;
-after a value, an escaping teardown failure rejects the attempt and permits a later read to retry. RxJS can suppress
-operator-chain cleanup exceptions internally; those follow RxJS behavior and cannot be recovered at this boundary.
-
-`fetchQueryObservable` exposes one finite result. `observeQueryObservable` exposes ongoing snapshots and completes on
-explicit removal. Use the latter or `queryResource` when mutation invalidation must update a mounted view.
-`QueryResourceRef` includes `isInitialLoading` and `isRefreshing` in addition to the aggregate `isLoading` signal.
-
-Cancellation follows the shared cache policy. Destroying, disabling, or changing the key of a resource detaches its
-observer. The underlying request is aborted only when the last observer leaves and `cancelOnNoObservers: true` is
-enabled. The default allows finite shared reads to finish and populate the cache. When the engine aborts an
-Observable-backed request, the adapter unsubscribes, preserving HttpClient cancellation and interceptors. Promise
-loaders should forward `context.abortSignal` to transports such as `fetch` when cancellation is needed.
-
-### 2.3 Immediate Cache Reads and Shared Definition Policies
-
-Before observer attachment, `queryResource` exposes existing successful data for the requested key synchronously,
-including stale data. Stale snapshots report `reloading` while the observer attaches and starts revalidation; missing
-data reports `loading`. This also applies to the default `staleTime: 0`. Disabled queries remain idle, and a key change
-never displays the previous key's value. Synchronous destruction during initial attachment or manual recovery disposes
-the observer handle, including handles returned after teardown has already run.
-
-Policies reconcile conservatively for the lifetime of a cache entry: minimum `staleTime`, maximum `gcTime`, and
-`cancelOnNoObservers` enabled only if every registered definition opts in. Detaching a reader does not reverse those
-choices. A temporary reader opting out of cancellation consequently disables it for later requests until eviction. This
-is a bandwidth/lifecycle tradeoff, and consumers should centralize consistent same-key definitions. The latest
-registered definition supplies the loader, including definitions registered through imperative `fetchQuery`; loaders
-sharing a key must describe interchangeable reads and capture stable parameters. Polling intervals, in contrast, are
-aggregated across active observers. Active-observer-only freshness, cancellation, and loader ownership would require a
-separate design that also accounts for imperative callers and requests already in flight.
-
----
-
-## 3. Placement Guide: Component vs. Service (Point B)
-
-`queryResource` and `mutateResource` can be defined in either **Services** or **Components**, depending on data reuse,
-state lifetime, and architecture boundaries:
-
-| Placement                        | When to Use                                                            | Advantages & Trade-offs                                                                                                                                                                                                                                                                                                     |
-| :------------------------------- | :--------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **In a Service (`@Injectable`)** | **Shared data, domain API layers, and multi-component state**          | • Centralizes API endpoints, query keys, and invalidation tags in one domain facade.<br>• Keeps components lean and focused strictly on presentation.<br>• Multiple components injecting the service join the exact same cached data stream.<br>• Query lifetime persists across route transitions if provided in `'root'`. |
-| **In a Component**               | **View-specific queries, local dialogs, and tight component bindings** | • Declares queries directly alongside component Signal inputs (`input()`, `input.required()`).<br>• Observer lifecycle is cleanly bounded to the component instance via `DestroyRef`.<br>• Automatically cleans up observer handles when the component unmounts while retaining cache entries in `QueryClient`.             |
-
-### Pattern 1: Service-Based Domain Facade (Recommended for Shared Data)
-
-Encapsulate query definitions and shared write operations inside an `@Injectable` service:
-
-```typescript
-import {inject, Injectable, Injector} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {queryResource, mutateResource} from 'ngx-lift';
-
-export interface User {
+interface Tenant {
   id: string;
   name: string;
-  email: string;
 }
-
-@Injectable({providedIn: 'root'})
-export class UserService {
-  private http = inject(HttpClient);
-
-  /**
-   * Returns a reactive query observer parameterized by a Signal or getter.
-   */
-  getUserQuery(id: () => string | undefined, injector: Injector) {
-    return queryResource(
-      () => {
-        const userId = id();
-        if (!userId) return undefined;
-
-        return {
-          key: ['users', userId],
-          tags: [{type: 'User', id: userId}],
-          staleTime: 60_000,
-          loader: () => this.http.get<User>(`/api/users/${userId}`),
-        };
-      },
-      {injector},
-    );
-  }
-
-  /**
-   * Explicit write operation that invalidates the corresponding user tag upon success.
-   */
-  readonly updateUser = mutateResource(
-    (payload: {id: string; name: string}) => this.http.put<User>(`/api/users/${payload.id}`, payload),
-    {
-      invalidatesTags: (_result, payload) => [{type: 'User', id: payload.id}],
-    },
-  );
+interface Database {
+  id: number;
+  name: string;
 }
-```
-
-A service method does not create an injection context just because its class is injectable. Pass the caller injector
-when creating a view-owned observer, including calls made later from event handlers:
-
-```typescript
-private injector = inject(Injector);
-private users = inject(UserService);
-readonly userQuery = this.users.getUserQuery(() => this.userId(), this.injector);
-```
-
-This shares cached data through the application `QueryClient` while destroying the observer with the component. A
-service field uses its own provider injector instead; a root service field can live until application teardown.
-`resourceAsync` follows the same `{injector}` and `DestroyRef` rules, but does not share a cache automatically. Service
-placement is therefore supported for all three APIs; placement and lifecycle ownership are separate decisions.
-
-### Pattern 2: Component-Direct Binding (Recommended for View-Specific Queries)
-
-Declare queries directly as component fields when data is local to a specific view or depends directly on component
-signal inputs:
-
-```typescript
-import {Component, ChangeDetectionStrategy, inject, input} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {queryResource, mutateResource} from 'ngx-lift';
 
 @Component({
-  selector: 'app-user-profile',
-  standalone: true,
+  selector: 'app-tenant',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (userQuery.isLoading()) {
-      <span class="spinner">Loading...</span>
+    @if (tenantQuery.value(); as tenant) {
+      <h2>{{ tenant.name }}</h2>
     }
-    @if (userQuery.error(); as err) {
-      <div class="alert alert-danger">{{ err }}</div>
+    @if (tenantQuery.isInitialLoading()) {
+      <p>Loading tenant…</p>
     }
-    @if (userQuery.value(); as user) {
-      <h2>{{ user.name }}</h2>
-      <button class="btn btn-primary" [disabled]="saveMutation.isLoading()" (click)="save(user.id)">Save</button>
+    @if (tenantQuery.isInitialError()) {
+      <p role="alert">Could not load the tenant.</p>
     }
+    <button (click)="tenantQuery.reload()">Refresh</button>
   `,
 })
-export class UserProfileComponent {
-  private http = inject(HttpClient);
-  readonly userId = input.required<string>();
-
-  // Defined directly in the component, capturing userId() reactively
-  readonly userQuery = queryResource(
-    () => {
-      const id = this.userId();
-      return {
-        key: ['users', id],
-        tags: [{type: 'User', id}],
-        loader: () => this.http.get<User>(`/api/users/${id}`),
-      };
-    },
-    {pollInterval: 30_000},
-  );
-
-  readonly saveMutation = mutateResource((id: string) => this.http.patch(`/api/users/${id}`, {active: true}), {
-    invalidatesTags: (_res, id) => [{type: 'User', id}],
+export class TenantComponent {
+  private readonly http = inject(HttpClient);
+  readonly tenantId = signal('a');
+  readonly tenantQuery = queryResource(() => {
+    const id = this.tenantId();
+    return {
+      key: ['tenants', id],
+      loader: () => this.http.get<Tenant>(`/api/tenants/${id}`),
+      staleTime: 30_000,
+    };
   });
-
-  save(id: string): void {
-    void this.saveMutation.mutate(id);
-  }
+  readonly databasesQuery = queryResource(() => {
+    const tenant = this.tenantQuery.value();
+    if (!tenant) return undefined;
+    return {
+      key: ['databases', tenant.id],
+      tags: [{type: 'Databases', scope: tenant.id}],
+      loader: () => this.http.get<Database[]>(`/api/tenants/${tenant.id}/databases`),
+    };
+  });
 }
 ```
 
-> **Note on Injection Context**: `resourceAsync` and both `queryResource` and `mutateResource` use `inject(Injector)`
-> internally to resolve `QUERY_CLIENT`. Therefore, they must be called during component/service instantiation (property
-> initializers or constructors), or passed an explicit `{ injector }` option.
+Capture changing parameters once so the key and loader describe the same request. Include every endpoint, filter, paging
+and authorization variable that changes the response. Returning `undefined` disables the observer and exposes idle
+state. A key change hides the previous key's value immediately, before observer attachment is scheduled. Other observers
+and cached entries retain their own lifetimes.
 
----
+Sibling queries run independently. A dependent query waits for its prerequisites; retained parent data remains usable
+through a background refresh. Show the parent's error when its initial failure prevents the child from starting. For an
+inseparable multi-step result, compose the loader with RxJS; forward `context.refresh` to nested cached reads when an
+explicit refresh must bypass their completed data.
 
-## 4. Consumer App Dependency Injection & Setup
+### Single-resource API
 
-### Do we need to register `QUERY_CLIENT` in the consumer app?
+`queryResource(() => definition | undefined, options?)` returns readonly signals and explicit execution controls.
 
-**No. In standard Angular applications, zero registration is required.**
+| Surface                                         | Meaning                                                                                  |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `value`, `error`, `status`                      | Latest successful data, terminal error and `idle/loading/reloading/resolved/error` state |
+| `isLoading`, `isInitialLoading`, `isRefreshing` | Any pending read, pending without data, pending with retained data                       |
+| `isInitialError`, `isRefreshError`              | Failure without successful data / failure with retained data                             |
+| `hasValue()`                                    | Type guard for a defined successful value                                                |
+| `updatedAt`, `isStale`                          | Last successful time and freshness                                                       |
+| `failureCount`, `failureReason`, `nextRetryAt`  | Current logical read's attempt failures and scheduled retry time                         |
+| `reload()`                                      | Background refresh; returns false when disabled/destroyed                                |
+| `execute()`                                     | Await a fresh read; rejects when disabled/destroyed                                      |
+| `destroy()`                                     | Dispose this observer; shared work follows the cache cancellation policy                 |
 
-`QUERY_CLIENT` uses `providedIn: 'root'` and an Angular-aware factory. See the actual
-[token/provider implementation](../../libs/ngx-lift/src/lib/query/query-client.token.ts) for browser visibility,
-focus/online listeners, diagnostic ErrorHandler integration, and DestroyRef disposal.
+`QueryResourceOptions` accepts `injector`, `client`, reactive `pollInterval`, `refetchOnFocus` and `refetchOnReconnect`.
+Outside an injection context, pass the lifecycle owner's injector explicitly.
 
-- When you call `queryResource()` or `mutateResource()` without options, they automatically inject the root singleton
-  `QueryClient`.
-- The factory automatically connects browser visibility tracking (pausing background poll schedules when the tab is
-  hidden) and tears down the client on application destruction.
+## Dynamic collections
 
-### When should you provide a custom `QueryClient`?
+`queryResources(items, definition, options?)` implements item-based pattern B. It returns a signal of ordered
+`QueryResourceItem<T, I>` refs; each row has the single-query surface plus serialized `key` and typed `item()`.
 
-You only need custom registration in specific architectural scenarios:
+```typescript
+// Component fields; HttpClient is injected as this.http.
+readonly selectedIds = signal(['a']);
+readonly tenantQueries = queryResources(this.selectedIds, id => ({
+  key: ['tenants', id],
+  loader: () => this.http.get<Tenant>(`/api/tenants/${id}`),
+  staleTime: 30_000,
+  cancelOnNoObservers: true,
+}));
+```
 
-1. **Custom Global Options** (e.g. customized polling clock, capacity limits):
-   ```typescript
-   import {ApplicationConfig} from '@angular/core';
-   import {provideQueryClient} from 'ngx-lift';
+```html
+@for (query of tenantQueries(); track query.key) {
+<p>{{ query.item() }}: {{ query.status() }}</p>
+@if (query.value(); as tenant) {
+<p>{{ tenant.name }}</p>
+} @if (query.isInitialError()) {
+<button (click)="query.reload()">Retry this read</button>
+} }
+```
 
-   export const appConfig: ApplicationConfig = {
-     providers: [provideQueryClient({maxEntries: 200})],
-   };
-   ```
-2. **Server-Side Rendering (SSR)**:
-   - Provide an isolated `QueryClient` per server request so concurrent requests do not cross-contaminate cache state.
-3. **Unit Testing**:
-   - Provide an isolated `new QueryClient()` per test suite or pass `{ client: testClient }` in `QueryResourceOptions`.
+- Reordering preserves refs; removed rows disappear immediately and their observers detach during reconciliation.
+- New rows attach during Angular effect scheduling. Empty inputs create no observers; destroying the collection disposes
+  every child observer and prevents restart.
+- Duplicate canonical keys throw. Use one result type per collection and filter out unready items before defining
+  queries.
+- One failed row does not fail its peers. `item()` identifies the input before success and after failure; retry only
+  that row.
 
----
+Requests start in parallel without a concurrency limit. Paginate, limit selection or use a backend batch endpoint for
+large lists. `maxEntries` cannot evict active observers or pending work. Prebuilt-definition arrays, heterogeneous
+collections and a shared concurrency scheduler are deferred until a consumer needs them.
 
-## 5. Architectural Contracts & Operational Guarantees
+## Definitions and shared cache policy
 
-| Concern                        | Operational Contract                                                                                                                                                                                                                                     |
-| :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Key Identity**               | Readonly JSON-compatible tuple keys (`['entity', id]`). Plain object properties are canonicalized recursively so `{ a: 1, b: 2 }` and `{ b: 2, a: 1 }` map to the identical cache entry. Functions, circular structures, and sparse arrays are rejected. |
-| **Pending Read Joining**       | Ordinary reads, explicit refreshes (`reload()`, `execute()`), and scheduled background polls join the current active in-flight request, preventing duplicate HTTP requests.                                                                              |
-| **Freshness (`staleTime`)**    | Freshness timer begins at request completion. Within `staleTime`, reads return immediately from cache without re-fetching. Failed requests remain immediately retryable.                                                                                 |
-| **Retention (`gcTime`)**       | `gcTime` controls how long unused entries linger in memory after their last observer detaches (default: 5 minutes). Eviction protects active observers and in-flight requests.                                                                           |
-| **Bypass Refresh**             | `reload()` or `execute()` bypasses completed cached data while still coalescing with any valid pending in-flight request.                                                                                                                                |
-| **Generation Isolation**       | Tag invalidation increments the cache entry's generation counter and detaches obsolete generations before refetching. In-flight requests initiated prior to invalidation are cleanly discarded and cannot overwrite newer state.                         |
-| **Race Protection**            | Obsolete responses/errors and reentrant notification batches cannot overwrite newer state. Removed or detached observers do not receive earlier snapshots.                                                                                               |
-| **Error Resilience**           | A background revalidation failure preserves the last successful cached data in `.value()` while exposing the error in `.error()`. Initial fetch failures have `undefined` value.                                                                         |
-| **Context Switching**          | Changing the query key immediately sets previous data to `undefined` on the observer, guaranteeing stale or cross-tenant data is never displayed while the new key loads.                                                                                |
-| **Coordinated Polling**        | Only one background timer runs per unique key, synchronized to the minimum active observer interval. Polling automatically pauses when the browser tab is hidden and resumes when visible. SSR never runs background polling.                            |
-| **Dynamic Interval Callbacks** | `pollInterval` accepts a reactive function (e.g. `() => isModalOpen() ? undefined : 30_000`) allowing dynamic pause/resume without recreating observers.                                                                                                 |
-| **Observer Teardown**          | An observer unsubscribing unbinds cleanly without aborting shared background work needed by other active sibling observers.                                                                                                                              |
+`QueryDefinition<T>` uses `key`, `loader`, optional `tags`, `staleTime`, `gcTime`, `cancelOnNoObservers`, `retry` and
+`deadlineMs`. Its loader returns `Observable<T> | PromiseLike<T>` and receives `{abortSignal, refresh}`.
 
----
+| Policy                  | Default / contract                                                 |
+| ----------------------- | ------------------------------------------------------------------ |
+| `staleTime`             | 0; freshness starts at successful completion                       |
+| `gcTime`                | 300,000 ms; retention after the last use, independent of freshness |
+| `cancelOnNoObservers`   | false; finite reads finish and populate cache by default           |
+| `maxEntries`            | 200; LRU removal of inactive entries without pending work          |
+| `pollInterval`          | Unset; fastest active observer interval per key                    |
+| `retry`, `deadlineMs`   | Disabled unless configured                                         |
+| Focus/reconnect refresh | Disabled unless configured                                         |
 
-## 6. Code vs. Spec Gap Analysis
+For an entry's lifetime, definitions combine minimum freshness, maximum retention and cancellation only if every
+registered definition opts in. Detaching a reader does not reverse those policies. Tags accumulate until eviction. The
+latest registered definition supplies future loaders and read policy; a started logical read freezes its initiating
+loader/policy. Centralize consistent same-key definitions, including imperative fetches. Poll intervals instead
+aggregate active observers only.
 
-| Requirement / Spec Item            | Implementation in Code                                 | Gap / Finding                                                    | Assessment           |
-| :--------------------------------- | :----------------------------------------------------- | :--------------------------------------------------------------- | :------------------- |
-| **Deterministic Key Hashing**      | `hashQueryKey` & `normalizeQueryKey`                   | None. Recursively canonicalizes object keys.                     | ✅ Exact match       |
-| **Multi-Observer Deduplication**   | Snapshot stream in `QueryClient`                       | None. Concurrent reads share a single in-flight Promise.         | ✅ Exact match       |
-| **Generation Isolation on Tags**   | Generation counter per cache entry                     | None. Obsolete in-flight responses are dropped.                  | ✅ Exact match       |
-| **Coordinated Background Polling** | Reference counting + fastest interval                  | None. Pauses on document hidden, disabled in SSR.                | ✅ Exact match       |
-| **Dynamic Poll Callback**          | `pollInterval?: number \| (() => number \| undefined)` | None. Recalculates timer dynamically.                            | ✅ Exact match       |
-| **Observable Adapter**             | Internal normalization & `observeQueryObservable`      | None. Handles synchronous emission and teardown.                 | ✅ Exact match       |
-| **Automatic DI Root Token**        | `QUERY_CLIENT` with `providedIn: 'root'`               | None. Zero-config root client.                                   | ✅ Exact match       |
-| **Offline Cache Persistence**      | In-memory only                                         | Offline storage plugin (LocalStorage / IndexedDB) not built yet. | ⚠️ Planned next step |
+Fresh imperative reads return cached data. Stale cached data is synchronously available to mounted resources while
+revalidating. Reads, refreshes and polling join current pending work. Refresh bypasses completed data, not valid pending
+work. Successful `undefined` is recorded by `QuerySnapshot.hasValue`; the resource's `hasValue()` guards defined values.
 
----
+Unused entries collect after retention; active observers and all unsettled reads are protected. Capacity is therefore a
+soft bound. Timers segment durations beyond the native timer limit and recheck before expiry.
 
-## 7. Evolutionary Roadmap & Next Steps
+## Transport, cancellation and invalidation
 
-1. **Persistent Cache Adapter**:
-   - Provide an optional `QueryClientStorage` interface for synchronizing cache snapshots with browser storage.
-2. **Infinite Query (`infiniteQueryResource`)**:
-   - Introduce cursor-based / paginated query management for infinite scrolling lists.
-3. **Pre-fetching API**:
-   - Provide `queryClient.prefetchQuery(options)` for router preload strategies.
+Observable loaders resolve the first value and unsubscribe. Empty completion rejects with `EmptyError`; continuous
+streams need another lifecycle. Native PromiseLike results are assimilated with `Promise.resolve`. The normalizer
+handles synchronous sources and subscription-boundary teardown failures without stranding shared work. Original
+transport errors take precedence; an escaping teardown failure after a value rejects that attempt. Cleanup exceptions
+suppressed internally by RxJS follow RxJS behavior.
 
-## Implemented bounded failure lifecycle
+Destroying/disabling/changing a resource detaches its observer. Transport aborts when the last observer leaves only if
+`cancelOnNoObservers` is enabled. Promise loaders must forward the signal to physically cancel their transport. A finite
+`fetchQueryObservable` subscription is not an independent cancellation owner. Explicit `removeQueries` and client
+destruction abort both current and obsolete reads and dispose scheduling.
 
-[Failure design](query-failure-design.md) and its [Chinese companion](query-failure-design.zh-CN.md) describe the public
-provider, read policy, error signals, reporting hooks, and recovery options. `query-request.ts` owns one frozen logical
-read with bounded attempts, total deadline, and cleanup; QueryClient retains cache/generation/publication ownership.
-Joiners share that work. Superseded callers can finish, but cannot publish or report into a newer generation.
+Tags are invalidation dependencies, not identity. `{type, id?, scope?}` matches its own scope; omitting scope means the
+unscoped namespace, not every tenant. Omitting id matches every registered id of that type within the same scope.
+`invalidateTags` detaches every affected generation before any refetch begins. Observed entries refetch; inactive
+entries become stale. Old callers can finish, including retries, but cannot publish or report into a newer generation.
+Reentrant notifications use publication revisions and membership checks so old batches cannot overwrite newer state.
 
-`query-client-failure.spec.ts`, `query-client-retry.spec.ts`, and `query-client-recovery.spec.ts` cover listener
-isolation, deadlines, retry boundaries, and observed recovery. Resource tests cover retained values and falsy errors;
-provider tests cover Angular event/disposal wiring. Typed collection `item()` identifies failed rows without decoding
-cache keys.
+Polling waits for the entire logical read, including retry backoff, before scheduling another interval. The default
+Angular provider pauses background polling while hidden and disables it on the server. Dynamic intervals can pause an
+individual observer. Visibility return resumes overdue work without duplicating a recovery request.
 
-Defaults disable automatic retry, deadline, and focus/reconnect refresh. `provideQueryClient` supplies Angular lifecycle
-integration and accepts explicit defaults; per-definition `retry: false` / `deadlineMs: false` opt out. Per-resource
-recovery flags override client defaults. Mutation execution has no automatic retry.
+## Failure and recovery
+
+| Situation           | UI / execution contract                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Initial failure     | Undefined value, `isInitialError()`, rejected execution; blocking error with manual recovery                 |
+| Refresh failure     | Preserve data and `updatedAt`; `isRefreshError()` supports a local warning                                   |
+| Retry wait          | Stay loading/reloading; expose failed attempts, original failure and `nextRetryAt`                           |
+| Successful recovery | Clear error and retry metadata                                                                               |
+| Terminal failure    | Keep actual failure count and last failure                                                                   |
+| Deadline            | `QueryTimeoutError`, retaining its cause when available; no invented failed attempt before an actual failure |
+| Normal cancellation | Awaiting callers reject; no new client-level user-error report                                               |
+
+A logical read's deadline includes synchronous loading publication, attempts and waits. It uses an elapsed-time clock,
+separate from wall-clock cache timestamps, and rechecks before accepting/publishing success. A hanging read settles;
+late noncancelable results cannot publish. Retry invokes the loader anew. Attempts include the initial read, and policy
+is shared by joiners rather than duplicated per observer.
+
+Never shorten a server minimum retry wait to fit the deadline. Stop the read instead. Query-policy callback failures
+report diagnostically and preserve the original transport failure. Observer exceptions do not interrupt peers, transport
+settlement, removal or timer cleanup. Superseded reads retain their own completion machinery until settled.
+
+Opt-in focus/reconnect recovery refreshes observed stale entries only and joins existing work. Focus is ignored while
+hidden; reconnect is a connectivity hint and may refresh while hidden. There is no offline queue or pause-and-replay
+state.
+
+`onQueryError` reports once per terminal current logical read with key, attempt count, retained-data flag and trigger.
+`onDiagnostic` isolates observer, retry-policy and error-reporter faults from transport outcomes. Avoid converting a
+failed request to a successful empty list unless that represents the domain result.
+
+## Application configuration
+
+```typescript
+import {HttpErrorResponse, provideHttpClient} from '@angular/common/http';
+import {ApplicationConfig} from '@angular/core';
+import {provideQueryClient} from 'ngx-lift';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(),
+    provideQueryClient({
+      queryDefaults: {
+        deadlineMs: 10_000,
+        retry: {
+          maxAttempts: 3,
+          shouldRetry: (error) =>
+            error instanceof HttpErrorResponse && error.status === 503 && !error.headers.has('Retry-After'),
+          delayMs: (_error, context) => 500 * 2 ** (context.attempt - 1),
+        },
+        refetchOnFocus: true,
+        refetchOnReconnect: true,
+      },
+      onQueryError: (error, context) => console.error(context.trigger, error),
+    }),
+  ],
+};
+```
+
+This example retries safe reads only and declines server-hinted waits; provide an application policy that honors those
+hints when retrying them. Choose retry ownership between the query layer and HTTP interceptors to avoid multiplied
+attempts. Per-query `retry: false` / `deadlineMs: false` opt out of inherited defaults; observer recovery flags can also
+override defaults.
+
+`QUERY_CLIENT` is root-provided. `provideQueryClient` retains browser events, Angular ErrorHandler diagnostics and
+DestroyRef disposal while configuring defaults. A plain `new QueryClient` is supported; hosts supply visibility/events
+and destruction. Each SSR request needs an isolated injector/client, with browser scheduling disabled.
+
+## Placement and Observable services
+
+| Placement                         | Owner                                                                                            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Component field                   | Component injector owns the observer; application client shares cache                            |
+| Service returns definitions       | Component creates its own observer from centralized keys, loader and tags                        |
+| Service resource field            | Service provider injector owns its lifetime; root fields can last until application teardown     |
+| Service method creates a resource | Pass the caller's injector explicitly; an injectable method does not create an injection context |
+
+A cached finite service read retains an Observable contract:
+
+```typescript
+// Injectable service members.
+private readonly http = inject(HttpClient);
+private readonly client = inject(QUERY_CLIENT);
+
+users$(scope: string) {
+  return fetchQueryObservable(this.client, {
+    key: ['users', scope],
+    tags: [{type: 'Users', scope}],
+    loader: () => this.http.get<User[]>('/api/users'),
+    staleTime: 30_000,
+  });
+}
+```
+
+Use `observeQueryObservable` or signal resources for ongoing invalidation updates. Explicit removal completes snapshot
+Observable subscribers; resubscribe to observe a recreated entry. Signal resources can manually reattach on reload.
+Private one-off service reads need not enter a shared cache.
+
+## Session transitions and writes
+
+Use an opaque session/authorization revision in keys and scope tags; tenant identity alone does not distinguish changed
+permissions or a different login. Never put credentials in keys. Disable observers and purge old scoped data before
+enabling new-session reads. The following predicate assumes a centralized key schema with scope at index 1:
+
+```typescript
+// Component/service members; http and client are injected fields.
+readonly sessionScope = signal<string | undefined>(undefined);
+readonly usersQuery = queryResource(() => {
+  const scope = this.sessionScope();
+  if (!scope) return undefined;
+  return {
+    key: ['users', scope],
+    tags: [{type: 'Users', scope}],
+    loader: () => this.http.get<User[]>('/api/users'),
+    staleTime: 30_000,
+    deadlineMs: 10_000,
+    cancelOnNoObservers: true,
+  };
+});
+
+changeSession(nextScope: string | undefined): void {
+  const previous = this.sessionScope();
+  this.sessionScope.set(undefined);
+  if (previous !== undefined) this.client.removeQueries(key => key[1] === previous);
+  // Install the new authentication context before enabling its reads.
+  this.sessionScope.set(nextScope);
+}
+```
+
+Invalidation lets old callers finish and is not a logout purge. A destroyed client cannot be reused; remove scoped
+entries or replace the provider deliberately. Mutation invalidation must use scope captured in submitted arguments, not
+a current-session signal sampled after completion. Already-submitted writes may finish after observer destruction.
+
+Writes are never automatically replayed. A timeout can be an uncertain server outcome: reconcile by reading or an
+endpoint-specific idempotency protocol before resubmitting. `invalidationError` means the server write succeeded and
+cache synchronization failed; refresh reads instead of repeating the write. Shared optimistic cache setters and rollback
+are not implemented. See [mutation execution](mutate-resource-design-spec.md).
+
+## Diagnostics
+
+`getEntriesSnapshot()` and `getDiagnostics()` inspect without fetching, notifying, retaining entries or mutating state.
+Keys and tag arrays are detached copies; each complete snapshot samples time/visibility once. Callers own refresh
+frequency and destruction. Redact identifiers when exporting telemetry.
+
+- `requestCount` / `pendingRequestCount` count unsettled logical reads on cached entries, including retry waits and
+  obsolete generations. Removed entries are excluded; removal aborts their work.
+- `isPending` describes only the current generation and may be false while an obsolete read remains.
+- `failureCount` / `nextRetryAt` describe the current logical read, not aggregate transports; success clears them.
+- These metrics do not count active HTTP subscriptions or claim offline queue semantics.
+
+The demo inspector observes its application client. Isolated failure/service examples own separate clients.
+
+## Production scope and deferred work
+
+Browser contracts have unit, real-browser and strict installed-package evidence. The installed Angular 21.2 zoneless DOM
+fixture tests session isolation, cancellation, refresh recovery, collection lifecycle and scoped writes. This does not
+prove SSR serialization/hydration, ZoneJS or every version allowed by peer ranges. Arbitrary async loaders need an
+Angular stability contract before SSR support is claimed; HttpClient tracks its own requests. See
+[Angular SSR task guidance](https://angular.dev/guide/zoneless#pendingtasks-for-server-side-rendering-ssr).
+
+Implemented resilience priorities: callback isolation, retained-data recovery, bounded retry, total deadlines, observed
+focus/reconnect recovery and terminal reporting. Explicit mutation failure handling is implemented; advanced write
+reconciliation and optimism remain application-specific/deferred.
+
+Persistence, infinite queries, offline queues, shared rollback, mutation reset, nondestructive cancellation and a global
+concurrency scheduler require concrete consumers and ownership contracts. `fetchQuery` already warms cache without a
+separate prefetch helper. Publication additionally requires dependency triage/audit, compatible versioning,
+final-revision checks and authentication; [the review](../reviews/query-production-review.md) records those gates.
+
+Primary-source background: [Angular resources](https://angular.dev/guide/signals/resource),
+[TanStack query defaults](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults),
+[query cancellation](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation), and
+[RTK Query tags](https://redux-toolkit.js.org/rtk-query/usage/automated-refetching). Those libraries' defaults and full
+feature sets are comparisons, not ngx-lift contracts.
