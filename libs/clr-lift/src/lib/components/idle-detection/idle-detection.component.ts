@@ -62,8 +62,7 @@ export class IdleDetectionComponent implements OnInit {
   open$ = this.activeService$.pipe(
     switchMap((service) =>
       merge(
-        // Idle detection phase ends, pop up timeout countdown dialog
-        service.onIdleEnd().pipe(map(() => true)),
+        service.observeState().pipe(map((state) => state.isCountingDown)),
 
         // Timeout phase ends, session timeout. It will redirect to login page.
         service.onTimeoutEnd().pipe(
@@ -78,7 +77,9 @@ export class IdleDetectionComponent implements OnInit {
     ),
   );
 
-  countdown$ = this.activeService$.pipe(switchMap((service) => service.onCountDown()));
+  countdown$ = this.activeService$.pipe(
+    switchMap((service) => service.observeState().pipe(map((state) => state.countdown))),
+  );
 
   constructor() {
     this.translationService.loadTranslationsForComponent('idleDetection', idleDetectionTranslations);

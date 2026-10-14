@@ -1,7 +1,13 @@
 import {DestroyRef, inject, Injectable, Provider} from '@angular/core';
-import {fromEvent, merge, Subject, Subscription, throttleTime} from 'rxjs';
+import {BehaviorSubject, filter, fromEvent, merge, Subject, Subscription, throttleTime} from 'rxjs';
 
 import {IdleDetectionConfig} from './idle-detection.config';
+
+/** Current idle warning state, replayed to newly mounted or switched consumers. */
+export interface IdleDetectionState {
+  readonly isCountingDown: boolean;
+  readonly countdown: number | null;
+}
 
 /**
  * Provides an isolated IdleDetectionService instance with optional initial configuration.
@@ -48,6 +54,7 @@ export class IdleDetectionService {
   private interruptionSubscription?: Subscription;
   private watcherCount = 0;
   private manuallyWatching = false;
+  private destroyed = false;
 
   /**
    * The default idle duration in seconds (19 minutes).
@@ -93,13 +100,18 @@ export class IdleDetectionService {
    * Subject to emit when countdown ends.
    */
   private countdownEndSubject = new Subject<void>();
+  private readonly stateSubject = new BehaviorSubject<IdleDetectionState>({isCountingDown: false, countdown: null});
 
   /**
    * Constructs the IdleDetectionService.
    * @param config - Optional configuration for idle and timeout durations.
    */
   constructor() {
-    inject(DestroyRef).onDestroy(() => this.clearTimers());
+    inject(DestroyRef).onDestroy(() => {
+      this.destroyed = true;
+      this.clearTimers();
+      this.stateSubject.complete();
+    });
     const config = inject(IdleDetectionConfig, {optional: true});
     if (config) {
       this.setConfig(config);
@@ -110,6 +122,7 @@ export class IdleDetectionService {
    * Starts to watch for user inactivity.
    */
   startWatching() {
+    if (this.destroyed) return;
     this.manuallyWatching = true;
     this.ensureWatching();
   }
@@ -120,6 +133,7 @@ export class IdleDetectionService {
    * @returns Callback releasing this owner's subscription to idle detection.
    */
   watch(): () => void {
+    if (this.destroyed) return () => undefined;
     this.watcherCount++;
     if (this.watcherCount === 1 && !this.interruptionSubscription) this.ensureWatching();
     let released = false;
@@ -143,6 +157,7 @@ export class IdleDetectionService {
    * Pass true when you want to reset the countdown as well. This is useful when you click "Keep Me Signed In" button in cll-idle-detection component
    */
   resetTimer(withCountdownReset = false) {
+    if (this.destroyed) return;
     this.startIdleTimer();
 
     if (withCountdownReset && this.isCountingDown) {
@@ -176,8 +191,9 @@ export class IdleDetectionService {
 
     this.idleTimer = window.setTimeout(() => {
       // after idle period, user inactivity detected
+      const timer = this.idleTimer;
       this.idleEndSubject.next();
-      this.startCountdown();
+      if (this.idleTimer === timer) this.startCountdown();
     }, this.idleDuration * 1000);
   }
 
@@ -185,31 +201,51 @@ export class IdleDetectionService {
    * Starts the countdown.
    */
   private startCountdown() {
-    this.stopCountdown();
+    this.stopCountdown(false);
     this.isCountingDown = true;
-    this.countdownSubject.next(this.countdown);
-
-    this.countdownTimer = window.setInterval(() => {
-      this.countdown--;
-      this.countdownSubject.next(this.countdown);
-
-      if (this.countdown <= 0) {
+    const timer = window.setInterval(() => {
+      if (this.countdownTimer !== timer || !this.isCountingDown) return;
+      const remaining = --this.countdown;
+      this.publishState();
+      if (this.countdownTimer !== timer || !this.isCountingDown) return;
+      this.countdownSubject.next(remaining);
+      if (this.countdownTimer !== timer || !this.isCountingDown) return;
+      if (remaining <= 0) {
         this.stopCountdown();
         this.countdownEndSubject.next();
       }
     }, 1000);
+    // Install ownership before synchronous callbacks can reset or release it.
+    this.countdownTimer = timer;
+    this.publishState();
+    if (this.countdownTimer === timer && this.isCountingDown) this.countdownSubject.next(this.countdown);
   }
 
   /**
    * Stops the countdown.
    */
-  private stopCountdown() {
+  private stopCountdown(publish = true) {
     clearInterval(this.countdownTimer);
     this.countdownTimer = undefined;
     this.isCountingDown = false;
 
     // reset countdown
     this.countdown = this.timeoutDuration;
+    if (publish) this.publishState();
+  }
+
+  private publishState(): void {
+    const state = {isCountingDown: this.isCountingDown, countdown: this.isCountingDown ? this.countdown : null};
+    const previous = this.stateSubject.value;
+    if (previous.isCountingDown !== state.isCountingDown || previous.countdown !== state.countdown) {
+      this.stateSubject.next(state);
+    }
+  }
+
+  /** Observe current warning/countdown state, including activity resets and service switching. */
+  observeState() {
+    // A synchronous observer may reset state before later peers receive this batch.
+    return this.stateSubject.asObservable().pipe(filter((state) => state === this.stateSubject.value));
   }
 
   /**
@@ -249,13 +285,10 @@ export class IdleDetectionService {
   clearTimers() {
     this.manuallyWatching = false;
     clearTimeout(this.idleTimer);
-    this.stopCountdown();
-
     this.idleTimer = undefined;
-    this.countdownTimer = undefined;
-
     this.interruptionSubscription?.unsubscribe();
     this.interruptionSubscription = undefined;
+    this.stopCountdown();
   }
 
   /**
@@ -263,6 +296,7 @@ export class IdleDetectionService {
    * @param config - Configuration object with idle and timeout durations.
    */
   setConfig(config: IdleDetectionConfig) {
+    if (this.destroyed) return;
     if (config.idleDurationInSeconds && config.idleDurationInSeconds !== this.idleDuration) {
       this.idleDuration = config.idleDurationInSeconds;
       if (this.idleTimer !== undefined && !this.isCountingDown) this.startIdleTimer();
@@ -270,6 +304,7 @@ export class IdleDetectionService {
 
     if (config.timeoutDurationInSeconds) {
       this.countdown = this.timeoutDuration = config.timeoutDurationInSeconds;
+      this.publishState();
     }
   }
 }

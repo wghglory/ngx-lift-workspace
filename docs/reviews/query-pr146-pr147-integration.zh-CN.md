@@ -27,6 +27,10 @@ wrapper 或 defineQuery。
 诊断新增 6 项回归先出现 4 失败、2 通过；修复后全通过。覆盖没有 HTTP
 subscription 的重试等待、当前代际完成后旧读取继续 retry，以及等待期间 remove/destroy。#146 的同步 teardown、observer 隔离、deadline 和过期结果防护继续保留。
 
+## 独立的 idle scope 修复
+
+非 query 补充检查发现 P2：已打开的弹窗切换 service 后继续显示旧状态；新组件挂接到正在倒计时的共享 service 时又收不到过去的事件。用 observeState() 重放实际 service 状态，切换后立即同步；共享活动重置也关闭同 service 的其他弹窗。3 项真实组件回归先全部失败，修复后通过；另补 10 项 service 回归，覆盖状态重放、释放、销毁，以及同步回调 reset/release/clear 后不继续安装 timer 或发送旧 countdown；过期状态批次不会覆盖其他 observer 已收到的 reset。单独提交，保留 query 整合审查边界。
+
 ## 诊断使用边界
 
 两个 get 方法不发请求、不通知 observer、不延长缓存、不修改状态；key 和 tags 是独立副本。调用方自己安排刷新与销毁。Inspector 读取 injected

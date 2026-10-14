@@ -1,8 +1,8 @@
 import {flushEffects} from '../../../test-setup';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
-import {IdleDetectionService} from 'ngx-lift';
-import {Subject} from 'rxjs';
+import {IdleDetectionService, IdleDetectionState} from 'ngx-lift';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
@@ -24,17 +24,23 @@ describe('IdleDetectionComponent', () => {
   let idleEndSubject: Subject<void>;
   let timeoutEndSubject: Subject<void>;
   let countdownSubject: Subject<number>;
+  let stateSubject: BehaviorSubject<IdleDetectionState>;
 
   beforeEach(async () => {
     idleEndSubject = new Subject<void>();
     timeoutEndSubject = new Subject<void>();
     countdownSubject = new Subject<number>();
+    stateSubject = new BehaviorSubject<IdleDetectionState>({isCountingDown: false, countdown: null});
+    idleEndSubject.subscribe(() => stateSubject.next({isCountingDown: true, countdown: stateSubject.value.countdown}));
+    timeoutEndSubject.subscribe(() => stateSubject.next({isCountingDown: false, countdown: null}));
+    countdownSubject.subscribe((countdown) => stateSubject.next({isCountingDown: true, countdown}));
 
     // Create a mock service instance
     const mockIdleDetectionService = {
       onIdleEnd: vi.fn(() => idleEndSubject.asObservable()),
       onTimeoutEnd: vi.fn(() => timeoutEndSubject.asObservable()),
       onCountDown: vi.fn(() => countdownSubject.asObservable()),
+      observeState: vi.fn(() => stateSubject.asObservable()),
       startWatching: vi.fn(),
       watch: vi.fn(() => {
         mockIdleDetectionService.startWatching();
@@ -64,6 +70,7 @@ describe('IdleDetectionComponent', () => {
     idleEndSubject.complete();
     timeoutEndSubject.complete();
     countdownSubject.complete();
+    stateSubject.complete();
   });
 
   it('should create', async () => {
@@ -167,7 +174,7 @@ describe('IdleDetectionComponent', () => {
   });
 
   it('should emit countdown values', async () => {
-    let countdownValue: number | undefined;
+    let countdownValue: number | null | undefined;
     const subscription = component.countdown$.subscribe((value) => {
       countdownValue = value;
     });
@@ -219,7 +226,7 @@ describe('IdleDetectionComponent', () => {
   });
 
   it('should handle countdown sequence', async () => {
-    const countdownValues: number[] = [];
+    const countdownValues: (number | null)[] = [];
     const subscription = component.countdown$.subscribe((value) => {
       countdownValues.push(value);
     });
@@ -231,7 +238,7 @@ describe('IdleDetectionComponent', () => {
     countdownSubject.next(3);
     await flushEffects(100);
 
-    expect(countdownValues).toEqual([5, 4, 3]);
+    expect(countdownValues).toEqual([null, 5, 4, 3]);
     subscription.unsubscribe();
   });
 });

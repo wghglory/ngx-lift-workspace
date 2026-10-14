@@ -44,7 +44,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
@@ -164,7 +164,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   writeFileSync(
     join(freshConsumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
@@ -196,6 +196,11 @@ function resources() {
   return [initialError, refreshError, id, count, retryAt];
 }
 void [users, users$, snapshots$, queryProviders, diagnostics, resources, new QueryTimeoutError(5)];
+function idleState(service: IdleDetectionService) {
+  const state$: Observable<IdleDetectionState> = service.observeState();
+  return state$;
+}
+void idleState;
 const spinner: typeof SpinnerComponent = SpinnerComponent;
 const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}

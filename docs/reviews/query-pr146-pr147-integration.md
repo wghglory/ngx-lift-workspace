@@ -28,6 +28,17 @@ cover a logical read with zero active transport subscriptions, an obsolete retry
 and removal/destruction during backoff. Original-error, listener-isolation, deadline, generation and cancellation
 regressions from #146 remain present.
 
+## Independent idle scope repair
+
+A nonquery scan found a P2 state mismatch: changing the active idle service retained the previous modal/countdown, while
+a late-mounted shared consumer missed an already-active countdown. `observeState()` now replays the service's actual
+state, synchronizes scope changes, and closes shared dialogs on activity reset. Three rendered-component cases failed
+before the fix and pass afterward; ten service cases cover replay, reset, ownership release, destruction and synchronous
+callbacks. Timer ownership is installed before notification; callbacks that reset/release/clear prevent stale
+continuation, and destruction blocks timer resurrection. Superseded synchronous state batches are filtered so a peer
+cannot receive an old warning after a reset. This repair is a separate commit from query integration. The existing event
+APIs remain available.
+
 ## Public inspection contract
 
 `getEntriesSnapshot()` and `getDiagnostics()` do not fetch, notify observers, extend retention or mutate query state.
@@ -72,7 +83,7 @@ snapshot observation or signal resources for mounted views.
 
 ## Validation
 
-The combined branch passed `pnpm run validate`: 838 ngx-lift tests, 259 clr-lift tests and the full demo unit suite;
+The combined branch passed `pnpm run validate`: 848 ngx-lift tests, 262 clr-lift tests and the full demo unit suite;
 coverage gates, source type checks, lint, full dictionary checks, tooling, production builds, bundle dependency gates
 and strict fresh consumer installation. Source and spec TypeScript checks passed for all three projects. All 120
 Chromium/Firefox/WebKit E2E tests passed on the frozen source, including every locale's inspector projection and

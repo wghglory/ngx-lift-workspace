@@ -76,3 +76,8 @@ browser clock advances every minute and cleans up with its injector. Each status
 major release or a separately named opt-in API. A Result wrapper would require consumers to unwrap values in
 assignments, property reads, templates and previous-value callbacks. Changing the default to throwing would instead
 change runtime error behavior. This PR makes neither change.
+
+`IdleDetectionService.observeState()` replays the current warning/countdown state. Switching to a fresh scope clears the
+previous modal and countdown; joining an already-counting shared service renders its current state immediately. Activity
+resets close every modal observing the same service. Existing event APIs remain available; the state stream completes
+with its injector.

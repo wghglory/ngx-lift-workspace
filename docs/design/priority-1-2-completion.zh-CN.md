@@ -34,3 +34,5 @@ nextRetryAt 暴露当前读取的失败次数与计划重试时间。面板每�
 ## computedAsync
 
 实现和类型均保持不变。错误被当作值的类型债务应在独立 major 或新命名的可选 API 中处理。Result 包装会要求现有赋值、属性访问、模板和 previous-value 回调先解包；默认抛错则改变运行时行为。本 PR 不引入这些变化。
+
+IdleDetectionService.observeState() 重放当前 warning/countdown 状态。切到独立 scope 时立即关闭旧弹窗并清空倒计时；挂接到正在倒计时的共享 service 时立即显示当前状态。任何共享 consumer 的活动重置都会关闭所有同 service 弹窗。原有事件 API 保留，状态流随 injector 销毁完成。
