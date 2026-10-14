@@ -9,34 +9,44 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import {isObservable, Observable, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
-import {QueryDefinition, QueryLoaderContext, QueryObserverHandle, QuerySnapshot, QueryStatus} from './query.models';
+import {QueryDefinition, QueryObserverHandle, QueryRecoveryOptions, QuerySnapshot, QueryStatus} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {serializeQueryKey} from './query-key';
-import {observableLoader} from './query-observable';
 import {resourceAsync} from './resource-async';
 
-/** Angular query definition accepting Promise or first-value Observable reads. */
-export interface QueryResourceDefinition<T> extends Omit<QueryDefinition<T>, 'loader'> {
-  /** Observable reads unsubscribe after the first value or when the shared request is aborted. */
-  readonly loader: (context: QueryLoaderContext) => Promise<T> | Observable<T>;
-}
+/**
+ * Angular query definition accepting Promise or Observable reads.
+ * Alias for QueryDefinition.
+ */
+export type QueryResourceDefinition<T> = QueryDefinition<T>;
 
 /** Injection, shared-client, and reactive polling configuration for queryResource. */
-export interface QueryResourceOptions {
+export interface QueryResourceOptions extends QueryRecoveryOptions {
   pollInterval?: number | (() => number | undefined);
   injector?: Injector;
   client?: QueryClient;
 }
 
 /** Readonly signals and explicit refresh controls for one shared query observer. */
-export interface QueryResourceRef<T, E = Error> {
+export interface QueryFailureSignals {
+  readonly isInitialError: Signal<boolean>;
+  readonly isRefreshError: Signal<boolean>;
+  readonly updatedAt: Signal<number | null>;
+  readonly failureCount: Signal<number>;
+  readonly failureReason: Signal<unknown | null>;
+  readonly nextRetryAt: Signal<number | null>;
+}
+
+export interface QueryResourceRef<T, E = Error> extends QueryFailureSignals {
   readonly value: Signal<T>;
   readonly error: Signal<E | null>;
   readonly status: Signal<QueryStatus>;
   readonly isLoading: Signal<boolean>;
+  readonly isInitialLoading: Signal<boolean>;
+  readonly isRefreshing: Signal<boolean>;
   readonly isStale: Signal<boolean>;
   hasValue(): this is QueryResourceRef<Exclude<T, undefined>, E>;
   /** Force fresh data while joining a valid request already in flight. */
@@ -48,7 +58,17 @@ export interface QueryResourceRef<T, E = Error> {
 }
 
 function idleSnapshot<T>(): QuerySnapshot<T> {
-  return {value: undefined, hasValue: false, error: null, status: 'idle', updatedAt: null, isStale: true};
+  return {
+    value: undefined,
+    hasValue: false,
+    error: null,
+    status: 'idle',
+    updatedAt: null,
+    isStale: true,
+    failureCount: 0,
+    failureReason: null,
+    nextRetryAt: null,
+  };
 }
 
 /**
@@ -59,12 +79,16 @@ function idleSnapshot<T>(): QuerySnapshot<T> {
  * // In an Angular injection context, with HttpClient provided:
  * const http = inject(HttpClient);
  * const userId = signal('42');
- * const user = queryResource(() => {
+ * const userQuery = queryResource(() => {
  *   const id = userId();
  *   return {key: ['user', id], loader: () => http.get<User>(`/api/users/${id}`)};
  * });
- * // Read user.value(), user.isLoading(), and user.error() from the template.
+ * // Read userQuery.value(), userQuery.isLoading(), and userQuery.error() from the template.
  * ```
+ *
+ * @param definition Reactive factory returning a QueryDefinition or undefined when prerequisites are missing.
+ * @param options Polling interval, custom injector, or custom query client.
+ * @returns QueryResourceRef exposing signals and execution controls.
  */
 export function queryResource<T, E = Error>(
   definition: () => QueryResourceDefinition<T> | undefined,
@@ -78,14 +102,7 @@ export function queryResource<T, E = Error>(
   const requested = computed(() => {
     const query = definition();
     if (!query) return undefined;
-    const adapted: QueryDefinition<T> = {
-      ...query,
-      loader: (context) => {
-        const source = query.loader(context);
-        return isObservable(source) ? observableLoader(() => source)(context) : source;
-      },
-    };
-    return {query: adapted, key: serializeQueryKey(query.key)};
+    return {query, key: serializeQueryKey(query.key)};
   });
   const requestedKey = computed(() => requested()?.key);
   const observedKey = signal<string | undefined>(undefined);
@@ -125,7 +142,12 @@ export function queryResource<T, E = Error>(
                   if (!destroyed && observedKey() === key) subscriber.next(snapshot);
                 });
               },
-              {pollInterval: observedInterval, refresh},
+              {
+                pollInterval: observedInterval,
+                refresh,
+                refetchOnFocus: options.refetchOnFocus,
+                refetchOnReconnect: options.refetchOnReconnect,
+              },
             );
             // A synchronous snapshot can destroy the resource while recovery is attaching.
             if (destroyed || subscriber.closed) {
@@ -162,6 +184,7 @@ export function queryResource<T, E = Error>(
     const snapshot = sharedState.value();
     return sharedState.error() ? {...snapshot, error: sharedState.error(), status: 'error' as const} : snapshot;
   });
+
   const observerEffect = effect(
     () => {
       const current = requested();
@@ -174,7 +197,12 @@ export function queryResource<T, E = Error>(
         observedInterval = interval;
         if (current?.key === observedKey() && current) {
           unsubscribe?.updateDefinition(current.query);
-          if (intervalChanged) unsubscribe?.updateOptions({pollInterval: interval});
+          if (intervalChanged)
+            unsubscribe?.updateOptions({
+              pollInterval: interval,
+              refetchOnFocus: options.refetchOnFocus,
+              refetchOnReconnect: options.refetchOnReconnect,
+            });
         }
       });
     },
@@ -209,6 +237,14 @@ export function queryResource<T, E = Error>(
     error: computed(() => visibleState().error as E | null),
     status: computed(() => visibleState().status),
     isLoading: computed(() => ['loading', 'reloading'].includes(visibleState().status)),
+    isInitialLoading: computed(() => visibleState().status === 'loading'),
+    isRefreshing: computed(() => visibleState().status === 'reloading'),
+    isInitialError: computed(() => visibleState().status === 'error' && !visibleState().hasValue),
+    isRefreshError: computed(() => visibleState().status === 'error' && visibleState().hasValue),
+    updatedAt: computed(() => visibleState().updatedAt),
+    failureCount: computed(() => visibleState().failureCount),
+    failureReason: computed(() => visibleState().failureReason),
+    nextRetryAt: computed(() => visibleState().nextRetryAt),
     isStale: computed(() => visibleState().isStale),
     hasValue(): this is QueryResourceRef<Exclude<T, undefined>, E> {
       return visibleState().hasValue && visibleState().value !== undefined;

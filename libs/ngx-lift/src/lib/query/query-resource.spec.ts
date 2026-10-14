@@ -6,10 +6,9 @@ import {TestBed} from '@angular/core/testing';
 import {EMPTY, EmptyError, firstValueFrom, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
-import {QueryClient} from './query-client';
-import {QUERY_CLIENT} from './query-client.token';
 import {QueryDefinition} from './query.models';
-import {observableLoader} from './query-observable';
+import {QueryClient} from './query-client';
+import {provideQueryClient, QUERY_CLIENT} from './query-client.token';
 import {queryResource} from './query-resource';
 
 @Component({
@@ -43,6 +42,39 @@ describe('queryResource', () => {
     client.destroy();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('distinguishes falsy initial errors from refresh errors after successful undefined data', async () => {
+    const enabled = signal(true);
+    const failure = new Error('refresh failed');
+    const loader = vi
+      .fn<() => Promise<number | undefined>>()
+      .mockRejectedValueOnce(null)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(failure);
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => (enabled() ? {key: ['failure-signals'], loader} : undefined)),
+    );
+    await settle();
+    expect(resource.error()).toBeNull();
+    expect(resource.isInitialError()).toBe(true);
+    expect(resource.isRefreshError()).toBe(false);
+    expect(resource.failureCount()).toBe(1);
+    await resource.execute();
+    await settle();
+    expect(resource.updatedAt()).not.toBeNull();
+    expect(resource.failureCount()).toBe(0);
+    expect(resource.hasValue()).toBe(false);
+    await expect(resource.execute()).rejects.toBe(failure);
+    await settle();
+    expect(resource.isInitialError()).toBe(false);
+    expect(resource.isRefreshError()).toBe(true);
+    expect(resource.failureReason()).toBe(failure);
+    enabled.set(false);
+    expect(resource.status()).toBe('idle');
+    expect(resource.failureCount()).toBe(0);
+    expect(resource.nextRetryAt()).toBeNull();
+    expect(resource.updatedAt()).toBeNull();
   });
 
   it('coordinates mounted components with different policies and isolates scope keys', async () => {
@@ -95,18 +127,27 @@ describe('queryResource', () => {
     const second = TestBed.runInInjectionContext(() => queryResource(() => definition));
     expect(first.status()).toBe('loading');
     expect(first.isLoading()).toBe(true);
+    expect(first.isInitialLoading()).toBe(true);
+    expect(first.isRefreshing()).toBe(false);
     await settle();
     expect(loader).toHaveBeenCalledTimes(1);
     expect(first.value()).toBe(1);
     expect(second.value()).toBe(1);
+    expect(first.isInitialLoading()).toBe(false);
+    expect(first.isRefreshing()).toBe(false);
     first.reload();
     second.reload();
     expect(first.status()).toBe('reloading');
+    expect(first.isLoading()).toBe(true);
+    expect(first.isInitialLoading()).toBe(false);
+    expect(first.isRefreshing()).toBe(true);
     expect(first.hasValue()).toBe(true);
     await settle();
     expect(loader).toHaveBeenCalledTimes(2);
     expect(first.value()).toBe(2);
     expect(second.value()).toBe(2);
+    expect(first.isInitialLoading()).toBe(false);
+    expect(first.isRefreshing()).toBe(false);
   });
 
   it.each(['initial', 'recovery'] as const)(
@@ -203,8 +244,8 @@ describe('queryResource', () => {
     expect(contexts).toEqual([false, true]);
   });
 
-  it('keeps explicit observableLoader definitions compatible', async () => {
-    const definition = {key: ['adapted'], loader: observableLoader(() => of(7))};
+  it('shares a direct Observable definition with imperative client reads', async () => {
+    const definition = {key: ['shared-observable'], loader: () => of(7)};
     const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
     await settle();
     expect(resource.value()).toBe(7);
@@ -689,6 +730,53 @@ describe('QUERY_CLIENT browser and server lifecycle', () => {
     TestBed.resetTestingModule();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('configures defaults while retaining browser recovery and disposing every listener', async () => {
+    TestBed.configureTestingModule({providers: [provideQueryClient({queryDefaults: {refetchOnReconnect: true}})]});
+    const document = TestBed.inject(DOCUMENT);
+    const view = document.defaultView;
+    if (!view) throw new Error('Browser test requires a window');
+    const add = vi.spyOn(view, 'addEventListener');
+    const remove = vi.spyOn(view, 'removeEventListener');
+    const client = TestBed.inject(QUERY_CLIENT);
+    const loader = vi.fn(async () => 42);
+    const definition = {key: ['provider-recovery'], loader};
+    client.observeQuery(definition, () => undefined);
+    await client.fetchQuery(definition);
+    view.dispatchEvent(new Event('online'));
+    await client.fetchQuery(definition);
+    expect(loader).toHaveBeenCalledTimes(2);
+    expect(add).toHaveBeenCalledWith('focus', expect.any(Function));
+    expect(add).toHaveBeenCalledWith('online', expect.any(Function));
+    TestBed.resetTestingModule();
+    expect(remove).toHaveBeenCalledWith('focus', expect.any(Function));
+    expect(remove).toHaveBeenCalledWith('online', expect.any(Function));
+    expect(() => client.fetchQuery(definition)).toThrow('destroyed');
+  });
+
+  it('preserves provider SSR defaults when optional overrides are explicitly undefined', async () => {
+    vi.useFakeTimers();
+    const document = {defaultView: null, addEventListener: vi.fn(), removeEventListener: vi.fn()};
+    TestBed.configureTestingModule({
+      providers: [
+        {provide: DOCUMENT, useValue: document},
+        provideQueryClient({
+          isVisible: undefined,
+          subscribeVisibility: undefined,
+          subscribeFocus: undefined,
+          queryDefaults: {refetchOnFocus: true},
+        }),
+      ],
+    });
+    const client = TestBed.inject(QUERY_CLIENT);
+    const loader = vi.fn(async () => 42);
+    const definition = {key: ['provider-ssr'], loader};
+    client.observeQuery(definition, () => undefined, {pollInterval: 10});
+    await client.fetchQuery(definition);
+    await vi.advanceTimersByTimeAsync(30);
+    expect(loader).toHaveBeenCalledTimes(1);
+    expect(document.addEventListener).not.toHaveBeenCalled();
   });
 
   it('pauses polling while the document is hidden and removes its listener on injector destruction', async () => {

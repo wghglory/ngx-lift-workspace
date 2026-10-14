@@ -1,6 +1,8 @@
 <cll-page-container [title]="'queryResource.title' | translate">
   <!-- Overview -->
   <p class="p1" [innerHTML]="'queryResource.overview' | translate"></p>
+  <app-query-usage-examples />
+  <app-query-failure-examples />
 
   <!-- ==================== ARCHITECTURE & COMPARISON SECTION ==================== -->
   <section cds-layout="vertical gap:md align:stretch" class="m-t-md">
@@ -472,7 +474,7 @@
   </section>
 
   <!-- ==================== DEMO 5: DEVELOPER DIAGNOSTICS ==================== -->
-  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+  <section data-testid="query-diagnostics" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2>{{ 'queryResource.diagnosticsSection' | translate }}</h2>
     <p>{{ 'queryResource.diagnosticsSectionDesc' | translate }}</p>
 
@@ -480,19 +482,16 @@
       [title]="'queryResource.diagnosticsPlaygroundTitle' | translate"
       [description]="'queryResource.diagnosticsPlaygroundDesc' | translate"
       [tsCode]="diagnosticsCode"
+      [badgeText]="'queryResource.badgeDiagnostics' | translate"
     >
-      <div playground-badge>
-        <span class="badge badge-info">{{ 'queryResource.badgeDiagnostics' | translate }}</span>
-      </div>
-
-      <div playground-actions>
+      <div inspector>
         <button type="button" class="btn btn-sm btn-outline" (click)="refreshDiagnostics()">
           <clr-icon shape="refresh" class="m-r-xs" />
           {{ 'queryResource.refreshDiagnostics' | translate }}
         </button>
       </div>
 
-      <div playground-preview>
+      <div preview>
         <!-- Metric Cards -->
         <div class="clr-row">
           <div class="clr-col-6 clr-col-md-2">
@@ -550,6 +549,8 @@
               <th>{{ 'queryResource.thQueryKey' | translate }}</th>
               <th>{{ 'queryResource.status' | translate }}</th>
               <th>{{ 'queryResource.thObservers' | translate }}</th>
+              <th>{{ 'queryResource.thFailures' | translate }}</th>
+              <th>{{ 'queryResource.thNextRetry' | translate }}</th>
               <th>{{ 'queryResource.freshness' | translate }}</th>
               <th>{{ 'queryResource.thRemainingGc' | translate }}</th>
               <th>{{ 'queryResource.thRemainingPoll' | translate }}</th>
@@ -572,6 +573,14 @@
                   </span>
                 </td>
                 <td>{{ entry.observerCount }}</td>
+                <td>{{ entry.failureCount }}</td>
+                <td>
+                  @if (entry.nextRetryAt !== null) {
+                    {{ entry.nextRetryAt | date: 'mediumTime' }}
+                  } @else {
+                    -
+                  }
+                </td>
                 <td>
                   @if (entry.isStale) {
                     <span class="badge badge-warning">{{ 'queryResource.freshnessBadgeStale' | translate }}</span>
@@ -596,7 +605,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="6" class="text-center p-y-sm text-secondary">
+                <td colspan="8" class="text-center p-y-sm text-secondary">
                   {{ 'queryResource.noQueriesCached' | translate }}
                 </td>
               </tr>

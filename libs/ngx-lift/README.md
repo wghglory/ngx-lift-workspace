@@ -308,7 +308,7 @@ export class UserProfileComponent {
   userId = signal('42');
 
   // Shared query with automatic deduplication, caching, and reactive polling
-  user = queryResource(
+  userQuery = queryResource(
     () => {
       const id = this.userId();
       return {
@@ -322,9 +322,9 @@ export class UserProfileComponent {
   );
 
   // Template usage:
-  // @if (user.isLoading()) { <spinner /> }
-  // @if (user.error(); as error) { <alert [error]="error" /> }
-  // @if (user.hasValue()) { <user-card [user]="user.value()" /> }
+  // @if (userQuery.isLoading()) { <spinner /> }
+  // @if (userQuery.error(); as error) { <alert [error]="error" /> }
+  // @if (userQuery.hasValue()) { <user-card [user]="userQuery.value()" /> }
 }
 ```
 

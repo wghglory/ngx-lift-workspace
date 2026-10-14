@@ -1,5 +1,8 @@
 # PR #147 production review and Priority 1/2 delivery
 
+Historical review of PR #147 at `a168da7`, before integration with #146. Current combination results are recorded in
+[the integration review](query-pr146-pr147-integration.md).
+
 Reviewed on 2026-10-14 (Asia/Shanghai). Target: [PR #147](https://github.com/wghglory/ngx-lift-workspace/pull/147),
 `feat/extended-priority-2-backlog`; original head `6549690`, base/main `b8459ed`. The corrected target is #147. Separate
 #146 experiments are outside this report.
@@ -36,7 +39,8 @@ The review found and repaired these defects:
 - Clarity language switches retained strings from the previous locale. Every switch now starts from upstream/English
   defaults and applies canonical base and exact locale overrides.
 - Diagnostic snapshots exposed mutable cache keys, and the pending total undercounted overlapping request generations.
-  Snapshots are detached and the aggregate counts all transports still in flight.
+  Snapshots detach keys and aggregate all unsettled logical reads attached to cached entries, including obsolete
+  generations.
 - Shared idle components could stop each other's timers. Managed owners release their own subscriptions; the last owner
   clears timers while explicit manual ownership remains supported. Initial configuration precedes the first timer.
 - Asynchronous highlighting changed clipboard output to escaped markup. Copy now decodes prepared source exactly once.

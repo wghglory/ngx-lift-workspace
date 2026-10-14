@@ -1,5 +1,8 @@
 # PR #147 生产审查与 Priority 1、2 交付
 
+本报告记录 #147 在 `a168da7`
+的独立检查，早于与 #146 整合。最终组合的修复与验证见[整合复审](query-pr146-pr147-integration.zh-CN.md)。
+
 目标为 `feat/extended-priority-2-backlog` 的 PR #147，原始提交 `6549690`，基线 `b8459ed`。完整矩阵、使用入口与验证证据见
 [英文报告](./pr-147-production-review-2026-10-14.md)。#146 的独立实验不属于本次交付。
 

@@ -1,10 +1,10 @@
 # Design Specification: `queryResource` & `QueryClient`
 
-**Status**: Implemented & Production-ready  
+**Status**: Implemented; package publication readiness is assessed separately.  
 **Module**: `libs/ngx-lift/src/lib/query/query-resource.ts`, `query-client.ts`, `query-observable.ts`,
 `query-client.token.ts`  
-**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts` (30 tests), `query-client.spec.ts` (38 tests),
-`query-observable.spec.ts` (9 tests)
+**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts`, `query-client.spec.ts`, `query-normalizer.spec.ts`,
+`query-observable.spec.ts`, and `query-resources.spec.ts`.
 
 ---
 
@@ -53,7 +53,7 @@ interface Pod {
 const http = inject(HttpClient);
 const tenant = signal('tenant-a');
 
-const pods = queryResource(
+const podsQuery = queryResource(
   () => {
     const scope = tenant();
     if (!scope) return undefined; // An undefined definition disables the query
@@ -67,20 +67,22 @@ const pods = queryResource(
   {pollInterval: 60_000},
 );
 
-await pods.execute();
+await podsQuery.execute();
 ```
 
 ### 2.2 Observable and Promise Loaders
 
-`queryResource` accepts `QueryResourceDefinition<T>`, whose loader returns `Observable<T> | Promise<T>`. Observable
-loaders such as `HttpClient.get<T>()` can be passed directly. The Angular adapter uses `observableLoader` internally to
-resolve the first emitted value and unsubscribe. Empty completion rejects with `EmptyError`; source errors are forwarded
-to the query state. Promise loaders and existing `observableLoader` definitions remain compatible.
+All query entry points accept `QueryDefinition<T>` loaders returning `Observable<T> | PromiseLike<T>` directly.
+`QueryResourceDefinition<T>` names the same definition type for signal resources. The internal normalizer resolves
+Observable reads on the first value and unsubscribes; empty completion rejects with `EmptyError`. Promise-like results
+are assimilated with `Promise.resolve`. The scheduler remains Promise-based without requiring public adapters. If
+teardown exceptions escape the subscription boundary, the request still settles: original transport errors are retained;
+after a value, an escaping teardown failure rejects the attempt and permits a later read to retry. RxJS can suppress
+operator-chain cleanup exceptions internally; those follow RxJS behavior and cannot be recovered at this boundary.
 
-`QueryClient` remains framework-independent and accepts Promise-only `QueryDefinition<T>` loaders. Use
-`observableLoader` when passing an Observable-backed definition directly to `QueryClient`, `observeQueryObservable`, or
-`fetchQueryObservable`. Those Observable bridges remain useful for service APIs and RxJS operator composition;
-`queryResource` is the signal bridge for Angular views.
+`fetchQueryObservable` exposes one finite result. `observeQueryObservable` exposes ongoing snapshots and completes on
+explicit removal. Use the latter or `queryResource` when mutation invalidation must update a mounted view.
+`QueryResourceRef` includes `isInitialLoading` and `isRefreshing` in addition to the aggregate `isLoading` signal.
 
 Cancellation follows the shared cache policy. Destroying, disabling, or changing the key of a resource detaches its
 observer. The underlying request is aborted only when the last observer leaves and `cancelOnNoObservers: true` is
@@ -231,7 +233,7 @@ export class UserProfileComponent {
   });
 
   save(id: string): void {
-    this.saveMutation.mutate(id);
+    void this.saveMutation.mutate(id);
   }
 }
 ```
@@ -248,26 +250,9 @@ export class UserProfileComponent {
 
 **No. In standard Angular applications, zero registration is required.**
 
-`QUERY_CLIENT` is defined with `providedIn: 'root'`:
-
-```typescript
-export const QUERY_CLIENT = new InjectionToken<QueryClient>('QUERY_CLIENT', {
-  providedIn: 'root',
-  factory: () => {
-    const document = inject(DOCUMENT);
-    const client = new QueryClient({
-      isVisible: () => !!document.defaultView && document.visibilityState !== 'hidden',
-      subscribeVisibility: (listener) => {
-        if (!document.defaultView) return () => undefined;
-        document.addEventListener('visibilitychange', listener);
-        return () => document.removeEventListener('visibilitychange', listener);
-      },
-    });
-    inject(DestroyRef).onDestroy(() => client.destroy());
-    return client;
-  },
-});
-```
+`QUERY_CLIENT` uses `providedIn: 'root'` and an Angular-aware factory. See the actual
+[token/provider implementation](../../libs/ngx-lift/src/lib/query/query-client.token.ts) for browser visibility,
+focus/online listeners, diagnostic ErrorHandler integration, and DestroyRef disposal.
 
 - When you call `queryResource()` or `mutateResource()` without options, they automatically inject the root singleton
   `QueryClient`.
@@ -280,14 +265,11 @@ You only need custom registration in specific architectural scenarios:
 
 1. **Custom Global Options** (e.g. customized polling clock, capacity limits):
    ```typescript
-   // app.config.ts
+   import {ApplicationConfig} from '@angular/core';
+   import {provideQueryClient} from 'ngx-lift';
+
    export const appConfig: ApplicationConfig = {
-     providers: [
-       {
-         provide: QUERY_CLIENT,
-         useFactory: () => new QueryClient({maxEntries: 200}),
-       },
-     ],
+     providers: [provideQueryClient({maxEntries: 200})],
    };
    ```
 2. **Server-Side Rendering (SSR)**:
@@ -325,7 +307,7 @@ You only need custom registration in specific architectural scenarios:
 | **Generation Isolation on Tags**   | Generation counter per cache entry                     | None. Obsolete in-flight responses are dropped.                  | ✅ Exact match       |
 | **Coordinated Background Polling** | Reference counting + fastest interval                  | None. Pauses on document hidden, disabled in SSR.                | ✅ Exact match       |
 | **Dynamic Poll Callback**          | `pollInterval?: number \| (() => number \| undefined)` | None. Recalculates timer dynamically.                            | ✅ Exact match       |
-| **Observable Adapter**             | `observableLoader` & `observeQueryObservable`          | None. Handles synchronous emission and teardown.                 | ✅ Exact match       |
+| **Observable Adapter**             | Internal normalization & `observeQueryObservable`      | None. Handles synchronous emission and teardown.                 | ✅ Exact match       |
 | **Automatic DI Root Token**        | `QUERY_CLIENT` with `providedIn: 'root'`               | None. Zero-config root client.                                   | ✅ Exact match       |
 | **Offline Cache Persistence**      | In-memory only                                         | Offline storage plugin (LocalStorage / IndexedDB) not built yet. | ⚠️ Planned next step |
 
@@ -339,3 +321,19 @@ You only need custom registration in specific architectural scenarios:
    - Introduce cursor-based / paginated query management for infinite scrolling lists.
 3. **Pre-fetching API**:
    - Provide `queryClient.prefetchQuery(options)` for router preload strategies.
+
+## Implemented bounded failure lifecycle
+
+[Failure design](query-failure-design.md) and its [Chinese companion](query-failure-design.zh-CN.md) describe the public
+provider, read policy, error signals, reporting hooks, and recovery options. `query-request.ts` owns one frozen logical
+read with bounded attempts, total deadline, and cleanup; QueryClient retains cache/generation/publication ownership.
+Joiners share that work. Superseded callers can finish, but cannot publish or report into a newer generation.
+
+`query-client-failure.spec.ts`, `query-client-retry.spec.ts`, and `query-client-recovery.spec.ts` cover listener
+isolation, deadlines, retry boundaries, and observed recovery. Resource tests cover retained values and falsy errors;
+provider tests cover Angular event/disposal wiring. Typed collection `item()` identifies failed rows without decoding
+cache keys.
+
+Defaults disable automatic retry, deadline, and focus/reconnect refresh. `provideQueryClient` supplies Angular lifecycle
+integration and accepts explicit defaults; per-definition `retry: false` / `deadlineMs: false` opt out. Per-resource
+recovery flags override client defaults. Mutation execution has no automatic retry.

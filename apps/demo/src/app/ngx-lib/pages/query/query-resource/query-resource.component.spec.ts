@@ -72,6 +72,13 @@ describe('QueryResourceDemoComponent', () => {
     }
   });
 
+  it('renders the inspector table and refresh control through the playground projection', () => {
+    const inspector = fixture.nativeElement.querySelector('[data-testid="query-diagnostics"]');
+    expect(inspector.querySelector('table')).not.toBeNull();
+    const refresh = Array.from(inspector.querySelectorAll('button')) as HTMLButtonElement[];
+    expect(refresh.some((button) => button.querySelector('clr-icon[shape="refresh"]'))).toBe(true);
+  });
+
   it('updates live diagnostics snapshot', () => {
     expect(component.diagnostics()).toBeDefined();
     expect(component.diagnostics().entryCount).toBeGreaterThanOrEqual(0);

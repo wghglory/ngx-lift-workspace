@@ -5,6 +5,8 @@ import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, QUERY_CLIENT, QueryClientDiagnostics, queryResource, QueryResourceRef} from 'ngx-lift';
 
+import {QueryFailureExamplesComponent} from './query-failure-examples.component';
+import {QueryUsageExamplesComponent} from './query-usage-examples.component';
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -33,6 +35,8 @@ interface DemoUser {
     TranslatePipe,
     DemoPlaygroundComponent,
     ApiTableComponent,
+    QueryUsageExamplesComponent,
+    QueryFailureExamplesComponent,
   ],
   templateUrl: './query-resource.component.html',
   styleUrls: ['./query-resource.component.scss'],
@@ -222,6 +226,8 @@ for (const entry of entries) {
     isStale: entry.isStale,
     remainingGc: entry.remainingGcTime,
     remainingPoll: entry.remainingPollDelay,
+    failures: entry.failureCount,
+    retryAt: entry.nextRetryAt,
   });
 }`);
 
@@ -252,13 +258,13 @@ const updateProfile = mutateResource(
 
   readonly coalesceCode = highlight(`// Component A and Component B observe the SAME query key
 // Even when mounted concurrently, QueryClient executes only 1 HTTP request!
-const statsA = queryResource(() => ({
+const statsQueryA = queryResource(() => ({
   key: ['metrics', 'cluster-overview'],
   loader: ({ abortSignal }) => fetch('/api/metrics', { signal: abortSignal }),
   staleTime: 5000,
 }));
 
-const statsB = queryResource(() => ({
+const statsQueryB = queryResource(() => ({
   key: ['metrics', 'cluster-overview'],
   loader: ({ abortSignal }) => fetch('/api/metrics', { signal: abortSignal }),
   staleTime: 5000,
@@ -305,6 +311,18 @@ const addUser = mutateResource(
   // ---------------------------------------------------------------------------
   readonly queryResourceApiProps = computed<ApiProperty[]>(() => [
     {
+      name: 'options.refetchOnFocus',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translationService.translate('queryExamples.recoveryFocusDescription'),
+    },
+    {
+      name: 'options.refetchOnReconnect',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translationService.translate('queryExamples.recoveryReconnectDescription'),
+    },
+    {
       name: 'definition',
       type: '() => QueryResourceDefinition<T> | undefined',
       description: this.translationService.translate('demoApi.query-resource.queryResourceApiProps.definition'),
@@ -330,13 +348,25 @@ const addUser = mutateResource(
 
   readonly queryResourceDefinitionProps = computed<ApiProperty[]>(() => [
     {
+      name: 'retry',
+      type: 'false | QueryRetryOptions',
+      defaultValue: 'false',
+      description: this.translationService.translate('queryExamples.retryDescription'),
+    },
+    {
+      name: 'deadlineMs',
+      type: 'number | false',
+      defaultValue: 'undefined',
+      description: this.translationService.translate('queryExamples.deadlineDescription'),
+    },
+    {
       name: 'key',
       type: 'QueryKey',
       description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.key'),
     },
     {
       name: 'loader',
-      type: '(context: QueryLoaderContext) => Promise<T> | Observable<T>',
+      type: '(context: QueryLoaderContext) => PromiseLike<T> | Observable<T>',
       description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.loader'),
     },
     {
@@ -367,6 +397,46 @@ const addUser = mutateResource(
   ]);
 
   readonly queryResourceRefApiProps = computed<ApiProperty[]>(() => [
+    {
+      name: 'isInitialError',
+      type: 'Signal<boolean>',
+      description: this.translationService.translate('queryExamples.isInitialErrorDescription'),
+    },
+    {
+      name: 'isRefreshError',
+      type: 'Signal<boolean>',
+      description: this.translationService.translate('queryExamples.isRefreshErrorDescription'),
+    },
+    {
+      name: 'updatedAt',
+      type: 'Signal<number | null>',
+      description: this.translationService.translate('queryExamples.updatedAtDescription'),
+    },
+    {
+      name: 'failureCount',
+      type: 'Signal<number>',
+      description: this.translationService.translate('queryExamples.failureCountDescription'),
+    },
+    {
+      name: 'failureReason',
+      type: 'Signal<unknown | null>',
+      description: this.translationService.translate('queryExamples.failureReasonDescription'),
+    },
+    {
+      name: 'nextRetryAt',
+      type: 'Signal<number | null>',
+      description: this.translationService.translate('queryExamples.nextRetryAtDescription'),
+    },
+    {
+      name: 'isInitialLoading',
+      type: 'Signal<boolean>',
+      description: this.translationService.translate('queryExamples.initialLoadingDescription'),
+    },
+    {
+      name: 'isRefreshing',
+      type: 'Signal<boolean>',
+      description: this.translationService.translate('queryExamples.refreshingDescription'),
+    },
     {
       name: 'value',
       type: 'Signal<T>',

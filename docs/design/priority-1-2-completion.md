@@ -57,10 +57,14 @@ A component can instead use `[scoped]="true"`. Shared idle instances share confi
 policies. The last managed owner clears timers, while an explicitly started `startWatching()` owner retains control
 until `clearTimers()` or injector destruction. Initial component configuration is applied before watching starts.
 
-Diagnostic keys are detached copies, and the total pending count includes obsolete transports still in flight. The demo
-refreshes every second and stops on destruction. Real mounted consumers test shared keys with different stale, polling
-and GC policies, destruction and independent scope keys. Shared keys continue to use the documented conservative
-combined policy; scoping uses distinct query keys or clients.
+Diagnostic keys are detached copies. Each complete snapshot samples its clock and visibility once; freshness and
+scheduling estimates use that same instant. `requestCount` / `pendingRequestCount` count unsettled logical reads
+associated with cached entries, including retry waits and obsolete generations, rather than active HTTP transports.
+`isPending` describes only the current generation and can be false while an obsolete read remains. Removed entries are
+excluded; remove/destroy abort their work. `failureCount` / `nextRetryAt` expose the current logical read's retry
+progress. The demo refreshes every second and stops on destruction. Real mounted consumers test shared keys with
+different stale, polling and GC policies, destruction and independent scope keys. Shared keys continue to use the
+documented conservative combined policy; scoping uses distinct query keys or clients.
 
 Certificate clocks accept a callback returning Date or a timestamp. Signals satisfy that callback and drive reactive
 status changes. Bind `[clock]="now"` or provide `CERTIFICATE_CLOCK`; custom clocks own their advancement. The default

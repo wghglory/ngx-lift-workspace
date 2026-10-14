@@ -23,7 +23,11 @@ run；即使选择一个包，也构建两个包供消费者验证。dry run 不
 的所有者继续持有计时器，直到清理或销毁。组件先应用配置，再启动首个计时器。
 
 Query
-diagnostics 返回独立 key 副本，pending 总数包含仍在运行的旧请求。面板每秒刷新，销毁后停止。真实组件测试覆盖同 key 的不同 stale/poll/GC 配置、卸载与作用域隔离；共享 key 继续采用已声明的保守合并策略。
+diagnostics 返回独立 key 副本。每次完整快照只采样一次时钟和 visibility，freshness、GC 与 polling 倒计时使用同一时刻。requestCount
+/
+pendingRequestCount 表示缓存条目的待结算逻辑读取，包含 retry 等待与旧代际；不是正在发送 HTTP 的数量。isPending 仅表示当前代际，旧读取未完成时可以为 false。删除条目后不再计数，remove/destroy 会取消对应读取。failureCount
+/
+nextRetryAt 暴露当前读取的失败次数与计划重试时间。面板每秒刷新，销毁后停止。真实组件测试覆盖同 key 的不同 stale/poll/GC 配置、卸载与作用域隔离；共享 key 继续采用已声明的保守合并策略。
 
 证书 Clock 支持返回 Date 或时间戳的回调，也支持 signal。每次状态计算只采样一次。自定义 Clock 由调用方推进；默认浏览器 Clock 每分钟推进并随注入器销毁清理。
 
