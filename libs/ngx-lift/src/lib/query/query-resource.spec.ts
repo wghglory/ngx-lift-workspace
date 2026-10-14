@@ -8,7 +8,6 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
-import {observableLoader} from './query-observable';
 import {queryResource} from './query-resource';
 
 async function settle(): Promise<void> {
@@ -158,8 +157,8 @@ describe('queryResource', () => {
     expect(contexts).toEqual([false, true]);
   });
 
-  it('keeps explicit observableLoader definitions compatible', async () => {
-    const definition = {key: ['adapted'], loader: observableLoader(() => of(7))};
+  it('shares a direct Observable definition with imperative client reads', async () => {
+    const definition = {key: ['shared-observable'], loader: () => of(7)};
     const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
     await settle();
     expect(resource.value()).toBe(7);

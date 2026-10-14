@@ -1,7 +1,8 @@
 import {QueryDefinition} from './query.models';
 
 /**
- * Inference helper to define a reusable query definition with preserved types.
+ * Define a reusable query with inferred data types and shared cache policy.
+ * Returns the same object typed as QueryDefinition<T>, rather than preserving literal key or transport types.
  *
  * @example
  * ```typescript

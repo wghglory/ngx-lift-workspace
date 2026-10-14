@@ -31,42 +31,36 @@ export function normalizeQueryResult<T>(source: QueryResult<T>, context: QueryLo
 
       let settled = false;
 
-      const cleanup = () => {
+      const settle = (result: {value: T} | {error: unknown}) => {
+        if (settled) return;
+        settled = true;
         abortSignal.removeEventListener('abort', onAbort);
-        subscriber.unsubscribe();
+        try {
+          subscriber.unsubscribe();
+        } catch (error) {
+          // A teardown failure must not strand the shared request or mask its original error.
+          reject('error' in result ? result.error : error);
+          return;
+        }
+        if ('error' in result) reject(result.error);
+        else resolve(result.value);
       };
 
       const onAbort = () => {
-        if (!settled) {
-          settled = true;
-          cleanup();
-          const error = new Error('Query request aborted');
-          error.name = 'AbortError';
-          reject(error);
-        }
+        const error = new Error('Query request aborted');
+        error.name = 'AbortError';
+        settle({error});
       };
 
       const subscriber = new Subscriber<T>({
         next: (value: T) => {
-          if (!settled) {
-            settled = true;
-            cleanup();
-            resolve(value);
-          }
+          settle({value});
         },
         error: (error: unknown) => {
-          if (!settled) {
-            settled = true;
-            cleanup();
-            reject(error);
-          }
+          settle({error});
         },
         complete: () => {
-          if (!settled) {
-            settled = true;
-            cleanup();
-            reject(new EmptyError());
-          }
+          settle({error: new EmptyError()});
         },
       });
 

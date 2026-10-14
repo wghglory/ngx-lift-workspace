@@ -23,7 +23,7 @@ export interface QueryLoaderContext {
 }
 
 /** Return type of a query loader: natively accepts an Observable, Promise, or PromiseLike value. */
-export type QueryResult<T> = Observable<T> | Promise<T> | PromiseLike<T>;
+export type QueryResult<T> = Observable<T> | PromiseLike<T>;
 
 /** Definitions sharing a key describe the same data; timing policies reconcile conservatively. */
 export interface QueryDefinition<T> {

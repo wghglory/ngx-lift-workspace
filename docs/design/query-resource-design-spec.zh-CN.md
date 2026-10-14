@@ -21,9 +21,11 @@
 
 ## Observable 支持
 
-`queryResource` 接受 `Observable<T> | Promise<T>` loader。Observable 通过现有 `observableLoader`
-适配，首次值后退订，空流拒绝，错误进入 query 状态。Promise loader 若依赖底层主动取消，仍应传递 `context.abortSignal`。
-`QueryClient` 保持 Promise-only；直接使用它或 Observable 桥接 API 时，Observable loader 仍需显式适配。
+所有查询入口直接接受 `Observable<T> | PromiseLike<T>`
+loader；内部统一 normalize，调度器使用 Promise，应用不需要公开适配器。Observable 取第一个值后 unsubscribe；空完成产生
+`EmptyError`。teardown 抛错时请求仍会结束，错误后可以重试。 `isInitialLoading` 表示无成功数据时的读取，`isRefreshing`
+表示保留旧值的刷新。 `fetchQueryObservable` 是单次快照；需要随失效持续更新时使用 `observeQueryObservable` 或
+`queryResource`。
 
 ## 验证
 

@@ -1,10 +1,10 @@
 # Design Specification: `queryResource` & `QueryClient`
 
-**Status**: Implemented & Production-ready  
+**Status**: Implemented; package publication readiness is assessed separately.  
 **Module**: `libs/ngx-lift/src/lib/query/query-resource.ts`, `query-client.ts`, `query-observable.ts`,
 `query-client.token.ts`  
-**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts` (30 tests), `query-client.spec.ts` (38 tests),
-`query-observable.spec.ts` (9 tests)
+**Tests**: `libs/ngx-lift/src/lib/query/query-resource.spec.ts`, `query-client.spec.ts`, `query-normalizer.spec.ts`,
+`query-observable.spec.ts`, and `query-definition.spec.ts`.
 
 ---
 
@@ -72,15 +72,16 @@ await pods.execute();
 
 ### 2.2 Observable and Promise Loaders
 
-`queryResource` accepts `QueryResourceDefinition<T>`, whose loader returns `Observable<T> | Promise<T>`. Observable
-loaders such as `HttpClient.get<T>()` can be passed directly. The Angular adapter uses `observableLoader` internally to
-resolve the first emitted value and unsubscribe. Empty completion rejects with `EmptyError`; source errors are forwarded
-to the query state. Promise loaders and existing `observableLoader` definitions remain compatible.
+All query entry points accept `QueryDefinition<T>` loaders returning `Observable<T> | PromiseLike<T>` directly.
+`QueryResourceDefinition<T>` names the same definition type for signal resources. The internal normalizer resolves
+Observable reads on the first value and unsubscribes; empty completion rejects with `EmptyError`. Promise-like results
+are assimilated with `Promise.resolve`. The scheduler remains Promise-based without requiring public adapters. If
+teardown throws, the request still settles: original errors are retained; teardown failure after a value rejects the
+attempt and allows a subsequent read to retry.
 
-`QueryClient` remains framework-independent and accepts Promise-only `QueryDefinition<T>` loaders. Use
-`observableLoader` when passing an Observable-backed definition directly to `QueryClient`, `observeQueryObservable`, or
-`fetchQueryObservable`. Those Observable bridges remain useful for service APIs and RxJS operator composition;
-`queryResource` is the signal bridge for Angular views.
+`fetchQueryObservable` exposes one finite result. `observeQueryObservable` exposes ongoing snapshots and completes on
+explicit removal. Use the latter or `queryResource` when mutation invalidation must update a mounted view.
+`QueryResourceRef` includes `isInitialLoading` and `isRefreshing` in addition to the aggregate `isLoading` signal.
 
 Cancellation follows the shared cache policy. Destroying, disabling, or changing the key of a resource detaches its
 observer. The underlying request is aborted only when the last observer leaves and `cancelOnNoObservers: true` is
@@ -325,7 +326,7 @@ You only need custom registration in specific architectural scenarios:
 | **Generation Isolation on Tags**   | Generation counter per cache entry                     | None. Obsolete in-flight responses are dropped.                  | ✅ Exact match       |
 | **Coordinated Background Polling** | Reference counting + fastest interval                  | None. Pauses on document hidden, disabled in SSR.                | ✅ Exact match       |
 | **Dynamic Poll Callback**          | `pollInterval?: number \| (() => number \| undefined)` | None. Recalculates timer dynamically.                            | ✅ Exact match       |
-| **Observable Adapter**             | `observableLoader` & `observeQueryObservable`          | None. Handles synchronous emission and teardown.                 | ✅ Exact match       |
+| **Observable Adapter**             | Internal normalization & `observeQueryObservable`      | None. Handles synchronous emission and teardown.                 | ✅ Exact match       |
 | **Automatic DI Root Token**        | `QUERY_CLIENT` with `providedIn: 'root'`               | None. Zero-config root client.                                   | ✅ Exact match       |
 | **Offline Cache Persistence**      | In-memory only                                         | Offline storage plugin (LocalStorage / IndexedDB) not built yet. | ⚠️ Planned next step |
 
