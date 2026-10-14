@@ -33,8 +33,8 @@ describe('QueryResourceDemoComponent', () => {
   });
 
   it('handles metric refresh and widget toggle', () => {
-    expect(component.metricsQueryA).toBeDefined();
-    expect(component.metricsQueryB).toBeDefined();
+    expect(component.metricsAQuery).toBeDefined();
+    expect(component.metricsBQuery).toBeDefined();
     component.refreshMetrics();
     expect(component.widgetAShown()).toBe(true);
     component.widgetAShown.set(false);
@@ -76,7 +76,19 @@ describe('QueryResourceDemoComponent', () => {
     const inspector = fixture.nativeElement.querySelector('[data-testid="query-diagnostics"]');
     expect(inspector.querySelector('table')).not.toBeNull();
     const refresh = Array.from(inspector.querySelectorAll('button')) as HTMLButtonElement[];
-    expect(refresh.some((button) => button.querySelector('clr-icon[shape="refresh"]'))).toBe(true);
+    expect(refresh.some((button) => button.textContent?.includes('Refresh Diagnostics'))).toBe(true);
+  });
+
+  it('introduces the tool before examples and uses Clarity controls and status labels', () => {
+    const root: HTMLElement = fixture.nativeElement;
+    const intro = root.querySelector('[data-testid="query-introduction"]');
+    const examples = root.querySelector('[data-testid="observable-query-examples"]');
+    if (!intro || !examples) throw new Error('Missing guide introduction or examples');
+    expect(intro.compareDocumentPosition(examples) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(root.querySelector('clr-select-container select[clrSelect]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="query-demo-dynamic"]')).toBeNull();
+    expect(root.querySelector('[data-testid="query-failure-examples"] .card')).toBeNull();
+    expect(root.querySelector('[data-testid="query-demo-parallel"] .label')).not.toBeNull();
   });
 
   it('updates live diagnostics snapshot', () => {
