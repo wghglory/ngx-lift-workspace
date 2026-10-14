@@ -1,8 +1,49 @@
 import {expect, test} from '@playwright/test';
+import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+import ts from 'typescript';
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('clr-lift-lang')) localStorage.setItem('clr-lift-lang', 'en');
+  });
   await page.goto('/ngx-lift/query/queryResource');
+});
+
+test('dynamic collection adds, reorders, and removes rows', async ({page}) => {
+  const demo = page.getByTestId('query-demo-dynamic');
+  await expect(demo.getByTestId('query-demo-dynamic-row')).toHaveCount(1);
+  await demo.getByRole('button', {name: 'Both tenants', exact: true}).click();
+  await expect(demo.getByTestId('query-demo-dynamic-row')).toHaveCount(2);
+  await expect(demo.getByTestId('query-demo-dynamic-row').last()).toContainText('Tenant B — resolved');
+  await demo.getByRole('button', {name: 'Reverse order', exact: true}).click();
+  await expect(demo.getByTestId('query-demo-dynamic-row').first()).toContainText('Tenant B');
+  await demo.getByRole('button', {name: 'Clear selection', exact: true}).click();
+  await expect(demo.getByTestId('query-demo-dynamic-row')).toHaveCount(0);
+});
+
+test('new query examples are localized in every supported language', async ({page}) => {
+  test.setTimeout(60_000);
+  for (const locale of ['en', 'zh-CN', 'zh-TW', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt-BR', 'ru']) {
+    await page.evaluate((locale) => localStorage.setItem('clr-lift-lang', locale), locale);
+    await page.reload();
+    const file = resolve(__dirname, '../../demo/src/app/core/l10n', `demo.l10n.${locale.toLowerCase()}.ts`);
+    const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+    const translated: Record<string, string> = {};
+    function read(node: ts.Node) {
+      if (ts.isPropertyAssignment(node) && ts.isStringLiteral(node.name) && ts.isStringLiteral(node.initializer)) {
+        translated[node.name.text] = node.initializer.text;
+      }
+      ts.forEachChild(node, read);
+    }
+    read(source);
+    const demo = page.getByTestId('observable-query-examples');
+    await expect(demo.locator('h2')).toHaveText(translated['queryExamples.title']);
+    await expect(demo.getByRole('button', {name: translated['queryExamples.create'], exact: true})).toBeVisible();
+    await expect(demo).toContainText(translated['queryExamples.dynamicIntro']);
+    await expect(demo).not.toContainText('!! Key');
+    await expect(demo).not.toContainText(/\{\d+\}/);
+  }
 });
 
 test('Observable queries gate dependencies, distinguish refresh, and recover from errors', async ({page}) => {

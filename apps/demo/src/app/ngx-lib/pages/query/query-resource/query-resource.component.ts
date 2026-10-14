@@ -1,8 +1,8 @@
 import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, QUERY_CLIENT, queryResource, QueryResourceRef} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -41,6 +41,7 @@ interface DemoUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryResourceDemoComponent {
+  private readonly translation = inject(TranslationService);
   private readonly queryClient = inject(QUERY_CLIENT);
 
   // ---------------------------------------------------------------------------
@@ -330,9 +331,17 @@ const addUser = mutateResource(
     },
   ];
 
-  readonly queryResourceRefApiProps: ApiProperty[] = [
-    {name: 'isInitialLoading', type: 'Signal<boolean>', description: 'True during loading without successful data.'},
-    {name: 'isRefreshing', type: 'Signal<boolean>', description: 'True during refresh while retaining cached data.'},
+  readonly queryResourceRefApiProps = computed<ApiProperty[]>(() => [
+    {
+      name: 'isInitialLoading',
+      type: 'Signal<boolean>',
+      description: this.translation.translate('queryExamples.initialLoadingDescription'),
+    },
+    {
+      name: 'isRefreshing',
+      type: 'Signal<boolean>',
+      description: this.translation.translate('queryExamples.refreshingDescription'),
+    },
     {
       name: 'value',
       type: 'Signal<T>',
@@ -378,5 +387,5 @@ const addUser = mutateResource(
       type: '() => void',
       description: 'Detaches this observer without canceling shared queries if other observers remain.',
     },
-  ];
+  ]);
 }

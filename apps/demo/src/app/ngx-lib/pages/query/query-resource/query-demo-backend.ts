@@ -5,6 +5,7 @@ import {defer, map, Observable, timer} from 'rxjs';
 export interface DemoDatabase {
   id: number;
   name: string;
+  labelKey?: string;
 }
 export interface DemoTenant {
   id: string;
@@ -18,8 +19,8 @@ export class QueryDemoBackend extends HttpBackend {
   failNextTenant = false;
   private nextId = 3;
   private readonly databases = new Map<string, DemoDatabase[]>([
-    ['a', [{id: 1, name: 'Tenant A database'}]],
-    ['b', [{id: 2, name: 'Tenant B database'}]],
+    ['a', [{id: 1, name: 'Tenant A database', labelKey: 'queryExamples.databaseA'}]],
+    ['b', [{id: 2, name: 'Tenant B database', labelKey: 'queryExamples.databaseB'}]],
   ]);
 
   override handle(request: HttpRequest<unknown>): Observable<HttpEvent<unknown>> {
@@ -39,7 +40,7 @@ export class QueryDemoBackend extends HttpBackend {
             if (resource === 'databases') body = this.databases.get(tenantId)?.map((database) => ({...database}));
             else if (resource === 'health') body = {state: 'healthy', tenantId};
             else if (resource === 'preferences') body = {theme: 'dark', tenantId};
-            else body = {id: tenantId, name: `Tenant ${tenantId.toUpperCase()}`};
+            else body = {id: tenantId, name: `queryExamples.tenant${tenantId.toUpperCase()}`};
           } else if (request.method === 'POST' && resource === 'databases') {
             const payload = request.body as {name?: unknown} | null;
             if (typeof payload?.name !== 'string' || !payload.name.trim()) {
