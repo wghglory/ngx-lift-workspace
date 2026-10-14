@@ -50,10 +50,10 @@
       <p>{{ 'keyValueInputs.apiSummary' | translate }}</p>
 
       <h4>{{ 'common.inputs' | translate }}</h4>
-      <app-api-table [properties]="inputs" />
+      <app-api-table [properties]="inputs()" />
 
       <h4>{{ 'common.outputs' | translate }}</h4>
-      <app-api-table [properties]="outputs" />
+      <app-api-table [properties]="outputs()" />
     </div>
   </section>
 </cll-page-container>

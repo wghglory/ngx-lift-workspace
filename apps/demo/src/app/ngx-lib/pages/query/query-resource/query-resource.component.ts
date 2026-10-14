@@ -1,8 +1,8 @@
 import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, QUERY_CLIENT, QueryClientDiagnostics, queryResource, QueryResourceRef} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -39,9 +39,16 @@ interface DemoUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryResourceDemoComponent {
+  private readonly translationService = inject(TranslationService);
+
   private readonly queryClient = inject(QUERY_CLIENT);
 
   diagnostics = signal<QueryClientDiagnostics>(this.queryClient.getDiagnostics());
+
+  constructor() {
+    const timer = setInterval(() => this.refreshDiagnostics(), 1000);
+    inject(DestroyRef).onDestroy(() => clearInterval(timer));
+  }
 
   refreshDiagnostics() {
     this.diagnostics.set(this.queryClient.getDiagnostics());
@@ -296,111 +303,114 @@ const addUser = mutateResource(
   // ---------------------------------------------------------------------------
   // API Reference Tables
   // ---------------------------------------------------------------------------
-  readonly queryResourceApiProps: ApiProperty[] = [
+  readonly queryResourceApiProps = computed<ApiProperty[]>(() => [
     {
       name: 'definition',
       type: '() => QueryResourceDefinition<T> | undefined',
-      description: 'Reactive factory with an Observable or Promise loader, or undefined to disable.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceApiProps.definition'),
     },
     {
       name: 'options.pollInterval',
       type: 'number | (() => number | undefined)',
-      description: 'Milliseconds between completed requests. Coordinated across all active observers.',
+      description: this.translationService.translate(
+        'demoApi.query-resource.queryResourceApiProps.options.pollInterval',
+      ),
     },
     {
       name: 'options.injector',
       type: 'Injector',
-      description: 'Optional explicit Angular Injector for signal registration outside injection context.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceApiProps.options.injector'),
     },
     {
       name: 'options.client',
       type: 'QueryClient',
-      description: 'Optional explicit QueryClient override (defaults to QUERY_CLIENT token).',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceApiProps.options.client'),
     },
-  ];
+  ]);
 
-  readonly queryResourceDefinitionProps: ApiProperty[] = [
+  readonly queryResourceDefinitionProps = computed<ApiProperty[]>(() => [
     {
       name: 'key',
       type: 'QueryKey',
-      description: 'Array of JSON-compatible values uniquely identifying the query (e.g. ["user", id]).',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.key'),
     },
     {
       name: 'loader',
       type: '(context: QueryLoaderContext) => Promise<T> | Observable<T>',
-      description:
-        'Data fetcher receiving { abortSignal, refresh }. Observable reads automatically complete after the first emission.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.loader'),
     },
     {
       name: 'tags',
       type: 'readonly QueryTag[]',
-      description: 'Optional tags for cache invalidation (e.g. [{ type: "users" }]).',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.tags'),
     },
     {
       name: 'staleTime',
       type: 'number',
       defaultValue: '0',
-      description: 'Duration in milliseconds before cached data is considered stale.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.staleTime'),
     },
     {
       name: 'gcTime',
       type: 'number',
       defaultValue: '300000',
-      description: 'Duration in milliseconds (default 5 minutes) to retain unused queries in cache.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceDefinitionProps.gcTime'),
     },
     {
       name: 'cancelOnNoObservers',
       type: 'boolean',
       defaultValue: 'false',
-      description: 'Whether to abort an in-flight transport request if all observers unmount before completion.',
+      description: this.translationService.translate(
+        'demoApi.query-resource.queryResourceDefinitionProps.cancelOnNoObservers',
+      ),
     },
-  ];
+  ]);
 
-  readonly queryResourceRefApiProps: ApiProperty[] = [
+  readonly queryResourceRefApiProps = computed<ApiProperty[]>(() => [
     {
       name: 'value',
       type: 'Signal<T>',
-      description: 'Signal holding the latest successfully resolved query data.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.value'),
     },
     {
       name: 'error',
       type: 'Signal<E | null>',
-      description: 'Signal holding the most recent error, or null when healthy.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.error'),
     },
     {
       name: 'status',
       type: 'Signal<QueryStatus>',
-      description: 'Granular status: "idle" | "loading" | "reloading" | "resolved" | "error".',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.status'),
     },
     {
       name: 'isLoading',
       type: 'Signal<boolean>',
-      description: 'True when status is "loading" or "reloading".',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.isLoading'),
     },
     {
       name: 'isStale',
       type: 'Signal<boolean>',
-      description: 'True when data has exceeded staleTime or was invalidated by a mutation.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.isStale'),
     },
     {
       name: 'hasValue()',
       type: '() => boolean',
-      description: 'Type predicate narrowing value() to exclude undefined when valid data is present.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.hasValue()'),
     },
     {
       name: 'reload()',
       type: '() => boolean',
-      description: 'Triggers a background refresh without wiping existing data (status: "reloading").',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.reload()'),
     },
     {
       name: 'execute()',
       type: '() => Promise<T>',
-      description: 'Forces an immediate fresh fetch and returns a Promise settling with the result.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.execute()'),
     },
     {
       name: 'destroy()',
       type: '() => void',
-      description: 'Detaches this observer without canceling shared queries if other observers remain.',
+      description: this.translationService.translate('demoApi.query-resource.queryResourceRefApiProps.destroy()'),
     },
-  ];
+  ]);
 }

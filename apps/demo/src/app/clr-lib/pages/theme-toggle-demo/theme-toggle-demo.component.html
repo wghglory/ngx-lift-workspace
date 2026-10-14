@@ -84,10 +84,10 @@
       <h3>ThemeToggleComponent (<code>cll-theme-toggle</code>)</h3>
 
       <h4>{{ 'common.inputs' | translate }}</h4>
-      <app-api-table [properties]="componentInputs" />
+      <app-api-table [properties]="componentInputs()" />
 
       <h4>{{ 'common.outputs' | translate }}</h4>
-      <app-api-table [properties]="componentOutputs" />
+      <app-api-table [properties]="componentOutputs()" />
     </div>
 
     <div cds-layout="vertical gap:sm align:stretch">
@@ -95,10 +95,10 @@
       <p>{{ 'themeToggle.serviceSummary' | translate }}</p>
 
       <h4>{{ 'common.properties' | translate }}</h4>
-      <app-api-table [properties]="serviceProperties" />
+      <app-api-table [properties]="serviceProperties()" />
 
       <h4>{{ 'common.methods' | translate }}</h4>
-      <app-api-table [properties]="serviceMethods" />
+      <app-api-table [properties]="serviceMethods()" />
     </div>
   </section>
 </cll-page-container>

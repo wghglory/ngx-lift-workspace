@@ -111,13 +111,13 @@ export class ResourceAsyncComponent {
       name: 'params',
       type: '() => P',
       required: true,
-      description: 'Pure reactive parameter capture function. Signal reads here are tracked.',
+      description: this.translationService.translate('demoApi.resource-async.definitionProperties.params'),
     },
     {
       name: 'loader',
       type: '(params: P, context: ResourceAsyncContext) => Observable<T> | PromiseLike<T> | T',
       required: true,
-      description: 'Factory receiving latest params and context.abortSignal. Signal reads here are untracked.',
+      description: this.translationService.translate('demoApi.resource-async.definitionProperties.loader'),
     },
   ]);
 
@@ -132,8 +132,7 @@ export class ResourceAsyncComponent {
       {
         name: 'defaultValue',
         type: 'T',
-        description:
-          'Default value before first fetch; guarantees value() returns T (never undefined). Alias for initialValue.',
+        description: this.translationService.translate('demoApi.resource-async.optionsProperties.defaultValue'),
       },
       {
         name: 'lazy',
@@ -162,13 +161,13 @@ export class ResourceAsyncComponent {
         name: 'preserveValueOnError',
         type: 'boolean',
         defaultValue: 'false',
-        description: 'Retain the last received or local value when an error occurs.',
+        description: this.translationService.translate('demoApi.resource-async.optionsProperties.preserveValueOnError'),
       },
       {
         name: 'reactive',
         type: 'boolean',
         defaultValue: 'true',
-        description: 'Whether parameter/source dependencies trigger automatic re-execution.',
+        description: this.translationService.translate('demoApi.resource-async.optionsProperties.reactive'),
       },
       {
         name: 'onSuccess',
@@ -183,12 +182,12 @@ export class ResourceAsyncComponent {
       {
         name: 'injector',
         type: 'Injector',
-        description: 'Optional custom injector if called outside an ambient injection context.',
+        description: this.translationService.translate('demoApi.resource-async.optionsProperties.injector'),
       },
       {
         name: 'equal',
         type: '(a: T, b: T) => boolean',
-        description: 'Custom equality comparator passed to underlying computed signal.',
+        description: this.translationService.translate('demoApi.resource-async.optionsProperties.equal'),
       },
     ];
   });
@@ -198,63 +197,62 @@ export class ResourceAsyncComponent {
       {
         name: 'value',
         type: 'Signal<T | undefined>',
-        description: 'The current value of the resource.',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.value'),
       },
       {
         name: 'error',
         type: 'Signal<E | null>',
-        description: 'The current error, if any.',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.error'),
       },
       {
         name: 'status',
         type: 'Signal<ResourceStatus>',
-        description: "The current status: 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'.",
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.status'),
       },
       {
         name: 'isLoading',
         type: 'Signal<boolean>',
-        description: "Signal that returns true if any fetch operation is in progress ('loading' or 'reloading').",
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.isLoading'),
       },
       {
         name: 'isIdle',
         type: 'Signal<boolean>',
-        description: 'Signal that returns true if the resource is in idle state (never fetched).',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.isIdle'),
       },
       {
         name: 'hasValue()',
         type: '() => boolean',
-        description: 'Type predicate narrowing value() to exclude undefined when true.',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.hasValue()'),
       },
       {
         name: 'reload()',
         type: '() => boolean',
-        description: 'Manually trigger a reload of the resource. Ideal for queries (GET).',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.reload()'),
       },
       {
         name: 'execute()',
         type: '() => Promise<T>',
-        description:
-          'Manually trigger execution returning an awaitable Promise. Ideal for mutations (POST/PUT/DELETE).',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.execute()'),
       },
       {
         name: 'set()',
         type: '(value: T) => void',
-        description: 'Manually update the resource value, transitioning status to "local".',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.set()'),
       },
       {
         name: 'update()',
         type: '(updater: (value: T) => T) => void',
-        description: 'Update the resource value using an updater function, transitioning status to "local".',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.update()'),
       },
       {
         name: 'reset()',
         type: '() => void',
-        description: 'Resets the resource to its initial idle state and cancels in-flight operations.',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.reset()'),
       },
       {
         name: 'destroy()',
         type: '() => void',
-        description: 'Permanently stop observation and cancel pending work.',
+        description: this.translationService.translate('demoApi.resource-async.returnsProperties.destroy()'),
       },
     ];
   });

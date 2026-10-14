@@ -54,10 +54,10 @@ describe('LanguageSwitcherComponent', () => {
     expect(component.isLanguageActive(active)).toBe(true);
     expect(component.isLanguageActive('ru')).toBe(false);
   });
-  it('marks incomplete languages and keeps full English/Chinese dictionaries unmarked', () => {
+  it('shows the selected complete locale without a partial-support marker', () => {
     translationService.setLanguage('de', false);
-    expect(component.isPartialLanguage()).toBe(true);
-    translationService.setLanguage('zh-CN', false);
-    expect(component.isPartialLanguage()).toBe(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.lang-text').textContent).toBe('Deutsch');
+    expect(fixture.nativeElement.querySelector('.language-trigger [title]')).toBeNull();
   });
 });

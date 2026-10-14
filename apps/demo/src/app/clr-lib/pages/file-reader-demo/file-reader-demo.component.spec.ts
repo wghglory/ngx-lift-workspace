@@ -21,7 +21,8 @@ describe('FileReaderDemoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should isolate basicForm and certForm so submissions do not interfere', () => {
+  it('should isolate basicForm and certForm so submissions do not interfere', async () => {
+    await fixture.whenStable();
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
     component.basicForm.controls.file.setValue('my-file-content');
@@ -39,6 +40,35 @@ describe('FileReaderDemoComponent', () => {
     expect(consoleSpy).not.toHaveBeenCalledWith(expect.objectContaining({file: 'my-file-content'}));
 
     consoleSpy.mockRestore();
+  });
+
+  it('blocks submission while validation is pending and after validation fails', async () => {
+    let complete!: (errors: {certificateValidationUnavailable: true}) => void;
+    component.certForm.controls.caCert.setAsyncValidators(
+      () =>
+        new Promise((resolve) => {
+          complete = resolve;
+        }),
+    );
+    component.certForm.controls.caCert.updateValueAndValidity();
+    fixture.detectChanges();
+    const button: HTMLButtonElement = fixture.nativeElement.querySelectorAll('button[type="submit"]')[1];
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      expect(component.certForm.pending).toBe(true);
+      expect(button.disabled).toBe(true);
+      component.submitCert();
+      expect(log).not.toHaveBeenCalled();
+      complete({certificateValidationUnavailable: true});
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(component.certForm.invalid).toBe(true);
+      expect(button.disabled).toBe(true);
+      component.submitCert();
+      expect(log).not.toHaveBeenCalled();
+    } finally {
+      log.mockRestore();
+    }
   });
 
   it('should enable Example 1 submit button when basicForm is valid regardless of certForm', () => {

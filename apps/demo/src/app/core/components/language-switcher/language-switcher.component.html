@@ -7,11 +7,6 @@
   >
     <clr-icon shape="world" />
     <span class="lang-text">{{ currentLabel() }}</span>
-    @if (isPartialLanguage()) {
-      <span [title]="'header.partialLanguage' | translate" [attr.aria-label]="'header.partialLanguage' | translate"
-        >*</span
-      >
-    }
     <clr-icon shape="angle" dir="down" class="dropdown-caret" size="12" />
   </button>
   <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>

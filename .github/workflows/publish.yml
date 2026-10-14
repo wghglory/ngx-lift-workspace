@@ -6,6 +6,11 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
+      dry_run:
+        description: 'Verify publication without publishing packages or modifying Git'
+        required: true
+        default: true
+        type: boolean
       version:
         description: 'Version type (major, minor, patch, or skip to publish existing)'
         required: true
@@ -33,6 +38,8 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  RELEASE_VERSION: ${{ inputs.version || 'skip' }}
+  RELEASE_PROJECT: ${{ inputs.project || 'all' }}
 
 jobs:
   quality:
@@ -63,9 +70,9 @@ jobs:
         with:
           node-version: '24.x'
           cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Configure npm authentication
+        if: github.event_name == 'push' || !inputs.dry_run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -77,6 +84,7 @@ jobs:
           pnpm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
 
       - name: Verify npm credentials
+        if: github.event_name == 'push' || !inputs.dry_run
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -89,8 +97,16 @@ jobs:
       - name: Determine projects
         id: projects
         run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            REF="${{ github.ref }}"
+          case "$RELEASE_VERSION" in
+            major|minor|patch|skip) ;;
+            *) echo "::error::Unsupported release version"; exit 1 ;;
+          esac
+          case "$RELEASE_PROJECT" in
+            all|ngx-lift|clr-lift) ;;
+            *) echo "::error::Unsupported release project"; exit 1 ;;
+          esac
+          if [ "$GITHUB_EVENT_NAME" == "push" ]; then
+            REF="$GITHUB_REF"
             if [[ "$REF" == refs/tags/ngx-lift@* ]]; then
               echo "PROJECTS=ngx-lift" >> $GITHUB_ENV
               echo "PROJECT_FLAG=--projects=ngx-lift" >> $GITHUB_ENV
@@ -101,12 +117,12 @@ jobs:
               echo "PROJECTS=ngx-lift,clr-lift" >> $GITHUB_ENV
               echo "PROJECT_FLAG=" >> $GITHUB_ENV
             fi
-          elif [ "${{ github.event.inputs.project }}" == "all" ]; then
+          elif [ "$RELEASE_PROJECT" == "all" ]; then
             echo "PROJECTS=ngx-lift,clr-lift" >> $GITHUB_ENV
             echo "PROJECT_FLAG=" >> $GITHUB_ENV
           else
-            echo "PROJECTS=${{ github.event.inputs.project }}" >> $GITHUB_ENV
-            echo "PROJECT_FLAG=--projects=${{ github.event.inputs.project }}" >> $GITHUB_ENV
+            echo "PROJECTS=$RELEASE_PROJECT" >> $GITHUB_ENV
+            echo "PROJECT_FLAG=--projects=$RELEASE_PROJECT" >> $GITHUB_ENV
           fi
 
       - name: Build libraries
@@ -117,20 +133,41 @@ jobs:
         id: run-unit-tests
         run: pnpm nx run-many -t test --projects=${{ env.PROJECTS }} --parallel=2
 
+      - name: Verify publication without side effects
+        id: publish-dry-run
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        run: |
+          # Consumer verification packs both libraries, including their dependency relationship.
+          pnpm nx run-many -t build --projects=ngx-lift,clr-lift --parallel=2
+          pnpm run verify:packages
+          if [ "$RELEASE_VERSION" != "skip" ]; then
+            pnpm nx release version "$RELEASE_VERSION" $PROJECT_FLAG --dry-run --git-commit=false --git-tag=false
+          fi
+          pnpm nx release publish ${{ env.PROJECT_FLAG }} --dry-run --registry=https://registry.npmjs.org/
+
+      - name: Upload verified packages
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        uses: actions/upload-artifact@v7
+        with:
+          name: verified-release-packages
+          path: dist/libs/
+          if-no-files-found: error
+
       - name: Configure Git
+        if: github.event_name == 'push' || !inputs.dry_run
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
       - name: Version and publish (manual trigger)
         id: publish-manual
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && !inputs.dry_run
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ "${{ github.event.inputs.version }}" != "skip" ]; then
-            pnpm nx release version ${{ github.event.inputs.version }} ${{ env.PROJECT_FLAG }} --git-push
+          if [ "$RELEASE_VERSION" != "skip" ]; then
+            pnpm nx release version "$RELEASE_VERSION" ${{ env.PROJECT_FLAG }} --git-push
           fi
           pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
 
@@ -159,10 +196,14 @@ jobs:
           EVENT="${{ github.event_name }}"
 
           if [ "$EVENT" = "workflow_dispatch" ]; then
-            PUBLISH_STATUS="${{ steps.publish-manual.outcome }}"
-            VERSION_TYPE="${{ github.event.inputs.version }}"
-            PROJECT="${{ github.event.inputs.project }}"
-            TRIGGER_INFO="**Version Type**: \`$VERSION_TYPE\`<br>**Project**: \`$PROJECT\`"
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              PUBLISH_STATUS="${{ steps.publish-dry-run.outcome }}"
+            else
+              PUBLISH_STATUS="${{ steps.publish-manual.outcome }}"
+            fi
+            VERSION_TYPE="$RELEASE_VERSION"
+            PROJECT="$RELEASE_PROJECT"
+            TRIGGER_INFO="**Dry run**: ${{ inputs.dry_run }}<br>**Version Type**: \`$VERSION_TYPE\`<br>**Project**: \`$PROJECT\`"
           else
             PUBLISH_STATUS="${{ steps.publish-tag.outcome }}"
             TAG="${{ github.ref }}"
@@ -234,6 +275,6 @@ jobs:
 
           ## 📈 Overall Status
 
-          $([ "$BUILD_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ] && [ "$PUBLISH_STATUS" = "success" ] && echo "### ✅ Publishing completed successfully!" || echo "### ⚠️ Publishing did not complete successfully. Check logs for details.")
+          $([ "$BUILD_STATUS" = "success" ] && [ "$TEST_STATUS" = "success" ] && [ "$PUBLISH_STATUS" = "success" ] && echo "### ✅ Release workflow completed successfully (dry run: ${{ inputs.dry_run }})" || echo "### ⚠️ Publishing did not complete successfully. Check logs for details.")
 
           EOF

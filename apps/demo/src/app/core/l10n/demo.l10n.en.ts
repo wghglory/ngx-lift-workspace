@@ -2,7 +2,6 @@ export const enTranslations: Record<string, string> = {
   'header.selectLanguage': 'Select Language',
   'header.openGitHub': 'Open on GitHub',
   'header.codeLicensed': 'Code licensed under',
-
   'nav.signalUtils': 'Signal Utils',
   'nav.queryMutation': 'Query & Mutation',
   'nav.operators': 'Operators',
@@ -36,7 +35,6 @@ export const enTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
-
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Enhance your <code>modern</code> Angular development workflow',
   'home.ngxLift.supportMatrix': 'Version Support Matrix',
@@ -49,7 +47,6 @@ export const enTranslations: Record<string, string> = {
     'Specialized operators that simplify complex reactive operations and improve code maintainability',
   'home.ngxLift.signalTitle': 'Signal Utilities',
   'home.ngxLift.signalDesc': "Powerful signal-based utilities that complement Angular's Signals API",
-
   'home.clrLift.title': 'clr-lift',
   'home.clrLift.subtitle': 'Extending Clarity Design System with reusable components, utilities, and operators',
   'home.clrLift.supportMatrix': 'Version Support Matrix',
@@ -69,7 +66,6 @@ export const enTranslations: Record<string, string> = {
   'home.clrLift.tipSkipLib':
     'If you are not using the latest Angular version, consider setting <code>skipLibCheck: true</code> in tsconfig.json to avoid potential build errors.',
   'home.clrLift.tipIcon': 'Ensure Clarity icons are imported properly using <code>ClarityIcons.addIcons(...)</code>.',
-
   'common.examples': 'Examples',
   'common.apiReference': 'API Reference',
   'common.overview': 'Overview',
@@ -154,7 +150,6 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.unsavedChanges': 'Unsaved changes - Counter has been modified locally',
   'resourceAsync.saveToServer': 'Save to Server',
   'resourceAsync.discardChanges': 'Discard Changes',
-
   'playground.beginner': 'Beginner',
   'playground.intermediate': 'Intermediate',
   'playground.advanced': 'Advanced',
@@ -164,11 +159,9 @@ export const enTranslations: Record<string, string> = {
   'playground.hideCode': 'Hide Code',
   'playground.stackedLayout': 'Stacked layout',
   'playground.splitLayout': 'Side-by-side layout',
-
   'inspector.liveState': 'Live Signal State',
   'inspector.rawJson': 'Raw State JSON',
   'inspector.hideJson': 'Hide JSON',
-
   'mergeFrom.overview':
     'The <code>mergeFrom</code> function merges the values of Observables or Signals and emits the latest value. It also allows for modifying the emitted value using RxJS operators before it is emitted. While it is similar to <code>merge()</code>, it also takes Signals into account. <code>mergeFrom</code> is akin to <code>combineFrom</code>, but instead of emitting a combined value, it emits the latest emitted value using the merge operator rather than combineLatest.',
   'mergeFrom.example1Desc': 'Merge multiple signals or observables:',
@@ -184,7 +177,6 @@ export const enTranslations: Record<string, string> = {
   'mergeFrom.paramOperator': 'An RxJS pipe operator to manipulate the emitted values before they are emitted.',
   'mergeFrom.paramOptions': 'Configuration options including initialValue and injector.',
   'mergeFrom.returnsDesc': 'A Signal that emits the combined/merged value as sources emit.',
-
   'toSignalForm.pageTitle': 'Reactive Form Signals & Bindings (toSignalForm)',
   'toSignalForm.bannerTitle': 'Bridging Angular Reactive Forms & Modern Signals',
   'toSignalForm.bannerDesc':
@@ -322,13 +314,11 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.pattern5Title': 'Pattern 5: Cascading Updates & Change Watch (sf.watch)',
   'toSignalForm.pattern5Desc':
     "When a form control's change triggers cascading updates in another control (e.g. resetting available versions when the database engine changes), you can use the traditional RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> pattern or the signal-first <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code> utility. <code>watch</code> operates inside an Angular <code>effect()</code> with automatic <code>untracked</code> isolation, preventing <code>NG0600</code> signal write errors while eliminating manual subscription teardown.",
-
   'toSignalForm.apiReferenceTitle': 'API Reference',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
   'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
-
   'toSignalForm.apiPropForm': 'The Angular FormGroup instance to wrap with reactive signals and bindings.',
   'toSignalForm.apiPropOmit': 'Control names to omit from submitValue payloads.',
   'toSignalForm.apiPropEmitEvent': 'Whether status/value changes emit Angular control events.',
@@ -339,26 +329,22 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.apiPropInvalid': 'Computed signal indicating whether the form is invalid.',
   'toSignalForm.apiPropSubmitValue': 'Sanitized payload excluding disabled, omitted, or unmounted controls.',
   'toSignalForm.apiPropIsSubmitting': 'Writable signal tracking whether an async submission operation is in-flight.',
-
   'toSignalForm.apiBindIfControl': 'Name or instance of the control to mount/unmount conditionally.',
   'toSignalForm.apiBindIfCondition': 'Boolean signal or predicate governing whether the control is mounted.',
   'toSignalForm.apiBindIfPreserveValue': 'Preserves control value in memory across unmount/remount cycles.',
   'toSignalForm.apiBindIfDefaultValue': 'Default value assigned when mounting or resetting the control.',
   'toSignalForm.apiBindIfEmitEvent': 'Whether control addition/removal emits FormGroup value and status events.',
-
   'toSignalForm.apiBindDisabledControl': 'Target control whose enabled/disabled state is bound.',
   'toSignalForm.apiBindDisabledCondition': 'Boolean signal or predicate returning true to disable, false to enable.',
   'toSignalForm.apiBindDisabledResetOnDisable': 'Automatically resets the control value when entering disabled state.',
   'toSignalForm.apiBindDisabledResetValue':
     'Specific reset value when resetOnDisable is active; defaults to control initial/null.',
   'toSignalForm.apiBindDisabledEmitEvent': 'Whether enable/disable changes emit value/status events.',
-
   'toSignalForm.apiRevalidateTarget': 'Target control to re-evaluate validation upon source changes.',
   'toSignalForm.apiRevalidateSources':
     'One or more dependency controls whose value/status changes trigger target revalidation.',
   'toSignalForm.apiRevalidateOnlyIfTouched': 'Only trigger target revalidation if target has been touched by user.',
   'toSignalForm.apiRevalidateOnlyIfDirty': 'Only trigger target revalidation if target has been modified (dirty).',
-
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises, Observables, or regular values. It provides flexibility in computational behavior through selectable flattening strategies (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>, provide a function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting the computed value.',
@@ -408,7 +394,7 @@ export const enTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Use the <code>onError</code> callback to handle errors gracefully and provide fallback values. When <code>onError</code> returns a value, the signal will emit that value instead of throwing an error:',
   'computedAsync.onErrorCallout':
-    'The <code>onError</code> callback receives the error and can return a fallback value. If it returns <code>undefined</code>, the error will be stored in the signal (when used with <code>createAsyncState</code>).',
+    'The <code>onError</code> callback receives the error and returns a fallback value. Returning <code>undefined</code> sets the signal value to undefined. Without a handler, the legacy default stores the error object as the signal value; provide a valid fallback or use <code>throwOnError</code>.',
   'computedAsync.example12': 'Example 12: Error Handling with throwOnError',
   'computedAsync.example12Desc':
     'Use <code>throwOnError: true</code> to propagate errors up instead of silently handling them. This is useful when you want errors to bubble up to a global error handler:',
@@ -442,7 +428,6 @@ export const enTranslations: Record<string, string> = {
   'computedAsync.propOnError': 'Error handler callback that receives errors from async operations.',
   'computedAsync.propThrowOnError': 'If true, errors will be thrown and propagate up.',
   'computedAsync.returnsDesc': 'A Signal that emits the computed value.',
-
   'combineFrom.title': 'combineFrom',
   'combineFrom.overview':
     'The <code>combineFrom</code> function takes an array or object of Observables or Signals and produces a Signal that emits the aggregated value from these sources. Similar to <code>combineLatest</code>, but seamlessly supports Signals. Supports custom injectors and initial values.',
@@ -467,7 +452,6 @@ export const enTranslations: Record<string, string> = {
   'combineFrom.paramOptions': 'Configuration options including initialValue and injector.',
   'combineFrom.returnsDesc':
     'A signal that emits an array or object (depending on input type) containing the latest values from all source observables and signals.',
-
   'resourceAsync.title': 'resourceAsync',
   'resourceAsync.overview':
     'The <code>resourceAsync</code> function creates a reactive resource that manages async operations with full state tracking. Works with any async operation (Observable, Promise, or sync value). Provides automatic request cancellation, manual reload capability, and granular status tracking.',
@@ -533,7 +517,6 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.nestedRetry': 'Retry',
   'resourceAsync.nestedRefreshItems': 'Refresh Items',
   'resourceAsync.nestedLoadAllOrgs': 'Load All Orgs',
-
   'queryResource.title': 'queryResource',
   'queryResource.overview':
     '<code>queryResource</code> provides declarative, cached, and deduplicated server-state management in Angular Signals. Paired with <code>mutateResource</code> and <code>QueryClient</code>, it coordinates background polling, stale-while-revalidate caching, request coalescing, and tag-based invalidation.',
@@ -667,7 +650,6 @@ export const enTranslations: Record<string, string> = {
   'queryResource.thRemainingPoll': 'Next Poll In',
   'queryResource.noQueriesCached': 'No query entries currently in cache.',
   'queryResource.apiReference': 'API Reference',
-
   'mutateResource.title': 'mutateResource',
   'mutateResource.overview':
     '<code>mutateResource</code> coordinates asynchronous server writes (POST, PUT, PATCH, DELETE) with automatic tag-based cache invalidation, built-in concurrency strategies (exhaust, concat, parallel), and reactive Angular Signals.',
@@ -737,7 +719,6 @@ export const enTranslations: Record<string, string> = {
   'mutateResource.isLoadingLabel': 'isLoading',
   'mutateResource.errorSuccessMsg': 'Configuration saved successfully!',
   'mutateResource.apiReference': 'API Reference',
-
   'injectParams.example1Title': 'Example 1: Get All Route Parameters',
   'injectParams.example1Desc':
     'When called without any arguments, returns a signal containing the entire params object:',
@@ -754,7 +735,6 @@ export const enTranslations: Record<string, string> = {
   'injectParams.example6Title': 'Example 6: Custom Injector',
   'injectParams.example6Desc':
     'Pass a custom <code>Injector</code> via the options object to access route parameters outside an ambient injection context (such as inside composable helper functions or dynamic services):',
-
   'injectParams.title': 'injectParams',
   'injectParams.overview':
     'The <code>injectParams</code> function provides a reactive signal for route parameters, automatically updating when navigation occurs.',
@@ -768,7 +748,6 @@ export const enTranslations: Record<string, string> = {
   'injectParams.pattern2': 'String key: Returns signal with specific parameter value (or null if not present)',
   'injectParams.pattern3': 'Transform function: Returns signal with transformed parameters',
   'injectParams.pattern4': 'With options: Allows initial value and type conversion',
-
   'injectQueryParams.title': 'injectQueryParams',
   'injectQueryParams.overview':
     'The <code>injectQueryParams</code> function provides a reactive signal for URL query parameters.',
@@ -778,7 +757,6 @@ export const enTranslations: Record<string, string> = {
   'injectQueryParams.paramOptions':
     'Configuration object containing transform function, initialValue, and/or injector.',
   'injectQueryParams.returnsDesc': 'A signal containing the query parameter value(s) or transformed result.',
-
   'injectQueryParams.example1Title': 'Example 1: Get All Query Parameters',
   'injectQueryParams.example1Desc': 'Get all query parameters as a signal:',
   'injectQueryParams.example2Title': 'Example 2: Get Single Query Parameter',
@@ -792,7 +770,6 @@ export const enTranslations: Record<string, string> = {
   'injectQueryParams.example6Title': 'Example 6: Custom Injector',
   'injectQueryParams.example6Desc':
     'Pass a custom <code>Injector</code> via the options object to access route query parameters outside an ambient injection context (such as inside composable helper functions or dynamic services):',
-
   'createTrigger.title': 'createTrigger',
   'createTrigger.overview':
     'The <code>createTrigger</code> function provides a way to manually initiate signal re-computations by referencing the trigger signal it creates. Similar to an RxJS Subject, calling <code>next()</code> increments the counter signal and notifies dependent effects or computed signals.',
@@ -807,7 +784,6 @@ export const enTranslations: Record<string, string> = {
   'createTrigger.btnSeeConsole': 'See Console Log',
   'createTrigger.callout':
     "Initially, <code>createTrigger's value()</code> returns 0. Whenever <code>next</code> is explicitly called, the value adds 1.",
-
   'pageContainer.title': 'Page Container',
   'pageContainer.overview':
     'The <code>cll-page-container</code> component provides a standardized, responsive page shell across Clarity applications. It encapsulates uniform title typography, fluid padding, and consistent spacing while offering a content projection slot for arbitrary views, cards, forms, and grids.',
@@ -833,7 +809,6 @@ export const enTranslations: Record<string, string> = {
   'pageContainer.inputCustomClass': 'Additional CSS classes applied directly to the container root element.',
   'pageContainer.contentProjectionDesc':
     'Default <ng-content /> slot for placing all main page content below the title.',
-
   'alert.title': 'Alert',
   'alert.overview':
     "Alerts are banners that draw the user's attention to important messages. Visual elements such as icons and colors indicate the type and urgency of the information being communicated. Use alerts to provide critical information that requires immediate user attention within the current context.",
@@ -884,7 +859,6 @@ export const enTranslations: Record<string, string> = {
   'alert.contentAppLevel': 'App level alert from content input',
   'alert.contentAppProjection': 'App level alert from projection',
   'alert.btnView': 'View',
-
   'callout.title': 'Callout',
   'callout.overview':
     'The <code>cll-callout</code> component displays an informational callout box designed to emphasize important notes, tips, warnings, or prerequisite instructions with responsive icon display and theme awareness.',
@@ -903,7 +877,6 @@ export const enTranslations: Record<string, string> = {
   'callout.example3DescText': 'Ensure resource limits are explicitly configured before triggering the rollout process.',
   'callout.example3LabelDeployment': 'Deployment',
   'callout.example3LabelValidated': 'Validated',
-
   'themeToggle.title': 'Theme Toggle',
   'themeToggle.overview':
     'The <code>cll-theme-toggle</code> component and <code>ThemeService</code> provide seamless theme switching between Clarity light and dark modes with Signal reactivity and localStorage persistence.',
@@ -923,7 +896,6 @@ export const enTranslations: Record<string, string> = {
   'themeToggle.example3Desc':
     'Components and global styles can target [cds-theme="dark"] on the body or via :host-context([cds-theme="dark"]):',
   'themeToggle.serviceSummary': 'Injectable service provided in root for managing application theme state.',
-
   'spinner.title': 'Spinner',
   'spinner.overview':
     'A spinner is a visual indicator of an ongoing, user-initiated process. Clarity has two types of spinners, each with its own use case: <strong>Page Spinners</strong> for tracking the progress of an operation related to an entire page, and <strong>Inline Spinners</strong> for tracking the progress of an operation related to a specific component.',
@@ -944,7 +916,6 @@ export const enTranslations: Record<string, string> = {
   'spinner.centered': 'Centered (default):',
   'spinner.leftAligned': 'Left-aligned:',
   'spinner.loading': 'Loading...',
-
   'tooltip.title': 'Tooltip',
   'tooltip.overview':
     'The Tooltip component provides a flexible way to display additional information, hints, or interactive content. It supports hover and copy actions within the content popover, configurable delay options, automatic positioning, focus trapping for accessibility, click outside interaction, keyboard operations, and dark mode support.',
@@ -970,7 +941,6 @@ export const enTranslations: Record<string, string> = {
   'tooltip.contextCallout':
     'cllTooltipContentContext is optional, it is the context passed to the ng-template during view creation.',
   'tooltip.componentRefHover': 'Component Ref Example',
-
   'toast.title': 'Toast',
   'toast.overview':
     'Toast messages serve as a user-friendly means to communicate medium-priority events that users may wish to reference later. These messages appear temporarily on the screen and can be stored in a notifications panel until closed or expired.',
@@ -1002,7 +972,6 @@ export const enTranslations: Record<string, string> = {
   'toast.optionsTitle': 'ToastOptions Interface',
   'toast.containerSummary':
     'Container component that holds all toast notifications. Should appear only once in your application.',
-
   'multiAlerts.title': 'Alerts (Multiple)',
   'multiAlerts.overview':
     'Frequently, there is a need to showcase multiple alerts, particularly those at the application level positioned at the top. The clr-lift library offers two essential utilities: <code>AlertContainerComponent</code> and <code>AlertService</code> to add, remove, and manage alerts programmatically.',
@@ -1021,7 +990,6 @@ export const enTranslations: Record<string, string> = {
   'multiAlerts.alertTypeTitle': 'Alert Type',
   'multiAlerts.containerSummary':
     'Container component that displays all alerts. Should be placed above the Clarity header tag within the main container.',
-
   'fileReader.title': 'File Reader',
   'fileReader.overview':
     'The <code>FileReaderComponent</code> allows you to easily browse and read the contents of text files. It supports file selection, content reading as plain text or base64 encoded string, file size validation, and emits events when files are selected or removed.',
@@ -1035,7 +1003,6 @@ export const enTranslations: Record<string, string> = {
   'fileReader.feature3': 'File size validation',
   'fileReader.feature4': 'Content parsing error handling',
   'fileReader.feature5': 'Form control integration',
-
   'keyValueInputs.title': 'Key Value Inputs',
   'keyValueInputs.overview':
     'The <code>KeyValueInputsComponent</code> is an Angular component designed to facilitate the input of key-value pairs. It provides a dynamic form allowing users to add, edit, and remove key-value pairs with FormArray integration, real-time validation, and smart keyboard navigation.',
@@ -1051,7 +1018,6 @@ export const enTranslations: Record<string, string> = {
   'keyValueInputs.valueHelper': 'run time property value',
   'keyValueInputs.addText': 'add key value',
   'keyValueInputs.apiSummary': 'Component for managing dynamic key-value pair inputs in Angular forms.',
-
   'statusIndicator.title': 'Status Indicator',
   'statusIndicator.overview':
     'The <code>StatusIndicatorComponent</code> displays a status indicator with an icon and text. It supports various status types (error, success, warning, unknown, inactive, pending), customizable icon sizes, and optional tooltips for additional context.',
@@ -1075,7 +1041,6 @@ export const enTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'inactive status',
   'statusIndicator.tooltipPending': 'some pending happen',
   'statusIndicator.apiSummary': 'Component for displaying status indicators with icons and text.',
-
   'certificate.title': 'Certificate Signpost (Viewer)',
   'certificate.overview':
     "The <code>CertificateSignpostComponent</code>, an Angular component, interprets a PEM string, showcasing the certificate's content with a click on the certificate icon. Seamlessly integrated with Clarity, this component exhibits crucial details such as certificate status, validity period, issuer info, and hash values.",
@@ -1083,7 +1048,6 @@ export const enTranslations: Record<string, string> = {
   'certificate.example1Desc': 'Parse and display a raw PEM certificate string:',
   'certificate.example2': 'Example 2: Parsing PEM (Base64 Encoded)',
   'certificate.example2Desc': 'When PEM strings are Base64 encoded, toggle pemEncoded to decode before parsing:',
-
   'idleDetection.utilOverview':
     'Idle detection is the process of monitoring user activity and determining when a user becomes inactive. This is particularly useful for applications that require users to remain logged in, as it allows the system to take appropriate action when a user stops interacting with the application, such as warning them of an impending timeout or automatically logging them out after a period of inactivity.',
   'idleDetection.utilOverviewDesc':
@@ -1108,7 +1072,6 @@ export const enTranslations: Record<string, string> = {
   'idleDetection.utilExample5ParamDesc':
     'The parameters <code>idleDurationInSeconds</code> and <code>timeoutDurationInSeconds</code> are optional. When these parameters are passed, they will overwrite the configuration passed by <code>provideIdleDetectionConfig</code>.',
   'idleDetection.utilDialogPreview': 'The dialog looks like below:',
-
   'idleDetection.title': 'Idle Detection',
   'idleDetection.overview':
     'The <code>cll-idle-detection</code> component monitors user inactivity across DOM events (mouse movement, keystrokes, scrolls, and touch). When the idle duration expires, it opens an accessible Clarity countdown dialog and emits a (timeout) event.',
@@ -1133,7 +1096,6 @@ export const enTranslations: Record<string, string> = {
   'idleDetection.methodOnIdleEnd': 'Observable that emits when the idle phase ends and countdown begins.',
   'idleDetection.methodOnTimeoutEnd': 'Observable that emits when the timeout countdown finishes.',
   'idleDetection.methodOnCountDown': 'Observable that emits the remaining seconds during the countdown phase.',
-
   'datagridUtil.title': 'Datagrid Utilities',
   'datagridUtil.overview':
     'The Clarity datagrid emits a state whenever a user interacts with pagination, filters, or sorting. To facilitate seamless integration with API requests, convertToHttpParams transforms the datagrid state into an HttpParams-ready query object.',
@@ -1151,7 +1113,6 @@ export const enTranslations: Record<string, string> = {
   'datagridUtil.propSortAsc': 'The field name to sort in ascending order.',
   'datagridUtil.propSortDesc': 'The field name to sort in descending order.',
   'datagridUtil.propFilter': 'The filter expression formatted in FIQL format.',
-
   'dgState.overview':
     'The <code>dgState</code> operator is an RxJS operator designed to manage Clarity Datagrid state transformations with intelligent debouncing and duplicate filtering. It assesses changes in datagrid filters and handles API trigger events efficiently. When filters are modified, the operator introduces a 500ms debounce before initiating the API call, preventing excessive requests during rapid typing. For actions such as sorting or pagination, the API call is made promptly without delay. The operator also provides an optional parameter to control the use of <code>distinctUntilChanged</code>. When enabled (default: <code>true</code>), it ensures that no API call is initiated if the datagrid state remains the same, preventing redundant requests.',
   'dgState.example1Title': 'Example 1: Basic Usage',
@@ -1179,7 +1140,6 @@ export const enTranslations: Record<string, string> = {
   'dgState.behavior3':
     'Optionally filters out duplicate consecutive states when <code>enableDistinctUntilChanged</code> is <code>true</code>',
   'dgState.behavior4': 'Starts with a null state to handle initial load scenarios',
-
   'timelineWizard.title': 'Timeline Wizard',
   'timelineWizard.overview':
     'The TimelineWizard component facilitates building timeline-based multi-step wizards in Angular applications. Each step is represented by a dedicated component extending TimelineBaseComponent, supporting step navigation, asynchronous validation, and dynamic component rendering.',
@@ -1221,7 +1181,6 @@ export const enTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': 'Replicas',
   'timelineWizard.url': 'URL',
-
   'poll.overview':
     'The <code>poll</code> operator is a custom RxJS operator that simplifies the process of polling APIs to keep data up-to-date. It allows developers to create observables that periodically emit data at specified intervals, abstracting away the complexity of managing polling intervals and API requests. This operator is especially useful when real-time updates are required but the server does not support push notifications (WebSockets, Server-Sent Events, etc.). It seamlessly integrates with other RxJS operators, enabling developers to build reactive pipelines for handling data streams.',
   'poll.example1Title': 'Example 1: Basic Polling',
@@ -1251,7 +1210,6 @@ export const enTranslations: Record<string, string> = {
   'poll.example6Desc':
     "The datagrid below will automatically refresh every 10 seconds. Additionally, whenever there's a change in the input, triggering filtering, sorting, or pagination, the API will be promptly called, accompanied by a spinner indicating loading.",
   'poll.searchByFirstName': 'Search by First Name',
-
   'poll.apiDesc':
     'Polls data at a specified interval and can be triggered manually. Returns an observable that emits the result as an AsyncState object.',
   'poll.paramPollingFn': 'A function that returns an Observable, Promise, or primitive value.',
@@ -1263,7 +1221,6 @@ export const enTranslations: Record<string, string> = {
   'poll.paramDelay': 'Delay in milliseconds before starting the first poll.',
   'poll.returnsDesc':
     'An observable that emits AsyncState<Data> objects with status, isLoading, error, and data properties.',
-
   'createAsyncState.overview':
     'The <code>createAsyncState</code> operator transforms an observable of type <code>T</code> into an observable of <code>AsyncState&lt;T&gt;</code>, encapsulating loading, error, and data states in a standardized structure. This eliminates the need to manage separate variables for loading states, errors, and data, making your codebase more organized and maintainable.',
   'createAsyncState.interfaceStructure': 'The <code>AsyncState</code> interface structure that the operator returns:',
@@ -1303,13 +1260,11 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.propOnLoading': 'Callback invoked when operation starts loading.',
   'resourceAsync.returnsDesc':
     'A ResourceRef<T, E> object exposing value, error, status, isLoading, and mutation methods.',
-
   'spinner.apiSummary': 'Component for displaying loading spinners with customizable sizes and alignment.',
   'spinner.inputSize': 'Determines the spinner size: "lg" (default), "md", or "sm".',
   'spinner.inputCenter': 'Centers the spinner as a block element. Pass false to disable centering.',
   'spinner.inputInline': 'Specifies whether the spinner should be displayed as an inline-block element.',
   'spinner.inputCustomClass': 'A string of additional CSS classes to apply to the spinner.',
-
   'callout.apiSummary': 'A callout component built on top of Clarity Design System.',
   'callout.contentProjectionDesc':
     'Provides a default <ng-content /> slot to render custom HTML content, text, lists, and components.',
@@ -1319,7 +1274,6 @@ export const enTranslations: Record<string, string> = {
   'callout.themingTitle': 'Theming',
   'callout.themingDesc':
     "Inherits Clarity theme context and respects [cds-theme='dark'] for contrasting background, border, and link styles.",
-
   'certificate.pemNote':
     "PEM stands for Privacy Enhanced Mail. It's a file format that is often used to store cryptographic keys, certificates, and other secure data. PEM files typically have extensions like .pem, .crt, .cer, and .key.",
   'certificate.apiSummary': 'Component for displaying certificate information in a Clarity signpost.',
@@ -1329,7 +1283,6 @@ export const enTranslations: Record<string, string> = {
   'certificate.inputPemEncoded': 'Whether the provided PEM string is base64-encoded.',
   'certificate.inputPosition': 'Position of the signpost relative to the trigger icon.',
   'certificate.inputShowIcon': 'A boolean value to manage the visibility of the certificate status icon.',
-
   'isPromise.overview':
     'The <code>isPromise</code> utility is a TypeScript type guard that determines whether an arbitrary value is a <code>Promise</code> or <code>PromiseLike</code> (an object or function containing a callable <code>then</code> method). It enables safe runtime verification and type narrowing without throwing errors on null or primitive values.',
   'isPromise.callout':
@@ -1346,7 +1299,6 @@ export const enTranslations: Record<string, string> = {
   'isPromise.paramObj': 'The value to inspect.',
   'isPromise.returnsDesc':
     'true if the input is non-null, is an object or function, and implements a callable then method; false otherwise.',
-
   'isEmpty.overview':
     'The <code>isEmpty</code> utility function checks if a string, object, or array is empty. It returns <code>true</code> for empty values and <code>false</code> for non-empty values.',
   'isEmpty.example1Title': 'Example 1: Basic Usage',
@@ -1357,7 +1309,6 @@ export const enTranslations: Record<string, string> = {
   'isEmpty.paramValue': 'The value to check. Can be a string, object, array, or other value.',
   'isEmpty.returnsDesc':
     'true if the value is empty (empty string, empty object, empty array, null, or undefined), false otherwise.',
-
   'isEqual.overview':
     'The <code>isEqual</code> utility function performs a deep equality check between two values. It compares primitive values, arrays, and objects recursively to determine if they are structurally equal, regardless of reference equality.',
   'isEqual.example1Title': 'Example 1: Basic Usage',
@@ -1369,7 +1320,6 @@ export const enTranslations: Record<string, string> = {
   'isEqual.paramValue2': 'The second value to compare.',
   'isEqual.returnsDesc':
     'true if the values are deeply equal, false otherwise. Performs recursive comparison for objects and arrays.',
-
   'differenceInDays.overview':
     'The <code>differenceInDays</code> utility function calculates the number of whole days between two dates. It simplifies date calculations in JavaScript by accepting flexible input types. The first parameter represents the reference date from which the difference is measured, and the second parameter denotes the date to be compared against the reference date. Both parameters accept <code>Date</code> objects, numbers representing milliseconds since the Unix epoch, or strings parseable by the <code>Date</code> constructor.',
   'differenceInDays.example1Title': 'Example 1: Calculate Days Between Dates',
@@ -1383,7 +1333,6 @@ export const enTranslations: Record<string, string> = {
     'The date to compare against the reference date. Accepts the same types as dateLeft.',
   'differenceInDays.returnsDesc':
     'The number of whole days between the two dates. Returns a positive number if dateLeft is later than dateRight, and negative if dateLeft is earlier.',
-
   'pickBy.overview':
     'The <code>pickBy</code> and <code>omitBy</code> utility functions allow you to create new objects by selecting or excluding properties based on a predicate function. <code>pickBy</code> creates an object composed of properties that satisfy a given condition, while <code>omitBy</code> is the opposite, creating an object composed of properties that do not satisfy the condition.',
   'pickBy.example1Title': 'Example 1: pickBy',
@@ -1391,19 +1340,16 @@ export const enTranslations: Record<string, string> = {
   'pickBy.example2Title': 'Example 2: omitBy',
   'pickBy.example2Desc':
     '<code>omitBy</code> is the opposite of <code>pickBy</code>, creating an object composed of properties that do not satisfy the given condition.',
-
   'pickBy.apiSummary': 'Creates an object composed of object properties that satisfy a given condition.',
   'pickBy.paramObject': 'The source object to pick properties from.',
   'pickBy.paramPredicate':
     'A function that determines which properties to include. Returns true to include, false to exclude.',
   'pickBy.returnsDesc': 'A new object containing only the properties that satisfy the predicate.',
-
   'omitBy.apiSummary': 'Creates an object composed of object properties that do not satisfy a given condition.',
   'omitBy.paramObject': 'The source object to omit properties from.',
   'omitBy.paramPredicate':
     'A function that determines which properties to omit. Returns true to omit, false to retain.',
   'omitBy.returnsDesc': 'A new object containing only the properties that do not satisfy the predicate.',
-
   'url.title': 'URL Utilities',
   'url.overview':
     'ngx-lift provides several utility functions for working with URLs: <code>isIP</code> and <code>isFQDN</code> for checking hostname types, <code>isURL</code> for validating URLs, and <code>isHttps</code> for checking HTTPS protocol. These utilities are useful for URL validation, security checks, and conditional logic based on URL properties.',
@@ -1419,7 +1365,6 @@ export const enTranslations: Record<string, string> = {
   'url.isFQDNSummary': 'Checks if a hostname is a fully qualified domain name (FQDN).',
   'url.isURLSummary': 'Checks if a string is a valid URL.',
   'url.isHttpsSummary': 'Checks if a URL string uses the HTTPS protocol.',
-
   'urlValidator.title': 'urlValidator & httpsValidator',
   'urlValidator.overview':
     'The <code>urlValidator</code> and <code>httpsValidator</code> functions are Angular validators used to check if a given string adheres to specific URL patterns. The <code>urlValidator</code> validates URLs starting with http or https, while <code>httpsValidator</code> validates only HTTPS URLs.',
@@ -1441,7 +1386,6 @@ export const enTranslations: Record<string, string> = {
     'A validator function that returns {invalidUrl: true} if the URL is invalid, or null if valid.',
   'urlValidator.httpsReturns':
     'A validator function that returns {invalidUrl: true} if the URL is not HTTPS, or null if valid.',
-
   'startWithTap.overview':
     'The <code>startWithTap</code> operator executes a synchronous callback before each subscription to the source Observable begins emitting. Unlike eager tap operations or pipeline initialization code, constructing the pipeline does not execute the callback until a subscription occurs. Any callback exceptions enter the Observable error channel.',
   'startWithTap.callout':
@@ -1460,7 +1404,6 @@ export const enTranslations: Record<string, string> = {
   'startWithTap.paramCallback': 'Function executed synchronously before the source Observable begins emitting.',
   'startWithTap.returnsDesc':
     'An RxJS operator function that executes the callback upon subscription and returns the source Observable unchanged.',
-
   'switchMapWithAsyncState.overview':
     'The <code>switchMapWithAsyncState</code> operator combines the functionality of <code>switchMap</code> and <code>createAsyncState</code> into a single operator. It is tailor-made for scenarios where you need to trigger an API request based on user actions (like button clicks) and seamlessly transition between streams. By creating an <code>AsyncState</code> structure to encapsulate your API response, this operator delivers a seamless and efficient approach to managing asynchronous operations.',
   'switchMapWithAsyncState.example1Title': 'Example 1: Filter Users by Gender',
@@ -1474,7 +1417,6 @@ export const enTranslations: Record<string, string> = {
     'A function that receives each value from the source observable and returns an Observable, Promise, or other ObservableInput.',
   'switchMapWithAsyncState.returnsDesc':
     'An observable that emits AsyncState<R> objects, automatically handling loading, error, and data states.',
-
   'combineLatestEager.overview':
     'The RxJS operator <code>combineLatest</code> requires all sources to emit at least once, which can be problematic when using <code>Subject</code> sources that may not emit initially. <code>combineLatestEager</code> extends <code>combineLatest</code> by automatically adding <code>startWith(null)</code> for each <code>Subject</code> in the sources, ensuring the combined observable initializes properly. You can also set the second parameter to <code>true</code> to append <code>startWith(null)</code> for all source observables, which is useful when dealing with numerous observables where initial emissions are not guaranteed.',
   'combineLatestEager.example1Title': 'Example 1: Basic Usage',
@@ -1482,7 +1424,6 @@ export const enTranslations: Record<string, string> = {
   'combineLatestEager.example2Title': 'Example 2: Complete Example with Template',
   'combineLatestEager.example2Desc':
     'Complete example showing how to use combineLatestEager with async pipe in templates:',
-
   'combineLatestEager.apiSummary':
     'Combines multiple observables with eager emission, automatically handling sources that do not emit initial values.',
   'combineLatestEager.paramSources': 'An array or dictionary object of observables to combine.',
@@ -1490,14 +1431,12 @@ export const enTranslations: Record<string, string> = {
     '(Optional) When true, appends startWith(null) for all sources, not just Subjects. Defaults to false.',
   'combineLatestEager.returnsDesc':
     'An observable that emits an array or object containing the latest values from all sources.',
-
   'distinctOnChange.overview':
     'The <code>distinctOnChange</code> operator enhances RxJS Observables by not only preventing duplicate emissions (like <code>distinctUntilChanged</code>) but also executing a callback function when a value changes. This is useful for scenarios where you need to perform side effects, such as displaying a toast notification, when a value changes after the initial emission.',
   'distinctOnChange.example1Title': 'Example 1: Basic Usage',
   'distinctOnChange.example1Desc': 'Execute a callback when distinct values are encountered:',
   'distinctOnChange.example2Title': 'Example 2: With Custom Comparator',
   'distinctOnChange.example2Desc': 'Use a custom comparator function to determine equality:',
-
   'distinctOnChange.apiSummary':
     'Returns an observable that emits distinct contiguous values and executes a callback whenever the value changes.',
   'distinctOnChange.paramCallback':
@@ -1505,7 +1444,6 @@ export const enTranslations: Record<string, string> = {
   'distinctOnChange.paramComparator':
     '(Optional) Function to determine whether two values are considered equal. Defaults to strict equality (===).',
   'distinctOnChange.returnsDesc': 'An observable that emits distinct values and executes the callback on changes.',
-
   'logger.overview':
     'The <code>logger</code> operator is a utility function for RxJS observables that simplifies logging emitted values using different console functions. This operator is useful for debugging and monitoring the behavior of your observables during development.',
   'logger.example1Title': 'Example 1: Basic Logging',
@@ -1518,7 +1456,6 @@ export const enTranslations: Record<string, string> = {
   'logger.paramMethod':
     '(Optional) Console method to use: "log" | "table" | "warn" | "error" | "info" | "debug". Defaults to "log".',
   'logger.returnsDesc': 'An observable that passes through all values while logging them to the console.',
-
   'kubernetesPagination.overview':
     'The <code>aggregatePaginatedKubernetesResources</code> operator and <code>fetchPaginatedKubernetesResources</code> function automate client-side pagination for Kubernetes REST APIs. They inspect the <code>metadata.continue</code> token on incoming responses, request consecutive pages recursively until all pages are retrieved, normalize missing or null items safely, and aggregate all resources into a single unified <code>KubernetesList&lt;T&gt;</code>.',
   'kubernetesPagination.callout':
@@ -1538,7 +1475,6 @@ export const enTranslations: Record<string, string> = {
   'kubernetesPagination.example2Title': 'Example 2: Self-Contained Fetch Function',
   'kubernetesPagination.example2Desc':
     'Use <code>fetchPaginatedKubernetesResources</code> when you want to initiate and paginate in a single function call without constructing the initial Observable manually:',
-
   'kubernetesPagination.aggregateSummary':
     'RxJS operator that transforms an initial Kubernetes list response Observable into an aggregated list containing items from all pages.',
   'kubernetesPagination.fetchSummary':
@@ -1546,7 +1482,6 @@ export const enTranslations: Record<string, string> = {
   'kubernetesPagination.paramHttp': 'Angular HttpClient used for requesting subsequent pages.',
   'kubernetesPagination.paramEndpoint': 'REST URL of the Kubernetes resource.',
   'kubernetesPagination.paramInitialParams': 'Query parameters (e.g. limit).',
-
   'k8sRetryBackoff.configSummary': 'Optional configuration shared by the operator and interceptor factory.',
   'k8sRetryBackoff.paramMaxAttempts': 'Total attempts including the initial request. Set to 1 to disable retries.',
   'k8sRetryBackoff.errorShape':
@@ -1557,7 +1492,6 @@ export const enTranslations: Record<string, string> = {
     'Try a probe that fails on its first 429, or a workload read that receives two 429s before succeeding. The custom read uses maxAttempts: 10 and a 200ms exponential base with equal jitter; at most nine retries are allowed.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Test Workload Read (10 Attempts)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Test Fast Probe (Opt-out)',
-
   'k8sRetryBackoff.overview':
     'The <code>retryOnK8sBackoff</code> RxJS operator implements automated retry-with-backoff for Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) responses (such as when the apiserver watch cache is bootstrapping with "storage is (re)initializing"). Only HTTP 429 triggers a retry; all other errors (4xx, 5xx, network failures) propagate immediately and unchanged to the subscriber.',
   'k8sRetryBackoff.callout':
@@ -1609,7 +1543,6 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramError': 'The error to inspect (HttpErrorResponse or object with status/headers/error).',
   'k8sRetryBackoff.paramFallbackDelay':
     'Base fallback delay in milliseconds. The operator increases it exponentially; the delay helper returns it directly when no hint exists.',
-
   'k8sRetryBackoffInterceptor.overview':
     '<code>k8sRetryBackoffInterceptor</code> automatically retries Kubernetes 429 responses for idempotent methods. It honors Retry-After and details.retryAfterSeconds, with exponential fallback, jitter, wait budgets and HttpContext opt-out. POST/PATCH require explicit opt-in.',
   'k8sRetryBackoffInterceptor.callout':
@@ -1633,7 +1566,6 @@ export const enTranslations: Record<string, string> = {
     'Default K8sBackoffRetryConfig applied to requests unless overridden via K8S_RETRY_BACKOFF_CONFIG.',
   'k8sRetryBackoffInterceptor.tokenSummary':
     'HttpContextToken used to customize or disable retry-backoff for individual requests.',
-
   'ifValidator.overview':
     'ngx-lift provides utility functions for creating conditional validators in Angular Reactive Forms. Conditional validators allow you to apply specified validator functions based on a given condition. There are two main functions exported: <code>ifValidator</code> for synchronous validators and <code>ifAsyncValidator</code> for asynchronous validators.',
   'ifValidator.example1Title': 'Example 1: Conditional Required Validator',
@@ -1651,7 +1583,6 @@ export const enTranslations: Record<string, string> = {
   'ifValidator.example2Title': 'Example 2: ifAsyncValidator',
   'ifValidator.example2Desc':
     '<code>ifAsyncValidator</code> shares similarities with <code>ifValidator</code> but differs in that it accepts two parameters: the condition and an AsyncValidation function, designed specifically for handling asynchronous operations.',
-
   'ifValidator.apiSummary': 'Creates a conditional validator that applies validator functions based on a condition.',
   'ifValidator.paramCondition':
     'Function that returns true to apply trueValidatorFn, or false to apply falseValidatorFn.',
@@ -1661,7 +1592,6 @@ export const enTranslations: Record<string, string> = {
     'Creates a conditional async validator that applies an async validator function based on a condition.',
   'ifAsyncValidator.paramCondition': 'Function determining whether the async validator should be applied.',
   'ifAsyncValidator.paramAsyncValidatorFn': 'The async validator function to execute when condition is true.',
-
   'intersectionValidator.overview':
     "The <code>intersectionValidator</code> is a custom Angular Forms validator designed to ensure that two form controls do not have overlapping values. For example, you might have two lists of items and want to ensure they don't contain any duplicates. When there's any overlap between the arrays, both fields and the form will have the <code>{intersection: true}</code> error.",
   'intersectionValidator.example1Title': 'Example 1: Validate Non-Overlapping Arrays',
@@ -1673,12 +1603,10 @@ export const enTranslations: Record<string, string> = {
   'intersectionValidator.overlapAlert': 'Included namespaces and excluded namespaces have overlaps',
   'intersectionValidator.returnsDesc':
     "A validator function that returns <code>{intersection: true}</code> if the arrays overlap, or <code>null</code> if they don't. You can check for this error in the form by accessing <code>form.errors?.['intersection']</code>.",
-
   'intersectionValidator.apiSummary':
     'Validates that two array-valued form controls do not contain overlapping elements.',
   'intersectionValidator.paramArray1Key': 'The name of the first form control.',
   'intersectionValidator.paramArray2Key': 'The name of the second form control.',
-
   'uniqueValidator.overview':
     "The <code>uniqueValidator</code> is a custom Angular Forms validator designed to check for uniqueness across multiple fields within a <code>FormArray</code> or <code>FormGroup</code>. It ensures that each control's value is unique among all other controls within the array or group.",
   'uniqueValidator.example1Title': 'Example 1: Array of FormControls',
@@ -1701,11 +1629,9 @@ export const enTranslations: Record<string, string> = {
   'uniqueValidator.usageNotes': 'Usage Notes',
   'uniqueValidator.usageNotesDesc':
     "Trigger the control's <code>updateValueAndValidity()</code> method as needed to re-validate when values change.",
-
   'uniqueValidator.apiSummary': 'Validates uniqueness across FormArray controls or array values.',
   'uniqueValidator.paramKey':
     '(Optional) Property key to check uniqueness for object items. If omitted, checks primitive equality.',
-
   'dateRangeValidator.overview':
     'The <code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range. It supports validation for both date-only values and date-time values, with configurable inclusive/exclusive boundaries and optional time comparison.',
   'dateRangeValidator.example1Title': 'Example 1: Date Range Validation',
@@ -1736,14 +1662,12 @@ export const enTranslations: Record<string, string> = {
     'Returned when the selected date is earlier than or equal to the minimum allowed date. The error value is the minimum allowed date formatted as an ISO string.',
   'dateRangeValidator.errMaxDate':
     'Returned when the selected date is later than or equal to the maximum allowed date. The error value is the maximum allowed date formatted as an ISO string.',
-
   'dateRangeValidator.apiSummary': 'Validates that a date value falls within a specified minDate and/or maxDate range.',
   'dateRangeValidator.paramOptions': 'DateRangeOptions configuring minDate, maxDate, and inclusivity flags.',
   'dateRangeValidator.optMinDate': 'Minimum acceptable date.',
   'dateRangeValidator.optMaxDate': 'Maximum acceptable date.',
   'dateRangeValidator.optMinInclusive': 'Whether the minimum date is inclusive. Defaults to true.',
   'dateRangeValidator.optMaxInclusive': 'Whether the maximum date is inclusive. Defaults to true.',
-
   'rangePipe.overview':
     "The <code>range</code> pipe generates an array of numbers within a specified range, making it ideal for creating dropdown options, pagination controls, or any scenario requiring numeric sequences in templates. When working with Angular templates, you may need to generate an array of numbers for iteration. For example, if you have the number 20 and want to create an array from 1 to 20 to display in a dropdown list, Angular's <code>@for</code> directive cannot directly iterate over a number. While you could generate this array in TypeScript, there are cases where creating the array directly in the template is more convenient.",
   'rangePipe.callout1':
@@ -1764,10 +1688,8 @@ export const enTranslations: Record<string, string> = {
   'rangePipe.cpuLabel': 'Choose CPU count',
   'rangePipe.cpuOption': '{{ count }} CPU(s)',
   'rangePipe.returnsDesc': 'An array of numbers within the specified range.',
-
   'rangePipe.apiSummary': 'Angular pipe that generates an array of numbers within a specified range.',
   'rangePipe.paramValue': 'Array specifying [end], [start, end], [start, end, step], or [start, end, step, inclusive].',
-
   'isHttpsPipe.overview':
     "The <code>isHttps</code> pipe is an Angular pipe that checks if a URL string uses the HTTPS protocol. It's useful for conditional rendering, validation, or security checks in templates. A corresponding <code>isHttps</code> utility function is also available for use in TypeScript.",
   'isHttpsPipe.example1Title': 'Example 1: Basic Usage',
@@ -1776,11 +1698,9 @@ export const enTranslations: Record<string, string> = {
   'isHttpsPipe.example2Desc': 'Conditionally render components based on HTTPS status:',
   'isHttpsPipe.example3Title': 'Example 3: Security Validation',
   'isHttpsPipe.example3Desc': 'Display security indicators based on protocol:',
-
   'isHttpsPipe.apiSummary': 'Angular pipe that checks if a URL string uses the HTTPS protocol.',
   'isHttpsPipe.paramValue': 'The URL string to check.',
   'isHttpsPipe.returnsDesc': 'true if the URL uses HTTPS protocol, false otherwise.',
-
   'arrayJoinPipe.overview':
     'The <code>arrayJoin</code> pipe is an Angular pipe that joins array elements into a string using a specified separator. It provides a convenient way to display array data as comma-separated or custom-delimited strings in templates.',
   'arrayJoinPipe.example1Title': 'Example 1: Basic Usage',
@@ -1789,12 +1709,10 @@ export const enTranslations: Record<string, string> = {
   'arrayJoinPipe.example2Desc': 'Use different separators for various use cases:',
   'arrayJoinPipe.example3Title': 'Example 3: Numeric Arrays',
   'arrayJoinPipe.example3Desc': 'Join numeric arrays with different separators:',
-
   'arrayJoinPipe.apiSummary': 'Angular pipe that joins array elements into a string using a specified separator.',
   'arrayJoinPipe.paramValue': 'The array to join. If not an array, returns the value as-is.',
   'arrayJoinPipe.paramSeparator': '(Optional) The separator string to use between elements. Defaults to ",".',
   'arrayJoinPipe.returnsDesc': 'A string containing the joined array elements, or the original value if not an array.',
-
   'maskPipe.overview':
     "The <code>mask</code> pipe is an Angular pipe designed to mask sensitive string data by replacing characters with asterisks, while preserving a configurable number of characters at the beginning and end. It's ideal for obscuring sensitive information in user interfaces, such as credit card numbers, phone numbers, or API keys.",
   'maskPipe.example1Title': 'Example 1: Basic Usage',
@@ -1812,7 +1730,6 @@ export const enTranslations: Record<string, string> = {
   'maskPipe.cond2': '<code>unmaskedPrefixLength</code> and <code>unmaskedSuffixLength</code> must not be negative.',
   'maskPipe.cond3': 'The <code>masked</code> option must be <code>true</code>.',
   'maskPipe.condFallback': 'If any of these conditions are not met, the original string is returned unchanged.',
-
   'maskPipe.apiSummary': 'Angular pipe that masks sensitive string data by replacing characters with asterisks.',
   'maskPipe.paramValue': 'The input string to be masked.',
   'maskPipe.paramOptions': 'Configuration options for masking behavior.',
@@ -1822,7 +1739,6 @@ export const enTranslations: Record<string, string> = {
   'maskPipe.optUnmaskedSuffixLength': 'Number of characters to leave unmasked at the end. Defaults to 6.',
   'maskPipe.optMaskChar': 'Character used for masking. Defaults to "*".',
   'maskPipe.optEnabled': 'Whether masking is enabled. Defaults to true.',
-
   'byteConverterPipe.overview':
     'The <code>byteConverter</code> pipe converts numeric byte values into human-readable file size strings (e.g., "1.5 MB", "2.3 GB") with locale-aware formatting. It automatically handles unit conversion (BYTE, KB, MB, GB, TB) and supports internationalization with translations for multiple languages including English, French, Chinese, Japanese, Korean, German, Spanish, Italian, Portuguese, and Russian.',
   'byteConverterPipe.example1Title': 'Example 1: Basic Usage',
@@ -1836,13 +1752,11 @@ export const enTranslations: Record<string, string> = {
     "The pipe uses the application's <code>LOCALE_ID</code> to determine the appropriate unit translations. Supported languages include English, French, Chinese (Simplified and Traditional), Japanese, Korean, German, Spanish, Italian, Portuguese (Brazil), and Russian. If the browser language is not supported, English serves as the default.",
   'byteConverterPipe.i18nCallout':
     'To configure locale support, refer to the <a href="https://angular.io/guide/i18n" target="_blank">Angular i18n documentation</a>.',
-
   'byteConverterPipe.apiSummary':
     'Angular pipe that converts a number of bytes into a human-readable string format with locale-aware formatting.',
   'byteConverterPipe.paramValue': '(Optional) The number of bytes to convert. Returns null if null, undefined, or NaN.',
   'byteConverterPipe.returnsDesc':
     'A formatted string with appropriate unit (B, KB, MB, GB, TB) based on locale, or null if invalid.',
-
   'datagridUtil.transformDesc':
     "The function converts the Clarity datagrid state (containing pagination, sorting, and filter information) into a PageQuery object. Here's an example of the transformation:",
   'datagridUtil.inputTitle': 'Input: Clarity Datagrid State',
@@ -1924,4 +1838,213 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoffInterceptor.postDefault': 'POST: default (no retry)',
   'k8sRetryBackoffInterceptor.postOptIn': 'POST: explicit Kubernetes opt-in',
   'k8sRetryBackoffInterceptor.postGateway': 'POST: gateway 429 (rejected)',
+  'demoApi.key-value-inputs-demo.inputs.formArray':
+    'The FormArray instance from the parent component used to manage the key-value pairs.',
+  'demoApi.key-value-inputs-demo.inputs.data': 'Initial data to pre-populate the form with existing key-value pairs.',
+  'demoApi.key-value-inputs-demo.inputs.uniqueKey':
+    'Set to <code>true</code> to enable unique key validation. Uses <code>UniqueValidator</code> from ngx-lift.',
+  'demoApi.key-value-inputs-demo.inputs.keyHelper': 'Helper text for the key input field.',
+  'demoApi.key-value-inputs-demo.inputs.valueHelper': 'Helper text for the value input field.',
+  'demoApi.key-value-inputs-demo.inputs.addText': 'Text for the "Add Key-Value Pair" button.',
+  'demoApi.key-value-inputs-demo.inputs.inputSize': 'Size of the input fields.',
+  'demoApi.key-value-inputs-demo.inputs.buttonClass': 'Custom class to apply to "Add Key-Value Pair" button.',
+  'demoApi.key-value-inputs-demo.inputs.smartMode':
+    'If set to <code>true</code>, the component will automatically create one key-value pair when there are no key-value inputs.',
+  'demoApi.key-value-inputs-demo.inputs.keyPattern':
+    'If key control needs to pass a custom regex pattern. You can pass an object with two keys: <code>regex</code> and <code>message</code>. The message property is optional.',
+  'demoApi.key-value-inputs-demo.inputs.valuePattern':
+    'Similar to <code>keyPattern</code>, but used for value control validation.',
+  'demoApi.key-value-inputs-demo.outputs.removeKeyValue':
+    'Event emitted when a key-value pair is removed. Provides the index of the removed pair.',
+  'demoApi.key-value-inputs-demo.outputs.addKeyValue': 'Event emitted when a new key-value pair is added.',
+  'demoApi.multi-alerts-demo.methods.addAlert(options: Alert)': 'Adds a new alert with the specified options.',
+  'demoApi.multi-alerts-demo.methods.deleteAlert(id: symbol)': 'Deletes an alert by its ID.',
+  'demoApi.multi-alerts-demo.methods.clearAlerts()': 'Clears all alerts.',
+  'demoApi.multi-alerts-demo.alertProperties.content': 'The alert message. Safe HTML formatting is supported.',
+  'demoApi.multi-alerts-demo.alertProperties.alertType': 'The type of alert.',
+  'demoApi.multi-alerts-demo.alertProperties.actions':
+    'Native buttons. Each action provides <code>label: string</code> and <code>onClick: () => void</code>.',
+  'demoApi.multi-alerts-demo.alertProperties.isAppLevel': 'Whether this is an application-level alert.',
+  'demoApi.multi-alerts-demo.alertProperties.targetSelector':
+    'The selector (ID, class, etc.) of a clickable element (button, link, etc.) anywhere within the alert content.',
+  'demoApi.multi-alerts-demo.alertProperties.onTargetClick':
+    'Callback executed when the element matching <code>targetSelector</code> within the alert content is clicked.',
+  'demoApi.theme-toggle-demo.componentInputs.lang': 'Explicit language code for localized tooltips.',
+  'demoApi.theme-toggle-demo.componentOutputs.changeTheme':
+    "Emits <code>ClarityTheme</code> ('light' | 'dark') whenever the theme is toggled.",
+  'demoApi.theme-toggle-demo.serviceProperties.theme': "Current active theme ('light' | 'dark').",
+  'demoApi.theme-toggle-demo.serviceMethods.setTheme(newTheme: ClarityTheme)':
+    'Sets the theme, persists to storage, and updates the DOM.',
+  'demoApi.timeline-wizard-demo.wizardInputs.timelineSteps':
+    'An array of <code>TimelineStep</code> objects representing the steps in the wizard.',
+  'demoApi.timeline-wizard-demo.wizardInputs.live':
+    'Controls whether to destroy step components when clicking prev/next buttons.',
+  'demoApi.timeline-wizard-demo.wizardInputs.confirmButtonText': 'The text for the "Finish" button on the last step.',
+  'demoApi.timeline-wizard-demo.wizardOutputs.confirmed':
+    "Emits all previous steps' data when clicking the finish button in the last step.",
+  'demoApi.timeline-wizard-demo.wizardOutputs.canceled': 'Emits when the wizard is canceled.',
+  'demoApi.timeline-wizard-demo.wizardOutputs.finished': 'Emits when the wizard is successfully completed.',
+  'demoApi.timeline-wizard-demo.wizardMethods.cancel()':
+    'Cancels the wizard and emits the <code>canceled</code> event.',
+  'demoApi.timeline-wizard-demo.wizardMethods.nextStep()': 'Moves to the next step in the wizard.',
+  'demoApi.timeline-wizard-demo.wizardMethods.previousStep()': 'Moves to the previous step in the wizard.',
+  'demoApi.timeline-wizard-demo.baseProperties.allStepsData':
+    'An array containing the data of all wizard steps. Available as an input property, accessible in <code>ngOnInit</code> and later lifecycle hooks.',
+  'demoApi.timeline-wizard-demo.baseProperties.currentStepData':
+    'The data of the current step or <code>null</code> if not available. Available as an input property, accessible in <code>ngOnInit</code> and later lifecycle hooks.',
+  'demoApi.timeline-wizard-demo.baseProperties.form':
+    'The form group associated with the step. Set to <code>null</code> for steps without a form. Override this property in your step component.',
+  'demoApi.timeline-wizard-demo.baseProperties.next$':
+    'An observable that emits when the "Next" button is clicked. Override it to perform custom actions, such as API calls.',
+  'demoApi.timeline-wizard-demo.baseProperties.stepInvalid': "Indicates whether the step's form is invalid.",
+  'demoApi.timeline-wizard-demo.baseMethods.formValueToData()':
+    "Converts the step's form value to data. Override this method if your form structure doesn't match the step data structure.",
+  'demoApi.timeline-wizard-demo.baseMethods.dataToFormValue(data)':
+    "Converts step data to the form value that can be used for <code>patchValue</code>. Override this method if your form structure doesn't match the step data structure.",
+  'demoApi.timeline-wizard-demo.stepProperties.state':
+    "The state of the timeline step (e.g., 'not-started', 'current', 'success', 'error').",
+  'demoApi.timeline-wizard-demo.stepProperties.header': 'The header of the timeline step.',
+  'demoApi.timeline-wizard-demo.stepProperties.title':
+    'The title of the timeline step, acting as an identifier (should be unique). Can be used to find step data via <code>getStepData</code>.',
+  'demoApi.timeline-wizard-demo.stepProperties.id':
+    'The id of the timeline step, acting as a primary identifier. If id is not provided, will use title as identifier instead. Can be used to find step data via <code>getStepData</code>.',
+  'demoApi.timeline-wizard-demo.stepProperties.description': 'The description of the timeline step.',
+  'demoApi.timeline-wizard-demo.stepProperties.component':
+    'The Angular component associated with the timeline step. Must extend <code>TimelineBaseComponent</code>.',
+  'demoApi.timeline-wizard-demo.stepProperties.data':
+    'Step data, which will be converted to form data by the timeline wizard component and passed to the step component as <code>currentStepData</code>.',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStepIndex': 'Get the index of the current step.',
+  'demoApi.timeline-wizard-demo.serviceProperties.isFirstStep': 'Check if the current step is the first step.',
+  'demoApi.timeline-wizard-demo.serviceProperties.isLastStep': 'Check if the current step is the last step.',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStep': 'Get the current step object.',
+  'demoApi.timeline-wizard-demo.serviceProperties.currentStepData': 'Get the data of the current step.',
+  'demoApi.timeline-wizard-demo.serviceProperties.allStepsData':
+    'Get all steps data to be reviewed. Returns an array with step identifiers and data.',
+  'demoApi.timeline-wizard-demo.serviceMethods.getStepData<T>(key: string)':
+    'Get the data of a specific step by its id or title. Returns <code>null</code> if the step is not found.',
+  'demoApi.toast-demo.methods.addToast(options: ToastOptions)': 'Creates a toast with the specified options.',
+  'demoApi.toast-demo.methods.success(options: ToastOptions)': 'Creates a success toast with the specified options.',
+  'demoApi.toast-demo.methods.info(options: ToastOptions)': 'Creates an info toast with the specified options.',
+  'demoApi.toast-demo.methods.warning(options: ToastOptions)': 'Creates a warning toast with the specified options.',
+  'demoApi.toast-demo.methods.error(options: ToastOptions)': 'Creates an error toast with the specified options.',
+  'demoApi.toast-demo.toastOptions.title': 'The title of the toast message.',
+  'demoApi.toast-demo.toastOptions.description': 'The description of the toast message.',
+  'demoApi.toast-demo.toastOptions.toastType': 'The type of toast.',
+  'demoApi.toast-demo.toastOptions.date': 'A relative timestamp (e.g., "1hr ago").',
+  'demoApi.toast-demo.toastOptions.manualClosable': 'Whether the toast can be manually closed.',
+  'demoApi.toast-demo.toastOptions.timeoutSeconds':
+    "The number of seconds before the toast automatically closes. If not provided, uses the container's default.",
+  'demoApi.toast-demo.toastOptions.primaryButtonText': 'Text for the primary action button.',
+  'demoApi.toast-demo.toastOptions.primaryButtonClick': 'Callback function for the primary button click.',
+  'demoApi.toast-demo.toastOptions.secondaryButtonText': 'Text for the secondary action button.',
+  'demoApi.toast-demo.toastOptions.secondaryButtonClick': 'Callback function for the secondary button click.',
+  'demoApi.toast-demo.toastOptions.closed': 'Callback function called when the toast is closed.',
+  'demoApi.toast-demo.containerInputs.timeoutSeconds': 'Default timeout in seconds for toasts.',
+  'demoApi.toast-demo.containerInputs.manualClosable': 'Whether toasts can be manually closed by default.',
+  'demoApi.toast-demo.containerInputs.topOffset': 'Distance from the top of the screen in pixels.',
+  'demoApi.tooltip-demo.inputs.cllTooltip':
+    'Simple string content for the tooltip. Can be used as a shorthand for <code>cllTooltipContent</code>.',
+  'demoApi.tooltip-demo.inputs.cllTooltipContent':
+    'The content to display in the tooltip. Can be a string, template reference, component reference, or component type.',
+  'demoApi.tooltip-demo.inputs.cllTooltipContentContext':
+    'Context object to pass to the template when using <code>TemplateRef</code> as content.',
+  'demoApi.tooltip-demo.inputs.cllTooltipWidth': 'Width of the tooltip in pixels.',
+  'demoApi.tooltip-demo.inputs.cllTooltipPosition':
+    "Position of the tooltip relative to the element. Options include 'tooltip-top-right', 'tooltip-top-left', etc.",
+  'demoApi.tooltip-demo.inputs.cllTooltipHideDelay':
+    'Delay in milliseconds before hiding the tooltip after mouse leave.',
+  'demoApi.mutate-resource.mutateResourceApiProps.mutation':
+    'Async function or observable executing the server-side write operation.',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+    'Tags to invalidate upon successful write. Immediately schedules refetches for active queries.',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
+    'Strategy for overlapping calls: parallel (default), exhaust (joins in-flight), concat (queues).',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.injector':
+    'Optional explicit Angular Injector for signal registration outside injection context.',
+  'demoApi.mutate-resource.mutateResourceApiProps.options.client':
+    'Optional explicit QueryClient override (defaults to QUERY_CLIENT token).',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.value':
+    'Signal holding the latest successfully resolved mutation result.',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.error':
+    'Signal holding the most recent mutation error, or null when healthy.',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.status': 'Granular mutation lifecycle status.',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.isLoading': 'True while the mutation operation is executing.',
+  'demoApi.mutate-resource.mutateResourceRefApiProps.mutate(args)':
+    'Triggers the mutation with arguments and returns a Promise settling with the result or rejection.',
+  'demoApi.query-resource.queryResourceApiProps.definition':
+    'Reactive factory with an Observable or Promise loader, or undefined to disable.',
+  'demoApi.query-resource.queryResourceApiProps.options.pollInterval':
+    'Milliseconds between completed requests. Coordinated across all active observers.',
+  'demoApi.query-resource.queryResourceApiProps.options.injector':
+    'Optional explicit Angular Injector for signal registration outside injection context.',
+  'demoApi.query-resource.queryResourceApiProps.options.client':
+    'Optional explicit QueryClient override (defaults to QUERY_CLIENT token).',
+  'demoApi.query-resource.queryResourceDefinitionProps.key':
+    'Array of JSON-compatible values uniquely identifying the query (e.g. ["user", id]).',
+  'demoApi.query-resource.queryResourceDefinitionProps.loader':
+    'Data fetcher receiving { abortSignal, refresh }. Observable reads automatically complete after the first emission.',
+  'demoApi.query-resource.queryResourceDefinitionProps.tags':
+    'Optional tags for cache invalidation (e.g. [{ type: "users" }]).',
+  'demoApi.query-resource.queryResourceDefinitionProps.staleTime':
+    'Duration in milliseconds before cached data is considered stale.',
+  'demoApi.query-resource.queryResourceDefinitionProps.gcTime':
+    'Duration in milliseconds (default 5 minutes) to retain unused queries in cache.',
+  'demoApi.query-resource.queryResourceDefinitionProps.cancelOnNoObservers':
+    'Whether to abort an in-flight transport request if all observers unmount before completion.',
+  'demoApi.query-resource.queryResourceRefApiProps.value':
+    'Signal holding the latest successfully resolved query data.',
+  'demoApi.query-resource.queryResourceRefApiProps.error':
+    'Signal holding the most recent error, or null when healthy.',
+  'demoApi.query-resource.queryResourceRefApiProps.status':
+    'Granular status: "idle" | "loading" | "reloading" | "resolved" | "error".',
+  'demoApi.query-resource.queryResourceRefApiProps.isLoading': 'True when status is "loading" or "reloading".',
+  'demoApi.query-resource.queryResourceRefApiProps.isStale':
+    'True when data has exceeded staleTime or was invalidated by a mutation.',
+  'demoApi.query-resource.queryResourceRefApiProps.hasValue()':
+    'Type predicate narrowing value() to exclude undefined when valid data is present.',
+  'demoApi.query-resource.queryResourceRefApiProps.reload()':
+    'Triggers a background refresh without wiping existing data (status: "reloading").',
+  'demoApi.query-resource.queryResourceRefApiProps.execute()':
+    'Forces an immediate fresh fetch and returns a Promise settling with the result.',
+  'demoApi.query-resource.queryResourceRefApiProps.destroy()':
+    'Detaches this observer without canceling shared queries if other observers remain.',
+  'demoApi.resource-async.definitionProperties.params':
+    'Pure reactive parameter capture function. Signal reads here are tracked.',
+  'demoApi.resource-async.definitionProperties.loader':
+    'Factory receiving latest params and context.abortSignal. Signal reads here are untracked.',
+  'demoApi.resource-async.optionsProperties.defaultValue':
+    'Default value before first fetch; guarantees value() returns T (never undefined). Alias for initialValue.',
+  'demoApi.resource-async.optionsProperties.preserveValueOnError':
+    'Retain the last received or local value when an error occurs.',
+  'demoApi.resource-async.optionsProperties.reactive':
+    'Whether parameter/source dependencies trigger automatic re-execution.',
+  'demoApi.resource-async.optionsProperties.injector':
+    'Optional custom injector if called outside an ambient injection context.',
+  'demoApi.resource-async.optionsProperties.equal': 'Custom equality comparator passed to underlying computed signal.',
+  'demoApi.resource-async.returnsProperties.value': 'The current value of the resource.',
+  'demoApi.resource-async.returnsProperties.error': 'The current error, if any.',
+  'demoApi.resource-async.returnsProperties.status':
+    "The current status: 'idle' | 'loading' | 'reloading' | 'resolved' | 'local' | 'error'.",
+  'demoApi.resource-async.returnsProperties.isLoading':
+    "Signal that returns true if any fetch operation is in progress ('loading' or 'reloading').",
+  'demoApi.resource-async.returnsProperties.isIdle':
+    'Signal that returns true if the resource is in idle state (never fetched).',
+  'demoApi.resource-async.returnsProperties.hasValue()':
+    'Type predicate narrowing value() to exclude undefined when true.',
+  'demoApi.resource-async.returnsProperties.reload()':
+    'Manually trigger a reload of the resource. Ideal for queries (GET).',
+  'demoApi.resource-async.returnsProperties.execute()':
+    'Manually trigger execution returning an awaitable Promise. Ideal for mutations (POST/PUT/DELETE).',
+  'demoApi.resource-async.returnsProperties.set()':
+    'Manually update the resource value, transitioning status to "local".',
+  'demoApi.resource-async.returnsProperties.update()':
+    'Update the resource value using an updater function, transitioning status to "local".',
+  'demoApi.resource-async.returnsProperties.reset()':
+    'Resets the resource to its initial idle state and cancels in-flight operations.',
+  'demoApi.resource-async.returnsProperties.destroy()': 'Permanently stop observation and cancel pending work.',
+  'demoApi.date-range-validator.optionsProperties.compareTime':
+    'Whether to compare the time as well. Defaults to false.',
+  'certificate.loadExample': 'Load certificate example',
+  'certificate.loadFailed': 'Certificate details could not load. Refresh the page to try again.',
+  'fileReader.validationUnavailable': 'Certificate validation could not load. Refresh the page and try again.',
 };

@@ -7,6 +7,7 @@ import {
   ThemeService,
   ThemeToggleComponent,
   TranslatePipe,
+  TranslationService,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -32,37 +33,41 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeToggleDemoComponent {
-  readonly componentInputs: ApiProperty[] = [
+  private readonly translationService = inject(TranslationService);
+
+  readonly componentInputs = computed<ApiProperty[]>(() => [
     {
       name: 'lang',
       type: 'string',
-      description: 'Explicit language code for localized tooltips.',
+      description: this.translationService.translate('demoApi.theme-toggle-demo.componentInputs.lang'),
     },
-  ];
+  ]);
 
-  readonly componentOutputs: ApiProperty[] = [
+  readonly componentOutputs = computed<ApiProperty[]>(() => [
     {
       name: 'changeTheme',
       type: 'EventEmitter<ClarityTheme>',
-      description: "Emits <code>ClarityTheme</code> ('light' | 'dark') whenever the theme is toggled.",
+      description: this.translationService.translate('demoApi.theme-toggle-demo.componentOutputs.changeTheme'),
     },
-  ];
+  ]);
 
-  readonly serviceProperties: ApiProperty[] = [
+  readonly serviceProperties = computed<ApiProperty[]>(() => [
     {
       name: 'theme',
       type: 'WritableSignal<ClarityTheme>',
-      description: "Current active theme ('light' | 'dark').",
+      description: this.translationService.translate('demoApi.theme-toggle-demo.serviceProperties.theme'),
     },
-  ];
+  ]);
 
-  readonly serviceMethods: ApiProperty[] = [
+  readonly serviceMethods = computed<ApiProperty[]>(() => [
     {
       name: 'setTheme(newTheme: ClarityTheme)',
       type: 'void',
-      description: 'Sets the theme, persists to storage, and updates the DOM.',
+      description: this.translationService.translate(
+        'demoApi.theme-toggle-demo.serviceMethods.setTheme(newTheme: ClarityTheme)',
+      ),
     },
-  ];
+  ]);
 
   readonly themeService = inject(ThemeService);
 

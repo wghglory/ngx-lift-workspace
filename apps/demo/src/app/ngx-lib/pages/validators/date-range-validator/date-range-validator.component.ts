@@ -55,7 +55,7 @@ export class DateRangeValidatorComponent {
         name: 'compareTime',
         type: 'boolean',
         default: 'false',
-        description: 'Whether to compare the time as well. Defaults to false.',
+        description: this.translationService.translate('demoApi.date-range-validator.optionsProperties.compareTime'),
       },
     ];
   });

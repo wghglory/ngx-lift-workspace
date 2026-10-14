@@ -1,29 +1,25 @@
-import {Component, computed, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {
-  CertificateSignpostComponent,
-  certificateValidator,
-  FileReaderComponent,
-  PageContainerComponent,
-  TranslatePipe,
-  TranslationService,
-} from 'clr-lift';
+import {FileReaderComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../shared/utils/highlight.util';
+import {lazyCertificateValidator} from '../../../shared/utils/lazy-certificate-validator';
+import {CertificateExampleComponent} from '../../../shared/components/certificate-example/certificate-example.component';
 
 @Component({
   selector: 'app-file-reader-demo',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ApiTableComponent,
     ClarityModule,
     ReactiveFormsModule,
-    CertificateSignpostComponent,
     FileReaderComponent,
     PageContainerComponent,
     CodeBlockComponent,
+    CertificateExampleComponent,
     TranslatePipe,
   ],
   templateUrl: './file-reader-demo.component.html',
@@ -82,7 +78,7 @@ export class FileReaderDemoComponent implements OnInit {
   });
 
   certForm = new FormGroup({
-    caCert: new FormControl('', [certificateValidator(), Validators.required]),
+    caCert: new FormControl('', [Validators.required], [lazyCertificateValidator()]),
   });
 
   certAcceptedFiles = '.pem, .cer, .key';
@@ -144,6 +140,7 @@ RpegRTbFn9zkb7yHHaBaVYk6pAnpF8+e
   }
 
   submitCert() {
+    if (!this.certForm.valid) return;
     console.log(this.certForm.value);
   }
 

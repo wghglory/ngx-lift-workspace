@@ -33,7 +33,22 @@ export function validateDictionary(english, translated, {complete = true} = {}) 
       if (complete) errors.push(`Missing key: ${key}`);
       continue;
     }
-    const placeholders = (text) => JSON.stringify((text.match(/\{\d+\}/g) ?? []).sort());
+    if (!translated[key].trim()) errors.push(`Empty translation: ${key}`);
+    if (/@-@|XQ\d+XQZ|§\d+§/.test(translated[key]) && !/@-@|XQ\d+XQZ|§\d+§/.test(message))
+      errors.push(`Translation artifact: ${key}`);
+    const options = [
+      ...message.matchAll(
+        /"(switch|merge|concat|exhaust|idle|loading|reloading|resolved|error|local|parallel|info|warning|success|danger|neutral|unknown|log|table|warn|debug)"/g,
+      ),
+    ].map((match) => match[1]);
+    if (options.some((option) => !translated[key].includes(option))) errors.push(`Changed API option: ${key}`);
+    const identifiers = [...message.matchAll(/<code>([A-Za-z_$][\w.$]*)<\/code>/g)].map((match) => match[1]);
+    if (identifiers.some((identifier) => identifier !== 'modern' && !translated[key].includes(identifier)))
+      errors.push(`Changed code identifier: ${key}`);
+    const placeholders = (text) =>
+      JSON.stringify(
+        (text.match(/\{\{[^}]+\}\}|\{(?:\d+|[A-Za-z_]\w*)\}/g) ?? []).map((value) => value.replace(/\s/g, '')).sort(),
+      );
     if (placeholders(message) !== placeholders(translated[key])) errors.push(`Placeholder mismatch: ${key}`);
   }
   for (const key of Object.keys(translated)) if (!Object.hasOwn(english, key)) errors.push(`Unknown key: ${key}`);
@@ -82,17 +97,15 @@ export function checkWorkspace(root = process.cwd()) {
   for (const file of files(dir).filter((file) => /demo\.l10n\..+\.ts$/.test(file))) {
     const locale = file.match(/demo\.l10n\.(.+)\.ts$/)[1];
     const messages = dictionary(file);
-    errors.push(
-      ...validateDictionary(english, messages, {complete: ['en', 'zh-cn'].includes(locale)}).map(
-        (error) => `${locale}: ${error}`,
-      ),
-    );
+    errors.push(...validateDictionary(english, messages, {complete: true}).map((error) => `${locale}: ${error}`));
     coverage[locale] = {
       present: Object.keys(messages).length,
       total: Object.keys(english).length,
-      complete: ['en', 'zh-cn'].includes(locale),
+      complete: true,
     };
   }
+  for (const locale of ['en', 'zh-cn', 'zh-tw', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt-br', 'ru'])
+    if (!coverage[locale]) errors.push(`Missing promised demo locale: ${locale}`);
   for (const file of files(join(root, 'apps/demo/src/app')).filter(
     (file) => /\.(html|ts)$/.test(file) && !file.endsWith('.spec.ts') && !file.includes('/l10n/'),
   )) {

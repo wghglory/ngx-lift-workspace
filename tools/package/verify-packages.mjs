@@ -1,14 +1,5 @@
 import assert from 'node:assert/strict';
-import {
-  mkdtempSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-  symlinkSync,
-  rmSync,
-  copyFileSync,
-} from 'node:fs';
+import {mkdtempSync, mkdirSync, readdirSync, readFileSync, writeFileSync, symlinkSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -106,7 +97,14 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   run(process.execPath, ['consumer.mjs']);
 
   // Phase 2: Fresh isolated consumer without host node_modules symlinking
-  copyFileSync(join(root, '.npmrc'), join(freshConsumer, '.npmrc'));
+  const registryConfig = readFileSync(join(root, '.npmrc'), 'utf8')
+    .split('\n')
+    .filter((line) => !/^(legacy-peer-deps|strict-peer-dependencies|auto-install-peers)=/.test(line))
+    .join('\n');
+  writeFileSync(
+    join(freshConsumer, '.npmrc'),
+    `${registryConfig}\nstrict-peer-dependencies=true\nauto-install-peers=false\n`,
+  );
   writeFileSync(
     join(freshConsumer, 'package.json'),
     JSON.stringify(

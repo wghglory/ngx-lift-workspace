@@ -65,10 +65,10 @@
       <p>{{ 'toast.serviceSummary' | translate }}</p>
 
       <h4>{{ 'common.methods' | translate }}</h4>
-      <app-api-table [properties]="methods" />
+      <app-api-table [properties]="methods()" />
 
       <h4>{{ 'toast.optionsTitle' | translate }}</h4>
-      <app-api-table [properties]="toastOptions" />
+      <app-api-table [properties]="toastOptions()" />
     </div>
 
     <div cds-layout="vertical gap:sm align:stretch">
@@ -76,7 +76,7 @@
       <p>{{ 'toast.containerSummary' | translate }}</p>
 
       <h4>{{ 'common.inputs' | translate }}</h4>
-      <app-api-table [properties]="containerInputs" />
+      <app-api-table [properties]="containerInputs()" />
     </div>
   </section>
 </cll-page-container>

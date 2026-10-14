@@ -1,5 +1,11 @@
-import {ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {AlertContainerComponent, AlertService, PageContainerComponent, TranslatePipe} from 'clr-lift';
+import {ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, computed} from '@angular/core';
+import {
+  AlertContainerComponent,
+  AlertService,
+  PageContainerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -13,62 +19,61 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
-  readonly methods: ApiProperty[] = [
+  private readonly translationService = inject(TranslationService);
+
+  readonly methods = computed<ApiProperty[]>(() => [
     {
       name: 'addAlert(options: Alert)',
       type: 'RequiredAlert',
-      description: 'Adds a new alert with the specified options.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.methods.addAlert(options: Alert)'),
     },
     {
       name: 'deleteAlert(id: symbol)',
       type: 'void',
-      description: 'Deletes an alert by its ID.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.methods.deleteAlert(id: symbol)'),
     },
     {
       name: 'clearAlerts()',
       type: 'void',
-      description: 'Clears all alerts.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.methods.clearAlerts()'),
     },
-  ];
+  ]);
 
-  readonly alertProperties: ApiProperty[] = [
+  readonly alertProperties = computed<ApiProperty[]>(() => [
     {
       name: 'content',
       type: 'string',
       required: true,
-      description: 'The alert message. Safe HTML formatting is supported.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.alertProperties.content'),
     },
     {
       name: 'alertType',
       type: 'AlertType',
       defaultValue: "'danger'",
-      description: 'The type of alert.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.alertProperties.alertType'),
     },
     {
       name: 'actions',
       type: 'readonly AlertAction[]',
-      description:
-        'Native buttons. Each action provides <code>label: string</code> and <code>onClick: () => void</code>.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.alertProperties.actions'),
     },
     {
       name: 'isAppLevel',
       type: 'boolean',
       defaultValue: 'true',
-      description: 'Whether this is an application-level alert.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.alertProperties.isAppLevel'),
     },
     {
       name: 'targetSelector',
       type: 'string',
-      description:
-        'The selector (ID, class, etc.) of a clickable element (button, link, etc.) anywhere within the alert content.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.alertProperties.targetSelector'),
     },
     {
       name: 'onTargetClick',
       type: '() => void',
-      description:
-        'Callback executed when the element matching <code>targetSelector</code> within the alert content is clicked.',
+      description: this.translationService.translate('demoApi.multi-alerts-demo.alertProperties.onTargetClick'),
     },
-  ];
+  ]);
 
   alertService = inject(AlertService);
 

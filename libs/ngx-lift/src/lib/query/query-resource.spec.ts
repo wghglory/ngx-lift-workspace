@@ -1,15 +1,26 @@
 import {DOCUMENT} from '@angular/common';
 import {HttpClient, provideHttpClient, withInterceptors} from '@angular/common/http';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
-import {effect, Injector, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, Injector, input, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {EMPTY, EmptyError, firstValueFrom, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
+import {QueryDefinition} from './query.models';
 import {observableLoader} from './query-observable';
 import {queryResource} from './query-resource';
+
+@Component({
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class QueryConsumerComponent {
+  definition = input.required<QueryDefinition<string>>();
+  interval = input(1000);
+  query = queryResource(() => this.definition(), {pollInterval: this.interval});
+}
 
 async function settle(): Promise<void> {
   TestBed.tick();
@@ -32,6 +43,49 @@ describe('queryResource', () => {
     client.destroy();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('coordinates mounted components with different policies and isolates scope keys', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+    const loader = vi.fn(async () => 'shared');
+    const otherLoader = vi.fn(async () => 'other');
+    const slow = TestBed.createComponent(QueryConsumerComponent);
+    const fast = TestBed.createComponent(QueryConsumerComponent);
+    const isolated = TestBed.createComponent(QueryConsumerComponent);
+    slow.componentRef.setInput('definition', {key: ['widgets', 'a'], loader, staleTime: 5000, gcTime: 5000});
+    slow.componentRef.setInput('interval', 1000);
+    fast.componentRef.setInput('definition', {key: ['widgets', 'a'], loader, staleTime: 1000, gcTime: 1000});
+    fast.componentRef.setInput('interval', 100);
+    isolated.componentRef.setInput('definition', {key: ['widgets', 'b'], loader: otherLoader, staleTime: Infinity});
+    isolated.componentRef.setInput('interval', undefined);
+    for (const fixture of [slow, fast, isolated]) fixture.detectChanges();
+    await settle();
+    expect(loader).toHaveBeenCalledTimes(1);
+    expect(otherLoader).toHaveBeenCalledTimes(1);
+    expect(client.getDiagnostics().totalObserverCount).toBe(3);
+    const entry = client.getEntriesSnapshot().find((entry) => entry.key[1] === 'a');
+    expect(entry).toMatchObject({observerCount: 2, staleTime: 1000, gcTime: 5000, remainingPollDelay: 100});
+    await vi.advanceTimersByTimeAsync(100);
+    await settle();
+    expect(loader).toHaveBeenCalledTimes(2);
+    fast.destroy();
+    await vi.advanceTimersByTimeAsync(1000);
+    await settle();
+    expect(loader).toHaveBeenCalledTimes(3);
+    expect(otherLoader).toHaveBeenCalledTimes(1);
+    expect(slow.componentInstance.query.value()).toBe('shared');
+    slow.destroy();
+    expect(client.getEntriesSnapshot().find((entry) => entry.key[1] === 'a')).toMatchObject({
+      observerCount: 0,
+      remainingGcTime: 5000,
+      remainingPollDelay: null,
+    });
+    await vi.advanceTimersByTimeAsync(5000);
+    await settle();
+    expect(client.getSnapshot(['widgets', 'a'])).toBeUndefined();
+    expect(isolated.componentInstance.query.value()).toBe('other');
+    isolated.destroy();
   });
 
   it('shares initial reads and refresh results across Signal observers', async () => {

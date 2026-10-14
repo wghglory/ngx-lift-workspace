@@ -36,6 +36,10 @@ describe('IdleDetectionComponent', () => {
       onTimeoutEnd: vi.fn(() => timeoutEndSubject.asObservable()),
       onCountDown: vi.fn(() => countdownSubject.asObservable()),
       startWatching: vi.fn(),
+      watch: vi.fn(() => {
+        mockIdleDetectionService.startWatching();
+        return () => mockIdleDetectionService.clearTimers();
+      }),
       setConfig: vi.fn(),
       resetTimer: vi.fn(),
       clearTimers: vi.fn(),
@@ -184,9 +188,9 @@ describe('IdleDetectionComponent', () => {
     expect(idleDetectionService.resetTimer).toHaveBeenCalledWith(true);
   });
 
-  it('should not clear shared root timers on destroy when not scoped', async () => {
+  it('should release shared service ownership on destroy', async () => {
     fixture.destroy();
-    expect(idleDetectionService.clearTimers).not.toHaveBeenCalled();
+    expect(idleDetectionService.clearTimers).toHaveBeenCalled();
   });
 
   it('should clear scoped timers on destroy when scoped is true', async () => {
@@ -229,5 +233,58 @@ describe('IdleDetectionComponent', () => {
 
     expect(countdownValues).toEqual([5, 4, 3]);
     subscription.unsubscribe();
+  });
+});
+
+describe('IdleDetectionComponent service ownership', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [IdleDetectionComponent],
+      providers: [
+        IdleDetectionService,
+        {provide: TranslationService, useClass: MockTranslationService},
+        provideNoopAnimations(),
+      ],
+    });
+  });
+
+  it('keeps shared timers until the last component leaves and then releases them', async () => {
+    const service = TestBed.inject(IdleDetectionService);
+    const idle = vi.fn();
+    service.onIdleEnd().subscribe(idle);
+    const first = TestBed.createComponent(IdleDetectionComponent);
+    const second = TestBed.createComponent(IdleDetectionComponent);
+    first.componentRef.setInput('idleDurationInSeconds', 2);
+    second.componentRef.setInput('idleDurationInSeconds', 2);
+    first.detectChanges();
+    second.detectChanges();
+    first.destroy();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(idle).toHaveBeenCalledTimes(1);
+    second.destroy();
+    document.dispatchEvent(new Event('mousemove'));
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(idle).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies scoped input configuration before starting and isolates timers', async () => {
+    const first = TestBed.createComponent(IdleDetectionComponent);
+    const second = TestBed.createComponent(IdleDetectionComponent);
+    for (const fixture of [first, second]) fixture.componentRef.setInput('scoped', true);
+    first.componentRef.setInput('idleDurationInSeconds', 1);
+    second.componentRef.setInput('idleDurationInSeconds', 3);
+    const firstIdle = vi.fn();
+    const secondIdle = vi.fn();
+    first.componentInstance['activeService'].onIdleEnd().subscribe(firstIdle);
+    second.componentInstance['activeService'].onIdleEnd().subscribe(secondIdle);
+    first.detectChanges();
+    second.detectChanges();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(firstIdle).toHaveBeenCalledTimes(1);
+    expect(secondIdle).not.toHaveBeenCalled();
+    first.destroy();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(secondIdle).toHaveBeenCalledTimes(1);
+    second.destroy();
   });
 });

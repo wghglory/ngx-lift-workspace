@@ -139,13 +139,13 @@
         @if (isCodeExpanded() || currentLayout() === 'split') {
           <div class="playground-code-body">
             @if (effectiveActiveTab() === 'typescript' && tsCode()) {
-              <pre class="code-pre"><code class="language-typescript" [innerHTML]="tsCode()"></code></pre>
+              <app-code-block [code]="tsCode()" lang="typescript" />
             }
             @if (effectiveActiveTab() === 'html' && htmlCode()) {
-              <pre class="code-pre"><code class="language-html" [innerHTML]="htmlCode()"></code></pre>
+              <app-code-block [code]="htmlCode()" lang="html" />
             }
             @if (effectiveActiveTab() === 'scss' && scssCode()) {
-              <pre class="code-pre"><code class="language-scss" [innerHTML]="scssCode()"></code></pre>
+              <app-code-block [code]="scssCode()" lang="scss" />
             }
           </div>
         }

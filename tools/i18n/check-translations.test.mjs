@@ -26,3 +26,26 @@ test('TypeScript AST ignores illustrative snippets but checks executable calls',
     ['real.key'],
   );
 });
+
+test('rejects blank translations and preserves named interpolation examples', () => {
+  assert.deepEqual(
+    validateDictionary({save: 'Save', min: 'Minimum {{ minDate }}'}, {save: ' ', min: 'Minimum {{ maxDate }}'}),
+    ['Empty translation: save', 'Placeholder mismatch: min'],
+  );
+  assert.deepEqual(validateDictionary({min: 'Minimum {{ minDate }}'}, {min: 'Minimum {{minDate}}'}), []);
+});
+test('rejects translation artifacts and translated API option literals', () => {
+  assert.deepEqual(
+    validateDictionary(
+      {mode: 'Use "switch" or "exhaust".', content: 'Uses ng-content.'},
+      {
+        mode: 'Utilisez switch ou échappement.',
+        content: 'Utilise ng@-@content.',
+      },
+    ),
+    ['Changed API option: mode', 'Translation artifact: content'],
+  );
+  assert.deepEqual(validateDictionary({enabled: 'Use <code>true</code>.'}, {enabled: 'Use <code>verdadero</code>.'}), [
+    'Changed code identifier: enabled',
+  ]);
+});

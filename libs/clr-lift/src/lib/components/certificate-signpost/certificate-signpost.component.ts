@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal} from '@angular/core';
+import {DOCUMENT} from '@angular/common';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal, signal} from '@angular/core';
 import {certificateIcon, ClarityIcons} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import type {pki} from 'node-forge';
@@ -24,7 +25,9 @@ export class CertificateSignpostComponent {
   private certificateService = inject(CertificateService);
   private injectedClock = inject(CERTIFICATE_CLOCK, {optional: true});
 
+  /** Optional clock; signal-backed functions reactively update certificate status. */
   clock = input<CertificateClock>();
+  private readonly currentTime = signal(Date.now());
 
   position = input<
     | 'top-left'
@@ -86,6 +89,12 @@ export class CertificateSignpostComponent {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('certificate', certificateTranslations);
+    const browserWindow = inject(DOCUMENT).defaultView;
+    effect((onCleanup) => {
+      if (this.clock() || this.injectedClock || !browserWindow) return;
+      const timer = browserWindow.setInterval(() => this.currentTime.set(Date.now()), 60_000);
+      onCleanup(() => browserWindow.clearInterval(timer));
+    });
   }
 
   /**
@@ -96,13 +105,7 @@ export class CertificateSignpostComponent {
    */
   private getCertificateStatus(certificate: pki.Certificate): CertificateStatus {
     const clock = this.clock() ?? this.injectedClock;
-    const nowTimestamp = clock
-      ? typeof clock === 'function'
-        ? clock() instanceof Date
-          ? (clock() as Date).getTime()
-          : (clock() as number)
-        : Date.now()
-      : Date.now();
+    const nowTimestamp = this.certificateService.getCurrentTime(clock ?? (() => this.currentTime()));
     const referenceDate = new Date(nowTimestamp);
     const daysDiff = this.certificateService.getDayDifferences(certificate.validity.notAfter, referenceDate);
 

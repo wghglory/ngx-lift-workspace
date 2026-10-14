@@ -17,6 +17,9 @@
             <clr-control-success>{{ 'fileReader.readSuccess' | translate }}</clr-control-success>
           }
           <clr-control-error *clrIfError="'parse'; error as error">{{ error }}</clr-control-error>
+          <clr-control-error *clrIfError="'certificateValidationUnavailable'">{{
+            'fileReader.validationUnavailable' | translate
+          }}</clr-control-error>
           <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
         </clr-control-container>
 
@@ -46,12 +49,20 @@
             <clr-control-success>
               {{ 'fileReader.showCertificate' | translate }}
               @if (certForm.controls.caCert.valid) {
-                <cll-certificate-signpost
-                  [pem]="certForm.controls.caCert.value"
-                  [pemEncoded]="false"
-                  [showIcon]="true"
-                  [position]="'bottom-right'"
-                />
+                @defer (on interaction) {
+                  <app-certificate-example
+                    [pem]="certForm.controls.caCert.value"
+                    [pemEncoded]="false"
+                    [showIcon]="true"
+                    [position]="'bottom-right'"
+                  />
+                } @placeholder {
+                  <button type="button" class="btn btn-link" data-test-id="load-certificate">
+                    {{ 'certificate.loadExample' | translate }}
+                  </button>
+                } @error {
+                  <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
+                }
               }
             </clr-control-success>
           }
@@ -59,10 +70,13 @@
             {{ 'fileReader.exceedLimit' | translate: [certFileLimit] }}
           </clr-control-error>
           <clr-control-error *clrIfError="'invalidCertificate'; error as error">{{ error }}</clr-control-error>
+          <clr-control-error *clrIfError="'certificateValidationUnavailable'">{{
+            'fileReader.validationUnavailable' | translate
+          }}</clr-control-error>
           <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
         </clr-control-container>
 
-        <button type="submit" class="btn btn-primary" cds-layout="m-t:md" [disabled]="certForm.invalid">
+        <button type="submit" class="btn btn-primary" cds-layout="m-t:md" [disabled]="!certForm.valid">
           {{ 'fileReader.submitAndLog' | translate }}
         </button>
       </form>

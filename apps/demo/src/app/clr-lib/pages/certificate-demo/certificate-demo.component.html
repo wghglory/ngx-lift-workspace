@@ -16,7 +16,15 @@
       <p>{{ 'certificate.clickIcon' | translate }}</p>
       <div cds-layout="horizontal gap:xs align:center">
         <span>{{ 'certificate.clickCert' | translate }}</span>
-        <cll-certificate-signpost [pem]="pem1" />
+        @defer (on interaction) {
+          <app-certificate-example [pem]="pem1" />
+        } @placeholder {
+          <button type="button" class="btn btn-link" data-test-id="load-certificate">
+            {{ 'certificate.loadExample' | translate }}
+          </button>
+        } @error {
+          <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
+        }
       </div>
     </article>
 
@@ -27,7 +35,13 @@
       <p>{{ 'certificate.clickIcon' | translate }}</p>
       <div cds-layout="horizontal gap:xs align:center">
         <span>{{ 'certificate.clickCert' | translate }}</span>
-        <cll-certificate-signpost [pem]="pem2" [pemEncoded]="true" position="right-top" />
+        @defer (on interaction) {
+          <app-certificate-example [pem]="pem2" [pemEncoded]="true" position="right-top" />
+        } @placeholder {
+          <button type="button" class="btn btn-link">{{ 'certificate.loadExample' | translate }}</button>
+        } @error {
+          <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
+        }
       </div>
     </article>
   </section>

@@ -35,6 +35,8 @@ export class IdleDetectionComponent implements OnInit {
 
   private scopedService?: IdleDetectionService;
   private previousService?: IdleDetectionService;
+  private releaseWatch?: () => void;
+  private initialized = false;
 
   scoped = input(false);
   idleDurationInSeconds = input<number>();
@@ -83,36 +85,38 @@ export class IdleDetectionComponent implements OnInit {
 
     effect(() => {
       const service = this.activeService;
-      if (this.previousService && this.previousService !== service) {
-        if (this.previousService === this.scopedService) {
-          this.scopedService?.clearTimers();
-        }
-        service.startWatching();
-      }
-      this.previousService = service;
-
-      const config = pickBy(
-        {
-          idleDurationInSeconds: this.idleDurationInSeconds(),
-          timeoutDurationInSeconds: this.timeoutDurationInSeconds(),
-        } as IdleDetectionConfig,
-        (value) => value !== undefined,
-      );
-
-      if (!isEmpty(config)) {
-        service.setConfig(config);
+      this.configureService(service);
+      if (this.initialized && this.previousService !== service) {
+        this.releaseWatch?.();
+        this.releaseWatch = service.watch();
+        this.previousService = service;
       }
     });
 
     inject(DestroyRef).onDestroy(() => {
-      if (this.scoped()) {
-        this.scopedService?.clearTimers();
-      }
+      this.releaseWatch?.();
+      this.closeSubject.complete();
     });
   }
 
+  private configureService(service: IdleDetectionService): void {
+    const config = pickBy(
+      {
+        idleDurationInSeconds: this.idleDurationInSeconds(),
+        timeoutDurationInSeconds: this.timeoutDurationInSeconds(),
+      } as IdleDetectionConfig,
+      (value) => value !== undefined,
+    );
+    if (!isEmpty(config)) service.setConfig(config);
+  }
+
   ngOnInit() {
-    this.activeService.startWatching();
+    if (this.initialized) return;
+    this.initialized = true;
+    const service = this.activeService;
+    this.configureService(service);
+    this.releaseWatch = service.watch();
+    this.previousService = service;
   }
 
   keepMeSignedIn() {

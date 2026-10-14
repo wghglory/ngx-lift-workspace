@@ -1,7 +1,14 @@
-import {Component} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClrTimelineStepState} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TimelineStep, TimelineWizardComponent, TranslatePipe} from 'clr-lift';
+import {
+  CalloutComponent,
+  PageContainerComponent,
+  TimelineStep,
+  TimelineWizardComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
@@ -29,6 +36,8 @@ import {Deployment} from './deployment.type';
   styleUrl: './timeline-wizard-demo.component.scss',
 })
 export class TimelineWizardDemoComponent {
+  private readonly translationService = inject(TranslationService);
+
   // simulate an API response
   initialData: Deployment = {
     operator: {
@@ -373,193 +382,184 @@ export class ConfigureReviewComponent extends TimelineBaseComponent {
 }
   `);
 
-  readonly wizardInputs: ApiProperty[] = [
+  readonly wizardInputs = computed<ApiProperty[]>(() => [
     {
       name: 'timelineSteps',
       type: 'TimelineStep[]',
       required: true,
-      description: 'An array of <code>TimelineStep</code> objects representing the steps in the wizard.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardInputs.timelineSteps'),
     },
     {
       name: 'live',
       type: 'boolean',
       defaultValue: 'false',
-      description: 'Controls whether to destroy step components when clicking prev/next buttons.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardInputs.live'),
     },
     {
       name: 'confirmButtonText',
       type: 'string',
       defaultValue: "'Finish'",
-      description: 'The text for the "Finish" button on the last step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardInputs.confirmButtonText'),
     },
-  ];
+  ]);
 
-  readonly wizardOutputs: ApiProperty[] = [
+  readonly wizardOutputs = computed<ApiProperty[]>(() => [
     {
       name: 'confirmed',
       type: 'EventEmitter<unknown>',
-      description: "Emits all previous steps' data when clicking the finish button in the last step.",
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardOutputs.confirmed'),
     },
     {
       name: 'canceled',
       type: 'EventEmitter<void>',
-      description: 'Emits when the wizard is canceled.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardOutputs.canceled'),
     },
     {
       name: 'finished',
       type: 'EventEmitter<void>',
-      description: 'Emits when the wizard is successfully completed.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardOutputs.finished'),
     },
-  ];
+  ]);
 
-  readonly wizardMethods: ApiProperty[] = [
+  readonly wizardMethods = computed<ApiProperty[]>(() => [
     {
       name: 'cancel()',
       type: 'void',
-      description: 'Cancels the wizard and emits the <code>canceled</code> event.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardMethods.cancel()'),
     },
     {
       name: 'nextStep()',
       type: 'void',
-      description: 'Moves to the next step in the wizard.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardMethods.nextStep()'),
     },
     {
       name: 'previousStep()',
       type: 'void',
-      description: 'Moves to the previous step in the wizard.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.wizardMethods.previousStep()'),
     },
-  ];
+  ]);
 
-  readonly baseProperties: ApiProperty[] = [
+  readonly baseProperties = computed<ApiProperty[]>(() => [
     {
       name: 'allStepsData',
       type: 'unknown[]',
-      description:
-        'An array containing the data of all wizard steps. Available as an input property, accessible in <code>ngOnInit</code> and later lifecycle hooks.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseProperties.allStepsData'),
     },
     {
       name: 'currentStepData',
       type: 'T | null',
-      description:
-        'The data of the current step or <code>null</code> if not available. Available as an input property, accessible in <code>ngOnInit</code> and later lifecycle hooks.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseProperties.currentStepData'),
     },
     {
       name: 'form',
       type: 'FormGroup | null',
-      description:
-        'The form group associated with the step. Set to <code>null</code> for steps without a form. Override this property in your step component.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseProperties.form'),
     },
     {
       name: 'next$',
       type: 'Observable<unknown>',
-      description:
-        'An observable that emits when the "Next" button is clicked. Override it to perform custom actions, such as API calls.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseProperties.next$'),
     },
     {
       name: 'stepInvalid',
       type: 'boolean',
-      description: "Indicates whether the step's form is invalid.",
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseProperties.stepInvalid'),
     },
-  ];
+  ]);
 
-  readonly baseMethods: ApiProperty[] = [
+  readonly baseMethods = computed<ApiProperty[]>(() => [
     {
       name: 'formValueToData()',
       type: 'unknown',
-      description:
-        "Converts the step's form value to data. Override this method if your form structure doesn't match the step data structure.",
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseMethods.formValueToData()'),
     },
     {
       name: 'dataToFormValue(data)',
       type: 'any',
-      description:
-        "Converts step data to the form value that can be used for <code>patchValue</code>. Override this method if your form structure doesn't match the step data structure.",
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.baseMethods.dataToFormValue(data)'),
     },
-  ];
+  ]);
 
-  readonly stepProperties: ApiProperty[] = [
+  readonly stepProperties = computed<ApiProperty[]>(() => [
     {
       name: 'state',
       type: 'ClrTimelineStepState',
-      description: "The state of the timeline step (e.g., 'not-started', 'current', 'success', 'error').",
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.state'),
     },
     {
       name: 'header',
       type: 'string',
-      description: 'The header of the timeline step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.header'),
     },
     {
       name: 'title',
       type: 'string',
       required: true,
-      description:
-        'The title of the timeline step, acting as an identifier (should be unique). Can be used to find step data via <code>getStepData</code>.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.title'),
     },
     {
       name: 'id',
       type: 'string',
-      description:
-        'The id of the timeline step, acting as a primary identifier. If id is not provided, will use title as identifier instead. Can be used to find step data via <code>getStepData</code>.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.id'),
     },
     {
       name: 'description',
       type: 'string',
-      description: 'The description of the timeline step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.description'),
     },
     {
       name: 'component',
       type: 'Type<any>',
       required: true,
-      description:
-        'The Angular component associated with the timeline step. Must extend <code>TimelineBaseComponent</code>.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.component'),
     },
     {
       name: 'data',
       type: 'unknown',
-      description:
-        'Step data, which will be converted to form data by the timeline wizard component and passed to the step component as <code>currentStepData</code>.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.stepProperties.data'),
     },
-  ];
+  ]);
 
-  readonly serviceProperties: ApiProperty[] = [
+  readonly serviceProperties = computed<ApiProperty[]>(() => [
     {
       name: 'currentStepIndex',
       type: 'number',
-      description: 'Get the index of the current step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.serviceProperties.currentStepIndex'),
     },
     {
       name: 'isFirstStep',
       type: 'boolean',
-      description: 'Check if the current step is the first step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.serviceProperties.isFirstStep'),
     },
     {
       name: 'isLastStep',
       type: 'boolean',
-      description: 'Check if the current step is the last step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.serviceProperties.isLastStep'),
     },
     {
       name: 'currentStep',
       type: 'TimelineStep | null',
-      description: 'Get the current step object.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.serviceProperties.currentStep'),
     },
     {
       name: 'currentStepData',
       type: 'unknown | null',
-      description: 'Get the data of the current step.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.serviceProperties.currentStepData'),
     },
     {
       name: 'allStepsData',
       type: 'Array<{id?: string; title: string; data: unknown}>',
-      description: 'Get all steps data to be reviewed. Returns an array with step identifiers and data.',
+      description: this.translationService.translate('demoApi.timeline-wizard-demo.serviceProperties.allStepsData'),
     },
-  ];
+  ]);
 
-  readonly serviceMethods: ApiProperty[] = [
+  readonly serviceMethods = computed<ApiProperty[]>(() => [
     {
       name: 'getStepData<T>(key: string)',
       type: 'T | null',
-      description:
-        'Get the data of a specific step by its id or title. Returns <code>null</code> if the step is not found.',
+      description: this.translationService.translate(
+        'demoApi.timeline-wizard-demo.serviceMethods.getStepData<T>(key: string)',
+      ),
     },
-  ];
+  ]);
 }

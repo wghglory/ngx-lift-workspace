@@ -798,4 +798,31 @@ describe('QueryClient', () => {
     expect(client.getDiagnostics().isDestroyed).toBe(true);
     expect(client.getDiagnostics().entryCount).toBe(0);
   });
+  it('keeps cache identity isolated from mutations to diagnostic snapshots', async () => {
+    const client = createClient();
+    await client.fetchQuery({key: ['diagnostics', {scope: 'original'}], loader: async () => 1});
+    const snapshot = client.getEntriesSnapshot()[0];
+    (snapshot.key[1] as {scope: string}).scope = 'mutated';
+    expect(client.getEntriesSnapshot()[0].key).toEqual(['diagnostics', {scope: 'original'}]);
+    client.removeQueries((key) => (key[1] as {scope: string}).scope === 'original');
+    expect(client.getDiagnostics().entryCount).toBe(0);
+  });
+  it('counts both obsolete and current transports during pending invalidation', async () => {
+    const client = createClient();
+    const obsolete = deferred<string>();
+    const current = deferred<string>();
+    const loader = vi.fn().mockReturnValueOnce(obsolete.promise).mockReturnValueOnce(current.promise);
+    const definition = {key: ['overlapping-diagnostics'], loader, tags: [{type: 'Diagnostics'}]};
+    const first = client.fetchQuery(definition);
+    client.invalidateTags([{type: 'Diagnostics'}]);
+    const second = client.fetchQuery(definition);
+    expect(client.getDiagnostics()).toMatchObject({entryCount: 1, pendingRequestCount: 2});
+    current.resolve('current');
+    await second;
+    expect(client.getDiagnostics().pendingRequestCount).toBe(1);
+    obsolete.resolve('obsolete');
+    await first;
+    expect(client.getDiagnostics().pendingRequestCount).toBe(0);
+    expect(client.getSnapshot(definition.key)?.value).toBe('current');
+  });
 });

@@ -41,7 +41,7 @@
     "affected:lint": "nx affected -t lint",
     "graph": "nx graph",
     "clean": "nx reset && rm -rf dist tmp .nx/cache",
-    "validate": "pnpm run format:check && pnpm run test:tools && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run verify:packages",
+    "validate": "pnpm run format:check && pnpm run test:tools && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run bundle:check && pnpm run verify:packages",
     "release:version": "nx release version",
     "release:publish": "nx release publish",
     "publish:ngx": "nx build ngx-lift && cd dist/libs/ngx-lift && pnpm publish --registry=https://registry.npmjs.org/",
@@ -51,7 +51,8 @@
     "fix": "pnpm run format && pnpm run lint:fix",
     "test:tools": "nx run @ngx-lift-workspace/source:tooling-test",
     "i18n:check": "nx run @ngx-lift-workspace/source:i18n-check",
-    "verify:packages": "nx run @ngx-lift-workspace/source:package-verify"
+    "verify:packages": "nx run @ngx-lift-workspace/source:package-verify",
+    "bundle:check": "nx run @ngx-lift-workspace/source:bundle-check"
   },
   "private": true,
   "packageManager": "pnpm@11.7.0",
@@ -139,7 +140,7 @@
       "tooling-test": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs"
+          "command": "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs tools/bundle/*.test.mjs"
         }
       },
       "i18n-check": {
@@ -161,6 +162,20 @@
         ],
         "options": {
           "command": "node tools/package/verify-packages.mjs"
+        }
+      },
+      "bundle-check": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          {
+            "projects": [
+              "demo"
+            ],
+            "target": "build"
+          }
+        ],
+        "options": {
+          "command": "node tools/bundle/check-lazy-dependencies.mjs"
         }
       }
     }

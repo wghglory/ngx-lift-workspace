@@ -34,6 +34,18 @@ describe('IdleDetectionService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('does not restart or stop a manually owned watcher when managed owners join and leave', async () => {
+    const idle = vi.fn();
+    service.onIdleEnd().subscribe(idle);
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(500);
+    const release = service.watch();
+    release();
+    release();
+    await vi.advanceTimersByTimeAsync(500);
+    expect(idle).toHaveBeenCalledTimes(1);
+  });
+
   it('should reset timer on user activity', async () => {
     service.startWatching();
     const event = new MouseEvent('mousemove');

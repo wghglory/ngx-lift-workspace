@@ -197,7 +197,7 @@ export class QueryClient {
 
       list.push({
         serializedKey: entry.serializedKey,
-        key: entry.key,
+        key: JSON.parse(entry.serializedKey),
         status: entry.status,
         hasValue: entry.hasValue,
         observerCount: entry.observers.size,
@@ -228,9 +228,7 @@ export class QueryClient {
       if (entry.observerCount > 0) {
         activeEntryCount++;
       }
-      if (entry.isPending) {
-        pendingRequestCount++;
-      }
+      pendingRequestCount += entry.requestCount;
       totalObserverCount += entry.observerCount;
     }
 

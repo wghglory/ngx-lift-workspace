@@ -237,3 +237,8 @@ beforeEach(async () => {
 ## 📄 License
 
 MIT © [Guanghui Wang](https://github.com/wghglory)
+
+## Lifecycle and production contracts
+
+See [service scoping, clocks, localization and query diagnostics](../../docs/design/priority-1-2-completion.md) for
+ownership and loading contracts. [中文说明](../../docs/design/priority-1-2-completion.zh-CN.md).

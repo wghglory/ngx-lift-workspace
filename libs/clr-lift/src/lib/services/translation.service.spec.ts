@@ -1,9 +1,10 @@
 import {computed} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {ClrCommonStringsService} from '@clr/angular/utils';
+import {ClrCommonStringsService, commonStringsDefault} from '@clr/angular/utils';
 import {vi} from 'vitest';
 
 import {TranslationService} from './translation.service';
+import {defaultClarityCommonStrings} from './clarity-common-strings.l10n';
 
 describe('TranslationService', () => {
   let translationService: TranslationService;
@@ -17,6 +18,13 @@ describe('TranslationService', () => {
 
   it('should be created', () => {
     expect(translationService).toBeTruthy();
+  });
+  it('covers every upstream Clarity common string in every built-in locale', () => {
+    const expected = Object.keys(commonStringsDefault).sort();
+    for (const [locale, strings] of Object.entries(defaultClarityCommonStrings)) {
+      expect(Object.keys(strings).sort(), locale).toEqual(expected);
+      for (const text of Object.values(strings)) expect(text.trim(), locale).not.toBe('');
+    }
   });
 
   it('should load translations for a component', () => {
@@ -337,5 +345,25 @@ describe('Clarity Common Strings dynamic synchronization', () => {
         firstPage: 'Beginning',
       }),
     );
+  });
+  it('resets missing Clarity strings to English when switching to a partial custom locale', () => {
+    const translationService = TestBed.inject(TranslationService);
+    const clarity = TestBed.inject(ClrCommonStringsService);
+    translationService.setLanguage('de', false);
+    TestBed.tick();
+    translationService.loadClarityCommonStrings('it', {close: 'Chiudi'});
+    translationService.setLanguage('it', false);
+    TestBed.tick();
+    expect(clarity.keys.close).toBe('Chiudi');
+    expect(clarity.keys.open).toBe('Open');
+  });
+
+  it('canonicalizes Clarity registrations and prefers exact regional overrides', () => {
+    const translationService = TestBed.inject(TranslationService);
+    translationService.loadTranslationsForComponent('', {de: {test: 'Test'}});
+    translationService.loadClarityCommonStrings('DE-de', {close: 'Regional close'});
+    expect(translationService.resolveClarityStrings('de-DE').close).toBe('Regional close');
+    translationService.loadClarityCommonStrings('zh-cn', {close: 'Custom close'});
+    expect(translationService.resolveClarityStrings('zh-CN').close).toBe('Custom close');
   });
 });

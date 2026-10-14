@@ -1,6 +1,6 @@
 import {DOCUMENT} from '@angular/common';
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
-import {ClrCommonStrings, ClrCommonStringsService} from '@clr/angular/utils';
+import {ClrCommonStrings, ClrCommonStringsService, commonStringsDefault} from '@clr/angular/utils';
 import {defaultClarityCommonStrings} from './clarity-common-strings.l10n';
 
 /** English fallback used when a requested translation is unavailable. */
@@ -142,13 +142,12 @@ export class TranslationService {
    */
   loadClarityCommonStrings(lang: string, strings: Partial<ClrCommonStrings>): void {
     if (!lang || !strings) return;
-    this.clarityCommonStrings[lang] = {
-      ...(this.clarityCommonStrings[lang] ?? {}),
+    const locale = canonicalLocale(lang);
+    this.clarityCommonStrings[locale] = {
+      ...(this.clarityCommonStrings[locale] ?? {}),
       ...strings,
     };
-    if (this.resolveLanguage(this.currentLanguageSignal()) === this.resolveLanguage(lang)) {
-      this.syncClrCommonStrings(this.currentLanguageSignal());
-    }
+    this.syncClrCommonStrings();
   }
 
   /**
@@ -162,7 +161,7 @@ export class TranslationService {
       return;
     }
     const resolved = this.resolveClarityStrings(lang);
-    this.clrCommonStrings.localize({...resolved, ...overrides});
+    this.clrCommonStrings.localize({...commonStringsDefault, ...resolved, ...overrides});
   }
 
   /**
@@ -172,14 +171,15 @@ export class TranslationService {
    * @returns Resolved partial ClrCommonStrings dictionary.
    */
   resolveClarityStrings(lang: string): Partial<ClrCommonStrings> {
-    const resolvedLang = this.resolveLanguage(lang);
-    return (
-      this.clarityCommonStrings[resolvedLang] ??
-      this.clarityCommonStrings[canonicalLocale(lang)] ??
-      this.clarityCommonStrings[canonicalLocale(lang).split('-')[0]] ??
-      this.clarityCommonStrings[DEFAULT_LANGUAGE] ??
-      {}
-    );
+    const locale = canonicalLocale(lang);
+    const base = locale.split('-')[0];
+    const chinese = chineseLocale(locale);
+    return {
+      ...this.clarityCommonStrings[DEFAULT_LANGUAGE],
+      ...this.clarityCommonStrings[base],
+      ...(chinese ? this.clarityCommonStrings[chinese] : undefined),
+      ...this.clarityCommonStrings[locale],
+    };
   }
 
   /**

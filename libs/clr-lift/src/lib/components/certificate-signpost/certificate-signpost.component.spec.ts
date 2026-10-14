@@ -1,3 +1,4 @@
+import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {pki} from 'node-forge';
 import {vi} from 'vitest';
@@ -55,6 +56,51 @@ describe('CertificateSignpostComponent', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('ages an unchanged certificate with the default clock and cleans up on destroy', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-10-31T23:59:30Z'));
+      const timedFixture = TestBed.createComponent(CertificateSignpostComponent);
+      const certificate = pki.createCertificate();
+      certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
+      vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
+      timedFixture.componentRef.setInput('pem', 'certificate');
+      timedFixture.detectChanges();
+      expect(timedFixture.componentInstance.certificateStatus().status).toBe('warning');
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(timedFixture.componentInstance.certificateStatus().status).toBe('danger');
+      timedFixture.destroy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('samples a mixed Date/timestamp clock exactly once per status evaluation', () => {
+    const certificate = pki.createCertificate();
+    certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
+    vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
+    fixture.componentRef.setInput('pem', 'certificate');
+    const clock = vi
+      .fn<() => Date | number>()
+      .mockReturnValueOnce(new Date('2026-10-22T00:00:00Z'))
+      .mockReturnValue(Date.parse('2026-11-02T00:00:00Z'));
+    fixture.componentRef.setInput('clock', clock);
+    expect(component.certificateStatus().status).toBe('warning');
+    expect(clock).toHaveBeenCalledTimes(1);
+  });
+
+  it('updates status when a signal-backed clock advances without replacing inputs', () => {
+    const certificate = pki.createCertificate();
+    certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
+    vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
+    fixture.componentRef.setInput('pem', 'certificate');
+    const clock = signal(Date.parse('2026-10-22T00:00:00Z'));
+    fixture.componentRef.setInput('clock', clock);
+    expect(component.certificateStatus().status).toBe('warning');
+    clock.set(Date.parse('2026-11-02T00:00:00Z'));
+    expect(component.certificateStatus().status).toBe('danger');
   });
 
   it('determines certificate status using clock input for deterministic time evaluation', () => {

@@ -46,6 +46,8 @@ export class IdleDetectionService {
     'resize',
   ];
   private interruptionSubscription?: Subscription;
+  private watcherCount = 0;
+  private manuallyWatching = false;
 
   /**
    * The default idle duration in seconds (19 minutes).
@@ -108,6 +110,28 @@ export class IdleDetectionService {
    * Starts to watch for user inactivity.
    */
   startWatching() {
+    this.manuallyWatching = true;
+    this.ensureWatching();
+  }
+
+  /**
+   * Acquires shared idle detection and returns an idempotent release callback.
+   * The last owner releases timers unless a caller explicitly used startWatching().
+   * @returns Callback releasing this owner's subscription to idle detection.
+   */
+  watch(): () => void {
+    this.watcherCount++;
+    if (this.watcherCount === 1 && !this.interruptionSubscription) this.ensureWatching();
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      this.watcherCount--;
+      if (this.watcherCount === 0 && !this.manuallyWatching) this.clearTimers();
+    };
+  }
+
+  private ensureWatching(): void {
     this.setupInterruptionEvents();
     this.startIdleTimer();
   }
@@ -223,6 +247,7 @@ export class IdleDetectionService {
    * Clears all timers when the component is destroyed.
    */
   clearTimers() {
+    this.manuallyWatching = false;
     clearTimeout(this.idleTimer);
     this.stopCountdown();
 
@@ -238,8 +263,9 @@ export class IdleDetectionService {
    * @param config - Configuration object with idle and timeout durations.
    */
   setConfig(config: IdleDetectionConfig) {
-    if (config.idleDurationInSeconds) {
+    if (config.idleDurationInSeconds && config.idleDurationInSeconds !== this.idleDuration) {
       this.idleDuration = config.idleDurationInSeconds;
+      if (this.idleTimer !== undefined && !this.isCountingDown) this.startIdleTimer();
     }
 
     if (config.timeoutDurationInSeconds) {

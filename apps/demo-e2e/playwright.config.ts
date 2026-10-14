@@ -27,7 +27,7 @@ export default defineConfig({
   webServer: externalBaseURL
     ? undefined
     : {
-        command: 'pnpm nx run demo:serve --port=4307',
+        command: 'pnpm nx run demo:serve --port=4307 --hmr=false',
         url: baseURL,
         reuseExistingServer: false,
         timeout: 120 * 1000,
