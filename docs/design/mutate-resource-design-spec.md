@@ -1,8 +1,8 @@
 # Design Specification: `mutateResource`
 
-**Status**: Implemented & Production-ready  
-**Module**: `libs/ngx-lift/src/lib/query/mutate-resource.ts`  
-**Tests**: `libs/ngx-lift/src/lib/query/mutate-resource.spec.ts` (18 passing unit tests)
+**Source:** [mutate-resource.ts](../../libs/ngx-lift/src/lib/query/mutate-resource.ts)
+
+**Regression tests:** [mutate-resource.spec.ts](../../libs/ngx-lift/src/lib/query/mutate-resource.spec.ts)
 
 ---
 
@@ -117,19 +117,7 @@ declaring duplicate invalidation tags in the calling component.
 
 ---
 
-## 4. Code vs. Spec Gap Analysis
-
-| Requirement / Spec Item         | Implementation in Code                      | Gap / Finding                                          | Assessment                            |
-| :------------------------------ | :------------------------------------------ | :----------------------------------------------------- | :------------------------------------ |
-| **Strict On-Demand Execution**  | Only executes via `mutate(args)`            | None. Never triggers on signal shifts.                 | ✅ Exact match                        |
-| **Concurrency Modes**           | Implemented `exhaust`, `concat`, `parallel` | None. Synchronous reentrancy tested.                   | ✅ Exact match                        |
-| **Tag Invalidation**            | Explicit client or root `QUERY_CLIENT`      | None. Root token supplies the default shared client.   | ✅ Exact match                        |
-| **Unhandled Rejection Safety**  | Chained silent catch                        | None. Fire-and-forget calls do not log console errors. | ✅ Exact match                        |
-| **Optimistic Rollback Context** | Caller-managed external snapshots           | Automated `onMutate` rollback hook not yet built.      | Deferred until a consumer requires it |
-
----
-
-## 5. Deferred extensions
+## 4. Scope and limitations
 
 Shared optimistic cache updates/rollback and a global mutation counter are not implemented. They need overlapping-write,
 cancellation and rollback ownership contracts before becoming public APIs. For now, use local pending UI, explicit write

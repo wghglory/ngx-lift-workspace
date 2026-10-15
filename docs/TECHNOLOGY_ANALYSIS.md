@@ -1,48 +1,23 @@
-# Technology Stack Architecture
+# Technology architecture
 
-An overview of the architectural decisions, build systems, framework versions, and testing infrastructure in
-`ngx-lift-workspace`.
+Dependency versions are defined in [package.json](../package.json) and the lockfile. Library manifests define their
+consumer peer ranges; a permitted peer range is not proof of a complete compatibility matrix.
 
----
+| Area          | Implementation                                                                     |
+| ------------- | ---------------------------------------------------------------------------------- |
+| Framework     | Standalone Angular components, signals, OnPush and modern template control flow    |
+| Demo runtime  | Zoneless change detection; installed-consumer fixtures also exercise ZoneJS        |
+| Demo build    | Angular application builder using @angular/build; output is dist/apps/demo/browser |
+| Library build | ng-packagr through Nx, producing Angular package-format distributions              |
+| Workspace     | Nx task graph and cache, orchestrated through pnpm                                 |
+| Unit tests    | Vitest with Angular TestBed and controlled timers                                  |
+| Browser tests | Playwright projects for Chromium, Firefox and WebKit                               |
+| UI            | Clarity Angular components and design tokens                                       |
+| Quality       | TypeScript strict checks, ESLint, Prettier, locale/bundle/package verification     |
 
-## 🏛️ Core Technologies & Versions
+The demo bootstraps with provideZonelessChangeDetection. This does not require consumers to switch rendering mode. The
+installed DOM fixture checks both modes, but does not establish SSR/hydration or a real-browser ZoneJS matrix.
 
-| Layer            | Technology        | Version       | Purpose                                                      |
-| :--------------- | :---------------- | :------------ | :----------------------------------------------------------- |
-| **Framework**    | Angular           | `21.2.x`      | Modern reactive frontend framework (Zoneless, Signals)       |
-| **Language**     | TypeScript        | `5.9.x`       | Strict type safety and compilation                           |
-| **Monorepo**     | Nx                | `22.7.x`      | Monorepo task orchestration, caching, and dependency graph   |
-| **App Bundler**  | Rspack            | `1.5.x`       | High-speed Rust-based bundler for demo application           |
-| **Unit Testing** | Vitest            | `4.1.x`       | Fast native ESM unit testing with `@analogjs/vitest-angular` |
-| **E2E Testing**  | Playwright        | `1.50.x`      | End-to-end browser testing                                   |
-| **UI System**    | VMware Clarity    | `18.0.x`      | Clarity Design System for `clr-lift`                         |
-| **Code Quality** | ESLint & Prettier | `9.x` / `3.x` | Strict linting rules and code formatting                     |
-
----
-
-## ⚡ Architectural Principles
-
-### 1. Fully Zoneless Angular
-
-- **No `zone.js` runtime**: Change detection is driven purely by Angular Signals and native scheduler notifications via
-  `provideZonelessChangeDetection()`.
-- **Zero monkey patching**: Eliminates browser API wrapping overhead, drastically improving runtime performance and
-  reducing bundle sizes.
-
-### 2. Signal-First State Management
-
-- Component state is modeled using Angular Signals (`signal()`, `computed()`, `input()`, `output()`).
-- Asynchronous data lifecycles are modeled via `resourceAsync`, `queryResource`, `mutateResource`, and `computedAsync`.
-- Direct manual `.subscribe()` in templates and components is strictly avoided.
-
-### 3. Native ESM Testing with Vitest
-
-- Replaces legacy Karma/Jasmine and `fakeAsync`.
-- Test suites use Vitest Fake Timers (`vi.useFakeTimers()`, `vi.advanceTimersByTimeAsync()`) and `TestBed.tick()` to
-  synchronize reactive Signal effects cleanly.
-
-### 4. High-Performance Tooling: Rspack & Nx
-
-- Production and development builds of the demo app leverage **Rspack** via `@nx/angular-rspack`, delivering sub-second
-  compilation and incremental build times.
-- Nx handles computational caching and dependency tracking across the monorepo.
+Async API responsibilities and concurrency contracts are defined in the [API specifications](design/README.md). Large
+example dependencies load at interaction/render boundaries as described in the
+[integration guide](guides/demo-and-library-integration.md). Validation commands are in [COMMANDS](COMMANDS.md).

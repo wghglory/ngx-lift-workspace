@@ -7,12 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-Release targets: `ngx-lift@21.3.0` / `clr-lift@21.2.0`, after `ngx-lift@21.2.0` / `clr-lift@21.1.0`.
+### Added
+
+- Ordered delivery roadmap and installed Angular 21 query-consumer checks in zoneless and ZoneJS modes.
+
+### Breaking
+
+- computedAsync now throws unhandled failures on reads instead of returning errors as T. Typed onError fallbacks remain
+  data; callback exceptions throw on reads. The false throwOnError option is rejected, and initialized sources and
+  fallbacks must match T. Include undefined explicitly in T when needed. Existing source recovery is preserved. This
+  requires a breaking release/version decision before publication; see the computedAsync design specification.
+
+### Changed
+
+- Idle warnings remain open during ordinary activity. Only explicit `resetTimer(true)` confirmation cancels the
+  countdown and starts a fresh idle cycle; mouse movement and keystrokes no longer postpone timeout.
+- Vitest/UI/coverage updated to 4.1.11; PostCSS minimum raised to 8.5.23, with scoped development-tool overrides.
+  Angular and Nx upgrades are deferred to the maintainer; their pins match the existing main-branch baseline.
+
+## [21.3.0] (ngx-lift) / [21.2.0] (clr-lift) - 2026-10-14
 
 **Compatibility notice:** the maintainer selected minor versions for these recent APIs despite the removed
 `observableLoader` export and changed FileReader encoding default. Migrate adapter imports to native loaders; set
 `[textEncoding]="'latin1'"` for legacy encoded byte strings. clr-lift now requires ngx-lift `>=21.3.0 <22`. Publication
-status is tracked separately from these prepared versions.
+jobs and GitHub release records succeeded; mirrored registry metadata contains both published versions.
 
 ### Added
 
@@ -30,9 +48,9 @@ status is tracked separately from these prepared versions.
 
 - Query adapters no longer require the public `observableLoader` wrapper. This removes a public export; migrate to
   native loaders and select a release version with an explicit SemVer review. See
-  [migration steps](docs/MIGRATIONS.md#4-native-query-loaders-and-dynamic-collections-unreleased).
+  [native loader contract](docs/design/query-resource-design-spec.md).
 - #143–#147 also contain retry-policy, validation, file encoding, localization, scoped-service and package-quality
-  changes. See the existing unreleased migration sections for their consumer effects.
+  changes. See the API design specifications for their consumer contracts.
 
 ### Fixed
 
@@ -44,9 +62,9 @@ status is tracked separately from these prepared versions.
 
 ### Release boundary
 
-The current source and demo are ahead of the last tagged release. Actual publication still requires a version decision,
-dependency advisory triage, final-revision quality checks and registry authentication. SSR/hydration and a broad
-peer-version matrix are not established by the browser consumer fixture.
+These versions have published release records. Dependency advisory triage and independent language acceptance remain
+separate follow-ups. Subsequent source changes belong under Unreleased and require a new release/version decision.
+SSR/hydration and a broad peer-version matrix are not established by the browser consumer fixture.
 
 ## [21.2.0] (ngx-lift) / [21.1.0] (clr-lift) - 2026-10-12
 
@@ -135,7 +153,7 @@ peer-version matrix are not established by the browser consumer fixture.
 - **Kubernetes pagination retry default:**
   - `kubernetesPagination` retries HTTP 429 status codes by default; opt out explicitly via `{retryConfig: false}`.
 
-See [the migration guide](docs/MIGRATIONS.md) for detailed upgrade steps and code samples.
+See the [API design specifications](docs/design/README.md) for contracts and examples.
 
 ## [21.1.1] - 2026-09-23
 

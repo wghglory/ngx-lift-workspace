@@ -1,11 +1,11 @@
 # Query design and production contracts
 
 Implemented APIs: `QueryClient`, `queryResource`, `queryResources`, `fetchQueryObservable`, `observeQueryObservable` and
-`provideQueryClient`. [中文说明](query-resource-design-spec.zh-CN.md) ·
-[Current validation and release assessment](../reviews/query-production-review.md).
+`provideQueryClient`. See the [publishing procedure](../DEPLOYMENT.md) for release gates.
 
 This is the single query design entry point. Mutation execution has its own
-[specification](mutate-resource-design-spec.md); published-version changes belong in [MIGRATIONS](../MIGRATIONS.md).
+[specification](mutate-resource-design-spec.md); published-version changes belong in the
+[changelog](../../CHANGELOG.md).
 
 ## Choosing an API
 
@@ -360,9 +360,10 @@ The demo inspector observes its application client. Isolated failure/service exa
 
 ## Production scope and deferred work
 
-Browser contracts have unit, real-browser and strict installed-package evidence. The installed Angular 21.2 zoneless DOM
-fixture tests session isolation, cancellation, refresh recovery, collection lifecycle and scoped writes. This does not
-prove SSR serialization/hydration, ZoneJS or every version allowed by peer ranges. Arbitrary async loaders need an
+Browser contracts have unit, real-browser and strict installed-package evidence. The installed Angular 21.2 DOM fixture
+runs in separate zoneless and ZoneJS processes, testing session isolation, cancellation, refresh recovery, collection
+lifecycle and scoped writes. ZoneJS uses its Node patch in the DOM fixture; this is not a real-browser ZoneJS run. This
+does not prove SSR serialization/hydration or every version allowed by peer ranges. Arbitrary async loaders need an
 Angular stability contract before SSR support is claimed; HttpClient tracks its own requests. See
 [Angular SSR task guidance](https://angular.dev/guide/zoneless#pendingtasks-for-server-side-rendering-ssr).
 
@@ -373,7 +374,7 @@ reconciliation and optimism remain application-specific/deferred.
 Persistence, infinite queries, offline queues, shared rollback, mutation reset, nondestructive cancellation and a global
 concurrency scheduler require concrete consumers and ownership contracts. `fetchQuery` already warms cache without a
 separate prefetch helper. Publication additionally requires dependency triage/audit, compatible versioning,
-final-revision checks and authentication; [the review](../reviews/query-production-review.md) records those gates.
+final-revision checks and authentication; [publishing](../DEPLOYMENT.md) defines those gates.
 
 Primary-source background: [Angular resources](https://angular.dev/guide/signals/resource),
 [TanStack query defaults](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults),
