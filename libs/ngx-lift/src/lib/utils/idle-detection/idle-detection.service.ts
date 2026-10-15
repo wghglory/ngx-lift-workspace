@@ -37,7 +37,7 @@ export function provideIdleDetectionService(config?: IdleDetectionConfig): Provi
 })
 export class IdleDetectionService {
   /**
-   * The list of interruption events that will end the idle detection.
+   * Activity events that restart the idle period before the warning opens.
    */
   private interruptionEvents = [
     'click',
@@ -153,11 +153,11 @@ export class IdleDetectionService {
   /**
    * Resets the idle timer when user activity is detected.
    * @param withCountdownReset - Flag to indicate if countdown should be reset.
-   * By default, it only reset the idle-detection timer. If you enter the countdown phase, it won't stop the countdown.
+   * By default, resets only the idle phase and leaves an active countdown unchanged.
    * Pass true when you want to reset the countdown as well. This is useful when you click "Keep Me Signed In" button in cll-idle-detection component
    */
   resetTimer(withCountdownReset = false) {
-    if (this.destroyed) return;
+    if (this.destroyed || (this.isCountingDown && !withCountdownReset)) return;
     this.startIdleTimer();
 
     if (withCountdownReset && this.isCountingDown) {
@@ -166,9 +166,9 @@ export class IdleDetectionService {
   }
 
   /**
-   * Sets up the interruption events that will end the idle detection.
+   * Sets up the activity events that restart the idle period.
    * Listens to a set of events on the document (e.g. click, keydown, mousemove, etc.).
-   * When any of these events is triggered, the idle timer is reset.
+   * During the warning countdown, activity does not cancel or postpone the timeout.
    * Uses `throttleTime` operator to only trigger the reset when the events are spaced
    * out by at least 1000ms (1 second).
    * @private
@@ -178,7 +178,7 @@ export class IdleDetectionService {
       const throttledInterruptionEvents = this.interruptionEvents.map((eventName) =>
         fromEvent(document, eventName).pipe(throttleTime(1000)),
       );
-      this.interruptionSubscription = merge(...throttledInterruptionEvents).subscribe(() => this.resetTimer(true));
+      this.interruptionSubscription = merge(...throttledInterruptionEvents).subscribe(() => this.resetTimer());
     }
   }
 
@@ -242,7 +242,7 @@ export class IdleDetectionService {
     }
   }
 
-  /** Observe current warning/countdown state, including activity resets and service switching. */
+  /** Observe current warning/countdown state, including explicit resets and service switching. */
   observeState() {
     // A synchronous observer may reset state before later peers receive this batch.
     return this.stateSubject.asObservable().pipe(filter((state) => state === this.stateSubject.value));
@@ -254,7 +254,7 @@ export class IdleDetectionService {
    *
    * user has been inactive for a long period (idleDuration), at this moment, idle detection phase ends, onIdleEnd event is emitted, and then enter countdown/timeout phase.
    * During the countdown phase:
-   *  - if user has any activity, countdown phase immediately ends and restart the idle detection phase.
+   *  - ordinary activity leaves the countdown running; resetTimer(true) explicitly starts a new idle cycle.
    *  - else, countdownEnd event will be emitted when timeoutDuration is over.
    * @returns {Observable<void>} - Observable for idle end event.
    */
