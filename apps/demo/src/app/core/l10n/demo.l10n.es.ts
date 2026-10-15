@@ -1107,6 +1107,43 @@ export const esTranslations: Record<string, string> = {
   'fileReader.feature3': 'Valoración de tamaño de archivo',
   'fileReader.feature4': 'Tratamiento de errores de separación de contenido',
   'fileReader.feature5': 'Integración de control de formularios',
+  'keyValueInputs.signalIntro':
+    'Un modelo de Reactive Forms controla las cuatro combinaciones. Inspeccione la validación, los campos deshabilitados y los datos de envío con',
+  'keyValueInputs.editing': 'Habilitar edición',
+  'keyValueInputs.inputInput': 'Etiquetas libres: escribir clave / escribir valor',
+  'keyValueInputs.inputInputDesc':
+    'Una categoría admite distintas etiquetas; los pares idénticos no se permiten. Use letras minúsculas, dígitos y guiones en las categorías.',
+  'keyValueInputs.selectInput': 'Parámetros de base de datos: seleccionar clave / escribir valor',
+  'keyValueInputs.selectInputDesc':
+    'Seleccione un parámetro e introduzca su valor. Cada parámetro aparece una vez; las opciones ocupadas se deshabilitan en otras filas.',
+  'keyValueInputs.inputSelect': 'Asignaciones de equipo: escribir clave / seleccionar valor',
+  'keyValueInputs.inputSelectDesc':
+    'Introduzca un nombre y seleccione un equipo. Las etiquetas y los valores almacenados pueden ser diferentes.',
+  'keyValueInputs.selectSelect': 'Política de despliegue: seleccionar clave / seleccionar valor',
+  'keyValueInputs.selectSelectDesc':
+    'Las opciones de valor dependen de la clave. Cambiar la clave borra el valor anterior; cada clave se puede usar una vez.',
+  'keyValueInputs.production': 'Producción',
+  'keyValueInputs.staging': 'Preproducción',
+  'keyValueInputs.category': 'Categoría',
+  'keyValueInputs.tag': 'Etiqueta',
+  'keyValueInputs.tagKeyError': 'Empiece con una letra minúscula; use solo letras minúsculas, dígitos y guiones.',
+  'keyValueInputs.save': 'Guardar configuración',
+  'keyValueInputs.restore': 'Restaurar valores predeterminados',
+  'keyValueInputs.signalState': 'Signals del formulario en vivo',
+  'keyValueInputs.payload': 'Datos de envío',
+  'keyValueInputs.saved': 'Instantánea guardada',
+  'keyValueInputs.configHelp':
+    'Opciones: mode (input o select), options ({value, label, disabled}), label, placeholder, helper, required y validators ({validator, errorKey, message}). Los valores son cadenas; required es true de forma predeterminada.',
+  'keyValueInputs.lifecycleHelp':
+    'data rellena un FormArray vacío una vez por instancia. Conserva filas y validadores existentes. Actualice opciones con objetos de configuración nuevos; los valores guardados que ya no están disponibles siguen visibles e inválidos hasta corregirse.',
+  'keyValueInputs.api.keyConfig':
+    'Configuración de clave, con entrada de texto predeterminada. Las opciones separan etiquetas y valores de cadena.',
+  'keyValueInputs.api.valueConfig':
+    'Configuración de valor o función pura de la clave para opciones dependientes o distintos editores.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Borra el valor y restablece touched/dirty al cambiar la clave. Actívelo para valores dependientes.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Rechaza pares idénticos; permite la misma clave con valores diferentes cuando uniqueKey es false.',
   'keyValueInputs.title': 'Indicaciones de valor clave',
   'keyValueInputs.overview':
     'El componente <code>KeyValueInputsComponent</code> es un componente Angular diseñado para facilitar la entrada de pares clave-valor. Proporciona un formulario dinámico que permite a los usuarios agregar, editar y eliminar pares clave-valor con integración de FormArray, validación en tiempo real y navegación inteligente con teclado.',

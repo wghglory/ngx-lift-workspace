@@ -997,6 +997,37 @@ export const zhCNTranslations: Record<string, string> = {
   'fileReader.feature3': '内置文件大小超限校验',
   'fileReader.feature4': '内容解析与格式错误提示',
   'fileReader.feature5': '无缝接入 Angular 响应式表单 (ControlValueAccessor)',
+  'keyValueInputs.signalIntro':
+    '四种编辑组合共用同一份 Reactive Forms 模型。通过以下工具查看校验、禁用状态和提交数据：',
+  'keyValueInputs.editing': '启用编辑',
+  'keyValueInputs.inputInput': '自由文本标签：输入 key / 输入 value',
+  'keyValueInputs.inputInputDesc':
+    '同一分类可以有不同标签；相同分类和标签的组合不可重复。分类名使用小写字母、数字和连字符。',
+  'keyValueInputs.selectInput': '数据库参数：选择 key / 输入 value',
+  'keyValueInputs.selectInputDesc': '选择参数并输入值。每个参数只能出现一次；其他行已选的选项会被禁用。',
+  'keyValueInputs.inputSelect': '团队分配：输入 key / 选择 value',
+  'keyValueInputs.inputSelectDesc': '输入分配名称并选择团队。选项显示名称可以与实际存储值不同。',
+  'keyValueInputs.selectSelect': '部署策略：选择 key / 选择 value',
+  'keyValueInputs.selectSelectDesc': 'value 选项随 key 变化。修改 key 会清空旧 value；每个可用 key 只能使用一次。',
+  'keyValueInputs.production': '生产环境',
+  'keyValueInputs.staging': '预发布环境',
+  'keyValueInputs.category': '分类',
+  'keyValueInputs.tag': '标签',
+  'keyValueInputs.tagKeyError': '以小写字母开头，仅使用小写字母、数字和连字符。',
+  'keyValueInputs.save': '保存配置',
+  'keyValueInputs.restore': '恢复默认值',
+  'keyValueInputs.signalState': '实时表单 Signals',
+  'keyValueInputs.payload': '提交数据',
+  'keyValueInputs.saved': '已保存快照',
+  'keyValueInputs.configHelp':
+    '字段配置：mode（input 或 select）、options（{value, label, disabled}）、label、placeholder、helper、required，以及 validators（{validator, errorKey, message}）。值保持字符串；required 默认为 true。',
+  'keyValueInputs.lifecycleHelp':
+    'data 对每个 FormArray 实例仅在初始为空时填充一次，保留已有行和父表单校验器。请通过新配置对象更新选项；已保存但不再可选的值仍会显示，并保持无效直到修正。',
+  'keyValueInputs.api.keyConfig': 'key 编辑器配置，默认文本输入。select 选项区分显示名称和字符串值。',
+  'keyValueInputs.api.valueConfig': 'value 编辑器配置，或仅依赖所选 key 的纯函数，支持关联选项及按 key 切换编辑器。',
+  'keyValueInputs.api.resetValueOnKeyChange': 'key 变化时清空 value 并重置其 touched/dirty 状态；关联选择时显式启用。',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    '禁止完全相同的 key/value 组合；uniqueKey 为 false 时允许同 key 对应不同 value。',
   'keyValueInputs.title': '键值对输入 (Key Value Inputs)',
   'keyValueInputs.overview':
     '<code>KeyValueInputsComponent</code> 专为编辑键值对设计。与 FormArray 深度集成，支持用户动态新增、编辑和删除条目，提供即时校验与流畅的键盘快捷导航。',

@@ -986,6 +986,37 @@ export const zhTWTranslations: Record<string, string> = {
   'fileReader.feature3': '內建檔案大小超限校驗',
   'fileReader.feature4': '內容解析與格式錯誤提示',
   'fileReader.feature5': '無縫接入 Angular 響應式表單 (ControlValueAccessor)',
+  'keyValueInputs.signalIntro':
+    '四種編輯組合共用同一份 Reactive Forms 模型。透過以下工具查看驗證、停用狀態和提交資料：',
+  'keyValueInputs.editing': '啟用編輯',
+  'keyValueInputs.inputInput': '自由文字標籤：輸入 key / 輸入 value',
+  'keyValueInputs.inputInputDesc':
+    '同一分類可以有不同標籤；相同分類和標籤的組合不可重複。分類名稱使用小寫字母、數字和連字號。',
+  'keyValueInputs.selectInput': '資料庫參數：選擇 key / 輸入 value',
+  'keyValueInputs.selectInputDesc': '選擇參數並輸入值。每個參數只能出現一次；其他列已選的選項會停用。',
+  'keyValueInputs.inputSelect': '團隊指派：輸入 key / 選擇 value',
+  'keyValueInputs.inputSelectDesc': '輸入指派名稱並選擇團隊。選項顯示名稱可以與實際儲存值不同。',
+  'keyValueInputs.selectSelect': '部署原則：選擇 key / 選擇 value',
+  'keyValueInputs.selectSelectDesc': 'value 選項隨 key 變化。修改 key 會清空舊 value；每個可用 key 只能使用一次。',
+  'keyValueInputs.production': '正式環境',
+  'keyValueInputs.staging': '預備環境',
+  'keyValueInputs.category': '分類',
+  'keyValueInputs.tag': '標籤',
+  'keyValueInputs.tagKeyError': '以小寫字母開頭，僅使用小寫字母、數字和連字號。',
+  'keyValueInputs.save': '儲存設定',
+  'keyValueInputs.restore': '還原預設值',
+  'keyValueInputs.signalState': '即時表單 Signals',
+  'keyValueInputs.payload': '提交資料',
+  'keyValueInputs.saved': '已儲存快照',
+  'keyValueInputs.configHelp':
+    '欄位設定：mode（input 或 select）、options（{value, label, disabled}）、label、placeholder、helper、required，以及 validators（{validator, errorKey, message}）。值保持字串；required 預設為 true。',
+  'keyValueInputs.lifecycleHelp':
+    'data 對每個 FormArray 執行個體僅在初始為空時填入一次，保留現有列和父表單驗證器。請透過新的設定物件更新選項；已儲存但不再可選的值仍會顯示，並保持無效直到修正。',
+  'keyValueInputs.api.keyConfig': 'key 編輯器設定，預設文字輸入。select 選項區分顯示名稱和字串值。',
+  'keyValueInputs.api.valueConfig': 'value 編輯器設定，或僅依賴所選 key 的純函式，支援關聯選項及按 key 切換編輯器。',
+  'keyValueInputs.api.resetValueOnKeyChange': 'key 變化時清空 value 並重設其 touched/dirty 狀態；關聯選擇時明確啟用。',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    '禁止完全相同的 key/value 組合；uniqueKey 為 false 時允許同 key 對應不同 value。',
   'keyValueInputs.title': '鍵值對輸入 (Key Value Inputs)',
   'keyValueInputs.overview':
     '<code>KeyValueInputsComponent</code> 專為動態編輯鍵值對設計。與 FormArray 整合，支援動態增刪改與鍵盤捷徑導航。',

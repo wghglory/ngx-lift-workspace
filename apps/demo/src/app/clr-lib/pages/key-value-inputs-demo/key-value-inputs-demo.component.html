@@ -1,59 +1,67 @@
 <cll-page-container [title]="'keyValueInputs.title' | translate">
-  <!-- Overview -->
   <p [innerHTML]="'keyValueInputs.overview' | translate"></p>
   <cll-callout>
-    {{ 'keyValueInputs.callout' | translate }}
-    <a [routerLink]="['/ngx-lift/validators/unique']"> UniqueValidator </a>
+    {{ 'keyValueInputs.signalIntro' | translate }}
+    <a routerLink="/ngx-lift/signals/toSignalForm">toSignalForm</a>
   </cll-callout>
 
-  <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
+    <form clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="save()" cds-layout="vertical gap:md">
+      <clr-toggle-container>
+        <clr-toggle-wrapper>
+          <input clrToggle type="checkbox" formControlName="editing" />
+          <label>{{ 'keyValueInputs.editing' | translate }}</label>
+        </clr-toggle-wrapper>
+      </clr-toggle-container>
 
-    <article cds-layout="vertical gap:sm align:stretch">
+      @for (scenario of scenarios(); track scenario.name) {
+        <article [attr.data-scenario]="scenario.name" cds-layout="vertical gap:sm align:stretch">
+          <h3>{{ scenario.title }}</h3>
+          <p>{{ scenario.description }}</p>
+          <cll-key-value-inputs
+            [formArray]="form.controls[scenario.name]"
+            [keyConfig]="scenario.keyConfig"
+            [valueConfig]="scenario.valueConfig"
+            [uniqueKey]="scenario.uniqueKey"
+            [uniqueKeyValuePair]="scenario.uniqueKeyValuePair"
+            [resetValueOnKeyChange]="scenario.resetValueOnKeyChange"
+            [inputSize]="28"
+            buttonClass="btn-sm btn-link"
+          />
+        </article>
+      }
+      <div class="demo-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="!sf.valid() || !sf.fields.editing.value()">
+          {{ 'keyValueInputs.save' | translate }}
+        </button>
+        <button class="btn" type="button" (click)="restore()">{{ 'keyValueInputs.restore' | translate }}</button>
+      </div>
+    </form>
+
+    <app-state-inspector title="keyValueInputs.signalState" [data]="state()" />
+    <h3>{{ 'keyValueInputs.payload' | translate }} <code>sf.submitValue()</code></h3>
+    <pre data-submit-value>{{ sf.submitValue() | json }}</pre>
+    @if (saved(); as payload) {
+      <h3>{{ 'keyValueInputs.saved' | translate }}</h3>
+      <pre data-saved-value>{{ payload | json }}</pre>
+    }
+    <article cds-layout="vertical gap:sm">
       <h3>{{ 'keyValueInputs.example1' | translate }}</h3>
-      <p>{{ 'keyValueInputs.example1Desc' | translate }}</p>
       <app-code-block [code]="exampleCode" lang="typescript" />
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'keyValueInputs.example2' | translate }}</h3>
-      <p>{{ 'keyValueInputs.example2Desc' | translate }}</p>
-      <form clrForm [formGroup]="form">
-        <cll-key-value-inputs
-          [formArray]="form.controls.appProperties"
-          [inputSize]="30"
-          [data]="data"
-          [keyPattern]="{
-            regex: '^\\w+\\d+$',
-            message: 'custom error message: key must start with a letter and end with a number',
-          }"
-          [valuePattern]="{regex: '^\\w+\\d+$'}"
-          [smartMode]="true"
-          [uniqueKey]="true"
-          buttonClass="btn-link"
-          [keyHelper]="'keyValueInputs.keyHelper' | translate"
-          [valueHelper]="'keyValueInputs.valueHelper' | translate"
-          [addText]="'keyValueInputs.addText' | translate"
-        />
-      </form>
-      <p>{{ 'keyValueInputs.formOutput' | translate }}</p>
-      <app-code-block [code]="form.value | json" lang="json" />
     </article>
   </section>
 
-  <!-- API Reference -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.apiReference' | translate }}</h2>
-    <div cds-layout="vertical gap:sm align:stretch">
-      <h3>KeyValueInputsComponent (<code>cll-key-value-inputs</code>)</h3>
-      <p>{{ 'keyValueInputs.apiSummary' | translate }}</p>
-
-      <h4>{{ 'common.inputs' | translate }}</h4>
-      <app-api-table [properties]="inputs()" />
-
-      <h4>{{ 'common.outputs' | translate }}</h4>
-      <app-api-table [properties]="outputs()" />
-    </div>
+    <h3>KeyValueInputsComponent (<code>cll-key-value-inputs</code>)</h3>
+    <p>{{ 'keyValueInputs.apiSummary' | translate }}</p>
+    <h4>{{ 'common.inputs' | translate }}</h4>
+    <app-api-table [properties]="inputs()" />
+    <h4>{{ 'common.outputs' | translate }}</h4>
+    <app-api-table [properties]="outputs()" />
+    <h4>KeyValueFieldConfig</h4>
+    <p>{{ 'keyValueInputs.configHelp' | translate }}</p>
+    <p>{{ 'keyValueInputs.lifecycleHelp' | translate }}</p>
   </section>
 </cll-page-container>

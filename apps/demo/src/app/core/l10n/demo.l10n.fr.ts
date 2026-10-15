@@ -1112,6 +1112,44 @@ export const frTranslations: Record<string, string> = {
   'fileReader.feature3': 'Validation de la taille du fichier',
   'fileReader.feature4': "Gestion des erreurs d'analyse de contenu",
   'fileReader.feature5': 'Intégration du contrôle des formulaires',
+  'keyValueInputs.signalIntro':
+    'Un modèle Reactive Forms pilote les quatre combinaisons. Inspectez la validation, les champs désactivés et les données avec',
+  'keyValueInputs.editing': 'Activer la modification',
+  'keyValueInputs.inputInput': 'Étiquettes libres : saisir la clé / saisir la valeur',
+  'keyValueInputs.inputInputDesc':
+    'Une catégorie accepte plusieurs étiquettes différentes ; les paires identiques sont refusées. Utilisez des minuscules, des chiffres et des traits d’union.',
+  'keyValueInputs.selectInput': 'Paramètres de base de données : sélectionner la clé / saisir la valeur',
+  'keyValueInputs.selectInputDesc':
+    'Sélectionnez un paramètre et saisissez sa valeur. Chaque paramètre apparaît une seule fois ; les options utilisées sont désactivées dans les autres lignes.',
+  'keyValueInputs.inputSelect': 'Affectations : saisir la clé / sélectionner la valeur',
+  'keyValueInputs.inputSelectDesc':
+    'Saisissez un nom et sélectionnez une équipe. Les libellés peuvent différer des valeurs enregistrées.',
+  'keyValueInputs.selectSelect': 'Politique de déploiement : sélectionner la clé / sélectionner la valeur',
+  'keyValueInputs.selectSelectDesc':
+    'Les choix dépendent de la clé. Changer de clé efface la valeur précédente ; chaque clé ne peut être utilisée qu’une fois.',
+  'keyValueInputs.production': 'Production',
+  'keyValueInputs.staging': 'Préproduction',
+  'keyValueInputs.category': 'Catégorie',
+  'keyValueInputs.tag': 'Étiquette',
+  'keyValueInputs.tagKeyError':
+    'Commencez par une minuscule ; utilisez uniquement des minuscules, des chiffres et des traits d’union.',
+  'keyValueInputs.save': 'Enregistrer la configuration',
+  'keyValueInputs.restore': 'Restaurer les valeurs par défaut',
+  'keyValueInputs.signalState': 'Signals du formulaire en direct',
+  'keyValueInputs.payload': 'Données à envoyer',
+  'keyValueInputs.saved': 'Instantané enregistré',
+  'keyValueInputs.configHelp':
+    'Options : mode (input ou select), options ({value, label, disabled}), label, placeholder, helper, required et validators ({validator, errorKey, message}). Les valeurs restent des chaînes ; required vaut true par défaut.',
+  'keyValueInputs.lifecycleHelp':
+    'data remplit un FormArray vide une fois par instance. Les lignes et validateurs existants sont conservés. Actualisez les options avec de nouveaux objets ; les valeurs enregistrées indisponibles restent visibles et invalides jusqu’à correction.',
+  'keyValueInputs.api.keyConfig':
+    'Configuration de clé, saisie de texte par défaut. Les options séparent les libellés et les valeurs de chaîne.',
+  'keyValueInputs.api.valueConfig':
+    'Configuration de valeur ou fonction pure de la clé pour des choix dépendants ou différents éditeurs.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Efface la valeur et réinitialise touched/dirty au changement de clé. À activer pour les valeurs dépendantes.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Refuse les paires identiques ; autorise une même clé avec différentes valeurs lorsque uniqueKey vaut false.',
   'keyValueInputs.title': 'Entrées de valeur clés',
   'keyValueInputs.overview':
     "Le <code>KeyValueInputsComponent</code> est un composant Angular conçu pour faciliter l'entrée de paires clé-valeur. Il permet à l'utilisateur d'ajouter, d'éditer et de supprimer des paires clé-valeur avec l'intégration de FormArray, la validation en temps réel et une navigation au clavier intelligente.",

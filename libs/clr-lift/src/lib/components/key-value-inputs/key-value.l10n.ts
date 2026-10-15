@@ -1,5 +1,8 @@
 export const keyValueTranslations: Record<string, Record<string, string>> = {
   en: {
+    select: 'Select an option',
+    selection: 'Select a value from the available options',
+    duplicatePair: 'This key and value combination already exists',
     add: 'Add',
     required: 'This field is required',
     key: 'Key',
@@ -9,6 +12,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Delete',
   },
   'en-US': {
+    select: 'Select an option',
+    selection: 'Select a value from the available options',
+    duplicatePair: 'This key and value combination already exists',
     add: 'Add',
     required: 'This field is required',
     key: 'Key',
@@ -18,6 +24,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Delete',
   },
   de: {
+    select: 'Option auswählen',
+    selection: 'Wählen Sie einen Wert aus den verfügbaren Optionen',
+    duplicatePair: 'Diese Kombination aus Schlüssel und Wert ist bereits vorhanden',
     add: 'Hinzufügen',
     required: 'Dieses Feld ist erforderlich',
     key: 'Schlüssel',
@@ -27,6 +36,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Löschen',
   },
   es: {
+    select: 'Seleccionar una opción',
+    selection: 'Seleccione un valor de las opciones disponibles',
+    duplicatePair: 'Esta combinación de clave y valor ya existe',
     add: 'Agregar',
     required: 'Este campo es requerido',
     key: 'Clave',
@@ -36,6 +48,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Eliminar',
   },
   fr: {
+    select: 'Sélectionner une option',
+    selection: 'Sélectionnez une valeur parmi les options disponibles',
+    duplicatePair: 'Cette combinaison de clé et de valeur existe déjà',
     add: 'Ajouter',
     required: 'Ce champ est requis',
     key: 'Clé',
@@ -45,6 +60,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Supprimer',
   },
   it: {
+    select: 'Seleziona una opzione',
+    selection: 'Seleziona un valore tra le opzioni disponibili',
+    duplicatePair: 'Questa combinazione di chiave e valore esiste già',
     add: 'Aggiungi',
     required: 'Questo campo è obbligatorio',
     key: 'Chiave',
@@ -54,6 +72,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Elimina',
   },
   ja: {
+    select: '選択してください',
+    selection: '利用可能な選択肢から値を選択してください',
+    duplicatePair: 'このキーと値の組み合わせは既に存在します',
     add: '追加',
     required: 'このフィールドは必須です',
     key: 'キー',
@@ -63,6 +84,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '削除',
   },
   ko: {
+    select: '옵션 선택',
+    selection: '사용 가능한 옵션에서 값을 선택하세요',
+    duplicatePair: '이 키와 값의 조합이 이미 존재합니다',
     add: '추가',
     required: '이 필드는 필수입니다',
     key: '키',
@@ -72,6 +96,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '삭제',
   },
   nl: {
+    select: 'Selecteer een optie',
+    selection: 'Selecteer een waarde uit de beschikbare opties',
+    duplicatePair: 'Deze combinatie van sleutel en waarde bestaat al',
     add: 'Toevoegen',
     required: 'Dit veld is verplicht',
     key: 'Sleutel',
@@ -81,6 +108,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Verwijderen',
   },
   pt: {
+    select: 'Selecionar uma opção',
+    selection: 'Selecione um valor das opções disponíveis',
+    duplicatePair: 'Esta combinação de chave e valor já existe',
     add: 'Adicionar',
     required: 'Este campo é obrigatório',
     key: 'Chave',
@@ -90,6 +120,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Excluir',
   },
   'pt-BR': {
+    select: 'Selecionar uma opção',
+    selection: 'Selecione um valor das opções disponíveis',
+    duplicatePair: 'Esta combinação de chave e valor já existe',
     add: 'Adicionar',
     required: 'Este campo é obrigatório',
     key: 'Chave',
@@ -99,6 +132,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Excluir',
   },
   'zh-CN': {
+    select: '请选择',
+    selection: '请从可用选项中选择值',
+    duplicatePair: '此键值组合已存在',
     add: '添加',
     required: '此字段为必填项',
     key: '键',
@@ -108,6 +144,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '删除',
   },
   'zh-TW': {
+    select: '請選擇',
+    selection: '請從可用選項中選擇值',
+    duplicatePair: '此鍵值組合已存在',
     add: '新增',
     required: '此欄位為必填項',
     key: '鍵',
@@ -117,6 +156,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '刪除',
   },
   ru: {
+    select: 'Выберите вариант',
+    selection: 'Выберите значение из доступных вариантов',
+    duplicatePair: 'Эта комбинация ключа и значения уже существует',
     add: 'Добавить',
     required: 'Это поле обязательно',
     key: 'Ключ',

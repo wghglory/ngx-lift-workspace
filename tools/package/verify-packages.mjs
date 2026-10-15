@@ -9,6 +9,7 @@ import {spawnSync} from 'node:child_process';
 const root = process.cwd();
 const consumer = mkdtempSync(join(tmpdir(), 'ngx-lift-consumer-'));
 const freshConsumer = mkdtempSync(join(tmpdir(), 'ngx-lift-fresh-consumer-'));
+const keyValueContract = readFileSync(join(root, 'tools/package/fixtures/key-value-inputs.ts'), 'utf8');
 
 function run(command, args, cwd = consumer, timeout = 60000) {
   const result = spawnSync(command, args, {cwd, encoding: 'utf8', timeout});
@@ -105,6 +106,7 @@ function emptyArrays(items: number[]) {
 }
 const retryProviders = provideK8sRetryBackoffConfig({maxAttempts: 3, jitter: 'none'});
 void [valid, client, spinner, tooltip, format, form, translations, emptiness, emptyArrays, retryProviders];
+${keyValueContract}
 `,
   );
   run(process.execPath, [
@@ -245,6 +247,7 @@ function emptiness(items: string[] | undefined) {
 }
 const retryProviders = provideK8sRetryBackoffConfig({maxAttempts: 3, jitter: 'none'});
 void [valid, client, spinner, tooltip, format, form, translations, emptiness, retryProviders];
+${keyValueContract}
 `,
   );
 

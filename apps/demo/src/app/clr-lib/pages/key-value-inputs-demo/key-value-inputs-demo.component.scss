@@ -1,0 +1,10 @@
+.demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+pre {
+  overflow: auto;
+  max-height: 24rem;
+}

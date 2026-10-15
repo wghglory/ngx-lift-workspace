@@ -1,0 +1,72 @@
+@let field = config();
+@if (field.mode === 'select') {
+  <clr-select-container>
+    <label class="clr-sr-only" [for]="controlId()">{{ field.label || label() }}</label>
+    <select clrSelect [id]="controlId()" [formControl]="control()" [attr.aria-required]="field.required !== false">
+      <option value="">{{ field.placeholder || ('key-value.select' | translate) }}</option>
+      @for (option of field.options; track option.value) {
+        <option [value]="option.value" [disabled]="option.disabled">{{ option.label }}</option>
+      }
+      @if (isUnknownSelection()) {
+        <option [value]="control().value">{{ control().value }}</option>
+      }
+    </select>
+    <clr-control-helper>{{ field.helper ?? helper() }}</clr-control-helper>
+    <clr-control-error *clrIfError="'required'">{{
+      validationMessage('required', 'key-value.required' | translate)
+    }}</clr-control-error>
+    <clr-control-error *clrIfError="'pattern'">
+      {{
+        validationMessage(
+          'pattern',
+          patternMessage() || ('key-value.pattern' | translate: control().errors?.['pattern']?.['requiredPattern'])
+        )
+      }}
+    </clr-control-error>
+    <clr-control-error *clrIfError="'notUnique'">{{
+      validationMessage('notUnique', 'key-value.notUnique' | translate)
+    }}</clr-control-error>
+    <clr-control-error *clrIfError="'duplicatePair'">{{
+      validationMessage('duplicatePair', 'key-value.duplicatePair' | translate)
+    }}</clr-control-error>
+    <clr-control-error *clrIfError="'selection'">{{
+      validationMessage('selection', 'key-value.selection' | translate)
+    }}</clr-control-error>
+    @for (validation of customValidations(); track validation.errorKey) {
+      <clr-control-error *clrIfError="validation.errorKey">{{ validation.message }}</clr-control-error>
+    }
+  </clr-select-container>
+} @else {
+  <clr-input-container>
+    <label class="clr-sr-only" [for]="controlId()">{{ field.label || label() }}</label>
+    <input
+      clrInput
+      [id]="controlId()"
+      [formControl]="control()"
+      [size]="inputSize()"
+      [placeholder]="field.placeholder || ''"
+      [attr.aria-required]="field.required !== false"
+    />
+    <clr-control-helper>{{ field.helper ?? helper() }}</clr-control-helper>
+    <clr-control-error *clrIfError="'required'">{{
+      validationMessage('required', 'key-value.required' | translate)
+    }}</clr-control-error>
+    <clr-control-error *clrIfError="'pattern'">
+      {{
+        validationMessage(
+          'pattern',
+          patternMessage() || ('key-value.pattern' | translate: control().errors?.['pattern']?.['requiredPattern'])
+        )
+      }}
+    </clr-control-error>
+    <clr-control-error *clrIfError="'notUnique'">{{
+      validationMessage('notUnique', 'key-value.notUnique' | translate)
+    }}</clr-control-error>
+    <clr-control-error *clrIfError="'duplicatePair'">{{
+      validationMessage('duplicatePair', 'key-value.duplicatePair' | translate)
+    }}</clr-control-error>
+    @for (validation of customValidations(); track validation.errorKey) {
+      <clr-control-error *clrIfError="validation.errorKey">{{ validation.message }}</clr-control-error>
+    }
+  </clr-input-container>
+}

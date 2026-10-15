@@ -1045,6 +1045,42 @@ export const koTranslations: Record<string, string> = {
   'fileReader.feature3': '파일 크기 검증',
   'fileReader.feature4': '내용 파싱 오류 처리',
   'fileReader.feature5': '폼 제어 기능 통합',
+  'keyValueInputs.signalIntro':
+    '하나의 Reactive Forms 모델로 네 가지 편집 조합을 관리합니다. 다음 기능으로 유효성 검사, 비활성 상태 및 제출 데이터를 확인하세요:',
+  'keyValueInputs.editing': '편집 활성화',
+  'keyValueInputs.inputInput': '자유 텍스트 태그: 키 입력 / 값 입력',
+  'keyValueInputs.inputInputDesc':
+    '동일한 범주에 다른 태그를 추가할 수 있지만 동일한 조합은 허용되지 않습니다. 범주에는 소문자, 숫자, 하이픈을 사용하세요.',
+  'keyValueInputs.selectInput': '데이터베이스 매개변수: 키 선택 / 값 입력',
+  'keyValueInputs.selectInputDesc':
+    '매개변수를 선택하고 값을 입력하세요. 각 매개변수는 한 번만 사용할 수 있으며 다른 행에서 선택된 옵션은 비활성화됩니다.',
+  'keyValueInputs.inputSelect': '팀 할당: 키 입력 / 값 선택',
+  'keyValueInputs.inputSelectDesc': '할당 이름을 입력하고 팀을 선택하세요. 표시 이름과 저장 값은 다를 수 있습니다.',
+  'keyValueInputs.selectSelect': '배포 정책: 키 선택 / 값 선택',
+  'keyValueInputs.selectSelectDesc':
+    '값 옵션은 키에 따라 달라집니다. 키를 변경하면 이전 값이 지워지며 각 키는 한 번만 사용할 수 있습니다.',
+  'keyValueInputs.production': '프로덕션',
+  'keyValueInputs.staging': '스테이징',
+  'keyValueInputs.category': '범주',
+  'keyValueInputs.tag': '태그',
+  'keyValueInputs.tagKeyError': '소문자로 시작하고 소문자, 숫자, 하이픈만 사용하세요.',
+  'keyValueInputs.save': '구성 저장',
+  'keyValueInputs.restore': '기본값 복원',
+  'keyValueInputs.signalState': '실시간 양식 Signals',
+  'keyValueInputs.payload': '제출 데이터',
+  'keyValueInputs.saved': '저장된 스냅샷',
+  'keyValueInputs.configHelp':
+    '필드 설정: mode(input 또는 select), options({value, label, disabled}), label, placeholder, helper, required, validators({validator, errorKey, message}). 값은 문자열이며 required의 기본값은 true입니다.',
+  'keyValueInputs.lifecycleHelp':
+    'data는 인스턴스별로 빈 FormArray를 한 번만 초기화합니다. 기존 행과 상위 유효성 검사기는 유지됩니다. 새 구성 객체로 옵션을 업데이트하세요. 사용할 수 없게 된 저장 값은 계속 표시되며 수정할 때까지 유효하지 않습니다.',
+  'keyValueInputs.api.keyConfig':
+    '키 편집 설정으로 기본값은 텍스트 입력입니다. 옵션은 표시 이름과 문자열 값을 구분합니다.',
+  'keyValueInputs.api.valueConfig':
+    '값 편집 설정 또는 키에만 의존하는 순수 함수로 연동 옵션이나 키별 편집기를 지원합니다.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    '키 변경 시 값을 지우고 touched/dirty 상태를 초기화합니다. 연동 값에 대해 명시적으로 활성화하세요.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    '동일한 키/값 조합을 거부합니다. uniqueKey가 false이면 같은 키에 다른 값을 사용할 수 있습니다.',
   'keyValueInputs.title': '키 값 입력',
   'keyValueInputs.overview':
     '<code>KeyValueInputsComponent</code>는 키-값 쌍을 입력하기 위한 Angular 컴포넌트입니다. 이 컴포넌트는 사용자가 FormArray를 통합하여 키-값 쌍을 추가, 편집, 제거할 수 있도록 동적 폼을 제공하고 실시간 검증 및 지능적인 키보드 네비게이션을 제공합니다.',

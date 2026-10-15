@@ -1085,6 +1085,43 @@ export const ptBRTranslations: Record<string, string> = {
   'fileReader.feature3': 'Válvula para o tamanho do arquivo',
   'fileReader.feature4': 'Tratamento de erros para processamento de conteúdo',
   'fileReader.feature5': 'Integração para o controle dos formulários',
+  'keyValueInputs.signalIntro':
+    'Um modelo Reactive Forms controla as quatro combinações. Inspecione a validação, os campos desabilitados e os dados de envio com',
+  'keyValueInputs.editing': 'Habilitar edição',
+  'keyValueInputs.inputInput': 'Tags livres: digitar chave / digitar valor',
+  'keyValueInputs.inputInputDesc':
+    'Uma categoria pode ter tags diferentes; pares idênticos não são permitidos. Use letras minúsculas, dígitos e hífens nas categorias.',
+  'keyValueInputs.selectInput': 'Parâmetros de banco de dados: selecionar chave / digitar valor',
+  'keyValueInputs.selectInputDesc':
+    'Selecione um parâmetro e informe o valor. Cada parâmetro aparece uma vez; opções usadas são desabilitadas em outras linhas.',
+  'keyValueInputs.inputSelect': 'Atribuições de equipe: digitar chave / selecionar valor',
+  'keyValueInputs.inputSelectDesc':
+    'Informe um nome e selecione uma equipe. Rótulos e valores armazenados podem ser diferentes.',
+  'keyValueInputs.selectSelect': 'Política de implantação: selecionar chave / selecionar valor',
+  'keyValueInputs.selectSelectDesc':
+    'As opções de valor dependem da chave. Alterar a chave limpa o valor anterior; cada chave pode ser usada uma vez.',
+  'keyValueInputs.production': 'Produção',
+  'keyValueInputs.staging': 'Homologação',
+  'keyValueInputs.category': 'Categoria',
+  'keyValueInputs.tag': 'Tag',
+  'keyValueInputs.tagKeyError': 'Comece com uma letra minúscula; use apenas letras minúsculas, dígitos e hífens.',
+  'keyValueInputs.save': 'Salvar configuração',
+  'keyValueInputs.restore': 'Restaurar padrões',
+  'keyValueInputs.signalState': 'Signals do formulário em tempo real',
+  'keyValueInputs.payload': 'Dados de envio',
+  'keyValueInputs.saved': 'Instantâneo salvo',
+  'keyValueInputs.configHelp':
+    'Opções: mode (input ou select), options ({value, label, disabled}), label, placeholder, helper, required e validators ({validator, errorKey, message}). Os valores são strings; required é true por padrão.',
+  'keyValueInputs.lifecycleHelp':
+    'data preenche um FormArray vazio uma vez por instância. Linhas e validadores existentes são preservados. Atualize opções com novos objetos de configuração; valores salvos indisponíveis permanecem visíveis e inválidos até serem corrigidos.',
+  'keyValueInputs.api.keyConfig':
+    'Configuração de chave com entrada de texto por padrão. As opções separam rótulos e valores de string.',
+  'keyValueInputs.api.valueConfig':
+    'Configuração de valor ou função pura da chave para opções dependentes ou editores diferentes.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Limpa o valor e redefine touched/dirty ao alterar a chave. Habilite explicitamente para valores dependentes.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Rejeita pares idênticos; permite a mesma chave com valores diferentes quando uniqueKey é false.',
   'keyValueInputs.title': 'Valor-Chave Entradas',
   'keyValueInputs.overview':
     'O componente <code>KeyValueInputsComponent</code> é um componente Angular projetado para facilitar a entrada de pares de chave-valor. Ele fornece um formulário dinâmico que permite aos usuários adicionar, editar e remover pares de chave-valor com integração com FormArray, validação em tempo real e navegação inteligente com teclado.',

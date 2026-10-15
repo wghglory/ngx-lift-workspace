@@ -1060,6 +1060,43 @@ export const enTranslations: Record<string, string> = {
   'fileReader.feature3': 'File size validation',
   'fileReader.feature4': 'Content parsing error handling',
   'fileReader.feature5': 'Form control integration',
+  'keyValueInputs.signalIntro':
+    'One Reactive Forms model drives all four editor combinations. Inspect validation, disabled state, and the submission payload with',
+  'keyValueInputs.editing': 'Enable editing',
+  'keyValueInputs.inputInput': 'Free-text tags: input key / input value',
+  'keyValueInputs.inputInputDesc':
+    'Repeat a category for different tags; identical category and tag pairs are rejected. Category names use lowercase letters, digits, and hyphens.',
+  'keyValueInputs.selectInput': 'Database parameters: select key / input value',
+  'keyValueInputs.selectInputDesc':
+    'Choose a parameter and enter its value. Each parameter can appear once; occupied choices are disabled in other rows.',
+  'keyValueInputs.inputSelect': 'Team assignments: input key / select value',
+  'keyValueInputs.inputSelectDesc':
+    'Enter an assignment name and select a team. Labels and stored option values can differ.',
+  'keyValueInputs.selectSelect': 'Deployment policy: select key / select value',
+  'keyValueInputs.selectSelectDesc':
+    'Value choices depend on the selected key. Changing the key clears the previous value; all available keys can be used once.',
+  'keyValueInputs.production': 'Production',
+  'keyValueInputs.staging': 'Staging',
+  'keyValueInputs.category': 'Category',
+  'keyValueInputs.tag': 'Tag',
+  'keyValueInputs.tagKeyError': 'Start with a lowercase letter; use only lowercase letters, digits, and hyphens.',
+  'keyValueInputs.save': 'Save configuration',
+  'keyValueInputs.restore': 'Restore defaults',
+  'keyValueInputs.signalState': 'Live form signals',
+  'keyValueInputs.payload': 'Submission payload',
+  'keyValueInputs.saved': 'Saved snapshot',
+  'keyValueInputs.configHelp':
+    'Field options: mode (input or select), options ({value, label, disabled}), label, placeholder, helper, required, and validators ({validator, errorKey, message}). Values remain strings; required defaults to true.',
+  'keyValueInputs.lifecycleHelp':
+    'Data seeds an empty FormArray once per array instance. Existing rows and parent validators are preserved. Update option configurations immutably; unavailable saved selections stay visible and invalid until corrected.',
+  'keyValueInputs.api.keyConfig':
+    'Key editor configuration. Defaults to a text input. Select options have separate labels and string values.',
+  'keyValueInputs.api.valueConfig':
+    'Value editor configuration or a pure function of the selected key. Supports dependent select options or different editors by key.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Clear the value and reset its touched/dirty state when the key changes. Opt in for dependent values.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Reject identical key/value combinations while allowing the same key with different values when uniqueKey is false.',
   'keyValueInputs.title': 'Key Value Inputs',
   'keyValueInputs.overview':
     'The <code>KeyValueInputsComponent</code> is an Angular component designed to facilitate the input of key-value pairs. It provides a dynamic form allowing users to add, edit, and remove key-value pairs with FormArray integration, real-time validation, and smart keyboard navigation.',

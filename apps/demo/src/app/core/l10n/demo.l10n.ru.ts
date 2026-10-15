@@ -1090,6 +1090,43 @@ export const ruTranslations: Record<string, string> = {
   'fileReader.feature3': 'Подтверждение размера файла',
   'fileReader.feature4': 'Обработка погрешностей содержания',
   'fileReader.feature5': 'Интеграция в систему контроля формы',
+  'keyValueInputs.signalIntro':
+    'Одна модель Reactive Forms управляет четырьмя комбинациями. Проверяйте валидацию, отключенные поля и данные отправки с помощью',
+  'keyValueInputs.editing': 'Включить редактирование',
+  'keyValueInputs.inputInput': 'Произвольные теги: ввод ключа / ввод значения',
+  'keyValueInputs.inputInputDesc':
+    'Одна категория допускает разные теги; одинаковые пары запрещены. Используйте строчные буквы, цифры и дефисы в именах категорий.',
+  'keyValueInputs.selectInput': 'Параметры базы данных: выбор ключа / ввод значения',
+  'keyValueInputs.selectInputDesc':
+    'Выберите параметр и введите значение. Каждый параметр используется один раз; занятые варианты отключены в других строках.',
+  'keyValueInputs.inputSelect': 'Назначения команд: ввод ключа / выбор значения',
+  'keyValueInputs.inputSelectDesc':
+    'Введите имя назначения и выберите команду. Подписи могут отличаться от сохраняемых значений.',
+  'keyValueInputs.selectSelect': 'Политика развертывания: выбор ключа / выбор значения',
+  'keyValueInputs.selectSelectDesc':
+    'Варианты значений зависят от ключа. Изменение ключа очищает прежнее значение; каждый ключ используется один раз.',
+  'keyValueInputs.production': 'Рабочая среда',
+  'keyValueInputs.staging': 'Тестовая среда',
+  'keyValueInputs.category': 'Категория',
+  'keyValueInputs.tag': 'Тег',
+  'keyValueInputs.tagKeyError': 'Начните со строчной буквы; используйте только строчные буквы, цифры и дефисы.',
+  'keyValueInputs.save': 'Сохранить конфигурацию',
+  'keyValueInputs.restore': 'Восстановить значения',
+  'keyValueInputs.signalState': 'Сигналы формы в реальном времени',
+  'keyValueInputs.payload': 'Данные отправки',
+  'keyValueInputs.saved': 'Сохраненный снимок',
+  'keyValueInputs.configHelp':
+    'Настройки: mode (input или select), options ({value, label, disabled}), label, placeholder, helper, required и validators ({validator, errorKey, message}). Значения остаются строками; required по умолчанию true.',
+  'keyValueInputs.lifecycleHelp':
+    'data заполняет пустой FormArray один раз для каждого экземпляра. Существующие строки и валидаторы сохраняются. Обновляйте варианты новыми объектами конфигурации; недоступные сохраненные значения остаются видимыми и недействительными до исправления.',
+  'keyValueInputs.api.keyConfig':
+    'Настройка ключа, по умолчанию текстовый ввод. Варианты разделяют подписи и строковые значения.',
+  'keyValueInputs.api.valueConfig':
+    'Настройка значения или чистая функция ключа для зависимых вариантов или разных редакторов.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Очищает значение и сбрасывает touched/dirty при изменении ключа. Явно включите для зависимых значений.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Отклоняет одинаковые пары; при uniqueKey false разрешает один ключ с разными значениями.',
   'keyValueInputs.title': 'Ключевое значение',
   'keyValueInputs.overview':
     'Компонент <code>KeyValueInputsComponent</code> — это Angular-компонент, предназначенный для ввода пар ключ-значение. Он предоставляет динамическую форму, позволяющую пользователям добавлять, редактировать и удалять пары ключ-значение с интеграцией FormArray, реальном проверке и умном навигации клавиатуры.',

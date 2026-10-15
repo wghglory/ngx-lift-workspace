@@ -1067,6 +1067,41 @@ export const jaTranslations: Record<string, string> = {
   'fileReader.feature3': 'ファイルサイズの検証',
   'fileReader.feature4': '内容のパースエラー処理',
   'fileReader.feature5': 'フォームコントロールとの統合',
+  'keyValueInputs.signalIntro':
+    '4 種類の編集を同じ Reactive Forms モデルで管理します。検証、無効状態、送信データを次の機能で確認できます：',
+  'keyValueInputs.editing': '編集を有効にする',
+  'keyValueInputs.inputInput': '自由入力タグ：キー入力 / 値入力',
+  'keyValueInputs.inputInputDesc':
+    '同じカテゴリに異なるタグを追加できます。同一の組み合わせは許可されません。カテゴリ名には小文字、数字、ハイフンを使用します。',
+  'keyValueInputs.selectInput': 'データベースパラメータ：キー選択 / 値入力',
+  'keyValueInputs.selectInputDesc':
+    'パラメータを選択して値を入力します。各パラメータは一度だけ使用でき、他の行で選択済みの項目は無効になります。',
+  'keyValueInputs.inputSelect': 'チーム割り当て：キー入力 / 値選択',
+  'keyValueInputs.inputSelectDesc': '割り当て名を入力してチームを選択します。表示名と保存値は別々に設定できます。',
+  'keyValueInputs.selectSelect': 'デプロイポリシー：キー選択 / 値選択',
+  'keyValueInputs.selectSelectDesc':
+    '値の選択肢はキーに応じて変わります。キーを変更すると以前の値は消去されます。各キーは一度だけ使用できます。',
+  'keyValueInputs.production': '本番環境',
+  'keyValueInputs.staging': 'ステージング環境',
+  'keyValueInputs.category': 'カテゴリ',
+  'keyValueInputs.tag': 'タグ',
+  'keyValueInputs.tagKeyError': '小文字で始め、小文字、数字、ハイフンのみを使用してください。',
+  'keyValueInputs.save': '設定を保存',
+  'keyValueInputs.restore': '既定値に戻す',
+  'keyValueInputs.signalState': 'フォームのリアルタイム Signals',
+  'keyValueInputs.payload': '送信データ',
+  'keyValueInputs.saved': '保存済みスナップショット',
+  'keyValueInputs.configHelp':
+    'フィールド設定：mode（input または select）、options（{value, label, disabled}）、label、placeholder、helper、required、validators（{validator, errorKey, message}）。値は文字列です。required の既定値は true です。',
+  'keyValueInputs.lifecycleHelp':
+    'data は空の FormArray をインスタンスごとに一度だけ初期化します。既存の行と親のバリデータは維持されます。選択肢は新しい設定オブジェクトで更新してください。利用できなくなった保存値は表示されたまま、修正まで無効になります。',
+  'keyValueInputs.api.keyConfig': 'キーの編集設定。既定はテキスト入力です。選択肢は表示名と文字列値を分離します。',
+  'keyValueInputs.api.valueConfig':
+    '値の編集設定、またはキーのみを引数にする純粋関数。連動する選択肢やキーごとのエディタを設定できます。',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'キー変更時に値を消去して touched/dirty をリセットします。連動する値で明示的に有効化します。',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    '同じキーと値の組み合わせを拒否します。uniqueKey が false の場合、同じキーに異なる値を指定できます。',
   'keyValueInputs.title': 'キー値入力',
   'keyValueInputs.overview':
     '<code>KeyValueInputsComponent</code>は、キー値ペアの入力に特化したAngularコンポーネントです。ユーザーがFormArrayとの統合により、キー値ペアを追加、編集、削除できるダイナミックフォームを提供し、リアルタイムでの検証とスマートなキーボードナビゲーションをサポートします。',

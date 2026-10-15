@@ -1,12 +1,14 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
   ElementRef,
   inject,
   input,
-  OnInit,
+  OnChanges,
+  OnDestroy,
   output,
 } from '@angular/core';
 import {
@@ -14,224 +16,321 @@ import {
   FormArray,
   FormControl,
   FormGroup,
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
+  ValueChangeEvent,
 } from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {UniqueValidator} from 'ngx-lift';
+import {Subscription} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
-import {keyValueTranslations} from './key-value.l10n';
+import {KeyValueFieldConfig, KeyValueValueConfig} from './key-value-field-config';
+import {KeyValueFieldComponent} from './key-value-field.component';
 import {KeyValueFormGroup} from './key-value-form-group.type';
+import {keyValueFieldErrors} from './key-value-validators';
+import {keyValueTranslations} from './key-value.l10n';
 
 let nextControlId = 0;
 
-/**
- * A component for managing dynamic key-value pair inputs in a form.
- * Supports validation, uniqueness checking, pattern matching, and smart mode for automatic key-value management.
- *
- * @example
- * ```html
- * <cll-key-value-inputs
- *   [formArray]="keyValueFormArray"
- *   [uniqueKey]="true"
- *   [keyPattern]="{ regex: '^[A-Z_]+$', message: 'Keys must be uppercase' }"
- *   (addKeyValue)="onAdd()"
- *   (removeKeyValue)="onRemove($event)"
- * />
- * ```
- */
+interface RowBinding {
+  keyValidator: ValidatorFn;
+  valueValidator: ValidatorFn;
+  keyChanges: Subscription;
+  keyDependencies?: readonly unknown[];
+  valueDependencies?: readonly unknown[];
+}
+
+/** Dynamic string key/value rows backed by the caller's Reactive Forms controls. */
 @Component({
   selector: 'cll-key-value-inputs',
-  imports: [TranslatePipe, ClarityModule, ReactiveFormsModule],
+  imports: [TranslatePipe, ClarityModule, KeyValueFieldComponent],
   templateUrl: './key-value-inputs.component.html',
   styleUrls: ['./key-value-inputs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KeyValueInputsComponent implements OnInit {
-  private translationService = inject(TranslationService);
-  private fb = inject(NonNullableFormBuilder);
-  private hostElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+export class KeyValueInputsComponent implements OnChanges, OnDestroy {
+  private readonly translationService = inject(TranslationService);
+  private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly initialized = new WeakSet<FormArray<KeyValueFormGroup>>();
+  private readonly bindings = new Map<KeyValueFormGroup, RowBinding>();
+  private activeArray?: FormArray<KeyValueFormGroup>;
+  private arrayChanges?: Subscription;
   private focusTimer?: ReturnType<typeof setTimeout>;
+  private refreshing = false;
+  private readonly uniquenessValidator: ValidatorFn = () => {
+    const errors: ValidationErrors = {};
+    for (const row of this.activeArray?.controls ?? []) {
+      if (row.disabled) continue;
+      if (row.controls.key.hasError('notUnique')) errors['notUnique'] = true;
+      if (row.controls.key.hasError('duplicatePair') || row.controls.value.hasError('duplicatePair')) {
+        errors['duplicatePair'] = true;
+      }
+    }
+    return Object.keys(errors).length ? errors : null;
+  };
   readonly controlIdPrefix = `cll-key-value-${nextControlId++}`;
 
-  /**
-   * The FormArray containing key-value form groups.
-   * Required input for managing the key-value pairs.
-   */
-  formArray = input.required<FormArray<KeyValueFormGroup>>();
+  readonly formArray = input.required<FormArray<KeyValueFormGroup>>();
+  /** Seeds an empty array once per array instance. Existing rows always take precedence. */
+  readonly data = input<{key: string; value: string}[]>([]);
+  readonly keyConfig = input<KeyValueFieldConfig>({});
+  readonly valueConfig = input<KeyValueValueConfig>({});
+  /** Opt in for dependent values; default false preserves free-text editing behavior. */
+  readonly resetValueOnKeyChange = input(false);
+  readonly uniqueKey = input(true);
+  readonly uniqueKeyValuePair = input(false);
+  readonly keyPattern = input<{regex: string | RegExp; message?: string}>();
+  readonly valuePattern = input<{regex: string | RegExp; message?: string}>();
+  readonly keyHelper = input('');
+  readonly valueHelper = input('');
+  readonly inputSize = input(40);
+  readonly buttonClass = input('');
+  readonly smartMode = input(false);
+  readonly addText = input('');
+  readonly computedAddText = computed(() => this.addText() || this.translationService.translate('key-value.add'));
+  readonly removeKeyValue = output<number>();
+  readonly addKeyValue = output<void>();
 
-  /**
-   * Initial data to populate the form array.
-   * Array of objects with `key` and `value` properties.
-   */
-  data = input<{key: string; value: string}[]>([]);
-
-  /**
-   * Whether keys must be unique across all key-value pairs.
-   * If `true`, the UniqueValidator is applied to ensure no duplicate keys.
-   * Defaults to `true`.
-   */
-  uniqueKey = input(true);
-
-  /**
-   * Optional pattern validator configuration for keys.
-   * Contains a regex pattern and optional error message.
-   */
-  keyPattern = input<{regex: string | RegExp; message?: string}>();
-
-  /**
-   * Optional pattern validator configuration for values.
-   * Contains a regex pattern and optional error message.
-   */
-  valuePattern = input<{regex: string | RegExp; message?: string}>();
-
-  /**
-   * Helper text to display for the key input field.
-   */
-  keyHelper = input('');
-
-  /**
-   * Helper text to display for the value input field.
-   */
-  valueHelper = input('');
-
-  /**
-   * The size (width) of the input fields in characters.
-   * Defaults to 40.
-   */
-  inputSize = input(40);
-
-  /**
-   * Additional CSS classes to apply to action buttons.
-   */
-  buttonClass = input('');
-
-  /**
-   * Whether smart mode is enabled.
-   * In smart mode, the component provides enhanced UX features.
-   * Defaults to `false`.
-   */
-  smartMode = input(false);
-
-  /**
-   * Custom text for the "Add" button.
-   * If not provided, uses the default translation key 'key-value.add'.
-   */
-  addText = input('');
-
-  /**
-   * Computed text for the "Add" button.
-   * Uses custom text if provided, otherwise falls back to translation.
-   */
-  computedAddText = computed(() => this.addText() || this.translationService.translate('key-value.add'));
-
-  /**
-   * Event emitted when a key-value pair is removed.
-   * Emits the index of the removed pair.
-   */
-  removeKeyValue = output<number>();
-
-  /**
-   * Event emitted when a new key-value pair is added.
-   */
-  addKeyValue = output<void>();
-
-  keyValidators = computed(() => {
-    const keyPattern = this.keyPattern();
-    const keyPatternValidator = keyPattern && Validators.pattern(keyPattern.regex);
-    return [Validators.required, keyPatternValidator].filter((item) => item !== undefined);
-  });
-
-  valueValidators = computed(() => {
-    const valuePattern = this.valuePattern();
-    const valuePatternValidator = valuePattern && Validators.pattern(valuePattern.regex);
-    return [Validators.required, valuePatternValidator].filter((item) => item !== undefined);
-  });
+  readonly keyValidators = computed(() => this.patternValidators(this.keyPattern()));
+  readonly valueValidators = computed(() => this.patternValidators(this.valuePattern()));
 
   constructor() {
     this.translationService.loadTranslationsForComponent('key-value', keyValueTranslations);
     inject(DestroyRef).onDestroy(() => clearTimeout(this.focusTimer));
   }
 
-  removeKeyValuePair(index: number) {
-    this.formArray().removeAt(index);
-    this.validateAllKeyControls();
-    this.removeKeyValue.emit(index);
+  ngOnChanges(): void {
+    const array = this.formArray();
+    if (this.activeArray !== array) {
+      this.detachArray();
+      this.activeArray = array;
+      array.addValidators(this.uniquenessValidator);
+      if (!this.initialized.has(array)) {
+        this.initialized.add(array);
+        if (array.length === 0) {
+          const initial = this.data().length ? this.data() : this.smartMode() ? [{key: '', value: ''}] : [];
+          initial.forEach(({key, value}) => array.push(this.createRow(key, value), {emitEvent: false}));
+        }
+      }
+      this.arrayChanges = array.events.subscribe((event) => {
+        if (event instanceof ValueChangeEvent) this.refreshRows();
+        this.cdr.markForCheck();
+      });
+    }
+    this.refreshRows();
   }
 
-  addKeyValuePair() {
-    const group = this.fb.group({
-      key: ['', this.keyValidators()],
-      value: ['', this.valueValidators()],
-    });
-    this.formArray().push(group);
+  ngOnDestroy(): void {
+    this.detachArray();
+  }
+
+  resolveValueConfig(key: string): KeyValueFieldConfig {
+    const config = this.valueConfig();
+    return typeof config === 'function' ? config(key) : config;
+  }
+
+  resolveKeyConfig(row: KeyValueFormGroup): KeyValueFieldConfig {
+    const config = this.keyConfig();
+    if (config.mode !== 'select' || !this.uniqueKey()) return config;
+    const selected = new Set(
+      this.formArray()
+        .controls.filter((other) => other !== row && other.enabled && other.controls.key.enabled)
+        .map((other) => other.controls.key.value),
+    );
+    return {
+      ...config,
+      options: config.options.map((option) => ({
+        ...option,
+        disabled: option.disabled || (option.value !== row.controls.key.value && selected.has(option.value)),
+      })),
+    };
+  }
+
+  canAdd(): boolean {
+    const array = this.formArray();
+    if (array.disabled || array.pending || (array.invalid && array.length > 0)) return false;
+    const config = this.keyConfig();
+    if (config.mode !== 'select') return true;
+    const selected = new Set(
+      array.controls.filter((row) => row.enabled && row.controls.key.enabled).map((row) => row.controls.key.value),
+    );
+    return config.options.some(
+      (option) => option.value !== '' && !option.disabled && (!this.uniqueKey() || !selected.has(option.value)),
+    );
+  }
+
+  addKeyValuePair(): void {
+    if (!this.canAdd()) return;
+    const row = this.createRow('', '');
+    this.formArray().push(row);
+    this.formArray().markAsDirty();
     this.addKeyValue.emit();
-
-    this.focusOnLastKeyControl();
+    this.focusRow(row);
   }
 
-  _validateKeyControl(index: number) {
-    this.formArray().controls[index].controls.key.updateValueAndValidity();
+  removeKeyValuePair(index: number): void {
+    const array = this.formArray();
+    if (array.disabled || !array.at(index) || index < 0 || array.at(index).disabled) return;
+    array.removeAt(index);
+    array.markAsDirty();
+    this.removeKeyValue.emit(index);
+    this.focusRow(array.at(Math.min(index, array.length - 1)));
   }
-  validateKeyControl(control: AbstractControl) {
+
+  /** Retained for callers that explicitly revalidate on blur. */
+  validateKeyControl(control: AbstractControl): void {
     control.updateValueAndValidity();
   }
 
-  ngOnInit() {
-    this.addUniqueKeyValidator();
-
-    this.initializeFormData();
+  _validateKeyControl(index: number): void {
+    this.formArray().at(index)?.controls.key.updateValueAndValidity();
   }
 
-  private validateAllKeyControls() {
-    this.formArray().controls.forEach((group) => {
-      group.controls.key.updateValueAndValidity();
+  private patternValidators(pattern: {regex: string | RegExp} | undefined): ValidatorFn[] {
+    return pattern ? [Validators.pattern(pattern.regex)] : [];
+  }
+
+  private createRow(key: string, value: string): KeyValueFormGroup {
+    const row = new FormGroup({
+      key: new FormControl(key, {nonNullable: true}),
+      value: new FormControl(value, {nonNullable: true}),
     });
+    if (this.formArray().disabled) row.disable({emitEvent: false});
+    return row;
   }
 
-  private addUniqueKeyValidator() {
-    if (this.uniqueKey()) {
-      const selector = (control: AbstractControl): AbstractControl =>
-        (control as FormGroup<{key: FormControl<string>}>).controls.key;
-
-      this.formArray().addValidators(UniqueValidator.unique(selector));
-
-      this.formArray().updateValueAndValidity();
-    }
-  }
-
-  private initializeFormData() {
-    const data = this.data();
-    if (data && data.length > 0) {
-      data.forEach((prop) => {
-        this.formArray().push(
-          this.fb.group({
-            key: [prop.key || '', this.keyValidators()],
-            value: [prop.value || '', this.valueValidators()],
-          }),
+  private bindRow(row: KeyValueFormGroup): void {
+    if (this.bindings.has(row)) return;
+    const validator =
+      (field: 'key' | 'value'): ValidatorFn =>
+      (control) =>
+        keyValueFieldErrors(
+          control,
+          field,
+          field === 'key' ? this.keyConfig() : this.resolveValueConfig(row.controls.key.value),
+          field === 'key' ? this.keyValidators() : this.valueValidators(),
+          row,
+          this.formArray().controls,
+          this.uniqueKey(),
+          this.uniqueKeyValuePair(),
         );
-      });
-    } else {
-      this.addPairForSmartMode();
+    const keyValidator = validator('key');
+    const valueValidator = validator('value');
+    row.controls.key.addValidators(keyValidator);
+    row.controls.value.addValidators(valueValidator);
+    let previousKey = row.controls.key.value;
+    const keyChanges = row.controls.key.valueChanges.subscribe((key) => {
+      const changed = key !== previousKey;
+      previousKey = key;
+      if (changed && this.resetValueOnKeyChange()) row.controls.value.reset('', {onlySelf: true});
+    });
+    this.bindings.set(row, {keyValidator, valueValidator, keyChanges});
+  }
+
+  private unbindRow(row: KeyValueFormGroup, binding: RowBinding): void {
+    binding.keyChanges.unsubscribe();
+    row.controls.key.removeValidators(binding.keyValidator);
+    row.controls.value.removeValidators(binding.valueValidator);
+    this.revalidateRow(row);
+    this.bindings.delete(row);
+  }
+
+  private revalidateRow(row: KeyValueFormGroup, emitEvent = true): void {
+    row.controls.key.updateValueAndValidity({onlySelf: true, emitEvent});
+    row.controls.value.updateValueAndValidity({onlySelf: true, emitEvent});
+    row.updateValueAndValidity({onlySelf: true, emitEvent});
+  }
+
+  private refreshRows(): void {
+    if (this.refreshing) return;
+    this.refreshing = true;
+    try {
+      const array = this.formArray();
+      for (const [row, binding] of this.bindings) {
+        if (!array.controls.includes(row)) this.unbindRow(row, binding);
+      }
+      array.controls.forEach((row) => this.bindRow(row));
+      const keys = array.controls.flatMap((row) => [
+        row,
+        row.enabled,
+        row.controls.key.enabled,
+        row.controls.key.value,
+      ]);
+      const pairs = array.controls.flatMap((row) => [
+        row,
+        row.enabled,
+        row.controls.key.enabled,
+        row.controls.value.enabled,
+        row.controls.key.value,
+        row.controls.value.value,
+      ]);
+      let changed = false;
+      // Revalidate only fields whose validation inputs changed, preserving unrelated async work.
+      for (const row of array.controls) {
+        const binding = this.bindings.get(row);
+        if (!binding) continue;
+        const pairDependencies = this.uniqueKeyValuePair() ? pairs : [];
+        const keyDependencies = [
+          this.keyConfig(),
+          this.keyPattern(),
+          this.uniqueKey(),
+          this.uniqueKeyValuePair(),
+          row.controls.key.enabled,
+          ...(this.uniqueKey() ? keys : []),
+          ...pairDependencies,
+        ];
+        const valueDependencies = [
+          this.valueConfig(),
+          this.valuePattern(),
+          this.uniqueKeyValuePair(),
+          row.controls.value.enabled,
+          typeof this.valueConfig() === 'function' ? row.controls.key.value : undefined,
+          ...pairDependencies,
+        ];
+        const keyChanged = this.dependenciesChanged(binding.keyDependencies, keyDependencies);
+        const valueChanged = this.dependenciesChanged(binding.valueDependencies, valueDependencies);
+        binding.keyDependencies = keyDependencies;
+        binding.valueDependencies = valueDependencies;
+        if (keyChanged) row.controls.key.updateValueAndValidity({onlySelf: true});
+        if (valueChanged) row.controls.value.updateValueAndValidity({onlySelf: true});
+        if (keyChanged || valueChanged) {
+          row.updateValueAndValidity({onlySelf: true});
+          changed = true;
+        }
+      }
+      if (changed) array.updateValueAndValidity();
+    } finally {
+      this.refreshing = false;
     }
   }
 
-  private addPairForSmartMode() {
-    if (this.smartMode()) {
-      this.addKeyValuePair();
-    }
+  private dependenciesChanged(previous: readonly unknown[] | undefined, next: readonly unknown[]): boolean {
+    return (
+      !previous || previous.length !== next.length || next.some((value, index) => !Object.is(value, previous[index]))
+    );
   }
 
-  private focusOnLastKeyControl() {
+  private detachArray(): void {
+    this.arrayChanges?.unsubscribe();
+    for (const [row, binding] of this.bindings) this.unbindRow(row, binding);
+    this.activeArray?.removeValidators(this.uniquenessValidator);
+    this.activeArray?.updateValueAndValidity();
+  }
+
+  private focusRow(row?: KeyValueFormGroup): void {
     clearTimeout(this.focusTimer);
     this.focusTimer = setTimeout(() => {
-      this.focusTimer = undefined;
-      const inputs = this.hostElement.getElementsByTagName('input');
-      const lastKeyControl = inputs[inputs.length - 2];
-      lastKeyControl?.focus();
+      const index = row ? this.formArray().controls.indexOf(row) : -1;
+      const element =
+        index < 0
+          ? this.hostElement.querySelector<HTMLElement>('[data-add-key-value]')
+          : this.hostElement.querySelector<HTMLElement>(
+              `[data-key-value-row="${index}"] [data-key-field] input, [data-key-value-row="${index}"] [data-key-field] select`,
+            );
+      element?.focus();
     });
   }
 }

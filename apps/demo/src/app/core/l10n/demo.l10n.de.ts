@@ -1094,6 +1094,44 @@ export const deTranslations: Record<string, string> = {
   'fileReader.feature3': 'Validierung der Dateigröße',
   'fileReader.feature4': 'Fehlerbehandlung von Inhalten',
   'fileReader.feature5': 'Integration der Formsteuerung',
+  'keyValueInputs.signalIntro':
+    'Ein Reactive Forms-Modell steuert alle vier Kombinationen. Prüfen Sie Validierung, deaktivierte Felder und die Übermittlungsdaten mit',
+  'keyValueInputs.editing': 'Bearbeitung aktivieren',
+  'keyValueInputs.inputInput': 'Freie Tags: Schlüssel eingeben / Wert eingeben',
+  'keyValueInputs.inputInputDesc':
+    'Eine Kategorie kann verschiedene Tags haben; identische Paare sind nicht erlaubt. Kategorien verwenden Kleinbuchstaben, Ziffern und Bindestriche.',
+  'keyValueInputs.selectInput': 'Datenbankparameter: Schlüssel auswählen / Wert eingeben',
+  'keyValueInputs.selectInputDesc':
+    'Wählen Sie einen Parameter und geben Sie einen Wert ein. Jeder Parameter ist einmal verwendbar; belegte Optionen sind in anderen Zeilen deaktiviert.',
+  'keyValueInputs.inputSelect': 'Teamzuweisung: Schlüssel eingeben / Wert auswählen',
+  'keyValueInputs.inputSelectDesc':
+    'Geben Sie einen Namen ein und wählen Sie ein Team. Anzeigenamen und gespeicherte Werte können sich unterscheiden.',
+  'keyValueInputs.selectSelect': 'Bereitstellungsrichtlinie: Schlüssel auswählen / Wert auswählen',
+  'keyValueInputs.selectSelectDesc':
+    'Wertoptionen hängen vom Schlüssel ab. Ein Schlüsselwechsel leert den bisherigen Wert; jeder Schlüssel ist einmal verwendbar.',
+  'keyValueInputs.production': 'Produktion',
+  'keyValueInputs.staging': 'Staging',
+  'keyValueInputs.category': 'Kategorie',
+  'keyValueInputs.tag': 'Tag',
+  'keyValueInputs.tagKeyError':
+    'Mit einem Kleinbuchstaben beginnen; nur Kleinbuchstaben, Ziffern und Bindestriche verwenden.',
+  'keyValueInputs.save': 'Konfiguration speichern',
+  'keyValueInputs.restore': 'Standardwerte wiederherstellen',
+  'keyValueInputs.signalState': 'Live-Formularsignale',
+  'keyValueInputs.payload': 'Übermittlungsdaten',
+  'keyValueInputs.saved': 'Gespeicherter Stand',
+  'keyValueInputs.configHelp':
+    'Feldoptionen: mode (input oder select), options ({value, label, disabled}), label, placeholder, helper, required und validators ({validator, errorKey, message}). Werte bleiben Zeichenfolgen; required ist standardmäßig true.',
+  'keyValueInputs.lifecycleHelp':
+    'data füllt ein leeres FormArray einmal pro Instanz. Vorhandene Zeilen und übergeordnete Validatoren bleiben erhalten. Optionen durch neue Konfigurationsobjekte aktualisieren; nicht mehr verfügbare Werte bleiben sichtbar und bis zur Korrektur ungültig.',
+  'keyValueInputs.api.keyConfig':
+    'Schlüsselkonfiguration, standardmäßig Texteingabe. Auswahloptionen trennen Anzeigenamen und Zeichenfolgenwerte.',
+  'keyValueInputs.api.valueConfig':
+    'Wertkonfiguration oder reine Funktion des Schlüssels für abhängige Optionen oder unterschiedliche Editoren.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Leert den Wert und setzt touched/dirty bei Schlüsselwechsel zurück. Für abhängige Werte ausdrücklich aktivieren.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Verhindert identische Schlüssel/Wert-Paare; bei uniqueKey false sind gleiche Schlüssel mit verschiedenen Werten erlaubt.',
   'keyValueInputs.title': 'Wichtigste Werteeingaben',
   'keyValueInputs.overview':
     'Die <code>KeyValueInputsComponent</code> ist eine Angular-Komponente, die die Eingabe von Schlüssel-Wert-Paaren erleichtert. Sie bietet eine dynamische Form, die es den Benutzern ermöglicht, Schlüssel-Wert-Paare hinzuzufügen, zu bearbeiten und zu entfernen, mit FormArray-Integration, Echtzeitvalidierung und intuitiver Tastaturnavigation.',

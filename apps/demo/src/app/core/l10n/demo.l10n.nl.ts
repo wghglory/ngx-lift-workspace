@@ -1097,6 +1097,43 @@ export const nlTranslations: Record<string, string> = {
   'fileReader.feature3': 'Validatie van bestandsgrootte',
   'fileReader.feature4': 'Fout bij verwerken van inhoud',
   'fileReader.feature5': 'Integratie van de vormcontrole',
+  'keyValueInputs.signalIntro':
+    'Eén Reactive Forms-model stuurt alle vier combinaties aan. Bekijk validatie, uitgeschakelde velden en verzendgegevens met',
+  'keyValueInputs.editing': 'Bewerken inschakelen',
+  'keyValueInputs.inputInput': 'Vrije tags: sleutel invoeren / waarde invoeren',
+  'keyValueInputs.inputInputDesc':
+    'Een categorie kan verschillende tags hebben; identieke paren zijn niet toegestaan. Gebruik kleine letters, cijfers en koppeltekens voor categorieën.',
+  'keyValueInputs.selectInput': 'Databaseparameters: sleutel selecteren / waarde invoeren',
+  'keyValueInputs.selectInputDesc':
+    'Selecteer een parameter en voer een waarde in. Elke parameter kan eenmaal voorkomen; gebruikte opties zijn uitgeschakeld in andere rijen.',
+  'keyValueInputs.inputSelect': 'Teamtoewijzingen: sleutel invoeren / waarde selecteren',
+  'keyValueInputs.inputSelectDesc':
+    'Voer een naam in en selecteer een team. Labels en opgeslagen waarden kunnen verschillen.',
+  'keyValueInputs.selectSelect': 'Implementatiebeleid: sleutel selecteren / waarde selecteren',
+  'keyValueInputs.selectSelectDesc':
+    'Waardeopties hangen af van de sleutel. Een andere sleutel wist de vorige waarde; elke sleutel kan eenmaal worden gebruikt.',
+  'keyValueInputs.production': 'Productie',
+  'keyValueInputs.staging': 'Staging',
+  'keyValueInputs.category': 'Categorie',
+  'keyValueInputs.tag': 'Tag',
+  'keyValueInputs.tagKeyError': 'Begin met een kleine letter; gebruik alleen kleine letters, cijfers en koppeltekens.',
+  'keyValueInputs.save': 'Configuratie opslaan',
+  'keyValueInputs.restore': 'Standaardwaarden herstellen',
+  'keyValueInputs.signalState': 'Live formuliersignalen',
+  'keyValueInputs.payload': 'Verzendgegevens',
+  'keyValueInputs.saved': 'Opgeslagen momentopname',
+  'keyValueInputs.configHelp':
+    'Veldopties: mode (input of select), options ({value, label, disabled}), label, placeholder, helper, required en validators ({validator, errorKey, message}). Waarden blijven tekenreeksen; required is standaard true.',
+  'keyValueInputs.lifecycleHelp':
+    'data vult een leeg FormArray eenmaal per instantie. Bestaande rijen en bovenliggende validators blijven behouden. Werk opties bij met nieuwe configuratieobjecten; niet meer beschikbare opgeslagen waarden blijven zichtbaar en ongeldig tot correctie.',
+  'keyValueInputs.api.keyConfig':
+    'Sleutelconfiguratie met standaard tekstinvoer. Opties scheiden labels en tekenreekswaarden.',
+  'keyValueInputs.api.valueConfig':
+    'Waardeconfiguratie of zuivere functie van de sleutel voor afhankelijke opties of verschillende editors.',
+  'keyValueInputs.api.resetValueOnKeyChange':
+    'Wist de waarde en herstelt touched/dirty bij een sleutelwijziging. Expliciet inschakelen voor afhankelijke waarden.',
+  'keyValueInputs.api.uniqueKeyValuePair':
+    'Weigert identieke sleutel/waarde-paren; dezelfde sleutel met verschillende waarden is toegestaan als uniqueKey false is.',
   'keyValueInputs.title': 'Sleutelwaarde-invoer',
   'keyValueInputs.overview':
     'De <code>KeyValueInputsComponent</code> is een Angular component dat is ontworpen om sleutel-waardeparen in te voeren. Het biedt een dynamische vorm die gebruikers toestaat om sleutel-waardeparen toe te voegen, te bewerken en te verwijderen met FormArray integratie, reële tijd validatie en slimme toetsenbord navigatie.',

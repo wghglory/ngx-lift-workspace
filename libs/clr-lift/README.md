@@ -174,25 +174,29 @@ No need to mess with native `<input type="file">` change events or manual Base64
 
 ## 🧩 Component & Operator Quick Reference
 
-| Category           | Export                         | Selector / API             | Description                                                                               |
-| :----------------- | :----------------------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
-| **Datagrid**       | `dgState`                      | Operator / Utility         | Flicker-free reactive datagrid state manager with debounce & race-condition cancellation. |
-| **Feedback**       | `AlertComponent`               | `cll-alert`                | Intelligent alert container with auto-unwrapping for `Error` and `HttpErrorResponse`.     |
-|                    | `AlertContainerComponent`      | `cll-alert-container`      | Multi-alert reactive stack controlled declaratively by `AlertService`.                    |
-|                    | `ToastService`                 | Injectable Service         | Global toast dispatcher supporting `success`, `error`, `warning`, `info`.                 |
-|                    | `ToastContainerComponent`      | `cll-toast-container`      | Root toast overlay host with positioning and auto-dismiss timing.                         |
-|                    | `SpinnerComponent`             | `cll-spinner`              | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                     |
-|                    | `StatusIndicatorComponent`     | `cll-status-indicator`     | Semantic operational state badges (`success`, `warning`, `error`, `pending`).             |
-| **Navigation**     | `TimelineWizardComponent`      | `cll-timeline-wizard`      | Multi-step asynchronous wizard with timeline navigation and async step hooks.             |
-|                    | `PageContainerComponent`       | `cll-page-container`       | Standardized header, breadcrumb, action bar, and content responsive shell.                |
-| **Forms**          | `FileReaderComponent`          | `cll-file-reader`          | `ControlValueAccessor` drag-and-drop file ingestion (Text, DataURL, ArrayBuffer).         |
-|                    | `KeyValueInputsComponent`      | `cll-key-value-inputs`     | Dynamic key-value label/environment variable editor with duplicate key validation.        |
-| **Theming & i18n** | `ThemeToggleComponent`         | `cll-theme-toggle`         | Light/dark theme switch with Clarity token synchronization & persistence.                 |
-|                    | `TranslationService`           | Injectable Service         | Built-in localization service supporting 12+ enterprise locales without external libs.    |
-|                    | `TranslatePipe`                | `translate`                | Reactive pipe for localized component labels and messages.                                |
-| **Overlays**       | `CalloutComponent`             | `cll-callout`              | Lightweight contextual notice box with subtle borders.                                    |
-|                    | `CertificateSignpostComponent` | `cll-certificate-signpost` | Interactive X.509 certificate inspector showing SAN, expiry, and issuer details.          |
-|                    | `TooltipDirective`             | `[cllTooltip]`             | Dynamic declarative popover tooltip.                                                      |
+| Category           | Export                         | Selector / API             | Description                                                                                  |
+| :----------------- | :----------------------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
+| **Datagrid**       | `dgState`                      | Operator / Utility         | Flicker-free reactive datagrid state manager with debounce & race-condition cancellation.    |
+| **Feedback**       | `AlertComponent`               | `cll-alert`                | Intelligent alert container with auto-unwrapping for `Error` and `HttpErrorResponse`.        |
+|                    | `AlertContainerComponent`      | `cll-alert-container`      | Multi-alert reactive stack controlled declaratively by `AlertService`.                       |
+|                    | `ToastService`                 | Injectable Service         | Global toast dispatcher supporting `success`, `error`, `warning`, `info`.                    |
+|                    | `ToastContainerComponent`      | `cll-toast-container`      | Root toast overlay host with positioning and auto-dismiss timing.                            |
+|                    | `SpinnerComponent`             | `cll-spinner`              | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                        |
+|                    | `StatusIndicatorComponent`     | `cll-status-indicator`     | Semantic operational state badges (`success`, `warning`, `error`, `pending`).                |
+| **Navigation**     | `TimelineWizardComponent`      | `cll-timeline-wizard`      | Multi-step asynchronous wizard with timeline navigation and async step hooks.                |
+|                    | `PageContainerComponent`       | `cll-page-container`       | Standardized header, breadcrumb, action bar, and content responsive shell.                   |
+| **Forms**          | `FileReaderComponent`          | `cll-file-reader`          | `ControlValueAccessor` drag-and-drop file ingestion (Text, DataURL, ArrayBuffer).            |
+|                    | `KeyValueInputsComponent`      | `cll-key-value-inputs`     | Independent input/select key/value editors with dependent options and uniqueness validation. |
+| **Theming & i18n** | `ThemeToggleComponent`         | `cll-theme-toggle`         | Light/dark theme switch with Clarity token synchronization & persistence.                    |
+|                    | `TranslationService`           | Injectable Service         | Built-in localization service supporting 12+ enterprise locales without external libs.       |
+|                    | `TranslatePipe`                | `translate`                | Reactive pipe for localized component labels and messages.                                   |
+| **Overlays**       | `CalloutComponent`             | `cll-callout`              | Lightweight contextual notice box with subtle borders.                                       |
+|                    | `CertificateSignpostComponent` | `cll-certificate-signpost` | Interactive X.509 certificate inspector showing SAN, expiry, and issuer details.             |
+|                    | `TooltipDirective`             | `[cllTooltip]`             | Dynamic declarative popover tooltip.                                                         |
+
+For independent input/select key/value fields, dependent choices, validation, and `toSignalForm` integration, see the
+[key/value editor guide](../../docs/design/key-value-inputs.md) and the
+[interactive demo](https://ngx-lift.netlify.app/clr-lift/components/key-value-inputs).
 
 ---
 
