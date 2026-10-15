@@ -1,7 +1,8 @@
 # ngx-lift delivery priorities
 
-Updated October 15, 2026 (Asia/Shanghai). Ordered from highest to lowest priority according to the maintainer's latest
-direction.
+Updated October 15, 2026. The [component roadmap](component-roadmap.md) now owns the proposed component sequence: design
+workflow, Angular/Nx and forms, then components. Its form/API review gate holds key/value enhancements. The table below
+preserves the existing delivery backlog and evidence; its historical rank is not the new component order.
 
 🟢 **Done** means the stated scope has evidence. 🟡 **In progress / partial** identifies remaining work. ⚪ **Planned**
 and ⏸️ **Deferred** are not completed work. Local validation, remote merge and npm publication remain separate gates.
@@ -11,9 +12,9 @@ and ⏸️ **Deferred** are not completed work. Local validation, remote merge a
 | 1    | Original Priority 1: release guards, isolated package consumers, deferred heavy dependencies | 🟢 Done                                     | Release guards and strict consumer verification are implemented; production bundle metadata checks pass. The publish jobs and GitHub releases for ngx-lift 21.3.0 / clr-lift 21.2.0 succeeded.                                |
 | 2    | Original Priority 2: dictionary/Clarity coverage, diagnostics, scope and clocks              | 🟢 Engineering done; 🟡 human acceptance    | Eleven dictionaries contain all 1,726 keys with no checker errors. Lifecycle and diagnostics engineering is delivered. Independent native-speaker sign-off remains external and must not be marked done.                      |
 | 3    | Previous order 1: installed rendering compatibility                                          | 🟢 Local implementation and validation done | Commit `27a4499` runs the installed Angular 21.2 DOM fixture in separate zoneless and ZoneJS processes. Package exports, strict types and strict peer installation pass. Submitted in PR #150; remote merge remains separate. |
-| 4    | Previous order 2: dependency security                                                        | 🟡 Partial; Angular/Nx deferred             | Vitest 4.1.11, PostCSS and scoped development-tool patches remain. Angular and Nx pins restored to main; maintainer will upgrade later. Whole-tree audit remains unverified.                                                  |
+| 4    | Previous order 2: dependency security                                                        | 🟡 Partial; migration separate              | Vitest 4.1.11, PostCSS and scoped development-tool patches remain. Angular and Nx pins remain unchanged; the component foundation plan owns their migration. Whole-tree audit remains unverified.                             |
 | 5    | Previous order 8a: computedAsync error/type defect                                           | 🟢 Fixed and locally validated              | Existing API now throws unhandled failures on reads, preserves typed fallbacks and recovery, and rejects false/undefined contract violations. Breaking release decision remains separate. No new result API.                  |
-| 6    | Previous order 8b: Angular migration                                                         | ⚪ Deferred                                 | Angular 22 verification removed at maintainer request. Workspace/library build baseline remains Angular 21. Full major migration is separate work.                                                                            |
+| 6    | Previous order 8b: Angular migration                                                         | ⚪ Planned; design review first             | Promoted into the component foundation plan. Baseline remains Angular 21; Angular 22/Nx migration, compatibility and release policy are separate work, not completed verification.                                            |
 | 7    | Accessibility and independent language acceptance                                            | ⚪ Planned                                  | Keyboard/focus and automated accessibility evidence for tooltip, dialog, file-reader and wizard; named human language reviewers and recorded approval.                                                                        |
 | 8    | Existing feature PRs #137–#141                                                               | ⚪ Review pending                           | Independently review core utilities, validators, headless directives, transactional/testing APIs and Clarity directives; do not merge solely because a PR exists.                                                             |
 | 9    | Secondary entry points                                                                       | ⚪ Measure first                            | Compare installed-consumer bundle and optional-dependency boundaries before choosing splits such as ngx-lift/query or clr-lift/certificate.                                                                                   |
@@ -31,7 +32,7 @@ The [integration guide](../guides/demo-and-library-integration.md) owns loading,
 - Dictionary checks do not replace independent human language approval.
 - Strict installed Angular consumers cover zoneless and ZoneJS DOM modes, not SSR/hydration or every permitted peer.
 - computedAsync's error/type correction requires a breaking release/version decision and dependent peer-range review.
-- Angular/Nx upgrades are deferred; pins remain at the existing main baseline.
+- Angular/Nx upgrades are planned under the component roadmap's review gate; pins remain at the existing baseline.
 - Dependency advisory follow-ups remain open; unsuccessful audit access is not a clean whole-tree result.
 
 ## Documentation maintenance

@@ -2,6 +2,14 @@
 
 [Documentation index](../README.md) · [Roadmap](priority-roadmap.md)
 
+## Component planning and review
+
+Start with the [component roadmap](component-roadmap.md), [development workflow](component-development.md), and
+[spec template](templates/component-design-spec.md). New component proposals are **drafts**, separate from the
+implemented API contracts below. The component roadmap links every draft and records the key/value enhancement hold.
+
+## Existing API contracts
+
 | API                                                               | Canonical contract                                           |
 | ----------------------------------------------------------------- | ------------------------------------------------------------ |
 | queryResource, queryResources, QueryClient and Observable facades | [Query and cache](query-resource-design-spec.md)             |
