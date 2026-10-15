@@ -68,7 +68,7 @@ test.describe('FileReader component', () => {
     await expect(signpostContent).toBeVisible();
     await expect(signpostContent).toContainText('Issued To');
     await expect(signpostContent).toContainText('Issued By');
-    await expect(signpostContent).toContainText('Broadcom Inc.');
+    await expect(signpostContent).toContainText('Example Organization');
 
     // Example 2 submit button is enabled for the valid pre-filled cert
     const submitBtn = example2.locator('button[type="submit"]');

@@ -412,12 +412,12 @@ export const ruTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Используйте звонок <code>onError</code> для грациозной обработки ошибок и создания запасных значений. Когда <code>onError</code> возвращает значение, сигнал излучает это значение вместо того, чтобы запустить ошибку:',
   'computedAsync.onErrorCallout':
-    'Функция <code>onError</code> получает ошибку и возвращает резервное значение. Возврат <code>undefined</code> устанавливает значение сигнала в undefined. Без обработчика прежнее поведение по умолчанию сохраняет объект ошибки как значение сигнала; задайте корректное резервное значение или используйте <code>throwOnError</code>.',
-  'computedAsync.example12': 'Пример 12: Обработка ошибок с throwOnError',
+    'Обработчик <code>onError</code> возвращает резервное значение типа T. При необходимости явно включите <code>undefined</code> в T. Необработанные ошибки и исключения обработчика выбрасываются при чтении signal и никогда не становятся успешными данными.',
+  'computedAsync.example12': 'Пример 12: По умолчанию ошибка выбрасывается при чтении',
   'computedAsync.example12Desc':
-    'Используйте <code>throwOnError: true</code> для распространения ошибок вместо того, чтобы молча обращаться с ними. Это полезно, когда вы хотите, чтобы ошибки пузырьировали до глобального оператора ошибок:',
+    'Необработанные ошибки выбрасываются при чтении signal. Перехватите ошибку чтения или верните типизированное резервное значение через <code>onError</code>.',
   'computedAsync.throwOnErrorCallout':
-    'Когда <code>throwOnError: true</code>, ошибки будут выброшены, даже если <code>onError</code> будет предоставлен. Возврат <code>onError</code> все еще может быть использован для заготовки или побочных эффектов до появления ошибки.',
+    '<code>throwOnError: true</code> выполняет <code>onError</code> для побочных эффектов и всё равно выбрасывает ошибку; возвращаемое значение игнорируется. <code>throwOnError: false</code> больше не поддерживается.',
   'computedAsync.example13': 'Пример 13: Переключение вкладок с отменой запроса (устойчивость потока)',
   'computedAsync.example13Desc':
     'В многотабличном UIs, быстро переключая вкладки, можно вызвать параллельные запросы в тех случаях, когда запросы в ходе полета отменяются или отменяются (например, отмена браузера).',
@@ -2215,4 +2215,13 @@ export const ruTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Имена ссылок на запросы и мутации',
   'queryGuide.namingHandles':
     'Используйте <code>userQuery</code> для одного запроса, <code>tenantQueries</code> для коллекции и <code>createMutation</code> для записи. Имена <code>user</code> или <code>tenant</code> оставляйте для полученных данных.',
+
+  'computedAsync.failSource': 'Вызвать ошибку источника',
+  'computedAsync.recoverSource': 'Восстановить источник',
+  'computedAsync.readSignal': 'Прочитать signal',
+  'computedAsync.lastRead': 'Последнее чтение',
+  'computedAsync.notRead': 'Ещё не прочитано',
+  'computedAsync.readError': 'При чтении выброшена ошибка; успешное значение не возвращено.',
+  'computedAsync.readDemoHint':
+    'Вызовите ошибку источника и прочитайте signal. Восстановите источник и прочитайте снова для проверки восстановления.',
 };

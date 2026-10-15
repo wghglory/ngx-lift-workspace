@@ -4,6 +4,9 @@ import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {afterEach, vi} from 'vitest';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
+import {of} from 'rxjs';
+import {UserService} from '../../../../shared/services/user.service';
+
 import {PollComponent} from './poll.component';
 
 describe('PollComponent', () => {
@@ -17,6 +20,9 @@ describe('PollComponent', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), provideNoopAnimations()],
     }).compileComponents();
 
+    vi.spyOn(TestBed.inject(UserService), 'getUsers').mockReturnValue(
+      of({results: [], info: {page: 1, results: 0, seed: 'test', version: '1', total: 0}}),
+    );
     fixture = TestBed.createComponent(PollComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

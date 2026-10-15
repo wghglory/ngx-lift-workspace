@@ -136,7 +136,7 @@ import {AlertComponent} from 'clr-lift';
 export class AlertProjectionExampleComponent { }
   `);
 
-  standardSmallAlertCode = highlight(`
+  smallAlertCode = highlight(`
 import {AlertComponent} from 'clr-lift';
 
 @Component({

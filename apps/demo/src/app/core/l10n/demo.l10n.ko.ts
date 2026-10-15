@@ -394,12 +394,12 @@ export const koTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'onError 콜백을 사용하여 오류를 부드럽게 처리하고 대체 값을 제공할 수 있습니다. onError가 값을 반환하면 시그널은 해당 값을 발행하고 오류를 던지지 않습니다:',
   'computedAsync.onErrorCallout':
-    '<code>onError</code> 콜백은 오류를 받아 대체 값을 반환합니다. <code>undefined</code>를 반환하면 signal 값도 undefined가 됩니다. 처리기가 없으면 기존 기본 동작은 오류 객체를 signal 값으로 저장합니다. 유효한 대체 값을 반환하거나 <code>throwOnError</code>를 사용하세요.',
-  'computedAsync.example12': '예제 12: throwOnError를 사용한 오류 처리',
+    '<code>onError</code> 콜백은 T 타입의 대체 값을 반환합니다. 필요한 경우 <code>undefined</code>를 T에 명시적으로 포함하세요. 처리되지 않은 실패와 콜백 예외는 signal을 읽을 때 발생하며 성공 데이터가 되지 않습니다.',
+  'computedAsync.example12': '예제 12: 기본적으로 읽을 때 오류 발생',
   'computedAsync.example12Desc':
-    'throwOnError: true를 사용하여 오류를 상위로 전파하도록 할 수 있습니다. 이는 오류가 전역 오류 처리기로 브러시를 전달하고자 할 때 유용합니다:',
+    '처리되지 않은 실패는 signal을 읽을 때 발생합니다. 읽기를 포착하거나 <code>onError</code>로 타입에 맞는 대체 값을 반환하세요.',
   'computedAsync.throwOnErrorCallout':
-    'throwOnError: true일 경우, onError가 제공되어도 오류가 던져집니다. onError 콜백은 오류가 던지기 전에 로그 기록 또는 부작용을 위해 사용할 수 있습니다.',
+    '<code>throwOnError: true</code>는 부수 효과를 위해 <code>onError</code>를 실행한 뒤에도 오류를 발생시키며 반환값을 무시합니다. <code>throwOnError: false</code>는 더 이상 지원되지 않습니다.',
   'computedAsync.example13': '예제 13: 탭 전환과 함께 요청 중단 (스트림 회복)',
   'computedAsync.example13Desc':
     '다중 탭 UI에서 탭을 빠르게 전환하면 동시 요청이 발생하고, 진행 중인 요청이 중단되거나 실패할 수 있습니다(예: 브라우저 네비게이션 중단).',
@@ -2100,4 +2100,12 @@ export const koTranslations: Record<string, string> = {
   'queryGuide.namingTitle': '쿼리 및 뮤테이션 참조 이름',
   'queryGuide.namingHandles':
     '단일 쿼리는 <code>userQuery</code>, 컬렉션은 <code>tenantQueries</code>, 쓰기 작업은 <code>createMutation</code>으로 이름을 지정합니다. <code>user</code> 또는 <code>tenant</code>는 반환된 데이터에 사용합니다.',
+
+  'computedAsync.failSource': '소스 실패시키기',
+  'computedAsync.recoverSource': '소스 복구',
+  'computedAsync.readSignal': 'signal 읽기',
+  'computedAsync.lastRead': '마지막 읽기',
+  'computedAsync.notRead': '아직 읽지 않음',
+  'computedAsync.readError': '읽을 때 오류가 발생하여 성공 값이 반환되지 않았습니다.',
+  'computedAsync.readDemoHint': '소스를 실패시킨 뒤 signal을 읽으세요. 소스를 복구하고 다시 읽어 복구를 확인하세요.',
 };

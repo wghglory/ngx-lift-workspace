@@ -394,12 +394,12 @@ export const enTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Use the <code>onError</code> callback to handle errors gracefully and provide fallback values. When <code>onError</code> returns a value, the signal will emit that value instead of throwing an error:',
   'computedAsync.onErrorCallout':
-    'The <code>onError</code> callback receives the error and returns a fallback value. Returning <code>undefined</code> sets the signal value to undefined. Without a handler, the legacy default stores the error object as the signal value; provide a valid fallback or use <code>throwOnError</code>.',
-  'computedAsync.example12': 'Example 12: Error Handling with throwOnError',
+    'The <code>onError</code> callback returns a fallback of type T. Include <code>undefined</code> in T explicitly if needed. Unhandled failures and throwing callbacks throw when the signal is read; failures never become success data.',
+  'computedAsync.example12': 'Example 12: Default Errors Throw on Read',
   'computedAsync.example12Desc':
-    'Use <code>throwOnError: true</code> to propagate errors up instead of silently handling them. This is useful when you want errors to bubble up to a global error handler:',
+    'Unhandled failures throw when the signal is read. Catch the read or use <code>onError</code> for a typed fallback.',
   'computedAsync.throwOnErrorCallout':
-    'When <code>throwOnError: true</code>, errors will be thrown even if <code>onError</code> is provided. The <code>onError</code> callback can still be used for logging or side effects before the error throws.',
+    '<code>throwOnError: true</code> runs <code>onError</code> for side effects and still throws; its return value is ignored. <code>throwOnError: false</code> is no longer supported.',
   'computedAsync.example13': 'Example 13: Tab Switching with Request Cancellation (Stream Resilience)',
   'computedAsync.example13Desc':
     'In multi-tab UIs, switching tabs rapidly can trigger concurrent requests where in-flight requests get aborted or fail (e.g. browser navigation cancellations).',
@@ -2142,4 +2142,13 @@ export const enTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Naming query and mutation handles',
   'queryGuide.namingHandles':
     'Use <code>userQuery</code> for one query, <code>tenantQueries</code> for a collection, and <code>createMutation</code> for a write. Reserve <code>user</code> or <code>tenant</code> for the resolved data.',
+
+  'computedAsync.failSource': 'Fail source',
+  'computedAsync.recoverSource': 'Recover source',
+  'computedAsync.readSignal': 'Read signal',
+  'computedAsync.lastRead': 'Last read',
+  'computedAsync.notRead': 'Not read yet',
+  'computedAsync.readError': 'The read threw; no success value was returned.',
+  'computedAsync.readDemoHint':
+    'Fail the source, then read the signal. Recover the source and read again to verify recovery.',
 };

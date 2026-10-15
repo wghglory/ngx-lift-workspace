@@ -278,7 +278,7 @@ export class ResourceAsyncComponent {
         gender: 'male',
         name: {first: 'Fallback', last: 'User', title: 'Mr'},
         email: 'fallback@example.com',
-        picture: {large: 'https://via.placeholder.com/150', medium: '', thumbnail: ''},
+        picture: {large: '/user-fallback.svg', medium: '/user-fallback.svg', thumbnail: '/user-fallback.svg'},
         id: {name: '', value: '0'},
         phone: '',
         cell: '',
