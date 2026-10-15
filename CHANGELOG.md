@@ -17,11 +17,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   data; callback exceptions throw on reads. The false throwOnError option is rejected, and initialized sources and
   fallbacks must match T. Include undefined explicitly in T when needed. Existing source recovery is preserved. This
   requires a breaking release/version decision before publication; see the computedAsync design specification.
+- IdleDetectionService interruption events no longer reset the active countdown phase. Ordinary user activity (mouse
+  movement, keystrokes, clicks) leaves warning countdowns running; only explicit `resetTimer(true)` confirmation resets
+  the countdown and starts a fresh idle cycle.
 
 ### Changed
 
-- Idle warnings remain open during ordinary activity. Only explicit `resetTimer(true)` confirmation cancels the
-  countdown and starts a fresh idle cycle; mouse movement and keystrokes no longer postpone timeout.
 - Vitest/UI/coverage updated to 4.1.11; PostCSS minimum raised to 8.5.23, with scoped development-tool overrides.
   Angular and Nx upgrades are deferred to the maintainer; their pins match the existing main-branch baseline.
 

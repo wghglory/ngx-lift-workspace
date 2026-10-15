@@ -405,6 +405,19 @@ describe('IdleDetectionService', () => {
     expect(service['countdown']).toBe(5);
   });
 
+  it('ignores resetTimer() without countdown reset during active countdown', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    const timeout = vi.fn();
+    service.onTimeoutEnd().subscribe(timeout);
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(service['isCountingDown']).toBe(true);
+    service.resetTimer(false);
+    expect(service['isCountingDown']).toBe(true);
+    await vi.advanceTimersByTimeAsync(4000);
+    expect(timeout).toHaveBeenCalledTimes(1);
+  });
+
   it('should handle all interruption event types', async () => {
     service.startWatching();
     const events = [

@@ -169,5 +169,4 @@ Made by [Guanghui Wang](https://github.com/wghglory)
 
 Run [the validation commands](docs/COMMANDS.md) before submitting changes. The
 [integration guide](docs/guides/demo-and-library-integration.md) describes loading/localization ownership and acceptance
-limits; [publishing](docs/DEPLOYMENT.md) describes release gates. Source examples use local fixtures by default; opt
-into DEMO_LIVE_USERS only when demonstrating external HTTP transport.
+limits; [publishing](docs/DEPLOYMENT.md) describes release gates.

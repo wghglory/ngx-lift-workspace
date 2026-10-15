@@ -66,6 +66,8 @@ type OptionsWithInitialValue<T> = {initialValue: T} & BaseOptions<T>;
 type OptionsWithOptionalInitialValue<T> = {initialValue?: undefined} & BaseOptions<T>;
 type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
 
+type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; error: unknown};
+
 /**
  * Creates a computed signal that can derive its value from asynchronous sources
  * (Observables, Promises) or synchronous values. The signal automatically updates
@@ -139,15 +141,11 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  *     throwOnError: true,
  *     onError: (error) => {
  *       this.logService.error(error);
- *       throw error; // Re-throw after logging
  *     }
  *   }
  * );
  * ```
  */
-type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; error: unknown};
-
-// without options
 export function computedAsync<T>(
   computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
 ): Signal<T | undefined>;
