@@ -177,11 +177,6 @@ export class QueryResourcesDemoComponent {
     this.queryClient.invalidateTags([{type: 'k8s-fleet-demo'}]);
   }
 
-  reloadClusterItem(clusterId: string) {
-    const item = this.clusterItemQueries().find((q) => q.item().id === clusterId);
-    item?.reload();
-  }
-
   readonly dynamicCode = highlight(`// Component fields (with HttpClient injected as this.http).
 readonly selectedIds = signal(['a']);
 readonly tenantQueries = queryResources(this.selectedIds, (id) => ({

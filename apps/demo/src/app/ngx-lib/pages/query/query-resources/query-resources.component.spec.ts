@@ -93,7 +93,7 @@ describe('queryResources guide', () => {
     // Test individual cluster item reload
     const eastCluster = component.clusterItemQueries().find((q) => q.item().id === 'cluster-us-east');
     expect(eastCluster?.isRefreshing()).toBe(false);
-    component.reloadClusterItem('cluster-us-east');
+    eastCluster?.reload();
     fixture.detectChanges();
     expect(eastCluster?.isRefreshing()).toBe(true);
     expect(component.isFleetRefreshing()).toBe(true);
@@ -110,11 +110,26 @@ describe('queryResources guide', () => {
     expect(component.clustersBulkQuery.isRefreshing()).toBe(false);
 
     // Test granular fleet reload
+    const rows = component.clusterItemQueries();
+    const previousValues = rows.map((query) => query.value());
+    const previousUpdatedAt = rows.map((query) => query.updatedAt());
+    const bulkUpdatedAt = component.clustersBulkQuery.updatedAt();
     component.reloadGranularFleet();
     fixture.detectChanges();
-    expect(component.isFleetRefreshing()).toBe(true);
+
+    expect(component.clustersListQuery.isRefreshing()).toBe(true);
+    expect(rows.every((query) => query.isRefreshing())).toBe(true);
+    expect(rows.map((query) => query.value())).toEqual(previousValues);
+    expect(component.clustersBulkQuery.isRefreshing()).toBe(false);
+
     await vi.advanceTimersByTimeAsync(1500);
     fixture.detectChanges();
+
+    expect(component.clusterItemQueries()).toEqual(rows);
+    rows.forEach((query, index) => {
+      expect(query.updatedAt()).toBeGreaterThan(previousUpdatedAt[index] ?? 0);
+    });
     expect(component.isFleetRefreshing()).toBe(false);
+    expect(component.clustersBulkQuery.updatedAt()).toBe(bulkUpdatedAt);
   });
 });

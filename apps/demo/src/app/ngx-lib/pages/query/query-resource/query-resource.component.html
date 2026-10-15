@@ -343,7 +343,7 @@
             <span class="badge badge-info">{{
               'queryResource.actualHttpCalls' | translate: [coalesceFetchCount()]
             }}</span>
-            <button class="btn btn-sm btn-primary" (click)="refreshMetrics()">
+            <button type="button" class="btn btn-sm btn-primary" (click)="refreshMetrics()">
               {{ 'queryResource.reloadQuery' | translate }}
             </button>
           </div>
@@ -451,7 +451,7 @@
           <div>
             <span class="badge badge-info">{{ 'queryResource.networkCalls' | translate: [cacheNetworkCount()] }}</span>
           </div>
-          <button class="btn btn-sm btn-outline" (click)="cacheQuery.reload()">
+          <button type="button" class="btn btn-sm btn-outline" (click)="cacheQuery.reload()">
             {{ 'queryResource.triggerReadReload' | translate }}
           </button>
         </div>
@@ -520,7 +520,7 @@
       <div preview>
         <div cds-layout="vertical gap:sm">
           <div class="query-actions">
-            <button class="btn btn-sm btn-outline" (click)="togglePolling()">
+            <button type="button" class="btn btn-sm btn-outline" (click)="togglePolling()">
               {{ (pollingEnabled() ? 'queryResource.stopPolling' : 'queryResource.startPolling') | translate }}
             </button>
             <span class="badge badge-info">{{
@@ -554,7 +554,7 @@
   </section>
 
   <!-- ==================== DEMO 4: MUTATIONS & TAG INVALIDATION ==================== -->
-  <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+  <section data-testid="query-demo-mutation" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2>{{ 'queryResource.demo4Section' | translate }}</h2>
     <p [innerHTML]="'queryResource.demo4SectionDesc' | translate"></p>
 

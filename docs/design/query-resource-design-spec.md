@@ -602,11 +602,14 @@ export class ClusterMonitorService {
   private readonly http = inject(HttpClient);
   readonly monitoredNodeIds = signal<string[]>(['node-1', 'node-2', 'node-3']);
 
-  readonly nodeQueries = queryResources(this.monitoredNodeIds, (nodeId) => ({
-    key: ['nodes', nodeId, 'health'],
-    loader: () => this.http.get<NodeHealth>(`/api/nodes/${nodeId}/health`),
-    pollInterval: 10_000,
-  }));
+  readonly nodeQueries = queryResources(
+    this.monitoredNodeIds,
+    (nodeId) => ({
+      key: ['nodes', nodeId, 'health'],
+      loader: () => this.http.get<NodeHealth>(`/api/nodes/${nodeId}/health`),
+    }),
+    {pollInterval: 10_000},
+  );
 }
 ```
 
@@ -621,6 +624,9 @@ applications.
 `fetchQueryObservable` and `observeQueryObservable` are **low-level interop adapters** provided specifically for
 boundaries where an RxJS `Observable` contract is mandatory (such as Angular Route Resolvers, Route Guards, NgRx
 Effects, or existing operator chains).
+
+The interactive query demos focus on `queryResource`, `queryResources`, and `mutateResource`. Low-level adapter examples
+remain documented below rather than adding a separate interactive adapter component.
 
 ### Architectural Decision: Why NO Parallel `fetchQuery$` or `query$`
 
@@ -725,11 +731,14 @@ export class LegacyFleetStore {
   private readonly client = inject(QUERY_CLIENT);
   private readonly http = inject(HttpClient);
 
-  readonly fleetSnapshot$: Observable<QuerySnapshot<FleetMetrics>> = observeQueryObservable(this.client, {
-    key: ['fleet', 'metrics'],
-    loader: () => this.http.get<FleetMetrics>('/api/fleet'),
-    pollInterval: 5000,
-  });
+  readonly fleetSnapshot$: Observable<QuerySnapshot<FleetMetrics>> = observeQueryObservable(
+    this.client,
+    {
+      key: ['fleet', 'metrics'],
+      loader: () => this.http.get<FleetMetrics>('/api/fleet'),
+    },
+    {pollInterval: 5000},
+  );
 }
 ```
 
