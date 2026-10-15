@@ -10,7 +10,6 @@
     <a routerLink="/ngx-lift/query/queryResource"><code>queryResource</code></a>
   </p>
   <section class="query-section" data-testid="query-demo-dynamic">
-    <h2>{{ 'queryExamples.dynamic' | translate }}</h2>
     <app-demo-playground
       [title]="'queryExamples.dynamic' | translate"
       [description]="'queryExamples.dynamicIntro' | translate"
@@ -44,7 +43,6 @@
     </app-demo-playground>
   </section>
   <section class="query-section" data-testid="failure-rows">
-    <h2>{{ 'queryExamples.partialFailure' | translate }}</h2>
     <app-demo-playground
       [title]="'queryExamples.partialFailure' | translate"
       [description]="'queryGuide.partialIntro' | translate"
@@ -79,70 +77,80 @@
     <h2>{{ 'queryResources.k8sComparisonTitle' | translate }}</h2>
     <p>{{ 'queryResources.k8sComparisonDesc' | translate }}</p>
 
-    <clr-tabs>
+    <clr-tabs cds-layout="m-t:sm">
       <!-- Tab 1: Approach 1 -->
       <clr-tab>
         <button clrTabLink id="tab-k8s-traditional">{{ 'queryResources.traditionalTab' | translate }}</button>
         <clr-tab-content id="tab-content-k8s-traditional" *clrIfActive>
-          <div class="card m-t-sm">
-            <div class="card-header" cds-layout="horizontal align:vertical-center justify:between">
-              <span>{{ 'queryResources.traditionalDesc' | translate }}</span>
-              <button
-                type="button"
-                class="btn btn-sm btn-outline"
-                [clrLoading]="clustersBulkQuery.isRefreshing()"
-                (click)="reloadBulkFleet()"
-              >
-                <clr-icon shape="refresh" />
-                {{ 'queryResources.refreshFleet' | translate }}
-              </button>
-            </div>
-            <div class="card-block">
-              <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-b-sm">
-                <clr-alert-item>
-                  <span class="alert-text">{{ 'queryResources.headOfLineWarning' | translate }}</span>
-                </clr-alert-item>
-              </clr-alert>
-
-              @if (clustersBulkQuery.isInitialLoading()) {
-                <div class="text-center p-y-md">
-                  <cll-spinner [size]="'md'" />
-                </div>
-              } @else if (clustersBulkQuery.value(); as rows) {
-                <clr-datagrid>
-                  <clr-dg-column>{{ 'queryResources.clusterName' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.providerRegion' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.activeNodes' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.healthStatus' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.latency' | translate }}</clr-dg-column>
-
-                  <clr-dg-row *clrDgItems="let row of rows">
-                    <clr-dg-cell
-                      ><strong>{{ row.name }}</strong></clr-dg-cell
-                    >
-                    <clr-dg-cell>{{ row.provider }} ({{ row.region }})</clr-dg-cell>
-                    <clr-dg-cell>{{ row.metrics?.activeNodes ?? '-' }}</clr-dg-cell>
-                    <clr-dg-cell>
-                      @if (row.metrics; as m) {
-                        <span
-                          class="label"
-                          [class.label-success]="m.status === 'healthy'"
-                          [class.label-warning]="m.status === 'degraded'"
-                        >
-                          {{ m.status }}
-                        </span>
-                      } @else {
-                        <span class="label label-danger">{{ row.error ?? 'Error' }}</span>
-                      }
-                    </clr-dg-cell>
-                    <clr-dg-cell>{{ row.metrics ? row.metrics.latencyMs + 'ms' : '-' }}</clr-dg-cell>
-                  </clr-dg-row>
-                </clr-datagrid>
-              }
-            </div>
-          </div>
           <div class="m-t-sm">
-            <pre class="query-code-block"><code [innerHTML]="k8sTraditionalCode"></code></pre>
+            <app-demo-playground
+              [title]="'queryResources.traditionalTab' | translate"
+              [description]="'queryResources.traditionalDesc' | translate"
+              level="intermediate"
+              layout="split"
+              [tsCode]="k8sTraditionalCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:sm">
+                  <div class="query-actions" cds-layout="vertical gap:sm align:start">
+                    <p class="m-0">{{ 'queryResources.traditionalDesc' | translate }}</p>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline"
+                      [clrLoading]="clustersBulkQuery.isRefreshing()"
+                      (click)="reloadBulkFleet()"
+                    >
+                      <clr-icon shape="refresh" />
+                      {{ 'queryResources.refreshFleet' | translate }}
+                    </button>
+                  </div>
+
+                  <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-b-sm">
+                    <clr-alert-item>
+                      <span class="alert-text">{{ 'queryResources.headOfLineWarning' | translate }}</span>
+                    </clr-alert-item>
+                  </clr-alert>
+
+                  @if (clustersBulkQuery.isInitialLoading()) {
+                    <div class="text-center p-y-md">
+                      <cll-spinner [size]="'md'" />
+                    </div>
+                  } @else if (clustersBulkQuery.value(); as rows) {
+                    <clr-datagrid>
+                      <clr-dg-column>{{ 'queryResources.clusterName' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.providerRegion' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.activeNodes' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.healthStatus' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.latency' | translate }}</clr-dg-column>
+
+                      @for (row of rows; track row.id) {
+                        <clr-dg-row [clrDgItem]="row">
+                          <clr-dg-cell
+                            ><strong>{{ row.name }}</strong></clr-dg-cell
+                          >
+                          <clr-dg-cell>{{ row.provider }} ({{ row.region }})</clr-dg-cell>
+                          <clr-dg-cell>{{ row.metrics?.activeNodes ?? '-' }}</clr-dg-cell>
+                          <clr-dg-cell>
+                            @if (row.metrics; as m) {
+                              <span
+                                class="label"
+                                [class.label-success]="m.status === 'healthy'"
+                                [class.label-warning]="m.status === 'degraded'"
+                              >
+                                {{ m.status }}
+                              </span>
+                            } @else {
+                              <span class="label label-danger">{{ row.error ?? 'Error' }}</span>
+                            }
+                          </clr-dg-cell>
+                          <clr-dg-cell>{{ row.metrics ? row.metrics.latencyMs + 'ms' : '-' }}</clr-dg-cell>
+                        </clr-dg-row>
+                      }
+                    </clr-datagrid>
+                  }
+                </div>
+              </div>
+            </app-demo-playground>
           </div>
         </clr-tab-content>
       </clr-tab>
@@ -151,91 +159,101 @@
       <clr-tab>
         <button clrTabLink id="tab-k8s-granular">{{ 'queryResources.granularTab' | translate }}</button>
         <clr-tab-content id="tab-content-k8s-granular" *clrIfActive>
-          <div class="card m-t-sm">
-            <div class="card-header" cds-layout="horizontal align:vertical-center justify:between">
-              <span>{{ 'queryResources.granularDesc' | translate }}</span>
-              <button
-                type="button"
-                class="btn btn-sm btn-primary"
-                [clrLoading]="isFleetRefreshing()"
-                (click)="reloadGranularFleet()"
-              >
-                <clr-icon shape="refresh" />
-                {{ 'queryResources.refreshFleet' | translate }}
-              </button>
-            </div>
-            <div class="card-block">
-              <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false" class="m-b-sm">
-                <clr-alert-item>
-                  <span class="alert-text">{{ 'queryResources.progressiveNotice' | translate }}</span>
-                </clr-alert-item>
-              </clr-alert>
-
-              @if (clustersListQuery.isInitialLoading()) {
-                <div class="text-center p-y-md">
-                  <cll-spinner [size]="'md'" />
-                </div>
-              } @else {
-                <clr-datagrid>
-                  <clr-dg-column>{{ 'queryResources.clusterName' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.providerRegion' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.activeNodes' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.healthStatus' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.latency' | translate }}</clr-dg-column>
-                  <clr-dg-column>{{ 'queryResources.actions' | translate }}</clr-dg-column>
-
-                  <clr-dg-row *clrDgItems="let query of clusterItemQueries(); trackBy: trackByClusterKey">
-                    <clr-dg-cell
-                      ><strong>{{ query.item().name }}</strong></clr-dg-cell
-                    >
-                    <clr-dg-cell>{{ query.item().provider }} ({{ query.item().region }})</clr-dg-cell>
-                    <clr-dg-cell>
-                      @if (query.isLoading() && !query.hasValue()) {
-                        <cll-spinner inline [size]="'sm'" />
-                      } @else {
-                        {{ query.value()?.activeNodes ?? '-' }}
-                      }
-                    </clr-dg-cell>
-                    <clr-dg-cell>
-                      @if (query.isRefreshing()) {
-                        <cll-spinner inline [size]="'sm'" class="m-r-xs" />
-                      }
-                      @if (query.value(); as m) {
-                        <span
-                          class="label"
-                          [class.label-success]="m.status === 'healthy'"
-                          [class.label-warning]="m.status === 'degraded'"
-                        >
-                          {{ m.status }}
-                        </span>
-                      } @else if (query.isInitialError()) {
-                        <span class="label label-danger">Failed</span>
-                      }
-                    </clr-dg-cell>
-                    <clr-dg-cell>
-                      @if (query.value(); as m) {
-                        {{ m.latencyMs }}ms
-                      } @else {
-                        -
-                      }
-                    </clr-dg-cell>
-                    <clr-dg-cell>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-link p-0 m-0"
-                        [clrLoading]="query.isRefreshing()"
-                        (click)="reloadClusterItem(query.item().id)"
-                      >
-                        {{ 'queryResources.refreshCluster' | translate }}
-                      </button>
-                    </clr-dg-cell>
-                  </clr-dg-row>
-                </clr-datagrid>
-              }
-            </div>
-          </div>
           <div class="m-t-sm">
-            <pre class="query-code-block"><code [innerHTML]="k8sGranularCode"></code></pre>
+            <app-demo-playground
+              [title]="'queryResources.granularTab' | translate"
+              [description]="'queryResources.granularDesc' | translate"
+              level="advanced"
+              layout="split"
+              [tsCode]="k8sGranularCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:sm">
+                  <div class="query-actions" cds-layout="vertical gap:sm align:start">
+                    <p class="m-0">{{ 'queryResources.granularDesc' | translate }}</p>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-primary"
+                      [clrLoading]="isFleetRefreshing()"
+                      (click)="reloadGranularFleet()"
+                    >
+                      <clr-icon shape="refresh" />
+                      {{ 'queryResources.refreshFleet' | translate }}
+                    </button>
+                  </div>
+
+                  <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false" class="m-b-sm">
+                    <clr-alert-item>
+                      <span class="alert-text">{{ 'queryResources.progressiveNotice' | translate }}</span>
+                    </clr-alert-item>
+                  </clr-alert>
+
+                  @if (clustersListQuery.isInitialLoading()) {
+                    <div class="text-center p-y-md">
+                      <cll-spinner [size]="'md'" />
+                    </div>
+                  } @else {
+                    <clr-datagrid>
+                      <clr-dg-column>{{ 'queryResources.clusterName' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.providerRegion' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.activeNodes' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.healthStatus' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.latency' | translate }}</clr-dg-column>
+                      <clr-dg-column>{{ 'queryResources.actions' | translate }}</clr-dg-column>
+
+                      @for (query of clusterItemQueries(); track query.key) {
+                        <clr-dg-row [clrDgItem]="query">
+                          <clr-dg-cell
+                            ><strong>{{ query.item().name }}</strong></clr-dg-cell
+                          >
+                          <clr-dg-cell>{{ query.item().provider }} ({{ query.item().region }})</clr-dg-cell>
+                          <clr-dg-cell>
+                            @if (query.isLoading() && !query.hasValue()) {
+                              <cll-spinner inline [size]="'sm'" />
+                            } @else {
+                              {{ query.value()?.activeNodes ?? '-' }}
+                            }
+                          </clr-dg-cell>
+                          <clr-dg-cell>
+                            @if (query.isRefreshing()) {
+                              <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                            }
+                            @if (query.value(); as m) {
+                              <span
+                                class="label"
+                                [class.label-success]="m.status === 'healthy'"
+                                [class.label-warning]="m.status === 'degraded'"
+                              >
+                                {{ m.status }}
+                              </span>
+                            } @else if (query.isInitialError()) {
+                              <span class="label label-danger">Failed</span>
+                            }
+                          </clr-dg-cell>
+                          <clr-dg-cell>
+                            @if (query.value(); as m) {
+                              {{ m.latencyMs }}ms
+                            } @else {
+                              -
+                            }
+                          </clr-dg-cell>
+                          <clr-dg-cell>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-link p-0 m-0"
+                              [clrLoading]="query.isRefreshing()"
+                              (click)="reloadClusterItem(query.item().id)"
+                            >
+                              {{ 'queryResources.refreshCluster' | translate }}
+                            </button>
+                          </clr-dg-cell>
+                        </clr-dg-row>
+                      }
+                    </clr-datagrid>
+                  }
+                </div>
+              </div>
+            </app-demo-playground>
           </div>
         </clr-tab-content>
       </clr-tab>

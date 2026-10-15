@@ -82,13 +82,13 @@ describe('QueryResourceDemoComponent', () => {
   it('introduces the tool before examples and uses Clarity controls and status labels', () => {
     const root: HTMLElement = fixture.nativeElement;
     const intro = root.querySelector('[data-testid="query-introduction"]');
-    const examples = root.querySelector('[data-testid="observable-query-examples"]');
-    if (!intro || !examples) throw new Error('Missing guide introduction or examples');
-    expect(intro.compareDocumentPosition(examples) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const coalesce = root.querySelector('[data-testid="query-demo-coalesce"]');
+    if (!intro || !coalesce) throw new Error('Missing guide introduction or coalesce demo');
+    expect(intro.compareDocumentPosition(coalesce) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(root.querySelector('clr-select-container select[clrSelect]')).not.toBeNull();
     expect(root.querySelector('[data-testid="query-demo-dynamic"]')).toBeNull();
     expect(root.querySelector('[data-testid="query-failure-examples"] .card')).toBeNull();
-    expect(root.querySelector('[data-testid="query-demo-parallel"] .label')).not.toBeNull();
+    expect(root.querySelector('[data-testid="query-demo-coalesce"] .label')).not.toBeNull();
   });
 
   it('updates live diagnostics snapshot', () => {

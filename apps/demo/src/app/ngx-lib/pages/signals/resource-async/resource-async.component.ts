@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, 
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {ClarityModule} from '@clr/angular';
+import {ClarityIcons, minusIcon, plusIcon} from '@clr/angular/icon';
 import {
   AlertComponent,
   CalloutComponent,
@@ -21,6 +22,8 @@ import {UserCardComponent} from '../../../../shared/components/user-card/user-ca
 import {User} from '../../../../shared/models/user.model';
 import {UserService} from '../../../../shared/services/user.service';
 import {highlight} from '../../../../shared/utils/highlight.util';
+
+ClarityIcons.addIcons(minusIcon, plusIcon);
 
 interface RegistrationPayload {
   username: string;

@@ -3,8 +3,10 @@ import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
+import {ClarityIcons, refreshIcon} from '@clr/angular/icon';
 import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
-import {QUERY_CLIENT, QueryClient, queryResource, QueryResourceItem, queryResources} from 'ngx-lift';
+
+import {QUERY_CLIENT, QueryClient, queryResource, queryResources} from 'ngx-lift';
 import {forkJoin, Observable, of} from 'rxjs';
 import {catchError, delay, map, switchMap} from 'rxjs/operators';
 
@@ -13,6 +15,8 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 import {DemoTenant, QueryDemoBackend} from '../query-resource/query-demo-backend';
 import {FailureDemoData, QueryFailureBackend} from '../query-resource/query-failure-backend';
 import {QueryStatusDirective} from '../query-status.directive';
+
+ClarityIcons.addIcons(refreshIcon);
 
 export interface K8sCluster {
   id: string;
@@ -27,6 +31,11 @@ export interface K8sClusterMetrics {
   activeNodes: number;
   status: 'healthy' | 'degraded';
   latencyMs: number;
+}
+
+export interface K8sClusterBulkItem extends K8sCluster {
+  metrics: K8sClusterMetrics | null;
+  error?: string;
 }
 
 const K8S_CLUSTERS: readonly K8sCluster[] = [
@@ -119,17 +128,17 @@ export class QueryResourcesDemoComponent {
   }
 
   // Approach 1: Traditional Bulk Aggregation with forkJoin
-  readonly clustersBulkQuery = queryResource(() => ({
+  readonly clustersBulkQuery = queryResource<K8sClusterBulkItem[]>(() => ({
     key: ['k8s-demo', 'clusters-bulk-fleet'],
     staleTime: 30_000,
     loader: () =>
       this.fetchK8sClusters().pipe(
         switchMap((clusters) => {
-          if (!clusters.length) return of([]);
-          const requests = clusters.map((c) =>
+          if (!clusters.length) return of<K8sClusterBulkItem[]>([]);
+          const requests: Observable<K8sClusterBulkItem>[] = clusters.map((c) =>
             this.fetchClusterMetrics(c.id).pipe(
-              map((metrics) => ({...c, metrics})),
-              catchError((err: unknown) => of({...c, metrics: null, error: String(err)})),
+              map((metrics): K8sClusterBulkItem => ({...c, metrics})),
+              catchError((err: unknown) => of<K8sClusterBulkItem>({...c, metrics: null, error: String(err)})),
             ),
           );
           return forkJoin(requests);
@@ -173,10 +182,6 @@ export class QueryResourcesDemoComponent {
     item?.reload();
   }
 
-  trackByClusterKey(index: number, query: QueryResourceItem<K8sClusterMetrics, K8sCluster>): string {
-    return query.key;
-  }
-
   readonly dynamicCode = highlight(`// Component fields (with HttpClient injected as this.http).
 readonly selectedIds = signal(['a']);
 readonly tenantQueries = queryResources(this.selectedIds, (id) => ({
@@ -185,9 +190,13 @@ readonly tenantQueries = queryResources(this.selectedIds, (id) => ({
   staleTime: 30_000,
   cancelOnNoObservers: true,
 }));
-// Add, reorder or remove IDs; retained keys keep the same ref.
-// Duplicate canonical keys are rejected.
-// New rows attach during Angular effect scheduling.`);
+
+// In template:
+// <button (click)="selectedIds.set(['a'])">Tenant A only</button>
+// <button (click)="selectedIds.set(['a', 'b'])">Both tenants</button>
+// <button (click)="selectedIds.set(['b', 'a'])">Reverse order</button>
+// <button (click)="selectedIds.set([])">Clear selection</button>
+// Add, reorder or remove IDs; retained keys keep the same ref.`);
 
   readonly rowCode = highlight(`@for (row of rowQueries(); track row.key) {
   <p>{{ row.item() }}: {{ row.status() }}</p>
@@ -217,13 +226,21 @@ readonly clustersBulkQuery = queryResource(() => ({
       }),
     ),
 }));
-// Single combined QueryResourceRef; table renders when slowest cluster finishes.`);
+
+reloadBulkFleet() {
+  this.clustersBulkQuery.reload();
+}
+
+// In template:
+// <button [clrLoading]="clustersBulkQuery.isRefreshing()" (click)="reloadBulkFleet()">
+//   <clr-icon shape="refresh" /> Refresh Fleet
+// </button>`);
 
   readonly k8sGranularCode = highlight(`// Approach 2: Granular Reactive Collection (queryResource + queryResources)
 // 1. Parent query: fetches master cluster list
 readonly clustersListQuery = queryResource(() => ({
   key: ['k8s', 'clusters-list'],
-  tags: 'k8s-fleet',
+  tags: [{type: 'k8s-fleet'}],
   staleTime: 60_000,
   loader: () => this.http.get<ClusterSummary[]>('/api/v1/clusters'),
 }));
@@ -233,7 +250,7 @@ readonly clusterItemQueries = queryResources(
   () => this.clustersListQuery.value() ?? [],
   (cluster) => ({
     key: ['k8s', 'cluster-metrics', cluster.id],
-    tags: 'k8s-fleet',
+    tags: [{type: 'k8s-fleet'}, {type: 'k8s-cluster', id: cluster.id}],
     staleTime: 30_000,
     cancelOnNoObservers: true,
     loader: () => this.http.get<ClusterMetrics>(\`/api/v1/clusters/\${cluster.id}/metrics\`),
@@ -241,12 +258,20 @@ readonly clusterItemQueries = queryResources(
 );
 
 // Reload entire fleet via tag invalidation:
-refreshFleet() {
-  this.queryClient.invalidateQueries({ tags: 'k8s-fleet' });
+reloadGranularFleet() {
+  this.queryClient.invalidateTags([{type: 'k8s-fleet-demo'}]);
 }
 
-// Or reload single degraded cluster:
-refreshRow(clusterId: string) {
-  this.clusterItemQueries().find(q => q.item().id === clusterId)?.reload();
-}`);
+// Reload single degraded cluster:
+reloadClusterItem(clusterId: string) {
+  this.clusterItemQueries().find((q) => q.item().id === clusterId)?.reload();
+}
+
+// In template:
+// <button [clrLoading]="isFleetRefreshing()" (click)="reloadGranularFleet()">
+//   <clr-icon shape="refresh" /> Refresh Fleet
+// </button>
+// <button [clrLoading]="query.isRefreshing()" (click)="reloadClusterItem(cluster.id)">
+//   Reload Cluster
+// </button>`);
 }

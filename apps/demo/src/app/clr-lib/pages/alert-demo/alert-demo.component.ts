@@ -1,11 +1,14 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
+import {ClarityIcons, infoCircleIcon} from '@clr/angular/icon';
 import {AlertComponent, PageContainerComponent, TooltipModule, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../shared/utils/highlight.util';
+
+ClarityIcons.addIcons(infoCircleIcon);
 
 @Component({
   selector: 'app-alert-demo',
