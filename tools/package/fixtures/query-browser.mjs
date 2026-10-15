@@ -1,21 +1,39 @@
+// Angular consumer lifecycle tests in Node/JSDOM, run in zoneless and ZoneJS modes.
+// Copied into an isolated installation and executed by verify-packages.mjs.
 import '@angular/compiler';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
-import {Component, ChangeDetectionStrategy, inject, provideZonelessChangeDetection, signal} from '@angular/core';
-import {Observable, of} from 'rxjs';
-import {QUERY_CLIENT, provideQueryClient, queryResource, queryResources, mutateResource} from 'ngx-lift';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  provideZoneChangeDetection,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core';
+import {Observable, of, throwError} from 'rxjs';
+import {computedAsync, QUERY_CLIENT, provideQueryClient, queryResource, queryResources, mutateResource} from 'ngx-lift';
 
 const dom = new JSDOM('<html><body><query-consumer></query-consumer></body></html>', {pretendToBeVisual: true});
 for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'Event', 'CustomEvent', 'customElements']) {
   globalThis[key] = dom.window[key];
 }
 const {bootstrapApplication} = await import('@angular/platform-browser');
+const mode = process.argv[2] ?? 'zoneless';
+assert.ok(['zoneless', 'zone'].includes(mode), `Unknown rendering mode: ${mode}`);
+if (mode === 'zone') await import('zone.js/node');
+else assert.equal(globalThis.Zone, undefined, 'Zoneless consumer must run without ZoneJS');
 const reads = new Map();
 const counts = new Map();
 let cancellations = 0;
 let finishWrite;
 
 class QueryConsumer {
+  derivedInput = signal(1);
+  derived = computedAsync(
+    () => (this.derivedInput() === 0 ? throwError(() => ({code: 'unavailable'})) : of(this.derivedInput())),
+    {requireSync: true},
+  );
   client = inject(QUERY_CLIENT);
   session = signal('session-a');
   ids = signal([1, 2]);
@@ -81,10 +99,32 @@ async function until(predicate) {
 }
 
 const app = await bootstrapApplication(QueryConsumer, {
-  providers: [provideZonelessChangeDetection(), provideQueryClient({queryDefaults: {deadlineMs: 2000}})],
+  providers: [
+    mode === 'zone' ? provideZoneChangeDetection() : provideZonelessChangeDetection(),
+    provideQueryClient({queryDefaults: {deadlineMs: 2000}}),
+  ],
 });
 try {
   const instance = app.components[0].instance;
+  assert.equal(instance.derived(), 1);
+  instance.derivedInput.set(0);
+  await until(() => {
+    try {
+      instance.derived();
+      return false;
+    } catch (error) {
+      assert.deepEqual(error, {code: 'unavailable'});
+      return true;
+    }
+  });
+  instance.derivedInput.set(2);
+  await until(() => {
+    try {
+      return instance.derived() === 2;
+    } catch {
+      return false;
+    }
+  });
   await until(() => counts.get('session-a') === 1 && instance.rows().length === 2);
   instance.changeSession(undefined);
   assert.equal(instance.query.value(), undefined);
@@ -125,7 +165,7 @@ try {
   await until(() => cancellations === 2);
   assert.equal(instance.client.getDiagnostics().entryCount, 0);
   console.log(
-    'Installed Angular query consumer: session isolation, cancellation, recovery, collections and scoped writes passed.',
+    `Installed Angular query consumer (${mode}): session isolation, cancellation, recovery, collections and scoped writes passed.`,
   );
 } finally {
   if (!app.destroyed) app.destroy();

@@ -1,3 +1,4 @@
+// Runs all Nx unit-test projects with fresh coverage, then prints the combined summary.
 import {spawnSync} from 'node:child_process';
 import {rmSync} from 'node:fs';
 // Never show a stale report from an earlier successful run.

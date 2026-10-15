@@ -6,3 +6,9 @@ allowBuilds:
   lmdb: true
   msgpackr-extract: true
   nx: true
+
+# Development-tool patches pinned until their parent packages update exact dependency versions.
+overrides:
+  'nx>smol-toml': 1.9.0
+  'verdaccio>compression': 1.8.2
+  '@module-federation/dts-plugin>adm-zip': 0.6.1
