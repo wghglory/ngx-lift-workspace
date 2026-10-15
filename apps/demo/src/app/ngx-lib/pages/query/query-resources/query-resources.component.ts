@@ -259,19 +259,14 @@ readonly clusterItemQueries = queryResources(
 
 // Reload entire fleet via tag invalidation:
 reloadGranularFleet() {
-  this.queryClient.invalidateTags([{type: 'k8s-fleet-demo'}]);
-}
-
-// Reload single degraded cluster:
-reloadClusterItem(clusterId: string) {
-  this.clusterItemQueries().find((q) => q.item().id === clusterId)?.reload();
+  this.queryClient.invalidateTags([{type: 'k8s-fleet'}]);
 }
 
 // In template:
 // <button [clrLoading]="isFleetRefreshing()" (click)="reloadGranularFleet()">
 //   <clr-icon shape="refresh" /> Refresh Fleet
 // </button>
-// <button [clrLoading]="query.isRefreshing()" (click)="reloadClusterItem(cluster.id)">
+// <button [clrLoading]="query.isRefreshing()" (click)="query.reload()">
 //   Reload Cluster
 // </button>`);
 }

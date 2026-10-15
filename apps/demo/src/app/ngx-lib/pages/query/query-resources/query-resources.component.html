@@ -107,7 +107,7 @@
 
                   <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-b-sm">
                     <clr-alert-item>
-                      <span class="alert-text">{{ 'queryResources.headOfLineWarning' | translate }}</span>
+                      <span class="alert-text" role="status">{{ 'queryResources.headOfLineWarning' | translate }}</span>
                     </clr-alert-item>
                   </clr-alert>
 
@@ -184,7 +184,7 @@
 
                   <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false" class="m-b-sm">
                     <clr-alert-item>
-                      <span class="alert-text">{{ 'queryResources.progressiveNotice' | translate }}</span>
+                      <span class="alert-text" role="status">{{ 'queryResources.progressiveNotice' | translate }}</span>
                     </clr-alert-item>
                   </clr-alert>
 
@@ -208,7 +208,7 @@
                           >
                           <clr-dg-cell>{{ query.item().provider }} ({{ query.item().region }})</clr-dg-cell>
                           <clr-dg-cell>
-                            @if (query.isLoading() && !query.hasValue()) {
+                            @if (query.isInitialLoading()) {
                               <cll-spinner inline [size]="'sm'" />
                             } @else {
                               {{ query.value()?.activeNodes ?? '-' }}
@@ -228,6 +228,8 @@
                               </span>
                             } @else if (query.isInitialError()) {
                               <span class="label label-danger">Failed</span>
+                            } @else {
+                              <span>-</span>
                             }
                           </clr-dg-cell>
                           <clr-dg-cell>
@@ -242,7 +244,7 @@
                               type="button"
                               class="btn btn-sm btn-link p-0 m-0"
                               [clrLoading]="query.isRefreshing()"
-                              (click)="reloadClusterItem(query.item().id)"
+                              (click)="query.reload()"
                             >
                               {{ 'queryResources.refreshCluster' | translate }}
                             </button>

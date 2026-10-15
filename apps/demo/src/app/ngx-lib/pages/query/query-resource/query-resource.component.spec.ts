@@ -56,6 +56,20 @@ describe('QueryResourceDemoComponent', () => {
     expect(component.newUserName()).toBe('');
   });
 
+  it('manages demo auth user state and cycles names via mutation', async () => {
+    expect(component.demoAuthUser().name).toBe('Alex Rivera');
+    component.cycleDemoUserName();
+    expect(component.demoAuthMutation.isLoading()).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    expect(component.demoAuthUser().name).toBe('Jordan Lee');
+  });
+
+  it('selects demo database and updates details query', () => {
+    expect(component.demoSelectedDbId()).toBe('db-pg-01');
+    component.selectDemoDb('db-ch-02');
+    expect(component.demoSelectedDbId()).toBe('db-ch-02');
+  });
+
   it('refreshes diagnostics automatically and stops the inspector timer on destroy', async () => {
     vi.useFakeTimers();
     const liveFixture = TestBed.createComponent(QueryResourceDemoComponent);

@@ -409,6 +409,10 @@ export class DatabaseStateService {
 })
 export class DatabaseListComponent {
   readonly dbService = inject(DatabaseStateService);
+  readonly databases = [
+    {id: 'db-pg-01', name: 'Production PostgreSQL'},
+    {id: 'db-ch-02', name: 'Analytics ClickHouse'},
+  ];
 }
 
 // 3. Detail View: Detail Component

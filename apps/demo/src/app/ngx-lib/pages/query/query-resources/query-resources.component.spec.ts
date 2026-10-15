@@ -88,5 +88,33 @@ describe('queryResources guide', () => {
     expect(component.clustersBulkQuery.hasValue()).toBe(true);
     expect(component.clustersBulkQuery.value()?.length).toBe(3);
     expect(component.clusterItemQueries().every((q) => q.hasValue())).toBe(true);
+    expect(component.isFleetRefreshing()).toBe(false);
+
+    // Test individual cluster item reload
+    const eastCluster = component.clusterItemQueries().find((q) => q.item().id === 'cluster-us-east');
+    expect(eastCluster?.isRefreshing()).toBe(false);
+    component.reloadClusterItem('cluster-us-east');
+    fixture.detectChanges();
+    expect(eastCluster?.isRefreshing()).toBe(true);
+    expect(component.isFleetRefreshing()).toBe(true);
+    await vi.advanceTimersByTimeAsync(300);
+    fixture.detectChanges();
+    expect(eastCluster?.isRefreshing()).toBe(false);
+
+    // Test bulk fleet reload
+    component.reloadBulkFleet();
+    fixture.detectChanges();
+    expect(component.clustersBulkQuery.isRefreshing()).toBe(true);
+    await vi.advanceTimersByTimeAsync(1500);
+    fixture.detectChanges();
+    expect(component.clustersBulkQuery.isRefreshing()).toBe(false);
+
+    // Test granular fleet reload
+    component.reloadGranularFleet();
+    fixture.detectChanges();
+    expect(component.isFleetRefreshing()).toBe(true);
+    await vi.advanceTimersByTimeAsync(1500);
+    fixture.detectChanges();
+    expect(component.isFleetRefreshing()).toBe(false);
   });
 });

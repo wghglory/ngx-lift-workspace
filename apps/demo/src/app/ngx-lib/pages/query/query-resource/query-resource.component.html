@@ -310,7 +310,9 @@
                 <div cds-layout="vertical gap:sm">
                   <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false">
                     <clr-alert-item>
-                      <span class="alert-text">{{ 'queryResource.componentPlacementAdvice' | translate }}</span>
+                      <span class="alert-text" role="status">{{
+                        'queryResource.componentPlacementAdvice' | translate
+                      }}</span>
                     </clr-alert-item>
                   </clr-alert>
                 </div>
@@ -465,7 +467,7 @@
             @if (cacheQuery.status() === 'reloading') {
               <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="revalidate-alert">
                 <clr-alert-item>
-                  <span class="alert-text">
+                  <span class="alert-text" role="status">
                     <cll-spinner inline [size]="'sm'" class="m-r-xs" />
                     {{ 'queryResource.revalidatingAlert' | translate }}
                   </span>
@@ -492,7 +494,7 @@
 
         <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-t-md">
           <clr-alert-item>
-            <span class="alert-text">
+            <span class="alert-text" role="status">
               <strong>{{ 'queryResource.focusRefetchNoteTitle' | translate }}:</strong>
               {{ 'queryResource.focusRefetchNoteBody' | translate }}
             </span>
