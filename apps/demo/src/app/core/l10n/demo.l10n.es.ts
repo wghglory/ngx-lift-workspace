@@ -411,12 +411,12 @@ export const esTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Utilice el callback <code>onError</code> para manejar errores con gracia y proporcionar valores de falback. Cuando <code>onError</code> devuelve un valor, la señal emitirá ese valor en lugar de lanzar un error:',
   'computedAsync.onErrorCallout':
-    'El callback <code>onError</code> recibe el error y devuelve un valor de respaldo. Devolver <code>undefined</code> establece el valor del signal en undefined. Sin un manejador, el comportamiento heredado almacena el objeto de error como valor del signal; proporcione un respaldo válido o use <code>throwOnError</code>.',
-  'computedAsync.example12': 'Ejemplo 12: Error de manejo con throwOnError',
+    'El callback <code>onError</code> devuelve un valor de respaldo de tipo T. Incluya <code>undefined</code> explícitamente en T si lo necesita. Los errores no manejados y las excepciones del callback se lanzan al leer el signal; nunca se convierten en datos correctos.',
+  'computedAsync.example12': 'Ejemplo 12: Los errores se lanzan al leer de forma predeterminada',
   'computedAsync.example12Desc':
-    'Utilice <code>throwOnError: true</code> para propagación de errores en lugar de manejarlos silenciosamente. Esto es útil cuando desea errores para burbuja hasta un controlador de errores global:',
+    'Los fallos no manejados se lanzan al leer el signal. Capture la lectura o use <code>onError</code> para devolver un valor de respaldo tipado.',
   'computedAsync.throwOnErrorCallout':
-    'Cuando <code>throwOnError: true</code>, los errores se lanzarán incluso si se proporciona <code>onError</code>. El callback <code>onError</code> todavía puede ser utilizado para el registro o efectos secundarios antes de que el error lance.',
+    '<code>throwOnError: true</code> ejecuta <code>onError</code> para efectos secundarios y sigue lanzando el error; ignora su valor de retorno. <code>throwOnError: false</code> ya no se admite.',
   'computedAsync.example13': 'Ejemplo 13: Interruptor de pestañas con cancelación de solicitud (Remover Resilience)',
   'computedAsync.example13Desc':
     'En la pestaña múltiple UIs, las pestañas de conmutación rápida pueden desencadenar solicitudes simultáneas donde las solicitudes de invuelo se abortan o fallan (por ejemplo, cancelaciones de navegación del navegador).',
@@ -2253,4 +2253,13 @@ export const esTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Nombres de referencias de consultas y mutaciones',
   'queryGuide.namingHandles':
     'Use <code>userQuery</code> para una consulta, <code>tenantQueries</code> para una colección y <code>createMutation</code> para una escritura. Reserve <code>user</code> o <code>tenant</code> para los datos resueltos.',
+
+  'computedAsync.failSource': 'Provocar fallo de la fuente',
+  'computedAsync.recoverSource': 'Recuperar la fuente',
+  'computedAsync.readSignal': 'Leer signal',
+  'computedAsync.lastRead': 'Última lectura',
+  'computedAsync.notRead': 'Aún no se ha leído',
+  'computedAsync.readError': 'La lectura lanzó un error; no se devolvió ningún valor correcto.',
+  'computedAsync.readDemoHint':
+    'Provoque un fallo y lea el signal. Recupere la fuente y vuelva a leer para comprobar la recuperación.',
 };

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Prints coverage totals for both libraries and the demo from their generated reports.
 import {readFileSync} from 'fs';
 import {join} from 'path';
 import {fileURLToPath} from 'url';

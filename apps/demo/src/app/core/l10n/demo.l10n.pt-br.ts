@@ -406,12 +406,12 @@ export const ptBRTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Usar o callback <code>onError</code> para lidar com erros graciosamente e fornecer valores fallback. Quando o <code>onError</code> devolve um valor, o sinal irá emitir esse valor em vez de lançar um erro:',
   'computedAsync.onErrorCallout':
-    'O callback <code>onError</code> recebe o erro e retorna um valor de fallback. Retornar <code>undefined</code> define o valor do signal como undefined. Sem um tratador, o comportamento legado armazena o objeto de erro como valor do signal; forneça um fallback válido ou use <code>throwOnError</code>.',
-  'computedAsync.example12': 'Exemplo 12: Tratamento de erros com throwOnError',
+    'O callback <code>onError</code> retorna um valor alternativo do tipo T. Inclua <code>undefined</code> explicitamente em T se necessário. Falhas não tratadas e exceções do callback são lançadas ao ler o signal; nunca se tornam dados de sucesso.',
+  'computedAsync.example12': 'Exemplo 12: Erros são lançados na leitura por padrão',
   'computedAsync.example12Desc':
-    'Usar o <code>throwOnError: true</code> para propagarem erros em vez de lidar silenciosamente com eles. Isto é útil quando você quer erros para bubling até um manipulador global de erros:',
+    'Falhas não tratadas são lançadas ao ler o signal. Capture a leitura ou use <code>onError</code> para retornar um valor alternativo tipado.',
   'computedAsync.throwOnErrorCallout':
-    'Quando <code>throwOnError: true</code>, erros serão lançados mesmo que <code>onError</code> for fornecido. A callback <code>onError</code> pode ainda ser usado para o registro ou efeitos secundários antes que o erro rode.',
+    '<code>throwOnError: true</code> executa <code>onError</code> para efeitos colaterais e ainda lança o erro; o retorno é ignorado. <code>throwOnError: false</code> não é mais suportado.',
   'computedAsync.example13': 'Exemplo 13: Toque em Interligar com o Cancelamento de Solicitação (Resiliência em Fluxo)',
   'computedAsync.example13Desc':
     'Em multi- tab UIs, as telhas para comutação rapidamente podem despoletar as solicitações simultâneas quando as solicitações para o voo são abortadas ou falharem (por exemplo, cancelamentos para a navegação pelo navegador).',
@@ -2208,4 +2208,13 @@ export const ptBRTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Nomes de referências de consultas e mutações',
   'queryGuide.namingHandles':
     'Use <code>userQuery</code> para uma consulta, <code>tenantQueries</code> para uma coleção e <code>createMutation</code> para uma escrita. Reserve <code>user</code> ou <code>tenant</code> para os dados resolvidos.',
+
+  'computedAsync.failSource': 'Provocar falha na fonte',
+  'computedAsync.recoverSource': 'Recuperar fonte',
+  'computedAsync.readSignal': 'Ler signal',
+  'computedAsync.lastRead': 'Última leitura',
+  'computedAsync.notRead': 'Ainda não foi lido',
+  'computedAsync.readError': 'A leitura lançou um erro; nenhum valor de sucesso foi retornado.',
+  'computedAsync.readDemoHint':
+    'Provoque uma falha na fonte e leia o signal. Recupere a fonte e leia novamente para verificar a recuperação.',
 };

@@ -387,7 +387,6 @@ export class MyFormComponent {
   - [queryResource & QueryClient Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/query-resource-design-spec.md)
   - [mutateResource Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/mutate-resource-design-spec.md)
   - [computedAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/computed-async-design-spec.md)
-- [Migration Guides](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/MIGRATIONS.md)
 
 - **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
 - **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)
@@ -453,8 +452,8 @@ If this library helped you, please consider giving it a ⭐ on GitHub!
 ## Lifecycle and production contracts
 
 See
-[service scoping, clocks, localization and query diagnostics](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/priority-1-2-completion.md)
-for ownership and loading contracts. [中文说明](../../docs/design/priority-1-2-completion.zh-CN.md).
+[service scoping, clocks, localization and query diagnostics](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/guides/demo-and-library-integration.md)
+for ownership and loading contracts.
 
 For the query learning path, session isolation recipe, tested consumer scope and release boundary, see the
 [query production guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/query-resource-design-spec.md).

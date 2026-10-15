@@ -1,83 +1,33 @@
-# Quick Start Guide
+# Workspace quick start
 
-Get up and running with the `ngx-lift` monorepo in minutes.
+For application installation and usage, see the [ngx-lift](../libs/ngx-lift/README.md) and
+[clr-lift](../libs/clr-lift/README.md) package READMEs. This guide covers workspace development.
 
----
+## Setup
 
-## 🚀 Initial Setup
-
-### Prerequisites
-
-- **Node.js**: `>= 24.0.0`
-- **pnpm**: `>= 10.0.0`
-- **Git**: `>= 2.30.0`
-
-### Installation
+Use the Node version required by package.json engines and the pnpm version declared in packageManager. Install Git, then
+run:
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/wghglory/ngx-lift-workspace.git
 cd ngx-lift-workspace
-
-# 2. Install dependencies
-pnpm install
-
-# 3. Build libraries
-pnpm run build:libs
-
-# 4. Start demo application
+pnpm install --frozen-lockfile
 pnpm start
 ```
 
-Open [http://localhost:4200](http://localhost:4200) in your browser to view the interactive demo.
+The demo opens at http://localhost:4200. Library source aliases support local development; production builds create
+packages under dist/libs and the demo under dist/apps/demo/browser.
 
----
+## Workspace
 
-## 📂 Workspace Structure
+| Location      | Purpose                                                    |
+| ------------- | ---------------------------------------------------------- |
+| apps/demo     | Interactive examples and locale dictionaries               |
+| apps/demo-e2e | Playwright browser tests                                   |
+| libs/ngx-lift | Core Angular utilities                                     |
+| libs/clr-lift | Clarity components and extensions                          |
+| tools         | Consumer, bundle, translation and other verification tools |
+| docs          | [Guides, contracts and roadmap](README.md)                 |
 
-This monorepo is managed with [Nx](https://nx.dev) and contains two production libraries and a showcase demo app:
-
-```
-ngx-lift-workspace/
-├── apps/
-│   ├── demo/               # Showcase application with live examples
-│   └── demo-e2e/           # Playwright E2E tests for demo app
-├── libs/
-│   ├── ngx-lift/           # Core Angular utility library (signals, operators, pipes, query)
-│   └── clr-lift/           # Clarity Design System extension components
-├── docs/                   # Workspace guides and specifications
-│   ├── design/             # Architectural specifications for async & query primitives
-│   ├── QUICK_START.md      # This file
-│   ├── COMMANDS.md         # Full command reference
-│   ├── DEPLOYMENT.md       # Publishing & deployment guides
-│   ├── MIGRATIONS.md       # Version migration notes
-│   └── TECHNOLOGY_ANALYSIS.md # Architecture and technology stack details
-```
-
----
-
-## 📋 Essential Commands
-
-| Command               | Description                                       |
-| :-------------------- | :------------------------------------------------ |
-| `pnpm start`          | Start demo application at `http://localhost:4200` |
-| `pnpm run watch:ngx`  | Build and watch `ngx-lift` with auto-rebuild      |
-| `pnpm run watch:clr`  | Build and watch `clr-lift` with auto-rebuild      |
-| `pnpm test`           | Run all unit tests across the workspace           |
-| `pnpm run test:ngx`   | Run unit tests for `ngx-lift`                     |
-| `pnpm run test:clr`   | Run unit tests for `clr-lift`                     |
-| `pnpm run build:libs` | Build both libraries for distribution             |
-| `pnpm run lint`       | Lint all projects with ESLint                     |
-| `pnpm run format`     | Format code with Prettier                         |
-
-For the complete list of available commands, see [COMMANDS.md](COMMANDS.md).
-
----
-
-## 🧭 Next Steps
-
-- **Command Reference**: See [COMMANDS.md](COMMANDS.md) for testing, building, and Nx tooling commands.
-- **Async & Query Architecture**: Explore [docs/design/README.md](design/README.md) for in-depth design specifications
-  of `resourceAsync`, `queryResource`, `mutateResource`, and `computedAsync`.
-- **Release & Deployment**: See [DEPLOYMENT.md](DEPLOYMENT.md) for publishing libraries to npm.
-- **Migration Guides**: See [MIGRATIONS.md](MIGRATIONS.md) when upgrading from earlier versions.
+Continue with the [command reference](COMMANDS.md), [API specifications](design/README.md) or
+[integration guide](guides/demo-and-library-integration.md). Publishing is covered by [DEPLOYMENT](DEPLOYMENT.md).

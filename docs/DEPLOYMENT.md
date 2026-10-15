@@ -1,98 +1,49 @@
-# Deployment & Publishing Guide
+# Publishing and demo deployment
 
-This guide covers publishing `ngx-lift` and `clr-lift` to npm, as well as deploying the demo application.
+Automation is defined in [publish.yml](../.github/workflows/publish.yml),
+[deploy-demo.yml](../.github/workflows/deploy-demo.yml) and the shared [quality.yml](../.github/workflows/quality.yml).
+Package manifests and [CHANGELOG](../CHANGELOG.md) own version history.
 
----
+## Verification before publication
 
-## 📦 Publishing Libraries to npm
+Run the [validation commands](COMMANDS.md) and review package compatibility, release notes and credentials before
+publishing. A successful build, a merged PR and a published npm version are separate outcomes.
 
-### 1. Automated Tag-Driven Publishing (Recommended)
+The Publish Libraries workflow accepts project all/ngx-lift/clr-lift, version major/minor/patch/skip and dry_run. Manual
+dispatch defaults to dry_run=true. A dry run verifies both packages, strict installed consumers, versioning and publish
+commands without publishing, creating a version commit/tag or requiring an npm token.
 
-Pushing a semver git tag triggers GitHub Actions to test, build, publish the targeted library directly to npm, and
-create a GitHub Release with auto-generated release notes.
+For a real release, choose the version policy, review the changelog, and deliberately disable dry_run. The workflow uses
+the official npm registry and checks credentials. Breaking API changes require breaking versions and a review of
+dependent package peer ranges before publication.
 
-#### Step-by-Step Flow:
+## Release tags
 
-1. **Update version and changelog**:
-   - Update `"version"` in `libs/ngx-lift/package.json` (or `libs/clr-lift/package.json`).
-   - Document changes in `CHANGELOG.md` under the new version header.
-
-2. **Commit and push to `main`**:
-
-   ```bash
-   git add libs/ngx-lift/package.json CHANGELOG.md
-   git commit -m "chore(release): publish ngx-lift@21.1.1"
-   git push origin main
-   ```
-
-3. **Tag and push**:
-   - For `ngx-lift`:
-     ```bash
-     git tag ngx-lift@21.1.1
-     git push origin ngx-lift@21.1.1
-     ```
-   - For `clr-lift`:
-     ```bash
-     git tag clr-lift@21.0.1
-     git push origin clr-lift@21.0.1
-     ```
-
-4. **CI/CD Pipeline**:
-   - The workflow detects the tag prefix (`ngx-lift@*` or `clr-lift@*`).
-   - Executes unit tests and builds the targeted library.
-   - Publishes to the npm registry with provenance.
-   - Generates the GitHub release.
-
----
-
-### 2. Manual Workflow Dispatch (GitHub Actions UI)
-
-If publishing without a local git tag:
-
-1. Go to **Actions** → **Publish to npm** in GitHub.
-2. Click **Run workflow**.
-3. Select:
-   - Branch (`main`).
-   - Target library (`ngx-lift` or `clr-lift`).
-   - Version bump type (`patch`, `minor`, `major`) or specific version.
-4. Click **Run workflow** to execute.
-
----
-
-### 3. Local Verification & Packaging
-
-Before publishing, you can verify package contents locally:
+Tag events always publish; they are not dry runs. Commit reviewed version and changelog changes before pushing a tag:
 
 ```bash
-# 1. Build the library
-pnpm run build:ngx
+git tag ngx-lift@<version>
+git push origin ngx-lift@<version>
+```
 
-# 2. Package into tarball
+Use clr-lift@<version> for the Clarity package. A v* tag selects both packages. The pipeline runs quality gates and
+publishes the selected package(s) with release records. Ordinary branch pushes do not publish packages.
+
+## Local package inspection
+
+```bash
+pnpm run build:libs
+pnpm run verify:packages
 cd dist/libs/ngx-lift
-npm pack
-
-# 3. Inspect tarball contents
-tar -tf ngx-lift-*.tgz
+npm pack --dry-run
 ```
 
----
+Use npm pack to create a local tarball when needed. The installed-consumer check already verifies package exports,
+strict declarations, peer installation, runtime imports and mounted Angular consumer lifecycle.
 
-## 🌐 Deploying the Demo Application
+## Demo deployment
 
-The demo application showcases both `ngx-lift` and `clr-lift` in an interactive environment.
-
-### Production Build
-
-```bash
-pnpm run build:demo
-```
-
-The production bundle is generated in `dist/apps/demo`.
-
-### Automated Hosting (Netlify & Vercel)
-
-- **Netlify**: Connected via GitHub webhook. Every push to `main` deploys to
-  [ngx-lift.netlify.app](https://ngx-lift.netlify.app).
-- **Configuration**: Managed via `netlify.toml` in the repository root.
-  - Build command: `pnpm run build:demo`
-  - Publish directory: `dist/apps/demo`
+The production site lives in dist/apps/demo/browser. Netlify and Vercel settings are in [netlify.toml](../netlify.toml)
+and [vercel.json](../vercel.json). The Deploy Demo App workflow waits for quality gates, builds the libraries/demo and
+deploys the generated browser output. Hosting integrations may also create PR previews; the corresponding remote
+job/deployment records provide status.

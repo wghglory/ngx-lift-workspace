@@ -1,3 +1,5 @@
+// Checks demo dictionary keys, interpolation placeholders and literal API options.
+// Run with pnpm run i18n:check.
 import {readFileSync, readdirSync} from 'node:fs';
 import {resolve, join} from 'node:path';
 import {pathToFileURL} from 'node:url';

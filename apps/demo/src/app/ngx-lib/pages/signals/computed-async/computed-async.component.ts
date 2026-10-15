@@ -43,12 +43,36 @@ export class ComputedAsyncComponent {
   private refreshTrigger = createTrigger();
   private fetchTrigger = createTrigger();
 
+  readonly fallbackFails = signal(false);
+  readonly fallbackValue = computedAsync<number>(
+    () => (this.fallbackFails() ? throwError(() => ({code: 'DEMO_FAILURE'})) : of(42)),
+    {initialValue: 42, onError: () => 0},
+  );
+
+  readonly sourceFails = signal(false);
+  private readonly defaultValue = computedAsync<number>(
+    () => (this.sourceFails() ? throwError(() => ({code: 'DEMO_FAILURE'})) : of(42)),
+    {initialValue: 42},
+  );
+  readonly lastReadValue = signal<number | undefined>(undefined);
+  readonly lastReadFailed = signal(false);
+
+  readDefaultValue() {
+    try {
+      this.lastReadValue.set(this.defaultValue());
+      this.lastReadFailed.set(false);
+    } catch {
+      this.lastReadValue.set(undefined);
+      this.lastReadFailed.set(true);
+    }
+  }
+
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();
     return [
       {
         name: 'computation',
-        type: '(previousValue?: T) => Promise<T> | Observable<T> | T',
+        type: '(previousValue?: T) => PromiseLike<T> | Observable<T> | T',
         required: true,
         description: this.translationService.translate('computedAsync.paramComputation'),
       },
@@ -82,13 +106,13 @@ export class ComputedAsyncComponent {
       },
       {
         name: 'onError',
-        type: '(error: unknown) => T | undefined',
+        type: '(error: unknown) => T',
         description: this.translationService.translate('computedAsync.propOnError'),
       },
       {
         name: 'throwOnError',
-        type: 'boolean',
-        defaultValue: 'false',
+        type: 'true',
+        defaultValue: 'undefined',
         description: this.translationService.translate('computedAsync.propThrowOnError'),
       },
     ];
@@ -392,49 +416,46 @@ export class UserListComponent {
   `);
 
   errorHandlingCode = highlight(`
+import {signal} from '@angular/core';
 import {computedAsync} from 'ngx-lift';
-import {Component, inject, input, Signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {of, throwError} from 'rxjs';
 
-export class UserDetailComponent {
-  private http = inject(HttpClient);
-  userId = input.required<number>();
-
-  // Handle errors and provide fallback value
-  user: Signal<User | undefined> = computedAsync(
-    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
-    {
-      onError: (error) => {
-        console.error('Failed to load user:', error);
-        // Return fallback user
-        return {id: 0, name: 'Guest User', email: 'guest@example.com'} as User;
-      }
-    }
+export class FallbackDemo {
+  readonly fallbackFails = signal(false);
+  readonly fallbackValue = computedAsync<number>(
+    () => this.fallbackFails()
+      ? throwError(() => ({code: 'DEMO_FAILURE'}))
+      : of(42),
+    {initialValue: 42, onError: () => 0},
   );
 }
   `);
 
-  throwOnErrorCode = highlight(`
+  readTimeErrorCode = highlight(`
+import {signal} from '@angular/core';
 import {computedAsync} from 'ngx-lift';
-import {Component, inject, input, Signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {of, throwError} from 'rxjs';
 
-export class UserDetailComponent {
-  private http = inject(HttpClient);
-  userId = input.required<number>();
-
-  // Throw errors instead of silently handling them
-  user: Signal<User | undefined> = computedAsync(
-    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
-    {
-      throwOnError: true,  // Errors will propagate up
-      onError: (error) => {
-        console.error('API Error:', error);
-        // Can still log/handle but error will still throw
-        return undefined;  // Won't be used since error throws
-      }
-    }
+export class ReadTimeErrorDemo {
+  readonly sourceFails = signal(false);
+  private readonly defaultValue = computedAsync<number>(
+    () => this.sourceFails()
+      ? throwError(() => ({code: 'DEMO_FAILURE'}))
+      : of(42),
+    {initialValue: 42}, // No throwOnError option is needed.
   );
+  readonly lastReadValue = signal<number | undefined>(undefined);
+  readonly lastReadFailed = signal(false);
+
+  readDefaultValue() {
+    try {
+      this.lastReadValue.set(this.defaultValue());
+      this.lastReadFailed.set(false);
+    } catch {
+      this.lastReadValue.set(undefined);
+      this.lastReadFailed.set(true);
+    }
+  }
 }
   `);
 
@@ -486,17 +507,18 @@ export class UserProfileComponent {
 
   signatureCode = highlight(`
 computedAsync<T>(
-  computation: (previousValue?: T) => Promise<T> | Observable<T> | T,
+  computation: (previousValue?: T) => PromiseLike<T> | Observable<T> | T,
   options?: ComputedAsyncOptions<T>
 ): Signal<T | undefined> | Signal<T>
 
-interface ComputedAsyncOptions<T> {
+type ComputedAsyncOptions<T> = {
   initialValue?: T;
   requireSync?: boolean;
   behavior?: 'switch' | 'merge' | 'concat' | 'exhaust';
-  onError?: (error: unknown) => T | undefined;
-  throwOnError?: boolean;
   injector?: Injector;
-}
+} & (
+  | {onError?: (error: unknown) => T; throwOnError?: undefined}
+  | {onError?: (error: unknown) => unknown; throwOnError: true}
+);
   `);
 }

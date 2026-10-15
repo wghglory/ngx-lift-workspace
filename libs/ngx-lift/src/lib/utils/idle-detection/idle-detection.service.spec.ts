@@ -169,32 +169,21 @@ describe('IdleDetectionService', () => {
     expect(service['isCountingDown']).toBeTruthy();
   });
 
-  it('should stop countdown on user activity during countdown', async () => {
-    service.startWatching();
-    // Wait for idle duration to pass (countdown starts) + a bit more to ensure we're in countdown phase
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 200);
-    TestBed.tick();
-
-    // Countdown should be active
-    expect(service['isCountingDown']).toBeTruthy();
-
-    // User activity during countdown - dispatch multiple events to ensure one gets through throttling
-    document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-    // Also dispatch a mousemove to ensure an event gets through
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(50);
-    TestBed.tick();
-    document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
-
-    // Wait a bit for the events to be processed
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(200);
-    TestBed.tick();
-
-    expect(service['isCountingDown']).toBeFalsy();
-    expect(service['countdown']).toBe(service['timeoutDuration']);
-  });
+  it.each(['mousemove', 'pointermove', 'keydown', 'click', 'scroll'])(
+    'keeps the warning and timeout deadline after %s during countdown',
+    async (eventType) => {
+      service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+      const timeout = vi.fn();
+      service.onTimeoutEnd().subscribe(timeout);
+      service.startWatching();
+      await vi.advanceTimersByTimeAsync(2000);
+      document.dispatchEvent(new Event(eventType));
+      expect(service['isCountingDown']).toBe(true);
+      expect(service['countdown']).toBe(4);
+      await vi.advanceTimersByTimeAsync(4000);
+      expect(timeout).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('should emit countdown value every second', async () => {
     service.setConfig({
@@ -400,30 +389,33 @@ describe('IdleDetectionService', () => {
     expect(timerResetCount).toBeLessThan(10);
   });
 
-  it('should stop countdown when user activity detected during countdown', async () => {
+  it('starts a fresh idle cycle only after explicit countdown confirmation', async () => {
+    service.setConfig({idleDurationInSeconds: 3, timeoutDurationInSeconds: 5});
+    const timeout = vi.fn();
+    service.onTimeoutEnd().subscribe(timeout);
     service.startWatching();
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(service['idleDuration'] * 1000 + 200);
-    TestBed.tick();
+    await vi.advanceTimersByTimeAsync(5000);
+    service.resetTimer(true);
+    expect(service['isCountingDown']).toBe(false);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(service['isCountingDown']).toBe(false);
+    expect(timeout).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(service['isCountingDown']).toBe(true);
+    expect(service['countdown']).toBe(5);
+  });
 
-    // Countdown should be active
-    expect(service['isCountingDown']).toBeTruthy();
-
-    // User activity during countdown - dispatch multiple events to ensure one gets through throttling
-    document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-    // Also dispatch a mousemove to ensure an event gets through
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(50);
-    TestBed.tick();
-    document.dispatchEvent(new MouseEvent('mousemove', {bubbles: true}));
-
-    // Wait a bit for the events to be processed
-    TestBed.tick();
-    await vi.advanceTimersByTimeAsync(200);
-    TestBed.tick();
-
-    expect(service['isCountingDown']).toBeFalsy();
-    expect(service['countdown']).toBe(service['timeoutDuration']);
+  it('ignores resetTimer() without countdown reset during active countdown', async () => {
+    service.setConfig({idleDurationInSeconds: 1, timeoutDurationInSeconds: 5});
+    const timeout = vi.fn();
+    service.onTimeoutEnd().subscribe(timeout);
+    service.startWatching();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(service['isCountingDown']).toBe(true);
+    service.resetTimer(false);
+    expect(service['isCountingDown']).toBe(true);
+    await vi.advanceTimersByTimeAsync(4000);
+    expect(timeout).toHaveBeenCalledTimes(1);
   });
 
   it('should handle all interruption event types', async () => {

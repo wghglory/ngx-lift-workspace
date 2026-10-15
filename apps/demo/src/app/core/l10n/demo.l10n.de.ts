@@ -406,12 +406,12 @@ export const deTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Verwenden Sie den <code>onError</code> Callback, um Fehler anmutig zu handhaben und Fallback-Werte zu liefern. Wenn <code>onError</code> einen Wert zurückgibt, sendet das Signal diesen Wert aus, anstatt einen Fehler zu werfen:',
   'computedAsync.onErrorCallout':
-    'Der <code>onError</code>-Callback erhält den Fehler und liefert einen Fallback-Wert. Bei <code>undefined</code> wird auch der Signalwert undefined. Ohne Handler speichert das bisherige Standardverhalten das Fehlerobjekt als Signalwert; liefern Sie einen gültigen Fallback oder verwenden Sie <code>throwOnError</code>.',
-  'computedAsync.example12': 'Beispiel 12: Fehlerbehandlung mit throwOnError',
+    'Der <code>onError</code>-Callback liefert einen Ersatzwert vom Typ T. Nehmen Sie <code>undefined</code> bei Bedarf ausdrücklich in T auf. Unbehandelte Fehler und Callback-Ausnahmen werden beim Lesen des Signals geworfen und niemals als erfolgreiche Daten zurückgegeben.',
+  'computedAsync.example12': 'Beispiel 12: Fehler werden standardmäßig beim Lesen geworfen',
   'computedAsync.example12Desc':
-    'Verwenden Sie <code>throwOnError: true</code>, um Fehler zu verbreiten, anstatt sie still zu behandeln. Dies ist nützlich, wenn Sie Fehler bis zu einem globalen Fehler-Handler blasen möchten:',
+    'Unbehandelte Fehler werden beim Lesen des Signals geworfen. Fangen Sie sie beim Lesen ab oder liefern Sie mit <code>onError</code> einen typisierten Ersatzwert.',
   'computedAsync.throwOnErrorCallout':
-    'Wenn <code>throwOnError: true</code>, Fehler werden geworfen, auch wenn <code>onError</code> zur Verfügung gestellt wird. Der <code>onError</code> Callback kann immer noch für die Protokollierung oder Nebenwirkungen verwendet werden, bevor der Fehler wirft.',
+    '<code>throwOnError: true</code> führt <code>onError</code> für Nebeneffekte aus und wirft den Fehler trotzdem; der Rückgabewert wird ignoriert. <code>throwOnError: false</code> wird nicht mehr unterstützt.',
   'computedAsync.example13': 'Beispiel 13: Tab-Schalten mit Anfrage-Stornierung (Stream Resilience)',
   'computedAsync.example13Desc':
     'In Multitab UIs können Schaltklappen schnell gleichzeitige Anfragen auslösen, bei denen Anfragen im Flug abgebrochen werden oder fehlschlagen (z.B. Browser-Navigationsstornierungen).',
@@ -2259,4 +2259,13 @@ export const deTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Benennung von Query- und Mutation-Referenzen',
   'queryGuide.namingHandles':
     'Verwenden Sie <code>userQuery</code> für eine Query, <code>tenantQueries</code> für eine Sammlung und <code>createMutation</code> für einen Schreibvorgang. <code>user</code> oder <code>tenant</code> bezeichnet die aufgelösten Daten.',
+
+  'computedAsync.failSource': 'Quelle fehlschlagen lassen',
+  'computedAsync.recoverSource': 'Quelle wiederherstellen',
+  'computedAsync.readSignal': 'Signal lesen',
+  'computedAsync.lastRead': 'Letzter Lesevorgang',
+  'computedAsync.notRead': 'Noch nicht gelesen',
+  'computedAsync.readError': 'Beim Lesen wurde ein Fehler geworfen; kein Erfolgswert wurde zurückgegeben.',
+  'computedAsync.readDemoHint':
+    'Lassen Sie die Quelle fehlschlagen und lesen Sie das Signal. Stellen Sie die Quelle wieder her und lesen Sie erneut.',
 };

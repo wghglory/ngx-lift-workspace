@@ -84,176 +84,20 @@ import {injectParams, injectQueryParams, combineFrom} from 'ngx-lift';
 import {AlertComponent, ToastService} from 'clr-lift';
 ```
 
-### Development Setup
+### Workspace development
 
-**Prerequisites:**
+Follow the [quick start](docs/QUICK_START.md) for setup and the [command reference](docs/COMMANDS.md) for builds,
+testing and validation. Exact tool versions live in package.json and the lockfile.
 
-- Node.js 24.x or higher
-- npm 10.x or higher
+## Documentation
 
-```bash
-# Clone the repository
-git clone https://github.com/wghglory/ngx-lift-workspace.git
-cd ngx-lift-workspace
+The [documentation index](docs/README.md) maps each topic to its canonical source:
 
-# Install dependencies
-npm install
-
-# Start the demo application
-npm start
-```
-
-The demo app will be available at `http://localhost:4200`.
-
-## 📖 Development
-
-### Project Structure
-
-```
-ngx-lift-workspace/
-├── apps/
-│   └── demo/              # Demo application
-├── libs/
-│   ├── ngx-lift/          # ngx-lift library
-│   └── clr-lift/          # clr-lift library
-├── dist/                  # Build outputs
-└── .github/workflows/     # CI/CD workflows
-```
-
-### Common Commands
-
-#### Development
-
-```bash
-# Start demo app
-npm start
-
-# Build all projects
-npm run build
-
-# Build only libraries
-npm run build:libs
-
-# Build specific library
-npm run build:ngx
-npm run build:clr
-
-# Watch mode for development
-npm run watch:ngx
-npm run watch:clr
-```
-
-#### Testing
-
-```bash
-# Run all tests
-npm test
-
-# Test specific library
-npm run test:ngx
-npm run test:clr
-
-# Run tests with coverage
-npm run test:coverage
-```
-
-#### Linting & Formatting
-
-```bash
-# Lint all projects
-npm run lint
-
-# Lint and fix
-npm run lint:fix
-
-# Format code
-npm run format
-
-# Check formatting
-npm run format:check
-```
-
-#### Nx Commands
-
-```bash
-# View project graph
-npm run graph
-
-# Run affected tests
-npm run affected:test
-
-# Build affected projects
-npm run affected:build
-
-# Lint affected projects
-npm run affected:lint
-```
-
-## 🧪 Testing
-
-This project uses **Vitest** with `@analogjs/vitest-angular` for testing.
-
-### Running Tests
-
-```bash
-# Run all tests
-nx run-many -t test
-
-# Run tests for a specific library
-nx test ngx-lift
-nx test clr-lift
-
-# Run tests in watch mode
-nx test ngx-lift --watch
-
-# Run tests with coverage
-nx test ngx-lift --coverage
-
-# Run tests with UI
-nx test ngx-lift --ui
-```
-
-### Test Configuration
-
-Each library has its own `vite.config.mts` with test configuration. The test setup is in `src/test-setup.ts`.
-
-## 🔧 Configuration Files
-
-- **`nx.json`**: Nx workspace configuration
-- **`tsconfig.base.json`**: TypeScript base configuration with path mappings
-- **`package.json`**: Dependencies and scripts
-
-## 📖 Additional Documentation
-
-For maintainers and contributors:
-
-- **`docs/QUICK_START.md`**: Quick start guide for new developers
-- **`docs/COMMANDS.md`**: Comprehensive command reference
-- **`docs/DEPLOYMENT.md`**: Publishing, deployment, and CI/CD guides
-- **`docs/MIGRATIONS.md`**: Migration notes across versions
-- **`docs/design/README.md`**: Architectural design specifications for async and query primitives
-
-## 📚 Library Usage
-
-### Installing Libraries
-
-```bash
-# Install ngx-lift
-npm install ngx-lift
-
-# Install clr-lift (requires ngx-lift)
-npm install clr-lift ngx-lift @clr/angular
-```
-
-### Using in Your Project
-
-```typescript
-// Import from ngx-lift
-import {createAsyncState, poll} from 'ngx-lift';
-
-// Import from clr-lift
-import {AlertComponent, ToastService} from 'clr-lift';
-```
+- [Library installation and usage](libs/ngx-lift/README.md) · [Clarity package](libs/clr-lift/README.md)
+- [Async/query/retry API contracts](docs/design/README.md)
+- [Loading, localization and shared lifecycle](docs/guides/demo-and-library-integration.md)
+- [Publishing and deployment](docs/DEPLOYMENT.md)
+- [Architecture](docs/TECHNOLOGY_ANALYSIS.md), [roadmap](docs/design/priority-roadmap.md) and [changelog](CHANGELOG.md)
 
 ## 🤝 Contributing
 
@@ -284,15 +128,7 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - `perf:` Performance improvements
 - `ci:` CI/CD changes
 
-### Development Guidelines
-
-- ✅ All code must pass ESLint and TypeScript strict mode
-- ✅ Tests are required for new features (60%+ coverage minimum)
-- ✅ JSDoc comments required for all exported APIs
-- ✅ Follow Angular 21 best practices (signals, standalone components, OnPush)
-- ✅ Use Clarity Design System components where applicable
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+Contribution requirements and code conventions are maintained in [CONTRIBUTING](CONTRIBUTING.md).
 
 ## 📄 License
 
@@ -331,16 +167,6 @@ Made by [Guanghui Wang](https://github.com/wghglory)
 
 ### Quality checks
 
-Use pnpm **11.7.0** and Node **24** for the workspace. `pnpm run validate` checks formatting, tool regressions,
-translation contracts, lint, types, coverage, builds and packed-library consumers. It does not rewrite source files; use
-`pnpm run fix` for formatting/lint fixes. Run `pnpm run e2e` for Chromium, Firefox and WebKit. E2E starts its own server
-on port 4307; set `BASE_URL` explicitly to test an external deployment.
-
-Demo routes and locale dictionaries load on demand. English and Simplified Chinese message dictionaries are checked for
-complete key sets; other demo languages are explicitly marked partial and fall back to English. Key completeness is not
-a claim that every advanced example or upstream Clarity string has been translated. Built-in clr-lift control labels are
-checked across all promised locales. Default user examples use local fixtures; opt into `DEMO_LIVE_USERS` only when
-demonstrating external HTTP transport.
-
-See the [audit hardening notes](docs/design/quality-audit-hardening.zh-CN.md) and
-[unreleased migration guidance](docs/MIGRATIONS.md#3-unreleased-quality-audit-hardening-2026-10-13).
+Run [the validation commands](docs/COMMANDS.md) before submitting changes. The
+[integration guide](docs/guides/demo-and-library-integration.md) describes loading/localization ownership and acceptance
+limits; [publishing](docs/DEPLOYMENT.md) describes release gates.

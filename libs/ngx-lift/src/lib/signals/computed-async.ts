@@ -41,29 +41,32 @@ import {isPromise} from '../utils/is-promise.util';
  */
 type ComputedAsyncBehavior = 'switch' | 'merge' | 'concat' | 'exhaust';
 
-// { equal, behavior, onError, throwOnError }
 type BaseOptions<T> = CreateComputedOptions<T> & {
   behavior?: ComputedAsyncBehavior;
   injector?: Injector;
-  /**
-   * Optional error handler that receives errors from async operations.
-   * Can be used to transform errors or provide fallback values.
-   * If provided, the signal will emit the return value instead of the error.
-   * If the handler throws, its error follows throwOnError without escaping the subscription.
-   */
-  onError?: (error: unknown) => T | undefined;
-  /**
-   * If true, errors will be thrown and propagate up when the signal is read.
-   * If false (default), errors are set on the signal (or handled via `onError` if provided).
-   * Note: When `onError` is omitted and `throwOnError` is false, the error object is emitted
-   * into the signal as its value.
-   */
-  throwOnError?: boolean;
-};
+} & (
+    | {
+        /**
+         * Return a typed fallback for source failures. Include undefined in T explicitly if needed.
+         * Callback failures throw on reads without escaping the subscription.
+         */
+        onError?: (error: unknown) => T;
+        /** Unhandled errors always throw on reads; false is no longer supported. */
+        throwOnError?: undefined;
+      }
+    | {
+        /** Log source failures before they are thrown on reads. The return value is ignored. */
+        onError?: (error: unknown) => unknown;
+        /** Throw on reads even when onError returns a fallback. */
+        throwOnError: true;
+      }
+  );
 
 type OptionsWithInitialValue<T> = {initialValue: T} & BaseOptions<T>;
 type OptionsWithOptionalInitialValue<T> = {initialValue?: undefined} & BaseOptions<T>;
 type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
+
+type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; error: unknown};
 
 /**
  * Creates a computed signal that can derive its value from asynchronous sources
@@ -91,9 +94,9 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  *   - `behavior`: How to handle multiple async operations ('switch' | 'merge' | 'concat' | 'exhaust')
  *   - `equal`: Custom equality function for signal comparison
  *   - `onError`: Error handler that can transform errors or provide fallback values
- *   - `throwOnError`: If true, errors will be thrown; if false (default), errors are set on the signal
+ *   - `throwOnError`: If true, errors throw on reads even when onError returns a fallback
  * @returns A signal that emits the computed value. May be `T | undefined` if no initial value is provided.
- *   Without onError or throwOnError, an error object becomes the signal value for compatibility.
+ *   Unhandled errors and throwing onError callbacks throw when the signal is read.
  *
  * @example
  * ```typescript
@@ -131,22 +134,18 @@ type OptionsWithRequireSync<T> = {requireSync: true} & BaseOptions<T>;
  *   }
  * );
  *
- * // Throw errors instead of setting them on the signal
+ * // Log and throw errors when the signal is read
  * const data = computedAsync(
  *   () => this.dataService.getData(),
  *   {
  *     throwOnError: true,
  *     onError: (error) => {
  *       this.logService.error(error);
- *       throw error; // Re-throw after logging
  *     }
  *   }
  * );
  * ```
  */
-type SignalState<T> = {kind: 'value'; value: T | undefined} | {kind: 'error'; error: unknown};
-
-// without options
 export function computedAsync<T>(
   computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
 ): Signal<T | undefined>;
@@ -159,7 +158,7 @@ export function computedAsync<T>(
 
 // with initialValue
 export function computedAsync<T>(
-  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T | undefined,
+  computeFn: (previousValue?: T) => Observable<T> | PromiseLike<T> | T,
   options: OptionsWithInitialValue<T>,
 ): Signal<T>;
 
@@ -205,12 +204,11 @@ export function computedAsync<T>(
     untracked(() => {
       let failure = error;
       try {
-        if (options.onError) {
-          const fallbackValue = options.onError(error);
-          if (!options.throwOnError) {
-            sourceState.set({kind: 'value', value: fallbackValue});
-            return;
-          }
+        if (options.throwOnError === true) {
+          options.onError?.(error);
+        } else if (options.onError) {
+          sourceState.set({kind: 'value', value: options.onError(error)});
+          return;
         }
       } catch (handlerError: unknown) {
         failure = handlerError;
@@ -298,10 +296,7 @@ export function computedAsync<T>(
     () => {
       const state = sourceState();
       if (state.kind === 'error') {
-        if (options.throwOnError) {
-          throw state.error;
-        }
-        return state.error as T;
+        throw state.error;
       }
       return state.value as T;
     },

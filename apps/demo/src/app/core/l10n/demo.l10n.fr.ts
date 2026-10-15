@@ -415,12 +415,12 @@ export const frTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Utilisez le callback <code>onError</code> pour gérer les erreurs gracieusement et fournir des valeurs de repli. Lorsque <code>onError</code> retourne une valeur, le signal émet cette valeur au lieu de lancer une erreur :',
   'computedAsync.onErrorCallout':
-    'Le callback <code>onError</code> reçoit l’erreur et renvoie une valeur de repli. Renvoyer <code>undefined</code> définit aussi la valeur du signal à undefined. Sans gestionnaire, le comportement historique stocke l’objet erreur comme valeur du signal ; fournissez une valeur de repli valide ou utilisez <code>throwOnError</code>.',
-  'computedAsync.example12': 'Exemple 12 : Gestion des erreurs avec throwOnError',
+    'Le callback <code>onError</code> renvoie une valeur de secours de type T. Incluez explicitement <code>undefined</code> dans T si nécessaire. Les erreurs non traitées et les exceptions du callback sont levées à la lecture du signal ; elles ne deviennent jamais des données de succès.',
+  'computedAsync.example12': 'Exemple 12 : Les erreurs sont levées à la lecture par défaut',
   'computedAsync.example12Desc':
-    "Utilisez <code>throwOnError: true</code> pour propager les erreurs au lieu de les manipuler silencieusement. Ceci est utile lorsque vous voulez que les erreurs se transforment en un gestionnaire d'erreur global:",
+    'Les erreurs non traitées sont levées à la lecture du signal. Interceptez la lecture ou utilisez <code>onError</code> pour fournir une valeur de secours typée.',
   'computedAsync.throwOnErrorCallout':
-    "Lorsque <code>throwOnError: true</code>, des erreurs seront lancées même si <code>onError</code> est fourni. Le callback <code>onError</code> peut encore être utilisé pour la logarithme ou les effets secondaires avant que l'erreur ne soit lancée.",
+    '<code>throwOnError: true</code> exécute <code>onError</code> pour ses effets de bord et lève toujours une erreur ; sa valeur de retour est ignorée. <code>throwOnError: false</code> n’est plus pris en charge.',
   'computedAsync.example13': "Exemple 13 : Changement d'onglet avec annulation de la demande (résilience de la force)",
   'computedAsync.example13Desc':
     'Dans le UIs multi-onglets, les onglets de commutation peuvent rapidement déclencher des requêtes simultanées lorsque les demandes en vol sont avortées ou échouées (p. ex. annulations de navigation par le navigateur).',
@@ -2270,4 +2270,13 @@ export const frTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Nommer les références de requêtes et de mutations',
   'queryGuide.namingHandles':
     'Utilisez <code>userQuery</code> pour une requête, <code>tenantQueries</code> pour une collection et <code>createMutation</code> pour une écriture. Réservez <code>user</code> ou <code>tenant</code> aux données obtenues.',
+
+  'computedAsync.failSource': 'Faire échouer la source',
+  'computedAsync.recoverSource': 'Rétablir la source',
+  'computedAsync.readSignal': 'Lire le signal',
+  'computedAsync.lastRead': 'Dernière lecture',
+  'computedAsync.notRead': 'Pas encore lu',
+  'computedAsync.readError': 'La lecture a levé une erreur ; aucune valeur de succès n’a été renvoyée.',
+  'computedAsync.readDemoHint':
+    'Faites échouer la source, puis lisez le signal. Rétablissez la source et relisez pour vérifier la récupération.',
 };

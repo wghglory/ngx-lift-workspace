@@ -62,7 +62,7 @@
       <app-code-block [code]="previousCode" lang="typescript" />
     </article>
 
-    <article cds-layout="vertical gap:sm align:stretch">
+    <article cds-layout="vertical gap:sm align:stretch" data-testid="computed-http-users-demo">
       <h3>{{ 'computedAsync.example9' | translate }}</h3>
       <p>{{ 'computedAsync.example9Desc' | translate }}</p>
       <div>
@@ -92,7 +92,7 @@
       <cll-callout [innerHTML]="'computedAsync.learnTrigger' | translate: '../createTrigger'"></cll-callout>
     </article>
 
-    <article cds-layout="vertical gap:sm align:stretch">
+    <article cds-layout="vertical gap:sm align:stretch" data-testid="computed-lazy-users-demo">
       <h3>{{ 'computedAsync.example10' | translate }}</h3>
       <p>{{ 'computedAsync.example10Desc' | translate }}</p>
       <div>
@@ -121,17 +121,62 @@
       <app-code-block [code]="loadDeferTsCode" lang="typescript" />
     </article>
 
-    <article cds-layout="vertical gap:sm align:stretch">
+    <article cds-layout="vertical gap:sm align:stretch" data-testid="computed-fallback-demo">
       <h3>{{ 'computedAsync.example11' | translate }}</h3>
       <p [innerHTML]="'computedAsync.example11Desc' | translate"></p>
+      <div cds-layout="horizontal gap:sm wrap:wrap">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline"
+          [disabled]="fallbackFails()"
+          (click)="fallbackFails.set(true)"
+        >
+          {{ 'computedAsync.failSource' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline"
+          [disabled]="!fallbackFails()"
+          (click)="fallbackFails.set(false)"
+        >
+          {{ 'computedAsync.recoverSource' | translate }}
+        </button>
+      </div>
+      <p role="status" data-testid="computed-fallback-value"><code>onError</code>: {{ fallbackValue() }}</p>
       <app-code-block [code]="errorHandlingCode" lang="typescript" />
       <cll-callout [innerHTML]="'computedAsync.onErrorCallout' | translate"></cll-callout>
     </article>
 
-    <article cds-layout="vertical gap:sm align:stretch">
+    <article cds-layout="vertical gap:sm align:stretch" data-testid="computed-read-error-demo">
       <h3>{{ 'computedAsync.example12' | translate }}</h3>
       <p [innerHTML]="'computedAsync.example12Desc' | translate"></p>
-      <app-code-block [code]="throwOnErrorCode" lang="typescript" />
+      <p>{{ 'computedAsync.readDemoHint' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap:wrap">
+        <button type="button" class="btn btn-sm btn-outline" [disabled]="sourceFails()" (click)="sourceFails.set(true)">
+          {{ 'computedAsync.failSource' | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline"
+          [disabled]="!sourceFails()"
+          (click)="sourceFails.set(false)"
+        >
+          {{ 'computedAsync.recoverSource' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm" (click)="readDefaultValue()">
+          {{ 'computedAsync.readSignal' | translate }}
+        </button>
+      </div>
+      <div role="status" data-testid="computed-last-read">
+        @if (lastReadFailed()) {
+          <cll-alert [content]="'computedAsync.readError' | translate" />
+        } @else if (lastReadValue() !== undefined) {
+          <p>{{ 'computedAsync.lastRead' | translate }}: {{ lastReadValue() }}</p>
+        } @else {
+          <p>{{ 'computedAsync.notRead' | translate }}</p>
+        }
+      </div>
+      <app-code-block [code]="readTimeErrorCode" lang="typescript" />
       <cll-callout type="warning" [innerHTML]="'computedAsync.throwOnErrorCallout' | translate"></cll-callout>
     </article>
 

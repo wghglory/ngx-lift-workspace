@@ -1,3 +1,5 @@
+// Packs built libraries and verifies exports, public types, imports and strict isolated installs.
+// Run with pnpm run verify:packages; also included in pnpm run validate.
 import assert from 'node:assert/strict';
 import {mkdtempSync, mkdirSync, readdirSync, readFileSync, writeFileSync, symlinkSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -44,11 +46,22 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
+function computedTypes() {
+  const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
+  const optional: number | undefined = computedAsync<number | undefined>(() => of(42), {initialValue: 0, onError: () => undefined})();
+  // @ts-expect-error Legacy error-as-data behavior is no longer supported.
+  computedAsync<number>(() => of(42), {throwOnError: false});
+  // @ts-expect-error A numeric signal cannot use an undefined fallback.
+  computedAsync<number>(() => of(42), {initialValue: 0, onError: () => undefined});
+  void [value, optional];
+}
+void computedTypes;
+
 const client = new QueryClient();
 const definition = {key: ['package-users'], loader: () => of([{id: 1}])};
 const users: Promise<{id: number}[]> = client.fetchQuery(definition);
@@ -148,6 +161,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
           rxjs: '^7.8.0',
           'node-forge': '^1.4.0',
           jsdom: '^27.0.0',
+          'zone.js': '~0.16.0',
         },
         devDependencies: {
           '@types/node': '^22.0.0',
@@ -160,21 +174,35 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
     ),
   );
 
+  writeFileSync(join(freshConsumer, 'pnpm-workspace.yaml'), 'strictPeerDependencies: true\nautoInstallPeers: false\n');
   run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 60000);
   writeFileSync(
     join(freshConsumer, 'query-browser.mjs'),
     readFileSync(join(root, 'tools/package/fixtures/query-browser.mjs'), 'utf8'),
   );
-  process.stdout.write(run(process.execPath, ['query-browser.mjs'], freshConsumer));
+  for (const mode of ['zoneless', 'zone']) {
+    process.stdout.write(run(process.execPath, ['query-browser.mjs', mode], freshConsumer));
+  }
 
   writeFileSync(
     join(freshConsumer, 'consumer.ts'),
     `
-import {isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
+function computedTypes() {
+  const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
+  const optional: number | undefined = computedAsync<number | undefined>(() => of(42), {initialValue: 0, onError: () => undefined})();
+  // @ts-expect-error Legacy error-as-data behavior is no longer supported.
+  computedAsync<number>(() => of(42), {throwOnError: false});
+  // @ts-expect-error A numeric signal cannot use an undefined fallback.
+  computedAsync<number>(() => of(42), {initialValue: 0, onError: () => undefined});
+  void [value, optional];
+}
+void computedTypes;
+
 const client = new QueryClient();
 const definition = {key: ['fresh-users'], loader: () => of([{id: 1}])};
 const users: Promise<{id: number}[]> = client.fetchQuery(definition);

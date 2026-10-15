@@ -373,10 +373,12 @@ export const zhTWTranslations: Record<string, string> = {
   'computedAsync.example11': '範例 11：利用 onError 進行優雅降級',
   'computedAsync.example11Desc': '配置 onError 回呼，當非同步請求發生例外時提供後備容錯資料：',
   'computedAsync.onErrorCallout':
-    '<code>onError</code> 回呼接收錯誤並回傳備援值。回傳 <code>undefined</code> 時，signal 的值會變成 undefined。未提供處理器時，舊版預設行為將錯誤物件當作 signal 值；請提供有效備援值或使用 <code>throwOnError</code>。',
-  'computedAsync.example12': '範例 12：向外拋出錯誤 (throwOnError)',
-  'computedAsync.example12Desc': '設定 throwOnError: true 將錯誤向上拋出給全域 ErrorHandler 集中處理。',
-  'computedAsync.throwOnErrorCallout': '開啟 throwOnError: true 時，即使有 onError，錯誤仍會向外拋出。',
+    '<code>onError</code> 回呼回傳 T 型別的備援值；需要 <code>undefined</code> 時請明確將其納入 T。未處理的失敗及回呼異常在讀取 signal 時拋出，不會成為成功資料。',
+  'computedAsync.example12': '範例 12：預設在讀取時拋錯',
+  'computedAsync.example12Desc':
+    '未處理的失敗會在讀取 signal 時拋出。請捕獲讀取異常，或透過 <code>onError</code> 回傳型別正確的備援值。',
+  'computedAsync.throwOnErrorCallout':
+    '<code>throwOnError: true</code> 執行 <code>onError</code> 副作用後仍拋錯，忽略回傳值。不再支援 <code>throwOnError: false</code>。',
   'computedAsync.example13': '範例 13：Tab 分頁切換與請求取消（資料流彈性容錯）',
   'computedAsync.example13Desc': '在多 Tab 快速切換時維持外層 Observable 的持久運作。',
   'computedAsync.tabResilienceBefore':
@@ -1951,4 +1953,12 @@ export const zhTWTranslations: Record<string, string> = {
   'queryGuide.namingTitle': '查詢和 mutation 參照命名',
   'queryGuide.namingHandles':
     '單個查詢使用 <code>userQuery</code>，集合使用 <code>tenantQueries</code>，寫入操作使用 <code>createMutation</code>。<code>user</code> 或 <code>tenant</code> 留給解析後的資料。',
+
+  'computedAsync.failSource': '使資料來源失敗',
+  'computedAsync.recoverSource': '恢復資料來源',
+  'computedAsync.readSignal': '讀取 signal',
+  'computedAsync.lastRead': '上次讀取',
+  'computedAsync.notRead': '尚未讀取',
+  'computedAsync.readError': '讀取時拋出了異常，沒有回傳成功值。',
+  'computedAsync.readDemoHint': '先使資料來源失敗，再讀取 signal；恢復資料來源後再次讀取，驗證其可以恢復。',
 };

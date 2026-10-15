@@ -1,8 +1,8 @@
 # Design Specification: `resourceAsync`
 
-**Status**: Implemented & Production-ready  
-**Module**: `libs/ngx-lift/src/lib/query/resource-async.ts`  
-**Tests**: `libs/ngx-lift/src/lib/query/resource-async.spec.ts` (110 passing unit tests)
+**Source:** [resource-async.ts](../../libs/ngx-lift/src/lib/query/resource-async.ts)
+
+**Regression tests:** [resource-async.spec.ts](../../libs/ngx-lift/src/lib/query/resource-async.spec.ts)
 
 ---
 
@@ -233,24 +233,8 @@ function removeRow(orgId: string) {
 
 ---
 
-## 6. Code vs. Spec Gap Analysis
+## 6. Scope and limitations
 
-| Requirement / Spec Item             | Implementation in Code                 | Gap / Finding                                          | Assessment     |
-| :---------------------------------- | :------------------------------------- | :----------------------------------------------------- | :------------- |
-| **Pure params & loader separation** | `ResourceAsyncDefinition<P, T>`        | None. Pure tracking is strictly enforced.              | ✅ Exact match |
-| **All Concurrency Behaviors**       | `switch`, `exhaust`                    | None. Reentrant calls and scheduling verified.         | ✅ Exact match |
-| **AbortSignal Propagation**         | `AbortController` linked per execution | None. Emits on cancellation, destruction, and reset.   | ✅ Exact match |
-| **Background Value Retention**      | `preserveValueOnError: boolean`        | None. Previous data retained with error status.        | ✅ Exact match |
-| **Type-Safe Nullability**           | Function overloads on `defaultValue`   | None. Precise `Signal<T>` vs `Signal<T \| undefined>`. | ✅ Exact match |
-| **Lifecycle Destruction**           | `destroy()` & `DestroyRef` hook        | None. Disposes injector-level and explicit resources.  | ✅ Exact match |
-
----
-
-## 7. Evolutionary Roadmap & Next Steps
-
-1. **SSR Hydration Key**:
-   - Introduce an optional `hydrationKey?: string` to serialize server-rendered state and eliminate client-side refetch
-     flickers.
-2. **Optimistic Rollback Hook**:
-   - Provide an automatic rollback snapshot callback within `set()` / `update()` for easy recovery on subsequent
-     mutation errors.
+SSR hydration serialization and automatic optimistic rollback are not implemented. Callers own any rollback snapshots
+used with local set/update operations. Planned work is tracked in the [roadmap](priority-roadmap.md); do not assume
+future options are part of the public API.

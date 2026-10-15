@@ -377,10 +377,12 @@ export const zhCNTranslations: Record<string, string> = {
   'computedAsync.example11': '示例 11：利用 onError 进行优雅降级',
   'computedAsync.example11Desc': '配置 onError 回调，当异步请求发生异常时提供后备容错数据，防止 Signal 崩溃：',
   'computedAsync.onErrorCallout':
-    '<code>onError</code> 回调接收错误并返回兜底值。返回 <code>undefined</code> 时，signal 的值会变成 undefined。未提供处理器时，旧版默认行为将错误对象当作 signal 值；请提供有效兜底值或使用 <code>throwOnError</code>。',
-  'computedAsync.example12': '示例 12：错误向外抛出 (throwOnError)',
-  'computedAsync.example12Desc': '设置 throwOnError: true 将错误向上抛出给全局 ErrorHandler 集中捕获。',
-  'computedAsync.throwOnErrorCallout': '开启 throwOnError: true 时，即使配置了 onError，错误依然会向外抛出。',
+    '<code>onError</code> 回调返回 T 类型的备用值；需要 <code>undefined</code> 时请明确将其纳入 T。未处理的失败和回调异常在读取 signal 时抛出，不会成为成功数据。',
+  'computedAsync.example12': '示例 12：默认在读取时抛错',
+  'computedAsync.example12Desc':
+    '未处理的失败会在读取 signal 时抛出。请捕获读取异常，或通过 <code>onError</code> 返回类型正确的备用值。',
+  'computedAsync.throwOnErrorCallout':
+    '<code>throwOnError: true</code> 执行 <code>onError</code> 副作用后仍抛错，忽略返回值。不再支持 <code>throwOnError: false</code>。',
   'computedAsync.example13': '示例 13：Tab 标签切换与快速取消（流的弹性容错）',
   'computedAsync.example13Desc':
     '在多 Tab 界面中快速切换可能会导致正在请求的 HTTP 流被浏览器 abort，此示例演示如何维持外层 Observable 流的持久存活。',
@@ -1960,4 +1962,12 @@ export const zhCNTranslations: Record<string, string> = {
   'queryGuide.namingTitle': '查询和 mutation 句柄命名',
   'queryGuide.namingHandles':
     '单个查询使用 <code>userQuery</code>，集合使用 <code>tenantQueries</code>，写操作使用 <code>createMutation</code>。<code>user</code> 或 <code>tenant</code> 留给解析后的数据。',
+
+  'computedAsync.failSource': '使数据源失败',
+  'computedAsync.recoverSource': '恢复数据源',
+  'computedAsync.readSignal': '读取 signal',
+  'computedAsync.lastRead': '上次读取',
+  'computedAsync.notRead': '尚未读取',
+  'computedAsync.readError': '读取时抛出了异常，没有返回成功值。',
+  'computedAsync.readDemoHint': '先使数据源失败，再读取 signal；恢复数据源后再次读取，验证其可以恢复。',
 };

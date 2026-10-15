@@ -408,12 +408,12 @@ export const nlTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'Gebruik de <code>onError</code> callback om fouten elegant te verwerken en terugvalwaarden te geven. Wanneer <code>onError</code> een waarde teruggeeft, zal het signaal die waarde uitstralen in plaats van een fout te maken:',
   'computedAsync.onErrorCallout':
-    'De callback <code>onError</code> ontvangt de fout en geeft een terugvalwaarde terug. Bij <code>undefined</code> wordt de signalwaarde ook undefined. Zonder handler slaat het bestaande standaardgedrag het foutobject als signalwaarde op; geef een geldige terugvalwaarde of gebruik <code>throwOnError</code>.',
-  'computedAsync.example12': 'Voorbeeld 12: Fout bij het omgaan met throwOnError',
+    'De <code>onError</code>-callback retourneert een vervangende waarde van type T. Neem <code>undefined</code> indien nodig expliciet op in T. Onbehandelde fouten en callback-uitzonderingen worden bij het lezen van het signal geworpen en worden nooit succesvolle gegevens.',
+  'computedAsync.example12': 'Voorbeeld 12: Fouten worden standaard bij het lezen geworpen',
   'computedAsync.example12Desc':
-    'Gebruik <code>throwOnError: true</code> om fouten te propageren in plaats van ze stil aan te pakken. Dit is handig als u fouten wilt opbellen naar een globale foutafhandeling:',
+    'Onbehandelde fouten worden geworpen wanneer u het signal leest. Vang de leesfout op of gebruik <code>onError</code> voor een getypeerde vervangende waarde.',
   'computedAsync.throwOnErrorCallout':
-    'Wanneer <code>throwOnError: true</code>, fouten zullen worden gegooid, zelfs als <code>onError</code> is voorzien. De <code>onError</code> callback kan nog steeds worden gebruikt voor het loggen of bijwerkingen voordat de fout gooit.',
+    '<code>throwOnError: true</code> voert <code>onError</code> uit voor neveneffecten en werpt toch een fout; de retourwaarde wordt genegeerd. <code>throwOnError: false</code> wordt niet meer ondersteund.',
   'computedAsync.example13': 'Voorbeeld 13: Tabblad wisselen met Annulering aanvraag (Stream Resilience)',
   'computedAsync.example13Desc':
     'In multi-tab UIs kunnen schakeltabbladen snel gelijktijdige verzoeken oproepen waarbij verzoeken tijdens de vlucht worden afgebroken of mislukt (bijvoorbeeld browsernavigatie annuleringen).',
@@ -2230,4 +2230,13 @@ export const nlTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'Query- en mutatiereferenties benoemen',
   'queryGuide.namingHandles':
     'Gebruik <code>userQuery</code> voor één query, <code>tenantQueries</code> voor een verzameling en <code>createMutation</code> voor een schrijfopdracht. Reserveer <code>user</code> of <code>tenant</code> voor de opgeloste gegevens.',
+
+  'computedAsync.failSource': 'Bron laten mislukken',
+  'computedAsync.recoverSource': 'Bron herstellen',
+  'computedAsync.readSignal': 'Signal lezen',
+  'computedAsync.lastRead': 'Laatste lezing',
+  'computedAsync.notRead': 'Nog niet gelezen',
+  'computedAsync.readError': 'Bij het lezen is een fout geworpen; er is geen succeswaarde geretourneerd.',
+  'computedAsync.readDemoHint':
+    'Laat de bron mislukken en lees het signal. Herstel de bron en lees opnieuw om het herstel te controleren.',
 };

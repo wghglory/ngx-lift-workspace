@@ -1,8 +1,6 @@
-# Priority 1 and 2 production contracts
+# Demo and library integration
 
-This document records the loading, localization and lifecycle contracts completed for PR #147. Current validation and
-release evidence are in [the production review](../reviews/query-production-review.md).
-[简体中文说明](./priority-1-2-completion.zh-CN.md).
+Shared loading, localization and lifecycle contracts.
 
 ## Loading and package consumers
 
@@ -17,9 +15,15 @@ import graph or the static graph of either certificate-related route. This preve
 from being mistaken for component-level deferred loading.
 
 `pnpm run verify:packages` packs both libraries and tests isolated installs with strict peer dependency checks and no
-automatic peer installation. The consumer compiles with strict TypeScript settings and runs public imports. The
-publication workflow defaults to a dry run, validates its inputs and builds both packages even for a selected-project
-release. A dry run requires no npm token, creates no version commit or tag, and performs no publication.
+automatic peer installation. The consumer compiles with strict TypeScript settings and runs public imports. See
+[publishing](../DEPLOYMENT.md) for the dry-run and release procedure.
+
+## User API examples
+
+User cards and datagrids use `UserService` to request `https://randomuser.me/api`; portrait URLs come from the response.
+Refresh and lazy-load actions issue new HTTP requests, and failures propagate to each example's error handling. There is
+no automatic local-data replacement. Browser tests intercept HTTP at the network boundary; production demos always use
+the live API. The resource error-fallback example intentionally uses a local avatar.
 
 ## Localization
 
@@ -57,14 +61,8 @@ A component can instead use `[scoped]="true"`. Shared idle instances share confi
 policies. The last managed owner clears timers, while an explicitly started `startWatching()` owner retains control
 until `clearTimers()` or injector destruction. Initial component configuration is applied before watching starts.
 
-Diagnostic keys are detached copies. Each complete snapshot samples its clock and visibility once; freshness and
-scheduling estimates use that same instant. `requestCount` / `pendingRequestCount` count unsettled logical reads
-associated with cached entries, including retry waits and obsolete generations, rather than active HTTP transports.
-`isPending` describes only the current generation and can be false while an obsolete read remains. Removed entries are
-excluded; remove/destroy abort their work. `failureCount` / `nextRetryAt` expose the current logical read's retry
-progress. The demo refreshes every second and stops on destruction. Real mounted consumers test shared keys with
-different stale, polling and GC policies, destruction and independent scope keys. Shared keys continue to use the
-documented conservative combined policy; scoping uses distinct query keys or clients.
+Query diagnostics and shared cache policies are defined in the
+[query contract](../design/query-resource-design-spec.md).
 
 Certificate clocks accept a callback returning Date or a timestamp. Signals satisfy that callback and drive reactive
 status changes. Bind `[clock]="now"` or provide `CERTIFICATE_CLOCK`; custom clocks own their advancement. The default
@@ -72,12 +70,10 @@ browser clock advances every minute and cleans up with its injector. Each status
 
 ## Compatibility
 
-`computedAsync` implementation and types are unchanged. Its error-as-value typing debt belongs in a separately designed
-major release or a separately named opt-in API. A Result wrapper would require consumers to unwrap values in
-assignments, property reads, templates and previous-value callbacks. Changing the default to throwing would instead
-change runtime error behavior. This PR makes neither change.
+Derived signal error handling is defined in the [computedAsync contract](../design/computed-async-design-spec.md).
 
 `IdleDetectionService.observeState()` replays the current warning/countdown state. Switching to a fresh scope clears the
-previous modal and countdown; joining an already-counting shared service renders its current state immediately. Activity
-resets close every modal observing the same service. Existing event APIs remain available; the state stream completes
-with its injector.
+previous modal and countdown; joining an already-counting shared service renders its current state immediately. Ordinary
+activity resets only the idle phase. Once the warning opens, mouse movement, scrolling and keystrokes neither dismiss it
+nor extend the countdown. "Keep me signed in" calls `resetTimer(true)`, closing every modal observing the same service
+and starting a fresh idle cycle. Existing event APIs remain available; the state stream completes with its injector.

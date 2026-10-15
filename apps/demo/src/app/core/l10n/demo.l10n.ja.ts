@@ -399,12 +399,12 @@ export const jaTranslations: Record<string, string> = {
   'computedAsync.example11Desc':
     'onErrorコールバックを使用してエラーを穏やかに処理し、フォールバック値を提供してください。onErrorが値を返すと、シグナルはその値を発行し、エラーを投げなくなります:',
   'computedAsync.onErrorCallout':
-    '<code>onError</code> コールバックはエラーを受け取り、フォールバック値を返します。<code>undefined</code> を返すと、signal の値も undefined になります。ハンドラーがない場合、従来の既定動作ではエラーオブジェクトが signal の値になります。有効なフォールバック値を返すか、<code>throwOnError</code> を使用してください。',
-  'computedAsync.example12': '例12: throwOnErrorを使用したエラーハンドリング',
+    '<code>onError</code> コールバックは T 型の代替値を返します。必要な場合は <code>undefined</code> を T に明示的に含めてください。未処理の失敗とコールバックの例外は signal の読み取り時にスローされ、成功データにはなりません。',
+  'computedAsync.example12': '例12: 既定では読み取り時にエラーをスロー',
   'computedAsync.example12Desc':
-    'throwOnError: trueを使用してエラーを上に伝播させ、静默的に処理しないようにします。これはグローバルなエラーハンドラーにエラーが上に伝播する場合に役立ちます:',
+    '未処理の失敗は signal の読み取り時にスローされます。読み取りを捕捉するか、<code>onError</code> で型付きの代替値を返してください。',
   'computedAsync.throwOnErrorCallout':
-    'throwOnError: trueの場合、onErrorが提供されている場合でもエラーは投げられます。onErrorコールバックはエラーが投げられる前にログや副作用を処理するために使用できます。',
+    '<code>throwOnError: true</code> は副作用のために <code>onError</code> を実行した後もエラーをスローし、戻り値を無視します。<code>throwOnError: false</code> はサポートされなくなりました。',
   'computedAsync.example13': '例13: タブ切り替えとリクエストキャンセル（ストリームの耐性）',
   'computedAsync.example13Desc':
     '複数タブのUIにおいて、タブを頻繁に切り替えると、同時に送信されるリクエストがキャンセルされるか失敗する（例: ブラウザのナビゲーションキャンセル）。',
@@ -2138,4 +2138,13 @@ export const jaTranslations: Record<string, string> = {
   'queryGuide.namingTitle': 'クエリとミューテーション参照の命名',
   'queryGuide.namingHandles':
     '単一クエリには <code>userQuery</code>、コレクションには <code>tenantQueries</code>、書き込みには <code>createMutation</code> を使います。<code>user</code> や <code>tenant</code> は取得したデータに使います。',
+
+  'computedAsync.failSource': 'ソースを失敗させる',
+  'computedAsync.recoverSource': 'ソースを復旧',
+  'computedAsync.readSignal': 'signal を読む',
+  'computedAsync.lastRead': '前回の読み取り',
+  'computedAsync.notRead': 'まだ読み取っていません',
+  'computedAsync.readError': '読み取り時にエラーがスローされ、成功値は返されませんでした。',
+  'computedAsync.readDemoHint':
+    'ソースを失敗させてから signal を読みます。ソースを復旧して再度読み、復旧を確認してください。',
 };
