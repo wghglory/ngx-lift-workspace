@@ -26,3 +26,26 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+# Library and component design
+
+For a new or changed public component, utility, operator, directive, validator, or form integration, read
+[the component development workflow](docs/design/component-development.md) and use
+[the lift-design skill](.agents/skills/lift-design/SKILL.md). Create or update the design spec before implementation;
+present practical use cases and proposed API examples for maintainer review. Existing explicit approval remains valid
+for its scope. The workflow owns industry comparisons, form applicability, Clarity demos, localization and validation.
+Use the [component roadmap](docs/design/component-roadmap.md) for the new component sequence and key/value hold.
+
+## Documentation language and examples
+
+Maintain repository documentation in English. Chinese explanations are temporary review aids for the maintainer; provide
+them in chat unless a temporary file is explicitly requested, and keep them out of committed project documentation.
+Preserve supported product translations. Use ngx-lift/clr-lift names and generic application examples; omit internal
+company and product identifiers from project documentation, examples, and agent guidance.
+
+## Dependency policy
+
+Prefer browser APIs and existing supported dependencies. Add a runtime dependency only when important, approved use
+cases justify its maintenance, installation, bundle, and integration costs. Optional heavyweight features must not
+require an engine installation for ordinary consumers; lazy loading alone does not establish dependency isolation.
+Record the alternatives and consumer evidence in the feature spec before adding a dependency.

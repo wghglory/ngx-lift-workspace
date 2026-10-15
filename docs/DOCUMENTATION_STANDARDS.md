@@ -1,5 +1,9 @@
 # Documentation Standards for Demo App
 
+Public library behavior is designed through the [component development workflow](design/component-development.md).
+Create or update its spec before implementation using the [spec template](design/templates/component-design-spec.md).
+These standards define demo-page presentation; the workflow defines API review and feature acceptance.
+
 This document defines the standards for all documentation pages in the demo app to ensure consistency, clarity, and ease
 of use for public users.
 
