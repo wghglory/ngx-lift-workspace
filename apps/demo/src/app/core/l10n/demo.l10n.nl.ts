@@ -581,7 +581,27 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Tag-gebaseerde ongeldigheid',
   'queryResource.badgeManualReload': 'Handmatig herladen trigger',
   'queryResource.badgeAutoMutate': 'Automatisch via mutateResource',
-  'queryResource.demo1Section': 'Coalescing en deduplicatie aanvragen',
+  'queryResource.lifecycleTitle': 'Levenscyclusstatussen en signaalmatrix',
+  'queryResource.lifecycleIntro':
+    'Query’s verwerken zowel initiële laadacties als achtergrondrevalidaties. Gebruik deze matrix om te bepalen wanneer een paginabrede spinner gewenst is of wanneer een subtiele vernieuwingsindicator volstaat zonder de gebruikersinterface te blokkeren.',
+  'queryResource.matrixState': 'Levenscyclusstatus',
+  'queryResource.matrixStatus': 'status()',
+  'queryResource.matrixWhenToUse': 'Wanneer gebruiken & UI-gedrag',
+  'queryResource.matrixInitialLoad': 'Eerste keer laden (geen eerdere gegevens)',
+  'queryResource.matrixInitialLoadUsage':
+    'Toon een centrale spinner of skeleton. De interface heeft nog geen gegevens om te tonen.',
+  'queryResource.matrixResolved': 'Opgelost / Inactief (verse gegevens)',
+  'queryResource.matrixResolvedUsage': 'Toon inhoud normaal. Er is geen netwerkverzoek actief.',
+  'queryResource.matrixRefreshingState': 'Achtergrondrevalidatie (SWR / Invalidatie)',
+  'queryResource.matrixRefreshingUsage':
+    'Toon GEEN paginabrede spinner! Behoud de bestaande gegevens en toon een subtiele badge of kleine spinner. Voorkomt knipperen en witte schermen.',
+  'queryResource.matrixInitialError': 'Initiële fout (geen eerdere gegevens)',
+  'queryResource.matrixInitialErrorUsage':
+    'Toon een volledig foutscherm of waarschuwingsbericht met een knop voor opnieuw proberen.',
+  'queryResource.matrixRefreshError': 'Vernieuwingsfout (met behoud van cache)',
+  'queryResource.matrixRefreshErrorUsage':
+    'Behoud de gegevens op het scherm en toon een zwevende waarschuwingsbanner of toast.',
+  'queryResource.demo1Section': '1. Coalescing en deduplicatie aanvragen',
   'queryResource.demo1SectionDesc':
     'Wanneer twee of meer componenten tegelijkertijd mounten en dezelfde query key aanvragen, deelt <code>QueryClient</code> het enkele netwerkverzoek tijdens de vlucht. Beide componenten ontvangen exact dezelfde respons met nul redundant verkeer.',
   'queryResource.demo1PlaygroundTitle': 'Gelijktijdige waarnemers delen in-flight werk',
@@ -599,9 +619,12 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Geheugengebruik',
   'queryResource.status': 'Status',
   'queryResource.updated': 'Bijgewerkt',
-  'queryResource.demo2Section': 'Stam-While-Revalidate & versheid beleid',
+  'queryResource.demo2Section': '2. Stale-While-Revalidate en versheidsbeleid',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> beheert hoe lang gecachede data nog fris is. Als een observer data vraagt terwijl het fris is, wordt het direct uit de geheugen opgehaald. Als het verder is, wordt de gecachede data onmiddellijk weergegeven terwijl een achtergrondherlaad actief wordt uitgevoerd zonder de UI te veranderen (aangeduid door <code>status: 'reloading'</code>).",
+  'queryResource.focusRefetchNoteTitle': 'Opnieuw ophalen bij tabbladfocus',
+  'queryResource.focusRefetchNoteBody':
+    'Standaard is refetchOnFocus uitgeschakeld in ngx-lift om enterprise-backends te beschermen tegen piekbelastingen. Geef { refetchOnFocus: true } mee in de query-opties om automatisch te vernieuwen bij terugkeer naar het tabblad.',
   'queryResource.configuredStaleTime': 'Geconfigureerde staleTime: {0} seconden',
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
@@ -612,7 +635,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Gezond',
   'queryResource.region': 'Gebieden',
   'queryResource.snapshotTime': 'Snapshot-tijd',
-  'queryResource.demo3Section': 'Gecoördineerde polling met zichtbaar bewustzijn',
+  'queryResource.demo3Section': '3. Gecoördineerde polling met zichtbaar bewustzijn',
   'queryResource.demo3SectionDesc':
     'Stel <code>pollInterval</code> in om actieve queries periodiek te herladen. Meelieve observers met verschillende intervallen worden gecoördineerd op het snelste interval. Polling pauzeert automatisch wanneer de browser tab verborgen is en herstart zich direct bij het retourneren.',
   'queryResource.demo3PlaygroundTitle': 'Achtergrondbespreking',
@@ -626,7 +649,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Laatste pulse',
   'queryResource.pollingIdleMsg':
     'Polling is momenteel inactief. Klik op "Start Polling" om live gecoördineerde achtergrondchecks te observeren.',
-  'queryResource.demo4Section': 'mutaties & tag ongeldigheid (mutateResource)',
+  'queryResource.demo4Section': '4. Mutaties & tag-ongeldigheid (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> behandelt asynchrone schrijfsels. Bij succesvolle mutatie ongeldig maakt bijpassende tags, waardoor alle actieve queries met deze tags automatisch de nieuwste servergegevens op de achtergrond opnieuw opvragen.',
   'queryResource.demo4PlaygroundTitle': 'Tag-based ongeldigheid',
@@ -2152,7 +2175,7 @@ export const nlTranslations: Record<string, string> = {
   'queryExamples.startDeadline': 'Hangende leesactie starten',
   'queryExamples.deadlineMessage': 'De leesactie heeft de tijdslimiet bereikt. Probeer opnieuw.',
   'queryExamples.canceledReads': 'Geannuleerde abonnementen: {0}',
-  'queryExamples.partialFailure': 'Gedeeltelijke lijstfout',
+  'queryExamples.partialFailure': '2. Gedeeltelijke lijstfout en granulair herstel',
   'queryExamples.mutationFailure': 'Schrijffout',
   'queryExamples.mutationIntro':
     'Schrijfacties worden niet automatisch herhaald. Deze simulatie weigert vóór uitvoering.',
@@ -2200,7 +2223,7 @@ export const nlTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Servicewidgets vernieuwen',
   'queryExamples.widget': 'Widget {0}: tenant {1}, {2}',
   'queryExamples.counts': 'Aantal HTTP-verzoeken:',
-  'queryExamples.dynamic': 'Dynamische parallelle query’s',
+  'queryExamples.dynamic': '1. Dynamische parallelle query’s',
   'queryExamples.dynamicIntro':
     'queryResources koppelt geselecteerde ID’s aan onafhankelijke observers. Herschikken behoudt observers; verwijderen van een ID ruimt de observer op.',
   'queryExamples.one': 'Alleen tenant A',
@@ -2211,6 +2234,58 @@ export const nlTranslations: Record<string, string> = {
   'queryExamples.databaseB': 'Database van tenant B',
   'queryExamples.initialLoadingDescription': 'True tijdens laden zonder beschikbare gegevens.',
   'queryExamples.refreshingDescription': 'True tijdens vernieuwen met behoud van cachegegevens.',
+  'queryResources.k8sComparisonTitle': '3. Vlootmonitoring: Bulkaggregatie vs. Granulaire reactieve collectie',
+  'queryResources.k8sComparisonDesc':
+    'Vergelijking van twee architectuurpatronen voor het monitoren van gedistribueerde Kubernetes-clusters: Monolithische bulkaggregatie (queryResource + forkJoin) vs. Granulaire querycollectie (queryResources).',
+  'queryResources.traditionalTab': 'Aanpak 1: Bulkaggregatie (queryResource)',
+  'queryResources.traditionalDesc':
+    'Aggregeert de hele vloot in één monolithisch netwerkverzoek. Head-of-Line blokkering: het traagste cluster (APAC Edge @ 1200ms) vertraagt de weergave van alle andere clusters.',
+  'queryResources.granularTab': 'Aanpak 2: Granulaire collectie (queryResources)',
+  'queryResources.granularDesc':
+    'Creëert onafhankelijke reactieve query’s per cluster. Snelle clusters renderen direct (US-East @ 150ms). Elk cluster kan geïsoleerd worden herladen.',
+  'queryResources.refreshFleet': 'Hele vloot vernieuwen',
+  'queryResources.refreshCluster': 'Cluster vernieuwen',
+  'queryResources.clusterName': 'Clusternaam',
+  'queryResources.providerRegion': 'Provider / Regio',
+  'queryResources.activeNodes': 'Actieve knooppunten',
+  'queryResources.healthStatus': 'Gezondheidsstatus',
+  'queryResources.latency': 'Latentie',
+  'queryResources.actions': 'Acties',
+  'queryResources.revalidatingNotice':
+    'Vloot wordt op de achtergrond gevalideerd... Bestaande gegevens blijven interactief.',
+  'queryResources.headOfLineWarning':
+    'Head-of-Line blokkering actief: alle 4 de clusters wachten op het traagste cluster (APAC Edge ~1200ms). Als één cluster faalt, faalt de hele momentopname tenzij handmatig geïsoleerd.',
+  'queryResources.progressiveNotice':
+    'Progressieve weergave actief: snelle clusters (US-East 150ms, EU-Central 280ms) verschijnen direct interactief terwijl langzamere verbindingen nog laden.',
+  'queryResources.comparisonTableTitle': 'Vergelijking van architectuurdimensies',
+  'queryResources.dimTitle': 'Dimensie',
+  'queryResources.dimArch': 'Architectuurpatroon',
+  'queryResources.dimArchTraditional': 'Monolithische forkJoin / Geaggregeerd eindpunt',
+  'queryResources.dimArchGranular': 'Onafhankelijke reactieve collectie (queryResources)',
+  'queryResources.dimLatency': 'Latentie en weergave',
+  'queryResources.dimLatencyTraditional': 'Head-of-Line blokkering: UI wacht op het traagste cluster',
+  'queryResources.dimLatencyGranular': 'Progressieve weergave: elk cluster verschijnt direct bij ontvangst',
+  'queryResources.dimIsolation': 'Foutisolatie',
+  'queryResources.dimIsolationTraditional': 'Alles-of-niets: één fout blokkeert de hele vloot',
+  'queryResources.dimIsolationGranular': 'Volledige foutisolatie: falend cluster beïnvloedt andere clusters niet',
+  'queryResources.dimIdentity': 'Cachesleutels en identiteit',
+  'queryResources.dimIdentityTraditional': 'Eén monolithische sleutel voor alle gegevens',
+  'queryResources.dimIdentityGranular': 'Individuele atomaire cachesleutel per clusterentiteit',
+  'queryResources.dimReload': 'Herlaadgranulariteit',
+  'queryResources.dimReloadTraditional': 'Alleen volledige vloot herladen (bandbreedteverspilling)',
+  'queryResources.dimReloadGranular': 'Precies herladen per cluster of via vloottags',
+  'queryResources.dimCache': 'Herbruikbaarheid van cache',
+  'queryResources.dimCacheTraditional': 'Niet deelbaar over afzonderlijke detailweergaven of pagina’s',
+  'queryResources.dimCacheGranular': 'Naadloos hergebruik tussen vloot- en clusterdetailweergaven',
+  'queryResources.prosConsTitle': 'Voor- en nadelen overzicht',
+  'queryResources.prosTraditional':
+    'Eenvoudig wanneer de backend al een geaggregeerde batch-API aanbiedt; precies één netwerktrip.',
+  'queryResources.consTraditional':
+    'Slechte gebruikerservaring door latentiekoppeling; trapsgewijze fouten; ongeschikt voor dashboards met individuele acties.',
+  'queryResources.prosGranular':
+    'Optimale responsiviteit door progressief laden; foutisolatie; gerichte acties en cachehergebruik.',
+  'queryResources.consGranular':
+    'Hoger aantal afzonderlijke HTTP-verzoeken bij zeer grote vloten (paginering aanbevolen).',
   'queryResource.thFailures': 'Mislukte pogingen',
   'queryResource.thNextRetry': 'Volgende poging',
   'queryGuide.selection': 'Gerelateerde hulpmiddelen:',

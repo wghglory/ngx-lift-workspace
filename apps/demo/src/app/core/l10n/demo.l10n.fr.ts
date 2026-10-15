@@ -587,7 +587,27 @@ export const frTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': "Invalidation fondée sur l'étiquette",
   'queryResource.badgeManualReload': 'Déclencheur manuel de recharge',
   'queryResource.badgeAutoMutate': 'Automatique via mutateResource',
-  'queryResource.demo1Section': 'Demande de coalcage et de déduplication',
+  'queryResource.lifecycleTitle': 'Matrice des états et signaux du cycle de vie',
+  'queryResource.lifecycleIntro':
+    'Les requêtes gèrent à la fois les chargements initiaux et les revalidations en arrière-plan. Utilisez cette matrice pour déterminer quand afficher un indicateur de chargement plein écran ou un badge discret de rafraîchissement sans bloquer l’interface utilisateur.',
+  'queryResource.matrixState': 'État du cycle de vie',
+  'queryResource.matrixStatus': 'status()',
+  'queryResource.matrixWhenToUse': 'Quand l’utiliser & comportement UI',
+  'queryResource.matrixInitialLoad': 'Chargement initial (aucune donnée préalable)',
+  'queryResource.matrixInitialLoadUsage':
+    'Affichez un spinner ou un squelette principal. L’interface n’a pas encore de données à afficher.',
+  'queryResource.matrixResolved': 'Résolu / Inactif (données fraîches)',
+  'queryResource.matrixResolvedUsage': 'Affichez le contenu normalement. Aucune requête réseau n’est en cours.',
+  'queryResource.matrixRefreshingState': 'Revalidation en arrière-plan (SWR / Invalidation)',
+  'queryResource.matrixRefreshingUsage':
+    'N’AFFICHEZ PAS de spinner plein écran ! Conservez l’affichage des données existantes et ajoutez un indicateur discret. Évite tout scintillement ou écran blanc.',
+  'queryResource.matrixInitialError': 'Erreur initiale (aucune donnée préalable)',
+  'queryResource.matrixInitialErrorUsage':
+    'Affichez une alerte ou un écran d’erreur complet avec bouton de nouvelle tentative.',
+  'queryResource.matrixRefreshError': 'Erreur de rafraîchissement (avec données en cache)',
+  'queryResource.matrixRefreshErrorUsage':
+    'Conservez les données à l’écran et affichez un bandeau ou toast d’avertissement flottant.',
+  'queryResource.demo1Section': '1. Demande de coalescence et de déduplication',
   'queryResource.demo1SectionDesc':
     'Lorsque deux ou plusieurs composants se montent en même temps et demandent la même clé de requête, <code>QueryClient</code> partage la seule demande de réseau en vol. Les deux composants reçoivent exactement la même réponse avec aucun trafic redondant.',
   'queryResource.demo1PlaygroundTitle': 'Cocurrent Observers Part in-Flight Work',
@@ -605,9 +625,12 @@ export const frTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Utilisation de la mémoire',
   'queryResource.status': 'État',
   'queryResource.updated': 'Mise à jour',
-  'queryResource.demo2Section': 'Politiques relatives à la revalidation et à la fraîcheur',
+  'queryResource.demo2Section': '2. Politiques de revalidation et de fraîcheur (Stale-While-Revalidate)',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> contrôle pendant combien les données en cache restent fraiches. Si un observateur demande des données pendant qu'elles sont fraiches, elles sont rendues instantanément à partir de la mémoire. Si elles sont périmées, les données en cache sont affichées immédiatement pendant qu'une réinitialisation de fond s'exécute en silence sans effacer le UI (indiqué par <code>status: 'reloading'</code>).",
+  'queryResource.focusRefetchNoteTitle': 'Réactualisation au focus de l’onglet',
+  'queryResource.focusRefetchNoteBody':
+    'Par défaut, refetchOnFocus est désactivé dans ngx-lift pour protéger les API d’entreprise contre les pics de charge. Passez { refetchOnFocus: true } dans les options de la requête pour réactualiser automatiquement au retour sur l’onglet.',
   'queryResource.configuredStaleTime': 'Configuration de staleTime : {0} secondes',
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
@@ -618,7 +641,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Santé',
   'queryResource.region': 'Région',
   'queryResource.snapshotTime': "Heure d'instantané",
-  'queryResource.demo3Section': 'Sondage coordonné avec sensibilisation à la visibilité',
+  'queryResource.demo3Section': '3. Sondage coordonné avec sensibilisation à la visibilité',
   'queryResource.demo3SectionDesc':
     "Configurez <code>pollInterval</code> pour actualiser périodiquement les requêtes actives. Plusieurs observateurs demandant des intervalles différents sont synchronisés à la plus grande vitesse. L'interrogation périodique s'arrête automatiquement lorsque l'onglet du navigateur est masqué et se reprend immédiatement lorsqu'il est réactivé.",
   'queryResource.demo3PlaygroundTitle': 'Historique du scrutin',
@@ -632,7 +655,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Dernier pouls',
   'queryResource.pollingIdleMsg':
     'Le sondage est actuellement inactif. Cliquez sur "Démarrer le sondage" pour observer en direct les vérifications coordonnées des antécédents.',
-  'queryResource.demo4Section': "Mutations et invalidation de l'étiquette (mutateResource)",
+  'queryResource.demo4Section': '4. Mutations et invalidation par étiquette (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> gère les écritures asynchrones. Une fois la mutation réussie, elle invalide les balises correspondantes, ce qui fait que toutes les requêtes actives avec ces balises permettent de récupérer automatiquement les dernières données du serveur en arrière-plan.',
   'queryResource.demo4PlaygroundTitle': 'Invalidation par étiquette',
@@ -2190,7 +2213,7 @@ export const frTranslations: Record<string, string> = {
   'queryExamples.startDeadline': 'Démarrer une lecture bloquée',
   'queryExamples.deadlineMessage': 'Le délai de lecture est dépassé. Vous pouvez réessayer.',
   'queryExamples.canceledReads': 'Abonnements annulés : {0}',
-  'queryExamples.partialFailure': 'Échec partiel de la liste',
+  'queryExamples.partialFailure': '2. Échec partiel de liste et récupération granulaire',
   'queryExamples.mutationFailure': 'Échec écriture',
   'queryExamples.mutationIntro':
     'Les écritures ne sont pas répétées automatiquement. Cette simulation refuse avant application.',
@@ -2240,7 +2263,7 @@ export const frTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Actualiser les widgets du service',
   'queryExamples.widget': 'Widget {0} : locataire {1}, {2}',
   'queryExamples.counts': 'Nombre de requêtes HTTP :',
-  'queryExamples.dynamic': 'Requêtes parallèles dynamiques',
+  'queryExamples.dynamic': '1. Requêtes parallèles dynamiques',
   'queryExamples.dynamicIntro':
     'queryResources associe les ID sélectionnés à des observateurs indépendants. Le réordonnancement les conserve ; retirer un ID libère son observateur.',
   'queryExamples.one': 'Locataire A uniquement',
@@ -2251,6 +2274,59 @@ export const frTranslations: Record<string, string> = {
   'queryExamples.databaseB': 'Base de données du locataire B',
   'queryExamples.initialLoadingDescription': 'True pendant le chargement sans données disponibles.',
   'queryExamples.refreshingDescription': 'True pendant l’actualisation avec conservation du cache.',
+  'queryResources.k8sComparisonTitle':
+    '3. Surveillance de flotte : Agrégation globale vs. Collection réactive granulaire',
+  'queryResources.k8sComparisonDesc':
+    'Comparaison de deux modèles d’architecture pour surveiller l’état des clusters Kubernetes distribués : Agrégation globale monolithique (queryResource + forkJoin) vs. Collection de requêtes granulaire (queryResources).',
+  'queryResources.traditionalTab': 'Approche 1 : Agrégation globale (queryResource)',
+  'queryResources.traditionalDesc':
+    'Agrège toute la flotte en un seul appel réseau. Blocage en tête de ligne : le cluster le plus lent (APAC Edge @ 1200ms) retarde l’affichage de tous les autres.',
+  'queryResources.granularTab': 'Approche 2 : Collection granulaire (queryResources)',
+  'queryResources.granularDesc':
+    'Crée des requêtes réactives indépendantes par cluster. Les clusters rapides s’affichent instantanément (US-East @ 150ms). Chaque cluster peut être rechargé de façon isolée.',
+  'queryResources.refreshFleet': 'Actualiser toute la flotte',
+  'queryResources.refreshCluster': 'Actualiser le cluster',
+  'queryResources.clusterName': 'Nom du cluster',
+  'queryResources.providerRegion': 'Fournisseur / Région',
+  'queryResources.activeNodes': 'Nœuds actifs',
+  'queryResources.healthStatus': 'État de santé',
+  'queryResources.latency': 'Latence',
+  'queryResources.actions': 'Actions',
+  'queryResources.revalidatingNotice':
+    'Revalidation de la flotte en arrière-plan... Les données existantes restent interactives.',
+  'queryResources.headOfLineWarning':
+    'Blocage en tête de ligne actif : les 4 clusters attendent le plus lent (APAC Edge ~1200ms). Si un cluster échoue, l’ensemble de l’instantané échoue sans gestion d’erreur spécifique.',
+  'queryResources.progressiveNotice':
+    'Rendu progressif actif : les clusters rapides (US-East 150ms, EU-Central 280ms) s’affichent immédiatement de façon interactive pendant le chargement des plus lents.',
+  'queryResources.comparisonTableTitle': 'Dimensions architecturales comparées',
+  'queryResources.dimTitle': 'Dimension',
+  'queryResources.dimArch': 'Modèle architectural',
+  'queryResources.dimArchTraditional': 'forkJoin monolithique / Point de terminaison agrégateur',
+  'queryResources.dimArchGranular': 'Collection réactive indépendante (queryResources)',
+  'queryResources.dimLatency': 'Latence et affichage',
+  'queryResources.dimLatencyTraditional': 'Blocage en tête de ligne : l’interface attend le cluster le plus lent',
+  'queryResources.dimLatencyGranular': 'Rendu progressif : chaque cluster s’affiche dès sa réception',
+  'queryResources.dimIsolation': 'Isolation des pannes',
+  'queryResources.dimIsolationTraditional': 'Tout ou rien : un échec bloque toute la flotte',
+  'queryResources.dimIsolationGranular': 'Isolation complète : la panne d’un cluster n’affecte pas les autres',
+  'queryResources.dimIdentity': 'Clés de cache et identité',
+  'queryResources.dimIdentityTraditional': 'Une seule clé monolithique pour toutes les données',
+  'queryResources.dimIdentityGranular': 'Clé atomique distincte par entité de cluster',
+  'queryResources.dimReload': 'Granularité de rechargement',
+  'queryResources.dimReloadTraditional': 'Rechargement global uniquement (gaspillage de bande passante)',
+  'queryResources.dimReloadGranular': 'Rechargement précis par cluster ou via des balises de flotte',
+  'queryResources.dimCache': 'Réutilisabilité du cache',
+  'queryResources.dimCacheTraditional': 'Non partageable entre différentes vues ou pages détaillées',
+  'queryResources.dimCacheGranular': 'Réutilisation transparente entre vue d’ensemble et page de détail d’un cluster',
+  'queryResources.prosConsTitle': 'Avantages et inconvénients',
+  'queryResources.prosTraditional':
+    'Simple lorsque le backend fournit déjà une API agrégée ; exactement un aller-retour réseau.',
+  'queryResources.consTraditional':
+    'Mauvaise expérience utilisateur due au couplage des latences ; pannes en cascade ; inadapté aux tableaux de bord avec actions individuelles.',
+  'queryResources.prosGranular':
+    'Excellente réactivité grâce au chargement progressif ; isolation des erreurs ; actions ciblées et réutilisation du cache.',
+  'queryResources.consGranular':
+    'Nombre plus élevé de requêtes HTTP si la flotte est très importante (pagination ou découpage par lots conseillé).',
   'queryResource.thFailures': 'Tentatives échouées',
   'queryResource.thNextRetry': 'Prochaine tentative',
   'queryGuide.selection': 'Outils associés :',

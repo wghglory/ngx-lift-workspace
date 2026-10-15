@@ -584,7 +584,26 @@ export const esTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Invalidación basada en las velocidades',
   'queryResource.badgeManualReload': 'Activador de recarga manual',
   'queryResource.badgeAutoMutate': 'Automático a través de mutateResource',
-  'queryResource.demo1Section': 'Solicitar coalescing',
+  'queryResource.lifecycleTitle': 'Matriz de estados y señales del ciclo de vida',
+  'queryResource.lifecycleIntro':
+    'Las consultas gestionan tanto las cargas iniciales como las revalidaciones en segundo plano. Utilice esta matriz para determinar cuándo mostrar spinners de pantalla completa frente a indicadores sutiles de actualización sin bloquear la interacción.',
+  'queryResource.matrixState': 'Estado del ciclo de vida',
+  'queryResource.matrixStatus': 'status()',
+  'queryResource.matrixWhenToUse': 'Cuándo usar e impacto en UI',
+  'queryResource.matrixInitialLoad': 'Carga inicial (sin datos previos)',
+  'queryResource.matrixInitialLoadUsage':
+    'Muestre un spinner o esqueleto principal. La UI aún no tiene datos para mostrar.',
+  'queryResource.matrixResolved': 'Resuelto / Inactivo (datos frescos)',
+  'queryResource.matrixResolvedUsage': 'Muestre el contenido con normalidad. Ninguna solicitud de red está en curso.',
+  'queryResource.matrixRefreshingState': 'Revalidación en segundo plano (SWR / Invalidación)',
+  'queryResource.matrixRefreshingUsage':
+    '¡NO muestre un spinner de pantalla completa! Muestre los datos existentes y añada una insignia o spinner sutil en la barra superior. Evita parpadeos y pantallas en blanco.',
+  'queryResource.matrixInitialError': 'Error inicial (sin datos previos)',
+  'queryResource.matrixInitialErrorUsage': 'Muestre una alerta o pantalla de error completa con botón de reintento.',
+  'queryResource.matrixRefreshError': 'Error de actualización (con datos en caché)',
+  'queryResource.matrixRefreshErrorUsage':
+    'Conserve los datos existentes en pantalla y muestre un banner o toast de advertencia flotante.',
+  'queryResource.demo1Section': '1. Coalescencia de solicitudes',
   'queryResource.demo1SectionDesc':
     'Cuando dos o más componentes montan al mismo tiempo y solicitan la misma clave de consulta, <code>QueryClient</code> comparte la solicitud de red única en vuelo. Ambos componentes reciben la misma respuesta con cero tráfico redundante.',
   'queryResource.demo1PlaygroundTitle': 'Los observadores concurrentes comparten un trabajo de vuelo',
@@ -602,9 +621,12 @@ export const esTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Uso de la memoria',
   'queryResource.status': 'Situación',
   'queryResource.updated': 'Actualizado',
-  'queryResource.demo2Section': 'Las políticas de frescura de Stale-While-Ralliate',
+  'queryResource.demo2Section': '2. Políticas de frescura y Stale-While-Revalidate',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> controla cuánto tiempo permanece los datos en caché actualizados. Si un observador solicita datos mientras están actualizados, se renderizan instantáneamente desde la memoria. Si están vencidos, los datos en caché se muestran inmediatamente mientras un refresco de fondo se ejecuta silenciosamente sin limpiar la interfaz (indicado por <code>status: 'reloading'</code>).",
+  'queryResource.focusRefetchNoteTitle': 'Recuperación al enfocar la pestaña',
+  'queryResource.focusRefetchNoteBody':
+    'Por defecto, refetchOnFocus está deshabilitado en ngx-lift para proteger las APIs empresariales de saturaciones de tráfico. Pase { refetchOnFocus: true } en las opciones de consulta para actualizar automáticamente al volver a la pestaña.',
   'queryResource.configuredStaleTime': 'Configurado staleTime: {0} segundos',
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
@@ -616,7 +638,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Sano',
   'queryResource.region': 'Región',
   'queryResource.snapshotTime': 'Hora de la instantánea',
-  'queryResource.demo3Section': 'Polling coordinado con conciencia de visibilidad',
+  'queryResource.demo3Section': '3. Polling coordinado con conciencia de visibilidad',
   'queryResource.demo3SectionDesc':
     'Configure <code>pollInterval</code> para refrescar periódicamente consultas activas. Varios observadores solicitando intervalos diferentes se coordinan a la máxima velocidad. El sondeo se pausa automáticamente cuando la pestaña del navegador está oculta y se reinicia inmediatamente al volver.',
   'queryResource.demo3PlaygroundTitle': 'Polling de fondo',
@@ -630,7 +652,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Último Pulso',
   'queryResource.pollingIdleMsg':
     'Polling está ahora inactivo. Haga clic en Inicio Polling para observar controles de fondo coordinados en vivo.',
-  'queryResource.demo4Section': 'Mutaciones de invalidación de etiqueta (mutateResource)',
+  'queryResource.demo4Section': '4. Mutaciones e invalidación por etiquetas (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> maneja asíncrono escribe. Tras una mutación exitosa, invalida las etiquetas de juego, causando que todas las consultas activas con esas etiquetas retejan automáticamente los últimos datos del servidor en el fondo.',
   'queryResource.demo4PlaygroundTitle': 'Invalidación basada en velocidades',
@@ -2173,7 +2195,7 @@ export const esTranslations: Record<string, string> = {
   'queryExamples.startDeadline': 'Iniciar lectura bloqueada',
   'queryExamples.deadlineMessage': 'La lectura agotó el plazo. Puedes reintentar.',
   'queryExamples.canceledReads': 'Suscripciones canceladas: {0}',
-  'queryExamples.partialFailure': 'Error parcial de la lista',
+  'queryExamples.partialFailure': '2. Fallo parcial de lista y recuperación granular',
   'queryExamples.mutationFailure': 'Error de escritura',
   'queryExamples.mutationIntro':
     'Las escrituras no se reintentan automáticamente. Esta simulación rechaza antes de aplicar la escritura.',
@@ -2223,7 +2245,7 @@ export const esTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Actualizar widgets del servicio',
   'queryExamples.widget': 'Widget {0}: inquilino {1}, {2}',
   'queryExamples.counts': 'Número de solicitudes HTTP:',
-  'queryExamples.dynamic': 'Consultas paralelas dinámicas',
+  'queryExamples.dynamic': '1. Consultas paralelas dinámicas',
   'queryExamples.dynamicIntro':
     'queryResources asigna los ID seleccionados a observadores independientes. Reordenar conserva los observadores; eliminar un ID libera su observador.',
   'queryExamples.one': 'Solo inquilino A',
@@ -2234,6 +2256,57 @@ export const esTranslations: Record<string, string> = {
   'queryExamples.databaseB': 'Base de datos del inquilino B',
   'queryExamples.initialLoadingDescription': 'True durante la carga sin datos disponibles.',
   'queryExamples.refreshingDescription': 'True durante la actualización conservando la caché.',
+  'queryResources.k8sComparisonTitle': '3. Monitorización de flota: Agregación masiva vs. Colección reactiva granular',
+  'queryResources.k8sComparisonDesc':
+    'Comparación de dos patrones arquitectónicos para supervisar la salud de clústeres Kubernetes distribuidos: Agregación masiva monolítica (queryResource + forkJoin) frente a Colección de consultas granular (queryResources).',
+  'queryResources.traditionalTab': 'Enfoque 1: Agregación masiva (queryResource)',
+  'queryResources.traditionalDesc':
+    'Agrega toda la flota en una única llamada de red. Bloqueo de cabecera: el clúster más lento (APAC Edge @ 1200ms) retrasa la visualización de todos los demás.',
+  'queryResources.granularTab': 'Enfoque 2: Colección granular (queryResources)',
+  'queryResources.granularDesc':
+    'Crea consultas reactivas independientes por clúster. Los clústeres rápidos se renderizan al instante (US-East @ 150ms). Cada clúster puede recargarse de forma aislada.',
+  'queryResources.refreshFleet': 'Actualizar toda la flota',
+  'queryResources.refreshCluster': 'Actualizar clúster',
+  'queryResources.clusterName': 'Nombre del clúster',
+  'queryResources.providerRegion': 'Proveedor / Región',
+  'queryResources.activeNodes': 'Nodos activos',
+  'queryResources.healthStatus': 'Estado',
+  'queryResources.latency': 'Latencia',
+  'queryResources.actions': 'Acciones',
+  'queryResources.revalidatingNotice':
+    'Revalidando flota en segundo plano... Los datos existentes permanecen interactivos.',
+  'queryResources.headOfLineWarning':
+    'Bloqueo de cabecera activo: los 4 clústeres esperan al más lento (APAC Edge ~1200ms). Si un clúster falla, toda la instantánea falla a menos que se aísle manualmente.',
+  'queryResources.progressiveNotice':
+    'Renderizado progresivo activo: los clústeres rápidos (US-East 150ms, EU-Central 280ms) se muestran interactivos inmediatamente mientras se cargan los enlaces más lentos.',
+  'queryResources.comparisonTableTitle': 'Dimensiones arquitectónicas',
+  'queryResources.dimTitle': 'Dimensión',
+  'queryResources.dimArch': 'Patrón arquitectónico',
+  'queryResources.dimArchTraditional': 'forkJoin monolítico / Endpoint agregador',
+  'queryResources.dimArchGranular': 'Colección reactiva independiente (queryResources)',
+  'queryResources.dimLatency': 'Latencia y renderizado',
+  'queryResources.dimLatencyTraditional': 'Bloqueo de cabecera: la interfaz espera al clúster más lento',
+  'queryResources.dimLatencyGranular': 'Renderizado progresivo: cada clúster se muestra tan pronto como se recibe',
+  'queryResources.dimIsolation': 'Aislamiento de fallos',
+  'queryResources.dimIsolationTraditional': 'Todo o nada: un fallo bloquea toda la flota',
+  'queryResources.dimIsolationGranular': 'Aislamiento total: un fallo en un clúster no afecta a los demás',
+  'queryResources.dimIdentity': 'Claves de caché e identidad',
+  'queryResources.dimIdentityTraditional': 'Una única clave monolítica para todos los datos',
+  'queryResources.dimIdentityGranular': 'Clave atómica individual por entidad de clúster',
+  'queryResources.dimReload': 'Granularidad de recarga',
+  'queryResources.dimReloadTraditional': 'Solo recarga de flota completa (desperdicio de ancho de banda)',
+  'queryResources.dimReloadGranular': 'Recarga granular por clúster o mediante etiquetas de flota',
+  'queryResources.dimCache': 'Reutilización de caché',
+  'queryResources.dimCacheTraditional': 'No compartible con vistas de detalle individuales',
+  'queryResources.dimCacheGranular': 'Reutilización fluida entre vistas de flota y detalle de clúster',
+  'queryResources.prosConsTitle': 'Ventajas y desventajas',
+  'queryResources.prosTraditional': 'Fácil cuando el backend ya expone una API agregada; exactamente un viaje de red.',
+  'queryResources.consTraditional':
+    'Mala experiencia de usuario por acoplamiento de latencia; fallos en cascada; inadecuado para paneles con acciones individuales.',
+  'queryResources.prosGranular':
+    'Excelente experiencia de usuario gracias a la carga progresiva; aislamiento de errores; acciones granulares y reutilización de caché.',
+  'queryResources.consGranular':
+    'Mayor cantidad de solicitudes HTTP si la flota es muy grande (se recomienda paginación o división en lotes).',
   'queryResource.thFailures': 'Intentos fallidos',
   'queryResource.thNextRetry': 'Próximo reintento',
   'queryGuide.selection': 'Herramientas relacionadas:',

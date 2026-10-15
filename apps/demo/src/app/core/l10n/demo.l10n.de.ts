@@ -579,7 +579,26 @@ export const deTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Tag-basierte Invalidierung',
   'queryResource.badgeManualReload': 'manueller Neustart-Auslöser',
   'queryResource.badgeAutoMutate': 'Automatisch über mutateResource',
-  'queryResource.demo1Section': 'Bitten Sie um Kohlebildung und Deduplikation',
+  'queryResource.lifecycleTitle': 'Lebenszyklus-Zustände & Signal-Matrix',
+  'queryResource.lifecycleIntro':
+    'Verstehen Sie die Funktionsunterschiede zwischen isLoading, isInitialLoading und isRefreshing, um flackernde weiße Bildschirme zu vermeiden und reibungslose Hintergrundaktualisierungen umzusetzen.',
+  'queryResource.matrixState': 'Lebenszyklus-Zustand',
+  'queryResource.matrixStatus': 'status()',
+  'queryResource.matrixWhenToUse': 'Empfohlenes UI-Verhalten',
+  'queryResource.matrixInitialLoad': 'Erster Abruf ohne Cache',
+  'queryResource.matrixInitialLoadUsage': 'Seiten-Skelett oder zentralen Spinner anzeigen; noch keine Daten verfügbar.',
+  'queryResource.matrixResolved': 'Abgeschlossen / Gecacht',
+  'queryResource.matrixResolvedUsage': 'Inhalt normal rendern; Daten sind verfügbar und aktuell oder veraltet.',
+  'queryResource.matrixRefreshingState': 'Hintergrundaktualisierung (SWR)',
+  'queryResource.matrixRefreshingUsage':
+    'Bestehende UI sichtbar lassen! Dezenten Inline-Indikator oder Ladezustand am Aktualisieren-Button anzeigen.',
+  'queryResource.matrixInitialError': 'Initialer Fehler',
+  'queryResource.matrixInitialErrorUsage':
+    'Vollständigen Fehlerzustand / Leere Karte mit Wiederholen-Button anzeigen (isInitialError() ist true).',
+  'queryResource.matrixRefreshError': 'Aktualisierungsfehler',
+  'queryResource.matrixRefreshErrorUsage':
+    'Zwischengespeicherte Daten weiterhin anzeigen! Nicht-blockierendes Warnbanner oder Toast anzeigen (isRefreshError() ist true).',
+  'queryResource.demo1Section': '1. Anforderungsbündelung & Deduplizierung',
   'queryResource.demo1SectionDesc':
     'Wenn zwei oder mehr Komponenten gleichzeitig montieren und den gleichen Abfrageschlüssel anfordern, teilt <code>QueryClient</code> die einzelne In-Flight-Netzwerkanforderung. Beide Komponenten erhalten die exakt gleiche Antwort mit null redundantem Datenverkehr.',
   'queryResource.demo1PlaygroundTitle': 'Gleichzeitige Beobachter teilen sich in der Flugarbeit',
@@ -597,9 +616,12 @@ export const deTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Speichernutzung',
   'queryResource.status': 'Status',
   'queryResource.updated': 'Aktualisiert',
-  'queryResource.demo2Section': 'Stile-While-Revalidate & Freshness Politik',
+  'queryResource.demo2Section': '2. Stale-While-Revalidate & Frische-Richtlinien',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> steuert, wie lange gespeicherte Daten frisch bleiben. Wenn ein Beobachter Daten während des frischen Anfrages anfordert, werden sie sofort aus der Speicherung geladen. Wenn veraltet, werden die gespeicherten Daten sofort angezeigt, während ein Hintergrund-Refresh im Hintergrund ausführt, ohne die UI (indiziert durch <code>status: 'reloading'</code>) zu löschen.",
+  'queryResource.focusRefetchNoteTitle': 'Aktualisierung bei Tab-Fokus',
+  'queryResource.focusRefetchNoteBody':
+    'Standardmäßig ist refetchOnFocus in ngx-lift deaktiviert, um Unternehmens-Backends vor Lastspitzen zu schützen. Übergeben Sie { refetchOnFocus: true } in den Abfrageoptionen, um beim Zurückkehren zum Tab automatisch zu aktualisieren.',
   'queryResource.configuredStaleTime': 'Konfiguriert staleTime: {0} Sekunden',
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
@@ -610,7 +632,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Gesund',
   'queryResource.region': 'Region',
   'queryResource.snapshotTime': 'Snapshot Zeit',
-  'queryResource.demo3Section': 'Koordiniertes Polling mit Sichtbewusstsein',
+  'queryResource.demo3Section': '3. Koordiniertes Polling mit Sichtbarkeitserkennung',
   'queryResource.demo3SectionDesc':
     'Konfigurieren Sie <code>pollInterval</code>, um aktive Abfragen regelmäßig zu aktualisieren. Mehrere Beobachter, die unterschiedliche Intervalle anfordern, werden auf das schnellste Intervall koordiniert. Polling pausiert automatisch, wenn der Browser-Fenster versteckt ist, und wird sofort wieder aufgenommen, wenn es zurückkehrt.',
   'queryResource.demo3PlaygroundTitle': 'Hintergrundbefragung',
@@ -624,7 +646,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Letzter Puls',
   'queryResource.pollingIdleMsg':
     'Das Polling ist derzeit im Leerlauf. Klicken Sie auf "Polling starten", um Live-koordinierte Hintergrundüberprüfungen zu beobachten.',
-  'queryResource.demo4Section': 'Mutationen & Tag-Invalidierung (mutateResource)',
+  'queryResource.demo4Section': '4. Mutationen & Tag-Invalidierung (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> verarbeitet asynchrone Schreibvorgänge. Nach erfolgreicher Mutation werden passende Tags ungültig, wodurch alle aktiven Abfragen mit diesen Tags automatisch die neuesten Serverdaten im Hintergrund widerlegen.',
   'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
@@ -2179,7 +2201,7 @@ export const deTranslations: Record<string, string> = {
   'queryExamples.startDeadline': 'Hängenden Lesevorgang starten',
   'queryExamples.deadlineMessage': 'Zeitlimit überschritten. Sie können erneut versuchen.',
   'queryExamples.canceledReads': 'Beendete Abonnements: {0}',
-  'queryExamples.partialFailure': 'Teilweise fehlgeschlagene Liste',
+  'queryExamples.partialFailure': '2. Partieller Listenfehler & Granulare Wiederherstellung',
   'queryExamples.mutationFailure': 'Schreibfehler',
   'queryExamples.mutationIntro':
     'Schreibvorgänge werden nicht automatisch wiederholt. Die Simulation lehnt vor der Ausführung ab.',
@@ -2229,7 +2251,7 @@ export const deTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Dienst-Widgets aktualisieren',
   'queryExamples.widget': 'Widget {0}: Mandant {1}, {2}',
   'queryExamples.counts': 'Anzahl der HTTP-Anfragen:',
-  'queryExamples.dynamic': 'Dynamische parallele Abfragen',
+  'queryExamples.dynamic': '1. Dynamische parallele Abfragen',
   'queryExamples.dynamicIntro':
     'queryResources ordnet ausgewählte IDs unabhängigen Beobachtern zu. Umsortieren erhält Beobachter; Entfernen einer ID beendet ihren Beobachter.',
   'queryExamples.one': 'Nur Mandant A',
@@ -2240,6 +2262,59 @@ export const deTranslations: Record<string, string> = {
   'queryExamples.databaseB': 'Datenbank von Mandant B',
   'queryExamples.initialLoadingDescription': 'True beim Laden ohne erfolgreiche Daten.',
   'queryExamples.refreshingDescription': 'True beim Aktualisieren mit erhaltenen Cache-Daten.',
+  'queryResources.k8sComparisonTitle': '3. Flottenüberwachung: Bulk-Aggregation vs. Granulare reaktive Sammlung',
+  'queryResources.k8sComparisonDesc':
+    'Vergleich zweier architektonischer Muster zur Überwachung verteilter Kubernetes-Clusterzustände: Monolithische Bulk-Aggregation (queryResource + forkJoin) vs. Granulare Abfragesammlung (queryResources).',
+  'queryResources.traditionalTab': 'Ansatz 1: Bulk-Aggregation (queryResource)',
+  'queryResources.traditionalDesc':
+    'Aggregiert die gesamte Flotte in einem monolithischen Netzwerkaufruf. Head-of-Line-Blockierung: Der langsamste Cluster (APAC Edge @ 1200ms) verzögert die Anzeige aller Cluster.',
+  'queryResources.granularTab': 'Ansatz 2: Granulare Sammlung (queryResources)',
+  'queryResources.granularDesc':
+    'Erstellt unabhängige reaktive Abfragen pro Cluster. Schnelle Cluster werden sofort gerendert (US-East @ 150ms). Einzelne Cluster können isoliert neu geladen werden.',
+  'queryResources.refreshFleet': 'Gesamte Flotte aktualisieren',
+  'queryResources.refreshCluster': 'Cluster aktualisieren',
+  'queryResources.clusterName': 'Clustername',
+  'queryResources.providerRegion': 'Anbieter / Region',
+  'queryResources.activeNodes': 'Aktive Knoten',
+  'queryResources.healthStatus': 'Zustand',
+  'queryResources.latency': 'Latenz',
+  'queryResources.actions': 'Aktionen',
+  'queryResources.revalidatingNotice': 'Flotte wird im Hintergrund neu validiert... Daten bleiben interaktiv.',
+  'queryResources.headOfLineWarning':
+    'Head-of-Line-Blockierung aktiv: Alle 4 Cluster warten auf den langsamsten Cluster (APAC Edge ~1200ms). Wenn ein Cluster ausfällt, schlägt der gesamte Snapshot fehl, sofern keine individuelle Fehlerbehandlung vorliegt.',
+  'queryResources.progressiveNotice':
+    'Progressives Rendering aktiv: Schnelle Cluster (US-East 150ms, EU-Central 280ms) werden sofort interaktiv gerendert, während langsame Verbindungen noch geladen werden.',
+  'queryResources.comparisonTableTitle': 'Architekturdimensionen im Vergleich',
+  'queryResources.dimTitle': 'Dimension',
+  'queryResources.dimArch': 'Architekturmuster',
+  'queryResources.dimArchTraditional': 'Monolithisches forkJoin / Aggregierter Endpunkt',
+  'queryResources.dimArchGranular': 'Unabhängige reaktive Sammlung (queryResources)',
+  'queryResources.dimLatency': 'Latenz & Rendering',
+  'queryResources.dimLatencyTraditional': 'Head-of-Line-Blockierung: UI wartet auf den langsamsten Cluster',
+  'queryResources.dimLatencyGranular': 'Progressives Rendering: Jeder Cluster erscheint sofort bei Eintreffen',
+  'queryResources.dimIsolation': 'Fehlerisolation',
+  'queryResources.dimIsolationTraditional': 'Alles-oder-Nichts: Ein Fehler blockiert die gesamte Flotte',
+  'queryResources.dimIsolationGranular':
+    'Vollständige Fehlerkapselung: Fehlgeschlagener Cluster beeinträchtigt andere nicht',
+  'queryResources.dimIdentity': 'Cache-Schlüssel & Identität',
+  'queryResources.dimIdentityTraditional': 'Ein einziger monolithischer Schlüssel für alle Daten',
+  'queryResources.dimIdentityGranular': 'Individueller atomarer Cache-Schlüssel pro Cluster-Entität',
+  'queryResources.dimReload': 'Granularität von Neuladungen',
+  'queryResources.dimReloadTraditional':
+    'Nur vollständige Flotte kann neu geladen werden (Verschwendung von Bandbreite)',
+  'queryResources.dimReloadGranular': 'Präzises Neuladen einzelner Cluster oder gesamter Flottentags',
+  'queryResources.dimCache': 'Cache-Wiederverwendbarkeit',
+  'queryResources.dimCacheTraditional': 'Nicht über verschiedene Ansichten oder Detailseiten hinweg teilbar',
+  'queryResources.dimCacheGranular': 'Nahtlose Wiederverwendung zwischen Flotten- und Cluster-Detailansichten',
+  'queryResources.prosConsTitle': 'Vor- und Nachteile im Überblick',
+  'queryResources.prosTraditional':
+    'Einfache Handhabung, wenn das Backend bereits einen aggregierten Batch-Endpunkt anbietet; genau ein Netzwerk-Roundtrip.',
+  'queryResources.consTraditional':
+    'Schlechte UX durch Latenzkopplung; Kaskadierendes Scheitern; ungeeignet für Dashboards mit unabhängigen Einzelaktionen.',
+  'queryResources.prosGranular':
+    'Optimale Benutzererfahrung durch progressives Laden; isolierte Fehlerbehandlung; granulare Aktionen und Cache-Wiederverwendung.',
+  'queryResources.consGranular':
+    'Höhere Anzahl einzelner HTTP-Anfragen bei großen Flotten (bei extrem großen Listen Pagination oder Batching empfohlen).',
   'queryResource.thFailures': 'Fehlgeschlagene Versuche',
   'queryResource.thNextRetry': 'Nächster Wiederholungsversuch',
   'queryGuide.selection': 'Verwandte Werkzeuge:',

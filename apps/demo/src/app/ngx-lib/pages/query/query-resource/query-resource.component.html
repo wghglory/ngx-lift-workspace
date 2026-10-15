@@ -46,6 +46,82 @@
         </tbody>
       </table>
     </div>
+
+    <h3 class="m-t-md">{{ 'queryResource.lifecycleTitle' | translate }}</h3>
+    <p>{{ 'queryResource.lifecycleIntro' | translate }}</p>
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'queryResource.matrixState' | translate }}</th>
+            <th>{{ 'queryResource.matrixStatus' | translate }}</th>
+            <th><code>hasValue()</code></th>
+            <th><code>isInitialLoading()</code></th>
+            <th><code>isRefreshing()</code></th>
+            <th><code>isLoading()</code></th>
+            <th>{{ 'queryResource.matrixWhenToUse' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixInitialLoad' | translate }}</strong>
+            </td>
+            <td><code>'loading'</code></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-info">true</span></td>
+            <td>{{ 'queryResource.matrixInitialLoadUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixResolved' | translate }}</strong>
+            </td>
+            <td><code>'resolved'</code></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td>{{ 'queryResource.matrixResolvedUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixRefreshingState' | translate }}</strong>
+            </td>
+            <td><code>'reloading'</code></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-info">true</span></td>
+            <td>{{ 'queryResource.matrixRefreshingUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixInitialError' | translate }}</strong>
+            </td>
+            <td><code>'error'</code></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td>{{ 'queryResource.matrixInitialErrorUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixRefreshError' | translate }}</strong>
+            </td>
+            <td><code>'error'</code></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td>{{ 'queryResource.matrixRefreshErrorUsage' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <p>
       {{ 'queryGuide.selection' | translate }}
       <a routerLink="/ngx-lift/query/queryResources"><code>queryResources</code></a> ·
@@ -215,6 +291,15 @@
             </div>
           </div>
         }
+
+        <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-t-md">
+          <clr-alert-item>
+            <span class="alert-text">
+              <strong>{{ 'queryResource.focusRefetchNoteTitle' | translate }}:</strong>
+              {{ 'queryResource.focusRefetchNoteBody' | translate }}
+            </span>
+          </clr-alert-item>
+        </clr-alert>
       </div>
     </div>
   </section>

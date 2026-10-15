@@ -563,7 +563,26 @@ export const enTranslations: Record<string, string> = {
   'queryResource.rowTagInvalidation': 'Tag-based Invalidation',
   'queryResource.badgeManualReload': 'Manual reload trigger',
   'queryResource.badgeAutoMutate': 'Automatic via mutateResource',
-  'queryResource.demo1Section': 'Request Coalescing & Deduplication',
+  'queryResource.lifecycleTitle': 'Lifecycle States & Signal Matrix',
+  'queryResource.lifecycleIntro':
+    'Understand the operational differences between isLoading, isInitialLoading, and isRefreshing to avoid blank-screen flashes and implement smooth background revalidations.',
+  'queryResource.matrixState': 'Lifecycle State',
+  'queryResource.matrixStatus': 'status()',
+  'queryResource.matrixWhenToUse': 'Recommended UI Behavior',
+  'queryResource.matrixInitialLoad': 'First Uncached Fetch',
+  'queryResource.matrixInitialLoadUsage': 'Display page skeleton or central spinner; no data is available yet.',
+  'queryResource.matrixResolved': 'Settled / Cached',
+  'queryResource.matrixResolvedUsage': 'Render content normally; data is available and fresh or stale.',
+  'queryResource.matrixRefreshingState': 'Background Revalidation (SWR)',
+  'queryResource.matrixRefreshingUsage':
+    'Keep existing UI visible! Show subtle inline indicator or loading spinner on the refresh button.',
+  'queryResource.matrixInitialError': 'Initial Failure',
+  'queryResource.matrixInitialErrorUsage':
+    'Display full error state / empty card with retry button (isInitialError() is true).',
+  'queryResource.matrixRefreshError': 'Refresh Failure',
+  'queryResource.matrixRefreshErrorUsage':
+    'Keep displaying cached data! Show a non-intrusive warning banner or toast (isRefreshError() is true).',
+  'queryResource.demo1Section': '1. Request Coalescing & Deduplication',
   'queryResource.demo1SectionDesc':
     'When two or more components mount at the same time and request the same query key, <code>QueryClient</code> shares the single in-flight network request. Both components receive the exact same response with zero redundant traffic.',
   'queryResource.demo1PlaygroundTitle': 'Concurrent Observers Share In-Flight Work',
@@ -581,9 +600,12 @@ export const enTranslations: Record<string, string> = {
   'queryResource.memoryUsage': 'Memory Usage',
   'queryResource.status': 'Status',
   'queryResource.updated': 'Updated',
-  'queryResource.demo2Section': 'Stale-While-Revalidate & Freshness Policies',
+  'queryResource.demo2Section': '2. Stale-While-Revalidate & Freshness Policies',
   'queryResource.demo2SectionDesc':
     "<code>staleTime</code> controls how long cached data remains fresh. If an observer requests data while fresh, it renders instantly from memory. If stale, the cached data is displayed immediately while a background refresh executes silently without clearing the UI (indicated by <code>status: 'reloading'</code>).",
+  'queryResource.focusRefetchNoteTitle': 'Tab Focus Revalidation',
+  'queryResource.focusRefetchNoteBody':
+    'By default, refetchOnFocus is disabled in ngx-lift to protect enterprise backends from API stampedes. Pass { refetchOnFocus: true } in query options to revalidate automatically when returning to the tab.',
   'queryResource.configuredStaleTime': 'Configured staleTime: {0} seconds',
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
@@ -594,7 +616,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.healthyNodes': '{0} / {1} Healthy',
   'queryResource.region': 'Region',
   'queryResource.snapshotTime': 'Snapshot Time',
-  'queryResource.demo3Section': 'Coordinated Polling with Visibility Awareness',
+  'queryResource.demo3Section': '3. Coordinated Polling with Visibility Awareness',
   'queryResource.demo3SectionDesc':
     'Configure <code>pollInterval</code> to periodically refresh active queries. Multiple observers requesting different intervals are coordinated at the fastest rate. Polling automatically pauses when the browser tab is hidden and resumes immediately upon returning.',
   'queryResource.demo3PlaygroundTitle': 'Background Polling',
@@ -608,7 +630,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.lastPulse': 'Last Pulse',
   'queryResource.pollingIdleMsg':
     'Polling is currently idle. Click "Start Polling" to observe live coordinated background checks.',
-  'queryResource.demo4Section': 'Mutations & Tag Invalidation (mutateResource)',
+  'queryResource.demo4Section': '4. Mutations & Tag Invalidation (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> handles asynchronous writes. Upon successful mutation, it invalidates matching tags, causing all active queries with those tags to automatically refetch the latest server data in the background.',
   'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
@@ -2066,7 +2088,7 @@ export const enTranslations: Record<string, string> = {
   'queryExamples.startDeadline': 'Start hanging read',
   'queryExamples.deadlineMessage': 'The read timed out. You can retry.',
   'queryExamples.canceledReads': 'Canceled subscriptions: {0}',
-  'queryExamples.partialFailure': 'Partial list failure',
+  'queryExamples.partialFailure': '2. Partial List Failure & Granular Recovery',
   'queryExamples.mutationFailure': 'Write failure',
   'queryExamples.mutationIntro': 'Writes do not retry automatically. This fixture rejects before applying the write.',
   'queryExamples.failWrite': 'Submit failed write',
@@ -2112,7 +2134,7 @@ export const enTranslations: Record<string, string> = {
   'queryExamples.refreshWidgets': 'Refresh service widgets',
   'queryExamples.widget': 'Widget {0}: tenant {1}, {2}',
   'queryExamples.counts': 'HTTP request counts:',
-  'queryExamples.dynamic': 'Dynamic parallel queries',
+  'queryExamples.dynamic': '1. Dynamic Parallel Queries',
   'queryExamples.dynamicIntro':
     'queryResources maps selected IDs to independent observers. Reordering preserves observers; removing an ID disposes its observer.',
   'queryExamples.one': 'Tenant A only',
@@ -2123,6 +2145,57 @@ export const enTranslations: Record<string, string> = {
   'queryExamples.databaseB': 'Tenant B database',
   'queryExamples.initialLoadingDescription': 'True during loading without successful data.',
   'queryExamples.refreshingDescription': 'True during refresh while retaining cached data.',
+  'queryResources.k8sComparisonTitle': '3. Kubernetes Cluster Monitoring: Bulk vs. Granular Collection',
+  'queryResources.k8sComparisonDesc':
+    'Compare the traditional bulk aggregation pattern (queryResource with forkJoin) against the granular reactive collection pattern (queryResource with queryResources).',
+  'queryResources.traditionalTab': 'Approach 1: Bulk Aggregation (forkJoin)',
+  'queryResources.traditionalDesc':
+    'Standard traditional pattern when using a combined query or backend endpoint. All clusters are fetched together; table updates as a single block.',
+  'queryResources.granularTab': 'Approach 2: Granular Collection (queryResources)',
+  'queryResources.granularDesc':
+    'Independent observers per cluster. Fast clusters render immediately, slower clusters stream in progressively, and each cluster has independent error boundaries and reload controls.',
+  'queryResources.refreshFleet': 'Refresh Fleet',
+  'queryResources.refreshCluster': 'Reload Cluster',
+  'queryResources.clusterName': 'Cluster',
+  'queryResources.providerRegion': 'Provider & Region',
+  'queryResources.activeNodes': 'Nodes',
+  'queryResources.healthStatus': 'Health',
+  'queryResources.latency': 'Response Time',
+  'queryResources.actions': 'Actions',
+  'queryResources.revalidatingNotice': 'Updating cluster metrics in background... existing table remains interactive.',
+  'queryResources.headOfLineWarning':
+    'Note: Response time is bound to the slowest cluster (1200ms) before any metrics display.',
+  'queryResources.progressiveNotice':
+    'Note: US East (200ms) and EU West (500ms) appear immediately while APAC (1200ms) streams in.',
+  'queryResources.comparisonTableTitle': 'Pattern Comparison',
+  'queryResources.dimTitle': 'Architecture Dimension',
+  'queryResources.dimArch': 'Composition Architecture',
+  'queryResources.dimArchTraditional': 'Single combined queryResource wrapping switchMap + forkJoin',
+  'queryResources.dimArchGranular': 'Parent queryResource (cluster list) + child queryResources (metrics)',
+  'queryResources.dimLatency': 'Time to First Render',
+  'queryResources.dimLatencyTraditional': 'Head-of-line blocking (waiting for slowest cluster)',
+  'queryResources.dimLatencyGranular': 'Progressive streaming (fast clusters render in ms; slow clusters stream in)',
+  'queryResources.dimIsolation': 'Fault Isolation',
+  'queryResources.dimIsolationTraditional': 'Entire table fails unless each item is wrapped in defensive catchError',
+  'queryResources.dimIsolationGranular': 'Isolated error boundaries (a failing cluster does not affect others)',
+  'queryResources.dimIdentity': 'Row Identity Availability',
+  'queryResources.dimIdentityTraditional': 'Deferred until entire forkJoin completes',
+  'queryResources.dimIdentityGranular': 'Immediate via query.item() even while metrics are loading',
+  'queryResources.dimReload': 'Reload Granularity',
+  'queryResources.dimReloadTraditional': 'All-or-nothing fleet reload',
+  'queryResources.dimReloadGranular': 'Dual-level: fleet refresh (tags) + individual row reload (query.reload())',
+  'queryResources.dimCache': 'Cache Strategy',
+  'queryResources.dimCacheTraditional': 'Single monolithic key',
+  'queryResources.dimCacheGranular': 'Dedicated canonical key per cluster (reusable across views)',
+  'queryResources.prosConsTitle': 'Architectural Trade-offs',
+  'queryResources.prosTraditional':
+    'Familiar RxJS pattern; simple single array for Datagrid sorting/pagination; ideal for bulk API endpoints.',
+  'queryResources.consTraditional':
+    'Slowest item blocks the table; cannot retry a single failed item without reloading everything.',
+  'queryResources.prosGranular':
+    'Eliminates perceived latency; independent error boundaries; synchronous row identity; granular per-row controls; optimal cache reuse.',
+  'queryResources.consGranular':
+    'Requires modeling parent list and child queries separately; requires computed view model for cross-column table sorting.',
   'queryResource.thFailures': 'Failed attempts',
   'queryResource.thNextRetry': 'Next retry',
   'queryGuide.selection': 'Related tools:',

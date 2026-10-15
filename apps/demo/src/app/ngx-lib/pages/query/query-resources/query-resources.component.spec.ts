@@ -1,4 +1,5 @@
 import {TestBed} from '@angular/core/testing';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
 import {TranslationService} from 'clr-lift';
 import {QUERY_CLIENT} from 'ngx-lift';
@@ -10,7 +11,10 @@ import {QueryResourcesDemoComponent} from './query-resources.component';
 describe('queryResources guide', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    TestBed.configureTestingModule({imports: [QueryResourcesDemoComponent], providers: [provideRouter([])]});
+    TestBed.configureTestingModule({
+      imports: [QueryResourcesDemoComponent],
+      providers: [provideRouter([]), provideNoopAnimations()],
+    });
     const translations = TestBed.inject(TranslationService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
     translations.setLanguage('en', false);
@@ -58,5 +62,31 @@ describe('queryResources guide', () => {
     expect(component.failureBackend.requests()['GET rows/a']).toBe(1);
     expect(component.failureBackend.requests()['GET rows/b']).toBe(2);
     expect(fixture.nativeElement.querySelectorAll('[data-testid="failure-row"] .label-success')).toHaveLength(2);
+  });
+
+  it('manages Kubernetes fleet bulk vs granular query flows', async () => {
+    const fixture = TestBed.createComponent(QueryResourcesDemoComponent);
+    const component = fixture.componentInstance;
+    // Trigger initial observation of both queries
+    expect(component.clustersBulkQuery.status()).toBe('loading');
+    expect(component.clustersListQuery.status()).toBe('loading');
+    fixture.detectChanges();
+
+    // Advance 150ms: parent list resolves, but metrics and bulk are still in flight
+    await vi.advanceTimersByTimeAsync(150);
+    fixture.detectChanges();
+
+    expect(component.clustersListQuery.hasValue()).toBe(true);
+    expect(component.clustersListQuery.value()?.length).toBe(3);
+    expect(component.clusterItemQueries().length).toBe(3);
+    expect(component.clustersBulkQuery.hasValue()).toBe(false);
+
+    // Advance another 1500ms (total 1650ms): all child item queries and bulk query finish
+    await vi.advanceTimersByTimeAsync(1500);
+    fixture.detectChanges();
+
+    expect(component.clustersBulkQuery.hasValue()).toBe(true);
+    expect(component.clustersBulkQuery.value()?.length).toBe(3);
+    expect(component.clusterItemQueries().every((q) => q.hasValue())).toBe(true);
   });
 });

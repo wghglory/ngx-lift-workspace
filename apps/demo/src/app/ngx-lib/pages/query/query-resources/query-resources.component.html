@@ -74,6 +74,253 @@
       </div>
     </app-demo-playground>
   </section>
+
+  <section class="query-section" data-testid="k8s-cluster-comparison">
+    <h2>{{ 'queryResources.k8sComparisonTitle' | translate }}</h2>
+    <p>{{ 'queryResources.k8sComparisonDesc' | translate }}</p>
+
+    <clr-tabs>
+      <!-- Tab 1: Approach 1 -->
+      <clr-tab>
+        <button clrTabLink id="tab-k8s-traditional">{{ 'queryResources.traditionalTab' | translate }}</button>
+        <clr-tab-content id="tab-content-k8s-traditional" *clrIfActive>
+          <div class="card m-t-sm">
+            <div class="card-header" cds-layout="horizontal align:vertical-center justify:between">
+              <span>{{ 'queryResources.traditionalDesc' | translate }}</span>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline"
+                [clrLoading]="clustersBulkQuery.isRefreshing()"
+                (click)="reloadBulkFleet()"
+              >
+                <clr-icon shape="refresh" />
+                {{ 'queryResources.refreshFleet' | translate }}
+              </button>
+            </div>
+            <div class="card-block">
+              <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-b-sm">
+                <clr-alert-item>
+                  <span class="alert-text">{{ 'queryResources.headOfLineWarning' | translate }}</span>
+                </clr-alert-item>
+              </clr-alert>
+
+              @if (clustersBulkQuery.isInitialLoading()) {
+                <div class="text-center p-y-md">
+                  <cll-spinner [size]="'md'" />
+                </div>
+              } @else if (clustersBulkQuery.value(); as rows) {
+                <clr-datagrid>
+                  <clr-dg-column>{{ 'queryResources.clusterName' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.providerRegion' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.activeNodes' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.healthStatus' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.latency' | translate }}</clr-dg-column>
+
+                  <clr-dg-row *clrDgItems="let row of rows">
+                    <clr-dg-cell
+                      ><strong>{{ row.name }}</strong></clr-dg-cell
+                    >
+                    <clr-dg-cell>{{ row.provider }} ({{ row.region }})</clr-dg-cell>
+                    <clr-dg-cell>{{ row.metrics?.activeNodes ?? '-' }}</clr-dg-cell>
+                    <clr-dg-cell>
+                      @if (row.metrics; as m) {
+                        <span
+                          class="label"
+                          [class.label-success]="m.status === 'healthy'"
+                          [class.label-warning]="m.status === 'degraded'"
+                        >
+                          {{ m.status }}
+                        </span>
+                      } @else {
+                        <span class="label label-danger">{{ row.error ?? 'Error' }}</span>
+                      }
+                    </clr-dg-cell>
+                    <clr-dg-cell>{{ row.metrics ? row.metrics.latencyMs + 'ms' : '-' }}</clr-dg-cell>
+                  </clr-dg-row>
+                </clr-datagrid>
+              }
+            </div>
+          </div>
+          <div class="m-t-sm">
+            <pre class="query-code-block"><code [innerHTML]="k8sTraditionalCode"></code></pre>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <!-- Tab 2: Approach 2 -->
+      <clr-tab>
+        <button clrTabLink id="tab-k8s-granular">{{ 'queryResources.granularTab' | translate }}</button>
+        <clr-tab-content id="tab-content-k8s-granular" *clrIfActive>
+          <div class="card m-t-sm">
+            <div class="card-header" cds-layout="horizontal align:vertical-center justify:between">
+              <span>{{ 'queryResources.granularDesc' | translate }}</span>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                [clrLoading]="isFleetRefreshing()"
+                (click)="reloadGranularFleet()"
+              >
+                <clr-icon shape="refresh" />
+                {{ 'queryResources.refreshFleet' | translate }}
+              </button>
+            </div>
+            <div class="card-block">
+              <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false" class="m-b-sm">
+                <clr-alert-item>
+                  <span class="alert-text">{{ 'queryResources.progressiveNotice' | translate }}</span>
+                </clr-alert-item>
+              </clr-alert>
+
+              @if (clustersListQuery.isInitialLoading()) {
+                <div class="text-center p-y-md">
+                  <cll-spinner [size]="'md'" />
+                </div>
+              } @else {
+                <clr-datagrid>
+                  <clr-dg-column>{{ 'queryResources.clusterName' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.providerRegion' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.activeNodes' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.healthStatus' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.latency' | translate }}</clr-dg-column>
+                  <clr-dg-column>{{ 'queryResources.actions' | translate }}</clr-dg-column>
+
+                  <clr-dg-row *clrDgItems="let query of clusterItemQueries(); trackBy: trackByClusterKey">
+                    <clr-dg-cell
+                      ><strong>{{ query.item().name }}</strong></clr-dg-cell
+                    >
+                    <clr-dg-cell>{{ query.item().provider }} ({{ query.item().region }})</clr-dg-cell>
+                    <clr-dg-cell>
+                      @if (query.isLoading() && !query.hasValue()) {
+                        <cll-spinner inline [size]="'sm'" />
+                      } @else {
+                        {{ query.value()?.activeNodes ?? '-' }}
+                      }
+                    </clr-dg-cell>
+                    <clr-dg-cell>
+                      @if (query.isRefreshing()) {
+                        <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                      }
+                      @if (query.value(); as m) {
+                        <span
+                          class="label"
+                          [class.label-success]="m.status === 'healthy'"
+                          [class.label-warning]="m.status === 'degraded'"
+                        >
+                          {{ m.status }}
+                        </span>
+                      } @else if (query.isInitialError()) {
+                        <span class="label label-danger">Failed</span>
+                      }
+                    </clr-dg-cell>
+                    <clr-dg-cell>
+                      @if (query.value(); as m) {
+                        {{ m.latencyMs }}ms
+                      } @else {
+                        -
+                      }
+                    </clr-dg-cell>
+                    <clr-dg-cell>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-link p-0 m-0"
+                        [clrLoading]="query.isRefreshing()"
+                        (click)="reloadClusterItem(query.item().id)"
+                      >
+                        {{ 'queryResources.refreshCluster' | translate }}
+                      </button>
+                    </clr-dg-cell>
+                  </clr-dg-row>
+                </clr-datagrid>
+              }
+            </div>
+          </div>
+          <div class="m-t-sm">
+            <pre class="query-code-block"><code [innerHTML]="k8sGranularCode"></code></pre>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+    </clr-tabs>
+
+    <h3 class="m-t-lg">{{ 'queryResources.comparisonTableTitle' | translate }}</h3>
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'queryResources.dimTitle' | translate }}</th>
+            <th>{{ 'queryResources.traditionalTab' | translate }}</th>
+            <th>{{ 'queryResources.granularTab' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>{{ 'queryResources.dimArch' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResources.dimArchTraditional' | translate }}</td>
+            <td>{{ 'queryResources.dimArchGranular' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResources.dimLatency' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResources.dimLatencyTraditional' | translate }}</td>
+            <td>{{ 'queryResources.dimLatencyGranular' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResources.dimIsolation' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResources.dimIsolationTraditional' | translate }}</td>
+            <td>{{ 'queryResources.dimIsolationGranular' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResources.dimIdentity' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResources.dimIdentityTraditional' | translate }}</td>
+            <td>{{ 'queryResources.dimIdentityGranular' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResources.dimReload' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResources.dimReloadTraditional' | translate }}</td>
+            <td>{{ 'queryResources.dimReloadGranular' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResources.dimCache' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResources.dimCacheTraditional' | translate }}</td>
+            <td>{{ 'queryResources.dimCacheGranular' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="m-t-md">{{ 'queryResources.prosConsTitle' | translate }}</h3>
+    <div class="clr-row">
+      <div class="clr-col-12 clr-col-md-6">
+        <div class="card">
+          <div class="card-header">{{ 'queryResources.traditionalTab' | translate }}</div>
+          <div class="card-block">
+            <p><strong>Pros:</strong> {{ 'queryResources.prosTraditional' | translate }}</p>
+            <p><strong>Cons:</strong> {{ 'queryResources.consTraditional' | translate }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="clr-col-12 clr-col-md-6">
+        <div class="card">
+          <div class="card-header">{{ 'queryResources.granularTab' | translate }}</div>
+          <div class="card-block">
+            <p><strong>Pros:</strong> {{ 'queryResources.prosGranular' | translate }}</p>
+            <p><strong>Cons:</strong> {{ 'queryResources.consGranular' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="query-section">
     <h2>{{ 'queryResource.apiReference' | translate }}</h2>
     <p><code>queryResources(items, definition, options?)</code></p>
