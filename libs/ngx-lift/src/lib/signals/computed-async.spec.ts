@@ -408,7 +408,7 @@ describe(computedAsync.name, () => {
       if (!finishActive) throw new Error('The active Promise did not capture its resolver');
       finishActive(1);
       await flushEffects();
-      expect(result()).toBe(failure);
+      expect(() => result()).toThrow(failure);
       parameter.set(3);
       await flushEffects();
       expect(result()).toBe(3);
@@ -693,10 +693,9 @@ describe(computedAsync.name, () => {
         expect(s()).toBe(1);
         expect(logs).toEqual([1]);
 
-        // After next 50ms: request 2 runs and fails, emitting the Error object into the signal
+        // After next 50ms: request 2 fails; reads throw while the queue continues
         await flushEffects(50);
-        expect(s()).toBeInstanceOf(Error);
-        expect(s()).toMatchObject({message: 'Intermediate error for 2'});
+        expect(() => s()).toThrow('Intermediate error for 2');
         expect(logs).toEqual([1, 'error-2']);
 
         // After next 50ms: request 3 runs and succeeds
@@ -853,7 +852,7 @@ describe(computedAsync.name, () => {
         );
 
         await flushEffects();
-        expect(s()).toBeInstanceOf(Error);
+        expect(() => s()).toThrow('First attempt failed');
 
         // When trigger changes, exhaust gate should be unlocked because the error completed
         trigger.set(2);
@@ -1156,6 +1155,76 @@ describe(computedAsync.name, () => {
     });
   });
 
+  it.each([new Error('failure'), {code: 'failure'}, null, undefined])(
+    'throws the original unhandled rejection on reads and recovers: %j',
+    async (failure) => {
+      const recover = signal(false);
+      const previous: (number | undefined)[] = [];
+      const result = TestBed.runInInjectionContext(() =>
+        computedAsync<number>(
+          (value) => {
+            previous.push(value);
+            return recover() ? of(42) : Promise.reject(failure);
+          },
+          {initialValue: 0},
+        ),
+      );
+      expect(result()).toBe(0);
+      await expect(flushEffects()).resolves.toBeUndefined();
+      let caught = false;
+      try {
+        result();
+      } catch (error) {
+        caught = true;
+        expect(error).toBe(failure);
+      }
+      expect(caught).toBe(true);
+      recover.set(true);
+      await flushEffects();
+      expect(result()).toBe(42);
+      expect(previous).toEqual([0, undefined]);
+    },
+  );
+
+  it('keeps explicit undefined in the value type and rejects untyped fallbacks', async () => {
+    const result = TestBed.runInInjectionContext(() => {
+      const result = computedAsync<number | undefined>(() => throwError(() => 'failure'), {
+        initialValue: 0,
+        onError: () => undefined,
+      });
+      expectTypeOf(result).toEqualTypeOf<Signal<number | undefined>>();
+      const verifyTypes = () => {
+        // @ts-expect-error A numeric fallback cannot silently return undefined.
+        computedAsync<number>(() => of(1), {initialValue: 0, onError: () => undefined});
+        // @ts-expect-error Errors can no longer masquerade as numeric data.
+        computedAsync<number>(() => of(1), {throwOnError: false});
+        // @ts-expect-error An initialized numeric signal cannot emit undefined.
+        computedAsync<number>(() => undefined, {initialValue: 0});
+      };
+      void verifyTypes;
+      return result;
+    });
+    await flushEffects();
+    expect(result()).toBeUndefined();
+  });
+
+  it.each(['factory', 'observable'] as const)('throws default %s failures and recovers', async (source) => {
+    const recover = signal(false);
+    const failure = new Error('Source failed');
+    const result = TestBed.runInInjectionContext(() =>
+      computedAsync(() => {
+        if (recover()) return of(42);
+        if (source === 'factory') throw failure;
+        return throwError(() => failure);
+      }),
+    );
+    await expect(flushEffects()).resolves.toBeUndefined();
+    expect(() => result()).toThrow(failure);
+    recover.set(true);
+    await flushEffects();
+    expect(result()).toBe(42);
+  });
+
   describe('error handling and stream resilience', () => {
     it('throws an onError callback failure only on read with throwOnError and still recovers', async () => {
       const parameter = signal(false);
@@ -1236,7 +1305,7 @@ describe(computedAsync.name, () => {
         }),
       );
       await expect(flushEffects()).resolves.toBeUndefined();
-      expect(result()).toBe(handlerFailure);
+      expect(() => result()).toThrow(handlerFailure);
       trigger.set(true);
       await flushEffects();
       expect(result()).toBe('recovered');
@@ -1259,7 +1328,7 @@ describe(computedAsync.name, () => {
         // Simulate request error/cancel
         trigger.set('error');
         await flushEffects();
-        expect(s()).toBeInstanceOf(Error);
+        expect(() => s()).toThrow('Request canceled');
 
         // Subsequent valid source should continue to work and not be frozen
         trigger.set('recovered');

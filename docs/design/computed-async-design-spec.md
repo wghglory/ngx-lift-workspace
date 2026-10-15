@@ -1,8 +1,8 @@
 # Design Specification: `computedAsync`
 
-**Status**: Implemented & Production-ready  
-**Module**: `libs/ngx-lift/src/lib/signals/computed-async.ts`  
-**Tests**: `libs/ngx-lift/src/lib/signals/computed-async.spec.ts` (51 passing unit tests)
+**Source:** [computed-async.ts](../../libs/ngx-lift/src/lib/signals/computed-async.ts)
+
+**Regression tests:** [computed-async.spec.ts](../../libs/ngx-lift/src/lib/signals/computed-async.spec.ts)
 
 ---
 
@@ -12,8 +12,9 @@
 Angular Signal.
 
 Unlike `resourceAsync` (which produces a full-featured resource object with `status`, `isLoading`, `error`, `reload()`,
-and local `set()` methods), `computedAsync` returns a **pure `Signal<T>`**. It is intended for computed derivations
-where consumers only require the computed value itself.
+and local `set()` methods), `computedAsync` returns a **read-only signal**. The return type is `Signal<T | undefined>`
+without a guaranteed initial value, or `Signal<T>` when initialization guarantees a value. Use it for derivations that
+need a value rather than a resource lifecycle.
 
 ```
        [ Upstream Signals ]
@@ -24,7 +25,7 @@ where consumers only require the computed value itself.
        └────────┬────────┘
                 │
                 ▼
-         [ Signal<T> ] (Pure, composable read-only signal)
+         [ Read-only Signal ]
 ```
 
 ---
@@ -32,6 +33,8 @@ where consumers only require the computed value itself.
 ## 2. API Contract & Core Capabilities
 
 ### 2.1 Basic Usage
+
+Create the signal in an Angular injection context, or supply `options.injector`.
 
 ```typescript
 import {inject, signal} from '@angular/core';
@@ -52,9 +55,11 @@ Capture all reactive parameters synchronously before crossing asynchronous bound
 ```typescript
 const result = computedAsync(() => {
   const id = userId(); // synchronously captured dependency
-  return defer(() => http.get<User>(`/api/users/${id}`));
+  return http.get<User>(`/api/users/${id}`);
 });
 ```
+
+HttpClient returns a cold Observable, so this request does not need an additional defer wrapper.
 
 Reading a signal inside a later `.then()` callback, timer, or inner Observable subscription does not establish the
 intended dependency.
@@ -69,7 +74,7 @@ intended dependency.
   Angular effect.
 - When `requireSync: true` is configured without an initial value, the factory executes immediately upon construction:
   - It accepts synchronous values or synchronous Observable emissions.
-  - It rejects asynchronous Promises or Observables that do not emit synchronously.
+  - It rejects PromiseLike sources and Observables that do not emit synchronously.
   - Construction errors clean up subscriptions immediately.
 
 ### 3.2 Low-Level Primitives & `createWatch`
@@ -102,41 +107,63 @@ execution. To defer network work until a source is accepted, return a cold Obser
 
 ### 5.1 Error Handling Strategies
 
-- **Default (Error as Value)**: The default behavior returns the error object as the signal value (does not throw when
-  read). Typings should reflect `User | Error`.
+- **Default (Throw on Read)**: An unhandled failure is thrown when the signal is read. This includes arbitrary rejection
+  values such as objects, null and undefined; failures never masquerade as successful T values.
 - **`onError` Fallback**:
   ```typescript
   const data = computedAsync(() => http.get<User>('/api/user'), {
     onError: (err) => defaultUser,
   });
   ```
-- **`throwOnError: true`**: Re-throws the captured error when the signal is read.
+- **`throwOnError: true`**: Invokes onError for side effects but throws on reads even if it returns a fallback. The
+  former false option is rejected.
+- **Fallback typing**: onError returns T. Include undefined in T explicitly when it is valid data. Initial-value
+  overloads also require source results to match T; they cannot hide undefined emissions behind `Signal<T>`.
 
 ### 5.2 `previousValue` and `equal`
 
-- `previousValue` passed to the factory comes from the last resolved source value (`undefined` after unhandled errors).
+- `previousValue` passed to the factory comes from the last successful source value or fallback (`undefined` after
+  unhandled errors).
 - `equal` controls notifications from the output Signal. It does not prevent the factory from re-evaluating when
   dependencies change.
 
 ---
 
-## 6. Code vs. Spec Gap Analysis
+## 6. Breaking error/type correction
 
-| Requirement / Spec Item            | Implementation in Code                 | Gap / Finding                                           | Assessment     |
-| :--------------------------------- | :------------------------------------- | :------------------------------------------------------ | :------------- |
-| **Pure Signal Return**             | Returns `Signal<T>`                    | None. Seamlessly composable with native `computed()`.   | ✅ Exact match |
-| **All Flattening Behaviors**       | `switch`, `merge`, `concat`, `exhaust` | None. Full emission and queuing behaviors tested.       | ✅ Exact match |
-| **Avoid NG0600 on Dynamic Writes** | Scheduled effects + `createWatch`      | None. Prevents signal write conflicts.                  | ✅ Exact match |
-| **Injector Disconnection**         | Integrated with `DestroyRef`           | None. Cancels subscriptions and watcher on unmount.     | ✅ Exact match |
-| **Unhandled Rejection Safety**     | Promise rejection handlers attached    | None. Discarded promises do not trigger console errors. | ✅ Exact match |
+Previously, `state.error as T` returned arbitrary failures as success data; onError could also silently return undefined
+behind `Signal<T>`. The existing API now throws unhandled failures on reads, retains successful typed fallbacks, and
+throws callback failures on reads. `throwOnError: true` preserves its side-effect-then-throw behavior; false is no
+longer accepted. Sources with initial values cannot silently emit undefined unless T includes it. No new public API is
+needed.
 
----
+[Angular toSignal](https://angular.dev/ecosystem/rxjs-interop#error-and-completion) also throws source failures on
+reads. The implementation preserves per-source failure containment, dependency-driven recovery, cancellation and eager
+Promise rejection handling.
 
-## 7. Evolutionary Roadmap & Next Steps
+**Release treatment:** this change requires a breaking release/version decision before publication. Existing default
+callers that inspected error objects as data must catch failures or supply a typed fallback. Remove throwOnError:false;
+use onError for fallback data or createAsyncState/resourceAsync/queryResource for explicit loading/error state. Calls
+already handling source errors through catchError or createAsyncState preserve their successful data contract.
 
-1. **Angular `createWatch` Upgrade Stability**:
-   - Maintain continuous monitoring of Angular's `@angular/core/primitives/signals` exports across major Angular version
-     bumps.
-2. **Clear Architecture Guidance**:
-   - Guide developers to use `resourceAsync` when buttons, loading spinners, or reload methods are needed, reserving
-     `computedAsync` for pure derived state streams.
+```typescript
+const count = computedAsync(() => loadCount(), {initialValue: 0, onError: () => 0});
+const optional = computedAsync<number | undefined>(() => loadCount(), {
+  initialValue: 0,
+  onError: () => undefined,
+});
+```
+
+See the [roadmap](priority-roadmap.md) for planned work.
+
+## Upgrade considerations
+
+The synchronous initialization path uses Angular's exported createWatch primitive. Recheck that contract when upgrading
+Angular. Loading/reload UI belongs to resourceAsync or queryResource; planned extensions are tracked in the roadmap.
+
+## Interactive examples
+
+The [computedAsync demo](https://ngx-lift.netlify.app/ngx-lift/signals/computedAsync) compares a typed numeric fallback
+with default read-time errors. Example 11 changes from 42 to fallback 0 and back to 42. Example 12 separates failing the
+source from reading the signal: the UI catches the read in a button handler, displays the failure, and permits a
+successful read after recovery. The raw throwing signal is not bound directly in the template.
