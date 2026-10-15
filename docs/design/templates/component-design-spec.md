@@ -80,6 +80,10 @@ checks.
 
 ## Compatibility, rollout, and risks
 
+For each proposed dependency, identify the important use case it enables, browser/existing-library alternatives,
+maintenance and transitive costs, and how installed consumers avoid it when the feature is optional. Distinguish package
+installation from lazy loading. Obtain review of this decision before introducing a new runtime dependency.
+
 State supported Angular/Clarity versions, peer/entry-point impact, migration examples, breaking changes, bundle costs,
 fallbacks, and rollback. Identify unresolved risks and an acceptance owner for each.
 

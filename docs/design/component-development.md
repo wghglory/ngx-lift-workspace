@@ -25,6 +25,12 @@ to be values; explain this in their specs. Utilities document the form integrati
 
 ## Required feature acceptance
 
+Prefer native browser capabilities and existing supported dependencies. Justify each new runtime dependency against
+important approved use cases, including transitive cost, maintenance, licensing, installation and production
+integration. For optional heavy features, verify both installed-dependency isolation and bundle isolation; a dynamic
+import alone proves neither optional installation nor absence from an unrelated consumer's build. Record the decision in
+the spec.
+
 - Each approved use case appears in the demo app, with working code through `app-demo-playground` wherever practical.
   Include imports, value/state, reset, validation, errors, disabled/readonly, and a realistic advanced use case.
 - All demo pages use `cll-page-container`, Clarity controls/tokens and `cds-layout`, with light/dark, compact,

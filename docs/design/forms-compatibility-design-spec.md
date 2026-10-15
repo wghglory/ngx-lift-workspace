@@ -12,9 +12,7 @@ a signal model and a field tree; these concepts must remain distinct in docs and
 ## Goals
 
 - G1: Applications can use the same value-control behavior with each supported form system.
--
 - G2: Developers retain typed values, standard validation/reset/disabled semantics, and simple templates.
--
 - G3: Existing Reactive Forms consumers can use `toSignalForm` without a component-specific adapter.
 
 ## Non-Goals
@@ -96,6 +94,12 @@ value, and code. Feature demos use their real value types and meaningful validat
 Recommend native Angular 22 support in a new major while maintaining the 21.x release line. Confirm that policy before
 editing package ranges. Test strict tarball consumers and both zoneless and ZoneJS where declared supported. Do not
 claim SSR/hydration support based on a DOM fixture; document the boundary and test browser-only engines lazily.
+
+The platform spike must end with a recorded compatibility decision before new controls are implemented: Angular 22-only
+major, or explicitly supported/tested Angular 21 and 22 package surfaces. If migration is postponed, keep the new
+native-form controls pending by default. A requested 21.x backport can reuse value state and CVA without importing the
+22-only contract into that consumer's public declarations; approve its separate scope and prove it with strict installed
+consumers. Do not add dual-major adapters speculatively or promise a backport merely because a component has a CVA.
 
 Unit/type coverage: typed null/empty/multiple values, owner writes, duplicate event prevention, errors, composite touch,
 pending transitions, reset, disable, `updateOn`, teardown and no retained owner subscriptions. Browser coverage:

@@ -12,11 +12,8 @@ terms. Keep these public semantics distinct even when a private overlay/request 
 ## Goals
 
 - G1: Users select one or several remote entities with clear loading, no-result, failure and retry states.
--
 - G2: Users enter text efficiently with optional suggestions, without unexpected selection or text loss.
--
 - G3: Applications handle large result sets without downloading or rendering the entire dataset.
--
 - G4: Developers use simple typed options and all four form modes with Clarity presentation.
 
 ## Non-Goals

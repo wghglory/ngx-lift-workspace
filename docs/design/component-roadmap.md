@@ -55,7 +55,8 @@ Migration delivery is two reviewable changes where the supported intermediate co
 
 1. Record the baseline and choose compatible Nx, Angular, CDK, TypeScript, Node, ng-packagr, Angular ESLint, and
    Analog/Vitest versions. Inspect official migrations and third-party peers. Keep all official Nx packages at one
-   version.
+   version. End the spike with an approved 22-only or dual-major support decision and consumer acceptance matrix. If the
+   migration is postponed, retain the new-control hold unless a separate CVA-based 21.x backport is explicitly approved.
 2. Generate the pinned Nx migration plan, inspect `package.json` and `migrations.json`, install, then run generated
    migrations. Keep Angular at 21 during the tooling step if supported; otherwise document the required coordinated
    upgrade.

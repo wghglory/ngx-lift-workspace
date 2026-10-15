@@ -42,3 +42,10 @@ Maintain repository documentation in English. Chinese explanations are temporary
 them in chat unless a temporary file is explicitly requested, and keep them out of committed project documentation.
 Preserve supported product translations. Use ngx-lift/clr-lift names and generic application examples; omit internal
 company and product identifiers from project documentation, examples, and agent guidance.
+
+## Dependency policy
+
+Prefer browser APIs and existing supported dependencies. Add a runtime dependency only when important, approved use
+cases justify its maintenance, installation, bundle, and integration costs. Optional heavyweight features must not
+require an engine installation for ordinary consumers; lazy loading alone does not establish dependency isolation.
+Record the alternatives and consumer evidence in the feature spec before adding a dependency.
