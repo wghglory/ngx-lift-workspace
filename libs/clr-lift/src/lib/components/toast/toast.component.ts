@@ -31,13 +31,17 @@ ClarityIcons.addIcons(timesIcon);
   imports: [ClarityModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    '(focusin)': 'focus(true)',
+    '(focusout)': 'onFocusOut($event)',
+    '(mouseover)': 'mouseOver(true)',
+    '(mouseleave)': 'mouseOver(false)',
     '[animate.enter]': '"toast-enter"',
     '[animate.leave]': '"toast-leave"',
     '(animate.leave)': '$event.animationComplete()',
   },
 })
 export class ToastComponent implements OnInit, AfterViewInit {
-  private element = inject(ElementRef);
+  private element = inject<ElementRef<HTMLElement>>(ElementRef);
   private destroyRef = inject(DestroyRef);
   private ngZone = inject(NgZone);
   private translationService = inject(TranslationService);
@@ -58,6 +62,8 @@ export class ToastComponent implements OnInit, AfterViewInit {
   secondaryButtonClick = output<void>();
 
   disableAutoClose = false;
+  private isHovering = false;
+  private hasFocusWithin = false;
 
   constructor() {
     this.translationService.loadTranslationsForComponent('toast', toastTranslations);
@@ -73,11 +79,18 @@ export class ToastComponent implements OnInit, AfterViewInit {
 
   // If the user moves their mouse over the snack, disable auto-close
   mouseOver(over: boolean) {
-    this.disableAutoClose = over;
+    this.isHovering = over;
+    this.disableAutoClose = this.isHovering || this.hasFocusWithin;
   }
 
   focus(focused: boolean) {
-    this.disableAutoClose = focused;
+    this.hasFocusWithin = focused;
+    this.disableAutoClose = this.isHovering || this.hasFocusWithin;
+  }
+
+  onFocusOut(event: FocusEvent) {
+    const next = event.relatedTarget;
+    this.focus(next instanceof Node && this.element.nativeElement.contains(next));
   }
 
   close(userClosed = false) {

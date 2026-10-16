@@ -1,23 +1,25 @@
+// Keep animation and long notification stacks inside the viewport, not the page scroll area.
 :host {
   display: block;
   z-index: 1040;
-  position: absolute;
-  max-width: 310px;
-  right: -12px;
-  opacity: 1;
-  margin-top: 18px;
-
-  @media screen and (min-width: 576px) {
-    width: 414px;
-    max-width: unset;
-    right: 0;
-  }
+  position: fixed;
+  width: 450px;
+  max-width: 100vw;
+  max-height: max(0px, calc(100dvh - var(--toast-top, 60px)));
+  right: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .toast-container {
-  margin-right: 0;
   display: flex;
   flex-direction: column;
+  padding: 18px;
+
+  &:empty {
+    padding: 0;
+  }
 }
 
 .toast-description {
@@ -47,6 +49,8 @@
 }
 
 .toast-title {
+  min-width: 0;
+  flex: 1;
   font-weight: 500;
   color: #e9ecef;
   font-size: 14px;
