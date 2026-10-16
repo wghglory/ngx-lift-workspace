@@ -57,6 +57,57 @@ describe('ToastComponent', () => {
     secondaryButton.triggerEventHandler('click', null);
     expect(secondaryButtonClickSpy).toHaveBeenCalled();
   });
+  it.each(['hover', 'focus'] as const)(
+    'keeps the toast while %s remains active after the other interaction ends',
+    (remaining) => {
+      vi.useFakeTimers();
+      try {
+        fixture.componentRef.setInput('timeoutSeconds', 1);
+        fixture.detectChanges();
+        const closed = vi.spyOn(component.closed, 'emit');
+        component.mouseOver(true);
+        component.focus(true);
+        if (remaining === 'focus') component.mouseOver(false);
+        else component.focus(false);
+
+        vi.advanceTimersByTime(1000);
+        expect(closed).not.toHaveBeenCalled();
+        if (remaining === 'focus') component.focus(false);
+        else component.mouseOver(false);
+        vi.advanceTimersByTime(999);
+        expect(closed).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(1);
+        expect(closed).toHaveBeenCalledExactlyOnceWith(false);
+      } finally {
+        fixture.destroy();
+        vi.useRealTimers();
+      }
+    },
+  );
+
+  it('keeps focus protection when keyboard focus moves between buttons', () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput('timeoutSeconds', 1);
+      fixture.componentRef.setInput('primaryButtonText', 'First');
+      fixture.componentRef.setInput('secondaryButtonText', 'Second');
+      fixture.detectChanges();
+      const closed = vi.spyOn(component.closed, 'emit');
+      const first = fixture.nativeElement.querySelector('.toast-button') as HTMLButtonElement;
+      const second = fixture.nativeElement.querySelector('.toast-button.secondary') as HTMLButtonElement;
+      first.focus();
+      second.focus();
+      vi.advanceTimersByTime(1000);
+      expect(closed).not.toHaveBeenCalled();
+      second.blur();
+      vi.advanceTimersByTime(1000);
+      expect(closed).toHaveBeenCalledExactlyOnceWith(false);
+    } finally {
+      fixture.destroy();
+      vi.useRealTimers();
+    }
+  });
+
   it('cancels auto-close timers when destroyed', () => {
     vi.useFakeTimers();
     try {
