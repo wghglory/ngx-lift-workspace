@@ -5,14 +5,14 @@ contributing to the project.
 
 ## 📋 Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Workflow](#development-workflow)
-- [Coding Standards](#coding-standards)
-- [Testing Guidelines](#testing-guidelines)
-- [Documentation](#documentation)
-- [Submitting Changes](#submitting-changes)
-- [Project Structure](#project-structure)
+- [Code of Conduct](#-code-of-conduct)
+- [Getting Started](#-getting-started)
+- [Development Workflow](#-development-workflow)
+- [Coding Standards](#-coding-standards)
+- [Testing Guidelines](#-testing-guidelines)
+- [Documentation](#-documentation)
+- [Submitting Changes](#-submitting-changes)
+- [Project Structure](#-project-structure)
 
 ## 📜 Code of Conduct
 
@@ -72,7 +72,7 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ### Making Changes
 
-1. **Make your changes** following our [coding standards](#coding-standards)
+1. **Make your changes** following our [coding standards](#-coding-standards)
 2. **Write/update tests** for your changes
 3. **Update documentation** if needed
 4. **Run tests** to ensure everything passes:
