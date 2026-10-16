@@ -1590,7 +1590,7 @@ export const esTranslations: Record<string, string> = {
     'Haga clic en &quot; Fetch Pagated Pods &quot; para desencadenar múltiples páginas automatizadas a través de tres páginas Kubernetes API:',
   'kubernetesPagination.btnFetchPods': 'Fetch Paginated Pods',
   'kubernetesPagination.fetchingPages': 'Páginas de contacto (continuar la muestra)...',
-  'kubernetesPagination.pagesFetched': 'Páginas alcanzadas recursivamente:',
+  'kubernetesPagination.pagesFetched': 'Páginas obtenidas (incluida la primera):',
   'kubernetesPagination.aggregationComplete': 'Completa de agregación',
   'kubernetesPagination.totalResources': 'Total de recursos:',
   'kubernetesPagination.thPodName': 'Nombre',
@@ -1604,9 +1604,16 @@ export const esTranslations: Record<string, string> = {
     'El operador RxJS que transforma una respuesta inicial de la lista Kubernetes Observable en una lista agregada que contiene artículos de todas las páginas.',
   'kubernetesPagination.fetchSummary':
     'Función de conveniencia que inicia y paga los recursos de Kubernetes en una sola llamada.',
+  'kubernetesPagination.limitHelp':
+    'Tamaño de página del servidor. La función sigue los tokens de continuación por todas las páginas; limit no limita el total.',
+  'kubernetesPagination.maxPagesHelp':
+    'Máximo de páginas correctas, incluida la primera. Superarlo hace fallar toda la lista; si se omite, no hay límite.',
+  'kubernetesPagination.maxItemsHelp':
+    'Máximo de elementos acumulados de todas las páginas. Superarlo hace fallar toda la lista; si se omite, no hay límite.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient utilizado para solicitar páginas posteriores.',
   'kubernetesPagination.paramEndpoint': 'REST URL del recurso Kubernetes.',
-  'kubernetesPagination.paramInitialParams': 'Parámetros de consulta (por ejemplo, límite).',
+  'kubernetesPagination.paramInitialParams':
+    'Opciones (initialParams, retryConfig, bounds) o parámetros de consulta anteriores.',
   'k8sRetryBackoff.configSummary': 'Configuración opcional compartida por el operador y la factoría del interceptor.',
   'k8sRetryBackoff.paramMaxAttempts':
     'Total de intentos incluyendo la petición inicial. Establezca en 1 para deshabilitar reintentos.',

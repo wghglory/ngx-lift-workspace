@@ -17,7 +17,9 @@ export type KubernetesListResponse<T extends KubernetesObject> = Omit<Kubernetes
  */
 export interface KubernetesPaginationOptions {
   /**
-   * Optional initial parameters to include in the request (e.g. `limit`, `labelSelector`, `fieldSelector`).
+   * Optional parameters sent with every request (e.g. `limit`, `labelSelector`, `fieldSelector`).
+   * `limit` is the server page size, not the total result count: limit=100 can fetch many 100-item pages.
+   * Use bounds.maxItems to cap the aggregate, or a single HttpClient request to fetch just one page.
    */
   initialParams?: Record<string, string | number | boolean | (string | number | boolean)[]>;
 
@@ -32,7 +34,12 @@ export interface KubernetesPaginationOptions {
    * Exceeding a limit fails the entire aggregate, never returns a truncated successful list.
    * @example {bounds: {maxPages: 100, maxItems: 10000}}
    */
-  bounds?: {maxPages?: number; maxItems?: number};
+  bounds?: {
+    /** Maximum successful pages, including the first. HTTP retry attempts do not count as extra pages. */
+    maxPages?: number;
+    /** Maximum combined items across all pages. An oversized received page fails, without partial success. */
+    maxItems?: number;
+  };
 }
 
 function parsePaginationOptions(

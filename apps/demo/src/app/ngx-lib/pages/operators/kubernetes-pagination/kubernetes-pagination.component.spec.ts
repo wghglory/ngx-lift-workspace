@@ -32,6 +32,6 @@ describe('KubernetesPaginationComponent', () => {
   it('should transition to loading state when fetch is triggered', () => {
     component.fetchAggregatedPods();
     expect(component.isLoading()).toBe(true);
-    expect(component.pagesFetched()).toBe(0);
+    expect(component.pagesFetched()).toBe(1);
   });
 });

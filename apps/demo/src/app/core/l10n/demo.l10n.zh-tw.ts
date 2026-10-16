@@ -1397,7 +1397,7 @@ export const zhTWTranslations: Record<string, string> = {
     '點選“獲取所有 Pod 分頁”觸發自動化遞迴請求，模擬拉取三個連續的 Kubernetes API 分頁：',
   'kubernetesPagination.btnFetchPods': '獲取所有 Pod 分頁',
   'kubernetesPagination.fetchingPages': '正在拉取分頁 (continue token)...',
-  'kubernetesPagination.pagesFetched': '已遞迴獲取的分頁數：',
+  'kubernetesPagination.pagesFetched': '已取得頁數（包含第一頁）：',
   'kubernetesPagination.aggregationComplete': '資料聚合完畢',
   'kubernetesPagination.totalResources': '總資源數：',
   'kubernetesPagination.thPodName': 'Pod 名稱',
@@ -1410,9 +1410,12 @@ export const zhTWTranslations: Record<string, string> = {
   'kubernetesPagination.aggregateSummary':
     '將初始 Kubernetes 列表響應 Observable 轉換為聚合所有分頁資料列表的 RxJS 運算子。',
   'kubernetesPagination.fetchSummary': '在單次呼叫中直接發起並自動完成 Kubernetes 資源分頁聚合的便捷函式。',
+  'kubernetesPagination.limitHelp': '伺服器每頁大小。輔助函式會沿接續權杖取得所有頁面；limit 不限制結果總數。',
+  'kubernetesPagination.maxPagesHelp': '允許成功取得的最大頁數，包含第一頁。超過上限時整個清單回報錯誤；省略則不限制。',
+  'kubernetesPagination.maxItemsHelp': '所有頁面合計的最大項目數。超過上限時整個清單回報錯誤；省略則不限制。',
   'kubernetesPagination.paramHttp': '用於請求後續分頁的 Angular HttpClient。',
   'kubernetesPagination.paramEndpoint': 'Kubernetes 資源的 REST URL 端點。',
-  'kubernetesPagination.paramInitialParams': '查詢引數（例如 limit）。',
+  'kubernetesPagination.paramInitialParams': '選項（initialParams、retryConfig、bounds），或舊式查詢參數。',
   'k8sRetryBackoff.configSummary': 'Operator 和 interceptor factory 共用的可選設定。',
   'k8sRetryBackoff.paramMaxAttempts': '總嘗試次數，包含首次請求。設為 1 可停用重試。',
   'k8sRetryBackoff.errorShape':

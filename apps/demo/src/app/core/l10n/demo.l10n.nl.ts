@@ -1582,7 +1582,7 @@ export const nlTranslations: Record<string, string> = {
     'Klik op "Fetch Paginated Pods" (Fetch Paginated Pods) om geautomatiseerde multi-page fetching te activeren op drie mock Kubernetes API pagina\'s:',
   'kubernetesPagination.btnFetchPods': 'Paginated Pods ophalen',
   'kubernetesPagination.fetchingPages': "Pagina's ophalen (token continueren)...",
-  'kubernetesPagination.pagesFetched': "Recursief opgehaalde pagina's:",
+  'kubernetesPagination.pagesFetched': 'Opgehaalde pagina’s (inclusief de eerste):',
   'kubernetesPagination.aggregationComplete': 'Samenvoegen voltooid',
   'kubernetesPagination.totalResources': 'Totaal middelen:',
   'kubernetesPagination.thPodName': 'Pod-naam',
@@ -1596,9 +1596,16 @@ export const nlTranslations: Record<string, string> = {
     "RxJS-operator die een initiële Kubernetes-lijstrespons Observable transformeert in een geaggregeerde lijst met items van alle pagina's.",
   'kubernetesPagination.fetchSummary':
     'Convenience functie die Kubernetes initieert en pagineert in een enkele oproep.',
+  'kubernetesPagination.limitHelp':
+    'Paginagrootte van de server. De functie volgt vervolgtokens door alle pagina’s; limit begrenst niet het totaal.',
+  'kubernetesPagination.maxPagesHelp':
+    'Maximaal aantal succesvol opgehaalde pagina’s, inclusief de eerste. Overschrijding laat de hele lijst mislukken; weglaten betekent onbeperkt.',
+  'kubernetesPagination.maxItemsHelp':
+    'Maximaal totaal aantal items over alle pagina’s. Overschrijding laat de hele lijst mislukken; weglaten betekent onbeperkt.',
   'kubernetesPagination.paramHttp': "Angular HttpClient gebruikt voor het aanvragen van volgende pagina's.",
   'kubernetesPagination.paramEndpoint': 'REST URL van de Kubernetes resource.',
-  'kubernetesPagination.paramInitialParams': 'Zoekparameters (bv. limiet).',
+  'kubernetesPagination.paramInitialParams':
+    'Opties (initialParams, retryConfig, bounds) of bestaande queryparameters.',
   'k8sRetryBackoff.configSummary': 'Optionele configuratie gedeeld door de operator en interceptor-factory.',
   'k8sRetryBackoff.paramMaxAttempts':
     'Totaal aantal pogingen inclusief het eerste verzoek. Stel in op 1 om retries uit te schakelen.',

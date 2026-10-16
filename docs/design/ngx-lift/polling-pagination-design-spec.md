@@ -61,9 +61,13 @@ readonly status$ = poll({interval: 5000, pollingFn: () => this.http.get('/api/st
 `paramsBuilder`. Before the first manual input, timer reads receive undefined input; builders must tolerate it.
 `fetchPaginatedKubernetesResources` starts HTTP; `aggregatePaginatedKubernetesResources` operates on a supplied first
 page. Options accept initial parameters and `retryConfig`, with `false` disabling per-page retry; legacy parameter
-objects remain supported. Optional `bounds: {maxPages, maxItems}` counts the first page and all accumulated items. Each
-supplied bound must be a positive safe integer (invalid configuration throws RangeError); omitted bounds remain
-unbounded for compatibility. The nested object avoids confusing old HTTP parameters named maxPages/maxItems/bounds.
+objects remain supported. Optional `bounds: {maxPages, maxItems}` counts the first page and all accumulated items.
+`initialParams.limit` requests a server page size, not a total result count: limit=100 may fetch many successive pages.
+maxPages caps successful pages (including the first, excluding HTTP retry attempts); maxItems caps all accumulated
+items. Exceeding either cap errors instead of returning a truncated list. Use a single HTTP page or server paging when
+the UI needs only the first 100 items. Each supplied bound must be a positive safe integer (invalid configuration throws
+RangeError); omitted bounds remain unbounded for compatibility. The nested object avoids confusing old HTTP parameters
+named maxPages/maxItems/bounds.
 
 ```typescript
 fetchPaginatedKubernetesResources<Pod>(this.http, '/api/pods', {
@@ -120,3 +124,7 @@ isolation. Full ngx-lift tests, lint, typecheck and production build pass. No lo
 The bounded demo completes twice in each of Chromium, Firefox and WebKit (3 browser checks). Demo tests (236), lint and
 typecheck pass. Packed public types and fresh strict-peer Angular 21 consumers pass package verification with the new
 numeric bounds API, including rejection of incorrectly typed string bounds.
+
+The demo distinguishes server page size from client aggregate bounds in translated helper text and API rows. It counts
+the initial page, exposes maxPages/maxItems controls, shows a persistent alert on either failure, and recovers after
+raising the bound. Six browser checks verify success, each bound failure and recovery across the three engines.

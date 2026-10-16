@@ -1599,7 +1599,7 @@ export const frTranslations: Record<string, string> = {
     'Cliquez sur "Fetch Pagined Pods" pour déclencher la récupération automatique de plusieurs pages sur trois pages de simulation Kubernetes API :',
   'kubernetesPagination.btnFetchPods': 'Récupérer des pods paginés',
   'kubernetesPagination.fetchingPages': 'Chercher des pages (poursuivre)...',
-  'kubernetesPagination.pagesFetched': 'Pages récupérées de façon récursive :',
+  'kubernetesPagination.pagesFetched': 'Pages récupérées (première comprise) :',
   'kubernetesPagination.aggregationComplete': 'Agrégation terminée',
   'kubernetesPagination.totalResources': 'Total des ressources :',
   'kubernetesPagination.thPodName': 'Nom du pod',
@@ -1613,9 +1613,16 @@ export const frTranslations: Record<string, string> = {
     "L'opérateur RxJS qui transforme une réponse initiale de la liste Kubernetes Observable en une liste agrégée contenant des éléments de toutes les pages.",
   'kubernetesPagination.fetchSummary':
     'Fonction convenance qui initie et pagine les ressources Kubernetes en un seul appel.',
+  'kubernetesPagination.limitHelp':
+    'Taille de page du serveur. La fonction suit les jetons de continuation sur toutes les pages ; limit ne limite pas le total.',
+  'kubernetesPagination.maxPagesHelp':
+    'Nombre maximal de pages reçues avec succès, première comprise. Tout dépassement fait échouer la liste entière ; sans valeur, aucune limite.',
+  'kubernetesPagination.maxItemsHelp':
+    'Nombre maximal cumulé d’éléments sur toutes les pages. Tout dépassement fait échouer la liste entière ; sans valeur, aucune limite.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient utilisé pour demander les pages suivantes.',
   'kubernetesPagination.paramEndpoint': 'REST URL de la ressource Kubernetes.',
-  'kubernetesPagination.paramInitialParams': 'Paramètres de requête (p. ex. limite).',
+  'kubernetesPagination.paramInitialParams':
+    'Options (initialParams, retryConfig, bounds) ou anciens paramètres de requête.',
   'k8sRetryBackoff.configSummary': 'Configuration optionnelle partagée par l’opérateur et la fabrique d’intercepteurs.',
   'k8sRetryBackoff.paramMaxAttempts':
     'Nombre total de tentatives incluant la requête initiale. Définir sur 1 pour désactiver les réessais.',

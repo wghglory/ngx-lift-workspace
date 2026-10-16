@@ -1,14 +1,23 @@
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {
+  AlertComponent,
+  CalloutComponent,
+  PageContainerComponent,
+  SpinnerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
 import {
   aggregatePaginatedKubernetesResources,
   KubernetesList,
   KubernetesListResponse,
   KubernetesObject,
 } from 'ngx-lift';
-import {delay, Observable, of} from 'rxjs';
+import {defer, delay, Observable, of} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -34,6 +43,8 @@ export interface DemoPod extends KubernetesObject {
   selector: 'app-kubernetes-pagination',
   imports: [
     PageContainerComponent,
+    AlertComponent,
+    FormsModule,
     CalloutComponent,
     CodeBlockComponent,
     SpinnerComponent,
@@ -46,6 +57,7 @@ export interface DemoPod extends KubernetesObject {
 })
 export class KubernetesPaginationComponent {
   private translationService = inject(TranslationService);
+  private destroyRef = inject(DestroyRef);
 
   aggregateParameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();
@@ -61,35 +73,39 @@ export class KubernetesPaginationComponent {
         description: this.translationService.translate('kubernetesPagination.paramEndpoint'),
       },
       {
-        name: 'initialParams',
-        type: 'Record<string, any>',
-        default: '{}',
+        name: 'initialParamsOrOptions',
+        type: "KubernetesPaginationOptions | KubernetesPaginationOptions['initialParams']",
+        defaultValue: '{}',
         description: this.translationService.translate('kubernetesPagination.paramInitialParams'),
       },
     ];
   });
 
-  fetchParameters = computed<ApiProperty[]>(() => {
-    this.translationService.currentLanguage();
-    return [
-      {
-        name: 'http',
-        type: 'HttpClient',
-        description: this.translationService.translate('kubernetesPagination.paramHttp'),
-      },
-      {
-        name: 'endpoint',
-        type: 'string',
-        description: this.translationService.translate('kubernetesPagination.paramEndpoint'),
-      },
-      {
-        name: 'initialParams',
-        type: 'Record<string, any>',
-        default: '{}',
-        description: this.translationService.translate('kubernetesPagination.paramInitialParams'),
-      },
-    ];
-  });
+  fetchParameters = this.aggregateParameters;
+
+  optionProperties = computed<ApiProperty[]>(() => [
+    {
+      name: 'initialParams.limit',
+      type: 'number',
+      description: this.translationService.translate('kubernetesPagination.limitHelp'),
+    },
+    {
+      name: 'bounds.maxPages',
+      type: 'number',
+      defaultValue: 'undefined',
+      description: this.translationService.translate('kubernetesPagination.maxPagesHelp'),
+    },
+    {
+      name: 'bounds.maxItems',
+      type: 'number',
+      defaultValue: 'undefined',
+      description: this.translationService.translate('kubernetesPagination.maxItemsHelp'),
+    },
+  ]);
+
+  readonly maxPages = signal(3);
+  readonly maxItems = signal(5);
+  readonly error = signal<Error | undefined>(undefined);
 
   readonly isLoading = signal(false);
   readonly pagesFetched = signal<number>(0);
@@ -168,6 +184,7 @@ export class KubernetesPaginationComponent {
     this.isLoading.set(true);
     this.pagesFetched.set(0);
     this.aggregatedList.set(null);
+    this.error.set(undefined);
 
     // Mock an HttpClient adapter that uses our simulated pagination map
     const mockHttpClient = {
@@ -178,19 +195,24 @@ export class KubernetesPaginationComponent {
       },
     } as unknown as HttpClient;
 
-    this.fetchMockPods('/api/v1/pods')
+    defer(() => {
+      this.pagesFetched.update((count) => count + 1);
+      return this.fetchMockPods('/api/v1/pods');
+    })
       .pipe(
         aggregatePaginatedKubernetesResources<DemoPod>(mockHttpClient, '/api/v1/pods', {
           initialParams: {limit: 2},
-          bounds: {maxPages: 3, maxItems: 5},
+          bounds: {maxPages: this.maxPages(), maxItems: this.maxItems()},
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (list) => {
           this.aggregatedList.set(list);
           this.isLoading.set(false);
         },
-        error: () => {
+        error: (error: unknown) => {
+          this.error.set(error instanceof Error ? error : new Error(String(error)));
           this.isLoading.set(false);
         },
       });
@@ -209,7 +231,8 @@ this.http.get<KubernetesList<Pod>>('/api/v1/pods', {params: {limit: 100}})
     })
   )
   .subscribe((podList) => {
-    // Follows distinct continue tokens; bound violations fail without partial success.
+    // limit=100 requests up to 100 items PER PAGE. The helper continues through all pages.
+    // bounds cap the total pages/items; exceeding either cap errors without partial success.
     console.log('Total pods aggregated across all pages:', podList.items.length);
   });
   `);

@@ -17,6 +17,42 @@
       </p>
 
       <div class="preview-box" cds-layout="vertical gap:md">
+        <p><code>limit = 2</code>: {{ 'kubernetesPagination.limitHelp' | translate }}</p>
+        <div cds-layout="horizontal gap:md wrap:wrap">
+          <clr-select-container cds-layout="m-t:none">
+            <label for="pagination-max-pages">maxPages</label>
+            <select
+              clrSelect
+              id="pagination-max-pages"
+              [ngModel]="maxPages()"
+              (ngModelChange)="maxPages.set($event)"
+              [disabled]="isLoading()"
+            >
+              <option [ngValue]="1">1</option>
+              <option [ngValue]="2">2</option>
+              <option [ngValue]="3">3</option>
+            </select>
+            <clr-control-helper>{{ 'kubernetesPagination.maxPagesHelp' | translate }}</clr-control-helper>
+          </clr-select-container>
+          <clr-select-container cds-layout="m-t:none">
+            <label for="pagination-max-items">maxItems</label>
+            <select
+              clrSelect
+              id="pagination-max-items"
+              [ngModel]="maxItems()"
+              (ngModelChange)="maxItems.set($event)"
+              [disabled]="isLoading()"
+            >
+              <option [ngValue]="3">3</option>
+              <option [ngValue]="4">4</option>
+              <option [ngValue]="5">5</option>
+            </select>
+            <clr-control-helper>{{ 'kubernetesPagination.maxItemsHelp' | translate }}</clr-control-helper>
+          </clr-select-container>
+        </div>
+        @if (error(); as error) {
+          <cll-alert [error]="error" />
+        }
         <div cds-layout="horizontal gap:sm align:center">
           <button type="button" class="btn btn-primary btn-sm" [disabled]="isLoading()" (click)="fetchAggregatedPods()">
             {{ 'kubernetesPagination.btnFetchPods' | translate }}
@@ -95,5 +131,7 @@
       <h4>{{ 'common.parameters' | translate }}</h4>
       <app-api-table [properties]="fetchParameters()" />
     </div>
+    <h3>KubernetesPaginationOptions</h3>
+    <app-api-table [properties]="optionProperties()" />
   </section>
 </cll-page-container>

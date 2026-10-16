@@ -1492,7 +1492,7 @@ export const koTranslations: Record<string, string> = {
     '"Fetch Paginated Pods"를 클릭하여 세 개의 가상의 Kubernetes API 페이지를 통해 자동으로 다중 페이지를 가져옵니다:',
   'kubernetesPagination.btnFetchPods': 'Fetch Paginated Pods',
   'kubernetesPagination.fetchingPages': '페이지 가져오기 (continue token)...',
-  'kubernetesPagination.pagesFetched': '재귀적으로 가져온 페이지:',
+  'kubernetesPagination.pagesFetched': '가져온 페이지 수(첫 페이지 포함):',
   'kubernetesPagination.aggregationComplete': '집계 완료',
   'kubernetesPagination.totalResources': '총 자원:',
   'kubernetesPagination.thPodName': 'Pod 이름',
@@ -1506,9 +1506,15 @@ export const koTranslations: Record<string, string> = {
     'Kubernetes 목록 응답 Observable을 초기 Observable로 변환하는 RxJS 연산자로, 모든 페이지의 항목을 포함하는 집계된 목록으로 변환합니다.',
   'kubernetesPagination.fetchSummary':
     '단일 호출로 Kubernetes 자원을 초기화하고 페이지네이션을 수행하는 편의 함수입니다.',
+  'kubernetesPagination.limitHelp':
+    '서버의 페이지 크기입니다. 모든 페이지의 계속 토큰을 따라가므로 limit는 전체 항목 수의 제한이 아닙니다.',
+  'kubernetesPagination.maxPagesHelp':
+    '첫 페이지를 포함하여 성공적으로 가져올 최대 페이지 수입니다. 초과하면 전체 목록이 실패하며, 생략하면 제한이 없습니다.',
+  'kubernetesPagination.maxItemsHelp':
+    '모든 페이지를 합친 최대 항목 수입니다. 초과하면 전체 목록이 실패하며, 생략하면 제한이 없습니다.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient를 사용하여 다음 페이지를 요청합니다.',
   'kubernetesPagination.paramEndpoint': 'Kubernetes 자원의 REST URL입니다.',
-  'kubernetesPagination.paramInitialParams': '쿼리 매개변수 (예: 제한)',
+  'kubernetesPagination.paramInitialParams': '옵션(initialParams, retryConfig, bounds) 또는 기존 쿼리 매개변수입니다.',
   'k8sRetryBackoff.configSummary': '연산자 및 인터셉터 팩토리에서 공유하는 선택적 구성입니다.',
   'k8sRetryBackoff.paramMaxAttempts': '초기 요청을 포함한 총 시도 횟수입니다. 1로 설정하면 재시도가 비활성화됩니다.',
   'k8sRetryBackoff.errorShape':
