@@ -80,28 +80,29 @@ test.describe('Toast viewport containment', () => {
           return snapshots;
         });
         for (const size of sizes) expect(size).toEqual(before);
-        if (index === 0) {
-          const screenshot = testInfo.outputPath('toast-entry.png');
-          await page.screenshot({path: screenshot});
-          await testInfo.attach('toast-entry', {path: screenshot, contentType: 'image/png'});
-        }
       }
       await expect(page.locator('cll-toast')).toHaveCount(8);
       const last = page.locator('cll-toast').last();
       const action = last.getByRole('button', {name: 'More Info', exact: true});
       await action.focus();
       await expect(action).toBeFocused();
-      const stack = await page.locator('cll-toast-container').boundingBox();
-      if (!stack) throw new Error('Toast stack must be visible');
+      const bounds = (element: Element) => {
+        const {x, y, width, height} = element.getBoundingClientRect();
+        return {x, y, width, height};
+      };
+      const stack = await page.locator('cll-toast-container').evaluate(bounds);
       for (const control of await last.getByRole('button').all()) {
-        const rect = await control.boundingBox();
-        if (!rect) throw new Error('Toast action must be visible');
+        await expect(control).toBeVisible();
+        const rect = await control.evaluate(bounds);
         expect(rect.x).toBeGreaterThanOrEqual(0);
         expect(rect.x + rect.width).toBeLessThanOrEqual(width);
         expect(rect.y).toBeGreaterThanOrEqual(stack.y);
         expect(rect.y + rect.height).toBeLessThanOrEqual(Math.min(stack.y + stack.height, 480));
       }
       expect(await pageSize()).toEqual(before);
+      const screenshot = testInfo.outputPath('toast-stack.png');
+      await page.screenshot({path: screenshot});
+      await testInfo.attach('toast-stack', {path: screenshot, contentType: 'image/png'});
     });
   }
 });
