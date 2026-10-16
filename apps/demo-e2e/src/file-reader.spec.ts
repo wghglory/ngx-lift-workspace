@@ -60,12 +60,15 @@ test.describe('FileReader component', () => {
     // Verify certificate signpost is present
     await expect(signpostTrigger).toBeVisible();
     await expect(signpostTrigger).not.toBeFocused();
-    const label = await example2.getByText('Show certificate:', {exact: true}).boundingBox();
-    const trigger = await signpostTrigger.boundingBox();
-    if (!label || !trigger) throw new Error('Certificate label and trigger must be visible');
-    expect(Math.abs(label.y + label.height / 2 - trigger.y - trigger.height / 2)).toBeLessThanOrEqual(3);
+    const centerY = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return rect.y + rect.height / 2;
+    };
+    const labelCenter = await example2.getByText('Show certificate:', {exact: true}).evaluate(centerY);
+    const triggerCenter = await signpostTrigger.evaluate(centerY);
+    expect(Math.abs(labelCenter - triggerCenter)).toBeLessThanOrEqual(3);
     const screenshot = testInfo.outputPath('prefilled-certificate.png');
-    await example2.screenshot({path: screenshot});
+    await example2.locator('form').screenshot({path: screenshot});
     await testInfo.attach('prefilled-certificate', {path: screenshot, contentType: 'image/png'});
 
     // Click signpost to open details
