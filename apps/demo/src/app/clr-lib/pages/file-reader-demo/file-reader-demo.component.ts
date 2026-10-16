@@ -27,6 +27,7 @@ import {CertificateExampleComponent} from '../../../shared/components/certificat
 })
 export class FileReaderDemoComponent implements OnInit {
   private readonly translationService = inject(TranslationService);
+
   readonly inputs = computed<ApiProperty[]>(() => [
     {
       name: 'controlId',
@@ -124,7 +125,8 @@ WK7fpDrk9vUp
     console.log(this.certForm.value);
   }
 
-  basicExampleCode = highlight(`
+  basicExampleCode = highlight(`import {Component} from '@angular/core';
+
 import {FileReaderComponent} from 'clr-lift';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -145,7 +147,7 @@ import {ClarityModule} from '@clr/angular';
 
       <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
     </form>
-  \`
+  \`,
 })
 export class FileReaderExampleComponent {
   form = new FormGroup({
@@ -155,21 +157,16 @@ export class FileReaderExampleComponent {
   submit() {
     console.log(this.form.value);
   }
-}
-  `);
+}`);
 
-  certificateExampleCode = highlight(`
+  certificateExampleCode = highlight(`import {Component} from '@angular/core';
+
 import {CertificateSignpostComponent, certificateValidator, FileReaderComponent} from 'clr-lift';
 import {ReactiveFormsModule, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 
 @Component({
-  imports: [
-    ClarityModule,
-    ReactiveFormsModule,
-    CertificateSignpostComponent,
-    FileReaderComponent,
-  ],
+  imports: [ClarityModule, ReactiveFormsModule, CertificateSignpostComponent, FileReaderComponent],
   styles: '.certificate-success { align-items: center; }',
   template: \`
     <form clrForm [formGroup]="form" (ngSubmit)="submit()">
@@ -187,15 +184,15 @@ import {ClarityModule} from '@clr/angular';
         @if (form.controls.caCert.value) {
           <clr-control-success class="certificate-success">
             <span cds-layout="horizontal gap:xs align:center wrap:wrap">
-            <span>Show certificate:</span>
-            @if (form.controls.caCert.valid) {
-              <cll-certificate-signpost
-                [pem]="form.controls.caCert.value"
-                [pemEncoded]="false"
-                [showIcon]="true"
-                [position]="'bottom-right'"
-              />
-            }
+              <span>Show certificate:</span>
+              @if (form.controls.caCert.valid) {
+                <cll-certificate-signpost
+                  [pem]="form.controls.caCert.value"
+                  [pemEncoded]="false"
+                  [showIcon]="true"
+                  [position]="'bottom-right'"
+                />
+              }
             </span>
           </clr-control-success>
         }
@@ -206,7 +203,7 @@ import {ClarityModule} from '@clr/angular';
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
       </clr-control-container>
     </form>
-  \`
+  \`,
 })
 export class CertificateFileReaderExampleComponent {
   form = new FormGroup({
@@ -223,6 +220,5 @@ export class CertificateFileReaderExampleComponent {
   submit() {
     console.log(this.form.value);
   }
-}
-  `);
+}`);
 }

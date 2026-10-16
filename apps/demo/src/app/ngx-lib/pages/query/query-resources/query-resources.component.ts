@@ -178,8 +178,8 @@ export class QueryResourcesDemoComponent {
   }
 
   readonly dynamicCode = highlight(`// Component fields (with HttpClient injected as this.http).
-readonly selectedIds = signal(['a']);
-readonly tenantQueries = queryResources(this.selectedIds, (id) => ({
+readonly selectedTenants = signal(['a']);
+readonly tenantQueries = queryResources(this.selectedTenants, (id) => ({
   key: ['tenants', id],
   loader: () => this.http.get<Tenant>(\`/api/tenants/\${id}\`),
   staleTime: 30_000,
@@ -187,15 +187,17 @@ readonly tenantQueries = queryResources(this.selectedIds, (id) => ({
 }));
 
 // In template:
-// <button (click)="selectedIds.set(['a'])">Tenant A only</button>
-// <button (click)="selectedIds.set(['a', 'b'])">Both tenants</button>
-// <button (click)="selectedIds.set(['b', 'a'])">Reverse order</button>
-// <button (click)="selectedIds.set([])">Clear selection</button>
+// <button (click)="selectedTenants.set(['a'])">Tenant A only</button>
+// <button (click)="selectedTenants.set(['a', 'b'])">Both tenants</button>
+// <button (click)="selectedTenants.set(['b', 'a'])">Reverse order</button>
+// <button (click)="selectedTenants.set([])">Clear selection</button>
 // Add, reorder or remove IDs; retained keys keep the same ref.`);
 
   readonly rowCode = highlight(`@for (row of rowQueries(); track row.key) {
   <p>{{ row.item() }}: {{ row.status() }}</p>
-  @if (row.hasValue()) { <p>{{ row.value()?.value }}</p> }
+  @if (row.hasValue()) {
+    <p>{{ row.value()?.value }}</p>
+  }
   @if (row.isInitialError()) {
     <button (click)="row.reload()">Retry this read</button>
   }
@@ -213,8 +215,8 @@ readonly clustersBulkQuery = queryResource(() => ({
         if (!clusters.length) return of([]);
         const requests = clusters.map((cluster) =>
           this.http.get<ClusterMetrics>(\`/api/v1/clusters/\${cluster.id}/metrics\`).pipe(
-            map((metrics) => ({ ...cluster, metrics })),
-            catchError((err) => of({ ...cluster, metrics: null, error: err.message })),
+            map((metrics) => ({...cluster, metrics})),
+            catchError((err) => of({...cluster, metrics: null, error: err.message})),
           ),
         );
         return forkJoin(requests);

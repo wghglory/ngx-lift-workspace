@@ -6,6 +6,7 @@ export * from './file-reader';
 export * from './idle-detection';
 export * from './key-value-inputs';
 export * from './page-container';
+export * from './query-devtools';
 export * from './spinner';
 export * from './status-indicator';
 export * from './theme-toggle';

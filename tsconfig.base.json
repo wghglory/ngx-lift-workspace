@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "ngx-lift": ["libs/ngx-lift/src/index.ts"],
-      "clr-lift": ["libs/clr-lift/src/index.ts"]
+      "clr-lift": ["libs/clr-lift/src/index.ts"],
+      "clr-lift/devtools": ["libs/clr-lift/devtools/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

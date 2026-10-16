@@ -23,6 +23,7 @@ describe('FileReaderDemoComponent', () => {
 
   it('should isolate basicForm and certForm so submissions do not interfere', async () => {
     await fixture.whenStable();
+    await vi.waitFor(() => expect(component.certForm.pending).toBe(false));
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
     component.basicForm.controls.file.setValue('my-file-content');

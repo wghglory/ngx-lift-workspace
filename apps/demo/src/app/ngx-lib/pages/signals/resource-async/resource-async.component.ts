@@ -656,119 +656,121 @@ export class ResourceAsyncComponent {
     }
   }
 
-  basicCode = highlight(`
+  readonly basicCode = highlight(`import {inject, signal} from '@angular/core';
 import {resourceAsync} from 'ngx-lift';
-import {Component, signal} from '@angular/core';
+import {map} from 'rxjs';
+import {UserService} from '../../../../shared/services/user.service';
 
-export class UserDetailComponent {
-  userId = signal(1);
+// Component fields and handlers used by the live preview.
+private userService = inject(UserService);
 
-  // Automatically fetches when userId changes
-  userRef = resourceAsync(() =>
-    this.http.get<User>(\`/api/users/\${this.userId()}\`)
-  );
-}
-  `);
+pageNumber = signal(1);
 
-  basicHtmlCode = highlight(`
-<!-- Loading state -->
-@if (userRef.isLoading()) {
-  <cll-spinner />
-}
+userRef = resourceAsync(() =>
+  this.userService.getUsers({results: 1, page: this.pageNumber()}).pipe(map((res) => res.results[0])),
+);
 
-<!-- Error state -->
-@if (userRef.error(); as error) {
-  <cll-alert [error]="error" />
-}
+changeUserId(pageNum: number) {
+  this.pageNumber.set(pageNum);
+}`);
 
-<!-- Success state -->
-<!-- If you want to keep previous data while loading, you can use the following code: -->
-@if (userRef.value(); as userData) {
-  <app-user-card [user]="userData" />
-}
+  readonly basicHtmlCode = highlight(
+    `<div cds-layout="vertical gap:md">
+  <div cds-layout="horizontal gap:xs align:center">
+    <button
+      class="btn btn-sm"
+      [class.btn-primary]="pageNumber() === 1"
+      [class.btn-outline]="pageNumber() !== 1"
+      (click)="changeUserId(1)"
+    >
+      {{ 'resourceAsync.userN' | translate: [1] }}
+    </button>
+    <button
+      class="btn btn-sm"
+      [class.btn-primary]="pageNumber() === 2"
+      [class.btn-outline]="pageNumber() !== 2"
+      (click)="changeUserId(2)"
+    >
+      {{ 'resourceAsync.userN' | translate: [2] }}
+    </button>
+    <button
+      class="btn btn-sm"
+      [class.btn-primary]="pageNumber() === 3"
+      [class.btn-outline]="pageNumber() !== 3"
+      (click)="changeUserId(3)"
+    >
+      {{ 'resourceAsync.userN' | translate: [3] }}
+    </button>
+    <button class="btn btn-sm" (click)="userRef.reload()">{{ 'resourceAsync.reload' | translate }}</button>
+  </div>
 
-<!-- if you want to hide previous data while refetching, you can use the following code: -->
-@if (userRef.status() === 'resolved' && userRef.value(); as userData) {
-  <app-user-card [user]="userData" />
-}
-
-<!-- Or check hasValue() for loading while data exists -->
-@if (userRef.hasValue()) {
-  <app-user-card [user]="userRef.value()!" />
   @if (userRef.isLoading()) {
-    <span>Refreshing...</span>
+    <div class="text-center" cds-layout="p-y:md">
+      <cll-spinner inline />
+    </div>
   }
-}
+  @if (userRef.error(); as error) {
+    <cll-alert [error]="error" [isSmall]="true" />
+  }
+  @if (userRef.status() === 'resolved' && userRef.value(); as userData) {
+    <app-user-card [user]="userData" />
+  }
+</div>`,
+    'html',
+  );
 
-<!-- Reload -->
-<button class="btn btn-sm" (click)="userRef.reload()">Reload</button>
-    `);
-
-  lazyCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  lazyCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component} from '@angular/core';
 
 export class SearchComponent {
   searchResultsRef = resourceAsync(
     () => this.http.get(\`/api/search?q=\${this.query()}\`),
-    {lazy: true} // Won't fetch until reload() is called
+    {lazy: true}, // Won't fetch until reload() is called
   );
 
   search() {
     this.searchResultsRef.reload(); // Trigger fetch
   }
-}
-  `);
+}`);
 
-  errorHandlingCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  errorHandlingCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component} from '@angular/core';
 
 export class UserDetailComponent {
-  userRef = resourceAsync(
-    () => this.http.get<User>('/api/user'),
-    {
-      onError: (error) => {
-        console.error('Failed:', error);
-        // Return fallback value
-        return {name: 'Guest User'};
-      },
-      onSuccess: (user) => {
-        console.log('Loaded:', user);
-      },
-      onLoading: () => {
-        console.log('Loading started');
-      }
-    }
-  );
-}
-  `);
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'), {
+    onError: (error) => {
+      console.error('Failed:', error);
+      // Return fallback value
+      return {name: 'Guest User'};
+    },
+    onSuccess: (user) => {
+      console.log('Loaded:', user);
+    },
+    onLoading: () => {
+      console.log('Loading started');
+    },
+  });
+}`);
 
-  exhaustCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  exhaustCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, signal} from '@angular/core';
 
 export class SearchComponent {
   searchTerm = signal('');
 
   // Exhaust prevents multiple concurrent searches
-  searchResultsRef = resourceAsync(
-    () => this.http.get(\`/api/search?q=\${this.searchTerm()}\`),
-    {
-      behavior: 'exhaust', // Ignore new searches while one is in progress
-      lazy: true
-    }
-  );
+  searchResultsRef = resourceAsync(() => this.http.get(\`/api/search?q=\${this.searchTerm()}\`), {
+    behavior: 'exhaust', // Ignore new searches while one is in progress
+    lazy: true,
+  });
 
   search() {
     // If a search is already in progress, this will be ignored
     this.searchResultsRef.reload();
   }
-}
-  `);
+}`);
 
-  statusCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  statusCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, computed} from '@angular/core';
 
 export class UserDetailComponent {
@@ -777,18 +779,21 @@ export class UserDetailComponent {
   // Use computed() instead of getter for better performance
   statusMessage = computed(() => {
     switch (this.userRef.status()) {
-      case 'idle': return 'Not loaded yet';
-      case 'loading': return 'Loading...';
-      case 'reloading': return 'Reloading...';
-      case 'resolved': return 'Data loaded!';
-      case 'error': return 'Failed to load';
+      case 'idle':
+        return 'Not loaded yet';
+      case 'loading':
+        return 'Loading...';
+      case 'reloading':
+        return 'Reloading...';
+      case 'resolved':
+        return 'Data loaded!';
+      case 'error':
+        return 'Failed to load';
     }
   });
-}
-  `);
+}`);
 
-  declarativeCode = highlight(`
-import {resourceAsync, ResourceAsyncDefinition} from 'ngx-lift';
+  declarativeCode = highlight(`import {resourceAsync, ResourceAsyncDefinition} from 'ngx-lift';
 import {Component, signal} from '@angular/core';
 
 export class CatalogSearchComponent {
@@ -807,22 +812,20 @@ export class CatalogSearchComponent {
     },
     {
       defaultValue: [],
-    }
+    },
   );
-}
-  `);
+}`);
 
-  signatureCode = highlight(`
-// 1. Declarative definition (ResourceAsyncDefinition<P, T>)
+  signatureCode = highlight(`// 1. Declarative definition (ResourceAsyncDefinition<P, T>)
 function resourceAsync<T, P, E = Error>(
   definition: ResourceAsyncDefinition<P, T>,
-  options?: ResourceRefOptions<T, E>
+  options?: ResourceRefOptions<T, E>,
 ): WritableResourceRef<T, E>;
 
 // 2. Functional loader with AbortSignal context
 function resourceAsync<T, E = Error>(
   sourceFn: (context: ResourceAsyncContext) => Observable<T> | Promise<T> | T,
-  options?: ResourceRefOptions<T, E>
+  options?: ResourceRefOptions<T, E>,
 ): WritableResourceRef<T, E>;
 
 interface ResourceAsyncDefinition<P, T> {
@@ -835,8 +838,8 @@ interface ResourceAsyncContext {
 }
 
 interface ResourceRefOptions<T, E = Error> {
-  initialValue?: T;                       // Initial value before first fetch
-  defaultValue?: T;                       // Alias matching Angular's resource() API
+  initialValue?: T; // Initial value before first fetch
+  defaultValue?: T; // Alias matching Angular's resource() API
   behavior?: 'switch' | 'exhaust';
   onError?: (error: E) => T | undefined;
   throwOnError?: boolean;
@@ -847,22 +850,20 @@ interface ResourceRefOptions<T, E = Error> {
 }
 
 interface ResourceRef<T, E = Error> {
-  readonly value: Signal<T>;              // T when initial/default provided, else T | undefined
+  readonly value: Signal<T>; // T when initial/default provided, else T | undefined
   readonly error: Signal<E | null>;
   readonly status: Signal<ResourceStatus>;
   readonly isLoading: Signal<boolean>;
   readonly isIdle: Signal<boolean>;
-  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>;  // Type guard narrows T | undefined -> T
-  reload(): boolean;                      // Returns true if initiated, for read operations (GET)
-  execute(): Promise<T>;                  // Awaitable mutation trigger - returns Promise<T>
-  reset(): void;                          // Resets resource to idle state, cancels in-flight
+  hasValue(): this is ResourceRef<Exclude<T, undefined>, E>; // Type guard narrows T | undefined -> T
+  reload(): boolean; // Returns true if initiated, for read operations (GET)
+  execute(): Promise<T>; // Awaitable mutation trigger - returns Promise<T>
+  reset(): void; // Resets resource to idle state, cancels in-flight
 }
 
-type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error' | 'local';
-  `);
+type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error' | 'local';`);
 
-  behaviorCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  behaviorCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, signal} from '@angular/core';
 
 export class UserDetailComponent {
@@ -871,13 +872,11 @@ export class UserDetailComponent {
   // Default 'switch' behavior - cancels previous request
   userRef = resourceAsync(
     () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
-    {behavior: 'switch'} // default
+    {behavior: 'switch'}, // default
   );
-}
-  `);
+}`);
 
-  initialValueCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  initialValueCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -885,22 +884,17 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
 
   // Provide initial value from route state or cached data
-  userRef = resourceAsync(
-    () => this.http.get<User>('/api/user'),
-    {
-      initialValue: this.getInitialUser(), // Display immediately
-    }
-  );
+  userRef = resourceAsync(() => this.http.get<User>('/api/user'), {
+    initialValue: this.getInitialUser(), // Display immediately
+  });
 
   private getInitialUser(): User | undefined {
     // Could come from router state, local storage, etc.
     return history.state?.user;
   }
-}
-  `);
+}`);
 
-  throwOnErrorCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  throwOnErrorCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, inject, input} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -908,22 +902,17 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  userRef = resourceAsync(
-    () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
-    {
-      throwOnError: true,  // Errors will propagate up
-      onError: (error) => {
-        console.error('API Error:', error);
-        // Can still log but error will still throw
-        return undefined;
-      }
-    }
-  );
-}
-  `);
+  userRef = resourceAsync(() => this.http.get<User>(\`/api/users/\${this.userId()}\`), {
+    throwOnError: true, // Errors will propagate up
+    onError: (error) => {
+      console.error('API Error:', error);
+      // Can still log but error will still throw
+      return undefined;
+    },
+  });
+}`);
 
-  registrationCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  registrationCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, inject, signal} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
@@ -947,7 +936,7 @@ export class RegistrationComponent {
   form = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),
     password: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    email: new FormControl('', [Validators.required, Validators.email])
+    email: new FormControl('', [Validators.required, Validators.email]),
   });
 
   // Registration resource with exhaust + lazy
@@ -956,22 +945,22 @@ export class RegistrationComponent {
       const payload: RegistrationPayload = {
         username: this.form.value.username!,
         password: this.form.value.password!,
-        email: this.form.value.email!
+        email: this.form.value.email!,
       };
       return this.http.post<RegistrationResponse>('/api/register', payload);
     },
     {
-      lazy: true,  // Don't execute until explicitly called
-      behavior: 'exhaust',  // Prevent duplicate submissions
+      lazy: true, // Don't execute until explicitly called
+      behavior: 'exhaust', // Prevent duplicate submissions
       onSuccess: (response) => {
         console.log('Registration successful:', response);
-        this.form.reset();  // Clear form on success
+        this.form.reset(); // Clear form on success
       },
       onError: (error) => {
         console.error('Registration failed:', error);
         // Could set form errors here
-      }
-    }
+      },
+    },
   );
 
   async onSubmit() {
@@ -981,8 +970,7 @@ export class RegistrationComponent {
       console.log('Registration successful:', response);
     }
   }
-}
-  `);
+}`);
 
   registrationHtmlCode = highlight(`
 <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
@@ -1028,8 +1016,7 @@ export class RegistrationComponent {
   // WritableResourceRef Code Blocks
   // ============================================================================
 
-  optimisticUpdateCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  optimisticUpdateCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -1037,32 +1024,27 @@ export class TodoComponent {
   private http = inject(HttpClient);
   todoId = signal(1);
 
-  todoRef = resourceAsync(() =>
-    this.http.get<Todo>(\`/api/todos/\${this.todoId()}\`)
-  );
+  todoRef = resourceAsync(() => this.http.get<Todo>(\`/api/todos/\${this.todoId()}\`));
 
   toggleTodo() {
     // 1. Update UI immediately (optimistic)
-    this.todoRef.update(todo => ({ ...todo, completed: !todo.completed }));
+    this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
 
     // 2. Send to server
-    this.http.put(\`/api/todos/\${this.todoId()}\`, this.todoRef.value())
-      .subscribe({
-        next: () => {
-          console.log('Todo updated successfully');
-        },
-        error: () => {
-          // Revert on error
-          this.todoRef.update(todo => ({ ...todo, completed: !todo.completed }));
-          alert('Failed to update todo');
-        }
-      });
+    this.http.put(\`/api/todos/\${this.todoId()}\`, this.todoRef.value()).subscribe({
+      next: () => {
+        console.log('Todo updated successfully');
+      },
+      error: () => {
+        // Revert on error
+        this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
+        alert('Failed to update todo');
+      },
+    });
   }
-}
-  `);
+}`);
 
-  cacheFirstCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  cacheFirstCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, inject, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -1070,10 +1052,7 @@ export class UserProfileComponent {
   private http = inject(HttpClient);
   userId = signal(1);
 
-  userRef = resourceAsync(
-    () => this.http.get<User>(\`/api/users/\${this.userId()}\`),
-    { lazy: true }
-  );
+  userRef = resourceAsync(() => this.http.get<User>(\`/api/users/\${this.userId()}\`), {lazy: true});
 
   loadUser() {
     // 1. Set cached data immediately (from localStorage, router state, etc.)
@@ -1087,39 +1066,33 @@ export class UserProfileComponent {
   }
 }
 
-// Template shows cached data immediately, updates when fresh data arrives
-  `);
+// Template shows cached data immediately, updates when fresh data arrives`);
 
-  formDraftCode = highlight(`
-import {resourceAsync} from 'ngx-lift';
+  formDraftCode = highlight(`import {resourceAsync} from 'ngx-lift';
 import {Component, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
 export class CounterComponent {
   private http = inject(HttpClient);
 
-  counterRef = resourceAsync(
-    () => this.http.get<number>('/api/counter'),
-    { lazy: true }
-  );
+  counterRef = resourceAsync(() => this.http.get<number>('/api/counter'), {lazy: true});
 
   incrementCounter() {
-    this.counterRef.update(count => count + 1); // Status: local
+    this.counterRef.update((count) => count + 1); // Status: local
   }
 
   decrementCounter() {
-    this.counterRef.update(count => count - 1); // Status: local
+    this.counterRef.update((count) => count - 1); // Status: local
   }
 
   saveCounter() {
-    this.http.put('/api/counter', { value: this.counterRef.value() })
-      .subscribe({
-        next: () => {
-          alert('Counter saved!');
-          this.counterRef.reload(); // Get server state
-        },
-        error: () => alert('Failed to save')
-      });
+    this.http.put('/api/counter', {value: this.counterRef.value()}).subscribe({
+      next: () => {
+        alert('Counter saved!');
+        this.counterRef.reload(); // Get server state
+      },
+      error: () => alert('Failed to save'),
+    });
   }
 
   discardChanges() {
@@ -1127,11 +1100,9 @@ export class CounterComponent {
   }
 }
 
-// Show "Unsaved changes" when status === 'local'
-  `);
+// Show "Unsaved changes" when status === 'local'`);
 
-  nestedResourceCode = highlight(`
-import {resourceAsync, ResourceRef} from 'ngx-lift';
+  nestedResourceCode = highlight(`import {resourceAsync, ResourceRef} from 'ngx-lift';
 import {Component, inject, Injector, runInInjectionContext, untracked} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -1140,9 +1111,7 @@ export class ProjectListComponent {
   private injector = inject(Injector);
 
   // Outer resource: List of projects
-  projectsRef = resourceAsync(() =>
-    this.http.get<Project[]>('/api/projects')
-  );
+  projectsRef = resourceAsync(() => this.http.get<Project[]>('/api/projects'));
 
   // Inner resources: Map of orgId -> ResourceRef<Organization>
   private orgRefsMap = new Map<string, ResourceRef<Organization>>();
@@ -1156,13 +1125,14 @@ export class ProjectListComponent {
    * 2. { injector: this.injector } - Directly decouples the injector without runInInjectionContext()!
    */
   getOrgRef(orgId: string): ResourceRef<Organization> {
-    return untracked(() => {  // Break out of reactive context
+    return untracked(() => {
+      // Break out of reactive context
       let orgRef = this.orgRefsMap.get(orgId);
       if (!orgRef) {
-        orgRef = resourceAsync(
-          () => this.http.get<Organization>(\`/api/orgs/\${orgId}\`),
-          { lazy: true, injector: this.injector }
-        );
+        orgRef = resourceAsync(() => this.http.get<Organization>(\`/api/orgs/\${orgId}\`), {
+          lazy: true,
+          injector: this.injector,
+        });
         this.orgRefsMap.set(orgId, orgRef);
       }
       return orgRef;
@@ -1172,8 +1142,7 @@ export class ProjectListComponent {
   loadOrg(orgId: string) {
     this.getOrgRef(orgId).reload();
   }
-}
-  `);
+}`);
 
   nestedResourceHtmlCode = highlight(`
 <table class="table">

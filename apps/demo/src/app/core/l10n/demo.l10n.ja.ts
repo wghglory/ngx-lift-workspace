@@ -1,4 +1,26 @@
 export const jaTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': '保存したプロフィール',
+  'queryResource.projectRevision': '応答バージョン',
+  'queryResource.activeUser': '現在のユーザー',
+  'queryResource.engineLabel': 'エンジン',
+  'queryResource.computeLabel': 'コンピュート',
+  'queryOwnership.title': 'ドメインで管理するキーとタグ',
+  'queryOwnership.definitions':
+    'オブザーバーはコンポーネントに置き、完全なクエリ定義とタグファクトリを担当ドメインからインポートします。キーにはスコープと応答に影響するすべてのパラメーターを含めます。',
+  'queryOwnership.refactoring':
+    '文字列を繰り返さず共有エクスポートを使います。定義の変更や削除の前に、すべての参照を検索し、担当ドメインと調整して、影響する読み書きを検証します。',
+  'queryOwnership.noCache':
+    'キーは共有リクエストと状態も識別します。staleTime: 0 はデータを即座に古い状態にし、gcTime: 0 はリクエスト終了後に未使用エントリを削除します。キーなしの独立した状態には resourceAsync を使います。ミューテーションにキーは不要です。',
+  'queryOwnership.naming':
+    'invalidateTags は配列または成功時のみ実行する (result, args) コールバックを受け取ります。[] を返すと無効化を省略します。',
+  'queryOwnership.journey':
+    'メンバーを追加すると、表とサマリーは更新ごとに一つのリクエストを共有します。サマリーを閉じて再度追加し、開き直してください。チーム B のデータとリクエスト数は変わりません。',
+  'queryOwnership.closeSummary': 'サマリーを閉じる',
+  'queryOwnership.openSummary': 'サマリーを開く',
+  'queryOwnership.summary': 'チーム A のサマリー',
+  'queryOwnership.teamAReads': 'チーム A のリクエスト数',
+  'queryOwnership.otherScope': 'チーム B のメンバー（別スコープ）',
+  'queryOwnership.teamBReads': 'チーム B のリクエスト数',
   'header.selectLanguage': '言語を選択',
   'header.openGitHub': 'GitHub で開く',
   'header.codeLicensed': 'ライセンス：',
@@ -619,7 +641,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'ユーザープロフィールカード',
   'queryResource.simulatedMasterList': 'マスター一覧（データベースを選択）',
   'queryResource.simulatedDetailCard': '詳細ビュー（スペック情報）',
-  'queryResource.updateNameBtn': 'authStateService.updateProfile.mutate() 経由でユーザー名を更新',
+  'queryResource.updateNameBtn': 'ユーザー名を更新',
   'queryResource.componentPlacementAdvice':
     'データが特定のビュー専用である場合はコンポーネント配置が推奨されます。追加ファイルが不要で、Signal 入力 input() とシームレスに結合し、アンマウント時に即座にクリーンアップされます。',
   'queryResource.demo1Section': 'リクエスト結合 & 重複除去',
@@ -692,10 +714,10 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.thRole': '役割',
   'queryResource.diagnosticsSection': '開発者診断 & キャッシュインスペクター',
   'queryResource.diagnosticsSectionDesc':
-    'この QueryClient のキャッシュ、オブザーバー、処理中の論理読み取り、再試行、GC、ポーリングを確認します。失敗例と Observable サービスの例は別のクライアントを使用します。',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClientライブ診断',
+    'app.config.tsでprovideQueryDevtools()を一度登録すると、開発時のみ起動ボタンが表示されます。アプリを操作しながら下部パネルでクエリを調べられます。',
+  'queryResource.diagnosticsPlaygroundTitle': 'クエリ検査パネル',
   'queryResource.diagnosticsPlaygroundDesc':
-    '「診断をリフレッシュ」をクリックして、getDiagnostics()およびgetEntriesSnapshot()を介して内部のQueryClient状態をポーリングします。',
+    'クエリの検索、絞り込み、並べ替え、キャッシュデータやエラーの確認ができます。再取得は選択したローダーを実行します。この文書用プレビューは本番ビルドでも有効です。',
   'queryResource.badgeDiagnostics': '診断',
   'queryResource.refreshDiagnostics': '診断をリフレッシュ',
   'queryResource.diagTotalEntries': '総数',
@@ -2013,7 +2035,7 @@ export const jaTranslations: Record<string, string> = {
   'demoApi.tooltip-demo.inputs.cllTooltipHideDelay': 'マウスを離れた後にツールチップを隠すまでの遅延（ミリ秒）。',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'サーバーサイドの書き込み操作を実行するアсинクロン関数またはオバザーバブル。',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     '成功した書き込み後に無効にするタグ。アクティブなクエリに対して即座に再取得をスケジュールします。',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     '重複する呼び出しの戦略：並列（デフォルト）、エクスーティ（進行中の呼び出しを結合）、コンカト（キューイング）。',

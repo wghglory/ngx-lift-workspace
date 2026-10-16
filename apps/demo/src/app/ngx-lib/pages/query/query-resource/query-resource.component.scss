@@ -7,50 +7,9 @@
   display: flex;
 }
 
-.widget-card {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-top: 0;
-  margin-bottom: 0;
-
-  .card-header {
-    min-height: 4.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-
-    .widget-header-text {
-      .card-title {
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 0.15rem;
-      }
-
-      .card-subtitle {
-        font-size: 0.7rem;
-      }
-    }
-  }
-
-  .card-block {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0.75rem;
-
-    .widget-metrics {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-
-      p {
-        margin: 0;
-      }
-    }
-  }
+.focus-refetch-note {
+  display: block;
+  margin-block-start: var(--cds-global-space-7);
 }
 
 .revalidate-alert {
@@ -83,43 +42,5 @@
   .form-actions {
     margin-top: 1rem;
     padding-top: 0.25rem;
-  }
-}
-
-.diag-cards-row {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.diag-card-col {
-  display: flex;
-  margin-bottom: 0.5rem;
-}
-
-.diag-metric-card {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin: 0;
-
-  .diag-card-title {
-    min-height: 2.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    line-height: 1.2;
-    text-align: center;
-  }
-
-  .diag-card-val {
-    min-height: 2.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0.25rem;
-    margin-bottom: 0;
   }
 }

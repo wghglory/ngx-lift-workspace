@@ -5,6 +5,7 @@ import {mkdtempSync, mkdirSync, readdirSync, readFileSync, writeFileSync, symlin
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {createRequire} from 'node:module';
 
 const root = process.cwd();
 const consumer = mkdtempSync(join(tmpdir(), 'ngx-lift-consumer-'));
@@ -48,7 +49,11 @@ try {
     `
 import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
-import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
+import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
+import {provideQueryDevtools} from 'clr-lift/devtools';
+void provideQueryDevtools();
+const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
+void devtools;
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
@@ -185,11 +190,86 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   }
 
   writeFileSync(
+    join(freshConsumer, 'query-devtools-browser.mjs'),
+    readFileSync(join(root, 'tools/package/fixtures/query-devtools-browser.mjs'), 'utf8'),
+  );
+  for (const mode of ['zoneless', 'zone']) {
+    process.stdout.write(run(process.execPath, ['query-devtools-browser.mjs', mode], freshConsumer));
+  }
+
+  writeFileSync(
+    join(freshConsumer, 'query-devtools-provider.mjs'),
+    readFileSync(join(root, 'tools/package/fixtures/query-devtools-provider.mjs'), 'utf8'),
+  );
+  for (const mode of ['zoneless', 'zone']) {
+    process.stdout.write(run(process.execPath, ['query-devtools-provider.mjs', mode, 'default'], freshConsumer));
+    process.stdout.write(
+      run(
+        process.execPath,
+        ['--conditions=development', 'query-devtools-provider.mjs', mode, 'development'],
+        freshConsumer,
+      ),
+    );
+  }
+
+  // Resolve the packed export map, without workspace aliases, alongside an ordinary clr-lift consumer.
+  const {build} = createRequire(import.meta.resolve('@angular/build/package.json'))('esbuild');
+  const {transformAsync} = createRequire(import.meta.resolve('@angular/build/package.json'))('@babel/core');
+  const {default: angularLinker} = await import('@angular/compiler-cli/linker/babel');
+  for (const condition of ['production', 'development']) {
+    const bundle = await build({
+      stdin: {
+        contents:
+          "import {provideQueryDevtools} from 'clr-lift/devtools'; import {SpinnerComponent} from 'clr-lift'; console.log(SpinnerComponent, provideQueryDevtools());",
+        resolveDir: freshConsumer,
+      },
+      absWorkingDir: freshConsumer,
+      bundle: true,
+      write: false,
+      format: 'esm',
+      platform: 'browser',
+      minify: true,
+      metafile: true,
+      conditions: [condition],
+      external: ['@angular/*', '@clr/*', 'ngx-lift', 'rxjs', 'rxjs/*', 'node-forge'],
+      define: {ngDevMode: condition === 'development' ? 'true' : 'false', ngJitMode: 'false'},
+      plugins: [
+        {
+          name: 'angular-package-linker',
+          setup(build) {
+            build.onLoad({filter: /\.mjs$/}, async ({path}) => {
+              const result = await transformAsync(readFileSync(path, 'utf8'), {
+                filename: path,
+                plugins: [[angularLinker, {linkerJitMode: false}]],
+                configFile: false,
+                babelrc: false,
+              });
+              return {contents: result.code, loader: 'js'};
+            });
+          },
+        },
+      ],
+    });
+    const inputs = Object.keys(bundle.metafile.inputs);
+    const hasRenderer = bundle.outputFiles.some((file) => file.text.includes('cll-query-devtools'));
+    assert.equal(hasRenderer, condition === 'development', `${condition} bundle devtools renderer isolation`);
+    assert.equal(
+      inputs.some((path) => path.endsWith('clr-lift-devtools-development.mjs')),
+      condition === 'development',
+    );
+    process.stdout.write(
+      `Packed ${condition} import graph: devtools renderer ${hasRenderer ? 'included' : 'excluded'}.\n`,
+    );
+  }
+
+  writeFileSync(
     join(freshConsumer, 'consumer.ts'),
     `
 import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
-import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
+import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
+const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
+void devtools;
 import {FormControl} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {

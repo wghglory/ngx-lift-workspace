@@ -4,6 +4,7 @@ import localeEn from '@angular/common/locales/en';
 import {ApplicationConfig, LOCALE_ID, provideZonelessChangeDetection} from '@angular/core';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
+import {provideQueryDevtools} from 'clr-lift/devtools';
 
 import {routes} from './app.routes';
 
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(),
+    provideQueryDevtools(),
     {
       provide: LOCALE_ID,
       useValue: 'en',

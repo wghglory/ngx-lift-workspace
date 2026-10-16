@@ -79,6 +79,12 @@ export function usedKeys(source, file) {
       if (!node || typeof node !== 'object' || seen.has(node)) return;
       seen.add(node);
       const translated = inTranslate || (node.name === 'translate' && node.constructor.name === 'BindingPipe');
+      if (translated && node.constructor.name === 'Conditional') {
+        visit(node.condition, false);
+        visit(node.trueExp, true);
+        visit(node.falseExp, true);
+        return;
+      }
       if (translated && node.constructor.name === 'LiteralPrimitive' && typeof node.value === 'string')
         keys.add(node.value);
       for (const [name, child] of Object.entries(node)) {

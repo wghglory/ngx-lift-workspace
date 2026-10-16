@@ -203,6 +203,21 @@ export class QueryClient {
     return entry ? this.snapshot(entry) : undefined;
   }
 
+  /**
+   * Refetch an existing key with its current loader/policy, joining a pending read. Missing keys are not created.
+   * @example
+   * ```typescript
+   * await client.refetchQuery(['users', userId]);
+   * ```
+   */
+  refetchQuery(key: QueryKey): Promise<unknown> | undefined {
+    this.assertActive();
+    const entry = this.entries.get(serializeQueryKey(key));
+    if (!entry) return undefined;
+    entry.lastAccess = ++this.accessSequence;
+    return this.startRequest(entry, true);
+  }
+
   /** Return a point-in-time snapshot of all cached query entries and their runtime metrics. */
   getEntriesSnapshot(): QueryEntryDiagnostics[] {
     return this.collectEntriesSnapshot(this.now(), this.isVisible());

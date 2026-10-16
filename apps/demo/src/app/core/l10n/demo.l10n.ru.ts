@@ -1,4 +1,26 @@
 export const ruTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': 'Сохранённый профиль',
+  'queryResource.projectRevision': 'Версия ответа',
+  'queryResource.activeUser': 'Текущий пользователь',
+  'queryResource.engineLabel': 'Движок',
+  'queryResource.computeLabel': 'Ресурсы',
+  'queryOwnership.title': 'Ключи и теги на уровне домена',
+  'queryOwnership.definitions':
+    'Оставляйте наблюдателей в компонентах. Импортируйте полные определения запросов и фабрики тегов из домена-владельца; включайте в ключи область и все параметры, влияющие на ответ.',
+  'queryOwnership.refactoring':
+    'Используйте общие экспорты вместо повторения строк. Перед изменением или удалением определения найдите все ссылки, согласуйте действия с ответственным доменом и проверьте затронутые операции чтения и записи.',
+  'queryOwnership.noCache':
+    'Ключи также определяют общие запросы и состояние. staleTime: 0 делает данные устаревшими; gcTime: 0 удаляет неиспользуемые записи после завершения запросов. Для независимого состояния без ключа используйте resourceAsync. Мутациям ключ не нужен.',
+  'queryOwnership.naming':
+    'invalidateTags принимает массив или функцию (result, args), вызываемую только после успеха. Верните [] для пропуска инвалидации.',
+  'queryOwnership.journey':
+    'Добавьте участников: таблица и сводка разделяют один запрос при обновлении. Закройте сводку, добавьте ещё участника и откройте её. Данные и число запросов команды B не меняются.',
+  'queryOwnership.closeSummary': 'Закрыть сводку',
+  'queryOwnership.openSummary': 'Открыть сводку',
+  'queryOwnership.summary': 'Сводка команды A',
+  'queryOwnership.teamAReads': 'Запросы команды A',
+  'queryOwnership.otherScope': 'Участники команды B (другая область)',
+  'queryOwnership.teamBReads': 'Запросы команды B',
   'header.selectLanguage': 'Выберите язык',
   'header.openGitHub': 'Открыть на GitHub',
   'header.codeLicensed': 'Код под лицензией',
@@ -632,7 +654,7 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'Карточка профиля пользователя',
   'queryResource.simulatedMasterList': 'Список Master (выбор базы данных)',
   'queryResource.simulatedDetailCard': 'Экран Detail (активные характеристики)',
-  'queryResource.updateNameBtn': 'Обновить имя через authStateService.updateProfile.mutate()',
+  'queryResource.updateNameBtn': 'Обновить имя',
   'queryResource.componentPlacementAdvice':
     'Размещение в компоненте рекомендуется, когда данные строго ограничены одним экраном. Не требует отдельных файлов сервисов и мгновенно очищается при размонтировании.',
   'queryResource.demo1Section': 'Просьба об использовании угля и его осложнении',
@@ -703,10 +725,10 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.thRole': 'Роль',
   'queryResource.diagnosticsSection': 'Инспектор диагностики и кэша разработчиков',
   'queryResource.diagnosticsSectionDesc':
-    'Проверяйте кеш, наблюдателей, незавершенные логические чтения, повторные попытки, GC и опрос этого QueryClient. Примеры ошибок и сервисов Observable используют отдельные клиенты.',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient Живая диагностика',
+    'Зарегистрируйте provideQueryDevtools() один раз в app.config.ts для плавающей кнопки только в режиме разработки. Просматривайте запросы внизу, продолжая работать с приложением.',
+  'queryResource.diagnosticsPlaygroundTitle': 'Панель запросов',
   'queryResource.diagnosticsPlaygroundDesc':
-    'Нажмите "Вновь диагностику" для опроса внутреннего состояния QueryClient через getDiagnostics() и getEntriesSnapshot().',
+    'Ищите, фильтруйте и сортируйте запросы; изучайте данные, ошибки и таймеры. Повторная загрузка запускает выбранный загрузчик. Этот пример документации также включён в production.',
   'queryResource.badgeDiagnostics': 'Диагностика',
   'queryResource.refreshDiagnostics': 'Обновить диагноз',
   'queryResource.diagTotalEntries': 'Всего',
@@ -2081,7 +2103,7 @@ export const ruTranslations: Record<string, string> = {
     'Задержка в миллисекундах перед скрытием tooltip после выхода мыши.',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'Асинхронная функция или observable, выполняющая серверную операцию записи.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     'Теги, которые должны быть недействительны после успешной записи. Немедленно планирует повторные запросы для активных запросов.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     'Стратегия для пересечений вызовов: параллельный (по умолчанию), исчерпывающий (соединяют в процессе), конкатенация (очередная).',

@@ -40,8 +40,7 @@ export class StatusIndicatorDemoComponent {
       description: this.translationService.translate('statusIndicator.inputTooltipPosition'),
     },
   ]);
-  basicExampleCode = highlight(`
-import {StatusIndicatorComponent} from 'clr-lift';
+  basicExampleCode = highlight(`import {StatusIndicatorComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
@@ -50,27 +49,20 @@ import {Component} from '@angular/core';
     <cll-status-indicator [iconStatus]="'error'" [iconSize]="'sm'"> Error </cll-status-indicator>
     <cll-status-indicator [iconStatus]="'success'" [iconSize]="'24'"> Success </cll-status-indicator>
     <cll-status-indicator [iconStatus]="'warning'"> Warning </cll-status-indicator>
-  \`
+  \`,
 })
-export class StatusIndicatorExampleComponent {}
-  `);
+export class StatusIndicatorExampleComponent {}`);
 
-  tooltipExampleCode = highlight(`
-import {StatusIndicatorComponent} from 'clr-lift';
+  tooltipExampleCode = highlight(`import {StatusIndicatorComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
   imports: [StatusIndicatorComponent],
   template: \`
-    <cll-status-indicator
-      [iconStatus]="'pending'"
-      [tooltip]="'some pending happen'"
-      [tooltipPosition]="'tooltip-left'"
-    >
+    <cll-status-indicator [iconStatus]="'pending'" [tooltip]="'some pending happen'" [tooltipPosition]="'tooltip-left'">
       Pending
     </cll-status-indicator>
-  \`
+  \`,
 })
-export class StatusIndicatorTooltipExampleComponent {}
-  `);
+export class StatusIndicatorTooltipExampleComponent {}`);
 }

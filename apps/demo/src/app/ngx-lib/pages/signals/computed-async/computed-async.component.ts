@@ -40,6 +40,7 @@ export class ComputedAsyncComponent {
   private userService = inject(UserService);
   private injector = inject(Injector);
   private translationService = inject(TranslationService);
+
   private refreshTrigger = createTrigger();
   private fetchTrigger = createTrigger();
 
@@ -198,21 +199,18 @@ export class ComputedAsyncComponent {
     this.fetchTrigger.next();
   }
 
-  promiseCode = highlight(`
-import {computedAsync} from 'ngx-lift';
+  promiseCode = highlight(`import {computedAsync} from 'ngx-lift';
 import {Component, input, Signal} from '@angular/core';
 
 export class UserDetailComponent {
   userId = input.required<number>();
 
-  user: Signal<User | undefined> = computedAsync(
-    () => fetch(\`https://localhost/api/users/\${this.userId()}\`).then((res) => res.json()),
+  user: Signal<User | undefined> = computedAsync(() =>
+    fetch(\`https://localhost/api/users/\${this.userId()}\`).then((res) => res.json()),
   );
-}
-  `);
+}`);
 
-  observableCode = highlight(`
-import {computedAsync} from 'ngx-lift';
+  observableCode = highlight(`import {computedAsync} from 'ngx-lift';
 import {Component, inject, input, Signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -220,11 +218,10 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  user: Signal<User | undefined> = computedAsync(
-    () => this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
+  user: Signal<User | undefined> = computedAsync(() =>
+    this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`),
   );
-}
-  `);
+}`);
 
   regularCode = highlight(`
 import {computedAsync} from 'ngx-lift';
@@ -306,8 +303,7 @@ export class UserDetailComponent {
 }
   `);
 
-  previousCode = highlight(`
-import {computedAsync} from 'ngx-lift';
+  previousCode = highlight(`import {computedAsync} from 'ngx-lift';
 import {Component, inject, input, Signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -315,14 +311,11 @@ export class UserDetailComponent {
   private http = inject(HttpClient);
   userId = input.required<number>();
 
-  user: Signal<User | undefined> = computedAsync(
-    (previousValue) => {
-      // Use previousValue here if you need
-      return this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`);
-    },
-  );
-}
-  `);
+  user: Signal<User | undefined> = computedAsync((previousValue) => {
+    // Use previousValue here if you need
+    return this.http.get<User>(\`https://localhost/api/users/\${this.userId()}\`);
+  });
+}`);
 
   loadInitiallyHtmlCode = highlight(`
 <div>
@@ -353,6 +346,7 @@ import {UserService} from './user.service';
 
 export class UserListComponent {
   private userService = inject(UserService);
+
   private refreshTrigger = createTrigger();
 
   // user list will initially be fetched
@@ -371,11 +365,8 @@ export class UserListComponent {
 }
   `);
 
-  loadDeferHtmlCode = highlight(`
-<div>
-  <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.isLoading">
-    Load Users
-  </button>
+  loadDeferHtmlCode = highlight(`<div>
+  <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.isLoading">Load Users</button>
 </div>
 
 @if (deferredUsersState()?.isLoading) {
@@ -392,8 +383,7 @@ export class UserListComponent {
       <app-user-card [user]="user" />
     }
   </div>
-}
-  `);
+}`);
 
   loadDeferTsCode = highlight(`
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
@@ -402,6 +392,7 @@ import {UserService} from './user.service';
 
 export class UserListComponent {
   private userService = inject(UserService);
+
   private fetchTrigger = createTrigger();
 
   // user list will be fetched only when button clicks
@@ -415,33 +406,26 @@ export class UserListComponent {
 }
   `);
 
-  errorHandlingCode = highlight(`
-import {signal} from '@angular/core';
+  errorHandlingCode = highlight(`import {signal} from '@angular/core';
 import {computedAsync} from 'ngx-lift';
 import {of, throwError} from 'rxjs';
 
 export class FallbackDemo {
   readonly fallbackFails = signal(false);
   readonly fallbackValue = computedAsync<number>(
-    () => this.fallbackFails()
-      ? throwError(() => ({code: 'DEMO_FAILURE'}))
-      : of(42),
+    () => (this.fallbackFails() ? throwError(() => ({code: 'DEMO_FAILURE'})) : of(42)),
     {initialValue: 42, onError: () => 0},
   );
-}
-  `);
+}`);
 
-  readTimeErrorCode = highlight(`
-import {signal} from '@angular/core';
+  readTimeErrorCode = highlight(`import {signal} from '@angular/core';
 import {computedAsync} from 'ngx-lift';
 import {of, throwError} from 'rxjs';
 
 export class ReadTimeErrorDemo {
   readonly sourceFails = signal(false);
   private readonly defaultValue = computedAsync<number>(
-    () => this.sourceFails()
-      ? throwError(() => ({code: 'DEMO_FAILURE'}))
-      : of(42),
+    () => (this.sourceFails() ? throwError(() => ({code: 'DEMO_FAILURE'})) : of(42)),
     {initialValue: 42}, // No throwOnError option is needed.
   );
   readonly lastReadValue = signal<number | undefined>(undefined);
@@ -456,8 +440,7 @@ export class ReadTimeErrorDemo {
       this.lastReadFailed.set(true);
     }
   }
-}
-  `);
+}`);
 
   tabSwitchingCode = highlight(`
 import {computedAsync, createAsyncState} from 'ngx-lift';
@@ -487,8 +470,7 @@ export class MultiTabPageComponent {
 }
   `);
 
-  decoupledInjectorCode = highlight(`
-import {computedAsync, createAsyncState} from 'ngx-lift';
+  decoupledInjectorCode = highlight(`import {computedAsync, createAsyncState} from 'ngx-lift';
 import {Component, inject, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
@@ -498,18 +480,15 @@ export class UserProfileComponent {
 
   // Decoupled Injector: By passing { injector }, computedAsync can be instantiated
   // outside the constructor (e.g. inside helper methods, composable functions, or services).
-  userState = computedAsync(
-    () => this.http.get('/api/user/current').pipe(createAsyncState()),
-    {injector: this.injector},
-  );
-}
-  `);
+  userState = computedAsync(() => this.http.get('/api/user/current').pipe(createAsyncState()), {
+    injector: this.injector,
+  });
+}`);
 
-  signatureCode = highlight(`
-computedAsync<T>(
+  signatureCode = highlight(`declare function computedAsync<T>(
   computation: (previousValue?: T) => PromiseLike<T> | Observable<T> | T,
-  options?: ComputedAsyncOptions<T>
-): Signal<T | undefined> | Signal<T>
+  options?: ComputedAsyncOptions<T>,
+): Signal<T | undefined> | Signal<T>;
 
 type ComputedAsyncOptions<T> = {
   initialValue?: T;
@@ -519,6 +498,5 @@ type ComputedAsyncOptions<T> = {
 } & (
   | {onError?: (error: unknown) => T; throwOnError?: undefined}
   | {onError?: (error: unknown) => unknown; throwOnError: true}
-);
-  `);
+);`);
 }

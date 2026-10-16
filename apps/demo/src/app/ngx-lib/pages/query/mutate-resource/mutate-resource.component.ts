@@ -7,13 +7,11 @@ import {mutateResource, queryResource} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
-
-interface TeamMember {
-  id: number;
-  name: string;
-  role: string;
-}
+import {CreateTeamMemberArgs, TeamService} from './team.service';
+import {teamMembersQuery, teamTags} from './team.queries';
+import {TeamSummaryComponent} from './team-summary.component';
 
 @Component({
   selector: 'app-mutate-resource-demo',
@@ -27,7 +25,10 @@ interface TeamMember {
     TranslatePipe,
     DemoPlaygroundComponent,
     ApiTableComponent,
+    TeamSummaryComponent,
+    CodeBlockComponent,
   ],
+  providers: [TeamService],
   templateUrl: './mutate-resource.component.html',
   styleUrls: ['./mutate-resource.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,45 +39,25 @@ export class MutateResourceDemoComponent {
   // ---------------------------------------------------------------------------
   // Demo 1: Tag Invalidation with Active Queries
   // ---------------------------------------------------------------------------
-  teamList = signal<TeamMember[]>([
-    {id: 1, name: 'Alice Smith', role: 'Platform Engineer'},
-    {id: 2, name: 'Bob Jones', role: 'Site Reliability Engineer'},
-  ]);
+  readonly teamService = inject(TeamService);
 
-  membersQuery = queryResource(() => ({
-    key: ['team', 'members'],
-    tags: [{type: 'team'}],
-    staleTime: 60000,
-    loader: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 350));
-      return [...this.teamList()];
-    },
-  }));
+  readonly showSummary = signal(true);
+  readonly membersQuery = queryResource(() => teamMembersQuery(this.teamService, 'team-a'));
+  readonly otherTeamQuery = queryResource(() => teamMembersQuery(this.teamService, 'team-b'));
 
   newMemberName = signal('');
   newMemberRole = signal('Platform Engineer');
 
-  addMemberMutation = mutateResource(
-    async (payload: {name: string; role: string}) => {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const created: TeamMember = {
-        id: Date.now(),
-        name: payload.name,
-        role: payload.role,
-      };
-      this.teamList.update((list) => [...list, created]);
-      return created;
-    },
-    {
-      invalidatesTags: [{type: 'team'}],
-      concurrency: 'exhaust',
-    },
-  );
+  addMemberMutation = mutateResource((args: CreateTeamMemberArgs) => this.teamService.createMember(args), {
+    invalidateTags: (created, args) => [teamTags.members(args.scope), teamTags.member(args.scope, created.id)],
+    concurrency: 'exhaust',
+  });
 
   submitNewMember() {
     const name = this.newMemberName().trim();
     if (!name) return;
     this.addMemberMutation.mutate({
+      scope: 'team-a',
       name,
       role: this.newMemberRole(),
     });
@@ -169,55 +150,148 @@ export class MutateResourceDemoComponent {
   // ---------------------------------------------------------------------------
   // Code Snippets for DemoPlayground
   // ---------------------------------------------------------------------------
-  readonly invalidationCode = highlight(`// 1. Define query observing 'team' tags
-readonly teamQuery = queryResource(() => ({
-  key: ['team', 'members'],
-  tags: [{type: 'team'}],
-  loader: () => this.teamService.getAll(),
-}));
+  readonly invalidationCode = highlight(`import {inject, signal} from '@angular/core';
+import {mutateResource, queryResource} from 'ngx-lift';
+import {CreateTeamMemberArgs, TeamService} from './team.service';
+import {teamMembersQuery, teamTags} from './team.queries';
 
-// 2. Define mutation invalidating 'team' tags on write success
-readonly addMemberMutation = mutateResource((payload: NewMember) => this.teamService.create(payload), {
-  invalidatesTags: [{type: 'team'}],
-  concurrency: 'exhaust', // prevents double-submit
-});
+// The page provides TeamService so mock state resets on navigation.
+readonly teamService = inject(TeamService);
 
-// 3. In click handler or form submit:
-async addMember(): Promise<void> {
-  await this.addMemberMutation.mutate({name: 'Alice', role: 'Engineer'});
-}
-// -> teamQuery automatically refetches in the background!`);
+readonly showSummary = signal(true);
 
-  readonly concurrencyCode = highlight(`// Concurrency strategies:
-// 'exhaust': Ignores or coalesces rapid clicks while in-flight (double-submit guard)
-readonly saveProfileMutation = mutateResource((data: UserDto) => this.userService.update(data), {
+readonly membersQuery = queryResource(() => teamMembersQuery(this.teamService, 'team-a'));
+
+readonly otherTeamQuery = queryResource(() => teamMembersQuery(this.teamService, 'team-b'));
+
+newMemberName = signal('');
+
+newMemberRole = signal('Platform Engineer');
+
+addMemberMutation = mutateResource((args: CreateTeamMemberArgs) => this.teamService.createMember(args), {
+  invalidateTags: (created, args) => [teamTags.members(args.scope), teamTags.member(args.scope, created.id)],
   concurrency: 'exhaust',
 });
 
-// 'concat': Queues submissions strictly sequentially in FIFO order without losing arguments
-readonly appendLogMutation = mutateResource((entry: LogEntry) => this.logService.append(entry), {
+submitNewMember() {
+  const name = this.newMemberName().trim();
+  if (!name) return;
+  this.addMemberMutation.mutate({
+    scope: 'team-a',
+    name,
+    role: this.newMemberRole(),
+  });
+  this.newMemberName.set('');
+}`);
+
+  readonly ownershipCode = highlight(`import {QueryDefinition} from 'ngx-lift';
+import {TeamService, TeamMember} from './team.service';
+
+// team.queries.ts: one domain owns identity, dependencies, loader and policy.
+export const teamKeys = {
+  members: (scope: string) => ['teams', scope, 'members'] as const,
+};
+export const teamTags = {
+  members: (scope: string) => ({type: 'teams/members', scope}),
+  member: (scope: string, id: number) => ({type: 'teams/member', scope, id}),
+};
+export function teamMembersQuery(teamService: TeamService, scope: string): QueryDefinition<TeamMember[]> {
+  return {
+    key: teamKeys.members(scope),
+    tags: [teamTags.members(scope)],
+    loader: () => teamService.getMembers(scope),
+    staleTime: 60_000,
+    gcTime: 0, // Mock transport belongs to this page instance.
+  };
+}`);
+
+  readonly concurrencyCode = highlight(`import {signal} from '@angular/core';
+import {mutateResource} from 'ngx-lift';
+
+// Component fields and handlers used by the live preview.
+selectedConcurrency = signal<'exhaust' | 'concat' | 'parallel'>('exhaust');
+
+clickCount = signal(0);
+
+executionCount = signal(0);
+
+inFlightCount = signal(0);
+
+concurrencyLogs = signal<string[]>([]);
+
+private readonly exhaustMutation = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
+  concurrency: 'exhaust',
+});
+
+private readonly concatMutation = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
   concurrency: 'concat',
 });
 
-// 'parallel': Executes every invocation independently concurrently (default)
-readonly uploadFileMutation = mutateResource((file: File) => this.fileService.upload(file), {
+private readonly parallelMutation = mutateResource((seq: number) => this.runSimulatedMutation(seq), {
   concurrency: 'parallel',
-});`);
+});
 
-  readonly errorCode =
-    highlight(`readonly saveSettingsMutation = mutateResource((settings: Settings) => this.settingsService.save(settings));
+private async runSimulatedMutation(seq: number): Promise<string> {
+  this.executionCount.update((c) => c + 1);
+  this.inFlightCount.update((c) => c + 1);
+  const startMsg = \`[\${new Date().toLocaleTimeString()}] #\${seq} Started\`;
+  this.concurrencyLogs.update((logs) => [startMsg, ...logs].slice(0, 20));
 
-// In template:
-// @if (saveSettingsMutation.isLoading()) { <cll-spinner /> }
-// @if (saveSettingsMutation.error(); as err) { <clr-alert [clrAlertType]="'danger'">{{ err.message }}</clr-alert> }
+  await new Promise((resolve) => setTimeout(resolve, 800));
 
-// Component method:
-async saveSettings(): Promise<void> {
+  this.inFlightCount.update((c) => Math.max(0, c - 1));
+  const endMsg = \`[\${new Date().toLocaleTimeString()}] #\${seq} Completed\`;
+  this.concurrencyLogs.update((logs) => [endMsg, ...logs].slice(0, 20));
+  return \`Result #\${seq}\`;
+}
+
+triggerConcurrencyTest() {
+  this.clickCount.update((c) => c + 1);
+  const currentSeq = this.clickCount();
+  const mode = this.selectedConcurrency();
+
+  if (mode === 'exhaust') {
+    void this.exhaustMutation.mutate(currentSeq);
+  } else if (mode === 'concat') {
+    void this.concatMutation.mutate(currentSeq);
+  } else {
+    void this.parallelMutation.mutate(currentSeq);
+  }
+}
+
+clearLogs() {
+  this.concurrencyLogs.set([]);
+  this.clickCount.set(0);
+  this.executionCount.set(0);
+  this.inFlightCount.set(0);
+}`);
+
+  readonly errorCode = highlight(`import {signal} from '@angular/core';
+import {mutateResource} from 'ngx-lift';
+
+// Component fields and handlers used by the live preview.
+simulateError = signal(false);
+
+saveSuccessMessage = signal(false);
+
+saveSettingsMutation = mutateResource(
+  async (payload: {timeoutSeconds: number}) => {
+    this.saveSuccessMessage.set(false);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    if (this.simulateError()) {
+      throw new Error('HTTP 500: Failed to persist cluster settings to database.');
+    }
+    return {success: true, timeoutSeconds: payload.timeoutSeconds};
+  },
+  {concurrency: 'exhaust'},
+);
+
+async onSaveSettings() {
   try {
-    const result = await this.saveSettingsMutation.mutate({timeout: 30});
-    console.log('Saved successfully:', result);
-  } catch (error) {
-    // The template reads this.saveSettingsMutation.error().
+    await this.saveSettingsMutation.mutate({timeoutSeconds: 30});
+    this.saveSuccessMessage.set(true);
+  } catch {
+    this.saveSuccessMessage.set(false);
   }
 }`);
 
@@ -231,10 +305,10 @@ async saveSettings(): Promise<void> {
       description: this.translationService.translate('demoApi.mutate-resource.mutateResourceApiProps.mutation'),
     },
     {
-      name: 'options.invalidatesTags',
+      name: 'options.invalidateTags',
       type: 'QueryTag[] | ((result, args) => QueryTag[])',
       description: this.translationService.translate(
-        'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags',
+        'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags',
       ),
     },
     {

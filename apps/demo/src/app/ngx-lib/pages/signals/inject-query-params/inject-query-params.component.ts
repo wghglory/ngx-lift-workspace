@@ -147,11 +147,9 @@ export class SearchComponent {
 }
   `);
 
-  signatureCode = highlight(`
-injectQueryParams(): Signal<Params>
-injectQueryParams(key: string): Signal<string | null>
-injectQueryParams<T>(key: string, options: InjectQueryParamsOptions<T>): Signal<T>
-injectQueryParams<T>(transform: (params: Params) => T): Signal<T>
-injectQueryParams<T>(transform: (params: Params) => T, options: InjectQueryParamsOptions<T>): Signal<T>
-  `);
+  signatureCode = highlight(`injectQueryParams(): Signal<Params>;
+injectQueryParams(key: string): Signal<string | null>;
+injectQueryParams<T>(key: string, options: InjectQueryParamsOptions<T>): Signal<T>;
+injectQueryParams<T>(transform: (params: Params) => T): Signal<T>;
+injectQueryParams<T>(transform: (params: Params) => T, options: InjectQueryParamsOptions<T>): Signal<T>;`);
 }

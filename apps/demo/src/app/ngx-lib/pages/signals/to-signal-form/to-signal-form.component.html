@@ -17,7 +17,7 @@
     [htmlCode]="quickStartHtml"
   >
     <div preview>
-      <form clrForm [formGroup]="quickForm" class="max-w-xl">
+      <form clrForm [formGroup]="quickForm" class="max-w-xl" (ngSubmit)="saveQuickProfile()">
         <clr-input-container>
           <label for="quick-username">{{ 'toSignalForm.username' | translate }}</label>
           <input
@@ -55,14 +55,18 @@
         </clr-toggle-container>
 
         <div cds-layout="horizontal gap:xs align:center m-t:sm">
-          <button type="button" class="btn btn-primary" [disabled]="quickSf.invalid()">
+          <button type="submit" class="btn btn-primary" [disabled]="quickSf.invalid()">
             {{ 'toSignalForm.saveProfile' | translate }}
           </button>
-          <button type="button" class="btn btn-outline" (click)="quickSf.reset()">
+          <button type="button" class="btn btn-outline" (click)="resetQuickProfile()">
             {{ 'toSignalForm.reset' | translate }}
           </button>
         </div>
       </form>
+      @if (quickSubmitted()) {
+        <p>{{ 'toSignalForm.savedProfile' | translate }}</p>
+        <pre data-testid="quick-saved-profile">{{ quickSubmitted() | json }}</pre>
+      }
     </div>
 
     <div inspector>

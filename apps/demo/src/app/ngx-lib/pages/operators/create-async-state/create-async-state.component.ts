@@ -71,20 +71,20 @@ export class CreateAsyncStateComponent {
       },
     ];
   });
-  callbackCode = highlight(`
-import {createAsyncState} from 'ngx-lift';
+  callbackCode = highlight(`import {createAsyncState} from 'ngx-lift';
 
-this.userService.getUsers().pipe(
-  createAsyncState({
-    next: (res) => console.log(res), // success callback
-    error: (error) => console.error(error), // error callback
-  }),
-).subscribe();
-    `);
+this.userService
+  .getUsers()
+  .pipe(
+    createAsyncState({
+      next: (res) => console.log(res), // success callback
+      error: (error) => console.error(error), // error callback
+    }),
+  )
+  .subscribe();`);
 
-  asyncStateCode = highlight(`
-export interface AsyncState<T, E = HttpErrorResponse> {
-  status: ResourceStatus;  // 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
+  asyncStateCode = highlight(`export interface AsyncState<T, E = HttpErrorResponse> {
+  status: ResourceStatus; // 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
   isLoading: boolean;
   error: E | null;
   data: T | null;
@@ -93,10 +93,11 @@ export interface AsyncState<T, E = HttpErrorResponse> {
 type ResourceStatus = 'idle' | 'loading' | 'reloading' | 'resolved' | 'error';
 
 // For non-HTTP errors, you can override the default:
-// AsyncState<Product[], Error>
-  `);
+// AsyncState<Product[], Error>`);
 
   exampleCode = highlight(`
+import {Component} from '@angular/core';
+
 import {createAsyncState} from 'ngx-lift';
 // ... other imports
 
@@ -118,9 +119,10 @@ export class UserCardListComponent {
 }
   `);
 
-  exampleWithoutLoadingCode = highlight(`
+  exampleWithoutLoadingCode = highlight(`import {Component} from '@angular/core';
+
 import {createAsyncState} from 'ngx-lift';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
 import {noop} from 'rxjs';
 
 import {User} from '../../models/user.model';
@@ -137,27 +139,19 @@ export class UserDetailComponent {
 
   userState$ = this.userService
     .getUserById(1)
-    .pipe(createAsyncState<User>(noop, {status: 'idle', isLoading: false, error: null, data: this.location.getState()}));
-}
-  `);
+    .pipe(
+      createAsyncState<User>(noop, {status: 'idle', isLoading: false, error: null, data: this.location.getState()}),
+    );
+}`);
 
-  dependentRequestsCode = highlight(`
-import {createAsyncState} from 'ngx-lift';
+  dependentRequestsCode = highlight(`import {createAsyncState} from 'ngx-lift';
 
 data$ = firstCall$.pipe(
   switchMap(() => this.shopService.products$),
-  createAsyncState()
-);
-  `);
+  createAsyncState(),
+);`);
 
-  templateUsageCode = highlight(`
-import {createAsyncState} from 'ngx-lift';
-
-// In component:
-userState$ = this.userService.getUser(id).pipe(createAsyncState());
-
-// In template (using isLoading - recommended):
-@if (userState$ | async; as state) {
+  templateUsageCode = highlight(`@if (userState$ | async; as state) {
   @if (state.isLoading) {
     <cll-spinner />
   }
@@ -169,7 +163,7 @@ userState$ = this.userService.getUser(id).pipe(createAsyncState());
   }
 }
 
-// Alternative: using status for granular state tracking:
+<!-- Alternative: inspect individual status values. -->
 @if (userState$ | async; as state) {
   @if (state.status === 'loading') {
     <p>Initial load...</p>
@@ -183,13 +177,10 @@ userState$ = this.userService.getUser(id).pipe(createAsyncState());
   @if (state.status === 'resolved' && state.data; as user) {
     <user-card [user]="user" />
   }
-}
-  `);
+}`);
 
-  signatureCode = highlight(`
-createAsyncState<T, E>(
+  signatureCode = highlight(`createAsyncState<T, E>(
   observerOrNextForOrigin?: Partial<TapObserver<T>> | ((value: T) => void),
-  initialValue?: AsyncState<T, E>
-): UnaryFunction<Observable<T>, Observable<AsyncState<T, E>>>
-  `);
+  initialValue?: AsyncState<T, E>,
+): UnaryFunction<Observable<T>, Observable<AsyncState<T, E>>>;`);
 }

@@ -1,5 +1,40 @@
 // Global demo styles (Clarity Design System based)
 
+// Custom-element hosts default to inline; vertical margins then do not separate tables and tabs.
+cll-page-container clr-tabs {
+  display: block;
+  margin-block-start: var(--cds-global-space-7);
+  min-inline-size: 0;
+
+  > .nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    height: auto;
+
+    > .nav-item {
+      max-inline-size: 100%;
+      flex-shrink: 0;
+
+      > [role='tab'] {
+        max-inline-size: 100%;
+        white-space: normal;
+        height: auto;
+      }
+    }
+  }
+
+  > .tab-content[aria-hidden='false'] {
+    display: block;
+    padding-block-start: var(--cds-global-space-7);
+  }
+}
+
+cll-page-container > .page-container.density-compact {
+  padding: var(--cds-global-space-5);
+  gap: var(--cds-global-space-3);
+  border-inline-start: 3px solid var(--clr-color-action-600);
+}
+
 // Ensure vertical layout containers display at 100% full width across all pages
 [cds-layout~='vertical'] {
   align-items: stretch;

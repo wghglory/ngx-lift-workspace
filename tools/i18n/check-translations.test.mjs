@@ -19,6 +19,12 @@ test('template AST extracts conditional translate keys and ignores interpolation
     [...usedKeys("{{ (valid ? 'form.ok' : 'form.error') | translate: 'not.a.key' }}", 'fixture.html')].sort(),
     ['form.error', 'form.ok'],
   );
+  assert.deepEqual(
+    [
+      ...usedKeys("{{ (variant() === 'topbar' ? 'widget.topbar' : 'widget.dashboard') | translate }}", 'fixture.html'),
+    ].sort(),
+    ['widget.dashboard', 'widget.topbar'],
+  );
 });
 test('TypeScript AST ignores illustrative snippets but checks executable calls', () => {
   assert.deepEqual(

@@ -43,6 +43,9 @@ test.describe('Toast viewport containment', () => {
       await page.setViewportSize({width, height: 480});
       await page.clock.install({time: new Date('2026-10-16T00:00:00Z')});
       await page.goto('/clr-lift/components/toast');
+      const add = page.getByRole('button', {name: 'Error Toast', exact: true});
+      // Let the lazy dictionary and its render complete before freezing Angular's scheduler.
+      await expect(add).toBeVisible();
       await page.clock.pauseAt(new Date('2026-10-16T00:01:00Z'));
       const pageSize = () =>
         page.evaluate(() => ({
@@ -53,7 +56,6 @@ test.describe('Toast viewport containment', () => {
         }));
       await page.addStyleTag({content: 'cll-toast.toast-enter { animation-play-state: paused !important; }'});
       const before = await pageSize();
-      const add = page.getByRole('button', {name: 'Error Toast', exact: true});
       for (let index = 0; index < 8; index++) {
         await add.press('Enter');
         await page.clock.runFor(20);

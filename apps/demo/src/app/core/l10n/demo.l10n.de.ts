@@ -1,4 +1,26 @@
 export const deTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': 'Gespeichertes Profil',
+  'queryResource.projectRevision': 'Antwortversion',
+  'queryResource.activeUser': 'Aktueller Benutzer',
+  'queryResource.engineLabel': 'Engine',
+  'queryResource.computeLabel': 'Rechenressourcen',
+  'queryOwnership.title': 'Schlüssel und Tags pro Domäne',
+  'queryOwnership.definitions':
+    'Beobachter bleiben in Komponenten. Vollständige Abfragedefinitionen und Tag-Fabriken kommen aus der zuständigen Domäne. Schlüssel enthalten den Gültigkeitsbereich und alle Parameter, die die Antwort beeinflussen.',
+  'queryOwnership.refactoring':
+    'Verwenden Sie gemeinsame Exporte statt wiederholter Zeichenfolgen. Suchen Sie vor Änderungen oder Löschungen alle Referenzen, stimmen Sie sich mit der zuständigen Domäne ab und prüfen Sie betroffene Lese- und Schreibvorgänge.',
+  'queryOwnership.noCache':
+    'Schlüssel identifizieren auch gemeinsame Anfragen und Zustände. staleTime: 0 markiert Daten als veraltet; gcTime: 0 entfernt ungenutzte Einträge nach Abschluss der Anfragen. Für unabhängigen Zustand ohne Schlüssel resourceAsync verwenden. Mutationen benötigen keinen Schlüssel.',
+  'queryOwnership.naming':
+    'invalidateTags akzeptiert ein Array oder einen nur bei Erfolg ausgeführten (result, args)-Callback. [] überspringt die Invalidierung.',
+  'queryOwnership.journey':
+    'Mitglieder hinzufügen: Tabelle und Zusammenfassung teilen eine Anfrage pro Aktualisierung. Zusammenfassung schließen, erneut hinzufügen und wieder öffnen. Daten und Anfragezahl von Team B bleiben unverändert.',
+  'queryOwnership.closeSummary': 'Zusammenfassung schließen',
+  'queryOwnership.openSummary': 'Zusammenfassung öffnen',
+  'queryOwnership.summary': 'Zusammenfassung Team A',
+  'queryOwnership.teamAReads': 'Anfragen Team A',
+  'queryOwnership.otherScope': 'Mitglieder Team B (anderer Bereich)',
+  'queryOwnership.teamBReads': 'Anfragen Team B',
   'header.selectLanguage': 'Sprache auswählen',
   'header.openGitHub': 'Auf GitHub öffnen',
   'header.codeLicensed': 'Code lizenziert unter',
@@ -630,7 +652,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'Benutzerprofil-Karte',
   'queryResource.simulatedMasterList': 'Master-Liste (Datenbank auswählen)',
   'queryResource.simulatedDetailCard': 'Detailansicht (Aktive Spezifikationen)',
-  'queryResource.updateNameBtn': 'Name über authStateService.updateProfile.mutate() aktualisieren',
+  'queryResource.updateNameBtn': 'Name aktualisieren',
   'queryResource.componentPlacementAdvice':
     'Die Komponentenplatzierung wird empfohlen, wenn Daten strikt auf eine Ansicht beschränkt sind. Sie erfordert keine zusätzlichen Servicedateien und wird beim Zerstören der Komponente automatisch freigegeben.',
   'queryResource.demo1Section': 'Anforderungsbündelung & Deduplizierung',
@@ -703,10 +725,10 @@ export const deTranslations: Record<string, string> = {
   'queryResource.thRole': 'Rolle',
   'queryResource.diagnosticsSection': 'Entwickler-Diagnose & Cache-Inspektor',
   'queryResource.diagnosticsSectionDesc':
-    'Prüfen Sie Cache, Beobachter, ausstehende logische Abfragen, Wiederholungen, GC und Polling dieses QueryClient. Fehler- und Observable-Service-Beispiele verwenden separate Clients.',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient Live-Diagnose',
+    'Registrieren Sie provideQueryDevtools() einmal in app.config.ts für einen schwebenden Entwicklungsstarter. Prüfen Sie Abfragen im unteren Bereich, während die Anwendung bedienbar bleibt.',
+  'queryResource.diagnosticsPlaygroundTitle': 'Abfrage-Inspektor',
   'queryResource.diagnosticsPlaygroundDesc':
-    'Klicken Sie auf "Diagnostik aktualisieren", um den internen QueryClient Zustand über getDiagnostics() und getEntriesSnapshot() abzufragen.',
+    'Suchen, filtern und sortieren Sie Abfragen und prüfen Sie Daten, Fehler und Zeitangaben. Neu laden ruft den gewählten Loader auf. Diese Dokumentationsvorschau ist auch in Produktion aktiviert.',
   'queryResource.badgeDiagnostics': 'Diagnose',
   'queryResource.refreshDiagnostics': 'Diagnostik aktualisieren',
   'queryResource.diagTotalEntries': 'Einträge insgesamt',
@@ -2119,7 +2141,7 @@ export const deTranslations: Record<string, string> = {
     'Verzögerung in Millisekunden, bevor der Tooltip nach Maus-Verlassen versteckt wird.',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'Async-Funktion oder Observable, die die serverseitige Schreiboperation ausführt.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     'Tags, die bei erfolgreicher Schreiboperation ungültig gemacht werden. Dies plant sofort Refetchs für aktive Abfragen planen.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     'Strategie für überlappende Aufrufe: parallel (Standard), exhaust (Verbindungen in der Luft), concat (Warteschlange).',

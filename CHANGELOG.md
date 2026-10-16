@@ -9,7 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- `clr-lift` exports `QueryDevtoolsComponent`: a resizable nonmodal query panel with bounded data/error inspection,
+  lowercase state badges, datagrid filtering/sorting/pagination and targeted refetch/copy actions.
+- `provideQueryDevtools()` from `clr-lift/devtools` installs one floating root launcher; the production export is a
+  no-op. `QueryClient.refetchQuery(key)` reuses an existing entry without creating queries or observers.
 - Ordered delivery roadmap and installed Angular 21 query-consumer checks in zoneless and ZoneJS modes.
+- `mutateResource` accepts `invalidateTags` as a static array or success-only `(result, args)` callback, matching
+  `QueryClient.invalidateTags`. The previous `invalidatesTags` spelling remains a deprecated compatibility alias; the
+  new option takes precedence when both are supplied, including an empty array.
 
 ### Breaking
 

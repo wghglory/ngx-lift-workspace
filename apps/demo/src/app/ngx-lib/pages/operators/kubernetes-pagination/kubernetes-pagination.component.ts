@@ -191,31 +191,22 @@ export class KubernetesPaginationComponent {
       });
   }
 
-  operatorCode = highlight(`
-import {HttpClient} from '@angular/common/http';
+  operatorCode = highlight(`import {HttpClient} from '@angular/common/http';
 import {aggregatePaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 
 // As an RxJS operator piped from an initial HTTP request:
-this.http.get<KubernetesList<Pod>>('/api/v1/pods', {params: {limit: 100}})
-  .pipe(
-    aggregatePaginatedKubernetesResources(this.http, '/api/v1/pods', {limit: 100})
-  )
+this.http
+  .get<KubernetesList<Pod>>('/api/v1/pods', {params: {limit: 100}})
+  .pipe(aggregatePaginatedKubernetesResources(this.http, '/api/v1/pods', {limit: 100}))
   .subscribe((podList) => {
     // Automatically loops through continue tokens until finished!
     console.log('Total pods aggregated across all pages:', podList.items.length);
-  });
-  `);
+  });`);
 
-  convenienceCode = highlight(`
-import {fetchPaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
+  convenienceCode = highlight(`import {fetchPaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 
 // As a self-contained helper function:
-fetchPaginatedKubernetesResources<Pod>(
-  this.http,
-  '/api/v1/pods',
-  {limit: 100}
-).subscribe((podList) => {
+fetchPaginatedKubernetesResources<Pod>(this.http, '/api/v1/pods', {limit: 100}).subscribe((podList) => {
   console.log('Total pods:', podList.items.length);
-});
-  `);
+});`);
 }

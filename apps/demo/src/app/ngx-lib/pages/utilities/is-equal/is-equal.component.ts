@@ -53,7 +53,5 @@ console.log(isEqual([1, [2, 3]], [1, [2, 3]])); // true
 console.log(isEqual([1, [2, 3]], [1, [2, 4]])); // false
   `);
 
-  signatureCode = highlight(`
-isEqual(value1: unknown, value2: unknown): boolean
-  `);
+  signatureCode = highlight(`isEqual(value1: unknown, value2: unknown): boolean;`);
 }

@@ -1,0 +1,37 @@
+<div class="card widget-card">
+  <div class="card-header">
+    <div class="widget-header-text">
+      <div class="card-title">
+        <span class="label label-info m-r-xs">{{ variant() === 'topbar' ? 'Component 1' : 'Component 2' }}</span>
+        {{ (variant() === 'topbar' ? 'queryResource.widgetATitle' : 'queryResource.widgetBTitle') | translate }}
+      </div>
+      <div class="card-subtitle text-muted">
+        {{ (variant() === 'topbar' ? 'queryResource.widgetASubtitle' : 'queryResource.widgetBSubtitle') | translate }}
+      </div>
+    </div>
+    @if (metricsQuery.isLoading()) {
+      <cll-spinner inline [size]="'sm'" class="m-l-xs" />
+    }
+  </div>
+  <div class="card-block">
+    @if (metricsQuery.value(); as data) {
+      <div class="widget-metrics">
+        <p class="p7">
+          {{ (variant() === 'topbar' ? 'queryResource.activeUsers' : 'queryResource.memoryUsage') | translate }}:
+          <strong
+            >{{ variant() === 'topbar' ? data.activeUsers : data.memoryUsage
+            }}{{ variant() === 'dashboard' ? '%' : '' }}</strong
+          >
+        </p>
+        <p class="p7">
+          {{ 'queryResource.cpuLoad' | translate }}: <strong>{{ data.cpuLoad }}%</strong>
+        </p>
+        <p class="p7">
+          {{ 'queryResource.status' | translate }}:
+          <span [appQueryStatus]="metricsQuery.status()">{{ metricsQuery.status() }}</span>
+        </p>
+        <p class="p7 text-muted">{{ 'queryResource.updated' | translate }}: {{ data.timestamp }}</p>
+      </div>
+    }
+  </div>
+</div>

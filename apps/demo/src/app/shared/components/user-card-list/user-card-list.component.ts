@@ -17,6 +17,7 @@ import {UserCardComponent} from '../user-card/user-card.component';
 })
 export class UserCardListComponent {
   private userService = inject(UserService);
+
   private refreshAction = new Subject<void>();
 
   usersState$ = this.refreshAction.pipe(

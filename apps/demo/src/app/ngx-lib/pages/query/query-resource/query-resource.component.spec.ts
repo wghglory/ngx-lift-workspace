@@ -1,5 +1,6 @@
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
+import {By} from '@angular/platform-browser';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
@@ -8,6 +9,8 @@ import {describe, expect, it, beforeEach, vi} from 'vitest';
 
 import {demoTranslations} from '../../../../core/l10n/demo.l10n';
 import {loadDemoLanguage} from '../../../../core/l10n/demo-language-loader';
+import {AuthStateService} from './query-placement-state';
+import {MetricsWidgetComponent} from './metrics-widget.component';
 import {QueryResourceDemoComponent} from './query-resource.component';
 
 describe('QueryResourceDemoComponent', () => {
@@ -32,13 +35,13 @@ describe('QueryResourceDemoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('handles metric refresh and widget toggle', () => {
-    expect(component.metricsAQuery).toBeDefined();
-    expect(component.metricsBQuery).toBeDefined();
+  it('mounts independent metric widgets that share their request and refresh', () => {
+    const widgets = fixture.debugElement.queryAll(By.directive(MetricsWidgetComponent));
+    expect(widgets).toHaveLength(2);
+    expect(widgets[0].componentInstance.metricsQuery).not.toBe(widgets[1].componentInstance.metricsQuery);
+    const reload = vi.spyOn(widgets[0].componentInstance.metricsQuery, 'reload');
     component.refreshMetrics();
-    expect(component.widgetAShown()).toBe(true);
-    component.widgetAShown.set(false);
-    expect(component.widgetAShown()).toBe(false);
+    expect(reload).toHaveBeenCalledTimes(1);
   });
 
   it('handles polling toggle', () => {
@@ -56,26 +59,36 @@ describe('QueryResourceDemoComponent', () => {
     expect(component.newUserName()).toBe('');
   });
 
+  it('ignores a profile update until the initial user is available', () => {
+    const authStateService = TestBed.inject(AuthStateService);
+    const mutate = vi.spyOn(authStateService.updateProfileMutation, 'mutate');
+    authStateService.updateName();
+    expect(mutate).not.toHaveBeenCalled();
+  });
+
   it('keeps the cached topbar user visible while a mutation revalidates the query', async () => {
-    await component.demoAuthQuery.execute();
+    await TestBed.inject(AuthStateService).currentUserQuery.execute();
     fixture.detectChanges();
     const topbar = fixture.nativeElement.querySelector('#tab-content-service-pattern-a .card');
     expect(topbar.querySelector('strong')?.textContent).toBe('Alex Rivera');
 
     vi.useFakeTimers();
     try {
-      component.cycleDemoUserName();
-      expect(component.demoAuthMutation.isLoading()).toBe(true);
+      TestBed.inject(AuthStateService).updateName();
+      expect(TestBed.inject(AuthStateService).updateProfileMutation.isLoading()).toBe(true);
       await vi.advanceTimersByTimeAsync(400);
       fixture.detectChanges();
 
-      expect(component.demoAuthQuery.isRefreshing()).toBe(true);
+      expect(TestBed.inject(AuthStateService).currentUserQuery.isRefreshing()).toBe(true);
       expect(topbar.querySelector('strong')?.textContent).toBe('Alex Rivera');
       expect(topbar.querySelector('cll-spinner')).not.toBeNull();
+      const mutate = vi.spyOn(TestBed.inject(AuthStateService).updateProfileMutation, 'mutate');
+      TestBed.inject(AuthStateService).updateName();
+      expect(mutate).not.toHaveBeenCalled();
 
       await vi.advanceTimersByTimeAsync(300);
       fixture.detectChanges();
-      expect(component.demoAuthQuery.isRefreshing()).toBe(false);
+      expect(TestBed.inject(AuthStateService).currentUserQuery.isRefreshing()).toBe(false);
       expect(topbar.querySelector('strong')?.textContent).toBe('Jordan Lee');
       expect(topbar.querySelector('cll-spinner')).toBeNull();
     } finally {
@@ -84,32 +97,16 @@ describe('QueryResourceDemoComponent', () => {
   });
 
   it('selects demo database and updates details query', () => {
-    expect(component.demoSelectedDbId()).toBe('db-pg-01');
-    component.selectDemoDb('db-ch-02');
-    expect(component.demoSelectedDbId()).toBe('db-ch-02');
+    expect(component.databaseStateService.activeDatabaseId()).toBe('db-pg-01');
+    component.databaseStateService.selectDatabase('db-ch-02');
+    expect(component.databaseStateService.activeDatabaseId()).toBe('db-ch-02');
   });
 
-  it('refreshes diagnostics automatically and stops the inspector timer on destroy', async () => {
-    vi.useFakeTimers();
-    const liveFixture = TestBed.createComponent(QueryResourceDemoComponent);
-    const refresh = vi.spyOn(liveFixture.componentInstance, 'refreshDiagnostics');
-    try {
-      await vi.advanceTimersByTimeAsync(1000);
-      expect(refresh).toHaveBeenCalledTimes(1);
-      liveFixture.destroy();
-      await vi.advanceTimersByTimeAsync(2000);
-      expect(refresh).toHaveBeenCalledTimes(1);
-    } finally {
-      if (!liveFixture.componentRef.hostView.destroyed) liveFixture.destroy();
-      vi.useRealTimers();
-    }
-  });
-
-  it('renders the inspector table and refresh control through the playground projection', () => {
+  it('renders the reusable diagnostics trigger through the playground preview', () => {
     const inspector = fixture.nativeElement.querySelector('[data-testid="query-diagnostics"]');
-    expect(inspector.querySelector('table')).not.toBeNull();
-    const refresh = Array.from(inspector.querySelectorAll('button')) as HTMLButtonElement[];
-    expect(refresh.some((button) => button.textContent?.includes('Refresh Diagnostics'))).toBe(true);
+    expect(inspector.querySelector('cll-query-devtools')).not.toBeNull();
+    expect(inspector.textContent).toContain('Query devtools');
+    expect(inspector.querySelector('clr-datagrid')).toBeNull();
   });
 
   it('introduces the tool before examples and uses Clarity controls and status labels', () => {
@@ -124,12 +121,6 @@ describe('QueryResourceDemoComponent', () => {
     expect(root.querySelector('[data-testid="query-demo-coalesce"] .label')).not.toBeNull();
   });
 
-  it('updates live diagnostics snapshot', () => {
-    expect(component.diagnostics()).toBeDefined();
-    expect(component.diagnostics().entryCount).toBeGreaterThanOrEqual(0);
-    component.refreshDiagnostics();
-    expect(component.diagnostics().isVisible).toBe(true);
-  });
   it('updates an already mounted API table when its lazy dictionary arrives', async () => {
     const translations = TestBed.inject(TranslationService);
     translations.setLanguage('en', false);

@@ -42,6 +42,25 @@ describe('ToSignalFormComponent', () => {
     expect(component.quickFormState().email).toBe('john@example.com');
   });
 
+  it('rejects invalid quick profiles and marks their fields touched', () => {
+    component.saveQuickProfile();
+    expect(component.quickSubmitted()).toBeNull();
+    expect(component.quickForm.controls.username.touched).toBe(true);
+    expect(component.quickForm.controls.email.touched).toBe(true);
+  });
+
+  it('saves a quick profile snapshot and resets both the form and saved preview', () => {
+    component.quickForm.setValue({username: 'Alex', email: 'alex@example.com', notifications: true});
+    component.saveQuickProfile();
+    expect(component.quickSubmitted()).toEqual({username: 'Alex', email: 'alex@example.com', notifications: true});
+    component.quickForm.controls.username.setValue('Jordan');
+    expect(component.quickSubmitted()?.username).toBe('Alex');
+    component.resetQuickProfile();
+    expect(component.quickSubmitted()).toBeNull();
+    expect(component.quickForm.controls.username.value).toBe('');
+    expect(component.quickForm.pristine).toBe(true);
+  });
+
   it('should filter versions reactively when engine changes', () => {
     expect(component.engine()).toBe('');
     expect(component.availableVersions()).toEqual([]);

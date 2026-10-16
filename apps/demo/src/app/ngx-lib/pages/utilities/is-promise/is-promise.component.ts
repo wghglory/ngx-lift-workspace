@@ -89,8 +89,7 @@ export class IsPromiseComponent {
     return isPromise(val);
   }
 
-  basicExampleCode = highlight(`
-import {isPromise} from 'ngx-lift';
+  basicExampleCode = highlight(`import {isPromise} from 'ngx-lift';
 
 // Native Promise
 console.log(isPromise(Promise.resolve('success'))); // true
@@ -99,13 +98,12 @@ console.log(isPromise(Promise.resolve('success'))); // true
 console.log(isPromise((async () => 1)())); // true
 
 // Custom PromiseLike / thenable object
-console.log(isPromise({ then: () => {} })); // true
+console.log(isPromise({then: () => {}})); // true
 
 // Non-promises
 console.log(isPromise(42)); // false
 console.log(isPromise(null)); // false
-console.log(isPromise({ data: 123 })); // false
-  `);
+console.log(isPromise({data: 123})); // false`);
 
   typeNarrowingCode = highlight(`
 import {isPromise} from 'ngx-lift';

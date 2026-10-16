@@ -16,6 +16,9 @@ import {QUERY_CLIENT} from './query-client.token';
 
 /** Invalidation and concurrency policy for explicit server writes. */
 export interface MutateResourceOptions<TArgs, TResult> {
+  /** Tags or a success-only mapper receiving the result and invocation arguments. Takes precedence over the alias. */
+  invalidateTags?: readonly QueryTag[] | ((result: TResult, args: TArgs) => readonly QueryTag[]);
+  /** @deprecated Use invalidateTags for consistency with QueryClient.invalidateTags. */
   invalidatesTags?: readonly QueryTag[] | ((result: TResult, args: TArgs) => readonly QueryTag[]);
   client?: QueryClient;
   injector?: Injector;
@@ -48,7 +51,7 @@ export interface MutateResourceRef<TArgs, TResult, E = Error> {
  * const http = inject(HttpClient);
  * const save = mutateResource(
  *   (user: User) => http.put<User>(`/api/users/${user.id}`, user),
- *   {invalidatesTags: (user) => [{type: 'User', id: user.id}], concurrency: 'exhaust'},
+ *   {invalidateTags: (user) => [{type: 'User', id: user.id}], concurrency: 'exhaust'},
  * );
  * await save.mutate(updatedUser);
  * ```
@@ -88,10 +91,8 @@ export function mutateResource<TArgs, TResult, E = Error>(
       void resultPromise.catch(() => undefined);
       const result = await resultPromise;
       try {
-        const tags =
-          typeof options.invalidatesTags === 'function'
-            ? options.invalidatesTags(result, args)
-            : options.invalidatesTags;
+        const mapping = options.invalidateTags ?? options.invalidatesTags;
+        const tags = typeof mapping === 'function' ? mapping(result, args) : mapping;
         if (tags?.length) client.invalidateTags(tags);
       } catch (failure) {
         // Never classify a completed server write as failed or encourage retrying it.

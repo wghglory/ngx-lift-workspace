@@ -20,6 +20,7 @@ export class ConfigureOperatorComponent extends TimelineBaseComponent<Deployment
   });
 
   timelineWizardService = inject(TimelineWizardService);
+
   stepData = this.timelineWizardService.getStepData<Pick<Deployment, 'operator'>>('operator');
 
   constructor() {

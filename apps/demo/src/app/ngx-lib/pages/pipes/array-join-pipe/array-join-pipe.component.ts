@@ -31,7 +31,8 @@ export class ArrayJoinPipeComponent {
       },
     ];
   });
-  basicExampleCode = highlight(`
+  basicExampleCode = highlight(`import {Component} from '@angular/core';
+
 import {ArrayJoinPipe} from 'ngx-lift';
 
 @Component({
@@ -39,12 +40,12 @@ import {ArrayJoinPipe} from 'ngx-lift';
   template: \`
     <p>{{ [1, 2, 3, 4] | arrayJoin }}</p>
     <!-- Output: "1,2,3,4" -->
-  \`
+  \`,
 })
-export class ArrayJoinExampleComponent {}
-  `);
+export class ArrayJoinExampleComponent {}`);
 
-  customSeparatorsCode = highlight(`
+  customSeparatorsCode = highlight(`import {Component} from '@angular/core';
+
 import {ArrayJoinPipe} from 'ngx-lift';
 
 @Component({
@@ -55,12 +56,12 @@ import {ArrayJoinPipe} from 'ngx-lift';
 
     <p>{{ ['John', 'Doe'] | arrayJoin: ' - ' }}</p>
     <!-- Output: "John - Doe" -->
-  \`
+  \`,
 })
-export class ArrayJoinExampleComponent {}
-  `);
+export class ArrayJoinExampleComponent {}`);
 
-  numericArrayCode = highlight(`
+  numericArrayCode = highlight(`import {Component} from '@angular/core';
+
 import {ArrayJoinPipe} from 'ngx-lift';
 
 @Component({
@@ -71,12 +72,9 @@ import {ArrayJoinPipe} from 'ngx-lift';
 
     <p>{{ [100, 200, 300] | arrayJoin: ' | ' }}</p>
     <!-- Output: "100 | 200 | 300" -->
-  \`
+  \`,
 })
-export class ArrayJoinExampleComponent {}
-  `);
+export class ArrayJoinExampleComponent {}`);
 
-  signatureCode = highlight(`
-transform(value: unknown, separator?: string): string | unknown
-  `);
+  signatureCode = highlight(`transform(value: unknown, separator?: string): string | unknown;`);
 }

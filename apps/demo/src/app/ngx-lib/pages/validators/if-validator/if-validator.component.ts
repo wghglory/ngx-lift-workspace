@@ -86,8 +86,7 @@ export class IfValidatorComponent {
     this.form.controls.reason.updateValueAndValidity();
   }
 
-  ifValidatorCode = highlight(`
-import {ifValidator, revalidateOnChange} from 'ngx-lift';
+  ifValidatorCode = highlight(`import {ifValidator, revalidateOnChange} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -120,13 +119,10 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
       </clr-input-container>
     </form>
-  \`
+  \`,
 })
 export class IfValidatorComponent {
-  validator = ifValidator(
-    () => this.form?.controls.choice.value === 'UNLIKE',
-    [Validators.required]
-  );
+  validator = ifValidator(() => this.form?.controls.choice.value === 'UNLIKE', [Validators.required]);
 
   form = new FormGroup({
     choice: new FormControl('', Validators.required),
@@ -136,16 +132,11 @@ export class IfValidatorComponent {
 
   constructor() {
     // Automatically revalidate dependent fields when choice changes
-    revalidateOnChange(
-      [this.form.controls.email, this.form.controls.reason],
-      this.form.controls.choice
-    );
+    revalidateOnChange([this.form.controls.email, this.form.controls.reason], this.form.controls.choice);
   }
-}
-  `);
+}`);
 
-  ifAsyncValidatorCode = highlight(`
-import {ifAsyncValidator} from 'ngx-lift';
+  ifAsyncValidatorCode = highlight(`import {ifAsyncValidator} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {of} from 'rxjs';
@@ -160,7 +151,7 @@ export class IfAsyncValidatorComponent {
     (control) => {
       // Simulate async validation
       return of(null).pipe(delay(1000));
-    }
+    },
   );
 
   form = new FormGroup({
@@ -171,21 +162,15 @@ export class IfAsyncValidatorComponent {
   toggleAsync() {
     this.form.controls.asyncField.updateValueAndValidity();
   }
-}
-  `);
+}`);
 
-  ifValidatorSignatureCode = highlight(`
-ifValidator(
+  ifValidatorSignatureCode = highlight(`ifValidator(
   condition: () => boolean,
   trueValidatorFn: ValidatorFn | ValidatorFn[],
-  falseValidatorFn?: ValidatorFn | ValidatorFn[]
-): ValidatorFn
-  `);
+  falseValidatorFn?: ValidatorFn | ValidatorFn[],
+): ValidatorFn;`);
 
-  ifAsyncValidatorSignatureCode = highlight(`
-ifAsyncValidator(
-  condition: () => boolean,
-  asyncValidatorFn: AsyncValidatorFn
-): AsyncValidatorFn
-  `);
+  ifAsyncValidatorSignatureCode = highlight(
+    `ifAsyncValidator(condition: () => boolean, asyncValidatorFn: AsyncValidatorFn): AsyncValidatorFn;`,
+  );
 }

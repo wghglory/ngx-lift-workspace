@@ -45,8 +45,7 @@ export class UniqueValidatorComponent {
     this.form1.controls.demo1.controls[index].updateValueAndValidity();
   }
 
-  example1Code = highlight(`
-import {UniqueValidator} from 'ngx-lift';
+  example1Code = highlight(`import {UniqueValidator} from 'ngx-lift';
 import {Component, inject} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
@@ -65,7 +64,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
         }
       </ng-container>
     </form>
-  \`
+  \`,
 })
 export class UniqueValidatorExampleComponent {
   private fb = inject(FormBuilder);
@@ -77,8 +76,7 @@ export class UniqueValidatorExampleComponent {
   validateControlByIndex(index: number) {
     this.form1.controls.demo1.controls[index].updateValueAndValidity();
   }
-}
-  `);
+}`);
 
   form2 = this.fb.group({
     demo2: this.fb.array(
@@ -91,8 +89,7 @@ export class UniqueValidatorExampleComponent {
     control.updateValueAndValidity();
   }
 
-  example2Code = highlight(`
-import {UniqueValidator} from 'ngx-lift';
+  example2Code = highlight(`import {UniqueValidator} from 'ngx-lift';
 import {Component, inject} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
@@ -123,7 +120,7 @@ import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModul
         }
       </ng-container>
     </form>
-  \`
+  \`,
 })
 export class UniqueValidatorFormGroupExampleComponent {
   private fb = inject(FormBuilder);
@@ -138,10 +135,9 @@ export class UniqueValidatorFormGroupExampleComponent {
   validateControl(control: AbstractControl) {
     control.updateValueAndValidity();
   }
-}
-  `);
+}`);
 
-  signatureCode = highlight(`
-UniqueValidator.unique(controlSelector?: (control: AbstractControl) => AbstractControl): ValidatorFn
-  `);
+  signatureCode = highlight(`declare class UniqueValidator {
+  static unique(controlSelector?: (control: AbstractControl) => AbstractControl): ValidatorFn;
+}`);
 }

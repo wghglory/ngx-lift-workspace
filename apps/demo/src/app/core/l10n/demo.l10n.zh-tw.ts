@@ -1,4 +1,25 @@
 export const zhTWTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': '已儲存的使用者資料',
+  'queryResource.projectRevision': '回應版本',
+  'queryResource.activeUser': '目前使用者',
+  'queryResource.engineLabel': '引擎',
+  'queryResource.computeLabel': '運算資源',
+  'queryOwnership.title': '按領域管理 key 與 tag',
+  'queryOwnership.definitions':
+    '在元件中建立觀察者，從所屬領域匯入完整查詢定義與 tag 工廠。key 應包含作用域及所有影響回應的參數。',
+  'queryOwnership.refactoring':
+    '使用共用匯出，避免重複字串。修改或刪除定義前，搜尋所有參照，與所屬領域的維護者協調，並驗證受影響的讀取與寫入。',
+  'queryOwnership.noCache':
+    'key 也用於識別共用請求與狀態。staleTime: 0 表示資料立即過期；gcTime: 0 在請求結束後清理閒置項目。獨立且不需 key 的狀態請使用 resourceAsync。變更操作不需 key。',
+  'queryOwnership.naming': 'invalidateTags 支援陣列或僅成功後執行的 (result, args) 回呼。傳回 [] 可略過失效處理。',
+  'queryOwnership.journey':
+    '在下方新增成員：表格與摘要每次重新整理共用一個請求。關閉摘要後再次新增，再開啟摘要。團隊 B 的資料與請求數維持不變。',
+  'queryOwnership.closeSummary': '關閉摘要',
+  'queryOwnership.openSummary': '開啟摘要',
+  'queryOwnership.summary': '團隊 A 摘要',
+  'queryOwnership.teamAReads': '團隊 A 請求數',
+  'queryOwnership.otherScope': '團隊 B 成員（獨立作用域）',
+  'queryOwnership.teamBReads': '團隊 B 請求數',
   'header.selectLanguage': '選擇語言',
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '程式碼開源授權',
@@ -577,7 +598,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': '使用者個人檔案卡片',
   'queryResource.simulatedMasterList': '主清單（選取資料庫）',
   'queryResource.simulatedDetailCard': '詳細規格檢視',
-  'queryResource.updateNameBtn': '透過 authStateService.updateProfile.mutate() 更新使用者名稱',
+  'queryResource.updateNameBtn': '更新使用者名稱',
   'queryResource.componentPlacementAdvice':
     '當資料嚴格限制在單一檢視中時，建議使用元件級放置。它不需要額外的服務檔案，能無縫繫結元件 Signal 輸入 input()，並在元件卸載時立即自動清理。',
   'queryResource.demo1Section': '並發請求合併與去重 (Request Coalescing)',
@@ -647,10 +668,10 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.thRole': '職位角色',
   'queryResource.diagnosticsSection': '開發者診斷與快取檢查器',
   'queryResource.diagnosticsSectionDesc':
-    '檢視此 QueryClient 的快取、觀察者、待完成邏輯讀取、重試進度、GC 與輪詢。失敗與 Observable 服務範例使用獨立 client。',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient 即時運行診斷',
+    '在 app.config.ts 中註冊一次 provideQueryDevtools()，即可啟用僅開發環境顯示的懸浮入口。在底部面板中檢查查詢，同時繼續操作應用程式。',
+  'queryResource.diagnosticsPlaygroundTitle': '查詢檢查面板',
   'queryResource.diagnosticsPlaygroundDesc':
-    '點擊「重新整理診斷」透過 getDiagnostics() 與 getEntriesSnapshot() 獲取 QueryClient 的最新內部狀態。',
+    '搜尋、篩選和排序查詢，查看快取資料、錯誤及時間資訊。重新取得會執行所選查詢的載入器。此文件預覽也在正式組建中明確啟用。',
   'queryResource.badgeDiagnostics': '診斷',
   'queryResource.refreshDiagnostics': '重新整理診斷',
   'queryResource.diagTotalEntries': '總快取項目',
@@ -1849,7 +1870,7 @@ export const zhTWTranslations: Record<string, string> = {
     "提示框相對元素的位置，例如 'tooltip-top-right'、'tooltip-top-left' 等。",
   'demoApi.tooltip-demo.inputs.cllTooltipHideDelay': '滑鼠移出後隱藏提示框的延遲，單位為毫秒。',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation': '執行服務端寫入操作的非同步函式或 Observable。',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     '寫入成功後使對應 tag 失效，並立即為活躍查詢安排重新獲取。',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     '重疊呼叫的策略：parallel（預設，並行）、exhaust（加入進行中的操作）、concat（排隊）。',

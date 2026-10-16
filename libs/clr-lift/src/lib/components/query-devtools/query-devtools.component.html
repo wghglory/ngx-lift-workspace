@@ -1,0 +1,332 @@
+@if (enabled()) {
+  <button
+    #trigger
+    type="button"
+    class="btn btn-sm btn-outline launcher"
+    [class.floating]="launcher() === 'floating'"
+    [attr.aria-label]="'queryDevtools.title' | translate"
+    [attr.title]="'queryDevtools.title' | translate"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-controls]="panelId"
+    (click)="isOpen() ? closePanel() : openPanel(trigger)"
+  >
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <ellipse cx="12" cy="5" rx="8" ry="3" />
+      <path d="M4 5v7c0 4 16 4 16 0V5M4 12v7c0 4 16 4 16 0v-7" />
+    </svg>
+    @if (launcher() === 'inline') {
+      <span>{{ 'queryDevtools.title' | translate }}</span>
+    }
+  </button>
+
+  @if (isOpen()) {
+    <section
+      #panel
+      popover="manual"
+      [id]="panelId"
+      role="region"
+      class="devtools-panel"
+      [class.full-height]="fullHeight()"
+      [style.height.px]="fullHeight() ? null : panelHeight()"
+      [attr.aria-label]="'queryDevtools.title' | translate"
+      (keydown.escape)="handleEscape($event)"
+    >
+      <div
+        class="resize-handle"
+        role="separator"
+        tabindex="0"
+        aria-orientation="horizontal"
+        [attr.aria-label]="'queryDevtools.resize' | translate"
+        [attr.aria-valuenow]="panelHeight()"
+        aria-valuemin="200"
+        (keydown)="resizeBy($event)"
+        (pointerdown)="startResize($event)"
+      ></div>
+      <header class="panel-header">
+        <strong>{{ 'queryDevtools.title' | translate }}</strong>
+        <span class="counts"
+          >{{ snapshot()?.entryCount ?? 0 }} {{ 'queryDevtools.entries' | translate }} ·
+          {{ snapshot()?.pendingRequestCount ?? 0 }} {{ 'queryDevtools.pending' | translate }}</span
+        >
+        <div class="toolbar-actions">
+          <button
+            type="button"
+            class="btn btn-sm btn-link"
+            [attr.aria-pressed]="paused()"
+            (click)="paused.set(!paused())"
+          >
+            {{ (paused() ? 'queryDevtools.resume' : 'queryDevtools.pause') | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-link"
+            [attr.aria-pressed]="fullHeight()"
+            (click)="fullHeight.set(!fullHeight())"
+          >
+            {{ 'queryDevtools.fullHeight' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" (click)="closePanel()">
+            {{ 'queryDevtools.close' | translate }}
+          </button>
+        </div>
+      </header>
+      <div class="panel-toolbar">
+        <input
+          #searchInput
+          type="search"
+          class="clr-input"
+          [value]="search()"
+          [placeholder]="'queryDevtools.search' | translate"
+          [attr.aria-label]="'queryDevtools.search' | translate"
+          (input)="search.set(searchInput.value)"
+        />
+        <button type="button" class="btn btn-sm btn-outline" (click)="refresh()">
+          {{ 'queryDevtools.refresh' | translate }}
+        </button>
+        @if (paused()) {
+          <span class="label">{{ 'queryDevtools.paused' | translate }}</span>
+        }
+        @if (copyNotice()) {
+          <span role="status">{{ 'queryDevtools.copied' | translate }}</span>
+        }
+      </div>
+      @if (actionError()) {
+        <cll-alert [content]="actionError()" [isSmall]="true" />
+      }
+      <div class="panel-body" [class.has-selection]="selectedKey() !== null">
+        <div class="query-list">
+          <clr-datagrid>
+            <clr-dg-column clrDgField="serializedKey" [style.width.px]="280">{{
+              'queryDevtools.key' | translate
+            }}</clr-dg-column>
+            <clr-dg-column clrDgField="stateLabel">{{ 'queryDevtools.status' | translate }}</clr-dg-column>
+            <clr-dg-column clrDgField="observerCount" clrDgColType="number">{{
+              'queryDevtools.observers' | translate
+            }}</clr-dg-column>
+            <clr-dg-column clrDgSortBy="updatedAt">{{ 'queryDevtools.updated' | translate }}</clr-dg-column>
+            <clr-dg-column>{{ 'queryDevtools.actions' | translate }}</clr-dg-column>
+            <clr-dg-placeholder>{{ 'queryDevtools.empty' | translate }}</clr-dg-placeholder>
+            <clr-dg-row
+              *clrDgItems="let entry of entries(); trackBy: trackEntry"
+              [class.selected-row]="entry.serializedKey === selectedKey()"
+            >
+              <clr-dg-cell
+                ><button type="button" class="key-button" (click)="select(entry)">
+                  <code dir="ltr">{{ entry.serializedKey }}</code>
+                </button></clr-dg-cell
+              >
+              <clr-dg-cell
+                ><span class="state-badge" [attr.data-state]="entry.state">{{ entry.stateLabel }}</span></clr-dg-cell
+              >
+              <clr-dg-cell
+                ><span
+                  [attr.title]="(entry.observerCount ? 'queryDevtools.active' : 'queryDevtools.inactive') | translate"
+                  >{{ entry.observerCount }}</span
+                ></clr-dg-cell
+              >
+              <clr-dg-cell
+                ><span
+                  tabindex="0"
+                  [attr.title]="entry.updatedAt === null ? '—' : (entry.updatedAt | date: 'medium')"
+                  >{{ entry.age }}</span
+                ></clr-dg-cell
+              >
+              <clr-dg-cell
+                ><div class="row-actions">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-link"
+                    [attr.aria-label]="'queryDevtools.inspect' | translate"
+                    [attr.title]="'queryDevtools.inspect' | translate"
+                    (click)="select(entry)"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    >
+                      <circle cx="10" cy="10" r="6" />
+                      <path d="m14 14 7 7" />
+                    </svg>
+                  </button>
+                  @if (canRefetch()) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-link"
+                      [attr.aria-label]="'queryDevtools.refetch' | translate"
+                      [attr.title]="'queryDevtools.refetch' | translate"
+                      [disabled]="entry.isPending"
+                      (click)="refetch(entry)"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      >
+                        <path d="M20 11a8 8 0 1 1-2.5-5.8M20 3v8h-8" />
+                      </svg>
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-link"
+                    [attr.aria-label]="'queryDevtools.copyKey' | translate"
+                    [attr.title]="'queryDevtools.copyKey' | translate"
+                    (click)="copyKey(entry)"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    >
+                      <rect x="8" y="7" width="12" height="14" rx="1" />
+                      <path d="M5 17H3V2h12v2" />
+                    </svg>
+                  </button></div
+              ></clr-dg-cell>
+            </clr-dg-row>
+            <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="20" /></clr-dg-footer>
+          </clr-datagrid>
+        </div>
+        @if (selectedKey() !== null) {
+          <aside class="query-inspector" [attr.aria-label]="'queryDevtools.inspect' | translate">
+            <div class="inspector-header">
+              <code dir="ltr">{{ selectedKey() }}</code>
+              <button type="button" class="btn btn-sm btn-link" (click)="backToList()">
+                {{ 'queryDevtools.back' | translate }}
+              </button>
+            </div>
+            @if (selectedEntry(); as entry) {
+              <div class="inspector-actions">
+                @if (canRefetch()) {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline"
+                    [disabled]="entry.isPending"
+                    (click)="refetch(entry)"
+                  >
+                    {{ 'queryDevtools.refetch' | translate }}
+                  </button>
+                }
+                <button type="button" class="btn btn-sm btn-link" (click)="copyKey(entry)">
+                  {{ 'queryDevtools.copyKey' | translate }}
+                </button>
+              </div>
+              <div class="nav inspector-tabs" role="tablist" [attr.aria-label]="'queryDevtools.inspect' | translate">
+                @for (name of tabs; track name) {
+                  <button
+                    type="button"
+                    role="tab"
+                    class="nav-link"
+                    [class.active]="tab() === name"
+                    [id]="panelId + '-' + name"
+                    [attr.aria-selected]="tab() === name"
+                    [attr.tabindex]="tab() === name ? 0 : -1"
+                    [attr.aria-controls]="panelId + '-content'"
+                    (click)="switchTab(name)"
+                    (keydown.arrowright)="nextTab(1, $event)"
+                    (keydown.arrowleft)="nextTab(-1, $event)"
+                  >
+                    {{ (name === 'error' ? 'queryDevtools.errorTab' : 'queryDevtools.' + name) | translate }}
+                  </button>
+                }
+              </div>
+              <div role="tabpanel" [id]="panelId + '-content'" [attr.aria-labelledby]="panelId + '-' + tab()">
+                @if (tab() === 'details') {
+                  <dl class="query-details">
+                    <dt>{{ 'queryDevtools.status' | translate }}</dt>
+                    <dd>{{ entry.status }}</dd>
+                    <dt>{{ 'queryDevtools.freshness' | translate }}</dt>
+                    <dd>
+                      {{
+                        (entry.hasValue
+                          ? entry.isStale
+                            ? 'queryDevtools.stale'
+                            : 'queryDevtools.fresh'
+                          : 'queryDevtools.noData'
+                        ) | translate
+                      }}
+                    </dd>
+                    <dt>{{ 'queryDevtools.observers' | translate }}</dt>
+                    <dd>{{ entry.observerCount }}</dd>
+                    <dt>{{ 'queryDevtools.failures' | translate }}</dt>
+                    <dd>{{ entry.failureCount }}</dd>
+                    <dt>{{ 'queryDevtools.retry' | translate }}</dt>
+                    <dd>{{ entry.nextRetryAt === null ? '—' : (entry.nextRetryAt | date: 'mediumTime') }}</dd>
+                    <dt>staleTime / gcTime</dt>
+                    <dd>{{ entry.staleTime }} / {{ entry.gcTime }} ms</dd>
+                    <dt>{{ 'queryDevtools.gc' | translate }}</dt>
+                    <dd>{{ entry.remainingGcTime === null ? '—' : entry.remainingGcTime + ' ms' }}</dd>
+                    <dt>{{ 'queryDevtools.poll' | translate }}</dt>
+                    <dd>{{ entry.remainingPollDelay === null ? '—' : entry.remainingPollDelay + ' ms' }}</dd>
+                    <dt>{{ 'queryDevtools.pending' | translate }}</dt>
+                    <dd>{{ entry.requestCount }}</dd>
+                    <dt>{{ 'queryDevtools.tags' | translate }}</dt>
+                    <dd>
+                      @for (tag of entry.tagMemberships; track tag) {
+                        <code dir="ltr">{{ tag }}</code>
+                      }
+                    </dd>
+                  </dl>
+                } @else if (tab() === 'data' && !selectedSnapshot()?.hasValue) {
+                  <p>{{ 'queryDevtools.noData' | translate }}</p>
+                } @else if (tab() === 'error' && (inspectedValue() === null || inspectedValue() === undefined)) {
+                  <p>{{ 'queryDevtools.noError' | translate }}</p>
+                } @else {
+                  <button type="button" class="btn btn-sm btn-link" (click)="copyData()">
+                    {{ 'queryDevtools.copyData' | translate }}
+                  </button>
+                  <p class="preview-note">{{ 'queryDevtools.previewLimit' | translate }}</p>
+                  <div class="value-tree" dir="ltr">
+                    @for (row of tree(); track $index) {
+                      <div class="value-row" [style.padding-inline-start.rem]="row.depth * 0.8" [attr.title]="row.path">
+                        @if (row.nextOffset !== undefined) {
+                          <button type="button" class="tree-toggle" (click)="expand(row)">
+                            {{ row.label }} · {{ 'queryDevtools.more' | translate }}
+                          </button>
+                        } @else if (row.expandable) {
+                          <button
+                            type="button"
+                            class="tree-toggle"
+                            [attr.aria-expanded]="row.expanded"
+                            (click)="expand(row)"
+                          >
+                            {{ row.expanded ? '▾' : '▸' }} {{ row.label }}: {{ row.preview }}
+                          </button>
+                        } @else {
+                          <code>{{ row.label }}: {{ row.preview }}</code>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            } @else {
+              <p role="status">{{ 'queryDevtools.evicted' | translate }}</p>
+            }
+          </aside>
+        }
+      </div>
+    </section>
+  }
+}

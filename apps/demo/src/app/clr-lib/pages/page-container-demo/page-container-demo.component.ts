@@ -31,7 +31,8 @@ export class PageContainerDemoComponent {
       },
     ];
   });
-  basicUsageCode = highlight(`
+  basicUsageCode = highlight(`import {Component} from '@angular/core';
+
 import {PageContainerComponent} from 'clr-lift';
 
 @Component({
@@ -40,46 +41,50 @@ import {PageContainerComponent} from 'clr-lift';
     <cll-page-container title="User Management">
       <p>Page body content rendered inside the default slot.</p>
     </cll-page-container>
-  \`
+  \`,
 })
-export class UserManagementPageComponent {}
-  `);
+export class UserManagementPageComponent {}`);
 
-  customClassCode = highlight(`
+  customClassCode = highlight(`import {Component} from '@angular/core';
+
 import {PageContainerComponent} from 'clr-lift';
 
 @Component({
   imports: [PageContainerComponent],
   template: \`
-    <cll-page-container
-      title="Cluster Settings"
-      customClass="density-compact"
-    >
+    <cll-page-container title="Cluster Settings" customClass="density-compact">
       <section class="card">
         <div class="card-block">
           <p>Configured with custom styling classes.</p>
         </div>
       </section>
     </cll-page-container>
-  \`
+  \`,
 })
-export class SettingsPageComponent {}
-  `);
+export class SettingsPageComponent {}`);
 
-  htmlTitleCode = highlight(`
+  readonly customClassStylesCode = highlight(
+    `// Global styles.scss: customClass is applied inside the page container.
+cll-page-container > .page-container.density-compact {
+  padding: var(--cds-global-space-5);
+  gap: var(--cds-global-space-3);
+  border-inline-start: 3px solid var(--clr-color-action-600);
+}`,
+    'scss',
+  );
+
+  htmlTitleCode = highlight(`import {Component} from '@angular/core';
+
 import {PageContainerComponent} from 'clr-lift';
 
 @Component({
   imports: [PageContainerComponent],
   template: \`
     <!-- The title input supports HTML markup rendered via innerHTML -->
-    <cll-page-container
-      [title]="'Audit Log <span class=\\'badge badge-info\\'>Live</span>'"
-    >
+    <cll-page-container [title]="'Audit Log <span class='badge badge-info'>Live</span>'">
       <p>Log entries stream here in real-time.</p>
     </cll-page-container>
-  \`
+  \`,
 })
-export class AuditLogPageComponent {}
-  `);
+export class AuditLogPageComponent {}`);
 }

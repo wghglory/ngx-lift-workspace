@@ -107,8 +107,7 @@ export class DateRangeValidatorComponent {
     }),
   });
 
-  dateCode = highlight(`
-import {dateRangeValidator} from 'ngx-lift';
+  dateCode = highlight(`import {dateRangeValidator} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -126,7 +125,14 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 
       <clr-date-container>
         <label class="clr-required-mark">Future 5 Days</label>
-        <input type="date" clrDate [formControl]="dateForm.controls.futureDays" required [min]="tomorrowInISO" [max]="fiveDaysLaterInISO" />
+        <input
+          type="date"
+          clrDate
+          [formControl]="dateForm.controls.futureDays"
+          required
+          [min]="tomorrowInISO"
+          [max]="fiveDaysLaterInISO"
+        />
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
         <clr-control-error *clrIfError="'invalidDate'">The date is invalid</clr-control-error>
         <clr-control-error *clrIfError="'maxDate'; error as maxDate">
@@ -137,7 +143,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
         </clr-control-error>
       </clr-date-container>
     </form>
-  \`
+  \`,
 })
 export class DateRangeValidatorComponent {
   today = new Date();
@@ -166,11 +172,9 @@ export class DateRangeValidatorComponent {
       ],
     }),
   });
-}
-  `);
+}`);
 
-  dateTimeCode = highlight(`
-import {dateRangeValidator} from 'ngx-lift';
+  dateTimeCode = highlight(`import {dateRangeValidator} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -180,7 +184,14 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
     <form [formGroup]="dateTimeForm">
       <clr-input-container>
         <label class="clr-required-mark">Expiration Date</label>
-        <input type="datetime-local" clrInput [formControl]="dateTimeForm.controls.expires" required [min]="minTimestamp" [max]="maxTimestamp" />
+        <input
+          type="datetime-local"
+          clrInput
+          [formControl]="dateTimeForm.controls.expires"
+          required
+          [min]="minTimestamp"
+          [max]="maxTimestamp"
+        />
         <clr-control-error *clrIfError="'required'">Required</clr-control-error>
         <clr-control-error *clrIfError="'minDate'; error as minDate">
           The date time cannot be earlier than {{ minDate }}
@@ -190,7 +201,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
         </clr-control-error>
       </clr-input-container>
     </form>
-  \`
+  \`,
 })
 export class DateTimeRangeValidatorComponent {
   today = new Date();
@@ -208,8 +219,7 @@ export class DateTimeRangeValidatorComponent {
       ],
     }),
   });
-}
-  `);
+}`);
 
   dateExampleCode = highlight(`
 import {dateRangeValidator} from 'ngx-lift';
@@ -255,15 +265,13 @@ export class DateTimeRangeExampleComponent {
 }
   `);
 
-  signatureCode = highlight(`
-dateRangeValidator(options: DateRangeOptions): ValidatorFn
-
-interface DateRangeOptions {
+  signatureCode = highlight(`interface DateRangeOptions {
   minDate?: Date | string;
   maxDate?: Date | string;
   minInclusive?: boolean;
   maxInclusive?: boolean;
   compareTime?: boolean;
 }
-  `);
+
+dateRangeValidator(options: DateRangeOptions): ValidatorFn;`);
 }

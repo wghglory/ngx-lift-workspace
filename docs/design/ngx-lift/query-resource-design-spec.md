@@ -1,7 +1,8 @@
 # Query design and production contracts
 
 Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
-Approval: existing API; this audit does not approve new behavior.
+Approval: existing API plus the October 16 maintainer request for domain-owned key/tag guidance and consistent mutation
+`invalidateTags` naming. See the mutation spec for compatibility.
 
 ## Background
 
@@ -28,6 +29,17 @@ This is the single query design entry point. Mutation execution has its own
 
 Each canonical query key identifies one cache entry. `QueryClient` owns cache state, in-flight work, generations and
 scheduling; Angular resources own observers. Multiple observers share data without sharing their component lifetimes.
+
+### Keys when completed-data caching is unwanted
+
+`queryResource` requires a key even with `staleTime: 0` and `gcTime: 0`: the key also identifies shared pending reads,
+state, scheduling and invalidation. `staleTime: 0` makes completed data immediately stale; it does not erase it or start
+an endless refresh loop. `gcTime: 0` schedules collection after the last observer leaves and all requests settle. Active
+entries still retain values and can show them during refresh. Same-key definitions reconcile retention using the maximum
+`gcTime`, so another consumer may retain the shared entry longer.
+
+For independent component-local state without a shared entry, use `resourceAsync` without a key. Mutations already
+require neither keys nor tags. Do not generate random keys to simulate an uncached query.
 
 ## Terminology
 
@@ -331,6 +343,110 @@ Closing an overlay stops observation only if its owning component/injector is de
 a retained component does not dispose it. Cache sharing follows the injected/explicit QueryClient, not a global key
 namespace. Choose ownership from actual consumers; there is no measured component/service percentage target.
 
+Application services use the `Service` suffix, and injected fields use the full class name in camelCase, such as
+`teamService = inject(TeamService)`. Leave one blank line between the injection group and query/state declarations. Use
+`providedIn: 'root'` for application-wide ownership; page-owned services use the page's `providers`. The mutation demo
+provides `TeamService` on its page so mock members and request counters reset on navigation.
+
+The placement demo exercises these owners directly: Pattern A injects a root `AuthStateService`, Pattern B provides a
+`DatabaseStateService` at the page/feature boundary, and Pattern C mounts an input-driven project component with its own
+observer. Pattern C's displayed template is the same constant compiled by its live component. Refresh retains the
+project while a new response version loads. Pattern A presents the actual auth component's HTML in a separate code tab,
+including its loading states and update action. Action buttons use short translated labels; method paths belong in code.
+The [demo documentation standards](../../DOCUMENTATION_STANDARDS.md#code-example-best-practices) apply to every page.
+
+The placement mocks use separate `UserProfileService`, `DatabaseService` and `ProjectService` transports. The project
+preview passes `projectId="website-redesign"`; the displayed mock returns the visible "Website redesign" name. The
+coalescing preview mounts two `MetricsWidgetComponent` instances, each with its own observer and the same key/loader.
+Its example requires no QueryClient injection or widget visibility flags. Developer diagnostics use the reusable
+[QueryDevtoolsComponent](../clr-lift/query-devtools-design-spec.md); only that component reads client snapshots.
+
+Placement keys describe data rather than the demo: `['current-user']`, `['databases', id]` and `['projects', id]`. The
+singleton profile query and its mutation share the `{type: 'current-user'}` tag. `['auth', 'current-user']` is valid
+when auth is a useful namespace, but its extra segment is unnecessary for this single resource. An application that
+retains one client across account changes must clear previous-session data or include an opaque session identity in the
+key. Removing a presentation prefix never removes result-changing identity or parameter segments.
+
+The [query devtools](../clr-lift/query-devtools-design-spec.md) use `getSnapshot(key)` for selected data without network
+or retention changes. `refetchQuery(key): Promise<unknown> | undefined` deliberately refreshes an existing entry with
+its registered loader/policies, joins pending work and returns undefined for a missing key. It never creates entries or
+observers; a destroyed client throws. Applications can register `provideQueryDevtools()` from `clr-lift/devtools` once
+at root. The installed production export resolves to a no-op, while direct component opt-in remains available for docs.
+
+### Large-project key and tag ownership
+
+Component-owned observers and domain-owned definitions serve different purposes. Keep `queryResource` in each component
+when its lifetime belongs there, and import a complete definition factory from the domain that owns the API. Do not
+require a singleton observer or a global application-wide key registry.
+
+```text
+teams/
+  team.service.ts          transport and DTOs
+  team.queries.ts       key/tag factories and complete read definitions
+  team-page.ts          component observer and explicit mutations
+  team-summary.ts       independent observer of the same definition
+```
+
+```typescript
+// team.queries.ts
+import {QueryDefinition} from 'ngx-lift';
+import {TeamService, TeamMember} from './team.service';
+
+export const teamKeys = {
+  members: (scope: string) => ['teams', scope, 'members'] as const,
+  member: (scope: string, id: number) => ['teams', scope, 'member', id] as const,
+};
+
+export const teamTags = {
+  members: (scope: string) => ({type: 'teams/members', scope}),
+  member: (scope: string, id: number) => ({type: 'teams/member', scope, id}),
+};
+
+export function teamMembersQuery(teamService: TeamService, scope: string): QueryDefinition<TeamMember[]> {
+  return {
+    key: teamKeys.members(scope),
+    tags: [teamTags.members(scope)],
+    loader: () => teamService.getMembers(scope),
+    staleTime: 30_000,
+  };
+}
+```
+
+Both page and summary call `queryResource(() => teamMembersQuery(this.teamService, this.scope()))`. Their observers
+dispose independently while pending reads and values share the same entry. Keep entity keys alongside their own loaders
+when those reads are needed; do not invent unused query definitions.
+
+Ownership and refactoring rules:
+
+- Namespace by domain and response contract, not by page. Same data intentionally shares a definition; different
+  projections/endpoints need different keys even if they share tags.
+- Include every response-changing parameter: scope, IDs, filters, sorting and pagination. Scope must distinguish tenants
+  and relevant session/authorization revisions; never include credentials. Capture inputs once so the loader, key and
+  tags describe the same request.
+- Export typed factories and import them from consumers. Co-locate loaders and policies with keys, because the latest
+  same-key definition supplies future loaders and policy; sharing a string factory alone cannot ensure consistency.
+- Use tags to express affected data, including list membership. Creating/deleting an entity can change filtered lists
+  that did not previously contain it. Invalidating an entity detail tag alone does not refresh those lists.
+- Deleting/renaming a shared export exposes imported consumers during type checking. Changing its underlying string or
+  semantic scope can still compile and break synchronization. Search references, involve the domain owner, and verify
+  the read/write integration before changing a shared contract. TypeScript is not a semantic dependency checker.
+- Removing a tag from a definition does not unregister it from an existing entry: tags accumulate until eviction. An
+  existing mounted entry can therefore conceal a broken contract; verify new-client behavior too.
+- Closing a page/card disposes its observer; do not call `removeQueries` as component cleanup. Removal affects other
+  consumers of that entry. Invalidation marks dependencies stale and refetches active entries; it does not delete keys
+  or remove another component's observer.
+
+Adopt the co-location principle from TanStack Query's
+[query options guide](https://tanstack.com/query/latest/docs/framework/angular/guides/query-options), using plain typed
+factories rather than adding a mandatory registry or another public helper. Clarity, Angular Material and NG-ZORRO
+control APIs do not own this query-client dependency contract; no component pattern is needed for it.
+
+Demo acceptance: the mutation page imports one domain factory into a table and a separately mounted summary. A
+successful create maps `(result, args)` to scoped tags and updates both consumers. Closing the summary preserves the
+table; writes and refreshes in one scope leave another scope untouched. Browser checks repeat the flow after reopening
+the summary and run in each supported browser. See
+[mutation options](mutate-resource-design-spec.md#22-options--configuration-mutateresourceoptions).
+
 ### Service Placement: Pros and Cons
 
 - **Pros**:
@@ -385,7 +501,7 @@ export class AuthStateService {
   // 2. Centralized mutation that invalidates the cached user tag (follows *Mutation naming convention)
   readonly updateProfileMutation = mutateResource(
     (changes: Partial<UserProfile>) => this.http.patch<UserProfile>('/api/me', changes),
-    {invalidatesTags: [{type: 'User', id: 'me'}]},
+    {invalidateTags: [{type: 'User', id: 'me'}]},
   );
 }
 ```
@@ -527,8 +643,8 @@ export class DatabaseStateService {
       @for (db of databases; track db.id) {
         <button
           class="list-group-item"
-          [class.active]="dbService.activeDatabaseId() === db.id"
-          (click)="dbService.selectDatabase(db.id)"
+          [class.active]="databaseStateService.activeDatabaseId() === db.id"
+          (click)="databaseStateService.selectDatabase(db.id)"
         >
           {{ db.name }}
         </button>
@@ -537,7 +653,7 @@ export class DatabaseStateService {
   `,
 })
 export class DatabaseListComponent {
-  readonly dbService = inject(DatabaseStateService);
+  readonly databaseStateService = inject(DatabaseStateService);
   readonly databases = [
     {id: 'db-pg-01', name: 'Production PostgreSQL'},
     {id: 'db-ch-02', name: 'Analytics ClickHouse'},
@@ -551,18 +667,18 @@ export class DatabaseListComponent {
   selector: 'app-database-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (dbService.activeDatabaseId(); as id) {
+    @if (databaseStateService.activeDatabaseId(); as id) {
       <div class="card">
-        @if (dbService.databaseDetailsQuery.isInitialLoading()) {
+        @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
           <p>Loading database specifications…</p>
-        } @else if (dbService.databaseDetailsQuery.isInitialError()) {
+        } @else if (databaseStateService.databaseDetailsQuery.isInitialError()) {
           <p class="error">Could not load database details.</p>
-          <button (click)="dbService.databaseDetailsQuery.reload()">Retry</button>
-        } @else if (dbService.databaseDetailsQuery.value(); as details) {
+          <button (click)="databaseStateService.databaseDetailsQuery.reload()">Retry</button>
+        } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
           <h3>{{ details.name }}</h3>
           <p>Engine: {{ details.engine }} | Status: {{ details.status }}</p>
           <p>Compute: {{ details.cpu }} / {{ details.ram }}</p>
-          <button (click)="dbService.databaseDetailsQuery.reload()">Refresh Specs</button>
+          <button (click)="databaseStateService.databaseDetailsQuery.reload()">Refresh Specs</button>
         }
       </div>
     } @else {
@@ -571,7 +687,7 @@ export class DatabaseListComponent {
   `,
 })
 export class DatabaseDetailComponent {
-  readonly dbService = inject(DatabaseStateService);
+  readonly databaseStateService = inject(DatabaseStateService);
 }
 ```
 

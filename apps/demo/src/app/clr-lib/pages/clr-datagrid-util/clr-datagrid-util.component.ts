@@ -109,29 +109,23 @@ export class DatagridExampleComponent {
 }
   `);
 
-  signatureCode = highlight(`
-convertToHttpParams(state: ClrDatagridStateInterface | null): PageQuery
-  `);
+  signatureCode = highlight(`convertToHttpParams(state: ClrDatagridStateInterface | null): PageQuery;`);
 
-  stateCode = highlight(`
-// Clarity Datagrid state example
+  stateCode = highlight(`// Clarity Datagrid state example
 {
   "page": {"from": 0, "to": 9, "size": 10, "current": 1},
   "sort": {"by": "date", "reverse": false},
   "filters": [
     {"property": "name", "value": "mike"},
-    {"property": "job", "value": "programming"}
-  ]
-}
-  `);
+    {"property": "job", "value": "programming"},
+  ],
+}`);
 
-  outputCode = highlight(`
-// output data returned by convertToHttpParams
+  outputCode = highlight(`// output data returned by convertToHttpParams
 {
   "page": 1,
   "pageSize": 10,
   "filter": "name==*mike*;job==*programming*",
-  "sortAsc": "date"
-}
-    `);
+  "sortAsc": "date",
+}`);
 }

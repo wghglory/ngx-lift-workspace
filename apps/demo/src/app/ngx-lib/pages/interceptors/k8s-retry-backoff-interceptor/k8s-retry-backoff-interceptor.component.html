@@ -9,6 +9,12 @@
     <a routerLink="/ngx-lift/operators/k8sRetryBackoff">retryOnK8sBackoff</a>
   </cll-callout>
 
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.basicUsage' | translate }}</h2>
+    <app-code-block [code]="interceptorUsageCode" lang="typescript" />
+    <app-code-block [code]="contextOverrideCode" lang="typescript" />
+  </section>
+
   <!-- Interactive Simulator Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -19,7 +25,7 @@
       level="intermediate"
       badgeText="HttpInterceptorFn"
       layout="stacked"
-      [tsCode]="interceptorUsageCode"
+      [tsCode]="simulationCode"
     >
       <div preview class="preview-box" cds-layout="vertical gap:md">
         <clr-radio-container clrInline>
@@ -118,7 +124,7 @@
       level="advanced"
       badgeText="HttpContextToken"
       layout="stacked"
-      [tsCode]="contextOverrideCode"
+      [tsCode]="overrideSimulationCode"
     >
       <div preview class="preview-box" cds-layout="vertical gap:md">
         <p>{{ 'k8sRetryBackoffInterceptor.overrideSimulation' | translate }}</p>

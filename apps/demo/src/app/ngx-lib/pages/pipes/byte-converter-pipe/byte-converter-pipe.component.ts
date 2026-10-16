@@ -26,7 +26,8 @@ export class ByteConverterPipeComponent {
       },
     ];
   });
-  basicExampleCode = highlight(`
+  basicExampleCode = highlight(`import {Component} from '@angular/core';
+
 import {ByteConverterPipe} from 'ngx-lift';
 
 @Component({
@@ -37,12 +38,12 @@ import {ByteConverterPipe} from 'ngx-lift';
 
     <p>{{ 1044.89 | byteConverter }}</p>
     <!-- Output: "1.02 KB" -->
-  \`
+  \`,
 })
-export class ByteConverterExampleComponent {}
-  `);
+export class ByteConverterExampleComponent {}`);
 
-  fileSizeDisplayCode = highlight(`
+  fileSizeDisplayCode = highlight(`import {Component} from '@angular/core';
+
 import {ByteConverterPipe} from 'ngx-lift';
 
 @Component({
@@ -50,14 +51,14 @@ import {ByteConverterPipe} from 'ngx-lift';
   template: \`
     <p>File size: {{ fileSizeInBytes | byteConverter }}</p>
     <!-- Example: "File size: 1.02 KB" -->
-  \`
+  \`,
 })
 export class FileSizeExampleComponent {
   fileSizeInBytes = 1044.89;
-}
-  `);
+}`);
 
-  unitConversionsCode = highlight(`
+  unitConversionsCode = highlight(`import {Component} from '@angular/core';
+
 import {ByteConverterPipe} from 'ngx-lift';
 
 @Component({
@@ -77,12 +78,9 @@ import {ByteConverterPipe} from 'ngx-lift';
 
     <p>{{ 2.89 * 1024 * 1024 * 1024 * 1024 | byteConverter }}</p>
     <!-- Output: "2.89 TB" -->
-  \`
+  \`,
 })
-export class UnitConversionsExampleComponent {}
-  `);
+export class UnitConversionsExampleComponent {}`);
 
-  signatureCode = highlight(`
-transform(value?: number | null): string | null
-  `);
+  signatureCode = highlight(`transform(value?: number | null): string | null;`);
 }

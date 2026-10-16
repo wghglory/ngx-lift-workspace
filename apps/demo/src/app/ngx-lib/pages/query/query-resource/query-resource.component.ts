@@ -1,45 +1,37 @@
 import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, signal, computed} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal, computed, viewChild} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {QueryStatusDirective} from '../query-status.directive';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import {mutateResource, QUERY_CLIENT, QueryClientDiagnostics, queryResource, QueryResourceRef} from 'ngx-lift';
+import {
+  CalloutComponent,
+  PageContainerComponent,
+  QueryDevtoolsComponent,
+  SpinnerComponent,
+  TranslatePipe,
+  TranslationService,
+} from 'clr-lift';
+import {mutateResource, queryResource} from 'ngx-lift';
 
+import {AuthPlacementDemoComponent} from './auth-placement-demo.component';
 import {QueryFailureExamplesComponent} from './query-failure-examples.component';
+import {MetricsService} from './metrics.service';
+import {MetricsWidgetComponent} from './metrics-widget.component';
+import {DatabaseStateService} from './query-placement-state';
+import {ProjectDetailDemoComponent} from './project-detail-demo.component';
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 import {ClarityIcons, refreshIcon} from '@clr/angular/icon';
 
 ClarityIcons.addIcons(refreshIcon);
 
-interface ServerMetrics {
-  activeUsers: number;
-  cpuLoad: number;
-  memoryUsage: number;
-  timestamp: string;
-}
-
 interface DemoUser {
   id: number;
   name: string;
   role: string;
-}
-
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface DemoDatabaseDetails {
-  name: string;
-  engine: string;
-  cpu: string;
-  ram: string;
 }
 
 @Component({
@@ -52,12 +44,18 @@ interface DemoDatabaseDetails {
     ClarityModule,
     CalloutComponent,
     PageContainerComponent,
+    QueryDevtoolsComponent,
     SpinnerComponent,
     TranslatePipe,
     DemoPlaygroundComponent,
+    CodeBlockComponent,
     ApiTableComponent,
     QueryFailureExamplesComponent,
+    ProjectDetailDemoComponent,
+    AuthPlacementDemoComponent,
+    MetricsWidgetComponent,
   ],
+  providers: [DatabaseStateService, MetricsService],
   templateUrl: './query-resource.component.html',
   styleUrls: ['./query-resource.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,128 +63,20 @@ interface DemoDatabaseDetails {
 export class QueryResourceDemoComponent {
   private readonly translationService = inject(TranslationService);
 
-  private readonly queryClient = inject(QUERY_CLIENT);
-
-  diagnostics = signal<QueryClientDiagnostics>(this.queryClient.getDiagnostics());
-
-  constructor() {
-    const timer = setInterval(() => this.refreshDiagnostics(), 1000);
-    inject(DestroyRef).onDestroy(() => clearInterval(timer));
-  }
-
-  refreshDiagnostics() {
-    this.diagnostics.set(this.queryClient.getDiagnostics());
-  }
-
   // ---------------------------------------------------------------------------
   // Placement Architecture: Component vs Service
   // ---------------------------------------------------------------------------
-  readonly demoAuthUser = signal<UserProfile>({
-    id: 'usr-901',
-    name: 'Alex Rivera',
-    email: 'alex.rivera@example.com',
-    role: 'Platform Admin',
-  });
-
-  readonly demoAuthQuery = queryResource(() => ({
-    key: ['demo-auth', 'current-user'],
-    tags: [{type: 'User', id: 'me'}],
-    loader: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return this.demoAuthUser();
-    },
-    staleTime: 60_000,
-  }));
-
-  readonly demoAuthMutation = mutateResource(
-    async (changes: Partial<UserProfile>) => {
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      this.demoAuthUser.update((user) => ({...user, ...changes}));
-      return this.demoAuthUser();
-    },
-    {
-      invalidatesTags: [{type: 'User', id: 'me'}],
-    },
-  );
-
-  cycleDemoUserName(): void {
-    const names = ['Alex Rivera', 'Jordan Lee', 'Taylor Morgan', 'Sam Chen'];
-    const current = this.demoAuthUser().name;
-    const nextIdx = (names.indexOf(current) + 1) % names.length;
-    this.demoAuthMutation.mutate({name: names[nextIdx]});
-  }
-
-  readonly demoSelectedDbId = signal<string | null>('db-pg-01');
-
-  readonly demoDbList = [
-    {id: 'db-pg-01', name: 'Production PostgreSQL'},
-    {id: 'db-ch-02', name: 'Analytics ClickHouse'},
-    {id: 'db-rd-03', name: 'Session Cache Redis'},
-  ];
-
-  readonly demoDbDetailsQuery = queryResource(() => {
-    const id = this.demoSelectedDbId();
-    if (!id) return undefined;
-    return {
-      key: ['demo-db', id],
-      loader: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        const dbs: Record<string, DemoDatabaseDetails> = {
-          'db-pg-01': {name: 'Production PostgreSQL', engine: 'PostgreSQL 16.2', cpu: '8 vCPU', ram: '32 GB'},
-          'db-ch-02': {name: 'Analytics ClickHouse', engine: 'ClickHouse 24.1', cpu: '16 vCPU', ram: '64 GB'},
-          'db-rd-03': {name: 'Session Cache Redis', engine: 'Redis 7.2 Cluster', cpu: '4 vCPU', ram: '16 GB'},
-        };
-        return dbs[id] ?? {name: id, engine: 'Generic Engine', cpu: '2 vCPU', ram: '8 GB'};
-      },
-      staleTime: 10_000,
-    };
-  });
-
-  selectDemoDb(id: string): void {
-    this.demoSelectedDbId.set(id);
-  }
+  readonly databaseStateService = inject(DatabaseStateService);
 
   // ---------------------------------------------------------------------------
   // Demo 1: Request Coalescing / Deduplication
   // ---------------------------------------------------------------------------
-  coalesceFetchCount = signal(0);
-  widgetAShown = signal(true);
-  widgetBShown = signal(true);
+  readonly metricsService = inject(MetricsService);
 
-  private async fetchMetrics(): Promise<ServerMetrics> {
-    this.coalesceFetchCount.update((count) => count + 1);
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    return {
-      activeUsers: 142 + Math.floor(Math.random() * 20),
-      cpuLoad: Math.floor(35 + Math.random() * 25),
-      memoryUsage: Math.floor(60 + Math.random() * 15),
-      timestamp: new Date().toLocaleTimeString(),
-    };
-  }
+  readonly metricsWidget = viewChild(MetricsWidgetComponent);
 
-  metricsAQuery: QueryResourceRef<ServerMetrics | undefined> = queryResource(() =>
-    this.widgetAShown()
-      ? {
-          key: ['metrics', 'cluster-overview'],
-          loader: () => this.fetchMetrics(),
-          staleTime: 4000,
-        }
-      : undefined,
-  );
-
-  metricsBQuery: QueryResourceRef<ServerMetrics | undefined> = queryResource(() =>
-    this.widgetBShown()
-      ? {
-          key: ['metrics', 'cluster-overview'],
-          loader: () => this.fetchMetrics(),
-          staleTime: 4000,
-        }
-      : undefined,
-  );
-
-  refreshMetrics() {
-    this.metricsAQuery.reload();
-    this.refreshDiagnostics();
+  refreshMetrics(): void {
+    this.metricsWidget()?.metricsQuery.reload();
   }
 
   // ---------------------------------------------------------------------------
@@ -243,7 +133,6 @@ export class QueryResourceDemoComponent {
 
   togglePolling() {
     this.pollingEnabled.update((v) => !v);
-    this.refreshDiagnostics();
   }
 
   // ---------------------------------------------------------------------------
@@ -279,291 +168,458 @@ export class QueryResourceDemoComponent {
       return created;
     },
     {
-      invalidatesTags: [{type: 'users'}],
+      invalidateTags: [{type: 'users'}],
       concurrency: 'exhaust',
     },
   );
 
   submitNewUser() {
     if (!this.newUserName().trim()) return;
-    this.addUserMutation.mutate({
+    void this.addUserMutation.mutate({
       name: this.newUserName().trim(),
       role: this.newUserRole(),
     });
     this.newUserName.set('');
-    this.refreshDiagnostics();
   }
 
   // ---------------------------------------------------------------------------
   // Code Snippets for DemoPlayground
   // ---------------------------------------------------------------------------
-  readonly diagnosticsCode = highlight(`private readonly queryClient = inject(QUERY_CLIENT);
-readonly diagnostics = signal(this.queryClient.getDiagnostics());
+  readonly diagnosticsCode = highlight(`import {Component} from '@angular/core';
+import {QueryDevtoolsComponent} from 'clr-lift';
 
-refreshDiagnostics(): void {
-  this.diagnostics.set(this.queryClient.getDiagnostics());
-  const entries = this.queryClient.getEntriesSnapshot();
-  for (const entry of entries) {
-    console.log(entry.key, {
-      status: entry.status,
-      observers: entry.observerCount,
-      failures: entry.failureCount,
-      retryAt: entry.nextRetryAt,
-    });
-  }
-}
+@Component({
+  selector: 'app-query-diagnostics-demo',
+  imports: [QueryDevtoolsComponent],
+  template: '<cll-query-devtools [enabled]="true" />',
+})
+export class QueryDiagnosticsDemoComponent {}`);
 
-// In template:
-// <button (click)="refreshDiagnostics()">Refresh Diagnostics</button>`);
+  readonly diagnosticsHtmlCode = highlight(`<cll-query-devtools [enabled]="true" />`, 'html');
 
-  readonly authServiceCode = highlight(`// 1. Singleton Root Service (Centralized state, query, and mutation)
+  readonly diagnosticsSetupCode = highlight(`import {ApplicationConfig} from '@angular/core';
+import {provideQueryDevtools} from 'clr-lift/devtools';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideQueryDevtools()],
+};`);
+
+  readonly authServiceCode =
+    highlight(`import {ChangeDetectionStrategy, Component, inject, Injectable} from '@angular/core';
+import {ClarityModule} from '@clr/angular';
+import {SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {mutateResource, queryResource} from 'ngx-lift';
+import {QueryStatusDirective} from '../query-status.directive';
+import {UserProfile, UserProfileService} from './user-profile.service';
+
 @Injectable({providedIn: 'root'})
 export class AuthStateService {
-  private readonly http = inject(HttpClient);
+  private readonly userProfileService = inject(UserProfileService);
 
-  // Centralized cached query resource (follows *Query naming convention)
   readonly currentUserQuery = queryResource(() => ({
-    key: ['auth', 'current-user'],
-    tags: [{type: 'User', id: 'me'}],
-    loader: () => this.http.get<UserProfile>('/api/me'),
+    key: ['current-user'],
+    tags: [{type: 'current-user'}],
+    loader: () => this.userProfileService.getProfile(),
     staleTime: 60_000,
   }));
-
-  // Centralized mutation (follows *Mutation naming convention and ngx-lift signature)
   readonly updateProfileMutation = mutateResource(
-    (changes: Partial<UserProfile>) => this.http.patch<UserProfile>('/api/me', changes),
-    {invalidatesTags: [{type: 'User', id: 'me'}]},
+    (changes: Partial<UserProfile>) => this.userProfileService.updateProfile(changes),
+    {
+      invalidateTags: [{type: 'current-user'}],
+      concurrency: 'exhaust',
+    },
   );
-}
 
-// 2. Consumed in Topbar Component:
-@Component({
-  selector: 'app-topbar',
-  template: \`
-    <header class="topbar">
-      @if (authStateService.currentUserQuery.value(); as user) {
-        <span>{{ user.name }} ({{ user.role }})</span>
-      }
-    </header>
-  \`,
-})
-export class TopbarComponent {
-  // Inject the service directly:
-  readonly authStateService = inject(AuthStateService);
-}
-
-// 3. Consumed in User Profile Editor Component:
-@Component({
-  selector: 'app-user-profile-editor',
-  template: \`
-    @if (authStateService.currentUserQuery.value(); as user) {
-      <button (click)="saveName('Alex Rivera')">Save Profile</button>
-    }
-  \`,
-})
-export class UserProfileEditorComponent {
-  readonly authStateService = inject(AuthStateService);
-
-  saveName(name: string) {
-    this.authStateService.updateProfileMutation.mutate({name});
-    // Invalidation updates both TopbarComponent and UserProfileEditorComponent synchronously!
+  updateName(): void {
+    const names = ['Alex Rivera', 'Jordan Lee', 'Taylor Morgan', 'Sam Chen'];
+    const current = this.currentUserQuery.value();
+    if (!current || this.currentUserQuery.isRefreshing()) return;
+    const name = names[(names.indexOf(current.name) + 1) % names.length];
+    void this.updateProfileMutation.mutate({name});
   }
-}`);
+}
 
-  readonly databaseServiceCode = highlight(`// 1. Dynamic Parameterized Feature Service
-@Injectable({providedIn: 'root'})
+@Component({
+  selector: 'app-auth-placement-demo',
+  imports: [ClarityModule, SpinnerComponent, TranslatePipe, QueryStatusDirective],
+  templateUrl: './auth-placement-demo.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AuthPlacementDemoComponent {
+  readonly authStateService = inject(AuthStateService);
+}
+`);
+
+  readonly authHtmlCode = highlight(`<div cds-layout="vertical gap:sm">
+  <div class="card p-3">
+    <div class="card-header font-weight-semibold">
+      {{ 'queryResource.simulatedTopbar' | translate }}
+    </div>
+    <div class="card-block">
+      @if (authStateService.currentUserQuery.isInitialLoading()) {
+        <cll-spinner inline [size]="'sm'" />
+        <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
+      } @else if (authStateService.currentUserQuery.value(); as user) {
+        @if (authStateService.currentUserQuery.isRefreshing()) {
+          <cll-spinner inline [size]="'sm'" />
+        }
+        <span>
+          <strong>{{ user.name }}</strong> ({{ user.role }}) &middot;
+          <span class="text-secondary">{{ user.email }}</span>
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="card p-3 m-t-sm">
+    <div class="card-header font-weight-semibold">
+      {{ 'queryResource.simulatedProfile' | translate }}
+    </div>
+    <div class="card-block" cds-layout="vertical gap:sm">
+      @if (authStateService.currentUserQuery.value(); as user) {
+        <p class="m-0">
+          {{ 'queryResource.activeUser' | translate }}: <code>{{ user.name }}</code> &middot;
+          {{ 'mutateResource.statusLabel' | translate }}:
+          <span [appQueryStatus]="authStateService.currentUserQuery.status()">{{
+            authStateService.currentUserQuery.status()
+          }}</span>
+        </p>
+      }
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        [clrLoading]="authStateService.updateProfileMutation.isLoading()"
+        [disabled]="
+          authStateService.updateProfileMutation.isLoading() ||
+          authStateService.currentUserQuery.isLoading() ||
+          !authStateService.currentUserQuery.hasValue()
+        "
+        (click)="authStateService.updateName()"
+      >
+        <clr-icon shape="refresh" />
+        {{ 'queryResource.updateNameBtn' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+`);
+
+  readonly databaseServiceCode = highlight(`import {Component, inject, Injectable, signal} from '@angular/core';
+import {SpinnerComponent} from 'clr-lift';
+import {queryResource} from 'ngx-lift';
+import {DatabaseService} from './database.service';
+
+@Injectable()
 export class DatabaseStateService {
-  private readonly http = inject(HttpClient);
-  readonly activeDatabaseId = signal<string | null>(null);
+  private readonly databaseService = inject(DatabaseService);
 
-  // queryResource reacts automatically whenever activeDatabaseId() changes
+  readonly activeDatabaseId = signal('db-pg-01');
+  readonly databases = [
+    {id: 'db-pg-01', name: 'Production PostgreSQL'},
+    {id: 'db-ch-02', name: 'Analytics ClickHouse'},
+    {id: 'db-rd-03', name: 'Session Cache Redis'},
+  ];
   readonly databaseDetailsQuery = queryResource(() => {
     const id = this.activeDatabaseId();
-    if (!id) return undefined; // Idle state when unselected
-
     return {
       key: ['databases', id],
-      loader: () => this.http.get<DatabaseDetails>(\`/api/databases/\${id}\`),
-      staleTime: 30_000,
+      loader: () => this.databaseService.getDatabase(id),
+      staleTime: 10_000,
     };
   });
-
-  selectDatabase(id: string) {
+  selectDatabase(id: string): void {
     this.activeDatabaseId.set(id);
   }
 }
 
-// 2. Master View: List Component
+// Provide the service at the feature shell, not at root.
 @Component({
-  selector: 'app-database-list',
+  imports: [SpinnerComponent],
+  providers: [DatabaseStateService],
   template: \`
-    @for (db of databases; track db.id) {
-      <button
-        [class.active]="dbService.activeDatabaseId() === db.id"
-        (click)="dbService.selectDatabase(db.id)"
-      >
-        {{ db.name }}
-      </button>
+    @for (db of databaseStateService.databases; track db.id) {
+      <button (click)="databaseStateService.selectDatabase(db.id)">{{ db.name }}</button>
+    }
+    @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
+      <cll-spinner inline size="sm" />
+    } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
+      <h4>{{ details.name }}</h4>
+      <p>{{ details.engine }} · {{ details.cpu }} / {{ details.ram }}</p>
+      <span>{{ databaseStateService.databaseDetailsQuery.status() }}</span>
     }
   \`,
 })
-export class DatabaseListComponent {
-  readonly dbService = inject(DatabaseStateService);
-  readonly databases = [
-    {id: 'db-pg-01', name: 'Production PostgreSQL'},
-    {id: 'db-ch-02', name: 'Analytics ClickHouse'},
-  ];
-}
-
-// 3. Detail View: Detail Component
-@Component({
-  selector: 'app-database-detail',
-  template: \`
-    @if (dbService.activeDatabaseId(); as id) {
-      @if (dbService.databaseDetailsQuery.isInitialLoading()) {
-        <clr-spinner />
-      } @else if (dbService.databaseDetailsQuery.value(); as details) {
-        @if (dbService.databaseDetailsQuery.isRefreshing()) { <clr-spinner /> }
-        <h3>{{ details.name }}</h3>
-        <p>{{ details.engine }} | {{ details.cpu }}</p>
-      }
-    }
-  \`,
-})
-export class DatabaseDetailComponent {
-  readonly dbService = inject(DatabaseStateService);
+export class DatabaseFeatureComponent {
+  readonly databaseStateService = inject(DatabaseStateService);
 }`);
 
-  readonly componentPlacementCode = highlight(`// Direct Component Placement:
-// Best for self-contained, single-use views where no other component
-// needs to observe or coordinate with this data.
+  readonly componentPlacementCode =
+    highlight(`import {ChangeDetectionStrategy, Component, inject, Injectable, input} from '@angular/core';
+import {AlertComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {queryResource} from 'ngx-lift';
+import {QueryStatusDirective} from '../query-status.directive';
+
+@Injectable({providedIn: 'root'})
+export class ProjectService {
+  private projectReads = 0;
+
+  async getProject(id: string): Promise<{id: string; name: string; revision: number}> {
+    const revision = ++this.projectReads;
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    return {
+      id,
+      name: id === 'website-redesign' ? 'Website redesign' : 'Mobile application',
+      revision,
+    };
+  }
+}
 
 @Component({
-  selector: 'app-project-detail',
+  selector: 'app-project-detail-demo',
+  imports: [AlertComponent, SpinnerComponent, TranslatePipe, QueryStatusDirective],
   template: \`
     @if (projectQuery.isInitialLoading()) {
-      <clr-spinner />
+      <cll-spinner inline size="sm" />
     } @else if (projectQuery.value(); as project) {
-      @if (projectQuery.isRefreshing()) { <clr-spinner /> }
-      <h2>{{ project.name }}</h2>
-      <button (click)="projectQuery.reload()">Refresh</button>
+      <div cds-layout="vertical gap:sm">
+        <h3>{{ project.name }}</h3>
+        <p data-testid="project-revision">{{ 'queryResource.projectRevision' | translate }}: {{ project.revision }}</p>
+        <span [appQueryStatus]="projectQuery.status()">{{ projectQuery.status() }}</span>
+        @if (projectQuery.isRefreshing()) {
+          <cll-spinner inline size="sm" />
+        }
+        <button type="button" class="btn btn-sm btn-outline" (click)="projectQuery.reload()">
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
+    }
+    @if (projectQuery.error(); as error) {
+      <cll-alert [content]="error.message" [alertType]="'danger'" />
     }
   \`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectDetailComponent {
-  private readonly http = inject(HttpClient);
-  readonly projectId = input.required<string>();
+export class ProjectDetailDemoComponent {
+  private readonly projectService = inject(ProjectService);
 
-  // Self-contained: automatically created on mount, destroyed on unmount.
-  // Directly reads the component's signal input:
-  readonly projectQuery = queryResource(() => ({
-    key: ['projects', this.projectId()],
-    loader: () => this.http.get<Project>(\`/api/projects/\${this.projectId()}\`),
-    staleTime: 30_000,
-  }));
+  readonly projectId = input.required<string>();
+  readonly projectQuery = queryResource(() => {
+    const id = this.projectId();
+    return {
+      key: ['projects', id],
+      loader: () => this.projectService.getProject(id),
+      staleTime: 30_000,
+    };
+  });
 }`);
 
-  readonly coalesceCode = highlight(`// Real-world scenario: Two independent components mounted on the same page
-// (e.g. Global Topbar and Main Dashboard) both requesting the same cluster metrics.
+  readonly componentPlacementHtmlCode = highlight(`<app-project-detail-demo projectId="website-redesign" />`, 'html');
 
-// 1. Top Navigation Bar Component:
+  readonly coalesceCode =
+    highlight(`import {ChangeDetectionStrategy, Component, inject, Injectable, input, signal, viewChild} from '@angular/core';
+import {SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {queryResource} from 'ngx-lift';
+import {QueryStatusDirective} from '../query-status.directive';
+
+interface ServerMetrics {
+  activeUsers: number;
+  cpuLoad: number;
+  memoryUsage: number;
+  timestamp: string;
+}
+
+@Injectable()
+export class MetricsService {
+  readonly readCount = signal(0);
+
+  async getMetrics(): Promise<ServerMetrics> {
+    this.readCount.update((count) => count + 1);
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    return {
+      activeUsers: 142 + Math.floor(Math.random() * 20),
+      cpuLoad: Math.floor(35 + Math.random() * 25),
+      memoryUsage: Math.floor(60 + Math.random() * 15),
+      timestamp: new Date().toLocaleTimeString(),
+    };
+  }
+}
+
 @Component({
-  selector: 'app-topbar-status',
-  template: \`
-    @if (metricsQuery.value(); as metrics) {
-      <span>Active Users: {{ metrics.activeUsers }} ({{ metricsQuery.status() }})</span>
-    }
-  \`,
+  selector: 'app-metrics-widget',
+  imports: [SpinnerComponent, TranslatePipe, QueryStatusDirective],
+  template: \`<div class="card widget-card">
+    <div class="card-header">
+      <div class="widget-header-text">
+        <div class="card-title">
+          <span class="label label-info m-r-xs">{{ variant() === 'topbar' ? 'Component 1' : 'Component 2' }}</span>
+          {{ (variant() === 'topbar' ? 'queryResource.widgetATitle' : 'queryResource.widgetBTitle') | translate }}
+        </div>
+        <div class="card-subtitle text-muted">
+          {{ (variant() === 'topbar' ? 'queryResource.widgetASubtitle' : 'queryResource.widgetBSubtitle') | translate }}
+        </div>
+      </div>
+      @if (metricsQuery.isLoading()) {
+        <cll-spinner inline [size]="'sm'" class="m-l-xs" />
+      }
+    </div>
+    <div class="card-block">
+      @if (metricsQuery.value(); as data) {
+        <div class="widget-metrics">
+          <p class="p7">
+            {{ (variant() === 'topbar' ? 'queryResource.activeUsers' : 'queryResource.memoryUsage') | translate }}:
+            <strong
+              >{{ variant() === 'topbar' ? data.activeUsers : data.memoryUsage
+              }}{{ variant() === 'dashboard' ? '%' : '' }}</strong
+            >
+          </p>
+          <p class="p7">
+            {{ 'queryResource.cpuLoad' | translate }}: <strong>{{ data.cpuLoad }}%</strong>
+          </p>
+          <p class="p7">
+            {{ 'queryResource.status' | translate }}:
+            <span [appQueryStatus]="metricsQuery.status()">{{ metricsQuery.status() }}</span>
+          </p>
+          <p class="p7 text-muted">{{ 'queryResource.updated' | translate }}: {{ data.timestamp }}</p>
+        </div>
+      }
+    </div>
+  </div> \`,
+  styleUrl: './metrics-widget.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopbarStatusComponent {
-  private readonly http = inject(HttpClient);
+export class MetricsWidgetComponent {
+  private readonly metricsService = inject(MetricsService);
 
+  readonly variant = input.required<'topbar' | 'dashboard'>();
   readonly metricsQuery = queryResource(() => ({
     key: ['metrics', 'cluster-overview'],
-    loader: () => this.http.get<ServerMetrics>('/api/metrics'),
-    staleTime: 5000,
+    loader: () => this.metricsService.getMetrics(),
+    staleTime: 4000,
+    gcTime: 0,
   }));
 }
 
-// 2. Main Dashboard Component:
 @Component({
-  selector: 'app-dashboard-metrics',
-  template: \`
-    @if (metricsQuery.value(); as metrics) {
-      <div>CPU: {{ metrics.cpuLoad }}% | Memory: {{ metrics.memoryUsage }}%</div>
-    }
-    <button (click)="metricsQuery.reload()">Reload Query</button>
-  \`,
+  selector: 'app-metrics-demo',
+  imports: [MetricsWidgetComponent, TranslatePipe],
+  providers: [MetricsService],
+  template: \` <div cds-layout="vertical gap:sm">
+    <div class="query-actions">
+      <span class="badge badge-info">{{
+        'queryResource.actualHttpCalls' | translate: [metricsService.readCount()]
+      }}</span>
+      <button type="button" class="btn btn-sm btn-primary" (click)="refreshMetrics()">
+        {{ 'queryResource.reloadQuery' | translate }}
+      </button>
+    </div>
+
+    <div class="clr-row m-t-xs">
+      <div class="clr-col-12 clr-col-md-6 widget-col">
+        <app-metrics-widget variant="topbar" />
+      </div>
+      <div class="clr-col-12 clr-col-md-6 widget-col">
+        <app-metrics-widget variant="dashboard" />
+      </div>
+    </div>
+  </div>\`,
 })
-export class DashboardMetricsComponent {
-  private readonly http = inject(HttpClient);
+export class MetricsDemoComponent {
+  readonly metricsService = inject(MetricsService);
 
-  readonly metricsQuery = queryResource(() => ({
-    key: ['metrics', 'cluster-overview'],
-    loader: () => this.http.get<ServerMetrics>('/api/metrics'),
-    staleTime: 5000,
-  }));
-}
+  readonly metricsWidget = viewChild(MetricsWidgetComponent);
 
-// When the route loads both components concurrently:
-// QueryClient detects the shared key ['metrics', 'cluster-overview'],
-// executes only 1 HTTP request, and synchronously delivers the data to both!`);
+  refreshMetrics(): void {
+    this.metricsWidget()?.metricsQuery.reload();
+  }
+}`);
 
-  readonly pollCode = highlight(`// Polling is coordinated globally by QueryClient:
-// - Multiple observers join the fastest requested interval.
-// - Automatically pauses when document visibility is hidden.
-// - Resumes on visibility return without duplicate bursts.
-readonly pollingEnabled = signal(false);
+  readonly pollCode = highlight(`import {signal} from '@angular/core';
+import {queryResource} from 'ngx-lift';
 
-readonly statusQuery = queryResource(
+pollingIntervalSeconds = signal(3);
+
+pollingEnabled = signal(false);
+
+pollNetworkCount = signal(0);
+
+pollingQuery = queryResource(
   () =>
     this.pollingEnabled()
       ? {
           key: ['system', 'heartbeat'],
-          loader: () => this.api.checkHealth(),
+          loader: async () => {
+            this.pollNetworkCount.update((c) => c + 1);
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            return {
+              status: 'ONLINE',
+              pingMs: Math.floor(15 + Math.random() * 12),
+              lastPing: new Date().toLocaleTimeString(),
+            };
+          },
           staleTime: 0,
         }
       : undefined,
   {
-    pollInterval: () => (this.pollingEnabled() ? 3000 : undefined),
+    pollInterval: () => (this.pollingEnabled() ? this.pollingIntervalSeconds() * 1000 : undefined),
   },
 );
 
 togglePolling() {
   this.pollingEnabled.update((v) => !v);
+}`);
+
+  readonly mutationCode = highlight(`import {signal} from '@angular/core';
+import {mutateResource, queryResource} from 'ngx-lift';
+interface DemoUser {
+  id: number;
+  name: string;
+  role: string;
 }
 
-// In template:
-// <button (click)="togglePolling()">{{ pollingEnabled() ? 'Stop Polling' : 'Start Polling' }}</button>`);
+userList = signal<DemoUser[]>([
+  {id: 1, name: 'Alice Smith', role: 'Platform Admin'},
+  {id: 2, name: 'Bob Jones', role: 'DevOps Engineer'},
+]);
 
-  readonly mutationCode = highlight(`// Define query with cache tags
-readonly usersQuery = queryResource(() => ({
+usersQuery = queryResource(() => ({
   key: ['users', 'list'],
   tags: [{type: 'users'}],
-  loader: () => this.userService.getAll(),
-  staleTime: 60_000,
+  staleTime: 60000,
+  loader: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    return [...this.userList()];
+  },
 }));
 
-// Define mutation that invalidates 'users' tag on success
-readonly addUserMutation = mutateResource((payload: NewUser) => this.userService.create(payload), {
-  invalidatesTags: [{type: 'users'}],
-  concurrency: 'exhaust', // prevents double-submit
-});
+newUserName = signal('');
+
+newUserRole = signal('Platform Engineer');
+
+addUserMutation = mutateResource(
+  async (payload: {name: string; role: string}) => {
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    const created: DemoUser = {
+      id: Date.now(),
+      name: payload.name,
+      role: payload.role,
+    };
+    this.userList.update((list) => [...list, created]);
+    return created;
+  },
+  {
+    invalidateTags: [{type: 'users'}],
+    concurrency: 'exhaust',
+  },
+);
 
 submitNewUser() {
   if (!this.newUserName().trim()) return;
-  this.addUserMutation.mutate({
+  void this.addUserMutation.mutate({
     name: this.newUserName().trim(),
     role: this.newUserRole(),
   });
   this.newUserName.set('');
-}
-
-// In template:
-// <button [disabled]="!newUserName().trim() || addUserMutation.isLoading()" (click)="submitNewUser()">
-//   Add Member
-// </button>
-// -> usersQuery automatically refetches fresh data in the background!`);
+}`);
 
   // ---------------------------------------------------------------------------
   // API Reference Tables
