@@ -16,8 +16,8 @@ policy. Read the relevant existing design spec and current source first. The
 2. Create or update the spec under `docs/design/ngx-lift/` or `docs/design/clr-lift/` using the
    [template](../../../docs/design/templates/component-design-spec.md). Preserve the existing canonical spec when one
    exists. Include goals, non-goals, acceptance use cases, minimal/advanced examples, failure states and compatibility.
-3. Apply the [form contract](../../../docs/design/clr-lift/forms-compatibility-design-spec.md) to value controls. For display,
-   navigation and utilities, explain the relevant integration instead of adding an artificial form value.
+3. Apply the [form contract](../../../docs/design/clr-lift/forms-compatibility-design-spec.md) to value controls. For
+   display, navigation and utilities, explain the relevant integration instead of adding an artificial form value.
 4. Present the draft/API changes for review before implementation unless explicit approval already covers that scope.
    Keep proposal status and unavailable exports clear. On a design-only request, stop after producing the reviewable
    docs.

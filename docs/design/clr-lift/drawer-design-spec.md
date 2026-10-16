@@ -1,6 +1,9 @@
 # Drawer
 
-Status: **Draft; API approval pending**. Updated October 15, 2026. New symbols are proposed.
+Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
+October 16, 2026.
+
+Status: **Draft; API approval pending**. Updated October 16, 2026. New symbols are proposed.
 
 ## Background
 
@@ -14,17 +17,19 @@ Detail and edit panels need shared overlay behavior that works with embedded for
 
 ## Non-Goals
 
-Not now: arbitrary nested drawers, a new navigation router, multi-window management or a wizard framework. Outside this
-API: owning/submitting the embedded form. Drawer contains forms; its open state is not a form value.
+### Not now
 
-## Industry evidence and gap
+arbitrary nested drawers, a new navigation router, multi-window management or a wizard framework. Outside this API:
+owning/submitting the embedded form. Drawer contains forms; its open state is not a form value.
+
+## Industry evidence and current gaps
 
 [NG-ZORRO Drawer](https://ng.ant.design/components/drawer/en) illustrates placements, close controls and content/footer
 composition. Compare [Material sidenav](https://material.angular.dev/components/sidenav/overview) for persistent
 navigation versus a transient detail panel. Use Clarity modal, buttons and tokens as the visual/focus reference, and CDK
 overlay/focus public APIs as needed. A side-positioned modal still has to satisfy modal interaction requirements.
 
-## Use cases
+## Use cases and acceptance
 
 | ID  | Task                                     | Acceptance and recovery                                                                   |
 | --- | ---------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -34,7 +39,7 @@ overlay/focus public APIs as needed. A side-positioned modal still has to satisf
 | D4  | Open combobox/calendar inside the drawer | Nested overlay remains operable; Escape dismisses the top layer first                     |
 | D5  | View on a phone or switch route          | Responsive width and deterministic teardown; return focus only to a connected element     |
 
-## Proposed API and example
+## Public API and examples
 
 Propose `DrawerComponent` / `cll-drawer`: `open` model, required `title`, `modal=true`, logical `placement='end'`, and
 `size='medium'` with documented responsive tokens. Header/body/footer slots follow existing projection conventions. All
@@ -48,14 +53,20 @@ Route teardown is disposal, not a promise to prevent router navigation; the appl
 </cll-drawer>
 ```
 
+## Behavior and architecture
+
 Close reason distinguishes close button, Escape and backdrop. Concurrent dismissal attempts share one pending guard;
 destroying/reopening invalidates a late result. Programmatic owner close is authoritative and does not recursively
-invoke the guard. Document whether Escape/backdrop can be disabled; always provide an accessible close path. Modal mode
-uses dialog semantics with `aria-modal`, focus trapping, inert background and restored focus. Nonmodal mode has no modal
-assertion, inert background or focus trap. Account for scroll locking, reduced motion and screen-reader title. Use
-Clarity spacing/colors and logical placement for RTL. Width stays within viewport; long body scrolls independently.
+invoke the guard. Document whether Escape/backdrop can be disabled; always provide an accessible close path.
 
-## Demo, tests and review decisions
+## Clarity, accessibility, and localization
+
+Modal mode uses dialog semantics with `aria-modal`, focus trapping, inert background and restored focus. Nonmodal mode
+has no modal assertion, inert background or focus trap. Account for scroll locking, reduced motion and screen-reader
+title. Use Clarity spacing/colors and logical placement for RTL. Width stays within viewport; long body scrolls
+independently.
+
+## Demo and validation plan
 
 Follow the [workflow](../component-development.md). Playground demonstrates modal/nonmodal, all embedded form modes,
 dirty guard cancel/failure, nested selection overlays, narrow layouts and runtime theme/language changes. Translate
@@ -70,3 +81,25 @@ Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive
 feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
 [shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
 value of their own. This requirement does not make proposed exports available.
+
+## Terminology
+
+Owner close changes open state directly. User dismissal passes through canClose. Modal mode isolates interaction;
+nonmodal mode leaves the page operable. Disposal is a lifetime boundary, not a dismiss request.
+
+## Compatibility, rollout, and risks
+
+Angular 21 and existing Clarity/CDK public APIs are the initial candidates; no new dependency is approved. The drawer is
+a form container. Use Angular 21 embedded form hosts now and native-field hosts after the upgrade; the drawer itself
+never gains a CVA. Browser overlay/scroll effects require a stable server fallback before any SSR claim.
+
+## Review decisions and delivery
+
+D1/D5 cover G1; D2/D3/D5 cover G2; D4 covers G3. Define guard rejection as a visible recoverable state before
+implementation. Maintainers must review modal default, named slots, nested overlay focus and close options; an
+accessible close path remains available while a guard is not pending.
+
+## Evidence
+
+Checked against the current public exports and source at base `e4a43f9` on October 16, 2026. No proposed feature exports
+or feature implementation exist; all feature demos/tests and measurements described here remain planned.

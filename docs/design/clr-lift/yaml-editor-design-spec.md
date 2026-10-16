@@ -1,6 +1,9 @@
 # YAML viewer, editor, and future form synchronization
 
-Status: **Draft; API approval pending**. Updated October 15, 2026. New symbols are proposed.
+Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
+October 16, 2026.
+
+Status: **Draft; API approval pending**. Updated October 16, 2026. New symbols are proposed.
 
 ## Background
 
@@ -17,12 +20,16 @@ Users need a reusable YAML surface now and a safe form/editor integration for la
 
 ## Non-Goals
 
-Not now: shipping application-specific Postgres create/edit integration, collaborative editing, a general IDE, multiple
-documents, custom YAML tags, or arbitrary schema discovery. Diff is a later increment after basic editing is reliable.
-Outside this API: backend authorization, persistence, Kubernetes admission, resource-version conflict resolution, and
-secret policy.
+### Not now
 
-## Industry evidence and existing behavior
+shipping application-specific Postgres create/edit integration, collaborative editing, a general IDE, multiple
+documents, custom YAML tags, or arbitrary schema discovery. Diff is a later increment after basic editing is reliable.
+
+### Outside this API
+
+backend authorization, persistence, Kubernetes admission, resource-version conflict resolution, and secret policy.
+
+## Industry evidence and current gaps
 
 An existing application's viewer, YAML editor and diff editor were inspected locally. Useful observed patterns include
 theme mapping, readonly/edit modes, resizing in tabs/split panels, model updates, and redaction at the display/export
@@ -74,7 +81,7 @@ acceptance evidence. No dependencies, package split, or engine implementation ar
 | Y7  | Edit a YAML field absent from the form                | Unknown fields survive subsequent form edits; incompatible edits block with a useful message                 |
 | Y8  | Reset, navigate away or replace the model             | Explicit dirty-draft handling; stale diagnostics and disposed models cannot update the next document         |
 
-## Proposed public API
+## Public API and examples
 
 Separate a lightweight `YamlViewerComponent` (`cll-yaml-viewer`, `text: string`) from `YamlEditorComponent`
 (`cll-yaml-editor`, form value `string`). Readonly viewer has no CVA; editor follows the Angular 21
@@ -108,7 +115,7 @@ Copy/download uses the supplied display text. Redaction is the caller's explicit
 and merely hiding it with CSS is unacceptable. The library does not infer secret paths. No resource content is logged.
 Do not expose raw Monaco/CodeMirror instance types in the default public API.
 
-## Text, parse and synchronization behavior
+## Behavior and architecture
 
 The editor always emits raw text edits, including invalid drafts. When configured, debounced parse/schema validation has
 an independent document revision and generation; a success for an older revision cannot mark the latest text valid.
@@ -157,7 +164,7 @@ application's nonce to editor styles. A nonce is a fresh per-response authorizat
 does not by itself settle every inline-style, Trusted Types or worker constraint. Verify the chosen engine and
 application build under an enforced production policy, with a useful text fallback when optional enhancement fails.
 
-### Presentation and validation
+## Clarity, accessibility, and localization
 
 Clarity controls, borders, typography, focus and light/dark tokens surround the text surface or optional engine. Syntax
 colors need an explicit accessible theme mapping. Translate toolbar, errors, diagnostics wrapper, announcements and
@@ -179,3 +186,31 @@ Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive
 feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
 [shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
 value of their own. This requirement does not make proposed exports available.
+
+## Terminology
+
+Draft text can be invalid; parse/schema/domain diagnostics have separate validity. A document revision identifies one
+text version; committed resource and current editor draft must never share ambiguous ownership.
+
+## Compatibility, rollout, and risks
+
+Base editor targets Angular 21 CVA; native fields follow the platform upgrade. Keep viewer rendering independent of
+forms/engines. Maintainers own approval of any engine/parser package and measured consumer cost; the dependency policy
+above is an acceptance requirement, not evidence that an optional package boundary already exists.
+
+## Review decisions and delivery
+
+Review Y1/Y2/Y4/Y8 for the native text shell first. Y3 requires an approved validation callback contract. Y5 applies
+only after an engine is approved; Y6/Y7 require a separately reviewed synchronization owner and document parser. This
+prevents future schema/sync work from being mistaken for base-editor release blockers.
+
+## Demo and validation plan
+
+Map G1 to Y1–Y5/Y8, G2 to Y2/Y8 and G3 to future Y6/Y7. The preceding validation requirements define planned playground,
+race, browser, CSP and memory checks. Base text delivery must pass its own forms/keyboard/reset cases without an engine;
+future integration tests must not be reported as executed today.
+
+## Evidence
+
+Checked against the current public exports and source at base `e4a43f9` on October 16, 2026. No proposed feature exports
+or feature implementation exist; all feature demos/tests and measurements described here remain planned.

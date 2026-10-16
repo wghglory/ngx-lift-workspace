@@ -1,6 +1,9 @@
 # Badges and labels: reuse before extension
 
-Status: **Draft; composition recommendation**. Updated October 15, 2026.
+Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
+October 16, 2026.
+
+Status: **Draft; composition recommendation**. Updated October 16, 2026.
 
 ## Background
 
@@ -14,16 +17,21 @@ Clarity provides separate badge and label primitives; the requested examples nee
 
 ## Non-Goals
 
-Not now: a general notification service, animated counters or a new color system. Outside this API: a form value.
-Badges/labels have no ngModel, CVA or native Signal Forms binding.
+### Not now
 
-## Industry evidence
+a general notification service, animated counters or a new color system.
+
+### Outside this API
+
+a form value. Badges/labels have no ngModel, CVA or native Signal Forms binding.
+
+## Industry evidence and current gaps
 
 The installed Clarity 18.4 package includes badge/label exports, and its website source includes labels with badges.
 [NG-ZORRO Badge](https://ng.ant.design/components/badge/en) provides reference cases for counts, overflow and dots.
 Adopt the distinctions and accessibility outcomes while retaining Clarity appearance.
 
-## Use cases
+## Use cases and acceptance
 
 | ID  | Task                                 | Recommended behavior                                                                             |
 | --- | ------------------------------------ | ------------------------------------------------------------------------------------------------ |
@@ -33,7 +41,7 @@ Adopt the distinctions and accessibility outcomes while retaining Clarity appear
 | N4  | Place an unread-count/dot on an icon | Verify Clarity positioning and accessible naming; add a small wrapper only if a real gap remains |
 | N5  | Convey severity without a number     | Include accessible status text; color alone is insufficient                                      |
 
-## API example and extension boundary
+## Public API and examples
 
 ```html
 <!-- Existing Clarity CSS composition; no proposed clr-lift export is required. -->
@@ -45,10 +53,43 @@ Approve its name and exact need before implementing. Define zero/negative/nonint
 accessible full count. Decorative duplicates should be hidden from screen readers; meaningful status belongs in the
 host's accessible name/description. Avoid a live announcement on every rapid count change.
 
-## Demo, tests and decision
+## Demo and validation plan
 
 Add Clarity-styled composition examples, including zero, overflow, long labels, icon anchors, theme/compact/RTL and all
 supported languages, with playground HTML. No form demos are necessary for a display-only composition; explain this in
 the demo. If a wrapper is approved, unit/E2E tests must cover actual accessible output and clipping on an interactive
 host. Current decision recommendation: document/reuse Clarity first and defer a new API. No new badge code or demo is
 delivered.
+
+## Terminology
+
+Badge is count/indicator, label is category text, and host accessible name communicates the full status/count.
+Composition uses existing Clarity primitives; a cll-badge wrapper remains an unapproved proposal.
+
+## Behavior and architecture
+
+Current recommendation is static host composition: no lift service, observer, cache or lifecycle is needed. If icon
+anchoring/overflow is approved, separate raw count from displayed overflow and define zero/invalid count handling before
+implementation. Avoid HTML interpretation of caller labels.
+
+## Clarity, accessibility, and localization
+
+Use text with severity, preserve full count in the host accessible description, and hide decorative duplication.
+Localize category/overflow labels; direction/theme/compact/zoom checks belong to actual host examples. A status dot
+needs a text equivalent. Native form fields are inapplicable.
+
+## Compatibility, rollout, and risks
+
+Reuse the installed Angular 21-compatible Clarity badge/label styles; no new export/dependency or peer change. A wrapper
+adds maintenance cost only if a consumer proves missing behavior. Existing composition is available; proposed wrapper
+names/options are not.
+
+## Review decisions and delivery
+
+N1/N2/N3/N5 cover G1; reuse across N1–N5 covers G2. Maintainers should accept composition first and require a named
+icon-anchor/overflow gap before approving a wrapper. Keep the full accessible count when displaying 99+.
+
+## Evidence
+
+Checked against the current public exports and source at base `e4a43f9` on October 16, 2026. Clarity composition is
+available; no clr-lift badge wrapper or new acceptance tests exist.
