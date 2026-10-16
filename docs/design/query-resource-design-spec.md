@@ -274,35 +274,476 @@ override defaults.
 DestroyRef disposal while configuring defaults. A plain `new QueryClient` is supported; hosts supply visibility/events
 and destruction. Each SSR request needs an isolated injector/client, with browser scheduling disabled.
 
-## Placement and Observable services
+## Placement Architecture: Component vs Service
 
-| Placement                         | Owner                                                                                            |
-| --------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Component field                   | Component injector owns the observer; application client shares cache                            |
-| Service returns definitions       | Component creates its own observer from centralized keys, loader and tags                        |
-| Service resource field            | Service provider injector owns its lifetime; root fields can last until application teardown     |
-| Service method creates a resource | Pass the caller's injector explicitly; an injectable method does not create an injection context |
+A query observer can be instantiated directly on an Angular `@Component` field or inside an `@Injectable()` service.
+Because `queryResource`, `queryResources`, and `mutateResource` rely on Angular's dependency injection context
+(`inject(QUERY_CLIENT)` and `inject(DestroyRef)`), both placement targets are first-class and officially supported.
 
-A cached finite service read retains an Observable contract:
+### Architectural Comparison
+
+| Dimension                    | Component Placement                                | Service Placement                                                 |
+| ---------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- |
+| **Injector & Owner**         | Component `Injector`                               | Service `Injector` (`providedIn: 'root'` or feature route)        |
+| **Observer Lifetime**        | Destroyed when component unmounts                  | Persists across route changes for service lifetime                |
+| **State Sharing**            | Local to one component instance                    | Shared synchronously across multiple components & routes          |
+| **Memory Cache**             | Shared globally by `QueryKey` in `QueryClient`     | Shared globally by `QueryKey` in `QueryClient`                    |
+| **Re-fetching Coordination** | Triggered locally (`query.reload()`)               | Triggered globally via service methods or shared signals          |
+| **Mutation Invalidation**    | Listens to tags; updates if mounted                | Listens to tags; updates active observers automatically           |
+| **Parameter Handling**       | Component signal inputs (`input()`)                | Service parameter signals (e.g. `activeId = signal(...)`)         |
+| **Boilerplate**              | Zero extra files; self-contained in view           | Requires an `@Injectable` service class                           |
+| **Best Used For**            | Isolated views, modals, forms, one-off detail tabs | Shared session/auth, master-detail workflows, cross-cutting state |
+
+### Component Placement: Pros and Cons
+
+- **Pros**:
+  - **Zero Indirection**: No extra service files needed for single-use views or isolated routes.
+  - **Automatic Teardown**: Observers detach immediately when the component is destroyed.
+  - **Native Signal Inputs**: Can directly capture Angular signal inputs (e.g., `userId = input.required<string>()`) in
+    the query definition.
+- **Cons**:
+  - **Observer Re-creation**: Navigating away and back creates a new observer (though `QueryClient` serves cached data
+    immediately if within `gcTime`).
+  - **Duplicated Definitions**: If two distant components need the same data, they must duplicate the key and loader
+    definition unless extracted.
+  - **Harder Cross-View Coordination**: An external navbar cannot easily trigger a reload on an isolated component's
+    query.
+
+### When Component Placement is Mandatory or Preferable
+
+Component placement is not just an alternative; in many scenarios it is either **mandatory** or **highly preferable**:
+
+1. **MANDATORY: Direct Component Signal Inputs (`input()` / `input.required()`)**
+   - When a query depends on component inputs (e.g. `userId = input.required<string>()`), declaring `queryResource`
+     inside the component directly captures `this.userId()`.
+   - A singleton service cannot access individual component inputs. Attempting to manage this via a service requires
+     imperative setters or synchronization effects, causing race conditions and state leakage.
+2. **MANDATORY: Multi-Instance Reusable Components (Side-by-Side Views, Card Grids, Dialogs)**
+   - When the same component is rendered multiple times concurrently on the same screen (e.g. comparing two clusters
+     side-by-side, or multiple metric cards in a grid), each component instance MUST have its own independent
+     `queryResource` observer.
+   - If the query were placed in a singleton service, all instances would conflict and overwrite each other's active
+     parameters.
+3. **PREFERABLE: Ephemeral UI Lifecycles (Modals, Drawers, Wizard Steps)**
+   - When data is only needed while a modal or slide-over drawer is open, component placement ensures the observer
+     detaches and stops background polling immediately when closed.
+4. **PREFERABLE: Isolated Single-Use Feature Views (KISS Principle)**
+   - For a route or view where no other part of the app cares about the data (e.g. `/audit-logs` or `/release-notes`),
+     creating an extra `@Injectable()` service file introduces unnecessary boilerplate and indirection.
+
+### The 80/20 Rule: Where Should Most Queries Live?
+
+In traditional Angular (RxJS `BehaviorSubject`), developers were taught to put all data fetching in services because
+components had no memory cache—destroying a component meant losing data.
+
+With **`ngx-lift` and `QueryClient`**, the cache and request deduplication are **already globally managed by
+`QueryKey`**. Therefore:
+
+- **~70–80% of queries belong directly in Components**: Most views, cards, modals, and route pages are self-contained.
+  Placing `queryResource` in the component provides direct `input()` binding, zero boilerplate, and automatic lifecycle
+  management while still enjoying global caching and deduplication.
+- **~20–30% of queries belong in Services**: Reserve service placement for truly cross-cutting, application-wide state:
+  1. Global Session / Auth (`currentUserQuery`, permissions).
+  2. Active global workspace/tenant selection that coordinates decoupled sibling components (e.g. Topbar, Sidebar,
+     Router breadcrumbs).
+  3. Master-detail coordination between independent views that have no parent-child relationship.
+
+### Service Placement: Pros and Cons
+
+- **Pros**:
+  - **Single Source of Truth**: Multiple components (navbar, sidebar, widgets, modals) bind to the exact same reactive
+    Signal.
+  - **Cross-Component Synchronization**: Calling `service.query.reload()` or executing a mutation in one component
+    updates all observing components synchronously.
+  - **Route-Crossing Continuity**: In a root service, active observers retain their state across route changes without
+    re-mounting flashes.
+  - **Clean View Components**: Components remain thin UI presentations, delegating data management and keys to domain
+    services.
+- **Cons**:
+  - **Service Boilerplate**: Requires creating and maintaining service classes for simple views.
+  - **State Retention Caution**: Parameter signals held on singleton services (e.g., `activeTenantId`) must be reset
+    explicitly during logout or session switches.
+
+---
+
+### Canonical Service Patterns
+
+#### Pattern A: Global Auth & User Profile Service (Root Singleton)
+
+A global session service provides the currently authenticated user and a profile update mutation to the entire
+application.
 
 ```typescript
-// Injectable service members.
-private readonly http = inject(HttpClient);
-private readonly client = inject(QUERY_CLIENT);
+// auth-state.service.ts
+import {HttpClient} from '@angular/common/http';
+import {Injectable, inject} from '@angular/core';
+import {mutateResource, queryResource} from 'ngx-lift';
 
-users$(scope: string) {
-  return fetchQueryObservable(this.client, {
-    key: ['users', scope],
-    tags: [{type: 'Users', scope}],
-    loader: () => this.http.get<User[]>('/api/users'),
-    staleTime: 30_000,
-  });
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+@Injectable({providedIn: 'root'})
+export class AuthStateService {
+  private readonly http = inject(HttpClient);
+
+  // 1. Centralized cached query resource (follows *Query naming convention)
+  readonly currentUserQuery = queryResource(() => ({
+    key: ['auth', 'current-user'],
+    tags: [{type: 'User', id: 'me'}],
+    loader: () => this.http.get<UserProfile>('/api/me'),
+    staleTime: 60_000,
+  }));
+
+  // 2. Centralized mutation that invalidates the cached user tag (follows *Mutation naming convention)
+  readonly updateProfileMutation = mutateResource(
+    (changes: Partial<UserProfile>) => this.http.patch<UserProfile>('/api/me', changes),
+    {invalidatesTags: [{type: 'User', id: 'me'}]},
+  );
 }
 ```
 
-Use `observeQueryObservable` or signal resources for ongoing invalidation updates. Explicit removal completes snapshot
-Observable subscribers; resubscribe to observe a recreated entry. Signal resources can manually reattach on reload.
-Private one-off service reads need not enter a shared cache.
+**Consuming in Components (Zero RxJS Boilerplate):**
+
+```typescript
+// topbar.component.ts
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {AuthStateService} from './auth-state.service';
+
+@Component({
+  selector: 'app-topbar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <header class="topbar">
+      @if (authStateService.currentUserQuery.isInitialLoading()) {
+        <span class="spinner spinner-inline">Loading user…</span>
+      } @else if (authStateService.currentUserQuery.value(); as user) {
+        @if (authStateService.currentUserQuery.isRefreshing()) {
+          <span class="spinner spinner-inline">Refreshing user…</span>
+        }
+        <span>{{ user.name }} ({{ user.role }})</span>
+      }
+    </header>
+  `,
+})
+export class TopbarComponent {
+  // Inject the service directly:
+  readonly authStateService = inject(AuthStateService);
+}
+```
+
+```typescript
+// user-profile-editor.component.ts
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {AuthStateService} from './auth-state.service';
+
+@Component({
+  selector: 'app-user-profile-editor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule],
+  template: `
+    @if (authStateService.currentUserQuery.value(); as user) {
+      <div class="profile-card">
+        <h3>Edit Profile</h3>
+        <input [(ngModel)]="newName" placeholder="Enter new name" />
+        <button [disabled]="!newName() || authStateService.updateProfileMutation.isLoading()" (click)="saveName()">
+          {{ authStateService.updateProfileMutation.isLoading() ? 'Saving…' : 'Save Name' }}
+        </button>
+      </div>
+    }
+  `,
+})
+export class UserProfileEditorComponent {
+  readonly authStateService = inject(AuthStateService);
+  readonly newName = signal('');
+
+  saveName(): void {
+    if (!this.newName().trim()) return;
+    this.authStateService.updateProfileMutation.mutate({name: this.newName().trim()});
+    this.newName.set('');
+    // Both TopbarComponent and UserProfileEditorComponent update synchronously!
+  }
+}
+```
+
+---
+
+#### Pattern B: Dynamic Master-Detail Feature Service (Parameterized Query)
+
+When a master list and detail views share an active selection, a feature service binds selection state to a reactive
+query.
+
+```typescript
+// database-state.service.ts
+import {HttpClient} from '@angular/common/http';
+import {Injectable, inject, signal} from '@angular/core';
+import {queryResource} from 'ngx-lift';
+
+export interface DatabaseDetails {
+  id: string;
+  name: string;
+  engine: string;
+  status: string;
+  cpu: string;
+  ram: string;
+}
+
+@Injectable({providedIn: 'root'})
+export class DatabaseStateService {
+  private readonly http = inject(HttpClient);
+
+  // Active parameter signal owned by the service
+  readonly activeDatabaseId = signal<string | null>(null);
+
+  // queryResource reacts automatically whenever activeDatabaseId() changes
+  readonly databaseDetailsQuery = queryResource(() => {
+    const id = this.activeDatabaseId();
+    if (!id) return undefined; // Enters idle state when unselected
+
+    return {
+      key: ['databases', id],
+      tags: [{type: 'Databases', id}],
+      loader: () => this.http.get<DatabaseDetails>(`/api/databases/${id}`),
+      staleTime: 30_000,
+    };
+  });
+
+  selectDatabase(id: string): void {
+    this.activeDatabaseId.set(id);
+  }
+
+  clearSelection(): void {
+    this.activeDatabaseId.set(null);
+  }
+}
+```
+
+**Consuming in Master and Detail Components:**
+
+```typescript
+// database-list.component.ts (Master View)
+@Component({
+  selector: 'app-database-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="list-group">
+      @for (db of databases; track db.id) {
+        <button
+          class="list-group-item"
+          [class.active]="dbService.activeDatabaseId() === db.id"
+          (click)="dbService.selectDatabase(db.id)"
+        >
+          {{ db.name }}
+        </button>
+      }
+    </div>
+  `,
+})
+export class DatabaseListComponent {
+  readonly dbService = inject(DatabaseStateService);
+  readonly databases = [
+    {id: 'db-pg-01', name: 'Production PostgreSQL'},
+    {id: 'db-ch-02', name: 'Analytics ClickHouse'},
+  ];
+}
+```
+
+```typescript
+// database-detail.component.ts (Detail View)
+@Component({
+  selector: 'app-database-detail',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @if (dbService.activeDatabaseId(); as id) {
+      <div class="card">
+        @if (dbService.databaseDetailsQuery.isInitialLoading()) {
+          <p>Loading database specifications…</p>
+        } @else if (dbService.databaseDetailsQuery.isInitialError()) {
+          <p class="error">Could not load database details.</p>
+          <button (click)="dbService.databaseDetailsQuery.reload()">Retry</button>
+        } @else if (dbService.databaseDetailsQuery.value(); as details) {
+          <h3>{{ details.name }}</h3>
+          <p>Engine: {{ details.engine }} | Status: {{ details.status }}</p>
+          <p>Compute: {{ details.cpu }} / {{ details.ram }}</p>
+          <button (click)="dbService.databaseDetailsQuery.reload()">Refresh Specs</button>
+        }
+      </div>
+    } @else {
+      <p class="text-muted">Select a database from the list to inspect specifications.</p>
+    }
+  `,
+})
+export class DatabaseDetailComponent {
+  readonly dbService = inject(DatabaseStateService);
+}
+```
+
+---
+
+#### Pattern C: Parallel Multi-Resource Monitoring (`queryResources`)
+
+When a service needs to monitor multiple independent cluster nodes or tenant health checks:
+
+```typescript
+// cluster-monitor.service.ts
+import {HttpClient} from '@angular/common/http';
+import {Injectable, inject, signal} from '@angular/core';
+import {queryResources} from 'ngx-lift';
+
+export interface NodeHealth {
+  nodeId: string;
+  status: 'healthy' | 'degraded';
+  loadAverage: number;
+}
+
+@Injectable({providedIn: 'root'})
+export class ClusterMonitorService {
+  private readonly http = inject(HttpClient);
+  readonly monitoredNodeIds = signal<string[]>(['node-1', 'node-2', 'node-3']);
+
+  readonly nodeQueries = queryResources(
+    this.monitoredNodeIds,
+    (nodeId) => ({
+      key: ['nodes', nodeId, 'health'],
+      loader: () => this.http.get<NodeHealth>(`/api/nodes/${nodeId}/health`),
+    }),
+    {pollInterval: 10_000},
+  );
+}
+```
+
+---
+
+## RxJS Interoperability & Low-Level Adapters
+
+`ngx-lift` is built around the **Core Triad**: `queryResource`, `queryResources`, and `mutateResource`. These three
+Signal-native primitives cover the data fetching, collection mapping, and cache invalidation needs of modern Angular
+applications.
+
+`fetchQueryObservable` and `observeQueryObservable` are **low-level interop adapters** provided specifically for
+boundaries where an RxJS `Observable` contract is mandatory (such as Angular Route Resolvers, Route Guards, NgRx
+Effects, or existing operator chains).
+
+The interactive query demos focus on `queryResource`, `queryResources`, and `mutateResource`. Low-level adapter examples
+remain documented below rather than adding a separate interactive adapter component.
+
+### Architectural Decision: Why NO Parallel `fetchQuery$` or `query$`
+
+1. **Avoids API Fragmentation & Choice Paralysis**: Providing duplicate parallel APIs (`queryResource` vs `query$`,
+   `fetchQuery` vs `fetchQuery$`) leads developers to question whether they should write Signal-based or
+   Observable-based components.
+2. **Signal-First Modern Angular**: Modern Angular (v18–v21) treats Signals as the primary view-model reactivity layer.
+   Observables remain essential for continuous event streams and HTTP pipelines, but component templates and state
+   models belong to Signals.
+3. **Alignment with Industry Standards**:
+   - **TanStack Query Angular**: Exposes only `injectQuery` and `injectMutation` (no `query$` Observable stream).
+   - **Angular Core**: Exposes `resource()` and `httpResource()` (no `httpResourceObservable`).
+   - **NgRx SignalStore**: Signal-first; provides `@ngrx/operators` (`rxMethod`) only as a boundary connector.
+4. **Clean Boundary Bridges**: If an application requires an Observable from a Signal query, Angular's official
+   `toObservable(query.value)` or `from(client.fetchQuery(def))` provides standard, idiomatic translation without
+   bloating the library API.
+
+### Low-Level Adapter Usage
+
+#### 1. `fetchQueryObservable`: Angular Route Guards & Resolvers
+
+Use `fetchQueryObservable` when an Angular router contract expects a cold, single-emission `Observable<T>` that
+completes after reading through the cache.
+
+```typescript
+// tenant.resolver.ts
+import {inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ResolveFn} from '@angular/router';
+import {QUERY_CLIENT, fetchQueryObservable} from 'ngx-lift';
+import {Observable} from 'rxjs';
+
+export interface Tenant {
+  id: string;
+  name: string;
+}
+
+export const tenantResolver: ResolveFn<Tenant> = (route): Observable<Tenant> => {
+  const client = inject(QUERY_CLIENT);
+  const http = inject(HttpClient);
+  const tenantId = route.paramMap.get('id')!;
+
+  return fetchQueryObservable(client, {
+    key: ['tenants', tenantId],
+    loader: () => http.get<Tenant>(`/api/tenants/${tenantId}`),
+    staleTime: 60_000,
+  });
+};
+```
+
+#### 2. `fetchQueryObservable`: RxJS Operator Composition Pipeline
+
+When composing queries with RxJS operators (e.g. `switchMap`, `debounceTime`):
+
+```typescript
+// search-integration.service.ts
+import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {FormControl} from '@angular/forms';
+import {QUERY_CLIENT, fetchQueryObservable} from 'ngx-lift';
+import {debounceTime, distinctUntilChanged, switchMap, Observable} from 'rxjs';
+
+export interface SearchResult {
+  items: string[];
+}
+
+@Injectable({providedIn: 'root'})
+export class SearchIntegrationService {
+  private readonly http = inject(HttpClient);
+  private readonly client = inject(QUERY_CLIENT);
+
+  createSearchStream(searchControl: FormControl<string>): Observable<SearchResult> {
+    return searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term) =>
+        fetchQueryObservable(this.client, {
+          key: ['search', term],
+          loader: () => this.http.get<SearchResult>(`/api/search?q=${encodeURIComponent(term)}`),
+          staleTime: 10_000,
+        }),
+      ),
+    );
+  }
+}
+```
+
+#### 3. `observeQueryObservable`: Streaming Cache Snapshots into RxJS Stores
+
+Use `observeQueryObservable` when an RxJS state store (such as NgRx ComponentStore) needs a continuous stream of cache
+lifecycle snapshots (`QuerySnapshot<T>`):
+
+```typescript
+// legacy-store.service.ts
+import {inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {QUERY_CLIENT, observeQueryObservable, QuerySnapshot} from 'ngx-lift';
+import {Observable} from 'rxjs';
+
+@Injectable()
+export class LegacyFleetStore {
+  private readonly client = inject(QUERY_CLIENT);
+  private readonly http = inject(HttpClient);
+
+  readonly fleetSnapshot$: Observable<QuerySnapshot<FleetMetrics>> = observeQueryObservable(
+    this.client,
+    {
+      key: ['fleet', 'metrics'],
+      loader: () => this.http.get<FleetMetrics>('/api/fleet'),
+    },
+    {pollInterval: 5000},
+  );
+}
+```
 
 ## Session transitions and writes
 

@@ -43,10 +43,18 @@ test('new query examples are localized in every supported language', async ({pag
     await page.evaluate((locale) => localStorage.setItem('clr-lift-lang', locale), locale);
     await page.reload();
     const translated = readTranslations(locale);
-    const demo = page.getByTestId('observable-query-examples');
-    await expect(demo.locator('h2')).toHaveText(translated['queryExamples.title']);
-    await expect(demo.getByRole('button', {name: translated['queryExamples.create'], exact: true})).toBeVisible();
-    await expect(demo).toContainText(translated['queryGuide.basicIntro']);
+    const demo = page.getByTestId('query-placement-architecture');
+    await expect(demo.locator('h2')).toHaveText(translated['queryResource.placementTitle']);
+    await expect(
+      demo.getByRole('button', {name: translated['queryResource.updateNameBtn'], exact: true}),
+    ).toBeVisible();
+    await expect(page.getByTestId('query-introduction')).toContainText(translated['queryResource.lifecycleTitle']);
+    await expect(
+      page.getByTestId('query-demo-mutation').getByRole('button', {
+        name: translated['queryResource.addMemberBtn'],
+        exact: true,
+      }),
+    ).toBeVisible();
     await expect(demo).not.toContainText('!! Key');
     await expect(demo).not.toContainText(/\{\d+\}/);
     const failure = page.getByTestId('query-failure-examples');
@@ -116,37 +124,44 @@ test('deadlines cancel hanging subscriptions and write failures preserve input w
   await expect(demo.getByTestId('failure-retained')).toContainText('43');
 });
 
-test('Observable queries gate dependencies, distinguish refresh, and recover from errors', async ({page}) => {
-  const parallel = page.getByTestId('query-demo-parallel');
-  await expect(parallel).toContainText(/Tenant A\s*resolved/);
-  await expect(page.getByTestId('query-demo-dependent')).toContainText('Tenant A database');
-  await page.getByRole('button', {name: 'Refresh tenant', exact: true}).click();
-  await expect(page.getByTestId('query-demo-loading')).toContainText('isRefreshing: true');
-  await expect(page.getByTestId('query-demo-loading')).toContainText('isInitialLoading: false');
-  await expect(parallel).toContainText(/Tenant A\s*resolved/);
-  await page.getByRole('button', {name: 'Fail next tenant read', exact: true}).click();
-  await expect(parallel.getByRole('alert')).toContainText('Tenant read failed');
-  await page.getByRole('button', {name: 'Retry tenant', exact: true}).click();
-  await expect(parallel).toContainText(/Tenant A\s*resolved/);
-  await expect(parallel.getByRole('alert')).toHaveCount(0);
+test('queryResource coalesces independent observers and retains data during refresh', async ({page}) => {
+  const demo = page.getByTestId('query-demo-coalesce');
+  const calls = demo.locator('.badge').filter({hasText: /^Actual HTTP Calls:/});
+  await expect(demo.locator('.label-success')).toHaveCount(2);
+  await expect(calls).toHaveText('Actual HTTP Calls: 1');
+  const activeUsers = await demo.locator('.widget-metrics').first().locator('strong').first().textContent();
+  await demo.getByRole('button', {name: 'Reload Query', exact: true}).click();
+  await expect(calls).toHaveText('Actual HTTP Calls: 2');
+  await expect(demo.locator('.widget-metrics')).toHaveCount(2);
+  await expect(demo.locator('.widget-metrics').first().locator('strong').first()).toHaveText(activeUsers ?? '');
+  await expect(demo.locator('.label-success')).toHaveCount(2);
+  await expect(calls).toHaveText('Actual HTTP Calls: 2');
 });
 
-test('three service callers coalesce and a mutation refreshes live scoped observers', async ({page}) => {
-  await page.getByRole('button', {name: 'Mount service widgets', exact: true}).click();
-  await expect(page.getByTestId('query-demo-widget')).toHaveCount(3);
-  await expect(page.getByTestId('query-demo-counts')).toContainText('"GET /query-demo/tenants/a/preferences": 1');
-  await page.getByRole('button', {name: 'Refresh service widgets', exact: true}).click();
-  await expect(page.getByTestId('query-demo-counts')).toContainText('"GET /query-demo/tenants/a/preferences": 2');
-  const databases = page.getByTestId('query-demo-dependent');
-  await expect(databases).toContainText('Tenant A database');
-  await page.getByTestId('query-demo-name').fill('Browser-created database');
-  await page.getByRole('button', {name: 'Create database', exact: true}).click();
-  await expect(databases).toContainText('Browser-created database');
-  await expect(page.getByTestId('query-demo-snapshot')).toContainText('resolved, 2 databases');
-  await page.getByTestId('query-demo-tenant').selectOption('b');
-  await expect(databases).toContainText('Tenant B database');
-  await expect(databases).not.toContainText('Browser-created database');
-  await expect(page.getByTestId('query-demo-widget').first()).toContainText('tenant b');
+test('mutateResource invalidates the team query and updates the rendered members', async ({page}) => {
+  const demo = page.getByTestId('query-demo-mutation');
+  await expect(demo.locator('tbody tr')).toHaveCount(2);
+  await demo.locator('input[name="newUserName"]').fill('Browser-created member');
+  await demo.locator('select[name="newUserRole"]').selectOption('Site Reliability Engineer');
+  await demo.getByRole('button', {name: 'Add Member', exact: true}).click();
+  await expect(demo.getByRole('button', {name: 'Saving...', exact: true})).toBeDisabled();
+  await expect(demo.locator('tbody tr')).toHaveCount(3);
+  await expect(demo.locator('tbody tr').last()).toContainText('Browser-created member');
+  await expect(demo.locator('tbody tr').last()).toContainText('Site Reliability Engineer');
+  await expect(demo.locator('input[name="newUserName"]')).toHaveValue('');
+});
+
+test('parameterized queryResource switches database details without retaining the previous scope', async ({page}) => {
+  await page.locator('#tab-service-pattern-b').click();
+  const detail = page.locator('#tab-content-service-pattern-b');
+  await expect(detail.locator('h4')).toHaveText('Production PostgreSQL');
+  await detail.getByRole('button', {name: 'Analytics ClickHouse', exact: true}).click();
+  await expect(detail.locator('h4')).toHaveCount(0);
+  await expect(detail.locator('h4')).toHaveText('Analytics ClickHouse');
+  await expect(detail).toContainText('ClickHouse 24.1');
+  await detail.getByRole('button', {name: 'Production PostgreSQL', exact: true}).click();
+  await expect(detail.locator('h4')).toHaveText('Production PostgreSQL');
+  await expect(detail).toContainText('PostgreSQL 16.2');
 });
 
 test('collection recovery retries one failed row and preserves successful siblings', async ({page}) => {
@@ -159,13 +174,10 @@ test('collection recovery retries one failed row and preserves successful siblin
   await expect(page.getByTestId('failure-request-counts')).toContainText('"GET rows/b": 2');
 });
 
-test('query guide controls have spacing, Clarity labels and a separate collection menu', async ({page}) => {
-  const select = page.getByTestId('query-demo-tenant');
+test('query guide uses Clarity controls, status labels and a separate collection menu', async ({page}) => {
+  const select = page.getByTestId('query-demo-mutation').locator('select[name="newUserRole"]');
   await expect(select.locator('xpath=ancestor::clr-select-container')).toBeVisible();
-  const first = await page.getByRole('button', {name: 'Refresh tenant', exact: true}).boundingBox();
-  const second = await page.getByRole('button', {name: 'Fail next tenant read', exact: true}).boundingBox();
-  expect(first && second && second.x - (first.x + first.width)).toBeGreaterThan(4);
-  await expect(page.getByTestId('query-demo-parallel').locator('.label-success')).toHaveCount(2);
+  await expect(page.getByTestId('query-demo-coalesce').locator('.label-success')).toHaveCount(2);
   await page.getByRole('link', {name: 'queryResources', exact: true}).first().click();
   await expect(page).toHaveURL(/queryResources$/);
   await expect(page.locator('h1')).toHaveText('queryResources');

@@ -66,8 +66,60 @@
     margin-top: 0.5rem;
   }
 
+  input[clrInput],
+  select[clrSelect] {
+    width: 16rem;
+    max-width: 100%;
+  }
+
+  ::ng-deep {
+    .clr-input-wrapper,
+    .clr-select-wrapper {
+      width: 16rem;
+      max-width: 100%;
+    }
+  }
+
   .form-actions {
     margin-top: 1rem;
     padding-top: 0.25rem;
+  }
+}
+
+.diag-cards-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.diag-card-col {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.diag-metric-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+
+  .diag-card-title {
+    min-height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .diag-card-val {
+    min-height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
   }
 }

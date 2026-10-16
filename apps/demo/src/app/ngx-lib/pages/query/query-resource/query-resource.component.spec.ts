@@ -56,6 +56,39 @@ describe('QueryResourceDemoComponent', () => {
     expect(component.newUserName()).toBe('');
   });
 
+  it('keeps the cached topbar user visible while a mutation revalidates the query', async () => {
+    await component.demoAuthQuery.execute();
+    fixture.detectChanges();
+    const topbar = fixture.nativeElement.querySelector('#tab-content-service-pattern-a .card');
+    expect(topbar.querySelector('strong')?.textContent).toBe('Alex Rivera');
+
+    vi.useFakeTimers();
+    try {
+      component.cycleDemoUserName();
+      expect(component.demoAuthMutation.isLoading()).toBe(true);
+      await vi.advanceTimersByTimeAsync(400);
+      fixture.detectChanges();
+
+      expect(component.demoAuthQuery.isRefreshing()).toBe(true);
+      expect(topbar.querySelector('strong')?.textContent).toBe('Alex Rivera');
+      expect(topbar.querySelector('cll-spinner')).not.toBeNull();
+
+      await vi.advanceTimersByTimeAsync(300);
+      fixture.detectChanges();
+      expect(component.demoAuthQuery.isRefreshing()).toBe(false);
+      expect(topbar.querySelector('strong')?.textContent).toBe('Jordan Lee');
+      expect(topbar.querySelector('cll-spinner')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('selects demo database and updates details query', () => {
+    expect(component.demoSelectedDbId()).toBe('db-pg-01');
+    component.selectDemoDb('db-ch-02');
+    expect(component.demoSelectedDbId()).toBe('db-ch-02');
+  });
+
   it('refreshes diagnostics automatically and stops the inspector timer on destroy', async () => {
     vi.useFakeTimers();
     const liveFixture = TestBed.createComponent(QueryResourceDemoComponent);
@@ -82,13 +115,13 @@ describe('QueryResourceDemoComponent', () => {
   it('introduces the tool before examples and uses Clarity controls and status labels', () => {
     const root: HTMLElement = fixture.nativeElement;
     const intro = root.querySelector('[data-testid="query-introduction"]');
-    const examples = root.querySelector('[data-testid="observable-query-examples"]');
-    if (!intro || !examples) throw new Error('Missing guide introduction or examples');
-    expect(intro.compareDocumentPosition(examples) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const coalesce = root.querySelector('[data-testid="query-demo-coalesce"]');
+    if (!intro || !coalesce) throw new Error('Missing guide introduction or coalesce demo');
+    expect(intro.compareDocumentPosition(coalesce) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(root.querySelector('clr-select-container select[clrSelect]')).not.toBeNull();
     expect(root.querySelector('[data-testid="query-demo-dynamic"]')).toBeNull();
     expect(root.querySelector('[data-testid="query-failure-examples"] .card')).toBeNull();
-    expect(root.querySelector('[data-testid="query-demo-parallel"] .label')).not.toBeNull();
+    expect(root.querySelector('[data-testid="query-demo-coalesce"] .label')).not.toBeNull();
   });
 
   it('updates live diagnostics snapshot', () => {
