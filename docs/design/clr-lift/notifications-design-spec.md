@@ -91,7 +91,14 @@ set. `closed` distinguishes manual close (`true`) from timer (`false`); destruct
 
 Translated close labels and Clarity severities. Native action buttons provide keyboard semantics. Host owns message and
 action translations. Alert container uses role=alert; repeated rapid additions need host-level announcement policy.
-Toast hover/focus currently share one flag; leaving one interaction can clear protection for the other.
+Toast hover and focus-within must be tracked independently. Auto-close remains paused while either interaction is
+active, including focus moving between buttons within one toast. Preserve the current full-interval retry policy at
+expiry.
+
+Toast containers are fixed to the viewport below the configured header offset. Entry/exit motion and long stacks must
+not change document scroll dimensions or page layout. Bound vertical overflow inside the toast stack, keep narrow
+viewport cards inside its available width, and preserve keyboard access to offscreen notifications. Page/body overflow
+must remain under the host application's control.
 
 ## Demo and validation plan
 
@@ -119,3 +126,14 @@ documentation callouts describe APIs.
 
 Services, container template and ToastComponent inspected October 16, 2026. Findings are source-derived; no exploit,
 browser acceptance or test execution is claimed in this docs PR.
+
+### Toast interaction regression evidence
+
+Independent hover/focus-within regressions pass in the 9-test toast unit suite. The two real demo interaction scenarios
+pass in Chromium, Firefox and WebKit (6 checks). clr-lift tests, lint, typecheck and build and demo-e2e lint/typecheck
+pass. Expiry still retries the full configured interval while interaction remains active.
+
+The viewport regressions reproduce horizontal animation overflow and vertical stack growth before the fix. Fixed
+container sizing passes 15 browser checks across Chromium, Firefox and WebKit, including 320px, 390px and desktop
+widths, sampled animation times, eight-toast stacks and keyboard access. The fix changes toast containment only; it does
+not set document/body overflow.

@@ -1,4 +1,4 @@
-<div class="toast" (mouseover)="mouseOver(true)" (mouseleave)="mouseOver(false)">
+<div class="toast">
   <span class="gradient"></span>
   <div class="icon-container">
     @switch (toastType()) {
@@ -114,8 +114,6 @@
             class="close-button"
             [attr.aria-label]="'toast.close-notification' | translate"
             (click)="close(true)"
-            (focus)="focus(true)"
-            (blur)="focus(false)"
           >
             <span>
               <clr-icon shape="times" size="16" />
@@ -127,24 +125,12 @@
     <ng-content select=".toast-description" />
     <div class="button-container">
       @if (primaryButtonText()) {
-        <button
-          type="button"
-          class="toast-button"
-          (focus)="focus(true)"
-          (blur)="focus(false)"
-          (click)="primaryButtonClick.emit()"
-        >
+        <button type="button" class="toast-button" (click)="primaryButtonClick.emit()">
           {{ primaryButtonText() }}
         </button>
       }
       @if (secondaryButtonText()) {
-        <button
-          type="button"
-          class="toast-button secondary"
-          (focus)="focus(true)"
-          (blur)="focus(false)"
-          (click)="secondaryButtonClick.emit()"
-        >
+        <button type="button" class="toast-button secondary" (click)="secondaryButtonClick.emit()">
           {{ secondaryButtonText() }}
         </button>
       }
