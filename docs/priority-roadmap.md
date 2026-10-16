@@ -22,6 +22,13 @@ and ⏸️ **Deferred** are not completed work. Local validation, remote merge a
 | 10   | Previous order 3: SSR/hydration                                                              | ⏸️ Lower priority                           | Request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency need dedicated consumers. Node DOM tests do not prove SSR or hydration.                                                                    |
 | 11   | Large-collection scheduling and advanced cache features                                      | ⏸️ Demand-driven                            | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback require concrete consumers and ownership contracts.                                                                    |
 
+## Repairs before extending the affected APIs
+
+The [active gap register](design/implementation-gaps.md) owns source evidence and acceptance criteria. Fix automatic
+alert-string HTML trust first (F1), then pending-read disable handling (F2), mixed hover/focus toast timeout (F3), and
+pagination progress/total-result guards (F4). These fixes are pending; this documentation PR does not implement them.
+They can ship on Angular 21 without waiting for the deferred platform upgrade.
+
 ## Acceptance boundaries
 
 The [integration guide](guides/demo-and-library-integration.md) owns loading, localization and shared lifecycle;

@@ -1,5 +1,10 @@
 # Kubernetes retry configuration and demos
 
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Approval: existing API; this audit does not approve new behavior.
+
+## Public API and examples
+
 `retryOnK8sBackoff` retains its default 429-only policy, five total attempts, exponential equal jitter, 30s single-wait
 cap and 60s scheduled-wait budget. The budget excludes time spent on network requests.
 
@@ -45,3 +50,78 @@ default POST failure, explicitly opted-in Kubernetes POST recovery, and rejectio
 next handler exercises the production interceptor without changing application-wide HTTP configuration.
 
 See the [command reference](../../COMMANDS.md) for validation commands.
+
+## Background
+
+Sources: [operator](../../../libs/ngx-lift/src/lib/operators/k8s-retry-backoff.operator.ts) and
+[interceptor](../../../libs/ngx-lift/src/lib/interceptors/k8s-retry-backoff.interceptor.ts), with regression suites
+beside each source.
+
+Kubernetes throttling can carry minimum retry waits. The operator and interceptor share policy while keeping request
+method safety and interceptor resubscription distinct.
+
+## Terminology
+
+maxAttempts counts total attempts, including the original; retry log maxRetries is maxAttempts minus one. A server hint
+is a minimum wait. Scheduled-wait budget excludes network execution time; it is not an end-to-end request deadline.
+
+## Goals
+
+- G1: Retry configured throttled reads with bounded attempts/waits while respecting server minimum hints.
+- G2: Require explicit method policy and endpoint safety before retrying POST/PATCH.
+
+## Non-Goals
+
+### Not now
+
+A full request deadline, circuit breaker or shared query scheduler.
+
+### Outside this API
+
+Proving a write had no side effect or manufacturing endpoint idempotency.
+
+## Use cases and acceptance
+
+| ID  | Task                       | Initial state/action               | Outcome                                 | Failure/recovery                           | Demo/test                          |
+| --- | -------------------------- | ---------------------------------- | --------------------------------------- | ------------------------------------------ | ---------------------------------- |
+| K1  | Recover throttled read     | Eligible failure with/without hint | Honor minimum wait or bounded jitter    | Stop when wait cannot fit budget           | k8s-retry-backoff.operator.spec.ts |
+| K2  | Protect writes             | Default POST/PATCH failure         | No retry unless explicit method opt-in  | Endpoint owner proves write safety         | interceptor tests/demo             |
+| K3  | Refresh downstream headers | Retry through interceptor chain    | Reinvoke downstream handler per attempt | Same retry ownership avoids multiplication | interceptor regressions            |
+
+## Behavior and architecture
+
+The interceptor defers next(req) so each subscription traverses downstream interceptors again. The operator retries
+source subscriptions; an eager Promise cannot be restarted by resubscription. Invalid options fail before retrying.
+Server hints that exceed available wait/budget are rejected rather than shortened.
+
+## Clarity, accessibility, and localization
+
+Headless API; it owns no control labels, focus or translations. Application UI distinguishes initial loading/error from
+retained-data refresh where applicable. Forms invoke/observe this API without assigning it a CVA/native field value.
+
+## Demo and validation plan
+
+Existing operator/interceptor demos show default method exclusion and explicit safe opt-in. Adjacent tests cover
+Retry-After, Kubernetes hints, date validation, jitter/budgets, predicate/logging failures and downstream
+resubscription. Clock/jitter fixtures make timing assertions deterministic.
+
+## Compatibility, rollout, and risks
+
+Angular 21/HttpClient/RxJS; no new dependency. Keep operator retry ownership separate from interceptor/query retries.
+Subscription cancellation stops waits/Observable work; no SSR-specific scheduling behavior is claimed.
+
+## Industry evidence and current gaps
+
+Kubernetes' general TooManyRequests constructor above is response-shape evidence, not write-safety evidence. Adopt
+minimum-wait handling; reject implicit POST/PATCH eligibility based only on the body reason.
+
+## Review decisions and delivery
+
+This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
+[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+
+## Evidence
+
+Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
+identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
+in the corresponding PR and pipeline.

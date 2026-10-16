@@ -1,5 +1,13 @@
 # Query design and production contracts
 
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Approval: existing API; this audit does not approve new behavior.
+
+## Background
+
+Sources: [query exports](../../../libs/ngx-lift/src/lib/query/index.ts),
+[QueryClient](../../../libs/ngx-lift/src/lib/query/query-client.ts) and the adjacent query regression suites.
+
 Implemented APIs: `QueryClient`, `queryResource`, `queryResources`, `fetchQueryObservable`, `observeQueryObservable` and
 `provideQueryClient`. See the [publishing procedure](../../DEPLOYMENT.md) for release gates.
 
@@ -21,7 +29,10 @@ This is the single query design entry point. Mutation execution has its own
 Each canonical query key identifies one cache entry. `QueryClient` owns cache state, in-flight work, generations and
 scheduling; Angular resources own observers. Multiple observers share data without sharing their component lifetimes.
 
-## Naming
+## Terminology
+
+A key identifies one cache entry within a QueryClient. Tags describe invalidation dependencies; an observer owns one
+consumer lifetime. A logical read includes all its attempts and waits, not just one HTTP request.
 
 | Value                                            | Example                                  |
 | ------------------------------------------------ | ---------------------------------------- |
@@ -33,7 +44,7 @@ scheduling; Angular resources own observers. Multiple observers share data witho
 Avoid calling a resource handle `user`, `tenants` or `create`: the name should distinguish its controls from the data or
 an action method. The same convention appears in the demo callouts.
 
-## Basic read and dependent requests
+## Public API and examples
 
 Configure `provideHttpClient()` in application providers. The root query client requires no extra registration.
 
@@ -157,7 +168,7 @@ Requests start in parallel without a concurrency limit. Paginate, limit selectio
 large lists. `maxEntries` cannot evict active observers or pending work. Prebuilt-definition arrays, heterogeneous
 collections and a shared concurrency scheduler are deferred until a consumer needs them.
 
-## Definitions and shared cache policy
+## Behavior and architecture
 
 `QueryDefinition<T>` uses `key`, `loader`, optional `tags`, `staleTime`, `gcTime`, `cancelOnNoObservers`, `retry` and
 `deadlineMs`. Its loader returns `Observable<T> | PromiseLike<T>` and receives `{abortSignal, refresh}`.
@@ -287,7 +298,7 @@ Because `queryResource`, `queryResources`, and `mutateResource` rely on Angular'
 | **Injector & Owner**         | Component `Injector`                               | Service `Injector` (`providedIn: 'root'` or feature route)        |
 | **Observer Lifetime**        | Destroyed when component unmounts                  | Persists across route changes for service lifetime                |
 | **State Sharing**            | Local to one component instance                    | Shared synchronously across multiple components & routes          |
-| **Memory Cache**             | Shared globally by `QueryKey` in `QueryClient`     | Shared globally by `QueryKey` in `QueryClient`                    |
+| **Memory Cache**             | Shared by key within the same QueryClient          | Shared by key within the same QueryClient                         |
 | **Re-fetching Coordination** | Triggered locally (`query.reload()`)               | Triggered globally via service methods or shared signals          |
 | **Mutation Invalidation**    | Listens to tags; updates if mounted                | Listens to tags; updates active observers automatically           |
 | **Parameter Handling**       | Component signal inputs (`input()`)                | Service parameter signals (e.g. `activeId = signal(...)`)         |
@@ -309,44 +320,16 @@ Because `queryResource`, `queryResources`, and `mutateResource` rely on Angular'
   - **Harder Cross-View Coordination**: An external navbar cannot easily trigger a reload on an isolated component's
     query.
 
-### When Component Placement is Mandatory or Preferable
+### Instance and injector ownership
 
-Component placement is not just an alternative; in many scenarios it is either **mandatory** or **highly preferable**:
+Place an observer on a component when its parameters/lifetime belong to that instance. A service provided by that
+component can own the same isolated lifecycle and receive parameter signals through a factory; component placement is
+not mandatory. A singleton with one mutable selected ID cannot independently represent several simultaneous cards. For
+shared selection across views, a route/root service can own one observer intentionally.
 
-1. **MANDATORY: Direct Component Signal Inputs (`input()` / `input.required()`)**
-   - When a query depends on component inputs (e.g. `userId = input.required<string>()`), declaring `queryResource`
-     inside the component directly captures `this.userId()`.
-   - A singleton service cannot access individual component inputs. Attempting to manage this via a service requires
-     imperative setters or synchronization effects, causing race conditions and state leakage.
-2. **MANDATORY: Multi-Instance Reusable Components (Side-by-Side Views, Card Grids, Dialogs)**
-   - When the same component is rendered multiple times concurrently on the same screen (e.g. comparing two clusters
-     side-by-side, or multiple metric cards in a grid), each component instance MUST have its own independent
-     `queryResource` observer.
-   - If the query were placed in a singleton service, all instances would conflict and overwrite each other's active
-     parameters.
-3. **PREFERABLE: Ephemeral UI Lifecycles (Modals, Drawers, Wizard Steps)**
-   - When data is only needed while a modal or slide-over drawer is open, component placement ensures the observer
-     detaches and stops background polling immediately when closed.
-4. **PREFERABLE: Isolated Single-Use Feature Views (KISS Principle)**
-   - For a route or view where no other part of the app cares about the data (e.g. `/audit-logs` or `/release-notes`),
-     creating an extra `@Injectable()` service file introduces unnecessary boilerplate and indirection.
-
-### The 80/20 Rule: Where Should Most Queries Live?
-
-In traditional Angular (RxJS `BehaviorSubject`), developers were taught to put all data fetching in services because
-components had no memory cache—destroying a component meant losing data.
-
-With **`ngx-lift` and `QueryClient`**, the cache and request deduplication are **already globally managed by
-`QueryKey`**. Therefore:
-
-- **~70–80% of queries belong directly in Components**: Most views, cards, modals, and route pages are self-contained.
-  Placing `queryResource` in the component provides direct `input()` binding, zero boilerplate, and automatic lifecycle
-  management while still enjoying global caching and deduplication.
-- **~20–30% of queries belong in Services**: Reserve service placement for truly cross-cutting, application-wide state:
-  1. Global Session / Auth (`currentUserQuery`, permissions).
-  2. Active global workspace/tenant selection that coordinates decoupled sibling components (e.g. Topbar, Sidebar,
-     Router breadcrumbs).
-  3. Master-detail coordination between independent views that have no parent-child relationship.
+Closing an overlay stops observation only if its owning component/injector is destroyed or its query is disabled; hiding
+a retained component does not dispose it. Cache sharing follows the injected/explicit QueryClient, not a global key
+namespace. Choose ownership from actual consumers; there is no measured component/service percentage target.
 
 ### Service Placement: Pros and Cons
 
@@ -354,7 +337,7 @@ With **`ngx-lift` and `QueryClient`**, the cache and request deduplication are *
   - **Single Source of Truth**: Multiple components (navbar, sidebar, widgets, modals) bind to the exact same reactive
     Signal.
   - **Cross-Component Synchronization**: Calling `service.query.reload()` or executing a mutation in one component
-    updates all observing components synchronously.
+    starts asynchronous refetches whose results update observing components.
   - **Route-Crossing Continuity**: In a root service, active observers retain their state across route changes without
     re-mounting flashes.
   - **Clean View Components**: Components remain thin UI presentations, delegating data management and keys to domain
@@ -371,7 +354,8 @@ With **`ngx-lift` and `QueryClient`**, the cache and request deduplication are *
 #### Pattern A: Global Auth & User Profile Service (Root Singleton)
 
 A global session service provides the currently authenticated user and a profile update mutation to the entire
-application.
+application. The compact examples below assume one session. Production callers must apply the scoped key/tag and logout
+purge contract in [Session transitions and writes](#session-transitions-and-writes).
 
 ```typescript
 // auth-state.service.ts
@@ -439,12 +423,13 @@ export class TopbarComponent {
 // user-profile-editor.component.ts
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {AlertComponent} from 'clr-lift';
 import {AuthStateService} from './auth-state.service';
 
 @Component({
   selector: 'app-user-profile-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule],
+  imports: [FormsModule, AlertComponent],
   template: `
     @if (authStateService.currentUserQuery.value(); as user) {
       <div class="profile-card">
@@ -453,6 +438,9 @@ import {AuthStateService} from './auth-state.service';
         <button [disabled]="!newName() || authStateService.updateProfileMutation.isLoading()" (click)="saveName()">
           {{ authStateService.updateProfileMutation.isLoading() ? 'Saving…' : 'Save Name' }}
         </button>
+        @if (authStateService.updateProfileMutation.error()) {
+          <cll-alert content="Could not save the profile. Your draft is retained; try again." />
+        }
       </div>
     }
   `,
@@ -461,11 +449,16 @@ export class UserProfileEditorComponent {
   readonly authStateService = inject(AuthStateService);
   readonly newName = signal('');
 
-  saveName(): void {
-    if (!this.newName().trim()) return;
-    this.authStateService.updateProfileMutation.mutate({name: this.newName().trim()});
-    this.newName.set('');
-    // Both TopbarComponent and UserProfileEditorComponent update synchronously!
+  async saveName(): Promise<void> {
+    const name = this.newName().trim();
+    if (!name) return;
+    try {
+      await this.authStateService.updateProfileMutation.mutate({name});
+      if (this.newName().trim() === name) this.newName.set('');
+      // Both views observe the invalidated query after its background refetch completes.
+    } catch {
+      // The mutation error drives the alert; retain the draft for retry.
+    }
   }
 }
 ```
@@ -640,12 +633,15 @@ remain documented below rather than adding a separate interactive adapter compon
    Observables remain essential for continuous event streams and HTTP pipelines, but component templates and state
    models belong to Signals.
 3. **Alignment with Industry Standards**:
-   - **TanStack Query Angular**: Exposes only `injectQuery` and `injectMutation` (no `query$` Observable stream).
+   - **TanStack Query Angular**: `injectQuery` and `injectMutation` are comparable signal-facing entry points; their
+     full API surface is not an ngx-lift contract.
    - **Angular Core**: Exposes `resource()` and `httpResource()` (no `httpResourceObservable`).
-   - **NgRx SignalStore**: Signal-first; provides `@ngrx/operators` (`rxMethod`) only as a boundary connector.
-4. **Clean Boundary Bridges**: If an application requires an Observable from a Signal query, Angular's official
-   `toObservable(query.value)` or `from(client.fetchQuery(def))` provides standard, idiomatic translation without
-   bloating the library API.
+   - **NgRx SignalStore**: Signal-first; provides
+     [`rxMethod` in `@ngrx/signals/rxjs-interop`](https://ngrx.io/guide/signals/rxjs-integration).
+4. **Clean Boundary Bridges**: If an application requires an Observable from a Signal query, Angular's
+   `toObservable(query.value)` observes value changes; `defer(() => from(client.fetchQuery(def)))` starts a read at
+   subscription time. These have different snapshot, error and cancellation semantics and provide explicit translation
+   without bloating the library API.
 
 ### Low-Level Adapter Usage
 
@@ -799,7 +795,7 @@ frequency and destruction. Redact identifiers when exporting telemetry.
 
 The demo inspector observes its application client. Isolated failure/service examples own separate clients.
 
-## Production scope and deferred work
+## Compatibility, rollout, and risks
 
 Browser contracts have unit, real-browser and strict installed-package evidence. The installed Angular 21.2 DOM fixture
 runs in separate zoneless and ZoneJS processes, testing session isolation, cancellation, refresh recovery, collection
@@ -817,8 +813,58 @@ concurrency scheduler require concrete consumers and ownership contracts. `fetch
 separate prefetch helper. Publication additionally requires dependency triage/audit, compatible versioning,
 final-revision checks and authentication; [publishing](../../DEPLOYMENT.md) defines those gates.
 
+## Industry evidence and current gaps
+
 Primary-source background: [Angular resources](https://angular.dev/guide/signals/resource),
 [TanStack query defaults](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults),
 [query cancellation](https://tanstack.com/query/latest/docs/framework/react/guides/query-cancellation), and
 [RTK Query tags](https://redux-toolkit.js.org/rtk-query/usage/automated-refetching). Those libraries' defaults and full
 feature sets are comparisons, not ngx-lift contracts.
+
+## Goals
+
+- G1: Share finite server reads by scoped identity while keeping observer lifetimes independent.
+- G2: Expose initial/refresh failure, retries and recovery without stale-generation publication.
+- G3: Reconcile dynamic collections and explicit writes through bounded cache retention and scoped invalidation.
+
+## Non-Goals
+
+### Not now
+
+Persistence, offline queues, infinite queries, shared rollback and a global concurrency scheduler.
+
+### Outside this API
+
+Authorization, transport idempotency, form ownership and backend pagination policy.
+
+## Use cases and acceptance
+
+| ID  | Task                 | Initial state/action          | Outcome                                           | Failure/recovery                    | Demo/test                               |
+| --- | -------------------- | ----------------------------- | ------------------------------------------------- | ----------------------------------- | --------------------------------------- |
+| Q1  | Share read           | Two same-key observers        | One logical read; independent disposal            | Stale generation cannot publish     | query-client/resource regressions       |
+| Q2  | Compare dynamic rows | Add/reorder/remove keys       | Stable ordered refs; removed observers detach     | One row failure leaves peers usable | query-resources.spec.ts; lifecycle demo |
+| Q3  | Recover refresh      | Retained data; retry/deadline | Data and failure metadata remain distinct         | Explicit recovery clears error      | retry/recovery tests                    |
+| Q4  | Change session       | Disable then purge old scope  | Old credentials/data never publish into new scope | Accepted writes keep captured scope | package DOM fixture; query tests        |
+
+## Demo and validation plan
+
+Existing query lifecycle matrix and cluster comparison demos exercise shared versus instance observers, retained data,
+collections and mutations. Adjacent query tests cover normalizer boundaries, client retries/deadlines, diagnostic
+callback faults and session changes. `tools/package/verify-packages.mjs` owns installed Angular 21 strict consumers and
+DOM fixtures; three-browser E2E and browser ZoneJS/SSR are separate acceptance boundaries.
+
+## Clarity, accessibility, and localization
+
+Headless API; it owns no control labels, focus or translations. Application UI distinguishes initial loading/error from
+retained-data refresh where applicable. Forms invoke/observe this API without assigning it a CVA/native field value.
+
+## Review decisions and delivery
+
+This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
+[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+
+## Evidence
+
+Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
+identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
+in the corresponding PR and pipeline.
