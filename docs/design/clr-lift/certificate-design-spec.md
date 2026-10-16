@@ -69,11 +69,12 @@ messages. Verify keyboard open/close and focus return; human translation accepta
 
 ## Demo and validation plan
 
-Existing certificate demo loads tools on interaction; `apps/demo-e2e/src/certificate.spec.ts` checks details/focus.
-Adjacent tests cover clock precedence/status and mocked parse-error recovery; they do not directly prove real PEM
-parsing, fingerprints or certificateValidator branches. Add actual raw/encoded/malformed PEM fixtures, hash expectations
-and empty/invalid validator assertions. Dependency/bundle tooling verifies demo lazy-loading; strict package
-installation checks a different boundary.
+Certificate and file-reader demos automatically load their deferred viewer for the initial PEM, without a load button or
+programmatic focus movement. The label, signpost trigger and status use aligned inline layouts;
+`apps/demo-e2e/src/certificate.spec.ts` checks details/focus. Adjacent tests cover clock precedence/status and mocked
+parse-error recovery; they do not directly prove real PEM parsing, fingerprints or certificateValidator branches. Add
+actual raw/encoded/malformed PEM fixtures, hash expectations and empty/invalid validator assertions. Dependency/bundle
+tooling verifies demo lazy-loading; strict package installation checks a different boundary.
 
 ## Compatibility, rollout, and risks
 

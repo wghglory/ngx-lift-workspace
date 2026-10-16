@@ -1927,7 +1927,7 @@ export const zhCNTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.reset()': '将资源重置为初始 idle 状态并取消进行中的操作。',
   'demoApi.resource-async.returnsProperties.destroy()': '永久停止观察并取消待完成的操作。',
   'demoApi.date-range-validator.optionsProperties.compareTime': '是否同时比较时间，默认为 false。',
-  'certificate.loadExample': '加载证书示例',
+  'certificate.loading': '正在加载证书…',
   'certificate.loadFailed': '无法加载证书详情，请刷新页面重试。',
   'fileReader.validationUnavailable': '无法加载证书校验，请刷新页面重试。',
   'queryExamples.failureTitle': '失败与恢复模式',

@@ -104,3 +104,7 @@ the single-space error sentinel also needs a payload/validation compatibility de
 October 16, 2026: disabled-read regressions failed against the prior implementation, then all 44 file-reader tests
 passed with the fix, including a rendered FormControl.disable case. Full clr-lift tests, lint, typecheck and production
 library build passed. Browser acceptance is recorded in the PR; native Signal Forms remains deferred.
+
+The prefilled certificate demo loads its viewer automatically after validation, without an extra load button or focus
+movement. The status label and signpost align within a wrapping row. Certificate/file-reader browser coverage passes 12
+checks across Chromium, Firefox and WebKit; production bundle metadata still verifies deferred certificate parsing.

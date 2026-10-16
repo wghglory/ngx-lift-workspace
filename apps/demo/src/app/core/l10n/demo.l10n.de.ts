@@ -2211,7 +2211,7 @@ export const deTranslations: Record<string, string> = {
     'Dauerhaft die Beobachtung beenden und laufende Arbeit abbrechen.',
   'demoApi.date-range-validator.optionsProperties.compareTime':
     'Ob der Zeitvergleich ebenfalls erfolgen soll. Standardwert ist false.',
-  'certificate.loadExample': 'Zertifikatsbeispiel laden',
+  'certificate.loading': 'Zertifikat wird geladen…',
   'certificate.loadFailed':
     'Die Zertifikatsdetails konnten nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.',
   'fileReader.validationUnavailable':

@@ -2096,7 +2096,7 @@ export const jaTranslations: Record<string, string> = {
     'リソースを初期の idle 状態に戻し、進行中の操作をキャンセルする。',
   'demoApi.resource-async.returnsProperties.destroy()': '永続的に観察を停止し、待機中の作業をキャンセルする。',
   'demoApi.date-range-validator.optionsProperties.compareTime': '時間も比較するかどうか。デフォルトは false。',
-  'certificate.loadExample': '証明書の例を読み込む',
+  'certificate.loading': '証明書を読み込み中…',
   'certificate.loadFailed': '証明書の詳細を読み込めませんでした。ページを再読み込みして、もう一度お試しください。',
   'fileReader.validationUnavailable':
     '証明書の検証を読み込めませんでした。ページを再読み込みして、もう一度お試しください。',

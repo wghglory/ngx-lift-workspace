@@ -2171,7 +2171,7 @@ export const ruTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.destroy()':
     'Постоянно остановить наблюдение и отменить запланированные задачи.',
   'demoApi.date-range-validator.optionsProperties.compareTime': 'Нужно ли сравнивать время. По умолчанию false.',
-  'certificate.loadExample': 'Загрузить пример сертификата',
+  'certificate.loading': 'Загрузка сертификата…',
   'certificate.loadFailed': 'Не удалось загрузить сведения о сертификате. Обновите страницу и повторите попытку.',
   'fileReader.validationUnavailable':
     'Не удалось загрузить проверку сертификата. Обновите страницу и повторите попытку.',

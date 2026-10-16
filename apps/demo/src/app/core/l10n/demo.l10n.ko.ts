@@ -2058,7 +2058,7 @@ export const koTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.reset()': '리소스를 초기 idle 상태로 되돌리고 진행 중인 작업을 취소합니다.',
   'demoApi.resource-async.returnsProperties.destroy()': '영구히 관찰을 중지하고 대기 중인 작업을 취소합니다.',
   'demoApi.date-range-validator.optionsProperties.compareTime': '시간을 비교하는지 여부입니다. 기본값은 false입니다.',
-  'certificate.loadExample': '인증서 예제 불러오기',
+  'certificate.loading': '인증서 로드 중…',
   'certificate.loadFailed': '인증서 세부 정보를 불러오지 못했습니다. 페이지를 새로 고침한 후 다시 시도하세요.',
   'fileReader.validationUnavailable':
     '인증서 유효성 검사를 불러오지 못했습니다. 페이지를 새로 고침한 후 다시 시도하세요.',
