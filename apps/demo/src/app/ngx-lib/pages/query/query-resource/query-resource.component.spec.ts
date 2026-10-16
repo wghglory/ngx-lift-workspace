@@ -56,12 +56,31 @@ describe('QueryResourceDemoComponent', () => {
     expect(component.newUserName()).toBe('');
   });
 
-  it('manages demo auth user state and cycles names via mutation', async () => {
-    expect(component.demoAuthUser().name).toBe('Alex Rivera');
-    component.cycleDemoUserName();
-    expect(component.demoAuthMutation.isLoading()).toBe(true);
-    await new Promise((resolve) => setTimeout(resolve, 450));
-    expect(component.demoAuthUser().name).toBe('Jordan Lee');
+  it('keeps the cached topbar user visible while a mutation revalidates the query', async () => {
+    await component.demoAuthQuery.execute();
+    fixture.detectChanges();
+    const topbar = fixture.nativeElement.querySelector('#tab-content-service-pattern-a .card');
+    expect(topbar.querySelector('strong')?.textContent).toBe('Alex Rivera');
+
+    vi.useFakeTimers();
+    try {
+      component.cycleDemoUserName();
+      expect(component.demoAuthMutation.isLoading()).toBe(true);
+      await vi.advanceTimersByTimeAsync(400);
+      fixture.detectChanges();
+
+      expect(component.demoAuthQuery.isRefreshing()).toBe(true);
+      expect(topbar.querySelector('strong')?.textContent).toBe('Alex Rivera');
+      expect(topbar.querySelector('cll-spinner')).not.toBeNull();
+
+      await vi.advanceTimersByTimeAsync(300);
+      fixture.detectChanges();
+      expect(component.demoAuthQuery.isRefreshing()).toBe(false);
+      expect(topbar.querySelector('strong')?.textContent).toBe('Jordan Lee');
+      expect(topbar.querySelector('cll-spinner')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('selects demo database and updates details query', () => {

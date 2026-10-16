@@ -420,9 +420,10 @@ export class DatabaseListComponent {
   selector: 'app-database-detail',
   template: \`
     @if (dbService.activeDatabaseId(); as id) {
-      @if (dbService.databaseDetailsQuery.isLoading()) {
+      @if (dbService.databaseDetailsQuery.isInitialLoading()) {
         <clr-spinner />
       } @else if (dbService.databaseDetailsQuery.value(); as details) {
+        @if (dbService.databaseDetailsQuery.isRefreshing()) { <clr-spinner /> }
         <h3>{{ details.name }}</h3>
         <p>{{ details.engine }} | {{ details.cpu }}</p>
       }
@@ -440,9 +441,10 @@ export class DatabaseDetailComponent {
 @Component({
   selector: 'app-project-detail',
   template: \`
-    @if (projectQuery.isLoading()) {
+    @if (projectQuery.isInitialLoading()) {
       <clr-spinner />
     } @else if (projectQuery.value(); as project) {
+      @if (projectQuery.isRefreshing()) { <clr-spinner /> }
       <h2>{{ project.name }}</h2>
       <button (click)="projectQuery.reload()">Refresh</button>
     }

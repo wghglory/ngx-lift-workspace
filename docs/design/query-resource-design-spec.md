@@ -418,9 +418,12 @@ import {AuthStateService} from './auth-state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="topbar">
-      @if (authStateService.currentUserQuery.isLoading()) {
+      @if (authStateService.currentUserQuery.isInitialLoading()) {
         <span class="spinner spinner-inline">Loading user…</span>
       } @else if (authStateService.currentUserQuery.value(); as user) {
+        @if (authStateService.currentUserQuery.isRefreshing()) {
+          <span class="spinner spinner-inline">Refreshing user…</span>
+        }
         <span>{{ user.name }} ({{ user.role }})</span>
       }
     </header>

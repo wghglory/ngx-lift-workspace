@@ -188,10 +188,13 @@
                       {{ 'queryResource.simulatedTopbar' | translate }} (<code>TopbarComponent</code>)
                     </div>
                     <div class="card-block">
-                      @if (demoAuthQuery.isLoading()) {
+                      @if (demoAuthQuery.isInitialLoading()) {
                         <cll-spinner inline [size]="'sm'" />
                         <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
                       } @else if (demoAuthQuery.value(); as user) {
+                        @if (demoAuthQuery.isRefreshing()) {
+                          <cll-spinner inline [size]="'sm'" />
+                        }
                         <span>
                           <strong>{{ user.name }}</strong> ({{ user.role }}) &middot;
                           <span class="text-secondary">{{ user.email }}</span>
