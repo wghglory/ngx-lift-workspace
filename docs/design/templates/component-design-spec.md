@@ -2,7 +2,9 @@
 
 Status: Draft | API reviewed | Implementing | Verified | Released. Owner: <owner>. Updated: <date>. Approval: <review
 link and approved revision, or pending>. Package: ngx-lift | clr-lift. All proposed symbols and examples are unavailable
-until implemented and verified.
+until implemented and verified. For existing APIs, use Status: Implemented (contract audit), record source/test
+pointers, and distinguish source inspection from tests actually run. Preserve accurate existing sections; fill
+substantive gaps without rewriting prose. Store package specs in `docs/design/ngx-lift/` or `docs/design/clr-lift/`.
 
 ## Background
 
@@ -52,8 +54,11 @@ retaining Clarity styling. Prefer composition over replacement when public Clari
 Define minimal inputs/outputs, types, defaults, identity, empty/null/reset behavior, and validation semantics. Show
 imports, a minimal local example, a realistic advanced example, and submitted data. Mark examples as proposed until they
 compile against the public package. Explain why each advanced option is necessary; avoid mandatory configuration DSLs.
-For value controls, reference the shared [forms contract](../forms-compatibility-design-spec.md) and show the feature's
-values in all four form modes. For a utility or display/navigation component, explain form applicability explicitly.
+For value controls, reference the shared [forms contract](../clr-lift/forms-compatibility-design-spec.md). Show the
+feature's values in Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm`; record native
+signal-field support as required after the platform upgrade, with its own acceptance cases. Keep Angular 21 examples
+free of native Signal Forms imports. For a utility or display/navigation component, explain form applicability
+explicitly.
 
 ## Behavior and architecture
 

@@ -1,8 +1,8 @@
 # Design Specification: `computedAsync`
 
-**Source:** [computed-async.ts](../../libs/ngx-lift/src/lib/signals/computed-async.ts)
+**Source:** [computed-async.ts](../../../libs/ngx-lift/src/lib/signals/computed-async.ts)
 
-**Regression tests:** [computed-async.spec.ts](../../libs/ngx-lift/src/lib/signals/computed-async.spec.ts)
+**Regression tests:** [computed-async.spec.ts](../../../libs/ngx-lift/src/lib/signals/computed-async.spec.ts)
 
 ---
 
@@ -154,7 +154,7 @@ const optional = computedAsync<number | undefined>(() => loadCount(), {
 });
 ```
 
-See the [roadmap](priority-roadmap.md) for planned work.
+See the [roadmap](../../priority-roadmap.md) for planned work.
 
 ## Upgrade considerations
 

@@ -57,9 +57,16 @@ Clarity spacing/colors and logical placement for RTL. Width stays within viewpor
 
 ## Demo, tests and review decisions
 
-Follow the [workflow](component-development.md). Playground demonstrates modal/nonmodal, all embedded form modes, dirty
-guard cancel/failure, nested selection overlays, narrow layouts and runtime theme/language changes. Translate actions,
-titles and announcements in every supported language. Unit tests cover guards and generations. Three-browser E2E covers
-focus cycling/return, Escape priority, backdrop, scroll locking and repeated open/destroy with no orphaned overlays.
-Pending: guard rejection UX, projection slot names, sizes and modal default. No drawer behavior was implemented or
-tested.
+Follow the [workflow](../component-development.md). Playground demonstrates modal/nonmodal, all embedded form modes,
+dirty guard cancel/failure, nested selection overlays, narrow layouts and runtime theme/language changes. Translate
+actions, titles and announcements in every supported language. Unit tests cover guards and generations. Three-browser
+E2E covers focus cycling/return, Escape priority, backdrop, scroll locking and repeated open/destroy with no orphaned
+overlays. Pending: guard rejection UX, projection slot names, sizes and modal default. No drawer behavior was
+implemented or tested.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.

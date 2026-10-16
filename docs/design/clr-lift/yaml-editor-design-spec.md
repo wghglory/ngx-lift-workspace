@@ -77,8 +77,8 @@ acceptance evidence. No dependencies, package split, or engine implementation ar
 ## Proposed public API
 
 Separate a lightweight `YamlViewerComponent` (`cll-yaml-viewer`, `text: string`) from `YamlEditorComponent`
-(`cll-yaml-editor`, form value `string`). Readonly viewer has no CVA; editor follows all four
-[form modes](forms-compatibility-design-spec.md). Base editor inputs start with `label`, `readonly`, and
+(`cll-yaml-editor`, form value `string`). Readonly viewer has no CVA; editor follows the Angular 21
+[form integrations](forms-compatibility-design-spec.md). Base editor inputs start with `label`, `readonly`, and
 feature-specific limits. An optional `validateText` callback is a proposed extension point; its exact sync/async result
 signature and validation ownership need API review. A schema input belongs to the optional schema integration, not the
 base text shell. When configured, `diagnosticsChange` carries severity/message/location; it is not another text value.
@@ -172,3 +172,10 @@ undo preservation, hidden-tab layout and keyboard flows in three browsers. Measu
 memory. Pending: engine, package boundary, measured engine costs, parser dialect/limits, diagnostic validation
 integration and future sync mapping ownership. No engine spike, implementation, Postgres integration, or performance
 measurement is complete.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.

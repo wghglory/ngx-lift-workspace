@@ -10,7 +10,7 @@ Start with the guide for your task. Each topic has one canonical document; other
 | Build and runtime architecture             | [Technology architecture](TECHNOLOGY_ANALYSIS.md)                         |
 | Async/query/retry API contracts            | [API specifications](design/README.md); signatures and tests live in libs |
 | Loading, localization and shared lifecycle | [Integration guide](guides/demo-and-library-integration.md)               |
-| Planned work and acceptance status         | [Roadmap](design/priority-roadmap.md)                                     |
+| Planned work and acceptance status         | [Roadmap](priority-roadmap.md)                                            |
 | Released and unreleased changes            | [Changelog](../CHANGELOG.md)                                              |
 | Demo page conventions                      | [Documentation standards](DOCUMENTATION_STANDARDS.md)                     |
 | Contributions                              | [Contributing](../CONTRIBUTING.md)                                        |

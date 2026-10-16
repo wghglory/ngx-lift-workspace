@@ -6,4 +6,4 @@ alwaysApply: true
 For new or changed public library behavior, follow `docs/design/component-development.md` and
 `.agents/skills/lift-design/SKILL.md`. Use `docs/design/templates/component-design-spec.md` when a spec is missing. The
 workflow owns industry comparison, API review, form applicability, Clarity demos, localization and validation;
-`docs/design/component-roadmap.md` owns component order and the key/value enhancement hold.
+`docs/component-roadmap.md` owns Angular 21 component order and the deferred platform upgrade.

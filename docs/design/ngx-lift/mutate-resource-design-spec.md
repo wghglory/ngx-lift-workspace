@@ -1,8 +1,8 @@
 # Design Specification: `mutateResource`
 
-**Source:** [mutate-resource.ts](../../libs/ngx-lift/src/lib/query/mutate-resource.ts)
+**Source:** [mutate-resource.ts](../../../libs/ngx-lift/src/lib/query/mutate-resource.ts)
 
-**Regression tests:** [mutate-resource.spec.ts](../../libs/ngx-lift/src/lib/query/mutate-resource.spec.ts)
+**Regression tests:** [mutate-resource.spec.ts](../../../libs/ngx-lift/src/lib/query/mutate-resource.spec.ts)
 
 ---
 

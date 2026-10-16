@@ -1,11 +1,11 @@
 # Query design and production contracts
 
 Implemented APIs: `QueryClient`, `queryResource`, `queryResources`, `fetchQueryObservable`, `observeQueryObservable` and
-`provideQueryClient`. See the [publishing procedure](../DEPLOYMENT.md) for release gates.
+`provideQueryClient`. See the [publishing procedure](../../DEPLOYMENT.md) for release gates.
 
 This is the single query design entry point. Mutation execution has its own
 [specification](mutate-resource-design-spec.md); published-version changes belong in the
-[changelog](../../CHANGELOG.md).
+[changelog](../../../CHANGELOG.md).
 
 ## Choosing an API
 
@@ -815,7 +815,7 @@ reconciliation and optimism remain application-specific/deferred.
 Persistence, infinite queries, offline queues, shared rollback, mutation reset, nondestructive cancellation and a global
 concurrency scheduler require concrete consumers and ownership contracts. `fetchQuery` already warms cache without a
 separate prefetch helper. Publication additionally requires dependency triage/audit, compatible versioning,
-final-revision checks and authentication; [publishing](../DEPLOYMENT.md) defines those gates.
+final-revision checks and authentication; [publishing](../../DEPLOYMENT.md) defines those gates.
 
 Primary-source background: [Angular resources](https://angular.dev/guide/signals/resource),
 [TanStack query defaults](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults),

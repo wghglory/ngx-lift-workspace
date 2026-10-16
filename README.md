@@ -97,7 +97,7 @@ The [documentation index](docs/README.md) maps each topic to its canonical sourc
 - [Async/query/retry API contracts](docs/design/README.md)
 - [Loading, localization and shared lifecycle](docs/guides/demo-and-library-integration.md)
 - [Publishing and deployment](docs/DEPLOYMENT.md)
-- [Architecture](docs/TECHNOLOGY_ANALYSIS.md), [roadmap](docs/design/priority-roadmap.md) and [changelog](CHANGELOG.md)
+- [Architecture](docs/TECHNOLOGY_ANALYSIS.md), [roadmap](docs/priority-roadmap.md) and [changelog](CHANGELOG.md)
 
 ## 🤝 Contributing
 

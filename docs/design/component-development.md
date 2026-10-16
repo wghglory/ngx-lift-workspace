@@ -18,10 +18,13 @@ one.
 
 ## Form applicability
 
-Every value control supports ngModel, typed Reactive Forms, Reactive Forms observed with `toSignalForm`, and native
-Angular Signal Forms on its supported Angular release. These are separate examples and test hosts. Follow the
-[form contract](forms-compatibility-design-spec.md). Display/navigation tools integrate inside forms without pretending
-to be values; explain this in their specs. Utilities document the form integration relevant to their purpose.
+New value controls first ship on Angular 21 with ngModel and typed Reactive Forms through ControlValueAccessor.
+Demonstrate Reactive Forms observed with the existing `toSignalForm` facade separately; it is still Reactive Forms.
+Native Signal Forms integration is deferred until the Angular/Nx upgrade, then required for every new value control,
+including selectable calendars. Keep value types and interaction state independent of the form bridge so that later
+signal-field support preserves the value contract. Follow the
+[form contract](clr-lift/forms-compatibility-design-spec.md). Display/navigation tools integrate inside forms without
+pretending to be values; explain this in their specs. Utilities document the form integration relevant to their purpose.
 
 ## Required feature acceptance
 

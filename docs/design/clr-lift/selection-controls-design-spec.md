@@ -1,7 +1,7 @@
 # Combobox and autocomplete
 
 Status: **Draft; API approval pending**. Updated October 15, 2026. All new symbols are proposed. Shared requirements:
-[development workflow](component-development.md) and [four form modes](forms-compatibility-design-spec.md).
+[development workflow](../component-development.md) and [staged form integrations](forms-compatibility-design-spec.md).
 
 ## Background and terminology
 
@@ -14,7 +14,7 @@ terms. Keep these public semantics distinct even when a private overlay/request 
 - G1: Users select one or several remote entities with clear loading, no-result, failure and retry states.
 - G2: Users enter text efficiently with optional suggestions, without unexpected selection or text loss.
 - G3: Applications handle large result sets without downloading or rendering the entire dataset.
-- G4: Developers use simple typed options and all four form modes with Clarity presentation.
+- G4: Developers use simple typed options and the Angular 21 form integrations with Clarity presentation.
 
 ## Non-Goals
 
@@ -142,7 +142,7 @@ a string-page result; do not publish a generalized loader framework solely to sh
 Autocomplete emits text edits normally; choosing a suggestion replaces the text once. Arrow highlighting does not
 commit. Enter during IME composition does not choose an option. Escape dismisses the panel without discarding text. Blur
 retains free text. Entity-only required selection uses the combobox. Avoid an initial `string | Entity` value union. The
-shipping demos add ngModel, native Signal Forms, and typed Reactive Forms + `toSignalForm` from the shared contract.
+shipping demos add ngModel and typed Reactive Forms + `toSignalForm` from the shared contract.
 
 ## Async, scale, and accessibility behavior
 
@@ -169,14 +169,21 @@ styling.
 
 ## Demo, validation, rollout and decisions
 
-Demo/playground cases S1–S10 cover all four form modes, latency/error/retry, out-of-order responses, duplicate labels,
-disabled options, prefill, pill overflow, large data, IME, modal scrolling, runtime language switch and
-dark/compact/RTL. Translate control states, remove labels, result counts, API docs and demo content in every supported
-dictionary. Unit/type tests verify value inference, generation/cancellation, page dedup/caps, cursor loops, label
-retention, events, reset and cleanup. Three-browser E2E verifies actual focus, selection/pill removal, stale results and
-virtual navigation.
+Demo/playground cases S1–S10 cover the Angular 21 form integrations, latency/error/retry, out-of-order responses,
+duplicate labels, disabled options, prefill, pill overflow, large data, IME, modal scrolling, runtime language switch
+and dark/compact/RTL. Translate control states, remove labels, result counts, API docs and demo content in every
+supported dictionary. Unit/type tests verify value inference, generation/cancellation, page dedup/caps, cursor loops,
+label retention, events, reset and cleanup. Three-browser E2E verifies actual focus, selection/pill removal, stale
+results and virtual navigation.
 
 Deliver local single select → remote states/paging → multi-select → autocomplete → scale verification, each functional.
 Pending API decisions: separate selectors, primitive keys, seeded-label behavior, remote request context, cap defaults,
 and wrapper versus independently styled implementation after the public-API spike. No implementation or benchmark is
 done.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.

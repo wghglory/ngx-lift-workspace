@@ -70,10 +70,18 @@ text.
 
 ## Demo, tests, delivery and decisions
 
-Follow the [workflow](component-development.md) and all four form modes. Demos cover H1–H5, duplicate labels, disabled
-ancestors/leaves, context switching, failed branches, 10,000 loaded nodes and a large paged remote hierarchy. Provide
-playground source, reset, validation and submitted paths/keys in every supported language. Unit/type tests cover path
-validity, independent check behavior, unloaded leaves, cycles, duplicate keys, branch races and disposal. Three-browser
-E2E covers keyboard levels/selection, search reveal, virtualization and focus after collapse. Deliver cascader before
-multi-tree only after the consumer confirms the needed selection model. Pending: child paging, server search result
-shape, Clarity composition, single/multiple selectors and scale budgets. No implementation is complete.
+Follow the [workflow](../component-development.md) and the Angular 21 form integrations. Demos cover H1–H5, duplicate
+labels, disabled ancestors/leaves, context switching, failed branches, 10,000 loaded nodes and a large paged remote
+hierarchy. Provide playground source, reset, validation and submitted paths/keys in every supported language. Unit/type
+tests cover path validity, independent check behavior, unloaded leaves, cycles, duplicate keys, branch races and
+disposal. Three-browser E2E covers keyboard levels/selection, search reveal, virtualization and focus after collapse.
+Deliver cascader before multi-tree only after the consumer confirms the needed selection model. Pending: child paging,
+server search result shape, Clarity composition, single/multiple selectors and scale budgets. No implementation is
+complete.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.

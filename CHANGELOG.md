@@ -49,7 +49,7 @@ jobs and GitHub release records succeeded; mirrored registry metadata contains b
 
 - Query adapters no longer require the public `observableLoader` wrapper. This removes a public export; migrate to
   native loaders and select a release version with an explicit SemVer review. See
-  [native loader contract](docs/design/query-resource-design-spec.md).
+  [native loader contract](docs/design/ngx-lift/query-resource-design-spec.md).
 - #143–#147 also contain retry-policy, validation, file encoding, localization, scoped-service and package-quality
   changes. See the API design specifications for their consumer contracts.
 

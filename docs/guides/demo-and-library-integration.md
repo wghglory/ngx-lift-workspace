@@ -62,7 +62,7 @@ policies. The last managed owner clears timers, while an explicitly started `sta
 until `clearTimers()` or injector destruction. Initial component configuration is applied before watching starts.
 
 Query diagnostics and shared cache policies are defined in the
-[query contract](../design/query-resource-design-spec.md).
+[query contract](../design/ngx-lift/query-resource-design-spec.md).
 
 Certificate clocks accept a callback returning Date or a timestamp. Signals satisfy that callback and drive reactive
 status changes. Bind `[clock]="now"` or provide `CERTIFICATE_CLOCK`; custom clocks own their advancement. The default
@@ -70,7 +70,8 @@ browser clock advances every minute and cleans up with its injector. Each status
 
 ## Compatibility
 
-Derived signal error handling is defined in the [computedAsync contract](../design/computed-async-design-spec.md).
+Derived signal error handling is defined in the
+[computedAsync contract](../design/ngx-lift/computed-async-design-spec.md).
 
 `IdleDetectionService.observeState()` replays the current warning/countdown state. Switching to a fresh scope clears the
 previous modal and countdown; joining an already-counting shared service renders its current state immediately. Ordinary

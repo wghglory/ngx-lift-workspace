@@ -1,8 +1,8 @@
 # Design Specification: `resourceAsync`
 
-**Source:** [resource-async.ts](../../libs/ngx-lift/src/lib/query/resource-async.ts)
+**Source:** [resource-async.ts](../../../libs/ngx-lift/src/lib/query/resource-async.ts)
 
-**Regression tests:** [resource-async.spec.ts](../../libs/ngx-lift/src/lib/query/resource-async.spec.ts)
+**Regression tests:** [resource-async.spec.ts](../../../libs/ngx-lift/src/lib/query/resource-async.spec.ts)
 
 ---
 
@@ -236,5 +236,5 @@ function removeRow(orgId: string) {
 ## 6. Scope and limitations
 
 SSR hydration serialization and automatic optimistic rollback are not implemented. Callers own any rollback snapshots
-used with local set/update operations. Planned work is tracked in the [roadmap](priority-roadmap.md); do not assume
-future options are part of the public API.
+used with local set/update operations. Planned work is tracked in the [roadmap](../../priority-roadmap.md); do not
+assume future options are part of the public API.

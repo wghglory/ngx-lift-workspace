@@ -108,7 +108,7 @@ No recurrence expansion or hidden background polling. Loading/error views are se
 Use Clarity date containers and tokens, localized month/day names, locale week start, RTL, compact/light/dark and
 accessible grid navigation. Support typed entry as well as picking. Give range endpoints separate names; announce
 invalid times and restore input focus on dismissal. No trap when tabbing through a nonmodal calendar. Every value
-control has all four [form demos](forms-compatibility-design-spec.md). Calendar form integration applies to date
+control has the Angular 21 [form demos](forms-compatibility-design-spec.md). Calendar form integration applies to date
 selection; display-only event navigation works without binding a form. Playground examples cover T1–T7, presets,
 keyboard entry, min/max, disabled days/times, partial ranges, reset, UTC and DST zones, all supported languages.
 
@@ -120,3 +120,10 @@ unbounded DOM. Deliver date/time → date-time → date ranges → date-time ran
 private date logic. Pending: exact value types, time-zone conversion dependency, locale parser, DST UX, range
 confirmation and calendar demand. No controls, parser/DST spike, measurements, or new tests are delivered by this
 document.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.

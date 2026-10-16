@@ -60,8 +60,8 @@ return.
 
 ## Demo, tests and decisions
 
-Follow the [workflow](component-development.md). Playground cases cover 1/4/30/100 levels, repeated names, long labels,
-special characters, narrow layouts, keyboard, dark/compact/RTL, runtime language change, and route changes. Unit tests
-cover collapse/filter/key behavior; three-browser E2E verifies every hidden ancestor and real link destinations. No
-form-control wrappers are added. Pending: Clarity composition limit, width measurement strategy, default visible count
-and search threshold. No navigation code or rendering/performance verification is delivered by this draft.
+Follow the [workflow](../component-development.md). Playground cases cover 1/4/30/100 levels, repeated names, long
+labels, special characters, narrow layouts, keyboard, dark/compact/RTL, runtime language change, and route changes. Unit
+tests cover collapse/filter/key behavior; three-browser E2E verifies every hidden ancestor and real link destinations.
+No form-control wrappers are added. Pending: Clarity composition limit, width measurement strategy, default visible
+count and search threshold. No navigation code or rendering/performance verification is delivered by this draft.
