@@ -1,7 +1,7 @@
 # File reader value control
 
 Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
-Approval: existing API; identified behavior gaps remain open.
+Approval: F2 fix authorized by maintainer; existing value/encoding API preserved.
 
 ## Background
 
@@ -40,8 +40,9 @@ Uploads, content trust, virus scanning, certificate trust validation, and server
 
 Checked October 16, 2026: [FileReader](https://developer.mozilla.org/en-US/docs/Web/API/FileReader) supports aborting
 pending reads. Adopt abort plus identity checks. [Angular CVA](https://angular.dev/api/forms/ControlValueAccessor)
-separates model writes from user edits. Current disable behavior blocks new selection/removal, but does not cancel a
-read already in flight; see the [gap register](../implementation-gaps.md).
+separates model writes from user edits. Disabling through the CVA or disabled input must cancel an active read and
+prevent obsolete callbacks from changing the owner; this change closes F2 in the
+[gap register](../implementation-gaps.md).
 
 ## Public API and examples
 
@@ -66,7 +67,9 @@ Forms + `toSignalForm` observes the same FormControl; native fields follow the d
 
 ## Behavior and architecture
 
-Selection cancels the previous reader, checks size, then reads as text. Reader identity guards callbacks. Reset,
+Selection cancels the previous reader, checks size, then reads as text. Reader identity and disabled state guard
+callbacks. Disabling cancels active work and clears its pending filename/native selection while preserving committed
+content and form interaction state. Reenabling requires a fresh selection; it never resumes the aborted read. Reset,
 replacement and destruction abort/detach old handlers. Owner `writeValue(null/undefined/'')` clears content and the
 native file input without `onChange`/touch. Invalid owner base64/UTF-8 produces parse validation without writing back.
 Oversized user files write `''`; read errors currently write a single-space sentinel to distinguish parse from required
@@ -81,8 +84,8 @@ content validation.
 ## Demo and validation plan
 
 Existing `apps/demo-e2e/src/file-reader.spec.ts` and adjacent unit tests cover prefill, removal, Unicode/legacy
-encoding, malformed data, stale reads, teardown and real form validation. Add disable-during-read and rendered ngModel,
-facade and updateOn hosts before claiming the new shared contract is fully met.
+encoding, malformed data, stale reads, teardown and real form validation. Add deterministic CVA/input disabled-read
+races and a rendered FormControl.disable regression. ngModel, facade and updateOn hosts remain separate acceptance work.
 
 ## Compatibility, rollout, and risks
 
@@ -91,9 +94,11 @@ text/base64 copies coexist. Applications should set maxSize. Native fields are r
 
 ## Review decisions and delivery
 
-Preserve the existing encoding migration. Review disabling pending reads and touch timing separately; changing the
-single-space error sentinel also needs a payload/validation compatibility decision.
+Preserve the existing encoding migration. Disabling now cancels pending reads; touch timing remains separate. Changing
+the single-space error sentinel also needs a payload/validation compatibility decision.
 
 ## Evidence
 
-Source and existing test assertions inspected October 16, 2026. No component/browser tests rerun for this docs PR.
+October 16, 2026: disabled-read regressions failed against the prior implementation, then all 44 file-reader tests
+passed with the fix, including a rendered FormControl.disable case. Full clr-lift tests, lint, typecheck and production
+library build passed. Browser acceptance is recorded in the PR; native Signal Forms remains deferred.
