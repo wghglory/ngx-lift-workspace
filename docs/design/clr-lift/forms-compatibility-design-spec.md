@@ -8,8 +8,7 @@ control exports are unavailable until implemented.
 
 New controls must ship without waiting for Angular 22 or the Nx major upgrade. Existing `toSignalForm(FormGroup)`
 retains Reactive Forms ownership and adds signal observations/submission helpers. Native Signal Forms owns a signal
-model and field tree. See the [implemented facade source](../../../libs/ngx-lift/src/lib/signals/to-signal-form.ts) for
-the current API.
+model and field tree. See the [implemented facade](../ngx-lift/reactive-forms-design-spec.md) for the current API.
 
 ## Terminology
 
