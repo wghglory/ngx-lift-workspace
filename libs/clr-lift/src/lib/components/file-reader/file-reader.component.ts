@@ -1,4 +1,5 @@
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -139,8 +140,10 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   constructor() {
     this.translationService.loadTranslationsForComponent('FileReader', fileReaderTranslations);
     inject(DestroyRef).onDestroy(() => this.cancelRead());
-    effect(() => {
-      if (this.isDisabled()) untracked(() => this.cancelPendingRead());
+    afterRenderEffect({
+      write: () => {
+        if (this.isDisabled()) untracked(() => this.cancelPendingRead());
+      },
     });
     effect(() => {
       this.sizeInvalid();

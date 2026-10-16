@@ -68,12 +68,14 @@ Forms + `toSignalForm` observes the same FormControl; native fields follow the d
 ## Behavior and architecture
 
 Selection cancels the previous reader, checks size, then reads as text. Reader identity and disabled state guard
-callbacks. Disabling cancels active work and clears its pending filename/native selection while preserving committed
-content and form interaction state. Reenabling requires a fresh selection; it never resumes the aborted read. Reset,
-replacement and destruction abort/detach old handlers. Owner `writeValue(null/undefined/'')` clears content and the
-native file input without `onChange`/touch. Invalid owner base64/UTF-8 produces parse validation without writing back.
-Oversized user files write `''`; read errors currently write a single-space sentinel to distinguish parse from required
-errors. Successful file selection marks touched immediately; this is not composite-blur semantics.
+callbacks. CVA disabling cancels active work immediately; input-driven disabling cancels when Angular renders the
+disabled state. Cancellation clears the pending filename/native selection while preserving committed content and form
+interaction state. Input writes coalesced before a render do not represent a disabled interval. Reenabling requires a
+fresh selection; it never resumes the aborted read. Reset, replacement and destruction abort/detach old handlers. Owner
+`writeValue(null/undefined/'')` clears content and the native file input without `onChange`/touch. Invalid owner
+base64/UTF-8 produces parse validation without writing back. Oversized user files write `''`; read errors currently
+write a single-space sentinel to distinguish parse from required errors. Successful file selection marks touched
+immediately; this is not composite-blur semantics.
 
 ## Clarity, accessibility, and localization
 

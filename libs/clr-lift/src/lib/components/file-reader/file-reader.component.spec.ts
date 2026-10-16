@@ -596,6 +596,13 @@ describe('FileReaderComponent', () => {
       const staleLoad = reader.onload;
       const staleError = reader.onerror;
 
+      // jsdom forbids assigning a file path, so model the browser-populated value.
+      Object.defineProperty(component.fileElement().nativeElement, 'value', {
+        configurable: true,
+        writable: true,
+        value: 'C:\\fakepath\\pending.txt',
+      });
+
       if (mode === 'cva') component.setDisabledState(true);
       else fixture.componentRef.setInput('disabled', true);
       fixture.detectChanges();
