@@ -170,6 +170,7 @@ import {ClarityModule} from '@clr/angular';
     CertificateSignpostComponent,
     FileReaderComponent,
   ],
+  styles: '.certificate-success { align-items: center; }',
   template: \`
     <form clrForm [formGroup]="form" (ngSubmit)="submit()">
       <clr-control-container>
@@ -184,8 +185,9 @@ import {ClarityModule} from '@clr/angular';
           (fileChange)="onFileChange($event)"
         />
         @if (form.controls.caCert.value) {
-          <clr-control-success>
-            Show certificate:
+          <clr-control-success class="certificate-success">
+            <span cds-layout="horizontal gap:xs align:center wrap:wrap">
+            <span>Show certificate:</span>
             @if (form.controls.caCert.valid) {
               <cll-certificate-signpost
                 [pem]="form.controls.caCert.value"
@@ -194,6 +196,7 @@ import {ClarityModule} from '@clr/angular';
                 [position]="'bottom-right'"
               />
             }
+            </span>
           </clr-control-success>
         }
         <clr-control-error *clrIfError="'exceedLimit'">

@@ -2186,7 +2186,7 @@ export const nlTranslations: Record<string, string> = {
     'Blijvend stoppen met observatie en annuleer opzettelijke werk.',
   'demoApi.date-range-validator.optionsProperties.compareTime':
     'Of de tijd ook te vergelijken. Standaard is dit false.',
-  'certificate.loadExample': 'Certificaatvoorbeeld laden',
+  'certificate.loading': 'Certificaat laden…',
   'certificate.loadFailed':
     'De certificaatgegevens konden niet worden geladen. Vernieuw de pagina en probeer het opnieuw.',
   'fileReader.validationUnavailable':

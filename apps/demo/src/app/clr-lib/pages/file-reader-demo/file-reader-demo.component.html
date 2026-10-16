@@ -46,24 +46,24 @@
             (fileChange)="onFileChange($event)"
           />
           @if (certForm.controls.caCert.value) {
-            <clr-control-success>
-              {{ 'fileReader.showCertificate' | translate }}
-              @if (certForm.controls.caCert.valid) {
-                @defer (on interaction) {
-                  <app-certificate-example
-                    [pem]="certForm.controls.caCert.value"
-                    [pemEncoded]="false"
-                    [showIcon]="true"
-                    [position]="'bottom-right'"
-                  />
-                } @placeholder {
-                  <button type="button" class="btn btn-link" data-test-id="load-certificate">
-                    {{ 'certificate.loadExample' | translate }}
-                  </button>
-                } @error {
-                  <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
+            <clr-control-success class="certificate-success">
+              <span cds-layout="horizontal gap:xs align:center wrap:wrap">
+                <span>{{ 'fileReader.showCertificate' | translate }}</span>
+                @if (certForm.controls.caCert.valid) {
+                  @defer (on immediate) {
+                    <app-certificate-example
+                      [pem]="certForm.controls.caCert.value"
+                      [pemEncoded]="false"
+                      [showIcon]="true"
+                      [position]="'bottom-right'"
+                    />
+                  } @placeholder {
+                    <span aria-busy="true">{{ 'certificate.loading' | translate }}</span>
+                  } @error {
+                    <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
+                  }
                 }
-              }
+              </span>
             </clr-control-success>
           }
           <clr-control-error *clrIfError="'exceedLimit'">

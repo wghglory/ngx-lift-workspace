@@ -36,7 +36,7 @@ Server authorization, writes, infinite scrolling, and form values.
 | --- | --------------------------- | -------------------------------- | ---------------------------------------------------- | ----------------------------------------------- | -------------------------------------- |
 | P1  | Refresh a status panel      | Slow read; timer/manual triggers | Active operation is not overlapped                   | Error becomes AsyncState; later trigger retries | poll.operator.spec.ts                  |
 | P2  | Load complete resource list | First page has continue token    | Follow token with original parameters; combine items | Per-page retry or propagate failure             | kubernetes-pagination.operator.spec.ts |
-| P3  | Unmount reader              | Unsubscribe during request       | RxJS HTTP work and timers released                   | Promise work may continue without publishing    | planned cancellation regression        |
+| P3  | Unmount reader              | Unsubscribe during request       | RxJS HTTP work and timers released                   | Promise work may continue without publishing    | shared/final-unsubscribe regressions   |
 
 ## Industry evidence and current gaps
 
@@ -85,9 +85,10 @@ data; do not infer query-resource retained-data semantics from poll's AsyncState
 ## Demo and validation plan
 
 Existing poll and Kubernetes pagination demos plus adjacent tests cover refresh triggers, synchronous error recovery,
-normalization, parameter compatibility and retry. Add explicit shared-subscriber/last-unsubscribe cancellation
-assertions; source use of share() alone does not prove those lifetimes. Pagination tests cover repeated/cyclic tokens,
-initial cursor reuse, independent subscriptions, whole-stream retry and continuation cancellation.
+normalization, parameter compatibility and retry. Direct poll regressions cover shared execution, no replay,
+remaining-subscriber ownership, final-unsubscribe request/timer/manual-trigger cleanup and fresh resubscription.
+Pagination tests cover repeated/cyclic tokens, initial cursor reuse, independent subscriptions, whole-stream retry and
+continuation cancellation.
 
 ## Compatibility, rollout, and risks
 
@@ -103,6 +104,9 @@ caller-owned server-paging/aggregation decision. The [gap register](../implement
 finding.
 
 ## Evidence
+
+October 16, 2026: poll unit regressions verify shared subscription and final-unsubscribe behavior with real RxJS
+Observables and fake timers. No browser or SSR claims are made by these headless lifecycle checks.
 
 Cursor regressions cover repeated/cyclic tokens, initial cursor serialization, resubscription/retry isolation and
 cancellation. Validation results are recorded in the implementation PR; no browser, scale or SSR claims are made.

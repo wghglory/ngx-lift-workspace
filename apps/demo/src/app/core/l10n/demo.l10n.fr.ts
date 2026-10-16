@@ -2224,7 +2224,7 @@ export const frTranslations: Record<string, string> = {
     "Arrêter définitivement l'observation et annuler les tâches en attente.",
   'demoApi.date-range-validator.optionsProperties.compareTime':
     'Indiquez si vous souhaitez également comparer le temps. Par défaut, false.',
-  'certificate.loadExample': 'Charger l’exemple de certificat',
+  'certificate.loading': 'Chargement du certificat…',
   'certificate.loadFailed': 'Impossible de charger les détails du certificat. Actualisez la page pour réessayer.',
   'fileReader.validationUnavailable':
     'Impossible de charger la validation du certificat. Actualisez la page pour réessayer.',

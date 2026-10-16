@@ -2101,7 +2101,7 @@ export const enTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.destroy()': 'Permanently stop observation and cancel pending work.',
   'demoApi.date-range-validator.optionsProperties.compareTime':
     'Whether to compare the time as well. Defaults to false.',
-  'certificate.loadExample': 'Load certificate example',
+  'certificate.loading': 'Loading certificate…',
   'certificate.loadFailed': 'Certificate details could not load. Refresh the page to try again.',
   'fileReader.validationUnavailable': 'Certificate validation could not load. Refresh the page and try again.',
   'queryExamples.failureTitle': 'Failure and recovery patterns',

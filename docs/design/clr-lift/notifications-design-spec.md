@@ -1,7 +1,7 @@
 # Alerts and toast notifications
 
 Status: Implemented (contract audit with open defects). Owner: clr-lift maintainers. Updated: October 16, 2026. Package:
-clr-lift. Approval: existing APIs; HTML trust-boundary change needs review.
+clr-lift. Approval: existing APIs; maintainer confirmed developer-trusted localized HTML on October 16, 2026.
 
 ## Background
 
@@ -19,6 +19,7 @@ itself.
 
 - G1: Show actionable application failures and transient outcomes with stable removal identity.
 - G2: Keep service state and container interaction distinct, including keyboard-accessible actions.
+- G3: Let developers place buttons/links inside localized HTML strings without defining Angular templates.
 
 ## Non-Goals
 
@@ -40,37 +41,48 @@ HTTP retry ownership, domain error classification, and submitting forms.
 
 ## Industry evidence and current gaps
 
-Clarity alerts provide severity and close/action presentation. Adopt native Angular action buttons instead of encoding
-all actions inside HTML. [Angular security guidance](https://angular.dev/best-practices/security) defines bypass trust
-as an application trust decision. Current AlertService instead automatically bypasses sanitization for every string;
-this is an open implementation defect, not a safe text contract.
+Clarity alerts provide severity and close/action presentation. The maintainer explicitly retains developer-authored
+localized HTML so translators can place an inline button/link anywhere in a sentence. The existing scoped
+`targetSelector`/`onTargetClick` callback supports that contract without a template or slot renderer.
+[Angular security guidance](https://angular.dev/best-practices/security) makes bypassing HTML sanitization a trust
+boundary. Here it is an intentional developer-trusted HTML API, not an automatically sanitized text API.
 
 ## Public API and examples
 
 ```typescript
-// In an Angular injection context; mount AlertContainerComponent in the application shell.
+// Catalog value for settings.saveFailed:
+// 'Could not save. <button type="button" class="btn btn-link retry-save">Try again</button> to continue.'
+// Create in an injection context; retrySave is application-owned.
 import {inject} from '@angular/core';
-import {AlertService} from 'clr-lift';
+import {AlertService, TranslationService} from 'clr-lift';
 
 const alerts = inject(AlertService);
+const i18n = inject(TranslationService);
 const alert = alerts.addAlert({
-  content: 'Could not save settings.',
+  content: i18n.translate('settings.saveFailed'),
   alertType: 'danger',
-  actions: [{label: 'Retry', onClick: () => retrySave()}],
-}); // retrySave is application-owned
+  targetSelector: '.retry-save',
+  onTargetClick: () => retrySave(),
+});
 // alerts.deleteAlert(alert.id); alerts.clearAlerts();
 ```
 
-Alert defaults are danger/app-level; content accepts string or SafeHtml. Structured actions have text labels/callbacks;
-legacy `targetSelector`/`onTargetClick` delegate clicks within content. Toast convenience methods are success, warning,
-info and error; default type is info. Both services add newest first and return created identity. They are UI services,
-not CVAs; forms can invoke them after submission.
+Alert defaults are danger/app-level; content accepts developer-trusted HTML as string or SafeHtml. Callback functions
+stay in TypeScript; the localized markup identifies the target. `targetSelector`/`onTargetClick` remain supported.
+Structured `actions` are optional buttons in a separate action area, not a replacement for inline localization. Toast
+convenience methods are success, warning, info and error; default type is info. Both services add newest first and
+return created identity. They are UI services, not CVAs; forms can invoke them after submission.
 
 ## Behavior and architecture
 
-AlertService exposes a computed signal and clears on injector destruction. Its container renders content through
-innerHTML after the current automatic trust bypass. Until corrected, only application-trusted HTML belongs here;
-external strings are not sanitized by this path. Preserve the distinction explicitly when reviewing the fix.
+AlertService exposes a computed signal and clears on injector destruction. The container renders content through
+innerHTML after the intentional trust bypass. Developers own the markup and any interpolated data. Avoid executable HTML
+including script tags, event attributes such as onclick/onerror, and javascript: URLs; omitting script tags alone is
+insufficient. Escape user/server values as text before inserting them into trusted markup. TranslationService
+interpolation does not perform HTML escaping. Do not pass arbitrary API error text directly as trusted alert content.
+Click delegation is scoped to the current alert, handles nested targets and leaves callbacks outside the HTML string. An
+added content string is a translation snapshot; changing language does not retranslate an existing service entry.
+
 ToastService uses a BehaviorSubject; its container owns rendering/removal. ToastComponent defaults to 6-second timeout,
 with nonpositive timeout disabling auto-close. It defers expiry by another full timeout while its interaction flag is
 set. `closed` distinguishes manual close (`true`) from timer (`false`); destruction cancels its timer.
@@ -79,25 +91,49 @@ set. `closed` distinguishes manual close (`true`) from timer (`false`); destruct
 
 Translated close labels and Clarity severities. Native action buttons provide keyboard semantics. Host owns message and
 action translations. Alert container uses role=alert; repeated rapid additions need host-level announcement policy.
-Toast hover/focus currently share one flag; leaving one interaction can clear protection for the other.
+Toast hover and focus-within must be tracked independently. Auto-close remains paused while either interaction is
+active, including focus moving between buttons within one toast. Preserve the current full-interval retry policy at
+expiry.
+
+Toast containers are fixed to the viewport below the configured header offset. Entry/exit motion and long stacks must
+not change document scroll dimensions or page layout. Bound vertical overflow inside the toast stack, keep narrow
+viewport cards inside its available width, and preserve keyboard access to offscreen notifications. Page/body overflow
+must remain under the host application's control.
 
 ## Demo and validation plan
 
-Existing alert/toast demos and adjacent specs cover identity, actions, dismissal and timers. Add hostile-string
-rendering and mixed hover/focus browser tests for the [open fixes](../implementation-gaps.md). Existing callback/unit
-checks do not prove HTML safety or independent pointer/keyboard pause behavior.
+Existing alert/toast demos and adjacent specs cover inline buttons, nested delegated clicks, alert scoping, structured
+actions, dismissal and timers. Preserve these tests and add localized inline-action examples, including translator
+reordering and safely escaped runtime values. Add mixed hover/focus browser tests for the
+[open toast fix](../implementation-gaps.md). Do not assert that this developer-trusted HTML path sanitizes hostile
+markup automatically.
 
 ## Compatibility, rollout, and risks
 
-Angular 21/Clarity; no new dependencies. Service scope controls sharing. Correcting string sanitization may change HTML
-callers; keep explicit caller-owned SafeHtml as the reviewed escape hatch and document migration.
+Angular 21/Clarity; no new dependencies. Service scope controls sharing. Preserve the existing string/SafeHtml and
+selector callback APIs. No TemplateRef, named-slot API, mandatory sanitizer or SafeHtml-only migration is required.
+Developer-controlled dictionaries must keep markup separate from untrusted runtime data; review interpolation at the
+caller boundary rather than silently stripping supported inline buttons.
 
 ## Review decisions and delivery
 
-Prioritize removing the automatic HTML trust bypass. Separately track hover/focus state and verify timeout behavior.
-Keep interactive API failures visible through alerts; documentation callouts describe APIs.
+Settled by the maintainer: retain convenient localized HTML strings and TypeScript callbacks. The trust bypass is part
+of that documented contract, not a blanket implementation defect. Any unsafe caller interpolation is a separate fix.
+Track toast hover/focus independently and verify timeout behavior. Keep interactive API failures visible through alerts;
+documentation callouts describe APIs.
 
 ## Evidence
 
 Services, container template and ToastComponent inspected October 16, 2026. Findings are source-derived; no exploit,
 browser acceptance or test execution is claimed in this docs PR.
+
+### Toast interaction regression evidence
+
+Independent hover/focus-within regressions pass in the 9-test toast unit suite. The two real demo interaction scenarios
+pass in Chromium, Firefox and WebKit (6 checks). clr-lift tests, lint, typecheck and build and demo-e2e lint/typecheck
+pass. Expiry still retries the full configured interval while interaction remains active.
+
+The viewport regressions reproduce horizontal animation overflow and vertical stack growth before the fix. Fixed
+container sizing passes 15 browser checks across Chromium, Firefox and WebKit, including 320px, 390px and desktop
+widths, sampled animation times, eight-toast stacks and keyboard access. The fix changes toast containment only; it does
+not set document/body overflow.

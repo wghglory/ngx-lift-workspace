@@ -16,12 +16,10 @@
       <p>{{ 'certificate.clickIcon' | translate }}</p>
       <div cds-layout="horizontal gap:xs align:center">
         <span>{{ 'certificate.clickCert' | translate }}</span>
-        @defer (on interaction) {
+        @defer (on immediate) {
           <app-certificate-example [pem]="pem1" />
         } @placeholder {
-          <button type="button" class="btn btn-link" data-test-id="load-certificate">
-            {{ 'certificate.loadExample' | translate }}
-          </button>
+          <span aria-busy="true">{{ 'certificate.loading' | translate }}</span>
         } @error {
           <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
         }
@@ -35,10 +33,10 @@
       <p>{{ 'certificate.clickIcon' | translate }}</p>
       <div cds-layout="horizontal gap:xs align:center">
         <span>{{ 'certificate.clickCert' | translate }}</span>
-        @defer (on interaction) {
+        @defer (on immediate) {
           <app-certificate-example [pem]="pem2" [pemEncoded]="true" position="right-top" />
         } @placeholder {
-          <button type="button" class="btn btn-link">{{ 'certificate.loadExample' | translate }}</button>
+          <span aria-busy="true">{{ 'certificate.loading' | translate }}</span>
         } @error {
           <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
         }

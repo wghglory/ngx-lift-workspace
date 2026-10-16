@@ -1,4 +1,5 @@
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -139,6 +140,11 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
   constructor() {
     this.translationService.loadTranslationsForComponent('FileReader', fileReaderTranslations);
     inject(DestroyRef).onDestroy(() => this.cancelRead());
+    afterRenderEffect({
+      write: () => {
+        if (this.isDisabled()) untracked(() => this.cancelPendingRead());
+      },
+    });
     effect(() => {
       this.sizeInvalid();
       this.parseError();
@@ -192,7 +198,7 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
     const reader = new FileReader();
     this.activeReader = reader;
     reader.onload = () => {
-      if (this.activeReader !== reader) {
+      if (!this.canCompleteRead(reader)) {
         return;
       }
       const fileContent = reader.result;
@@ -212,7 +218,7 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
       this.cancelRead(reader);
     };
     reader.onerror = () => {
-      if (this.activeReader === reader) {
+      if (this.canCompleteRead(reader)) {
         this.handleReadError(reader.error?.message ?? this.translationService.translate('FileReader.readError'));
         this.cancelRead(reader);
       }
@@ -293,6 +299,21 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
     this.onTouched();
   }
 
+  private canCompleteRead(reader: FileReader): boolean {
+    if (this.activeReader !== reader) return false;
+    if (!this.isDisabled()) return true;
+    this.cancelPendingRead();
+    return false;
+  }
+
+  private cancelPendingRead() {
+    if (!this.activeReader) return;
+    this.cancelRead();
+    this.selectedFile.set(undefined);
+    const inputElement = this.fileInput();
+    if (inputElement) inputElement.nativeElement.value = '';
+  }
+
   private cancelRead(reader = this.activeReader) {
     if (reader && this.activeReader === reader) {
       this.activeReader = undefined;
@@ -318,6 +339,7 @@ export class FileReaderComponent implements ControlValueAccessor, Validator {
 
   setDisabledState(isDisabled: boolean) {
     this.isDisabled.set(isDisabled);
+    if (isDisabled) this.cancelPendingRead();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

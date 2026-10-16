@@ -334,4 +334,98 @@ describe('poll', () => {
     expect(pollingFn).toHaveBeenLastCalledWith('new');
     subscription.unsubscribe();
   });
+  it('shares a running request, does not replay, and retains work for remaining subscribers', () => {
+    const response = new Subject<string>();
+    const teardown = vi.fn();
+    const pollingFn = vi.fn(
+      () =>
+        new Observable<string>((subscriber) => {
+          const subscription = response.subscribe(subscriber);
+          return () => {
+            subscription.unsubscribe();
+            teardown();
+          };
+        }),
+    );
+    const shared = poll({interval: 100, pollingFn});
+    const firstStates: AsyncState<string>[] = [];
+    const secondStates: AsyncState<string>[] = [];
+    const first = shared.subscribe((state) => firstStates.push(state));
+    vi.advanceTimersByTime(0);
+    const second = shared.subscribe((state) => secondStates.push(state));
+    expect(pollingFn).toHaveBeenCalledTimes(1);
+    expect(firstStates.map((state) => state.status)).toEqual(['loading']);
+    expect(secondStates).toEqual([]);
+    first.unsubscribe();
+    expect(teardown).not.toHaveBeenCalled();
+    response.next('shared response');
+    expect(secondStates.at(-1)?.data).toBe('shared response');
+    expect(firstStates).toHaveLength(1);
+    second.unsubscribe();
+    expect(teardown).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+    vi.advanceTimersByTime(500);
+    expect(pollingFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('disconnects manual triggers and active requests on final unsubscribe, then starts fresh', () => {
+    const trigger = new Subject<string>();
+    const disconnect = vi.fn();
+    const connect = vi.fn();
+    const refresh = new Observable<string>((subscriber) => {
+      connect();
+      const subscription = trigger.subscribe(subscriber);
+      return () => {
+        subscription.unsubscribe();
+        disconnect();
+      };
+    });
+    const responses: Subject<string>[] = [];
+    const abort = vi.fn();
+    const pollingFn = vi.fn(
+      (_input: string | undefined) =>
+        new Observable<string>((subscriber) => {
+          const response = new Subject<string>();
+          responses.push(response);
+          const subscription = response.subscribe(subscriber);
+          return () => {
+            subscription.unsubscribe();
+            abort();
+          };
+        }),
+    );
+    const shared = poll({interval: 100, delay: 20, pollingFn, forceRefresh: refresh});
+    const states: AsyncState<string>[] = [];
+    const first = shared.subscribe((state) => states.push(state));
+    trigger.next('old parameters');
+    const second = shared.subscribe();
+    expect(connect).toHaveBeenCalledTimes(1);
+    first.unsubscribe();
+    expect(disconnect).not.toHaveBeenCalled();
+    second.unsubscribe();
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(abort).toHaveBeenCalledTimes(1);
+    responses[0].next('late result');
+    trigger.next('disconnected parameters');
+    vi.advanceTimersByTime(500);
+    expect(states.map((state) => state.status)).toEqual(['loading']);
+    expect(pollingFn).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+
+    const freshStates: AsyncState<string>[] = [];
+    const fresh = shared.subscribe((state) => freshStates.push(state));
+    expect(connect).toHaveBeenCalledTimes(2);
+    expect(freshStates).toEqual([]);
+    vi.advanceTimersByTime(19);
+    expect(pollingFn).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(1);
+    expect(pollingFn).toHaveBeenLastCalledWith(undefined);
+    expect(freshStates.map((state) => state.status)).toEqual(['loading']);
+    responses[1].next('fresh response');
+    expect(freshStates.at(-1)?.data).toBe('fresh response');
+    fresh.unsubscribe();
+    expect(abort).toHaveBeenCalledTimes(2);
+    expect(disconnect).toHaveBeenCalledTimes(2);
+    expect(vi.getTimerCount()).toBe(0);
+  });
 });
