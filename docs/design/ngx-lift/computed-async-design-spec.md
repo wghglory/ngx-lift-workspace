@@ -1,12 +1,15 @@
 # Design Specification: `computedAsync`
 
-**Source:** [computed-async.ts](../../libs/ngx-lift/src/lib/signals/computed-async.ts)
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Approval: existing API; this audit does not approve new behavior.
 
-**Regression tests:** [computed-async.spec.ts](../../libs/ngx-lift/src/lib/signals/computed-async.spec.ts)
+**Source:** [computed-async.ts](../../../libs/ngx-lift/src/lib/signals/computed-async.ts)
+
+**Regression tests:** [computed-async.spec.ts](../../../libs/ngx-lift/src/lib/signals/computed-async.spec.ts)
 
 ---
 
-## 1. Vision & Architecture
+## Background
 
 `computedAsync` derives an asynchronous operation (Observable, `PromiseLike<T>`, or synchronous value) into a read-only
 Angular Signal.
@@ -30,7 +33,7 @@ need a value rather than a resource lifecycle.
 
 ---
 
-## 2. API Contract & Core Capabilities
+## Public API and examples
 
 ### 2.1 Basic Usage
 
@@ -66,7 +69,7 @@ intended dependency.
 
 ---
 
-## 3. Initialization & Angular Primitives
+## Behavior and architecture
 
 ### 3.1 Initial Values & `requireSync`
 
@@ -154,9 +157,9 @@ const optional = computedAsync<number | undefined>(() => loadCount(), {
 });
 ```
 
-See the [roadmap](priority-roadmap.md) for planned work.
+See the [roadmap](../../priority-roadmap.md) for planned work.
 
-## Upgrade considerations
+## Compatibility, rollout, and risks
 
 The synchronous initialization path uses Angular's exported createWatch primitive. Recheck that contract when upgrading
 Angular. Loading/reload UI belongs to resourceAsync or queryResource; planned extensions are tracked in the roadmap.
@@ -167,3 +170,59 @@ The [computedAsync demo](https://ngx-lift.netlify.app/ngx-lift/signals/computedA
 with default read-time errors. Example 11 changes from 42 to fallback 0 and back to 42. Example 12 separates failing the
 source from reading the signal: the UI catches the read in a button handler, displays the failure, and permits a
 successful read after recovery. The raw throwing signal is not bound directly in the template.
+
+## Terminology
+
+A factory is evaluated when tracked dependencies change; a source is the returned value/Observable/PromiseLike. A
+flattened subscription has a lifetime distinct from eagerly started factory work.
+
+## Goals
+
+- G1: Derive async values with explicit flattening and injector-owned cleanup.
+- G2: Preserve accurate signal types and distinguish thrown failures from successful fallback values.
+
+## Non-Goals
+
+### Not now
+
+A separate result API or new loading/status surface.
+
+### Outside this API
+
+Shared server cache, writes, reload controls and native form-field ownership.
+
+## Use cases and acceptance
+
+| ID  | Task               | Initial state/action                    | Outcome                                     | Failure/recovery                     | Demo/test                             |
+| --- | ------------------ | --------------------------------------- | ------------------------------------------- | ------------------------------------ | ------------------------------------- |
+| C1  | Derive changing ID | Rapid dependency changes in switch mode | Old source unsubscribed/ignored             | Later successful dependency recovers | computed-async.spec.ts                |
+| C2  | Render fallback    | Source fails                            | Typed onError value                         | Callback failures throw on read      | demo examples 11/12; unit regressions |
+| C3  | Require sync       | Construct with synchronous source       | Defined initial value or construction error | Cleanup on failure                   | requireSync type/runtime assertions   |
+
+## Industry evidence and current gaps
+
+[Angular toSignal](https://angular.dev/ecosystem/rxjs-interop#error-and-completion) throws source errors on reads. Adopt
+that failure boundary while adding dependency-driven factories and flattening. Use resourceAsync/queryResource when
+loading/error/reload state is needed; do not extend a readonly value signal into a second resource API.
+
+## Demo and validation plan
+
+Existing demo: `apps/demo/src/app/ngx-lib/pages/signals/computed-async/`. Adjacent runtime/type tests cover
+initialization, arbitrary rejection values, fallback typing, each flattening mode and cleanup. The demo keeps a live
+request failure visible through error UI rather than replacing failed HTTP reads with local success data.
+
+## Clarity, accessibility, and localization
+
+Headless API; it owns no control labels, focus or translations. Application UI distinguishes initial loading/error from
+retained-data refresh where applicable. Forms invoke/observe this API without assigning it a CVA/native field value.
+
+## Review decisions and delivery
+
+This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
+[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+
+## Evidence
+
+Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
+identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
+in the corresponding PR and pipeline.

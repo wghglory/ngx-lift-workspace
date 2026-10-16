@@ -14,7 +14,8 @@ export class IdleDetectionConfig {
 
   /**
    * The duration in seconds for the countdown phase after idle detection.
-   * During this phase, the user can still interact to reset the timer.
+   * During this phase, explicit confirmation through resetTimer(true) restarts the idle cycle.
+   * Ordinary pointer, scroll, and keyboard activity does not extend the countdown.
    * After this duration, the timeout event is emitted.
    * Defaults to 1 minute (60 seconds) if not provided.
    */

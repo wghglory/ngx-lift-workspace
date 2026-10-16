@@ -9,15 +9,15 @@ description:
 
 Use the repository's [development workflow](../../../docs/design/component-development.md) as the canonical acceptance
 policy. Read the relevant existing design spec and current source first. The
-[component roadmap](../../../docs/design/component-roadmap.md) defines the component sequence and key/value hold.
+[component roadmap](../../../docs/component-roadmap.md) defines Angular 21 delivery and the deferred platform upgrade.
 
 1. Identify the actual consumer use cases and current gaps. Inspect Clarity and current primary documentation/source
    from Angular Material, NG-ZORRO and relevant React libraries. Record specific adopt/adapt/reject decisions.
-2. Create or update the spec under `docs/design/` using the
+2. Create or update the spec under `docs/design/ngx-lift/` or `docs/design/clr-lift/` using the
    [template](../../../docs/design/templates/component-design-spec.md). Preserve the existing canonical spec when one
    exists. Include goals, non-goals, acceptance use cases, minimal/advanced examples, failure states and compatibility.
-3. Apply the [form contract](../../../docs/design/forms-compatibility-design-spec.md) to value controls. For display,
-   navigation and utilities, explain the relevant integration instead of adding an artificial form value.
+3. Apply the [form contract](../../../docs/design/clr-lift/forms-compatibility-design-spec.md) to value controls. For
+   display, navigation and utilities, explain the relevant integration instead of adding an artificial form value.
 4. Present the draft/API changes for review before implementation unless explicit approval already covers that scope.
    Keep proposal status and unavailable exports clear. On a design-only request, stop after producing the reviewable
    docs.

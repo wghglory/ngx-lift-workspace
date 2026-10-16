@@ -34,7 +34,7 @@ For a new or changed public component, utility, operator, directive, validator, 
 [the lift-design skill](.agents/skills/lift-design/SKILL.md). Create or update the design spec before implementation;
 present practical use cases and proposed API examples for maintainer review. Existing explicit approval remains valid
 for its scope. The workflow owns industry comparisons, form applicability, Clarity demos, localization and validation.
-Use the [component roadmap](docs/design/component-roadmap.md) for the new component sequence and key/value hold.
+Use the [component roadmap](docs/component-roadmap.md) for the Angular 21 delivery sequence and deferred platform work.
 
 ## Documentation language and examples
 

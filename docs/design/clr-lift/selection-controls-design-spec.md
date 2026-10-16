@@ -1,9 +1,12 @@
 # Combobox and autocomplete
 
-Status: **Draft; API approval pending**. Updated October 15, 2026. All new symbols are proposed. Shared requirements:
-[development workflow](component-development.md) and [four form modes](forms-compatibility-design-spec.md).
+Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
+October 16, 2026.
 
-## Background and terminology
+Status: **Draft; API approval pending**. Updated October 16, 2026. All new symbols are proposed. Shared requirements:
+[development workflow](../component-development.md) and [staged form integrations](forms-compatibility-design-spec.md).
+
+## Background
 
 Combobox selects known values; autocomplete edits text with suggestions. Search text, highlighted option, committed
 value, and option label have separate identities. Multi-select pills represent selected values, not arbitrary search
@@ -14,14 +17,18 @@ terms. Keep these public semantics distinct even when a private overlay/request 
 - G1: Users select one or several remote entities with clear loading, no-result, failure and retry states.
 - G2: Users enter text efficiently with optional suggestions, without unexpected selection or text loss.
 - G3: Applications handle large result sets without downloading or rendering the entire dataset.
-- G4: Developers use simple typed options and all four form modes with Clarity presentation.
+- G4: Developers use simple typed options and the Angular 21 form integrations with Clarity presentation.
 
 ## Non-Goals
 
-Not now: tokenizing pasted text, creating remote entities, arbitrary object-valued forms, drag-sorting pills, and a
-public headless selection framework. Add free-tag creation only through a separately reviewed use case and value
-contract. Outside this API: backend search indexing, authorization, unbounded global caches, or selecting all remote
-matches implicitly.
+### Not now
+
+tokenizing pasted text, creating remote entities, arbitrary object-valued forms, drag-sorting pills, and a public
+headless selection framework. Add free-tag creation only through a separately reviewed use case and value contract.
+
+### Outside this API
+
+backend search indexing, authorization, unbounded global caches, or selecting all remote matches implicitly.
 
 ## Industry evidence and current gaps
 
@@ -54,7 +61,7 @@ not decide on a full replacement before that evidence exists.
 | S9  | Reset/disable/close/destroy during work              | No late UI writes or retained subscriptions; reopening follows documented reload policy                   |
 | S10 | Navigate in a modal on a narrow screen               | Overlay follows scrolling/resizing, correct focus/escape behavior, no clipped controls                    |
 
-## Proposed public API
+## Public API and examples
 
 Use primitive keys (`string | number`) for initial combobox values. Local mode supplies `options`; managed remote mode
 supplies `loadOptions`. Supplying both is a configuration error. The component owns debounce/request/paging in managed
@@ -142,9 +149,9 @@ a string-page result; do not publish a generalized loader framework solely to sh
 Autocomplete emits text edits normally; choosing a suggestion replaces the text once. Arrow highlighting does not
 commit. Enter during IME composition does not choose an option. Escape dismisses the panel without discarding text. Blur
 retains free text. Entity-only required selection uses the combobox. Avoid an initial `string | Entity` value union. The
-shipping demos add ngModel, native Signal Forms, and typed Reactive Forms + `toSignalForm` from the shared contract.
+shipping demos add ngModel and typed Reactive Forms + `toSignalForm` from the shared contract.
 
-## Async, scale, and accessibility behavior
+## Behavior and architecture
 
 States: idle/below-threshold → debouncing → initial loading → results/empty/error. Appending has separate loading/error
 state so existing options and selected pills remain usable. A new query immediately invalidates the prior request, even
@@ -160,6 +167,8 @@ keeping rendered option DOM below 100 at the chosen viewport. Record actual inpu
 with fixed-height text rows; variable-height virtualization requires another reviewed contract. An accessible Load more
 action is available outside the listbox options, even when scroll-end loading is supported.
 
+## Clarity, accessibility, and localization
+
 Follow the [WAI-ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/): named trigger,
 listbox/options, expanded/controls/active-descendant state, focus on the input, and an active option that actually
 exists in the DOM. Virtual navigation scrolls an option into view before referencing it. Disabled items are skipped.
@@ -167,16 +176,45 @@ Pills have named remove buttons and keyboard navigation; announce removal/result
 keystroke. Use Clarity containers, focus/invalid states, pills, spinners and design tokens. No Material/Ant runtime
 styling.
 
-## Demo, validation, rollout and decisions
+## Demo and validation plan
 
-Demo/playground cases S1–S10 cover all four form modes, latency/error/retry, out-of-order responses, duplicate labels,
-disabled options, prefill, pill overflow, large data, IME, modal scrolling, runtime language switch and
-dark/compact/RTL. Translate control states, remove labels, result counts, API docs and demo content in every supported
-dictionary. Unit/type tests verify value inference, generation/cancellation, page dedup/caps, cursor loops, label
-retention, events, reset and cleanup. Three-browser E2E verifies actual focus, selection/pill removal, stale results and
-virtual navigation.
+Demo/playground cases S1–S10 cover the Angular 21 form integrations, latency/error/retry, out-of-order responses,
+duplicate labels, disabled options, prefill, pill overflow, large data, IME, modal scrolling, runtime language switch
+and dark/compact/RTL. Translate control states, remove labels, result counts, API docs and demo content in every
+supported dictionary. Unit/type tests verify value inference, generation/cancellation, page dedup/caps, cursor loops,
+label retention, events, reset and cleanup. Three-browser E2E verifies actual focus, selection/pill removal, stale
+results and virtual navigation.
 
 Deliver local single select → remote states/paging → multi-select → autocomplete → scale verification, each functional.
 Pending API decisions: separate selectors, primitive keys, seeded-label behavior, remote request context, cap defaults,
 and wrapper versus independently styled implementation after the public-API spike. No implementation or benchmark is
 done.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.
+
+## Terminology
+
+Query text, highlighted option, committed primitive key and seeded display metadata are independent. A result page
+belongs to one request context/generation; native signal fields remain the second delivery phase.
+
+## Compatibility, rollout, and risks
+
+Angular 21 CVA is the first target; native field support follows the deferred platform upgrade. No selected renderer or
+runtime dependency is approved. Owner: maintainers must prove public Clarity filtering/paging and strict installed
+consumer types before replacing its renderer. SSR/virtualization behavior requires separate acceptance.
+
+## Review decisions and delivery
+
+Feature APIs remain pending. Before implementing S1, review the public-Clarity composition spike, primitive value types
+and empty/reset semantics; before remote delivery approve request context, bounded pages and cancellation. S1/S6 cover
+G2/G4; S2/S3/S8/S9 cover G1; S5 covers G3. Acceptance demos/tests remain planned.
+
+## Evidence
+
+Checked against the current public exports and source at base `e4a43f9` on October 16, 2026. No proposed feature exports
+or feature implementation exist; all feature demos/tests and measurements described here remain planned.

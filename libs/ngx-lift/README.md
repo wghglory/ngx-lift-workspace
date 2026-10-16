@@ -383,10 +383,10 @@ export class MyFormComponent {
 ## 📚 Documentation
 
 - [Async & Query Design Specifications](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/README.md)
-  - [resourceAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/resource-async-design-spec.md)
-  - [queryResource & QueryClient Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/query-resource-design-spec.md)
-  - [mutateResource Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/mutate-resource-design-spec.md)
-  - [computedAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/computed-async-design-spec.md)
+  - [resourceAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/resource-async-design-spec.md)
+  - [queryResource & QueryClient Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/query-resource-design-spec.md)
+  - [mutateResource Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/mutate-resource-design-spec.md)
+  - [computedAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/computed-async-design-spec.md)
 
 - **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
 - **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)
@@ -456,7 +456,7 @@ See
 for ownership and loading contracts.
 
 For the query learning path, session isolation recipe, tested consumer scope and release boundary, see the
-[query production guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/query-resource-design-spec.md).
+[query production guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/query-resource-design-spec.md).
 The demos for [queryResource](https://ngx-lift.netlify.app/ngx-lift/query/queryResource) and
 [queryResources](https://ngx-lift.netlify.app/ngx-lift/query/queryResources) are separate pages. These links describe
 the current source; deployment and npm publication are separate steps.

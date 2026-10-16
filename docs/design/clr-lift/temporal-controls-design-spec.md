@@ -1,6 +1,9 @@
 # Date, time, date-time, ranges, and calendar
 
-Status: **Draft; API approval pending**. Updated October 15, 2026. New selectors and types are proposed.
+Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
+October 16, 2026.
+
+Status: **Draft; API approval pending**. Updated October 16, 2026. New selectors and types are proposed.
 
 ## Background
 
@@ -15,11 +18,16 @@ Temporal entry and calendar display need explicit value, locale and time-zone co
 
 ## Non-Goals
 
-Not now: recurrence rules, scheduling engines, drag/drop events, non-Gregorian calendar systems, quarter/week pickers,
-or parsing arbitrary natural language. Month/year shortcuts can follow actual consumer demand. Outside this API: backend
-scheduling, business holidays, authorization and server validation.
+### Not now
 
-## Industry evidence and gaps
+recurrence rules, scheduling engines, drag/drop events, non-Gregorian calendar systems, quarter/week pickers, or parsing
+arbitrary natural language. Month/year shortcuts can follow actual consumer demand.
+
+### Outside this API
+
+backend scheduling, business holidays, authorization and server validation.
+
+## Industry evidence and current gaps
 
 | Reference                                                                          | Behavior to learn from                                        | Proposed decision                                                                                           |
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -30,7 +38,7 @@ scheduling, business holidays, authorization and server validation.
 | [NG-ZORRO Calendar](https://ng.ant.design/components/calendar/en)                  | Full/card views and date-cell content                         | Keep a bounded calendar view separate from recurrence/event editing                                         |
 | Installed Clarity date input                                                       | Existing visual/form foundation                               | Verify public date composition before replacing it; it does not itself establish our full temporal contract |
 
-## Use cases
+## Use cases and acceptance
 
 | ID  | Task                                   | Expected outcome and recovery                                                                       |
 | --- | -------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -42,7 +50,7 @@ scheduling, business holidays, authorization and server validation.
 | T6  | Navigate a monthly operations calendar | Request the visible interval; distinguish selected date, visible month and events                   |
 | T7  | Enter a DST gap/overlap                | Reject nonexistent local time; require explicit disambiguation for a repeated wall time             |
 
-## Proposed API and examples
+## Public API and examples
 
 Prefer separate controls with narrow types over one mode input returning a large union: `DatePickerComponent` /
 `cll-date-picker`: ISO date `string | null` (`YYYY-MM-DD`); `TimePickerComponent` / `cll-time-picker`: ISO wall time
@@ -85,6 +93,8 @@ export class TemporalExample {
 }
 ```
 
+## Behavior and architecture
+
 Date-only values must not round-trip through `new Date('YYYY-MM-DD')` as an implicit local date. Time-only ranges
 crossing midnight need a separate domain rule. Out-of-range values remain visible and invalid; do not silently reorder
 or clamp. Parse drafts and incomplete ranges remain inside the control until a valid commit; parse/required errors still
@@ -103,12 +113,12 @@ No recurrence expansion or hidden background polling. Loading/error views are se
 <cll-calendar [events]="events()" [viewDate]="month()" (visibleRangeChange)="fetchEvents($event)" />
 ```
 
-## Behavior, demo and validation
+## Clarity, accessibility, and localization
 
 Use Clarity date containers and tokens, localized month/day names, locale week start, RTL, compact/light/dark and
 accessible grid navigation. Support typed entry as well as picking. Give range endpoints separate names; announce
 invalid times and restore input focus on dismissal. No trap when tabbing through a nonmodal calendar. Every value
-control has all four [form demos](forms-compatibility-design-spec.md). Calendar form integration applies to date
+control has the Angular 21 [form demos](forms-compatibility-design-spec.md). Calendar form integration applies to date
 selection; display-only event navigation works without binding a form. Playground examples cover T1–T7, presets,
 keyboard entry, min/max, disabled days/times, partial ranges, reset, UTC and DST zones, all supported languages.
 
@@ -120,3 +130,37 @@ unbounded DOM. Deliver date/time → date-time → date ranges → date-time ran
 private date logic. Pending: exact value types, time-zone conversion dependency, locale parser, DST UX, range
 confirmation and calendar demand. No controls, parser/DST spike, measurements, or new tests are delivered by this
 document.
+
+## Platform delivery requirement
+
+Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
+feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
+[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
+value of their own. This requirement does not make proposed exports available.
+
+## Terminology
+
+A calendar date has no zone; a wall time has no date; an instant identifies one point in time. A partial range is a
+draft, not a valid committed endpoint pair. A display calendar does not own a form value unless selection is enabled.
+
+## Compatibility, rollout, and risks
+
+Angular 21 CVA first; native fields required after the platform upgrade for every value picker/range and selectable
+calendar. Intl formats values but is not a complete localized parser or DST conversion engine. Maintainers must approve
+that dependency/adapter decision before promising zoned entry; no parser dependency is approved here.
+
+## Review decisions and delivery
+
+T1/T2/T4 cover G1; T3/T5/T7 cover G2; T6 covers G3. Review parser/DST behavior before date-time implementation. Ship
+useful date/time controls independently; calendar demand and event shape remain pending. Form owners must be able to see
+parse errors even when invalid drafts are withheld from committed values.
+
+## Demo and validation plan
+
+The use cases and validation requirements above are planned acceptance, not executed coverage. Each first-delivery use
+case needs a working Clarity playground and focused state/browser tests before its status changes to Verified.
+
+## Evidence
+
+Checked against the current public exports and source at base `e4a43f9` on October 16, 2026. No proposed feature exports
+or feature implementation exist; all feature demos/tests and measurements described here remain planned.
