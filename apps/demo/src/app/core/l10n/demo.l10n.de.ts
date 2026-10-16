@@ -1585,7 +1585,7 @@ export const deTranslations: Record<string, string> = {
     'Klicken Sie auf "Fetch Paginated Pods", um automatisiertes Mehrseiten-Hotting über drei Mock Kubernetes API Seiten auszulösen:',
   'kubernetesPagination.btnFetchPods': 'Besorgen Sie heidnische Pods',
   'kubernetesPagination.fetchingPages': 'Seiten laden (weiter Token)...',
-  'kubernetesPagination.pagesFetched': 'Abgerufene Seiten (einschließlich der ersten):',
+  'kubernetesPagination.pagesFetched': 'Seiten, die rekursiv abgerufen werden:',
   'kubernetesPagination.aggregationComplete': 'Gesamtsumme',
   'kubernetesPagination.totalResources': 'Gesamtmittel:',
   'kubernetesPagination.thPodName': 'Name des Pods',
@@ -1599,16 +1599,9 @@ export const deTranslations: Record<string, string> = {
     'RxJS-Operator, der eine anfängliche Kubernetes-Listenantwort Observable in eine aggregierte Liste umwandelt, die Elemente von allen Seiten enthält.',
   'kubernetesPagination.fetchSummary':
     'Convenience-Funktion, die Kubernetes-Ressourcen in einem einzigen Aufruf initiiert und paginiert.',
-  'kubernetesPagination.limitHelp':
-    'Seitengröße des Servers. Der Helfer folgt den Fortsetzungstoken durch alle Seiten; limit begrenzt nicht die Gesamtmenge.',
-  'kubernetesPagination.maxPagesHelp':
-    'Maximale Anzahl erfolgreicher Seiten einschließlich der ersten. Eine Überschreitung lässt die gesamte Abfrage fehlschlagen; ohne Angabe unbegrenzt.',
-  'kubernetesPagination.maxItemsHelp':
-    'Maximale Gesamtzahl der Elemente aller Seiten. Eine Überschreitung lässt die gesamte Abfrage fehlschlagen; ohne Angabe unbegrenzt.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient verwendet für die Anforderung von nachfolgenden Seiten.',
   'kubernetesPagination.paramEndpoint': 'REST URL der Kubernetes Ressource.',
-  'kubernetesPagination.paramInitialParams':
-    'Optionen (initialParams, retryConfig, bounds) oder bisherige Abfrageparameter.',
+  'kubernetesPagination.paramInitialParams': 'Abfrageparameter (z.B. Limit).',
   'k8sRetryBackoff.configSummary': 'Optionale Konfiguration, die von Operator und Interzeptor-Factory geteilt wird.',
   'k8sRetryBackoff.paramMaxAttempts':
     'Gesamtzahl der Versuche inklusive der Erstanfrage. Auf 1 setzen, um Wiederholungen zu deaktivieren.',

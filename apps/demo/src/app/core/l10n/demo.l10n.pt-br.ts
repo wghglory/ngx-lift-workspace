@@ -1560,7 +1560,7 @@ export const ptBRTranslations: Record<string, string> = {
     'Clique em &apos; Fetch Pagined Pods &apos; para detonar a obtenção automatizada de múltiplas páginas em três rodadas Kubernetes API páginas:',
   'kubernetesPagination.btnFetchPods': 'Procurar Pods Paginados',
   'kubernetesPagination.fetchingPages': 'A obter as páginas (continue a token)...',
-  'kubernetesPagination.pagesFetched': 'Páginas obtidas (incluindo a primeira):',
+  'kubernetesPagination.pagesFetched': 'Páginas pegadas recursivamente:',
   'kubernetesPagination.aggregationComplete': 'Agregação Completa',
   'kubernetesPagination.totalResources': 'Total dos recursos:',
   'kubernetesPagination.thPodName': 'Nome do CódigoName',
@@ -1574,16 +1574,9 @@ export const ptBRTranslations: Record<string, string> = {
     'RxJS operador que transforma um primeiro Kubernetes resposta à lista Observable numa lista agregada que contenha itens a partir de todas as páginas.',
   'kubernetesPagination.fetchSummary':
     'Função de conveniência que inicia e paga recursos Kubernetes em uma única chamada.',
-  'kubernetesPagination.limitHelp':
-    'Tamanho de página do servidor. A função segue os tokens de continuação por todas as páginas; limit não limita o total.',
-  'kubernetesPagination.maxPagesHelp':
-    'Máximo de páginas obtidas com sucesso, incluindo a primeira. Exceder esse valor falha a lista inteira; omitido significa sem limite.',
-  'kubernetesPagination.maxItemsHelp':
-    'Máximo de itens somados em todas as páginas. Exceder esse valor falha a lista inteira; omitido significa sem limite.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient utilizado para solicitar as páginas subsequentes.',
   'kubernetesPagination.paramEndpoint': 'REST URL do recurso Kubernetes.',
-  'kubernetesPagination.paramInitialParams':
-    'Opções (initialParams, retryConfig, bounds) ou parâmetros de consulta anteriores.',
+  'kubernetesPagination.paramInitialParams': 'Parâmetros da quilha (por exemplo, limite).',
   'k8sRetryBackoff.configSummary':
     'Configuração opcional compartilhada pelo operador e pela fábrica de interceptadores.',
   'k8sRetryBackoff.paramMaxAttempts':

@@ -1565,7 +1565,7 @@ export const ruTranslations: Record<string, string> = {
     'Нажмите "Petch Paginated Pods" для запуска автоматизированной многостраничной работы с тремя имитирующими страницами Kubernetes API:',
   'kubernetesPagination.btnFetchPods': 'Возьмите опухоли',
   'kubernetesPagination.fetchingPages': 'Написание страниц (продолжающий символ)...',
-  'kubernetesPagination.pagesFetched': 'Получено страниц (включая первую):',
+  'kubernetesPagination.pagesFetched': 'Страницы получены рекурсивно:',
   'kubernetesPagination.aggregationComplete': 'Агрегация завершена',
   'kubernetesPagination.totalResources': 'Общий объем ресурсов:',
   'kubernetesPagination.thPodName': 'Название',
@@ -1579,16 +1579,9 @@ export const ruTranslations: Record<string, string> = {
     'RxJS оператор, который преобразует первоначальный ответ Kubernetes-лист Observable в агрегированный список, содержащий элементы со всех страниц.',
   'kubernetesPagination.fetchSummary':
     'Функция координации, которая инициирует и растягивает ресурсы Kubernetes в один звонок.',
-  'kubernetesPagination.limitHelp':
-    'Размер страницы сервера. Функция следует токенам продолжения по всем страницам; limit не ограничивает общее число элементов.',
-  'kubernetesPagination.maxPagesHelp':
-    'Максимальное число успешно полученных страниц, включая первую. Превышение завершает весь список ошибкой; без значения ограничений нет.',
-  'kubernetesPagination.maxItemsHelp':
-    'Максимальное общее число элементов всех страниц. Превышение завершает весь список ошибкой; без значения ограничений нет.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient используется для запроса последующих страниц.',
   'kubernetesPagination.paramEndpoint': 'REST URL ресурс Kubernetes.',
-  'kubernetesPagination.paramInitialParams':
-    'Параметры (initialParams, retryConfig, bounds) или прежние параметры запроса.',
+  'kubernetesPagination.paramInitialParams': 'Параметры запроса (например, предел).',
   'k8sRetryBackoff.configSummary': 'Опциональная конфигурация, разделяемая оператором и фабрикой интерцептора.',
   'k8sRetryBackoff.paramMaxAttempts':
     'Общее количество попыток, включая начальный запрос. Установите 1 для отключения повторов.',

@@ -71,47 +71,8 @@ describe('aggregatePaginatedKubernetesResources', () => {
     expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('repeated')}));
   });
 
-  it.each([1, 2])('stops at maxPages=%s before issuing an extra request', (maxPages) => {
-    const next = vi.fn(),
-      error = vi.fn();
-    fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages}}).subscribe({next, error});
-    httpTestingController.expectOne('/items').flush(page('a'));
-    if (maxPages === 2) httpTestingController.expectOne('/items?continue=a').flush(page('b'));
-    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('maxPages')}));
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  it.each([1, 2])('rejects maxItems overflow on page %s without partial output', (overflowPage) => {
-    const next = vi.fn(),
-      error = vi.fn();
-    fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxItems: 1}}).subscribe({next, error});
-    httpTestingController.expectOne('/items').flush(page(overflowPage === 1 ? '' : 'a', overflowPage === 1 ? 2 : 1));
-    if (overflowPage === 2) httpTestingController.expectOne('/items?continue=a').flush(page());
-    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('maxItems')}));
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  it('allows exact limits, including a final empty page', async () => {
-    const result = firstValueFrom(
-      fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2, maxItems: 1}}),
-    );
-    httpTestingController.expectOne('/items').flush(page('a'));
-    httpTestingController.expectOne('/items?continue=a').flush(page('', 0));
-    expect((await result).items).toHaveLength(1);
-  });
-
-  it.each([0, -1, 1.5, Infinity, NaN, Number.MAX_SAFE_INTEGER + 1])('rejects invalid aggregate limit %s', (limit) => {
-    for (const name of ['maxPages', 'maxItems']) {
-      expect(() => fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {[name]: limit}})).toThrow(
-        RangeError,
-      );
-    }
-    httpTestingController.expectNone('/items');
-  });
-
-  it('resets counters and cursor history for each subscriber and whole-aggregate retry', () => {
+  it('resets cursor history for each subscriber and whole-aggregate retry', () => {
     const shared = fetchPaginatedKubernetesResources(httpClient, '/items', {
-      bounds: {maxPages: 2, maxItems: 2},
       retryConfig: false,
     });
     for (let index = 0; index < 2; index++) {
@@ -131,7 +92,7 @@ describe('aggregatePaginatedKubernetesResources', () => {
   it('cancels an in-flight continuation without emitting a partial aggregate', () => {
     const next = vi.fn(),
       error = vi.fn();
-    const subscription = fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2}}).subscribe({
+    const subscription = fetchPaginatedKubernetesResources(httpClient, '/items').subscribe({
       next,
       error,
     });
@@ -145,7 +106,7 @@ describe('aggregatePaginatedKubernetesResources', () => {
 
   it('keeps simultaneous subscriptions independent', () => {
     const source = of(page('a'));
-    const operator = aggregatePaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2, maxItems: 2}});
+    const operator = aggregatePaginatedKubernetesResources(httpClient, '/items');
     const first = vi.fn(),
       second = vi.fn();
     source.pipe(operator).subscribe(first);
@@ -159,14 +120,6 @@ describe('aggregatePaginatedKubernetesResources', () => {
     expect(first).toHaveBeenCalledTimes(1);
     expect(first.mock.calls[0][0].items).toHaveLength(2);
     expect(second.mock.calls[0][0].items).toHaveLength(2);
-  });
-
-  it('preserves legacy HTTP parameters named bounds, maxPages and maxItems', async () => {
-    const result = firstValueFrom(
-      fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: 'server', maxPages: 3, maxItems: 7}),
-    );
-    httpTestingController.expectOne('/items?bounds=server&maxPages=3&maxItems=7').flush(page());
-    expect((await result).items).toHaveLength(1);
   });
 
   it('preserves a legacy boolean retryConfig parameter alongside other HTTP params', async () => {

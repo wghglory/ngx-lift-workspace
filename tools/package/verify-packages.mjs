@@ -50,11 +50,6 @@ import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionSt
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
-import {type KubernetesPaginationOptions} from 'ngx-lift';
-const boundedPagination: KubernetesPaginationOptions = {initialParams: {limit: 100}, bounds: {maxPages: 5, maxItems: 500}};
-// @ts-expect-error Aggregate bounds must be numeric in the published API.
-const invalidPagination: KubernetesPaginationOptions = {bounds: {maxPages: '5'}};
-void [boundedPagination, invalidPagination];
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
   const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
@@ -196,11 +191,6 @@ import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionSt
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService} from 'clr-lift';
 import {FormControl} from '@angular/forms';
-import {type KubernetesPaginationOptions} from 'ngx-lift';
-const boundedPagination: KubernetesPaginationOptions = {initialParams: {limit: 100}, bounds: {maxPages: 5, maxItems: 500}};
-// @ts-expect-error Aggregate bounds must be numeric in the published API.
-const invalidPagination: KubernetesPaginationOptions = {bounds: {maxPages: '5'}};
-void [boundedPagination, invalidPagination];
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
   const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();

@@ -1522,7 +1522,7 @@ export const enTranslations: Record<string, string> = {
     'Click "Fetch Paginated Pods" to trigger automated multi-page fetching across three mock Kubernetes API pages:',
   'kubernetesPagination.btnFetchPods': 'Fetch Paginated Pods',
   'kubernetesPagination.fetchingPages': 'Fetching pages (continue token)...',
-  'kubernetesPagination.pagesFetched': 'Pages fetched (including the first):',
+  'kubernetesPagination.pagesFetched': 'Pages fetched recursively:',
   'kubernetesPagination.aggregationComplete': 'Aggregation Complete',
   'kubernetesPagination.totalResources': 'Total Resources:',
   'kubernetesPagination.thPodName': 'Pod Name',
@@ -1536,16 +1536,9 @@ export const enTranslations: Record<string, string> = {
     'RxJS operator that transforms an initial Kubernetes list response Observable into an aggregated list containing items from all pages.',
   'kubernetesPagination.fetchSummary':
     'Convenience function that initiates and paginates Kubernetes resources in a single call.',
-  'kubernetesPagination.limitHelp':
-    'Server page size. The helper follows continue tokens through all pages; limit does not cap the total.',
-  'kubernetesPagination.maxPagesHelp':
-    'Maximum successful pages, including the first. Exceeding this bound fails the whole list; omitted means unbounded.',
-  'kubernetesPagination.maxItemsHelp':
-    'Maximum combined items across all pages. Exceeding this bound fails the whole list; omitted means unbounded.',
   'kubernetesPagination.paramHttp': 'Angular HttpClient used for requesting subsequent pages.',
   'kubernetesPagination.paramEndpoint': 'REST URL of the Kubernetes resource.',
-  'kubernetesPagination.paramInitialParams':
-    'Options (initialParams, retryConfig, bounds), or legacy query parameters.',
+  'kubernetesPagination.paramInitialParams': 'Query parameters (e.g. limit).',
   'k8sRetryBackoff.configSummary': 'Optional configuration shared by the operator and interceptor factory.',
   'k8sRetryBackoff.paramMaxAttempts': 'Total attempts including the initial request. Set to 1 to disable retries.',
   'k8sRetryBackoff.errorShape':
