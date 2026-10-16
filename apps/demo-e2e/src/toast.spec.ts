@@ -2,8 +2,8 @@ import {expect, test} from '@playwright/test';
 
 test.describe('Toast interaction lifetime', () => {
   test.beforeEach(async ({page}) => {
-    await page.goto('/clr-lift/components/toast');
     await page.clock.install();
+    await page.goto('/clr-lift/components/toast');
     await page.getByRole('button', {name: 'Error Toast', exact: true}).click();
   });
 
@@ -41,7 +41,9 @@ test.describe('Toast viewport containment', () => {
   for (const width of [1280, 390, 320]) {
     test(`keeps page dimensions stable during entry and stacking at ${width}px`, async ({page}, testInfo) => {
       await page.setViewportSize({width, height: 480});
+      await page.clock.install({time: new Date('2026-10-16T00:00:00Z')});
       await page.goto('/clr-lift/components/toast');
+      await page.clock.pauseAt(new Date('2026-10-16T00:01:00Z'));
       const pageSize = () =>
         page.evaluate(() => ({
           width: document.documentElement.scrollWidth,
@@ -49,20 +51,24 @@ test.describe('Toast viewport containment', () => {
           clientWidth: document.documentElement.clientWidth,
           clientHeight: document.documentElement.clientHeight,
         }));
+      await page.addStyleTag({content: 'cll-toast.toast-enter { animation-play-state: paused !important; }'});
       const before = await pageSize();
       const add = page.getByRole('button', {name: 'Error Toast', exact: true});
       for (let index = 0; index < 8; index++) {
         await add.press('Enter');
-        const latest = page.locator('cll-toast').last();
+        await page.clock.runFor(20);
+        await expect(page.locator('cll-toast')).toHaveCount(index + 1);
+        const latest = page.locator('cll-toast').first();
         await expect(latest).toBeAttached();
         const sizes = await latest.evaluate((element) => {
           const animation = element
             .getAnimations()
-            .find((item) => item instanceof CSSAnimation && item.animationName === 'toast-enter-anim');
-          animation?.pause();
+            .find((item) => item instanceof CSSAnimation && item.animationName.includes('toast-enter-anim'));
+          if (!animation) throw new Error('New toast must have its entry animation');
+          animation.pause();
           const snapshots = [];
           for (const time of [0, 16, 100, 200, 399, 400]) {
-            if (animation) animation.currentTime = time;
+            animation.currentTime = time;
             snapshots.push({
               width: document.documentElement.scrollWidth,
               height: document.documentElement.scrollHeight,
@@ -70,7 +76,7 @@ test.describe('Toast viewport containment', () => {
               clientHeight: document.documentElement.clientHeight,
             });
           }
-          animation?.finish();
+          animation.finish();
           return snapshots;
         });
         for (const size of sizes) expect(size).toEqual(before);
@@ -82,14 +88,19 @@ test.describe('Toast viewport containment', () => {
       }
       await expect(page.locator('cll-toast')).toHaveCount(8);
       const last = page.locator('cll-toast').last();
-      await last.getByRole('button', {name: 'More Info', exact: true}).focus();
+      const action = last.getByRole('button', {name: 'More Info', exact: true});
+      await action.focus();
+      await expect(action).toBeFocused();
+      const stack = await page.locator('cll-toast-container').boundingBox();
+      if (!stack) throw new Error('Toast stack must be visible');
       for (const control of await last.getByRole('button').all()) {
         const rect = await control.boundingBox();
         if (!rect) throw new Error('Toast action must be visible');
         expect(rect.x).toBeGreaterThanOrEqual(0);
         expect(rect.x + rect.width).toBeLessThanOrEqual(width);
+        expect(rect.y).toBeGreaterThanOrEqual(stack.y);
+        expect(rect.y + rect.height).toBeLessThanOrEqual(Math.min(stack.y + stack.height, 480));
       }
-      await page.locator('cll-toast').last().getByRole('button', {name: 'More Info', exact: true}).focus();
       expect(await pageSize()).toEqual(before);
     });
   }
