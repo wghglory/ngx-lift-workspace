@@ -32,11 +32,11 @@ TLS trust decisions, chain validation, private-key handling, revocation and serv
 
 ## Use cases and acceptance
 
-| ID  | Task                   | Initial state/action             | Outcome                                     | Failure/recovery                           | Demo/test                                       |
-| --- | ---------------------- | -------------------------------- | ------------------------------------------- | ------------------------------------------ | ----------------------------------------------- |
-| C1  | Inspect PEM            | Raw/encoded input opens signpost | Details and display hashes                  | Parse failure shown without trust claim    | mocked recovery tests; real parser tests needed |
-| C2  | Observe expiry         | Inject/update reference clock    | Expired at notAfter; warning within 30 days | Override clock yields deterministic output | clock regressions                               |
-| C3  | Validate imported text | Empty, malformed, valid PEM      | Empty allowed; malformed invalidCertificate | Required is caller-owned                   | validator coverage needed; certificate E2E      |
+| ID  | Task                   | Initial state/action             | Outcome                                     | Failure/recovery                           | Demo/test                                |
+| --- | ---------------------- | -------------------------------- | ------------------------------------------- | ------------------------------------------ | ---------------------------------------- |
+| C1  | Inspect PEM            | Raw/encoded input opens signpost | Details and display hashes                  | Parse failure shown without trust claim    | real raw/encoded parser and digest tests |
+| C2  | Observe expiry         | Inject/update reference clock    | Expired at notAfter; warning within 30 days | Override clock yields deterministic output | clock regressions                        |
+| C3  | Validate imported text | Empty, malformed, valid PEM      | Empty allowed; malformed invalidCertificate | Required is caller-owned                   | validator branch tests; certificate E2E  |
 
 ## Industry evidence and current gaps
 
@@ -70,11 +70,12 @@ messages. Verify keyboard open/close and focus return; human translation accepta
 ## Demo and validation plan
 
 Certificate and file-reader demos automatically load their deferred viewer for the initial PEM, without a load button or
-programmatic focus movement. The label, signpost trigger and status use aligned inline layouts;
+programmatic focus movement. Keep the signpost trigger and status aligned with their label;
 `apps/demo-e2e/src/certificate.spec.ts` checks details/focus. Adjacent tests cover clock precedence/status and mocked
-parse-error recovery; they do not directly prove real PEM parsing, fingerprints or certificateValidator branches. Add
-actual raw/encoded/malformed PEM fixtures, hash expectations and empty/invalid validator assertions. Dependency/bundle
-tooling verifies demo lazy-loading; strict package installation checks a different boundary.
+parse-error recovery. Direct service/validator tests use an expired public certificate to verify raw/encoded PEM
+parsing, fixed DER fingerprints, malformed input, empty optional values, caller-owned required validation and recovery.
+Parsing an expired certificate remains valid for this API. Dependency/bundle tooling verifies demo lazy-loading; strict
+package installation checks a different boundary.
 
 ## Compatibility, rollout, and risks
 
@@ -89,4 +90,5 @@ separately; neither is silently introduced in this docs update.
 
 ## Evidence
 
-Source, adjacent tests and package manifest inspected October 16, 2026. No crypto, browser or package checks rerun here.
+The direct CertificateService/certificateValidator suites pass 18 tests with real node-forge parsing and fixed MD5/SHA1
+values independently calculated from DER with Python hashlib. This proves parsing/display behavior, not trust.
