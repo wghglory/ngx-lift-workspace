@@ -2207,7 +2207,7 @@ export const esTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.destroy()':
     'Detener permanentemente la observación y cancelar el trabajo pendiente.',
   'demoApi.date-range-validator.optionsProperties.compareTime': '¿Comparar el tiempo también? Predeterminado es falso.',
-  'certificate.loadExample': 'Cargar ejemplo de certificado',
+  'certificate.loading': 'Cargando certificado…',
   'certificate.loadFailed':
     'No se pudieron cargar los detalles del certificado. Actualiza la página e inténtalo de nuevo.',
   'fileReader.validationUnavailable':

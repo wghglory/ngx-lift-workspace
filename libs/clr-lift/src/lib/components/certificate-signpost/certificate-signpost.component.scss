@@ -14,7 +14,8 @@
 }
 
 .certificate-status {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 
   & > * + * {
     margin-left: 0.25rem;

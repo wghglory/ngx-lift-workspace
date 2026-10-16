@@ -2161,7 +2161,7 @@ export const ptBRTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.destroy()':
     'Parar permanentemente a observação e cancelar tarefas pendentes.',
   'demoApi.date-range-validator.optionsProperties.compareTime': 'Se quer comparar o tempo também. Padrão é false.',
-  'certificate.loadExample': 'Carregar exemplo de certificado',
+  'certificate.loading': 'Carregando certificado…',
   'certificate.loadFailed':
     'Não foi possível carregar os detalhes do certificado. Atualize a página e tente novamente.',
   'fileReader.validationUnavailable':

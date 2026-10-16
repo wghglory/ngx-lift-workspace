@@ -52,13 +52,24 @@ test.describe('FileReader component', () => {
     await expect(submitBtn).toBeDisabled();
   });
 
-  test('Example 2: displays pre-filled certificate and certificate signpost', async ({page}) => {
+  test('Example 2: displays pre-filled certificate and certificate signpost', async ({page}, testInfo) => {
     const example2 = page.locator('article', {hasText: 'Example 2: Certificate File Reader'});
-    await example2.locator('[data-test-id="load-certificate"]').click();
+    await expect(example2.getByRole('button', {name: 'Load Certificate Example', exact: true})).toHaveCount(0);
     const signpostTrigger = example2.locator('cll-certificate-signpost button');
 
     // Verify certificate signpost is present
     await expect(signpostTrigger).toBeVisible();
+    await expect(signpostTrigger).not.toBeFocused();
+    const centerY = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return rect.y + rect.height / 2;
+    };
+    const labelCenter = await example2.getByText('Show certificate:', {exact: true}).evaluate(centerY);
+    const triggerCenter = await signpostTrigger.evaluate(centerY);
+    expect(Math.abs(labelCenter - triggerCenter)).toBeLessThanOrEqual(3);
+    const screenshot = testInfo.outputPath('prefilled-certificate.png');
+    await example2.locator('form').screenshot({path: screenshot});
+    await testInfo.attach('prefilled-certificate', {path: screenshot, contentType: 'image/png'});
 
     // Click signpost to open details
     await signpostTrigger.click();

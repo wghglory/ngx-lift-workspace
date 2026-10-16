@@ -1917,7 +1917,7 @@ export const zhTWTranslations: Record<string, string> = {
   'demoApi.resource-async.returnsProperties.reset()': '將資源重置為初始 idle 狀態並取消進行中的操作。',
   'demoApi.resource-async.returnsProperties.destroy()': '永久停止觀察並取消待完成的操作。',
   'demoApi.date-range-validator.optionsProperties.compareTime': '是否同時比較時間，預設為 false。',
-  'certificate.loadExample': '載入證書示例',
+  'certificate.loading': '正在載入憑證…',
   'certificate.loadFailed': '無法載入證書詳情，請重新整理頁面重試。',
   'fileReader.validationUnavailable': '無法載入證書校驗，請重新整理頁面重試。',
   'queryExamples.failureTitle': '失敗與復原模式',

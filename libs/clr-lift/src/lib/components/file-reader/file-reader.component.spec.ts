@@ -46,6 +46,7 @@ describe('FileReaderComponent', () => {
   });
 
   afterEach(() => {
+    fixture.destroy();
     // Restore original FileReader
     delete (globalThis as {FileReader?: unknown}).FileReader;
   });
@@ -582,6 +583,68 @@ describe('FileReaderComponent', () => {
       expect(readers[0].onload).toBeNull();
     });
 
+    it.each(['cva', 'input'] as const)('cancels pending work when disabled through %s', (mode) => {
+      component.writeValue('committed content');
+      const onChange = vi.fn();
+      const onTouched = vi.fn();
+      const fileChange = vi.fn();
+      component.registerOnChange(onChange);
+      component.registerOnTouched(onTouched);
+      component.fileChange.subscribe(fileChange);
+      selectFile('pending.txt');
+      const reader = readers[0];
+      const staleLoad = reader.onload;
+      const staleError = reader.onerror;
+
+      // jsdom forbids assigning a file path, so model the browser-populated value.
+      Object.defineProperty(component.fileElement().nativeElement, 'value', {
+        configurable: true,
+        writable: true,
+        value: 'C:\\fakepath\\pending.txt',
+      });
+
+      if (mode === 'cva') component.setDisabledState(true);
+      else fixture.componentRef.setInput('disabled', true);
+      fixture.detectChanges();
+
+      expect(reader.abort).toHaveBeenCalledTimes(1);
+      expect(reader.onload).toBeNull();
+      expect(reader.onerror).toBeNull();
+      expect(component.selectedFile()).toBeUndefined();
+      expect(component.fileElement().nativeElement.value).toBe('');
+      expect(component.rawContent()).toBe('committed content');
+
+      if (mode === 'cva') component.setDisabledState(false);
+      else fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+      reader.result = 'obsolete content';
+      staleLoad?.({target: reader} as unknown as ProgressEvent<FileReader>);
+      staleError?.();
+      expect(onChange).not.toHaveBeenCalled();
+      expect(onTouched).not.toHaveBeenCalled();
+      expect(fileChange).not.toHaveBeenCalled();
+      expect(component.parseError()).toBe('');
+      expect(component.rawContent()).toBe('committed content');
+
+      selectFile('fresh.txt');
+      complete(readers[1], 'fresh content');
+      expect(onChange).toHaveBeenCalledExactlyOnceWith('fresh content');
+      expect(fileChange).toHaveBeenCalledExactlyOnceWith('fresh content');
+    });
+
+    it('rejects completion after disabled input changes before effects flush', () => {
+      component.writeValue('committed content');
+      const onChange = vi.fn();
+      component.registerOnChange(onChange);
+      selectFile('pending.txt');
+      fixture.componentRef.setInput('disabled', true);
+      complete(readers[0], 'obsolete content');
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(component.rawContent()).toBe('committed content');
+      expect(readers[0].abort).toHaveBeenCalledTimes(1);
+    });
+
     it('exposes FileReader errors to form validation', () => {
       selectFile('broken.txt');
       readers[0].error = new DOMException('Read failed');
@@ -635,6 +698,52 @@ describe('FileReaderComponent real form integration', () => {
     expect(host.form.untouched).toBe(true);
     expect(host.form.pristine).toBe(true);
     subscription.unsubscribe();
+  });
+
+  it('cancels a pending native read when the owning FormControl is disabled', () => {
+    let pendingLoad: (() => void) | null = null;
+    const abort = vi.fn();
+    class PendingReader {
+      static LOADING = 1;
+      readyState = 1;
+      result = 'obsolete content';
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      abort = abort;
+      readAsText() {
+        pendingLoad = this.onload;
+      }
+    }
+    vi.stubGlobal('FileReader', PendingReader);
+    try {
+      TestBed.configureTestingModule({
+        imports: [FileReaderFormHost],
+        providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      });
+      const fixture = TestBed.createComponent(FileReaderFormHost);
+      fixture.detectChanges();
+      const host = fixture.componentInstance;
+      const reader = fixture.debugElement.query(By.directive(FileReaderComponent))
+        .componentInstance as FileReaderComponent;
+      const changed = vi.fn();
+      reader.fileChange.subscribe(changed);
+      const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
+      Object.defineProperty(input, 'files', {value: [new File(['pending'], 'pending.txt')]});
+      input.dispatchEvent(new Event('change'));
+      host.form.disable();
+      host.form.enable();
+      const complete = pendingLoad as (() => void) | null;
+      complete?.();
+
+      expect(abort).toHaveBeenCalledTimes(1);
+      expect(host.form.value).toBe('initial value');
+      expect(host.form.pristine).toBe(true);
+      expect(host.form.untouched).toBe(true);
+      expect(changed).not.toHaveBeenCalled();
+      fixture.destroy();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('revalidates the real form when the file size limit or parsing state changes', () => {
