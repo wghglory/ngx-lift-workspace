@@ -22,6 +22,7 @@ export class ToastContainerComponent {
   toasts$ = this.toastService.toasts$;
 
   @HostBinding('style.top')
+  @HostBinding('style.--toast-top')
   get top() {
     return 60 + this.topOffset() + 'px'; // 60 is Clarity header navigation height
   }

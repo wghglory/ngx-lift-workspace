@@ -93,8 +93,10 @@ describe('ToastComponent', () => {
       fixture.componentRef.setInput('secondaryButtonText', 'Second');
       fixture.detectChanges();
       const closed = vi.spyOn(component.closed, 'emit');
-      const first = fixture.nativeElement.querySelector('.toast-button') as HTMLButtonElement;
-      const second = fixture.nativeElement.querySelector('.toast-button.secondary') as HTMLButtonElement;
+      const buttons = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button'));
+      const first = buttons.find((button) => button.textContent?.trim() === 'First');
+      const second = buttons.find((button) => button.textContent?.trim() === 'Second');
+      if (!first || !second) throw new Error('Expected both named toast actions');
       first.focus();
       second.focus();
       vi.advanceTimersByTime(1000);

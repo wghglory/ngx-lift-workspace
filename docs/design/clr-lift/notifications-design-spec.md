@@ -83,6 +83,11 @@ Toast hover and focus-within must be tracked independently. Auto-close remains p
 active, including focus moving between buttons within one toast. Preserve the current full-interval retry policy at
 expiry.
 
+Toast containers are fixed to the viewport below the configured header offset. Entry/exit motion and long stacks must
+not change document scroll dimensions or page layout. Bound vertical overflow inside the toast stack, keep narrow
+viewport cards inside its available width, and preserve keyboard access to offscreen notifications. Page/body overflow
+must remain under the host application's control.
+
 ## Demo and validation plan
 
 Existing alert/toast demos and adjacent specs cover identity, actions, dismissal and timers. Add hostile-string
@@ -109,3 +114,8 @@ browser acceptance or test execution is claimed in this docs PR.
 Independent hover/focus-within regressions pass in the 9-test toast unit suite. The two real demo interaction scenarios
 pass in Chromium, Firefox and WebKit (6 checks). clr-lift tests, lint, typecheck and build and demo-e2e lint/typecheck
 pass. Expiry still retries the full configured interval while interaction remains active.
+
+The viewport regressions reproduce horizontal animation overflow and vertical stack growth before the fix. Fixed
+container sizing passes 15 browser checks across Chromium, Firefox and WebKit, including 320px, 390px and desktop
+widths, sampled animation times, eight-toast stacks and keyboard access. The fix changes toast containment only; it does
+not set document/body overflow.
