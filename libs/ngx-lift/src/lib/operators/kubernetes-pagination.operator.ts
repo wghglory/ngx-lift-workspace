@@ -116,8 +116,11 @@ export function aggregatePaginatedKubernetesResources<T extends KubernetesObject
       let pageCount = 0;
       let itemCount = 0;
       const seenTokens = new Set<string>();
-      if (typeof initialParams['continue'] === 'string' && initialParams['continue']) {
-        seenTokens.add(initialParams['continue']);
+      const initialCursor = initialParams['continue'];
+      const initialCursors = Array.isArray(initialCursor) ? initialCursor : [initialCursor];
+      for (const cursor of initialCursors) {
+        // HttpClient serializes primitive parameter values to strings, including array entries.
+        if (cursor !== undefined && String(cursor)) seenTokens.add(String(cursor));
       }
       return retriedSource$.pipe(
         expand((response) => {

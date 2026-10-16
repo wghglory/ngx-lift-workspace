@@ -114,5 +114,9 @@ preserve existing large-list consumers; callers handling large or untrusted coll
 
 ## Evidence
 
-October 16, 2026: all 34 pagination tests pass, including cursor cycles, first/later limits and retry/resubscription
-isolation. Full ngx-lift tests, lint, typecheck and production build pass. No browser, load or SSR claims are made.
+October 16, 2026: all 40 pagination tests pass, including cursor cycles, first/later limits and retry/resubscription
+isolation. Full ngx-lift tests, lint, typecheck and production build pass. No load or SSR claims are made.
+
+The bounded demo completes twice in each of Chromium, Firefox and WebKit (3 browser checks). Demo tests (236), lint and
+typecheck pass. Packed public types and fresh strict-peer Angular 21 consumers pass package verification with the new
+numeric bounds API, including rejection of incorrectly typed string bounds.

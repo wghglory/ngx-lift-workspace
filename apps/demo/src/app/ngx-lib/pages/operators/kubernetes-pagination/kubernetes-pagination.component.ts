@@ -179,7 +179,12 @@ export class KubernetesPaginationComponent {
     } as unknown as HttpClient;
 
     this.fetchMockPods('/api/v1/pods')
-      .pipe(aggregatePaginatedKubernetesResources<DemoPod>(mockHttpClient, '/api/v1/pods', {limit: 2}))
+      .pipe(
+        aggregatePaginatedKubernetesResources<DemoPod>(mockHttpClient, '/api/v1/pods', {
+          initialParams: {limit: 2},
+          bounds: {maxPages: 3, maxItems: 5},
+        }),
+      )
       .subscribe({
         next: (list) => {
           this.aggregatedList.set(list);
@@ -198,10 +203,13 @@ import {aggregatePaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 // As an RxJS operator piped from an initial HTTP request:
 this.http.get<KubernetesList<Pod>>('/api/v1/pods', {params: {limit: 100}})
   .pipe(
-    aggregatePaginatedKubernetesResources(this.http, '/api/v1/pods', {limit: 100})
+    aggregatePaginatedKubernetesResources(this.http, '/api/v1/pods', {
+      initialParams: {limit: 100},
+      bounds: {maxPages: 100, maxItems: 10000},
+    })
   )
   .subscribe((podList) => {
-    // Automatically loops through continue tokens until finished!
+    // Follows distinct continue tokens; bound violations fail without partial success.
     console.log('Total pods aggregated across all pages:', podList.items.length);
   });
   `);
@@ -213,7 +221,7 @@ import {fetchPaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 fetchPaginatedKubernetesResources<Pod>(
   this.http,
   '/api/v1/pods',
-  {limit: 100}
+  {initialParams: {limit: 100}, bounds: {maxPages: 100, maxItems: 10000}}
 ).subscribe((podList) => {
   console.log('Total pods:', podList.items.length);
 });

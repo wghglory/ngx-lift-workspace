@@ -64,12 +64,19 @@ describe('aggregatePaginatedKubernetesResources', () => {
     expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('repeated')}));
   });
 
-  it('stops at maxPages before issuing an extra request', () => {
+  it.each([['seed'], [42], [true]])('normalizes initial cursor %j like HttpClient', (cursor) => {
+    const error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {initialParams: {continue: [cursor]}}).subscribe({error});
+    httpTestingController.expectOne(`/items?continue=${cursor}`).flush(page(String(cursor)));
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('repeated')}));
+  });
+
+  it.each([1, 2])('stops at maxPages=%s before issuing an extra request', (maxPages) => {
     const next = vi.fn(),
       error = vi.fn();
-    fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2}}).subscribe({next, error});
+    fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages}}).subscribe({next, error});
     httpTestingController.expectOne('/items').flush(page('a'));
-    httpTestingController.expectOne('/items?continue=a').flush(page('b'));
+    if (maxPages === 2) httpTestingController.expectOne('/items?continue=a').flush(page('b'));
     expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('maxPages')}));
     expect(next).not.toHaveBeenCalled();
   });
@@ -119,6 +126,39 @@ describe('aggregatePaginatedKubernetesResources', () => {
       expect(next).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({items: expect.any(Array)}));
       expect(next.mock.calls[0][0].items).toHaveLength(2);
     }
+  });
+
+  it('cancels an in-flight continuation without emitting a partial aggregate', () => {
+    const next = vi.fn(),
+      error = vi.fn();
+    const subscription = fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2}}).subscribe({
+      next,
+      error,
+    });
+    httpTestingController.expectOne('/items').flush(page('a'));
+    const continuation = httpTestingController.expectOne('/items?continue=a');
+    subscription.unsubscribe();
+    expect(continuation.cancelled).toBe(true);
+    expect(next).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('keeps simultaneous subscriptions independent', () => {
+    const source = of(page('a'));
+    const operator = aggregatePaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2, maxItems: 2}});
+    const first = vi.fn(),
+      second = vi.fn();
+    source.pipe(operator).subscribe(first);
+    source.pipe(operator).subscribe(second);
+    const requests = httpTestingController.match('/items?continue=a');
+    expect(requests).toHaveLength(2);
+    requests[1].flush(page());
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
+    requests[0].flush(page());
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(first.mock.calls[0][0].items).toHaveLength(2);
+    expect(second.mock.calls[0][0].items).toHaveLength(2);
   });
 
   it('preserves legacy HTTP parameters named bounds, maxPages and maxItems', async () => {
