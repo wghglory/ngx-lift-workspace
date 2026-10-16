@@ -1,7 +1,7 @@
 import {HttpClient, provideHttpClient} from '@angular/common/http';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {firstValueFrom, of} from 'rxjs';
+import {firstValueFrom, of, retry} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, expectTypeOf, it, vi} from 'vitest';
 
 import {KubernetesList, KubernetesObject} from '../models';
@@ -27,6 +27,106 @@ describe('aggregatePaginatedKubernetesResources', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+  });
+
+  const page = (token = '', count = 1): KubernetesList<KubernetesObject> => ({
+    apiVersion: 'v1',
+    kind: 'List',
+    metadata: {continue: token},
+    items: Array.from({length: count}, (_, index) => ({
+      apiVersion: 'v1',
+      kind: 'Pod',
+      metadata: {name: String(index)},
+    })),
+  });
+
+  it.each([
+    ['a', 'a'],
+    ['a', 'b', 'a'],
+  ])('rejects repeated/cyclic tokens %j without partial output', async (...tokens) => {
+    const next = vi.fn();
+    const error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {retryConfig: false}).subscribe({next, error});
+    httpTestingController.expectOne('/items').flush(page(tokens[0]));
+    for (let index = 1; index < tokens.length; index++) {
+      httpTestingController.expectOne(`/items?continue=${tokens[index - 1]}`).flush(page(tokens[index]));
+    }
+    expect(error).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({message: expect.stringContaining('repeated')}),
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('detects a server returning the initial request cursor again', () => {
+    const error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {initialParams: {continue: 'seed'}}).subscribe({error});
+    httpTestingController.expectOne('/items?continue=seed').flush(page('seed'));
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('repeated')}));
+  });
+
+  it('stops at maxPages before issuing an extra request', () => {
+    const next = vi.fn(),
+      error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2}}).subscribe({next, error});
+    httpTestingController.expectOne('/items').flush(page('a'));
+    httpTestingController.expectOne('/items?continue=a').flush(page('b'));
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('maxPages')}));
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it.each([1, 2])('rejects maxItems overflow on page %s without partial output', (overflowPage) => {
+    const next = vi.fn(),
+      error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxItems: 1}}).subscribe({next, error});
+    httpTestingController.expectOne('/items').flush(page(overflowPage === 1 ? '' : 'a', overflowPage === 1 ? 2 : 1));
+    if (overflowPage === 2) httpTestingController.expectOne('/items?continue=a').flush(page());
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('maxItems')}));
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('allows exact limits, including a final empty page', async () => {
+    const result = firstValueFrom(
+      fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {maxPages: 2, maxItems: 1}}),
+    );
+    httpTestingController.expectOne('/items').flush(page('a'));
+    httpTestingController.expectOne('/items?continue=a').flush(page('', 0));
+    expect((await result).items).toHaveLength(1);
+  });
+
+  it.each([0, -1, 1.5, Infinity, NaN, Number.MAX_SAFE_INTEGER + 1])('rejects invalid aggregate limit %s', (limit) => {
+    for (const name of ['maxPages', 'maxItems']) {
+      expect(() => fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: {[name]: limit}})).toThrow(
+        RangeError,
+      );
+    }
+    httpTestingController.expectNone('/items');
+  });
+
+  it('resets counters and cursor history for each subscriber and whole-aggregate retry', () => {
+    const shared = fetchPaginatedKubernetesResources(httpClient, '/items', {
+      bounds: {maxPages: 2, maxItems: 2},
+      retryConfig: false,
+    });
+    for (let index = 0; index < 2; index++) {
+      const next = vi.fn(),
+        error = vi.fn();
+      shared.pipe(retry(1)).subscribe({next, error});
+      httpTestingController.expectOne('/items').flush(page('a'));
+      httpTestingController.expectOne('/items?continue=a').flush('failure', {status: 500, statusText: 'Server Error'});
+      httpTestingController.expectOne('/items').flush(page('a'));
+      httpTestingController.expectOne('/items?continue=a').flush(page());
+      expect(error).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({items: expect.any(Array)}));
+      expect(next.mock.calls[0][0].items).toHaveLength(2);
+    }
+  });
+
+  it('preserves legacy HTTP parameters named bounds, maxPages and maxItems', async () => {
+    const result = firstValueFrom(
+      fetchPaginatedKubernetesResources(httpClient, '/items', {bounds: 'server', maxPages: 3, maxItems: 7}),
+    );
+    httpTestingController.expectOne('/items?bounds=server&maxPages=3&maxItems=7').flush(page());
+    expect((await result).items).toHaveLength(1);
   });
 
   it('preserves a legacy boolean retryConfig parameter alongside other HTTP params', async () => {

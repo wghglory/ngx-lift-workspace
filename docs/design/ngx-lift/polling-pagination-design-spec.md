@@ -1,7 +1,7 @@
 # Polling and Kubernetes pagination
 
 Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
-Approval: existing APIs; proposed bounds need separate review.
+Approval: existing APIs and pagination progress/bounds repair reviewed in its implementation PR.
 
 ## Background
 
@@ -24,7 +24,7 @@ pagination emits a completed list rather than incremental UI pages.
 
 ### Not now
 
-Visibility-aware cache polling, incremental list virtualization, automatic cursor-loop detection or list-size caps.
+Visibility-aware cache polling and incremental list virtualization.
 
 ### Outside this API
 
@@ -42,7 +42,9 @@ Server authorization, writes, infinite scrolling, and form values.
 
 The installed RxJS `exhaustMap` controls poll concurrency; pagination uses `expand` and `reduce`. Adopt these lifecycle
 mechanisms. Unlike [query resources](query-resource-design-spec.md), poll has no freshness cache or hidden-tab policy.
-Aggregation currently has no protection against a server repeating a continue token indefinitely.
+Adopt Kubernetes continuation semantics and preserve original query parameters. Reject a repeated cursor rather than
+loop indefinitely; configure aggregate limits separately from server page size. See the
+[Kubernetes chunking contract](https://kubernetes.io/docs/reference/using-api/api-concepts/#retrieving-large-results-sets-in-chunks).
 
 ## Public API and examples
 
@@ -59,7 +61,16 @@ readonly status$ = poll({interval: 5000, pollingFn: () => this.http.get('/api/st
 `paramsBuilder`. Before the first manual input, timer reads receive undefined input; builders must tolerate it.
 `fetchPaginatedKubernetesResources` starts HTTP; `aggregatePaginatedKubernetesResources` operates on a supplied first
 page. Options accept initial parameters and `retryConfig`, with `false` disabling per-page retry; legacy parameter
-objects remain supported.
+objects remain supported. Optional `bounds: {maxPages, maxItems}` counts the first page and all accumulated items. Each
+supplied bound must be a positive safe integer (invalid configuration throws RangeError); omitted bounds remain
+unbounded for compatibility. The nested object avoids confusing old HTTP parameters named maxPages/maxItems/bounds.
+
+```typescript
+fetchPaginatedKubernetesResources<Pod>(this.http, '/api/pods', {
+  initialParams: {limit: 100},
+  bounds: {maxPages: 100, maxItems: 10000},
+});
+```
 
 ## Behavior and architecture
 
@@ -71,7 +82,11 @@ retain the previous state until completion. Errors emit `{status:'error', data:n
 Pagination retries the supplied initial source and later pages using the [retry policy](k8s-retry-options.md).
 Missing/null items become arrays; result order is page order and metadata comes from the last page. It aggregates all
 items in memory; `limit` bounds a page, not the total. Unsubscribe cancels Observable work. A failing page rejects the
-whole aggregate rather than returning a successful partial list.
+whole aggregate rather than returning a successful partial list. Every subscription has fresh counters and cursor
+history, including whole-stream retry/resubscription. Repeated/cyclic nonempty tokens (including the initial request
+cursor) fail before another request. maxPages rejects a continuation at the page limit; maxItems rejects an oversized
+received page. Exact limits and terminal empty pages succeed. Failures propagate as errors, with no partial success.
+Item bounds limit the aggregate, not the bytes in one HTTP response; HTTP/page-size policy remains caller-owned.
 
 ## Clarity, accessibility, and localization
 
@@ -82,8 +97,8 @@ data; do not infer query-resource retained-data semantics from poll's AsyncState
 
 Existing poll and Kubernetes pagination demos plus adjacent tests cover refresh triggers, synchronous error recovery,
 normalization, parameter compatibility and retry. Add explicit shared-subscriber/last-unsubscribe cancellation
-assertions; source use of share() alone does not prove those lifetimes. Add repeated-token and total-item-bound
-regressions when those guards are designed.
+assertions; source use of share() alone does not prove those lifetimes. Pagination tests cover repeated/cyclic tokens,
+initial cursor reuse, first/later-page limits, exact bounds, malformed options and independent subscribers/retry.
 
 ## Compatibility, rollout, and risks
 
@@ -93,9 +108,11 @@ attempts; choose one owner.
 
 ## Review decisions and delivery
 
-Keep current contracts explicit. Review repeated-cursor failure and configurable page/item bounds before advertising
-pagination for untrusted or very large result sets; see the [gap register](../implementation-gaps.md).
+Keep per-page retry behavior and legacy parameters. Enforce cursor progress always and make total limits opt-in to
+preserve existing large-list consumers; callers handling large or untrusted collections should set both bounds. The
+[gap register](../implementation-gaps.md) records the original F4 finding.
 
 ## Evidence
 
-Sources and existing adjacent tests inspected October 16, 2026. No unit, load, browser or SSR tests rerun here.
+October 16, 2026: all 34 pagination tests pass, including cursor cycles, first/later limits and retry/resubscription
+isolation. Full ngx-lift tests, lint, typecheck and production build pass. No browser, load or SSR claims are made.

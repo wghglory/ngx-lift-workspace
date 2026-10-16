@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {EMPTY, expand, map, Observable, OperatorFunction, reduce} from 'rxjs';
+import {defer, EMPTY, expand, map, Observable, OperatorFunction, reduce} from 'rxjs';
 
 import {KubernetesList, KubernetesObject} from '../models';
 import {K8sBackoffRetryConfig, retryOnK8sBackoff} from './k8s-retry-backoff.operator';
@@ -27,6 +27,12 @@ export interface KubernetesPaginationOptions {
    * Defaults to undefined (enabled with standard Kubernetes backoff settings).
    */
   retryConfig?: K8sBackoffRetryConfig | false;
+
+  /** Optional aggregate limits, including the initial page. Positive safe integers; omitted means unbounded.
+   * Exceeding a limit fails the entire aggregate, never returns a truncated successful list.
+   * @example {bounds: {maxPages: 100, maxItems: 10000}}
+   */
+  bounds?: {maxPages?: number; maxItems?: number};
 }
 
 function parsePaginationOptions(
@@ -34,12 +40,14 @@ function parsePaginationOptions(
 ): {
   initialParams: Record<string, string | number | boolean | (string | number | boolean)[]>;
   retryConfig?: K8sBackoffRetryConfig | false;
+  bounds?: KubernetesPaginationOptions['bounds'];
 } {
   // Legacy HTTP parameter names may coincide with option names; discriminate by value shape.
   const isOptionsObject = (value: unknown): boolean =>
     value === undefined || (value !== null && typeof value === 'object' && !Array.isArray(value));
   if (
     ('initialParams' in options && isOptionsObject(options.initialParams)) ||
+    ('bounds' in options && isOptionsObject(options.bounds)) ||
     ('retryConfig' in options &&
       Object.keys(options).every((key) => key === 'retryConfig') &&
       (options.retryConfig === false || isOptionsObject(options.retryConfig)))
@@ -48,6 +56,7 @@ function parsePaginationOptions(
     return {
       initialParams: paginationOptions.initialParams ?? {},
       retryConfig: paginationOptions.retryConfig,
+      bounds: paginationOptions.bounds,
     };
   }
   return {
@@ -65,6 +74,7 @@ function parsePaginationOptions(
  * - Checks for a `continue` token in the response metadata
  * - Makes subsequent requests with the `continue` token until no more pages exist
  * - Normalizes missing/null `items` on every page, including a single-page response
+ * - Rejects repeated/cyclic continue tokens and configured aggregate bounds
  * - Aggregates all items from all pages into a single KubernetesList
  *
  * @template T - The type of Kubernetes objects in the list. Must extend `KubernetesObject`.
@@ -92,28 +102,56 @@ export function aggregatePaginatedKubernetesResources<T extends KubernetesObject
   initialParamsOrOptions:
     Record<string, string | number | boolean | (string | number | boolean)[]> | KubernetesPaginationOptions = {},
 ): OperatorFunction<KubernetesListResponse<T>, KubernetesList<T>> {
-  const {initialParams, retryConfig} = parsePaginationOptions(initialParamsOrOptions);
+  const {initialParams, retryConfig, bounds} = parsePaginationOptions(initialParamsOrOptions);
+  for (const [name, value] of Object.entries(bounds ?? {})) {
+    if (value !== undefined && (!Number.isSafeInteger(value) || value <= 0)) {
+      throw new RangeError(`Kubernetes pagination ${name} must be a positive safe integer`);
+    }
+  }
 
   return (source$: Observable<KubernetesListResponse<T>>) => {
     const retriedSource$ = retryConfig === false ? source$ : source$.pipe(retryOnK8sBackoff(retryConfig));
 
-    return retriedSource$.pipe(
-      expand((response) => {
-        const continueToken = response.metadata?.continue;
-        if (continueToken) {
-          const params = {...initialParams, continue: continueToken};
-          const page$ = http.get<KubernetesListResponse<T>>(endpoint, {params});
-          return retryConfig === false ? page$ : page$.pipe(retryOnK8sBackoff(retryConfig));
-        }
-        return EMPTY; // No more pages
-      }),
-      map((response): KubernetesList<T> => ({...response, items: [...(response.items ?? [])]})),
-      reduce((acc, current) => ({
-        ...acc,
-        metadata: current.metadata,
-        items: [...acc.items, ...current.items],
-      })),
-    );
+    return defer(() => {
+      let pageCount = 0;
+      let itemCount = 0;
+      const seenTokens = new Set<string>();
+      if (typeof initialParams['continue'] === 'string' && initialParams['continue']) {
+        seenTokens.add(initialParams['continue']);
+      }
+      return retriedSource$.pipe(
+        expand((response) => {
+          pageCount++;
+          itemCount += response.items?.length ?? 0;
+          if (bounds?.maxPages !== undefined && pageCount > bounds.maxPages) {
+            throw new Error('Kubernetes pagination exceeded maxPages');
+          }
+          if (bounds?.maxItems !== undefined && itemCount > bounds.maxItems) {
+            throw new Error('Kubernetes pagination exceeded maxItems');
+          }
+          const token = response.metadata?.continue;
+          if (token) {
+            if (seenTokens.has(token)) throw new Error('Kubernetes pagination repeated a continue token');
+            if (bounds?.maxPages !== undefined && pageCount >= bounds.maxPages) {
+              throw new Error('Kubernetes pagination exceeded maxPages');
+            }
+            seenTokens.add(token);
+          }
+          if (token) {
+            const params = {...initialParams, continue: token};
+            const page$ = http.get<KubernetesListResponse<T>>(endpoint, {params});
+            return retryConfig === false ? page$ : page$.pipe(retryOnK8sBackoff(retryConfig));
+          }
+          return EMPTY; // No more pages
+        }),
+        map((response): KubernetesList<T> => ({...response, items: [...(response.items ?? [])]})),
+        reduce((acc, current) => ({
+          ...acc,
+          metadata: current.metadata,
+          items: [...acc.items, ...current.items],
+        })),
+      );
+    });
   };
 }
 
@@ -151,13 +189,14 @@ export function fetchPaginatedKubernetesResources<T extends KubernetesObject>(
   initialParamsOrOptions:
     Record<string, string | number | boolean | (string | number | boolean)[]> | KubernetesPaginationOptions = {},
 ): Observable<KubernetesList<T>> {
-  const {initialParams, retryConfig} = parsePaginationOptions(initialParamsOrOptions);
+  const {initialParams, retryConfig, bounds} = parsePaginationOptions(initialParamsOrOptions);
   const initialRequest$ = http.get<KubernetesListResponse<T>>(endpoint, {params: initialParams});
 
   return initialRequest$.pipe(
     aggregatePaginatedKubernetesResources(http, endpoint, {
       initialParams,
       retryConfig,
+      bounds,
     }),
   );
 }
