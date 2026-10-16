@@ -1,5 +1,5 @@
 import {HttpClient} from '@angular/common/http';
-import {EMPTY, expand, map, Observable, OperatorFunction, reduce} from 'rxjs';
+import {defer, EMPTY, expand, map, Observable, OperatorFunction, reduce} from 'rxjs';
 
 import {KubernetesList, KubernetesObject} from '../models';
 import {K8sBackoffRetryConfig, retryOnK8sBackoff} from './k8s-retry-backoff.operator';
@@ -65,6 +65,7 @@ function parsePaginationOptions(
  * - Checks for a `continue` token in the response metadata
  * - Makes subsequent requests with the `continue` token until no more pages exist
  * - Normalizes missing/null `items` on every page, including a single-page response
+ * - Rejects repeated/cyclic continue tokens instead of requesting the same page forever
  * - Aggregates all items from all pages into a single KubernetesList
  *
  * @template T - The type of Kubernetes objects in the list. Must extend `KubernetesObject`.
@@ -97,23 +98,34 @@ export function aggregatePaginatedKubernetesResources<T extends KubernetesObject
   return (source$: Observable<KubernetesListResponse<T>>) => {
     const retriedSource$ = retryConfig === false ? source$ : source$.pipe(retryOnK8sBackoff(retryConfig));
 
-    return retriedSource$.pipe(
-      expand((response) => {
-        const continueToken = response.metadata?.continue;
-        if (continueToken) {
-          const params = {...initialParams, continue: continueToken};
-          const page$ = http.get<KubernetesListResponse<T>>(endpoint, {params});
-          return retryConfig === false ? page$ : page$.pipe(retryOnK8sBackoff(retryConfig));
-        }
-        return EMPTY; // No more pages
-      }),
-      map((response): KubernetesList<T> => ({...response, items: [...(response.items ?? [])]})),
-      reduce((acc, current) => ({
-        ...acc,
-        metadata: current.metadata,
-        items: [...acc.items, ...current.items],
-      })),
-    );
+    return defer(() => {
+      const seenTokens = new Set<string>();
+      const initialCursor = initialParams['continue'];
+      const initialCursors = Array.isArray(initialCursor) ? initialCursor : [initialCursor];
+      for (const cursor of initialCursors) {
+        // HttpClient serializes primitive parameter values to strings, including array entries.
+        if (cursor !== undefined && String(cursor)) seenTokens.add(String(cursor));
+      }
+      return retriedSource$.pipe(
+        expand((response) => {
+          const continueToken = response.metadata?.continue;
+          if (continueToken) {
+            if (seenTokens.has(continueToken)) throw new Error('Kubernetes pagination repeated a continue token');
+            seenTokens.add(continueToken);
+            const params = {...initialParams, continue: continueToken};
+            const page$ = http.get<KubernetesListResponse<T>>(endpoint, {params});
+            return retryConfig === false ? page$ : page$.pipe(retryOnK8sBackoff(retryConfig));
+          }
+          return EMPTY; // No more pages
+        }),
+        map((response): KubernetesList<T> => ({...response, items: [...(response.items ?? [])]})),
+        reduce((acc, current) => ({
+          ...acc,
+          metadata: current.metadata,
+          items: [...acc.items, ...current.items],
+        })),
+      );
+    });
   };
 }
 

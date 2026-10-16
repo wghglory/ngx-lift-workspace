@@ -1,22 +1,24 @@
 # Design and implementation gaps
 
 This is the active fix register for design contracts. Update an entry when its implementation and acceptance evidence
-change. Reviewed against base `e4a43f9` on October 16, 2026; source/test inspection is not a fresh test execution. The
-[delivery roadmap](../priority-roadmap.md) owns scheduling; package specs own API behavior.
+change. The original audit used base `e4a43f9` on October 16, 2026; follow-up implementation and validation evidence is
+linked below. The [delivery roadmap](../priority-roadmap.md) owns scheduling; package specs own API behavior.
+Implementation, merge and publication remain separate gates.
 
 ## Implementation fixes to prioritize
 
-| ID / priority           | Source evidence and failure path                                                                                                                                                                                                                                                  | Required change                                                                                                                                                                                                           | Acceptance before closing                                                                                                                                                                  |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| F1 / Contract clarified | [AlertService](../../libs/clr-lift/src/lib/components/alerts/alert.service.ts) intentionally trusts developer-authored localized HTML and delegates scoped clicks. The maintainer requires inline buttons/links without templates.                                                | Preserve string/SafeHtml plus targetSelector/onTargetClick. Document developer-owned markup and text-escaping of user/server interpolation. Inspect unsafe callers individually; no blanket sanitizer/template migration. | Existing inline-button and nested/scoped-click tests stay valid. Localized markup examples preserve placement and escaped runtime text; no promise of automatic hostile-HTML sanitization. |
-| F2 / Medium             | [FileReaderComponent](../../libs/clr-lift/src/lib/components/file-reader/file-reader.component.ts) setDisabledState changes only isDisabled. Active reader.onload checks reader identity, then calls onChange/fileChange even after disable.                                      | Define disable as invalidating/aborting pending read; cover both Angular disabled state and disabled input. Preserve owner reset and previous value semantics explicitly.                                                 | Start a controlled read, disable before completion, release old callback: no owner/output change. Reenable and select again successfully.                                                  |
-| F3 / Medium             | [ToastComponent.mouseOver/focus](../../libs/clr-lift/src/lib/components/toast/toast.component.ts) assign the same disableAutoClose flag. Pointer leave can clear it while keyboard focus remains, or blur while hovered.                                                          | Track hover and focus independently; pause auto-close while either is active. Keep timeout/restart policy explicit.                                                                                                       | Both mixed interaction orders, leave one modality, advance expiry: toast stays until both protections end; teardown cancels timer.                                                         |
-| F4 / Medium             | [Pagination expand/reduce](../../libs/ngx-lift/src/lib/operators/kubernetes-pagination.operator.ts) follows every nonempty continue token and retains all items without a loop/page/item guard. A faulty endpoint can repeat forever; page limit does not bound aggregate memory. | Reject repeated/nonprogressing tokens; review configurable total page/item bounds and a clear terminal error. Keep large UI lists on server paging.                                                                       | Repeated token, cycle, configured page/item boundary, cancellation, per-page retry and unchanged valid-list ordering/metadata.                                                             |
+| ID / priority           | Source evidence and failure path                                                                                                                                                                                                   | Required change                                                                                                                                                                                                           | Acceptance before closing                                                                                                                                                                   |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F1 / Contract clarified | [AlertService](../../libs/clr-lift/src/lib/components/alerts/alert.service.ts) intentionally trusts developer-authored localized HTML and delegates scoped clicks. The maintainer requires inline buttons/links without templates. | Preserve string/SafeHtml plus targetSelector/onTargetClick. Document developer-owned markup and text-escaping of user/server interpolation. Inspect unsafe callers individually; no blanket sanitizer/template migration. | Existing inline-button and nested/scoped-click tests stay valid. Localized markup examples preserve placement and escaped runtime text; no promise of automatic hostile-HTML sanitization.  |
+| F2 / Implemented        | [FileReaderComponent](../../libs/clr-lift/src/lib/components/file-reader/file-reader.component.ts) cancels pending reads on CVA/input disabling and rejects obsolete callbacks.                                                    | Preserve committed content and form interaction state; reenabling requires a fresh selection.                                                                                                                             | [#156](https://github.com/wghglory/ngx-lift-workspace/pull/156): CVA/input races, stale callbacks, recovery and rendered FormControl.disable regressions.                                   |
+| F3 / Implemented        | [ToastComponent](../../libs/clr-lift/src/lib/components/toast/toast.component.ts) tracks hover/focus independently; its container confines animation and stack scrolling to the viewport.                                          | Keep full-interval timeout retries and keyboard access without changing page/body overflow.                                                                                                                               | [#155](https://github.com/wghglory/ngx-lift-workspace/pull/155): mixed interactions, timer teardown, sampled animation dimensions and narrow/long-stack browser checks.                     |
+| F4 / Implemented        | [Pagination](../../libs/ngx-lift/src/lib/operators/kubernetes-pagination.operator.ts) rejects repeated/cyclic continuation tokens with per-subscription history.                                                                   | Configurable page/item caps were declined; use server paging for large UI lists.                                                                                                                                          | [#159](https://github.com/wghglory/ngx-lift-workspace/pull/159): repeated/cyclic tokens, initial cursor reuse, subscription/retry isolation, cancellation and valid-list ordering/metadata. |
 
 F1 is a clarified trust contract, not a blanket library defect; the notification spec now records it. Developer-authored
 markup must avoid script tags, executable event attributes and javascript: URLs. Untrusted interpolated values need text
-escaping at the caller boundary. F2/F3 are pending lifecycle/accessibility fixes; F4 is pagination robustness work. No
-runtime fix or new regression pass is claimed by these documentation changes.
+escaping at the caller boundary. F2/F3 fixes and their regressions are delivered in #156/#155; F4 cursor-loop protection
+and its regressions are delivered in #159. The linked PRs record exact-head review, CI and merge evidence; no npm
+publication is implied.
 
 ## Existing specifications checked against implementation
 
@@ -42,7 +44,8 @@ runtime fix or new regression pass is claimed by these documentation changes.
 The [specification index](README.md) now includes Reactive Forms facade/bindings/submission, idle service, polling and
 pagination, tooltip/popover, file reader, certificate parsing/status/validator, idle warning, notifications, timeline
 wizard, and runtime language/theme services. Each names source, ownership, current behavior, acceptance pointers and
-limitations. F1 records the approved alert trust boundary; F2–F4 remain open implementation work.
+limitations. F1 records the approved alert trust boundary; the focused F2–F4 implementations and evidence are linked
+above. Broader form and native-field acceptance remains open below.
 
 Keep simple pure helpers, pipes and display shells documented through exported JSDoc, package usage and focused tests
 unless they acquire substantial state, asynchronous work, external resources or nontrivial compatibility policy. PRs
@@ -51,10 +54,12 @@ unless they acquire substantial state, asynchronous work, external resources or 
 ## Additional test and documentation gaps
 
 - The exported
-  [certificateValidator](../../libs/clr-lift/src/lib/components/certificate-signpost/certificate.validator.ts) has no
-  direct library test. Add empty/raw/encoded/malformed cases and prove its parse-only semantics.
-- Poll tests cover triggers/error recovery but lack explicit shared-subscriber and last-unsubscribe cancellation
-  assertions. Add these before changing its share/exhaust lifecycle.
+  [certificateValidator](../../libs/clr-lift/src/lib/components/certificate-signpost/certificate.validator.ts) has
+  direct empty/raw/encoded/malformed and parse-only regressions in
+  [#157](https://github.com/wghglory/ngx-lift-workspace/pull/157), alongside real parser and fixed DER digest tests. Its
+  merge and CI evidence remain in that PR.
+- [#158](https://github.com/wghglory/ngx-lift-workspace/pull/158) adds explicit shared-subscriber, final-unsubscribe
+  request/timer/manual-trigger cleanup and fresh-resubscription assertions without changing poll production behavior.
 - Corrected idle configuration JSDoc to require explicit resetTimer(true) during a warning; ordinary interaction
   preserves the countdown. This aligns the source documentation with the existing implementation.
 

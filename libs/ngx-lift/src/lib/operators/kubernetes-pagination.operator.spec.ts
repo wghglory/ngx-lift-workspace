@@ -1,7 +1,7 @@
 import {HttpClient, provideHttpClient} from '@angular/common/http';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
-import {firstValueFrom, of} from 'rxjs';
+import {firstValueFrom, of, retry} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, expectTypeOf, it, vi} from 'vitest';
 
 import {KubernetesList, KubernetesObject} from '../models';
@@ -27,6 +27,99 @@ describe('aggregatePaginatedKubernetesResources', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+  });
+
+  const page = (token = '', count = 1): KubernetesList<KubernetesObject> => ({
+    apiVersion: 'v1',
+    kind: 'List',
+    metadata: {continue: token},
+    items: Array.from({length: count}, (_, index) => ({
+      apiVersion: 'v1',
+      kind: 'Pod',
+      metadata: {name: String(index)},
+    })),
+  });
+
+  it.each([
+    ['a', 'a'],
+    ['a', 'b', 'a'],
+  ])('rejects repeated/cyclic tokens %j without partial output', async (...tokens) => {
+    const next = vi.fn();
+    const error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {retryConfig: false}).subscribe({next, error});
+    httpTestingController.expectOne('/items').flush(page(tokens[0]));
+    for (let index = 1; index < tokens.length; index++) {
+      httpTestingController.expectOne(`/items?continue=${tokens[index - 1]}`).flush(page(tokens[index]));
+    }
+    expect(error).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({message: expect.stringContaining('repeated')}),
+    );
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('detects a server returning the initial request cursor again', () => {
+    const error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {initialParams: {continue: 'seed'}}).subscribe({error});
+    httpTestingController.expectOne('/items?continue=seed').flush(page('seed'));
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('repeated')}));
+  });
+
+  it.each([['seed'], [42], [true]])('normalizes initial cursor %j like HttpClient', (cursor) => {
+    const error = vi.fn();
+    fetchPaginatedKubernetesResources(httpClient, '/items', {initialParams: {continue: [cursor]}}).subscribe({error});
+    httpTestingController.expectOne(`/items?continue=${cursor}`).flush(page(String(cursor)));
+    expect(error).toHaveBeenCalledWith(expect.objectContaining({message: expect.stringContaining('repeated')}));
+  });
+
+  it('resets cursor history for each subscriber and whole-aggregate retry', () => {
+    const shared = fetchPaginatedKubernetesResources(httpClient, '/items', {
+      retryConfig: false,
+    });
+    for (let index = 0; index < 2; index++) {
+      const next = vi.fn(),
+        error = vi.fn();
+      shared.pipe(retry(1)).subscribe({next, error});
+      httpTestingController.expectOne('/items').flush(page('a'));
+      httpTestingController.expectOne('/items?continue=a').flush('failure', {status: 500, statusText: 'Server Error'});
+      httpTestingController.expectOne('/items').flush(page('a'));
+      httpTestingController.expectOne('/items?continue=a').flush(page());
+      expect(error).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({items: expect.any(Array)}));
+      expect(next.mock.calls[0][0].items).toHaveLength(2);
+    }
+  });
+
+  it('cancels an in-flight continuation without emitting a partial aggregate', () => {
+    const next = vi.fn(),
+      error = vi.fn();
+    const subscription = fetchPaginatedKubernetesResources(httpClient, '/items').subscribe({
+      next,
+      error,
+    });
+    httpTestingController.expectOne('/items').flush(page('a'));
+    const continuation = httpTestingController.expectOne('/items?continue=a');
+    subscription.unsubscribe();
+    expect(continuation.cancelled).toBe(true);
+    expect(next).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('keeps simultaneous subscriptions independent', () => {
+    const source = of(page('a'));
+    const operator = aggregatePaginatedKubernetesResources(httpClient, '/items');
+    const first = vi.fn(),
+      second = vi.fn();
+    source.pipe(operator).subscribe(first);
+    source.pipe(operator).subscribe(second);
+    const requests = httpTestingController.match('/items?continue=a');
+    expect(requests).toHaveLength(2);
+    requests[1].flush(page());
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
+    requests[0].flush(page());
+    expect(first).toHaveBeenCalledTimes(1);
+    expect(first.mock.calls[0][0].items).toHaveLength(2);
+    expect(second.mock.calls[0][0].items).toHaveLength(2);
   });
 
   it('preserves a legacy boolean retryConfig parameter alongside other HTTP params', async () => {

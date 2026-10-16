@@ -26,9 +26,10 @@ and ⏸️ **Deferred** are not completed work. Local validation, remote merge a
 
 The [active gap register](design/implementation-gaps.md) owns source evidence and acceptance criteria. Preserve
 intentional developer-trusted localized alert HTML and scoped callbacks (F1); caller interpolation must escape untrusted
-values. Pending runtime repairs are file-reader disable handling (F2), mixed hover/focus toast timeout (F3), and
-pagination progress/total-result guards (F4). Deliver each in a separate focused PR on Angular 21; the deferred platform
-upgrade is not a prerequisite. These documentation changes do not implement those runtime fixes.
+values. File-reader disable handling (F2, #156) and mixed hover/focus toast timeout plus viewport containment (F3, #155)
+are implemented and merged. Pagination cursor-loop protection (F4, #159) is implemented; its PR owns final validation
+and merge evidence. Configurable aggregate page/item caps were declined. These focused repairs target Angular 21; the
+deferred platform upgrade is not a prerequisite. Package publication remains separate.
 
 ## Acceptance boundaries
 

@@ -1,7 +1,7 @@
 # Polling and Kubernetes pagination
 
 Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
-Approval: existing APIs; proposed bounds need separate review.
+Approval: existing APIs and repeated-cursor protection; no configurable aggregate caps.
 
 ## Background
 
@@ -24,7 +24,7 @@ pagination emits a completed list rather than incremental UI pages.
 
 ### Not now
 
-Visibility-aware cache polling, incremental list virtualization, automatic cursor-loop detection or list-size caps.
+Visibility-aware cache polling, incremental list virtualization, client-side page/item caps and truncation.
 
 ### Outside this API
 
@@ -42,7 +42,8 @@ Server authorization, writes, infinite scrolling, and form values.
 
 The installed RxJS `exhaustMap` controls poll concurrency; pagination uses `expand` and `reduce`. Adopt these lifecycle
 mechanisms. Unlike [query resources](query-resource-design-spec.md), poll has no freshness cache or hidden-tab policy.
-Aggregation currently has no protection against a server repeating a continue token indefinitely.
+Repeated or cyclic nonempty continuation tokens fail before another request, rather than requesting the same page
+indefinitely. Preserve Kubernetes continuation semantics and original query parameters.
 
 ## Public API and examples
 
@@ -59,7 +60,8 @@ readonly status$ = poll({interval: 5000, pollingFn: () => this.http.get('/api/st
 `paramsBuilder`. Before the first manual input, timer reads receive undefined input; builders must tolerate it.
 `fetchPaginatedKubernetesResources` starts HTTP; `aggregatePaginatedKubernetesResources` operates on a supplied first
 page. Options accept initial parameters and `retryConfig`, with `false` disabling per-page retry; legacy parameter
-objects remain supported.
+objects remain supported. No new pagination options are introduced. `limit` controls server page size, not the total
+result count; use a single HTTP page or server paging when the UI needs only one page.
 
 ## Behavior and architecture
 
@@ -71,7 +73,9 @@ retain the previous state until completion. Errors emit `{status:'error', data:n
 Pagination retries the supplied initial source and later pages using the [retry policy](k8s-retry-options.md).
 Missing/null items become arrays; result order is page order and metadata comes from the last page. It aggregates all
 items in memory; `limit` bounds a page, not the total. Unsubscribe cancels Observable work. A failing page rejects the
-whole aggregate rather than returning a successful partial list.
+whole aggregate rather than returning a successful partial list. Cursor history is scoped to each subscription,
+including whole-stream retry. Seed history with the initial request cursor using HttpClient serialization semantics.
+Repeated/cyclic nonempty tokens fail before another request; an empty token still completes normally.
 
 ## Clarity, accessibility, and localization
 
@@ -82,8 +86,9 @@ data; do not infer query-resource retained-data semantics from poll's AsyncState
 
 Existing poll and Kubernetes pagination demos plus adjacent tests cover refresh triggers, synchronous error recovery,
 normalization, parameter compatibility and retry. Direct poll regressions cover shared execution, no replay,
-remaining-subscriber ownership, final-unsubscribe request/timer/manual-trigger cleanup and fresh resubscription. Add
-repeated-token and total-item-bound regressions when those guards are designed.
+remaining-subscriber ownership, final-unsubscribe request/timer/manual-trigger cleanup and fresh resubscription.
+Pagination tests cover repeated/cyclic tokens, initial cursor reuse, independent subscriptions, whole-stream retry and
+continuation cancellation.
 
 ## Compatibility, rollout, and risks
 
@@ -93,10 +98,15 @@ attempts; choose one owner.
 
 ## Review decisions and delivery
 
-Keep current contracts explicit. Review repeated-cursor failure and configurable page/item bounds before advertising
-pagination for untrusted or very large result sets; see the [gap register](../implementation-gaps.md).
+Reject invalid cursor progression while preserving valid-list behavior and the existing API. The maintainer rejected
+configurable page/item caps and their configuration-driven errors; do not introduce them. Large collections remain a
+caller-owned server-paging/aggregation decision. The [gap register](../implementation-gaps.md) records the original F4
+finding.
 
 ## Evidence
 
 October 16, 2026: poll unit regressions verify shared subscription and final-unsubscribe behavior with real RxJS
 Observables and fake timers. No browser or SSR claims are made by these headless lifecycle checks.
+
+Cursor regressions cover repeated/cyclic tokens, initial cursor serialization, resubscription/retry isolation and
+cancellation. Validation results are recorded in the implementation PR; no browser, scale or SSR claims are made.
