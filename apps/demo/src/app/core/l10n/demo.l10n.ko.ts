@@ -208,6 +208,7 @@ export const koTranslations: Record<string, string> = {
   'rockStar.unveil': '공개',
   'common.signature': '시그니처',
   'common.description': '설명',
+  'common.clear': '지우기',
   'common.basicUsage': '기본 사용법',
   'common.inputs': '입력 속성 (Inputs)',
   'common.outputs': '출력 이벤트 (Outputs)',

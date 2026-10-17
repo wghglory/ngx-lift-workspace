@@ -216,6 +216,7 @@ export const deTranslations: Record<string, string> = {
   'rockStar.unveil': 'Enthüllung',
   'common.signature': 'Signatur',
   'common.description': 'Beschreibung',
+  'common.clear': 'Leeren',
   'common.basicUsage': 'Grundlegende Verwendung',
   'common.inputs': 'Eingaben (Inputs)',
   'common.outputs': 'Ausgaben (Outputs)',
