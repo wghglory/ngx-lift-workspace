@@ -242,7 +242,7 @@ test('query inspector shows cached data and refetches only the selected shared q
   await expect(requests).toHaveText('Actual HTTP Calls: 1');
   await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
   const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
-  await expect(panel.getByRole('columnheader')).toHaveCount(4);
+  await expect(panel.getByRole('columnheader')).toHaveCount(7);
   const row = panel.locator('clr-dg-row').filter({hasText: '["metrics","cluster-overview"]'});
   await expect(row.locator('.state-badge')).toHaveText(/^(fresh|stale)$/);
   await row.locator('.key-button').click();
@@ -295,7 +295,7 @@ test('data-first controls group copy actions and distinguish paused view updates
   await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
   const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
   await expect(panel.getByRole('button', {name: 'Update view', exact: true})).toHaveCount(0);
-  await expect(panel.getByRole('columnheader')).toHaveCount(4);
+  await expect(panel.getByRole('columnheader')).toHaveCount(7);
   await panel.locator('clr-dg-row').filter({hasText: '["metrics","cluster-overview"]'}).locator('.key-button').click();
   const inspector = panel.locator('.query-inspector');
   await expect(inspector.locator('.value-tree')).toContainText('activeUsers');
@@ -318,7 +318,7 @@ test('data-first controls group copy actions and distinguish paused view updates
   await expect(page.locator('html')).toHaveAttribute('data-copied-query', '["metrics","cluster-overview"]');
   await inspector.getByRole('button', {name: 'Collapse all', exact: true}).click();
   await expect(inspector.locator('.value-row')).toHaveCount(1);
-  await inspector.getByRole('button', {name: 'Expand first level', exact: true}).click();
+  await inspector.getByRole('button', {name: 'Expand next level', exact: true}).click();
   await expect(inspector.locator('.value-tree')).toContainText('activeUsers');
   await panel.getByRole('button', {name: 'Pause updates', exact: true}).click();
   await panel.getByRole('button', {name: 'Update view', exact: true}).click();
@@ -340,6 +340,9 @@ test('state counts and shared tags filter collection queries without refetching 
   await states.getByRole('button', {name: /^All /}).click();
   const cluster = panel.locator('clr-dg-row').filter({hasText: '["k8s-demo","cluster-metric","cluster-us-east"]'});
   await expect(cluster.locator('.state-badge')).toHaveText('fresh');
+  const keyTarget = box(await cluster.locator('.key-button').boundingBox());
+  const keyCell = box(await cluster.locator('clr-dg-cell').first().boundingBox());
+  expect(keyTarget.height).toBeGreaterThanOrEqual(keyCell.height - 1);
   await cluster.locator('.key-button').click();
   await panel.getByRole('tab', {name: 'Details', exact: true}).click();
   await panel.locator('.tag-button').first().click();
@@ -350,6 +353,40 @@ test('state counts and shared tags filter collection queries without refetching 
   await expect(panel.locator('clr-dg-row')).toHaveCount(3);
   await panel.getByRole('combobox', {name: 'Tags', exact: true}).selectOption('');
   await expect(panel.locator('clr-dg-row')).toHaveCount(3);
+});
+
+test('wide query lists expose diagnostics and row refetch while expansion opens additional cached levels', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({width: 1920, height: 1000});
+  await page.goto('/ngx-lift/query/queryResources');
+  await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
+  const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
+  await expect(panel.getByRole('columnheader')).toHaveCount(7);
+  await expect(panel.getByRole('columnheader', {name: 'Tags'})).toBeVisible();
+  await expect(panel.getByRole('columnheader', {name: 'Failed attempts'})).toBeVisible();
+  const keyColumn = panel.getByRole('columnheader', {name: 'Query key'});
+  await expect.poll(async () => box(await keyColumn.boundingBox()).width).toBeGreaterThan(600);
+  const bulk = panel.locator('clr-dg-row').filter({hasText: 'clusters-bulk-fleet'});
+  await expect(bulk.locator('.state-badge')).toHaveText('fresh');
+  expect(box(await bulk.locator('.key-button code').boundingBox()).height).toBeLessThan(28);
+  await panel.screenshot({path: testInfo.outputPath('query-devtools-wide-list.png')});
+  await bulk.getByRole('button', {name: 'Refetch', exact: true}).click();
+  const inspector = panel.locator('.query-inspector');
+  await expect(panel.getByRole('columnheader')).toHaveCount(4);
+  await expect(inspector.getByRole('button', {name: 'Refetch', exact: true})).toBeEnabled();
+  await inspector.getByRole('button', {name: 'Expand next level', exact: true}).click();
+  await expect(inspector.locator('.value-tree')).toContainText('prod-us-east');
+  await expect(inspector.locator('.value-tree')).not.toContainText('cpuUsagePct:');
+  await inspector.getByRole('button', {name: 'Expand next level', exact: true}).click();
+  await expect(inspector.locator('.value-tree')).toContainText('cpuUsagePct:');
+  await inspector.getByRole('button', {name: 'Collapse all', exact: true}).click();
+  await expect(inspector.locator('.value-row')).toHaveCount(1);
+  await inspector.getByRole('button', {name: 'Expand all', exact: true}).click();
+  await expect(inspector.locator('.value-tree')).toContainText('cpuUsagePct:');
+  await inspector.getByRole('button', {name: 'Back', exact: true}).click();
+  await expect(panel.getByRole('columnheader')).toHaveCount(7);
+  await expect.poll(async () => box(await keyColumn.boundingBox()).width).toBeGreaterThan(600);
 });
 
 test('pointer resizing persists height once dragging finishes and restores it on reopen', async ({page}) => {

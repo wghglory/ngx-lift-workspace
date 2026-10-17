@@ -23,7 +23,7 @@ import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {AlertComponent} from '../alert/alert.component';
 import {queryDevtoolsTranslations} from './query-devtools.l10n';
-import {copyableJson, valueRows, ValueRow} from './query-value-preview';
+import {copyableJson, expandValueRows, valueRows, ValueRow} from './query-value-preview';
 
 let nextPanelId = 0;
 
@@ -128,7 +128,13 @@ export class QueryDevtoolsComponent {
               : 'fresh'
             : 'idle';
       const age = entry.updatedAt === null ? '—' : `${Math.max(0, Math.floor((Date.now() - entry.updatedAt) / 1000))}s`;
-      return {...entry, age, state, stateLabel: this.translationService.translate(`queryDevtools.${state}`)};
+      return {
+        ...entry,
+        age,
+        state,
+        tagLabels: entry.tagMemberships.join(' '),
+        stateLabel: this.translationService.translate(`queryDevtools.${state}`),
+      };
     });
   });
   private readonly matchingEntries = computed(() => {
@@ -265,6 +271,10 @@ export class QueryDevtoolsComponent {
     this.expanded.set(new Map([['$', 0]]));
   }
 
+  protected expandLevels(mode: 'next' | 'all'): void {
+    this.expanded.set(expandValueRows(this.inspectedValue(), this.expanded(), mode));
+  }
+
   private readSnapshot(client: QueryClient): void {
     this.snapshot.set(client.getDiagnostics());
     const entry = this.selectedEntry();
@@ -376,6 +386,11 @@ export class QueryDevtoolsComponent {
     } finally {
       if (panelRevision === this.panelRevision && client === (this.client() ?? this.defaultClient)) this.refresh();
     }
+  }
+
+  protected async refetchFromList(entry: QueryEntryDiagnostics): Promise<void> {
+    this.select(entry);
+    await this.refetch(entry);
   }
 
   private clearCopyNotice(): void {

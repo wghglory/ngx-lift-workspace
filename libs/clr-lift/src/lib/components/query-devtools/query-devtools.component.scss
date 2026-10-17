@@ -192,6 +192,14 @@ clr-datagrid {
 }
 .key-button {
   inline-size: 100%;
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  padding: var(--clr-table-cell-padding);
+}
+clr-dg-cell.query-key-cell {
+  display: flex;
+  padding: 0;
 }
 code {
   overflow-wrap: anywhere;

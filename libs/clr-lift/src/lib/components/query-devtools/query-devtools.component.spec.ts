@@ -72,13 +72,13 @@ describe('QueryDevtoolsComponent', () => {
     mount();
     click('Query devtools');
     expect(fixture.nativeElement.querySelector('button[title="Read cached state without fetching."]')).toBeNull();
-    expect(fixture.nativeElement.querySelectorAll('clr-dg-column')).toHaveLength(4);
+    expect(fixture.nativeElement.querySelectorAll('clr-dg-column')).toHaveLength(7);
     inspectFirstQuery();
     expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('Alex');
     expect(fixture.nativeElement.querySelector('.preview-note')).toBeNull();
     click('Collapse all');
     expect(fixture.nativeElement.querySelectorAll('.value-row')).toHaveLength(1);
-    click('Expand first level');
+    click('Expand next level');
     expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('Alex');
     updateView();
     expect(fixture.nativeElement.querySelector('.view-feedback')?.textContent).toContain('View updated at');
@@ -137,6 +137,26 @@ describe('QueryDevtoolsComponent', () => {
     click('Query devtools');
     inspectFirstQuery();
     expect(fixture.nativeElement.querySelector('.preview-note')).not.toBeNull();
+  });
+
+  it('opens the inspector for a row refetch and expands nested cached data without additional reads', async () => {
+    const loader = vi.fn(() => Promise.resolve({child: {nested: {value: 42}}}));
+    await client.fetchQuery({key: ['nested'], loader, staleTime: Infinity});
+    mount();
+    click('Query devtools');
+    click('Refetch');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('clr-dg-column')).toHaveLength(4);
+    expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).not.toContain('value:');
+    click('Expand next level');
+    expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('nested:');
+    expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).not.toContain('value:');
+    click('Expand all');
+    expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('value: 42');
+    expect(loader).toHaveBeenCalledTimes(2);
+    click('Back');
+    expect(fixture.nativeElement.querySelectorAll('clr-dg-column')).toHaveLength(7);
   });
 
   it('uses the development-mode default and does not read diagnostics while closed', () => {

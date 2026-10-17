@@ -23,8 +23,9 @@ function dateJsonValue(value: Date): string | null {
 /** A bounded, read-only view. Descriptors avoid invoking application getters or toJSON hooks. */
 export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>): ValueRow[] {
   const rows: ValueRow[] = [];
+  let reservedPages = 0;
   function visit(value: unknown, path: string, label: string, depth: number, ancestors: readonly object[]): void {
-    if (rows.length >= maxNodes) return;
+    if (rows.length >= maxNodes - reservedPages) return;
     let preview: string;
     let keys: string[] | undefined;
     let length = 0;
@@ -68,7 +69,10 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
     });
     if (!open || !expandable || typeof value !== 'object' || value === null) return;
     const nextAncestors = [...ancestors, value];
-    for (let i = offset; i < Math.min(length, offset + pageSize) && rows.length < maxNodes; i++) {
+    // Keep paging reachable even when deeply expanded children fill the preview budget.
+    const paged = length > pageSize;
+    if (paged) reservedPages++;
+    for (let i = offset; i < Math.min(length, offset + pageSize) && rows.length < maxNodes - reservedPages; i++) {
       const key = keys ? keys[i] : String(i);
       const childPath = `${path}[${JSON.stringify(key)}]`;
       try {
@@ -94,7 +98,8 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
         });
       }
     }
-    if (length > pageSize && rows.length < maxNodes) {
+    if (paged) reservedPages--;
+    if (paged && rows.length < maxNodes - reservedPages) {
       rows.push({
         path,
         label: `${offset + 1}–${Math.min(length, offset + pageSize)} / ${length}`,
@@ -108,6 +113,24 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
   }
   visit(value, '$', '$', 0, []);
   return rows;
+}
+
+/** Expand visible preview pages without traversing the complete payload or exceeding the renderer's limits. */
+export function expandValueRows(
+  value: unknown,
+  expanded: ReadonlyMap<string, number>,
+  mode: 'next' | 'all',
+): ReadonlyMap<string, number> {
+  const next = new Map(expanded);
+  for (let level = 0; level < (mode === 'all' ? maxDepth : 1); level++) {
+    const collapsed = valueRows(value, next).filter((row) => row.expandable && !row.expanded);
+    if (!collapsed.length) break;
+    const shallowest = Math.min(...collapsed.map((row) => row.depth));
+    for (const row of collapsed) {
+      if (mode === 'all' || row.depth === shallowest) next.set(row.path, 0);
+    }
+  }
+  return next;
 }
 
 /** Copy only complete JSON-compatible trees, rejecting cycles, accessors, and oversized values before serialization. */

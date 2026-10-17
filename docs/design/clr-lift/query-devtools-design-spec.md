@@ -79,6 +79,12 @@ this explicit component import bypasses the root provider's production-exclusion
 
 ## Interaction and columns
 
+The follow-up layout revision uses flexible key width in the full list, with Tags, Failed attempts and a Refetch column.
+Clicking a tag filters that list; Refetch opens the inspector and runs only that row's loader. Opening the inspector
+switches to the compact four-column list and moves query actions into the inspector, so actions are not duplicated in
+the same view. The full list uses available width rather than wrapping long keys into a fixed 200-pixel column. Narrow
+screens retain horizontal scrolling. Existing cache inspection behavior and application-client ownership are unchanged.
+
 The launcher has an accessible name and tooltip. The panel is a labeled region with no backdrop or focus trap; opening
 focuses Search keys. Close restores focus to its launcher. Escape dismisses an inner grid filter first, then the
 selected inspector, then the panel when focus is inside it. There is no global shortcut. The panel uses the native
@@ -92,7 +98,7 @@ narrow screens selection replaces the list with an inspector and Back restores t
 slide animation. Existing Clarity controls and tokens provide light/dark, compact and RTL support; canonical keys and
 value paths retain LTR direction.
 
-| Default column | Purpose                                                                                                   |
+| Compact column | Purpose                                                                                                   |
 | -------------- | --------------------------------------------------------------------------------------------------------- |
 | Query key      | Canonical key, key search/filter/sort and click-to-inspect.                                               |
 | State          | Localized lowercase English badge with text as well as color.                                             |
@@ -134,6 +140,11 @@ new snapshot references; Update view also rebuilds previews after in-place chang
 functions, accessors and inaccessible objects have structural summaries. JavaScript Error and Angular HttpErrorResponse
 objects expose their own fields through descriptors; other custom objects are summarized rather than traversed.
 Arbitrary Proxy traps cannot have hard execution-time guarantees.
+
+Expand next level opens the shallowest collapsed nodes currently shown, preserving already expanded branches and page
+offsets. Expand all recursively opens the current preview pages within the same 500-row/depth-20 limits, without
+enumerating every page of a large collection. Collapse all closes the tree. Paging remains explicit, and these controls
+never fetch or create query observers.
 
 Copy JSON runs an explicit bounded serialization attempt. It copies complete JSON only, up to 256 KiB in UTF-8; cycles,
 accessors, unsupported values, sparse arrays and oversized data produce a visible explanation, never silent truncation.
@@ -203,7 +214,7 @@ runtime language switching. Structural JavaScript type markers and canonical ide
 
 ## Local evidence
 
-Local validation, October 17, 2026:
+Data-first baseline validation, October 17, 2026 (latest full-list/expansion evidence follows below):
 
 - Core suite: 883 tests pass, including targeted existing-key refetch, pending-read deduplication, cached-data failure,
   missing/destroyed clients and inactive collection.
@@ -252,8 +263,16 @@ Date previews and JSON copying use Date intrinsics rather than application gette
 dates copy as ISO strings and invalid dates as null. Resize bounds and separator values follow viewport changes and full
 height; drag storage writes occur at completion. Copy feedback is cleared on context changes and destruction.
 
-Follow-up validation: pnpm run validate passes with 883 core, 319 clr-lift and 237 demo tests, coverage gates, zero lint
-warnings, strict types, production builds, bundle checks and fresh installed consumers. The 210 browser checks pass in
-Chromium, Firefox and WebKit. Nine additional drag repetitions verify persistence and reopening after waiting for panel
-animation to finish. Regressions also cover paused client changes/reopening, late refetch completions, stable tree
-focus, Date method getters, viewport/full-height separator values and pending-read GC past the retention interval.
+Earlier review validation, before the data-first revision: pnpm run validate passed with 883 core, 319 clr-lift and 237
+demo tests, coverage gates, zero lint warnings, strict types, production builds, bundle checks and fresh installed
+consumers. The 210 browser checks pass in Chromium, Firefox and WebKit. Nine additional drag repetitions verify
+persistence and reopening after waiting for panel animation to finish. Regressions also cover paused client
+changes/reopening, late refetch completions, stable tree focus, Date method getters, viewport/full-height separator
+values and pending-read GC past the retention interval.
+
+Full-list and expansion follow-up validation, October 17: pnpm run validate passes with 883 core, 325 clr-lift and 238
+demo tests, lint/types, coverage, production builds, bundle checks and fresh strict-peer package consumers. The 24
+affected browser checks pass across Chromium, Firefox and WebKit, including wide/compact lists, row refetch, composed
+filters, next-level/all expansion, narrow layouts, dark/RTL and 11 demo languages. Five additional WebKit reproductions
+verify the full key-cell target after grid focus scrolling. Large-array expansion retains paging within the 500-row
+budget; descriptor-based expansion preserves page offsets, avoids getters and terminates on cycles/depth limits.

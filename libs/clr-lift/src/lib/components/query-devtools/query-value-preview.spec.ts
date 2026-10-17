@@ -1,9 +1,41 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {describe, expect, it, vi} from 'vitest';
 
-import {copyableJson, valueRows} from './query-value-preview';
+import {copyableJson, expandValueRows, valueRows} from './query-value-preview';
 
 describe('bounded query value inspection', () => {
+  it('opens one additional level or all previewed levels while preserving existing branches', () => {
+    const data = {first: {second: {value: 42}}, other: {name: 'Alex'}};
+    const initial = new Map([['$', 0]]);
+    const next = expandValueRows(data, initial, 'next');
+    expect(valueRows(data, next).some((row) => row.label === 'second')).toBe(true);
+    expect(valueRows(data, next).some((row) => row.label === 'value')).toBe(false);
+    const deeper = expandValueRows(data, next, 'next');
+    expect(valueRows(data, deeper).some((row) => row.preview === '42')).toBe(true);
+    expect(valueRows(data, expandValueRows(data, new Map(), 'all'))).toEqual(valueRows(data, deeper));
+    expect(initial.size).toBe(1);
+  });
+
+  it('expands all within the current page, node and depth limits without invoking getters', () => {
+    const getter = vi.fn();
+    const data = Array.from({length: 100_000}, (_, id) => ({id, nested: {value: id}}));
+    Object.defineProperty(data[100], 'hidden', {get: getter});
+    const expanded = expandValueRows(data, new Map([['$', 100]]), 'all');
+    const rows = valueRows(data, expanded);
+    expect(expanded.get('$')).toBe(100);
+    expect(rows[1].label).toBe('100');
+    expect(rows.length).toBeLessThanOrEqual(500);
+    expect(rows.at(-1)?.nextOffset).toBe(200);
+    expect(getter).not.toHaveBeenCalled();
+    let deep: unknown = 42;
+    for (let index = 0; index < 30; index++) deep = {child: deep};
+    const deepRows = valueRows(deep, expandValueRows(deep, new Map(), 'all'));
+    expect(deepRows.at(-1)).toMatchObject({depth: 20, truncated: true, expandable: false});
+    const cycle: Record<string, unknown> = {};
+    cycle['self'] = cycle;
+    expect(valueRows(cycle, expandValueRows(cycle, new Map(), 'all'))[1].preview).toBe('[Circular]');
+  });
+
   it('pages a large array without rendering or serializing every item', () => {
     const data = Array.from({length: 100_000}, (_, id) => ({id}));
     expect(valueRows(data, new Map())).toHaveLength(1);
