@@ -1529,6 +1529,8 @@ export const koTranslations: Record<string, string> = {
   'url.isURLSummary': '문자열이 유효한 URL인지 확인합니다.',
   'url.isHttpsSummary': 'URL 문자열이 HTTPS 프로토콜을 사용하는지 확인합니다.',
   'urlValidator.title': 'urlValidator 및 httpsValidator',
+  'urlValidator.firstTask':
+    'https://example.com 다음에 잘못된 주소를 입력하고 포커스를 이동하세요. 주소를 수정하면 오류가 사라집니다. 빈 값은 유효하지 않으며 다음 예제는 프로토콜을 제한합니다.',
   'urlValidator.overview':
     'urlValidator 및 httpsValidator는 URL 패턴에 따라 주어진 문자열이 유효한지 확인하는 Angular 검증 함수입니다. urlValidator는 http 또는 https로 시작하는 URL을 검증하고, httpsValidator는 오직 HTTPS URL만 검증합니다.',
   'urlValidator.example1': '예제 1: URL 검증기',
@@ -1750,6 +1752,8 @@ export const koTranslations: Record<string, string> = {
   'ifAsyncValidator.apiSummary': '조건에 따라 비동기 검증 함수를 적용하는 비동기 조건 검증 함수입니다.',
   'ifAsyncValidator.paramCondition': '비동기 검증 함수가 적용되어야 하는 조건을 결정하는 함수입니다.',
   'ifAsyncValidator.paramAsyncValidatorFn': '조건이 참일 때 실행할 비동기 검증 함수입니다.',
+  'intersectionValidator.firstTask':
+    '두 목록에서 같은 네임스페이스를 선택하면 그룹 오류가 표시됩니다. 각 목록에 선택을 하나 이상 남기고 중복을 제거하세요.',
   'intersectionValidator.overview':
     'intersectionValidator는 Angular Forms 커스텀 검증 함수로, 두 개의 폼 컨트롤이 중복된 값이 없도록 보장하는 것이 목표입니다. 예를 들어, 두 개의 아이템 목록이 있고, 중복이 없도록 보장하고자 할 때 사용할 수 있습니다. 배열 간에 중복이 있을 경우, 두 개의 필드와 폼 모두 <code>{intersection: true}</code> 오류가 발생합니다.',
   'intersectionValidator.example1Title': '예제 1: 중복이 없는 배열 검증',
@@ -1789,6 +1793,8 @@ export const koTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'FormArray 제어 또는 배열 값의 고유성 검증',
   'uniqueValidator.paramKey':
     '(선택 사항) 객체 항목을 검증할 프로퍼티 키. 생략하면 원시 타입의 등록 여부를 확인합니다.',
+  'dateRangeValidator.firstTask':
+    '내일부터 5일 후까지 날짜를 선택하세요. 양 끝 날짜도 포함됩니다. 범위 밖 날짜와 비어 있는 필수 값은 유효하지 않습니다.',
   'dateRangeValidator.overview':
     'dateRangeValidator는 특정 범위 내에 날짜가 있는지 검증하는 커스텀 검증기입니다. 날짜만 또는 날짜-시간 모두 지원하며, 포함/제외 경계를 구성할 수 있으며, 시간 비교가 선택적입니다.',
   'dateRangeValidator.example1Title': '예제 1: 날짜 범위 검증',

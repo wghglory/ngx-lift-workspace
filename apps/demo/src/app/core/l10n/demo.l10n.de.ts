@@ -1618,6 +1618,8 @@ export const deTranslations: Record<string, string> = {
   'url.isURLSummary': 'Prüft, ob ein String ein gültiger URL ist.',
   'url.isHttpsSummary': 'Prüft, ob ein URL-String das HTTPS-Protokoll verwendet.',
   'urlValidator.title': 'urlValidator & httpsValidator',
+  'urlValidator.firstTask':
+    'Geben Sie https://example.com und dann eine ungültige Adresse ein. Verlassen Sie das Feld und korrigieren Sie die Adresse. Leere Werte sind ungültig; das nächste Beispiel beschränkt das Protokoll.',
   'urlValidator.overview':
     'Die <code>urlValidator</code>- und <code>httpsValidator</code>-Funktionen sind Angular-Validierer, die überprüfen, ob ein gegebenes String-Objekt bestimmte URL-Muster erfüllt. Der <code>urlValidator</code> validiert URLs, die mit http oder https beginnen, während der <code>httpsValidator</code> nur HTTPS URLs validiert.',
   'urlValidator.example1': 'Beispiel 1: URL-Validator',
@@ -1857,6 +1859,8 @@ export const deTranslations: Record<string, string> = {
   'ifAsyncValidator.paramCondition': 'Funktion, die bestimmt, ob der Async-Validator angewendet werden soll.',
   'ifAsyncValidator.paramAsyncValidatorFn':
     'Die Funktion async validator, die ausgeführt wird, wenn Bedingung wahr ist.',
+  'intersectionValidator.firstTask':
+    'Wählen Sie denselben Namespace in beiden Listen, um den Gruppenfehler zu sehen. Behalten Sie in jeder Liste eine Auswahl und entfernen Sie die Überschneidung.',
   'intersectionValidator.overview':
     'Der <code>intersectionValidator</code> ist ein benutzerdefinierter Angular-Form-Validierer, der sicherstellt, dass zwei Formkontrollen keine überlappenden Werte aufweisen. Zum Beispiel könnten Sie zwei Listen von Elementen haben und sicherstellen, dass sie keine Duplikate enthalten. Wenn die Arrays sich überlappen, haben beide Felder und das Formular das <code>{intersection: true}</code> Fehlermeldung.',
   'intersectionValidator.example1Title': 'Beispiel 1: Nicht überlappende Arrays validieren',
@@ -1901,6 +1905,8 @@ export const deTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'Validiert Eindeutigkeit über FormArray-Kontrollen oder Array-Werte.',
   'uniqueValidator.paramKey':
     '(Optional) Property key to check uniqueness for object items. Wenn weggelassen, überprüft primitive Gleichheit.',
+  'dateRangeValidator.firstTask':
+    'Wählen Sie ein Datum zwischen morgen und in fünf Tagen, einschließlich beider Grenzen. Frühere, spätere und leere Pflichtwerte sind ungültig.',
   'dateRangeValidator.overview':
     'Der <code>dateRangeValidator</code> ist ein benutzerdefinierter Validierer, der prüft, ob ein Datum innerhalb eines spezifizierten Bereichs liegt. Er unterstützt die Validierung sowohl für Datumswerte als auch für Datum-Uhrzeit-Werte, mit konfigurierbaren inklusiven/exklusiven Grenzen und optionaler Uhrzeit-Validierung.',
   'dateRangeValidator.example1Title': 'Beispiel 1: Datumsbereichsvalidierung',

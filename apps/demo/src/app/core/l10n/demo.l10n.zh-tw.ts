@@ -1428,6 +1428,8 @@ export const zhTWTranslations: Record<string, string> = {
   'url.isURLSummary': '檢測字串是否為合法的 HTTP 或 HTTPS URL。',
   'url.isHttpsSummary': '檢測 URL 字串是否採用 HTTPS 協議。',
   'urlValidator.title': 'urlValidator 與 httpsValidator',
+  'urlValidator.firstTask':
+    '輸入 https://example.com，再輸入無效位址並移開焦點。更正位址即可清除錯誤。空值不符合必填規則；下個範例限制通訊協定。',
   'urlValidator.overview':
     '<code>urlValidator</code> 與 <code>httpsValidator</code> 函式是專為 Angular 表單設計的 URL 驗證器。<code>urlValidator</code> 校驗以 http 或 https 開頭的地址，而 <code>httpsValidator</code> 專用於 HTTPS 地址校驗。',
   'urlValidator.example1': '示例 1：通用 URL 驗證器',
@@ -1636,6 +1638,8 @@ export const zhTWTranslations: Record<string, string> = {
   'ifAsyncValidator.apiSummary': '根據條件動態應用非同步驗證器函式的條件非同步驗證器。',
   'ifAsyncValidator.paramCondition': '決定是否應用非同步驗證器的條件函式。',
   'ifAsyncValidator.paramAsyncValidatorFn': '條件為 true 時執行的非同步驗證器函式。',
+  'intersectionValidator.firstTask':
+    '在兩個清單選擇相同命名空間，查看表單群組的重疊錯誤。在每個清單保留至少一項，再移除重疊即可恢復。',
   'intersectionValidator.overview':
     '<code>intersectionValidator</code> 是一款專為 Angular 表單定製的驗證器，用於確保兩個表單控制元件不存在重疊的值。例如，在兩個列表間校驗以防止出現相同條目。當陣列之間出現交集時，兩個欄位及表單物件均會攜帶 <code>{intersection: true}</code> 錯誤。',
   'intersectionValidator.example1Title': '示例 1：校驗無重疊的陣列',
@@ -1673,6 +1677,7 @@ export const zhTWTranslations: Record<string, string> = {
     '在值改變時，可根據需要主動呼叫控制元件的 <code>updateValueAndValidity()</code> 方法觸發重新校驗。',
   'uniqueValidator.apiSummary': '驗證 FormArray 控制元件或陣列中各元素的唯一性。',
   'uniqueValidator.paramKey': '（可選）物件型別元素的唯一性檢查屬性名。若省略則檢查原始值相等性。',
+  'dateRangeValidator.firstTask': '選擇明天到五天後的日期，包含兩個端點。範圍外日期無效，清空必填日期也無效。',
   'dateRangeValidator.overview':
     '<code>dateRangeValidator</code> 是一款用於驗證日期是否在指定範圍內的自定義驗證器。它支援純日期與帶時間的日期格式校驗，具備可配置的邊界包含性（閉區間/開區間）以及可選的時間精度對比。',
   'dateRangeValidator.example1Title': '示例 1：日期範圍校驗',

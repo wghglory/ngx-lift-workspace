@@ -1554,6 +1554,8 @@ export const jaTranslations: Record<string, string> = {
   'url.isURLSummary': '文字列が有効なURLかどうかを確認します。',
   'url.isHttpsSummary': 'URL文字列がHTTPSプロトコルを使用しているかを確認します。',
   'urlValidator.title': 'urlValidator および httpsValidator',
+  'urlValidator.firstTask':
+    'https://example.com と無効なアドレスを順に入力し、フォーカスを外します。修正するとエラーが消えます。空の値は無効です。次の例ではプロトコルを制限します。',
   'urlValidator.overview':
     'urlValidator および httpsValidator は、Angular で使用されるバリデーション関数で、与えられた文字列が特定の URL パターンに合致しているかを確認します。urlValidator は http または https で始まる URL を検証し、httpsValidator は только HTTPS URL を検証します。',
   'urlValidator.example1': '例 1: URL バリデーション',
@@ -1776,6 +1778,8 @@ export const jaTranslations: Record<string, string> = {
   'ifAsyncValidator.apiSummary': '条件に基づくアシンクロンバリデーションを生成する関数。',
   'ifAsyncValidator.paramCondition': 'アシンクロンバリデーション関数が適用されるかどうかを決定する関数。',
   'ifAsyncValidator.paramAsyncValidatorFn': '条件が真の場合に実行されるアシンクロンバリデーション関数。',
+  'intersectionValidator.firstTask':
+    '両方のリストで同じ名前空間を選ぶとグループの重複エラーが表示されます。各リストに選択を残し、重複を取り除いて解消します。',
   'intersectionValidator.overview':
     'intersectionValidatorは、Angular Formsのカスタムバリデーションで、2つのフォームコントロールが重複する値を持たないことを保証するためのもの입니다。例えば、2つのアイテムリストがあり、重複がないようにする場合があります。配列間に重複がある場合、両方のフィールドとフォームには<code>{intersection: true}</code>エラーが発生します。',
   'intersectionValidator.example1Title': '例1: 非重複配列の検証',
@@ -1816,6 +1820,8 @@ export const jaTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'FormArray制御または配列値の間で一意性を検証します。',
   'uniqueValidator.paramKey':
     '(オプション)オブジェクトアイテムで一意性を確認するプロパティキー。省略するとプリミティブ等価性を確認します。',
+  'dateRangeValidator.firstTask':
+    '明日から5日後までの日付を選びます。両端を含みます。範囲外の日付と空の必須値は無効です。',
   'dateRangeValidator.overview':
     'dateRangeValidatorはカスタムバリデーターで、指定された範囲内の日付を検証します。日付のみまたは日時をサポートし、含まれる/含まれない境界を設定可能で、オプションで時間比較をサポートします。',
   'dateRangeValidator.example1Title': '例1: 日付範囲検証',

@@ -1,3 +1,4 @@
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -9,14 +10,58 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-url-validator',
-  imports: [PageContainerComponent, ClarityModule, ReactiveFormsModule, CodeBlockComponent, TranslatePipe],
+  imports: [
+    DemoPlaygroundComponent,
+    PageContainerComponent,
+    ClarityModule,
+    ReactiveFormsModule,
+    CodeBlockComponent,
+    TranslatePipe,
+  ],
   templateUrl: './url-validator.component.html',
   styleUrl: './url-validator.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UrlValidatorComponent {
+  readonly firstTaskCode = highlight(
+    `import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {httpsValidator, urlValidator} from 'ngx-lift';
+
+@Component({
+  selector: 'app-form-example',
+  imports: [ClarityModule, ReactiveFormsModule],
+  templateUrl: './form-example.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class FormExampleComponent {
   form = new FormGroup({
     url: new FormControl('', [Validators.required, urlValidator]),
+  });
+}`,
+  );
+  readonly firstTaskHtml = highlight(
+    `<form [formGroup]="form" clrForm>
+  <clr-input-container>
+    <label for="url-validator-url">URL</label>
+    <input id="url-validator-url" clrInput formControlName="url" />
+    <clr-control-helper>Provide a valid URL</clr-control-helper>
+    @if (form.controls.url.hasError('required')) {
+      <clr-control-error>Required</clr-control-error>
+    }
+    @if (form.controls.url.errors?.['invalidUrl']) {
+      <clr-control-error>Please enter a valid URL (starting with https or http)</clr-control-error>
+    }
+  </clr-input-container>
+  <button type="button" class="btn btn-sm btn-outline" (click)="form.reset()">Clear</button>
+  <output aria-live="polite">{{ form.status }}</output>
+</form>`,
+  );
+  form = new FormGroup({
+    url: new FormControl('', [Validators.required, urlValidator]),
+  });
+  readonly httpsForm = new FormGroup({
     https: new FormControl('', [Validators.required, httpsValidator]),
   });
 

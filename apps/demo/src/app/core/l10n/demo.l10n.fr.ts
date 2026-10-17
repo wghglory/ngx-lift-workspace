@@ -1632,6 +1632,8 @@ export const frTranslations: Record<string, string> = {
   'url.isURLSummary': 'Vérifie si une chaîne est une URL valide.',
   'url.isHttpsSummary': 'Vérifie si une chaîne URL utilise le protocole HTTPS.',
   'urlValidator.title': 'urlValidator & httpsValidator',
+  'urlValidator.firstTask':
+    'Saisissez https://example.com, puis une adresse invalide. Quittez le champ et corrigez l’adresse. Les valeurs vides sont invalides ; l’exemple suivant limite le protocole.',
   'urlValidator.overview':
     "Les fonctions <code>urlValidator</code> et <code>httpsValidator</code> sont des validateurs Angular utilisés pour vérifier si une chaîne donnée correspond à des motifs spécifiques d'URL. La fonction <code>urlValidator</code> valide des URLs commençant par http ou https, tandis que <code>httpsValidator</code> valide uniquement des URLs HTTPS.",
   'urlValidator.example1': 'Exemple 1: Validateur URL',
@@ -1868,6 +1870,8 @@ export const frTranslations: Record<string, string> = {
     "Crée un validateur asynchrone conditionnel qui applique une fonction de validation asynchrone en fonction d'une condition.",
   'ifAsyncValidator.paramCondition': "Fonction déterminant si le validateur d'async doit être appliqué.",
   'ifAsyncValidator.paramAsyncValidatorFn': 'La fonction async validator à exécuter lorsque la condition est vraie.',
+  'intersectionValidator.firstTask':
+    'Sélectionnez le même espace de noms dans les deux listes pour voir l’erreur du groupe. Gardez une sélection dans chaque liste et supprimez le chevauchement.',
   'intersectionValidator.overview':
     "L'<code>intersectionValidator</code> est un validateur personnalisé pour Angular Forms conçu pour assurer que deux contrôles de formulaire ne partagent pas de valeurs communes. Par exemple, vous pourriez avoir deux listes d'éléments et vouloir assurer qu'ils n'ont pas de doublons. Lorsqu'il y a un overlap entre les tableaux, les deux champs et le formulaire auront l'<code>{intersection: true}</code> erreur.",
   'intersectionValidator.example1Title': 'Exemple 1 : Valider les tableaux de non-overlaping',
@@ -1911,6 +1915,8 @@ export const frTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': "Valide l'unicité sur les contrôles de FormArray ou les valeurs d'array.",
   'uniqueValidator.paramKey':
     "(Facultatif) Clé de propriété pour vérifier l'unicité des objets. Si omis, vérifie l'égalité primitive.",
+  'dateRangeValidator.firstTask':
+    'Choisissez une date entre demain et dans cinq jours, bornes incluses. Les dates hors plage et les champs obligatoires vides sont invalides.',
   'dateRangeValidator.overview':
     "L'<code>dateRangeValidator</code> est un validateur personnalisé qui valide que la date est dans une plage spécifiée. Il prend en charge la validation pour des valeurs de date uniquement et des valeurs de date-heure, avec des bornes inclusives/exclusives configurables et une comparaison optionnelle du temps.",
   'dateRangeValidator.example1Title': 'Exemple 1: Validation de la plage de dates',

@@ -1613,6 +1613,8 @@ export const nlTranslations: Record<string, string> = {
   'url.isURLSummary': 'Controleer of een tekenreeks een geldige URL is.',
   'url.isHttpsSummary': 'Controleert of een URL-string het HTTPS-protocol gebruikt.',
   'urlValidator.title': 'urlValidator & httpsValidator',
+  'urlValidator.firstTask':
+    'Voer https://example.com en daarna een ongeldig adres in. Verlaat het veld en herstel het adres. Lege waarden zijn ongeldig; het volgende voorbeeld beperkt het protocol.',
   'urlValidator.overview':
     'De <code>urlValidator</code> en <code>httpsValidator</code> functies zijn Angular validators gebruikt om te controleren of een gegeven string voldoet aan specifieke URL patronen. De <code>urlValidator</code> valideert URLs die met http of https beginnen, terwijl <code>httpsValidator</code> alleen HTTPS URLs valideert.',
   'urlValidator.example1': 'Voorbeeld 1: URL Validator',
@@ -1849,6 +1851,8 @@ export const nlTranslations: Record<string, string> = {
     'Creëert een conditionele asynchrone validator die een asynchrone validatorfunctie toepast op basis van een voorwaarde.',
   'ifAsyncValidator.paramCondition': 'Functie die bepaalt of de async validator moet worden toegepast.',
   'ifAsyncValidator.paramAsyncValidatorFn': 'De async validatorfunctie om uit te voeren wanneer de conditie waar is.',
+  'intersectionValidator.firstTask':
+    'Selecteer dezelfde naamruimte in beide lijsten om de groepsfout te zien. Houd in elke lijst een selectie en verwijder de overlap.',
   'intersectionValidator.overview':
     'De <code>intersectionValidator</code> is een aangepaste Angular Forms validator die ervoor zorgt dat twee formcontroles geen overlappende waarden hebben. Bijvoorbeeld, je zou twee lijsten met items hebben en willen ervoor zorgen dat ze geen dubbels bevat. Wanneer er overlapping is tussen de arrays, zullen beide velden en het formaat het <code>{intersection: true}</code> foutmelding hebben.',
   'intersectionValidator.example1Title': 'Voorbeeld 1: Valideren Niet-overlappende Arrays',
@@ -1889,6 +1893,8 @@ export const nlTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'Valideert unicititeit over FormArray-controles of arraywaarden.',
   'uniqueValidator.paramKey':
     '(Optioneel) Eigenschap sleutel om de uniciteit van object items te controleren. Indien weggelaten, controleert primitieve gelijkheid.',
+  'dateRangeValidator.firstTask':
+    'Kies een datum van morgen tot over vijf dagen, inclusief de grenzen. Datums daarbuiten en lege verplichte waarden zijn ongeldig.',
   'dateRangeValidator.overview':
     'De <code>dateRangeValidator</code> is een aangepaste validator die valideert dat een datum binnen een opgegeven bereik valt. Het ondersteunt validatie voor zowel datum-alleenwaarden als datum-tijdwaarden, met configurerbare inclusieve/uitgesloten grenzen en optionele tijdsgelijkaardigheid.',
   'dateRangeValidator.example1Title': 'Voorbeeld 1: Datumbereikvalidatie',

@@ -1600,6 +1600,8 @@ export const ruTranslations: Record<string, string> = {
   'url.isURLSummary': 'Проверяет, является ли строчка действительной URL.',
   'url.isHttpsSummary': 'Проверяет, использует ли струна URL протокол HTTPS.',
   'urlValidator.title': 'urlValidator & httpsValidator',
+  'urlValidator.firstTask':
+    'Введите https://example.com, затем неверный адрес и уберите фокус. Исправьте адрес для устранения ошибки. Пустые значения недопустимы; следующий пример ограничивает протокол.',
   'urlValidator.overview':
     'Функции <code>urlValidator</code> и <code>httpsValidator</code> являются Angular-валидаторами, проверяющими, соответствует ли заданная строка определенным паттернам URL. <code>urlValidator</code> проверяет URL, начинающийся с http или https, в то время как <code>httpsValidator</code> проверяет только HTTPS-URL.',
   'urlValidator.example1': 'Пример 1: Проверочный прибор URL',
@@ -1835,6 +1837,8 @@ export const ruTranslations: Record<string, string> = {
   'ifAsyncValidator.paramCondition': 'Функция определения того, следует ли применять асинхронизатор.',
   'ifAsyncValidator.paramAsyncValidatorFn':
     'Функция асинкового действительных значений должна выполняться в том случае, когда состояние соответствует действительности.',
+  'intersectionValidator.firstTask':
+    'Выберите одинаковое пространство имён в обоих списках, чтобы увидеть ошибку группы. Оставьте выбор в каждом списке и устраните пересечение.',
   'intersectionValidator.overview':
     'Оператор <code>intersectionValidator</code> — это пользовательский валидатор Angular Forms, предназначенный для обеспечения того, чтобы два контроля формы не содержали пересекающихся значений. Например, у вас может быть два списка элементов, и вы хотите, чтобы они не содержали повторяющихся элементов. При наличии пересечения между массивами оба поля и форма будут иметь <code>{intersection: true}</code> ошибку.',
   'intersectionValidator.example1Title': 'Пример 1: Проверка неперекрывающих ретрансляторов',
@@ -1876,6 +1880,8 @@ export const ruTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'Проверяет уникальность по контрольным элементам FormArray или по значениям массива.',
   'uniqueValidator.paramKey':
     '(Вариант) Ключ имущества для проверки уникальности объектов. Если опущено, проверяется примитивное равенство.',
+  'dateRangeValidator.firstTask':
+    'Выберите дату от завтра до пяти дней от сегодня включительно. Даты вне диапазона и пустые обязательные значения недопустимы.',
   'dateRangeValidator.overview':
     'Оператор <code>dateRangeValidator</code> — это пользовательский валидатор, проверяющий, что дата попадает в заданный диапазон. Он поддерживает проверку для значений только даты и даты-времени, с настраиваемыми границами включительно/исключительно и возможным сравнением времени.',
   'dateRangeValidator.example1Title': 'Пример 1: Проверка дальности',
