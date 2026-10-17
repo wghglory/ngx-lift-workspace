@@ -64,7 +64,8 @@ Reviewed October 17, 2026:
 Implementation revision: `4264a75` (follow-up to PR head `a51d132`). No library exports, signatures or runtime contracts
 changed. This revision adds compiled read/save/collection starters, seven guide destinations, shallow translated
 navigation, reference anchors inside Clarity's scroll container, and narrow-screen header spacing. Introductory
-playgrounds precede lifecycle/comparison/organization reference; full fixture source is available through View Code.
+playgrounds precede lifecycle/comparison/organization reference; TypeScript and HTML source are shown by default in
+separate tabs and can be collapsed with Hide Code.
 
 Completed local checks:
 

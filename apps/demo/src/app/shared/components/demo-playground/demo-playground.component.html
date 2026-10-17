@@ -132,7 +132,7 @@
                 [attr.aria-expanded]="isCodeExpanded()"
                 (click)="toggleCode()"
               >
-                <clr-icon shape="angle" [attr.dir]="isCodeExpanded() ? 'up' : 'down'" />
+                <clr-icon shape="angle" [direction]="isCodeExpanded() ? 'up' : 'down'" />
                 <span class="btn-text">{{
                   (isCodeExpanded() ? 'playground.hideCode' : 'playground.viewCode') | translate
                 }}</span>

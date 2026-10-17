@@ -7,6 +7,30 @@ test.beforeEach(async ({page}) => {
   });
 });
 
+for (const [route, testId] of [
+  ['queryResource', 'query-starter'],
+  ['mutateResource', 'mutation-starter'],
+  ['queryResources', 'query-demo-dynamic'],
+]) {
+  test(`${route} shows code initially and visibly rotates its caret on repeated toggles`, async ({page}) => {
+    await page.goto(base + route);
+    const playground = page.getByTestId(testId).locator('app-demo-playground');
+    const toggle = playground.locator('.toggle-btn');
+    const icon = toggle.locator('clr-icon');
+    const code = playground.locator('.playground-code-body');
+    for (const expanded of [true, false, true, false, true]) {
+      await expect(toggle).toHaveAttribute('aria-expanded', String(expanded));
+      await expect(toggle).toHaveText(expanded ? 'Hide Code' : 'View Code');
+      await expect(icon).toHaveAttribute('direction', expanded ? 'up' : 'down');
+      // Clarity's direction input drives the actual rotation; dir only sets text direction.
+      await expect(icon).toHaveCSS('transform', expanded ? 'matrix(1, 0, 0, 1, 0, 0)' : 'matrix(-1, 0, 0, -1, 0, 0)');
+      if (expanded) await expect(code).toBeVisible();
+      else await expect(code).toHaveCount(0);
+      await toggle.click();
+    }
+  });
+}
+
 test('first read shows retained data on refresh failure and recovers without changing selection', async ({page}) => {
   await page.goto(base + 'queryResource');
   const starter = page.getByTestId('query-starter');
@@ -33,7 +57,6 @@ test('first read shows retained data on refresh failure and recovers without cha
   await fail.uncheck();
   await starter.getByRole('button', {name: 'Refresh', exact: true}).click();
   await expect(team).toContainText('Beacon');
-  await starter.getByRole('button', {name: 'View Code', exact: true}).click();
   await expect(starter.locator('app-demo-playground app-code-block')).toContainText("from 'ngx-lift'");
   await starter.getByRole('button', {name: 'HTML', exact: true}).click();
   await expect(starter.locator('app-demo-playground app-code-block')).toContainText('teamQuery.isRefreshing()');
@@ -60,7 +83,6 @@ test('first save retains input after failure and supports repeated successful su
   await save.click();
   await expect(starter.getByTestId('starter-saved')).toContainText('Beacon team');
   await expect(starter.getByRole('alert')).toHaveCount(0);
-  await starter.getByRole('button', {name: 'View Code', exact: true}).click();
   await expect(starter.locator('app-demo-playground app-code-block')).toContainText(
     'await this.saveTeamMutation.mutate',
   );
