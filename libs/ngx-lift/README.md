@@ -7,7 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/ngx-lift.svg?logo=npm)](https://www.npmjs.com/package/ngx-lift)
 [![npm downloads](https://img.shields.io/npm/dm/ngx-lift.svg)](https://www.npmjs.com/package/ngx-lift)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Angular](https://img.shields.io/badge/Angular-%3E%3D19.0.0-red.svg)](https://angular.io)
+[![Angular](https://img.shields.io/badge/Angular-%3E%3D21.0.0-red.svg)](https://angular.dev)
 
 [📖 Documentation](https://ngx-lift.netlify.app) • [🎮 Live Demo](https://ngx-lift.netlify.app) •
 [💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
@@ -28,6 +28,10 @@ common Angular development tasks and boost productivity.
 - ⚡ **Modern** - Built for Angular with Signals support
 - 🧪 **Well-Tested** - Comprehensive test coverage
 - 📚 **Well-Documented** - Extensive documentation and examples
+
+This README follows the main branch. Check the
+[release history](https://github.com/wghglory/ngx-lift-workspace/blob/main/CHANGELOG.md) for availability in your
+installed version; source changes under Unreleased are not yet on npm.
 
 ## Features
 
@@ -88,10 +92,10 @@ common Angular development tasks and boost productivity.
 
 ### ✅ Validators
 
-- **`dateRange`** - Validates date ranges in forms
-- **`intersection`** - Validates array intersections
-- **`unique`** - Validates unique values in arrays
-- **`url`** - Validates URL format
+- **`dateRangeValidator`** - Validates date ranges in forms
+- **`intersectionValidator`** - Validates array intersections
+- **`UniqueValidator`** - Validates unique values in arrays
+- **`urlValidator` / `httpsValidator`** - Validate URL format
 
 ### 🛠️ Utilities
 
@@ -104,13 +108,13 @@ common Angular development tasks and boost productivity.
 
 ### 📦 Models
 
-- **`AsyncState`** - Type for managing async operation states with `status` field: `idle | loading | success | error`
+- **`AsyncState`** - Type for managing async operation states with `status` field: `idle | loading | resolved | error`
 - **`ResourceStatus`** - Type alias for resource status states
 - **Kubernetes Models** - Types for Kubernetes object metadata and conditions
 
 ## Requirements
 
-- **Angular**: >= 19.0.0
+- **Angular**: >= 21.0.0
 - **RxJS**: >= 7.8.0
 
 ## Installation
@@ -123,7 +127,7 @@ pnpm add ngx-lift
 yarn add ngx-lift
 ```
 
-### Upgrading from v1.x to v19.x
+### Historical migration from v1.x to v19.x
 
 **Important:** v19.0.0 includes a breaking change to the `AsyncState` interface:
 
@@ -161,224 +165,169 @@ yarn add ngx-lift
 pnpm add ngx-lift
 ```
 
-### Using Operators
+These complete standalone components use local fixtures, so the first task needs no backend. Replace a loader with
+`HttpClient` only after configuring `provideHttpClient()` and your endpoint. Create signal/form helpers in an Angular
+injection context, such as component field initializers.
 
-**Async State Management** - Transform observables into loading/error/data states:
+### Display async state
+
+The AsyncPipe owns the subscription. The preview shows loading, then Ada; `createAsyncState` represents a source error
+as state rather than throwing it into the template.
 
 ```typescript
+import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {createAsyncState} from 'ngx-lift';
-import {HttpClient} from '@angular/common/http';
+import {delay, of} from 'rxjs';
 
-export class UserComponent {
-  private http = inject(HttpClient);
-
-  // Create async state from HTTP request
-  usersState$ = this.http.get<User[]>('/api/users').pipe(
-    createAsyncState({
-      next: (users) => console.log('Loaded users:', users),
-      error: (err) => console.error('Error:', err),
-    }),
-  );
+@Component({
+  selector: 'app-async-example',
+  imports: [AsyncPipe],
+  template: `
+    @if (state$ | async; as state) {
+      @if (state.isLoading) {
+        <p>Loading...</p>
+      }
+      @if (state.error) {
+        <p role="alert">Could not load the user.</p>
+      }
+      <p>{{ state.data?.name }}</p>
+    }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AsyncExampleComponent {
+  readonly state$ = of({name: 'Ada'}).pipe(delay(300), createAsyncState());
 }
 ```
 
-**Polling** - Poll data at configurable intervals:
+For an owned periodic read, use `poll({interval: 5000, pollingFn: () => of({name: 'Ada'})})` in place of that stream.
+The subscription starts polling; its final unsubscribe releases requests and timers. See the
+[polling tutorial](https://ngx-lift.netlify.app/ngx-lift/operators/poll) for start, stop and refresh.
+
+### Load a local reactive resource
+
+Change the ID to replace the pending read. This resource owns its lifecycle; use `queryResource` below when observers
+must share requests and cached data.
 
 ```typescript
-import {poll} from 'ngx-lift';
-
-export class DataComponent {
-  private http = inject(HttpClient);
-
-  // Poll data every 5 seconds
-  dataState$ = poll({
-    interval: 5000,
-    pollingFn: () => this.http.get('/api/data'),
-    initialValue: {loading: true, error: null, data: null},
-  });
-}
-```
-
-### Using Signal Utilities
-
-**Resource Async** - Modern reactive resource management (like Angular's `httpResource`):
-
-```typescript
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
 import {resourceAsync} from 'ngx-lift';
+import {delay, of} from 'rxjs';
 
-export class UserComponent {
-  private http = inject(HttpClient);
-
-  // Automatically fetches and re-fetches when userId changes
-  userId = signal(1);
-  user = resourceAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
-
-  // Access individual signals for optimal performance
-  // user.value()     - The data (T with initialValue fallback)
-  // user.error()     - Error if any (E | null)
-  // user.status()    - 'idle' | 'loading' | 'reloading' | 'resolved' | 'error'
-  // user.isLoading() - Boolean loading state
-  // user.isIdle()    - Boolean idle state
-  // user.hasValue()  - Type predicate - narrows value type
-  // user.reload()    - Function to manually reload
-  // user.execute()   - Awaitable mutation trigger returning Promise<T>
-  // user.reset()     - Reset resource to idle state
-
-  // Template usage
-  // @if (user.isLoading()) { <spinner /> }
-  // @if (user.error(); as error) { <alert [error]="error" /> }
-  // @if (user.hasValue()) { <user-card [user]="user.value()" /> }
+@Component({
+  selector: 'app-resource-example',
+  template: `
+    <button type="button" (click)="userId.set(userId() + 1)">Next user</button>
+    @if (user.isLoading()) {
+      <p>Loading...</p>
+    }
+    @if (user.error()) {
+      <p role="alert">Could not load the user.</p>
+    }
+    <p>{{ user.value()?.name }}</p>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ResourceExampleComponent {
+  readonly userId = signal(1);
+  readonly user = resourceAsync(() => of({name: `User ${this.userId()}`}).pipe(delay(300)));
 }
 ```
 
-**Computed Async** - Create computed signals from async sources:
+For a readonly async value without loading/reload state, use
+[computedAsync](https://ngx-lift.netlify.app/ngx-lift/signals/computedAsync). Unhandled failures throw when reading its
+signal; supply a typed `onError` fallback when recovery should produce data. The
+[API selection guide](https://ngx-lift.netlify.app/ngx-lift/query/choosing) compares the async primitives.
+
+### Observe an existing Reactive Form
+
+Edit the username to change the submit preview. The confirmation field stays in the form but is omitted from the
+payload. `toSignalForm` observes this FormGroup; it does not create a native Signal Forms field tree.
 
 ```typescript
-import {computedAsync} from 'ngx-lift';
-
-export class UserComponent {
-  userId = signal(1);
-
-  // Automatically recomputes when userId changes
-  user = computedAsync(() => this.http.get<User>(`/api/users/${this.userId()}`));
-}
-```
-
-**Route Parameters as Signals** - Access route params reactively:
-
-```typescript
-import {injectParams, injectQueryParams, combineFrom} from 'ngx-lift';
-
-export class UserDetailComponent {
-  // Inject route parameters as signals
-  userId = injectParams('id');
-  searchTerm = injectQueryParams('search');
-
-  // Combine Observables and Signals into a single Signal
-  vm = combineFrom({
-    user: this.userService.getUser(this.userId()),
-    filters: this.filtersSignal,
-  });
-}
-```
-
-**Reactive Form Facade (toSignalForm)** - Bridge Reactive Forms and Angular Signals seamlessly:
-
-```typescript
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {JsonPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {toSignalForm} from 'ngx-lift';
 
-export class RegistrationComponent {
+@Component({
+  selector: 'app-form-example',
+  imports: [JsonPipe, ReactiveFormsModule],
+  template: `
+    <form [formGroup]="form">
+      <label for="username">Username</label>
+      <input id="username" formControlName="username" />
+      <label for="confirmation">Confirmation</label>
+      <input id="confirmation" formControlName="confirmation" />
+    </form>
+    <p>Valid: {{ sf.valid() }}</p>
+    <pre>{{ sf.submitValue() | json }}</pre>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class FormExampleComponent {
   readonly form = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required]),
-    confirmPassword: new FormControl('', [Validators.required]),
+    username: new FormControl('Ada', {nonNullable: true, validators: [Validators.required]}),
+    confirmation: new FormControl('', {nonNullable: true}),
   });
-
-  // Wrap form with reactive signal facade
-  readonly sf = toSignalForm(this.form, {
-    omit: ['confirmPassword'],
-  });
-
-  // 1. Reactive field & form signals
-  // sf.valid() -> Signal<boolean>
-  // sf.fields.username.value() -> Signal<string>
-  // sf.fields.username.invalid() -> Signal<boolean>
-
-  // 2. Declarative bindings
-  constructor() {
-    this.sf.revalidate('confirmPassword', 'password');
-  }
-
-  // 3. Sanitized submission value ready for APIs
-  onSubmit() {
-    if (this.sf.valid()) {
-      const data = this.sf.submitValue(); // omits confirmPassword automatically
-      this.authService.register(data);
-    }
-  }
+  readonly sf = toSignalForm(this.form, {omit: ['confirmation']});
 }
 ```
 
-### Using Query & Caching
+Continue with [conditional controls and validation](https://ngx-lift.netlify.app/ngx-lift/signals/toSignalForm).
 
-**Query Resource** - Shared cached queries with multi-observer deduplication and coordinated polling:
+### Share cached reads
+
+A key identifies one response. Another observer with the same key shares the client entry and in-flight read. Reloading
+retains previous data while refreshing; the starter distinguishes initial loading from that background state.
 
 ```typescript
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
 import {queryResource} from 'ngx-lift';
+import {delay, of} from 'rxjs';
 
-export class UserProfileComponent {
-  private http = inject(HttpClient);
-  userId = signal('42');
-
-  // Shared query with automatic deduplication, caching, and reactive polling
-  userQuery = queryResource(
-    () => {
-      const id = this.userId();
-      return {
-        key: ['users', id],
-        loader: () => this.http.get<User>(`/api/users/${id}`),
-        tags: [{type: 'users', id}],
-        staleTime: 60_000,
-      };
-    },
-    {pollInterval: 10_000},
-  );
-
-  // Template usage:
-  // @if (userQuery.isLoading()) { <spinner /> }
-  // @if (userQuery.error(); as error) { <alert [error]="error" /> }
-  // @if (userQuery.hasValue()) { <user-card [user]="userQuery.value()" /> }
-}
-```
-
-### Using Pipes
-
-**Template Pipes** - Ready-to-use pipes for common transformations:
-
-```html
-<!-- Convert bytes to human-readable format (KB, MB, GB) -->
-<div>{{ fileSize | byteConverter }}</div>
-<!-- Output: "1.5 MB" -->
-
-<!-- Mask sensitive data (credit cards, emails, etc.) -->
-<div>{{ creditCard | mask: 'card' }}</div>
-<!-- Output: "**** **** **** 1234" -->
-
-<!-- Join array elements with separator -->
-<div>{{ tags | arrayJoin: ', ' }}</div>
-<!-- Output: "angular, typescript, rxjs" -->
-```
-
-### Using Validators
-
-**Advanced Form Validators** - Powerful validators for complex scenarios:
-
-```typescript
-import {FormBuilder, Validators} from '@angular/forms';
-import {dateRange, unique, url} from 'ngx-lift';
-
-export class MyFormComponent {
-  private fb = inject(FormBuilder);
-
-  form = this.fb.group({
-    // URL validation
-    website: ['', [Validators.required, url()]],
-
-    // Date range validation (end must be after start)
-    dates: this.fb.group(
-      {
-        start: [''],
-        end: [''],
-      },
-      {validators: dateRange()},
-    ),
-
-    // Unique values in array
-    tags: this.fb.array([], [unique()]),
+@Component({
+  selector: 'app-query-example',
+  template: `
+    <button type="button" (click)="userId.set(userId() + 1)">Next user</button>
+    <button type="button" (click)="user.reload()">Refresh</button>
+    @if (user.isInitialLoading()) {
+      <p>Loading...</p>
+    }
+    @if (user.isRefreshing()) {
+      <p>Refreshing...</p>
+    }
+    @if (user.error()) {
+      <p role="alert">Could not load the user.</p>
+    }
+    <p>{{ user.value()?.name }}</p>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class QueryExampleComponent {
+  readonly userId = signal(1);
+  readonly user = queryResource(() => {
+    const id = this.userId();
+    return {key: ['users', id], loader: () => of({name: `User ${id}`}).pipe(delay(300)), staleTime: 60_000};
   });
 }
 ```
+
+Follow the [query learning path](https://ngx-lift.netlify.app/ngx-lift/query/overview) for errors, saves, collections,
+keys, invalidation, and diagnostics. `QUERY_CLIENT` has a root factory; `provideQueryClient(options)` customizes it.
+
+### Use pipes and validators
+
+Import standalone pipe classes such as `ByteConverterPipe`, `MaskPipe`, and `ArrayJoinPipe` into the component using
+them. Masking takes an options object: `mask: {unmaskedPrefixLength: 0, unmaskedSuffixLength: 4}`; it has no card mode.
+Use exported validators such as `urlValidator` directly in a FormControl's validators array. Start with the complete
+[pipe examples](https://ngx-lift.netlify.app/ngx-lift/pipes/mask) and
+[validator examples](https://ngx-lift.netlify.app/ngx-lift/validators/url), including imports and reset behavior.
+
+Route-dependent helpers need a routed component and Router providers; follow the
+[route parameter tutorial](https://ngx-lift.netlify.app/ngx-lift/signals/injectParams) instead of constructing them
+outside a route.
 
 ## 📚 Documentation
 
@@ -409,13 +358,13 @@ export class MyFormComponent {
 Run the unit tests for ngx-lift:
 
 ```bash
-nx test ngx-lift
+pnpm nx test ngx-lift
 ```
 
 Run tests with coverage:
 
 ```bash
-nx test ngx-lift --coverage
+pnpm nx test ngx-lift --coverage
 ```
 
 ## 🤝 Contributing
