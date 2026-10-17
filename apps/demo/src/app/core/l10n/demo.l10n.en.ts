@@ -210,6 +210,7 @@ export const enTranslations: Record<string, string> = {
   'rockStar.unveil': 'Unveil',
   'common.signature': 'Signature',
   'common.description': 'Description',
+  'common.clear': 'Clear',
   'common.basicUsage': 'Basic Usage',
   'common.inputs': 'Inputs',
   'common.outputs': 'Outputs',

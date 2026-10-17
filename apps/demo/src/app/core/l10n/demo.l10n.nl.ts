@@ -215,6 +215,7 @@ export const nlTranslations: Record<string, string> = {
   'rockStar.unveil': 'Onthullen',
   'common.signature': 'Handtekening',
   'common.description': 'Beschrijving',
+  'common.clear': 'Wissen',
   'common.basicUsage': 'Basisgebruik',
   'common.inputs': 'Invoer (Inputs)',
   'common.outputs': 'Uitvoer (Outputs)',
