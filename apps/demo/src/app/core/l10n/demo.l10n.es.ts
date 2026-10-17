@@ -171,6 +171,13 @@ export const esTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
+  'home.start': 'Primeros pasos',
+  'home.prerequisite':
+    'Estas instrucciones son para Angular 21. Empieza en una aplicación Angular independiente existente.',
+  'home.ngxLift.setup':
+    'Instala ngx-lift y elige una tarea. Los ejemplos HTTP necesitan provideHttpClient(); los ejemplos locales de señales y temporizadores no.',
+  'home.clrLift.setup':
+    'Añade la hoja de estilos global de Clarity e importa los componentes independientes que uses. Empieza con la alerta y sigue un tutorial de componentes.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Mejorar su flujo de trabajo <code>modern</code> Angular',
   'home.ngxLift.supportMatrix': 'Matriz de soporte de versión',

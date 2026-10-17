@@ -173,6 +173,13 @@ export const deTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
+  'home.start': 'Erste Schritte',
+  'home.prerequisite':
+    'Diese Anleitung gilt für Angular 21. Beginnen Sie in einer vorhandenen eigenständigen Angular-Anwendung.',
+  'home.ngxLift.setup':
+    'Installieren Sie ngx-lift und wählen Sie eine Aufgabe. HTTP-Beispiele benötigen provideHttpClient(); lokale Signal- und Timer-Beispiele nicht.',
+  'home.clrLift.setup':
+    'Fügen Sie das Clarity-Stylesheet global hinzu und importieren Sie die verwendeten eigenständigen Komponenten. Beginnen Sie mit dem Alert unten und folgen Sie dann einem Komponenten-Tutorial.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Verbessern Sie Ihren <code>modern</code> Angular Entwicklungs-Workflow',
   'home.ngxLift.supportMatrix': 'Versionsunterstützungsmatrix',

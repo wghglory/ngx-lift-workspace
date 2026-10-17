@@ -172,6 +172,13 @@ export const frTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
+  'home.start': 'Bien démarrer',
+  'home.prerequisite':
+    'Ces instructions ciblent Angular 21. Commencez dans une application Angular autonome existante.',
+  'home.ngxLift.setup':
+    'Installez ngx-lift, puis choisissez une tâche. Les exemples HTTP nécessitent provideHttpClient() ; les exemples locaux de signaux et de temporisateurs non.',
+  'home.clrLift.setup':
+    'Ajoutez la feuille de style Clarity globalement et importez les composants autonomes utilisés. Commencez par l’alerte ci-dessous, puis suivez un tutoriel de composant.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Améliorez votre flux de travail de développement <code>modern</code> Angular',
   'home.ngxLift.supportMatrix': 'Matrice de support de la version',

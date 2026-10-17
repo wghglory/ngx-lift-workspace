@@ -169,6 +169,12 @@ export const jaTranslations: Record<string, string> = {
   'nav.badgeUpdated': '更新',
   'nav.badgePopular': '人気',
   'nav.badgeCore': 'コア',
+  'home.start': 'はじめに',
+  'home.prerequisite': 'この手順は Angular 21 向けです。既存のスタンドアロン Angular アプリから始めます。',
+  'home.ngxLift.setup':
+    'ngx-lift をインストールし、下のタスクを選びます。HTTP の例には provideHttpClient() が必要です。ローカルのシグナルやタイマーの例には不要です。',
+  'home.clrLift.setup':
+    'Clarity のスタイルシートをグローバルに追加し、使用するスタンドアロンコンポーネントをインポートします。下のアラートから始め、各チュートリアルに進みます。',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': '現代のAngular開発ワークフローを向上させる',
   'home.ngxLift.supportMatrix': 'バージョンサポートマトリクス',

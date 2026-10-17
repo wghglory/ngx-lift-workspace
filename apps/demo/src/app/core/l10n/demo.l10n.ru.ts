@@ -172,6 +172,12 @@ export const ruTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'ОБНОВЛЕНО',
   'nav.badgePopular': 'ПОПУЛЯРНОЕ',
   'nav.badgeCore': 'ЯДРО',
+  'home.start': 'Начало работы',
+  'home.prerequisite': 'Инструкции рассчитаны на Angular 21. Начните с существующего автономного приложения Angular.',
+  'home.ngxLift.setup':
+    'Установите ngx-lift и выберите задачу. Для HTTP-примеров нужен provideHttpClient(); для локальных сигналов и таймеров он не нужен.',
+  'home.clrLift.setup':
+    'Добавьте глобальные стили Clarity и импортируйте используемые автономные компоненты. Начните с уведомления ниже, затем перейдите к руководству по компоненту.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Усилить свой рабочий поток разработки <code>modern</code> Angular',
   'home.ngxLift.supportMatrix': 'Матрица поддержки версии',

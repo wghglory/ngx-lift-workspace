@@ -1,3 +1,4 @@
+import {provideRouter} from '@angular/router';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ClrLiftHomeComponent} from './clr-lift-home.component';
@@ -8,6 +9,7 @@ describe('ClrLiftHomeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideRouter([])],
       imports: [ClrLiftHomeComponent],
     }).compileComponents();
 

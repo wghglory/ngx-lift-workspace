@@ -155,6 +155,11 @@ export const zhTWTranslations: Record<string, string> = {
   'nav.badgeUpdated': '更新',
   'nav.badgePopular': '熱門',
   'nav.badgeCore': '核心',
+  'home.start': '開始使用',
+  'home.prerequisite': '以下步驟適用於 Angular 21。請從既有的獨立 Angular 應用程式開始。',
+  'home.ngxLift.setup':
+    '安裝 ngx-lift，再選擇下方任務。HTTP 範例需要 provideHttpClient()；本機訊號和計時器範例不需要 HTTP 提供者。',
+  'home.clrLift.setup': '全域加入 Clarity 樣式表，並匯入所需的獨立元件。從下方警告元件範例開始，再閱讀具體元件教學。',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': '提升您的 <code>現代化</code> Angular 開發流程與生產力',
   'home.ngxLift.supportMatrix': '版本支援矩陣',
