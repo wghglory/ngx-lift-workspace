@@ -1165,6 +1165,8 @@ export const koTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     '모든 경고를 표시하는 컨테이너 컴포넌트. 주요 컨테이너 내의 Clarity 헤더 태그 위에 위치해야 합니다.',
   'fileReader.title': '파일 읽기',
+  'fileReader.firstTask':
+    '텍스트 파일을 선택한 후 폼을 지워 보세요. 파일 선택은 필수입니다. 인증서 제한과 파싱 오류는 다음 예제에서 다룹니다.',
   'fileReader.overview':
     '<FileReaderComponent>는 텍스트 파일의 내용을 쉽게 탐색하고 읽기 위해 제공되는 컴포넌트입니다. 파일 선택, 텍스트 또는 base64 인코딩된 문자열로의 내용 읽기, 파일 크기 검증, 파일 선택 또는 제거 시 이벤트를 발생시킵니다.',
   'fileReader.example1': '예제 1: 기본 파일 읽기',
@@ -1725,6 +1727,8 @@ export const koTranslations: Record<string, string> = {
     'HttpContext를 통해 재정의되지 않는 한 모든 요청에 적용되는 기본 구성입니다.',
   'k8sRetryBackoffInterceptor.tokenSummary':
     '개별 요청에 대한 재시도 구성을 재정의하거나 비활성화하기 위한 HttpContextToken입니다.',
+  'ifValidator.firstTask':
+    '부정 답변을 선택하면 이메일과 이유가 필수입니다. 둘 다 입력하고 답변을 바꾸면 필수 오류가 사라지지만 이메일 형식 검증은 유지됩니다.',
   'ifValidator.overview':
     'ngx-lift는 Angular 반응형 폼에서 조건적 검증을 생성하는 유틸리티 함수를 제공합니다. 조건적 검증은 주어진 조건에 따라 지정된 검증 함수를 적용할 수 있도록 합니다. 주요 함수는 <code>ifValidator</code>로 동기 검증 함수를 위한 것이며, <code>ifAsyncValidator</code>는 비동기 검증 함수를 위한 것입니다.',
   'ifValidator.example1Title': '예시 1: 조건적 필수 검증',
@@ -1764,6 +1768,8 @@ export const koTranslations: Record<string, string> = {
   'intersectionValidator.apiSummary': '두 배열 값의 폼 컨트롤이 중복된 요소를 포함하지 않도록 검증합니다.',
   'intersectionValidator.paramArray1Key': '첫 번째 폼 컨트롤의 이름',
   'intersectionValidator.paramArray2Key': '두 번째 폼 컨트롤의 이름',
+  'uniqueValidator.firstTask':
+    '두 필드에 같은 텍스트를 입력하고 포커스를 이동하면 중복 오류가 표시됩니다. 하나를 수정하고 다시 이동하면 해결됩니다. 지우기는 두 값을 초기화합니다.',
   'uniqueValidator.overview':
     '<code>uniqueValidator</code>는 <code>FormArray</code> 또는 <code>FormGroup</code> 내 여러 필드의 값이 고유한지 확인하는 Angular Forms 검증기입니다. 각 컨트롤의 값이 같은 배열이나 그룹의 다른 컨트롤과 중복되지 않도록 합니다.',
   'uniqueValidator.example1Title': '예제 1: FormControls의 배열',

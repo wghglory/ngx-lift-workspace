@@ -1182,6 +1182,8 @@ export const enTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     'Container component that displays all alerts. Should be placed above the Clarity header tag within the main container.',
   'fileReader.title': 'File Reader',
+  'fileReader.firstTask':
+    'Choose a text file, inspect the caller-owned form, then clear it. An empty selection is required; certificate limits and parsing errors are covered in the next example.',
   'fileReader.overview':
     'The <code>FileReaderComponent</code> allows you to easily browse and read the contents of text files. It supports file selection, content reading as plain text or base64 encoded string, file size validation, and emits events when files are selected or removed.',
   'fileReader.example1': 'Example 1: Basic File Reader',
@@ -1757,6 +1759,8 @@ export const enTranslations: Record<string, string> = {
     'Default K8sBackoffRetryConfig applied to requests unless overridden via K8S_RETRY_BACKOFF_CONFIG.',
   'k8sRetryBackoffInterceptor.tokenSummary':
     'HttpContextToken used to customize or disable retry-backoff for individual requests.',
+  'ifValidator.firstTask':
+    'Choose the negative answer to require email and reason. Fill both fields, then change the answer: required errors clear, while email format validation still applies.',
   'ifValidator.overview':
     'ngx-lift provides utility functions for creating conditional validators in Angular Reactive Forms. Conditional validators allow you to apply specified validator functions based on a given condition. There are two main functions exported: <code>ifValidator</code> for synchronous validators and <code>ifAsyncValidator</code> for asynchronous validators.',
   'ifValidator.example1Title': 'Example 1: Conditional Required Validator',
@@ -1798,6 +1802,8 @@ export const enTranslations: Record<string, string> = {
     'Validates that two array-valued form controls do not contain overlapping elements.',
   'intersectionValidator.paramArray1Key': 'The name of the first form control.',
   'intersectionValidator.paramArray2Key': 'The name of the second form control.',
+  'uniqueValidator.firstTask':
+    'Enter the same text in both fields and leave the field to reveal the duplicate error. Change one value and leave it again to recover; Clear resets both values.',
   'uniqueValidator.overview':
     "The <code>uniqueValidator</code> is a custom Angular Forms validator designed to check for uniqueness across multiple fields within a <code>FormArray</code> or <code>FormGroup</code>. It ensures that each control's value is unique among all other controls within the array or group.",
   'uniqueValidator.example1Title': 'Example 1: Array of FormControls',

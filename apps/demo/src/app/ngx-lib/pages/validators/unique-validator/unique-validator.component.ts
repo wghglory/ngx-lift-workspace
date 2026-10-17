@@ -1,4 +1,5 @@
-import {Component, computed, inject} from '@angular/core';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
@@ -11,6 +12,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-unique-validator',
   imports: [
+    DemoPlaygroundComponent,
     ClarityModule,
     ReactiveFormsModule,
     PageContainerComponent,
@@ -19,10 +21,36 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     TranslatePipe,
     ApiTableComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './unique-validator.component.html',
   styleUrl: './unique-validator.component.scss',
 })
 export class UniqueValidatorComponent {
+  readonly firstTaskCode = highlight(
+    "import {ChangeDetectionStrategy, Component, inject} from '@angular/core';\nimport {FormBuilder, ReactiveFormsModule} from '@angular/forms';\nimport {ClarityModule} from '@clr/angular';\nimport {UniqueValidator} from 'ngx-lift';\n\n@Component({\n  selector: 'app-form-example',\n  imports: [ClarityModule, ReactiveFormsModule],\n  templateUrl: './form-example.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class FormExampleComponent {\n  private fb = inject(FormBuilder);\n\n  form1 = this.fb.group({\n    demo1: this.fb.array([this.fb.control(null), this.fb.control('')], UniqueValidator.unique()),\n  });\n\n  validateControlByIndex(index: number) {\n    this.form1.controls.demo1.controls[index].updateValueAndValidity();\n  }\n}",
+  );
+  readonly firstTaskHtml = highlight(
+    `<form clrForm [formGroup]="form1">
+  <ng-container formArrayName="demo1">
+    @for (control of form1.controls.demo1.controls; track $index; let i = $index) {
+      <clr-input-container>
+        <label [for]="'unique-control-' + i">Control {{ i + 1 }}</label>
+        <input
+          [id]="'unique-control-' + i"
+          clrInput
+          type="text"
+          [formControlName]="i"
+          (blur)="validateControlByIndex(i)"
+        />
+        <clr-control-helper>Control value should be unique</clr-control-helper>
+        <clr-control-error *clrIfError="'notUnique'">Duplicated</clr-control-error>
+      </clr-input-container>
+    }
+  </ng-container>
+  <button type="button" class="btn btn-sm btn-outline" (click)="form1.reset()">Clear</button>
+  <output aria-live="polite">{{ form1.status }}</output>
+</form>`,
+  );
   private fb = inject(FormBuilder);
   private translationService = inject(TranslationService);
 

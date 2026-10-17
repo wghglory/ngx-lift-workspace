@@ -1231,6 +1231,8 @@ export const esTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     'Componente de contenedores que muestra todas las alertas. Debe colocarse por encima de la etiqueta de cabecera Clarity dentro del contenedor principal.',
   'fileReader.title': 'Reader de archivos',
+  'fileReader.firstTask':
+    'Selecciona un archivo de texto y vacía el formulario. La selección es obligatoria; el siguiente ejemplo cubre límites y errores de certificados.',
   'fileReader.overview':
     'El componente <code>FileReaderComponent</code> te permite fácilmente explorar y leer el contenido de archivos de texto. Soporta la selección de archivos, la lectura del contenido como texto plano o cadena codificada en base64, la validación del tamaño del archivo y emite eventos cuando se seleccionan o eliminan archivos.',
   'fileReader.example1': 'Ejemplo 1: Reader de archivos básico',
@@ -1833,6 +1835,8 @@ export const esTranslations: Record<string, string> = {
     'Configuración predeterminada aplicada a todas las peticiones a menos que se anule mediante HttpContext.',
   'k8sRetryBackoffInterceptor.tokenSummary':
     'HttpContextToken para configurar o desactivar el retroceso de reintento para una petición individual.',
+  'ifValidator.firstTask':
+    'La respuesta negativa exige correo y motivo. Rellena ambos y cambia la respuesta: desaparecen los errores obligatorios, pero se sigue validando el formato del correo.',
   'ifValidator.overview':
     'ngx-lift proporciona funciones útiles para crear validadores condicionales en Angular Reactive Forms. Los validadores condicionales permiten aplicar funciones de validación especificadas basadas en una condición dada. Hay dos funciones principales exportadas: <code>ifValidator</code> para validadores sincrónicos y <code>ifAsyncValidator</code> para validadores asíncronos.',
   'ifValidator.example1Title': 'Ejemplo 1: Validador obligatorio',
@@ -1876,6 +1880,8 @@ export const esTranslations: Record<string, string> = {
     'Valida que dos controles de formulario con valores de array no contengan elementos superpuestos.',
   'intersectionValidator.paramArray1Key': 'El nombre del control de primera forma.',
   'intersectionValidator.paramArray2Key': 'El nombre de la segunda forma de control.',
+  'uniqueValidator.firstTask':
+    'Introduce el mismo texto en ambos campos y sal del campo para ver el duplicado. Cambia un valor y sal otra vez para corregirlo. Borrar restablece ambos.',
   'uniqueValidator.overview':
     'El <code>uniqueValidator</code> es un validador personalizado para Angular Forms diseñado para verificar la unicidad a través de múltiples campos dentro de un <code>FormArray</code> o <code>FormGroup</code>. Asegura que el valor de cada control sea único entre todos los otros controles dentro del array o grupo.',
   'uniqueValidator.example1Title': 'Ejemplo 1: Array de FormControls',
