@@ -11,7 +11,6 @@
       <p>
         {{ 'datagridUtil.example1Desc' | translate }}
       </p>
-      <app-code-block [code]="pageQueryModelCode" lang="typescript" />
       <p>
         {{ 'datagridUtil.transformDesc' | translate }}
       </p>
@@ -26,7 +25,9 @@
         </div>
       </div>
       <p>{{ 'datagridUtil.usageDesc' | translate }}</p>
+      <app-code-block [code]="pageQueryModelCode" lang="typescript" />
       <app-code-block [code]="usageCode" lang="typescript" />
+      <a routerLink="/clr-lift/operators/dgState">dgState</a>
     </article>
   </section>
 
