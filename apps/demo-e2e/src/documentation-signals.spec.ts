@@ -33,20 +33,20 @@ test('createTrigger changes a derived revision on repeated refreshes', async ({p
 test('route and query signals follow URL changes and missing values', async ({page}) => {
   await page.goto('/ngx-lift/signals/injectParams');
   const params = page.getByTestId('inject-params-starter');
-  await expect(params.locator('output')).toHaveText('null → 1');
+  await expect(params.locator('output')).toHaveText(['null → 1']);
   await params.getByRole('link', {name: 'id = 2', exact: true}).click();
   await expect(page).toHaveURL(/injectParams\/2$/);
-  await expect(params.locator('output')).toHaveText('2 → 2');
+  await expect(params.locator('output')).toHaveText(['2 → 2']);
   await params.getByRole('link', {name: 'Clear', exact: true}).click();
-  await expect(params.locator('output')).toHaveText('null → 1');
+  await expect(params.locator('output')).toHaveText(['null → 1']);
   await page.goto('/ngx-lift/signals/injectQueryParams');
   const query = page.getByTestId('inject-query-params-starter');
-  await expect(query.locator('output')).toHaveText('null → 1');
+  await expect(query.locator('output')).toHaveText(['null → 1']);
   await query.getByRole('link', {name: 'page = 2', exact: true}).click();
   await expect(page).toHaveURL(/\?page=2$/);
-  await expect(query.locator('output')).toHaveText('2 → 2');
+  await expect(query.locator('output')).toHaveText(['2 → 2']);
   await query.getByRole('link', {name: 'Clear', exact: true}).click();
-  await expect(query.locator('output')).toHaveText('null → 1');
+  await expect(query.locator('output')).toHaveText(['null → 1']);
 });
 
 test('signals documentation fits a narrow screen and exposes its first source', async ({page}) => {

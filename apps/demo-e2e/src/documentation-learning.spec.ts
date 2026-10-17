@@ -59,7 +59,7 @@ test('resourceAsync guides the reader from reactive reads to recipes and referen
 });
 
 test('dgState presents a working grid before its data-shape and reference walkthrough', async ({page}) => {
-  await page.goto('/clr-lift/operators/dgState');
+  await page.goto('/clr-lift/operators/dgState', {waitUntil: 'domcontentloaded'});
   const starter = page.getByTestId('datagrid-starter');
   const grid = starter.locator('clr-datagrid');
   await expect(grid.locator('clr-dg-row')).toHaveCount(10);
@@ -78,7 +78,7 @@ test('dgState presents a working grid before its data-shape and reference walkth
 });
 
 test('wizard preview precedes its step walkthrough and has separate HTML source', async ({page}) => {
-  await page.goto('/clr-lift/components/timeline-wizard');
+  await page.goto('/clr-lift/components/timeline-wizard', {waitUntil: 'domcontentloaded'});
   const starter = page.getByTestId('wizard-starter');
   const wizard = starter.locator('cll-timeline-wizard');
   await expect(wizard).toBeVisible();

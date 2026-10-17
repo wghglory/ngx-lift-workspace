@@ -52,6 +52,7 @@ test('date bounds allow correction within the inclusive window and reject cleari
   await page.goto('/ngx-lift/validators/date-range');
   const starter = page.getByTestId('date-range-validator-starter');
   const input = starter.locator('#date-starter-date');
+  await expect(input).toHaveAttribute('min', /^\d{4}-\d{2}-\d{2}$/);
   const min = await input.getAttribute('min');
   if (!min) throw new Error('The first date example must expose its minimum date');
   await input.fill('2000-01-01');
@@ -60,6 +61,7 @@ test('date bounds allow correction within the inclusive window and reject cleari
   await input.fill(min);
   await input.blur();
   await expect(starter.locator('output')).toHaveText('VALID');
+  await expect(input).toHaveAttribute('max', /^\d{4}-\d{2}-\d{2}$/);
   const max = await input.getAttribute('max');
   if (!max) throw new Error('The date example must expose its maximum date');
   await input.fill(max);
