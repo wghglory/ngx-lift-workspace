@@ -1,21 +1,58 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, numberAttribute} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {ChangeDetectionStrategy, Component, computed, inject, Injector, numberAttribute} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {computedAsync, injectQueryParams} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserService} from '../../../../shared/services/user.service';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-inject-query-params',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
+  imports: [
+    DemoPlaygroundComponent,
+    RouterLink,
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './inject-query-params.component.html',
   styleUrl: './inject-query-params.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InjectQueryParamsComponent {
+  readonly selectedPage = injectQueryParams('page');
+  readonly currentPage = injectQueryParams('page', {transform: numberAttribute, initialValue: 1});
+  readonly starterCode = highlight(`// Route setup excerpt for app.routes.ts:
+// {path: 'teams', component: StarterComponent}
+// In your app config, register routes with provideRouter(routes).
+
+import {ChangeDetectionStrategy, Component, numberAttribute} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {injectQueryParams} from 'ngx-lift';
+
+@Component({
+  selector: 'app-starter',
+  imports: [RouterLink],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly selectedPage = injectQueryParams('page');
+  readonly currentPage = injectQueryParams('page', {transform: numberAttribute, initialValue: 1});
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <a class="btn btn-sm" routerLink="." [queryParams]="{page: 1}">page = 1</a>
+  <a class="btn btn-sm" routerLink="." [queryParams]="{page: 2}">page = 2</a>
+  <a class="btn btn-sm" routerLink="." [queryParams]="{}">Clear</a>
+</div>
+<output aria-live="polite">{{ selectedPage() ?? 'null' }} → {{ currentPage() }}</output>`);
+
   private userService = inject(UserService);
   private injector = inject(Injector);
   private translationService = inject(TranslationService);
@@ -51,17 +88,6 @@ export class InjectQueryParamsComponent {
   pageNumber = injectQueryParams('page', {transform: numberAttribute});
 
   multipliedNumber = computed(() => (this.pageNumber() || 0) * 2);
-
-  constructor() {
-    effect(() => {
-      console.log('[injectQueryParams] queryParamsKeys:', this.queryParamsKeys());
-      console.log('[injectQueryParams] searchParam:', this.searchParam());
-      console.log('[injectQueryParams] users:', this.users());
-      console.log('[injectQueryParams] pageNumber:', this.pageNumber());
-      console.log('[injectQueryParams] multipliedNumber:', this.multipliedNumber());
-      console.log('[injectQueryParams] customInjectorQuery (custom injector):', this.customInjectorQuery());
-    });
-  }
 
   allParamsCode = highlight(`
 import {injectQueryParams} from 'ngx-lift';
