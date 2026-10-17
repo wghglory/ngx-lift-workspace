@@ -1636,11 +1636,11 @@ export const jaTranslations: Record<string, string> = {
   'logger.example2Title': '例2: テーブル形式のログ出力',
   'logger.example2Desc': 'console.tableを使用して発行された値をログ出力し、より良い可視化を実現:',
   'logger.example3Title': '例3: その他のコンソールメソッド',
-  'logger.example3Desc': 'warn、error、またはinfoなどの他のコンソールメソッドを使用:',
+  'logger.example3Desc': 'dir、count、またはinfoなどの他のコンソールメソッドを使用:',
   'logger.apiSummary':
     'エミッションをコンソールにログとして出力するデバッグオペレータ。さまざまなコンソールメソッドを使用してログを出力します。',
   'logger.paramMethod':
-    '(オプション) 使用するコンソールメソッド: "log" | "table" | "warn" | "error" | "info" | "debug"。デフォルトは "log" です。',
+    '(オプション) 使用するコンソールメソッド: "log" | "table" | "dir" | "count" | "debug"。デフォルトは "log" です。',
   'logger.returnsDesc': 'すべての値を通過しながら、それらをコンソールにログとして出力するオブザーバブル。',
   'kubernetesPagination.overview':
     '<code>aggregatePaginatedKubernetesResources</code> オペレータと <code>fetchPaginatedKubernetesResources</code> 関数は、Kubernetes REST API のクライアントサイドのページネーションを自動化します。それらは、入力する応答の <code>metadata.continue</code> タンクルを調べ、連続的にページを要求してすべてのページを取得するまで再帰的に処理し、欠損または null なアイテムを安全に正規化し、すべてのリソースを単一の <code>KubernetesList&lt;T&gt;</code> に集約します。',

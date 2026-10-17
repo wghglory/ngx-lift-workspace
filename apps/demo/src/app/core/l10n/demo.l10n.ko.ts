@@ -1610,10 +1610,10 @@ export const koTranslations: Record<string, string> = {
   'logger.example2Title': '예제 2: 표 형식 로그',
   'logger.example2Desc': 'console.table를 사용하여 방출된 값들을 더 시각적으로 표시:',
   'logger.example3Title': '예제 3: 다른 console 메소드',
-  'logger.example3Desc': 'warn, error, or info와 같은 다른 console 메소드를 사용:',
+  'logger.example3Desc': 'dir, count, or info와 같은 다른 console 메소드를 사용:',
   'logger.apiSummary': '일련의 디버깅 연산자로, 다양한 콘솔 메서드를 사용하여 배출을 콘솔에 로그 기록합니다.',
   'logger.paramMethod':
-    '(선택 사항) 사용할 콘솔 메서드: "log" | "table" | "warn" | "error" | "info" | "debug". 기본값은 "log"입니다.',
+    '(선택 사항) 사용할 콘솔 메서드: "log" | "table" | "dir" | "count" | "debug". 기본값은 "log"입니다.',
   'logger.returnsDesc': '모든 값이 통과하면서 그 값을 콘솔에 로그 기록하는 관찰 가능한 객체입니다.',
   'kubernetesPagination.overview':
     '<code>aggregatePaginatedKubernetesResources</code> 연산자와 <code>fetchPaginatedKubernetesResources</code> 함수는 Kubernetes REST API의 클라이언트 측 페이지네이션을 자동화합니다. 이들은 들어오는 응답의 <code>metadata.continue</code> 토큰을 검사하여, 모든 페이지가 수령될 때까지 재귀적으로 다음 페이지를 요청하고, 누락된 또는 null인 항목을 안전하게 정규화하며, 모든 자원을 하나의 통합된 <code>KubernetesList&lt;T&gt;</code>로 집계합니다.',

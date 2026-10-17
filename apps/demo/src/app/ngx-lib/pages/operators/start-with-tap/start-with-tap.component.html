@@ -2,10 +2,6 @@
   <!-- Overview -->
   <p [innerHTML]="'startWithTap.overview' | translate"></p>
 
-  <cll-callout>
-    <p cds-layout="m-t:none" [innerHTML]="'startWithTap.callout' | translate"></p>
-  </cll-callout>
-
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -47,6 +43,9 @@
           </div>
         }
       </div>
+      <cll-callout>
+        <p cds-layout="m-t:none" [innerHTML]="'startWithTap.callout' | translate"></p>
+      </cll-callout>
       <app-code-block [code]="basicUsageCode" lang="typescript" />
     </article>
 

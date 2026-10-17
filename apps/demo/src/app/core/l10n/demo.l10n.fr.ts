@@ -1721,11 +1721,11 @@ export const frTranslations: Record<string, string> = {
   'logger.example2Title': 'Exemple 2 : Exploitation du tableau',
   'logger.example2Desc': 'Log des valeurs émises en utilisant console.table pour une meilleure visualisation:',
   'logger.example3Title': 'Exemple 3: Autres méthodes de console',
-  'logger.example3Desc': "Utilisez d'autres méthodes de console comme avertissement, erreur ou info:",
+  'logger.example3Desc': "Utilisez d'autres méthodes de console comme avertissement, erreur ou debug:",
   'logger.apiSummary':
     'Un opérateur de débogage qui enregistre les émissions dans la console en utilisant diverses méthodes de console.',
   'logger.paramMethod':
-    'Facultatif : méthode de console: "log" | "table" | "warn" | "error" | "info" | "debug". Par défaut: "log".',
+    'Facultatif : méthode de console: "log" | "table" | "dir" | "count" | "debug". Par défaut: "log".',
   'logger.returnsDesc': 'Un observable qui passe à travers toutes les valeurs tout en les enregistrant sur la console.',
   'kubernetesPagination.overview':
     "L'opérateur <code>aggregatePaginatedKubernetesResources</code> et la fonction <code>fetchPaginatedKubernetesResources</code> automatisent la pagination côté client pour les API REST de Kubernetes. Ils inspectent le token <code>metadata.continue</code> des réponses entrantes, demandent des pages consécutives de manière récursive jusqu'à ce que toutes les pages soient récupérées, normalisent en toute sécurité les éléments manquants ou nulls, et regroupent tous les ressources dans un seul <code>KubernetesList&lt;T&gt;</code> unifié.",

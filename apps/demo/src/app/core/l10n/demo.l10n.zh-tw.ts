@@ -1503,10 +1503,9 @@ export const zhTWTranslations: Record<string, string> = {
   'logger.example2Title': '示例 2：表格化列印 (console.table)',
   'logger.example2Desc': '使用 console.table 進行結構化展示，以便直觀比對資料：',
   'logger.example3Title': '示例 3：其他控制檯方法',
-  'logger.example3Desc': '指定其他控制檯方法，如 warn、error 或 info：',
+  'logger.example3Desc': '指定其他控制檯方法，如 dir、count 或 debug：',
   'logger.apiSummary': '透過不同 console 方法將發射項列印到控制檯的除錯運算子。',
-  'logger.paramMethod':
-    '（可選）使用的 console 方法："log" | "table" | "warn" | "error" | "info" | "debug"，預設為 "log"。',
+  'logger.paramMethod': '（可選）使用的 console 方法："log" | "table" | "dir" | "count" | "debug"，預設為 "log"。',
   'logger.returnsDesc': '在將值記錄到控制檯的同時透傳所有值的 Observable。',
   'kubernetesPagination.overview':
     '<code>aggregatePaginatedKubernetesResources</code> 運算子與 <code>fetchPaginatedKubernetesResources</code> 便捷函式自動化了 Kubernetes REST API 的客戶端分頁處理。它們會自動檢查響應中的 <code>metadata.continue</code> 延續標記，遞迴請求後續各個分頁直到全部拉取完畢，安全規整缺失項，最終聚合成單一完整的 <code>KubernetesList&lt;T&gt;</code>。',

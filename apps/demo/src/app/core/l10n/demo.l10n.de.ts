@@ -1711,8 +1711,7 @@ export const deTranslations: Record<string, string> = {
   'logger.example3Desc': 'Verwenden Sie andere Konsolen-Methoden wie Warnung, Fehler oder Info:',
   'logger.apiSummary':
     'Ein Debug-Operator, der Ausstrahlungen in die Konsole loggt, wobei verschiedene Konsole-Methode verwendet werden.',
-  'logger.paramMethod':
-    'Optional: Konsolenmethode: "log" | "table" | "warn" | "error" | "info" | "debug". Standard: "log".',
+  'logger.paramMethod': 'Optional: Konsolenmethode: "log" | "table" | "dir" | "count" | "debug". Standard: "log".',
   'logger.returnsDesc': 'Ein Beobachtbarer, der alle Werte durchläuft, während er sie an die Konsole protokolliert.',
   'kubernetesPagination.overview':
     'Der <code>aggregatePaginatedKubernetesResources</code>-Operator und der <code>fetchPaginatedKubernetesResources</code>-Funktion automatisieren die Client-seitige Pagination für Kubernetes REST APIs. Sie inspizieren den <code>metadata.continue</code>-Token auf eingehenden Responses, bitten rekursiv nachfolgende Seiten an, bis alle Seiten abgerufen wurden, normieren fehlende oder null-Elemente sicher, und fügen alle Ressourcen in ein einziges einheitliches <code>KubernetesList&lt;T&gt;</code> zusammen.',

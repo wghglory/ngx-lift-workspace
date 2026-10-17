@@ -1711,11 +1711,11 @@ export const esTranslations: Record<string, string> = {
   'logger.example2Title': 'Ejemplo 2: Registro de la tabla',
   'logger.example2Desc': 'Valores emitidos mediante console.table para una mejor visualización:',
   'logger.example3Title': 'Ejemplo 3: Otros métodos de consola',
-  'logger.example3Desc': 'Utilice otros métodos de consola como advertencia, error, o información:',
+  'logger.example3Desc': 'Utilice otros métodos de consola como advertencia, count, o información:',
   'logger.apiSummary':
     'Un operador de depuración que registra las emisiones en la consola utilizando varios métodos de console.',
   'logger.paramMethod':
-    'Opcional: método de consola: "log" | "table" | "warn" | "error" | "info" | "debug". Predeterminado: "log".',
+    'Opcional: método de consola: "log" | "table" | "dir" | "count" | "debug". Predeterminado: "log".',
   'logger.returnsDesc': 'Una observable que pasa a través de todos los valores mientras los enciende a la consola.',
   'kubernetesPagination.overview':
     'El operador <code>aggregatePaginatedKubernetesResources</code> y la función <code>fetchPaginatedKubernetesResources</code> automatizan la paginación del lado del cliente para APIs REST de Kubernetes. Inspeccionan el token <code>metadata.continue</code> en las respuestas entrantes, solicitan páginas consecutivas recursivamente hasta que se recuperen todas las páginas, normalizan elementos faltantes o nulos de forma segura y agrupan todos los recursos en un único <code>KubernetesList&lt;T&gt;</code>.',
