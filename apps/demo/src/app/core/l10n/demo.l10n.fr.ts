@@ -1,4 +1,99 @@
 export const frTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Fraîcheur du cache et actualisation',
+  'queryDocs.cacheIntro':
+    'Une clé identifie des données partagées dans un QueryClient. Fraîcheur, activité des requêtes et durée de vie des observateurs répondent à des questions différentes.',
+  'queryDocs.chooseComputed':
+    'Utilisez cette API pour une valeur dérivée asynchrone lorsqu’un signal de valeur suffit. Préférez computed() pour une dérivation synchrone.',
+  'queryDocs.chooseMutation':
+    'Utilisez cette API pour les écritures serveur explicitement soumises. Aucune clé de requête n’est nécessaire ; ajoutez des tags d’invalidation pour actualiser d’autres vues.',
+  'queryDocs.chooseObservable':
+    'Utilisez fetchQueryObservable pour une lecture finie en cache dans un flux RxJS ; observeQueryObservable émet des instantanés du cache partagé et possède un observateur.',
+  'queryDocs.chooseQuery':
+    'Utilisez un observateur pour une lecture partagée en cache. Une réponse contenant un tableau reste une seule requête.',
+  'queryDocs.chooseResource':
+    'Utilisez cette API pour un état asynchrone indépendant, des modifications locales ou un flux continu sans cache partagé par clé.',
+  'queryDocs.choosing': 'Choisir une API asynchrone',
+  'queryDocs.choosingIntro':
+    'Choisissez selon l’opération et le propriétaire de l’état. Un bouton Actualiser effectue toujours une lecture ; un clic ne transforme pas une opération en mutation.',
+  'queryDocs.clientReference':
+    'QueryClient possède les entrées partagées. fetchQuery lit les données ; invalidateTags rend les dépendances périmées et recharge les actives ; removeQueries supprime les entrées correspondantes. Consultez les contrats publics pour les paramètres et adaptateurs.',
+  'queryDocs.defaults':
+    'Valeurs par défaut : staleTime = 0 ; gcTime = 300,000 ms. Interrogation périodique, nouvelles tentatives, délais et actualisation au retour du focus ou à la reconnexion sont désactivés sans configuration.',
+  'queryDocs.devtools': 'Outils de requêtes',
+  'queryDocs.excerpt':
+    'Extrait de champs de composant. Importez le service et les définitions ci-dessus ; la démonstration de mutation fournit le parcours complet avec tableau et résumé.',
+  'queryDocs.fetching': 'Charger des données · queryResource',
+  'queryDocs.freshness':
+    'staleTime mesure la fraîcheur depuis la dernière réponse réussie. À son expiration, les données deviennent périmées ; l’expiration seule ne lance aucune requête.',
+  'queryDocs.independent': 'Lectures indépendantes · queryResources',
+  'queryDocs.independentClocks':
+    'Les deux horloges sont indépendantes : des données inutilisées peuvent rester fraîches et des données actives être périmées. Les observateurs de retour peuvent réutiliser les données conservées.',
+  'queryDocs.invalidation':
+    'Les écritures réussies invalident les tags sélectionnés. Les requêtes actives se rechargent ; les entrées inactives deviennent périmées. L’invalidation ne supprime pas les données.',
+  'queryDocs.keyIdentity':
+    'Incluez chaque paramètre modifiant la réponse et le périmètre d’autorisation dans la clé. Capturez les valeurs réactives une fois et réutilisez-les dans la clé et le loader.',
+  'queryDocs.keys': 'Clés et invalidation',
+  'queryDocs.keysIntro':
+    'Les clés identifient les données. Les tags décrivent les lectures en cache concernées par une écriture réussie. Leurs rôles diffèrent.',
+  'queryDocs.organization': 'Organiser les requêtes',
+  'queryDocs.organizationIntro':
+    'Extrayez les définitions lorsque plusieurs consommateurs utilisent les mêmes données. Placez le transport dans team.service.ts, l’identité et les tags dans team.queries.ts et les observateurs auprès des consommateurs.',
+  'queryDocs.overview': 'Vue d’ensemble',
+  'queryDocs.overviewIntro':
+    'L’état serveur correspond aux données appartenant à un serveur. Ces outils les chargent, partagent les lectures entre composants et synchronisent les vues en cache après les écritures.',
+  'queryDocs.overviewRead':
+    'Chargez une équipe, affichez ses données, changez l’ID sélectionné et récupérez après une erreur.',
+  'queryDocs.overviewWrite':
+    'Enregistrez un nom d’équipe, observez l’attente et les erreurs, puis actualisez les vues en cache concernées.',
+  'queryDocs.prerequisites':
+    'Partez des composants et des signals Angular. Comprenez une requête avant de choisir une politique de cache ou d’organiser une fonctionnalité.',
+  'queryDocs.reference': 'Référence de l’API',
+  'queryDocs.referenceIntro':
+    'Consultez les signatures et les tableaux précis des états et options. Suivez les guides pour une explication ou une tâche pratique.',
+  'queryDocs.refreshControls':
+    'reload() lance une actualisation en arrière-plan et renvoie un booléen. execute() renvoie une Promise pour une lecture fraîche. Les deux ignorent les données déjà chargées et rejoignent le travail en cours valide.',
+  'queryDocs.retention':
+    'gcTime contrôle la rétention après le départ du dernier observateur. La suppression attend la fin des requêtes en cours. Les observateurs actifs conservent leurs données.',
+  'queryDocs.saving': 'Enregistrer des changements · mutateResource',
+  'queryDocs.tagIdentity':
+    'Un tag est un objet avec type et éventuellement scope/id. La mutation sélectionne les tags correspondants ; omettre scope ne vise pas tous les périmètres.',
+  'queryDocs.triggers':
+    'Les données périmées peuvent être actualisées lorsqu’elles sont observées à nouveau. L’actualisation manuelle et l’invalidation demandent des données fraîches ; interrogation périodique, retour du focus et reconnexion nécessitent une configuration.',
+  'queryDocs.writeBoundary':
+    'Une écriture réussie peut être suivie d’un échec de synchronisation du cache. Examinez invalidationError et actualisez les lectures ; ne répétez pas l’écriture réussie pour réparer le cache.',
+  'queryLearn.collectionExplain':
+    'Sélectionnez les deux ID, inversez leur ordre, puis videz la sélection. Les clés conservées gardent leurs observateurs ; les éléments retirés les libèrent. Chaque ligne possède ses états de chargement, d’erreur et d’actualisation.',
+  'queryLearn.collectionIntro':
+    'Utilisez queryResource lorsqu’une requête renvoie une liste. Utilisez queryResources lorsqu’une collection changeante nécessite une requête distincte pour chaque élément.',
+  'queryLearn.fixture':
+    'Cet exemple complet utilise un minuteur local pour simuler latence et échecs. Ouvrez TypeScript pour copier le composant ; HTML présente le même modèle compilé.',
+  'queryLearn.httpSetup':
+    'Pour HTTP, fournissez HttpClient dans app.config.ts et remplacez le loader simulé par http.get<Team>(url), avec un ID capturé. Le client racine ne nécessite aucun enregistrement supplémentaire.',
+  'queryLearn.readError': 'La lecture a échoué. Désactivez l’échec simulé et actualisez pour réessayer.',
+  'queryLearn.readExplain':
+    'key nomme les données ; loader les récupère. Les signals lus dans la définition sélectionnent les données. value() expose le résultat ; isInitialLoading() indique un chargement sans données.',
+  'queryLearn.readExplainTitle': 'Comprendre la première lecture',
+  'queryLearn.readIntro':
+    'queryResource charge des données et expose résultat, chargement et erreurs sous forme de signals Angular. Les composants utilisant la même clé partagent données en cache et requête en cours.',
+  'queryLearn.readSteps':
+    'Chargez Équipe A, choisissez Équipe B, puis actualisez. Activez l’échec et actualisez encore : l’équipe reste visible. Désactivez l’échec et actualisez pour récupérer.',
+  'queryLearn.readTitle': 'Votre première requête',
+  'queryLearn.refreshExplain':
+    'isRefreshing() indique une lecture en cours avec les données précédentes visibles. error() expose l’échec ; isRefreshError() distingue un échec avec données conservées.',
+  'queryLearn.saved': 'Enregistré',
+  'queryLearn.simulateFailure': 'Simuler un échec',
+  'queryLearn.teamA': 'Équipe A',
+  'queryLearn.teamB': 'Équipe B',
+  'queryLearn.writeError':
+    'L’enregistrement a échoué. Votre saisie est conservée ; désactivez l’échec simulé et enregistrez à nouveau.',
+  'queryLearn.writeExplain':
+    'mutate(args) soumet la valeur et renvoie une Promise. isLoading() contrôle l’attente ; error() signale un échec. Commencez sans tags ; ajoutez-les lorsqu’une écriture doit actualiser les lectures en cache.',
+  'queryLearn.writeExplainTitle': 'Comprendre le premier enregistrement',
+  'queryLearn.writeIntro':
+    'mutateResource exécute une écriture serveur lorsque vous appelez mutate(). Il expose des signals d’attente, de résultat et d’erreur pour que le formulaire reflète le résultat.',
+  'queryLearn.writeSteps':
+    'Saisissez un nom et enregistrez. Activez l’échec et recommencez, puis désactivez-le et réessayez. Le formulaire bloque l’envoi pendant une écriture.',
+  'queryLearn.writeTitle': 'Votre premier enregistrement',
   'toSignalForm.savedProfile': 'Profil enregistré',
   'queryResource.projectRevision': 'Version de réponse',
   'queryResource.activeUser': 'Utilisateur actuel',
@@ -25,7 +120,7 @@ export const frTranslations: Record<string, string> = {
   'header.openGitHub': 'Ouvrir sur GitHub',
   'header.codeLicensed': 'Code sous licence',
   'nav.signalUtils': 'Utilitaires Signal',
-  'nav.queryMutation': 'Requêtes et mutations',
+  'nav.queryMutation': 'Requêtes et état serveur',
   'nav.operators': 'Opérateurs',
   'nav.interceptors': 'Intercepteurs',
   'nav.validators': 'Validateurs',
@@ -611,7 +706,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatique via mutateResource',
   'queryResource.lifecycleTitle': 'Matrice des états et signaux du cycle de vie',
   'queryResource.lifecycleIntro':
-    'Les requêtes gèrent à la fois les chargements initiaux et les revalidations en arrière-plan. Utilisez cette matrice pour déterminer quand afficher un indicateur de chargement plein écran ou un badge discret de rafraîchissement sans bloquer l’interface utilisateur.',
+    'Les requêtes gèrent à la fois les chargements initiaux et les revalidations en arrière-plan. Utilisez cette matrice pour déterminer quand afficher un indicateur de chargement plein écran ou un badge discret de rafraîchissement sans bloquer l’interface utilisateur. La matrice suppose une valeur réussie définie. hasValue() renvoie false pour un résultat undefined.',
   'queryResource.matrixState': 'État du cycle de vie',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Quand l’utiliser & comportement UI',
@@ -792,7 +887,7 @@ export const frTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Dénomination',
   'mutateResource.thRole': 'Rôle',
-  'mutateResource.demo2Section': '2. Modes de contre-monnaie: échappement, concat et parallèle',
+  'mutateResource.demo2Section': '3. Modes de contre-monnaie: échappement, concat et parallèle',
   'mutateResource.demo2SectionDesc':
     'Tester comment différentes stratégies de concurrence gèrent les clics rapides sur un bouton. "exhaust" empêche accidentellement une soumission double en éliminant ou en joignant les clics en dupliques pendant qu\'une mutation est déjà en cours.',
   'mutateResource.demo2PlaygroundTitle': 'Simulation rapide de clics et de devises',

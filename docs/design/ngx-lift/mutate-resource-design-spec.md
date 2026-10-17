@@ -1,6 +1,6 @@
 # Design Specification: `mutateResource`
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API plus the October 16 maintainer request for consistent `invalidateTags` naming and domain-owned
 key/tag guidance. Preserve the previous spelling as a compatibility alias.
 
@@ -43,6 +43,28 @@ strictly on demand when `.mutate(args)` is called.
   Update value() Signal        Reject returned Promise
   Resolve returned Promise
 ```
+
+---
+
+## Developer learning journey and pedagogy plan
+
+Runtime status remains Implemented (contract audit). Documentation revision approved October 17, 2026; delivery and
+validation are tracked in the [query documentation plan](../../query-documentation-plan.md).
+
+Teach one explicitly submitted save before introducing cached reads or tag invalidation. The initial example shows a
+pending submit, server result, failure and recovery, with a complete compiled source/template. It does not require a
+query key or tags. Catch the returned Promise at the action boundary while keeping `error()` visible in the UI.
+
+| Reader task               | Outcome                                                          | Destination / type                             | Example and validation                                          |
+| ------------------------- | ---------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------- |
+| Save a value              | Submit once, observe pending/result/error, recover after failure | `/ngx-lift/query/mutateResource`, tutorial     | Shared compiled starter; browser repeated save/failure/recovery |
+| Update cached views       | Connect a successful write to affected query tags                | Same page, second task; `/ngx-lift/query/keys` | Existing table/summary invalidation preview                     |
+| Organize writes           | Reuse domain definitions and scope-aware tag factories           | `/ngx-lift/query/organization`, guide          | Existing team service and query definitions                     |
+| Control concurrent writes | Choose exhaust, concat or parallel after basic recovery          | Mutation page, advanced recipe                 | Existing concurrency preview and regressions                    |
+
+Tags are objects, for example `{invalidateTags: [{type: 'Items'}]}`, not string arrays. Query tags must match the tags
+selected by the mutation. A click-triggered read remains a read; choose mutation for a server write. Server success and
+post-success cache synchronization failure are distinct outcomes. Shared optimistic updates/rollback remain deferred.
 
 ---
 
@@ -256,3 +278,7 @@ This is an audit of shipped behavior. Proposed features and unresolved implement
 Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
 identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
+
+Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
+[query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the
+follow-up revision, actual checks and remaining human/remote gates. This supplements the earlier runtime contract audit.

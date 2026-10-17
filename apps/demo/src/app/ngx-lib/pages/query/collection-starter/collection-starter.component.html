@@ -1,0 +1,24 @@
+<div cds-layout="vertical gap:sm">
+  <div class="query-actions">
+    <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['a'])">
+      {{ 'queryExamples.one' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['a', 'b'])">
+      {{ 'queryExamples.both' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['b', 'a'])">
+      {{ 'queryExamples.reverse' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set([])">
+      {{ 'queryExamples.empty' | translate }}
+    </button>
+  </div>
+  @for (query of tenantQueries(); track query.key) {
+    <div class="query-state" data-testid="query-demo-dynamic-row">
+      <span>{{ query.value()?.nameKey ?? 'queryExamples.tenant' | translate }}</span>
+      <span class="label" [class.label-success]="query.status() === 'resolved'">{{ query.status() }}</span>
+    </div>
+  } @empty {
+    <p role="status">{{ 'queryGuide.empty' | translate }}</p>
+  }
+</div>

@@ -18,12 +18,19 @@ export const ngxLiftNavConfig: NavConfig[] = [
   },
   {
     path: '/ngx-lift/query',
-    value: 'Query & Mutation',
+    value: 'Query & Server State',
     icon: 'data-cluster',
     children: [
-      {path: '/queryResource', value: 'queryResource', label: 'new'},
-      {path: '/queryResources', value: 'queryResources', label: 'new'},
-      {path: '/mutateResource', value: 'mutateResource', label: 'new'},
+      {path: '/overview', value: 'Overview', i18nKey: 'queryDocs.overview'},
+      {path: '/queryResource', value: 'queryResource', i18nKey: 'queryDocs.fetching'},
+      {path: '/mutateResource', value: 'mutateResource', i18nKey: 'queryDocs.saving'},
+      {path: '/queryResources', value: 'queryResources', i18nKey: 'queryDocs.independent'},
+      {path: '/cache', value: 'Cache freshness and refresh', i18nKey: 'queryDocs.cache'},
+      {path: '/keys', value: 'Keys and invalidation', i18nKey: 'queryDocs.keys'},
+      {path: '/organization', value: 'Organizing queries', i18nKey: 'queryDocs.organization'},
+      {path: '/choosing', value: 'Choosing an async API', i18nKey: 'queryDocs.choosing'},
+      {path: '/reference', value: 'API reference', i18nKey: 'queryDocs.reference'},
+      {path: '/devtools', value: 'Query devtools', i18nKey: 'queryDocs.devtools'},
     ],
   },
   {

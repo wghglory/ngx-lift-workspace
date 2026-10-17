@@ -1,4 +1,100 @@
 export const deTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Cache-Aktualität und Aktualisierung',
+  'queryDocs.cacheIntro':
+    'Ein Abfrageschlüssel bezeichnet gemeinsame Daten innerhalb eines QueryClient. Aktualität, laufende Anfragen und Beobachterlebensdauer beantworten unterschiedliche Fragen.',
+  'queryDocs.chooseComputed':
+    'Für einen asynchron abgeleiteten Wert, wenn ein Wert-Signal genügt. Verwenden Sie computed() für synchrone Ableitungen.',
+  'queryDocs.chooseMutation':
+    'Für ausdrücklich ausgelöste Schreibvorgänge auf dem Server. Ein Abfrageschlüssel ist nicht erforderlich; ergänzen Sie Invalidierungstags, wenn andere Ansichten aktualisiert werden müssen.',
+  'queryDocs.chooseObservable':
+    'fetchQueryObservable liefert einen endlichen Cache-Lesezugriff in einem RxJS-Ablauf; observeQueryObservable liefert gemeinsame Cache-Snapshots und besitzt einen Beobachter.',
+  'queryDocs.chooseQuery':
+    'Verwenden Sie einen Beobachter für einen gemeinsam zwischengespeicherten Lesezugriff. Eine Antwort mit einem Array bleibt eine einzelne Abfrage.',
+  'queryDocs.chooseResource':
+    'Für unabhängigen asynchronen Zustand, lokale Überschreibungen oder Streams ohne gemeinsamen schlüsselbasierten Cache.',
+  'queryDocs.choosing': 'Eine asynchrone API wählen',
+  'queryDocs.choosingIntro':
+    'Wählen Sie nach Vorgang und Zustandsverantwortung. Eine Aktualisieren-Schaltfläche liest weiterhin Daten; ein Klick macht einen Vorgang nicht zur Mutation.',
+  'queryDocs.clientReference':
+    'QueryClient verwaltet gemeinsame Einträge. fetchQuery liest Daten; invalidateTags markiert Abhängigkeiten als veraltet und aktualisiert aktive Einträge; removeQueries entfernt passende Einträge. Parameter und Adapter stehen in den öffentlichen Quellverträgen.',
+  'queryDocs.defaults':
+    'Standardwerte: staleTime = 0; gcTime = 300,000 ms. Polling, Wiederholungen, Zeitlimits und Aktualisierung bei Fokus oder Wiederverbindung sind ohne Konfiguration deaktiviert.',
+  'queryDocs.devtools': 'Abfragewerkzeuge',
+  'queryDocs.excerpt':
+    'Auszug aus Komponentenfeldern. Importieren Sie den Dienst und die Definitionen oben; die Mutationsdemo zeigt den vollständigen Ablauf mit Tabelle und Zusammenfassung.',
+  'queryDocs.fetching': 'Daten laden · queryResource',
+  'queryDocs.freshness':
+    'staleTime misst die Aktualität seit der letzten erfolgreichen Antwort. Nach Ablauf gelten Daten als veraltet; der Ablauf allein startet keine Anfrage.',
+  'queryDocs.independent': 'Unabhängige Lesezugriffe · queryResources',
+  'queryDocs.independentClocks':
+    'Beide Zeiträume sind unabhängig: Ungenutzte Daten können noch aktuell sein und aktive Daten veraltet. Zurückkehrende Beobachter können aufbewahrte Daten wiederverwenden.',
+  'queryDocs.invalidation':
+    'Erfolgreiche Schreibvorgänge invalidieren ausgewählte Tags. Aktive Abfragen laden neu; inaktive Einträge gelten als veraltet. Die Invalidierung löscht keine Daten.',
+  'queryDocs.keyIdentity':
+    'Nehmen Sie alle antwortverändernden Parameter und den Berechtigungsbereich in den Schlüssel auf. Erfassen Sie reaktive Werte einmal und verwenden Sie denselben Stand in Schlüssel und Loader.',
+  'queryDocs.keys': 'Schlüssel und Invalidierung',
+  'queryDocs.keysIntro':
+    'Schlüssel identifizieren Daten. Tags beschreiben, welche gespeicherten Lesezugriffe ein erfolgreicher Schreibvorgang betrifft. Sie haben unterschiedliche Aufgaben.',
+  'queryDocs.organization': 'Abfragen organisieren',
+  'queryDocs.organizationIntro':
+    'Extrahieren Sie Definitionen, wenn mehrere Verbraucher dieselben Daten benötigen. Transport gehört in team.service.ts, Identität und Tags in team.queries.ts und Beobachter zu ihren Verbrauchern.',
+  'queryDocs.overview': 'Überblick',
+  'queryDocs.overviewIntro':
+    'Serverzustand sind Daten, die einem Server gehören. Diese Werkzeuge laden sie, teilen Lesezugriffe zwischen Komponenten und synchronisieren zwischengespeicherte Ansichten nach Schreibvorgängen.',
+  'queryDocs.overviewRead':
+    'Laden Sie ein Team, zeigen Sie seine Daten an, ändern Sie die ausgewählte ID und beheben Sie Fehler.',
+  'queryDocs.overviewWrite':
+    'Speichern Sie einen Teamnamen, beobachten Sie Warte- und Fehlerzustände und aktualisieren Sie danach betroffene Cache-Ansichten.',
+  'queryDocs.prerequisites':
+    'Vorausgesetzt werden Angular-Komponenten und Signals. Lernen Sie zuerst die Abfrage kennen, bevor Sie Cache-Richtlinien wählen oder eine Funktion organisieren.',
+  'queryDocs.reference': 'API-Referenz',
+  'queryDocs.referenceIntro':
+    'Hier finden Sie Signaturen und genaue Zustands- und Optionstabellen. Folgen Sie den Anleitungen für Erklärungen oder praktische Aufgaben.',
+  'queryDocs.refreshControls':
+    'reload() startet eine Hintergrundaktualisierung und gibt einen booleschen Wert zurück. execute() liefert eine Promise für einen neuen Lesezugriff. Beide umgehen bereits geladene Daten und teilen gültige laufende Anfragen.',
+  'queryDocs.retention':
+    'gcTime steuert die Aufbewahrung nach dem Ende des letzten Beobachters. Die Bereinigung wartet auf laufende Anfragen. Aktive Beobachter behalten ihre Daten.',
+  'queryDocs.saving': 'Änderungen speichern · mutateResource',
+  'queryDocs.tagIdentity':
+    'Ein Tag ist ein Objekt mit type und optional scope/id. Die Mutation wählt passende Abfragetags; ein fehlender scope bedeutet nicht alle Bereiche.',
+  'queryDocs.triggers':
+    'Veraltete Daten können beim erneuten Beobachten aktualisiert werden. Manuelle Aktualisierung und Invalidierung fordern neue Daten an; Polling sowie Fokus- und Verbindungswiederherstellung müssen konfiguriert werden.',
+  'queryDocs.writeBoundary':
+    'Nach einem erfolgreichen Schreibvorgang kann die Cache-Synchronisierung fehlschlagen. Prüfen Sie invalidationError und aktualisieren Sie Lesezugriffe; wiederholen Sie den erfolgreichen Schreibvorgang nicht zur Cache-Reparatur.',
+  'queryLearn.collectionExplain':
+    'Wählen Sie beide IDs, kehren Sie die Reihenfolge um und leeren Sie die Auswahl. Beibehaltene Schlüssel behalten ihre Beobachter; entfernte Elemente geben sie frei. Jede Zeile besitzt eigene Lade-, Fehler- und Aktualisierungszustände.',
+  'queryLearn.collectionIntro':
+    'Verwenden Sie queryResource, wenn eine Anfrage eine Liste liefert. Verwenden Sie queryResources, wenn eine veränderliche Sammlung eine eigene Abfrage pro Element benötigt.',
+  'queryLearn.fixture':
+    'Dieses vollständige Beispiel simuliert Serverlatenz und Fehler mit einem lokalen Timer. Öffnen Sie TypeScript zum Kopieren; HTML zeigt dasselbe kompilierte Template.',
+  'queryLearn.httpSetup':
+    'Stellen Sie für HTTP HttpClient in app.config.ts bereit und ersetzen Sie den simulierten Loader durch http.get<Team>(url) mit erfasster ID. Der Root-Client benötigt keine weitere Registrierung.',
+  'queryLearn.readError':
+    'Der Lesezugriff ist fehlgeschlagen. Deaktivieren Sie den simulierten Fehler und aktualisieren Sie erneut.',
+  'queryLearn.readExplain':
+    'key benennt Daten; loader lädt sie. In der Definition gelesene Signals wählen die Daten aus. value() liefert das Ergebnis; isInitialLoading() bezeichnet Laden ohne Daten.',
+  'queryLearn.readExplainTitle': 'Den ersten Lesezugriff verstehen',
+  'queryLearn.readIntro':
+    'queryResource lädt Daten und stellt Ergebnis, Ladezustand und Fehler als Angular-Signals bereit. Komponenten mit demselben Schlüssel teilen Cache-Daten und eine laufende Anfrage.',
+  'queryLearn.readSteps':
+    'Laden Sie Team A, wählen Sie Team B und aktualisieren Sie. Aktivieren Sie den Fehler und aktualisieren Sie erneut: Das Team bleibt sichtbar. Deaktivieren Sie den Fehler und aktualisieren Sie zur Wiederherstellung.',
+  'queryLearn.readTitle': 'Ihre erste Abfrage',
+  'queryLearn.refreshExplain':
+    'isRefreshing() bedeutet einen Lesezugriff bei weiterhin sichtbaren bisherigen Daten. error() liefert den Fehler; isRefreshError() unterscheidet Fehler mit aufbewahrten Daten.',
+  'queryLearn.saved': 'Gespeichert',
+  'queryLearn.simulateFailure': 'Fehler simulieren',
+  'queryLearn.teamA': 'Team A',
+  'queryLearn.teamB': 'Team B',
+  'queryLearn.writeError':
+    'Speichern fehlgeschlagen. Ihre Eingabe bleibt erhalten; deaktivieren Sie den simulierten Fehler und speichern Sie erneut.',
+  'queryLearn.writeExplain':
+    'mutate(args) übermittelt den Wert und liefert eine Promise. isLoading() steuert die Warteanzeige; error() meldet Schreibfehler. Beginnen Sie ohne Tags; ergänzen Sie sie für die Aktualisierung gespeicherter Lesezugriffe.',
+  'queryLearn.writeExplainTitle': 'Den ersten Speichervorgang verstehen',
+  'queryLearn.writeIntro':
+    'mutateResource führt beim Aufruf von mutate() einen Schreibvorgang auf dem Server aus. Signals für laufende Vorgänge, Ergebnisse und Fehler ermöglichen passende Formularreaktionen.',
+  'queryLearn.writeSteps':
+    'Geben Sie einen Namen ein und speichern Sie. Aktivieren Sie den Fehler und speichern Sie erneut; deaktivieren Sie ihn dann und wiederholen Sie. Während eines Schreibvorgangs sperrt das Formular die Übermittlung.',
+  'queryLearn.writeTitle': 'Ihr erster Speichervorgang',
   'toSignalForm.savedProfile': 'Gespeichertes Profil',
   'queryResource.projectRevision': 'Antwortversion',
   'queryResource.activeUser': 'Aktueller Benutzer',
@@ -25,7 +121,7 @@ export const deTranslations: Record<string, string> = {
   'header.openGitHub': 'Auf GitHub öffnen',
   'header.codeLicensed': 'Code lizenziert unter',
   'nav.signalUtils': 'Signal-Utilities',
-  'nav.queryMutation': 'Abfragen und Mutationen',
+  'nav.queryMutation': 'Abfragen und Serverzustand',
   'nav.operators': 'Operatoren',
   'nav.interceptors': 'Interzeptoren',
   'nav.validators': 'Validatoren',
@@ -603,7 +699,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatisch über mutateResource',
   'queryResource.lifecycleTitle': 'Lebenszyklus-Zustände & Signal-Matrix',
   'queryResource.lifecycleIntro':
-    'Verstehen Sie die Funktionsunterschiede zwischen isLoading, isInitialLoading und isRefreshing, um flackernde weiße Bildschirme zu vermeiden und reibungslose Hintergrundaktualisierungen umzusetzen.',
+    'Verstehen Sie die Funktionsunterschiede zwischen isLoading, isInitialLoading und isRefreshing, um flackernde weiße Bildschirme zu vermeiden und reibungslose Hintergrundaktualisierungen umzusetzen. Die Matrix setzt einen definierten erfolgreichen Wert voraus. hasValue() liefert bei undefined den Wert false.',
   'queryResource.matrixState': 'Lebenszyklus-Zustand',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Empfohlenes UI-Verhalten',
@@ -783,7 +879,7 @@ export const deTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Bezeichnung',
   'mutateResource.thRole': 'Rolle',
-  'mutateResource.demo2Section': '2. Concurrency Modes: Auspuff, Konkat und parallel',
+  'mutateResource.demo2Section': '3. Concurrency Modes: Auspuff, Konkat und parallel',
   'mutateResource.demo2SectionDesc':
     'Testen Sie, wie unterschiedliche Konkurrenzstrategien schnelle Buttonklicks behandeln. "exhaust" verhindert versehentliche Doppelabmeldung, indem es doppelte Klicks während einer Mutation ignoriert oder joinet.',
   'mutateResource.demo2PlaygroundTitle': 'Simulation für schnelle Klicks und Konkurrenz',
@@ -801,7 +897,7 @@ export const deTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Ausführungsprotokoll',
   'mutateResource.clearLogs': 'Protokoll löschen',
   'mutateResource.noLogsYet': 'Noch keine Mutationen durchgeführt. Klicken Sie auf den Button oben, um zu beginnen.',
-  'mutateResource.demo3Section': '3. Reaktiver Status Signals & Fehlerwiederherstellung',
+  'mutateResource.demo3Section': '2. Reaktiver Status Signals & Fehlerwiederherstellung',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> trennt Fehler vom Wert. Bei einer fehlgeschlagenen Schreiboperation enthält das Fehlersignal den Fehler, status wird "error" und die zurückgegebene Promise wird für die Behandlung mit try/catch abgelehnt.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',

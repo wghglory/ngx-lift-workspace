@@ -81,6 +81,62 @@ export const routes: Routes = [
         path: 'query',
         children: [
           {
+            path: 'overview',
+            data: {guide: 'overview'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
+            path: 'cache',
+            data: {guide: 'cache'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
+            path: 'keys',
+            data: {guide: 'keys'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
+            path: 'organization',
+            data: {guide: 'organization'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
+            path: 'choosing',
+            data: {guide: 'choosing'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
+            path: 'reference',
+            data: {guide: 'reference'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
+            path: 'devtools',
+            data: {guide: 'devtools'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
+          {
             path: 'queryResource',
             loadComponent: () =>
               import('./ngx-lib/pages/query/query-resource/query-resource.component').then(
@@ -103,7 +159,7 @@ export const routes: Routes = [
           },
           {
             path: '',
-            redirectTo: 'queryResource',
+            redirectTo: 'overview',
             pathMatch: 'full',
           },
         ],

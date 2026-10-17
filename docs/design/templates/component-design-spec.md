@@ -6,6 +6,20 @@ until implemented and verified. For existing APIs, use Status: Implemented (cont
 pointers, and distinguish source inspection from tests actually run. Preserve accurate existing sections; fill
 substantive gaps without rewriting prose. Store package specs in `docs/design/ngx-lift/` or `docs/design/clr-lift/`.
 
+## Applicable contracts
+
+Select requirements by behavior, not package. Keep the common problem, goals, use cases, public API, documentation plan,
+compatibility, decisions, and evidence sections. Record which additional contracts apply and why:
+
+- Value/form integration: value types, validation, CVA or the actual forms bridge (including headless form utilities).
+- Rendered UI: Clarity tokens, focus, keyboard/touch, accessible names, responsive layout and localization.
+- Reactive/async APIs: dependency capture, execution boundaries, races, cancellation, errors and disposal.
+- Shared state/cache: identity, observer ownership, freshness, retention, invalidation and scope isolation.
+- Other utilities: their relevant input/output, platform and performance contracts.
+
+A display component need not own a form value. A headless utility can integrate with forms. Omit irrelevant detail with
+one reason; do not impose signal/cache requirements on synchronous utilities or CVA requirements on every UI component.
+
 ## Background
 
 Describe the customer problem, existing callers, and the smallest useful delivery. Link source evidence and existing
@@ -36,18 +50,34 @@ State durable boundaries, such as backend authorization or domain-specific persi
 | --- | ---------------- | ------------------------ | ------------- | --------------------------- | ---------------- | ------------------------ |
 | UC1 | <practical task> | <including edit/prefill> | <interaction> | <including submitted value> | <error/reset>    | <planned or actual path> |
 
-Cover real user journeys, keyboard and touch, empty results, unavailable data, long/localized content, and applicable
-scale. Each goal maps to at least one use case. Later record actual test pointers; planned coverage is not evidence.
+Cover applicable user journeys, keyboard and touch, empty results, unavailable data, long/localized content, and scale.
+Each goal maps to at least one use case. Later record actual test pointers; planned coverage is not evidence.
 
 ## Industry evidence and current gaps
 
-| Existing implementation / primary source             | Verified behavior                 | Adopt, adapt, or reject | Our gap and reason |
-| ---------------------------------------------------- | --------------------------------- | ----------------------- | ------------------ |
-| Clarity source and current local implementation      | <specific behavior>               | <decision>              | <customer impact>  |
-| Angular Material / NG-ZORRO / relevant React library | <specific behavior, URL and date> | <decision>              | <tradeoff>         |
+| Existing implementation / primary source           | Verified behavior                 | Adopt, adapt, or reject | Our gap and reason |
+| -------------------------------------------------- | --------------------------------- | ----------------------- | ------------------ |
+| Relevant upstream and current local implementation | <specific behavior>               | <decision>              | <customer impact>  |
+| Comparable Angular / React library when relevant   | <specific behavior, URL and date> | <decision>              | <tradeoff>         |
 
-Research comparable production libraries before creating or changing behavior. Borrow interaction lessons while
-retaining Clarity styling. Prefer composition over replacement when public Clarity APIs satisfy the use cases.
+Research relevant production libraries before creating or changing behavior. Use sources appropriate to the feature;
+headless APIs do not require a comparison with visual controls. For rendered UI, retain Clarity styling and prefer
+composition when public Clarity APIs satisfy the use cases.
+
+## Developer learning journey and pedagogy plan
+
+Record a documentation brief that can be verified against the delivered pages:
+
+| Reader task / prerequisites        | Learning outcome                        | Destination / page type   | Working example and expected result    | Validation                     |
+| ---------------------------------- | --------------------------------------- | ------------------------- | -------------------------------------- | ------------------------------ |
+| <first task and assumed knowledge> | <what the reader can build and explain> | <actual route or section> | <source/template and visible behavior> | <compile/browser/reader check> |
+
+Include the first complete working task, then the next practical tasks. Introduce vocabulary where it is used; link to
+shared explanations instead of duplicating architecture banners. Reference pages serve lookup directly. Provide short
+teaching excerpts with explicitly stated prerequisites and a complete runnable example; avoid arbitrary line limits.
+Define stable destinations for advanced organization/naming, comparisons, and exact state/option tables. Separate the
+runtime implementation status from the documentation delivery status. Record checks actually performed; a proposed route
+or a prose description of a future example is not delivery evidence.
 
 ## Public API and examples
 
@@ -69,10 +99,11 @@ loading, SSR behavior, and security/resource limits that actually apply to the f
 
 ## Clarity, accessibility, and localization
 
-Define Clarity containers, tokens, light/dark and compact modes, responsive layout, keyboard behavior, accessible names,
-focus restoration, announcements, and RTL. List every user-visible string, plural/interpolation rule, locale/date
-behavior, and runtime language-switch behavior. Cover all supported dictionaries; record human language review
-separately.
+For rendered UI, define Clarity containers, tokens, light/dark and compact modes, responsive layout, keyboard behavior,
+accessible names, focus restoration, announcements, and RTL. List every user-visible string, plural/interpolation rule,
+locale/date behavior, and runtime language-switch behavior. Cover all supported dictionaries; record human language
+review separately. For headless APIs, document the messages and integrations they own; omit UI-only requirements when
+none apply.
 
 ## Demo and validation plan
 

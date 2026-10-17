@@ -1,4 +1,85 @@
 export const zhCNTranslations: Record<string, string> = {
+  'queryDocs.cache': '缓存新鲜度与刷新',
+  'queryDocs.cacheIntro':
+    '查询键标识同一个 QueryClient 中的共享数据。新鲜度、请求活动和观察者生命周期分别回答不同的问题。',
+  'queryDocs.chooseComputed': '只需要值信号时，用于异步派生值。同步派生优先使用 computed()。',
+  'queryDocs.chooseMutation': '用于显式提交的服务端写入。不需要查询键；其他视图需要更新时再添加失效标签。',
+  'queryDocs.chooseObservable':
+    '在 RxJS 流程中，用 fetchQueryObservable 获取一次有限的缓存读取；observeQueryObservable 持续发出共享缓存快照，并拥有一个观察者。',
+  'queryDocs.chooseQuery': '用一个观察者处理共享缓存读取。响应中包含数组，仍然只是一次查询。',
+  'queryDocs.chooseResource': '用于独立的异步状态、本地覆盖值，或无需共享键缓存的数据流。',
+  'queryDocs.choosing': '选择异步 API',
+  'queryDocs.choosingIntro': '根据操作和状态所有权选择 API。刷新按钮仍然执行读取；点击触发不意味着操作就是变更。',
+  'queryDocs.clientReference':
+    'QueryClient 拥有共享缓存项。fetchQuery 读取数据；invalidateTags 将依赖标记为旧并刷新活动项；removeQueries 移除匹配项。参数和适配器请参阅公开源码契约。',
+  'queryDocs.defaults':
+    '默认值：staleTime = 0；gcTime = 300,000 ms。未配置时，轮询、重试、截止时间以及获焦或重连刷新均关闭。',
+  'queryDocs.devtools': '查询开发工具',
+  'queryDocs.excerpt': '组件字段片段。导入上面的服务和定义；变更示例提供完整的表格与摘要流程。',
+  'queryDocs.fetching': '读取数据 · queryResource',
+  'queryDocs.freshness': 'staleTime 从最近一次成功响应开始计算新鲜度。到期后数据变旧；到期本身不会发起请求。',
+  'queryDocs.independent': '独立读取 · queryResources',
+  'queryDocs.independentClocks':
+    '这两个计时互相独立：未使用的数据仍可能新鲜，活动数据也可能变旧。返回的观察者可以复用尚未回收的数据。',
+  'queryDocs.invalidation': '成功写入使选定标签失效。活动查询重新读取，非活动缓存项变旧。失效不会删除数据。',
+  'queryDocs.keyIdentity':
+    '在键中包含所有会改变响应的参数和授权作用域。一次性捕获响应式值，并在键和 loader 中复用同一份快照。',
+  'queryDocs.keys': '键与失效',
+  'queryDocs.keysIntro': '键标识数据。标签描述成功写入会影响哪些缓存读取。它们的用途不同。',
+  'queryDocs.organization': '组织查询代码',
+  'queryDocs.organizationIntro':
+    '当多个调用方需要相同数据时，提取查询定义。传输放在 team.service.ts，身份和标签放在 team.queries.ts，观察者留在各自消费者中。',
+  'queryDocs.overview': '概览',
+  'queryDocs.overviewIntro':
+    '服务端状态是由服务器拥有的数据。这些工具负责加载数据、在组件间共享读取，以及在写入后同步缓存视图。',
+  'queryDocs.overviewRead': '加载一个团队、显示数据、切换所选 ID，并从错误中恢复。',
+  'queryDocs.overviewWrite': '保存团队名称、观察等待和错误状态，然后更新受影响的缓存视图。',
+  'queryDocs.prerequisites': '先掌握 Angular 组件和信号。理解一次查询的作用后，再选择缓存策略和组织功能代码。',
+  'queryDocs.reference': 'API 参考',
+  'queryDocs.referenceIntro': '在下方查找签名以及精确的状态和选项表。需要解释或实际操作时，使用相关指南。',
+  'queryDocs.refreshControls':
+    'reload() 发起后台刷新并返回布尔值。execute() 返回新读取的 Promise。两者均绕过已完成的数据，并复用仍然有效的进行中请求。',
+  'queryDocs.retention':
+    'gcTime 控制最后一个观察者离开后的保留时间。回收需等待尚未完成的请求结束。仍有活动观察者时会保留数据。',
+  'queryDocs.saving': '保存更改 · mutateResource',
+  'queryDocs.tagIdentity':
+    '标签是带有 type 和可选 scope/id 的对象。变更操作选择匹配的查询标签；省略 scope 不表示匹配所有作用域。',
+  'queryDocs.triggers':
+    '旧数据再次被观察时可以刷新。手动刷新和失效会请求新数据；轮询、窗口重新获焦和网络重连恢复需要配置。',
+  'queryDocs.writeBoundary':
+    '写入成功后，缓存同步仍可能失败。检查 invalidationError 并刷新读取；不要为了修复缓存而重复已成功的写入。',
+  'queryLearn.collectionExplain':
+    '选择两个 ID、反转顺序，然后清空选择。保留的键继续使用原观察者，被移除的元素释放观察者。每一行拥有各自的加载、错误和刷新状态。',
+  'queryLearn.collectionIntro':
+    '一次请求返回列表时使用 queryResource。变化的集合中每个元素都需要独立查询时，使用 queryResources。',
+  'queryLearn.fixture':
+    '这个完整示例用本地计时器模拟服务端延迟和失败。打开 TypeScript 复制组件；HTML 展示同一份参与编译的模板。',
+  'queryLearn.httpSetup':
+    '使用 HTTP 时，在 app.config.ts 提供 HttpClient，并将模拟 loader 替换为使用已捕获 ID 的 http.get<Team>(url)。根查询客户端无需额外注册。',
+  'queryLearn.readError': '读取失败。关闭失败模拟并刷新以重试。',
+  'queryLearn.readExplain':
+    'key 为数据命名，loader 负责读取。定义函数中读取的信号决定所需数据。value() 暴露结果；isInitialLoading() 表示尚无数据的加载。',
+  'queryLearn.readExplainTitle': '理解第一次读取',
+  'queryLearn.readIntro':
+    'queryResource 加载数据，并通过 Angular 信号暴露结果、加载状态和错误。使用相同键的组件共享缓存数据和进行中的请求。',
+  'queryLearn.readSteps':
+    '加载团队 A，切换到团队 B，然后刷新。启用失败模拟并再次刷新：已有团队仍然可见。关闭失败模拟后刷新即可恢复。',
+  'queryLearn.readTitle': '你的第一次查询',
+  'queryLearn.refreshExplain':
+    'isRefreshing() 表示读取进行中且保留原有数据显示。error() 暴露失败；isRefreshError() 区分仍有缓存数据的失败。',
+  'queryLearn.saved': '已保存',
+  'queryLearn.simulateFailure': '模拟失败',
+  'queryLearn.teamA': '团队 A',
+  'queryLearn.teamB': '团队 B',
+  'queryLearn.writeError': '保存失败。输入已保留；关闭失败模拟后再次保存。',
+  'queryLearn.writeExplain':
+    'mutate(args) 提交值并返回 Promise。isLoading() 控制等待界面，error() 报告写入失败。先不使用标签；成功写入需要刷新缓存读取时再添加。',
+  'queryLearn.writeExplainTitle': '理解第一次保存',
+  'queryLearn.writeIntro':
+    '调用 mutate() 时，mutateResource 执行服务端写入。它提供等待、结果和错误信号，让表单根据操作结果响应。',
+  'queryLearn.writeSteps':
+    '输入名称并保存。启用失败模拟后再次保存，然后关闭失败模拟并重试。写入等待期间，表单禁止再次提交。',
+  'queryLearn.writeTitle': '你的第一次保存',
   'toSignalForm.savedProfile': '已保存的用户资料',
   'queryResource.projectRevision': '响应版本',
   'queryResource.activeUser': '当前用户',
@@ -24,7 +105,7 @@ export const zhCNTranslations: Record<string, string> = {
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '代码开源协议',
   'nav.signalUtils': 'Signal 工具',
-  'nav.queryMutation': '查询与变更 (Query & Mutation)',
+  'nav.queryMutation': '查询与服务端状态',
   'nav.operators': '操作符 (Operators)',
   'nav.interceptors': '拦截器 (Interceptors)',
   'nav.validators': '校验器 (Validators)',
@@ -557,7 +638,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': '通过 mutateResource 自动触发',
   'queryResource.lifecycleTitle': '生命周期状态与信号矩阵',
   'queryResource.lifecycleIntro':
-    '深入理解 isLoading、isInitialLoading 与 isRefreshing 之间的工作差异，避免白屏闪烁并实现流畅的后台数据重新验证。',
+    '深入理解 isLoading、isInitialLoading 与 isRefreshing 之间的工作差异，避免白屏闪烁并实现流畅的后台数据重新验证。 此矩阵假设成功结果是已定义的值。结果为 undefined 时，hasValue() 返回 false。',
   'queryResource.matrixState': '生命周期状态',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': '推荐 UI 表现',
@@ -733,7 +814,7 @@ export const zhCNTranslations: Record<string, string> = {
   'mutateResource.thId': '序号',
   'mutateResource.thName': '姓名',
   'mutateResource.thRole': '职位角色',
-  'mutateResource.demo2Section': '2. 并发策略：exhaust、concat 与 parallel',
+  'mutateResource.demo2Section': '3. 并发策略：exhaust、concat 与 parallel',
   'mutateResource.demo2SectionDesc':
     '测试不同并发策略在快速频繁点击时的处理表现。"exhaust" 策略在请求处理期间会自动忽略后续重复点击，有效防止重复提交。',
   'mutateResource.demo2PlaygroundTitle': '快速连击与并发模式仿真',
@@ -751,7 +832,7 @@ export const zhCNTranslations: Record<string, string> = {
   'mutateResource.recentLogs': '执行日志',
   'mutateResource.clearLogs': '清空日志',
   'mutateResource.noLogsYet': '暂未触发任何变更操作。请点击上方按钮进行体验。',
-  'mutateResource.demo3Section': '3. 响应式状态信号与错误恢复',
+  'mutateResource.demo3Section': '2. 响应式状态信号与错误恢复',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> 提供完善的异常捕获。写操作失败时，error 信号自动填充，status 转变为 "error"，且返回的 Promise 会 reject 供 try/catch 处理。',
   'mutateResource.demo3PlaygroundTitle': '状态信号与失败恢复',

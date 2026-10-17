@@ -1,6 +1,6 @@
 # Query design and production contracts
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API plus the October 16 maintainer request for domain-owned key/tag guidance and consistent mutation
 `invalidateTags` naming. See the mutation spec for compatibility.
 
@@ -54,7 +54,29 @@ consumer lifetime. A logical read includes all its attempts and waits, not just 
 | Resolved data / event method                     | `user`, `tenant`, `createDatabase()`     |
 
 Avoid calling a resource handle `user`, `tenants` or `create`: the name should distinguish its controls from the data or
-an action method. The same convention appears in the demo callouts.
+an action method. The same convention appears in the organization guide.
+
+## Developer learning journey and pedagogy plan
+
+Runtime status remains Implemented (contract audit). Documentation revision approved October 17, 2026; delivery and
+validation are tracked separately in the [query documentation plan](../../query-documentation-plan.md).
+
+Prerequisites: Angular components, signals and basic async operations. The first example needs no knowledge of tags,
+query factories, service scopes, or lifecycle status strings. Teach one read, rendering, parameter changes and recovery
+before cache coordination. Capture each reactive parameter once in the definition and reuse it in the key and loader.
+
+| Reader task                  | Outcome                                                                               | Destination / type                                      | Example and validation                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------- |
+| First read                   | Render data, initial loading/error, and refresh without blanking retained data        | `/ngx-lift/query/queryResource`, tutorial               | Shared compiled starter source/template; browser load, refresh and recovery |
+| Several independent reads    | Distinguish one array response from a collection of observers; add/reorder/remove IDs | `/ngx-lift/query/queryResources`, tutorial              | Existing dynamic collection preview and browser checks                      |
+| Understand caching           | Explain freshness independently of observer lifetime and retention                    | `/ngx-lift/query/cache`, explanation                    | Separate freshness/retention timelines; source contract review              |
+| Identify and invalidate data | Choose response-changing keys and matching tag objects                                | `/ngx-lift/query/keys`, guide                           | Scoped keys/tags and mutation links                                         |
+| Organize a feature           | Place definitions, transport services and observers; use consistent handle names      | `/ngx-lift/query/organization`, guide                   | Existing team definitions and table/summary demo                            |
+| Choose or look up an API     | Compare requirements or find a signature/state without repeating the tutorial         | `/ngx-lift/query/choosing`, `/ngx-lift/query/reference` | Exact API links and lifecycle matrix after examples                         |
+
+Freshness and observer lifetime are independent: unused data can still be fresh. Expiring `staleTime` marks data stale;
+it does not itself issue a request. Both `reload()` and `execute()` bypass completed data and join valid pending work;
+they differ in return value and caller control flow. Keep these contracts explicit in the teaching material.
 
 ## Public API and examples
 
@@ -985,3 +1007,7 @@ This is an audit of shipped behavior. Proposed features and unresolved implement
 Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
 identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
+
+Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
+[query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the
+follow-up revision, actual checks and remaining human/remote gates. This supplements the earlier runtime contract audit.

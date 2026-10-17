@@ -1,62 +1,24 @@
 <cll-page-container [title]="'mutateResource.title' | translate">
-  <!-- Overview -->
-  <p class="p1" [innerHTML]="'mutateResource.overview' | translate"></p>
-  <cll-callout data-testid="query-naming-convention">
-    <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
-    <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
-  </cll-callout>
+  <!-- Stage 1: Overview & Elevator Pitch -->
+  <p class="p1" [innerHTML]="'queryLearn.writeIntro' | translate"></p>
 
-  <section cds-layout="vertical gap:sm" data-testid="query-ownership-guide">
-    <h2>{{ 'queryOwnership.title' | translate }}</h2>
-    <p>{{ 'queryOwnership.definitions' | translate }}</p>
-    <p>{{ 'queryOwnership.refactoring' | translate }}</p>
-    <p>{{ 'queryOwnership.noCache' | translate }}</p>
-    <p>{{ 'queryOwnership.naming' | translate }}</p>
-    <app-code-block [code]="ownershipCode" lang="typescript" />
-  </section>
-
-  <!-- ==================== CORE CAPABILITIES SECTION ==================== -->
-  <section class="features-section">
-    <h2>{{ 'mutateResource.featuresTitle' | translate }}</h2>
-    <p class="features-intro">{{ 'mutateResource.featuresIntro' | translate }}</p>
-
-    <div class="features-grid">
-      <div class="card feature-card card-outline-primary">
-        <div class="card-header">
-          <strong>{{ 'mutateResource.cardTagInvalidationTitle' | translate }}</strong>
-        </div>
-        <div class="card-block">
-          <p class="card-text">{{ 'mutateResource.cardTagInvalidationDesc' | translate }}</p>
-        </div>
-      </div>
-
-      <div class="card feature-card card-outline-success">
-        <div class="card-header">
-          <strong>{{ 'mutateResource.cardConcurrencyTitle' | translate }}</strong>
-        </div>
-        <div class="card-block">
-          <p class="card-text">{{ 'mutateResource.cardConcurrencyDesc' | translate }}</p>
-        </div>
-      </div>
-
-      <div class="card feature-card card-outline-warning">
-        <div class="card-header">
-          <strong>{{ 'mutateResource.cardSignalsTitle' | translate }}</strong>
-        </div>
-        <div class="card-block">
-          <p class="card-text">{{ 'mutateResource.cardSignalsDesc' | translate }}</p>
-        </div>
-      </div>
-
-      <div class="card feature-card card-outline-info">
-        <div class="card-header">
-          <strong>{{ 'mutateResource.cardPromiseTitle' | translate }}</strong>
-        </div>
-        <div class="card-block">
-          <p class="card-text">{{ 'mutateResource.cardPromiseDesc' | translate }}</p>
-        </div>
-      </div>
-    </div>
+  <section cds-layout="vertical gap:sm" data-testid="mutation-starter">
+    <app-demo-playground
+      [title]="'queryLearn.writeTitle' | translate"
+      [description]="'queryLearn.fixture' | translate"
+      level="beginner"
+      [tsCode]="starterCode"
+      [htmlCode]="starterHtmlCode"
+    >
+      <div preview><app-mutation-starter /></div>
+    </app-demo-playground>
+    <p>{{ 'queryLearn.writeSteps' | translate }}</p>
+    <h2>{{ 'queryLearn.writeExplainTitle' | translate }}</h2>
+    <p>{{ 'queryLearn.writeExplain' | translate }}</p>
+    <p>
+      <a routerLink="/ngx-lift/query/keys">{{ 'queryDocs.keys' | translate }}</a> ·
+      <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+    </p>
   </section>
 
   <!-- ==================== DEMO 1: TAG INVALIDATION ==================== -->
@@ -177,6 +139,86 @@
     </app-demo-playground>
   </section>
 
+  <!-- ==================== DEMO 3: STATUS SIGNALS & ERROR RECOVERY ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'mutateResource.demo3Section' | translate }}</h2>
+    <p [innerHTML]="'mutateResource.demo3SectionDesc' | translate"></p>
+
+    <app-demo-playground
+      [title]="'mutateResource.demo3PlaygroundTitle' | translate"
+      [description]="'mutateResource.demo3PlaygroundDesc' | translate"
+      level="intermediate"
+      [badgeText]="'mutateResource.badgeError' | translate"
+      layout="split"
+      [tsCode]="errorCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <div class="card card-block">
+            <clr-checkbox-container>
+              <clr-checkbox-wrapper>
+                <input
+                  type="checkbox"
+                  clrCheckbox
+                  name="simulateError"
+                  [ngModel]="simulateError()"
+                  (ngModelChange)="simulateError.set($event)"
+                />
+                <label>{{ 'mutateResource.simulateErrorLabel' | translate }}</label>
+              </clr-checkbox-wrapper>
+            </clr-checkbox-container>
+
+            <div class="m-t-sm">
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="saveSettingsMutation.isLoading()"
+                (click)="onSaveSettings()"
+              >
+                @if (saveSettingsMutation.isLoading()) {
+                  <cll-spinner inline [size]="'sm'" class="m-r-xs" />
+                }
+                {{ 'mutateResource.saveSettingsBtn' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <!-- State Signal Badges -->
+          <div cds-layout="horizontal gap:sm align:center">
+            <span
+              class="label"
+              [class.label-danger]="saveSettingsMutation.status() === 'error'"
+              [class.label-success]="saveSettingsMutation.status() === 'resolved'"
+              [class.label-info]="saveSettingsMutation.status() === 'loading'"
+            >
+              {{ 'mutateResource.statusLabel' | translate }}: {{ saveSettingsMutation.status() }}
+            </span>
+            <span class="label label-light">
+              {{ 'mutateResource.isLoadingLabel' | translate }}: {{ saveSettingsMutation.isLoading() }}
+            </span>
+          </div>
+
+          <!-- Alert Display -->
+          @if (saveSettingsMutation.error(); as err) {
+            <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+              <clr-alert-item>
+                <span class="alert-text">{{ err.message }}</span>
+              </clr-alert-item>
+            </clr-alert>
+          }
+
+          @if (saveSuccessMessage()) {
+            <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false">
+              <clr-alert-item>
+                <span class="alert-text">{{ 'mutateResource.errorSuccessMsg' | translate }}</span>
+              </clr-alert-item>
+            </clr-alert>
+          }
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
   <!-- ==================== DEMO 2: CONCURRENCY MODES ==================== -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'mutateResource.demo2Section' | translate }}</h2>
@@ -285,89 +327,13 @@
     </app-demo-playground>
   </section>
 
-  <!-- ==================== DEMO 3: STATUS SIGNALS & ERROR RECOVERY ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>{{ 'mutateResource.demo3Section' | translate }}</h2>
-    <p [innerHTML]="'mutateResource.demo3SectionDesc' | translate"></p>
-
-    <app-demo-playground
-      [title]="'mutateResource.demo3PlaygroundTitle' | translate"
-      [description]="'mutateResource.demo3PlaygroundDesc' | translate"
-      level="intermediate"
-      [badgeText]="'mutateResource.badgeError' | translate"
-      layout="split"
-      [tsCode]="errorCode"
-    >
-      <div preview>
-        <div cds-layout="vertical gap:md">
-          <div class="card card-block">
-            <clr-checkbox-container>
-              <clr-checkbox-wrapper>
-                <input
-                  type="checkbox"
-                  clrCheckbox
-                  name="simulateError"
-                  [ngModel]="simulateError()"
-                  (ngModelChange)="simulateError.set($event)"
-                />
-                <label>{{ 'mutateResource.simulateErrorLabel' | translate }}</label>
-              </clr-checkbox-wrapper>
-            </clr-checkbox-container>
-
-            <div class="m-t-sm">
-              <button
-                type="button"
-                class="btn btn-primary"
-                [disabled]="saveSettingsMutation.isLoading()"
-                (click)="onSaveSettings()"
-              >
-                @if (saveSettingsMutation.isLoading()) {
-                  <cll-spinner inline [size]="'sm'" class="m-r-xs" />
-                }
-                {{ 'mutateResource.saveSettingsBtn' | translate }}
-              </button>
-            </div>
-          </div>
-
-          <!-- State Signal Badges -->
-          <div cds-layout="horizontal gap:sm align:center">
-            <span
-              class="label"
-              [class.label-danger]="saveSettingsMutation.status() === 'error'"
-              [class.label-success]="saveSettingsMutation.status() === 'resolved'"
-              [class.label-info]="saveSettingsMutation.status() === 'loading'"
-            >
-              {{ 'mutateResource.statusLabel' | translate }}: {{ saveSettingsMutation.status() }}
-            </span>
-            <span class="label label-light">
-              {{ 'mutateResource.isLoadingLabel' | translate }}: {{ saveSettingsMutation.isLoading() }}
-            </span>
-          </div>
-
-          <!-- Alert Display -->
-          @if (saveSettingsMutation.error(); as err) {
-            <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
-              <clr-alert-item>
-                <span class="alert-text">{{ err.message }}</span>
-              </clr-alert-item>
-            </clr-alert>
-          }
-
-          @if (saveSuccessMessage()) {
-            <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false">
-              <clr-alert-item>
-                <span class="alert-text">{{ 'mutateResource.errorSuccessMsg' | translate }}</span>
-              </clr-alert-item>
-            </clr-alert>
-          }
-        </div>
-      </div>
-    </app-demo-playground>
-  </section>
+  <p id="domain-ownership">
+    <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+  </p>
 
   <!-- ==================== API REFERENCE ==================== -->
   <section cds-layout="vertical gap:md align:stretch">
-    <h2>{{ 'mutateResource.apiReference' | translate }}</h2>
+    <h2 id="api-reference">{{ 'mutateResource.apiReference' | translate }}</h2>
 
     <h3><code>mutateResource(mutation, options)</code></h3>
     <app-api-table [properties]="mutateResourceApiProps()" />

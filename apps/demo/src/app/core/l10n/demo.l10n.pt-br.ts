@@ -1,4 +1,98 @@
 export const ptBRTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Atualidade do cache e atualização',
+  'queryDocs.cacheIntro':
+    'Uma chave identifica dados compartilhados em um QueryClient. Atualidade, atividade das requisições e duração dos observadores respondem a perguntas diferentes.',
+  'queryDocs.chooseComputed':
+    'Use para um valor derivado assíncrono quando um signal de valor for suficiente. Prefira computed() para derivação síncrona.',
+  'queryDocs.chooseMutation':
+    'Use para gravações no servidor enviadas explicitamente. Não é necessária uma chave de consulta; adicione tags de invalidação quando outras visualizações precisarem atualizar.',
+  'queryDocs.chooseObservable':
+    'Use fetchQueryObservable para uma leitura finita em cache em um fluxo RxJS; observeQueryObservable emite instantâneos do cache compartilhado e mantém um observador.',
+  'queryDocs.chooseQuery':
+    'Use um observador para uma leitura compartilhada em cache. Uma resposta contendo um array continua sendo uma consulta.',
+  'queryDocs.chooseResource':
+    'Use para estado assíncrono independente, substituições locais ou fluxos contínuos sem cache compartilhado por chave.',
+  'queryDocs.choosing': 'Escolher uma API assíncrona',
+  'queryDocs.choosingIntro':
+    'Escolha conforme a operação e a responsabilidade pelo estado. Um botão Atualizar ainda faz uma leitura; um clique não transforma uma operação em mutação.',
+  'queryDocs.clientReference':
+    'QueryClient gerencia entradas compartilhadas. fetchQuery lê dados; invalidateTags marca dependências como desatualizadas e atualiza as ativas; removeQueries remove entradas correspondentes. Consulte os contratos públicos para parâmetros e adaptadores.',
+  'queryDocs.defaults':
+    'Padrões: staleTime = 0; gcTime = 300,000 ms. Consulta periódica, novas tentativas, prazos e atualização por foco ou reconexão ficam desativados sem configuração.',
+  'queryDocs.devtools': 'Ferramentas de consultas',
+  'queryDocs.excerpt':
+    'Trecho de campos do componente. Importe o serviço e as definições acima; a demonstração de mutação contém o fluxo completo de tabela e resumo.',
+  'queryDocs.fetching': 'Buscar dados · queryResource',
+  'queryDocs.freshness':
+    'staleTime mede a atualidade desde a última resposta bem-sucedida. Ao expirar, os dados ficam desatualizados; a expiração sozinha não inicia uma requisição.',
+  'queryDocs.independent': 'Leituras independentes · queryResources',
+  'queryDocs.independentClocks':
+    'Os dois relógios são independentes: dados não utilizados podem continuar atuais e dados ativos podem estar desatualizados. Observadores que retornam podem reutilizar os dados retidos.',
+  'queryDocs.invalidation':
+    'Gravações bem-sucedidas invalidam as tags selecionadas. Consultas ativas buscam novamente; entradas inativas ficam desatualizadas. A invalidação não exclui os dados.',
+  'queryDocs.keyIdentity':
+    'Inclua na chave todos os parâmetros que alteram a resposta e o escopo de autorização. Capture os valores reativos uma vez e reutilize-os na chave e no loader.',
+  'queryDocs.keys': 'Chaves e invalidação',
+  'queryDocs.keysIntro':
+    'Chaves identificam dados. Tags descrevem quais leituras em cache uma gravação bem-sucedida afeta. Elas têm finalidades diferentes.',
+  'queryDocs.organization': 'Organizar consultas',
+  'queryDocs.organizationIntro':
+    'Extraia definições quando vários consumidores precisarem dos mesmos dados. Mantenha o transporte em team.service.ts, identidade e tags em team.queries.ts e observadores junto aos consumidores.',
+  'queryDocs.overview': 'Visão geral',
+  'queryDocs.overviewIntro':
+    'O estado do servidor são dados pertencentes a um servidor. Estas ferramentas os carregam, compartilham leituras entre componentes e sincronizam visualizações em cache após gravações.',
+  'queryDocs.overviewRead': 'Carregue uma equipe, exiba os dados, altere o ID selecionado e recupere-se de erros.',
+  'queryDocs.overviewWrite':
+    'Salve o nome de uma equipe, observe os estados de espera e erro e atualize as visualizações em cache afetadas.',
+  'queryDocs.prerequisites':
+    'Comece com componentes e signals do Angular. Entenda uma consulta antes de escolher políticas de cache ou organizar uma funcionalidade.',
+  'queryDocs.reference': 'Referência da API',
+  'queryDocs.referenceIntro':
+    'Consulte assinaturas e tabelas exatas de estados e opções abaixo. Siga os guias para explicações ou tarefas práticas.',
+  'queryDocs.refreshControls':
+    'reload() inicia uma atualização em segundo plano e retorna um booleano. execute() retorna uma Promise de uma leitura nova. Ambos ignoram dados já concluídos e compartilham o trabalho pendente válido.',
+  'queryDocs.retention':
+    'gcTime controla a retenção após a saída do último observador. A remoção aguarda as requisições pendentes terminarem. Observadores ativos mantêm seus dados.',
+  'queryDocs.saving': 'Salvar alterações · mutateResource',
+  'queryDocs.tagIdentity':
+    'Uma tag é um objeto com type e scope/id opcionais. A mutação seleciona tags correspondentes; omitir scope não significa todos os escopos.',
+  'queryDocs.triggers':
+    'Dados desatualizados podem ser atualizados ao serem observados novamente. Atualização manual e invalidação solicitam dados novos; consulta periódica e recuperação por foco ou reconexão exigem configuração.',
+  'queryDocs.writeBoundary':
+    'Uma gravação bem-sucedida pode ser seguida por falha na sincronização do cache. Verifique invalidationError e atualize as leituras; não repita a gravação bem-sucedida para reparar o cache.',
+  'queryLearn.collectionExplain':
+    'Selecione os dois IDs, inverta a ordem e limpe a seleção. Chaves mantidas preservam seus observadores; itens removidos os liberam. Cada linha tem seus próprios estados de carregamento, erro e atualização.',
+  'queryLearn.collectionIntro':
+    'Use queryResource quando uma requisição retorna uma lista. Use queryResources quando uma coleção variável precisa de uma consulta separada para cada item.',
+  'queryLearn.fixture':
+    'Este exemplo completo usa um temporizador local para simular latência e falhas. Abra TypeScript para copiar o componente; HTML mostra o mesmo template compilado.',
+  'queryLearn.httpSetup':
+    'Para HTTP, forneça HttpClient em app.config.ts e substitua o loader simulado por http.get<Team>(url), usando um ID capturado. O cliente raiz não precisa de registro adicional.',
+  'queryLearn.readError': 'A leitura falhou. Desative a falha simulada e atualize para tentar novamente.',
+  'queryLearn.readExplain':
+    'key identifica os dados; loader os busca. Os signals lidos na definição selecionam os dados. value() expõe o resultado; isInitialLoading() indica carregamento sem dados.',
+  'queryLearn.readExplainTitle': 'Entenda a primeira leitura',
+  'queryLearn.readIntro':
+    'queryResource carrega dados e expõe resultado, carregamento e erros como signals do Angular. Componentes com a mesma chave compartilham dados em cache e uma requisição em andamento.',
+  'queryLearn.readSteps':
+    'Carregue Equipe A, escolha Equipe B e atualize. Ative a falha e atualize novamente: a equipe permanece visível. Desative a falha e atualize para recuperar.',
+  'queryLearn.readTitle': 'Sua primeira consulta',
+  'queryLearn.refreshExplain':
+    'isRefreshing() indica uma leitura em andamento com dados anteriores visíveis. error() expõe a falha; isRefreshError() distingue uma falha com dados retidos.',
+  'queryLearn.saved': 'Salvo',
+  'queryLearn.simulateFailure': 'Simular falha',
+  'queryLearn.teamA': 'Equipe A',
+  'queryLearn.teamB': 'Equipe B',
+  'queryLearn.writeError':
+    'Não foi possível salvar. Sua entrada foi preservada; desative a falha simulada e salve novamente.',
+  'queryLearn.writeExplain':
+    'mutate(args) envia o valor e retorna uma Promise. isLoading() controla a espera; error() informa a falha. Comece sem tags; adicione-as quando uma gravação bem-sucedida precisar atualizar leituras em cache.',
+  'queryLearn.writeExplainTitle': 'Entenda o primeiro salvamento',
+  'queryLearn.writeIntro':
+    'mutateResource executa uma gravação no servidor quando você chama mutate(). Expõe signals de espera, resultado e erro para o formulário responder ao resultado.',
+  'queryLearn.writeSteps':
+    'Digite um nome e salve. Ative a falha e salve novamente; depois desative-a e tente outra vez. O formulário bloqueia o envio durante uma gravação.',
+  'queryLearn.writeTitle': 'Seu primeiro salvamento',
   'toSignalForm.savedProfile': 'Perfil salvo',
   'queryResource.projectRevision': 'Versão da resposta',
   'queryResource.activeUser': 'Usuário atual',
@@ -25,7 +119,7 @@ export const ptBRTranslations: Record<string, string> = {
   'header.openGitHub': 'Abrir no GitHub',
   'header.codeLicensed': 'Código sob licença',
   'nav.signalUtils': 'Utilitários de Signal',
-  'nav.queryMutation': 'Consultas e mutações',
+  'nav.queryMutation': 'Consultas e estado do servidor',
   'nav.operators': 'Operadores',
   'nav.interceptors': 'Interceptadores',
   'nav.validators': 'Validadores',
@@ -602,7 +696,7 @@ export const ptBRTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automático por mutateResource',
   'queryResource.lifecycleTitle': 'Matriz de estados e sinais do ciclo de vida',
   'queryResource.lifecycleIntro':
-    'As consultas gerenciam tanto carregamentos iniciais quanto revalidações em segundo plano. Use esta matriz para saber quando exibir spinners em tela cheia versus indicadores sutis de atualização sem travar a interface.',
+    'As consultas gerenciam tanto carregamentos iniciais quanto revalidações em segundo plano. Use esta matriz para saber quando exibir spinners em tela cheia versus indicadores sutis de atualização sem travar a interface. A matriz pressupõe um valor bem-sucedido definido. hasValue() retorna false para um resultado undefined.',
   'queryResource.matrixState': 'Estado do ciclo de vida',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Quando usar & comportamento na UI',
@@ -781,7 +875,7 @@ export const ptBRTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Nome',
   'mutateResource.thRole': 'Papel',
-  'mutateResource.demo2Section': '2. Modos de Contagem: escape, concat, e paralelo',
+  'mutateResource.demo2Section': '3. Modos de Contagem: escape, concat, e paralelo',
   'mutateResource.demo2SectionDesc':
     'Teste como diferentes estratégias de concorrência lidam com cliques rápidos em botões. "exhaust" previne submissões acidentais duplas descartando ou unindo cliques duplicados enquanto uma mutação está em andamento.',
   'mutateResource.demo2PlaygroundTitle': 'Rápida Simulação para a Contagem',
@@ -799,7 +893,7 @@ export const ptBRTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Registos de execução',
   'mutateResource.clearLogs': 'Limpar o Registro',
   'mutateResource.noLogsYet': 'Ainda sem mutações realizadas. Clique no botão acima para começar.',
-  'mutateResource.demo3Section': '3. Recuperação reativa do status Signals',
+  'mutateResource.demo3Section': '2. Recuperação reativa do status Signals',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> gerencia erros separadamente. Quando uma gravação falha, o sinal de erro recebe o erro, status passa a "error" e a Promise retornada é rejeitada para tratamento com try/catch.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals Hult Recuperação',

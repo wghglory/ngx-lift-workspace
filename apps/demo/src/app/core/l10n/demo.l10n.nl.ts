@@ -1,4 +1,98 @@
 export const nlTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Cacheversheid en vernieuwen',
+  'queryDocs.cacheIntro':
+    'Een querysleutel identificeert gedeelde gegevens binnen één QueryClient. Versheid, actieve aanvragen en de levensduur van observers beantwoorden verschillende vragen.',
+  'queryDocs.chooseComputed':
+    'Gebruik voor een asynchroon afgeleide waarde wanneer een waardesignal volstaat. Gebruik bij synchrone afleiding liever computed().',
+  'queryDocs.chooseMutation':
+    'Gebruik voor expliciet ingediende schrijfbewerkingen op de server. Er is geen querysleutel nodig; voeg invalidatietags toe wanneer andere weergaven moeten bijwerken.',
+  'queryDocs.chooseObservable':
+    'Gebruik fetchQueryObservable voor één eindige cacheleesbewerking in RxJS; observeQueryObservable geeft gedeelde cachesnapshots en bezit een observer.',
+  'queryDocs.chooseQuery':
+    'Gebruik één observer voor een gedeelde gecachete leesbewerking. Een antwoord met een array blijft één query.',
+  'queryDocs.chooseResource':
+    'Gebruik voor onafhankelijke asynchrone status, lokale overschrijvingen of streams zonder gedeelde cache op sleutel.',
+  'queryDocs.choosing': 'Een asynchrone API kiezen',
+  'queryDocs.choosingIntro':
+    'Kies op basis van de bewerking en het eigenaarschap van de status. Een knop Vernieuwen leest nog steeds gegevens; een klik maakt een bewerking geen mutatie.',
+  'queryDocs.clientReference':
+    'QueryClient beheert gedeelde vermeldingen. fetchQuery leest gegevens; invalidateTags markeert afhankelijkheden als verouderd en vernieuwt actieve vermeldingen; removeQueries verwijdert overeenkomende vermeldingen. Zie de publieke broncontracten voor parameters en adapters.',
+  'queryDocs.defaults':
+    'Standaarden: staleTime = 0; gcTime = 300,000 ms. Polling, nieuwe pogingen, deadlines en vernieuwen bij focus of herverbinding zijn zonder configuratie uitgeschakeld.',
+  'queryDocs.devtools': 'Queryhulpmiddelen',
+  'queryDocs.excerpt':
+    'Fragment met componentvelden. Importeer de bovenstaande service en definities; de mutatiedemo biedt de volledige workflow met tabel en samenvatting.',
+  'queryDocs.fetching': 'Gegevens ophalen · queryResource',
+  'queryDocs.freshness':
+    'staleTime meet de versheid vanaf het laatste geslaagde antwoord. Daarna zijn gegevens verouderd; het verstrijken alleen start geen aanvraag.',
+  'queryDocs.independent': 'Onafhankelijk lezen · queryResources',
+  'queryDocs.independentClocks':
+    'Beide klokken zijn onafhankelijk: ongebruikte gegevens kunnen nog vers zijn en actieve gegevens verouderd. Terugkerende observers kunnen bewaarde gegevens hergebruiken.',
+  'queryDocs.invalidation':
+    'Geslaagde schrijfbewerkingen invalideren de geselecteerde tags. Actieve query’s halen opnieuw op; inactieve vermeldingen worden verouderd. Invalidatie verwijdert de gegevens niet.',
+  'queryDocs.keyIdentity':
+    'Neem elke parameter die het antwoord verandert en het autorisatiebereik op in de sleutel. Leg reactieve waarden eenmaal vast en gebruik dezelfde waarden in sleutel en loader.',
+  'queryDocs.keys': 'Sleutels en invalidatie',
+  'queryDocs.keysIntro':
+    'Sleutels identificeren gegevens. Tags beschrijven welke gecachete leesbewerkingen een geslaagde schrijfbewerking raakt. Ze hebben verschillende doelen.',
+  'queryDocs.organization': 'Query’s organiseren',
+  'queryDocs.organizationIntro':
+    'Extraheer definities wanneer meerdere gebruikers dezelfde gegevens nodig hebben. Zet transport in team.service.ts, identiteit en tags in team.queries.ts en observers bij hun gebruikers.',
+  'queryDocs.overview': 'Overzicht',
+  'queryDocs.overviewIntro':
+    'Serverstatus bestaat uit gegevens die bij een server horen. Deze hulpmiddelen laden ze, delen leesbewerkingen tussen componenten en synchroniseren cacheweergaven na schrijfbewerkingen.',
+  'queryDocs.overviewRead': 'Laad een team, toon de gegevens, wijzig de geselecteerde ID en herstel na fouten.',
+  'queryDocs.overviewWrite':
+    'Sla een teamnaam op, bekijk wacht- en foutstatussen en werk vervolgens de betrokken cacheweergaven bij.',
+  'queryDocs.prerequisites':
+    'Begin met Angular-componenten en signals. Leer eerst wat een query doet voordat je cachebeleid kiest of een functie organiseert.',
+  'queryDocs.reference': 'API-referentie',
+  'queryDocs.referenceIntro':
+    'Zoek hieronder handtekeningen en exacte status- en optietabellen op. Volg de handleidingen voor uitleg of een praktische taak.',
+  'queryDocs.refreshControls':
+    'reload() start vernieuwen op de achtergrond en geeft een boolean terug. execute() geeft een Promise voor een nieuwe leesbewerking. Beide slaan voltooide gegevens over en delen geldig lopend werk.',
+  'queryDocs.retention':
+    'gcTime bepaalt de bewaartijd nadat de laatste observer vertrekt. Opruimen wacht tot lopende aanvragen klaar zijn. Actieve observers behouden hun gegevens.',
+  'queryDocs.saving': 'Wijzigingen opslaan · mutateResource',
+  'queryDocs.tagIdentity':
+    'Een tag is een object met type en optioneel scope/id. De mutatie selecteert overeenkomende querytags; een weggelaten scope betekent niet alle bereiken.',
+  'queryDocs.triggers':
+    'Verouderde gegevens kunnen vernieuwen wanneer ze opnieuw worden geobserveerd. Handmatig vernieuwen en invalidatie vragen nieuwe gegevens; polling en herstel bij focus of verbinding vereisen configuratie.',
+  'queryDocs.writeBoundary':
+    'Na een geslaagde schrijfbewerking kan cachesynchronisatie mislukken. Controleer invalidationError en vernieuw leesbewerkingen; herhaal de geslaagde schrijfbewerking niet om de cache te herstellen.',
+  'queryLearn.collectionExplain':
+    'Selecteer beide ID’s, keer de volgorde om en wis de selectie. Behouden sleutels behouden hun observers; verwijderde items geven ze vrij. Elke rij heeft eigen laad-, fout- en vernieuwstatussen.',
+  'queryLearn.collectionIntro':
+    'Gebruik queryResource als één aanvraag een lijst oplevert. Gebruik queryResources als een veranderende verzameling een aparte query per item nodig heeft.',
+  'queryLearn.fixture':
+    'Dit volledige voorbeeld simuleert serververtraging en fouten met een lokale timer. Open TypeScript om de component te kopiëren; HTML toont dezelfde gecompileerde template.',
+  'queryLearn.httpSetup':
+    'Voor HTTP configureer je HttpClient in app.config.ts en vervang je de gesimuleerde loader door http.get<Team>(url) met een vastgelegde ID. De rootclient vereist geen extra registratie.',
+  'queryLearn.readError': 'Lezen mislukt. Schakel de gesimuleerde fout uit en vernieuw om opnieuw te proberen.',
+  'queryLearn.readExplain':
+    'key benoemt gegevens; loader haalt ze op. Signals die in de definitie worden gelezen selecteren de gegevens. value() biedt het resultaat; isInitialLoading() betekent laden zonder gegevens.',
+  'queryLearn.readExplainTitle': 'De eerste leesbewerking begrijpen',
+  'queryLearn.readIntro':
+    'queryResource laadt gegevens en biedt resultaat, laadstatus en fouten als Angular-signals. Componenten met dezelfde sleutel delen cachegegevens en een lopende aanvraag.',
+  'queryLearn.readSteps':
+    'Laad Team A, kies Team B en vernieuw. Schakel fouten in en vernieuw opnieuw: het team blijft zichtbaar. Schakel fouten uit en vernieuw om te herstellen.',
+  'queryLearn.readTitle': 'Je eerste query',
+  'queryLearn.refreshExplain':
+    'isRefreshing() betekent dat een leesbewerking loopt terwijl eerdere gegevens zichtbaar blijven. error() toont de fout; isRefreshError() onderscheidt fouten met bewaarde gegevens.',
+  'queryLearn.saved': 'Opgeslagen',
+  'queryLearn.simulateFailure': 'Fout simuleren',
+  'queryLearn.teamA': 'Team A',
+  'queryLearn.teamB': 'Team B',
+  'queryLearn.writeError':
+    'Opslaan mislukt. Je invoer blijft behouden; schakel de gesimuleerde fout uit en sla opnieuw op.',
+  'queryLearn.writeExplain':
+    'mutate(args) verstuurt de waarde en geeft een Promise terug. isLoading() regelt de wachtweergave; error() meldt een schrijffout. Begin zonder tags; voeg ze toe als een geslaagde schrijfbewerking cachelezingen moet vernieuwen.',
+  'queryLearn.writeExplainTitle': 'De eerste opslagbewerking begrijpen',
+  'queryLearn.writeIntro':
+    'mutateResource voert een serverbewerking uit wanneer je mutate() aanroept. Signals voor wachten, resultaat en fouten laten het formulier reageren op de uitkomst.',
+  'queryLearn.writeSteps':
+    'Voer een naam in en sla op. Schakel fouten in en sla opnieuw op; schakel ze daarna uit en probeer opnieuw. Tijdens een schrijfbewerking blokkeert het formulier indienen.',
+  'queryLearn.writeTitle': 'Je eerste opslagbewerking',
   'toSignalForm.savedProfile': 'Opgeslagen profiel',
   'queryResource.projectRevision': 'Antwoordversie',
   'queryResource.activeUser': 'Huidige gebruiker',
@@ -25,7 +119,7 @@ export const nlTranslations: Record<string, string> = {
   'header.openGitHub': 'Openen op GitHub',
   'header.codeLicensed': 'Code gelicentieerd onder',
   'nav.signalUtils': "Signal-hulpprogramma's",
-  'nav.queryMutation': 'Queries en mutaties',
+  'nav.queryMutation': 'Query’s en serverstatus',
   'nav.operators': 'Operatoren',
   'nav.interceptors': 'Interceptors',
   'nav.validators': 'Validatoren',
@@ -605,7 +699,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatisch via mutateResource',
   'queryResource.lifecycleTitle': 'Levenscyclusstatussen en signaalmatrix',
   'queryResource.lifecycleIntro':
-    'Query’s verwerken zowel initiële laadacties als achtergrondrevalidaties. Gebruik deze matrix om te bepalen wanneer een paginabrede spinner gewenst is of wanneer een subtiele vernieuwingsindicator volstaat zonder de gebruikersinterface te blokkeren.',
+    'Query’s verwerken zowel initiële laadacties als achtergrondrevalidaties. Gebruik deze matrix om te bepalen wanneer een paginabrede spinner gewenst is of wanneer een subtiele vernieuwingsindicator volstaat zonder de gebruikersinterface te blokkeren. De matrix gaat uit van een gedefinieerde geslaagde waarde. hasValue() geeft false voor een undefined-resultaat.',
   'queryResource.matrixState': 'Levenscyclusstatus',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Wanneer gebruiken & UI-gedrag',
@@ -786,7 +880,7 @@ export const nlTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Naam',
   'mutateResource.thRole': 'Rol',
-  'mutateResource.demo2Section': '2. Concurrency Modi: uitlaat, concat, en parallel',
+  'mutateResource.demo2Section': '3. Concurrency Modi: uitlaat, concat, en parallel',
   'mutateResource.demo2SectionDesc':
     'Test hoe verschillende concurrentiestrategieën snelle knopdrukken verwerken. "exhaust" voorkomt ongeplande dubbele indiening door dubbele klikken te negeren of toe te voegen terwijl een mutatie al draait.',
   'mutateResource.demo2PlaygroundTitle': 'Snel klikken op & concurrency simulatie',
@@ -804,7 +898,7 @@ export const nlTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Uitvoeringslogboek',
   'mutateResource.clearLogs': 'Logboek wissen',
   'mutateResource.noLogsYet': 'Nog geen mutaties uitgevoerd. Klik op de knop hierboven om te beginnen.',
-  'mutateResource.demo3Section': '3. Reactieve status Signals & Foutherstel',
+  'mutateResource.demo3Section': '2. Reactieve status Signals & Foutherstel',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> houdt fouten apart. Als een schrijfbewerking mislukt, bevat het foutsignaal de fout, wordt status "error" en wordt de geretourneerde Promise afgewezen voor afhandeling met try/catch.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Herstel',

@@ -1,4 +1,96 @@
 export const jaTranslations: Record<string, string> = {
+  'queryDocs.cache': 'キャッシュの鮮度と更新',
+  'queryDocs.cacheIntro':
+    'クエリキーは同じ QueryClient 内の共有データを識別します。鮮度、リクエストの実行状態、オブザーバーの寿命はそれぞれ異なる観点です。',
+  'queryDocs.chooseComputed':
+    '値シグナルだけで十分な非同期派生値に使用します。同期的な派生には computed() を優先します。',
+  'queryDocs.chooseMutation':
+    '明示的に送信するサーバー書き込みに使用します。クエリキーは不要です。他の表示を更新するときに無効化タグを追加します。',
+  'queryDocs.chooseObservable':
+    'RxJS で一回の有限キャッシュ読み取りには fetchQueryObservable を使用します。observeQueryObservable は共有キャッシュのスナップショットを発行し、オブザーバーを所有します。',
+  'queryDocs.chooseQuery':
+    '共有キャッシュ読み取りに一つのオブザーバーを使用します。配列を含むレスポンスも一つのクエリです。',
+  'queryDocs.chooseResource':
+    '共有キーキャッシュを使わない独立した非同期状態、ローカル値の上書き、ストリームに使用します。',
+  'queryDocs.choosing': '非同期 API の選択',
+  'queryDocs.choosingIntro':
+    '操作と状態の所有者に応じて選びます。更新ボタンも読み取りを行います。クリックで開始するだけではミューテーションにはなりません。',
+  'queryDocs.clientReference':
+    'QueryClient は共有項目を所有します。fetchQuery は読み取り、invalidateTags は依存項目を古い状態にしてアクティブな項目を再取得し、removeQueries は一致項目を削除します。引数とアダプターは公開ソースの契約を参照してください。',
+  'queryDocs.defaults':
+    '既定値: staleTime = 0、gcTime = 300,000 ms。ポーリング、再試行、期限、フォーカス復帰や再接続時の更新は未設定なら無効です。',
+  'queryDocs.devtools': 'クエリ開発ツール',
+  'queryDocs.excerpt':
+    'コンポーネントフィールドの抜粋です。上記のサービスと定義をインポートしてください。ミューテーションのデモに表とサマリーの完全な操作例があります。',
+  'queryDocs.fetching': 'データの取得 · queryResource',
+  'queryDocs.freshness':
+    'staleTime は最後の成功レスポンスから鮮度を計測します。期限が切れると古いデータになりますが、それだけではリクエストは開始されません。',
+  'queryDocs.independent': '独立した読み取り · queryResources',
+  'queryDocs.independentClocks':
+    '二つの時計は独立しています。未使用データも新鮮な場合があり、使用中のデータも古くなります。戻ってきたオブザーバーは保持データを再利用できます。',
+  'queryDocs.invalidation':
+    '書き込みに成功すると選択したタグを無効化します。アクティブなクエリは再取得し、非アクティブな項目は古い状態になります。無効化はデータを削除しません。',
+  'queryDocs.keyIdentity':
+    'レスポンスを変える全パラメーターと認可スコープをキーに含めます。リアクティブ値を一度取得し、同じスナップショットをキーと loader で使用します。',
+  'queryDocs.keys': 'キーと無効化',
+  'queryDocs.keysIntro':
+    'キーはデータを識別します。タグは成功した書き込みが影響するキャッシュ済み読み取りを表します。役割は異なります。',
+  'queryDocs.organization': 'クエリの整理',
+  'queryDocs.organizationIntro':
+    '複数の利用側が同じデータを必要とするときに定義を抽出します。通信は team.service.ts、識別子とタグは team.queries.ts に置き、オブザーバーは利用側に配置します。',
+  'queryDocs.overview': '概要',
+  'queryDocs.overviewIntro':
+    'サーバー状態とはサーバーが所有するデータです。これらのツールはデータを取得し、コンポーネント間で読み取りを共有し、書き込み後にキャッシュ表示を同期します。',
+  'queryDocs.overviewRead': 'チームを取得して表示し、選択 ID を変更して、エラーから回復します。',
+  'queryDocs.overviewWrite': 'チーム名を保存し、処理中とエラーの状態を確認して、関連するキャッシュ表示を更新します。',
+  'queryDocs.prerequisites':
+    'Angular のコンポーネントとシグナルの知識から始めます。キャッシュ方針や機能の構成を決める前に、クエリの動作を理解してください。',
+  'queryDocs.reference': 'API リファレンス',
+  'queryDocs.referenceIntro':
+    '以下でシグネチャと正確な状態・オプション表を確認できます。説明や実践的な操作にはガイドを参照してください。',
+  'queryDocs.refreshControls':
+    'reload() はバックグラウンド更新を開始し、真偽値を返します。execute() は新しい読み取りの Promise を返します。どちらも完了済みデータを迂回し、有効な実行中リクエストを共有します。',
+  'queryDocs.retention':
+    'gcTime は最後のオブザーバーが離れた後の保持期間を制御します。削除は実行中のリクエスト完了を待ちます。アクティブなオブザーバーがあればデータを保持します。',
+  'queryDocs.saving': '変更の保存 · mutateResource',
+  'queryDocs.tagIdentity':
+    'タグは type と任意の scope/id を持つオブジェクトです。ミューテーションは一致するクエリタグを選びます。scope の省略は全スコープへの一致を意味しません。',
+  'queryDocs.triggers':
+    '古いデータは再び観測されたときに更新できます。手動更新と無効化は新しいデータを要求します。ポーリング、フォーカス復帰、再接続時の回復には設定が必要です。',
+  'queryDocs.writeBoundary':
+    '書き込み成功後にキャッシュ同期が失敗する場合があります。invalidationError を確認して読み取りを更新してください。キャッシュ修復のために成功した書き込みを繰り返さないでください。',
+  'queryLearn.collectionExplain':
+    '両方の ID を選択し、順序を逆にしてから選択を解除します。残るキーはオブザーバーを保持し、削除した項目は解放します。各行に独自の読み込み、エラー、更新状態があります。',
+  'queryLearn.collectionIntro':
+    '一回のリクエストでリストを取得する場合は queryResource を使います。変化するコレクションの各項目に独立したクエリが必要なら queryResources を使います。',
+  'queryLearn.fixture':
+    'この完全な例はローカルタイマーでサーバー遅延と失敗を再現します。TypeScript を開くとコンポーネントをコピーできます。HTML は実際にコンパイルする同じテンプレートです。',
+  'queryLearn.httpSetup':
+    'HTTP では app.config.ts に HttpClient を提供し、取得済み ID を使う http.get<Team>(url) で模擬 loader を置き換えます。ルートクライアントの追加登録は不要です。',
+  'queryLearn.readError': '読み取りに失敗しました。失敗の再現を無効にし、更新して再試行してください。',
+  'queryLearn.readExplain':
+    'key はデータを識別し、loader は取得します。定義内で読むシグナルが対象データを選びます。value() は結果、isInitialLoading() はデータがない状態での読み込みを示します。',
+  'queryLearn.readExplainTitle': '最初の読み取りを理解する',
+  'queryLearn.readIntro':
+    'queryResource はデータを読み取り、結果、読み込み状態、エラーを Angular シグナルとして公開します。同じキーのコンポーネントはキャッシュと実行中リクエストを共有します。',
+  'queryLearn.readSteps':
+    'チーム A を取得し、チーム B に切り替えて更新します。失敗を有効にして再度更新すると、既存のチームは表示されたままです。失敗を無効にして更新すると回復します。',
+  'queryLearn.readTitle': '最初のクエリ',
+  'queryLearn.refreshExplain':
+    'isRefreshing() は以前のデータを表示しながら読み取っている状態です。error() は失敗を示し、isRefreshError() は保持データがある失敗を区別します。',
+  'queryLearn.saved': '保存済み',
+  'queryLearn.simulateFailure': '失敗を再現',
+  'queryLearn.teamA': 'チーム A',
+  'queryLearn.teamB': 'チーム B',
+  'queryLearn.writeError': '保存に失敗しました。入力は保持されています。失敗の再現を無効にして再度保存してください。',
+  'queryLearn.writeExplain':
+    'mutate(args) は値を送信して Promise を返します。isLoading() は処理中の表示、error() は書き込み失敗を示します。最初はタグなしで始め、成功後にキャッシュ読み取りを更新するときに追加します。',
+  'queryLearn.writeExplainTitle': '最初の保存を理解する',
+  'queryLearn.writeIntro':
+    'mutateResource は mutate() を呼ぶとサーバーに書き込みます。処理中、結果、エラーのシグナルでフォームが結果に応じて動作できます。',
+  'queryLearn.writeSteps':
+    '名前を入力して保存します。失敗を有効にして再保存し、次に無効にして再試行します。書き込み中はフォームの送信を無効にします。',
+  'queryLearn.writeTitle': '最初の保存',
   'toSignalForm.savedProfile': '保存したプロフィール',
   'queryResource.projectRevision': '応答バージョン',
   'queryResource.activeUser': '現在のユーザー',
@@ -25,7 +117,7 @@ export const jaTranslations: Record<string, string> = {
   'header.openGitHub': 'GitHub で開く',
   'header.codeLicensed': 'ライセンス：',
   'nav.signalUtils': 'Signal ユーティリティ',
-  'nav.queryMutation': 'クエリとミューテーション',
+  'nav.queryMutation': 'クエリとサーバー状態',
   'nav.operators': 'オペレーター',
   'nav.interceptors': 'インターセプター',
   'nav.validators': 'バリデーター',
@@ -593,7 +685,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'mutateResourceを通じて自動的に',
   'queryResource.lifecycleTitle': 'ライフサイクル状態とシグナルマトリックス',
   'queryResource.lifecycleIntro':
-    'クエリは初回読み込みとバックグラウンド再検証の両方を処理します。このマトリックスを参照して、全画面スピナーを表示すべきタイミングと、UI をブロックせずに控えめな更新インジケーターを表示すべきタイミングを判断してください。',
+    'クエリは初回読み込みとバックグラウンド再検証の両方を処理します。このマトリックスを参照して、全画面スピナーを表示すべきタイミングと、UI をブロックせずに控えめな更新インジケーターを表示すべきタイミングを判断してください。 この表は成功時の値が定義されている場合を示します。結果が undefined の場合、hasValue() は false を返します。',
   'queryResource.matrixState': 'ライフサイクル状態',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': '使用タイミングと推奨 UI',
@@ -772,7 +864,7 @@ export const jaTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': '名前',
   'mutateResource.thRole': '役職',
-  'mutateResource.demo2Section': '2. コンカレントモード: exhaust, concat, および parallel',
+  'mutateResource.demo2Section': '3. コンカレントモード: exhaust, concat, および parallel',
   'mutateResource.demo2SectionDesc':
     '高速なボタンクリックで異なるコンカレント戦略がどのように処理するかテストしてください。"exhaust"は、ミューテーションがすでに実行されている間、誤って二度の送信を防ぐために重複クリックを破棄または結合します。',
   'mutateResource.demo2PlaygroundTitle': '高速クリックとコンカレントシミュレーション',
@@ -790,7 +882,7 @@ export const jaTranslations: Record<string, string> = {
   'mutateResource.recentLogs': '実行ログ',
   'mutateResource.clearLogs': 'ログをクリア',
   'mutateResource.noLogsYet': 'まだミューテーションが実行されていません。上のボタンをクリックして開始してください。',
-  'mutateResource.demo3Section': '3. リアクティブなステータスシグナルとエラーリカバリー',
+  'mutateResource.demo3Section': '2. リアクティブなステータスシグナルとエラーリカバリー',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> はエラーを分離して管理します。書き込みが失敗すると error signal にエラーが入り、status は "error" になり、返された Promise は拒否されます。try/catch で処理できます。',
   'mutateResource.demo3PlaygroundTitle': 'ステータスシグナルとエラーリカバリー',

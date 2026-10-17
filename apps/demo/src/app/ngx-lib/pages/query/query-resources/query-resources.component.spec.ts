@@ -1,3 +1,5 @@
+import {By} from '@angular/platform-browser';
+import {CollectionStarterComponent} from '../collection-starter/collection-starter.component';
 import {TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
@@ -39,8 +41,10 @@ describe('queryResources guide', () => {
   });
   it('preserves displayed refs on reorder and cancels removed pending reads', async () => {
     const fixture = TestBed.createComponent(QueryResourcesDemoComponent);
-    const component = fixture.componentInstance;
     fixture.detectChanges();
+    const component: CollectionStarterComponent = fixture.debugElement.query(
+      By.directive(CollectionStarterComponent),
+    ).componentInstance;
     component.selectedTenants.set(['a', 'b']);
     fixture.detectChanges();
     const [a, b] = component.tenantQueries();

@@ -1,3 +1,5 @@
+import {QueryStarterComponent} from '../query-starter/query-starter.component';
+import {QUERY_STARTER_SOURCE, QUERY_STARTER_TEMPLATE} from '../query-starter/query-starter.example';
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject, signal, computed, viewChild} from '@angular/core';
 import {RouterLink} from '@angular/router';
@@ -5,7 +7,6 @@ import {QueryStatusDirective} from '../query-status.directive';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
-  CalloutComponent,
   PageContainerComponent,
   QueryDevtoolsComponent,
   SpinnerComponent,
@@ -38,11 +39,11 @@ interface DemoUser {
   selector: 'app-query-resource-demo',
   imports: [
     CommonModule,
+    QueryStarterComponent,
     RouterLink,
     QueryStatusDirective,
     FormsModule,
     ClarityModule,
-    CalloutComponent,
     PageContainerComponent,
     QueryDevtoolsComponent,
     SpinnerComponent,
@@ -62,6 +63,12 @@ interface DemoUser {
 })
 export class QueryResourceDemoComponent {
   private readonly translationService = inject(TranslationService);
+  readonly starterCode = highlight(QUERY_STARTER_SOURCE);
+  readonly starterHtmlCode = highlight(QUERY_STARTER_TEMPLATE, 'html');
+  readonly httpSetupCode = highlight(`import {ApplicationConfig} from '@angular/core';
+import {provideHttpClient} from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {providers: [provideHttpClient()]};`);
 
   // ---------------------------------------------------------------------------
   // Placement Architecture: Component vs Service
@@ -191,7 +198,7 @@ import {QueryDevtoolsComponent} from 'clr-lift';
 @Component({
   selector: 'app-query-diagnostics-demo',
   imports: [QueryDevtoolsComponent],
-  template: '<cll-query-devtools [enabled]="true" />',
+  templateUrl: './query-diagnostics-demo.component.html',
 })
 export class QueryDiagnosticsDemoComponent {}`);
 

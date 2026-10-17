@@ -9,69 +9,114 @@ of use for public users.
 
 ## Table of Contents
 
-1. [Page Structure](#page-structure)
-2. [Spacing and Layout](#spacing-and-layout)
-3. [Title Format](#title-format)
-4. [Required Sections](#required-sections)
-5. [Code Examples](#code-examples)
-6. [Import Statements in Code Examples](#import-statements-in-code-examples)
-7. [API Reference Format](#api-reference-format)
-8. [Component vs Utility/Operator/Pipe/Validator](#component-vs-utilityoperatorpipevalidator)
-9. [Examples and Demos](#examples-and-demos)
-10. [Migration Checklist](#migration-checklist)
+1. [Documentation Pedagogy & Progressive Disclosure](#documentation-pedagogy--progressive-disclosure)
+2. [Page Types and Learning Progression](#page-types-and-learning-progression)
+3. [Prohibited Documentation Anti-Patterns](#prohibited-documentation-anti-patterns)
+4. [Spacing and Layout](#spacing-and-layout)
+5. [Title Format](#title-format)
+6. [Introductory Page Sections](#introductory-page-sections)
+7. [Code Examples](#code-examples)
+8. [Import Statements in Code Examples](#import-statements-in-code-examples)
+9. [API Reference Format](#api-reference-format)
+10. [Component vs Utility/Operator/Pipe/Validator](#component-vs-utilityoperatorpipevalidator)
+11. [Examples and Demos](#examples-and-demos)
+12. [Migration Checklist](#migration-checklist)
 
 ---
 
-## Page Structure
+## Documentation Pedagogy & Progressive Disclosure
 
-All documentation pages MUST follow this structure:
+Following the **Diátaxis documentation framework**, documentation is curated according to developer intent:
+
+- **Tutorials (Learning Journey)**: Minimal friction onboarding ("3-Minute Quick Start").
+- **How-To Guides (Problem-Oriented Recipes)**: Concrete enterprise patterns and recovery solutions.
+- **Concepts (Mental Models)**: Visualized lifecycles, Stale-While-Revalidate timing, and caching architecture.
+- **Reference (Technical Lookup)**: Complete API signatures, input/output tables, and signal state matrices.
+
+Always respect the developer's cognitive load: developers must build an accurate mental model and run working code
+before being confronted with technical edge-case matrices or internal configuration DSLs.
+
+---
+
+## Page Types and Learning Progression
+
+Choose the page structure for the reader's task. Diátaxis distinguishes tutorials, how-to guides, explanation, and
+reference; it does not require all four modes on every page. Link between them instead of repeating them.
+
+| Page type                            | Reader outcome                               | Recommended organization                                                    |
+| ------------------------------------ | -------------------------------------------- | --------------------------------------------------------------------------- |
+| Overview                             | Recognize the problem and find the next step | What and why, prerequisites, short vocabulary, reading path                 |
+| Tutorial / introductory feature page | Complete a first working task                | Problem, working example and preview, explain each new concept, next task   |
+| How-to guide                         | Solve a specific problem                     | Required knowledge, steps, expected result, recovery and related reference  |
+| Explanation                          | Understand a behavior or tradeoff            | Question, concrete scenario, mental model, consequences and links           |
+| Reference                            | Look up an exact contract                    | Signature, types, defaults, methods, states, limitations and related guides |
+
+For introductory feature pages, use this progression when it helps: what and why -> first working example -> explain its
+behavior -> common tasks -> reference. Small utilities may need only an example and a contract. Reference pages should
+open with the requested API, without requiring the reader to repeat a tutorial.
+
+- Use a plain-language scope sentence early; put detailed tool comparisons in a linked guide.
+- Show the first useful preview before advanced coordination, architecture patterns, or lifecycle matrices.
+- Introduce signals beside the UI behavior they control. Explain initial loading before introducing background refresh.
+- Provide a short teaching excerpt and a complete runnable example. Label omitted setup and prerequisites; do not
+  enforce a line-count target that hides imports, providers, template bindings, or error handling.
+- Put factories, file organization, and naming conventions in an organization guide after basic keys and invalidation.
+- Keep reference bookmarkable with stable section IDs and links from the examples. Preserve existing public routes.
+- State an observable learning outcome. A reader should be able to complete the task and explain the important behavior.
+
+The query learning path is recorded in [the query documentation plan](query-documentation-plan.md). Its menu separates
+introductory API pages, cache/key/organization explanations, API selection, reference, and diagnostics.
 
 ```html
 <cll-page-container [title]="'ComponentName'">
-  <!-- Overview -->
+  <!-- Introduction: what and why -->
   <p>
     Clear, concise description of what the component/utility/operator/pipe/validator does, when to use it, and why it's
     useful.
   </p>
 
-  <!-- Examples Section -->
+  <!-- First task and working example -->
   <section cds-layout="vertical gap:md">
     <h2>Examples</h2>
 
     <article cds-layout="vertical gap:sm">
       <h3>Example 1: Title</h3>
       <p>Description of what this example demonstrates:</p>
-      <app-code-block [code]="basicUsageCode" lang="typescript" />
+      <app-demo-playground ... />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>Example 2: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="example1Code" lang="typescript" />
-      <!-- Live demo if applicable -->
-    </article>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>Example 3: Title</h3>
-      <p>Description of what this example demonstrates:</p>
-      <app-code-block [code]="example2Code" lang="html" />
-    </article>
-
-    <!-- Additional examples (optional) -->
-    <article cds-layout="vertical gap:sm">
-      <h3>Example 4: Title</h3>
-      <p>Description of what this example demonstrates:</p>
-      <app-code-block [code]="advancedCode" lang="typescript" />
     </article>
   </section>
 
-  <!-- API Reference Section (if applicable) -->
+  <!-- Reference or links to the dedicated reference page -->
   <section cds-layout="vertical gap:md">
     <h2>API Reference</h2>
-    <!-- API details here -->
+    <!-- API details, tables, matrices here -->
   </section>
 </cll-page-container>
 ```
+
+---
+
+## Prohibited Documentation Anti-Patterns
+
+1. **No Premature Architectural Banners**:
+   - Never place naming convention alerts, domain key architecture callouts, or dense comparative matrices at the very
+     top of a page before the developer has seen what the feature does and how to use it.
+   - Domain key patterns and naming rules belong in dedicated architecture sections or guides.
+
+2. **No Inverted Example Flow**:
+   - Do not bury working interactive component previews beneath 4–5 static code blocks.
+   - For complex UI components (e.g. `dgState`, `cll-timeline-wizard`), place the interactive playground in the top
+     fold.
+
+3. **No "Encyclopedia Trap" (Reference Before Concept)**:
+   - Do not lead with 5×7 boolean signal matrices (`status()`, `hasValue()`, `isInitialLoading()`, etc.) before
+     explaining what those signals mean. Keep the matrix in the linked reference or after the examples.
 
 ---
 
@@ -107,34 +152,28 @@ and translated tab labels.
 
 ### Standard Format
 
-Use the exact name of the component/utility/operator/pipe/validator as it appears in the library:
+For API demo pages, use the exact library export name. For overview and guide pages, use a translated reader task such
+as "Organizing queries". Include the API name in sidebar labels for API tutorials.
 
 ```html
-<!-- For components -->
-<cll-page-container [title]="'Alert'">
-  <!-- For operators -->
-  <cll-page-container [title]="'createAsyncState'">
-    <!-- For pipes -->
-    <cll-page-container [title]="'ArrayJoinPipe'">
-      <!-- For validators -->
-      <cll-page-container [title]="'urlValidator'">
-        <!-- For utilities -->
-        <cll-page-container
-          [title]="'injectParams'"
-        ></cll-page-container></cll-page-container></cll-page-container></cll-page-container
-></cll-page-container>
+<cll-page-container [title]="'queryResource'" />
+<cll-page-container [title]="'ArrayJoinPipe'" />
+<cll-page-container [title]="'urlValidator'" />
 ```
 
 **Rules:**
 
 - Use signal input syntax: `[title]="'Name'"`
-- Match the exact export name from the library
+- On API demo pages, match the exact export name from the library
 - Use PascalCase for classes/components, camelCase for functions/operators
 - No extra formatting (no "Component" suffix unless it's part of the actual name)
 
 ---
 
-## Required Sections
+## Introductory Page Sections
+
+These requirements apply to introductory API/demo pages. Guides and reference use the structures in
+[Page Types and Learning Progression](#page-types-and-learning-progression).
 
 ### 1. Overview (Required)
 
@@ -184,7 +223,7 @@ Use the exact name of the component/utility/operator/pipe/validator as it appear
 **Note**: Import statements should be included at the top of each code example block. Examples should be numbered
 sequentially (Example 1, Example 2, etc.), with the first example typically showing the simplest, most common use case.
 
-### 4. API Reference (Required for Components, Optional for Utilities)
+### 3. API Reference (Required for Components, Optional for Utilities)
 
 **Purpose**: Document all inputs, outputs, methods, and configuration options.
 
@@ -256,7 +295,8 @@ import { ComponentName } from 'library-name';
 }
 ```
 
-**Important**: All code examples MUST include import statements at the top of the code block.
+**Important**: Complete examples include imports and required setup. Clearly label teaching excerpts and link to the
+complete source; do not describe an excerpt as standalone runnable code.
 
 ### Code Block Language Tags
 
@@ -268,8 +308,10 @@ Always specify the `lang` attribute:
 
 ### Code Example Best Practices
 
-1. **Import Statements**: **ALWAYS** include import statements at the top of each code block
-2. **Complete Examples**: Include full, runnable code (imports, component decorator, etc.)
+1. **Import Statements**: Include imports in complete examples; identify the context of shorter excerpts.
+2. **Complete Examples**: Provide runnable code (imports, component decorator, providers, template and supporting
+   services). Prefer displaying the same compiled source/template used by the live preview. Verify complete teaching
+   examples against public exports; formatting or parsing alone does not prove that imports and API types are correct.
 3. **Real-World Scenarios**: Use practical, relatable examples
 4. **Comments**: Add helpful comments explaining key parts
 5. **Output Comments**: Show expected output when relevant:
@@ -287,7 +329,10 @@ Always specify the `lang` attribute:
    explicitly; formatting the surrounding TypeScript does not format template-literal snippets. Expand multi-statement
    methods and query definition objects, and keep excerpt closing braces aligned with their declarations. Present UI
    markup in an HTML example or a component template; do not represent it with commented-out HTML. Check every tab, not
-   only the initially selected panel.
+   only the initially selected panel. When a playground has both TypeScript and HTML tabs, keep the template in the HTML
+   tab. The TypeScript tab should contain imports, component setup and class logic, with `templateUrl` pointing to the
+   HTML file; do not repeat that HTML in an inline template or exported template constant. A separate HTML tab showing
+   how to consume a component may accompany its inline implementation when they show different code.
 7. **Action labels**: Use short, translated action names such as "Update name" or "Refresh". Keep method paths,
    signatures and implementation explanations in prose or code. Do not place API calls in button labels or use CSS
    truncation to hide them. Check each supported language and narrow screens.
@@ -320,7 +365,8 @@ Use descriptive names:
 
 ### Standard Import Format
 
-**All code examples MUST include import statements at the top of the code block.**
+**Complete code examples include imports and required setup. Label shorter excerpts and link to their complete
+example.**
 
 ```typescript
 basicUsageCode = highlight(`
@@ -559,14 +605,18 @@ Use `<cll-callout>` for important notes:
 When standardizing an existing page:
 
 - [ ] **Title**: Use signal input syntax `[title]="'Name'"`
+- [ ] **Reader outcome**: Choose a page type and verify its learning or lookup task. Introduce concepts before relying
+      on them; link to guides and reference when appropriate.
+- [ ] **No Premature Banners**: No naming convention or domain architecture callout banners before the overview and
+      basic usage
 - [ ] **Container**: Use the built-in page container spacing
 - [ ] **Sections**: All sections use `cds-layout="vertical gap:md"`
 - [ ] **Articles**: All articles use `cds-layout="vertical gap:sm"`
 - [ ] **Overview**: Clear, concise description (2-4 sentences)
-- [ ] **Examples**: Section with multiple examples, numbered sequentially (Example 1, Example 2, etc.)
-- [ ] **API Reference**: Complete documentation at the end (after Examples)
+- [ ] **Examples**: Start with one useful task and add relevant follow-up tasks. Keep any recipe numbering sequential.
+- [ ] **API Reference**: Complete documentation and signal state matrices at the end (after Examples)
 - [ ] **Code Blocks**: All use `highlight()` utility, proper `lang` attribute
-- [ ] **Imports in Code**: All code examples include import statements at the top
+- [ ] **Imports in Code**: Complete examples include imports and setup; excerpts identify their context.
 - [ ] **Spacing**: Consistent Clarity layout attributes throughout
 - [ ] **Headings**: Proper hierarchy (H2 for sections, H3 for examples)
 - [ ] **Lists**: Use `cds-layout="vertical gap:xs"` for unordered lists
@@ -691,9 +741,8 @@ export class ExampleComponent {
 
 ### Section Order
 
-1. Overview
-2. Examples (numbered sequentially: Example 1, Example 2, etc.)
-3. API Reference
+Choose the order from [Page Types and Learning Progression](#page-types-and-learning-progression). Introductory pages
+start with a useful task and working example; reference pages start with the contract being looked up.
 
 ### Code Block Pattern
 

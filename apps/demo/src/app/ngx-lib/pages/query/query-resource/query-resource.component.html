@@ -1,291 +1,27 @@
 <cll-page-container [title]="'queryResource.title' | translate">
-  <p class="p1" [innerHTML]="'queryResource.overview' | translate"></p>
-  <cll-callout data-testid="query-naming-convention">
-    <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
-    <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
-  </cll-callout>
+  <!-- Stage 1: Overview & Elevator Pitch -->
+  <p class="p1" [innerHTML]="'queryLearn.readIntro' | translate"></p>
 
-  <cll-callout>
-    <h3>{{ 'queryOwnership.title' | translate }}</h3>
-    <p>{{ 'queryOwnership.definitions' | translate }}</p>
-    <p>{{ 'queryOwnership.noCache' | translate }}</p>
-    <a routerLink="/ngx-lift/query/mutateResource">{{ 'queryOwnership.title' | translate }}</a>
-  </cll-callout>
-
-  <section class="query-section" data-testid="query-introduction">
-    <h2>{{ 'queryResource.comparisonTitle' | translate }}</h2>
-    <p>{{ 'queryResource.comparisonIntro' | translate }}</p>
-    <div class="query-table">
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>{{ 'queryResource.thFeature' | translate }}</th>
-            <th><code>resourceAsync</code></th>
-            <th><code>queryResource</code></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ 'queryResource.rowPrimaryLayer' | translate }}</td>
-            <td>{{ 'queryResource.rowPrimaryLayerResource' | translate }}</td>
-            <td>{{ 'queryResource.rowPrimaryLayerQuery' | translate }}</td>
-          </tr>
-          <tr>
-            <td>{{ 'queryResource.rowSharedMemory' | translate }}</td>
-            <td>{{ 'queryResource.badgeNoneComponent' | translate }}</td>
-            <td>{{ 'queryResource.badgeGlobalKey' | translate }}</td>
-          </tr>
-          <tr>
-            <td>{{ 'queryResource.rowDeduplication' | translate }}</td>
-            <td>{{ 'queryResource.badgePerInstance' | translate }}</td>
-            <td>{{ 'queryResource.badgeClientCoalesced' | translate }}</td>
-          </tr>
-          <tr>
-            <td>{{ 'queryResource.rowBackgroundPolling' | translate }}</td>
-            <td>{{ 'queryResource.badgeNoneBuiltIn' | translate }}</td>
-            <td>{{ 'queryResource.badgeCoordinatedVisibility' | translate }}</td>
-          </tr>
-          <tr>
-            <td>{{ 'queryResource.rowTagInvalidation' | translate }}</td>
-            <td>{{ 'queryResource.badgeManualReload' | translate }}</td>
-            <td>{{ 'queryResource.badgeAutoMutate' | translate }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3 class="m-t-md">{{ 'queryResource.lifecycleTitle' | translate }}</h3>
-    <p>{{ 'queryResource.lifecycleIntro' | translate }}</p>
-    <div class="query-table">
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>{{ 'queryResource.matrixState' | translate }}</th>
-            <th>{{ 'queryResource.matrixStatus' | translate }}</th>
-            <th><code>hasValue()</code></th>
-            <th><code>isInitialLoading()</code></th>
-            <th><code>isRefreshing()</code></th>
-            <th><code>isLoading()</code></th>
-            <th>{{ 'queryResource.matrixWhenToUse' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.matrixInitialLoad' | translate }}</strong>
-            </td>
-            <td><code>'loading'</code></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-success">true</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-success">true</span></td>
-            <td>{{ 'queryResource.matrixInitialLoadUsage' | translate }}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.matrixResolved' | translate }}</strong>
-            </td>
-            <td><code>'resolved'</code></td>
-            <td><span class="label label-success">true</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td>{{ 'queryResource.matrixResolvedUsage' | translate }}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.matrixRefreshingState' | translate }}</strong>
-            </td>
-            <td><code>'reloading'</code></td>
-            <td><span class="label label-success">true</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-success">true</span></td>
-            <td><span class="label label-success">true</span></td>
-            <td>{{ 'queryResource.matrixRefreshingUsage' | translate }}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.matrixInitialError' | translate }}</strong>
-            </td>
-            <td><code>'error'</code></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td>{{ 'queryResource.matrixInitialErrorUsage' | translate }}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.matrixRefreshError' | translate }}</strong>
-            </td>
-            <td><code>'error'</code></td>
-            <td><span class="label label-success">true</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td><span class="label label-danger">false</span></td>
-            <td>{{ 'queryResource.matrixRefreshErrorUsage' | translate }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
+  <section cds-layout="vertical gap:sm" data-testid="query-starter">
+    <app-demo-playground
+      [title]="'queryLearn.readTitle' | translate"
+      [description]="'queryLearn.fixture' | translate"
+      level="beginner"
+      [tsCode]="starterCode"
+      [htmlCode]="starterHtmlCode"
+    >
+      <div preview><app-query-starter /></div>
+    </app-demo-playground>
+    <p>{{ 'queryLearn.readSteps' | translate }}</p>
+    <h2>{{ 'queryLearn.readExplainTitle' | translate }}</h2>
+    <p>{{ 'queryLearn.readExplain' | translate }}</p>
+    <p>{{ 'queryLearn.refreshExplain' | translate }}</p>
+    <p>{{ 'queryLearn.httpSetup' | translate }}</p>
+    <app-code-block [code]="httpSetupCode" lang="typescript" />
     <p>
-      {{ 'queryGuide.selection' | translate }}
-      <a routerLink="/ngx-lift/query/queryResources"><code>queryResources</code></a> ·
-      <a routerLink="/ngx-lift/query/mutateResource"><code>mutateResource</code></a>
+      <a routerLink="/ngx-lift/query/cache">{{ 'queryDocs.cache' | translate }}</a> ·
+      <a routerLink="/ngx-lift/query/mutateResource">{{ 'queryDocs.saving' | translate }}</a>
     </p>
-  </section>
-
-  <!-- ==================== ARCHITECTURE: COMPONENT VS SERVICE PLACEMENT ==================== -->
-  <section class="query-section" data-testid="query-placement-architecture">
-    <h2>{{ 'queryResource.placementTitle' | translate }}</h2>
-    <p [innerHTML]="'queryResource.placementIntro' | translate"></p>
-
-    <div class="query-table">
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>{{ 'queryResource.thPlacement' | translate }}</th>
-            <th>{{ 'queryResource.thScopeLifetime' | translate }}</th>
-            <th>{{ 'queryResource.thStateSharing' | translate }}</th>
-            <th>{{ 'queryResource.thCoordination' | translate }}</th>
-            <th>{{ 'queryResource.thRecommendation' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.rowComponentPlacement' | translate }}</strong>
-            </td>
-            <td>{{ 'queryResource.rowComponentScope' | translate }}</td>
-            <td>{{ 'queryResource.rowComponentSharing' | translate }}</td>
-            <td>{{ 'queryResource.rowComponentCoord' | translate }}</td>
-            <td>{{ 'queryResource.rowComponentRec' | translate }}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.rowServicePlacement' | translate }}</strong>
-            </td>
-            <td>{{ 'queryResource.rowServiceScope' | translate }}</td>
-            <td>{{ 'queryResource.rowServiceSharing' | translate }}</td>
-            <td>{{ 'queryResource.rowServiceCoord' | translate }}</td>
-            <td>{{ 'queryResource.rowServiceRec' | translate }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <clr-tabs cds-layout="m-t:md">
-      <!-- Tab 1: Pattern A - Global Auth Session -->
-      <clr-tab>
-        <button clrTabLink id="tab-service-pattern-a">{{ 'queryResource.tabServicePatternA' | translate }}</button>
-        <clr-tab-content id="tab-content-service-pattern-a" *clrIfActive>
-          <div class="m-t-sm">
-            <app-demo-playground
-              [title]="'queryResource.tabServicePatternA' | translate"
-              [description]="'queryResource.tabServicePatternADesc' | translate"
-              level="intermediate"
-              layout="split"
-              [tsCode]="authServiceCode"
-              [htmlCode]="authHtmlCode"
-            >
-              <div preview><app-auth-placement-demo /></div>
-            </app-demo-playground>
-          </div>
-        </clr-tab-content>
-      </clr-tab>
-
-      <!-- Tab 2: Pattern B - Dynamic Master-Detail -->
-      <clr-tab>
-        <button clrTabLink id="tab-service-pattern-b">{{ 'queryResource.tabServicePatternB' | translate }}</button>
-        <clr-tab-content id="tab-content-service-pattern-b" *clrIfActive>
-          <div class="m-t-sm">
-            <app-demo-playground
-              [title]="'queryResource.tabServicePatternB' | translate"
-              [description]="'queryResource.tabServicePatternBDesc' | translate"
-              level="intermediate"
-              layout="split"
-              [tsCode]="databaseServiceCode"
-            >
-              <div preview>
-                <div cds-layout="vertical gap:sm">
-                  <div>
-                    <span class="font-weight-semibold">{{ 'queryResource.simulatedMasterList' | translate }}:</span>
-                    <div class="btn-group btn-sm m-t-xs" role="group">
-                      @for (db of databaseStateService.databases; track db.id) {
-                        <button
-                          type="button"
-                          class="btn"
-                          [class.btn-primary]="databaseStateService.activeDatabaseId() === db.id"
-                          [class.btn-outline]="databaseStateService.activeDatabaseId() !== db.id"
-                          (click)="databaseStateService.selectDatabase(db.id)"
-                        >
-                          {{ db.name }}
-                        </button>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="card p-3 m-t-sm">
-                    <div class="card-header font-weight-semibold">
-                      {{ 'queryResource.simulatedDetailCard' | translate }} (<code>DatabaseDetailComponent</code>)
-                    </div>
-                    <div class="card-block">
-                      @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
-                        <div class="text-center p-y-sm">
-                          <cll-spinner inline [size]="'sm'" />
-                          <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
-                        </div>
-                      } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
-                        <div cds-layout="vertical gap:xs">
-                          <h4 class="m-0 font-weight-bold">{{ details.name }}</h4>
-                          <p class="m-0 text-secondary">
-                            {{ 'queryResource.engineLabel' | translate }}:
-                            <strong>{{ details.engine }}</strong> &middot;
-                            {{ 'queryResource.computeLabel' | translate }}: <strong>{{ details.cpu }}</strong> /
-                            <strong>{{ details.ram }}</strong>
-                          </p>
-                          <p class="m-0 text-secondary">
-                            {{ 'mutateResource.statusLabel' | translate }}:
-                            <span [appQueryStatus]="databaseStateService.databaseDetailsQuery.status()">{{
-                              databaseStateService.databaseDetailsQuery.status()
-                            }}</span>
-                          </p>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </app-demo-playground>
-          </div>
-        </clr-tab-content>
-      </clr-tab>
-
-      <!-- Tab 3: Pattern C - Component Placement -->
-      <clr-tab>
-        <button clrTabLink id="tab-component-placement">{{ 'queryResource.tabComponentPlacement' | translate }}</button>
-        <clr-tab-content id="tab-content-component-placement" *clrIfActive>
-          <div class="m-t-sm">
-            <app-demo-playground
-              [title]="'queryResource.tabComponentPlacement' | translate"
-              [description]="'queryResource.tabComponentPlacementDesc' | translate"
-              level="beginner"
-              layout="split"
-              [tsCode]="componentPlacementCode"
-              [htmlCode]="componentPlacementHtmlCode"
-            >
-              <div preview>
-                <div cds-layout="vertical gap:sm">
-                  <p>{{ 'queryResource.componentPlacementAdvice' | translate }}</p>
-                  <app-project-detail-demo projectId="website-redesign" />
-                </div>
-              </div>
-            </app-demo-playground>
-          </div>
-        </clr-tab-content>
-      </clr-tab>
-    </clr-tabs>
   </section>
 
   <!-- ==================== DEMO 1: REQUEST COALESCING ==================== -->
@@ -560,6 +296,158 @@
 
   <app-query-failure-examples />
 
+  <!-- ==================== ARCHITECTURE: COMPONENT VS SERVICE PLACEMENT ==================== -->
+  <section class="query-section" data-testid="query-placement-architecture">
+    <h2>{{ 'queryResource.placementTitle' | translate }}</h2>
+    <p [innerHTML]="'queryResource.placementIntro' | translate"></p>
+
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'queryResource.thPlacement' | translate }}</th>
+            <th>{{ 'queryResource.thScopeLifetime' | translate }}</th>
+            <th>{{ 'queryResource.thStateSharing' | translate }}</th>
+            <th>{{ 'queryResource.thCoordination' | translate }}</th>
+            <th>{{ 'queryResource.thRecommendation' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.rowComponentPlacement' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResource.rowComponentScope' | translate }}</td>
+            <td>{{ 'queryResource.rowComponentSharing' | translate }}</td>
+            <td>{{ 'queryResource.rowComponentCoord' | translate }}</td>
+            <td>{{ 'queryResource.rowComponentRec' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.rowServicePlacement' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResource.rowServiceScope' | translate }}</td>
+            <td>{{ 'queryResource.rowServiceSharing' | translate }}</td>
+            <td>{{ 'queryResource.rowServiceCoord' | translate }}</td>
+            <td>{{ 'queryResource.rowServiceRec' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <clr-tabs cds-layout="m-t:md">
+      <!-- Tab 1: Pattern A - Global Auth Session -->
+      <clr-tab>
+        <button clrTabLink id="tab-service-pattern-a">{{ 'queryResource.tabServicePatternA' | translate }}</button>
+        <clr-tab-content id="tab-content-service-pattern-a" *clrIfActive>
+          <div class="m-t-sm">
+            <app-demo-playground
+              [title]="'queryResource.tabServicePatternA' | translate"
+              [description]="'queryResource.tabServicePatternADesc' | translate"
+              level="intermediate"
+              layout="split"
+              [tsCode]="authServiceCode"
+              [htmlCode]="authHtmlCode"
+            >
+              <div preview><app-auth-placement-demo /></div>
+            </app-demo-playground>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <!-- Tab 2: Pattern B - Dynamic Master-Detail -->
+      <clr-tab>
+        <button clrTabLink id="tab-service-pattern-b">{{ 'queryResource.tabServicePatternB' | translate }}</button>
+        <clr-tab-content id="tab-content-service-pattern-b" *clrIfActive>
+          <div class="m-t-sm">
+            <app-demo-playground
+              [title]="'queryResource.tabServicePatternB' | translate"
+              [description]="'queryResource.tabServicePatternBDesc' | translate"
+              level="intermediate"
+              layout="split"
+              [tsCode]="databaseServiceCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:sm">
+                  <div>
+                    <span class="font-weight-semibold">{{ 'queryResource.simulatedMasterList' | translate }}:</span>
+                    <div class="btn-group btn-sm m-t-xs" role="group">
+                      @for (db of databaseStateService.databases; track db.id) {
+                        <button
+                          type="button"
+                          class="btn"
+                          [class.btn-primary]="databaseStateService.activeDatabaseId() === db.id"
+                          [class.btn-outline]="databaseStateService.activeDatabaseId() !== db.id"
+                          (click)="databaseStateService.selectDatabase(db.id)"
+                        >
+                          {{ db.name }}
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="card p-3 m-t-sm">
+                    <div class="card-header font-weight-semibold">
+                      {{ 'queryResource.simulatedDetailCard' | translate }} (<code>DatabaseDetailComponent</code>)
+                    </div>
+                    <div class="card-block">
+                      @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
+                        <div class="text-center p-y-sm">
+                          <cll-spinner inline [size]="'sm'" />
+                          <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
+                        </div>
+                      } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
+                        <div cds-layout="vertical gap:xs">
+                          <h4 class="m-0 font-weight-bold">{{ details.name }}</h4>
+                          <p class="m-0 text-secondary">
+                            {{ 'queryResource.engineLabel' | translate }}:
+                            <strong>{{ details.engine }}</strong> &middot;
+                            {{ 'queryResource.computeLabel' | translate }}: <strong>{{ details.cpu }}</strong> /
+                            <strong>{{ details.ram }}</strong>
+                          </p>
+                          <p class="m-0 text-secondary">
+                            {{ 'mutateResource.statusLabel' | translate }}:
+                            <span [appQueryStatus]="databaseStateService.databaseDetailsQuery.status()">{{
+                              databaseStateService.databaseDetailsQuery.status()
+                            }}</span>
+                          </p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <!-- Tab 3: Pattern C - Component Placement -->
+      <clr-tab>
+        <button clrTabLink id="tab-component-placement">{{ 'queryResource.tabComponentPlacement' | translate }}</button>
+        <clr-tab-content id="tab-content-component-placement" *clrIfActive>
+          <div class="m-t-sm">
+            <app-demo-playground
+              [title]="'queryResource.tabComponentPlacement' | translate"
+              [description]="'queryResource.tabComponentPlacementDesc' | translate"
+              level="beginner"
+              layout="split"
+              [tsCode]="componentPlacementCode"
+              [htmlCode]="componentPlacementHtmlCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:sm">
+                  <p>{{ 'queryResource.componentPlacementAdvice' | translate }}</p>
+                  <app-project-detail-demo projectId="website-redesign" />
+                </div>
+              </div>
+            </app-demo-playground>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+    </clr-tabs>
+  </section>
+
   <!-- ==================== DEVELOPER DIAGNOSTICS ==================== -->
   <section data-testid="query-diagnostics" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2>{{ 'queryResource.diagnosticsSection' | translate }}</h2>
@@ -578,9 +466,135 @@
     </app-demo-playground>
   </section>
 
+  <p>
+    <a routerLink="/ngx-lift/query/devtools">{{ 'queryDocs.devtools' | translate }}</a> ·
+    <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+  </p>
+
+  <section class="query-section" id="lifecycle" data-testid="query-introduction">
+    <h2>{{ 'queryResource.lifecycleTitle' | translate }}</h2>
+    <p>{{ 'queryResource.lifecycleIntro' | translate }}</p>
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'queryResource.matrixState' | translate }}</th>
+            <th>{{ 'queryResource.matrixStatus' | translate }}</th>
+            <th><code>hasValue()</code></th>
+            <th><code>isInitialLoading()</code></th>
+            <th><code>isRefreshing()</code></th>
+            <th><code>isLoading()</code></th>
+            <th>{{ 'queryResource.matrixWhenToUse' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixInitialLoad' | translate }}</strong>
+            </td>
+            <td><code>'loading'</code></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-success">true</span></td>
+            <td>{{ 'queryResource.matrixInitialLoadUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixResolved' | translate }}</strong>
+            </td>
+            <td><code>'resolved'</code></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td>{{ 'queryResource.matrixResolvedUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixRefreshingState' | translate }}</strong>
+            </td>
+            <td><code>'reloading'</code></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-success">true</span></td>
+            <td>{{ 'queryResource.matrixRefreshingUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixInitialError' | translate }}</strong>
+            </td>
+            <td><code>'error'</code></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td>{{ 'queryResource.matrixInitialErrorUsage' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.matrixRefreshError' | translate }}</strong>
+            </td>
+            <td><code>'error'</code></td>
+            <td><span class="label label-success">true</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td><span class="label label-danger">false</span></td>
+            <td>{{ 'queryResource.matrixRefreshErrorUsage' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="query-section" id="comparison">
+    <h2>{{ 'queryResource.comparisonTitle' | translate }}</h2>
+    <p>{{ 'queryResource.comparisonIntro' | translate }}</p>
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'queryResource.thFeature' | translate }}</th>
+            <th><code>resourceAsync</code></th>
+            <th><code>queryResource</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ 'queryResource.rowPrimaryLayer' | translate }}</td>
+            <td>{{ 'queryResource.rowPrimaryLayerResource' | translate }}</td>
+            <td>{{ 'queryResource.rowPrimaryLayerQuery' | translate }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'queryResource.rowSharedMemory' | translate }}</td>
+            <td>{{ 'queryResource.badgeNoneComponent' | translate }}</td>
+            <td>{{ 'queryResource.badgeGlobalKey' | translate }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'queryResource.rowDeduplication' | translate }}</td>
+            <td>{{ 'queryResource.badgePerInstance' | translate }}</td>
+            <td>{{ 'queryResource.badgeClientCoalesced' | translate }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'queryResource.rowBackgroundPolling' | translate }}</td>
+            <td>{{ 'queryResource.badgeNoneBuiltIn' | translate }}</td>
+            <td>{{ 'queryResource.badgeCoordinatedVisibility' | translate }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'queryResource.rowTagInvalidation' | translate }}</td>
+            <td>{{ 'queryResource.badgeManualReload' | translate }}</td>
+            <td>{{ 'queryResource.badgeAutoMutate' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a routerLink="/ngx-lift/query/choosing">{{ 'queryDocs.choosing' | translate }}</a>
+  </section>
+
   <!-- ==================== API REFERENCE ==================== -->
   <section cds-layout="vertical gap:md align:stretch" class="m-t-lg">
-    <h2>{{ 'queryResource.apiReference' | translate }}</h2>
+    <h2 id="api-reference">{{ 'queryResource.apiReference' | translate }}</h2>
 
     <h3><code>queryResource(definition, options)</code></h3>
     <app-api-table [properties]="queryResourceApiProps()" />

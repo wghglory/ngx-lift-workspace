@@ -1,4 +1,96 @@
 export const enTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Cache freshness and refresh',
+  'queryDocs.cacheIntro':
+    'A query key identifies shared data within one QueryClient. Freshness, request activity, and observer lifetime answer different questions.',
+  'queryDocs.chooseComputed':
+    'Use for an async derived value when a value signal is sufficient. Prefer computed() for synchronous derivation.',
+  'queryDocs.chooseMutation':
+    'Use for explicitly submitted server writes. No query key is required; add invalidation tags when other views must update.',
+  'queryDocs.chooseObservable':
+    'Use fetchQueryObservable for one finite cached read in an RxJS flow; observeQueryObservable emits shared cache snapshots and owns an observer.',
+  'queryDocs.chooseQuery':
+    'Use one observer for a shared cached read. A response containing an array is still one query.',
+  'queryDocs.chooseResource':
+    'Use for independent async state, local overrides, or streaming without a shared keyed cache.',
+  'queryDocs.choosing': 'Choosing an async API',
+  'queryDocs.choosingIntro':
+    'Choose by the operation and ownership you need. A Refresh button still performs a read; a click does not make an operation a mutation.',
+  'queryDocs.clientReference':
+    'QueryClient owns shared entries. fetchQuery reads data; invalidateTags marks dependencies stale and refetches active entries; removeQueries removes matching entries. See the public source contracts for parameters and adapters.',
+  'queryDocs.defaults':
+    'Defaults: staleTime = 0; gcTime = 300,000 ms. Polling, retries, deadlines, and focus/reconnect refresh are disabled unless configured.',
+  'queryDocs.devtools': 'Query devtools',
+  'queryDocs.excerpt':
+    'Component-field excerpt. Import the service and definitions above; the mutation demo provides the complete table and summary workflow.',
+  'queryDocs.fetching': 'Fetching data · queryResource',
+  'queryDocs.freshness':
+    'staleTime measures freshness from the last successful response. Once it expires, data becomes stale; expiration alone does not issue a request.',
+  'queryDocs.independent': 'Independent reads · queryResources',
+  'queryDocs.independentClocks':
+    'The two clocks are independent: unused data can still be fresh, and active data can be stale. Returning observers can reuse retained data.',
+  'queryDocs.invalidation':
+    'Successful writes invalidate selected tags. Active queries refetch; inactive entries become stale. Invalidation does not delete the data.',
+  'queryDocs.keyIdentity':
+    'Include every response-changing parameter and authorization scope in the key. Capture reactive values once; reuse the snapshot in both key and loader.',
+  'queryDocs.keys': 'Keys and invalidation',
+  'queryDocs.keysIntro':
+    'Keys identify data. Tags describe which cached reads a successful write affects. They serve different purposes.',
+  'queryDocs.organization': 'Organizing queries',
+  'queryDocs.organizationIntro':
+    'Extract definitions when several callers need the same data. Keep transport in team.service.ts, identity and tags in team.queries.ts, and observers with their consumers.',
+  'queryDocs.overview': 'Overview',
+  'queryDocs.overviewIntro':
+    'Server state is data owned by a server. These tools load it, share reads between components, and synchronize cached views after writes.',
+  'queryDocs.overviewRead': 'Load one team, display its data, change the selected ID, and recover from errors.',
+  'queryDocs.overviewWrite': 'Save a team name, observe pending and failure states, then update affected cached views.',
+  'queryDocs.prerequisites':
+    'Start with Angular components and signals. Learn what a query does before choosing cache policies or organizing a feature.',
+  'queryDocs.reference': 'API reference',
+  'queryDocs.referenceIntro':
+    'Look up signatures and exact state/option tables below. Follow guide links when you need an explanation or a working task.',
+  'queryDocs.refreshControls':
+    'reload() starts a background refresh and returns a boolean. execute() returns a Promise for a fresh read. Both bypass completed data and join valid pending work.',
+  'queryDocs.retention':
+    'gcTime controls retention after the last observer leaves. Collection waits for pending requests to settle. Active observers retain their data.',
+  'queryDocs.saving': 'Saving changes · mutateResource',
+  'queryDocs.tagIdentity':
+    'A tag is an object with type and optional scope/id. The mutation selects matching query tags; an omitted scope does not match every scope.',
+  'queryDocs.triggers':
+    'Stale data can refresh when observed again. Manual refresh and invalidation request fresh data; polling and focus/reconnect recovery require configuration.',
+  'queryDocs.writeBoundary':
+    'A successful write can outlive a cache synchronization failure. Inspect invalidationError and refresh reads; do not repeat the successful write to repair the cache.',
+  'queryLearn.collectionExplain':
+    'Select both IDs, reverse their order, and clear the selection. Retained keys keep their observers; removed items release theirs. Each row owns its loading, error, and refresh state.',
+  'queryLearn.collectionIntro':
+    'Use queryResource when one request returns a list. Use queryResources when a changing collection needs a separate query for each item.',
+  'queryLearn.fixture':
+    'This complete example uses a local timer to simulate server latency and failures. Open TypeScript to copy the component; HTML shows the same compiled template.',
+  'queryLearn.httpSetup':
+    'For HTTP, provide HttpClient in app.config.ts and replace the simulated loader with http.get<Team>(url), using a captured ID. The root query client needs no additional registration.',
+  'queryLearn.readError': 'The read failed. Disable simulated failure and refresh to try again.',
+  'queryLearn.readExplain':
+    'key names the data; loader retrieves it. Signals read in the definition select the data. value() exposes the result; isInitialLoading() identifies loading without data.',
+  'queryLearn.readExplainTitle': 'Understand the first read',
+  'queryLearn.readIntro':
+    'queryResource loads data and exposes the result, loading state, and errors as Angular signals. Components using the same key share cached data and an in-flight request.',
+  'queryLearn.readSteps':
+    'Load Team A, choose Team B, then refresh. Enable failure and refresh again: the existing team stays visible. Disable failure and refresh to recover.',
+  'queryLearn.readTitle': 'Your first query',
+  'queryLearn.refreshExplain':
+    'isRefreshing() means a read is running while previous data remains visible. error() exposes failure; isRefreshError() distinguishes failure with retained data.',
+  'queryLearn.saved': 'Saved',
+  'queryLearn.simulateFailure': 'Simulate failure',
+  'queryLearn.teamA': 'Team A',
+  'queryLearn.teamB': 'Team B',
+  'queryLearn.writeError': 'The save failed. Your input is preserved; disable simulated failure and save again.',
+  'queryLearn.writeExplain':
+    'mutate(args) submits the value and returns a Promise. isLoading() controls pending UI; error() reports a failed write. Start without tags; add them when a successful write must refresh cached reads.',
+  'queryLearn.writeExplainTitle': 'Understand the first save',
+  'queryLearn.writeIntro':
+    'mutateResource runs a server write when you call mutate(). It exposes pending, result, and error signals so the form can respond to the outcome.',
+  'queryLearn.writeSteps':
+    'Enter a name and save. Enable failure and save again, then disable failure and retry. The form disables submission while a write is pending.',
+  'queryLearn.writeTitle': 'Your first save',
   'toSignalForm.savedProfile': 'Saved profile',
   'queryResource.projectRevision': 'Response version',
   'queryResource.activeUser': 'Current user',
@@ -25,7 +117,7 @@ export const enTranslations: Record<string, string> = {
   'header.openGitHub': 'Open on GitHub',
   'header.codeLicensed': 'Code licensed under',
   'nav.signalUtils': 'Signal Utils',
-  'nav.queryMutation': 'Query & Mutation',
+  'nav.queryMutation': 'Query & Server State',
   'nav.operators': 'Operators',
   'nav.interceptors': 'Interceptors',
   'nav.validators': 'Validators',
@@ -587,7 +679,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatic via mutateResource',
   'queryResource.lifecycleTitle': 'Lifecycle States & Signal Matrix',
   'queryResource.lifecycleIntro':
-    'Understand the operational differences between isLoading, isInitialLoading, and isRefreshing to avoid blank-screen flashes and implement smooth background revalidations.',
+    'Understand the operational differences between isLoading, isInitialLoading, and isRefreshing to avoid blank-screen flashes and implement smooth background revalidations. The matrix assumes a defined successful value. hasValue() returns false for an undefined result.',
   'queryResource.matrixState': 'Lifecycle State',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Recommended UI Behavior',
@@ -767,7 +859,7 @@ export const enTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Name',
   'mutateResource.thRole': 'Role',
-  'mutateResource.demo2Section': '2. Concurrency Modes: exhaust, concat, and parallel',
+  'mutateResource.demo2Section': '3. Concurrency Modes: exhaust, concat, and parallel',
   'mutateResource.demo2SectionDesc':
     'Test how different concurrency strategies handle rapid button clicks. "exhaust" prevents accidental double-submission by discarding or joining duplicate clicks while a mutation is already running.',
   'mutateResource.demo2PlaygroundTitle': 'Rapid Click & Concurrency Simulation',
@@ -785,7 +877,7 @@ export const enTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Execution Log',
   'mutateResource.clearLogs': 'Clear Log',
   'mutateResource.noLogsYet': 'No mutations executed yet. Click the button above to begin.',
-  'mutateResource.demo3Section': '3. Reactive Status Signals & Error Recovery',
+  'mutateResource.demo3Section': '2. Reactive Status Signals & Error Recovery',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> manages errors cleanly. When a write fails, the error signal is populated, status becomes "error", and the returned Promise rejects for try/catch handling.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',
