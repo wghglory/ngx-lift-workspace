@@ -1,3 +1,4 @@
+import {differenceInDays} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
@@ -13,6 +14,20 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DifferenceInDaysComponent {
+  readonly firstCases = [
+    {expression: 'differenceInDays(48h, 0)', result: String(differenceInDays(48 * 3600000, 0))},
+    {expression: 'differenceInDays(23h, 0)', result: String(differenceInDays(23 * 3600000, 0))},
+    {expression: 'differenceInDays(0, 48h)', result: String(differenceInDays(0, 48 * 3600000))},
+  ];
+  readonly firstTaskCode = highlight(`import {differenceInDays} from 'ngx-lift';
+
+// dateLeft minus dateRight, truncated toward zero in whole 24-hour periods.
+differenceInDays('2026-10-03T00:00:00Z', '2026-10-01T00:00:00Z'); // 2
+differenceInDays('2026-10-01T23:00:00Z', '2026-10-01T00:00:00Z'); // 0
+differenceInDays('2026-10-01T00:00:00Z', '2026-10-03T00:00:00Z'); // -2
+// Use explicit offsets for reproducible elapsed time. This is not calendar-day counting.
+// Invalid date inputs produce NaN; validate input before using the result.`);
+
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {

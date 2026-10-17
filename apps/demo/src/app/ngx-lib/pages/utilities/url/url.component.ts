@@ -13,16 +13,22 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UrlComponent {
-  constructor() {
-    console.log(isFQDN('www.example.com'));
-    console.log(isFQDN('192.168.0.1'));
+  readonly firstCases = [
+    {expression: "isIP('192.168.0.1')", result: String(isIP('192.168.0.1'))},
+    {expression: "isFQDN('example.com')", result: String(isFQDN('example.com'))},
+    {expression: "isURL('https://example.com')", result: String(isURL('https://example.com'))},
+    {expression: "isHttps('http://example.com')", result: String(isHttps('http://example.com'))},
+  ];
+  readonly firstTaskCode = highlight(`import {isIP, isFQDN, isURL, isHttps} from 'ngx-lift';
 
-    console.log(isIP('www.example.com'));
-    console.log(isIP('192.168.0.1'));
-
-    console.log(isURL('http://www.example.com'));
-    console.log(isHttps('https://192.168.0.1'));
-  }
+isIP('192.168.0.1'); // true — expects a hostname/address, not a full URL
+isFQDN('example.com'); // true — expects a hostname, not a scheme or path
+isURL('https://example.com/path'); // true — absolute HTTP(S) URL
+isURL('/relative/path'); // false
+isHttps('http://example.com'); // false
+isHttps('https://example.com'); // true
+// Classification does not verify reachability, ownership, certificate validity, or trust.
+// new URL(userInput) can throw; validate or catch when extracting a hostname.`);
 
   ipAndFqdnCode = highlight(`
 import {isFQDN, isIP} from 'ngx-lift';

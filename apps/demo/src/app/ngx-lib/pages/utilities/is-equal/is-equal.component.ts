@@ -1,3 +1,4 @@
+import {isEqual} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
@@ -13,6 +14,22 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsEqualComponent {
+  readonly firstCases = [
+    {expression: 'isEqual([1], [1])', result: String(isEqual([1], [1]))},
+    {expression: 'isEqual([1, 2], [2, 1])', result: String(isEqual([1, 2], [2, 1]))},
+    {expression: 'isEqual(NaN, NaN)', result: String(isEqual(NaN, NaN))},
+  ];
+  readonly firstTaskCode = highlight(`import {isEqual} from 'ngx-lift';
+
+const original = {id: 'a', labels: ['ready']};
+const sameContent = {id: 'a', labels: ['ready']};
+original === sameContent; // false — different object references
+isEqual(original, sameContent); // true — equal nested content
+isEqual([1, 2], [2, 1]); // false — array order matters
+isEqual(NaN, NaN); // true
+// Use for content comparison, such as deciding whether form values changed.
+// For one business identifier, a direct ID comparison is usually clearer.`);
+
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {
@@ -53,5 +70,5 @@ console.log(isEqual([1, [2, 3]], [1, [2, 3]])); // true
 console.log(isEqual([1, [2, 3]], [1, [2, 4]])); // false
   `);
 
-  signatureCode = highlight(`isEqual(value1: unknown, value2: unknown): boolean;`);
+  signatureCode = highlight(`isEqual<T>(value1: T, value2: T): boolean;`);
 }

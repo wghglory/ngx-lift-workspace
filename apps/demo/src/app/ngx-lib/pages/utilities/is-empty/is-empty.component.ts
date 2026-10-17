@@ -1,3 +1,4 @@
+import {isEmpty, isNotEmpty} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
@@ -13,6 +14,28 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsEmptyComponent {
+  readonly firstCases = [
+    {expression: 'isEmpty([])', result: String(isEmpty([]))},
+    {expression: 'isEmpty([0])', result: String(isEmpty([0]))},
+    {expression: 'isEmpty(0)', result: String(isEmpty(0))},
+    {expression: 'isEmpty(false)', result: String(isEmpty(false))},
+    {expression: 'isNotEmpty([])', result: String(isNotEmpty([]))},
+  ];
+  readonly firstTaskCode = highlight(`import {isEmpty, isNotEmpty} from 'ngx-lift';
+
+isEmpty([]); // true
+isEmpty([0]); // false
+isEmpty(0); // true — this helper checks collection content, not general validity.
+isEmpty(false); // true
+isNotEmpty([]); // false
+
+const items: string[] | null = [];
+// isNotEmpty is a boolean check, not a nullability type guard.
+if (items != null && isNotEmpty(items)) {
+  const count = items.length;
+}
+// An empty, defined array remains defined. Use value == null for null/undefined checks.`);
+
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {

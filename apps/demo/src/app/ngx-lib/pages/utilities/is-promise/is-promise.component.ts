@@ -40,7 +40,7 @@ export class IsPromiseComponent {
       },
     ];
   });
-  readonly checkCases: PromiseCheckCase[] = [
+  readonly checkCases = [
     {
       label: 'Native Promise.resolve()',
       expression: 'Promise.resolve(42)',
@@ -83,7 +83,7 @@ export class IsPromiseComponent {
       value: () => 42,
       expected: false,
     },
-  ];
+  ].map((item) => ({...item, result: isPromise(item.value)}));
 
   testIsPromise(val: unknown): boolean {
     return isPromise(val);
@@ -111,7 +111,8 @@ import {isPromise} from 'ngx-lift';
 async function resolveValue<T>(valueOrPromise: T | PromiseLike<T>): Promise<T> {
   if (isPromise(valueOrPromise)) {
     // TypeScript automatically narrows valueOrPromise to PromiseLike<T> here
-    return await valueOrPromise;
+    // Promise.resolve assimilates foreign thenables; instanceof Promise would miss them.
+    return await Promise.resolve(valueOrPromise);
   }
   return valueOrPromise;
 }
