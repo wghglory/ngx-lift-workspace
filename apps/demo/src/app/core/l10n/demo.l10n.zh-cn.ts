@@ -1623,6 +1623,8 @@ export const zhCNTranslations: Record<string, string> = {
   'ifAsyncValidator.apiSummary': '根据条件动态应用异步验证器函数的条件异步验证器。',
   'ifAsyncValidator.paramCondition': '决定是否应用异步验证器的条件函数。',
   'ifAsyncValidator.paramAsyncValidatorFn': '条件为 true 时执行的异步验证器函数。',
+  'intersectionValidator.firstTask':
+    '在两个列表选择相同命名空间，查看表单组的重叠错误。在每个列表保留至少一项，再移除重叠即可恢复。',
   'intersectionValidator.overview':
     '<code>intersectionValidator</code> 是一款专为 Angular 表单定制的验证器，用于确保两个表单控件不存在重叠的值。例如，在两个列表间校验以防止出现相同条目。当数组之间出现交集时，两个字段及表单对象均会携带 <code>{intersection: true}</code> 错误。',
   'intersectionValidator.example1Title': '示例 1：校验无重叠的数组',
@@ -1660,6 +1662,7 @@ export const zhCNTranslations: Record<string, string> = {
     '在值改变时，可根据需要主动调用控件的 <code>updateValueAndValidity()</code> 方法触发重新校验。',
   'uniqueValidator.apiSummary': '验证 FormArray 控件或数组中各元素的唯一性。',
   'uniqueValidator.paramKey': '（可选）对象类型元素的唯一性检查属性名。若省略则检查原始值相等性。',
+  'dateRangeValidator.firstTask': '选择明天到五天后的日期，包含两个端点。范围外日期无效，清空必填日期也无效。',
   'dateRangeValidator.overview':
     '<code>dateRangeValidator</code> 是一款用于验证日期是否在指定范围内的自定义验证器。它支持纯日期与带时间的日期格式校验，具备可配置的边界包含性（闭区间/开区间）以及可选的时间精度对比。',
   'dateRangeValidator.example1Title': '示例 1：日期范围校验',
@@ -1795,6 +1798,8 @@ export const zhCNTranslations: Record<string, string> = {
   'url.isURLSummary': '检测字符串是否为合法的 HTTP 或 HTTPS URL。',
   'url.isHttpsSummary': '检测 URL 字符串是否采用 HTTPS 协议。',
   'urlValidator.title': 'urlValidator 与 httpsValidator',
+  'urlValidator.firstTask':
+    '输入 https://example.com，再输入无效地址并移开焦点。更正地址即可清除错误。空值不满足必填规则；下个示例限制协议。',
   'urlValidator.overview':
     '<code>urlValidator</code> 与 <code>httpsValidator</code> 函数是专为 Angular 表单设计的 URL 验证器。<code>urlValidator</code> 校验以 http 或 https 开头的地址，而 <code>httpsValidator</code> 专用于 HTTPS 地址校验。',
   'urlValidator.example1': '示例 1：通用 URL 验证器',

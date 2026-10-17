@@ -1606,6 +1606,8 @@ export const ptBRTranslations: Record<string, string> = {
   'url.isURLSummary': 'Verificar se um string é um URL válido.',
   'url.isHttpsSummary': 'Verifique se a cadeia URL usa o protocolo HTTPS.',
   'urlValidator.title': 'urlValidator Eu... httpsValidator',
+  'urlValidator.firstTask':
+    'Digite https://example.com e depois um endereço inválido. Saia do campo e corrija o endereço. Valores vazios são inválidos; o próximo exemplo restringe o protocolo.',
   'urlValidator.overview':
     'As funções <code>urlValidator</code> e <code>httpsValidator</code> são validadores Angular usados para verificar se uma string dada segue padrões específicos de URL. A <code>urlValidator</code> valida URLs que começam com http ou https, enquanto a <code>httpsValidator</code> valida apenas URLs HTTPS.',
   'urlValidator.example1': 'Exemplo 1: Validades URL',
@@ -1836,6 +1838,8 @@ export const ptBRTranslations: Record<string, string> = {
     'Cria um validador condicional assíncrono que aplica uma função de validação assíncrona com base em uma condição.',
   'ifAsyncValidator.paramCondition': 'Função que determina se o validante sínc deve ser aplicado.',
   'ifAsyncValidator.paramAsyncValidatorFn': 'A função validante sínc para executar quando a condição for verdadeira.',
+  'intersectionValidator.firstTask':
+    'Selecione o mesmo namespace nas duas listas para ver o erro do grupo. Mantenha uma seleção em cada lista e remova a sobreposição.',
   'intersectionValidator.overview':
     'O <code>intersectionValidator</code> é um validador personalizado do Angular Forms projetado para garantir que dois controles de forma não tenham valores sobrepostos. Por exemplo, você pode ter duas listas de itens e querer garantir que não contenham nenhum duplicado. Quando houver qualquer sobreposição entre os arrays, ambos os campos e o formulário terão o erro <code>{intersection: true}</code>.',
   'intersectionValidator.example1Title': 'Exemplo 1: Validades para as matrizes sem sobrelocações',
@@ -1876,6 +1880,8 @@ export const ptBRTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'Valida a unicidade em controles de FormArray ou valores de array.',
   'uniqueValidator.paramKey':
     '(Opcional) Chave de propriedade para verificar a singularidade para itens objeto. Se omitido, verifica a igualdade primitiva.',
+  'dateRangeValidator.firstTask':
+    'Escolha uma data entre amanhã e daqui a cinco dias, incluindo os limites. Datas fora do intervalo e valores obrigatórios vazios são inválidos.',
   'dateRangeValidator.overview':
     'O <code>dateRangeValidator</code> é um validador personalizado que valida que uma data esteja dentro de um intervalo especificado. Ele suporta a validação tanto para valores de data apenas quanto para valores de data e hora, com limites inclusivos/exclusivos configuráveis e comparação opcional de tempo.',
   'dateRangeValidator.example1Title': 'Exemplo 1: Validação da faixa de datas',

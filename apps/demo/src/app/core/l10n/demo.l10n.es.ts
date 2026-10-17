@@ -1634,6 +1634,8 @@ export const esTranslations: Record<string, string> = {
   'url.isURLSummary': 'Comprueba si una cadena es un URL válido.',
   'url.isHttpsSummary': 'Comprueba si una cadena URL utiliza el protocolo HTTPS.',
   'urlValidator.title': 'urlValidator-httpsValidator',
+  'urlValidator.firstTask':
+    'Introduce https://example.com y después una dirección inválida. Sal del campo y corrige la dirección. Los valores vacíos son inválidos; el siguiente ejemplo limita el protocolo.',
   'urlValidator.overview':
     'Las funciones <code>urlValidator</code> y <code>httpsValidator</code> son validadores de Angular utilizados para verificar si una cadena dada cumple con patrones específicos de URL. La <code>urlValidator</code> valora URLs que comienzan con http o https, mientras que la <code>httpsValidator</code> valora únicamente URLs con HTTPS.',
   'urlValidator.example1': 'Ejemplo 1: URL Validador',
@@ -1871,6 +1873,8 @@ export const esTranslations: Record<string, string> = {
   'ifAsyncValidator.paramCondition': 'Función que determina si debe aplicarse el validador asíntico.',
   'ifAsyncValidator.paramAsyncValidatorFn':
     'La función de validador async para ejecutar cuando la condición es verdadera.',
+  'intersectionValidator.firstTask':
+    'Selecciona el mismo espacio de nombres en ambas listas para ver el error del grupo. Mantén una selección en cada lista y elimina la coincidencia.',
   'intersectionValidator.overview':
     'El <code>intersectionValidator</code> es un validador personalizado para Angular Forms diseñado para asegurar que dos controles de formulario no tengan valores superpuestos. Por ejemplo, podrías tener dos listas de elementos y querer asegurarte de que no contengan duplicados. Cuando haya cualquier superposición entre los arrays, ambos campos y el formulario tendrán el error <code>{intersection: true}</code>.',
   'intersectionValidator.example1Title': 'Ejemplo 1: Validar los rayos no superpuestos',
@@ -1913,6 +1917,8 @@ export const esTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'Valida la unicidad a través de controles de FormArray o valores de array.',
   'uniqueValidator.paramKey':
     '(Opcional) La clave de propiedad para comprobar la singularidad de los artículos de objeto. Si se omite, controla la igualdad primitiva.',
+  'dateRangeValidator.firstTask':
+    'Elige una fecha entre mañana y dentro de cinco días, incluidos los límites. Las fechas fuera del rango y los valores obligatorios vacíos son inválidos.',
   'dateRangeValidator.overview':
     'El <code>dateRangeValidator</code> es un validador personalizado que valida que una fecha esté dentro de un rango especificado. Soporta la validación tanto para valores de fecha únicamente como para valores de fecha y hora, con límites inclusivos o excluyentes configurables y comparación opcional de tiempo.',
   'dateRangeValidator.example1Title': 'Ejemplo 1: Validación de Rango de Fecha',

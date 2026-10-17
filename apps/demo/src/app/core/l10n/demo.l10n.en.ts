@@ -1566,6 +1566,8 @@ export const enTranslations: Record<string, string> = {
   'url.isURLSummary': 'Checks if a string is a valid URL.',
   'url.isHttpsSummary': 'Checks if a URL string uses the HTTPS protocol.',
   'urlValidator.title': 'urlValidator & httpsValidator',
+  'urlValidator.firstTask':
+    'Enter https://example.com, then an invalid address, and leave the field. Correct the address to clear the error. Empty values fail required validation; the next example restricts the protocol.',
   'urlValidator.overview':
     'The <code>urlValidator</code> and <code>httpsValidator</code> functions are Angular validators used to check if a given string adheres to specific URL patterns. The <code>urlValidator</code> validates URLs starting with http or https, while <code>httpsValidator</code> validates only HTTPS URLs.',
   'urlValidator.example1': 'Example 1: URL Validator',
@@ -1792,6 +1794,8 @@ export const enTranslations: Record<string, string> = {
     'Creates a conditional async validator that applies an async validator function based on a condition.',
   'ifAsyncValidator.paramCondition': 'Function determining whether the async validator should be applied.',
   'ifAsyncValidator.paramAsyncValidatorFn': 'The async validator function to execute when condition is true.',
+  'intersectionValidator.firstTask':
+    'Select the same namespace in both lists to reveal the overlap error on the group. Keep at least one selection in each list, then remove the overlap to recover.',
   'intersectionValidator.overview':
     "The <code>intersectionValidator</code> is a custom Angular Forms validator designed to ensure that two form controls do not have overlapping values. For example, you might have two lists of items and want to ensure they don't contain any duplicates. When there's any overlap between the arrays, both fields and the form will have the <code>{intersection: true}</code> error.",
   'intersectionValidator.example1Title': 'Example 1: Validate Non-Overlapping Arrays',
@@ -1832,6 +1836,8 @@ export const enTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': 'Validates uniqueness across FormArray controls or array values.',
   'uniqueValidator.paramKey':
     '(Optional) Property key to check uniqueness for object items. If omitted, checks primitive equality.',
+  'dateRangeValidator.firstTask':
+    'Choose a date from tomorrow through five days from today. Both endpoints are allowed. An earlier or later date is invalid; clearing the required date is also invalid.',
   'dateRangeValidator.overview':
     'The <code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range. It supports validation for both date-only values and date-time values, with configurable inclusive/exclusive boundaries and optional time comparison.',
   'dateRangeValidator.example1Title': 'Example 1: Date Range Validation',

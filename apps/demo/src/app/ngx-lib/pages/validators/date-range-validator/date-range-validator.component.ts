@@ -1,3 +1,4 @@
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -11,6 +12,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-date-range-validator',
   imports: [
+    DemoPlaygroundComponent,
     ClarityModule,
     ReactiveFormsModule,
     PageContainerComponent,
@@ -24,6 +26,70 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateRangeValidatorComponent {
+  readonly firstTaskCode = highlight(
+    `import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {dateRangeValidator} from 'ngx-lift';
+
+@Component({
+  selector: 'app-date-example',
+  imports: [ClarityModule, ReactiveFormsModule],
+  templateUrl: './date-example.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DateExampleComponent {
+  today = new Date();
+
+  readonly starterMin = this.dateInput(1);
+  readonly starterMax = this.dateInput(5);
+  private dateInput(offset: number): string {
+    const date = new Date(this.today);
+    date.setDate(date.getDate() + offset);
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+  }
+  readonly starterForm = new FormGroup({
+    date: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        dateRangeValidator({
+          minDate: this.starterMin,
+          maxDate: this.starterMax,
+          minInclusive: true,
+          maxInclusive: true,
+        }),
+      ],
+    }),
+  });
+}
+// Native date inputs emit YYYY-MM-DD strings. Use the same strings for bounds.
+// Build the displayed dates in the local calendar; do not derive them via UTC toISOString().`,
+  );
+  readonly firstTaskHtml = highlight(
+    `<form clrForm [formGroup]="starterForm">
+  <clr-input-container>
+    <label for="date-starter-date">Date</label>
+    <input
+      id="date-starter-date"
+      type="date"
+      clrInput
+      [formControl]="starterForm.controls.date"
+      [min]="starterMin"
+      [max]="starterMax"
+    />
+    <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+    <clr-control-error *clrIfError="'minDate'">Choose a date on or after the minimum.</clr-control-error>
+    <clr-control-error *clrIfError="'maxDate'">Choose a date on or before the maximum.</clr-control-error>
+  </clr-input-container>
+  <button type="button" class="btn btn-sm btn-outline" (click)="starterForm.reset()">Clear</button>
+  <output aria-live="polite">{{ starterForm.status }}</output>
+</form>`,
+  );
   private translationService = inject(TranslationService);
 
   optionsProperties = computed<ApiProperty[]>(() => {
@@ -69,6 +135,32 @@ export class DateRangeValidatorComponent {
 
   minTimestamp = this.today.toISOString().slice(0, 16); // slice to ignore seconds part
   maxTimestamp = this.fiveDaysLater.toISOString().slice(0, 16);
+
+  readonly starterMin = this.dateInput(1);
+  readonly starterMax = this.dateInput(5);
+  private dateInput(offset: number): string {
+    const date = new Date(this.today);
+    date.setDate(date.getDate() + offset);
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+  }
+  readonly starterForm = new FormGroup({
+    date: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        dateRangeValidator({
+          minDate: this.starterMin,
+          maxDate: this.starterMax,
+          minInclusive: true,
+          maxInclusive: true,
+        }),
+      ],
+    }),
+  });
 
   dateForm = new FormGroup({
     expires: new FormControl<string>('', {

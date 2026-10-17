@@ -2,6 +2,42 @@
   <!-- Overview -->
   <p [innerHTML]="'dateRangeValidator.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="date-range-validator-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="firstTaskCode"
+    [htmlCode]="firstTaskHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'dateRangeValidator.firstTask' | translate }}</p>
+      <form clrForm [formGroup]="starterForm">
+        <clr-input-container>
+          <label for="date-starter-date">{{ 'dateRangeValidator.futureDaysLabel' | translate }}</label>
+          <input
+            id="date-starter-date"
+            type="date"
+            clrInput
+            [formControl]="starterForm.controls.date"
+            [min]="starterMin"
+            [max]="starterMax"
+          />
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+          <clr-control-error *clrIfError="'minDate'">{{
+            'dateRangeValidator.minDateError' | translate: {minDate: starterMin}
+          }}</clr-control-error>
+          <clr-control-error *clrIfError="'maxDate'">{{
+            'dateRangeValidator.maxDateError' | translate: {maxDate: starterMax}
+          }}</clr-control-error>
+        </clr-input-container>
+        <button type="button" class="btn btn-sm btn-outline" (click)="starterForm.reset()">
+          {{ 'common.clear' | translate }}
+        </button>
+        <output aria-live="polite">{{ starterForm.status }}</output>
+      </form>
+    </div>
+  </app-demo-playground>
+  <cll-callout [innerHTML]="'dateRangeValidator.minMaxCallout' | translate"></cll-callout>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -12,6 +48,38 @@
       <app-code-block [code]="dateExampleCode" lang="typescript" />
     </article>
 
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'dateRangeValidator.example3Title' | translate }}</h3>
+      <p [innerHTML]="'dateRangeValidator.example3Desc' | translate"></p>
+      <app-code-block [code]="dateTimeExampleCode" lang="typescript" />
+      <form clrForm [formGroup]="dateTimeForm">
+        <clr-input-container>
+          <label class="clr-required-mark" for="datetime-expires">{{
+            'dateRangeValidator.dateTimeExpires' | translate
+          }}</label>
+          <input
+            type="datetime-local"
+            id="datetime-expires"
+            clrInput
+            [formControl]="dateTimeForm.controls.expires"
+            required
+            [min]="minTimestamp"
+            [max]="maxTimestamp"
+          />
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+          <clr-control-error *clrIfError="'minDate'; error as minDate">
+            {{ 'dateRangeValidator.dateTimeMinError' | translate: {minDate} }}
+          </clr-control-error>
+          <clr-control-error *clrIfError="'maxDate'; error as maxDate">
+            {{ 'dateRangeValidator.dateTimeMaxError' | translate: {maxDate} }}
+          </clr-control-error>
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="dateTimeCode" lang="typescript" />
+    </article>
+  </section>
+
+  <section cds-layout="vertical gap:md">
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'dateRangeValidator.example2Title' | translate }}</h3>
       <p [innerHTML]="'dateRangeValidator.example2Desc' | translate"></p>
@@ -61,38 +129,7 @@
       <app-code-block [code]="dateCode" lang="typescript" />
       <cll-callout [innerHTML]="'dateRangeValidator.minMaxCallout' | translate"></cll-callout>
     </article>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'dateRangeValidator.example3Title' | translate }}</h3>
-      <p [innerHTML]="'dateRangeValidator.example3Desc' | translate"></p>
-      <app-code-block [code]="dateTimeExampleCode" lang="typescript" />
-      <form clrForm [formGroup]="dateTimeForm">
-        <clr-input-container>
-          <label class="clr-required-mark" for="datetime-expires">{{
-            'dateRangeValidator.dateTimeExpires' | translate
-          }}</label>
-          <input
-            type="datetime-local"
-            id="datetime-expires"
-            clrInput
-            [formControl]="dateTimeForm.controls.expires"
-            required
-            [min]="minTimestamp"
-            [max]="maxTimestamp"
-          />
-          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
-          <clr-control-error *clrIfError="'minDate'; error as minDate">
-            {{ 'dateRangeValidator.dateTimeMinError' | translate: {minDate} }}
-          </clr-control-error>
-          <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-            {{ 'dateRangeValidator.dateTimeMaxError' | translate: {maxDate} }}
-          </clr-control-error>
-        </clr-input-container>
-      </form>
-      <app-code-block [code]="dateTimeCode" lang="typescript" />
-    </article>
   </section>
-
   <!-- API Reference -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.apiReference' | translate }}</h2>
