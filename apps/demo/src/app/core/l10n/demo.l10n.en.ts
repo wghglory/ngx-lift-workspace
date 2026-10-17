@@ -1653,10 +1653,10 @@ export const enTranslations: Record<string, string> = {
   'logger.example2Title': 'Example 2: Table Logging',
   'logger.example2Desc': 'Log emitted values using console.table for better visualization:',
   'logger.example3Title': 'Example 3: Other Console Methods',
-  'logger.example3Desc': 'Use other console methods like warn, error, or info:',
+  'logger.example3Desc': 'Use other console methods like dir, count, or debug:',
   'logger.apiSummary': 'A debugging operator that logs emissions to the console using various console methods.',
   'logger.paramMethod':
-    '(Optional) Console method to use: "log" | "table" | "warn" | "error" | "info" | "debug". Defaults to "log".',
+    '(Optional) Console method to use: "log" | "table" | "dir" | "count" | "debug". Defaults to "log".',
   'logger.returnsDesc': 'An observable that passes through all values while logging them to the console.',
   'kubernetesPagination.overview':
     'The <code>aggregatePaginatedKubernetesResources</code> operator and <code>fetchPaginatedKubernetesResources</code> function automate client-side pagination for Kubernetes REST APIs. They inspect the <code>metadata.continue</code> token on incoming responses, request consecutive pages recursively until all pages are retrieved, normalize missing or null items safely, and aggregate all resources into a single unified <code>KubernetesList&lt;T&gt;</code>.',

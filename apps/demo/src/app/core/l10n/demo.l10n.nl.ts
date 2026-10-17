@@ -1714,11 +1714,10 @@ export const nlTranslations: Record<string, string> = {
   'logger.example2Title': 'Voorbeeld 2: Tabelloggen',
   'logger.example2Desc': 'Log uitgestoten waarden met behulp van console.table voor een betere visualisatie:',
   'logger.example3Title': 'Voorbeeld 3: Andere consolemethoden',
-  'logger.example3Desc': 'Gebruik andere console methoden zoals waarschuwing, fout of info:',
+  'logger.example3Desc': 'Gebruik andere console methoden zoals waarschuwing, fout of debug:',
   'logger.apiSummary':
     'Een debugoperator die uitsturingen logt naar de console met behulp van verschillende consolemethoden.',
-  'logger.paramMethod':
-    'Optioneel: consolemethode: "log" | "table" | "warn" | "error" | "info" | "debug". Standaard: "log".',
+  'logger.paramMethod': 'Optioneel: consolemethode: "log" | "table" | "dir" | "count" | "debug". Standaard: "log".',
   'logger.returnsDesc': 'Een waarneembare die door alle waarden gaat tijdens het loggen naar de console.',
   'kubernetesPagination.overview':
     "De <code>aggregatePaginatedKubernetesResources</code> operator en de <code>fetchPaginatedKubernetesResources</code> functie automatiseren client-side paginatie voor Kubernetes REST API's. Ze inspecteren de <code>metadata.continue</code> token op ingekomende antwoorden, vragen opvolgende pagina's recursief aan tot alle pagina's zijn opgehaald, normaliseren ontbrekende of null items veilig, en combineren alle resources in één geïntegreerde <code>KubernetesList&lt;T&gt;</code>.",

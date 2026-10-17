@@ -1,9 +1,6 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import {distinctOnChange} from 'ngx-lift';
-import {from} from 'rxjs';
-
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -15,7 +12,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   styleUrl: './distinct-on-change.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DistinctOnChangeComponent implements OnInit {
+export class DistinctOnChangeComponent {
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {
@@ -36,26 +33,18 @@ export class DistinctOnChangeComponent implements OnInit {
   });
   data = [1, 1, 2, 2, 3, 4, 4, 5];
 
-  ngOnInit() {
-    from(this.data)
-      .pipe(distinctOnChange((prev, curr) => console.log(`Value changes from ${prev} to: ${curr}`)))
-      .subscribe();
-  }
-
-  basicExampleCode = highlight(`
-import {distinctOnChange} from 'ngx-lift';
+  basicExampleCode = highlight(`import {distinctOnChange} from 'ngx-lift';
 import {from} from 'rxjs';
 
-from([1, 1, 2, 2, 3, 4, 4, 5])
-  .pipe(distinctOnChange((prev, curr) => console.log(\`Value changes from $\{prev} to: $\{curr}\`)))
-  .subscribe();
+const transitions: string[] = [];
+const output: number[] = [];
+from([1, 1, 2, 2, 3])
+  .pipe(distinctOnChange((previous, current) => transitions.push(previous + ' → ' + current)))
+  .subscribe((value) => output.push(value));
 
-// Output:
-// Value changes from 1 to: 2
-// Value changes from 2 to: 3
-// Value changes from 3 to: 4
-// Value changes from 4 to: 5
-  `);
+// output: [1, 2, 3] — the first value passes through without a callback.
+// transitions: ['1 → 2', '2 → 3'] — compare with the previous DISTINCT value.
+// The default comparator is ===; use a comparator for object identity by ID.`);
 
   comparatorExampleCode = highlight(`import {distinctOnChange} from 'ngx-lift';
 import {from} from 'rxjs';

@@ -1489,10 +1489,9 @@ export const zhCNTranslations: Record<string, string> = {
   'logger.example2Title': '示例 2：表格化打印 (console.table)',
   'logger.example2Desc': '使用 console.table 进行结构化展示，以便直观比对数据：',
   'logger.example3Title': '示例 3：其他控制台方法',
-  'logger.example3Desc': '指定其他控制台方法，如 warn、error 或 info：',
+  'logger.example3Desc': '指定其他控制台方法，如 dir、count 或 debug：',
   'logger.apiSummary': '通过不同 console 方法将发射项打印到控制台的调试操作符。',
-  'logger.paramMethod':
-    '（可选）使用的 console 方法："log" | "table" | "warn" | "error" | "info" | "debug"，默认为 "log"。',
+  'logger.paramMethod': '（可选）使用的 console 方法："log" | "table" | "dir" | "count" | "debug"，默认为 "log"。',
   'logger.returnsDesc': '在将值记录到控制台的同时透传所有值的 Observable。',
   'kubernetesPagination.overview':
     '<code>aggregatePaginatedKubernetesResources</code> 操作符与 <code>fetchPaginatedKubernetesResources</code> 便捷函数自动化了 Kubernetes REST API 的客户端分页处理。它们会自动检查响应中的 <code>metadata.continue</code> 延续标记，递归请求后续各个分页直到全部拉取完毕，安全规整缺失项，最终聚合成单一完整的 <code>KubernetesList&lt;T&gt;</code>。',

@@ -1702,7 +1702,7 @@ export const ruTranslations: Record<string, string> = {
   'logger.apiSummary':
     'Отладочный оператор, который логирует эмиссии в консоль с использованием различных методов консоли.',
   'logger.paramMethod':
-    'Необязательно: метод консоли: "log" | "table" | "warn" | "error" | "info" | "debug". По умолчанию: "log".',
+    'Необязательно: метод консоли: "log" | "table" | "dir" | "count" | "debug". По умолчанию: "log".',
   'logger.returnsDesc': 'Видимая, которая проходит через все ценности, забирая их до консоли.',
   'kubernetesPagination.overview':
     'Оператор <code>aggregatePaginatedKubernetesResources</code> и функция <code>fetchPaginatedKubernetesResources</code> автоматизируют клиентскую пагинацию для REST-API Kubernetes. Они проверяют параметр <code>metadata.continue</code> в входящих ответах, рекурсивно запрашивают следующие страницы, пока не будут получены все страницы, нормализуют отсутствующие или null-значения безопасно, и агрегируют все ресурсы в один общий <code>KubernetesList&lt;T&gt;</code>.',

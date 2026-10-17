@@ -1694,8 +1694,7 @@ export const ptBRTranslations: Record<string, string> = {
   'logger.example3Title': 'Exemplo 3: Outros Métodos para a Consola',
   'logger.example3Desc': 'Usar outros métodos como advertir, erros ou informações:',
   'logger.apiSummary': 'Um operador de depuração que loga as emissões no console usando diferentes métodos do console.',
-  'logger.paramMethod':
-    'Opcional: método do console: "log" | "table" | "warn" | "error" | "info" | "debug". Padrão: "log".',
+  'logger.paramMethod': 'Opcional: método do console: "log" | "table" | "dir" | "count" | "debug". Padrão: "log".',
   'logger.returnsDesc': 'Um observável que passa por todos os valores enquanto as vai para a consola.',
   'kubernetesPagination.overview':
     'O operador <code>aggregatePaginatedKubernetesResources</code> e a função <code>fetchPaginatedKubernetesResources</code> automatizam a paginação do lado do cliente para APIs REST de Kubernetes. Eles inspecionam o token <code>metadata.continue</code> nas respostas entrantes, solicitam páginas consecutivas recursivamente até que todas as páginas sejam recuperadas, normalizam itens ausentes ou nulos de forma segura e aglomeram todos os recursos em um único <code>KubernetesList&lt;T&gt;</code>.',

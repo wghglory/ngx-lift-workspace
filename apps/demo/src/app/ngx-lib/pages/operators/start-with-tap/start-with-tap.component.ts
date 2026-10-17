@@ -73,17 +73,22 @@ export class StartWithTapComponent {
   }
 
   basicUsageCode = highlight(`import {startWithTap} from 'ngx-lift';
-import {of, delay, finalize} from 'rxjs';
+import {of, tap} from 'rxjs';
 
-this.http
-  .get('/api/users')
-  .pipe(
-    startWithTap(() => this.loading.set(true)),
-    finalize(() => this.loading.set(false)),
-  )
-  .subscribe((users) => {
-    this.users.set(users);
-  });`);
+const trace: string[] = [];
+const stream$ = of('Ready').pipe(
+  startWithTap(() => trace.push('subscribed')),
+  tap((value) => trace.push(value)),
+);
+// trace: [] — declaring a pipeline does not run its side effects.
+stream$.subscribe();
+// trace: ['subscribed', 'Ready']
+stream$.subscribe();
+// trace: ['subscribed', 'Ready', 'subscribed', 'Ready']
+// Every subscription invokes the callback before the source emits.
+// This finite trace completes synchronously. The preview delays data by 900 ms
+// to make loading visible. For component-owned streams, use AsyncPipe or
+// takeUntilDestroyed; startWithTap itself does not manage subscription lifetime.`);
 
   lazyExecutionCode = highlight(`import {startWithTap} from 'ngx-lift';
 import {of} from 'rxjs';
