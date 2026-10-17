@@ -3,902 +3,947 @@
   <p [innerHTML]="'resourceAsync.overview' | translate"></p>
 
   <!-- ==================== SECTION 1: BASIC EXAMPLES ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>
-      {{ 'resourceAsync.basicSection' | translate }}
-      <span class="badge badge-success">{{ 'playground.beginner' | translate }}</span>
-    </h2>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <app-demo-playground
-        [title]="'resourceAsync.example1' | translate"
-        [description]="'resourceAsync.example1Desc' | translate"
-        level="beginner"
-        badgeText="Signal Driven"
-        layout="split"
-        [tsCode]="basicCode"
-        [htmlCode]="basicHtmlCode"
-      >
-        <div preview>
-          <div cds-layout="vertical gap:md">
-            <div cds-layout="horizontal gap:xs align:center">
-              <button
-                class="btn btn-sm"
-                [class.btn-primary]="pageNumber() === 1"
-                [class.btn-outline]="pageNumber() !== 1"
-                (click)="changeUserId(1)"
-              >
-                {{ 'resourceAsync.userN' | translate: [1] }}
-              </button>
-              <button
-                class="btn btn-sm"
-                [class.btn-primary]="pageNumber() === 2"
-                [class.btn-outline]="pageNumber() !== 2"
-                (click)="changeUserId(2)"
-              >
-                {{ 'resourceAsync.userN' | translate: [2] }}
-              </button>
-              <button
-                class="btn btn-sm"
-                [class.btn-primary]="pageNumber() === 3"
-                [class.btn-outline]="pageNumber() !== 3"
-                (click)="changeUserId(3)"
-              >
-                {{ 'resourceAsync.userN' | translate: [3] }}
-              </button>
-              <button class="btn btn-sm" (click)="userRef.reload()">{{ 'resourceAsync.reload' | translate }}</button>
-            </div>
-
-            @if (userRef.isLoading()) {
-              <div class="text-center" cds-layout="p-y:md">
-                <cll-spinner inline />
-              </div>
-            }
-            @if (userRef.error(); as error) {
-              <cll-alert [error]="error" [isSmall]="true" />
-            }
-            @if (userRef.status() === 'resolved' && userRef.value(); as userData) {
-              <app-user-card [user]="userData" />
-            }
-          </div>
-        </div>
-
-        <div inspector>
-          <app-state-inspector
-            title="Reactive Resource Signals"
-            [data]="{
-              userId: pageNumber(),
-              status: userRef.status(),
-              isLoading: userRef.isLoading(),
-              hasValue: userRef.hasValue(),
-              hasError: !!userRef.error(),
-            }"
-          />
-        </div>
-      </app-demo-playground>
-
-      <cll-callout type="info">
-        When <code>pageNumber()</code> changes, <code>resourceAsync</code> automatically:
-        <ul class="list" cds-layout="m-t:xs">
-          <li>Cancels the previous HTTP request (if still in-flight)</li>
-          <li>Sets status to 'loading'</li>
-          <li>Makes a new request with the updated userId</li>
-          <li>Updates to 'resolved' when complete</li>
-        </ul>
-      </cll-callout>
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example2' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example2Desc' | translate"></p>
-      <app-code-block [code]="lazyCode" lang="typescript" />
-
-      <div>
-        <h4>Demo: Lazy-Loaded Users</h4>
-        <div class="card">
-          <div class="card-block">
-            <div cds-layout="vertical gap:md">
-              <div cds-layout="horizontal gap:xs align:center">
-                <button
-                  class="btn btn-sm btn-primary"
-                  (click)="lazyUsersRef.reload()"
-                  [clrLoading]="lazyUsersRef.isLoading()"
-                >
-                  {{ 'resourceAsync.loadUsers' | translate }}
-                </button>
-                @if (lazyUsersRef.isIdle()) {
-                  <span class="badge badge-info">{{ 'resourceAsync.notLoadedIdle' | translate }}</span>
-                }
-              </div>
-
-              @if (lazyUsersRef.isLoading()) {
-                <cll-spinner />
-              }
-              @if (lazyUsersRef.error(); as error) {
-                <cll-alert [error]="error" [isSmall]="true" />
-              }
-              @if (lazyUsersRef.hasValue()) {
-                <div class="card-grid">
-                  @for (u of lazyUsersRef.value().results; track u.id.value) {
-                    <app-user-card [user]="u" />
-                  }
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example3' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example3Desc' | translate"></p>
-      <app-code-block [code]="initialValueCode" lang="typescript" />
-      <cll-callout>
-        {{ 'resourceAsync.example3Callout' | translate }}
-      </cll-callout>
-    </article>
-  </section>
-
-  <!-- ==================== SECTION 2: INTERMEDIATE EXAMPLES ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>
-      {{ 'resourceAsync.intermediateSection' | translate }}
-      <span class="badge badge-info">{{ 'playground.intermediate' | translate }}</span>
-    </h2>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example4' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example4Desc' | translate"></p>
-
-      <h4>Error Handling with Fallback</h4>
-      <app-code-block [code]="errorHandlingCode" lang="typescript" />
-
-      <div>
-        <h4>Demo: Error Handling with Fallback</h4>
-        <p>This resource attempts to fetch from an invalid endpoint and falls back to a default user:</p>
-
-        <div class="card">
-          <div class="card-block">
-            <div cds-layout="vertical gap:md">
-              <div>
-                <button
-                  class="btn btn-sm btn-primary"
-                  (click)="userWithFallbackRef.reload()"
-                  [clrLoading]="userWithFallbackRef.isLoading()"
-                >
-                  {{ 'resourceAsync.triggerFallback' | translate }}
-                </button>
-              </div>
-
-              @if (userWithFallbackRef.isLoading()) {
-                <cll-spinner />
-              }
-              @if (userWithFallbackRef.error(); as error) {
-                <cll-alert [error]="error" [isSmall]="true" />
-              }
-              @if (userWithFallbackRef.hasValue()) {
-                <app-user-card [user]="userWithFallbackRef.value()" />
-                <cll-alert
-                  [content]="'resourceAsync.showingFallback' | translate"
-                  [isSmall]="true"
-                  [alertType]="'success'"
-                />
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h4 cds-layout="m-t:lg">{{ 'resourceAsync.errorPropagation' | translate }}</h4>
-      <p>Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:</p>
-      <app-code-block [code]="throwOnErrorCode" lang="typescript" />
-      <cll-callout type="warning">
-        When <code>throwOnError: true</code>, errors will be thrown if <code>onError</code> returns
-        <code>undefined</code> or is omitted. If <code>onError</code> returns a fallback value, the error is handled and
-        will not propagate.
-      </cll-callout>
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example5' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example5Desc' | translate"></p>
-
-      <p>
-        <strong>Key Configuration for Mutations:</strong>
-      </p>
-      <ul class="list" cds-layout="m-b:md">
-        <li><code>lazy: true</code> - Don't execute until explicitly triggered</li>
-        <li>
-          <code>behavior: 'exhaust'</code> - Prevent duplicate submissions (ignore new requests while one is in
-          progress, sharing the active in-flight Promise)
-        </li>
-        <li>
-          <code>execute(): Promise&lt;T&gt;</code> - Awaitable mutation trigger that returns a Promise resolving to the
-          result, or fire-and-forget
-        </li>
-      </ul>
-
-      <h4>Registration Component</h4>
-      <app-code-block [code]="registrationCode" lang="typescript" />
-
-      <h4>Registration Template</h4>
-      <app-code-block [code]="registrationHtmlCode" lang="html" />
-
-      <cll-callout type="info">
-        <strong>Why this works great for mutations:</strong>
-        <ul class="list" cds-layout="m-t:xs">
-          <li><code>lazy: true</code> - Form submission only happens when user clicks submit</li>
-          <li>
-            <code>behavior: 'exhaust'</code> - If user spams the submit button, subsequent clicks are ignored while
-            request is in-flight
-          </li>
-          <li>
-            <code>execute(): Promise&lt;T&gt;</code> - Awaitable with <code>const res = await ref.execute()</code>, or
-            fire-and-forget; clears stale previous value so loading UI is clean
-          </li>
-          <li><code>isLoading()</code> - Perfect for showing loading state and disabling button</li>
-          <li><code>status()</code> - Track success/error states for user feedback</li>
-        </ul>
-      </cll-callout>
-
-      <div>
-        <h4>Live Demo: User Registration Form</h4>
-        <p cds-text="body" cds-layout="m-b:md">
-          Try submitting the form below. It simulates a registration API with 70% success rate. With
-          <code>behavior: 'exhaust'</code>, rapid clicking the submit button is ignored while a request is in progress.
-        </p>
-
-        <div class="card">
-          <div class="card-block">
-            <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
-              @if (registrationRef.status() === 'resolved' && registrationRef.value(); as response) {
-                <cll-alert [content]="response.message" [alertType]="'success'" [isSmall]="true" cds-layout="m-t:md" />
-              }
-              @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
-                <cll-alert
-                  [content]="'Registration failed: ' + error.message"
-                  [alertType]="'danger'"
-                  cds-layout="m-t:md"
-                  [isSmall]="true"
-                />
-              }
-
-              <clr-input-container>
-                <label for="username" class="clr-required-mark">{{ 'resourceAsync.regUsername' | translate }}</label>
-                <input
-                  id="username"
-                  clrInput
-                  formControlName="username"
-                  [placeholder]="'resourceAsync.regUsernamePlaceholder' | translate"
-                />
-                <clr-control-error>{{ 'resourceAsync.regUsernameError' | translate }}</clr-control-error>
-              </clr-input-container>
-
-              <clr-input-container>
-                <label for="email" class="clr-required-mark">{{ 'resourceAsync.regEmail' | translate }}</label>
-                <input
-                  id="email"
-                  clrInput
-                  type="email"
-                  formControlName="email"
-                  [placeholder]="'resourceAsync.regEmailPlaceholder' | translate"
-                />
-                <clr-control-error>{{ 'resourceAsync.regEmailError' | translate }}</clr-control-error>
-              </clr-input-container>
-
-              <clr-password-container>
-                <label for="password" class="clr-required-mark">{{ 'resourceAsync.regPassword' | translate }}</label>
-                <input
-                  id="password"
-                  clrPassword
-                  formControlName="password"
-                  [placeholder]="'resourceAsync.regPasswordPlaceholder' | translate"
-                />
-                <clr-control-error>{{ 'resourceAsync.regPasswordError' | translate }}</clr-control-error>
-              </clr-password-container>
-
-              <div cds-layout="m-t:md">
-                <button
-                  class="btn btn-sm btn-primary"
-                  type="submit"
-                  [disabled]="registrationRef.isLoading()"
-                  [clrLoading]="registrationRef.isLoading()"
-                >
-                  {{ 'resourceAsync.regSubmit' | translate }}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example6' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example6Desc' | translate"></p>
-      <app-code-block [code]="behaviorCode" lang="typescript" />
-
-      <h4>switch (default)</h4>
-      <p>
-        Cancels the previous request when a new one is triggered. This is the default behavior and ensures you always
-        get the latest data. Best for read operations (GET requests).
-      </p>
-
-      <h4>exhaust</h4>
-      <p>
-        Ignores new requests while one is in progress. Useful for preventing duplicate operations like rapid button
-        clicks triggering multiple searches or paginations. Also ideal for mutations (see Example 5).
-      </p>
-      <app-code-block [code]="exhaustCode" lang="typescript" />
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example7' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example7Desc' | translate"></p>
-      <app-code-block [code]="statusCode" lang="typescript" />
-      <cll-callout>
-        Always use <code>computed()</code> instead of getters for derived state from signals. This provides better
-        performance through memoization and integrates perfectly with Angular's reactivity system.
-      </cll-callout>
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.example8' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.example8Desc' | translate"></p>
-      <app-code-block [code]="declarativeCode" lang="typescript" />
-
-      <div>
-        <h4>{{ 'resourceAsync.declarativeTitle' | translate }}</h4>
-        <div class="card">
-          <div class="card-block">
-            <div cds-layout="vertical gap:md">
-              <div cds-layout="horizontal gap:xs align:center wrap">
-                <span cds-text="secondary">Query Preset:</span>
-                <button
-                  class="btn btn-sm"
-                  [class.btn-primary]="searchKeyword() === 'Angular'"
-                  [class.btn-outline]="searchKeyword() !== 'Angular'"
-                  (click)="searchKeyword.set('Angular')"
-                >
-                  Angular
-                </button>
-                <button
-                  class="btn btn-sm"
-                  [class.btn-primary]="searchKeyword() === 'Signals'"
-                  [class.btn-outline]="searchKeyword() !== 'Signals'"
-                  (click)="searchKeyword.set('Signals')"
-                >
-                  Signals
-                </button>
-                <button
-                  class="btn btn-sm"
-                  [class.btn-primary]="searchKeyword() === 'Clarity'"
-                  [class.btn-outline]="searchKeyword() !== 'Clarity'"
-                  (click)="searchKeyword.set('Clarity')"
-                >
-                  Clarity
-                </button>
-                <button
-                  class="btn btn-sm"
-                  [class.btn-primary]="searchKeyword() === 'RxJS'"
-                  [class.btn-outline]="searchKeyword() !== 'RxJS'"
-                  (click)="searchKeyword.set('RxJS')"
-                >
-                  RxJS
-                </button>
-
-                <button
-                  class="btn btn-sm btn-warning-outline"
-                  (click)="rapidSwitchQuery()"
-                  [disabled]="searchDefinitionRef.isLoading()"
-                >
-                  {{ 'resourceAsync.quickSwitchDemo' | translate }}
-                </button>
-                <button class="btn btn-sm btn-outline" (click)="searchDefinitionRef.reload()">
-                  {{ 'resourceAsync.reload' | translate }}
-                </button>
-                <button class="btn btn-sm btn-danger-outline" (click)="searchDefinitionRef.reset()">Reset</button>
-                <button
-                  class="btn btn-sm btn-outline"
-                  (click)="runAwaitableSearch()"
-                  [clrLoading]="searchDefinitionRef.isLoading()"
-                >
-                  Await execute()
-                </button>
-              </div>
-
-              <div cds-layout="horizontal gap:md align:center wrap">
-                <span
-                  >Status: <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
-                >
-                <span
-                  >Active Query: <strong>{{ searchKeyword() }}</strong></span
-                >
-                @if (searchDefinitionRef.isLoading()) {
-                  <span cds-layout="horizontal gap:xs align:center">
-                    <cll-spinner inline />
-                    <span cds-text="secondary">Fetching with AbortSignal...</span>
-                  </span>
-                }
-              </div>
-
-              @if (searchDefinitionRef.value(); as items) {
-                <div class="table-responsive">
-                  <table class="table table-compact">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>{{ 'resourceAsync.topicTitle' | translate }}</th>
-                        <th>Category</th>
-                        <th>{{ 'resourceAsync.lastUpdated' | translate }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (item of items; track item.id) {
-                        <tr>
-                          <td>{{ item.id }}</td>
-                          <td>
-                            <strong>{{ item.title }}</strong>
-                          </td>
-                          <td>
-                            <span class="badge">{{ item.category }}</span>
-                          </td>
-                          <td>{{ item.updatedAt }}</td>
-                        </tr>
-                      } @empty {
-                        <tr>
-                          <td colspan="4" class="text-center">{{ 'resourceAsync.noData' | translate }}</td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-              }
-
-              <div cds-layout="m-t:sm">
-                <h5>{{ 'resourceAsync.activeSearchLogs' | translate }}</h5>
-                <ul class="list-unstyled" cds-layout="vertical gap:xs">
-                  @for (log of searchLogs(); track log.id) {
-                    <li cds-layout="horizontal gap:sm align:center">
-                      <span cds-text="secondary">[{{ log.timestamp }}]</span>
-                      <span
-                        >Request #{{ log.id }} (query: "<strong>{{ log.keyword }}</strong
-                        >"):</span
-                      >
-                      @if (log.status === 'in-flight') {
-                        <span class="badge badge-info">In-Flight (signal active)</span>
-                      } @else if (log.status === 'aborted') {
-                        <span class="badge badge-danger">Aborted (AbortSignal cancelled)</span>
-                      } @else {
-                        <span class="badge badge-success">Resolved</span>
-                      }
-                    </li>
-                  }
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-  </section>
-
-  <!-- ==================== SECTION 3: WHEN TO USE ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>{{ 'resourceAsync.whenToUseSection' | translate }}</h2>
-
-    <h3>{{ 'resourceAsync.useResource' | translate }}</h3>
-    <ul class="list" cds-layout="vertical gap:xs">
-      <li>{{ 'resourceAsync.useRead' | translate }}</li>
-      <li>{{ 'resourceAsync.useLocal' | translate }}</li>
-      <li>{{ 'resourceAsync.useManual' | translate }}</li>
-      <li>{{ 'resourceAsync.useStatus' | translate }}</li>
-      <li>{{ 'resourceAsync.useLazy' | translate }}</li>
-      <li>{{ 'resourceAsync.useCancel' | translate }}</li>
-    </ul>
-    <cll-callout>{{ 'resourceAsync.preferMutation' | translate }}</cll-callout>
-    <h3>{{ 'resourceAsync.useComputed' | translate }}</h3>
-    <ul class="list" cds-layout="vertical gap:xs">
-      <li>{{ 'resourceAsync.useComputedReactive' | translate }}</li>
-      <li>{{ 'resourceAsync.useComputedConcurrency' | translate }}</li>
-      <li>{{ 'resourceAsync.useComputedValue' | translate }}</li>
-    </ul>
-  </section>
-
-  <!-- ==================== SECTION 4: ADVANCED - WRITABLE RESOURCE API ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>
-      {{ 'resourceAsync.advancedSection' | translate }}
-      <span class="badge badge-warning">{{ 'playground.advanced' | translate }}</span>
-    </h2>
-
-    <cll-callout type="success">
-      <strong>New Feature:</strong> <code>resourceAsync</code> now returns a <code>WritableResourceRef</code> with
-      <code>set()</code>, <code>update()</code>, and <code>asReadonly()</code> methods for manual state management,
-      matching Angular's <code>WritableResource</code> API!
-    </cll-callout>
-
-    <!-- Example 1: Optimistic Updates -->
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.optimisticTitle' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.optimisticDesc' | translate"></p>
-
-      <app-code-block [code]="optimisticUpdateCode" lang="typescript" />
-
-      <div>
-        <h4>Demo: Todo Toggle</h4>
-        <div class="card">
-          <div class="card-block">
-            @if (todoRef.isIdle()) {
-              <button class="btn btn-sm btn-primary" (click)="todoRef.reload()">
-                {{ 'resourceAsync.loadTodo' | translate }}
-              </button>
-            }
-
-            @if (todoRef.isLoading() && !todoRef.hasValue()) {
-              <div cds-layout="horizontal gap:sm align:center">
-                <cll-spinner [size]="'sm'" />
-                <span>{{ 'resourceAsync.loadingTodo' | translate }}</span>
-              </div>
-            }
-
-            @if (todoRef.hasValue()) {
-              <div cds-layout="vertical gap:md">
-                <div cds-layout="horizontal gap:sm align:center">
-                  <input type="checkbox" [checked]="todoRef.value().completed" (change)="toggleTodo()" />
-                  <span>{{ todoRef.value().title }}</span>
-
-                  @if (todoRef.status() === 'local') {
-                    <span class="badge badge-warning">{{ 'resourceAsync.saving' | translate }}</span>
-                  }
-                </div>
-
-                <div class="p7">
-                  <strong>Status:</strong> {{ todoRef.status() }} | <strong>Completed:</strong>
-                  {{ todoRef.value().completed }}
-                </div>
-
-                <button class="btn btn-sm btn-outline" (click)="todoRef.reload()">
-                  {{ 'resourceAsync.resetFromServer' | translate }}
-                </button>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Example 2: Cache-First Pattern -->
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.cacheFirstTitle' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.cacheFirstDesc' | translate"></p>
-
-      <app-code-block [code]="cacheFirstCode" lang="typescript" />
-
-      <div>
-        <h4>Demo: Cache-First User Profile</h4>
-        <div class="card">
-          <div class="card-block">
-            <button class="btn btn-sm btn-primary" (click)="loadCacheFirstUser()">
-              {{ 'resourceAsync.loadUserCacheFirst' | translate }}
-            </button>
-
-            @if (cacheFirstUserRef.hasValue()) {
-              <div cds-layout="vertical gap:sm m-t:md">
-                <div>
-                  <strong>{{ 'common.name' | translate }}:</strong> {{ cacheFirstUserRef.value().name }}
-                  @if (cacheFirstUserRef.status() === 'local') {
-                    <span class="badge badge-info">{{ 'resourceAsync.fromCache' | translate }}</span>
-                  }
-                  @if (cacheFirstUserRef.status() === 'reloading') {
-                    <cll-spinner [size]="'sm'" />
-                    <span class="p7">{{ 'resourceAsync.updating' | translate }}</span>
-                  }
-                </div>
-                <div class="p7">
-                  <strong>{{ 'common.email' | translate }}:</strong> {{ cacheFirstUserRef.value().email }}
-                </div>
-                <div class="p7"><strong>Status:</strong> {{ cacheFirstUserRef.status() }}</div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Example 3: Form Draft / Manual Edits -->
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'resourceAsync.formDraftTitle' | translate }}</h3>
-      <p [innerHTML]="'resourceAsync.formDraftDesc' | translate"></p>
-
-      <app-code-block [code]="formDraftCode" lang="typescript" />
-
-      <div>
-        <h4>Demo: Editable Counter</h4>
-        <div class="card">
-          <div class="card-block">
-            @if (counterRef.isIdle()) {
-              <button class="btn btn-sm btn-primary" (click)="counterRef.reload()">
-                {{ 'resourceAsync.loadCounter' | translate }}
-              </button>
-            }
-
-            @if (counterRef.hasValue()) {
-              <div cds-layout="vertical gap:md">
-                <div cds-layout="horizontal gap:md align:center">
-                  <button class="btn btn-sm btn-icon" (click)="decrementCounter()">
-                    <clr-icon shape="minus" />
-                  </button>
-
-                  <div cds-text="display font:bold" class="counter-display">
-                    {{ counterRef.value() }}
+  <clr-tabs data-testid="resource-learning-tabs">
+    <clr-tab>
+      <button clrTabLink>{{ 'docsLearn.basics' | translate }}</button>
+      <clr-tab-content *clrIfActive="true">
+        <section cds-layout="vertical gap:md align:stretch">
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground
+              [title]="'docsLearn.resourceTitle' | translate"
+              [description]="'resourceAsync.example1Desc' | translate"
+              level="beginner"
+              data-testid="resource-starter"
+              [tsCode]="basicCode"
+              [htmlCode]="basicHtmlCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:md">
+                  <div cds-layout="horizontal gap:xs align:center">
+                    <button
+                      class="btn btn-sm"
+                      [class.btn-primary]="pageNumber() === 1"
+                      [class.btn-outline]="pageNumber() !== 1"
+                      (click)="changeUserId(1)"
+                    >
+                      {{ 'resourceAsync.userN' | translate: [1] }}
+                    </button>
+                    <button
+                      class="btn btn-sm"
+                      [class.btn-primary]="pageNumber() === 2"
+                      [class.btn-outline]="pageNumber() !== 2"
+                      (click)="changeUserId(2)"
+                    >
+                      {{ 'resourceAsync.userN' | translate: [2] }}
+                    </button>
+                    <button
+                      class="btn btn-sm"
+                      [class.btn-primary]="pageNumber() === 3"
+                      [class.btn-outline]="pageNumber() !== 3"
+                      (click)="changeUserId(3)"
+                    >
+                      {{ 'resourceAsync.userN' | translate: [3] }}
+                    </button>
+                    <button class="btn btn-sm" (click)="userRef.reload()">
+                      {{ 'resourceAsync.reload' | translate }}
+                    </button>
                   </div>
 
-                  <button class="btn btn-sm btn-icon" (click)="incrementCounter()">
-                    <clr-icon shape="plus" />
-                  </button>
-                </div>
-
-                @if (counterRef.status() === 'local') {
-                  <cll-alert
-                    [alertType]="'info'"
-                    [content]="'resourceAsync.unsavedChanges' | translate"
-                    [isSmall]="true"
-                  />
-                }
-
-                <div cds-layout="horizontal gap:sm">
-                  <button
-                    class="btn btn-sm btn-success"
-                    (click)="saveCounter()"
-                    [disabled]="counterRef.status() !== 'local'"
-                  >
-                    {{ 'resourceAsync.saveToServer' | translate }}
-                  </button>
-
-                  <button
-                    class="btn btn-sm btn-outline"
-                    (click)="discardCounterChanges()"
-                    [disabled]="counterRef.status() !== 'local'"
-                  >
-                    {{ 'resourceAsync.discardChanges' | translate }}
-                  </button>
-                </div>
-
-                <div class="p7"><strong>Status:</strong> {{ counterRef.status() }}</div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    </article>
-  </section>
-
-  <!-- ==================== SECTION 5: EXPERT - NESTED RESOURCES ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>
-      Advanced Pattern: Nested Resources
-      <span class="badge badge-danger">Expert</span>
-    </h2>
-
-    <p>
-      A common scenario is displaying a list of items where each item can fetch additional related data (e.g.,
-      organizations, users, details). This section demonstrates <strong>one approach</strong> to managing individual
-      loading/error states for each row.
-    </p>
-
-    <cll-callout type="info">
-      <strong>✨ Decoupled Injector:</strong> With the <code>injector</code> option in <code>ResourceRefOptions</code>,
-      you can instantiate <code>resourceAsync</code> dynamically (e.g., inside on-demand template helper methods or
-      services) by simply passing <code>&#123; injector: this.injector &#125;</code>, eliminating the need for
-      <code>runInInjectionContext()</code>.
-    </cll-callout>
-
-    <cll-callout type="info">
-      <strong>📖 Full Documentation:</strong> See
-      <a
-        href="https://github.com/wghglory/ngx-lift/blob/main/docs/design/resource-async-design-spec.md"
-        target="_blank"
-        rel="noopener"
-        >resource-async-design-spec.md</a
-      >
-      for comprehensive guide with multiple approaches, decision trees, and when to use each pattern.
-    </cll-callout>
-
-    <cll-callout type="info">
-      <strong>{{ 'resourceAsync.keyConcepts' | translate }}</strong>
-      <ul class="list" cds-layout="m-t:xs">
-        <li><strong>Outer Resource:</strong> List of items with their own loading/error state</li>
-        <li><strong>Inner Resources:</strong> Per-item related data with individual loading/error states</li>
-        <li><strong>Lazy Loading:</strong> Only fetch when user clicks (minimizes API calls)</li>
-        <li><strong>Independent States:</strong> Each row manages its own spinner/error/data</li>
-      </ul>
-    </cll-callout>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>Implementation</h3>
-      <app-code-block [code]="nestedResourceCode" lang="typescript" />
-      <app-code-block [code]="nestedResourceHtmlCode" lang="html" />
-
-      <div>
-        <h4>Demo: Items with Organizations</h4>
-        <div class="card">
-          <div class="card-header">
-            <div cds-layout="horizontal gap:md align:center">
-              <h4 cds-text="section font:bold" cds-layout="m:none">{{ 'resourceAsync.nestedProjects' | translate }}</h4>
-
-              @if (itemsRef.isLoading() && !itemsRef.hasValue()) {
-                <cll-spinner [size]="'sm'" />
-                <span class="p7">{{ 'resourceAsync.nestedLoadingItems' | translate }}</span>
-              }
-
-              @if (itemsRef.isLoading() && itemsRef.hasValue()) {
-                <cll-spinner [size]="'sm'" />
-                <span class="p7">{{ 'resourceAsync.nestedRefreshing' | translate }}</span>
-              }
-            </div>
-          </div>
-
-          <div class="card-block">
-            @if (itemsRef.error(); as error) {
-              <cll-alert [alertType]="'danger'" [content]="'Failed to load items: ' + error.message" [isSmall]="true">
-                <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">
-                  {{ 'resourceAsync.nestedRetry' | translate }}
-                </button>
-              </cll-alert>
-            }
-
-            @if (itemsRef.hasValue()) {
-              <table class="table table-vertical table-compact">
-                <thead>
-                  <tr>
-                    <th>{{ 'resourceAsync.nestedThName' | translate }}</th>
-                    <th>{{ 'resourceAsync.nestedThStatus' | translate }}</th>
-                    <th>{{ 'resourceAsync.nestedThOrg' | translate }}</th>
-                    <th>{{ 'resourceAsync.nestedThActions' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (item of itemsRef.value(); track item.id) {
-                    <tr>
-                      <td>
-                        <strong>{{ item.name }}</strong>
-                      </td>
-                      <td>
-                        <span
-                          class="badge"
-                          [class.badge-success]="item.status === 'active'"
-                          [class.badge-warning]="item.status === 'inactive'"
-                        >
-                          {{ item.status }}
-                        </span>
-                      </td>
-
-                      <!-- Organization Cell with Individual State -->
-                      <td>
-                        @if (getOrgRef(item.orgId); as orgRef) {
-                          @if (orgRef.isIdle()) {
-                            <span class="p7">{{ 'resourceAsync.notLoaded' | translate }}</span>
-                          }
-
-                          @if (orgRef.isLoading() && !orgRef.hasValue()) {
-                            <div cds-layout="horizontal gap:xs align:center">
-                              <cll-spinner [size]="'sm'" />
-                              <span class="p7">{{ 'resourceAsync.nestedLoadingItems' | translate }}</span>
-                            </div>
-                          }
-
-                          @if (orgRef.error() && !orgRef.isLoading()) {
-                            <div cds-layout="vertical gap:xs">
-                              <cll-alert
-                                [alertType]="'warning'"
-                                [content]="'Failed to load organization'"
-                                [isSmall]="true"
-                              />
-                            </div>
-                          }
-
-                          @if (orgRef.value(); as org) {
-                            <div cds-layout="vertical gap:xs">
-                              <strong>{{ org.name }}</strong>
-                              <div>{{ org.type }} • {{ org.location }}</div>
-                            </div>
-                          }
-                        }
-                      </td>
-
-                      <td>
-                        @if (getOrgRef(item.orgId); as orgRef) {
-                          @if (orgRef.isIdle()) {
-                            <button class="btn btn-sm btn-primary" (click)="loadOrg(item.orgId)">
-                              {{ 'resourceAsync.nestedLoadOrg' | translate }}
-                            </button>
-                          } @else {
-                            <button
-                              class="btn btn-sm btn-link"
-                              (click)="orgRef.reload()"
-                              [disabled]="orgRef.isLoading()"
-                            >
-                              {{ 'resourceAsync.nestedRetry' | translate }}
-                            </button>
-                          }
-                        }
-                      </td>
-                    </tr>
+                  @if (userRef.isLoading()) {
+                    <div class="text-center" cds-layout="p-y:md">
+                      <cll-spinner inline />
+                    </div>
                   }
-                </tbody>
-              </table>
-
-              <div cds-layout="horizontal gap:md m-t:md">
-                <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">
-                  {{ 'resourceAsync.nestedRefreshItems' | translate }}
-                </button>
-
-                <button class="btn btn-sm btn-outline" (click)="loadAllOrgs()">
-                  {{ 'resourceAsync.nestedLoadAllOrgs' | translate }}
-                </button>
+                  @if (userRef.error(); as error) {
+                    <cll-alert [error]="error" [isSmall]="true" />
+                  }
+                  @if (userRef.status() === 'resolved' && userRef.value(); as userData) {
+                    <app-user-card [user]="userData" />
+                  }
+                </div>
               </div>
-            }
+
+              <div inspector>
+                <app-state-inspector
+                  title="Reactive Resource Signals"
+                  [data]="{
+                    userId: pageNumber(),
+                    status: userRef.status(),
+                    isLoading: userRef.isLoading(),
+                    hasValue: userRef.hasValue(),
+                    hasError: !!userRef.error(),
+                  }"
+                />
+              </div>
+            </app-demo-playground>
+
+            <p>{{ 'docsLearn.resourceModel' | translate }}</p>
+          </article>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground [title]="'resourceAsync.example2' | translate" [tsCode]="lazyCode">
+              <div preview>
+                <p [innerHTML]="'resourceAsync.example2Desc' | translate"></p>
+
+                <div>
+                  <h4>Demo: Lazy-Loaded Users</h4>
+                  <div class="card">
+                    <div class="card-block">
+                      <div cds-layout="vertical gap:md">
+                        <div cds-layout="horizontal gap:xs align:center">
+                          <button
+                            class="btn btn-sm btn-primary"
+                            (click)="lazyUsersRef.reload()"
+                            [clrLoading]="lazyUsersRef.isLoading()"
+                          >
+                            {{ 'resourceAsync.loadUsers' | translate }}
+                          </button>
+                          @if (lazyUsersRef.isIdle()) {
+                            <span class="badge badge-info">{{ 'resourceAsync.notLoadedIdle' | translate }}</span>
+                          }
+                        </div>
+
+                        @if (lazyUsersRef.isLoading()) {
+                          <cll-spinner />
+                        }
+                        @if (lazyUsersRef.error(); as error) {
+                          <cll-alert [error]="error" [isSmall]="true" />
+                        }
+                        @if (lazyUsersRef.hasValue()) {
+                          <div class="card-grid">
+                            @for (u of lazyUsersRef.value().results; track u.id.value) {
+                              <app-user-card [user]="u" />
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <h3>{{ 'resourceAsync.example3' | translate }}</h3>
+            <p [innerHTML]="'resourceAsync.example3Desc' | translate"></p>
+            <app-code-block [code]="initialValueCode" lang="typescript" />
+            <cll-callout>
+              {{ 'resourceAsync.example3Callout' | translate }}
+            </cll-callout>
+          </article>
+        </section>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'docsLearn.recipes' | translate }}</button>
+      <clr-tab-content *clrIfActive="false">
+        <section cds-layout="vertical gap:md align:stretch">
+          <h2>
+            {{ 'resourceAsync.intermediateSection' | translate }}
+            <span class="badge badge-info">{{ 'playground.intermediate' | translate }}</span>
+          </h2>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground [title]="'resourceAsync.example4' | translate" [tsCode]="errorHandlingCode">
+              <div preview>
+                <p [innerHTML]="'resourceAsync.example4Desc' | translate"></p>
+
+                <h4>Error Handling with Fallback</h4>
+
+                <div>
+                  <h4>Demo: Error Handling with Fallback</h4>
+                  <p>This resource attempts to fetch from an invalid endpoint and falls back to a default user:</p>
+
+                  <div class="card">
+                    <div class="card-block">
+                      <div cds-layout="vertical gap:md">
+                        <div>
+                          <button
+                            class="btn btn-sm btn-primary"
+                            (click)="userWithFallbackRef.reload()"
+                            [clrLoading]="userWithFallbackRef.isLoading()"
+                          >
+                            {{ 'resourceAsync.triggerFallback' | translate }}
+                          </button>
+                        </div>
+
+                        @if (userWithFallbackRef.isLoading()) {
+                          <cll-spinner />
+                        }
+                        @if (userWithFallbackRef.error(); as error) {
+                          <cll-alert [error]="error" [isSmall]="true" />
+                        }
+                        @if (userWithFallbackRef.hasValue()) {
+                          <app-user-card [user]="userWithFallbackRef.value()" />
+                          <cll-alert
+                            [content]="'resourceAsync.showingFallback' | translate"
+                            [isSmall]="true"
+                            [alertType]="'success'"
+                          />
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h4 cds-layout="m-t:lg">{{ 'resourceAsync.errorPropagation' | translate }}</h4>
+                <p>
+                  Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:
+                </p>
+                <app-code-block [code]="throwOnErrorCode" lang="typescript" />
+                <cll-callout type="warning">
+                  When <code>throwOnError: true</code>, errors will be thrown if <code>onError</code> returns
+                  <code>undefined</code> or is omitted. If <code>onError</code> returns a fallback value, the error is
+                  handled and will not propagate.
+                </cll-callout>
+              </div>
+            </app-demo-playground>
+          </article>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground
+              [title]="'resourceAsync.example5' | translate"
+              [tsCode]="registrationCode"
+              [htmlCode]="registrationHtmlCode"
+            >
+              <div preview>
+                <p [innerHTML]="'resourceAsync.example5Desc' | translate"></p>
+
+                <p>
+                  <strong>Key Configuration for Mutations:</strong>
+                </p>
+                <ul class="list" cds-layout="m-b:md">
+                  <li><code>lazy: true</code> - Don't execute until explicitly triggered</li>
+                  <li>
+                    <code>behavior: 'exhaust'</code> - Prevent duplicate submissions (ignore new requests while one is
+                    in progress, sharing the active in-flight Promise)
+                  </li>
+                  <li>
+                    <code>execute(): Promise&lt;T&gt;</code> - Awaitable mutation trigger that returns a Promise
+                    resolving to the result, or fire-and-forget
+                  </li>
+                </ul>
+
+                <cll-callout type="info">
+                  <strong>Why this works great for mutations:</strong>
+                  <ul class="list" cds-layout="m-t:xs">
+                    <li><code>lazy: true</code> - Form submission only happens when user clicks submit</li>
+                    <li>
+                      <code>behavior: 'exhaust'</code> - If user spams the submit button, subsequent clicks are ignored
+                      while request is in-flight
+                    </li>
+                    <li>
+                      <code>execute(): Promise&lt;T&gt;</code> - Awaitable with
+                      <code>const res = await ref.execute()</code>, or fire-and-forget; clears stale previous value so
+                      loading UI is clean
+                    </li>
+                    <li><code>isLoading()</code> - Perfect for showing loading state and disabling button</li>
+                    <li><code>status()</code> - Track success/error states for user feedback</li>
+                  </ul>
+                </cll-callout>
+
+                <div>
+                  <h4>Live Demo: User Registration Form</h4>
+                  <p cds-text="body" cds-layout="m-b:md">
+                    Try submitting the form below. It simulates a registration API with 70% success rate. With
+                    <code>behavior: 'exhaust'</code>, rapid clicking the submit button is ignored while a request is in
+                    progress.
+                  </p>
+
+                  <div class="card">
+                    <div class="card-block">
+                      <form clrForm [formGroup]="registrationForm" (ngSubmit)="onRegistrationSubmit()">
+                        @if (registrationRef.status() === 'resolved' && registrationRef.value(); as response) {
+                          <cll-alert
+                            [content]="response.message"
+                            [alertType]="'success'"
+                            [isSmall]="true"
+                            cds-layout="m-t:md"
+                          />
+                        }
+                        @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
+                          <cll-alert
+                            [content]="'Registration failed: ' + error.message"
+                            [alertType]="'danger'"
+                            cds-layout="m-t:md"
+                            [isSmall]="true"
+                          />
+                        }
+
+                        <clr-input-container>
+                          <label for="username" class="clr-required-mark">{{
+                            'resourceAsync.regUsername' | translate
+                          }}</label>
+                          <input
+                            id="username"
+                            clrInput
+                            formControlName="username"
+                            [placeholder]="'resourceAsync.regUsernamePlaceholder' | translate"
+                          />
+                          <clr-control-error>{{ 'resourceAsync.regUsernameError' | translate }}</clr-control-error>
+                        </clr-input-container>
+
+                        <clr-input-container>
+                          <label for="email" class="clr-required-mark">{{
+                            'resourceAsync.regEmail' | translate
+                          }}</label>
+                          <input
+                            id="email"
+                            clrInput
+                            type="email"
+                            formControlName="email"
+                            [placeholder]="'resourceAsync.regEmailPlaceholder' | translate"
+                          />
+                          <clr-control-error>{{ 'resourceAsync.regEmailError' | translate }}</clr-control-error>
+                        </clr-input-container>
+
+                        <clr-password-container>
+                          <label for="password" class="clr-required-mark">{{
+                            'resourceAsync.regPassword' | translate
+                          }}</label>
+                          <input
+                            id="password"
+                            clrPassword
+                            formControlName="password"
+                            [placeholder]="'resourceAsync.regPasswordPlaceholder' | translate"
+                          />
+                          <clr-control-error>{{ 'resourceAsync.regPasswordError' | translate }}</clr-control-error>
+                        </clr-password-container>
+
+                        <div cds-layout="m-t:md">
+                          <button
+                            class="btn btn-sm btn-primary"
+                            type="submit"
+                            [disabled]="registrationRef.isLoading()"
+                            [clrLoading]="registrationRef.isLoading()"
+                          >
+                            {{ 'resourceAsync.regSubmit' | translate }}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <h3>{{ 'resourceAsync.example6' | translate }}</h3>
+            <p [innerHTML]="'resourceAsync.example6Desc' | translate"></p>
+            <app-code-block [code]="behaviorCode" lang="typescript" />
+
+            <h4>switch (default)</h4>
+            <p>
+              Cancels the previous request when a new one is triggered. This is the default behavior and ensures you
+              always get the latest data. Best for read operations (GET requests).
+            </p>
+
+            <h4>exhaust</h4>
+            <p>
+              Ignores new requests while one is in progress. Useful for preventing duplicate operations like rapid
+              button clicks triggering multiple searches or paginations. Also ideal for mutations (see Example 5).
+            </p>
+            <app-code-block [code]="exhaustCode" lang="typescript" />
+          </article>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <h3>{{ 'resourceAsync.example7' | translate }}</h3>
+            <p [innerHTML]="'resourceAsync.example7Desc' | translate"></p>
+            <app-code-block [code]="statusCode" lang="typescript" />
+            <cll-callout>
+              Always use <code>computed()</code> instead of getters for derived state from signals. This provides better
+              performance through memoization and integrates perfectly with Angular's reactivity system.
+            </cll-callout>
+          </article>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground [title]="'resourceAsync.example8' | translate" [tsCode]="declarativeCode">
+              <div preview>
+                <p [innerHTML]="'resourceAsync.example8Desc' | translate"></p>
+
+                <div>
+                  <h4>{{ 'resourceAsync.declarativeTitle' | translate }}</h4>
+                  <div class="card">
+                    <div class="card-block">
+                      <div cds-layout="vertical gap:md">
+                        <div cds-layout="horizontal gap:xs align:center wrap">
+                          <span cds-text="secondary">Query Preset:</span>
+                          <button
+                            class="btn btn-sm"
+                            [class.btn-primary]="searchKeyword() === 'Angular'"
+                            [class.btn-outline]="searchKeyword() !== 'Angular'"
+                            (click)="searchKeyword.set('Angular')"
+                          >
+                            Angular
+                          </button>
+                          <button
+                            class="btn btn-sm"
+                            [class.btn-primary]="searchKeyword() === 'Signals'"
+                            [class.btn-outline]="searchKeyword() !== 'Signals'"
+                            (click)="searchKeyword.set('Signals')"
+                          >
+                            Signals
+                          </button>
+                          <button
+                            class="btn btn-sm"
+                            [class.btn-primary]="searchKeyword() === 'Clarity'"
+                            [class.btn-outline]="searchKeyword() !== 'Clarity'"
+                            (click)="searchKeyword.set('Clarity')"
+                          >
+                            Clarity
+                          </button>
+                          <button
+                            class="btn btn-sm"
+                            [class.btn-primary]="searchKeyword() === 'RxJS'"
+                            [class.btn-outline]="searchKeyword() !== 'RxJS'"
+                            (click)="searchKeyword.set('RxJS')"
+                          >
+                            RxJS
+                          </button>
+
+                          <button
+                            class="btn btn-sm btn-warning-outline"
+                            (click)="rapidSwitchQuery()"
+                            [disabled]="searchDefinitionRef.isLoading()"
+                          >
+                            {{ 'resourceAsync.quickSwitchDemo' | translate }}
+                          </button>
+                          <button class="btn btn-sm btn-outline" (click)="searchDefinitionRef.reload()">
+                            {{ 'resourceAsync.reload' | translate }}
+                          </button>
+                          <button class="btn btn-sm btn-danger-outline" (click)="searchDefinitionRef.reset()">
+                            Reset
+                          </button>
+                          <button
+                            class="btn btn-sm btn-outline"
+                            (click)="runAwaitableSearch()"
+                            [clrLoading]="searchDefinitionRef.isLoading()"
+                          >
+                            Await execute()
+                          </button>
+                        </div>
+
+                        <div cds-layout="horizontal gap:md align:center wrap">
+                          <span
+                            >Status: <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
+                          >
+                          <span
+                            >Active Query: <strong>{{ searchKeyword() }}</strong></span
+                          >
+                          @if (searchDefinitionRef.isLoading()) {
+                            <span cds-layout="horizontal gap:xs align:center">
+                              <cll-spinner inline />
+                              <span cds-text="secondary">Fetching with AbortSignal...</span>
+                            </span>
+                          }
+                        </div>
+
+                        @if (searchDefinitionRef.value(); as items) {
+                          <div class="table-responsive">
+                            <table class="table table-compact">
+                              <thead>
+                                <tr>
+                                  <th>ID</th>
+                                  <th>{{ 'resourceAsync.topicTitle' | translate }}</th>
+                                  <th>Category</th>
+                                  <th>{{ 'resourceAsync.lastUpdated' | translate }}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @for (item of items; track item.id) {
+                                  <tr>
+                                    <td>{{ item.id }}</td>
+                                    <td>
+                                      <strong>{{ item.title }}</strong>
+                                    </td>
+                                    <td>
+                                      <span class="badge">{{ item.category }}</span>
+                                    </td>
+                                    <td>{{ item.updatedAt }}</td>
+                                  </tr>
+                                } @empty {
+                                  <tr>
+                                    <td colspan="4" class="text-center">{{ 'resourceAsync.noData' | translate }}</td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        }
+
+                        <div cds-layout="m-t:sm">
+                          <h5>{{ 'resourceAsync.activeSearchLogs' | translate }}</h5>
+                          <ul class="list-unstyled" cds-layout="vertical gap:xs">
+                            @for (log of searchLogs(); track log.id) {
+                              <li cds-layout="horizontal gap:sm align:center">
+                                <span cds-text="secondary">[{{ log.timestamp }}]</span>
+                                <span
+                                  >Request #{{ log.id }} (query: "<strong>{{ log.keyword }}</strong
+                                  >"):</span
+                                >
+                                @if (log.status === 'in-flight') {
+                                  <span class="badge badge-info">In-Flight (signal active)</span>
+                                } @else if (log.status === 'aborted') {
+                                  <span class="badge badge-danger">Aborted (AbortSignal cancelled)</span>
+                                } @else {
+                                  <span class="badge badge-success">Resolved</span>
+                                }
+                              </li>
+                            }
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+        </section>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'docsLearn.localState' | translate }}</button>
+      <clr-tab-content *clrIfActive="false">
+        <section cds-layout="vertical gap:md align:stretch">
+          <h2>
+            {{ 'resourceAsync.advancedSection' | translate }}
+            <span class="badge badge-warning">{{ 'playground.advanced' | translate }}</span>
+          </h2>
+
+          <cll-callout type="success">
+            <strong>New Feature:</strong> <code>resourceAsync</code> now returns a <code>WritableResourceRef</code> with
+            <code>set()</code>, <code>update()</code>, and <code>asReadonly()</code> methods for manual state
+            management, matching Angular's <code>WritableResource</code> API!
+          </cll-callout>
+
+          <!-- Example 1: Optimistic Updates -->
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground [title]="'resourceAsync.optimisticTitle' | translate" [tsCode]="optimisticUpdateCode">
+              <div preview>
+                <p [innerHTML]="'resourceAsync.optimisticDesc' | translate"></p>
+
+                <div>
+                  <h4>Demo: Todo Toggle</h4>
+                  <div class="card">
+                    <div class="card-block">
+                      @if (todoRef.isIdle()) {
+                        <button class="btn btn-sm btn-primary" (click)="todoRef.reload()">
+                          {{ 'resourceAsync.loadTodo' | translate }}
+                        </button>
+                      }
+
+                      @if (todoRef.isLoading() && !todoRef.hasValue()) {
+                        <div cds-layout="horizontal gap:sm align:center">
+                          <cll-spinner [size]="'sm'" />
+                          <span>{{ 'resourceAsync.loadingTodo' | translate }}</span>
+                        </div>
+                      }
+
+                      @if (todoRef.hasValue()) {
+                        <div cds-layout="vertical gap:md">
+                          <div cds-layout="horizontal gap:sm align:center">
+                            <input type="checkbox" [checked]="todoRef.value().completed" (change)="toggleTodo()" />
+                            <span>{{ todoRef.value().title }}</span>
+
+                            @if (todoRef.status() === 'local') {
+                              <span class="badge badge-warning">{{ 'resourceAsync.saving' | translate }}</span>
+                            }
+                          </div>
+
+                          <div class="p7">
+                            <strong>Status:</strong> {{ todoRef.status() }} | <strong>Completed:</strong>
+                            {{ todoRef.value().completed }}
+                          </div>
+
+                          <button class="btn btn-sm btn-outline" (click)="todoRef.reload()">
+                            {{ 'resourceAsync.resetFromServer' | translate }}
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+
+          <!-- Example 2: Cache-First Pattern -->
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground [title]="'resourceAsync.cacheFirstTitle' | translate" [tsCode]="cacheFirstCode">
+              <div preview>
+                <p [innerHTML]="'resourceAsync.cacheFirstDesc' | translate"></p>
+
+                <div>
+                  <h4>Demo: Cache-First User Profile</h4>
+                  <div class="card">
+                    <div class="card-block">
+                      <button class="btn btn-sm btn-primary" (click)="loadCacheFirstUser()">
+                        {{ 'resourceAsync.loadUserCacheFirst' | translate }}
+                      </button>
+
+                      @if (cacheFirstUserRef.hasValue()) {
+                        <div cds-layout="vertical gap:sm m-t:md">
+                          <div>
+                            <strong>{{ 'common.name' | translate }}:</strong> {{ cacheFirstUserRef.value().name }}
+                            @if (cacheFirstUserRef.status() === 'local') {
+                              <span class="badge badge-info">{{ 'resourceAsync.fromCache' | translate }}</span>
+                            }
+                            @if (cacheFirstUserRef.status() === 'reloading') {
+                              <cll-spinner [size]="'sm'" />
+                              <span class="p7">{{ 'resourceAsync.updating' | translate }}</span>
+                            }
+                          </div>
+                          <div class="p7">
+                            <strong>{{ 'common.email' | translate }}:</strong> {{ cacheFirstUserRef.value().email }}
+                          </div>
+                          <div class="p7"><strong>Status:</strong> {{ cacheFirstUserRef.status() }}</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+
+          <!-- Example 3: Form Draft / Manual Edits -->
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground [title]="'resourceAsync.formDraftTitle' | translate" [tsCode]="formDraftCode">
+              <div preview>
+                <p [innerHTML]="'resourceAsync.formDraftDesc' | translate"></p>
+
+                <div>
+                  <h4>Demo: Editable Counter</h4>
+                  <div class="card">
+                    <div class="card-block">
+                      @if (counterRef.isIdle()) {
+                        <button class="btn btn-sm btn-primary" (click)="counterRef.reload()">
+                          {{ 'resourceAsync.loadCounter' | translate }}
+                        </button>
+                      }
+
+                      @if (counterRef.hasValue()) {
+                        <div cds-layout="vertical gap:md">
+                          <div cds-layout="horizontal gap:md align:center">
+                            <button class="btn btn-sm btn-icon" (click)="decrementCounter()">
+                              <clr-icon shape="minus" />
+                            </button>
+
+                            <div cds-text="display font:bold" class="counter-display">
+                              {{ counterRef.value() }}
+                            </div>
+
+                            <button class="btn btn-sm btn-icon" (click)="incrementCounter()">
+                              <clr-icon shape="plus" />
+                            </button>
+                          </div>
+
+                          @if (counterRef.status() === 'local') {
+                            <cll-alert
+                              [alertType]="'info'"
+                              [content]="'resourceAsync.unsavedChanges' | translate"
+                              [isSmall]="true"
+                            />
+                          }
+
+                          <div cds-layout="horizontal gap:sm">
+                            <button
+                              class="btn btn-sm btn-success"
+                              (click)="saveCounter()"
+                              [disabled]="counterRef.status() !== 'local'"
+                            >
+                              {{ 'resourceAsync.saveToServer' | translate }}
+                            </button>
+
+                            <button
+                              class="btn btn-sm btn-outline"
+                              (click)="discardCounterChanges()"
+                              [disabled]="counterRef.status() !== 'local'"
+                            >
+                              {{ 'resourceAsync.discardChanges' | translate }}
+                            </button>
+                          </div>
+
+                          <div class="p7"><strong>Status:</strong> {{ counterRef.status() }}</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+        </section>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'docsLearn.nested' | translate }}</button>
+      <clr-tab-content *clrIfActive="false">
+        <section cds-layout="vertical gap:md align:stretch">
+          <h2>
+            Advanced Pattern: Nested Resources
+            <span class="badge badge-danger">Expert</span>
+          </h2>
+
+          <p>
+            A common scenario is displaying a list of items where each item can fetch additional related data (e.g.,
+            organizations, users, details). This section demonstrates <strong>one approach</strong> to managing
+            individual loading/error states for each row.
+          </p>
+
+          <cll-callout type="info">
+            <strong>✨ Decoupled Injector:</strong> With the <code>injector</code> option in
+            <code>ResourceRefOptions</code>, you can instantiate <code>resourceAsync</code> dynamically (e.g., inside
+            on-demand template helper methods or services) by simply passing
+            <code>&#123; injector: this.injector &#125;</code>, eliminating the need for
+            <code>runInInjectionContext()</code>.
+          </cll-callout>
+
+          <cll-callout type="info">
+            <strong>📖 Full Documentation:</strong> See
+            <a
+              href="https://github.com/wghglory/ngx-lift/blob/main/docs/design/resource-async-design-spec.md"
+              target="_blank"
+              rel="noopener"
+              >resource-async-design-spec.md</a
+            >
+            for comprehensive guide with multiple approaches, decision trees, and when to use each pattern.
+          </cll-callout>
+
+          <cll-callout type="info">
+            <strong>{{ 'resourceAsync.keyConcepts' | translate }}</strong>
+            <ul class="list" cds-layout="m-t:xs">
+              <li><strong>Outer Resource:</strong> List of items with their own loading/error state</li>
+              <li><strong>Inner Resources:</strong> Per-item related data with individual loading/error states</li>
+              <li><strong>Lazy Loading:</strong> Only fetch when user clicks (minimizes API calls)</li>
+              <li><strong>Independent States:</strong> Each row manages its own spinner/error/data</li>
+            </ul>
+          </cll-callout>
+
+          <article cds-layout="vertical gap:sm align:stretch">
+            <app-demo-playground
+              title="Implementation"
+              [tsCode]="nestedResourceCode"
+              [htmlCode]="nestedResourceHtmlCode"
+            >
+              <div preview>
+                <div>
+                  <h4>Demo: Items with Organizations</h4>
+                  <div class="card">
+                    <div class="card-header">
+                      <div cds-layout="horizontal gap:md align:center">
+                        <h4 cds-text="section font:bold" cds-layout="m:none">
+                          {{ 'resourceAsync.nestedProjects' | translate }}
+                        </h4>
+
+                        @if (itemsRef.isLoading() && !itemsRef.hasValue()) {
+                          <cll-spinner [size]="'sm'" />
+                          <span class="p7">{{ 'resourceAsync.nestedLoadingItems' | translate }}</span>
+                        }
+
+                        @if (itemsRef.isLoading() && itemsRef.hasValue()) {
+                          <cll-spinner [size]="'sm'" />
+                          <span class="p7">{{ 'resourceAsync.nestedRefreshing' | translate }}</span>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="card-block">
+                      @if (itemsRef.error(); as error) {
+                        <cll-alert
+                          [alertType]="'danger'"
+                          [content]="'Failed to load items: ' + error.message"
+                          [isSmall]="true"
+                        >
+                          <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">
+                            {{ 'resourceAsync.nestedRetry' | translate }}
+                          </button>
+                        </cll-alert>
+                      }
+
+                      @if (itemsRef.hasValue()) {
+                        <table class="table table-vertical table-compact">
+                          <thead>
+                            <tr>
+                              <th>{{ 'resourceAsync.nestedThName' | translate }}</th>
+                              <th>{{ 'resourceAsync.nestedThStatus' | translate }}</th>
+                              <th>{{ 'resourceAsync.nestedThOrg' | translate }}</th>
+                              <th>{{ 'resourceAsync.nestedThActions' | translate }}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (item of itemsRef.value(); track item.id) {
+                              <tr>
+                                <td>
+                                  <strong>{{ item.name }}</strong>
+                                </td>
+                                <td>
+                                  <span
+                                    class="badge"
+                                    [class.badge-success]="item.status === 'active'"
+                                    [class.badge-warning]="item.status === 'inactive'"
+                                  >
+                                    {{ item.status }}
+                                  </span>
+                                </td>
+
+                                <!-- Organization Cell with Individual State -->
+                                <td>
+                                  @if (getOrgRef(item.orgId); as orgRef) {
+                                    @if (orgRef.isIdle()) {
+                                      <span class="p7">{{ 'resourceAsync.notLoaded' | translate }}</span>
+                                    }
+
+                                    @if (orgRef.isLoading() && !orgRef.hasValue()) {
+                                      <div cds-layout="horizontal gap:xs align:center">
+                                        <cll-spinner [size]="'sm'" />
+                                        <span class="p7">{{ 'resourceAsync.nestedLoadingItems' | translate }}</span>
+                                      </div>
+                                    }
+
+                                    @if (orgRef.error() && !orgRef.isLoading()) {
+                                      <div cds-layout="vertical gap:xs">
+                                        <cll-alert
+                                          [alertType]="'warning'"
+                                          [content]="'Failed to load organization'"
+                                          [isSmall]="true"
+                                        />
+                                      </div>
+                                    }
+
+                                    @if (orgRef.value(); as org) {
+                                      <div cds-layout="vertical gap:xs">
+                                        <strong>{{ org.name }}</strong>
+                                        <div>{{ org.type }} • {{ org.location }}</div>
+                                      </div>
+                                    }
+                                  }
+                                </td>
+
+                                <td>
+                                  @if (getOrgRef(item.orgId); as orgRef) {
+                                    @if (orgRef.isIdle()) {
+                                      <button class="btn btn-sm btn-primary" (click)="loadOrg(item.orgId)">
+                                        {{ 'resourceAsync.nestedLoadOrg' | translate }}
+                                      </button>
+                                    } @else {
+                                      <button
+                                        class="btn btn-sm btn-link"
+                                        (click)="orgRef.reload()"
+                                        [disabled]="orgRef.isLoading()"
+                                      >
+                                        {{ 'resourceAsync.nestedRetry' | translate }}
+                                      </button>
+                                    }
+                                  }
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+
+                        <div cds-layout="horizontal gap:md m-t:md">
+                          <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">
+                            {{ 'resourceAsync.nestedRefreshItems' | translate }}
+                          </button>
+
+                          <button class="btn btn-sm btn-outline" (click)="loadAllOrgs()">
+                            {{ 'resourceAsync.nestedLoadAllOrgs' | translate }}
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <cll-callout type="tip">
+                    <strong>{{ 'resourceAsync.patternBenefits' | translate }}</strong>
+                    <ul class="list" cds-layout="m-t:xs">
+                      <li>✅ Minimal API calls (only fetch what's needed)</li>
+                      <li>✅ Individual loading/error states per row</li>
+                      <li>✅ Retry failed fetches independently</li>
+                      <li>✅ Caches org data (won't refetch same orgId)</li>
+                      <li>✅ Scales well for large lists</li>
+                    </ul>
+                  </cll-callout>
+                </div>
+              </div>
+            </app-demo-playground>
+          </article>
+        </section>
+      </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+      <button clrTabLink>{{ 'docsLearn.reference' | translate }}</button>
+      <clr-tab-content *clrIfActive="false">
+        <section cds-layout="vertical gap:md align:stretch">
+          <h2>{{ 'common.apiReference' | translate }}</h2>
+          <div cds-layout="vertical gap:sm align:stretch">
+            <h3>resourceAsync</h3>
+            <p>{{ 'resourceAsync.apiSummary' | translate }}</p>
+
+            <h4>{{ 'common.signature' | translate }}</h4>
+            <app-code-block [code]="signatureCode" lang="typescript" />
+
+            <h4>{{ 'common.parameters' | translate }}</h4>
+            <app-api-table [properties]="parameters()" />
+
+            <h4>ResourceAsyncDefinition (Declarative Definition)</h4>
+            <app-api-table [properties]="definitionProperties()" />
+
+            <h4>ResourceRefOptions</h4>
+            <app-api-table [properties]="optionsProperties()" />
+
+            <h4>{{ 'common.returns' | translate }}</h4>
+            <p cds-text="body">{{ 'resourceAsync.returnsDesc' | translate }}</p>
+            <app-api-table [properties]="returnsProperties()" />
+
+            <h4>Resource Status</h4>
+            <ul class="list" cds-layout="vertical gap:xs">
+              <li>
+                <code>idle</code>: Initial state, operation has never been triggered (only with
+                <code>lazy: true</code>). <code>value() = undefined</code>.
+              </li>
+              <li>
+                <code>loading</code>: Initial fetch in progress (no previous value). <code>value() = undefined</code>.
+              </li>
+              <li>
+                <code>reloading</code>: Refetch in progress with previous value available. <code>value()</code> returns
+                previous data.
+              </li>
+              <li><code>resolved</code>: Operation completed successfully. <code>value()</code> contains the data.</li>
+              <li>
+                <code>error</code>: Operation failed with an error. <code>value() = undefined</code> (previous data is
+                cleared).
+              </li>
+            </ul>
+
+            <cll-callout type="info">{{ 'resourceAsync.errorValuePolicy' | translate }}</cll-callout>
           </div>
-        </div>
+        </section>
+        <section cds-layout="vertical gap:md align:stretch">
+          <h2>{{ 'resourceAsync.whenToUseSection' | translate }}</h2>
 
-        <cll-callout type="tip">
-          <strong>{{ 'resourceAsync.patternBenefits' | translate }}</strong>
-          <ul class="list" cds-layout="m-t:xs">
-            <li>✅ Minimal API calls (only fetch what's needed)</li>
-            <li>✅ Individual loading/error states per row</li>
-            <li>✅ Retry failed fetches independently</li>
-            <li>✅ Caches org data (won't refetch same orgId)</li>
-            <li>✅ Scales well for large lists</li>
+          <h3>{{ 'resourceAsync.useResource' | translate }}</h3>
+          <ul class="list" cds-layout="vertical gap:xs">
+            <li>{{ 'resourceAsync.useRead' | translate }}</li>
+            <li>{{ 'resourceAsync.useLocal' | translate }}</li>
+            <li>{{ 'resourceAsync.useManual' | translate }}</li>
+            <li>{{ 'resourceAsync.useStatus' | translate }}</li>
+            <li>{{ 'resourceAsync.useLazy' | translate }}</li>
+            <li>{{ 'resourceAsync.useCancel' | translate }}</li>
           </ul>
-        </cll-callout>
-      </div>
-    </article>
-  </section>
-
-  <!-- ==================== SECTION 6: API REFERENCE ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>{{ 'common.apiReference' | translate }}</h2>
-    <div cds-layout="vertical gap:sm align:stretch">
-      <h3>resourceAsync</h3>
-      <p>{{ 'resourceAsync.apiSummary' | translate }}</p>
-
-      <h4>{{ 'common.signature' | translate }}</h4>
-      <app-code-block [code]="signatureCode" lang="typescript" />
-
-      <h4>{{ 'common.parameters' | translate }}</h4>
-      <app-api-table [properties]="parameters()" />
-
-      <h4>ResourceAsyncDefinition (Declarative Definition)</h4>
-      <app-api-table [properties]="definitionProperties()" />
-
-      <h4>ResourceRefOptions</h4>
-      <app-api-table [properties]="optionsProperties()" />
-
-      <h4>{{ 'common.returns' | translate }}</h4>
-      <p cds-text="body">{{ 'resourceAsync.returnsDesc' | translate }}</p>
-      <app-api-table [properties]="returnsProperties()" />
-
-      <h4>Resource Status</h4>
-      <ul class="list" cds-layout="vertical gap:xs">
-        <li>
-          <code>idle</code>: Initial state, operation has never been triggered (only with <code>lazy: true</code>).
-          <code>value() = undefined</code>.
-        </li>
-        <li><code>loading</code>: Initial fetch in progress (no previous value). <code>value() = undefined</code>.</li>
-        <li>
-          <code>reloading</code>: Refetch in progress with previous value available. <code>value()</code> returns
-          previous data.
-        </li>
-        <li><code>resolved</code>: Operation completed successfully. <code>value()</code> contains the data.</li>
-        <li>
-          <code>error</code>: Operation failed with an error. <code>value() = undefined</code> (previous data is
-          cleared).
-        </li>
-      </ul>
-
-      <cll-callout type="info">{{ 'resourceAsync.errorValuePolicy' | translate }}</cll-callout>
-    </div>
-  </section>
+          <cll-callout>{{ 'resourceAsync.preferMutation' | translate }}</cll-callout>
+          <h3>{{ 'resourceAsync.useComputed' | translate }}</h3>
+          <ul class="list" cds-layout="vertical gap:xs">
+            <li>{{ 'resourceAsync.useComputedReactive' | translate }}</li>
+            <li>{{ 'resourceAsync.useComputedConcurrency' | translate }}</li>
+            <li>{{ 'resourceAsync.useComputedValue' | translate }}</li>
+          </ul>
+        </section>
+      </clr-tab-content>
+    </clr-tab>
+  </clr-tabs>
 </cll-page-container>
