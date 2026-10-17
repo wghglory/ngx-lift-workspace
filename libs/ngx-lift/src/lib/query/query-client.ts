@@ -210,11 +210,15 @@ export class QueryClient {
    * await client.refetchQuery(['users', userId]);
    * ```
    */
-  refetchQuery(key: QueryKey): Promise<unknown> | undefined {
+  refetchQuery<T = unknown>(key: QueryKey): Promise<T> | undefined {
     this.assertActive();
-    const entry = this.entries.get(serializeQueryKey(key));
+    const entry = this.entries.get(serializeQueryKey(key)) as QueryEntry<T> | undefined;
     if (!entry) return undefined;
     entry.lastAccess = ++this.accessSequence;
+    if (!entry.observers.size) {
+      entry.inactiveSince = this.now();
+      this.clearTimer(entry, 'gcTimer');
+    }
     return this.startRequest(entry, true);
   }
 

@@ -51,6 +51,7 @@ export class QueryDevtoolsComponent {
   private readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
   private trigger?: HTMLButtonElement;
   private actionRevision = 0;
+  private copyNoticeTimer?: ReturnType<typeof setTimeout>;
 
   /** Runtime gate. For build-time exclusion use provideQueryDevtools from clr-lift/devtools. */
   readonly enabled = input(isDevMode());
@@ -62,6 +63,8 @@ export class QueryDevtoolsComponent {
   protected readonly canRefetch = computed(
     () => typeof (this.client() ?? this.defaultClient).refetchQuery === 'function',
   );
+
+  protected readonly maxPanelHeight = computed(() => (this.document.defaultView?.innerHeight ?? 800) - 24);
 
   protected readonly panelId = `cll-query-devtools-${nextPanelId++}`;
   protected readonly isOpen = signal(false);
@@ -118,19 +121,20 @@ export class QueryDevtoolsComponent {
       this.isOpen.set(false);
       this.select(null);
       this.snapshot.set(null);
+      if (this.copyNoticeTimer) clearTimeout(this.copyNoticeTimer);
     });
     this.translationService.loadTranslationsForComponent('queryDevtools', queryDevtoolsTranslations);
     effect(() => {
+      if (!this.enabled() && untracked(() => this.isOpen())) {
+        untracked(() => this.closePanel());
+      }
+    });
+    effect(() => {
       this.client();
-      this.select(null);
+      untracked(() => this.select(null));
     });
     effect((onCleanup) => {
-      if (!this.enabled()) this.isOpen.set(false);
-      if (!this.isOpen()) {
-        this.snapshot.set(null);
-        this.select(null);
-        return;
-      }
+      if (!this.isOpen()) return;
       const client = this.client() ?? this.defaultClient;
       if (!this.isBrowser || this.paused()) return;
       untracked(() => this.readSnapshot(client));
@@ -161,6 +165,8 @@ export class QueryDevtoolsComponent {
   protected closePanel(): void {
     this.actionRevision++;
     this.isOpen.set(false);
+    this.select(null);
+    this.snapshot.set(null);
     this.trigger?.focus();
   }
 
@@ -258,6 +264,8 @@ export class QueryDevtoolsComponent {
       if (!this.isCurrentAction(revision)) return;
       this.copyNotice.set(true);
       this.actionError.set('');
+      if (this.copyNoticeTimer) clearTimeout(this.copyNoticeTimer);
+      this.copyNoticeTimer = setTimeout(() => this.copyNotice.set(false), 2000);
     } catch {
       if (this.isCurrentAction(revision))
         this.actionError.set(this.translationService.translate('queryDevtools.copyFailed'));
@@ -281,7 +289,7 @@ export class QueryDevtoolsComponent {
       if (this.isCurrentAction(revision))
         this.actionError.set(this.translationService.translate('queryDevtools.refetchFailed'));
     } finally {
-      if (this.isCurrentAction(revision)) this.refresh();
+      if (this.enabled() && this.isOpen()) this.refresh();
     }
   }
 
@@ -307,13 +315,29 @@ export class QueryDevtoolsComponent {
     handle.setPointerCapture(event.pointerId);
     const startY = event.clientY;
     const startHeight = this.panelHeight();
-    handle.onpointermove = (move) => this.setHeight(startHeight + startY - move.clientY);
-    handle.onlostpointercapture = () => {
+    handle.onpointermove = (move) => {
+      this.fullHeight.set(false);
+      this.panelHeight.set(this.clampHeight(startHeight + startY - move.clientY));
+    };
+    const finishResize = () => {
       handle.onpointermove = null;
       handle.onpointerup = null;
       handle.onlostpointercapture = null;
+      try {
+        this.document.defaultView?.sessionStorage.setItem('cll-query-devtools-height', String(this.panelHeight()));
+      } catch {
+        /* Resizing still works without storage. */
+      }
     };
-    handle.onpointerup = () => handle.releasePointerCapture(event.pointerId);
+    handle.onlostpointercapture = finishResize;
+    handle.onpointerup = (upEvent) => {
+      finishResize();
+      try {
+        handle.releasePointerCapture(upEvent.pointerId);
+      } catch {
+        /* Pointer capture may have already been released */
+      }
+    };
   }
 
   private clampHeight(height: number): number {
@@ -332,5 +356,9 @@ export class QueryDevtoolsComponent {
 
   protected trackEntry(_index: number, entry: QueryEntryDiagnostics): string {
     return entry.serializedKey;
+  }
+
+  protected trackTreeRow(_index: number, row: ValueRow): string {
+    return row.path + (row.nextOffset !== undefined ? ':more' : '');
   }
 }

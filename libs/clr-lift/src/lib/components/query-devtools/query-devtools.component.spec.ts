@@ -370,4 +370,31 @@ describe('QueryDevtoolsComponent', () => {
       else Reflect.deleteProperty(navigator, 'clipboard');
     }
   });
+
+  it('automatically dismisses copy notice after a delay', async () => {
+    vi.useFakeTimers();
+    const navigator = document.defaultView?.navigator;
+    if (!navigator) throw new Error('Missing browser navigator');
+    const previous = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {writeText: () => Promise.resolve()},
+    });
+    try {
+      await client.fetchQuery({key: ['copy-notice'], loader: () => Promise.resolve(1)});
+      mount();
+      click('Query devtools');
+      click('Copy key');
+      await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Copied');
+      await vi.advanceTimersByTimeAsync(2100);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).not.toContain('Copied');
+    } finally {
+      if (previous) Object.defineProperty(navigator, 'clipboard', previous);
+      else Reflect.deleteProperty(navigator, 'clipboard');
+      vi.useRealTimers();
+    }
+  });
 });

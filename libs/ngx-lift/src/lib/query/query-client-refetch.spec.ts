@@ -61,6 +61,24 @@ describe('QueryClient refetch by key', () => {
     }
   });
 
+  it('extends garbage collection retention when refetching an inactive query near expiration', async () => {
+    vi.useFakeTimers();
+    try {
+      await client.fetchQuery({key: ['near-expiry'], loader: () => of('initial'), gcTime: 100});
+      await vi.advanceTimersByTimeAsync(90);
+      const refetched: Promise<string> | undefined = client.refetchQuery<string>(['near-expiry']);
+      await expect(refetched).resolves.toBe('initial');
+      // 20ms later (110ms from initial fetch, but only 20ms after refetch): should still be cached
+      await vi.advanceTimersByTimeAsync(20);
+      expect(client.getSnapshot(['near-expiry'])).toBeDefined();
+      // 90ms more (110ms after refetch): now it should be collected
+      await vi.advanceTimersByTimeAsync(90);
+      expect(client.getSnapshot(['near-expiry'])).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('does not execute a loader after client destruction', () => {
     const destroyed = new QueryClient();
     destroyed.destroy();

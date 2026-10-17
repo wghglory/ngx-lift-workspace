@@ -58,6 +58,22 @@ describe('bounded query value inspection', () => {
     expect(valueRows('x'.repeat(10_000), new Map())[0].preview.length).toBeLessThan(2010);
   });
 
+  it('renders date previews as ISO strings and serializes dates in json export', () => {
+    const date = new Date('2026-10-17T00:00:00.000Z');
+    const rows = valueRows(date, new Map());
+    expect(rows[0].preview).toBe('2026-10-17T00:00:00.000Z');
+    expect(rows[0].expandable).toBe(false);
+
+    const invalidDate = new Date('invalid');
+    expect(valueRows(invalidDate, new Map())[0].preview).toBe('Invalid Date');
+
+    const payload = {created: date, invalid: invalidDate};
+    expect(JSON.parse(copyableJson(payload) ?? '')).toEqual({
+      created: '2026-10-17T00:00:00.000Z',
+      invalid: null,
+    });
+  });
+
   it('recovers from inaccessible proxies and limits deeply expanded trees', () => {
     const proxy = new Proxy(
       {},

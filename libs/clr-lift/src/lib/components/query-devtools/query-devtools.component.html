@@ -47,6 +47,7 @@
         [attr.aria-label]="'queryDevtools.resize' | translate"
         [attr.aria-valuenow]="panelHeight()"
         aria-valuemin="200"
+        [attr.aria-valuemax]="maxPanelHeight()"
         (keydown)="resizeBy($event)"
         (pointerdown)="startResize($event)"
       ></div>
@@ -298,7 +299,7 @@
                   </button>
                   <p class="preview-note">{{ 'queryDevtools.previewLimit' | translate }}</p>
                   <div class="value-tree" dir="ltr">
-                    @for (row of tree(); track $index) {
+                    @for (row of tree(); track trackTreeRow($index, row)) {
                       <div class="value-row" [style.padding-inline-start.rem]="row.depth * 0.8" [attr.title]="row.path">
                         @if (row.nextOffset !== undefined) {
                           <button type="button" class="tree-toggle" (click)="expand(row)">
