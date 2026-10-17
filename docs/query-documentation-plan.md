@@ -1,7 +1,8 @@
 # Query documentation delivery
 
 Approved scope: October 17, 2026. Runtime APIs are unchanged. This plan records documentation delivery separately from
-the implemented query/mutation contracts. Until validated, the destinations below are acceptance targets.
+the implemented query/mutation contracts. The destinations below are implemented. Local validation is recorded below;
+human acceptance remains a separate gate.
 
 ## Readers and outcomes
 
@@ -57,3 +58,33 @@ Reviewed October 17, 2026:
 - [TanStack Quick Start](https://tanstack.com/query/latest/docs/framework/react/quick-start): adapt a working path with
   required setup and links to focused guides; do not copy defaults or public API behavior.
 - [Diátaxis](https://diataxis.fr/): separate reader needs; do not impose all four documentation modes on every page.
+
+## Local delivery evidence — October 17, 2026
+
+Implementation revision: `4264a75` (follow-up to PR head `a51d132`). No library exports, signatures or runtime contracts
+changed. This revision adds compiled read/save/collection starters, seven guide destinations, shallow translated
+navigation, reference anchors inside Clarity's scroll container, and narrow-screen header spacing. Introductory
+playgrounds precede lifecycle/comparison/organization reference; full fixture source is available through View Code.
+
+Completed local checks:
+
+| Check                                                                            | Result                                                                           |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Demo tests (`pnpm nx run demo:test --run`)                                       | 79 files, 238 tests passed                                                       |
+| Tooling (`pnpm nx run @ngx-lift-workspace/source:tooling-test`)                  | 19 tests passed, including three complete-source parity checks                   |
+| New learning E2E (`query-learning.spec.ts`)                                      | 15 cases passed across Chromium, Firefox and WebKit                              |
+| Existing query/ownership/layout E2E                                              | 90 cases passed across Chromium, Firefox and WebKit                              |
+| Demo and E2E lint; demo TypeScript                                               | Passed                                                                           |
+| Dictionary checks                                                                | 11 complete dictionaries; 57 new translated learning/guide messages per language |
+| Formatting, example formatting, `git diff --check`, relative documentation links | Passed; 31 relative file targets checked                                         |
+| Demo production build                                                            | Passed                                                                           |
+
+Browser checks include first-load and refresh failure, retained data, save input preservation and retry, collection
+add/reorder/remove, all guide destinations, reference-anchor navigation, 390px layouts, runtime guide language changes,
+query ownership/disposal, devtools, dark/RTL layouts and existing demo layout checks. Parsing, compilation, interaction
+checks, and human judgment are different evidence: these tests do not establish that a new developer can learn the API
+without help or that every translation has native-speaker approval.
+
+Remaining external gates: maintainer/newcomer reading, native-language review, remote CI for the follow-up commits,
+merge and publication. Installed-package verification was not rerun because library code and packaging are unchanged.
+The original PR's green CI applies to its original head, not these local commits. Follow-up commits are local only.

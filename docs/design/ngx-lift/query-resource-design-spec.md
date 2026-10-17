@@ -1,6 +1,6 @@
 # Query design and production contracts
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API plus the October 16 maintainer request for domain-owned key/tag guidance and consistent mutation
 `invalidateTags` naming. See the mutation spec for compatibility.
 
@@ -1007,3 +1007,7 @@ This is an audit of shipped behavior. Proposed features and unresolved implement
 Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
 identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
+
+Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
+[query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the
+follow-up revision, actual checks and remaining human/remote gates. This supplements the earlier runtime contract audit.

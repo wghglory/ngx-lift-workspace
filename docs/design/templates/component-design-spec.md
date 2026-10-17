@@ -50,18 +50,19 @@ State durable boundaries, such as backend authorization or domain-specific persi
 | --- | ---------------- | ------------------------ | ------------- | --------------------------- | ---------------- | ------------------------ |
 | UC1 | <practical task> | <including edit/prefill> | <interaction> | <including submitted value> | <error/reset>    | <planned or actual path> |
 
-Cover real user journeys, keyboard and touch, empty results, unavailable data, long/localized content, and applicable
-scale. Each goal maps to at least one use case. Later record actual test pointers; planned coverage is not evidence.
+Cover applicable user journeys, keyboard and touch, empty results, unavailable data, long/localized content, and scale.
+Each goal maps to at least one use case. Later record actual test pointers; planned coverage is not evidence.
 
 ## Industry evidence and current gaps
 
-| Existing implementation / primary source             | Verified behavior                 | Adopt, adapt, or reject | Our gap and reason |
-| ---------------------------------------------------- | --------------------------------- | ----------------------- | ------------------ |
-| Clarity source and current local implementation      | <specific behavior>               | <decision>              | <customer impact>  |
-| Angular Material / NG-ZORRO / relevant React library | <specific behavior, URL and date> | <decision>              | <tradeoff>         |
+| Existing implementation / primary source           | Verified behavior                 | Adopt, adapt, or reject | Our gap and reason |
+| -------------------------------------------------- | --------------------------------- | ----------------------- | ------------------ |
+| Relevant upstream and current local implementation | <specific behavior>               | <decision>              | <customer impact>  |
+| Comparable Angular / React library when relevant   | <specific behavior, URL and date> | <decision>              | <tradeoff>         |
 
-Research comparable production libraries before creating or changing behavior. Borrow interaction lessons while
-retaining Clarity styling. Prefer composition over replacement when public Clarity APIs satisfy the use cases.
+Research relevant production libraries before creating or changing behavior. Use sources appropriate to the feature;
+headless APIs do not require a comparison with visual controls. For rendered UI, retain Clarity styling and prefer
+composition when public Clarity APIs satisfy the use cases.
 
 ## Developer learning journey and pedagogy plan
 
@@ -98,10 +99,11 @@ loading, SSR behavior, and security/resource limits that actually apply to the f
 
 ## Clarity, accessibility, and localization
 
-Define Clarity containers, tokens, light/dark and compact modes, responsive layout, keyboard behavior, accessible names,
-focus restoration, announcements, and RTL. List every user-visible string, plural/interpolation rule, locale/date
-behavior, and runtime language-switch behavior. Cover all supported dictionaries; record human language review
-separately.
+For rendered UI, define Clarity containers, tokens, light/dark and compact modes, responsive layout, keyboard behavior,
+accessible names, focus restoration, announcements, and RTL. List every user-visible string, plural/interpolation rule,
+locale/date behavior, and runtime language-switch behavior. Cover all supported dictionaries; record human language
+review separately. For headless APIs, document the messages and integrations they own; omit UI-only requirements when
+none apply.
 
 ## Demo and validation plan
 
