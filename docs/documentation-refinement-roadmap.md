@@ -1,8 +1,8 @@
 # Documentation refinement roadmap
 
 Status: demo refinement PRs #161–#174 merged October 17, 2026. Engineering delivery is complete for the scope below;
-newcomer comprehension and native-language acceptance remain open. Package README and spec closeout is tracked in this
-branch until its own PR and CI complete.
+newcomer comprehension and native-language acceptance remain open. Package README/spec closeout uses the same acceptance
+policy and records its own PR validation.
 
 ## Delivery coverage
 
