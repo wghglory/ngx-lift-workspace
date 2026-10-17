@@ -211,27 +211,41 @@ this.http
     console.log('Total pods aggregated across all pages:', podList.items.length);
   });`);
 
-  readonly firstReadCode = highlight(`// This is the HTTP version. The preview uses three local pages instead.
+  firstReadCode = highlight(`// This is the HTTP version. The preview uses three local pages instead.
 // In app.config.ts, add provideHttpClient() to your providers.
-import {HttpClient, provideHttpClient} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {AsyncPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {fetchPaginatedKubernetesResources, KubernetesObject} from 'ngx-lift';
+import {AlertComponent} from 'clr-lift';
+import {createAsyncState, fetchPaginatedKubernetesResources, KubernetesObject} from 'ngx-lift';
 
 @Component({
   selector: 'app-pods',
-  imports: [AsyncPipe],
-  template: \`<p>{{ (pods$ | async)?.items?.length ?? 0 }} pods</p>\`,
+  imports: [AsyncPipe, AlertComponent],
+  template: \`
+    @if (pods$ | async; as state) {
+      @if (state.isLoading) {
+        <p role="status">Loading pods...</p>
+      }
+      @if (state.error) {
+        <cll-alert [error]="state.error" />
+      }
+      @if (state.data; as list) {
+        <p>{{ list.items.length }} pods</p>
+      }
+    }
+  \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PodsComponent {
-  private http = inject(HttpClient);
-  readonly pods$ = fetchPaginatedKubernetesResources<KubernetesObject>(this.http, '/api/v1/pods', {limit: 100});
+  private httpClient = inject(HttpClient);
+  readonly pods$ = fetchPaginatedKubernetesResources<KubernetesObject>(this.httpClient, '/api/v1/pods', {
+    limit: 100,
+  }).pipe(createAsyncState());
 }
 // AsyncPipe owns the entire page sequence and unsubscribes on destruction.
 // A repeated/cyclic nonempty continuation token errors instead of looping forever.
-// Each ordinary page follows the server's continuation token; no arbitrary item cap.
-// Add your application's error presentation for failed HTTP reads.`);
+// Each ordinary page follows the server's continuation token; no arbitrary item cap.`);
 
   convenienceCode = highlight(`import {fetchPaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 
