@@ -1184,7 +1184,7 @@ export const enTranslations: Record<string, string> = {
     'Container component that displays all alerts. Should be placed above the Clarity header tag within the main container.',
   'fileReader.title': 'File Reader',
   'fileReader.firstTask':
-    'Choose a text file, inspect the caller-owned form, then clear it. An empty selection is required; certificate limits and parsing errors are covered in the next example.',
+    'Choose a text file, inspect the caller-owned form, then clear it. A file selection is required; certificate limits and parsing errors are covered in the next example.',
   'fileReader.overview':
     'The <code>FileReaderComponent</code> allows you to easily browse and read the contents of text files. It supports file selection, content reading as plain text or base64 encoded string, file size validation, and emits events when files are selected or removed.',
   'fileReader.example1': 'Example 1: Basic File Reader',

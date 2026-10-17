@@ -69,7 +69,7 @@ export class IfValidatorComponent {
   </clr-input-container>
 
   <clr-input-container>
-    <label for="if-reason">ifValidator.reasonLabel</label>
+    <label for="if-reason">Reason why you don't like</label>
     <input id="if-reason" clrInput type="text" [formControl]="form.controls.reason" size="30" />
     <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
     <clr-control-error *clrIfError="'required'">Required</clr-control-error>
