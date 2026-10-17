@@ -1741,6 +1741,8 @@ export const ruTranslations: Record<string, string> = {
     'Проверьте пробу, которая немедленно завершается сбоем при первом 429, или чтение рабочей нагрузки, которое успешно завершается после двух ответов 429. Настраиваемое чтение использует maxAttempts: 10 и резервную задержку 200 мс, допуская до 9 повторных попыток.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Тест чтения нагрузки (10 попыток)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Тест быстрой пробы (Исключение)',
+  'k8sRetryBackoff.firstTask':
+    'Обновление отправляет один модельный GET. Сначала приходит HTTP 429 с Retry-After: 1; минимум через секунду повтор возвращает HTTP 200. Вывод показывает состояние и число попыток. Затем изучите настройку и другие сценарии.',
   'k8sRetryBackoff.overview':
     'RxJS оператор <code>retryOnK8sBackoff</code> реализует автоматическую повторную отправку с задержкой для ответов HTTP 429 («TooManyRequests») Kubernetes apiserver (например, когда apiserver watch cache запускается с «storage is (re)initializing»). Только HTTP 429 запускает повторную отправку; все другие ошибки (4xx, 5xx, сбои в сети) немедленно и без изменений передаются подписчику.',
   'k8sRetryBackoff.callout':

@@ -1776,6 +1776,8 @@ export const frTranslations: Record<string, string> = {
     'Testez une sonde qui échoue dès son premier 429, ou une lecture de charge de travail qui reçoit deux 429 avant de réussir. La lecture personnalisée utilise maxAttempts: 10 et un délai de secours de 200 ms, ce qui autorise jusqu’à neuf réessais.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Tester la lecture de charge (10 tentatives)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Tester la sonde rapide (Exclusion)',
+  'k8sRetryBackoff.firstTask':
+    'Actualiser envoie un GET simulé. La première réponse est HTTP 429 avec Retry-After: 1 ; après au moins une seconde, une nouvelle tentative renvoie HTTP 200. La sortie affiche état et tentatives. La configuration et les autres scénarios suivent.',
   'k8sRetryBackoff.overview':
     "L'opérateur RxJS <code>retryOnK8sBackoff</code> implémente un retry avec backoff automatique pour les réponses HTTP 429 (<code>TooManyRequests</code>) de Kubernetes apiserver (par exemple, lorsqu'apiserver watch cache est en démarrage avec « storage is (re)initializing »). Seulement HTTP 429 déclenche un retry ; tous les autres erreurs (4xx, 5xx, perte de réseau) sont propagés immédiatement et sans modification vers l'abonné.",
   'k8sRetryBackoff.callout':

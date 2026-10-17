@@ -1,5 +1,6 @@
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {
@@ -45,6 +46,7 @@ export interface DemoPod extends KubernetesObject {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KubernetesPaginationComponent {
+  private readonly destroyRef = inject(DestroyRef);
   private translationService = inject(TranslationService);
 
   aggregateParameters = computed<ApiProperty[]>(() => {
@@ -179,7 +181,10 @@ export class KubernetesPaginationComponent {
     } as unknown as HttpClient;
 
     this.fetchMockPods('/api/v1/pods')
-      .pipe(aggregatePaginatedKubernetesResources<DemoPod>(mockHttpClient, '/api/v1/pods', {limit: 2}))
+      .pipe(
+        aggregatePaginatedKubernetesResources<DemoPod>(mockHttpClient, '/api/v1/pods', {limit: 2}),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (list) => {
           this.aggregatedList.set(list);
@@ -191,7 +196,10 @@ export class KubernetesPaginationComponent {
       });
   }
 
-  operatorCode = highlight(`import {HttpClient} from '@angular/common/http';
+  operatorCode =
+    highlight(`// Component-field excerpt: http is an injected HttpClient; Pod is your KubernetesObject type.
+// In app.config.ts, provideHttpClient() enables HTTP; own the subscription with AsyncPipe or takeUntilDestroyed.
+import {HttpClient} from '@angular/common/http';
 import {aggregatePaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 
 // As an RxJS operator piped from an initial HTTP request:
@@ -202,6 +210,42 @@ this.http
     // Automatically loops through continue tokens until finished!
     console.log('Total pods aggregated across all pages:', podList.items.length);
   });`);
+
+  firstReadCode = highlight(`// This is the HTTP version. The preview uses three local pages instead.
+// In app.config.ts, add provideHttpClient() to your providers.
+import {HttpClient} from '@angular/common/http';
+import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {AlertComponent} from 'clr-lift';
+import {createAsyncState, fetchPaginatedKubernetesResources, KubernetesObject} from 'ngx-lift';
+
+@Component({
+  selector: 'app-pods',
+  imports: [AsyncPipe, AlertComponent],
+  template: \`
+    @if (pods$ | async; as state) {
+      @if (state.isLoading) {
+        <p role="status">Loading pods...</p>
+      }
+      @if (state.error) {
+        <cll-alert [error]="state.error" />
+      }
+      @if (state.data; as list) {
+        <p>{{ list.items.length }} pods</p>
+      }
+    }
+  \`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class PodsComponent {
+  private httpClient = inject(HttpClient);
+  readonly pods$ = fetchPaginatedKubernetesResources<KubernetesObject>(this.httpClient, '/api/v1/pods', {
+    limit: 100,
+  }).pipe(createAsyncState());
+}
+// AsyncPipe owns the entire page sequence and unsubscribes on destruction.
+// A repeated/cyclic nonempty continuation token errors instead of looping forever.
+// Each ordinary page follows the server's continuation token; no arbitrary item cap.`);
 
   convenienceCode = highlight(`import {fetchPaginatedKubernetesResources, KubernetesList} from 'ngx-lift';
 

@@ -4,14 +4,14 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
   test('documents setup and navigates between the operator and interceptor', async ({page}, testInfo) => {
     await page.goto('/ngx-lift/operators/k8sRetryBackoff');
     await expect(page.locator('h1')).toContainText('retryOnK8sBackoff');
-    await expect(page.locator('app-code-block').first()).toContainText('resourceAsync');
-    await expect(page.locator('app-demo-playground').first()).toContainText('executeSimulation');
-    await expect(page.locator('app-demo-playground').first()).not.toContainText('@Component({ ... })');
+    await expect(page.locator('app-code-block').first()).toContainText('retryOnK8sBackoff');
+    await expect(page.getByTestId('retry-scenarios')).toContainText('executeSimulation');
+    await expect(page.getByTestId('retry-scenarios')).not.toContainText('@Component({ ... })');
     await testInfo.attach('operator-page', {body: await page.screenshot(), contentType: 'image/png'});
     await page.getByRole('link', {name: 'k8sRetryBackoffInterceptor', exact: true}).click();
     await expect(page).toHaveURL(/\/interceptors\/k8sRetryBackoff$/);
-    await expect(page.locator('app-code-block').first()).toContainText('withInterceptors');
-    await expect(page.locator('app-demo-playground').first()).toContainText('executeRequest');
+    await expect(page.locator('app-code-block').first()).toContainText('k8sRetryBackoffInterceptor');
+    await expect(page.getByTestId('interceptor-scenarios')).toContainText('executeRequest');
     await testInfo.attach('interceptor-page', {body: await page.screenshot(), contentType: 'image/png'});
     await page.getByRole('link', {name: 'retryOnK8sBackoff', exact: true}).click();
     await expect(page).toHaveURL(/\/operators\/k8sRetryBackoff$/);
@@ -27,7 +27,7 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
     await expect(simulateBtn).toBeVisible();
     await simulateBtn.click();
 
-    const firstPlayground = page.locator('app-demo-playground').first();
+    const firstPlayground = page.getByTestId('retry-scenarios');
 
     // Verify loading spinner appears and then resolves to success after backoff
     const successBadge = firstPlayground.locator('.badge-success');
@@ -70,7 +70,7 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
     const sendBtn = page.getByRole('button', {name: 'Send Intercepted Request'});
     await expect(sendBtn).toBeVisible();
 
-    const firstPlayground = page.locator('app-demo-playground').first();
+    const firstPlayground = page.getByTestId('interceptor-scenarios');
 
     // Test 1: Default mode (429 retried via global interceptor, resolves to 200)
     await sendBtn.click();
@@ -93,7 +93,7 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
     await clearBtn.click();
     await expect(firstPlayground.locator('.card')).toBeHidden();
 
-    const overrides = page.locator('app-demo-playground').nth(1);
+    const overrides = page.getByTestId('interceptor-overrides');
     await page.getByRole('button', {name: 'Test Fast Probe (Opt-out)'}).click();
     await expect(overrides).toContainText('Attempts: 1');
     await page.getByRole('button', {name: 'Test Workload Read (10 Attempts)'}).click();
@@ -107,7 +107,7 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
   });
   test('write retries require explicit endpoint opt-in and reject gateway errors', async ({page}) => {
     await page.goto('/ngx-lift/interceptors/k8sRetryBackoff');
-    const preview = page.locator('app-demo-playground').first();
+    const preview = page.getByTestId('interceptor-scenarios');
     const send = page.getByRole('button', {name: 'Send Intercepted Request'});
     await page.getByRole('radio', {name: 'POST: default (no retry)', exact: true}).check();
     await send.click();

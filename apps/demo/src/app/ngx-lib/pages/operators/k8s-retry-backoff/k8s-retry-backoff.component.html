@@ -4,22 +4,31 @@
 
   <cll-callout>{{ 'k8sRetryBackoff.retryContract' | translate }}</cll-callout>
 
-  <cll-callout>
-    <p cds-layout="m-t:none" [innerHTML]="'k8sRetryBackoff.callout' | translate"></p>
-    <a routerLink="/ngx-lift/interceptors/k8sRetryBackoff">k8sRetryBackoffInterceptor</a>
-  </cll-callout>
+  <app-demo-playground
+    data-testid="k8s-retry-backoff-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'k8sRetryBackoff.firstTask' | translate }}</p>
+      @let state = firstState$ | async;
+      <button type="button" class="btn btn-sm" [disabled]="state?.isLoading" (click)="firstRead$.next()">
+        {{ 'common.refresh' | translate }}
+      </button>
+      <output aria-live="polite">{{ state?.status ?? 'idle' }} · {{ state?.data?.attempt ?? 0 }}</output>
+      @if (state?.error; as error) {
+        <cll-alert [error]="error" />
+      }
+    </div>
+  </app-demo-playground>
 
-  <section cds-layout="vertical gap:md">
-    <h2>{{ 'common.basicUsage' | translate }}</h2>
-    <app-code-block [code]="operatorCode" lang="typescript" />
-    <app-code-block [code]="delayHelperCode" lang="typescript" />
-  </section>
-
-  <!-- Interactive Simulator Section -->
+  <!-- Examples: scenarios, setup and customization -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
 
     <app-demo-playground
+      data-testid="retry-scenarios"
       [title]="'k8sRetryBackoff.example1Title' | translate"
       [description]="'k8sRetryBackoff.example1Desc' | translate"
       level="intermediate"
@@ -125,6 +134,17 @@
         }
       </div>
     </app-demo-playground>
+
+    <cll-callout>
+      <p cds-layout="m-t:none" [innerHTML]="'k8sRetryBackoff.callout' | translate"></p>
+      <a routerLink="/ngx-lift/interceptors/k8sRetryBackoff">k8sRetryBackoffInterceptor</a>
+    </cll-callout>
+
+    <article cds-layout="vertical gap:sm" id="setup">
+      <h3>{{ 'common.basicUsage' | translate }}</h3>
+      <app-code-block [code]="operatorCode" lang="typescript" />
+      <app-code-block [code]="delayHelperCode" lang="typescript" />
+    </article>
 
     <!-- Example 2: Standalone Delay Extraction Helper -->
     <app-demo-playground

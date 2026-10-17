@@ -118,4 +118,14 @@ describe('K8sRetryBackoffComponent', () => {
     expect(component.isLoading()).toBe(false);
     expect(component.logs().filter((line) => line.includes('Attempt'))).toHaveLength(1);
   });
+  it('runs the fixed GET example through one retry and cancels it on destruction', async () => {
+    component.firstRead$.next();
+    await vi.advanceTimersByTimeAsync(1000);
+    fixture.detectChanges();
+    const output = fixture.nativeElement.querySelector('app-demo-playground output');
+    expect(output.textContent).toContain('resolved · 2');
+    component.firstRead$.next();
+    fixture.destroy();
+    await vi.advanceTimersByTimeAsync(1500);
+  });
 });

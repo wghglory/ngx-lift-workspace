@@ -1529,6 +1529,8 @@ export const zhCNTranslations: Record<string, string> = {
     'probe 首次 429 立即失败；workload read 收到两次 429 后成功。自定义读取配置 maxAttempts: 10、200ms 指数退避基数和 equal jitter，最多重试 9 次。',
   'k8sRetryBackoffInterceptor.btnWorkloads': '测试工作负载读取（10 次尝试）',
   'k8sRetryBackoffInterceptor.btnProbe': '测试探针（禁用重试）',
+  'k8sRetryBackoff.firstTask':
+    '刷新会发送一次模拟 GET。首次响应为 HTTP 429，并带有 Retry-After: 1；至少等待一秒后，重试返回 HTTP 200。输出显示状态和尝试次数，再阅读下方配置和其他场景。',
   'k8sRetryBackoff.overview':
     '<code>retryOnK8sBackoff</code> 是专为 Kubernetes API Server 设计的 RxJS 重试退避操作符。专门针对 HTTP 429 (<code>TooManyRequests</code>) 响应（例如 Watch 缓存正在重建并提示 "storage is (re)initializing"）进行智能退避重试。只有 HTTP 429 会触发重试，其他任何错误（4xx、5xx、网络中断）均会立即且原样向上抛出。',
   'k8sRetryBackoff.callout':
