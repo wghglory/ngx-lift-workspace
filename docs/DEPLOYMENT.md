@@ -14,8 +14,20 @@ dispatch defaults to dry_run=true. A dry run verifies both packages, strict inst
 commands without publishing, creating a version commit/tag or requiring an npm token.
 
 For a real release, choose the version policy, review the changelog, and deliberately disable dry_run. The workflow uses
-the official npm registry and checks credentials. Breaking API changes require breaking versions and a review of
-dependent package peer ranges before publication.
+the official npm registry and checks credentials. Review behavioral compatibility and dependent package peer ranges
+using the version policy below before publication.
+
+## Version policy
+
+The maintainer decided on October 17, 2026 to keep both packages on **21.x** while the supported platform remains
+Angular 21, and reserve **22.x** for the Angular 22 upgrade. Upcoming additions belong in 21.x minor releases. The
+package versions remain independent; this decision does not select exact release numbers or publish anything.
+
+The current `computedAsync` error/type correction and idle-warning countdown change remain **behaviorally breaking**.
+Shipping them in 21.x is an explicit maintainer-approved exception to SemVer's major-bump rule, not a claim of backward
+compatibility. Preserve the [migration notes](../CHANGELOG.md#breaking), verify dependent peers and installed consumers,
+and run the publication dry run before the real release. Do not remove the compatibility notice when assigning versions.
+The same review is required for any later incompatible change; this decision is not blanket approval for future breaks.
 
 ## Release tags
 

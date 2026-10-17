@@ -2,10 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), using
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html), with explicit maintainer-approved compatibility exceptions
+recorded for the affected releases.
 
 ## [Unreleased]
+
+**Release decision — October 17, 2026:** both packages remain on 21.x; 22.x is reserved for the Angular 22 upgrade. The
+maintainer accepts the behavioral breaks below in the upcoming 21.x minor releases. This is an explicit exception to
+SemVer, not backward-compatible behavior. Exact versions, publication and dependent-peer verification remain release
+steps; see the [version policy](docs/DEPLOYMENT.md#version-policy).
 
 ### Added
 
@@ -22,11 +28,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - computedAsync now throws unhandled failures on reads instead of returning errors as T. Typed onError fallbacks remain
   data; callback exceptions throw on reads. The false throwOnError option is rejected, and initialized sources and
-  fallbacks must match T. Include undefined explicitly in T when needed. Existing source recovery is preserved. This
-  requires a breaking release/version decision before publication; see the computedAsync design specification.
+  fallbacks must match T. Include undefined explicitly in T when needed. Existing source recovery is preserved. See the
+  migration below and the computedAsync design specification.
 - IdleDetectionService interruption events no longer reset the active countdown phase. Ordinary user activity (mouse
   movement, keystrokes, clicks) leaves warning countdowns running; only explicit `resetTimer(true)` confirmation resets
   the countdown and starts a fresh idle cycle.
+
+### Migration for the upcoming 21.x releases
+
+- `computedAsync`: remove `throwOnError: false`. Provide a typed `onError` fallback when failures should produce data;
+  otherwise handle a thrown read outside template evaluation. Include `undefined` in `T` if it is a valid fallback.
+
+  ```typescript
+  // In an Angular injection context; the loader is unchanged.
+  const count = computedAsync(() => loadCount(), {initialValue: 0, onError: () => 0});
+  const optional = computedAsync<number | undefined>(() => loadCount(), {
+    initialValue: 0,
+    onError: () => undefined,
+  });
+  ```
+
+- Idle warnings: call `idleDetectionService.resetTimer(true)` only when the user explicitly confirms continuation.
+  Ordinary activity and `resetTimer()` preserve an active warning countdown. Application-owned session renewal remains
+  separate from resetting the UI timer.
 
 ### Changed
 

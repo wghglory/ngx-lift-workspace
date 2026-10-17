@@ -1,8 +1,9 @@
 # Signal and Clarity documentation follow-up
 
 This follows the query learning path in PR #161. It changes the documentation app, not the libraries' public APIs.
-Existing URLs remain stable. PR #161 merged into `main` as `cc1590e`; this follow-up now targets `main`. The
-[site-wide refinement roadmap](documentation-refinement-roadmap.md) records the remaining work explicitly.
+Existing URLs remain stable. PR #161 merged into `main` as `cc1590e`; this follow-up merged as PR #162. The
+[site-wide refinement roadmap](documentation-refinement-roadmap.md) records the merged catalog and remaining human
+acceptance explicitly.
 
 ## Reader outcomes and destinations
 
@@ -39,9 +40,9 @@ with deterministic data. The new computed example uses a timer and requires no n
 The specifications under `docs/design/` remain the authority for runtime contracts; this is a documentation delivery
 plan. No new component API, library dependency, package entry point, or release is introduced. The existing standards
 and design template already distinguish tutorials, guides, explanations and reference; no second template is needed.
-This PR does not establish site-wide adoption. The remaining pages, including existing playgrounds, are tracked in the
-[refinement roadmap](documentation-refinement-roadmap.md). Short reference pages do not need the long resource page’s
-tab structure.
+This follow-up established six entry flows. The subsequent catalog refinements, including existing playgrounds, are
+tracked in the [refinement roadmap](documentation-refinement-roadmap.md). Short reference pages do not need the long
+resource page’s tab structure.
 
 A successful build proves template validity. Browser interaction proves the demonstrated flow, not newcomer
 comprehension or native-language review. Those human acceptance gates remain open.
@@ -71,8 +72,9 @@ The parent PR independently passes locally at 79.06% (340/430).
 
 The production build compiles the final demo templates; library/package verification is not rerun because `libs/` and
 package metadata are unchanged. Local review found no blocking issues. Human newcomer comprehension and native-language
-review remain open. Remote CI, merge and publication are separate gates.
+review remain open. Main integration and deployment evidence is linked in the refinement roadmap; publication remains
+separate.
 
-The remaining catalog now has 12 implementation PRs, tracked in the
+The remaining catalog was delivered through twelve merged implementation PRs, tracked in the
 [refinement roadmap](documentation-refinement-roadmap.md). Those sibling PRs own the other pages; #162 retains the
 focused entry-flow scope described here.

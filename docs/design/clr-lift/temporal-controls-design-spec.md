@@ -1,9 +1,14 @@
 # Date, time, date-time, ranges, and calendar
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 16, 2026. New selectors and types are proposed.
+Status: **Draft; API approval pending**. Updated October 17, 2026. New selectors and types are proposed.
+
+## Applicable contracts
+
+Temporal values, parsing/validation, CVA, calendar keyboard/focus and localization apply. Date-only, wall-time and
+instant semantics are separate; visible-range requests need cancellation, not a scheduling engine.
 
 ## Background
 
@@ -49,6 +54,19 @@ backend scheduling, business holidays, authorization and server validation.
 | T5  | Limit a maintenance interval           | Explicit instant min/max and disabled times; runtime constraint changes revalidate without clamping |
 | T6  | Navigate a monthly operations calendar | Request the visible interval; distinguish selected date, visible month and events                   |
 | T7  | Enter a DST gap/overlap                | Reject nonexistent local time; require explicit disambiguation for a repeated wall time             |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular 21 forms and date-only versus time-only versus zoned-instant terminology.
+
+| Reader task                     | Learning outcome                                           | Destination / working example                  |
+| ------------------------------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| Enter one date or time          | Keep serialized values stable and explain invalid drafts   | This spec, proposed picker examples            |
+| Choose a range or zoned instant | Resolve ordering, constraints and DST ambiguity explicitly | This spec, proposed range/calendar cases T1–T7 |
+
+Validation and delivery: All tutorials are planned. Parser/time-zone/API decisions precede compiled form examples, DST
+regressions and real browser acceptance. The public API and behavior sections below own exact options and limitations;
+examples introduce them after the first task.
 
 ## Public API and examples
 

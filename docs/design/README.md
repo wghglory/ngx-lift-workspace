@@ -34,14 +34,16 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 | TimelineWizardComponent, base step and service                       | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)                          |
 | TranslationService and ThemeService                                  | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)                |
 | Existing FormArray key/value editor, plus separately marked proposal | [Key/value current contract and proposal](clr-lift/key-value-inputs-design-spec.md) |
+| QueryDevtoolsComponent and conditional root provider                 | [Query inspector](clr-lift/query-devtools-design-spec.md)                           |
 
 ## Review status and maintenance
 
 The [gap register](implementation-gaps.md) records the check of every preexisting spec, source evidence and prioritized
 implementation fixes. Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not
 implemented APIs. Specs use the shared template's required topics, retaining accurate legacy detail and explicitly
-marking inapplicable UI/forms concerns. Simple pure helpers/pipes stay in public JSDoc and focused tests unless their
-state, resource or compatibility contract warrants a separate spec.
+marking inapplicable UI/forms concerns. The documentation learning briefs distinguish delivered demos from proposed
+destinations. Simple pure helpers/pipes stay in public JSDoc and focused tests unless their state, resource or
+compatibility contract warrants a separate spec.
 
 These documents define behavior, error handling, cancellation, lifetime and supported scope. Public signatures and
 regression tests remain in the libraries. Keep release changes in [CHANGELOG](../../CHANGELOG.md), publishing procedures

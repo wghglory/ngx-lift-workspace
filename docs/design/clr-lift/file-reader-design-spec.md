@@ -1,7 +1,12 @@
 # File reader value control
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
 Approval: F2 fix authorized by maintainer; existing value/encoding API preserved.
+
+## Applicable contracts
+
+String values, CVA/validation, read cancellation and stale-callback disposal apply, alongside file-input labels and
+translated errors. File selection owns local work, without a shared query cache.
 
 ## Background
 
@@ -43,6 +48,19 @@ pending reads. Adopt abort plus identity checks. [Angular CVA](https://angular.d
 separates model writes from user edits. Disabling through the CVA or disabled input must cancel an active read and
 prevent obsolete callbacks from changing the owner; this change closes F2 in the
 [gap register](../implementation-gaps.md).
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular Reactive Forms and Clarity setup; a local text file is sufficient.
+
+| Reader task                   | Learning outcome                                                   | Destination / working example                                                                    |
+| ----------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| Read a text file              | See the resulting string in the owning FormControl                 | [/clr-lift/components/file-reader](https://ngx-lift.netlify.app/clr-lift/components/file-reader) |
+| Correct and clear a selection | Observe size/encoding errors, reset and disabled-read cancellation | Same demo; CVA/read-race and file-reader E2E cases                                               |
+
+Validation and delivery: The demo and F2 regressions are delivered. ngModel/facade/updateOn hosts and human
+accessibility acceptance remain separately tracked. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

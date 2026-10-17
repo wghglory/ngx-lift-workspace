@@ -1,7 +1,12 @@
 # Tooltip and interactive popover
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
 Approval: existing API; assistive-technology acceptance remains separate.
+
+## Applicable contracts
+
+Rendered tooltip/popover semantics, borrowed/owned content, overlay positioning and disposal apply. Forms can host the
+trigger, but the directive has no form value or shared cache.
 
 ## Background
 
@@ -42,6 +47,19 @@ Form values, caller component attachment/destruction, routing, and content local
 Checked October 16, 2026: [WAI-ARIA tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/) keeps focus at the
 trigger and excludes interactive popup controls. Adapt by distinguishing string tooltip from nonmodal dialog content.
 Current behavior chooses semantics by content type, not by inspecting focusable descendants.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Clarity styling and a keyboard-focusable trigger; tooltip text differs from interactive popover content.
+
+| Reader task                         | Learning outcome                                                    | Destination / working example                                                            |
+| ----------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Focus a tooltip trigger             | Discover its description before reading the source                  | [/clr-lift/components/tooltip](https://ngx-lift.netlify.app/clr-lift/components/tooltip) |
+| Open interactive content repeatedly | Preserve focus/content ownership and clean up the body-mounted view | Same demo; ownership and lifecycle cases below                                           |
+
+Validation and delivery: The entry flow landed in #166. Unit/browser coverage is separate from manual
+assistive-technology acceptance. The public API and behavior sections below own exact options and limitations; examples
+introduce them after the first task.
 
 ## Public API and examples
 

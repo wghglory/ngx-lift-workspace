@@ -38,6 +38,12 @@ compatible migration is approved. Release fixes, security remediation, and pendi
   The proposed lift value is a simpler supported contract for cancellation, paging, errors, identity, and forms.
 - Clarity also supplies breadcrumbs, badges, and labels. Compare its real behavior before adding equivalents.
 
+## Package release decision
+
+Both packages remain on 21.x; 22.x is reserved for the Angular 22 upgrade. The
+[version policy](DEPLOYMENT.md#version-policy) records the maintainer-approved compatibility exception and migration
+requirements. Documentation closeout changes neither dependency pins nor package versions.
+
 ## Platform decision
 
 The maintainer's October 16 direction settles the delivery order:

@@ -1,9 +1,14 @@
 # Drawer
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 16, 2026. New symbols are proposed.
+Status: **Draft; API approval pending**. Updated October 17, 2026. New symbols are proposed.
+
+## Applicable contracts
+
+Rendered overlays, focus restoration, guards, async close races and disposal apply. Embedded forms retain their own
+value owner; the drawer itself has no CVA or shared cache.
 
 ## Background
 
@@ -38,6 +43,19 @@ overlay/focus public APIs as needed. A side-positioned modal still has to satisf
 | D3  | Close a dirty edit                       | Application can defer closure, confirm asynchronously and keep focus if cancellation wins |
 | D4  | Open combobox/calendar inside the drawer | Nested overlay remains operable; Escape dismisses the top layer first                     |
 | D5  | View on a phone or switch route          | Responsive width and deterministic teardown; return focus only to a connected element     |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular content projection, Clarity styling and the distinction between modal and nonmodal surfaces.
+
+| Reader task            | Learning outcome                                       | Destination / working example                      |
+| ---------------------- | ------------------------------------------------------ | -------------------------------------------------- |
+| Open and close details | Return focus to the trigger after closing              | This spec, proposed minimal drawer example         |
+| Close an edited form   | Keep edits visible when a close guard rejects or fails | This spec, proposed guard and nested-control cases |
+
+Validation and delivery: Both tasks are planned. No drawer route/export exists; API review must precede compiled demos,
+keyboard checks and browser evidence. The public API and behavior sections below own exact options and limitations;
+examples introduce them after the first task.
 
 ## Public API and examples
 

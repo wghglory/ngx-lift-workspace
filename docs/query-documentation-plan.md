@@ -86,6 +86,13 @@ query ownership/disposal, devtools, dark/RTL layouts and existing demo layout ch
 checks, and human judgment are different evidence: these tests do not establish that a new developer can learn the API
 without help or that every translation has native-speaker approval.
 
-Remaining external gates: maintainer/newcomer reading, native-language review, remote CI for the follow-up commits,
-merge and publication. Installed-package verification was not rerun because library code and packaging are unchanged.
-The original PR's green CI applies to its original head, not these local commits. Follow-up commits are local only.
+## Integration and remaining acceptance
+
+PR #161 and its follow-ups are merged.
+[Main CI at 5bee7e1](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851435) passed full validation,
+installed-package verification and the complete three-browser suite; the
+[demo deployment](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851437) also passed. The earlier
+local revision above records development evidence; it no longer describes unmerged work.
+
+Maintainer/newcomer reading and native-language review remain open. Publication is separate, under the
+[release policy](DEPLOYMENT.md#version-policy). Later documentation changes require their own PR checks.

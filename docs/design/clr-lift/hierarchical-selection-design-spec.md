@@ -1,9 +1,14 @@
 # Cascader and tree-select
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 16, 2026. Lower priority pending a named application consumer.
+Status: **Draft; API approval pending**. Updated October 17, 2026. Lower priority pending a named application consumer.
+
+## Applicable contracts
+
+Hierarchical value/identity, forms, keyboard/tree semantics, child-request cancellation and bounded rendering apply.
+Cross-control shared state is not assumed; request ownership follows the proposed feature scope.
 
 ## Background
 
@@ -40,6 +45,19 @@ dropdown. Evaluate Clarity tree/checkbox/overlay composition before choosing a n
 | H3  | Expand a remote branch                         | Per-branch loading/error/retry; late results cannot overwrite a different context                   |
 | H4  | Search unloaded hierarchy                      | A server result includes its ancestor path; local filtering never pretends to search unloaded nodes |
 | H5  | Edit an existing selection before parents load | Supplied path/label seeds render immediately and reconcile by key                                   |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: A named hierarchy consumer and Angular 21 forms; API approval is pending.
+
+| Reader task               | Learning outcome                                                 | Destination / working example                       |
+| ------------------------- | ---------------------------------------------------------------- | --------------------------------------------------- |
+| Choose one hierarchy path | Distinguish loaded nodes, selectable values and missing children | This spec, proposed cascader example                |
+| Select lazy tree nodes    | Recover child-load failures without committing stale selections  | This spec, proposed tree-select and lazy-load cases |
+
+Validation and delivery: All examples and destinations are planned. A consumer, child paging/search decisions and
+keyboard acceptance are prerequisites to implementation. The public API and behavior sections below own exact options
+and limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

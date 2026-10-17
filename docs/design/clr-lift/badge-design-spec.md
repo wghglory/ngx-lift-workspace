@@ -1,9 +1,14 @@
 # Badges and labels: reuse before extension
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; composition recommendation**. Updated October 16, 2026.
+Status: **Draft; composition recommendation**. Updated October 17, 2026.
+
+## Applicable contracts
+
+Rendered status, accessible text and localization apply. Clarity composition is synchronous; no form value, request
+identity or shared cache is introduced.
 
 ## Background
 
@@ -40,6 +45,19 @@ Adopt the distinctions and accessibility outcomes while retaining Clarity appear
 | N3  | Show a label with a count            | Compose the existing label and badge                                                             |
 | N4  | Place an unread-count/dot on an icon | Verify Clarity positioning and accessible naming; add a small wrapper only if a real gap remains |
 | N5  | Convey severity without a number     | Include accessible status text; color alone is insufficient                                      |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular templates and existing Clarity badges/labels.
+
+| Reader task                  | Learning outcome                                     | Destination / working example           |
+| ---------------------------- | ---------------------------------------------------- | --------------------------------------- |
+| Choose a badge or label      | Explain count versus status without relying on color | This spec, Clarity composition examples |
+| Handle long/localized status | Keep the label understandable at narrow widths       | Use cases and proposed demo plan        |
+
+Validation and delivery: N1–N5 remain planned demo acceptance. A lift wrapper and its tutorial require a demonstrated
+Clarity gap and API review. The public API and behavior sections below own exact options and limitations; examples
+introduce them after the first task.
 
 ## Public API and examples
 

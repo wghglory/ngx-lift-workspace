@@ -1,7 +1,12 @@
 # Timeline wizard lifecycle and form ownership
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
 Approval: existing API; no new workflow framework proposed.
+
+## Applicable contracts
+
+Dynamic view lifetime, Reactive Forms ownership, async advancement, stale-result cleanup and rendered step focus apply.
+The wizard hosts forms rather than owning a CVA value; it has no shared query cache.
 
 ## Background
 
@@ -42,6 +47,19 @@ Server write rollback, route guards, validation rules, and a single CVA value fo
 Installed Clarity timeline supplies current/processing/success/error presentation; the lift shell owns dynamic Angular
 components and async transitions. Angular FormGroup remains the validity/data owner. A native Signal Forms step has no
 implemented integration with this base class yet.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Clarity setup, TimelineStep configuration and step components extending TimelineBaseComponent.
+
+| Reader task              | Learning outcome                                                          | Destination / working example                                                                            |
+| ------------------------ | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Complete two local steps | See required validation, navigation and final submitted data              | [/clr-lift/components/timeline-wizard](https://ngx-lift.netlify.app/clr-lift/components/timeline-wizard) |
+| Retry async advancement  | Keep entered values after failure and distinguish confirmed from finished | Same demo; live/non-live and failure lifecycle contracts below                                           |
+
+Validation and delivery: The entry flow landed in #162. Use wizard unit/E2E cases; native-field steps and human
+focus/announcement acceptance remain separate. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 
