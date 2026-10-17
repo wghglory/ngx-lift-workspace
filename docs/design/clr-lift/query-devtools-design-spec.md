@@ -79,11 +79,13 @@ this explicit component import bypasses the root provider's production-exclusion
 
 ## Interaction and columns
 
-The follow-up layout revision uses flexible key width in the full list, with Tags, Failed attempts and a Refetch column.
-Clicking a tag filters that list; Refetch opens the inspector and runs only that row's loader. Opening the inspector
-switches to the compact four-column list and moves query actions into the inspector, so actions are not duplicated in
-the same view. The full list uses available width rather than wrapping long keys into a fixed 200-pixel column. Narrow
-screens retain horizontal scrolling. Existing cache inspection behavior and application-client ownership are unchanged.
+The follow-up layout revision delegates all column sizing to Clarity, without fixed widths or minimum widths on columns.
+Query key is first and Tags is second in both layouts. The full list also shows Failed attempts and Refetch. Clicking a
+tag filters that list; Refetch opens the inspector and runs only that row's loader. Opening the inspector switches to
+the compact five-column list and moves query actions into the inspector, so actions are not duplicated in the same view.
+Column widths follow content and available space; no column is explicitly stretched to consume the remaining width.
+Narrow screens retain horizontal scrolling. Existing cache inspection behavior and application-client ownership are
+unchanged.
 
 The launcher has an accessible name and tooltip. The panel is a labeled region with no backdrop or focus trap; opening
 focuses Search keys. Close restores focus to its launcher. Escape dismisses an inner grid filter first, then the
@@ -101,6 +103,7 @@ value paths retain LTR direction.
 | Compact column | Purpose                                                                                                   |
 | -------------- | --------------------------------------------------------------------------------------------------------- |
 | Query key      | Canonical key, key search/filter/sort and click-to-inspect.                                               |
+| Tags           | Shared memberships, sortable/filterable; click a tag to show matching queries.                            |
 | State          | Localized lowercase English badge with text as well as color.                                             |
 | Observers      | Active subscriptions, sortable and numerically filterable; zero means inactive.                           |
 | Updated        | Seconds since last success, exact localized timestamp on focus/hover, sorted by the underlying timestamp. |
@@ -141,10 +144,10 @@ functions, accessors and inaccessible objects have structural summaries. JavaScr
 objects expose their own fields through descriptors; other custom objects are summarized rather than traversed.
 Arbitrary Proxy traps cannot have hard execution-time guarantees.
 
-Expand next level opens the shallowest collapsed nodes currently shown, preserving already expanded branches and page
-offsets. Expand all recursively opens the current preview pages within the same 500-row/depth-20 limits, without
-enumerating every page of a large collection. Collapse all closes the tree. Paging remains explicit, and these controls
-never fetch or create query observers.
+Expand all recursively opens the current preview pages within the same 500-row/depth-20 limits, without enumerating
+every page of a large collection. Collapse all closes the tree. Paging remains explicit, and these controls never fetch
+or create query observers. Conditional row cells each have a single projectable root so Angular can assign them to
+Clarity's cell slot without suppressing projection diagnostics.
 
 Copy JSON runs an explicit bounded serialization attempt. It copies complete JSON only, up to 256 KiB in UTF-8; cycles,
 accessors, unsupported values, sparse arrays and oversized data produce a visible explanation, never silent truncation.
@@ -273,6 +276,12 @@ values and pending-read GC past the retention interval.
 Full-list and expansion follow-up validation, October 17: pnpm run validate passes with 883 core, 325 clr-lift and 238
 demo tests, lint/types, coverage, production builds, bundle checks and fresh strict-peer package consumers. The 24
 affected browser checks pass across Chromium, Firefox and WebKit, including wide/compact lists, row refetch, composed
-filters, next-level/all expansion, narrow layouts, dark/RTL and 11 demo languages. Five additional WebKit reproductions
+filters, bounded value expansion, narrow layouts, dark/RTL and 11 demo languages. Five additional WebKit reproductions
 verify the full key-cell target after grid focus scrolling. Large-array expansion retains paging within the 500-row
 budget; descriptor-based expansion preserves page offsets, avoids getters and terminates on cycles/depth limits.
+
+Projection/layout follow-up: development and production builds report no NG8011 diagnostics without suppressions. Native
+projected-row assertions verify tags, failure counts and Refetch cells; Key and Tags remain first/second with Clarity
+automatic column sizing in both layouts. Only Expand all/Collapse all remain. pnpm run validate passes with 1,446 unit
+tests and installed-package checks; all 24 targeted three-browser cases pass, including column order, projected
+diagnostics, refetch, bounded expansion, filters, narrow/dark/RTL and supported demo languages.

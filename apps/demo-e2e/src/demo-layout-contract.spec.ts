@@ -218,10 +218,10 @@ test('diagnostics datagrid filters and sorts without refetching application data
   const observers = dialog.getByRole('columnheader', {name: 'Observers'});
   await observers.getByRole('button', {name: 'Observers', exact: true}).click();
   await expect(observers).toHaveAttribute('aria-sort', 'ascending');
-  await expect(rows.first().locator('clr-dg-cell').nth(2)).toHaveText('1');
+  await expect(rows.first().locator('clr-dg-cell').nth(3)).toHaveText('1');
   await observers.getByRole('button', {name: 'Observers', exact: true}).click();
   await expect(observers).toHaveAttribute('aria-sort', 'descending');
-  await expect(rows.first().locator('clr-dg-cell').nth(2)).toHaveText('2');
+  await expect(rows.first().locator('clr-dg-cell').nth(3)).toHaveText('2');
   await observers.locator('.datagrid-filter-toggle').click();
   await filter.getByRole('spinbutton').first().fill('2');
   await expect(rows).toHaveCount(1);
@@ -300,10 +300,8 @@ test('data-first controls group copy actions and distinguish paused view updates
   const inspector = panel.locator('.query-inspector');
   await expect(inspector.locator('.value-tree')).toContainText('activeUsers');
   await expect(inspector.locator('.preview-note')).toHaveCount(0);
-  const list = box(await panel.locator('.query-list').boundingBox());
-  const updatedColumn = box(await panel.getByRole('columnheader', {name: 'Updated'}).boundingBox());
-  expect(updatedColumn.x + updatedColumn.width).toBeLessThanOrEqual(list.x + list.width);
-  expect(updatedColumn.y).toBeGreaterThanOrEqual(box(await panel.locator('.panel-body').boundingBox()).y);
+  await expect(panel.getByRole('columnheader').nth(0)).toContainText('Query key');
+  await expect(panel.getByRole('columnheader').nth(1)).toContainText('Tags');
   expect(box(await inspector.boundingBox()).width).toBeGreaterThan(
     box(await panel.locator('.query-list').boundingBox()).width,
   );
@@ -318,7 +316,7 @@ test('data-first controls group copy actions and distinguish paused view updates
   await expect(page.locator('html')).toHaveAttribute('data-copied-query', '["metrics","cluster-overview"]');
   await inspector.getByRole('button', {name: 'Collapse all', exact: true}).click();
   await expect(inspector.locator('.value-row')).toHaveCount(1);
-  await inspector.getByRole('button', {name: 'Expand next level', exact: true}).click();
+  await inspector.getByRole('button', {name: 'Expand all', exact: true}).click();
   await expect(inspector.locator('.value-tree')).toContainText('activeUsers');
   await panel.getByRole('button', {name: 'Pause updates', exact: true}).click();
   await panel.getByRole('button', {name: 'Update view', exact: true}).click();
@@ -345,7 +343,7 @@ test('state counts and shared tags filter collection queries without refetching 
   expect(keyTarget.height).toBeGreaterThanOrEqual(keyCell.height - 1);
   await cluster.locator('.key-button').click();
   await panel.getByRole('tab', {name: 'Details', exact: true}).click();
-  await panel.locator('.tag-button').first().click();
+  await panel.locator('.query-inspector .tag-button').first().click();
   await expect(panel.locator('.query-inspector')).toHaveCount(0);
   await expect(panel.locator('clr-dg-row')).toHaveCount(4);
   await expect(panel.getByRole('searchbox', {name: 'Search keys', exact: true})).toBeFocused();
@@ -355,7 +353,7 @@ test('state counts and shared tags filter collection queries without refetching 
   await expect(panel.locator('clr-dg-row')).toHaveCount(3);
 });
 
-test('wide query lists expose diagnostics and row refetch while expansion opens additional cached levels', async ({
+test('query lists size columns automatically and project diagnostics while expansion opens cached levels', async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({width: 1920, height: 1000});
@@ -366,19 +364,21 @@ test('wide query lists expose diagnostics and row refetch while expansion opens 
   await expect(panel.getByRole('columnheader', {name: 'Tags'})).toBeVisible();
   await expect(panel.getByRole('columnheader', {name: 'Failed attempts'})).toBeVisible();
   const keyColumn = panel.getByRole('columnheader', {name: 'Query key'});
-  await expect.poll(async () => box(await keyColumn.boundingBox()).width).toBeGreaterThan(600);
+  expect(box(await keyColumn.boundingBox()).width).toBeLessThan(
+    box(await panel.locator('.query-list').boundingBox()).width / 2,
+  );
   const bulk = panel.locator('clr-dg-row').filter({hasText: 'clusters-bulk-fleet'});
   await expect(bulk.locator('.state-badge')).toHaveText('fresh');
-  expect(box(await bulk.locator('.key-button code').boundingBox()).height).toBeLessThan(28);
+  await expect(panel.getByRole('columnheader').nth(1)).toContainText('Tags');
+  await expect(bulk.locator('.datagrid-cell')).toHaveCount(7);
+  await expect(bulk.locator('.datagrid-cell').nth(5)).toHaveText('0');
   await panel.screenshot({path: testInfo.outputPath('query-devtools-wide-list.png')});
   await bulk.getByRole('button', {name: 'Refetch', exact: true}).click();
   const inspector = panel.locator('.query-inspector');
-  await expect(panel.getByRole('columnheader')).toHaveCount(4);
+  await expect(panel.getByRole('columnheader')).toHaveCount(5);
   await expect(inspector.getByRole('button', {name: 'Refetch', exact: true})).toBeEnabled();
-  await inspector.getByRole('button', {name: 'Expand next level', exact: true}).click();
+  await inspector.getByRole('button', {name: 'Expand all', exact: true}).click();
   await expect(inspector.locator('.value-tree')).toContainText('prod-us-east');
-  await expect(inspector.locator('.value-tree')).not.toContainText('cpuUsagePct:');
-  await inspector.getByRole('button', {name: 'Expand next level', exact: true}).click();
   await expect(inspector.locator('.value-tree')).toContainText('cpuUsagePct:');
   await inspector.getByRole('button', {name: 'Collapse all', exact: true}).click();
   await expect(inspector.locator('.value-row')).toHaveCount(1);
@@ -386,7 +386,9 @@ test('wide query lists expose diagnostics and row refetch while expansion opens 
   await expect(inspector.locator('.value-tree')).toContainText('cpuUsagePct:');
   await inspector.getByRole('button', {name: 'Back', exact: true}).click();
   await expect(panel.getByRole('columnheader')).toHaveCount(7);
-  await expect.poll(async () => box(await keyColumn.boundingBox()).width).toBeGreaterThan(600);
+  expect(box(await keyColumn.boundingBox()).width).toBeLessThan(
+    box(await panel.locator('.query-list').boundingBox()).width / 2,
+  );
 });
 
 test('pointer resizing persists height once dragging finishes and restores it on reopen', async ({page}) => {

@@ -23,7 +23,7 @@ import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {AlertComponent} from '../alert/alert.component';
 import {queryDevtoolsTranslations} from './query-devtools.l10n';
-import {copyableJson, expandValueRows, valueRows, ValueRow} from './query-value-preview';
+import {copyableJson, expandAllValueRows, valueRows, ValueRow} from './query-value-preview';
 
 let nextPanelId = 0;
 
@@ -271,8 +271,8 @@ export class QueryDevtoolsComponent {
     this.expanded.set(new Map([['$', 0]]));
   }
 
-  protected expandLevels(mode: 'next' | 'all'): void {
-    this.expanded.set(expandValueRows(this.inspectedValue(), this.expanded(), mode));
+  protected expandAll(): void {
+    this.expanded.set(expandAllValueRows(this.inspectedValue(), this.expanded()));
   }
 
   private readSnapshot(client: QueryClient): void {

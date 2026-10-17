@@ -1,18 +1,15 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {describe, expect, it, vi} from 'vitest';
 
-import {copyableJson, expandValueRows, valueRows} from './query-value-preview';
+import {copyableJson, expandAllValueRows, valueRows} from './query-value-preview';
 
 describe('bounded query value inspection', () => {
-  it('opens one additional level or all previewed levels while preserving existing branches', () => {
+  it('opens all previewed levels without changing the original expansion state', () => {
     const data = {first: {second: {value: 42}}, other: {name: 'Alex'}};
     const initial = new Map([['$', 0]]);
-    const next = expandValueRows(data, initial, 'next');
-    expect(valueRows(data, next).some((row) => row.label === 'second')).toBe(true);
-    expect(valueRows(data, next).some((row) => row.label === 'value')).toBe(false);
-    const deeper = expandValueRows(data, next, 'next');
-    expect(valueRows(data, deeper).some((row) => row.preview === '42')).toBe(true);
-    expect(valueRows(data, expandValueRows(data, new Map(), 'all'))).toEqual(valueRows(data, deeper));
+    const expanded = expandAllValueRows(data, initial);
+    expect(valueRows(data, expanded).some((row) => row.preview === '42')).toBe(true);
+    expect(valueRows(data, expanded)).toEqual(valueRows(data, expandAllValueRows(data, new Map())));
     expect(initial.size).toBe(1);
   });
 
@@ -20,7 +17,7 @@ describe('bounded query value inspection', () => {
     const getter = vi.fn();
     const data = Array.from({length: 100_000}, (_, id) => ({id, nested: {value: id}}));
     Object.defineProperty(data[100], 'hidden', {get: getter});
-    const expanded = expandValueRows(data, new Map([['$', 100]]), 'all');
+    const expanded = expandAllValueRows(data, new Map([['$', 100]]));
     const rows = valueRows(data, expanded);
     expect(expanded.get('$')).toBe(100);
     expect(rows[1].label).toBe('100');
@@ -29,11 +26,11 @@ describe('bounded query value inspection', () => {
     expect(getter).not.toHaveBeenCalled();
     let deep: unknown = 42;
     for (let index = 0; index < 30; index++) deep = {child: deep};
-    const deepRows = valueRows(deep, expandValueRows(deep, new Map(), 'all'));
+    const deepRows = valueRows(deep, expandAllValueRows(deep, new Map()));
     expect(deepRows.at(-1)).toMatchObject({depth: 20, truncated: true, expandable: false});
     const cycle: Record<string, unknown> = {};
     cycle['self'] = cycle;
-    expect(valueRows(cycle, expandValueRows(cycle, new Map(), 'all'))[1].preview).toBe('[Circular]');
+    expect(valueRows(cycle, expandAllValueRows(cycle, new Map()))[1].preview).toBe('[Circular]');
   });
 
   it('pages a large array without rendering or serializing every item', () => {

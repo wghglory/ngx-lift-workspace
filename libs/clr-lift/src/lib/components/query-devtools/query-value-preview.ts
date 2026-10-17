@@ -116,18 +116,13 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
 }
 
 /** Expand visible preview pages without traversing the complete payload or exceeding the renderer's limits. */
-export function expandValueRows(
-  value: unknown,
-  expanded: ReadonlyMap<string, number>,
-  mode: 'next' | 'all',
-): ReadonlyMap<string, number> {
+export function expandAllValueRows(value: unknown, expanded: ReadonlyMap<string, number>): ReadonlyMap<string, number> {
   const next = new Map(expanded);
-  for (let level = 0; level < (mode === 'all' ? maxDepth : 1); level++) {
+  for (let level = 0; level < maxDepth; level++) {
     const collapsed = valueRows(value, next).filter((row) => row.expandable && !row.expanded);
     if (!collapsed.length) break;
-    const shallowest = Math.min(...collapsed.map((row) => row.depth));
     for (const row of collapsed) {
-      if (mode === 'all' || row.depth === shallowest) next.set(row.path, 0);
+      next.set(row.path, 0);
     }
   }
   return next;

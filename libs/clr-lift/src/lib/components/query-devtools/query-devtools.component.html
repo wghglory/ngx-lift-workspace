@@ -180,31 +180,20 @@
       <div class="panel-body" [class.has-selection]="selectedKey() !== null">
         <div class="query-list">
           <clr-datagrid>
-            <clr-dg-column
-              clrDgField="serializedKey"
-              [style.min-width.px]="200"
-              [style.width.px]="selectedKey() !== null ? 200 : null"
-              >{{ 'queryDevtools.key' | translate }}</clr-dg-column
-            >
-            <clr-dg-column clrDgField="stateLabel" [style.width.px]="90">{{
-              'queryDevtools.status' | translate
-            }}</clr-dg-column>
-            <clr-dg-column clrDgField="observerCount" clrDgColType="number" [style.width.px]="120">{{
+            <clr-dg-column clrDgField="serializedKey">{{ 'queryDevtools.key' | translate }}</clr-dg-column>
+            <clr-dg-column clrDgField="tagLabels">{{ 'queryDevtools.tags' | translate }}</clr-dg-column>
+            <clr-dg-column clrDgField="stateLabel">{{ 'queryDevtools.status' | translate }}</clr-dg-column>
+            <clr-dg-column clrDgField="observerCount" clrDgColType="number">{{
               'queryDevtools.observers' | translate
             }}</clr-dg-column>
-            <clr-dg-column clrDgSortBy="updatedAt" [style.width.px]="100">{{
-              'queryDevtools.updated' | translate
-            }}</clr-dg-column>
+            <clr-dg-column clrDgSortBy="updatedAt">{{ 'queryDevtools.updated' | translate }}</clr-dg-column>
             @if (selectedKey() === null) {
-              <clr-dg-column clrDgField="tagLabels" [style.width.px]="240">{{
-                'queryDevtools.tags' | translate
-              }}</clr-dg-column>
-              <clr-dg-column clrDgField="failureCount" clrDgColType="number" [style.width.px]="140">{{
+              <clr-dg-column clrDgField="failureCount" clrDgColType="number">{{
                 'queryDevtools.failures' | translate
               }}</clr-dg-column>
-              @if (canRefetch()) {
-                <clr-dg-column [style.width.px]="110">{{ 'queryDevtools.actions' | translate }}</clr-dg-column>
-              }
+            }
+            @if (selectedKey() === null && canRefetch()) {
+              <clr-dg-column>{{ 'queryDevtools.actions' | translate }}</clr-dg-column>
             }
             <clr-dg-placeholder>{{ 'queryDevtools.empty' | translate }}</clr-dg-placeholder>
             <clr-dg-row
@@ -216,6 +205,20 @@
                   <code dir="ltr">{{ entry.serializedKey }}</code>
                 </button></clr-dg-cell
               >
+              <clr-dg-cell>
+                @for (tag of entry.tagMemberships; track tag) {
+                  <button
+                    type="button"
+                    class="tag-button"
+                    (click)="filterByTag(tag)"
+                    [attr.title]="'queryDevtools.tagHint' | translate"
+                  >
+                    <code dir="ltr">{{ tag }}</code>
+                  </button>
+                } @empty {
+                  <span>—</span>
+                }
+              </clr-dg-cell>
               <clr-dg-cell
                 ><span class="state-badge" [attr.data-state]="entry.state">{{ entry.stateLabel }}</span></clr-dg-cell
               >
@@ -233,33 +236,19 @@
                 ></clr-dg-cell
               >
               @if (selectedKey() === null) {
-                <clr-dg-cell>
-                  @for (tag of entry.tagMemberships; track tag) {
-                    <button
-                      type="button"
-                      class="tag-button"
-                      (click)="filterByTag(tag)"
-                      [attr.title]="'queryDevtools.tagHint' | translate"
-                    >
-                      <code dir="ltr">{{ tag }}</code>
-                    </button>
-                  } @empty {
-                    <span>—</span>
-                  }
-                </clr-dg-cell>
                 <clr-dg-cell>{{ entry.failureCount }}</clr-dg-cell>
-                @if (canRefetch()) {
-                  <clr-dg-cell>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline"
-                      [disabled]="entry.isPending"
-                      (click)="refetchFromList(entry)"
-                    >
-                      {{ 'queryDevtools.refetch' | translate }}
-                    </button>
-                  </clr-dg-cell>
-                }
+              }
+              @if (selectedKey() === null && canRefetch()) {
+                <clr-dg-cell>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline"
+                    [disabled]="entry.isPending"
+                    (click)="refetchFromList(entry)"
+                  >
+                    {{ 'queryDevtools.refetch' | translate }}
+                  </button>
+                </clr-dg-cell>
               }
             </clr-dg-row>
             <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="20" /></clr-dg-footer>
@@ -400,13 +389,10 @@
                     @if (copyNotice() === 'data') {
                       <span role="status">{{ 'queryDevtools.copied' | translate }}</span>
                     }
-                    <button type="button" class="btn btn-sm btn-link" (click)="expandLevels('next')">
-                      {{ 'queryDevtools.expandNext' | translate }}
-                    </button>
                     <button
                       type="button"
                       class="btn btn-sm btn-link"
-                      (click)="expandLevels('all')"
+                      (click)="expandAll()"
                       [attr.title]="'queryDevtools.previewLimit' | translate"
                     >
                       {{ 'queryDevtools.expandAll' | translate }}
