@@ -46,6 +46,32 @@ strictly on demand when `.mutate(args)` is called.
 
 ---
 
+## Developer learning journey and pedagogy plan
+
+This headless primitive adheres to Track B (Headless Primitives & Utilities). Its public documentation follows the
+Diátaxis-inspired 5-stage progressive disclosure model:
+
+1. **30-Second Elevator Pitch**:
+   - _What is it?_ Declarative mutation and side-effect engine with automatic cache invalidation for Angular Signals.
+   - _What problem does it solve?_ Eliminates manual HTTP write management, duplicate submit bugs, and custom
+     cache-busting event buses.
+2. **Minimal Hello World (<15 lines)**:
+   - Declarative `mutateResource((data) => service.save(data), { invalidateTags: ['items'] })` wiring into a submit
+     button.
+3. **Core Mental Model**:
+   - Mutation Lifecycle: Trigger -> Concurrency Coordinator -> Network Execution -> Success (Tag Invalidation & State
+     Update) or Error.
+4. **Progressive Learning Path**:
+   - Level 1: Basic mutation with `isLoading()` and `error()` signals.
+   - Level 2: Automatic tag invalidation targeting active `queryResource` instances.
+   - Level 3: Concurrency strategies (`exhaust`, `concat`, `parallel`) and optimistic error handling.
+5. **Information Placement**:
+   - Key capabilities (cards/overview) appear in the top fold.
+   - Domain-owned keys and tag factory architecture appear in a dedicated section following live examples, not as a
+     jarring banner before the overview.
+
+---
+
 ## Public API and examples
 
 Name mutation handles with an action plus `Mutation`, such as `createMutation` or `saveSettingsMutation`. Use

@@ -1,19 +1,6 @@
 <cll-page-container [title]="'mutateResource.title' | translate">
-  <!-- Overview -->
+  <!-- Stage 1: Overview & Elevator Pitch -->
   <p class="p1" [innerHTML]="'mutateResource.overview' | translate"></p>
-  <cll-callout data-testid="query-naming-convention">
-    <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
-    <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
-  </cll-callout>
-
-  <section cds-layout="vertical gap:sm" data-testid="query-ownership-guide">
-    <h2>{{ 'queryOwnership.title' | translate }}</h2>
-    <p>{{ 'queryOwnership.definitions' | translate }}</p>
-    <p>{{ 'queryOwnership.refactoring' | translate }}</p>
-    <p>{{ 'queryOwnership.noCache' | translate }}</p>
-    <p>{{ 'queryOwnership.naming' | translate }}</p>
-    <app-code-block [code]="ownershipCode" lang="typescript" />
-  </section>
 
   <!-- ==================== CORE CAPABILITIES SECTION ==================== -->
   <section class="features-section">
@@ -363,6 +350,21 @@
         </div>
       </div>
     </app-demo-playground>
+  </section>
+
+  <!-- ==================== ARCHITECTURE & BEST PRACTICES ==================== -->
+  <section cds-layout="vertical gap:sm" data-testid="query-ownership-guide" class="m-t-lg">
+    <h2>{{ 'queryOwnership.title' | translate }}</h2>
+    <p>{{ 'queryOwnership.definitions' | translate }}</p>
+    <p>{{ 'queryOwnership.refactoring' | translate }}</p>
+    <p>{{ 'queryOwnership.noCache' | translate }}</p>
+    <p>{{ 'queryOwnership.naming' | translate }}</p>
+    <app-code-block [code]="ownershipCode" lang="typescript" />
+
+    <cll-callout data-testid="query-naming-convention" class="m-t-sm">
+      <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
+      <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
+    </cll-callout>
   </section>
 
   <!-- ==================== API REFERENCE ==================== -->

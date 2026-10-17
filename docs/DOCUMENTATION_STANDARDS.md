@@ -9,69 +9,110 @@ of use for public users.
 
 ## Table of Contents
 
-1. [Page Structure](#page-structure)
-2. [Spacing and Layout](#spacing-and-layout)
-3. [Title Format](#title-format)
-4. [Required Sections](#required-sections)
-5. [Code Examples](#code-examples)
-6. [Import Statements in Code Examples](#import-statements-in-code-examples)
-7. [API Reference Format](#api-reference-format)
-8. [Component vs Utility/Operator/Pipe/Validator](#component-vs-utilityoperatorpipevalidator)
-9. [Examples and Demos](#examples-and-demos)
-10. [Migration Checklist](#migration-checklist)
+1. [Documentation Pedagogy & Progressive Disclosure](#documentation-pedagogy--progressive-disclosure)
+2. [Page Structure & The 5-Stage Blueprint](#page-structure--the-5-stage-blueprint)
+3. [Prohibited Documentation Anti-Patterns](#prohibited-documentation-anti-patterns)
+4. [Spacing and Layout](#spacing-and-layout)
+5. [Title Format](#title-format)
+6. [Required Sections](#required-sections)
+7. [Code Examples](#code-examples)
+8. [Import Statements in Code Examples](#import-statements-in-code-examples)
+9. [API Reference Format](#api-reference-format)
+10. [Component vs Utility/Operator/Pipe/Validator](#component-vs-utilityoperatorpipevalidator)
+11. [Examples and Demos](#examples-and-demos)
+12. [Migration Checklist](#migration-checklist)
 
 ---
 
-## Page Structure
+## Documentation Pedagogy & Progressive Disclosure
 
-All documentation pages MUST follow this structure:
+Following the **Diátaxis documentation framework**, documentation is curated according to developer intent:
+
+- **Tutorials (Learning Journey)**: Minimal friction onboarding ("3-Minute Quick Start").
+- **How-To Guides (Problem-Oriented Recipes)**: Concrete enterprise patterns and recovery solutions.
+- **Concepts (Mental Models)**: Visualized lifecycles, Stale-While-Revalidate timing, and caching architecture.
+- **Reference (Technical Lookup)**: Complete API signatures, input/output tables, and signal state matrices.
+
+Always respect the developer's cognitive load: developers must build an accurate mental model and run working code
+before being confronted with technical edge-case matrices or internal configuration DSLs.
+
+---
+
+## Page Structure & The 5-Stage Blueprint
+
+All documentation and demo pages MUST follow the **5-Stage Progressive Disclosure Blueprint**:
+
+1. **Stage 1: The 30-Second Elevator Pitch**
+   - 1–2 plain-English sentences answering: _What is it?_ and _What specific friction or boilerplate does it eliminate?_
+   - Strictly no warning banners, naming lectures, or comparative technical matrices in this fold.
+
+2. **Stage 2: The 3-Minute Quick Start (Live Preview First)**
+   - Minimal runnable snippet (<15 lines) accompanied immediately by its interactive preview.
+   - For UI components, the interactive control appears directly here so the user immediately sees what it looks like.
+
+3. **Stage 3: The Core Mental Model**
+   - Plain-English explanation and visual timeline (e.g., Stale-While-Revalidate, Reactive Bridge, Concurrency).
+   - Clarify the primary metaphor and dispel common developer misconceptions.
+
+4. **Stage 4: Practical Progressive Recipes**
+   - Sequenced or tabbed examples spanning Beginner (parameters), Intermediate (error recovery), and Advanced
+     (caching/coordination).
+
+5. **Stage 5: Deep Technical Reference**
+   - API tables (Inputs, Outputs, Methods, Options).
+   - Complete boolean state matrices (`status()`, `isInitialLoading()`, `isRefreshing()`, `isLoading()`, etc.).
+   - Architectural guides (Key factories, domain ownership, and tool decision trees).
 
 ```html
 <cll-page-container [title]="'ComponentName'">
-  <!-- Overview -->
+  <!-- Stage 1: Overview & Elevator Pitch -->
   <p>
     Clear, concise description of what the component/utility/operator/pipe/validator does, when to use it, and why it's
     useful.
   </p>
 
-  <!-- Examples Section -->
+  <!-- Stage 2: Quick Start & Examples -->
   <section cds-layout="vertical gap:md">
     <h2>Examples</h2>
 
     <article cds-layout="vertical gap:sm">
       <h3>Example 1: Title</h3>
       <p>Description of what this example demonstrates:</p>
-      <app-code-block [code]="basicUsageCode" lang="typescript" />
+      <app-demo-playground ... />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>Example 2: Title</h3>
       <p>Description of what this example demonstrates:</p>
       <app-code-block [code]="example1Code" lang="typescript" />
-      <!-- Live demo if applicable -->
-    </article>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>Example 3: Title</h3>
-      <p>Description of what this example demonstrates:</p>
-      <app-code-block [code]="example2Code" lang="html" />
-    </article>
-
-    <!-- Additional examples (optional) -->
-    <article cds-layout="vertical gap:sm">
-      <h3>Example 4: Title</h3>
-      <p>Description of what this example demonstrates:</p>
-      <app-code-block [code]="advancedCode" lang="typescript" />
     </article>
   </section>
 
-  <!-- API Reference Section (if applicable) -->
+  <!-- Stage 5: API Reference & Architecture Section -->
   <section cds-layout="vertical gap:md">
     <h2>API Reference</h2>
-    <!-- API details here -->
+    <!-- API details, tables, matrices here -->
   </section>
 </cll-page-container>
 ```
+
+---
+
+## Prohibited Documentation Anti-Patterns
+
+1. **No Premature Architectural Banners**:
+   - Never place naming convention alerts, domain key architecture callouts, or dense comparative matrices at the very
+     top of a page before the developer has seen what the feature does and how to use it.
+   - Domain key patterns and naming rules belong in dedicated architecture sections or guides.
+
+2. **No Inverted Example Flow**:
+   - Do not bury working interactive component previews beneath 4–5 static code blocks.
+   - For complex UI components (e.g. `dgState`, `cll-timeline-wizard`), place the interactive playground in the top
+     fold.
+
+3. **No "Encyclopedia Trap" (Reference Before Concept)**:
+   - Do not lead with 5×7 boolean signal matrices (`status()`, `hasValue()`, `isInitialLoading()`, etc.) before
+     explaining what those signals mean. Put the reference matrix in Stage 5 at the bottom.
 
 ---
 
@@ -559,12 +600,16 @@ Use `<cll-callout>` for important notes:
 When standardizing an existing page:
 
 - [ ] **Title**: Use signal input syntax `[title]="'Name'"`
+- [ ] **Pedagogy**: Follow the 5-Stage Progressive Disclosure Blueprint (Elevator pitch -> Quick Start -> Mental Model
+      -> Recipes -> Reference)
+- [ ] **No Premature Banners**: No naming convention or domain architecture callout banners before the overview and
+      basic usage
 - [ ] **Container**: Use the built-in page container spacing
 - [ ] **Sections**: All sections use `cds-layout="vertical gap:md"`
 - [ ] **Articles**: All articles use `cds-layout="vertical gap:sm"`
 - [ ] **Overview**: Clear, concise description (2-4 sentences)
 - [ ] **Examples**: Section with multiple examples, numbered sequentially (Example 1, Example 2, etc.)
-- [ ] **API Reference**: Complete documentation at the end (after Examples)
+- [ ] **API Reference**: Complete documentation and signal state matrices at the end (after Examples)
 - [ ] **Code Blocks**: All use `highlight()` utility, proper `lang` attribute
 - [ ] **Imports in Code**: All code examples include import statements at the top
 - [ ] **Spacing**: Consistent Clarity layout attributes throughout

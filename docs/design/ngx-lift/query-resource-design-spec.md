@@ -56,6 +56,31 @@ consumer lifetime. A logical read includes all its attempts and waits, not just 
 Avoid calling a resource handle `user`, `tenants` or `create`: the name should distinguish its controls from the data or
 an action method. The same convention appears in the demo callouts.
 
+## Developer learning journey and pedagogy plan
+
+This headless primitive adheres to Track B (Headless Primitives & Utilities). Its public documentation follows the
+Diátaxis-inspired 5-stage progressive disclosure model:
+
+1. **30-Second Elevator Pitch**:
+   - _What is it?_ Server-state synchronization and cache coordination with Angular Signals.
+   - _What problem does it solve?_ Eliminates manual RxJS caching boilerplate, in-flight request deduplication, and
+     stale data bugs across navigating components.
+2. **Minimal Hello World (<12 lines)**:
+   - Declarative `queryResource(() => ({ key: ['user', id()], loader: () => service.getUser(id()) }))` rendering
+     directly via `query.value()` and `query.isInitialLoading()`.
+3. **Core Mental Model**:
+   - The Stale-While-Revalidate timeline (Fresh -> Stale -> Inactive -> GC Eviction).
+   - Clear conceptual distinction between `staleTime` (when data is considered old) and `gcTime` (when unused cache
+     entries are purged from memory).
+4. **Progressive Learning Path**:
+   - Level 1: Basic cached read with parameter signals.
+   - Level 2: Dependent queries (`return undefined` while parent ID is unready) and error recovery.
+   - Level 3: Polling intervals, manual revalidation (`reload()` vs `execute()`), and multi-observer coordination.
+5. **Information Placement**:
+   - Domain-owned key & tag factories belong in dedicated architecture guides, avoiding premature top-level warning
+     banners.
+   - The full 5×7 lifecycle signal matrix belongs in Stage 5 (Reference) at the bottom of the page.
+
 ## Public API and examples
 
 Configure `provideHttpClient()` in application providers. The root query client requires no extra registration.

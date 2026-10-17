@@ -1,9 +1,5 @@
 <cll-page-container title="queryResources">
   <p class="p1">{{ 'queryGuide.collectionIntro' | translate }}</p>
-  <cll-callout data-testid="query-naming-convention">
-    <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
-    <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
-  </cll-callout>
 
   <p>
     {{ 'queryGuide.selection' | translate }}
@@ -339,6 +335,13 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="query-section">
+    <cll-callout data-testid="query-naming-convention">
+      <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
+      <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
+    </cll-callout>
   </section>
 
   <section class="query-section">

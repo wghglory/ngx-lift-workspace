@@ -6,6 +6,17 @@ until implemented and verified. For existing APIs, use Status: Implemented (cont
 pointers, and distinguish source inspection from tests actually run. Preserve accurate existing sections; fill
 substantive gaps without rewriting prose. Store package specs in `docs/design/ngx-lift/` or `docs/design/clr-lift/`.
 
+## Specification Tracks
+
+Select the appropriate track for this feature:
+
+- **Track A: Visual UI Components (`clr-lift`)** — Governed by Clarity design tokens, accessible DOM structures,
+  keyboard interaction, responsive layout, theme switching, and forms integration via `ControlValueAccessor`.
+- **Track B: Headless Primitives & Utilities (`ngx-lift`)** — Governed by Signal reactivity contracts (glitch freedom,
+  untracked execution, zoneless/zone compatibility), memory lifecycle, cache retention/eviction, cancellation, and zero
+  UI dependencies. For Track B, explicitly mark Clarity tokens and forms CVA sections as _Inapplicable (Headless
+  Primitive)_.
+
 ## Background
 
 Describe the customer problem, existing callers, and the smallest useful delivery. Link source evidence and existing
@@ -48,6 +59,27 @@ scale. Each goal maps to at least one use case. Later record actual test pointer
 
 Research comparable production libraries before creating or changing behavior. Borrow interaction lessons while
 retaining Clarity styling. Prefer composition over replacement when public Clarity APIs satisfy the use cases.
+
+## Developer learning journey and pedagogy plan
+
+Define how a developer will acquire the mental model before encountering detailed APIs or technical matrices.
+
+1. **The 30-Second Elevator Pitch**:
+   - What core problem does this solve in plain English?
+   - What boilerplate or friction does it eliminate?
+2. **Minimal Hello World (<12 lines)**:
+   - What is the simplest, copyable snippet that executes and provides immediate visual or state feedback?
+3. **Core Mental Model & Metaphor**:
+   - What is the foundational metaphor (e.g. Stale-While-Revalidate, Reactive Bridge, Debounced Stream)?
+   - What common misconception must be addressed early?
+4. **Progressive Learning Path**:
+   - Level 1 (Starter): Minimal working usage with default configuration.
+   - Level 2 (Intermediate): Parameterized state, error recovery, and common real-world flows.
+   - Level 3 (Advanced): Cache policies, manual revalidation, concurrency, custom clients, or complex hooks.
+5. **Information Placement & Anti-Pattern Prevention**:
+   - Where do foundational concepts live in the navigation hierarchy?
+   - Avoid premature architectural banners (do not place naming rules or domain factories before basic usage).
+   - Avoid the "Encyclopedia Trap" (keep dense boolean state matrices in Reference at the bottom).
 
 ## Public API and examples
 
