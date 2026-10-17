@@ -329,7 +329,10 @@ Always specify the `lang` attribute:
    explicitly; formatting the surrounding TypeScript does not format template-literal snippets. Expand multi-statement
    methods and query definition objects, and keep excerpt closing braces aligned with their declarations. Present UI
    markup in an HTML example or a component template; do not represent it with commented-out HTML. Check every tab, not
-   only the initially selected panel.
+   only the initially selected panel. When a playground has both TypeScript and HTML tabs, keep the template in the HTML
+   tab. The TypeScript tab should contain imports, component setup and class logic, with `templateUrl` pointing to the
+   HTML file; do not repeat that HTML in an inline template or exported template constant. A separate HTML tab showing
+   how to consume a component may accompany its inline implementation when they show different code.
 7. **Action labels**: Use short, translated action names such as "Update name" or "Refresh". Keep method paths,
    signatures and implementation explanations in prose or code. Do not place API calls in button labels or use CSS
    truncation to hide them. Check each supported language and narrow screens.

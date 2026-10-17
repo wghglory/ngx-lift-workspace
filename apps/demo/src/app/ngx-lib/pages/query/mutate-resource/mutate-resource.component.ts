@@ -1,6 +1,6 @@
 import {RouterLink} from '@angular/router';
-import {MutationStarterComponent, MUTATION_STARTER_TEMPLATE} from '../mutation-starter/mutation-starter.component';
-import {MUTATION_STARTER_SOURCE} from '../mutation-starter/mutation-starter.example';
+import {MutationStarterComponent} from '../mutation-starter/mutation-starter.component';
+import {MUTATION_STARTER_SOURCE, MUTATION_STARTER_TEMPLATE} from '../mutation-starter/mutation-starter.example';
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal, computed, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';

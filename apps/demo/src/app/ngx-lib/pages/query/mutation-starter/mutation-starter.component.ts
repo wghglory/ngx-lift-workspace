@@ -5,36 +5,11 @@ import {AlertComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
 import {mutateResource} from 'ngx-lift';
 import {map, timer} from 'rxjs';
 
-export const MUTATION_STARTER_TEMPLATE = `
-  <form clrForm cds-layout="vertical gap:sm" (ngSubmit)="save()">
-    <clr-input-container>
-      <label>{{ 'common.name' | translate }}</label>
-      <input clrInput name="teamName" [ngModel]="name()" (ngModelChange)="name.set($event)" />
-    </clr-input-container>
-    <clr-checkbox-container>
-      <clr-checkbox-wrapper>
-        <input type="checkbox" clrCheckbox name="simulateFailure" [ngModel]="simulateFailure()" (ngModelChange)="simulateFailure.set($event)" />
-        <label>{{ 'queryLearn.simulateFailure' | translate }}</label>
-      </clr-checkbox-wrapper>
-    </clr-checkbox-container>
-    <button type="submit" class="btn btn-sm btn-primary" [disabled]="saveDisabled()">
-      @if (saveTeamMutation.isLoading()) { <cll-spinner inline size="sm" /> }
-      {{ 'common.save' | translate }}
-    </button>
-    @if (saveTeamMutation.error()) {
-      <cll-alert [content]="'queryLearn.writeError' | translate" />
-    }
-    @if (saveTeamMutation.status() === 'resolved') {
-      <p role="status" data-testid="starter-saved">{{ 'queryLearn.saved' | translate }}: {{ saveTeamMutation.value()?.name }}</p>
-    }
-  </form>
-`;
-
 /** A complete save example; timer simulates a server write without requiring a backend. */
 @Component({
   selector: 'app-mutation-starter',
   imports: [FormsModule, ClarityModule, AlertComponent, SpinnerComponent, TranslatePipe],
-  template: MUTATION_STARTER_TEMPLATE,
+  templateUrl: './mutation-starter.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MutationStarterComponent {

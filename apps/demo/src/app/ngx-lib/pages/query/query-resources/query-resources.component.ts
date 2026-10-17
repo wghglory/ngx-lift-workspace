@@ -1,8 +1,5 @@
-import {
-  CollectionStarterComponent,
-  COLLECTION_STARTER_TEMPLATE,
-} from '../collection-starter/collection-starter.component';
-import {COLLECTION_STARTER_SOURCE} from '../collection-starter/collection-starter.example';
+import {CollectionStarterComponent} from '../collection-starter/collection-starter.component';
+import {COLLECTION_STARTER_SOURCE, COLLECTION_STARTER_TEMPLATE} from '../collection-starter/collection-starter.example';
 import {JsonPipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';

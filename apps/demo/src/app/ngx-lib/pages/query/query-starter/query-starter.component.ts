@@ -11,41 +11,11 @@ interface Team {
   revision: number;
 }
 
-export const QUERY_STARTER_TEMPLATE = `
-  <div cds-layout="vertical gap:sm">
-    <div class="btn-group">
-      <button type="button" class="btn btn-sm" (click)="teamId.set('a')">{{ 'queryLearn.teamA' | translate }}</button>
-      <button type="button" class="btn btn-sm" (click)="teamId.set('b')">{{ 'queryLearn.teamB' | translate }}</button>
-    </div>
-    <clr-checkbox-container>
-      <clr-checkbox-wrapper>
-        <input type="checkbox" clrCheckbox [ngModel]="simulateFailure()" (ngModelChange)="simulateFailure.set($event)" />
-        <label>{{ 'queryLearn.simulateFailure' | translate }}</label>
-      </clr-checkbox-wrapper>
-    </clr-checkbox-container>
-    @if (teamQuery.isInitialLoading()) {
-      <p role="status"><cll-spinner inline size="sm" /> {{ 'queryResource.loading' | translate }}</p>
-    }
-    @if (teamQuery.value(); as team) {
-      <p data-testid="starter-team">{{ team.name }} · {{ 'queryResource.projectRevision' | translate }}: {{ team.revision }}</p>
-    }
-    @if (teamQuery.isRefreshing()) {
-      <p role="status"><cll-spinner inline size="sm" /> {{ 'queryResource.revalidatingAlert' | translate }}</p>
-    }
-    @if (teamQuery.error()) {
-      <cll-alert [content]="'queryLearn.readError' | translate" [alertType]="teamQuery.isRefreshError() ? 'warning' : 'danger'" />
-    }
-    <button type="button" class="btn btn-sm btn-outline" [disabled]="teamQuery.isLoading()" (click)="teamQuery.reload()">
-      {{ 'common.refresh' | translate }}
-    </button>
-  </div>
-`;
-
 /** A complete read example; timer simulates the HTTP request so the preview runs locally. */
 @Component({
   selector: 'app-query-starter',
   imports: [FormsModule, ClarityModule, AlertComponent, SpinnerComponent, TranslatePipe],
-  template: QUERY_STARTER_TEMPLATE,
+  templateUrl: './query-starter.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryStarterComponent {

@@ -9,13 +9,18 @@ const query = resolve(root, 'apps/demo/src/app/ngx-lib/pages/query');
 
 // The public-package examples are real components compiled by the demo build, not unchecked prose.
 for (const name of ['query-starter', 'mutation-starter', 'collection-starter']) {
-  test(`${name} displays its complete compiled source`, () => {
+  test(`${name} displays its compiled TypeScript without duplicating the HTML tab`, () => {
     const actual = readFileSync(resolve(query, name, `${name}.component.ts`), 'utf8').trim();
     const example = readFileSync(resolve(query, name, `${name}.example.ts`), 'utf8');
     const ast = ts.createSourceFile('example.ts', example, ts.ScriptTarget.Latest, true);
     const value = ast.statements.find(ts.isVariableStatement)?.declarationList.declarations[0].initializer;
     assert.ok(value && ts.isStringLiteralLike(value));
     assert.equal(value.text, actual);
+    const html = ast.statements.filter(ts.isVariableStatement)[1]?.declarationList.declarations[0].initializer;
+    assert.ok(html && ts.isStringLiteralLike(html));
+    assert.equal(html.text, readFileSync(resolve(query, name, `${name}.component.html`), 'utf8').trim());
+    assert.ok(!value.text.includes('export const '), 'TypeScript must not embed the HTML tab');
+    assert.ok(value.text.includes(`templateUrl: './${name}.component.html'`));
     assert.ok(actual.includes("from 'ngx-lift'"));
     assert.ok(!actual.includes("from '../"), 'complete starter must not depend on private demo helpers');
   });

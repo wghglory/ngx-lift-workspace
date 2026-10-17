@@ -1,5 +1,5 @@
-import {QueryStarterComponent, QUERY_STARTER_TEMPLATE} from '../query-starter/query-starter.component';
-import {QUERY_STARTER_SOURCE} from '../query-starter/query-starter.example';
+import {QueryStarterComponent} from '../query-starter/query-starter.component';
+import {QUERY_STARTER_SOURCE, QUERY_STARTER_TEMPLATE} from '../query-starter/query-starter.example';
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject, signal, computed, viewChild} from '@angular/core';
 import {RouterLink} from '@angular/router';
@@ -198,7 +198,7 @@ import {QueryDevtoolsComponent} from 'clr-lift';
 @Component({
   selector: 'app-query-diagnostics-demo',
   imports: [QueryDevtoolsComponent],
-  template: '<cll-query-devtools [enabled]="true" />',
+  templateUrl: './query-diagnostics-demo.component.html',
 })
 export class QueryDiagnosticsDemoComponent {}`);
 
