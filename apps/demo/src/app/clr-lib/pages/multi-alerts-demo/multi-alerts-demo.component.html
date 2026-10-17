@@ -2,6 +2,31 @@
   <!-- Overview -->
   <p [innerHTML]="'multiAlerts.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="multi-alerts-demo-starter"
+    [title]="'common.liveDemo' | translate"
+    [tsCode]="alertsStarterCode"
+    [htmlCode]="alertsStarterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <cll-alert-container />
+      <div cds-layout="horizontal gap:xs align:center wrap">
+        <button type="button" class="btn btn-outline" (click)="addAlert()">
+          {{ 'multiAlerts.addStandard' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="addAlertWithInlineButton()">
+          {{ 'multiAlerts.addInlineBtn' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="addAlertWithAction()">
+          {{ 'multiAlerts.addAction' | translate }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="clearAlerts()">
+          {{ 'multiAlerts.clearAll' | translate }}
+        </button>
+      </div>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -22,26 +47,6 @@
       <h3>{{ 'multiAlerts.example3' | translate }}</h3>
       <p [innerHTML]="'multiAlerts.example3Desc' | translate"></p>
       <app-code-block [code]="advancedCode" lang="typescript" />
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'multiAlerts.example4' | translate }}</h3>
-      <p>{{ 'multiAlerts.example4Desc' | translate }}</p>
-      <cll-alert-container />
-      <div cds-layout="horizontal gap:xs align:center wrap">
-        <button type="button" class="btn btn-outline" (click)="addAlert()">
-          {{ 'multiAlerts.addStandard' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline" (click)="addAlertWithInlineButton()">
-          {{ 'multiAlerts.addInlineBtn' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline" (click)="addAlertWithAction()">
-          {{ 'multiAlerts.addAction' | translate }}
-        </button>
-        <button type="button" class="btn btn-outline" (click)="clearAlerts()">
-          {{ 'multiAlerts.clearAll' | translate }}
-        </button>
-      </div>
     </article>
   </section>
 

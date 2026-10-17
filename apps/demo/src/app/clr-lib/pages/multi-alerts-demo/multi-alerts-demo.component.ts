@@ -1,3 +1,4 @@
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, computed} from '@angular/core';
 import {
   AlertContainerComponent,
@@ -13,12 +14,33 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-multi-alerts-demo',
-  imports: [ApiTableComponent, AlertContainerComponent, PageContainerComponent, CodeBlockComponent, TranslatePipe],
+  imports: [
+    DemoPlaygroundComponent,
+    ApiTableComponent,
+    AlertContainerComponent,
+    PageContainerComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+  ],
   templateUrl: './multi-alerts-demo.component.html',
   styleUrl: './multi-alerts-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
+  readonly alertsStarterHtml = highlight(
+    `<cll-alert-container />
+<div cds-layout="horizontal gap:xs align:center wrap">
+  <button type="button" class="btn btn-outline" (click)="addAlert()">Add Standard Alert</button>
+  <button type="button" class="btn btn-outline" (click)="addAlertWithInlineButton()">
+    Add Alert with Inline Button
+  </button>
+  <button type="button" class="btn btn-outline" (click)="addAlertWithAction()">Add Alert with Action</button>
+  <button type="button" class="btn btn-outline" (click)="clearAlerts()">Clear All Alerts</button>
+</div>`,
+  );
+  readonly alertsStarterCode = highlight(
+    "import {ChangeDetectionStrategy, Component, inject} from '@angular/core';\nimport {AlertService, AlertContainerComponent} from 'clr-lift';\n\n@Component({\n  selector: 'app-feedback',\n  imports: [AlertContainerComponent],\n  templateUrl: './feedback.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class FeedbackComponent {\n  private alertService = inject(AlertService);\n\n  ngOnDestroy() {\n    this.alertService.clearAlerts();\n  }\n\n  addAlert() {\n    this.alertService.addAlert({\n      content: `New standard alert added on ${new Date().toLocaleTimeString()}`,\n      alertType: 'success',\n    });\n  }\n\n  addAlertWithInlineButton() {\n    this.alertService.addAlert({\n      content:\n        'New alert with an inline button: <button type=\"button\" class=\"btn btn-sm alert-action\" id=\"inline-click-target\">Click Me</button> inside the message.',\n      alertType: 'info',\n      targetSelector: '#inline-click-target',\n      onTargetClick: () => this.clickMe(),\n    });\n  }\n\n  addAlertWithAction() {\n    this.alertService.addAlert({\n      content: 'New alert with trailing action buttons.',\n      alertType: 'warning',\n      actions: [{label: 'Acknowledge', onClick: () => alert('Acknowledged!')}],\n    });\n  }\n\n  clearAlerts() {\n    this.alertService.clearAlerts();\n  }\n\n  clickMe() {\n    alert('You did it correctly!');\n  }\n}",
+  );
   private readonly translationService = inject(TranslationService);
 
   readonly methods = computed<ApiProperty[]>(() => [

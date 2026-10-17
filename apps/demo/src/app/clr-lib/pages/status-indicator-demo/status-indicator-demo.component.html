@@ -2,6 +2,31 @@
   <!-- Overview -->
   <p [innerHTML]="'statusIndicator.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="status-indicator-demo-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'statusIndicator.example1Desc' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap">
+        <button type="button" class="btn btn-sm" (click)="currentStatus.set('pending')">
+          {{ 'statusIndicator.statusPending' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm" (click)="currentStatus.set('success')">
+          {{ 'statusIndicator.statusSuccess' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm" (click)="currentStatus.set('error')">
+          {{ 'statusIndicator.statusError' | translate }}
+        </button>
+      </div>
+      <div aria-live="polite">
+        <cll-status-indicator [iconStatus]="currentStatus()">{{ currentStatus() }}</cll-status-indicator>
+      </div>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>

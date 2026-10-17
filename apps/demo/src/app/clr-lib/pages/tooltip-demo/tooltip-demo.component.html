@@ -9,7 +9,6 @@
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'tooltip.example1' | translate }}</h3>
       <p>{{ 'tooltip.example1Desc' | translate }}</p>
-      <app-code-block [code]="basicTooltipCode" lang="html" />
       <div cds-layout="horizontal gap:md align:center wrap">
         <a href="#" (click)="$event.preventDefault()" [cllTooltip]="'tooltip.basic1' | translate">{{
           'tooltip.basic1' | translate
@@ -28,12 +27,12 @@
           'tooltip.empty' | translate
         }}</a>
       </div>
+      <app-code-block [code]="basicTooltipCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'tooltip.example2' | translate }}</h3>
       <p>{{ 'tooltip.example2Desc' | translate }}</p>
-      <app-code-block [code]="templateRefCode" lang="html" />
       <div>
         <a
           href="#"
@@ -57,12 +56,12 @@
       <cll-callout>
         {{ 'tooltip.contextCallout' | translate }}
       </cll-callout>
+      <app-code-block [code]="templateRefCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'tooltip.example3' | translate }}</h3>
       <p>{{ 'tooltip.example3Desc' | translate }}</p>
-      <app-code-block [code]="componentRefCode" lang="typescript" />
       <div>
         @if (alertComponentRef) {
           <a
@@ -77,12 +76,12 @@
           </a>
         }
       </div>
+      <app-code-block [code]="componentRefCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'tooltip.example4' | translate }}</h3>
       <p>{{ 'tooltip.example4Desc' | translate }}</p>
-      <app-code-block [code]="componentTypeCode" lang="html" />
       <div>
         <a
           href="#"
@@ -94,6 +93,7 @@
           {{ 'tooltip.componentTypeExample' | translate }}
         </a>
       </div>
+      <app-code-block [code]="componentTypeCode" lang="typescript" />
     </article>
   </section>
 

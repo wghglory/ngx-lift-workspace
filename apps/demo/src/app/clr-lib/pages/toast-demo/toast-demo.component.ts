@@ -1,3 +1,4 @@
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, inject, computed} from '@angular/core';
 import {PageContainerComponent, ToastService, TranslatePipe, TranslationService} from 'clr-lift';
 
@@ -7,12 +8,26 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-toast-demo',
-  imports: [ApiTableComponent, CodeBlockComponent, PageContainerComponent, TranslatePipe],
+  imports: [DemoPlaygroundComponent, ApiTableComponent, CodeBlockComponent, PageContainerComponent, TranslatePipe],
   templateUrl: './toast-demo.component.html',
   styleUrl: './toast-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastDemoComponent {
+  readonly toastStarterHtml = highlight(
+    `<!-- Place the container once in the application shell. -->
+<cll-toast-container />
+
+<div cds-layout="horizontal gap:xs align:center wrap">
+  <button (click)="showSuccessToast()" class="btn btn-success">Success Toast</button>
+  <button (click)="showInfoToast()" class="btn btn-primary">Info Toast</button>
+  <button (click)="showErrorToast()" class="btn btn-danger">Error Toast</button>
+  <button (click)="showWarningToast()" class="btn btn-warning">Warning Toast</button>
+</div>`,
+  );
+  readonly toastStarterCode = highlight(
+    "import {ChangeDetectionStrategy, Component, inject} from '@angular/core';\nimport {ToastService, ToastContainerComponent} from 'clr-lift';\n\n@Component({\n  selector: 'app-feedback',\n  imports: [ToastContainerComponent],\n  templateUrl: './feedback.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class FeedbackComponent {\n  private toastService = inject(ToastService);\n\n  showSuccessToast() {\n    this.toastService.success({\n      title: 'Great Toast',\n      description: 'I am a successful message!',\n    });\n  }\n\n  showWarningToast() {\n    this.toastService.warning({\n      title: 'Warning Toast',\n      description: 'I am a warning message!',\n    });\n  }\n\n  showErrorToast() {\n    this.toastService.error({\n      title: 'Error Toast',\n      description: 'I am a Error message! I will be closed in 10s automatically.',\n      date: '1hr ago',\n      timeoutSeconds: 10,\n      primaryButtonText: 'More Info',\n      primaryButtonClick() {\n        alert('Assume opening a new tab');\n      },\n    });\n  }\n\n  showInfoToast() {\n    this.toastService.info({\n      title: 'Info Toast',\n      description: 'I am the default toast type.',\n    });\n  }\n}",
+  );
   private readonly translationService = inject(TranslationService);
 
   readonly methods = computed<ApiProperty[]>(() => [

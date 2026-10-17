@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {PageContainerComponent, StatusIndicatorComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -7,12 +8,43 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-status-indicator-demo',
-  imports: [ApiTableComponent, CodeBlockComponent, PageContainerComponent, StatusIndicatorComponent, TranslatePipe],
+  imports: [
+    DemoPlaygroundComponent,
+    StatusIndicatorComponent,
+    ApiTableComponent,
+    CodeBlockComponent,
+    PageContainerComponent,
+    StatusIndicatorComponent,
+    TranslatePipe,
+  ],
   templateUrl: './status-indicator-demo.component.html',
   styleUrl: './status-indicator-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusIndicatorDemoComponent {
+  readonly currentStatus = signal<'pending' | 'success' | 'error'>('pending');
+  readonly starterCode = highlight(`import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {StatusIndicatorComponent} from 'clr-lift';
+
+// Keep a visible text label alongside the icon; color alone is insufficient.
+@Component({
+  selector: 'app-starter',
+  imports: [StatusIndicatorComponent],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly currentStatus = signal<'pending' | 'success' | 'error'>('pending');
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" (click)="currentStatus.set('pending')">Pending</button>
+  <button type="button" class="btn btn-sm" (click)="currentStatus.set('success')">Success</button>
+  <button type="button" class="btn btn-sm" (click)="currentStatus.set('error')">Error</button>
+</div>
+<div aria-live="polite">
+  <cll-status-indicator [iconStatus]="currentStatus()">{{ currentStatus() }}</cll-status-indicator>
+</div>`);
+
   private translationService = inject(TranslationService);
 
   readonly inputs = computed<ApiProperty[]>(() => [

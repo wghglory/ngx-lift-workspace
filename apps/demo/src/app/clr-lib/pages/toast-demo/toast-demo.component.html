@@ -2,6 +2,22 @@
   <!-- Overview -->
   <p>{{ 'toast.overview' | translate }}</p>
 
+  <app-demo-playground
+    data-testid="toast-demo-starter"
+    [title]="'common.liveDemo' | translate"
+    [tsCode]="toastStarterCode"
+    [htmlCode]="toastStarterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <div cds-layout="horizontal gap:xs align:center wrap">
+        <button (click)="showSuccessToast()" class="btn btn-success">{{ 'toast.successBtn' | translate }}</button>
+        <button (click)="showInfoToast()" class="btn btn-primary">{{ 'toast.infoBtn' | translate }}</button>
+        <button (click)="showErrorToast()" class="btn btn-danger">{{ 'toast.errorBtn' | translate }}</button>
+        <button (click)="showWarningToast()" class="btn btn-warning">{{ 'toast.warningBtn' | translate }}</button>
+      </div>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -22,12 +38,6 @@
       <h3>{{ 'toast.example3' | translate }}</h3>
       <p>{{ 'toast.example3Desc' | translate }}</p>
       <app-code-block [code]="shortHandCode" lang="typescript" />
-      <div cds-layout="horizontal gap:xs align:center wrap">
-        <button (click)="showSuccessToast()" class="btn btn-success">{{ 'toast.successBtn' | translate }}</button>
-        <button (click)="showInfoToast()" class="btn btn-primary">{{ 'toast.infoBtn' | translate }}</button>
-        <button (click)="showErrorToast()" class="btn btn-danger">{{ 'toast.errorBtn' | translate }}</button>
-        <button (click)="showWarningToast()" class="btn btn-warning">{{ 'toast.warningBtn' | translate }}</button>
-      </div>
     </article>
   </section>
 
