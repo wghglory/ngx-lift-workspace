@@ -171,6 +171,12 @@ export const nlTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
+  'home.start': 'Aan de slag',
+  'home.prerequisite': 'Deze instructies zijn voor Angular 21. Begin in een bestaande zelfstandige Angular-applicatie.',
+  'home.ngxLift.setup':
+    'Installeer ngx-lift en kies een taak. HTTP-voorbeelden hebben provideHttpClient() nodig; lokale signaal- en timervoorbeelden niet.',
+  'home.clrLift.setup':
+    'Voeg het Clarity-stijlblad globaal toe en importeer de zelfstandige componenten die u gebruikt. Begin met de melding hieronder en volg daarna een componenttutorial.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Verbeter uw <code>modern</code> Angular ontwikkeling workflow',
   'home.ngxLift.supportMatrix': 'Versie ondersteuningsmatrix',

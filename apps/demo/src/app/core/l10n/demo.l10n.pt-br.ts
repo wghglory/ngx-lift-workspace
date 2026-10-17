@@ -170,6 +170,12 @@ export const ptBRTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
+  'home.start': 'Primeiros passos',
+  'home.prerequisite': 'Estas instruções são para Angular 21. Comece em uma aplicação Angular standalone existente.',
+  'home.ngxLift.setup':
+    'Instale ngx-lift e escolha uma tarefa. Exemplos HTTP precisam de provideHttpClient(); exemplos locais de sinais e temporizadores não.',
+  'home.clrLift.setup':
+    'Adicione a folha de estilos do Clarity globalmente e importe os componentes standalone usados. Comece pelo alerta abaixo e siga um tutorial de componente.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Ajudar o seu fluxo de desenvolvimento <code>modern</code> Angular',
   'home.ngxLift.supportMatrix': 'Matriz de suporte à versão',

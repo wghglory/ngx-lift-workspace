@@ -3,37 +3,25 @@
     <div class="clr-col-12 clr-col-xl-6" cds-layout="vertical gap:md">
       <h1 cds-text="display">{{ 'home.ngxLift.title' | translate }}</h1>
       <p cds-text="title" cds-layout="m-t:sm" [innerHTML]="'home.ngxLift.subtitle' | translate"></p>
-      <app-code-block [code]="'npm install ngx-lift'" lang="shell" />
-
-      <div cds-layout="vertical gap:xs">
-        <p cds-text="section font:semibold">{{ 'home.ngxLift.supportMatrix' | translate }}</p>
-        <table class="table table-compact">
-          <thead>
-            <tr>
-              <th>{{ 'home.ngxLift.thVersion' | translate }}</th>
-              <th>{{ 'home.ngxLift.thNgVersion' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>v1.x</td>
-              <td>Angular 17+</td>
-            </tr>
-            <tr>
-              <td>v19.x</td>
-              <td>Angular 19, 20</td>
-            </tr>
-            <tr>
-              <td>v21.x</td>
-              <td>Angular 21</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <app-code-block [code]="'npm install ngx-lift&#64;21'" lang="shell" />
     </div>
     <div class="clr-col-12 clr-col-xl-6">
       <img class="hero-image" cds-layout="p:sm" src="./assets/ngx-lift-dark.svg" alt="ngx-lift" />
     </div>
+  </section>
+
+  <section cds-layout="vertical gap:md" id="getting-started">
+    <h2>{{ 'home.start' | translate }}</h2>
+    <p>{{ 'home.prerequisite' | translate }}</p>
+    <p>{{ 'home.ngxLift.setup' | translate }}</p>
+    <app-code-block [code]="setupCode" lang="typescript" />
+    <ul class="list" cds-layout="vertical gap:xs">
+      <li>
+        <a routerLink="/ngx-lift/query/queryResource">{{ 'queryLearn.readTitle' | translate }}</a>
+      </li>
+      <li><a routerLink="/ngx-lift/signals/computedAsync">computedAsync</a></li>
+      <li><a routerLink="/ngx-lift/signals/toSignalForm">toSignalForm</a></li>
+    </ul>
   </section>
 
   <section class="clr-row">
@@ -57,6 +45,33 @@
         [title]="'home.ngxLift.signalTitle' | translate"
         [description]="'home.ngxLift.signalDesc' | translate"
       />
+    </div>
+  </section>
+  <section id="version-support">
+    <div cds-layout="vertical gap:xs">
+      <p cds-text="section font:semibold">{{ 'home.ngxLift.supportMatrix' | translate }}</p>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'home.ngxLift.thVersion' | translate }}</th>
+            <th>{{ 'home.ngxLift.thNgVersion' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>v1.x</td>
+            <td>Angular 17+</td>
+          </tr>
+          <tr>
+            <td>v19.x</td>
+            <td>Angular 19, 20</td>
+          </tr>
+          <tr>
+            <td>v21.x</td>
+            <td>Angular 21</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 </div>

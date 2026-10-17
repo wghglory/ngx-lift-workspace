@@ -167,6 +167,12 @@ export const koTranslations: Record<string, string> = {
   'nav.badgeUpdated': '업데이트',
   'nav.badgePopular': '인기',
   'nav.badgeCore': '핵심',
+  'home.start': '시작하기',
+  'home.prerequisite': '이 안내는 Angular 21을 대상으로 합니다. 기존 독립형 Angular 애플리케이션에서 시작하세요.',
+  'home.ngxLift.setup':
+    'ngx-lift를 설치하고 아래 작업을 선택하세요. HTTP 예제에는 provideHttpClient()가 필요하며 로컬 시그널과 타이머 예제에는 필요하지 않습니다.',
+  'home.clrLift.setup':
+    'Clarity 스타일시트를 전역으로 추가하고 사용할 독립형 컴포넌트를 가져오세요. 아래 알림으로 시작한 다음 컴포넌트 튜토리얼을 따라가세요.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': '현대 Angular 개발 워크플로를 향상시키세요',
   'home.ngxLift.supportMatrix': '버전 지원 매트릭스',

@@ -169,6 +169,12 @@ export const enTranslations: Record<string, string> = {
   'nav.badgeUpdated': 'UPDATED',
   'nav.badgePopular': 'POPULAR',
   'nav.badgeCore': 'CORE',
+  'home.start': 'Get started',
+  'home.prerequisite': 'These instructions target Angular 21. Begin in an existing standalone Angular application.',
+  'home.ngxLift.setup':
+    'Install ngx-lift, then choose a task below. HTTP examples need provideHttpClient(); local signal and timer examples need no HTTP provider.',
+  'home.clrLift.setup':
+    'Add the Clarity stylesheet globally and import only the standalone components you use. Start with the alert below, then follow a component tutorial.',
   'home.ngxLift.title': 'ngx-lift',
   'home.ngxLift.subtitle': 'Enhance your <code>modern</code> Angular development workflow',
   'home.ngxLift.supportMatrix': 'Version Support Matrix',
