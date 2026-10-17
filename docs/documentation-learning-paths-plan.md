@@ -72,3 +72,7 @@ The parent PR independently passes locally at 79.06% (340/430).
 The production build compiles the final demo templates; library/package verification is not rerun because `libs/` and
 package metadata are unchanged. Local review found no blocking issues. Human newcomer comprehension and native-language
 review remain open. Remote CI, merge and publication are separate gates.
+
+The remaining catalog now has 12 implementation PRs, tracked in the
+[refinement roadmap](documentation-refinement-roadmap.md). Those sibling PRs own the other pages; #162 retains the
+focused entry-flow scope described here.
