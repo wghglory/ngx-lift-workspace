@@ -1,11 +1,6 @@
 <cll-page-container [title]="'toSignalForm.pageTitle' | translate">
-  <!-- Value Proposition Banner -->
-  <div cds-layout="m-b:md">
-    <cll-callout type="info">
-      <p class="font-semibold" cds-layout="m-t:none m-b:xs">{{ 'toSignalForm.bannerTitle' | translate }}</p>
-      <p cds-text="body" [innerHTML]="'toSignalForm.bannerDesc' | translate"></p>
-    </cll-callout>
-  </div>
+  <p class="font-semibold">{{ 'toSignalForm.bannerTitle' | translate }}</p>
+  <p [innerHTML]="'toSignalForm.bannerDesc' | translate"></p>
 
   <!-- ==================== SECTION 1: QUICKSTART (BEGINNER) ==================== -->
   <app-demo-playground

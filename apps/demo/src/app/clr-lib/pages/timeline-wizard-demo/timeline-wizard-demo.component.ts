@@ -95,22 +95,20 @@ export class TimelineWizardDemoComponent {
     window.alert('finished');
   }
 
-  wizardCode = highlight(`import {Component} from '@angular/core';
+  wizardCode = highlight(`import {ChangeDetectionStrategy, Component} from '@angular/core';
 
 import {ClrTimelineStepState} from '@clr/angular';
 import {TimelineStep, TimelineWizardComponent} from 'clr-lift';
 import {Deployment} from './deployment.type';
+import {ConfigureOperatorComponent} from './configure-operator/configure-operator.component';
+import {ConfigureServiceComponent} from './configure-service/configure-service.component';
+import {ConfigureRuntimePropComponent} from './configure-runtime-prop/configure-runtime-prop.component';
+import {ConfigureReviewComponent} from './configure-review/configure-review.component';
 
 @Component({
   imports: [TimelineWizardComponent],
-  template: \`
-    <cll-timeline-wizard
-      [timelineSteps]="timelineSteps"
-      (canceled)="onCanceled()"
-      (confirmed)="onConfirmed($event)"
-      (finished)="onFinished()"
-    ></cll-timeline-wizard>
-  \`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './timeline-wizard-demo.component.html',
 })
 export class TimelineWizardDemoComponent {
   // simulate an API response. These values will be set into step forms.
@@ -170,6 +168,16 @@ export class TimelineWizardDemoComponent {
     window.alert('finished');
   }
 }`);
+
+  readonly wizardHtmlCode = highlight(
+    `<cll-timeline-wizard
+  [timelineSteps]="timelineSteps"
+  (canceled)="onCanceled()"
+  (confirmed)="onConfirmed($event)"
+  (finished)="onFinished()"
+></cll-timeline-wizard>`,
+    'html',
+  );
 
   deploymentTypeCode = highlight(`
 export type Deployment = {

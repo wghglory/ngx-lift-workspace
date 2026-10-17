@@ -1,4 +1,24 @@
 export const frTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'Charger des données quand un signal change',
+  'docsLearn.basics': 'Bases',
+  'docsLearn.recipes': 'Exemples pratiques',
+  'docsLearn.localState': 'État local',
+  'docsLearn.nested': 'Ressources imbriquées',
+  'docsLearn.reference': 'Référence',
+  'docsLearn.gridTitle': 'Essayer une grille alimentée par le serveur',
+  'docsLearn.gridIntro':
+    'dgState prépare les événements Clarity Datagrid pour les requêtes serveur, retarde les changements de filtre et peut ignorer les états identiques.',
+  'docsLearn.gridTry':
+    'Changez les filtres ou la page, puis actualisez. La prévisualisation appelle randomuser.me ; le total est simulé.',
+  'docsLearn.gridModel':
+    'La grille émet un état ; dgState retarde les changements de filtre de 500 ms. switchMap remplace la requête précédente. Actualiser utilise un déclencheur distinct.',
+  'docsLearn.resourceModel':
+    'Les signaux lus dans la fonction source deviennent des dépendances. Avec le comportement switch par défaut, un changement annule l’abonnement précédent et lance une nouvelle lecture. Chaque ressource possède sa propre valeur.',
+  'docsLearn.computedTitle': 'Votre première valeur dérivée asynchrone',
+  'docsLearn.computedModel':
+    'Cliquez pour changer l’entrée. Après 300 ms, la valeur devient entrée × 10. computedAsync renvoie un signal de valeur, sans signaux de chargement ou d’erreur de ressource. Le minuteur simule un travail asynchrone.',
+  'docsLearn.nextValue': 'Valeur suivante',
+
   'queryDocs.cache': 'Fraîcheur du cache et actualisation',
   'queryDocs.cacheIntro':
     'Une clé identifie des données partagées dans un QueryClient. Fraîcheur, activité des requêtes et durée de vie des observateurs répondent à des questions différentes.',

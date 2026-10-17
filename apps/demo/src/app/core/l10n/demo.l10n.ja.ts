@@ -1,4 +1,24 @@
 export const jaTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'シグナルの変化に応じてデータを読み込む',
+  'docsLearn.basics': '基本',
+  'docsLearn.recipes': '実用例',
+  'docsLearn.localState': 'ローカル状態',
+  'docsLearn.nested': 'ネストしたリソース',
+  'docsLearn.reference': 'リファレンス',
+  'docsLearn.gridTitle': 'サーバー駆動のデータグリッドを試す',
+  'docsLearn.gridIntro':
+    'dgState は Clarity Datagrid のイベントをサーバー要求用に整え、フィルター変更を遅延し、必要に応じて重複状態を除外します。',
+  'docsLearn.gridTry':
+    'フィルターやページを変更して再読み込みしてください。プレビューは randomuser.me を呼び出し、合計件数は模擬値です。',
+  'docsLearn.gridModel':
+    'グリッドが状態を通知し、dgState がフィルター変更を 500 ms 遅延します。switchMap は前の要求を置き換えます。再読み込みには別のトリガーを使います。',
+  'docsLearn.resourceModel':
+    'ソース関数で読み取ったシグナルは依存関係になります。既定の switch 動作では、変更時に前の購読を解除して新しい読み取りを開始します。各リソースは独自の値を保持します。',
+  'docsLearn.computedTitle': '最初の非同期派生値',
+  'docsLearn.computedModel':
+    'クリックして入力を変更します。300 ms 後に値が入力 × 10 になります。computedAsync は値シグナルを返し、リソースの読み込みやエラーのシグナルは提供しません。タイマーが非同期処理を模擬します。',
+  'docsLearn.nextValue': '次の値',
+
   'queryDocs.cache': 'キャッシュの鮮度と更新',
   'queryDocs.cacheIntro':
     'クエリキーは同じ QueryClient 内の共有データを識別します。鮮度、リクエストの実行状態、オブザーバーの寿命はそれぞれ異なる観点です。',

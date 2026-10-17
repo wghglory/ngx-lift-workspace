@@ -1,4 +1,24 @@
 export const enTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'Load data when a signal changes',
+  'docsLearn.basics': 'Basics',
+  'docsLearn.recipes': 'Practical recipes',
+  'docsLearn.localState': 'Local state',
+  'docsLearn.nested': 'Nested resources',
+  'docsLearn.reference': 'Reference',
+  'docsLearn.gridTitle': 'Try a server-driven datagrid',
+  'docsLearn.gridIntro':
+    'dgState prepares Clarity Datagrid events for server requests, delaying filter changes and optionally skipping duplicate states.',
+  'docsLearn.gridTry':
+    'Change filters or pages, then refresh. The preview calls randomuser.me; its total count is simulated.',
+  'docsLearn.gridModel':
+    'The grid emits state; dgState delays filter changes by 500 ms. switchMap replaces the previous request. Refresh is a separate trigger.',
+  'docsLearn.resourceModel':
+    'Signals read in the source become dependencies. With the default switch behavior, a change cancels the previous subscription and starts a new read. Each resource owns its own value.',
+  'docsLearn.computedTitle': 'Your first async derived value',
+  'docsLearn.computedModel':
+    'Click to change the input. After 300 ms, the value becomes input × 10. computedAsync returns a value signal; it does not provide resource loading or error signals. The timer simulates async work.',
+  'docsLearn.nextValue': 'Next value',
+
   'queryDocs.cache': 'Cache freshness and refresh',
   'queryDocs.cacheIntro':
     'A query key identifies shared data within one QueryClient. Freshness, request activity, and observer lifetime answer different questions.',

@@ -13,12 +13,14 @@ import {
 
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-key-value-inputs-demo',
   imports: [
     CommonModule,
+    DemoPlaygroundComponent,
     CalloutComponent,
     RouterLink,
     KeyValueInputsComponent,
@@ -50,26 +52,7 @@ import {FormArray, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   imports: [KeyValueInputsComponent, ReactiveFormsModule],
-  template: \`
-    <form [formGroup]="form">
-      <cll-key-value-inputs
-        [formArray]="form.controls.appProperties"
-        [inputSize]="30"
-        [data]="data"
-        [keyPattern]="{
-          regex: '^\\\\w+\\\\d+$',
-          message: 'custom error message: key must start with a letter and end with a number',
-        }"
-        [valuePattern]="{regex: '^\\\\w+\\\\d+$'}"
-        [smartMode]="true"
-        [uniqueKey]="true"
-        buttonClass="btn-sm btn-link"
-        keyHelper="run time property key"
-        valueHelper="run time property value"
-        addText="add key value"
-      />
-    </form>
-  \`,
+  templateUrl: './key-value-inputs-example.component.html',
 })
 export class KeyValueInputsExampleComponent {
   form = new FormGroup({
@@ -81,6 +64,28 @@ export class KeyValueInputsExampleComponent {
     {key: 'key2', value: 'value2'},
   ];
 }`);
+
+  readonly exampleHtmlCode = highlight(
+    `<form [formGroup]="form">
+  <cll-key-value-inputs
+    [formArray]="form.controls.appProperties"
+    [inputSize]="30"
+    [data]="data"
+    [keyPattern]="{
+      regex: '^\\\\w+\\\\d+$',
+      message: 'custom error message: key must start with a letter and end with a number',
+    }"
+    [valuePattern]="{regex: '^\\\\w+\\\\d+$'}"
+    [smartMode]="true"
+    [uniqueKey]="true"
+    buttonClass="btn-sm btn-link"
+    keyHelper="run time property key"
+    valueHelper="run time property value"
+    addText="add key value"
+  />
+</form>`,
+    'html',
+  );
 
   readonly inputs = computed<ApiProperty[]>(() => [
     {

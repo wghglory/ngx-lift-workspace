@@ -5,6 +5,7 @@ import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationServ
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-datagrid.component';
 
@@ -12,6 +13,7 @@ import {UserDatagridComponent} from '../../shared/components/user-datagrid/user-
   selector: 'app-dg-state',
   imports: [
     ClarityModule,
+    DemoPlaygroundComponent,
     RouterLink,
     PageContainerComponent,
     CodeBlockComponent,
@@ -154,29 +156,37 @@ export class DgStateComponent {
 }
     `);
 
-  typescriptCode = highlight(`
-import {convertToHttpParams, dgState} from 'clr-lift';
-import {Component, inject} from '@angular/core';
-import {BehaviorSubject, combineLatest} from 'rxjs';
-import {distinctUntilChanged, filter, map, share, switchMap} from 'rxjs/operators';
-import {AsyncState, createAsyncState} from 'ngx-lift';
-import {ClrDatagridStateInterface} from '@clr/angular';
-import {isEqual} from 'ngx-lift';
+  typescriptCode = highlight(`import {CommonModule} from '@angular/common';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
+import {AlertComponent, convertToHttpParams, dgState, TranslatePipe} from 'clr-lift';
+import {AsyncState, createAsyncState, isEqual} from 'ngx-lift';
+import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, share, switchMap} from 'rxjs';
 
-@Component({})
+import {PaginationResponse} from '../../../../shared/models/pagination.model';
+import {User} from '../../../../shared/models/user.model';
+import {UserService} from '../../../../shared/services/user.service';
+
+@Component({
+  selector: 'app-user-datagrid',
+  imports: [CommonModule, ClarityModule, AlertComponent, TranslatePipe],
+  templateUrl: './user-datagrid.component.html',
+  styleUrl: './user-datagrid.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 export class UserDatagridComponent {
   selectedItems: User[] = [];
+
   userService = inject(UserService);
 
   private dgBS = new BehaviorSubject<ClrDatagridStateInterface | null>(null);
-  // When the dgState parameter is set to false, it signals the execution of an API call even when the current state is identical to the previous state.
-  // Conversely, emission is suppressed when dgState is true, thanks to the application of distinctUntilChanged.
-  private dgState$ = this.dgBS.pipe(dgState(false));
+  private dgState$ = this.dgBS.pipe(dgState(false)); // When the dgState parameter is set to false, it signals the execution of an API call even when the current state is identical to the previous state. Conversely, emission is suppressed when dgState is true, thanks to the application of distinctUntilChanged.
 
   usersState$ = combineLatest([this.dgState$, this.userService.refresh$]).pipe(
     switchMap(([state]) => {
-      const params = convertToHttpParams(state); // if convertToHttpParams doesn't fit your need, use your own utils to convert state
-      return this.userService.getUsers(params).pipe(createAsyncState());
+      const params = convertToHttpParams(state);
+      return this.userService.getUsers({...params, results: 10, seed: 'abc'}).pipe(createAsyncState());
     }),
     share(),
   );
@@ -184,12 +194,11 @@ export class UserDatagridComponent {
   total$ = this.usersState$.pipe(
     filter((state) => Boolean(state.data)),
     distinctUntilChanged<AsyncState<PaginationResponse<User>, HttpErrorResponse>>(isEqual),
-    map((res) => res.data?.info?.total),
+    map((res) => res.data?.info?.total || 0),
   );
 
   refresh(state: ClrDatagridStateInterface) {
     this.dgBS.next(state);
   }
-}
-  `);
+}`);
 }

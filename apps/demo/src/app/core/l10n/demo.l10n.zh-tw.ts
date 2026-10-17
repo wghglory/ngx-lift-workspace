@@ -1,4 +1,22 @@
 export const zhTWTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': '信號變更時載入資料',
+  'docsLearn.basics': '基礎',
+  'docsLearn.recipes': '實用範例',
+  'docsLearn.localState': '本機狀態',
+  'docsLearn.nested': '巢狀資源',
+  'docsLearn.reference': '參考',
+  'docsLearn.gridTitle': '試用伺服器端資料表格',
+  'docsLearn.gridIntro': 'dgState 將 Clarity 資料表格事件轉換為伺服器請求的輸入，延遲篩選變更，並可略過重複狀態。',
+  'docsLearn.gridTry': '變更篩選或頁碼，然後重新整理。預覽呼叫 randomuser.me；總數為模擬資料。',
+  'docsLearn.gridModel':
+    '表格發出狀態；dgState 將篩選變更延遲 500 毫秒。switchMap 取代上一次請求。重新整理使用獨立觸發器。',
+  'docsLearn.resourceModel':
+    '來源函式讀取的信號會成為相依項目。預設 switch 行為下，相依項目變更會取消上一次訂閱並開始新讀取。每個資源獨立持有自己的值。',
+  'docsLearn.computedTitle': '第一個非同步衍生值',
+  'docsLearn.computedModel':
+    '點擊以變更輸入。300 毫秒後，值變為輸入 × 10。computedAsync 回傳值信號，不提供資源的載入或錯誤信號。計時器模擬非同步工作。',
+  'docsLearn.nextValue': '下一個值',
+
   'queryDocs.cache': '快取新鮮度與重新整理',
   'queryDocs.cacheIntro':
     '查詢鍵識別同一個 QueryClient 中的共用資料。新鮮度、請求活動和觀察者生命週期各自回答不同的問題。',

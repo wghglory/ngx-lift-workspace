@@ -1,4 +1,24 @@
 export const koTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': '신호가 변경될 때 데이터 로드',
+  'docsLearn.basics': '기본',
+  'docsLearn.recipes': '실용 예제',
+  'docsLearn.localState': '로컬 상태',
+  'docsLearn.nested': '중첩 리소스',
+  'docsLearn.reference': '참조',
+  'docsLearn.gridTitle': '서버 기반 데이터그리드 체험',
+  'docsLearn.gridIntro':
+    'dgState는 Clarity Datagrid 이벤트를 서버 요청에 맞게 준비하고, 필터 변경을 지연하며, 필요하면 중복 상태를 건너뜁니다.',
+  'docsLearn.gridTry':
+    '필터나 페이지를 변경한 후 새로 고치세요. 미리보기는 randomuser.me를 호출하며 총 개수는 모의 값입니다.',
+  'docsLearn.gridModel':
+    '그리드가 상태를 내보내면 dgState가 필터 변경을 500 ms 지연합니다. switchMap이 이전 요청을 대체합니다. 새로 고침은 별도 트리거를 사용합니다.',
+  'docsLearn.resourceModel':
+    '소스 함수에서 읽은 신호는 의존성이 됩니다. 기본 switch 동작에서는 변경 시 이전 구독을 취소하고 새 읽기를 시작합니다. 각 리소스는 자체 값을 보유합니다.',
+  'docsLearn.computedTitle': '첫 비동기 파생 값',
+  'docsLearn.computedModel':
+    '클릭하여 입력을 변경하세요. 300 ms 후 값은 입력 × 10이 됩니다. computedAsync는 값 신호를 반환하며 리소스의 로딩 또는 오류 신호를 제공하지 않습니다. 타이머는 비동기 작업을 모의합니다.',
+  'docsLearn.nextValue': '다음 값',
+
   'queryDocs.cache': '캐시 최신성 및 새로 고침',
   'queryDocs.cacheIntro':
     '쿼리 키는 하나의 QueryClient 안에서 공유 데이터를 식별합니다. 최신성, 요청 활동, 관찰자 수명은 서로 다른 질문에 답합니다.',

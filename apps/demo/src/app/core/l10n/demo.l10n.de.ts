@@ -1,4 +1,24 @@
 export const deTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'Daten bei Signaländerungen laden',
+  'docsLearn.basics': 'Grundlagen',
+  'docsLearn.recipes': 'Praktische Beispiele',
+  'docsLearn.localState': 'Lokaler Zustand',
+  'docsLearn.nested': 'Verschachtelte Ressourcen',
+  'docsLearn.reference': 'Referenz',
+  'docsLearn.gridTitle': 'Servergesteuertes Datagrid ausprobieren',
+  'docsLearn.gridIntro':
+    'dgState bereitet Clarity-Datagrid-Ereignisse für Serveranfragen auf, verzögert Filteränderungen und kann doppelte Zustände überspringen.',
+  'docsLearn.gridTry':
+    'Filter oder Seite ändern, dann aktualisieren. Die Vorschau ruft randomuser.me auf; die Gesamtzahl ist simuliert.',
+  'docsLearn.gridModel':
+    'Das Grid liefert Zustand; dgState verzögert Filteränderungen um 500 ms. switchMap ersetzt die vorherige Anfrage. Aktualisieren hat einen eigenen Auslöser.',
+  'docsLearn.resourceModel':
+    'Im Quellcode gelesene Signale werden Abhängigkeiten. Beim Standardverhalten switch beendet eine Änderung das vorherige Abonnement und startet einen neuen Lesevorgang. Jede Ressource besitzt ihren eigenen Wert.',
+  'docsLearn.computedTitle': 'Ihr erster asynchron abgeleiteter Wert',
+  'docsLearn.computedModel':
+    'Klicken Sie, um die Eingabe zu ändern. Nach 300 ms wird der Wert zu Eingabe × 10. computedAsync liefert ein Wertsignal, keine Ressourcen-Lade- oder Fehlersignale. Der Timer simuliert asynchrone Arbeit.',
+  'docsLearn.nextValue': 'Nächster Wert',
+
   'queryDocs.cache': 'Cache-Aktualität und Aktualisierung',
   'queryDocs.cacheIntro':
     'Ein Abfrageschlüssel bezeichnet gemeinsame Daten innerhalb eines QueryClient. Aktualität, laufende Anfragen und Beobachterlebensdauer beantworten unterschiedliche Fragen.',
