@@ -2,6 +2,22 @@
   <!-- Overview -->
   <p [innerHTML]="'computedAsync.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="computed-starter"
+    [title]="'docsLearn.computedTitle' | translate"
+    [description]="'docsLearn.computedModel' | translate"
+    level="beginner"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtmlCode"
+  >
+    <div preview>
+      <button type="button" class="btn btn-sm" (click)="starterInput.update(increment)">
+        {{ 'docsLearn.nextValue' | translate }}
+      </button>
+      <p role="status">{{ starterInput() }} → {{ starterValue() }}</p>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>

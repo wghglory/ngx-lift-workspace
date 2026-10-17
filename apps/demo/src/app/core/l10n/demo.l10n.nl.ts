@@ -1,4 +1,24 @@
 export const nlTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'Gegevens laden wanneer een signaal verandert',
+  'docsLearn.basics': 'Basis',
+  'docsLearn.recipes': 'Praktische voorbeelden',
+  'docsLearn.localState': 'Lokale toestand',
+  'docsLearn.nested': 'Geneste resources',
+  'docsLearn.reference': 'Referentie',
+  'docsLearn.gridTitle': 'Probeer een servergestuurd datagrid',
+  'docsLearn.gridIntro':
+    'dgState bereidt Clarity Datagrid-gebeurtenissen voor op serververzoeken, vertraagt filterwijzigingen en kan dubbele toestanden overslaan.',
+  'docsLearn.gridTry':
+    'Wijzig filters of pagina’s en vernieuw daarna. Het voorbeeld roept randomuser.me aan; het totale aantal is gesimuleerd.',
+  'docsLearn.gridModel':
+    'Het grid zendt toestand uit; dgState vertraagt filterwijzigingen met 500 ms. switchMap vervangt het vorige verzoek. Vernieuwen heeft een eigen trigger.',
+  'docsLearn.resourceModel':
+    'Signalen die in de bronfunctie worden gelezen, worden afhankelijkheden. Bij het standaardgedrag switch annuleert een wijziging het vorige abonnement en start een nieuwe leesactie. Elke resource heeft een eigen waarde.',
+  'docsLearn.computedTitle': 'Je eerste asynchroon afgeleide waarde',
+  'docsLearn.computedModel':
+    'Klik om de invoer te wijzigen. Na 300 ms wordt de waarde invoer × 10. computedAsync geeft een waardesignaal terug, zonder laad- of foutsignalen van een resource. De timer simuleert asynchroon werk.',
+  'docsLearn.nextValue': 'Volgende waarde',
+
   'queryDocs.cache': 'Cacheversheid en vernieuwen',
   'queryDocs.cacheIntro':
     'Een querysleutel identificeert gedeelde gegevens binnen één QueryClient. Versheid, actieve aanvragen en de levensduur van observers beantwoorden verschillende vragen.',

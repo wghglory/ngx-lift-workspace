@@ -9,7 +9,7 @@ import {
   TranslationService,
 } from 'clr-lift';
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
-import {delay, of, throwError} from 'rxjs';
+import {delay, map, of, throwError, timer} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -17,12 +17,14 @@ import {UserCardComponent} from '../../../../shared/components/user-card/user-ca
 import {PaginationResponse} from '../../../../shared/models/pagination.model';
 import {User} from '../../../../shared/models/user.model';
 import {UserService} from '../../../../shared/services/user.service';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-computed-async',
   imports: [
     ClarityModule,
+    DemoPlaygroundComponent,
     PageContainerComponent,
     CalloutComponent,
     CodeBlockComponent,
@@ -40,6 +42,49 @@ export class ComputedAsyncComponent {
   private userService = inject(UserService);
   private injector = inject(Injector);
   private translationService = inject(TranslationService);
+
+  readonly starterInput = signal(1);
+  readonly starterValue = computedAsync(
+    () => {
+      const value = this.starterInput();
+      return timer(300).pipe(map(() => value * 10));
+    },
+    {initialValue: 0},
+  );
+  increment(value: number): number {
+    return value + 1;
+  }
+  readonly starterCode = highlight(`import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {computedAsync} from 'ngx-lift';
+import {map, timer} from 'rxjs';
+import {TranslatePipe} from 'clr-lift';
+
+@Component({
+  selector: 'app-derived-value',
+  imports: [TranslatePipe],
+  templateUrl: './derived-value.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DerivedValueComponent {
+  readonly starterInput = signal(1);
+  readonly starterValue = computedAsync(
+    () => {
+      const value = this.starterInput();
+      return timer(300).pipe(map(() => value * 10));
+    },
+    {initialValue: 0},
+  );
+  increment(value: number): number {
+    return value + 1;
+  }
+}`);
+  readonly starterHtmlCode = highlight(
+    `<button type="button" class="btn btn-sm" (click)="starterInput.update(increment)">
+  {{ 'docsLearn.nextValue' | translate }}
+</button>
+<p role="status">{{ starterInput() }} → {{ starterValue() }}</p>`,
+    'html',
+  );
 
   private refreshTrigger = createTrigger();
   private fetchTrigger = createTrigger();

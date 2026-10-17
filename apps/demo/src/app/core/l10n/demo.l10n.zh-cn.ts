@@ -1,4 +1,22 @@
 export const zhCNTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': '信号变化时加载数据',
+  'docsLearn.basics': '基础',
+  'docsLearn.recipes': '实用示例',
+  'docsLearn.localState': '本地状态',
+  'docsLearn.nested': '嵌套资源',
+  'docsLearn.reference': '参考',
+  'docsLearn.gridTitle': '试用服务端数据表格',
+  'docsLearn.gridIntro': 'dgState 将 Clarity 数据表格事件转换为服务端请求的输入，延迟筛选变化，并可跳过重复状态。',
+  'docsLearn.gridTry': '更改筛选或页码，然后刷新。预览调用 randomuser.me；总数为模拟数据。',
+  'docsLearn.gridModel':
+    '表格发出状态；dgState 将筛选变化延迟 500 毫秒。switchMap 替换上一次请求。刷新使用独立触发器。',
+  'docsLearn.resourceModel':
+    '源函数中读取的信号会成为依赖。默认 switch 行为下，依赖变化会取消上一次订阅并开始新读取。每个资源独立持有自己的值。',
+  'docsLearn.computedTitle': '第一个异步派生值',
+  'docsLearn.computedModel':
+    '点击更改输入。300 毫秒后，值变为输入 × 10。computedAsync 返回值信号，不提供资源的加载或错误信号。定时器模拟异步工作。',
+  'docsLearn.nextValue': '下一个值',
+
   'queryDocs.cache': '缓存新鲜度与刷新',
   'queryDocs.cacheIntro':
     '查询键标识同一个 QueryClient 中的共享数据。新鲜度、请求活动和观察者生命周期分别回答不同的问题。',

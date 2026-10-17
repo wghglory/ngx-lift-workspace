@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {
-  CalloutComponent,
   ClarityTheme,
   PageContainerComponent,
   ThemeService,
@@ -21,7 +20,6 @@ import {highlight} from '../../../shared/utils/highlight.util';
   imports: [
     ApiTableComponent,
     PageContainerComponent,
-    CalloutComponent,
     CodeBlockComponent,
     DemoPlaygroundComponent,
     StateInspectorComponent,

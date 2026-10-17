@@ -1,4 +1,23 @@
 export const ptBRTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'Carregar dados quando um sinal muda',
+  'docsLearn.basics': 'Fundamentos',
+  'docsLearn.recipes': 'Exemplos práticos',
+  'docsLearn.localState': 'Estado local',
+  'docsLearn.nested': 'Recursos aninhados',
+  'docsLearn.reference': 'Referência',
+  'docsLearn.gridTitle': 'Experimente uma tabela controlada pelo servidor',
+  'docsLearn.gridIntro':
+    'dgState prepara eventos do Clarity Datagrid para requisições ao servidor, atrasa alterações de filtros e pode ignorar estados duplicados.',
+  'docsLearn.gridTry': 'Altere filtros ou páginas e atualize. A prévia chama randomuser.me; o total é simulado.',
+  'docsLearn.gridModel':
+    'A tabela emite estado; dgState atrasa mudanças de filtros em 500 ms. switchMap substitui a requisição anterior. Atualizar usa um gatilho separado.',
+  'docsLearn.resourceModel':
+    'Sinais lidos na função fonte tornam-se dependências. No comportamento switch padrão, uma mudança cancela a assinatura anterior e inicia uma nova leitura. Cada recurso mantém seu próprio valor.',
+  'docsLearn.computedTitle': 'Seu primeiro valor derivado assíncrono',
+  'docsLearn.computedModel':
+    'Clique para alterar a entrada. Após 300 ms, o valor será entrada × 10. computedAsync retorna um sinal de valor; não fornece sinais de carregamento ou erro de recurso. O temporizador simula trabalho assíncrono.',
+  'docsLearn.nextValue': 'Próximo valor',
+
   'queryDocs.cache': 'Atualidade do cache e atualização',
   'queryDocs.cacheIntro':
     'Uma chave identifica dados compartilhados em um QueryClient. Atualidade, atividade das requisições e duração dos observadores respondem a perguntas diferentes.',

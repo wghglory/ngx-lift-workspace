@@ -6,10 +6,29 @@
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
 
+    <article cds-layout="vertical gap:sm" data-testid="wizard-starter">
+      <app-demo-playground
+        [title]="'timelineWizard.playgroundTitle' | translate"
+        [description]="'timelineWizard.playgroundDesc' | translate"
+        level="advanced"
+        [badgeText]="'timelineWizard.playgroundBadge' | translate"
+        [tsCode]="wizardCode"
+        [htmlCode]="wizardHtmlCode"
+      >
+        <div preview>
+          <cll-timeline-wizard
+            [timelineSteps]="timelineSteps"
+            (canceled)="onCanceled()"
+            (confirmed)="onConfirmed($event)"
+            (finished)="onFinished()"
+          />
+        </div>
+      </app-demo-playground>
+    </article>
+
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'timelineWizard.example1' | translate }}</h3>
       <p>{{ 'timelineWizard.example1Desc' | translate }}</p>
-      <app-code-block [code]="wizardCode" lang="typescript" />
       <app-code-block [code]="deploymentTypeCode" lang="typescript" />
     </article>
 
@@ -42,25 +61,6 @@
       <cll-callout>
         {{ 'timelineWizard.example5Callout' | translate }}
       </cll-callout>
-    </article>
-
-    <article cds-layout="vertical gap:sm">
-      <app-demo-playground
-        [title]="'timelineWizard.playgroundTitle' | translate"
-        [description]="'timelineWizard.playgroundDesc' | translate"
-        level="advanced"
-        [badgeText]="'timelineWizard.playgroundBadge' | translate"
-        [tsCode]="wizardCode"
-      >
-        <div preview>
-          <cll-timeline-wizard
-            [timelineSteps]="timelineSteps"
-            (canceled)="onCanceled()"
-            (confirmed)="onConfirmed($event)"
-            (finished)="onFinished()"
-          />
-        </div>
-      </app-demo-playground>
     </article>
   </section>
 

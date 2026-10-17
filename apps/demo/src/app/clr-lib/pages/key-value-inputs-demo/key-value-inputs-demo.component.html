@@ -1,45 +1,46 @@
 <cll-page-container [title]="'keyValueInputs.title' | translate">
   <!-- Overview -->
   <p [innerHTML]="'keyValueInputs.overview' | translate"></p>
-  <cll-callout>
-    {{ 'keyValueInputs.callout' | translate }}
-    <a [routerLink]="['/ngx-lift/validators/unique']"> UniqueValidator </a>
-  </cll-callout>
 
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'keyValueInputs.example1' | translate }}</h3>
-      <p>{{ 'keyValueInputs.example1Desc' | translate }}</p>
-      <app-code-block [code]="exampleCode" lang="typescript" />
-    </article>
-
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'keyValueInputs.example2' | translate }}</h3>
-      <p>{{ 'keyValueInputs.example2Desc' | translate }}</p>
-      <form clrForm [formGroup]="form">
-        <cll-key-value-inputs
-          [formArray]="form.controls.appProperties"
-          [inputSize]="30"
-          [data]="data"
-          [keyPattern]="{
-            regex: '^\\w+\\d+$',
-            message: 'custom error message: key must start with a letter and end with a number',
-          }"
-          [valuePattern]="{regex: '^\\w+\\d+$'}"
-          [smartMode]="true"
-          [uniqueKey]="true"
-          buttonClass="btn-link"
-          [keyHelper]="'keyValueInputs.keyHelper' | translate"
-          [valueHelper]="'keyValueInputs.valueHelper' | translate"
-          [addText]="'keyValueInputs.addText' | translate"
-        />
-      </form>
-      <p>{{ 'keyValueInputs.formOutput' | translate }}</p>
-      <app-code-block [code]="form.value | json" lang="json" />
-    </article>
+    <app-demo-playground
+      data-testid="key-value-starter"
+      [title]="'keyValueInputs.example2' | translate"
+      [description]="'keyValueInputs.example2Desc' | translate"
+      [tsCode]="exampleCode"
+      [htmlCode]="exampleHtmlCode"
+      level="beginner"
+    >
+      <div preview>
+        <form clrForm [formGroup]="form">
+          <cll-key-value-inputs
+            [formArray]="form.controls.appProperties"
+            [inputSize]="30"
+            [data]="data"
+            [keyPattern]="{
+              regex: '^\\w+\\d+$',
+              message: 'custom error message: key must start with a letter and end with a number',
+            }"
+            [valuePattern]="{regex: '^\\w+\\d+$'}"
+            [smartMode]="true"
+            [uniqueKey]="true"
+            buttonClass="btn-link"
+            [keyHelper]="'keyValueInputs.keyHelper' | translate"
+            [valueHelper]="'keyValueInputs.valueHelper' | translate"
+            [addText]="'keyValueInputs.addText' | translate"
+          />
+        </form>
+        <p>{{ 'keyValueInputs.formOutput' | translate }}</p>
+        <app-code-block [code]="form.value | json" lang="json" />
+      </div>
+    </app-demo-playground>
+    <cll-callout>
+      {{ 'keyValueInputs.callout' | translate }}
+      <a [routerLink]="['/ngx-lift/validators/unique']"> UniqueValidator </a>
+    </cll-callout>
   </section>
 
   <!-- API Reference -->

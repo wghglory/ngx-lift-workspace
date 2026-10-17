@@ -1,4 +1,24 @@
 export const esTranslations: Record<string, string> = {
+  'docsLearn.resourceTitle': 'Cargar datos al cambiar una señal',
+  'docsLearn.basics': 'Conceptos básicos',
+  'docsLearn.recipes': 'Ejemplos prácticos',
+  'docsLearn.localState': 'Estado local',
+  'docsLearn.nested': 'Recursos anidados',
+  'docsLearn.reference': 'Referencia',
+  'docsLearn.gridTitle': 'Prueba una tabla con datos del servidor',
+  'docsLearn.gridIntro':
+    'dgState prepara los eventos de Clarity Datagrid para solicitudes al servidor, retrasa cambios de filtros y puede omitir estados duplicados.',
+  'docsLearn.gridTry':
+    'Cambia filtros o páginas y actualiza. La vista previa llama a randomuser.me; el total es simulado.',
+  'docsLearn.gridModel':
+    'La tabla emite estado; dgState retrasa los cambios de filtros 500 ms. switchMap reemplaza la solicitud anterior. Actualizar usa un disparador independiente.',
+  'docsLearn.resourceModel':
+    'Las señales leídas en la función fuente se convierten en dependencias. Con el comportamiento switch predeterminado, un cambio cancela la suscripción anterior e inicia otra lectura. Cada recurso mantiene su propio valor.',
+  'docsLearn.computedTitle': 'Tu primer valor derivado asíncrono',
+  'docsLearn.computedModel':
+    'Haz clic para cambiar la entrada. Tras 300 ms, el valor será entrada × 10. computedAsync devuelve una señal de valor; no ofrece señales de carga o error del recurso. El temporizador simula trabajo asíncrono.',
+  'docsLearn.nextValue': 'Siguiente valor',
+
   'queryDocs.cache': 'Vigencia de caché y actualización',
   'queryDocs.cacheIntro':
     'Una clave de consulta identifica datos compartidos dentro de un QueryClient. La vigencia, la actividad de las solicitudes y la duración de los observadores responden a preguntas distintas.',

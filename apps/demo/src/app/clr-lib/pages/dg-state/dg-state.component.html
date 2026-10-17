@@ -1,15 +1,26 @@
 <cll-page-container [title]="'dgState'">
   <!-- Overview -->
-  <p [innerHTML]="'dgState.overview' | translate"></p>
+  <p>{{ 'docsLearn.gridIntro' | translate }}</p>
 
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
 
+    <app-demo-playground
+      data-testid="datagrid-starter"
+      [title]="'docsLearn.gridTitle' | translate"
+      [description]="'docsLearn.gridTry' | translate"
+      level="beginner"
+      [tsCode]="typescriptCode"
+      [htmlCode]="secondHtmlCode"
+    >
+      <div preview><app-user-datagrid /></div>
+    </app-demo-playground>
+    <p>{{ 'docsLearn.gridModel' | translate }}</p>
+
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'dgState.example1Title' | translate }}</h3>
       <p [innerHTML]="'dgState.example1Desc' | translate"></p>
-      <app-code-block [code]="typescriptCode" lang="typescript" />
       <p>{{ 'dgState.example1DataDesc' | translate }}</p>
       <app-code-block [code]="dataCode" lang="json" />
     </article>
@@ -25,12 +36,6 @@
       <p [innerHTML]="'dgState.example3Desc' | translate"></p>
       <app-code-block [code]="secondHtmlCode" lang="html" />
     </article>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'dgState.example4Title' | translate }}</h3>
-      <p [innerHTML]="'dgState.example4Desc' | translate"></p>
-      <app-user-datagrid />
-    </article>
   </section>
 
   <cll-callout>
@@ -44,6 +49,7 @@
   <!-- API Reference -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.apiReference' | translate }}</h2>
+    <p [innerHTML]="'dgState.overview' | translate"></p>
     <div cds-layout="vertical gap:sm">
       <h3>dgState</h3>
       <p>{{ 'dgState.apiDesc' | translate }}</p>

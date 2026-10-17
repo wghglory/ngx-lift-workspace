@@ -225,3 +225,27 @@ test('interactive code excerpts contain the actual handlers driving their previe
       }
   }
 });
+
+test('the datagrid tutorial displays the compiled preview component', () => {
+  const example = snippets(source(join(pages, 'clr-lib/pages/dg-state/dg-state.component.ts'))).get('typescriptCode');
+  const actual = readFileSync(
+    join(pages, 'clr-lib/shared/components/user-datagrid/user-datagrid.component.ts'),
+    'utf8',
+  );
+  assert.equal(example.trim(), actual.trim());
+});
+
+test('the first computed example shows the fields and handler used by the preview', () => {
+  const ast = source(join(pages, 'ngx-lib/pages/signals/computed-async/computed-async.component.ts'));
+  const example = snippets(ast).get('starterCode');
+  const shown = ts.createSourceFile('starter.ts', example, ts.ScriptTarget.Latest, true);
+  const actualClass = ast.statements.find(ts.isClassDeclaration);
+  const shownClass = shown.statements.find(ts.isClassDeclaration);
+  const compact = (text) => text.replace(/\s+/g, '');
+  for (const name of ['starterInput', 'starterValue', 'increment']) {
+    const actual = actualClass.members.find((member) => member.name?.getText(ast) === name);
+    const displayed = shownClass.members.find((member) => member.name?.getText(shown) === name);
+    assert.ok(actual && displayed, `Missing ${name}`);
+    assert.equal(compact(displayed.getText(shown)), compact(actual.getText(ast)));
+  }
+});
