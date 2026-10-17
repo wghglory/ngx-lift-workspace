@@ -13,8 +13,10 @@ import {queryDevtoolsTranslations} from './query-devtools.l10n';
 describe('QueryDevtoolsComponent', () => {
   let fixture: ComponentFixture<QueryDevtoolsComponent>;
   let client: QueryClient;
+  const scrollIntoView = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollIntoView');
 
   beforeEach(() => {
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {value: () => undefined, configurable: true});
     client = new QueryClient();
     TestBed.configureTestingModule({
       imports: [QueryDevtoolsComponent],
@@ -27,6 +29,8 @@ describe('QueryDevtoolsComponent', () => {
     client.destroy();
     vi.useRealTimers();
     vi.restoreAllMocks();
+    if (scrollIntoView) Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', scrollIntoView);
+    else Reflect.deleteProperty(HTMLElement.prototype, 'scrollIntoView');
   });
 
   function mount(): void {
@@ -36,14 +40,104 @@ describe('QueryDevtoolsComponent', () => {
   }
 
   function click(label: string): void {
-    const buttons = Array.from(fixture.nativeElement.querySelectorAll('button')) as HTMLButtonElement[];
+    const scope = label === 'Copy key' ? document : fixture.nativeElement;
+    const buttons = Array.from(scope.querySelectorAll('button')) as HTMLButtonElement[];
     const button = buttons.find(
-      (button) => button.textContent?.trim() === label || button.getAttribute('aria-label') === label,
+      (button) =>
+        button.textContent?.trim().replace(/\s+/g, ' ') === label || button.getAttribute('aria-label') === label,
     );
     if (!button) throw new Error(`Missing button: ${label}`);
     button.click();
     fixture.detectChanges();
   }
+
+  function inspectFirstQuery(): void {
+    (fixture.nativeElement.querySelector('.key-button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+  }
+
+  function updateView(): void {
+    if (fixture.nativeElement.querySelector('button[aria-label="Pause updates"]')) click('Pause updates');
+    click('Update view');
+  }
+
+  function copyKey(): void {
+    click('Actions');
+    click('Copy key');
+  }
+
+  it('shows data immediately and keeps view reads separate from loader execution', async () => {
+    const loader = vi.fn(() => Promise.resolve({name: 'Alex'}));
+    await client.fetchQuery({key: ['profile'], loader});
+    mount();
+    click('Query devtools');
+    expect(fixture.nativeElement.querySelector('button[title="Read cached state without fetching."]')).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('clr-dg-column')).toHaveLength(4);
+    inspectFirstQuery();
+    expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('Alex');
+    expect(fixture.nativeElement.querySelector('.preview-note')).toBeNull();
+    click('Collapse all');
+    expect(fixture.nativeElement.querySelectorAll('.value-row')).toHaveLength(1);
+    click('Expand first level');
+    expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('Alex');
+    updateView();
+    expect(fixture.nativeElement.querySelector('.view-feedback')?.textContent).toContain('View updated at');
+    expect(loader).toHaveBeenCalledTimes(1);
+    click('Resume updates');
+    expect(fixture.nativeElement.querySelector('.view-feedback')).toBeNull();
+    click('Pause updates');
+    expect(fixture.nativeElement.querySelector('.view-feedback')).toBeNull();
+  });
+
+  it('combines key, tag and state filters without fetching and navigates from a shared tag', async () => {
+    const loader = vi.fn(() => Promise.resolve(42));
+    const first = {key: ['team', 'a'], tags: [{type: 'team'}], staleTime: Infinity, loader};
+    await client.fetchQuery(first);
+    await client.fetchQuery({key: ['team', 'b'], tags: [{type: 'team'}], loader});
+    await client.fetchQuery({key: ['other'], tags: [{type: 'other'}], staleTime: Infinity, loader});
+    const unsubscribe = client.observeQuery(first, () => undefined);
+    try {
+      mount();
+      click('Query devtools');
+      click('inactive 2');
+      expect(fixture.nativeElement.querySelectorAll('clr-dg-row')).toHaveLength(2);
+      const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+      select.value = client.getDiagnostics().entries.find((entry) => entry.key[1] === 'a')?.tagMemberships[0] ?? '';
+      select.dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelectorAll('clr-dg-row')).toHaveLength(1);
+      click('fresh 1');
+      expect(fixture.nativeElement.querySelector('clr-dg-row')?.textContent).toContain('"a"');
+      const search = fixture.nativeElement.querySelector('input[type="search"]') as HTMLInputElement;
+      search.value = '"a"';
+      search.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      inspectFirstQuery();
+      click('Details');
+      (fixture.nativeElement.querySelector('.tag-button') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.query-inspector')).toBeNull();
+      expect(search.value).toBe('');
+      expect(fixture.nativeElement.querySelectorAll('clr-dg-row')).toHaveLength(2);
+      expect(loader).toHaveBeenCalledTimes(3);
+      expect(client.getDiagnostics().totalObserverCount).toBe(1);
+      const tag = select.value;
+      client.removeQueries((key) => key[0] === 'team');
+      updateView();
+      expect(select.value).toBe(tag);
+      expect(fixture.nativeElement.querySelectorAll('clr-dg-row')).toHaveLength(0);
+    } finally {
+      unsubscribe();
+    }
+  });
+
+  it('shows preview limits only when the displayed data is paged or truncated', async () => {
+    await client.fetchQuery({key: ['limited'], loader: () => Promise.resolve({text: 'x'.repeat(2001)})});
+    mount();
+    click('Query devtools');
+    inspectFirstQuery();
+    expect(fixture.nativeElement.querySelector('.preview-note')).not.toBeNull();
+  });
 
   it('uses the development-mode default and does not read diagnostics while closed', () => {
     const snapshots = vi.spyOn(client, 'getDiagnostics');
@@ -65,11 +159,11 @@ describe('QueryDevtoolsComponent', () => {
     expect(snapshots).toHaveBeenCalledTimes(1);
     vi.advanceTimersByTime(2000);
     expect(snapshots).toHaveBeenCalledTimes(3);
-    click('Read snapshot');
-    expect(snapshots).toHaveBeenCalledTimes(4);
+    updateView();
+    expect(snapshots).toHaveBeenCalledTimes(5);
     click('Close');
     vi.advanceTimersByTime(2000);
-    expect(snapshots).toHaveBeenCalledTimes(4);
+    expect(snapshots).toHaveBeenCalledTimes(5);
     click('Query devtools');
     fixture.componentRef.setInput('enabled', false);
     fixture.detectChanges();
@@ -99,8 +193,8 @@ describe('QueryDevtoolsComponent', () => {
       fixture.detectChanges();
       expect(otherSnapshots).toHaveBeenCalledTimes(1);
       expect(fixture.nativeElement.textContent).toContain('scoped');
-      click('Read snapshot');
-      expect(otherSnapshots).toHaveBeenCalledTimes(2);
+      updateView();
+      expect(otherSnapshots).toHaveBeenCalledTimes(3);
       expect(loader).toHaveBeenCalledTimes(1);
       expect(otherClient.getDiagnostics().totalObserverCount).toBe(0);
     } finally {
@@ -121,7 +215,7 @@ describe('QueryDevtoolsComponent', () => {
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('clr-datagrid')?.textContent).toContain('second-client');
       expect(fixture.nativeElement.querySelector('clr-datagrid')?.textContent).not.toContain('first-client');
-      click('Inspect');
+      inspectFirstQuery();
       expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('second');
       expect(otherClient.getDiagnostics().totalObserverCount).toBe(0);
     } finally {
@@ -155,7 +249,7 @@ describe('QueryDevtoolsComponent', () => {
       mount();
       click('Query devtools');
       click('Pause updates');
-      click('Inspect');
+      inspectFirstQuery();
       click('Refetch');
       expect(fixture.nativeElement.querySelector('.state-badge')?.textContent).toBe('refreshing');
       click('Details');
@@ -182,6 +276,7 @@ describe('QueryDevtoolsComponent', () => {
     mount();
     click('Query devtools');
     click('Pause updates');
+    inspectFirstQuery();
     click('Refetch');
     click('Close');
     click('Query devtools');
@@ -191,7 +286,7 @@ describe('QueryDevtoolsComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
     expect(snapshots).toHaveBeenCalledTimes(count);
-    click('Read snapshot');
+    updateView();
     expect(fixture.nativeElement.querySelector('.state-badge')?.textContent).toBe('fresh');
   });
 
@@ -283,7 +378,7 @@ describe('QueryDevtoolsComponent', () => {
       expect(fixture.nativeElement.querySelectorAll('clr-dg-row')).toHaveLength(5);
     });
     const firstKey = fixture.nativeElement.querySelector('clr-dg-cell code').textContent;
-    click('Read snapshot');
+    updateView();
     expect(pagination.currentPage).toBe(2);
     expect(fixture.nativeElement.querySelector('clr-dg-cell code').textContent).toBe(firstKey);
     expect(keyColumn.sortOrder).toBe(ClrDatagridSortOrder.DESC);
@@ -314,7 +409,7 @@ describe('QueryDevtoolsComponent', () => {
     const count = snapshots.mock.calls.length;
     vi.advanceTimersByTime(5000);
     expect(snapshots).toHaveBeenCalledTimes(count);
-    click('Read snapshot');
+    updateView();
     expect(snapshots).toHaveBeenCalledTimes(count + 1);
     click('Resume updates');
     expect(snapshots).toHaveBeenCalledTimes(count + 2);
@@ -326,19 +421,17 @@ describe('QueryDevtoolsComponent', () => {
     await client.fetchQuery({key: ['profile'], loader});
     mount();
     click('Query devtools');
-    click('Inspect');
+    inspectFirstQuery();
     const tree = fixture.nativeElement.querySelector('.value-tree') as HTMLElement;
     expect(tree.textContent).toContain('Object(2)');
-    (tree.querySelector('button') as HTMLButtonElement).click();
-    fixture.detectChanges();
     expect(tree.textContent).toContain('Alex');
     data.name = 'Jordan';
-    click('Read snapshot');
+    updateView();
     expect(tree.textContent).toContain('Jordan');
     expect(loader).toHaveBeenCalledTimes(1);
     expect(client.getDiagnostics().totalObserverCount).toBe(0);
     client.removeQueries();
-    click('Read snapshot');
+    updateView();
     expect(fixture.nativeElement.textContent).toContain('Query is no longer cached.');
     expect(fixture.nativeElement.querySelector('.value-tree')).toBeNull();
     click('Close');
@@ -350,10 +443,8 @@ describe('QueryDevtoolsComponent', () => {
     await client.fetchQuery({key: ['tree'], loader: () => Promise.resolve(data)});
     mount();
     click('Query devtools');
-    click('Inspect');
+    inspectFirstQuery();
     const tree = fixture.nativeElement.querySelector('.value-tree') as HTMLElement;
-    (tree.querySelector('.tree-toggle') as HTMLButtonElement).click();
-    fixture.detectChanges();
     const toggles = Array.from(tree.querySelectorAll<HTMLButtonElement>('.tree-toggle'));
     const before = toggles.find((button) => button.textContent?.includes('before:'));
     const after = toggles.find((button) => button.textContent?.includes('after:'));
@@ -362,7 +453,7 @@ describe('QueryDevtoolsComponent', () => {
     fixture.detectChanges();
     after.focus();
     data.before.push(3);
-    click('Read snapshot');
+    updateView();
     expect(Array.from(tree.querySelectorAll('.tree-toggle'))).toContain(after);
     expect(document.activeElement).toBe(after);
   });
@@ -373,7 +464,7 @@ describe('QueryDevtoolsComponent', () => {
     await client.fetchQuery({key: ['profile'], loader, staleTime: Infinity});
     mount();
     click('Query devtools');
-    click('Inspect');
+    inspectFirstQuery();
     fail = true;
     click('Refetch');
     await vi.waitFor(() => {
@@ -384,8 +475,6 @@ describe('QueryDevtoolsComponent', () => {
     expect(client.getDiagnostics().totalObserverCount).toBe(0);
     expect(loader).toHaveBeenCalledTimes(2);
     click('Error');
-    (fixture.nativeElement.querySelector('.tree-toggle') as HTMLButtonElement).click();
-    fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('offline');
   });
 
@@ -402,7 +491,7 @@ describe('QueryDevtoolsComponent', () => {
       try {
         mount();
         click('Query devtools');
-        click('Inspect');
+        inspectFirstQuery();
         click('Refetch');
         if (context === 'close') {
           click('Close');
@@ -410,7 +499,7 @@ describe('QueryDevtoolsComponent', () => {
         } else if (context === 'client') {
           fixture.componentRef.setInput('client', otherClient);
           fixture.detectChanges();
-        } else click('Inspect');
+        } else inspectFirstQuery();
         rejectRequest(new Error('late failure'));
         await request.catch(() => undefined);
         await fixture.whenStable();
@@ -428,7 +517,7 @@ describe('QueryDevtoolsComponent', () => {
     await client.fetchQuery({key: ['legacy'], loader: () => Promise.resolve({name: 'Alex'})});
     mount();
     click('Query devtools');
-    click('Inspect');
+    inspectFirstQuery();
     expect(fixture.nativeElement.querySelector('.value-tree')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('button[aria-label="Refetch"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('.inspector-actions')?.textContent).not.toContain('Refetch');
@@ -447,7 +536,8 @@ describe('QueryDevtoolsComponent', () => {
       await client.fetchQuery({key: ['copy'], loader: () => Promise.resolve(1)});
       mount();
       click('Query devtools');
-      click('Copy key');
+      inspectFirstQuery();
+      copyKey();
       click('Close');
       click('Query devtools');
       finishCopy();
@@ -466,9 +556,7 @@ describe('QueryDevtoolsComponent', () => {
     await client.fetchQuery({key: ['large'], loader});
     mount();
     click('Query devtools');
-    click('Inspect');
-    (fixture.nativeElement.querySelector('.tree-toggle') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    inspectFirstQuery();
     expect(fixture.nativeElement.querySelectorAll('.value-row')).toHaveLength(102);
     const buttons = fixture.nativeElement.querySelectorAll('.tree-toggle') as NodeListOf<HTMLButtonElement>;
     buttons[buttons.length - 1].click();
@@ -488,10 +576,10 @@ describe('QueryDevtoolsComponent', () => {
       mount();
       click('Query devtools');
       expect(writeText).not.toHaveBeenCalled();
-      click('Copy key');
+      inspectFirstQuery();
+      copyKey();
       await vi.waitFor(() => expect(writeText).toHaveBeenCalledWith('["copy"]'));
-      click('Inspect');
-      click('Copy value');
+      click('Copy JSON');
       await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(2));
       expect(JSON.parse(writeText.mock.calls[1][0])).toEqual({value: [1, 2]});
     } finally {
@@ -513,7 +601,8 @@ describe('QueryDevtoolsComponent', () => {
       await client.fetchQuery({key: ['copy-notice'], loader: () => Promise.resolve(1)});
       mount();
       click('Query devtools');
-      click('Copy key');
+      inspectFirstQuery();
+      copyKey();
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();
       expect(fixture.nativeElement.textContent).toContain('Copied');

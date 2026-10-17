@@ -87,7 +87,7 @@ try {
   assert.equal(reads, 1, 'Inspecting diagnostics must not refetch application data');
   assert.equal(scopedClient.getDiagnostics().totalObserverCount, 0);
   const close = [...dom.window.document.querySelectorAll('button')].find(
-    (button) => button.textContent.trim() === 'Close',
+    (button) => button.getAttribute('aria-label') === 'Close',
   );
   close.click();
   await until(() => !dom.window.document.querySelector('[role="region"]'));

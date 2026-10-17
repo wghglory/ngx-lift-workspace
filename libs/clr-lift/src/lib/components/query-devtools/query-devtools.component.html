@@ -57,62 +57,141 @@
           {{ snapshot()?.pendingRequestCount ?? 0 }} {{ 'queryDevtools.pending' | translate }}</span
         >
         <div class="toolbar-actions">
+          <span class="label">{{ (paused() ? 'queryDevtools.paused' : 'queryDevtools.live') | translate }}</span>
           <button
             type="button"
-            class="btn btn-sm btn-link"
+            class="btn btn-sm btn-link btn-icon"
+            [attr.aria-label]="(paused() ? 'queryDevtools.resume' : 'queryDevtools.pause') | translate"
+            [attr.title]="(paused() ? 'queryDevtools.resume' : 'queryDevtools.pause') | translate"
             [attr.aria-pressed]="paused()"
-            (click)="paused.set(!paused())"
+            (click)="togglePause()"
           >
-            {{ (paused() ? 'queryDevtools.resume' : 'queryDevtools.pause') | translate }}
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              @if (paused()) {
+                <path d="m7 4 14 8-14 8Z" />
+              } @else {
+                <path d="M6 4h4v16H6ZM14 4h4v16h-4Z" />
+              }
+            </svg>
           </button>
           <button
             type="button"
-            class="btn btn-sm btn-link"
+            class="btn btn-sm btn-link btn-icon"
+            [attr.aria-label]="'queryDevtools.fullHeight' | translate"
+            [attr.title]="'queryDevtools.fullHeight' | translate"
             [attr.aria-pressed]="fullHeight()"
             (click)="fullHeight.set(!fullHeight())"
           >
-            {{ 'queryDevtools.fullHeight' | translate }}
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              @if (fullHeight()) {
+                <path d="M9 2v7H2m20 6h-7v7M2 15h7v7M15 2v7h7" />
+              } @else {
+                <path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6" />
+              }
+            </svg>
           </button>
-          <button type="button" class="btn btn-sm btn-outline" (click)="closePanel()">
-            {{ 'queryDevtools.close' | translate }}
+          <button
+            type="button"
+            class="btn btn-sm btn-link btn-icon"
+            [attr.aria-label]="'queryDevtools.close' | translate"
+            [attr.title]="'queryDevtools.close' | translate"
+            (click)="closePanel()"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m6 6 12 12M6 18 18 6" />
+            </svg>
           </button>
         </div>
       </header>
       <div class="panel-toolbar">
-        <input
-          #searchInput
-          type="search"
-          class="clr-input"
-          [value]="search()"
-          [placeholder]="'queryDevtools.search' | translate"
-          [attr.aria-label]="'queryDevtools.search' | translate"
-          (input)="search.set(searchInput.value)"
-        />
-        <button type="button" class="btn btn-sm btn-outline" (click)="refresh()">
-          {{ 'queryDevtools.refresh' | translate }}
-        </button>
+        <clr-input-container>
+          <label class="clr-sr-only" [for]="panelId + '-search'">{{ 'queryDevtools.search' | translate }}</label>
+          <input
+            #searchInput
+            [id]="panelId + '-search'"
+            clrInput
+            type="search"
+            [value]="search()"
+            [placeholder]="'queryDevtools.search' | translate"
+            [attr.aria-label]="'queryDevtools.search' | translate"
+            (input)="search.set(searchInput.value)"
+          />
+        </clr-input-container>
+        <clr-select-container>
+          <label class="clr-sr-only" [for]="panelId + '-tags'">{{ 'queryDevtools.tags' | translate }}</label>
+          <select
+            #tagsInput
+            [id]="panelId + '-tags'"
+            clrSelect
+            [value]="tagFilter()"
+            [attr.aria-label]="'queryDevtools.tags' | translate"
+            (change)="tagFilter.set(tagsInput.value)"
+          >
+            <option value="">{{ 'queryDevtools.allTags' | translate }}</option>
+            @for (tag of tags(); track tag) {
+              <option [value]="tag">{{ tag }}</option>
+            }
+          </select>
+        </clr-select-container>
         @if (paused()) {
-          <span class="label">{{ 'queryDevtools.paused' | translate }}</span>
-        }
-        @if (copyNotice()) {
-          <span role="status">{{ 'queryDevtools.copied' | translate }}</span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline"
+            (click)="updateView()"
+            [attr.title]="'queryDevtools.updateHint' | translate"
+          >
+            {{ 'queryDevtools.refresh' | translate }}
+          </button>
+          @if (viewUpdatedAt(); as updatedAt) {
+            <span class="view-feedback" role="status"
+              >{{ 'queryDevtools.viewUpdated' | translate }} {{ updatedAt | date: 'mediumTime' }}</span
+            >
+          }
         }
       </div>
-      @if (actionError()) {
-        <cll-alert [content]="actionError()" [isSmall]="true" />
-      }
+      <div class="state-filters" role="group" [attr.aria-label]="'queryDevtools.status' | translate">
+        @for (filter of stateFilters(); track filter.state) {
+          <button
+            type="button"
+            class="state-filter"
+            [attr.aria-pressed]="stateFilter() === filter.state"
+            (click)="stateFilter.set(filter.state)"
+          >
+            {{ 'queryDevtools.' + filter.state | translate }} <span class="badge">{{ filter.count }}</span>
+          </button>
+        }
+      </div>
       <div class="panel-body" [class.has-selection]="selectedKey() !== null">
         <div class="query-list">
           <clr-datagrid>
-            <clr-dg-column clrDgField="serializedKey" [style.width.px]="280">{{
+            <clr-dg-column clrDgField="serializedKey" [style.width.px]="200">{{
               'queryDevtools.key' | translate
             }}</clr-dg-column>
-            <clr-dg-column clrDgField="stateLabel">{{ 'queryDevtools.status' | translate }}</clr-dg-column>
-            <clr-dg-column clrDgField="observerCount" clrDgColType="number">{{
+            <clr-dg-column clrDgField="stateLabel" [style.width.px]="90">{{
+              'queryDevtools.status' | translate
+            }}</clr-dg-column>
+            <clr-dg-column clrDgField="observerCount" clrDgColType="number" [style.width.px]="120">{{
               'queryDevtools.observers' | translate
             }}</clr-dg-column>
-            <clr-dg-column clrDgSortBy="updatedAt">{{ 'queryDevtools.updated' | translate }}</clr-dg-column>
-            <clr-dg-column>{{ 'queryDevtools.actions' | translate }}</clr-dg-column>
+            <clr-dg-column clrDgSortBy="updatedAt" [style.width.px]="100">{{
+              'queryDevtools.updated' | translate
+            }}</clr-dg-column>
             <clr-dg-placeholder>{{ 'queryDevtools.empty' | translate }}</clr-dg-placeholder>
             <clr-dg-row
               *clrDgItems="let entry of entries(); trackBy: trackEntry"
@@ -139,71 +218,6 @@
                   >{{ entry.age }}</span
                 ></clr-dg-cell
               >
-              <clr-dg-cell
-                ><div class="row-actions">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-link"
-                    [attr.aria-label]="'queryDevtools.inspect' | translate"
-                    [attr.title]="'queryDevtools.inspect' | translate"
-                    (click)="select(entry)"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 24 24"
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                    >
-                      <circle cx="10" cy="10" r="6" />
-                      <path d="m14 14 7 7" />
-                    </svg>
-                  </button>
-                  @if (canRefetch()) {
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-link"
-                      [attr.aria-label]="'queryDevtools.refetch' | translate"
-                      [attr.title]="'queryDevtools.refetch' | translate"
-                      [disabled]="entry.isPending"
-                      (click)="refetch(entry)"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                      >
-                        <path d="M20 11a8 8 0 1 1-2.5-5.8M20 3v8h-8" />
-                      </svg>
-                    </button>
-                  }
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-link"
-                    [attr.aria-label]="'queryDevtools.copyKey' | translate"
-                    [attr.title]="'queryDevtools.copyKey' | translate"
-                    (click)="copyKey(entry)"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 24 24"
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                    >
-                      <rect x="8" y="7" width="12" height="14" rx="1" />
-                      <path d="M5 17H3V2h12v2" />
-                    </svg>
-                  </button></div
-              ></clr-dg-cell>
             </clr-dg-row>
             <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="20" /></clr-dg-footer>
           </clr-datagrid>
@@ -217,20 +231,50 @@
               </button>
             </div>
             @if (selectedEntry(); as entry) {
+              @if (actionError()) {
+                <cll-alert [content]="actionError()" [isSmall]="true" />
+              }
               <div class="inspector-actions">
+                <span class="state-badge" [attr.data-state]="entry.state">{{ entry.stateLabel }}</span>
                 @if (canRefetch()) {
                   <button
                     type="button"
                     class="btn btn-sm btn-outline"
                     [disabled]="entry.isPending"
+                    [attr.aria-label]="'queryDevtools.refetch' | translate"
                     (click)="refetch(entry)"
                   >
                     {{ 'queryDevtools.refetch' | translate }}
                   </button>
                 }
-                <button type="button" class="btn btn-sm btn-link" (click)="copyKey(entry)">
-                  {{ 'queryDevtools.copyKey' | translate }}
-                </button>
+                <clr-dropdown>
+                  <button
+                    type="button"
+                    clrDropdownTrigger
+                    class="btn btn-sm btn-outline btn-icon"
+                    [attr.aria-label]="'queryDevtools.actions' | translate"
+                    [attr.title]="'queryDevtools.actions' | translate"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <circle cx="12" cy="5" r="2" />
+                      <circle cx="12" cy="12" r="2" />
+                      <circle cx="12" cy="19" r="2" />
+                    </svg>
+                  </button>
+                  <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                    <button
+                      type="button"
+                      clrDropdownItem
+                      (click)="copyKey(entry)"
+                      [attr.title]="'queryDevtools.copyKeyHint' | translate"
+                    >
+                      {{ 'queryDevtools.copyKey' | translate }}
+                    </button>
+                  </clr-dropdown-menu>
+                </clr-dropdown>
+                @if (copyNotice() === 'key') {
+                  <span role="status">{{ 'queryDevtools.copied' | translate }}</span>
+                }
               </div>
               <div class="nav inspector-tabs" role="tablist" [attr.aria-label]="'queryDevtools.inspect' | translate">
                 @for (name of tabs; track name) {
@@ -241,6 +285,9 @@
                     [class.active]="tab() === name"
                     [id]="panelId + '-' + name"
                     [attr.aria-selected]="tab() === name"
+                    [attr.aria-label]="
+                      (name === 'error' ? 'queryDevtools.errorTab' : 'queryDevtools.' + name) | translate
+                    "
                     [attr.tabindex]="tab() === name ? 0 : -1"
                     [attr.aria-controls]="panelId + '-content'"
                     (click)="switchTab(name)"
@@ -248,6 +295,9 @@
                     (keydown.arrowleft)="nextTab(-1, $event)"
                   >
                     {{ (name === 'error' ? 'queryDevtools.errorTab' : 'queryDevtools.' + name) | translate }}
+                    @if (name === 'error' && (selectedSnapshot()?.error || selectedSnapshot()?.failureReason)) {
+                      <span class="badge badge-danger" aria-hidden="true">!</span>
+                    }
                   </button>
                 }
               </div>
@@ -284,7 +334,14 @@
                     <dt>{{ 'queryDevtools.tags' | translate }}</dt>
                     <dd>
                       @for (tag of entry.tagMemberships; track tag) {
-                        <code dir="ltr">{{ tag }}</code>
+                        <button
+                          type="button"
+                          class="tag-button"
+                          (click)="filterByTag(tag)"
+                          [attr.title]="'queryDevtools.tagHint' | translate"
+                        >
+                          <code dir="ltr">{{ tag }}</code>
+                        </button>
                       }
                     </dd>
                   </dl>
@@ -293,10 +350,23 @@
                 } @else if (tab() === 'error' && (inspectedValue() === null || inspectedValue() === undefined)) {
                   <p>{{ 'queryDevtools.noError' | translate }}</p>
                 } @else {
-                  <button type="button" class="btn btn-sm btn-link" (click)="copyData()">
-                    {{ 'queryDevtools.copyData' | translate }}
-                  </button>
-                  <p class="preview-note">{{ 'queryDevtools.previewLimit' | translate }}</p>
+                  <div class="value-actions">
+                    <button type="button" class="btn btn-sm btn-outline" (click)="copyData()">
+                      {{ 'queryDevtools.copyData' | translate }}
+                    </button>
+                    @if (copyNotice() === 'data') {
+                      <span role="status">{{ 'queryDevtools.copied' | translate }}</span>
+                    }
+                    <button type="button" class="btn btn-sm btn-link" (click)="expandFirstLevel()">
+                      {{ 'queryDevtools.expandFirst' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-link" (click)="expanded.set(emptyExpansion)">
+                      {{ 'queryDevtools.collapseAll' | translate }}
+                    </button>
+                  </div>
+                  @if (previewLimited()) {
+                    <p class="preview-note">{{ 'queryDevtools.previewLimit' | translate }}</p>
+                  }
                   <div class="value-tree" dir="ltr">
                     @for (row of tree(); track trackTreeRow($index, row)) {
                       <div class="value-row" [style.padding-inline-start.rem]="row.depth * 0.8" [attr.title]="row.path">

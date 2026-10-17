@@ -6,6 +6,10 @@ accessibility/language acceptance are separate.
 
 ## Background and goals
 
+The October 17 data-first revision is approved for implementation: consolidate actions, emphasize cached values, add
+state/tag filters, and distinguish a paused view update from an explicit network refetch. Mutation inspection, state
+simulation, cache editing and destructive actions remain deferred.
+
 The metadata-only modal made application interaction difficult and exposed eight mostly technical columns. The query
 inspector now opens a nonmodal bottom panel, allowing developers to inspect cached data while reproducing application
 behavior. Inspection reads local snapshots; Refetch deliberately executes one existing query loader.
@@ -94,18 +98,27 @@ value paths retain LTR direction.
 | State          | Localized lowercase English badge with text as well as color.                                             |
 | Observers      | Active subscriptions, sortable and numerically filterable; zero means inactive.                           |
 | Updated        | Seconds since last success, exact localized timestamp on focus/hover, sorted by the underlying timestamp. |
-| Actions        | Named/tooltip icon buttons for Inspect, Refetch and Copy key.                                             |
 
 The existing Clarity datagrid owns filters, sort and pagination (20 entries per page). Refreshing snapshots retains that
-view state. A separate key search field provides quick filtering. Primary state precedence is retrying for a pending
-retry wait, refreshing for pending work with cached data, loading for pending work without data, error for a terminal
-error, fresh/stale for a resolved value, otherwise idle. Raw status such as resolved remains in Details. Inactive is an
-observer-count dimension, independent of freshness. Details shows failure count, retry time, staleTime/gcTime, GC/poll
-delays, outstanding reads, tag memberships and cached-data freshness. No-data entries do not display a freshness claim.
+view state. Clicking a key selects the query; no row action column duplicates inspector controls. A separate key search
+and tag selector compose with state-count buttons. Counts reflect the search/tag matches before the state filter;
+inactive is an independent zero-observer filter. Selecting a tag in Details returns to the matching query list and
+clears search/state filters, without invalidating anything. The selected query header groups Refetch and a Clarity
+overflow menu containing Copy key. Copy JSON and expand/collapse controls belong to the value toolbar. Copy feedback
+appears beside its control; refetch failures appear inside the selected inspector. Data receives 60% of desktop width.
+Panel utilities use consistent quiet icon buttons with localized names/tooltips; maximize and pause expose pressed
+state. Error tabs show a visible indicator when an error or retry failure exists. Primary state precedence is retrying
+for a pending retry wait, refreshing for pending work with cached data, loading for pending work without data, error for
+a terminal error, fresh/stale for a resolved value, otherwise idle. Raw status such as resolved remains in Details.
+Inactive is an observer-count dimension, independent of freshness. Details shows failure count, retry time,
+staleTime/gcTime, GC/poll delays, outstanding reads, tag memberships and cached-data freshness. No-data entries do not
+display a freshness claim.
 
-The toolbar shows query count and outstanding reads, not inferred HTTP request count. Read snapshot samples local state.
-Pause updates stops its one-second timer without pausing application queries or deep-cloning mutable application values.
-Manual reads and explicit Refetch can update the paused view. No diagnostics timer or payload reads run while closed.
+The toolbar shows query count and outstanding reads, not inferred HTTP request count. A live/paused indicator describes
+inspector updates. Pause updates stops its one-second timer without pausing application queries or deep-cloning mutable
+application values. Only while paused, Update view samples local state without fetching or requiring a search key;
+timestamped status feedback confirms that read. Explicit Refetch can also update the paused view. No diagnostics timer
+or payload reads run while closed.
 
 ## Data, errors and large values
 
@@ -114,14 +127,15 @@ may be transformed; raw HTTP headers/status/history are not available. Errors re
 retained after a failed refresh. Eviction shows a missing-entry message and removes actions/data. Closing, disabling,
 client switching and destruction release selected payload/error references.
 
-The data tree starts collapsed, expands through descriptors without executing getters/toJSON hooks, and pages
+The data tree opens its first level, expands through descriptors without executing getters/toJSON hooks, and pages
 collections 100 items at a time. Rendering is bounded to 500 rows and depth 20; string previews show at most 2,000
-characters. The visible preview note states these limits. Root values update on new snapshot references; in-place
-changes require Read snapshot. Cycles, bigint, undefined, functions, accessors and inaccessible objects have structural
-summaries. JavaScript Error and Angular HttpErrorResponse objects expose their own fields through descriptors; other
-custom objects are summarized rather than traversed. Arbitrary Proxy traps cannot have hard execution-time guarantees.
+characters. The preview note appears only when paging, depth, node or string limits are reached. Root values update on
+new snapshot references; Update view also rebuilds previews after in-place changes. Cycles, bigint, undefined,
+functions, accessors and inaccessible objects have structural summaries. JavaScript Error and Angular HttpErrorResponse
+objects expose their own fields through descriptors; other custom objects are summarized rather than traversed.
+Arbitrary Proxy traps cannot have hard execution-time guarantees.
 
-Copy value runs an explicit bounded serialization attempt. It copies complete JSON only, up to 256 KiB in UTF-8; cycles,
+Copy JSON runs an explicit bounded serialization attempt. It copies complete JSON only, up to 256 KiB in UTF-8; cycles,
 accessors, unsupported values, sparse arrays and oversized data produce a visible explanation, never silent truncation.
 Clipboard and Refetch failures use `cll-alert`. Data renders through Angular text interpolation.
 
@@ -193,22 +207,26 @@ Local validation, October 17, 2026:
 
 - Core suite: 883 tests pass, including targeted existing-key refetch, pending-read deduplication, cached-data failure,
   missing/destroyed clients and inactive collection.
-- clr-lift suite: 319 tests pass. Inspector coverage includes closed/paused/disposed timer behavior, client switching,
+- clr-lift suite: 322 tests pass. Inspector coverage includes closed/paused/disposed timer behavior, client switching,
   eviction, response expansion and paging, accessor/cycle handling, full-value copy, error inspection, in-place data
-  refresh and locale parity. Demo suite: 237 tests pass. Tooling: 16 checks and the two-space snippet formatter pass.
-- The full 210-test Playwright suite passes across Chromium, Firefox and WebKit, including all 57 demo routes at desktop
-  and narrow sizes and 11 demo languages. Checks verify panel actions, keyboard resizing, bottom positioning, selection
-  focus/return, filters, dark mode and RTL. Individual tabs fit their scroll container and wrap long labels; this also
-  prevents WebKit from swallowing a click during overflow scrolling.
+  refresh, composed state/tag filters, retained tag labels after eviction, view-read feedback and locale parity. Demo
+  suite: 238 tests pass. Tooling: 16 checks and the two-space snippet formatter pass.
+- All 219 Playwright cases are verified across Chromium, Firefox and WebKit: 213 passed in the full run, then six passed
+  in a focused rerun after updating stale narrow-column and always-visible snapshot-button expectations. No application
+  code changed between those runs. Coverage includes all 57 demo routes at desktop/narrow sizes and 11 demo languages.
+  Checks verify panel actions, keyboard resizing, bottom positioning, selection focus/return, filters, dark mode and
+  RTL. Individual tabs fit their scroll container and wrap long labels; this also prevents WebKit from swallowing a
+  click during overflow scrolling.
 - Fresh tarball consumers pass strict peers/types and zoneless/ZoneJS checks, including conditional provider loading,
   duplicate registration, ownership and teardown. Angular-linked browser bundles using another clr-lift component
   exclude the devtools renderer for production and include it for development.
 - Three production browser checks confirm no global launcher and a working explicit documentation preview. Library/demo
   production builds, bundle isolation, lint/types, formatting and translation checks pass. Both the floating provider
   and copyable root setup are present in the app; no unimplemented provider example remains.
-- The 100,000-item response stays collapsed or pages 100 items, without another request. Grid scale checks retain 20 DOM
-  rows with 200 and 2,000 entries. Initial snapshot/grid work measured approximately 125 and 152 ms respectively in
-  JSDOM under concurrent test load; these are test-environment measurements, not browser performance guarantees.
+- The 100,000-item response opens its first 100 items and pages locally, without another request. Grid scale checks
+  retain 20 DOM rows with 200 and 2,000 entries. Initial snapshot/grid work measured approximately 122 and 103 ms
+  respectively in JSDOM under concurrent test load; these are test-environment measurements, not browser performance
+  guarantees.
 - Light/narrow and dark/RTL screenshots were inspected. Native top-layer positioning avoids playground clipping; Clarity
   semantic link/label tokens preserve themed state and action contrast.
 

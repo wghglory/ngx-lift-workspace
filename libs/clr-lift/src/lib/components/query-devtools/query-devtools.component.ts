@@ -84,12 +84,22 @@ export class QueryDevtoolsComponent {
   protected readonly tabs = ['data', 'error', 'details'] as const;
   protected readonly tab = signal<(typeof this.tabs)[number]>('data');
   protected readonly search = signal('');
-  protected readonly expanded = signal<ReadonlyMap<string, number>>(new Map());
+  protected readonly emptyExpansion: ReadonlyMap<string, number> = new Map();
+  protected readonly expanded = signal<ReadonlyMap<string, number>>(new Map([['$', 0]]));
   private readonly previewRevision = signal(0);
   protected readonly actionError = signal('');
-  protected readonly copyNotice = signal(false);
+  protected readonly copyNotice = signal<'key' | 'data' | null>(null);
+  protected readonly viewUpdatedAt = signal<number | null>(null);
+  protected readonly stateFilter = signal('all');
+  protected readonly tagFilter = signal('');
+  protected readonly tags = computed(() => {
+    const tags = new Set(this.snapshot()?.entries.flatMap((entry) => entry.tagMemberships) ?? []);
+    // Preserve the selected filter's visible label after its last matching entry is evicted.
+    if (this.tagFilter()) tags.add(this.tagFilter());
+    return [...tags].sort();
+  });
   protected readonly selectedEntry = computed(() =>
-    this.snapshot()?.entries.find((entry) => entry.serializedKey === this.selectedKey()),
+    this.allEntries().find((entry) => entry.serializedKey === this.selectedKey()),
   );
   protected readonly inspectedValue = computed(() => {
     const state = this.selectedSnapshot();
@@ -99,28 +109,49 @@ export class QueryDevtoolsComponent {
     this.previewRevision();
     return valueRows(this.inspectedValue(), this.expanded());
   });
-  protected readonly entries = computed(() => {
+  protected readonly previewLimited = computed(
+    () => this.tree().length >= 500 || this.tree().some((row) => row.truncated || row.nextOffset !== undefined),
+  );
+  protected readonly allEntries = computed(() => {
+    return (this.snapshot()?.entries ?? []).map((entry) => {
+      const state = entry.isPending
+        ? entry.nextRetryAt !== null
+          ? 'retrying'
+          : entry.hasValue
+            ? 'refreshing'
+            : 'loading'
+        : entry.status === 'error'
+          ? 'error'
+          : entry.hasValue
+            ? entry.isStale
+              ? 'stale'
+              : 'fresh'
+            : 'idle';
+      const age = entry.updatedAt === null ? '—' : `${Math.max(0, Math.floor((Date.now() - entry.updatedAt) / 1000))}s`;
+      return {...entry, age, state, stateLabel: this.translationService.translate(`queryDevtools.${state}`)};
+    });
+  });
+  private readonly matchingEntries = computed(() => {
     const search = this.search().toLowerCase();
-    return (this.snapshot()?.entries ?? [])
-      .filter((entry) => entry.serializedKey.toLowerCase().includes(search))
-      .map((entry) => {
-        const state = entry.isPending
-          ? entry.nextRetryAt !== null
-            ? 'retrying'
-            : entry.hasValue
-              ? 'refreshing'
-              : 'loading'
-          : entry.status === 'error'
-            ? 'error'
-            : entry.hasValue
-              ? entry.isStale
-                ? 'stale'
-                : 'fresh'
-              : 'idle';
-        const age =
-          entry.updatedAt === null ? '—' : `${Math.max(0, Math.floor((Date.now() - entry.updatedAt) / 1000))}s`;
-        return {...entry, age, state, stateLabel: this.translationService.translate(`queryDevtools.${state}`)};
-      });
+    const tag = this.tagFilter();
+    return this.allEntries().filter(
+      (entry) => entry.serializedKey.toLowerCase().includes(search) && (!tag || entry.tagMemberships.includes(tag)),
+    );
+  });
+  protected readonly stateFilters = computed(() => {
+    const entries = this.matchingEntries();
+    return ['all', 'fresh', 'stale', 'loading', 'refreshing', 'retrying', 'error', 'idle', 'inactive'].map((state) => ({
+      state,
+      count: entries.filter((entry) =>
+        state === 'all' ? true : state === 'inactive' ? entry.observerCount === 0 : entry.state === state,
+      ).length,
+    }));
+  });
+  protected readonly entries = computed(() => {
+    const state = this.stateFilter();
+    return this.matchingEntries().filter((entry) =>
+      state === 'all' ? true : state === 'inactive' ? entry.observerCount === 0 : entry.state === state,
+    );
   });
 
   constructor() {
@@ -142,6 +173,8 @@ export class QueryDevtoolsComponent {
         this.panelRevision++;
         this.select(null);
         this.snapshot.set(null);
+        this.tagFilter.set('');
+        this.viewUpdatedAt.set(null);
       });
     });
     effect((onCleanup) => {
@@ -190,6 +223,7 @@ export class QueryDevtoolsComponent {
     this.actionRevision++;
     this.stopResize?.();
     this.isOpen.set(false);
+    this.viewUpdatedAt.set(null);
     this.select(null);
     this.snapshot.set(null);
     this.trigger?.focus();
@@ -209,6 +243,28 @@ export class QueryDevtoolsComponent {
     }
   }
 
+  protected togglePause(): void {
+    this.viewUpdatedAt.set(null);
+    this.paused.set(!this.paused());
+  }
+
+  protected updateView(): void {
+    this.refresh();
+    this.viewUpdatedAt.set(Date.now());
+  }
+
+  protected filterByTag(tag: string): void {
+    this.tagFilter.set(tag);
+    this.search.set('');
+    this.stateFilter.set('all');
+    this.select(null);
+    afterNextRender(() => this.searchInput()?.nativeElement.focus(), {injector: this.injector});
+  }
+
+  protected expandFirstLevel(): void {
+    this.expanded.set(new Map([['$', 0]]));
+  }
+
   private readSnapshot(client: QueryClient): void {
     this.snapshot.set(client.getDiagnostics());
     const entry = this.selectedEntry();
@@ -220,7 +276,7 @@ export class QueryDevtoolsComponent {
     this.actionRevision++;
     this.selectedKey.set(entry?.serializedKey ?? null);
     this.selectedSnapshot.set(entry ? (this.client() ?? this.defaultClient).getSnapshot(entry.key) : undefined);
-    this.expanded.set(new Map());
+    this.expandFirstLevel();
     this.tab.set('data');
     this.actionError.set('');
     this.clearCopyNotice();
@@ -253,7 +309,7 @@ export class QueryDevtoolsComponent {
   protected switchTab(tab: 'data' | 'error' | 'details'): void {
     this.actionRevision++;
     this.tab.set(tab);
-    this.expanded.set(new Map());
+    this.expandFirstLevel();
     this.clearCopyNotice();
   }
 
@@ -268,7 +324,7 @@ export class QueryDevtoolsComponent {
   }
 
   protected async copyKey(entry: QueryEntryDiagnostics): Promise<void> {
-    await this.copy(entry.serializedKey);
+    await this.copy(entry.serializedKey, 'key');
   }
 
   protected async copyData(): Promise<void> {
@@ -277,10 +333,10 @@ export class QueryDevtoolsComponent {
       this.actionError.set(this.translationService.translate('queryDevtools.copyLimit'));
       return;
     }
-    await this.copy(text);
+    await this.copy(text, 'data');
   }
 
-  private async copy(text: string): Promise<void> {
+  private async copy(text: string, target: 'key' | 'data'): Promise<void> {
     const revision = ++this.actionRevision;
     try {
       const clipboard = this.document.defaultView?.navigator.clipboard;
@@ -288,11 +344,11 @@ export class QueryDevtoolsComponent {
       await clipboard.writeText(text);
       if (!this.isCurrentAction(revision)) return;
       this.clearCopyNotice();
-      this.copyNotice.set(true);
+      this.copyNotice.set(target);
       this.actionError.set('');
       this.copyNoticeTimer = setTimeout(() => {
         this.copyNoticeTimer = undefined;
-        this.copyNotice.set(false);
+        this.copyNotice.set(null);
       }, 2000);
     } catch {
       if (this.isCurrentAction(revision))
@@ -325,7 +381,7 @@ export class QueryDevtoolsComponent {
   private clearCopyNotice(): void {
     if (this.copyNoticeTimer !== undefined) clearTimeout(this.copyNoticeTimer);
     this.copyNoticeTimer = undefined;
-    this.copyNotice.set(false);
+    this.copyNotice.set(null);
   }
 
   private flushPreview(): void {

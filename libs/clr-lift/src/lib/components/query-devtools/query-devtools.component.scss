@@ -53,7 +53,7 @@
 .toolbar-actions,
 .inspector-header,
 .inspector-actions,
-.row-actions {
+.value-actions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -78,10 +78,47 @@
 .preview-note {
   font-size: 0.6rem;
 }
-.panel-toolbar input {
+.panel-toolbar clr-input-container {
   flex: 1;
   min-inline-size: 6rem;
-  max-inline-size: 24rem;
+  max-inline-size: 20rem;
+}
+.panel-toolbar clr-input-container,
+.panel-toolbar clr-select-container {
+  margin-block-start: 0;
+}
+.panel-toolbar input {
+  inline-size: 100%;
+}
+.panel-toolbar select {
+  max-inline-size: 14rem;
+}
+.state-filters {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.state-filter,
+.tag-button {
+  border: 1px solid var(--cds-alias-object-border-color);
+  border-radius: 0.15rem;
+  padding: 0.1rem 0.35rem;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  font: inherit;
+  font-size: 0.6rem;
+}
+.state-filter[aria-pressed='true'] {
+  border-color: var(--clr-link-color);
+  color: var(--clr-link-color);
+  background: var(--cds-alias-object-container-background);
+}
+.view-feedback {
+  font-size: 0.6rem;
 }
 .btn {
   margin: 0;
@@ -96,17 +133,20 @@
 .query-list {
   flex: 1;
   min-inline-size: 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 0 0.75rem 0.5rem;
 }
 clr-datagrid {
-  min-inline-size: 37rem;
+  block-size: 100%;
+  min-inline-size: 20rem;
 }
 .has-selection .query-list {
-  flex-basis: 60%;
+  flex: 0 1 40%;
 }
 .query-inspector {
-  flex: 1 1 40%;
+  flex: 1 1 60%;
   min-inline-size: 16rem;
   overflow: auto;
   padding: 0.75rem;
@@ -119,6 +159,10 @@ clr-datagrid {
 .inspector-actions {
   margin-block-end: 0.5rem;
 }
+.value-actions {
+  flex-wrap: wrap;
+  margin-block: 0.5rem;
+}
 .query-details {
   display: grid;
   grid-template-columns: minmax(6rem, 1fr) 2fr;
@@ -130,6 +174,11 @@ clr-datagrid {
 }
 .query-details code {
   display: block;
+}
+.tag-button {
+  display: block;
+  max-inline-size: 100%;
+  margin-block-end: 0.25rem;
 }
 .key-button,
 .tree-toggle {
@@ -193,15 +242,6 @@ code {
 .state-badge[data-state='retrying'] {
   color: var(--clr-link-color);
 }
-.row-actions {
-  flex-wrap: nowrap;
-  gap: 0 0.2rem;
-}
-.row-actions .btn {
-  padding-inline: 0.15rem;
-  font-size: 0.5rem;
-  min-inline-size: 1.25rem;
-}
 .inspector-tabs {
   margin-block-start: 0.5rem;
 }
@@ -226,7 +266,8 @@ code {
   box-shadow: inset 3px 0 var(--clr-link-color);
 }
 cll-alert {
-  margin: 0.25rem 0.75rem;
+  display: block;
+  margin-block: 0.25rem;
 }
 @media (max-width: 800px) {
   .has-selection .query-list {

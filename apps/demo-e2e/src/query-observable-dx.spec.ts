@@ -94,7 +94,10 @@ test('new query examples are localized in every supported language', async ({pag
     await expect(dialog.getByRole('columnheader', {name: translated['queryDevtools.status']})).toBeVisible();
     await expect(dialog.getByRole('columnheader', {name: translated['queryDevtools.updated']})).toBeVisible();
     await expect(dialog).toContainText(translated['queryDevtools.pending']);
+    await expect(dialog.getByRole('button', {name: translated['queryDevtools.refresh'], exact: true})).toHaveCount(0);
+    await dialog.getByRole('button', {name: translated['queryDevtools.pause'], exact: true}).click();
     await dialog.getByRole('button', {name: translated['queryDevtools.refresh'], exact: true}).click();
+    await expect(dialog.locator('.view-feedback')).toContainText(translated['queryDevtools.viewUpdated']);
     await expect(dialog.locator('clr-dg-row')).not.toHaveCount(0);
     await expect(dialog).not.toContainText('!! Key');
     await dialog.getByRole('button', {name: translated['queryDevtools.close'], exact: true}).click();

@@ -8,6 +8,7 @@ export interface ValueRow {
   expandable: boolean;
   expanded: boolean;
   nextOffset?: number;
+  truncated?: boolean;
 }
 
 const pageSize = 100;
@@ -27,13 +28,15 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
     let preview: string;
     let keys: string[] | undefined;
     let length = 0;
+    let truncated = false;
     const offset = expanded.get(path) ?? 0;
     const open = expanded.has(path);
     try {
       if (value === null) preview = 'null';
-      else if (typeof value === 'string')
+      else if (typeof value === 'string') {
+        truncated = value.length > 2000;
         preview = JSON.stringify(value.slice(0, 2000)) + (value.length > 2000 ? ' …' : '');
-      else if (typeof value === 'bigint') preview = `${value}n`;
+      } else if (typeof value === 'bigint') preview = `${value}n`;
       else if (value instanceof Date) preview = dateJsonValue(value) ?? 'Invalid Date';
       else if (typeof value === 'object') {
         if (ancestors.includes(value)) preview = '[Circular]';
@@ -54,7 +57,15 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
       preview = '[Unavailable]';
     }
     const expandable = length > 0 && depth < maxDepth;
-    rows.push({path, label, preview, depth, expandable, expanded: open});
+    rows.push({
+      path,
+      label,
+      preview,
+      depth,
+      expandable,
+      expanded: open,
+      truncated: truncated || (length > 0 && depth >= maxDepth),
+    });
     if (!open || !expandable || typeof value !== 'object' || value === null) return;
     const nextAncestors = [...ancestors, value];
     for (let i = offset; i < Math.min(length, offset + pageSize) && rows.length < maxNodes; i++) {
