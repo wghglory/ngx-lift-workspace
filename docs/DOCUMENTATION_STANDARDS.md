@@ -368,7 +368,8 @@ Use descriptive names:
 
 ### Standard Import Format
 
-**All code examples MUST include import statements at the top of the code block.**
+**Complete code examples include imports and required setup. Label shorter excerpts and link to their complete
+example.**
 
 ```typescript
 basicUsageCode = highlight(`
@@ -618,7 +619,7 @@ When standardizing an existing page:
 - [ ] **Examples**: Section with multiple examples, numbered sequentially (Example 1, Example 2, etc.)
 - [ ] **API Reference**: Complete documentation and signal state matrices at the end (after Examples)
 - [ ] **Code Blocks**: All use `highlight()` utility, proper `lang` attribute
-- [ ] **Imports in Code**: All code examples include import statements at the top
+- [ ] **Imports in Code**: Complete examples include imports and setup; excerpts identify their context.
 - [ ] **Spacing**: Consistent Clarity layout attributes throughout
 - [ ] **Headings**: Proper hierarchy (H2 for sections, H3 for examples)
 - [ ] **Lists**: Use `cds-layout="vertical gap:xs"` for unordered lists

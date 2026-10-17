@@ -1,4 +1,22 @@
 export const koTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    '이 완전한 예제는 로컬 타이머로 서버 지연과 실패를 재현합니다. TypeScript를 열어 컴포넌트를 복사하세요. HTML은 실제 컴파일에 쓰이는 동일한 템플릿입니다.',
+  'queryLearn.httpSetup':
+    'HTTP를 사용하려면 app.config.ts에서 HttpClient를 제공하고 캡처한 ID를 사용하는 http.get<Team>(url)로 모의 loader를 바꾸세요. 루트 클라이언트는 추가 등록이 필요 없습니다.',
+  'queryLearn.readError': '읽기에 실패했습니다. 실패 재현을 끄고 새로 고쳐 다시 시도하세요.',
+  'queryLearn.readExplain':
+    'key는 데이터의 이름이고 loader는 데이터를 가져옵니다. 정의에서 읽은 시그널이 데이터를 선택합니다. value()는 결과를 제공하고 isInitialLoading()은 데이터 없는 로딩을 나타냅니다.',
+  'queryLearn.readExplainTitle': '첫 번째 읽기 이해하기',
+  'queryLearn.readIntro':
+    'queryResource는 데이터를 불러오고 결과, 로딩 상태, 오류를 Angular 시그널로 제공합니다. 같은 키를 사용하는 컴포넌트는 캐시 데이터와 진행 중 요청을 공유합니다.',
+  'queryLearn.readSteps':
+    '팀 A를 불러오고 팀 B를 선택한 뒤 새로 고치세요. 실패를 켜고 다시 새로 고쳐도 기존 팀이 표시됩니다. 실패를 끄고 새로 고치면 복구됩니다.',
+  'queryLearn.readTitle': '첫 번째 쿼리',
+  'queryLearn.refreshExplain':
+    'isRefreshing()은 기존 데이터를 표시하면서 읽기가 진행되는 상태입니다. error()는 실패를 제공하고 isRefreshError()는 보관 데이터가 있는 실패를 구분합니다.',
+  'queryLearn.simulateFailure': '실패 재현',
+  'queryLearn.teamA': '팀 A',
+  'queryLearn.teamB': '팀 B',
   'toSignalForm.savedProfile': '저장된 프로필',
   'queryResource.projectRevision': '응답 버전',
   'queryResource.activeUser': '현재 사용자',

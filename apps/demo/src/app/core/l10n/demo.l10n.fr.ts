@@ -1,4 +1,22 @@
 export const frTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'Cet exemple complet utilise un minuteur local pour simuler latence et échecs. Ouvrez TypeScript pour copier le composant ; HTML présente le même modèle compilé.',
+  'queryLearn.httpSetup':
+    'Pour HTTP, fournissez HttpClient dans app.config.ts et remplacez le loader simulé par http.get<Team>(url), avec un ID capturé. Le client racine ne nécessite aucun enregistrement supplémentaire.',
+  'queryLearn.readError': 'La lecture a échoué. Désactivez l’échec simulé et actualisez pour réessayer.',
+  'queryLearn.readExplain':
+    'key nomme les données ; loader les récupère. Les signals lus dans la définition sélectionnent les données. value() expose le résultat ; isInitialLoading() indique un chargement sans données.',
+  'queryLearn.readExplainTitle': 'Comprendre la première lecture',
+  'queryLearn.readIntro':
+    'queryResource charge des données et expose résultat, chargement et erreurs sous forme de signals Angular. Les composants utilisant la même clé partagent données en cache et requête en cours.',
+  'queryLearn.readSteps':
+    'Chargez Équipe A, choisissez Équipe B, puis actualisez. Activez l’échec et actualisez encore : l’équipe reste visible. Désactivez l’échec et actualisez pour récupérer.',
+  'queryLearn.readTitle': 'Votre première requête',
+  'queryLearn.refreshExplain':
+    'isRefreshing() indique une lecture en cours avec les données précédentes visibles. error() expose l’échec ; isRefreshError() distingue un échec avec données conservées.',
+  'queryLearn.simulateFailure': 'Simuler un échec',
+  'queryLearn.teamA': 'Équipe A',
+  'queryLearn.teamB': 'Équipe B',
   'toSignalForm.savedProfile': 'Profil enregistré',
   'queryResource.projectRevision': 'Version de réponse',
   'queryResource.activeUser': 'Utilisateur actuel',

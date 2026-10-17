@@ -1,4 +1,22 @@
 export const nlTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'Dit volledige voorbeeld simuleert serververtraging en fouten met een lokale timer. Open TypeScript om de component te kopiëren; HTML toont dezelfde gecompileerde template.',
+  'queryLearn.httpSetup':
+    'Voor HTTP configureer je HttpClient in app.config.ts en vervang je de gesimuleerde loader door http.get<Team>(url) met een vastgelegde ID. De rootclient vereist geen extra registratie.',
+  'queryLearn.readError': 'Lezen mislukt. Schakel de gesimuleerde fout uit en vernieuw om opnieuw te proberen.',
+  'queryLearn.readExplain':
+    'key benoemt gegevens; loader haalt ze op. Signals die in de definitie worden gelezen selecteren de gegevens. value() biedt het resultaat; isInitialLoading() betekent laden zonder gegevens.',
+  'queryLearn.readExplainTitle': 'De eerste leesbewerking begrijpen',
+  'queryLearn.readIntro':
+    'queryResource laadt gegevens en biedt resultaat, laadstatus en fouten als Angular-signals. Componenten met dezelfde sleutel delen cachegegevens en een lopende aanvraag.',
+  'queryLearn.readSteps':
+    'Laad Team A, kies Team B en vernieuw. Schakel fouten in en vernieuw opnieuw: het team blijft zichtbaar. Schakel fouten uit en vernieuw om te herstellen.',
+  'queryLearn.readTitle': 'Je eerste query',
+  'queryLearn.refreshExplain':
+    'isRefreshing() betekent dat een leesbewerking loopt terwijl eerdere gegevens zichtbaar blijven. error() toont de fout; isRefreshError() onderscheidt fouten met bewaarde gegevens.',
+  'queryLearn.simulateFailure': 'Fout simuleren',
+  'queryLearn.teamA': 'Team A',
+  'queryLearn.teamB': 'Team B',
   'toSignalForm.savedProfile': 'Opgeslagen profiel',
   'queryResource.projectRevision': 'Antwoordversie',
   'queryResource.activeUser': 'Huidige gebruiker',

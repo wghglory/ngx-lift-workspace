@@ -1,4 +1,22 @@
 export const ruTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'Этот полный пример использует локальный таймер для имитации задержек и сбоев сервера. Откройте TypeScript для копирования компонента; HTML показывает тот же компилируемый шаблон.',
+  'queryLearn.httpSetup':
+    'Для HTTP предоставьте HttpClient в app.config.ts и замените имитацию на http.get<Team>(url) с зафиксированным ID. Корневой клиент не требует дополнительной регистрации.',
+  'queryLearn.readError': 'Чтение не удалось. Отключите имитацию сбоя и обновите для повторной попытки.',
+  'queryLearn.readExplain':
+    'key задаёт данные; loader получает их. Signals, прочитанные в определении, выбирают данные. value() предоставляет результат; isInitialLoading() означает загрузку без данных.',
+  'queryLearn.readExplainTitle': 'Как работает первое чтение',
+  'queryLearn.readIntro':
+    'queryResource загружает данные и предоставляет результат, загрузку и ошибки как signals Angular. Компоненты с одним ключом разделяют кеш и выполняющийся запрос.',
+  'queryLearn.readSteps':
+    'Загрузите Команду A, выберите Команду B и обновите. Включите сбой и обновите снова: команда останется видимой. Отключите сбой и обновите для восстановления.',
+  'queryLearn.readTitle': 'Ваш первый запрос',
+  'queryLearn.refreshExplain':
+    'isRefreshing() означает чтение при сохранении предыдущих данных на экране. error() сообщает сбой; isRefreshError() выделяет сбой с сохранёнными данными.',
+  'queryLearn.simulateFailure': 'Имитировать сбой',
+  'queryLearn.teamA': 'Команда A',
+  'queryLearn.teamB': 'Команда B',
   'toSignalForm.savedProfile': 'Сохранённый профиль',
   'queryResource.projectRevision': 'Версия ответа',
   'queryResource.activeUser': 'Текущий пользователь',

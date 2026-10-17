@@ -1,4 +1,22 @@
 export const zhTWTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    '這個完整範例以本機計時器模擬伺服器延遲和失敗。開啟 TypeScript 複製元件；HTML 展示同一份參與編譯的範本。',
+  'queryLearn.httpSetup':
+    '使用 HTTP 時，在 app.config.ts 提供 HttpClient，並將模擬 loader 替換為使用已擷取 ID 的 http.get<Team>(url)。根查詢用戶端不需要額外註冊。',
+  'queryLearn.readError': '讀取失敗。關閉失敗模擬並重新整理以重試。',
+  'queryLearn.readExplain':
+    'key 為資料命名，loader 負責讀取。定義函式中讀取的訊號決定所需資料。value() 公開結果；isInitialLoading() 表示尚無資料的載入。',
+  'queryLearn.readExplainTitle': '理解第一次讀取',
+  'queryLearn.readIntro':
+    'queryResource 載入資料，並透過 Angular 訊號公開結果、載入狀態和錯誤。使用相同鍵的元件共用快取資料和進行中的請求。',
+  'queryLearn.readSteps':
+    '載入團隊 A，切換到團隊 B，再重新整理。啟用失敗模擬並再次重新整理：既有團隊仍可見。關閉失敗模擬後重新整理即可復原。',
+  'queryLearn.readTitle': '你的第一次查詢',
+  'queryLearn.refreshExplain':
+    'isRefreshing() 表示讀取進行中且保留既有資料顯示。error() 公開失敗；isRefreshError() 區分仍有快取資料的失敗。',
+  'queryLearn.simulateFailure': '模擬失敗',
+  'queryLearn.teamA': '團隊 A',
+  'queryLearn.teamB': '團隊 B',
   'toSignalForm.savedProfile': '已儲存的使用者資料',
   'queryResource.projectRevision': '回應版本',
   'queryResource.activeUser': '目前使用者',

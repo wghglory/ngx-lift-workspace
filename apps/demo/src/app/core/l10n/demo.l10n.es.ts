@@ -1,4 +1,22 @@
 export const esTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'Este ejemplo completo usa un temporizador local para simular latencia y fallos. Abre TypeScript para copiar el componente; HTML muestra la misma plantilla compilada.',
+  'queryLearn.httpSetup':
+    'Para HTTP, proporciona HttpClient en app.config.ts y sustituye el loader simulado por http.get<Team>(url), usando un ID capturado. El cliente raíz no necesita registro adicional.',
+  'queryLearn.readError': 'La consulta falló. Desactiva el fallo simulado y actualiza para volver a intentarlo.',
+  'queryLearn.readExplain':
+    'key identifica los datos; loader los obtiene. Los signals leídos en la definición seleccionan los datos. value() expone el resultado; isInitialLoading() indica carga sin datos.',
+  'queryLearn.readExplainTitle': 'Entender la primera consulta',
+  'queryLearn.readIntro':
+    'queryResource carga datos y expone el resultado, la carga y los errores como signals de Angular. Los componentes con la misma clave comparten datos en caché y una solicitud en curso.',
+  'queryLearn.readSteps':
+    'Carga Equipo A, elige Equipo B y actualiza. Activa el fallo y actualiza de nuevo: el equipo anterior permanece visible. Desactiva el fallo y actualiza para recuperarte.',
+  'queryLearn.readTitle': 'Tu primera consulta',
+  'queryLearn.refreshExplain':
+    'isRefreshing() indica una consulta en curso con los datos anteriores visibles. error() expone el fallo; isRefreshError() distingue un fallo con datos conservados.',
+  'queryLearn.simulateFailure': 'Simular fallo',
+  'queryLearn.teamA': 'Equipo A',
+  'queryLearn.teamB': 'Equipo B',
   'toSignalForm.savedProfile': 'Perfil guardado',
   'queryResource.projectRevision': 'Versión de respuesta',
   'queryResource.activeUser': 'Usuario actual',

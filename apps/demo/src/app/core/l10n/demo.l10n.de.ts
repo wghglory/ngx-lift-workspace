@@ -1,4 +1,23 @@
 export const deTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'Dieses vollständige Beispiel simuliert Serverlatenz und Fehler mit einem lokalen Timer. Öffnen Sie TypeScript zum Kopieren; HTML zeigt dasselbe kompilierte Template.',
+  'queryLearn.httpSetup':
+    'Stellen Sie für HTTP HttpClient in app.config.ts bereit und ersetzen Sie den simulierten Loader durch http.get<Team>(url) mit erfasster ID. Der Root-Client benötigt keine weitere Registrierung.',
+  'queryLearn.readError':
+    'Der Lesezugriff ist fehlgeschlagen. Deaktivieren Sie den simulierten Fehler und aktualisieren Sie erneut.',
+  'queryLearn.readExplain':
+    'key benennt Daten; loader lädt sie. In der Definition gelesene Signals wählen die Daten aus. value() liefert das Ergebnis; isInitialLoading() bezeichnet Laden ohne Daten.',
+  'queryLearn.readExplainTitle': 'Den ersten Lesezugriff verstehen',
+  'queryLearn.readIntro':
+    'queryResource lädt Daten und stellt Ergebnis, Ladezustand und Fehler als Angular-Signals bereit. Komponenten mit demselben Schlüssel teilen Cache-Daten und eine laufende Anfrage.',
+  'queryLearn.readSteps':
+    'Laden Sie Team A, wählen Sie Team B und aktualisieren Sie. Aktivieren Sie den Fehler und aktualisieren Sie erneut: Das Team bleibt sichtbar. Deaktivieren Sie den Fehler und aktualisieren Sie zur Wiederherstellung.',
+  'queryLearn.readTitle': 'Ihre erste Abfrage',
+  'queryLearn.refreshExplain':
+    'isRefreshing() bedeutet einen Lesezugriff bei weiterhin sichtbaren bisherigen Daten. error() liefert den Fehler; isRefreshError() unterscheidet Fehler mit aufbewahrten Daten.',
+  'queryLearn.simulateFailure': 'Fehler simulieren',
+  'queryLearn.teamA': 'Team A',
+  'queryLearn.teamB': 'Team B',
   'toSignalForm.savedProfile': 'Gespeichertes Profil',
   'queryResource.projectRevision': 'Antwortversion',
   'queryResource.activeUser': 'Aktueller Benutzer',

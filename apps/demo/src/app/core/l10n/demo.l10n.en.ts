@@ -1,4 +1,22 @@
 export const enTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'This complete example uses a local timer to simulate server latency and failures. Open TypeScript to copy the component; HTML shows the same compiled template.',
+  'queryLearn.httpSetup':
+    'For HTTP, provide HttpClient in app.config.ts and replace the simulated loader with http.get<Team>(url), using a captured ID. The root query client needs no additional registration.',
+  'queryLearn.readError': 'The read failed. Disable simulated failure and refresh to try again.',
+  'queryLearn.readExplain':
+    'key names the data; loader retrieves it. Signals read in the definition select the data. value() exposes the result; isInitialLoading() identifies loading without data.',
+  'queryLearn.readExplainTitle': 'Understand the first read',
+  'queryLearn.readIntro':
+    'queryResource loads data and exposes the result, loading state, and errors as Angular signals. Components using the same key share cached data and an in-flight request.',
+  'queryLearn.readSteps':
+    'Load Team A, choose Team B, then refresh. Enable failure and refresh again: the existing team stays visible. Disable failure and refresh to recover.',
+  'queryLearn.readTitle': 'Your first query',
+  'queryLearn.refreshExplain':
+    'isRefreshing() means a read is running while previous data remains visible. error() exposes failure; isRefreshError() distinguishes failure with retained data.',
+  'queryLearn.simulateFailure': 'Simulate failure',
+  'queryLearn.teamA': 'Team A',
+  'queryLearn.teamB': 'Team B',
   'toSignalForm.savedProfile': 'Saved profile',
   'queryResource.projectRevision': 'Response version',
   'queryResource.activeUser': 'Current user',

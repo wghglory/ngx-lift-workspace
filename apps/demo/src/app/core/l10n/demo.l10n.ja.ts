@@ -1,4 +1,22 @@
 export const jaTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    'この完全な例はローカルタイマーでサーバー遅延と失敗を再現します。TypeScript を開くとコンポーネントをコピーできます。HTML は実際にコンパイルする同じテンプレートです。',
+  'queryLearn.httpSetup':
+    'HTTP では app.config.ts に HttpClient を提供し、取得済み ID を使う http.get<Team>(url) で模擬 loader を置き換えます。ルートクライアントの追加登録は不要です。',
+  'queryLearn.readError': '読み取りに失敗しました。失敗の再現を無効にし、更新して再試行してください。',
+  'queryLearn.readExplain':
+    'key はデータを識別し、loader は取得します。定義内で読むシグナルが対象データを選びます。value() は結果、isInitialLoading() はデータがない状態での読み込みを示します。',
+  'queryLearn.readExplainTitle': '最初の読み取りを理解する',
+  'queryLearn.readIntro':
+    'queryResource はデータを読み取り、結果、読み込み状態、エラーを Angular シグナルとして公開します。同じキーのコンポーネントはキャッシュと実行中リクエストを共有します。',
+  'queryLearn.readSteps':
+    'チーム A を取得し、チーム B に切り替えて更新します。失敗を有効にして再度更新すると、既存のチームは表示されたままです。失敗を無効にして更新すると回復します。',
+  'queryLearn.readTitle': '最初のクエリ',
+  'queryLearn.refreshExplain':
+    'isRefreshing() は以前のデータを表示しながら読み取っている状態です。error() は失敗を示し、isRefreshError() は保持データがある失敗を区別します。',
+  'queryLearn.simulateFailure': '失敗を再現',
+  'queryLearn.teamA': 'チーム A',
+  'queryLearn.teamB': 'チーム B',
   'toSignalForm.savedProfile': '保存したプロフィール',
   'queryResource.projectRevision': '応答バージョン',
   'queryResource.activeUser': '現在のユーザー',

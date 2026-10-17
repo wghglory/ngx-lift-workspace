@@ -1,4 +1,22 @@
 export const zhCNTranslations: Record<string, string> = {
+  'queryLearn.fixture':
+    '这个完整示例用本地计时器模拟服务端延迟和失败。打开 TypeScript 复制组件；HTML 展示同一份参与编译的模板。',
+  'queryLearn.httpSetup':
+    '使用 HTTP 时，在 app.config.ts 提供 HttpClient，并将模拟 loader 替换为使用已捕获 ID 的 http.get<Team>(url)。根查询客户端无需额外注册。',
+  'queryLearn.readError': '读取失败。关闭失败模拟并刷新以重试。',
+  'queryLearn.readExplain':
+    'key 为数据命名，loader 负责读取。定义函数中读取的信号决定所需数据。value() 暴露结果；isInitialLoading() 表示尚无数据的加载。',
+  'queryLearn.readExplainTitle': '理解第一次读取',
+  'queryLearn.readIntro':
+    'queryResource 加载数据，并通过 Angular 信号暴露结果、加载状态和错误。使用相同键的组件共享缓存数据和进行中的请求。',
+  'queryLearn.readSteps':
+    '加载团队 A，切换到团队 B，然后刷新。启用失败模拟并再次刷新：已有团队仍然可见。关闭失败模拟后刷新即可恢复。',
+  'queryLearn.readTitle': '你的第一次查询',
+  'queryLearn.refreshExplain':
+    'isRefreshing() 表示读取进行中且保留原有数据显示。error() 暴露失败；isRefreshError() 区分仍有缓存数据的失败。',
+  'queryLearn.simulateFailure': '模拟失败',
+  'queryLearn.teamA': '团队 A',
+  'queryLearn.teamB': '团队 B',
   'toSignalForm.savedProfile': '已保存的用户资料',
   'queryResource.projectRevision': '响应版本',
   'queryResource.activeUser': '当前用户',

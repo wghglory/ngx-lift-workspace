@@ -109,12 +109,15 @@ describe('QueryResourceDemoComponent', () => {
     expect(inspector.querySelector('clr-datagrid')).toBeNull();
   });
 
-  it('introduces the tool before examples and uses Clarity controls and status labels', () => {
+  it('teaches a working read before advanced examples and lifecycle reference', () => {
     const root: HTMLElement = fixture.nativeElement;
-    const intro = root.querySelector('[data-testid="query-introduction"]');
+    const intro = root.querySelector('[data-testid="query-starter"]');
+    const reference = root.querySelector('[data-testid="query-introduction"]');
     const coalesce = root.querySelector('[data-testid="query-demo-coalesce"]');
     if (!intro || !coalesce) throw new Error('Missing guide introduction or coalesce demo');
     expect(intro.compareDocumentPosition(coalesce) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    if (!reference) throw new Error('Missing lifecycle reference');
+    expect(coalesce.compareDocumentPosition(reference) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(root.querySelector('clr-select-container select[clrSelect]')).not.toBeNull();
     expect(root.querySelector('[data-testid="query-demo-dynamic"]')).toBeNull();
     expect(root.querySelector('[data-testid="query-failure-examples"] .card')).toBeNull();
