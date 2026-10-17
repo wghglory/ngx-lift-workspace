@@ -2,21 +2,28 @@
   <!-- Overview -->
   <p [innerHTML]="'uniqueValidator.overview' | translate"></p>
 
-  <!-- Examples Section -->
-  <section cds-layout="vertical gap:md">
-    <h2>{{ 'common.examples' | translate }}</h2>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'uniqueValidator.example1Title' | translate }}</h3>
-      <p [innerHTML]="'uniqueValidator.example1Desc' | translate"></p>
+  <app-demo-playground
+    data-testid="unique-validator-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="firstTaskCode"
+    [htmlCode]="firstTaskHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'uniqueValidator.firstTask' | translate }}</p>
       <form clrForm [formGroup]="form1">
         <cll-callout>{{ 'uniqueValidator.calloutSameValue' | translate }}</cll-callout>
 
         <ng-container formArrayName="demo1">
           @for (control of form1.controls.demo1.controls; track $index; let i = $index) {
             <clr-input-container>
-              <label [attr.for]="i">{{ 'uniqueValidator.controlLabel' | translate }} {{ i + 1 }}</label>
-              <input clrInput type="text" [formControlName]="i" (blur)="validateControlByIndex(i)" />
+              <label [for]="'unique-control-' + i">{{ 'uniqueValidator.controlLabel' | translate }} {{ i + 1 }}</label>
+              <input
+                [id]="'unique-control-' + i"
+                clrInput
+                type="text"
+                [formControlName]="i"
+                (blur)="validateControlByIndex(i)"
+              />
               <clr-control-helper>{{ 'uniqueValidator.controlHelper' | translate }}</clr-control-helper>
               <clr-control-error *clrIfError="'notUnique'">{{
                 'uniqueValidator.duplicated' | translate
@@ -24,9 +31,18 @@
             </clr-input-container>
           }
         </ng-container>
+        <button type="button" class="btn btn-sm btn-outline" (click)="form1.reset()">
+          {{ 'common.clear' | translate }}
+        </button>
+        <output aria-live="polite">{{ form1.status }}</output>
       </form>
-      <app-code-block [code]="example1Code" lang="typescript" />
-    </article>
+    </div>
+  </app-demo-playground>
+  <cll-callout>{{ 'uniqueValidator.calloutSameValue' | translate }}</cll-callout>
+
+  <!-- Examples Section -->
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'uniqueValidator.example2Title' | translate }}</h3>

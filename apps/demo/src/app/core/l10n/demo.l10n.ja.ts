@@ -1198,6 +1198,8 @@ export const jaTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     'すべてのアラートを表示するコンテナコンポーネント。メインコンテナ内のClarityヘッダータグの上に配置すべきです。',
   'fileReader.title': 'ファイルリーダー',
+  'fileReader.firstTask':
+    'テキストファイルを選択し、フォームをクリアします。選択は必須です。証明書の制限と解析エラーは次の例で扱います。',
   'fileReader.overview':
     '<FileReaderComponent>は、テキストファイルのブラウズと内容の読み込みを簡単に実行するためのコンポーネントです。ファイル選択、plain textまたはbase64エンコードされた文字列での内容読み込み、ファイルサイズの検証、ファイルが選択または削除されたときにイベントを発行する機能を提供します。',
   'fileReader.example1': '例1: 基本的なファイルリーダー',
@@ -1768,6 +1770,8 @@ export const jaTranslations: Record<string, string> = {
     'HttpContext で上書きされない限りすべてのリクエストに適用されるデフォルト設定。',
   'k8sRetryBackoffInterceptor.tokenSummary':
     'リクエスト単位でリトライ設定を上書きまたは無効化するための HttpContextToken。',
+  'ifValidator.firstTask':
+    '否定の回答を選ぶとメールと理由が必須になります。両方入力して回答を変えると必須エラーは消えますが、メール形式の検証は続きます。',
   'ifValidator.overview':
     'ngx-liftはAngular Reactive Formsで条件付きバリデータを作成するためのユーティリティ関数を提供します。条件付きバリデータは、与えられた条件に基づいて指定されたバリデータ関数を適用します。主要な関数は2つあります：<code>ifValidator</code>は同期バリデータ用で、<code>ifAsyncValidator</code>はアсинクロンバリデータ用です。',
   'ifValidator.example1Title': '例1: 条件付き必須バリデータ',
@@ -1809,6 +1813,8 @@ export const jaTranslations: Record<string, string> = {
   'intersectionValidator.apiSummary': '2つの配列値のフォームコントロールが重複しないように検証します。',
   'intersectionValidator.paramArray1Key': '最初のフォームコントロールの名前。',
   'intersectionValidator.paramArray2Key': '第二个のフォームコントロールの名前。',
+  'uniqueValidator.firstTask':
+    '両方のフィールドに同じ文字列を入力し、フォーカスを外すと重複エラーが表示されます。一方を変更して再びフォーカスを外すと解消します。クリアで両方を初期化します。',
   'uniqueValidator.overview':
     'uniqueValidatorは、<code>FormArray</code>または<code>FormGroup</code>内の複数のフィールドで一意性を確認するためのカスタムAngular Formsバリデーションです。これにより、配列またはグループ内の各コントロールの値が他のコントロールの値と一意であることを保証します。',
   'uniqueValidator.example1Title': '例1: フォームコントロールの配列',
