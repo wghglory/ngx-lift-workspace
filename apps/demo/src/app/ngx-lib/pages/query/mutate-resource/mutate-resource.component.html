@@ -6,6 +6,15 @@
     <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
   </cll-callout>
 
+  <section cds-layout="vertical gap:sm" data-testid="query-ownership-guide">
+    <h2>{{ 'queryOwnership.title' | translate }}</h2>
+    <p>{{ 'queryOwnership.definitions' | translate }}</p>
+    <p>{{ 'queryOwnership.refactoring' | translate }}</p>
+    <p>{{ 'queryOwnership.noCache' | translate }}</p>
+    <p>{{ 'queryOwnership.naming' | translate }}</p>
+    <app-code-block [code]="ownershipCode" lang="typescript" />
+  </section>
+
   <!-- ==================== CORE CAPABILITIES SECTION ==================== -->
   <section class="features-section">
     <h2>{{ 'mutateResource.featuresTitle' | translate }}</h2>
@@ -63,8 +72,26 @@
       layout="split"
       [tsCode]="invalidationCode"
     >
-      <div preview>
+      <div preview data-testid="team-ownership-demo">
         <div cds-layout="vertical gap:md">
+          <p>{{ 'queryOwnership.journey' | translate }}</p>
+          <div class="card card-block" cds-layout="vertical gap:sm">
+            <button type="button" class="btn btn-outline" (click)="showSummary.set(!showSummary())">
+              {{ (showSummary() ? 'queryOwnership.closeSummary' : 'queryOwnership.openSummary') | translate }}
+            </button>
+            @if (showSummary()) {
+              <app-team-summary />
+            }
+            <p data-testid="team-a-reads">
+              {{ 'queryOwnership.teamAReads' | translate }}: {{ teamService.reads()['team-a'] ?? 0 }}
+            </p>
+            <p data-testid="team-b-count">
+              {{ 'queryOwnership.otherScope' | translate }}: {{ otherTeamQuery.value()?.length ?? 0 }}
+            </p>
+            <p data-testid="team-b-reads">
+              {{ 'queryOwnership.teamBReads' | translate }}: {{ teamService.reads()['team-b'] ?? 0 }}
+            </p>
+          </div>
           <!-- Add Member Form -->
           <div class="card card-block">
             <div class="card-title">{{ 'mutateResource.addTeamMember' | translate }}</div>

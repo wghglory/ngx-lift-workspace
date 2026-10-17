@@ -128,8 +128,7 @@ export class ToastDemoComponent {
 
   private toastService = inject(ToastService);
 
-  containerCode = highlight(`
-import {Component} from '@angular/core';
+  containerCode = highlight(`import {Component} from '@angular/core';
 import {ToastContainerComponent} from 'clr-lift';
 
 @Component({
@@ -142,10 +141,9 @@ import {ToastContainerComponent} from 'clr-lift';
 
     <!-- toast container should appear only once -->
     <cll-toast-container [timeoutSeconds]="8" />
-  \`
+  \`,
 })
-export class AppComponent {}
-  `);
+export class AppComponent {}`);
 
   addToastCode = highlight(`
 import {ToastService} from 'clr-lift';

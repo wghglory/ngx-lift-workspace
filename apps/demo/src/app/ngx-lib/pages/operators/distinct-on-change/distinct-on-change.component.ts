@@ -57,8 +57,7 @@ from([1, 1, 2, 2, 3, 4, 4, 5])
 // Value changes from 4 to: 5
   `);
 
-  comparatorExampleCode = highlight(`
-import {distinctOnChange} from 'ngx-lift';
+  comparatorExampleCode = highlight(`import {distinctOnChange} from 'ngx-lift';
 import {from} from 'rxjs';
 
 interface User {
@@ -73,17 +72,14 @@ from([
 ])
   .pipe(
     distinctOnChange(
-      (prev, curr) => console.log(\`User changed from $\{prev.name} to $\{curr.name}\`),
-      (prev, curr) => prev.id === curr.id
-    )
+      (prev, curr) => console.log(\`User changed from \${prev.name} to \${curr.name}\`),
+      (prev, curr) => prev.id === curr.id,
+    ),
   )
-  .subscribe();
-  `);
+  .subscribe();`);
 
-  signatureCode = highlight(`
-distinctOnChange<T>(
+  signatureCode = highlight(`distinctOnChange<T>(
   onChangeCallback: (previous: T, current: T) => void,
-  comparator?: (previous: T, current: T) => boolean
-): MonoTypeOperatorFunction<T>
-  `);
+  comparator?: (previous: T, current: T) => boolean,
+): MonoTypeOperatorFunction<T>;`);
 }

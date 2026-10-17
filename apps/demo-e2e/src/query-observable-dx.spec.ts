@@ -14,6 +14,26 @@ function readTranslations(locale: string) {
     ts.forEachChild(node, read);
   }
   read(source);
+  const devtoolsFile = resolve(
+    __dirname,
+    '../../../libs/clr-lift/src/lib/components/query-devtools/query-devtools.l10n.ts',
+  );
+  const devtools = ts.createSourceFile(devtoolsFile, readFileSync(devtoolsFile, 'utf8'), ts.ScriptTarget.Latest, true);
+  for (const statement of devtools.statements) {
+    if (!ts.isVariableStatement(statement)) continue;
+    const entries = statement.declarationList.declarations[0].initializer;
+    if (!entries || !ts.isObjectLiteralExpression(entries)) continue;
+    const labels = entries.properties.find(
+      (property) =>
+        ts.isPropertyAssignment(property) && property.name.getText(devtools).replace(/['"]/g, '') === locale,
+    );
+    if (!labels || !ts.isPropertyAssignment(labels) || !ts.isObjectLiteralExpression(labels.initializer)) continue;
+    for (const property of labels.initializer.properties) {
+      if (ts.isPropertyAssignment(property) && ts.isStringLiteral(property.initializer)) {
+        translated[`queryDevtools.${property.name.getText(devtools).replace(/['"]/g, '')}`] = property.initializer.text;
+      }
+    }
+  }
   return translated;
 }
 
@@ -66,16 +86,22 @@ test('new query examples are localized in every supported language', async ({pag
     await expect(failure).not.toContainText('!! Key');
     await expect(failure).not.toContainText(/\{\d+\}/);
     const diagnostics = page.getByTestId('query-diagnostics');
-    await expect(
-      diagnostics.getByRole('columnheader', {name: translated['queryResource.thFailures'], exact: true}),
-    ).toBeVisible();
-    await expect(
-      diagnostics.getByRole('columnheader', {name: translated['queryResource.thNextRetry'], exact: true}),
-    ).toBeVisible();
-    await expect(diagnostics).toContainText(translated['queryResource.diagPendingRequests']);
-    await diagnostics.getByRole('button', {name: translated['queryResource.refreshDiagnostics'], exact: true}).click();
-    await expect(diagnostics.locator('tbody tr')).not.toHaveCount(0);
-    await expect(diagnostics).not.toContainText('!! Key');
+    await diagnostics
+      .locator('.playground-canvas')
+      .getByRole('button', {name: translated['queryDevtools.title'], exact: true})
+      .click();
+    const dialog = page.getByRole('region', {name: translated['queryDevtools.title'], exact: true});
+    await expect(dialog.getByRole('columnheader', {name: translated['queryDevtools.status']})).toBeVisible();
+    await expect(dialog.getByRole('columnheader', {name: translated['queryDevtools.updated']})).toBeVisible();
+    await expect(dialog).toContainText(translated['queryDevtools.pending']);
+    await expect(dialog.getByRole('button', {name: translated['queryDevtools.refresh'], exact: true})).toHaveCount(0);
+    await dialog.getByRole('button', {name: translated['queryDevtools.pause'], exact: true}).click();
+    await dialog.getByRole('button', {name: translated['queryDevtools.refresh'], exact: true}).click();
+    await expect(dialog.locator('.view-feedback')).toContainText(translated['queryDevtools.viewUpdated']);
+    await expect(dialog.locator('clr-dg-row')).not.toHaveCount(0);
+    await expect(dialog).not.toContainText('!! Key');
+    await dialog.getByRole('button', {name: translated['queryDevtools.close'], exact: true}).click();
+    await expect(dialog).toBeHidden();
   }
 });
 

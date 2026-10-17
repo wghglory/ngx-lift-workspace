@@ -26,11 +26,47 @@ describe('mutateResource', () => {
     client.destroy();
   });
 
+  it.each(['static', 'callback'] as const)('preserves the deprecated %s invalidatesTags option', async (mode) => {
+    const tags = [{type: 'Legacy', id: 7}];
+    const invalidate = vi.spyOn(client, 'invalidateTags');
+    const mapper = vi.fn((result: number, args: number) => [{type: 'Legacy', id: result + args}]);
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource((args: number) => args + 1, {
+        invalidatesTags: mode === 'static' ? tags : mapper,
+      }),
+    );
+    await resource.mutate(3);
+    expect(invalidate).toHaveBeenCalledExactlyOnceWith(tags);
+    if (mode === 'callback') expect(mapper).toHaveBeenCalledExactlyOnceWith(4, 3);
+  });
+
+  it.each([false, true])('prefers invalidateTags without invoking the alias (empty: %s)', async (empty) => {
+    const tags = empty ? [] : [{type: 'Preferred'}];
+    const invalidate = vi.spyOn(client, 'invalidateTags');
+    const alias = vi.fn(() => [{type: 'Legacy'}]);
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource(() => 'saved', {invalidateTags: tags, invalidatesTags: alias}),
+    );
+    await resource.mutate(undefined);
+    expect(alias).not.toHaveBeenCalled();
+    if (empty) expect(invalidate).not.toHaveBeenCalled();
+    else expect(invalidate).toHaveBeenCalledExactlyOnceWith(tags);
+  });
+
+  it('does not evaluate the tag mapper after a failed write', async () => {
+    const mapper = vi.fn(() => [{type: 'User'}]);
+    const resource = TestBed.runInInjectionContext(() =>
+      mutateResource(() => throwError(() => new Error('write failed')), {invalidateTags: mapper}),
+    );
+    await expect(resource.mutate(undefined)).rejects.toThrow('write failed');
+    expect(mapper).not.toHaveBeenCalled();
+  });
+
   it('keeps a successful write successful when its invalidation callback fails', async () => {
     const failure = new Error('Tag mapping failed');
     const resource = TestBed.runInInjectionContext(() =>
       mutateResource(() => of('saved'), {
-        invalidatesTags: () => {
+        invalidateTags: () => {
           throw failure;
         },
       }),
@@ -45,7 +81,7 @@ describe('mutateResource', () => {
     const result = new Subject<string>();
     const resource = TestBed.runInInjectionContext(() =>
       mutateResource(() => result, {
-        invalidatesTags: [{type: 'User'}],
+        invalidateTags: [{type: 'User'}],
       }),
     );
     const saved = resource.mutate(undefined);
@@ -60,7 +96,7 @@ describe('mutateResource', () => {
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
       mutateResource(mutation, {
-        invalidatesTags: (result, id) => [{type: 'Binding', id: result.id, scope: `org-${id}`}],
+        invalidateTags: (result, id) => [{type: 'Binding', id: result.id, scope: `org-${id}`}],
       }),
     );
     await settle();
@@ -81,7 +117,7 @@ describe('mutateResource', () => {
     const thenable: PromiseLike<number> = {then: promise.then.bind(promise)};
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
-      mutateResource(() => thenable, {invalidatesTags: [{type: 'Thenable'}]}),
+      mutateResource(() => thenable, {invalidateTags: [{type: 'Thenable'}]}),
     );
     expect(await resource.mutate(undefined)).toBe(7);
     expect(resource.value()).toBe(7);
@@ -103,7 +139,7 @@ describe('mutateResource', () => {
       then: (resolve, reject) => Promise.reject<number>(failure).then(resolve, reject),
     };
     const resource = TestBed.runInInjectionContext(() =>
-      mutateResource(() => thenable, {invalidatesTags: [{type: 'Thenable'}]}),
+      mutateResource(() => thenable, {invalidateTags: [{type: 'Thenable'}]}),
     );
     await expect(resource.mutate(undefined)).rejects.toBe(failure);
     expect(resource.error()).toBe(failure);
@@ -159,7 +195,7 @@ describe('mutateResource', () => {
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
       mutateResource(mutation, {
-        invalidatesTags: (_result, id) => [{type: 'Item', id}],
+        invalidateTags: (_result, id) => [{type: 'Item', id}],
       }),
     );
     const first = resource.mutate(1);
@@ -228,7 +264,7 @@ describe('mutateResource', () => {
     const failure = new Error('permission denied');
     const invalidate = vi.spyOn(client, 'invalidateTags');
     const resource = TestBed.runInInjectionContext(() =>
-      mutateResource(() => throwError(() => failure), {invalidatesTags: [{type: 'Bindings'}]}),
+      mutateResource(() => throwError(() => failure), {invalidateTags: [{type: 'Bindings'}]}),
     );
     await expect(resource.mutate(undefined)).rejects.toBe(failure);
     expect(resource.error()).toBe(failure);
@@ -285,7 +321,7 @@ describe('mutateResource', () => {
     const unsubscribe = client.observeQuery(definition, () => undefined);
     await settle();
     const resource = TestBed.runInInjectionContext(() =>
-      mutateResource(async () => 'saved', {invalidatesTags: [{type: 'Bindings'}]}),
+      mutateResource(async () => 'saved', {invalidateTags: [{type: 'Bindings'}]}),
     );
     expect(await resource.mutate(undefined)).toBe('saved');
     await settle();
@@ -304,7 +340,7 @@ describe('mutateResource', () => {
     const resource = mutateResource(() => source, {
       injector: componentInjector,
       client,
-      invalidatesTags: [{type: 'Bindings'}],
+      invalidateTags: [{type: 'Bindings'}],
     });
     const request = resource.mutate(undefined);
     await settle();

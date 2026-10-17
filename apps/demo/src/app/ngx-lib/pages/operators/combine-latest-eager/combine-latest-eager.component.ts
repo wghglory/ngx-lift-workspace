@@ -57,10 +57,10 @@ export class MyComponent {
 }
   `);
 
-  htmlCode = highlight(`
-@if (vm$ | async; as vm) {
+  htmlCode = highlight(`@if (vm$ | async; as vm) {
   <p>
-    Today is <time>{{ vm.today | date }}</time>. Who is our today's rock star?
+    Today is <time>{{ vm.today | date }}</time
+    >. Who is our today's rock star?
     <button (click)="showRockStar()" class="btn btn-outline">Unveil</button>
   </p>
 
@@ -73,8 +73,7 @@ export class MyComponent {
   @if (vm.rockStarState?.data; as rockStar) {
     <p class="!text-xl">{{ rockStar.name }}</p>
   }
-}
-  `);
+}`);
 
   tsCode = highlight(`
 import {AlertComponent, SpinnerComponent} from 'clr-lift';
@@ -102,10 +101,8 @@ export class RockStarComponent {
 }
   `);
 
-  signatureCode = highlight(`
-combineLatestEager<T>(
+  signatureCode = highlight(`combineLatestEager<T>(
   sources: Record<string, Observable<T>> | Observable<T>[],
-  startWithAll?: boolean
-): Observable<T[] | Record<string, T>>
-  `);
+  startWithAll?: boolean,
+): Observable<T[] | Record<string, T>>;`);
 }

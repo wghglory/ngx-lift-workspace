@@ -1,4 +1,26 @@
 export const koTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': '저장된 프로필',
+  'queryResource.projectRevision': '응답 버전',
+  'queryResource.activeUser': '현재 사용자',
+  'queryResource.engineLabel': '엔진',
+  'queryResource.computeLabel': '컴퓨팅 리소스',
+  'queryOwnership.title': '도메인에서 관리하는 키와 태그',
+  'queryOwnership.definitions':
+    '관찰자는 컴포넌트에 두고 전체 쿼리 정의와 태그 팩터리는 담당 도메인에서 가져오세요. 키에는 범위와 응답에 영향을 주는 모든 매개변수를 포함하세요.',
+  'queryOwnership.refactoring':
+    '문자열을 반복하지 말고 공유 내보내기를 사용하세요. 정의를 변경하거나 삭제하기 전에 모든 참조를 찾고 담당 도메인과 조율하며 영향을 받는 읽기와 쓰기를 검증하세요.',
+  'queryOwnership.noCache':
+    '키는 공유 요청과 상태도 식별합니다. staleTime: 0은 데이터를 즉시 오래된 상태로 만들고 gcTime: 0은 요청 종료 후 미사용 항목을 제거합니다. 키 없는 독립 상태에는 resourceAsync를 사용하세요. 변경 작업에는 키가 필요하지 않습니다.',
+  'queryOwnership.naming':
+    'invalidateTags는 배열 또는 성공 후에만 실행되는 (result, args) 콜백을 받습니다. []를 반환하면 무효화를 건너뜁니다.',
+  'queryOwnership.journey':
+    '멤버를 추가하면 표와 요약이 새로 고칠 때마다 요청 하나를 공유합니다. 요약을 닫고 다시 추가한 뒤 열어 보세요. 팀 B의 데이터와 요청 수는 유지됩니다.',
+  'queryOwnership.closeSummary': '요약 닫기',
+  'queryOwnership.openSummary': '요약 열기',
+  'queryOwnership.summary': '팀 A 요약',
+  'queryOwnership.teamAReads': '팀 A 요청 수',
+  'queryOwnership.otherScope': '팀 B 멤버(다른 범위)',
+  'queryOwnership.teamBReads': '팀 B 요청 수',
   'header.selectLanguage': '언어 선택',
   'header.openGitHub': 'GitHub에서 열기',
   'header.codeLicensed': '코드 라이선스:',
@@ -611,7 +633,7 @@ export const koTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': '사용자 프로필 카드',
   'queryResource.simulatedMasterList': '마스터 목록 (데이터베이스 선택)',
   'queryResource.simulatedDetailCard': '상세 뷰 (활성 스펙)',
-  'queryResource.updateNameBtn': 'authStateService.updateProfile.mutate()를 통해 이름 업데이트',
+  'queryResource.updateNameBtn': '이름 업데이트',
   'queryResource.componentPlacementAdvice':
     '데이터가 특정 뷰에 국한된 경우 컴포넌트 배치를 권장합니다. 추가 서비스 파일이 필요 없고, Signal 입력 input()과 매끄럽게 연결되며 언마운트 시 즉시 정리됩니다.',
   'queryResource.demo1Section': '요청 코일리즈 & 중복 제거',
@@ -683,10 +705,10 @@ export const koTranslations: Record<string, string> = {
   'queryResource.thRole': '역할',
   'queryResource.diagnosticsSection': '개발자 진단 및 캐시 검사기',
   'queryResource.diagnosticsSectionDesc':
-    '이 QueryClient의 캐시, 옵저버, 처리 중인 논리 읽기, 재시도, GC 및 폴링을 확인합니다. 실패 및 Observable 서비스 예제는 별도 클라이언트를 사용합니다.',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient 실시간 진단',
+    'app.config.ts에서 provideQueryDevtools()를 한 번 등록하면 개발 환경에서만 실행 버튼이 표시됩니다. 앱을 사용하면서 하단 패널에서 쿼리를 검사하세요.',
+  'queryResource.diagnosticsPlaygroundTitle': '쿼리 검사 패널',
   'queryResource.diagnosticsPlaygroundDesc':
-    '"진단 새로고침"을 클릭하여 getDiagnostics() 및 getEntriesSnapshot()을 통해 내부 QueryClient 상태를 폴링할 수 있습니다.',
+    '쿼리를 검색, 필터링, 정렬하고 캐시 데이터, 오류, 시간 정보를 확인하세요. 다시 가져오기는 선택한 로더를 실행합니다. 이 문서 미리보기는 프로덕션에서도 활성화됩니다.',
   'queryResource.badgeDiagnostics': '진단',
   'queryResource.refreshDiagnostics': '진단 새로고침',
   'queryResource.diagTotalEntries': '총 항목',
@@ -1978,7 +2000,7 @@ export const koTranslations: Record<string, string> = {
     "요소에 대비한 툴팁의 위치. 옵션에는 'tooltip-top-right', 'tooltip-top-left' 등이 포함됩니다.",
   'demoApi.tooltip-demo.inputs.cllTooltipHideDelay': '마우스 떠나기 후에 툴팁을 숨기는 지연 시간(밀리초).',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation': '서버 측의 쓰기 작업을 수행하는 비동기 함수 또는 관찰자.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     '성공적인 쓰기 후 무효화할 태그. 활성 쿼리에 대한 재수집을 즉시 일정하게 계획합니다.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     '중첩된 호출의 전략: 병행(기본값), 끝내기(진행 중인 조인), 콜리네이션(큐잉).',

@@ -34,5 +34,12 @@
     "access": "public"
   },
   "dependencies": {},
-  "sideEffects": false
+  "sideEffects": false,
+  "exports": {
+    "./devtools": {
+      "types": "./types/clr-lift-devtools-development.d.ts",
+      "development": "./fesm2022/clr-lift-devtools-development.mjs",
+      "default": "./devtools/stub.mjs"
+    }
+  }
 }

@@ -1,7 +1,8 @@
 # Design Specification: `mutateResource`
 
 Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
-Approval: existing API; this audit does not approve new behavior.
+Approval: existing API plus the October 16 maintainer request for consistent `invalidateTags` naming and domain-owned
+key/tag guidance. Preserve the previous spelling as a compatibility alias.
 
 **Source:** [mutate-resource.ts](../../../libs/ngx-lift/src/lib/query/mutate-resource.ts)
 
@@ -72,8 +73,11 @@ Source failures still reject `mutate()` and do not invalidate tags.
   - **`exhaust`**: Drops duplicate submissions while a request is in flight. Returns the active in-flight Promise so
     callers can await the outcome without generating duplicate server side-effects.
   - **`concat`**: Queues incoming submissions sequentially in FIFO order.
-- **`invalidatesTags?: readonly QueryTag[] | ((result: TResult, args: TArgs) => readonly QueryTag[])`**: Static tags or
-  a function evaluated after successful write completion.
+- **`invalidateTags?: readonly QueryTag[] | ((result: TResult, args: TArgs) => readonly QueryTag[])`**: Static tags or a
+  synchronous function evaluated after successful write completion. The callback receives the actual result and the
+  arguments of that accepted invocation. Return `[]` to skip invalidation. It is not called after a failed write.
+- **`invalidatesTags`**: Deprecated compatibility alias with the same type. If both spellings are supplied,
+  `invalidateTags` takes precedence, including an empty array. Only one invalidation runs.
 - **`client?: QueryClient`**: Explicit cache client; otherwise resolved from the owner injector.
 - **`injector?: Injector`**: Optional explicit Angular injector.
 
@@ -98,7 +102,7 @@ import {mutateResource} from 'ngx-lift';
 const http = inject(HttpClient);
 const saveMutation = mutateResource((settings: {name: string}) => http.put<{name: string}>('/api/settings', settings), {
   concurrency: 'exhaust',
-  invalidatesTags: [{type: 'Settings'}],
+  invalidateTags: [{type: 'Settings'}],
 });
 // In a submit handler, await saveMutation.mutate({name: 'Analytics'}).
 // Catch transport failure; inspect invalidationError separately after a successful write.
@@ -118,6 +122,39 @@ rejection warnings in the browser console when callers fire-and-forget without `
 
 Successful writes invalidate declared tags immediately without awaiting background query refetches. Observing queries in
 the background will update their UI states smoothly.
+
+Use `invalidateTags` for both the mutation option and `QueryClient.invalidateTags(tags)` to keep one public spelling.
+The option is declarative: configuring it does not invalidate immediately. RTK Query uses `invalidatesTags` for endpoint
+configuration and accepts callbacks
+([primary documentation](https://redux.js.org/toolkit/rtk-query/usage/automated-refetching)). Adapt the callback idea,
+but prefer consistent naming here. Unlike RTK Query's callback, this callback receives `(result, args)` and runs only on
+success; there is no error argument.
+
+Capture scope in mutation arguments rather than reading a changing selection after the server responds:
+
+```typescript
+import {mutateResource} from 'ngx-lift';
+import {teamTags} from './team.queries';
+import {TeamService, NewMember} from './team.service';
+
+// Inside an Angular component with an injected TeamService.
+readonly addMutation = mutateResource(
+  (args: {scope: string; member: NewMember}) => this.teamService.createMember(args.scope, args.member),
+  {
+    invalidateTags: (created, args) => [
+      teamTags.members(args.scope),
+      teamTags.member(args.scope, created.id),
+    ],
+    concurrency: 'exhaust',
+  },
+);
+```
+
+The input scope and server-assigned ID select dependencies without duplicating tag strings. Keep tags and complete query
+definitions in the domain module described in
+[large-project ownership](query-resource-design-spec.md#large-project-key-and-tag-ownership). Migrate `invalidatesTags:`
+to `invalidateTags:`; legacy consumers keep working. A throwing mapper remains a post-success synchronization failure
+through `invalidationError`, never a failed server write.
 
 Post-success invalidation failures do not reject or reclassify the completed server write. `invalidationError` exposes
 that cache synchronization failure (the interface marks it optional for structural test refs; the implementation
@@ -172,12 +209,14 @@ Server write undo, automatic retry or endpoint idempotency guarantees.
 
 ## Use cases and acceptance
 
-| ID  | Task                  | Initial state/action                     | Outcome                                                        | Failure/recovery                             | Demo/test               |
-| --- | --------------------- | ---------------------------------------- | -------------------------------------------------------------- | -------------------------------------------- | ----------------------- |
-| M1  | Prevent double submit | Active exhaust write; click again        | Same Promise; second args ignored                              | Await original result/error                  | mutate-resource.spec.ts |
-| M2  | Save independently    | Parallel submissions finish out of order | Every server write runs; latest invocation owns display        | Older completion cannot replace latest state | ordering regressions    |
-| M3  | Synchronize cache     | Server succeeds; invalidation throws     | mutate resolves server result                                  | invalidationError shows sync failure         | post-success regression |
-| M4  | Dispose queued writer | concat queue then injector destroy       | Accepted started write finishes; queued transport never starts | Queued Promise rejects                       | disposal tests          |
+| ID  | Task                  | Initial state/action                                      | Outcome                                                        | Failure/recovery                                         | Demo/test                   |
+| --- | --------------------- | --------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- | --------------------------- |
+| M1  | Prevent double submit | Active exhaust write; click again                         | Same Promise; second args ignored                              | Await original result/error                              | mutate-resource.spec.ts     |
+| M2  | Save independently    | Parallel submissions finish out of order                  | Every server write runs; latest invocation owns display        | Older completion cannot replace latest state             | ordering regressions        |
+| M3  | Synchronize cache     | Server succeeds; invalidation throws                      | mutate resolves server result                                  | invalidationError shows sync failure                     | post-success regression     |
+| M4  | Dispose queued writer | concat queue then injector destroy                        | Accepted started write finishes; queued transport never starts | Queued Promise rejects                                   | disposal tests              |
+| M5  | Share domain reads    | Table and summary observe one definition; create a member | One refetch updates both; other scope remains unchanged        | Closing summary preserves table observation              | query-key-ownership.spec.ts |
+| M6  | Map affected tags     | Successful write returns an ID; invocation contains scope | Mapper receives `(result, args)` and selects domain tags       | Failed writes do not call mapper; old option still works | mutate-resource.spec.ts     |
 
 ## Industry evidence and current gaps
 
@@ -190,6 +229,12 @@ parallel/exhaust/concat and invalidationError semantics rather than copying anot
 Use existing query/mutation demos and adjacent mutate-resource tests. Regressions cover plain values/thenables,
 Observable failure, each concurrency mode, latest-invocation ordering, disposal and post-success invalidation failure.
 Show transport error and synchronization error separately when presenting a write outcome.
+
+October 16, 2026 local validation: 25 mutation regressions and four mutation-demo unit tests passed; 33 query browser
+cases passed across Chromium, Firefox and WebKit, including scoped invalidation and all 11 demo languages. Library/demo
+type checks, lint, translation coverage, package builds and fresh installed-consumer verification passed. The packed
+declarations expose both spellings and the deprecation notice; installed Angular consumers exercise the preferred
+callback in zoneless and ZoneJS modes. These are local checks, not CI, merge or publication approval.
 
 ## Compatibility, rollout, and risks
 

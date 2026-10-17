@@ -140,19 +140,14 @@ export class CombineFromComponent {
 }
   `);
 
-  pipeCode = highlight(`
-import {combineFrom} from 'ngx-lift';
+  pipeCode = highlight(`import {combineFrom} from 'ngx-lift';
 
 export class CombineFromComponent {
   a = signal(1);
   b$ = new BehaviorSubject(2);
 
-  combineOperator = combineFrom(
-    [this.a, this.b$],
-    pipe(switchMap(([a, b]) => of(a + b))),
-  ); // 3
-}
-  `);
+  combineOperator = combineFrom([this.a, this.b$], pipe(switchMap(([a, b]) => of(a + b)))); // 3
+}`);
 
   asyncCode = highlight(`
 import {combineFrom} from 'ngx-lift';
@@ -198,8 +193,7 @@ export class CombineFromComponent {
 }
   `);
 
-  realCode = highlight(`
-import {combineFrom, createAsyncState} from 'ngx-lift';
+  realCode = highlight(`import {combineFrom, createAsyncState} from 'ngx-lift';
 import {Component, inject, signal} from '@angular/core';
 import {pipe, switchMap} from 'rxjs';
 import {of} from 'rxjs';
@@ -223,10 +217,11 @@ import {SpinnerComponent, AlertComponent} from 'clr-lift';
         }
       </div>
     }
-  \`
+  \`,
 })
 export class CombineFromComponent {
   private userService = inject(UserService);
+
   count = signal(3);
 
   usersState = combineFrom(
@@ -236,11 +231,9 @@ export class CombineFromComponent {
       createAsyncState(),
     ),
   );
-}
-  `);
+}`);
 
-  initializationCode = highlight(`
-import {combineFrom} from 'ngx-lift';
+  initializationCode = highlight(`import {combineFrom} from 'ngx-lift';
 import {Component, inject, Injector, signal} from '@angular/core';
 
 export class CombineFromComponent {
@@ -252,18 +245,12 @@ export class CombineFromComponent {
   // preventing duplicate emissions between initial synchronous read and toObservable microtask.
   // 2. Decoupled Injector: Can be instantiated dynamically or outside component constructor
   // by passing an explicit injector in the options object.
-  calculation = combineFrom(
-    {count: this.count, multiplier: this.multiplier},
-    {injector: this.injector},
-  );
-}
-  `);
+  calculation = combineFrom({count: this.count, multiplier: this.multiplier}, {injector: this.injector});
+}`);
 
-  signatureCode = highlight(`
-combineFrom<T>(
+  signatureCode = highlight(`combineFrom<T>(
   sources: Record<string, Observable<T> | Signal<T>> | Array<Observable<T> | Signal<T>>,
   operator?: OperatorFunction,
-  options?: CombineFromOptions
-): Signal<T[] | Record<string, T>>
-  `);
+  options?: CombineFromOptions,
+): Signal<T[] | Record<string, T>>;`);
 }

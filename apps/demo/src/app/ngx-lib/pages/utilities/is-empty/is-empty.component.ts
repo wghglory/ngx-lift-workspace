@@ -53,7 +53,5 @@ const result1 = processData({}); // Returns {default: true}
 const result2 = processData({name: 'John'}); // Returns {name: 'John'}
   `);
 
-  signatureCode = highlight(`
-isEmpty(value: unknown): boolean
-  `);
+  signatureCode = highlight(`isEmpty(value: unknown): boolean;`);
 }

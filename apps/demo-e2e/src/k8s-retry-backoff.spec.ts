@@ -4,12 +4,14 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
   test('documents setup and navigates between the operator and interceptor', async ({page}, testInfo) => {
     await page.goto('/ngx-lift/operators/k8sRetryBackoff');
     await expect(page.locator('h1')).toContainText('retryOnK8sBackoff');
-    await expect(page.locator('app-demo-playground').first()).toContainText('resourceAsync');
+    await expect(page.locator('app-code-block').first()).toContainText('resourceAsync');
+    await expect(page.locator('app-demo-playground').first()).toContainText('executeSimulation');
     await expect(page.locator('app-demo-playground').first()).not.toContainText('@Component({ ... })');
     await testInfo.attach('operator-page', {body: await page.screenshot(), contentType: 'image/png'});
     await page.getByRole('link', {name: 'k8sRetryBackoffInterceptor', exact: true}).click();
     await expect(page).toHaveURL(/\/interceptors\/k8sRetryBackoff$/);
-    await expect(page.locator('app-demo-playground').first()).toContainText('withInterceptors');
+    await expect(page.locator('app-code-block').first()).toContainText('withInterceptors');
+    await expect(page.locator('app-demo-playground').first()).toContainText('executeRequest');
     await testInfo.attach('interceptor-page', {body: await page.screenshot(), contentType: 'image/png'});
     await page.getByRole('link', {name: 'retryOnK8sBackoff', exact: true}).click();
     await expect(page).toHaveURL(/\/operators\/k8sRetryBackoff$/);

@@ -1,4 +1,26 @@
 export const esTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': 'Perfil guardado',
+  'queryResource.projectRevision': 'Versión de respuesta',
+  'queryResource.activeUser': 'Usuario actual',
+  'queryResource.engineLabel': 'Motor',
+  'queryResource.computeLabel': 'Recursos',
+  'queryOwnership.title': 'Claves y etiquetas por dominio',
+  'queryOwnership.definitions':
+    'Mantén los observadores en los componentes. Importa definiciones completas y fábricas de etiquetas del dominio responsable; incluye el ámbito y todos los parámetros que cambian la respuesta en las claves.',
+  'queryOwnership.refactoring':
+    'Use exportaciones compartidas en lugar de repetir cadenas. Antes de cambiar o eliminar una definición, busque todas las referencias, coordine con el dominio responsable y verifique las lecturas y escrituras afectadas.',
+  'queryOwnership.noCache':
+    'Las claves también identifican solicitudes y estado compartidos. staleTime: 0 marca los datos como obsoletos; gcTime: 0 elimina entradas sin uso cuando terminan las solicitudes. Usa resourceAsync para estado independiente sin clave. Las mutaciones no necesitan clave.',
+  'queryOwnership.naming':
+    'invalidateTags acepta una matriz o una función (result, args) ejecutada solo tras el éxito. Devuelva [] para omitir la invalidación.',
+  'queryOwnership.journey':
+    'Añade miembros: la tabla y el resumen comparten una solicitud por actualización. Cierra el resumen, añade otro miembro y ábrelo. Los datos y las solicitudes del equipo B no cambian.',
+  'queryOwnership.closeSummary': 'Cerrar resumen',
+  'queryOwnership.openSummary': 'Abrir resumen',
+  'queryOwnership.summary': 'Resumen del equipo A',
+  'queryOwnership.teamAReads': 'Solicitudes del equipo A',
+  'queryOwnership.otherScope': 'Miembros del equipo B (otro ámbito)',
+  'queryOwnership.teamBReads': 'Solicitudes del equipo B',
   'header.selectLanguage': 'Seleccionar idioma',
   'header.openGitHub': 'Abrir en GitHub',
   'header.codeLicensed': 'Código bajo licencia',
@@ -636,7 +658,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'Tarjeta de Perfil de Usuario',
   'queryResource.simulatedMasterList': 'Lista Maestra (Seleccionar Base de Datos)',
   'queryResource.simulatedDetailCard': 'Vista de Detalle (Especificaciones Activas)',
-  'queryResource.updateNameBtn': 'Actualizar Nombre vía authStateService.updateProfile.mutate()',
+  'queryResource.updateNameBtn': 'Actualizar nombre',
   'queryResource.componentPlacementAdvice':
     'Se recomienda la ubicación en el componente cuando los datos están estrictamente limitados a una vista. No requiere archivos adicionales y se limpia automáticamente al desmontar.',
   'queryResource.demo1Section': 'Coalescencia de solicitudes',
@@ -710,10 +732,10 @@ export const esTranslations: Record<string, string> = {
   'queryResource.thRole': 'Función',
   'queryResource.diagnosticsSection': 'El desarrollador Diagnóstico',
   'queryResource.diagnosticsSectionDesc':
-    'Inspeccione la caché, los observadores, las lecturas lógicas pendientes, los reintentos, GC y el sondeo de este QueryClient. Los ejemplos de fallos y servicios Observable usan clientes independientes.',
-  'queryResource.diagnosticsPlaygroundTitle': 'Diagnóstico en vivo de QueryClient',
+    'Registre provideQueryDevtools() una vez en app.config.ts para mostrar el botón flotante solo en desarrollo. Inspeccione consultas en el panel inferior mientras usa la aplicación.',
+  'queryResource.diagnosticsPlaygroundTitle': 'Panel de consultas',
   'queryResource.diagnosticsPlaygroundDesc':
-    'Haga clic en &quot; Refresh Diagnostics &quot; para sondear el estado interno de QueryClient a través de getDiagnostics() y getEntriesSnapshot().',
+    'Busque, filtre y ordene consultas; inspeccione datos, errores y tiempos. Recargar ejecuta el cargador seleccionado. Esta vista de documentación también está habilitada en producción.',
   'queryResource.badgeDiagnostics': 'Diagnóstico',
   'queryResource.refreshDiagnostics': 'Refrescar el diagnóstico',
   'queryResource.diagTotalEntries': 'Total de entradas',
@@ -2117,7 +2139,7 @@ export const esTranslations: Record<string, string> = {
     'Retraso en milisegundos antes de ocultar la herramienta de ayuda después de salir del ratón.',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'Función asíncrona o observable ejecutando la operación de escritura en el lado del servidor.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     'Etiquetas para invalidar al escribir con éxito. Programa inmediatamente refetches para consultas activas.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     'Estrategia para llamadas superpuestas: paralelo (predeterminado), exhaust (conecta en el momento de la escritura), concat (cola).',

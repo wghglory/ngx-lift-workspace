@@ -107,7 +107,5 @@ export class IntersectionValidatorComponent {
 }
   `);
 
-  signatureCode = highlight(`
-intersectionValidator(controlName1: string, controlName2: string): ValidatorFn
-  `);
+  signatureCode = highlight(`intersectionValidator(controlName1: string, controlName2: string): ValidatorFn;`);
 }

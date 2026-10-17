@@ -25,7 +25,8 @@ export class IsHttpsPipeComponent {
       },
     ];
   });
-  basicExampleCode = highlight(`
+  basicExampleCode = highlight(`import {Component} from '@angular/core';
+
 import {IsHttpsPipe} from 'ngx-lift';
 
 @Component({
@@ -36,27 +37,27 @@ import {IsHttpsPipe} from 'ngx-lift';
 
     <p>{{ 'http://www.example.com' | isHttps }}</p>
     <!-- Output: false -->
-  \`
+  \`,
 })
-export class IsHttpsExampleComponent {}
-  `);
+export class IsHttpsExampleComponent {}`);
 
-  conditionalRenderingCode = highlight(`
+  conditionalRenderingCode = highlight(`import {Component} from '@angular/core';
+
 import {IsHttpsPipe} from 'ngx-lift';
 
 @Component({
   imports: [IsHttpsPipe],
   template: \`
-    @if(url | isHttps) {
+    @if (url | isHttps) {
       <secure-component [url]="url" />
     } @else {
       <p>Please use HTTPS</p>
     }
-  \`
-})
-  `);
+  \`,
+})`);
 
-  securityValidationCode = highlight(`
+  securityValidationCode = highlight(`import {Component} from '@angular/core';
+
 import {IsHttpsPipe} from 'ngx-lift';
 
 @Component({
@@ -64,15 +65,12 @@ import {IsHttpsPipe} from 'ngx-lift';
   template: \`
     <div>
       <span>{{ url }}</span>
-      @if(url | isHttps) {
+      @if (url | isHttps) {
         <clr-icon shape="shield" status="success" />
       }
     </div>
-  \`
-})
-  `);
+  \`,
+})`);
 
-  signatureCode = highlight(`
-transform(value: string): boolean
-  `);
+  signatureCode = highlight(`transform(value: string): boolean;`);
 }

@@ -30,10 +30,11 @@
       [badgeText]="'pageContainer.example2Badge' | translate"
       layout="split"
       [tsCode]="customClassCode"
+      [scssCode]="customClassStylesCode"
     >
       <div preview>
         <div class="preview-box">
-          <cll-page-container [title]="'pageContainer.demoClusterSettings' | translate">
+          <cll-page-container [title]="'pageContainer.demoClusterSettings' | translate" customClass="density-compact">
             <div class="card">
               <div class="card-block">
                 <p class="card-text">{{ 'pageContainer.demoConfigured' | translate }}</p>

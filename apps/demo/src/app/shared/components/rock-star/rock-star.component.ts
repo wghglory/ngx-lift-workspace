@@ -14,23 +14,23 @@ import {UserService} from '../../services/user.service';
 })
 export class RockStarComponent {
   today$ = of(new Date());
-  private readonly translations = inject(TranslationService);
+  private readonly translationService = inject(TranslationService);
 
   readonly formattedToday = computed(() =>
-    new Intl.DateTimeFormat(this.translations.locale(), {dateStyle: 'medium'}).format(new Date()),
+    new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium'}).format(new Date()),
   );
 
   formatDate(value: Date | null): string {
     if (!value) return '';
-    return new Intl.DateTimeFormat(this.translations.locale(), {dateStyle: 'medium'}).format(value);
+    return new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium'}).format(value);
   }
 
   private showStarAction = new Subject<void>();
-  private users = inject(UserService);
+  private readonly userService = inject(UserService);
 
   rockStarState$ = this.showStarAction.pipe(
     switchMapWithAsyncState(() =>
-      this.users.getUsers({results: 1}).pipe(map((response) => ({name: response.results[0].name.first}))),
+      this.userService.getUsers({results: 1}).pipe(map((response) => ({name: response.results[0].name.first}))),
     ),
   );
 

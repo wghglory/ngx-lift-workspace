@@ -1,5 +1,5 @@
 import {JsonPipe} from '@angular/common';
-import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
@@ -215,6 +215,20 @@ export class ToSignalFormComponent {
   });
 
   readonly quickSf = toSignalForm(this.quickForm);
+  readonly quickSubmitted = signal<Partial<{username: string; email: string; notifications: boolean}> | null>(null);
+
+  saveQuickProfile(): void {
+    if (this.quickSf.invalid()) {
+      this.quickSf.markAllAsTouched();
+      return;
+    }
+    this.quickSubmitted.set({...this.quickSf.submitValue()});
+  }
+
+  resetQuickProfile(): void {
+    this.quickSf.reset();
+    this.quickSubmitted.set(null);
+  }
 
   readonly quickFormState = computed(() => ({
     valid: this.quickSf.valid(),
@@ -497,74 +511,121 @@ export class ToSignalFormComponent {
   }
 
   // Code snippets for documentation tabs
-  readonly quickStartTs = highlight(`
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { toSignalForm } from 'ngx-lift';
+  readonly quickStartTs = highlight(`import {signal} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {toSignalForm} from 'ngx-lift';
 
-const form = new FormGroup({
-  username: new FormControl('', [Validators.required, Validators.minLength(3)]),
-  email: new FormControl('', [Validators.required, Validators.email]),
-  notifications: new FormControl(true, { nonNullable: true }),
+// Component fields and handlers used by the live preview.
+readonly quickForm = new FormGroup({
+  username: new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required, Validators.minLength(3)],
+  }),
+  email: new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required, Validators.email],
+  }),
+  notifications: new FormControl(true, {nonNullable: true}),
 });
 
-// Create signal-enhanced facade
-export const sf = toSignalForm(form);
+readonly quickSf = toSignalForm(this.quickForm);
 
-// Read fields as native Signals in components and templates:
-sf.fields.username.value() // Signal<string>
-sf.valid()                 // Signal<boolean>
-sf.submitValue()           // Signal<TSubmitValue>
-`);
+readonly quickSubmitted = signal<Partial<{username: string; email: string; notifications: boolean}> | null>(null);
+
+saveQuickProfile(): void {
+  if (this.quickSf.invalid()) {
+    this.quickSf.markAllAsTouched();
+    return;
+  }
+  this.quickSubmitted.set({...this.quickSf.submitValue()});
+}
+
+resetQuickProfile(): void {
+  this.quickSf.reset();
+  this.quickSubmitted.set(null);
+}`);
 
   readonly quickStartHtml = highlight(
-    `
-<form clrForm [formGroup]="quickForm">
+    `<form clrForm [formGroup]="quickForm" class="max-w-xl" (ngSubmit)="saveQuickProfile()">
   <clr-input-container>
-    <label>Username</label>
-    <input clrInput [formControl]="quickSf.controls.username" />
-    <clr-control-error *clrIfError="'required'">Username is required.</clr-control-error>
+    <label for="quick-username">{{ 'toSignalForm.username' | translate }}</label>
+    <input
+      id="quick-username"
+      clrInput
+      [formControl]="quickSf.controls.username"
+      [placeholder]="'toSignalForm.usernamePlaceholder' | translate"
+    />
+    <clr-control-error *clrIfError="'required'">{{ 'toSignalForm.usernameRequired' | translate }}</clr-control-error>
+    <clr-control-error *clrIfError="'minlength'">{{ 'toSignalForm.usernameMinLength' | translate }}</clr-control-error>
   </clr-input-container>
 
   <clr-input-container>
-    <label>Email</label>
-    <input clrInput type="email" [formControl]="quickSf.controls.email" />
-    <clr-control-error *clrIfError="'email'">Valid email is required.</clr-control-error>
+    <label for="quick-email">{{ 'toSignalForm.email' | translate }}</label>
+    <input
+      id="quick-email"
+      clrInput
+      type="email"
+      [formControl]="quickSf.controls.email"
+      [placeholder]="'toSignalForm.emailPlaceholder' | translate"
+    />
+    <clr-control-error *clrIfError="'required'">{{ 'toSignalForm.emailRequired' | translate }}</clr-control-error>
+    <clr-control-error *clrIfError="'email'">{{ 'toSignalForm.emailInvalid' | translate }}</clr-control-error>
   </clr-input-container>
 
-  <!-- Submit button bound directly to reactive invalid signal -->
-  <button class="btn btn-primary" [disabled]="quickSf.invalid()">
-    Save Profile
-  </button>
+  <clr-toggle-container>
+    <label for="quick-notifications">{{ 'toSignalForm.receiveUpdates' | translate }}</label>
+    <clr-toggle-wrapper>
+      <input type="checkbox" id="quick-notifications" clrToggle [formControl]="quickSf.controls.notifications" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+
+  <div cds-layout="horizontal gap:xs align:center m-t:sm">
+    <button type="submit" class="btn btn-primary" [disabled]="quickSf.invalid()">
+      {{ 'toSignalForm.saveProfile' | translate }}
+    </button>
+    <button type="button" class="btn btn-outline" (click)="resetQuickProfile()">
+      {{ 'toSignalForm.reset' | translate }}
+    </button>
+  </div>
 </form>
-`,
-    'xml',
+@if (quickSubmitted()) {
+  <p>{{ 'toSignalForm.savedProfile' | translate }}</p>
+  <pre data-testid="quick-saved-profile">{{ quickSubmitted() | json }}</pre>
+}`,
+    'html',
   );
 
-  readonly toSignalFormSnippet = highlight(`
-// 1. Single entry-point for the entire form:
+  readonly toSignalFormSnippet = highlight(`// 1. Single entry-point for the entire form:
 readonly sf = toSignalForm(this.form, {
   omit: ['confirmPassword'],
 });
 
 // 2. Read field signals (Angular 22 style):
 engine = this.sf.fields.engine.value; // Signal<string> -> this.engine()
-clusterNameDebounced = this.sf.controlValue('clusterName', { debounceTime: 400 });
+clusterNameDebounced = this.sf.controlValue('clusterName', {debounceTime: 400});
 
 // 3. Field status & validation signals:
-this.sf.fields.clusterName.valid()    // Signal<boolean>
-this.sf.fields.clusterName.invalid()  // Signal<boolean>
-this.sf.fields.clusterName.touched()  // Signal<boolean>
-this.sf.fields.clusterName.errors()   // Signal<ValidationErrors | null>
+readFieldState() {
+  return {
+    valid: this.sf.fields.clusterName.valid(),
+    invalid: this.sf.fields.clusterName.invalid(),
+    touched: this.sf.fields.clusterName.touched(),
+    errors: this.sf.fields.clusterName.errors(),
+  };
+}
 
 // 4. Form-level status signals:
-this.sf.valid()       // Signal<boolean>
-this.sf.invalid()     // Signal<boolean>
-this.sf.rawValue()    // Signal<T> (preserves disabled controls)
-this.sf.submitValue() // Signal<TSubmitValue> (sanitized submission value)
-`);
+readFormState() {
+  return {
+    valid: this.sf.valid(),
+    invalid: this.sf.invalid(),
+    rawValue: this.sf.rawValue(),
+    submitValue: this.sf.submitValue(),
+  };
+}`);
 
-  readonly bindIfSnippet = highlight(`
-// Mount/unmount a group of related controls (SQL credentials) together with memory retention.
+  readonly bindIfSnippet =
+    highlight(`// Mount/unmount a group of related controls (SQL credentials) together with memory retention.
 // Condition accepts any reactive getter function () => boolean or Signal<boolean>:
 this.sf.bindIf(
   () => this.authMode() === 'sql',
@@ -572,15 +633,14 @@ this.sf.bindIf(
     password: new FormControl('', [Validators.required, Validators.minLength(8)]),
     confirmPassword: new FormControl('', [
       Validators.required,
-      (ctrl) => (ctrl.value === this.form.controls.password?.value ? null : { passwordMismatch: true }),
+      (ctrl) => (ctrl.value === this.form.controls.password?.value ? null : {passwordMismatch: true}),
     ]),
   }),
-  { preserveValue: true }
+  {preserveValue: true},
 );
 
 // Re-validate confirmPassword whenever password changes:
-this.sf.revalidate('confirmPassword', 'password');
-`);
+this.sf.revalidate('confirmPassword', 'password');`);
 
   readonly bindDisabledSnippet = highlight(`
 // Pattern 1: Strongly-typed control name + reactive getter function + auto-reset
@@ -605,8 +665,7 @@ this.sf.bindDisabled(this.sf.controls.storageGb, () => this.autoScaling(), {
 // const isLocked = this.sf.fields.storageGb.disabled();
 `);
 
-  readonly submitValueSnippet = highlight(`
-// 1. Facade initialization (omits confirmPassword from submitValue):
+  readonly submitValueSnippet = highlight(`// 1. Facade initialization (omits confirmPassword from submitValue):
 readonly sf = toSignalForm(this.form, {
   omit: ['confirmPassword'],
 });
@@ -615,10 +674,11 @@ readonly sf = toSignalForm(this.form, {
 // - lazy: true prevents premature execution on component load or typing
 // - behavior: 'exhaust' drops duplicate clicks during in-flight submission
 // - sf.submitValue() provides the sanitized, backend-ready object directly to the API
-readonly createClusterRef = resourceAsync(
-  () => this.api.createCluster(this.sf.submitValue()),
-  { lazy: true, reactive: false, behavior: 'exhaust' }
-);
+readonly createClusterRef = resourceAsync(() => this.api.createCluster(this.sf.submitValue()), {
+  lazy: true,
+  reactive: false,
+  behavior: 'exhaust',
+});
 
 // 3. Trigger simulated submission on button click:
 onSubmit(): void {
@@ -627,38 +687,36 @@ onSubmit(): void {
     return;
   }
   this.createClusterRef.execute(); // Fires API call and transitions to loading state
-}
-`);
+}`);
 
-  readonly featureGatingSnippet = highlight(`
-// 1. Asynchronously resolve regional capability via computedAsync:
+  readonly featureGatingSnippet = highlight(`// 1. Asynchronously resolve regional capability via computedAsync:
 // (Asynchronous feature flag or capability lookup)
 readonly isMultiZoneSupported = computedAsync(
   () => this.featureGate.isSupported('supervisorInfraPolicy.multiZone', this.sf.fields.region.value(), this.engine()),
-  { initialValue: false }
+  {initialValue: false},
 );
 
-// 2. Pass reactive getter function directly into sf.bindIf:
-this.sf.bindIf(
-  () => this.isMultiZoneSupported(),
-  () => ({
-    haTopology: new FormControl('', [Validators.required]),
-    replicaCount: new FormControl(2, [Validators.required, Validators.min(2)]),
-  }),
-  { preserveValue: true }
-);
+// 2. Register the conditional controls in the injection context.
+constructor() {
+  this.sf.bindIf(
+    () => this.isMultiZoneSupported(),
+    () => ({
+      haTopology: new FormControl('', [Validators.required]),
+      replicaCount: new FormControl(2, [Validators.required, Validators.min(2)]),
+    }),
+    {preserveValue: true},
+  );
+}
 
-// 3. SubmitValue automatically includes or omits controls when capability changes:
-const submitData = this.sf.submitValue();
-`);
+// 3. Submitted values include the currently active controls.
+submit() {
+  return this.sf.submitValue();
+}`);
 
-  readonly cascadingSnippet = highlight(`
-// Approach 1 (Traditional Reactive Forms): valueChanges + takeUntilDestroyed
-this.form.controls.engine.valueChanges
-  .pipe(takeUntilDestroyed())
-  .subscribe((engine) => {
-    this.syncVersionForEngine(engine);
-  });
+  readonly cascadingSnippet = highlight(`// Approach 1 (Traditional Reactive Forms): valueChanges + takeUntilDestroyed
+this.form.controls.engine.valueChanges.pipe(takeUntilDestroyed()).subscribe((engine) => {
+  this.syncVersionForEngine(engine);
+});
 
 // Approach 2 (Modern Signal-Based - Angular 22 Style): sf.controls.engine.watch / sf.watch
 // Uses Angular effect() internally with untracked isolation, allowing safe cascading writes
@@ -670,6 +728,5 @@ this.sf.controls.engine.watch((engine) => {
 // Or using sf.watch directly:
 this.sf.watch('engine', (engine) => {
   this.syncVersionForEngine(engine);
-});
-`);
+});`);
 }

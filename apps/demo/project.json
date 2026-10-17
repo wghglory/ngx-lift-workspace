@@ -54,6 +54,12 @@
           ]
         },
         "development": {
+          "fileReplacements": [
+            {
+              "replace": "libs/clr-lift/devtools/index.ts",
+              "with": "libs/clr-lift/devtools/development/index.ts"
+            }
+          ],
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true,

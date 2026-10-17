@@ -12,21 +12,24 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalloutDemoComponent {
-  basicCalloutCode = highlight(`
+  basicCalloutCode = highlight(`import {Component} from '@angular/core';
+
 import {CalloutComponent} from 'clr-lift';
 
 @Component({
   imports: [CalloutComponent],
   template: \`
     <cll-callout>
-      <p class="font-medium" cds-layout="m-t:none">Please note that all configuration changes take effect immediately.</p>
+      <p class="font-medium" cds-layout="m-t:none">
+        Please note that all configuration changes take effect immediately.
+      </p>
     </cll-callout>
-  \`
+  \`,
 })
-export class CalloutExampleComponent {}
-  `);
+export class CalloutExampleComponent {}`);
 
-  listAndLinksCode = highlight(`
+  listAndLinksCode = highlight(`import {Component} from '@angular/core';
+
 import {CalloutComponent} from 'clr-lift';
 
 @Component({
@@ -37,16 +40,18 @@ import {CalloutComponent} from 'clr-lift';
         <li>Supports both <strong>light</strong> and <strong>dark</strong> themes automatically.</li>
         <li>
           For more details, check out the
-          <a href="https://clarity.design" target="_blank" rel="noopener noreferrer">Clarity Design System documentation</a>.
+          <a href="https://clarity.design" target="_blank" rel="noopener noreferrer"
+            >Clarity Design System documentation</a
+          >.
         </li>
       </ul>
     </cll-callout>
-  \`
+  \`,
 })
-export class CalloutListExampleComponent {}
-  `);
+export class CalloutListExampleComponent {}`);
 
-  richContentCode = highlight(`
+  richContentCode = highlight(`import {Component} from '@angular/core';
+
 import {CalloutComponent} from 'clr-lift';
 import {ClrIconModule} from '@clr/angular';
 
@@ -63,8 +68,7 @@ import {ClrIconModule} from '@clr/angular';
         </div>
       </div>
     </cll-callout>
-  \`
+  \`,
 })
-export class CalloutRichExampleComponent {}
-  `);
+export class CalloutRichExampleComponent {}`);
 }

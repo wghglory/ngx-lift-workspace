@@ -318,8 +318,7 @@ export class MyComponent {
 }
   `);
 
-  signalForceRefreshCode = highlight(`
-import {poll} from 'ngx-lift';
+  signalForceRefreshCode = highlight(`import {poll} from 'ngx-lift';
 import {signal} from '@angular/core';
 import {of, delay} from 'rxjs';
 
@@ -330,8 +329,8 @@ export class DeviceMonitorComponent {
   devicePollState$ = poll({
     interval: 8000,
     forceRefresh: this.statusFilter,
-    paramsBuilder: (status) => ({ status, limit: status === 'all' ? 50 : 20 }),
-    pollingFn: (params) => this.api.getDevices(params)
+    paramsBuilder: (status) => ({status, limit: status === 'all' ? 50 : 20}),
+    pollingFn: (params) => this.api.getDevices(params),
   });
 
   // 2. Updating the Signal immediately triggers pollingFn.
@@ -340,13 +339,9 @@ export class DeviceMonitorComponent {
   changeFilter(status: 'all' | 'active' | 'inactive') {
     this.statusFilter.set(status);
   }
-}
-  `);
+}`);
 
-  signatureCode = highlight(`
-poll<Data, Input>(options: PollOptions<Data, Input>): Observable<AsyncState<Data>>
-
-interface PollOptions<Data, Input> {
+  signatureCode = highlight(`interface PollOptions<Data, Input> {
   pollingFn: (input?: Input) => Observable<Data> | Promise<Data> | Data;
   interval: number;
   forceRefresh?: Observable<Input> | Signal<Input>;
@@ -354,10 +349,10 @@ interface PollOptions<Data, Input> {
   initialValue?: AsyncState<Data>;
   delay?: number;
 }
-  `);
 
-  advancedCode = highlight(`
-import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
+poll<Data, Input>(options: PollOptions<Data, Input>): Observable<AsyncState<Data>>;`);
+
+  advancedCode = highlight(`import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
 import {AlertComponent, convertToHttpParams, dgState} from 'clr-lift';
 import {poll} from 'ngx-lift';
 import {inject} from '@angular/core';
@@ -373,10 +368,9 @@ export class PollComponent {
     interval: 10_000,
     pollingFn: (params) => this.userService.getUsers({...params, results: 10, seed: 'abc'}),
     paramsBuilder: (dgState: ClrDatagridStateInterface | null) => convertToHttpParams(dgState), // build params for getUsers
-    forceRefresh: this.dgState$,  // datagrid filter, sort, pagination change will immediately force a refresh of the API call
+    forceRefresh: this.dgState$, // datagrid filter, sort, pagination change will immediately force a refresh of the API call
   });
-}
-    `);
+}`);
 
   startPolling = new Subject<void>();
 

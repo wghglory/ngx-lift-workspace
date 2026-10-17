@@ -164,11 +164,9 @@ export class UserDetailComponent {
 }
   `);
 
-  signatureCode = highlight(`
-injectParams(): Signal<Params>
-injectParams(key: string): Signal<string | null>
-injectParams<T>(key: string, options: InjectParamsOptions<T>): Signal<T>
-injectParams<T>(transform: (params: Params) => T): Signal<T>
-injectParams<T>(transform: (params: Params) => T, options: InjectParamsOptions<T>): Signal<T>
-  `);
+  signatureCode = highlight(`injectParams(): Signal<Params>;
+injectParams(key: string): Signal<string | null>;
+injectParams<T>(key: string, options: InjectParamsOptions<T>): Signal<T>;
+injectParams<T>(transform: (params: Params) => T): Signal<T>;
+injectParams<T>(transform: (params: Params) => T, options: InjectParamsOptions<T>): Signal<T>;`);
 }

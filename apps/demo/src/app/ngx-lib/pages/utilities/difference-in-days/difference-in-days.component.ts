@@ -51,7 +51,7 @@ const daysAgo2 = differenceInDays(Date.now(), '2022-09-08');
 console.log(\`That date was \${daysAgo2} days ago\`);
   `);
 
-  signatureCode = highlight(`
-differenceInDays(dateLeft: Date | number | string, dateRight: Date | number | string): number
-  `);
+  signatureCode = highlight(
+    `differenceInDays(dateLeft: Date | number | string, dateRight: Date | number | string): number;`,
+  );
 }

@@ -89,24 +89,21 @@ export class ThemeToggleDemoComponent {
     this.lastChangedEvent.set(`Programmatically set "${theme}" at ${new Date().toLocaleTimeString()}`);
   }
 
-  basicComponentCode = highlight(`
+  basicComponentCode = highlight(`import {Component} from '@angular/core';
+
 import {ThemeToggleComponent, ClarityTheme} from 'clr-lift';
 
 @Component({
   imports: [ThemeToggleComponent],
-  template: \`
-    <cll-theme-toggle (changeTheme)="onThemeChange($event)" />
-  \`
+  template: \` <cll-theme-toggle (changeTheme)="onThemeChange($event)" /> \`,
 })
 export class HeaderComponent {
   onThemeChange(theme: ClarityTheme) {
     console.log('Active theme changed to:', theme);
   }
-}
-  `);
+}`);
 
-  programmaticServiceCode = highlight(`
-import {ThemeService, ClarityTheme} from 'clr-lift';
+  programmaticServiceCode = highlight(`import {ThemeService, ClarityTheme} from 'clr-lift';
 import {Component, inject} from '@angular/core';
 
 @Component({
@@ -114,12 +111,11 @@ import {Component, inject} from '@angular/core';
     <p>Current theme: {{ themeService.theme() }}</p>
     <button class="btn btn-sm btn-outline" (click)="themeService.setTheme('light')">Force Light</button>
     <button class="btn btn-sm btn-outline" (click)="themeService.setTheme('dark')">Force Dark</button>
-  \`
+  \`,
 })
 export class SettingsComponent {
   readonly themeService = inject(ThemeService);
-}
-  `);
+}`);
 
   themingStylesCode = highlight(`
 /* Styling custom components to react to Clarity dark theme */

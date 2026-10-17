@@ -36,6 +36,7 @@
     "e2e:verify": "pnpm run e2e:lint && pnpm run e2e",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md,html,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md,html,yml,yaml}\"",
+    "format:examples": "nx run @ngx-lift-workspace/source:demo-examples-format",
     "affected:test": "nx affected -t test",
     "affected:build": "nx affected -t build",
     "affected:lint": "nx affected -t lint",
@@ -140,7 +141,17 @@
       "tooling-test": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs tools/bundle/*.test.mjs"
+          "commands": [
+            "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs tools/bundle/*.test.mjs tools/demo/*.test.mjs",
+            "node tools/demo/format-examples.mjs"
+          ],
+          "parallel": false
+        }
+      },
+      "demo-examples-format": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node tools/demo/format-examples.mjs --write"
         }
       },
       "i18n-check": {

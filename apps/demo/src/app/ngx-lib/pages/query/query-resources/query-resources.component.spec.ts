@@ -23,6 +23,20 @@ describe('queryResources guide', () => {
     TestBed.resetTestingModule();
     vi.useRealTimers();
   });
+  it('registers collection queries in the application client and releases them on page destruction', async () => {
+    const client = TestBed.inject(QUERY_CLIENT);
+    await client.fetchQuery({key: ['unrelated'], loader: async () => 42});
+    const fixture = TestBed.createComponent(QueryResourcesDemoComponent);
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(150);
+    fixture.detectChanges();
+    expect(client.getDiagnostics().entries).toHaveLength(9);
+    fixture.destroy();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(client.getDiagnostics().entries.map((entry) => entry.key)).toEqual([['unrelated']]);
+    expect(client.getSnapshot(['unrelated'])?.value).toBe(42);
+    expect(client.getDiagnostics().pendingRequestCount).toBe(0);
+  });
   it('preserves displayed refs on reorder and cancels removed pending reads', async () => {
     const fixture = TestBed.createComponent(QueryResourcesDemoComponent);
     const component = fixture.componentInstance;
@@ -40,10 +54,7 @@ describe('queryResources guide', () => {
     fixture.detectChanges();
     const entries = fixture.debugElement.injector.get(QUERY_CLIENT).getDiagnostics().entries;
     const removed = entries.filter((entry) => entry.key[2] === 'tenant');
-    expect(removed).toHaveLength(2);
-    expect(removed.every((entry) => entry.observerCount === 0 && !entry.isPending && entry.requestCount === 0)).toBe(
-      true,
-    );
+    expect(removed).toHaveLength(0);
     await expect(a.execute()).rejects.toThrow('destroyed');
   });
   it('recovers a failed row without reloading a successful sibling', async () => {

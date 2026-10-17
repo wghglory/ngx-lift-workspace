@@ -54,8 +54,7 @@ export class SwitchMapWithAsyncStateComponent {
     this.#saveAction.next();
   }
 
-  example1Code = highlight(`
-import {switchMapWithAsyncState} from 'ngx-lift';
+  example1Code = highlight(`import {switchMapWithAsyncState} from 'ngx-lift';
 import {Component, inject} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -95,7 +94,7 @@ import {AsyncPipe, NgIf, NgFor} from '@angular/common';
         }
       }
     </div>
-  \`
+  \`,
 })
 export class FilterUsersComponent {
   genderControl = new FormControl('');
@@ -106,11 +105,9 @@ export class FilterUsersComponent {
     filter(Boolean),
     switchMapWithAsyncState((gender) => this.userService.getUsers({gender, results: 9})),
   );
-}
-  `);
+}`);
 
-  example2Code = highlight(`
-import {switchMapWithAsyncState} from 'ngx-lift';
+  example2Code = highlight(`import {switchMapWithAsyncState} from 'ngx-lift';
 import {Component, inject} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {HttpClient} from '@angular/common/http';
@@ -134,7 +131,7 @@ import {Subject} from 'rxjs';
         <cll-alert [error]="error" />
       }
     </form>
-  \`
+  \`,
 })
 export class SubmitFormComponent {
   private http = inject(HttpClient);
@@ -151,12 +148,9 @@ export class SubmitFormComponent {
   save() {
     this.#saveAction.next();
   }
-}
-  `);
+}`);
 
-  signatureCode = highlight(`
-switchMapWithAsyncState<T, R>(
-  project: (value: T, index: number) => ObservableInput<R>
-): OperatorFunction<T, AsyncState<R>>
-  `);
+  signatureCode = highlight(`switchMapWithAsyncState<T, R>(
+  project: (value: T, index: number) => ObservableInput<R>,
+): OperatorFunction<T, AsyncState<R>>;`);
 }

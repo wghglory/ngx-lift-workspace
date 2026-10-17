@@ -72,35 +72,28 @@ export class StartWithTapComponent {
     this.fetchedData.set(null);
   }
 
-  basicUsageCode = highlight(`
-import {startWithTap} from 'ngx-lift';
+  basicUsageCode = highlight(`import {startWithTap} from 'ngx-lift';
 import {of, delay, finalize} from 'rxjs';
 
-this.http.get('/api/users')
+this.http
+  .get('/api/users')
   .pipe(
     startWithTap(() => this.loading.set(true)),
-    finalize(() => this.loading.set(false))
+    finalize(() => this.loading.set(false)),
   )
   .subscribe((users) => {
     this.users.set(users);
-  });
-  `);
+  });`);
 
-  lazyExecutionCode = highlight(`
-import {startWithTap} from 'ngx-lift';
+  lazyExecutionCode = highlight(`import {startWithTap} from 'ngx-lift';
 import {of} from 'rxjs';
 
 // Callback does NOT run when pipeline is declared:
-const stream$ = of('Ready').pipe(
-  startWithTap(() => console.log('Subscription started!'))
-);
+const stream$ = of('Ready').pipe(startWithTap(() => console.log('Subscription started!')));
 
 // Callback runs synchronously each time .subscribe() is invoked:
 stream$.subscribe(); // Logs: "Subscription started!"
-stream$.subscribe(); // Logs: "Subscription started!"
-  `);
+stream$.subscribe(); // Logs: "Subscription started!"`);
 
-  signatureCode = highlight(`
-startWithTap<T>(callback: () => void): MonoTypeOperatorFunction<T>
-  `);
+  signatureCode = highlight(`startWithTap<T>(callback: () => void): MonoTypeOperatorFunction<T>;`);
 }

@@ -74,7 +74,8 @@ export class AlertDemoComponent {
     ];
   });
 
-  standardApiErrorCode = highlight(`
+  standardApiErrorCode = highlight(`import {Component} from '@angular/core';
+
 import {AlertComponent} from 'clr-lift';
 
 @Component({
@@ -82,16 +83,16 @@ import {AlertComponent} from 'clr-lift';
   template: \`
     <!-- error is instance of HttpErrorResponse -->
     <cll-alert [error]="error" />
-  \`
+  \`,
 })
 export class AlertExampleComponent {
   error = new HttpErrorResponse({
     error: {message: 'Error message'},
   });
-}
-  `);
+}`);
 
-  standardContentCode = highlight(`
+  standardContentCode = highlight(`import {Component} from '@angular/core';
+
 import {AlertComponent} from 'clr-lift';
 
 @Component({
@@ -104,12 +105,12 @@ import {AlertComponent} from 'clr-lift';
 
     <!-- Pass HTML tags -->
     <cll-alert alertType="info" [content]="'<strong>Hello world</strong>, I like clr-lift!'" />
-  \`
+  \`,
 })
-export class AlertContentExampleComponent { }
-  `);
+export class AlertContentExampleComponent {}`);
 
-  standardProjectionCode = highlight(`
+  standardProjectionCode = highlight(`import {Component} from '@angular/core';
+
 import {AlertComponent} from 'clr-lift';
 
 @Component({
@@ -134,24 +135,22 @@ import {AlertComponent} from 'clr-lift';
         </li>
       </ol>
     </cll-alert>
-  \`
+  \`,
 })
-export class AlertProjectionExampleComponent { }
-  `);
+export class AlertProjectionExampleComponent {}`);
 
-  smallAlertCode = highlight(`
+  smallAlertCode = highlight(`import {Component} from '@angular/core';
+
 import {AlertComponent} from 'clr-lift';
 
 @Component({
   imports: [AlertComponent],
-  template: \`
-    <cll-alert alertType="danger" content="I'm a small alert" [isSmall]="true" />
-  \`
+  template: \` <cll-alert alertType="danger" content="I'm a small alert" [isSmall]="true" /> \`,
 })
-export class SmallAlertExampleComponent { }
-  `);
+export class SmallAlertExampleComponent {}`);
 
-  lightweightAlertsCode = highlight(`
+  lightweightAlertsCode = highlight(`import {Component} from '@angular/core';
+
 import {AlertComponent} from 'clr-lift';
 
 @Component({
@@ -164,12 +163,12 @@ import {AlertComponent} from 'clr-lift';
     <cll-alert [isLightweight]="true" alertType="neutral" content="I'm a neutral content" />
     <cll-alert [isLightweight]="true" alertType="loading" content="I'm a loading content" />
     <cll-alert [isLightweight]="true" alertType="unknown" content="I'm a unknown content" />
-  \`
+  \`,
 })
-export class LightweightAlertExampleComponent { }
-  `);
+export class LightweightAlertExampleComponent {}`);
 
-  appLevelAlertsCode = highlight(`
+  appLevelAlertsCode = highlight(`import {Component} from '@angular/core';
+
 import {AlertComponent} from 'clr-lift';
 
 @Component({
@@ -187,8 +186,7 @@ import {AlertComponent} from 'clr-lift';
     </cll-alert>
     <cll-alert alertType="info" content="I'm a info content" [isAppLevel]="true" />
     <cll-alert alertType="warning" content="I'm a warning content" [isAppLevel]="true" />
-  \`
+  \`,
 })
-export class AppLevelAlertExampleComponent { }
-  `);
+export class AppLevelAlertExampleComponent {}`);
 }

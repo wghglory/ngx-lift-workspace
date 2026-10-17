@@ -5,6 +5,13 @@
     <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
   </cll-callout>
 
+  <cll-callout>
+    <h3>{{ 'queryOwnership.title' | translate }}</h3>
+    <p>{{ 'queryOwnership.definitions' | translate }}</p>
+    <p>{{ 'queryOwnership.noCache' | translate }}</p>
+    <a routerLink="/ngx-lift/query/mutateResource">{{ 'queryOwnership.title' | translate }}</a>
+  </cll-callout>
+
   <section class="query-section" data-testid="query-introduction">
     <h2>{{ 'queryResource.comparisonTitle' | translate }}</h2>
     <p>{{ 'queryResource.comparisonIntro' | translate }}</p>
@@ -180,53 +187,9 @@
               level="intermediate"
               layout="split"
               [tsCode]="authServiceCode"
+              [htmlCode]="authHtmlCode"
             >
-              <div preview>
-                <div cds-layout="vertical gap:sm">
-                  <div class="card p-3">
-                    <div class="card-header font-weight-semibold">
-                      {{ 'queryResource.simulatedTopbar' | translate }} (<code>TopbarComponent</code>)
-                    </div>
-                    <div class="card-block">
-                      @if (demoAuthQuery.isInitialLoading()) {
-                        <cll-spinner inline [size]="'sm'" />
-                        <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
-                      } @else if (demoAuthQuery.value(); as user) {
-                        @if (demoAuthQuery.isRefreshing()) {
-                          <cll-spinner inline [size]="'sm'" />
-                        }
-                        <span>
-                          <strong>{{ user.name }}</strong> ({{ user.role }}) &middot;
-                          <span class="text-secondary">{{ user.email }}</span>
-                        </span>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="card p-3 m-t-sm">
-                    <div class="card-header font-weight-semibold">
-                      {{ 'queryResource.simulatedProfile' | translate }} (<code>UserProfileEditorComponent</code>)
-                    </div>
-                    <div class="card-block" cds-layout="vertical gap:sm">
-                      @if (demoAuthQuery.value(); as user) {
-                        <p class="m-0">
-                          Active User Signal: <code>{{ user.name }}</code> &middot; Status:
-                          <span [appQueryStatus]="demoAuthQuery.status()">{{ demoAuthQuery.status() }}</span>
-                        </p>
-                      }
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        [clrLoading]="demoAuthMutation.isLoading()"
-                        (click)="cycleDemoUserName()"
-                      >
-                        <clr-icon shape="refresh" />
-                        {{ 'queryResource.updateNameBtn' | translate }}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div preview><app-auth-placement-demo /></div>
             </app-demo-playground>
           </div>
         </clr-tab-content>
@@ -249,13 +212,13 @@
                   <div>
                     <span class="font-weight-semibold">{{ 'queryResource.simulatedMasterList' | translate }}:</span>
                     <div class="btn-group btn-sm m-t-xs" role="group">
-                      @for (db of demoDbList; track db.id) {
+                      @for (db of databaseStateService.databases; track db.id) {
                         <button
                           type="button"
                           class="btn"
-                          [class.btn-primary]="demoSelectedDbId() === db.id"
-                          [class.btn-outline]="demoSelectedDbId() !== db.id"
-                          (click)="selectDemoDb(db.id)"
+                          [class.btn-primary]="databaseStateService.activeDatabaseId() === db.id"
+                          [class.btn-outline]="databaseStateService.activeDatabaseId() !== db.id"
+                          (click)="databaseStateService.selectDatabase(db.id)"
                         >
                           {{ db.name }}
                         </button>
@@ -268,22 +231,24 @@
                       {{ 'queryResource.simulatedDetailCard' | translate }} (<code>DatabaseDetailComponent</code>)
                     </div>
                     <div class="card-block">
-                      @if (demoDbDetailsQuery.isInitialLoading()) {
+                      @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
                         <div class="text-center p-y-sm">
                           <cll-spinner inline [size]="'sm'" />
                           <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
                         </div>
-                      } @else if (demoDbDetailsQuery.value(); as details) {
+                      } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
                         <div cds-layout="vertical gap:xs">
                           <h4 class="m-0 font-weight-bold">{{ details.name }}</h4>
                           <p class="m-0 text-secondary">
-                            Engine: <strong>{{ details.engine }}</strong> &middot; Compute:
-                            <strong>{{ details.cpu }}</strong> / <strong>{{ details.ram }}</strong>
+                            {{ 'queryResource.engineLabel' | translate }}:
+                            <strong>{{ details.engine }}</strong> &middot;
+                            {{ 'queryResource.computeLabel' | translate }}: <strong>{{ details.cpu }}</strong> /
+                            <strong>{{ details.ram }}</strong>
                           </p>
                           <p class="m-0 text-secondary">
-                            Status:
-                            <span [appQueryStatus]="demoDbDetailsQuery.status()">{{
-                              demoDbDetailsQuery.status()
+                            {{ 'mutateResource.statusLabel' | translate }}:
+                            <span [appQueryStatus]="databaseStateService.databaseDetailsQuery.status()">{{
+                              databaseStateService.databaseDetailsQuery.status()
                             }}</span>
                           </p>
                         </div>
@@ -308,16 +273,12 @@
               level="beginner"
               layout="split"
               [tsCode]="componentPlacementCode"
+              [htmlCode]="componentPlacementHtmlCode"
             >
               <div preview>
                 <div cds-layout="vertical gap:sm">
-                  <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false">
-                    <clr-alert-item>
-                      <span class="alert-text" role="status">{{
-                        'queryResource.componentPlacementAdvice' | translate
-                      }}</span>
-                    </clr-alert-item>
-                  </clr-alert>
+                  <p>{{ 'queryResource.componentPlacementAdvice' | translate }}</p>
+                  <app-project-detail-demo projectId="website-redesign" />
                 </div>
               </div>
             </app-demo-playground>
@@ -344,7 +305,7 @@
         <div cds-layout="vertical gap:sm">
           <div class="query-actions">
             <span class="badge badge-info">{{
-              'queryResource.actualHttpCalls' | translate: [coalesceFetchCount()]
+              'queryResource.actualHttpCalls' | translate: [metricsService.readCount()]
             }}</span>
             <button type="button" class="btn btn-sm btn-primary" (click)="refreshMetrics()">
               {{ 'queryResource.reloadQuery' | translate }}
@@ -352,74 +313,11 @@
           </div>
 
           <div class="clr-row m-t-xs">
-            <!-- Component 1: Top Navigation Bar -->
             <div class="clr-col-12 clr-col-md-6 widget-col">
-              <div class="card widget-card">
-                <div class="card-header">
-                  <div class="widget-header-text">
-                    <div class="card-title">
-                      <span class="label label-info m-r-xs">Component 1</span>
-                      {{ 'queryResource.widgetATitle' | translate }}
-                    </div>
-                    <div class="card-subtitle text-muted">{{ 'queryResource.widgetASubtitle' | translate }}</div>
-                  </div>
-                  @if (metricsAQuery.isLoading()) {
-                    <cll-spinner inline [size]="'sm'" class="m-l-xs" />
-                  }
-                </div>
-                <div class="card-block">
-                  @if (metricsAQuery.value(); as data) {
-                    <div class="widget-metrics">
-                      <p class="p7">
-                        {{ 'queryResource.activeUsers' | translate }}: <strong>{{ data.activeUsers }}</strong>
-                      </p>
-                      <p class="p7">
-                        {{ 'queryResource.cpuLoad' | translate }}: <strong>{{ data.cpuLoad }}%</strong>
-                      </p>
-                      <p class="p7">
-                        {{ 'queryResource.status' | translate }}:
-                        <span [appQueryStatus]="metricsAQuery.status()">{{ metricsAQuery.status() }}</span>
-                      </p>
-                      <p class="p7 text-muted">{{ 'queryResource.updated' | translate }}: {{ data.timestamp }}</p>
-                    </div>
-                  }
-                </div>
-              </div>
+              <app-metrics-widget variant="topbar" />
             </div>
-
-            <!-- Component 2: Main Dashboard Card -->
             <div class="clr-col-12 clr-col-md-6 widget-col">
-              <div class="card widget-card">
-                <div class="card-header">
-                  <div class="widget-header-text">
-                    <div class="card-title">
-                      <span class="label label-info m-r-xs">Component 2</span>
-                      {{ 'queryResource.widgetBTitle' | translate }}
-                    </div>
-                    <div class="card-subtitle text-muted">{{ 'queryResource.widgetBSubtitle' | translate }}</div>
-                  </div>
-                  @if (metricsBQuery.isLoading()) {
-                    <cll-spinner inline [size]="'sm'" class="m-l-xs" />
-                  }
-                </div>
-                <div class="card-block">
-                  @if (metricsBQuery.value(); as data) {
-                    <div class="widget-metrics">
-                      <p class="p7">
-                        {{ 'queryResource.memoryUsage' | translate }}: <strong>{{ data.memoryUsage }}%</strong>
-                      </p>
-                      <p class="p7">
-                        {{ 'queryResource.cpuLoad' | translate }}: <strong>{{ data.cpuLoad }}%</strong>
-                      </p>
-                      <p class="p7">
-                        {{ 'queryResource.status' | translate }}:
-                        <span [appQueryStatus]="metricsBQuery.status()">{{ metricsBQuery.status() }}</span>
-                      </p>
-                      <p class="p7 text-muted">{{ 'queryResource.updated' | translate }}: {{ data.timestamp }}</p>
-                    </div>
-                  }
-                </div>
-              </div>
+              <app-metrics-widget variant="dashboard" />
             </div>
           </div>
         </div>
@@ -495,7 +393,12 @@
           </div>
         }
 
-        <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false" class="m-t-md">
+        <clr-alert
+          [clrAlertType]="'info'"
+          [clrAlertClosable]="false"
+          class="focus-refetch-note"
+          data-testid="focus-refetch-note"
+        >
           <clr-alert-item>
             <span class="alert-text" role="status">
               <strong>{{ 'queryResource.focusRefetchNoteTitle' | translate }}:</strong>
@@ -661,151 +564,17 @@
   <section data-testid="query-diagnostics" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2>{{ 'queryResource.diagnosticsSection' | translate }}</h2>
     <p>{{ 'queryResource.diagnosticsSectionDesc' | translate }}</p>
+    <h3>app.config.ts</h3>
+    <app-code-block [code]="diagnosticsSetupCode" />
 
     <app-demo-playground
       [title]="'queryResource.diagnosticsPlaygroundTitle' | translate"
       [description]="'queryResource.diagnosticsPlaygroundDesc' | translate"
       [tsCode]="diagnosticsCode"
+      [htmlCode]="diagnosticsHtmlCode"
       [badgeText]="'queryResource.badgeDiagnostics' | translate"
     >
-      <div inspector class="query-actions">
-        <button type="button" class="btn btn-sm btn-outline" (click)="refreshDiagnostics()">
-          {{ 'queryResource.refreshDiagnostics' | translate }}
-        </button>
-      </div>
-
-      <div preview>
-        <!-- Metric Cards -->
-        <div class="clr-row diag-cards-row">
-          <div class="clr-col-6 clr-col-md-2 diag-card-col">
-            <div class="card card-block text-center p-y-sm diag-metric-card">
-              <span class="text-secondary font-weight-light diag-card-title">{{
-                'queryResource.diagTotalEntries' | translate
-              }}</span>
-              <h3 class="diag-card-val">{{ diagnostics().entryCount }}</h3>
-            </div>
-          </div>
-          <div class="clr-col-6 clr-col-md-2 diag-card-col">
-            <div class="card card-block text-center p-y-sm diag-metric-card">
-              <span class="text-secondary font-weight-light diag-card-title">{{
-                'queryResource.diagActiveQueries' | translate
-              }}</span>
-              <h3 class="diag-card-val text-success">{{ diagnostics().activeEntryCount }}</h3>
-            </div>
-          </div>
-          <div class="clr-col-6 clr-col-md-2 diag-card-col">
-            <div class="card card-block text-center p-y-sm diag-metric-card">
-              <span class="text-secondary font-weight-light diag-card-title">{{
-                'queryResource.diagInactiveQueries' | translate
-              }}</span>
-              <h3 class="diag-card-val text-warning">{{ diagnostics().inactiveEntryCount }}</h3>
-            </div>
-          </div>
-          <div class="clr-col-6 clr-col-md-2 diag-card-col">
-            <div class="card card-block text-center p-y-sm diag-metric-card">
-              <span class="text-secondary font-weight-light diag-card-title">{{
-                'queryResource.diagPendingRequests' | translate
-              }}</span>
-              <h3 class="diag-card-val text-info">{{ diagnostics().pendingRequestCount }}</h3>
-            </div>
-          </div>
-          <div class="clr-col-6 clr-col-md-2 diag-card-col">
-            <div class="card card-block text-center p-y-sm diag-metric-card">
-              <span class="text-secondary font-weight-light diag-card-title">{{
-                'queryResource.diagTotalObservers' | translate
-              }}</span>
-              <h3 class="diag-card-val">{{ diagnostics().totalObserverCount }}</h3>
-            </div>
-          </div>
-          <div class="clr-col-6 clr-col-md-2 diag-card-col">
-            <div class="card card-block text-center p-y-sm diag-metric-card">
-              <span class="text-secondary font-weight-light diag-card-title">{{
-                'queryResource.diagVisibility' | translate
-              }}</span>
-              <div class="diag-card-val">
-                @if (diagnostics().isVisible) {
-                  <span class="label label-success">{{ 'queryResource.diagVisible' | translate }}</span>
-                } @else {
-                  <span class="label label-warning">{{ 'queryResource.diagHidden' | translate }}</span>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Entries Table -->
-        <div class="query-table">
-          <table class="table table-compact m-t-md">
-            <thead>
-              <tr>
-                <th>{{ 'queryResource.thQueryKey' | translate }}</th>
-                <th>{{ 'queryResource.status' | translate }}</th>
-                <th>{{ 'queryResource.thObservers' | translate }}</th>
-                <th>{{ 'queryResource.thFailures' | translate }}</th>
-                <th>{{ 'queryResource.thNextRetry' | translate }}</th>
-                <th>{{ 'queryResource.freshness' | translate }}</th>
-                <th>{{ 'queryResource.thRemainingGc' | translate }}</th>
-                <th>{{ 'queryResource.thRemainingPoll' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (entry of diagnostics().entries; track entry.serializedKey) {
-                <tr>
-                  <td>
-                    <code>{{ entry.serializedKey }}</code>
-                  </td>
-                  <td>
-                    <span
-                      class="label"
-                      [class.label-success]="entry.status === 'resolved'"
-                      [class.label-info]="entry.status === 'loading' || entry.status === 'reloading'"
-                      [class.label-danger]="entry.status === 'error'"
-                    >
-                      {{ entry.status }}
-                    </span>
-                  </td>
-                  <td>{{ entry.observerCount }}</td>
-                  <td>{{ entry.failureCount }}</td>
-                  <td>
-                    @if (entry.nextRetryAt !== null) {
-                      {{ entry.nextRetryAt | date: 'mediumTime' }}
-                    } @else {
-                      -
-                    }
-                  </td>
-                  <td>
-                    @if (entry.isStale) {
-                      <span class="label label-warning">{{ 'queryResource.freshnessBadgeStale' | translate }}</span>
-                    } @else {
-                      <span class="label label-success">{{ 'queryResource.freshnessBadgeFresh' | translate }}</span>
-                    }
-                  </td>
-                  <td>
-                    @if (entry.remainingGcTime !== null) {
-                      {{ (entry.remainingGcTime / 1000).toFixed(1) }}s
-                    } @else {
-                      -
-                    }
-                  </td>
-                  <td>
-                    @if (entry.remainingPollDelay !== null) {
-                      {{ (entry.remainingPollDelay / 1000).toFixed(1) }}s
-                    } @else {
-                      -
-                    }
-                  </td>
-                </tr>
-              } @empty {
-                <tr>
-                  <td colspan="8" class="text-center p-y-sm text-secondary">
-                    {{ 'queryResource.noQueriesCached' | translate }}
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <div preview><cll-query-devtools [enabled]="true" /></div>
     </app-demo-playground>
   </section>
 

@@ -150,11 +150,9 @@ export class MergeFromComponent {
 }
   `);
 
-  signatureCode = highlight(`
-mergeFrom<T>(
+  signatureCode = highlight(`mergeFrom<T>(
   sources: Record<string, Observable<T> | Signal<T>> | Array<Observable<T> | Signal<T>>,
   operator?: OperatorFunction,
-  options?: MergeFromOptions
-): Signal<T>
-  `);
+  options?: MergeFromOptions,
+): Signal<T>;`);
 }

@@ -1,0 +1,52 @@
+<div cds-layout="vertical gap:sm">
+  <div class="card p-3">
+    <div class="card-header font-weight-semibold">
+      {{ 'queryResource.simulatedTopbar' | translate }}
+    </div>
+    <div class="card-block">
+      @if (authStateService.currentUserQuery.isInitialLoading()) {
+        <cll-spinner inline [size]="'sm'" />
+        <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
+      } @else if (authStateService.currentUserQuery.value(); as user) {
+        @if (authStateService.currentUserQuery.isRefreshing()) {
+          <cll-spinner inline [size]="'sm'" />
+        }
+        <span>
+          <strong>{{ user.name }}</strong> ({{ user.role }}) &middot;
+          <span class="text-secondary">{{ user.email }}</span>
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="card p-3 m-t-sm">
+    <div class="card-header font-weight-semibold">
+      {{ 'queryResource.simulatedProfile' | translate }}
+    </div>
+    <div class="card-block" cds-layout="vertical gap:sm">
+      @if (authStateService.currentUserQuery.value(); as user) {
+        <p class="m-0">
+          {{ 'queryResource.activeUser' | translate }}: <code>{{ user.name }}</code> &middot;
+          {{ 'mutateResource.statusLabel' | translate }}:
+          <span [appQueryStatus]="authStateService.currentUserQuery.status()">{{
+            authStateService.currentUserQuery.status()
+          }}</span>
+        </p>
+      }
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        [clrLoading]="authStateService.updateProfileMutation.isLoading()"
+        [disabled]="
+          authStateService.updateProfileMutation.isLoading() ||
+          authStateService.currentUserQuery.isLoading() ||
+          !authStateService.currentUserQuery.hasValue()
+        "
+        (click)="authStateService.updateName()"
+      >
+        <clr-icon shape="refresh" />
+        {{ 'queryResource.updateNameBtn' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

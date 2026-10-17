@@ -1,4 +1,25 @@
 export const zhCNTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': '已保存的用户资料',
+  'queryResource.projectRevision': '响应版本',
+  'queryResource.activeUser': '当前用户',
+  'queryResource.engineLabel': '引擎',
+  'queryResource.computeLabel': '计算资源',
+  'queryOwnership.title': '按领域管理 key 和 tag',
+  'queryOwnership.definitions':
+    '在组件中创建观察者，从所属领域导入完整查询定义和 tag 工厂。key 应包含作用域以及所有会影响响应的参数。',
+  'queryOwnership.refactoring':
+    '使用共享导出，避免重复字符串。修改或删除定义前，搜索所有引用，与所属领域的维护者协调，并验证受影响的读取和写入。',
+  'queryOwnership.noCache':
+    'key 也用于标识共享请求和状态。staleTime: 0 表示数据立即过期；gcTime: 0 在请求结束后清理闲置条目。独立且无需 key 的状态请使用 resourceAsync。变更操作无需 key。',
+  'queryOwnership.naming': 'invalidateTags 支持数组或仅成功后执行的 (result, args) 回调。返回 [] 可跳过失效处理。',
+  'queryOwnership.journey':
+    '在下方添加成员：表格与摘要每次刷新共享一个请求。关闭摘要后再次添加，再打开摘要。团队 B 的数据和请求数保持不变。',
+  'queryOwnership.closeSummary': '关闭摘要',
+  'queryOwnership.openSummary': '打开摘要',
+  'queryOwnership.summary': '团队 A 摘要',
+  'queryOwnership.teamAReads': '团队 A 请求数',
+  'queryOwnership.otherScope': '团队 B 成员（独立作用域）',
+  'queryOwnership.teamBReads': '团队 B 请求数',
   'header.selectLanguage': '选择语言',
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '代码开源协议',
@@ -584,7 +605,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': '用户资料卡片',
   'queryResource.simulatedMasterList': '主列表（选择数据库）',
   'queryResource.simulatedDetailCard': '详情视图（规格详情）',
-  'queryResource.updateNameBtn': '通过 authStateService.updateProfile.mutate() 更新用户名',
+  'queryResource.updateNameBtn': '更新用户名',
   'queryResource.componentPlacementAdvice':
     '当数据严格限制在单一视图中时，推荐使用组件级放置。它不需要额外的服务文件，能无缝绑定组件 Signal 输入 input()，并在组件卸载时立即自动清理。',
   'queryResource.demo1Section': '并发请求合并与去重 (Request Coalescing)',
@@ -654,10 +675,10 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.thRole': '职位角色',
   'queryResource.diagnosticsSection': '开发者诊断与缓存检查器',
   'queryResource.diagnosticsSectionDesc':
-    '查看此 QueryClient 的缓存、观察者、待结算逻辑读取、重试进度、GC 与轮询。失败和 Observable 服务示例使用独立 client。',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient 实时运行诊断',
+    '在 app.config.ts 中注册一次 provideQueryDevtools()，即可启用仅开发环境显示的悬浮入口。在底部面板中检查查询，同时继续操作应用。',
+  'queryResource.diagnosticsPlaygroundTitle': '查询检查面板',
   'queryResource.diagnosticsPlaygroundDesc':
-    '点击“刷新诊断”通过 getDiagnostics() 与 getEntriesSnapshot() 获取 QueryClient 的最新内部状态。',
+    '搜索、筛选和排序查询，查看缓存数据、错误及时间信息。重新获取会执行所选查询的加载器。此文档预览也在生产构建中显式启用。',
   'queryResource.badgeDiagnostics': '诊断',
   'queryResource.refreshDiagnostics': '刷新诊断',
   'queryResource.diagTotalEntries': '总缓存条目',
@@ -1860,7 +1881,7 @@ export const zhCNTranslations: Record<string, string> = {
     "提示框相对元素的位置，例如 'tooltip-top-right'、'tooltip-top-left' 等。",
   'demoApi.tooltip-demo.inputs.cllTooltipHideDelay': '鼠标移出后隐藏提示框的延迟，单位为毫秒。',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation': '执行服务端写入操作的异步函数或 Observable。',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     '写入成功后使对应 tag 失效，并立即为活跃查询安排重新获取。',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     '重叠调用的策略：parallel（默认，并行）、exhaust（加入进行中的操作）、concat（排队）。',

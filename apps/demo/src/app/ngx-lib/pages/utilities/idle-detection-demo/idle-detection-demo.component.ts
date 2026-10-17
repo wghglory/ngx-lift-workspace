@@ -76,8 +76,7 @@ export class IdleDetectionConfig {
 }
   `);
 
-  moduleUsage = highlight(`
-import { provideIdleDetectionConfig, IdleDetectionService } from 'ngx-lift';
+  moduleUsage = highlight(`import {provideIdleDetectionConfig, IdleDetectionService} from 'ngx-lift';
 
 @NgModule({
   providers: [
@@ -88,20 +87,15 @@ import { provideIdleDetectionConfig, IdleDetectionService } from 'ngx-lift';
     }),
   ],
 })
-export class AppModule {}
-  `);
+export class AppModule {}`);
 
-  standaloneUsage = highlight(`
-import { provideIdleDetectionConfig } from 'ngx-lift';
+  standaloneUsage = highlight(`import {provideIdleDetectionConfig} from 'ngx-lift';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideIdleDetectionConfig({ idleDurationInSeconds: 20 * 60, timeoutDurationInSeconds: 5 * 60 }),
-  ],
+  providers: [provideIdleDetectionConfig({idleDurationInSeconds: 20 * 60, timeoutDurationInSeconds: 5 * 60})],
 };
 
-bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
-  `);
+bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));`);
 
   someComponentUsage = highlight(`
 import {IdleDetectionService} from 'ngx-lift';
@@ -159,8 +153,7 @@ export class AppComponent implements OnInit, OnDestroy {
 }
   `);
 
-  idleDetectionComponentCode = highlight(`
-import {IdleDetectionComponent} from 'clr-lift';
+  idleDetectionComponentCode = highlight(`import {IdleDetectionComponent} from 'clr-lift';
 import {Component, inject} from '@angular/core';
 
 @Component({
@@ -173,7 +166,7 @@ import {Component, inject} from '@angular/core';
         (timeout)="onTimeout()"
       />
     }
-  \`
+  \`,
 })
 export class AppComponent {
   isLoggedIn = inject(AuthService).isLoggedIn;
@@ -182,8 +175,7 @@ export class AppComponent {
     localStorage.removeItem('your-app-jwt');
     location.assign('/login');
   }
-}
-  `);
+}`);
 
   // onTimeout() {
   //   this.router.navigate(['/login']);

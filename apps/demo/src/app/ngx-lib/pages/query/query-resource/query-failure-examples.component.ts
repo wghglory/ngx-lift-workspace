@@ -97,7 +97,7 @@ export class QueryFailureExamplesComponent {
     {
       client: this.client,
       concurrency: 'exhaust',
-      invalidatesTags: [{type: 'FailureData', scope: 'demo'}],
+      invalidateTags: [{type: 'FailureData', scope: 'demo'}],
     },
   );
 

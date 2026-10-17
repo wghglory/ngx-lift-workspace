@@ -9,6 +9,12 @@
     <a routerLink="/ngx-lift/interceptors/k8sRetryBackoff">k8sRetryBackoffInterceptor</a>
   </cll-callout>
 
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.basicUsage' | translate }}</h2>
+    <app-code-block [code]="operatorCode" lang="typescript" />
+    <app-code-block [code]="delayHelperCode" lang="typescript" />
+  </section>
+
   <!-- Interactive Simulator Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -19,7 +25,7 @@
       level="intermediate"
       badgeText="RxJS Operator"
       layout="stacked"
-      [tsCode]="operatorCode"
+      [tsCode]="simulationCode"
     >
       <div preview class="preview-box" cds-layout="vertical gap:md">
         <clr-radio-container clrInline>
@@ -127,7 +133,7 @@
       level="beginner"
       badgeText="Helper Function"
       layout="stacked"
-      [tsCode]="delayHelperCode"
+      [tsCode]="delaySimulationCode"
     >
       <div preview class="preview-box" cds-layout="vertical gap:md">
         <clr-radio-container clrInline>

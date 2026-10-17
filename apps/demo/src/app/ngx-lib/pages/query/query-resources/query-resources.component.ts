@@ -1,12 +1,12 @@
 import {JsonPipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {ClarityIcons, refreshIcon} from '@clr/angular/icon';
 import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
 
-import {QUERY_CLIENT, QueryClient, queryResource, queryResources} from 'ngx-lift';
+import {QUERY_CLIENT, queryResource, queryResources} from 'ngx-lift';
 import {forkJoin, Observable, of} from 'rxjs';
 import {catchError, delay, map, switchMap} from 'rxjs/operators';
 
@@ -76,14 +76,6 @@ const K8S_METRICS_FIXTURE: Record<string, {latency: number; metrics: Omit<K8sClu
     QueryDemoBackend,
     QueryFailureBackend,
     {provide: HttpClient, useFactory: () => new HttpClient(inject(QueryDemoBackend))},
-    {
-      provide: QUERY_CLIENT,
-      useFactory: () => {
-        const client = new QueryClient({queryDefaults: {deadlineMs: 5000}});
-        inject(DestroyRef).onDestroy(() => client.destroy());
-        return client;
-      },
-    },
   ],
   templateUrl: './query-resources.component.html',
   styleUrl: './query-resources.component.scss',
@@ -97,9 +89,12 @@ export class QueryResourcesDemoComponent {
   private readonly queryClient = inject(QUERY_CLIENT);
 
   readonly selectedTenants = signal(['a']);
+  // Use the application client for devtools, but release page-owned mock loaders when observers leave.
   readonly tenantQueries = queryResources(this.selectedTenants, (id) => ({
     key: ['collection-demo', id, 'tenant'],
     staleTime: 30_000,
+    gcTime: 0,
+    deadlineMs: 5000,
     cancelOnNoObservers: true,
     loader: () => this.http.get<DemoTenant>(`/query-demo/tenants/${id}`),
   }));
@@ -109,6 +104,8 @@ export class QueryResourcesDemoComponent {
     (id) => ({
       key: ['collection-demo', 'rows', id],
       staleTime: 30_000,
+      gcTime: 0,
+      deadlineMs: 5000,
       cancelOnNoObservers: true,
       loader: () => this.failureHttp.get<FailureDemoData>(`/query-failure/rows/${id}`),
     }),
@@ -131,6 +128,9 @@ export class QueryResourcesDemoComponent {
   readonly clustersBulkQuery = queryResource<K8sClusterBulkItem[]>(() => ({
     key: ['k8s-demo', 'clusters-bulk-fleet'],
     staleTime: 30_000,
+    gcTime: 0,
+    deadlineMs: 5000,
+    cancelOnNoObservers: true,
     loader: () =>
       this.fetchK8sClusters().pipe(
         switchMap((clusters) => {
@@ -151,6 +151,9 @@ export class QueryResourcesDemoComponent {
     key: ['k8s-demo', 'clusters-parent-list'],
     tags: [{type: 'k8s-fleet-demo'}],
     staleTime: 60_000,
+    gcTime: 0,
+    deadlineMs: 5000,
+    cancelOnNoObservers: true,
     loader: () => this.fetchK8sClusters(),
   }));
 
@@ -160,6 +163,8 @@ export class QueryResourcesDemoComponent {
       key: ['k8s-demo', 'cluster-metric', cluster.id],
       tags: [{type: 'k8s-fleet-demo'}, {type: 'k8s-cluster', id: cluster.id}],
       staleTime: 30_000,
+      gcTime: 0,
+      deadlineMs: 5000,
       cancelOnNoObservers: true,
       loader: () => this.fetchClusterMetrics(cluster.id),
     }),
@@ -178,8 +183,8 @@ export class QueryResourcesDemoComponent {
   }
 
   readonly dynamicCode = highlight(`// Component fields (with HttpClient injected as this.http).
-readonly selectedIds = signal(['a']);
-readonly tenantQueries = queryResources(this.selectedIds, (id) => ({
+readonly selectedTenants = signal(['a']);
+readonly tenantQueries = queryResources(this.selectedTenants, (id) => ({
   key: ['tenants', id],
   loader: () => this.http.get<Tenant>(\`/api/tenants/\${id}\`),
   staleTime: 30_000,
@@ -187,15 +192,17 @@ readonly tenantQueries = queryResources(this.selectedIds, (id) => ({
 }));
 
 // In template:
-// <button (click)="selectedIds.set(['a'])">Tenant A only</button>
-// <button (click)="selectedIds.set(['a', 'b'])">Both tenants</button>
-// <button (click)="selectedIds.set(['b', 'a'])">Reverse order</button>
-// <button (click)="selectedIds.set([])">Clear selection</button>
+// <button (click)="selectedTenants.set(['a'])">Tenant A only</button>
+// <button (click)="selectedTenants.set(['a', 'b'])">Both tenants</button>
+// <button (click)="selectedTenants.set(['b', 'a'])">Reverse order</button>
+// <button (click)="selectedTenants.set([])">Clear selection</button>
 // Add, reorder or remove IDs; retained keys keep the same ref.`);
 
   readonly rowCode = highlight(`@for (row of rowQueries(); track row.key) {
   <p>{{ row.item() }}: {{ row.status() }}</p>
-  @if (row.hasValue()) { <p>{{ row.value()?.value }}</p> }
+  @if (row.hasValue()) {
+    <p>{{ row.value()?.value }}</p>
+  }
   @if (row.isInitialError()) {
     <button (click)="row.reload()">Retry this read</button>
   }
@@ -213,8 +220,8 @@ readonly clustersBulkQuery = queryResource(() => ({
         if (!clusters.length) return of([]);
         const requests = clusters.map((cluster) =>
           this.http.get<ClusterMetrics>(\`/api/v1/clusters/\${cluster.id}/metrics\`).pipe(
-            map((metrics) => ({ ...cluster, metrics })),
-            catchError((err) => of({ ...cluster, metrics: null, error: err.message })),
+            map((metrics) => ({...cluster, metrics})),
+            catchError((err) => of({...cluster, metrics: null, error: err.message})),
           ),
         );
         return forkJoin(requests);

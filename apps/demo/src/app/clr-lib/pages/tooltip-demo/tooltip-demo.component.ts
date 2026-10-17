@@ -72,8 +72,7 @@ export class TooltipDemoComponent implements OnInit {
       description: this.translationService.translate('demoApi.tooltip-demo.inputs.cllTooltipHideDelay'),
     },
   ]);
-  basicTooltipCode = highlight(`
-import {TooltipModule} from 'clr-lift';
+  basicTooltipCode = highlight(`import {TooltipModule} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
@@ -92,13 +91,11 @@ import {Component} from '@angular/core';
     </a>
 
     <a href="javascript:void(0)" cllTooltip cllTooltipContent="">Empty Content Will NOT Show Tooltip</a>
-  \`
+  \`,
 })
-export class BasicTooltipExampleComponent {}
-  `);
+export class BasicTooltipExampleComponent {}`);
 
-  templateRefCode = highlight(`
-import {TooltipModule} from 'clr-lift';
+  templateRefCode = highlight(`import {TooltipModule} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
@@ -118,13 +115,11 @@ import {Component} from '@angular/core';
       {{ 'A great tooltip:' }} {{ data }} {{ value }}
       <cll-callout> You can also put a component inside ng-template </cll-callout>
     </ng-template>
-  \`
+  \`,
 })
-export class TemplateRefTooltipExampleComponent {}
-  `);
+export class TemplateRefTooltipExampleComponent {}`);
 
-  componentRefCode = highlight(`
-import {TooltipModule, AlertComponent} from 'clr-lift';
+  componentRefCode = highlight(`import {TooltipModule, AlertComponent} from 'clr-lift';
 import {Component, ApplicationRef, ComponentRef, createComponent, DestroyRef, inject, OnInit} from '@angular/core';
 
 @Component({
@@ -141,7 +136,7 @@ import {Component, ApplicationRef, ComponentRef, createComponent, DestroyRef, in
         Component Ref Example
       </a>
     }
-  \`
+  \`,
 })
 export class ComponentRefTooltipExampleComponent implements OnInit {
   private appRef = inject(ApplicationRef);
@@ -158,11 +153,9 @@ export class ComponentRefTooltipExampleComponent implements OnInit {
       this.alertComponentRef?.destroy();
     });
   }
-}
-  `);
+}`);
 
-  componentTypeCode = highlight(`
-import {TooltipModule, SpinnerComponent} from 'clr-lift';
+  componentTypeCode = highlight(`import {TooltipModule, SpinnerComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
@@ -172,12 +165,11 @@ import {Component} from '@angular/core';
     <a href="javascript:void(0)" cllTooltip [cllTooltipContent]="SpinnerComponent" [cllTooltipHideDelay]="1000">
       Component Type Example
     </a>
-  \`
+  \`,
 })
 export class ComponentTypeTooltipExampleComponent {
   SpinnerComponent = SpinnerComponent;
-}
-  `);
+}`);
 
   SpinnerComponent = SpinnerComponent;
 

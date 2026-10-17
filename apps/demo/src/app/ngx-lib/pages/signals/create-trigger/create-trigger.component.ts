@@ -108,7 +108,5 @@ export class CreateTriggerComponent {
 }
   `);
 
-  signatureCode = highlight(`
-createTrigger(): {value: Signal<number>; next: () => void}
-  `);
+  signatureCode = highlight(`createTrigger(): {value: Signal<number>; next: () => void};`);
 }

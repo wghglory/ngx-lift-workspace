@@ -1,4 +1,26 @@
 export const enTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': 'Saved profile',
+  'queryResource.projectRevision': 'Response version',
+  'queryResource.activeUser': 'Current user',
+  'queryResource.engineLabel': 'Engine',
+  'queryResource.computeLabel': 'Compute',
+  'queryOwnership.title': 'Domain-owned keys and tags',
+  'queryOwnership.definitions':
+    'Keep observers in components. Import complete query definitions and tag factories from the owning domain; include scope and every response-changing parameter in keys.',
+  'queryOwnership.refactoring':
+    'Use shared exports instead of repeated strings. Before changing or deleting a definition, find all references, coordinate with the owning domain, and verify affected reads and writes.',
+  'queryOwnership.noCache':
+    'Keys identify shared requests and state too. staleTime: 0 makes data stale; gcTime: 0 collects unused entries after requests settle. Use resourceAsync for independent state without a key. Mutations need no key.',
+  'queryOwnership.naming':
+    'invalidateTags accepts an array or a success-only (result, args) callback. Return [] to skip invalidation.',
+  'queryOwnership.journey':
+    'Add members below: the table and summary share one request per refresh. Close the summary, add again, and reopen it. Team B keeps its value and request count.',
+  'queryOwnership.closeSummary': 'Close summary',
+  'queryOwnership.openSummary': 'Open summary',
+  'queryOwnership.summary': 'Team A summary',
+  'queryOwnership.teamAReads': 'Team A requests',
+  'queryOwnership.otherScope': 'Team B members (separate scope)',
+  'queryOwnership.teamBReads': 'Team B requests',
   'header.selectLanguage': 'Select Language',
   'header.openGitHub': 'Open on GitHub',
   'header.codeLicensed': 'Code licensed under',
@@ -614,7 +636,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'User Profile Card',
   'queryResource.simulatedMasterList': 'Master List (Select Database)',
   'queryResource.simulatedDetailCard': 'Detail View (Active Specs)',
-  'queryResource.updateNameBtn': 'Update Name via authStateService.updateProfile.mutate()',
+  'queryResource.updateNameBtn': 'Update name',
   'queryResource.componentPlacementAdvice':
     'Component Placement is recommended when data is strictly scoped to one view. It requires zero extra files, automatically binds to component signal inputs input(), and cleans up immediately on unmount.',
   'queryResource.demo1Section': 'Request Coalescing & Deduplication',
@@ -687,10 +709,10 @@ export const enTranslations: Record<string, string> = {
   'queryResource.thRole': 'Role',
   'queryResource.diagnosticsSection': 'Developer Diagnostics & Cache Inspector',
   'queryResource.diagnosticsSectionDesc':
-    "Inspect this QueryClient's cache, observers, pending logical reads, retry progress, GC and polling. The failure and Observable service examples use separate clients.",
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient Live Diagnostics',
+    'Register provideQueryDevtools() once in app.config.ts for a development-only floating launcher. Inspect queries in a bottom panel while continuing to use the application.',
+  'queryResource.diagnosticsPlaygroundTitle': 'Query inspector panel',
   'queryResource.diagnosticsPlaygroundDesc':
-    'Click "Refresh Diagnostics" to poll the internal QueryClient state via getDiagnostics() and getEntriesSnapshot().',
+    'Search, filter and sort queries; inspect cached data, errors and timing details. Refetch explicitly runs the selected loader. This documentation preview is also enabled in production.',
   'queryResource.badgeDiagnostics': 'Diagnostics',
   'queryResource.refreshDiagnostics': 'Refresh Diagnostics',
   'queryResource.diagTotalEntries': 'Total Entries',
@@ -2012,7 +2034,7 @@ export const enTranslations: Record<string, string> = {
     'Delay in milliseconds before hiding the tooltip after mouse leave.',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'Async function or observable executing the server-side write operation.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     'Tags to invalidate upon successful write. Immediately schedules refetches for active queries.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     'Strategy for overlapping calls: parallel (default), exhaust (joins in-flight), concat (queues).',

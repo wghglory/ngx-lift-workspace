@@ -57,9 +57,7 @@ of([1, 2, 3]).pipe(logger('error')).subscribe();
 of([1, 2, 3]).pipe(logger('info')).subscribe();
   `);
 
-  signatureCode = highlight(`
-logger(
-  method?: 'log' | 'table' | 'warn' | 'error' | 'info' | 'debug'
-): MonoTypeOperatorFunction<T>
-  `);
+  signatureCode = highlight(
+    `logger(method?: 'log' | 'table' | 'warn' | 'error' | 'info' | 'debug'): MonoTypeOperatorFunction<T>;`,
+  );
 }

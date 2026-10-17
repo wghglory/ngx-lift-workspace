@@ -44,8 +44,7 @@ export class KeyValueInputsDemoComponent {
     {key: 'key2', value: 'value2'},
   ];
 
-  exampleCode = highlight(`
-import {KeyValueFormGroup, KeyValueInputsComponent} from 'clr-lift';
+  exampleCode = highlight(`import {KeyValueFormGroup, KeyValueInputsComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 import {FormArray, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
@@ -70,7 +69,7 @@ import {FormArray, FormGroup, ReactiveFormsModule} from '@angular/forms';
         addText="add key value"
       />
     </form>
-  \`
+  \`,
 })
 export class KeyValueInputsExampleComponent {
   form = new FormGroup({
@@ -81,8 +80,7 @@ export class KeyValueInputsExampleComponent {
     {key: 'key1', value: 'value1'},
     {key: 'key2', value: 'value2'},
   ];
-}
-  `);
+}`);
 
   readonly inputs = computed<ApiProperty[]>(() => [
     {

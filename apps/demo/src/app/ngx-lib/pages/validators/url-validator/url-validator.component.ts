@@ -20,8 +20,7 @@ export class UrlValidatorComponent {
     https: new FormControl('', [Validators.required, httpsValidator]),
   });
 
-  urlExampleCode = highlight(`
-import {urlValidator} from 'ngx-lift';
+  urlExampleCode = highlight(`import {urlValidator} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -40,17 +39,15 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
         }
       </div>
     </form>
-  \`
+  \`,
 })
 export class UrlValidatorExampleComponent {
   form = new FormGroup({
     url: new FormControl('', [Validators.required, urlValidator]),
   });
-}
-  `);
+}`);
 
-  httpsExampleCode = highlight(`
-import {httpsValidator} from 'ngx-lift';
+  httpsExampleCode = highlight(`import {httpsValidator} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -69,17 +66,15 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
         }
       </div>
     </form>
-  \`
+  \`,
 })
 export class HttpsValidatorExampleComponent {
   form = new FormGroup({
     https: new FormControl('', [Validators.required, httpsValidator]),
   });
-}
-  `);
+}`);
 
-  completeExampleCode = highlight(`
-import {httpsValidator, urlValidator} from 'ngx-lift';
+  completeExampleCode = highlight(`import {httpsValidator, urlValidator} from 'ngx-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 
@@ -109,21 +104,16 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
         }
       </div>
     </form>
-  \`
+  \`,
 })
 export class UrlValidatorComponent {
   form = new FormGroup({
     url: new FormControl('', [Validators.required, urlValidator]),
     https: new FormControl('', [Validators.required, httpsValidator]),
   });
-}
-  `);
+}`);
 
-  urlSignatureCode = highlight(`
-urlValidator(control: AbstractControl): ValidationErrors | null
-  `);
+  urlSignatureCode = highlight(`urlValidator(control: AbstractControl): ValidationErrors | null;`);
 
-  httpsSignatureCode = highlight(`
-httpsValidator(control: AbstractControl): ValidationErrors | null
-  `);
+  httpsSignatureCode = highlight(`httpsValidator(control: AbstractControl): ValidationErrors | null;`);
 }

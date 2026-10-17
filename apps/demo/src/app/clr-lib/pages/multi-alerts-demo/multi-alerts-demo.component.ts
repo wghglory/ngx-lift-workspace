@@ -140,8 +140,7 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
     alert('You did it correctly!');
   }
 
-  htmlCode = highlight(`
-import {AlertContainerComponent} from 'clr-lift';
+  htmlCode = highlight(`import {AlertContainerComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
@@ -152,10 +151,9 @@ import {Component} from '@angular/core';
       <clr-header></clr-header>
       <!-- rest of your app -->
     </clr-main-container>
-  \`
+  \`,
 })
-export class AppComponent {}
-  `);
+export class AppComponent {}`);
 
   tsCode = highlight(`
 import {AlertService} from 'clr-lift';

@@ -174,25 +174,49 @@ No need to mess with native `<input type="file">` change events or manual Base64
 
 ## 🧩 Component & Operator Quick Reference
 
-| Category           | Export                         | Selector / API             | Description                                                                               |
-| :----------------- | :----------------------------- | :------------------------- | :---------------------------------------------------------------------------------------- |
-| **Datagrid**       | `dgState`                      | Operator / Utility         | Flicker-free reactive datagrid state manager with debounce & race-condition cancellation. |
-| **Feedback**       | `AlertComponent`               | `cll-alert`                | Intelligent alert container with auto-unwrapping for `Error` and `HttpErrorResponse`.     |
-|                    | `AlertContainerComponent`      | `cll-alert-container`      | Multi-alert reactive stack controlled declaratively by `AlertService`.                    |
-|                    | `ToastService`                 | Injectable Service         | Global toast dispatcher supporting `success`, `error`, `warning`, `info`.                 |
-|                    | `ToastContainerComponent`      | `cll-toast-container`      | Root toast overlay host with positioning and auto-dismiss timing.                         |
-|                    | `SpinnerComponent`             | `cll-spinner`              | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                     |
-|                    | `StatusIndicatorComponent`     | `cll-status-indicator`     | Semantic operational state badges (`success`, `warning`, `error`, `pending`).             |
-| **Navigation**     | `TimelineWizardComponent`      | `cll-timeline-wizard`      | Multi-step asynchronous wizard with timeline navigation and async step hooks.             |
-|                    | `PageContainerComponent`       | `cll-page-container`       | Standardized header, breadcrumb, action bar, and content responsive shell.                |
-| **Forms**          | `FileReaderComponent`          | `cll-file-reader`          | `ControlValueAccessor` drag-and-drop file ingestion (Text, DataURL, ArrayBuffer).         |
-|                    | `KeyValueInputsComponent`      | `cll-key-value-inputs`     | Dynamic key-value label/environment variable editor with duplicate key validation.        |
-| **Theming & i18n** | `ThemeToggleComponent`         | `cll-theme-toggle`         | Light/dark theme switch with Clarity token synchronization & persistence.                 |
-|                    | `TranslationService`           | Injectable Service         | Built-in localization service supporting 12+ enterprise locales without external libs.    |
-|                    | `TranslatePipe`                | `translate`                | Reactive pipe for localized component labels and messages.                                |
-| **Overlays**       | `CalloutComponent`             | `cll-callout`              | Lightweight contextual notice box with subtle borders.                                    |
-|                    | `CertificateSignpostComponent` | `cll-certificate-signpost` | Interactive X.509 certificate inspector showing SAN, expiry, and issuer details.          |
-|                    | `TooltipDirective`             | `[cllTooltip]`             | Dynamic declarative popover tooltip.                                                      |
+| Category           | Export                         | Selector / API             | Description                                                                                         |
+| :----------------- | :----------------------------- | :------------------------- | :-------------------------------------------------------------------------------------------------- |
+| **Datagrid**       | `dgState`                      | Operator / Utility         | Flicker-free reactive datagrid state manager with debounce & race-condition cancellation.           |
+| **Feedback**       | `AlertComponent`               | `cll-alert`                | Intelligent alert container with auto-unwrapping for `Error` and `HttpErrorResponse`.               |
+|                    | `AlertContainerComponent`      | `cll-alert-container`      | Multi-alert reactive stack controlled declaratively by `AlertService`.                              |
+|                    | `ToastService`                 | Injectable Service         | Global toast dispatcher supporting `success`, `error`, `warning`, `info`.                           |
+|                    | `ToastContainerComponent`      | `cll-toast-container`      | Root toast overlay host with positioning and auto-dismiss timing.                                   |
+|                    | `SpinnerComponent`             | `cll-spinner`              | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                               |
+|                    | `StatusIndicatorComponent`     | `cll-status-indicator`     | Semantic operational state badges (`success`, `warning`, `error`, `pending`).                       |
+| **Navigation**     | `TimelineWizardComponent`      | `cll-timeline-wizard`      | Multi-step asynchronous wizard with timeline navigation and async step hooks.                       |
+|                    | `PageContainerComponent`       | `cll-page-container`       | Standardized header, breadcrumb, action bar, and content responsive shell.                          |
+| **Forms**          | `FileReaderComponent`          | `cll-file-reader`          | `ControlValueAccessor` drag-and-drop file ingestion (Text, DataURL, ArrayBuffer).                   |
+|                    | `KeyValueInputsComponent`      | `cll-key-value-inputs`     | Dynamic key-value label/environment variable editor with duplicate key validation.                  |
+| **Theming & i18n** | `ThemeToggleComponent`         | `cll-theme-toggle`         | Light/dark theme switch with Clarity token synchronization & persistence.                           |
+|                    | `TranslationService`           | Injectable Service         | Built-in localization service supporting 12+ enterprise locales without external libs.              |
+|                    | `TranslatePipe`                | `translate`                | Reactive pipe for localized component labels and messages.                                          |
+| **Overlays**       | `CalloutComponent`             | `cll-callout`              | Lightweight contextual notice box with subtle borders.                                              |
+|                    | `CertificateSignpostComponent` | `cll-certificate-signpost` | Interactive X.509 certificate inspector showing SAN, expiry, and issuer details.                    |
+|                    | `TooltipDirective`             | `[cllTooltip]`             | Dynamic declarative popover tooltip.                                                                |
+| **Development**    | `QueryDevtoolsComponent`       | `cll-query-devtools`       | Resizable query panel with data/error inspection, row actions and a development-only root provider. |
+
+Register the floating query inspector once in `app.config.ts`:
+
+```typescript
+import {ApplicationConfig} from '@angular/core';
+import {provideQueryDevtools} from 'clr-lift/devtools';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideQueryDevtools()],
+};
+```
+
+The development launcher opens a resizable, nonmodal bottom panel. Search/filter/sort/paginate queries, inspect data,
+errors and tags, copy keys, and explicitly refetch one query. Data previews are bounded, expandable and read-only. With
+ngx-lift 21.3, inspection is available; Refetch controls require a client exposing `refetchQuery`. Automatic snapshots
+run only while open and unpaused. `provideQueryClient()` is needed only to customize client settings. The package's
+production condition resolves to a no-op and excludes the inspector implementation.
+
+For scoped clients or inline placement, import `QueryDevtoolsComponent` and use
+`<cll-query-devtools [client]="scopedQueryClient" />`. The caller retains client ownership. `launcher="floating"`
+selects the icon launcher. `[enabled]="true"` deliberately enables a direct component import outside development, as in
+the documentation preview; that opt-in bypasses the provider's production exclusion. See the
+[design spec](../../docs/design/clr-lift/query-devtools-design-spec.md).
 
 ---
 

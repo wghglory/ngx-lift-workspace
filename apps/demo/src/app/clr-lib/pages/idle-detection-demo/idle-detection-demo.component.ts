@@ -74,8 +74,7 @@ export class ClrIdleDetectionDemoComponent {
     this.timeoutCount.update((count) => count + 1);
   }
 
-  basicUsageCode = highlight(`
-import {IdleDetectionComponent} from 'clr-lift';
+  basicUsageCode = highlight(`import {IdleDetectionComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 
 @Component({
@@ -87,7 +86,7 @@ import {Component} from '@angular/core';
       [timeoutDurationInSeconds]="60"
       (timeout)="onSessionTimeout()"
     />
-  \`
+  \`,
 })
 export class AppComponent {
   onSessionTimeout() {
@@ -95,8 +94,7 @@ export class AppComponent {
     localStorage.removeItem('auth_token');
     window.location.assign('/login');
   }
-}
-  `);
+}`);
 
   appConfigCode = highlight(`
 import {provideIdleDetectionConfig} from 'ngx-lift';

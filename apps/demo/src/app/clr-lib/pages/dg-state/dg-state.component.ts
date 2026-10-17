@@ -38,33 +38,28 @@ export class DgStateComponent {
       },
     ];
   });
-  dataCode = highlight(`
-{
+  dataCode = highlight(`{
   "results": [
     {
       "gender": "male",
       "name": {
         "first": "Johan",
-        "last": "Lemoine"
+        "last": "Lemoine",
       },
-      "email": "john@gmail.com"
-    }
+      "email": "john@gmail.com",
+    },
     // ... more users
   ],
   "info": {
     "pageSize": 10, // display 10 items per page
     "page": 2, // current page is 2
-    "total": 100
-  }
-}
-  `);
+    "total": 100,
+  },
+}`);
 
-  signatureCode = highlight(`
-dgState(enableDistinctUntilChanged?: boolean): UnaryFunction<
-  Observable<ClrDatagridStateInterface | null>,
-  Observable<ClrDatagridStateInterface | null>
->
-  `);
+  signatureCode = highlight(`dgState(
+  enableDistinctUntilChanged?: boolean,
+): UnaryFunction<Observable<ClrDatagridStateInterface | null>, Observable<ClrDatagridStateInterface | null>>;`);
 
   htmlCode = highlight(
     `

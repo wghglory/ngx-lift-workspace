@@ -1,0 +1,50 @@
+:host {
+  display: flex;
+  inline-size: 100%;
+}
+
+.widget-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  .card-header {
+    min-height: 4.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+
+    .widget-header-text {
+      .card-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.15rem;
+      }
+
+      .card-subtitle {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  .card-block {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.75rem;
+
+    .widget-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+}

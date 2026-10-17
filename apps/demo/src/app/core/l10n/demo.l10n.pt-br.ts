@@ -1,4 +1,26 @@
 export const ptBRTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': 'Perfil salvo',
+  'queryResource.projectRevision': 'Versão da resposta',
+  'queryResource.activeUser': 'Usuário atual',
+  'queryResource.engineLabel': 'Mecanismo',
+  'queryResource.computeLabel': 'Recursos',
+  'queryOwnership.title': 'Chaves e tags por domínio',
+  'queryOwnership.definitions':
+    'Mantenha observadores nos componentes. Importe definições completas e fábricas de tags do domínio responsável; inclua o escopo e todos os parâmetros que alteram a resposta nas chaves.',
+  'queryOwnership.refactoring':
+    'Use exportações compartilhadas em vez de repetir strings. Antes de alterar ou excluir uma definição, encontre todas as referências, coordene com o domínio responsável e verifique as leituras e gravações afetadas.',
+  'queryOwnership.noCache':
+    'Chaves também identificam solicitações e estado compartilhados. staleTime: 0 torna os dados obsoletos; gcTime: 0 remove entradas sem uso após as solicitações terminarem. Use resourceAsync para estado independente sem chave. Mutações não precisam de chave.',
+  'queryOwnership.naming':
+    'invalidateTags aceita um array ou uma função (result, args) executada apenas após sucesso. Retorne [] para ignorar a invalidação.',
+  'queryOwnership.journey':
+    'Adicione membros: tabela e resumo compartilham uma solicitação por atualização. Feche o resumo, adicione novamente e reabra. Os dados e a contagem de solicitações da equipe B não mudam.',
+  'queryOwnership.closeSummary': 'Fechar resumo',
+  'queryOwnership.openSummary': 'Abrir resumo',
+  'queryOwnership.summary': 'Resumo da equipe A',
+  'queryOwnership.teamAReads': 'Solicitações da equipe A',
+  'queryOwnership.otherScope': 'Membros da equipe B (outro escopo)',
+  'queryOwnership.teamBReads': 'Solicitações da equipe B',
   'header.selectLanguage': 'Selecionar idioma',
   'header.openGitHub': 'Abrir no GitHub',
   'header.codeLicensed': 'Código sob licença',
@@ -629,7 +651,7 @@ export const ptBRTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'Cartão de Perfil do Usuário',
   'queryResource.simulatedMasterList': 'Lista Mestra (Selecionar Banco de Dados)',
   'queryResource.simulatedDetailCard': 'Visualização de Detalhes (Especificações)',
-  'queryResource.updateNameBtn': 'Atualizar Nome via authStateService.updateProfile.mutate()',
+  'queryResource.updateNameBtn': 'Atualizar nome',
   'queryResource.componentPlacementAdvice':
     'O posicionamento em componente é recomendado quando os dados estão estritamente contidos em uma única tela. Ele se integra nativamente a inputs Signal input() e é limpo automaticamente ao desmontar.',
   'queryResource.demo1Section': 'Solicitação Coalescing',
@@ -701,10 +723,10 @@ export const ptBRTranslations: Record<string, string> = {
   'queryResource.thRole': 'Papel',
   'queryResource.diagnosticsSection': 'Sistema de diagnóstico para o desenvolvedor',
   'queryResource.diagnosticsSectionDesc':
-    'Inspecione o cache, os observadores, as leituras lógicas pendentes, as novas tentativas, GC e o polling deste QueryClient. Os exemplos de falhas e serviços Observable usam clientes separados.',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient ao vivo',
+    'Registre provideQueryDevtools() uma vez em app.config.ts para exibir o botão flutuante apenas em desenvolvimento. Inspecione consultas no painel inferior enquanto usa o aplicativo.',
+  'queryResource.diagnosticsPlaygroundTitle': 'Painel de consultas',
   'queryResource.diagnosticsPlaygroundDesc':
-    'Clique em... para estudar o estado interno QueryClient através getDiagnostics() e getEntriesSnapshot().',
+    'Pesquise, filtre e ordene consultas; inspecione dados em cache, erros e tempos. Buscar novamente executa o carregador selecionado. Esta prévia da documentação também está ativa em produção.',
   'queryResource.badgeDiagnostics': 'Diagnóstico',
   'queryResource.refreshDiagnostics': 'Recuperar o Diagnóstico',
   'queryResource.diagTotalEntries': 'Total de Entradas',
@@ -2071,7 +2093,7 @@ export const ptBRTranslations: Record<string, string> = {
     'Atraso em milissegundos antes de esconder o tooltip após o mouse sair.',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'Função assíncrona ou observável executando a operação de escrita no lado do servidor.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     'Tags para invalidar após uma escrita bem-sucedida. Agende imediatamente rebuscas para consultas ativas.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     'Estratégia para chamadas sobrepostas: paralelo (padrão), exhaust (junta chamadas em andamento), concat (fila).',

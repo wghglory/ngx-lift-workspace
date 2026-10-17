@@ -203,6 +203,27 @@ export class QueryClient {
     return entry ? this.snapshot(entry) : undefined;
   }
 
+  /**
+   * Refetch an existing key with its current loader/policy, joining a pending read. Missing keys are not created.
+   * Inactive calls restart retention at invocation, consistently with fetchQuery; pending reads remain protected.
+   * @typeParam T Caller-asserted result type; an untyped key cannot validate or infer the loader result.
+   * @example
+   * ```typescript
+   * await client.refetchQuery(['users', userId]);
+   * ```
+   */
+  refetchQuery<T = unknown>(key: QueryKey): Promise<T> | undefined {
+    this.assertActive();
+    const entry = this.entries.get(serializeQueryKey(key)) as QueryEntry<T> | undefined;
+    if (!entry) return undefined;
+    entry.lastAccess = ++this.accessSequence;
+    if (!entry.observers.size) {
+      entry.inactiveSince = this.now();
+      this.clearTimer(entry, 'gcTimer');
+    }
+    return this.startRequest(entry, true);
+  }
+
   /** Return a point-in-time snapshot of all cached query entries and their runtime metrics. */
   getEntriesSnapshot(): QueryEntryDiagnostics[] {
     return this.collectEntriesSnapshot(this.now(), this.isVisible());

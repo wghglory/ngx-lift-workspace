@@ -1,4 +1,26 @@
 export const nlTranslations: Record<string, string> = {
+  'toSignalForm.savedProfile': 'Opgeslagen profiel',
+  'queryResource.projectRevision': 'Antwoordversie',
+  'queryResource.activeUser': 'Huidige gebruiker',
+  'queryResource.engineLabel': 'Engine',
+  'queryResource.computeLabel': 'Rekenkracht',
+  'queryOwnership.title': 'Sleutels en tags per domein',
+  'queryOwnership.definitions':
+    'Houd observers in componenten. Importeer volledige querydefinities en tagfuncties uit het verantwoordelijke domein; neem het bereik en alle parameters die het antwoord veranderen op in sleutels.',
+  'queryOwnership.refactoring':
+    'Gebruik gedeelde exports in plaats van herhaalde teksten. Zoek vóór het wijzigen of verwijderen van een definitie alle referenties, stem af met het verantwoordelijke domein en controleer de betrokken lees- en schrijfacties.',
+  'queryOwnership.noCache':
+    'Sleutels identificeren ook gedeelde verzoeken en status. staleTime: 0 maakt gegevens verouderd; gcTime: 0 verwijdert ongebruikte items na lopende verzoeken. Gebruik resourceAsync voor onafhankelijke status zonder sleutel. Mutaties hebben geen sleutel nodig.',
+  'queryOwnership.naming':
+    'invalidateTags accepteert een array of een (result, args)-callback die alleen na succes draait. Geef [] terug om invalidatie over te slaan.',
+  'queryOwnership.journey':
+    'Voeg leden toe: tabel en samenvatting delen één verzoek per verversing. Sluit de samenvatting, voeg opnieuw toe en open deze weer. Gegevens en verzoekenaantal van team B blijven gelijk.',
+  'queryOwnership.closeSummary': 'Samenvatting sluiten',
+  'queryOwnership.openSummary': 'Samenvatting openen',
+  'queryOwnership.summary': 'Samenvatting team A',
+  'queryOwnership.teamAReads': 'Verzoeken team A',
+  'queryOwnership.otherScope': 'Leden team B (ander bereik)',
+  'queryOwnership.teamBReads': 'Verzoeken team B',
   'header.selectLanguage': 'Taal selecteren',
   'header.openGitHub': 'Openen op GitHub',
   'header.codeLicensed': 'Code gelicentieerd onder',
@@ -633,7 +655,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.simulatedProfile': 'Gebruikersprofielkaart',
   'queryResource.simulatedMasterList': 'Hoofdlijst (Selecteer Database)',
   'queryResource.simulatedDetailCard': 'Detailweergave (Actieve Specificaties)',
-  'queryResource.updateNameBtn': 'Naam bijwerken via authStateService.updateProfile.mutate()',
+  'queryResource.updateNameBtn': 'Naam bijwerken',
   'queryResource.componentPlacementAdvice':
     'Component-plaatsing wordt aangeraden wanneer gegevens strikt tot één weergave beperkt blijven. Het vereist geen extra bestanden en ruimt direct op bij unmount.',
   'queryResource.demo1Section': 'Coalescing en deduplicatie aanvragen',
@@ -706,10 +728,10 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.thRole': 'Rol',
   'queryResource.diagnosticsSection': 'Ontwikkelaar Diagnostics & Cache Inspector',
   'queryResource.diagnosticsSectionDesc':
-    'Bekijk de cache, waarnemers, openstaande logische leesacties, herhaalpogingen, GC en polling van deze QueryClient. De fout- en Observable-servicevoorbeelden gebruiken aparte clients.',
-  'queryResource.diagnosticsPlaygroundTitle': 'QueryClient Live Diagnostica',
+    'Registreer provideQueryDevtools() eenmaal in app.config.ts voor een zwevende knop die alleen tijdens ontwikkeling verschijnt. Inspecteer queries onderaan terwijl u de toepassing gebruikt.',
+  'queryResource.diagnosticsPlaygroundTitle': 'Query-inspectiepaneel',
   'queryResource.diagnosticsPlaygroundDesc':
-    'Klik op "Refresh Diagnostics" om de interne QueryClient toestand te peilen via getDiagnostics() en getEntriesSnapshot().',
+    'Zoek, filter en sorteer queries en bekijk cachegegevens, fouten en tijden. Opnieuw ophalen voert de geselecteerde loader uit. Dit documentatievoorbeeld is ook actief in productie.',
   'queryResource.badgeDiagnostics': 'Diagnostica',
   'queryResource.refreshDiagnostics': 'Diagnostics vernieuwen',
   'queryResource.diagTotalEntries': 'Totale vermeldingen',
@@ -2095,7 +2117,7 @@ export const nlTranslations: Record<string, string> = {
     'Vertraging in milliseconden voor het verbergen van de tooltip na het verlaten van de muis.',
   'demoApi.mutate-resource.mutateResourceApiProps.mutation':
     'Async functie of observabel die de serverkant schrijfbewerking uitvoert.',
-  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidatesTags':
+  'demoApi.mutate-resource.mutateResourceApiProps.options.invalidateTags':
     'Tags om te ongeldig maken bij succesvolle schrijfbewerking. Hiermee wordt onmiddellijk herhalen van actieve queries gepland.',
   'demoApi.mutate-resource.mutateResourceApiProps.options.concurrency':
     'Strategie voor overlappende aanroepen: parallel (standaard), exhaust (verbindt in-afwachting), concat (queueert).',

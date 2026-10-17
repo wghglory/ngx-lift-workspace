@@ -81,6 +81,11 @@ Use Clarity `cds-layout` attributes and design tokens. Tailwind was removed; do 
 examples. Keep the page container's built-in spacing and use native list indentation. `app-demo-playground` can replace
 an article when an interactive example needs controls, preview, and code tabs.
 
+Clarity tab hosts must use block layout so vertical margins take effect. Shared demo styles separate tab navigation from
+preceding tables/prose and separate active panels from navigation. Keep this policy in the shared stylesheet; do not
+patch individual pages with blank elements or repeated margins. Verify the rendered distance, including narrow screens
+and translated tab labels.
+
 ### Standard Clarity Layout Attributes
 
 - **Page Container**: the built-in page container spacing (spacing between major sections)
@@ -268,9 +273,35 @@ Always specify the `lang` attribute:
 3. **Real-World Scenarios**: Use practical, relatable examples
 4. **Comments**: Add helpful comments explaining key parts
 5. **Output Comments**: Show expected output when relevant:
+
    ```typescript
    // Output: "1,2,3,4"
    ```
+
+6. **Preview parity**: The live preview must demonstrate the inputs, actions, data and state transitions shown in its
+   code. A callout explaining an interactive example cannot replace that example. When illustrating component/service
+   ownership, use the actual owning component/service in the preview. Show loading, refresh and error behavior
+   consistently. Code and preview may use translations and a simulated transport, but must describe the same user
+   workflow. Use two spaces per indentation level in the page source and highlighted examples. Run
+   `pnpm run format:examples`; tooling checks enforce this for embedded code. Format the contents of code strings
+   explicitly; formatting the surrounding TypeScript does not format template-literal snippets. Expand multi-statement
+   methods and query definition objects, and keep excerpt closing braces aligned with their declarations. Present UI
+   markup in an HTML example or a component template; do not represent it with commented-out HTML. Check every tab, not
+   only the initially selected panel.
+7. **Action labels**: Use short, translated action names such as "Update name" or "Refresh". Keep method paths,
+   signatures and implementation explanations in prose or code. Do not place API calls in button labels or use CSS
+   truncation to hide them. Check each supported language and narrow screens.
+8. **Service naming and spacing**: Application services use the `Service` suffix. Name injected service fields after the
+   full class name in camelCase (`teamService = inject(TeamService)`). Separate the injection group from state and query
+   declarations with one blank line. Choose `providedIn: 'root'` for application-wide services; provide feature or page
+   services at their owner when their state should have that lifetime. Apply these conventions to the live
+   implementation and displayed examples.
+
+Use domain service names such as `TeamService`, `DatabaseService` and `ProjectService` in examples. Keys and tags should
+also describe the domain (`['teams', scope, 'members']`); omit page-specific demo prefixes.
+
+Changes to shared demo layout require a route-wide browser scan. Pair structural scans (missing previews, inputs and
+button labels) with behavior checks for changed examples; scans alone cannot prove semantic equivalence.
 
 ### Code Block Naming Convention
 

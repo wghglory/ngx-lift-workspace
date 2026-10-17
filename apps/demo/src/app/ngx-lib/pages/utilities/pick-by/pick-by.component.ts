@@ -88,11 +88,11 @@ const result = omitBy(inputObject, predicate);
 // }
   `);
 
-  pickBySignatureCode = highlight(`
-pickBy<T>(object: Record<string, T>, predicate: (value: T, key: string) => boolean): Record<string, T>
-  `);
+  pickBySignatureCode = highlight(
+    `pickBy<T>(object: Record<string, T>, predicate: (value: T, key: string) => boolean): Record<string, T>;`,
+  );
 
-  omitBySignatureCode = highlight(`
-omitBy<T>(object: Record<string, T>, predicate: (value: T, key: string) => boolean): Record<string, T>
-  `);
+  omitBySignatureCode = highlight(
+    `omitBy<T>(object: Record<string, T>, predicate: (value: T, key: string) => boolean): Record<string, T>;`,
+  );
 }

@@ -95,7 +95,8 @@ export class TimelineWizardDemoComponent {
     window.alert('finished');
   }
 
-  wizardCode = highlight(`
+  wizardCode = highlight(`import {Component} from '@angular/core';
+
 import {ClrTimelineStepState} from '@clr/angular';
 import {TimelineStep, TimelineWizardComponent} from 'clr-lift';
 import {Deployment} from './deployment.type';
@@ -109,7 +110,7 @@ import {Deployment} from './deployment.type';
       (confirmed)="onConfirmed($event)"
       (finished)="onFinished()"
     ></cll-timeline-wizard>
-  \`
+  \`,
 })
 export class TimelineWizardDemoComponent {
   // simulate an API response. These values will be set into step forms.
@@ -168,8 +169,7 @@ export class TimelineWizardDemoComponent {
   onFinished() {
     window.alert('finished');
   }
-}
-  `);
+}`);
 
   deploymentTypeCode = highlight(`
 export type Deployment = {
@@ -186,8 +186,7 @@ export type Deployment = {
 };
     `);
 
-  operatorCode = highlight(`
-import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
+  operatorCode = highlight(`import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
 import {Component, inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Deployment} from '../deployment.type';
@@ -208,7 +207,7 @@ import {Deployment} from '../deployment.type';
         <clr-control-error> Required </clr-control-error>
       </clr-input-container>
     </form>
-  \`
+  \`,
 })
 export class ConfigureOperatorComponent extends TimelineBaseComponent<Deployment['operator']> implements OnInit {
   private timelineWizardService = inject(TimelineWizardService);
@@ -234,11 +233,9 @@ export class ConfigureOperatorComponent extends TimelineBaseComponent<Deployment
     console.log(this.currentStepData);
     console.log(this.stepData); // also available from service
   }
-}
-  `);
+}`);
 
-  serviceCode = highlight(`
-import {TimelineBaseComponent} from 'clr-lift';
+  serviceCode = highlight(`import {TimelineBaseComponent} from 'clr-lift';
 import {Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Deployment} from '../deployment.type';
@@ -263,7 +260,7 @@ import {Deployment} from '../deployment.type';
         <clr-control-error> Required </clr-control-error>
       </clr-input-container>
     </form>
-  \`
+  \`,
 })
 export class ConfigureServiceComponent extends TimelineBaseComponent<Deployment['service']> {
   override form = new FormGroup({
@@ -279,11 +276,9 @@ export class ConfigureServiceComponent extends TimelineBaseComponent<Deployment[
   override dataToFormValue(data: any): Record<string, any> {
     return data.service;
   }
-}
-  `);
+}`);
 
-  runtimePropsCode = highlight(`
-import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
+  runtimePropsCode = highlight(`import {KeyValueInputsComponent, TimelineBaseComponent} from 'clr-lift';
 import {Component, inject} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
@@ -299,7 +294,7 @@ type RuntimePropStepData = {appProperties: Array<{key: string; value: string}>};
         [data]="currentStepData?.appProperties!"
       />
     </form>
-  \`
+  \`,
 })
 export class ConfigureRuntimePropComponent extends TimelineBaseComponent<RuntimePropStepData> {
   private fb = inject(FormBuilder);
@@ -331,11 +326,9 @@ export class ConfigureRuntimePropComponent extends TimelineBaseComponent<Runtime
       }),
     };
   }
-}
-  `);
+}`);
 
-  reviewCode = highlight(`
-import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
+  reviewCode = highlight(`import {TimelineBaseComponent, TimelineWizardService} from 'clr-lift';
 import {Component, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Deployment} from '../deployment.type';
@@ -348,7 +341,7 @@ import {Deployment} from '../deployment.type';
       <p>Service: {{ serviceStep?.service?.url }}</p>
       <p>Runtime Properties: {{ runtimePropertiesStep?.appProperties | json }}</p>
     </div>
-  \`
+  \`,
 })
 export class ConfigureReviewComponent extends TimelineBaseComponent {
   private timelineWizardService = inject(TimelineWizardService);
@@ -379,8 +372,7 @@ export class ConfigureReviewComponent extends TimelineBaseComponent {
 
     return formSpec;
   }
-}
-  `);
+}`);
 
   readonly wizardInputs = computed<ApiProperty[]>(() => [
     {

@@ -383,7 +383,7 @@ describe('poll', () => {
     const responses: Subject<string>[] = [];
     const abort = vi.fn();
     const pollingFn = vi.fn(
-      (_input: string | undefined) =>
+      () =>
         new Observable<string>((subscriber) => {
           const response = new Subject<string>();
           responses.push(response);

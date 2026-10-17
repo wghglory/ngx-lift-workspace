@@ -72,7 +72,7 @@ class QueryConsumer {
         finishWrite = resolve;
       }),
     {
-      invalidatesTags: (_result, args) => [{type: 'SessionData', scope: args.scope}],
+      invalidateTags: (_result, args) => [{type: 'SessionData', scope: args.scope}],
     },
   );
   changeSession(scope) {

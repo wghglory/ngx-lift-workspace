@@ -62,7 +62,8 @@ export class MaskPipeComponent {
       },
     ];
   });
-  basicExampleCode = highlight(`
+  basicExampleCode = highlight(`import {Component} from '@angular/core';
+
 import {MaskPipe} from 'ngx-lift';
 
 @Component({
@@ -70,12 +71,12 @@ import {MaskPipe} from 'ngx-lift';
   template: \`
     <p>{{ 'sensitive-string-to-mask' | mask }}</p>
     <!-- Output: sensit************o-mask -->
-  \`
+  \`,
 })
-export class MaskExampleComponent {}
-  `);
+export class MaskExampleComponent {}`);
 
-  customCode = highlight(`
+  customCode = highlight(`import {Component} from '@angular/core';
+
 import {MaskPipe} from 'ngx-lift';
 
 @Component({
@@ -83,11 +84,11 @@ import {MaskPipe} from 'ngx-lift';
   template: \`
     <p>{{ 'sensitive-string-to-mask' | mask: {unmaskedPrefixLength: 2, unmaskedSuffixLength: 3} }}</p>
     <!-- Output: se*******************ask -->
-  \`
-})
-    `);
+  \`,
+})`);
 
-  creditCardCode = highlight(`
+  creditCardCode = highlight(`import {Component} from '@angular/core';
+
 import {MaskPipe} from 'ngx-lift';
 
 @Component({
@@ -95,11 +96,11 @@ import {MaskPipe} from 'ngx-lift';
   template: \`
     <p>{{ creditCardNumber | mask: {unmaskedPrefixLength: 0, unmaskedSuffixLength: 4} }}</p>
     <!-- Example: "************1234" -->
-  \`
-})
-  `);
+  \`,
+})`);
 
-  toggleMaskCode = highlight(`
+  toggleMaskCode = highlight(`import {Component} from '@angular/core';
+
 import {MaskPipe} from 'ngx-lift';
 
 @Component({
@@ -107,13 +108,10 @@ import {MaskPipe} from 'ngx-lift';
   template: \`
     <p>{{ apiKey | mask: {masked: showMask} }}</p>
     <!-- Toggle showMask to reveal/hide -->
-  \`
-})
-  `);
+  \`,
+})`);
 
-  signatureCode = highlight(`
-transform(value: string, options?: MaskOptions): string
-  `);
+  signatureCode = highlight(`transform(value: string, options?: MaskOptions): string;`);
 
   maskOptions: MaskOptions = {
     unmaskedPrefixLength: 2,
