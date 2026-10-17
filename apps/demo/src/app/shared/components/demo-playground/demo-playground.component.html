@@ -126,8 +126,13 @@
             </button>
 
             @if (currentLayout() === 'stacked') {
-              <button type="button" class="btn btn-sm btn-link toggle-btn" (click)="toggleCode()">
-                <clr-icon shape="angle" [dir]="isCodeExpanded() ? 'up' : 'down'" />
+              <button
+                type="button"
+                class="btn btn-sm btn-link toggle-btn"
+                [attr.aria-expanded]="isCodeExpanded()"
+                (click)="toggleCode()"
+              >
+                <clr-icon shape="angle" [attr.dir]="isCodeExpanded() ? 'up' : 'down'" />
                 <span class="btn-text">{{
                   (isCodeExpanded() ? 'playground.hideCode' : 'playground.viewCode') | translate
                 }}</span>
