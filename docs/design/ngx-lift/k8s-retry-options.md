@@ -1,7 +1,25 @@
 # Kubernetes retry configuration and demos
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API; this audit does not approve new behavior.
+
+## Applicable contracts
+
+Async retries, method/idempotency policy, server minimum delays, budgets and cancellation apply. Applications own
+rendered failures and form submission; retry does not create shared cache or write-safety guarantees.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: RxJS subscriptions and GET retry semantics; configure HttpClient for the interceptor.
+
+| Reader task              | Learning outcome                                            | Destination / working example                                                                                |
+| ------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Run one simulated GET    | Observe 429, the required wait and successful recovery      | [/ngx-lift/operators/k8sRetryBackoff](https://ngx-lift.netlify.app/ngx-lift/operators/k8sRetryBackoff)       |
+| Configure request policy | Compare interceptor setup, cancellation and allowed methods | [/ngx-lift/interceptors/k8sRetryBackoff](https://ngx-lift.netlify.app/ngx-lift/interceptors/k8sRetryBackoff) |
+
+Validation and delivery: The fixed starters landed in #169. Keep server hints/method-safety regressions and demo request
+teardown; writes still require endpoint evidence. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

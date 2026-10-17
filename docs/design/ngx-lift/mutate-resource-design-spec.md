@@ -10,6 +10,11 @@ key/tag guidance. Preserve the previous spelling as a compatibility alias.
 
 ---
 
+## Applicable contracts
+
+Write concurrency, settlement/error boundaries, shared-client invalidation and injector disposal apply. Applications own
+forms and rendered feedback; the mutation is not a CVA or an optimistic rollback manager.
+
 ## Background
 
 `mutateResource` is designed exclusively for explicit asynchronous write operations (e.g., POST, PUT, PATCH, DELETE)

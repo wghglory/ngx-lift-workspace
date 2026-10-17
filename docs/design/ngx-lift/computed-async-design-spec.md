@@ -1,6 +1,6 @@
 # Design Specification: `computedAsync`
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API; this audit does not approve new behavior.
 
 **Source:** [computed-async.ts](../../../libs/ngx-lift/src/lib/signals/computed-async.ts)
@@ -8,6 +8,11 @@ Approval: existing API; this audit does not approve new behavior.
 **Regression tests:** [computed-async.spec.ts](../../../libs/ngx-lift/src/lib/signals/computed-async.spec.ts)
 
 ---
+
+## Applicable contracts
+
+Reactive dependency capture, flattening, cancellation, typed error/fallback behavior and injector disposal apply. The
+readonly signal owns no rendered UI, form value or shared query cache.
 
 ## Background
 
@@ -32,6 +37,19 @@ need a value rather than a resource lifecycle.
 ```
 
 ---
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular signals, Observable sources and injection-context initialization.
+
+| Reader task                   | Learning outcome                                    | Destination / working example                                                                  |
+| ----------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Derive a changing local value | Explain when a dependency replaces its async source | [/ngx-lift/signals/computedAsync](https://ngx-lift.netlify.app/ngx-lift/signals/computedAsync) |
+| Fail and recover              | Distinguish a typed fallback from a read-time throw | Same demo, examples 11/12; breaking correction below                                           |
+
+Validation and delivery: The entry flow landed in #162. Existing runtime/type tests cover the contract; human
+comprehension and the 21.x release gates remain separate. The public API and behavior sections below own exact options
+and limitations; examples introduce them after the first task.
 
 ## Public API and examples
 
@@ -144,9 +162,10 @@ needed.
 reads. The implementation preserves per-source failure containment, dependency-driven recovery, cancellation and eager
 Promise rejection handling.
 
-**Release treatment:** this change requires a breaking release/version decision before publication. Existing default
-callers that inspected error objects as data must catch failures or supply a typed fallback. Remove throwOnError:false;
-use onError for fallback data or createAsyncState/resourceAsync/queryResource for explicit loading/error state. Calls
+**Release treatment:** the maintainer selected a 21.x compatibility exception on October 17; see the
+[version policy](../../DEPLOYMENT.md#version-policy). The change remains behaviorally breaking. Existing default callers
+that inspected error objects as data must catch failures or supply a typed fallback. Remove throwOnError:false; use
+onError for fallback data or createAsyncState/resourceAsync/queryResource for explicit loading/error state. Calls
 already handling source errors through catchError or createAsyncState preserve their successful data contract.
 
 ```typescript
@@ -218,8 +237,9 @@ retained-data refresh where applicable. Forms invoke/observe this API without as
 
 ## Review decisions and delivery
 
-This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
-[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+This is an audit of implemented behavior, including the unreleased correction above. Proposed features and unresolved
+implementation work belong in the [gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no
+new API is approved here.
 
 ## Evidence
 

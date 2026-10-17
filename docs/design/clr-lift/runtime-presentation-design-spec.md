@@ -1,7 +1,12 @@
 # Runtime language and theme services
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
 Approval: existing APIs; human language acceptance remains separate.
+
+## Applicable contracts
+
+Document-wide language/theme state, persistence, labels/direction and lifecycle apply. Consumers own their form values
+and query caches; service scoping does not isolate the shared document.
 
 ## Background
 
@@ -44,6 +49,19 @@ Native field ownership, persistence authorization, human translation approval an
 Installed Clarity CommonStringsService owns framework strings; adapt its public localize API with locale fallbacks. Intl
 canonicalization provides normalized language tags. These mechanisms establish key/layout behavior; dictionary parity
 cannot establish linguistic accuracy.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Clarity styles, component dictionaries, and runtime language selection.
+
+| Reader task                       | Learning outcome                                                | Destination / working example                                                                                                     |
+| --------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Switch theme or language          | Observe rendered labels/direction and persisted theme selection | [/clr-lift/components/theme-toggle](https://ngx-lift.netlify.app/clr-lift/components/theme-toggle) and the demo language selector |
+| Register a dictionary or override | Explain fallback and component events versus service state      | This spec, service examples and runtime-presentation contracts                                                                    |
+
+Validation and delivery: Theme teaching landed in #172; translation/theme tests cover fallback/storage. Dictionary
+parity does not establish native-speaker approval. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

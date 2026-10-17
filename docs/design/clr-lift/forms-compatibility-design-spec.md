@@ -4,6 +4,11 @@ Status: **Draft API; delivery order decided by maintainer October 16, 2026**. Ow
 clr-lift. Approval: Angular 21-first direction approved in the task; individual component APIs remain pending. Proposed
 control exports are unavailable until implemented.
 
+## Applicable contracts
+
+Value types, CVA ownership, validation, composite focus and pending-work cancellation apply. Angular 21 Reactive
+Forms/ngModel and the toSignalForm facade are phase 1; native signal fields are a later platform gate.
+
 ## Background
 
 New controls must ship without waiting for Angular 22 or the Nx major upgrade. Existing `toSignalForm(FormGroup)`
@@ -50,6 +55,20 @@ changes, touch and disabled propagation. Adopt this bridge for Angular 21. Angul
 [native custom-control contract](https://angular.dev/api/forms/signals/FormValueControl) informs the later integration;
 compile against the selected upgraded release before committing to its exact binding syntax. Current key/value inputs
 are a caller-owned FormArray editor, not a CVA. No generic lift CVA/native bridge exists today.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular 21 ngModel, typed Reactive Forms, and the existing facade; this is a proposed shared-control
+contract.
+
+| Reader task                               | Learning outcome                                                 | Destination / working example                       |
+| ----------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------- |
+| Bind one value control                    | Explain owner writes versus user changes and the submitted value | This spec, phase-1 API examples                     |
+| Repeat reset/validation in each form mode | Preserve value and interaction semantics across hosts            | F1–F3 host acceptance matrix; native F4 is deferred |
+
+Validation and delivery: Hosts for proposed controls remain planned. Existing facade examples do not certify a new CVA
+or native field bridge. The public API and behavior sections below own exact options and limitations; examples introduce
+them after the first task.
 
 ## Public API and examples
 

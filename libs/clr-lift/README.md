@@ -221,7 +221,7 @@ For scoped clients or inline placement, import `QueryDevtoolsComponent` and use
 `<cll-query-devtools [client]="scopedQueryClient" />`. The caller retains client ownership. `launcher="floating"`
 selects the icon launcher. `[enabled]="true"` deliberately enables a direct component import outside development, as in
 the documentation preview; that opt-in bypasses the provider's production exclusion. See the
-[design spec](../../docs/design/clr-lift/query-devtools-design-spec.md).
+[design spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/clr-lift/query-devtools-design-spec.md).
 
 ---
 
@@ -272,5 +272,6 @@ MIT © [Guanghui Wang](https://github.com/wghglory)
 
 ## Lifecycle and production contracts
 
-See [service scoping, clocks, localization and query diagnostics](../../docs/guides/demo-and-library-integration.md) for
-ownership and loading contracts.
+See
+[service scoping, clocks, localization and query diagnostics](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/guides/demo-and-library-integration.md)
+for ownership and loading contracts.

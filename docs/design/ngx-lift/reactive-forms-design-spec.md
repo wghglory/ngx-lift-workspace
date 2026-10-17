@@ -1,7 +1,12 @@
 # Reactive Forms signals, bindings, and submission
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API; this audit does not approve new behavior.
+
+## Applicable contracts
+
+Typed Reactive Forms, control/proxy identity, validation/pending state, submission shaping and injector cleanup apply.
+The facade is headless and does not create native signal fields, rendered controls or shared query state.
 
 ## Background
 
@@ -45,6 +50,19 @@ CVA implementation, HTTP submission, server validation, and automatic rollback o
 [Angular typed forms](https://angular.dev/guide/forms/typed-forms) distinguishes `.value` from `.getRawValue()`. Adopt
 that distinction; submission deliberately defaults to including disabled values. The installed Angular control event
 stream drives state updates. The facade adds dynamic bindings, not a separate form owner.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: An existing Angular FormGroup and basic signals; Angular remains the form owner.
+
+| Reader task                         | Learning outcome                                                | Destination / working example                                                                |
+| ----------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Observe and submit a local form     | Read value/validity and inspect the omitted-field payload       | [/ngx-lift/signals/toSignalForm](https://ngx-lift.netlify.app/ngx-lift/signals/toSignalForm) |
+| Toggle and reset conditional fields | Preserve selected values and validation through control changes | Same demo; bindings/submission contracts below                                               |
+
+Validation and delivery: The teaching flow landed in #162. Form/proxy unit cases cover behavior; installed consumers for
+new controls remain a separate gate. The public API and behavior sections below own exact options and limitations;
+examples introduce them after the first task.
 
 ## Public API and examples
 

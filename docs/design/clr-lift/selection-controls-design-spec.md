@@ -1,10 +1,15 @@
 # Combobox and autocomplete
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 16, 2026. All new symbols are proposed. Shared requirements:
+Status: **Draft; API approval pending**. Updated October 17, 2026. All new symbols are proposed. Shared requirements:
 [development workflow](../component-development.md) and [staged form integrations](forms-compatibility-design-spec.md).
+
+## Applicable contracts
+
+Selection identity, CVA/validation, keyboard/overlay focus, localized messages and remote cancellation/paging apply.
+Suggestion text and committed values stay distinct; no public cache or reusable engine is approved here.
 
 ## Background
 
@@ -60,6 +65,19 @@ not decide on a full replacement before that evidence exists.
 | S8  | Change tenant/filter while a page is loading         | Invalidate the old generation, reset cursor/results, retain only permitted selections under caller policy |
 | S9  | Reset/disable/close/destroy during work              | No late UI writes or retained subscriptions; reopening follows documented reload policy                   |
 | S10 | Navigate in a modal on a narrow screen               | Overlay follows scrolling/resizing, correct focus/escape behavior, no clipped controls                    |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular 21 forms and current Clarity combobox capabilities; proposed exports remain unavailable.
+
+| Reader task                       | Learning outcome                                                         | Destination / working example                            |
+| --------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------- |
+| Select one remote entity          | Explain selected identity, displayed label, clearing and submitted value | This spec, proposed combobox example                     |
+| Add multi-selection or completion | Handle query changes, pending/error/empty state and stale results        | This spec, proposed multi-combobox/autocomplete examples |
+
+Validation and delivery: All feature tutorials are planned. Complete the Clarity composition spike and API review before
+route/source, three form hosts and browser evidence. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

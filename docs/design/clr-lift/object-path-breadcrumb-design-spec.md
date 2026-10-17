@@ -1,9 +1,14 @@
 # Deep object-path breadcrumbs
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 16, 2026. Proposed selectors are unavailable.
+Status: **Draft; API approval pending**. Updated October 17, 2026. Proposed selectors are unavailable.
+
+## Applicable contracts
+
+Rendered navigation, ancestor identity, resize/focus cleanup and localization apply. Prefixes are navigation state, not
+a form value; no request cache or backend authorization is introduced.
 
 ## Background
 
@@ -42,6 +47,19 @@ hidden-ancestor picker is needed; avoid building a replacement merely for separa
 | B3  | Use a narrow viewport or 200% zoom       | Width-aware collapse, readable current label and accessible full name                    |
 | B4  | Open an ancestor in another tab          | Real supplied links preserve standard browser behavior                                   |
 | B5  | Change route while overflow is open      | Close/dispose the old panel and restore focus only to a surviving trigger                |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Object-store prefix navigation and Clarity breadcrumb composition; selectors remain proposed.
+
+| Reader task                          | Learning outcome                                                 | Destination / working example                 |
+| ------------------------------------ | ---------------------------------------------------------------- | --------------------------------------------- |
+| Navigate to an ancestor              | Keep every ancestor reachable without confusing labels and paths | This spec, proposed breadcrumb example        |
+| Navigate a deep path at narrow width | Use overflow navigation and retain keyboard focus                | This spec, proposed width/overflow acceptance |
+
+Validation and delivery: Both journeys are planned. Verify the Clarity gap and API, then add an actual route, compiled
+source, resize and keyboard/browser checks. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

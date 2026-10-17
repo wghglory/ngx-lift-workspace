@@ -1,7 +1,12 @@
 # Certificate parsing, status, and validation
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
 Approval: existing parsing/display APIs; no cryptographic trust guarantee.
+
+## Applicable contracts
+
+Parsing, async module loading, validation and rendered signpost accessibility apply. The validator integrates with
+Reactive Forms; the signpost has no form value or shared query cache.
 
 ## Background
 
@@ -42,6 +47,19 @@ TLS trust decisions, chain validation, private-key handling, revocation and serv
 
 The installed node-forge APIs supply PEM parsing, DER and digest functions; reuse them rather than implementing ASN.1.
 Angular's ValidatorFn owns parsing errors. Expiry display does not inspect all certificate trust conditions.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular components, Clarity setup, and a PEM certificate; parsing does not establish trust.
+
+| Reader task            | Learning outcome                                              | Destination / working example                                                                    |
+| ---------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Inspect a certificate  | Read issuer, expiry and SAN from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.netlify.app/clr-lift/components/certificate) |
+| Validate imported text | Distinguish parse failure from certificate trust              | This spec, validator contract and certificate demo                                               |
+
+Validation and delivery: Use certificate parser/validator regressions and certificate E2E. The fixture and teaching flow
+landed in #172; human comprehension remains open. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

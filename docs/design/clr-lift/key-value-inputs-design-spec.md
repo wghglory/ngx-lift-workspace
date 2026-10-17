@@ -1,10 +1,15 @@
 # Key/value inputs
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft enhancement API**. Updated October 16, 2026. Angular 21 first under the
+Status: **Draft enhancement API**. Updated October 17, 2026. Angular 21 first under the
 [forms contract](forms-compatibility-design-spec.md); feature API review remains pending. Proposed APIs are unavailable.
+
+## Applicable contracts
+
+Forms, row identity, validation, keyboard/focus and localization apply. The implemented control edits a required
+caller-owned FormArray; the proposed value/CVA API has separate approval and no shared cache.
 
 ## Background
 
@@ -44,6 +49,20 @@ Use Angular's [CVA contract](https://angular.dev/api/forms/ControlValueAccessor)
 [Material chips](https://material.angular.dev/components/chips/overview) informs removable-item focus/announcements; it
 does not supply the key/value domain model. Existing Clarity inputs and error containers supply the visual shell. Unlike
 a tags input, each row contains two editable fields with independently named errors.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular typed Reactive Forms and required key/value rows; distinguish the current API from the draft
+enhancement.
+
+| Reader task                              | Learning outcome                                           | Destination / working example                                                                              |
+| ---------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Edit caller-owned rows                   | Inspect the FormArray value and duplicate-key errors       | [/clr-lift/components/key-value-inputs](https://ngx-lift.netlify.app/clr-lift/components/key-value-inputs) |
+| Clear and submit; assess the enhancement | Preserve legacy consumers before selecting a new value API | Existing demo; proposed examples in this spec                                                              |
+
+Validation and delivery: Existing teaching flow is delivered through #162. A proposed CVA/array-value tutorial remains
+planned until coexistence and API review. The public API and behavior sections below own exact options and limitations;
+examples introduce them after the first task.
 
 ## Public API and examples
 
