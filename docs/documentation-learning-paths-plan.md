@@ -46,4 +46,23 @@ comprehension or native-language review. Those human acceptance gates remain ope
 
 ## Validation
 
-Results are recorded after the final implementation is checked. Remote CI, merge and publication are separate gates.
+Completed locally on October 17, 2026:
+
+| Check                                           | Result                                                                                       |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Demo unit tests                                 | 79 files, 239 tests passed                                                                   |
+| Tooling and example formatting                  | 21 tests passed, including datagrid and computed starter source checks                       |
+| Learning/query/forms/wizard browser regressions | 39 cases passed across Chromium, Firefox and WebKit                                          |
+| Retry, theme and dark/RTL browser regressions   | 24 cases passed across the same browsers                                                     |
+| Demo and E2E lint                               | Passed without lint warnings                                                                 |
+| Localization                                    | All 11 dictionaries complete, 1,910 entries each; 14 new teaching labels/messages per locale |
+| Demo production build                           | Passed without Angular template warnings                                                     |
+| Formatting and whitespace                       | Prettier and `git diff --check` passed                                                       |
+
+Browser checks include reactive user selection, fallback responses, tab navigation and restored selection, repeated
+async derivation, datagrid refresh, wizard forward/back navigation, separate HTML source, and 390px entry-point layouts.
+The resource reorganization preserves all 29 event bindings and 36 template-state reads from the parent version.
+
+The production build compiles the final demo templates; library/package verification is not rerun because `libs/` and
+package metadata are unchanged. Local review found no blocking issues. Human newcomer comprehension and native-language
+review remain open. Remote CI, merge and publication are separate gates.

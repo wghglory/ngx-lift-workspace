@@ -43,11 +43,11 @@ describe('DemoPlaygroundComponent', () => {
     fixture.componentRef.setInput('tsCode', 'const x = 1;');
     fixture.detectChanges();
     const button: HTMLButtonElement = fixture.nativeElement.querySelector('.toggle-btn');
-    const icon = button.querySelector('clr-icon')!;
+    const icon = button.querySelector('clr-icon');
 
     for (const expanded of [true, false, true]) {
       expect(button.getAttribute('aria-expanded')).toBe(String(expanded));
-      expect(icon.getAttribute('direction')).toBe(expanded ? 'up' : 'down');
+      expect(icon?.getAttribute('direction')).toBe(expanded ? 'up' : 'down');
       expect(!!fixture.nativeElement.querySelector('.playground-code-body')).toBe(expanded);
       button.click();
       fixture.detectChanges();

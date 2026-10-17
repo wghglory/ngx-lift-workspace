@@ -24,8 +24,8 @@ for (const [route, testId] of [
       await expect(icon).toHaveAttribute('direction', expanded ? 'up' : 'down');
       // Clarity's direction input drives the actual rotation; dir only sets text direction.
       await expect(icon).toHaveCSS('transform', expanded ? 'matrix(1, 0, 0, 1, 0, 0)' : 'matrix(-1, 0, 0, -1, 0, 0)');
-      if (expanded) await expect(code).toBeVisible();
-      else await expect(code).toHaveCount(0);
+      await expect(code).toHaveCount(Number(expanded));
+      await expect(code).toBeVisible({visible: expanded});
       await toggle.click();
     }
   });
