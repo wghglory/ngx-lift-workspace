@@ -1015,6 +1015,8 @@ export const zhCNTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': '部署',
   'callout.example3LabelValidated': '已验证',
   'themeToggle.title': '主题切换 (Theme Toggle)',
+  'themeToggle.exercise':
+    '切换主题并刷新：ThemeService 将选择保存为 localStorage 中的 cds-theme，并应用到文档 body。两个控件共享服务。changeTheme 表示切换控件的操作；调用服务不会触发该组件事件。',
   'themeToggle.overview':
     '<code>cll-theme-toggle</code> 组件与 <code>ThemeService</code> 提供在 Clarity 明亮主题与暗黑主题之间平滑切换的能力，支持 Signal 响应式与 localStorage 记忆持久化。',
   'themeToggle.callout':
@@ -1192,6 +1194,8 @@ export const zhCNTranslations: Record<string, string> = {
     '属性 <code>idleDurationInSeconds</code> 与 <code>timeoutDurationInSeconds</code> 均为可选输入。传入时将自动覆盖 <code>provideIdleDetectionConfig</code> 所设定的全局默认值。',
   'idleDetection.utilDialogPreview': '弹窗展示效果如下：',
   'idleDetection.title': '空闲检测 (Idle Detection)',
+  'idleDetection.exercise':
+    '启动后停止操作 3 秒，警告会倒计时 10 秒。活动不会关闭已打开的警告；必须明确确认才能重新开始空闲计时。停止会释放计时器。',
   'idleDetection.overview':
     '<code>cll-idle-detection</code> 监听用户的多维度无操作状态（鼠标移动、按键、滚动和触控）。空闲超时时弹出 Clarity 无障碍倒计时对话框，并触发 (timeout) 事件保护会话安全。',
   'idleDetection.example1': '示例 1：倒计时对话框交互模拟',
@@ -1201,7 +1205,7 @@ export const zhCNTranslations: Record<string, string> = {
   'idleDetection.apiSummary': '当用户无操作时自动弹出倒计时模态框的会话超时检测组件。',
   'idleDetection.inputIdleDuration': '触发超时倒计时前的无操作空闲时长（秒）。若指定将覆盖全局配置。',
   'idleDetection.callout':
-    '弹窗包含一个“保持登录”按钮，用户点击后会立即重置所有计时器。若用户未响应，将触发 (timeout) 超时事件以执行安全登出或路由重定向。',
+    '启动后停止操作 3 秒，警告会倒计时 10 秒。活动不会关闭已打开的警告；必须明确确认才能重新开始空闲计时。停止会释放计时器。',
   'idleDetection.inputTimeoutDuration': '倒计时弹窗展示阶段的持续时长（秒）。若指定将覆盖全局配置。',
   'idleDetection.outputTimeout': '当倒计时归零且用户未进行任何操作时触发。',
   'idleDetection.serviceSummary': '用于监测全局用户活跃度并在空闲时触发事件的核心服务。',

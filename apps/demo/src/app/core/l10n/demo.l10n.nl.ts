@@ -1108,6 +1108,8 @@ export const nlTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Inzet',
   'callout.example3LabelValidated': 'Validatie',
   'themeToggle.title': 'Thema aan/uit',
+  'themeToggle.exercise':
+    'Wissel het thema en herlaad: ThemeService bewaart cds-theme in localStorage en past het toe op de documentbody. Beide bedieningselementen delen de service. changeTheme meldt de schakelactie, niet serviceaanroepen.',
   'themeToggle.overview':
     'De <code>cll-theme-toggle</code> component en <code>ThemeService</code> bieden een soepel thema wisselwerking tussen Clarity licht en donkergewijs met Signal reactiviteit en localStorage opslag.',
   'themeToggle.callout':
@@ -1314,6 +1316,8 @@ export const nlTranslations: Record<string, string> = {
     'De parameters <code>idleDurationInSeconds</code> en <code>timeoutDurationInSeconds</code> zijn optioneel. Wanneer deze parameters zijn doorgegeven, zullen ze de configuratie die door <code>provideIdleDetectionConfig</code> is doorgegeven overschrijven.',
   'idleDetection.utilDialogPreview': 'Het dialoogvenster ziet er als volgt uit:',
   'idleDetection.title': 'Stationaire detectie',
+  'idleDetection.exercise':
+    'Start en laat de pagina 3 seconden rusten. De waarschuwing telt 10 seconden af. Activiteit sluit een geopende waarschuwing niet; bevestig expliciet. Stoppen geeft de timers vrij.',
   'idleDetection.overview':
     'De <code>cll-idle-detection</code> component monitoreert gebruikersinactiefheid over DOM gebeurtenissen (muisbeweging, toetsdruk, scrollen en aanraking). Wanneer de inactieve duur verstrekt, opens het een toegankelijke Clarity tijdsverloop dialoog en stuurt het een (tijdsverloop) gebeurtenis.',
   'idleDetection.example1': 'Voorbeeld 1: Interactive Idle Dialoog Simulatie',
@@ -1327,7 +1331,7 @@ export const nlTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     'Duur van de inactiviteit in seconden voordat de countdown modal wordt weergegeven. Overschrijft de globale configuratie indien opgegeven.',
   'idleDetection.callout':
-    'De modale bevat een "Keep Me Aangemeld In" actie die alle timers resetten bij gebruikersinteractie. Als de gebruiker niet reageert, brandt de (timeout) gebeurtenis om veilige uitlog- of route-omleiding mogelijk te maken.',
+    'Start en laat de pagina 3 seconden rusten. De waarschuwing telt 10 seconden af. Activiteit sluit een geopende waarschuwing niet; bevestig expliciet. Stoppen geeft de timers vrij.',
   'idleDetection.inputTimeoutDuration':
     'Duur van de aftelfase in seconden voordat de sessie wordt beëindigd. Overschrijft globale configuratie indien opgegeven.',
   'idleDetection.outputTimeout':

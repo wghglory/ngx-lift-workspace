@@ -1118,6 +1118,8 @@ export const esTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Despliegue',
   'callout.example3LabelValidated': 'Validada',
   'themeToggle.title': 'Toggle temático',
+  'themeToggle.exercise':
+    'Cambia el tema y recarga: ThemeService guarda cds-theme en localStorage y lo aplica al cuerpo del documento. Ambos controles comparten el servicio. changeTheme informa de la acción del selector, no de las llamadas al servicio.',
   'themeToggle.overview':
     'El componente <code>cll-theme-toggle</code> y el <code>ThemeService</code> permiten cambiar de forma fluida entre los modos claro y oscuro de Clarity con reactividad mediante Signal y persistencia en localStorage.',
   'themeToggle.callout':
@@ -1326,6 +1328,8 @@ export const esTranslations: Record<string, string> = {
     'Los parámetros <code>idleDurationInSeconds</code> y <code>timeoutDurationInSeconds</code> son opcionales. Al pasar estos parámetros, sobreescribirán la configuración pasada por <code>provideIdleDetectionConfig</code>.',
   'idleDetection.utilDialogPreview': 'El diálogo parece a continuación:',
   'idleDetection.title': 'Detección de Idle',
+  'idleDetection.exercise':
+    'Inicia y deja la página inactiva 3 segundos. El aviso cuenta 10 segundos. La actividad no cierra un aviso abierto; confirma para reiniciar el período. Detener libera los temporizadores.',
   'idleDetection.overview':
     'El componente <code>cll-idle-detection</code> monitorea la inactividad del usuario a través de eventos del DOM (movimiento del ratón, teclas, desplazamientos y toques). Cuando el tiempo de inactividad expire, abre un diálogo de conteo regresivo accesible de Clarity y emite un evento de (timeout).',
   'idleDetection.example1': 'Ejemplo 1: Simulación interactiva de diálogo de Idle',
@@ -1339,7 +1343,7 @@ export const esTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     'Duración de la inactividad en segundos antes de que se muestre el modal de cuenta atrás. Sobrepasa la configuración global si se especifica.',
   'idleDetection.callout':
-    'El modal incluye un &quot; Mantenme firmado &quot; En acción que reinicia a todos los timers tras la interacción del usuario. Si el usuario no responde, el evento (Timout) dispara para permitir un registro seguro o redirección de la ruta.',
+    'Inicia y deja la página inactiva 3 segundos. El aviso cuenta 10 segundos. La actividad no cierra un aviso abierto; confirma para reiniciar el período. Detener libera los temporizadores.',
   'idleDetection.inputTimeoutDuration':
     'Duración de la fase de cuenta atrás en segundos antes de que se produzca el tiempo de sesión. Sobrepasa la configuración global si se especifica.',
   'idleDetection.outputTimeout': 'Emite vacío cuando la cuenta atrás llega a 0 sin reconocimiento del usuario.',

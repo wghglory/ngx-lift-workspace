@@ -1005,6 +1005,8 @@ export const zhTWTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': '部署',
   'callout.example3LabelValidated': '已驗證',
   'themeToggle.title': '主題切換 (Theme Toggle)',
+  'themeToggle.exercise':
+    '切換佈景主題並重新整理：ThemeService 將選擇儲存為 localStorage 中的 cds-theme，並套用至文件 body。兩個控制項共用服務。changeTheme 表示切換控制項的操作；呼叫服務不會觸發該元件事件。',
   'themeToggle.overview':
     '<code>cll-theme-toggle</code> 與 <code>ThemeService</code> 提供 Clarity 明暗主題切換，支援 Signal 與 localStorage 持久儲存。',
   'themeToggle.callout':
@@ -1181,6 +1183,8 @@ export const zhTWTranslations: Record<string, string> = {
     '屬性 <code>idleDurationInSeconds</code> 與 <code>timeoutDurationInSeconds</code> 均為可選輸入。傳入時將自動覆蓋 <code>provideIdleDetectionConfig</code> 所設定的全域性預設值。',
   'idleDetection.utilDialogPreview': '彈窗展示效果如下：',
   'idleDetection.title': '閒置偵測 (Idle Detection)',
+  'idleDetection.exercise':
+    '啟動後停止操作 3 秒，警告會倒數 10 秒。活動不會關閉已開啟的警告；必須明確確認才能重新開始閒置計時。停止會釋放計時器。',
   'idleDetection.overview':
     '<code>cll-idle-detection</code> 監控使用者無動作狀態。逾時時跳出 Clarity 倒數對話方塊，並發出 (timeout) 事件保護連線安全。',
   'idleDetection.example1': '範例 1：倒數對話方塊互動模擬',
@@ -1190,7 +1194,7 @@ export const zhTWTranslations: Record<string, string> = {
   'idleDetection.apiSummary': '當使用者無操作時自動彈出倒計時模態框的會話超時檢測元件。',
   'idleDetection.inputIdleDuration': '觸發超時倒計時前的無操作空閒時長（秒）。若指定將覆蓋全域性配置。',
   'idleDetection.callout':
-    '彈窗包含一個“保持登入”按鈕，使用者點選後會立即重置所有計時器。若使用者未響應，將觸發 (timeout) 超時事件以執行安全登出或路由重定向。',
+    '啟動後停止操作 3 秒，警告會倒數 10 秒。活動不會關閉已開啟的警告；必須明確確認才能重新開始閒置計時。停止會釋放計時器。',
   'idleDetection.inputTimeoutDuration': '倒計時彈窗展示階段的持續時長（秒）。若指定將覆蓋全域性配置。',
   'idleDetection.outputTimeout': '當倒計時歸零且使用者未進行任何操作時觸發。',
   'idleDetection.serviceSummary': '用於監測全域性使用者活躍度並在空閒時觸發事件的核心服務。',

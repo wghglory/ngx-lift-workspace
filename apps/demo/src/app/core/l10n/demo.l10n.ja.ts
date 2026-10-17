@@ -1085,6 +1085,8 @@ export const jaTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'デプロイ',
   'callout.example3LabelValidated': '検証済み',
   'themeToggle.title': 'テーマスイッチ',
+  'themeToggle.exercise':
+    'テーマを切り替えて再読み込みします。ThemeService は cds-theme を localStorage に保存し、body に適用します。両方の操作は同じサービスを共有します。changeTheme は切り替え操作で発火し、サービス呼び出しでは発火しません。',
   'themeToggle.overview':
     '＜code＞cll-theme-toggle＜/code＞コンポーネントと＜code＞ThemeService＜/code＞は、Signalリアクティブ性とlocalStorageの永続性を活用してClarityライトとダークモード間のスムーズなテーマ切替を提供します。',
   'themeToggle.callout':
@@ -1278,6 +1280,8 @@ export const jaTranslations: Record<string, string> = {
     '<code>idleDurationInSeconds</code>と<code>timeoutDurationInSeconds</code>のパラメータはオプションです。これらのパラメータが渡されると、<code>provideIdleDetectionConfig</code>で渡された設定を上書きします。',
   'idleDetection.utilDialogPreview': 'ダイアログは以下のように見えます：',
   'idleDetection.title': 'アイドリーデテクション',
+  'idleDetection.exercise':
+    '開始後、3秒間操作を止めます。警告は10秒カウントダウンします。操作だけでは開いた警告は消えません。明示的に確認すると待機時間が再開し、停止でタイマーを解放します。',
   'idleDetection.overview':
     '<code>cll-idle-detection</code> コンポーネントは、マウスの移動、キー入力、スクロール、タッチなどの DOM イベントからユーザーの非アクティブ状態を監視します。設定したアイドル時間を過ぎると、アクセシブルな Clarity のカウントダウンダイアログを表示し、(timeout) イベントを発行します。',
   'idleDetection.example1': '例1: インタラクティブなアイドリーデータのシミュレーション',
@@ -1289,7 +1293,7 @@ export const jaTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     'カウントダウンモーダルが表示されるまでの不活動時間（秒）。指定された場合、グローバル設定を上書きします。',
   'idleDetection.callout':
-    'モーダルには「Keep Me Signed In」というアクションがあり、ユーザーのインタラクションによってすべてのタイマーをリセットします。ユーザーが反応しない場合、(timeout)イベントが発生し、安全なログアウトまたはルートリダイレクトを可能にします。',
+    '開始後、3秒間操作を止めます。警告は10秒カウントダウンします。操作だけでは開いた警告は消えません。明示的に確認すると待機時間が再開し、停止でタイマーを解放します。',
   'idleDetection.inputTimeoutDuration':
     'セッションタイムアウトが発生するまでのカウントダウンフェーズの時間（秒）。指定された場合、グローバル設定を上書きします。',
   'idleDetection.outputTimeout': 'ユーザーの承認なしにカウントダウンが0に達すると、voidを発行します。',

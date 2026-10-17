@@ -5,6 +5,8 @@
     {{ 'certificate.pemNote' | translate }}
   </cll-callout>
 
+  <p><a href="/sample-certificate.pem" download>sample-certificate.pem</a></p>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -12,7 +14,6 @@
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'certificate.example1' | translate }}</h3>
       <p>{{ 'certificate.example1Desc' | translate }}</p>
-      <app-code-block [code]="pem1Code" lang="typescript" />
       <p>{{ 'certificate.clickIcon' | translate }}</p>
       <div cds-layout="horizontal gap:xs align:center">
         <span>{{ 'certificate.clickCert' | translate }}</span>
@@ -24,12 +25,12 @@
           <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
         }
       </div>
+      <app-code-block [code]="pem1Code" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'certificate.example2' | translate }}</h3>
       <p [innerHTML]="'certificate.example2Desc' | translate"></p>
-      <app-code-block [code]="pem2Code" lang="typescript" />
       <p>{{ 'certificate.clickIcon' | translate }}</p>
       <div cds-layout="horizontal gap:xs align:center">
         <span>{{ 'certificate.clickCert' | translate }}</span>
@@ -41,6 +42,7 @@
           <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
         }
       </div>
+      <app-code-block [code]="pem2Code" lang="typescript" />
     </article>
   </section>
 

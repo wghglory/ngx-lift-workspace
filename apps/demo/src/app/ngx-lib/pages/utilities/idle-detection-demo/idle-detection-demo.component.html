@@ -3,6 +3,26 @@
   <p [innerHTML]="'idleDetection.utilOverview' | translate"></p>
   <p [innerHTML]="'idleDetection.utilOverviewDesc' | translate"></p>
 
+  <article cds-layout="vertical gap:sm" data-testid="idle-service-starter">
+    <h2>{{ 'common.liveDemo' | translate }}</h2>
+    <p>{{ 'idleDetection.exercise' | translate }}</p>
+    <div cds-layout="horizontal gap:sm wrap">
+      <button type="button" class="btn btn-sm" [disabled]="monitoring()" (click)="start()">
+        {{ 'idleDetection.startSimulation' | translate }}
+      </button>
+      <button type="button" class="btn btn-sm" [disabled]="!monitoring()" (click)="stop()">
+        {{ 'idleDetection.stopSimulation' | translate }}
+      </button>
+      @if (phase() === 'Warning') {
+        <button type="button" class="btn btn-sm" (click)="confirm()">{{ 'common.refresh' | translate }}</button>
+      }
+    </div>
+    <output aria-live="polite">{{ phase() }} · {{ countdown() ?? '—' }}</output>
+    <app-code-block [code]="starterCode" lang="typescript" />
+    <app-code-block [code]="starterHtml" lang="html" />
+    <a routerLink="/clr-lift/components/idle-detection">cll-idle-detection</a>
+  </article>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>

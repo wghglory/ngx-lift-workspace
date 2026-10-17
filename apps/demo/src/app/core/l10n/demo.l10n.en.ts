@@ -1076,6 +1076,8 @@ export const enTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Deployment',
   'callout.example3LabelValidated': 'Validated',
   'themeToggle.title': 'Theme Toggle',
+  'themeToggle.exercise':
+    'Toggle the theme and reload: ThemeService persists the selection as cds-theme in localStorage and applies it to the document body. Both controls share the service. changeTheme reports the toggle action; service calls do not emit that component event.',
   'themeToggle.overview':
     'The <code>cll-theme-toggle</code> component and <code>ThemeService</code> provide seamless theme switching between Clarity light and dark modes with Signal reactivity and localStorage persistence.',
   'themeToggle.callout':
@@ -1271,6 +1273,8 @@ export const enTranslations: Record<string, string> = {
     'The parameters <code>idleDurationInSeconds</code> and <code>timeoutDurationInSeconds</code> are optional. When these parameters are passed, they will overwrite the configuration passed by <code>provideIdleDetectionConfig</code>.',
   'idleDetection.utilDialogPreview': 'The dialog looks like below:',
   'idleDetection.title': 'Idle Detection',
+  'idleDetection.exercise':
+    'Start, then leave the page idle for 3 seconds. The warning counts down for 10 seconds. Activity does not dismiss an open warning; confirm explicitly to restart the idle period. Stop releases the timers.',
   'idleDetection.overview':
     'The <code>cll-idle-detection</code> component monitors user inactivity across DOM events (mouse movement, keystrokes, scrolls, and touch). When the idle duration expires, it opens an accessible Clarity countdown dialog and emits a (timeout) event.',
   'idleDetection.example1': 'Example 1: Interactive Idle Dialog Simulation',
@@ -1282,7 +1286,7 @@ export const enTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     'Duration of inactivity in seconds before the countdown modal is displayed. Overrides global configuration if specified.',
   'idleDetection.callout':
-    'The modal includes a "Keep Me Signed In" action that resets all timers upon user interaction. If the user does not respond, the (timeout) event fires to allow safe logout or route redirection.',
+    'Start, then leave the page idle for 3 seconds. The warning counts down for 10 seconds. Activity does not dismiss an open warning; confirm explicitly to restart the idle period. Stop releases the timers.',
   'idleDetection.inputTimeoutDuration':
     'Duration of the countdown phase in seconds before session timeout occurs. Overrides global configuration if specified.',
   'idleDetection.outputTimeout': 'Emits void when the countdown reaches 0 without user acknowledgment.',

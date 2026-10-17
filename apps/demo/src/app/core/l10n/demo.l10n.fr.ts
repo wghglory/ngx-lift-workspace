@@ -1122,6 +1122,8 @@ export const frTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Déploiement',
   'callout.example3LabelValidated': 'Validé',
   'themeToggle.title': 'Thème toggle',
+  'themeToggle.exercise':
+    'Changez de thème et rechargez : ThemeService conserve cds-theme dans localStorage et l’applique au corps du document. Les contrôles partagent le service. changeTheme signale l’action du sélecteur, pas les appels au service.',
   'themeToggle.overview':
     'Le <code>cll-theme-toggle</code> et le <code>ThemeService</code> permettent de passer de manière fluide entre les modes clair et sombre de Clarity avec la réactivité Signal et la persistance dans le stockage local.',
   'themeToggle.callout':
@@ -1332,6 +1334,8 @@ export const frTranslations: Record<string, string> = {
     'Les paramètres <code>idleDurationInSeconds</code> et <code>timeoutDurationInSeconds</code> sont optionnels. Lorsque ces paramètres sont passés, ils écrasent la configuration passée par <code>provideIdleDetectionConfig</code>.',
   'idleDetection.utilDialogPreview': 'La boîte de dialogue se présente comme suit :',
   'idleDetection.title': "Détection de l'aiguille",
+  'idleDetection.exercise':
+    'Démarrez, puis restez inactif 3 secondes. L’avertissement compte 10 secondes. L’activité ne ferme pas l’avertissement ouvert ; confirmez explicitement. Arrêter libère les temporisateurs.',
   'idleDetection.overview':
     "Le composant <code>cll-idle-detection</code> surveille l'inactivité de l'utilisateur à travers les événements DOM (déplacements de la souris, frappes, défilements et touche). Lorsque la durée d'inactivité expire, il ouvre un dialogue de comptage à rebours accessible Clarity et émet un événement (timeout).",
   'idleDetection.example1': 'Exemple 1 : Simulation interactive de la boîte de dialogue Idle',
@@ -1345,7 +1349,7 @@ export const frTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     "Durée de l'inactivité en secondes avant l'affichage du modal de compte à rebours. Surpasse la configuration globale si spécifiée.",
   'idleDetection.callout':
-    "Le modal comprend une action « Keep Me Signed In » qui réinitialise tous les minuteurs lors de l'interaction avec l'utilisateur. Si l'utilisateur ne répond pas, l'événement (timeout) s'allume pour permettre une déconnexion ou une redirection de route en toute sécurité.",
+    'Démarrez, puis restez inactif 3 secondes. L’avertissement compte 10 secondes. L’activité ne ferme pas l’avertissement ouvert ; confirmez explicitement. Arrêter libère les temporisateurs.',
   'idleDetection.inputTimeoutDuration':
     "Durée de la phase de compte à rebours en secondes avant l'expiration de la session. Dépasse la configuration globale si spécifiée.",
   'idleDetection.outputTimeout':

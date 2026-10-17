@@ -1100,6 +1100,8 @@ export const ptBRTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Implementação',
   'callout.example3LabelValidated': 'Validades',
   'themeToggle.title': 'Toque em Tema',
+  'themeToggle.exercise':
+    'Altere o tema e recarregue: ThemeService salva cds-theme no localStorage e aplica ao corpo do documento. Os controles compartilham o serviço. changeTheme informa a ação do seletor, não chamadas ao serviço.',
   'themeToggle.overview':
     'O componente <code>cll-theme-toggle</code> e o <code>ThemeService</code> permitem a troca de temas entre o modo claro e escuro do Clarity com reatividade de sinal e persistência no localStorage.',
   'themeToggle.callout':
@@ -1301,6 +1303,8 @@ export const ptBRTranslations: Record<string, string> = {
     'Os parâmetros <code>idleDurationInSeconds</code> e <code>timeoutDurationInSeconds</code> são opcionais. Quando estes parâmetros são passados, eles vão substituir a configuração passada pelo <code>provideIdleDetectionConfig</code>.',
   'idleDetection.utilDialogPreview': 'A janela parece-se com a seguinte:',
   'idleDetection.title': 'Detecção do Idle',
+  'idleDetection.exercise':
+    'Inicie e deixe a página inativa por 3 segundos. O aviso conta 10 segundos. A atividade não fecha um aviso aberto; confirme explicitamente para reiniciar. Parar libera os temporizadores.',
   'idleDetection.overview':
     'O componente <code>cll-idle-detection</code> monitora a inatividade do usuário em eventos DOM (movimento do mouse, teclas, rolagens e toque). Quando o período de inatividade expirar, ele abre um diálogo de contagem down acessível Clarity e emite um evento (timeout).',
   'idleDetection.example1': 'Exemplo 1: Simulação Interativa da Janela de Idle',
@@ -1314,7 +1318,7 @@ export const ptBRTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     'A duração da inatividade em segundos antes que o modal para contagem regressiva seja exibido.',
   'idleDetection.callout':
-    'O modal inclui uma ação para Me manter-se em série que reinstala todos os horários sobre a interação do usuário. Se o usuário não responder, o evento (timeout) dispara para para permitir o logout seguro ou redirecionarem a rota.',
+    'Inicie e deixe a página inativa por 3 segundos. O aviso conta 10 segundos. A atividade não fecha um aviso aberto; confirme explicitamente para reiniciar. Parar libera os temporizadores.',
   'idleDetection.inputTimeoutDuration': 'A duração da fase contagem regressiva em segundos antes da sessão ocorrer.',
   'idleDetection.outputTimeout':
     'Emite um vazio quando a contagem regressiva chegar a 0 sem o reconhecimento do usuário.',

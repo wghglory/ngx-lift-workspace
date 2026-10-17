@@ -79,33 +79,68 @@ IhNzbM8m9Yop5w==
 
   pem2 = btoa(this.pem1);
 
-  pem1Code = highlight(`import {CertificateSignpostComponent} from 'clr-lift';
-import {Component} from '@angular/core';
+  pem1Code = highlight(`// Copy sample-certificate.pem from the download link to your public/ directory.
+// Register provideHttpClient() in app.config.ts.
+import {AsyncPipe} from '@angular/common';
+import {HttpClient} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {AlertComponent, CertificateSignpostComponent} from 'clr-lift';
+import {createAsyncState} from 'ngx-lift';
 
 @Component({
-  imports: [CertificateSignpostComponent],
-  template: \`<cll-certificate-signpost [pem]="pem1" />\`,
+  selector: 'app-certificate',
+  imports: [AsyncPipe, AlertComponent, CertificateSignpostComponent],
+  template: \`
+    @if (state$ | async; as state) {
+      @if (state.error) {
+        <cll-alert [error]="state.error" />
+      }
+      @if (state.data; as pem) {
+        @defer (on immediate) {
+          <cll-certificate-signpost [pem]="pem" />
+        }
+      }
+    }
+  \`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateExampleComponent {
-  pem1 = \`-----BEGIN CERTIFICATE-----
-MIIDljCCAn6gAwIBAgIQC5McOtY5Z+pnI7/Dr5r0SzANBgkqhkiG9w0BAQsFADBl
-...
------END CERTIFICATE-----\`;
-}`);
-
-  pem2Code = highlight(`import {CertificateSignpostComponent} from 'clr-lift';
-import {Component} from '@angular/core';
+export class CertificateComponent {
+  private http = inject(HttpClient);
+  readonly state$ = this.http.get('/sample-certificate.pem', {responseType: 'text'}).pipe(createAsyncState());
+}
+// The deferred template keeps the parsing code out of the eager component path.`);
+  pem2Code = highlight(`// Copy sample-certificate.pem from the download link to your public/ directory.
+// Register provideHttpClient() in app.config.ts.
+import {AsyncPipe} from '@angular/common';
+import {HttpClient} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {AlertComponent, CertificateSignpostComponent} from 'clr-lift';
+import {createAsyncState} from 'ngx-lift';
+import {map} from 'rxjs';
 
 @Component({
-  imports: [CertificateSignpostComponent],
-  template: \`<cll-certificate-signpost [pem]="pem2" [pemEncoded]="true" position="right-top" />\`,
+  selector: 'app-certificate',
+  imports: [AsyncPipe, AlertComponent, CertificateSignpostComponent],
+  template: \`
+    @if (state$ | async; as state) {
+      @if (state.error) {
+        <cll-alert [error]="state.error" />
+      }
+      @if (state.data; as pem) {
+        @defer (on immediate) {
+          <cll-certificate-signpost [pem]="pem" [pemEncoded]="true" position="right-top" />
+        }
+      }
+    }
+  \`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateEncodedExampleComponent {
-  pem1 = \`-----BEGIN CERTIFICATE-----
-...
------END CERTIFICATE-----\`;
-
-  // Base64 encoded PEM string
-  pem2 = btoa(this.pem1);
-}`);
+export class CertificateComponent {
+  private http = inject(HttpClient);
+  readonly state$ = this.http.get('/sample-certificate.pem', {responseType: 'text'}).pipe(
+    map((pem) => btoa(pem)),
+    createAsyncState(),
+  );
+}
+// The deferred template keeps the parsing code out of the eager component path.`);
 }

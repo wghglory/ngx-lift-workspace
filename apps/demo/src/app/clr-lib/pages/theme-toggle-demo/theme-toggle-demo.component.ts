@@ -87,33 +87,19 @@ export class ThemeToggleDemoComponent {
     this.lastChangedEvent.set(`Programmatically set "${theme}" at ${new Date().toLocaleTimeString()}`);
   }
 
-  basicComponentCode = highlight(`import {Component} from '@angular/core';
+  basicComponentCode = highlight(
+    "import {ChangeDetectionStrategy, Component} from '@angular/core';\n\nimport {ThemeToggleComponent, ClarityTheme} from 'clr-lift';\n\n@Component({\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [ThemeToggleComponent],\n  templateUrl: './example.html',\n})\nexport class HeaderComponent {\n  onThemeChange(theme: ClarityTheme) {\n    console.log('Active theme changed to:', theme);\n  }\n}",
+  );
+  basicComponentCodeHtml = highlight('<cll-theme-toggle (changeTheme)="onThemeChange($event)" />');
 
-import {ThemeToggleComponent, ClarityTheme} from 'clr-lift';
-
-@Component({
-  imports: [ThemeToggleComponent],
-  template: \` <cll-theme-toggle (changeTheme)="onThemeChange($event)" /> \`,
-})
-export class HeaderComponent {
-  onThemeChange(theme: ClarityTheme) {
-    console.log('Active theme changed to:', theme);
-  }
-}`);
-
-  programmaticServiceCode = highlight(`import {ThemeService, ClarityTheme} from 'clr-lift';
-import {Component, inject} from '@angular/core';
-
-@Component({
-  template: \`
-    <p>Current theme: {{ themeService.theme() }}</p>
-    <button class="btn btn-sm btn-outline" (click)="themeService.setTheme('light')">Force Light</button>
-    <button class="btn btn-sm btn-outline" (click)="themeService.setTheme('dark')">Force Dark</button>
-  \`,
-})
-export class SettingsComponent {
-  readonly themeService = inject(ThemeService);
-}`);
+  programmaticServiceCode = highlight(
+    "import {ThemeService, ClarityTheme} from 'clr-lift';\nimport {ChangeDetectionStrategy, Component, inject} from '@angular/core';\n\n@Component({\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  templateUrl: './example.html',\n})\nexport class SettingsComponent {\n  readonly themeService = inject(ThemeService);\n}",
+  );
+  programmaticServiceCodeHtml = highlight(
+    `<p>Current theme: {{ themeService.theme() }}</p>
+<button class="btn btn-sm btn-outline" (click)="themeService.setTheme('light')">Force Light</button>
+<button class="btn btn-sm btn-outline" (click)="themeService.setTheme('dark')">Force Dark</button>`,
+  );
 
   themingStylesCode = highlight(`
 /* Styling custom components to react to Clarity dark theme */
