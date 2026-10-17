@@ -2,6 +2,10 @@
   <!-- Overview -->
   <p [innerHTML]="'pageContainer.overview' | translate"></p>
 
+  <p>
+    <a routerLink="/clr-lift" fragment="getting-started">clr-lift · {{ 'common.basicUsage' | translate }}</a>
+  </p>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -13,6 +17,7 @@
       [badgeText]="'pageContainer.example1Badge' | translate"
       layout="split"
       [tsCode]="basicUsageCode"
+      [htmlCode]="basicUsageCodeHtml"
     >
       <div preview>
         <div class="preview-box">
@@ -30,6 +35,7 @@
       [badgeText]="'pageContainer.example2Badge' | translate"
       layout="split"
       [tsCode]="customClassCode"
+      [htmlCode]="customClassCodeHtml"
       [scssCode]="customClassStylesCode"
     >
       <div preview>
@@ -52,6 +58,7 @@
       [badgeText]="'pageContainer.example3Badge' | translate"
       layout="split"
       [tsCode]="htmlTitleCode"
+      [htmlCode]="htmlTitleCodeHtml"
     >
       <div preview>
         <div class="preview-box">

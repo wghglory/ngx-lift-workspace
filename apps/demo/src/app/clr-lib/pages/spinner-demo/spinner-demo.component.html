@@ -2,16 +2,22 @@
   <!-- Overview -->
   <p [innerHTML]="'spinner.overview' | translate"></p>
 
+  <p>
+    <a routerLink="/clr-lift" fragment="getting-started">clr-lift · {{ 'common.basicUsage' | translate }}</a>
+  </p>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'spinner.example1' | translate }}</h3>
-      <p>{{ 'spinner.example1Desc' | translate }}</p>
-      <cll-spinner [decorative]="false" [label]="'spinner.loading' | translate" />
-      <app-code-block [code]="defaultCode" lang="html" />
-    </article>
+    <app-demo-playground
+      [title]="'spinner.example1' | translate"
+      [description]="'spinner.example1Desc' | translate"
+      [tsCode]="setupCode"
+      [htmlCode]="defaultCode"
+    >
+      <div preview><cll-spinner [decorative]="false" [label]="'spinner.loading' | translate" /></div>
+    </app-demo-playground>
 
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'spinner.example2' | translate }}</h3>
