@@ -1230,6 +1230,8 @@ export const deTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     'Container-Komponente, die alle Alarme anzeigt. Sollte über dem Clarity-Header-Tag im Hauptcontainer platziert werden.',
   'fileReader.title': 'Dateileser',
+  'fileReader.firstTask':
+    'Wählen Sie eine Textdatei und leeren Sie anschließend das Formular. Eine leere Auswahl ist ungültig; Zertifikatsgrenzen und Parsefehler folgen im nächsten Beispiel.',
   'fileReader.overview':
     'Die <code>FileReaderComponent</code> ermöglicht es Ihnen, die Inhalte von Textdateien einfach zu durchschauen und zu lesen. Sie unterstützt die Dateiauswahl, den Inhalt als einfacher Text oder als base64-codierter String zu lesen, die Überprüfung der Dateigröße und die Auslösung von Ereignissen, wenn Dateien ausgewählt oder entfernt werden.',
   'fileReader.example1': 'Beispiel 1: Grundlegender Dateileser',
@@ -1846,6 +1848,8 @@ export const deTranslations: Record<string, string> = {
     'Standardkonfiguration für alle Anfragen, sofern nicht via HttpContext überschrieben.',
   'k8sRetryBackoffInterceptor.tokenSummary':
     'HttpContextToken zur Konfiguration oder Deaktivierung der Wiederholung für einzelne Anfragen.',
+  'ifValidator.firstTask':
+    'Die negative Antwort macht E-Mail und Begründung erforderlich. Füllen Sie beide aus und ändern Sie die Antwort: Pflichtfehler verschwinden, das E-Mail-Format wird weiter geprüft.',
   'ifValidator.overview':
     'ngx-lift bietet Hilfsfunktionen zur Erstellung von bedingten Validierern in Angular-Reaktiven Formularen. Bedingte Validierer ermöglichen es Ihnen, spezifizierte Validiererfunktionen basierend auf einer gegebenen Bedingung anzuwenden. Es werden zwei Hauptfunktionen exportiert: <code>ifValidator</code> für synchronisierte Validierer und <code>ifAsyncValidator</code> für asynchrone Validierer.',
   'ifValidator.example1Title': 'Beispiel 1: Bedingter erforderlicher Validator',
@@ -1893,6 +1897,8 @@ export const deTranslations: Record<string, string> = {
     'Validiert, dass zwei array-wertige Formkontrollen keine überlappende Elemente enthalten.',
   'intersectionValidator.paramArray1Key': 'Der Name der ersten Formkontrolle.',
   'intersectionValidator.paramArray2Key': 'Der Name der zweiten Formkontrolle.',
+  'uniqueValidator.firstTask':
+    'Geben Sie in beide Felder denselben Text ein und verlassen Sie das Feld. Ändern und verlassen Sie es erneut, um den Duplikatfehler zu beheben. Leeren setzt beide Werte zurück.',
   'uniqueValidator.overview':
     'Der <code>uniqueValidator</code> ist ein benutzerdefinierter Angular-Form-Validierer, der auf der Suche nach Eindeutigkeit in mehreren Feldern innerhalb eines <code>FormArray</code> oder <code>FormGroup</code> ist. Er stellt sicher, dass der Wert jedes Kontrollen eindeutig among allen anderen Kontrollen innerhalb des Arrays oder der Gruppe ist.',
   'uniqueValidator.example1Title': 'Beispiel 1: Array von FormControls',

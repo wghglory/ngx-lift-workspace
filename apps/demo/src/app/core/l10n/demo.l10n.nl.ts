@@ -1230,6 +1230,8 @@ export const nlTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     'Containercomponent die alle waarschuwingen weergeeft. Moet boven de Clarity header tag in de hoofdcontainer worden geplaatst.',
   'fileReader.title': 'Bestandslezer',
+  'fileReader.firstTask':
+    'Kies een tekstbestand en wis daarna het formulier. Een bestand is verplicht; certificaatlimieten en parseerfouten volgen in het volgende voorbeeld.',
   'fileReader.overview':
     'De <code>FileReaderComponent</code> laat je gemakkelijk doorzoeken en lezen van tekstbestanden. Het ondersteunt bestandselectie, inhoudslezen als platte tekst of base64 geencodeerde string, bestandsgrotes validatie en zendt gebeurtenissen wanneer bestanden worden geselecteerd of verwijderd.',
   'fileReader.example1': 'Voorbeeld 1: Basisbestandslezer',
@@ -1838,6 +1840,8 @@ export const nlTranslations: Record<string, string> = {
     'Standaardconfiguratie toegepast op alle verzoeken tenzij overschreven via HttpContext.',
   'k8sRetryBackoffInterceptor.tokenSummary':
     'HttpContextToken om retry-gedrag per verzoek aan te passen of uit te schakelen.',
+  'ifValidator.firstTask':
+    'Het negatieve antwoord maakt e-mail en reden verplicht. Vul beide in en verander het antwoord: de verplichtingsfouten verdwijnen, maar het e-mailformaat blijft gecontroleerd.',
   'ifValidator.overview':
     'ngx-lift biedt nuttige functies voor het maken van conditionele validators in Angular Reactive Forms. Conditionele validators laten je op basis van een gegeven voorwaarde opgegeven validatorfuncties toepassen. Er zijn twee hoofdfuncties geïmporteerd: <code>ifValidator</code> voor synchrone validators en <code>ifAsyncValidator</code> voor asynchrone validators.',
   'ifValidator.example1Title': 'Voorbeeld 1: Voorwaardelijke Validator',
@@ -1882,6 +1886,8 @@ export const nlTranslations: Record<string, string> = {
     'Valideert dat twee array-gevulde formcontroles geen overlappende elementen bevatten.',
   'intersectionValidator.paramArray1Key': 'De naam van de eerste vorm controle.',
   'intersectionValidator.paramArray2Key': 'De naam van de tweede vorm controle.',
+  'uniqueValidator.firstTask':
+    'Voer dezelfde tekst in beide velden in en verlaat het veld om de duplicaatfout te zien. Wijzig één waarde en verlaat het veld opnieuw. Wissen herstelt beide waarden.',
   'uniqueValidator.overview':
     'De <code>uniqueValidator</code> is een aangepaste Angular Forms validator die controleert op unicititeit over meerdere velden binnen een <code>FormArray</code> of <code>FormGroup</code>. Het zorgt ervoor dat de waarde van elke controle uniek is among alle andere controles binnen de array of groep.',
   'uniqueValidator.example1Title': 'Voorbeeld 1: Array of FormControls',

@@ -8,7 +8,7 @@ test.describe('FileReader component', () => {
   test('Example 1: reads file, enables submit, and logs only basicForm data without Example 2 caCert', async ({
     page,
   }) => {
-    const example1 = page.locator('article', {hasText: 'Example 1: Basic File Reader'});
+    const example1 = page.getByTestId('file-reader-demo-starter');
     const submitBtn = example1.locator('button[type="submit"]');
 
     // Initially, Example 1 submit button is disabled because file is empty

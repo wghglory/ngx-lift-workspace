@@ -1,3 +1,4 @@
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -11,6 +12,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-if-validator',
   imports: [
+    DemoPlaygroundComponent,
     ClarityModule,
     ReactiveFormsModule,
     PageContainerComponent,
@@ -24,6 +26,60 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IfValidatorComponent {
+  readonly firstTaskCode = highlight(
+    "import {ChangeDetectionStrategy, Component, inject} from '@angular/core';\nimport {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';\nimport {ClarityModule} from '@clr/angular';\nimport {ifValidator, revalidateOnChange} from 'ngx-lift';\n\n@Component({\n  selector: 'app-form-example',\n  imports: [ClarityModule, ReactiveFormsModule],\n  templateUrl: './form-example.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class FormExampleComponent {\n  validator = ifValidator(\n    () => this.form?.controls.choice.value === 'UNLIKE',\n    [Validators.required],\n    // add mismatch validation functions if needed\n  );\n\n  form = new FormGroup({\n    choice: new FormControl('', Validators.required),\n    email: new FormControl('', [this.validator, Validators.email]),\n    reason: new FormControl('', this.validator),\n  });\n\n  constructor() {\n    // Automatically revalidate email & reason whenever choice changes!\n    // Eliminates the need for manual (change)=\"changeChoice()\" template handlers.\n    revalidateOnChange([this.form.controls.email, this.form.controls.reason], this.form.controls.choice);\n  }\n\n  changeChoice() {\n    this.form.controls.email.updateValueAndValidity();\n    this.form.controls.reason.updateValueAndValidity();\n  }\n}",
+  );
+  readonly firstTaskHtml = highlight(
+    `<form clrForm [formGroup]="form">
+  <clr-radio-container>
+    <label for="if-choice">Do you like this tool?</label>
+    <clr-radio-wrapper>
+      <input
+        type="radio"
+        id="if-choice-like"
+        clrRadio
+        name="choice"
+        value="LIKE"
+        [formControl]="form.controls.choice"
+        (change)="changeChoice()"
+      />
+      <label for="if-choice-like">Of course 😜</label>
+    </clr-radio-wrapper>
+    <clr-radio-wrapper>
+      <input
+        type="radio"
+        id="if-choice-unlike"
+        clrRadio
+        name="choice"
+        value="UNLIKE"
+        [formControl]="form.controls.choice"
+        (change)="changeChoice()"
+      />
+      <label for="if-choice-unlike">Sorry 😅</label>
+    </clr-radio-wrapper>
+    <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+  </clr-radio-container>
+
+  <clr-input-container>
+    <label for="if-email">Email</label>
+    <input id="if-email" clrInput type="text" [formControl]="form.controls.email" size="30" />
+    <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
+    <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+    <clr-control-error *clrIfError="'email'">Invalid email</clr-control-error>
+  </clr-input-container>
+
+  <clr-input-container>
+    <label for="if-reason">Reason why you don't like</label>
+    <input id="if-reason" clrInput type="text" [formControl]="form.controls.reason" size="30" />
+    <clr-control-helper>Field required only when you choose Sorry</clr-control-helper>
+    <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+  </clr-input-container>
+
+  <button type="submit" class="btn-primary btn" [disabled]="form.invalid">Submit</button>
+  <button type="button" class="btn btn-sm btn-outline" (click)="form.reset()">Clear</button>
+  <output aria-live="polite">{{ form.status }}</output>
+</form>`,
+  );
   private translationService = inject(TranslationService);
 
   ifValidatorParameters = computed<ApiProperty[]>(() => {

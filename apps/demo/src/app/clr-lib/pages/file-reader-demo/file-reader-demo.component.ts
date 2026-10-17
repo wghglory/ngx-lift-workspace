@@ -1,3 +1,4 @@
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -13,6 +14,7 @@ import {CertificateExampleComponent} from '../../../shared/components/certificat
   selector: 'app-file-reader-demo',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DemoPlaygroundComponent,
     ApiTableComponent,
     ClarityModule,
     ReactiveFormsModule,
@@ -26,6 +28,31 @@ import {CertificateExampleComponent} from '../../../shared/components/certificat
   styleUrl: './file-reader-demo.component.scss',
 })
 export class FileReaderDemoComponent implements OnInit {
+  readonly firstTaskCode = highlight(
+    "import {ChangeDetectionStrategy, Component, inject} from '@angular/core';\nimport {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';\nimport {ClarityModule} from '@clr/angular';\nimport {FileReaderComponent} from 'clr-lift';\n\n@Component({\n  selector: 'app-form-example',\n  imports: [ClarityModule, ReactiveFormsModule, FileReaderComponent],\n  templateUrl: './form-example.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class FormExampleComponent {\n  basicForm = new FormGroup({\n    file: new FormControl('', [Validators.required]),\n  });\n\n  submitBasic() {\n    console.log(this.basicForm.value);\n  }\n}",
+  );
+  readonly firstTaskHtml = highlight(
+    `<form clrForm [formGroup]="basicForm" cds-layout="m-t:none" (ngSubmit)="submitBasic()">
+  <clr-control-container>
+    <label for="file">File</label>
+    <cll-file-reader controlId="file" clrControl [encoded]="false" [formControl]="basicForm.controls.file" />
+    @if (basicForm.controls.file.value) {
+      <clr-control-success>File content has been read successfully</clr-control-success>
+    }
+    <clr-control-error *clrIfError="'parse'; error as error">{{ error }}</clr-control-error>
+    <clr-control-error *clrIfError="'certificateValidationUnavailable'"
+      >Certificate validation could not load. Refresh the page and try again.</clr-control-error
+    >
+    <clr-control-error *clrIfError="'required'">Required</clr-control-error>
+  </clr-control-container>
+
+  <button type="submit" class="btn btn-primary" cds-layout="m-t:md" [disabled]="basicForm.invalid">
+    Submit and view console log
+  </button>
+  <button type="button" class="btn btn-sm btn-outline" (click)="basicForm.reset()">Clear</button>
+  <output aria-live="polite">{{ basicForm.status }}</output>
+</form>`,
+  );
   private readonly translationService = inject(TranslationService);
 
   readonly inputs = computed<ApiProperty[]>(() => [

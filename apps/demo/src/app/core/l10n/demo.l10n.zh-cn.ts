@@ -1113,6 +1113,8 @@ export const zhCNTranslations: Record<string, string> = {
   'multiAlerts.containerSummary':
     '统一承载并渲染所有多重警告消息的容器组件。建议挂载在主容器中的 Clarity Header 标签上方。',
   'fileReader.title': '文件读取器 (File Reader)',
+  'fileReader.firstTask':
+    '选择文本文件，查看调用方持有的表单，再清除内容。文件为必选项；下个示例介绍证书大小限制和解析错误。',
   'fileReader.overview':
     '<code>FileReaderComponent</code> 帮助用户在浏览器端轻松选择并读取文本文件内容。支持纯文本与 Base64 编码、文件大小限制，并在选定或清除文件时触发相应事件。',
   'fileReader.example1': '示例 1：基础文件读取',
@@ -1603,6 +1605,8 @@ export const zhCNTranslations: Record<string, string> = {
   'k8sRetryBackoffInterceptor.paramDefaultConfig':
     '应用于请求的默认 K8sBackoffRetryConfig，优先级低于请求级 K8S_RETRY_BACKOFF_CONFIG。',
   'k8sRetryBackoffInterceptor.tokenSummary': '用于在单次请求中覆盖退避配置或直接禁用重试的 HttpContextToken。',
+  'ifValidator.firstTask':
+    '选择否定答案后，邮箱和原因为必填。填写两项后切换答案：必填错误消失，但邮箱格式验证仍然生效。',
   'ifValidator.overview':
     'ngx-lift 为 Angular 响应式表单提供了功能强大的条件验证器。条件验证器支持根据动态布尔条件决定是否激活并应用指定的验证规则。库中导出了两大核心函数：用于同步校验的 <code>ifValidator</code> 与用于异步校验的 <code>ifAsyncValidator</code>。',
   'ifValidator.example1Title': '示例 1：条件必填验证器',
@@ -1643,6 +1647,8 @@ export const zhCNTranslations: Record<string, string> = {
   'intersectionValidator.apiSummary': '验证两个数组类型表单控件不包含重复或重叠元素。',
   'intersectionValidator.paramArray1Key': '第一个表单控件的名称。',
   'intersectionValidator.paramArray2Key': '第二个表单控件的名称。',
+  'uniqueValidator.firstTask':
+    '在两个字段输入相同文本并移开焦点，查看重复错误。修改其中一个值并再次移开焦点即可恢复；清除会重置两个值。',
   'uniqueValidator.overview':
     '<code>uniqueValidator</code> 是一款专为 Angular 表单定制的验证器，用于检测 <code>FormArray</code> 或 <code>FormGroup</code> 中多个控件的值是否保持唯一，确保数组或分组内任意控件的值不与其他控件冲突。',
   'uniqueValidator.example1Title': '示例 1：FormControls 数组',
