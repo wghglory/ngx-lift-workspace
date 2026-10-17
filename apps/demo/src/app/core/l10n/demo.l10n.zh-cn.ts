@@ -1282,6 +1282,8 @@ export const zhCNTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU 核心数',
   'timelineWizard.replicas': '副本数',
   'timelineWizard.url': '服务地址 (URL)',
+  'poll.start': '开始',
+  'poll.stop': '停止',
   'poll.overview':
     '<code>poll</code> 操作符是一个高效的自定义 RxJS 操作符，专门用于按固定周期轮询后端接口并同步最新数据。它将定时管理、数据加载和接口请求细节抽象为统一响应式流，在服务端不支持实时推送（如 WebSockets、SSE）的场景下尤为实用。同时可与各类 RxJS 操作符无缝组合使用。',
   'poll.example1Title': '示例 1：基础轮询',

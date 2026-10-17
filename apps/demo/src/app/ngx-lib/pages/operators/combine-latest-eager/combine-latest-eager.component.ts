@@ -1,3 +1,7 @@
+import {BehaviorSubject, Subject} from 'rxjs';
+import {combineLatestEager} from 'ngx-lift';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {AsyncPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
@@ -10,6 +14,8 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-combine-latest-eager',
   imports: [
+    DemoPlaygroundComponent,
+    AsyncPipe,
     ClarityModule,
     PageContainerComponent,
     CodeBlockComponent,
@@ -22,6 +28,35 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombineLatestEagerComponent {
+  readonly left$ = new BehaviorSubject('Atlas');
+  readonly right$ = new Subject<string>();
+  readonly values$ = combineLatestEager({left: this.left$, right: this.right$});
+  readonly starterCode = highlight(`import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {combineLatestEager} from 'ngx-lift';
+import {BehaviorSubject, Subject} from 'rxjs';
+
+// Subscribes to both inputs. The silent Subject is seeded with null.
+// The output is available before that Subject emits; later changes update it.
+@Component({
+  selector: 'app-starter',
+  imports: [AsyncPipe],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly left$ = new BehaviorSubject('Atlas');
+  readonly right$ = new Subject<string>();
+  readonly values$ = combineLatestEager({left: this.left$, right: this.right$});
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" (click)="left$.next('Beacon')">left = Beacon</button>
+  <button type="button" class="btn btn-sm" (click)="right$.next('Ready')">right = Ready</button>
+</div>
+@if (values$ | async; as values) {
+  <output aria-live="polite">left: {{ values.left }}, right: {{ values.right ?? 'null' }}</output>
+}`);
+
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {
@@ -42,7 +77,7 @@ export class CombineLatestEagerComponent {
   });
   basicExampleCode = highlight(`
 import {combineLatestEager} from 'ngx-lift';
-import {of, Subject} from 'rxjs';
+import {of, Subject, BehaviorSubject} from 'rxjs';
 
 export class MyComponent {
   today$ = of(new Date());

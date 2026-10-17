@@ -1358,6 +1358,8 @@ export const koTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': '리플리카',
   'timelineWizard.url': 'URL',
+  'poll.start': '시작',
+  'poll.stop': '중지',
   'poll.overview':
     'poll 운영자는 사용자 정의 RxJS 운영자로, API를 주기적으로 호출하여 데이터가 최신 상태를 유지하도록 하는 과정을 간소화합니다. 이 운영자는 개발자가 지정된 간격으로 데이터를 주기적으로 발행하는 관찰자를 생성할 수 있도록 하며, polling 간격 및 API 요청 관리의 복잡성을 추상화합니다. 이 운영자는 실시간 업데이트가 필요하지만 서버가 푸시 알림(웹소켓, 서버전송이벤트 등)을 지원하지 않는 경우에 특히 유용합니다. 이 운영자는 다른 RxJS 운영자와 원활하게 통합되어 데이터 스트림을 처리하는 반응형 파이프라인을 구축할 수 있습니다.',
   'poll.example1Title': '예제 1: 기본 폴링',

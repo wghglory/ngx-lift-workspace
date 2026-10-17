@@ -1441,6 +1441,8 @@ export const esTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': 'Respuestas',
   'timelineWizard.url': 'URL',
+  'poll.start': 'Iniciar',
+  'poll.stop': 'Detener',
   'poll.overview':
     'El operador <code>poll</code> es un operador personalizado de RxJS que simplifica el proceso de sondar APIs para mantener los datos actualizados. Permite que los desarrolladores creen observables que emitan datos periódicamente en intervalos especificados, abstrayendo la complejidad de gestionar intervalos de sondeo y solicitudes de API. Este operador es especialmente útil cuando se requieren actualizaciones en tiempo real pero el servidor no soporta notificaciones por push (WebSockets, Server-Sent Events, etc.). Integra fácilmente con otros operadores de RxJS, permitiendo a los desarrolladores construir pipelines reactivos para manejar flujos de datos.',
   'poll.example1Title': 'Ejemplo 1: Polling básico',

@@ -98,4 +98,26 @@ describe('PollComponent', () => {
     component.scrollToElement(element);
     expect(element.scrollIntoView).toHaveBeenCalledWith({behavior: 'smooth', block: 'start', inline: 'nearest'});
   });
+  it('starts, recovers from an error, and releases the first poller on stop', async () => {
+    const starter = () => fixture.nativeElement.querySelector('[data-testid="poll-starter"]');
+    component.running$.next(true);
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(300);
+    fixture.detectChanges();
+    expect(starter().querySelector('output').textContent).toContain('resolved · 1');
+    component.failure.set(true);
+    component.manualRefresh$.next();
+    await vi.advanceTimersByTimeAsync(300);
+    fixture.detectChanges();
+    expect(starter().querySelector('cll-alert').textContent).toContain('Simulated polling failure');
+    component.failure.set(false);
+    component.manualRefresh$.next();
+    await vi.advanceTimersByTimeAsync(300);
+    fixture.detectChanges();
+    expect(starter().querySelector('output').textContent).toContain('resolved · 2');
+    component.running$.next(false);
+    await vi.advanceTimersByTimeAsync(2000);
+    fixture.detectChanges();
+    expect(starter().querySelector('output')).toBeNull();
+  });
 });

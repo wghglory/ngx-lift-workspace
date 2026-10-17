@@ -2,6 +2,33 @@
   <!-- Overview -->
   <p [innerHTML]="'poll.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="poll-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'poll.example1Desc' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap">
+        <button type="button" class="btn btn-sm" (click)="running$.next(true)">{{ 'poll.start' | translate }}</button>
+        <button type="button" class="btn btn-sm" (click)="running$.next(false)">{{ 'poll.stop' | translate }}</button>
+        <button type="button" class="btn btn-sm" (click)="manualRefresh$.next()">
+          {{ 'common.refresh' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm" [attr.aria-pressed]="failure()" (click)="failure.set(!failure())">
+          {{ 'queryLearn.simulateFailure' | translate }}
+        </button>
+      </div>
+      @if (starterState$ | async; as state) {
+        <output aria-live="polite">{{ state.status }} · {{ state.data ?? '—' }}</output>
+        @if (state.error) {
+          <cll-alert [error]="state.error" />
+        }
+      }
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>

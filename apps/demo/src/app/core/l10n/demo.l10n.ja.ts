@@ -1382,6 +1382,8 @@ export const jaTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': 'レプリケーション',
   'timelineWizard.url': 'URL',
+  'poll.start': '開始',
+  'poll.stop': '停止',
   'poll.overview':
     '＜code＞poll＜/code＞オペレータは、カスタムのRxJSオペレータであり、APIをポーリングしてデータを最新に保つプロセスを単純化します。これは、指定された間隔でデータを定期的に発行する観測可能なオブジェクトを作成するのを許容し、ポーリング間隔やAPIリクエストの管理の複雑性を抽象化します。このオペレータは、リアルタイムの更新が必要であるが、サーバーがプッシュ通知（WebSockets、サーバー送信イベントなど）をサポートしていない場合に特に役立ちます。また、他のRxJSオペレータとスムーズに統合され、データストリームの処理に使用されるリアクティブなパイプラインを構築するための開発者に便利です。',
   'poll.example1Title': '例1: 基本的なポーリング',

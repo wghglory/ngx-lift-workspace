@@ -1379,6 +1379,8 @@ export const enTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': 'Replicas',
   'timelineWizard.url': 'URL',
+  'poll.start': 'Start',
+  'poll.stop': 'Stop',
   'poll.overview':
     'The <code>poll</code> operator is a custom RxJS operator that simplifies the process of polling APIs to keep data up-to-date. It allows developers to create observables that periodically emit data at specified intervals, abstracting away the complexity of managing polling intervals and API requests. This operator is especially useful when real-time updates are required but the server does not support push notifications (WebSockets, Server-Sent Events, etc.). It seamlessly integrates with other RxJS operators, enabling developers to build reactive pipelines for handling data streams.',
   'poll.example1Title': 'Example 1: Basic Polling',
