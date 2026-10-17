@@ -1,4 +1,8 @@
 export const enTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Select both IDs, reverse their order, and clear the selection. Retained keys keep their observers; removed items release theirs. Each row owns its loading, error, and refresh state.',
+  'queryLearn.collectionIntro':
+    'Use queryResource when one request returns a list. Use queryResources when a changing collection needs a separate query for each item.',
   'queryLearn.fixture':
     'This complete example uses a local timer to simulate server latency and failures. Open TypeScript to copy the component; HTML shows the same compiled template.',
   'queryLearn.httpSetup':
@@ -14,9 +18,19 @@ export const enTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Your first query',
   'queryLearn.refreshExplain':
     'isRefreshing() means a read is running while previous data remains visible. error() exposes failure; isRefreshError() distinguishes failure with retained data.',
+  'queryLearn.saved': 'Saved',
   'queryLearn.simulateFailure': 'Simulate failure',
   'queryLearn.teamA': 'Team A',
   'queryLearn.teamB': 'Team B',
+  'queryLearn.writeError': 'The save failed. Your input is preserved; disable simulated failure and save again.',
+  'queryLearn.writeExplain':
+    'mutate(args) submits the value and returns a Promise. isLoading() controls pending UI; error() reports a failed write. Start without tags; add them when a successful write must refresh cached reads.',
+  'queryLearn.writeExplainTitle': 'Understand the first save',
+  'queryLearn.writeIntro':
+    'mutateResource runs a server write when you call mutate(). It exposes pending, result, and error signals so the form can respond to the outcome.',
+  'queryLearn.writeSteps':
+    'Enter a name and save. Enable failure and save again, then disable failure and retry. The form disables submission while a write is pending.',
+  'queryLearn.writeTitle': 'Your first save',
   'toSignalForm.savedProfile': 'Saved profile',
   'queryResource.projectRevision': 'Response version',
   'queryResource.activeUser': 'Current user',
@@ -785,7 +799,7 @@ export const enTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Name',
   'mutateResource.thRole': 'Role',
-  'mutateResource.demo2Section': '2. Concurrency Modes: exhaust, concat, and parallel',
+  'mutateResource.demo2Section': '3. Concurrency Modes: exhaust, concat, and parallel',
   'mutateResource.demo2SectionDesc':
     'Test how different concurrency strategies handle rapid button clicks. "exhaust" prevents accidental double-submission by discarding or joining duplicate clicks while a mutation is already running.',
   'mutateResource.demo2PlaygroundTitle': 'Rapid Click & Concurrency Simulation',
@@ -803,7 +817,7 @@ export const enTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Execution Log',
   'mutateResource.clearLogs': 'Clear Log',
   'mutateResource.noLogsYet': 'No mutations executed yet. Click the button above to begin.',
-  'mutateResource.demo3Section': '3. Reactive Status Signals & Error Recovery',
+  'mutateResource.demo3Section': '2. Reactive Status Signals & Error Recovery',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> manages errors cleanly. When a write fails, the error signal is populated, status becomes "error", and the returned Promise rejects for try/catch handling.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',

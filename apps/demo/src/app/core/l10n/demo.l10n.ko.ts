@@ -1,4 +1,8 @@
 export const koTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    '두 ID를 선택하고 순서를 뒤집은 뒤 선택을 지우세요. 유지된 키는 관찰자를 유지하고 제거된 항목은 해제합니다. 각 행에는 자체 로딩, 오류, 새로 고침 상태가 있습니다.',
+  'queryLearn.collectionIntro':
+    '한 번의 요청이 목록을 반환하면 queryResource를 사용하세요. 바뀌는 컬렉션의 각 항목에 별도 쿼리가 필요하면 queryResources를 사용하세요.',
   'queryLearn.fixture':
     '이 완전한 예제는 로컬 타이머로 서버 지연과 실패를 재현합니다. TypeScript를 열어 컴포넌트를 복사하세요. HTML은 실제 컴파일에 쓰이는 동일한 템플릿입니다.',
   'queryLearn.httpSetup':
@@ -14,9 +18,19 @@ export const koTranslations: Record<string, string> = {
   'queryLearn.readTitle': '첫 번째 쿼리',
   'queryLearn.refreshExplain':
     'isRefreshing()은 기존 데이터를 표시하면서 읽기가 진행되는 상태입니다. error()는 실패를 제공하고 isRefreshError()는 보관 데이터가 있는 실패를 구분합니다.',
+  'queryLearn.saved': '저장됨',
   'queryLearn.simulateFailure': '실패 재현',
   'queryLearn.teamA': '팀 A',
   'queryLearn.teamB': '팀 B',
+  'queryLearn.writeError': '저장에 실패했습니다. 입력은 유지됩니다. 실패 재현을 끄고 다시 저장하세요.',
+  'queryLearn.writeExplain':
+    'mutate(args)는 값을 제출하고 Promise를 반환합니다. isLoading()은 대기 UI를 제어하고 error()는 쓰기 실패를 알립니다. 태그 없이 시작하고, 쓰기 성공 후 캐시 읽기를 갱신해야 할 때 추가하세요.',
+  'queryLearn.writeExplainTitle': '첫 번째 저장 이해하기',
+  'queryLearn.writeIntro':
+    'mutateResource는 mutate()를 호출하면 서버 쓰기를 실행합니다. 대기, 결과, 오류 시그널을 제공하여 폼이 결과에 맞게 반응할 수 있습니다.',
+  'queryLearn.writeSteps':
+    '이름을 입력하고 저장하세요. 실패를 켜고 다시 저장한 다음, 실패를 끄고 재시도하세요. 쓰기 대기 중에는 폼 제출을 막습니다.',
+  'queryLearn.writeTitle': '첫 번째 저장',
   'toSignalForm.savedProfile': '저장된 프로필',
   'queryResource.projectRevision': '응답 버전',
   'queryResource.activeUser': '현재 사용자',
@@ -781,7 +795,7 @@ export const koTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': '이름',
   'mutateResource.thRole': '역할',
-  'mutateResource.demo2Section': '2. 동시성 모드: exhaust, concat, parallel',
+  'mutateResource.demo2Section': '3. 동시성 모드: exhaust, concat, parallel',
   'mutateResource.demo2SectionDesc':
     '빠른 버튼 클릭에 어떻게 다른 동시성 전략이 대응하는지 테스트합니다. "exhaust"는 이미 실행 중인 변경 작업이 있을 때 중복 클릭을 제거하거나 결합하여 부적절한 이중 제출을 방지합니다.',
   'mutateResource.demo2PlaygroundTitle': '빠른 클릭 및 동시성 시뮬레이션',
@@ -799,7 +813,7 @@ export const koTranslations: Record<string, string> = {
   'mutateResource.recentLogs': '실행 로그',
   'mutateResource.clearLogs': '로그 클리어',
   'mutateResource.noLogsYet': '아직 변경 작업이 실행되지 않았습니다. 위의 버튼을 클릭하여 시작해주세요.',
-  'mutateResource.demo3Section': '3. 반응형 상태 신호 및 오류 회복',
+  'mutateResource.demo3Section': '2. 반응형 상태 신호 및 오류 회복',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code>는 오류를 별도로 관리합니다. 쓰기가 실패하면 error signal에 오류가 저장되고 status는 "error"가 되며, 반환된 Promise는 거부됩니다. try/catch로 처리할 수 있습니다.',
   'mutateResource.demo3PlaygroundTitle': '상태 신호 및 실패 회복',

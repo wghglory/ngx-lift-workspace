@@ -1,4 +1,8 @@
 export const ruTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Выберите оба ID, измените порядок и очистите выбор. Сохранившиеся ключи удерживают наблюдателей; удалённые элементы освобождают их. У каждой строки свои состояния загрузки, ошибки и обновления.',
+  'queryLearn.collectionIntro':
+    'Используйте queryResource, если один запрос возвращает список. Используйте queryResources, если изменяющейся коллекции нужен отдельный запрос для каждого элемента.',
   'queryLearn.fixture':
     'Этот полный пример использует локальный таймер для имитации задержек и сбоев сервера. Откройте TypeScript для копирования компонента; HTML показывает тот же компилируемый шаблон.',
   'queryLearn.httpSetup':
@@ -14,9 +18,20 @@ export const ruTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Ваш первый запрос',
   'queryLearn.refreshExplain':
     'isRefreshing() означает чтение при сохранении предыдущих данных на экране. error() сообщает сбой; isRefreshError() выделяет сбой с сохранёнными данными.',
+  'queryLearn.saved': 'Сохранено',
   'queryLearn.simulateFailure': 'Имитировать сбой',
   'queryLearn.teamA': 'Команда A',
   'queryLearn.teamB': 'Команда B',
+  'queryLearn.writeError':
+    'Сохранение не удалось. Введённые данные сохранены; отключите имитацию сбоя и сохраните снова.',
+  'queryLearn.writeExplain':
+    'mutate(args) отправляет значение и возвращает Promise. isLoading() управляет ожиданием; error() сообщает ошибку записи. Начните без тегов; добавьте их для обновления кешированных чтений после успешной записи.',
+  'queryLearn.writeExplainTitle': 'Как работает первое сохранение',
+  'queryLearn.writeIntro':
+    'mutateResource выполняет запись на сервер при вызове mutate(). Signals ожидания, результата и ошибки позволяют форме отражать итог операции.',
+  'queryLearn.writeSteps':
+    'Введите имя и сохраните. Включите сбой и сохраните снова, затем отключите его и повторите. Форма блокирует отправку, пока запись выполняется.',
+  'queryLearn.writeTitle': 'Ваше первое сохранение',
   'toSignalForm.savedProfile': 'Сохранённый профиль',
   'queryResource.projectRevision': 'Версия ответа',
   'queryResource.activeUser': 'Текущий пользователь',
@@ -801,7 +816,7 @@ export const ruTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Имя',
   'mutateResource.thRole': 'Роль',
-  'mutateResource.demo2Section': '2. Валютные режимы: выхлопные газы, конкат и параллельные',
+  'mutateResource.demo2Section': '3. Валютные режимы: выхлопные газы, конкат и параллельные',
   'mutateResource.demo2SectionDesc':
     'Тестирование, как разные стратегииConcurrency обрабатывают быстрые клики по кнопке. "exhaust" предотвращает случайные двойные отправки, отбрасывая или соединяя дублирующие клики, пока изменение не завершено.',
   'mutateResource.demo2PlaygroundTitle': 'Быстрый нажмите & конвалентный имитация',
@@ -819,7 +834,7 @@ export const ruTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Журнал выполнения',
   'mutateResource.clearLogs': 'Очистить журнал',
   'mutateResource.noLogsYet': 'Никаких мутации пока не выполнено. Нажмите кнопку выше, чтобы начать.',
-  'mutateResource.demo3Section': '3. Реактивное состояние Signals & Восстановление ошибок',
+  'mutateResource.demo3Section': '2. Реактивное состояние Signals & Восстановление ошибок',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> исправляет ошибки в чистом виде. Когда запись не работает, сигнал ошибки нагружается, статус становится "error", и возвращаемый Promise отказывается от обработки проб/прилова.',
   'mutateResource.demo3PlaygroundTitle': '& Выход из строя Signals',

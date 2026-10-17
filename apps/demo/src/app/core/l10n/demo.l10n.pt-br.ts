@@ -1,4 +1,8 @@
 export const ptBRTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Selecione os dois IDs, inverta a ordem e limpe a seleção. Chaves mantidas preservam seus observadores; itens removidos os liberam. Cada linha tem seus próprios estados de carregamento, erro e atualização.',
+  'queryLearn.collectionIntro':
+    'Use queryResource quando uma requisição retorna uma lista. Use queryResources quando uma coleção variável precisa de uma consulta separada para cada item.',
   'queryLearn.fixture':
     'Este exemplo completo usa um temporizador local para simular latência e falhas. Abra TypeScript para copiar o componente; HTML mostra o mesmo template compilado.',
   'queryLearn.httpSetup':
@@ -14,9 +18,20 @@ export const ptBRTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Sua primeira consulta',
   'queryLearn.refreshExplain':
     'isRefreshing() indica uma leitura em andamento com dados anteriores visíveis. error() expõe a falha; isRefreshError() distingue uma falha com dados retidos.',
+  'queryLearn.saved': 'Salvo',
   'queryLearn.simulateFailure': 'Simular falha',
   'queryLearn.teamA': 'Equipe A',
   'queryLearn.teamB': 'Equipe B',
+  'queryLearn.writeError':
+    'Não foi possível salvar. Sua entrada foi preservada; desative a falha simulada e salve novamente.',
+  'queryLearn.writeExplain':
+    'mutate(args) envia o valor e retorna uma Promise. isLoading() controla a espera; error() informa a falha. Comece sem tags; adicione-as quando uma gravação bem-sucedida precisar atualizar leituras em cache.',
+  'queryLearn.writeExplainTitle': 'Entenda o primeiro salvamento',
+  'queryLearn.writeIntro':
+    'mutateResource executa uma gravação no servidor quando você chama mutate(). Expõe signals de espera, resultado e erro para o formulário responder ao resultado.',
+  'queryLearn.writeSteps':
+    'Digite um nome e salve. Ative a falha e salve novamente; depois desative-a e tente outra vez. O formulário bloqueia o envio durante uma gravação.',
+  'queryLearn.writeTitle': 'Seu primeiro salvamento',
   'toSignalForm.savedProfile': 'Perfil salvo',
   'queryResource.projectRevision': 'Versão da resposta',
   'queryResource.activeUser': 'Usuário atual',
@@ -799,7 +814,7 @@ export const ptBRTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Nome',
   'mutateResource.thRole': 'Papel',
-  'mutateResource.demo2Section': '2. Modos de Contagem: escape, concat, e paralelo',
+  'mutateResource.demo2Section': '3. Modos de Contagem: escape, concat, e paralelo',
   'mutateResource.demo2SectionDesc':
     'Teste como diferentes estratégias de concorrência lidam com cliques rápidos em botões. "exhaust" previne submissões acidentais duplas descartando ou unindo cliques duplicados enquanto uma mutação está em andamento.',
   'mutateResource.demo2PlaygroundTitle': 'Rápida Simulação para a Contagem',
@@ -817,7 +832,7 @@ export const ptBRTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Registos de execução',
   'mutateResource.clearLogs': 'Limpar o Registro',
   'mutateResource.noLogsYet': 'Ainda sem mutações realizadas. Clique no botão acima para começar.',
-  'mutateResource.demo3Section': '3. Recuperação reativa do status Signals',
+  'mutateResource.demo3Section': '2. Recuperação reativa do status Signals',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> gerencia erros separadamente. Quando uma gravação falha, o sinal de erro recebe o erro, status passa a "error" e a Promise retornada é rejeitada para tratamento com try/catch.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals Hult Recuperação',

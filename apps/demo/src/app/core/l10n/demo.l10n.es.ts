@@ -1,4 +1,8 @@
 export const esTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Selecciona ambos ID, invierte el orden y vacía la selección. Las claves conservadas mantienen sus observadores; los elementos eliminados los liberan. Cada fila tiene su propio estado de carga, error y actualización.',
+  'queryLearn.collectionIntro':
+    'Usa queryResource cuando una solicitud devuelve una lista. Usa queryResources cuando una colección cambiante necesita una consulta separada por elemento.',
   'queryLearn.fixture':
     'Este ejemplo completo usa un temporizador local para simular latencia y fallos. Abre TypeScript para copiar el componente; HTML muestra la misma plantilla compilada.',
   'queryLearn.httpSetup':
@@ -14,9 +18,20 @@ export const esTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Tu primera consulta',
   'queryLearn.refreshExplain':
     'isRefreshing() indica una consulta en curso con los datos anteriores visibles. error() expone el fallo; isRefreshError() distingue un fallo con datos conservados.',
+  'queryLearn.saved': 'Guardado',
   'queryLearn.simulateFailure': 'Simular fallo',
   'queryLearn.teamA': 'Equipo A',
   'queryLearn.teamB': 'Equipo B',
+  'queryLearn.writeError':
+    'No se pudo guardar. Se conserva tu entrada; desactiva el fallo simulado y vuelve a guardar.',
+  'queryLearn.writeExplain':
+    'mutate(args) envía el valor y devuelve una Promise. isLoading() controla la interfaz pendiente; error() informa del fallo. Empieza sin etiquetas; añádelas cuando un guardado deba actualizar consultas en caché.',
+  'queryLearn.writeExplainTitle': 'Entender el primer guardado',
+  'queryLearn.writeIntro':
+    'mutateResource ejecuta una escritura al servidor cuando llamas a mutate(). Expone signals de actividad, resultado y error para que el formulario responda al resultado.',
+  'queryLearn.writeSteps':
+    'Introduce un nombre y guarda. Activa el fallo y guarda de nuevo; después desactívalo y reintenta. El formulario impide enviar mientras hay una escritura pendiente.',
+  'queryLearn.writeTitle': 'Tu primer guardado',
   'toSignalForm.savedProfile': 'Perfil guardado',
   'queryResource.projectRevision': 'Versión de respuesta',
   'queryResource.activeUser': 'Usuario actual',
@@ -808,7 +823,7 @@ export const esTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Nombre',
   'mutateResource.thRole': 'Función',
-  'mutateResource.demo2Section': '2. Modos de Conmoneda: escape, concat, y paralelo',
+  'mutateResource.demo2Section': '3. Modos de Conmoneda: escape, concat, y paralelo',
   'mutateResource.demo2SectionDesc':
     'Probar cómo diferentes estrategias de concurrencia manejan clics rápidos en un botón. "exhaust" previene el doble envío accidental descartando o uniendo clics duplicados mientras un mutación está en curso.',
   'mutateResource.demo2PlaygroundTitle': 'Haga clic rápido en Simulación de Conmoneda',
@@ -826,7 +841,7 @@ export const esTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Registro de ejecución',
   'mutateResource.clearLogs': 'Despejado',
   'mutateResource.noLogsYet': 'No mutaciones ejecutadas todavía. Haga clic en el botón de arriba para comenzar.',
-  'mutateResource.demo3Section': '3. Reactive Status Signals',
+  'mutateResource.demo3Section': '2. Reactive Status Signals',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> gestiona los errores de forma limpia. Cuando un escrito falla, la señal de error está poblada, el estado se vuelve un error, y el Promise devuelto rechaza por el manejo de la prueba / captura.',
   'mutateResource.demo3PlaygroundTitle': 'Estado Signals',

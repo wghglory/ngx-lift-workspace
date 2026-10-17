@@ -1,5 +1,5 @@
 <cll-page-container title="queryResources">
-  <p class="p1">{{ 'queryGuide.collectionIntro' | translate }}</p>
+  <p class="p1">{{ 'queryLearn.collectionIntro' | translate }}</p>
 
   <p>
     {{ 'queryGuide.selection' | translate }}
@@ -11,32 +11,14 @@
       [description]="'queryExamples.dynamicIntro' | translate"
       level="beginner"
       [tsCode]="dynamicCode"
+      [htmlCode]="dynamicHtmlCode"
+      [defaultExpanded]="false"
     >
-      <div preview>
-        <div class="query-actions">
-          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['a'])">
-            {{ 'queryExamples.one' | translate }}
-          </button>
-          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['a', 'b'])">
-            {{ 'queryExamples.both' | translate }}
-          </button>
-          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set(['b', 'a'])">
-            {{ 'queryExamples.reverse' | translate }}
-          </button>
-          <button type="button" class="btn btn-sm btn-outline" (click)="selectedTenants.set([])">
-            {{ 'queryExamples.empty' | translate }}
-          </button>
-        </div>
-        @for (query of tenantQueries(); track query.key) {
-          <div class="query-state" data-testid="query-demo-dynamic-row">
-            <span>{{ query.value()?.name ?? 'queryExamples.tenant' | translate }}</span>
-            <span [appQueryStatus]="query.status()">{{ query.status() }}</span>
-          </div>
-        } @empty {
-          <p role="status">{{ 'queryGuide.empty' | translate }}</p>
-        }
-      </div>
+      <div preview><app-collection-starter /></div>
     </app-demo-playground>
+  </section>
+  <section class="query-section" cds-layout="vertical gap:sm">
+    <p>{{ 'queryLearn.collectionExplain' | translate }}</p>
   </section>
   <section class="query-section" data-testid="failure-rows">
     <app-demo-playground
@@ -338,14 +320,7 @@
   </section>
 
   <section class="query-section">
-    <cll-callout data-testid="query-naming-convention">
-      <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
-      <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
-    </cll-callout>
-  </section>
-
-  <section class="query-section">
-    <h2>{{ 'queryResource.apiReference' | translate }}</h2>
+    <h2 id="api-reference">{{ 'queryResource.apiReference' | translate }}</h2>
     <p><code>queryResources(items, definition, options?)</code></p>
     <p>{{ 'queryGuide.collectionContract' | translate }}</p>
     <div class="query-table">

@@ -1,4 +1,8 @@
 export const nlTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Selecteer beide ID’s, keer de volgorde om en wis de selectie. Behouden sleutels behouden hun observers; verwijderde items geven ze vrij. Elke rij heeft eigen laad-, fout- en vernieuwstatussen.',
+  'queryLearn.collectionIntro':
+    'Gebruik queryResource als één aanvraag een lijst oplevert. Gebruik queryResources als een veranderende verzameling een aparte query per item nodig heeft.',
   'queryLearn.fixture':
     'Dit volledige voorbeeld simuleert serververtraging en fouten met een lokale timer. Open TypeScript om de component te kopiëren; HTML toont dezelfde gecompileerde template.',
   'queryLearn.httpSetup':
@@ -14,9 +18,20 @@ export const nlTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Je eerste query',
   'queryLearn.refreshExplain':
     'isRefreshing() betekent dat een leesbewerking loopt terwijl eerdere gegevens zichtbaar blijven. error() toont de fout; isRefreshError() onderscheidt fouten met bewaarde gegevens.',
+  'queryLearn.saved': 'Opgeslagen',
   'queryLearn.simulateFailure': 'Fout simuleren',
   'queryLearn.teamA': 'Team A',
   'queryLearn.teamB': 'Team B',
+  'queryLearn.writeError':
+    'Opslaan mislukt. Je invoer blijft behouden; schakel de gesimuleerde fout uit en sla opnieuw op.',
+  'queryLearn.writeExplain':
+    'mutate(args) verstuurt de waarde en geeft een Promise terug. isLoading() regelt de wachtweergave; error() meldt een schrijffout. Begin zonder tags; voeg ze toe als een geslaagde schrijfbewerking cachelezingen moet vernieuwen.',
+  'queryLearn.writeExplainTitle': 'De eerste opslagbewerking begrijpen',
+  'queryLearn.writeIntro':
+    'mutateResource voert een serverbewerking uit wanneer je mutate() aanroept. Signals voor wachten, resultaat en fouten laten het formulier reageren op de uitkomst.',
+  'queryLearn.writeSteps':
+    'Voer een naam in en sla op. Schakel fouten in en sla opnieuw op; schakel ze daarna uit en probeer opnieuw. Tijdens een schrijfbewerking blokkeert het formulier indienen.',
+  'queryLearn.writeTitle': 'Je eerste opslagbewerking',
   'toSignalForm.savedProfile': 'Opgeslagen profiel',
   'queryResource.projectRevision': 'Antwoordversie',
   'queryResource.activeUser': 'Huidige gebruiker',
@@ -804,7 +819,7 @@ export const nlTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Naam',
   'mutateResource.thRole': 'Rol',
-  'mutateResource.demo2Section': '2. Concurrency Modi: uitlaat, concat, en parallel',
+  'mutateResource.demo2Section': '3. Concurrency Modi: uitlaat, concat, en parallel',
   'mutateResource.demo2SectionDesc':
     'Test hoe verschillende concurrentiestrategieën snelle knopdrukken verwerken. "exhaust" voorkomt ongeplande dubbele indiening door dubbele klikken te negeren of toe te voegen terwijl een mutatie al draait.',
   'mutateResource.demo2PlaygroundTitle': 'Snel klikken op & concurrency simulatie',
@@ -822,7 +837,7 @@ export const nlTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Uitvoeringslogboek',
   'mutateResource.clearLogs': 'Logboek wissen',
   'mutateResource.noLogsYet': 'Nog geen mutaties uitgevoerd. Klik op de knop hierboven om te beginnen.',
-  'mutateResource.demo3Section': '3. Reactieve status Signals & Foutherstel',
+  'mutateResource.demo3Section': '2. Reactieve status Signals & Foutherstel',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> houdt fouten apart. Als een schrijfbewerking mislukt, bevat het foutsignaal de fout, wordt status "error" en wordt de geretourneerde Promise afgewezen voor afhandeling met try/catch.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Herstel',

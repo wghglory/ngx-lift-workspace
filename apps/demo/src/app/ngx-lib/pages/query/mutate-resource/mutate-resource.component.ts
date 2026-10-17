@@ -1,3 +1,7 @@
+import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
+import {RouterLink} from '@angular/router';
+import {MutationStarterComponent, MUTATION_STARTER_TEMPLATE} from '../mutation-starter/mutation-starter.component';
+import {MUTATION_STARTER_SOURCE} from '../mutation-starter/mutation-starter.example';
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal, computed, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
@@ -7,7 +11,6 @@ import {mutateResource, queryResource} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
-import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 import {CreateTeamMemberArgs, TeamService} from './team.service';
 import {teamMembersQuery, teamTags} from './team.queries';
@@ -17,16 +20,18 @@ import {TeamSummaryComponent} from './team-summary.component';
   selector: 'app-mutate-resource-demo',
   imports: [
     CommonModule,
+    CalloutComponent,
+    CodeBlockComponent,
+    RouterLink,
+    MutationStarterComponent,
     FormsModule,
     ClarityModule,
-    CalloutComponent,
     PageContainerComponent,
     SpinnerComponent,
     TranslatePipe,
     DemoPlaygroundComponent,
     ApiTableComponent,
     TeamSummaryComponent,
-    CodeBlockComponent,
   ],
   providers: [TeamService],
   templateUrl: './mutate-resource.component.html',
@@ -35,6 +40,8 @@ import {TeamSummaryComponent} from './team-summary.component';
 })
 export class MutateResourceDemoComponent {
   private readonly translationService = inject(TranslationService);
+  readonly starterCode = highlight(MUTATION_STARTER_SOURCE);
+  readonly starterHtmlCode = highlight(MUTATION_STARTER_TEMPLATE, 'html');
 
   // ---------------------------------------------------------------------------
   // Demo 1: Tag Invalidation with Active Queries

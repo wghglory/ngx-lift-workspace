@@ -38,3 +38,30 @@ test('first read shows retained data on refresh failure and recovers without cha
   await starter.getByRole('button', {name: 'HTML', exact: true}).click();
   await expect(starter.locator('app-demo-playground app-code-block')).toContainText('teamQuery.isRefreshing()');
 });
+
+test('first save retains input after failure and supports repeated successful submission', async ({page}) => {
+  await page.goto(base + 'mutateResource');
+  const starter = page.getByTestId('mutation-starter');
+  const input = starter.getByRole('textbox', {name: 'Name', exact: true});
+  const save = starter.getByRole('button', {name: 'Save', exact: true});
+  await expect(save).toBeDisabled();
+  await input.fill('Atlas team');
+  await save.click();
+  await expect(save).toBeDisabled();
+  await expect(starter.getByTestId('starter-saved')).toContainText('Atlas team');
+  const fail = starter.getByRole('checkbox', {name: 'Simulate failure', exact: true});
+  await fail.check();
+  await input.fill('Beacon team');
+  await save.click();
+  await expect(starter.getByRole('alert')).toContainText('The save failed');
+  await expect(input).toHaveValue('Beacon team');
+  await expect(starter.getByTestId('starter-saved')).toHaveCount(0);
+  await fail.uncheck();
+  await save.click();
+  await expect(starter.getByTestId('starter-saved')).toContainText('Beacon team');
+  await expect(starter.getByRole('alert')).toHaveCount(0);
+  await starter.getByRole('button', {name: 'View Code', exact: true}).click();
+  await expect(starter.locator('app-demo-playground app-code-block')).toContainText(
+    'await this.saveTeamMutation.mutate',
+  );
+});

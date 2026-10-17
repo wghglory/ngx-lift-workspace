@@ -1,4 +1,8 @@
 export const deTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Wählen Sie beide IDs, kehren Sie die Reihenfolge um und leeren Sie die Auswahl. Beibehaltene Schlüssel behalten ihre Beobachter; entfernte Elemente geben sie frei. Jede Zeile besitzt eigene Lade-, Fehler- und Aktualisierungszustände.',
+  'queryLearn.collectionIntro':
+    'Verwenden Sie queryResource, wenn eine Anfrage eine Liste liefert. Verwenden Sie queryResources, wenn eine veränderliche Sammlung eine eigene Abfrage pro Element benötigt.',
   'queryLearn.fixture':
     'Dieses vollständige Beispiel simuliert Serverlatenz und Fehler mit einem lokalen Timer. Öffnen Sie TypeScript zum Kopieren; HTML zeigt dasselbe kompilierte Template.',
   'queryLearn.httpSetup':
@@ -15,9 +19,20 @@ export const deTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Ihre erste Abfrage',
   'queryLearn.refreshExplain':
     'isRefreshing() bedeutet einen Lesezugriff bei weiterhin sichtbaren bisherigen Daten. error() liefert den Fehler; isRefreshError() unterscheidet Fehler mit aufbewahrten Daten.',
+  'queryLearn.saved': 'Gespeichert',
   'queryLearn.simulateFailure': 'Fehler simulieren',
   'queryLearn.teamA': 'Team A',
   'queryLearn.teamB': 'Team B',
+  'queryLearn.writeError':
+    'Speichern fehlgeschlagen. Ihre Eingabe bleibt erhalten; deaktivieren Sie den simulierten Fehler und speichern Sie erneut.',
+  'queryLearn.writeExplain':
+    'mutate(args) übermittelt den Wert und liefert eine Promise. isLoading() steuert die Warteanzeige; error() meldet Schreibfehler. Beginnen Sie ohne Tags; ergänzen Sie sie für die Aktualisierung gespeicherter Lesezugriffe.',
+  'queryLearn.writeExplainTitle': 'Den ersten Speichervorgang verstehen',
+  'queryLearn.writeIntro':
+    'mutateResource führt beim Aufruf von mutate() einen Schreibvorgang auf dem Server aus. Signals für laufende Vorgänge, Ergebnisse und Fehler ermöglichen passende Formularreaktionen.',
+  'queryLearn.writeSteps':
+    'Geben Sie einen Namen ein und speichern Sie. Aktivieren Sie den Fehler und speichern Sie erneut; deaktivieren Sie ihn dann und wiederholen Sie. Während eines Schreibvorgangs sperrt das Formular die Übermittlung.',
+  'queryLearn.writeTitle': 'Ihr erster Speichervorgang',
   'toSignalForm.savedProfile': 'Gespeichertes Profil',
   'queryResource.projectRevision': 'Antwortversion',
   'queryResource.activeUser': 'Aktueller Benutzer',
@@ -802,7 +817,7 @@ export const deTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Bezeichnung',
   'mutateResource.thRole': 'Rolle',
-  'mutateResource.demo2Section': '2. Concurrency Modes: Auspuff, Konkat und parallel',
+  'mutateResource.demo2Section': '3. Concurrency Modes: Auspuff, Konkat und parallel',
   'mutateResource.demo2SectionDesc':
     'Testen Sie, wie unterschiedliche Konkurrenzstrategien schnelle Buttonklicks behandeln. "exhaust" verhindert versehentliche Doppelabmeldung, indem es doppelte Klicks während einer Mutation ignoriert oder joinet.',
   'mutateResource.demo2PlaygroundTitle': 'Simulation für schnelle Klicks und Konkurrenz',
@@ -820,7 +835,7 @@ export const deTranslations: Record<string, string> = {
   'mutateResource.recentLogs': 'Ausführungsprotokoll',
   'mutateResource.clearLogs': 'Protokoll löschen',
   'mutateResource.noLogsYet': 'Noch keine Mutationen durchgeführt. Klicken Sie auf den Button oben, um zu beginnen.',
-  'mutateResource.demo3Section': '3. Reaktiver Status Signals & Fehlerwiederherstellung',
+  'mutateResource.demo3Section': '2. Reaktiver Status Signals & Fehlerwiederherstellung',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> trennt Fehler vom Wert. Bei einer fehlgeschlagenen Schreiboperation enthält das Fehlersignal den Fehler, status wird "error" und die zurückgegebene Promise wird für die Behandlung mit try/catch abgelehnt.',
   'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',

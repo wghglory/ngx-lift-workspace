@@ -1,4 +1,8 @@
 export const jaTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    '両方の ID を選択し、順序を逆にしてから選択を解除します。残るキーはオブザーバーを保持し、削除した項目は解放します。各行に独自の読み込み、エラー、更新状態があります。',
+  'queryLearn.collectionIntro':
+    '一回のリクエストでリストを取得する場合は queryResource を使います。変化するコレクションの各項目に独立したクエリが必要なら queryResources を使います。',
   'queryLearn.fixture':
     'この完全な例はローカルタイマーでサーバー遅延と失敗を再現します。TypeScript を開くとコンポーネントをコピーできます。HTML は実際にコンパイルする同じテンプレートです。',
   'queryLearn.httpSetup':
@@ -14,9 +18,19 @@ export const jaTranslations: Record<string, string> = {
   'queryLearn.readTitle': '最初のクエリ',
   'queryLearn.refreshExplain':
     'isRefreshing() は以前のデータを表示しながら読み取っている状態です。error() は失敗を示し、isRefreshError() は保持データがある失敗を区別します。',
+  'queryLearn.saved': '保存済み',
   'queryLearn.simulateFailure': '失敗を再現',
   'queryLearn.teamA': 'チーム A',
   'queryLearn.teamB': 'チーム B',
+  'queryLearn.writeError': '保存に失敗しました。入力は保持されています。失敗の再現を無効にして再度保存してください。',
+  'queryLearn.writeExplain':
+    'mutate(args) は値を送信して Promise を返します。isLoading() は処理中の表示、error() は書き込み失敗を示します。最初はタグなしで始め、成功後にキャッシュ読み取りを更新するときに追加します。',
+  'queryLearn.writeExplainTitle': '最初の保存を理解する',
+  'queryLearn.writeIntro':
+    'mutateResource は mutate() を呼ぶとサーバーに書き込みます。処理中、結果、エラーのシグナルでフォームが結果に応じて動作できます。',
+  'queryLearn.writeSteps':
+    '名前を入力して保存します。失敗を有効にして再保存し、次に無効にして再試行します。書き込み中はフォームの送信を無効にします。',
+  'queryLearn.writeTitle': '最初の保存',
   'toSignalForm.savedProfile': '保存したプロフィール',
   'queryResource.projectRevision': '応答バージョン',
   'queryResource.activeUser': '現在のユーザー',
@@ -790,7 +804,7 @@ export const jaTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': '名前',
   'mutateResource.thRole': '役職',
-  'mutateResource.demo2Section': '2. コンカレントモード: exhaust, concat, および parallel',
+  'mutateResource.demo2Section': '3. コンカレントモード: exhaust, concat, および parallel',
   'mutateResource.demo2SectionDesc':
     '高速なボタンクリックで異なるコンカレント戦略がどのように処理するかテストしてください。"exhaust"は、ミューテーションがすでに実行されている間、誤って二度の送信を防ぐために重複クリックを破棄または結合します。',
   'mutateResource.demo2PlaygroundTitle': '高速クリックとコンカレントシミュレーション',
@@ -808,7 +822,7 @@ export const jaTranslations: Record<string, string> = {
   'mutateResource.recentLogs': '実行ログ',
   'mutateResource.clearLogs': 'ログをクリア',
   'mutateResource.noLogsYet': 'まだミューテーションが実行されていません。上のボタンをクリックして開始してください。',
-  'mutateResource.demo3Section': '3. リアクティブなステータスシグナルとエラーリカバリー',
+  'mutateResource.demo3Section': '2. リアクティブなステータスシグナルとエラーリカバリー',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> はエラーを分離して管理します。書き込みが失敗すると error signal にエラーが入り、status は "error" になり、返された Promise は拒否されます。try/catch で処理できます。',
   'mutateResource.demo3PlaygroundTitle': 'ステータスシグナルとエラーリカバリー',

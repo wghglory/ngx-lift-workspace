@@ -1,4 +1,8 @@
 export const zhTWTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    '選擇兩個 ID、反轉順序，再清空選擇。保留的鍵繼續使用原觀察者，被移除的元素釋放觀察者。每一列擁有各自的載入、錯誤和重新整理狀態。',
+  'queryLearn.collectionIntro':
+    '一次請求回傳清單時使用 queryResource。變動的集合中每個元素都需要獨立查詢時，使用 queryResources。',
   'queryLearn.fixture':
     '這個完整範例以本機計時器模擬伺服器延遲和失敗。開啟 TypeScript 複製元件；HTML 展示同一份參與編譯的範本。',
   'queryLearn.httpSetup':
@@ -14,9 +18,19 @@ export const zhTWTranslations: Record<string, string> = {
   'queryLearn.readTitle': '你的第一次查詢',
   'queryLearn.refreshExplain':
     'isRefreshing() 表示讀取進行中且保留既有資料顯示。error() 公開失敗；isRefreshError() 區分仍有快取資料的失敗。',
+  'queryLearn.saved': '已儲存',
   'queryLearn.simulateFailure': '模擬失敗',
   'queryLearn.teamA': '團隊 A',
   'queryLearn.teamB': '團隊 B',
+  'queryLearn.writeError': '儲存失敗。輸入已保留；關閉失敗模擬後再次儲存。',
+  'queryLearn.writeExplain':
+    'mutate(args) 提交值並回傳 Promise。isLoading() 控制等待介面，error() 回報寫入失敗。先不使用標籤；成功寫入需要重新整理快取讀取時再加入。',
+  'queryLearn.writeExplainTitle': '理解第一次儲存',
+  'queryLearn.writeIntro':
+    '呼叫 mutate() 時，mutateResource 執行伺服器寫入。它提供等待、結果和錯誤訊號，讓表單依據操作結果回應。',
+  'queryLearn.writeSteps':
+    '輸入名稱並儲存。啟用失敗模擬後再次儲存，再關閉失敗模擬並重試。寫入等待期間，表單禁止再次提交。',
+  'queryLearn.writeTitle': '你的第一次儲存',
   'toSignalForm.savedProfile': '已儲存的使用者資料',
   'queryResource.projectRevision': '回應版本',
   'queryResource.activeUser': '目前使用者',
@@ -744,7 +758,7 @@ export const zhTWTranslations: Record<string, string> = {
   'mutateResource.thId': '序號',
   'mutateResource.thName': '姓名',
   'mutateResource.thRole': '職位角色',
-  'mutateResource.demo2Section': '2. 並發策略：exhaust、concat 與 parallel',
+  'mutateResource.demo2Section': '3. 並發策略：exhaust、concat 與 parallel',
   'mutateResource.demo2SectionDesc':
     '測試不同並發策略在快速頻繁點擊時的處理表現。"exhaust" 策略在請求處理期間會自動忽略後續重複點擊，有效防止重複提交。',
   'mutateResource.demo2PlaygroundTitle': '快速連擊與並發模式模擬',
@@ -762,7 +776,7 @@ export const zhTWTranslations: Record<string, string> = {
   'mutateResource.recentLogs': '執行紀錄',
   'mutateResource.clearLogs': '清除紀錄',
   'mutateResource.noLogsYet': '尚未觸發任何變更操作。請點擊上方按鈕進行體驗。',
-  'mutateResource.demo3Section': '3. 響應式狀態信號與錯誤復原',
+  'mutateResource.demo3Section': '2. 響應式狀態信號與錯誤復原',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> 提供完善的例外狀況捕獲。寫入失敗時，error 信號自動填充，status 轉變為 "error"，且回傳的 Promise 會 reject 供 try/catch 處理。',
   'mutateResource.demo3PlaygroundTitle': '狀態信號與失敗復原',

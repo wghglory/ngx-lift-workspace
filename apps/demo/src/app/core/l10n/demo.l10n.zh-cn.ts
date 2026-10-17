@@ -1,4 +1,8 @@
 export const zhCNTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    '选择两个 ID、反转顺序，然后清空选择。保留的键继续使用原观察者，被移除的元素释放观察者。每一行拥有各自的加载、错误和刷新状态。',
+  'queryLearn.collectionIntro':
+    '一次请求返回列表时使用 queryResource。变化的集合中每个元素都需要独立查询时，使用 queryResources。',
   'queryLearn.fixture':
     '这个完整示例用本地计时器模拟服务端延迟和失败。打开 TypeScript 复制组件；HTML 展示同一份参与编译的模板。',
   'queryLearn.httpSetup':
@@ -14,9 +18,19 @@ export const zhCNTranslations: Record<string, string> = {
   'queryLearn.readTitle': '你的第一次查询',
   'queryLearn.refreshExplain':
     'isRefreshing() 表示读取进行中且保留原有数据显示。error() 暴露失败；isRefreshError() 区分仍有缓存数据的失败。',
+  'queryLearn.saved': '已保存',
   'queryLearn.simulateFailure': '模拟失败',
   'queryLearn.teamA': '团队 A',
   'queryLearn.teamB': '团队 B',
+  'queryLearn.writeError': '保存失败。输入已保留；关闭失败模拟后再次保存。',
+  'queryLearn.writeExplain':
+    'mutate(args) 提交值并返回 Promise。isLoading() 控制等待界面，error() 报告写入失败。先不使用标签；成功写入需要刷新缓存读取时再添加。',
+  'queryLearn.writeExplainTitle': '理解第一次保存',
+  'queryLearn.writeIntro':
+    '调用 mutate() 时，mutateResource 执行服务端写入。它提供等待、结果和错误信号，让表单根据操作结果响应。',
+  'queryLearn.writeSteps':
+    '输入名称并保存。启用失败模拟后再次保存，然后关闭失败模拟并重试。写入等待期间，表单禁止再次提交。',
+  'queryLearn.writeTitle': '你的第一次保存',
   'toSignalForm.savedProfile': '已保存的用户资料',
   'queryResource.projectRevision': '响应版本',
   'queryResource.activeUser': '当前用户',
@@ -751,7 +765,7 @@ export const zhCNTranslations: Record<string, string> = {
   'mutateResource.thId': '序号',
   'mutateResource.thName': '姓名',
   'mutateResource.thRole': '职位角色',
-  'mutateResource.demo2Section': '2. 并发策略：exhaust、concat 与 parallel',
+  'mutateResource.demo2Section': '3. 并发策略：exhaust、concat 与 parallel',
   'mutateResource.demo2SectionDesc':
     '测试不同并发策略在快速频繁点击时的处理表现。"exhaust" 策略在请求处理期间会自动忽略后续重复点击，有效防止重复提交。',
   'mutateResource.demo2PlaygroundTitle': '快速连击与并发模式仿真',
@@ -769,7 +783,7 @@ export const zhCNTranslations: Record<string, string> = {
   'mutateResource.recentLogs': '执行日志',
   'mutateResource.clearLogs': '清空日志',
   'mutateResource.noLogsYet': '暂未触发任何变更操作。请点击上方按钮进行体验。',
-  'mutateResource.demo3Section': '3. 响应式状态信号与错误恢复',
+  'mutateResource.demo3Section': '2. 响应式状态信号与错误恢复',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> 提供完善的异常捕获。写操作失败时，error 信号自动填充，status 转变为 "error"，且返回的 Promise 会 reject 供 try/catch 处理。',
   'mutateResource.demo3PlaygroundTitle': '状态信号与失败恢复',

@@ -1,4 +1,8 @@
 export const frTranslations: Record<string, string> = {
+  'queryLearn.collectionExplain':
+    'Sélectionnez les deux ID, inversez leur ordre, puis videz la sélection. Les clés conservées gardent leurs observateurs ; les éléments retirés les libèrent. Chaque ligne possède ses états de chargement, d’erreur et d’actualisation.',
+  'queryLearn.collectionIntro':
+    'Utilisez queryResource lorsqu’une requête renvoie une liste. Utilisez queryResources lorsqu’une collection changeante nécessite une requête distincte pour chaque élément.',
   'queryLearn.fixture':
     'Cet exemple complet utilise un minuteur local pour simuler latence et échecs. Ouvrez TypeScript pour copier le composant ; HTML présente le même modèle compilé.',
   'queryLearn.httpSetup':
@@ -14,9 +18,20 @@ export const frTranslations: Record<string, string> = {
   'queryLearn.readTitle': 'Votre première requête',
   'queryLearn.refreshExplain':
     'isRefreshing() indique une lecture en cours avec les données précédentes visibles. error() expose l’échec ; isRefreshError() distingue un échec avec données conservées.',
+  'queryLearn.saved': 'Enregistré',
   'queryLearn.simulateFailure': 'Simuler un échec',
   'queryLearn.teamA': 'Équipe A',
   'queryLearn.teamB': 'Équipe B',
+  'queryLearn.writeError':
+    'L’enregistrement a échoué. Votre saisie est conservée ; désactivez l’échec simulé et enregistrez à nouveau.',
+  'queryLearn.writeExplain':
+    'mutate(args) soumet la valeur et renvoie une Promise. isLoading() contrôle l’attente ; error() signale un échec. Commencez sans tags ; ajoutez-les lorsqu’une écriture doit actualiser les lectures en cache.',
+  'queryLearn.writeExplainTitle': 'Comprendre le premier enregistrement',
+  'queryLearn.writeIntro':
+    'mutateResource exécute une écriture serveur lorsque vous appelez mutate(). Il expose des signals d’attente, de résultat et d’erreur pour que le formulaire reflète le résultat.',
+  'queryLearn.writeSteps':
+    'Saisissez un nom et enregistrez. Activez l’échec et recommencez, puis désactivez-le et réessayez. Le formulaire bloque l’envoi pendant une écriture.',
+  'queryLearn.writeTitle': 'Votre premier enregistrement',
   'toSignalForm.savedProfile': 'Profil enregistré',
   'queryResource.projectRevision': 'Version de réponse',
   'queryResource.activeUser': 'Utilisateur actuel',
@@ -810,7 +825,7 @@ export const frTranslations: Record<string, string> = {
   'mutateResource.thId': 'ID',
   'mutateResource.thName': 'Dénomination',
   'mutateResource.thRole': 'Rôle',
-  'mutateResource.demo2Section': '2. Modes de contre-monnaie: échappement, concat et parallèle',
+  'mutateResource.demo2Section': '3. Modes de contre-monnaie: échappement, concat et parallèle',
   'mutateResource.demo2SectionDesc':
     'Tester comment différentes stratégies de concurrence gèrent les clics rapides sur un bouton. "exhaust" empêche accidentellement une soumission double en éliminant ou en joignant les clics en dupliques pendant qu\'une mutation est déjà en cours.',
   'mutateResource.demo2PlaygroundTitle': 'Simulation rapide de clics et de devises',
