@@ -124,14 +124,17 @@ Clipboard and Refetch failures use `cll-alert`. Data renders through Angular tex
 ## Refetch contract in ngx-lift
 
 ```typescript
-refetchQuery(key: QueryKey): Promise<unknown> | undefined;
+refetchQuery<T = unknown>(key: QueryKey): Promise<T> | undefined;
 ```
 
 The method looks up an existing entry, invokes the same manual-request machinery as reload with refresh=true and uses
 its most recently registered loader/policies. It bypasses completed fresh data, joins a current pending request and
 creates neither a query entry nor an observer. Missing keys return undefined. A destroyed client throws consistently
 with other client operations; loader failures reject and update the normal query error state. Inactive entries retain
-normal collection behavior. All observers of the selected key receive the result; unrelated keys are unaffected.
+normal collection behavior. Inactive manual refetches restart retention at invocation, consistently with fetchQuery; a
+pending read remains protected even after that retention interval elapses. The optional generic is a caller assertion
+about cached data, not an inference from an untyped key. All observers of the selected key receive the result; unrelated
+keys are unaffected.
 
 ## Production and installed-package boundary
 
@@ -184,12 +187,12 @@ runtime language switching. Structural JavaScript type markers and canonical ide
 
 Local validation, October 17, 2026:
 
-- Core suite: 881 tests pass, including targeted existing-key refetch, pending-read deduplication, cached-data failure,
+- Core suite: 883 tests pass, including targeted existing-key refetch, pending-read deduplication, cached-data failure,
   missing/destroyed clients and inactive collection.
-- clr-lift suite: 309 tests pass. Inspector coverage includes closed/paused/disposed timer behavior, client switching,
+- clr-lift suite: 319 tests pass. Inspector coverage includes closed/paused/disposed timer behavior, client switching,
   eviction, response expansion and paging, accessor/cycle handling, full-value copy, error inspection, in-place data
   refresh and locale parity. Demo suite: 237 tests pass. Tooling: 16 checks and the two-space snippet formatter pass.
-- The full 207-test Playwright suite passes across Chromium, Firefox and WebKit, including all 57 demo routes at desktop
+- The full 210-test Playwright suite passes across Chromium, Firefox and WebKit, including all 57 demo routes at desktop
   and narrow sizes and 11 demo languages. Checks verify panel actions, keyboard resizing, bottom positioning, selection
   focus/return, filters, dark mode and RTL. Individual tabs fit their scroll container and wrap long labels; this also
   prevents WebKit from swallowing a click during overflow scrolling.
@@ -214,3 +217,21 @@ inspection remains usable without that method.
 Review hardening: asynchronous action feedback is scoped to the current inspector context, so closing, selecting a
 query, or switching clients cannot receive feedback from an earlier action. Provider cleanup also releases a pending
 installation when its injector is destroyed before the first render.
+
+## Follow-up review contract
+
+[Angular effect options](https://angular.dev/api/core/CreateEffectOptions) allow signal writes by default, including in
+Angular 21; untracked keeps cleanup reads out of dependency tracking rather than granting write permission. Opening a
+paused panel or switching its client takes one initial snapshot; pause suppresses periodic updates. An explicit refetch
+settles the snapshot in its original open panel even after a tab/selection change, but completion from a previous panel
+session or client must not change the current paused view.
+
+Date previews and JSON copying use Date intrinsics rather than application getters or overridden serializers. Valid
+dates copy as ISO strings and invalid dates as null. Resize bounds and separator values follow viewport changes and full
+height; drag storage writes occur at completion. Copy feedback is cleared on context changes and destruction.
+
+Follow-up validation: pnpm run validate passes with 883 core, 319 clr-lift and 237 demo tests, coverage gates, zero lint
+warnings, strict types, production builds, bundle checks and fresh installed consumers. The 210 browser checks pass in
+Chromium, Firefox and WebKit. Nine additional drag repetitions verify persistence and reopening after waiting for panel
+animation to finish. Regressions also cover paused client changes/reopening, late refetch completions, stable tree
+focus, Date method getters, viewport/full-height separator values and pending-read GC past the retention interval.

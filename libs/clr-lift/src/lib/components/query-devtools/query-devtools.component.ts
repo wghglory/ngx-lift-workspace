@@ -51,6 +51,9 @@ export class QueryDevtoolsComponent {
   private readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
   private trigger?: HTMLButtonElement;
   private actionRevision = 0;
+  private panelRevision = 0;
+  private stopResize?: () => void;
+  private readonly viewportHeight = signal(this.document.defaultView?.innerHeight ?? 800);
   private copyNoticeTimer?: ReturnType<typeof setTimeout>;
 
   /** Runtime gate. For build-time exclusion use provideQueryDevtools from clr-lift/devtools. */
@@ -64,7 +67,11 @@ export class QueryDevtoolsComponent {
     () => typeof (this.client() ?? this.defaultClient).refetchQuery === 'function',
   );
 
-  protected readonly maxPanelHeight = computed(() => (this.document.defaultView?.innerHeight ?? 800) - 24);
+  protected readonly maxPanelHeight = computed(() => Math.max(0, this.viewportHeight() - 24));
+  protected readonly minPanelHeight = computed(() => Math.min(200, this.maxPanelHeight()));
+  protected readonly renderedPanelHeight = computed(() =>
+    this.fullHeight() ? this.maxPanelHeight() : this.clampHeight(this.panelHeight()),
+  );
 
   protected readonly panelId = `cll-query-devtools-${nextPanelId++}`;
   protected readonly isOpen = signal(false);
@@ -121,7 +128,7 @@ export class QueryDevtoolsComponent {
       this.isOpen.set(false);
       this.select(null);
       this.snapshot.set(null);
-      if (this.copyNoticeTimer) clearTimeout(this.copyNoticeTimer);
+      this.stopResize?.();
     });
     this.translationService.loadTranslationsForComponent('queryDevtools', queryDevtoolsTranslations);
     effect(() => {
@@ -131,20 +138,36 @@ export class QueryDevtoolsComponent {
     });
     effect(() => {
       this.client();
-      untracked(() => this.select(null));
+      untracked(() => {
+        this.panelRevision++;
+        this.select(null);
+        this.snapshot.set(null);
+      });
     });
     effect((onCleanup) => {
-      if (!this.isOpen()) return;
+      if (!this.enabled() || !this.isOpen() || !this.isBrowser) return;
       const client = this.client() ?? this.defaultClient;
-      if (!this.isBrowser || this.paused()) return;
+      const paused = this.paused();
       untracked(() => this.readSnapshot(client));
+      if (paused) return;
       const timer = setInterval(() => this.readSnapshot(client), 1000);
       onCleanup(() => clearInterval(timer));
+    });
+    effect((onCleanup) => {
+      if (!this.enabled() || !this.isOpen() || !this.isBrowser) return;
+      const viewport = this.document.defaultView;
+      if (!viewport) return;
+      const updateHeight = () => this.viewportHeight.set(viewport.innerHeight);
+      untracked(updateHeight);
+      viewport.addEventListener('resize', updateHeight);
+      onCleanup(() => viewport.removeEventListener('resize', updateHeight));
     });
   }
 
   protected openPanel(trigger: HTMLButtonElement): void {
     this.trigger = trigger;
+    this.panelRevision++;
+    this.viewportHeight.set(this.document.defaultView?.innerHeight ?? 800);
     this.actionError.set('');
     this.isOpen.set(true);
     try {
@@ -163,7 +186,9 @@ export class QueryDevtoolsComponent {
   }
 
   protected closePanel(): void {
+    this.panelRevision++;
     this.actionRevision++;
+    this.stopResize?.();
     this.isOpen.set(false);
     this.select(null);
     this.snapshot.set(null);
@@ -198,7 +223,7 @@ export class QueryDevtoolsComponent {
     this.expanded.set(new Map());
     this.tab.set('data');
     this.actionError.set('');
-    this.copyNotice.set(false);
+    this.clearCopyNotice();
     // Computed values are lazy: flush their cached payload/preview references when inspection ends.
     if (!entry) this.flushPreview();
     else if (this.isBrowser)
@@ -229,7 +254,7 @@ export class QueryDevtoolsComponent {
     this.actionRevision++;
     this.tab.set(tab);
     this.expanded.set(new Map());
-    this.copyNotice.set(false);
+    this.clearCopyNotice();
   }
 
   protected expand(row: ValueRow): void {
@@ -262,10 +287,13 @@ export class QueryDevtoolsComponent {
       if (!clipboard) throw new Error('Clipboard unavailable');
       await clipboard.writeText(text);
       if (!this.isCurrentAction(revision)) return;
+      this.clearCopyNotice();
       this.copyNotice.set(true);
       this.actionError.set('');
-      if (this.copyNoticeTimer) clearTimeout(this.copyNoticeTimer);
-      this.copyNoticeTimer = setTimeout(() => this.copyNotice.set(false), 2000);
+      this.copyNoticeTimer = setTimeout(() => {
+        this.copyNoticeTimer = undefined;
+        this.copyNotice.set(false);
+      }, 2000);
     } catch {
       if (this.isCurrentAction(revision))
         this.actionError.set(this.translationService.translate('queryDevtools.copyFailed'));
@@ -275,9 +303,10 @@ export class QueryDevtoolsComponent {
   protected async refetch(entry: QueryEntryDiagnostics): Promise<void> {
     if (!this.canRefetch()) return;
     const revision = ++this.actionRevision;
+    const panelRevision = this.panelRevision;
+    const client = this.client() ?? this.defaultClient;
     this.actionError.set('');
     try {
-      const client = this.client() ?? this.defaultClient;
       const request = client.refetchQuery(entry.key);
       if (!request) {
         this.actionError.set(this.translationService.translate('queryDevtools.evicted'));
@@ -289,8 +318,14 @@ export class QueryDevtoolsComponent {
       if (this.isCurrentAction(revision))
         this.actionError.set(this.translationService.translate('queryDevtools.refetchFailed'));
     } finally {
-      if (this.enabled() && this.isOpen()) this.refresh();
+      if (panelRevision === this.panelRevision && client === (this.client() ?? this.defaultClient)) this.refresh();
     }
+  }
+
+  private clearCopyNotice(): void {
+    if (this.copyNoticeTimer !== undefined) clearTimeout(this.copyNoticeTimer);
+    this.copyNoticeTimer = undefined;
+    this.copyNotice.set(false);
   }
 
   private flushPreview(): void {
@@ -307,14 +342,15 @@ export class QueryDevtoolsComponent {
   protected resizeBy(event: KeyboardEvent): void {
     if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
     event.preventDefault();
-    this.setHeight(this.panelHeight() + (event.key === 'ArrowUp' ? 20 : -20));
+    this.setHeight(this.renderedPanelHeight() + (event.key === 'ArrowUp' ? 20 : -20));
   }
 
   protected startResize(event: PointerEvent): void {
+    this.stopResize?.();
     const handle = event.currentTarget as HTMLElement;
     handle.setPointerCapture(event.pointerId);
     const startY = event.clientY;
-    const startHeight = this.panelHeight();
+    const startHeight = this.renderedPanelHeight();
     handle.onpointermove = (move) => {
       this.fullHeight.set(false);
       this.panelHeight.set(this.clampHeight(startHeight + startY - move.clientY));
@@ -322,13 +358,13 @@ export class QueryDevtoolsComponent {
     const finishResize = () => {
       handle.onpointermove = null;
       handle.onpointerup = null;
+      handle.onpointercancel = null;
       handle.onlostpointercapture = null;
-      try {
-        this.document.defaultView?.sessionStorage.setItem('cll-query-devtools-height', String(this.panelHeight()));
-      } catch {
-        /* Resizing still works without storage. */
-      }
+      this.stopResize = undefined;
+      this.persistHeight();
     };
+    this.stopResize = finishResize;
+    handle.onpointercancel = finishResize;
     handle.onlostpointercapture = finishResize;
     handle.onpointerup = (upEvent) => {
       finishResize();
@@ -341,12 +377,16 @@ export class QueryDevtoolsComponent {
   }
 
   private clampHeight(height: number): number {
-    return Math.max(200, Math.min(height, (this.document.defaultView?.innerHeight ?? 800) - 24));
+    return Math.max(this.minPanelHeight(), Math.min(height, this.maxPanelHeight()));
   }
 
   private setHeight(height: number): void {
     this.fullHeight.set(false);
     this.panelHeight.set(this.clampHeight(height));
+    this.persistHeight();
+  }
+
+  private persistHeight(): void {
     try {
       this.document.defaultView?.sessionStorage.setItem('cll-query-devtools-height', String(this.panelHeight()));
     } catch {

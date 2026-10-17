@@ -79,6 +79,28 @@ describe('QueryClient refetch by key', () => {
     }
   });
 
+  it('protects a pending inactive read past retention, then collects it under the normal GC policy', async () => {
+    vi.useFakeTimers();
+    try {
+      const transport = new Subject<string>();
+      let refetching = false;
+      const key = ['slow-inactive'];
+      await client.fetchQuery({key, loader: () => (refetching ? transport : of('cached')), gcTime: 100});
+      await vi.advanceTimersByTimeAsync(90);
+      refetching = true;
+      const request = client.refetchQuery<string>(key);
+      await vi.advanceTimersByTimeAsync(110);
+      expect(client.getSnapshot(key)?.status).toBe('reloading');
+      transport.next('updated');
+      await expect(request).resolves.toBe('updated');
+      expect(client.getSnapshot(key)?.value).toBe('updated');
+      await vi.advanceTimersByTimeAsync(0);
+      expect(client.getSnapshot(key)).toBeUndefined();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('does not execute a loader after client destruction', () => {
     const destroyed = new QueryClient();
     destroyed.destroy();

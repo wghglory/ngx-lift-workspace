@@ -14,6 +14,11 @@ const pageSize = 100;
 const maxNodes = 500;
 const maxDepth = 20;
 
+function dateJsonValue(value: Date): string | null {
+  // Avoid application overrides, including getters on these methods and custom toJSON hooks.
+  return Number.isNaN(Date.prototype.getTime.call(value)) ? null : Date.prototype.toISOString.call(value);
+}
+
 /** A bounded, read-only view. Descriptors avoid invoking application getters or toJSON hooks. */
 export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>): ValueRow[] {
   const rows: ValueRow[] = [];
@@ -29,7 +34,7 @@ export function valueRows(value: unknown, expanded: ReadonlyMap<string, number>)
       else if (typeof value === 'string')
         preview = JSON.stringify(value.slice(0, 2000)) + (value.length > 2000 ? ' …' : '');
       else if (typeof value === 'bigint') preview = `${value}n`;
-      else if (value instanceof Date) preview = Number.isNaN(value.getTime()) ? 'Invalid Date' : value.toISOString();
+      else if (value instanceof Date) preview = dateJsonValue(value) ?? 'Invalid Date';
       else if (typeof value === 'object') {
         if (ancestors.includes(value)) preview = '[Circular]';
         else if (Array.isArray(value)) {
@@ -100,9 +105,9 @@ export function copyableJson(value: unknown): string | undefined {
   const ancestors = new Set<object>();
   function clone(value: unknown, depth: number): unknown {
     if (--budget < 0 || depth > maxDepth) throw new Error('limit');
+    if (value instanceof Date) value = dateJsonValue(value);
     if (value === null || typeof value === 'boolean') return value;
     if (typeof value === 'number' && Number.isFinite(value)) return value;
-    if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value.toISOString();
     if (typeof value === 'string') {
       budget -= value.length;
       if (budget < 0) throw new Error('limit');

@@ -70,6 +70,8 @@ void computedTypes;
 const client = new QueryClient();
 const definition = {key: ['package-users'], loader: () => of([{id: 1}])};
 const users: Promise<{id: number}[]> = client.fetchQuery(definition);
+const refetched: Promise<{id: number}[]> | undefined = client.refetchQuery<{id: number}[]>(definition.key);
+void refetched;
 const users$: Observable<{id: number}[]> = fetchQueryObservable(client, definition);
 const snapshots$ = observeQueryObservable(client, definition);
 const providers = provideQueryClient({queryDefaults: {
@@ -286,6 +288,8 @@ void computedTypes;
 const client = new QueryClient();
 const definition = {key: ['fresh-users'], loader: () => of([{id: 1}])};
 const users: Promise<{id: number}[]> = client.fetchQuery(definition);
+const refetched: Promise<{id: number}[]> | undefined = client.refetchQuery<{id: number}[]>(definition.key);
+void refetched;
 const users$: Observable<{id: number}[]> = fetchQueryObservable(client, definition);
 const snapshots$ = observeQueryObservable(client, definition);
 const queryProviders = provideQueryClient({queryDefaults: {

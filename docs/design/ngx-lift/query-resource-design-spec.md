@@ -368,10 +368,11 @@ retains one client across account changes must clear previous-session data or in
 key. Removing a presentation prefix never removes result-changing identity or parameter segments.
 
 The [query devtools](../clr-lift/query-devtools-design-spec.md) use `getSnapshot(key)` for selected data without network
-or retention changes. `refetchQuery(key): Promise<unknown> | undefined` deliberately refreshes an existing entry with
-its registered loader/policies, joins pending work and returns undefined for a missing key. It never creates entries or
-observers; a destroyed client throws. Applications can register `provideQueryDevtools()` from `clr-lift/devtools` once
-at root. The installed production export resolves to a no-op, while direct component opt-in remains available for docs.
+or retention changes. `refetchQuery<T = unknown>(key): Promise<T> | undefined` deliberately refreshes an existing entry
+with its registered loader/policies, joins pending work and returns undefined for a missing key. It never creates
+entries or observers; a destroyed client throws. Applications can register `provideQueryDevtools()` from
+`clr-lift/devtools` once at root. The installed production export resolves to a no-op, while direct component opt-in
+remains available for docs.
 
 ### Large-project key and tag ownership
 

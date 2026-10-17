@@ -74,6 +74,17 @@ describe('bounded query value inspection', () => {
     });
   });
 
+  it('does not invoke Date method getters or custom serializers while inspecting and copying', () => {
+    const date = new Date('2026-10-17T00:00:00.000Z');
+    const getter = vi.fn(() => {
+      throw new Error('Application code must not execute');
+    });
+    for (const method of ['getTime', 'toISOString', 'toJSON']) Object.defineProperty(date, method, {get: getter});
+    expect(valueRows(date, new Map())[0].preview).toBe('2026-10-17T00:00:00.000Z');
+    expect(copyableJson({created: date})).toBe('{\n  "created": "2026-10-17T00:00:00.000Z"\n}');
+    expect(getter).not.toHaveBeenCalled();
+  });
+
   it('recovers from inaccessible proxies and limits deeply expanded trees', () => {
     const proxy = new Proxy(
       {},

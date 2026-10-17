@@ -240,7 +240,36 @@ test('query inspector shows cached data and refetches only the selected shared q
   await expect.poll(async () => box(await panel.boundingBox()).height).toBeGreaterThan(initial.height);
   await inspector.getByRole('button', {name: 'Back', exact: true}).click();
   await expect(row.locator('.key-button')).toBeFocused();
+  await panel.getByRole('button', {name: 'Full height', exact: true}).click();
+  await expect(resize).toHaveAttribute('aria-valuenow', '976');
+  await page.setViewportSize({width: 1440, height: 700});
+  await expect(resize).toHaveAttribute('aria-valuemax', '676');
+  await expect(resize).toHaveAttribute('aria-valuenow', '676');
+  await expect.poll(async () => Math.abs(box(await panel.boundingBox()).height - 676)).toBeLessThan(1);
   await panel.getByRole('button', {name: 'Close', exact: true}).click();
+});
+
+test('pointer resizing persists height once dragging finishes and restores it on reopen', async ({page}) => {
+  await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
+  const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
+  const handle = panel.getByRole('separator');
+  await expect
+    .poll(() => panel.evaluate((element) => Math.abs(element.getBoundingClientRect().bottom - innerHeight)))
+    .toBeLessThan(1);
+  const start = box(await handle.boundingBox());
+  await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2 - 80, {steps: 5});
+  await expect.poll(async () => box(await panel.boundingBox()).height).toBeGreaterThan(400);
+  expect(await page.evaluate(() => sessionStorage.getItem('cll-query-devtools-height'))).toBeNull();
+  await page.mouse.up();
+  const height = box(await panel.boundingBox()).height;
+  await expect
+    .poll(() => page.evaluate(() => Number(sessionStorage.getItem('cll-query-devtools-height'))))
+    .toBeCloseTo(height, 0);
+  await panel.getByRole('button', {name: 'Close', exact: true}).click();
+  await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
+  await expect.poll(async () => Math.abs(box(await panel.boundingBox()).height - height)).toBeLessThan(1);
 });
 
 test('Kubernetes comparison previews appear above their code by default', async ({page}) => {

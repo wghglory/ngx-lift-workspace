@@ -205,6 +205,8 @@ export class QueryClient {
 
   /**
    * Refetch an existing key with its current loader/policy, joining a pending read. Missing keys are not created.
+   * Inactive calls restart retention at invocation, consistently with fetchQuery; pending reads remain protected.
+   * @typeParam T Caller-asserted result type; an untyped key cannot validate or infer the loader result.
    * @example
    * ```typescript
    * await client.refetchQuery(['users', userId]);

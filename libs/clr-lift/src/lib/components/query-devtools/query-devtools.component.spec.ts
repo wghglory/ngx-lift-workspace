@@ -109,6 +109,113 @@ describe('QueryDevtoolsComponent', () => {
     }
   });
 
+  it('replaces a paused snapshot when the caller switches clients', async () => {
+    await client.fetchQuery({key: ['first-client'], loader: () => Promise.resolve('first')});
+    const otherClient = new QueryClient();
+    await otherClient.fetchQuery({key: ['second-client'], loader: () => Promise.resolve('second')});
+    try {
+      mount();
+      click('Query devtools');
+      click('Pause updates');
+      fixture.componentRef.setInput('client', otherClient);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('clr-datagrid')?.textContent).toContain('second-client');
+      expect(fixture.nativeElement.querySelector('clr-datagrid')?.textContent).not.toContain('first-client');
+      click('Inspect');
+      expect(fixture.nativeElement.querySelector('.value-tree')?.textContent).toContain('second');
+      expect(otherClient.getDiagnostics().totalObserverCount).toBe(0);
+    } finally {
+      fixture.destroy();
+      otherClient.destroy();
+    }
+  });
+
+  it('takes an initial snapshot when reopening a paused panel', async () => {
+    mount();
+    click('Query devtools');
+    click('Pause updates');
+    click('Close');
+    await client.fetchQuery({key: ['while-closed'], loader: () => Promise.resolve(1)});
+    click('Query devtools');
+    expect(fixture.nativeElement.querySelector('clr-datagrid')?.textContent).toContain('while-closed');
+  });
+
+  it.each(['resolve', 'reject'])(
+    'settles an explicit refetch after switching tabs while paused (%s)',
+    async (outcome) => {
+      await client.fetchQuery({key: ['profile'], loader: () => Promise.resolve('cached'), staleTime: Infinity});
+      let resolveRequest: (value: string) => void = () => undefined;
+      let rejectRequest: (error: Error) => void = () => undefined;
+      const pending = new Promise<string>((resolve, reject) => {
+        resolveRequest = resolve;
+        rejectRequest = reject;
+      });
+      // Register a future loader without replacing the currently fresh value.
+      await client.fetchQuery({key: ['profile'], loader: () => pending, staleTime: Infinity});
+      mount();
+      click('Query devtools');
+      click('Pause updates');
+      click('Inspect');
+      click('Refetch');
+      expect(fixture.nativeElement.querySelector('.state-badge')?.textContent).toBe('refreshing');
+      click('Details');
+      if (outcome === 'resolve') resolveRequest('updated');
+      else rejectRequest(new Error('offline'));
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(fixture.nativeElement.querySelector('.state-badge')?.textContent).toBe(
+          outcome === 'resolve' ? 'fresh' : 'error',
+        );
+        expect(fixture.nativeElement.querySelector('button[aria-label="Refetch"]')?.disabled).toBe(false);
+      });
+    },
+  );
+
+  it('does not let an earlier refetch completion refresh a reopened paused panel', async () => {
+    await client.fetchQuery({key: ['profile'], loader: () => Promise.resolve('cached'), staleTime: Infinity});
+    let resolveRequest: (value: string) => void = () => undefined;
+    const pending = new Promise<string>((resolve) => {
+      resolveRequest = resolve;
+    });
+    await client.fetchQuery({key: ['profile'], loader: () => pending, staleTime: Infinity});
+    const snapshots = vi.spyOn(client, 'getDiagnostics');
+    mount();
+    click('Query devtools');
+    click('Pause updates');
+    click('Refetch');
+    click('Close');
+    click('Query devtools');
+    const count = snapshots.mock.calls.length;
+    resolveRequest('updated');
+    await pending;
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(snapshots).toHaveBeenCalledTimes(count);
+    click('Read snapshot');
+    expect(fixture.nativeElement.querySelector('.state-badge')?.textContent).toBe('fresh');
+  });
+
+  it('updates separator bounds and full-height values when the viewport changes', () => {
+    const original = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+    Object.defineProperty(window, 'innerHeight', {value: 800, configurable: true});
+    try {
+      mount();
+      click('Query devtools');
+      const handle = fixture.nativeElement.querySelector('[role="separator"]') as HTMLElement;
+      expect(handle.getAttribute('aria-valuemax')).toBe('776');
+      click('Full height');
+      expect(handle.getAttribute('aria-valuenow')).toBe('776');
+      Object.defineProperty(window, 'innerHeight', {value: 180, configurable: true});
+      window.dispatchEvent(new Event('resize'));
+      fixture.detectChanges();
+      expect(handle.getAttribute('aria-valuemax')).toBe('156');
+      expect(handle.getAttribute('aria-valuemin')).toBe('156');
+      expect(handle.getAttribute('aria-valuenow')).toBe('156');
+    } finally {
+      if (original) Object.defineProperty(window, 'innerHeight', original);
+    }
+  });
+
   it('renders an empty state and updates open-dialog labels when language changes', () => {
     mount();
     click('Query devtools');
@@ -236,6 +343,28 @@ describe('QueryDevtoolsComponent', () => {
     expect(fixture.nativeElement.querySelector('.value-tree')).toBeNull();
     click('Close');
     expect(fixture.nativeElement.querySelector('[role="region"]')).toBeNull();
+  });
+
+  it('preserves focused tree nodes when an earlier expanded collection grows', async () => {
+    const data = {before: [1], after: {id: 2}};
+    await client.fetchQuery({key: ['tree'], loader: () => Promise.resolve(data)});
+    mount();
+    click('Query devtools');
+    click('Inspect');
+    const tree = fixture.nativeElement.querySelector('.value-tree') as HTMLElement;
+    (tree.querySelector('.tree-toggle') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    const toggles = Array.from(tree.querySelectorAll<HTMLButtonElement>('.tree-toggle'));
+    const before = toggles.find((button) => button.textContent?.includes('before:'));
+    const after = toggles.find((button) => button.textContent?.includes('after:'));
+    if (!before || !after) throw new Error('Missing tree branches');
+    before.click();
+    fixture.detectChanges();
+    after.focus();
+    data.before.push(3);
+    click('Read snapshot');
+    expect(Array.from(tree.querySelectorAll('.tree-toggle'))).toContain(after);
+    expect(document.activeElement).toBe(after);
   });
 
   it('refetches deliberately and shows failure while keeping cached data available', async () => {
