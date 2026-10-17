@@ -108,7 +108,7 @@ installed version; source changes under Unreleased are not yet on npm.
 
 ### 📦 Models
 
-- **`AsyncState`** - Type for managing async operation states with `status` field: `idle | loading | resolved | error`
+- **`AsyncState`** - Async operation state with `status`, `isLoading`, `data` and `error` fields
 - **`ResourceStatus`** - Type alias for resource status states
 - **Kubernetes Models** - Types for Kubernetes object metadata and conditions
 
@@ -140,7 +140,7 @@ We provide a migration script to automatically update your code:
 
 ```bash
 # Quick one-liner (downloads and runs migration)
-curl -sSL https://raw.githubusercontent.com/wghglory/ngx-lift-workspace/main/tools/download-and-migrate.sh | bash -s -- src
+curl -sSL https://raw.githubusercontent.com/wghglory/ngx-lift-workspace/main/migration/download-and-migrate.sh | bash -s -- src
 
 # Or manual download and run
 curl -o migrate-async-state.js https://raw.githubusercontent.com/wghglory/ngx-lift-workspace/main/migration/migrate-async-state.js
@@ -150,8 +150,8 @@ node migrate-async-state.js src
 node migrate-async-state.js src --dry-run
 ```
 
-See the [Migration Guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/MIGRATION_ASYNC_STATE.md) for
-detailed instructions and manual migration steps.
+See the [Migration Guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/migration/README.md) for detailed
+instructions and manual migration steps.
 
 ## 🚀 Quick Start
 

@@ -68,7 +68,25 @@ npm install clr-lift ngx-lift @clr/angular @clr/ui
 @import '@clr/ui/clr-ui.min.css';
 ```
 
-### 3. Use in Your Standalone Component
+### 3. Enable Clarity animation support
+
+Clarity controls such as the datagrid inject Angular's animation builder. Install `@angular/animations` at the same
+version as your app's `@angular/core`, then add its provider to your existing application configuration:
+
+```typescript
+import {ApplicationConfig} from '@angular/core';
+import {provideAnimations} from '@angular/platform-browser/animations';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideAnimations()],
+};
+```
+
+Pass `appConfig` to `bootstrapApplication(AppComponent, appConfig)` in `main.ts`. Keep your existing Router/HTTP
+providers. Angular 21 marks this API deprecated, but current Clarity controls still require it; follow Clarity's
+compatibility requirements when upgrading.
+
+### 4. Use in Your Standalone Component
 
 Mount one toast container in the application shell. This standalone root example displays a notification when its button
 is clicked; no backend or application service is required.
@@ -99,8 +117,8 @@ export class AppComponent {
 }
 ```
 
-For HTTP errors, bind an `Error` or `HttpErrorResponse` to `[error]`; use `content` for a text message. Animated Clarity
-controls need the animation setup described on their demo pages.
+For HTTP errors, bind an `Error` or `HttpErrorResponse` to `[error]`; use `content` for a text message. The animation
+setup above also applies to the datagrid example below.
 
 ---
 
@@ -123,7 +141,7 @@ import {BehaviorSubject} from 'rxjs';
   imports: [AsyncPipe, JsonPipe, ClarityModule],
   template: `
     <clr-datagrid (clrDgRefresh)="refresh$.next($event)">
-      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
       <clr-dg-row><clr-dg-cell>Ada</clr-dg-cell></clr-dg-row>
     </clr-datagrid>
     <pre>{{ state$ | async | json }}</pre>
@@ -136,7 +154,7 @@ export class GridStateComponent {
 }
 ```
 
-The preview displays emitted grid state. For server requests, follow the
+Click the Name column heading to change sorting and display the emitted grid state. For server requests, follow the
 [complete datagrid example](https://ngx-lift.netlify.app/clr-lift/operators/dgState).
 
 ### 2. `cll-timeline-wizard` — Component-based steps
@@ -228,9 +246,10 @@ the documentation preview; that opt-in bypasses the provider's production exclus
 ## 🌍 Built-in Localization
 
 Library dictionaries cover English, Simplified/Traditional Chinese, German, Spanish, French, Italian, Japanese, Korean,
-Dutch and Portuguese, with regional fallback. The demo maintains eleven language dictionaries. Russian is not a bundled
-translation. Key/placeholder checks establish dictionary completeness; independent native-speaker acceptance remains
-separate. Applications own translations for their content and can register additional dictionaries.
+Dutch, Portuguese and Russian, with regional fallback. The demo maintains eleven language dictionaries; its locale
+inventory differs from the library dictionaries. Key/placeholder checks establish dictionary completeness; independent
+native-speaker acceptance remains separate. Applications own translations for their content and can register additional
+dictionaries.
 
 Switch language on the fly via `TranslationService`:
 
