@@ -2,6 +2,27 @@
   <!-- Overview -->
   <p [innerHTML]="'isHttpsPipe.overview' | translate"></p>
 
+  <section cds-layout="vertical gap:sm" data-testid="is-https-pipe-first-result">
+    <h2>{{ 'common.basicUsage' | translate }}</h2>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'common.inputs' | translate }}</th>
+          <th>{{ 'common.outputs' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>https://example.com</code></td>
+          <td>
+            <output>{{ 'https://example.com' | isHttps }}</output>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <app-code-block [code]="firstTaskCode" lang="typescript" />
+  </section>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -9,19 +30,19 @@
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'isHttpsPipe.example1Title' | translate }}</h3>
       <p>{{ 'isHttpsPipe.example1Desc' | translate }}</p>
-      <app-code-block [code]="basicExampleCode" lang="html" />
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'isHttpsPipe.example2Title' | translate }}</h3>
       <p>{{ 'isHttpsPipe.example2Desc' | translate }}</p>
-      <app-code-block [code]="conditionalRenderingCode" lang="html" />
+      <app-code-block [code]="conditionalRenderingCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'isHttpsPipe.example3Title' | translate }}</h3>
       <p>{{ 'isHttpsPipe.example3Desc' | translate }}</p>
-      <app-code-block [code]="securityValidationCode" lang="html" />
+      <app-code-block [code]="securityValidationCode" lang="typescript" />
     </article>
   </section>
 

@@ -1,6 +1,7 @@
+import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {ClarityModule, ClrDatagridStateInterface} from '@clr/angular';
+import {PageContainerComponent, TranslatePipe, TranslationService, convertToHttpParams} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -8,7 +9,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-clr-datagrid-util',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
+  imports: [RouterLink, ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './clr-datagrid-util.component.html',
   styleUrl: './clr-datagrid-util.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,42 +91,31 @@ export interface PageQuery {
 }
   `);
 
-  usageCode = highlight(`
+  usageCode = highlight(`import {ClrDatagridStateInterface} from '@clr/angular';
 import {convertToHttpParams} from 'clr-lift';
-import {Component} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {ClrDatagridStateInterface} from '@clr/angular';
 
-@Component({})
-export class DatagridExampleComponent {
-  private http = inject(HttpClient);
-
-  refresh(state: ClrDatagridStateInterface) {
-    const params = convertToHttpParams(state);
-    const httpParams = new HttpParams({fromObject: params as Record<string, string>});
-
-    return this.http.get('/api/users', {params: httpParams});
-  }
-}
-  `);
+const state: ClrDatagridStateInterface = {
+  page: {current: 1, size: 10},
+  sort: {by: 'date', reverse: false},
+  filters: [{property: 'name', value: 'mike'}],
+};
+const query = convertToHttpParams(state);
+// {page: 1, pageSize: 10, sortAsc: 'date', filter: 'name==*mike*'}
+// convertToHttpParams(null) → {page: 1, pageSize: 10}
+// Convert only Clarity property/value filters and string sort fields supported by your server.
+// This function builds parameters; it does not send or subscribe to an HTTP request.
+// For owned HTTP reads and debounced grid events, follow the dgState tutorial.`);
 
   signatureCode = highlight(`convertToHttpParams(state: ClrDatagridStateInterface | null): PageQuery;`);
 
-  stateCode = highlight(`// Clarity Datagrid state example
-{
-  "page": {"from": 0, "to": 9, "size": 10, "current": 1},
-  "sort": {"by": "date", "reverse": false},
-  "filters": [
-    {"property": "name", "value": "mike"},
-    {"property": "job", "value": "programming"},
-  ],
-}`);
-
-  outputCode = highlight(`// output data returned by convertToHttpParams
-{
-  "page": 1,
-  "pageSize": 10,
-  "filter": "name==*mike*;job==*programming*",
-  "sortAsc": "date",
-}`);
+  readonly sampleState: ClrDatagridStateInterface = {
+    page: {from: 0, to: 9, size: 10, current: 1},
+    sort: {by: 'date', reverse: false},
+    filters: [
+      {property: 'name', value: 'mike'},
+      {property: 'job', value: 'programming'},
+    ],
+  };
+  readonly stateCode = highlight(JSON.stringify(this.sampleState, null, 2));
+  readonly outputCode = highlight(JSON.stringify(convertToHttpParams(this.sampleState), null, 2));
 }

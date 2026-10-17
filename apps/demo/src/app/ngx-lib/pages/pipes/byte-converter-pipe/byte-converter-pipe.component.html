@@ -2,6 +2,27 @@
   <!-- Overview -->
   <p [innerHTML]="'byteConverterPipe.overview' | translate"></p>
 
+  <section cds-layout="vertical gap:sm" data-testid="byte-converter-pipe-first-result">
+    <h2>{{ 'common.basicUsage' | translate }}</h2>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'common.inputs' | translate }}</th>
+          <th>{{ 'common.outputs' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>1024</code></td>
+          <td>
+            <output>{{ 1024 | byteConverter: 'en' }}</output>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <app-code-block [code]="firstTaskCode" lang="typescript" />
+  </section>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -9,19 +30,19 @@
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'byteConverterPipe.example1Title' | translate }}</h3>
       <p>{{ 'byteConverterPipe.example1Desc' | translate }}</p>
-      <app-code-block [code]="basicExampleCode" lang="html" />
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'byteConverterPipe.example2Title' | translate }}</h3>
       <p>{{ 'byteConverterPipe.example2Desc' | translate }}</p>
-      <app-code-block [code]="fileSizeDisplayCode" lang="html" />
+      <app-code-block [code]="fileSizeDisplayCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'byteConverterPipe.example3Title' | translate }}</h3>
       <p>{{ 'byteConverterPipe.example3Desc' | translate }}</p>
-      <app-code-block [code]="unitConversionsCode" lang="html" />
+      <app-code-block [code]="unitConversionsCode" lang="typescript" />
     </article>
   </section>
 

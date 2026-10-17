@@ -1,14 +1,27 @@
 <cll-page-container [title]="'range'">
   <!-- Overview -->
   <p [innerHTML]="'rangePipe.overview' | translate"></p>
-  <cll-callout>
-    <ul cds-layout="vertical gap:xs" class="list">
-      <li [innerHTML]="'rangePipe.callout1' | translate"></li>
-      <li>{{ 'rangePipe.callout2' | translate }}</li>
-      <li>{{ 'rangePipe.callout3' | translate }}</li>
-      <li [innerHTML]="'rangePipe.callout4' | translate"></li>
-    </ul>
-  </cll-callout>
+
+  <section cds-layout="vertical gap:sm" data-testid="range-pipe-first-result">
+    <h2>{{ 'common.basicUsage' | translate }}</h2>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'common.inputs' | translate }}</th>
+          <th>{{ 'common.outputs' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>[1, 5]</code></td>
+          <td>
+            <output>{{ [1, 5] | range | json }}</output>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <app-code-block [code]="firstTaskCode" lang="typescript" />
+  </section>
 
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
@@ -17,19 +30,19 @@
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'rangePipe.example1Title' | translate }}</h3>
       <p>{{ 'rangePipe.example1Desc' | translate }}</p>
-      <app-code-block [code]="basicExampleCode" lang="html" />
+      <app-code-block [code]="basicExampleCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'rangePipe.example2Title' | translate }}</h3>
       <p>{{ 'rangePipe.example2Desc' | translate }}</p>
-      <app-code-block [code]="stepExampleCode" lang="html" />
+      <app-code-block [code]="stepExampleCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'rangePipe.example3Title' | translate }}</h3>
       <p>{{ 'rangePipe.example3Desc' | translate }}</p>
-      <app-code-block [code]="reverseExampleCode" lang="html" />
+      <app-code-block [code]="reverseExampleCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
@@ -43,10 +56,18 @@
           }
         </select>
       </div>
-      <app-code-block [code]="cpuCode" lang="html" />
+      <app-code-block [code]="cpuCode" lang="typescript" />
     </article>
   </section>
 
+  <cll-callout>
+    <ul cds-layout="vertical gap:xs" class="list">
+      <li [innerHTML]="'rangePipe.callout1' | translate"></li>
+      <li>{{ 'rangePipe.callout2' | translate }}</li>
+      <li>{{ 'rangePipe.callout3' | translate }}</li>
+      <li [innerHTML]="'rangePipe.callout4' | translate"></li>
+    </ul>
+  </cll-callout>
   <!-- API Reference -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.apiReference' | translate }}</h2>
