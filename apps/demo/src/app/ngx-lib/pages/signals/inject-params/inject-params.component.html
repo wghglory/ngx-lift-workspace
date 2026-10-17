@@ -2,6 +2,23 @@
   <!-- Overview -->
   <p [innerHTML]="'injectParams.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="inject-params-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'injectParams.example2Desc' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap">
+        <a class="btn btn-sm" routerLink="/ngx-lift/signals/injectParams/1">id = 1</a>
+        <a class="btn btn-sm" routerLink="/ngx-lift/signals/injectParams/2">id = 2</a>
+        <a class="btn btn-sm" routerLink="/ngx-lift/signals/injectParams">{{ 'common.clear' | translate }}</a>
+      </div>
+      <output aria-live="polite">{{ selectedId() ?? 'null' }} → {{ numericId() }}</output>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>

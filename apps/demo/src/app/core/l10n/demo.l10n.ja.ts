@@ -216,6 +216,7 @@ export const jaTranslations: Record<string, string> = {
   'rockStar.unveil': '公開',
   'common.signature': 'シグネチャ',
   'common.description': '説明',
+  'common.clear': 'クリア',
   'common.basicUsage': '基本的な使い方',
   'common.inputs': '入力プロパティ (Inputs)',
   'common.outputs': '出力イベント (Outputs)',

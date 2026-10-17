@@ -2,6 +2,22 @@
   <!-- Overview -->
   <p [innerHTML]="'combineFrom.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="combine-from-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'combineFrom.example1Desc' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap">
+        <button type="button" class="btn btn-sm" (click)="left.set(left() + 1)">left + 1</button>
+        <button type="button" class="btn btn-sm" (click)="right$.next(right$.value + 1)">right + 1</button>
+      </div>
+      <output aria-live="polite">left: {{ combined()?.left }}, right: {{ combined()?.right }}</output>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>

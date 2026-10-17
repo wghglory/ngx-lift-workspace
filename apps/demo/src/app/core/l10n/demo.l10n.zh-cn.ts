@@ -199,6 +199,7 @@ export const zhCNTranslations: Record<string, string> = {
   'rockStar.unveil': '揭晓',
   'common.signature': '方法签名',
   'common.description': '描述',
+  'common.clear': '清除',
   'common.basicUsage': '基础用法',
   'common.inputs': '输入属性 (Inputs)',
   'common.outputs': '输出事件 (Outputs)',

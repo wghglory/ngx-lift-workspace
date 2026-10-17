@@ -1,19 +1,20 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {createTrigger} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-create-trigger',
   imports: [
+    DemoPlaygroundComponent,
     ClarityModule,
     PageContainerComponent,
     CodeBlockComponent,
-    CalloutComponent,
     TranslatePipe,
     ApiTableComponent,
   ],
@@ -22,6 +23,24 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateTriggerComponent {
+  readonly trigger = createTrigger();
+  readonly revision = computed(() => this.trigger.value() + 1);
+  readonly starterCode = highlight(`import {ChangeDetectionStrategy, Component, computed} from '@angular/core';
+import {createTrigger} from 'ngx-lift';
+
+@Component({
+  selector: 'app-starter',
+  imports: [],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly trigger = createTrigger();
+  readonly revision = computed(() => this.trigger.value() + 1);
+}`);
+  readonly starterHtml = highlight(`<button type="button" class="btn btn-sm" (click)="trigger.next()">Refresh</button>
+<output aria-live="polite">{{ revision() }}</output>`);
+
   private refreshTrigger = createTrigger();
   private translationService = inject(TranslationService);
 
@@ -40,23 +59,6 @@ export class CreateTriggerComponent {
       },
     ];
   });
-
-  constructor() {
-    effect(() => {
-      this.refreshTrigger.value();
-
-      // whatever code you want to run whenever refreshTrigger.next() is called
-      console.log('trigger effect');
-    });
-
-    effect(() => {
-      if (this.refreshTrigger.value()) {
-        // Will NOT run on init
-        // whatever code you want to run whenever refreshTrigger.next() is called
-        console.log('You click the button!');
-      }
-    });
-  }
 
   refresh() {
     this.refreshTrigger.next();

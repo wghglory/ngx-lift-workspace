@@ -2,19 +2,22 @@
   <!-- Overview -->
   <p [innerHTML]="'createTrigger.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="create-trigger-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'createTrigger.example1Desc' | translate }}</p>
+      <button type="button" class="btn btn-sm" (click)="trigger.next()">{{ 'common.refresh' | translate }}</button>
+      <output aria-live="polite">{{ revision() }}</output>
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'createTrigger.example1' | translate }}</h3>
-      <p>{{ 'createTrigger.example1Desc' | translate }}</p>
-      <div cds-layout="horizontal gap:xs">
-        <button class="btn btn-primary" (click)="refresh()">{{ 'createTrigger.btnSeeConsole' | translate }}</button>
-      </div>
-      <app-code-block [code]="basicExampleCode" lang="typescript" />
-      <cll-callout [innerHTML]="'createTrigger.callout' | translate"> </cll-callout>
-    </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'createTrigger.example2' | translate }}</h3>

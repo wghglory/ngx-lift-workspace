@@ -1,21 +1,54 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {ChangeDetectionStrategy, Component, computed, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mergeFrom} from 'ngx-lift';
 import {delay, of, pipe, startWith, switchMap} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-merge-from',
-  imports: [ClarityModule, PageContainerComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
+  imports: [
+    DemoPlaygroundComponent,
+    ClarityModule,
+    PageContainerComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+    ApiTableComponent,
+  ],
   templateUrl: './merge-from.component.html',
   styleUrl: './merge-from.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MergeFromComponent {
+  readonly left = signal(1);
+  readonly right$ = new BehaviorSubject(10);
+  readonly latest = mergeFrom([this.left, this.right$]);
+  readonly starterCode = highlight(`import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {mergeFrom} from 'ngx-lift';
+
+@Component({
+  selector: 'app-starter',
+  imports: [],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly left = signal(1);
+  readonly right$ = new BehaviorSubject(10);
+  readonly latest = mergeFrom([this.left, this.right$]);
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" (click)="left.set(left() + 1)">left + 1</button>
+  <button type="button" class="btn btn-sm" (click)="right$.next(right$.value + 10)">right + 10</button>
+</div>
+<output aria-live="polite">{{ latest() }}</output>`);
+
   private injector = inject(Injector);
   private translationService = inject(TranslationService);
 
@@ -68,16 +101,6 @@ export class MergeFromComponent {
       startWith(0),
     ),
   );
-
-  constructor() {
-    effect(() => {
-      console.log('[mergeFrom] Example 1 (basic array):', this.mergedArray());
-      console.log('[mergeFrom] Example 2 (pipe operator):', this.mergedOperator());
-      console.log('[mergeFrom] Example 3 (with initialValue):', this.mergedWithInitialValue());
-      console.log('[mergeFrom] Example 3 (startWith):', this.mergedStartWith());
-      console.log('[mergeFrom] Example 4 (decoupled injector):', this.mergedWithCustomInjector());
-    });
-  }
 
   basicCode = highlight(`
 import {mergeFrom} from 'ngx-lift';

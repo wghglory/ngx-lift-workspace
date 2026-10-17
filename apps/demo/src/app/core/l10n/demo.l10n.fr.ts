@@ -223,6 +223,7 @@ export const frTranslations: Record<string, string> = {
   'rockStar.unveil': 'Dévoilement',
   'common.signature': 'Signature',
   'common.description': 'Description',
+  'common.clear': 'Effacer',
   'common.basicUsage': 'Utilisation de base',
   'common.inputs': 'Entrées (Inputs)',
   'common.outputs': 'Sorties (Outputs)',

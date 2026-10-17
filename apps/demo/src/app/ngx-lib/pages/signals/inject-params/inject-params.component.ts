@@ -1,24 +1,19 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  Injector,
-  numberAttribute,
-  Signal,
-} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {ChangeDetectionStrategy, Component, computed, inject, Injector, numberAttribute, Signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {injectParams} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-inject-params',
   imports: [
+    DemoPlaygroundComponent,
+    RouterLink,
     ClarityModule,
     PageContainerComponent,
     CodeBlockComponent,
@@ -31,6 +26,34 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InjectParamsComponent {
+  readonly selectedId = injectParams('id');
+  readonly numericId = injectParams('id', {transform: numberAttribute, initialValue: 1});
+  readonly starterCode = highlight(`// Route setup excerpt for app.routes.ts:
+// {path: 'teams/:id', component: StarterComponent},
+// Also register {path: 'teams', component: StarterComponent} for the missing-ID case.
+// In your app config, register routes with provideRouter(routes).
+
+import {ChangeDetectionStrategy, Component, numberAttribute} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {injectParams} from 'ngx-lift';
+
+@Component({
+  selector: 'app-starter',
+  imports: [RouterLink],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly selectedId = injectParams('id');
+  readonly numericId = injectParams('id', {transform: numberAttribute, initialValue: 1});
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <a class="btn btn-sm" routerLink="/teams/1">id = 1</a>
+  <a class="btn btn-sm" routerLink="/teams/2">id = 2</a>
+  <a class="btn btn-sm" routerLink="/teams">Clear</a>
+</div>
+<output aria-live="polite">{{ selectedId() ?? 'null' }} → {{ numericId() }}</output>`);
+
   private injector = inject(Injector);
   private translationService = inject(TranslationService);
 
@@ -70,17 +93,6 @@ export class InjectParamsComponent {
 
   // decoupled injector: can be called outside component constructor
   customInjectorParam = injectParams('id', {injector: this.injector});
-
-  constructor() {
-    effect(() => {
-      console.log('[injectParams] params:', this.params());
-      console.log('[injectParams] paramsKeys:', this.paramsKeys());
-      console.log('[injectParams] userId:', this.userId());
-      console.log('[injectParams] id:', this.id());
-      console.log('[injectParams] idByTransformFn:', this.idByTransformFn());
-      console.log('[injectParams] customInjectorParam (custom injector):', this.customInjectorParam());
-    });
-  }
 
   allParamsCode = highlight(`
 import {injectParams} from 'ngx-lift';

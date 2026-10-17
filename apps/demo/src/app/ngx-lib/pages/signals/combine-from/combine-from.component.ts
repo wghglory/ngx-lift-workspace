@@ -1,10 +1,11 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {combineFrom, createAsyncState} from 'ngx-lift';
 import {BehaviorSubject, delay, of, pipe, startWith, switchMap} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {UserCardComponent} from '../../../../shared/components/user-card/user-card.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
@@ -13,6 +14,7 @@ import {UserService} from './../../../../shared/services/user.service';
 @Component({
   selector: 'app-combine-from',
   imports: [
+    DemoPlaygroundComponent,
     ClarityModule,
     PageContainerComponent,
     CodeBlockComponent,
@@ -27,6 +29,30 @@ import {UserService} from './../../../../shared/services/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombineFromComponent {
+  readonly left = signal(1);
+  readonly right$ = new BehaviorSubject(2);
+  readonly combined = combineFrom({left: this.left, right: this.right$});
+  readonly starterCode = highlight(`import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {combineFrom} from 'ngx-lift';
+
+@Component({
+  selector: 'app-starter',
+  imports: [],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly left = signal(1);
+  readonly right$ = new BehaviorSubject(2);
+  readonly combined = combineFrom({left: this.left, right: this.right$});
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" (click)="left.set(left() + 1)">left + 1</button>
+  <button type="button" class="btn btn-sm" (click)="right$.next(right$.value + 1)">right + 1</button>
+</div>
+<output aria-live="polite">left: {{ combined()?.left }}, right: {{ combined()?.right }}</output>`);
+
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {
@@ -112,18 +138,6 @@ export class CombineFromComponent {
       createAsyncState(),
     ),
   );
-
-  constructor() {
-    effect(() => {
-      console.log('[combineFrom] Example 1 (array):', this.combinedArray());
-      console.log('[combineFrom] Example 1 (object):', this.combinedObject());
-      console.log('[combineFrom] Example 2 (pipe operator):', this.combineOperator());
-      console.log('[combineFrom] Example 3 (with initialValue):', this.combinedWithInitialValue());
-      console.log('[combineFrom] Example 3 (startWith):', this.combinedStartWith());
-      console.log('[combineFrom] Example 4 (usersState):', this.usersState());
-      console.log('[combineFrom] Example 5 (decoupled injector):', this.decoupledSignal());
-    });
-  }
 
   basicCode = highlight(`
 import {combineFrom} from 'ngx-lift';

@@ -198,6 +198,7 @@ export const zhTWTranslations: Record<string, string> = {
   'rockStar.unveil': '揭曉',
   'common.signature': '簽名',
   'common.description': '描述',
+  'common.clear': '清除',
   'common.basicUsage': '基本用法',
   'common.inputs': '輸入屬性 (Inputs)',
   'common.outputs': '輸出事件 (Outputs)',
