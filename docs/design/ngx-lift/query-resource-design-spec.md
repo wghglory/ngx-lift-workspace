@@ -54,32 +54,29 @@ consumer lifetime. A logical read includes all its attempts and waits, not just 
 | Resolved data / event method                     | `user`, `tenant`, `createDatabase()`     |
 
 Avoid calling a resource handle `user`, `tenants` or `create`: the name should distinguish its controls from the data or
-an action method. The same convention appears in the demo callouts.
+an action method. The same convention appears in the organization guide.
 
 ## Developer learning journey and pedagogy plan
 
-This headless primitive adheres to Track B (Headless Primitives & Utilities). Its public documentation follows the
-Diátaxis-inspired 5-stage progressive disclosure model:
+Runtime status remains Implemented (contract audit). Documentation revision approved October 17, 2026; delivery and
+validation are tracked separately in the [query documentation plan](../../query-documentation-plan.md).
 
-1. **30-Second Elevator Pitch**:
-   - _What is it?_ Server-state synchronization and cache coordination with Angular Signals.
-   - _What problem does it solve?_ Eliminates manual RxJS caching boilerplate, in-flight request deduplication, and
-     stale data bugs across navigating components.
-2. **Minimal Hello World (<12 lines)**:
-   - Declarative `queryResource(() => ({ key: ['user', id()], loader: () => service.getUser(id()) }))` rendering
-     directly via `query.value()` and `query.isInitialLoading()`.
-3. **Core Mental Model**:
-   - The Stale-While-Revalidate timeline (Fresh -> Stale -> Inactive -> GC Eviction).
-   - Clear conceptual distinction between `staleTime` (when data is considered old) and `gcTime` (when unused cache
-     entries are purged from memory).
-4. **Progressive Learning Path**:
-   - Level 1: Basic cached read with parameter signals.
-   - Level 2: Dependent queries (`return undefined` while parent ID is unready) and error recovery.
-   - Level 3: Polling intervals, manual revalidation (`reload()` vs `execute()`), and multi-observer coordination.
-5. **Information Placement**:
-   - Domain-owned key & tag factories belong in dedicated architecture guides, avoiding premature top-level warning
-     banners.
-   - The full 5×7 lifecycle signal matrix belongs in Stage 5 (Reference) at the bottom of the page.
+Prerequisites: Angular components, signals and basic async operations. The first example needs no knowledge of tags,
+query factories, service scopes, or lifecycle status strings. Teach one read, rendering, parameter changes and recovery
+before cache coordination. Capture each reactive parameter once in the definition and reuse it in the key and loader.
+
+| Reader task                  | Outcome                                                                               | Destination / type                                      | Example and validation                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------- |
+| First read                   | Render data, initial loading/error, and refresh without blanking retained data        | `/ngx-lift/query/queryResource`, tutorial               | Shared compiled starter source/template; browser load, refresh and recovery |
+| Several independent reads    | Distinguish one array response from a collection of observers; add/reorder/remove IDs | `/ngx-lift/query/queryResources`, tutorial              | Existing dynamic collection preview and browser checks                      |
+| Understand caching           | Explain freshness independently of observer lifetime and retention                    | `/ngx-lift/query/cache`, explanation                    | Separate freshness/retention timelines; source contract review              |
+| Identify and invalidate data | Choose response-changing keys and matching tag objects                                | `/ngx-lift/query/keys`, guide                           | Scoped keys/tags and mutation links                                         |
+| Organize a feature           | Place definitions, transport services and observers; use consistent handle names      | `/ngx-lift/query/organization`, guide                   | Existing team definitions and table/summary demo                            |
+| Choose or look up an API     | Compare requirements or find a signature/state without repeating the tutorial         | `/ngx-lift/query/choosing`, `/ngx-lift/query/reference` | Exact API links and lifecycle matrix after examples                         |
+
+Freshness and observer lifetime are independent: unused data can still be fresh. Expiring `staleTime` marks data stale;
+it does not itself issue a request. Both `reload()` and `execute()` bypass completed data and join valid pending work;
+they differ in return value and caller control flow. Keep these contracts explicit in the teaching material.
 
 ## Public API and examples
 

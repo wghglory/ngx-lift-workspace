@@ -10,7 +10,7 @@ of use for public users.
 ## Table of Contents
 
 1. [Documentation Pedagogy & Progressive Disclosure](#documentation-pedagogy--progressive-disclosure)
-2. [Page Structure & The 5-Stage Blueprint](#page-structure--the-5-stage-blueprint)
+2. [Page Types and Learning Progression](#page-types-and-learning-progression)
 3. [Prohibited Documentation Anti-Patterns](#prohibited-documentation-anti-patterns)
 4. [Spacing and Layout](#spacing-and-layout)
 5. [Title Format](#title-format)
@@ -38,40 +38,44 @@ before being confronted with technical edge-case matrices or internal configurat
 
 ---
 
-## Page Structure & The 5-Stage Blueprint
+## Page Types and Learning Progression
 
-All documentation and demo pages MUST follow the **5-Stage Progressive Disclosure Blueprint**:
+Choose the page structure for the reader's task. Diátaxis distinguishes tutorials, how-to guides, explanation, and
+reference; it does not require all four modes on every page. Link between them instead of repeating them.
 
-1. **Stage 1: The 30-Second Elevator Pitch**
-   - 1–2 plain-English sentences answering: _What is it?_ and _What specific friction or boilerplate does it eliminate?_
-   - Strictly no warning banners, naming lectures, or comparative technical matrices in this fold.
+| Page type                            | Reader outcome                               | Recommended organization                                                    |
+| ------------------------------------ | -------------------------------------------- | --------------------------------------------------------------------------- |
+| Overview                             | Recognize the problem and find the next step | What and why, prerequisites, short vocabulary, reading path                 |
+| Tutorial / introductory feature page | Complete a first working task                | Problem, working example and preview, explain each new concept, next task   |
+| How-to guide                         | Solve a specific problem                     | Required knowledge, steps, expected result, recovery and related reference  |
+| Explanation                          | Understand a behavior or tradeoff            | Question, concrete scenario, mental model, consequences and links           |
+| Reference                            | Look up an exact contract                    | Signature, types, defaults, methods, states, limitations and related guides |
 
-2. **Stage 2: The 3-Minute Quick Start (Live Preview First)**
-   - Minimal runnable snippet (<15 lines) accompanied immediately by its interactive preview.
-   - For UI components, the interactive control appears directly here so the user immediately sees what it looks like.
+For introductory feature pages, use this progression when it helps: what and why -> first working example -> explain its
+behavior -> common tasks -> reference. Small utilities may need only an example and a contract. Reference pages should
+open with the requested API, without requiring the reader to repeat a tutorial.
 
-3. **Stage 3: The Core Mental Model**
-   - Plain-English explanation and visual timeline (e.g., Stale-While-Revalidate, Reactive Bridge, Concurrency).
-   - Clarify the primary metaphor and dispel common developer misconceptions.
+- Use a plain-language scope sentence early; put detailed tool comparisons in a linked guide.
+- Show the first useful preview before advanced coordination, architecture patterns, or lifecycle matrices.
+- Introduce signals beside the UI behavior they control. Explain initial loading before introducing background refresh.
+- Provide a short teaching excerpt and a complete runnable example. Label omitted setup and prerequisites; do not
+  enforce a line-count target that hides imports, providers, template bindings, or error handling.
+- Put factories, file organization, and naming conventions in an organization guide after basic keys and invalidation.
+- Keep reference bookmarkable with stable section IDs and links from the examples. Preserve existing public routes.
+- State an observable learning outcome. A reader should be able to complete the task and explain the important behavior.
 
-4. **Stage 4: Practical Progressive Recipes**
-   - Sequenced or tabbed examples spanning Beginner (parameters), Intermediate (error recovery), and Advanced
-     (caching/coordination).
-
-5. **Stage 5: Deep Technical Reference**
-   - API tables (Inputs, Outputs, Methods, Options).
-   - Complete boolean state matrices (`status()`, `isInitialLoading()`, `isRefreshing()`, `isLoading()`, etc.).
-   - Architectural guides (Key factories, domain ownership, and tool decision trees).
+The query learning path is recorded in [the query documentation plan](query-documentation-plan.md). Its menu separates
+introductory API pages, cache/key/organization explanations, API selection, reference, and diagnostics.
 
 ```html
 <cll-page-container [title]="'ComponentName'">
-  <!-- Stage 1: Overview & Elevator Pitch -->
+  <!-- Introduction: what and why -->
   <p>
     Clear, concise description of what the component/utility/operator/pipe/validator does, when to use it, and why it's
     useful.
   </p>
 
-  <!-- Stage 2: Quick Start & Examples -->
+  <!-- First task and working example -->
   <section cds-layout="vertical gap:md">
     <h2>Examples</h2>
 
@@ -88,7 +92,7 @@ All documentation and demo pages MUST follow the **5-Stage Progressive Disclosur
     </article>
   </section>
 
-  <!-- Stage 5: API Reference & Architecture Section -->
+  <!-- Reference or links to the dedicated reference page -->
   <section cds-layout="vertical gap:md">
     <h2>API Reference</h2>
     <!-- API details, tables, matrices here -->
@@ -112,7 +116,7 @@ All documentation and demo pages MUST follow the **5-Stage Progressive Disclosur
 
 3. **No "Encyclopedia Trap" (Reference Before Concept)**:
    - Do not lead with 5×7 boolean signal matrices (`status()`, `hasValue()`, `isInitialLoading()`, etc.) before
-     explaining what those signals mean. Put the reference matrix in Stage 5 at the bottom.
+     explaining what those signals mean. Keep the matrix in the linked reference or after the examples.
 
 ---
 
@@ -297,7 +301,8 @@ import { ComponentName } from 'library-name';
 }
 ```
 
-**Important**: All code examples MUST include import statements at the top of the code block.
+**Important**: Complete examples include imports and required setup. Clearly label teaching excerpts and link to the
+complete source; do not describe an excerpt as standalone runnable code.
 
 ### Code Block Language Tags
 
@@ -309,8 +314,10 @@ Always specify the `lang` attribute:
 
 ### Code Example Best Practices
 
-1. **Import Statements**: **ALWAYS** include import statements at the top of each code block
-2. **Complete Examples**: Include full, runnable code (imports, component decorator, etc.)
+1. **Import Statements**: Include imports in complete examples; identify the context of shorter excerpts.
+2. **Complete Examples**: Provide runnable code (imports, component decorator, providers, template and supporting
+   services). Prefer displaying the same compiled source/template used by the live preview. Verify complete teaching
+   examples against public exports; formatting or parsing alone does not prove that imports and API types are correct.
 3. **Real-World Scenarios**: Use practical, relatable examples
 4. **Comments**: Add helpful comments explaining key parts
 5. **Output Comments**: Show expected output when relevant:
@@ -600,8 +607,8 @@ Use `<cll-callout>` for important notes:
 When standardizing an existing page:
 
 - [ ] **Title**: Use signal input syntax `[title]="'Name'"`
-- [ ] **Pedagogy**: Follow the 5-Stage Progressive Disclosure Blueprint (Elevator pitch -> Quick Start -> Mental Model
-      -> Recipes -> Reference)
+- [ ] **Reader outcome**: Choose a page type and verify its learning or lookup task. Introduce concepts before relying
+      on them; link to guides and reference when appropriate.
 - [ ] **No Premature Banners**: No naming convention or domain architecture callout banners before the overview and
       basic usage
 - [ ] **Container**: Use the built-in page container spacing
@@ -736,9 +743,8 @@ export class ExampleComponent {
 
 ### Section Order
 
-1. Overview
-2. Examples (numbered sequentially: Example 1, Example 2, etc.)
-3. API Reference
+Choose the order from [Page Types and Learning Progression](#page-types-and-learning-progression). Introductory pages
+start with a useful task and working example; reference pages start with the contract being looked up.
 
 ### Code Block Pattern
 

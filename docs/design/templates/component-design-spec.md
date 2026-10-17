@@ -6,16 +6,19 @@ until implemented and verified. For existing APIs, use Status: Implemented (cont
 pointers, and distinguish source inspection from tests actually run. Preserve accurate existing sections; fill
 substantive gaps without rewriting prose. Store package specs in `docs/design/ngx-lift/` or `docs/design/clr-lift/`.
 
-## Specification Tracks
+## Applicable contracts
 
-Select the appropriate track for this feature:
+Select requirements by behavior, not package. Keep the common problem, goals, use cases, public API, documentation plan,
+compatibility, decisions, and evidence sections. Record which additional contracts apply and why:
 
-- **Track A: Visual UI Components (`clr-lift`)** — Governed by Clarity design tokens, accessible DOM structures,
-  keyboard interaction, responsive layout, theme switching, and forms integration via `ControlValueAccessor`.
-- **Track B: Headless Primitives & Utilities (`ngx-lift`)** — Governed by Signal reactivity contracts (glitch freedom,
-  untracked execution, zoneless/zone compatibility), memory lifecycle, cache retention/eviction, cancellation, and zero
-  UI dependencies. For Track B, explicitly mark Clarity tokens and forms CVA sections as _Inapplicable (Headless
-  Primitive)_.
+- Value/form integration: value types, validation, CVA or the actual forms bridge (including headless form utilities).
+- Rendered UI: Clarity tokens, focus, keyboard/touch, accessible names, responsive layout and localization.
+- Reactive/async APIs: dependency capture, execution boundaries, races, cancellation, errors and disposal.
+- Shared state/cache: identity, observer ownership, freshness, retention, invalidation and scope isolation.
+- Other utilities: their relevant input/output, platform and performance contracts.
+
+A display component need not own a form value. A headless utility can integrate with forms. Omit irrelevant detail with
+one reason; do not impose signal/cache requirements on synchronous utilities or CVA requirements on every UI component.
 
 ## Background
 
@@ -62,24 +65,18 @@ retaining Clarity styling. Prefer composition over replacement when public Clari
 
 ## Developer learning journey and pedagogy plan
 
-Define how a developer will acquire the mental model before encountering detailed APIs or technical matrices.
+Record a documentation brief that can be verified against the delivered pages:
 
-1. **The 30-Second Elevator Pitch**:
-   - What core problem does this solve in plain English?
-   - What boilerplate or friction does it eliminate?
-2. **Minimal Hello World (<12 lines)**:
-   - What is the simplest, copyable snippet that executes and provides immediate visual or state feedback?
-3. **Core Mental Model & Metaphor**:
-   - What is the foundational metaphor (e.g. Stale-While-Revalidate, Reactive Bridge, Debounced Stream)?
-   - What common misconception must be addressed early?
-4. **Progressive Learning Path**:
-   - Level 1 (Starter): Minimal working usage with default configuration.
-   - Level 2 (Intermediate): Parameterized state, error recovery, and common real-world flows.
-   - Level 3 (Advanced): Cache policies, manual revalidation, concurrency, custom clients, or complex hooks.
-5. **Information Placement & Anti-Pattern Prevention**:
-   - Where do foundational concepts live in the navigation hierarchy?
-   - Avoid premature architectural banners (do not place naming rules or domain factories before basic usage).
-   - Avoid the "Encyclopedia Trap" (keep dense boolean state matrices in Reference at the bottom).
+| Reader task / prerequisites        | Learning outcome                        | Destination / page type   | Working example and expected result    | Validation                     |
+| ---------------------------------- | --------------------------------------- | ------------------------- | -------------------------------------- | ------------------------------ |
+| <first task and assumed knowledge> | <what the reader can build and explain> | <actual route or section> | <source/template and visible behavior> | <compile/browser/reader check> |
+
+Include the first complete working task, then the next practical tasks. Introduce vocabulary where it is used; link to
+shared explanations instead of duplicating architecture banners. Reference pages serve lookup directly. Provide short
+teaching excerpts with explicitly stated prerequisites and a complete runnable example; avoid arbitrary line limits.
+Define stable destinations for advanced organization/naming, comparisons, and exact state/option tables. Separate the
+runtime implementation status from the documentation delivery status. Record checks actually performed; a proposed route
+or a prose description of a future example is not delivery evidence.
 
 ## Public API and examples
 

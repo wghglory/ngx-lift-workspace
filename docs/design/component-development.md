@@ -11,9 +11,9 @@ one.
 2. Check current primary sources from Clarity, Angular Material, NG-ZORRO, and relevant React libraries. Record concrete
    gaps and adopt/adapt/reject decisions. Use patterns appropriate to the feature; API count is not a quality target.
 3. Write practical use cases, goals, non-goals, the developer learning journey (elevator pitch, hello world, and
-   progressive learning path), minimal and advanced API examples, errors, and compatibility following either Track A (UI
-   Controls) or Track B (Headless Primitives). Keep proposed APIs visibly provisional. Show what the consumer imports,
-   binds, and submits.
+   progressive learning path), minimal and advanced API examples, errors, and compatibility. Select additional contracts
+   by behavior (forms, UI, async, shared cache), not by package. Keep proposed APIs visibly provisional. Show what the
+   consumer imports, binds, and submits.
 4. Present the spec/API changes for maintainer review. Implement after approval for that scope; existing explicit
    approval remains valid. A material new behavior or breaking API requires review of the updated proposal.
 5. Deliver small functional increments. Update the approved spec with final behavior and evidence.

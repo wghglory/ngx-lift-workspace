@@ -48,27 +48,23 @@ strictly on demand when `.mutate(args)` is called.
 
 ## Developer learning journey and pedagogy plan
 
-This headless primitive adheres to Track B (Headless Primitives & Utilities). Its public documentation follows the
-Diátaxis-inspired 5-stage progressive disclosure model:
+Runtime status remains Implemented (contract audit). Documentation revision approved October 17, 2026; delivery and
+validation are tracked in the [query documentation plan](../../query-documentation-plan.md).
 
-1. **30-Second Elevator Pitch**:
-   - _What is it?_ Declarative mutation and side-effect engine with automatic cache invalidation for Angular Signals.
-   - _What problem does it solve?_ Eliminates manual HTTP write management, duplicate submit bugs, and custom
-     cache-busting event buses.
-2. **Minimal Hello World (<15 lines)**:
-   - Declarative `mutateResource((data) => service.save(data), { invalidateTags: ['items'] })` wiring into a submit
-     button.
-3. **Core Mental Model**:
-   - Mutation Lifecycle: Trigger -> Concurrency Coordinator -> Network Execution -> Success (Tag Invalidation & State
-     Update) or Error.
-4. **Progressive Learning Path**:
-   - Level 1: Basic mutation with `isLoading()` and `error()` signals.
-   - Level 2: Automatic tag invalidation targeting active `queryResource` instances.
-   - Level 3: Concurrency strategies (`exhaust`, `concat`, `parallel`) and optimistic error handling.
-5. **Information Placement**:
-   - Key capabilities (cards/overview) appear in the top fold.
-   - Domain-owned keys and tag factory architecture appear in a dedicated section following live examples, not as a
-     jarring banner before the overview.
+Teach one explicitly submitted save before introducing cached reads or tag invalidation. The initial example shows a
+pending submit, server result, failure and recovery, with a complete compiled source/template. It does not require a
+query key or tags. Catch the returned Promise at the action boundary while keeping `error()` visible in the UI.
+
+| Reader task               | Outcome                                                          | Destination / type                             | Example and validation                                          |
+| ------------------------- | ---------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------- |
+| Save a value              | Submit once, observe pending/result/error, recover after failure | `/ngx-lift/query/mutateResource`, tutorial     | Shared compiled starter; browser repeated save/failure/recovery |
+| Update cached views       | Connect a successful write to affected query tags                | Same page, second task; `/ngx-lift/query/keys` | Existing table/summary invalidation preview                     |
+| Organize writes           | Reuse domain definitions and scope-aware tag factories           | `/ngx-lift/query/organization`, guide          | Existing team service and query definitions                     |
+| Control concurrent writes | Choose exhaust, concat or parallel after basic recovery          | Mutation page, advanced recipe                 | Existing concurrency preview and regressions                    |
+
+Tags are objects, for example `{invalidateTags: [{type: 'Items'}]}`, not string arrays. Query tags must match the tags
+selected by the mutation. A click-triggered read remains a read; choose mutation for a server write. Server success and
+post-success cache synchronization failure are distinct outcomes. Shared optimistic updates/rollback remain deferred.
 
 ---
 
