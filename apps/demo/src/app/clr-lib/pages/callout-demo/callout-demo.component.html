@@ -2,6 +2,10 @@
   <!-- Overview -->
   <p [innerHTML]="'callout.overview' | translate"></p>
 
+  <p>
+    <a routerLink="/clr-lift" fragment="getting-started">clr-lift · {{ 'common.basicUsage' | translate }}</a>
+  </p>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -11,6 +15,7 @@
       level="beginner"
       [description]="'callout.example1Desc' | translate"
       [tsCode]="basicCalloutCode"
+      [htmlCode]="basicCalloutCodeHtml"
     >
       <div preview>
         <cll-callout>
@@ -24,6 +29,7 @@
       level="intermediate"
       [description]="'callout.example2Desc' | translate"
       [tsCode]="listAndLinksCode"
+      [htmlCode]="listAndLinksCodeHtml"
     >
       <div preview>
         <cll-callout>
@@ -44,6 +50,7 @@
       level="advanced"
       [description]="'callout.example3Desc' | translate"
       [tsCode]="richContentCode"
+      [htmlCode]="richContentCodeHtml"
     >
       <div preview>
         <cll-callout>

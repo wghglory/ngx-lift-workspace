@@ -1,3 +1,5 @@
+import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
+import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
@@ -7,7 +9,15 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-spinner',
-  imports: [ApiTableComponent, SpinnerComponent, PageContainerComponent, CodeBlockComponent, TranslatePipe],
+  imports: [
+    DemoPlaygroundComponent,
+    RouterLink,
+    ApiTableComponent,
+    SpinnerComponent,
+    PageContainerComponent,
+    CodeBlockComponent,
+    TranslatePipe,
+  ],
   templateUrl: './spinner-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -53,8 +63,21 @@ export class SpinnerDemoComponent {
       },
     ];
   });
+  readonly setupCode = highlight(`import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {SpinnerComponent} from 'clr-lift';
+
+@Component({
+  selector: 'app-loading',
+  imports: [SpinnerComponent],
+  templateUrl: './loading.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class LoadingComponent {}
+// Standalone spinner: decorative=false exposes label to assistive technology.
+// Beside visible loading text, leave decorative=true to avoid duplicate announcements.
+// Import the Clarity global stylesheet; see the setup link above.`);
   defaultCode = highlight(`
-<cll-spinner />
+<cll-spinner [decorative]="false" label="Loading..." />
   `);
 
   sizeVariationsCode = highlight(`
@@ -78,7 +101,7 @@ export class SpinnerDemoComponent {
 
   inlineCode = highlight(`
 <div>
-  <cll-spinner inline [class]="'demo-spinner-space'" />
+  <cll-spinner inline />
   <span>Loading...</span>
 </div>
   `);

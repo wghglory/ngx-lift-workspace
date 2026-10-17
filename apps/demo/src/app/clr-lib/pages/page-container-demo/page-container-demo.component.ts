@@ -1,3 +1,4 @@
+import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
@@ -7,7 +8,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-page-container-demo',
-  imports: [PageContainerComponent, DemoPlaygroundComponent, TranslatePipe, ApiTableComponent],
+  imports: [RouterLink, PageContainerComponent, DemoPlaygroundComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './page-container-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,37 +32,27 @@ export class PageContainerDemoComponent {
       },
     ];
   });
-  basicUsageCode = highlight(`import {Component} from '@angular/core';
+  basicUsageCode = highlight(
+    "import {ChangeDetectionStrategy, Component} from '@angular/core';\n\nimport {PageContainerComponent} from 'clr-lift';\n\n@Component({\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [PageContainerComponent],\n  templateUrl: './example.html',\n})\nexport class UserManagementPageComponent {}",
+  );
+  basicUsageCodeHtml = highlight(
+    `<cll-page-container title="User Management">
+  <p>Page body content rendered inside the default slot.</p>
+</cll-page-container>`,
+  );
 
-import {PageContainerComponent} from 'clr-lift';
-
-@Component({
-  imports: [PageContainerComponent],
-  template: \`
-    <cll-page-container title="User Management">
-      <p>Page body content rendered inside the default slot.</p>
-    </cll-page-container>
-  \`,
-})
-export class UserManagementPageComponent {}`);
-
-  customClassCode = highlight(`import {Component} from '@angular/core';
-
-import {PageContainerComponent} from 'clr-lift';
-
-@Component({
-  imports: [PageContainerComponent],
-  template: \`
-    <cll-page-container title="Cluster Settings" customClass="density-compact">
-      <section class="card">
-        <div class="card-block">
-          <p>Configured with custom styling classes.</p>
-        </div>
-      </section>
-    </cll-page-container>
-  \`,
-})
-export class SettingsPageComponent {}`);
+  customClassCode = highlight(
+    "import {ChangeDetectionStrategy, Component} from '@angular/core';\n\nimport {PageContainerComponent} from 'clr-lift';\n\n@Component({\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [PageContainerComponent],\n  templateUrl: './example.html',\n})\nexport class SettingsPageComponent {}",
+  );
+  customClassCodeHtml = highlight(
+    `<cll-page-container title="Cluster Settings" customClass="density-compact">
+  <section class="card">
+    <div class="card-block">
+      <p>Configured with custom styling classes.</p>
+    </div>
+  </section>
+</cll-page-container>`,
+  );
 
   readonly customClassStylesCode = highlight(
     `// Global styles.scss: customClass is applied inside the page container.
@@ -73,18 +64,13 @@ cll-page-container > .page-container.density-compact {
     'scss',
   );
 
-  htmlTitleCode = highlight(`import {Component} from '@angular/core';
-
-import {PageContainerComponent} from 'clr-lift';
-
-@Component({
-  imports: [PageContainerComponent],
-  template: \`
-    <!-- The title input supports HTML markup rendered via innerHTML -->
-    <cll-page-container [title]="'Audit Log <span class='badge badge-info'>Live</span>'">
-      <p>Log entries stream here in real-time.</p>
-    </cll-page-container>
-  \`,
-})
-export class AuditLogPageComponent {}`);
+  htmlTitleCode = highlight(
+    "import {ChangeDetectionStrategy, Component} from '@angular/core';\n\nimport {PageContainerComponent} from 'clr-lift';\n\n@Component({\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [PageContainerComponent],\n  templateUrl: './example.html',\n})\nexport class AuditLogPageComponent {}",
+  );
+  htmlTitleCodeHtml = highlight(
+    `<!-- The title input supports HTML markup rendered via innerHTML -->
+<cll-page-container [title]="'Audit Log <span class=&quot;badge badge-info&quot;>Live</span>'">
+  <p>Log entries stream here in real-time.</p>
+</cll-page-container>`,
+  );
 }

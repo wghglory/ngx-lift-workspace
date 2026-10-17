@@ -1,3 +1,4 @@
+import {provideRouter} from '@angular/router';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {PageContainerDemoComponent} from './page-container-demo.component';
@@ -8,6 +9,7 @@ describe('PageContainerDemoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideRouter([])],
       imports: [PageContainerDemoComponent],
     }).compileComponents();
 
