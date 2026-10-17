@@ -50,7 +50,7 @@ Completed locally on October 17, 2026:
 
 | Check                                           | Result                                                                                       |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Demo unit tests                                 | 79 files, 239 tests passed                                                                   |
+| Demo unit tests                                 | 81 files, 256 tests passed                                                                   |
 | Tooling and example formatting                  | 21 tests passed, including datagrid and computed starter source checks                       |
 | Learning/query/forms/wizard browser regressions | 39 cases passed across Chromium, Firefox and WebKit                                          |
 | Retry, theme and dark/RTL browser regressions   | 24 cases passed across the same browsers                                                     |
@@ -62,6 +62,10 @@ Completed locally on October 17, 2026:
 Browser checks include reactive user selection, fallback responses, tab navigation and restored selection, repeated
 async derivation, datagrid refresh, wizard forward/back navigation, separate HTML source, and 390px entry-point layouts.
 The resource reorganization preserves all 29 event bindings and 36 template-state reads from the parent version.
+
+Coverage follow-up: the branch includes the PR #161 repair (`791ae20`), adding 17 transport/save tests. A fresh demo
+coverage run on this follow-up branch passes with 78.60% branch coverage (338/430), above the unchanged 75% threshold.
+The parent PR independently passes locally at 79.06% (340/430).
 
 The production build compiles the final demo templates; library/package verification is not rerun because `libs/` and
 package metadata are unchanged. Local review found no blocking issues. Human newcomer comprehension and native-language
