@@ -216,6 +216,7 @@ export const ruTranslations: Record<string, string> = {
   'rockStar.unveil': 'Откройте',
   'common.signature': 'Сигнатура',
   'common.description': 'Описание',
+  'common.clear': 'Очистить',
   'common.basicUsage': 'Базовое использование',
   'common.inputs': 'Входные свойства (Inputs)',
   'common.outputs': 'Выходные события (Outputs)',

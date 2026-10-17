@@ -213,6 +213,7 @@ export const ptBRTranslations: Record<string, string> = {
   'rockStar.unveil': 'Desvelar',
   'common.signature': 'Assinatura',
   'common.description': 'Descrição',
+  'common.clear': 'Limpar',
   'common.basicUsage': 'Uso básico',
   'common.inputs': 'Entradas (Inputs)',
   'common.outputs': 'Saídas (Outputs)',
