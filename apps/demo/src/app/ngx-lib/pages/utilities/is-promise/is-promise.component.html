@@ -2,10 +2,6 @@
   <!-- Overview -->
   <p [innerHTML]="'isPromise.overview' | translate"></p>
 
-  <cll-callout>
-    <p cds-layout="m-t:none" [innerHTML]="'isPromise.callout' | translate"></p>
-  </cll-callout>
-
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -29,7 +25,7 @@
                 <td>{{ item.label }}</td>
                 <td class="font-mono text-xs">{{ item.expression }}</td>
                 <td>
-                  @if (testIsPromise(item.value)) {
+                  @if (item.result) {
                     <span class="label label-success">true</span>
                   } @else {
                     <span class="label label-danger">false</span>
@@ -40,6 +36,9 @@
           </tbody>
         </table>
       </div>
+      <cll-callout>
+        <p cds-layout="m-t:none" [innerHTML]="'isPromise.callout' | translate"></p>
+      </cll-callout>
       <app-code-block [code]="basicExampleCode" lang="typescript" />
     </article>
 

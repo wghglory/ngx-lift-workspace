@@ -2,6 +2,29 @@
   <!-- Overview -->
   <p [innerHTML]="'differenceInDays.overview' | translate"></p>
 
+  <section cds-layout="vertical gap:sm" data-testid="difference-in-days-first-result">
+    <h2>{{ 'common.basicUsage' | translate }}</h2>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>{{ 'common.example' | translate }}</th>
+          <th>{{ 'common.returns' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of firstCases; track item.expression) {
+          <tr>
+            <td>
+              <code>{{ item.expression }}</code>
+            </td>
+            <td>{{ item.result }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <app-code-block [code]="firstTaskCode" lang="typescript" />
+  </section>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
