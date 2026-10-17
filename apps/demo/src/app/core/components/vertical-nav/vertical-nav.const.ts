@@ -27,8 +27,10 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/queryResources', value: 'queryResources', i18nKey: 'queryDocs.independent'},
       {path: '/cache', value: 'Cache freshness and refresh', i18nKey: 'queryDocs.cache'},
       {path: '/keys', value: 'Keys and invalidation', i18nKey: 'queryDocs.keys'},
+      {path: '/organization', value: 'Organizing queries', i18nKey: 'queryDocs.organization'},
       {path: '/choosing', value: 'Choosing an async API', i18nKey: 'queryDocs.choosing'},
       {path: '/reference', value: 'API reference', i18nKey: 'queryDocs.reference'},
+      {path: '/devtools', value: 'Query devtools', i18nKey: 'queryDocs.devtools'},
     ],
   },
   {

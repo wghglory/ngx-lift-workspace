@@ -14,6 +14,8 @@ export const zhCNTranslations: Record<string, string> = {
     'QueryClient 拥有共享缓存项。fetchQuery 读取数据；invalidateTags 将依赖标记为旧并刷新活动项；removeQueries 移除匹配项。参数和适配器请参阅公开源码契约。',
   'queryDocs.defaults':
     '默认值：staleTime = 0；gcTime = 300,000 ms。未配置时，轮询、重试、截止时间以及获焦或重连刷新均关闭。',
+  'queryDocs.devtools': '查询开发工具',
+  'queryDocs.excerpt': '组件字段片段。导入上面的服务和定义；变更示例提供完整的表格与摘要流程。',
   'queryDocs.fetching': '读取数据 · queryResource',
   'queryDocs.freshness': 'staleTime 从最近一次成功响应开始计算新鲜度。到期后数据变旧；到期本身不会发起请求。',
   'queryDocs.independent': '独立读取 · queryResources',
@@ -24,6 +26,9 @@ export const zhCNTranslations: Record<string, string> = {
     '在键中包含所有会改变响应的参数和授权作用域。一次性捕获响应式值，并在键和 loader 中复用同一份快照。',
   'queryDocs.keys': '键与失效',
   'queryDocs.keysIntro': '键标识数据。标签描述成功写入会影响哪些缓存读取。它们的用途不同。',
+  'queryDocs.organization': '组织查询代码',
+  'queryDocs.organizationIntro':
+    '当多个调用方需要相同数据时，提取查询定义。传输放在 team.service.ts，身份和标签放在 team.queries.ts，观察者留在各自消费者中。',
   'queryDocs.overview': '概览',
   'queryDocs.overviewIntro':
     '服务端状态是由服务器拥有的数据。这些工具负责加载数据、在组件间共享读取，以及在写入后同步缓存视图。',
@@ -633,7 +638,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': '通过 mutateResource 自动触发',
   'queryResource.lifecycleTitle': '生命周期状态与信号矩阵',
   'queryResource.lifecycleIntro':
-    '深入理解 isLoading、isInitialLoading 与 isRefreshing 之间的工作差异，避免白屏闪烁并实现流畅的后台数据重新验证。',
+    '深入理解 isLoading、isInitialLoading 与 isRefreshing 之间的工作差异，避免白屏闪烁并实现流畅的后台数据重新验证。 此矩阵假设成功结果是已定义的值。结果为 undefined 时，hasValue() 返回 false。',
   'queryResource.matrixState': '生命周期状态',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': '推荐 UI 表现',

@@ -19,6 +19,9 @@ export const nlTranslations: Record<string, string> = {
     'QueryClient beheert gedeelde vermeldingen. fetchQuery leest gegevens; invalidateTags markeert afhankelijkheden als verouderd en vernieuwt actieve vermeldingen; removeQueries verwijdert overeenkomende vermeldingen. Zie de publieke broncontracten voor parameters en adapters.',
   'queryDocs.defaults':
     'Standaarden: staleTime = 0; gcTime = 300,000 ms. Polling, nieuwe pogingen, deadlines en vernieuwen bij focus of herverbinding zijn zonder configuratie uitgeschakeld.',
+  'queryDocs.devtools': 'Queryhulpmiddelen',
+  'queryDocs.excerpt':
+    'Fragment met componentvelden. Importeer de bovenstaande service en definities; de mutatiedemo biedt de volledige workflow met tabel en samenvatting.',
   'queryDocs.fetching': 'Gegevens ophalen · queryResource',
   'queryDocs.freshness':
     'staleTime meet de versheid vanaf het laatste geslaagde antwoord. Daarna zijn gegevens verouderd; het verstrijken alleen start geen aanvraag.',
@@ -32,6 +35,9 @@ export const nlTranslations: Record<string, string> = {
   'queryDocs.keys': 'Sleutels en invalidatie',
   'queryDocs.keysIntro':
     'Sleutels identificeren gegevens. Tags beschrijven welke gecachete leesbewerkingen een geslaagde schrijfbewerking raakt. Ze hebben verschillende doelen.',
+  'queryDocs.organization': 'Query’s organiseren',
+  'queryDocs.organizationIntro':
+    'Extraheer definities wanneer meerdere gebruikers dezelfde gegevens nodig hebben. Zet transport in team.service.ts, identiteit en tags in team.queries.ts en observers bij hun gebruikers.',
   'queryDocs.overview': 'Overzicht',
   'queryDocs.overviewIntro':
     'Serverstatus bestaat uit gegevens die bij een server horen. Deze hulpmiddelen laden ze, delen leesbewerkingen tussen componenten en synchroniseren cacheweergaven na schrijfbewerkingen.',
@@ -693,7 +699,7 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatisch via mutateResource',
   'queryResource.lifecycleTitle': 'Levenscyclusstatussen en signaalmatrix',
   'queryResource.lifecycleIntro':
-    'Query’s verwerken zowel initiële laadacties als achtergrondrevalidaties. Gebruik deze matrix om te bepalen wanneer een paginabrede spinner gewenst is of wanneer een subtiele vernieuwingsindicator volstaat zonder de gebruikersinterface te blokkeren.',
+    'Query’s verwerken zowel initiële laadacties als achtergrondrevalidaties. Gebruik deze matrix om te bepalen wanneer een paginabrede spinner gewenst is of wanneer een subtiele vernieuwingsindicator volstaat zonder de gebruikersinterface te blokkeren. De matrix gaat uit van een gedefinieerde geslaagde waarde. hasValue() geeft false voor een undefined-resultaat.',
   'queryResource.matrixState': 'Levenscyclusstatus',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Wanneer gebruiken & UI-gedrag',

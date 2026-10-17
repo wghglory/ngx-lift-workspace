@@ -57,8 +57,32 @@
         <p>{{ 'queryDocs.invalidation' | translate }}</p>
         <p>{{ 'queryDocs.writeBoundary' | translate }}</p>
         <p>
-          <a routerLink="/ngx-lift/query/mutateResource">{{ 'mutateResource.demo1Section' | translate }}</a>
+          <a routerLink="/ngx-lift/query/mutateResource">{{ 'mutateResource.demo1Section' | translate }}</a> ·
+          <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
         </p>
+      }
+      @case ('organization') {
+        <section cds-layout="vertical gap:sm" data-testid="query-ownership-guide">
+          <h2>{{ 'queryOwnership.title' | translate }}</h2>
+          <p>{{ 'queryDocs.organizationIntro' | translate }}</p>
+          <pre><code>teams/
+  team.service.ts
+  team.queries.ts
+  team-table.component.ts
+  team-summary.component.ts</code></pre>
+          <p>{{ 'queryOwnership.definitions' | translate }}</p>
+          <app-code-block [code]="organizationCode" lang="typescript" />
+          <p>{{ 'queryDocs.excerpt' | translate }}</p>
+          <app-code-block [code]="observerCode" lang="typescript" />
+          <p>{{ 'queryOwnership.refactoring' | translate }}</p>
+          <p>{{ 'queryOwnership.noCache' | translate }}</p>
+          <p>{{ 'queryOwnership.naming' | translate }}</p>
+        </section>
+        <section cds-layout="vertical gap:sm" data-testid="query-naming-convention">
+          <h2>{{ 'queryGuide.namingTitle' | translate }}</h2>
+          <p [innerHTML]="'queryGuide.namingHandles' | translate"></p>
+        </section>
+        <a routerLink="/ngx-lift/query/mutateResource">{{ 'queryOwnership.journey' | translate }}</a>
       }
       @case ('choosing') {
         <p class="p1">{{ 'queryDocs.choosingIntro' | translate }}</p>
@@ -128,6 +152,14 @@
         </p>
         <p>{{ 'queryDocs.defaults' | translate }}</p>
         <p>{{ 'queryDocs.refreshControls' | translate }}</p>
+      }
+      @case ('devtools') {
+        <p class="p1">{{ 'queryResource.diagnosticsSectionDesc' | translate }}</p>
+        <h2>app.config.ts</h2>
+        <app-code-block [code]="setupCode" lang="typescript" />
+        <app-code-block [code]="panelCode" lang="typescript" />
+        <app-query-starter />
+        <cll-query-devtools [enabled]="true" />
       }
     }
     <nav [attr.aria-label]="'queryDocs.overview' | translate">

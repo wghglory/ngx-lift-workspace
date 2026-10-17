@@ -14,6 +14,8 @@ export const zhTWTranslations: Record<string, string> = {
     'QueryClient 擁有共用快取項目。fetchQuery 讀取資料；invalidateTags 將相依項目標記為舊並重新整理作用中項目；removeQueries 移除相符項目。參數與介接器請參閱公開原始碼契約。',
   'queryDocs.defaults':
     '預設值：staleTime = 0；gcTime = 300,000 ms。未設定時，輪詢、重試、截止時間，以及取得焦點或重新連線時重新整理均關閉。',
+  'queryDocs.devtools': '查詢開發工具',
+  'queryDocs.excerpt': '元件欄位片段。匯入上述服務與定義；變更示範提供完整的表格與摘要流程。',
   'queryDocs.fetching': '讀取資料 · queryResource',
   'queryDocs.freshness': 'staleTime 從最近一次成功回應開始計算新鮮度。到期後資料變舊；到期本身不會發出請求。',
   'queryDocs.independent': '獨立讀取 · queryResources',
@@ -24,6 +26,9 @@ export const zhTWTranslations: Record<string, string> = {
     '在鍵中包含所有會改變回應的參數和授權範圍。一次擷取回應式值，並在鍵和 loader 中重用同一份快照。',
   'queryDocs.keys': '鍵與失效',
   'queryDocs.keysIntro': '鍵識別資料。標籤描述成功寫入會影響哪些快取讀取。它們的用途不同。',
+  'queryDocs.organization': '組織查詢程式碼',
+  'queryDocs.organizationIntro':
+    '當多個呼叫端需要相同資料時，提取查詢定義。傳輸放在 team.service.ts，識別與標籤放在 team.queries.ts，觀察者留在各自的消費者中。',
   'queryDocs.overview': '概覽',
   'queryDocs.overviewIntro':
     '伺服器狀態是由伺服器擁有的資料。這些工具負責載入資料、在元件間共享讀取，以及在寫入後同步快取檢視。',
@@ -626,7 +631,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': '透過 mutateResource 自動觸發',
   'queryResource.lifecycleTitle': '生命週期狀態與訊號矩陣',
   'queryResource.lifecycleIntro':
-    '深入理解 isLoading、isInitialLoading 與 isRefreshing 之間的操作差異，避免白屏閃爍並實現流暢的背景資料重新驗證。',
+    '深入理解 isLoading、isInitialLoading 與 isRefreshing 之間的操作差異，避免白屏閃爍並實現流暢的背景資料重新驗證。 此矩陣假設成功結果是已定義的值。結果為 undefined 時，hasValue() 回傳 false。',
   'queryResource.matrixState': '生命週期狀態',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': '建議 UI 表現',

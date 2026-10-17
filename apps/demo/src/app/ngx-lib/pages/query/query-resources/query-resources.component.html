@@ -19,6 +19,9 @@
   </section>
   <section class="query-section" cds-layout="vertical gap:sm">
     <p>{{ 'queryLearn.collectionExplain' | translate }}</p>
+    <p>
+      <a routerLink="/ngx-lift/query/queryResource">{{ 'queryDocs.fetching' | translate }}</a>
+    </p>
   </section>
   <section class="query-section" data-testid="failure-rows">
     <app-demo-playground
@@ -318,6 +321,10 @@
       </div>
     </div>
   </section>
+
+  <p>
+    <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+  </p>
 
   <section class="query-section">
     <h2 id="api-reference">{{ 'queryResource.apiReference' | translate }}</h2>

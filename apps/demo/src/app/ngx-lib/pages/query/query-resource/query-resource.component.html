@@ -19,158 +19,10 @@
     <p>{{ 'queryLearn.refreshExplain' | translate }}</p>
     <p>{{ 'queryLearn.httpSetup' | translate }}</p>
     <app-code-block [code]="httpSetupCode" lang="typescript" />
-  </section>
-
-  <!-- ==================== ARCHITECTURE: COMPONENT VS SERVICE PLACEMENT ==================== -->
-  <section class="query-section" data-testid="query-placement-architecture">
-    <h2>{{ 'queryResource.placementTitle' | translate }}</h2>
-    <p [innerHTML]="'queryResource.placementIntro' | translate"></p>
-
-    <div class="query-table">
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>{{ 'queryResource.thPlacement' | translate }}</th>
-            <th>{{ 'queryResource.thScopeLifetime' | translate }}</th>
-            <th>{{ 'queryResource.thStateSharing' | translate }}</th>
-            <th>{{ 'queryResource.thCoordination' | translate }}</th>
-            <th>{{ 'queryResource.thRecommendation' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.rowComponentPlacement' | translate }}</strong>
-            </td>
-            <td>{{ 'queryResource.rowComponentScope' | translate }}</td>
-            <td>{{ 'queryResource.rowComponentSharing' | translate }}</td>
-            <td>{{ 'queryResource.rowComponentCoord' | translate }}</td>
-            <td>{{ 'queryResource.rowComponentRec' | translate }}</td>
-          </tr>
-          <tr>
-            <td>
-              <strong>{{ 'queryResource.rowServicePlacement' | translate }}</strong>
-            </td>
-            <td>{{ 'queryResource.rowServiceScope' | translate }}</td>
-            <td>{{ 'queryResource.rowServiceSharing' | translate }}</td>
-            <td>{{ 'queryResource.rowServiceCoord' | translate }}</td>
-            <td>{{ 'queryResource.rowServiceRec' | translate }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <clr-tabs cds-layout="m-t:md">
-      <!-- Tab 1: Pattern A - Global Auth Session -->
-      <clr-tab>
-        <button clrTabLink id="tab-service-pattern-a">{{ 'queryResource.tabServicePatternA' | translate }}</button>
-        <clr-tab-content id="tab-content-service-pattern-a" *clrIfActive>
-          <div class="m-t-sm">
-            <app-demo-playground
-              [title]="'queryResource.tabServicePatternA' | translate"
-              [description]="'queryResource.tabServicePatternADesc' | translate"
-              level="intermediate"
-              layout="split"
-              [tsCode]="authServiceCode"
-              [htmlCode]="authHtmlCode"
-            >
-              <div preview><app-auth-placement-demo /></div>
-            </app-demo-playground>
-          </div>
-        </clr-tab-content>
-      </clr-tab>
-
-      <!-- Tab 2: Pattern B - Dynamic Master-Detail -->
-      <clr-tab>
-        <button clrTabLink id="tab-service-pattern-b">{{ 'queryResource.tabServicePatternB' | translate }}</button>
-        <clr-tab-content id="tab-content-service-pattern-b" *clrIfActive>
-          <div class="m-t-sm">
-            <app-demo-playground
-              [title]="'queryResource.tabServicePatternB' | translate"
-              [description]="'queryResource.tabServicePatternBDesc' | translate"
-              level="intermediate"
-              layout="split"
-              [tsCode]="databaseServiceCode"
-            >
-              <div preview>
-                <div cds-layout="vertical gap:sm">
-                  <div>
-                    <span class="font-weight-semibold">{{ 'queryResource.simulatedMasterList' | translate }}:</span>
-                    <div class="btn-group btn-sm m-t-xs" role="group">
-                      @for (db of databaseStateService.databases; track db.id) {
-                        <button
-                          type="button"
-                          class="btn"
-                          [class.btn-primary]="databaseStateService.activeDatabaseId() === db.id"
-                          [class.btn-outline]="databaseStateService.activeDatabaseId() !== db.id"
-                          (click)="databaseStateService.selectDatabase(db.id)"
-                        >
-                          {{ db.name }}
-                        </button>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="card p-3 m-t-sm">
-                    <div class="card-header font-weight-semibold">
-                      {{ 'queryResource.simulatedDetailCard' | translate }} (<code>DatabaseDetailComponent</code>)
-                    </div>
-                    <div class="card-block">
-                      @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
-                        <div class="text-center p-y-sm">
-                          <cll-spinner inline [size]="'sm'" />
-                          <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
-                        </div>
-                      } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
-                        <div cds-layout="vertical gap:xs">
-                          <h4 class="m-0 font-weight-bold">{{ details.name }}</h4>
-                          <p class="m-0 text-secondary">
-                            {{ 'queryResource.engineLabel' | translate }}:
-                            <strong>{{ details.engine }}</strong> &middot;
-                            {{ 'queryResource.computeLabel' | translate }}: <strong>{{ details.cpu }}</strong> /
-                            <strong>{{ details.ram }}</strong>
-                          </p>
-                          <p class="m-0 text-secondary">
-                            {{ 'mutateResource.statusLabel' | translate }}:
-                            <span [appQueryStatus]="databaseStateService.databaseDetailsQuery.status()">{{
-                              databaseStateService.databaseDetailsQuery.status()
-                            }}</span>
-                          </p>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </app-demo-playground>
-          </div>
-        </clr-tab-content>
-      </clr-tab>
-
-      <!-- Tab 3: Pattern C - Component Placement -->
-      <clr-tab>
-        <button clrTabLink id="tab-component-placement">{{ 'queryResource.tabComponentPlacement' | translate }}</button>
-        <clr-tab-content id="tab-content-component-placement" *clrIfActive>
-          <div class="m-t-sm">
-            <app-demo-playground
-              [title]="'queryResource.tabComponentPlacement' | translate"
-              [description]="'queryResource.tabComponentPlacementDesc' | translate"
-              level="beginner"
-              layout="split"
-              [tsCode]="componentPlacementCode"
-              [htmlCode]="componentPlacementHtmlCode"
-            >
-              <div preview>
-                <div cds-layout="vertical gap:sm">
-                  <p>{{ 'queryResource.componentPlacementAdvice' | translate }}</p>
-                  <app-project-detail-demo projectId="website-redesign" />
-                </div>
-              </div>
-            </app-demo-playground>
-          </div>
-        </clr-tab-content>
-      </clr-tab>
-    </clr-tabs>
+    <p>
+      <a routerLink="/ngx-lift/query/cache">{{ 'queryDocs.cache' | translate }}</a> ·
+      <a routerLink="/ngx-lift/query/mutateResource">{{ 'queryDocs.saving' | translate }}</a>
+    </p>
   </section>
 
   <!-- ==================== DEMO 1: REQUEST COALESCING ==================== -->
@@ -445,6 +297,158 @@
 
   <app-query-failure-examples />
 
+  <!-- ==================== ARCHITECTURE: COMPONENT VS SERVICE PLACEMENT ==================== -->
+  <section class="query-section" data-testid="query-placement-architecture">
+    <h2>{{ 'queryResource.placementTitle' | translate }}</h2>
+    <p [innerHTML]="'queryResource.placementIntro' | translate"></p>
+
+    <div class="query-table">
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>{{ 'queryResource.thPlacement' | translate }}</th>
+            <th>{{ 'queryResource.thScopeLifetime' | translate }}</th>
+            <th>{{ 'queryResource.thStateSharing' | translate }}</th>
+            <th>{{ 'queryResource.thCoordination' | translate }}</th>
+            <th>{{ 'queryResource.thRecommendation' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.rowComponentPlacement' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResource.rowComponentScope' | translate }}</td>
+            <td>{{ 'queryResource.rowComponentSharing' | translate }}</td>
+            <td>{{ 'queryResource.rowComponentCoord' | translate }}</td>
+            <td>{{ 'queryResource.rowComponentRec' | translate }}</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>{{ 'queryResource.rowServicePlacement' | translate }}</strong>
+            </td>
+            <td>{{ 'queryResource.rowServiceScope' | translate }}</td>
+            <td>{{ 'queryResource.rowServiceSharing' | translate }}</td>
+            <td>{{ 'queryResource.rowServiceCoord' | translate }}</td>
+            <td>{{ 'queryResource.rowServiceRec' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <clr-tabs cds-layout="m-t:md">
+      <!-- Tab 1: Pattern A - Global Auth Session -->
+      <clr-tab>
+        <button clrTabLink id="tab-service-pattern-a">{{ 'queryResource.tabServicePatternA' | translate }}</button>
+        <clr-tab-content id="tab-content-service-pattern-a" *clrIfActive>
+          <div class="m-t-sm">
+            <app-demo-playground
+              [title]="'queryResource.tabServicePatternA' | translate"
+              [description]="'queryResource.tabServicePatternADesc' | translate"
+              level="intermediate"
+              layout="split"
+              [tsCode]="authServiceCode"
+              [htmlCode]="authHtmlCode"
+            >
+              <div preview><app-auth-placement-demo /></div>
+            </app-demo-playground>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <!-- Tab 2: Pattern B - Dynamic Master-Detail -->
+      <clr-tab>
+        <button clrTabLink id="tab-service-pattern-b">{{ 'queryResource.tabServicePatternB' | translate }}</button>
+        <clr-tab-content id="tab-content-service-pattern-b" *clrIfActive>
+          <div class="m-t-sm">
+            <app-demo-playground
+              [title]="'queryResource.tabServicePatternB' | translate"
+              [description]="'queryResource.tabServicePatternBDesc' | translate"
+              level="intermediate"
+              layout="split"
+              [tsCode]="databaseServiceCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:sm">
+                  <div>
+                    <span class="font-weight-semibold">{{ 'queryResource.simulatedMasterList' | translate }}:</span>
+                    <div class="btn-group btn-sm m-t-xs" role="group">
+                      @for (db of databaseStateService.databases; track db.id) {
+                        <button
+                          type="button"
+                          class="btn"
+                          [class.btn-primary]="databaseStateService.activeDatabaseId() === db.id"
+                          [class.btn-outline]="databaseStateService.activeDatabaseId() !== db.id"
+                          (click)="databaseStateService.selectDatabase(db.id)"
+                        >
+                          {{ db.name }}
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="card p-3 m-t-sm">
+                    <div class="card-header font-weight-semibold">
+                      {{ 'queryResource.simulatedDetailCard' | translate }} (<code>DatabaseDetailComponent</code>)
+                    </div>
+                    <div class="card-block">
+                      @if (databaseStateService.databaseDetailsQuery.isInitialLoading()) {
+                        <div class="text-center p-y-sm">
+                          <cll-spinner inline [size]="'sm'" />
+                          <span class="m-l-xs">{{ 'queryResource.loading' | translate }}</span>
+                        </div>
+                      } @else if (databaseStateService.databaseDetailsQuery.value(); as details) {
+                        <div cds-layout="vertical gap:xs">
+                          <h4 class="m-0 font-weight-bold">{{ details.name }}</h4>
+                          <p class="m-0 text-secondary">
+                            {{ 'queryResource.engineLabel' | translate }}:
+                            <strong>{{ details.engine }}</strong> &middot;
+                            {{ 'queryResource.computeLabel' | translate }}: <strong>{{ details.cpu }}</strong> /
+                            <strong>{{ details.ram }}</strong>
+                          </p>
+                          <p class="m-0 text-secondary">
+                            {{ 'mutateResource.statusLabel' | translate }}:
+                            <span [appQueryStatus]="databaseStateService.databaseDetailsQuery.status()">{{
+                              databaseStateService.databaseDetailsQuery.status()
+                            }}</span>
+                          </p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-demo-playground>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+
+      <!-- Tab 3: Pattern C - Component Placement -->
+      <clr-tab>
+        <button clrTabLink id="tab-component-placement">{{ 'queryResource.tabComponentPlacement' | translate }}</button>
+        <clr-tab-content id="tab-content-component-placement" *clrIfActive>
+          <div class="m-t-sm">
+            <app-demo-playground
+              [title]="'queryResource.tabComponentPlacement' | translate"
+              [description]="'queryResource.tabComponentPlacementDesc' | translate"
+              level="beginner"
+              layout="split"
+              [tsCode]="componentPlacementCode"
+              [htmlCode]="componentPlacementHtmlCode"
+            >
+              <div preview>
+                <div cds-layout="vertical gap:sm">
+                  <p>{{ 'queryResource.componentPlacementAdvice' | translate }}</p>
+                  <app-project-detail-demo projectId="website-redesign" />
+                </div>
+              </div>
+            </app-demo-playground>
+          </div>
+        </clr-tab-content>
+      </clr-tab>
+    </clr-tabs>
+  </section>
+
   <!-- ==================== DEVELOPER DIAGNOSTICS ==================== -->
   <section data-testid="query-diagnostics" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2>{{ 'queryResource.diagnosticsSection' | translate }}</h2>
@@ -462,6 +466,11 @@
       <div preview><cll-query-devtools [enabled]="true" /></div>
     </app-demo-playground>
   </section>
+
+  <p>
+    <a routerLink="/ngx-lift/query/devtools">{{ 'queryDocs.devtools' | translate }}</a> ·
+    <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+  </p>
 
   <section class="query-section" id="lifecycle" data-testid="query-introduction">
     <h2>{{ 'queryResource.lifecycleTitle' | translate }}</h2>
@@ -580,6 +589,8 @@
         </tbody>
       </table>
     </div>
+
+    <a routerLink="/ngx-lift/query/choosing">{{ 'queryDocs.choosing' | translate }}</a>
   </section>
 
   <!-- ==================== API REFERENCE ==================== -->

@@ -14,7 +14,7 @@ of use for public users.
 3. [Prohibited Documentation Anti-Patterns](#prohibited-documentation-anti-patterns)
 4. [Spacing and Layout](#spacing-and-layout)
 5. [Title Format](#title-format)
-6. [Required Sections](#required-sections)
+6. [Introductory Page Sections](#introductory-page-sections)
 7. [Code Examples](#code-examples)
 8. [Import Statements in Code Examples](#import-statements-in-code-examples)
 9. [API Reference Format](#api-reference-format)
@@ -152,34 +152,28 @@ and translated tab labels.
 
 ### Standard Format
 
-Use the exact name of the component/utility/operator/pipe/validator as it appears in the library:
+For API demo pages, use the exact library export name. For overview and guide pages, use a translated reader task such
+as "Organizing queries". Include the API name in sidebar labels for API tutorials.
 
 ```html
-<!-- For components -->
-<cll-page-container [title]="'Alert'">
-  <!-- For operators -->
-  <cll-page-container [title]="'createAsyncState'">
-    <!-- For pipes -->
-    <cll-page-container [title]="'ArrayJoinPipe'">
-      <!-- For validators -->
-      <cll-page-container [title]="'urlValidator'">
-        <!-- For utilities -->
-        <cll-page-container
-          [title]="'injectParams'"
-        ></cll-page-container></cll-page-container></cll-page-container></cll-page-container
-></cll-page-container>
+<cll-page-container [title]="'queryResource'" />
+<cll-page-container [title]="'ArrayJoinPipe'" />
+<cll-page-container [title]="'urlValidator'" />
 ```
 
 **Rules:**
 
 - Use signal input syntax: `[title]="'Name'"`
-- Match the exact export name from the library
+- On API demo pages, match the exact export name from the library
 - Use PascalCase for classes/components, camelCase for functions/operators
 - No extra formatting (no "Component" suffix unless it's part of the actual name)
 
 ---
 
-## Required Sections
+## Introductory Page Sections
+
+These requirements apply to introductory API/demo pages. Guides and reference use the structures in
+[Page Types and Learning Progression](#page-types-and-learning-progression).
 
 ### 1. Overview (Required)
 
@@ -229,7 +223,7 @@ Use the exact name of the component/utility/operator/pipe/validator as it appear
 **Note**: Import statements should be included at the top of each code example block. Examples should be numbered
 sequentially (Example 1, Example 2, etc.), with the first example typically showing the simplest, most common use case.
 
-### 4. API Reference (Required for Components, Optional for Utilities)
+### 3. API Reference (Required for Components, Optional for Utilities)
 
 **Purpose**: Document all inputs, outputs, methods, and configuration options.
 
@@ -616,7 +610,7 @@ When standardizing an existing page:
 - [ ] **Sections**: All sections use `cds-layout="vertical gap:md"`
 - [ ] **Articles**: All articles use `cds-layout="vertical gap:sm"`
 - [ ] **Overview**: Clear, concise description (2-4 sentences)
-- [ ] **Examples**: Section with multiple examples, numbered sequentially (Example 1, Example 2, etc.)
+- [ ] **Examples**: Start with one useful task and add relevant follow-up tasks. Keep any recipe numbering sequential.
 - [ ] **API Reference**: Complete documentation and signal state matrices at the end (after Examples)
 - [ ] **Code Blocks**: All use `highlight()` utility, proper `lang` attribute
 - [ ] **Imports in Code**: Complete examples include imports and setup; excerpts identify their context.

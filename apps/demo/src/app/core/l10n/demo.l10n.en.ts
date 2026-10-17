@@ -19,6 +19,9 @@ export const enTranslations: Record<string, string> = {
     'QueryClient owns shared entries. fetchQuery reads data; invalidateTags marks dependencies stale and refetches active entries; removeQueries removes matching entries. See the public source contracts for parameters and adapters.',
   'queryDocs.defaults':
     'Defaults: staleTime = 0; gcTime = 300,000 ms. Polling, retries, deadlines, and focus/reconnect refresh are disabled unless configured.',
+  'queryDocs.devtools': 'Query devtools',
+  'queryDocs.excerpt':
+    'Component-field excerpt. Import the service and definitions above; the mutation demo provides the complete table and summary workflow.',
   'queryDocs.fetching': 'Fetching data · queryResource',
   'queryDocs.freshness':
     'staleTime measures freshness from the last successful response. Once it expires, data becomes stale; expiration alone does not issue a request.',
@@ -32,6 +35,9 @@ export const enTranslations: Record<string, string> = {
   'queryDocs.keys': 'Keys and invalidation',
   'queryDocs.keysIntro':
     'Keys identify data. Tags describe which cached reads a successful write affects. They serve different purposes.',
+  'queryDocs.organization': 'Organizing queries',
+  'queryDocs.organizationIntro':
+    'Extract definitions when several callers need the same data. Keep transport in team.service.ts, identity and tags in team.queries.ts, and observers with their consumers.',
   'queryDocs.overview': 'Overview',
   'queryDocs.overviewIntro':
     'Server state is data owned by a server. These tools load it, share reads between components, and synchronize cached views after writes.',
@@ -673,7 +679,7 @@ export const enTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatic via mutateResource',
   'queryResource.lifecycleTitle': 'Lifecycle States & Signal Matrix',
   'queryResource.lifecycleIntro':
-    'Understand the operational differences between isLoading, isInitialLoading, and isRefreshing to avoid blank-screen flashes and implement smooth background revalidations.',
+    'Understand the operational differences between isLoading, isInitialLoading, and isRefreshing to avoid blank-screen flashes and implement smooth background revalidations. The matrix assumes a defined successful value. hasValue() returns false for an undefined result.',
   'queryResource.matrixState': 'Lifecycle State',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Recommended UI Behavior',

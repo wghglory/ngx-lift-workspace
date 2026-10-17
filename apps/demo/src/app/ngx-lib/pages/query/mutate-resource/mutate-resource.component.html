@@ -16,6 +16,10 @@
     <p>{{ 'queryLearn.writeSteps' | translate }}</p>
     <h2>{{ 'queryLearn.writeExplainTitle' | translate }}</h2>
     <p>{{ 'queryLearn.writeExplain' | translate }}</p>
+    <p>
+      <a routerLink="/ngx-lift/query/keys">{{ 'queryDocs.keys' | translate }}</a> ·
+      <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+    </p>
   </section>
 
   <!-- ==================== DEMO 1: TAG INVALIDATION ==================== -->
@@ -324,20 +328,9 @@
     </app-demo-playground>
   </section>
 
-  <!-- ==================== ARCHITECTURE & BEST PRACTICES ==================== -->
-  <section cds-layout="vertical gap:sm" data-testid="query-ownership-guide" class="m-t-lg">
-    <h2>{{ 'queryOwnership.title' | translate }}</h2>
-    <p>{{ 'queryOwnership.definitions' | translate }}</p>
-    <p>{{ 'queryOwnership.refactoring' | translate }}</p>
-    <p>{{ 'queryOwnership.noCache' | translate }}</p>
-    <p>{{ 'queryOwnership.naming' | translate }}</p>
-    <app-code-block [code]="ownershipCode" lang="typescript" />
-
-    <cll-callout data-testid="query-naming-convention" class="m-t-sm">
-      <h3 class="query-naming-title">{{ 'queryGuide.namingTitle' | translate }}</h3>
-      <p class="query-naming-copy" [innerHTML]="'queryGuide.namingHandles' | translate"></p>
-    </cll-callout>
-  </section>
+  <p id="domain-ownership">
+    <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
+  </p>
 
   <!-- ==================== API REFERENCE ==================== -->
   <section cds-layout="vertical gap:md align:stretch">

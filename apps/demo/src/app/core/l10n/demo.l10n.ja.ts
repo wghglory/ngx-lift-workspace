@@ -19,6 +19,9 @@ export const jaTranslations: Record<string, string> = {
     'QueryClient は共有項目を所有します。fetchQuery は読み取り、invalidateTags は依存項目を古い状態にしてアクティブな項目を再取得し、removeQueries は一致項目を削除します。引数とアダプターは公開ソースの契約を参照してください。',
   'queryDocs.defaults':
     '既定値: staleTime = 0、gcTime = 300,000 ms。ポーリング、再試行、期限、フォーカス復帰や再接続時の更新は未設定なら無効です。',
+  'queryDocs.devtools': 'クエリ開発ツール',
+  'queryDocs.excerpt':
+    'コンポーネントフィールドの抜粋です。上記のサービスと定義をインポートしてください。ミューテーションのデモに表とサマリーの完全な操作例があります。',
   'queryDocs.fetching': 'データの取得 · queryResource',
   'queryDocs.freshness':
     'staleTime は最後の成功レスポンスから鮮度を計測します。期限が切れると古いデータになりますが、それだけではリクエストは開始されません。',
@@ -32,6 +35,9 @@ export const jaTranslations: Record<string, string> = {
   'queryDocs.keys': 'キーと無効化',
   'queryDocs.keysIntro':
     'キーはデータを識別します。タグは成功した書き込みが影響するキャッシュ済み読み取りを表します。役割は異なります。',
+  'queryDocs.organization': 'クエリの整理',
+  'queryDocs.organizationIntro':
+    '複数の利用側が同じデータを必要とするときに定義を抽出します。通信は team.service.ts、識別子とタグは team.queries.ts に置き、オブザーバーは利用側に配置します。',
   'queryDocs.overview': '概要',
   'queryDocs.overviewIntro':
     'サーバー状態とはサーバーが所有するデータです。これらのツールはデータを取得し、コンポーネント間で読み取りを共有し、書き込み後にキャッシュ表示を同期します。',
@@ -679,7 +685,7 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'mutateResourceを通じて自動的に',
   'queryResource.lifecycleTitle': 'ライフサイクル状態とシグナルマトリックス',
   'queryResource.lifecycleIntro':
-    'クエリは初回読み込みとバックグラウンド再検証の両方を処理します。このマトリックスを参照して、全画面スピナーを表示すべきタイミングと、UI をブロックせずに控えめな更新インジケーターを表示すべきタイミングを判断してください。',
+    'クエリは初回読み込みとバックグラウンド再検証の両方を処理します。このマトリックスを参照して、全画面スピナーを表示すべきタイミングと、UI をブロックせずに控えめな更新インジケーターを表示すべきタイミングを判断してください。 この表は成功時の値が定義されている場合を示します。結果が undefined の場合、hasValue() は false を返します。',
   'queryResource.matrixState': 'ライフサイクル状態',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': '使用タイミングと推奨 UI',

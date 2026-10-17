@@ -19,6 +19,9 @@ export const esTranslations: Record<string, string> = {
     'QueryClient administra las entradas compartidas. fetchQuery consulta datos; invalidateTags marca dependencias desactualizadas y actualiza las activas; removeQueries elimina entradas coincidentes. Consulta los contratos públicos para parámetros y adaptadores.',
   'queryDocs.defaults':
     'Valores predeterminados: staleTime = 0; gcTime = 300,000 ms. El sondeo, los reintentos, los plazos y la actualización por foco o reconexión están desactivados salvo configuración.',
+  'queryDocs.devtools': 'Herramientas de consultas',
+  'queryDocs.excerpt':
+    'Extracto de campos de componente. Importa el servicio y las definiciones anteriores; la demo de mutación incluye el flujo completo de tabla y resumen.',
   'queryDocs.fetching': 'Consultar datos · queryResource',
   'queryDocs.freshness':
     'staleTime mide la vigencia desde la última respuesta correcta. Al vencer, los datos quedan desactualizados; el vencimiento por sí solo no inicia una solicitud.',
@@ -32,6 +35,9 @@ export const esTranslations: Record<string, string> = {
   'queryDocs.keys': 'Claves e invalidación',
   'queryDocs.keysIntro':
     'Las claves identifican datos. Las etiquetas indican qué consultas en caché afecta una escritura correcta. Cumplen funciones distintas.',
+  'queryDocs.organization': 'Organizar consultas',
+  'queryDocs.organizationIntro':
+    'Extrae las definiciones cuando varios consumidores necesitan los mismos datos. Mantén el transporte en team.service.ts, la identidad y las etiquetas en team.queries.ts y los observadores junto a sus consumidores.',
   'queryDocs.overview': 'Descripción general',
   'queryDocs.overviewIntro':
     'El estado del servidor son datos que pertenecen a un servidor. Estas herramientas los cargan, comparten consultas entre componentes y sincronizan las vistas en caché después de las escrituras.',
@@ -696,7 +702,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automático a través de mutateResource',
   'queryResource.lifecycleTitle': 'Matriz de estados y señales del ciclo de vida',
   'queryResource.lifecycleIntro':
-    'Las consultas gestionan tanto las cargas iniciales como las revalidaciones en segundo plano. Utilice esta matriz para determinar cuándo mostrar spinners de pantalla completa frente a indicadores sutiles de actualización sin bloquear la interacción.',
+    'Las consultas gestionan tanto las cargas iniciales como las revalidaciones en segundo plano. Utilice esta matriz para determinar cuándo mostrar spinners de pantalla completa frente a indicadores sutiles de actualización sin bloquear la interacción. La matriz supone un valor correcto definido. hasValue() devuelve false si el resultado es undefined.',
   'queryResource.matrixState': 'Estado del ciclo de vida',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Cuándo usar e impacto en UI',

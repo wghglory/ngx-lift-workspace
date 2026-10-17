@@ -1,4 +1,3 @@
-import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {RouterLink} from '@angular/router';
 import {MutationStarterComponent, MUTATION_STARTER_TEMPLATE} from '../mutation-starter/mutation-starter.component';
 import {MUTATION_STARTER_SOURCE} from '../mutation-starter/mutation-starter.example';
@@ -6,7 +5,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal, computed, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -20,8 +19,6 @@ import {TeamSummaryComponent} from './team-summary.component';
   selector: 'app-mutate-resource-demo',
   imports: [
     CommonModule,
-    CalloutComponent,
-    CodeBlockComponent,
     RouterLink,
     MutationStarterComponent,
     FormsModule,
@@ -189,27 +186,6 @@ submitNewMember() {
     role: this.newMemberRole(),
   });
   this.newMemberName.set('');
-}`);
-
-  readonly ownershipCode = highlight(`import {QueryDefinition} from 'ngx-lift';
-import {TeamService, TeamMember} from './team.service';
-
-// team.queries.ts: one domain owns identity, dependencies, loader and policy.
-export const teamKeys = {
-  members: (scope: string) => ['teams', scope, 'members'] as const,
-};
-export const teamTags = {
-  members: (scope: string) => ({type: 'teams/members', scope}),
-  member: (scope: string, id: number) => ({type: 'teams/member', scope, id}),
-};
-export function teamMembersQuery(teamService: TeamService, scope: string): QueryDefinition<TeamMember[]> {
-  return {
-    key: teamKeys.members(scope),
-    tags: [teamTags.members(scope)],
-    loader: () => teamService.getMembers(scope),
-    staleTime: 60_000,
-    gcTime: 0, // Mock transport belongs to this page instance.
-  };
 }`);
 
   readonly concurrencyCode = highlight(`import {signal} from '@angular/core';

@@ -65,3 +65,82 @@ test('first save retains input after failure and supports repeated successful su
     'await this.saveTeamMutation.mutate',
   );
 });
+
+test('guides are reachable from the sidebar and reference anchors reveal their target', async ({page}) => {
+  await page.goto(base);
+  await expect(page).toHaveURL(/overview$/);
+  const nav = page.locator('app-vertical-nav');
+  for (const name of [
+    'Overview',
+    'Cache freshness and refresh',
+    'Keys and invalidation',
+    'Organizing queries',
+    'Choosing an async API',
+    'API reference',
+    'Query devtools',
+  ]) {
+    await nav.getByRole('link', {name, exact: true}).click();
+    await expect(page.locator('h1')).toHaveText(name);
+    await expect(page.getByTestId('query-guide')).not.toContainText('!! Key');
+  }
+  await nav.getByRole('link', {name: 'API reference', exact: true}).click();
+  await page
+    .getByTestId('query-guide')
+    .getByRole('link', {name: 'Lifecycle States & Signal Matrix', exact: true})
+    .click();
+  await expect(page).toHaveURL(/queryResource#lifecycle$/);
+  await expect
+    .poll(() => page.locator('#lifecycle').evaluate((element) => element.getBoundingClientRect().top))
+    .toBeLessThan(160);
+});
+
+test('query learning pages fit a narrow viewport with translated guidance', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto(base + 'overview');
+  for (const route of [
+    'overview',
+    'queryResource',
+    'mutateResource',
+    'queryResources',
+    'cache',
+    'keys',
+    'organization',
+    'choosing',
+    'reference',
+  ]) {
+    await page.goto(base + route);
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('cll-page-container')).not.toContainText('!! Key');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});
+
+test('query learning guides switch language across all supported dictionaries', async ({page}) => {
+  test.setTimeout(120_000);
+  await page.goto(base + 'overview');
+  const titles: Record<string, string> = {
+    en: 'Overview',
+    'zh-CN': '概览',
+    'zh-TW': '概覽',
+    de: 'Überblick',
+    es: 'Descripción general',
+    fr: 'Vue d’ensemble',
+    ja: '概要',
+    ko: '개요',
+    nl: 'Overzicht',
+    'pt-BR': 'Visão geral',
+    ru: 'Обзор',
+  };
+  for (const [locale, title] of Object.entries(titles)) {
+    await page.evaluate((language) => localStorage.setItem('clr-lift-lang', language), locale);
+    await page.reload();
+    await expect(page.locator('h1')).toHaveText(title);
+    for (const route of ['cache', 'keys', 'organization', 'choosing', 'reference', 'overview']) {
+      await page.locator(`app-vertical-nav a[href="${base + route}"]`).click();
+      await expect(page).toHaveURL(new RegExp(route + '$'));
+      await expect(page.getByTestId('query-guide')).toHaveCount(1);
+      await expect(page.getByTestId('query-guide')).not.toContainText('!! Key');
+      await expect(page.locator('h1')).not.toContainText('queryDocs.');
+    }
+  }
+});

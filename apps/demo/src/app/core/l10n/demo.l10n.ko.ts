@@ -17,6 +17,9 @@ export const koTranslations: Record<string, string> = {
     'QueryClient는 공유 항목을 소유합니다. fetchQuery는 데이터를 읽고, invalidateTags는 의존 항목을 오래된 상태로 표시하여 활성 항목을 갱신하며, removeQueries는 일치하는 항목을 제거합니다. 매개변수와 어댑터는 공개 소스 계약을 확인하세요.',
   'queryDocs.defaults':
     '기본값: staleTime = 0, gcTime = 300,000 ms. 폴링, 재시도, 제한 시간, 포커스·재연결 새로 고침은 설정하지 않으면 꺼져 있습니다.',
+  'queryDocs.devtools': '쿼리 개발 도구',
+  'queryDocs.excerpt':
+    '컴포넌트 필드 발췌입니다. 위 서비스와 정의를 가져오세요. 뮤테이션 데모에 표와 요약의 전체 흐름이 있습니다.',
   'queryDocs.fetching': '데이터 가져오기 · queryResource',
   'queryDocs.freshness':
     'staleTime은 마지막 성공 응답부터 최신성을 측정합니다. 만료되면 데이터가 오래된 상태가 되지만, 만료만으로 요청을 시작하지는 않습니다.',
@@ -30,6 +33,9 @@ export const koTranslations: Record<string, string> = {
   'queryDocs.keys': '키와 무효화',
   'queryDocs.keysIntro':
     '키는 데이터를 식별합니다. 태그는 성공한 쓰기가 영향을 주는 캐시 읽기를 설명합니다. 두 기능의 목적은 다릅니다.',
+  'queryDocs.organization': '쿼리 코드 구성',
+  'queryDocs.organizationIntro':
+    '여러 소비자가 같은 데이터를 필요로 할 때 정의를 추출하세요. 전송은 team.service.ts, 식별자와 태그는 team.queries.ts에 두고 관찰자는 소비자와 함께 두세요.',
   'queryDocs.overview': '개요',
   'queryDocs.overviewIntro':
     '서버 상태는 서버가 소유한 데이터입니다. 이 도구는 데이터를 불러오고 컴포넌트 간 읽기를 공유하며 쓰기 후 캐시 화면을 동기화합니다.',
@@ -669,7 +675,7 @@ export const koTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': '자동으로 mutateResource를 통해',
   'queryResource.lifecycleTitle': '수명 주기 상태 및 시그널 매트릭스',
   'queryResource.lifecycleIntro':
-    '쿼리는 초기 로드와 백그라운드 재검증을 모두 처리합니다. 이 매트릭스를 활용하여 전체 화면 스피너를 띄울 시점과, 화면을 차단하지 않고 은은한 갱신 인디케이터를 표시할 시점을 올바르게 선택하세요.',
+    '쿼리는 초기 로드와 백그라운드 재검증을 모두 처리합니다. 이 매트릭스를 활용하여 전체 화면 스피너를 띄울 시점과, 화면을 차단하지 않고 은은한 갱신 인디케이터를 표시할 시점을 올바르게 선택하세요. 이 표는 성공한 값이 정의되어 있다고 가정합니다. 결과가 undefined이면 hasValue()는 false를 반환합니다.',
   'queryResource.matrixState': '수명 주기 상태',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': '사용 시점 및 UI 권장 사항',

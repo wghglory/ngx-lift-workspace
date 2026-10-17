@@ -40,6 +40,7 @@ test('domain definitions share refreshes while summary disposal and other scopes
 });
 
 test('ownership guidance and callback API remain visible in every supported language', async ({page}) => {
+  await page.goto('/ngx-lift/query/organization');
   test.setTimeout(60_000);
   const titles: Record<string, string> = {
     en: 'Domain-owned keys and tags',

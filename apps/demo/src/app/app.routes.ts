@@ -104,7 +104,14 @@ export const routes: Routes = [
                 (module) => module.QueryGuidesComponent,
               ),
           },
-
+          {
+            path: 'organization',
+            data: {guide: 'organization'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
           {
             path: 'choosing',
             data: {guide: 'choosing'},
@@ -121,7 +128,14 @@ export const routes: Routes = [
                 (module) => module.QueryGuidesComponent,
               ),
           },
-
+          {
+            path: 'devtools',
+            data: {guide: 'devtools'},
+            loadComponent: () =>
+              import('./ngx-lib/pages/query/query-guides/query-guides.component').then(
+                (module) => module.QueryGuidesComponent,
+              ),
+          },
           {
             path: 'queryResource',
             loadComponent: () =>

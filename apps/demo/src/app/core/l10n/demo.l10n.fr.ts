@@ -19,6 +19,9 @@ export const frTranslations: Record<string, string> = {
     'QueryClient possède les entrées partagées. fetchQuery lit les données ; invalidateTags rend les dépendances périmées et recharge les actives ; removeQueries supprime les entrées correspondantes. Consultez les contrats publics pour les paramètres et adaptateurs.',
   'queryDocs.defaults':
     'Valeurs par défaut : staleTime = 0 ; gcTime = 300,000 ms. Interrogation périodique, nouvelles tentatives, délais et actualisation au retour du focus ou à la reconnexion sont désactivés sans configuration.',
+  'queryDocs.devtools': 'Outils de requêtes',
+  'queryDocs.excerpt':
+    'Extrait de champs de composant. Importez le service et les définitions ci-dessus ; la démonstration de mutation fournit le parcours complet avec tableau et résumé.',
   'queryDocs.fetching': 'Charger des données · queryResource',
   'queryDocs.freshness':
     'staleTime mesure la fraîcheur depuis la dernière réponse réussie. À son expiration, les données deviennent périmées ; l’expiration seule ne lance aucune requête.',
@@ -32,6 +35,9 @@ export const frTranslations: Record<string, string> = {
   'queryDocs.keys': 'Clés et invalidation',
   'queryDocs.keysIntro':
     'Les clés identifient les données. Les tags décrivent les lectures en cache concernées par une écriture réussie. Leurs rôles diffèrent.',
+  'queryDocs.organization': 'Organiser les requêtes',
+  'queryDocs.organizationIntro':
+    'Extrayez les définitions lorsque plusieurs consommateurs utilisent les mêmes données. Placez le transport dans team.service.ts, l’identité et les tags dans team.queries.ts et les observateurs auprès des consommateurs.',
   'queryDocs.overview': 'Vue d’ensemble',
   'queryDocs.overviewIntro':
     'L’état serveur correspond aux données appartenant à un serveur. Ces outils les chargent, partagent les lectures entre composants et synchronisent les vues en cache après les écritures.',
@@ -700,7 +706,7 @@ export const frTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatique via mutateResource',
   'queryResource.lifecycleTitle': 'Matrice des états et signaux du cycle de vie',
   'queryResource.lifecycleIntro':
-    'Les requêtes gèrent à la fois les chargements initiaux et les revalidations en arrière-plan. Utilisez cette matrice pour déterminer quand afficher un indicateur de chargement plein écran ou un badge discret de rafraîchissement sans bloquer l’interface utilisateur.',
+    'Les requêtes gèrent à la fois les chargements initiaux et les revalidations en arrière-plan. Utilisez cette matrice pour déterminer quand afficher un indicateur de chargement plein écran ou un badge discret de rafraîchissement sans bloquer l’interface utilisateur. La matrice suppose une valeur réussie définie. hasValue() renvoie false pour un résultat undefined.',
   'queryResource.matrixState': 'État du cycle de vie',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Quand l’utiliser & comportement UI',

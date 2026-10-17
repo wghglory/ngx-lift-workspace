@@ -19,6 +19,9 @@ export const deTranslations: Record<string, string> = {
     'QueryClient verwaltet gemeinsame Einträge. fetchQuery liest Daten; invalidateTags markiert Abhängigkeiten als veraltet und aktualisiert aktive Einträge; removeQueries entfernt passende Einträge. Parameter und Adapter stehen in den öffentlichen Quellverträgen.',
   'queryDocs.defaults':
     'Standardwerte: staleTime = 0; gcTime = 300,000 ms. Polling, Wiederholungen, Zeitlimits und Aktualisierung bei Fokus oder Wiederverbindung sind ohne Konfiguration deaktiviert.',
+  'queryDocs.devtools': 'Abfragewerkzeuge',
+  'queryDocs.excerpt':
+    'Auszug aus Komponentenfeldern. Importieren Sie den Dienst und die Definitionen oben; die Mutationsdemo zeigt den vollständigen Ablauf mit Tabelle und Zusammenfassung.',
   'queryDocs.fetching': 'Daten laden · queryResource',
   'queryDocs.freshness':
     'staleTime misst die Aktualität seit der letzten erfolgreichen Antwort. Nach Ablauf gelten Daten als veraltet; der Ablauf allein startet keine Anfrage.',
@@ -32,6 +35,9 @@ export const deTranslations: Record<string, string> = {
   'queryDocs.keys': 'Schlüssel und Invalidierung',
   'queryDocs.keysIntro':
     'Schlüssel identifizieren Daten. Tags beschreiben, welche gespeicherten Lesezugriffe ein erfolgreicher Schreibvorgang betrifft. Sie haben unterschiedliche Aufgaben.',
+  'queryDocs.organization': 'Abfragen organisieren',
+  'queryDocs.organizationIntro':
+    'Extrahieren Sie Definitionen, wenn mehrere Verbraucher dieselben Daten benötigen. Transport gehört in team.service.ts, Identität und Tags in team.queries.ts und Beobachter zu ihren Verbrauchern.',
   'queryDocs.overview': 'Überblick',
   'queryDocs.overviewIntro':
     'Serverzustand sind Daten, die einem Server gehören. Diese Werkzeuge laden sie, teilen Lesezugriffe zwischen Komponenten und synchronisieren zwischengespeicherte Ansichten nach Schreibvorgängen.',
@@ -693,7 +699,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.badgeAutoMutate': 'Automatisch über mutateResource',
   'queryResource.lifecycleTitle': 'Lebenszyklus-Zustände & Signal-Matrix',
   'queryResource.lifecycleIntro':
-    'Verstehen Sie die Funktionsunterschiede zwischen isLoading, isInitialLoading und isRefreshing, um flackernde weiße Bildschirme zu vermeiden und reibungslose Hintergrundaktualisierungen umzusetzen.',
+    'Verstehen Sie die Funktionsunterschiede zwischen isLoading, isInitialLoading und isRefreshing, um flackernde weiße Bildschirme zu vermeiden und reibungslose Hintergrundaktualisierungen umzusetzen. Die Matrix setzt einen definierten erfolgreichen Wert voraus. hasValue() liefert bei undefined den Wert false.',
   'queryResource.matrixState': 'Lebenszyklus-Zustand',
   'queryResource.matrixStatus': 'status()',
   'queryResource.matrixWhenToUse': 'Empfohlenes UI-Verhalten',
