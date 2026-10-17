@@ -1056,6 +1056,8 @@ export const koTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': '배포',
   'callout.example3LabelValidated': '검증됨',
   'themeToggle.title': '테마 토글',
+  'themeToggle.exercise':
+    '테마를 바꾸고 새로고침하세요. ThemeService는 cds-theme을 localStorage에 저장하고 문서 body에 적용합니다. 두 컨트롤은 서비스를 공유합니다. changeTheme은 토글 조작에서 발생하며 서비스 호출에서는 발생하지 않습니다.',
   'themeToggle.overview':
     '＜code＞cll-theme-toggle＜/code＞ 컴포넌트와 ＜code＞ThemeService＜/code＞는 Signal 반응성과 localStorage 기반으로 Clarity 라이트 및 다크 모드 간 테마 전환을 원활하게 제공합니다.',
   'themeToggle.callout':
@@ -1248,6 +1250,8 @@ export const koTranslations: Record<string, string> = {
     '파라미터 <code>idleDurationInSeconds</code>와 <code>timeoutDurationInSeconds</code>는 선택 사항입니다. 이러한 파라미터가 전달되면 <code>provideIdleDetectionConfig</code>로 전달된 구성이 덮어쓰게 됩니다.',
   'idleDetection.utilDialogPreview': '다음과 같은 모달이 보입니다:',
   'idleDetection.title': '비활성화 감지',
+  'idleDetection.exercise':
+    '시작 후 3초간 조작하지 마세요. 경고는 10초 동안 카운트다운합니다. 활동만으로 열린 경고가 닫히지는 않습니다. 명시적으로 확인하면 유휴 시간이 재시작되고 중지하면 타이머가 해제됩니다.',
   'idleDetection.overview':
     '클리어 모달 대화상자 컴포넌트는 DOM 이벤트(마우스 이동, 키보드 입력, 스크롤, 터치)를 통해 사용자의 비활성화를 감시합니다. 비활성화 기간이 만료되면 접근성이 높은 Clarity 카운트다운 모달을 열고 (timeout) 이벤트를 방출합니다.',
   'idleDetection.example1': '예제 1: 상호작용 있는 비활성화 대화상자 시뮬레이션',
@@ -1259,7 +1263,7 @@ export const koTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     '비활성화가 발생할 때 카운트다운 모달이 표시되기 전의 시간(초)입니다. 지정된 경우 글로벌 구성이 덮어쓰게 됩니다.',
   'idleDetection.callout':
-    '모달에는 "Keep Me Signed In"라는 동작이 포함되어 사용자의 상호작용 시 모든 타이머가 초기화됩니다. 사용자가 응답하지 않으면 (timeout) 이벤트가 발생하여 안전한 로그아웃 또는 라우트 리디렉션을 허용합니다.',
+    '시작 후 3초간 조작하지 마세요. 경고는 10초 동안 카운트다운합니다. 활동만으로 열린 경고가 닫히지는 않습니다. 명시적으로 확인하면 유휴 시간이 재시작되고 중지하면 타이머가 해제됩니다.',
   'idleDetection.inputTimeoutDuration':
     '세션 타임아웃이 발생하기 전에 카운트다운 단계가 지속되는 시간(초)입니다. 지정된 경우 글로벌 구성이 덮어쓰게 됩니다.',
   'idleDetection.outputTimeout': '사용자가 인식하지 않으면 카운트다운이 0에 도달할 때 void를 방출합니다.',

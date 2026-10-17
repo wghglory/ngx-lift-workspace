@@ -1096,6 +1096,8 @@ export const ruTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Развертывание',
   'callout.example3LabelValidated': 'Подтвержденные',
   'themeToggle.title': 'Панель темы',
+  'themeToggle.exercise':
+    'Смените тему и перезагрузите: ThemeService сохраняет cds-theme в localStorage и применяет к body. Элементы управления используют один сервис. changeTheme сообщает о переключении компонента, а не о вызовах сервиса.',
   'themeToggle.overview':
     'Компонент <code>cll-theme-toggle</code> и <code>ThemeService</code> обеспечивают плавный переход между темами Clarity в темных и светлых режимах с реактивностью сигнала и сохранением в localStorage.',
   'themeToggle.callout':
@@ -1301,6 +1303,8 @@ export const ruTranslations: Record<string, string> = {
     'Параметры <code>idleDurationInSeconds</code> и <code>timeoutDurationInSeconds</code> факультативно. Когда эти параметры будут переданы, они перезапишут конфигурацию, <code>provideIdleDetectionConfig</code>.',
   'idleDetection.utilDialogPreview': 'Диалог выглядит следующим образом:',
   'idleDetection.title': 'Обнаружение холостого хода',
+  'idleDetection.exercise':
+    'Запустите и не трогайте страницу 3 секунды. Предупреждение отсчитывает 10 секунд. Активность не закрывает открытое предупреждение; подтвердите явно. Остановка освобождает таймеры.',
   'idleDetection.overview':
     'Компонент <code>cll-idle-detection</code> мониторит бездействие пользователя в событиях DOM (движение мыши, клавиши, прокрутка, касание). Когда время бездействия истекает, он открывает доступный Clarity диалог отсчета и излучает событие (таймаут).',
   'idleDetection.example1': 'Пример 1: Интерактивный диалоговый имитацион',
@@ -1311,7 +1315,7 @@ export const ruTranslations: Record<string, string> = {
   'idleDetection.apiSummary': 'Clarity модальное окно, отображающее отсчет таймаута на бездействие.',
   'idleDetection.inputIdleDuration': 'Продолжительность бездействия за секунды до отображения режима отсчета.',
   'idleDetection.callout':
-    'Вид транспорта включает в себя действие "Store Me Signed In", которое перезапускает все таймеры при взаимодействии с пользователем. Если пользователь не отвечает, события (время выхода) возгораются, чтобы обеспечить безопасный выход или перенаправление маршрута.',
+    'Запустите и не трогайте страницу 3 секунды. Предупреждение отсчитывает 10 секунд. Активность не закрывает открытое предупреждение; подтвердите явно. Остановка освобождает таймеры.',
   'idleDetection.inputTimeoutDuration': 'Продолжительность этапа отсчёта за секунды до начала сессии.',
   'idleDetection.outputTimeout': 'Эмиты пусты, когда обратный отсчет достигает 0 без распознавания пользователя.',
   'idleDetection.serviceSummary':

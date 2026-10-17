@@ -1097,6 +1097,8 @@ export const deTranslations: Record<string, string> = {
   'callout.example3LabelDeployment': 'Einsatz',
   'callout.example3LabelValidated': 'Geprüft',
   'themeToggle.title': 'Design-Umschalter (Theme Toggle)',
+  'themeToggle.exercise':
+    'Wechseln Sie das Design und laden Sie neu: ThemeService speichert cds-theme in localStorage und setzt es am Dokumentkörper. Beide Steuerelemente teilen den Dienst. changeTheme meldet die Umschaltaktion, nicht Dienstaufrufe.',
   'themeToggle.overview':
     'Die <code>cll-theme-toggle</code>-Komponente und die <code>ThemeService</code> ermöglichen einen reibungslosen Wechsel zwischen dem Clarity-Hell- und Dunklemodus mit Signal-Reaktivität und localStorage-Persistenz.',
   'themeToggle.callout':
@@ -1307,6 +1309,8 @@ export const deTranslations: Record<string, string> = {
     'Die Parameter <code>idleDurationInSeconds</code> und <code>timeoutDurationInSeconds</code> sind optional. Wenn diese Parameter übergeben werden, überschreiben sie die von <code>provideIdleDetectionConfig</code> übergebene Konfiguration.',
   'idleDetection.utilDialogPreview': 'Der Dialog sieht wie folgt aus:',
   'idleDetection.title': 'Idle Detection',
+  'idleDetection.exercise':
+    'Starten Sie und lassen Sie die Seite 3 Sekunden ruhen. Die Warnung zählt 10 Sekunden herunter. Aktivität schließt eine offene Warnung nicht; bestätigen Sie ausdrücklich. Stoppen gibt die Timer frei.',
   'idleDetection.overview':
     'Der <code>cll-idle-detection</code>-Komponenten überwacht die Benutzerinaktivität über DOM-Ereignisse (Mausbewegungen, Tastatureingaben, Scrollen und Berührungen). Wenn die Inaktivitätsdauer abläuft, öffnet es ein zugängliches Clarity-Zählungsdialogfenster und emittiert ein (timeout)-Ereignis.',
   'idleDetection.example1': 'Beispiel 1: Interaktive Idle Dialogsimulation',
@@ -1320,7 +1324,7 @@ export const deTranslations: Record<string, string> = {
   'idleDetection.inputIdleDuration':
     'Dauer der Inaktivität in Sekunden vor dem Countdown modal angezeigt wird. Overrides globale Konfiguration, wenn angegeben.',
   'idleDetection.callout':
-    'Der Modal beinhaltet eine Aktion "Keep Me Signed In", die alle Timer bei Benutzerinteraktion zurücksetzt. Wenn der Benutzer nicht reagiert, feuert das (Timeout) Ereignis an, um eine sichere Ausloggen oder Routenumleitung zu ermöglichen.',
+    'Starten Sie und lassen Sie die Seite 3 Sekunden ruhen. Die Warnung zählt 10 Sekunden herunter. Aktivität schließt eine offene Warnung nicht; bestätigen Sie ausdrücklich. Stoppen gibt die Timer frei.',
   'idleDetection.inputTimeoutDuration':
     'Dauer der Countdown-Phase in Sekunden vor dem Session-Timeout. Überschreibt die globale Konfiguration, falls angegeben.',
   'idleDetection.outputTimeout':

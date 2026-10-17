@@ -4,6 +4,8 @@
 
   <p>{{ 'themeToggle.callout' | translate }}</p>
 
+  <p>{{ 'themeToggle.exercise' | translate }}</p>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
@@ -13,7 +15,8 @@
       level="beginner"
       [badgeText]="'themeToggle.example1Badge' | translate"
       [description]="'themeToggle.example1Desc' | translate"
-      [htmlCode]="basicComponentCode"
+      [tsCode]="basicComponentCode"
+      [htmlCode]="basicComponentCodeHtml"
     >
       <div preview>
         <div class="preview-box" cds-layout="horizontal gap:md align:center">
@@ -39,6 +42,7 @@
       [badgeText]="'themeToggle.example2Badge' | translate"
       [description]="'themeToggle.example2Desc' | translate"
       [tsCode]="programmaticServiceCode"
+      [htmlCode]="programmaticServiceCodeHtml"
     >
       <div preview>
         <div class="preview-box" cds-layout="horizontal gap:sm align:center">

@@ -1,3 +1,4 @@
+import {provideRouter} from '@angular/router';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {IdleDetectionDemoComponent} from './idle-detection-demo.component';
@@ -8,6 +9,7 @@ describe('IdleDetectionDemoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideRouter([])],
       imports: [IdleDetectionDemoComponent],
     }).compileComponents();
 

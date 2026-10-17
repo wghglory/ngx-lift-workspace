@@ -1,7 +1,17 @@
-import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnDestroy, OnInit} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import {IdleDetectionService} from 'ngx-lift';
+import {IdleDetectionService, provideIdleDetectionService} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -9,11 +19,91 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-idle-detection-demo',
-  imports: [PageContainerComponent, CalloutComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
+  providers: [provideIdleDetectionService({idleDurationInSeconds: 3, timeoutDurationInSeconds: 10})],
+  imports: [RouterLink, PageContainerComponent, CalloutComponent, CodeBlockComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './idle-detection-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdleDetectionDemoComponent implements OnInit, OnDestroy {
+  readonly starterCode = highlight(
+    `import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, OnDestroy, signal} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {IdleDetectionService, provideIdleDetectionService} from 'ngx-lift';
+
+@Component({
+  selector: 'app-idle',
+  providers: [provideIdleDetectionService({idleDurationInSeconds: 3, timeoutDurationInSeconds: 10})],
+  templateUrl: './idle.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class IdleComponent implements OnInit, OnDestroy {
+  private destroyRef = inject(DestroyRef);
+
+  private readonly idleDetectionService = inject(IdleDetectionService);
+
+  readonly phase = signal<'Stopped' | 'Active' | 'Warning' | 'Expired'>('Stopped');
+
+  readonly countdown = signal<number | null>(null);
+
+  readonly monitoring = signal(false);
+
+  ngOnInit() {
+    this.idleDetectionService
+      .onIdleEnd()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.phase.set('Warning'));
+    this.idleDetectionService
+      .onCountDown()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.countdown.set(value));
+    this.idleDetectionService
+      .onTimeoutEnd()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.phase.set('Expired');
+        this.monitoring.set(false);
+        this.idleDetectionService.clearTimers();
+      });
+  }
+
+  start() {
+    this.phase.set('Active');
+    this.countdown.set(null);
+    this.monitoring.set(true);
+    this.idleDetectionService.startWatching();
+  }
+
+  confirm() {
+    this.idleDetectionService.resetTimer(true);
+    this.phase.set('Active');
+    this.countdown.set(null);
+  }
+
+  stop() {
+    this.idleDetectionService.clearTimers();
+    this.phase.set('Stopped');
+    this.monitoring.set(false);
+    this.countdown.set(null);
+  }
+
+  ngOnDestroy() {
+    this.idleDetectionService.clearTimers();
+  }
+}
+// The provider isolates these timers from the root service.
+// Activity resets the idle phase; only resetTimer(true) confirms an active warning.
+// Expiry is an event: connect it to your application's session termination policy.`,
+  );
+  readonly starterHtml = highlight(
+    `<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" [disabled]="monitoring()" (click)="start()">Start</button>
+  <button type="button" class="btn btn-sm" [disabled]="!monitoring()" (click)="stop()">Stop</button>
+  @if (phase() === 'Warning') {
+    <button type="button" class="btn btn-sm" (click)="confirm()">Refresh</button>
+  }
+</div>
+<output aria-live="polite">{{ phase() }} · {{ countdown() ?? '—' }}</output>`,
+  );
   private destroyRef = inject(DestroyRef);
   private translationService = inject(TranslationService);
 
@@ -181,40 +271,46 @@ export class AppComponent {
   //   this.router.navigate(['/login']);
   // }
 
-  private idleDetectionService = inject(IdleDetectionService);
+  private readonly idleDetectionService = inject(IdleDetectionService);
+  readonly phase = signal<'Stopped' | 'Active' | 'Warning' | 'Expired'>('Stopped');
+  readonly countdown = signal<number | null>(null);
+  readonly monitoring = signal(false);
 
   ngOnInit() {
-    this.idleDetectionService.setConfig({
-      idleDurationInSeconds: 5,
-      timeoutDurationInSeconds: 5,
-    });
-    this.idleDetectionService.startWatching();
-
     this.idleDetectionService
       .onIdleEnd()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        // Handle idle end event, e.g., show a warning dialog
-        console.log('idle for a long time, enter timeout phase');
-      });
-
+      .subscribe(() => this.phase.set('Warning'));
+    this.idleDetectionService
+      .onCountDown()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.countdown.set(value));
     this.idleDetectionService
       .onTimeoutEnd()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        // Handle timeout end event, e.g., log out the user
-        console.log('timeout, should logout');
-      });
-
-    this.idleDetectionService
-      .onCountDown()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((countdown) => {
-        // Update the UI with the remaining time
-        console.log(countdown);
+        this.phase.set('Expired');
+        this.monitoring.set(false);
+        this.idleDetectionService.clearTimers();
       });
   }
-
+  start() {
+    this.phase.set('Active');
+    this.countdown.set(null);
+    this.monitoring.set(true);
+    this.idleDetectionService.startWatching();
+  }
+  confirm() {
+    this.idleDetectionService.resetTimer(true);
+    this.phase.set('Active');
+    this.countdown.set(null);
+  }
+  stop() {
+    this.idleDetectionService.clearTimers();
+    this.phase.set('Stopped');
+    this.monitoring.set(false);
+    this.countdown.set(null);
+  }
   ngOnDestroy() {
     this.idleDetectionService.clearTimers();
   }
