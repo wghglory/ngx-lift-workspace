@@ -1,6 +1,10 @@
-import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {Subject, startWith, timer, map, switchMap} from 'rxjs';
+import {createAsyncState} from 'ngx-lift';
+import {AsyncPipe} from '@angular/common';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService, AlertComponent} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -10,6 +14,9 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-create-async-state',
   imports: [
+    DemoPlaygroundComponent,
+    AsyncPipe,
+    AlertComponent,
     ClarityModule,
     PageContainerComponent,
     CodeBlockComponent,
@@ -23,6 +30,72 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateAsyncStateComponent {
+  readonly failure = signal(false);
+  readonly request$ = new Subject<number>();
+  selection = 1;
+  readonly state$ = this.request$.pipe(
+    startWith(1),
+    switchMap((id) =>
+      timer(350).pipe(
+        map(() => {
+          if (this.failure()) throw new Error('Simulated read failure');
+          return {id};
+        }),
+        createAsyncState(),
+      ),
+    ),
+  );
+  readNext() {
+    this.request$.next(++this.selection);
+  }
+  readonly starterCode = highlight(`import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {AlertComponent} from 'clr-lift';
+import {createAsyncState} from 'ngx-lift';
+import {Subject, startWith, timer, map, switchMap} from 'rxjs';
+
+// Each read starts pending. Disable failure and refresh to recover.
+// New selections cancel the previous timer; AsyncPipe owns the subscription.
+@Component({
+  selector: 'app-starter',
+  imports: [AsyncPipe, AlertComponent],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly failure = signal(false);
+  readonly request$ = new Subject<number>();
+  selection = 1;
+  readonly state$ = this.request$.pipe(
+    startWith(1),
+    switchMap((id) =>
+      timer(350).pipe(
+        map(() => {
+          if (this.failure()) throw new Error('Simulated read failure');
+          return {id};
+        }),
+        createAsyncState(),
+      ),
+    ),
+  );
+  readNext() {
+    this.request$.next(++this.selection);
+  }
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" (click)="readNext()">Next value</button>
+  <button type="button" class="btn btn-sm" [attr.aria-pressed]="failure()" (click)="failure.set(!failure())">
+    Simulate failure
+  </button>
+  <button type="button" class="btn btn-sm" (click)="request$.next(selection)">Refresh</button>
+</div>
+@if (state$ | async; as state) {
+  <output aria-live="polite">{{ state.status }} · {{ state.data?.id ?? '—' }}</output>
+  @if (state.error) {
+    <cll-alert [error]="state.error" />
+  }
+}`);
+
   private translationService = inject(TranslationService);
 
   parameters = computed<ApiProperty[]>(() => {
@@ -122,8 +195,8 @@ export class UserCardListComponent {
   exampleWithoutLoadingCode = highlight(`import {Component} from '@angular/core';
 
 import {createAsyncState} from 'ngx-lift';
-import {Location} from '@angular/common';
-import {noop} from 'rxjs';
+import {Location, AsyncPipe} from '@angular/common';
+import {noop, Subject, startWith, timer, map, switchMap} from 'rxjs';
 
 import {User} from '../../models/user.model';
 

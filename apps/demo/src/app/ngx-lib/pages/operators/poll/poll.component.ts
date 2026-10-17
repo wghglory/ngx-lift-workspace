@@ -1,4 +1,5 @@
-import {CommonModule} from '@angular/common';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
+import {CommonModule, AsyncPipe} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -14,7 +15,19 @@ import {
   TranslationService,
 } from 'clr-lift';
 import {AsyncState, isEqual, poll} from 'ngx-lift';
-import {BehaviorSubject, delay, distinctUntilChanged, filter, map, of, Subject, switchMap, takeWhile, tap} from 'rxjs';
+import {
+  BehaviorSubject,
+  delay,
+  distinctUntilChanged,
+  filter,
+  map,
+  of,
+  Subject,
+  switchMap,
+  takeWhile,
+  tap,
+  timer,
+} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -33,6 +46,9 @@ interface SignalPollData {
 @Component({
   selector: 'app-poll',
   imports: [
+    DemoPlaygroundComponent,
+    AsyncPipe,
+    AlertComponent,
     CommonModule,
     ClarityModule,
     PageContainerComponent,
@@ -47,6 +63,69 @@ interface SignalPollData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollComponent implements OnInit {
+  readonly running$ = new BehaviorSubject(false);
+  readonly manualRefresh$ = new Subject<void>();
+  readonly failure = signal(false);
+  private sequence = 0;
+  readonly starterState$ = this.running$.pipe(
+    switchMap((running) =>
+      running
+        ? poll({
+            interval: 1500,
+            forceRefresh: this.manualRefresh$,
+            pollingFn: () =>
+              timer(300).pipe(
+                map(() => {
+                  if (this.failure()) throw new Error('Simulated polling failure');
+                  return ++this.sequence;
+                }),
+              ),
+          })
+        : of(null),
+    ),
+  );
+  readonly starterCode = highlight(`import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {AlertComponent} from 'clr-lift';
+import {poll} from 'ngx-lift';
+import {BehaviorSubject, Subject, switchMap, of, timer, map} from 'rxjs';
+
+// Start subscribes to one poller; Stop unsubscribes and cancels pending work.
+// AsyncPipe also unsubscribes when the component is destroyed.
+// Failed reads remain observable; disable failure and refresh to recover.
+@Component({
+  selector: 'app-starter',
+  imports: [AsyncPipe, AlertComponent],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly running$ = new BehaviorSubject(false);
+  readonly manualRefresh$ = new Subject<void>();
+  readonly failure = signal(false);
+  private sequence = 0;
+  readonly starterState$ = this.running$.pipe(
+    switchMap((running) =>
+      running
+        ? poll({
+            interval: 1500,
+            forceRefresh: this.manualRefresh$,
+            pollingFn: () =>
+              timer(300).pipe(
+                map(() => {
+                  if (this.failure()) throw new Error('Simulated polling failure');
+                  return ++this.sequence;
+                }),
+              ),
+          })
+        : of(null),
+    ),
+  );
+}`);
+  readonly starterHtml = highlight(
+    '<div cds-layout="horizontal gap:sm wrap">\n  <button type="button" class="btn btn-sm" (click)="running$.next(true)">Start</button>\n  <button type="button" class="btn btn-sm" (click)="running$.next(false)">Stop</button>\n  <button type="button" class="btn btn-sm" (click)="manualRefresh$.next()">Refresh</button>\n  <button type="button" class="btn btn-sm" [attr.aria-pressed]="failure()" (click)="failure.set(!failure())">\n    Simulate failure\n  </button>\n</div>\n@if (starterState$ | async; as state) {\n  <output aria-live="polite">{{ state.status }} · {{ state.data ?? \'—\' }}</output>\n  @if (state.error) {\n    <cll-alert [error]="state.error" />\n  }\n}',
+  );
+
   selectedItems: User[] = [];
   private readonly destroyRef = inject(DestroyRef);
   private refreshTimers: ReturnType<typeof setTimeout>[] = [];

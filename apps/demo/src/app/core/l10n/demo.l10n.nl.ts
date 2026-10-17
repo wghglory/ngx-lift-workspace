@@ -1422,6 +1422,8 @@ export const nlTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': "Replica's",
   'timelineWizard.url': 'URL',
+  'poll.start': 'Starten',
+  'poll.stop': 'Stoppen',
   'poll.overview':
     "De <code>poll</code> operator is een aangepaste RxJS operator die het proces van polling API's vereenvoudigt om data op te dateer. Het toont toepassingen waarin observables periodiek data op een bepaalde tijdsinterval uitstralen, abstractie van de complexiteit van het beheren van polling intervallen en API aanvragen. Deze operator is vooral handig wanneer in het real-time updaten is vereist, maar de server geen push notificaties ondersteunt (WebSockets, Server-Sent Events, etc.). Het integreert zich soepele met andere RxJS operators, waardoor ontwikkelaars reactieve pijplijnen kunnen bouwen voor het beheren van datastromen.",
   'poll.example1Title': 'Voorbeeld 1: Basic Polling',

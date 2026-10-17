@@ -1421,6 +1421,8 @@ export const deTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU',
   'timelineWizard.replicas': 'Nachbildungen',
   'timelineWizard.url': 'URL',
+  'poll.start': 'Starten',
+  'poll.stop': 'Stoppen',
   'poll.overview':
     'Der <code>poll</code>-Operator ist ein benutzerdefinierter RxJS-Operator, der die Prozessvereinfachung beim Polling von APIs zum Erhalt aktueller Daten vereinfacht. Er ermöglicht Entwicklern, Beobachtbarkeiten zu erstellen, die periodisch Daten zu bestimmten Intervallen ausstellen, wodurch die Komplexität des Verwaltens von Polling-Intervallen und API-Anfragen abstrahiert wird. Dieser Operator ist besonders nützlich, wenn in Echtzeit Updates erforderlich sind, aber der Server keine Push-Benachrichtigungen (WebSockets, Server-Sent Events, usw.) unterstützt. Er integriert sich nahtlos mit anderen RxJS-Operatoren, um Entwicklern ermöglichen, reaktive Pipelines für die Behandlung von Datenströmen zu bauen.',
   'poll.example1Title': 'Beispiel 1: Grundgesamtheit',

@@ -1,8 +1,32 @@
 <cll-page-container [title]="'createAsyncState'">
   <!-- Overview -->
   <p [innerHTML]="'createAsyncState.overview' | translate"></p>
-  <p [innerHTML]="'createAsyncState.interfaceStructure' | translate"></p>
-  <app-code-block [code]="asyncStateCode" lang="typescript" />
+
+  <app-demo-playground
+    data-testid="create-async-state-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'createAsyncState.example1Desc' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap">
+        <button type="button" class="btn btn-sm" (click)="readNext()">{{ 'docsLearn.nextValue' | translate }}</button>
+        <button type="button" class="btn btn-sm" [attr.aria-pressed]="failure()" (click)="failure.set(!failure())">
+          {{ 'queryLearn.simulateFailure' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm" (click)="request$.next(selection)">
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
+      @if (state$ | async; as state) {
+        <output aria-live="polite">{{ state.status }} · {{ state.data?.id ?? '—' }}</output>
+        @if (state.error) {
+          <cll-alert [error]="state.error" />
+        }
+      }
+    </div>
+  </app-demo-playground>
 
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
@@ -46,6 +70,8 @@
   <!-- API Reference -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.apiReference' | translate }}</h2>
+    <p [innerHTML]="'createAsyncState.interfaceStructure' | translate"></p>
+    <app-code-block [code]="asyncStateCode" lang="typescript" />
     <div cds-layout="vertical gap:sm">
       <h3>createAsyncState</h3>
       <p>{{ 'createAsyncState.apiSummary' | translate }}</p>

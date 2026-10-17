@@ -1265,6 +1265,8 @@ export const zhTWTranslations: Record<string, string> = {
   'timelineWizard.cpu': 'CPU 核心數',
   'timelineWizard.replicas': '複本數',
   'timelineWizard.url': '服務位址 (URL)',
+  'poll.start': '開始',
+  'poll.stop': '停止',
   'poll.overview':
     '<code>poll</code> 運算子是一個高效的自定義 RxJS 運算子，專門用於按固定週期輪詢後端介面並同步最新資料。它將定時管理、資料載入和介面請求細節抽象為統一響應式流，在服務端不支援實時推送（如 WebSockets、SSE）的場景下尤為實用。同時可與各類 RxJS 運算子無縫組合使用。',
   'poll.example1Title': '示例 1：基礎輪詢',

@@ -1,10 +1,12 @@
+import {AsyncPipe} from '@angular/common';
+import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {switchMapWithAsyncState} from 'ngx-lift';
-import {Subject} from 'rxjs';
+import {Subject, startWith, timer, map} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -14,6 +16,9 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-switch-map-with-async-state',
   imports: [
+    DemoPlaygroundComponent,
+    AsyncPipe,
+    AlertComponent,
     ClarityModule,
     AlertComponent,
     PageContainerComponent,
@@ -27,6 +32,70 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SwitchMapWithAsyncStateComponent {
+  readonly failure = signal(false);
+  readonly request$ = new Subject<number>();
+  selection = 1;
+  readonly state$ = this.request$.pipe(
+    startWith(1),
+    switchMapWithAsyncState((id) =>
+      timer(350).pipe(
+        map(() => {
+          if (this.failure()) throw new Error('Simulated read failure');
+          return {id};
+        }),
+      ),
+    ),
+  );
+  readNext() {
+    this.request$.next(++this.selection);
+  }
+  readonly starterCode = highlight(`import {AsyncPipe} from '@angular/common';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {AlertComponent} from 'clr-lift';
+import {switchMapWithAsyncState} from 'ngx-lift';
+import {Subject, startWith, timer, map} from 'rxjs';
+
+// Each read starts pending. Disable failure and refresh to recover.
+// New selections cancel the previous timer; AsyncPipe owns the subscription.
+@Component({
+  selector: 'app-starter',
+  imports: [AsyncPipe, AlertComponent],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  readonly failure = signal(false);
+  readonly request$ = new Subject<number>();
+  selection = 1;
+  readonly state$ = this.request$.pipe(
+    startWith(1),
+    switchMapWithAsyncState((id) =>
+      timer(350).pipe(
+        map(() => {
+          if (this.failure()) throw new Error('Simulated read failure');
+          return {id};
+        }),
+      ),
+    ),
+  );
+  readNext() {
+    this.request$.next(++this.selection);
+  }
+}`);
+  readonly starterHtml = highlight(`<div cds-layout="horizontal gap:sm wrap">
+  <button type="button" class="btn btn-sm" (click)="readNext()">Next value</button>
+  <button type="button" class="btn btn-sm" [attr.aria-pressed]="failure()" (click)="failure.set(!failure())">
+    Simulate failure
+  </button>
+  <button type="button" class="btn btn-sm" (click)="request$.next(selection)">Refresh</button>
+</div>
+@if (state$ | async; as state) {
+  <output aria-live="polite">{{ state.status }} · {{ state.data?.id ?? '—' }}</output>
+  @if (state.error) {
+    <cll-alert [error]="state.error" />
+  }
+}`);
+
   private http = inject(HttpClient);
   private translationService = inject(TranslationService);
 

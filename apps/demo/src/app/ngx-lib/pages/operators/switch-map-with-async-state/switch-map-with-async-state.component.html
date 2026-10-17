@@ -2,6 +2,32 @@
   <!-- Overview -->
   <p [innerHTML]="'switchMapWithAsyncState.overview' | translate"></p>
 
+  <app-demo-playground
+    data-testid="switch-map-with-async-state-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'switchMapWithAsyncState.example1Desc' | translate }}</p>
+      <div cds-layout="horizontal gap:sm wrap">
+        <button type="button" class="btn btn-sm" (click)="readNext()">{{ 'docsLearn.nextValue' | translate }}</button>
+        <button type="button" class="btn btn-sm" [attr.aria-pressed]="failure()" (click)="failure.set(!failure())">
+          {{ 'queryLearn.simulateFailure' | translate }}
+        </button>
+        <button type="button" class="btn btn-sm" (click)="request$.next(selection)">
+          {{ 'common.refresh' | translate }}
+        </button>
+      </div>
+      @if (state$ | async; as state) {
+        <output aria-live="polite">{{ state.status }} · {{ state.data?.id ?? '—' }}</output>
+        @if (state.error) {
+          <cll-alert [error]="state.error" />
+        }
+      }
+    </div>
+  </app-demo-playground>
+
   <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
