@@ -61,6 +61,30 @@ test('application query devtools opens the shared client and stays available acr
   await page.keyboard.press('Escape');
 });
 
+test('collection queries appear in root devtools on a fresh landing and after route navigation', async ({page}) => {
+  // Full navigation resets the application client used by the beforeEach landing.
+  await page.goto('/ngx-lift/query/queryResources');
+  const rootTool = page.locator('cll-query-devtools-root');
+  await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
+  const rows = rootTool.locator('clr-dg-row');
+  const tenant = rows.filter({hasText: '["collection-demo","a","tenant"]'});
+  const cluster = rows.filter({hasText: '["k8s-demo","cluster-metric","cluster-us-east"]'});
+  await expect(tenant).toBeVisible();
+  await expect(cluster).toBeVisible();
+  await expect(rows).toHaveCount(8);
+  await rootTool.getByRole('button', {name: 'Close', exact: true}).click();
+  await page.getByRole('link', {name: 'queryResource', exact: true}).first().click();
+  await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
+  await expect(tenant).toHaveCount(0);
+  await expect(cluster).toHaveCount(0);
+  await expect(rows.filter({hasText: '["current-user"]'})).toBeVisible();
+  await rootTool.getByRole('button', {name: 'Close', exact: true}).click();
+  await page.getByRole('link', {name: 'queryResources', exact: true}).first().click();
+  await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
+  await expect(tenant).toBeVisible();
+  await expect(cluster).toBeVisible();
+});
+
 test('comparison tables and tab panels have visible vertical separation', async ({page}) => {
   const section = page.getByTestId('query-placement-architecture');
   const table = box(await section.locator('.query-table').boundingBox());

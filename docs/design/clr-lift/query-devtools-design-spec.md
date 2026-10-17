@@ -54,6 +54,10 @@ has no dependency on clr-lift. The provider installs one floating launcher after
 repeated registration and removes its component/view/host on application destruction. It is inert during SSR and in
 production.
 
+The root launcher inspects the root `QUERY_CLIENT`; it does not aggregate clients overridden in child injectors. The
+`queryResources` demo uses that shared client, with zero inactive retention and cancellation when its last observer
+leaves, so page-owned mock loaders are released on navigation.
+
 For an inline launcher or a scoped client, import QueryDevtoolsComponent from clr-lift:
 
 ```html
