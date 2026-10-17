@@ -1,3 +1,4 @@
+import {AsyncPipe} from '@angular/common';
 import {
   HttpContext,
   HttpErrorResponse,
@@ -20,9 +21,9 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import {isK8sStatusThrottled, K8S_RETRY_BACKOFF_CONFIG, k8sRetryBackoffInterceptor} from 'ngx-lift';
-import {defer, finalize, of, throwError} from 'rxjs';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService, AlertComponent} from 'clr-lift';
+import {isK8sStatusThrottled, K8S_RETRY_BACKOFF_CONFIG, k8sRetryBackoffInterceptor, createAsyncState} from 'ngx-lift';
+import {defer, finalize, of, throwError, Subject, switchMap, filter, map} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -41,6 +42,9 @@ export interface InterceptorResult {
 @Component({
   selector: 'app-k8s-retry-backoff-interceptor',
   imports: [
+    DemoPlaygroundComponent,
+    AsyncPipe,
+    AlertComponent,
     PageContainerComponent,
     CalloutComponent,
     DemoPlaygroundComponent,
@@ -55,6 +59,84 @@ export interface InterceptorResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class K8sRetryBackoffInterceptorComponent {
+  private readonly firstInjector = inject(Injector);
+  readonly firstRead$ = new Subject<void>();
+  readonly firstState$ = this.firstRead$.pipe(
+    switchMap(() => {
+      let attempt = 0;
+      const request = new HttpRequest('GET', '/api/v1/pods');
+      const transport: HttpHandlerFn = () =>
+        defer(() => {
+          attempt++;
+          if (attempt === 1)
+            return throwError(
+              () =>
+                new HttpErrorResponse({
+                  status: 429,
+                  headers: new HttpHeaders({'Retry-After': '1'}),
+                }),
+            );
+          return of(new HttpResponse({status: 200, body: {attempt}}));
+        });
+      return runInInjectionContext(this.firstInjector, () => k8sRetryBackoffInterceptor(request, transport)).pipe(
+        filter((event) => event instanceof HttpResponse),
+        map(() => ({attempt, status: 200})),
+        createAsyncState(),
+      );
+    }),
+  );
+  readonly starterCode = highlight(`import {AsyncPipe} from '@angular/common';
+import {HttpRequest, HttpResponse, HttpHandlerFn, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {ChangeDetectionStrategy, Component, inject, Injector, runInInjectionContext} from '@angular/core';
+import {AlertComponent} from 'clr-lift';
+import {createAsyncState, k8sRetryBackoffInterceptor} from 'ngx-lift';
+import {Subject, switchMap, defer, throwError, of, filter, map} from 'rxjs';
+
+// Local transport: first response is 429 with Retry-After: 1; the retry succeeds.
+// No HTTP provider is needed for this simulation.
+// AsyncPipe releases the request and pending retry when the component is destroyed.
+// Follow the setup below to apply the same policy to HttpClient GET requests.
+@Component({
+  selector: 'app-starter',
+  imports: [AsyncPipe, AlertComponent],
+  templateUrl: './starter.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class StarterComponent {
+  private readonly firstInjector = inject(Injector);
+  readonly firstRead$ = new Subject<void>();
+  readonly firstState$ = this.firstRead$.pipe(
+    switchMap(() => {
+      let attempt = 0;
+      const request = new HttpRequest('GET', '/api/v1/pods');
+      const transport: HttpHandlerFn = () =>
+        defer(() => {
+          attempt++;
+          if (attempt === 1)
+            return throwError(
+              () =>
+                new HttpErrorResponse({
+                  status: 429,
+                  headers: new HttpHeaders({'Retry-After': '1'}),
+                }),
+            );
+          return of(new HttpResponse({status: 200, body: {attempt}}));
+        });
+      return runInInjectionContext(this.firstInjector, () => k8sRetryBackoffInterceptor(request, transport)).pipe(
+        filter((event) => event instanceof HttpResponse),
+        map(() => ({attempt, status: 200})),
+        createAsyncState(),
+      );
+    }),
+  );
+}`);
+  readonly starterHtml = highlight(`@let state = firstState$ | async;
+<button type="button" class="btn btn-sm" [disabled]="state?.isLoading" (click)="firstRead$.next()">Refresh</button>
+<output aria-live="polite">{{ state?.status ?? 'idle' }} · {{ state?.data?.attempt ?? 0 }}</output>
+@if (state?.error; as error) {
+  <cll-alert [error]="error" />
+}`);
+
   readonly overrideSimulationCode = highlight(`import {
   HttpContext,
   HttpErrorResponse,

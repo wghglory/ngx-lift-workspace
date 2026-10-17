@@ -1678,6 +1678,8 @@ export const jaTranslations: Record<string, string> = {
     '最初の 429 で失敗するプローブ、または 2 回の 429 の後で成功するワークロード読み取りを試してください。カスタム読み取りでは maxAttempts: 10、基準値 200ms の指数バックオフと equal jitter を使用し、最大 9 回のリトライを許可します。',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'ワークロード読み取りテスト (10回試行)',
   'k8sRetryBackoffInterceptor.btnProbe': '高速プローブテスト (オプトアウト)',
+  'k8sRetryBackoff.firstTask':
+    '更新で模擬 GET を送信します。最初は Retry-After: 1 付きの HTTP 429 となり、1秒以上待って再試行すると HTTP 200 が返ります。状態と試行回数を確認し、下の設定や他のシナリオへ進みます。',
   'k8sRetryBackoff.overview':
     '<code>retryOnK8sBackoff</code> RxJS オペレーターは、Kubernetes API サーバーの HTTP 429（<code>TooManyRequests</code>）応答に対してバックオフ付きの自動リトライを行います。例えば、watch キャッシュの初期化時に「storage is (re)initializing」が返される場合に使用します。リトライするのは HTTP 429 のみで、それ以外のエラー（4xx、5xx、ネットワーク障害）は変更せず直ちに購読者へ伝播します。',
   'k8sRetryBackoff.callout':

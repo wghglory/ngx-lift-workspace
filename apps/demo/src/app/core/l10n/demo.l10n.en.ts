@@ -1683,6 +1683,8 @@ export const enTranslations: Record<string, string> = {
     'Try a probe that fails on its first 429, or a workload read that receives two 429s before succeeding. The custom read uses maxAttempts: 10 and a 200ms exponential base with equal jitter; at most nine retries are allowed.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Test Workload Read (10 Attempts)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Test Fast Probe (Opt-out)',
+  'k8sRetryBackoff.firstTask':
+    'Refresh sends one simulated GET. Its first response is HTTP 429 with Retry-After: 1; after at least one second, a retry returns HTTP 200. The output shows state and attempt count. Then explore setup and other scenarios below.',
   'k8sRetryBackoff.overview':
     'The <code>retryOnK8sBackoff</code> RxJS operator implements automated retry-with-backoff for Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) responses (such as when the apiserver watch cache is bootstrapping with "storage is (re)initializing"). Only HTTP 429 triggers a retry; all other errors (4xx, 5xx, network failures) propagate immediately and unchanged to the subscriber.',
   'k8sRetryBackoff.callout':

@@ -4,22 +4,31 @@
 
   <cll-callout>{{ 'k8sRetryBackoff.retryContract' | translate }}</cll-callout>
 
-  <cll-callout>
-    <p cds-layout="m-t:none" [innerHTML]="'k8sRetryBackoffInterceptor.callout' | translate"></p>
-    <a routerLink="/ngx-lift/operators/k8sRetryBackoff">retryOnK8sBackoff</a>
-  </cll-callout>
+  <app-demo-playground
+    data-testid="k8s-retry-backoff-interceptor-starter"
+    [title]="'common.basicUsage' | translate"
+    [tsCode]="starterCode"
+    [htmlCode]="starterHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'k8sRetryBackoff.firstTask' | translate }}</p>
+      @let state = firstState$ | async;
+      <button type="button" class="btn btn-sm" [disabled]="state?.isLoading" (click)="firstRead$.next()">
+        {{ 'common.refresh' | translate }}
+      </button>
+      <output aria-live="polite">{{ state?.status ?? 'idle' }} · {{ state?.data?.attempt ?? 0 }}</output>
+      @if (state?.error; as error) {
+        <cll-alert [error]="error" />
+      }
+    </div>
+  </app-demo-playground>
 
-  <section cds-layout="vertical gap:md">
-    <h2>{{ 'common.basicUsage' | translate }}</h2>
-    <app-code-block [code]="interceptorUsageCode" lang="typescript" />
-    <app-code-block [code]="contextOverrideCode" lang="typescript" />
-  </section>
-
-  <!-- Interactive Simulator Section -->
+  <!-- Examples: scenarios, setup and customization -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.examples' | translate }}</h2>
 
     <app-demo-playground
+      data-testid="interceptor-scenarios"
       [title]="'k8sRetryBackoffInterceptor.example1Title' | translate"
       [description]="'k8sRetryBackoffInterceptor.example1Desc' | translate"
       level="intermediate"
@@ -117,8 +126,20 @@
       </div>
     </app-demo-playground>
 
+    <cll-callout>
+      <p cds-layout="m-t:none" [innerHTML]="'k8sRetryBackoffInterceptor.callout' | translate"></p>
+      <a routerLink="/ngx-lift/operators/k8sRetryBackoff">retryOnK8sBackoff</a>
+    </cll-callout>
+
+    <article cds-layout="vertical gap:sm" id="setup">
+      <h3>{{ 'common.basicUsage' | translate }}</h3>
+      <app-code-block [code]="interceptorUsageCode" lang="typescript" />
+      <app-code-block [code]="contextOverrideCode" lang="typescript" />
+    </article>
+
     <!-- Example 2: Per-Request Customization & Opt-Out via HttpContext -->
     <app-demo-playground
+      data-testid="interceptor-overrides"
       [title]="'k8sRetryBackoffInterceptor.example2Title' | translate"
       [description]="'k8sRetryBackoffInterceptor.example2Desc' | translate"
       level="advanced"

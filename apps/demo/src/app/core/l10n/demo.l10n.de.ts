@@ -1751,6 +1751,8 @@ export const deTranslations: Record<string, string> = {
     'Testen Sie einen Probe, der beim ersten 429 sofort fehlschlägt, oder ein Workload-Lesen, das nach zwei 429-Fehlern erfolgreich ist. Der angepasste Lesevorgang verwendet maxAttempts: 10 und 200 ms Fallback; dies erlaubt maximal neun Wiederholungen.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-Lesen testen (10 Versuche)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Schnellen Probe testen (Opt-out)',
+  'k8sRetryBackoff.firstTask':
+    'Aktualisieren sendet ein simuliertes GET. Zuerst kommt HTTP 429 mit Retry-After: 1; nach mindestens einer Sekunde folgt HTTP 200. Die Ausgabe zeigt Status und Versuche. Danach folgen Einrichtung und weitere Szenarien.',
   'k8sRetryBackoff.overview':
     'Der <code>retryOnK8sBackoff</code> RxJS-Operator implementiert automatisierte Wiederholungen mit Rückverzögerung für Kubernetes-apiserver HTTP 429 (<code>TooManyRequests</code>)-Antworten (z. B. wenn der apiserver Watch-Cache bootstrapt mit „Speicher ist (erneut) initialisierend“). Nur HTTP 429 löst eine Wiederholung aus; alle anderen Fehler (4xx, 5xx, Netzwerkfehler) werden unverändert an den Abonnenten weitergegeben.',
   'k8sRetryBackoff.callout':

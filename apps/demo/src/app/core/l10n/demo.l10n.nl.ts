@@ -1746,6 +1746,8 @@ export const nlTranslations: Record<string, string> = {
     'Test een probe die direct faalt bij de eerste 429, of een workload-uitlezing die na twee 429’s slaagt. De aangepaste uitlezing gebruikt maxAttempts: 10 en een terugvalvertraging van 200ms; dit staat maximaal negen retries toe.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-uitlezing testen (10 pogingen)',
   'k8sRetryBackoffInterceptor.btnProbe': 'Snelle probe testen (Opt-out)',
+  'k8sRetryBackoff.firstTask':
+    'Vernieuwen verstuurt één gesimuleerde GET. Eerst komt HTTP 429 met Retry-After: 1; na minstens één seconde retourneert een herhaling HTTP 200. De uitvoer toont status en pogingen. Bekijk daarna instellingen en andere scenario’s.',
   'k8sRetryBackoff.overview':
     'De <code>retryOnK8sBackoff</code> RxJS operator implementeert automatische retry met backoff voor Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) antwoorden (zoals wanneer de apiserver watch cache bootstrappert met "storage is (re)initializing"). Alleen HTTP 429 triggeert een retry; alle andere fouten (4xx, 5xx, netwerkfouten) stromen onveranderd naar de abonneraar.',
   'k8sRetryBackoff.callout':

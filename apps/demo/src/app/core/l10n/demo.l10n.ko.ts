@@ -1651,6 +1651,8 @@ export const koTranslations: Record<string, string> = {
     '첫 번째 429에서 실패하는 프로브 또는 두 번의 429 이후 성공하는 워크로드 읽기를 테스트합니다. 사용자 지정 읽기는 maxAttempts: 10, 기준값 200ms의 지수 백오프와 equal jitter를 사용하며 최대 9번 재시도합니다.',
   'k8sRetryBackoffInterceptor.btnWorkloads': '워크로드 읽기 테스트 (10회 시도)',
   'k8sRetryBackoffInterceptor.btnProbe': '빠른 프로브 테스트 (제외)',
+  'k8sRetryBackoff.firstTask':
+    '새로고침하면 모의 GET을 보냅니다. 첫 응답은 Retry-After: 1이 포함된 HTTP 429이고, 최소 1초 후 재시도하면 HTTP 200을 반환합니다. 상태와 시도 횟수를 확인한 후 아래 설정과 다른 시나리오를 살펴보세요.',
   'k8sRetryBackoff.overview':
     '<code>retryOnK8sBackoff</code> RxJS 연산자는 Kubernetes API 서버의 HTTP 429(<code>TooManyRequests</code>) 응답에 대해 백오프를 적용한 자동 재시도를 수행합니다. 예를 들어 watch 캐시 초기화 중 "storage is (re)initializing" 응답이 발생할 때 사용합니다. HTTP 429만 재시도를 유발하며 그 밖의 오류(4xx, 5xx, 네트워크 오류)는 변경 없이 즉시 구독자에게 전파됩니다.',
   'k8sRetryBackoff.callout':
