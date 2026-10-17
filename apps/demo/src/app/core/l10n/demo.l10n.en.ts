@@ -1,4 +1,58 @@
 export const enTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Cache freshness and refresh',
+  'queryDocs.cacheIntro':
+    'A query key identifies shared data within one QueryClient. Freshness, request activity, and observer lifetime answer different questions.',
+  'queryDocs.chooseComputed':
+    'Use for an async derived value when a value signal is sufficient. Prefer computed() for synchronous derivation.',
+  'queryDocs.chooseMutation':
+    'Use for explicitly submitted server writes. No query key is required; add invalidation tags when other views must update.',
+  'queryDocs.chooseObservable':
+    'Use fetchQueryObservable for one finite cached read in an RxJS flow; observeQueryObservable emits shared cache snapshots and owns an observer.',
+  'queryDocs.chooseQuery':
+    'Use one observer for a shared cached read. A response containing an array is still one query.',
+  'queryDocs.chooseResource':
+    'Use for independent async state, local overrides, or streaming without a shared keyed cache.',
+  'queryDocs.choosing': 'Choosing an async API',
+  'queryDocs.choosingIntro':
+    'Choose by the operation and ownership you need. A Refresh button still performs a read; a click does not make an operation a mutation.',
+  'queryDocs.clientReference':
+    'QueryClient owns shared entries. fetchQuery reads data; invalidateTags marks dependencies stale and refetches active entries; removeQueries removes matching entries. See the public source contracts for parameters and adapters.',
+  'queryDocs.defaults':
+    'Defaults: staleTime = 0; gcTime = 300,000 ms. Polling, retries, deadlines, and focus/reconnect refresh are disabled unless configured.',
+  'queryDocs.fetching': 'Fetching data · queryResource',
+  'queryDocs.freshness':
+    'staleTime measures freshness from the last successful response. Once it expires, data becomes stale; expiration alone does not issue a request.',
+  'queryDocs.independent': 'Independent reads · queryResources',
+  'queryDocs.independentClocks':
+    'The two clocks are independent: unused data can still be fresh, and active data can be stale. Returning observers can reuse retained data.',
+  'queryDocs.invalidation':
+    'Successful writes invalidate selected tags. Active queries refetch; inactive entries become stale. Invalidation does not delete the data.',
+  'queryDocs.keyIdentity':
+    'Include every response-changing parameter and authorization scope in the key. Capture reactive values once; reuse the snapshot in both key and loader.',
+  'queryDocs.keys': 'Keys and invalidation',
+  'queryDocs.keysIntro':
+    'Keys identify data. Tags describe which cached reads a successful write affects. They serve different purposes.',
+  'queryDocs.overview': 'Overview',
+  'queryDocs.overviewIntro':
+    'Server state is data owned by a server. These tools load it, share reads between components, and synchronize cached views after writes.',
+  'queryDocs.overviewRead': 'Load one team, display its data, change the selected ID, and recover from errors.',
+  'queryDocs.overviewWrite': 'Save a team name, observe pending and failure states, then update affected cached views.',
+  'queryDocs.prerequisites':
+    'Start with Angular components and signals. Learn what a query does before choosing cache policies or organizing a feature.',
+  'queryDocs.reference': 'API reference',
+  'queryDocs.referenceIntro':
+    'Look up signatures and exact state/option tables below. Follow guide links when you need an explanation or a working task.',
+  'queryDocs.refreshControls':
+    'reload() starts a background refresh and returns a boolean. execute() returns a Promise for a fresh read. Both bypass completed data and join valid pending work.',
+  'queryDocs.retention':
+    'gcTime controls retention after the last observer leaves. Collection waits for pending requests to settle. Active observers retain their data.',
+  'queryDocs.saving': 'Saving changes · mutateResource',
+  'queryDocs.tagIdentity':
+    'A tag is an object with type and optional scope/id. The mutation selects matching query tags; an omitted scope does not match every scope.',
+  'queryDocs.triggers':
+    'Stale data can refresh when observed again. Manual refresh and invalidation request fresh data; polling and focus/reconnect recovery require configuration.',
+  'queryDocs.writeBoundary':
+    'A successful write can outlive a cache synchronization failure. Inspect invalidationError and refresh reads; do not repeat the successful write to repair the cache.',
   'queryLearn.collectionExplain':
     'Select both IDs, reverse their order, and clear the selection. Retained keys keep their observers; removed items release theirs. Each row owns its loading, error, and refresh state.',
   'queryLearn.collectionIntro':
@@ -57,7 +111,7 @@ export const enTranslations: Record<string, string> = {
   'header.openGitHub': 'Open on GitHub',
   'header.codeLicensed': 'Code licensed under',
   'nav.signalUtils': 'Signal Utils',
-  'nav.queryMutation': 'Query & Mutation',
+  'nav.queryMutation': 'Query & Server State',
   'nav.operators': 'Operators',
   'nav.interceptors': 'Interceptors',
   'nav.validators': 'Validators',

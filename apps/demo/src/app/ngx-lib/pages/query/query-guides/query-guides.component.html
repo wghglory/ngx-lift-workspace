@@ -1,0 +1,138 @@
+<cll-page-container [title]="title | translate">
+  <div cds-layout="vertical gap:lg" data-testid="query-guide">
+    @switch (guide) {
+      @case ('overview') {
+        <p class="p1">{{ 'queryDocs.overviewIntro' | translate }}</p>
+        <p>{{ 'queryDocs.prerequisites' | translate }}</p>
+        <ol cds-layout="vertical gap:sm">
+          <li>
+            <a routerLink="/ngx-lift/query/queryResource">{{ 'queryDocs.fetching' | translate }}</a> —
+            {{ 'queryDocs.overviewRead' | translate }}
+          </li>
+          <li>
+            <a routerLink="/ngx-lift/query/mutateResource">{{ 'queryDocs.saving' | translate }}</a> —
+            {{ 'queryDocs.overviewWrite' | translate }}
+          </li>
+          <li>
+            <a routerLink="/ngx-lift/query/queryResources">{{ 'queryDocs.independent' | translate }}</a> —
+            {{ 'queryLearn.collectionIntro' | translate }}
+          </li>
+        </ol>
+        <p>
+          <a routerLink="/ngx-lift/query/cache">{{ 'queryDocs.cache' | translate }}</a> ·
+          <a routerLink="/ngx-lift/query/keys">{{ 'queryDocs.keys' | translate }}</a> ·
+          <a routerLink="/ngx-lift/query/choosing">{{ 'queryDocs.choosing' | translate }}</a>
+        </p>
+      }
+      @case ('cache') {
+        <p class="p1">{{ 'queryDocs.cacheIntro' | translate }}</p>
+        <section cds-layout="vertical gap:sm">
+          <h2><code>staleTime</code></h2>
+          <p>{{ 'queryDocs.freshness' | translate }}</p>
+        </section>
+        <section cds-layout="vertical gap:sm">
+          <h2><code>gcTime</code></h2>
+          <p>{{ 'queryDocs.retention' | translate }}</p>
+        </section>
+        <cll-callout
+          ><p>{{ 'queryDocs.independentClocks' | translate }}</p></cll-callout
+        >
+        <p>{{ 'queryDocs.triggers' | translate }}</p>
+        <p>{{ 'queryDocs.defaults' | translate }}</p>
+        <p>{{ 'queryDocs.refreshControls' | translate }}</p>
+        <a routerLink="/ngx-lift/query/queryResource" fragment="lifecycle">{{
+          'queryResource.lifecycleTitle' | translate
+        }}</a>
+      }
+      @case ('keys') {
+        <p class="p1">{{ 'queryDocs.keysIntro' | translate }}</p>
+        <h2><code>key</code></h2>
+        <p>{{ 'queryDocs.keyIdentity' | translate }}</p>
+        <p><code>['teams', scope, teamId]</code></p>
+        <h2><code>tags</code> / <code>invalidateTags</code></h2>
+        <p>{{ 'queryDocs.tagIdentity' | translate }}</p>
+        <p>
+          <code>{{ "{type: 'TeamMembers', scope: 'team-a'}" }}</code>
+        </p>
+        <p>{{ 'queryDocs.invalidation' | translate }}</p>
+        <p>{{ 'queryDocs.writeBoundary' | translate }}</p>
+        <p>
+          <a routerLink="/ngx-lift/query/mutateResource">{{ 'mutateResource.demo1Section' | translate }}</a>
+        </p>
+      }
+      @case ('choosing') {
+        <p class="p1">{{ 'queryDocs.choosingIntro' | translate }}</p>
+        <dl cds-layout="vertical gap:sm">
+          <dt>
+            <a routerLink="/ngx-lift/query/queryResource"><code>queryResource</code></a>
+          </dt>
+          <dd>{{ 'queryDocs.chooseQuery' | translate }}</dd>
+          <dt>
+            <a routerLink="/ngx-lift/query/queryResources"><code>queryResources</code></a>
+          </dt>
+          <dd>{{ 'queryLearn.collectionIntro' | translate }}</dd>
+          <dt>
+            <a routerLink="/ngx-lift/query/mutateResource"><code>mutateResource</code></a>
+          </dt>
+          <dd>{{ 'queryDocs.chooseMutation' | translate }}</dd>
+          <dt>
+            <a routerLink="/ngx-lift/signals/resourceAsync"><code>resourceAsync</code></a>
+          </dt>
+          <dd>{{ 'queryDocs.chooseResource' | translate }}</dd>
+          <dt>
+            <a routerLink="/ngx-lift/signals/computedAsync"><code>computedAsync</code></a>
+          </dt>
+          <dd>{{ 'queryDocs.chooseComputed' | translate }}</dd>
+          <dt><code>fetchQueryObservable</code> / <code>observeQueryObservable</code></dt>
+          <dd>{{ 'queryDocs.chooseObservable' | translate }}</dd>
+        </dl>
+        <a routerLink="/ngx-lift/query/queryResource" fragment="comparison">{{
+          'queryResource.comparisonTitle' | translate
+        }}</a>
+      }
+      @case ('reference') {
+        <p class="p1">{{ 'queryDocs.referenceIntro' | translate }}</p>
+        <ul cds-layout="vertical gap:sm">
+          <li>
+            <a routerLink="/ngx-lift/query/queryResource" fragment="api-reference"
+              ><code>queryResource(definition, options?)</code></a
+            >
+          </li>
+          <li>
+            <a routerLink="/ngx-lift/query/queryResources" fragment="api-reference"
+              ><code>queryResources(items, definition, options?)</code></a
+            >
+          </li>
+          <li>
+            <a routerLink="/ngx-lift/query/mutateResource" fragment="api-reference"
+              ><code>mutateResource(mutation, options?)</code></a
+            >
+          </li>
+          <li>
+            <a routerLink="/ngx-lift/query/queryResource" fragment="lifecycle">{{
+              'queryResource.lifecycleTitle' | translate
+            }}</a>
+          </li>
+        </ul>
+        <h2><code>QueryClient</code></h2>
+        <p>{{ 'queryDocs.clientReference' | translate }}</p>
+        <p>
+          <a href="https://github.com/wghglory/ngx-lift-workspace/blob/main/libs/ngx-lift/src/lib/query/query-client.ts"
+            >QueryClient</a
+          >
+          ·
+          <a
+            href="https://github.com/wghglory/ngx-lift-workspace/blob/main/libs/ngx-lift/src/lib/query/query-observable.ts"
+            >fetchQueryObservable / observeQueryObservable</a
+          >
+        </p>
+        <p>{{ 'queryDocs.defaults' | translate }}</p>
+        <p>{{ 'queryDocs.refreshControls' | translate }}</p>
+      }
+    }
+    <nav [attr.aria-label]="'queryDocs.overview' | translate">
+      <a routerLink="/ngx-lift/query/overview">{{ 'queryDocs.overview' | translate }}</a> ·
+      <a routerLink="/ngx-lift/query/reference">{{ 'queryDocs.reference' | translate }}</a>
+    </nav>
+  </div>
+</cll-page-container>

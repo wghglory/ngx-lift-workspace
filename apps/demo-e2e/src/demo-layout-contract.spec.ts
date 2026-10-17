@@ -73,13 +73,19 @@ test('collection queries appear in root devtools on a fresh landing and after ro
   await expect(cluster).toBeVisible();
   await expect(rows).toHaveCount(8);
   await rootTool.getByRole('button', {name: 'Close', exact: true}).click();
-  await page.getByRole('link', {name: 'queryResource', exact: true}).first().click();
+  await page
+    .getByRole('link', {name: /queryResource$/})
+    .first()
+    .click();
   await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
   await expect(tenant).toHaveCount(0);
   await expect(cluster).toHaveCount(0);
   await expect(rows.filter({hasText: '["current-user"]'})).toBeVisible();
   await rootTool.getByRole('button', {name: 'Close', exact: true}).click();
-  await page.getByRole('link', {name: 'queryResources', exact: true}).first().click();
+  await page
+    .getByRole('link', {name: /queryResources$/})
+    .first()
+    .click();
   await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
   await expect(tenant).toBeVisible();
   await expect(cluster).toBeVisible();

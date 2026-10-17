@@ -1,4 +1,58 @@
 export const jaTranslations: Record<string, string> = {
+  'queryDocs.cache': 'キャッシュの鮮度と更新',
+  'queryDocs.cacheIntro':
+    'クエリキーは同じ QueryClient 内の共有データを識別します。鮮度、リクエストの実行状態、オブザーバーの寿命はそれぞれ異なる観点です。',
+  'queryDocs.chooseComputed':
+    '値シグナルだけで十分な非同期派生値に使用します。同期的な派生には computed() を優先します。',
+  'queryDocs.chooseMutation':
+    '明示的に送信するサーバー書き込みに使用します。クエリキーは不要です。他の表示を更新するときに無効化タグを追加します。',
+  'queryDocs.chooseObservable':
+    'RxJS で一回の有限キャッシュ読み取りには fetchQueryObservable を使用します。observeQueryObservable は共有キャッシュのスナップショットを発行し、オブザーバーを所有します。',
+  'queryDocs.chooseQuery':
+    '共有キャッシュ読み取りに一つのオブザーバーを使用します。配列を含むレスポンスも一つのクエリです。',
+  'queryDocs.chooseResource':
+    '共有キーキャッシュを使わない独立した非同期状態、ローカル値の上書き、ストリームに使用します。',
+  'queryDocs.choosing': '非同期 API の選択',
+  'queryDocs.choosingIntro':
+    '操作と状態の所有者に応じて選びます。更新ボタンも読み取りを行います。クリックで開始するだけではミューテーションにはなりません。',
+  'queryDocs.clientReference':
+    'QueryClient は共有項目を所有します。fetchQuery は読み取り、invalidateTags は依存項目を古い状態にしてアクティブな項目を再取得し、removeQueries は一致項目を削除します。引数とアダプターは公開ソースの契約を参照してください。',
+  'queryDocs.defaults':
+    '既定値: staleTime = 0、gcTime = 300,000 ms。ポーリング、再試行、期限、フォーカス復帰や再接続時の更新は未設定なら無効です。',
+  'queryDocs.fetching': 'データの取得 · queryResource',
+  'queryDocs.freshness':
+    'staleTime は最後の成功レスポンスから鮮度を計測します。期限が切れると古いデータになりますが、それだけではリクエストは開始されません。',
+  'queryDocs.independent': '独立した読み取り · queryResources',
+  'queryDocs.independentClocks':
+    '二つの時計は独立しています。未使用データも新鮮な場合があり、使用中のデータも古くなります。戻ってきたオブザーバーは保持データを再利用できます。',
+  'queryDocs.invalidation':
+    '書き込みに成功すると選択したタグを無効化します。アクティブなクエリは再取得し、非アクティブな項目は古い状態になります。無効化はデータを削除しません。',
+  'queryDocs.keyIdentity':
+    'レスポンスを変える全パラメーターと認可スコープをキーに含めます。リアクティブ値を一度取得し、同じスナップショットをキーと loader で使用します。',
+  'queryDocs.keys': 'キーと無効化',
+  'queryDocs.keysIntro':
+    'キーはデータを識別します。タグは成功した書き込みが影響するキャッシュ済み読み取りを表します。役割は異なります。',
+  'queryDocs.overview': '概要',
+  'queryDocs.overviewIntro':
+    'サーバー状態とはサーバーが所有するデータです。これらのツールはデータを取得し、コンポーネント間で読み取りを共有し、書き込み後にキャッシュ表示を同期します。',
+  'queryDocs.overviewRead': 'チームを取得して表示し、選択 ID を変更して、エラーから回復します。',
+  'queryDocs.overviewWrite': 'チーム名を保存し、処理中とエラーの状態を確認して、関連するキャッシュ表示を更新します。',
+  'queryDocs.prerequisites':
+    'Angular のコンポーネントとシグナルの知識から始めます。キャッシュ方針や機能の構成を決める前に、クエリの動作を理解してください。',
+  'queryDocs.reference': 'API リファレンス',
+  'queryDocs.referenceIntro':
+    '以下でシグネチャと正確な状態・オプション表を確認できます。説明や実践的な操作にはガイドを参照してください。',
+  'queryDocs.refreshControls':
+    'reload() はバックグラウンド更新を開始し、真偽値を返します。execute() は新しい読み取りの Promise を返します。どちらも完了済みデータを迂回し、有効な実行中リクエストを共有します。',
+  'queryDocs.retention':
+    'gcTime は最後のオブザーバーが離れた後の保持期間を制御します。削除は実行中のリクエスト完了を待ちます。アクティブなオブザーバーがあればデータを保持します。',
+  'queryDocs.saving': '変更の保存 · mutateResource',
+  'queryDocs.tagIdentity':
+    'タグは type と任意の scope/id を持つオブジェクトです。ミューテーションは一致するクエリタグを選びます。scope の省略は全スコープへの一致を意味しません。',
+  'queryDocs.triggers':
+    '古いデータは再び観測されたときに更新できます。手動更新と無効化は新しいデータを要求します。ポーリング、フォーカス復帰、再接続時の回復には設定が必要です。',
+  'queryDocs.writeBoundary':
+    '書き込み成功後にキャッシュ同期が失敗する場合があります。invalidationError を確認して読み取りを更新してください。キャッシュ修復のために成功した書き込みを繰り返さないでください。',
   'queryLearn.collectionExplain':
     '両方の ID を選択し、順序を逆にしてから選択を解除します。残るキーはオブザーバーを保持し、削除した項目は解放します。各行に独自の読み込み、エラー、更新状態があります。',
   'queryLearn.collectionIntro':
@@ -57,7 +111,7 @@ export const jaTranslations: Record<string, string> = {
   'header.openGitHub': 'GitHub で開く',
   'header.codeLicensed': 'ライセンス：',
   'nav.signalUtils': 'Signal ユーティリティ',
-  'nav.queryMutation': 'クエリとミューテーション',
+  'nav.queryMutation': 'クエリとサーバー状態',
   'nav.operators': 'オペレーター',
   'nav.interceptors': 'インターセプター',
   'nav.validators': 'バリデーター',

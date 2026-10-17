@@ -1,4 +1,59 @@
 export const nlTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Cacheversheid en vernieuwen',
+  'queryDocs.cacheIntro':
+    'Een querysleutel identificeert gedeelde gegevens binnen één QueryClient. Versheid, actieve aanvragen en de levensduur van observers beantwoorden verschillende vragen.',
+  'queryDocs.chooseComputed':
+    'Gebruik voor een asynchroon afgeleide waarde wanneer een waardesignal volstaat. Gebruik bij synchrone afleiding liever computed().',
+  'queryDocs.chooseMutation':
+    'Gebruik voor expliciet ingediende schrijfbewerkingen op de server. Er is geen querysleutel nodig; voeg invalidatietags toe wanneer andere weergaven moeten bijwerken.',
+  'queryDocs.chooseObservable':
+    'Gebruik fetchQueryObservable voor één eindige cacheleesbewerking in RxJS; observeQueryObservable geeft gedeelde cachesnapshots en bezit een observer.',
+  'queryDocs.chooseQuery':
+    'Gebruik één observer voor een gedeelde gecachete leesbewerking. Een antwoord met een array blijft één query.',
+  'queryDocs.chooseResource':
+    'Gebruik voor onafhankelijke asynchrone status, lokale overschrijvingen of streams zonder gedeelde cache op sleutel.',
+  'queryDocs.choosing': 'Een asynchrone API kiezen',
+  'queryDocs.choosingIntro':
+    'Kies op basis van de bewerking en het eigenaarschap van de status. Een knop Vernieuwen leest nog steeds gegevens; een klik maakt een bewerking geen mutatie.',
+  'queryDocs.clientReference':
+    'QueryClient beheert gedeelde vermeldingen. fetchQuery leest gegevens; invalidateTags markeert afhankelijkheden als verouderd en vernieuwt actieve vermeldingen; removeQueries verwijdert overeenkomende vermeldingen. Zie de publieke broncontracten voor parameters en adapters.',
+  'queryDocs.defaults':
+    'Standaarden: staleTime = 0; gcTime = 300,000 ms. Polling, nieuwe pogingen, deadlines en vernieuwen bij focus of herverbinding zijn zonder configuratie uitgeschakeld.',
+  'queryDocs.fetching': 'Gegevens ophalen · queryResource',
+  'queryDocs.freshness':
+    'staleTime meet de versheid vanaf het laatste geslaagde antwoord. Daarna zijn gegevens verouderd; het verstrijken alleen start geen aanvraag.',
+  'queryDocs.independent': 'Onafhankelijk lezen · queryResources',
+  'queryDocs.independentClocks':
+    'Beide klokken zijn onafhankelijk: ongebruikte gegevens kunnen nog vers zijn en actieve gegevens verouderd. Terugkerende observers kunnen bewaarde gegevens hergebruiken.',
+  'queryDocs.invalidation':
+    'Geslaagde schrijfbewerkingen invalideren de geselecteerde tags. Actieve query’s halen opnieuw op; inactieve vermeldingen worden verouderd. Invalidatie verwijdert de gegevens niet.',
+  'queryDocs.keyIdentity':
+    'Neem elke parameter die het antwoord verandert en het autorisatiebereik op in de sleutel. Leg reactieve waarden eenmaal vast en gebruik dezelfde waarden in sleutel en loader.',
+  'queryDocs.keys': 'Sleutels en invalidatie',
+  'queryDocs.keysIntro':
+    'Sleutels identificeren gegevens. Tags beschrijven welke gecachete leesbewerkingen een geslaagde schrijfbewerking raakt. Ze hebben verschillende doelen.',
+  'queryDocs.overview': 'Overzicht',
+  'queryDocs.overviewIntro':
+    'Serverstatus bestaat uit gegevens die bij een server horen. Deze hulpmiddelen laden ze, delen leesbewerkingen tussen componenten en synchroniseren cacheweergaven na schrijfbewerkingen.',
+  'queryDocs.overviewRead': 'Laad een team, toon de gegevens, wijzig de geselecteerde ID en herstel na fouten.',
+  'queryDocs.overviewWrite':
+    'Sla een teamnaam op, bekijk wacht- en foutstatussen en werk vervolgens de betrokken cacheweergaven bij.',
+  'queryDocs.prerequisites':
+    'Begin met Angular-componenten en signals. Leer eerst wat een query doet voordat je cachebeleid kiest of een functie organiseert.',
+  'queryDocs.reference': 'API-referentie',
+  'queryDocs.referenceIntro':
+    'Zoek hieronder handtekeningen en exacte status- en optietabellen op. Volg de handleidingen voor uitleg of een praktische taak.',
+  'queryDocs.refreshControls':
+    'reload() start vernieuwen op de achtergrond en geeft een boolean terug. execute() geeft een Promise voor een nieuwe leesbewerking. Beide slaan voltooide gegevens over en delen geldig lopend werk.',
+  'queryDocs.retention':
+    'gcTime bepaalt de bewaartijd nadat de laatste observer vertrekt. Opruimen wacht tot lopende aanvragen klaar zijn. Actieve observers behouden hun gegevens.',
+  'queryDocs.saving': 'Wijzigingen opslaan · mutateResource',
+  'queryDocs.tagIdentity':
+    'Een tag is een object met type en optioneel scope/id. De mutatie selecteert overeenkomende querytags; een weggelaten scope betekent niet alle bereiken.',
+  'queryDocs.triggers':
+    'Verouderde gegevens kunnen vernieuwen wanneer ze opnieuw worden geobserveerd. Handmatig vernieuwen en invalidatie vragen nieuwe gegevens; polling en herstel bij focus of verbinding vereisen configuratie.',
+  'queryDocs.writeBoundary':
+    'Na een geslaagde schrijfbewerking kan cachesynchronisatie mislukken. Controleer invalidationError en vernieuw leesbewerkingen; herhaal de geslaagde schrijfbewerking niet om de cache te herstellen.',
   'queryLearn.collectionExplain':
     'Selecteer beide ID’s, keer de volgorde om en wis de selectie. Behouden sleutels behouden hun observers; verwijderde items geven ze vrij. Elke rij heeft eigen laad-, fout- en vernieuwstatussen.',
   'queryLearn.collectionIntro':
@@ -58,7 +113,7 @@ export const nlTranslations: Record<string, string> = {
   'header.openGitHub': 'Openen op GitHub',
   'header.codeLicensed': 'Code gelicentieerd onder',
   'nav.signalUtils': "Signal-hulpprogramma's",
-  'nav.queryMutation': 'Queries en mutaties',
+  'nav.queryMutation': 'Query’s en serverstatus',
   'nav.operators': 'Operatoren',
   'nav.interceptors': 'Interceptors',
   'nav.validators': 'Validatoren',

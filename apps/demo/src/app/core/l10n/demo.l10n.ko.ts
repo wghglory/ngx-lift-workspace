@@ -1,4 +1,56 @@
 export const koTranslations: Record<string, string> = {
+  'queryDocs.cache': '캐시 최신성 및 새로 고침',
+  'queryDocs.cacheIntro':
+    '쿼리 키는 하나의 QueryClient 안에서 공유 데이터를 식별합니다. 최신성, 요청 활동, 관찰자 수명은 서로 다른 질문에 답합니다.',
+  'queryDocs.chooseComputed':
+    '값 시그널만으로 충분한 비동기 파생 값에 사용하세요. 동기 파생에는 computed()를 우선하세요.',
+  'queryDocs.chooseMutation':
+    '명시적으로 제출하는 서버 쓰기에 사용하세요. 쿼리 키는 필요 없습니다. 다른 화면이 갱신되어야 할 때 무효화 태그를 추가하세요.',
+  'queryDocs.chooseObservable':
+    'RxJS 흐름에서 한 번의 유한한 캐시 읽기에는 fetchQueryObservable을 사용하세요. observeQueryObservable은 공유 캐시 스냅샷을 내보내며 관찰자를 소유합니다.',
+  'queryDocs.chooseQuery': '공유 캐시 읽기에 하나의 관찰자를 사용하세요. 응답에 배열이 있어도 하나의 쿼리입니다.',
+  'queryDocs.chooseResource': '공유 키 캐시가 필요 없는 독립적인 비동기 상태, 로컬 덮어쓰기 또는 스트림에 사용하세요.',
+  'queryDocs.choosing': '비동기 API 선택',
+  'queryDocs.choosingIntro':
+    '작업과 상태 소유권에 따라 선택하세요. 새로 고침 버튼도 여전히 읽기를 수행합니다. 클릭으로 시작한다고 뮤테이션이 되는 것은 아닙니다.',
+  'queryDocs.clientReference':
+    'QueryClient는 공유 항목을 소유합니다. fetchQuery는 데이터를 읽고, invalidateTags는 의존 항목을 오래된 상태로 표시하여 활성 항목을 갱신하며, removeQueries는 일치하는 항목을 제거합니다. 매개변수와 어댑터는 공개 소스 계약을 확인하세요.',
+  'queryDocs.defaults':
+    '기본값: staleTime = 0, gcTime = 300,000 ms. 폴링, 재시도, 제한 시간, 포커스·재연결 새로 고침은 설정하지 않으면 꺼져 있습니다.',
+  'queryDocs.fetching': '데이터 가져오기 · queryResource',
+  'queryDocs.freshness':
+    'staleTime은 마지막 성공 응답부터 최신성을 측정합니다. 만료되면 데이터가 오래된 상태가 되지만, 만료만으로 요청을 시작하지는 않습니다.',
+  'queryDocs.independent': '독립적인 읽기 · queryResources',
+  'queryDocs.independentClocks':
+    '두 시간 기준은 독립적입니다. 사용하지 않는 데이터가 최신일 수도 있고 활성 데이터가 오래될 수도 있습니다. 돌아온 관찰자는 보관된 데이터를 재사용할 수 있습니다.',
+  'queryDocs.invalidation':
+    '쓰기 성공 시 선택한 태그를 무효화합니다. 활성 쿼리는 다시 읽고 비활성 항목은 오래된 상태가 됩니다. 무효화는 데이터를 삭제하지 않습니다.',
+  'queryDocs.keyIdentity':
+    '응답을 바꾸는 모든 매개변수와 권한 범위를 키에 포함하세요. 반응형 값을 한 번 캡처하고 동일한 스냅샷을 키와 loader에서 재사용하세요.',
+  'queryDocs.keys': '키와 무효화',
+  'queryDocs.keysIntro':
+    '키는 데이터를 식별합니다. 태그는 성공한 쓰기가 영향을 주는 캐시 읽기를 설명합니다. 두 기능의 목적은 다릅니다.',
+  'queryDocs.overview': '개요',
+  'queryDocs.overviewIntro':
+    '서버 상태는 서버가 소유한 데이터입니다. 이 도구는 데이터를 불러오고 컴포넌트 간 읽기를 공유하며 쓰기 후 캐시 화면을 동기화합니다.',
+  'queryDocs.overviewRead': '팀을 불러와 데이터를 표시하고 선택한 ID를 바꾸며 오류에서 복구합니다.',
+  'queryDocs.overviewWrite': '팀 이름을 저장하고 대기 및 오류 상태를 확인한 뒤 관련 캐시 화면을 갱신합니다.',
+  'queryDocs.prerequisites':
+    'Angular 컴포넌트와 시그널부터 시작하세요. 캐시 정책이나 기능 구조를 정하기 전에 쿼리가 하는 일을 이해하세요.',
+  'queryDocs.reference': 'API 참조',
+  'queryDocs.referenceIntro':
+    '아래에서 시그니처와 정확한 상태·옵션 표를 확인하세요. 설명이나 실제 작업이 필요하면 관련 가이드를 따르세요.',
+  'queryDocs.refreshControls':
+    'reload()는 백그라운드 새로 고침을 시작하고 불리언을 반환합니다. execute()는 새로운 읽기의 Promise를 반환합니다. 둘 다 완료된 데이터를 건너뛰고 유효한 진행 중 요청을 공유합니다.',
+  'queryDocs.retention':
+    'gcTime은 마지막 관찰자가 떠난 뒤의 보관 기간을 제어합니다. 정리는 진행 중인 요청이 끝날 때까지 기다립니다. 활성 관찰자는 데이터를 유지합니다.',
+  'queryDocs.saving': '변경 사항 저장 · mutateResource',
+  'queryDocs.tagIdentity':
+    '태그는 type과 선택적인 scope/id가 있는 객체입니다. 뮤테이션은 일치하는 쿼리 태그를 선택합니다. scope 생략은 모든 범위와 일치한다는 뜻이 아닙니다.',
+  'queryDocs.triggers':
+    '오래된 데이터는 다시 관찰할 때 갱신될 수 있습니다. 수동 새로 고침과 무효화는 새 데이터를 요청합니다. 폴링 및 포커스·재연결 복구는 설정이 필요합니다.',
+  'queryDocs.writeBoundary':
+    '쓰기 성공 후 캐시 동기화가 실패할 수 있습니다. invalidationError를 확인하고 읽기를 새로 고치세요. 캐시를 복구하려고 성공한 쓰기를 반복하지 마세요.',
   'queryLearn.collectionExplain':
     '두 ID를 선택하고 순서를 뒤집은 뒤 선택을 지우세요. 유지된 키는 관찰자를 유지하고 제거된 항목은 해제합니다. 각 행에는 자체 로딩, 오류, 새로 고침 상태가 있습니다.',
   'queryLearn.collectionIntro':
@@ -57,7 +109,7 @@ export const koTranslations: Record<string, string> = {
   'header.openGitHub': 'GitHub에서 열기',
   'header.codeLicensed': '코드 라이선스:',
   'nav.signalUtils': 'Signal 유틸리티',
-  'nav.queryMutation': '쿼리 및 변경 작업',
+  'nav.queryMutation': '쿼리 및 서버 상태',
   'nav.operators': '연산자',
   'nav.interceptors': '인터셉터',
   'nav.validators': '유효성 검사기',

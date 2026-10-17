@@ -1,4 +1,60 @@
 export const frTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Fraîcheur du cache et actualisation',
+  'queryDocs.cacheIntro':
+    'Une clé identifie des données partagées dans un QueryClient. Fraîcheur, activité des requêtes et durée de vie des observateurs répondent à des questions différentes.',
+  'queryDocs.chooseComputed':
+    'Utilisez cette API pour une valeur dérivée asynchrone lorsqu’un signal de valeur suffit. Préférez computed() pour une dérivation synchrone.',
+  'queryDocs.chooseMutation':
+    'Utilisez cette API pour les écritures serveur explicitement soumises. Aucune clé de requête n’est nécessaire ; ajoutez des tags d’invalidation pour actualiser d’autres vues.',
+  'queryDocs.chooseObservable':
+    'Utilisez fetchQueryObservable pour une lecture finie en cache dans un flux RxJS ; observeQueryObservable émet des instantanés du cache partagé et possède un observateur.',
+  'queryDocs.chooseQuery':
+    'Utilisez un observateur pour une lecture partagée en cache. Une réponse contenant un tableau reste une seule requête.',
+  'queryDocs.chooseResource':
+    'Utilisez cette API pour un état asynchrone indépendant, des modifications locales ou un flux continu sans cache partagé par clé.',
+  'queryDocs.choosing': 'Choisir une API asynchrone',
+  'queryDocs.choosingIntro':
+    'Choisissez selon l’opération et le propriétaire de l’état. Un bouton Actualiser effectue toujours une lecture ; un clic ne transforme pas une opération en mutation.',
+  'queryDocs.clientReference':
+    'QueryClient possède les entrées partagées. fetchQuery lit les données ; invalidateTags rend les dépendances périmées et recharge les actives ; removeQueries supprime les entrées correspondantes. Consultez les contrats publics pour les paramètres et adaptateurs.',
+  'queryDocs.defaults':
+    'Valeurs par défaut : staleTime = 0 ; gcTime = 300,000 ms. Interrogation périodique, nouvelles tentatives, délais et actualisation au retour du focus ou à la reconnexion sont désactivés sans configuration.',
+  'queryDocs.fetching': 'Charger des données · queryResource',
+  'queryDocs.freshness':
+    'staleTime mesure la fraîcheur depuis la dernière réponse réussie. À son expiration, les données deviennent périmées ; l’expiration seule ne lance aucune requête.',
+  'queryDocs.independent': 'Lectures indépendantes · queryResources',
+  'queryDocs.independentClocks':
+    'Les deux horloges sont indépendantes : des données inutilisées peuvent rester fraîches et des données actives être périmées. Les observateurs de retour peuvent réutiliser les données conservées.',
+  'queryDocs.invalidation':
+    'Les écritures réussies invalident les tags sélectionnés. Les requêtes actives se rechargent ; les entrées inactives deviennent périmées. L’invalidation ne supprime pas les données.',
+  'queryDocs.keyIdentity':
+    'Incluez chaque paramètre modifiant la réponse et le périmètre d’autorisation dans la clé. Capturez les valeurs réactives une fois et réutilisez-les dans la clé et le loader.',
+  'queryDocs.keys': 'Clés et invalidation',
+  'queryDocs.keysIntro':
+    'Les clés identifient les données. Les tags décrivent les lectures en cache concernées par une écriture réussie. Leurs rôles diffèrent.',
+  'queryDocs.overview': 'Vue d’ensemble',
+  'queryDocs.overviewIntro':
+    'L’état serveur correspond aux données appartenant à un serveur. Ces outils les chargent, partagent les lectures entre composants et synchronisent les vues en cache après les écritures.',
+  'queryDocs.overviewRead':
+    'Chargez une équipe, affichez ses données, changez l’ID sélectionné et récupérez après une erreur.',
+  'queryDocs.overviewWrite':
+    'Enregistrez un nom d’équipe, observez l’attente et les erreurs, puis actualisez les vues en cache concernées.',
+  'queryDocs.prerequisites':
+    'Partez des composants et des signals Angular. Comprenez une requête avant de choisir une politique de cache ou d’organiser une fonctionnalité.',
+  'queryDocs.reference': 'Référence de l’API',
+  'queryDocs.referenceIntro':
+    'Consultez les signatures et les tableaux précis des états et options. Suivez les guides pour une explication ou une tâche pratique.',
+  'queryDocs.refreshControls':
+    'reload() lance une actualisation en arrière-plan et renvoie un booléen. execute() renvoie une Promise pour une lecture fraîche. Les deux ignorent les données déjà chargées et rejoignent le travail en cours valide.',
+  'queryDocs.retention':
+    'gcTime contrôle la rétention après le départ du dernier observateur. La suppression attend la fin des requêtes en cours. Les observateurs actifs conservent leurs données.',
+  'queryDocs.saving': 'Enregistrer des changements · mutateResource',
+  'queryDocs.tagIdentity':
+    'Un tag est un objet avec type et éventuellement scope/id. La mutation sélectionne les tags correspondants ; omettre scope ne vise pas tous les périmètres.',
+  'queryDocs.triggers':
+    'Les données périmées peuvent être actualisées lorsqu’elles sont observées à nouveau. L’actualisation manuelle et l’invalidation demandent des données fraîches ; interrogation périodique, retour du focus et reconnexion nécessitent une configuration.',
+  'queryDocs.writeBoundary':
+    'Une écriture réussie peut être suivie d’un échec de synchronisation du cache. Examinez invalidationError et actualisez les lectures ; ne répétez pas l’écriture réussie pour réparer le cache.',
   'queryLearn.collectionExplain':
     'Sélectionnez les deux ID, inversez leur ordre, puis videz la sélection. Les clés conservées gardent leurs observateurs ; les éléments retirés les libèrent. Chaque ligne possède ses états de chargement, d’erreur et d’actualisation.',
   'queryLearn.collectionIntro':
@@ -58,7 +114,7 @@ export const frTranslations: Record<string, string> = {
   'header.openGitHub': 'Ouvrir sur GitHub',
   'header.codeLicensed': 'Code sous licence',
   'nav.signalUtils': 'Utilitaires Signal',
-  'nav.queryMutation': 'Requêtes et mutations',
+  'nav.queryMutation': 'Requêtes et état serveur',
   'nav.operators': 'Opérateurs',
   'nav.interceptors': 'Intercepteurs',
   'nav.validators': 'Validateurs',

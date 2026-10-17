@@ -184,3 +184,17 @@ code:not([class^='language-']) {
 .demo-spinner-space {
   margin-inline: 1rem;
 }
+
+// Keep language and theme controls reachable while reading documentation on narrow screens.
+@media (max-width: 575px) {
+  app-root clr-header.header {
+    .branding {
+      padding-inline-end: var(--cds-global-space-3, 4px);
+    }
+
+    .header-actions .nav-link {
+      padding-inline: var(--cds-global-space-3, 4px);
+      min-inline-size: 44px;
+    }
+  }
+}

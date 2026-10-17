@@ -1,4 +1,48 @@
 export const zhTWTranslations: Record<string, string> = {
+  'queryDocs.cache': '快取新鮮度與重新整理',
+  'queryDocs.cacheIntro':
+    '查詢鍵識別同一個 QueryClient 中的共用資料。新鮮度、請求活動和觀察者生命週期各自回答不同的問題。',
+  'queryDocs.chooseComputed': '只需要值訊號時，用於非同步衍生值。同步衍生優先使用 computed()。',
+  'queryDocs.chooseMutation': '用於明確提交的伺服器寫入。不需要查詢鍵；其他檢視需要更新時再加入失效標籤。',
+  'queryDocs.chooseObservable':
+    '在 RxJS 流程中，以 fetchQueryObservable 取得一次有限的快取讀取；observeQueryObservable 持續發出共用快取快照，並擁有一個觀察者。',
+  'queryDocs.chooseQuery': '以一個觀察者處理共用快取讀取。回應中包含陣列，仍然只是一次查詢。',
+  'queryDocs.chooseResource': '用於獨立的非同步狀態、本機覆寫值，或不需要共用鍵快取的資料串流。',
+  'queryDocs.choosing': '選擇非同步 API',
+  'queryDocs.choosingIntro': '根據操作和狀態擁有權選擇 API。重新整理按鈕仍執行讀取；點擊觸發不代表操作就是變更。',
+  'queryDocs.clientReference':
+    'QueryClient 擁有共用快取項目。fetchQuery 讀取資料；invalidateTags 將相依項目標記為舊並重新整理作用中項目；removeQueries 移除相符項目。參數與介接器請參閱公開原始碼契約。',
+  'queryDocs.defaults':
+    '預設值：staleTime = 0；gcTime = 300,000 ms。未設定時，輪詢、重試、截止時間，以及取得焦點或重新連線時重新整理均關閉。',
+  'queryDocs.fetching': '讀取資料 · queryResource',
+  'queryDocs.freshness': 'staleTime 從最近一次成功回應開始計算新鮮度。到期後資料變舊；到期本身不會發出請求。',
+  'queryDocs.independent': '獨立讀取 · queryResources',
+  'queryDocs.independentClocks':
+    '這兩個計時互相獨立：未使用的資料仍可能新鮮，作用中的資料也可能變舊。返回的觀察者可重用尚未回收的資料。',
+  'queryDocs.invalidation': '成功寫入使選定標籤失效。作用中查詢重新讀取，非作用中的快取項目變舊。失效不會刪除資料。',
+  'queryDocs.keyIdentity':
+    '在鍵中包含所有會改變回應的參數和授權範圍。一次擷取回應式值，並在鍵和 loader 中重用同一份快照。',
+  'queryDocs.keys': '鍵與失效',
+  'queryDocs.keysIntro': '鍵識別資料。標籤描述成功寫入會影響哪些快取讀取。它們的用途不同。',
+  'queryDocs.overview': '概覽',
+  'queryDocs.overviewIntro':
+    '伺服器狀態是由伺服器擁有的資料。這些工具負責載入資料、在元件間共享讀取，以及在寫入後同步快取檢視。',
+  'queryDocs.overviewRead': '載入一個團隊、顯示資料、切換所選 ID，並從錯誤中復原。',
+  'queryDocs.overviewWrite': '儲存團隊名稱、觀察等待和錯誤狀態，再更新受影響的快取檢視。',
+  'queryDocs.prerequisites': '先掌握 Angular 元件和訊號。理解一次查詢的作用後，再選擇快取策略和組織功能程式碼。',
+  'queryDocs.reference': 'API 參考',
+  'queryDocs.referenceIntro': '在下方查找簽章，以及精確的狀態和選項表。需要解釋或實際操作時，請使用相關指南。',
+  'queryDocs.refreshControls':
+    'reload() 發起背景重新整理並回傳布林值。execute() 回傳新讀取的 Promise。兩者均略過已完成的資料，並共用仍有效的進行中請求。',
+  'queryDocs.retention':
+    'gcTime 控制最後一個觀察者離開後的保留時間。回收需等待尚未完成的請求結束。仍有作用中的觀察者時會保留資料。',
+  'queryDocs.saving': '儲存變更 · mutateResource',
+  'queryDocs.tagIdentity':
+    '標籤是具有 type 和選用 scope/id 的物件。變更操作選擇相符的查詢標籤；省略 scope 不代表符合所有範圍。',
+  'queryDocs.triggers':
+    '舊資料再次被觀察時可以重新整理。手動重新整理和失效會請求新資料；輪詢、視窗重新取得焦點和網路重新連線復原需要設定。',
+  'queryDocs.writeBoundary':
+    '寫入成功後，快取同步仍可能失敗。檢查 invalidationError 並重新整理讀取；不要為了修復快取而重複已成功的寫入。',
   'queryLearn.collectionExplain':
     '選擇兩個 ID、反轉順序，再清空選擇。保留的鍵繼續使用原觀察者，被移除的元素釋放觀察者。每一列擁有各自的載入、錯誤和重新整理狀態。',
   'queryLearn.collectionIntro':
@@ -56,7 +100,7 @@ export const zhTWTranslations: Record<string, string> = {
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '程式碼開源授權',
   'nav.signalUtils': 'Signal 工具',
-  'nav.queryMutation': '查詢與變更 (Query & Mutation)',
+  'nav.queryMutation': '查詢與伺服器狀態',
   'nav.operators': '操作符 (Operators)',
   'nav.interceptors': '攔截器 (Interceptors)',
   'nav.validators': '驗證器 (Validators)',

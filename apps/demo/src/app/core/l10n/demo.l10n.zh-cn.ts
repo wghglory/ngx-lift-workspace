@@ -1,4 +1,48 @@
 export const zhCNTranslations: Record<string, string> = {
+  'queryDocs.cache': '缓存新鲜度与刷新',
+  'queryDocs.cacheIntro':
+    '查询键标识同一个 QueryClient 中的共享数据。新鲜度、请求活动和观察者生命周期分别回答不同的问题。',
+  'queryDocs.chooseComputed': '只需要值信号时，用于异步派生值。同步派生优先使用 computed()。',
+  'queryDocs.chooseMutation': '用于显式提交的服务端写入。不需要查询键；其他视图需要更新时再添加失效标签。',
+  'queryDocs.chooseObservable':
+    '在 RxJS 流程中，用 fetchQueryObservable 获取一次有限的缓存读取；observeQueryObservable 持续发出共享缓存快照，并拥有一个观察者。',
+  'queryDocs.chooseQuery': '用一个观察者处理共享缓存读取。响应中包含数组，仍然只是一次查询。',
+  'queryDocs.chooseResource': '用于独立的异步状态、本地覆盖值，或无需共享键缓存的数据流。',
+  'queryDocs.choosing': '选择异步 API',
+  'queryDocs.choosingIntro': '根据操作和状态所有权选择 API。刷新按钮仍然执行读取；点击触发不意味着操作就是变更。',
+  'queryDocs.clientReference':
+    'QueryClient 拥有共享缓存项。fetchQuery 读取数据；invalidateTags 将依赖标记为旧并刷新活动项；removeQueries 移除匹配项。参数和适配器请参阅公开源码契约。',
+  'queryDocs.defaults':
+    '默认值：staleTime = 0；gcTime = 300,000 ms。未配置时，轮询、重试、截止时间以及获焦或重连刷新均关闭。',
+  'queryDocs.fetching': '读取数据 · queryResource',
+  'queryDocs.freshness': 'staleTime 从最近一次成功响应开始计算新鲜度。到期后数据变旧；到期本身不会发起请求。',
+  'queryDocs.independent': '独立读取 · queryResources',
+  'queryDocs.independentClocks':
+    '这两个计时互相独立：未使用的数据仍可能新鲜，活动数据也可能变旧。返回的观察者可以复用尚未回收的数据。',
+  'queryDocs.invalidation': '成功写入使选定标签失效。活动查询重新读取，非活动缓存项变旧。失效不会删除数据。',
+  'queryDocs.keyIdentity':
+    '在键中包含所有会改变响应的参数和授权作用域。一次性捕获响应式值，并在键和 loader 中复用同一份快照。',
+  'queryDocs.keys': '键与失效',
+  'queryDocs.keysIntro': '键标识数据。标签描述成功写入会影响哪些缓存读取。它们的用途不同。',
+  'queryDocs.overview': '概览',
+  'queryDocs.overviewIntro':
+    '服务端状态是由服务器拥有的数据。这些工具负责加载数据、在组件间共享读取，以及在写入后同步缓存视图。',
+  'queryDocs.overviewRead': '加载一个团队、显示数据、切换所选 ID，并从错误中恢复。',
+  'queryDocs.overviewWrite': '保存团队名称、观察等待和错误状态，然后更新受影响的缓存视图。',
+  'queryDocs.prerequisites': '先掌握 Angular 组件和信号。理解一次查询的作用后，再选择缓存策略和组织功能代码。',
+  'queryDocs.reference': 'API 参考',
+  'queryDocs.referenceIntro': '在下方查找签名以及精确的状态和选项表。需要解释或实际操作时，使用相关指南。',
+  'queryDocs.refreshControls':
+    'reload() 发起后台刷新并返回布尔值。execute() 返回新读取的 Promise。两者均绕过已完成的数据，并复用仍然有效的进行中请求。',
+  'queryDocs.retention':
+    'gcTime 控制最后一个观察者离开后的保留时间。回收需等待尚未完成的请求结束。仍有活动观察者时会保留数据。',
+  'queryDocs.saving': '保存更改 · mutateResource',
+  'queryDocs.tagIdentity':
+    '标签是带有 type 和可选 scope/id 的对象。变更操作选择匹配的查询标签；省略 scope 不表示匹配所有作用域。',
+  'queryDocs.triggers':
+    '旧数据再次被观察时可以刷新。手动刷新和失效会请求新数据；轮询、窗口重新获焦和网络重连恢复需要配置。',
+  'queryDocs.writeBoundary':
+    '写入成功后，缓存同步仍可能失败。检查 invalidationError 并刷新读取；不要为了修复缓存而重复已成功的写入。',
   'queryLearn.collectionExplain':
     '选择两个 ID、反转顺序，然后清空选择。保留的键继续使用原观察者，被移除的元素释放观察者。每一行拥有各自的加载、错误和刷新状态。',
   'queryLearn.collectionIntro':
@@ -56,7 +100,7 @@ export const zhCNTranslations: Record<string, string> = {
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '代码开源协议',
   'nav.signalUtils': 'Signal 工具',
-  'nav.queryMutation': '查询与变更 (Query & Mutation)',
+  'nav.queryMutation': '查询与服务端状态',
   'nav.operators': '操作符 (Operators)',
   'nav.interceptors': '拦截器 (Interceptors)',
   'nav.validators': '校验器 (Validators)',

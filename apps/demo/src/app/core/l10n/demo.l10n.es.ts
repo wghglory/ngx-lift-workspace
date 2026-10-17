@@ -1,4 +1,59 @@
 export const esTranslations: Record<string, string> = {
+  'queryDocs.cache': 'Vigencia de caché y actualización',
+  'queryDocs.cacheIntro':
+    'Una clave de consulta identifica datos compartidos dentro de un QueryClient. La vigencia, la actividad de las solicitudes y la duración de los observadores responden a preguntas distintas.',
+  'queryDocs.chooseComputed':
+    'Úsalo para un valor derivado asíncrono cuando baste un signal de valor. Prefiere computed() para derivaciones síncronas.',
+  'queryDocs.chooseMutation':
+    'Úsalo para escrituras al servidor enviadas explícitamente. No requiere una clave de consulta; añade etiquetas de invalidación cuando otras vistas deban actualizarse.',
+  'queryDocs.chooseObservable':
+    'Usa fetchQueryObservable para una consulta finita en caché dentro de RxJS; observeQueryObservable emite instantáneas de la caché compartida y mantiene un observador.',
+  'queryDocs.chooseQuery':
+    'Usa un observador para una consulta compartida en caché. Una respuesta con un arreglo sigue siendo una sola consulta.',
+  'queryDocs.chooseResource':
+    'Úsalo para estado asíncrono independiente, modificaciones locales o flujos continuos sin una caché compartida por claves.',
+  'queryDocs.choosing': 'Elegir una API asíncrona',
+  'queryDocs.choosingIntro':
+    'Elige según la operación y la propiedad del estado. Un botón Actualizar sigue realizando una lectura; un clic no convierte una operación en mutación.',
+  'queryDocs.clientReference':
+    'QueryClient administra las entradas compartidas. fetchQuery consulta datos; invalidateTags marca dependencias desactualizadas y actualiza las activas; removeQueries elimina entradas coincidentes. Consulta los contratos públicos para parámetros y adaptadores.',
+  'queryDocs.defaults':
+    'Valores predeterminados: staleTime = 0; gcTime = 300,000 ms. El sondeo, los reintentos, los plazos y la actualización por foco o reconexión están desactivados salvo configuración.',
+  'queryDocs.fetching': 'Consultar datos · queryResource',
+  'queryDocs.freshness':
+    'staleTime mide la vigencia desde la última respuesta correcta. Al vencer, los datos quedan desactualizados; el vencimiento por sí solo no inicia una solicitud.',
+  'queryDocs.independent': 'Consultas independientes · queryResources',
+  'queryDocs.independentClocks':
+    'Los dos relojes son independientes: los datos sin uso pueden seguir vigentes y los datos activos pueden estar desactualizados. Los observadores que vuelven pueden reutilizar los datos conservados.',
+  'queryDocs.invalidation':
+    'Las escrituras correctas invalidan las etiquetas seleccionadas. Las consultas activas vuelven a cargar; las entradas inactivas quedan desactualizadas. La invalidación no borra los datos.',
+  'queryDocs.keyIdentity':
+    'Incluye en la clave todos los parámetros que cambian la respuesta y el ámbito de autorización. Captura los valores reactivos una vez y reutilízalos en la clave y el loader.',
+  'queryDocs.keys': 'Claves e invalidación',
+  'queryDocs.keysIntro':
+    'Las claves identifican datos. Las etiquetas indican qué consultas en caché afecta una escritura correcta. Cumplen funciones distintas.',
+  'queryDocs.overview': 'Descripción general',
+  'queryDocs.overviewIntro':
+    'El estado del servidor son datos que pertenecen a un servidor. Estas herramientas los cargan, comparten consultas entre componentes y sincronizan las vistas en caché después de las escrituras.',
+  'queryDocs.overviewRead': 'Carga un equipo, muestra sus datos, cambia el ID seleccionado y recupera los errores.',
+  'queryDocs.overviewWrite':
+    'Guarda el nombre de un equipo, observa los estados pendiente y de error y actualiza las vistas en caché afectadas.',
+  'queryDocs.prerequisites':
+    'Parte de los componentes y signals de Angular. Aprende qué hace una consulta antes de elegir políticas de caché u organizar una funcionalidad.',
+  'queryDocs.reference': 'Referencia de API',
+  'queryDocs.referenceIntro':
+    'Consulta las firmas y tablas exactas de estados y opciones. Sigue los enlaces a las guías cuando necesites una explicación o una tarea práctica.',
+  'queryDocs.refreshControls':
+    'reload() inicia una actualización en segundo plano y devuelve un booleano. execute() devuelve una Promise de una consulta nueva. Ambos omiten los datos completados y comparten el trabajo pendiente válido.',
+  'queryDocs.retention':
+    'gcTime controla la retención desde que se retira el último observador. La eliminación espera a que terminen las solicitudes pendientes. Los observadores activos conservan sus datos.',
+  'queryDocs.saving': 'Guardar cambios · mutateResource',
+  'queryDocs.tagIdentity':
+    'Una etiqueta es un objeto con type y scope/id opcionales. La mutación selecciona etiquetas coincidentes; omitir scope no equivale a todos los ámbitos.',
+  'queryDocs.triggers':
+    'Los datos desactualizados pueden actualizarse al volver a observarlos. La actualización manual y la invalidación solicitan datos nuevos; el sondeo y la recuperación al recuperar foco o conexión requieren configuración.',
+  'queryDocs.writeBoundary':
+    'Una escritura correcta puede ir seguida de un fallo de sincronización. Revisa invalidationError y actualiza las consultas; no repitas una escritura correcta para reparar la caché.',
   'queryLearn.collectionExplain':
     'Selecciona ambos ID, invierte el orden y vacía la selección. Las claves conservadas mantienen sus observadores; los elementos eliminados los liberan. Cada fila tiene su propio estado de carga, error y actualización.',
   'queryLearn.collectionIntro':
@@ -58,7 +113,7 @@ export const esTranslations: Record<string, string> = {
   'header.openGitHub': 'Abrir en GitHub',
   'header.codeLicensed': 'Código bajo licencia',
   'nav.signalUtils': 'Utilidades de Signal',
-  'nav.queryMutation': 'Consultas y mutaciones',
+  'nav.queryMutation': 'Consultas y estado del servidor',
   'nav.operators': 'Operadores',
   'nav.interceptors': 'Interceptores',
   'nav.validators': 'Validadores',

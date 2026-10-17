@@ -204,7 +204,10 @@ test('query guide uses Clarity controls, status labels and a separate collection
   const select = page.getByTestId('query-demo-mutation').locator('select[name="newUserRole"]');
   await expect(select.locator('xpath=ancestor::clr-select-container')).toBeVisible();
   await expect(page.getByTestId('query-demo-coalesce').locator('.label-success')).toHaveCount(2);
-  await page.getByRole('link', {name: 'queryResources', exact: true}).first().click();
+  await page
+    .getByRole('link', {name: /queryResources$/})
+    .first()
+    .click();
   await expect(page).toHaveURL(/queryResources$/);
   await expect(page.locator('h1')).toHaveText('queryResources');
 });
