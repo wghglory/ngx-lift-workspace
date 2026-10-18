@@ -21,13 +21,13 @@ export class ConfigureReviewComponent extends TimelineBaseComponent {
   override next$ = this.submitAPI();
 
   get operatorStep() {
-    return this.timelineWizardService.getStepData<Pick<Deployment, 'operator'>>('Configure Operator');
+    return this.timelineWizardService.getStepData<Pick<Deployment, 'operator'>>('operator');
   }
   get serviceStep() {
-    return this.timelineWizardService.getStepData<Pick<Deployment, 'service'>>('Configure Service');
+    return this.timelineWizardService.getStepData<Pick<Deployment, 'service'>>('service');
   }
   get runtimePropertiesStep() {
-    return this.timelineWizardService.getStepData<Pick<Deployment, 'appProperties'>>('Configure Runtime Properties');
+    return this.timelineWizardService.getStepData<Pick<Deployment, 'appProperties'>>('runtime-properties');
   }
 
   private submitAPI() {

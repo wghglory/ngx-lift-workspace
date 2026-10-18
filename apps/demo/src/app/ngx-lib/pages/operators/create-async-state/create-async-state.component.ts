@@ -38,7 +38,7 @@ export class CreateAsyncStateComponent {
     switchMap((id) =>
       timer(350).pipe(
         map(() => {
-          if (this.failure()) throw new Error('Simulated read failure');
+          if (this.failure()) throw new Error(this.translationService.translate('runtime.readFailure'));
           return {id};
         }),
         createAsyncState(),

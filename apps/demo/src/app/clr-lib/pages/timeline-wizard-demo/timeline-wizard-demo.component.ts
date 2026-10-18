@@ -54,45 +54,58 @@ export class TimelineWizardDemoComponent {
     },
   };
 
-  readonly timelineSteps: TimelineStep[] = [
-    {
-      state: ClrTimelineStepState.CURRENT,
-      title: 'Configure Operator',
-      id: 'operator',
-      component: ConfigureOperatorComponent,
-      data: {operator: this.initialData.operator},
-    },
-    {
-      state: ClrTimelineStepState.NOT_STARTED,
-      title: 'Configure Service',
-      id: 'service',
-      component: ConfigureServiceComponent,
-      data: {service: this.initialData.service},
-    },
-    {
-      state: ClrTimelineStepState.NOT_STARTED,
-      title: 'Configure Runtime Properties', // use title to find the step, id is optional
-      component: ConfigureRuntimePropComponent,
-      data: {appProperties: this.initialData.appProperties},
-    },
-    {
-      state: ClrTimelineStepState.NOT_STARTED,
-      title: 'Review',
-      component: ConfigureReviewComponent,
-    },
-  ];
+  readonly timelineSteps: TimelineStep[] = (() => {
+    const translations = this.translationService;
+    return [
+      {
+        state: ClrTimelineStepState.CURRENT,
+        get title() {
+          return translations.translate('timelineWizard.configureOperator');
+        },
+        id: 'operator',
+        component: ConfigureOperatorComponent,
+        data: {operator: this.initialData.operator},
+      },
+      {
+        state: ClrTimelineStepState.NOT_STARTED,
+        get title() {
+          return translations.translate('timelineWizard.configureService');
+        },
+        id: 'service',
+        component: ConfigureServiceComponent,
+        data: {service: this.initialData.service},
+      },
+      {
+        state: ClrTimelineStepState.NOT_STARTED,
+        get title() {
+          return translations.translate('timelineWizard.configureRuntimeProperties');
+        },
+        id: 'runtime-properties',
+        component: ConfigureRuntimePropComponent,
+        data: {appProperties: this.initialData.appProperties},
+      },
+      {
+        state: ClrTimelineStepState.NOT_STARTED,
+        get title() {
+          return translations.translate('timelineWizard.review');
+        },
+        id: 'review',
+        component: ConfigureReviewComponent,
+      },
+    ];
+  })();
 
   onCanceled() {
-    window.alert('canceled');
+    window.alert(this.translationService.translate('timelineWizard.canceledMessage'));
   }
 
   onConfirmed(data: unknown) {
-    window.alert('confirmed to submit, you can see form data from console. Simulate API request');
+    window.alert(this.translationService.translate('timelineWizard.confirmedMessage'));
     console.log(data);
   }
 
   onFinished() {
-    window.alert('finished');
+    window.alert(this.translationService.translate('timelineWizard.finishedMessage'));
   }
 
   wizardCode = highlight(`import {ChangeDetectionStrategy, Component} from '@angular/core';

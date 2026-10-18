@@ -2,6 +2,7 @@ import {
   ApplicationRef,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ComponentRef,
   createComponent,
   DestroyRef,
@@ -176,13 +177,17 @@ export class ComponentTypeTooltipExampleComponent {
   private appRef = inject(ApplicationRef);
   private destroyRef = inject(DestroyRef);
   alertComponentRef?: ComponentRef<AlertComponent>;
+  private readonly localizeAlertContent = effect(() => {
+    const content = this.translationService.translate('tooltip.componentAlert');
+    this.alertComponentRef?.setInput('content', content);
+  });
 
   ngOnInit() {
     const environmentInjector = this.appRef.injector;
     this.alertComponentRef = createComponent(AlertComponent, {
       environmentInjector,
     });
-    this.alertComponentRef.setInput('content', 'I am from alert component');
+    this.alertComponentRef.setInput('content', this.translationService.translate('tooltip.componentAlert'));
     this.alertComponentRef.setInput('alertType', 'success');
 
     this.destroyRef.onDestroy(() => {

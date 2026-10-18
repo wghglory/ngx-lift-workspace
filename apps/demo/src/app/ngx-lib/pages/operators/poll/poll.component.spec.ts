@@ -1,3 +1,5 @@
+import {TranslationService} from 'clr-lift';
+import {enTranslations} from '../../../../core/l10n/demo.l10n.en';
 import {provideHttpClient} from '@angular/common/http';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
@@ -23,6 +25,9 @@ describe('PollComponent', () => {
     vi.spyOn(TestBed.inject(UserService), 'getUsers').mockReturnValue(
       of({results: [], info: {page: 1, results: 0, seed: 'test', version: '1', total: 0}}),
     );
+    const translations = TestBed.inject(TranslationService);
+    translations.loadTranslationsForComponent('', {en: enTranslations});
+    translations.setLanguage('en');
     fixture = TestBed.createComponent(PollComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

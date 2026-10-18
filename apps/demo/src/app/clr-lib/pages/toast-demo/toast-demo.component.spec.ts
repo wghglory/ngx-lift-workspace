@@ -1,6 +1,8 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {Toast, ToastService} from 'clr-lift';
+import {Toast, ToastService, TranslationService} from 'clr-lift';
 import {MockInstance, vi} from 'vitest';
+
+import {enTranslations} from '../../../core/l10n/demo.l10n.en';
 
 import {ToastDemoComponent} from './toast-demo.component';
 
@@ -20,6 +22,9 @@ describe('ToastDemoComponent', () => {
       providers: [ToastService],
     }).compileComponents();
 
+    const translations = TestBed.inject(TranslationService);
+    translations.loadTranslationsForComponent('', {en: enTranslations});
+    translations.setLanguage('en');
     fixture = TestBed.createComponent(ToastDemoComponent);
     component = fixture.componentInstance;
     toastService = TestBed.inject(ToastService);
@@ -119,7 +124,7 @@ describe('ToastDemoComponent', () => {
       expect(errorSpy).toHaveBeenCalledTimes(1);
       const callArgs = errorSpy.mock.calls[0][0] as Toast;
       expect(callArgs.title).toBe('Error Toast');
-      expect(callArgs.description).toBe('I am a Error message! I will be closed in 10s automatically.');
+      expect(callArgs.description).toBe('This is an error message. It closes automatically after 10 seconds.');
       expect(callArgs.date).toBe('1hr ago');
       expect(callArgs.timeoutSeconds).toBe(10);
       expect(callArgs.primaryButtonText).toBe('More Info');

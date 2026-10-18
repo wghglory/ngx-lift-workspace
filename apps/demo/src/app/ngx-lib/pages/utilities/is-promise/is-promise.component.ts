@@ -42,43 +42,43 @@ export class IsPromiseComponent {
   });
   readonly checkCases = [
     {
-      label: 'Native Promise.resolve()',
+      label: 'isPromise.caseNative',
       expression: 'Promise.resolve(42)',
       value: Promise.resolve(42),
       expected: true,
     },
     {
-      label: 'Async Function Return',
+      label: 'isPromise.caseAsync',
       expression: '(async () => "done")()',
       value: (async () => 'done')(),
       expected: true,
     },
     {
-      label: 'Custom Thenable Object',
+      label: 'isPromise.caseThenable',
       expression: '{ then: (resolve) => resolve() }',
       value: {then: (fn: () => void) => fn()},
       expected: true,
     },
     {
-      label: 'Plain Object',
+      label: 'isPromise.caseObject',
       expression: '{ data: 42 }',
       value: {data: 42},
       expected: false,
     },
     {
-      label: 'Null / Undefined',
+      label: 'isPromise.caseNullish',
       expression: 'null',
       value: null,
       expected: false,
     },
     {
-      label: 'Primitive Value',
+      label: 'isPromise.casePrimitive',
       expression: '"https://angular.dev"',
       value: 'https://angular.dev',
       expected: false,
     },
     {
-      label: 'Function without .then',
+      label: 'isPromise.caseFunction',
       expression: '() => 42',
       value: () => 42,
       expected: false,

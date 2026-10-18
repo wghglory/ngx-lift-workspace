@@ -76,7 +76,7 @@ export class PollComponent implements OnInit {
             pollingFn: () =>
               timer(300).pipe(
                 map(() => {
-                  if (this.failure()) throw new Error('Simulated polling failure');
+                  if (this.failure()) throw new Error(this.translationService.translate('runtime.pollFailure'));
                   return ++this.sequence;
                 }),
               ),
