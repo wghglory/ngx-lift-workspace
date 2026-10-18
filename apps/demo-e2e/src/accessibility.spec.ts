@@ -18,6 +18,16 @@ for (const theme of ['light', 'dark']) {
         await expect(page.locator('body')).toHaveAttribute('cds-theme', theme);
         await expect(page.locator('main h1').first()).not.toBeEmpty();
         await expectAccessible(page, testInfo);
+        const tabs = page.getByRole('tablist').first().getByRole('tab');
+        const tabCount = await tabs.count();
+        for (let index = 1; index < tabCount; index++) {
+          const tab = tabs.nth(index);
+          await test.step(`tab: ${await tab.innerText()}`, async () => {
+            await tab.click();
+            await expect(tab).toHaveAttribute('aria-selected', 'true');
+            await expectAccessible(page, testInfo);
+          });
+        }
       });
     }
 
@@ -52,6 +62,30 @@ for (const theme of ['light', 'dark']) {
       await remove.focus();
       await remove.press('Enter');
       await expect(browse).toBeFocused();
+      await expectAccessible(page, testInfo);
+    });
+
+    test('resource controls keep names during local edits and loading', async ({page}, testInfo) => {
+      await page.goto('/ngx-lift/signals/resourceAsync');
+      await page.getByRole('tab', {name: 'Local state', exact: true}).click();
+      await page.getByRole('button', {name: 'Load Todo', exact: true}).click();
+      const todo = page.getByRole('checkbox', {name: 'Learn WritableResourceRef', exact: true});
+      await todo.focus();
+      await todo.press('Space');
+      await expect(todo).toBeChecked();
+      await page.getByRole('button', {name: 'Load Counter', exact: true}).click();
+      const increase = page.getByRole('button', {name: 'Increase counter', exact: true});
+      await increase.focus();
+      await increase.press('Enter');
+      await expect(page.locator('.counter-display')).toHaveText('1');
+      await page.getByRole('button', {name: 'Decrease counter', exact: true}).press('Enter');
+      await expect(page.locator('.counter-display')).toHaveText('0');
+      await expectAccessible(page, testInfo);
+      await page.getByRole('tab', {name: 'Practical recipes', exact: true}).click();
+      const execute = page.getByRole('button', {name: 'Await execute()', exact: true});
+      await execute.press('Enter');
+      await expect(execute).toHaveAttribute('aria-label', 'Await execute()');
+      await expect(execute).toBeVisible();
       await expectAccessible(page, testInfo);
     });
 

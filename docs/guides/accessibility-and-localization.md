@@ -35,9 +35,9 @@ changes. Record a concrete reason for requirements that do not apply to a headle
 
 `pnpm run i18n:check` validates dictionary completeness, placeholders, API literals, and static translation-key
 references. The accessibility browser suite derives its page inventory from the demo route configuration, so new static
-demo routes enter the scans automatically. Scans run against rendered content in both themes and attach violations,
-checks needing manual review, and passed rule IDs. Language browser checks verify supported locale metadata, translated
-rendering, and library controls.
+demo routes enter the scans automatically. Scans visit initially rendered content and available tab panels in both
+themes, and attach violations, checks needing manual review, and passed rule IDs. Language browser checks verify
+supported locale metadata, translated rendering, and library controls.
 
 Use the resolved Nx browser targets and the repository validation commands. A passing scan covers the tested page and
 state; open menus, dialogs, tooltips, errors, and subsequent wizard steps need explicit interaction tests. Do not hide

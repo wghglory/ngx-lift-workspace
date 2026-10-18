@@ -31,6 +31,17 @@ for (const {code, label} of demoLocales) {
         expect
           .soft(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), route)
           .toBe(true);
+        const tabs = page.getByRole('tablist').first().getByRole('tab');
+        const tabCount = await tabs.count();
+        for (let index = 1; index < tabCount; index++) {
+          const tab = tabs.nth(index);
+          await tab.click();
+          await expect(tab).toHaveAttribute('aria-selected', 'true');
+          await expect(page.locator('body')).not.toContainText('!! Key');
+          expect
+            .soft(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), route)
+            .toBe(true);
+        }
       });
     }
     await page.goto('/clr-lift/components/file-reader');
@@ -38,7 +49,9 @@ for (const {code, label} of demoLocales) {
     await page.goto('/clr-lift/components/status-indicator');
     await expect(page.getByRole('img', {name: statusMessages['success'], exact: true}).first()).toBeVisible();
     await page.getByRole('button', {name: messages['header.selectLanguage'], exact: true}).click();
-    await expect(page.getByRole('menuitem', {name: label, exact: true})).toHaveAttribute('aria-current', 'true');
+    const activeLanguage = page.getByRole('menuitem', {name: label, exact: true});
+    await expect(activeLanguage).toHaveAttribute('aria-current', 'true');
+    await expect(activeLanguage).toHaveAttribute('lang', code);
     await page.getByRole('menuitem', {name: alternateLabel, exact: true}).click();
     await expect(page.getByRole('img', {name: alternateStatus['success'], exact: true}).first()).toBeVisible();
     await page.getByRole('button', {name: alternateMessages['header.selectLanguage'], exact: true}).click();
