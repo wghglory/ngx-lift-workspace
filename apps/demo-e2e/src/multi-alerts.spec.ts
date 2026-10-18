@@ -11,9 +11,7 @@ test.describe('Multiple alerts actions', () => {
     await expect(button).toHaveAttribute('type', 'button');
     await expect(button).toHaveClass(/alert-action/);
 
-    const alertText = page
-      .locator('cll-alert-container')
-      .locator('.alert-text', {hasText: 'Alert with an inline button:'});
+    const alertText = page.locator('cll-alert-container').locator('.alert-text', {has: page.locator('#click-target')});
     await expect(alertText).toBeVisible();
 
     // Verify button has visible non-transparent white text and border without needing hover

@@ -85,7 +85,7 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
 
     const dangerBadge = firstPlayground.locator('.badge-danger');
     await expect(dangerBadge).toBeVisible({timeout: 3000});
-    await expect(dangerBadge).toContainText('Failure (HTTP 429)');
+    await expect(dangerBadge).toContainText('Failed (HTTP 429)');
 
     // Verify clear logs
     const clearBtn = page.getByRole('button', {name: 'Clear Log'});
@@ -111,16 +111,16 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
     const send = page.getByRole('button', {name: 'Send Intercepted Request'});
     await page.getByRole('radio', {name: 'POST: default (no retry)', exact: true}).check();
     await send.click();
-    await expect(preview).toContainText('Total Attempts: 1');
+    await expect(preview).toContainText('Total attempts: 1');
     await expect(preview).toContainText('write retries require explicit endpoint opt-in');
     await page.getByRole('radio', {name: 'POST: explicit Kubernetes opt-in', exact: true}).check();
     await send.click();
     await expect(preview).toContainText('Success (HTTP 200)');
-    await expect(preview).toContainText('Total Attempts: 2');
+    await expect(preview).toContainText('Total attempts: 2');
     await expect(preview).toContainText('POST /api/v1/namespaces/default/pods status 429');
     await page.getByRole('radio', {name: 'POST: gateway 429 (rejected)', exact: true}).check();
     await send.click();
-    await expect(preview).toContainText('Total Attempts: 1');
+    await expect(preview).toContainText('Total attempts: 1');
     await expect(preview).toContainText('configured Kubernetes predicate rejected it');
   });
 });

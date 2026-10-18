@@ -1,4 +1,4 @@
-import {Component, computed, inject} from '@angular/core';
+import {Component, computed, effect, inject, viewChild} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClrTimelineStepState} from '@clr/angular';
 import {
@@ -37,6 +37,7 @@ import {Deployment} from './deployment.type';
 })
 export class TimelineWizardDemoComponent {
   private readonly translationService = inject(TranslationService);
+  private readonly wizard = viewChild(TimelineWizardComponent);
 
   // simulate an API response
   initialData: Deployment = {
@@ -54,46 +55,54 @@ export class TimelineWizardDemoComponent {
     },
   };
 
-  readonly timelineSteps: TimelineStep[] = (() => {
-    const translations = this.translationService;
-    return [
-      {
-        state: ClrTimelineStepState.CURRENT,
-        get title() {
-          return translations.translate('timelineWizard.configureOperator');
-        },
-        id: 'operator',
-        component: ConfigureOperatorComponent,
-        data: {operator: this.initialData.operator},
-      },
-      {
-        state: ClrTimelineStepState.NOT_STARTED,
-        get title() {
-          return translations.translate('timelineWizard.configureService');
-        },
-        id: 'service',
-        component: ConfigureServiceComponent,
-        data: {service: this.initialData.service},
-      },
-      {
-        state: ClrTimelineStepState.NOT_STARTED,
-        get title() {
-          return translations.translate('timelineWizard.configureRuntimeProperties');
-        },
-        id: 'runtime-properties',
-        component: ConfigureRuntimePropComponent,
-        data: {appProperties: this.initialData.appProperties},
-      },
-      {
-        state: ClrTimelineStepState.NOT_STARTED,
-        get title() {
-          return translations.translate('timelineWizard.review');
-        },
-        id: 'review',
-        component: ConfigureReviewComponent,
-      },
-    ];
-  })();
+  readonly timelineSteps: TimelineStep[] = [
+    {
+      state: ClrTimelineStepState.CURRENT,
+      title: this.translationService.translate('timelineWizard.configureOperator'),
+      id: 'operator',
+      component: ConfigureOperatorComponent,
+      data: {operator: this.initialData.operator},
+    },
+    {
+      state: ClrTimelineStepState.NOT_STARTED,
+      title: this.translationService.translate('timelineWizard.configureService'),
+      id: 'service',
+      component: ConfigureServiceComponent,
+      data: {service: this.initialData.service},
+    },
+    {
+      state: ClrTimelineStepState.NOT_STARTED,
+      title: this.translationService.translate('timelineWizard.configureRuntimeProperties'),
+      id: 'runtime-properties',
+      component: ConfigureRuntimePropComponent,
+      data: {appProperties: this.initialData.appProperties},
+    },
+    {
+      state: ClrTimelineStepState.NOT_STARTED,
+      title: this.translationService.translate('timelineWizard.review'),
+      id: 'review',
+      component: ConfigureReviewComponent,
+    },
+  ];
+
+  constructor() {
+    effect(() => {
+      const titles = new Map([
+        ['operator', this.translationService.translate('timelineWizard.configureOperator')],
+        ['service', this.translationService.translate('timelineWizard.configureService')],
+        ['runtime-properties', this.translationService.translate('timelineWizard.configureRuntimeProperties')],
+        ['review', this.translationService.translate('timelineWizard.review')],
+      ]);
+      // Wizard transitions clone steps; update their labels without replacing inputs or resetting forms.
+      const wizard = this.wizard();
+      for (const steps of [this.timelineSteps, wizard?.timelineWizardService.steps ?? []]) {
+        for (const step of steps) {
+          const title = titles.get(step.id ?? '');
+          if (title) step.title = title;
+        }
+      }
+    });
+  }
 
   onCanceled() {
     window.alert(this.translationService.translate('timelineWizard.canceledMessage'));
