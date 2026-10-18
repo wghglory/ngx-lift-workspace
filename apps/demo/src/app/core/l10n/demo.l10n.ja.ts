@@ -719,8 +719,9 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': '初回読み込み（既存データなし）',
   'queryResource.matrixInitialLoadUsage':
     'メインスピナーやスケルトンを表示します。UI にはまだ表示可能なデータがありません。',
-  'queryResource.matrixResolved': '解決済み / アイドル（最新データ）',
-  'queryResource.matrixResolvedUsage': 'コンテンツを通常表示します。進行中のネットワークリクエストはありません。',
+  'queryResource.matrixResolved': '完了 / キャッシュ済み',
+  'queryResource.matrixResolvedUsage':
+    'コンテンツを通常表示します。データは利用可能で、最新の場合も古くなっている場合もあります。',
   'queryResource.matrixRefreshingState': 'バックグラウンド再検証（SWR / タグ無効化）',
   'queryResource.matrixRefreshingUsage':
     '全画面スピナーは絶対に表示しないでください！ 既存データをそのまま表示し、ヘッダーに控えめなバッジや小型スピナーを追加します。画面のちらつきやホワイトアウトを防止します。',
@@ -2042,7 +2043,7 @@ export const jaTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramRandom':
     '決定的なスケジュールをテストするための乱数源。[0, 1) の有限値を返します（0 を含み、1 を含みません）。',
   'k8sRetryBackoff.retryContract':
-    'デフォルト: 5回の試行、指数的なフォールバックで同じジャッターを用いる。サーバーのヒントでは250msを超える追加が可能で、待機時間は30秒、総合計スケジュールされた待機時間は60秒。ヒントが大きすぎる場合、再試行は停止する。インターセプターは既定でアイデモプトなメソッドを再試行する；POST/PATCHはエンドポイントの保証が必要。',
+    'デフォルト: 試行は5回。サーバーのヒントがない場合は、equal jitter を用いた指数バックオフを適用します。サーバーのヒントには最大250msの追加待機を加えます。待機は1回あたり最大30秒、予定される待機時間は合計最大60秒です。ヒントが上限を超える場合は再試行を停止します。インターセプターは既定で冪等なメソッドを再試行します。POST/PATCHには、エンドポイントの冪等性の保証が必要です。',
   'k8sRetryBackoff.paramMinDelay':
     'ジャッター戦略のための最小フォールバック待機時間；maxDelayMsを超えない。サーバーのヒントは変更しない。',
   'k8sRetryBackoff.paramStatuses':

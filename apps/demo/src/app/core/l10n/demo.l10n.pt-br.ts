@@ -399,7 +399,7 @@ export const ptBRTranslations: Record<string, string> = {
   'toSignalForm.storageManual': '← Acesso Manual Permitido',
   'toSignalForm.authMode': 'Modo de Autenticação',
   'toSignalForm.authSql': 'Utilizador Nativo para a Base de Dados',
-  'toSignalForm.authWindows': 'Enterprise Directory / Windows Auth',
+  'toSignalForm.authWindows': 'Diretório empresarial / Autenticação do Windows',
   'toSignalForm.authModeRequired': 'É necessário o modo de autenticação.',
   'toSignalForm.authModeHelper':
     'Seleccionando a base de dados Usuário Native monta a senha para obter a confirmação com a retenção da memória.',
@@ -729,8 +729,9 @@ export const ptBRTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Carregamento inicial (sem dados prévios)',
   'queryResource.matrixInitialLoadUsage':
     'Exiba um spinner central ou tela de skeleton. A UI ainda não tem dados para renderizar.',
-  'queryResource.matrixResolved': 'Resolvido / Ocioso (dados atualizados)',
-  'queryResource.matrixResolvedUsage': 'Exiba o conteúdo normalmente. Nenhuma requisição de rede está em andamento.',
+  'queryResource.matrixResolved': 'Concluído / Em cache',
+  'queryResource.matrixResolvedUsage':
+    'Exiba o conteúdo normalmente; os dados estão disponíveis e podem estar atualizados ou desatualizados.',
   'queryResource.matrixRefreshingState': 'Revalidação em segundo plano (SWR / Invalidação)',
   'queryResource.matrixRefreshingUsage':
     'NÃO exiba um spinner em tela cheia! Mantenha os dados existentes visíveis e adicione um badge ou spinner sutil no topo. Evita piscamento e tela branca.',
@@ -802,7 +803,7 @@ export const ptBRTranslations: Record<string, string> = {
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
   'queryResource.networkCalls': 'Chamadas para a rede: {0}',
-  'queryResource.triggerReadReload': 'Trigger Read / Reload',
+  'queryResource.triggerReadReload': 'Iniciar leitura / Recarregar',
   'queryResource.revalidatingAlert': 'Contexto revalidante em progresso... o UI existente permanece interativo!',
   'queryResource.clusterNodes': 'Nodes-aglomerados',
   'queryResource.healthyNodes': '{0} / {1} Healthy',
@@ -1158,7 +1159,7 @@ export const ptBRTranslations: Record<string, string> = {
   'tooltip.basic1': 'Dica Básica para a Tooltip 1',
   'tooltip.basic2': 'Dica básica 2 com o atraso 500ms',
   'tooltip.empty': 'Content Von Vazio Show Tooltip',
-  'tooltip.templateHover': 'TemplateRef Example Hover',
+  'tooltip.templateHover': 'Passe o cursor sobre o exemplo de TemplateRef',
   'tooltip.templateText': 'Um bom ponto para ferramentas:',
   'tooltip.templateCallout': 'Você também pode colocar um componente dentro de ng-template',
   'tooltip.contextCallout':
@@ -1504,10 +1505,11 @@ export const ptBRTranslations: Record<string, string> = {
     'Um objeto ResourceRef<T, E> que expõe value, error, status, isLoading e métodos de alteração.',
   'spinner.apiSummary':
     'Componente para exibir indicadores de carregamento com tamanhos e alinhamentos personalizáveis.',
-  'spinner.inputSize': 'Determina o tamanho spinner:',
-  'spinner.inputCenter': 'Centra a rolagem como um elemento-bloco. Passe falso para desativar a concentração.',
+  'spinner.inputSize': 'Determina o tamanho do indicador de carregamento: "lg" (padrão), "md" ou "sm".',
+  'spinner.inputCenter':
+    'Centraliza o indicador de carregamento como um elemento de bloco. Passe false para desativar a centralização.',
   'spinner.inputInline': 'Especifica se o spinner deve ser exibido como um elemento inline-block.',
-  'spinner.inputCustomClass': 'Um conjunto de categorias CSS adicionais para se aplicar ao rodante.',
+  'spinner.inputCustomClass': 'Uma string de classes CSS adicionais a serem aplicadas ao indicador de carregamento.',
   'callout.apiSummary': 'Um componente de destaque baseado no Sistema de Design Clarity.',
   'callout.contentProjectionDesc':
     'Fornece um slot <ng-content /> padrão para tornar o conteúdo HTML personalizado, texto, listas e componentes.',
@@ -1735,7 +1737,7 @@ export const ptBRTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Aceita HttpErrorResponse ou um objeto com a forma <code>{ status, headers?, error? }</code>, incluindo uma string JSON no <code>error</code>. O fetch nativo não rejeita em HTTP 429: verifique a resposta e adapte seu status, headers e corpo analisado. O Axios expõe esses dados sob <code>error.response</code>; adapte-os antes de chamar a função. A função calcula apenas um atraso.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    'as sobreposições de Contexto se fundem com as default global ou fábrica. GET / HEAD / OPTIONS / PUT / DELETE são elegíveis por padrão; POST / PATCH requer um overrod explícito retryMethods e idempotência para o fim.',
+    'null usa os padrões do interceptor; false desativa as novas tentativas. As configurações do contexto são combinadas com os padrões globais ou da fábrica. GET/HEAD/OPTIONS/PUT/DELETE são elegíveis por padrão; POST/PATCH exigem uma configuração explícita de retryMethods e um endpoint idempotente.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Teste uma sonda que falha no primeiro 429 ou uma leitura de carga que recebe dois 429 antes de ter sucesso. A leitura customizada usa maxAttempts: 10 e 200ms de atraso padrão, permitindo até nove repetições.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Testar leitura de carga (10 tentativas)',
@@ -1745,7 +1747,7 @@ export const ptBRTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     'O operador RxJS <code>retryOnK8sBackoff</code> implementa reintentos automatizados com backoff para respostas HTTP 429 (<code>TooManyRequests</code>) do Kubernetes apiserver (como quando o apiserver watch cache está sendo inicializado com "storage is (re)initializing"). Apenas as respostas HTTP 429 desencadeiam um retry; todos os outros erros (4xx, 5xx, falhas de rede) são propagados imediatamente e sem alteração para o subscriptor.',
   'k8sRetryBackoff.callout':
-    '<strong>Operador vs. Interceptor:</strong> O operador controla específicos Observable o interceptor aplica 429 retentações em todo o elegível HttpClient métodos; a escrita requer idepotência verificada.',
+    '<strong>Operador e interceptor:</strong> O operador controla fluxos Observable específicos. O interceptor repete solicitações HttpClient em caso de HTTP 429 para os métodos elegíveis; operações de escrita exigem idempotência verificada.',
   'k8sRetryBackoff.diffTitle': 'Comparação arquitetural: Operador vs. Interceptador',
   'k8sRetryBackoff.diffDesc':
     'Ambas as ferramentas compartilham o mesmo mecanismo de cálculo de atraso de repetição, mas desempenham papéis complementares:',
@@ -1801,7 +1803,7 @@ export const ptBRTranslations: Record<string, string> = {
     '<strong>Proteção Global com Sobrescrituras de Solicitação:</strong> Registre o interceptor uma vez em <code>app.config.ts</code> para proteger todos os endpoints. Para solicitações individuais que devem ignorar o retry ou usar limites personalizados, defina o token de contexto <code>K8S_RETRY_BACKOFF_CONFIG</code> na chamada de <code>HttpClient</code>. Para controle local no pipeline, veja o operador <code>retryOnK8sBackoff</code>.',
   'k8sRetryBackoffInterceptor.example1Title': 'Exemplo 1: Registro global do interceptador e simulador',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Registre o interceptador globalmente em app.config.ts. Todas as chamadas HttpClient ganham repetição automática em HTTP 429:',
+    'Registre o interceptor globalmente em app.config.ts para repetir requisições HttpClient idempotentes elegíveis ao receber HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Modo de contexto do interceptador:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Interceptador global padrão (Repete 429 com atraso de 1s, depois 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom': 'Custom HttpContext (maxAttempts: 2, base: 400ms, jitter igual)',
@@ -2079,7 +2081,7 @@ export const ptBRTranslations: Record<string, string> = {
   'resourceAsync.keyConcepts': 'Conceitos-chave:',
   'resourceAsync.patternBenefits': 'Benefícios-padrão:',
   'spinner.inputDecorative': 'Decorativa por padrão. Defina falso para anunciar a carga como um status.',
-  'spinner.inputLabel': 'Marca de estado localizada; as falhas para a mensagem built-in loading.',
+  'spinner.inputLabel': 'Rótulo de status localizado; por padrão, usa a mensagem de carregamento integrada.',
   'fileReader.inputControlId': 'ID da entrada nativa, para a associação com um rótulo-formulário.',
   'fileReader.inputAcceptFiles':
     'Tipos de arquivo de texto aceites. Este componente lê o texto, não arquivos binário arbitrários.',

@@ -78,7 +78,7 @@ export const toastTranslations: Record<string, Record<string, string>> = {
   },
   'zh-TW': {
     'close-notification': '關閉通知',
-    'success-icon': '成功图标',
+    'success-icon': '成功圖示',
     'error-icon': '失敗圖示',
     'info-icon': '資訊圖示',
     'warning-icon': '警告圖示',

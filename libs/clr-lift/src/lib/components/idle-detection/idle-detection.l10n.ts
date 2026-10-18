@@ -60,8 +60,8 @@ export const idleDetectionTranslations: Record<string, Record<string, string>> =
     keepMeSignedIn: '保持登录状态',
   },
   'zh-TW': {
-    title: '會議超時警告',
-    description: '您的會議將在 {0} 秒後超時。',
+    title: '工作階段逾時警告',
+    description: '您的工作階段將在 {0} 秒後逾時。',
     keepMeSignedIn: '保持登入狀態',
   },
   ru: {

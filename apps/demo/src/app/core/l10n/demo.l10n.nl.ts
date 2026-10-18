@@ -324,11 +324,11 @@ export const nlTranslations: Record<string, string> = {
   'mergeFrom.paramOptions': 'Configuratie-opties waaronder initialValue en injector.',
   'mergeFrom.returnsDesc': 'Een Signal die de gecombineerde/samengevoegde waarde uitstraalt als bronnen.',
   'toSignalForm.pageTitle': 'Reactive Form Signals & Bindingen (toSignalForm)',
-  'toSignalForm.bannerTitle': 'Bridging Angular Reactive Forms & Modern Signals',
+  'toSignalForm.bannerTitle': 'Angular Reactive Forms verbinden met moderne Signals',
   'toSignalForm.bannerDesc':
     '<code>toSignalForm</code> omringt standaard Angular <code>FormGroup</code>-instanties met reaktieve Signals, declaratieve bindingen (<code>bindIf</code>, <code>bindDisabled</code>), overgebruik van meerdere controles, en geverifieerde indieningswaarden (<code>submitValue</code>), behoudend 100% compatibiliteit met Clarity-formcontainers en Angular-validators.',
   'toSignalForm.quickTitle': 'Niveau 1: Snelstartformulier Signals',
-  'toSignalForm.quickBadge': '30-Second Hello World',
+  'toSignalForm.quickBadge': 'Hallo wereld in 30 seconden',
   'toSignalForm.quickDesc':
     'Leer de basisprincipes: wrap a FormGroup with toSignalForm, read values reactively via signals, and disable actions with sf.invalid().',
   'toSignalForm.username': 'Gebruikersnaam',
@@ -348,10 +348,10 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.enterpriseBadge': 'Volledige Real-World-spec',
   'toSignalForm.enterpriseDesc':
     'Complexe multi-control aanwezigheid, asynchrone apparaat onderzoeken via resourceAsync, cascading versie updates, en voorwaardelijke auto-schaling sloten.',
-  'toSignalForm.enterpriseState': 'Enterprise Form Live Signals',
+  'toSignalForm.enterpriseState': 'Actuele signalen van het bedrijfsformulier',
   'toSignalForm.enterpriseStateDesc':
     'Tracks vorm validatie, auto-schaling sloten, en backend provisioning status in real time',
-  'toSignalForm.region': 'Deployment Region / Appliance',
+  'toSignalForm.region': 'Implementatieregio / appliance',
   'toSignalForm.regionSelect': 'Doelgebied selecteren...',
   'toSignalForm.regionUSWest': 'US West (Cloud v2 - Multi-Zone HA ondersteund)',
   'toSignalForm.regionApEast': 'Asia Pacific (Regional Cloud - Multi-Zone HA voor PG & MySQL)',
@@ -400,7 +400,7 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.storageManual': 'Handmatige toewijzing toegestaan',
   'toSignalForm.authMode': 'Authenticatiemodus',
   'toSignalForm.authSql': 'Database Native Gebruiker',
-  'toSignalForm.authWindows': 'Enterprise Directory / Windows Auth',
+  'toSignalForm.authWindows': 'Bedrijfsdirectory / Windows-verificatie',
   'toSignalForm.authModeRequired': 'Authenticatiemodus is vereist.',
   'toSignalForm.authModeHelper':
     'Het selecteren van Database Native User mount wachtwoord en bevestiging met geheugenretentie.',
@@ -433,7 +433,7 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.successTitle': 'Cluster Provisioning Request Succeed (ID: {0})',
   'toSignalForm.simulatedResponse': 'Gesimuleerde backend respons ontvangen in 1.0 seconde:',
   'toSignalForm.diagnosticsTitle': 'Real-time Signal-diagnostiek',
-  'toSignalForm.clusterNameState': 'Cluster Name State (sf.fields.clusterName)',
+  'toSignalForm.clusterNameState': 'Status van de clusternaam (sf.fields.clusterName)',
   'toSignalForm.value': 'Waarde:',
   'toSignalForm.debounced': 'Ontbounced (400ms):',
   'toSignalForm.valid': 'Geldig:',
@@ -616,7 +616,7 @@ export const nlTranslations: Record<string, string> = {
   'resourceAsync.basicSection': 'Basisvoorbeelden',
   'resourceAsync.intermediateSection': 'Tussenliggende voorbeelden',
   'resourceAsync.whenToUseSection': 'Wanneer te gebruiken',
-  'resourceAsync.advancedSection': 'WritableResourceRef - Local State Management',
+  'resourceAsync.advancedSection': 'WritableResourceRef - Lokaal statusbeheer',
   'resourceAsync.nestedSection': 'Geavanceerd patroon: geneste bronnen',
   'resourceAsync.example1': 'Voorbeeld 1: Basic Reactive Query met Auto-Dependency Tracking',
   'resourceAsync.example1Desc':
@@ -733,8 +733,9 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Eerste keer laden (geen eerdere gegevens)',
   'queryResource.matrixInitialLoadUsage':
     'Toon een centrale spinner of skeleton. De interface heeft nog geen gegevens om te tonen.',
-  'queryResource.matrixResolved': 'Opgelost / Inactief (verse gegevens)',
-  'queryResource.matrixResolvedUsage': 'Toon inhoud normaal. Er is geen netwerkverzoek actief.',
+  'queryResource.matrixResolved': 'Afgerond / In cache',
+  'queryResource.matrixResolvedUsage':
+    'Toon de inhoud normaal; gegevens zijn beschikbaar en kunnen actueel of verouderd zijn.',
   'queryResource.matrixRefreshingState': 'Achtergrondrevalidatie (SWR / Invalidatie)',
   'queryResource.matrixRefreshingUsage':
     'Toon GEEN paginabrede spinner! Behoud de bestaande gegevens en toon een subtiele badge of kleine spinner. Voorkomt knipperen en witte schermen.',
@@ -916,7 +917,7 @@ export const nlTranslations: Record<string, string> = {
   'mutateResource.badgeConcurrency': 'Munteenheid',
   'mutateResource.modeLabel': 'Concurrencystrategie',
   'mutateResource.modeExhaust': 'uitlaat (Voeg snelle dubbele klikken - dubbele indiening beveiliging)',
-  'mutateResource.modeConcat': 'concat (Queue invocations in sequentie)',
+  'mutateResource.modeConcat': 'concat (aanroepen in de wachtrij plaatsen en op volgorde uitvoeren)',
   'mutateResource.modeParallel': 'parallel (Elke aanroeping zelfstandig uitvoeren)',
   'mutateResource.triggerMutationBtn': 'Trigger 800ms mutatie',
   'mutateResource.totalClicks': 'Totaal aantal muisklikken: {0}',
@@ -1256,7 +1257,7 @@ export const nlTranslations: Record<string, string> = {
   'keyValueInputs.callout':
     'Ontdek hoe de KeyValueInputsComponent gebruik maakt van de UniqueValidator om validatie uit te voeren tegen essentiële controles. Klik hier om te leren hoe uniciteit wordt afgedwongen in belangrijke invoervelden.',
   'keyValueInputs.formOutput': 'Uw vormwaarde-uitvoer:',
-  'keyValueInputs.keyHelper': 'run time property key',
+  'keyValueInputs.keyHelper': 'Eigenschapssleutel tijdens uitvoering',
   'keyValueInputs.valueHelper': 'run time property waarde',
   'keyValueInputs.addText': 'sleutelwaarde toevoegen',
   'keyValueInputs.apiSummary': 'Component voor het beheren van dynamische sleutel-waardepaarden in Angular vormen.',
@@ -1757,7 +1758,7 @@ export const nlTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Accepteert HttpErrorResponse of een object met vorm <code>{ status, headers?, error? }</code>, inclusief een JSON-string in <code>error</code>. Native fetch negeert HTTP 429 niet: controleer het antwoord en pas de status, headers en opgeparseerde lichaam aan. Axios blokkeert deze onder <code>error.response</code>; pas deze aan voordat je de helper gebruikt. De helper berekent alleen een vertraging.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    'Null maakt gebruik van interceptor defaults; false deactiveert retries. Context overrides merge with global or factory defaults. GET/HEAD/OPTIONS/PUT/DELETE komen standaard in aanmerking; POST/PATCH vereist een expliciete retryMethods override en eindpunt idempotency.',
+    'null gebruikt de standaardinstellingen van de interceptor; false schakelt nieuwe pogingen uit. Instellingen uit de context worden samengevoegd met de globale standaardinstellingen of die van de factory. GET/HEAD/OPTIONS/PUT/DELETE komen standaard in aanmerking; POST/PATCH vereisen een expliciete instelling van retryMethods en een idempotent eindpunt.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Test een probe die direct faalt bij de eerste 429, of een workload-uitlezing die na twee 429’s slaagt. De aangepaste uitlezing gebruikt maxAttempts: 10 en een terugvalvertraging van 200ms; dit staat maximaal negen retries toe.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-uitlezing testen (10 pogingen)',
@@ -1767,7 +1768,7 @@ export const nlTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     'De <code>retryOnK8sBackoff</code> RxJS operator implementeert automatische retry met backoff voor Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) antwoorden (zoals wanneer de apiserver watch cache bootstrappert met "storage is (re)initializing"). Alleen HTTP 429 triggeert een retry; alle andere fouten (4xx, 5xx, netwerkfouten) stromen onveranderd naar de abonneraar.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor:</strong> De exploitant bestuurt specifieke Observable-pijpleidingen. De interceptor past 429 retry toe op de in aanmerking komende HttpClient-methoden; schrijft geverifieerde idempotency.',
+    '<strong>Operator en interceptor:</strong> De operator bestuurt specifieke Observable-pipelines. De interceptor probeert HttpClient-aanvragen bij HTTP 429 opnieuw voor toegestane methoden; schrijfbewerkingen vereisen geverifieerde idempotentie.',
   'k8sRetryBackoff.diffTitle': 'Architectonische vergelijking: Operator vs. Interceptor',
   'k8sRetryBackoff.diffDesc':
     'Beide hulpprogramma’s delen dezelfde berekeningslogica voor vertragingen, maar vervullen complementaire rollen:',
@@ -1823,7 +1824,7 @@ export const nlTranslations: Record<string, string> = {
     '<strong>Global Protection with Request Overrides:</strong> Registreer de interceptor één keer in <code>app.config.ts</code> om alle endpoints te beschermen. Voor individuele aanvragen die moeten worden genegeerd of met aangepaste limieten moeten worden gebruikt, stel de <code>K8S_RETRY_BACKOFF_CONFIG</code> contexttoken op de <code>HttpClient</code> aanroep. Voor lokale pijplijncontrole in plaats hiervan, zie de <code>retryOnK8sBackoff</code> operator.',
   'k8sRetryBackoffInterceptor.example1Title': 'Voorbeeld 1: Globale interceptorregistratie & interactieve simulator',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Registreer de interceptor globaal in app.config.ts. Alle HttpClient-aanroepen worden automatisch herhaald bij HTTP 429:',
+    'Registreer de interceptor globaal in app.config.ts om toegestane idempotente HttpClient-aanvragen opnieuw te proberen bij HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Interceptor-contextmodus:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Standaard globale interceptor (Probeert 429 na 1s opnieuw, daarna 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom': 'Aangepaste HttpContext (maxAttempts: 2, basis: 400ms, gelijk aan jitter)',

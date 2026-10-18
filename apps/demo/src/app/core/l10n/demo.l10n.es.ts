@@ -330,7 +330,7 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.bannerDesc':
     '<code>toSignalForm</code> envuelve instancias estándar de <code>FormGroup</code> de Angular con señales reactivas, enlaces declarativos (<code>bindIf</code>, <code>bindDisabled</code>), validación cruzada entre controles, y valores de envío limpios (<code>submitValue</code>)—manteniendo 100% de compatibilidad con contenedores de formularios Clarity y validadores de Angular.',
   'toSignalForm.quickTitle': 'Nivel 1: Forma de inicio rápido Signals',
-  'toSignalForm.quickBadge': '30-Second Hello World',
+  'toSignalForm.quickBadge': 'Hola mundo en 30 segundos',
   'toSignalForm.quickDesc':
     'Aprender los fundamentos: envolver un FormGroup con toSignalForm, leer valores reactivamente a través de señales, y desactivar acciones con sf.invalid().',
   'toSignalForm.username': 'Nombre de usuario',
@@ -356,14 +356,14 @@ export const esTranslations: Record<string, string> = {
     'Tracks forma validación, bloqueo de autoescala, y estado de suministro de respaldo en tiempo real',
   'toSignalForm.region': 'Región de despliegue / aplicación',
   'toSignalForm.regionSelect': 'Seleccionar región objetivo...',
-  'toSignalForm.regionUSWest': 'US West (Cloud v2 - Multi-Zone HA Supported)',
+  'toSignalForm.regionUSWest': 'Oeste de EE. UU. (Cloud v2: admite alta disponibilidad en varias zonas)',
   'toSignalForm.regionApEast': 'Asia Pacific (Regional Cloud - Multizona HA para PG-MySQL)',
   'toSignalForm.regionEuCentral': 'Europa Central (Región de Legado - Solo zona de Single-)',
   'toSignalForm.regionRequired': 'Se necesita una región de despliegue.',
   'toSignalForm.regionHelper':
     'Controla de forma simultánea las capacidades de los aparatos regionales a través de <code>computedAsync</code>.',
   'toSignalForm.multiZoneSupported': 'Auxiliar Multizona HA',
-  'toSignalForm.singleZoneOnly': 'Single-Zone Only (HA Gated)',
+  'toSignalForm.singleZoneOnly': 'Solo una zona (alta disponibilidad no disponible)',
   'toSignalForm.engine': 'Motor de base de datos',
   'toSignalForm.enginePostgres': 'PostgreSQL',
   'toSignalForm.engineMysql': 'MySQL',
@@ -404,7 +404,7 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.storageManual': 'Se permite la asignación manual',
   'toSignalForm.authMode': 'Modo de autenticación',
   'toSignalForm.authSql': 'Base de datos de usuario nativo',
-  'toSignalForm.authWindows': 'Enterprise Directory / Windows Auth',
+  'toSignalForm.authWindows': 'Directorio empresarial / Autenticación de Windows',
   'toSignalForm.authModeRequired': 'Se requiere un modo de autenticación.',
   'toSignalForm.authModeHelper':
     'Seleccionar la base de datos Native User monta la contraseña de confirmación con retención de memoria.',
@@ -567,7 +567,7 @@ export const esTranslations: Record<string, string> = {
   'computedAsync.tabResilienceBefore':
     '<strong>Antes de la corrección:</strong> Un error interno (como una solicitud HTTP cancelada) propagaría a través de <code>switchAll</code> y terminaría permanentemente la suscripción externa. La UI quedaba atrapada en el estado de carga por siempre y nunca podía cargar las siguientes pestañas.',
   'computedAsync.tabResilienceAfter':
-    '<strong>After Fix: </strong> El error interno es capturado y manejado de forma segura, manteniendo el flujo exterior vivo. Cambiando a cualquier pestaña o retratando inmediatamente se obtiene y muestra nuevos datos!',
+    '<strong>Tras la corrección:</strong> El error interno se captura y se gestiona de forma segura, manteniendo activo el flujo externo. Al cambiar a cualquier pestaña o reintentar, se obtienen y se muestran nuevos datos de inmediato.',
   'computedAsync.tabActiveDirectory': 'Directorio activo',
   'computedAsync.tabBackupLocations': 'Localización de respaldo',
   'computedAsync.tabCertificates': 'Certificados',
@@ -637,7 +637,7 @@ export const esTranslations: Record<string, string> = {
   'resourceAsync.example4': 'Ejemplo 4: El manejo del error con la propagación de la caída y el error',
   'resourceAsync.example4Desc':
     'Manejar errores con <code>onError</code> para proporcionar valores de fallback, o utilizar <code>throwOnError: true</code> para propagar errores:',
-  'resourceAsync.triggerFallback': 'Trigger Request (will fallback)',
+  'resourceAsync.triggerFallback': 'Iniciar solicitud (usará el valor alternativo)',
   'resourceAsync.showingFallback': 'Mostrando usuario de fallback después de error',
   'resourceAsync.errorPropagation': 'Propagación del error',
   'resourceAsync.example5': 'Ejemplo 5: Mutaciones con execute() - Formulario de registro de usuarios',
@@ -685,7 +685,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.comparisonTitle': 'Cuando usar: queryResource vs. resourceAsync',
   'queryResource.comparisonIntro':
     'Ambos primitivos utilizan Angular Signals para reactivos UI, pero se ocupan de diferentes capas de su arquitectura de aplicación:',
-  'queryResource.cardResourceAsyncTitle': 'resourceAsync (Component-Local Async State)',
+  'queryResource.cardResourceAsyncTitle': 'resourceAsync (estado asíncrono local del componente)',
   'queryResource.cardQueryResourceTitle': 'queryResource (Cache de entidad compartida)',
   'queryResource.scope': 'Ámbito de aplicación',
   'queryResource.cache': 'Cache',
@@ -737,8 +737,9 @@ export const esTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Carga inicial (sin datos previos)',
   'queryResource.matrixInitialLoadUsage':
     'Muestre un spinner o esqueleto principal. La UI aún no tiene datos para mostrar.',
-  'queryResource.matrixResolved': 'Resuelto / Inactivo (datos frescos)',
-  'queryResource.matrixResolvedUsage': 'Muestre el contenido con normalidad. Ninguna solicitud de red está en curso.',
+  'queryResource.matrixResolved': 'Completado / En caché',
+  'queryResource.matrixResolvedUsage':
+    'Muestre el contenido con normalidad; los datos están disponibles y pueden estar vigentes o desactualizados.',
   'queryResource.matrixRefreshingState': 'Revalidación en segundo plano (SWR / Invalidación)',
   'queryResource.matrixRefreshingUsage':
     '¡NO muestre un spinner de pantalla completa! Muestre los datos existentes y añada una insignia o spinner sutil en la barra superior. Evita parpadeos y pantallas en blanco.',
@@ -811,7 +812,7 @@ export const esTranslations: Record<string, string> = {
   'queryResource.freshnessBadgeFresh': 'FRESH',
   'queryResource.freshnessBadgeStale': 'STALE',
   'queryResource.networkCalls': 'Llamadas de red: {0}',
-  'queryResource.triggerReadReload': 'Trigger Read / Reload',
+  'queryResource.triggerReadReload': 'Iniciar lectura / Recargar',
   'queryResource.revalidatingAlert':
     'Los antecedentes que revalidan en progreso... ¡UI existente sigue siendo interactivo!',
   'queryResource.clusterNodes': 'Nodos de racimo',
@@ -921,10 +922,10 @@ export const esTranslations: Record<string, string> = {
   'mutateResource.badgeConcurrency': 'Conmoneda',
   'mutateResource.modeLabel': 'Estrategia de divisas',
   'mutateResource.modeExhaust': 'escape (Suelte los clics rápidos duplicados - doble remitente de protección)',
-  'mutateResource.modeConcat': 'concat (Queue invocations in sequence)',
+  'mutateResource.modeConcat': 'concat (poner las invocaciones en cola y ejecutarlas en orden)',
   'mutateResource.modeParallel': '(Ejecutar cada invocación de forma independiente)',
-  'mutateResource.triggerMutationBtn': 'Trigger 800ms Mutation',
-  'mutateResource.totalClicks': 'Total Button Clicks: {0}',
+  'mutateResource.triggerMutationBtn': 'Iniciar mutación de 800 ms',
+  'mutateResource.totalClicks': 'Clics totales en el botón: {0}',
   'mutateResource.actualExecutions': 'Ejecuciones efectivas: {0}',
   'mutateResource.inFlight': 'Actualmente In-Flight: {0}',
   'mutateResource.recentLogs': 'Registro de ejecución',
@@ -1112,7 +1113,7 @@ export const esTranslations: Record<string, string> = {
   'callout.example1Note': 'Tenga en cuenta que todos los cambios de configuración surten efecto inmediatamente.',
   'callout.example2Theme': 'Apoya los temas de luz y oscuridad automáticamente.',
   'callout.example2Docs': 'Para más detalles, consulte la documentación del Sistema de Diseño Clarity.',
-  'callout.example3Tip': 'Pro Tip for Production Deployments',
+  'callout.example3Tip': 'Consejo avanzado para despliegues en producción',
   'callout.example3DescText':
     'Garantizar que los límites de los recursos se configuran explícitamente antes de activar el proceso de despliegue.',
   'callout.example3LabelDeployment': 'Despliegue',
@@ -1384,7 +1385,7 @@ export const esTranslations: Record<string, string> = {
   'dgState.example1DataDesc':
     'Supongamos que tenemos un API que devuelve la siguiente forma de datos para un datagrid impulsado por serveros:',
   'dgState.example2Title': 'Ejemplo 2: Ejecución de plantillas con seguridad de tipo',
-  'dgState.example2Desc': 'Utilice tubo asíntico con <code>@if</code> para mejorar la seguridad de tipo:',
+  'dgState.example2Desc': 'Usa la pipe async con <code>@if</code> para mejorar la seguridad de tipos:',
   'dgState.example3Title': 'Ejemplo 3: Ejecución de plantillas alternativas',
   'dgState.example3Desc': 'Utilice el tubo asíntico directamente en su plantilla:',
   'dgState.example4Title': 'Ejemplo 4: Ejemplo en vivo',
@@ -1532,10 +1533,11 @@ export const esTranslations: Record<string, string> = {
   'resourceAsync.returnsDesc':
     'Un objeto ResourceRef<T, E> expone valor, error, estado, isLoading, y métodos de mutación.',
   'spinner.apiSummary': 'Componente para mostrar indicadores de carga con tamaños y alineaciones personalizables.',
-  'spinner.inputSize': 'Determina el tamaño de la espina:',
-  'spinner.inputCenter': 'El eje es un elemento de bloque. Pasar falso para desactivar el cínter.',
+  'spinner.inputSize': 'Determina el tamaño del indicador de carga: "lg" (predeterminado), "md" o "sm".',
+  'spinner.inputCenter':
+    'Centra el indicador de carga como un elemento de bloque. Pase false para desactivar el centrado.',
   'spinner.inputInline': 'Especifica si el spinner debe ser mostrado como un elemento de bloqueo inline-.',
-  'spinner.inputCustomClass': 'Una cadena de clases CSS adicionales que se aplican al espinor.',
+  'spinner.inputCustomClass': 'Una cadena de clases CSS adicionales que se aplican al indicador de carga.',
   'callout.apiSummary': 'Un componente de alerta basado en el Sistema de Diseño Clarity.',
   'callout.contentProjectionDesc':
     'Proporciona una ranura <ng-content /> predeterminada para hacer contenido HTML personalizado, texto, listas, y componentes.',
@@ -1564,7 +1566,7 @@ export const esTranslations: Record<string, string> = {
   'isPromise.thDescription': 'Descripción',
   'isPromise.thExpression': 'Expresión evaluada',
   'isPromise.thResult': 'Resultado isPromise()',
-  'isPromise.example2Title': 'Ejemplo 2: Patrón de corte de tipo seguro',
+  'isPromise.example2Title': 'Ejemplo 2: Patrón de acotación segura de tipos',
   'isPromise.example2Desc':
     'En TypeScript, el control con <code>if (isPromise(val))</code> limita automáticamente el tipo dentro del bloque:',
   'isPromise.apiSummary': 'Función de tipo guardado de TypeScript que verifica contratos de PromiseLike.',
@@ -1767,7 +1769,7 @@ export const esTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Acepta HttpErrorResponse o un objeto con forma <code>{ status, headers?, error? }</code>, incluyendo una cadena JSON en <code>error</code>. Native fetch no rechaza en HTTP 429: verifica la respuesta y adapta su estado, encabezados y cuerpo analizado. Axios expone estos elementos bajo <code>error.response</code>; adapta los antes de llamar al helper. El helper calcula solo un retraso.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    'null utiliza los incumplimientos de interceptor; los falsos deshabilitan las repruebas. Los rebasamientos de Contexto se fusionan con los incumplimientos globales o de fábrica. GET/HEAD/OPTIONS/PUT/DELETE sean elegibles por incumplimiento; POST/PATCH requieren un explícito retryMethods desmontar y poner fin a la idempotencia.',
+    'null utiliza los valores predeterminados del interceptor; false desactiva los reintentos. La configuración del contexto se combina con los valores predeterminados globales o de la fábrica. GET/HEAD/OPTIONS/PUT/DELETE son elegibles de forma predeterminada; POST/PATCH requieren una configuración explícita de retryMethods y que el endpoint sea idempotente.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Pruebe una sonda que falla en su primer 429, o una lectura de carga que recibe dos 429 antes de tener éxito. La lectura personalizada usa maxAttempts: 10 y un retardo de respaldo de 200ms; esto permite como máximo nueve reintentos.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Probar lectura de carga (10 intentos)',
@@ -1777,7 +1779,7 @@ export const esTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     'El operador RxJS <code>retryOnK8sBackoff</code> implementa un reintentamiento automático con retraso para respuestas HTTP 429 (<code>TooManyRequests</code>) de Kubernetes apiserver (como cuando el apiserver watch cache está siendo inicializado con "storage is (re)initializing"). Solo HTTP 429 desencadena un reintentamiento; todos los otros errores (4xx, 5xx, fallos de red) se propagan inmediatamente y sin cambios al suscriptor.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor: </strong> El operador controla tuberías Observable específicas. El interceptor aplica 429 repruebas a través de métodos HttpClient elegibles; los escritos requieren idempotencia verificada.',
+    '<strong>Operador e interceptor:</strong> El operador controla flujos Observable específicos. El interceptor reintenta solicitudes HttpClient ante HTTP 429 para los métodos elegibles; las operaciones de escritura requieren idempotencia verificada.',
   'k8sRetryBackoff.diffTitle': 'Comparación arquitectónica: Operador vs. Interceptor',
   'k8sRetryBackoff.diffDesc':
     'Ambas herramientas comparten el mismo motor de resolución de retardos de reintento, pero cumplen funciones complementarias:',
@@ -1834,7 +1836,7 @@ export const esTranslations: Record<string, string> = {
     '<strong>Protección global con sobrescrituras de solicitud:</strong> Registra el interceptador una vez en <code>app.config.ts</code> para proteger todos los puntos finales. Para solicitudes individuales que deben omitir el reintentamiento o usar límites personalizados, establece el token de contexto <code>K8S_RETRY_BACKOFF_CONFIG</code> en la llamada a <code>HttpClient</code>. Para el control local del pipeline, consulta el operador <code>retryOnK8sBackoff</code>.',
   'k8sRetryBackoffInterceptor.example1Title': 'Ejemplo 1: Registro global de interceptor y simulador interactivo',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Registre el interceptor globalmente en app.config.ts. Todas las peticiones estándar de HttpClient se reintentan automáticamente en HTTP 429:',
+    'Registra el interceptor globalmente en app.config.ts para reintentar las solicitudes HttpClient idempotentes elegibles ante HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Modo de contexto del interceptor:',
   'k8sRetryBackoffInterceptor.modeDefault':
     'Interceptor global predeterminado (Reintenta 429 con retardo de 1 s, luego 200 OK)',
@@ -2067,7 +2069,7 @@ export const esTranslations: Record<string, string> = {
     'Una cadena formateada con la unidad adecuada (B, KB, MB, GB, TB) basada en la localización, o nula si es inválida.',
   'datagridUtil.transformDesc':
     'La función convierte el estado de datagrid Clarity (que contiene información de pasión, clasificación e filtro) en un objeto PageQuery. Aquí está un ejemplo de la transformación:',
-  'datagridUtil.inputTitle': 'Input: Clarity Datagrid State',
+  'datagridUtil.inputTitle': 'Entrada: estado de Clarity Datagrid',
   'datagridUtil.outputTitle': 'Producto: Objeto PageQuery',
   'datagridUtil.usageDesc':
     'Utilice convertToHttpParams en su componente para convertir el estado de datagrid para las peticiones de API:',
@@ -2118,7 +2120,7 @@ export const esTranslations: Record<string, string> = {
   'resourceAsync.keyConcepts': 'Conceptos clave:',
   'resourceAsync.patternBenefits': 'Beneficios del patrón:',
   'spinner.inputDecorative': 'Decorativo por defecto. Establezca falso para anunciar la carga como un estado.',
-  'spinner.inputLabel': 'Etiqueta de estado localizada; incumple el mensaje de carga de construcción.',
+  'spinner.inputLabel': 'Etiqueta de estado localizada; de forma predeterminada, usa el mensaje de carga integrado.',
   'fileReader.inputControlId': 'ID de la entrada nativa, para asociación con una etiqueta de forma.',
   'fileReader.inputAcceptFiles': 'Este componente lee texto, no archivos binarios arbitrarios.',
   'fileReader.inputEncoded': 'Indica si el contenido devuelto se codifica en Base64.',

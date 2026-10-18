@@ -400,7 +400,7 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.storageGbRequired': 'La taille de stockage est requise.',
   'toSignalForm.storageGbMin': "L'allocation minimale est de 20 GB.",
   'toSignalForm.storageGbHelper':
-    "Bound via <code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250 &#125;)</code>.",
+    "Lié via <code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250 &#125;)</code>.",
   'toSignalForm.storageLocked': "Gestion de l'échelle automatique (désactivée, verrouillée à 250 GB)",
   'toSignalForm.storageManual': '✓ Affectation manuelle autorisée',
   'toSignalForm.authMode': "Mode d'authentification",
@@ -741,8 +741,9 @@ export const frTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Chargement initial (aucune donnée préalable)',
   'queryResource.matrixInitialLoadUsage':
     'Affichez un spinner ou un squelette principal. L’interface n’a pas encore de données à afficher.',
-  'queryResource.matrixResolved': 'Résolu / Inactif (données fraîches)',
-  'queryResource.matrixResolvedUsage': 'Affichez le contenu normalement. Aucune requête réseau n’est en cours.',
+  'queryResource.matrixResolved': 'Terminé / En cache',
+  'queryResource.matrixResolvedUsage':
+    'Affichez le contenu normalement ; les données sont disponibles et peuvent être à jour ou périmées.',
   'queryResource.matrixRefreshingState': 'Revalidation en arrière-plan (SWR / Invalidation)',
   'queryResource.matrixRefreshingUsage':
     'N’AFFICHEZ PAS de spinner plein écran ! Conservez l’affichage des données existantes et ajoutez un indicateur discret. Évite tout scintillement ou écran blanc.',
@@ -1777,7 +1778,7 @@ export const frTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     "Accepte HttpErrorResponse ou un objet au format <code>{ status, headers?, error? }</code>, incluant une chaîne JSON dans <code>error</code>. Native fetch ne rejette pas sur HTTP 429 : vérifiez la réponse et adaptez son statut, ses en-têtes et son corps analysé. Axios expose ces informations sous <code>error.response</code> ; adaptez-les avant d'appeler l'assistant. L'assistant calcule uniquement un délai.",
   'k8sRetryBackoffInterceptor.overrideRules':
-    "null utilise les valeurs par défaut de l'intercepteur; false désactive les retries. Le contexte remplace les fusions par des valeurs par défaut globales ou en usine. GET/HEAD/OPTIONS/PUT/DELETE sont éligibles par défaut; POST/PATCH nécessite une priorité explicite de retryMethods et une idempotency du paramètre.",
+    'null utilise les valeurs par défaut de l’intercepteur ; false désactive les nouvelles tentatives. Les paramètres du contexte sont fusionnés avec les valeurs par défaut globales ou celles de la fabrique. GET/HEAD/OPTIONS/PUT/DELETE sont autorisés par défaut ; POST/PATCH nécessitent une configuration explicite de retryMethods et un point de terminaison idempotent.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Testez une sonde qui échoue dès son premier 429, ou une lecture de charge de travail qui reçoit deux 429 avant de réussir. La lecture personnalisée utilise maxAttempts: 10 et un délai de secours de 200 ms, ce qui autorise jusqu’à neuf réessais.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Tester la lecture de charge (10 tentatives)',
@@ -1787,7 +1788,7 @@ export const frTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     "L'opérateur RxJS <code>retryOnK8sBackoff</code> implémente un retry avec backoff automatique pour les réponses HTTP 429 (<code>TooManyRequests</code>) de Kubernetes apiserver (par exemple, lorsqu'apiserver watch cache est en démarrage avec « storage is (re)initializing »). Seulement HTTP 429 déclenche un retry ; tous les autres erreurs (4xx, 5xx, perte de réseau) sont propagés immédiatement et sans modification vers l'abonné.",
   'k8sRetryBackoff.callout':
-    "<strong>Operator vs. Intercepteur:</strong> L'opérateur contrôle des pipelines spécifiques Observable. L'intercepteur applique 429 réessayer à travers les méthodes admissibles HttpClient; écrit nécessite une idempotency vérifiée.",
+    '<strong>Opérateur et intercepteur :</strong> L’opérateur contrôle des pipelines Observable précis. L’intercepteur réessaie les requêtes HttpClient en cas de réponse HTTP 429 pour les méthodes autorisées ; les écritures nécessitent une idempotence vérifiée.',
   'k8sRetryBackoff.diffTitle': 'Comparaison architecturale : Opérateur vs Intercepteur',
   'k8sRetryBackoff.diffDesc':
     'Les deux outils partagent le même moteur de résolution de délai de réessai, mais jouent des rôles complémentaires :',
@@ -1843,7 +1844,7 @@ export const frTranslations: Record<string, string> = {
     "<strong>Protection globale avec surcharge de requêtes :</strong> Enregistrez l'intercepteur une fois dans <code>app.config.ts</code> pour protéger tous les points de terminaison. Pour les requêtes individuelles qui doivent ignorer le retry ou utiliser des limites personnalisées, définissez le token de contexte <code>K8S_RETRY_BACKOFF_CONFIG</code> sur l'appel <code>HttpClient</code>. Pour un contrôle local de la pipeline, consultez l'opérateur <code>retryOnK8sBackoff</code>.",
   'k8sRetryBackoffInterceptor.example1Title': 'Exemple 1 : Enregistrement global de l’intercepteur et simulateur',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Inscrivez-vous dans le monde entier dans app.config.ts pour réessayer les requêtes idémpotentes admissibles HttpClient sur HTTP 429.',
+    'Enregistrez l’intercepteur globalement dans app.config.ts pour réessayer les requêtes HttpClient idempotentes autorisées en cas de réponse HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Mode de contexte de l’intercepteur :',
   'k8sRetryBackoffInterceptor.modeDefault':
     'Intercepteur global par défaut (Réessaie 429 avec 1s de délai, puis 200 OK)',

@@ -385,7 +385,7 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.storageGbRequired': '저장소 크기는 필수입니다.',
   'toSignalForm.storageGbMin': '최소 할당량은 20 GB입니다.',
   'toSignalForm.storageGbHelper':
-    "Bound via <code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250 &#125;)</code>.",
+    "다음 코드로 연결됨: <code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250 &#125;)</code>.",
   'toSignalForm.storageLocked': '🔒 자동 스케일링 관리 (비활성화, 250 GB로 고정)',
   'toSignalForm.storageManual': '✓ 수동 할당 허용',
   'toSignalForm.authMode': '인증 모드',
@@ -709,8 +709,9 @@ export const koTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': '초기 로드 (이전 데이터 없음)',
   'queryResource.matrixInitialLoadUsage':
     '메인 스피너 또는 스켈레톤 화면을 표시합니다. UI에 아직 표시할 데이터가 없습니다.',
-  'queryResource.matrixResolved': '완료 / 대기 (최신 데이터)',
-  'queryResource.matrixResolvedUsage': '콘텐츠를 정상적으로 표시합니다. 진행 중인 네트워크 요청이 없습니다.',
+  'queryResource.matrixResolved': '완료 / 캐시됨',
+  'queryResource.matrixResolvedUsage':
+    '콘텐츠를 정상적으로 표시합니다. 데이터는 사용 가능하며 최신 상태이거나 오래된 상태일 수 있습니다.',
   'queryResource.matrixRefreshingState': '백그라운드 재검증 (SWR / 무효화)',
   'queryResource.matrixRefreshingUsage':
     '전체 화면 스피너를 표시하지 마세요! 기존 데이터를 그대로 유지하면서 상단에 은은한 배지나 소형 스피너를 추가하여 깜빡임과 흰 화면을 방지합니다.',
@@ -2008,7 +2009,7 @@ export const koTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramRandom':
     '결정적인 스케줄링 테스트를 위한 난수 생성 함수입니다. [0, 1) 범위의 유한한 수를 반환합니다(0 포함, 1 제외).',
   'k8sRetryBackoff.retryContract':
-    '기본값: 5회 시도, 지수형 대체 값과 동일한 잡동, 서버 힌트에 따라 최대 250ms 추가, 30초 대기 시간 및 60초 총 계획된 대기 시간. 과다한 힌트는 재시도를 중지합니다. 인터셉터는 기본적으로 아이디емпотент 메서드를 재시도하지만, POST/PATCH는 엔드포인트 보장이 필요합니다.',
+    '기본값: 총 5회 시도, 서버 힌트가 없을 때 equal jitter를 적용한 지수 백오프, 서버 힌트에 최대 250ms 추가 대기, 1회 최대 30초 및 예정된 대기 시간 합계 최대 60초입니다. 힌트가 한도를 초과하면 재시도를 중지합니다. 인터셉터는 기본적으로 멱등 메서드를 재시도하며 POST/PATCH에는 엔드포인트의 멱등성 보장이 필요합니다.',
   'k8sRetryBackoff.paramMinDelay':
     '모든 잡동 전략의 최소 대체 대기 시간; maxDelayMs를 넘을 수 없습니다. 서버 힌트는 변하지 않습니다.',
   'k8sRetryBackoff.paramStatuses':

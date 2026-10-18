@@ -327,7 +327,7 @@ export const deTranslations: Record<string, string> = {
   'mergeFrom.paramOptions': 'Konfigurationsoptionen einschließlich initialValue und Injektor.',
   'mergeFrom.returnsDesc': 'Ein Signal, das den kombinierten/zusammengefügten Wert als Quellen emittiert.',
   'toSignalForm.pageTitle': 'Reaktive Form Signals & Bindungen (toSignalForm)',
-  'toSignalForm.bannerTitle': 'Bridging Angular Reaktive Formen & moderne Signals',
+  'toSignalForm.bannerTitle': 'Angular Reactive Forms mit modernen Signals verbinden',
   'toSignalForm.bannerDesc':
     '<code>toSignalForm</code> umschließt standardmäßige Angular-<code>FormGroup</code>-Instanzen mit reaktiven Signalen, deklarativen Bindungen (<code>bindIf</code>, <code>bindDisabled</code>), Kreuzkontrollen-Validierung und gesanitierten Submit-Werten (<code>submitValue</code>) – wobei die 100 % Kompatibilität mit Clarity-Form-Containern und Angular-Validierern gewahrt bleibt.',
   'toSignalForm.quickTitle': 'Stufe 1: Schnellstartformular Signals',
@@ -403,7 +403,7 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.storageManual': '✓ Manuelle Zuteilung gestattet',
   'toSignalForm.authMode': 'Authentifizierungsmodus',
   'toSignalForm.authSql': 'Datenbank Native User',
-  'toSignalForm.authWindows': 'Enterprise Directory / Windows Auth',
+  'toSignalForm.authWindows': 'Unternehmensverzeichnis / Windows-Authentifizierung',
   'toSignalForm.authModeRequired': 'Der Authentifizierungsmodus ist erforderlich.',
   'toSignalForm.authModeHelper':
     'Auswahl der Datenbank Native User mountet Passwort und Bestätigung mit Speicherspeicherung.',
@@ -564,7 +564,7 @@ export const deTranslations: Record<string, string> = {
   'computedAsync.tabResilienceBefore':
     '<strong>Before Fix:</strong> Ein innerer Fehler (z. B. ein abgebrochener HTTP-Aufruf) würde durch <code>switchAll</code> weitergehen und die äußere Observable-Abonnierung dauerhaft beenden. Der UI blieb ständig im Laden-Zustand und konnte nie die nächsten Tabs laden.',
   'computedAsync.tabResilienceAfter':
-    '<strong>After Fix:</strong> Der innere Fehler wird sicher erfasst und gehandhabt, so dass der äußere Strom am Leben bleibt.',
+    '<strong>Nach der Korrektur:</strong> Der innere Fehler wird sicher abgefangen und behandelt, sodass der äußere Stream aktiv bleibt. Beim Wechsel zu einem beliebigen Tab oder bei einem erneuten Versuch werden sofort neue Daten abgerufen und angezeigt.',
   'computedAsync.tabActiveDirectory': 'Active Directory',
   'computedAsync.tabBackupLocations': 'Backup-Standorte',
   'computedAsync.tabCertificates': 'Bescheinigungen',
@@ -641,7 +641,7 @@ export const deTranslations: Record<string, string> = {
   'resourceAsync.errorPropagation': 'Fehlerverbreitung',
   'resourceAsync.example5': 'Beispiel 5: Mutationen mit execute() - Benutzer-Registrierungsformular',
   'resourceAsync.example5Desc':
-    'Für Mutationen (POST/PUT/DELETE), verwenden Sie die <code>execute()</code>-Methode anstelle von <code>reload()</code>. <code>execute()</code> gibt ein awaitables <code>Promise&lt;T&gt;</code> zurück, das auf den genauen Wert, der in <code>resource.value()</code> geschrieben wird, zurückgeht, alte Werte und Fehler beim Wiederablaufen löscht, und ist sicher für fire-and-forget-Aufrufe ohne unverarbeitete Wiederholungen.',
+    'Für Mutationen (POST/PUT/DELETE) verwenden Sie <code>execute()</code> statt <code>reload()</code>. <code>execute()</code> gibt eine abwartbare <code>Promise&lt;T&gt;</code> zurück, die genau den in <code>resource.value()</code> geschriebenen Wert liefert. Bei erneuter Ausführung werden veraltete Werte und Fehler gelöscht. Auch Aufrufe ohne Abwarten sind ohne unbehandelte Promise-Ablehnungen sicher.',
   'resourceAsync.regUsername': 'Benutzername',
   'resourceAsync.regEmail': 'E-Mail',
   'resourceAsync.regPassword': 'Passwort',
@@ -684,7 +684,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.comparisonTitle': 'Wann zu verwenden: queryResource gegen resourceAsync',
   'queryResource.comparisonIntro':
     'Beide Primitive verwenden Angular Signals für reaktive UI Bindungen, aber sie adressieren verschiedene Ebenen Ihrer Anwendungsarchitektur:',
-  'queryResource.cardResourceAsyncTitle': 'resourceAsync (Component-Local Async State)',
+  'queryResource.cardResourceAsyncTitle': 'resourceAsync (lokaler asynchroner Zustand der Komponente)',
   'queryResource.cardQueryResourceTitle': 'queryResource (Geteilter Server- und Entity-Cache)',
   'queryResource.scope': 'Anwendungsbereich',
   'queryResource.cache': 'Zwischenspeicher',
@@ -717,7 +717,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.badgePerInstance': 'Pro Instanz (switch/exhaust)',
   'queryResource.badgeClientCoalesced': 'Mandantenweit verkohlt',
   'queryResource.rowStaleWhileRevalidate': 'Stale-While-Revalidate',
-  'queryResource.badgeManualPreserve': 'Handbuch (preserveValueOnError)',
+  'queryResource.badgeManualPreserve': 'Manuell (preserveValueOnError)',
   'queryResource.badgeAutoStale': 'Automatisch über staleTime',
   'queryResource.rowBackgroundPolling': 'Hintergrundbefragung',
   'queryResource.badgeNoneBuiltIn': 'Keine eingebaute (oder externe Umfrage)',
@@ -830,7 +830,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.demo4Section': 'Mutationen & Tag-Invalidierung (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> verarbeitet asynchrone Schreibvorgänge. Nach erfolgreicher Mutation werden passende Tags ungültig, wodurch alle aktiven Abfragen mit diesen Tags automatisch die neuesten Serverdaten im Hintergrund widerlegen.',
-  'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
+  'queryResource.demo4PlaygroundTitle': 'Tag-basierte Invalidierung',
   'queryResource.demo4PlaygroundDesc':
     'Fügen Sie ein neues Mitglied hinzu. usersQuery kehrt nach der Mutationsvervollständigung automatisch im Hintergrund zurück!',
   'queryResource.badgeMutations': 'Mutationen',
@@ -928,7 +928,7 @@ export const deTranslations: Record<string, string> = {
   'mutateResource.demo3Section': '2. Reaktiver Status Signals & Fehlerwiederherstellung',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> trennt Fehler vom Wert. Bei einer fehlgeschlagenen Schreiboperation enthält das Fehlersignal den Fehler, status wird "error" und die zurückgegebene Promise wird für die Behandlung mit try/catch abgelehnt.',
-  'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',
+  'mutateResource.demo3PlaygroundTitle': 'Statussignale und Wiederherstellung nach Fehlern',
   'mutateResource.demo3PlaygroundDesc':
     'Schalten Sie die Fehlersimulation ein und lösen Sie die Aktion aus, um den reaktiven Fehlerzustand zu überprüfen.',
   'mutateResource.badgeError': 'Fehlerbehebung',
@@ -1372,7 +1372,7 @@ export const deTranslations: Record<string, string> = {
   'dgState.example1DataDesc':
     'Nehmen wir an, wir haben einen API, der die folgende Form von Daten für einen servergesteuerten Datagrid zurückgibt:',
   'dgState.example2Title': 'Beispiel 2: Vorlagenimplementierung mit Typsicherheit',
-  'dgState.example2Desc': 'Verwenden Sie async Rohr mit <code>@if</code> für eine bessere Art Sicherheit:',
+  'dgState.example2Desc': 'Verwenden Sie die async-Pipe mit <code>@if</code> für mehr Typsicherheit:',
   'dgState.example3Title': 'Beispiel 3: Alternative Vorlagenimplementierung',
   'dgState.example3Desc': 'Verwenden Sie die async-Pipe direkt in Ihrer Vorlage:',
   'dgState.example4Title': 'Beispiel 4: Live-Beispiel',
@@ -1546,7 +1546,7 @@ export const deTranslations: Record<string, string> = {
   'certificate.inputPosition': 'Position des Wegweisers relativ zum Triggersymbol.',
   'certificate.inputShowIcon': 'Ein boolescher Wert, um die Sichtbarkeit des Zertifikatsstatussymbols zu verwalten.',
   'isPromise.overview':
-    'Der <code>isPromise</code>-Utility ist ein TypeScript-Type-Guard, das bestimmt, ob ein beliebiger Wert ein <code>Promise</code> oder <code>PromiseLike</code> (ein Objekt oder eine Funktion, die eine callable <code>then</code>-Methode enthält) ist. Es ermöglicht sichere Runtime-Validierung und Typ-Enkfokussierung ohne Fehler bei null oder primären Werten.',
+    'Die Hilfsfunktion <code>isPromise</code> ist ein TypeScript-Type-Guard. Sie prüft, ob ein beliebiger Wert eine <code>Promise</code> oder <code>PromiseLike</code> ist, also ein Objekt oder eine Funktion mit einer aufrufbaren <code>then</code>-Methode. Sie ermöglicht sichere Prüfungen zur Laufzeit und eine Eingrenzung des Typs, ohne bei null oder primitiven Werten Fehler auszulösen.',
   'isPromise.callout':
     'Nützlich in asynchronen Ressourcenladern, benutzerdefinierten Operatoren und flexiblem Service APIs, die entweder sofortige statische Werte oder asynchrone Versprechen akzeptieren.',
   'isPromise.example1Title': 'Beispiel 1: Interactive Value Evaluation Matrix',
@@ -1555,7 +1555,7 @@ export const deTranslations: Record<string, string> = {
   'isPromise.thDescription': 'Warenbezeichnung',
   'isPromise.thExpression': 'Bewerteter Ausdruck',
   'isPromise.thResult': 'isPromise() Ergebnis',
-  'isPromise.example2Title': 'Beispiel 2: Sicherer Typ Engeres Muster',
+  'isPromise.example2Title': 'Beispiel 2: Muster für sichere Typeingrenzung',
   'isPromise.example2Desc':
     'In TypeScript verengt die Prüfung mit <code>if (isPromise(val))</code> den Typ automatisch innerhalb des Blocks:',
   'isPromise.apiSummary': 'TypeScript-Type-Guard-Funktion, die PromiseLike-Kontrakte prüft.',
@@ -1763,7 +1763,7 @@ export const deTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Empfängt HttpErrorResponse oder ein Objekt, das als <code>{ status, headers?, error? }</code> geformt ist, einschließlich eines JSON-Strings in <code>error</code>. Native fetch lehnt nicht auf HTTP 429: Prüfen Sie den Response und passen Sie seinen Status, Header und geparseden Körper an. Axios zeigt diese unter <code>error.response</code> an; passen Sie sie vor dem Aufruf des Hilfsfunktionen an. Die Hilfsfunktion berechnet nur eine Verzögerung.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    'null verwendet Interceptor-Defaults; false deaktiviert Retries. Kontextüberschreiben werden mit globalen oder Werks-Defaults zusammengeführt. GET/HEAD/OPTIONS/PUT/DELETE sind standardmäßig zulässig; POST/PATCH benötigen eine explizite retryMethods-Überschrift und Endpunkt-Idempotenz.',
+    'null verwendet die Standardeinstellungen des Interceptors; false deaktiviert Wiederholungsversuche. Einstellungen im Anfragekontext werden mit den globalen Einstellungen oder den Standardeinstellungen der Factory zusammengeführt. GET/HEAD/OPTIONS/PUT/DELETE sind standardmäßig zulässig; POST/PATCH erfordern eine explizite Anpassung von retryMethods und einen idempotenten Endpunkt.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Testen Sie einen Probe, der beim ersten 429 sofort fehlschlägt, oder ein Workload-Lesen, das nach zwei 429-Fehlern erfolgreich ist. Der angepasste Lesevorgang verwendet maxAttempts: 10 und 200 ms Fallback; dies erlaubt maximal neun Wiederholungen.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-Lesen testen (10 Versuche)',
@@ -1773,7 +1773,7 @@ export const deTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     'Der <code>retryOnK8sBackoff</code> RxJS-Operator implementiert automatisierte Wiederholungen mit Rückverzögerung für Kubernetes-apiserver HTTP 429 (<code>TooManyRequests</code>)-Antworten (z. B. wenn der apiserver Watch-Cache bootstrapt mit „Speicher ist (erneut) initialisierend“). Nur HTTP 429 löst eine Wiederholung aus; alle anderen Fehler (4xx, 5xx, Netzwerkfehler) werden unverändert an den Abonnenten weitergegeben.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor:</strong> Der Operator steuert spezifische Observable-Pipelines. Der Abfanger wendet 429 Retry-Verfahren an, die für HttpClient-Methoden geeignet sind.',
+    '<strong>Operator und Interceptor:</strong> Der Operator steuert bestimmte Observable-Pipelines. Der Interceptor wiederholt Anfragen bei HTTP 429 für zulässige HttpClient-Methoden; Schreibvorgänge erfordern nachgewiesene Idempotenz.',
   'k8sRetryBackoff.diffTitle': 'Architekturvergleich: Operator vs. Interzeptor',
   'k8sRetryBackoff.diffDesc':
     'Beide Werkzeuge teilen dieselbe Logik zur Verzögerungsberechnung, erfüllen jedoch komplementäre Aufgaben:',
@@ -1830,7 +1830,7 @@ export const deTranslations: Record<string, string> = {
     '<strong>-Globale Schutz mit Anforderungsüberschreitungen:</strong> Registrieren Sie den Interceptor einmal in <code>app.config.ts</code>, um alle Endpunkte zu schützen. Für einzelne Anfragen, die wiederholen oder benutzerdefinierte Grenzen verwenden sollen, setzen Sie den <code>K8S_RETRY_BACKOFF_CONFIG</code>-Kontext-Token auf die <code>HttpClient</code>-Anfrage. Für lokale Pipeline-Steuerung anstelle, siehe den <code>retryOnK8sBackoff</code>-Operator.',
   'k8sRetryBackoffInterceptor.example1Title': 'Beispiel 1: Globale Interzeptor-Registrierung & interaktiver Simulator',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Registrieren Sie den Interzeptor global in app.config.ts. Alle HttpClient-Aufrufe wiederholen automatisch bei HTTP 429:',
+    'Registrieren Sie den Interceptor global in app.config.ts, um zulässige idempotente HttpClient-Anfragen bei HTTP 429 zu wiederholen.',
   'k8sRetryBackoffInterceptor.selectMode': 'Interzeptor-Kontextmodus:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Standard-Interzeptor (Wiederholt 429 mit 1s Verzögerung, dann 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom':

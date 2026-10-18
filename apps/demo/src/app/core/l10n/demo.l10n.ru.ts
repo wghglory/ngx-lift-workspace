@@ -734,8 +734,9 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Первоначальная загрузка (нет данных)',
   'queryResource.matrixInitialLoadUsage':
     'Отобразите основной спиннер или скелетон. В интерфейсе ещё нет данных для показа.',
-  'queryResource.matrixResolved': 'Разрешено / Ожидание (актуальные данные)',
-  'queryResource.matrixResolvedUsage': 'Отображайте контент в обычном режиме. Сетевые запросы не выполняются.',
+  'queryResource.matrixResolved': 'Завершено / В кэше',
+  'queryResource.matrixResolvedUsage':
+    'Отображайте содержимое как обычно; данные доступны и могут быть актуальными или устаревшими.',
   'queryResource.matrixRefreshingState': 'Фоновая ревалидация (SWR / Инвалидация)',
   'queryResource.matrixRefreshingUsage':
     'НЕ показывайте полноэкранный спиннер! Сохраняйте существующие данные на экране и добавьте аккуратный бейдж или маленький спиннер в заголовке. Предотвращает мерцание и пустые экраны.',
@@ -1509,7 +1510,8 @@ export const ruTranslations: Record<string, string> = {
     'Объект ResourceRef<T, E> с полями value, error, status, isLoading и методами изменения.',
   'spinner.apiSummary': 'Компонент для отображения индикаторов загрузки с настраиваемыми размерами и выравниванием.',
   'spinner.inputSize': 'Определяется размер шпиндера: "lg" (по умолчанию), "md" или "sm".',
-  'spinner.inputCenter': 'Центрирует спиннер как элемент блока. Переходите на отключение центра.',
+  'spinner.inputCenter':
+    'Центрирует индикатор загрузки как блочный элемент. Передайте false, чтобы отключить центрирование.',
   'spinner.inputInline': 'Указывает, должен ли шпиндер быть показан как элемент встроенного блока.',
   'spinner.inputCustomClass': 'Строка дополнительных классов CSS для приложения к шпиндеру.',
   'callout.apiSummary': 'Компонент с подсказкой, реализованный на основе системы Clarity Design System.',
@@ -1807,7 +1809,7 @@ export const ruTranslations: Record<string, string> = {
     '<strong>Глобальная защита с перезаписью запросов:</strong> Регистрируйте интерсептор один раз в <code>app.config.ts</code>, чтобы защитить все конечные точки. Для отдельных запросов, которые должны пропустить повторную отправку или использовать пользовательские лимиты, установите <code>K8S_RETRY_BACKOFF_CONFIG</code> контекстный токен на вызов <code>HttpClient</code>. Для локального контроля потока вместо этого, посмотрите <code>retryOnK8sBackoff</code> оператор.',
   'k8sRetryBackoffInterceptor.example1Title': 'Пример 1: Глобальная регистрация интерцептора и симулятор',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Зарегистрируйте интерцептор в app.config.ts, и все запросы HttpClient будут автоматически повторяться при 429:',
+    'Зарегистрируйте интерцептор глобально в app.config.ts, чтобы повторять допустимые идемпотентные запросы HttpClient при HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Режим контекста интерцептора:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Интерцептор по умолчанию (Повтор 429 через 1 с, затем 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom':
@@ -2091,8 +2093,9 @@ export const ruTranslations: Record<string, string> = {
   'resourceAsync.topicTitle': 'Тема/название',
   'resourceAsync.keyConcepts': 'Основные концепции:',
   'resourceAsync.patternBenefits': 'Преимущества модели:',
-  'spinner.inputDecorative': 'Декоратив по умолчанию. Введите ложную запись о погрузке как о состоянии.',
-  'spinner.inputLabel': 'Локализованный знак статуса; по умолчанию на встроенное сообщение нагрузки.',
+  'spinner.inputDecorative':
+    'По умолчанию используется как декоративный элемент. Установите false, чтобы объявлять загрузку как состояние.',
+  'spinner.inputLabel': 'Локализованная метка состояния; по умолчанию используется встроенное сообщение о загрузке.',
   'fileReader.inputControlId': 'ID входного кода, для связи с лейблом формы.',
   'fileReader.inputAcceptFiles':
     'Приемлемые типы текстовых файлов. Этот компонент читает текст, а не произвольные двоичные файлы.',
