@@ -1,6 +1,6 @@
 # Design Specification: `resourceAsync`
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API; this audit does not approve new behavior.
 
 **Source:** [resource-async.ts](../../../libs/ngx-lift/src/lib/query/resource-async.ts)
@@ -8,6 +8,11 @@ Approval: existing API; this audit does not approve new behavior.
 **Regression tests:** [resource-async.spec.ts](../../../libs/ngx-lift/src/lib/query/resource-async.spec.ts)
 
 ---
+
+## Applicable contracts
+
+Reactive parameters, switch/exhaust execution, cancellation, failures and injector-owned cleanup apply. Local resource
+values may drive forms/UI, but the API supplies no CVA or shared query cache.
 
 ## Background
 
@@ -39,6 +44,19 @@ through `QueryClient`, **`resourceAsync` manages the complete lifecycle of a sin
 asynchronous resource**.
 
 ---
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular signals, Observable sources and an injection context.
+
+| Reader task                        | Learning outcome                                                     | Destination / working example                                                                  |
+| ---------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Load one local resource            | Render loading, data and recoverable failure                         | [/ngx-lift/signals/resourceAsync](https://ngx-lift.netlify.app/ngx-lift/signals/resourceAsync) |
+| Change parameters or execute again | Explain replacement, retained values and canceled execution promises | Same demo; execution/cancellation reference below                                              |
+
+Validation and delivery: The starter flow landed in #162. Runtime/type tests establish the resource contract; newcomer
+understanding remains separate. The public API and behavior sections below own exact options and limitations; examples
+introduce them after the first task.
 
 ## Public API and examples
 

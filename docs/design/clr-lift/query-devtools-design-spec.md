@@ -1,8 +1,14 @@
 # Query devtools
 
-Status: Implemented locally, unreleased. Updated October 17, 2026. The maintainer requested completion of the
-docked-panel revision in this session. Local acceptance evidence is recorded below; publication and human
-accessibility/language acceptance are separate.
+Status: Implemented, merged in #160; unreleased. Owner: clr-lift maintainers. Updated October 17, 2026. Package:
+clr-lift. Approval: the maintainer approved the docked-panel revision. Local acceptance evidence is recorded below;
+[main CI at 5bee7e1](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851435) also passed. Publication
+and human accessibility/language acceptance remain separate.
+
+## Applicable contracts
+
+Rendered nonmodal focus/resize behavior, bounded value inspection and shared-cache identity apply. The inspector borrows
+a QueryClient and owns only its view/timer lifetime; it is not a form control or cache owner.
 
 ## Background and goals
 
@@ -39,6 +45,19 @@ Primary documentation/source reviewed October 16, 2026. These are adopt/adapt de
 | [Angular Material sidenav source documentation](https://github.com/angular/components/blob/main/src/material/sidenav/sidenav.md)                                                                                         | Backdrop and focus behavior vary by drawer mode                                                                    | Use a nonmodal region, without a backdrop or focus trap, so developers can operate the application. Do not add Material.                                                                                       |
 | [NG-ZORRO drawer](https://ng.ant.design/components/drawer/en)                                                                                                                                                            | Bottom placement, preview content and extra actions                                                                | Adapt the layout pattern. Do not add NG-ZORRO or use a small signpost for large values.                                                                                                                        |
 | [Angular isDevMode](https://angular.dev/api/core/isDevMode), [build environments](https://angular.dev/tools/cli/environments), [deferred loading](https://angular.dev/guide/templates/defer)                             | Development-mode checks, build-specific replacement files, and deferred chunks solve different problems            | Retain a runtime guard and use conditional package exports for strict exclusion. File replacement is a fallback for custom builders. Loading later does not itself mean code is absent from production output. |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Basic queries and keys, plus root versus scoped QueryClient ownership.
+
+| Reader task                        | Learning outcome                                                               | Destination / working example                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Open and inspect an existing query | Read cached data without creating an observer                                  | [/ngx-lift/query/devtools](https://ngx-lift.netlify.app/ngx-lift/query/devtools); root setup below |
+| Pause, refetch and close           | Distinguish paused snapshots from explicit requests and release view resources | Same demo; production/installed-package boundaries below                                           |
+
+Validation and delivery: Delivered in #160 and verified at main 5bee7e1; publication, human accessibility and
+native-language acceptance remain separate. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and root setup
 
@@ -244,11 +263,11 @@ Data-first baseline validation, October 17, 2026 (latest full-list/expansion evi
 - Light/narrow and dark/RTL screenshots were inspected. Native top-layer positioning avoids playground clipping; Clarity
   semantic link/label tokens preserve themed state and action contrast.
 
-Human assistive-technology and native-speaker acceptance, full SSR/hydration integration, CI, merge and publication
-remain separate gates. Release preparation must select versions for both libraries. Inspection remains compatible with
-the declared ngx-lift 21.3 peer minimum; Refetch controls are shown only when the client exposes refetchQuery. The
-current matching workspace tarballs prove the full feature set, and a legacy-client regression proves read-only
-inspection remains usable without that method.
+Human assistive-technology and native-speaker acceptance, full SSR/hydration integration and publication remain separate
+gates. Both packages remain on 21.x under the [version policy](../../DEPLOYMENT.md#version-policy). Inspection remains
+compatible with the declared ngx-lift 21.3 peer minimum; Refetch controls are shown only when the client exposes
+refetchQuery. The current matching workspace tarballs prove the full feature set, and a legacy-client regression proves
+read-only inspection remains usable without that method.
 
 Review hardening: asynchronous action feedback is scoped to the current inspector context, so closing, selecting a
 query, or switching clients cannot receive feedback from an earlier action. Provider cleanup also releases a pending

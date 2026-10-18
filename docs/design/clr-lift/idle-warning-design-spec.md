@@ -1,7 +1,12 @@
 # Idle warning component
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 16, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
 Approval: existing API; no new session policy.
+
+## Applicable contracts
+
+Rendered dialog labels/focus and injector-scoped monitoring ownership apply. Countdown transitions and explicit
+confirmation are lifecycle contracts; the warning has no form value or query cache.
 
 ## Background
 
@@ -41,6 +46,19 @@ Authentication/logout, server session extension, and any form value.
 Installed Clarity modal supplies the visual dialog shell; compose it around service state rather than creating another
 timer in the template. The core service's state observable addresses late subscribers. Browser throttling still limits
 deadline accuracy; this UI cannot enforce authentication expiry.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Clarity setup and idle-phase versus warning-countdown terminology.
+
+| Reader task                  | Learning outcome                                          | Destination / working example                                                                          |
+| ---------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Start an isolated warning    | Observe the countdown and explicitly confirm continuation | [/clr-lift/components/idle-detection](https://ngx-lift.netlify.app/clr-lift/components/idle-detection) |
+| Leave and restart monitoring | Release the owner without stopping unrelated watches      | Same demo and the idle service ownership contract                                                      |
+
+Validation and delivery: The isolated teaching flow landed in #172. Use idle-warning/browser regressions; human focus
+and assistive-technology acceptance remain open. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

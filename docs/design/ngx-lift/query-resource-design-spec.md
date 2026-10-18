@@ -4,6 +4,11 @@ Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: Octo
 Approval: existing API plus the October 16 maintainer request for domain-owned key/tag guidance and consistent mutation
 `invalidateTags` naming. See the mutation spec for compatibility.
 
+## Applicable contracts
+
+Reactive loaders, shared identity/cache policy, observer scope, freshness/invalidation and cancellation apply. Rendered
+UI and forms belong to consumers; this headless API owns no CVA or translated control strings.
+
 ## Background
 
 Sources: [query exports](../../../libs/ngx-lift/src/lib/query/index.ts),

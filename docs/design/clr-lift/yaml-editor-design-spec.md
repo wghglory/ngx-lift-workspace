@@ -1,9 +1,14 @@
 # YAML viewer, editor, and future form synchronization
 
 Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 16, 2026.
+October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 16, 2026. New symbols are proposed.
+Status: **Draft; API approval pending**. Updated October 17, 2026. New symbols are proposed.
+
+## Applicable contracts
+
+Text values, CVA/validation, optional engine loading/disposal, accessible editing and localization apply. Parser and
+remote-sync boundaries are separate; a textarea does not establish syntax/schema or cache capabilities.
 
 ## Background
 
@@ -80,6 +85,19 @@ acceptance evidence. No dependencies, package split, or engine implementation ar
 | Y6  | Switch form/YAML views for a future Postgres resource | Valid changes synchronize under the explicit commit policy below                                             |
 | Y7  | Edit a YAML field absent from the form                | Unknown fields survive subsequent form edits; incompatible edits block with a useful message                 |
 | Y8  | Reset, navigate away or replace the model             | Explicit dirty-draft handling; stale diagnostics and disposed models cannot update the next document         |
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Angular 21 forms and the distinction between plain text, YAML parsing and an editor engine.
+
+| Reader task                              | Learning outcome                                                   | Destination / working example                            |
+| ---------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------- |
+| Inspect then edit bounded text           | Copy/download or submit the exact text value                       | This spec, proposed base viewer/editor examples          |
+| Add validation and later synchronization | Recover parse/conflict failures without silently replacing a draft | This spec, separately staged parser/engine/sync examples |
+
+Validation and delivery: All tutorials are planned. Base text scope, dependencies and API approval precede compiled
+hosts; engine/CSP and sync evidence are separate gates. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

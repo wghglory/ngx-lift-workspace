@@ -1,7 +1,12 @@
 # Polling and Kubernetes pagination
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 16, 2026. Package: ngx-lift.
+Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing APIs and repeated-cursor protection; no configurable aggregate caps.
+
+## Applicable contracts
+
+Subscription sharing, timer/request cleanup, sequential page ordering and cursor-cycle detection apply. UI/forms and
+cache freshness belong to consumers; aggregate page/item caps are outside the approved pagination scope.
 
 ## Background
 
@@ -44,6 +49,19 @@ The installed RxJS `exhaustMap` controls poll concurrency; pagination uses `expa
 mechanisms. Unlike [query resources](query-resource-design-spec.md), poll has no freshness cache or hidden-tab policy.
 Repeated or cyclic nonempty continuation tokens fail before another request, rather than requesting the same page
 indefinitely. Preserve Kubernetes continuation semantics and original query parameters.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: RxJS subscriptions; distinguish a continuing poll from a finite aggregated list.
+
+| Reader task                     | Learning outcome                                            | Destination / working example                                                                                    |
+| ------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Start, refresh and stop polling | See repeated reads stop when the final subscription leaves  | [/ngx-lift/operators/poll](https://ngx-lift.netlify.app/ngx-lift/operators/poll)                                 |
+| Read a multi-page list          | Preserve item order and report repeated continuation tokens | [/ngx-lift/operators/kubernetesPagination](https://ngx-lift.netlify.app/ngx-lift/operators/kubernetesPagination) |
+
+Validation and delivery: Teaching flows landed in #165/#169; #158/#159 cover teardown and cursor cycles. These operators
+do not establish shared query-cache ownership. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 

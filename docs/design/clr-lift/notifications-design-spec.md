@@ -1,7 +1,12 @@
 # Alerts and toast notifications
 
-Status: Implemented (contract audit with open defects). Owner: clr-lift maintainers. Updated: October 16, 2026. Package:
-clr-lift. Approval: existing APIs; maintainer confirmed developer-trusted localized HTML on October 16, 2026.
+Status: Implemented (contract audit; toast fixes merged). Owner: clr-lift maintainers. Updated: October 17, 2026.
+Package: clr-lift. Approval: existing APIs; maintainer confirmed developer-trusted localized HTML on October 16, 2026.
+
+## Applicable contracts
+
+Shared service lifetime, toast timers, rendered actions/focus and localization apply. Trusted HTML and caller
+interpolation are explicit boundaries; notifications have no form value or query request identity.
 
 ## Background
 
@@ -33,11 +38,11 @@ HTTP retry ownership, domain error classification, and submitting forms.
 
 ## Use cases and acceptance
 
-| ID  | Task                      | Initial state/action      | Outcome                                        | Failure/recovery                   | Demo/test                     |
-| --- | ------------------------- | ------------------------- | ---------------------------------------------- | ---------------------------------- | ----------------------------- |
-| N1  | Report persistent failure | Add alert with action     | Latest alert first; named action runs callback | Delete by Symbol or clear          | alert service/container tests |
-| N2  | Show save outcome         | Add toast                 | Typed notification in mounted container        | Manual or timed close removes it   | toast service/component tests |
-| N3  | Read/action toast         | Pointer or keyboard focus | Auto-close deferred during interaction         | Mixed focus/hover needs regression | gap register                  |
+| ID  | Task                      | Initial state/action      | Outcome                                        | Failure/recovery                 | Demo/test                      |
+| --- | ------------------------- | ------------------------- | ---------------------------------------------- | -------------------------------- | ------------------------------ |
+| N1  | Report persistent failure | Add alert with action     | Latest alert first; named action runs callback | Delete by Symbol or clear        | alert service/container tests  |
+| N2  | Show save outcome         | Add toast                 | Typed notification in mounted container        | Manual or timed close removes it | toast service/component tests  |
+| N3  | Read/action toast         | Pointer or keyboard focus | Auto-close deferred during interaction         | Independent hover/focus guards   | toast unit/browser regressions |
 
 ## Industry evidence and current gaps
 
@@ -46,6 +51,19 @@ localized HTML so translators can place an inline button/link anywhere in a sent
 `targetSelector`/`onTargetClick` callback supports that contract without a template or slot renderer.
 [Angular security guidance](https://angular.dev/best-practices/security) makes bypassing HTML sanitization a trust
 boundary. Here it is an intentional developer-trusted HTML API, not an automatically sanitized text API.
+
+## Developer learning journey and pedagogy plan
+
+Prerequisites: Standalone Clarity setup; mount the relevant container before dispatching service notifications.
+
+| Reader task                      | Learning outcome                                                | Destination / working example                                                                                                                                                               |
+| -------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Show a toast or persistent alert | See the message and use its action/close control                | [/clr-lift/components/toast](https://ngx-lift.netlify.app/clr-lift/components/toast) and [/clr-lift/components/multi-alerts](https://ngx-lift.netlify.app/clr-lift/components/multi-alerts) |
+| Recover a failed action          | Keep callbacks scoped and defer toast expiry during hover/focus | Same demos; this spec owns HTML and timeout contracts                                                                                                                                       |
+
+Validation and delivery: Entry flows landed in #166; #155 proves mixed interaction/viewport repairs. Human announcement
+and translation acceptance remain separate. The public API and behavior sections below own exact options and
+limitations; examples introduce them after the first task.
 
 ## Public API and examples
 
@@ -103,10 +121,10 @@ must remain under the host application's control.
 ## Demo and validation plan
 
 Existing alert/toast demos and adjacent specs cover inline buttons, nested delegated clicks, alert scoping, structured
-actions, dismissal and timers. Preserve these tests and add localized inline-action examples, including translator
-reordering and safely escaped runtime values. Add mixed hover/focus browser tests for the
-[open toast fix](../implementation-gaps.md). Do not assert that this developer-trusted HTML path sanitizes hostile
-markup automatically.
+actions, dismissal and timers. Preserve these tests, including localized inline-action examples, translator reordering
+and safely escaped runtime values. Mixed hover/focus and viewport regressions are merged in
+[#155](https://github.com/wghglory/ngx-lift-workspace/pull/155); see the [gap register](../implementation-gaps.md). Do
+not assert that this developer-trusted HTML path sanitizes hostile markup automatically.
 
 ## Compatibility, rollout, and risks
 
