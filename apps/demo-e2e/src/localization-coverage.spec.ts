@@ -26,7 +26,7 @@ for (const {code, label} of demoLocales) {
     await page.addInitScript((locale) => localStorage.setItem('clr-lift-lang', locale), code);
     for (const route of demoRoutes) {
       await test.step(route, async () => {
-        await page.goto(route);
+        await page.goto(route, {waitUntil: 'domcontentloaded'});
         await expect(page.getByRole('button', {name: messages['header.selectLanguage'], exact: true})).toBeVisible();
         await expect(page.locator('html')).toHaveAttribute('lang', code);
         await expect(page.locator('main h1').first()).not.toBeEmpty();
@@ -42,12 +42,12 @@ for (const {code, label} of demoLocales) {
         });
       });
     }
-    await page.goto('/clr-lift/components/multi-alerts');
+    await page.goto('/clr-lift/components/multi-alerts', {waitUntil: 'domcontentloaded'});
     await expect(page.locator('cll-alert-container')).toContainText(messages['multiAlerts.dangerMessage']);
     await expect(page.locator('#click-target')).toHaveAccessibleName(inlineButtonLabel);
-    await page.goto('/clr-lift/components/file-reader');
+    await page.goto('/clr-lift/components/file-reader', {waitUntil: 'domcontentloaded'});
     await expect(page.getByRole('button', {name: fileMessages['browse'], exact: true}).first()).toBeVisible();
-    await page.goto('/clr-lift/components/status-indicator');
+    await page.goto('/clr-lift/components/status-indicator', {waitUntil: 'domcontentloaded'});
     await expect(page.getByRole('img', {name: statusMessages['success'], exact: true}).first()).toBeVisible();
     await page.getByRole('button', {name: messages['header.selectLanguage'], exact: true}).click();
     const activeLanguage = page.getByRole('menuitem', {name: label, exact: true});
@@ -65,7 +65,7 @@ test('switching languages preserves dismissed seeds and user-created alerts', as
   const english = dictionaryMessages(demoFile('en'));
   const chinese = dictionaryMessages(demoFile('zh-CN'));
   await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
-  await page.goto('/clr-lift/components/multi-alerts');
+  await page.goto('/clr-lift/components/multi-alerts', {waitUntil: 'domcontentloaded'});
   const danger = page.locator('cll-alert-container clr-alert').filter({hasText: english['multiAlerts.dangerMessage']});
   await page.getByRole('button', {name: /Previous alert message/}).click();
   await expect(danger).toBeVisible();
@@ -88,7 +88,7 @@ test('wizard language changes preserve the current step and entered values', asy
   const chinese = dictionaryMessages(demoFile('zh-CN'));
   const wizardChinese = dictionaryMessages(library + 'timeline-wizard/timeline-wizard.l10n.ts', 'zh-CN');
   await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
-  await page.goto('/clr-lift/components/timeline-wizard');
+  await page.goto('/clr-lift/components/timeline-wizard', {waitUntil: 'domcontentloaded'});
   await expect(page.locator('#operator-name')).toHaveValue('my-operator');
   await page.locator('#operator-name').fill('localized-operator');
   await page.getByRole('button', {name: 'Next', exact: true}).press('Enter');
@@ -105,7 +105,7 @@ test('wizard language changes preserve the current step and entered values', asy
 });
 
 test('query guide scans both failure and service-placement tab groups', async ({page}) => {
-  await page.goto('/ngx-lift/query/queryResource');
+  await page.goto('/ngx-lift/query/queryResource', {waitUntil: 'domcontentloaded'});
   await expect(page.locator('main h1')).toHaveText('queryResource');
   const failureTabs = await page
     .getByTestId('query-failure-examples')

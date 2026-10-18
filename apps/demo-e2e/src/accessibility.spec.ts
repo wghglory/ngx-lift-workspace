@@ -15,7 +15,7 @@ for (const theme of ['light', 'dark']) {
 
     for (const route of demoRoutes) {
       test(`${route}`, async ({page}, testInfo) => {
-        await page.goto(route);
+        await page.goto(route, {waitUntil: 'domcontentloaded'});
         await expect(page.locator('body')).toHaveAttribute('cds-theme', theme);
         await expect(page.locator('main h1').first()).not.toBeEmpty();
         // Wait for both raw/encoded examples, rather than scanning a partially created deferred view.
@@ -33,7 +33,7 @@ for (const theme of ['light', 'dark']) {
     }
 
     test('text tooltip and interactive dialog support keyboard entry and exit', async ({page}, testInfo) => {
-      await page.goto('/clr-lift/components/tooltip');
+      await page.goto('/clr-lift/components/tooltip', {waitUntil: 'domcontentloaded'});
       const textTrigger = page.getByRole('link', {name: 'Basic Tooltip 1', exact: true});
       await textTrigger.focus();
       await expect(page.getByRole('tooltip')).toBeVisible();
@@ -52,7 +52,7 @@ for (const theme of ['light', 'dark']) {
     });
 
     test('file selection and removal preserve keyboard access', async ({page}, testInfo) => {
-      await page.goto('/clr-lift/components/file-reader');
+      await page.goto('/clr-lift/components/file-reader', {waitUntil: 'domcontentloaded'});
       const example = page.getByTestId('file-reader-demo-starter');
       const browse = example.getByRole('button', {name: 'Browse', exact: true});
       await browse.focus();
@@ -67,7 +67,7 @@ for (const theme of ['light', 'dark']) {
     });
 
     test('resource controls keep names during local edits and loading', async ({page}, testInfo) => {
-      await page.goto('/ngx-lift/signals/resourceAsync');
+      await page.goto('/ngx-lift/signals/resourceAsync', {waitUntil: 'domcontentloaded'});
       await page.getByRole('tab', {name: 'Local state', exact: true}).click();
       await page.getByRole('button', {name: 'Load Todo', exact: true}).click();
       const todo = page.getByRole('checkbox', {name: 'Learn WritableResourceRef', exact: true});
@@ -91,7 +91,7 @@ for (const theme of ['light', 'dark']) {
     });
 
     test('wizard navigation remains named and keyboard operable', async ({page}, testInfo) => {
-      await page.goto('/clr-lift/components/timeline-wizard');
+      await page.goto('/clr-lift/components/timeline-wizard', {waitUntil: 'domcontentloaded'});
       const wizard = page.locator('cll-timeline-wizard');
       const next = wizard.getByRole('button', {name: 'Next', exact: true});
       await next.focus();
