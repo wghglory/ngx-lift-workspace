@@ -12,7 +12,7 @@ on:
         default: true
         type: boolean
       version:
-        description: 'Version type (major, minor, patch, or skip to publish existing)'
+        description: 'Dry-run version preview; real publication requires skip and a merged version PR'
         required: true
         default: 'patch'
         type: choice
@@ -42,7 +42,20 @@ env:
   RELEASE_PROJECT: ${{ inputs.project || 'all' }}
 
 jobs:
+  release-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require reviewed versions for real publication
+        env:
+          RELEASE_EVENT: ${{ github.event_name }}
+          RELEASE_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$RELEASE_EVENT" = "workflow_dispatch" ] && [ "$RELEASE_DRY_RUN" != "true" ] && [ "$RELEASE_VERSION" != "skip" ]; then
+            echo "::error::Merge a version/changelog PR first, then publish with version=skip or push its reviewed release tags. Other version choices are dry-run previews only."
+            exit 1
+          fi
   quality:
+    needs: release-inputs
     uses: ./.github/workflows/quality.yml
   publish:
     needs: quality
@@ -152,23 +165,13 @@ jobs:
           path: dist/libs/
           if-no-files-found: error
 
-      - name: Configure Git
-        if: github.event_name == 'push' || !inputs.dry_run
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
-      - name: Version and publish (manual trigger)
+      - name: Publish reviewed versions (manual trigger)
         id: publish-manual
         if: github.event_name == 'workflow_dispatch' && !inputs.dry_run
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ "$RELEASE_VERSION" != "skip" ]; then
-            pnpm nx release version "$RELEASE_VERSION" ${{ env.PROJECT_FLAG }} --git-push
-          fi
-          pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
+        run: pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
 
       - name: Publish from tag
         id: publish-tag

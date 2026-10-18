@@ -42,7 +42,8 @@ live in [COMMANDS](COMMANDS.md), release history in [CHANGELOG](../CHANGELOG.md)
 - Dictionary checks do not replace independent human language approval.
 - Strict installed Angular consumers cover zoneless and ZoneJS DOM modes, not SSR/hydration or every permitted peer.
 - Both packages stay on 21.x until Angular 22; the [version policy](DEPLOYMENT.md#version-policy) records the explicit
-  compatibility exception for computedAsync and idle warnings. Dependent-peer verification and publication remain open.
+  compatibility exception for computedAsync and idle warnings. Packed-consumer verification and publication completed
+  for ngx-lift 21.4.0 / clr-lift 21.3.0; see the [release evidence](../CHANGELOG.md).
 - Angular 22 and the Nx major upgrade are deferred; new Angular 21 CVA controls can proceed after feature API review.
 - After the platform upgrade, native signal-field integration is a required delivery gate for every new value control.
 - Dependency advisory follow-ups remain open; unsuccessful audit access is not a clean whole-tree result.

@@ -29,7 +29,7 @@ compatible migration is approved. Release fixes, security remediation, and pendi
 
 - Workspace manifest: Angular **21.2.17**, CDK **21.2.10**, Nx and official Nx plugins **22.7.5**, TypeScript **5.9.x**.
 - Installed Clarity **18.4.0** permits Angular/CDK `^21.1.0 || 22`; this is a peer declaration, not rendering evidence.
-- `ngx-lift` is **21.3.0** and `clr-lift` **21.2.0**. Their current broad Angular peers are not proof of Angular 22
+- `ngx-lift` is **21.4.0** and `clr-lift` **21.3.0**. Their current broad Angular peers are not proof of Angular 22
   support.
 - `toSignalForm(FormGroup)` exposes signals over Reactive Forms. It does not create an Angular Signal Forms `FieldTree`.
 - The existing key/value control requires a `FormArray`; it is not yet a general value control for all form modes.
