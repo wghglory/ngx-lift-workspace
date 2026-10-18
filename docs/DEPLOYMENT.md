@@ -21,11 +21,14 @@ a local version preparation command such as:
 pnpm nx release version minor --git-commit=false --git-tag=false
 ```
 
-Nx updates both source and distribution manifests. Commit the source changes and release notes through the PR. After
-merging, deliberately disable dry_run and select **version=skip** to publish those reviewed versions, or push their
-reviewed release tags. Other workflow version choices are dry-run previews only. The workflow uses the official npm
-registry and checks credentials. Review behavioral compatibility and dependent package peer ranges using the version
-policy below before publication.
+Nx resolves the current version from the source manifest and updates both source and distribution manifests. Commit the
+source changes and release notes through the PR. After merging, deliberately disable dry_run and select **version=skip**
+to publish those reviewed versions, or push their reviewed release tags. Other workflow version choices are dry-run
+previews only. The workflow uses the official npm registry and checks credentials. Review behavioral compatibility and
+dependent package peer ranges using the version policy below before publication.
+
+After successful manual publication, create the corresponding GitHub release records and tags at the reviewed version
+commit. Those records document the release; source manifests own the next version calculation.
 
 ## Version policy
 
