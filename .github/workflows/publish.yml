@@ -166,7 +166,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ "$RELEASE_VERSION" != "skip" ]; then
-            pnpm nx release version "$RELEASE_VERSION" ${{ env.PROJECT_FLAG }} --git-push
+            pnpm nx release version "$RELEASE_VERSION" ${{ env.PROJECT_FLAG }} --git-commit --git-tag --git-push
           fi
           pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
 

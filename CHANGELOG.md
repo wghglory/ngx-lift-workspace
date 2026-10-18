@@ -8,10 +8,15 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
+
 **Release decision — October 17, 2026:** both packages remain on 21.x; 22.x is reserved for the Angular 22 upgrade. The
-maintainer accepts the behavioral breaks below in the upcoming 21.x minor releases. This is an explicit exception to
-SemVer, not backward-compatible behavior. Exact versions, publication and dependent-peer verification remain release
-steps; see the [version policy](docs/DEPLOYMENT.md#version-policy).
+maintainer accepts the behavioral breaks below in these 21.x minor releases. This is an explicit exception to SemVer,
+not backward-compatible behavior; see the [version policy](docs/DEPLOYMENT.md#version-policy).
+
+The [release workflow](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39095608373) passed full validation,
+three-browser E2E and npm authentication, then published both packages to the official registry with the `latest` tag.
+Fresh packed consumers and the publication dry run also passed before publication.
 
 ### Added
 
@@ -34,7 +39,7 @@ steps; see the [version policy](docs/DEPLOYMENT.md#version-policy).
   movement, keystrokes, clicks) leaves warning countdowns running; only explicit `resetTimer(true)` confirmation resets
   the countdown and starts a fresh idle cycle.
 
-### Migration for the upcoming 21.x releases
+### Migration
 
 - `computedAsync`: remove `throwOnError: false`. Provide a typed `onError` fallback when failures should produce data;
   otherwise handle a thrown read outside template evaluation. Include `undefined` in `T` if it is a valid fallback.
