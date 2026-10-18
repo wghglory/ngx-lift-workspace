@@ -217,8 +217,8 @@ export class CertificateImportComponent {
 |                    | `TooltipDirective`             | `[cllTooltip]`             | Dynamic declarative popover tooltip.                                                                |
 | **Development**    | `QueryDevtoolsComponent`       | `cll-query-devtools`       | Resizable query panel with data/error inspection, row actions and a development-only root provider. |
 
-**Unreleased on main:** the inspector and `clr-lift/devtools` entry point below are not in clr-lift 21.2.0. Use a
-release containing them before copying this setup. Register once in `app.config.ts`:
+**Available in clr-lift 21.3.0:** the inspector and `clr-lift/devtools` entry point below are included in this release.
+Upgrade from 21.2.0 before copying this setup. Register once in `app.config.ts`:
 
 ```typescript
 import {ApplicationConfig} from '@angular/core';

@@ -13,9 +13,19 @@ The Publish Libraries workflow accepts project all/ngx-lift/clr-lift, version ma
 dispatch defaults to dry_run=true. A dry run verifies both packages, strict installed consumers, versioning and publish
 commands without publishing, creating a version commit/tag or requiring an npm token.
 
-For a real release, choose the version policy, review the changelog, and deliberately disable dry_run. The workflow uses
-the official npm registry and checks credentials. Review behavioral compatibility and dependent package peer ranges
-using the version policy below before publication.
+For a real release, prepare source versions and the changelog in a PR, validate it, and merge it before publication.
+Main requires changes through a PR; the publishing workflow does not push version commits to bypass that protection. Use
+a local version preparation command such as:
+
+```bash
+pnpm nx release version minor --git-commit=false --git-tag=false
+```
+
+Nx updates both source and distribution manifests. Commit the source changes and release notes through the PR. After
+merging, deliberately disable dry_run and select **version=skip** to publish those reviewed versions, or push their
+reviewed release tags. Other workflow version choices are dry-run previews only. The workflow uses the official npm
+registry and checks credentials. Review behavioral compatibility and dependent package peer ranges using the version
+policy below before publication.
 
 ## Version policy
 
