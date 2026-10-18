@@ -2461,4 +2461,45 @@ export const koTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': '중단됨(AbortSignal로 취소)',
   'resourceAsync.requestResolved': '완료됨',
   'resourceAsync.requestLogLabel': '요청 #{0}(쿼리: "{1}"):',
+  'resourceAsync.todoDemoTitle': '데모: 할 일 완료 상태 전환',
+  'resourceAsync.completedLabel': '완료 여부:',
+  'resourceAsync.cacheFirstDemoTitle': '데모: 캐시 우선 사용자 프로필',
+  'resourceAsync.counterDemoTitle': '데모: 편집 가능한 카운터',
+  'resourceAsync.expert': '전문가',
+  'resourceAsync.nestedDemoTitle': '데모: 조직 정보가 있는 항목',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition(선언적 정의)',
+  'resourceAsync.statusTitle': '리소스 상태',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code>는 수동 상태 관리를 위한 <code>set()</code>, <code>update()</code>, <code>asReadonly()</code>를 갖춘 <code>WritableResourceRef</code>를 반환하며 Angular의 <code>WritableResource</code> API에 맞춰 동작합니다.',
+  'resourceAsync.decrementCounter': '카운터 감소',
+  'resourceAsync.incrementCounter': '카운터 증가',
+  'resourceAsync.nestedIntroduction':
+    '목록의 항목이 관련 조직, 사용자 또는 세부 정보를 가져올 수 있습니다. 이 예제는 각 행의 로딩 및 오류 상태를 독립적으로 관리하는 한 가지 방법을 보여줍니다.',
+  'resourceAsync.nestedInjector':
+    '<code>ResourceRefOptions</code>의 <code>injector</code> 옵션으로 <code>&#123; injector: this.injector &#125;</code>를 전달하면 <code>runInInjectionContext()</code> 없이 템플릿 도우미 메서드나 서비스에서 <code>resourceAsync</code>를 동적으로 만들 수 있습니다.',
+  'resourceAsync.fullDocumentation': '📖 전체 문서:',
+  'resourceAsync.seeDocumentation': '설계 가이드:',
+  'resourceAsync.documentationDescription': '여러 접근 방식, 의사 결정 트리와 각 패턴의 사용 시점을 설명합니다.',
+  'resourceAsync.nestedOuter': '외부 리소스: 항목 목록에는 자체 로딩 및 오류 상태가 있습니다.',
+  'resourceAsync.nestedInner': '내부 리소스: 각 항목의 관련 데이터에는 독립적인 로딩 및 오류 상태가 있습니다.',
+  'resourceAsync.nestedLazy': '지연 로딩: 사용자가 클릭할 때만 가져와 API 호출을 줄입니다.',
+  'resourceAsync.nestedIndependent': '독립적인 상태: 각 행은 자체 로딩 표시기, 오류 및 데이터를 관리합니다.',
+  'resourceAsync.nestedItemsFailed': '항목을 불러오지 못했습니다: {0}',
+  'resourceAsync.nestedOrganizationFailed': '조직을 불러오지 못했습니다',
+  'resourceAsync.nestedBenefitRequests': '최소한의 API 호출(필요한 데이터만 가져오기)',
+  'resourceAsync.nestedBenefitStates': '행별 독립적인 로딩 및 오류 상태',
+  'resourceAsync.nestedBenefitRetry': '실패한 가져오기를 독립적으로 재시도',
+  'resourceAsync.nestedBenefitCache':
+    'orgId마다 하나의 리소스를 재사용하며, 명시적으로 다시 로드하면 데이터를 다시 가져옵니다.',
+  'resourceAsync.nestedBenefitScale': '큰 목록에도 적합',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: 아직 시작되지 않았거나 초기화된 상태입니다. <code>value()</code>는 설정된 초기값 또는 기본값을 반환하고, 설정된 값이 없으면 <code>undefined</code>를 반환합니다.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: 유지된 결과 없이 작업을 로드하는 중입니다. <code>value()</code>는 설정된 초기값 또는 기본값을 반환하고, 설정된 값이 없으면 <code>undefined</code>를 반환합니다.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: 다시 가져오는 중입니다. <code>value()</code>는 이전 데이터를 유지합니다.',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code>: 작업이 성공했습니다. <code>value()</code>에 데이터가 들어 있습니다.',
+  'resourceAsync.statusError':
+    '<code>error</code>: 작업이 실패했습니다. <code>preserveValueOnError</code>가 활성화된 경우에만 이전 데이터를 유지하며, 그렇지 않으면 <code>value()</code>는 설정된 초기값 또는 기본값을 반환하고, 설정된 값이 없으면 <code>undefined</code>를 반환합니다.',
 };

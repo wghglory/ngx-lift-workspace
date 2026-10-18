@@ -2579,4 +2579,47 @@ export const ptBRTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Cancelada (AbortSignal acionado)',
   'resourceAsync.requestResolved': 'Concluída',
   'resourceAsync.requestLogLabel': 'Solicitação #{0} (consulta: "{1}"):',
+  'resourceAsync.todoDemoTitle': 'Demonstração: alternar conclusão da tarefa',
+  'resourceAsync.completedLabel': 'Concluída:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demonstração: perfil de usuário com prioridade ao cache',
+  'resourceAsync.counterDemoTitle': 'Demonstração: contador editável',
+  'resourceAsync.expert': 'Especialista',
+  'resourceAsync.nestedDemoTitle': 'Demonstração: itens com organizações',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (definição declarativa)',
+  'resourceAsync.statusTitle': 'Status do recurso',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> retorna uma <code>WritableResourceRef</code> com <code>set()</code>, <code>update()</code> e <code>asReadonly()</code> para gerenciar o estado manualmente, de acordo com a API <code>WritableResource</code> do Angular.',
+  'resourceAsync.decrementCounter': 'Diminuir contador',
+  'resourceAsync.incrementCounter': 'Aumentar contador',
+  'resourceAsync.nestedIntroduction':
+    'Uma lista pode conter itens que buscam organizações, usuários ou detalhes relacionados. Este exemplo mostra uma abordagem para gerenciar os estados de carregamento e erro de cada linha de forma independente.',
+  'resourceAsync.nestedInjector':
+    'Passe <code>&#123; injector: this.injector &#125;</code> pela opção <code>injector</code> de <code>ResourceRefOptions</code> para criar <code>resourceAsync</code> dinamicamente em métodos auxiliares de template ou serviços, sem <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Documentação completa:',
+  'resourceAsync.seeDocumentation': 'Guia de design:',
+  'resourceAsync.documentationDescription':
+    'Inclui várias abordagens, árvores de decisão e orientações sobre quando usar cada padrão.',
+  'resourceAsync.nestedOuter': 'Recurso externo: a lista de itens tem seu próprio estado de carregamento e erro.',
+  'resourceAsync.nestedInner':
+    'Recursos internos: os dados relacionados de cada item têm estados de carregamento e erro independentes.',
+  'resourceAsync.nestedLazy':
+    'Carregamento sob demanda: buscar somente quando o usuário clicar, reduzindo as chamadas à API.',
+  'resourceAsync.nestedIndependent':
+    'Estados independentes: cada linha gerencia seu indicador de carregamento, erro e dados.',
+  'resourceAsync.nestedItemsFailed': 'Não foi possível carregar os itens: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Não foi possível carregar a organização',
+  'resourceAsync.nestedBenefitRequests': 'Mínimo de chamadas à API (buscar somente o necessário)',
+  'resourceAsync.nestedBenefitStates': 'Estados de carregamento e erro individuais por linha',
+  'resourceAsync.nestedBenefitRetry': 'Repetir buscas com falha de forma independente',
+  'resourceAsync.nestedBenefitCache': 'Reutiliza um recurso por orgId; uma recarga explícita busca os dados novamente.',
+  'resourceAsync.nestedBenefitScale': 'Escala bem para listas grandes',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Ainda não iniciado ou redefinido. <code>value()</code> retorna o valor inicial ou padrão configurado, ou <code>undefined</code> se nenhum estiver configurado.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Uma operação está carregando sem um resultado mantido. <code>value()</code> retorna o valor inicial ou padrão configurado, ou <code>undefined</code> se nenhum estiver configurado.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Nova busca em andamento. <code>value()</code> mantém os dados anteriores.',
+  'resourceAsync.statusResolved': '<code>resolved</code>: Operação bem-sucedida. <code>value()</code> contém os dados.',
+  'resourceAsync.statusError':
+    '<code>error</code>: A operação falhou. Os dados anteriores são mantidos apenas com <code>preserveValueOnError</code>; caso contrário, <code>value()</code> retorna o valor inicial ou padrão configurado, ou <code>undefined</code> se nenhum estiver configurado.',
 };

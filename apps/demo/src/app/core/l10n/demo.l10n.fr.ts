@@ -2647,4 +2647,49 @@ export const frTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Annulée (AbortSignal déclenché)',
   'resourceAsync.requestResolved': 'Terminée',
   'resourceAsync.requestLogLabel': 'Requête n° {0} (recherche : « {1} ») :',
+  'resourceAsync.todoDemoTitle': 'Démonstration : changer l’état d’une tâche',
+  'resourceAsync.completedLabel': 'Terminée :',
+  'resourceAsync.cacheFirstDemoTitle': 'Démonstration : profil utilisateur avec priorité au cache',
+  'resourceAsync.counterDemoTitle': 'Démonstration : compteur modifiable',
+  'resourceAsync.expert': 'Expert',
+  'resourceAsync.nestedDemoTitle': 'Démonstration : éléments et organisations',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (définition déclarative)',
+  'resourceAsync.statusTitle': 'État de la ressource',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> renvoie une <code>WritableResourceRef</code> avec <code>set()</code>, <code>update()</code> et <code>asReadonly()</code> pour gérer l’état manuellement, conformément à l’API <code>WritableResource</code> d’Angular.',
+  'resourceAsync.decrementCounter': 'Diminuer le compteur',
+  'resourceAsync.incrementCounter': 'Augmenter le compteur',
+  'resourceAsync.nestedIntroduction':
+    'Une liste peut contenir des éléments qui récupèrent des organisations, utilisateurs ou détails associés. Cet exemple présente une approche pour gérer indépendamment les états de chargement et d’erreur de chaque ligne.',
+  'resourceAsync.nestedInjector':
+    'Passez <code>&#123; injector: this.injector &#125;</code> via l’option <code>injector</code> de <code>ResourceRefOptions</code> pour créer <code>resourceAsync</code> dynamiquement dans des méthodes auxiliaires de modèle ou des services, sans <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Documentation complète :',
+  'resourceAsync.seeDocumentation': 'Guide de conception :',
+  'resourceAsync.documentationDescription':
+    'Comprend plusieurs approches, des arbres de décision et des conseils pour choisir chaque modèle.',
+  'resourceAsync.nestedOuter': 'Ressource externe : la liste possède ses propres états de chargement et d’erreur.',
+  'resourceAsync.nestedInner':
+    'Ressources internes : les données associées à chaque élément possèdent des états de chargement et d’erreur indépendants.',
+  'resourceAsync.nestedLazy':
+    'Chargement à la demande : récupérer les données uniquement au clic pour limiter les appels API.',
+  'resourceAsync.nestedIndependent':
+    'États indépendants : chaque ligne gère son indicateur de chargement, son erreur et ses données.',
+  'resourceAsync.nestedItemsFailed': 'Impossible de charger les éléments : {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Impossible de charger l’organisation',
+  'resourceAsync.nestedBenefitRequests': 'Appels API minimaux (récupérer uniquement le nécessaire)',
+  'resourceAsync.nestedBenefitStates': 'États de chargement et d’erreur propres à chaque ligne',
+  'resourceAsync.nestedBenefitRetry': 'Réessayer indépendamment les récupérations échouées',
+  'resourceAsync.nestedBenefitCache':
+    'Réutilise une ressource par orgId ; un rechargement explicite récupère à nouveau les données.',
+  'resourceAsync.nestedBenefitScale': 'Adapté aux grandes listes',
+  'resourceAsync.statusIdle':
+    '<code>idle</code> : Pas encore démarré ou réinitialisé. <code>value()</code> renvoie la valeur initiale ou par défaut configurée, ou <code>undefined</code> si aucune n’est configurée.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code> : Une opération est en cours de chargement sans résultat conservé. <code>value()</code> renvoie la valeur initiale ou par défaut configurée, ou <code>undefined</code> si aucune n’est configurée.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code> : Nouvelle récupération en cours. <code>value()</code> conserve les données précédentes.',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code> : Opération réussie. <code>value()</code> contient les données.',
+  'resourceAsync.statusError':
+    '<code>error</code> : L’opération a échoué. Les données précédentes ne sont conservées qu’avec <code>preserveValueOnError</code> ; sinon, <code>value()</code> renvoie la valeur initiale ou par défaut configurée, ou <code>undefined</code> si aucune n’est configurée.',
 };

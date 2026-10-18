@@ -2297,4 +2297,42 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': '已中止（AbortSignal 已取消）',
   'resourceAsync.requestResolved': '已完成',
   'resourceAsync.requestLogLabel': '请求 #{0}（查询：“{1}”）：',
+  'resourceAsync.todoDemoTitle': '演示：切换待办事项状态',
+  'resourceAsync.completedLabel': '已完成：',
+  'resourceAsync.cacheFirstDemoTitle': '演示：优先使用缓存的用户资料',
+  'resourceAsync.counterDemoTitle': '演示：可编辑计数器',
+  'resourceAsync.expert': '专家',
+  'resourceAsync.nestedDemoTitle': '演示：包含组织信息的项目',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition（声明式定义）',
+  'resourceAsync.statusTitle': '资源状态',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> 返回 <code>WritableResourceRef</code>，通过 <code>set()</code>、<code>update()</code> 和 <code>asReadonly()</code> 手动管理状态，与 Angular 的 <code>WritableResource</code> API 保持一致。',
+  'resourceAsync.decrementCounter': '减小计数',
+  'resourceAsync.incrementCounter': '增大计数',
+  'resourceAsync.nestedIntroduction':
+    '列表中的项目可能需要获取相关组织、用户或详细信息。本例展示一种为每行独立管理加载与错误状态的方法。',
+  'resourceAsync.nestedInjector':
+    '通过 <code>ResourceRefOptions</code> 的 <code>injector</code> 选项传入 <code>&#123; injector: this.injector &#125;</code>，即可在模板辅助方法或服务中动态创建 <code>resourceAsync</code>，无需 <code>runInInjectionContext()</code>。',
+  'resourceAsync.fullDocumentation': '📖 完整文档：',
+  'resourceAsync.seeDocumentation': '设计指南：',
+  'resourceAsync.documentationDescription': '包含多种实现方式、决策树，以及各种模式的适用场景。',
+  'resourceAsync.nestedOuter': '外层资源：项目列表拥有自己的加载和错误状态。',
+  'resourceAsync.nestedInner': '内层资源：每个项目的相关数据拥有独立的加载和错误状态。',
+  'resourceAsync.nestedLazy': '按需加载：仅在用户点击时获取数据，减少 API 调用。',
+  'resourceAsync.nestedIndependent': '独立状态：每行管理自己的加载指示器、错误和数据。',
+  'resourceAsync.nestedItemsFailed': '加载项目失败：{0}',
+  'resourceAsync.nestedOrganizationFailed': '加载组织失败',
+  'resourceAsync.nestedBenefitRequests': '尽量减少 API 调用（仅获取所需数据）',
+  'resourceAsync.nestedBenefitStates': '每行独立的加载与错误状态',
+  'resourceAsync.nestedBenefitRetry': '独立重试失败的数据获取',
+  'resourceAsync.nestedBenefitCache': '每个 orgId 复用一个资源；显式重新加载会再次获取数据。',
+  'resourceAsync.nestedBenefitScale': '适用于大型列表',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>：尚未开始，或已重置。 <code>value()</code> 返回配置的初始值或默认值，若未配置则返回 <code>undefined</code>。',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>：操作正在加载，且没有保留的结果。 <code>value()</code> 返回配置的初始值或默认值，若未配置则返回 <code>undefined</code>。',
+  'resourceAsync.statusReloading': '<code>reloading</code>：正在重新获取。<code>value()</code> 保留之前的数据。',
+  'resourceAsync.statusResolved': '<code>resolved</code>：操作成功。<code>value()</code> 包含结果数据。',
+  'resourceAsync.statusError':
+    '<code>error</code>：操作失败。仅在启用 <code>preserveValueOnError</code> 时保留之前的数据；否则， <code>value()</code> 返回配置的初始值或默认值，若未配置则返回 <code>undefined</code>。',
 };

@@ -2288,4 +2288,42 @@ export const zhTWTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': '已中止（AbortSignal 已取消）',
   'resourceAsync.requestResolved': '已完成',
   'resourceAsync.requestLogLabel': '請求 #{0}（查詢：「{1}」）：',
+  'resourceAsync.todoDemoTitle': '示範：切換待辦事項狀態',
+  'resourceAsync.completedLabel': '已完成：',
+  'resourceAsync.cacheFirstDemoTitle': '示範：優先使用快取的使用者資料',
+  'resourceAsync.counterDemoTitle': '示範：可編輯計數器',
+  'resourceAsync.expert': '專家',
+  'resourceAsync.nestedDemoTitle': '示範：包含組織資訊的項目',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition（宣告式定義）',
+  'resourceAsync.statusTitle': '資源狀態',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> 傳回 <code>WritableResourceRef</code>，透過 <code>set()</code>、<code>update()</code> 和 <code>asReadonly()</code> 手動管理狀態，與 Angular 的 <code>WritableResource</code> API 一致。',
+  'resourceAsync.decrementCounter': '減少計數',
+  'resourceAsync.incrementCounter': '增加計數',
+  'resourceAsync.nestedIntroduction':
+    '清單中的項目可能需要取得相關組織、使用者或詳細資訊。本例展示一種為每列獨立管理載入與錯誤狀態的方法。',
+  'resourceAsync.nestedInjector':
+    '透過 <code>ResourceRefOptions</code> 的 <code>injector</code> 選項傳入 <code>&#123; injector: this.injector &#125;</code>，即可在範本輔助方法或服務中動態建立 <code>resourceAsync</code>，無需 <code>runInInjectionContext()</code>。',
+  'resourceAsync.fullDocumentation': '📖 完整文件：',
+  'resourceAsync.seeDocumentation': '設計指南：',
+  'resourceAsync.documentationDescription': '包含多種實作方式、決策樹，以及各種模式的適用情境。',
+  'resourceAsync.nestedOuter': '外層資源：項目清單擁有自己的載入和錯誤狀態。',
+  'resourceAsync.nestedInner': '內層資源：每個項目的相關資料擁有獨立的載入和錯誤狀態。',
+  'resourceAsync.nestedLazy': '按需載入：僅在使用者點選時取得資料，減少 API 呼叫。',
+  'resourceAsync.nestedIndependent': '獨立狀態：每列管理自己的載入指示器、錯誤和資料。',
+  'resourceAsync.nestedItemsFailed': '載入項目失敗：{0}',
+  'resourceAsync.nestedOrganizationFailed': '載入組織失敗',
+  'resourceAsync.nestedBenefitRequests': '盡量減少 API 呼叫（僅取得所需資料）',
+  'resourceAsync.nestedBenefitStates': '每列獨立的載入與錯誤狀態',
+  'resourceAsync.nestedBenefitRetry': '獨立重試失敗的資料擷取',
+  'resourceAsync.nestedBenefitCache': '每個 orgId 共用一個資源；明確重新載入會再次取得資料。',
+  'resourceAsync.nestedBenefitScale': '適用於大型清單',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>：尚未開始，或已重設。 <code>value()</code> 傳回設定的初始值或預設值，若未設定則傳回 <code>undefined</code>。',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>：操作正在載入，且沒有保留的結果。 <code>value()</code> 傳回設定的初始值或預設值，若未設定則傳回 <code>undefined</code>。',
+  'resourceAsync.statusReloading': '<code>reloading</code>：正在重新擷取。<code>value()</code> 保留先前的資料。',
+  'resourceAsync.statusResolved': '<code>resolved</code>：操作成功。<code>value()</code> 包含結果資料。',
+  'resourceAsync.statusError':
+    '<code>error</code>：操作失敗。僅在啟用 <code>preserveValueOnError</code> 時保留先前的資料；否則， <code>value()</code> 傳回設定的初始值或預設值，若未設定則傳回 <code>undefined</code>。',
 };

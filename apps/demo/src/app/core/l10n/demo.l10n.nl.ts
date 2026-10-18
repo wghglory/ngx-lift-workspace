@@ -2601,4 +2601,47 @@ export const nlTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Afgebroken (AbortSignal geactiveerd)',
   'resourceAsync.requestResolved': 'Voltooid',
   'resourceAsync.requestLogLabel': 'Aanvraag #{0} (query: ‘{1}’):',
+  'resourceAsync.todoDemoTitle': 'Demo: taakstatus omschakelen',
+  'resourceAsync.completedLabel': 'Voltooid:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demo: gebruikersprofiel met cachevoorrang',
+  'resourceAsync.counterDemoTitle': 'Demo: bewerkbare teller',
+  'resourceAsync.expert': 'Expert',
+  'resourceAsync.nestedDemoTitle': 'Demo: items met organisaties',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (declaratieve definitie)',
+  'resourceAsync.statusTitle': 'Resourcestatus',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> retourneert een <code>WritableResourceRef</code> met <code>set()</code>, <code>update()</code> en <code>asReadonly()</code> voor handmatig statusbeheer, overeenkomstig de <code>WritableResource</code>-API van Angular.',
+  'resourceAsync.decrementCounter': 'Teller verlagen',
+  'resourceAsync.incrementCounter': 'Teller verhogen',
+  'resourceAsync.nestedIntroduction':
+    'Een lijst kan items bevatten die gerelateerde organisaties, gebruikers of details ophalen. Dit voorbeeld toont een aanpak om laad- en foutstatussen voor elke rij onafhankelijk te beheren.',
+  'resourceAsync.nestedInjector':
+    'Geef <code>&#123; injector: this.injector &#125;</code> door via de optie <code>injector</code> in <code>ResourceRefOptions</code> om <code>resourceAsync</code> dynamisch te maken in templatehulpmethoden of services, zonder <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Volledige documentatie:',
+  'resourceAsync.seeDocumentation': 'Ontwerphandleiding:',
+  'resourceAsync.documentationDescription':
+    'Bevat meerdere benaderingen, beslisbomen en uitleg over wanneer elk patroon geschikt is.',
+  'resourceAsync.nestedOuter': 'Buitenste resource: de itemlijst heeft een eigen laad- en foutstatus.',
+  'resourceAsync.nestedInner':
+    'Binnenste resources: gerelateerde gegevens van elk item hebben onafhankelijke laad- en foutstatussen.',
+  'resourceAsync.nestedLazy': 'Laden op aanvraag: haal alleen gegevens op na een klik om API-aanroepen te beperken.',
+  'resourceAsync.nestedIndependent':
+    'Onafhankelijke statussen: elke rij beheert een eigen laadindicator, fout en gegevens.',
+  'resourceAsync.nestedItemsFailed': 'Items laden mislukt: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Organisatie laden mislukt',
+  'resourceAsync.nestedBenefitRequests': 'Minimale API-aanroepen (alleen benodigde gegevens ophalen)',
+  'resourceAsync.nestedBenefitStates': 'Eigen laad- en foutstatussen per rij',
+  'resourceAsync.nestedBenefitRetry': 'Mislukte aanvragen onafhankelijk opnieuw proberen',
+  'resourceAsync.nestedBenefitCache':
+    'Hergebruikt één resource per orgId; expliciet opnieuw laden haalt de gegevens weer op.',
+  'resourceAsync.nestedBenefitScale': 'Schaalt goed voor grote lijsten',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Nog niet gestart of opnieuw ingesteld. <code>value()</code> retourneert de ingestelde begin- of standaardwaarde, of <code>undefined</code> als deze ontbreekt.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Een bewerking wordt geladen zonder behouden resultaat. <code>value()</code> retourneert de ingestelde begin- of standaardwaarde, of <code>undefined</code> als deze ontbreekt.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Gegevens worden opnieuw opgehaald. <code>value()</code> behoudt de vorige gegevens.',
+  'resourceAsync.statusResolved': '<code>resolved</code>: Bewerking geslaagd. <code>value()</code> bevat de gegevens.',
+  'resourceAsync.statusError':
+    '<code>error</code>: De bewerking is mislukt. Vorige gegevens blijven alleen behouden met <code>preserveValueOnError</code>; anders geldt: <code>value()</code> retourneert de ingestelde begin- of standaardwaarde, of <code>undefined</code> als deze ontbreekt.',
 };

@@ -2587,4 +2587,48 @@ export const ruTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Прерван (отмена через AbortSignal)',
   'resourceAsync.requestResolved': 'Завершён',
   'resourceAsync.requestLogLabel': 'Запрос № {0} (поиск: «{1}»):',
+  'resourceAsync.todoDemoTitle': 'Демонстрация: переключение состояния задачи',
+  'resourceAsync.completedLabel': 'Выполнено:',
+  'resourceAsync.cacheFirstDemoTitle': 'Демонстрация: профиль пользователя с приоритетом кэша',
+  'resourceAsync.counterDemoTitle': 'Демонстрация: редактируемый счётчик',
+  'resourceAsync.expert': 'Эксперт',
+  'resourceAsync.nestedDemoTitle': 'Демонстрация: элементы с организациями',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (декларативное определение)',
+  'resourceAsync.statusTitle': 'Состояние ресурса',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> возвращает <code>WritableResourceRef</code> с методами <code>set()</code>, <code>update()</code> и <code>asReadonly()</code> для ручного управления состоянием в соответствии с API <code>WritableResource</code> Angular.',
+  'resourceAsync.decrementCounter': 'Уменьшить счётчик',
+  'resourceAsync.incrementCounter': 'Увеличить счётчик',
+  'resourceAsync.nestedIntroduction':
+    'Список может содержать элементы, которые загружают связанные организации, пользователей или подробные сведения. Этот пример показывает один из способов независимо управлять состояниями загрузки и ошибок каждой строки.',
+  'resourceAsync.nestedInjector':
+    'Передайте <code>&#123; injector: this.injector &#125;</code> через параметр <code>injector</code> в <code>ResourceRefOptions</code>, чтобы динамически создавать <code>resourceAsync</code> во вспомогательных методах шаблона или сервисах без <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Полная документация:',
+  'resourceAsync.seeDocumentation': 'Руководство по проектированию:',
+  'resourceAsync.documentationDescription':
+    'Содержит несколько подходов, деревья решений и рекомендации по выбору каждого шаблона.',
+  'resourceAsync.nestedOuter': 'Внешний ресурс: список элементов имеет собственные состояния загрузки и ошибки.',
+  'resourceAsync.nestedInner':
+    'Внутренние ресурсы: связанные данные каждого элемента имеют независимые состояния загрузки и ошибки.',
+  'resourceAsync.nestedLazy': 'Загрузка по запросу: получать данные только по нажатию, сокращая вызовы API.',
+  'resourceAsync.nestedIndependent':
+    'Независимые состояния: каждая строка управляет своим индикатором загрузки, ошибкой и данными.',
+  'resourceAsync.nestedItemsFailed': 'Не удалось загрузить элементы: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Не удалось загрузить организацию',
+  'resourceAsync.nestedBenefitRequests': 'Минимум вызовов API (загружаются только нужные данные)',
+  'resourceAsync.nestedBenefitStates': 'Отдельные состояния загрузки и ошибки для каждой строки',
+  'resourceAsync.nestedBenefitRetry': 'Независимое повторение неудачных запросов',
+  'resourceAsync.nestedBenefitCache':
+    'Повторно используется один ресурс для каждой orgId; явная перезагрузка снова запрашивает данные.',
+  'resourceAsync.nestedBenefitScale': 'Подходит для больших списков',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Ещё не запущен или сброшен. <code>value()</code> возвращает настроенное начальное значение или значение по умолчанию, а при их отсутствии — <code>undefined</code>.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Выполняется загрузка без сохранённого результата. <code>value()</code> возвращает настроенное начальное значение или значение по умолчанию, а при их отсутствии — <code>undefined</code>.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Выполняется повторная загрузка. <code>value()</code> сохраняет предыдущие данные.',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code>: Операция выполнена успешно. <code>value()</code> содержит данные.',
+  'resourceAsync.statusError':
+    '<code>error</code>: Операция завершилась ошибкой. Предыдущие данные сохраняются только при <code>preserveValueOnError</code>; иначе <code>value()</code> возвращает настроенное начальное значение или значение по умолчанию, а при их отсутствии — <code>undefined</code>.',
 };

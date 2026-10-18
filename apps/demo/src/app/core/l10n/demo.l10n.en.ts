@@ -2505,4 +2505,44 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Aborted (AbortSignal cancelled)',
   'resourceAsync.requestResolved': 'Resolved',
   'resourceAsync.requestLogLabel': 'Request #{0} (query: "{1}"):',
+  'resourceAsync.todoDemoTitle': 'Demo: Todo Toggle',
+  'resourceAsync.completedLabel': 'Completed:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demo: Cache-First User Profile',
+  'resourceAsync.counterDemoTitle': 'Demo: Editable Counter',
+  'resourceAsync.expert': 'Expert',
+  'resourceAsync.nestedDemoTitle': 'Demo: Items with Organizations',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (Declarative Definition)',
+  'resourceAsync.statusTitle': 'Resource Status',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> returns a <code>WritableResourceRef</code> with <code>set()</code>, <code>update()</code>, and <code>asReadonly()</code> for manual state management, matching Angular’s <code>WritableResource</code> API.',
+  'resourceAsync.decrementCounter': 'Decrease counter',
+  'resourceAsync.incrementCounter': 'Increase counter',
+  'resourceAsync.nestedIntroduction':
+    'A list may contain items that fetch related organizations, users, or details. This example shows one approach to managing loading and error states independently for each row.',
+  'resourceAsync.nestedInjector':
+    'Pass <code>&#123; injector: this.injector &#125;</code> through the <code>injector</code> option in <code>ResourceRefOptions</code> to create <code>resourceAsync</code> dynamically in template helpers or services, without <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Full Documentation:',
+  'resourceAsync.seeDocumentation': 'Design guide:',
+  'resourceAsync.documentationDescription':
+    'Includes multiple approaches, decision trees, and guidance on when to use each pattern.',
+  'resourceAsync.nestedOuter': 'Outer resource: The item list has its own loading and error state.',
+  'resourceAsync.nestedInner': 'Inner resources: Related data for each item has independent loading and error states.',
+  'resourceAsync.nestedLazy': 'Lazy loading: Fetch only when the user clicks, minimizing API calls.',
+  'resourceAsync.nestedIndependent': 'Independent states: Each row manages its own loading indicator, error, and data.',
+  'resourceAsync.nestedItemsFailed': 'Failed to load items: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Failed to load organization',
+  'resourceAsync.nestedBenefitRequests': "Minimal API calls (only fetch what's needed)",
+  'resourceAsync.nestedBenefitStates': 'Individual loading/error states per row',
+  'resourceAsync.nestedBenefitRetry': 'Retry failed fetches independently',
+  'resourceAsync.nestedBenefitCache': 'Reuses one resource per orgId; explicit reloads fetch again.',
+  'resourceAsync.nestedBenefitScale': 'Scales well for large lists',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Not started yet, or reset. <code>value()</code> returns the configured initial/default value, or <code>undefined</code>.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: An operation is loading without a retained result. <code>value()</code> returns the configured initial/default value, or <code>undefined</code>.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Refetch in progress. <code>value()</code> retains the previous data.',
+  'resourceAsync.statusResolved': '<code>resolved</code>: Operation succeeded. <code>value()</code> contains the data.',
+  'resourceAsync.statusError':
+    '<code>error</code>: Operation failed. Previous data is retained only with <code>preserveValueOnError</code>; otherwise, <code>value()</code> returns the configured initial/default value, or <code>undefined</code>.',
 };

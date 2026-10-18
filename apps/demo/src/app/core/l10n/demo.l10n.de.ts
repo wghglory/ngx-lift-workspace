@@ -2636,4 +2636,47 @@ export const deTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Abgebrochen (AbortSignal ausgelöst)',
   'resourceAsync.requestResolved': 'Abgeschlossen',
   'resourceAsync.requestLogLabel': 'Anfrage #{0} (Abfrage: „{1}“):',
+  'resourceAsync.todoDemoTitle': 'Demo: Aufgabenstatus umschalten',
+  'resourceAsync.completedLabel': 'Erledigt:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demo: Benutzerprofil mit Cache-Vorrang',
+  'resourceAsync.counterDemoTitle': 'Demo: Bearbeitbarer Zähler',
+  'resourceAsync.expert': 'Experte',
+  'resourceAsync.nestedDemoTitle': 'Demo: Einträge mit Organisationen',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (deklarative Definition)',
+  'resourceAsync.statusTitle': 'Ressourcenstatus',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> gibt eine <code>WritableResourceRef</code> mit <code>set()</code>, <code>update()</code> und <code>asReadonly()</code> zur manuellen Zustandsverwaltung zurück, entsprechend Angulars <code>WritableResource</code>-API.',
+  'resourceAsync.decrementCounter': 'Zähler verringern',
+  'resourceAsync.incrementCounter': 'Zähler erhöhen',
+  'resourceAsync.nestedIntroduction':
+    'Eine Liste kann Einträge enthalten, die zugehörige Organisationen, Benutzer oder Details abrufen. Dieses Beispiel zeigt einen Ansatz, Lade- und Fehlerzustände für jede Zeile unabhängig zu verwalten.',
+  'resourceAsync.nestedInjector':
+    'Übergeben Sie <code>&#123; injector: this.injector &#125;</code> über die Option <code>injector</code> in <code>ResourceRefOptions</code>, um <code>resourceAsync</code> dynamisch in Template-Hilfsmethoden oder Services zu erstellen, ohne <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Vollständige Dokumentation:',
+  'resourceAsync.seeDocumentation': 'Designleitfaden:',
+  'resourceAsync.documentationDescription':
+    'Enthält mehrere Ansätze, Entscheidungsbäume und Hinweise zum Einsatz der einzelnen Muster.',
+  'resourceAsync.nestedOuter': 'Äußere Ressource: Die Eintragsliste hat einen eigenen Lade- und Fehlerzustand.',
+  'resourceAsync.nestedInner':
+    'Innere Ressourcen: Zugehörige Daten jedes Eintrags haben unabhängige Lade- und Fehlerzustände.',
+  'resourceAsync.nestedLazy': 'Laden bei Bedarf: Daten erst nach einem Klick abrufen, um API-Aufrufe zu minimieren.',
+  'resourceAsync.nestedIndependent':
+    'Unabhängige Zustände: Jede Zeile verwaltet ihre eigene Ladeanzeige, Fehler und Daten.',
+  'resourceAsync.nestedItemsFailed': 'Einträge konnten nicht geladen werden: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Organisation konnte nicht geladen werden',
+  'resourceAsync.nestedBenefitRequests': 'Minimale API-Aufrufe (nur benötigte Daten abrufen)',
+  'resourceAsync.nestedBenefitStates': 'Eigene Lade- und Fehlerzustände je Zeile',
+  'resourceAsync.nestedBenefitRetry': 'Fehlgeschlagene Abrufe unabhängig wiederholen',
+  'resourceAsync.nestedBenefitCache':
+    'Eine Ressource je orgId wiederverwenden; explizites Neuladen ruft die Daten erneut ab.',
+  'resourceAsync.nestedBenefitScale': 'Gut für große Listen skalierbar',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Noch nicht gestartet oder zurückgesetzt. <code>value()</code> liefert den konfigurierten Anfangs- oder Standardwert, sonst <code>undefined</code>.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Ein Vorgang lädt ohne beibehaltenes Ergebnis. <code>value()</code> liefert den konfigurierten Anfangs- oder Standardwert, sonst <code>undefined</code>.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Erneuter Abruf läuft. <code>value()</code> behält die vorherigen Daten.',
+  'resourceAsync.statusResolved': '<code>resolved</code>: Vorgang erfolgreich. <code>value()</code> enthält die Daten.',
+  'resourceAsync.statusError':
+    '<code>error</code>: Vorgang fehlgeschlagen. Vorherige Daten werden nur mit <code>preserveValueOnError</code> beibehalten; andernfalls gilt: <code>value()</code> liefert den konfigurierten Anfangs- oder Standardwert, sonst <code>undefined</code>.',
 };

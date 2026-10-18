@@ -2503,4 +2503,45 @@ export const jaTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': '中止済み（AbortSignal による取り消し）',
   'resourceAsync.requestResolved': '完了',
   'resourceAsync.requestLogLabel': 'リクエスト #{0}（クエリ：「{1}」）：',
+  'resourceAsync.todoDemoTitle': 'デモ：タスクの完了状態を切り替える',
+  'resourceAsync.completedLabel': '完了：',
+  'resourceAsync.cacheFirstDemoTitle': 'デモ：キャッシュを優先するユーザープロフィール',
+  'resourceAsync.counterDemoTitle': 'デモ：編集可能なカウンター',
+  'resourceAsync.expert': '上級者向け',
+  'resourceAsync.nestedDemoTitle': 'デモ：組織情報を持つ項目',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition（宣言的定義）',
+  'resourceAsync.statusTitle': 'リソースの状態',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> は、手動で状態を管理する <code>set()</code>、<code>update()</code>、<code>asReadonly()</code> を備えた <code>WritableResourceRef</code> を返し、Angular の <code>WritableResource</code> API に対応します。',
+  'resourceAsync.decrementCounter': 'カウンターを減らす',
+  'resourceAsync.incrementCounter': 'カウンターを増やす',
+  'resourceAsync.nestedIntroduction':
+    'リストの各項目が、関連する組織、ユーザー、詳細情報を取得する場合があります。この例では、行ごとに読み込みとエラーの状態を独立して管理する方法を示します。',
+  'resourceAsync.nestedInjector':
+    '<code>ResourceRefOptions</code> の <code>injector</code> オプションに <code>&#123; injector: this.injector &#125;</code> を渡すと、テンプレートの補助メソッドやサービスで <code>runInInjectionContext()</code> を使わずに <code>resourceAsync</code> を動的に作成できます。',
+  'resourceAsync.fullDocumentation': '📖 詳細ドキュメント：',
+  'resourceAsync.seeDocumentation': '設計ガイド：',
+  'resourceAsync.documentationDescription': '複数の方法、判断フロー、各パターンの使い分けを説明しています。',
+  'resourceAsync.nestedOuter': '外側のリソース：項目リスト自体の読み込みとエラーの状態を持ちます。',
+  'resourceAsync.nestedInner': '内側のリソース：各項目の関連データが独立した読み込みとエラーの状態を持ちます。',
+  'resourceAsync.nestedLazy': '遅延読み込み：クリック時のみ取得し、API 呼び出しを抑えます。',
+  'resourceAsync.nestedIndependent': '独立した状態：各行が読み込み表示、エラー、データを個別に管理します。',
+  'resourceAsync.nestedItemsFailed': '項目を読み込めませんでした：{0}',
+  'resourceAsync.nestedOrganizationFailed': '組織を読み込めませんでした',
+  'resourceAsync.nestedBenefitRequests': 'API 呼び出しを最小限にする（必要なデータのみ取得）',
+  'resourceAsync.nestedBenefitStates': '行ごとに独立した読み込みとエラーの状態',
+  'resourceAsync.nestedBenefitRetry': '失敗した取得を個別に再試行',
+  'resourceAsync.nestedBenefitCache':
+    'orgId ごとに1つのリソースを再利用します。明示的に再読み込みすると、データを再取得します。',
+  'resourceAsync.nestedBenefitScale': '大きなリストにも対応',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>：まだ開始されていないか、リセットされた状態です。 <code>value()</code> は設定された初期値または既定値を返し、未設定の場合は <code>undefined</code> を返します。',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>：結果を保持せずに操作を読み込んでいます。 <code>value()</code> は設定された初期値または既定値を返し、未設定の場合は <code>undefined</code> を返します。',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>：再取得の実行中です。<code>value()</code> は前のデータを保持します。',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code>：操作が成功しました。<code>value()</code> にデータが含まれます。',
+  'resourceAsync.statusError':
+    '<code>error</code>：操作が失敗しました。前のデータは <code>preserveValueOnError</code> が有効な場合のみ保持されます。それ以外の場合、 <code>value()</code> は設定された初期値または既定値を返し、未設定の場合は <code>undefined</code> を返します。',
 };

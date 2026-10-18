@@ -2627,4 +2627,48 @@ export const esTranslations: Record<string, string> = {
   'resourceAsync.requestAborted': 'Cancelada (AbortSignal activado)',
   'resourceAsync.requestResolved': 'Completada',
   'resourceAsync.requestLogLabel': 'Solicitud #{0} (consulta: «{1}»):',
+  'resourceAsync.todoDemoTitle': 'Demostración: cambiar el estado de una tarea',
+  'resourceAsync.completedLabel': 'Completada:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demostración: perfil de usuario con prioridad de caché',
+  'resourceAsync.counterDemoTitle': 'Demostración: contador editable',
+  'resourceAsync.expert': 'Experto',
+  'resourceAsync.nestedDemoTitle': 'Demostración: elementos con organizaciones',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (definición declarativa)',
+  'resourceAsync.statusTitle': 'Estado del recurso',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> devuelve una <code>WritableResourceRef</code> con <code>set()</code>, <code>update()</code> y <code>asReadonly()</code> para gestionar el estado manualmente, de acuerdo con la API <code>WritableResource</code> de Angular.',
+  'resourceAsync.decrementCounter': 'Disminuir contador',
+  'resourceAsync.incrementCounter': 'Aumentar contador',
+  'resourceAsync.nestedIntroduction':
+    'Una lista puede contener elementos que obtienen organizaciones, usuarios o detalles relacionados. Este ejemplo muestra una forma de gestionar los estados de carga y error de cada fila de manera independiente.',
+  'resourceAsync.nestedInjector':
+    'Pase <code>&#123; injector: this.injector &#125;</code> mediante la opción <code>injector</code> de <code>ResourceRefOptions</code> para crear <code>resourceAsync</code> dinámicamente en métodos auxiliares de plantilla o servicios, sin <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Documentación completa:',
+  'resourceAsync.seeDocumentation': 'Guía de diseño:',
+  'resourceAsync.documentationDescription':
+    'Incluye varios enfoques, árboles de decisión y orientación sobre cuándo usar cada patrón.',
+  'resourceAsync.nestedOuter': 'Recurso externo: la lista de elementos tiene su propio estado de carga y error.',
+  'resourceAsync.nestedInner':
+    'Recursos internos: los datos relacionados de cada elemento tienen estados de carga y error independientes.',
+  'resourceAsync.nestedLazy':
+    'Carga bajo demanda: obtener datos solo al hacer clic para reducir las llamadas a la API.',
+  'resourceAsync.nestedIndependent': 'Estados independientes: cada fila gestiona su indicador de carga, error y datos.',
+  'resourceAsync.nestedItemsFailed': 'No se pudieron cargar los elementos: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'No se pudo cargar la organización',
+  'resourceAsync.nestedBenefitRequests': 'Mínimas llamadas a la API (solo obtener lo necesario)',
+  'resourceAsync.nestedBenefitStates': 'Estados de carga y error independientes por fila',
+  'resourceAsync.nestedBenefitRetry': 'Reintentar las consultas fallidas de forma independiente',
+  'resourceAsync.nestedBenefitCache':
+    'Reutiliza un recurso por orgId; una recarga explícita vuelve a obtener los datos.',
+  'resourceAsync.nestedBenefitScale': 'Escala bien para listas grandes',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Aún no se ha iniciado o se ha restablecido. <code>value()</code> devuelve el valor inicial o predeterminado configurado, o <code>undefined</code> si no se ha configurado.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Hay una operación de carga en curso sin un resultado conservado. <code>value()</code> devuelve el valor inicial o predeterminado configurado, o <code>undefined</code> si no se ha configurado.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Nueva consulta en curso. <code>value()</code> conserva los datos anteriores.',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code>: La operación se completó correctamente. <code>value()</code> contiene los datos.',
+  'resourceAsync.statusError':
+    '<code>error</code>: La operación falló. Los datos anteriores solo se conservan con <code>preserveValueOnError</code>; de lo contrario, <code>value()</code> devuelve el valor inicial o predeterminado configurado, o <code>undefined</code> si no se ha configurado.',
 };
