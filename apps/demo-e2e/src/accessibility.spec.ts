@@ -2,6 +2,7 @@ import {expect, test} from '@playwright/test';
 
 import {expectAccessible} from './support/accessibility';
 import {demoRoutes} from './support/demo-routes';
+import {visitDemoTabs} from './support/demo-tabs';
 
 for (const theme of ['light', 'dark']) {
   test.describe(`accessibility ${theme}`, () => {
@@ -17,24 +18,17 @@ for (const theme of ['light', 'dark']) {
         await page.goto(route);
         await expect(page.locator('body')).toHaveAttribute('cds-theme', theme);
         await expect(page.locator('main h1').first()).not.toBeEmpty();
-        // Certificate examples load their interactive content through @defer after the heading renders.
-        for (const example of await page.locator('app-certificate-example').all()) {
-          await expect(example.getByRole('button')).toHaveCount(1);
-          await expect(example.getByRole('button')).toHaveAccessibleName('Show certificate');
-          await expect(example.getByRole('button')).toBeEnabled();
+        // Wait for both raw/encoded examples, rather than scanning a partially created deferred view.
+        for (const demo of await page.locator('app-certificate-demo').all()) {
+          await expect(demo.locator('app-certificate-example')).toHaveCount(2);
+          for (const example of await demo.locator('app-certificate-example').all()) {
+            await expect(example.getByRole('button')).toHaveCount(1);
+            await expect(example.getByRole('button')).toHaveAccessibleName('Show certificate');
+            await expect(example.getByRole('button')).toBeEnabled();
+          }
         }
         await expectAccessible(page, testInfo);
-        const tabs = page.getByRole('tablist').first().getByRole('tab');
-        const tabCount = await tabs.count();
-        for (let index = 1; index < tabCount; index++) {
-          const tab = tabs.nth(index);
-          await test.step(`tab: ${await tab.innerText()}`, async () => {
-            await tab.focus();
-            await tab.press('Enter');
-            await expect(tab).toHaveAttribute('aria-selected', 'true');
-            await expectAccessible(page, testInfo);
-          });
-        }
+        await visitDemoTabs(page, () => expectAccessible(page, testInfo));
       });
     }
 

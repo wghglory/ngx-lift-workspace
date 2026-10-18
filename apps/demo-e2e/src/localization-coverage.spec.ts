@@ -2,6 +2,7 @@ import {expect, test} from '@playwright/test';
 
 import {demoLocales, dictionaryMessages} from './support/demo-locales';
 import {demoRoutes} from './support/demo-routes';
+import {visitDemoTabs} from './support/demo-tabs';
 
 const demoFile = (locale: string) => `apps/demo/src/app/core/l10n/demo.l10n.${locale.toLowerCase()}.ts`;
 const library = 'libs/clr-lift/src/lib/components/';
@@ -33,18 +34,12 @@ for (const {code, label} of demoLocales) {
         expect
           .soft(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), route)
           .toBe(true);
-        const tabs = page.getByRole('tablist').first().getByRole('tab');
-        const tabCount = await tabs.count();
-        for (let index = 1; index < tabCount; index++) {
-          const tab = tabs.nth(index);
-          await tab.focus();
-          await tab.press('Enter');
-          await expect(tab).toHaveAttribute('aria-selected', 'true');
+        await visitDemoTabs(page, async () => {
           await expect(page.locator('body')).not.toContainText('!! Key');
           expect
             .soft(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), route)
             .toBe(true);
-        }
+        });
       });
     }
     await page.goto('/clr-lift/components/multi-alerts');
@@ -94,9 +89,11 @@ test('wizard language changes preserve the current step and entered values', asy
   const wizardChinese = dictionaryMessages(library + 'timeline-wizard/timeline-wizard.l10n.ts', 'zh-CN');
   await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
   await page.goto('/clr-lift/components/timeline-wizard');
+  await expect(page.locator('#operator-name')).toHaveValue('my-operator');
   await page.locator('#operator-name').fill('localized-operator');
   await page.getByRole('button', {name: 'Next', exact: true}).press('Enter');
   await expect(page.locator('app-configure-service')).toBeVisible();
+  await expect(page.locator('#service-cpu')).toHaveValue('2');
   await page.locator('#service-cpu').fill('7');
   await page.getByRole('button', {name: english['header.selectLanguage'], exact: true}).click();
   await page.getByRole('menuitem', {name: '简体中文', exact: true}).click();
@@ -105,4 +102,27 @@ test('wizard language changes preserve the current step and entered values', asy
   await expect(page.locator('#service-cpu')).toHaveValue('7');
   await page.getByRole('button', {name: wizardChinese['previous'], exact: true}).press('Enter');
   await expect(page.locator('#operator-name')).toHaveValue('localized-operator');
+});
+
+test('query guide scans both failure and service-placement tab groups', async ({page}) => {
+  await page.goto('/ngx-lift/query/queryResource');
+  await expect(page.locator('main h1')).toHaveText('queryResource');
+  const failureTabs = await page
+    .getByTestId('query-failure-examples')
+    .getByRole('tab')
+    .evaluateAll((tabs) => tabs.map((tab) => tab.id));
+  const visiblePanels = new Set<string>();
+  const visited = await visitDemoTabs(page, async () => {
+    for (const panel of await page.getByRole('tabpanel').all()) {
+      visiblePanels.add((await panel.getAttribute('id')) ?? '');
+    }
+  });
+  expect(failureTabs.length).toBeGreaterThan(1);
+  expect([...visited]).toEqual(
+    expect.arrayContaining([...failureTabs, 'tab-service-pattern-b', 'tab-component-placement']),
+  );
+  expect([...visiblePanels]).toEqual(
+    expect.arrayContaining(['tab-content-service-pattern-b', 'tab-content-component-placement']),
+  );
+  await expect(page.getByTestId('query-failure-examples')).toBeVisible();
 });
