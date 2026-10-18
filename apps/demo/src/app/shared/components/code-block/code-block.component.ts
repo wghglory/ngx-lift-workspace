@@ -7,6 +7,8 @@ import {highlight, highlightAsync, sourceText} from '../../utils/highlight.util'
   templateUrl: './code-block.component.html',
   styleUrl: './code-block.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // The lang input selects a grammar; it is not an HTML language tag.
+  host: {'[attr.lang]': 'null'},
 })
 export class CodeBlockComponent {
   lang = input('typescript');

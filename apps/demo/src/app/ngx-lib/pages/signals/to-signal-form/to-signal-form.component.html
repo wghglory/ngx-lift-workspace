@@ -186,23 +186,16 @@
                 <clr-control-helper [innerHTML]="'toSignalForm.haHelper' | translate"></clr-control-helper>
               </clr-radio-container>
 
-              <clr-number-input-container>
+              <clr-input-container>
                 <label for="replica-count-input">{{ 'toSignalForm.replicaCount' | translate }}</label>
-                <input
-                  id="replica-count-input"
-                  clrNumberInput
-                  type="number"
-                  min="2"
-                  max="5"
-                  formControlName="replicaCount"
-                />
+                <input id="replica-count-input" clrInput type="number" min="2" max="5" formControlName="replicaCount" />
                 <clr-control-error *clrIfError="'required'">{{
                   'toSignalForm.replicaRequired' | translate
                 }}</clr-control-error>
                 <clr-control-error *clrIfError="'min'">{{ 'toSignalForm.replicaMin' | translate }}</clr-control-error>
                 <clr-control-error *clrIfError="'max'">{{ 'toSignalForm.replicaMax' | translate }}</clr-control-error>
                 <clr-control-helper>{{ 'toSignalForm.replicaHelper' | translate }}</clr-control-helper>
-              </clr-number-input-container>
+              </clr-input-container>
             }
 
             <!-- 3. Cascading Version Select -->
@@ -263,15 +256,15 @@
               <clr-control-helper>{{ 'toSignalForm.autoScalingHelper' | translate }}</clr-control-helper>
             </clr-toggle-container>
 
-            <clr-number-input-container>
+            <clr-input-container>
               <label for="storage-gb-input">{{ 'toSignalForm.storageGb' | translate }}</label>
-              <input id="storage-gb-input" clrNumberInput type="number" [formControl]="sf.controls.storageGb" />
+              <input id="storage-gb-input" clrInput type="number" [formControl]="sf.controls.storageGb" />
               <clr-control-error *clrIfError="'required'">{{
                 'toSignalForm.storageGbRequired' | translate
               }}</clr-control-error>
               <clr-control-error *clrIfError="'min'">{{ 'toSignalForm.storageGbMin' | translate }}</clr-control-error>
               <clr-control-helper [innerHTML]="'toSignalForm.storageGbHelper' | translate"></clr-control-helper>
-            </clr-number-input-container>
+            </clr-input-container>
 
             <!-- Declarative Enable/Disable Status Badge -->
             <div cds-layout="m-t:xs" cds-text="caption">
@@ -317,7 +310,12 @@
             @if (isPasswordMounted()) {
               <clr-password-container>
                 <label for="password-input">{{ 'form.masterPassword' | translate }}</label>
-                <input id="password-input" clrPassword formControlName="password" placeholder="Min 8 characters" />
+                <input
+                  id="password-input"
+                  clrPassword
+                  formControlName="password"
+                  [placeholder]="'toSignalForm.passwordPlaceholder' | translate"
+                />
                 <clr-control-error *clrIfError="'required'">{{
                   'form.masterPasswordRequired' | translate
                 }}</clr-control-error>
@@ -401,6 +399,7 @@
                 class="btn btn-primary"
                 [clrLoading]="createClusterRef.isLoading()"
                 [disabled]="isSubmitDisabled()"
+                [attr.aria-label]="'toSignalForm.createCluster' | translate"
               >
                 {{ 'toSignalForm.createCluster' | translate }}
               </button>

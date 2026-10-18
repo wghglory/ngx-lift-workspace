@@ -86,7 +86,7 @@
 
     .prop-type code {
       font-size: 0.8125rem;
-      color: #0284c7;
+      color: var(--clr-link-color);
       background-color: #f0f9ff;
       border: 1px solid #e0f2fe;
       padding: 0.15rem 0.375rem;
@@ -101,7 +101,7 @@
 
     .prop-default code {
       font-size: 0.8125rem;
-      color: #059669;
+      color: var(--clr-global-font-color);
       background-color: #ecfdf5;
       border: 1px solid #d1fae5;
       padding: 0.15rem 0.375rem;
@@ -128,7 +128,7 @@
   }
 
   .prop-empty {
-    color: var(--clr-color-neutral-500, #94a3b8);
+    color: var(--clr-global-font-color);
   }
 }
 
@@ -174,7 +174,7 @@
     }
 
     .prop-empty {
-      color: #64748b;
+      color: var(--clr-global-font-color);
     }
   }
 }

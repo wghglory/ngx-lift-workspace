@@ -1,3 +1,14 @@
+@use 'sass:meta';
+
+// Bundle accessible syntax palettes so theme changes do not depend on a CDN request.
+[cds-theme='light'] {
+  @include meta.load-css('highlight.js/styles/a11y-light.css');
+}
+
+[cds-theme='dark'] {
+  @include meta.load-css('highlight.js/styles/a11y-dark.css');
+}
+
 // Global demo styles (Clarity Design System based)
 
 // Custom-element hosts default to inline; vertical margins then do not separate tables and tabs.

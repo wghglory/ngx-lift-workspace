@@ -1,6 +1,14 @@
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {CodeBlockComponent} from './code-block.component';
+
+@Component({
+  imports: [CodeBlockComponent],
+  template: '<app-code-block code="const value = 1;" lang="typescript" />',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class CodeBlockHost {}
 
 describe('CodeBlockComponent', () => {
   let component: CodeBlockComponent;
@@ -19,6 +27,12 @@ describe('CodeBlockComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('inherits the document language and makes overflowing source keyboard reachable', () => {
+    const host = TestBed.createComponent(CodeBlockHost);
+    host.detectChanges();
+    expect(host.nativeElement.querySelector('app-code-block').getAttribute('lang')).toBeNull();
+    expect(host.nativeElement.querySelector('pre').tabIndex).toBe(0);
   });
   it('renders new source immediately while asynchronous highlighting catches up', async () => {
     fixture.componentRef.setInput('code', 'const first = 1;');

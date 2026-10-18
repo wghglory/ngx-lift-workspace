@@ -82,7 +82,12 @@
       <h3>{{ 'computedAsync.example9' | translate }}</h3>
       <p>{{ 'computedAsync.example9Desc' | translate }}</p>
       <div>
-        <button class="btn btn-primary" (click)="refresh()" [clrLoading]="usersState().isLoading === true">
+        <button
+          class="btn btn-primary"
+          (click)="refresh()"
+          [clrLoading]="usersState().isLoading === true"
+          [attr.aria-label]="'computedAsync.refresh' | translate"
+        >
           {{ 'computedAsync.refresh' | translate }}
         </button>
       </div>
@@ -112,7 +117,12 @@
       <h3>{{ 'computedAsync.example10' | translate }}</h3>
       <p>{{ 'computedAsync.example10Desc' | translate }}</p>
       <div>
-        <button class="btn btn-primary" (click)="load()" [clrLoading]="deferredUsersState()?.isLoading === true">
+        <button
+          class="btn btn-primary"
+          (click)="load()"
+          [clrLoading]="deferredUsersState()?.isLoading === true"
+          [attr.aria-label]="'computedAsync.loadUsers' | translate"
+        >
           {{ 'computedAsync.loadUsers' | translate }}
         </button>
       </div>

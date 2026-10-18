@@ -97,7 +97,13 @@
         </clr-radio-container>
 
         <div cds-layout="horizontal gap:sm align:vertical-center">
-          <button type="button" class="btn btn-primary btn-sm" [clrLoading]="isLoading()" (click)="executeSimulation()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [clrLoading]="isLoading()"
+            (click)="executeSimulation()"
+            [attr.aria-label]="'k8sRetryBackoff.btnSimulate' | translate"
+          >
             {{ 'k8sRetryBackoff.btnSimulate' | translate }}
           </button>
           <button

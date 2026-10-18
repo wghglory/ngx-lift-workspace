@@ -90,6 +90,9 @@ cancels patch timers and subscriptions. Cancelling the wizard emits an event; th
 
 ## Clarity, accessibility, and localization
 
+Next/Finish retains its translated accessible name while Clarity replaces visible button content with a loading
+indicator. Keyboard advancement and return navigation have explicit browser accessibility checks.
+
 Clarity timeline/action layout and translated navigation labels. Hosts localize titles, descriptions and errors. Verify
 focus after step changes, error announcements, compact/RTL, long titles and keyboard access separately from form
 validity tests. Child controls keep their own CVA/form accessibility contracts.

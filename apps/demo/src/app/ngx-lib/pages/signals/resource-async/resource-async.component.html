@@ -95,6 +95,7 @@
                             class="btn btn-sm btn-primary"
                             (click)="lazyUsersRef.reload()"
                             [clrLoading]="lazyUsersRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.loadUsers' | translate"
                           >
                             {{ 'resourceAsync.loadUsers' | translate }}
                           </button>
@@ -163,6 +164,7 @@
                             class="btn btn-sm btn-primary"
                             (click)="userWithFallbackRef.reload()"
                             [clrLoading]="userWithFallbackRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.triggerFallback' | translate"
                           >
                             {{ 'resourceAsync.triggerFallback' | translate }}
                           </button>
@@ -317,6 +319,7 @@
                             type="submit"
                             [disabled]="registrationRef.isLoading()"
                             [clrLoading]="registrationRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.regSubmit' | translate"
                           >
                             {{ 'resourceAsync.regSubmit' | translate }}
                           </button>
@@ -420,6 +423,7 @@
                             class="btn btn-sm btn-outline"
                             (click)="runAwaitableSearch()"
                             [clrLoading]="searchDefinitionRef.isLoading()"
+                            aria-label="Await execute()"
                           >
                             Await execute()
                           </button>

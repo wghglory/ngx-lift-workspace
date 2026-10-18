@@ -79,6 +79,7 @@
                       class="btn btn-sm btn-outline"
                       [clrLoading]="clustersBulkQuery.isRefreshing()"
                       (click)="reloadBulkFleet()"
+                      [attr.aria-label]="'queryResources.refreshFleet' | translate"
                     >
                       <clr-icon shape="refresh" />
                       {{ 'queryResources.refreshFleet' | translate }}
@@ -156,6 +157,7 @@
                       class="btn btn-sm btn-primary"
                       [clrLoading]="isFleetRefreshing()"
                       (click)="reloadGranularFleet()"
+                      [attr.aria-label]="'queryResources.refreshFleet' | translate"
                     >
                       <clr-icon shape="refresh" />
                       {{ 'queryResources.refreshFleet' | translate }}
@@ -225,6 +227,7 @@
                               class="btn btn-sm btn-link p-0 m-0"
                               [clrLoading]="query.isRefreshing()"
                               (click)="query.reload()"
+                              [attr.aria-label]="'queryResources.refreshCluster' | translate"
                             >
                               {{ 'queryResources.refreshCluster' | translate }}
                             </button>

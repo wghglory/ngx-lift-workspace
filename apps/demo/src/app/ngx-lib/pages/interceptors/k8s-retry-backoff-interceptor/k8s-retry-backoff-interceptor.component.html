@@ -88,7 +88,13 @@
         </clr-radio-container>
 
         <div cds-layout="horizontal gap:sm align:vertical-center">
-          <button type="button" class="btn btn-primary btn-sm" [clrLoading]="isLoading()" (click)="executeRequest()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [clrLoading]="isLoading()"
+            (click)="executeRequest()"
+            [attr.aria-label]="'k8sRetryBackoffInterceptor.btnSend' | translate"
+          >
             {{ 'k8sRetryBackoffInterceptor.btnSend' | translate }}
           </button>
           <button
@@ -156,6 +162,7 @@
             [clrLoading]="activeOverrideTest() === 'probe'"
             [disabled]="isTestingOverride()"
             (click)="testProbeOptOut()"
+            [attr.aria-label]="'k8sRetryBackoffInterceptor.btnProbe' | translate"
           >
             {{ 'k8sRetryBackoffInterceptor.btnProbe' | translate }}
           </button>
@@ -165,6 +172,7 @@
             [clrLoading]="activeOverrideTest() === 'workload'"
             [disabled]="isTestingOverride()"
             (click)="testWorkloadCustom()"
+            [attr.aria-label]="'k8sRetryBackoffInterceptor.btnWorkloads' | translate"
           >
             {{ 'k8sRetryBackoffInterceptor.btnWorkloads' | translate }}
           </button>

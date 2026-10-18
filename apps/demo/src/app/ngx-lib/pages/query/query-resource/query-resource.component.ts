@@ -302,6 +302,7 @@ export class AuthPlacementDemoComponent {
           !authStateService.currentUserQuery.hasValue()
         "
         (click)="authStateService.updateName()"
+        [attr.aria-label]="'queryResource.updateNameBtn' | translate"
       >
         <clr-icon shape="refresh" />
         {{ 'queryResource.updateNameBtn' | translate }}

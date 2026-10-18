@@ -1,9 +1,3 @@
-$primary-color: #3490dc;
-$background-light: #ebf4ff;
-$text-color: #1a202c;
-$background-dark: #0086bf;
-$border-dark: #ebf4ff;
-$icon-color-dark: rgb(0, 51, 90);
 $callout-padding: 1rem;
 $callout-border-radius: 0 0 2px 2px;
 
@@ -15,10 +9,10 @@ $callout-border-radius: 0 0 2px 2px;
   display: flex;
   align-items: center;
   gap: 1rem;
-  background-color: $background-light;
-  border-left: 4px solid $primary-color;
+  background-color: var(--clr-card-bg-color);
+  border-inline-start: 4px solid var(--clr-alert-info-border-color);
   border-radius: $callout-border-radius;
-  color: $text-color;
+  color: var(--clr-global-font-color);
   padding: $callout-padding;
 
   ::ng-deep p:first-of-type {
@@ -30,7 +24,7 @@ $callout-border-radius: 0 0 2px 2px;
   fill: currentColor;
   height: 1.5rem;
   width: 1.5rem;
-  color: $primary-color;
+  color: var(--clr-alert-info-icon-color);
 
   display: none;
 
@@ -41,19 +35,8 @@ $callout-border-radius: 0 0 2px 2px;
 
 :host-context([cds-theme='dark']) {
   .callout-container {
-    background-color: $background-dark;
-    border-left: 4px solid $border-dark;
-
     ::ng-deep a {
       text-decoration: underline;
-
-      &:visited {
-        color: hsl(238deg 100% 91.59%);
-      }
     }
-  }
-
-  .callout-icon {
-    color: $icon-color-dark;
   }
 }

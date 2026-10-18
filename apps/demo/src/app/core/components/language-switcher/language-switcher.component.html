@@ -16,6 +16,7 @@
         type="button"
         clrDropdownItem
         [class.active]="activeLanguageCode() === lang.code"
+        [attr.aria-current]="activeLanguageCode() === lang.code ? 'true' : null"
         (click)="selectLanguage(lang.code)"
       >
         <span class="dropdown-item-label">{{ lang.label }}</span>

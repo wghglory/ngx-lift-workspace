@@ -10,7 +10,7 @@
   .features-intro {
     margin-top: 0.5rem;
     margin-bottom: 1.25rem;
-    color: var(--clr-color-neutral-700, #565656);
+    color: var(--clr-global-font-color);
   }
 
   .features-grid {
@@ -61,7 +61,7 @@
 
   .stat-label {
     font-size: 0.75rem;
-    color: var(--clr-color-neutral-700, #565656);
+    color: var(--clr-global-font-color);
     margin-top: 0.25rem;
   }
 }
@@ -71,7 +71,7 @@
   overflow-y: auto;
   font-family: monospace;
   font-size: 0.75rem;
-  background-color: var(--clr-color-neutral-100, #f8f8f8);
+  background-color: var(--clr-card-bg-color);
   border: 1px solid var(--clr-color-neutral-300, #e0e0e0);
   border-radius: 4px;
   padding: 0.5rem;

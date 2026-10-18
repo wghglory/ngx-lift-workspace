@@ -52,7 +52,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
-  color: var(--clr-color-neutral-700, #4a5568);
+  color: var(--clr-global-font-color);
 }
 
 .toggle-raw-btn {
@@ -65,7 +65,7 @@
 
 .inspector-description {
   font-size: 0.8125rem;
-  color: var(--clr-color-neutral-600, #718096);
+  color: var(--clr-global-font-color);
   margin-bottom: 0.5rem;
 }
 
@@ -88,7 +88,6 @@
 }
 
 .state-label {
-  opacity: 0.75;
   font-weight: 500;
 }
 
@@ -130,7 +129,7 @@
   color: #374151;
 }
 
-[cds-theme='dark'] {
+:host-context([cds-theme='dark']) {
   .state-inspector-container {
     background-color: #1a202c;
     border-color: #2d3748;
