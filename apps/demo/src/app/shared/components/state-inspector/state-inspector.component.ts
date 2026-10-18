@@ -21,7 +21,7 @@ export interface StateInspectorItem {
 export class StateInspectorComponent {
   private translationService = inject(TranslationService);
 
-  title = input<string>('Live Signal State');
+  title = input<string>('inspector.liveState');
   description = input<string>('');
   data = input<Record<string, unknown> | null | undefined>(null);
 

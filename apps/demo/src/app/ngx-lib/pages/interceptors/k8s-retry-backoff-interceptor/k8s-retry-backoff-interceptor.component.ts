@@ -35,6 +35,7 @@ export type InterceptorMode = 'default' | 'custom' | 'disabled' | 'postDefault' 
 export interface InterceptorResult {
   success: boolean;
   message: string;
+  messageKey?: string;
   totalAttempts: number;
   statusCode: number;
 }
@@ -164,6 +165,7 @@ readonly overrideResult = signal<{
   attempts: number;
   statusCode: number;
   message: string;
+  messageKey?: string;
 } | null>(null);
 
 testProbeOptOut(): void {
@@ -209,6 +211,7 @@ private testOverride(
             statusCode: event.status,
             message:
               'Request succeeded after 2 retries with maxAttempts: 10 and 200ms exponential base and equal jitter.',
+            messageKey: 'k8sRetryBackoff.customOverrideResult',
           });
         }
       },
@@ -218,6 +221,7 @@ private testOverride(
           attempts,
           statusCode: error.status,
           message: 'Request failed immediately (HTTP 429). Retries bypassed via K8S_RETRY_BACKOFF_CONFIG: false.',
+          messageKey: 'k8sRetryBackoff.bypassedResult',
         }),
     });
 }`);
@@ -343,6 +347,7 @@ executeRequest(): void {
           this.simulationResult.set({
             success: true,
             message: 'Request succeeded through interceptor after retry.',
+            messageKey: 'k8sRetryBackoff.interceptorSuccess',
             totalAttempts: attemptCount,
             statusCode: event.status,
           });
@@ -359,6 +364,14 @@ executeRequest(): void {
                 : mode === 'postGateway'
                   ? 'Gateway 429 was not retried: the configured Kubernetes predicate rejected it.'
                   : \`Error \${err.status}: Exceeded maximum attempts without recovery.\`,
+          messageKey:
+            mode === 'disabled'
+              ? 'k8sRetryBackoff.disabledResult'
+              : mode === 'postDefault'
+                ? 'k8sRetryBackoff.postDefaultResult'
+                : mode === 'postGateway'
+                  ? 'k8sRetryBackoff.gatewayResult'
+                  : 'k8sRetryBackoff.unrecoveredResult',
           totalAttempts: attemptCount,
           statusCode: err.status,
         });
@@ -395,6 +408,7 @@ clearLogs(): void {
     attempts: number;
     statusCode: number;
     message: string;
+    messageKey?: string;
   } | null>(null);
 
   readonly interceptorUsageCode = highlight(`// app.config.ts
@@ -594,6 +608,7 @@ export class WorkloadService {
             this.simulationResult.set({
               success: true,
               message: 'Request succeeded through interceptor after retry.',
+              messageKey: 'k8sRetryBackoff.interceptorSuccess',
               totalAttempts: attemptCount,
               statusCode: event.status,
             });
@@ -610,6 +625,14 @@ export class WorkloadService {
                   : mode === 'postGateway'
                     ? 'Gateway 429 was not retried: the configured Kubernetes predicate rejected it.'
                     : `Error ${err.status}: Exceeded maximum attempts without recovery.`,
+            messageKey:
+              mode === 'disabled'
+                ? 'k8sRetryBackoff.disabledResult'
+                : mode === 'postDefault'
+                  ? 'k8sRetryBackoff.postDefaultResult'
+                  : mode === 'postGateway'
+                    ? 'k8sRetryBackoff.gatewayResult'
+                    : 'k8sRetryBackoff.unrecoveredResult',
             totalAttempts: attemptCount,
             statusCode: err.status,
           });
@@ -668,6 +691,7 @@ export class WorkloadService {
               statusCode: event.status,
               message:
                 'Request succeeded after 2 retries with maxAttempts: 10 and 200ms exponential base and equal jitter.',
+              messageKey: 'k8sRetryBackoff.customOverrideResult',
             });
           }
         },
@@ -677,6 +701,7 @@ export class WorkloadService {
             attempts,
             statusCode: error.status,
             message: 'Request failed immediately (HTTP 429). Retries bypassed via K8S_RETRY_BACKOFF_CONFIG: false.',
+            messageKey: 'k8sRetryBackoff.bypassedResult',
           }),
       });
   }

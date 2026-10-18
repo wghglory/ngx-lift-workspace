@@ -76,14 +76,14 @@
         <div class="card-block">
           <div cds-layout="vertical gap:md">
             <div cds-layout="horizontal gap:xs align:center wrap">
-              <span cds-text="secondary">Filter Parameter (Signal):</span>
+              <span cds-text="secondary">{{ 'poll.filterParameter' | translate }}:</span>
               <button
                 class="btn btn-sm"
                 [class.btn-primary]="signalFilter() === 'all'"
                 [class.btn-outline]="signalFilter() !== 'all'"
                 (click)="setSignalFilter('all')"
               >
-                All (30 items)
+                {{ 'poll.filterAll' | translate: 30 }}
               </button>
               <button
                 class="btn btn-sm"
@@ -91,7 +91,7 @@
                 [class.btn-outline]="signalFilter() !== 'active'"
                 (click)="setSignalFilter('active')"
               >
-                Active (15 items)
+                {{ 'poll.filterActive' | translate: 15 }}
               </button>
               <button
                 class="btn btn-sm"
@@ -99,7 +99,7 @@
                 [class.btn-outline]="signalFilter() !== 'inactive'"
                 (click)="setSignalFilter('inactive')"
               >
-                Inactive (15 items)
+                {{ 'poll.filterInactive' | translate: 15 }}
               </button>
               <button class="btn btn-sm btn-warning-outline" (click)="triggerRapidRefreshes()">
                 {{ 'poll.btnRapidFilters' | translate }}
@@ -109,15 +109,16 @@
             @if (signalPollState$ | async; as state) {
               <div cds-layout="horizontal gap:md align:center wrap">
                 <span
-                  >Status: <span class="badge badge-info">{{ state.status }}</span></span
+                  >{{ 'queryResource.status' | translate }}:
+                  <span class="badge badge-info">{{ state.status }}</span></span
                 >
                 <span
-                  >Active Filter: <strong>{{ signalFilter() }}</strong></span
+                  >{{ 'poll.activeFilter' | translate }}: <strong>{{ signalFilter() }}</strong></span
                 >
                 @if (state.isLoading) {
                   <span cds-layout="horizontal gap:xs align:center">
                     <cll-spinner inline />
-                    <span cds-text="secondary">Polling in progress...</span>
+                    <span cds-text="secondary">{{ 'poll.inProgress' | translate }}</span>
                   </span>
                 }
               </div>
@@ -126,21 +127,21 @@
                 <div class="card card-block">
                   <div cds-layout="horizontal gap:lg align:center wrap">
                     <div>
-                      <div cds-text="secondary caption">Poll Sequence #</div>
+                      <div cds-text="secondary caption">{{ 'poll.sequence' | translate }}</div>
                       <div cds-text="heading">{{ data.seq }}</div>
                     </div>
                     <div>
-                      <div cds-text="secondary caption">Filtered By</div>
+                      <div cds-text="secondary caption">{{ 'poll.filteredBy' | translate }}</div>
                       <div>
                         <span class="badge">{{ data.status }}</span>
                       </div>
                     </div>
                     <div>
-                      <div cds-text="secondary caption">Total Results</div>
+                      <div cds-text="secondary caption">{{ 'poll.totalResults' | translate }}</div>
                       <div cds-text="heading">{{ data.totalItems }}</div>
                     </div>
                     <div>
-                      <div cds-text="secondary caption">Last Server Timestamp</div>
+                      <div cds-text="secondary caption">{{ 'poll.lastTimestamp' | translate }}</div>
                       <div>{{ data.timestamp }}</div>
                     </div>
                   </div>
@@ -149,19 +150,16 @@
             }
 
             <div>
-              <h5>Recent Poll Trigger & Execution Log:</h5>
+              <h5>{{ 'poll.recentLog' | translate }}:</h5>
               <ul class="list-unstyled" cds-layout="vertical gap:xs">
                 @for (log of signalPollLogs(); track $index) {
                   <li cds-layout="horizontal gap:sm align:center">
                     <span cds-text="secondary">[{{ log.time }}]</span>
-                    <span
-                      >Trigger with filter: "<strong>{{ log.filter }}</strong
-                      >"</span
-                    >
+                    <span>{{ 'poll.triggerWithFilter' | translate: log.filter }}</span>
                     @if (log.status === 'in-flight') {
-                      <span class="badge badge-info">Executing (HTTP delay)</span>
+                      <span class="badge badge-info">{{ 'poll.executing' | translate }}</span>
                     } @else {
-                      <span class="badge badge-success">Settled</span>
+                      <span class="badge badge-success">{{ 'poll.settled' | translate }}</span>
                     }
                   </li>
                 }

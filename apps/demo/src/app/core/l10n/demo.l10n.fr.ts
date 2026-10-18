@@ -2556,4 +2556,48 @@ export const frTranslations: Record<string, string> = {
   'computedAsync.readError': 'La lecture a levé une erreur ; aucune valeur de succès n’a été renvoyée.',
   'computedAsync.readDemoHint':
     'Faites échouer la source, puis lisez le signal. Rétablissez la source et relisez pour vérifier la récupération.',
+  'header.mitLicense': 'Licence MIT',
+  'alert.moreInfo': 'Plus d’informations sur l’erreur du serveur',
+  'common.interfaceTitle': 'Interface {0}',
+  'common.failed': 'Échec',
+  'common.error': 'Erreur',
+  'common.pros': 'Avantages',
+  'common.cons': 'Inconvénients',
+  'common.componentN': 'Composant {0}',
+  'poll.filterParameter': 'Paramètre de filtre (signal)',
+  'poll.filterAll': 'Tous ({0} éléments)',
+  'poll.filterActive': 'Actifs ({0} éléments)',
+  'poll.filterInactive': 'Inactifs ({0} éléments)',
+  'poll.activeFilter': 'Filtre actif',
+  'poll.inProgress': 'Interrogation périodique en cours...',
+  'poll.sequence': 'Numéro d’interrogation',
+  'poll.filteredBy': 'Filtré par',
+  'poll.totalResults': 'Nombre total de résultats',
+  'poll.lastTimestamp': 'Dernier horodatage du serveur',
+  'poll.recentLog': 'Journal récent des déclenchements et des exécutions des interrogations',
+  'poll.triggerWithFilter': 'Déclenché avec le filtre : « {0} »',
+  'poll.executing': 'Exécution en cours (délai HTTP)',
+  'poll.settled': 'Terminé',
+  'k8sRetryBackoff.resultSuccess': 'Réussite (HTTP {0})',
+  'k8sRetryBackoff.resultFailure': 'Échec (HTTP {0})',
+  'k8sRetryBackoff.totalAttempts': '(Total des tentatives : {0})',
+  'k8sRetryBackoff.failFast': 'HTTP {0} (échec immédiat)',
+  'k8sRetryBackoff.overrideSucceeded': 'HTTP {0} (réussite)',
+  'k8sRetryBackoff.attempts': '(Tentatives : {0})',
+  'k8sRetryBackoff.exhaustedResult': 'Nombre maximal de tentatives (5) atteint. Requête rejetée.',
+  'k8sRetryBackoff.non429Result':
+    'Erreur {0} : Une erreur autre que 429 a été propagée immédiatement sans nouvelle tentative.',
+  'k8sRetryBackoff.interceptorSuccess': 'La requête a réussi après une nouvelle tentative de l’intercepteur.',
+  'k8sRetryBackoff.disabledResult':
+    'HTTP 429 a été renvoyé immédiatement : les nouvelles tentatives avec temporisation ont été désactivées via HttpContext.',
+  'k8sRetryBackoff.postDefaultResult':
+    'POST n’a pas été réessayé : les nouvelles tentatives d’écriture nécessitent une activation explicite pour le point de terminaison.',
+  'k8sRetryBackoff.gatewayResult':
+    'Le code 429 de la passerelle n’a pas été réessayé : le prédicat Kubernetes configuré l’a rejeté.',
+  'k8sRetryBackoff.unrecoveredResult': 'Erreur {0} : Nombre maximal de tentatives atteint sans rétablissement.',
+  'k8sRetryBackoff.customOverrideResult':
+    'La requête a réussi après 2 nouvelles tentatives avec maxAttempts: 10, une base exponentielle de 200ms et equal jitter.',
+  'k8sRetryBackoff.bypassedResult':
+    'La requête a échoué immédiatement (HTTP 429). Les nouvelles tentatives ont été ignorées via K8S_RETRY_BACKOFF_CONFIG: false.',
+  'k8sRetryBackoff.operatorSuccess': 'La requête a réussi après une nouvelle tentative.',
 };
