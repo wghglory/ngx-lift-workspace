@@ -64,8 +64,11 @@ The maintainer's October 16 direction settles the delivery order:
    submissions, browser demos and strict installed consumers. Keep Angular 21 CVA behavior until an explicit supported
    version/release decision replaces it. A CVA alone does not establish native signal-field support.
 
-The [forms contract](design/clr-lift/forms-compatibility-design-spec.md) owns the two phases and acceptance matrix.
-Compatibility/release policy for the upgrade remains open; the decision to deliver Angular 21 controls first is settled.
+The [forms contract](design/clr-lift/forms-compatibility-design-spec.md) owns the two phases and acceptance matrix. Its
+October 18 revision is ready for maintainer review: owner writes/reset, composite touch, Angular commit timing,
+validation and payload policy have concrete examples and gates. Implementation and installed-consumer proof remain
+pending; the shared-form roadmap item is not complete merely because the contract is written. Compatibility/release
+policy for the upgrade remains open; the decision to deliver Angular 21 controls first is settled.
 
 ## Specifications to review
 

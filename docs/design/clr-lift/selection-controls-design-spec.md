@@ -169,6 +169,11 @@ commit. Enter during IME composition does not choose an option. Escape dismisses
 retains free text. Entity-only required selection uses the combobox. Avoid an initial `string | Entity` value union. The
 shipping demos add ngModel and typed Reactive Forms + `toSignalForm` from the shared contract.
 
+The [shared forms contract](forms-compatibility-design-spec.md#behavior-and-architecture) owns reset/clear differences,
+Angular `updateOn`, intrinsic validation, composite touch and disabled-value serialization. Search loading does not
+automatically mark the form pending. A Clarity composition spike must prove those behaviors through real Angular form
+directives before implementation is considered verified; existing Clarity CVA support alone is insufficient.
+
 ## Behavior and architecture
 
 States: idle/below-threshold → debouncing → initial loading → results/empty/error. Appending has separate loading/error

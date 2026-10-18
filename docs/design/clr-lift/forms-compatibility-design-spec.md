@@ -1,8 +1,8 @@
 # Shared form-control compatibility
 
-Status: **Draft API; delivery order decided by maintainer October 16, 2026**. Owner: clr-lift maintainers. Package:
-clr-lift. Approval: Angular 21-first direction approved in the task; individual component APIs remain pending. Proposed
-control exports are unavailable until implemented.
+Status: **Draft contract; ready for maintainer review**. Updated October 18, 2026. Owner: clr-lift maintainers. Package:
+clr-lift. Approval: Angular 21-first delivery order is approved; the detailed contract below and individual component
+APIs await review. This increment specifies behavior and examples; it adds no control exports or implementation.
 
 ## Applicable contracts
 
@@ -17,8 +17,11 @@ model and field tree. See the [implemented facade](../ngx-lift/reactive-forms-de
 
 ## Terminology
 
-**CVA** bridges Angular 21 ngModel/Reactive Forms to a value control. **Facade** means `toSignalForm` over that same
-FormGroup. **Native field** means Angular Signal Forms integration, deferred until the platform upgrade.
+**Owner** is the Angular control holding the submitted value and form status. **CVA** bridges its model writes, user
+changes, touch and disabled state to the view. **Draft** is uncommitted text or search state. **Composite** includes a
+control's inputs, selected-item actions and owned overlay, even when the overlay is outside its DOM subtree. **Facade**
+means `toSignalForm` over the same FormGroup. **Native field** means Angular Signal Forms integration, deferred until
+the platform upgrade.
 
 ## Goals
 
@@ -39,32 +42,57 @@ Replacing `toSignalForm`, domain persistence, or assigning form values to drawer
 
 ## Use cases and acceptance
 
-| ID  | Actor and task                     | Initial state/action                    | Observable outcome                                     | Failure/recovery                            | Demo/test                     |
-| --- | ---------------------------------- | --------------------------------------- | ------------------------------------------------------ | ------------------------------------------- | ----------------------------- |
-| F1  | Bind ngModel                       | Prefill, edit, externally reset         | One user update; owner writes never echo               | Clear/reset restores documented empty value | Phase 1 ngModel host          |
-| F2  | Edit typed FormGroup               | Validate, disable, reset, submit        | Correct value, dirty/touched/pending and updateOn      | Error visible without losing draft          | Phase 1 Reactive Forms host   |
-| F3  | Observe via facade                 | Wrap F2's group in toSignalForm         | Same value and validity; explicit submission filtering | Reset/async validity reaches facade         | Phase 1 facade host           |
-| F4  | Bind native field                  | After upgrade, repeat F1/F2 journeys    | Same serialized value and native field state           | Required/parse/async errors reach owner     | Phase 2 native host, deferred |
-| F5  | Traverse composite                 | Move between input, pills and overlay   | Touch only when leaving composite                      | No premature blur commit                    | Keyboard/pointer E2E          |
-| F6  | Reset/disable/destroy pending work | Start remote load then owner transition | Obsolete completion cannot overwrite new state         | Reenable/retry uses current owner state     | Race/cleanup tests            |
+| ID  | Actor and task                     | Initial state/action                    | Observable outcome                                     | Failure/recovery                               | Demo/test                     |
+| --- | ---------------------------------- | --------------------------------------- | ------------------------------------------------------ | ---------------------------------------------- | ----------------------------- |
+| F1  | Bind ngModel                       | Prefill, edit, externally reset         | One accepted user edit; owner writes never echo        | Clear uses empty value; reset uses owner value | Phase 1 ngModel host          |
+| F2  | Edit typed FormGroup               | Validate, disable, reset, submit        | Correct value, dirty/touched/pending and updateOn      | Error visible without losing draft             | Phase 1 Reactive Forms host   |
+| F3  | Observe via facade                 | Wrap F2's group in toSignalForm         | Same value and validity; explicit submission filtering | Reset/async validity reaches facade            | Phase 1 facade host           |
+| F4  | Bind native field                  | After upgrade, repeat F1/F2 journeys    | Same serialized value and native field state           | Required/parse/async errors reach owner        | Phase 2 native host, deferred |
+| F5  | Traverse composite                 | Move between input, pills and overlay   | Touch only when leaving composite                      | No premature blur commit                       | Keyboard/pointer E2E          |
+| F6  | Reset/disable/destroy pending work | Start remote load then owner transition | Obsolete completion cannot overwrite new state         | Reenable/retry uses current owner state        | Race/cleanup tests            |
+| F7  | Choose when edits reach the owner  | Use change, blur and submit policies    | Angular commits at the configured boundary             | Reset drops a buffered edit                    | Real Angular directive hosts  |
+| F8  | Submit disabled/readonly fields    | Disable one child or keep it readonly   | Payload follows explicit owner serialization policy    | Reenable retains the committed value           | Reactive/facade host          |
+| F9  | Correct an invalid draft           | Enter an unparseable value              | Owning form sees an intrinsic error without data loss  | Correction clears only the control's error     | Applicable parsing controls   |
+
+G1 maps to F1–F3/F7; G2 to F1–F3/F5–F9; G3 to the deferred F4 matrix. These are planned acceptance cases, not results.
 
 ## Industry evidence and current gaps
 
-Checked October 16, 2026: [Angular CVA](https://angular.dev/api/forms/ControlValueAccessor) separates owner writes, user
-changes, touch and disabled propagation. Adopt this bridge for Angular 21. Angular's
-[native custom-control contract](https://angular.dev/api/forms/signals/FormValueControl) informs the later integration;
-compile against the selected upgraded release before committing to its exact binding syntax. Current key/value inputs
-are a caller-owned FormArray editor, not a CVA. No generic lift CVA/native bridge exists today.
+Checked October 18, 2026. Installed Angular 21.2.17 source is the phase-1 behavioral baseline; current upstream docs can
+also describe newer form integrations.
+
+| Primary source / existing implementation                                                                                      | Observed behavior                                                                                 | Adopt, adapt, or reject                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [Angular CVA](https://angular.dev/api/forms/ControlValueAccessor), installed `@angular/forms` view/blur/submit pipelines      | CVA reports changes/touch; Angular buffers commits for `updateOn`                                 | Adopt; do not reproduce Angular's pending flags inside controls                                          |
+| [Clarity combobox](https://clarity.design/documentation/combobox/api), installed `clr-angular-forms-combobox.mjs`             | Existing CVA, selection, labels and overlay behavior                                              | Compose public APIs first; prove the wrapper's composite-focus boundary rather than assuming conformance |
+| [Material custom field guide](https://github.com/angular/components/blob/main/guides/creating-a-custom-form-field-control.md) | Separates form-field presentation, focus/error state and the forms bridge                         | Adapt state ownership; keep Clarity presentation and omit newer native-field examples in phase 1         |
+| [NG-ZORRO forms](https://ng.ant.design/components/form/en)                                                                    | Form presentation derives validation feedback from Angular controls                               | Adopt owner-driven errors; do not copy Ant styling or a second form model                                |
+| [React Aria forms](https://react-aria.adobe.com/forms)                                                                        | Associates labels/errors with fields and distinguishes controlled values from validation feedback | Adapt accessible feedback; Angular remains the validation/submission owner                               |
+
+Local starting points, inspected rather than newly certified:
+
+- [File-reader](../../../libs/clr-lift/src/lib/components/file-reader/file-reader.component.ts) already implements CVA
+  and intrinsic validation. Its `writeValue` does not emit changes; disable cancels pending reads. Its existing
+  action-based touch behavior is not proof of the proposed composite-blur contract. Preserve its public behavior here.
+- [Key/value inputs](../../../libs/clr-lift/src/lib/components/key-value-inputs/key-value-inputs.component.ts) require a
+  caller-owned FormArray. A future value-control API must coexist with it or obtain separate migration approval.
+- [toSignalForm](../../../libs/ngx-lift/src/lib/signals/to-signal-form.ts) observes/delegates to the original FormGroup;
+  its [submission helper](../../../libs/ngx-lift/src/lib/signals/to-submit-value.ts) includes disabled values by
+  default.
+- No generic lift CVA/native bridge exists. Keep a shared mechanism private until implemented controls demonstrate
+  reuse.
 
 ## Developer learning journey and pedagogy plan
 
 Prerequisites: Angular 21 ngModel, typed Reactive Forms, and the existing facade; this is a proposed shared-control
 contract.
 
-| Reader task                               | Learning outcome                                                 | Destination / working example                       |
-| ----------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------- |
-| Bind one value control                    | Explain owner writes versus user changes and the submitted value | This spec, phase-1 API examples                     |
-| Repeat reset/validation in each form mode | Preserve value and interaction semantics across hosts            | F1–F3 host acceptance matrix; native F4 is deferred |
+| Reader task                           | Learning outcome                                                 | Destination / working example                         |
+| ------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------- |
+| Bind one value control                | Explain owner writes versus user changes and the submitted value | Example A: ngModel owner selection and submission     |
+| Add typed validation and reset        | Separate clear, owner writes, reset and disabled values          | Example B: typed Reactive Forms; F2/F7/F8 hosts       |
+| Observe the same form through signals | Preserve Angular ownership and choose payload filtering          | Example C: facade over Example B's FormGroup; F3 host |
+| Add composite/async behavior          | Explain touch boundaries, drafts and obsolete requests           | Behavior table and F5/F6/F9; native F4 stays deferred |
 
 Validation and delivery: Hosts for proposed controls remain planned. Existing facade examples do not certify a new CVA
 or native field bridge. The public API and behavior sections below own exact options and limitations; examples introduce
@@ -72,57 +100,196 @@ them after the first task.
 
 ## Public API and examples
 
-Each feature chooses one exact value: single key `V | null`, multiple keys `readonly V[]`, text `string`, or an ordered
-key/value array. A control instance has one form owner. Search text and invalid drafts are separate from committed data.
+Each feature chooses one exact value and documents its empty value:
+
+| Kind                     | Form value                   | User clear      | Owner reset                                                    |
+| ------------------------ | ---------------------------- | --------------- | -------------------------------------------------------------- |
+| Single selection         | Primitive `V                 | null`           | `null`                                                         | Owner-supplied value/default, which may be a selected key |
+| Multiple selection       | `readonly V[]`               | New empty array | Owner-supplied array/default                                   |
+| Text/completion          | `string`                     | `''`            | Owner-supplied string/default                                  |
+| Ordered key/value editor | Feature-reviewed entry array | New empty array | Owner-supplied array/default; legacy FormArray stays supported |
+
+A control instance has one form owner. Search text, highlighted options and invalid drafts are separate from committed
+data. Do not combine ngModel and Reactive Forms or add a second writable value binding on the same instance. Copy
+collection inputs before internal edits and emit a new array for accepted collection changes. Feature specs own key
+identity, equality, ordering and intrinsic parse errors; this contract does not approve those APIs.
+
+The following **proposed** examples use `ComboboxComponent` from the selection draft; that export does not exist yet and
+these snippets have not been compiled. Labels are explanatory English; delivered examples must translate their owned
+text under the [acceptance contract](../../guides/accessibility-and-localization.md).
+
+### A. ngModel: select and submit one owner
 
 ```typescript
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {toSignalForm} from 'ngx-lift';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {FormsModule, NgForm} from '@angular/forms';
 import {ComboboxComponent} from 'clr-lift'; // proposed export
 
 @Component({
-  imports: [FormsModule, ReactiveFormsModule, ComboboxComponent],
+  imports: [FormsModule, ComboboxComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <cll-combobox label="Owner" [options]="owners" [(ngModel)]="owner" name="owner" />
-    <cll-combobox label="Owner" [options]="owners" [formControl]="group.controls.owner" />
-    <p>Reactive value: {{ sf.fields.owner.value() }}</p>
-    <button type="button" (click)="group.reset()">Reset</button>
+    <form #form="ngForm" (ngSubmit)="save(form)">
+      <cll-combobox label="Owner" [options]="owners" [(ngModel)]="owner" name="owner" required />
+      <button type="submit">Save</button>
+      <button type="button" (click)="form.resetForm({owner: null})">Reset</button>
+    </form>
+    <output>{{ submitted()?.owner }}</output>
   `,
 })
-export class FormModesExample {
+export class NgModelOwnerExample {
   readonly owners = [{value: 'u1', label: 'Ada'}];
   owner: string | null = null;
-  readonly group = new FormGroup({owner: new FormControl<string | null>(null)});
-  readonly sf = toSignalForm(this.group);
+  readonly submitted = signal<{owner: string | null} | null>(null);
+
+  save(form: NgForm): void {
+    form.control.markAllAsTouched();
+    if (!form.valid) return;
+    this.submitted.set({owner: this.owner});
+  }
 }
 ```
 
-The second control plus `sf` is the third integration example, still Reactive Forms. Submitted owner is `'u1'` or null;
-facade omission options can deliberately change the payload. Phase 2 will add a separate compiled native-field example.
+Selecting Ada submits `{owner: 'u1'}`. Clear reports null and required validation blocks this example's save. The reset
+button explicitly chooses null; it does not promise that every Angular reset means clear.
+
+### B. Typed Reactive Forms: prefill, validate, reset and disable
+
+```typescript
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ComboboxComponent} from 'clr-lift'; // proposed export
+
+@Component({
+  imports: [ReactiveFormsModule, ComboboxComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <cll-combobox label="Owner" [options]="owners" formControlName="owner" />
+      <button type="submit">Save</button>
+      <button type="button" (click)="form.reset()">Reset</button>
+      <button type="button" (click)="form.controls.owner.disable()">Disable owner</button>
+      <button type="button" (click)="form.controls.owner.enable()">Enable owner</button>
+    </form>
+    <output>{{ submitted()?.owner }}</output>
+  `,
+})
+export class ReactiveOwnerExample {
+  readonly owners = [{value: 'u1', label: 'Ada'}];
+  readonly form = new FormGroup({
+    owner: new FormControl<string | null>('u1', {nonNullable: true, validators: Validators.required}),
+  });
+  readonly submitted = signal<Partial<{owner: string | null}> | null>(null);
+
+  save(): void {
+    this.form.markAllAsTouched();
+    if (!this.form.valid) return;
+    this.submitted.set(this.form.getRawValue());
+  }
+}
+```
+
+The explicit `string | null` type allows user clear; `nonNullable: true` makes parameterless reset restore the initial
+`'u1'` instead of null. `getRawValue()` deliberately retains disabled children. This one-field form becomes DISABLED
+when its only control is disabled, so the validity guard blocks save. Use the F8 multi-field host to verify omission of
+a disabled child from an enabled group's `value`.
+
+### C. Signal observations over the same Reactive Form
+
+Starting from Example B, import `toSignalForm` at module scope, add the `sf` field inside `ReactiveOwnerExample`, and
+replace `save` with the method below. This is a separate delivery host, not a second form owner or a second control
+binding. The partial submitted-payload type preserves omissions rather than replacing missing keys with null.
+
+```typescript
+import {toSignalForm} from 'ngx-lift';
+
+readonly sf = toSignalForm(this.form, {includeDisabled: false});
+
+save(): void {
+  this.sf.markAllAsTouched();
+  if (!this.form.valid) return;
+  this.submitted.set(this.sf.submitValue());
+}
+```
+
+Render `{{ sf.fields.owner.value() }}`, `{{ sf.fields.owner.touched() }}` and `{{ sf.status() }}` alongside the same
+form. Ada still submits `{owner: 'u1'}`. `sf.form` and `sf.controls.owner` refer to the original owner/control.
+`sf.submitValue()` defaults to raw values, including disabled children; this example explicitly chooses `form.value`
+semantics instead. An enabled group omits disabled children; Angular includes all children in a wholly disabled group's
+`value`. The facade does not override that exception or make the payload valid automatically. Filtering/transform
+options belong to the application's payload policy. Phase 2 adds a separate compiled native-field example.
 
 ## Behavior and architecture
 
 One internal value/interaction state backs the CVA now and the native bridge later. Keep any reusable bridge private
-until real controls prove its shape. Owner writes never invoke `onChange`; accepted user edits invoke it once. Honor
-`updateOn: 'change' | 'blur' | 'submit'` by reporting interaction to Angular. Required/pattern/min/max and parse errors
-reach the owning form. Disabled blocks edits; readonly preserves inspection/focus where meaningful. Reset clears
-uncommitted drafts. Pending work uses cancellation plus generation checks. Do not add native form dependencies to
-Angular 21 package imports or public declarations.
+until real controls prove its shape. The component reports interaction; Angular owns dirty/touched, validation and
+commit timing. Use public Angular interfaces; no control-private pending flags or forced owner value/status writes.
+
+| Trigger                                                  | Required behavior                                                                                                                                     | Owner notification                                                                                      |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `writeValue` on setup, setValue, patchValue or reset     | Render the supplied value, discard obsolete drafts, invalidate stale work; accept nullish initialization for display without rewriting the owner      | No `onChange`, `onTouched` or user-change event                                                         |
+| Accepted user edit/selection/clear                       | Update the view and report the serialized value once; highlighting/query edits alone do not select an entity                                          | One `onChange(value)` per accepted value change                                                         |
+| Focus moves within the composite or to its owned overlay | Keep one logical focus boundary, including pointer and keyboard transitions                                                                           | No `onTouched`                                                                                          |
+| User focus leaves the entire composite                   | Report departure after resolving the actual focus destination; return focus within the composite on Escape when appropriate                           | `onTouched()` on each departure, including after reset; Angular decides when touched becomes observable |
+| `setDisabledState(true)`                                 | Block all edit paths, close the overlay, invalidate pending work, keep committed value; disabling is not a user clear or blur                         | No change/touch callback                                                                                |
+| Readonly becomes true                                    | Block text edits, selection changes and removal; preserve meaningful focus/inspection and form inclusion; cancel work that could commit an edit       | No change callback; ordinary later user departure may report touch                                      |
+| Owner reset                                              | Render the value Angular supplies (nullable default, non-null default or explicit value); cancel stale work even if the serialized value is unchanged | Angular resets pristine/touched; CVA does not infer reset solely from a null value                      |
+| Destroy or superseded request                            | Unsubscribe/abort and invalidate the generation so an uncancelable completion cannot write later                                                      | No late callbacks, validator notifications or UI updates                                                |
+
+**Commit timing:** call CVA `onChange` when the user accepts an edit for all `updateOn` modes. Angular buffers that
+value for blur or submit; the control must not add its own competing buffer. With blur, moving to an option/pill is not
+a commit boundary. Escape back to the input is not departure. `ngSubmit` runs after Angular synchronizes submit-mode
+edits; read payloads there rather than in a Save click handler. Do not disable the submit action solely because the
+pre-submit owner value is invalid: a buffered edit may make it valid on submit. A pending async validator blocks save
+until a subsequent valid submission; this contract does not queue or automatically resubmit operations.
+
+**Validation:** owner validators supply business constraints. Feature-owned parse/structural errors implement Angular's
+Validator contract, compose with owner validators, and notify `registerOnValidatorChange` when those errors change. An
+invalid draft must be visible to the owning form so it cannot silently submit an older valid value. Retaining the last
+parseable value versus another explicit invalid representation is a feature API decision. A CVA alone does not forward
+validators, required semantics, readonly state or network pending into Angular. Required/pattern/min/max must be
+verified for each applicable value type, not inferred from matching input names.
+
+**Async state:** remote search/loading is control UI state, not automatically `FormControl.pending`. Only owning-form
+async validation creates that validation state. Angular owns validator cancellation; control-owned search/parsing work
+owns its unsubscribe/AbortSignal and generation checks. Owner writes and disabled/readonly transitions cannot let late
+results select, normalize or overwrite a value. A feature must separately define whether readonly permits read-only
+lookup/inspection. No Angular native-form dependency enters phase-1 imports or declarations.
 
 ## Clarity, accessibility, and localization
 
-Use Clarity containers, labels, helper/error slots and tokens. Define composite focus boundaries including overlays.
-Translate labels, errors, empty/loading states and announcements in every supported dictionary. Each feature owns its
-keyboard/touch, dark/compact, RTL and narrow-layout behavior.
+Follow the [accessibility and language acceptance contract](../../guides/accessibility-and-localization.md) in both
+libraries and the demo, including AI-generated work. Use Clarity containers, labels, helper/error slots and tokens;
+connect names, descriptions, errors and invalid/readonly/disabled states to the actual focusable element. An outer label
+or CVA implementation alone is insufficient. Define composite focus boundaries including overlays.
+
+Inventory labels, help, required/parse/business errors, selected/unavailable labels, clear/remove actions,
+empty/loading/failure/retry states, result counts and announcements. Complete all 11 supported demo locales and every
+existing library locale/alias. Runtime language switching updates names/messages without resetting values, drafts,
+active steps or focus. Feature acceptance covers keyboard/touch, light/dark/compact, zoom/reflow, long translations and
+applicable RTL. Dictionary parity, AI review, human language approval and manual assistive-technology acceptance remain
+separate evidence gates.
 
 ## Demo and validation plan
 
-Phase 1 requires ngModel, typed Reactive Forms, and Reactive Forms + facade hosts with real imports, submission,
-validation, reset, disabled and readonly. Test owner writes, no duplicate changes, async validation and `updateOn`.
-Compile strict Angular 21 tarball consumers and check declared zoneless/ZoneJS modes; DOM tests do not prove SSR. Phase
-2 repeats those checks and adds native field value/reset/availability/touch/pending/error propagation and real browser
-submissions for every new value control listed in the [roadmap](../../component-roadmap.md).
+Phase 1 requires three separately discoverable hosts for Examples A–C with real public imports, copyable playground
+code, value/status/payload output, submission, validation, reset, disabled and readonly. The facade host must use the
+same FormGroup, not an independent mirror. Add a second enabled sibling for F8 serialization checks. These hosts ship
+with the first approved control; draft examples do not satisfy the roadmap's installed-consumer exit condition.
+
+| Gate                     | Required assertion                                                                                                                                                    | Evidence required before marking delivered                                                                             |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Angular host integration | Setup/setValue/patchValue/reset do not echo; user edit reports once; nullable/non-null default reset, disabled initial state, enable and readonly behave as specified | Actual ngModel/FormControl directives, not only manually invoked CVA callbacks                                         |
+| Commit/touch             | Repeat F5/F7 with change, blur and submit; pointer selection and portaled overlays; reset then leave again                                                            | Owning value, dirty/touched, change count and submitted payload assertions                                             |
+| Validation/async         | Required, intrinsic errors and caller sync/async validators compose; invalid/pending save is blocked; reset/disable/destroy cannot apply stale work                   | Controlled requests/validators and generation/race tests; no fixed sleeps                                              |
+| Payload                  | Enabled group value versus raw value, wholly disabled-group exception and explicit facade filtering                                                                   | F8 host; submitted data asserted after ngSubmit synchronization                                                        |
+| Types/packages           | Feature value inference and rejected invalid inputs; identical public tarball in strict Angular 21 consumers, zoneless and ZoneJS                                     | Installed declarations/templates and actual host rendering; typed FormControl alone does not certify CVA binding types |
+| Browser/language         | All three browsers; keyboard/overlay focus, repeated reset, narrow light/dark states, every locale and runtime switching                                              | Route/tab scans plus real interaction journeys and separate human acceptance records                                   |
+
+Use existing validation commands/targets; this documentation increment needs formatting and link/diff checks rather than
+component tests. Phase 2 repeats the matrix and adds native-field value/reset/availability/touch/pending/error
+propagation and real submissions for every new value control in the [roadmap](../../component-roadmap.md). DOM tests do
+not prove SSR/hydration.
 
 ## Compatibility, rollout, and risks
 
@@ -133,12 +300,22 @@ migration is implemented. Ordinary Angular signal inputs/state are compatible wi
 
 ## Review decisions and delivery
 
-Settled: Angular 21 first; no native Signal Forms in phase 1; native field support required after upgrade. Pending:
-feature value APIs, key/value coexistence strategy, and upgrade release/compatibility policy. Review each feature before
-implementation; future native support must keep its serialized value stable or explicitly document a breaking change.
+Settled: Angular 21 first; no native Signal Forms in phase 1; native field support required after upgrade.
+
+This review proposes owner-controlled reset/disabled state, public CVA callbacks with Angular-owned `updateOn`, a
+composite touch boundary, intrinsic-validator composition and explicit payload filtering as the shared contract.
+Maintainer approval of this revision is pending. Feature value APIs, key/value coexistence strategy and the platform
+upgrade's release policy stay with their feature reviews; this spec does not approve proposed selection exports.
+
+After contract review, deliver the first local combobox increment with all three hosts and installed Angular 21 proof.
+That increment also proves the Clarity composition and private bridge choices. Add remote/multiple/completion behavior
+in the selection spec's order. Later controls reuse demonstrated behavior; do not publish a generic CVA base class now.
 
 ## Evidence
 
-Source and manifest inspection on October 16, 2026. CVA and native upstream contracts checked separately. Examples use
-proposed components and have not been compiled. No component implementation, browser run or Angular 22 consumer is
-claimed by this documentation change.
+Source inspection on October 18, 2026 at base `f021fb6` (merged #179): installed Angular 21.2.17 forms pipelines,
+installed Clarity combobox and the local file-reader, key/value and facade sources linked above. Current primary
+Material, NG-ZORRO and React Aria references informed the adopt/adapt decisions; installed Angular source governs phase
+
+1. No component implementation, compiled proposed examples, browser pass or new installed-consumer result is claimed by
+   this documentation increment. Record maintainer approval and implementation evidence in their respective PRs.
