@@ -1,243 +1,118 @@
-# Combobox and autocomplete
+# Clarity selection and editable-input reuse
 
-Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 17, 2026.
+Status: **Reuse decision; new control proposals withdrawn**. Updated October 18, 2026. Owner: clr-lift maintainers. The
+maintainer removed combobox and autocomplete from the new-component plan after reviewing current Clarity. This document
+retains the existing link destination; it no longer proposes lift selection components or loader types.
 
-Status: **Draft; API approval pending**. Updated October 17, 2026. All new symbols are proposed. Shared requirements:
-[development workflow](../component-development.md) and [staged form integrations](forms-compatibility-design-spec.md).
+## Decision and scope
 
-## Applicable contracts
+Use `clr-combobox` for known-value selection and its editable mode for supported free-text/custom-item workflows. Do not
+schedule lift combobox, multi-combobox or autocomplete exports. Prefer existing Clarity templates, forms and
+localization, with application data coordination through existing ngx-lift query/resource APIs when needed.
 
-Selection identity, CVA/validation, keyboard/overlay focus, localized messages and remote cancellation/paging apply.
-Suggestion text and committed values stay distinct; no public cache or reusable engine is approved here.
+Editable combobox and autocomplete are not universally equivalent. Clarity's editable single mode commits custom values
+through its change path when no matching options remain; editable multiple mode creates a custom item on Enter with an
+empty result set. An application needing every text edit committed as a string, a different blur/selection policy or
+another unsupported interaction must demonstrate that gap before proposing a dedicated control. This is a reopening
+criterion, not an autocomplete implementation commitment.
 
-## Background
+## Verified existing capabilities
 
-Combobox selects known values; autocomplete edits text with suggestions. Search text, highlighted option, committed
-value, and option label have separate identities. Multi-select pills represent selected values, not arbitrary search
-terms. Keep these public semantics distinct even when a private overlay/request mechanism is shared.
+The inspected `@clr/angular` release is 18.4.0, already installed in the workspace. Its combobox implementation matches
+ng-clarity main at `11c39739984c3fc630ccabb796adb5cac111e69c`; these features do not require a platform upgrade:
 
-## Goals
+- Single/multiple selection, removable selected pills, option groups, and custom option/selected-item templates.
+- Identity mapping through `clrComboboxIdentityFn` for objects recreated by a data source.
+- Editable values through `clrEditable`, plus `clrEditableResolverFn` to create a model object from typed text.
+- Case/diacritic-insensitive local filtering, input/open events, loading/searching/empty states, and Clarity form
+  errors.
+- Select-all for currently visible loaded options and selected-pill overflow/expansion behavior.
 
-- G1: Users select one or several remote entities with clear loading, no-result, failure and retry states.
-- G2: Users enter text efficiently with optional suggestions, without unexpected selection or text loss.
-- G3: Applications handle large result sets without downloading or rendering the entire dataset.
-- G4: Developers use simple typed options and the Angular 21 form integrations with Clarity presentation.
-
-## Non-Goals
-
-### Not now
-
-tokenizing pasted text, creating remote entities, arbitrary object-valued forms, drag-sorting pills, and a public
-headless selection framework. Add free-tag creation only through a separately reviewed use case and value contract.
-
-### Outside this API
-
-backend search indexing, authorization, unbounded global caches, or selecting all remote matches implicitly.
-
-## Industry evidence and current gaps
-
-| Reference                                                                                                                                                                                         | Verified behavior                                                                                     | Decision and gap                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [Clarity async example](https://github.com/vmware-clarity/ng-clarity/blob/main/projects/website/src/app/documentation/demos/combobox/combobox-async.demo.html) and installed 18.4 types/templates | Multi-selection, selected pills, input event, loading and spinner already exist                       | Compose public APIs first; do not reimplement these merely because the initial assumption said they were absent |
-| [NG-ZORRO Select](https://ng.ant.design/components/select/en)                                                                                                                                     | Remote search, multiple/tags, loading and scroll-end hooks                                            | Adapt remote states and bounded loading; do not copy every option or Ant styles                                 |
-| [Material autocomplete](https://github.com/angular/components/blob/main/src/material/autocomplete/autocomplete.md)                                                                                | Text input with suggestions, separate display mapping, keyboard focus and optional required selection | Keep completion and entity-selection semantics explicit                                                         |
-| [NG-ZORRO autocomplete](https://ng.ant.design/components/auto-complete/en)                                                                                                                        | Input/panel composition, grouping and configurable origin                                             | Keep a small default API; custom templates can follow proven demand                                             |
-| [React Aria ComboBox](https://react-aria.adobe.com/ComboBox)                                                                                                                                      | Selection versus completion distinction, async collections and tags                                   | Adapt identity, separate input/value state and accessible interaction                                           |
-| Existing application autocomplete (behavior reviewed)                                                                                                                                             | String options, CVA, local substring filtering, keyboard index and delayed blur                       | Rebuild independently; close gaps in disabled state, IME, listbox semantics, cancellation and focus races       |
-
-Internal application code is behavioral context only; do not copy proprietary implementation into this MIT library. The
-Clarity wrapper spike must prove form ownership, public filtering bypass, paging and keyboard behavior without private
-member access. If it cannot, document the failing cases and review a Clarity-styled CDK/Angular Aria implementation. Do
-not decide on a full replacement before that evidence exists.
-
-## Use cases and acceptance
-
-| ID  | Task                                                 | Outcome and failure behavior                                                                              |
-| --- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| S1  | Select one local owner                               | Store the stable owner key; clear produces null; duplicate labels remain distinct                         |
-| S2  | Search a remote user directory                       | Debounced request, inline loading, error/retry; old responses never replace newer results                 |
-| S3  | Edit preselected owners absent from the current page | Seed labels remain visible across searches; changing pages does not deselect                              |
-| S4  | Select several owners as removable pills             | Keyboard and pointer add/remove once; overflow summary exposes all selected values                        |
-| S5  | Search 100,000 server records                        | Fetch bounded pages, retain bounded results, render a bounded viewport; no fetch-all fallback             |
-| S6  | Enter a name with optional suggestions               | Autocomplete keeps typed text when no suggestion is chosen; no fabricated selected key                    |
-| S7  | Enter Chinese/Japanese via IME                       | Composition does not prematurely search, select, or submit; composition end triggers normal behavior      |
-| S8  | Change tenant/filter while a page is loading         | Invalidate the old generation, reset cursor/results, retain only permitted selections under caller policy |
-| S9  | Reset/disable/close/destroy during work              | No late UI writes or retained subscriptions; reopening follows documented reload policy                   |
-| S10 | Navigate in a modal on a narrow screen               | Overlay follows scrolling/resizing, correct focus/escape behavior, no clipped controls                    |
-
-## Developer learning journey and pedagogy plan
-
-Prerequisites: Angular 21 forms and current Clarity combobox capabilities; proposed exports remain unavailable.
-
-| Reader task                       | Learning outcome                                                         | Destination / working example                            |
-| --------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------- |
-| Select one remote entity          | Explain selected identity, displayed label, clearing and submitted value | This spec, proposed combobox example                     |
-| Add multi-selection or completion | Handle query changes, pending/error/empty state and stale results        | This spec, proposed multi-combobox/autocomplete examples |
-
-Validation and delivery: All feature tutorials are planned. Complete the Clarity composition spike and API review before
-route/source, three form hosts and browser evidence. The public API and behavior sections below own exact options and
-limitations; examples introduce them after the first task.
-
-## Public API and examples
-
-Use primitive keys (`string | number`) for initial combobox values. Local mode supplies `options`; managed remote mode
-supplies `loadOptions`. Supplying both is a configuration error. The component owns debounce/request/paging in managed
-mode; the application owns auth, endpoint mapping and business filters. Do not also require consumers to build an RxJS
-pipeline.
-
-```typescript
-import type {Observable} from 'rxjs';
-
-export interface SelectOption<V extends string | number> {
-  value: V;
-  label: string;
-  disabled?: boolean;
-}
-export interface OptionRequest {
-  query: string;
-  cursor?: string;
-  signal: AbortSignal;
-}
-export interface OptionPage<V extends string | number> {
-  items: readonly SelectOption<V>[];
-  nextCursor?: string;
-}
-export type OptionLoader<V extends string | number> = (
-  request: OptionRequest,
-) => Observable<OptionPage<V>> | Promise<OptionPage<V>>;
-```
-
-Proposed exports: `ComboboxComponent` (`cll-combobox`, value `V | null`) and `MultiComboboxComponent`
-(`cll-multi-combobox`, value `readonly V[]`). Separate selectors keep single/multiple value inference clear; review this
-against one selector with a `multiple` input before approval. Shared defaults: `label`, `placeholder`, `options` or
-`loadOptions`, `minSearchLength=0`, `debounceMs=250`. Remote context changes use a small `requestKey` input scoped by
-tenant/filter; context changes invalidate requests even when the loader function identity remains stable.
-`selectedOptions` seeds label metadata for edit flows and is not another source of selected values. A supplied seed does
-not select anything; the form value owns selection. Unknown IDs display an explicit unavailable label and remain
-removable until the caller supplies metadata or changes the value. No automatic silent deletion.
-
-```typescript
-import {Component, inject} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {ComboboxComponent, MultiComboboxComponent, type OptionLoader} from 'clr-lift'; // proposed
-
-@Component({
-  imports: [ReactiveFormsModule, ComboboxComponent, MultiComboboxComponent],
-  template: `
-    <cll-combobox label="Owner" [options]="owners" [formControl]="owner" />
-    <cll-multi-combobox
-      label="Reviewers"
-      [loadOptions]="searchUsers"
-      [selectedOptions]="initialReviewers"
-      [formControl]="reviewers"
-    />
-  `,
-})
-export class OwnerExample {
-  private readonly http = inject(HttpClient);
-  readonly owners = [{value: 'u1', label: 'Ada'}];
-  readonly owner = new FormControl<string | null>(null);
-  readonly reviewers = new FormControl<readonly string[]>(['u1'], {nonNullable: true});
-  readonly initialReviewers = this.owners;
-  readonly searchUsers: OptionLoader<string> = ({query, cursor}) =>
-    this.http.get<{items: {value: string; label: string}[]; nextCursor?: string}>('/api/users', {
-      params: {q: query, ...(cursor ? {cursor} : {})},
-    });
-}
-```
-
-HttpClient Observables are accepted directly and canceled by unsubscribe. Promise loaders use the supplied AbortSignal;
-all results also pass a generation check because not every Promise honors cancellation. No Observable adapter is
-required. Autocomplete's default surface is `AutocompleteComponent` / `cll-autocomplete`, value `string`, with
-`options: readonly string[]` for local completion. A remote `loadSuggestions` callback uses the same request context and
-a string-page result; do not publish a generalized loader framework solely to share these two type aliases.
-
-```html
-<!-- Proposed; import AutocompleteComponent and FormsModule in the host. -->
-<cll-autocomplete
-  label="Database name"
-  [options]="['orders', 'analytics']"
-  [(ngModel)]="databaseName"
-  name="databaseName"
-/>
-```
-
-Autocomplete emits text edits normally; choosing a suggestion replaces the text once. Arrow highlighting does not
-commit. Enter during IME composition does not choose an option. Escape dismisses the panel without discarding text. Blur
-retains free text. Entity-only required selection uses the combobox. Avoid an initial `string | Entity` value union. The
-shipping demos add ngModel and typed Reactive Forms + `toSignalForm` from the shared contract.
-
-The [shared forms contract](forms-compatibility-design-spec.md#behavior-and-architecture) owns reset/clear differences,
-Angular `updateOn`, intrinsic validation, composite touch and disabled-value serialization. Search loading does not
-automatically mark the form pending. A Clarity composition spike must prove those behaviors through real Angular form
-directives before implementation is considered verified; existing Clarity CVA support alone is insufficient.
+Sources: [component API and handlers][component], [filtering][filter], [options/select-all][options], [editable resolver
+example][resolver], and the [published Code & Examples page][docs]. Existing common strings are translated in the
+library's Clarity integration; new application-owned messages still need all supported locales.
 
 ## Behavior and architecture
 
-States: idle/below-threshold → debouncing → initial loading → results/empty/error. Appending has separate loading/error
-state so existing options and selected pills remain usable. A new query immediately invalidates the prior request, even
-during debounce. First result resolves a finite loader; empty Observable completion is an error, not an empty page.
-Close cancels outstanding work; reopen starts the current query again. No request occurs below the minimum length. Retry
-uses the current query/cursor/generation and does not replay a superseded page. One append request at a time;
-deduplicate by value, reject a repeated non-advancing cursor, and keep the server's order without client refiltering.
+Clarity owns the rendered control, selection and overlay interactions. The form owns values and validation. The
+application owns requests, query/context identity, debounce/cancellation policy, result limits, page cursors and retry.
+An async example is not a component-owned request engine. Selection is not an excuse to introduce a second cache, retry
+abstraction or another form owner.
 
-Server paging reduces network/data volume; virtualization reduces DOM cost. They are separate requirements. Propose a
-50-item demo server page and at most 500 retained result options per query; after the cap, ask users to refine the
-query. Selected metadata is tracked separately. Benchmark a 10,000-item local list and 100,000-record remote fixture,
-keeping rendered option DOM below 100 at the chosen viewport. Record actual input latency and peak retained items. Start
-with fixed-height text rows; variable-height virtualization requires another reviewed contract. An accessible Load more
-action is available outside the listbox options, even when scroll-end loading is supported.
+For server-ranked results, render `clr-option` with public Angular iteration rather than assuming `clrOptionItems` can
+disable its local substring filter. The upstream [identity test][tests] demonstrates that rendering composition.
+Grouping and large-list keyboard behavior still need their own verification. Keep load-more actions outside listbox
+options; visible select-all does not select every matching server record.
 
-## Clarity, accessibility, and localization
+Native Clarity value semantics remain upstream behavior. In particular, the [multiple-selection model][multi] mutates
+its array and uses null after last-item removal. Applications must model or map that value deliberately; the
+[shared form contract](forms-compatibility-design-spec.md) for future lift controls does not silently change Clarity.
 
-Follow the [WAI-ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/): named trigger,
-listbox/options, expanded/controls/active-descendant state, focus on the input, and an active option that actually
-exists in the DOM. Virtual navigation scrolls an option into view before referencing it. Disabled items are skipped.
-Pills have named remove buttons and keyboard navigation; announce removal/result/error counts without announcing every
-keystroke. Use Clarity containers, focus/invalid states, pills, spinners and design tokens. No Material/Ant runtime
-styling.
+## Remaining gaps and verification items
 
-## Demo and validation plan
+| Area                             | Current evidence                                                                                                     | Disposition                                                                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Virtualization and paging        | No built-in virtual viewport or bottom-reached output; keyboard navigation tracks rendered options                   | Verify an actual large-data flow; upstream work or a new renderer requires a prioritized blocked use case                         |
+| Disabled options and readonly    | No first-class per-option disabled input or readonly selection contract in the inspected API                         | Prefer focused upstream enhancements when required; disabled and readonly are not interchangeable                                 |
+| Search/filter/status convenience | Input/open/loading hooks exist; custom server filtering and error/retry/page policies remain application composition | Start with a recipe using existing query/resource tools; extract a helper only after demonstrated reuse                           |
+| Limits and tokenization          | Editable values exist; hard selected-count limits and delimiter/paste parsing are not first-class APIs               | Require a concrete use case before expanding scope; pill overflow is not a selection limit                                        |
+| IME, focus and accessibility     | Enter handlers need composition verification; selected-state semantics and composite focus need targeted assessment  | Validate real browser/assistive-technology journeys and report focused upstream defects; do not assume a replacement is necessary |
 
-Demo/playground cases S1–S10 cover the Angular 21 form integrations, latency/error/retry, out-of-order responses,
-duplicate labels, disabled options, prefill, pill overflow, large data, IME, modal scrolling, runtime language switch
-and dark/compact/RTL. Translate control states, remove labels, result counts, API docs and demo content in every
-supported dictionary. Unit/type tests verify value inference, generation/cancellation, page dedup/caps, cursor loops,
-label retention, events, reset and cleanup. Three-browser E2E verifies actual focus, selection/pill removal, stale
-results and virtual navigation.
+Evidence: [ClrOption inputs][option], [focus/keyboard implementation][focus], [component handlers][component], and
+[filtering implementation][filter]. Competitor capabilities are useful comparisons rather than delivery requirements:
+[NG-ZORRO Select][zorro] provides integrated virtualization/scroll-end/limits/tokenization; [MUI Autocomplete][mui] and
+[React Aria ComboBox][reactaria] expose different composition and readonly APIs. Their request handling and
+virtualization ownership differ; feature-table parity alone does not justify another control.
 
-Deliver local single select → remote states/paging → multi-select → autocomplete → scale verification, each functional.
-Pending API decisions: separate selectors, primitive keys, seeded-label behavior, remote request context, cap defaults,
-and wrapper versus independently styled implementation after the public-API spike. No implementation or benchmark is
-done.
+## Integration acceptance
 
-## Platform delivery requirement
+When an actual application or demo integration is delivered, verify:
 
-Initial delivery supports Angular 21 ngModel, typed Reactive Forms, and Reactive Forms + `toSignalForm` where this
-feature owns a value. Native signal-field integration is deferred until the platform upgrade, then required under the
-[shared forms contract](forms-compatibility-design-spec.md). Display-only surfaces and form containers have no field
-value of their own. This requirement does not make proposed exports available.
+- ngModel, typed Reactive Forms and the existing toSignalForm facade without a second form owner.
+- Prefill, object identity, clear/reset, disabled behavior, actual submitted values and any required readonly policy.
+- Remote request cancellation, obsolete-result protection, errors/retry and bounded paging under the application's
+  documented policy; no forced client filtering of server-ranked results.
+- Keyboard/overlay focus, IME, narrow/light/dark rendering and runtime language changes. Follow the
+  [accessibility and language acceptance contract](../../guides/accessibility-and-localization.md) for owned names,
+  helper/error/loading text and announcements in every supported language.
 
-## Terminology
+This acceptance list is not a newly scheduled control or a claim of passing integration tests. Automated checks, manual
+accessibility, independent human language acceptance and package publication remain separate gates.
 
-Query text, highlighted option, committed primitive key and seeded display metadata are independent. A result page
-belongs to one request context/generation; native signal fields remain the second delivery phase.
+## Reopening policy and delivery
 
-## Compatibility, rollout, and risks
+A helper, wrapper or dedicated autocomplete requires a named consumer, a reproducible unmet use case, and evidence that
+supported Clarity APIs or simple composition cannot meet it adequately. Review the smallest proposed solution before
+implementation. Keep any shared mechanism private until independent consumers demonstrate the need.
 
-Angular 21 CVA is the first target; native field support follows the deferred platform upgrade. No selected renderer or
-runtime dependency is approved. Owner: maintainers must prove public Clarity filtering/paging and strict installed
-consumer types before replacing its renderer. SSR/virtualization behavior requires separate acceptance.
-
-## Review decisions and delivery
-
-Feature APIs remain pending. Before implementing S1, review the public-Clarity composition spike, primitive value types
-and empty/reset semantics; before remote delivery approve request context, bounded pages and cancellation. S1/S6 cover
-G2/G4; S2/S3/S8/S9 cover G1; S5 covers G3. Acceptance demos/tests remain planned.
+The next planned new-control review is key/value input value/coexistence behavior, followed by the remaining
+[component roadmap](../../component-roadmap.md). Angular 22 and the Nx major upgrade stay deferred; the forms contract
+continues to apply to future value controls and its later native-field phase.
 
 ## Evidence
 
-Checked against the current public exports and source at base `e4a43f9` on October 16, 2026. No proposed feature exports
-or feature implementation exist; all feature demos/tests and measurements described here remain planned.
+October 18 source and published-page inspection confirmed the released capabilities above. Chromium interaction
+confirmed editable resolver item creation. A synthetic Enter marked isComposing still selected an option; this
+identifies a focused validation concern, not a real OS IME acceptance result. No source implementation, new public
+export, new rendered demo, complete Clarity accessibility assessment or installed form-host result is claimed here.
+
+[component]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/combobox.ts
+[filter]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/option-items.directive.ts
+[options]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/options.ts
+[resolver]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/website/src/app/documentation/demos/combobox/combobox-editable-multi.demo.ts
+[docs]: https://clarity.design/documentation/combobox/code
+[tests]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/combobox.spec.ts
+[multi]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/model/multi-select-combobox.model.ts
+[option]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/option.ts
+[focus]:
+  https://github.com/vmware-clarity/ng-clarity/blob/11c39739984c3fc630ccabb796adb5cac111e69c/projects/angular/forms/combobox/providers/combobox-focus-handler.service.ts
+[zorro]: https://ng.ant.design/components/select/en
+[mui]: https://mui.com/material-ui/react-autocomplete/
+[reactaria]: https://react-aria.adobe.com/ComboBox
