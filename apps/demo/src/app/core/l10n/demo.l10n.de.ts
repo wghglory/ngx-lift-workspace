@@ -625,7 +625,7 @@ export const deTranslations: Record<string, string> = {
     'Erzeugt eine Ressource, die automatisch Daten abholt und bei Änderung von Abhängigkeiten wieder zurücktritt. Jedes Signal, das innerhalb der Quellfunktion gelesen wird, wird zu einer reaktiven Abhängigkeit.',
   'resourceAsync.example2': 'Beispiel 2: Faules Laden',
   'resourceAsync.example2Desc':
-    'Verwenden Sie <code>lazy: true</code>, um das Laden zu verschieben, bis <code>reload()</code> aufgerufen wird. Die Ressource startet im Leerlaufzustand und holt keine Daten, bis sie explizit ausgelöst wird:',
+    'Verwenden Sie <code>lazy: true</code>, um das Laden bis zum Aufruf von <code>reload()</code> oder <code>execute()</code> aufzuschieben. Die Ressource startet im Zustand idle und ruft Daten erst nach ausdrücklichem Auslösen ab:',
   'resourceAsync.loadUsers': 'Benutzer laden',
   'resourceAsync.notLoadedIdle': 'Noch nicht geladen (idle)',
   'resourceAsync.example3': 'Beispiel 3: Ursprünglicher Wert',
@@ -1512,11 +1512,13 @@ export const deTranslations: Record<string, string> = {
     'Eine reaktive Funktion, die einen Observable, Promise oder einen synchronen Wert zurückgibt.',
   'resourceAsync.paramOptions': 'Konfigurationsoptionen für die Ressource.',
   'resourceAsync.propInitialValue': 'Der Anfangswert vor dem ersten Abruf wird abgeschlossen.',
-  'resourceAsync.propLazy': 'Wenn true, startet in dem "idle"-Zustand und wartet auf die Aufrufung von reload().',
+  'resourceAsync.propLazy':
+    'Wenn true, startet die Ressource im Zustand "idle" und wartet auf einen Aufruf von reload() oder execute().',
   'resourceAsync.propBehavior':
     'Verhalten bei gleichzeitigen Ausführungen: "switch" bricht die vorherige Ausführung ab; "exhaust" ignoriert neue Ausführungen. Standard: "switch".',
   'resourceAsync.propOnError': 'Fehler-Handler-Callback, der Fallback-Werte liefern kann.',
-  'resourceAsync.propThrowOnError': 'Wenn true, werden Fehler geworfen anstatt im Fehlersignal gespeichert.',
+  'resourceAsync.propThrowOnError':
+    'Wenn true, werden Fehler, die kein onError-Ersatzwert behandelt, nach dem Speichern im Fehlersignal weitergegeben.',
   'resourceAsync.propOnSuccess': 'Rückruf aufgerufen, wenn die Operation erfolgreich abgeschlossen ist.',
   'resourceAsync.propOnLoading': 'Callback aufgerufen, wenn die Operation das Laden beginnt.',
   'resourceAsync.returnsDesc':
@@ -2587,4 +2589,51 @@ export const deTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'Die Anfrage ist sofort fehlgeschlagen (HTTP 429). Wiederholungen wurden durch K8S_RETRY_BACKOFF_CONFIG: false übersprungen.',
   'k8sRetryBackoff.operatorSuccess': 'Die Anfrage war nach einer Wiederholung erfolgreich.',
+  'resourceAsync.lazyDemoTitle': 'Demo: Benutzer bei Bedarf laden',
+  'resourceAsync.fallbackTitle': 'Fehlerbehandlung mit Ersatzwert',
+  'resourceAsync.fallbackDescription':
+    'Diese Ressource ruft einen ungültigen Endpunkt auf und verwendet bei einem Fehler einen Standardbenutzer:',
+  'resourceAsync.throwOnErrorDescription':
+    'Verwenden Sie <code>throwOnError: true</code>, um Fehler weiterzugeben, die nicht durch einen Ersatzwert behandelt werden. Der Fehler wird auch im Fehlersignal gespeichert.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Mit <code>throwOnError: true</code> werden Fehler weitergegeben, wenn <code>onError</code> fehlt oder <code>undefined</code> zurückgibt. Ein von <code>onError</code> zurückgegebener Ersatzwert behandelt den Fehler und verhindert die Weitergabe.',
+  'resourceAsync.mutationConfigTitle': 'Wichtige Konfiguration für Mutationen:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Nur bei ausdrücklichem Aufruf ausführen.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Doppelte Übermittlungen verhindern, indem neue Anfragen während einer laufenden Anfrage ignoriert werden. Jeder Aufruf von <code>execute()</code> wartet auf das Ergebnis des aktiven Vorgangs.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Eine Mutation auslösen und ihr Ergebnis abwarten oder ohne Warten aufrufen.',
+  'resourceAsync.mutationBenefitsTitle': 'Warum diese Konfiguration für Mutationen geeignet ist:',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code>: Das Formular erst übermitteln, wenn der Benutzer auf die Schaltfläche zum Absenden klickt.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Wiederholte Klicks zum Absenden während der laufenden Anfrage ignorieren.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: <code>const res = await ref.execute()</code> verwenden oder ohne Warten aufrufen. Der vorherige Wert wird für einen klaren Ladezustand gelöscht.',
+  'resourceAsync.mutationLoading':
+    '<code>isLoading()</code>: Ladefortschritt anzeigen und die Schaltfläche zum Absenden deaktivieren.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code>: Erfolgs- und Fehlerzustände für die Rückmeldung an Benutzer verfolgen.',
+  'resourceAsync.registrationDemoTitle': 'Interaktive Demo: Benutzerregistrierung',
+  'resourceAsync.registrationDescription':
+    "Senden Sie das Formular ab, um eine simulierte Registrierungs-API mit 70 % Erfolgsquote auszuprobieren. Mit <code>behavior: 'exhaust'</code> werden wiederholte Klicks während einer laufenden Anfrage ignoriert.",
+  'resourceAsync.registrationFailed': 'Registrierung fehlgeschlagen: {0}',
+  'resourceAsync.switchTitle': 'switch (Standard)',
+  'resourceAsync.switchDescription':
+    'Bricht die vorherige Anfrage ab, sobald eine neue beginnt. So bestimmt die neueste Anfrage die Daten. Dieses Standardverhalten eignet sich besonders für Lesevorgänge (GET-Anfragen).',
+  'resourceAsync.exhaustDescription':
+    'Ignoriert neue Anfragen, solange eine Anfrage läuft. Verhindert doppelte Vorgänge durch schnelle Klicks, etwa wiederholte Such- oder Seitenanfragen. Auch für Mutationen geeignet (Beispiel 5).',
+  'resourceAsync.computedStateAdvice':
+    'Verwenden Sie <code>computed()</code> statt Gettern, um Zustände aus Signals abzuleiten. Memoisierung vermeidet wiederholte Berechnungen und integriert sich in Angulars Reaktivität.',
+  'resourceAsync.queryPreset': 'Abfragevorlage:',
+  'resourceAsync.reset': 'Zurücksetzen',
+  'resourceAsync.awaitExecute': 'execute() abwarten',
+  'resourceAsync.statusLabel': 'Status:',
+  'resourceAsync.activeQuery': 'Aktive Abfrage:',
+  'resourceAsync.fetchingWithAbortSignal': 'Datenabruf mit AbortSignal…',
+  'resourceAsync.category': 'Kategorie',
+  'resourceAsync.requestInFlight': 'Läuft (Signal aktiv)',
+  'resourceAsync.requestAborted': 'Abgebrochen (AbortSignal ausgelöst)',
+  'resourceAsync.requestResolved': 'Abgeschlossen',
+  'resourceAsync.requestLogLabel': 'Anfrage #{0} (Abfrage: „{1}“):',
 };

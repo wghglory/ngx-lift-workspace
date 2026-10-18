@@ -619,7 +619,7 @@ export const ptBRTranslations: Record<string, string> = {
     'Cria um recurso que recupera automaticamente os dados e reinventas sempre que as dependências mudam. Qualquer sinal lido dentro da função-fonte torna-se uma dependência reativa.',
   'resourceAsync.example2': 'Exemplo 2: Carga Láctea',
   'resourceAsync.example2Desc':
-    'Utilize o <code>lazy: true</code> para adiar o carregamento até que o <code>reload()</code> seja chamado. O recurso vai começar em estado inactivo e vai para a obtenção dos dados até que seja explicitamente acionado:',
+    'Use <code>lazy: true</code> para adiar o carregamento até que <code>reload()</code> ou <code>execute()</code> seja chamado. O recurso inicia no estado idle e busca dados somente quando acionado explicitamente:',
   'resourceAsync.loadUsers': 'Carregar os Usuários',
   'resourceAsync.notLoadedIdle': 'Ainda não carregado (sem carga)',
   'resourceAsync.example3': 'Exemplo 3: Valor inicial',
@@ -1494,11 +1494,12 @@ export const ptBRTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'A função reativa que devolve um valor Observable, Promise ou síncrono.',
   'resourceAsync.paramOptions': 'Opções de configuração para o recurso.',
   'resourceAsync.propInitialValue': 'Valor inicial antes que a primeira obtenção termine.',
-  'resourceAsync.propLazy': 'Se true, inicia no estado "idle" e aguarda uma chamada a reload().',
+  'resourceAsync.propLazy': 'Se true, inicia no estado "idle" e aguarda uma chamada a reload() ou execute().',
   'resourceAsync.propBehavior':
     'Comportamento em execuções simultâneas: "switch" cancela a execução anterior; "exhaust" ignora novas execuções. Padrão: "switch".',
   'resourceAsync.propOnError': 'Erro callback handler que pode fornecer valores fallback.',
-  'resourceAsync.propThrowOnError': 'Se for verdade, erros são lançados em vez de armazenados em sinal de erro.',
+  'resourceAsync.propThrowOnError':
+    'Se true, propaga erros não tratados por um valor alternativo de onError após armazená-los no sinal de erro.',
   'resourceAsync.propOnSuccess': 'Callback invocado quando a operação for concluída com sucesso.',
   'resourceAsync.propOnLoading': 'Callback invocado quando a operação começar a carregar.',
   'resourceAsync.returnsDesc':
@@ -2532,4 +2533,50 @@ export const ptBRTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'A solicitação falhou imediatamente (HTTP 429). As novas tentativas foram ignoradas via K8S_RETRY_BACKOFF_CONFIG: false.',
   'k8sRetryBackoff.operatorSuccess': 'A solicitação foi bem-sucedida após uma nova tentativa.',
+  'resourceAsync.lazyDemoTitle': 'Demonstração: carregar usuários sob demanda',
+  'resourceAsync.fallbackTitle': 'Tratamento de erros com valor alternativo',
+  'resourceAsync.fallbackDescription':
+    'Este recurso tenta buscar dados de um endpoint inválido e usa um usuário padrão em caso de falha:',
+  'resourceAsync.throwOnErrorDescription':
+    'Use <code>throwOnError: true</code> para propagar erros não tratados por um valor alternativo. O erro também é armazenado no sinal de erro.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Com <code>throwOnError: true</code>, os erros são propagados se <code>onError</code> for omitido ou retornar <code>undefined</code>. Um valor alternativo retornado por <code>onError</code> trata o erro e impede sua propagação.',
+  'resourceAsync.mutationConfigTitle': 'Configuração principal para mutações:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Executar somente quando acionado explicitamente.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Evitar envios duplicados ignorando novas solicitações enquanto uma estiver em andamento. Cada chamada a <code>execute()</code> aguarda o resultado da operação ativa.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Acionar uma mutação e aguardar o resultado, ou chamar sem aguardar.',
+  'resourceAsync.mutationBenefitsTitle': 'Por que esta configuração é adequada para mutações:',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code>: Enviar o formulário somente quando o usuário clicar em enviar.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Ignorar cliques repetidos em enviar enquanto a solicitação estiver em andamento.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: Usar <code>const res = await ref.execute()</code> ou chamar sem aguardar. Limpa o valor anterior para manter o estado de carregamento claro.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: Exibir o carregamento e desativar o botão de envio.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code>: Acompanhar os estados de sucesso e erro para informar o usuário.',
+  'resourceAsync.registrationDemoTitle': 'Demonstração interativa: formulário de cadastro',
+  'resourceAsync.registrationDescription':
+    "Envie o formulário para testar uma API de cadastro simulada com 70% de sucesso. Com <code>behavior: 'exhaust'</code>, cliques repetidos são ignorados enquanto uma solicitação estiver em andamento.",
+  'resourceAsync.registrationFailed': 'Falha no cadastro: {0}',
+  'resourceAsync.switchTitle': 'switch (padrão)',
+  'resourceAsync.switchDescription':
+    'Cancela a solicitação anterior quando uma nova começa, para que a mais recente determine os dados. É o comportamento padrão e é adequado para leituras (solicitações GET).',
+  'resourceAsync.exhaustDescription':
+    'Ignora novas solicitações enquanto uma estiver em andamento. Evita operações duplicadas por cliques rápidos, como pesquisas ou solicitações de paginação repetidas. Também é útil para mutações (exemplo 5).',
+  'resourceAsync.computedStateAdvice':
+    'Use <code>computed()</code> em vez de getters para derivar estado de sinais. A memoização evita cálculos repetidos e se integra à reatividade do Angular.',
+  'resourceAsync.queryPreset': 'Consulta predefinida:',
+  'resourceAsync.reset': 'Redefinir',
+  'resourceAsync.awaitExecute': 'Aguardar execute()',
+  'resourceAsync.statusLabel': 'Status:',
+  'resourceAsync.activeQuery': 'Consulta ativa:',
+  'resourceAsync.fetchingWithAbortSignal': 'Buscando dados com AbortSignal…',
+  'resourceAsync.category': 'Categoria',
+  'resourceAsync.requestInFlight': 'Em andamento (sinal ativo)',
+  'resourceAsync.requestAborted': 'Cancelada (AbortSignal acionado)',
+  'resourceAsync.requestResolved': 'Concluída',
+  'resourceAsync.requestLogLabel': 'Solicitação #{0} (consulta: "{1}"):',
 };

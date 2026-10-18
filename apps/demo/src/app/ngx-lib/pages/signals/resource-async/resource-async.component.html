@@ -65,7 +65,7 @@
 
               <div inspector>
                 <app-state-inspector
-                  title="Reactive Resource Signals"
+                  [title]="'inspector.liveState' | translate"
                   [data]="{
                     userId: pageNumber(),
                     status: userRef.status(),
@@ -86,7 +86,7 @@
                 <p [innerHTML]="'resourceAsync.example2Desc' | translate"></p>
 
                 <div>
-                  <h4>Demo: Lazy-Loaded Users</h4>
+                  <h4>{{ 'resourceAsync.lazyDemoTitle' | translate }}</h4>
                   <div class="card">
                     <div class="card-block">
                       <div cds-layout="vertical gap:md">
@@ -150,11 +150,11 @@
               <div preview>
                 <p [innerHTML]="'resourceAsync.example4Desc' | translate"></p>
 
-                <h4>Error Handling with Fallback</h4>
+                <h4>{{ 'resourceAsync.fallbackTitle' | translate }}</h4>
 
                 <div>
-                  <h4>Demo: Error Handling with Fallback</h4>
-                  <p>This resource attempts to fetch from an invalid endpoint and falls back to a default user:</p>
+                  <h4>{{ 'resourceAsync.fallbackTitle' | translate }}</h4>
+                  <p>{{ 'resourceAsync.fallbackDescription' | translate }}</p>
 
                   <div class="card">
                     <div class="card-block">
@@ -190,15 +190,11 @@
                 </div>
 
                 <h4 cds-layout="m-t:lg">{{ 'resourceAsync.errorPropagation' | translate }}</h4>
-                <p>
-                  Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:
-                </p>
+                <p [innerHTML]="'resourceAsync.throwOnErrorDescription' | translate"></p>
                 <app-code-block [code]="throwOnErrorCode" lang="typescript" />
-                <cll-callout type="warning">
-                  When <code>throwOnError: true</code>, errors will be thrown if <code>onError</code> returns
-                  <code>undefined</code> or is omitted. If <code>onError</code> returns a fallback value, the error is
-                  handled and will not propagate.
-                </cll-callout>
+                <cll-callout type="warning"
+                  ><span [innerHTML]="'resourceAsync.throwOnErrorPolicy' | translate"></span
+                ></cll-callout>
               </div>
             </app-demo-playground>
           </article>
@@ -213,45 +209,28 @@
                 <p [innerHTML]="'resourceAsync.example5Desc' | translate"></p>
 
                 <p>
-                  <strong>Key Configuration for Mutations:</strong>
+                  <strong>{{ 'resourceAsync.mutationConfigTitle' | translate }}</strong>
                 </p>
                 <ul class="list" cds-layout="m-b:md">
-                  <li><code>lazy: true</code> - Don't execute until explicitly triggered</li>
-                  <li>
-                    <code>behavior: 'exhaust'</code> - Prevent duplicate submissions (ignore new requests while one is
-                    in progress, sharing the active in-flight Promise)
-                  </li>
-                  <li>
-                    <code>execute(): Promise&lt;T&gt;</code> - Awaitable mutation trigger that returns a Promise
-                    resolving to the result, or fire-and-forget
-                  </li>
+                  <li [innerHTML]="'resourceAsync.mutationLazy' | translate"></li>
+                  <li [innerHTML]="'resourceAsync.mutationExhaust' | translate"></li>
+                  <li [innerHTML]="'resourceAsync.mutationExecute' | translate"></li>
                 </ul>
 
                 <cll-callout type="info">
-                  <strong>Why this works great for mutations:</strong>
+                  <strong>{{ 'resourceAsync.mutationBenefitsTitle' | translate }}</strong>
                   <ul class="list" cds-layout="m-t:xs">
-                    <li><code>lazy: true</code> - Form submission only happens when user clicks submit</li>
-                    <li>
-                      <code>behavior: 'exhaust'</code> - If user spams the submit button, subsequent clicks are ignored
-                      while request is in-flight
-                    </li>
-                    <li>
-                      <code>execute(): Promise&lt;T&gt;</code> - Awaitable with
-                      <code>const res = await ref.execute()</code>, or fire-and-forget; clears stale previous value so
-                      loading UI is clean
-                    </li>
-                    <li><code>isLoading()</code> - Perfect for showing loading state and disabling button</li>
-                    <li><code>status()</code> - Track success/error states for user feedback</li>
+                    <li [innerHTML]="'resourceAsync.mutationSubmit' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationRepeatedClicks' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationAwait' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationLoading' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationStatus' | translate"></li>
                   </ul>
                 </cll-callout>
 
                 <div>
-                  <h4>Live Demo: User Registration Form</h4>
-                  <p cds-text="body" cds-layout="m-b:md">
-                    Try submitting the form below. It simulates a registration API with 70% success rate. With
-                    <code>behavior: 'exhaust'</code>, rapid clicking the submit button is ignored while a request is in
-                    progress.
-                  </p>
+                  <h4>{{ 'resourceAsync.registrationDemoTitle' | translate }}</h4>
+                  <p [innerHTML]="'resourceAsync.registrationDescription' | translate"></p>
 
                   <div class="card">
                     <div class="card-block">
@@ -266,7 +245,7 @@
                         }
                         @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
                           <cll-alert
-                            [content]="'Registration failed: ' + error.message"
+                            [content]="'resourceAsync.registrationFailed' | translate: error.message"
                             [alertType]="'danger'"
                             cds-layout="m-t:md"
                             [isSmall]="true"
@@ -337,17 +316,11 @@
             <p [innerHTML]="'resourceAsync.example6Desc' | translate"></p>
             <app-code-block [code]="behaviorCode" lang="typescript" />
 
-            <h4>switch (default)</h4>
-            <p>
-              Cancels the previous request when a new one is triggered. This is the default behavior and ensures you
-              always get the latest data. Best for read operations (GET requests).
-            </p>
+            <h4>{{ 'resourceAsync.switchTitle' | translate }}</h4>
+            <p [innerHTML]="'resourceAsync.switchDescription' | translate"></p>
 
             <h4>exhaust</h4>
-            <p>
-              Ignores new requests while one is in progress. Useful for preventing duplicate operations like rapid
-              button clicks triggering multiple searches or paginations. Also ideal for mutations (see Example 5).
-            </p>
+            <p [innerHTML]="'resourceAsync.exhaustDescription' | translate"></p>
             <app-code-block [code]="exhaustCode" lang="typescript" />
           </article>
 
@@ -355,10 +328,7 @@
             <h3>{{ 'resourceAsync.example7' | translate }}</h3>
             <p [innerHTML]="'resourceAsync.example7Desc' | translate"></p>
             <app-code-block [code]="statusCode" lang="typescript" />
-            <cll-callout>
-              Always use <code>computed()</code> instead of getters for derived state from signals. This provides better
-              performance through memoization and integrates perfectly with Angular's reactivity system.
-            </cll-callout>
+            <cll-callout><span [innerHTML]="'resourceAsync.computedStateAdvice' | translate"></span></cll-callout>
           </article>
 
           <article cds-layout="vertical gap:sm align:stretch">
@@ -372,7 +342,7 @@
                     <div class="card-block">
                       <div cds-layout="vertical gap:md">
                         <div cds-layout="horizontal gap:xs align:center wrap">
-                          <span cds-text="secondary">Query Preset:</span>
+                          <span cds-text="secondary">{{ 'resourceAsync.queryPreset' | translate }}</span>
                           <button
                             class="btn btn-sm"
                             [class.btn-primary]="searchKeyword() === 'Angular'"
@@ -417,29 +387,32 @@
                             {{ 'resourceAsync.reload' | translate }}
                           </button>
                           <button class="btn btn-sm btn-danger-outline" (click)="searchDefinitionRef.reset()">
-                            Reset
+                            {{ 'resourceAsync.reset' | translate }}
                           </button>
                           <button
                             class="btn btn-sm btn-outline"
                             (click)="runAwaitableSearch()"
                             [clrLoading]="searchDefinitionRef.isLoading()"
-                            aria-label="Await execute()"
+                            [attr.aria-label]="'resourceAsync.awaitExecute' | translate"
                           >
-                            Await execute()
+                            {{ 'resourceAsync.awaitExecute' | translate }}
                           </button>
                         </div>
 
                         <div cds-layout="horizontal gap:md align:center wrap">
                           <span
-                            >Status: <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
+                            >{{ 'resourceAsync.statusLabel' | translate }}
+                            <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
                           >
                           <span
-                            >Active Query: <strong>{{ searchKeyword() }}</strong></span
+                            >{{ 'resourceAsync.activeQuery' | translate }} <strong>{{ searchKeyword() }}</strong></span
                           >
                           @if (searchDefinitionRef.isLoading()) {
                             <span cds-layout="horizontal gap:xs align:center">
                               <cll-spinner inline />
-                              <span cds-text="secondary">Fetching with AbortSignal...</span>
+                              <span cds-text="secondary">{{
+                                'resourceAsync.fetchingWithAbortSignal' | translate
+                              }}</span>
                             </span>
                           }
                         </div>
@@ -451,7 +424,7 @@
                                 <tr>
                                   <th>ID</th>
                                   <th>{{ 'resourceAsync.topicTitle' | translate }}</th>
-                                  <th>Category</th>
+                                  <th>{{ 'resourceAsync.category' | translate }}</th>
                                   <th>{{ 'resourceAsync.lastUpdated' | translate }}</th>
                                 </tr>
                               </thead>
@@ -483,16 +456,19 @@
                             @for (log of searchLogs(); track log.id) {
                               <li cds-layout="horizontal gap:sm align:center">
                                 <span cds-text="secondary">[{{ log.timestamp }}]</span>
-                                <span
-                                  >Request #{{ log.id }} (query: "<strong>{{ log.keyword }}</strong
-                                  >"):</span
-                                >
+                                <span>{{ 'resourceAsync.requestLogLabel' | translate: log.id : log.keyword }}</span>
                                 @if (log.status === 'in-flight') {
-                                  <span class="badge badge-info">In-Flight (signal active)</span>
+                                  <span class="badge badge-info">{{
+                                    'resourceAsync.requestInFlight' | translate
+                                  }}</span>
                                 } @else if (log.status === 'aborted') {
-                                  <span class="badge badge-danger">Aborted (AbortSignal cancelled)</span>
+                                  <span class="badge badge-danger">{{
+                                    'resourceAsync.requestAborted' | translate
+                                  }}</span>
                                 } @else {
-                                  <span class="badge badge-success">Resolved</span>
+                                  <span class="badge badge-success">{{
+                                    'resourceAsync.requestResolved' | translate
+                                  }}</span>
                                 }
                               </li>
                             }

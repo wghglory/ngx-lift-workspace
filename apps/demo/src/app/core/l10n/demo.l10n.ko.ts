@@ -602,7 +602,7 @@ export const koTranslations: Record<string, string> = {
     '의존성 변경 시 자동으로 데이터를 다시 가져오는 자원을 생성합니다. 소스 함수 내부에서 읽은 모든 시그널은 반응형 의존성으로 간주됩니다.',
   'resourceAsync.example2': '예제 2: 지연 로딩',
   'resourceAsync.example2Desc':
-    '예제 2: <code>lazy: true</code>를 사용하여 <code>reload()</code>가 호출될 때까지 로딩을 지연시킵니다. 자원은 초기 상태(아이델)로 시작하며 명시적으로 실행될 때까지 데이터를 가져오지 않습니다:',
+    '<code>lazy: true</code>를 사용하면 <code>reload()</code> 또는 <code>execute()</code>를 호출할 때까지 로딩을 지연합니다. 리소스는 idle 상태로 시작하며 명시적으로 실행을 요청할 때만 데이터를 가져옵니다:',
   'resourceAsync.loadUsers': '사용자 로딩',
   'resourceAsync.notLoadedIdle': '아직 로딩되지 않음 (아이델)',
   'resourceAsync.example3': '예제 3: 초기 값',
@@ -1434,11 +1434,12 @@ export const koTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': '반응형 함수로, Observable, Promise, 또는 동기화된 값이 반환되는 함수.',
   'resourceAsync.paramOptions': '리소스에 대한 구성 옵션.',
   'resourceAsync.propInitialValue': '첫 번째 fetch가 완료하기 전의 초기 값.',
-  'resourceAsync.propLazy': 'true이면 "idle" 상태로 시작하고 reload()가 호출될 때까지 기다립니다.',
+  'resourceAsync.propLazy': 'true이면 "idle" 상태로 시작하고 reload() 또는 execute() 호출을 기다립니다.',
   'resourceAsync.propBehavior':
     '병행 처리 행동: "switch" (이전 작업을 취소) 또는 "exhaust" (새로운 작업을 무시)로, 기본값은 "switch"입니다.',
   'resourceAsync.propOnError': '오류 처리 콜백으로 대체 값 제공이 가능합니다.',
-  'resourceAsync.propThrowOnError': 'true이면 오류가 발생하면 예외가 발생하는 대신 오류 신호에 저장됩니다.',
+  'resourceAsync.propThrowOnError':
+    'true이면 onError의 대체 값으로 처리되지 않은 오류를 오류 신호에 저장한 후 전파합니다.',
   'resourceAsync.propOnSuccess': '작업이 성공적으로 완료될 때 호출되는 콜백.',
   'resourceAsync.propOnLoading': '작업이 로딩 시작될 때 호출되는 콜백.',
   'resourceAsync.returnsDesc':
@@ -2416,4 +2417,48 @@ export const koTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     '요청이 즉시 실패했습니다(HTTP 429). K8S_RETRY_BACKOFF_CONFIG: false를 통해 재시도를 건너뛰었습니다.',
   'k8sRetryBackoff.operatorSuccess': '재시도 후 요청이 성공했습니다.',
+  'resourceAsync.lazyDemoTitle': '데모: 필요할 때 사용자 불러오기',
+  'resourceAsync.fallbackTitle': '대체 값을 사용한 오류 처리',
+  'resourceAsync.fallbackDescription':
+    '이 리소스는 잘못된 엔드포인트에서 데이터를 가져오려 시도하고, 실패하면 기본 사용자를 사용합니다:',
+  'resourceAsync.throwOnErrorDescription':
+    '<code>throwOnError: true</code>를 사용하면 대체 값으로 처리되지 않은 오류를 전파합니다. 오류는 오류 신호에도 저장됩니다.',
+  'resourceAsync.throwOnErrorPolicy':
+    '<code>throwOnError: true</code>인 경우 <code>onError</code>가 생략되거나 <code>undefined</code>를 반환하면 오류가 전파됩니다. <code>onError</code>가 대체 값을 반환하면 오류를 처리하여 전파를 막습니다.',
+  'resourceAsync.mutationConfigTitle': '변경 작업의 주요 설정:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: 명시적으로 실행을 요청할 때만 실행합니다.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: 요청이 진행 중이면 새 요청을 무시하여 중복 제출을 방지합니다. 각 <code>execute()</code> 호출은 활성 작업의 결과를 기다립니다.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: 변경 작업을 시작하고 결과를 기다리거나, 기다리지 않고 호출합니다.',
+  'resourceAsync.mutationBenefitsTitle': '이 설정이 변경 작업에 적합한 이유:',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>: 사용자가 제출을 클릭할 때만 양식을 제출합니다.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: 요청 진행 중에는 반복되는 제출 클릭을 무시합니다.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: <code>const res = await ref.execute()</code>를 사용하거나 기다리지 않고 호출합니다. 이전 값을 지워 로딩 상태를 명확하게 합니다.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: 로딩 상태를 표시하고 제출 버튼을 비활성화합니다.',
+  'resourceAsync.mutationStatus': '<code>status()</code>: 성공 및 오류 상태를 추적하여 사용자에게 알립니다.',
+  'resourceAsync.registrationDemoTitle': '대화형 데모: 사용자 등록 양식',
+  'resourceAsync.registrationDescription':
+    "양식을 제출하여 성공률이 70%인 모의 등록 API를 사용해 보세요. <code>behavior: 'exhaust'</code>를 사용하면 요청 진행 중에 반복되는 제출 클릭을 무시합니다.",
+  'resourceAsync.registrationFailed': '등록 실패: {0}',
+  'resourceAsync.switchTitle': 'switch (기본값)',
+  'resourceAsync.switchDescription':
+    '새 요청이 시작되면 이전 요청을 취소하여 최신 요청이 데이터를 결정하게 합니다. 기본 동작이며 읽기 작업(GET 요청)에 적합합니다.',
+  'resourceAsync.exhaustDescription':
+    '요청 진행 중에는 새 요청을 무시합니다. 빠른 클릭으로 인한 검색이나 페이지 요청 등 중복 작업을 방지합니다. 변경 작업에도 유용합니다(예제 5).',
+  'resourceAsync.computedStateAdvice':
+    '신호에서 상태를 도출할 때 getter 대신 <code>computed()</code>를 사용하세요. 메모이제이션으로 반복 계산을 줄이고 Angular 반응성과 통합합니다.',
+  'resourceAsync.queryPreset': '미리 설정된 쿼리:',
+  'resourceAsync.reset': '초기화',
+  'resourceAsync.awaitExecute': 'execute() 기다리기',
+  'resourceAsync.statusLabel': '상태:',
+  'resourceAsync.activeQuery': '활성 쿼리:',
+  'resourceAsync.fetchingWithAbortSignal': 'AbortSignal을 사용하여 가져오는 중…',
+  'resourceAsync.category': '범주',
+  'resourceAsync.requestInFlight': '진행 중(신호 활성)',
+  'resourceAsync.requestAborted': '중단됨(AbortSignal로 취소)',
+  'resourceAsync.requestResolved': '완료됨',
+  'resourceAsync.requestLogLabel': '요청 #{0}(쿼리: "{1}"):',
 };

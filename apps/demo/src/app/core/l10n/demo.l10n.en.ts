@@ -606,7 +606,7 @@ export const enTranslations: Record<string, string> = {
     'Creates a resource that automatically fetches data and re-fetches whenever dependencies change. Any signal read inside the source function becomes a reactive dependency.',
   'resourceAsync.example2': 'Example 2: Lazy Loading',
   'resourceAsync.example2Desc':
-    "Use <code>lazy: true</code> to defer loading until <code>reload()</code> is called. The resource starts in idle state and won't fetch data until explicitly triggered:",
+    'Use <code>lazy: true</code> to defer loading until <code>reload()</code> or <code>execute()</code> is called. The resource starts in idle state and fetches data only when explicitly triggered:',
   'resourceAsync.loadUsers': 'Load Users',
   'resourceAsync.notLoadedIdle': 'Not loaded yet (idle)',
   'resourceAsync.example3': 'Example 3: Initial Value',
@@ -1457,11 +1457,12 @@ export const enTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'A reactive function that returns an Observable, Promise, or synchronous value.',
   'resourceAsync.paramOptions': 'Configuration options for the resource.',
   'resourceAsync.propInitialValue': 'Initial value before the first fetch completes.',
-  'resourceAsync.propLazy': 'If true, starts in "idle" state and waits for reload() to be called.',
+  'resourceAsync.propLazy': 'If true, starts in "idle" state and waits for reload() or execute() to be called.',
   'resourceAsync.propBehavior':
     'Concurrency behavior: "switch" (cancel previous) or "exhaust" (ignore new). Defaults to "switch".',
   'resourceAsync.propOnError': 'Error handler callback that can provide fallback values.',
-  'resourceAsync.propThrowOnError': 'If true, errors are thrown instead of stored in error signal.',
+  'resourceAsync.propThrowOnError':
+    'If true, propagates errors not handled by an onError fallback after storing them in the error signal.',
   'resourceAsync.propOnSuccess': 'Callback invoked when operation successfully completes.',
   'resourceAsync.propOnLoading': 'Callback invoked when operation starts loading.',
   'resourceAsync.returnsDesc':
@@ -2460,4 +2461,48 @@ export const enTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'The request failed immediately (HTTP 429). Retries were bypassed via K8S_RETRY_BACKOFF_CONFIG: false.',
   'k8sRetryBackoff.operatorSuccess': 'The request succeeded after retry.',
+  'resourceAsync.lazyDemoTitle': 'Demo: Lazy-Loaded Users',
+  'resourceAsync.fallbackTitle': 'Error Handling with Fallback',
+  'resourceAsync.fallbackDescription':
+    'This resource attempts to fetch from an invalid endpoint and falls back to a default user:',
+  'resourceAsync.throwOnErrorDescription':
+    'Use <code>throwOnError: true</code> to propagate errors that are not handled by a fallback value. The error is also stored in the error signal.',
+  'resourceAsync.throwOnErrorPolicy':
+    'With <code>throwOnError: true</code>, errors propagate when <code>onError</code> is omitted or returns <code>undefined</code>. A fallback value returned by <code>onError</code> handles the error and prevents propagation.',
+  'resourceAsync.mutationConfigTitle': 'Key Configuration for Mutations:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Execute only when explicitly triggered.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Prevent duplicate submissions by ignoring new requests while one is in progress. Each <code>execute()</code> call joins the outcome of the active operation.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Trigger a mutation and await its result, or call without awaiting.',
+  'resourceAsync.mutationBenefitsTitle': 'Why this works great for mutations:',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>: Submit the form only when the user clicks submit.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Ignore repeated submit clicks while the request is in progress.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: Use <code>const res = await ref.execute()</code> or call without awaiting. It clears the previous value for a clean loading state.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: Show loading feedback and disable the submit button.',
+  'resourceAsync.mutationStatus': '<code>status()</code>: Track success and error states for user feedback.',
+  'resourceAsync.registrationDemoTitle': 'Live Demo: User Registration Form',
+  'resourceAsync.registrationDescription':
+    "Submit the form to try a simulated registration API with a 70% success rate. With <code>behavior: 'exhaust'</code>, repeated submit clicks are ignored while a request is in progress.",
+  'resourceAsync.registrationFailed': 'Registration failed: {0}',
+  'resourceAsync.switchTitle': 'switch (default)',
+  'resourceAsync.switchDescription':
+    'Cancels the previous request when a new one starts, so the latest request determines the data. This is the default behavior and is best for reads (GET requests).',
+  'resourceAsync.exhaustDescription':
+    'Ignores new requests while one is in progress. Prevents duplicate operations from rapid clicks, such as repeated searches or pagination requests. Also useful for mutations (Example 5).',
+  'resourceAsync.computedStateAdvice':
+    'Use <code>computed()</code> instead of getters to derive state from signals. Memoization avoids repeated work and integrates with Angular reactivity.',
+  'resourceAsync.queryPreset': 'Query Preset:',
+  'resourceAsync.reset': 'Reset',
+  'resourceAsync.awaitExecute': 'Await execute()',
+  'resourceAsync.statusLabel': 'Status:',
+  'resourceAsync.activeQuery': 'Active Query:',
+  'resourceAsync.fetchingWithAbortSignal': 'Fetching with AbortSignal...',
+  'resourceAsync.category': 'Category',
+  'resourceAsync.requestInFlight': 'In-Flight (signal active)',
+  'resourceAsync.requestAborted': 'Aborted (AbortSignal cancelled)',
+  'resourceAsync.requestResolved': 'Resolved',
+  'resourceAsync.requestLogLabel': 'Request #{0} (query: "{1}"):',
 };

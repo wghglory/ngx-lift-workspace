@@ -626,7 +626,7 @@ export const ruTranslations: Record<string, string> = {
     'Создание ресурса, который автоматически приносит данные и перезадаёт их при изменении зависимости. Любой считываемый внутри исходной функции сигнал становится реактивной зависимостью.',
   'resourceAsync.example2': 'Пример 2: Ленивая погрузка',
   'resourceAsync.example2Desc':
-    'Используйте <code>lazy: true</code>, чтобы отложить загрузку до вызова <code>reload()</code>. Ресурс начинается в режиме холостого хода и не будет получать данные, пока он не активирован:',
+    'Используйте <code>lazy: true</code>, чтобы отложить загрузку до вызова <code>reload()</code> или <code>execute()</code>. Ресурс начинается в состоянии idle и загружает данные только при явном запуске:',
   'resourceAsync.loadUsers': 'Загрузить пользователей',
   'resourceAsync.notLoadedIdle': 'Еще не загружен (идл)',
   'resourceAsync.example3': 'Пример 3: Начальное значение',
@@ -1499,11 +1499,12 @@ export const ruTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'Реактивная функция, которая возвращает Observable, Promise, или синхронное значение.',
   'resourceAsync.paramOptions': 'Варианты конфигурации ресурсов.',
   'resourceAsync.propInitialValue': 'Начальное значение перед первой доставкой.',
-  'resourceAsync.propLazy': 'Если true, начинается в состоянии "idle" и ждет вызова reload().',
+  'resourceAsync.propLazy': 'Если true, ресурс начинается в состоянии "idle" и ждёт вызова reload() или execute().',
   'resourceAsync.propBehavior':
     'Поведение при одновременных выполнениях: "switch" отменяет предыдущее выполнение; "exhaust" игнорирует новые. По умолчанию: "switch".',
   'resourceAsync.propOnError': 'Обратный звонок оператора ошибки, который может дать запасные значения.',
-  'resourceAsync.propThrowOnError': 'Если это так, то ошибки забрасываются, а не хранятся в сигнале об ошибке.',
+  'resourceAsync.propThrowOnError':
+    'Если true, ошибки, не обработанные резервным значением onError, сохраняются в сигнале ошибки и затем передаются дальше.',
   'resourceAsync.propOnSuccess': 'В случае успешного завершения операции используется ссылка на звонок.',
   'resourceAsync.propOnLoading': 'Перезвони, когда начнутся операции.',
   'resourceAsync.returnsDesc':
@@ -2541,4 +2542,49 @@ export const ruTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'Запрос завершился ошибкой сразу (HTTP 429). Повторы пропущены из-за K8S_RETRY_BACKOFF_CONFIG: false.',
   'k8sRetryBackoff.operatorSuccess': 'Запрос выполнен успешно после повтора.',
+  'resourceAsync.lazyDemoTitle': 'Демонстрация: загрузка пользователей по запросу',
+  'resourceAsync.fallbackTitle': 'Обработка ошибок с резервным значением',
+  'resourceAsync.fallbackDescription':
+    'Этот ресурс пытается получить данные из недействительной конечной точки и при ошибке использует пользователя по умолчанию:',
+  'resourceAsync.throwOnErrorDescription':
+    'Используйте <code>throwOnError: true</code>, чтобы передавать дальше ошибки, не обработанные резервным значением. Ошибка также сохраняется в сигнале ошибки.',
+  'resourceAsync.throwOnErrorPolicy':
+    'При <code>throwOnError: true</code> ошибки передаются дальше, если <code>onError</code> не задан или возвращает <code>undefined</code>. Резервное значение, возвращаемое <code>onError</code>, обрабатывает ошибку и предотвращает её распространение.',
+  'resourceAsync.mutationConfigTitle': 'Основные настройки операций изменения:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Выполнять только при явном запуске.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Предотвращать повторную отправку, игнорируя новые запросы во время текущего. Каждый вызов <code>execute()</code> ожидает результат активной операции.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Запустить операцию изменения и дождаться результата либо вызвать без ожидания.',
+  'resourceAsync.mutationBenefitsTitle': 'Почему эти настройки подходят для операций изменения:',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>: Отправлять форму только по нажатию кнопки отправки.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Игнорировать повторные нажатия отправки во время выполнения запроса.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: Использовать <code>const res = await ref.execute()</code> либо вызвать без ожидания. Предыдущее значение очищается, чтобы состояние загрузки было понятным.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: Показывать загрузку и отключать кнопку отправки.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code>: Отслеживать успешное завершение и ошибки для информирования пользователя.',
+  'resourceAsync.registrationDemoTitle': 'Интерактивная демонстрация: форма регистрации',
+  'resourceAsync.registrationDescription':
+    "Отправьте форму, чтобы проверить имитацию API регистрации с вероятностью успеха 70%. При <code>behavior: 'exhaust'</code> повторные нажатия игнорируются, пока запрос выполняется.",
+  'resourceAsync.registrationFailed': 'Ошибка регистрации: {0}',
+  'resourceAsync.switchTitle': 'switch (по умолчанию)',
+  'resourceAsync.switchDescription':
+    'Отменяет предыдущий запрос при запуске нового, чтобы данные определялись последним запросом. Это поведение по умолчанию лучше всего подходит для чтения (запросов GET).',
+  'resourceAsync.exhaustDescription':
+    'Игнорирует новые запросы, пока выполняется текущий. Предотвращает повторные операции при быстрых нажатиях, например повторный поиск или запросы страниц. Подходит и для операций изменения (пример 5).',
+  'resourceAsync.computedStateAdvice':
+    'Используйте <code>computed()</code> вместо геттеров для получения производного состояния из сигналов. Мемоизация исключает повторные вычисления и работает совместно с реактивностью Angular.',
+  'resourceAsync.queryPreset': 'Предустановленный запрос:',
+  'resourceAsync.reset': 'Сбросить',
+  'resourceAsync.awaitExecute': 'Дождаться execute()',
+  'resourceAsync.statusLabel': 'Состояние:',
+  'resourceAsync.activeQuery': 'Активный запрос:',
+  'resourceAsync.fetchingWithAbortSignal': 'Получение данных с AbortSignal…',
+  'resourceAsync.category': 'Категория',
+  'resourceAsync.requestInFlight': 'Выполняется (сигнал активен)',
+  'resourceAsync.requestAborted': 'Прерван (отмена через AbortSignal)',
+  'resourceAsync.requestResolved': 'Завершён',
+  'resourceAsync.requestLogLabel': 'Запрос № {0} (поиск: «{1}»):',
 };

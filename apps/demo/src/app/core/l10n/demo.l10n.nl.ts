@@ -623,7 +623,7 @@ export const nlTranslations: Record<string, string> = {
     'Maakt een hulpbron aan die automatisch gegevens ophaalt en her-fetches wanneer afhankelijkheden veranderen. Elk signaal dat gelezen wordt binnen de bronfunctie wordt een reactieve afhankelijkheid.',
   'resourceAsync.example2': 'Voorbeeld 2: Lazy Laden',
   'resourceAsync.example2Desc':
-    'Gebruik <code>lazy: true</code> om het laden uit te stellen totdat <code>reload()</code> wordt aangeroepen. De hulpbron start in stationaire toestand en zal geen gegevens ophalen totdat dit expliciet is geactiveerd:',
+    'Gebruik <code>lazy: true</code> om het laden uit te stellen totdat <code>reload()</code> of <code>execute()</code> wordt aangeroepen. De resource begint in de status idle en haalt alleen gegevens op na een expliciete trigger:',
   'resourceAsync.loadUsers': 'Gebruikers laden',
   'resourceAsync.notLoadedIdle': 'Nog niet geladen (idle)',
   'resourceAsync.example3': 'Voorbeeld 3: Initiële waarde',
@@ -1510,12 +1510,13 @@ export const nlTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'Een reactieve functie die een Observable, Promise of synchrone waarde teruggeeft.',
   'resourceAsync.paramOptions': 'Configuratie-opties voor de bron.',
   'resourceAsync.propInitialValue': 'Initiële waarde voordat de eerste ophaling voltooid is.',
-  'resourceAsync.propLazy': 'Als waar, begint in "idle"-toestand en wacht tot reload() wordt aangeroepen.',
+  'resourceAsync.propLazy':
+    'Indien true, begint de resource in de status "idle" en wacht op een aanroep van reload() of execute().',
   'resourceAsync.propBehavior':
     'Gedrag bij gelijktijdige uitvoeringen: "switch" annuleert de vorige uitvoering; "exhaust" negeert nieuwe uitvoeringen. Standaard: "switch".',
   'resourceAsync.propOnError': 'Error handler callback die terugvalwaarden kan bieden.',
   'resourceAsync.propThrowOnError':
-    'Indien ingeschakeld worden fouten gegooid in plaats van opgeslagen in het foutsignaal.',
+    'Indien true, worden fouten die niet door een onError-terugvalwaarde zijn afgehandeld na opslag in het foutsignaal doorgegeven.',
   'resourceAsync.propOnSuccess': 'Oproep tot terugroepen wanneer de bewerking succesvol is voltooid.',
   'resourceAsync.propOnLoading': 'Oproep tot terugroepen wanneer de bewerking begint te laden.',
   'resourceAsync.returnsDesc':
@@ -2555,4 +2556,49 @@ export const nlTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'De aanvraag is direct mislukt (HTTP 429). Nieuwe pogingen zijn overgeslagen via K8S_RETRY_BACKOFF_CONFIG: false.',
   'k8sRetryBackoff.operatorSuccess': 'De aanvraag is geslaagd na een nieuwe poging.',
+  'resourceAsync.lazyDemoTitle': 'Demo: gebruikers op aanvraag laden',
+  'resourceAsync.fallbackTitle': 'Foutafhandeling met terugvalwaarde',
+  'resourceAsync.fallbackDescription':
+    'Deze resource vraagt gegevens op bij een ongeldig eindpunt en gebruikt bij een fout een standaardgebruiker:',
+  'resourceAsync.throwOnErrorDescription':
+    'Gebruik <code>throwOnError: true</code> om fouten door te geven die niet door een terugvalwaarde zijn afgehandeld. De fout wordt ook in het foutsignaal opgeslagen.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Met <code>throwOnError: true</code> worden fouten doorgegeven als <code>onError</code> ontbreekt of <code>undefined</code> retourneert. Een terugvalwaarde van <code>onError</code> handelt de fout af en voorkomt doorgifte.',
+  'resourceAsync.mutationConfigTitle': 'Belangrijke configuratie voor mutaties:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Alleen uitvoeren na een expliciete aanroep.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Voorkom dubbele verzendingen door nieuwe aanvragen tijdens een lopende aanvraag te negeren. Elke aanroep van <code>execute()</code> wacht op de uitkomst van de actieve bewerking.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Start een mutatie en wacht op het resultaat, of roep aan zonder te wachten.',
+  'resourceAsync.mutationBenefitsTitle': 'Waarom deze configuratie geschikt is voor mutaties:',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code>: Verzend het formulier pas wanneer de gebruiker op verzenden klikt.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Negeer herhaalde verzendklikken zolang de aanvraag loopt.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: Gebruik <code>const res = await ref.execute()</code> of roep aan zonder te wachten. De vorige waarde wordt gewist voor een duidelijke laadstatus.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: Toon de laadstatus en schakel de verzendknop uit.',
+  'resourceAsync.mutationStatus': '<code>status()</code>: Volg succes- en foutstatussen om de gebruiker te informeren.',
+  'resourceAsync.registrationDemoTitle': 'Interactieve demo: gebruikersregistratie',
+  'resourceAsync.registrationDescription':
+    "Verzend het formulier om een gesimuleerde registratie-API met 70% kans op succes te proberen. Met <code>behavior: 'exhaust'</code> worden herhaalde klikken genegeerd zolang een aanvraag loopt.",
+  'resourceAsync.registrationFailed': 'Registratie mislukt: {0}',
+  'resourceAsync.switchTitle': 'switch (standaard)',
+  'resourceAsync.switchDescription':
+    'Annuleert de vorige aanvraag wanneer een nieuwe begint, zodat de nieuwste aanvraag de gegevens bepaalt. Dit standaardgedrag is vooral geschikt voor leesacties (GET-aanvragen).',
+  'resourceAsync.exhaustDescription':
+    'Negeert nieuwe aanvragen zolang er een loopt. Voorkomt dubbele bewerkingen door snelle klikken, zoals herhaalde zoek- of pagineringsaanvragen. Ook geschikt voor mutaties (voorbeeld 5).',
+  'resourceAsync.computedStateAdvice':
+    'Gebruik <code>computed()</code> in plaats van getters om status af te leiden uit signals. Memoïsatie voorkomt herhaalde berekeningen en werkt samen met de reactiviteit van Angular.',
+  'resourceAsync.queryPreset': 'Vooraf ingestelde query:',
+  'resourceAsync.reset': 'Opnieuw instellen',
+  'resourceAsync.awaitExecute': 'Wachten op execute()',
+  'resourceAsync.statusLabel': 'Status:',
+  'resourceAsync.activeQuery': 'Actieve query:',
+  'resourceAsync.fetchingWithAbortSignal': 'Gegevens ophalen met AbortSignal…',
+  'resourceAsync.category': 'Categorie',
+  'resourceAsync.requestInFlight': 'Bezig (signaal actief)',
+  'resourceAsync.requestAborted': 'Afgebroken (AbortSignal geactiveerd)',
+  'resourceAsync.requestResolved': 'Voltooid',
+  'resourceAsync.requestLogLabel': 'Aanvraag #{0} (query: ‘{1}’):',
 };

@@ -610,7 +610,7 @@ export const jaTranslations: Record<string, string> = {
     '依存関係が変化するたびにデータを再取得するリソースを生成します。ソース関数内の任意のシグナルはリアクティブな依存関係になります。',
   'resourceAsync.example2': '例2: ラズリロード',
   'resourceAsync.example2Desc':
-    'コードlazy: trueを用いて、reload()が呼ばれるまでロードを遅らせることができます。リソースは初期状態で開始され、明示的にトリガーされたまでデータを取得しません:',
+    '<code>lazy: true</code> を使うと、<code>reload()</code> または <code>execute()</code> が呼び出されるまで読み込みを遅延させます。リソースは idle 状態で始まり、明示的にトリガーされた場合のみデータを取得します：',
   'resourceAsync.loadUsers': 'ユーザーをロード',
   'resourceAsync.notLoadedIdle': 'まだ読み込まれていない（idle）',
   'resourceAsync.example3': '例3: 初期値',
@@ -1458,12 +1458,12 @@ export const jaTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'リアクティブな関数で、Observable、Promise、または同期的な値を返す関数.',
   'resourceAsync.paramOptions': 'リソースの構成オプション.',
   'resourceAsync.propInitialValue': '最初の取得が完了する前の初期値.',
-  'resourceAsync.propLazy': 'true の場合、状態が "idle" から始まり、reload() が呼ばれるまで待つ.',
+  'resourceAsync.propLazy': 'true の場合、状態は "idle" から始まり、reload() または execute() の呼び出しを待ちます。',
   'resourceAsync.propBehavior':
     'コンカレントの挙動: "switch" (前の操作をキャンセル) または "exhaust" (新しい操作を無視). デフォルトは "switch" です.',
   'resourceAsync.propOnError': 'エラーハンドラーのコールバックでフォールバック値を提供できます.',
   'resourceAsync.propThrowOnError':
-    'true の場合、エラーは例外として投げられるのではなく、エラーサインアルに保存されます.',
+    'true の場合、onError の代替値で処理されていないエラーをエラーシグナルに保存した後、伝播させます。',
   'resourceAsync.propOnSuccess': '操作が成功して終了したときに呼び出されるコールバック.',
   'resourceAsync.propOnLoading': '操作がローディングを開始したときに呼び出されるコールバック.',
   'resourceAsync.returnsDesc':
@@ -2459,4 +2459,48 @@ export const jaTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'リクエストは即座に失敗しました（HTTP 429）。K8S_RETRY_BACKOFF_CONFIG: false により再試行がスキップされました。',
   'k8sRetryBackoff.operatorSuccess': '再試行後、リクエストが成功しました。',
+  'resourceAsync.lazyDemoTitle': 'デモ：必要に応じてユーザーを読み込む',
+  'resourceAsync.fallbackTitle': '代替値を使ったエラー処理',
+  'resourceAsync.fallbackDescription':
+    'このリソースは無効なエンドポイントからの取得を試み、失敗時に既定のユーザーを使用します：',
+  'resourceAsync.throwOnErrorDescription':
+    '<code>throwOnError: true</code> を使うと、代替値で処理されていないエラーを伝播させます。エラーはエラーシグナルにも保存されます。',
+  'resourceAsync.throwOnErrorPolicy':
+    '<code>throwOnError: true</code> の場合、<code>onError</code> が省略されるか <code>undefined</code> を返すとエラーが伝播します。<code>onError</code> が代替値を返すと、エラーは処理され、伝播しません。',
+  'resourceAsync.mutationConfigTitle': '変更操作の主な設定：',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>：明示的にトリガーされた場合のみ実行します。',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>：処理中のリクエストがある間は新しいリクエストを無視し、二重送信を防ぎます。各 <code>execute()</code> 呼び出しは、実行中の操作の結果を待機します。",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>：変更操作を開始して結果を待機するか、待機せずに呼び出します。',
+  'resourceAsync.mutationBenefitsTitle': '変更操作に適している理由：',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>：ユーザーが送信をクリックした場合のみフォームを送信します。',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>：リクエストの実行中は送信ボタンの連続クリックを無視します。",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>：<code>const res = await ref.execute()</code> を使うか、待機せずに呼び出します。前の値を消去して読み込み状態を明確にします。',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>：読み込み中の表示を行い、送信ボタンを無効にします。',
+  'resourceAsync.mutationStatus': '<code>status()</code>：成功とエラーの状態を追跡してユーザーに知らせます。',
+  'resourceAsync.registrationDemoTitle': '対話型デモ：ユーザー登録フォーム',
+  'resourceAsync.registrationDescription':
+    "フォームを送信して、成功率 70% の模擬登録 API を試せます。<code>behavior: 'exhaust'</code> を使うと、リクエストの実行中は連続クリックが無視されます。",
+  'resourceAsync.registrationFailed': '登録に失敗しました：{0}',
+  'resourceAsync.switchTitle': 'switch（既定）',
+  'resourceAsync.switchDescription':
+    '新しいリクエストが始まると前のリクエストを取り消し、最新のリクエストがデータを決定します。これは既定の動作で、読み取り（GET リクエスト）に適しています。',
+  'resourceAsync.exhaustDescription':
+    'リクエストの実行中は新しいリクエストを無視します。連続クリックによる検索やページ切り替えなどの重複操作を防ぎます。変更操作にも有効です（例 5）。',
+  'resourceAsync.computedStateAdvice':
+    'シグナルから状態を導出する場合は、getter の代わりに <code>computed()</code> を使います。メモ化によって再計算を抑え、Angular のリアクティビティと連携します。',
+  'resourceAsync.queryPreset': 'クエリのプリセット：',
+  'resourceAsync.reset': 'リセット',
+  'resourceAsync.awaitExecute': 'execute() を待機',
+  'resourceAsync.statusLabel': '状態：',
+  'resourceAsync.activeQuery': '現在のクエリ：',
+  'resourceAsync.fetchingWithAbortSignal': 'AbortSignal を使って取得中…',
+  'resourceAsync.category': 'カテゴリ',
+  'resourceAsync.requestInFlight': '実行中（シグナル有効）',
+  'resourceAsync.requestAborted': '中止済み（AbortSignal による取り消し）',
+  'resourceAsync.requestResolved': '完了',
+  'resourceAsync.requestLogLabel': 'リクエスト #{0}（クエリ：「{1}」）：',
 };

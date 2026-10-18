@@ -567,7 +567,7 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.example1Desc': '在回调中读取任何 Signal 都会自动被记录为响应式依赖，当其变更时自动重新获取数据。',
   'resourceAsync.example2': '示例 2：延迟懒加载 (Lazy Loading)',
   'resourceAsync.example2Desc':
-    '配置 <code>lazy: true</code>，资源将初始化为 idle 空闲态，直到显式调用 <code>reload()</code> 时才发起加载：',
+    '使用 <code>lazy: true</code> 推迟加载，直到调用 <code>reload()</code> 或 <code>execute()</code>。资源以 idle 状态启动，仅在显式触发时获取数据：',
   'resourceAsync.loadUsers': '加载用户列表',
   'resourceAsync.notLoadedIdle': '尚未加载（空闲态 idle）',
   'resourceAsync.example3': '示例 3：初始占位值 (initialValue)',
@@ -1351,10 +1351,10 @@ export const zhCNTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': '响应式数据获取函数，返回 Observable、Promise 或同步数据。',
   'resourceAsync.paramOptions': '资源配置选项。',
   'resourceAsync.propInitialValue': '首次加载完成前的资源初始值。',
-  'resourceAsync.propLazy': '若为 true，资源以 "idle" 初始状态启动，直到调用 reload() 时才开始加载。',
+  'resourceAsync.propLazy': '若为 true，资源以 "idle" 初始状态启动，等待调用 reload() 或 execute()。',
   'resourceAsync.propBehavior': '并发请求处理策略："switch"（取消前次）或 "exhaust"（忽略新请求），默认为 "switch"。',
   'resourceAsync.propOnError': '错误处理回调，可返回兜底默认数据。',
-  'resourceAsync.propThrowOnError': '若为 true，错误将直接向上抛出而不存入 error signal。',
+  'resourceAsync.propThrowOnError': '若为 true，将未被 onError 备用值处理的错误存入错误信号后，再向外传播。',
   'resourceAsync.propOnSuccess': '操作成功完成时的回调函数。',
   'resourceAsync.propOnLoading': '加载开始时的回调函数。',
   'resourceAsync.returnsDesc':
@@ -2256,4 +2256,45 @@ export const zhCNTranslations: Record<string, string> = {
     '请求重试 2 次后成功，配置为 maxAttempts: 10、指数退避基数 200ms 和 equal jitter。',
   'k8sRetryBackoff.bypassedResult': '请求立即失败（HTTP 429）。已通过 K8S_RETRY_BACKOFF_CONFIG: false 跳过重试。',
   'k8sRetryBackoff.operatorSuccess': '请求重试后成功。',
+  'resourceAsync.lazyDemoTitle': '演示：按需加载用户',
+  'resourceAsync.fallbackTitle': '使用备用值处理错误',
+  'resourceAsync.fallbackDescription': '此资源尝试从无效端点获取数据，失败后使用默认用户：',
+  'resourceAsync.throwOnErrorDescription':
+    '使用 <code>throwOnError: true</code> 传播未被备用值处理的错误。该错误也会存入错误信号。',
+  'resourceAsync.throwOnErrorPolicy':
+    '启用 <code>throwOnError: true</code> 后，若省略 <code>onError</code> 或其返回 <code>undefined</code>，错误会向外传播。<code>onError</code> 返回的备用值会处理错误并阻止传播。',
+  'resourceAsync.mutationConfigTitle': '写入操作的关键配置：',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>：仅在显式触发时执行。',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>：请求进行期间忽略新请求，防止重复提交。每次调用 <code>execute()</code> 都会等待当前操作的结果。",
+  'resourceAsync.mutationExecute': '<code>execute(): Promise&lt;T&gt;</code>：触发写入并等待结果，也可调用后不等待。',
+  'resourceAsync.mutationBenefitsTitle': '这些配置为何适合写入操作：',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>：仅当用户点击提交时提交表单。',
+  'resourceAsync.mutationRepeatedClicks': "<code>behavior: 'exhaust'</code>：请求进行期间忽略重复的提交点击。",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>：使用 <code>const res = await ref.execute()</code>，也可调用后不等待。执行时清除旧值，让加载状态保持清晰。',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>：显示加载反馈并禁用提交按钮。',
+  'resourceAsync.mutationStatus': '<code>status()</code>：跟踪成功和错误状态，为用户提供反馈。',
+  'resourceAsync.registrationDemoTitle': '交互演示：用户注册表单',
+  'resourceAsync.registrationDescription':
+    "提交表单，体验成功率为 70% 的模拟注册 API。使用 <code>behavior: 'exhaust'</code> 时，请求进行期间会忽略重复的提交点击。",
+  'resourceAsync.registrationFailed': '注册失败：{0}',
+  'resourceAsync.switchTitle': 'switch（默认）',
+  'resourceAsync.switchDescription':
+    '新请求开始时取消上一个请求，由最新请求决定数据。这是默认行为，最适合读取操作（GET 请求）。',
+  'resourceAsync.exhaustDescription':
+    '请求进行期间忽略新请求，避免快速点击导致重复搜索或分页等重复操作。也适用于写入操作（示例 5）。',
+  'resourceAsync.computedStateAdvice':
+    '使用 <code>computed()</code> 而非 getter 从信号派生状态。记忆化避免重复计算，并与 Angular 响应式机制集成。',
+  'resourceAsync.queryPreset': '查询预设：',
+  'resourceAsync.reset': '重置',
+  'resourceAsync.awaitExecute': '等待 execute()',
+  'resourceAsync.statusLabel': '状态：',
+  'resourceAsync.activeQuery': '当前查询：',
+  'resourceAsync.fetchingWithAbortSignal': '正在使用 AbortSignal 获取数据…',
+  'resourceAsync.category': '类别',
+  'resourceAsync.requestInFlight': '进行中（信号有效）',
+  'resourceAsync.requestAborted': '已中止（AbortSignal 已取消）',
+  'resourceAsync.requestResolved': '已完成',
+  'resourceAsync.requestLogLabel': '请求 #{0}（查询：“{1}”）：',
 };

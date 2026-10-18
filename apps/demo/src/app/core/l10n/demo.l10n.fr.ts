@@ -632,7 +632,7 @@ export const frTranslations: Record<string, string> = {
     "Crée une ressource qui récupère automatiquement les données et re-fetches chaque fois que les dépendances changent. Tout signal lu à l'intérieur de la fonction source devient une dépendance réactive.",
   'resourceAsync.example2': 'Exemple 2: Chargement paresseux',
   'resourceAsync.example2Desc':
-    "Utilisez <code>lazy: true</code> pour reporter le chargement jusqu'à ce que <code>reload()</code> soit appelé. La ressource démarre en état inactif et ne récupérera pas les données tant qu'elle n'aura pas été explicitement déclenchée :",
+    'Utilisez <code>lazy: true</code> pour différer le chargement jusqu’à un appel à <code>reload()</code> ou <code>execute()</code>. La ressource démarre dans l’état idle et ne récupère des données que sur déclenchement explicite :',
   'resourceAsync.loadUsers': 'Charger les utilisateurs',
   'resourceAsync.notLoadedIdle': 'Non encore chargé (rembourrage)',
   'resourceAsync.example3': 'Exemple 3 : Valeur initiale',
@@ -1529,11 +1529,12 @@ export const frTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'Une fonction réactive qui renvoie une valeur Observable, Promise ou synchrone.',
   'resourceAsync.paramOptions': 'Options de configuration pour la ressource.',
   'resourceAsync.propInitialValue': 'Valeur initiale avant la première récupération complète.',
-  'resourceAsync.propLazy': 'Si vrai, commence dans l\'état "idle" et attend que reload() soit appelé.',
+  'resourceAsync.propLazy': 'Si true, démarre dans l’état "idle" et attend un appel à reload() ou execute().',
   'resourceAsync.propBehavior':
     'Gestion des exécutions simultanées : "switch" annule l\'exécution précédente ; "exhaust" ignore les nouvelles exécutions. Valeur par défaut : "switch".',
   'resourceAsync.propOnError': "Callback du gestionnaire d'erreur qui peut fournir des valeurs de recul.",
-  'resourceAsync.propThrowOnError': "Si vrai, les erreurs sont lancées au lieu de stockées dans le signal d'erreur.",
+  'resourceAsync.propThrowOnError':
+    'Si true, propage les erreurs non traitées par une valeur de repli de onError après les avoir stockées dans le signal d’erreur.',
   'resourceAsync.propOnSuccess': "Callback invoqué lorsque l'opération se termine avec succès.",
   'resourceAsync.propOnLoading': "Callback invoqué lorsque l'opération commence le chargement.",
   'resourceAsync.returnsDesc':
@@ -2600,4 +2601,50 @@ export const frTranslations: Record<string, string> = {
   'k8sRetryBackoff.bypassedResult':
     'La requête a échoué immédiatement (HTTP 429). Les nouvelles tentatives ont été ignorées via K8S_RETRY_BACKOFF_CONFIG: false.',
   'k8sRetryBackoff.operatorSuccess': 'La requête a réussi après une nouvelle tentative.',
+  'resourceAsync.lazyDemoTitle': 'Démonstration : utilisateurs chargés à la demande',
+  'resourceAsync.fallbackTitle': 'Gestion des erreurs avec valeur de repli',
+  'resourceAsync.fallbackDescription':
+    'Cette ressource interroge un point de terminaison non valide et utilise un utilisateur par défaut en cas d’échec :',
+  'resourceAsync.throwOnErrorDescription':
+    'Utilisez <code>throwOnError: true</code> pour propager les erreurs non traitées par une valeur de repli. L’erreur est également stockée dans le signal d’erreur.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Avec <code>throwOnError: true</code>, les erreurs se propagent si <code>onError</code> est omis ou renvoie <code>undefined</code>. Une valeur de repli renvoyée par <code>onError</code> traite l’erreur et empêche sa propagation.',
+  'resourceAsync.mutationConfigTitle': 'Configuration essentielle des mutations :',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code> : Exécuter uniquement sur déclenchement explicite.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code> : Éviter les envois en double en ignorant les nouvelles requêtes pendant une requête en cours. Chaque appel à <code>execute()</code> attend le résultat de l’opération active.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code> : Déclencher une mutation et attendre son résultat, ou appeler sans attendre.',
+  'resourceAsync.mutationBenefitsTitle': 'Pourquoi cette configuration convient aux mutations :',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code> : Envoyer le formulaire uniquement lorsque l’utilisateur clique sur le bouton d’envoi.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code> : Ignorer les clics d’envoi répétés pendant la requête.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code> : Utiliser <code>const res = await ref.execute()</code> ou appeler sans attendre. La valeur précédente est effacée pour clarifier l’état de chargement.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code> : Afficher le chargement et désactiver le bouton d’envoi.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code> : Suivre les états de réussite et d’erreur pour informer l’utilisateur.',
+  'resourceAsync.registrationDemoTitle': 'Démonstration interactive : formulaire d’inscription',
+  'resourceAsync.registrationDescription':
+    "Envoyez le formulaire pour tester une API d’inscription simulée avec 70 % de réussite. Avec <code>behavior: 'exhaust'</code>, les clics répétés sont ignorés pendant une requête en cours.",
+  'resourceAsync.registrationFailed': 'Échec de l’inscription : {0}',
+  'resourceAsync.switchTitle': 'switch (par défaut)',
+  'resourceAsync.switchDescription':
+    'Annule la requête précédente au démarrage d’une nouvelle, afin que la plus récente détermine les données. Ce comportement par défaut convient particulièrement aux lectures (requêtes GET).',
+  'resourceAsync.exhaustDescription':
+    'Ignore les nouvelles requêtes tant qu’une requête est en cours. Évite les opérations en double dues aux clics rapides, comme des recherches ou demandes de pagination répétées. Convient aussi aux mutations (exemple 5).',
+  'resourceAsync.computedStateAdvice':
+    'Utilisez <code>computed()</code> plutôt que des getters pour dériver un état à partir de signaux. La mémoïsation évite les calculs répétés et s’intègre à la réactivité d’Angular.',
+  'resourceAsync.queryPreset': 'Requête prédéfinie :',
+  'resourceAsync.reset': 'Réinitialiser',
+  'resourceAsync.awaitExecute': 'Attendre execute()',
+  'resourceAsync.statusLabel': 'État :',
+  'resourceAsync.activeQuery': 'Requête active :',
+  'resourceAsync.fetchingWithAbortSignal': 'Récupération avec AbortSignal…',
+  'resourceAsync.category': 'Catégorie',
+  'resourceAsync.requestInFlight': 'En cours (signal actif)',
+  'resourceAsync.requestAborted': 'Annulée (AbortSignal déclenché)',
+  'resourceAsync.requestResolved': 'Terminée',
+  'resourceAsync.requestLogLabel': 'Requête n° {0} (recherche : « {1} ») :',
 };
