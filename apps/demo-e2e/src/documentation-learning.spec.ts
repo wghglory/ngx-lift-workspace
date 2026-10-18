@@ -96,18 +96,18 @@ test('wizard preview precedes its step walkthrough and has separate HTML source'
   ).toBe(true);
 });
 
-test('learning entry points keep their previews reachable on narrow screens', async ({page}) => {
-  await page.setViewportSize({width: 390, height: 844});
-  for (const route of [
-    '/ngx-lift/signals/resourceAsync',
-    '/ngx-lift/signals/computedAsync',
-    '/ngx-lift/signals/toSignalForm',
-    '/clr-lift/operators/dgState',
-    '/clr-lift/components/timeline-wizard',
-    '/clr-lift/components/key-value-inputs',
-  ]) {
+for (const route of [
+  '/ngx-lift/signals/resourceAsync',
+  '/ngx-lift/signals/computedAsync',
+  '/ngx-lift/signals/toSignalForm',
+  '/clr-lift/operators/dgState',
+  '/clr-lift/components/timeline-wizard',
+  '/clr-lift/components/key-value-inputs',
+]) {
+  test(`learning preview remains reachable on narrow screens: ${route}`, async ({page}) => {
+    await page.setViewportSize({width: 390, height: 844});
     await page.goto(route);
     await expect(page.locator('app-demo-playground').first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  }
-});
+  });
+}

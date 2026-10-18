@@ -77,6 +77,12 @@
 - [ ] Lint checks pass with zero errors (`npx nx run-many -t lint`)
 - [ ] Production build succeeds (`npm run build:libs` / `npx nx build demo`)
 - [ ] Interactive demo page updated and verified (if applicable)
+- [ ] Accessibility scans and relevant keyboard/focus journeys pass for library and demo UI
+- [ ] All supported library and demo locales are complete, including accessible names and announcements
+- [ ] Independent human language acceptance recorded with reviewer, locale, scope, and revision (leave unchecked while
+      pending)
+- [ ] Manual assistive-technology acceptance recorded with assessor, environment, scope, and revision (leave unchecked
+      while pending)
 
 ### Test Commands Run
 

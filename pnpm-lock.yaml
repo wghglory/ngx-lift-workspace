@@ -158,6 +158,9 @@ importers:
       angular-eslint:
         specifier: 21.4.0
         version: 21.4.0(@angular/cli@21.2.14(@types/node@24.13.2)(chokidar@5.0.0))(chokidar@5.0.0)(eslint@9.39.5(jiti@2.4.2)(supports-color@7.2.0))(typescript-eslint@8.70.0(eslint@9.39.5(jiti@2.4.2)(supports-color@7.2.0))(typescript@5.9.3))(typescript@5.9.3)
+      axe-core:
+        specifier: 4.11.4
+        version: 4.11.4
       eslint:
         specifier: ^9.8.0
         version: 9.39.5(jiti@2.4.2)(supports-color@7.2.0)
@@ -4092,6 +4095,10 @@ packages:
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
+
+  axe-core@4.11.4:
+    resolution: {integrity: sha512-KunSNx+TVpkAw/6ULfhnx+HWRecjqZGTOyquAoWHYLRSdK1tB5Ihce1ZW+UY3fj33bYAFWPu7W/GRSmmrCGuxA==}
+    engines: {node: '>=4'}
 
   aws-sign2@0.7.0:
     resolution: {integrity: sha512-08kcGqnYf/YmjoRhfxyu+CLxBjUtHLXLXX/vUfx9l2LYzG3c1m61nrpyFUZI6zeS+Li/wWMMidD9KgrqtGq3mA==}
@@ -9084,6 +9091,8 @@ packages:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
 snapshots:
+
+  axe-core@4.11.4: {}
 
   '@algolia/abtesting@1.14.1':
     dependencies:

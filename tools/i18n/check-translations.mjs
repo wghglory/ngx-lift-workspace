@@ -68,6 +68,21 @@ export function usedKeys(source, file) {
         ts.isStringLiteralLike(node.arguments[0] ?? {})
       )
         keys.add(node.arguments[0].text);
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        node.expression.text === 'Component' &&
+        ts.isObjectLiteralExpression(node.arguments[0] ?? {})
+      ) {
+        for (const property of node.arguments[0].properties) {
+          if (
+            ts.isPropertyAssignment(property) &&
+            property.name.getText(ast) === 'template' &&
+            ts.isStringLiteralLike(property.initializer)
+          )
+            for (const key of usedKeys(property.initializer.text, `${file}.html`)) keys.add(key);
+        }
+      }
       ts.forEachChild(node, visit);
     };
     visit(ast);
@@ -79,6 +94,8 @@ export function usedKeys(source, file) {
       if (!node || typeof node !== 'object' || seen.has(node)) return;
       seen.add(node);
       const translated = inTranslate || (node.name === 'translate' && node.constructor.name === 'BindingPipe');
+      // Dynamic concatenations are not complete translation keys.
+      if (translated && node.constructor.name === 'Binary') return;
       if (translated && node.constructor.name === 'Conditional') {
         visit(node.condition, false);
         visit(node.trueExp, true);
@@ -120,12 +137,42 @@ export function checkWorkspace(root = process.cwd()) {
     for (const key of usedKeys(readFileSync(file, 'utf8'), file))
       if (!Object.hasOwn(english, key)) errors.push(`${file}: missing English key ${key}`);
   }
-  for (const file of files(join(root, 'libs/clr-lift/src/lib')).filter((file) => file.endsWith('.l10n.ts'))) {
+  const libraryFiles = files(join(root, 'libs/clr-lift/src/lib'));
+  const libraryKeys = new Set();
+  const registrations = new Map();
+  for (const file of libraryFiles.filter((path) => path.endsWith('.ts') && !path.endsWith('.spec.ts'))) {
+    const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+    const visit = (node) => {
+      if (
+        ts.isCallExpression(node) &&
+        ts.isPropertyAccessExpression(node.expression) &&
+        node.expression.name.text === 'loadTranslationsForComponent' &&
+        ts.isStringLiteralLike(node.arguments[0] ?? {}) &&
+        ts.isIdentifier(node.arguments[1] ?? {})
+      ) {
+        const name = node.arguments[1].text;
+        if (!registrations.has(name)) registrations.set(name, new Set());
+        registrations.get(name).add(node.arguments[0].text);
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(source);
+  }
+  for (const file of libraryFiles.filter((file) => file.endsWith('.l10n.ts'))) {
     const locales = dictionary(file);
     for (const [locale, messages] of Object.entries(locales))
       errors.push(...validateDictionary(locales.en, messages).map((error) => `${file} ${locale}: ${error}`));
     for (const locale of ['en', 'zh-CN', 'zh-TW', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt-BR', 'ru'])
       if (!Object.hasOwn(locales, locale)) errors.push(`${file}: unsupported promised locale ${locale}`);
+    // Namespace registration belongs to the component, rather than the dictionary filename.
+    const ast = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+    const name = ast.statements.find(ts.isVariableStatement)?.declarationList.declarations[0]?.name.getText(ast);
+    for (const namespace of registrations.get(name) ?? [])
+      for (const key of Object.keys(locales.en)) libraryKeys.add([namespace, key].filter(Boolean).join('.'));
+  }
+  for (const file of libraryFiles.filter((file) => /\.(html|ts)$/.test(file) && !/\.(spec|l10n)\.ts$/.test(file))) {
+    for (const key of usedKeys(readFileSync(file, 'utf8'), file))
+      if (!libraryKeys.has(key)) errors.push(`${file}: missing library key ${key}`);
   }
   return {errors, coverage};
 }

@@ -38,6 +38,12 @@ Use the [component roadmap](docs/component-roadmap.md) for the Angular 21 delive
 
 ## Documentation language and examples
 
+For every new or changed UI in either library or the demo app, follow the
+[accessibility and language acceptance contract](docs/guides/accessibility-and-localization.md) during generation and
+review. Deliver keyboard/focus behavior, semantic names/state, and every owned visible/announced message in all
+supported locales together with the implementation and demo. Run the applicable accessibility, translation, and browser
+checks. Report independent human language and assistive-technology acceptance separately from automated checks.
+
 Maintain repository documentation in English. Chinese explanations are temporary review aids for the maintainer; provide
 them in chat unless a temporary file is explicitly requested, and keep them out of committed project documentation.
 Preserve supported product translations. Use ngx-lift/clr-lift names and generic application examples; omit internal

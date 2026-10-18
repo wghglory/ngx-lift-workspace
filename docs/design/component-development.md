@@ -30,6 +30,11 @@ pretending to be values; explain this in their specs. Utilities document the for
 
 ## Required feature acceptance
 
+Apply the [accessibility and language acceptance contract](../guides/accessibility-and-localization.md) to library and
+demo work, including AI-generated changes. Complete every supported dictionary as part of the feature increment; runtime
+English fallback does not satisfy delivery. Include visible text, accessible names/descriptions, validation,
+loading/error messages, and announcements. Keep automated evidence and independent human approval separate.
+
 Prefer native browser capabilities and existing supported dependencies. Justify each new runtime dependency against
 important approved use cases, including transitive cost, maintenance, licensing, installation and production
 integration. For optional heavy features, verify both installed-dependency isolation and bundle isolation; a dynamic
