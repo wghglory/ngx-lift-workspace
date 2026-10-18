@@ -7,3 +7,7 @@ For new or changed public library behavior, follow `docs/design/component-develo
 `.agents/skills/lift-design/SKILL.md`. Use `docs/design/templates/component-design-spec.md` when a spec is missing. The
 workflow owns industry comparison, API review, form applicability, Clarity demos, localization and validation;
 `docs/component-roadmap.md` owns Angular 21 component order and the deferred platform upgrade.
+
+For generated or edited library and demo UI, apply `docs/guides/accessibility-and-localization.md`: include accessible
+semantics and keyboard/focus behavior, translate owned visible and announced messages into every supported locale, and
+verify the rendered states. Keep automated validation and independent human acceptance separate.

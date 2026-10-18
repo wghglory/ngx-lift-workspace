@@ -610,7 +610,7 @@ export const jaTranslations: Record<string, string> = {
     '依存関係が変化するたびにデータを再取得するリソースを生成します。ソース関数内の任意のシグナルはリアクティブな依存関係になります。',
   'resourceAsync.example2': '例2: ラズリロード',
   'resourceAsync.example2Desc':
-    'コードlazy: trueを用いて、reload()が呼ばれるまでロードを遅らせることができます。リソースは初期状態で開始され、明示的にトリガーされたまでデータを取得しません:',
+    '<code>lazy: true</code> を使うと、<code>reload()</code> または <code>execute()</code> が呼び出されるまで読み込みを遅延させます。リソースは idle 状態で始まり、明示的にトリガーされた場合のみデータを取得します：',
   'resourceAsync.loadUsers': 'ユーザーをロード',
   'resourceAsync.notLoadedIdle': 'まだ読み込まれていない（idle）',
   'resourceAsync.example3': '例3: 初期値',
@@ -719,8 +719,9 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': '初回読み込み（既存データなし）',
   'queryResource.matrixInitialLoadUsage':
     'メインスピナーやスケルトンを表示します。UI にはまだ表示可能なデータがありません。',
-  'queryResource.matrixResolved': '解決済み / アイドル（最新データ）',
-  'queryResource.matrixResolvedUsage': 'コンテンツを通常表示します。進行中のネットワークリクエストはありません。',
+  'queryResource.matrixResolved': '完了 / キャッシュ済み',
+  'queryResource.matrixResolvedUsage':
+    'コンテンツを通常表示します。データは利用可能で、最新の場合も古くなっている場合もあります。',
   'queryResource.matrixRefreshingState': 'バックグラウンド再検証（SWR / タグ無効化）',
   'queryResource.matrixRefreshingUsage':
     '全画面スピナーは絶対に表示しないでください！ 既存データをそのまま表示し、ヘッダーに控えめなバッジや小型スピナーを追加します。画面のちらつきやホワイトアウトを防止します。',
@@ -1457,12 +1458,12 @@ export const jaTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'リアクティブな関数で、Observable、Promise、または同期的な値を返す関数.',
   'resourceAsync.paramOptions': 'リソースの構成オプション.',
   'resourceAsync.propInitialValue': '最初の取得が完了する前の初期値.',
-  'resourceAsync.propLazy': 'true の場合、状態が "idle" から始まり、reload() が呼ばれるまで待つ.',
+  'resourceAsync.propLazy': 'true の場合、状態は "idle" から始まり、reload() または execute() の呼び出しを待ちます。',
   'resourceAsync.propBehavior':
     'コンカレントの挙動: "switch" (前の操作をキャンセル) または "exhaust" (新しい操作を無視). デフォルトは "switch" です.',
   'resourceAsync.propOnError': 'エラーハンドラーのコールバックでフォールバック値を提供できます.',
   'resourceAsync.propThrowOnError':
-    'true の場合、エラーは例外として投げられるのではなく、エラーサインアルに保存されます.',
+    'true の場合、onError の代替値で処理されていないエラーをエラーシグナルに保存した後、伝播させます。',
   'resourceAsync.propOnSuccess': '操作が成功して終了したときに呼び出されるコールバック.',
   'resourceAsync.propOnLoading': '操作がローディングを開始したときに呼び出されるコールバック.',
   'resourceAsync.returnsDesc':
@@ -2042,7 +2043,7 @@ export const jaTranslations: Record<string, string> = {
   'k8sRetryBackoff.paramRandom':
     '決定的なスケジュールをテストするための乱数源。[0, 1) の有限値を返します（0 を含み、1 を含みません）。',
   'k8sRetryBackoff.retryContract':
-    'デフォルト: 5回の試行、指数的なフォールバックで同じジャッターを用いる。サーバーのヒントでは250msを超える追加が可能で、待機時間は30秒、総合計スケジュールされた待機時間は60秒。ヒントが大きすぎる場合、再試行は停止する。インターセプターは既定でアイデモプトなメソッドを再試行する；POST/PATCHはエンドポイントの保証が必要。',
+    'デフォルト: 試行は5回。サーバーのヒントがない場合は、equal jitter を用いた指数バックオフを適用します。サーバーのヒントには最大250msの追加待機を加えます。待機は1回あたり最大30秒、予定される待機時間は合計最大60秒です。ヒントが上限を超える場合は再試行を停止します。インターセプターは既定で冪等なメソッドを再試行します。POST/PATCHには、エンドポイントの冪等性の保証が必要です。',
   'k8sRetryBackoff.paramMinDelay':
     'ジャッター戦略のための最小フォールバック待機時間；maxDelayMsを超えない。サーバーのヒントは変更しない。',
   'k8sRetryBackoff.paramStatuses':
@@ -2415,4 +2416,185 @@ export const jaTranslations: Record<string, string> = {
   'computedAsync.readError': '読み取り時にエラーがスローされ、成功値は返されませんでした。',
   'computedAsync.readDemoHint':
     'ソースを失敗させてから signal を読みます。ソースを復旧して再度読み、復旧を確認してください。',
+  'header.mitLicense': 'MIT ライセンス',
+  'alert.moreInfo': 'サーバーエラーの詳細情報',
+  'common.interfaceTitle': '{0} インターフェース',
+  'common.failed': '失敗',
+  'common.error': 'エラー',
+  'common.pros': '利点',
+  'common.cons': '欠点',
+  'common.componentN': 'コンポーネント {0}',
+  'poll.filterParameter': 'フィルターパラメーター（シグナル）',
+  'poll.filterAll': 'すべて（{0} 件）',
+  'poll.filterActive': 'アクティブ（{0} 件）',
+  'poll.filterInactive': '非アクティブ（{0} 件）',
+  'poll.activeFilter': '現在のフィルター',
+  'poll.inProgress': 'ポーリング中...',
+  'poll.sequence': 'ポーリング番号',
+  'poll.filteredBy': '適用されたフィルター',
+  'poll.totalResults': '結果の総数',
+  'poll.lastTimestamp': '前回のサーバータイムスタンプ',
+  'poll.recentLog': '最近のポーリングのトリガーと実行ログ',
+  'poll.triggerWithFilter': 'フィルター「{0}」でトリガー',
+  'poll.executing': '実行中（HTTP 遅延）',
+  'poll.settled': '完了',
+  'k8sRetryBackoff.resultSuccess': '成功（HTTP {0}）',
+  'k8sRetryBackoff.resultFailure': '失敗（HTTP {0}）',
+  'k8sRetryBackoff.totalAttempts': '（総試行回数: {0}）',
+  'k8sRetryBackoff.failFast': 'HTTP {0}（即時失敗）',
+  'k8sRetryBackoff.overrideSucceeded': 'HTTP {0}（成功）',
+  'k8sRetryBackoff.attempts': '（試行回数: {0}）',
+  'k8sRetryBackoff.exhaustedResult': '最大試行回数（5回）に達しました。リクエストは拒否されました。',
+  'k8sRetryBackoff.non429Result': 'エラー {0}: 429 以外のエラーは再試行せずに即座に伝播しました。',
+  'k8sRetryBackoff.interceptorSuccess': 'インターセプターによる再試行後、リクエストが成功しました。',
+  'k8sRetryBackoff.disabledResult':
+    'HTTP 429 が即座に返されました。HttpContext によりバックオフ再試行が無効化されています。',
+  'k8sRetryBackoff.postDefaultResult':
+    'POST は再試行されませんでした。書き込みの再試行には、エンドポイントに対する明示的な有効化が必要です。',
+  'k8sRetryBackoff.gatewayResult':
+    'ゲートウェイの 429 は再試行されませんでした。設定された Kubernetes 述語がそのエラーを対象外としました。',
+  'k8sRetryBackoff.unrecoveredResult': 'エラー {0}: 復旧せずに最大試行回数に達しました。',
+  'k8sRetryBackoff.customOverrideResult':
+    'maxAttempts: 10、指数バックオフの基準値 200ms、equal jitter の設定で、2回の再試行後にリクエストが成功しました。',
+  'k8sRetryBackoff.bypassedResult':
+    'リクエストは即座に失敗しました（HTTP 429）。K8S_RETRY_BACKOFF_CONFIG: false により再試行がスキップされました。',
+  'k8sRetryBackoff.operatorSuccess': '再試行後、リクエストが成功しました。',
+  'resourceAsync.lazyDemoTitle': 'デモ：必要に応じてユーザーを読み込む',
+  'resourceAsync.fallbackTitle': '代替値を使ったエラー処理',
+  'resourceAsync.fallbackDescription':
+    'このリソースは無効なエンドポイントからの取得を試み、失敗時に既定のユーザーを使用します：',
+  'resourceAsync.throwOnErrorDescription':
+    '<code>throwOnError: true</code> を使うと、代替値で処理されていないエラーを伝播させます。エラーはエラーシグナルにも保存されます。',
+  'resourceAsync.throwOnErrorPolicy':
+    '<code>throwOnError: true</code> の場合、<code>onError</code> が省略されるか <code>undefined</code> を返すとエラーが伝播します。<code>onError</code> が代替値を返すと、エラーは処理され、伝播しません。',
+  'resourceAsync.mutationConfigTitle': '変更操作の主な設定：',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>：明示的にトリガーされた場合のみ実行します。',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>：処理中のリクエストがある間は新しいリクエストを無視し、二重送信を防ぎます。各 <code>execute()</code> 呼び出しは、実行中の操作の結果を待機します。",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>：変更操作を開始して結果を待機するか、待機せずに呼び出します。',
+  'resourceAsync.mutationBenefitsTitle': '変更操作に適している理由：',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>：ユーザーが送信をクリックした場合のみフォームを送信します。',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>：リクエストの実行中は送信ボタンの連続クリックを無視します。",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>：<code>const res = await ref.execute()</code> を使うか、待機せずに呼び出します。前の値を消去して読み込み状態を明確にします。',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>：読み込み中の表示を行い、送信ボタンを無効にします。',
+  'resourceAsync.mutationStatus': '<code>status()</code>：成功とエラーの状態を追跡してユーザーに知らせます。',
+  'resourceAsync.registrationDemoTitle': '対話型デモ：ユーザー登録フォーム',
+  'resourceAsync.registrationDescription':
+    "フォームを送信して、成功率 70% の模擬登録 API を試せます。<code>behavior: 'exhaust'</code> を使うと、リクエストの実行中は連続クリックが無視されます。",
+  'resourceAsync.registrationFailed': '登録に失敗しました：{0}',
+  'resourceAsync.switchTitle': 'switch（既定）',
+  'resourceAsync.switchDescription':
+    '新しいリクエストが始まると前のリクエストを取り消し、最新のリクエストがデータを決定します。これは既定の動作で、読み取り（GET リクエスト）に適しています。',
+  'resourceAsync.exhaustDescription':
+    'リクエストの実行中は新しいリクエストを無視します。連続クリックによる検索やページ切り替えなどの重複操作を防ぎます。変更操作にも有効です（例 5）。',
+  'resourceAsync.computedStateAdvice':
+    'シグナルから状態を導出する場合は、getter の代わりに <code>computed()</code> を使います。メモ化によって再計算を抑え、Angular のリアクティビティと連携します。',
+  'resourceAsync.queryPreset': 'クエリのプリセット：',
+  'resourceAsync.reset': 'リセット',
+  'resourceAsync.awaitExecute': 'execute() を待機',
+  'resourceAsync.statusLabel': '状態：',
+  'resourceAsync.activeQuery': '現在のクエリ：',
+  'resourceAsync.fetchingWithAbortSignal': 'AbortSignal を使って取得中…',
+  'resourceAsync.category': 'カテゴリ',
+  'resourceAsync.requestInFlight': '実行中（シグナル有効）',
+  'resourceAsync.requestAborted': '中止済み（AbortSignal による取り消し）',
+  'resourceAsync.requestResolved': '完了',
+  'resourceAsync.requestLogLabel': 'リクエスト #{0}（クエリ：「{1}」）：',
+  'resourceAsync.todoDemoTitle': 'デモ：タスクの完了状態を切り替える',
+  'resourceAsync.completedLabel': '完了：',
+  'resourceAsync.cacheFirstDemoTitle': 'デモ：キャッシュを優先するユーザープロフィール',
+  'resourceAsync.counterDemoTitle': 'デモ：編集可能なカウンター',
+  'resourceAsync.expert': '上級者向け',
+  'resourceAsync.nestedDemoTitle': 'デモ：組織情報を持つ項目',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition（宣言的定義）',
+  'resourceAsync.statusTitle': 'リソースの状態',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> は、手動で状態を管理する <code>set()</code>、<code>update()</code>、<code>asReadonly()</code> を備えた <code>WritableResourceRef</code> を返し、Angular の <code>WritableResource</code> API に対応します。',
+  'resourceAsync.decrementCounter': 'カウンターを減らす',
+  'resourceAsync.incrementCounter': 'カウンターを増やす',
+  'resourceAsync.nestedIntroduction':
+    'リストの各項目が、関連する組織、ユーザー、詳細情報を取得する場合があります。この例では、行ごとに読み込みとエラーの状態を独立して管理する方法を示します。',
+  'resourceAsync.nestedInjector':
+    '<code>ResourceRefOptions</code> の <code>injector</code> オプションに <code>&#123; injector: this.injector &#125;</code> を渡すと、テンプレートの補助メソッドやサービスで <code>runInInjectionContext()</code> を使わずに <code>resourceAsync</code> を動的に作成できます。',
+  'resourceAsync.fullDocumentation': '📖 詳細ドキュメント：',
+  'resourceAsync.seeDocumentation': '設計ガイド：',
+  'resourceAsync.documentationDescription': '複数の方法、判断フロー、各パターンの使い分けを説明しています。',
+  'resourceAsync.nestedOuter': '外側のリソース：項目リスト自体の読み込みとエラーの状態を持ちます。',
+  'resourceAsync.nestedInner': '内側のリソース：各項目の関連データが独立した読み込みとエラーの状態を持ちます。',
+  'resourceAsync.nestedLazy': '遅延読み込み：クリック時のみ取得し、API 呼び出しを抑えます。',
+  'resourceAsync.nestedIndependent': '独立した状態：各行が読み込み表示、エラー、データを個別に管理します。',
+  'resourceAsync.nestedItemsFailed': '項目を読み込めませんでした：{0}',
+  'resourceAsync.nestedOrganizationFailed': '組織を読み込めませんでした',
+  'resourceAsync.nestedBenefitRequests': 'API 呼び出しを最小限にする（必要なデータのみ取得）',
+  'resourceAsync.nestedBenefitStates': '行ごとに独立した読み込みとエラーの状態',
+  'resourceAsync.nestedBenefitRetry': '失敗した取得を個別に再試行',
+  'resourceAsync.nestedBenefitCache':
+    'orgId ごとに1つのリソースを再利用します。明示的に再読み込みすると、データを再取得します。',
+  'resourceAsync.nestedBenefitScale': '大きなリストにも対応',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>：まだ開始されていないか、リセットされた状態です。 <code>value()</code> は設定された初期値または既定値を返し、未設定の場合は <code>undefined</code> を返します。',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>：結果を保持せずに操作を読み込んでいます。 <code>value()</code> は設定された初期値または既定値を返し、未設定の場合は <code>undefined</code> を返します。',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>：再取得の実行中です。<code>value()</code> は前のデータを保持します。',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code>：操作が成功しました。<code>value()</code> にデータが含まれます。',
+  'resourceAsync.statusError':
+    '<code>error</code>：操作が失敗しました。前のデータは <code>preserveValueOnError</code> が有効な場合のみ保持されます。それ以外の場合、 <code>value()</code> は設定された初期値または既定値を返し、未設定の場合は <code>undefined</code> を返します。',
+  'toast.greatTitle': '成功通知',
+  'toast.successMessage': '成功メッセージです！',
+  'toast.warningMessage': '警告メッセージです！',
+  'toast.errorMessage': 'エラーメッセージです。10秒後に自動的に閉じます。',
+  'toast.infoMessage': '既定の種類の通知です。',
+  'toast.oneHourAgo': '1時間前',
+  'toast.primaryAction': 'メインボタン',
+  'toast.secondaryAction': 'サブボタン',
+  'toast.primaryClicked': 'メインボタンがクリックされました',
+  'toast.secondaryClicked': 'サブボタンがクリックされました',
+  'common.moreInfo': '詳細情報',
+  'toast.openTabSimulation': '新しいタブを開く操作をシミュレーション',
+  'common.details': '詳細',
+  'common.dismiss': '閉じる',
+  'common.acknowledge': '確認',
+  'multiAlerts.dangerMessage': '危険を知らせるアラートです。閉じるボタンで削除できます。',
+  'multiAlerts.warningMessage': '警告アラートです。閉じるボタンで削除できます。',
+  'multiAlerts.successActions': '末尾に操作ボタンがある成功アラートです。',
+  'multiAlerts.detailsClicked': '詳細の操作がクリックされました！',
+  'multiAlerts.dismissClicked': '閉じる操作がクリックされました！',
+  'multiAlerts.newActions': '末尾に操作ボタンがある新しいアラートです。',
+  'multiAlerts.acknowledged': '確認しました！',
+  'multiAlerts.inlineClicked': '正しく操作できました！',
+  'multiAlerts.inlineMessage':
+    'メッセージ内に <button type="button" class="btn btn-sm alert-action" id="click-target">クリック</button> があるアラートです。',
+  'multiAlerts.standardAdded': '標準アラートを {0} に追加しました',
+  'timelineWizard.canceledMessage': 'キャンセルしました',
+  'timelineWizard.confirmedMessage':
+    '送信を確認しました。フォームのデータはコンソールで確認できます。API リクエストをシミュレーションします。',
+  'timelineWizard.finishedMessage': '完了しました',
+  'tooltip.componentAlert': 'アラートコンポーネントのメッセージです',
+  'resourceAsync.todoUpdateFailed': 'タスクを更新できませんでした',
+  'resourceAsync.counterSaveFailed': 'カウンターを保存できませんでした',
+  'resourceAsync.counterSaved': 'カウンターを保存しました: {0}',
+  'resourceAsync.usernameExists': 'このユーザー名は既に使用されています',
+  'resourceAsync.registrationSuccess': '登録が完了しました。ようこそ！',
+  'resourceAsync.networkTimeout': 'ネットワークのタイムアウト',
+  'runtime.readFailure': '読み取り失敗のシミュレーション',
+  'runtime.saveFailure': '保存失敗のシミュレーション',
+  'runtime.pollFailure': 'ポーリング失敗のシミュレーション',
+  'runtime.settingsSaveFailure': 'HTTP 500: クラスター設定をデータベースに保存できませんでした。',
+  'isPromise.caseNative': 'ネイティブの Promise.resolve()',
+  'isPromise.caseAsync': '非同期関数の戻り値',
+  'isPromise.caseThenable': '独自の Thenable オブジェクト',
+  'isPromise.caseObject': '通常のオブジェクト',
+  'isPromise.caseNullish': 'null / undefined',
+  'isPromise.casePrimitive': 'プリミティブ値',
+  'isPromise.caseFunction': '.then を持たない関数',
+  'idleDetection.activeStatus': 'アクティブ',
+  'idleDetection.timeoutStatus': 'タイムアウトしました',
+  'multiAlerts.newInlineMessage':
+    'メッセージ内に <button type="button" class="btn btn-sm alert-action" id="inline-click-target">クリック</button> があるアラートです。',
+  'timelineWizard.review': '確認',
 };

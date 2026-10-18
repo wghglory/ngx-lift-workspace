@@ -19,6 +19,7 @@ export type SimulatorScenario = 'header' | 'body' | 'fallback' | 'non429' | 'exh
 export interface SimulationResult {
   success: boolean;
   message: string;
+  messageKey?: string;
   totalAttempts: number;
   statusCode?: number;
 }
@@ -284,6 +285,7 @@ executeSimulation(): void {
         this.simulationResult.set({
           success: true,
           message: res.message,
+          messageKey: 'k8sRetryBackoff.operatorSuccess',
           totalAttempts: res.attempt,
           statusCode: 200,
         });
@@ -302,6 +304,7 @@ executeSimulation(): void {
             statusCode === 429
               ? 'Max attempts (5) exceeded. Request rejected.'
               : \`Error \${statusCode}: Non-429 error propagated immediately without retry.\`,
+          messageKey: statusCode === 429 ? 'k8sRetryBackoff.exhaustedResult' : 'k8sRetryBackoff.non429Result',
           totalAttempts: attemptCount,
           statusCode,
         });
@@ -590,6 +593,7 @@ getK8sRetryDelayMs({status: 500}); // null — do not retry
           this.simulationResult.set({
             success: true,
             message: res.message,
+            messageKey: 'k8sRetryBackoff.operatorSuccess',
             totalAttempts: res.attempt,
             statusCode: 200,
           });
@@ -608,6 +612,7 @@ getK8sRetryDelayMs({status: 500}); // null — do not retry
               statusCode === 429
                 ? 'Max attempts (5) exceeded. Request rejected.'
                 : `Error ${statusCode}: Non-429 error propagated immediately without retry.`,
+            messageKey: statusCode === 429 ? 'k8sRetryBackoff.exhaustedResult' : 'k8sRetryBackoff.non429Result',
             totalAttempts: attemptCount,
             statusCode,
           });

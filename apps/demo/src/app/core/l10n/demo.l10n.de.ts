@@ -327,7 +327,7 @@ export const deTranslations: Record<string, string> = {
   'mergeFrom.paramOptions': 'Konfigurationsoptionen einschließlich initialValue und Injektor.',
   'mergeFrom.returnsDesc': 'Ein Signal, das den kombinierten/zusammengefügten Wert als Quellen emittiert.',
   'toSignalForm.pageTitle': 'Reaktive Form Signals & Bindungen (toSignalForm)',
-  'toSignalForm.bannerTitle': 'Bridging Angular Reaktive Formen & moderne Signals',
+  'toSignalForm.bannerTitle': 'Angular Reactive Forms mit modernen Signals verbinden',
   'toSignalForm.bannerDesc':
     '<code>toSignalForm</code> umschließt standardmäßige Angular-<code>FormGroup</code>-Instanzen mit reaktiven Signalen, deklarativen Bindungen (<code>bindIf</code>, <code>bindDisabled</code>), Kreuzkontrollen-Validierung und gesanitierten Submit-Werten (<code>submitValue</code>) – wobei die 100 % Kompatibilität mit Clarity-Form-Containern und Angular-Validierern gewahrt bleibt.',
   'toSignalForm.quickTitle': 'Stufe 1: Schnellstartformular Signals',
@@ -403,7 +403,7 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.storageManual': '✓ Manuelle Zuteilung gestattet',
   'toSignalForm.authMode': 'Authentifizierungsmodus',
   'toSignalForm.authSql': 'Datenbank Native User',
-  'toSignalForm.authWindows': 'Enterprise Directory / Windows Auth',
+  'toSignalForm.authWindows': 'Unternehmensverzeichnis / Windows-Authentifizierung',
   'toSignalForm.authModeRequired': 'Der Authentifizierungsmodus ist erforderlich.',
   'toSignalForm.authModeHelper':
     'Auswahl der Datenbank Native User mountet Passwort und Bestätigung mit Speicherspeicherung.',
@@ -564,7 +564,7 @@ export const deTranslations: Record<string, string> = {
   'computedAsync.tabResilienceBefore':
     '<strong>Before Fix:</strong> Ein innerer Fehler (z. B. ein abgebrochener HTTP-Aufruf) würde durch <code>switchAll</code> weitergehen und die äußere Observable-Abonnierung dauerhaft beenden. Der UI blieb ständig im Laden-Zustand und konnte nie die nächsten Tabs laden.',
   'computedAsync.tabResilienceAfter':
-    '<strong>After Fix:</strong> Der innere Fehler wird sicher erfasst und gehandhabt, so dass der äußere Strom am Leben bleibt.',
+    '<strong>Nach der Korrektur:</strong> Der innere Fehler wird sicher abgefangen und behandelt, sodass der äußere Stream aktiv bleibt. Beim Wechsel zu einem beliebigen Tab oder bei einem erneuten Versuch werden sofort neue Daten abgerufen und angezeigt.',
   'computedAsync.tabActiveDirectory': 'Active Directory',
   'computedAsync.tabBackupLocations': 'Backup-Standorte',
   'computedAsync.tabCertificates': 'Bescheinigungen',
@@ -625,7 +625,7 @@ export const deTranslations: Record<string, string> = {
     'Erzeugt eine Ressource, die automatisch Daten abholt und bei Änderung von Abhängigkeiten wieder zurücktritt. Jedes Signal, das innerhalb der Quellfunktion gelesen wird, wird zu einer reaktiven Abhängigkeit.',
   'resourceAsync.example2': 'Beispiel 2: Faules Laden',
   'resourceAsync.example2Desc':
-    'Verwenden Sie <code>lazy: true</code>, um das Laden zu verschieben, bis <code>reload()</code> aufgerufen wird. Die Ressource startet im Leerlaufzustand und holt keine Daten, bis sie explizit ausgelöst wird:',
+    'Verwenden Sie <code>lazy: true</code>, um das Laden bis zum Aufruf von <code>reload()</code> oder <code>execute()</code> aufzuschieben. Die Ressource startet im Zustand idle und ruft Daten erst nach ausdrücklichem Auslösen ab:',
   'resourceAsync.loadUsers': 'Benutzer laden',
   'resourceAsync.notLoadedIdle': 'Noch nicht geladen (idle)',
   'resourceAsync.example3': 'Beispiel 3: Ursprünglicher Wert',
@@ -641,7 +641,7 @@ export const deTranslations: Record<string, string> = {
   'resourceAsync.errorPropagation': 'Fehlerverbreitung',
   'resourceAsync.example5': 'Beispiel 5: Mutationen mit execute() - Benutzer-Registrierungsformular',
   'resourceAsync.example5Desc':
-    'Für Mutationen (POST/PUT/DELETE), verwenden Sie die <code>execute()</code>-Methode anstelle von <code>reload()</code>. <code>execute()</code> gibt ein awaitables <code>Promise&lt;T&gt;</code> zurück, das auf den genauen Wert, der in <code>resource.value()</code> geschrieben wird, zurückgeht, alte Werte und Fehler beim Wiederablaufen löscht, und ist sicher für fire-and-forget-Aufrufe ohne unverarbeitete Wiederholungen.',
+    'Für Mutationen (POST/PUT/DELETE) verwenden Sie <code>execute()</code> statt <code>reload()</code>. <code>execute()</code> gibt eine abwartbare <code>Promise&lt;T&gt;</code> zurück, die genau den in <code>resource.value()</code> geschriebenen Wert liefert. Bei erneuter Ausführung werden veraltete Werte und Fehler gelöscht. Auch Aufrufe ohne Abwarten sind ohne unbehandelte Promise-Ablehnungen sicher.',
   'resourceAsync.regUsername': 'Benutzername',
   'resourceAsync.regEmail': 'E-Mail',
   'resourceAsync.regPassword': 'Passwort',
@@ -684,7 +684,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.comparisonTitle': 'Wann zu verwenden: queryResource gegen resourceAsync',
   'queryResource.comparisonIntro':
     'Beide Primitive verwenden Angular Signals für reaktive UI Bindungen, aber sie adressieren verschiedene Ebenen Ihrer Anwendungsarchitektur:',
-  'queryResource.cardResourceAsyncTitle': 'resourceAsync (Component-Local Async State)',
+  'queryResource.cardResourceAsyncTitle': 'resourceAsync (lokaler asynchroner Zustand der Komponente)',
   'queryResource.cardQueryResourceTitle': 'queryResource (Geteilter Server- und Entity-Cache)',
   'queryResource.scope': 'Anwendungsbereich',
   'queryResource.cache': 'Zwischenspeicher',
@@ -717,7 +717,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.badgePerInstance': 'Pro Instanz (switch/exhaust)',
   'queryResource.badgeClientCoalesced': 'Mandantenweit verkohlt',
   'queryResource.rowStaleWhileRevalidate': 'Stale-While-Revalidate',
-  'queryResource.badgeManualPreserve': 'Handbuch (preserveValueOnError)',
+  'queryResource.badgeManualPreserve': 'Manuell (preserveValueOnError)',
   'queryResource.badgeAutoStale': 'Automatisch über staleTime',
   'queryResource.rowBackgroundPolling': 'Hintergrundbefragung',
   'queryResource.badgeNoneBuiltIn': 'Keine eingebaute (oder externe Umfrage)',
@@ -830,7 +830,7 @@ export const deTranslations: Record<string, string> = {
   'queryResource.demo4Section': 'Mutationen & Tag-Invalidierung (mutateResource)',
   'queryResource.demo4SectionDesc':
     '<code>mutateResource</code> verarbeitet asynchrone Schreibvorgänge. Nach erfolgreicher Mutation werden passende Tags ungültig, wodurch alle aktiven Abfragen mit diesen Tags automatisch die neuesten Serverdaten im Hintergrund widerlegen.',
-  'queryResource.demo4PlaygroundTitle': 'Tag-Based Invalidation',
+  'queryResource.demo4PlaygroundTitle': 'Tag-basierte Invalidierung',
   'queryResource.demo4PlaygroundDesc':
     'Fügen Sie ein neues Mitglied hinzu. usersQuery kehrt nach der Mutationsvervollständigung automatisch im Hintergrund zurück!',
   'queryResource.badgeMutations': 'Mutationen',
@@ -928,7 +928,7 @@ export const deTranslations: Record<string, string> = {
   'mutateResource.demo3Section': '2. Reaktiver Status Signals & Fehlerwiederherstellung',
   'mutateResource.demo3SectionDesc':
     '<code>mutateResource</code> trennt Fehler vom Wert. Bei einer fehlgeschlagenen Schreiboperation enthält das Fehlersignal den Fehler, status wird "error" und die zurückgegebene Promise wird für die Behandlung mit try/catch abgelehnt.',
-  'mutateResource.demo3PlaygroundTitle': 'Status Signals & Failure Recovery',
+  'mutateResource.demo3PlaygroundTitle': 'Statussignale und Wiederherstellung nach Fehlern',
   'mutateResource.demo3PlaygroundDesc':
     'Schalten Sie die Fehlersimulation ein und lösen Sie die Aktion aus, um den reaktiven Fehlerzustand zu überprüfen.',
   'mutateResource.badgeError': 'Fehlerbehebung',
@@ -1372,7 +1372,7 @@ export const deTranslations: Record<string, string> = {
   'dgState.example1DataDesc':
     'Nehmen wir an, wir haben einen API, der die folgende Form von Daten für einen servergesteuerten Datagrid zurückgibt:',
   'dgState.example2Title': 'Beispiel 2: Vorlagenimplementierung mit Typsicherheit',
-  'dgState.example2Desc': 'Verwenden Sie async Rohr mit <code>@if</code> für eine bessere Art Sicherheit:',
+  'dgState.example2Desc': 'Verwenden Sie die async-Pipe mit <code>@if</code> für mehr Typsicherheit:',
   'dgState.example3Title': 'Beispiel 3: Alternative Vorlagenimplementierung',
   'dgState.example3Desc': 'Verwenden Sie die async-Pipe direkt in Ihrer Vorlage:',
   'dgState.example4Title': 'Beispiel 4: Live-Beispiel',
@@ -1512,11 +1512,13 @@ export const deTranslations: Record<string, string> = {
     'Eine reaktive Funktion, die einen Observable, Promise oder einen synchronen Wert zurückgibt.',
   'resourceAsync.paramOptions': 'Konfigurationsoptionen für die Ressource.',
   'resourceAsync.propInitialValue': 'Der Anfangswert vor dem ersten Abruf wird abgeschlossen.',
-  'resourceAsync.propLazy': 'Wenn true, startet in dem "idle"-Zustand und wartet auf die Aufrufung von reload().',
+  'resourceAsync.propLazy':
+    'Wenn true, startet die Ressource im Zustand "idle" und wartet auf einen Aufruf von reload() oder execute().',
   'resourceAsync.propBehavior':
     'Verhalten bei gleichzeitigen Ausführungen: "switch" bricht die vorherige Ausführung ab; "exhaust" ignoriert neue Ausführungen. Standard: "switch".',
   'resourceAsync.propOnError': 'Fehler-Handler-Callback, der Fallback-Werte liefern kann.',
-  'resourceAsync.propThrowOnError': 'Wenn true, werden Fehler geworfen anstatt im Fehlersignal gespeichert.',
+  'resourceAsync.propThrowOnError':
+    'Wenn true, werden Fehler, die kein onError-Ersatzwert behandelt, nach dem Speichern im Fehlersignal weitergegeben.',
   'resourceAsync.propOnSuccess': 'Rückruf aufgerufen, wenn die Operation erfolgreich abgeschlossen ist.',
   'resourceAsync.propOnLoading': 'Callback aufgerufen, wenn die Operation das Laden beginnt.',
   'resourceAsync.returnsDesc':
@@ -1546,7 +1548,7 @@ export const deTranslations: Record<string, string> = {
   'certificate.inputPosition': 'Position des Wegweisers relativ zum Triggersymbol.',
   'certificate.inputShowIcon': 'Ein boolescher Wert, um die Sichtbarkeit des Zertifikatsstatussymbols zu verwalten.',
   'isPromise.overview':
-    'Der <code>isPromise</code>-Utility ist ein TypeScript-Type-Guard, das bestimmt, ob ein beliebiger Wert ein <code>Promise</code> oder <code>PromiseLike</code> (ein Objekt oder eine Funktion, die eine callable <code>then</code>-Methode enthält) ist. Es ermöglicht sichere Runtime-Validierung und Typ-Enkfokussierung ohne Fehler bei null oder primären Werten.',
+    'Die Hilfsfunktion <code>isPromise</code> ist ein TypeScript-Type-Guard. Sie prüft, ob ein beliebiger Wert eine <code>Promise</code> oder <code>PromiseLike</code> ist, also ein Objekt oder eine Funktion mit einer aufrufbaren <code>then</code>-Methode. Sie ermöglicht sichere Prüfungen zur Laufzeit und eine Eingrenzung des Typs, ohne bei null oder primitiven Werten Fehler auszulösen.',
   'isPromise.callout':
     'Nützlich in asynchronen Ressourcenladern, benutzerdefinierten Operatoren und flexiblem Service APIs, die entweder sofortige statische Werte oder asynchrone Versprechen akzeptieren.',
   'isPromise.example1Title': 'Beispiel 1: Interactive Value Evaluation Matrix',
@@ -1555,7 +1557,7 @@ export const deTranslations: Record<string, string> = {
   'isPromise.thDescription': 'Warenbezeichnung',
   'isPromise.thExpression': 'Bewerteter Ausdruck',
   'isPromise.thResult': 'isPromise() Ergebnis',
-  'isPromise.example2Title': 'Beispiel 2: Sicherer Typ Engeres Muster',
+  'isPromise.example2Title': 'Beispiel 2: Muster für sichere Typeingrenzung',
   'isPromise.example2Desc':
     'In TypeScript verengt die Prüfung mit <code>if (isPromise(val))</code> den Typ automatisch innerhalb des Blocks:',
   'isPromise.apiSummary': 'TypeScript-Type-Guard-Funktion, die PromiseLike-Kontrakte prüft.',
@@ -1763,7 +1765,7 @@ export const deTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Empfängt HttpErrorResponse oder ein Objekt, das als <code>{ status, headers?, error? }</code> geformt ist, einschließlich eines JSON-Strings in <code>error</code>. Native fetch lehnt nicht auf HTTP 429: Prüfen Sie den Response und passen Sie seinen Status, Header und geparseden Körper an. Axios zeigt diese unter <code>error.response</code> an; passen Sie sie vor dem Aufruf des Hilfsfunktionen an. Die Hilfsfunktion berechnet nur eine Verzögerung.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    'null verwendet Interceptor-Defaults; false deaktiviert Retries. Kontextüberschreiben werden mit globalen oder Werks-Defaults zusammengeführt. GET/HEAD/OPTIONS/PUT/DELETE sind standardmäßig zulässig; POST/PATCH benötigen eine explizite retryMethods-Überschrift und Endpunkt-Idempotenz.',
+    'null verwendet die Standardeinstellungen des Interceptors; false deaktiviert Wiederholungsversuche. Einstellungen im Anfragekontext werden mit den globalen Einstellungen oder den Standardeinstellungen der Factory zusammengeführt. GET/HEAD/OPTIONS/PUT/DELETE sind standardmäßig zulässig; POST/PATCH erfordern eine explizite Anpassung von retryMethods und einen idempotenten Endpunkt.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Testen Sie einen Probe, der beim ersten 429 sofort fehlschlägt, oder ein Workload-Lesen, das nach zwei 429-Fehlern erfolgreich ist. Der angepasste Lesevorgang verwendet maxAttempts: 10 und 200 ms Fallback; dies erlaubt maximal neun Wiederholungen.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-Lesen testen (10 Versuche)',
@@ -1773,7 +1775,7 @@ export const deTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     'Der <code>retryOnK8sBackoff</code> RxJS-Operator implementiert automatisierte Wiederholungen mit Rückverzögerung für Kubernetes-apiserver HTTP 429 (<code>TooManyRequests</code>)-Antworten (z. B. wenn der apiserver Watch-Cache bootstrapt mit „Speicher ist (erneut) initialisierend“). Nur HTTP 429 löst eine Wiederholung aus; alle anderen Fehler (4xx, 5xx, Netzwerkfehler) werden unverändert an den Abonnenten weitergegeben.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor:</strong> Der Operator steuert spezifische Observable-Pipelines. Der Abfanger wendet 429 Retry-Verfahren an, die für HttpClient-Methoden geeignet sind.',
+    '<strong>Operator und Interceptor:</strong> Der Operator steuert bestimmte Observable-Pipelines. Der Interceptor wiederholt Anfragen bei HTTP 429 für zulässige HttpClient-Methoden; Schreibvorgänge erfordern nachgewiesene Idempotenz.',
   'k8sRetryBackoff.diffTitle': 'Architekturvergleich: Operator vs. Interzeptor',
   'k8sRetryBackoff.diffDesc':
     'Beide Werkzeuge teilen dieselbe Logik zur Verzögerungsberechnung, erfüllen jedoch komplementäre Aufgaben:',
@@ -1830,7 +1832,7 @@ export const deTranslations: Record<string, string> = {
     '<strong>-Globale Schutz mit Anforderungsüberschreitungen:</strong> Registrieren Sie den Interceptor einmal in <code>app.config.ts</code>, um alle Endpunkte zu schützen. Für einzelne Anfragen, die wiederholen oder benutzerdefinierte Grenzen verwenden sollen, setzen Sie den <code>K8S_RETRY_BACKOFF_CONFIG</code>-Kontext-Token auf die <code>HttpClient</code>-Anfrage. Für lokale Pipeline-Steuerung anstelle, siehe den <code>retryOnK8sBackoff</code>-Operator.',
   'k8sRetryBackoffInterceptor.example1Title': 'Beispiel 1: Globale Interzeptor-Registrierung & interaktiver Simulator',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Registrieren Sie den Interzeptor global in app.config.ts. Alle HttpClient-Aufrufe wiederholen automatisch bei HTTP 429:',
+    'Registrieren Sie den Interceptor global in app.config.ts, um zulässige idempotente HttpClient-Anfragen bei HTTP 429 zu wiederholen.',
   'k8sRetryBackoffInterceptor.selectMode': 'Interzeptor-Kontextmodus:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Standard-Interzeptor (Wiederholt 429 mit 1s Verzögerung, dann 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom':
@@ -2543,4 +2545,192 @@ export const deTranslations: Record<string, string> = {
   'computedAsync.readError': 'Beim Lesen wurde ein Fehler geworfen; kein Erfolgswert wurde zurückgegeben.',
   'computedAsync.readDemoHint':
     'Lassen Sie die Quelle fehlschlagen und lesen Sie das Signal. Stellen Sie die Quelle wieder her und lesen Sie erneut.',
+  'header.mitLicense': 'MIT-Lizenz',
+  'alert.moreInfo': 'Weitere Informationen zum Serverfehler',
+  'common.interfaceTitle': 'Schnittstelle {0}',
+  'common.failed': 'Fehlgeschlagen',
+  'common.error': 'Fehler',
+  'common.pros': 'Vorteile',
+  'common.cons': 'Nachteile',
+  'common.componentN': 'Komponente {0}',
+  'poll.filterParameter': 'Filterparameter (Signal)',
+  'poll.filterAll': 'Alle ({0} Elemente)',
+  'poll.filterActive': 'Aktiv ({0} Elemente)',
+  'poll.filterInactive': 'Inaktiv ({0} Elemente)',
+  'poll.activeFilter': 'Aktiver Filter',
+  'poll.inProgress': 'Abfrage läuft...',
+  'poll.sequence': 'Abfragesequenz',
+  'poll.filteredBy': 'Gefiltert nach',
+  'poll.totalResults': 'Ergebnisse insgesamt',
+  'poll.lastTimestamp': 'Letzter Serverzeitstempel',
+  'poll.recentLog': 'Letzte Abfrageauslöser und Ausführungsprotokoll',
+  'poll.triggerWithFilter': 'Mit Filter ausgelöst: „{0}“',
+  'poll.executing': 'Wird ausgeführt (HTTP-Verzögerung)',
+  'poll.settled': 'Abgeschlossen',
+  'k8sRetryBackoff.resultSuccess': 'Erfolgreich (HTTP {0})',
+  'k8sRetryBackoff.resultFailure': 'Fehlgeschlagen (HTTP {0})',
+  'k8sRetryBackoff.totalAttempts': '(Versuche insgesamt: {0})',
+  'k8sRetryBackoff.failFast': 'HTTP {0} (sofort fehlgeschlagen)',
+  'k8sRetryBackoff.overrideSucceeded': 'HTTP {0} (erfolgreich)',
+  'k8sRetryBackoff.attempts': '(Versuche: {0})',
+  'k8sRetryBackoff.exhaustedResult': 'Maximale Anzahl von Versuchen (5) erreicht. Anfrage abgelehnt.',
+  'k8sRetryBackoff.non429Result':
+    'Fehler {0}: Ein Fehler mit einem anderen Status als 429 wurde sofort ohne Wiederholung weitergegeben.',
+  'k8sRetryBackoff.interceptorSuccess': 'Die Anfrage war nach einer Wiederholung durch den Interceptor erfolgreich.',
+  'k8sRetryBackoff.disabledResult':
+    'HTTP 429 wurde sofort zurückgegeben: Wiederholungen mit Backoff wurden über HttpContext deaktiviert.',
+  'k8sRetryBackoff.postDefaultResult':
+    'POST wurde nicht wiederholt: Wiederholungen von Schreibvorgängen müssen für den Endpunkt explizit aktiviert werden.',
+  'k8sRetryBackoff.gatewayResult':
+    'Gateway-429 wurde nicht wiederholt: Das konfigurierte Kubernetes-Prädikat hat den Fehler abgelehnt.',
+  'k8sRetryBackoff.unrecoveredResult': 'Fehler {0}: Maximale Anzahl von Versuchen ohne Wiederherstellung erreicht.',
+  'k8sRetryBackoff.customOverrideResult':
+    'Die Anfrage war nach 2 Wiederholungen mit maxAttempts: 10, einer exponentiellen Basis von 200ms und equal jitter erfolgreich.',
+  'k8sRetryBackoff.bypassedResult':
+    'Die Anfrage ist sofort fehlgeschlagen (HTTP 429). Wiederholungen wurden durch K8S_RETRY_BACKOFF_CONFIG: false übersprungen.',
+  'k8sRetryBackoff.operatorSuccess': 'Die Anfrage war nach einer Wiederholung erfolgreich.',
+  'resourceAsync.lazyDemoTitle': 'Demo: Benutzer bei Bedarf laden',
+  'resourceAsync.fallbackTitle': 'Fehlerbehandlung mit Ersatzwert',
+  'resourceAsync.fallbackDescription':
+    'Diese Ressource ruft einen ungültigen Endpunkt auf und verwendet bei einem Fehler einen Standardbenutzer:',
+  'resourceAsync.throwOnErrorDescription':
+    'Verwenden Sie <code>throwOnError: true</code>, um Fehler weiterzugeben, die nicht durch einen Ersatzwert behandelt werden. Der Fehler wird auch im Fehlersignal gespeichert.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Mit <code>throwOnError: true</code> werden Fehler weitergegeben, wenn <code>onError</code> fehlt oder <code>undefined</code> zurückgibt. Ein von <code>onError</code> zurückgegebener Ersatzwert behandelt den Fehler und verhindert die Weitergabe.',
+  'resourceAsync.mutationConfigTitle': 'Wichtige Konfiguration für Mutationen:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Nur bei ausdrücklichem Aufruf ausführen.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Doppelte Übermittlungen verhindern, indem neue Anfragen während einer laufenden Anfrage ignoriert werden. Jeder Aufruf von <code>execute()</code> wartet auf das Ergebnis des aktiven Vorgangs.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Eine Mutation auslösen und ihr Ergebnis abwarten oder ohne Warten aufrufen.',
+  'resourceAsync.mutationBenefitsTitle': 'Warum diese Konfiguration für Mutationen geeignet ist:',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code>: Das Formular erst übermitteln, wenn der Benutzer auf die Schaltfläche zum Absenden klickt.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Wiederholte Klicks zum Absenden während der laufenden Anfrage ignorieren.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: <code>const res = await ref.execute()</code> verwenden oder ohne Warten aufrufen. Der vorherige Wert wird für einen klaren Ladezustand gelöscht.',
+  'resourceAsync.mutationLoading':
+    '<code>isLoading()</code>: Ladefortschritt anzeigen und die Schaltfläche zum Absenden deaktivieren.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code>: Erfolgs- und Fehlerzustände für die Rückmeldung an Benutzer verfolgen.',
+  'resourceAsync.registrationDemoTitle': 'Interaktive Demo: Benutzerregistrierung',
+  'resourceAsync.registrationDescription':
+    "Senden Sie das Formular ab, um eine simulierte Registrierungs-API mit 70 % Erfolgsquote auszuprobieren. Mit <code>behavior: 'exhaust'</code> werden wiederholte Klicks während einer laufenden Anfrage ignoriert.",
+  'resourceAsync.registrationFailed': 'Registrierung fehlgeschlagen: {0}',
+  'resourceAsync.switchTitle': 'switch (Standard)',
+  'resourceAsync.switchDescription':
+    'Bricht die vorherige Anfrage ab, sobald eine neue beginnt. So bestimmt die neueste Anfrage die Daten. Dieses Standardverhalten eignet sich besonders für Lesevorgänge (GET-Anfragen).',
+  'resourceAsync.exhaustDescription':
+    'Ignoriert neue Anfragen, solange eine Anfrage läuft. Verhindert doppelte Vorgänge durch schnelle Klicks, etwa wiederholte Such- oder Seitenanfragen. Auch für Mutationen geeignet (Beispiel 5).',
+  'resourceAsync.computedStateAdvice':
+    'Verwenden Sie <code>computed()</code> statt Gettern, um Zustände aus Signals abzuleiten. Memoisierung vermeidet wiederholte Berechnungen und integriert sich in Angulars Reaktivität.',
+  'resourceAsync.queryPreset': 'Abfragevorlage:',
+  'resourceAsync.reset': 'Zurücksetzen',
+  'resourceAsync.awaitExecute': 'execute() abwarten',
+  'resourceAsync.statusLabel': 'Status:',
+  'resourceAsync.activeQuery': 'Aktive Abfrage:',
+  'resourceAsync.fetchingWithAbortSignal': 'Datenabruf mit AbortSignal…',
+  'resourceAsync.category': 'Kategorie',
+  'resourceAsync.requestInFlight': 'Läuft (Signal aktiv)',
+  'resourceAsync.requestAborted': 'Abgebrochen (AbortSignal ausgelöst)',
+  'resourceAsync.requestResolved': 'Abgeschlossen',
+  'resourceAsync.requestLogLabel': 'Anfrage #{0} (Abfrage: „{1}“):',
+  'resourceAsync.todoDemoTitle': 'Demo: Aufgabenstatus umschalten',
+  'resourceAsync.completedLabel': 'Erledigt:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demo: Benutzerprofil mit Cache-Vorrang',
+  'resourceAsync.counterDemoTitle': 'Demo: Bearbeitbarer Zähler',
+  'resourceAsync.expert': 'Experte',
+  'resourceAsync.nestedDemoTitle': 'Demo: Einträge mit Organisationen',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (deklarative Definition)',
+  'resourceAsync.statusTitle': 'Ressourcenstatus',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> gibt eine <code>WritableResourceRef</code> mit <code>set()</code>, <code>update()</code> und <code>asReadonly()</code> zur manuellen Zustandsverwaltung zurück, entsprechend Angulars <code>WritableResource</code>-API.',
+  'resourceAsync.decrementCounter': 'Zähler verringern',
+  'resourceAsync.incrementCounter': 'Zähler erhöhen',
+  'resourceAsync.nestedIntroduction':
+    'Eine Liste kann Einträge enthalten, die zugehörige Organisationen, Benutzer oder Details abrufen. Dieses Beispiel zeigt einen Ansatz, Lade- und Fehlerzustände für jede Zeile unabhängig zu verwalten.',
+  'resourceAsync.nestedInjector':
+    'Übergeben Sie <code>&#123; injector: this.injector &#125;</code> über die Option <code>injector</code> in <code>ResourceRefOptions</code>, um <code>resourceAsync</code> dynamisch in Template-Hilfsmethoden oder Services zu erstellen, ohne <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Vollständige Dokumentation:',
+  'resourceAsync.seeDocumentation': 'Designleitfaden:',
+  'resourceAsync.documentationDescription':
+    'Enthält mehrere Ansätze, Entscheidungsbäume und Hinweise zum Einsatz der einzelnen Muster.',
+  'resourceAsync.nestedOuter': 'Äußere Ressource: Die Eintragsliste hat einen eigenen Lade- und Fehlerzustand.',
+  'resourceAsync.nestedInner':
+    'Innere Ressourcen: Zugehörige Daten jedes Eintrags haben unabhängige Lade- und Fehlerzustände.',
+  'resourceAsync.nestedLazy': 'Laden bei Bedarf: Daten erst nach einem Klick abrufen, um API-Aufrufe zu minimieren.',
+  'resourceAsync.nestedIndependent':
+    'Unabhängige Zustände: Jede Zeile verwaltet ihre eigene Ladeanzeige, Fehler und Daten.',
+  'resourceAsync.nestedItemsFailed': 'Einträge konnten nicht geladen werden: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Organisation konnte nicht geladen werden',
+  'resourceAsync.nestedBenefitRequests': 'Minimale API-Aufrufe (nur benötigte Daten abrufen)',
+  'resourceAsync.nestedBenefitStates': 'Eigene Lade- und Fehlerzustände je Zeile',
+  'resourceAsync.nestedBenefitRetry': 'Fehlgeschlagene Abrufe unabhängig wiederholen',
+  'resourceAsync.nestedBenefitCache':
+    'Eine Ressource je orgId wiederverwenden; explizites Neuladen ruft die Daten erneut ab.',
+  'resourceAsync.nestedBenefitScale': 'Gut für große Listen skalierbar',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Noch nicht gestartet oder zurückgesetzt. <code>value()</code> liefert den konfigurierten Anfangs- oder Standardwert, sonst <code>undefined</code>.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Ein Vorgang lädt ohne beibehaltenes Ergebnis. <code>value()</code> liefert den konfigurierten Anfangs- oder Standardwert, sonst <code>undefined</code>.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Erneuter Abruf läuft. <code>value()</code> behält die vorherigen Daten.',
+  'resourceAsync.statusResolved': '<code>resolved</code>: Vorgang erfolgreich. <code>value()</code> enthält die Daten.',
+  'resourceAsync.statusError':
+    '<code>error</code>: Vorgang fehlgeschlagen. Vorherige Daten werden nur mit <code>preserveValueOnError</code> beibehalten; andernfalls gilt: <code>value()</code> liefert den konfigurierten Anfangs- oder Standardwert, sonst <code>undefined</code>.',
+  'toast.greatTitle': 'Erfolgreiche Benachrichtigung',
+  'toast.successMessage': 'Dies ist eine Erfolgsmeldung!',
+  'toast.warningMessage': 'Dies ist eine Warnmeldung!',
+  'toast.errorMessage': 'Dies ist eine Fehlermeldung. Sie wird nach 10 Sekunden automatisch geschlossen.',
+  'toast.infoMessage': 'Dies ist der Standardtyp für Benachrichtigungen.',
+  'toast.oneHourAgo': 'vor 1 Std.',
+  'toast.primaryAction': 'Primäre Schaltfläche',
+  'toast.secondaryAction': 'Sekundäre Schaltfläche',
+  'toast.primaryClicked': 'Primäre Schaltfläche angeklickt',
+  'toast.secondaryClicked': 'Sekundäre Schaltfläche angeklickt',
+  'common.moreInfo': 'Weitere Informationen',
+  'toast.openTabSimulation': 'Öffnen eines neuen Tabs simulieren',
+  'common.details': 'Details',
+  'common.dismiss': 'Schließen',
+  'common.acknowledge': 'Bestätigen',
+  'multiAlerts.dangerMessage':
+    'Dies ist eine Gefahrenmeldung! Sie können sie über die Schaltfläche zum Schließen entfernen.',
+  'multiAlerts.warningMessage': 'Warnmeldung! Sie können sie über die Schaltfläche zum Schließen entfernen.',
+  'multiAlerts.successActions': 'Erfolgsmeldung mit nachfolgenden Aktionsschaltflächen.',
+  'multiAlerts.detailsClicked': 'Detailaktion angeklickt!',
+  'multiAlerts.dismissClicked': 'Schließaktion angeklickt!',
+  'multiAlerts.newActions': 'Neue Meldung mit nachfolgenden Aktionsschaltflächen.',
+  'multiAlerts.acknowledged': 'Bestätigt!',
+  'multiAlerts.inlineClicked': 'Aktion erfolgreich ausgeführt!',
+  'multiAlerts.inlineMessage':
+    'Meldung mit <button type="button" class="btn btn-sm alert-action" id="click-target">Hier klicken</button> im Nachrichtentext.',
+  'multiAlerts.standardAdded': 'Neue Standardmeldung um {0} hinzugefügt',
+  'timelineWizard.canceledMessage': 'Abgebrochen',
+  'timelineWizard.confirmedMessage':
+    'Absenden bestätigt. Die Formulardaten stehen in der Konsole. Dies simuliert eine API-Anfrage.',
+  'timelineWizard.finishedMessage': 'Abgeschlossen',
+  'tooltip.componentAlert': 'Ich stamme aus der Meldungskomponente',
+  'resourceAsync.todoUpdateFailed': 'Aufgabe konnte nicht aktualisiert werden',
+  'resourceAsync.counterSaveFailed': 'Zähler konnte nicht gespeichert werden',
+  'resourceAsync.counterSaved': 'Zähler gespeichert: {0}',
+  'resourceAsync.usernameExists': 'Benutzername bereits vorhanden',
+  'resourceAsync.registrationSuccess': 'Registrierung erfolgreich! Willkommen.',
+  'resourceAsync.networkTimeout': 'Netzwerkzeitüberschreitung',
+  'runtime.readFailure': 'Simulierter Lesefehler',
+  'runtime.saveFailure': 'Simulierter Speicherfehler',
+  'runtime.pollFailure': 'Simulierter Fehler bei periodischer Abfrage',
+  'runtime.settingsSaveFailure': 'HTTP 500: Cluster-Einstellungen konnten nicht in der Datenbank gespeichert werden.',
+  'isPromise.caseNative': 'Natives Promise.resolve()',
+  'isPromise.caseAsync': 'Rückgabewert einer asynchronen Funktion',
+  'isPromise.caseThenable': 'Benutzerdefiniertes Thenable-Objekt',
+  'isPromise.caseObject': 'Einfaches Objekt',
+  'isPromise.caseNullish': 'null / undefined',
+  'isPromise.casePrimitive': 'Primitiver Wert',
+  'isPromise.caseFunction': 'Funktion ohne .then',
+  'idleDetection.activeStatus': 'Aktiv',
+  'idleDetection.timeoutStatus': 'Zeitüberschreitung ausgelöst',
+  'multiAlerts.newInlineMessage':
+    'Meldung mit <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Hier klicken</button> im Nachrichtentext.',
+  'timelineWizard.review': 'Überprüfen',
 };

@@ -293,7 +293,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     issuedTo: 'Выдан',
     issuedBy: 'Выдан кем',
     validityPeriod: 'Срок действия',
-    fingerprints: 'Отпечатки пальцев',
+    fingerprints: 'Отпечатки сертификата',
     issuedOn: 'Выдано',
     expiresOn: 'Истекает',
     md5Fingerprint: 'Отпечаток MD5',

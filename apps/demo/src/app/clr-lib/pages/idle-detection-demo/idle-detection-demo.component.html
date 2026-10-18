@@ -29,7 +29,10 @@
             <strong>{{ (isMonitoring() ? 'idleDetection.yes' : 'idleDetection.no') | translate }}</strong>
           </span>
           <span>
-            {{ 'idleDetection.sessionStatus' | translate }} <strong>{{ sessionStatus() }}</strong>
+            {{ 'idleDetection.sessionStatus' | translate }}
+            <strong>{{
+              (sessionStatus() === 'Active' ? 'idleDetection.activeStatus' : 'idleDetection.timeoutStatus') | translate
+            }}</strong>
           </span>
           <span>
             {{ 'idleDetection.totalTimeouts' | translate }} <strong>{{ timeoutCount() }}</strong>

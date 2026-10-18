@@ -24,6 +24,17 @@ describe('StatusIndicatorComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it.each(['success', 'error', 'pending', 'warning', 'inactive', 'unknown'])(
+    'exposes %s as a named image for assistive technology',
+    (status) => {
+      fixture.componentRef.setInput('iconStatus', status);
+      fixture.detectChanges();
+      const image = fixture.nativeElement.querySelector('[role="img"]');
+      expect(image).not.toBeNull();
+      expect(image.getAttribute('aria-label')).toBeTruthy();
+    },
+  );
+
   it('uses a non-submit button for tooltip interaction inside forms', () => {
     fixture.componentRef.setInput('tooltip', 'Status details');
     fixture.detectChanges();

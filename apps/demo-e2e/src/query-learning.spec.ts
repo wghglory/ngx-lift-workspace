@@ -102,7 +102,8 @@ test('guides are reachable from the sidebar and reference anchors reveal their t
     'Query devtools',
   ]) {
     await nav.getByRole('link', {name, exact: true}).click();
-    await expect(page.locator('h1')).toHaveText(name);
+    // Wait for the outgoing heading to disappear as the next route renders.
+    await expect(page.locator('h1')).toHaveText([name]);
     await expect(page.getByTestId('query-guide')).not.toContainText('!! Key');
   }
   await nav.getByRole('link', {name: 'API reference', exact: true}).click();

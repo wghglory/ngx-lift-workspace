@@ -34,7 +34,7 @@ test.describe('Tooltip component & directive', () => {
     const tooltipContent = page.locator('cll-tooltip .tooltip-content');
     await expect(tooltipContent).toBeVisible();
     await expect(tooltipContent.locator('cll-alert')).toBeVisible();
-    await expect(tooltipContent.locator('cll-alert')).toContainText('I am from alert component');
+    await expect(tooltipContent.locator('cll-alert')).toContainText('I am from the alert component');
 
     // Verify the alert is a sibling of .content-container, not inside it
     const insideContentContainer = await tooltipContent.locator('.content-container cll-alert').count();

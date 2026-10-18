@@ -400,7 +400,7 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.storageGbRequired': 'La taille de stockage est requise.',
   'toSignalForm.storageGbMin': "L'allocation minimale est de 20 GB.",
   'toSignalForm.storageGbHelper':
-    "Bound via <code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250 &#125;)</code>.",
+    "Lié via <code>sf.bindDisabled('storageGb', () =&gt; autoScaling(), &#123; resetOnDisable: true, resetValue: 250 &#125;)</code>.",
   'toSignalForm.storageLocked': "Gestion de l'échelle automatique (désactivée, verrouillée à 250 GB)",
   'toSignalForm.storageManual': '✓ Affectation manuelle autorisée',
   'toSignalForm.authMode': "Mode d'authentification",
@@ -632,7 +632,7 @@ export const frTranslations: Record<string, string> = {
     "Crée une ressource qui récupère automatiquement les données et re-fetches chaque fois que les dépendances changent. Tout signal lu à l'intérieur de la fonction source devient une dépendance réactive.",
   'resourceAsync.example2': 'Exemple 2: Chargement paresseux',
   'resourceAsync.example2Desc':
-    "Utilisez <code>lazy: true</code> pour reporter le chargement jusqu'à ce que <code>reload()</code> soit appelé. La ressource démarre en état inactif et ne récupérera pas les données tant qu'elle n'aura pas été explicitement déclenchée :",
+    'Utilisez <code>lazy: true</code> pour différer le chargement jusqu’à un appel à <code>reload()</code> ou <code>execute()</code>. La ressource démarre dans l’état idle et ne récupère des données que sur déclenchement explicite :',
   'resourceAsync.loadUsers': 'Charger les utilisateurs',
   'resourceAsync.notLoadedIdle': 'Non encore chargé (rembourrage)',
   'resourceAsync.example3': 'Exemple 3 : Valeur initiale',
@@ -741,8 +741,9 @@ export const frTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Chargement initial (aucune donnée préalable)',
   'queryResource.matrixInitialLoadUsage':
     'Affichez un spinner ou un squelette principal. L’interface n’a pas encore de données à afficher.',
-  'queryResource.matrixResolved': 'Résolu / Inactif (données fraîches)',
-  'queryResource.matrixResolvedUsage': 'Affichez le contenu normalement. Aucune requête réseau n’est en cours.',
+  'queryResource.matrixResolved': 'Terminé / En cache',
+  'queryResource.matrixResolvedUsage':
+    'Affichez le contenu normalement ; les données sont disponibles et peuvent être à jour ou périmées.',
   'queryResource.matrixRefreshingState': 'Revalidation en arrière-plan (SWR / Invalidation)',
   'queryResource.matrixRefreshingUsage':
     'N’AFFICHEZ PAS de spinner plein écran ! Conservez l’affichage des données existantes et ajoutez un indicateur discret. Évite tout scintillement ou écran blanc.',
@@ -1528,11 +1529,12 @@ export const frTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'Une fonction réactive qui renvoie une valeur Observable, Promise ou synchrone.',
   'resourceAsync.paramOptions': 'Options de configuration pour la ressource.',
   'resourceAsync.propInitialValue': 'Valeur initiale avant la première récupération complète.',
-  'resourceAsync.propLazy': 'Si vrai, commence dans l\'état "idle" et attend que reload() soit appelé.',
+  'resourceAsync.propLazy': 'Si true, démarre dans l’état "idle" et attend un appel à reload() ou execute().',
   'resourceAsync.propBehavior':
     'Gestion des exécutions simultanées : "switch" annule l\'exécution précédente ; "exhaust" ignore les nouvelles exécutions. Valeur par défaut : "switch".',
   'resourceAsync.propOnError': "Callback du gestionnaire d'erreur qui peut fournir des valeurs de recul.",
-  'resourceAsync.propThrowOnError': "Si vrai, les erreurs sont lancées au lieu de stockées dans le signal d'erreur.",
+  'resourceAsync.propThrowOnError':
+    'Si true, propage les erreurs non traitées par une valeur de repli de onError après les avoir stockées dans le signal d’erreur.',
   'resourceAsync.propOnSuccess': "Callback invoqué lorsque l'opération se termine avec succès.",
   'resourceAsync.propOnLoading': "Callback invoqué lorsque l'opération commence le chargement.",
   'resourceAsync.returnsDesc':
@@ -1777,7 +1779,7 @@ export const frTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     "Accepte HttpErrorResponse ou un objet au format <code>{ status, headers?, error? }</code>, incluant une chaîne JSON dans <code>error</code>. Native fetch ne rejette pas sur HTTP 429 : vérifiez la réponse et adaptez son statut, ses en-têtes et son corps analysé. Axios expose ces informations sous <code>error.response</code> ; adaptez-les avant d'appeler l'assistant. L'assistant calcule uniquement un délai.",
   'k8sRetryBackoffInterceptor.overrideRules':
-    "null utilise les valeurs par défaut de l'intercepteur; false désactive les retries. Le contexte remplace les fusions par des valeurs par défaut globales ou en usine. GET/HEAD/OPTIONS/PUT/DELETE sont éligibles par défaut; POST/PATCH nécessite une priorité explicite de retryMethods et une idempotency du paramètre.",
+    'null utilise les valeurs par défaut de l’intercepteur ; false désactive les nouvelles tentatives. Les paramètres du contexte sont fusionnés avec les valeurs par défaut globales ou celles de la fabrique. GET/HEAD/OPTIONS/PUT/DELETE sont autorisés par défaut ; POST/PATCH nécessitent une configuration explicite de retryMethods et un point de terminaison idempotent.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Testez une sonde qui échoue dès son premier 429, ou une lecture de charge de travail qui reçoit deux 429 avant de réussir. La lecture personnalisée utilise maxAttempts: 10 et un délai de secours de 200 ms, ce qui autorise jusqu’à neuf réessais.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Tester la lecture de charge (10 tentatives)',
@@ -1787,7 +1789,7 @@ export const frTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     "L'opérateur RxJS <code>retryOnK8sBackoff</code> implémente un retry avec backoff automatique pour les réponses HTTP 429 (<code>TooManyRequests</code>) de Kubernetes apiserver (par exemple, lorsqu'apiserver watch cache est en démarrage avec « storage is (re)initializing »). Seulement HTTP 429 déclenche un retry ; tous les autres erreurs (4xx, 5xx, perte de réseau) sont propagés immédiatement et sans modification vers l'abonné.",
   'k8sRetryBackoff.callout':
-    "<strong>Operator vs. Intercepteur:</strong> L'opérateur contrôle des pipelines spécifiques Observable. L'intercepteur applique 429 réessayer à travers les méthodes admissibles HttpClient; écrit nécessite une idempotency vérifiée.",
+    '<strong>Opérateur et intercepteur :</strong> L’opérateur contrôle des pipelines Observable précis. L’intercepteur réessaie les requêtes HttpClient en cas de réponse HTTP 429 pour les méthodes autorisées ; les écritures nécessitent une idempotence vérifiée.',
   'k8sRetryBackoff.diffTitle': 'Comparaison architecturale : Opérateur vs Intercepteur',
   'k8sRetryBackoff.diffDesc':
     'Les deux outils partagent le même moteur de résolution de délai de réessai, mais jouent des rôles complémentaires :',
@@ -1843,7 +1845,7 @@ export const frTranslations: Record<string, string> = {
     "<strong>Protection globale avec surcharge de requêtes :</strong> Enregistrez l'intercepteur une fois dans <code>app.config.ts</code> pour protéger tous les points de terminaison. Pour les requêtes individuelles qui doivent ignorer le retry ou utiliser des limites personnalisées, définissez le token de contexte <code>K8S_RETRY_BACKOFF_CONFIG</code> sur l'appel <code>HttpClient</code>. Pour un contrôle local de la pipeline, consultez l'opérateur <code>retryOnK8sBackoff</code>.",
   'k8sRetryBackoffInterceptor.example1Title': 'Exemple 1 : Enregistrement global de l’intercepteur et simulateur',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Inscrivez-vous dans le monde entier dans app.config.ts pour réessayer les requêtes idémpotentes admissibles HttpClient sur HTTP 429.',
+    'Enregistrez l’intercepteur globalement dans app.config.ts pour réessayer les requêtes HttpClient idempotentes autorisées en cas de réponse HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Mode de contexte de l’intercepteur :',
   'k8sRetryBackoffInterceptor.modeDefault':
     'Intercepteur global par défaut (Réessaie 429 avec 1s de délai, puis 200 OK)',
@@ -2555,4 +2557,193 @@ export const frTranslations: Record<string, string> = {
   'computedAsync.readError': 'La lecture a levé une erreur ; aucune valeur de succès n’a été renvoyée.',
   'computedAsync.readDemoHint':
     'Faites échouer la source, puis lisez le signal. Rétablissez la source et relisez pour vérifier la récupération.',
+  'header.mitLicense': 'Licence MIT',
+  'alert.moreInfo': 'Plus d’informations sur l’erreur du serveur',
+  'common.interfaceTitle': 'Interface {0}',
+  'common.failed': 'Échec',
+  'common.error': 'Erreur',
+  'common.pros': 'Avantages',
+  'common.cons': 'Inconvénients',
+  'common.componentN': 'Composant {0}',
+  'poll.filterParameter': 'Paramètre de filtre (signal)',
+  'poll.filterAll': 'Tous ({0} éléments)',
+  'poll.filterActive': 'Actifs ({0} éléments)',
+  'poll.filterInactive': 'Inactifs ({0} éléments)',
+  'poll.activeFilter': 'Filtre actif',
+  'poll.inProgress': 'Interrogation périodique en cours...',
+  'poll.sequence': 'Numéro d’interrogation',
+  'poll.filteredBy': 'Filtré par',
+  'poll.totalResults': 'Nombre total de résultats',
+  'poll.lastTimestamp': 'Dernier horodatage du serveur',
+  'poll.recentLog': 'Journal récent des déclenchements et des exécutions des interrogations',
+  'poll.triggerWithFilter': 'Déclenché avec le filtre : « {0} »',
+  'poll.executing': 'Exécution en cours (délai HTTP)',
+  'poll.settled': 'Terminé',
+  'k8sRetryBackoff.resultSuccess': 'Réussite (HTTP {0})',
+  'k8sRetryBackoff.resultFailure': 'Échec (HTTP {0})',
+  'k8sRetryBackoff.totalAttempts': '(Total des tentatives : {0})',
+  'k8sRetryBackoff.failFast': 'HTTP {0} (échec immédiat)',
+  'k8sRetryBackoff.overrideSucceeded': 'HTTP {0} (réussite)',
+  'k8sRetryBackoff.attempts': '(Tentatives : {0})',
+  'k8sRetryBackoff.exhaustedResult': 'Nombre maximal de tentatives (5) atteint. Requête rejetée.',
+  'k8sRetryBackoff.non429Result':
+    'Erreur {0} : Une erreur autre que 429 a été propagée immédiatement sans nouvelle tentative.',
+  'k8sRetryBackoff.interceptorSuccess': 'La requête a réussi après une nouvelle tentative de l’intercepteur.',
+  'k8sRetryBackoff.disabledResult':
+    'HTTP 429 a été renvoyé immédiatement : les nouvelles tentatives avec temporisation ont été désactivées via HttpContext.',
+  'k8sRetryBackoff.postDefaultResult':
+    'POST n’a pas été réessayé : les nouvelles tentatives d’écriture nécessitent une activation explicite pour le point de terminaison.',
+  'k8sRetryBackoff.gatewayResult':
+    'Le code 429 de la passerelle n’a pas été réessayé : le prédicat Kubernetes configuré l’a rejeté.',
+  'k8sRetryBackoff.unrecoveredResult': 'Erreur {0} : Nombre maximal de tentatives atteint sans rétablissement.',
+  'k8sRetryBackoff.customOverrideResult':
+    'La requête a réussi après 2 nouvelles tentatives avec maxAttempts: 10, une base exponentielle de 200ms et equal jitter.',
+  'k8sRetryBackoff.bypassedResult':
+    'La requête a échoué immédiatement (HTTP 429). Les nouvelles tentatives ont été ignorées via K8S_RETRY_BACKOFF_CONFIG: false.',
+  'k8sRetryBackoff.operatorSuccess': 'La requête a réussi après une nouvelle tentative.',
+  'resourceAsync.lazyDemoTitle': 'Démonstration : utilisateurs chargés à la demande',
+  'resourceAsync.fallbackTitle': 'Gestion des erreurs avec valeur de repli',
+  'resourceAsync.fallbackDescription':
+    'Cette ressource interroge un point de terminaison non valide et utilise un utilisateur par défaut en cas d’échec :',
+  'resourceAsync.throwOnErrorDescription':
+    'Utilisez <code>throwOnError: true</code> pour propager les erreurs non traitées par une valeur de repli. L’erreur est également stockée dans le signal d’erreur.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Avec <code>throwOnError: true</code>, les erreurs se propagent si <code>onError</code> est omis ou renvoie <code>undefined</code>. Une valeur de repli renvoyée par <code>onError</code> traite l’erreur et empêche sa propagation.',
+  'resourceAsync.mutationConfigTitle': 'Configuration essentielle des mutations :',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code> : Exécuter uniquement sur déclenchement explicite.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code> : Éviter les envois en double en ignorant les nouvelles requêtes pendant une requête en cours. Chaque appel à <code>execute()</code> attend le résultat de l’opération active.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code> : Déclencher une mutation et attendre son résultat, ou appeler sans attendre.',
+  'resourceAsync.mutationBenefitsTitle': 'Pourquoi cette configuration convient aux mutations :',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code> : Envoyer le formulaire uniquement lorsque l’utilisateur clique sur le bouton d’envoi.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code> : Ignorer les clics d’envoi répétés pendant la requête.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code> : Utiliser <code>const res = await ref.execute()</code> ou appeler sans attendre. La valeur précédente est effacée pour clarifier l’état de chargement.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code> : Afficher le chargement et désactiver le bouton d’envoi.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code> : Suivre les états de réussite et d’erreur pour informer l’utilisateur.',
+  'resourceAsync.registrationDemoTitle': 'Démonstration interactive : formulaire d’inscription',
+  'resourceAsync.registrationDescription':
+    "Envoyez le formulaire pour tester une API d’inscription simulée avec 70 % de réussite. Avec <code>behavior: 'exhaust'</code>, les clics répétés sont ignorés pendant une requête en cours.",
+  'resourceAsync.registrationFailed': 'Échec de l’inscription : {0}',
+  'resourceAsync.switchTitle': 'switch (par défaut)',
+  'resourceAsync.switchDescription':
+    'Annule la requête précédente au démarrage d’une nouvelle, afin que la plus récente détermine les données. Ce comportement par défaut convient particulièrement aux lectures (requêtes GET).',
+  'resourceAsync.exhaustDescription':
+    'Ignore les nouvelles requêtes tant qu’une requête est en cours. Évite les opérations en double dues aux clics rapides, comme des recherches ou demandes de pagination répétées. Convient aussi aux mutations (exemple 5).',
+  'resourceAsync.computedStateAdvice':
+    'Utilisez <code>computed()</code> plutôt que des getters pour dériver un état à partir de signaux. La mémoïsation évite les calculs répétés et s’intègre à la réactivité d’Angular.',
+  'resourceAsync.queryPreset': 'Requête prédéfinie :',
+  'resourceAsync.reset': 'Réinitialiser',
+  'resourceAsync.awaitExecute': 'Attendre execute()',
+  'resourceAsync.statusLabel': 'État :',
+  'resourceAsync.activeQuery': 'Requête active :',
+  'resourceAsync.fetchingWithAbortSignal': 'Récupération avec AbortSignal…',
+  'resourceAsync.category': 'Catégorie',
+  'resourceAsync.requestInFlight': 'En cours (signal actif)',
+  'resourceAsync.requestAborted': 'Annulée (AbortSignal déclenché)',
+  'resourceAsync.requestResolved': 'Terminée',
+  'resourceAsync.requestLogLabel': 'Requête n° {0} (recherche : « {1} ») :',
+  'resourceAsync.todoDemoTitle': 'Démonstration : changer l’état d’une tâche',
+  'resourceAsync.completedLabel': 'Terminée :',
+  'resourceAsync.cacheFirstDemoTitle': 'Démonstration : profil utilisateur avec priorité au cache',
+  'resourceAsync.counterDemoTitle': 'Démonstration : compteur modifiable',
+  'resourceAsync.expert': 'Expert',
+  'resourceAsync.nestedDemoTitle': 'Démonstration : éléments et organisations',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (définition déclarative)',
+  'resourceAsync.statusTitle': 'État de la ressource',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> renvoie une <code>WritableResourceRef</code> avec <code>set()</code>, <code>update()</code> et <code>asReadonly()</code> pour gérer l’état manuellement, conformément à l’API <code>WritableResource</code> d’Angular.',
+  'resourceAsync.decrementCounter': 'Diminuer le compteur',
+  'resourceAsync.incrementCounter': 'Augmenter le compteur',
+  'resourceAsync.nestedIntroduction':
+    'Une liste peut contenir des éléments qui récupèrent des organisations, utilisateurs ou détails associés. Cet exemple présente une approche pour gérer indépendamment les états de chargement et d’erreur de chaque ligne.',
+  'resourceAsync.nestedInjector':
+    'Passez <code>&#123; injector: this.injector &#125;</code> via l’option <code>injector</code> de <code>ResourceRefOptions</code> pour créer <code>resourceAsync</code> dynamiquement dans des méthodes auxiliaires de modèle ou des services, sans <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Documentation complète :',
+  'resourceAsync.seeDocumentation': 'Guide de conception :',
+  'resourceAsync.documentationDescription':
+    'Comprend plusieurs approches, des arbres de décision et des conseils pour choisir chaque modèle.',
+  'resourceAsync.nestedOuter': 'Ressource externe : la liste possède ses propres états de chargement et d’erreur.',
+  'resourceAsync.nestedInner':
+    'Ressources internes : les données associées à chaque élément possèdent des états de chargement et d’erreur indépendants.',
+  'resourceAsync.nestedLazy':
+    'Chargement à la demande : récupérer les données uniquement au clic pour limiter les appels API.',
+  'resourceAsync.nestedIndependent':
+    'États indépendants : chaque ligne gère son indicateur de chargement, son erreur et ses données.',
+  'resourceAsync.nestedItemsFailed': 'Impossible de charger les éléments : {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Impossible de charger l’organisation',
+  'resourceAsync.nestedBenefitRequests': 'Appels API minimaux (récupérer uniquement le nécessaire)',
+  'resourceAsync.nestedBenefitStates': 'États de chargement et d’erreur propres à chaque ligne',
+  'resourceAsync.nestedBenefitRetry': 'Réessayer indépendamment les récupérations échouées',
+  'resourceAsync.nestedBenefitCache':
+    'Réutilise une ressource par orgId ; un rechargement explicite récupère à nouveau les données.',
+  'resourceAsync.nestedBenefitScale': 'Adapté aux grandes listes',
+  'resourceAsync.statusIdle':
+    '<code>idle</code> : Pas encore démarré ou réinitialisé. <code>value()</code> renvoie la valeur initiale ou par défaut configurée, ou <code>undefined</code> si aucune n’est configurée.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code> : Une opération est en cours de chargement sans résultat conservé. <code>value()</code> renvoie la valeur initiale ou par défaut configurée, ou <code>undefined</code> si aucune n’est configurée.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code> : Nouvelle récupération en cours. <code>value()</code> conserve les données précédentes.',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code> : Opération réussie. <code>value()</code> contient les données.',
+  'resourceAsync.statusError':
+    '<code>error</code> : L’opération a échoué. Les données précédentes ne sont conservées qu’avec <code>preserveValueOnError</code> ; sinon, <code>value()</code> renvoie la valeur initiale ou par défaut configurée, ou <code>undefined</code> si aucune n’est configurée.',
+  'toast.greatTitle': 'Notification de réussite',
+  'toast.successMessage': 'Ceci est un message de réussite !',
+  'toast.warningMessage': 'Ceci est un avertissement !',
+  'toast.errorMessage': 'Ceci est un message d’erreur. Il se ferme automatiquement après 10 secondes.',
+  'toast.infoMessage': 'Ceci est le type de notification par défaut.',
+  'toast.oneHourAgo': 'il y a 1 h',
+  'toast.primaryAction': 'Bouton principal',
+  'toast.secondaryAction': 'Bouton secondaire',
+  'toast.primaryClicked': 'Bouton principal activé',
+  'toast.secondaryClicked': 'Bouton secondaire activé',
+  'common.moreInfo': 'Plus d’informations',
+  'toast.openTabSimulation': 'Simuler l’ouverture d’un nouvel onglet',
+  'common.details': 'Détails',
+  'common.dismiss': 'Fermer',
+  'common.acknowledge': 'Accuser réception',
+  'multiAlerts.dangerMessage': 'Ceci est une alerte de danger ! Vous pouvez la supprimer avec le bouton de fermeture.',
+  'multiAlerts.warningMessage': 'Avertissement ! Vous pouvez le supprimer avec le bouton de fermeture.',
+  'multiAlerts.successActions': 'Alerte de réussite avec des boutons d’action à la fin.',
+  'multiAlerts.detailsClicked': 'Action Détails activée !',
+  'multiAlerts.dismissClicked': 'Action Fermer activée !',
+  'multiAlerts.newActions': 'Nouvelle alerte avec des boutons d’action à la fin.',
+  'multiAlerts.acknowledged': 'Réception confirmée !',
+  'multiAlerts.inlineClicked': 'Action effectuée correctement !',
+  'multiAlerts.inlineMessage':
+    'Alerte contenant <button type="button" class="btn btn-sm alert-action" id="click-target">Cliquez ici</button> dans le message.',
+  'multiAlerts.standardAdded': 'Nouvelle alerte standard ajoutée à {0}',
+  'timelineWizard.canceledMessage': 'Annulé',
+  'timelineWizard.confirmedMessage':
+    'Envoi confirmé. Consultez les données du formulaire dans la console. Ceci simule une requête API.',
+  'timelineWizard.finishedMessage': 'Terminé',
+  'tooltip.componentAlert': 'Je proviens du composant d’alerte',
+  'resourceAsync.todoUpdateFailed': 'Impossible de mettre à jour la tâche',
+  'resourceAsync.counterSaveFailed': 'Impossible d’enregistrer le compteur',
+  'resourceAsync.counterSaved': 'Compteur enregistré : {0}',
+  'resourceAsync.usernameExists': 'Ce nom d’utilisateur existe déjà',
+  'resourceAsync.registrationSuccess': 'Inscription réussie ! Bienvenue.',
+  'resourceAsync.networkTimeout': 'Délai réseau dépassé',
+  'runtime.readFailure': 'Échec de lecture simulé',
+  'runtime.saveFailure': 'Échec d’enregistrement simulé',
+  'runtime.pollFailure': 'Échec d’interrogation périodique simulé',
+  'runtime.settingsSaveFailure':
+    'HTTP 500 : Impossible d’enregistrer les paramètres du cluster dans la base de données.',
+  'isPromise.caseNative': 'Promise.resolve() natif',
+  'isPromise.caseAsync': 'Valeur renvoyée par une fonction asynchrone',
+  'isPromise.caseThenable': 'Objet Thenable personnalisé',
+  'isPromise.caseObject': 'Objet simple',
+  'isPromise.caseNullish': 'null / undefined',
+  'isPromise.casePrimitive': 'Valeur primitive',
+  'isPromise.caseFunction': 'Fonction sans .then',
+  'idleDetection.activeStatus': 'Actif',
+  'idleDetection.timeoutStatus': 'Délai dépassé',
+  'multiAlerts.newInlineMessage':
+    'Alerte contenant <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Cliquez ici</button> dans le message.',
+  'timelineWizard.review': 'Vérifier',
 };

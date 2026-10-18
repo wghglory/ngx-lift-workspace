@@ -88,7 +88,13 @@
         </clr-radio-container>
 
         <div cds-layout="horizontal gap:sm align:vertical-center">
-          <button type="button" class="btn btn-primary btn-sm" [clrLoading]="isLoading()" (click)="executeRequest()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [clrLoading]="isLoading()"
+            (click)="executeRequest()"
+            [attr.aria-label]="'k8sRetryBackoffInterceptor.btnSend' | translate"
+          >
             {{ 'k8sRetryBackoffInterceptor.btnSend' | translate }}
           </button>
           <button
@@ -104,12 +110,18 @@
         @if (simulationResult(); as result) {
           <div cds-layout="horizontal gap:sm align:vertical-center">
             @if (result.success) {
-              <span class="badge badge-success">Success (HTTP {{ result.statusCode }})</span>
+              <span class="badge badge-success">{{
+                'k8sRetryBackoff.resultSuccess' | translate: result.statusCode
+              }}</span>
             } @else {
-              <span class="badge badge-danger">Failure (HTTP {{ result.statusCode }})</span>
+              <span class="badge badge-danger">{{
+                'k8sRetryBackoff.resultFailure' | translate: result.statusCode
+              }}</span>
             }
-            <span cds-text="body font:medium">{{ result.message }}</span>
-            <span cds-text="caption">(Total Attempts: {{ result.totalAttempts }})</span>
+            <span cds-text="body font:medium">{{
+              result.messageKey ? (result.messageKey | translate: result.statusCode) : result.message
+            }}</span>
+            <span cds-text="caption">{{ 'k8sRetryBackoff.totalAttempts' | translate: result.totalAttempts }}</span>
           </div>
         }
 
@@ -156,6 +168,7 @@
             [clrLoading]="activeOverrideTest() === 'probe'"
             [disabled]="isTestingOverride()"
             (click)="testProbeOptOut()"
+            [attr.aria-label]="'k8sRetryBackoffInterceptor.btnProbe' | translate"
           >
             {{ 'k8sRetryBackoffInterceptor.btnProbe' | translate }}
           </button>
@@ -165,6 +178,7 @@
             [clrLoading]="activeOverrideTest() === 'workload'"
             [disabled]="isTestingOverride()"
             (click)="testWorkloadCustom()"
+            [attr.aria-label]="'k8sRetryBackoffInterceptor.btnWorkloads' | translate"
           >
             {{ 'k8sRetryBackoffInterceptor.btnWorkloads' | translate }}
           </button>
@@ -173,12 +187,16 @@
         @if (overrideResult(); as res) {
           <div cds-layout="horizontal gap:sm align:vertical-center">
             @if (res.bypassed) {
-              <span class="badge badge-danger">HTTP {{ res.statusCode }} (Fail Fast)</span>
+              <span class="badge badge-danger">{{ 'k8sRetryBackoff.failFast' | translate: res.statusCode }}</span>
             } @else {
-              <span class="badge badge-success">HTTP {{ res.statusCode }} (Succeeded)</span>
+              <span class="badge badge-success">{{
+                'k8sRetryBackoff.overrideSucceeded' | translate: res.statusCode
+              }}</span>
             }
-            <span cds-text="body font:medium">{{ res.message }}</span>
-            <span cds-text="caption">(Attempts: {{ res.attempts }})</span>
+            <span cds-text="body font:medium">{{
+              res.messageKey ? (res.messageKey | translate: res.statusCode) : res.message
+            }}</span>
+            <span cds-text="caption">{{ 'k8sRetryBackoff.attempts' | translate: res.attempts }}</span>
           </div>
         }
       </div>

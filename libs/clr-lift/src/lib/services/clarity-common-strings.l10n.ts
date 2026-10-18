@@ -461,7 +461,8 @@ export const defaultClarityCommonStrings: Record<string, Partial<ClrCommonString
     datagridExpandableRowContent: 'Erweiterbarer Zeileninhalt',
     datagridExpandableBeginningOf: 'Beginn von',
     datagridExpandableEndOf: 'Ende von',
-    datagridExpandableRowsHelperText: 'Screenreader-Befehle funktionieren möglicherweise nicht für erweiterte Inhalte',
+    datagridExpandableRowsHelperText:
+      'Tabellenbefehle des Screenreaders funktionieren möglicherweise nicht für erweiterte Inhalte. Verwenden Sie den Lesemodus Ihres Screenreaders, um die durch diese Schaltfläche eingeblendeten Inhalte zu lesen.',
     comboboxOpen: 'Optionen anzeigen',
     comboboxSelected: 'Ausgewählt',
     comboboxSearching: 'Suche nach Übereinstimmungen für "{INPUT}"',
@@ -586,7 +587,7 @@ export const defaultClarityCommonStrings: Record<string, Partial<ClrCommonString
     datagridExpandableBeginningOf: 'Comienzo de',
     datagridExpandableEndOf: 'Fin de',
     datagridExpandableRowsHelperText:
-      'Es posible que los comandos de la tabla del lector de pantalla no funcionen para ver contenido expandido',
+      'Es posible que los comandos de tabla del lector de pantalla no funcionen para ver el contenido expandido. Use el modo de exploración del lector de pantalla para leer el contenido que muestra este botón.',
     comboboxOpen: 'Mostrar opciones',
     comboboxSelected: 'Seleccionados',
     comboboxSearching: 'Buscando coincidencias para "{INPUT}"',
@@ -711,7 +712,7 @@ export const defaultClarityCommonStrings: Record<string, Partial<ClrCommonString
     datagridExpandableBeginningOf: 'Début de',
     datagridExpandableEndOf: 'Fin de',
     datagridExpandableRowsHelperText:
-      "Les commandes du tableau de lecteur d'écran peuvent ne pas fonctionner pour l'affichage du contenu développé",
+      'Les commandes de tableau du lecteur d’écran peuvent ne pas fonctionner pour le contenu développé. Utilisez le mode navigation de votre lecteur d’écran pour lire le contenu affiché par ce bouton.',
     comboboxOpen: 'Afficher les options',
     comboboxSelected: 'Sélectionné',
     comboboxSearching: 'Recherche de correspondances pour "{INPUT}"',

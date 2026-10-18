@@ -99,6 +99,10 @@ loading, SSR behavior, and security/resource limits that actually apply to the f
 
 ## Clarity, accessibility, and localization
 
+Apply the [project acceptance contract](../../guides/accessibility-and-localization.md) to both library and demo UI.
+Inventory owned visible/announced messages, all supported locales, keyboard/focus journeys, and regression checks.
+Identify independent human reviewers and record their actual acceptance separately from automated/AI verification.
+
 For rendered UI, define Clarity containers, tokens, light/dark and compact modes, responsive layout, keyboard behavior,
 accessible names, focus restoration, announcements, and RTL. List every user-visible string, plural/interpolation rule,
 locale/date behavior, and runtime language-switch behavior. Cover all supported dictionaries; record human language

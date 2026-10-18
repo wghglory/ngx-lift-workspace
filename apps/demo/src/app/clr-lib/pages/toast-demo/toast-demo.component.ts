@@ -235,58 +235,58 @@ export class ToastShorthandExampleComponent {
 
   showAddToast() {
     this.toastService.addToast({
-      title: 'Great Toast',
-      description: 'I am a successful message!',
+      title: this.translationService.translate('toast.greatTitle'),
+      description: this.translationService.translate('toast.successMessage'),
       // below properties are optional
       toastType: 'success',
-      date: '1hr ago',
+      date: this.translationService.translate('toast.oneHourAgo'),
       manualClosable: true,
       // timeoutSeconds: 6,
       closed() {
         console.log('closed');
       },
-      primaryButtonText: 'Primary Button',
-      primaryButtonClick() {
-        alert('primary button clicked');
+      primaryButtonText: this.translationService.translate('toast.primaryAction'),
+      primaryButtonClick: () => {
+        alert(this.translationService.translate('toast.primaryClicked'));
       },
-      secondaryButtonText: 'Secondary Button',
-      secondaryButtonClick() {
-        alert('secondary button clicked');
+      secondaryButtonText: this.translationService.translate('toast.secondaryAction'),
+      secondaryButtonClick: () => {
+        alert(this.translationService.translate('toast.secondaryClicked'));
       },
     });
   }
 
   showSuccessToast() {
     this.toastService.success({
-      title: 'Great Toast',
-      description: 'I am a successful message!',
+      title: this.translationService.translate('toast.greatTitle'),
+      description: this.translationService.translate('toast.successMessage'),
     });
   }
 
   showWarningToast() {
     this.toastService.warning({
-      title: 'Warning Toast',
-      description: 'I am a warning message!',
+      title: this.translationService.translate('toast.warningBtn'),
+      description: this.translationService.translate('toast.warningMessage'),
     });
   }
 
   showErrorToast() {
     this.toastService.error({
-      title: 'Error Toast',
-      description: 'I am a Error message! I will be closed in 10s automatically.',
-      date: '1hr ago',
+      title: this.translationService.translate('toast.errorBtn'),
+      description: this.translationService.translate('toast.errorMessage'),
+      date: this.translationService.translate('toast.oneHourAgo'),
       timeoutSeconds: 10,
-      primaryButtonText: 'More Info',
-      primaryButtonClick() {
-        alert('Assume opening a new tab');
+      primaryButtonText: this.translationService.translate('common.moreInfo'),
+      primaryButtonClick: () => {
+        alert(this.translationService.translate('toast.openTabSimulation'));
       },
     });
   }
 
   showInfoToast() {
     this.toastService.info({
-      title: 'Info Toast',
-      description: 'I am the default toast type.',
+      title: this.translationService.translate('toast.infoBtn'),
+      description: this.translationService.translate('toast.infoMessage'),
     });
   }
 }

@@ -22,7 +22,7 @@
           <tbody>
             @for (item of checkCases; track item.label) {
               <tr>
-                <td>{{ item.label }}</td>
+                <td>{{ item.label | translate }}</td>
                 <td class="font-mono text-xs">{{ item.expression }}</td>
                 <td>
                   @if (item.result) {

@@ -135,7 +135,7 @@ export class MutateResourceDemoComponent {
       this.saveSuccessMessage.set(false);
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (this.simulateError()) {
-        throw new Error('HTTP 500: Failed to persist cluster settings to database.');
+        throw new Error(this.translationService.translate('runtime.settingsSaveFailure'));
       }
       return {success: true, timeoutSeconds: payload.timeoutSeconds};
     },
@@ -249,34 +249,9 @@ clearLogs() {
   this.inFlightCount.set(0);
 }`);
 
-  readonly errorCode = highlight(`import {signal} from '@angular/core';
-import {mutateResource} from 'ngx-lift';
-
-// Component fields and handlers used by the live preview.
-simulateError = signal(false);
-
-saveSuccessMessage = signal(false);
-
-saveSettingsMutation = mutateResource(
-  async (payload: {timeoutSeconds: number}) => {
-    this.saveSuccessMessage.set(false);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    if (this.simulateError()) {
-      throw new Error('HTTP 500: Failed to persist cluster settings to database.');
-    }
-    return {success: true, timeoutSeconds: payload.timeoutSeconds};
-  },
-  {concurrency: 'exhaust'},
-);
-
-async onSaveSettings() {
-  try {
-    await this.saveSettingsMutation.mutate({timeoutSeconds: 30});
-    this.saveSuccessMessage.set(true);
-  } catch {
-    this.saveSuccessMessage.set(false);
-  }
-}`);
+  readonly errorCode = highlight(
+    "import {inject, signal} from '@angular/core';\nimport {TranslationService} from 'clr-lift';\nimport {mutateResource} from 'ngx-lift';\n\n// Component fields and handlers used by the live preview.\nprivate readonly translationService = inject(TranslationService);\nsimulateError = signal(false);\n\nsaveSuccessMessage = signal(false);\n\nsaveSettingsMutation = mutateResource(\n  async (payload: {timeoutSeconds: number}) => {\n    this.saveSuccessMessage.set(false);\n    await new Promise((resolve) => setTimeout(resolve, 500));\n    if (this.simulateError()) {\n      throw new Error(this.translationService.translate('runtime.settingsSaveFailure'));\n    }\n    return {success: true, timeoutSeconds: payload.timeoutSeconds};\n  },\n  {concurrency: 'exhaust'},\n);\n\nasync onSaveSettings() {\n  try {\n    await this.saveSettingsMutation.mutate({timeoutSeconds: 30});\n    this.saveSuccessMessage.set(true);\n  } catch {\n    this.saveSuccessMessage.set(false);\n  }\n}",
+  );
 
   // ---------------------------------------------------------------------------
   // API Reference Tables

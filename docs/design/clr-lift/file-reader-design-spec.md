@@ -97,6 +97,9 @@ immediately; this is not composite-blur semantics.
 
 ## Clarity, accessibility, and localization
 
+Removing a file through the UI returns keyboard focus to Browse. Programmatic owner resets retain their existing focus
+behavior. The keyboard file-picker/removal browser regression covers this distinction.
+
 Clarity file input/helpers/errors use component translations. Host supplies a unique `controlId` when necessary and its
 surrounding form label. Announce size/read errors and verify keyboard removal; acceptFiles is a chooser hint, not
 content validation.

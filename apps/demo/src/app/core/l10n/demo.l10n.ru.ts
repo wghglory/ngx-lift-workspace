@@ -626,7 +626,7 @@ export const ruTranslations: Record<string, string> = {
     'Создание ресурса, который автоматически приносит данные и перезадаёт их при изменении зависимости. Любой считываемый внутри исходной функции сигнал становится реактивной зависимостью.',
   'resourceAsync.example2': 'Пример 2: Ленивая погрузка',
   'resourceAsync.example2Desc':
-    'Используйте <code>lazy: true</code>, чтобы отложить загрузку до вызова <code>reload()</code>. Ресурс начинается в режиме холостого хода и не будет получать данные, пока он не активирован:',
+    'Используйте <code>lazy: true</code>, чтобы отложить загрузку до вызова <code>reload()</code> или <code>execute()</code>. Ресурс начинается в состоянии idle и загружает данные только при явном запуске:',
   'resourceAsync.loadUsers': 'Загрузить пользователей',
   'resourceAsync.notLoadedIdle': 'Еще не загружен (идл)',
   'resourceAsync.example3': 'Пример 3: Начальное значение',
@@ -734,8 +734,9 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Первоначальная загрузка (нет данных)',
   'queryResource.matrixInitialLoadUsage':
     'Отобразите основной спиннер или скелетон. В интерфейсе ещё нет данных для показа.',
-  'queryResource.matrixResolved': 'Разрешено / Ожидание (актуальные данные)',
-  'queryResource.matrixResolvedUsage': 'Отображайте контент в обычном режиме. Сетевые запросы не выполняются.',
+  'queryResource.matrixResolved': 'Завершено / В кэше',
+  'queryResource.matrixResolvedUsage':
+    'Отображайте содержимое как обычно; данные доступны и могут быть актуальными или устаревшими.',
   'queryResource.matrixRefreshingState': 'Фоновая ревалидация (SWR / Инвалидация)',
   'queryResource.matrixRefreshingUsage':
     'НЕ показывайте полноэкранный спиннер! Сохраняйте существующие данные на экране и добавьте аккуратный бейдж или маленький спиннер в заголовке. Предотвращает мерцание и пустые экраны.',
@@ -1498,18 +1499,20 @@ export const ruTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'Реактивная функция, которая возвращает Observable, Promise, или синхронное значение.',
   'resourceAsync.paramOptions': 'Варианты конфигурации ресурсов.',
   'resourceAsync.propInitialValue': 'Начальное значение перед первой доставкой.',
-  'resourceAsync.propLazy': 'Если true, начинается в состоянии "idle" и ждет вызова reload().',
+  'resourceAsync.propLazy': 'Если true, ресурс начинается в состоянии "idle" и ждёт вызова reload() или execute().',
   'resourceAsync.propBehavior':
     'Поведение при одновременных выполнениях: "switch" отменяет предыдущее выполнение; "exhaust" игнорирует новые. По умолчанию: "switch".',
   'resourceAsync.propOnError': 'Обратный звонок оператора ошибки, который может дать запасные значения.',
-  'resourceAsync.propThrowOnError': 'Если это так, то ошибки забрасываются, а не хранятся в сигнале об ошибке.',
+  'resourceAsync.propThrowOnError':
+    'Если true, ошибки, не обработанные резервным значением onError, сохраняются в сигнале ошибки и затем передаются дальше.',
   'resourceAsync.propOnSuccess': 'В случае успешного завершения операции используется ссылка на звонок.',
   'resourceAsync.propOnLoading': 'Перезвони, когда начнутся операции.',
   'resourceAsync.returnsDesc':
     'Объект ResourceRef<T, E> с полями value, error, status, isLoading и методами изменения.',
   'spinner.apiSummary': 'Компонент для отображения индикаторов загрузки с настраиваемыми размерами и выравниванием.',
   'spinner.inputSize': 'Определяется размер шпиндера: "lg" (по умолчанию), "md" или "sm".',
-  'spinner.inputCenter': 'Центрирует спиннер как элемент блока. Переходите на отключение центра.',
+  'spinner.inputCenter':
+    'Центрирует индикатор загрузки как блочный элемент. Передайте false, чтобы отключить центрирование.',
   'spinner.inputInline': 'Указывает, должен ли шпиндер быть показан как элемент встроенного блока.',
   'spinner.inputCustomClass': 'Строка дополнительных классов CSS для приложения к шпиндеру.',
   'callout.apiSummary': 'Компонент с подсказкой, реализованный на основе системы Clarity Design System.',
@@ -1807,7 +1810,7 @@ export const ruTranslations: Record<string, string> = {
     '<strong>Глобальная защита с перезаписью запросов:</strong> Регистрируйте интерсептор один раз в <code>app.config.ts</code>, чтобы защитить все конечные точки. Для отдельных запросов, которые должны пропустить повторную отправку или использовать пользовательские лимиты, установите <code>K8S_RETRY_BACKOFF_CONFIG</code> контекстный токен на вызов <code>HttpClient</code>. Для локального контроля потока вместо этого, посмотрите <code>retryOnK8sBackoff</code> оператор.',
   'k8sRetryBackoffInterceptor.example1Title': 'Пример 1: Глобальная регистрация интерцептора и симулятор',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Зарегистрируйте интерцептор в app.config.ts, и все запросы HttpClient будут автоматически повторяться при 429:',
+    'Зарегистрируйте интерцептор глобально в app.config.ts, чтобы повторять допустимые идемпотентные запросы HttpClient при HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Режим контекста интерцептора:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Интерцептор по умолчанию (Повтор 429 через 1 с, затем 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom':
@@ -2091,8 +2094,9 @@ export const ruTranslations: Record<string, string> = {
   'resourceAsync.topicTitle': 'Тема/название',
   'resourceAsync.keyConcepts': 'Основные концепции:',
   'resourceAsync.patternBenefits': 'Преимущества модели:',
-  'spinner.inputDecorative': 'Декоратив по умолчанию. Введите ложную запись о погрузке как о состоянии.',
-  'spinner.inputLabel': 'Локализованный знак статуса; по умолчанию на встроенное сообщение нагрузки.',
+  'spinner.inputDecorative':
+    'По умолчанию используется как декоративный элемент. Установите false, чтобы объявлять загрузку как состояние.',
+  'spinner.inputLabel': 'Локализованная метка состояния; по умолчанию используется встроенное сообщение о загрузке.',
   'fileReader.inputControlId': 'ID входного кода, для связи с лейблом формы.',
   'fileReader.inputAcceptFiles':
     'Приемлемые типы текстовых файлов. Этот компонент читает текст, а не произвольные двоичные файлы.',
@@ -2497,4 +2501,187 @@ export const ruTranslations: Record<string, string> = {
   'computedAsync.readError': 'При чтении выброшена ошибка; успешное значение не возвращено.',
   'computedAsync.readDemoHint':
     'Вызовите ошибку источника и прочитайте signal. Восстановите источник и прочитайте снова для проверки восстановления.',
+  'header.mitLicense': 'Лицензия MIT',
+  'alert.moreInfo': 'Дополнительные сведения об ошибке сервера',
+  'common.interfaceTitle': 'Интерфейс {0}',
+  'common.failed': 'Ошибка',
+  'common.error': 'Ошибка',
+  'common.pros': 'Преимущества',
+  'common.cons': 'Недостатки',
+  'common.componentN': 'Компонент {0}',
+  'poll.filterParameter': 'Параметр фильтра (сигнал)',
+  'poll.filterAll': 'Все (элементов: {0})',
+  'poll.filterActive': 'Активные (элементов: {0})',
+  'poll.filterInactive': 'Неактивные (элементов: {0})',
+  'poll.activeFilter': 'Активный фильтр',
+  'poll.inProgress': 'Выполняется опрос...',
+  'poll.sequence': 'Номер опроса',
+  'poll.filteredBy': 'Применённый фильтр',
+  'poll.totalResults': 'Всего результатов',
+  'poll.lastTimestamp': 'Последняя отметка времени сервера',
+  'poll.recentLog': 'Журнал последних запусков и выполнения опроса',
+  'poll.triggerWithFilter': 'Запуск с фильтром: «{0}»',
+  'poll.executing': 'Выполняется (задержка HTTP)',
+  'poll.settled': 'Завершено',
+  'k8sRetryBackoff.resultSuccess': 'Успешно (HTTP {0})',
+  'k8sRetryBackoff.resultFailure': 'Ошибка (HTTP {0})',
+  'k8sRetryBackoff.totalAttempts': '(Всего попыток: {0})',
+  'k8sRetryBackoff.failFast': 'HTTP {0} (немедленный отказ)',
+  'k8sRetryBackoff.overrideSucceeded': 'HTTP {0} (успешно)',
+  'k8sRetryBackoff.attempts': '(Попыток: {0})',
+  'k8sRetryBackoff.exhaustedResult': 'Достигнуто максимальное число попыток (5). Запрос отклонён.',
+  'k8sRetryBackoff.non429Result': 'Ошибка {0}: Ошибка с кодом, отличным от 429, передана сразу без повтора.',
+  'k8sRetryBackoff.interceptorSuccess': 'Запрос выполнен успешно после повтора через интерцептор.',
+  'k8sRetryBackoff.disabledResult': 'HTTP 429 возвращён сразу: повторы с задержкой отключены через HttpContext.',
+  'k8sRetryBackoff.postDefaultResult':
+    'POST не повторялся: повторы записи требуют явного включения для конечной точки.',
+  'k8sRetryBackoff.gatewayResult': 'Ошибка 429 шлюза не повторялась: настроенный предикат Kubernetes отклонил её.',
+  'k8sRetryBackoff.unrecoveredResult': 'Ошибка {0}: Достигнуто максимальное число попыток без восстановления.',
+  'k8sRetryBackoff.customOverrideResult':
+    'Запрос выполнен успешно после 2 повторов с maxAttempts: 10, базой экспоненциальной задержки 200ms и equal jitter.',
+  'k8sRetryBackoff.bypassedResult':
+    'Запрос завершился ошибкой сразу (HTTP 429). Повторы пропущены из-за K8S_RETRY_BACKOFF_CONFIG: false.',
+  'k8sRetryBackoff.operatorSuccess': 'Запрос выполнен успешно после повтора.',
+  'resourceAsync.lazyDemoTitle': 'Демонстрация: загрузка пользователей по запросу',
+  'resourceAsync.fallbackTitle': 'Обработка ошибок с резервным значением',
+  'resourceAsync.fallbackDescription':
+    'Этот ресурс пытается получить данные из недействительной конечной точки и при ошибке использует пользователя по умолчанию:',
+  'resourceAsync.throwOnErrorDescription':
+    'Используйте <code>throwOnError: true</code>, чтобы передавать дальше ошибки, не обработанные резервным значением. Ошибка также сохраняется в сигнале ошибки.',
+  'resourceAsync.throwOnErrorPolicy':
+    'При <code>throwOnError: true</code> ошибки передаются дальше, если <code>onError</code> не задан или возвращает <code>undefined</code>. Резервное значение, возвращаемое <code>onError</code>, обрабатывает ошибку и предотвращает её распространение.',
+  'resourceAsync.mutationConfigTitle': 'Основные настройки операций изменения:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Выполнять только при явном запуске.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Предотвращать повторную отправку, игнорируя новые запросы во время текущего. Каждый вызов <code>execute()</code> ожидает результат активной операции.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Запустить операцию изменения и дождаться результата либо вызвать без ожидания.',
+  'resourceAsync.mutationBenefitsTitle': 'Почему эти настройки подходят для операций изменения:',
+  'resourceAsync.mutationSubmit': '<code>lazy: true</code>: Отправлять форму только по нажатию кнопки отправки.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Игнорировать повторные нажатия отправки во время выполнения запроса.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: Использовать <code>const res = await ref.execute()</code> либо вызвать без ожидания. Предыдущее значение очищается, чтобы состояние загрузки было понятным.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: Показывать загрузку и отключать кнопку отправки.',
+  'resourceAsync.mutationStatus':
+    '<code>status()</code>: Отслеживать успешное завершение и ошибки для информирования пользователя.',
+  'resourceAsync.registrationDemoTitle': 'Интерактивная демонстрация: форма регистрации',
+  'resourceAsync.registrationDescription':
+    "Отправьте форму, чтобы проверить имитацию API регистрации с вероятностью успеха 70%. При <code>behavior: 'exhaust'</code> повторные нажатия игнорируются, пока запрос выполняется.",
+  'resourceAsync.registrationFailed': 'Ошибка регистрации: {0}',
+  'resourceAsync.switchTitle': 'switch (по умолчанию)',
+  'resourceAsync.switchDescription':
+    'Отменяет предыдущий запрос при запуске нового, чтобы данные определялись последним запросом. Это поведение по умолчанию лучше всего подходит для чтения (запросов GET).',
+  'resourceAsync.exhaustDescription':
+    'Игнорирует новые запросы, пока выполняется текущий. Предотвращает повторные операции при быстрых нажатиях, например повторный поиск или запросы страниц. Подходит и для операций изменения (пример 5).',
+  'resourceAsync.computedStateAdvice':
+    'Используйте <code>computed()</code> вместо геттеров для получения производного состояния из сигналов. Мемоизация исключает повторные вычисления и работает совместно с реактивностью Angular.',
+  'resourceAsync.queryPreset': 'Предустановленный запрос:',
+  'resourceAsync.reset': 'Сбросить',
+  'resourceAsync.awaitExecute': 'Дождаться execute()',
+  'resourceAsync.statusLabel': 'Состояние:',
+  'resourceAsync.activeQuery': 'Активный запрос:',
+  'resourceAsync.fetchingWithAbortSignal': 'Получение данных с AbortSignal…',
+  'resourceAsync.category': 'Категория',
+  'resourceAsync.requestInFlight': 'Выполняется (сигнал активен)',
+  'resourceAsync.requestAborted': 'Прерван (отмена через AbortSignal)',
+  'resourceAsync.requestResolved': 'Завершён',
+  'resourceAsync.requestLogLabel': 'Запрос № {0} (поиск: «{1}»):',
+  'resourceAsync.todoDemoTitle': 'Демонстрация: переключение состояния задачи',
+  'resourceAsync.completedLabel': 'Выполнено:',
+  'resourceAsync.cacheFirstDemoTitle': 'Демонстрация: профиль пользователя с приоритетом кэша',
+  'resourceAsync.counterDemoTitle': 'Демонстрация: редактируемый счётчик',
+  'resourceAsync.expert': 'Эксперт',
+  'resourceAsync.nestedDemoTitle': 'Демонстрация: элементы с организациями',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (декларативное определение)',
+  'resourceAsync.statusTitle': 'Состояние ресурса',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> возвращает <code>WritableResourceRef</code> с методами <code>set()</code>, <code>update()</code> и <code>asReadonly()</code> для ручного управления состоянием в соответствии с API <code>WritableResource</code> Angular.',
+  'resourceAsync.decrementCounter': 'Уменьшить счётчик',
+  'resourceAsync.incrementCounter': 'Увеличить счётчик',
+  'resourceAsync.nestedIntroduction':
+    'Список может содержать элементы, которые загружают связанные организации, пользователей или подробные сведения. Этот пример показывает один из способов независимо управлять состояниями загрузки и ошибок каждой строки.',
+  'resourceAsync.nestedInjector':
+    'Передайте <code>&#123; injector: this.injector &#125;</code> через параметр <code>injector</code> в <code>ResourceRefOptions</code>, чтобы динамически создавать <code>resourceAsync</code> во вспомогательных методах шаблона или сервисах без <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Полная документация:',
+  'resourceAsync.seeDocumentation': 'Руководство по проектированию:',
+  'resourceAsync.documentationDescription':
+    'Содержит несколько подходов, деревья решений и рекомендации по выбору каждого шаблона.',
+  'resourceAsync.nestedOuter': 'Внешний ресурс: список элементов имеет собственные состояния загрузки и ошибки.',
+  'resourceAsync.nestedInner':
+    'Внутренние ресурсы: связанные данные каждого элемента имеют независимые состояния загрузки и ошибки.',
+  'resourceAsync.nestedLazy': 'Загрузка по запросу: получать данные только по нажатию, сокращая вызовы API.',
+  'resourceAsync.nestedIndependent':
+    'Независимые состояния: каждая строка управляет своим индикатором загрузки, ошибкой и данными.',
+  'resourceAsync.nestedItemsFailed': 'Не удалось загрузить элементы: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Не удалось загрузить организацию',
+  'resourceAsync.nestedBenefitRequests': 'Минимум вызовов API (загружаются только нужные данные)',
+  'resourceAsync.nestedBenefitStates': 'Отдельные состояния загрузки и ошибки для каждой строки',
+  'resourceAsync.nestedBenefitRetry': 'Независимое повторение неудачных запросов',
+  'resourceAsync.nestedBenefitCache':
+    'Повторно используется один ресурс для каждой orgId; явная перезагрузка снова запрашивает данные.',
+  'resourceAsync.nestedBenefitScale': 'Подходит для больших списков',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Ещё не запущен или сброшен. <code>value()</code> возвращает настроенное начальное значение или значение по умолчанию, а при их отсутствии — <code>undefined</code>.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Выполняется загрузка без сохранённого результата. <code>value()</code> возвращает настроенное начальное значение или значение по умолчанию, а при их отсутствии — <code>undefined</code>.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Выполняется повторная загрузка. <code>value()</code> сохраняет предыдущие данные.',
+  'resourceAsync.statusResolved':
+    '<code>resolved</code>: Операция выполнена успешно. <code>value()</code> содержит данные.',
+  'resourceAsync.statusError':
+    '<code>error</code>: Операция завершилась ошибкой. Предыдущие данные сохраняются только при <code>preserveValueOnError</code>; иначе <code>value()</code> возвращает настроенное начальное значение или значение по умолчанию, а при их отсутствии — <code>undefined</code>.',
+  'toast.greatTitle': 'Уведомление об успехе',
+  'toast.successMessage': 'Это сообщение об успехе!',
+  'toast.warningMessage': 'Это предупреждение!',
+  'toast.errorMessage': 'Это сообщение об ошибке. Оно закроется автоматически через 10 секунд.',
+  'toast.infoMessage': 'Это тип уведомления по умолчанию.',
+  'toast.oneHourAgo': '1 ч назад',
+  'toast.primaryAction': 'Основная кнопка',
+  'toast.secondaryAction': 'Дополнительная кнопка',
+  'toast.primaryClicked': 'Нажата основная кнопка',
+  'toast.secondaryClicked': 'Нажата дополнительная кнопка',
+  'common.moreInfo': 'Подробнее',
+  'toast.openTabSimulation': 'Имитация открытия новой вкладки',
+  'common.details': 'Сведения',
+  'common.dismiss': 'Закрыть',
+  'common.acknowledge': 'Подтвердить получение',
+  'multiAlerts.dangerMessage': 'Это оповещение об опасности! Его можно удалить кнопкой закрытия.',
+  'multiAlerts.warningMessage': 'Предупреждение! Его можно удалить кнопкой закрытия.',
+  'multiAlerts.successActions': 'Оповещение об успехе с кнопками действий в конце.',
+  'multiAlerts.detailsClicked': 'Нажата кнопка сведений!',
+  'multiAlerts.dismissClicked': 'Нажата кнопка закрытия!',
+  'multiAlerts.newActions': 'Новое оповещение с кнопками действий в конце.',
+  'multiAlerts.acknowledged': 'Получение подтверждено!',
+  'multiAlerts.inlineClicked': 'Действие выполнено правильно!',
+  'multiAlerts.inlineMessage':
+    'Оповещение с <button type="button" class="btn btn-sm alert-action" id="click-target">Нажмите здесь</button> в тексте сообщения.',
+  'multiAlerts.standardAdded': 'Новое стандартное оповещение добавлено в {0}',
+  'timelineWizard.canceledMessage': 'Отменено',
+  'timelineWizard.confirmedMessage':
+    'Отправка подтверждена. Данные формы доступны в консоли. Это имитация запроса API.',
+  'timelineWizard.finishedMessage': 'Завершено',
+  'tooltip.componentAlert': 'Сообщение из компонента оповещения',
+  'resourceAsync.todoUpdateFailed': 'Не удалось обновить задачу',
+  'resourceAsync.counterSaveFailed': 'Не удалось сохранить счётчик',
+  'resourceAsync.counterSaved': 'Счётчик сохранён: {0}',
+  'resourceAsync.usernameExists': 'Имя пользователя уже существует',
+  'resourceAsync.registrationSuccess': 'Регистрация завершена! Добро пожаловать.',
+  'resourceAsync.networkTimeout': 'Время ожидания сети истекло',
+  'runtime.readFailure': 'Имитация ошибки чтения',
+  'runtime.saveFailure': 'Имитация ошибки сохранения',
+  'runtime.pollFailure': 'Имитация ошибки опроса',
+  'runtime.settingsSaveFailure': 'HTTP 500: Не удалось сохранить настройки кластера в базе данных.',
+  'isPromise.caseNative': 'Встроенный Promise.resolve()',
+  'isPromise.caseAsync': 'Результат асинхронной функции',
+  'isPromise.caseThenable': 'Пользовательский объект Thenable',
+  'isPromise.caseObject': 'Обычный объект',
+  'isPromise.caseNullish': 'null / undefined',
+  'isPromise.casePrimitive': 'Примитивное значение',
+  'isPromise.caseFunction': 'Функция без .then',
+  'idleDetection.activeStatus': 'Активно',
+  'idleDetection.timeoutStatus': 'Истекло время ожидания',
+  'multiAlerts.newInlineMessage':
+    'Оповещение с <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Нажмите здесь</button> в тексте сообщения.',
+  'timelineWizard.review': 'Проверка',
 };

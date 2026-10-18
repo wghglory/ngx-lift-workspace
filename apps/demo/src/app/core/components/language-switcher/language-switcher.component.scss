@@ -46,3 +46,9 @@
 .active-check {
   margin-left: 0.5rem;
 }
+
+@media (max-width: 575px) {
+  .language-trigger .lang-text {
+    max-width: 3rem;
+  }
+}

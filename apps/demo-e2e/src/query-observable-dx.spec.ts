@@ -209,5 +209,5 @@ test('query guide uses Clarity controls, status labels and a separate collection
     .first()
     .click();
   await expect(page).toHaveURL(/queryResources$/);
-  await expect(page.locator('h1')).toHaveText('queryResources');
+  await expect(page.locator('h1')).toHaveText(['queryResources']);
 });

@@ -320,13 +320,13 @@ export class ResourceAsyncComponent {
         delay(1500), // Simulate network delay
         map(() => {
           if (!shouldSucceed) {
-            throw new Error('Username already exists');
+            throw new Error(this.translationService.translate('resourceAsync.usernameExists'));
           }
           return {
             id: Math.floor(Math.random() * 1000),
             username: payload.username,
             email: payload.email,
-            message: 'Registration successful! Welcome aboard.',
+            message: this.translationService.translate('resourceAsync.registrationSuccess'),
           } as RegistrationResponse;
         }),
       );
@@ -387,7 +387,7 @@ export class ResourceAsyncComponent {
         error: () => {
           // Revert on error
           this.todoRef.update((todo) => ({...todo, completed: !todo.completed}));
-          alert('Failed to update todo');
+          alert(this.translationService.translate('resourceAsync.todoUpdateFailed'));
         },
       });
   }
@@ -439,12 +439,12 @@ export class ResourceAsyncComponent {
       .pipe(delay(500))
       .subscribe({
         next: () => {
-          alert(`Counter saved: ${this.counterRef.value()}`);
+          alert(this.translationService.translate('resourceAsync.counterSaved', this.counterRef.value()));
           // After save, reload to get server state
           this.counterRef.reload();
         },
         error: () => {
-          alert('Failed to save counter');
+          alert(this.translationService.translate('resourceAsync.counterSaveFailed'));
         },
       });
   }
@@ -541,7 +541,7 @@ export class ResourceAsyncComponent {
               map((org) => {
                 // Simulate random errors (30% chance)
                 if (Math.random() < 0.3) {
-                  throw new Error('Network timeout');
+                  throw new Error(this.translationService.translate('resourceAsync.networkTimeout'));
                 }
                 return org;
               }),

@@ -27,7 +27,7 @@
         </svg>
       </a>
       <app-language-switcher />
-      <cll-theme-toggle (changeTheme)="onThemeChange($event)" />
+      <cll-theme-toggle />
     </div>
   </clr-header>
 
@@ -37,7 +37,7 @@
       <footer cds-layout="p-t:md p-x:xl">
         <p>
           {{ 'header.codeLicensed' | translate }}
-          <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>
+          <a href="https://opensource.org/licenses/MIT" target="_blank">{{ 'header.mitLicense' | translate }}</a>
         </p>
       </footer>
     </main>

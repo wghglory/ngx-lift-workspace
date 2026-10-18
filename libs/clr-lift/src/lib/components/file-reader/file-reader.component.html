@@ -8,7 +8,7 @@
   [disabled]="isDisabled()"
 />
 
-<button type="button" [disabled]="isDisabled()" class="btn btn-outline btn-sm" (click)="file.click()">
+<button #browse type="button" [disabled]="isDisabled()" class="btn btn-outline btn-sm" (click)="file.click()">
   {{ (selectedFile() ? 'FileReader.replace' : 'FileReader.browse') | translate }}
 </button>
 <span>{{ selectedFile()?.name }}</span>
@@ -18,7 +18,7 @@
     type="button"
     class="btn btn-sm btn-icon btn-link btn-close"
     [disabled]="isDisabled()"
-    (click)="removeFile()"
+    (click)="removeFile(); browse.focus()"
     [attr.aria-label]="'FileReader.removeFile' | translate"
   >
     <clr-icon shape="times" />

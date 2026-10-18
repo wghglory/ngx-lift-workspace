@@ -65,7 +65,7 @@
 
               <div inspector>
                 <app-state-inspector
-                  title="Reactive Resource Signals"
+                  [title]="'inspector.liveState' | translate"
                   [data]="{
                     userId: pageNumber(),
                     status: userRef.status(),
@@ -86,7 +86,7 @@
                 <p [innerHTML]="'resourceAsync.example2Desc' | translate"></p>
 
                 <div>
-                  <h4>Demo: Lazy-Loaded Users</h4>
+                  <h4>{{ 'resourceAsync.lazyDemoTitle' | translate }}</h4>
                   <div class="card">
                     <div class="card-block">
                       <div cds-layout="vertical gap:md">
@@ -95,6 +95,7 @@
                             class="btn btn-sm btn-primary"
                             (click)="lazyUsersRef.reload()"
                             [clrLoading]="lazyUsersRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.loadUsers' | translate"
                           >
                             {{ 'resourceAsync.loadUsers' | translate }}
                           </button>
@@ -149,11 +150,11 @@
               <div preview>
                 <p [innerHTML]="'resourceAsync.example4Desc' | translate"></p>
 
-                <h4>Error Handling with Fallback</h4>
+                <h4>{{ 'resourceAsync.fallbackTitle' | translate }}</h4>
 
                 <div>
-                  <h4>Demo: Error Handling with Fallback</h4>
-                  <p>This resource attempts to fetch from an invalid endpoint and falls back to a default user:</p>
+                  <h4>{{ 'resourceAsync.fallbackTitle' | translate }}</h4>
+                  <p>{{ 'resourceAsync.fallbackDescription' | translate }}</p>
 
                   <div class="card">
                     <div class="card-block">
@@ -163,6 +164,7 @@
                             class="btn btn-sm btn-primary"
                             (click)="userWithFallbackRef.reload()"
                             [clrLoading]="userWithFallbackRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.triggerFallback' | translate"
                           >
                             {{ 'resourceAsync.triggerFallback' | translate }}
                           </button>
@@ -188,15 +190,11 @@
                 </div>
 
                 <h4 cds-layout="m-t:lg">{{ 'resourceAsync.errorPropagation' | translate }}</h4>
-                <p>
-                  Use <code>throwOnError: true</code> to propagate errors instead of storing them in the error signal:
-                </p>
+                <p [innerHTML]="'resourceAsync.throwOnErrorDescription' | translate"></p>
                 <app-code-block [code]="throwOnErrorCode" lang="typescript" />
-                <cll-callout type="warning">
-                  When <code>throwOnError: true</code>, errors will be thrown if <code>onError</code> returns
-                  <code>undefined</code> or is omitted. If <code>onError</code> returns a fallback value, the error is
-                  handled and will not propagate.
-                </cll-callout>
+                <cll-callout type="warning"
+                  ><span [innerHTML]="'resourceAsync.throwOnErrorPolicy' | translate"></span
+                ></cll-callout>
               </div>
             </app-demo-playground>
           </article>
@@ -211,45 +209,28 @@
                 <p [innerHTML]="'resourceAsync.example5Desc' | translate"></p>
 
                 <p>
-                  <strong>Key Configuration for Mutations:</strong>
+                  <strong>{{ 'resourceAsync.mutationConfigTitle' | translate }}</strong>
                 </p>
                 <ul class="list" cds-layout="m-b:md">
-                  <li><code>lazy: true</code> - Don't execute until explicitly triggered</li>
-                  <li>
-                    <code>behavior: 'exhaust'</code> - Prevent duplicate submissions (ignore new requests while one is
-                    in progress, sharing the active in-flight Promise)
-                  </li>
-                  <li>
-                    <code>execute(): Promise&lt;T&gt;</code> - Awaitable mutation trigger that returns a Promise
-                    resolving to the result, or fire-and-forget
-                  </li>
+                  <li [innerHTML]="'resourceAsync.mutationLazy' | translate"></li>
+                  <li [innerHTML]="'resourceAsync.mutationExhaust' | translate"></li>
+                  <li [innerHTML]="'resourceAsync.mutationExecute' | translate"></li>
                 </ul>
 
                 <cll-callout type="info">
-                  <strong>Why this works great for mutations:</strong>
+                  <strong>{{ 'resourceAsync.mutationBenefitsTitle' | translate }}</strong>
                   <ul class="list" cds-layout="m-t:xs">
-                    <li><code>lazy: true</code> - Form submission only happens when user clicks submit</li>
-                    <li>
-                      <code>behavior: 'exhaust'</code> - If user spams the submit button, subsequent clicks are ignored
-                      while request is in-flight
-                    </li>
-                    <li>
-                      <code>execute(): Promise&lt;T&gt;</code> - Awaitable with
-                      <code>const res = await ref.execute()</code>, or fire-and-forget; clears stale previous value so
-                      loading UI is clean
-                    </li>
-                    <li><code>isLoading()</code> - Perfect for showing loading state and disabling button</li>
-                    <li><code>status()</code> - Track success/error states for user feedback</li>
+                    <li [innerHTML]="'resourceAsync.mutationSubmit' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationRepeatedClicks' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationAwait' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationLoading' | translate"></li>
+                    <li [innerHTML]="'resourceAsync.mutationStatus' | translate"></li>
                   </ul>
                 </cll-callout>
 
                 <div>
-                  <h4>Live Demo: User Registration Form</h4>
-                  <p cds-text="body" cds-layout="m-b:md">
-                    Try submitting the form below. It simulates a registration API with 70% success rate. With
-                    <code>behavior: 'exhaust'</code>, rapid clicking the submit button is ignored while a request is in
-                    progress.
-                  </p>
+                  <h4>{{ 'resourceAsync.registrationDemoTitle' | translate }}</h4>
+                  <p [innerHTML]="'resourceAsync.registrationDescription' | translate"></p>
 
                   <div class="card">
                     <div class="card-block">
@@ -264,7 +245,7 @@
                         }
                         @if (registrationRef.status() === 'error' && registrationRef.error(); as error) {
                           <cll-alert
-                            [content]="'Registration failed: ' + error.message"
+                            [content]="'resourceAsync.registrationFailed' | translate: error.message"
                             [alertType]="'danger'"
                             cds-layout="m-t:md"
                             [isSmall]="true"
@@ -317,6 +298,7 @@
                             type="submit"
                             [disabled]="registrationRef.isLoading()"
                             [clrLoading]="registrationRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.regSubmit' | translate"
                           >
                             {{ 'resourceAsync.regSubmit' | translate }}
                           </button>
@@ -334,17 +316,11 @@
             <p [innerHTML]="'resourceAsync.example6Desc' | translate"></p>
             <app-code-block [code]="behaviorCode" lang="typescript" />
 
-            <h4>switch (default)</h4>
-            <p>
-              Cancels the previous request when a new one is triggered. This is the default behavior and ensures you
-              always get the latest data. Best for read operations (GET requests).
-            </p>
+            <h4>{{ 'resourceAsync.switchTitle' | translate }}</h4>
+            <p [innerHTML]="'resourceAsync.switchDescription' | translate"></p>
 
             <h4>exhaust</h4>
-            <p>
-              Ignores new requests while one is in progress. Useful for preventing duplicate operations like rapid
-              button clicks triggering multiple searches or paginations. Also ideal for mutations (see Example 5).
-            </p>
+            <p [innerHTML]="'resourceAsync.exhaustDescription' | translate"></p>
             <app-code-block [code]="exhaustCode" lang="typescript" />
           </article>
 
@@ -352,10 +328,7 @@
             <h3>{{ 'resourceAsync.example7' | translate }}</h3>
             <p [innerHTML]="'resourceAsync.example7Desc' | translate"></p>
             <app-code-block [code]="statusCode" lang="typescript" />
-            <cll-callout>
-              Always use <code>computed()</code> instead of getters for derived state from signals. This provides better
-              performance through memoization and integrates perfectly with Angular's reactivity system.
-            </cll-callout>
+            <cll-callout><span [innerHTML]="'resourceAsync.computedStateAdvice' | translate"></span></cll-callout>
           </article>
 
           <article cds-layout="vertical gap:sm align:stretch">
@@ -369,7 +342,7 @@
                     <div class="card-block">
                       <div cds-layout="vertical gap:md">
                         <div cds-layout="horizontal gap:xs align:center wrap">
-                          <span cds-text="secondary">Query Preset:</span>
+                          <span cds-text="secondary">{{ 'resourceAsync.queryPreset' | translate }}</span>
                           <button
                             class="btn btn-sm"
                             [class.btn-primary]="searchKeyword() === 'Angular'"
@@ -414,28 +387,32 @@
                             {{ 'resourceAsync.reload' | translate }}
                           </button>
                           <button class="btn btn-sm btn-danger-outline" (click)="searchDefinitionRef.reset()">
-                            Reset
+                            {{ 'resourceAsync.reset' | translate }}
                           </button>
                           <button
                             class="btn btn-sm btn-outline"
                             (click)="runAwaitableSearch()"
                             [clrLoading]="searchDefinitionRef.isLoading()"
+                            [attr.aria-label]="'resourceAsync.awaitExecute' | translate"
                           >
-                            Await execute()
+                            {{ 'resourceAsync.awaitExecute' | translate }}
                           </button>
                         </div>
 
                         <div cds-layout="horizontal gap:md align:center wrap">
                           <span
-                            >Status: <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
+                            >{{ 'resourceAsync.statusLabel' | translate }}
+                            <span class="badge badge-info">{{ searchDefinitionRef.status() }}</span></span
                           >
                           <span
-                            >Active Query: <strong>{{ searchKeyword() }}</strong></span
+                            >{{ 'resourceAsync.activeQuery' | translate }} <strong>{{ searchKeyword() }}</strong></span
                           >
                           @if (searchDefinitionRef.isLoading()) {
                             <span cds-layout="horizontal gap:xs align:center">
                               <cll-spinner inline />
-                              <span cds-text="secondary">Fetching with AbortSignal...</span>
+                              <span cds-text="secondary">{{
+                                'resourceAsync.fetchingWithAbortSignal' | translate
+                              }}</span>
                             </span>
                           }
                         </div>
@@ -447,7 +424,7 @@
                                 <tr>
                                   <th>ID</th>
                                   <th>{{ 'resourceAsync.topicTitle' | translate }}</th>
-                                  <th>Category</th>
+                                  <th>{{ 'resourceAsync.category' | translate }}</th>
                                   <th>{{ 'resourceAsync.lastUpdated' | translate }}</th>
                                 </tr>
                               </thead>
@@ -479,16 +456,19 @@
                             @for (log of searchLogs(); track log.id) {
                               <li cds-layout="horizontal gap:sm align:center">
                                 <span cds-text="secondary">[{{ log.timestamp }}]</span>
-                                <span
-                                  >Request #{{ log.id }} (query: "<strong>{{ log.keyword }}</strong
-                                  >"):</span
-                                >
+                                <span>{{ 'resourceAsync.requestLogLabel' | translate: log.id : log.keyword }}</span>
                                 @if (log.status === 'in-flight') {
-                                  <span class="badge badge-info">In-Flight (signal active)</span>
+                                  <span class="badge badge-info">{{
+                                    'resourceAsync.requestInFlight' | translate
+                                  }}</span>
                                 } @else if (log.status === 'aborted') {
-                                  <span class="badge badge-danger">Aborted (AbortSignal cancelled)</span>
+                                  <span class="badge badge-danger">{{
+                                    'resourceAsync.requestAborted' | translate
+                                  }}</span>
                                 } @else {
-                                  <span class="badge badge-success">Resolved</span>
+                                  <span class="badge badge-success">{{
+                                    'resourceAsync.requestResolved' | translate
+                                  }}</span>
                                 }
                               </li>
                             }
@@ -513,11 +493,9 @@
             <span class="badge badge-warning">{{ 'playground.advanced' | translate }}</span>
           </h2>
 
-          <cll-callout type="success">
-            <strong>New Feature:</strong> <code>resourceAsync</code> now returns a <code>WritableResourceRef</code> with
-            <code>set()</code>, <code>update()</code>, and <code>asReadonly()</code> methods for manual state
-            management, matching Angular's <code>WritableResource</code> API!
-          </cll-callout>
+          <cll-callout type="success"
+            ><span [innerHTML]="'resourceAsync.writableResourceIntro' | translate"></span
+          ></cll-callout>
 
           <!-- Example 1: Optimistic Updates -->
           <article cds-layout="vertical gap:sm align:stretch">
@@ -526,7 +504,7 @@
                 <p [innerHTML]="'resourceAsync.optimisticDesc' | translate"></p>
 
                 <div>
-                  <h4>Demo: Todo Toggle</h4>
+                  <h4>{{ 'resourceAsync.todoDemoTitle' | translate }}</h4>
                   <div class="card">
                     <div class="card-block">
                       @if (todoRef.isIdle()) {
@@ -545,7 +523,12 @@
                       @if (todoRef.hasValue()) {
                         <div cds-layout="vertical gap:md">
                           <div cds-layout="horizontal gap:sm align:center">
-                            <input type="checkbox" [checked]="todoRef.value().completed" (change)="toggleTodo()" />
+                            <input
+                              type="checkbox"
+                              [attr.aria-label]="todoRef.value().title"
+                              [checked]="todoRef.value().completed"
+                              (change)="toggleTodo()"
+                            />
                             <span>{{ todoRef.value().title }}</span>
 
                             @if (todoRef.status() === 'local') {
@@ -554,7 +537,8 @@
                           </div>
 
                           <div class="p7">
-                            <strong>Status:</strong> {{ todoRef.status() }} | <strong>Completed:</strong>
+                            <strong>{{ 'resourceAsync.statusLabel' | translate }}</strong> {{ todoRef.status() }} |
+                            <strong>{{ 'resourceAsync.completedLabel' | translate }}</strong>
                             {{ todoRef.value().completed }}
                           </div>
 
@@ -577,7 +561,7 @@
                 <p [innerHTML]="'resourceAsync.cacheFirstDesc' | translate"></p>
 
                 <div>
-                  <h4>Demo: Cache-First User Profile</h4>
+                  <h4>{{ 'resourceAsync.cacheFirstDemoTitle' | translate }}</h4>
                   <div class="card">
                     <div class="card-block">
                       <button class="btn btn-sm btn-primary" (click)="loadCacheFirstUser()">
@@ -599,7 +583,10 @@
                           <div class="p7">
                             <strong>{{ 'common.email' | translate }}:</strong> {{ cacheFirstUserRef.value().email }}
                           </div>
-                          <div class="p7"><strong>Status:</strong> {{ cacheFirstUserRef.status() }}</div>
+                          <div class="p7">
+                            <strong>{{ 'resourceAsync.statusLabel' | translate }}</strong>
+                            {{ cacheFirstUserRef.status() }}
+                          </div>
                         </div>
                       }
                     </div>
@@ -616,7 +603,7 @@
                 <p [innerHTML]="'resourceAsync.formDraftDesc' | translate"></p>
 
                 <div>
-                  <h4>Demo: Editable Counter</h4>
+                  <h4>{{ 'resourceAsync.counterDemoTitle' | translate }}</h4>
                   <div class="card">
                     <div class="card-block">
                       @if (counterRef.isIdle()) {
@@ -628,7 +615,11 @@
                       @if (counterRef.hasValue()) {
                         <div cds-layout="vertical gap:md">
                           <div cds-layout="horizontal gap:md align:center">
-                            <button class="btn btn-sm btn-icon" (click)="decrementCounter()">
+                            <button
+                              class="btn btn-sm btn-icon"
+                              (click)="decrementCounter()"
+                              [attr.aria-label]="'resourceAsync.decrementCounter' | translate"
+                            >
                               <clr-icon shape="minus" />
                             </button>
 
@@ -636,7 +627,11 @@
                               {{ counterRef.value() }}
                             </div>
 
-                            <button class="btn btn-sm btn-icon" (click)="incrementCounter()">
+                            <button
+                              class="btn btn-sm btn-icon"
+                              (click)="incrementCounter()"
+                              [attr.aria-label]="'resourceAsync.incrementCounter' | translate"
+                            >
                               <clr-icon shape="plus" />
                             </button>
                           </div>
@@ -667,7 +662,9 @@
                             </button>
                           </div>
 
-                          <div class="p7"><strong>Status:</strong> {{ counterRef.status() }}</div>
+                          <div class="p7">
+                            <strong>{{ 'resourceAsync.statusLabel' | translate }}</strong> {{ counterRef.status() }}
+                          </div>
                         </div>
                       }
                     </div>
@@ -684,54 +681,45 @@
       <clr-tab-content *clrIfActive="false">
         <section cds-layout="vertical gap:md align:stretch">
           <h2>
-            Advanced Pattern: Nested Resources
-            <span class="badge badge-danger">Expert</span>
+            {{ 'resourceAsync.nestedSection' | translate }}
+            <span class="badge badge-danger">{{ 'resourceAsync.expert' | translate }}</span>
           </h2>
 
-          <p>
-            A common scenario is displaying a list of items where each item can fetch additional related data (e.g.,
-            organizations, users, details). This section demonstrates <strong>one approach</strong> to managing
-            individual loading/error states for each row.
-          </p>
+          <p [innerHTML]="'resourceAsync.nestedIntroduction' | translate"></p>
+
+          <cll-callout type="info"><span [innerHTML]="'resourceAsync.nestedInjector' | translate"></span></cll-callout>
 
           <cll-callout type="info">
-            <strong>✨ Decoupled Injector:</strong> With the <code>injector</code> option in
-            <code>ResourceRefOptions</code>, you can instantiate <code>resourceAsync</code> dynamically (e.g., inside
-            on-demand template helper methods or services) by simply passing
-            <code>&#123; injector: this.injector &#125;</code>, eliminating the need for
-            <code>runInInjectionContext()</code>.
-          </cll-callout>
-
-          <cll-callout type="info">
-            <strong>📖 Full Documentation:</strong> See
+            <strong>{{ 'resourceAsync.fullDocumentation' | translate }}</strong>
+            {{ 'resourceAsync.seeDocumentation' | translate }}
             <a
               href="https://github.com/wghglory/ngx-lift/blob/main/docs/design/resource-async-design-spec.md"
               target="_blank"
               rel="noopener"
               >resource-async-design-spec.md</a
             >
-            for comprehensive guide with multiple approaches, decision trees, and when to use each pattern.
+            {{ 'resourceAsync.documentationDescription' | translate }}
           </cll-callout>
 
           <cll-callout type="info">
             <strong>{{ 'resourceAsync.keyConcepts' | translate }}</strong>
             <ul class="list" cds-layout="m-t:xs">
-              <li><strong>Outer Resource:</strong> List of items with their own loading/error state</li>
-              <li><strong>Inner Resources:</strong> Per-item related data with individual loading/error states</li>
-              <li><strong>Lazy Loading:</strong> Only fetch when user clicks (minimizes API calls)</li>
-              <li><strong>Independent States:</strong> Each row manages its own spinner/error/data</li>
+              <li>{{ 'resourceAsync.nestedOuter' | translate }}</li>
+              <li>{{ 'resourceAsync.nestedInner' | translate }}</li>
+              <li>{{ 'resourceAsync.nestedLazy' | translate }}</li>
+              <li>{{ 'resourceAsync.nestedIndependent' | translate }}</li>
             </ul>
           </cll-callout>
 
           <article cds-layout="vertical gap:sm align:stretch">
             <app-demo-playground
-              title="Implementation"
+              [title]="'resourceAsync.nestedTitle' | translate"
               [tsCode]="nestedResourceCode"
               [htmlCode]="nestedResourceHtmlCode"
             >
               <div preview>
                 <div>
-                  <h4>Demo: Items with Organizations</h4>
+                  <h4>{{ 'resourceAsync.nestedDemoTitle' | translate }}</h4>
                   <div class="card">
                     <div class="card-header">
                       <div cds-layout="horizontal gap:md align:center">
@@ -755,7 +743,7 @@
                       @if (itemsRef.error(); as error) {
                         <cll-alert
                           [alertType]="'danger'"
-                          [content]="'Failed to load items: ' + error.message"
+                          [content]="'resourceAsync.nestedItemsFailed' | translate: error.message"
                           [isSmall]="true"
                         >
                           <button class="btn btn-sm btn-outline" (click)="itemsRef.reload()">
@@ -808,7 +796,7 @@
                                       <div cds-layout="vertical gap:xs">
                                         <cll-alert
                                           [alertType]="'warning'"
-                                          [content]="'Failed to load organization'"
+                                          [content]="'resourceAsync.nestedOrganizationFailed' | translate"
                                           [isSmall]="true"
                                         />
                                       </div>
@@ -861,11 +849,11 @@
                   <cll-callout type="tip">
                     <strong>{{ 'resourceAsync.patternBenefits' | translate }}</strong>
                     <ul class="list" cds-layout="m-t:xs">
-                      <li>✅ Minimal API calls (only fetch what's needed)</li>
-                      <li>✅ Individual loading/error states per row</li>
-                      <li>✅ Retry failed fetches independently</li>
-                      <li>✅ Caches org data (won't refetch same orgId)</li>
-                      <li>✅ Scales well for large lists</li>
+                      <li>{{ 'resourceAsync.nestedBenefitRequests' | translate }}</li>
+                      <li>{{ 'resourceAsync.nestedBenefitStates' | translate }}</li>
+                      <li>{{ 'resourceAsync.nestedBenefitRetry' | translate }}</li>
+                      <li>{{ 'resourceAsync.nestedBenefitCache' | translate }}</li>
+                      <li>{{ 'resourceAsync.nestedBenefitScale' | translate }}</li>
                     </ul>
                   </cll-callout>
                 </div>
@@ -890,7 +878,7 @@
             <h4>{{ 'common.parameters' | translate }}</h4>
             <app-api-table [properties]="parameters()" />
 
-            <h4>ResourceAsyncDefinition (Declarative Definition)</h4>
+            <h4>{{ 'resourceAsync.definitionTitle' | translate }}</h4>
             <app-api-table [properties]="definitionProperties()" />
 
             <h4>ResourceRefOptions</h4>
@@ -900,24 +888,13 @@
             <p cds-text="body">{{ 'resourceAsync.returnsDesc' | translate }}</p>
             <app-api-table [properties]="returnsProperties()" />
 
-            <h4>Resource Status</h4>
+            <h4>{{ 'resourceAsync.statusTitle' | translate }}</h4>
             <ul class="list" cds-layout="vertical gap:xs">
-              <li>
-                <code>idle</code>: Initial state, operation has never been triggered (only with
-                <code>lazy: true</code>). <code>value() = undefined</code>.
-              </li>
-              <li>
-                <code>loading</code>: Initial fetch in progress (no previous value). <code>value() = undefined</code>.
-              </li>
-              <li>
-                <code>reloading</code>: Refetch in progress with previous value available. <code>value()</code> returns
-                previous data.
-              </li>
-              <li><code>resolved</code>: Operation completed successfully. <code>value()</code> contains the data.</li>
-              <li>
-                <code>error</code>: Operation failed with an error. <code>value() = undefined</code> (previous data is
-                cleared).
-              </li>
+              <li [innerHTML]="'resourceAsync.statusIdle' | translate"></li>
+              <li [innerHTML]="'resourceAsync.statusLoading' | translate"></li>
+              <li [innerHTML]="'resourceAsync.statusReloading' | translate"></li>
+              <li [innerHTML]="'resourceAsync.statusResolved' | translate"></li>
+              <li [innerHTML]="'resourceAsync.statusError' | translate"></li>
             </ul>
 
             <cll-callout type="info">{{ 'resourceAsync.errorValuePolicy' | translate }}</cll-callout>

@@ -79,6 +79,7 @@
                       class="btn btn-sm btn-outline"
                       [clrLoading]="clustersBulkQuery.isRefreshing()"
                       (click)="reloadBulkFleet()"
+                      [attr.aria-label]="'queryResources.refreshFleet' | translate"
                     >
                       <clr-icon shape="refresh" />
                       {{ 'queryResources.refreshFleet' | translate }}
@@ -120,7 +121,7 @@
                                 {{ m.status }}
                               </span>
                             } @else {
-                              <span class="label label-danger">{{ row.error ?? 'Error' }}</span>
+                              <span class="label label-danger">{{ row.error ?? ('common.error' | translate) }}</span>
                             }
                           </clr-dg-cell>
                           <clr-dg-cell>{{ row.metrics ? row.metrics.latencyMs + 'ms' : '-' }}</clr-dg-cell>
@@ -156,6 +157,7 @@
                       class="btn btn-sm btn-primary"
                       [clrLoading]="isFleetRefreshing()"
                       (click)="reloadGranularFleet()"
+                      [attr.aria-label]="'queryResources.refreshFleet' | translate"
                     >
                       <clr-icon shape="refresh" />
                       {{ 'queryResources.refreshFleet' | translate }}
@@ -207,7 +209,7 @@
                                 {{ m.status }}
                               </span>
                             } @else if (query.isInitialError()) {
-                              <span class="label label-danger">Failed</span>
+                              <span class="label label-danger">{{ 'common.failed' | translate }}</span>
                             } @else {
                               <span>-</span>
                             }
@@ -225,6 +227,7 @@
                               class="btn btn-sm btn-link p-0 m-0"
                               [clrLoading]="query.isRefreshing()"
                               (click)="query.reload()"
+                              [attr.aria-label]="'queryResources.refreshCluster' | translate"
                             >
                               {{ 'queryResources.refreshCluster' | translate }}
                             </button>
@@ -304,8 +307,12 @@
         <div class="card">
           <div class="card-header">{{ 'queryResources.traditionalTab' | translate }}</div>
           <div class="card-block">
-            <p><strong>Pros:</strong> {{ 'queryResources.prosTraditional' | translate }}</p>
-            <p><strong>Cons:</strong> {{ 'queryResources.consTraditional' | translate }}</p>
+            <p>
+              <strong>{{ 'common.pros' | translate }}:</strong> {{ 'queryResources.prosTraditional' | translate }}
+            </p>
+            <p>
+              <strong>{{ 'common.cons' | translate }}:</strong> {{ 'queryResources.consTraditional' | translate }}
+            </p>
           </div>
         </div>
       </div>
@@ -313,8 +320,12 @@
         <div class="card">
           <div class="card-header">{{ 'queryResources.granularTab' | translate }}</div>
           <div class="card-block">
-            <p><strong>Pros:</strong> {{ 'queryResources.prosGranular' | translate }}</p>
-            <p><strong>Cons:</strong> {{ 'queryResources.consGranular' | translate }}</p>
+            <p>
+              <strong>{{ 'common.pros' | translate }}:</strong> {{ 'queryResources.prosGranular' | translate }}
+            </p>
+            <p>
+              <strong>{{ 'common.cons' | translate }}:</strong> {{ 'queryResources.consGranular' | translate }}
+            </p>
           </div>
         </div>
       </div>

@@ -2,7 +2,9 @@
   <div class="card-header">
     <div class="widget-header-text">
       <div class="card-title">
-        <span class="label label-info m-r-xs">{{ variant() === 'topbar' ? 'Component 1' : 'Component 2' }}</span>
+        <span class="label label-info m-r-xs">{{
+          'common.componentN' | translate: (variant() === 'topbar' ? 1 : 2)
+        }}</span>
         {{ (variant() === 'topbar' ? 'queryResource.widgetATitle' : 'queryResource.widgetBTitle') | translate }}
       </div>
       <div class="card-subtitle text-muted">

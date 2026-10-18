@@ -50,7 +50,8 @@
       <app-code-block [code]="runtimePropsCode" lang="typescript" />
       <cll-callout>
         {{ 'timelineWizard.example4Callout' | translate }}
-        <a [routerLink]="['/clr-lift/components/key-value-inputs']">Key Value Inputs</a>.
+        <a [routerLink]="['/clr-lift/components/key-value-inputs']">{{ 'keyValueInputs.title' | translate }}</a
+        >.
       </cll-callout>
     </article>
 
@@ -93,7 +94,7 @@
     </div>
 
     <div cds-layout="vertical gap:sm">
-      <h3>TimelineStep Interface</h3>
+      <h3>{{ 'common.interfaceTitle' | translate: 'TimelineStep' }}</h3>
       <p>{{ 'timelineWizard.stepSummary' | translate }}</p>
 
       <h4>{{ 'common.properties' | translate }}</h4>

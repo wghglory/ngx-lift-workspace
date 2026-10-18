@@ -1,7 +1,7 @@
-import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, signal, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
+import {AlertComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {queryResource} from 'ngx-lift';
 import {map, timer} from 'rxjs';
 
@@ -19,6 +19,8 @@ interface Team {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryStarterComponent {
+  private readonly translationService = inject(TranslationService);
+
   readonly teamId = signal('a');
   readonly simulateFailure = signal(false);
   private revision = 0;
@@ -35,7 +37,7 @@ export class QueryStarterComponent {
         const revision = ++this.revision;
         return timer(350).pipe(
           map(() => {
-            if (fail) throw new Error('Simulated read failure');
+            if (fail) throw new Error(this.translationService.translate('runtime.readFailure'));
             return {id, name: id === 'a' ? 'Atlas' : 'Beacon', revision};
           }),
         );

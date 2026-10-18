@@ -1,6 +1,7 @@
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
-import {ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, computed} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnDestroy, computed, effect, untracked} from '@angular/core';
 import {
+  Alert,
   AlertContainerComponent,
   AlertService,
   PageContainerComponent,
@@ -26,7 +27,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   styleUrl: './multi-alerts-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
+export class MultiAlertsDemoComponent implements OnDestroy {
   readonly alertsStarterHtml = highlight(
     `<cll-alert-container />
 <div cds-layout="horizontal gap:xs align:center wrap">
@@ -99,30 +100,53 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
 
   alertService = inject(AlertService);
 
-  ngOnInit() {
-    this.alertService.addAlert({
-      content: 'This is a danger alert! You can delete this alert by clicking the close button.',
-      alertType: 'danger',
+  private seededIds: (symbol | undefined)[] = [];
+  private readonly localizeSeededAlerts = effect(() => {
+    const options = this.initialAlerts();
+    untracked(() => {
+      const visibleIds = new Set(this.alertService.alerts().map((alert) => alert.id));
+      const initialized = this.seededIds.length > 0;
+      this.seededIds = options.map((option, index) => {
+        const previousId = this.seededIds[index];
+        // Preserve dismissed seed alerts and leave user-created alerts untouched.
+        if (initialized && (!previousId || !visibleIds.has(previousId))) return undefined;
+        if (previousId) this.alertService.deleteAlert(previousId);
+        return this.alertService.addAlert(option).id;
+      });
     });
-    this.alertService.addAlert({
-      content: 'Warning alert! You can delete this alert by clicking the close button.',
-      alertType: 'warning',
-    });
-    this.alertService.addAlert({
-      content: 'Success alert with trailing action buttons.',
-      alertType: 'success',
-      actions: [
-        {label: 'Details', onClick: () => alert('Details action clicked!')},
-        {label: 'Dismiss', onClick: () => alert('Dismiss action clicked!')},
-      ],
-    });
-    this.alertService.addAlert({
-      content:
-        'Alert with an inline button: <button type="button" class="btn btn-sm alert-action" id="click-target">Click Me</button> placed in the middle of a sentence.',
-      alertType: 'info',
-      targetSelector: '#click-target',
-      onTargetClick: () => this.clickMe(),
-    });
+  });
+
+  private initialAlerts(): Alert[] {
+    return [
+      {
+        content: this.translationService.translate('multiAlerts.dangerMessage'),
+        alertType: 'danger',
+      },
+      {
+        content: this.translationService.translate('multiAlerts.warningMessage'),
+        alertType: 'warning',
+      },
+      {
+        content: this.translationService.translate('multiAlerts.successActions'),
+        alertType: 'success',
+        actions: [
+          {
+            label: this.translationService.translate('common.details'),
+            onClick: () => alert(this.translationService.translate('multiAlerts.detailsClicked')),
+          },
+          {
+            label: this.translationService.translate('common.dismiss'),
+            onClick: () => alert(this.translationService.translate('multiAlerts.dismissClicked')),
+          },
+        ],
+      },
+      {
+        content: this.translationService.translate('multiAlerts.inlineMessage'),
+        alertType: 'info',
+        targetSelector: '#click-target',
+        onTargetClick: () => this.clickMe(),
+      },
+    ];
   }
 
   ngOnDestroy() {
@@ -131,15 +155,17 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
 
   addAlert() {
     this.alertService.addAlert({
-      content: `New standard alert added on ${new Date().toLocaleTimeString()}`,
+      content: this.translationService.translate(
+        'multiAlerts.standardAdded',
+        new Date().toLocaleTimeString(this.translationService.locale()),
+      ),
       alertType: 'success',
     });
   }
 
   addAlertWithInlineButton() {
     this.alertService.addAlert({
-      content:
-        'New alert with an inline button: <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Click Me</button> inside the message.',
+      content: this.translationService.translate('multiAlerts.newInlineMessage'),
       alertType: 'info',
       targetSelector: '#inline-click-target',
       onTargetClick: () => this.clickMe(),
@@ -148,9 +174,14 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
 
   addAlertWithAction() {
     this.alertService.addAlert({
-      content: 'New alert with trailing action buttons.',
+      content: this.translationService.translate('multiAlerts.newActions'),
       alertType: 'warning',
-      actions: [{label: 'Acknowledge', onClick: () => alert('Acknowledged!')}],
+      actions: [
+        {
+          label: this.translationService.translate('common.acknowledge'),
+          onClick: () => alert(this.translationService.translate('multiAlerts.acknowledged')),
+        },
+      ],
     });
   }
 
@@ -159,7 +190,7 @@ export class MultiAlertsDemoComponent implements OnInit, OnDestroy {
   }
 
   clickMe() {
-    alert('You did it correctly!');
+    alert(this.translationService.translate('multiAlerts.inlineClicked'));
   }
 
   htmlCode = highlight(`import {AlertContainerComponent} from 'clr-lift';

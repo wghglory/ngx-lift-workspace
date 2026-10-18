@@ -324,11 +324,11 @@ export const nlTranslations: Record<string, string> = {
   'mergeFrom.paramOptions': 'Configuratie-opties waaronder initialValue en injector.',
   'mergeFrom.returnsDesc': 'Een Signal die de gecombineerde/samengevoegde waarde uitstraalt als bronnen.',
   'toSignalForm.pageTitle': 'Reactive Form Signals & Bindingen (toSignalForm)',
-  'toSignalForm.bannerTitle': 'Bridging Angular Reactive Forms & Modern Signals',
+  'toSignalForm.bannerTitle': 'Angular Reactive Forms verbinden met moderne Signals',
   'toSignalForm.bannerDesc':
     '<code>toSignalForm</code> omringt standaard Angular <code>FormGroup</code>-instanties met reaktieve Signals, declaratieve bindingen (<code>bindIf</code>, <code>bindDisabled</code>), overgebruik van meerdere controles, en geverifieerde indieningswaarden (<code>submitValue</code>), behoudend 100% compatibiliteit met Clarity-formcontainers en Angular-validators.',
   'toSignalForm.quickTitle': 'Niveau 1: Snelstartformulier Signals',
-  'toSignalForm.quickBadge': '30-Second Hello World',
+  'toSignalForm.quickBadge': 'Hallo wereld in 30 seconden',
   'toSignalForm.quickDesc':
     'Leer de basisprincipes: wrap a FormGroup with toSignalForm, read values reactively via signals, and disable actions with sf.invalid().',
   'toSignalForm.username': 'Gebruikersnaam',
@@ -348,10 +348,10 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.enterpriseBadge': 'Volledige Real-World-spec',
   'toSignalForm.enterpriseDesc':
     'Complexe multi-control aanwezigheid, asynchrone apparaat onderzoeken via resourceAsync, cascading versie updates, en voorwaardelijke auto-schaling sloten.',
-  'toSignalForm.enterpriseState': 'Enterprise Form Live Signals',
+  'toSignalForm.enterpriseState': 'Actuele signalen van het bedrijfsformulier',
   'toSignalForm.enterpriseStateDesc':
     'Tracks vorm validatie, auto-schaling sloten, en backend provisioning status in real time',
-  'toSignalForm.region': 'Deployment Region / Appliance',
+  'toSignalForm.region': 'Implementatieregio / appliance',
   'toSignalForm.regionSelect': 'Doelgebied selecteren...',
   'toSignalForm.regionUSWest': 'US West (Cloud v2 - Multi-Zone HA ondersteund)',
   'toSignalForm.regionApEast': 'Asia Pacific (Regional Cloud - Multi-Zone HA voor PG & MySQL)',
@@ -400,7 +400,7 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.storageManual': 'Handmatige toewijzing toegestaan',
   'toSignalForm.authMode': 'Authenticatiemodus',
   'toSignalForm.authSql': 'Database Native Gebruiker',
-  'toSignalForm.authWindows': 'Enterprise Directory / Windows Auth',
+  'toSignalForm.authWindows': 'Bedrijfsdirectory / Windows-verificatie',
   'toSignalForm.authModeRequired': 'Authenticatiemodus is vereist.',
   'toSignalForm.authModeHelper':
     'Het selecteren van Database Native User mount wachtwoord en bevestiging met geheugenretentie.',
@@ -433,7 +433,7 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.successTitle': 'Cluster Provisioning Request Succeed (ID: {0})',
   'toSignalForm.simulatedResponse': 'Gesimuleerde backend respons ontvangen in 1.0 seconde:',
   'toSignalForm.diagnosticsTitle': 'Real-time Signal-diagnostiek',
-  'toSignalForm.clusterNameState': 'Cluster Name State (sf.fields.clusterName)',
+  'toSignalForm.clusterNameState': 'Status van de clusternaam (sf.fields.clusterName)',
   'toSignalForm.value': 'Waarde:',
   'toSignalForm.debounced': 'Ontbounced (400ms):',
   'toSignalForm.valid': 'Geldig:',
@@ -616,14 +616,14 @@ export const nlTranslations: Record<string, string> = {
   'resourceAsync.basicSection': 'Basisvoorbeelden',
   'resourceAsync.intermediateSection': 'Tussenliggende voorbeelden',
   'resourceAsync.whenToUseSection': 'Wanneer te gebruiken',
-  'resourceAsync.advancedSection': 'WritableResourceRef - Local State Management',
+  'resourceAsync.advancedSection': 'WritableResourceRef - Lokaal statusbeheer',
   'resourceAsync.nestedSection': 'Geavanceerd patroon: geneste bronnen',
   'resourceAsync.example1': 'Voorbeeld 1: Basic Reactive Query met Auto-Dependency Tracking',
   'resourceAsync.example1Desc':
     'Maakt een hulpbron aan die automatisch gegevens ophaalt en her-fetches wanneer afhankelijkheden veranderen. Elk signaal dat gelezen wordt binnen de bronfunctie wordt een reactieve afhankelijkheid.',
   'resourceAsync.example2': 'Voorbeeld 2: Lazy Laden',
   'resourceAsync.example2Desc':
-    'Gebruik <code>lazy: true</code> om het laden uit te stellen totdat <code>reload()</code> wordt aangeroepen. De hulpbron start in stationaire toestand en zal geen gegevens ophalen totdat dit expliciet is geactiveerd:',
+    'Gebruik <code>lazy: true</code> om het laden uit te stellen totdat <code>reload()</code> of <code>execute()</code> wordt aangeroepen. De resource begint in de status idle en haalt alleen gegevens op na een expliciete trigger:',
   'resourceAsync.loadUsers': 'Gebruikers laden',
   'resourceAsync.notLoadedIdle': 'Nog niet geladen (idle)',
   'resourceAsync.example3': 'Voorbeeld 3: Initiële waarde',
@@ -733,8 +733,9 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.matrixInitialLoad': 'Eerste keer laden (geen eerdere gegevens)',
   'queryResource.matrixInitialLoadUsage':
     'Toon een centrale spinner of skeleton. De interface heeft nog geen gegevens om te tonen.',
-  'queryResource.matrixResolved': 'Opgelost / Inactief (verse gegevens)',
-  'queryResource.matrixResolvedUsage': 'Toon inhoud normaal. Er is geen netwerkverzoek actief.',
+  'queryResource.matrixResolved': 'Afgerond / In cache',
+  'queryResource.matrixResolvedUsage':
+    'Toon de inhoud normaal; gegevens zijn beschikbaar en kunnen actueel of verouderd zijn.',
   'queryResource.matrixRefreshingState': 'Achtergrondrevalidatie (SWR / Invalidatie)',
   'queryResource.matrixRefreshingUsage':
     'Toon GEEN paginabrede spinner! Behoud de bestaande gegevens en toon een subtiele badge of kleine spinner. Voorkomt knipperen en witte schermen.',
@@ -916,7 +917,7 @@ export const nlTranslations: Record<string, string> = {
   'mutateResource.badgeConcurrency': 'Munteenheid',
   'mutateResource.modeLabel': 'Concurrencystrategie',
   'mutateResource.modeExhaust': 'uitlaat (Voeg snelle dubbele klikken - dubbele indiening beveiliging)',
-  'mutateResource.modeConcat': 'concat (Queue invocations in sequentie)',
+  'mutateResource.modeConcat': 'concat (aanroepen in de wachtrij plaatsen en op volgorde uitvoeren)',
   'mutateResource.modeParallel': 'parallel (Elke aanroeping zelfstandig uitvoeren)',
   'mutateResource.triggerMutationBtn': 'Trigger 800ms mutatie',
   'mutateResource.totalClicks': 'Totaal aantal muisklikken: {0}',
@@ -1256,7 +1257,7 @@ export const nlTranslations: Record<string, string> = {
   'keyValueInputs.callout':
     'Ontdek hoe de KeyValueInputsComponent gebruik maakt van de UniqueValidator om validatie uit te voeren tegen essentiële controles. Klik hier om te leren hoe uniciteit wordt afgedwongen in belangrijke invoervelden.',
   'keyValueInputs.formOutput': 'Uw vormwaarde-uitvoer:',
-  'keyValueInputs.keyHelper': 'run time property key',
+  'keyValueInputs.keyHelper': 'Eigenschapssleutel tijdens uitvoering',
   'keyValueInputs.valueHelper': 'run time property waarde',
   'keyValueInputs.addText': 'sleutelwaarde toevoegen',
   'keyValueInputs.apiSummary': 'Component voor het beheren van dynamische sleutel-waardepaarden in Angular vormen.',
@@ -1509,12 +1510,13 @@ export const nlTranslations: Record<string, string> = {
   'resourceAsync.paramSourceFn': 'Een reactieve functie die een Observable, Promise of synchrone waarde teruggeeft.',
   'resourceAsync.paramOptions': 'Configuratie-opties voor de bron.',
   'resourceAsync.propInitialValue': 'Initiële waarde voordat de eerste ophaling voltooid is.',
-  'resourceAsync.propLazy': 'Als waar, begint in "idle"-toestand en wacht tot reload() wordt aangeroepen.',
+  'resourceAsync.propLazy':
+    'Indien true, begint de resource in de status "idle" en wacht op een aanroep van reload() of execute().',
   'resourceAsync.propBehavior':
     'Gedrag bij gelijktijdige uitvoeringen: "switch" annuleert de vorige uitvoering; "exhaust" negeert nieuwe uitvoeringen. Standaard: "switch".',
   'resourceAsync.propOnError': 'Error handler callback die terugvalwaarden kan bieden.',
   'resourceAsync.propThrowOnError':
-    'Indien ingeschakeld worden fouten gegooid in plaats van opgeslagen in het foutsignaal.',
+    'Indien true, worden fouten die niet door een onError-terugvalwaarde zijn afgehandeld na opslag in het foutsignaal doorgegeven.',
   'resourceAsync.propOnSuccess': 'Oproep tot terugroepen wanneer de bewerking succesvol is voltooid.',
   'resourceAsync.propOnLoading': 'Oproep tot terugroepen wanneer de bewerking begint te laden.',
   'resourceAsync.returnsDesc':
@@ -1757,7 +1759,7 @@ export const nlTranslations: Record<string, string> = {
   'k8sRetryBackoff.errorShape':
     'Accepteert HttpErrorResponse of een object met vorm <code>{ status, headers?, error? }</code>, inclusief een JSON-string in <code>error</code>. Native fetch negeert HTTP 429 niet: controleer het antwoord en pas de status, headers en opgeparseerde lichaam aan. Axios blokkeert deze onder <code>error.response</code>; pas deze aan voordat je de helper gebruikt. De helper berekent alleen een vertraging.',
   'k8sRetryBackoffInterceptor.overrideRules':
-    'Null maakt gebruik van interceptor defaults; false deactiveert retries. Context overrides merge with global or factory defaults. GET/HEAD/OPTIONS/PUT/DELETE komen standaard in aanmerking; POST/PATCH vereist een expliciete retryMethods override en eindpunt idempotency.',
+    'null gebruikt de standaardinstellingen van de interceptor; false schakelt nieuwe pogingen uit. Instellingen uit de context worden samengevoegd met de globale standaardinstellingen of die van de factory. GET/HEAD/OPTIONS/PUT/DELETE komen standaard in aanmerking; POST/PATCH vereisen een expliciete instelling van retryMethods en een idempotent eindpunt.',
   'k8sRetryBackoffInterceptor.overrideSimulation':
     'Test een probe die direct faalt bij de eerste 429, of een workload-uitlezing die na twee 429’s slaagt. De aangepaste uitlezing gebruikt maxAttempts: 10 en een terugvalvertraging van 200ms; dit staat maximaal negen retries toe.',
   'k8sRetryBackoffInterceptor.btnWorkloads': 'Workload-uitlezing testen (10 pogingen)',
@@ -1767,7 +1769,7 @@ export const nlTranslations: Record<string, string> = {
   'k8sRetryBackoff.overview':
     'De <code>retryOnK8sBackoff</code> RxJS operator implementeert automatische retry met backoff voor Kubernetes apiserver HTTP 429 (<code>TooManyRequests</code>) antwoorden (zoals wanneer de apiserver watch cache bootstrappert met "storage is (re)initializing"). Alleen HTTP 429 triggeert een retry; alle andere fouten (4xx, 5xx, netwerkfouten) stromen onveranderd naar de abonneraar.',
   'k8sRetryBackoff.callout':
-    '<strong>Operator vs. Interceptor:</strong> De exploitant bestuurt specifieke Observable-pijpleidingen. De interceptor past 429 retry toe op de in aanmerking komende HttpClient-methoden; schrijft geverifieerde idempotency.',
+    '<strong>Operator en interceptor:</strong> De operator bestuurt specifieke Observable-pipelines. De interceptor probeert HttpClient-aanvragen bij HTTP 429 opnieuw voor toegestane methoden; schrijfbewerkingen vereisen geverifieerde idempotentie.',
   'k8sRetryBackoff.diffTitle': 'Architectonische vergelijking: Operator vs. Interceptor',
   'k8sRetryBackoff.diffDesc':
     'Beide hulpprogramma’s delen dezelfde berekeningslogica voor vertragingen, maar vervullen complementaire rollen:',
@@ -1823,7 +1825,7 @@ export const nlTranslations: Record<string, string> = {
     '<strong>Global Protection with Request Overrides:</strong> Registreer de interceptor één keer in <code>app.config.ts</code> om alle endpoints te beschermen. Voor individuele aanvragen die moeten worden genegeerd of met aangepaste limieten moeten worden gebruikt, stel de <code>K8S_RETRY_BACKOFF_CONFIG</code> contexttoken op de <code>HttpClient</code> aanroep. Voor lokale pijplijncontrole in plaats hiervan, zie de <code>retryOnK8sBackoff</code> operator.',
   'k8sRetryBackoffInterceptor.example1Title': 'Voorbeeld 1: Globale interceptorregistratie & interactieve simulator',
   'k8sRetryBackoffInterceptor.example1Desc':
-    'Registreer de interceptor globaal in app.config.ts. Alle HttpClient-aanroepen worden automatisch herhaald bij HTTP 429:',
+    'Registreer de interceptor globaal in app.config.ts om toegestane idempotente HttpClient-aanvragen opnieuw te proberen bij HTTP 429.',
   'k8sRetryBackoffInterceptor.selectMode': 'Interceptor-contextmodus:',
   'k8sRetryBackoffInterceptor.modeDefault': 'Standaard globale interceptor (Probeert 429 na 1s opnieuw, daarna 200 OK)',
   'k8sRetryBackoffInterceptor.modeCustom': 'Aangepaste HttpContext (maxAttempts: 2, basis: 400ms, gelijk aan jitter)',
@@ -2511,4 +2513,188 @@ export const nlTranslations: Record<string, string> = {
   'computedAsync.readError': 'Bij het lezen is een fout geworpen; er is geen succeswaarde geretourneerd.',
   'computedAsync.readDemoHint':
     'Laat de bron mislukken en lees het signal. Herstel de bron en lees opnieuw om het herstel te controleren.',
+  'header.mitLicense': 'MIT-licentie',
+  'alert.moreInfo': 'Meer informatie over de serverfout',
+  'common.interfaceTitle': 'Interface {0}',
+  'common.failed': 'Mislukt',
+  'common.error': 'Fout',
+  'common.pros': 'Voordelen',
+  'common.cons': 'Nadelen',
+  'common.componentN': 'Component {0}',
+  'poll.filterParameter': 'Filterparameter (signaal)',
+  'poll.filterAll': 'Alle ({0} items)',
+  'poll.filterActive': 'Actief ({0} items)',
+  'poll.filterInactive': 'Inactief ({0} items)',
+  'poll.activeFilter': 'Actief filter',
+  'poll.inProgress': 'Periodieke opvraging bezig...',
+  'poll.sequence': 'Volgnummer van opvraging',
+  'poll.filteredBy': 'Gefilterd op',
+  'poll.totalResults': 'Totaal aantal resultaten',
+  'poll.lastTimestamp': 'Laatste tijdstempel van de server',
+  'poll.recentLog': 'Recent logboek van triggers en uitgevoerde opvragingen',
+  'poll.triggerWithFilter': 'Geactiveerd met filter: "{0}"',
+  'poll.executing': 'Bezig met uitvoeren (HTTP-vertraging)',
+  'poll.settled': 'Afgerond',
+  'k8sRetryBackoff.resultSuccess': 'Geslaagd (HTTP {0})',
+  'k8sRetryBackoff.resultFailure': 'Mislukt (HTTP {0})',
+  'k8sRetryBackoff.totalAttempts': '(Totaal aantal pogingen: {0})',
+  'k8sRetryBackoff.failFast': 'HTTP {0} (direct mislukt)',
+  'k8sRetryBackoff.overrideSucceeded': 'HTTP {0} (geslaagd)',
+  'k8sRetryBackoff.attempts': '(Pogingen: {0})',
+  'k8sRetryBackoff.exhaustedResult': 'Maximumaantal pogingen (5) bereikt. Aanvraag afgewezen.',
+  'k8sRetryBackoff.non429Result': 'Fout {0}: Een andere fout dan 429 is direct doorgegeven zonder nieuwe poging.',
+  'k8sRetryBackoff.interceptorSuccess': 'De aanvraag is geslaagd na een nieuwe poging door de interceptor.',
+  'k8sRetryBackoff.disabledResult':
+    'HTTP 429 is direct teruggegeven: nieuwe pogingen met backoff zijn uitgeschakeld via HttpContext.',
+  'k8sRetryBackoff.postDefaultResult':
+    'POST is niet opnieuw geprobeerd: nieuwe schrijfpogingen moeten expliciet voor het eindpunt worden ingeschakeld.',
+  'k8sRetryBackoff.gatewayResult':
+    'Gateway-429 is niet opnieuw geprobeerd: het ingestelde Kubernetes-predicaat heeft de fout afgewezen.',
+  'k8sRetryBackoff.unrecoveredResult': 'Fout {0}: Maximumaantal pogingen bereikt zonder herstel.',
+  'k8sRetryBackoff.customOverrideResult':
+    'De aanvraag is geslaagd na 2 nieuwe pogingen met maxAttempts: 10, een exponentiële basis van 200ms en equal jitter.',
+  'k8sRetryBackoff.bypassedResult':
+    'De aanvraag is direct mislukt (HTTP 429). Nieuwe pogingen zijn overgeslagen via K8S_RETRY_BACKOFF_CONFIG: false.',
+  'k8sRetryBackoff.operatorSuccess': 'De aanvraag is geslaagd na een nieuwe poging.',
+  'resourceAsync.lazyDemoTitle': 'Demo: gebruikers op aanvraag laden',
+  'resourceAsync.fallbackTitle': 'Foutafhandeling met terugvalwaarde',
+  'resourceAsync.fallbackDescription':
+    'Deze resource vraagt gegevens op bij een ongeldig eindpunt en gebruikt bij een fout een standaardgebruiker:',
+  'resourceAsync.throwOnErrorDescription':
+    'Gebruik <code>throwOnError: true</code> om fouten door te geven die niet door een terugvalwaarde zijn afgehandeld. De fout wordt ook in het foutsignaal opgeslagen.',
+  'resourceAsync.throwOnErrorPolicy':
+    'Met <code>throwOnError: true</code> worden fouten doorgegeven als <code>onError</code> ontbreekt of <code>undefined</code> retourneert. Een terugvalwaarde van <code>onError</code> handelt de fout af en voorkomt doorgifte.',
+  'resourceAsync.mutationConfigTitle': 'Belangrijke configuratie voor mutaties:',
+  'resourceAsync.mutationLazy': '<code>lazy: true</code>: Alleen uitvoeren na een expliciete aanroep.',
+  'resourceAsync.mutationExhaust':
+    "<code>behavior: 'exhaust'</code>: Voorkom dubbele verzendingen door nieuwe aanvragen tijdens een lopende aanvraag te negeren. Elke aanroep van <code>execute()</code> wacht op de uitkomst van de actieve bewerking.",
+  'resourceAsync.mutationExecute':
+    '<code>execute(): Promise&lt;T&gt;</code>: Start een mutatie en wacht op het resultaat, of roep aan zonder te wachten.',
+  'resourceAsync.mutationBenefitsTitle': 'Waarom deze configuratie geschikt is voor mutaties:',
+  'resourceAsync.mutationSubmit':
+    '<code>lazy: true</code>: Verzend het formulier pas wanneer de gebruiker op verzenden klikt.',
+  'resourceAsync.mutationRepeatedClicks':
+    "<code>behavior: 'exhaust'</code>: Negeer herhaalde verzendklikken zolang de aanvraag loopt.",
+  'resourceAsync.mutationAwait':
+    '<code>execute(): Promise&lt;T&gt;</code>: Gebruik <code>const res = await ref.execute()</code> of roep aan zonder te wachten. De vorige waarde wordt gewist voor een duidelijke laadstatus.',
+  'resourceAsync.mutationLoading': '<code>isLoading()</code>: Toon de laadstatus en schakel de verzendknop uit.',
+  'resourceAsync.mutationStatus': '<code>status()</code>: Volg succes- en foutstatussen om de gebruiker te informeren.',
+  'resourceAsync.registrationDemoTitle': 'Interactieve demo: gebruikersregistratie',
+  'resourceAsync.registrationDescription':
+    "Verzend het formulier om een gesimuleerde registratie-API met 70% kans op succes te proberen. Met <code>behavior: 'exhaust'</code> worden herhaalde klikken genegeerd zolang een aanvraag loopt.",
+  'resourceAsync.registrationFailed': 'Registratie mislukt: {0}',
+  'resourceAsync.switchTitle': 'switch (standaard)',
+  'resourceAsync.switchDescription':
+    'Annuleert de vorige aanvraag wanneer een nieuwe begint, zodat de nieuwste aanvraag de gegevens bepaalt. Dit standaardgedrag is vooral geschikt voor leesacties (GET-aanvragen).',
+  'resourceAsync.exhaustDescription':
+    'Negeert nieuwe aanvragen zolang er een loopt. Voorkomt dubbele bewerkingen door snelle klikken, zoals herhaalde zoek- of pagineringsaanvragen. Ook geschikt voor mutaties (voorbeeld 5).',
+  'resourceAsync.computedStateAdvice':
+    'Gebruik <code>computed()</code> in plaats van getters om status af te leiden uit signals. Memoïsatie voorkomt herhaalde berekeningen en werkt samen met de reactiviteit van Angular.',
+  'resourceAsync.queryPreset': 'Vooraf ingestelde query:',
+  'resourceAsync.reset': 'Opnieuw instellen',
+  'resourceAsync.awaitExecute': 'Wachten op execute()',
+  'resourceAsync.statusLabel': 'Status:',
+  'resourceAsync.activeQuery': 'Actieve query:',
+  'resourceAsync.fetchingWithAbortSignal': 'Gegevens ophalen met AbortSignal…',
+  'resourceAsync.category': 'Categorie',
+  'resourceAsync.requestInFlight': 'Bezig (signaal actief)',
+  'resourceAsync.requestAborted': 'Afgebroken (AbortSignal geactiveerd)',
+  'resourceAsync.requestResolved': 'Voltooid',
+  'resourceAsync.requestLogLabel': 'Aanvraag #{0} (query: ‘{1}’):',
+  'resourceAsync.todoDemoTitle': 'Demo: taakstatus omschakelen',
+  'resourceAsync.completedLabel': 'Voltooid:',
+  'resourceAsync.cacheFirstDemoTitle': 'Demo: gebruikersprofiel met cachevoorrang',
+  'resourceAsync.counterDemoTitle': 'Demo: bewerkbare teller',
+  'resourceAsync.expert': 'Expert',
+  'resourceAsync.nestedDemoTitle': 'Demo: items met organisaties',
+  'resourceAsync.definitionTitle': 'ResourceAsyncDefinition (declaratieve definitie)',
+  'resourceAsync.statusTitle': 'Resourcestatus',
+  'resourceAsync.writableResourceIntro':
+    '<code>resourceAsync</code> retourneert een <code>WritableResourceRef</code> met <code>set()</code>, <code>update()</code> en <code>asReadonly()</code> voor handmatig statusbeheer, overeenkomstig de <code>WritableResource</code>-API van Angular.',
+  'resourceAsync.decrementCounter': 'Teller verlagen',
+  'resourceAsync.incrementCounter': 'Teller verhogen',
+  'resourceAsync.nestedIntroduction':
+    'Een lijst kan items bevatten die gerelateerde organisaties, gebruikers of details ophalen. Dit voorbeeld toont een aanpak om laad- en foutstatussen voor elke rij onafhankelijk te beheren.',
+  'resourceAsync.nestedInjector':
+    'Geef <code>&#123; injector: this.injector &#125;</code> door via de optie <code>injector</code> in <code>ResourceRefOptions</code> om <code>resourceAsync</code> dynamisch te maken in templatehulpmethoden of services, zonder <code>runInInjectionContext()</code>.',
+  'resourceAsync.fullDocumentation': '📖 Volledige documentatie:',
+  'resourceAsync.seeDocumentation': 'Ontwerphandleiding:',
+  'resourceAsync.documentationDescription':
+    'Bevat meerdere benaderingen, beslisbomen en uitleg over wanneer elk patroon geschikt is.',
+  'resourceAsync.nestedOuter': 'Buitenste resource: de itemlijst heeft een eigen laad- en foutstatus.',
+  'resourceAsync.nestedInner':
+    'Binnenste resources: gerelateerde gegevens van elk item hebben onafhankelijke laad- en foutstatussen.',
+  'resourceAsync.nestedLazy': 'Laden op aanvraag: haal alleen gegevens op na een klik om API-aanroepen te beperken.',
+  'resourceAsync.nestedIndependent':
+    'Onafhankelijke statussen: elke rij beheert een eigen laadindicator, fout en gegevens.',
+  'resourceAsync.nestedItemsFailed': 'Items laden mislukt: {0}',
+  'resourceAsync.nestedOrganizationFailed': 'Organisatie laden mislukt',
+  'resourceAsync.nestedBenefitRequests': 'Minimale API-aanroepen (alleen benodigde gegevens ophalen)',
+  'resourceAsync.nestedBenefitStates': 'Eigen laad- en foutstatussen per rij',
+  'resourceAsync.nestedBenefitRetry': 'Mislukte aanvragen onafhankelijk opnieuw proberen',
+  'resourceAsync.nestedBenefitCache':
+    'Hergebruikt één resource per orgId; expliciet opnieuw laden haalt de gegevens weer op.',
+  'resourceAsync.nestedBenefitScale': 'Schaalt goed voor grote lijsten',
+  'resourceAsync.statusIdle':
+    '<code>idle</code>: Nog niet gestart of opnieuw ingesteld. <code>value()</code> retourneert de ingestelde begin- of standaardwaarde, of <code>undefined</code> als deze ontbreekt.',
+  'resourceAsync.statusLoading':
+    '<code>loading</code>: Een bewerking wordt geladen zonder behouden resultaat. <code>value()</code> retourneert de ingestelde begin- of standaardwaarde, of <code>undefined</code> als deze ontbreekt.',
+  'resourceAsync.statusReloading':
+    '<code>reloading</code>: Gegevens worden opnieuw opgehaald. <code>value()</code> behoudt de vorige gegevens.',
+  'resourceAsync.statusResolved': '<code>resolved</code>: Bewerking geslaagd. <code>value()</code> bevat de gegevens.',
+  'resourceAsync.statusError':
+    '<code>error</code>: De bewerking is mislukt. Vorige gegevens blijven alleen behouden met <code>preserveValueOnError</code>; anders geldt: <code>value()</code> retourneert de ingestelde begin- of standaardwaarde, of <code>undefined</code> als deze ontbreekt.',
+  'toast.greatTitle': 'Succesmelding',
+  'toast.successMessage': 'Dit is een succesbericht!',
+  'toast.warningMessage': 'Dit is een waarschuwing!',
+  'toast.errorMessage': 'Dit is een foutmelding. Deze sluit automatisch na 10 seconden.',
+  'toast.infoMessage': 'Dit is het standaardtype melding.',
+  'toast.oneHourAgo': '1 uur geleden',
+  'toast.primaryAction': 'Primaire knop',
+  'toast.secondaryAction': 'Secundaire knop',
+  'toast.primaryClicked': 'Primaire knop aangeklikt',
+  'toast.secondaryClicked': 'Secundaire knop aangeklikt',
+  'common.moreInfo': 'Meer informatie',
+  'toast.openTabSimulation': 'Het openen van een nieuw tabblad simuleren',
+  'common.details': 'Details',
+  'common.dismiss': 'Sluiten',
+  'common.acknowledge': 'Bevestigen',
+  'multiAlerts.dangerMessage': 'Dit is een gevaarmelding! U kunt deze verwijderen met de sluitknop.',
+  'multiAlerts.warningMessage': 'Waarschuwing! U kunt deze verwijderen met de sluitknop.',
+  'multiAlerts.successActions': 'Succesmelding met actieknoppen aan het einde.',
+  'multiAlerts.detailsClicked': 'Actie Details aangeklikt!',
+  'multiAlerts.dismissClicked': 'Actie Sluiten aangeklikt!',
+  'multiAlerts.newActions': 'Nieuwe melding met actieknoppen aan het einde.',
+  'multiAlerts.acknowledged': 'Bevestigd!',
+  'multiAlerts.inlineClicked': 'De actie is correct uitgevoerd!',
+  'multiAlerts.inlineMessage':
+    'Melding met <button type="button" class="btn btn-sm alert-action" id="click-target">Klik hier</button> in de berichttekst.',
+  'multiAlerts.standardAdded': 'Nieuwe standaardmelding toegevoegd om {0}',
+  'timelineWizard.canceledMessage': 'Geannuleerd',
+  'timelineWizard.confirmedMessage':
+    'Verzending bevestigd. Bekijk de formuliergegevens in de console. Dit simuleert een API-aanvraag.',
+  'timelineWizard.finishedMessage': 'Voltooid',
+  'tooltip.componentAlert': 'Ik kom uit de meldingscomponent',
+  'resourceAsync.todoUpdateFailed': 'Taak bijwerken mislukt',
+  'resourceAsync.counterSaveFailed': 'Teller opslaan mislukt',
+  'resourceAsync.counterSaved': 'Teller opgeslagen: {0}',
+  'resourceAsync.usernameExists': 'Gebruikersnaam bestaat al',
+  'resourceAsync.registrationSuccess': 'Registratie geslaagd! Welkom.',
+  'resourceAsync.networkTimeout': 'Netwerktime-out',
+  'runtime.readFailure': 'Gesimuleerde leesfout',
+  'runtime.saveFailure': 'Gesimuleerde opslagfout',
+  'runtime.pollFailure': 'Gesimuleerde fout bij periodieke opvraging',
+  'runtime.settingsSaveFailure': 'HTTP 500: Clusterinstellingen opslaan in de database mislukt.',
+  'isPromise.caseNative': 'Native Promise.resolve()',
+  'isPromise.caseAsync': 'Retourwaarde van asynchrone functie',
+  'isPromise.caseThenable': 'Aangepast Thenable-object',
+  'isPromise.caseObject': 'Eenvoudig object',
+  'isPromise.caseNullish': 'null / undefined',
+  'isPromise.casePrimitive': 'Primitieve waarde',
+  'isPromise.caseFunction': 'Functie zonder .then',
+  'idleDetection.activeStatus': 'Actief',
+  'idleDetection.timeoutStatus': 'Time-out opgetreden',
+  'multiAlerts.newInlineMessage':
+    'Melding met <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Klik hier</button> in de berichttekst.',
+  'timelineWizard.review': 'Controleren',
 };

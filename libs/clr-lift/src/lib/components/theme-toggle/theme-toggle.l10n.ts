@@ -13,7 +13,7 @@ export const themeToggleTranslations: Record<string, Record<string, string>> = {
   },
   de: {
     dark: 'Dunkel',
-    light: 'Licht',
+    light: 'Hell',
     toggleDark: 'Zu dunklem Thema wechseln',
     toggleLight: 'Zu hellem Thema wechseln',
   },

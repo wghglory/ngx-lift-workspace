@@ -35,6 +35,7 @@
       class="btn"
       [class]="timelineWizardService.isLastStep ? 'btn-success' : 'btn-primary'"
       [clrLoading]="(next$ | async)?.isLoading === true"
+      [attr.aria-label]="(timelineWizardService.isLastStep ? confirmButtonText() : 'timeline-wizard.next') | translate"
       (click)="nextStep()"
     >
       {{ (timelineWizardService.isLastStep ? confirmButtonText() : 'timeline-wizard.next') | translate }}

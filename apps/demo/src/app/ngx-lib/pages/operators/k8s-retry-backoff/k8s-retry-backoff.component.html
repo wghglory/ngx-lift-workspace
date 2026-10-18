@@ -97,7 +97,13 @@
         </clr-radio-container>
 
         <div cds-layout="horizontal gap:sm align:vertical-center">
-          <button type="button" class="btn btn-primary btn-sm" [clrLoading]="isLoading()" (click)="executeSimulation()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [clrLoading]="isLoading()"
+            (click)="executeSimulation()"
+            [attr.aria-label]="'k8sRetryBackoff.btnSimulate' | translate"
+          >
             {{ 'k8sRetryBackoff.btnSimulate' | translate }}
           </button>
           <button
@@ -113,12 +119,18 @@
         @if (simulationResult(); as result) {
           <div cds-layout="horizontal gap:sm align:vertical-center">
             @if (result.success) {
-              <span class="badge badge-success">Success (HTTP {{ result.statusCode }})</span>
+              <span class="badge badge-success">{{
+                'k8sRetryBackoff.resultSuccess' | translate: result.statusCode
+              }}</span>
             } @else {
-              <span class="badge badge-danger">Failed (HTTP {{ result.statusCode }})</span>
+              <span class="badge badge-danger">{{
+                'k8sRetryBackoff.resultFailure' | translate: result.statusCode
+              }}</span>
             }
-            <span cds-text="body font:medium">{{ result.message }}</span>
-            <span cds-text="caption">(Total Attempts: {{ result.totalAttempts }})</span>
+            <span cds-text="body font:medium">{{
+              result.messageKey ? (result.messageKey | translate: result.statusCode) : result.message
+            }}</span>
+            <span cds-text="caption">{{ 'k8sRetryBackoff.totalAttempts' | translate: result.totalAttempts }}</span>
           </div>
         }
 
