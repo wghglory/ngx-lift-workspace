@@ -6,19 +6,18 @@ retains existing release, security, and acceptance work.
 
 ## Recommended order
 
-| Order       | Deliverable                            | Why this comes here                                                                                    | Exit condition                                                     |
-| ----------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| 0           | Spec template and development workflow | Make reviewable use cases and API examples the starting point                                          | Maintainer reviews this plan and the template                      |
-| 1           | Angular 21 shared form contract        | Avoid redesigning each control around incompatible form ownership                                      | Angular 21 installed consumers and three integration examples pass |
-| 2           | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract                      | Array value API and legacy migration approved                      |
-| 3           | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                                     | Text, validation, engine loading, and disposal verified            |
-| 4           | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity                          | Date-only/time/instant contracts and range behavior verified       |
-| 5           | Deep object-path breadcrumbs           | Focused navigation improvement with a clear object-store use case                                      | Every ancestor remains reachable at narrow widths                  |
-| 6           | Drawer                                 | Reusable details/edit surface once form and overlay behavior are settled                               | Modal/nonmodal behavior and nested control focus verified          |
-| 7           | Cascader, then tree-select             | Specialized hierarchy selection; share only demonstrated common behavior                               | Concrete hierarchy consumer and lazy-selection semantics approved  |
-| 8           | Calendar view                          | Event visualization differs from a picker; no current scheduling-engine requirement                    | Named consumer and bounded visible-range loading contract          |
-| Reuse first | Selection and text completion          | Use Clarity combobox/editable mode; new lift combobox/autocomplete controls are removed from this plan | Reopen only for a demonstrated consumer gap and reviewed API       |
-| Reuse first | Badges/labels                          | Clarity already provides both; first document composition and remaining gaps                           | Add a wrapper only for a demonstrated missing behavior             |
+| Order       | Deliverable                            | Why this comes here                                                                 | Exit condition                                                     |
+| ----------- | -------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 0           | Spec template and development workflow | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                      |
+| 1           | Angular 21 shared form contract        | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass |
+| 2           | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Array value API and legacy migration approved                      |
+| 3           | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified            |
+| 4           | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified       |
+| 5           | Deep object-path breadcrumbs           | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
+| 6           | Drawer                                 | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified          |
+| 7           | Cascader, then tree-select             | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved  |
+| 8           | Calendar view                          | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract          |
+| Reuse first | Badges/labels                          | Clarity already provides both; first document composition and remaining gaps        | Add a wrapper only for a demonstrated missing behavior             |
 
 New value controls target **Angular 21 first**. Angular 22 and the Nx major upgrade are **deferred** and do not block
 component delivery. Review the shared CVA contract and each feature API before implementation. The earlier
@@ -33,10 +32,6 @@ compatible migration is approved. Release fixes, security remediation, and pendi
   support.
 - `toSignalForm(FormGroup)` exposes signals over Reactive Forms. It does not create an Angular Signal Forms `FieldTree`.
 - The existing key/value control requires a `FormArray`; it is not yet a general value control for all form modes.
-- Clarity 18.4.0 already supplies single/multiple selection, pills, grouping, identity mapping, editable free text with
-  a resolver, loading hooks and select-all/overflow handling. Use its public APIs for selection and text completion. The
-  [reuse decision](design/clr-lift/selection-controls-design-spec.md) replaces the proposed lift controls and loader
-  types; documented gaps are verification items, not a commitment to replacement components.
 - Clarity also supplies breadcrumbs, badges, and labels. Compare its real behavior before adding equivalents.
 
 ## Package release decision
@@ -77,7 +72,6 @@ settled.
 | Area                                                 | Draft                                                                           |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Shared form behavior and staged integration examples | [Forms compatibility](design/clr-lift/forms-compatibility-design-spec.md)       |
-| Existing Clarity selection and text completion       | [Clarity reuse decision](design/clr-lift/selection-controls-design-spec.md)     |
 | Repeating key/value fields                           | [Key/value inputs](design/clr-lift/key-value-inputs-design-spec.md)             |
 | Read, edit, validate, and synchronize YAML           | [YAML editor](design/clr-lift/yaml-editor-design-spec.md)                       |
 | Date, time, date-time, ranges, and calendar          | [Temporal controls](design/clr-lift/temporal-controls-design-spec.md)           |
@@ -92,8 +86,7 @@ Each feature moves through **Draft → API reviewed → Implementing → Verifie
 revision it covers; a draft example is not an available export. Changes to approved behavior return to API review. Use
 the [template](design/templates/component-design-spec.md) and [workflow](design/component-development.md).
 
-Review API examples first, then behavior, then implementation. Use existing Clarity selection APIs; a helper or wrapper
-requires demonstrated consumer friction and its own review. Design YAML synchronization now, but deliver it after the
+Review API examples first, then behavior, then implementation. Design YAML synchronization now, but deliver it after the
 editor has its own reliable contract. Calendar reuses date logic without turning the picker into a scheduling product.
 
 No dates or engineering estimates are promised before feature API review. Each implementation increment must build and

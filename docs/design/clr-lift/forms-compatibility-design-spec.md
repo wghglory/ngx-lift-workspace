@@ -2,8 +2,8 @@
 
 Status: **Shared contract reviewed; integration verification pending**. Updated October 18, 2026. Owner: clr-lift
 maintainers. Package: clr-lift. Approval: the maintainer accepted shared-contract revision `1e3ae98` in chat review. The
-later reuse decision removes proposed selection exports; the examples below use existing Clarity APIs. Individual
-new-control APIs and their implementation evidence remain separate gates.
+examples below use existing Clarity APIs. Individual new-control APIs and their implementation evidence remain separate
+gates.
 
 ## Applicable contracts
 
@@ -328,9 +328,8 @@ Clarity reuse examples preserve that shared contract without claiming Clarity al
 Feature value APIs, key/value coexistence strategy and the platform upgrade's release policy stay with their reviews.
 
 The next planned control review is the key/value value API and its coexistence with the existing FormArray interface.
-Require all three hosts and installed Angular 21 proof when an approved new value control is implemented. Selection uses
-existing Clarity APIs under the [reuse decision](selection-controls-design-spec.md); no new combobox or autocomplete
-implementation is scheduled. Keep any shared bridge private until real controls prove its shape.
+Require all three hosts and installed Angular 21 proof when an approved new value control is implemented. Keep any
+shared bridge private until real controls prove its shape.
 
 ## Evidence
 
