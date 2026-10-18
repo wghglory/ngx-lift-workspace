@@ -104,7 +104,7 @@ Each feature chooses one exact value and documents its empty value:
 
 | Kind                     | Form value                   | User clear      | Owner reset                                                    |
 | ------------------------ | ---------------------------- | --------------- | -------------------------------------------------------------- |
-| Single selection         | Primitive `V                 | null`           | `null`                                                         | Owner-supplied value/default, which may be a selected key |
+| Single selection         | Primitive `V \| null`        | `null`          | Owner-supplied value/default, which may be a selected key      |
 | Multiple selection       | `readonly V[]`               | New empty array | Owner-supplied array/default                                   |
 | Text/completion          | `string`                     | `''`            | Owner-supplied string/default                                  |
 | Ordered key/value editor | Feature-reviewed entry array | New empty array | Owner-supplied array/default; legacy FormArray stays supported |
@@ -315,7 +315,7 @@ in the selection spec's order. Later controls reuse demonstrated behavior; do no
 
 Source inspection on October 18, 2026 at base `f021fb6` (merged #179): installed Angular 21.2.17 forms pipelines,
 installed Clarity combobox and the local file-reader, key/value and facade sources linked above. Current primary
-Material, NG-ZORRO and React Aria references informed the adopt/adapt decisions; installed Angular source governs phase
-
-1. No component implementation, compiled proposed examples, browser pass or new installed-consumer result is claimed by
-   this documentation increment. Record maintainer approval and implementation evidence in their respective PRs.
+Material, NG-ZORRO and React Aria references informed the adopt/adapt decisions. Installed Angular source governs the
+first delivery phase. This documentation increment claims no component implementation, compiled proposed examples,
+browser pass or new installed-consumer result. Record maintainer approval and implementation evidence in their
+respective PRs.
