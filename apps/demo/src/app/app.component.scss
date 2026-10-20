@@ -1,0 +1,11 @@
+@media (max-width: 575px) {
+  .branding {
+    display: none;
+  }
+}
+
+.header-actions > .nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

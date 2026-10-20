@@ -61,3 +61,10 @@ app-vertical-nav {
     }
   }
 }
+
+// Clarity positions the overlay close button using its responsive panel width.
+@media (max-width: 992px) {
+  app-vertical-nav .clr-vertical-nav {
+    min-width: 0;
+  }
+}

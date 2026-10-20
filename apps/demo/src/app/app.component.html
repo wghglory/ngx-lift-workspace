@@ -1,7 +1,9 @@
-<clr-main-container>
-  <clr-header>
+<clr-main-container (keydown.escape)="closeNavigation(header)">
+  <clr-header #header>
     <div class="branding">
-      <a class="nav-link" routerLink="/"><span class="title">Angular Lift</span></a>
+      <a class="nav-link" routerLink="/" aria-label="Angular Lift">
+        <span class="title">Angular Lift</span>
+      </a>
     </div>
     <div class="header-nav" [clr-nav-level]="1">
       <a class="nav-link" routerLink="/ngx-lift" routerLinkActive="active">

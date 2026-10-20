@@ -55,6 +55,10 @@ cll-page-container > .page-container.density-compact {
   }
 }
 
+.home-feature-cards {
+  row-gap: 1.25rem;
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -198,14 +202,40 @@ code:not([class^='language-']) {
 
 // Keep language and theme controls reachable while reading documentation on narrow screens.
 @media (max-width: 575px) {
-  app-root clr-header.header {
-    .branding {
-      padding-inline-end: var(--cds-global-space-3, 4px);
+  app-root clr-main-container.main-container clr-header.header {
+    .header-hamburger-trigger,
+    .header-overflow-trigger {
+      flex: 0 0 44px;
+      min-inline-size: 44px;
+      margin-inline-end: 0;
+    }
+
+    cll-theme-toggle button {
+      font-size: 0;
     }
 
     .header-actions .nav-link {
       padding-inline: var(--cds-global-space-3, 4px);
       min-inline-size: 44px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  app-root .main-container {
+    --demo-overflow-width: min(288px, calc(100vw - 80px));
+
+    &.open-overflow-menu {
+      .clr-vertical-nav.clr-nav-level-2 {
+        width: var(--demo-overflow-width);
+        max-width: var(--demo-overflow-width);
+      }
+
+      .clr-nav-close {
+        right: var(--demo-overflow-width);
+        margin-inline: 12px;
+        transform: none;
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, Component, effect, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, ElementRef, inject} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {ClarityModule} from '@clr/angular';
+import {ClarityModule, ClrHeader} from '@clr/angular';
 import {ThemeToggleComponent, ToastContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {LanguageSwitcherComponent} from './core/components/language-switcher/language-switcher.component';
@@ -25,7 +25,16 @@ import {initialDemoTranslations, loadDemoLanguage} from './core/l10n/demo-langua
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
   private translationService = inject(TranslationService);
+
+  closeNavigation(header: ClrHeader): void {
+    const level = header.openNavLevel;
+    if (level === null) return;
+    header.closeOpenNav();
+    const trigger = level === 1 ? '.header-hamburger-trigger' : '.header-overflow-trigger';
+    this.host.nativeElement.querySelector<HTMLButtonElement>(trigger)?.focus();
+  }
 
   constructor() {
     this.translationService.loadTranslationsForComponent('', initialDemoTranslations);

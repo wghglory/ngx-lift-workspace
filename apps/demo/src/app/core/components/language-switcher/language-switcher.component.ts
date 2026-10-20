@@ -38,6 +38,16 @@ export class LanguageSwitcherComponent {
   readonly currentLang = this.translationService.currentLanguage;
 
   readonly activeLanguageCode = computed(() => resolveDemoLanguage(this.currentLang()));
+  readonly compactLabel = computed(() => {
+    switch (this.activeLanguageCode()) {
+      case 'zh-CN':
+        return '简';
+      case 'zh-TW':
+        return '繁';
+      default:
+        return this.currentLabel();
+    }
+  });
   readonly currentLabel = computed(
     () => this.languages.find((language) => language.code === this.activeLanguageCode())?.label ?? 'English',
   );
