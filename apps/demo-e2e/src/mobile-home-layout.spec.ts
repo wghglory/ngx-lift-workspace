@@ -125,3 +125,16 @@ for (const theme of ['light', 'dark']) {
     await expect(overflow).toBeFocused();
   });
 }
+
+test('desktop branding reuses the favicon and links to the library home', async ({page}) => {
+  await page.setViewportSize({width: 1440, height: 900});
+  await page.goto('/clr-lift');
+  const home = page.getByRole('link', {name: 'ngx-lift and clr-lift home', exact: true});
+  await expect(home).toBeVisible();
+  const logo = home.locator('img');
+  await expect(logo).toHaveAttribute('src', 'favicon.svg');
+  await expect.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await home.focus();
+  await home.press('Enter');
+  await expect(page).toHaveURL(/\/ngx-lift$/);
+});

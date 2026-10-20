@@ -138,6 +138,7 @@ export const deTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Mitglieder Team B (anderer Bereich)',
   'queryOwnership.teamBReads': 'Anfragen Team B',
   'header.selectLanguage': 'Sprache auswählen',
+  'header.home': 'Startseite von ngx-lift und clr-lift',
   'header.openGitHub': 'Auf GitHub öffnen',
   'header.codeLicensed': 'Code lizenziert unter',
   'nav.signalUtils': 'Signal-Utilities',

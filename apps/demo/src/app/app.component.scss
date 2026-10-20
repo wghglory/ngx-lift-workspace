@@ -1,3 +1,11 @@
+.branding {
+  min-inline-size: 0;
+}
+
+.brand-image {
+  display: block;
+}
+
 @media (max-width: 575px) {
   .branding {
     display: none;

@@ -134,6 +134,7 @@ export const enTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Team B members (separate scope)',
   'queryOwnership.teamBReads': 'Team B requests',
   'header.selectLanguage': 'Select Language',
+  'header.home': 'ngx-lift and clr-lift home',
   'header.openGitHub': 'Open on GitHub',
   'header.codeLicensed': 'Code licensed under',
   'nav.signalUtils': 'Signal Utils',

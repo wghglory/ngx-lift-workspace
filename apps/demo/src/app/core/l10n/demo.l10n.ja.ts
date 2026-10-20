@@ -134,6 +134,7 @@ export const jaTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'チーム B のメンバー（別スコープ）',
   'queryOwnership.teamBReads': 'チーム B のリクエスト数',
   'header.selectLanguage': '言語を選択',
+  'header.home': 'ngx-lift と clr-lift のホーム',
   'header.openGitHub': 'GitHub で開く',
   'header.codeLicensed': 'ライセンス：',
   'nav.signalUtils': 'Signal ユーティリティ',

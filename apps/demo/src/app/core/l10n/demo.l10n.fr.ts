@@ -137,6 +137,7 @@ export const frTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Membres de l’équipe B (autre portée)',
   'queryOwnership.teamBReads': 'Requêtes de l’équipe B',
   'header.selectLanguage': 'Sélectionner la langue',
+  'header.home': 'Accueil de ngx-lift et clr-lift',
   'header.openGitHub': 'Ouvrir sur GitHub',
   'header.codeLicensed': 'Code sous licence',
   'nav.signalUtils': 'Utilitaires Signal',

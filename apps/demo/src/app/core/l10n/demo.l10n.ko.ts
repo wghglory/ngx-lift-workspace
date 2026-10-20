@@ -132,6 +132,7 @@ export const koTranslations: Record<string, string> = {
   'queryOwnership.otherScope': '팀 B 멤버(다른 범위)',
   'queryOwnership.teamBReads': '팀 B 요청 수',
   'header.selectLanguage': '언어 선택',
+  'header.home': 'ngx-lift 및 clr-lift 홈',
   'header.openGitHub': 'GitHub에서 열기',
   'header.codeLicensed': '코드 라이선스:',
   'nav.signalUtils': 'Signal 유틸리티',

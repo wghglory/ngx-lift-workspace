@@ -19,10 +19,14 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('renders the shared favicon as the named home link', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.title')?.textContent).toContain('Angular Lift');
+    const home = compiled.querySelector('.branding a');
+    expect(home?.getAttribute('aria-label')).toBe('ngx-lift and clr-lift home');
+    expect(home?.querySelector('img')?.getAttribute('src')).toBe('favicon.svg');
+    expect(home?.querySelector('img')?.getAttribute('alt')).toBe('');
+    expect(home?.textContent?.trim()).toBe('');
   });
 });

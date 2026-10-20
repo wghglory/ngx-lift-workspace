@@ -120,6 +120,7 @@ export const zhTWTranslations: Record<string, string> = {
   'queryOwnership.otherScope': '團隊 B 成員（獨立作用域）',
   'queryOwnership.teamBReads': '團隊 B 請求數',
   'header.selectLanguage': '選擇語言',
+  'header.home': 'ngx-lift 與 clr-lift 首頁',
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '程式碼開源授權',
   'nav.signalUtils': 'Signal 工具',

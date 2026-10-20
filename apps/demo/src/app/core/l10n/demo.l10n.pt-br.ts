@@ -135,6 +135,7 @@ export const ptBRTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Membros da equipe B (outro escopo)',
   'queryOwnership.teamBReads': 'Solicitações da equipe B',
   'header.selectLanguage': 'Selecionar idioma',
+  'header.home': 'Página inicial de ngx-lift e clr-lift',
   'header.openGitHub': 'Abrir no GitHub',
   'header.codeLicensed': 'Código sob licença',
   'nav.signalUtils': 'Utilitários de Signal',

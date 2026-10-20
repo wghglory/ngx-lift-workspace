@@ -120,6 +120,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryOwnership.otherScope': '团队 B 成员（独立作用域）',
   'queryOwnership.teamBReads': '团队 B 请求数',
   'header.selectLanguage': '选择语言',
+  'header.home': 'ngx-lift 和 clr-lift 首页',
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '代码开源协议',
   'nav.signalUtils': 'Signal 工具',

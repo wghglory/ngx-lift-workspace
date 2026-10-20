@@ -137,6 +137,7 @@ export const ruTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Участники команды B (другая область)',
   'queryOwnership.teamBReads': 'Запросы команды B',
   'header.selectLanguage': 'Выберите язык',
+  'header.home': 'Главная страница ngx-lift и clr-lift',
   'header.openGitHub': 'Открыть на GitHub',
   'header.codeLicensed': 'Код под лицензией',
   'nav.signalUtils': 'Утилиты сигналов',
