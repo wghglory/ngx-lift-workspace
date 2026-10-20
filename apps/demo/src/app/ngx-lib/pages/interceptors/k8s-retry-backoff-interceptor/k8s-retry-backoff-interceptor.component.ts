@@ -57,6 +57,7 @@ export interface InterceptorResult {
     RouterLink,
   ],
   templateUrl: './k8s-retry-backoff-interceptor.component.html',
+  styleUrl: './k8s-retry-backoff-interceptor.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class K8sRetryBackoffInterceptorComponent {

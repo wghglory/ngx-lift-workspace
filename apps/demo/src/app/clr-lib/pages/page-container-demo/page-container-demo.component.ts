@@ -10,6 +10,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   selector: 'app-page-container-demo',
   imports: [RouterLink, PageContainerComponent, DemoPlaygroundComponent, TranslatePipe, ApiTableComponent],
   templateUrl: './page-container-demo.component.html',
+  styleUrl: './page-container-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageContainerDemoComponent {

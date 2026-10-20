@@ -60,4 +60,17 @@ describe('LanguageSwitcherComponent', () => {
     expect(fixture.nativeElement.querySelector('.lang-text').textContent).toBe('Deutsch');
     expect(fixture.nativeElement.querySelector('.language-trigger [title]')).toBeNull();
   });
+  it.each([
+    ['zh-CN', '简'],
+    ['zh-TW', '繁'],
+    ['zh-Hans', '简'],
+    ['zh-Hant', '繁'],
+    ['en', 'English'],
+    ['de', 'Deutsch'],
+    ['ja', '日本語'],
+    ['fr-CA', 'Français'],
+  ])('uses the compact label for %s', (locale, label) => {
+    translationService.setLanguage(locale, false);
+    expect(component.compactLabel()).toBe(label);
+  });
 });

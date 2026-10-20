@@ -41,6 +41,7 @@ export interface SimulationResult {
     RouterLink,
   ],
   templateUrl: './k8s-retry-backoff.component.html',
+  styleUrl: './k8s-retry-backoff.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class K8sRetryBackoffComponent {

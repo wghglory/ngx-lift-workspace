@@ -9,9 +9,11 @@
   @include meta.load-css('highlight.js/styles/a11y-dark.css');
 }
 
-// Global demo styles (Clarity Design System based)
+// Remaining globals are documentation-wide defaults or cross-component integrations.
+// Component-owned layout and surfaces belong in their encapsulated stylesheets.
 
-// Custom-element hosts default to inline; vertical margins then do not separate tables and tabs.
+// Clarity owns .nav and .tab-content inside clr-tabs; page styles cannot reach them.
+// These shared demo overrides keep every projected tab example spaced and scrollable.
 cll-page-container clr-tabs {
   display: block;
   margin-block-start: var(--cds-global-space-7);
@@ -40,13 +42,14 @@ cll-page-container clr-tabs {
   }
 }
 
+// customClass is forwarded inside a library view; this example deliberately demonstrates global CSS.
 cll-page-container > .page-container.density-compact {
   padding: var(--cds-global-space-5);
   gap: var(--cds-global-space-3);
   border-inline-start: 3px solid var(--clr-color-action-600);
 }
 
-// Ensure vertical layout containers display at 100% full width across all pages
+// Shared documentation layout contract, including content projected across component boundaries.
 [cds-layout~='vertical'] {
   align-items: stretch;
 
@@ -55,24 +58,7 @@ cll-page-container > .page-container.density-compact {
   }
 }
 
-.home-feature-cards {
-  row-gap: 1.25rem;
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (min-width: 1200px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
+// Documentation-wide preformatted content and inline code, including translated innerHTML.
 pre {
   padding: 1.5rem;
   background-color: var(--clr-global-app-background, #f8fafc);
@@ -92,115 +78,13 @@ code:not([class^='language-']) {
   vertical-align: baseline;
 }
 
-.preview-box {
-  border: 1px solid var(--clr-global-selection-color, #e2e8f0);
-  border-radius: 6px;
-  padding: 1.25rem;
-  background-color: var(--clr-global-app-background, #f8fafc);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-// Timeline wizard keyvalue grid
-.keyvalue-grid {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 0.75rem;
-  align-items: center;
-
-  @container (min-width: 900px) {
-    grid-template-columns: repeat(2, minmax(min-content, 130px) 3fr);
-  }
-
-  @container (min-width: 1100px) {
-    grid-template-columns: repeat(3, minmax(min-content, 130px) 3fr);
-  }
-}
-
-[cds-theme='dark'] {
-  .preview-box {
-    background-color: var(--clr-global-app-background, #12171a);
-    border-color: var(--clr-global-selection-color, #222b30);
-  }
-
-  code:not([class^='language-']) {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: #fb923c;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .demo-playground-card {
-    .playground-header {
-      background-color: var(--clr-global-app-background, #12171a);
-      border-color: var(--clr-global-selection-color, #222b30);
-    }
-
-    .playground-title {
-      color: var(--clr-color-neutral-100, #f8fafc);
-    }
-
-    .playground-description {
-      color: var(--clr-color-neutral-400, #94a3b8);
-    }
-
-    .layout-toggle-group {
-      background-color: #1e293b;
-
-      .layout-btn {
-        color: #94a3b8;
-
-        &.active {
-          background-color: #334155;
-          color: #38bdf8;
-        }
-      }
-    }
-
-    .playground-body.layout-split .preview-pane {
-      border-color: var(--clr-global-selection-color, #222b30);
-    }
-
-    .playground-code-toolbar {
-      background-color: #0f172a;
-      border-color: #1e293b;
-    }
-
-    .code-pre,
-    pre {
-      background-color: #030712 !important;
-      border: none !important;
-    }
-
-    .tab-btn {
-      color: #94a3b8;
-
-      &:hover {
-        color: #e2e8f0;
-        background-color: rgba(255, 255, 255, 0.05);
-      }
-
-      &.active {
-        color: #38bdf8;
-        background-color: #1e293b;
-      }
-    }
-
-    .code-actions .btn {
-      color: #94a3b8;
-
-      &:hover {
-        color: #38bdf8;
-      }
-    }
-  }
-}
-
-// Global utility used by the spinner class-forwarding example.
+// The spinner forwards this class to its internal element; an encapsulated caller rule cannot match it.
 .demo-spinner-space {
   margin-inline: 1rem;
 }
 
-// Keep language and theme controls reachable while reading documentation on narrow screens.
+// ThemeToggleComponent owns its button; the demo's compact header policy crosses that view boundary.
+// The same rule sizes the app link and language trigger consistently beside that button.
 @media (max-width: 575px) {
   app-root clr-main-container.main-container clr-header.header {
     cll-theme-toggle button {
@@ -214,21 +98,11 @@ code:not([class^='language-']) {
   }
 }
 
-@media (max-width: 576px) {
-  app-root .main-container {
-    --demo-overflow-width: min(288px, calc(100vw - 80px));
-
-    &.open-overflow-menu {
-      .clr-vertical-nav.clr-nav-level-2 {
-        width: var(--demo-overflow-width);
-        max-width: var(--demo-overflow-width);
-      }
-
-      .clr-nav-close {
-        right: var(--demo-overflow-width);
-        margin-inline: 12px;
-        transform: none;
-      }
-    }
+// Inline code also appears in translated innerHTML across documentation pages.
+[cds-theme='dark'] {
+  code:not([class^='language-']) {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fb923c;
+    border-color: rgba(255, 255, 255, 0.1);
   }
 }

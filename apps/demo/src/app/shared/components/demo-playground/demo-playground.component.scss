@@ -262,20 +262,69 @@
   }
 }
 
-.playground-code-body {
-  .code-pre,
-  pre,
-  app-code-block {
-    display: block;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
-    height: 100%;
+.playground-code-body app-code-block {
+  display: block;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  height: 100%;
+}
 
-    ::ng-deep pre {
-      margin: 0 !important;
-      border-radius: 0 !important;
-      border: none !important;
+:host-context([cds-theme='dark']) {
+  .playground-header {
+    background-color: var(--clr-global-app-background, #12171a);
+    border-color: var(--clr-global-selection-color, #222b30);
+  }
+
+  .playground-title {
+    color: var(--clr-color-neutral-100, #f8fafc);
+  }
+
+  .playground-description {
+    color: var(--clr-color-neutral-400, #94a3b8);
+  }
+
+  .layout-toggle-group {
+    background-color: #1e293b;
+
+    .layout-btn {
+      color: #94a3b8;
+
+      &.active {
+        background-color: #334155;
+        color: #38bdf8;
+      }
+    }
+  }
+
+  .playground-body.layout-split .preview-pane {
+    border-color: var(--clr-global-selection-color, #222b30);
+  }
+
+  .playground-code-toolbar {
+    background-color: #0f172a;
+    border-color: #1e293b;
+  }
+
+  .tab-btn {
+    color: #94a3b8;
+
+    &:hover {
+      color: #e2e8f0;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active {
+      color: #38bdf8;
+      background-color: #1e293b;
+    }
+  }
+
+  .code-actions .btn {
+    color: #94a3b8;
+
+    &:hover {
+      color: #38bdf8;
     }
   }
 }

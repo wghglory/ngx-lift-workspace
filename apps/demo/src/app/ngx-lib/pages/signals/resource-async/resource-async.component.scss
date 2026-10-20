@@ -1,3 +1,9 @@
+@use '../../../../shared/styles/demo-layout' as demo;
+
+.card-grid {
+  @include demo.card-grid;
+}
+
 .demo-section {
   margin: 1.5rem 0;
   padding: 1.5rem;

@@ -20,6 +20,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     ApiTableComponent,
   ],
   templateUrl: './start-with-tap.component.html',
+  styleUrl: './start-with-tap.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StartWithTapComponent {

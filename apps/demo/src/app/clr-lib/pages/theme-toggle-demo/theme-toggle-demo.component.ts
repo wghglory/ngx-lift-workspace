@@ -28,6 +28,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
     TranslatePipe,
   ],
   templateUrl: './theme-toggle-demo.component.html',
+  styleUrl: './theme-toggle-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeToggleDemoComponent {

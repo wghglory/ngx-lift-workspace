@@ -24,6 +24,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
     ApiTableComponent,
   ],
   templateUrl: './idle-detection-demo.component.html',
+  styleUrl: './idle-detection-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClrIdleDetectionDemoComponent {

@@ -2,7 +2,7 @@ import {expect, test} from '@playwright/test';
 
 import {expectAccessible} from './support/accessibility';
 
-for (const width of [320, 390, 576, 768, 992, 1440]) {
+for (const width of [320, 390, 575, 576, 768, 992, 1440]) {
   const minCardGap = width < 992 ? 16 : Number.NEGATIVE_INFINITY;
   test(`home cards and header fit at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
@@ -73,7 +73,7 @@ for (const width of [320, 390]) {
   });
 }
 
-for (const width of [320, 390, 576, 768, 992]) {
+for (const width of [320, 390, 575, 576, 768, 992]) {
   test(`overflow close stays beside the navigation at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await page.goto('/ngx-lift');
