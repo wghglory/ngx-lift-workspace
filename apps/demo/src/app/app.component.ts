@@ -38,6 +38,14 @@ export class AppComponent {
     this.host.nativeElement.querySelector<HTMLButtonElement>(trigger)?.focus();
   }
 
+  resetDesktopNavigation(header: ClrHeader): void {
+    const desktop = this.host.nativeElement.ownerDocument.defaultView?.matchMedia('(min-width: 993px)').matches;
+    if (header.openNavLevel !== null && desktop) {
+      // Close overlay state before Clarity restores desktop navigation during the same resize event.
+      header.closeOpenNav();
+    }
+  }
+
   constructor() {
     this.translationService.loadTranslationsForComponent('', initialDemoTranslations);
     effect(() => {

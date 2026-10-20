@@ -132,9 +132,8 @@ test('desktop branding reuses the favicon and links to the library home', async 
   const home = page.getByRole('link', {name: 'ngx-lift and clr-lift home', exact: true});
   await expect(home).toBeVisible();
   const logo = home.locator('img');
-  const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
-  expect(favicon).toMatch(/^favicon\.svg\?v=[a-f0-9]{8}$/);
-  await expect(logo).toHaveAttribute('src', favicon ?? '');
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'favicon.svg');
+  await expect(logo).toHaveAttribute('src', 'favicon.svg');
   await expect.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await home.focus();
   await home.press('Enter');
@@ -181,3 +180,20 @@ test('closed navigation stays outside the page while shrinking the desktop viewp
       .toBeGreaterThanOrEqual(width);
   }
 });
+
+for (const opener of ['.header-hamburger-trigger', '.header-overflow-trigger']) {
+  test(`enlarging an open ${opener} restores ordinary desktop navigation`, async ({page}) => {
+    await page.setViewportSize({width: 390, height: 900});
+    await page.goto('/ngx-lift');
+    await page.locator(opener).click();
+    await expect(page.locator('.main-container')).toHaveClass(/open-(hamburger|overflow)-menu/);
+    await page.setViewportSize({width: 1440, height: 900});
+    await expect(page.locator('.main-container')).not.toHaveClass(/open-(hamburger|overflow)-menu/);
+    await expect(page.locator('.clr-nav-close:visible')).toHaveCount(0);
+    await expect(page.locator('clr-vertical-nav')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('clr-vertical-nav')).toBeVisible();
+    await page.locator('.desktop-library-nav').getByRole('link', {name: 'clr-lift', exact: true}).click();
+    await expect(page.locator('h1').first()).toHaveText('clr-lift');
+  });
+}

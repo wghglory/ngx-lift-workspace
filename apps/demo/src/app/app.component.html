@@ -1,8 +1,8 @@
-<clr-main-container (keydown.escape)="closeNavigation(header)">
+<clr-main-container (keydown.escape)="closeNavigation(header)" (window:resize)="resetDesktopNavigation(header)">
   <clr-header #header>
     <div class="branding">
       <a class="nav-link" routerLink="/" [attr.aria-label]="'header.home' | translate">
-        <img class="brand-image" src="favicon.svg?v=b1f4334a" width="32" height="32" alt="" />
+        <img class="brand-image" src="favicon.svg" width="32" height="32" alt="" />
       </a>
     </div>
     <div class="header-nav desktop-library-nav">
