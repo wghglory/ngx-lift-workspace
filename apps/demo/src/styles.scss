@@ -9,7 +9,7 @@
   @include meta.load-css('highlight.js/styles/a11y-dark.css');
 }
 
-// Remaining globals are documentation-wide defaults or cross-component integrations.
+// Globals are shared demo utilities, documentation-wide defaults, or cross-component integrations.
 // Component-owned layout and surfaces belong in their encapsulated stylesheets.
 
 // Clarity owns .nav and .tab-content inside clr-tabs; page styles cannot reach them.
@@ -56,6 +56,35 @@ cll-page-container > .page-container.density-compact {
   > :is(button, .btn, .badge, .label, code):not(.btn-block) {
     align-self: flex-start;
   }
+}
+
+// Shared layout utilities used by multiple standalone demo components.
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.preview-box {
+  border: 1px solid var(--clr-global-selection-color, #e2e8f0);
+  border-radius: 6px;
+  padding: 1.25rem;
+  background-color: var(--clr-global-app-background, #f8fafc);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[cds-theme='dark'] .preview-box {
+  background-color: var(--clr-global-app-background, #12171a);
+  border-color: var(--clr-global-selection-color, #222b30);
 }
 
 // Documentation-wide preformatted content and inline code, including translated innerHTML.

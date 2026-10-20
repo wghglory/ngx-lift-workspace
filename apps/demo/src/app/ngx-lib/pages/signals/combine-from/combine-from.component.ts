@@ -25,7 +25,6 @@ import {UserService} from './../../../../shared/services/user.service';
     ApiTableComponent,
   ],
   templateUrl: './combine-from.component.html',
-  styleUrl: './combine-from.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CombineFromComponent {

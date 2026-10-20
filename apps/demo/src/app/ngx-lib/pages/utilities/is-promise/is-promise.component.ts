@@ -25,7 +25,6 @@ export interface PromiseCheckCase {
     ApiTableComponent,
   ],
   templateUrl: './is-promise.component.html',
-  styleUrl: './is-promise.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsPromiseComponent {

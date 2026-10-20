@@ -1,9 +1,3 @@
-@use '../../styles/demo-layout' as demo;
-
-.card-grid {
-  @include demo.card-grid;
-}
-
 :host {
   display: block;
 }

@@ -43,7 +43,6 @@ export interface DemoPod extends KubernetesObject {
     ApiTableComponent,
   ],
   templateUrl: './kubernetes-pagination.component.html',
-  styleUrl: './kubernetes-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KubernetesPaginationComponent {

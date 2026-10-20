@@ -35,7 +35,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     ApiTableComponent,
   ],
   templateUrl: './computed-async.component.html',
-  styleUrl: './computed-async.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComputedAsyncComponent {
