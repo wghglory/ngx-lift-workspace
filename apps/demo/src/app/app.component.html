@@ -2,17 +2,23 @@
   <clr-header #header>
     <div class="branding">
       <a class="nav-link" routerLink="/" [attr.aria-label]="'header.home' | translate">
-        <img class="brand-image" src="favicon.svg" width="32" height="32" alt="" />
+        <img class="brand-image" src="favicon.svg?v=b1f4334a" width="32" height="32" alt="" />
       </a>
     </div>
-    <div class="header-nav" [clr-nav-level]="1">
+    <div class="header-nav desktop-library-nav">
+      <ng-container [ngTemplateOutlet]="libraryLinks" />
+    </div>
+    <div class="header-nav mobile-library-nav" [clr-nav-level]="1">
+      <ng-container [ngTemplateOutlet]="libraryLinks" />
+    </div>
+    <ng-template #libraryLinks>
       <a class="nav-link" routerLink="/ngx-lift" routerLinkActive="active">
         <span class="nav-text">ngx-lift</span>
       </a>
       <a class="nav-link" routerLink="/clr-lift" routerLinkActive="active">
         <span class="nav-text">clr-lift</span>
       </a>
-    </div>
+    </ng-template>
     <div class="header-actions">
       <a
         class="nav-link nav-icon"

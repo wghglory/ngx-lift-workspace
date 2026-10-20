@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="lift-angular" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#f00646" />
-      <stop offset=".55" stop-color="#d414c5" />
-      <stop offset="1" stop-color="#7738f5" />
+    <linearGradient id="lift" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4338ca" />
+      <stop offset=".55" stop-color="#2563eb" />
+      <stop offset="1" stop-color="#0891b2" />
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="16" fill="url(#lift-angular)" />
+  <rect width="64" height="64" rx="16" fill="url(#lift)" />
   <path d="M18 18v28h26M32 27l10-10 10 10M42 18v18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

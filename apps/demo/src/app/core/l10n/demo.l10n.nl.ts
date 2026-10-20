@@ -168,10 +168,6 @@ export const nlTranslations: Record<string, string> = {
   'nav.range': 'Bereik',
   'nav.isHttps': 'Is Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Aan de slag',
   'home.prerequisite': 'Deze instructies zijn voor Angular 21. Begin in een bestaande zelfstandige Angular-applicatie.',
   'home.ngxLift.setup':

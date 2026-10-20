@@ -3,9 +3,6 @@ app-vertical-nav {
   display: contents;
 
   .clr-vertical-nav {
-    min-width: 17rem;
-    width: 17rem;
-
     .nav-group-content {
       height: auto !important;
       min-height: 2.25rem;
@@ -28,43 +25,10 @@ app-vertical-nav {
       box-sizing: border-box;
 
       .nav-text {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
         line-height: 1.35;
-        overflow: visible;
-        width: 100%;
-
-        .nav-label-text {
-          flex: 1 1 auto;
-          white-space: normal;
-          overflow-wrap: anywhere;
-        }
-
-        .badge {
-          flex-shrink: 0;
-          font-size: 0.65rem;
-          line-height: 1;
-          padding: 0.2rem 0.45rem;
-          border-radius: 9999px;
-          font-weight: 600;
-          letter-spacing: 0.02em;
-
-          &.badge-purple {
-            background-color: #7e3af2;
-            color: #ffffff;
-          }
-        }
       }
     }
-  }
-}
-
-// Clarity positions the overlay close button using its responsive panel width.
-@media (max-width: 992px) {
-  app-vertical-nav .clr-vertical-nav {
-    min-width: 0;
   }
 }

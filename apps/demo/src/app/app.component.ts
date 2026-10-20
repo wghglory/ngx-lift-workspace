@@ -1,3 +1,4 @@
+import {NgTemplateOutlet} from '@angular/common';
 import {ChangeDetectionStrategy, Component, effect, ElementRef, inject} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {ClarityModule, ClrHeader} from '@clr/angular';
@@ -11,6 +12,7 @@ import {initialDemoTranslations, loadDemoLanguage} from './core/l10n/demo-langua
   selector: 'app-root',
   imports: [
     RouterOutlet,
+    NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,
     VerticalNavComponent,

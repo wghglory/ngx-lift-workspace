@@ -152,10 +152,6 @@ export const zhTWTranslations: Record<string, string> = {
   'nav.range': '數值區間 (Range)',
   'nav.isHttps': 'HTTPS 檢查 (Is Https)',
   'nav.differenceInDays': '天數差異計算 (differenceInDays)',
-  'nav.badgeNew': '最新',
-  'nav.badgeUpdated': '更新',
-  'nav.badgePopular': '熱門',
-  'nav.badgeCore': '核心',
   'home.start': '開始使用',
   'home.prerequisite': '以下步驟適用於 Angular 21。請從既有的獨立 Angular 應用程式開始。',
   'home.ngxLift.setup':

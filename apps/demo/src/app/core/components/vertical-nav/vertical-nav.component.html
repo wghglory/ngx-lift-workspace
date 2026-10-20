@@ -11,19 +11,7 @@
             [queryParams]="child?.queryParams"
             routerLinkActive="active"
           >
-            <span class="nav-label-text">{{ child.i18nKey ? (child.i18nKey | translate) : child.value }}</span>
-            @if (child.label === 'new') {
-              <span class="badge badge-success">{{ 'nav.badgeNew' | translate }}</span>
-            }
-            @if (child.label === 'updated') {
-              <span class="badge badge-info">{{ 'nav.badgeUpdated' | translate }}</span>
-            }
-            @if (child.label === 'popular') {
-              <span class="badge badge-warning">{{ 'nav.badgePopular' | translate }}</span>
-            }
-            @if (child.label === 'core') {
-              <span class="badge badge-purple">{{ 'nav.badgeCore' | translate }}</span>
-            }
+            {{ child.i18nKey ? (child.i18nKey | translate) : child.value }}
           </a>
         }
       </clr-vertical-nav-group-children>

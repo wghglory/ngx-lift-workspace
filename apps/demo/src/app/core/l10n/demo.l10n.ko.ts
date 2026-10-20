@@ -164,10 +164,6 @@ export const koTranslations: Record<string, string> = {
   'nav.range': '범위',
   'nav.isHttps': 'Https 확인',
   'nav.differenceInDays': '일수 차이',
-  'nav.badgeNew': '신규',
-  'nav.badgeUpdated': '업데이트',
-  'nav.badgePopular': '인기',
-  'nav.badgeCore': '핵심',
   'home.start': '시작하기',
   'home.prerequisite': '이 안내는 Angular 21을 대상으로 합니다. 기존 독립형 Angular 애플리케이션에서 시작하세요.',
   'home.ngxLift.setup':

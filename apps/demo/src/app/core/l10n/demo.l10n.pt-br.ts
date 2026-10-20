@@ -167,10 +167,6 @@ export const ptBRTranslations: Record<string, string> = {
   'nav.range': 'Intervalo',
   'nav.isHttps': 'É Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Primeiros passos',
   'home.prerequisite': 'Estas instruções são para Angular 21. Comece em uma aplicação Angular standalone existente.',
   'home.ngxLift.setup':

@@ -25,7 +25,7 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const home = compiled.querySelector('.branding a');
     expect(home?.getAttribute('aria-label')).toBe('ngx-lift and clr-lift home');
-    expect(home?.querySelector('img')?.getAttribute('src')).toBe('favicon.svg');
+    expect(home?.querySelector('img')?.getAttribute('src')).toMatch(/^favicon\.svg\?v=[a-f0-9]{8}$/);
     expect(home?.querySelector('img')?.getAttribute('alt')).toBe('');
     expect(home?.textContent?.trim()).toBe('');
   });

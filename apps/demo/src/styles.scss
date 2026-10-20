@@ -203,13 +203,6 @@ code:not([class^='language-']) {
 // Keep language and theme controls reachable while reading documentation on narrow screens.
 @media (max-width: 575px) {
   app-root clr-main-container.main-container clr-header.header {
-    .header-hamburger-trigger,
-    .header-overflow-trigger {
-      flex: 0 0 44px;
-      min-inline-size: 44px;
-      margin-inline-end: 0;
-    }
-
     cll-theme-toggle button {
       font-size: 0;
     }

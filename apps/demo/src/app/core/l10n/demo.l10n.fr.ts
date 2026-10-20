@@ -169,10 +169,6 @@ export const frTranslations: Record<string, string> = {
   'nav.range': 'Plage numérique',
   'nav.isHttps': 'Est Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Bien démarrer',
   'home.prerequisite':
     'Ces instructions ciblent Angular 21. Commencez dans une application Angular autonome existante.',

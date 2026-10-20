@@ -7,6 +7,5 @@ export interface NavConfig {
     queryParams?: Record<string, unknown>;
     value: string;
     i18nKey?: string;
-    label?: 'new' | 'updated' | 'popular' | 'core';
   }[];
 }

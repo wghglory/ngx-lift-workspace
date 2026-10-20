@@ -2,10 +2,6 @@
   min-inline-size: 0;
 }
 
-.brand-image {
-  display: block;
-}
-
 @media (max-width: 575px) {
   .branding {
     display: none;
@@ -13,7 +9,18 @@
 }
 
 .header-actions > .nav-icon {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
+}
+
+// Desktop links must not inherit the responsive directive's body-width click handling.
+@media (max-width: 992px) {
+  .header-nav.desktop-library-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 993px) {
+  .header-nav.mobile-library-nav {
+    display: none;
+  }
 }

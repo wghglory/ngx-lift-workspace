@@ -168,10 +168,6 @@ export const esTranslations: Record<string, string> = {
   'nav.range': 'Rango',
   'nav.isHttps': 'Es Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Primeros pasos',
   'home.prerequisite':
     'Estas instrucciones son para Angular 21. Empieza en una aplicación Angular independiente existente.',

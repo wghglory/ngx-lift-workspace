@@ -170,10 +170,6 @@ export const deTranslations: Record<string, string> = {
   'nav.range': 'Bereich',
   'nav.isHttps': 'Ist Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Erste Schritte',
   'home.prerequisite':
     'Diese Anleitung gilt für Angular 21. Beginnen Sie in einer vorhandenen eigenständigen Angular-Anwendung.',

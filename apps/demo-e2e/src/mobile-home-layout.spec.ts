@@ -132,9 +132,52 @@ test('desktop branding reuses the favicon and links to the library home', async 
   const home = page.getByRole('link', {name: 'ngx-lift and clr-lift home', exact: true});
   await expect(home).toBeVisible();
   const logo = home.locator('img');
-  await expect(logo).toHaveAttribute('src', 'favicon.svg');
+  const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
+  expect(favicon).toMatch(/^favicon\.svg\?v=[a-f0-9]{8}$/);
+  await expect(logo).toHaveAttribute('src', favicon ?? '');
   await expect.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await home.focus();
   await home.press('Enter');
   await expect(page).toHaveURL(/\/ngx-lift$/);
+});
+
+test('desktop library links remain visible with a scrollbar beside the responsive breakpoint', async ({page}) => {
+  await page.setViewportSize({width: 1000, height: 900});
+  await page.goto('/ngx-lift');
+  await page.addStyleTag({content: 'html { scrollbar-gutter: stable; }'});
+  const header = page.locator('.header-nav');
+  for (const name of ['clr-lift', 'ngx-lift', 'clr-lift']) {
+    await header.getByRole('link', {name, exact: true}).click();
+    await expect(page.locator('h1').first()).toHaveText(name);
+    await expect(header.getByRole('link', {name: 'ngx-lift', exact: true})).toBeVisible();
+    await expect(header.getByRole('link', {name: 'clr-lift', exact: true})).toBeVisible();
+  }
+  await page.setViewportSize({width: 768, height: 900});
+  await page.locator('.header-hamburger-trigger').click();
+  await header.getByRole('link', {name: 'ngx-lift', exact: true}).click();
+  await expect(page.locator('h1').first()).toHaveText('ngx-lift');
+  await page.setViewportSize({width: 1000, height: 900});
+  await expect(header.getByRole('link', {name: 'ngx-lift', exact: true})).toBeVisible();
+  await expect(header.getByRole('link', {name: 'clr-lift', exact: true})).toBeVisible();
+});
+
+test('closed navigation stays outside the page while shrinking the desktop viewport', async ({page}) => {
+  await page.setViewportSize({width: 1440, height: 900});
+  await page.goto('/clr-lift');
+  for (const width of [992, 768, 576, 390, 320]) {
+    await page.setViewportSize({width, height: 900});
+    await expect(page.locator('.main-container')).not.toHaveClass(/open-overflow-menu/);
+    await page.locator('clr-vertical-nav').evaluate(async (element) => {
+      element.getBoundingClientRect();
+      await Promise.all(element.getAnimations().map((animation) => animation.finished));
+    });
+    await expect
+      .poll(() =>
+        page.locator('clr-vertical-nav').evaluate((element) => {
+          const rect = element.getBoundingClientRect();
+          return rect.width === 0 ? innerWidth : rect.left;
+        }),
+      )
+      .toBeGreaterThanOrEqual(width);
+  }
 });
