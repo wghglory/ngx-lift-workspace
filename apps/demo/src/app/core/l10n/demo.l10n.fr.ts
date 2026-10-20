@@ -137,6 +137,7 @@ export const frTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Membres de l’équipe B (autre portée)',
   'queryOwnership.teamBReads': 'Requêtes de l’équipe B',
   'header.selectLanguage': 'Sélectionner la langue',
+  'header.home': 'Accueil de ngx-lift et clr-lift',
   'header.openGitHub': 'Ouvrir sur GitHub',
   'header.codeLicensed': 'Code sous licence',
   'nav.signalUtils': 'Utilitaires Signal',
@@ -168,10 +169,6 @@ export const frTranslations: Record<string, string> = {
   'nav.range': 'Plage numérique',
   'nav.isHttps': 'Est Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Bien démarrer',
   'home.prerequisite':
     'Ces instructions ciblent Angular 21. Commencez dans une application Angular autonome existante.',

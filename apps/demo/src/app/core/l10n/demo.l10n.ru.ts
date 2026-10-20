@@ -137,6 +137,7 @@ export const ruTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Участники команды B (другая область)',
   'queryOwnership.teamBReads': 'Запросы команды B',
   'header.selectLanguage': 'Выберите язык',
+  'header.home': 'Главная страница ngx-lift и clr-lift',
   'header.openGitHub': 'Открыть на GitHub',
   'header.codeLicensed': 'Код под лицензией',
   'nav.signalUtils': 'Утилиты сигналов',
@@ -168,10 +169,6 @@ export const ruTranslations: Record<string, string> = {
   'nav.range': 'Диапазон',
   'nav.isHttps': 'Проверка Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'НОВОЕ',
-  'nav.badgeUpdated': 'ОБНОВЛЕНО',
-  'nav.badgePopular': 'ПОПУЛЯРНОЕ',
-  'nav.badgeCore': 'ЯДРО',
   'home.start': 'Начало работы',
   'home.prerequisite': 'Инструкции рассчитаны на Angular 21. Начните с существующего автономного приложения Angular.',
   'home.ngxLift.setup':

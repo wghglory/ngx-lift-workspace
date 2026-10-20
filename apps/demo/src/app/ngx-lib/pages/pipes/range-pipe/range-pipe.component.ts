@@ -20,7 +20,6 @@ import {highlight} from '../../../../shared/utils/highlight.util';
     ApiTableComponent,
   ],
   templateUrl: './range-pipe.component.html',
-  styleUrl: './range-pipe.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RangePipeComponent {

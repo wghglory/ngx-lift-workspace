@@ -138,6 +138,7 @@ export const deTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Mitglieder Team B (anderer Bereich)',
   'queryOwnership.teamBReads': 'Anfragen Team B',
   'header.selectLanguage': 'Sprache auswählen',
+  'header.home': 'Startseite von ngx-lift und clr-lift',
   'header.openGitHub': 'Auf GitHub öffnen',
   'header.codeLicensed': 'Code lizenziert unter',
   'nav.signalUtils': 'Signal-Utilities',
@@ -169,10 +170,6 @@ export const deTranslations: Record<string, string> = {
   'nav.range': 'Bereich',
   'nav.isHttps': 'Ist Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Erste Schritte',
   'home.prerequisite':
     'Diese Anleitung gilt für Angular 21. Beginnen Sie in einer vorhandenen eigenständigen Angular-Anwendung.',

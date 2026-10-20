@@ -135,6 +135,7 @@ export const ptBRTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Membros da equipe B (outro escopo)',
   'queryOwnership.teamBReads': 'Solicitações da equipe B',
   'header.selectLanguage': 'Selecionar idioma',
+  'header.home': 'Página inicial de ngx-lift e clr-lift',
   'header.openGitHub': 'Abrir no GitHub',
   'header.codeLicensed': 'Código sob licença',
   'nav.signalUtils': 'Utilitários de Signal',
@@ -166,10 +167,6 @@ export const ptBRTranslations: Record<string, string> = {
   'nav.range': 'Intervalo',
   'nav.isHttps': 'É Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Primeiros passos',
   'home.prerequisite': 'Estas instruções são para Angular 21. Comece em uma aplicação Angular standalone existente.',
   'home.ngxLift.setup':

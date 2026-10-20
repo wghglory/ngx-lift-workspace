@@ -21,7 +21,6 @@ import {UserCardComponent} from '../user-card/user-card.component';
     TranslatePipe,
   ],
   templateUrl: './filter-users.component.html',
-  styleUrl: './filter-users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterUsersComponent {

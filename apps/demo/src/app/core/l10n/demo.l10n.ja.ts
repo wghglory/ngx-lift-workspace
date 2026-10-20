@@ -134,6 +134,7 @@ export const jaTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'チーム B のメンバー（別スコープ）',
   'queryOwnership.teamBReads': 'チーム B のリクエスト数',
   'header.selectLanguage': '言語を選択',
+  'header.home': 'ngx-lift と clr-lift のホーム',
   'header.openGitHub': 'GitHub で開く',
   'header.codeLicensed': 'ライセンス：',
   'nav.signalUtils': 'Signal ユーティリティ',
@@ -165,10 +166,6 @@ export const jaTranslations: Record<string, string> = {
   'nav.range': '範囲',
   'nav.isHttps': 'Https 判定',
   'nav.differenceInDays': '日数差',
-  'nav.badgeNew': '新規',
-  'nav.badgeUpdated': '更新',
-  'nav.badgePopular': '人気',
-  'nav.badgeCore': 'コア',
   'home.start': 'はじめに',
   'home.prerequisite': 'この手順は Angular 21 向けです。既存のスタンドアロン Angular アプリから始めます。',
   'home.ngxLift.setup':

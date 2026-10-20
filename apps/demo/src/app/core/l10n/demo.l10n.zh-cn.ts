@@ -120,6 +120,7 @@ export const zhCNTranslations: Record<string, string> = {
   'queryOwnership.otherScope': '团队 B 成员（独立作用域）',
   'queryOwnership.teamBReads': '团队 B 请求数',
   'header.selectLanguage': '选择语言',
+  'header.home': 'ngx-lift 和 clr-lift 首页',
   'header.openGitHub': '在 GitHub 上查看',
   'header.codeLicensed': '代码开源协议',
   'nav.signalUtils': 'Signal 工具',
@@ -151,10 +152,6 @@ export const zhCNTranslations: Record<string, string> = {
   'nav.range': '区间范围 (Range)',
   'nav.isHttps': 'HTTPS 校验 (Is Https)',
   'nav.differenceInDays': '天数差计算 (differenceInDays)',
-  'nav.badgeNew': '最新',
-  'nav.badgeUpdated': '更新',
-  'nav.badgePopular': '热门',
-  'nav.badgeCore': '核心',
   'home.start': '开始使用',
   'home.prerequisite': '以下步骤适用于 Angular 21。请从已有的独立 Angular 应用开始。',
   'home.ngxLift.setup':

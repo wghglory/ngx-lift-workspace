@@ -132,6 +132,7 @@ export const koTranslations: Record<string, string> = {
   'queryOwnership.otherScope': '팀 B 멤버(다른 범위)',
   'queryOwnership.teamBReads': '팀 B 요청 수',
   'header.selectLanguage': '언어 선택',
+  'header.home': 'ngx-lift 및 clr-lift 홈',
   'header.openGitHub': 'GitHub에서 열기',
   'header.codeLicensed': '코드 라이선스:',
   'nav.signalUtils': 'Signal 유틸리티',
@@ -163,10 +164,6 @@ export const koTranslations: Record<string, string> = {
   'nav.range': '범위',
   'nav.isHttps': 'Https 확인',
   'nav.differenceInDays': '일수 차이',
-  'nav.badgeNew': '신규',
-  'nav.badgeUpdated': '업데이트',
-  'nav.badgePopular': '인기',
-  'nav.badgeCore': '핵심',
   'home.start': '시작하기',
   'home.prerequisite': '이 안내는 Angular 21을 대상으로 합니다. 기존 독립형 Angular 애플리케이션에서 시작하세요.',
   'home.ngxLift.setup':

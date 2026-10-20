@@ -10,3 +10,13 @@ pre:focus-visible {
   outline: 2px solid var(--clr-color-action-600);
   outline-offset: 2px;
 }
+
+:host-context(app-demo-playground) pre {
+  margin: 0;
+  border-radius: 0;
+  border: none;
+}
+
+:host-context([cds-theme='dark'] app-demo-playground) pre {
+  background-color: #030712;
+}

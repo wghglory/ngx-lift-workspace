@@ -3,9 +3,6 @@ app-vertical-nav {
   display: contents;
 
   .clr-vertical-nav {
-    min-width: 17rem;
-    width: 17rem;
-
     .nav-group-content {
       height: auto !important;
       min-height: 2.25rem;
@@ -28,36 +25,29 @@ app-vertical-nav {
       box-sizing: border-box;
 
       .nav-text {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
         line-height: 1.35;
-        overflow: visible;
-        width: 100%;
-
-        .nav-label-text {
-          flex: 1 1 auto;
-          white-space: normal;
-          overflow-wrap: anywhere;
-        }
-
-        .badge {
-          flex-shrink: 0;
-          font-size: 0.65rem;
-          line-height: 1;
-          padding: 0.2rem 0.45rem;
-          border-radius: 9999px;
-          font-weight: 600;
-          letter-spacing: 0.02em;
-
-          &.badge-purple {
-            background-color: #7e3af2;
-            color: #ffffff;
-          }
-        }
       }
+    }
+  }
+}
+
+// Clarity creates the close button inside its view, so this integration uses the
+// component's existing unencapsulated stylesheet and stays scoped to its host.
+@media (max-width: 575px) {
+  app-root .main-container.open-overflow-menu app-vertical-nav {
+    --demo-overflow-width: min(288px, calc(100vw - 80px));
+
+    .clr-vertical-nav.clr-nav-level-2 {
+      width: var(--demo-overflow-width);
+      max-width: var(--demo-overflow-width);
+    }
+
+    .clr-nav-close {
+      right: var(--demo-overflow-width);
+      margin-inline: 12px;
+      transform: none;
     }
   }
 }

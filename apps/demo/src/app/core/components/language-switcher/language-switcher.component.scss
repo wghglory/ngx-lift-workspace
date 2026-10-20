@@ -47,8 +47,18 @@
   margin-left: 0.5rem;
 }
 
+.lang-code {
+  display: none;
+}
+
 @media (max-width: 575px) {
-  .language-trigger .lang-text {
-    max-width: 3rem;
+  .language-trigger .lang-text,
+  .language-trigger > clr-icon {
+    display: none;
+  }
+
+  .lang-code {
+    display: inline;
+    white-space: nowrap;
   }
 }

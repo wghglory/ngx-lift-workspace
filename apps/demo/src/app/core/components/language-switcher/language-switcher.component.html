@@ -7,6 +7,7 @@
   >
     <clr-icon shape="world" />
     <span class="lang-text">{{ currentLabel() }}</span>
+    <span class="lang-code" [attr.lang]="activeLanguageCode()" aria-hidden="true">{{ compactLabel() }}</span>
     <clr-icon shape="angle" dir="down" class="dropdown-caret" size="12" />
   </button>
   <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>

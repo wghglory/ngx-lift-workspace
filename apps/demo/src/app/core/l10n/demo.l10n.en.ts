@@ -134,6 +134,7 @@ export const enTranslations: Record<string, string> = {
   'queryOwnership.otherScope': 'Team B members (separate scope)',
   'queryOwnership.teamBReads': 'Team B requests',
   'header.selectLanguage': 'Select Language',
+  'header.home': 'ngx-lift and clr-lift home',
   'header.openGitHub': 'Open on GitHub',
   'header.codeLicensed': 'Code licensed under',
   'nav.signalUtils': 'Signal Utils',
@@ -165,10 +166,6 @@ export const enTranslations: Record<string, string> = {
   'nav.range': 'Range',
   'nav.isHttps': 'Is Https',
   'nav.differenceInDays': 'differenceInDays',
-  'nav.badgeNew': 'NEW',
-  'nav.badgeUpdated': 'UPDATED',
-  'nav.badgePopular': 'POPULAR',
-  'nav.badgeCore': 'CORE',
   'home.start': 'Get started',
   'home.prerequisite': 'These instructions target Angular 21. Begin in an existing standalone Angular application.',
   'home.ngxLift.setup':
