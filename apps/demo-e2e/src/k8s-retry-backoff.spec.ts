@@ -8,12 +8,12 @@ test.describe('Kubernetes 429 Retry Backoff Demos', () => {
     await expect(page.getByTestId('retry-scenarios')).toContainText('executeSimulation');
     await expect(page.getByTestId('retry-scenarios')).not.toContainText('@Component({ ... })');
     await testInfo.attach('operator-page', {body: await page.screenshot(), contentType: 'image/png'});
-    await page.getByRole('link', {name: 'k8sRetryBackoffInterceptor', exact: true}).click();
+    await page.getByRole('main').getByRole('link', {name: 'k8sRetryBackoffInterceptor', exact: true}).click();
     await expect(page).toHaveURL(/\/interceptors\/k8sRetryBackoff$/);
     await expect(page.locator('app-code-block').first()).toContainText('k8sRetryBackoffInterceptor');
     await expect(page.getByTestId('interceptor-scenarios')).toContainText('executeRequest');
     await testInfo.attach('interceptor-page', {body: await page.screenshot(), contentType: 'image/png'});
-    await page.getByRole('link', {name: 'retryOnK8sBackoff', exact: true}).click();
+    await page.getByRole('main').getByRole('link', {name: 'retryOnK8sBackoff', exact: true}).click();
     await expect(page).toHaveURL(/\/operators\/k8sRetryBackoff$/);
   });
 
