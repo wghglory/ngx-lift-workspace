@@ -1,0 +1,78 @@
+<fieldset [disabled]="disabled()" [attr.aria-describedby]="prefix + '-help ' + prefix + '-limits'">
+  <legend class="clr-sr-only">{{ label() || ('key-value.labels' | translate) }}</legend>
+  <p [hidden]="!helper()" [id]="prefix + '-help'" class="clr-subtext">{{ helper() }}</p>
+  @for (row of rows(); track row.id; let i = $index) {
+    <div class="entry" cds-layout="horizontal gap:sm align:top">
+      <cll-key-value-field
+        class="field"
+        [groupHelpId]="prefix + '-help'"
+        [attr.data-key-id]="row.id"
+        [controlId]="prefix + '-key-' + row.id"
+        [label]="('key-value.key' | translate) + ' ' + (i + 1)"
+        [defaultPlaceholder]="'key-value.key' | translate"
+        [value]="row.key"
+        [config]="keyEditor(row)"
+        [disabled]="disabled()"
+        [readonly]="readonly()"
+        [errors]="rowErrors().get(i)?.key"
+        [showErrors]="touchedFields().has(row.id + '-key')"
+        (blurred)="touchField(row.id, 'key')"
+        (changed)="edit(row.id, 'key', $event)"
+      />
+      <cll-key-value-field
+        class="field"
+        [groupHelpId]="prefix + '-help'"
+        [controlId]="prefix + '-value-' + row.id"
+        [label]="('key-value.value' | translate) + ' ' + (i + 1)"
+        [defaultPlaceholder]="'key-value.value' | translate"
+        [value]="row.value"
+        [config]="valueEditor(row.key)"
+        [disabled]="disabled()"
+        [readonly]="readonly()"
+        [errors]="rowErrors().get(i)?.value"
+        [showErrors]="touchedFields().has(row.id + '-value')"
+        (blurred)="touchField(row.id, 'value')"
+        (changed)="edit(row.id, 'value', $event)"
+      />
+      <button
+        type="button"
+        class="btn btn-sm btn-link btn-icon"
+        [disabled]="blocked() || rows().length <= minRows()"
+        [attr.aria-label]="('key-value.delete' | translate) + ' ' + (i + 1)"
+        (pointerdown)="$event.preventDefault()"
+        (click)="remove(row.id)"
+      >
+        <clr-icon shape="times" aria-hidden="true" />
+      </button>
+    </div>
+  }
+  <p
+    class="clr-subtext error"
+    [hidden]="!errors()?.keyValue?.minRows && !errors()?.keyValue?.maxRows"
+    [id]="prefix + '-limits'"
+  >
+    @if (errors()?.keyValue?.minRows) {
+      {{ 'key-value.minRows' | translate: minRows() }}
+    }
+    @if (errors()?.keyValue?.maxRows) {
+      {{ 'key-value.maxRows' | translate: maxRows() }}
+    }
+  </p>
+  <button
+    [attr.aria-describedby]="addDisabledReason() ? prefix + '-add-help' : null"
+    data-add
+    type="button"
+    class="btn btn-sm btn-outline"
+    (pointerdown)="$event.preventDefault()"
+    (click)="add()"
+    [disabled]="addDisabled()"
+  >
+    {{ addText() || ('key-value.add' | translate) }}
+  </button>
+  <span class="clr-subtext" [id]="prefix + '-add-help'" [hidden]="!addDisabledReason()">{{ addDisabledReason() }}</span>
+  <span role="status" class="clr-sr-only">
+    @if (announcementCount() !== null) {
+      {{ 'key-value.rowCount' | translate: announcementCount() }}
+    }
+  </span>
+</fieldset>

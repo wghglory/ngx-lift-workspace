@@ -22,6 +22,12 @@ and ⏸️ **Deferred** are not completed work. Local validation, remote merge a
 | 10   | Previous order 3: SSR/hydration                                                              | ⏸️ Lower priority                                           | Request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency need dedicated consumers. Node DOM tests do not prove SSR or hydration.                                                                                                                                                                                                                                               |
 | 11   | Large-collection scheduling and advanced cache features                                      | ⏸️ Demand-driven                                            | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback require concrete consumers and ownership contracts.                                                                                                                                                                                                                                               |
 
+The October 19 key/value delivery adds `cll-key-value-control` for fresh array values while retaining the existing
+FormArray editor. Three Angular 21 form demos, all supported dictionaries, cross-browser journeys and strict installed
+zoneless/ZoneJS consumers are locally verified; the
+[feature evidence](design/clr-lift/key-value-inputs-design-spec.md#evidence) records scope and remaining human/release
+gates. Other proposed component APIs remain drafts.
+
 ## Repairs before extending the affected APIs
 
 The [active gap register](design/implementation-gaps.md) owns source evidence and acceptance criteria. Preserve

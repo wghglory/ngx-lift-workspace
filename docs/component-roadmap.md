@@ -1,6 +1,6 @@
 # Clarity component roadmap
 
-Status: **Draft for maintainer review**. Updated October 18, 2026 (Asia/Shanghai). This document proposes order and
+Status: **Draft for maintainer review**. Updated October 19, 2026 (Asia/Shanghai). This document proposes order and
 scope; it does not approve APIs or authorize component implementation. The [delivery roadmap](priority-roadmap.md)
 retains existing release, security, and acceptance work.
 
@@ -10,7 +10,7 @@ retains existing release, security, and acceptance work.
 | ----------- | -------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | 0           | Spec template and development workflow | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                      |
 | 1           | Angular 21 shared form contract        | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass |
-| 2           | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Array value API and legacy migration approved                      |
+| 2           | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass      |
 | 3           | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified            |
 | 4           | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified       |
 | 5           | Deep object-path breadcrumbs           | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
@@ -31,7 +31,8 @@ compatible migration is approved. Release fixes, security remediation, and pendi
 - `ngx-lift` is **21.4.0** and `clr-lift` **21.3.0**. Their current broad Angular peers are not proof of Angular 22
   support.
 - `toSignalForm(FormGroup)` exposes signals over Reactive Forms. It does not create an Angular Signal Forms `FieldTree`.
-- The existing key/value control requires a `FormArray`; it is not yet a general value control for all form modes.
+- `cll-key-value-inputs` retains its caller-owned `FormArray`; additive `cll-key-value-control` binds one immutable
+  array through ngModel, typed Reactive Forms and `toSignalForm`.
 - Clarity also supplies breadcrumbs, badges, and labels. Compare its real behavior before adding equivalents.
 
 ## Package release decision
@@ -48,7 +49,8 @@ The maintainer's October 16 direction settles the delivery order:
    Demonstrate the existing `toSignalForm(FormGroup)` facade as Reactive Forms integration. Do not add native Signal
    Forms dependencies or bindings in this phase. Ordinary Angular signals remain valid implementation tools.
 2. Review and deliver controls in the order above. A new key/value value API must coexist with the existing required
-   FormArray API or have a separately approved breaking release; this roadmap does not approve its proposed replacement.
+   FormArray API. The October 19 delivery uses the additive `cll-key-value-control`; no breaking replacement is
+   approved.
 3. Revisit Angular 22 and Nx together in a separate platform PR. At that time select mutually supported pinned Angular,
    CDK, Nx, TypeScript, Node, packaging and test tooling versions using current official compatibility guidance. Recheck
    third-party peers and installed declarations before generating migrations. No dependency pins change in this PR.
@@ -62,10 +64,11 @@ The maintainer's October 16 direction settles the delivery order:
 
 The [forms contract](design/clr-lift/forms-compatibility-design-spec.md) owns the two phases and acceptance matrix. Its
 October 18 contract revision `1e3ae98` was accepted by the maintainer in chat review: owner writes/reset, composite
-touch, Angular commit timing, validation and payload policy have concrete examples and gates. Implementation and
-installed-consumer proof remain pending; the shared-form roadmap item is not complete merely because the contract is
-written. Compatibility/release policy for the upgrade remains open; the decision to deliver Angular 21 controls first is
-settled.
+touch, Angular commit timing, validation and payload policy have concrete examples and gates. The additive key/value
+control now supplies three real integration demos and strict installed Angular 21 templates/DOM hosts in zoneless and
+ZoneJS modes. This proves that control's phase-1 integration; native fields and independent human acceptance remain
+separate gates. Compatibility/release policy for the upgrade remains open; the decision to deliver Angular 21 controls
+first is settled.
 
 ## Specifications to review
 
@@ -94,6 +97,7 @@ have useful tests; keep migration, new controls, and Postgres integration indepe
 
 ## Current validation boundary
 
-This change contains planning and agent instructions only. Source and reference inspection informed the proposals.
-Component demos, unit tests, E2E, installed Angular 22 consumers, performance measurements, human translation review,
-and publication are future acceptance work. Documentation formatting, links, and diff checks are recorded separately.
+The [key/value spec](design/clr-lift/key-value-inputs-design-spec.md#evidence) records the additive control's local
+unit, browser, localization and installed Angular 21 evidence. Other proposed controls remain drafts. Installed Angular
+22 consumers, dedicated large-scale performance measurements, independent human language/accessibility review, CI, merge
+and publication remain separate work.

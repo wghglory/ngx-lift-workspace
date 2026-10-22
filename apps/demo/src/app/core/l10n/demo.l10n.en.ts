@@ -1,4 +1,49 @@
 export const enTranslations: Record<string, string> = {
+  'keyValueRecipes.title': 'Choose editors for your data',
+  'keyValueRecipes.keySelect': 'Select a key, enter a value',
+  'keyValueRecipes.keySelectHelp': 'Restrict keys to known options while keeping values as free text.',
+  'keyValueRecipes.valueSelect': 'Enter a key, select a value',
+  'keyValueRecipes.valueSelectHelp': 'Choose a stored value from labeled options.',
+  'keyValueRecipes.bothSelect': 'Select both key and value',
+  'keyValueRecipes.bothSelectHelp': 'Changing the key clears the old value. Choose a value from the new options.',
+  'keyValueRecipes.dependent': 'Dependent value choices',
+  'keyValueRecipes.dependentHelp': 'Changing the key clears the old value. Choose a value from the new options.',
+  'keyValueRecipes.tags': 'Tags with repeated categories',
+  'keyValueRecipes.tagsHelp':
+    'Allow repeated keys but reject duplicate key/value pairs. Custom validators reject surrounding whitespace.',
+  'keyValueRecipes.schema': 'Typed configuration',
+  'keyValueRecipes.schemaHelp':
+    'Search for an unused key. Values retain their string, number, boolean or string-array type.',
+  'keyValueRecipes.tagError': 'Do not start or end with whitespace',
+  'keyValueRecipes.arrayHelp': 'One item per line',
+  'keyValueControl.rowPolicy':
+    'Optional lists can start empty. When a pair is required, initialize one blank row and set minRows to 1. Add stays available while rows are incomplete; errors appear after blur or submit.',
+  'keyValueControl.statePolicy':
+    'Disabled prevents interaction and follows Angular form exclusion rules. Readonly keeps values included and available for inspection. Both can be set; disabled takes precedence.',
+  'keyValueControl.title': 'Bind the list as one form control',
+  'keyValueControl.overview':
+    'Use cll-key-value-control for one ordered array value. Existing FormArray applications can keep cll-key-value-inputs below.',
+  'keyValueControl.modelTitle': 'ngModel: edit and submit',
+  'keyValueControl.modelHelp':
+    'Edit labels, add or delete rows, then submit. Empty rows and duplicate keys block submission. Reset restores the original labels; at most three rows are allowed.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: commit on blur',
+  'keyValueControl.reactiveHelp':
+    'Edits reach the typed FormControl when focus leaves the entire editor. Moving between its fields does not commit or touch it. Reset restores the non-null default. Disabling the editor disables this single-control form and prevents submission.',
+  'keyValueControl.facadeTitle': 'toSignalForm: commit on submit',
+  'keyValueControl.facadeHelp':
+    'The facade observes the same FormGroup. Submit commits buffered edits before validation. The payload uses includeDisabled: false; readonly labels remain included. At least one row is required.',
+  'keyValueControl.labels': 'Labels',
+  'keyValueControl.reset': 'Reset',
+  'keyValueControl.disabled': 'Disabled',
+  'keyValueControl.readonly': 'Readonly',
+  'keyValueControl.value': 'Owner value',
+  'keyValueControl.state': 'Form state',
+  'keyValueControl.payload': 'Submitted payload',
+  'keyValueControl.invalid': 'Correct the validation errors before saving.',
+  'keyValueControl.pending': 'Validation is pending. Submit again after it completes.',
+  'keyValueControl.legacy': 'Manage row controls with FormArray',
+  'keyValueControl.api':
+    'Bind KeyValueEntry[] with ngModel or a FormControl. label and helper supply accessible text; minRows and maxRows constrain count; uniqueKeys defaults to true. readonly preserves form inclusion. The form owner controls disabled state and required validation.',
   'docsLearn.resourceTitle': 'Load data when a signal changes',
   'docsLearn.basics': 'Basics',
   'docsLearn.recipes': 'Practical recipes',
@@ -1208,7 +1253,7 @@ export const enTranslations: Record<string, string> = {
   'keyValueInputs.example1': 'Example 1: Basic Usage',
   'keyValueInputs.example1Desc':
     'Create a form with a FormArray and use KeyValueInputsComponent to manage key-value pairs:',
-  'keyValueInputs.example2': 'Example 2: Interactive Demo',
+  'keyValueInputs.example2': 'FormArray: edit individual rows',
   'keyValueInputs.example2Desc': 'Try adding, editing, and removing key-value pairs in the form below:',
   'keyValueInputs.callout':
     'Explore how the KeyValueInputsComponent leverages the UniqueValidator to perform validation against key controls. Click here to learn how uniqueness is enforced in key input fields.',

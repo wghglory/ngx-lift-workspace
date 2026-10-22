@@ -1,4 +1,48 @@
 export const jaTranslations: Record<string, string> = {
+  'keyValueRecipes.title': 'データに合ったエディターを選択',
+  'keyValueRecipes.keySelect': 'キーを選択して値を入力',
+  'keyValueRecipes.keySelectHelp': 'キーを既知の選択肢に制限し、値は自由に入力できます。',
+  'keyValueRecipes.valueSelect': 'キーを入力して値を選択',
+  'keyValueRecipes.valueSelectHelp': 'ラベル付きの選択肢から保存する値を選びます。',
+  'keyValueRecipes.bothSelect': 'キーと値を選択',
+  'keyValueRecipes.bothSelectHelp': 'キーを変更すると以前の値がクリアされます。新しい選択肢から値を選んでください。',
+  'keyValueRecipes.dependent': 'キーに応じた値の選択肢',
+  'keyValueRecipes.dependentHelp': 'キーを変更すると以前の値がクリアされます。新しい選択肢から値を選んでください。',
+  'keyValueRecipes.tags': '同じカテゴリのタグ',
+  'keyValueRecipes.tagsHelp':
+    '同じキーは許可しますが、キーと値の重複は拒否します。カスタム検証で先頭と末尾の空白を拒否します。',
+  'keyValueRecipes.schema': '型付きの設定',
+  'keyValueRecipes.schemaHelp': '未使用のキーを検索します。値は文字列、数値、真偽値、文字列配列の型を保持します。',
+  'keyValueRecipes.tagError': '先頭と末尾に空白を入れないでください',
+  'keyValueRecipes.arrayHelp': '1行に1項目',
+  'keyValueControl.rowPolicy':
+    '任意のリストは空で開始できます。ペアが必須の場合は空の行を1つ初期化し、minRows を 1 に設定します。未入力の行があっても追加でき、エラーはフォーカスが離れたときや送信時に表示されます。',
+  'keyValueControl.statePolicy':
+    'Disabled は操作を禁止し、Angular のフォーム除外規則に従います。Readonly は値を保持し、閲覧を許可します。両方を設定できますが、Disabled が優先されます。',
+  'keyValueControl.title': 'リストを単一のフォームコントロールにバインド',
+  'keyValueControl.overview':
+    'cll-key-value-control で順序付き配列を編集します。既存の FormArray アプリは下の cll-key-value-inputs を引き続き使用できます。',
+  'keyValueControl.modelTitle': 'ngModel: 編集して送信',
+  'keyValueControl.modelHelp':
+    'ラベルを編集し、行を追加または削除して送信します。空のフィールドや重複キーがあると送信できません。リセットで初期ラベルに戻ります。最大 3 行です。',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: フォーカスが離れたときに確定',
+  'keyValueControl.reactiveHelp':
+    'エディター全体からフォーカスが離れると、型付き FormControl に変更が反映されます。内部フィールド間の移動では確定もタッチ状態への変更も行いません。リセットで非 null の初期値に戻ります。エディターを無効にすると、単一コントロールのフォーム全体が無効になり、送信できなくなります。',
+  'keyValueControl.facadeTitle': 'toSignalForm: 送信時に確定',
+  'keyValueControl.facadeHelp':
+    'ファサードは同じ FormGroup を監視します。送信時に保留中の変更を反映してから検証します。送信データは includeDisabled: false を使用し、読み取り専用のラベルは含まれます。1 行以上が必要です。',
+  'keyValueControl.labels': 'ラベル',
+  'keyValueControl.reset': 'リセット',
+  'keyValueControl.disabled': '無効',
+  'keyValueControl.readonly': '読み取り専用',
+  'keyValueControl.value': 'フォームの値',
+  'keyValueControl.state': 'フォームの状態',
+  'keyValueControl.payload': '送信データ',
+  'keyValueControl.invalid': '保存する前に検証エラーを修正してください。',
+  'keyValueControl.pending': '検証中です。完了後にもう一度送信してください。',
+  'keyValueControl.legacy': 'FormArray で行のコントロールを管理',
+  'keyValueControl.api':
+    'ngModel または FormControl で KeyValueEntry[] をバインドします。label と helper はアクセシブルなテキスト、minRows と maxRows は行数の制限、uniqueKeys の初期値は true です。readonly でもフォームに値が含まれます。無効状態と必須検証はフォームが管理します。',
   'docsLearn.resourceTitle': 'シグナルの変化に応じてデータを読み込む',
   'docsLearn.basics': '基本',
   'docsLearn.recipes': '実用例',
@@ -1215,7 +1259,7 @@ export const jaTranslations: Record<string, string> = {
     '<code>KeyValueInputsComponent</code>は、キー値ペアの入力に特化したAngularコンポーネントです。ユーザーがFormArrayとの統合により、キー値ペアを追加、編集、削除できるダイナミックフォームを提供し、リアルタイムでの検証とスマートなキーボードナビゲーションをサポートします。',
   'keyValueInputs.example1': '例1: 基本的な使用',
   'keyValueInputs.example1Desc': 'FormArrayを持つフォームを作成し、KeyValueInputsComponentを使用してキー値ペアを管理:',
-  'keyValueInputs.example2': '例2: インタラクティブなデモ',
+  'keyValueInputs.example2': 'FormArray: 個別の行を編集',
   'keyValueInputs.example2Desc': '以下のフォームでキーと値のペアを追加、編集、削除してみてください:',
   'keyValueInputs.callout':
     'KeyValueInputsComponentは、UniqueValidatorを活用してキー制御に対して検証を行う方法を探索してください。ここでは、キー入力フィールドで一意性がどのように強制されるかを学んでください。',

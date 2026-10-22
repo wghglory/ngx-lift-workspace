@@ -337,11 +337,11 @@ describe('QueryDevtoolsComponent', () => {
   it('renders an empty state and updates open-dialog labels when language changes', () => {
     mount();
     click('Query devtools');
-    expect(fixture.nativeElement.textContent).toContain(queryDevtoolsTranslations.en.empty);
+    expect(fixture.nativeElement.textContent).toContain(queryDevtoolsTranslations['en']['empty']);
     TestBed.inject(TranslationService).setLanguage('zh-CN', false);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('查询开发工具');
-    expect(fixture.nativeElement.textContent).toContain(queryDevtoolsTranslations['zh-CN'].empty);
+    expect(fixture.nativeElement.textContent).toContain(queryDevtoolsTranslations['zh-CN']['empty']);
   });
 
   it('limits rendered query rows to one page', async () => {
@@ -416,7 +416,7 @@ describe('QueryDevtoolsComponent', () => {
   });
 
   it('provides the same nonempty labels for every supported locale', () => {
-    const keys = Object.keys(queryDevtoolsTranslations.en).sort();
+    const keys = Object.keys(queryDevtoolsTranslations['en']).sort();
     for (const labels of Object.values(queryDevtoolsTranslations)) {
       expect(Object.keys(labels).sort()).toEqual(keys);
       expect(Object.values(labels).every((value) => value.trim().length > 0)).toBe(true);

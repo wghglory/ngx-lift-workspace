@@ -1,4 +1,50 @@
 export const frTranslations: Record<string, string> = {
+  'keyValueRecipes.title': 'Choisir les éditeurs adaptés aux données',
+  'keyValueRecipes.keySelect': 'Sélectionner une clé et saisir une valeur',
+  'keyValueRecipes.keySelectHelp': 'Limitez les clés aux options connues et conservez les valeurs en texte libre.',
+  'keyValueRecipes.valueSelect': 'Saisir une clé et sélectionner une valeur',
+  'keyValueRecipes.valueSelectHelp': 'Choisissez une valeur stockée parmi les options libellées.',
+  'keyValueRecipes.bothSelect': 'Sélectionner la clé et la valeur',
+  'keyValueRecipes.bothSelectHelp': 'Configurez les deux champs indépendamment.',
+  'keyValueRecipes.dependent': 'Choix de valeurs dépendants',
+  'keyValueRecipes.dependentHelp':
+    'Changer la clé efface la valeur précédente. Choisissez une valeur parmi les nouvelles options.',
+  'keyValueRecipes.tags': 'Étiquettes avec catégories répétées',
+  'keyValueRecipes.tagsHelp':
+    'Autorisez les clés répétées, mais refusez les paires identiques. Des validateurs personnalisés refusent les espaces au début et à la fin.',
+  'keyValueRecipes.schema': 'Configuration typée',
+  'keyValueRecipes.schemaHelp':
+    'Recherchez une clé inutilisée. Les valeurs conservent leur type : texte, nombre, booléen ou tableau de chaînes.',
+  'keyValueRecipes.tagError': 'Aucun espace au début ou à la fin',
+  'keyValueRecipes.arrayHelp': 'Un élément par ligne',
+  'keyValueControl.rowPolicy':
+    'Une liste facultative peut être vide. Pour une paire obligatoire, initialisez une ligne vide et définissez minRows à 1. L’ajout reste possible avec des lignes incomplètes ; les erreurs apparaissent à la perte du focus ou à l’envoi.',
+  'keyValueControl.statePolicy':
+    'Disabled empêche les interactions et suit les règles d’exclusion des formulaires Angular. Readonly conserve les valeurs et permet leur consultation. Les deux sont possibles ; Disabled est prioritaire.',
+  'keyValueControl.title': 'Lier la liste à un seul contrôle de formulaire',
+  'keyValueControl.overview':
+    'Utilisez cll-key-value-control pour un tableau ordonné. Les applications FormArray peuvent conserver cll-key-value-inputs ci-dessous.',
+  'keyValueControl.modelTitle': 'ngModel : modifier et envoyer',
+  'keyValueControl.modelHelp':
+    'Modifiez les étiquettes, ajoutez ou supprimez des lignes, puis envoyez le formulaire. Les champs vides et les clés en double bloquent l’envoi. Réinitialiser restaure les étiquettes initiales ; trois lignes au maximum sont autorisées.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms : valider à la sortie',
+  'keyValueControl.reactiveHelp':
+    'Les modifications atteignent le FormControl typé lorsque le focus quitte tout l’éditeur. Les déplacements internes ne valident rien et ne marquent pas le champ comme touché. Réinitialiser restaure la valeur par défaut non nulle. Désactiver l’éditeur désactive ce formulaire à un seul contrôle et empêche son envoi.',
+  'keyValueControl.facadeTitle': 'toSignalForm : valider à l’envoi',
+  'keyValueControl.facadeHelp':
+    'La façade observe le même FormGroup. L’envoi applique les modifications en attente avant la validation. Les données utilisent includeDisabled: false ; les étiquettes en lecture seule restent incluses. Au moins une ligne est requise.',
+  'keyValueControl.labels': 'Étiquettes',
+  'keyValueControl.reset': 'Réinitialiser',
+  'keyValueControl.disabled': 'Désactivé',
+  'keyValueControl.readonly': 'Lecture seule',
+  'keyValueControl.value': 'Valeur du champ',
+  'keyValueControl.state': 'État du formulaire',
+  'keyValueControl.payload': 'Données envoyées',
+  'keyValueControl.invalid': 'Corrigez les erreurs de validation avant d’enregistrer.',
+  'keyValueControl.pending': 'Validation en cours. Envoyez à nouveau après sa fin.',
+  'keyValueControl.legacy': 'Gérer les contrôles des lignes avec FormArray',
+  'keyValueControl.api':
+    'Liez KeyValueEntry[] avec ngModel ou FormControl. label et helper fournissent du texte accessible ; minRows et maxRows limitent les lignes ; uniqueKeys vaut true par défaut. readonly conserve la valeur dans le formulaire. Le formulaire contrôle la désactivation et la validation obligatoire.',
   'docsLearn.resourceTitle': 'Charger des données quand un signal change',
   'docsLearn.basics': 'Bases',
   'docsLearn.recipes': 'Exemples pratiques',
@@ -1265,7 +1311,7 @@ export const frTranslations: Record<string, string> = {
   'keyValueInputs.example1': 'Exemple 1: Utilisation de base',
   'keyValueInputs.example1Desc':
     'Créer un formulaire avec un FormArray et utiliser KeyValueInputsComponent pour gérer les paires de valeurs clés :',
-  'keyValueInputs.example2': 'Exemple 2 : Démo interactive',
+  'keyValueInputs.example2': 'FormArray : modifier chaque ligne',
   'keyValueInputs.example2Desc':
     "Essayez d'ajouter, d'éditer et de supprimer des paires de valeurs clés dans le formulaire ci-dessous :",
   'keyValueInputs.callout':

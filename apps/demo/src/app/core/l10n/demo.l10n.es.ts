@@ -1,4 +1,49 @@
 export const esTranslations: Record<string, string> = {
+  'keyValueRecipes.title': 'Elegir editores para los datos',
+  'keyValueRecipes.keySelect': 'Seleccionar clave e introducir valor',
+  'keyValueRecipes.keySelectHelp': 'Limite las claves a opciones conocidas y permita valores de texto libre.',
+  'keyValueRecipes.valueSelect': 'Introducir clave y seleccionar valor',
+  'keyValueRecipes.valueSelectHelp': 'Elija un valor almacenado entre las opciones etiquetadas.',
+  'keyValueRecipes.bothSelect': 'Seleccionar clave y valor',
+  'keyValueRecipes.bothSelectHelp': 'Cambiar la clave borra el valor anterior. Elija un valor de las nuevas opciones.',
+  'keyValueRecipes.dependent': 'Opciones de valor dependientes',
+  'keyValueRecipes.dependentHelp': 'Cambiar la clave borra el valor anterior. Elija un valor de las nuevas opciones.',
+  'keyValueRecipes.tags': 'Etiquetas con categorías repetidas',
+  'keyValueRecipes.tagsHelp':
+    'Permita claves repetidas, pero rechace pares duplicados. Los validadores personalizados rechazan espacios al principio o al final.',
+  'keyValueRecipes.schema': 'Configuración tipada',
+  'keyValueRecipes.schemaHelp':
+    'Busque una clave sin usar. Los valores conservan su tipo: texto, número, booleano o lista de textos.',
+  'keyValueRecipes.tagError': 'No empiece ni termine con espacios',
+  'keyValueRecipes.arrayHelp': 'Un elemento por línea',
+  'keyValueControl.rowPolicy':
+    'Las listas opcionales pueden empezar vacías. Si se requiere un par, inicialice una fila vacía y establezca minRows en 1. Se pueden añadir filas incompletas; los errores aparecen al perder el foco o enviar.',
+  'keyValueControl.statePolicy':
+    'Disabled impide la interacción y sigue las reglas de exclusión de Angular. Readonly conserva los valores y permite consultarlos. Ambos pueden activarse; Disabled tiene prioridad.',
+  'keyValueControl.title': 'Vincular la lista como un solo control',
+  'keyValueControl.overview':
+    'Use cll-key-value-control para una matriz ordenada. Las aplicaciones con FormArray pueden seguir usando cll-key-value-inputs a continuación.',
+  'keyValueControl.modelTitle': 'ngModel: editar y enviar',
+  'keyValueControl.modelHelp':
+    'Edite etiquetas, añada o elimine filas y envíe el formulario. Los campos vacíos y las claves duplicadas impiden el envío. Restablecer recupera las etiquetas originales; se permiten como máximo tres filas.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: confirmar al salir',
+  'keyValueControl.reactiveHelp':
+    'Los cambios llegan al FormControl tipado cuando el foco sale de todo el editor. Moverse entre campos internos no confirma cambios ni marca el control como visitado. Restablecer recupera el valor predeterminado no nulo. Deshabilitar el editor deshabilita este formulario de un solo control e impide el envío.',
+  'keyValueControl.facadeTitle': 'toSignalForm: confirmar al enviar',
+  'keyValueControl.facadeHelp':
+    'La fachada observa el mismo FormGroup. El envío confirma los cambios pendientes antes de validar. Los datos usan includeDisabled: false; las etiquetas de solo lectura se incluyen. Se requiere al menos una fila.',
+  'keyValueControl.labels': 'Etiquetas',
+  'keyValueControl.reset': 'Restablecer',
+  'keyValueControl.disabled': 'Deshabilitado',
+  'keyValueControl.readonly': 'Solo lectura',
+  'keyValueControl.value': 'Valor del control',
+  'keyValueControl.state': 'Estado del formulario',
+  'keyValueControl.payload': 'Datos enviados',
+  'keyValueControl.invalid': 'Corrija los errores de validación antes de guardar.',
+  'keyValueControl.pending': 'Validación pendiente. Vuelva a enviar cuando termine.',
+  'keyValueControl.legacy': 'Gestionar controles de filas con FormArray',
+  'keyValueControl.api':
+    'Vincule KeyValueEntry[] con ngModel o FormControl. label y helper proporcionan texto accesible; minRows y maxRows limitan las filas; uniqueKeys es true por defecto. readonly mantiene el valor en el formulario. El formulario controla la deshabilitación y la validación obligatoria.',
   'docsLearn.resourceTitle': 'Cargar datos al cambiar una señal',
   'docsLearn.basics': 'Conceptos básicos',
   'docsLearn.recipes': 'Ejemplos prácticos',
@@ -1259,7 +1304,7 @@ export const esTranslations: Record<string, string> = {
   'keyValueInputs.example1': 'Ejemplo 1: Uso básico',
   'keyValueInputs.example1Desc':
     'Crear un formulario con un FormArray y utilizar KeyValueInputsComponent para gestionar pares de valor clave:',
-  'keyValueInputs.example2': 'Ejemplo 2: Demo interactivo',
+  'keyValueInputs.example2': 'FormArray: editar filas individuales',
   'keyValueInputs.example2Desc': 'Trate de añadir, editar, y eliminar pares de valor clave en el siguiente formulario:',
   'keyValueInputs.callout':
     'Explora cómo el KeyValueInputsComponent aprovecha el UniqueValidator para realizar validación contra los controles clave. Haga clic aquí para saber cómo se aplica la singularidad en los campos de entrada clave.',

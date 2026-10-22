@@ -1,4 +1,47 @@
 export const zhTWTranslations: Record<string, string> = {
+  'keyValueRecipes.title': '選擇適合資料的編輯器',
+  'keyValueRecipes.keySelect': '選擇鍵，輸入值',
+  'keyValueRecipes.keySelectHelp': '將鍵限制為已知選項，值仍可自由輸入。',
+  'keyValueRecipes.valueSelect': '輸入鍵，選擇值',
+  'keyValueRecipes.valueSelectHelp': '從帶標籤的選項中選擇要儲存的值。',
+  'keyValueRecipes.bothSelect': '同時選擇鍵和值',
+  'keyValueRecipes.bothSelectHelp': '變更鍵後清空舊值，請從新的選項中選擇值。',
+  'keyValueRecipes.dependent': '連動的值選項',
+  'keyValueRecipes.dependentHelp': '變更鍵後清空舊值，請從新的選項中選擇值。',
+  'keyValueRecipes.tags': '允許重複類別的標籤',
+  'keyValueRecipes.tagsHelp': '允許重複鍵，但不允許重複的鍵值對。自訂驗證會拒絕首尾空白。',
+  'keyValueRecipes.schema': '具型別的設定',
+  'keyValueRecipes.schemaHelp': '搜尋尚未使用的鍵。值保留字串、數字、布林值或字串陣列型別。',
+  'keyValueRecipes.tagError': '開頭和結尾不能有空白',
+  'keyValueRecipes.arrayHelp': '每行一項',
+  'keyValueControl.rowPolicy':
+    '選填清單可以為空。必須填寫一組鍵值時，請初始化一個空白列並將 minRows 設為 1。列未填完時仍可新增；失焦或提交後顯示錯誤。',
+  'keyValueControl.statePolicy':
+    'Disabled 阻止互動，並遵循 Angular 的表單排除規則。Readonly 保留表單值並允許檢視。兩者可同時設定，此時 Disabled 優先。',
+  'keyValueControl.title': '將清單繫結為一個表單控制項',
+  'keyValueControl.overview':
+    '使用 cll-key-value-control 編輯一個有序陣列值。現有 FormArray 應用程式可以繼續使用下方的 cll-key-value-inputs。',
+  'keyValueControl.modelTitle': 'ngModel：編輯並提交',
+  'keyValueControl.modelHelp':
+    '編輯標籤、新增或刪除列，然後提交。空白欄位和重複鍵會阻止提交。重設會恢復初始標籤，最多允許三列。',
+  'keyValueControl.reactiveTitle': 'Reactive Forms：離開編輯器時提交變更',
+  'keyValueControl.reactiveHelp':
+    '焦點離開整個編輯器時，變更才會寫入具型別的 FormControl。在內部欄位之間移動焦點不會提交變更或標記已觸碰。重設會恢復非空預設值。停用編輯器會停用這個只有一個控制項的表單，並阻止提交。',
+  'keyValueControl.facadeTitle': 'toSignalForm：提交表單時寫入變更',
+  'keyValueControl.facadeHelp':
+    '此介面觀察同一個 FormGroup。提交時先寫入暫存變更，再進行驗證。提交資料使用 includeDisabled: false；唯讀標籤仍包含在內。至少需要一列。',
+  'keyValueControl.labels': '標籤',
+  'keyValueControl.reset': '重設',
+  'keyValueControl.disabled': '停用',
+  'keyValueControl.readonly': '唯讀',
+  'keyValueControl.value': '表單持有的值',
+  'keyValueControl.state': '表單狀態',
+  'keyValueControl.payload': '提交資料',
+  'keyValueControl.invalid': '請修正驗證錯誤後再儲存。',
+  'keyValueControl.pending': '正在驗證，請完成後再次提交。',
+  'keyValueControl.legacy': '使用 FormArray 管理列控制項',
+  'keyValueControl.api':
+    '透過 ngModel 或 FormControl 綁定 KeyValueEntry[]。label 和 helper 提供無障礙文字，minRows 和 maxRows 限制列數，uniqueKeys 預設為 true。readonly 保留表單提交值。停用狀態和必填驗證由表單控制。',
   'docsLearn.resourceTitle': '信號變更時載入資料',
   'docsLearn.basics': '基礎',
   'docsLearn.recipes': '實用範例',
@@ -1118,7 +1161,7 @@ export const zhTWTranslations: Record<string, string> = {
     '<code>KeyValueInputsComponent</code> 專為動態編輯鍵值對設計。與 FormArray 整合，支援動態增刪改與鍵盤捷徑導航。',
   'keyValueInputs.example1': '範例 1：基本用法',
   'keyValueInputs.example1Desc': '配合 FormArray 管理鍵值對：',
-  'keyValueInputs.example2': '範例 2：即時互動示範',
+  'keyValueInputs.example2': 'FormArray：編輯各列',
   'keyValueInputs.example2Desc': '在下方表單中體驗新增、編輯與刪除鍵值對：',
   'keyValueInputs.callout':
     '探索 KeyValueInputsComponent 如何利用 UniqueValidator 對鍵輸入執行唯一性校驗。點選此處瞭解如何在鍵輸入欄位中保證唯一性。',

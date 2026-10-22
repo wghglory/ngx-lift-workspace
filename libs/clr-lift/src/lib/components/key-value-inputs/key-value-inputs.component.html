@@ -6,6 +6,7 @@
         clrInput
         [id]="controlIdPrefix + '-key-' + i"
         [formControl]="kvControl.controls.key"
+        [placeholder]="'key-value.key' | translate"
         [size]="inputSize()"
         (blur)="validateKeyControl(kvControl.controls.key)"
       />
@@ -30,6 +31,7 @@
         clrInput
         [id]="controlIdPrefix + '-value-' + i"
         [formControl]="kvControl.controls.value"
+        [placeholder]="'key-value.value' | translate"
         [size]="inputSize()"
       />
       <clr-control-helper>{{ valueHelper() }}</clr-control-helper>

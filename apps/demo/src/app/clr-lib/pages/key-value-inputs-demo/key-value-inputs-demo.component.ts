@@ -14,12 +14,16 @@ import {
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
+import {KeyValueRecipesComponent} from './key-value-recipes.component';
+import {KeyValueControlExampleComponent} from './key-value-control-example.component';
 import {highlight} from '../../../shared/utils/highlight.util';
 
 @Component({
   selector: 'app-key-value-inputs-demo',
   imports: [
     CommonModule,
+    KeyValueControlExampleComponent,
+    KeyValueRecipesComponent,
     DemoPlaygroundComponent,
     CalloutComponent,
     RouterLink,
@@ -36,6 +40,84 @@ import {highlight} from '../../../shared/utils/highlight.util';
 })
 export class KeyValueInputsDemoComponent {
   private readonly translationService = inject(TranslationService);
+
+  readonly modelCode = highlight(`import {Component} from '@angular/core';
+import {FormsModule, NgForm} from '@angular/forms';
+import {KeyValueControlComponent, KeyValueEntry} from 'clr-lift';
+@Component({
+  imports: [FormsModule, KeyValueControlComponent],
+  template: \`<form #form="ngForm" (ngSubmit)="save(form)">
+    <cll-key-value-control name="labels" [(ngModel)]="labels" label="Labels" required [maxRows]="3" />
+    <button class="btn btn-primary" type="submit">Submit</button>
+    <button class="btn" type="button" (click)="form.resetForm({labels: initial})">Reset</button>
+  </form>\`,
+})
+export class LabelsExample {
+  readonly initial: KeyValueEntry[] = [{key: 'team', value: 'data'}];
+  labels: KeyValueEntry[] = this.initial;
+  payload: unknown;
+  save(form: NgForm) {
+    form.control.markAllAsTouched();
+    if (form.valid) this.payload = form.value;
+  }
+}`);
+  readonly reactiveCode = highlight(`import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {KeyValueControlComponent, KeyValueEntry} from 'clr-lift';
+@Component({
+  imports: [ReactiveFormsModule, KeyValueControlComponent],
+  template: \`<form [formGroup]="form" (ngSubmit)="save()">
+    <cll-key-value-control formControlName="labels" label="Labels" [minRows]="1" [maxRows]="3" />
+    <button class="btn btn-primary" type="submit">Submit</button>
+    <button class="btn" type="button" (click)="form.reset()">Reset</button>
+    <button class="btn" type="button" (click)="form.controls.labels.disable()">Disable labels</button>
+    <button class="btn" type="button" (click)="form.controls.labels.enable()">Enable labels</button>
+  </form>\`,
+})
+export class LabelsExample {
+  readonly form = new FormGroup({
+    labels: new FormControl<KeyValueEntry[]>([{key: 'team', value: 'data'}], {
+      nonNullable: true,
+      updateOn: 'blur',
+      validators: Validators.required,
+    }),
+  });
+  payload: unknown;
+  save() {
+    this.form.markAllAsTouched();
+    if (this.form.valid) this.payload = this.form.value;
+  }
+}`);
+  readonly facadeCode = highlight(`import {Component} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {KeyValueControlComponent, KeyValueEntry} from 'clr-lift';
+import {toSignalForm} from 'ngx-lift';
+@Component({
+  imports: [ReactiveFormsModule, KeyValueControlComponent],
+  template: \`<form [formGroup]="form" (ngSubmit)="save()">
+      <cll-key-value-control formControlName="labels" label="Labels" [minRows]="1" [maxRows]="3" />
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn" type="button" (click)="form.reset()">Reset</button>
+      <button class="btn" type="button" (click)="form.controls.labels.disable()">Disable labels</button>
+      <button class="btn" type="button" (click)="form.controls.labels.enable()">Enable labels</button>
+    </form>
+    <output>{{ sf.fields.labels.value() }} / {{ sf.status() }}</output>\`,
+})
+export class LabelsExample {
+  readonly form = new FormGroup({
+    labels: new FormControl<KeyValueEntry[]>([{key: 'team', value: 'data'}], {
+      nonNullable: true,
+      updateOn: 'submit',
+      validators: Validators.required,
+    }),
+  });
+  readonly sf = toSignalForm(this.form, {includeDisabled: false});
+  payload: unknown;
+  save() {
+    this.sf.markAllAsTouched();
+    if (this.form.valid) this.payload = this.sf.submitValue();
+  }
+}`);
 
   form = new FormGroup({
     appProperties: new FormArray<KeyValueFormGroup>([]),
@@ -86,6 +168,67 @@ export class KeyValueInputsExampleComponent {
 </form>`,
     'html',
   );
+
+  readonly editorInputs = computed<ApiProperty[]>(() => [
+    {
+      name: 'keyConfig',
+      type: 'KeyValueKeyConfig',
+      defaultValue: '{}',
+      description: this.translationService.translate('keyValueRecipes.keySelectHelp'),
+    },
+    {
+      name: 'valueConfig',
+      type: 'KeyValueValueConfig',
+      defaultValue: '{}',
+      description: this.translationService.translate('keyValueRecipes.schemaHelp'),
+    },
+    {
+      name: 'resetValueOnKeyChange',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translationService.translate('keyValueRecipes.dependentHelp'),
+    },
+    {
+      name: 'uniquePairs',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translationService.translate('keyValueRecipes.tagsHelp'),
+    },
+    {
+      name: 'excludeSelectedKeys',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: this.translationService.translate('keyValueRecipes.schemaHelp'),
+    },
+    {
+      name: 'addText',
+      type: 'string',
+      defaultValue: "''",
+      description: this.translationService.translate('demoApi.key-value-inputs-demo.inputs.addText'),
+    },
+  ]);
+
+  readonly fieldConfigCode = highlight(`interface KeyValueFieldConfig {
+  type?: 'input' | 'select' | 'combobox' | 'number' | 'boolean' | 'array';
+  options?: readonly {value: string; label: string; disabled?: boolean}[];
+  placeholder?: string;
+  helper?: string;
+  required?: boolean; // true by default; false is a valid boolean value
+  disabled?: boolean; // preserves the entry value
+  min?: number;
+  max?: number;
+  validators?: readonly {validator: ValidatorFn; errorKey: string; message: string}[];
+  messages?: Readonly<Record<string, string>>;
+}
+type KeyValueKeyConfig = Omit<KeyValueFieldConfig, 'type'> & {
+  type?: 'input' | 'select' | 'combobox';
+};
+type KeyValueValueConfig = KeyValueFieldConfig | ((key: string) => KeyValueFieldConfig);
+type KeyValueValue = string | number | boolean | string[] | null;
+interface KeyValueEntry<T extends KeyValueValue = string> {
+  key: string;
+  value: T;
+}`);
 
   readonly inputs = computed<ApiProperty[]>(() => [
     {
