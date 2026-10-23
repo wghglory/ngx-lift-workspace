@@ -49,10 +49,10 @@ asynchronous resource**.
 
 Prerequisites: Angular signals, Observable sources and an injection context.
 
-| Reader task                        | Learning outcome                                                     | Destination / working example                                                                  |
-| ---------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Load one local resource            | Render loading, data and recoverable failure                         | [/ngx-lift/signals/resourceAsync](https://ngx-lift.netlify.app/ngx-lift/signals/resourceAsync) |
-| Change parameters or execute again | Explain replacement, retained values and canceled execution promises | Same demo; execution/cancellation reference below                                              |
+| Reader task                        | Learning outcome                                                     | Destination / working example                                                                 |
+| ---------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Load one local resource            | Render loading, data and recoverable failure                         | [/ngx-lift/signals/resourceAsync](https://ngx-lift.vercel.app/ngx-lift/signals/resourceAsync) |
+| Change parameters or execute again | Explain replacement, retained values and canceled execution promises | Same demo; execution/cancellation reference below                                             |
 
 Validation and delivery: The starter flow landed in #162. Runtime/type tests establish the resource contract; newcomer
 understanding remains separate. The public API and behavior sections below own exact options and limitations; examples

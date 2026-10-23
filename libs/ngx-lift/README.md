@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Angular](https://img.shields.io/badge/Angular-%3E%3D21.0.0-red.svg)](https://angular.dev)
 
-[📖 Documentation](https://ngx-lift.netlify.app) • [🎮 Live Demo](https://ngx-lift.netlify.app) •
+[📖 Documentation](https://ngx-lift.vercel.app) • [🎮 Live Demo](https://ngx-lift.vercel.app) •
 [💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
 
 </div>
@@ -203,7 +203,7 @@ export class AsyncExampleComponent {
 
 For an owned periodic read, use `poll({interval: 5000, pollingFn: () => of({name: 'Ada'})})` in place of that stream.
 The subscription starts polling; its final unsubscribe releases requests and timers. See the
-[polling tutorial](https://ngx-lift.netlify.app/ngx-lift/operators/poll) for start, stop and refresh.
+[polling tutorial](https://ngx-lift.vercel.app/ngx-lift/operators/poll) for start, stop and refresh.
 
 ### Load a local reactive resource
 
@@ -236,9 +236,9 @@ export class ResourceExampleComponent {
 ```
 
 For a readonly async value without loading/reload state, use
-[computedAsync](https://ngx-lift.netlify.app/ngx-lift/signals/computedAsync). Unhandled failures throw when reading its
+[computedAsync](https://ngx-lift.vercel.app/ngx-lift/signals/computedAsync). Unhandled failures throw when reading its
 signal; supply a typed `onError` fallback when recovery should produce data. The
-[API selection guide](https://ngx-lift.netlify.app/ngx-lift/query/choosing) compares the async primitives.
+[API selection guide](https://ngx-lift.vercel.app/ngx-lift/query/choosing) compares the async primitives.
 
 ### Observe an existing Reactive Form
 
@@ -275,7 +275,7 @@ export class FormExampleComponent {
 }
 ```
 
-Continue with [conditional controls and validation](https://ngx-lift.netlify.app/ngx-lift/signals/toSignalForm).
+Continue with [conditional controls and validation](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm).
 
 ### Share cached reads
 
@@ -314,7 +314,7 @@ export class QueryExampleComponent {
 }
 ```
 
-Follow the [query learning path](https://ngx-lift.netlify.app/ngx-lift/query/overview) for errors, saves, collections,
+Follow the [query learning path](https://ngx-lift.vercel.app/ngx-lift/query/overview) for errors, saves, collections,
 keys, invalidation, and diagnostics. `QUERY_CLIENT` has a root factory; `provideQueryClient(options)` customizes it.
 
 ### Use pipes and validators
@@ -322,11 +322,11 @@ keys, invalidation, and diagnostics. `QUERY_CLIENT` has a root factory; `provide
 Import standalone pipe classes such as `ByteConverterPipe`, `MaskPipe`, and `ArrayJoinPipe` into the component using
 them. Masking takes an options object: `mask: {unmaskedPrefixLength: 0, unmaskedSuffixLength: 4}`; it has no card mode.
 Use exported validators such as `urlValidator` directly in a FormControl's validators array. Start with the complete
-[pipe examples](https://ngx-lift.netlify.app/ngx-lift/pipes/mask) and
-[validator examples](https://ngx-lift.netlify.app/ngx-lift/validators/url), including imports and reset behavior.
+[pipe examples](https://ngx-lift.vercel.app/ngx-lift/pipes/mask) and
+[validator examples](https://ngx-lift.vercel.app/ngx-lift/validators/url), including imports and reset behavior.
 
 Route-dependent helpers need a routed component and Router providers; follow the
-[route parameter tutorial](https://ngx-lift.netlify.app/ngx-lift/signals/injectParams) instead of constructing them
+[route parameter tutorial](https://ngx-lift.vercel.app/ngx-lift/signals/injectParams) instead of constructing them
 outside a route.
 
 ## 📚 Documentation
@@ -337,8 +337,8 @@ outside a route.
   - [mutateResource Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/mutate-resource-design-spec.md)
   - [computedAsync Design Spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/computed-async-design-spec.md)
 
-- **📖 Full Documentation**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app/)
-- **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.netlify.app/)
+- **📖 Full Documentation**: [ngx-lift.vercel.app](https://ngx-lift.vercel.app/)
+- **🎮 Interactive Demo**: [Live Examples](https://ngx-lift.vercel.app/)
 - **💻 Source Code**: [GitHub Repository](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)
 - **📦 npm Package**: [npmjs.com/package/ngx-lift](https://www.npmjs.com/package/ngx-lift)
 
@@ -394,7 +394,7 @@ If this library helped you, please consider giving it a ⭐ on GitHub!
 
 [Report Bug](https://github.com/wghglory/ngx-lift-workspace/issues) •
 [Request Feature](https://github.com/wghglory/ngx-lift-workspace/issues) •
-[View Documentation](https://ngx-lift.netlify.app)
+[View Documentation](https://ngx-lift.vercel.app)
 
 </div>
 
@@ -406,6 +406,6 @@ for ownership and loading contracts.
 
 For the query learning path, session isolation recipe, tested consumer scope and release boundary, see the
 [query production guide](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/query-resource-design-spec.md).
-The demos for [queryResource](https://ngx-lift.netlify.app/ngx-lift/query/queryResource) and
-[queryResources](https://ngx-lift.netlify.app/ngx-lift/query/queryResources) are separate pages. These links describe
-the current source; deployment and npm publication are separate steps.
+The demos for [queryResource](https://ngx-lift.vercel.app/ngx-lift/query/queryResource) and
+[queryResources](https://ngx-lift.vercel.app/ngx-lift/query/queryResources) are separate pages. These links describe the
+current source; deployment and npm publication are separate steps.
