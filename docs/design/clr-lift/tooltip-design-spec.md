@@ -52,10 +52,10 @@ Current behavior chooses semantics by content type, not by inspecting focusable 
 
 Prerequisites: Clarity styling and a keyboard-focusable trigger; tooltip text differs from interactive popover content.
 
-| Reader task                         | Learning outcome                                                    | Destination / working example                                                           |
-| ----------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Focus a tooltip trigger             | Discover its description before reading the source                  | [/clr-lift/components/tooltip](https://ngx-lift.vercel.app/clr-lift/components/tooltip) |
-| Open interactive content repeatedly | Preserve focus/content ownership and clean up the body-mounted view | Same demo; ownership and lifecycle cases below                                          |
+| Reader task                         | Learning outcome                                                    | Destination / working example                                                            |
+| ----------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Focus a tooltip trigger             | Discover its description before reading the source                  | [/clr-lift/components/tooltip](https://ngx-lift.netlify.app/clr-lift/components/tooltip) |
+| Open interactive content repeatedly | Preserve focus/content ownership and clean up the body-mounted view | Same demo; ownership and lifecycle cases below                                           |
 
 Validation and delivery: The entry flow landed in #166. Unit/browser coverage is separate from manual
 assistive-technology acceptance. The public API and behavior sections below own exact options and limitations; examples

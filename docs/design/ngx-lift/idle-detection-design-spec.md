@@ -51,10 +51,10 @@ establish a server-enforced session deadline.
 
 Prerequisites: Angular injection/lifetime and the difference between idle, warning and timeout phases.
 
-| Reader task                  | Learning outcome                                             | Destination / working example                                                                                                   |
-| ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| Start and release monitoring | Observe an idle cycle without taking over other owners       | [/ngx-lift/utilities/idle-detection](https://ngx-lift.vercel.app/ngx-lift/utilities/idle-detection)                             |
-| Confirm an active warning    | Use resetTimer(true) deliberately and release the last watch | [/clr-lift/components/idle-detection](https://ngx-lift.vercel.app/clr-lift/components/idle-detection); ownership contract below |
+| Reader task                  | Learning outcome                                             | Destination / working example                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Start and release monitoring | Observe an idle cycle without taking over other owners       | [/ngx-lift/utilities/idle-detection](https://ngx-lift.netlify.app/ngx-lift/utilities/idle-detection)                             |
+| Confirm an active warning    | Use resetTimer(true) deliberately and release the last watch | [/clr-lift/components/idle-detection](https://ngx-lift.netlify.app/clr-lift/components/idle-detection); ownership contract below |
 
 Validation and delivery: Both teaching flows landed in #172. Service/browser regressions do not prove a background-tab
 server-enforced deadline. The public API and behavior sections below own exact options and limitations; examples

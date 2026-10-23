@@ -55,10 +55,10 @@ stream drives state updates. The facade adds dynamic bindings, not a separate fo
 
 Prerequisites: An existing Angular FormGroup and basic signals; Angular remains the form owner.
 
-| Reader task                         | Learning outcome                                                | Destination / working example                                                               |
-| ----------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Observe and submit a local form     | Read value/validity and inspect the omitted-field payload       | [/ngx-lift/signals/toSignalForm](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm) |
-| Toggle and reset conditional fields | Preserve selected values and validation through control changes | Same demo; bindings/submission contracts below                                              |
+| Reader task                         | Learning outcome                                                | Destination / working example                                                                |
+| ----------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Observe and submit a local form     | Read value/validity and inspect the omitted-field payload       | [/ngx-lift/signals/toSignalForm](https://ngx-lift.netlify.app/ngx-lift/signals/toSignalForm) |
+| Toggle and reset conditional fields | Preserve selected values and validation through control changes | Same demo; bindings/submission contracts below                                               |
 
 Validation and delivery: The teaching flow landed in #162. Form/proxy unit cases cover behavior; installed consumers for
 new controls remain a separate gate. The public API and behavior sections below own exact options and limitations;

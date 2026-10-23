@@ -56,10 +56,10 @@ boundary. Here it is an intentional developer-trusted HTML API, not an automatic
 
 Prerequisites: Standalone Clarity setup; mount the relevant container before dispatching service notifications.
 
-| Reader task                      | Learning outcome                                                | Destination / working example                                                                                                                                                             |
-| -------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Show a toast or persistent alert | See the message and use its action/close control                | [/clr-lift/components/toast](https://ngx-lift.vercel.app/clr-lift/components/toast) and [/clr-lift/components/multi-alerts](https://ngx-lift.vercel.app/clr-lift/components/multi-alerts) |
-| Recover a failed action          | Keep callbacks scoped and defer toast expiry during hover/focus | Same demos; this spec owns HTML and timeout contracts                                                                                                                                     |
+| Reader task                      | Learning outcome                                                | Destination / working example                                                                                                                                                               |
+| -------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Show a toast or persistent alert | See the message and use its action/close control                | [/clr-lift/components/toast](https://ngx-lift.netlify.app/clr-lift/components/toast) and [/clr-lift/components/multi-alerts](https://ngx-lift.netlify.app/clr-lift/components/multi-alerts) |
+| Recover a failed action          | Keep callbacks scoped and defer toast expiry during hover/focus | Same demos; this spec owns HTML and timeout contracts                                                                                                                                       |
 
 Validation and delivery: Entry flows landed in #166; #155 proves mixed interaction/viewport repairs. Human announcement
 and translation acceptance remain separate. The public API and behavior sections below own exact options and

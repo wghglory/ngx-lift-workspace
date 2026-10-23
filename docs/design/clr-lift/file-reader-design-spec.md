@@ -53,10 +53,10 @@ prevent obsolete callbacks from changing the owner; this change closes F2 in the
 
 Prerequisites: Angular Reactive Forms and Clarity setup; a local text file is sufficient.
 
-| Reader task                   | Learning outcome                                                   | Destination / working example                                                                   |
-| ----------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| Read a text file              | See the resulting string in the owning FormControl                 | [/clr-lift/components/file-reader](https://ngx-lift.vercel.app/clr-lift/components/file-reader) |
-| Correct and clear a selection | Observe size/encoding errors, reset and disabled-read cancellation | Same demo; CVA/read-race and file-reader E2E cases                                              |
+| Reader task                   | Learning outcome                                                   | Destination / working example                                                                    |
+| ----------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| Read a text file              | See the resulting string in the owning FormControl                 | [/clr-lift/components/file-reader](https://ngx-lift.netlify.app/clr-lift/components/file-reader) |
+| Correct and clear a selection | Observe size/encoding errors, reset and disabled-read cancellation | Same demo; CVA/read-race and file-reader E2E cases                                               |
 
 Validation and delivery: The demo and F2 regressions are delivered. ngModel/facade/updateOn hosts and human
 accessibility acceptance remain separately tracked. The public API and behavior sections below own exact options and

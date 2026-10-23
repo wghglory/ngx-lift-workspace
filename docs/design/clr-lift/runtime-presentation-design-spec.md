@@ -54,10 +54,10 @@ cannot establish linguistic accuracy.
 
 Prerequisites: Clarity styles, component dictionaries, and runtime language selection.
 
-| Reader task                       | Learning outcome                                                | Destination / working example                                                                                                    |
-| --------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Switch theme or language          | Observe rendered labels/direction and persisted theme selection | [/clr-lift/components/theme-toggle](https://ngx-lift.vercel.app/clr-lift/components/theme-toggle) and the demo language selector |
-| Register a dictionary or override | Explain fallback and component events versus service state      | This spec, service examples and runtime-presentation contracts                                                                   |
+| Reader task                       | Learning outcome                                                | Destination / working example                                                                                                     |
+| --------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Switch theme or language          | Observe rendered labels/direction and persisted theme selection | [/clr-lift/components/theme-toggle](https://ngx-lift.netlify.app/clr-lift/components/theme-toggle) and the demo language selector |
+| Register a dictionary or override | Explain fallback and component events versus service state      | This spec, service examples and runtime-presentation contracts                                                                    |
 
 Validation and delivery: Theme teaching landed in #172; translation/theme tests cover fallback/storage. Dictionary
 parity does not establish native-speaker approval. The public API and behavior sections below own exact options and

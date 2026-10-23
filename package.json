@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/wghglory/ngx-lift-workspace.git"
   },
-  "homepage": "https://ngx-lift.vercel.app/",
+  "homepage": "https://ngx-lift.netlify.app/",
   "description": "Monorepo containing ngx-lift and clr-lift - powerful Angular utility and component libraries to enhance and simplify your Angular development experience.",
   "scripts": {
     "start": "nx serve demo",

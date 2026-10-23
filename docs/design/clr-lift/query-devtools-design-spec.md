@@ -50,10 +50,10 @@ Primary documentation/source reviewed October 16, 2026. These are adopt/adapt de
 
 Prerequisites: Basic queries and keys, plus root versus scoped QueryClient ownership.
 
-| Reader task                        | Learning outcome                                                               | Destination / working example                                                                     |
-| ---------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| Open and inspect an existing query | Read cached data without creating an observer                                  | [/ngx-lift/query/devtools](https://ngx-lift.vercel.app/ngx-lift/query/devtools); root setup below |
-| Pause, refetch and close           | Distinguish paused snapshots from explicit requests and release view resources | Same demo; production/installed-package boundaries below                                          |
+| Reader task                        | Learning outcome                                                               | Destination / working example                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Open and inspect an existing query | Read cached data without creating an observer                                  | [/ngx-lift/query/devtools](https://ngx-lift.netlify.app/ngx-lift/query/devtools); root setup below |
+| Pause, refetch and close           | Distinguish paused snapshots from explicit requests and release view resources | Same demo; production/installed-package boundaries below                                           |
 
 Validation and delivery: Delivered in #160 and verified at main 5bee7e1; publication, human accessibility and
 native-language acceptance remain separate. The public API and behavior sections below own exact options and

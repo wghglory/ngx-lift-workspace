@@ -18,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/wghglory/ngx-lift-workspace.git"
   },
-  "homepage": "https://ngx-lift.vercel.app/clr-lift",
+  "homepage": "https://ngx-lift.netlify.app/clr-lift",
   "peerDependencies": {
     "@angular/common": ">=21",
     "@angular/core": ">=21",

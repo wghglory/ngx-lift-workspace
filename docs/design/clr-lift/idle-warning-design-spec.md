@@ -51,10 +51,10 @@ deadline accuracy; this UI cannot enforce authentication expiry.
 
 Prerequisites: Clarity setup and idle-phase versus warning-countdown terminology.
 
-| Reader task                  | Learning outcome                                          | Destination / working example                                                                         |
-| ---------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Start an isolated warning    | Observe the countdown and explicitly confirm continuation | [/clr-lift/components/idle-detection](https://ngx-lift.vercel.app/clr-lift/components/idle-detection) |
-| Leave and restart monitoring | Release the owner without stopping unrelated watches      | Same demo and the idle service ownership contract                                                     |
+| Reader task                  | Learning outcome                                          | Destination / working example                                                                          |
+| ---------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Start an isolated warning    | Observe the countdown and explicitly confirm continuation | [/clr-lift/components/idle-detection](https://ngx-lift.netlify.app/clr-lift/components/idle-detection) |
+| Leave and restart monitoring | Release the owner without stopping unrelated watches      | Same demo and the idle service ownership contract                                                      |
 
 Validation and delivery: The isolated teaching flow landed in #172. Use idle-warning/browser regressions; human focus
 and assistive-technology acceptance remain open. The public API and behavior sections below own exact options and

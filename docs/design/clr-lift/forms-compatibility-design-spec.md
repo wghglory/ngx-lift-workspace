@@ -291,7 +291,7 @@ separate evidence gates.
 
 ## Demo and validation plan
 
-The [key/value demo](https://ngx-lift.vercel.app/clr-lift/components/key-value-inputs) implements three separately
+The [key/value demo](https://ngx-lift.netlify.app/clr-lift/components/key-value-inputs) implements three separately
 discoverable phase-1 hosts corresponding to Examples A–C. Other value controls require the same hosts with real public
 imports, copyable playground code, value/status/payload output, submission, validation, reset, disabled and readonly.
 The facade host must use the same FormGroup, not an independent mirror. Add a second enabled sibling for F8

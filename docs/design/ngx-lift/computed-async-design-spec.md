@@ -42,10 +42,10 @@ need a value rather than a resource lifecycle.
 
 Prerequisites: Angular signals, Observable sources and injection-context initialization.
 
-| Reader task                   | Learning outcome                                    | Destination / working example                                                                 |
-| ----------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Derive a changing local value | Explain when a dependency replaces its async source | [/ngx-lift/signals/computedAsync](https://ngx-lift.vercel.app/ngx-lift/signals/computedAsync) |
-| Fail and recover              | Distinguish a typed fallback from a read-time throw | Same demo, examples 11/12; breaking correction below                                          |
+| Reader task                   | Learning outcome                                    | Destination / working example                                                                  |
+| ----------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Derive a changing local value | Explain when a dependency replaces its async source | [/ngx-lift/signals/computedAsync](https://ngx-lift.netlify.app/ngx-lift/signals/computedAsync) |
+| Fail and recover              | Distinguish a typed fallback from a read-time throw | Same demo, examples 11/12; breaking correction below                                           |
 
 Validation and delivery: The entry flow landed in #162. Existing runtime/type tests cover the contract; human
 comprehension and the 21.x release gates remain separate. The public API and behavior sections below own exact options
@@ -185,7 +185,7 @@ Angular. Loading/reload UI belongs to resourceAsync or queryResource; planned ex
 
 ## Interactive examples
 
-The [computedAsync demo](https://ngx-lift.vercel.app/ngx-lift/signals/computedAsync) compares a typed numeric fallback
+The [computedAsync demo](https://ngx-lift.netlify.app/ngx-lift/signals/computedAsync) compares a typed numeric fallback
 with default read-time errors. Example 11 changes from 42 to fallback 0 and back to 42. Example 12 separates failing the
 source from reading the signal: the UI catches the read in a button handler, displays the failure, and permits a
 successful read after recovery. The raw throwing signal is not bound directly in the template.
