@@ -168,6 +168,49 @@ Malformed owner data (such as a non-array, null entry, missing field or unsuppor
 supplies a supported array. It never drops malformed entries or rewrites the owner value. Null and undefined still
 render as empty, subject to row-count constraints. Attaching an already touched owner reveals its field errors.
 
+## Choose who owns the row controls
+
+An array of data does not automatically become an Angular FormArray. A FormArray is explicitly constructed from child
+controls; its generic parameter describes a child control, not a data entry:
+
+```typescript
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
+
+type TagRow = FormGroup<{
+  key: FormControl<string>;
+  value: FormControl<string>;
+}>;
+
+const tags = new FormArray<TagRow>([]);
+tags.push(
+  new FormGroup({
+    key: new FormControl('environment', {nonNullable: true}),
+    value: new FormControl('production', {nonNullable: true}),
+  }),
+);
+// tags.at(0).controls.key is a FormControl<string>.
+// tags.getRawValue() is [{key: 'environment', value: 'production'}].
+```
+
+This is an Angular form-model example; apply the application's validators when creating each row. A
+`FormControl<KeyValueEntry[]>` instead holds the entire data array in one control. The CVA renders and validates its
+internal fields, but does not expose them as caller-owned Angular controls.
+
+| Application requirement                                                        | Preferred ownership                     |
+| ------------------------------------------------------------------------------ | --------------------------------------- |
+| Independent row validators, pending state, subscriptions, or metadata controls | FormArray                               |
+| One value field with ngModel or a simple Reactive Forms binding                | Array-valued FormControl/CVA            |
+| Existing code traverses row controls or keeps references to them               | Keep FormArray for incremental adoption |
+
+Neither ownership model is a modernization requirement. See Angular's
+[FormArray contract](https://angular.dev/api/forms/FormArray). Do not recreate a FormArray on every CVA value change:
+that discards control identity and may lose touched state, subscriptions, or pending validation.
+
+The current FormArray editor supports string key/value rows. It does not yet expose the CVA's typed field configuration,
+so retaining FormArray alone does not supply feature parity. Proposed shared-renderer enhancements are recorded in the
+[design spec](../design/clr-lift/key-value-inputs-design-spec.md#proposed-formarray-and-specialized-row-support); they
+are not available inputs.
+
 ## Choosing a migration boundary
 
 Keep the existing FormArray API when row control identity, parent-aware validators or add/remove outputs are part of the
@@ -228,11 +271,11 @@ Existing `cll-key-value-inputs` imports, selectors, inputs, outputs, FormArray o
 stay unchanged. Its only visual change is localized Key/Value placeholders for empty fields. Applications do not need to
 replace it when upgrading. Existing local application editors also remain unaffected by the new exported selector.
 
-Adopting `cll-key-value-control` is an explicit migration: replace row-level FormArray bindings with one array-valued
-FormControl or ngModel binding, map schema configuration and validators, and review any code that inspects individual
-row controls. Per-row asynchronous validators and custom subscriptions should remain on the FormArray integration until
-the application explicitly redesigns them. Support for typed fields and tag catalogs does not make this a drop-in
-replacement for every application-specific editor.
+Only choosing to adopt `cll-key-value-control` requires an ownership migration: replace row-level FormArray bindings
+with one array-valued FormControl or ngModel binding, map schema configuration and validators, and review any code that
+inspects individual row controls. Per-row asynchronous validators and custom subscriptions should remain on the
+FormArray integration until the application explicitly redesigns them. Support for typed fields and tag catalogs does
+not make this a drop-in replacement for every application-specific editor.
 
 ## Check application compatibility before migrating
 
@@ -247,6 +290,13 @@ upgrade. Run the application's own build and integration tests with the packed o
 Typed values alone do not guarantee identical editing behavior. This control's array editor uses newlines and preserves
 whitespace and blank items, unlike a comma editor that trims and filters. Unknown schema selections remain visible and
 invalid. Keep domain-specific conversion and validation in the application.
+
+Neither delimiter is an accessibility requirement. Provide visible format guidance linked to the field, meaningful
+labels, and actionable errors; see
+[WCAG labels or instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html). A comma parser
+cannot preserve literal commas without escaping, and a newline parser cannot preserve embedded line breaks within an
+item. For unrestricted strings, use an item-based editor or an explicitly defined escaping format. Do not silently trim
+stored configuration values or discard unknown keys just to make the form valid.
 
 Use an application adapter or retain a FormArray editor for policy rows that carry extra metadata, lock only selected
 keys, show per-row warning content, or depend on removal callbacks. The current `keyConfig` applies to every key, and

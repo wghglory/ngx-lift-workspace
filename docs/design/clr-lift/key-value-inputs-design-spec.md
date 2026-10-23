@@ -394,8 +394,9 @@ Clarity 18.4 verification does not substitute for a build/runtime check against 
 Migration must account for the caller's form factories, row-control traversal, reset/toggle initialization, validators,
 submission mapping, translated wording and locale ownership. In particular:
 
-- Repeated-category tags can use `uniqueKeys=false`, `uniquePairs=true` and existing field validators/messages, but
-  callers must move smart initialization and row-level lifecycle code to the owning control.
+- Repeated-category tags can use the CVA's `uniqueKeys=false`, `uniquePairs=true` and field validators/messages. Only
+  callers choosing that ownership migration must move smart initialization and row-level lifecycle code. Existing
+  FormArray ownership remains a supported choice, not technical debt that must be removed.
 - Schema-based typed values are representable, but newline arrays preserve whitespace and blank items; migrating from
   comma-separated, trimmed and filtered input changes editing semantics. Unknown keys remain visible and invalid rather
   than being filtered out on load.
@@ -411,3 +412,89 @@ A configurable Add appearance and a complete text-override contract are possible
 inputs. Consumer migration tests should establish the needed scope before adding those contracts. Start with a simple
 metadata/tag flow and verify create, edit, toggle, reset, duplicate validation, submission and runtime language changes;
 retain specialized policy editors until their additional requirements are met.
+
+## Proposed FormArray and specialized row support
+
+Status: design proposal, not implemented. The current CVA is not a drop-in replacement for all application editors.
+Adding button styling and two container error overrides would not close the ownership and specialized-row gaps.
+
+### Ownership and shared implementation
+
+Keep both supported ownership models. A FormArray holds child controls and their identities, validators, pending,
+dirty/touched state and subscriptions. An array-valued FormControl holds one composite value. Neither is universally
+preferable; applications already using individual row controls should be able to retain them.
+
+Build toward shared private field rendering, row layout, accessible messages and focus management, with separate
+FormArray and CVA adapters. Share presentation without forcing the two adapters to share Angular lifecycle semantics.
+Preserve existing selectors, string-based type aliases, defaults and initialization behavior. New FormArray capabilities
+must be additive; the legacy editor does not currently have the CVA's field configuration support. Do not convert
+between ownership models by clearing/rebuilding controls on every edit.
+
+The FormArray adapter must bind existing controls directly, preserve owner validators and metadata, detach only its own
+validators/subscriptions, and observe status/touch changes as well as values. Parent-aware and asynchronous field rules
+remain ordinary Angular validators. Typed value rows require an additive type contract; widening the existing string
+alias would break callers. Row creation must allow the owner to supply extra controls and validators.
+
+### Reusable capabilities and application responsibilities
+
+| Requirement                        | Library responsibility                                             | Application responsibility                                |
+| ---------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------- |
+| Repeated category/tag rows         | Pair uniqueness, accessible fields and row actions                 | Category catalog, reserved names and payload mapping      |
+| Schema-driven values               | Input/select/combobox/number/boolean/array rendering               | Schema lookup and per-key rules                           |
+| Lock original keys but edit values | Per-row, per-field readonly distinct from disabled                 | Decide which rows are original                            |
+| Warning and helper content         | Typed row context and accessible content projection                | Compute policy state and translate its explanation        |
+| Row removal                        | Stable row identity, event context and focus recovery              | Update application metadata or trigger domain actions     |
+| Custom string-array syntax         | Explicit formatting policy or custom renderer                      | Choose delimiter, normalization and allowed item contents |
+| Translation and button appearance  | Complete text customization contract and Clarity appearance option | Supply localized copy and presentation choice             |
+
+The row context should expose stable identity, index, current entry, and caller-owned control where applicable. Use
+typed accessors for nonstandard control names rather than renaming caller controls or storing policy metadata in the
+generic CVA value. Reuse the existing value resolver where sufficient; do not replace its signature incompatibly. Use
+projection for unusual warning content or field editors instead of adding a flag for every domain rule.
+
+### Array editing and accessibility decisions
+
+- Preserve the current newline mode by default. An opt-in comma mode with explicit trimming and empty-item filtering can
+  match existing applications, but must document that unescaped commas cannot occur inside an item. Newline mode has the
+  analogous embedded-line-break limitation. Neither is a general lossless string-array format.
+- Draft configuration shape for review: `arrayFormat: {separator: 'comma', trimItems: true, omitEmptyItems: true}` on an
+  array field config. This is not an exported API. Owner writes must not normalize data. Define how incompatible
+  incoming items are represented and validated before implementing the mode; never silently rewrite them on load.
+- Use item-based editing or an explicit escaping format for arbitrary strings. A token/chip editor is a separate
+  interaction contract with navigation, removal, focus recovery and announcements; do not add decorative chips and
+  assume accessibility is solved.
+- Preserve unknown saved keys and report invalid selections. If an application intentionally removes obsolete keys, make
+  that an explicit application transformation rather than a hidden side effect of rendering.
+- Keep new drafts visually neutral until blur, owner touch or submission. Keep Add available for incomplete drafts in
+  the new control. Preserve legacy defaults unless an explicit migration changes them. Optional lists may start empty;
+  required lists need a row-count rule plus an explicitly initialized row if desired.
+- Readonly must preserve values and validation. Disabled is not a substitute for locking an original key. Row warnings
+  need textual meaning and field association, not color or an icon alone.
+
+Primary-source comparisons inform these choices, not a claim that one delimiter is an industry standard:
+
+- [Angular FormArray](https://angular.dev/api/forms/FormArray): adopt direct ownership of child controls where row
+  lifecycle matters; reject mandatory conversion to one FormControl.
+- [NG-ZORRO forms](https://ng.ant.design/components/form/en): adapt dynamic field composition and customizable
+  validation/warning presentation; retain Angular form ownership.
+- [Angular Material chips](https://github.com/angular/components/blob/main/src/material/chips/chips.md) and
+  [React Aria TagGroup](https://react-aria.adobe.com/TagGroup): adapt keyboard and removal semantics if item editing is
+  added; reject importing another design-system dependency merely to obtain chips.
+- Existing Clarity combobox rendering remains the selection primitive. Share its tested focus and popup behavior across
+  adapters rather than building another combobox implementation.
+- [WCAG labels or instructions](https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html): require clear
+  input and format guidance. Choosing comma or newline syntax remains a product/data-model decision.
+
+### Implementation order and acceptance
+
+First prove the shared renderer through a caller-owned repeated-category FormArray without changing control identity,
+validators, reset/toggle behavior or submission. Then add typed schema rows and explicit array formatting. Finally prove
+specialized rows with extra metadata, nonstandard key control names, original-key readonly, warning content and removal
+callbacks. These are three generic consumer fixtures, not product-specific library modes.
+
+Before claiming migration readiness, verify row-level async validation and pending state, disabled inclusion, touch
+timing, add/remove/reorder identity, reset, unknown saved values, delimiter edge cases and runtime locale switching.
+Exercise keyboard interaction and error alignment in all supported browser engines, compile packed consumers in both
+ZoneJS and zoneless modes, and run the adopting application's create/edit/toggle/submit flows. Existing runtime test
+results above do not validate this proposed extension. Final public type names, renderer projection shape and complete
+text-override contract remain design-review decisions.
