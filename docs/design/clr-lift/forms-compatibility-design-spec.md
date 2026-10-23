@@ -291,12 +291,13 @@ separate evidence gates.
 
 ## Demo and validation plan
 
-The [key/value demo](https://ngx-lift.netlify.app/clr-lift/components/key-value-inputs) implements three separately
-discoverable phase-1 hosts corresponding to Examples A–C. Other value controls require the same hosts with real public
-imports, copyable playground code, value/status/payload output, submission, validation, reset, disabled and readonly.
-The facade host must use the same FormGroup, not an independent mirror. Add a second enabled sibling for F8
-serialization checks. The key/value hosts ship with its additive value control; the Clarity examples alone do not
-satisfy the installed-consumer exit condition for other lift controls.
+The
+[key/value demo source](../../../apps/demo/src/app/clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component.ts)
+implements three separately discoverable phase-1 hosts corresponding to Examples A–C. Other value controls require the
+same hosts with real public imports, copyable playground code, value/status/payload output, submission, validation,
+reset, disabled and readonly. The facade host must use the same FormGroup, not an independent mirror. Add a second
+enabled sibling for F8 serialization checks. The key/value hosts ship with its additive value control; the Clarity
+examples alone do not satisfy the installed-consumer exit condition for other lift controls.
 
 | Gate                     | Required assertion                                                                                                                                                    | Evidence required before marking delivered                                                                             |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
