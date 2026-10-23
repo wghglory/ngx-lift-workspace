@@ -5,13 +5,13 @@
 **Powerful Angular utilities and Clarity Design System components to supercharge your development**
 
 [![CI](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml/badge.svg)](https://github.com/wghglory/ngx-lift-workspace/actions/workflows/ci.yml)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ffc4941a-8b33-4b95-847e-d34938036bcf/deploy-status)](https://app.netlify.com/projects/ngx-lift/deploys)
+[![Live Demo on Vercel](https://img.shields.io/badge/Live_Demo-Vercel-black?logo=vercel)](https://ngx-lift.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Angular](https://img.shields.io/badge/Angular-21.2.17-red.svg)](https://angular.io)
 [![ngx-lift npm version](https://img.shields.io/npm/v/ngx-lift.svg?label=ngx-lift&logo=npm)](https://www.npmjs.com/package/ngx-lift)
 [![clr-lift npm version](https://img.shields.io/npm/v/clr-lift.svg?label=clr-lift&logo=npm)](https://www.npmjs.com/package/clr-lift)
 
-[📖 Documentation](https://ngx-lift.netlify.app) • [🎮 Live Demo](https://ngx-lift.netlify.app) •
+[📖 Documentation](https://ngx-lift.vercel.app) • [🎮 Live Demo](https://ngx-lift.vercel.app) •
 [🐛 Report Bug](https://github.com/wghglory/ngx-lift-workspace/issues) •
 [💡 Request Feature](https://github.com/wghglory/ngx-lift-workspace/issues)
 
@@ -34,7 +34,7 @@ simplify your development experience. Built with Angular 21, TypeScript 5.9, and
 - ✅ **Validators** - Advanced form validators (date ranges, URLs, unique values)
 - 🛠️ **Utilities** - Helper functions for forms, dates, objects, and more
 
-**[📦 View on npm](https://www.npmjs.com/package/ngx-lift)** • **[📖 Documentation](https://ngx-lift.netlify.app)** •
+**[📦 View on npm](https://www.npmjs.com/package/ngx-lift)** • **[📖 Documentation](https://ngx-lift.vercel.app)** •
 **[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/ngx-lift)**
 
 ### 🎨 clr-lift
@@ -48,7 +48,7 @@ simplify your development experience. Built with Angular 21, TypeScript 5.9, and
 - 🌓 **Theme Support** - Light and dark mode support
 
 **[📦 View on npm](https://www.npmjs.com/package/clr-lift)** •
-**[📖 Documentation](https://ngx-lift.netlify.app/clr-lift)** •
+**[📖 Documentation](https://ngx-lift.vercel.app/clr-lift)** •
 **[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/libs/clr-lift)**
 
 ### 🎮 Demo Application
@@ -56,7 +56,7 @@ simplify your development experience. Built with Angular 21, TypeScript 5.9, and
 A fully-featured showcase application demonstrating all capabilities of both libraries with live examples, code
 snippets, and interactive demos.
 
-**[🎮 Live Demo](https://ngx-lift.netlify.app)** •
+**[🎮 Live Demo](https://ngx-lift.vercel.app)** •
 **[💻 Source Code](https://github.com/wghglory/ngx-lift-workspace/tree/main/apps/demo)**
 
 ## 🚀 Quick Start
@@ -136,7 +136,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links & Resources
 
-- **🏠 Homepage**: [ngx-lift.netlify.app](https://ngx-lift.netlify.app)
+- **🏠 Homepage**: [ngx-lift.vercel.app](https://ngx-lift.vercel.app)
 - **📦 npm (ngx-lift)**: [npmjs.com/package/ngx-lift](https://www.npmjs.com/package/ngx-lift)
 - **📦 npm (clr-lift)**: [npmjs.com/package/clr-lift](https://www.npmjs.com/package/clr-lift)
 - **🐛 Issues**: [GitHub Issues](https://github.com/wghglory/ngx-lift-workspace/issues)

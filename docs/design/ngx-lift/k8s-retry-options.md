@@ -12,10 +12,10 @@ rendered failures and form submission; retry does not create shared cache or wri
 
 Prerequisites: RxJS subscriptions and GET retry semantics; configure HttpClient for the interceptor.
 
-| Reader task              | Learning outcome                                            | Destination / working example                                                                                |
-| ------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Run one simulated GET    | Observe 429, the required wait and successful recovery      | [/ngx-lift/operators/k8sRetryBackoff](https://ngx-lift.netlify.app/ngx-lift/operators/k8sRetryBackoff)       |
-| Configure request policy | Compare interceptor setup, cancellation and allowed methods | [/ngx-lift/interceptors/k8sRetryBackoff](https://ngx-lift.netlify.app/ngx-lift/interceptors/k8sRetryBackoff) |
+| Reader task              | Learning outcome                                            | Destination / working example                                                                               |
+| ------------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Run one simulated GET    | Observe 429, the required wait and successful recovery      | [/ngx-lift/operators/k8sRetryBackoff](https://ngx-lift.vercel.app/ngx-lift/operators/k8sRetryBackoff)       |
+| Configure request policy | Compare interceptor setup, cancellation and allowed methods | [/ngx-lift/interceptors/k8sRetryBackoff](https://ngx-lift.vercel.app/ngx-lift/interceptors/k8sRetryBackoff) |
 
 Validation and delivery: The fixed starters landed in #169. Keep server hints/method-safety regressions and demo request
 teardown; writes still require endpoint evidence. The public API and behavior sections below own exact options and
