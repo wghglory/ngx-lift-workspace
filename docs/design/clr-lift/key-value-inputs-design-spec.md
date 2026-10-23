@@ -374,11 +374,40 @@ publication remain separate gates.
 - Resolve displayed row configurations through computed state. Unrelated change detection does not allocate fresh
   configurations or rerun value resolvers.
 - Focus the neighboring row's enabled key or value after deletion; fall back to enabled Add, then the named fieldset.
-- Boolean editors use Clarity checkbox styling while retaining focusable readonly inspection and `aria-readonly`. The
-  native textarea API normalizes pasted CRLF to LF; regression coverage asserts the emitted string array.
+- Boolean editors use Clarity checkbox styling while retaining focusable readonly inspection and `aria-readonly`.
+  Normalize CRLF and lone CR before splitting textarea input: WebKit exposed raw CRLF during input events in browser
+  regression testing, even though reading the textarea afterward returned LF.
 
 Local hardening validation: 375 clr-lift and 279 demo unit tests; 78 feature browser checks across Chromium, Firefox and
 WebKit; library/demo lint without warnings; type checks and spec compilation; formatting; i18n/tooling checks;
 production/bundle checks; and fresh packed Angular 21 consumers in zoneless and ZoneJS modes. The packed fixtures also
 exercise malformed owner recovery and readonly boolean preservation. Two existing conditional-test lint warnings remain
 in the unrelated `documentation-validation-rules.spec.ts`. Remote CI and independent human acceptance remain separate.
+
+## Consumer adoption boundaries (October 23 review)
+
+Preserving the existing FormArray API does not certify an application upgrade or make the new CVA a drop-in replacement
+for every application-owned editor. Verify the packed package's peer requirements against each consumer lockfile; this
+package currently requires `ngx-lift >=21.3.0 <22`. The peer range predates this feature. Installed Angular 21.2.25 and
+Clarity 18.4 verification does not substitute for a build/runtime check against another consumer's resolved versions.
+
+Migration must account for the caller's form factories, row-control traversal, reset/toggle initialization, validators,
+submission mapping, translated wording and locale ownership. In particular:
+
+- Repeated-category tags can use `uniqueKeys=false`, `uniquePairs=true` and existing field validators/messages, but
+  callers must move smart initialization and row-level lifecycle code to the owning control.
+- Schema-based typed values are representable, but newline arrays preserve whitespace and blank items; migrating from
+  comma-separated, trimmed and filtered input changes editing semantics. Unknown keys remain visible and invalid rather
+  than being filtered out on load.
+- Policy-aware rows with per-row readonly keys, compliance metadata, warning content or removal callbacks are not
+  covered by the current CVA. `keyConfig` applies to all keys; `valueConfig` resolves by key only. A disabled field is
+  not a substitute for readonly because it skips field validation. Keep an application adapter/FormArray implementation
+  until the required generic extension is designed and verified.
+- Applications with another translation service must synchronize locale ownership. This library's TranslationService
+  also updates document lang/dir and Clarity common strings. Per-field messages and addText do not cover every group
+  message, accessible label or announcement. Supplying only min/max wording would not solve that integration.
+
+A configurable Add appearance and a complete text-override contract are possible follow-up APIs, not currently available
+inputs. Consumer migration tests should establish the needed scope before adding those contracts. Start with a simple
+metadata/tag flow and verify create, edit, toggle, reset, duplicate validation, submission and runtime language changes;
+retain specialized policy editors until their additional requirements are met.

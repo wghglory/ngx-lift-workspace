@@ -233,3 +233,29 @@ FormControl or ngModel binding, map schema configuration and validators, and rev
 row controls. Per-row asynchronous validators and custom subscriptions should remain on the FormArray integration until
 the application explicitly redesigns them. Support for typed fields and tag catalogs does not make this a drop-in
 replacement for every application-specific editor.
+
+## Check application compatibility before migrating
+
+The legacy FormArray API remains available. Adopting the array-value control changes form ownership: update form
+factories, code that traverses `controls`, row subscriptions/validators, reset/toggle behavior, and serialization
+together. The new control does not recreate smart initialization; the owner supplies any initial blank row explicitly.
+
+Check the installed package's peers and the application's lockfile together. The current package requires
+`ngx-lift >=21.3.0 <22`; an application still resolving an older version must update that dependency as part of its
+upgrade. Run the application's own build and integration tests with the packed or released packages.
+
+Typed values alone do not guarantee identical editing behavior. This control's array editor uses newlines and preserves
+whitespace and blank items, unlike a comma editor that trims and filters. Unknown schema selections remain visible and
+invalid. Keep domain-specific conversion and validation in the application.
+
+Use an application adapter or retain a FormArray editor for policy rows that carry extra metadata, lock only selected
+keys, show per-row warning content, or depend on removal callbacks. The current `keyConfig` applies to every key, and
+`valueConfig` receives only the key. Disabled fields skip field validation, so disabling a field does not reproduce
+readonly semantics.
+
+When the application uses another localization framework, bridge its active locale to
+`TranslationService.setLanguage(locale, false)` using the application's initialization/lifecycle conventions. Coordinate
+Clarity common-string overrides and document language/direction ownership as well. Test a locale that differs from the
+browser preference, runtime switching, and mounting a second editor. Field `messages`, placeholders, helpers and
+`addText` accept caller translations; group errors, row names, remove text and announcements use library translations.
+There is currently no component-level text-override or Add-appearance input.
