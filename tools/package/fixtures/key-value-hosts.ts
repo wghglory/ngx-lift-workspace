@@ -38,7 +38,12 @@ void invalidEntry;
       <button type="submit">Save</button>
     </form>
     <section data-typed>
-      <cll-key-value-control [formControl]="typed" [valueConfig]="typedConfig" [uniquePairs]="true" />
+      <cll-key-value-control
+        [formControl]="typed"
+        [readonly]="readonly()"
+        [valueConfig]="typedConfig"
+        [uniquePairs]="true"
+      />
     </section>
     <section data-legacy><cll-key-value-inputs [formArray]="legacy" [data]="legacyData" /></section>
   `,

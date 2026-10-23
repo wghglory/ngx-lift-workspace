@@ -1,8 +1,12 @@
-<fieldset [disabled]="disabled()" [attr.aria-describedby]="prefix + '-help ' + prefix + '-limits'">
+<fieldset
+  tabindex="-1"
+  [disabled]="disabled()"
+  [attr.aria-describedby]="prefix + '-help ' + prefix + '-limits ' + prefix + '-add-help'"
+>
   <legend class="clr-sr-only">{{ label() || ('key-value.labels' | translate) }}</legend>
   <p [hidden]="!helper()" [id]="prefix + '-help'" class="clr-subtext">{{ helper() }}</p>
-  @for (row of rows(); track row.id; let i = $index) {
-    <div class="entry" cds-layout="horizontal gap:sm align:top">
+  @for (row of editorRows(); track row.id; let i = $index) {
+    <div [attr.data-row-id]="row.id" class="entry" cds-layout="horizontal gap:sm align:top">
       <cll-key-value-field
         class="field"
         [groupHelpId]="prefix + '-help'"
@@ -11,7 +15,7 @@
         [label]="('key-value.key' | translate) + ' ' + (i + 1)"
         [defaultPlaceholder]="'key-value.key' | translate"
         [value]="row.key"
-        [config]="keyEditor(row)"
+        [config]="row.keyConfig"
         [disabled]="disabled()"
         [readonly]="readonly()"
         [errors]="rowErrors().get(i)?.key"
@@ -26,7 +30,7 @@
         [label]="('key-value.value' | translate) + ' ' + (i + 1)"
         [defaultPlaceholder]="'key-value.value' | translate"
         [value]="row.value"
-        [config]="valueEditor(row.key)"
+        [config]="row.valueConfig"
         [disabled]="disabled()"
         [readonly]="readonly()"
         [errors]="rowErrors().get(i)?.value"

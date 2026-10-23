@@ -26,10 +26,10 @@ row on initialization or reset.
 
 Row labels are screen-reader-only. The fieldset retains an accessible name through `label` (localized Labels by default)
 without adding a visible heading. Removal uses a times icon with a localized, numbered accessible name. Add focuses the
-new key; removal focuses the neighboring row or Add. Errors appear below their own field after blur or submission,
-without shifting adjacent inputs. New rows and reset fields do not immediately display errors. Localized Key/Value
-placeholders are supplied by default; field configuration can override them. Supply `helper` for group guidance or field
-`helper` for more specific instructions.
+new key; removal focuses the neighboring row's enabled key or value, then Add or the named group. Errors appear below
+their own field after blur or submission, without shifting adjacent inputs. New rows and reset fields do not immediately
+display errors. Localized Key/Value placeholders are supplied by default; field configuration can override them. Supply
+`helper` for group guidance or field `helper` for more specific instructions.
 
 `readonly KeyValueEntry[]` is accepted but not required. The editor copies incoming entries, emits new arrays and
 entries, and copies nested string arrays. It never mutates the owner's array. The `readonly` component input is
@@ -91,7 +91,7 @@ readonly valueConfig: KeyValueValueConfig = (key) => ({
 With `resetValueOnKeyChange`, user key changes reset the value to the new editor's empty value: `''`, `null` for
 numbers, `false` for booleans or `[]` for arrays. Owner writes and reset never perform this dependent reset. Without the
 flag, the old value remains visible; validation reports incompatibility. `excludeSelectedKeys` removes other rows' keys
-from the choices and disables Add when all available keys are used.
+from select/combobox choices and disables Add when all available keys are used. Free-text keys remain unrestricted.
 
 ## Tags, pair uniqueness and field validation
 
@@ -142,7 +142,8 @@ readonly valueConfig: KeyValueValueConfig = (key) => {
 This excerpt requires `FormControl`, `ReactiveFormsModule`, `KeyValueEntry`, `KeyValueValue` and `KeyValueValueConfig`.
 Bind the control with `[formControl]="entries"`. Number edits emit numbers, cleared numbers emit null, booleans emit
 booleans, and false is valid. The array editor uses one item per line; it preserves order and whitespace and emits an
-empty array for empty text. Owner values are validated without coercion. Arbitrary nested objects are unsupported.
+empty array for empty text. Textarea edits normalize CRLF and lone CR to LF before splitting lines. Owner values are
+validated without coercion. Arbitrary nested objects are unsupported.
 
 ## Forms, reset and submission
 
@@ -160,7 +161,12 @@ empty array for empty text. Owner values are validated without coercion. Arbitra
 
 The control emits indexed errors under `keyValue.rows`, plus optional `minRows` and `maxRows`. Field errors preserve the
 Angular validator payload. Add is blocked by readonly, disabled, maximum count or exhausted key choices. Invalid rows
-remain editable; Add is not blocked solely by existing errors.
+remain editable; Add is not blocked solely by existing field errors.
+
+Malformed owner data (such as a non-array, null entry, missing field or unsupported nested object) returns
+`{keyValue: {rows: [], structure: true}}`. The editor shows an invalid-type message and blocks edits until the owner
+supplies a supported array. It never drops malformed entries or rewrites the owner value. Null and undefined still
+render as empty, subject to row-count constraints. Attaching an already touched owner reveals its field errors.
 
 ## Choosing a migration boundary
 

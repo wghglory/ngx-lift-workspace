@@ -30,9 +30,16 @@ class Host {
   readonly = signal(false);
 }
 
+function query<T extends Element = HTMLInputElement>(root: ParentNode, selector: string): T {
+  const element = root.querySelector<T>(selector);
+  if (!element) throw new Error(`Missing test element: ${selector}`);
+  return element;
+}
+
 describe('key/value editor configuration', () => {
-  async function setup() {
+  async function setup(initialize?: (host: Host) => void) {
     const fixture = TestBed.createComponent(Host);
+    initialize?.(fixture.componentInstance);
     const settle = async () => {
       fixture.detectChanges();
       await fixture.whenStable();
@@ -41,7 +48,7 @@ describe('key/value editor configuration', () => {
     await settle();
     const element = fixture.nativeElement as HTMLElement;
     const edit = async (selector: string, value: string, event = 'input') => {
-      const field = element.querySelector<HTMLInputElement>(selector)!;
+      const field = query<HTMLInputElement>(element, selector);
       field.value = value;
       field.dispatchEvent(new Event(event, {bubbles: true}));
       await settle();
@@ -51,7 +58,7 @@ describe('key/value editor configuration', () => {
 
   it('defers each new field error until blur and clears feedback on reset', async () => {
     const {host, element, settle} = await setup();
-    element.querySelector<HTMLButtonElement>('[data-add]')!.click();
+    query<HTMLButtonElement>(element, '[data-add]').click();
     await settle();
     const fields = element.querySelectorAll('input');
     expect(host.control.invalid).toBe(true);
@@ -65,22 +72,22 @@ describe('key/value editor configuration', () => {
     host.control.markAllAsTouched();
     await settle();
     expect(fields[3].getAttribute('aria-invalid')).toBe('true');
-    element.querySelector<HTMLButtonElement>('[data-add]')!.click();
+    query<HTMLButtonElement>(element, '[data-add]').click();
     await settle();
     expect(element.querySelectorAll('input')[4].getAttribute('aria-invalid')).toBe('false');
     host.control.reset([{key: '', value: ''}]);
     await settle();
-    expect(element.querySelector('input')!.getAttribute('aria-invalid')).toBe('false');
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('false');
     host.keyConfig.set({placeholder: 'Choose category'});
     await settle();
-    expect(element.querySelector('input')!.placeholder).toBe('Choose category');
+    expect(query(element, 'input').placeholder).toBe('Choose category');
   });
 
   it('keeps required select placeholders out of selectable data and lets optional selects clear', async () => {
     const {host, element, settle, edit} = await setup();
     host.keyConfig.set({type: 'select', options: [{value: 'team', label: 'Team'}]});
     await settle();
-    const placeholder = element.querySelector('option')!;
+    const placeholder = query<HTMLOptionElement>(element, 'option');
     expect(placeholder.textContent?.trim()).toBe('Key');
     expect(placeholder.value).toBe('');
     expect(placeholder.disabled).toBe(true);
@@ -102,13 +109,123 @@ describe('key/value editor configuration', () => {
     await settle();
     original.markAllAsTouched();
     await settle();
-    expect(element.querySelector('input')!.getAttribute('aria-invalid')).toBe('false');
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('false');
     host.control.markAllAsTouched();
     await settle();
-    expect(element.querySelector('input')!.getAttribute('aria-invalid')).toBe('true');
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('true');
     host.control.markAsUntouched();
     await settle();
-    expect(element.querySelector('input')!.getAttribute('aria-invalid')).toBe('false');
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('false');
+  });
+
+  it('reveals errors for initially attached and replacement pre-touched owners', async () => {
+    const {host, fixture, element, settle} = await setup((host) => {
+      host.control.setValue([{key: '', value: ''}]);
+      host.control.markAsTouched();
+    });
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('true');
+    host.control = new FormControl<KeyValueEntry<KeyValueValue>[]>([{key: '', value: ''}], {nonNullable: true});
+    host.control.markAsTouched();
+    fixture.changeDetectorRef.markForCheck();
+    await settle();
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('true');
+    host.control.reset();
+    await settle();
+    expect(query(element, 'input').getAttribute('aria-invalid')).toBe('false');
+  });
+
+  it.each(
+    [
+      {},
+      '',
+      [null],
+      [undefined],
+      new Array(1),
+      [{}],
+      [{key: 4, value: ''}],
+      [{key: 'missing'}],
+      [{key: 'object', value: {nested: 'unsupported'}}],
+      [{key: 'array', value: [1]}],
+      [{key: 'array', value: new Array(1)}],
+    ].map((value) => ({value})),
+  )('rejects malformed owner data without throwing, rewriting or allowing edits: $value', async ({value}) => {
+    const {host, element, settle} = await setup();
+    const changed = vi.fn();
+    host.control.valueChanges.subscribe(changed);
+    host.control.setValue(value as unknown as KeyValueEntry<KeyValueValue>[]);
+    await settle();
+    expect(host.control.value).toBe(value);
+    expect(host.control.errors).toEqual({keyValue: {rows: [], structure: true}});
+    expect(element.querySelectorAll('input')).toHaveLength(0);
+    expect(query<HTMLButtonElement>(element, '[data-add]').disabled).toBe(true);
+    expect(element.textContent).toContain('Value has the wrong type');
+    query<HTMLButtonElement>(element, '[data-add]').click();
+    await settle();
+    expect(changed).toHaveBeenCalledTimes(1);
+    host.control.setValue([{key: 'environment', value: 'production'}]);
+    await settle();
+    expect(host.control.valid).toBe(true);
+    expect(query(element, 'input').value).toBe('environment');
+    expect(query<HTMLButtonElement>(element, '[data-add]').disabled).toBe(false);
+  });
+
+  it('keeps Add available for default free-text keys with exhausted options', async () => {
+    const {host, element, settle} = await setup();
+    host.keyConfig.set({options: [{value: 'team', label: 'Team'}]});
+    host.exclude.set(true);
+    await settle();
+    const add = query<HTMLButtonElement>(element, '[data-add]');
+    expect(query(element, 'input').value).toBe('team');
+    expect(add.disabled).toBe(false);
+    add.click();
+    await settle();
+    expect(host.control.value).toHaveLength(2);
+    expect(add.disabled).toBe(false);
+  });
+
+  it('does not resolve row configurations again for unrelated change detection', async () => {
+    const {host, settle} = await setup();
+    const resolver = vi.fn(() => ({}));
+    host.valueConfig.set(resolver);
+    host.exclude.set(true);
+    await settle();
+    resolver.mockClear();
+    host.readonly.set(true);
+    await settle();
+    await settle();
+    expect(resolver).not.toHaveBeenCalled();
+  });
+
+  it('recovers removal focus through enabled value, Add and the named group', async () => {
+    const {host, element, settle} = await setup();
+    host.control.setValue([
+      {key: 'team', value: 'data'},
+      {key: 'region', value: 'east'},
+    ]);
+    host.keyConfig.set({disabled: true});
+    await settle();
+    query<HTMLButtonElement>(element, 'button').click();
+    await settle();
+    await vi.waitFor(() => expect(document.activeElement).toBe(query(element, 'input:enabled')));
+    host.control.setValue([
+      {key: 'team', value: 'data'},
+      {key: 'region', value: 'east'},
+    ]);
+    host.valueConfig.set({disabled: true});
+    await settle();
+    query<HTMLButtonElement>(element, 'button').click();
+    await settle();
+    await vi.waitFor(() => expect(document.activeElement).toBe(query(element, '[data-add]')));
+    host.keyConfig.set({type: 'select', disabled: true, options: [{value: 'team', label: 'Team'}]});
+    host.exclude.set(true);
+    host.control.setValue([
+      {key: 'team', value: 'data'},
+      {key: 'region', value: 'east'},
+    ]);
+    await settle();
+    element.querySelectorAll<HTMLButtonElement>('button')[1].click();
+    await settle();
+    await vi.waitFor(() => expect(document.activeElement).toBe(query(element, 'fieldset')));
   });
 
   it('resets dependent values once on user key changes but preserves owner writes', async () => {
@@ -153,14 +270,18 @@ describe('key/value editor configuration', () => {
     host.control.setValue([{key: 'enabled', value: false}]);
     await settle();
     expect(host.control.valid).toBe(true);
-    element.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click();
+    query<HTMLInputElement>(element, 'input[type="checkbox"]').click();
     await settle();
     expect(host.control.value[0].value).toBe(true);
     host.readonly.set(true);
     await settle();
-    element.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click();
+    query<HTMLInputElement>(element, 'input[type="checkbox"]').click();
     await settle();
     expect(host.control.value[0].value).toBe(true);
+    const checkbox = query(element, 'clr-checkbox-wrapper input');
+    expect(checkbox.disabled).toBe(false);
+    expect(checkbox.checked).toBe(true);
+    expect(checkbox.getAttribute('aria-readonly')).toBe('true');
   });
 
   it('copies nested arrays on writes and emissions, and resets without changing the owner default', async () => {
@@ -205,9 +326,7 @@ describe('key/value editor configuration', () => {
     });
     await settle();
     expect(host.control.errors?.['keyValue'].rows[0].key.pattern).toBeTruthy();
-    element
-      .querySelector('input')!
-      .dispatchEvent(new FocusEvent('focusout', {bubbles: true, relatedTarget: document.body}));
+    query(element, 'input').dispatchEvent(new FocusEvent('focusout', {bubbles: true, relatedTarget: document.body}));
     await settle();
     expect(element.textContent).toContain('No whitespace');
     host.keyConfig.set({});
@@ -219,7 +338,7 @@ describe('key/value editor configuration', () => {
     const {host, settle, element} = await setup();
     host.valueConfig.set({type: 'select', options: [{value: 'allowed', label: 'Allowed'}]});
     await settle();
-    expect(element.querySelector('select')!.value).toBe('data');
+    expect(query(element, 'select').value).toBe('data');
     expect(host.control.errors?.['keyValue'].rows[0].value.selection).toBe(true);
     expect(host.control.value[0].value).toBe('data');
   });
@@ -240,10 +359,10 @@ describe('key/value editor configuration', () => {
     ]);
     await settle();
     expect(element.querySelectorAll('select')[0].options.length).toBe(2);
-    expect(element.querySelector<HTMLButtonElement>('[data-add]')!.disabled).toBe(true);
-    element.querySelector<HTMLButtonElement>('button')!.click();
+    expect(query<HTMLButtonElement>(element, '[data-add]').disabled).toBe(true);
+    query<HTMLButtonElement>(element, 'button').click();
     await settle();
-    expect(element.querySelector<HTMLButtonElement>('[data-add]')!.disabled).toBe(false);
+    expect(query<HTMLButtonElement>(element, '[data-add]').disabled).toBe(false);
   });
 
   it('blocks disabled fields without dropping their submitted values', async () => {

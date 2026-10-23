@@ -22,7 +22,9 @@
     </clr-combobox>
   </clr-combobox-container>
 } @else {
-  <label class="clr-sr-only" [for]="controlId()">{{ label() }}</label>
+  @if (config().type !== 'boolean') {
+    <label class="clr-sr-only" [for]="controlId()">{{ label() }}</label>
+  }
   @if (config().type === 'select' && !readonly()) {
     <div class="clr-select-wrapper">
       <select
@@ -62,17 +64,23 @@
       (compositionend)="edit($event)"
     ></textarea>
   } @else if (config().type === 'boolean') {
-    <input
-      type="checkbox"
-      [id]="controlId()"
-      [checked]="value() === true"
-      [disabled]="blocked()"
-      [attr.aria-readonly]="readonly()"
-      [attr.aria-invalid]="!!visibleErrors()"
-      [attr.aria-describedby]="groupHelpId() + ' ' + controlId() + '-help ' + controlId() + '-error'"
-      (click)="readonly() ? $event.preventDefault() : null"
-      (change)="edit($event)"
-    />
+    <clr-checkbox-wrapper>
+      <input
+        clrCheckbox
+        type="checkbox"
+        [id]="controlId()"
+        [checked]="value() === true"
+        [disabled]="blocked()"
+        [attr.aria-readonly]="readonly()"
+        [attr.aria-invalid]="!!visibleErrors()"
+        [attr.aria-describedby]="groupHelpId() + ' ' + controlId() + '-help ' + controlId() + '-error'"
+        (click)="readonly() ? $event.preventDefault() : null"
+        (change)="edit($event)"
+      />
+      <label [for]="controlId()"
+        ><span class="clr-sr-only">{{ label() }}</span></label
+      >
+    </clr-checkbox-wrapper>
   } @else {
     <input
       class="clr-input"

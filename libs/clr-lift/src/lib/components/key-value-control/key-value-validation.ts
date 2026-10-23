@@ -55,16 +55,46 @@ function fieldErrors(value: KeyValueValue, config: KeyValueFieldConfig): Validat
   return errors;
 }
 
+/** Check the serialized boundary before rendering or validating untyped owner data. */
+export function isKeyValueEntries(value: unknown): value is readonly KeyValueEntry<KeyValueValue>[] {
+  return (
+    Array.isArray(value) &&
+    Array.from(value).every((entry: unknown) => {
+      if (entry === null || typeof entry !== 'object' || !('key' in entry) || !('value' in entry)) return false;
+      const field = entry.value;
+      return (
+        typeof entry.key === 'string' &&
+        (field === null ||
+          typeof field === 'string' ||
+          typeof field === 'number' ||
+          typeof field === 'boolean' ||
+          (Array.isArray(field) && Array.from(field).every((item: unknown) => typeof item === 'string')))
+      );
+    })
+  );
+}
+
+export interface KeyValueErrors {
+  keyValue: {
+    rows: RowErrors[];
+    structure?: true;
+    minRows?: {required: number; actual: number};
+    maxRows?: {required: number; actual: number};
+  };
+}
+
 /** Validate committed owner values independently of buffered view edits. */
 export function keyValueErrors(
-  entries: readonly KeyValueEntry<KeyValueValue>[],
+  value: unknown,
   min: number,
   max: number | undefined,
   unique: boolean,
   keyConfig: KeyValueFieldConfig = {},
   valueConfig: KeyValueValueConfig = {},
   uniquePairs = false,
-) {
+): KeyValueErrors | null {
+  const entries = value ?? [];
+  if (!isKeyValueEntries(entries)) return {keyValue: {rows: [], structure: true}};
   const counts = new Map<string, number>();
   const pairs = new Map<string, number>();
   for (const entry of entries) {

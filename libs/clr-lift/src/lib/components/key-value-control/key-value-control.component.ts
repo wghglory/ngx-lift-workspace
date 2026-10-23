@@ -36,7 +36,13 @@ import {TranslationService} from '../../services/translation.service';
 import {keyValueTranslations} from '../key-value-inputs/key-value.l10n';
 import {KeyValueEntry, KeyValueValue, KeyValueKeyConfig, KeyValueValueConfig} from './key-value-entry.type';
 import {KeyValueFieldComponent} from './key-value-field.component';
-import {keyValueErrors, resolveValueConfig, emptyFieldValue, copyFieldValue} from './key-value-validation';
+import {
+  keyValueErrors,
+  resolveValueConfig,
+  emptyFieldValue,
+  copyFieldValue,
+  isKeyValueEntries,
+} from './key-value-validation';
 
 interface EditorRow extends KeyValueEntry<KeyValueValue> {
   readonly id: number;
@@ -116,6 +122,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   protected readonly prefix = `cll-key-value-control-${nextId++}`;
   protected readonly rows = signal<readonly EditorRow[]>([]);
   protected readonly disabled = signal(false);
+  protected readonly invalidStructure = signal(false);
   protected readonly announcementCount = signal<number | null>(null);
   protected readonly errors = computed(() =>
     keyValueErrors(
@@ -131,13 +138,30 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   protected readonly rowErrors = computed(
     () => new Map(this.errors()?.keyValue.rows.map((row) => [row.index, row]) ?? []),
   );
-  protected readonly blocked = computed(() => this.disabled() || this.readonly());
+  protected readonly editorRows = computed(() => {
+    const rows = this.rows();
+    const keyConfig = this.keyConfig();
+    const valueConfig = this.valueConfig();
+    const exclude = this.excludeSelectedKeys();
+    const selected = new Set(rows.map((row) => row.key));
+    return rows.map((row) => ({
+      ...row,
+      keyConfig: exclude
+        ? {
+            ...keyConfig,
+            options: keyConfig.options?.filter((option) => option.value === row.key || !selected.has(option.value)),
+          }
+        : keyConfig,
+      valueConfig: resolveValueConfig(valueConfig, row.key),
+    }));
+  });
+  protected readonly blocked = computed(() => this.disabled() || this.readonly() || this.invalidStructure());
   protected readonly addDisabled = computed(
     () =>
       this.blocked() ||
       this.rows().length >= (this.maxRows() ?? Number.POSITIVE_INFINITY) ||
       (this.excludeSelectedKeys() &&
-        this.keyConfig().type !== 'input' &&
+        (this.keyConfig().type === 'select' || this.keyConfig().type === 'combobox') &&
         this.keyConfig().options !== undefined &&
         !this.keyConfig().options?.some(
           (option) => !option.disabled && !this.rows().some((row) => row.key === option.value),
@@ -145,6 +169,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   );
 
   protected readonly addDisabledReason = computed(() => {
+    if (this.invalidStructure()) return this.translations.translate('key-value.invalidType');
     if (this.disabled()) return this.translations.translate('key-value.addDisabled');
     if (this.readonly()) return this.translations.translate('key-value.addReadonly');
     if (this.rows().length >= (this.maxRows() ?? Number.POSITIVE_INFINITY))
@@ -174,6 +199,8 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
     if (control === this.owner) return;
     this.ownerEvents?.unsubscribe();
     this.owner = control ?? null;
+    if (control?.touched) this.revealErrors();
+    else this.touchedFields.set(new Set());
     this.ownerEvents = control?.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       if (event instanceof TouchedChangeEvent && !this.reportingTouch) {
         if (event.touched) this.revealErrors();
@@ -206,18 +233,21 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
     }
   }
 
-  writeValue(value: readonly KeyValueEntry<KeyValueValue>[] | null | undefined): void {
+  writeValue(value: unknown): void {
     this.cancelFocus();
     this.touchedFields.set(new Set());
     const previous = this.rows();
+    const entries = value ?? [];
+    this.invalidStructure.set(!isKeyValueEntries(entries));
     this.rows.set(
-      (value ?? []).map((entry, index) => ({
+      (isKeyValueEntries(entries) ? entries : []).map((entry, index) => ({
         key: entry.key,
         value: copyFieldValue(entry.value),
         id: previous[index]?.id ?? nextId++,
       })),
     );
     this.announcementCount.set(null);
+    if (this.injector.get(NgControl, null, {self: true})?.control?.touched) this.revealErrors();
   }
 
   registerOnChange(fn: (value: KeyValueEntry<KeyValueValue>[]) => void): void {
@@ -245,20 +275,6 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
       this.valueConfig(),
       this.uniquePairs(),
     );
-  }
-
-  protected keyEditor(row: EditorRow): KeyValueKeyConfig {
-    const config = this.keyConfig();
-    if (!this.excludeSelectedKeys()) return config;
-    const selected = new Set(
-      this.rows()
-        .filter((item) => item.id !== row.id)
-        .map((item) => item.key),
-    );
-    return {
-      ...config,
-      options: config.options?.filter((option) => option.value === row.key || !selected.has(option.value)),
-    };
   }
 
   protected valueEditor(key: string) {
@@ -344,12 +360,11 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
     this.focusTimer = setTimeout(() => {
       this.focusTimer = undefined;
       if (!this.blocked()) {
+        const row = this.host.querySelector<HTMLElement>(`[data-row-id="${id}"]`);
         const target =
-          id === undefined
-            ? this.host.querySelector<HTMLElement>('[data-add]')
-            : this.host.querySelector<HTMLElement>(
-                `[data-key-id="${id}"] input, [data-key-id="${id}"] select, [data-key-id="${id}"] textarea`,
-              );
+          row?.querySelector<HTMLElement>('input:enabled, select:enabled, textarea:enabled') ??
+          this.host.querySelector<HTMLElement>('[data-add]:enabled') ??
+          this.host.querySelector<HTMLElement>('fieldset');
         target?.focus();
       }
     });

@@ -108,7 +108,7 @@ export class KeyValueFieldComponent {
           : type === 'array'
             ? target.value === ''
               ? []
-              : target.value.split('\n')
+              : target.value.replace(/\r\n?/g, '\n').split('\n')
             : target.value,
     );
   }

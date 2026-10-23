@@ -175,3 +175,28 @@ test('disabled Add explains its reason and recipe code has no empty sections', a
     'FormArray: edit individual rows',
   );
 });
+
+test('textarea edits normalize CRLF and Clarity checkboxes preserve boolean values', async ({page}) => {
+  const schema = page.getByTestId('key-value-schema');
+  const array = schema.getByRole('textbox', {name: 'Value 3', exact: true});
+  await array.fill('first\r\nsecond\r\n');
+  await expect(array).toHaveValue('first\nsecond\n');
+  const values = schema.getByTestId('recipe-value');
+  await expect.poll(async () => JSON.parse(await values.innerText())[2].value).toEqual(['first', 'second', '']);
+  const checkbox = schema.getByRole('checkbox', {name: 'Value 2', exact: true});
+  await checkbox.check();
+  await expect(checkbox).toBeChecked();
+  await expect(schema.locator('clr-checkbox-wrapper')).toHaveCount(1);
+  const keyBox = await schema.getByRole('combobox', {name: 'Key 2', exact: true}).boundingBox();
+  const checkboxBox = await checkbox.boundingBox();
+  expect(
+    Math.abs(
+      (keyBox ? keyBox.y + keyBox.height / 2 : NaN) - (checkboxBox ? checkboxBox.y + checkboxBox.height / 2 : NaN),
+    ),
+  ).toBeLessThan(2);
+  await checkbox.focus();
+  await checkbox.press('Space');
+  await expect(checkbox).toBeFocused();
+  await expect(checkbox).not.toBeChecked();
+  await expect.poll(async () => JSON.parse(await values.innerText())[1].value).toBe(false);
+});

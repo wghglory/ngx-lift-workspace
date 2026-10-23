@@ -9,7 +9,7 @@ fieldset {
   min-inline-size: 0;
 }
 legend {
-  color: var(--clr-forms-label-color, #454545);
+  color: var(--clr-forms-label-color);
   font-weight: 600;
 }
 .entry {
@@ -31,7 +31,7 @@ legend {
   overflow-wrap: anywhere;
 }
 .error {
-  color: var(--clr-forms-invalid-color, #c21d00);
+  color: var(--clr-forms-invalid-color);
 }
 .entry .btn {
   align-self: flex-start;

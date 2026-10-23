@@ -56,6 +56,27 @@ async function submit(name) {
 try {
   await stable();
   assert.equal(host.typed.valid, true, 'typed false and arrays are valid');
+  const typedValue = host.typed.value;
+  const malformed = [null];
+  host.typed.setValue(malformed);
+  await stable();
+  assert.equal(host.typed.value, malformed, 'malformed owner data is never rewritten');
+  assert.deepEqual(host.typed.errors, {keyValue: {rows: [], structure: true}});
+  assert.equal(document.querySelector('[data-typed] [data-add]').disabled, true);
+  host.typed.setValue(typedValue);
+  await stable();
+  assert.equal(host.typed.valid, true, 'valid owner data restores editing');
+  host.readonly.set(true);
+  await stable();
+  const checkbox = document.querySelector('[data-typed] clr-checkbox-wrapper input');
+  assert.equal(checkbox.getAttribute('aria-readonly'), 'true');
+  assert.equal(checkbox.disabled, false);
+  checkbox.click();
+  await stable();
+  assert.equal(checkbox.checked, false);
+  assert.equal(host.typed.value[1].value, false);
+  host.readonly.set(false);
+  await stable();
   const number = document.querySelector('[data-typed] input[type="number"]');
   number.value = '7';
   number.dispatchEvent(new Event('input', {bubbles: true}));

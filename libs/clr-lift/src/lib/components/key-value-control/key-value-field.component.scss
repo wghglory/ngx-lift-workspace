@@ -23,11 +23,8 @@ clr-combobox {
   overflow-wrap: anywhere;
 }
 .error {
-  color: var(--clr-forms-invalid-color, #c21d00);
+  color: var(--clr-forms-invalid-color);
 }
 .unavailable {
   opacity: 0.5;
-}
-input[type='checkbox'] {
-  margin-block: 0.3rem;
 }

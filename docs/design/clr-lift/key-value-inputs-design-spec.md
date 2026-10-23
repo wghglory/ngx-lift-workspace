@@ -1,6 +1,6 @@
 # Key/value inputs
 
-Owner: clr-lift maintainers. Package: clr-lift. Updated October 22, 2026.
+Owner: clr-lift maintainers. Package: clr-lift. Updated October 23, 2026.
 
 Status: **October 22 expansion locally verified; publication and independent human acceptance pending**. The maintainer
 requested the additive array-value control and Angular 21 delivery together with demos, accessibility, localization,
@@ -64,9 +64,9 @@ Primary references checked October 19, 2026; installed Angular 21.2.17 forms pip
 
 The existing route `/clr-lift/components/key-value-inputs` presents the value-control quick start followed by separately
 labeled ngModel, Reactive Forms and facade hosts, then the original FormArray example and API reference. Every new host
-provides copyable imports/template, live state, reset and submission. The advanced hosts demonstrate a second enabled
-sibling, readonly/disabled, validation, row limits and commit policy. The facade observes its original FormGroup and
-explicitly chooses `includeDisabled: false`. Legacy usage remains discoverable on the same route.
+provides copyable imports/template, live state, reset and submission. The advanced hosts demonstrate readonly/disabled,
+validation, row limits and commit policy. The facade observes its original FormGroup and explicitly chooses
+`includeDisabled: false`. Legacy usage remains discoverable on the same route.
 
 ## Public API and examples
 
@@ -361,3 +361,24 @@ compilation, repository formatting, i18n/tooling checks, production build, bundl
 verification passed. The original header overrides were omitted because main now owns responsive navigation. Independent
 human language and assistive-technology acceptance, downstream application runtime acceptance, remote CI, merge, and
 publication remain separate gates.
+
+## October 23 review hardening contract
+
+- Reject malformed owner values with `keyValue.structure: true` and an empty `rows` error list. Nullish values still
+  render as empty. Non-arrays, missing entries/fields, non-string keys and unsupported nested values never throw or
+  silently become valid. Preserve the owner value, show the localized invalid-type message, and block editing until the
+  owner supplies a supported array.
+- Restore error visibility when an already touched control is initially attached or replaces the owner. Fresh rows
+  remain untouched and owner reset clears feedback.
+- Only select and combobox keys restrict Add when configured choices are exhausted; omitted type means free text.
+- Resolve displayed row configurations through computed state. Unrelated change detection does not allocate fresh
+  configurations or rerun value resolvers.
+- Focus the neighboring row's enabled key or value after deletion; fall back to enabled Add, then the named fieldset.
+- Boolean editors use Clarity checkbox styling while retaining focusable readonly inspection and `aria-readonly`. The
+  native textarea API normalizes pasted CRLF to LF; regression coverage asserts the emitted string array.
+
+Local hardening validation: 375 clr-lift and 279 demo unit tests; 78 feature browser checks across Chromium, Firefox and
+WebKit; library/demo lint without warnings; type checks and spec compilation; formatting; i18n/tooling checks;
+production/bundle checks; and fresh packed Angular 21 consumers in zoneless and ZoneJS modes. The packed fixtures also
+exercise malformed owner recovery and readonly boolean preservation. Two existing conditional-test lint warnings remain
+in the unrelated `documentation-validation-rules.spec.ts`. Remote CI and independent human acceptance remain separate.
