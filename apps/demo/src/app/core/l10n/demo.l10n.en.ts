@@ -1,4 +1,10 @@
 export const enTranslations: Record<string, string> = {
+  'breadcrumbs.deep': 'Deep paths',
+  'breadcrumbs.deepDescription':
+    'Open the details to reach every ancestor. Change width or font size to inspect responsive collapse.',
+  'breadcrumbs.width': 'Container width',
+  'breadcrumbs.replace': 'Replace path',
+  'breadcrumbs.stationary': 'Object list stays in place when details open.',
   'breadcrumbs.title': 'Breadcrumbs',
   'breadcrumbs.intro':
     'Build a short trail from application routes and an entity name returned by HTTP. Use real links for destinations and buttons for addressless actions. Change font size per instance; the other trails inherit their size.',
@@ -6,7 +12,7 @@ export const enTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Empty and singleton trails',
   'breadcrumbs.apiTitle': 'Public API',
   'breadcrumbs.api':
-    'items is a required immutable list of BreadcrumbItem (id, label, optional href and context). ariaLabel overrides the localized landmark name. linkTemplate supplies real SPA anchors; navigate emits the original addressless ancestor. The last item is current text. Context defaults to the ordered display trail with depth. Duplicate IDs, blank labels and invalid destinations throw diagnostics. Set --cll-breadcrumb-font-size on the host or an ancestor; the default uses Clarity inline typography. Trails wrap; overflow is deferred.',
+    'items is a required immutable list of BreadcrumbItem (id, label, optional href and context). ariaLabel overrides the localized landmark name. linkTemplate supplies real SPA anchors; navigate emits the original addressless ancestor. The last item is current text. Context defaults to the ordered display trail with depth. Duplicate IDs, blank labels and invalid destinations throw diagnostics. Set --cll-breadcrumb-font-size on the host or an ancestor; the default uses Clarity inline typography. maxVisible defaults to four actual path items; width may remove recent ancestors. Open details for complete labels and every supplied ancestor.',
   'breadcrumbs.loading': 'Loading server…',
   'breadcrumbs.error': 'Could not load the server. Reload the page to retry.',
   'breadcrumbs.submissions': 'Form submissions:',

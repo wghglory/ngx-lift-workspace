@@ -1,4 +1,10 @@
 export const frTranslations: Record<string, string> = {
+  'breadcrumbs.deep': 'Chemins profonds',
+  'breadcrumbs.deepDescription':
+    'Ouvrez les détails pour accéder à tous les ancêtres. Modifiez la largeur ou la taille du texte.',
+  'breadcrumbs.width': 'Largeur du conteneur',
+  'breadcrumbs.replace': 'Remplacer le chemin',
+  'breadcrumbs.stationary': 'La liste des objets reste en place à l’ouverture des détails.',
   'breadcrumbs.title': 'Fil d’Ariane',
   'breadcrumbs.intro':
     'Créez un chemin court à partir des routes de l’application et d’un nom d’entité reçu par HTTP. Utilisez des liens pour les destinations et des boutons pour les actions sans adresse. Modifiez la taille du texte par instance ; les autres chemins héritent de leur taille.',
@@ -6,7 +12,7 @@ export const frTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Chemins vides et à un seul élément',
   'breadcrumbs.apiTitle': 'API publique',
   'breadcrumbs.api':
-    'items est une liste immuable obligatoire de BreadcrumbItem (id, label, href et context facultatifs). ariaLabel remplace le nom de navigation traduit. linkTemplate fournit de vrais liens SPA ; navigate émet l’ancêtre original sans adresse. Le dernier élément est le texte de la position actuelle. Le contexte par défaut contient le chemin affiché ordonné et le niveau. Les ID en double, libellés vides et destinations invalides déclenchent des erreurs de diagnostic. Définissez --cll-breadcrumb-font-size sur le composant ou un ancêtre ; la typographie en ligne de Clarity est utilisée par défaut. Les chemins passent à la ligne ; le débordement sera traité ultérieurement.',
+    'items est une liste immuable obligatoire de BreadcrumbItem (id, label, href et context facultatifs). ariaLabel remplace le nom de navigation traduit. linkTemplate fournit de vrais liens SPA ; navigate émet l’ancêtre original sans adresse. Le dernier élément est le texte de la position actuelle. Le contexte par défaut contient le chemin affiché ordonné et le niveau. Les ID en double, libellés vides et destinations invalides déclenchent des erreurs de diagnostic. Définissez --cll-breadcrumb-font-size sur le composant ou un ancêtre ; la typographie en ligne de Clarity est utilisée par défaut. maxVisible affiche quatre éléments de chemin par défaut ; la largeur peut masquer les ancêtres récents. Les détails affichent les libellés complets et tous les ancêtres.',
   'breadcrumbs.loading': 'Chargement du serveur…',
   'breadcrumbs.error': 'Impossible de charger le serveur. Rechargez la page pour réessayer.',
   'breadcrumbs.submissions': 'Envois du formulaire :',

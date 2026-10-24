@@ -1,4 +1,10 @@
 export const nlTranslations: Record<string, string> = {
+  'breadcrumbs.deep': 'Diepe paden',
+  'breadcrumbs.deepDescription':
+    'Open de details om alle bovenliggende locaties te bereiken. Wijzig de breedte of lettergrootte.',
+  'breadcrumbs.width': 'Containerbreedte',
+  'breadcrumbs.replace': 'Pad vervangen',
+  'breadcrumbs.stationary': 'De objectlijst blijft op zijn plaats wanneer details worden geopend.',
   'breadcrumbs.title': 'Broodkruimelnavigatie',
   'breadcrumbs.intro':
     'Maak een kort pad met applicatieroutes en een entiteitsnaam die via HTTP wordt opgehaald. Gebruik links voor bestemmingen en knoppen voor acties zonder adres. Pas de tekstgrootte per instantie aan; andere paden erven hun grootte.',
@@ -6,7 +12,7 @@ export const nlTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Lege paden en paden met één item',
   'breadcrumbs.apiTitle': 'Openbare API',
   'breadcrumbs.api':
-    'items is een verplichte onveranderlijke lijst van BreadcrumbItem (id, label, optioneel href en context). ariaLabel vervangt de vertaalde navigatienaam. linkTemplate levert echte SPA-links; navigate geeft het oorspronkelijke item zonder adres door. Het laatste item is tekst voor de huidige locatie. De standaardcontext bevat het geordende weergavepad en de diepte. Dubbele IDs, lege labels en ongeldige bestemmingen veroorzaken diagnostische fouten. Stel --cll-breadcrumb-font-size in op de host of een bovenliggend element; standaard geldt Clarity-inline-typografie. Paden lopen door op een nieuwe regel; overloop volgt later.',
+    'items is een verplichte onveranderlijke lijst van BreadcrumbItem (id, label, optioneel href en context). ariaLabel vervangt de vertaalde navigatienaam. linkTemplate levert echte SPA-links; navigate geeft het oorspronkelijke item zonder adres door. Het laatste item is tekst voor de huidige locatie. De standaardcontext bevat het geordende weergavepad en de diepte. Dubbele IDs, lege labels en ongeldige bestemmingen veroorzaken diagnostische fouten. Stel --cll-breadcrumb-font-size in op de host of een bovenliggend element; standaard geldt Clarity-inline-typografie. maxVisible toont standaard vier paditems; bij weinig ruimte worden recente bovenliggende locaties verborgen. Details tonen volledige namen en alle bovenliggende locaties.',
   'breadcrumbs.loading': 'Server laden…',
   'breadcrumbs.error': 'De server kon niet worden geladen. Vernieuw de pagina om opnieuw te proberen.',
   'breadcrumbs.submissions': 'Formulierinzendingen:',

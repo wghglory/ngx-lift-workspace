@@ -1,4 +1,9 @@
 export const zhTWTranslations: Record<string, string> = {
+  'breadcrumbs.deep': '深層路徑',
+  'breadcrumbs.deepDescription': '開啟詳細資料即可存取所有上層位置。調整寬度或字型大小以查看響應式摺疊。',
+  'breadcrumbs.width': '容器寬度',
+  'breadcrumbs.replace': '替換路徑',
+  'breadcrumbs.stationary': '開啟詳細資料時物件清單保持原位。',
   'breadcrumbs.title': '麵包屑導覽',
   'breadcrumbs.intro':
     '使用應用程式路由與 HTTP 傳回的實體名稱建立簡短路徑。有位址的位置使用連結，無位址的操作使用按鈕。調整單一實例的字型大小；其他路徑繼承字型大小。',
@@ -6,7 +11,7 @@ export const zhTWTranslations: Record<string, string> = {
   'breadcrumbs.empty': '空路徑與單項路徑',
   'breadcrumbs.apiTitle': '公開 API',
   'breadcrumbs.api':
-    'items 是必填的不可變 BreadcrumbItem 清單（id、label，以及選填的 href、context）。ariaLabel 覆寫本地化導覽名稱。linkTemplate 提供真正的 SPA 連結；navigate 發出無位址祖先的原始物件。最後一項是目前位置文字。預設內容為有序顯示路徑及深度。重複 ID、空白標籤及無效位址會擲出診斷錯誤。在宿主或祖先上設定 --cll-breadcrumb-font-size；預設採用 Clarity 行內字型。路徑會換行；溢位功能稍後提供。',
+    'items 是必填的不可變 BreadcrumbItem 清單（id、label，以及選填的 href、context）。ariaLabel 覆寫本地化導覽名稱。linkTemplate 提供真正的 SPA 連結；navigate 發出無位址祖先的原始物件。最後一項是目前位置文字。預設內容為有序顯示路徑及深度。重複 ID、空白標籤及無效位址會擲出診斷錯誤。在宿主或祖先上設定 --cll-breadcrumb-font-size；預設採用 Clarity 行內字型。maxVisible 預設最多顯示四個實際路徑項目；寬度不足時會摺疊最近的上層位置。開啟詳細資料可查看完整標籤並存取所有上層位置。',
   'breadcrumbs.loading': '正在載入伺服器…',
   'breadcrumbs.error': '無法載入伺服器。請重新載入頁面重試。',
   'breadcrumbs.submissions': '表單提交次數：',

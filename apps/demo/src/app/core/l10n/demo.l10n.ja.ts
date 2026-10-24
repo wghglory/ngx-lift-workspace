@@ -1,4 +1,10 @@
 export const jaTranslations: Record<string, string> = {
+  'breadcrumbs.deep': '深い階層のパス',
+  'breadcrumbs.deepDescription':
+    '詳細を開くとすべての上位階層にアクセスできます。幅や文字サイズを変更して確認してください。',
+  'breadcrumbs.width': 'コンテナーの幅',
+  'breadcrumbs.replace': 'パスを置換',
+  'breadcrumbs.stationary': '詳細を開いてもオブジェクト一覧は移動しません。',
   'breadcrumbs.title': 'パンくずリスト',
   'breadcrumbs.intro':
     'アプリのルートと HTTP で取得したエンティティ名から短いパスを作成します。宛先にはリンク、アドレスのない操作にはボタンを使います。インスタンスごとに文字サイズを変更でき、他のパスはサイズを継承します。',
@@ -6,7 +12,7 @@ export const jaTranslations: Record<string, string> = {
   'breadcrumbs.empty': '空のパスと単一項目のパス',
   'breadcrumbs.apiTitle': '公開 API',
   'breadcrumbs.api':
-    'items は必須の不変な BreadcrumbItem リストです（id、label、任意の href と context）。ariaLabel は翻訳済みのナビゲーション名を上書きします。linkTemplate は実際の SPA リンクを提供し、navigate はアドレスのない祖先の元の項目を出力します。最後の項目は現在位置のテキストです。既定のコンテキストには表示パスと階層が含まれます。重複 ID、空白ラベル、無効な宛先は診断エラーになります。ホストまたは祖先で --cll-breadcrumb-font-size を設定します。既定は Clarity のインライン書体です。パスは折り返され、オーバーフロー機能は後日提供されます。',
+    'items は必須の不変な BreadcrumbItem リストです（id、label、任意の href と context）。ariaLabel は翻訳済みのナビゲーション名を上書きします。linkTemplate は実際の SPA リンクを提供し、navigate はアドレスのない祖先の元の項目を出力します。最後の項目は現在位置のテキストです。既定のコンテキストには表示パスと階層が含まれます。重複 ID、空白ラベル、無効な宛先は診断エラーになります。ホストまたは祖先で --cll-breadcrumb-font-size を設定します。既定は Clarity のインライン書体です。maxVisible の既定値は実際のパス項目数で4です。幅が不足すると直近の上位階層が非表示になります。詳細では完全なラベルとすべての上位階層にアクセスできます。',
   'breadcrumbs.loading': 'サーバーを読み込み中…',
   'breadcrumbs.error': 'サーバーを読み込めませんでした。ページを再読み込みしてください。',
   'breadcrumbs.submissions': 'フォーム送信回数：',

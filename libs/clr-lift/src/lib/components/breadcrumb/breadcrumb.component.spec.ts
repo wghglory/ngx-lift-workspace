@@ -132,6 +132,62 @@ describe('Breadcrumb public host', () => {
     expect(() => fixture.detectChanges()).toThrow('invalid href at index 0');
   });
 
+  it('keeps root/current and a contiguous recent suffix before browser measurement', () => {
+    const fixture = TestBed.createComponent(BreadcrumbComponent);
+    const items = Object.freeze(
+      Array.from({length: 30}, (_, index) =>
+        Object.freeze({
+          id: String(index),
+          label: 'Same',
+          context: `exact/${index}`,
+          href: `/go?key=${index}%2F%25`,
+        }),
+      ),
+    );
+    fixture.componentRef.setInput('items', items);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    const row = element.querySelector('.trail');
+    expect(
+      Array.from(row?.querySelectorAll(':scope > li:not(.overflow)') ?? [], (li) =>
+        li.getAttribute('aria-description'),
+      ),
+    ).toEqual(['exact/0 · Level 1', 'exact/27 · Level 28', 'exact/28 · Level 29', 'exact/29 · Level 30']);
+    expect(element.querySelectorAll('.panel-list li')).toHaveLength(30);
+    expect(element.querySelector('.panel-list a')?.getAttribute('href')).toBe('/go?key=0%2F%25');
+    for (const button of element.querySelectorAll('button')) expect(button.type).toBe('button');
+    fixture.componentRef.setInput('maxVisible', 2);
+    fixture.detectChanges();
+    expect(row?.querySelectorAll(':scope > li:not(.overflow)')).toHaveLength(2);
+    fixture.componentRef.setInput('maxVisible', Number.NaN);
+    fixture.detectChanges();
+    expect(row?.querySelectorAll(':scope > li:not(.overflow)')).toHaveLength(4);
+    fixture.destroy();
+  });
+
+  it('disconnects browser measurement when the public host is destroyed', async () => {
+    const disconnect = vi.fn();
+    const observe = vi.fn();
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe = observe;
+        unobserve = vi.fn();
+        disconnect = disconnect;
+      },
+    );
+    try {
+      const fixture = TestBed.createComponent(Host);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      expect(observe).toHaveBeenCalled();
+      fixture.destroy();
+      expect(disconnect).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('diagnoses an empty explicit landmark name', () => {
     const fixture = TestBed.createComponent(BreadcrumbComponent);
     fixture.componentRef.setInput('items', initial);

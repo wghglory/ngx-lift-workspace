@@ -1,4 +1,9 @@
 export const zhCNTranslations: Record<string, string> = {
+  'breadcrumbs.deep': '深层路径',
+  'breadcrumbs.deepDescription': '打开详情可访问所有祖先。调整宽度或字号以查看响应式折叠。',
+  'breadcrumbs.width': '容器宽度',
+  'breadcrumbs.replace': '替换路径',
+  'breadcrumbs.stationary': '打开详情时对象列表保持原位。',
   'breadcrumbs.title': '面包屑导航',
   'breadcrumbs.intro':
     '使用应用路由和 HTTP 返回的实体名称构建简短路径。有地址的位置使用链接，无地址的操作使用按钮。调整单个实例的字号；其他路径继承字号。',
@@ -6,7 +11,7 @@ export const zhCNTranslations: Record<string, string> = {
   'breadcrumbs.empty': '空路径与单项路径',
   'breadcrumbs.apiTitle': '公共 API',
   'breadcrumbs.api':
-    'items 是必填的不可变 BreadcrumbItem 列表（id、label，以及可选的 href、context）。ariaLabel 覆盖本地化导航名称。linkTemplate 提供真实的 SPA 链接；navigate 发出无地址祖先的原始对象。最后一项是当前位置文本。默认上下文为有序显示路径和深度。重复 ID、空白标签及无效地址会抛出诊断错误。在宿主或祖先上设置 --cll-breadcrumb-font-size；默认采用 Clarity 行内字体。路径换行显示；溢出功能稍后提供。',
+    'items 是必填的不可变 BreadcrumbItem 列表（id、label，以及可选的 href、context）。ariaLabel 覆盖本地化导航名称。linkTemplate 提供真实的 SPA 链接；navigate 发出无地址祖先的原始对象。最后一项是当前位置文本。默认上下文为有序显示路径和深度。重复 ID、空白标签及无效地址会抛出诊断错误。在宿主或祖先上设置 --cll-breadcrumb-font-size；默认采用 Clarity 行内字体。maxVisible 默认最多显示四个实际路径项；宽度不足时会折叠最近的祖先。打开详情可查看完整标签并访问所有祖先。',
   'breadcrumbs.loading': '正在加载服务器…',
   'breadcrumbs.error': '无法加载服务器。请重新加载页面重试。',
   'breadcrumbs.submissions': '表单提交次数：',

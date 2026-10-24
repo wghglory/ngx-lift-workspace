@@ -5,20 +5,45 @@ grill decisions, approved continuing with the construction approach, and request
 The five-ticket delivery breakdown is approved. The first ticket proves the exact SPA/helper integration and interaction
 details before public exports.
 
-Status: **Ticket #186 simple public breadcrumb implemented and locally validated**, authorized by the maintainer's
+Status: **Ticket #186 simple breadcrumb and #187 responsive ancestry implemented**, authorized by the maintainer's
 `/implement` request. The component/item/link-template contracts exercised in #185 are approved for this increment.
-Deep-path overflow (#187), the public object-key helper (#188) and scale hardening (#189) remain deferred.
+Responsive ancestry (#187) is implemented below. The public object-key helper (#188) and scale hardening (#189) remain
+deferred.
+
+### Ticket #187 responsive ancestry
+
+The maintainer's `/implement` request authorizes the approved overflow contract. Add `maxVisible` (default four, minimum
+two, nonfinite values use four), counting actual items only. Preserve first/current and a contiguous suffix of recent
+ancestors. A browser-only intrinsic text probe observes current inherited typography independently of host width;
+resize, visual viewport and font-loading events schedule one measurement per animation frame. At insufficient widths,
+remove recent ancestors before truncating essential labels. A disclosure is also available when truncation alone hides
+text, including a singleton. Unmeasured rendering uses the count ceiling; no browser globals are required during render.
+
+Use the approved manual native popover and Clarity surface/link/focus tokens. All supplied locations appear in order in
+the scrollable panel, with full context/depth and noninteractive current text. Scrolling, rather than filtering,
+provides reachability in this increment. Panel primary typography inherits `--cll-breadcrumb-font-size`; secondary
+context uses relative sizing. Native anchors and consumer-owned SPA templates retain destinations and modified-click
+behavior. Opening focuses the first ancestor; Escape/close restore the trigger, Shift+Tab returns to it, forward Tab
+exits normally, and path replacement dismisses without restoring host route focus. Measurement rescues focus only if it
+removes this instance's focused trail control. Observers/listeners and pending measurement work are disposed on
+destruction.
+
+Owned messages are show details, panel name and close, plus the deep playground description, width control, path
+replacement and stationary-list explanation. All eleven locales and existing library aliases ship together. Public-host,
+three-browser, accessibility and installed-consumer checks cover this increment. SSR/hydration support remains unclaimed
+until exercised with an actual server/hydration harness; count-based rendering is the server-safe fallback.
 
 ### Ticket #186 public increment
 
 Export `BreadcrumbComponent`, `BreadcrumbItem` and `BreadcrumbLinkContext` from `clr-lift`. The component accepts
 required immutable `items`, optional `ariaLabel` (localized Breadcrumb), optional consumer-owned
-`linkTemplate: TemplateRef<BreadcrumbLinkContext>`, and emits original addressless ancestors via `navigate`. It wraps
-all supplied locations; `maxVisible` and overflow controls are not part of this increment. Empty trails render no
-landmark; singleton trails render current text. Duplicate IDs, invisible labels, blank navigation names and blank or
-unsafe destinations throw developer diagnostics. IDs may be empty and repeated labels are valid. Destinations are
-relative URLs or URLs with http, https, mailto, tel or ftp schemes; script/data and other schemes are rejected before
-rendering, including on the current item. No URL or identity is ever built from labels.
+`linkTemplate: TemplateRef<BreadcrumbLinkContext>`, and emits original addressless ancestors via `navigate`. It
+originally wrapped all supplied locations; #187 adds responsive collapse. `maxVisible` and overflow controls are not
+part of this increment. Empty trails render no landmark; singleton trails render current text. Duplicate IDs, invisible
+labels, blank navigation names and blank or unsafe destinations throw developer diagnostics. IDs may be empty and
+repeated labels are valid. Destinations are relative URLs or URLs with http, https, mailto, tel or ftp schemes;
+script/data and other schemes are rejected before rendering, including on the current item. No URL or identity is ever
+built from labels.
 
 Destination syntax is also checked with the URL parser against a fixed HTTPS base, independent of browser globals.
 Malformed absolute or protocol-relative URLs (for example `https://` or `//[`) throw the same diagnostic. Parsing is
@@ -318,15 +343,15 @@ export interface BreadcrumbItem {
 | Member       | Type                                       | Default and contract                                                                                   |
 | ------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
 | `items`      | required `readonly BreadcrumbItem[]` input | Ordered root through current location; never mutated                                                   |
-| `maxVisible` | Deferred #187 `number` input               | `4`; ceiling on actual path items including root/current, excluding overflow; width may reduce it      |
+| `maxVisible` | `number` input (#187)                      | `4`; ceiling on actual path items including root/current, excluding overflow; width may reduce it      |
 | `ariaLabel`  | `string` input                             | Localized “Breadcrumb”; caller can supply a translated name distinguishing multiple landmarks          |
 | `navigate`   | `BreadcrumbItem` output                    | Emits the original ancestor item only when it has no `href`; native links do not also emit this action |
 
 `linkTemplate?: TemplateRef<BreadcrumbLinkContext>` is also available in #186; its `$implicit` value is the original
-item. Consumers own the real anchor and RouterLink integration. The `maxVisible` row describes the deferred #187
-contract, not an input in this increment. The generic renderer is named `BreadcrumbComponent` / `cll-breadcrumb` for
-both application and object-store paths; the deferred `buildObjectPathBreadcrumbs` helper remains specific to exact
-object keys. No published breadcrumb API is being renamed because the increment is unreleased.
+item. Consumers own the real anchor and RouterLink integration. The `maxVisible` input is implemented in #187. The
+generic renderer is named `BreadcrumbComponent` / `cll-breadcrumb` for both application and object-store paths; the
+deferred `buildObjectPathBreadcrumbs` helper remains specific to exact object keys. No published breadcrumb API is being
+renamed because the increment is unreleased.
 
 ### Where items and context come from
 
@@ -952,8 +977,8 @@ Validated October 24, 2026 on `feat/186-breadcrumbs-public`:
 This increment adds no runtime dependency, router peer or package version bump. The changelog records it under
 Unreleased. CI at a pushed commit, merge, deployment and publication have not been performed. The full unrelated E2E
 suite was not rerun. Independent native-speaker review for each supported language and manual assistive-technology
-acceptance remain pending under the accessibility/language contract. Deep-path overflow (#187), the public exact-key
-helper (#188) and scale hardening (#189) remain separate increments.
+acceptance remain pending under the accessibility/language contract. Responsive overflow is implemented in #187 below.
+The public exact-key helper (#188) and scale hardening (#189) remain separate increments.
 
 ### Simple-first demo teaching correction
 
@@ -976,3 +1001,58 @@ retaining the original destination for rendering. Regression cases cover `https:
 unchanged supported relative, query-only, fragment-only and explicit-scheme links. The clr-lift unit suite passed all
 412 tests; clr-lift lint/type checks, changed-file formatting and `git diff --check` passed. Browser and installed
 package checks were not rerun for this correction.
+
+### Ticket #187 validation evidence (October 24, 2026)
+
+- `NX_SOCKET_DIR=/tmp/ngx-nx pnpm run validate` passed after the final focus correction: repository formatting,
+  tooling/translation checks, lint, type checks, coverage (883 ngx-lift, 414 clr-lift and 298 demo tests), all builds,
+  bundle checks and fresh strict-peer packed consumers. `git diff --check` and subsequent changed-document formatting
+  checks pass. The full unrelated browser suite was not run; the targeted public breadcrumb suite is recorded below.
+
+- Public host: 24 breadcrumb tests pass, including the deterministic count fallback, contiguous recent suffix, repeated
+  labels/exact destinations, count normalization, form safety, independent instances and observer teardown. The library
+  allocates disclosure IDs per application rather than using process-global server state.
+- Public browser journeys: **54 passed** across Chromium, Firefox and WebKit, using the isolated #187 production build.
+  The 18 deep-path checks cover complete ordered ancestry, panel scrolling and bounds, unchanged surrounding layout,
+  fixed-width font changes, 200% text sizing, narrow layouts, normal keyboard exit, close/Escape, external focus/path
+  replacement, singleton truncation, multiple instances, native modified clicks and ordinary SPA navigation. Existing
+  public journeys cover all eleven runtime locales, light/dark accessibility, compact RTL, native forms, HTTP recovery
+  and link ownership. Automated scans include the open panel. Text enlargement is automated; native browser zoom and
+  assistive-technology acceptance remain human checks.
+- Sampled at a 1280×720 viewport: the 30-level fixture at a 640px host width and 18px inherited text renders three
+  actual trail items, 30 panel rows and 29 native ancestor anchors in all three browsers. Panel geometry and scroll
+  extent are checked in each browser and recorded by the deep-path layout attachment. Page width remains 1280px. Tests
+  scroll to and expose the final ancestor. This is measured 30-level layout evidence, not a 100-level performance
+  guarantee.
+- Installed Angular 21 zoneless/ZoneJS fixtures cover the public `maxVisible` input, 30-level unmeasured fallback,
+  disclosure relationships, exact destinations and existing routing/actions/forms. No runtime dependency, router peer or
+  package version changes are required for #187.
+- Browser debugging found two correctness issues now covered by regressions: disclosure DOM must remain stable when the
+  recent suffix changes, and WebKit can focus the containing navigation during an inside pointer-down before the
+  anchor/button receives its click. Pointer-origin tracking preserves the pending inside activation without suppressing
+  ordinary keyboard exit. The demo also memoizes singleton arrays so it does not replace the path on each render.
+
+SSR/hydration remains unclaimed: stable count fallback and browser-only initialization are implemented, but an actual
+server-render/hydration harness has not run. Independent language review, assistive-technology/native-zoom acceptance,
+remote CI, merge, deployment and publication remain separate gates. Local filtering and 100-level scale hardening belong
+to #189.
+
+### Review feedback corrections (October 24, 2026)
+
+The renderer uses the breadcrumb-specific `crumb-label` class so Clarity's global badge padding, border and margins do
+not invalidate the text measurement. A boundary-width browser regression verifies that clipped text always has a details
+disclosure. The disclosure has a minimum 24px target width, and its measurement budget includes that width plus
+separator spacing; the compact RTL, enlarged-text accessibility journeys verify the target in both themes.
+
+Forward Tab from Close now uses native sequential navigation. The existing outside-focus listener dismisses the panel
+after focus moves, preserving browser handling of negative tab indices, inert ancestors, disabled fieldsets, visibility
+and tab order. The regression places excluded controls before the next enabled button and checks both focus and
+dismissal in Chromium, Firefox and WebKit. On macOS WebKit it uses Option+Tab for native button traversal. Shift+Tab
+from the first ancestor still closes the panel and returns focus to the disclosure trigger.
+
+The final review also replaced estimated separator spacing with rendered geometry, measures the navigation row's content
+width rather than the padded host, and renders consumer links in the hidden intrinsic probe. Twelve additional browser
+checks cover measured boundaries, host padding, custom link padding and native forward tab order across three engines.
+Consumer link examples clip their clickable boxes to the available label width and retain inset focus outlines; compact
+RTL/light/dark accessibility scans pass after this correction. The copyable deep example now uses `templateUrl` with its
+separate HTML tab.
