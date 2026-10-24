@@ -36,12 +36,39 @@ try {
     new URL(document.querySelector('nav[aria-label="SPA"] a').getAttribute('href'), dom.window.location.href).href,
     'http://localhost/database',
   );
+  const deep = document.querySelector('nav[aria-label="Deep"]');
+  assert.equal(deep.querySelectorAll('.trail > li:not(.overflow)').length, 3);
+  assert.equal(deep.querySelectorAll('.panel-list li').length, 30);
+  assert.equal(deep.querySelector('.panel-list a').getAttribute('href'), '/browse?key=0%2F%25');
+  const disclosure = deep.querySelector('.overflow button');
+  assert.equal(disclosure.type, 'button');
+  assert.equal(disclosure.getAttribute('aria-expanded'), 'false');
+  assert.equal(disclosure.getAttribute('aria-controls'), deep.querySelector('[popover]').id);
   host.items.set([{id: 'only', label: 'Current', href: '/ignored-current'}]);
   await app.whenStable();
   assert.equal(nav.querySelectorAll('a,button').length, 0);
   host.items.set([]);
   await app.whenStable();
-  assert.equal(document.querySelectorAll('nav').length, 1);
+  assert.equal(document.querySelectorAll('nav').length, 2);
+  assert.deepEqual(host.locations, [
+    {kind: 'prefix', bucket: 'bucket-1', prefix: '/'},
+    {kind: 'prefix', bucket: 'bucket-1', prefix: '/%2F/'},
+    {kind: 'prefix', bucket: 'bucket-1', prefix: '/%2F/雪/'},
+    {kind: 'prefix', bucket: 'bucket-1', prefix: '/%2F/雪/../'},
+    {kind: 'prefix', bucket: 'bucket-1', prefix: '/%2F/雪/../marker/'},
+    {kind: 'object', bucket: 'bucket-1', key: '/%2F/雪/../marker/'},
+  ]);
+  assert.equal(new Set(host.generated.map((item) => item.id)).size, 6);
+  assert.equal(host.generated.at(-1).href, '/object?key=%2F%252F%2F%E9%9B%AA%2F..%2Fmarker%2F');
+  assert.equal(host.generated.at(-2).context, '/%2F/雪/../marker/');
+  host.items.set(host.generated);
+  await app.whenStable();
+  const generatedNav = document.querySelector('nav:not([aria-label="SPA"])');
+  assert.equal(generatedNav.querySelector('[aria-current]').textContent.trim(), '(empty)');
+  assert.equal(generatedNav.querySelector('a').getAttribute('href'), '/browse?prefix=%2F');
+  console.log(
+    'Packed exact-key helper: public types, discriminants, callback scope/data and rendering passed (' + mode + ').',
+  );
   console.log(
     `Packed breadcrumb: Angular 21 strict templates, routing, action identity, form safety, replacement (${mode}) passed.`,
   );

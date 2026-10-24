@@ -1,0 +1,82 @@
+<app-demo-playground [title]="'breadcrumbStorage.title' | translate" [tsCode]="usageTs" [htmlCode]="usageHtml">
+  <section preview data-testid="storage-browser" cds-layout="vertical gap:sm">
+    <p>{{ 'breadcrumbStorage.intro' | translate }}</p>
+    <p>{{ 'breadcrumbStorage.flow' | translate }}</p>
+    <div class="storage-links">
+      <button type="button" class="btn btn-outline" (click)="reset()">
+        {{ 'breadcrumbPreview.reset' | translate }}
+      </button>
+      @if (state().rootPrefix === undefined) {
+        <a [routerLink]="urlTree(collectionHref())">{{ 'breadcrumbPreview.buckets' | translate }}</a>
+      }
+    </div>
+    <details>
+      <summary>{{ 'breadcrumbStorage.examples' | translate }}</summary>
+      <ul>
+        @for (example of examples; track $index) {
+          <li>
+            <a [routerLink]="urlTree(exampleHref(example))">{{ example | json }}</a>
+          </li>
+        }
+      </ul>
+    </details>
+    @if (trail().error) {
+      <p role="alert">{{ 'breadcrumbStorage.invalid' | translate }}</p>
+    } @else {
+      <cll-breadcrumb
+        data-testid="storage-trail"
+        [items]="trail().items"
+        [linkTemplate]="storageLink"
+        [ariaLabel]="'breadcrumbStorage.title' | translate"
+      />
+      @if (state().kind === 'buckets') {
+        <h3>{{ 'breadcrumbPreview.buckets' | translate }}</h3>
+        <ul data-testid="bucket-list">
+          @for (bucket of buckets.Buckets; track bucket.Name) {
+            <li>
+              <a [routerLink]="urlTree(hrefFor({kind: 'bucket', bucket: bucket.Name}))">{{ bucket.Name }}</a>
+            </li>
+          }
+        </ul>
+      }
+      @if (listing(); as response) {
+        <h3>{{ 'breadcrumbStorage.children' | translate }}</h3>
+        <ul data-testid="storage-children">
+          @for (prefix of response.CommonPrefixes; track prefix.Prefix) {
+            <li>
+              <a [routerLink]="urlTree(hrefFor({kind: 'prefix', bucket: state().bucket, prefix: prefix.Prefix}))">{{
+                prefix.Prefix | json
+              }}</a>
+            </li>
+          }
+          @for (object of response.Contents; track object.Key) {
+            <li>
+              <a [routerLink]="urlTree(hrefFor({kind: 'object', bucket: state().bucket, key: object.Key}))">{{
+                object.Key | json
+              }}</a>
+            </li>
+          }
+        </ul>
+        @if (!response.CommonPrefixes.length && !response.Contents.length) {
+          <p role="status">{{ 'breadcrumbStorage.empty' | translate }}</p>
+        }
+      }
+      @if (state().kind === 'object') {
+        <h3>{{ 'breadcrumbStorage.object' | translate }}</h3>
+        <pre data-testid="storage-object">{{ object() | json }}</pre>
+        @if (!object()) {
+          <p role="status">{{ 'breadcrumbStorage.missing' | translate }}</p>
+        }
+      }
+    }
+    <p>{{ 'breadcrumbStorage.scope' | translate }}</p>
+    <details>
+      <summary>{{ 'breadcrumbStorage.state' | translate }}</summary>
+      <pre data-testid="storage-state">{{ state() | json }}</pre>
+      <pre>{{ {Buckets: buckets.Buckets, response: listing(), items: trail().items} | json }}</pre>
+    </details>
+  </section>
+</app-demo-playground>
+<ng-template #storageLink let-item>
+  <a style="font-size: inherit; line-height: inherit" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
+</ng-template>

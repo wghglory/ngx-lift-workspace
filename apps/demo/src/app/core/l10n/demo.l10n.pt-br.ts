@@ -1,4 +1,25 @@
 export const ptBRTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Navegador de buckets e objetos',
+  'breadcrumbStorage.intro':
+    'Construa o caminho a partir do bucket atual e da chave exata da rota. Estes dados controlados de backend não exigem conta na nuvem.',
+  'breadcrumbStorage.flow':
+    'ListBuckets fornece nomes de buckets. ListObjectsV2 retorna CommonPrefixes e Contents para o Prefix atual; a rota fornece os ancestrais sem uma solicitação por nível.',
+  'breadcrumbStorage.examples': 'Exemplos de links diretos',
+  'breadcrumbStorage.invalid': 'O tipo de rota, a chave ou a raiz permitida é inválido. Redefina para recuperar.',
+  'breadcrumbStorage.children': 'Prefixos filhos e objetos',
+  'breadcrumbStorage.empty': 'Este prefixo não tem itens filhos.',
+  'breadcrumbStorage.object': 'Detalhes do objeto',
+  'breadcrumbStorage.missing':
+    'Não há metadados deste objeto nos dados de exemplo. Um caminho construído não comprova a existência.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limita o caminho gerado e as localizações do callback. A aplicação e o servidor gerenciam permissões. Os links de exemplo e Redefinir mudam o escopo deliberadamente.',
+  'breadcrumbStorage.state': 'Rota, resposta da API e itens gerados',
+  'breadcrumbs.deep': 'Caminhos profundos',
+  'breadcrumbs.deepDescription':
+    'Abra os detalhes para acessar todos os ancestrais. Altere a largura ou o tamanho da fonte.',
+  'breadcrumbs.width': 'Largura do contêiner',
+  'breadcrumbs.replace': 'Substituir caminho',
+  'breadcrumbs.stationary': 'A lista de objetos permanece no lugar ao abrir os detalhes.',
   'breadcrumbs.title': 'Navegação estrutural',
   'breadcrumbs.intro':
     'Crie um caminho curto com rotas da aplicação e um nome de entidade recebido por HTTP. Use links para destinos e botões para ações sem endereço. Altere o tamanho da fonte por instância; os outros caminhos herdam o tamanho.',
@@ -6,7 +27,7 @@ export const ptBRTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Caminhos vazios e com um único item',
   'breadcrumbs.apiTitle': 'API pública',
   'breadcrumbs.api':
-    'items é uma lista imutável obrigatória de BreadcrumbItem (id, label e href e context opcionais). ariaLabel substitui o nome de navegação traduzido. linkTemplate fornece links SPA reais; navigate emite o ancestral original sem endereço. O último item é o texto da localização atual. O contexto padrão contém o caminho de exibição ordenado e o nível. IDs duplicados, rótulos vazios e destinos inválidos geram erros de diagnóstico. Defina --cll-breadcrumb-font-size no componente ou em um ancestral; o padrão usa a tipografia em linha do Clarity. Os caminhos quebram linha; o tratamento de excesso será entregue depois.',
+    'items é uma lista imutável obrigatória de BreadcrumbItem (id, label e href e context opcionais). ariaLabel substitui o nome de navegação traduzido. linkTemplate fornece links SPA reais; navigate emite o ancestral original sem endereço. O último item é o texto da localização atual. O contexto padrão contém o caminho de exibição ordenado e o nível. IDs duplicados, rótulos vazios e destinos inválidos geram erros de diagnóstico. Defina --cll-breadcrumb-font-size no componente ou em um ancestral; o padrão usa a tipografia em linha do Clarity. maxVisible mostra quatro itens de caminho por padrão; a largura pode ocultar ancestrais recentes. Os detalhes mostram os rótulos completos e todos os ancestrais.',
   'breadcrumbs.loading': 'Carregando servidor…',
   'breadcrumbs.error': 'Não foi possível carregar o servidor. Recarregue a página para tentar novamente.',
   'breadcrumbs.submissions': 'Envios do formulário:',

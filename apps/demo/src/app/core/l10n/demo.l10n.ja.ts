@@ -1,4 +1,25 @@
 export const jaTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'バケットとオブジェクトのブラウザー',
+  'breadcrumbStorage.intro':
+    '現在のバケットとルートの正確なキーから経路を構築します。制御されたバックエンドのサンプルデータを使うため、クラウドアカウントは不要です。',
+  'breadcrumbStorage.flow':
+    'ListBuckets はバケット名を提供します。ListObjectsV2 は現在の Prefix の CommonPrefixes と Contents を返します。祖先はルートから取得するため、階層ごとのリクエストは不要です。',
+  'breadcrumbStorage.examples': '直接リンクのサンプル',
+  'breadcrumbStorage.invalid': 'ルートの種類、キー、または許可されたルートが無効です。リセットして復旧してください。',
+  'breadcrumbStorage.children': '子プレフィックスとオブジェクト',
+  'breadcrumbStorage.empty': 'このプレフィックスには子項目がありません。',
+  'breadcrumbStorage.object': 'オブジェクトの詳細',
+  'breadcrumbStorage.missing':
+    'サンプルデータにこのオブジェクトのメタデータはありません。構築された経路は存在を証明しません。',
+  'breadcrumbStorage.scope':
+    'rootPrefix は生成する経路とコールバックの場所を制限します。権限はアプリケーションとサーバーが管理します。サンプルリンクとリセットは意図的に範囲を切り替えます。',
+  'breadcrumbStorage.state': 'ルート、API レスポンス、生成された項目',
+  'breadcrumbs.deep': '深い階層のパス',
+  'breadcrumbs.deepDescription':
+    '詳細を開くとすべての上位階層にアクセスできます。幅や文字サイズを変更して確認してください。',
+  'breadcrumbs.width': 'コンテナーの幅',
+  'breadcrumbs.replace': 'パスを置換',
+  'breadcrumbs.stationary': '詳細を開いてもオブジェクト一覧は移動しません。',
   'breadcrumbs.title': 'パンくずリスト',
   'breadcrumbs.intro':
     'アプリのルートと HTTP で取得したエンティティ名から短いパスを作成します。宛先にはリンク、アドレスのない操作にはボタンを使います。インスタンスごとに文字サイズを変更でき、他のパスはサイズを継承します。',
@@ -6,7 +27,7 @@ export const jaTranslations: Record<string, string> = {
   'breadcrumbs.empty': '空のパスと単一項目のパス',
   'breadcrumbs.apiTitle': '公開 API',
   'breadcrumbs.api':
-    'items は必須の不変な BreadcrumbItem リストです（id、label、任意の href と context）。ariaLabel は翻訳済みのナビゲーション名を上書きします。linkTemplate は実際の SPA リンクを提供し、navigate はアドレスのない祖先の元の項目を出力します。最後の項目は現在位置のテキストです。既定のコンテキストには表示パスと階層が含まれます。重複 ID、空白ラベル、無効な宛先は診断エラーになります。ホストまたは祖先で --cll-breadcrumb-font-size を設定します。既定は Clarity のインライン書体です。パスは折り返され、オーバーフロー機能は後日提供されます。',
+    'items は必須の不変な BreadcrumbItem リストです（id、label、任意の href と context）。ariaLabel は翻訳済みのナビゲーション名を上書きします。linkTemplate は実際の SPA リンクを提供し、navigate はアドレスのない祖先の元の項目を出力します。最後の項目は現在位置のテキストです。既定のコンテキストには表示パスと階層が含まれます。重複 ID、空白ラベル、無効な宛先は診断エラーになります。ホストまたは祖先で --cll-breadcrumb-font-size を設定します。既定は Clarity のインライン書体です。maxVisible の既定値は実際のパス項目数で4です。幅が不足すると直近の上位階層が非表示になります。詳細では完全なラベルとすべての上位階層にアクセスできます。',
   'breadcrumbs.loading': 'サーバーを読み込み中…',
   'breadcrumbs.error': 'サーバーを読み込めませんでした。ページを再読み込みしてください。',
   'breadcrumbs.submissions': 'フォーム送信回数：',

@@ -1,4 +1,26 @@
 export const nlTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Bucket- en objectbrowser',
+  'breadcrumbStorage.intro':
+    'Maak het pad op basis van de huidige bucket en de exacte routesleutel. Deze gecontroleerde backendvoorbeelden vereisen geen cloudaccount.',
+  'breadcrumbStorage.flow':
+    'ListBuckets levert bucketnamen. ListObjectsV2 geeft CommonPrefixes en Contents voor de huidige Prefix terug; de route levert de bovenliggende locaties zonder aanvraag per niveau.',
+  'breadcrumbStorage.examples': 'Voorbeelden met directe links',
+  'breadcrumbStorage.invalid':
+    'Het routetype, de sleutel of de toegestane hoofdlocatie is ongeldig. Herstel met Opnieuw instellen.',
+  'breadcrumbStorage.children': 'Onderliggende prefixen en objecten',
+  'breadcrumbStorage.empty': 'Deze prefix heeft geen onderliggende items.',
+  'breadcrumbStorage.object': 'Objectdetails',
+  'breadcrumbStorage.missing':
+    'Dit object heeft geen metadata in de voorbeeldgegevens. Een samengesteld pad bewijst het bestaan niet.',
+  'breadcrumbStorage.scope':
+    'rootPrefix beperkt het gegenereerde pad en de callbacklocaties. De toepassing en server beheren machtigingen. Voorbeeldlinks en Opnieuw instellen wijzigen bewust het bereik.',
+  'breadcrumbStorage.state': 'Route, API-antwoord en gegenereerde items',
+  'breadcrumbs.deep': 'Diepe paden',
+  'breadcrumbs.deepDescription':
+    'Open de details om alle bovenliggende locaties te bereiken. Wijzig de breedte of lettergrootte.',
+  'breadcrumbs.width': 'Containerbreedte',
+  'breadcrumbs.replace': 'Pad vervangen',
+  'breadcrumbs.stationary': 'De objectlijst blijft op zijn plaats wanneer details worden geopend.',
   'breadcrumbs.title': 'Broodkruimelnavigatie',
   'breadcrumbs.intro':
     'Maak een kort pad met applicatieroutes en een entiteitsnaam die via HTTP wordt opgehaald. Gebruik links voor bestemmingen en knoppen voor acties zonder adres. Pas de tekstgrootte per instantie aan; andere paden erven hun grootte.',
@@ -6,7 +28,7 @@ export const nlTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Lege paden en paden met één item',
   'breadcrumbs.apiTitle': 'Openbare API',
   'breadcrumbs.api':
-    'items is een verplichte onveranderlijke lijst van BreadcrumbItem (id, label, optioneel href en context). ariaLabel vervangt de vertaalde navigatienaam. linkTemplate levert echte SPA-links; navigate geeft het oorspronkelijke item zonder adres door. Het laatste item is tekst voor de huidige locatie. De standaardcontext bevat het geordende weergavepad en de diepte. Dubbele IDs, lege labels en ongeldige bestemmingen veroorzaken diagnostische fouten. Stel --cll-breadcrumb-font-size in op de host of een bovenliggend element; standaard geldt Clarity-inline-typografie. Paden lopen door op een nieuwe regel; overloop volgt later.',
+    'items is een verplichte onveranderlijke lijst van BreadcrumbItem (id, label, optioneel href en context). ariaLabel vervangt de vertaalde navigatienaam. linkTemplate levert echte SPA-links; navigate geeft het oorspronkelijke item zonder adres door. Het laatste item is tekst voor de huidige locatie. De standaardcontext bevat het geordende weergavepad en de diepte. Dubbele IDs, lege labels en ongeldige bestemmingen veroorzaken diagnostische fouten. Stel --cll-breadcrumb-font-size in op de host of een bovenliggend element; standaard geldt Clarity-inline-typografie. maxVisible toont standaard vier paditems; bij weinig ruimte worden recente bovenliggende locaties verborgen. Details tonen volledige namen en alle bovenliggende locaties.',
   'breadcrumbs.loading': 'Server laden…',
   'breadcrumbs.error': 'De server kon niet worden geladen. Vernieuw de pagina om opnieuw te proberen.',
   'breadcrumbs.submissions': 'Formulierinzendingen:',

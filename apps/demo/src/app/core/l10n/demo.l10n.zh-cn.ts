@@ -1,4 +1,22 @@
 export const zhCNTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': '存储桶与对象浏览器',
+  'breadcrumbStorage.intro': '根据当前存储桶和路由中的精确键构建路径。这些受控后端示例无需云账户。',
+  'breadcrumbStorage.flow':
+    'ListBuckets 提供存储桶名称。ListObjectsV2 返回当前 Prefix 的 CommonPrefixes 和 Contents；路由直接提供祖先信息，无需逐级请求。',
+  'breadcrumbStorage.examples': '直接链接示例',
+  'breadcrumbStorage.invalid': '路由类型、键或允许的根前缀无效。请重置后重试。',
+  'breadcrumbStorage.children': '子前缀与对象',
+  'breadcrumbStorage.empty': '此前缀没有子项。',
+  'breadcrumbStorage.object': '对象详情',
+  'breadcrumbStorage.missing': '示例中不存在此对象的元数据。构建的路径不能证明资源存在。',
+  'breadcrumbStorage.scope':
+    'rootPrefix 限定生成的路径和回调位置。权限由应用或服务器负责。示例链接和重置操作会主动切换范围。',
+  'breadcrumbStorage.state': '路由、API 响应与生成的项目',
+  'breadcrumbs.deep': '深层路径',
+  'breadcrumbs.deepDescription': '打开详情可访问所有祖先。调整宽度或字号以查看响应式折叠。',
+  'breadcrumbs.width': '容器宽度',
+  'breadcrumbs.replace': '替换路径',
+  'breadcrumbs.stationary': '打开详情时对象列表保持原位。',
   'breadcrumbs.title': '面包屑导航',
   'breadcrumbs.intro':
     '使用应用路由和 HTTP 返回的实体名称构建简短路径。有地址的位置使用链接，无地址的操作使用按钮。调整单个实例的字号；其他路径继承字号。',
@@ -6,7 +24,7 @@ export const zhCNTranslations: Record<string, string> = {
   'breadcrumbs.empty': '空路径与单项路径',
   'breadcrumbs.apiTitle': '公共 API',
   'breadcrumbs.api':
-    'items 是必填的不可变 BreadcrumbItem 列表（id、label，以及可选的 href、context）。ariaLabel 覆盖本地化导航名称。linkTemplate 提供真实的 SPA 链接；navigate 发出无地址祖先的原始对象。最后一项是当前位置文本。默认上下文为有序显示路径和深度。重复 ID、空白标签及无效地址会抛出诊断错误。在宿主或祖先上设置 --cll-breadcrumb-font-size；默认采用 Clarity 行内字体。路径换行显示；溢出功能稍后提供。',
+    'items 是必填的不可变 BreadcrumbItem 列表（id、label，以及可选的 href、context）。ariaLabel 覆盖本地化导航名称。linkTemplate 提供真实的 SPA 链接；navigate 发出无地址祖先的原始对象。最后一项是当前位置文本。默认上下文为有序显示路径和深度。重复 ID、空白标签及无效地址会抛出诊断错误。在宿主或祖先上设置 --cll-breadcrumb-font-size；默认采用 Clarity 行内字体。maxVisible 默认最多显示四个实际路径项；宽度不足时会折叠最近的祖先。打开详情可查看完整标签并访问所有祖先。',
   'breadcrumbs.loading': '正在加载服务器…',
   'breadcrumbs.error': '无法加载服务器。请重新加载页面重试。',
   'breadcrumbs.submissions': '表单提交次数：',

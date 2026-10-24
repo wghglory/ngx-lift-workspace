@@ -1,4 +1,26 @@
 export const esTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Explorador de buckets y objetos',
+  'breadcrumbStorage.intro':
+    'Construya la ruta a partir del bucket actual y la clave exacta de la ruta. Estos datos de backend controlados no requieren una cuenta en la nube.',
+  'breadcrumbStorage.flow':
+    'ListBuckets proporciona nombres de buckets. ListObjectsV2 devuelve CommonPrefixes y Contents para el Prefix actual; la ruta proporciona los antecesores sin una solicitud por nivel.',
+  'breadcrumbStorage.examples': 'Ejemplos de enlaces directos',
+  'breadcrumbStorage.invalid':
+    'El tipo de ruta, la clave o la raíz permitida no son válidos. Restablezca para recuperarse.',
+  'breadcrumbStorage.children': 'Prefijos secundarios y objetos',
+  'breadcrumbStorage.empty': 'Este prefijo no tiene elementos secundarios.',
+  'breadcrumbStorage.object': 'Detalles del objeto',
+  'breadcrumbStorage.missing':
+    'No hay metadatos de este objeto en los datos de ejemplo. Una ruta construida no demuestra su existencia.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limita la ruta generada y las ubicaciones del callback. La aplicación y el servidor gestionan los permisos. Los enlaces de ejemplo y Restablecer cambian el ámbito deliberadamente.',
+  'breadcrumbStorage.state': 'Ruta, respuesta de API y elementos generados',
+  'breadcrumbs.deep': 'Rutas profundas',
+  'breadcrumbs.deepDescription':
+    'Abra los detalles para acceder a todos los antecesores. Cambie el ancho o el tamaño de letra.',
+  'breadcrumbs.width': 'Ancho del contenedor',
+  'breadcrumbs.replace': 'Reemplazar ruta',
+  'breadcrumbs.stationary': 'La lista de objetos permanece en su sitio al abrir los detalles.',
   'breadcrumbs.title': 'Migas de pan',
   'breadcrumbs.intro':
     'Cree una ruta corta con rutas de la aplicación y un nombre de entidad recibido por HTTP. Use enlaces para destinos y botones para acciones sin dirección. Cambie el tamaño de letra por instancia; las demás rutas lo heredan.',
@@ -6,7 +28,7 @@ export const esTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Rutas vacías y de un solo elemento',
   'breadcrumbs.apiTitle': 'API pública',
   'breadcrumbs.api':
-    'items es una lista inmutable obligatoria de BreadcrumbItem (id, label y href y context opcionales). ariaLabel sustituye el nombre de navegación traducido. linkTemplate proporciona enlaces SPA reales; navigate emite el antecesor original sin dirección. El último elemento es texto de la ubicación actual. El contexto predeterminado contiene la ruta visible ordenada y el nivel. Los ID duplicados, etiquetas vacías y destinos inválidos generan errores de diagnóstico. Defina --cll-breadcrumb-font-size en el componente o un antecesor; por defecto se usa la tipografía en línea de Clarity. Las rutas se ajustan en varias líneas; el desbordamiento se implementará después.',
+    'items es una lista inmutable obligatoria de BreadcrumbItem (id, label y href y context opcionales). ariaLabel sustituye el nombre de navegación traducido. linkTemplate proporciona enlaces SPA reales; navigate emite el antecesor original sin dirección. El último elemento es texto de la ubicación actual. El contexto predeterminado contiene la ruta visible ordenada y el nivel. Los ID duplicados, etiquetas vacías y destinos inválidos generan errores de diagnóstico. Defina --cll-breadcrumb-font-size en el componente o un antecesor; por defecto se usa la tipografía en línea de Clarity. maxVisible muestra hasta cuatro elementos de ruta por defecto; el ancho puede ocultar antecesores recientes. Los detalles muestran las etiquetas completas y todos los antecesores.',
   'breadcrumbs.loading': 'Cargando servidor…',
   'breadcrumbs.error': 'No se pudo cargar el servidor. Recargue la página para reintentar.',
   'breadcrumbs.submissions': 'Envíos del formulario:',

@@ -1,28 +1,105 @@
 @if (locations().length) {
-  <nav [attr.aria-label]="navigationName()">
-    <ol>
-      @for (location of locations(); track location.item.id; let current = $last; let first = $first) {
-        <li [attr.aria-description]="location.description">
-          @if (!first) {
-            <span class="separator" aria-hidden="true">/</span>
-          }
-          @if (current) {
-            <span aria-current="page" [attr.title]="location.description">{{ location.item.label }}</span>
-          } @else if (location.item.href !== undefined) {
-            @if (linkTemplate(); as customLink) {
-              <ng-container [ngTemplateOutlet]="customLink" [ngTemplateOutletContext]="{$implicit: location.item}" />
-            } @else {
-              <a [href]="location.item.href" [attr.aria-description]="location.description">{{
-                location.item.label
-              }}</a>
-            }
-          } @else {
-            <button type="button" [attr.aria-description]="location.description" (click)="navigate.emit(location.item)">
-              {{ location.item.label }}
-            </button>
-          }
+  <nav tabindex="-1" [attr.aria-label]="navigationName()">
+    <ol class="trail">
+      <li
+        [attr.data-location-id]="visible()[0].item.id"
+        [attr.aria-description]="visible()[0].description"
+        [class.current]="locations().length === 1"
+      >
+        <ng-container
+          [ngTemplateOutlet]="crumb"
+          [ngTemplateOutletContext]="{$implicit: visible()[0], current: locations().length === 1}"
+        />
+      </li>
+      @if (needsDetails()) {
+        <li class="overflow">
+          <span class="separator" aria-hidden="true">/</span>
+          <button
+            #trigger
+            type="button"
+            aria-expanded="false"
+            [attr.aria-controls]="panelId"
+            [attr.aria-label]="message('show')"
+            (click)="toggle()"
+          >
+            …
+          </button>
+          <ng-container [ngTemplateOutlet]="details" />
+        </li>
+      }
+      @for (location of visible().slice(1); track location.item.id; let current = $last) {
+        <li
+          [attr.data-location-id]="location.item.id"
+          [attr.aria-description]="location.description"
+          [class.current]="current"
+        >
+          <span class="separator" aria-hidden="true">/</span>
+          <ng-container
+            [ngTemplateOutlet]="crumb"
+            [ngTemplateOutletContext]="{$implicit: location, current: current}"
+          />
         </li>
       }
     </ol>
   </nav>
 }
+<ng-template #crumb let-location let-current="current">
+  @if (current) {
+    <span class="crumb-label" aria-current="page">{{ location.item.label }}</span>
+  } @else {
+    <span class="crumb-label"
+      ><ng-container [ngTemplateOutlet]="ancestor" [ngTemplateOutletContext]="{$implicit: location}"
+    /></span>
+  }
+</ng-template>
+<div class="measure-clip" aria-hidden="true" inert>
+  <div #probe class="measure">
+    @for (location of locations(); track location.item.id; let current = $last) {
+      <span [class.current]="current">
+        @if (current) {
+          {{ location.item.label }}
+        } @else {
+          <ng-container [ngTemplateOutlet]="ancestor" [ngTemplateOutletContext]="{$implicit: location}" />
+        }
+      </span>
+    }
+  </div>
+</div>
+<ng-template #ancestor let-location>
+  @if (location.item.href !== undefined) {
+    @if (linkTemplate(); as customLink) {
+      <ng-container [ngTemplateOutlet]="customLink" [ngTemplateOutletContext]="{$implicit: location.item}" />
+    } @else {
+      <a [href]="location.item.href" [attr.aria-description]="location.description">{{ location.item.label }}</a>
+    }
+  } @else {
+    <button type="button" [attr.aria-description]="location.description" (click)="activate(location.item)">
+      {{ location.item.label }}
+    </button>
+  }
+</ng-template>
+<ng-template #details>
+  <section
+    #panel
+    popover="manual"
+    role="region"
+    [id]="panelId"
+    [attr.aria-label]="message('details')"
+    (keydown)="panelKeydown($event)"
+  >
+    <p class="full-path">{{ locations().at(-1)?.description }}</p>
+    <ol class="panel-list">
+      @for (location of locations(); track location.item.id; let current = $last) {
+        <li [attr.data-location-id]="location.item.id" [attr.aria-description]="location.description">
+          @if (current) {
+            <span class="current">{{ location.item.label }}</span>
+          } @else {
+            <ng-container [ngTemplateOutlet]="ancestor" [ngTemplateOutletContext]="{$implicit: location}" />
+          }
+          <small>{{ location.description }}</small>
+        </li>
+      }
+    </ol>
+    <button type="button" class="btn btn-outline" (click)="close(true)">{{ message('close') }}</button>
+  </section>
+</ng-template>

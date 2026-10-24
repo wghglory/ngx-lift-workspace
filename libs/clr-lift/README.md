@@ -79,11 +79,26 @@ diagnostics.
 
 For SPA routing pass `[linkTemplate]="spaLink"`, with `<ng-template #spaLink let-item>` containing your real RouterLink
 anchor. `BreadcrumbLinkContext` exposes the original item as `$implicit`. Import RouterLink in the host; clr-lift adds
-no router peer. Style the consumer-owned anchor with inherited font size and line height.
+no router peer. Style the consumer-owned anchor with inherited font size and line height. Use `display: block`,
+`overflow: hidden` and `text-overflow: ellipsis` to keep its clickable bounds inside the available label width, and an
+inset focus outline (`outline-offset: -2px`) so clipping preserves the focus indicator.
 
 Set `--cll-breadcrumb-font-size` on an instance or ancestor, including through Angular
-`[style.--cll-breadcrumb-font-size]="'1rem'"`. The default uses Clarity inline typography. Trails wrap at narrow widths;
-deep-path overflow and object-key construction are deferred.
+`[style.--cll-breadcrumb-font-size]="'1rem'"`. The default uses Clarity inline typography. See the canonical
+specification below for responsive ancestry behavior.
+
+`maxVisible` defaults to four actual path items, including root/current and excluding disclosure. Available width and
+current typography can remove recent ancestors. The anchored nonmodal details panel preserves complete ordered ancestry,
+full labels/context and ordinary link behavior without expanding the page. It also appears when truncation alone hides
+text, including on a singleton. Keep supplied arrays immutable and stable between path replacements. Escape and explicit
+close return to the trigger; external path replacement leaves route focus to the host. Measurement runs only in the
+browser; unmeasured rendering uses the count ceiling. SSR/hydration support has not been exercised.
+
+For exact bucket/prefix/object state, opt in to `buildObjectPathBreadcrumbs` with `BuildObjectPathBreadcrumbsOptions`
+and `ObjectPathLocation`. It constructs stable IDs, display labels and exact cumulative contexts synchronously;
+`hrefFor` owns destinations and `rootPrefix` excludes higher ancestors. Compose translated application items outside the
+helper. See the [usage and reference guide](../../docs/guides/object-path-breadcrumbs.md) for scope, encoding, unusual
+keys and API-response examples.
 
 See the [working demo](https://ngx-lift.vercel.app/clr-lift/components/breadcrumb) and
 [canonical design spec](../../docs/design/clr-lift/breadcrumb-design-spec.md).

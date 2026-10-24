@@ -1,4 +1,25 @@
 export const enTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Bucket and object browser',
+  'breadcrumbStorage.intro':
+    'Construct the trail from the current bucket and exact route key. These controlled backend fixtures need no cloud account.',
+  'breadcrumbStorage.flow':
+    'ListBuckets supplies bucket names. ListObjectsV2 returns CommonPrefixes and Contents for the current Prefix; the route supplies ancestry without a request per ancestor.',
+  'breadcrumbStorage.examples': 'Direct-link fixtures',
+  'breadcrumbStorage.invalid': 'The route kind, key or permitted root is invalid. Reset to recover.',
+  'breadcrumbStorage.children': 'Child prefixes and objects',
+  'breadcrumbStorage.empty': 'This prefix has no children.',
+  'breadcrumbStorage.object': 'Object details',
+  'breadcrumbStorage.missing':
+    'No object metadata exists in this fixture. A constructed trail does not prove existence.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limits the generated trail and callback locations. Permissions belong to the application/server. Fixture links and Reset deliberately switch scope.',
+  'breadcrumbStorage.state': 'Route, API response and generated items',
+  'breadcrumbs.deep': 'Deep paths',
+  'breadcrumbs.deepDescription':
+    'Open the details to reach every ancestor. Change width or font size to inspect responsive collapse.',
+  'breadcrumbs.width': 'Container width',
+  'breadcrumbs.replace': 'Replace path',
+  'breadcrumbs.stationary': 'Object list stays in place when details open.',
   'breadcrumbs.title': 'Breadcrumbs',
   'breadcrumbs.intro':
     'Build a short trail from application routes and an entity name returned by HTTP. Use real links for destinations and buttons for addressless actions. Change font size per instance; the other trails inherit their size.',
@@ -6,7 +27,7 @@ export const enTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Empty and singleton trails',
   'breadcrumbs.apiTitle': 'Public API',
   'breadcrumbs.api':
-    'items is a required immutable list of BreadcrumbItem (id, label, optional href and context). ariaLabel overrides the localized landmark name. linkTemplate supplies real SPA anchors; navigate emits the original addressless ancestor. The last item is current text. Context defaults to the ordered display trail with depth. Duplicate IDs, blank labels and invalid destinations throw diagnostics. Set --cll-breadcrumb-font-size on the host or an ancestor; the default uses Clarity inline typography. Trails wrap; overflow is deferred.',
+    'items is a required immutable list of BreadcrumbItem (id, label, optional href and context). ariaLabel overrides the localized landmark name. linkTemplate supplies real SPA anchors; navigate emits the original addressless ancestor. The last item is current text. Context defaults to the ordered display trail with depth. Duplicate IDs, blank labels and invalid destinations throw diagnostics. Set --cll-breadcrumb-font-size on the host or an ancestor; the default uses Clarity inline typography. maxVisible defaults to four actual path items; width may remove recent ancestors. Open details for complete labels and every supplied ancestor.',
   'breadcrumbs.loading': 'Loading server…',
   'breadcrumbs.error': 'Could not load the server. Reload the page to retry.',
   'breadcrumbs.submissions': 'Form submissions:',

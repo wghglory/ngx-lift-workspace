@@ -1,4 +1,26 @@
 export const frTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Explorateur de buckets et d’objets',
+  'breadcrumbStorage.intro':
+    'Construisez le chemin à partir du bucket actuel et de la clé exacte de la route. Ces données de backend contrôlées ne nécessitent aucun compte cloud.',
+  'breadcrumbStorage.flow':
+    'ListBuckets fournit les noms des buckets. ListObjectsV2 renvoie CommonPrefixes et Contents pour le Prefix actuel ; la route fournit les ancêtres sans requête par niveau.',
+  'breadcrumbStorage.examples': 'Exemples de liens directs',
+  'breadcrumbStorage.invalid':
+    'Le type de route, la clé ou la racine autorisée est invalide. Réinitialisez pour reprendre.',
+  'breadcrumbStorage.children': 'Préfixes enfants et objets',
+  'breadcrumbStorage.empty': 'Ce préfixe ne contient aucun enfant.',
+  'breadcrumbStorage.object': 'Détails de l’objet',
+  'breadcrumbStorage.missing':
+    'Aucune métadonnée pour cet objet dans les données d’exemple. Un chemin construit ne prouve pas son existence.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limite le chemin généré et les emplacements du callback. L’application et le serveur gèrent les autorisations. Les liens d’exemple et Réinitialiser changent volontairement de périmètre.',
+  'breadcrumbStorage.state': 'Route, réponse API et éléments générés',
+  'breadcrumbs.deep': 'Chemins profonds',
+  'breadcrumbs.deepDescription':
+    'Ouvrez les détails pour accéder à tous les ancêtres. Modifiez la largeur ou la taille du texte.',
+  'breadcrumbs.width': 'Largeur du conteneur',
+  'breadcrumbs.replace': 'Remplacer le chemin',
+  'breadcrumbs.stationary': 'La liste des objets reste en place à l’ouverture des détails.',
   'breadcrumbs.title': 'Fil d’Ariane',
   'breadcrumbs.intro':
     'Créez un chemin court à partir des routes de l’application et d’un nom d’entité reçu par HTTP. Utilisez des liens pour les destinations et des boutons pour les actions sans adresse. Modifiez la taille du texte par instance ; les autres chemins héritent de leur taille.',
@@ -6,7 +28,7 @@ export const frTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Chemins vides et à un seul élément',
   'breadcrumbs.apiTitle': 'API publique',
   'breadcrumbs.api':
-    'items est une liste immuable obligatoire de BreadcrumbItem (id, label, href et context facultatifs). ariaLabel remplace le nom de navigation traduit. linkTemplate fournit de vrais liens SPA ; navigate émet l’ancêtre original sans adresse. Le dernier élément est le texte de la position actuelle. Le contexte par défaut contient le chemin affiché ordonné et le niveau. Les ID en double, libellés vides et destinations invalides déclenchent des erreurs de diagnostic. Définissez --cll-breadcrumb-font-size sur le composant ou un ancêtre ; la typographie en ligne de Clarity est utilisée par défaut. Les chemins passent à la ligne ; le débordement sera traité ultérieurement.',
+    'items est une liste immuable obligatoire de BreadcrumbItem (id, label, href et context facultatifs). ariaLabel remplace le nom de navigation traduit. linkTemplate fournit de vrais liens SPA ; navigate émet l’ancêtre original sans adresse. Le dernier élément est le texte de la position actuelle. Le contexte par défaut contient le chemin affiché ordonné et le niveau. Les ID en double, libellés vides et destinations invalides déclenchent des erreurs de diagnostic. Définissez --cll-breadcrumb-font-size sur le composant ou un ancêtre ; la typographie en ligne de Clarity est utilisée par défaut. maxVisible affiche quatre éléments de chemin par défaut ; la largeur peut masquer les ancêtres récents. Les détails affichent les libellés complets et tous les ancêtres.',
   'breadcrumbs.loading': 'Chargement du serveur…',
   'breadcrumbs.error': 'Impossible de charger le serveur. Rechargez la page pour réessayer.',
   'breadcrumbs.submissions': 'Envois du formulaire :',
