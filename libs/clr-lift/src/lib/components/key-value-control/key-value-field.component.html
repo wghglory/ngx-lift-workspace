@@ -101,9 +101,9 @@
   }
 }
 @if (incompatibility()) {
-  <output class="clr-subtext retained-value" [id]="controlId() + '-retained'">
+  <span class="clr-subtext retained-value" [id]="controlId() + '-retained'">
     {{ 'key-value.retainedValue' | translate }} <code>{{ retainedValue() }}</code>
-  </output>
+  </span>
 }
 <span class="clr-subtext" [id]="controlId() + '-help'">{{ config().helper }}</span>
 <span class="clr-subtext error" [id]="controlId() + '-error'">

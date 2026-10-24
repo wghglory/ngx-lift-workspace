@@ -20,11 +20,14 @@ const tagCatalog: Record<string, string[]> = {
   'cost-center': ['engineering', 'operations', 'finance'],
 };
 const keyOptions = Object.keys(tagCatalog).map((value) => ({value, label: value}));
-const tagValues: KeyValueValueConfig = (key) => ({
-  type: 'select',
-  disabled: !tagCatalog[key],
-  options: (tagCatalog[key] ?? []).map((value) => ({value, label: value})),
-});
+const tagValues: KeyValueValueConfig = (key) => {
+  const values = Object.hasOwn(tagCatalog, key) ? tagCatalog[key] : undefined;
+  return {
+    type: 'select',
+    disabled: !values,
+    options: (values ?? []).map((value) => ({value, label: value})),
+  };
+};
 const schema: Record<string, KeyValueFieldConfig> = {
   hostname: {type: 'input'},
   retries: {type: 'number', min: 1, max: 10},
@@ -129,7 +132,10 @@ export class KeyValueRecipesComponent {
           ? 'rules'
           : id === 'keySelect'
             ? '{}'
-            : `(key: string) => ({type: 'select', disabled: !tagCatalog[key], options: (tagCatalog[key] ?? []).map(value => ({value, label: value}))})`;
+            : `(key: string) => {
+    const values = Object.hasOwn(tagCatalog, key) ? tagCatalog[key] : undefined;
+    return {type: 'select', disabled: !values, options: (values ?? []).map(value => ({value, label: value}))};
+  }`;
     const bindings = [
       id === 'tags' ? '[uniqueKeys]="false" [uniquePairs]="true"' : '',
       ['schema', 'dependent', 'bothSelect', 'valueSelect'].includes(id) ? '[resetValueOnKeyChange]="true"' : '',

@@ -55,6 +55,24 @@ test('all select combinations update stored values and dependent choices reset',
   await expect(dependent.getByTestId('recipe-value')).toContainText('engineering');
 });
 
+test('free-text recipe keys handle inherited names and recover to known choices', async ({page}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  const example = page.getByTestId('key-value-valueSelect');
+  const key = example.getByRole('textbox', {name: 'Key 1', exact: true});
+  const value = example.getByRole('combobox', {name: 'Value 1', exact: true});
+  for (const name of ['constructor', 'toString', '__proto__']) {
+    await key.fill(name);
+    await expect(value).toBeDisabled();
+    await expect(example.getByTestId('recipe-value')).toContainText(name);
+  }
+  await key.fill('environment');
+  await expect(value).toBeEnabled();
+  await value.selectOption('staging');
+  await expect(example.getByTestId('recipe-value')).toContainText('staging');
+  expect(errors).toEqual([]);
+});
+
 test('tags permit repeated categories, reject duplicate pairs and display custom errors', async ({page}) => {
   const tags = page.getByTestId('key-value-tags');
   const key = tags.getByRole('textbox', {name: 'Key 1', exact: true});
@@ -106,7 +124,7 @@ test('incompatible saved values remain inspectable and recover through explicit 
   const number = schema.getByRole('spinbutton', {name: 'Value 1', exact: true});
   const boolean = schema.getByRole('checkbox', {name: 'Value 2', exact: true});
   const array = schema.getByRole('textbox', {name: 'Value 3', exact: true});
-  await expect(schema.locator('output code')).toHaveText(['false', '3', '["one\\ntwo"]']);
+  await expect(schema.locator('.retained-value code')).toHaveText(['false', '3', '["one\\ntwo"]']);
   await expect(number).toHaveAccessibleDescription(/Stored value: false/);
   await expect(boolean).toHaveAccessibleDescription(/Stored value: 3/);
   await expect(array).toHaveAccessibleDescription(/A single empty item/);
@@ -120,7 +138,7 @@ test('incompatible saved values remain inspectable and recover through explicit 
   await number.fill('5');
   await boolean.check();
   await array.fill('one\ntwo');
-  await expect(schema.locator('output')).toHaveCount(0);
+  await expect(schema.locator('.retained-value')).toHaveCount(0);
   await expect
     .poll(async () => JSON.parse(await schema.getByTestId('recipe-value').innerText()))
     .toEqual([

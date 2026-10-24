@@ -291,6 +291,23 @@ describe('key/value editor configuration', () => {
     expect(checkbox.getAttribute('aria-readonly')).toBe('true');
   });
 
+  it('emits one array change when compositionend is followed by the final input event', async () => {
+    const {host, element} = await setup((host) => {
+      host.valueConfig.set({type: 'array'});
+      host.control.setValue([{key: 'hosts', value: ['before']}]);
+    });
+    const changes = vi.fn();
+    host.control.valueChanges.subscribe(changes);
+    const textarea = query<HTMLTextAreaElement>(element, 'textarea');
+    textarea.value = '名字';
+    textarea.dispatchEvent(new InputEvent('input', {bubbles: true, isComposing: true}));
+    expect(changes).not.toHaveBeenCalled();
+    textarea.dispatchEvent(new Event('compositionend', {bubbles: true}));
+    textarea.dispatchEvent(new InputEvent('input', {bubbles: true}));
+    expect(host.control.value).toEqual([{key: 'hosts', value: ['名字']}]);
+    expect(changes).toHaveBeenCalledTimes(1);
+  });
+
   it('copies nested arrays on writes and emissions, and resets without changing the owner default', async () => {
     const {host, edit, settle} = await setup();
     const original = ['one', 'two'];
@@ -357,25 +374,25 @@ describe('key/value editor configuration', () => {
     });
     await edit('input', 'enabled');
     expect(host.control.value).toEqual([{key: 'enabled', value: 3}]);
-    expect(query(element, 'output code').textContent).toBe('3');
-    const preview = query(element, 'output');
+    expect(query(element, '.retained-value code').textContent).toBe('3');
+    const preview = query(element, '.retained-value');
     expect(query(element, 'input[type=checkbox]').getAttribute('aria-describedby')).toContain(preview.id);
     expect(host.control.errors?.['keyValue'].rows[0].value.type).toBe(true);
     host.readonly.set(true);
     await settle();
-    expect(query(element, 'output code').textContent).toBe('3');
+    expect(query(element, '.retained-value code').textContent).toBe('3');
     expect(query(element, 'input[type=checkbox]').getAttribute('aria-readonly')).toBe('true');
 
     host.control.setValue([{key: 'count', value: false}]);
     await settle();
     expect(query(element, 'input[type=number]').value).toBe('');
-    expect(query(element, 'output code').textContent).toBe('false');
+    expect(query(element, '.retained-value code').textContent).toBe('false');
     host.readonly.set(false);
     await settle();
     await edit('input[type=number]', '7');
     expect(host.control.value[0].value).toBe(7);
     expect(host.control.valid).toBe(true);
-    expect(element.querySelector('output')).toBeNull();
+    expect(element.querySelector('.retained-value')).toBeNull();
   });
 
   it.each([{value: ['']}, {value: ['one\ntwo']}, {value: ['one\rtwo']}])(
@@ -389,8 +406,10 @@ describe('key/value editor configuration', () => {
       host.control.valueChanges.subscribe(changes);
       expect(host.control.value[0].value).toBe(original);
       expect(host.control.errors?.['keyValue'].rows[0].value.arrayFormat).toBe(true);
-      expect(query(element, 'output code').textContent).toBe(JSON.stringify(original));
-      expect(query(element, 'textarea').getAttribute('aria-describedby')).toContain(query(element, 'output').id);
+      expect(query(element, '.retained-value code').textContent).toBe(JSON.stringify(original));
+      expect(query(element, 'textarea').getAttribute('aria-describedby')).toContain(
+        query(element, '.retained-value').id,
+      );
       host.control.markAllAsTouched();
       await settle();
       expect(element.textContent).toContain('A single empty item');
@@ -398,7 +417,7 @@ describe('key/value editor configuration', () => {
       await edit('textarea', 'first\nsecond');
       expect(host.control.value[0].value).toEqual(['first', 'second']);
       expect(changes).toHaveBeenCalledTimes(1);
-      expect(element.querySelector('output')).toBeNull();
+      expect(element.querySelector('.retained-value')).toBeNull();
       expect(host.control.valid).toBe(true);
     },
   );
@@ -414,7 +433,7 @@ describe('key/value editor configuration', () => {
     host.valueConfig.set({type: 'number', disabled: true});
     await settle();
     expect(host.control.valid).toBe(true);
-    expect(query(element, 'output code').textContent).toBe('[""]');
+    expect(query(element, '.retained-value code').textContent).toBe('[""]');
     expect(query(element, 'input[type=number]').disabled).toBe(true);
   });
 
@@ -427,12 +446,12 @@ describe('key/value editor configuration', () => {
     host.control.markAllAsTouched();
     TestBed.inject(TranslationService).setLanguage('zh-CN', false);
     await settle();
-    expect(query(element, 'output').textContent).toContain('已保存的值：');
+    expect(query(element, '.retained-value').textContent).toContain('已保存的值：');
     expect(element.textContent).toContain('无法表示仅含一个空字符串的数组');
     expect(host.control.value).toBe(saved);
     TestBed.inject(TranslationService).setLanguage('en', false);
     await settle();
-    expect(query(element, 'output').textContent).toContain('Stored value:');
+    expect(query(element, '.retained-value').textContent).toContain('Stored value:');
     expect(element.textContent).toContain('A single empty item');
     expect(host.control.value).toBe(saved);
   });

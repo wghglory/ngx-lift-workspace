@@ -87,7 +87,8 @@ a search does not commit arbitrary text. The composite owns focus while interact
 
 The tag examples use illustrative environment and cost-center catalogs. Real applications supply their own categories
 and tags. A `KeyValueValueConfig` can be a pure function. Keep the resolver stable and replace configurations when
-external options change; do not mutate option arrays in place.
+external options change; do not mutate option arrays in place. When indexing a catalog with a free-text key, use
+`Object.hasOwn` or a `Map` so inherited names such as `constructor` remain unknown choices.
 
 ```typescript
 readonly valueConfig: KeyValueValueConfig = (key) => ({
@@ -432,11 +433,17 @@ Count errors contain `{required, actual}`. Validation uses the **owning committe
 force a premature owner commit. Config changes notify Angular through `registerOnValidatorChange`. Caller sync and async
 validators continue to compose. No owner `setErrors`, `setValue` or private pending flags are used.
 
-Every accepted user edit, including invalid empty fields, reports one array. Add emits an empty row; deletion emits the
-remaining rows; deletion to zero emits `[]`. Internal focus moves do not report touched. Focus leaving the composite
-reports touch on every departure, including after reset, allowing Angular's blur/submit policies to work. Programmatic
-disabling never reports touch. Reset/disable/destroy cancel queued focus/departure work. Readonly blocks mutations;
-ordinary focus departure can still report touch. No async control work exists beyond focus scheduling.
+Every accepted user edit, including invalid empty fields, reports one array. Repeated array input with identical items
+is ignored, including the final input event after IME composition has already committed the same text. Add emits an
+empty row; deletion emits the remaining rows; deletion to zero emits `[]`. Internal focus moves do not report touched.
+Focus leaving the composite reports touch on every departure, including after reset, allowing Angular's blur/submit
+policies to work. Programmatic disabling never reports touch. Reset/disable/destroy cancel queued focus/departure work.
+Readonly blocks mutations; ordinary focus departure can still report touch. No async control work exists beyond focus
+scheduling.
+
+Retained incompatible values use ordinary descriptive text associated through `aria-describedby`, rather than an
+`output` status element. This preserves the saved value in both native accessibility descriptions and automated
+accessibility-name calculations.
 
 ## Demo and validation plan
 
@@ -839,3 +846,16 @@ The schema demo can load incompatible saved values and correct them without chan
 
 Remote CI, independent language and assistive-technology acceptance, fresh-install verification, merge, publication and
 deployment remain separate gates. Historical results above do not validate these refinements.
+
+## October 24 PR review follow-up
+
+The review reproduced and fixed duplicate array emissions after IME composition, and inherited-property lookups in the
+free-text recipe catalog. The live recipe and its copyable example now treat inherited names as unknown keys. Retained
+saved values use descriptive spans so native accessibility and Playwright description calculations agree.
+
+Local validation passed: 390 clr-lift unit tests and the demo unit suite; library/demo/E2E lint and type checks; both
+library and demo spec compilation; all 84 key/value browser checks in Chromium, Firefox and WebKit; translation and
+example-tooling checks; production library packaging; and fresh packed Angular 21.2.25 consumers in zoneless and ZoneJS
+modes. Two existing conditional-test lint warnings remain in the unrelated documentation-validation-rules E2E spec.
+Formatting and diff checks passed. Remote CI for these local fixes, downstream application acceptance, manual
+assistive-technology and human language acceptance, merge and publication remain separate gates.

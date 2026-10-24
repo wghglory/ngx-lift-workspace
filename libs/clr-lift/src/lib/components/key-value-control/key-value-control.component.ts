@@ -292,7 +292,16 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   protected edit(id: number, field: 'key' | 'value', value: KeyValueValue): void {
     if (this.blocked()) return;
     const row = this.rows().find((item) => item.id === id);
-    if (!row || row[field] === value) return;
+    if (!row) return;
+    const current = row[field];
+    if (
+      current === value ||
+      (Array.isArray(current) &&
+        Array.isArray(value) &&
+        current.length === value.length &&
+        current.every((item, index) => item === value[index]))
+    )
+      return;
     const config = field === 'key' ? this.keyConfig() : this.valueEditor(row.key);
     if (config.disabled) return;
     if (field === 'key' && typeof value !== 'string') return;
