@@ -2,6 +2,8 @@
   base = "."
   command = "pnpm nx run-many -t build --no-cloud"
   publish = "dist/apps/demo/browser"
+  # Netlify skips builds when this command exits 0; only production on main builds.
+  ignore = '[ "$BRANCH" != "main" ] || [ "$CONTEXT" != "production" ]'
 
 [[redirects]]
   from = "/*"

@@ -50,6 +50,7 @@ jobs:
         run: pnpm nx build demo --configuration=production
 
       - name: Deploy to Netlify
+        if: github.ref == 'refs/heads/main'
         id: netlify
         continue-on-error: true
         uses: nwtgck/actions-netlify@v4
