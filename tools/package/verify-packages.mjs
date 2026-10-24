@@ -171,6 +171,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
           'zone.js': '~0.16.0',
         },
         devDependencies: {
+          '@angular/compiler-cli': '~21.2.0',
           '@types/node': '^22.0.0',
           '@types/node-forge': '^1.3.11',
           typescript: '^5.9.0',
@@ -183,6 +184,32 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
 
   writeFileSync(join(freshConsumer, 'pnpm-workspace.yaml'), 'strictPeerDependencies: true\nautoInstallPeers: false\n');
   run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 60000);
+  for (const name of ['key-value-hosts.ts', 'key-value-browser.mjs']) {
+    writeFileSync(join(freshConsumer, name), readFileSync(join(root, 'tools/package/fixtures', name), 'utf8'));
+  }
+  writeFileSync(
+    join(freshConsumer, 'key-value-tsconfig.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'ES2022',
+        moduleResolution: 'bundler',
+        strict: true,
+        skipLibCheck: false,
+        experimentalDecorators: true,
+        outDir: './key-value-compiled',
+        lib: ['ES2022', 'DOM'],
+        types: [],
+      },
+      angularCompilerOptions: {strictTemplates: true},
+      files: ['key-value-hosts.ts'],
+    }),
+  );
+  run('pnpm', ['exec', 'ngc', '-p', 'key-value-tsconfig.json'], freshConsumer);
+  for (const mode of ['zoneless', 'zone']) {
+    process.stdout.write(run(process.execPath, ['key-value-browser.mjs', mode], freshConsumer));
+  }
+
   writeFileSync(
     join(freshConsumer, 'query-browser.mjs'),
     readFileSync(join(root, 'tools/package/fixtures/query-browser.mjs'), 'utf8'),

@@ -1,10 +1,43 @@
 <cll-page-container [title]="'keyValueInputs.title' | translate">
-  <!-- Overview -->
-  <p [innerHTML]="'keyValueInputs.overview' | translate"></p>
+  <p>{{ 'keyValueControl.overview' | translate }}</p>
+  <section cds-layout="vertical gap:md align:stretch" role="region" aria-labelledby="array-value-title">
+    <h2 id="array-value-title">{{ 'keyValueControl.title' | translate }}</h2>
+    <app-demo-playground
+      data-testid="key-value-model"
+      [title]="'keyValueControl.modelTitle' | translate"
+      [description]="'keyValueControl.modelHelp' | translate"
+      [tsCode]="modelCode"
+      level="beginner"
+    >
+      <app-key-value-control-example preview mode="model" />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="key-value-reactive"
+      [title]="'keyValueControl.reactiveTitle' | translate"
+      [description]="'keyValueControl.reactiveHelp' | translate"
+      [tsCode]="reactiveCode"
+      level="intermediate"
+    >
+      <app-key-value-control-example preview mode="reactive" />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="key-value-facade"
+      [title]="'keyValueControl.facadeTitle' | translate"
+      [description]="'keyValueControl.facadeHelp' | translate"
+      [tsCode]="facadeCode"
+      level="intermediate"
+    >
+      <app-key-value-control-example preview mode="facade" />
+    </app-demo-playground>
+  </section>
+  <p>{{ 'keyValueControl.rowPolicy' | translate }}</p>
+  <p>{{ 'keyValueControl.statePolicy' | translate }}</p>
+  <app-key-value-recipes />
 
-  <!-- Examples Section -->
+  <!-- Caller-owned row controls -->
   <section cds-layout="vertical gap:md align:stretch">
-    <h2>{{ 'common.examples' | translate }}</h2>
+    <h2>{{ 'keyValueControl.legacy' | translate }}</h2>
+    <p [innerHTML]="'keyValueInputs.overview' | translate"></p>
 
     <app-demo-playground
       data-testid="key-value-starter"
@@ -22,7 +55,6 @@
             [data]="data"
             [keyPattern]="{
               regex: '^\\w+\\d+$',
-              message: 'custom error message: key must start with a letter and end with a number',
             }"
             [valuePattern]="{regex: '^\\w+\\d+$'}"
             [smartMode]="true"
@@ -44,8 +76,14 @@
   </section>
 
   <!-- API Reference -->
-  <section cds-layout="vertical gap:md align:stretch">
+  <section cds-layout="vertical gap:md">
     <h2>{{ 'common.apiReference' | translate }}</h2>
+    <h3>KeyValueControlComponent (<code>cll-key-value-control</code>)</h3>
+    <p>{{ 'keyValueControl.api' | translate }}</p>
+    <code>label = ''; helper = ''; minRows = 0; maxRows?: number; uniqueKeys = true; readonly = false;</code>
+    <app-api-table [properties]="editorInputs()" />
+    <app-code-block [code]="fieldConfigCode" lang="typescript" />
+
     <div cds-layout="vertical gap:sm align:stretch">
       <h3>KeyValueInputsComponent (<code>cll-key-value-inputs</code>)</h3>
       <p>{{ 'keyValueInputs.apiSummary' | translate }}</p>

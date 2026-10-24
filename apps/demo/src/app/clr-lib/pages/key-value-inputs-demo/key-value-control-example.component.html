@@ -1,0 +1,77 @@
+@if (mode() === 'model') {
+  <form #modelForm="ngForm" (ngSubmit)="saveModel(modelForm)" data-testid="model-host">
+    <cll-key-value-control
+      name="labels"
+      [(ngModel)]="modelRows"
+      required
+      [maxRows]="3"
+      [label]="'keyValueControl.labels' | translate"
+      [readonly]="readonly()"
+      [disabled]="modelDisabled()"
+    />
+    <div cds-layout="horizontal gap:sm wrap:yes m-t:md m-b:sm">
+      <button class="btn btn-primary" type="submit">{{ 'common.submit' | translate }}</button>
+      <button class="btn" type="button" (click)="modelForm.resetForm({labels: initial}); payload.set(null)">
+        {{ 'keyValueControl.reset' | translate }}
+      </button>
+    </div>
+    <label
+      ><input type="checkbox" [checked]="modelDisabled()" (change)="modelDisabled.set(!modelDisabled())" />
+      {{ 'keyValueControl.disabled' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'keyValueControl.readonly' | translate }}</label
+    >
+    @if (modelForm.invalid && (modelForm.touched || modelForm.submitted)) {
+      <p role="status">{{ 'keyValueControl.invalid' | translate }}</p>
+    }
+    <p>{{ 'keyValueControl.value' | translate }}</p>
+    <pre data-testid="value">{{ modelForm.value | json }}</pre>
+    <p>{{ 'keyValueControl.state' | translate }}</p>
+    <pre data-testid="state">{{
+      {status: modelForm.status, dirty: modelForm.dirty, touched: modelForm.touched} | json
+    }}</pre>
+  </form>
+} @else {
+  <form #reactiveHost="ngForm" [formGroup]="form()" (ngSubmit)="saveReactive()" [attr.data-testid]="mode() + '-host'">
+    <cll-key-value-control
+      formControlName="labels"
+      [maxRows]="3"
+      [minRows]="1"
+      [label]="'keyValueControl.labels' | translate"
+      [readonly]="readonly()"
+    />
+    <div cds-layout="horizontal gap:sm wrap:yes m-t:md m-b:sm">
+      <button class="btn btn-primary" type="submit">{{ 'common.submit' | translate }}</button>
+      <button class="btn" type="button" (click)="form().reset(); payload.set(null)">
+        {{ 'keyValueControl.reset' | translate }}
+      </button>
+    </div>
+    <label
+      ><input type="checkbox" [checked]="form().controls.labels.disabled" (change)="toggleDisabled()" />
+      {{ 'keyValueControl.disabled' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'keyValueControl.readonly' | translate }}</label
+    >
+    @if (form().invalid && (form().touched || reactiveHost.submitted)) {
+      <p role="status">{{ 'keyValueControl.invalid' | translate }}</p>
+    }
+    @if (form().pending) {
+      <p role="status">{{ 'keyValueControl.pending' | translate }}</p>
+    }
+    <p>{{ 'keyValueControl.value' | translate }}</p>
+    <pre data-testid="value">{{ (mode() === 'facade' ? sf.value() : form().value) | json }}</pre>
+    <p>{{ 'keyValueControl.state' | translate }}</p>
+    <pre data-testid="state">{{ {status: form().status, dirty: form().dirty, touched: form().touched} | json }}</pre>
+    @if (mode() === 'facade') {
+      <pre data-testid="signals">{{
+        {value: sf.fields.labels.value(), touched: sf.fields.labels.touched(), status: sf.status()} | json
+      }}</pre>
+    }
+  </form>
+}
+<p>{{ 'keyValueControl.payload' | translate }}</p>
+<pre data-testid="payload">{{ payload() | json }}</pre>

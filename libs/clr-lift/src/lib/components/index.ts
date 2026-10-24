@@ -5,6 +5,7 @@ export * from './certificate-signpost';
 export * from './file-reader';
 export * from './idle-detection';
 export * from './key-value-inputs';
+export * from './key-value-control';
 export * from './page-container';
 export * from './query-devtools';
 export * from './spinner';

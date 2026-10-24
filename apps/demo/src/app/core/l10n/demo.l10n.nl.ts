@@ -1,4 +1,50 @@
 export const nlTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Incompatibele opgeslagen waarden laden',
+  'keyValueRecipes.title': 'Editors kiezen voor uw gegevens',
+  'keyValueRecipes.keySelect': 'Sleutel selecteren, waarde invoeren',
+  'keyValueRecipes.keySelectHelp': 'Beperk sleutels tot bekende opties en voer waarden als vrije tekst in.',
+  'keyValueRecipes.valueSelect': 'Sleutel invoeren, waarde selecteren',
+  'keyValueRecipes.valueSelectHelp': 'Kies een opgeslagen waarde uit opties met een label.',
+  'keyValueRecipes.bothSelect': 'Sleutel en waarde selecteren',
+  'keyValueRecipes.bothSelectHelp': 'Een andere sleutel wist de oude waarde. Kies een waarde uit de nieuwe opties.',
+  'keyValueRecipes.dependent': 'Afhankelijke waardeopties',
+  'keyValueRecipes.dependentHelp': 'Een andere sleutel wist de oude waarde. Kies een waarde uit de nieuwe opties.',
+  'keyValueRecipes.tags': 'Tags met herhaalde categorieën',
+  'keyValueRecipes.tagsHelp':
+    'Herhaalde sleutels zijn toegestaan, dubbele sleutel-waardeparen niet. Aangepaste validators weigeren spaties aan het begin of einde.',
+  'keyValueRecipes.schema': 'Getypeerde configuratie',
+  'keyValueRecipes.schemaHelp':
+    'Zoek een ongebruikte sleutel. Waarden behouden hun type: tekst, getal, boolean of tekstarray.',
+  'keyValueRecipes.tagError': 'Geen spaties aan het begin of einde',
+  'keyValueRecipes.arrayHelp': 'Eén item per regel',
+  'keyValueControl.rowPolicy':
+    'Optionele lijsten mogen leeg beginnen. Initialiseer voor een verplicht paar één lege rij en zet minRows op 1. Toevoegen blijft mogelijk bij onvolledige rijen; fouten verschijnen na focusverlies of verzenden.',
+  'keyValueControl.statePolicy':
+    'Disabled voorkomt interactie en volgt de uitsluitingsregels van Angular-formulieren. Readonly behoudt waarden en maakt bekijken mogelijk. Beide kunnen aanstaan; Disabled heeft voorrang.',
+  'keyValueControl.title': 'De lijst als één formulierbesturingselement binden',
+  'keyValueControl.overview':
+    'Gebruik cll-key-value-control voor een geordende array. Bestaande FormArray-applicaties kunnen cll-key-value-inputs hieronder blijven gebruiken.',
+  'keyValueControl.modelTitle': 'ngModel: bewerken en verzenden',
+  'keyValueControl.modelHelp':
+    'Bewerk labels, voeg rijen toe of verwijder ze en verzend het formulier. Lege velden en dubbele sleutels blokkeren verzending. Opnieuw instellen herstelt de oorspronkelijke labels; maximaal drie rijen zijn toegestaan.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: vastleggen bij verlaten',
+  'keyValueControl.reactiveHelp':
+    'Wijzigingen bereiken de getypeerde FormControl wanneer de focus de hele editor verlaat. Interne focusverplaatsingen leggen niets vast en markeren het veld niet als aangeraakt. Opnieuw instellen herstelt de standaardwaarde die niet null is. De editor uitschakelen schakelt dit formulier met één besturingselement uit en verhindert verzending.',
+  'keyValueControl.facadeTitle': 'toSignalForm: vastleggen bij verzenden',
+  'keyValueControl.facadeHelp':
+    'De facade observeert dezelfde FormGroup. Verzenden legt wachtende wijzigingen vast vóór validatie. De gegevens gebruiken includeDisabled: false; alleen-lezen labels blijven opgenomen. Minimaal één rij is vereist.',
+  'keyValueControl.labels': 'Labels',
+  'keyValueControl.reset': 'Opnieuw instellen',
+  'keyValueControl.disabled': 'Uitgeschakeld',
+  'keyValueControl.readonly': 'Alleen-lezen',
+  'keyValueControl.value': 'Waarde van het formulierveld',
+  'keyValueControl.state': 'Formulierstatus',
+  'keyValueControl.payload': 'Verzonden gegevens',
+  'keyValueControl.invalid': 'Corrigeer de validatiefouten voordat u opslaat.',
+  'keyValueControl.pending': 'Validatie loopt. Verzend opnieuw zodra deze is voltooid.',
+  'keyValueControl.legacy': 'Rijbesturingselementen beheren met FormArray',
+  'keyValueControl.api':
+    'Bind KeyValueEntry[] met ngModel of FormControl. label en helper leveren toegankelijke tekst; minRows en maxRows begrenzen het aantal rijen; uniqueKeys is standaard true. readonly behoudt de waarde in het formulier. Het formulier beheert uitschakeling en verplichte validatie.',
   'docsLearn.resourceTitle': 'Gegevens laden wanneer een signaal verandert',
   'docsLearn.basics': 'Basis',
   'docsLearn.recipes': 'Praktische voorbeelden',
@@ -1248,7 +1294,7 @@ export const nlTranslations: Record<string, string> = {
   'keyValueInputs.example1': 'Voorbeeld 1: Basisgebruik',
   'keyValueInputs.example1Desc':
     'Maak een formulier aan met een FormArray en gebruik KeyValueInputsComponent om sleutelwaardeparen te beheren:',
-  'keyValueInputs.example2': 'Voorbeeld 2: Interactieve Demo',
+  'keyValueInputs.example2': 'FormArray: afzonderlijke rijen bewerken',
   'keyValueInputs.example2Desc':
     'Probeer het toevoegen, bewerken en verwijderen van sleutelwaardeparen in het onderstaande formulier:',
   'keyValueInputs.callout':

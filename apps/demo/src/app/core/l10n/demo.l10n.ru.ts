@@ -1,4 +1,50 @@
 export const ruTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Загрузить несовместимые сохранённые значения',
+  'keyValueRecipes.title': 'Выбор редакторов для данных',
+  'keyValueRecipes.keySelect': 'Выбор ключа и ввод значения',
+  'keyValueRecipes.keySelectHelp': 'Ограничьте ключи известными вариантами, оставив свободный ввод значений.',
+  'keyValueRecipes.valueSelect': 'Ввод ключа и выбор значения',
+  'keyValueRecipes.valueSelectHelp': 'Выберите сохраняемое значение из подписанных вариантов.',
+  'keyValueRecipes.bothSelect': 'Выбор ключа и значения',
+  'keyValueRecipes.bothSelectHelp': 'При смене ключа старое значение очищается. Выберите значение из новых вариантов.',
+  'keyValueRecipes.dependent': 'Зависимые варианты значений',
+  'keyValueRecipes.dependentHelp': 'При смене ключа старое значение очищается. Выберите значение из новых вариантов.',
+  'keyValueRecipes.tags': 'Теги с повторяющимися категориями',
+  'keyValueRecipes.tagsHelp':
+    'Повторяющиеся ключи разрешены, одинаковые пары запрещены. Пользовательские валидаторы запрещают пробелы в начале и конце.',
+  'keyValueRecipes.schema': 'Типизированная конфигурация',
+  'keyValueRecipes.schemaHelp':
+    'Найдите неиспользованный ключ. Значения сохраняют тип: строка, число, логическое значение или массив строк.',
+  'keyValueRecipes.tagError': 'Не добавляйте пробелы в начале и конце',
+  'keyValueRecipes.arrayHelp': 'Один элемент в строке',
+  'keyValueControl.rowPolicy':
+    'Необязательный список может быть пустым. Для обязательной пары создайте одну пустую строку и задайте minRows равным 1. Добавление доступно при незаполненных строках; ошибки появляются после потери фокуса или отправки.',
+  'keyValueControl.statePolicy':
+    'Disabled запрещает взаимодействие и следует правилам исключения Angular. Readonly сохраняет значения и позволяет их просматривать. Можно включить оба режима; Disabled имеет приоритет.',
+  'keyValueControl.title': 'Привязка списка как одного элемента формы',
+  'keyValueControl.overview':
+    'Используйте cll-key-value-control для упорядоченного массива. Приложения с FormArray могут продолжать использовать cll-key-value-inputs ниже.',
+  'keyValueControl.modelTitle': 'ngModel: редактирование и отправка',
+  'keyValueControl.modelHelp':
+    'Измените метки, добавьте или удалите строки и отправьте форму. Пустые поля и повторяющиеся ключи блокируют отправку. Сброс восстанавливает исходные метки; допускается не более трех строк.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: применение при выходе',
+  'keyValueControl.reactiveHelp':
+    'Изменения поступают в типизированный FormControl, когда фокус покидает весь редактор. Переходы между внутренними полями не применяют изменения и не отмечают поле как посещенное. Сброс восстанавливает ненулевое значение по умолчанию. Отключение редактора отключает всю форму с единственным элементом управления и предотвращает отправку.',
+  'keyValueControl.facadeTitle': 'toSignalForm: применение при отправке',
+  'keyValueControl.facadeHelp':
+    'Фасад наблюдает за той же FormGroup. При отправке отложенные изменения применяются до проверки. Данные используют includeDisabled: false; метки только для чтения остаются в них. Требуется хотя бы одна строка.',
+  'keyValueControl.labels': 'Метки',
+  'keyValueControl.reset': 'Сбросить',
+  'keyValueControl.disabled': 'Отключено',
+  'keyValueControl.readonly': 'Только чтение',
+  'keyValueControl.value': 'Значение поля формы',
+  'keyValueControl.state': 'Состояние формы',
+  'keyValueControl.payload': 'Отправленные данные',
+  'keyValueControl.invalid': 'Исправьте ошибки проверки перед сохранением.',
+  'keyValueControl.pending': 'Выполняется проверка. Отправьте форму повторно после ее завершения.',
+  'keyValueControl.legacy': 'Управление элементами строк через FormArray',
+  'keyValueControl.api':
+    'Свяжите KeyValueEntry[] через ngModel или FormControl. label и helper задают доступный текст; minRows и maxRows ограничивают число строк; uniqueKeys по умолчанию равно true. readonly сохраняет значение в форме. Форма управляет отключением и обязательной проверкой.',
   'docsLearn.resourceTitle': 'Загружать данные при изменении сигнала',
   'docsLearn.basics': 'Основы',
   'docsLearn.recipes': 'Практические примеры',
@@ -1242,7 +1288,7 @@ export const ruTranslations: Record<string, string> = {
   'keyValueInputs.example1': 'Пример 1: Базовое использование',
   'keyValueInputs.example1Desc':
     'Создать форму с FormArray и использовать KeyValueInputsComponent для управления парами ключевых значений:',
-  'keyValueInputs.example2': 'Пример 2: Интерактивная демография',
+  'keyValueInputs.example2': 'FormArray: редактирование отдельных строк',
   'keyValueInputs.example2Desc':
     'Попробуйте добавить, редактировать и удалить пары ключевых значений в следующей форме:',
   'keyValueInputs.callout':

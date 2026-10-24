@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+legend {
+  color: var(--clr-forms-label-color);
+  font-weight: 600;
+}
+.entry {
+  flex-wrap: wrap;
+  margin-block-end: 0.6rem;
+}
+.field {
+  flex: 1 1 10rem;
+  min-inline-size: 0;
+  margin-block-start: 0.6rem;
+}
+.clr-input {
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+.clr-subtext {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.error {
+  color: var(--clr-forms-invalid-color);
+}
+.entry .btn {
+  align-self: flex-start;
+  margin-block-start: 0.6rem;
+}
+
+.clr-subtext[hidden] {
+  display: none;
+}

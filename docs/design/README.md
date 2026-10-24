@@ -24,17 +24,17 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## clr-lift implemented contracts
 
-| API                                                                  | Canonical contract                                                                  |
-| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| TooltipDirective and owned/borrowed popup content                    | [Tooltip and popover](clr-lift/tooltip-design-spec.md)                              |
-| FileReaderComponent CVA, encoding and read cancellation              | [File reader](clr-lift/file-reader-design-spec.md)                                  |
-| CertificateService, signpost and parsing validator                   | [Certificates](clr-lift/certificate-design-spec.md)                                 |
-| IdleDetectionComponent shared/scoped warning                         | [Idle warning](clr-lift/idle-warning-design-spec.md)                                |
-| AlertService/ToastService and notification containers                | [Notifications](clr-lift/notifications-design-spec.md)                              |
-| TimelineWizardComponent, base step and service                       | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)                          |
-| TranslationService and ThemeService                                  | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)                |
-| Existing FormArray key/value editor, plus separately marked proposal | [Key/value current contract and proposal](clr-lift/key-value-inputs-design-spec.md) |
-| QueryDevtoolsComponent and conditional root provider                 | [Query inspector](clr-lift/query-devtools-design-spec.md)                           |
+| API                                                                | Canonical contract                                                      |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| TooltipDirective and owned/borrowed popup content                  | [Tooltip and popover](clr-lift/tooltip-design-spec.md)                  |
+| FileReaderComponent CVA, encoding and read cancellation            | [File reader](clr-lift/file-reader-design-spec.md)                      |
+| CertificateService, signpost and parsing validator                 | [Certificates](clr-lift/certificate-design-spec.md)                     |
+| IdleDetectionComponent shared/scoped warning                       | [Idle warning](clr-lift/idle-warning-design-spec.md)                    |
+| AlertService/ToastService and notification containers              | [Notifications](clr-lift/notifications-design-spec.md)                  |
+| TimelineWizardComponent, base step and service                     | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)              |
+| TranslationService and ThemeService                                | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)    |
+| Legacy FormArray editor and additive immutable array-value control | [Key/value control contracts](clr-lift/key-value-inputs-design-spec.md) |
+| QueryDevtoolsComponent and conditional root provider               | [Query inspector](clr-lift/query-devtools-design-spec.md)               |
 
 ## Review status and maintenance
 

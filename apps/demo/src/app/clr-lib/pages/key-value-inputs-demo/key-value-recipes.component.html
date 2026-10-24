@@ -1,0 +1,36 @@
+<section cds-layout="vertical gap:md align:stretch">
+  <h2>{{ 'keyValueRecipes.title' | translate }}</h2>
+  @for (recipe of recipes(); track recipe.id) {
+    <app-demo-playground
+      [attr.data-testid]="'key-value-' + recipe.id"
+      [title]="'keyValueRecipes.' + recipe.id | translate"
+      [description]="'keyValueRecipes.' + recipe.id + 'Help' | translate"
+      [tsCode]="recipe.code"
+      level="intermediate"
+    >
+      <div preview>
+        <cll-key-value-control
+          [formControl]="recipe.control"
+          [keyConfig]="recipe.keyConfig"
+          [valueConfig]="recipe.valueConfig"
+          [uniqueKeys]="!recipe.uniquePairs"
+          [uniquePairs]="!!recipe.uniquePairs"
+          [resetValueOnKeyChange]="!!recipe.resetValue"
+          [excludeSelectedKeys]="!!recipe.excludeSelected"
+        />
+        <div cds-layout="m-t:md">
+          @if (recipe.id === 'schema') {
+            <button type="button" class="btn" (click)="loadIncompatibleValues()">
+              {{ 'keyValueRecipes.loadIncompatible' | translate }}
+            </button>
+          }
+          <button type="button" class="btn" (click)="recipe.control.reset()">
+            {{ 'keyValueControl.reset' | translate }}
+          </button>
+        </div>
+        <p>{{ 'keyValueControl.value' | translate }}</p>
+        <pre data-testid="recipe-value">{{ recipe.control.value | json }}</pre>
+      </div>
+    </app-demo-playground>
+  }
+</section>

@@ -1,6 +1,6 @@
 # Shared form-control compatibility
 
-Status: **Shared contract reviewed; integration verification pending**. Updated October 18, 2026. Owner: clr-lift
+Status: **Shared contract reviewed; key/value phase 1 locally verified**. Updated October 19, 2026. Owner: clr-lift
 maintainers. Package: clr-lift. Approval: the maintainer accepted shared-contract revision `1e3ae98` in chat review. The
 examples below use existing Clarity APIs. Individual new-control APIs and their implementation evidence remain separate
 gates.
@@ -95,9 +95,9 @@ reviewed; future controls still require their own API and implementation accepta
 | Observe the same form through signals | Preserve Angular ownership and choose payload filtering          | Example C: facade over Example B's FormGroup; F3 host |
 | Add composite/async behavior          | Explain touch boundaries, drafts and obsolete requests           | Behavior table and F5/F6/F9; native F4 stays deferred |
 
-Validation and delivery: Real delivery hosts for new controls remain planned. Existing Clarity/facade examples do not
-certify a new lift CVA or native field bridge. The public API and behavior sections below own exact options and
-limitations; examples introduce them after the first task.
+Validation and delivery: The additive key/value control now has real delivery hosts and installed Angular 21 evidence.
+Existing Clarity/facade examples do not certify other new controls or a native field bridge. The public API and behavior
+sections below own exact options and limitations; examples introduce them after the first task.
 
 ## Public API and examples
 
@@ -291,11 +291,13 @@ separate evidence gates.
 
 ## Demo and validation plan
 
-Phase 1 requires three separately discoverable hosts for Examples A–C with real public imports, copyable playground
-code, value/status/payload output, submission, validation, reset, disabled and readonly. The facade host must use the
-same FormGroup, not an independent mirror. Add a second enabled sibling for F8 serialization checks. These hosts ship
-with the next approved value control; the Clarity examples alone do not satisfy the roadmap's installed-consumer exit
-condition for future lift controls.
+The
+[key/value demo source](../../../apps/demo/src/app/clr-lib/pages/key-value-inputs-demo/key-value-inputs-demo.component.ts)
+implements three separately discoverable phase-1 hosts corresponding to Examples A–C. Other value controls require the
+same hosts with real public imports, copyable playground code, value/status/payload output, submission, validation,
+reset, disabled and readonly. The facade host must use the same FormGroup, not an independent mirror. Add a second
+enabled sibling for F8 serialization checks. The key/value hosts ship with its additive value control; the Clarity
+examples alone do not satisfy the installed-consumer exit condition for other lift controls.
 
 | Gate                     | Required assertion                                                                                                                                                    | Evidence required before marking delivered                                                                             |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -306,10 +308,9 @@ condition for future lift controls.
 | Types/packages           | Feature value inference and rejected invalid inputs; identical public tarball in strict Angular 21 consumers, zoneless and ZoneJS                                     | Installed declarations/templates and actual host rendering; typed FormControl alone does not certify CVA binding types |
 | Browser/language         | All three browsers; keyboard/overlay focus, repeated reset, narrow light/dark states, every locale and runtime switching                                              | Route/tab scans plus real interaction journeys and separate human acceptance records                                   |
 
-Use existing validation commands/targets; this documentation increment needs formatting and link/diff checks rather than
-component tests. Phase 2 repeats the matrix and adds native-field value/reset/availability/touch/pending/error
-propagation and real submissions for every new value control in the [roadmap](../../component-roadmap.md). DOM tests do
-not prove SSR/hydration.
+Use existing validation commands/targets and each control's implementation/browser/installed-consumer gates. Phase 2
+repeats the matrix and adds native-field value/reset/availability/touch/pending/error propagation and real submissions
+for every new value control in the [roadmap](../../component-roadmap.md). DOM tests do not prove SSR/hydration.
 
 ## Compatibility, rollout, and risks
 
@@ -327,9 +328,10 @@ composite touch boundary, intrinsic-validator composition and explicit payload f
 Clarity reuse examples preserve that shared contract without claiming Clarity already satisfies every requirement.
 Feature value APIs, key/value coexistence strategy and the platform upgrade's release policy stay with their reviews.
 
-The next planned control review is the key/value value API and its coexistence with the existing FormArray interface.
-Require all three hosts and installed Angular 21 proof when an approved new value control is implemented. Keep any
-shared bridge private until real controls prove its shape.
+The October 19 delivery implements additive `cll-key-value-control` alongside the existing FormArray interface. Its
+[feature spec](key-value-inputs-design-spec.md#evidence) records all three delivered hosts and installed Angular 21
+evidence. Other approved controls must supply the same integration proof. Keep any shared bridge private until real
+controls prove its shape.
 
 ## Evidence
 
@@ -338,6 +340,8 @@ installed Clarity combobox and the local file-reader, key/value and facade sourc
 Material, NG-ZORRO and React Aria references informed the adopt/adapt decisions. Installed Angular source governs the
 first delivery phase. The revised ngModel/Reactive Forms examples and composed facade variant pass local strict Angular
 21.2.17 template compilation with installed Clarity 18.4.0 and the built ngx-lift declarations. This compilation does
-not prove runtime form behavior, a new installed-package consumer, or all of Clarity's accessibility semantics. No new
-control implementation or browser pass is claimed. Revision-specific checks and reviewer evidence belong in the PR;
-future component APIs and delivery evidence remain separate.
+not prove runtime form behavior, a new installed-package consumer, or all of Clarity's accessibility semantics. The
+October 19 additive key/value implementation and browser/package results are recorded in its
+[feature evidence](key-value-inputs-design-spec.md#evidence); this does not certify other proposed controls.
+Revision-specific checks and reviewer evidence belong in the PR; future component APIs and delivery evidence remain
+separate.

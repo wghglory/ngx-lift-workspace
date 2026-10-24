@@ -1,4 +1,50 @@
 export const koTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': '호환되지 않는 저장된 값 불러오기',
+  'keyValueRecipes.title': '데이터에 맞는 편집기 선택',
+  'keyValueRecipes.keySelect': '키를 선택하고 값 입력',
+  'keyValueRecipes.keySelectHelp': '키는 지정된 옵션으로 제한하고 값은 자유롭게 입력합니다.',
+  'keyValueRecipes.valueSelect': '키를 입력하고 값 선택',
+  'keyValueRecipes.valueSelectHelp': '레이블이 있는 옵션에서 저장할 값을 선택합니다.',
+  'keyValueRecipes.bothSelect': '키와 값 모두 선택',
+  'keyValueRecipes.bothSelectHelp': '키를 변경하면 이전 값이 지워집니다. 새 옵션에서 값을 선택하세요.',
+  'keyValueRecipes.dependent': '키에 따른 값 옵션',
+  'keyValueRecipes.dependentHelp': '키를 변경하면 이전 값이 지워집니다. 새 옵션에서 값을 선택하세요.',
+  'keyValueRecipes.tags': '반복되는 범주의 태그',
+  'keyValueRecipes.tagsHelp':
+    '키 반복은 허용하지만 중복된 키와 값의 조합은 거부합니다. 사용자 정의 검증은 앞뒤 공백을 거부합니다.',
+  'keyValueRecipes.schema': '유형별 구성',
+  'keyValueRecipes.schemaHelp':
+    '사용하지 않은 키를 검색합니다. 값은 문자열, 숫자, 불리언 또는 문자열 배열 유형을 유지합니다.',
+  'keyValueRecipes.tagError': '앞뒤에 공백을 넣지 마세요',
+  'keyValueRecipes.arrayHelp': '한 줄에 한 항목',
+  'keyValueControl.rowPolicy':
+    '선택 목록은 빈 상태로 시작할 수 있습니다. 쌍이 필수이면 빈 행 하나를 초기화하고 minRows를 1로 설정하세요. 미완성 행이 있어도 추가할 수 있으며, 포커스가 벗어나거나 제출할 때 오류가 표시됩니다.',
+  'keyValueControl.statePolicy':
+    'Disabled는 상호 작용을 막고 Angular 폼 제외 규칙을 따릅니다. Readonly는 값을 유지하고 조회를 허용합니다. 둘 다 설정할 수 있으며 Disabled가 우선합니다.',
+  'keyValueControl.title': '목록을 하나의 폼 컨트롤로 바인딩',
+  'keyValueControl.overview':
+    'cll-key-value-control로 순서가 있는 배열을 편집합니다. 기존 FormArray 앱은 아래의 cll-key-value-inputs를 계속 사용할 수 있습니다.',
+  'keyValueControl.modelTitle': 'ngModel: 편집 및 제출',
+  'keyValueControl.modelHelp':
+    '레이블을 편집하고 행을 추가하거나 삭제한 후 제출합니다. 빈 필드와 중복 키가 있으면 제출할 수 없습니다. 초기화하면 원래 레이블이 복원되며 최대 3개 행이 허용됩니다.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: 편집기를 벗어날 때 반영',
+  'keyValueControl.reactiveHelp':
+    '포커스가 편집기 전체를 벗어나면 형식화된 FormControl에 변경 사항이 반영됩니다. 내부 필드 간 이동은 변경 사항을 반영하거나 터치 상태를 설정하지 않습니다. 초기화는 null이 아닌 기본값을 복원합니다. 편집기를 비활성화하면 단일 컨트롤 양식 전체가 비활성화되어 제출할 수 없습니다.',
+  'keyValueControl.facadeTitle': 'toSignalForm: 제출 시 반영',
+  'keyValueControl.facadeHelp':
+    '퍼사드는 동일한 FormGroup을 관찰합니다. 제출 시 대기 중인 변경 사항을 반영한 후 검증합니다. 제출 데이터는 includeDisabled: false를 사용하며 읽기 전용 레이블은 포함됩니다. 하나 이상의 행이 필요합니다.',
+  'keyValueControl.labels': '레이블',
+  'keyValueControl.reset': '초기화',
+  'keyValueControl.disabled': '비활성화',
+  'keyValueControl.readonly': '읽기 전용',
+  'keyValueControl.value': '폼 소유 값',
+  'keyValueControl.state': '폼 상태',
+  'keyValueControl.payload': '제출 데이터',
+  'keyValueControl.invalid': '저장하기 전에 검증 오류를 수정하세요.',
+  'keyValueControl.pending': '검증 중입니다. 완료 후 다시 제출하세요.',
+  'keyValueControl.legacy': 'FormArray로 행 컨트롤 관리',
+  'keyValueControl.api':
+    'ngModel 또는 FormControl로 KeyValueEntry[]를 바인딩합니다. label과 helper는 접근성 텍스트를 제공하고 minRows와 maxRows는 행 수를 제한하며 uniqueKeys의 기본값은 true입니다. readonly 값은 폼에 포함됩니다. 비활성화 상태와 필수 검증은 폼이 관리합니다.',
   'docsLearn.resourceTitle': '신호가 변경될 때 데이터 로드',
   'docsLearn.basics': '기본',
   'docsLearn.recipes': '실용 예제',
@@ -1192,7 +1238,7 @@ export const koTranslations: Record<string, string> = {
   'keyValueInputs.example1': '예제 1: 기본 사용법',
   'keyValueInputs.example1Desc':
     'FormArray와 함께 폼을 생성하고 KeyValueInputsComponent를 사용하여 키-값 쌍을 관리하는 기본 사용법:',
-  'keyValueInputs.example2': '예제 2: 상호작용형 데모',
+  'keyValueInputs.example2': 'FormArray: 개별 행 편집',
   'keyValueInputs.example2Desc': '아래 폼에서 키-값 쌍을 추가, 편집, 제거해 보세요:',
   'keyValueInputs.callout':
     'KeyValueInputsComponent는 UniqueValidator를 활용하여 키 컨트롤에 대한 검증을 수행하는 방법을 탐색해 보세요. 여기를 클릭하여 키 입력 필드에서 고유성 강제를 어떻게 수행하는지 알아보세요.',

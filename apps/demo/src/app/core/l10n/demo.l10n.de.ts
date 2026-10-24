@@ -1,4 +1,52 @@
 export const deTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Inkompatible gespeicherte Werte laden',
+  'keyValueRecipes.title': 'Editoren für Ihre Daten auswählen',
+  'keyValueRecipes.keySelect': 'Schlüssel auswählen, Wert eingeben',
+  'keyValueRecipes.keySelectHelp':
+    'Beschränken Sie Schlüssel auf bekannte Optionen und geben Sie Werte als Freitext ein.',
+  'keyValueRecipes.valueSelect': 'Schlüssel eingeben, Wert auswählen',
+  'keyValueRecipes.valueSelectHelp': 'Wählen Sie einen gespeicherten Wert aus beschrifteten Optionen.',
+  'keyValueRecipes.bothSelect': 'Schlüssel und Wert auswählen',
+  'keyValueRecipes.bothSelectHelp': 'Konfigurieren Sie beide Felder unabhängig voneinander.',
+  'keyValueRecipes.dependent': 'Abhängige Wertoptionen',
+  'keyValueRecipes.dependentHelp':
+    'Ein Schlüsselwechsel löscht den alten Wert. Wählen Sie einen Wert aus den neuen Optionen.',
+  'keyValueRecipes.tags': 'Tags mit wiederholten Kategorien',
+  'keyValueRecipes.tagsHelp':
+    'Wiederholte Schlüssel sind erlaubt, doppelte Schlüssel-Wert-Paare nicht. Benutzerdefinierte Validatoren verhindern umgebende Leerzeichen.',
+  'keyValueRecipes.schema': 'Typisierte Konfiguration',
+  'keyValueRecipes.schemaHelp':
+    'Suchen Sie einen unbenutzten Schlüssel. Werte behalten ihren Typ: Zeichenfolge, Zahl, Boolean oder Zeichenfolgenarray.',
+  'keyValueRecipes.tagError': 'Keine Leerzeichen am Anfang oder Ende',
+  'keyValueRecipes.arrayHelp': 'Ein Eintrag pro Zeile',
+  'keyValueControl.rowPolicy':
+    'Optionale Listen dürfen leer beginnen. Für ein Pflichtpaar eine leere Zeile initialisieren und minRows auf 1 setzen. Hinzufügen bleibt bei unvollständigen Zeilen verfügbar; Fehler erscheinen nach Fokusverlust oder Absenden.',
+  'keyValueControl.statePolicy':
+    'Disabled verhindert Interaktion und folgt den Ausschlussregeln von Angular-Formularen. Readonly behält Werte bei und erlaubt deren Ansicht. Beides ist möglich; Disabled hat Vorrang.',
+  'keyValueControl.title': 'Liste als ein Formularsteuerelement binden',
+  'keyValueControl.overview':
+    'Mit cll-key-value-control bearbeiten Sie ein geordnetes Array. Bestehende FormArray-Anwendungen können weiterhin cll-key-value-inputs unten verwenden.',
+  'keyValueControl.modelTitle': 'ngModel: bearbeiten und absenden',
+  'keyValueControl.modelHelp':
+    'Bearbeiten Sie Bezeichnungen, fügen Sie Zeilen hinzu oder löschen Sie sie und senden Sie das Formular ab. Leere Felder und doppelte Schlüssel verhindern das Absenden. Zurücksetzen stellt die ursprünglichen Werte wieder her; maximal drei Zeilen sind erlaubt.',
+  'keyValueControl.reactiveTitle': 'Reactive Forms: beim Verlassen übernehmen',
+  'keyValueControl.reactiveHelp':
+    'Änderungen erreichen das typisierte FormControl erst, wenn der Fokus den gesamten Editor verlässt. Interne Fokuswechsel übernehmen nichts und markieren das Feld nicht als berührt. Zurücksetzen stellt den Standardwert wieder her. Das Deaktivieren des Editors deaktiviert dieses Formular mit nur einem Steuerelement und verhindert das Absenden.',
+  'keyValueControl.facadeTitle': 'toSignalForm: beim Absenden übernehmen',
+  'keyValueControl.facadeHelp':
+    'Die Fassade beobachtet dieselbe FormGroup. Beim Absenden werden Änderungen vor der Validierung übernommen. Die Nutzdaten verwenden includeDisabled: false; schreibgeschützte Bezeichnungen bleiben enthalten. Mindestens eine Zeile ist erforderlich.',
+  'keyValueControl.labels': 'Bezeichnungen',
+  'keyValueControl.reset': 'Zurücksetzen',
+  'keyValueControl.disabled': 'Deaktiviert',
+  'keyValueControl.readonly': 'Schreibgeschützt',
+  'keyValueControl.value': 'Wert des Formularfelds',
+  'keyValueControl.state': 'Formularstatus',
+  'keyValueControl.payload': 'Gesendete Nutzdaten',
+  'keyValueControl.invalid': 'Korrigieren Sie die Validierungsfehler vor dem Speichern.',
+  'keyValueControl.pending': 'Validierung läuft. Senden Sie das Formular danach erneut ab.',
+  'keyValueControl.legacy': 'Zeilensteuerelemente mit FormArray verwalten',
+  'keyValueControl.api':
+    'Binden Sie KeyValueEntry[] mit ngModel oder FormControl. label und helper liefern barrierefreie Texte; minRows und maxRows begrenzen die Zeilenzahl; uniqueKeys ist standardmäßig true. readonly behält den Wert im Formular. Das Formular steuert Deaktivierung und Pflichtfeldprüfung.',
   'docsLearn.resourceTitle': 'Daten bei Signaländerungen laden',
   'docsLearn.basics': 'Grundlagen',
   'docsLearn.recipes': 'Praktische Beispiele',
@@ -1247,7 +1295,7 @@ export const deTranslations: Record<string, string> = {
   'keyValueInputs.example1': 'Beispiel 1: Grundlegende Verwendung',
   'keyValueInputs.example1Desc':
     'Erstellen Sie ein Formular mit einem FormArray und verwenden Sie KeyValueInputsComponent, um Schlüssel-Wert-Paare zu verwalten:',
-  'keyValueInputs.example2': 'Beispiel 2: Interaktive Demo',
+  'keyValueInputs.example2': 'FormArray: einzelne Zeilen bearbeiten',
   'keyValueInputs.example2Desc':
     'Versuchen Sie, Schlüssel-Wert-Paare in der folgenden Form hinzuzufügen, zu bearbeiten und zu entfernen:',
   'keyValueInputs.callout':
