@@ -81,6 +81,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   private reportingTouch = false;
   private owner: AbstractControl | null = null;
   private ownerEvents?: Subscription;
+  protected readonly touched = signal(false);
   protected readonly touchedFields = signal<ReadonlySet<string>>(new Set());
   private focusTimer?: ReturnType<typeof setTimeout>;
   private generation = 0;
@@ -176,6 +177,10 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
     return this.addDisabled() ? this.translations.translate('key-value.noAvailableKeys') : '';
   });
 
+  protected readonly showLimitsError = computed(
+    () => this.touched() && (!!this.errors()?.keyValue?.minRows || !!this.errors()?.keyValue?.maxRows),
+  );
+
   constructor() {
     this.translations.loadTranslationsForComponent('key-value', keyValueTranslations);
     effect(() => {
@@ -185,7 +190,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
     effect(() => {
       if (this.readonly()) untracked(() => this.cancelFocus());
     });
-    inject(DestroyRef).onDestroy(() => this.cancelFocus());
+    this.destroyRef.onDestroy(() => this.cancelFocus());
   }
 
   ngDoCheck(): void {
@@ -193,12 +198,22 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
     if (control === this.owner) return;
     this.ownerEvents?.unsubscribe();
     this.owner = control ?? null;
-    if (control?.touched) this.revealErrors();
-    else this.touchedFields.set(new Set());
+    if (control?.touched) {
+      this.touched.set(true);
+      this.revealErrors();
+    } else {
+      this.touched.set(false);
+      this.touchedFields.set(new Set());
+    }
     this.ownerEvents = control?.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       if (event instanceof TouchedChangeEvent && !this.reportingTouch) {
-        if (event.touched) this.revealErrors();
-        else this.touchedFields.set(new Set());
+        if (event.touched) {
+          this.touched.set(true);
+          this.revealErrors();
+        } else {
+          this.touched.set(false);
+          this.touchedFields.set(new Set());
+        }
       }
     });
   }
@@ -210,17 +225,20 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   }
 
   private revealErrors(): void {
+    this.touched.set(true);
     this.touchedFields.set(new Set(this.rows().flatMap((row) => [`${row.id}-key`, `${row.id}-value`])));
   }
 
   protected touchField(id: number, field: 'key' | 'value'): void {
     if (this.disabled() || !this.rows().some((row) => row.id === id)) return;
+    this.touched.set(true);
     this.touchedFields.update((fields) => new Set([...fields, `${id}-${field}`]));
   }
 
   private reportTouch(): void {
     this.reportingTouch = true;
     try {
+      this.touched.set(true);
       this.onTouched();
     } finally {
       this.reportingTouch = false;
@@ -230,6 +248,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   writeValue(value: unknown): void {
     this.cancelFocus();
     this.touchedFields.set(new Set());
+    this.touched.set(false);
     const previous = this.rows();
     const entries = value ?? [];
     this.invalidStructure.set(!isKeyValueEntries(entries));
@@ -241,7 +260,10 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
       })),
     );
     this.announcementCount.set(null);
-    if (this.injector.get(NgControl, null, {self: true})?.control?.touched) this.revealErrors();
+    if (this.injector.get(NgControl, null, {self: true})?.control?.touched) {
+      this.touched.set(true);
+      this.revealErrors();
+    }
   }
 
   registerOnChange(fn: (value: KeyValueEntry<KeyValueValue>[]) => void): void {

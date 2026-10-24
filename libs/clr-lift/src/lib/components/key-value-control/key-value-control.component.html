@@ -50,11 +50,7 @@
       </button>
     </div>
   }
-  <p
-    class="clr-subtext error"
-    [hidden]="!errors()?.keyValue?.minRows && !errors()?.keyValue?.maxRows"
-    [id]="prefix + '-limits'"
-  >
+  <p class="clr-subtext error" [hidden]="!showLimitsError()" [id]="prefix + '-limits'">
     @if (errors()?.keyValue?.minRows) {
       {{ 'key-value.minRows' | translate: minRows() }}
     }

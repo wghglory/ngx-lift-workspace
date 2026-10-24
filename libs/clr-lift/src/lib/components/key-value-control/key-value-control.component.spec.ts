@@ -7,8 +7,14 @@ import {Subject} from 'rxjs';
 import {vi} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
-import {KeyValueControlComponent} from './key-value-control.component';
-import {KeyValueEntry} from './key-value-entry.type';
+import {
+  KeyValueControlComponent,
+  KeyValueEntry,
+  KeyValueErrors,
+  KeyValueValidationOptions,
+  keyValueErrors,
+  RowErrors,
+} from './index';
 
 const initial: readonly KeyValueEntry[] = Object.freeze([Object.freeze({key: 'team', value: 'data'})]);
 
@@ -179,6 +185,16 @@ describe('KeyValueControlComponent with Angular form owners', () => {
     await settle();
     expect(inputs()).toHaveLength(0);
     expect(host.form.controls.labels.errors?.['keyValue'].minRows).toEqual({required: 1, actual: 0});
+    const limits = () => editor().querySelector('p.error') as HTMLParagraphElement;
+    expect(limits().hidden).toBe(true);
+    host.form.controls.labels.markAsTouched();
+    await settle();
+    expect(limits().hidden).toBe(false);
+    expect(limits().textContent).toContain('At least 1 rows are required');
+    host.form.controls.labels.markAsUntouched();
+    await settle();
+    expect(limits().hidden).toBe(true);
+
     addButton().click();
     await settle();
     expect(buttons()[0].disabled).toBe(true);
@@ -194,6 +210,19 @@ describe('KeyValueControlComponent with Angular form owners', () => {
     await settle();
     expect(inputs()).toHaveLength(6);
     expect(host.form.controls.labels.errors?.['keyValue'].maxRows).toEqual({required: 2, actual: 3});
+    expect(limits().hidden).toBe(true);
+    host.form.controls.labels.markAsTouched();
+    await settle();
+    expect(limits().hidden).toBe(false);
+    expect(limits().textContent).toContain('At most 2 rows are allowed');
+  });
+
+  it('exports validation models and helpers for consumers', () => {
+    const options: KeyValueValidationOptions = {minRows: 1};
+    const errors: KeyValueErrors | null = keyValueErrors([], options);
+    expect(errors?.keyValue.minRows).toEqual({required: 1, actual: 0});
+    const rowError: RowErrors = {index: 0, key: {required: true}};
+    expect(rowError.index).toBe(0);
   });
 
   it('commits blur-mode changes only on composite exit and reset discards pending edits', async () => {
