@@ -37,6 +37,9 @@ const path = '/clr-lift/components/breadcrumb';
     clr-range-container {
       margin-top: 0;
     }
+    .controls input[type='range'] {
+      min-block-size: 24px;
+    }
     .preview {
       padding: 0.3rem;
     }
@@ -74,6 +77,32 @@ export class BreadcrumbDemoComponent {
       }),
     ),
   );
+  readonly searchLength = signal(100);
+  readonly searchItems = computed<readonly BreadcrumbItem[]>(() =>
+    Array.from({length: this.searchLength()}, (_, index) => ({
+      id: `supplied-${index}`,
+      label:
+        index === 0
+          ? this.translation.translate('breadcrumbPreview.database')
+          : this.translation.translate('breadcrumbPreview.servers'),
+      context: Array.from({length: index + 1}, (_, depth) => `node-${depth}`).join('/'),
+      href: `${path}?ancestor=${index}&key=%2F%25`,
+    })),
+  );
+  readonly searchUsageHtml = '<cll-breadcrumb [items]="items" />';
+  readonly searchUsageTs = `import {Component} from '@angular/core';
+import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
+@Component({
+  selector: 'app-long-path', imports: [BreadcrumbComponent],
+  template: '<cll-breadcrumb [items]="items" />',
+})
+export class LongPathComponent {
+  readonly items: readonly BreadcrumbItem[] = Array.from({length: 100}, (_, index) => ({
+    id: String(index), label: 'Location',
+    context: Array.from({length: index + 1}, (_, depth) => 'node-' + depth).join('/'),
+    href: '/browse?ancestor=' + index + '&key=%2F%25',
+  }));
+}`;
   readonly deepUsageTs = `import {Component} from '@angular/core';
 import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
 @Component({
@@ -143,7 +172,7 @@ export class RoutedServerPathComponent {
   [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
 />
 <ng-template #spaLink let-item>
-  <a style="font-size: inherit; line-height: inherit; display: block; overflow: hidden; text-overflow: ellipsis; outline-offset: -2px" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
+  <a style="font-size: inherit; line-height: inherit; min-block-size: 24px; display: block; overflow: hidden; text-overflow: ellipsis; outline-offset: -2px" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
 </ng-template>`;
   readonly usageScss = `/* Inherited from an ancestor or set on one component instance. */
 .font-scope {
@@ -156,6 +185,7 @@ export class RoutedServerPathComponent {
     this.fontSize.set(null);
     this.width.set(640);
     this.deepLength.set(30);
+    this.searchLength.set(100);
     this.selected.set(null);
     void this.router.navigateByUrl(path);
   }

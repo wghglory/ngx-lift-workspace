@@ -19,7 +19,7 @@ test('every ancestor has ordered exact destinations, full context and stationary
   const panel = host.getByRole('region');
   await expect(panel).toBeVisible();
   await expect(panel.getByRole('link')).toHaveCount(29);
-  await expect(panel.getByRole('link').first()).toBeFocused();
+  await expect(panel.getByRole('searchbox', {name: 'Filter ancestors'})).toBeFocused();
   const links = await panel.getByRole('link').evaluateAll((elements) => elements.map((e) => e.getAttribute('href')));
   expect(links).toEqual(Array.from({length: 29}, (_, i) => `${route}?depth=${i}&key=%2F%25`));
   await expect(panel.locator('small').nth(20)).toContainText('Level 21');
@@ -56,7 +56,7 @@ test('fixed-width runtime font changes remove and restore recent ancestors witho
 }) => {
   const host = page.getByTestId('deep-trail');
   const row = host.locator('.trail > li:not(.overflow)');
-  const slider = page.getByRole('slider', {name: 'Font size'});
+  const slider = page.getByRole('slider', {name: 'Font size'}).first();
   await slider.press('Home');
   await expect(row).toHaveCount(4);
   const width = await host.evaluate((e) => e.clientWidth);
@@ -77,8 +77,8 @@ test('keyboard entry/exit, independent disclosures, replacement and outside focu
   await trigger.scrollIntoViewIfNeeded();
   await trigger.press('Enter');
   const panel = host.getByRole('region');
-  await expect(panel.getByRole('link').first()).toBeFocused();
-  await panel.getByRole('link').first().press('Shift+Tab');
+  await expect(panel.getByRole('searchbox', {name: 'Filter ancestors'})).toBeFocused();
+  await panel.getByRole('searchbox', {name: 'Filter ancestors'}).press('Shift+Tab');
   await expect(trigger).toBeFocused();
   await expect(panel).toBeHidden();
   await trigger.click();
@@ -86,10 +86,10 @@ test('keyboard entry/exit, independent disclosures, replacement and outside focu
   await expect(panel).toBeHidden();
   await expect(host.locator('.trail > li.current a')).toHaveCount(0);
   await trigger.click();
-  await page.getByRole('button', {name: 'Replace path'}).click();
+  await page.getByRole('button', {name: 'Replace path'}).first().click();
   await expect(panel).toBeHidden();
-  await expect(page.getByRole('button', {name: 'Replace path'})).toBeFocused();
-  await page.getByRole('button', {name: 'Replace path'}).click();
+  await expect(page.getByRole('button', {name: 'Replace path'}).first()).toBeFocused();
+  await page.getByRole('button', {name: 'Replace path'}).first().click();
   await trigger.click();
   await panel.getByRole('button', {name: 'Close path details'}).click();
   await expect(trigger).toBeFocused();
@@ -98,11 +98,11 @@ test('keyboard entry/exit, independent disclosures, replacement and outside focu
 test('narrow 200% text and short paths remain touch and keyboard reachable', async ({page}) => {
   await page.setViewportSize({width: 390, height: 800});
   const host = page.getByTestId('deep-trail');
-  await page.getByRole('slider', {name: 'Container width'}).press('Home');
-  await page.getByRole('slider', {name: 'Font size'}).press('End');
+  await page.getByRole('slider', {name: 'Container width'}).first().press('Home');
+  await page.getByRole('slider', {name: 'Font size'}).first().press('End');
   // Twice the inherited 0.9rem text size, independently of the demo slider ceiling.
   await host.evaluate((element) => (element as HTMLElement).style.setProperty('--cll-breadcrumb-font-size', '1.8rem'));
-  await page.getByRole('button', {name: 'Replace path'}).click();
+  await page.getByRole('button', {name: 'Replace path'}).first().click();
   const trigger = host.getByRole('button', {name: 'Show path details and ancestors'});
   await expect(trigger).toBeVisible();
   await trigger.click();

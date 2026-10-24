@@ -81,6 +81,53 @@
         <p data-testid="object-list">{{ 'breadcrumbs.stationary' | translate }}</p>
       </div>
     </app-demo-playground>
+    <app-demo-playground
+      [title]="'breadcrumbs.searchTitle' | translate"
+      [tsCode]="searchUsageTs"
+      [htmlCode]="searchUsageHtml"
+    >
+      <div preview cds-layout="vertical gap:sm">
+        <p>{{ 'breadcrumbs.searchDescription' | translate }}</p>
+        <div class="controls">
+          <clr-range-container>
+            <label for="search-width">{{ 'breadcrumbs.width' | translate }}</label>
+            <input
+              id="search-width"
+              clrRange
+              type="range"
+              min="140"
+              max="900"
+              step="10"
+              [value]="width()"
+              (input)="width.set(+$any($event.target).value)"
+            />
+          </clr-range-container>
+          <clr-range-container>
+            <label for="search-font">{{ 'breadcrumbPreview.font' | translate }}</label>
+            <input
+              id="search-font"
+              clrRange
+              type="range"
+              min="0.65"
+              max="1.5"
+              step="0.05"
+              [value]="fontSize() ?? 0.9"
+              (input)="fontSize.set(+$any($event.target).value)"
+            />
+          </clr-range-container>
+          <button class="btn btn-outline" type="button" (click)="searchLength.set(searchLength() === 100 ? 3 : 100)">
+            {{ 'breadcrumbs.replace' | translate }}
+          </button>
+        </div>
+        <cll-breadcrumb
+          data-testid="search-trail"
+          [items]="searchItems()"
+          [style.inline-size.px]="width()"
+          style="max-inline-size: 100%"
+          [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+        />
+      </div>
+    </app-demo-playground>
     @if (server() === undefined) {
       <p role="status">{{ 'breadcrumbs.loading' | translate }}</p>
     }
@@ -116,6 +163,7 @@
 <ng-template #spaLink let-item>
   <a
     style="
+      min-block-size: 24px;
       font-size: inherit;
       line-height: inherit;
       display: block;

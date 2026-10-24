@@ -88,8 +88,31 @@
     (keydown)="panelKeydown($event)"
   >
     <p class="full-path">{{ locations().at(-1)?.description }}</p>
+    @if (hasFilter()) {
+      <div class="ancestor-filter">
+        <label [for]="panelId + '-filter'">{{ message('filter') }}</label>
+        <input
+          type="search"
+          class="clr-input"
+          [id]="panelId + '-filter'"
+          [value]="query()"
+          [attr.aria-describedby]="panelId + '-count'"
+          (input)="filter($any($event.target).value, $any($event).isComposing)"
+          (compositionend)="filter($any($event.target).value)"
+          (keydown.enter)="$event.preventDefault()"
+        />
+        <button type="button" class="btn btn-outline filter-clear" (click)="clearFilter()">
+          {{ message('clear') }}
+        </button>
+        <p [id]="panelId + '-count'">{{ resultCount() }}</p>
+        <span class="sr-only" role="status" aria-live="polite" aria-atomic="true">{{ announcement() }}</span>
+      </div>
+      @if (!ancestors().length) {
+        <p>{{ message('empty') }}</p>
+      }
+    }
     <ol class="panel-list">
-      @for (location of locations(); track location.item.id; let current = $last) {
+      @for (location of panelLocations(); track location.item.id; let current = $last) {
         <li [attr.data-location-id]="location.item.id" [attr.aria-description]="location.description">
           @if (current) {
             <span class="current">{{ location.item.label }}</span>

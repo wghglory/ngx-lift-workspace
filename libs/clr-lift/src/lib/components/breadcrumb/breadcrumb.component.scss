@@ -60,8 +60,8 @@ a:focus-visible {
 }
 
 .trail > li {
+  min-block-size: 24px;
   flex: 0 1 auto;
-  overflow: hidden;
 }
 .trail > li.current {
   flex: 1 1 auto;
@@ -75,6 +75,7 @@ a:focus-visible {
   justify-content: center;
 }
 .crumb-label {
+  min-block-size: 24px;
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -161,4 +162,37 @@ a:focus-visible {
   line-height: inherit;
   block-size: auto;
   white-space: normal;
+}
+
+.ancestor-filter {
+  display: grid;
+  gap: 0.4em;
+  margin-block-end: 0.6em;
+}
+.ancestor-filter label,
+.ancestor-filter input,
+.ancestor-filter p {
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
+}
+.ancestor-filter input {
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  block-size: auto;
+  min-block-size: 24px;
+}
+.ancestor-filter .btn {
+  justify-self: start;
+  margin: 0;
+}
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

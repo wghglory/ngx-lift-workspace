@@ -1,4 +1,7 @@
 export const nlTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': 'Bovenliggende locaties zoeken · 100 aangeleverde locaties',
+  'breadcrumbs.searchDescription':
+    'Open details en filter herhaalde labels op context of niveau. Wis het filter bij geen resultaten. Wijzig de paginataal, lettergrootte of breedte, of vervang het pad. Filteren gebeurt lokaal en navigeert niet.',
   'breadcrumbStorage.title': 'Bucket- en objectbrowser',
   'breadcrumbStorage.intro':
     'Maak het pad op basis van de huidige bucket en de exacte routesleutel. Deze gecontroleerde backendvoorbeelden vereisen geen cloudaccount.',

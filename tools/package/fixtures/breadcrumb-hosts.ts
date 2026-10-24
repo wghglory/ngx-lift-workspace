@@ -40,7 +40,7 @@ export class BreadcrumbConsumer {
     {id: 'database', label: 'Database', href: '/database'},
     {id: 'server', label: 'Server'},
   ];
-  readonly deepItems: readonly BreadcrumbItem[] = Array.from({length: 30}, (_, i) => ({
+  readonly deepItems: readonly BreadcrumbItem[] = Array.from({length: 100}, (_, i) => ({
     id: `deep-${i}`,
     label: 'Repeated',
     context: `exact/${i}`,

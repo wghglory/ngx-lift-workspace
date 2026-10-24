@@ -96,7 +96,7 @@ for (const theme of ['light', 'dark']) {
     const spa = page.getByTestId('spa-trail');
     const native = page.getByTestId('native-trail');
     const inherited = await native.evaluate((element) => getComputedStyle(element).fontSize);
-    await page.getByRole('slider', {name: 'Font size'}).press('End');
+    await page.getByRole('slider', {name: 'Font size'}).first().press('End');
     await expect.poll(() => spa.evaluate((element) => getComputedStyle(element).fontSize)).toBe('30px');
     expect(await native.evaluate((element) => getComputedStyle(element).fontSize)).toBe(inherited);
     expect(

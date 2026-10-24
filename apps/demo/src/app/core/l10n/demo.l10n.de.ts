@@ -1,4 +1,7 @@
 export const deTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': 'Vorfahren finden · 100 übergebene Orte',
+  'breadcrumbs.searchDescription':
+    'Details öffnen und wiederholte Namen nach Kontext oder Ebene filtern. Den Filter bei fehlenden Treffern löschen. Seitensprache, Schriftgröße und Breite ändern oder den Pfad ersetzen. Die lokale Filterung löst keine Navigation aus.',
   'breadcrumbStorage.title': 'Bucket- und Objektbrowser',
   'breadcrumbStorage.intro':
     'Erstellen Sie den Pfad aus dem aktuellen Bucket und dem exakten Routenschlüssel. Diese kontrollierten Backend-Beispieldaten benötigen kein Cloud-Konto.',

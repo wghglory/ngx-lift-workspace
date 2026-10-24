@@ -1,4 +1,7 @@
 export const zhCNTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': '查找祖先 · 100 个传入位置',
+  'breadcrumbs.searchDescription':
+    '打开详情，按上下文或层级筛选重复标签。清除筛选可从无匹配状态恢复。可切换页面语言、调整字号和宽度，或替换路径。筛选在本地进行，不触发导航。',
   'breadcrumbStorage.title': '存储桶与对象浏览器',
   'breadcrumbStorage.intro': '根据当前存储桶和路由中的精确键构建路径。这些受控后端示例无需云账户。',
   'breadcrumbStorage.flow':

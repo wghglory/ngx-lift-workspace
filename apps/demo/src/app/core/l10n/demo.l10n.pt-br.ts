@@ -1,4 +1,7 @@
 export const ptBRTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': 'Encontrar ancestrais · 100 locais fornecidos',
+  'breadcrumbs.searchDescription':
+    'Abra os detalhes e filtre rótulos repetidos por contexto ou nível. Limpe o filtro se não houver resultados. Altere o idioma da página, o tamanho da fonte ou a largura, ou substitua o caminho. A filtragem é local e não navega.',
   'breadcrumbStorage.title': 'Navegador de buckets e objetos',
   'breadcrumbStorage.intro':
     'Construa o caminho a partir do bucket atual e da chave exata da rota. Estes dados controlados de backend não exigem conta na nuvem.',

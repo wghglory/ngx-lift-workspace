@@ -1,4 +1,7 @@
 export const jaTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': '祖先を検索 · 100 件の指定された場所',
+  'breadcrumbs.searchDescription':
+    '詳細を開き、コンテキストやレベルで重複するラベルを絞り込みます。一致しない場合は絞り込みをクリアします。ページの言語、文字サイズ、幅を変更したり、パスを置き換えたりできます。絞り込みはローカルで行われ、移動しません。',
   'breadcrumbStorage.title': 'バケットとオブジェクトのブラウザー',
   'breadcrumbStorage.intro':
     '現在のバケットとルートの正確なキーから経路を構築します。制御されたバックエンドのサンプルデータを使うため、クラウドアカウントは不要です。',

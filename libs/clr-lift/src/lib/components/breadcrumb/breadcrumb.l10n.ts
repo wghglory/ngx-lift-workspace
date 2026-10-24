@@ -1,6 +1,10 @@
 /** Built-in navigation names and positional context; application labels remain caller-owned. */
 export const breadcrumbTranslations: Record<string, Record<string, string>> = {
   en: {
+    filter: 'Filter ancestors',
+    clear: 'Clear filter',
+    empty: 'No matching ancestors',
+    matches: 'Matching ancestors: {0}',
     show: 'Show path details and ancestors',
     details: 'Path details and ancestors',
     close: 'Close path details',
@@ -8,6 +12,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Level {0}',
   },
   'zh-CN': {
+    filter: '筛选祖先',
+    clear: '清除筛选',
+    empty: '没有匹配的祖先',
+    matches: '匹配的祖先：{0}',
     show: '显示路径详情和祖先',
     details: '路径详情和祖先',
     close: '关闭路径详情',
@@ -15,6 +23,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: '第 {0} 层',
   },
   'zh-TW': {
+    filter: '篩選祖先',
+    clear: '清除篩選',
+    empty: '沒有符合的祖先',
+    matches: '符合的祖先：{0}',
     show: '顯示路徑詳細資料和祖先',
     details: '路徑詳細資料和祖先',
     close: '關閉路徑詳細資料',
@@ -22,6 +34,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: '第 {0} 層',
   },
   de: {
+    filter: 'Vorfahren filtern',
+    clear: 'Filter löschen',
+    empty: 'Keine passenden Vorfahren',
+    matches: 'Passende Vorfahren: {0}',
     show: 'Pfaddetails und Vorfahren anzeigen',
     details: 'Pfaddetails und Vorfahren',
     close: 'Pfaddetails schließen',
@@ -29,6 +45,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Ebene {0}',
   },
   es: {
+    filter: 'Filtrar antecesores',
+    clear: 'Borrar filtro',
+    empty: 'No hay antecesores coincidentes',
+    matches: 'Antecesores coincidentes: {0}',
     show: 'Mostrar detalles de ruta y antecesores',
     details: 'Detalles de ruta y antecesores',
     close: 'Cerrar detalles de ruta',
@@ -36,6 +56,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Nivel {0}',
   },
   fr: {
+    filter: 'Filtrer les ancêtres',
+    clear: 'Effacer le filtre',
+    empty: 'Aucun ancêtre correspondant',
+    matches: 'Ancêtres correspondants : {0}',
     show: 'Afficher les détails du chemin et les ancêtres',
     details: 'Détails du chemin et ancêtres',
     close: 'Fermer les détails du chemin',
@@ -43,6 +67,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Niveau {0}',
   },
   ja: {
+    filter: '祖先を絞り込む',
+    clear: '絞り込みをクリア',
+    empty: '一致する祖先はありません',
+    matches: '一致する祖先：{0}',
     show: 'パスの詳細と祖先を表示',
     details: 'パスの詳細と祖先',
     close: 'パスの詳細を閉じる',
@@ -50,6 +78,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'レベル {0}',
   },
   ko: {
+    filter: '상위 경로 필터링',
+    clear: '필터 지우기',
+    empty: '일치하는 상위 경로 없음',
+    matches: '일치하는 상위 경로: {0}',
     show: '경로 세부 정보 및 상위 경로 표시',
     details: '경로 세부 정보 및 상위 경로',
     close: '경로 세부 정보 닫기',
@@ -57,6 +89,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: '수준 {0}',
   },
   nl: {
+    filter: 'Bovenliggende locaties filteren',
+    clear: 'Filter wissen',
+    empty: 'Geen overeenkomende bovenliggende locaties',
+    matches: 'Overeenkomende bovenliggende locaties: {0}',
     show: 'Paddetails en bovenliggende locaties tonen',
     details: 'Paddetails en bovenliggende locaties',
     close: 'Paddetails sluiten',
@@ -64,6 +100,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Niveau {0}',
   },
   'pt-BR': {
+    filter: 'Filtrar ancestrais',
+    clear: 'Limpar filtro',
+    empty: 'Nenhum ancestral correspondente',
+    matches: 'Ancestrais correspondentes: {0}',
     show: 'Mostrar detalhes do caminho e ancestrais',
     details: 'Detalhes do caminho e ancestrais',
     close: 'Fechar detalhes do caminho',
@@ -71,6 +111,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Nível {0}',
   },
   ru: {
+    filter: 'Фильтр предков',
+    clear: 'Очистить фильтр',
+    empty: 'Совпадающие предки не найдены',
+    matches: 'Совпадающие предки: {0}',
     show: 'Показать сведения о пути и предков',
     details: 'Сведения о пути и предки',
     close: 'Закрыть сведения о пути',
@@ -78,6 +122,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Уровень {0}',
   },
   'en-US': {
+    filter: 'Filter ancestors',
+    clear: 'Clear filter',
+    empty: 'No matching ancestors',
+    matches: 'Matching ancestors: {0}',
     show: 'Show path details and ancestors',
     details: 'Path details and ancestors',
     close: 'Close path details',
@@ -85,6 +133,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Level {0}',
   },
   pt: {
+    filter: 'Filtrar ancestrais',
+    clear: 'Limpar filtro',
+    empty: 'Nenhum ancestral correspondente',
+    matches: 'Ancestrais correspondentes: {0}',
     show: 'Mostrar detalhes do caminho e ancestrais',
     details: 'Detalhes do caminho e ancestrais',
     close: 'Fechar detalhes do caminho',
@@ -92,6 +144,10 @@ export const breadcrumbTranslations: Record<string, Record<string, string>> = {
     depth: 'Nível {0}',
   },
   it: {
+    filter: 'Filtra antenati',
+    clear: 'Cancella filtro',
+    empty: 'Nessun antenato corrispondente',
+    matches: 'Antenati corrispondenti: {0}',
     show: 'Mostra dettagli e antenati del percorso',
     details: 'Dettagli e antenati del percorso',
     close: 'Chiudi dettagli del percorso',

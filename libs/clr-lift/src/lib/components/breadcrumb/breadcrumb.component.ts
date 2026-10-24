@@ -51,6 +51,60 @@ export class BreadcrumbComponent {
   readonly navigate = output<BreadcrumbItem>();
   /** Actual path items, including root/current, excluding disclosure. Minimum two; default four. */
   readonly maxVisible = input(4);
+  protected readonly query = signal('');
+  protected readonly hasFilter = computed(() => this.locations().length - this.visible().length > 20);
+  private readonly normalizedQuery = computed(() => this.normalizeQuery(this.query()));
+  protected readonly ancestors = computed(() => {
+    const ancestors = this.locations().slice(0, -1);
+    const query = this.hasFilter() ? this.normalizedQuery() : '';
+    return query
+      ? ancestors.filter(({item, description}) => this.normalizeQuery(item.label + ' ' + description).includes(query))
+      : ancestors;
+  });
+  protected readonly panelLocations = computed(() => [...this.ancestors(), ...this.locations().slice(-1)]);
+  protected readonly resultCount = computed(() =>
+    this.translation.translate(
+      'breadcrumb.matches',
+      new Intl.NumberFormat(this.translation.locale()).format(this.ancestors().length),
+    ),
+  );
+  protected readonly announcement = signal('');
+  private announcementTimer: ReturnType<typeof setTimeout> | undefined;
+
+  private normalizeQuery(value: string): string {
+    return value.trim().normalize('NFC').toLocaleLowerCase(this.translation.locale());
+  }
+
+  protected filter(value: string, composing = false): void {
+    if (composing) return;
+    const previous = this.normalizedQuery();
+    this.query.set(value);
+    if (previous === this.normalizedQuery()) return;
+    this.cancelAnnouncement();
+    // Keep the status empty until typing settles; opening never announces a count.
+    this.announcement.set('');
+    this.announcementTimer = setTimeout(() => {
+      this.announcementTimer = undefined;
+      if (this.isOpen) this.announcement.set(this.resultCount());
+    }, 250);
+  }
+
+  protected clearFilter(): void {
+    this.filter('');
+    this.panel()?.nativeElement.querySelector<HTMLInputElement>('input')?.focus({preventScroll: true});
+  }
+
+  private cancelAnnouncement(): void {
+    if (this.announcementTimer !== undefined) clearTimeout(this.announcementTimer);
+    this.announcementTimer = undefined;
+  }
+
+  private resetFilter(): void {
+    this.cancelAnnouncement();
+    this.query.set('');
+    this.announcement.set('');
+  }
+
   private readonly measuredCount = signal<number | null>(null);
   private readonly truncated = signal(false);
   protected readonly ceiling = computed(() =>
@@ -130,6 +184,16 @@ export class BreadcrumbComponent {
         this.schedule();
       });
     });
+    effect(() => {
+      this.translation.locale();
+      untracked(() => {
+        this.announcement.set('');
+        const active = this.document.activeElement;
+        if (!this.isOpen || !(active instanceof Element) || !this.openPanel?.contains(active)) return;
+        const row = active.closest<HTMLElement>('.panel-list li');
+        if (row && !this.ancestors().some(({item}) => item.id === row.dataset['locationId'])) this.close(true);
+      });
+    });
     afterNextRender(() => this.observe());
   }
   private schedule(): void {
@@ -176,9 +240,22 @@ export class BreadcrumbComponent {
     const focusedTrail = active instanceof Element && host.querySelector('.trail')?.contains(active);
     const focusedId =
       active instanceof Element ? active.closest<HTMLElement>('[data-location-id]')?.dataset['locationId'] : undefined;
+    const previousCount = this.visible().length;
+    const panelOwnedFocus = !!active && !!this.openPanel?.contains(active);
     this.measuredCount.set(count);
     this.truncated.set(details);
-    if (!this.needsDetails()) this.close(false);
+    if (this.isOpen && (!this.needsDetails() || previousCount !== this.visible().length)) {
+      this.close(false);
+      if (panelOwnedFocus && this.needsDetails()) {
+        this.trigger()?.nativeElement.focus({preventScroll: true});
+      } else if (panelOwnedFocus) {
+        this.focusFrame = view.requestAnimationFrame(() => {
+          this.focusFrame = undefined;
+          if (this.document.activeElement !== this.document.body && this.document.activeElement !== active) return;
+          (this.trigger()?.nativeElement ?? host.querySelector<HTMLElement>('nav'))?.focus({preventScroll: true});
+        });
+      }
+    }
     if (focusedTrail) {
       if (this.focusFrame !== undefined) this.document.defaultView?.cancelAnimationFrame(this.focusFrame);
       this.focusFrame = this.document.defaultView?.requestAnimationFrame(() => {
@@ -256,6 +333,7 @@ export class BreadcrumbComponent {
     this.schedule();
     this.destroyRef.onDestroy(() => {
       this.close(false);
+      this.cancelAnnouncement();
       this.resizeObserver?.disconnect();
       if (this.frame !== undefined) view.cancelAnimationFrame(this.frame);
       if (this.focusFrame !== undefined) view.cancelAnimationFrame(this.focusFrame);
@@ -272,6 +350,8 @@ export class BreadcrumbComponent {
   }
   toggle(): void {
     if (this.isOpen) return this.close(true);
+    // Settle pending locale/font measurements before the newly opened panel owns focus.
+    this.measure();
     const panel = this.panel()?.nativeElement;
     if (!panel) return;
     if (!panel.showPopover) return;
@@ -281,10 +361,11 @@ export class BreadcrumbComponent {
     this.isOpen = true;
     this.trigger()?.nativeElement.setAttribute('aria-expanded', 'true');
     this.position();
-    panel.querySelector<HTMLElement>('a,button')?.focus();
+    panel.querySelector<HTMLElement>('input,a,button')?.focus();
   }
 
   close(restore: boolean): void {
+    this.resetFilter();
     if (!this.isOpen) return;
     this.isOpen = false;
     const panel = this.openPanel;
@@ -299,7 +380,7 @@ export class BreadcrumbComponent {
 
   panelKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Tab') return;
-    const controls = this.panel()?.nativeElement.querySelectorAll<HTMLElement>('a,button');
+    const controls = this.panel()?.nativeElement.querySelectorAll<HTMLElement>('input,a,button');
     if (!controls?.length) return;
     const active = this.document.activeElement;
     if (event.shiftKey && active === controls[0]) {

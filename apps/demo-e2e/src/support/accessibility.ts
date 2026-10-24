@@ -3,16 +3,19 @@ import axe from 'axe-core';
 
 type BrowserAxe = typeof axe;
 
-export async function expectAccessible(page: Page, testInfo: TestInfo) {
+export async function expectAccessible(page: Page, testInfo: TestInfo, scope?: string) {
   await page.addScriptTag({content: axe.source});
-  const results = await page.evaluate(() =>
-    (window as unknown as Window & {axe: BrowserAxe}).axe.run(document, {
-      runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']},
-    }),
+  const results = await page.evaluate(
+    (scope) =>
+      (window as unknown as Window & {axe: BrowserAxe}).axe.run(scope ?? document, {
+        runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']},
+      }),
+    scope,
   );
   await testInfo.attach('accessibility', {
     body: JSON.stringify({
       url: results.url,
+      scope: scope ?? 'document',
       violations: results.violations,
       incomplete: results.incomplete,
       passedRules: results.passes.map(({id}) => id),
