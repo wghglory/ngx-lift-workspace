@@ -52,10 +52,10 @@ implemented integration with this base class yet.
 
 Prerequisites: Clarity setup, TimelineStep configuration and step components extending TimelineBaseComponent.
 
-| Reader task              | Learning outcome                                                          | Destination / working example                                                                            |
-| ------------------------ | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Complete two local steps | See required validation, navigation and final submitted data              | [/clr-lift/components/timeline-wizard](https://ngx-lift.netlify.app/clr-lift/components/timeline-wizard) |
-| Retry async advancement  | Keep entered values after failure and distinguish confirmed from finished | Same demo; live/non-live and failure lifecycle contracts below                                           |
+| Reader task              | Learning outcome                                                          | Destination / working example                                                                           |
+| ------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Complete two local steps | See required validation, navigation and final submitted data              | [/clr-lift/components/timeline-wizard](https://ngx-lift.vercel.app/clr-lift/components/timeline-wizard) |
+| Retry async advancement  | Keep entered values after failure and distinguish confirmed from finished | Same demo; live/non-live and failure lifecycle contracts below                                          |
 
 Validation and delivery: The entry flow landed in #162. Use wizard unit/E2E cases; native-field steps and human
 focus/announcement acceptance remain separate. The public API and behavior sections below own exact options and

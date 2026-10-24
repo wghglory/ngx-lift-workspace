@@ -52,10 +52,10 @@ Angular's ValidatorFn owns parsing errors. Expiry display does not inspect all c
 
 Prerequisites: Angular components, Clarity setup, and a PEM certificate; parsing does not establish trust.
 
-| Reader task            | Learning outcome                                              | Destination / working example                                                                    |
-| ---------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Inspect a certificate  | Read issuer, expiry and SAN from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.netlify.app/clr-lift/components/certificate) |
-| Validate imported text | Distinguish parse failure from certificate trust              | This spec, validator contract and certificate demo                                               |
+| Reader task            | Learning outcome                                              | Destination / working example                                                                   |
+| ---------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Inspect a certificate  | Read issuer, expiry and SAN from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.vercel.app/clr-lift/components/certificate) |
+| Validate imported text | Distinguish parse failure from certificate trust              | This spec, validator contract and certificate demo                                              |
 
 Validation and delivery: Use certificate parser/validator regressions and certificate E2E. The fixture and teaching flow
 landed in #172; human comprehension remains open. The public API and behavior sections below own exact options and

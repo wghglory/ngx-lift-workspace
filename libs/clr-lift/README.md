@@ -10,7 +10,7 @@
 [![Angular](https://img.shields.io/badge/Angular-%3E%3D21.0.0-red.svg)](https://angular.dev)
 [![Clarity](https://img.shields.io/badge/Clarity-%3E%3D18.0.0-blue.svg)](https://clarity.design)
 
-[📖 Documentation](https://ngx-lift.netlify.app/clr-lift) • [🎮 Live Demo](https://ngx-lift.netlify.app/clr-lift) •
+[📖 Documentation](https://ngx-lift.vercel.app/clr-lift) • [🎮 Live Demo](https://ngx-lift.vercel.app/clr-lift) •
 [💻 GitHub Repository](https://github.com/wghglory/ngx-lift-workspace)
 
 </div>
@@ -156,7 +156,7 @@ export class GridStateComponent {
 ```
 
 Click the Name column heading to change sorting and display the emitted grid state. For server requests, follow the
-[complete datagrid example](https://ngx-lift.netlify.app/clr-lift/operators/dgState).
+[complete datagrid example](https://ngx-lift.vercel.app/clr-lift/operators/dgState).
 
 ### 2. `cll-timeline-wizard` — Component-based steps
 
@@ -164,7 +164,7 @@ The wizard takes `[timelineSteps]`, an array of `TimelineStep` configurations. E
 `TimelineBaseComponent`; its Reactive Forms group owns validity and its `next$` owns optional async advancement.
 `confirmed` precedes the final async action; `finished` follows success. Persisting from both outputs duplicates work.
 
-Start with the [complete wizard demo](https://ngx-lift.netlify.app/clr-lift/components/timeline-wizard), including step
+Start with the [complete wizard demo](https://ngx-lift.vercel.app/clr-lift/components/timeline-wizard), including step
 classes, required initial state, form setup and failure recovery. Content templates and `cllStepContent` are not APIs.
 
 ### 3. `cll-file-reader` — Read text into a form
