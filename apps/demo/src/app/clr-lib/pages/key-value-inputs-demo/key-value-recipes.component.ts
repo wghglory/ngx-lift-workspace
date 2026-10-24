@@ -97,6 +97,16 @@ export class KeyValueRecipesComponent {
     }));
   });
 
+  /** Demonstrate saved data that requires explicit correction without normalizing it on load. */
+  loadIncompatibleValues(): void {
+    this.controls.schema.setValue([
+      {key: 'retries', value: false},
+      {key: 'enabled', value: 3},
+      {key: 'hosts', value: ['one\ntwo']},
+    ]);
+    this.controls.schema.markAllAsTouched();
+  }
+
   private control(entries: KeyValueEntry<KeyValueValue>[]) {
     return new FormControl(entries, {nonNullable: true});
   }
@@ -137,12 +147,21 @@ ${id === 'tags' ? `const rules: KeyValueKeyConfig = {validators: [{validator: Va
   imports: [ReactiveFormsModule, KeyValueControlComponent],
   template: \`<cll-key-value-control [formControl]="entries" [keyConfig]="keyConfig" [valueConfig]="valueConfig"
     ${bindings} />
+    ${id === 'schema' ? '<button class="btn" type="button" (click)="loadIncompatibleValues()">Load incompatible saved values</button>' : ''}
     <button class="btn" type="button" (click)="entries.reset()">Reset</button>\`,
 })
 export class Example {
   readonly entries = new FormControl<KeyValueEntry<KeyValueValue>[]>(${JSON.stringify(this.controls[id as keyof typeof this.controls].defaultValue)}, {nonNullable: true});
   readonly keyConfig: KeyValueKeyConfig = ${keyConfig};
   readonly valueConfig: KeyValueValueConfig = ${valueConfig};
+  ${
+    id === 'schema'
+      ? `loadIncompatibleValues(): void {
+    this.entries.setValue([{key: 'retries', value: false}, {key: 'enabled', value: 3}, {key: 'hosts', value: ['one\\ntwo']}]);
+    this.entries.markAllAsTouched();
+  }`
+      : ''
+  }
 }`;
     return highlight(source.replace(/^[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n'));
   }

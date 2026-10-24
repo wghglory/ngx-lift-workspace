@@ -58,7 +58,7 @@ export interface KeyValueFieldConfig {
   disabled?: boolean;
   min?: number;
   max?: number;
-  /** Overrides built-in errors by key, such as required, unique or duplicate. */
+  /** Overrides built-in errors by key, such as required, unique, duplicate or arrayFormat. */
   messages?: Readonly<Record<string, string>>;
   validators?: readonly KeyValueValidator[];
 }

@@ -5,8 +5,15 @@ import {ClrCombobox} from '@clr/angular';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 
 import {KeyValueControlComponent} from './key-value-control.component';
-import {KeyValueEntry, KeyValueKeyConfig, KeyValueValue, KeyValueValueConfig} from './key-value-entry.type';
+import {
+  KeyValueEntry,
+  KeyValueFieldConfig,
+  KeyValueKeyConfig,
+  KeyValueValue,
+  KeyValueValueConfig,
+} from './key-value-entry.type';
 import {keyValueErrors} from './key-value-validation';
+import {TranslationService} from '../../services/translation.service';
 
 @Component({
   imports: [KeyValueControlComponent, ReactiveFormsModule],
@@ -343,6 +350,123 @@ describe('key/value editor configuration', () => {
     expect(host.control.value[0].value).toBe('data');
   });
 
+  it('keeps incompatible typed values inspectable after key changes and in readonly mode', async () => {
+    const {host, element, settle, edit} = await setup((host) => {
+      host.control.setValue([{key: 'count', value: 3}]);
+      host.valueConfig.set((key) => (key === 'count' ? {type: 'number'} : {type: 'boolean'}));
+    });
+    await edit('input', 'enabled');
+    expect(host.control.value).toEqual([{key: 'enabled', value: 3}]);
+    expect(query(element, 'output code').textContent).toBe('3');
+    const preview = query(element, 'output');
+    expect(query(element, 'input[type=checkbox]').getAttribute('aria-describedby')).toContain(preview.id);
+    expect(host.control.errors?.['keyValue'].rows[0].value.type).toBe(true);
+    host.readonly.set(true);
+    await settle();
+    expect(query(element, 'output code').textContent).toBe('3');
+    expect(query(element, 'input[type=checkbox]').getAttribute('aria-readonly')).toBe('true');
+
+    host.control.setValue([{key: 'count', value: false}]);
+    await settle();
+    expect(query(element, 'input[type=number]').value).toBe('');
+    expect(query(element, 'output code').textContent).toBe('false');
+    host.readonly.set(false);
+    await settle();
+    await edit('input[type=number]', '7');
+    expect(host.control.value[0].value).toBe(7);
+    expect(host.control.valid).toBe(true);
+    expect(element.querySelector('output')).toBeNull();
+  });
+
+  it.each([{value: ['']}, {value: ['one\ntwo']}, {value: ['one\rtwo']}])(
+    'preserves unrepresentable arrays until an explicit correction: $value',
+    async ({value: original}) => {
+      const {host, element, settle, edit} = await setup((host) => {
+        host.valueConfig.set({type: 'array'});
+        host.control.setValue([{key: 'hosts', value: original}]);
+      });
+      const changes = vi.fn();
+      host.control.valueChanges.subscribe(changes);
+      expect(host.control.value[0].value).toBe(original);
+      expect(host.control.errors?.['keyValue'].rows[0].value.arrayFormat).toBe(true);
+      expect(query(element, 'output code').textContent).toBe(JSON.stringify(original));
+      expect(query(element, 'textarea').getAttribute('aria-describedby')).toContain(query(element, 'output').id);
+      host.control.markAllAsTouched();
+      await settle();
+      expect(element.textContent).toContain('A single empty item');
+      expect(changes).not.toHaveBeenCalled();
+      await edit('textarea', 'first\nsecond');
+      expect(host.control.value[0].value).toEqual(['first', 'second']);
+      expect(changes).toHaveBeenCalledTimes(1);
+      expect(element.querySelector('output')).toBeNull();
+      expect(host.control.valid).toBe(true);
+    },
+  );
+
+  it('allows an array-format message override and retains disabled incompatible values visibly', async () => {
+    const {host, element, settle} = await setup((host) => {
+      host.valueConfig.set({type: 'array', messages: {arrayFormat: 'Replace these items'}});
+      host.control.setValue([{key: 'hosts', value: ['']}]);
+    });
+    host.control.markAllAsTouched();
+    await settle();
+    expect(element.textContent).toContain('Replace these items');
+    host.valueConfig.set({type: 'number', disabled: true});
+    await settle();
+    expect(host.control.valid).toBe(true);
+    expect(query(element, 'output code').textContent).toBe('[""]');
+    expect(query(element, 'input[type=number]').disabled).toBe(true);
+  });
+
+  it('switches retained-value guidance and array errors at runtime without changing owner data', async () => {
+    const {host, element, settle} = await setup((host) => {
+      host.valueConfig.set({type: 'array'});
+      host.control.setValue([{key: 'hosts', value: ['']}]);
+    });
+    const saved = host.control.value;
+    host.control.markAllAsTouched();
+    TestBed.inject(TranslationService).setLanguage('zh-CN', false);
+    await settle();
+    expect(query(element, 'output').textContent).toContain('已保存的值：');
+    expect(element.textContent).toContain('无法表示仅含一个空字符串的数组');
+    expect(host.control.value).toBe(saved);
+    TestBed.inject(TranslationService).setLanguage('en', false);
+    await settle();
+    expect(query(element, 'output').textContent).toContain('Stored value:');
+    expect(element.textContent).toContain('A single empty item');
+    expect(host.control.value).toBe(saved);
+  });
+
+  it.each<{type: KeyValueFieldConfig['type']; invalid: KeyValueValue; empty: KeyValueValue}>([
+    {type: 'input', invalid: [], empty: ''},
+    {type: 'select', invalid: null, empty: ''},
+    {type: 'combobox', invalid: [], empty: ''},
+    {type: 'number', invalid: [], empty: null},
+    {type: 'boolean', invalid: '', empty: false},
+    {type: 'array', invalid: '', empty: []},
+  ])('validates optional $type fields without accepting another editor’s empty type', ({type, invalid, empty}) => {
+    const options = {valueConfig: {type, required: false}};
+    expect(keyValueErrors([{key: 'k', value: invalid}], options)?.keyValue.rows[0].value?.['type']).toBe(true);
+    expect(keyValueErrors([{key: 'k', value: empty}], options)).toBeNull();
+  });
+
+  it('preserves representable blank array items and applies list uniqueness to disabled fields', () => {
+    expect(keyValueErrors([{key: 'k', value: ['', '']}], {valueConfig: {type: 'array'}})).toBeNull();
+    const entries = [
+      {key: 'k', value: 'v'},
+      {key: 'k', value: 'v'},
+    ];
+    expect(keyValueErrors(entries, {keyConfig: {disabled: true}})?.keyValue.rows[0].key?.['unique']).toBe(true);
+    expect(
+      keyValueErrors(entries, {
+        uniqueKeys: false,
+        uniquePairs: true,
+        keyConfig: {disabled: true},
+        valueConfig: {disabled: true},
+      })?.keyValue.rows[0].value?.['duplicate'],
+    ).toBe(true);
+  });
+
   it('excludes selected keys and stops adding when all options are used', async () => {
     const {host, settle, element} = await setup();
     host.keyConfig.set({
@@ -439,28 +563,20 @@ describe('key/value editor configuration', () => {
   });
 
   it('validates empty, typed, bounded and unavailable values with indexed errors', () => {
-    expect(keyValueErrors([{key: 'k', value: false}], 0, undefined, true, {}, {type: 'boolean'})).toBeNull();
+    expect(keyValueErrors([{key: 'k', value: false}], {valueConfig: {type: 'boolean'}})).toBeNull();
+    expect(keyValueErrors([{key: 'k', value: []}], {valueConfig: {type: 'array', required: false}})).toBeNull();
     expect(
-      keyValueErrors([{key: 'k', value: []}], 0, undefined, true, {}, {type: 'array', required: false}),
-    ).toBeNull();
-    expect(
-      keyValueErrors([{key: 'k', value: '3'}], 0, undefined, true, {}, {type: 'number'})?.keyValue.rows[0].value?.[
-        'type'
-      ],
+      keyValueErrors([{key: 'k', value: '3'}], {valueConfig: {type: 'number'}})?.keyValue.rows[0].value?.['type'],
     ).toBe(true);
     expect(
-      keyValueErrors([{key: 'k', value: 11}], 0, undefined, true, {}, {type: 'number', max: 10})?.keyValue.rows[0]
-        .value?.['max'],
+      keyValueErrors([{key: 'k', value: 11}], {valueConfig: {type: 'number', max: 10}})?.keyValue.rows[0].value?.[
+        'max'
+      ],
     ).toEqual({max: 10, actual: 11});
     expect(
-      keyValueErrors(
-        [{key: 'k', value: 'old'}],
-        0,
-        undefined,
-        true,
-        {},
-        {type: 'select', options: [{value: 'old', label: 'Old', disabled: true}]},
-      )?.keyValue.rows[0].value?.['selection'],
+      keyValueErrors([{key: 'k', value: 'old'}], {
+        valueConfig: {type: 'select', options: [{value: 'old', label: 'Old', disabled: true}]},
+      })?.keyValue.rows[0].value?.['selection'],
     ).toBe(true);
   });
 });

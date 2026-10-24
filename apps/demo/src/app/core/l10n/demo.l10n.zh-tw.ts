@@ -1,4 +1,5 @@
 export const zhTWTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': '載入不相容的已儲存值',
   'keyValueRecipes.title': '選擇適合資料的編輯器',
   'keyValueRecipes.keySelect': '選擇鍵，輸入值',
   'keyValueRecipes.keySelectHelp': '將鍵限制為已知選項，值仍可自由輸入。',

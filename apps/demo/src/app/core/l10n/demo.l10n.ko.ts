@@ -1,4 +1,5 @@
 export const koTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': '호환되지 않는 저장된 값 불러오기',
   'keyValueRecipes.title': '데이터에 맞는 편집기 선택',
   'keyValueRecipes.keySelect': '키를 선택하고 값 입력',
   'keyValueRecipes.keySelectHelp': '키는 지정된 옵션으로 제한하고 값은 자유롭게 입력합니다.',

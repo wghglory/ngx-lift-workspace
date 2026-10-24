@@ -1,11 +1,11 @@
 # Key/value inputs
 
-Owner: clr-lift maintainers. Package: clr-lift. Updated October 23, 2026.
+Owner: clr-lift maintainers. Package: clr-lift. Updated October 24, 2026.
 
-Status: **October 22 expansion locally verified; publication and independent human acceptance pending**. The maintainer
-requested the additive array-value control and Angular 21 delivery together with demos, accessibility, localization,
-browser tests and installed-consumer checks. This scope preserves the existing caller-owned FormArray API. Native Signal
-Forms remains deferred under the [forms contract](forms-compatibility-design-spec.md).
+Status: **October 24 review refinements implemented; current browser, demo-build and fresh-install gates incomplete**.
+The maintainer requested the additive array-value control and Angular 21 delivery together with demos, accessibility,
+localization, browser tests and installed-consumer checks. This scope preserves the existing caller-owned FormArray API.
+Native Signal Forms remains deferred under the [forms contract](forms-compatibility-design-spec.md).
 
 ## Applicable contracts
 
@@ -135,7 +135,8 @@ Import `Validators` from `@angular/forms`. Validators receive a detached FormCon
 must be synchronous and must not mutate controls or rely on a parent/sibling control. Use the composite owner's
 validator for cross-row or asynchronous rules. Keep the FormArray editor for applications needing independent async row
 controls. Built-in message keys are `required`, `unique`, `duplicate`, `selection`, `type`, `min` and `max`. Caller
-messages and option labels are caller-owned translations; library defaults support all library locales.
+messages and option labels are caller-owned translations; library defaults support all library locales. `arrayFormat`
+reports string arrays that cannot be represented faithfully by newline editing and also accepts a message override.
 
 ### Preserve typed configuration values
 
@@ -161,8 +162,10 @@ readonly valueConfig: KeyValueValueConfig = (key) => {
 This excerpt requires `FormControl`, `ReactiveFormsModule`, `KeyValueEntry`, `KeyValueValue` and `KeyValueValueConfig`.
 Bind the control with `[formControl]="entries"`. Number edits emit numbers, cleared numbers emit null, booleans emit
 booleans, and false is valid. The array editor uses one item per line; it preserves order and whitespace and emits an
-empty array for empty text. Textarea edits normalize CRLF and lone CR to LF before splitting lines. Owner values are
-validated without coercion. Arbitrary nested objects are unsupported.
+empty array for empty text. Textarea edits normalize CRLF and lone CR to LF before splitting lines. A single empty item
+or an item containing CR/LF cannot round-trip through that editor; incoming values are preserved, shown as escaped text,
+and invalid with `arrayFormat` until explicitly corrected. Interior and trailing empty items in multi-item arrays remain
+supported. Owner values are validated without coercion. Arbitrary nested objects are unsupported.
 
 ### Forms, reset and submission
 
@@ -175,8 +178,9 @@ validated without coercion. Arbitrary nested objects are unsupported.
   follows Angular's form submission pipeline. Row feedback reflects drafts; the owner's validity reflects committed
   data.
 - Disable the composite through its owning control. A disabled composite is omitted from an enabled parent's normal form
-  value; `getRawValue()` includes it. A field config's `disabled` blocks edits and skips field validation, but its value
-  remains in the entry. Readonly keeps focus and form inclusion while blocking changes and add/remove.
+  value; `getRawValue()` includes it. A field config's `disabled` blocks edits and skips its own field validators, but
+  its value remains in the entry and still participates in whole-list uniqueness. Readonly keeps focus and form
+  inclusion while blocking changes and add/remove.
 
 The control emits indexed errors under `keyValue.rows`, plus optional `minRows` and `maxRows`. Field errors preserve the
 Angular validator payload. Add is blocked by readonly, disabled, maximum count or exhausted key choices. Invalid rows
@@ -789,3 +793,49 @@ Exercise keyboard interaction and error alignment in all supported browser engin
 ZoneJS and zoneless modes, and run the adopting application's create/edit/toggle/submit flows. Existing runtime test
 results above do not validate this proposed extension. Final public type names, renderer projection shape and complete
 text-override contract remain design-review decisions.
+
+## October 24 accepted review decisions
+
+The maintainer accepted these refinements during the implementation review. They describe the intended contract; the
+existing implementation and historical validation results above do not establish acceptance of the refinements.
+
+- Review the implemented CVA for correctness independently of the proposed shared FormArray renderer. Preserve both
+  ownership models as recorded in the [ownership decision](../../adr/0001-key-value-form-ownership.md).
+- Optional fields relax presence requirements, not type requirements. Empty values of incompatible types must remain
+  invalid, such as an empty array supplied to a number editor or an empty string supplied to a boolean editor. Public
+  user-clear representations remain as documented above: text/select/combobox use `''`, numbers use `null`, booleans use
+  `false`, and arrays use `[]`. Null is a supported empty field value only for numbers; a null composite value continues
+  to mean no rows.
+- Preserve incoming arrays that newline editing cannot represent faithfully and report an incompatibility error. Both
+  embedded line breaks and the single-empty-item array need coverage: `['']` and `[]` otherwise render identically, as
+  do `['a\nb']` and `['a', 'b']`. Item-based editing for arbitrary strings remains a separate interaction contract. The
+  incompatibility error is `{arrayFormat: true}` on the value field and supports a caller message override. Display the
+  retained value as escaped text alongside the configured editor, associated through `aria-describedby`, in both
+  editable and readonly modes. The editor accepts an explicit replacement; rendering never normalizes owner data.
+- Key and pair uniqueness are whole-list rules, including entries whose fields are disabled. A disabled field skips its
+  own field validators; it does not exempt the entry from uniqueness. See the [glossary](../../../GLOSSARY.md).
+
+Incompatible typed values also retain an escaped-text preview beside their editor, so switching keys without dependent
+reset does not hide the saved value behind an unchecked checkbox or a blank number input. The implementation shares a
+named validation policy between draft feedback and committed owner validation. Internal validation exports have JSDoc.
+The schema demo can load incompatible saved values and correct them without changing the legacy FormArray contract.
+
+### Local verification of the review refinements
+
+- 388 clr-lift and 279 demo unit tests passed, including incompatible typed values, readonly inspection, optional-field
+  types, ambiguous arrays, explicit corrections, disabled-field uniqueness and runtime language switching.
+- Library/demo/E2E lint and type checks, library spec compilation, all-locale translation checks, tooling checks, both
+  library builds, formatting and diff checks passed. Two pre-existing conditional-test lint warnings remain in the
+  unrelated documentation-validation-rules browser suite.
+- All six generated recipe snippets compiled with strict Angular templates against the built packages.
+- Tarball consumers passed strict templates and runtime fixtures in zoneless and ZoneJS modes with Angular 21.2.17,
+  Clarity 18.4.0 and ZoneJS 0.15.1. This fallback linked locally installed dependencies; it does not establish a fresh
+  dependency installation. The normal verifier passed its linked-artifact phase, then failed during the fresh consumer's
+  pnpm install; only repeated runtime warnings were reported, without a usable dependency-install diagnostic.
+- Browser regressions were added, but the three-engine run could not start its server because the sandbox denied its
+  socket (`listen EPERM`). No current browser or accessibility-scan pass is claimed.
+- The demo production build exited unsuccessfully without a diagnostic, including with Angular's serial TypeScript
+  compilation setting. The bundle gate depends on that build and remains incomplete.
+
+Remote CI, independent language and assistive-technology acceptance, fresh-install verification, merge, publication and
+deployment remain separate gates. Historical results above do not validate these refinements.

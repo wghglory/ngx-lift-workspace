@@ -1,4 +1,5 @@
 export const ruTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Загрузить несовместимые сохранённые значения',
   'keyValueRecipes.title': 'Выбор редакторов для данных',
   'keyValueRecipes.keySelect': 'Выбор ключа и ввод значения',
   'keyValueRecipes.keySelectHelp': 'Ограничьте ключи известными вариантами, оставив свободный ввод значений.',

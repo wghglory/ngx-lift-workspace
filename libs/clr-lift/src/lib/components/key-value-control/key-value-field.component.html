@@ -35,7 +35,7 @@
         [disabled]="blocked()"
         [attr.aria-invalid]="!!visibleErrors()"
         [attr.aria-required]="config().required !== false"
-        [attr.aria-describedby]="groupHelpId() + ' ' + controlId() + '-help ' + controlId() + '-error'"
+        [attr.aria-describedby]="describedBy()"
         (ngModelChange)="selectValue($event)"
       >
         <option value="" [disabled]="config().required !== false" [hidden]="config().required !== false">
@@ -59,7 +59,7 @@
       [placeholder]="placeholder()"
       [attr.aria-invalid]="!!visibleErrors()"
       [attr.aria-required]="config().required !== false"
-      [attr.aria-describedby]="groupHelpId() + ' ' + controlId() + '-help ' + controlId() + '-error'"
+      [attr.aria-describedby]="describedBy()"
       (input)="edit($event)"
       (compositionend)="edit($event)"
     ></textarea>
@@ -73,7 +73,7 @@
         [disabled]="blocked()"
         [attr.aria-readonly]="readonly()"
         [attr.aria-invalid]="!!visibleErrors()"
-        [attr.aria-describedby]="groupHelpId() + ' ' + controlId() + '-help ' + controlId() + '-error'"
+        [attr.aria-describedby]="describedBy()"
         (click)="readonly() ? $event.preventDefault() : null"
         (change)="edit($event)"
       />
@@ -94,11 +94,16 @@
       [attr.max]="config().max"
       [attr.aria-invalid]="!!visibleErrors()"
       [attr.aria-required]="config().required !== false"
-      [attr.aria-describedby]="groupHelpId() + ' ' + controlId() + '-help ' + controlId() + '-error'"
+      [attr.aria-describedby]="describedBy()"
       (input)="edit($event)"
       (compositionend)="edit($event)"
     />
   }
+}
+@if (incompatibility()) {
+  <output class="clr-subtext retained-value" [id]="controlId() + '-retained'">
+    {{ 'key-value.retainedValue' | translate }} <code>{{ retainedValue() }}</code>
+  </output>
 }
 <span class="clr-subtext" [id]="controlId() + '-help'">{{ config().helper }}</span>
 <span class="clr-subtext error" [id]="controlId() + '-error'">
@@ -114,6 +119,8 @@
     {{ 'key-value.selection' | translate }}
   } @else if (visibleErrors()?.['type']) {
     {{ 'key-value.invalidType' | translate }}
+  } @else if (visibleErrors()?.['arrayFormat']) {
+    {{ 'key-value.arrayFormat' | translate }}
   } @else if (visibleErrors()?.['min']) {
     {{ 'key-value.minValue' | translate: config().min }}
   } @else if (visibleErrors()?.['max']) {

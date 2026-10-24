@@ -1,4 +1,5 @@
 export const zhCNTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': '加载不兼容的已保存值',
   'keyValueRecipes.title': '选择适合数据的编辑器',
   'keyValueRecipes.keySelect': '选择键，输入值',
   'keyValueRecipes.keySelectHelp': '将键限制为已知选项，值仍可自由输入。',

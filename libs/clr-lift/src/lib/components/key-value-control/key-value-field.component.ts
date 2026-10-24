@@ -15,6 +15,7 @@ import {ClarityModule, ClrCombobox} from '@clr/angular';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {KeyValueFieldConfig, KeyValueOption, KeyValueValue} from './key-value-entry.type';
+import {fieldValueError} from './key-value-validation';
 
 /** Internal renderer shared by the key and value columns. The parent owns form callbacks. */
 @Component({
@@ -43,6 +44,16 @@ export class KeyValueFieldComponent {
   protected readonly visibleErrors = computed(() => (this.showErrors() ? this.errors() : undefined));
   protected readonly placeholder = computed(() => this.config().placeholder ?? this.defaultPlaceholder());
   protected readonly blocked = computed(() => this.disabled() || !!this.config().disabled);
+  protected readonly incompatibility = computed(() => fieldValueError(this.value(), this.config()));
+  protected readonly retainedValue = computed(() => {
+    const value = this.value();
+    return typeof value === 'number' && !Number.isFinite(value) ? String(value) : JSON.stringify(value);
+  });
+  protected readonly describedBy = computed(
+    () =>
+      `${this.groupHelpId()} ${this.controlId()}-help ${this.controlId()}-error` +
+      (this.incompatibility() ? ` ${this.controlId()}-retained` : ''),
+  );
   protected readonly text = computed(() =>
     Array.isArray(this.value()) ? (this.value() as string[]).join('\n') : String(this.value() ?? ''),
   );
@@ -73,6 +84,8 @@ export class KeyValueFieldComponent {
 
   constructor() {
     afterEveryRender(() => {
+      // Clarity's checkbox host binding replaces template descriptions after rendering.
+      this.host.querySelector('input[type="checkbox"]')?.setAttribute('aria-describedby', this.describedBy());
       const combo = this.combo();
       const input = combo?.textbox?.nativeElement;
       if (!input) return;
@@ -85,10 +98,7 @@ export class KeyValueFieldComponent {
       input.setAttribute('aria-label', this.label());
       input.setAttribute('aria-invalid', String(!!this.visibleErrors()));
       input.setAttribute('aria-required', String(this.config().required !== false));
-      input.setAttribute(
-        'aria-describedby',
-        `${this.groupHelpId()} ${this.controlId()}-help ${this.controlId()}-error`,
-      );
+      input.setAttribute('aria-describedby', this.describedBy());
     });
   }
 

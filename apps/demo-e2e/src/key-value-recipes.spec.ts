@@ -100,6 +100,36 @@ test('advanced editors and errors pass accessibility checks', async ({page}, tes
   await expectAccessible(page, testInfo);
 });
 
+test('incompatible saved values remain inspectable and recover through explicit edits', async ({page}, testInfo) => {
+  const schema = page.getByTestId('key-value-schema');
+  await schema.getByRole('button', {name: 'Load incompatible saved values', exact: true}).click();
+  const number = schema.getByRole('spinbutton', {name: 'Value 1', exact: true});
+  const boolean = schema.getByRole('checkbox', {name: 'Value 2', exact: true});
+  const array = schema.getByRole('textbox', {name: 'Value 3', exact: true});
+  await expect(schema.locator('output code')).toHaveText(['false', '3', '["one\\ntwo"]']);
+  await expect(number).toHaveAccessibleDescription(/Stored value: false/);
+  await expect(boolean).toHaveAccessibleDescription(/Stored value: 3/);
+  await expect(array).toHaveAccessibleDescription(/A single empty item/);
+  await expect(number).toHaveValue('');
+  await expect(number).toHaveAttribute('aria-invalid', 'true');
+  await expect(boolean).toHaveAttribute('aria-invalid', 'true');
+  await expect(array).toHaveAttribute('aria-invalid', 'true');
+  await expectAccessible(page, testInfo);
+  await page.setViewportSize({width: 390, height: 900});
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  await number.fill('5');
+  await boolean.check();
+  await array.fill('one\ntwo');
+  await expect(schema.locator('output')).toHaveCount(0);
+  await expect
+    .poll(async () => JSON.parse(await schema.getByTestId('recipe-value').innerText()))
+    .toEqual([
+      {key: 'retries', value: 5},
+      {key: 'enabled', value: true},
+      {key: 'hosts', value: ['one', 'two']},
+    ]);
+});
+
 test('searchable choices support keyboard selection, Escape and accessible open popups', async ({page}, testInfo) => {
   const schema = page.getByTestId('key-value-schema');
   await schema.getByRole('button', {name: 'Add', exact: true}).click();

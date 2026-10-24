@@ -1,4 +1,5 @@
 export const ptBRTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Carregar valores salvos incompatíveis',
   'keyValueRecipes.title': 'Escolher editores para os dados',
   'keyValueRecipes.keySelect': 'Selecionar chave e inserir valor',
   'keyValueRecipes.keySelectHelp': 'Restrinja as chaves a opções conhecidas e permita valores em texto livre.',

@@ -1,4 +1,5 @@
 export const nlTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Incompatibele opgeslagen waarden laden',
   'keyValueRecipes.title': 'Editors kiezen voor uw gegevens',
   'keyValueRecipes.keySelect': 'Sleutel selecteren, waarde invoeren',
   'keyValueRecipes.keySelectHelp': 'Beperk sleutels tot bekende opties en voer waarden als vrije tekst in.',

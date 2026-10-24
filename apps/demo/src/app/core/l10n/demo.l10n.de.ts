@@ -1,4 +1,5 @@
 export const deTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Inkompatible gespeicherte Werte laden',
   'keyValueRecipes.title': 'Editoren für Ihre Daten auswählen',
   'keyValueRecipes.keySelect': 'Schlüssel auswählen, Wert eingeben',
   'keyValueRecipes.keySelectHelp':

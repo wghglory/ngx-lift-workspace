@@ -42,6 +42,7 @@ import {
   emptyFieldValue,
   copyFieldValue,
   isKeyValueEntries,
+  KeyValueValidationOptions,
 } from './key-value-validation';
 
 interface EditorRow extends KeyValueEntry<KeyValueValue> {
@@ -124,17 +125,15 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   protected readonly disabled = signal(false);
   protected readonly invalidStructure = signal(false);
   protected readonly announcementCount = signal<number | null>(null);
-  protected readonly errors = computed(() =>
-    keyValueErrors(
-      this.rows(),
-      this.minRows(),
-      this.maxRows(),
-      this.uniqueKeys(),
-      this.keyConfig(),
-      this.valueConfig(),
-      this.uniquePairs(),
-    ),
-  );
+  private readonly validationOptions = computed<KeyValueValidationOptions>(() => ({
+    minRows: this.minRows(),
+    maxRows: this.maxRows(),
+    uniqueKeys: this.uniqueKeys(),
+    keyConfig: this.keyConfig(),
+    valueConfig: this.valueConfig(),
+    uniquePairs: this.uniquePairs(),
+  }));
+  protected readonly errors = computed(() => keyValueErrors(this.rows(), this.validationOptions()));
   protected readonly rowErrors = computed(
     () => new Map(this.errors()?.keyValue.rows.map((row) => [row.index, row]) ?? []),
   );
@@ -180,12 +179,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   constructor() {
     this.translations.loadTranslationsForComponent('key-value', keyValueTranslations);
     effect(() => {
-      this.minRows();
-      this.maxRows();
-      this.uniqueKeys();
-      this.uniquePairs();
-      this.keyConfig();
-      this.valueConfig();
+      this.validationOptions();
       untracked(() => this.onValidatorChange());
     });
     effect(() => {
@@ -266,15 +260,7 @@ export class KeyValueControlComponent implements ControlValueAccessor, Validator
   }
 
   validate(control: AbstractControl) {
-    return keyValueErrors(
-      control.value ?? [],
-      this.minRows(),
-      this.maxRows(),
-      this.uniqueKeys(),
-      this.keyConfig(),
-      this.valueConfig(),
-      this.uniquePairs(),
-    );
+    return keyValueErrors(control.value, this.validationOptions());
   }
 
   protected valueEditor(key: string) {

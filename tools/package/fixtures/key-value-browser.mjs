@@ -57,6 +57,39 @@ try {
   await stable();
   assert.equal(host.typed.valid, true, 'typed false and arrays are valid');
   const typedValue = host.typed.value;
+  const incompatible = [
+    {key: 'count', value: false},
+    {key: 'enabled', value: 3},
+    {key: 'hosts', value: ['']},
+  ];
+  host.typed.setValue(incompatible);
+  host.typed.markAllAsTouched();
+  host.readonly.set(true);
+  await stable();
+  const typedRoot = document.querySelector('[data-typed]');
+  assert.equal(host.typed.value, incompatible, 'incompatible values are preserved on load');
+  assert.deepEqual(
+    [...typedRoot.querySelectorAll('output code')].map((node) => node.textContent),
+    ['false', '3', '[""]'],
+  );
+  assert.equal(host.typed.errors.keyValue.rows[2].value.arrayFormat, true);
+  const retainedCheckbox = typedRoot.querySelector('input[type="checkbox"]');
+  assert.ok(retainedCheckbox.getAttribute('aria-describedby').includes(typedRoot.querySelectorAll('output')[1].id));
+  retainedCheckbox.click();
+  await stable();
+  assert.equal(host.typed.value, incompatible, 'readonly inspection never replaces incompatible values');
+  host.readonly.set(false);
+  await stable();
+  const replacementArray = typedRoot.querySelector('textarea');
+  replacementArray.value = 'one\ntwo';
+  replacementArray.dispatchEvent(new Event('input', {bubbles: true}));
+  await stable();
+  assert.deepEqual(host.typed.value[2].value, ['one', 'two']);
+  assert.equal(typedRoot.querySelectorAll('output').length, 2);
+  host.typed.reset(typedValue);
+  await stable();
+  assert.equal(host.typed.valid, true);
+  assert.equal(typedRoot.querySelectorAll('output').length, 0);
   const malformed = [null];
   host.typed.setValue(malformed);
   await stable();

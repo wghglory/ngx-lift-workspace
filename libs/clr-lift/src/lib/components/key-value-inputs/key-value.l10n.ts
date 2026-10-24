@@ -1,5 +1,7 @@
 export const keyValueTranslations: Record<string, Record<string, string>> = {
   en: {
+    retainedValue: 'Stored value:',
+    arrayFormat: 'Use one item per line. A single empty item or an item containing a line break cannot be represented.',
     addDisabled: 'Enable the editor to add rows',
     addReadonly: 'Turn off readonly mode to add rows',
     noAvailableKeys: 'All available keys are already in use',
@@ -21,6 +23,8 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Delete',
   },
   'en-US': {
+    retainedValue: 'Stored value:',
+    arrayFormat: 'Use one item per line. A single empty item or an item containing a line break cannot be represented.',
     addDisabled: 'Enable the editor to add rows',
     addReadonly: 'Turn off readonly mode to add rows',
     noAvailableKeys: 'All available keys are already in use',
@@ -42,6 +46,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Delete',
   },
   de: {
+    retainedValue: 'Gespeicherter Wert:',
+    arrayFormat:
+      'Verwenden Sie einen Eintrag pro Zeile. Ein einzelner leerer Eintrag oder ein Eintrag mit Zeilenumbruch kann nicht dargestellt werden.',
     addDisabled: 'Editor aktivieren, um Zeilen hinzuzufügen',
     addReadonly: 'Schreibschutz deaktivieren, um Zeilen hinzuzufügen',
     noAvailableKeys: 'Alle verfügbaren Schlüssel werden bereits verwendet',
@@ -63,6 +70,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Löschen',
   },
   es: {
+    retainedValue: 'Valor guardado:',
+    arrayFormat:
+      'Use un elemento por línea. No se puede representar un único elemento vacío ni un elemento que contenga un salto de línea.',
     addDisabled: 'Habilite el editor para añadir filas',
     addReadonly: 'Desactive el modo de solo lectura para añadir filas',
     noAvailableKeys: 'Todas las claves disponibles están en uso',
@@ -84,6 +94,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Eliminar',
   },
   fr: {
+    retainedValue: 'Valeur enregistrée :',
+    arrayFormat:
+      'Utilisez un élément par ligne. Un élément vide unique ou un élément contenant un saut de ligne ne peut pas être représenté.',
     addDisabled: 'Activez l’éditeur pour ajouter des lignes',
     addReadonly: 'Désactivez le mode lecture seule pour ajouter des lignes',
     noAvailableKeys: 'Toutes les clés disponibles sont déjà utilisées',
@@ -105,6 +118,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Supprimer',
   },
   it: {
+    retainedValue: 'Valore salvato:',
+    arrayFormat:
+      'Usa un elemento per riga. Non è possibile rappresentare un singolo elemento vuoto o un elemento contenente un ritorno a capo.',
     addDisabled: 'Abilita l’editor per aggiungere righe',
     addReadonly: 'Disattiva la sola lettura per aggiungere righe',
     noAvailableKeys: 'Tutte le chiavi disponibili sono già in uso',
@@ -126,6 +142,8 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Elimina',
   },
   ja: {
+    retainedValue: '保存された値:',
+    arrayFormat: '1 行に 1 項目を入力してください。空の項目が 1 つだけの配列や、改行を含む項目は表現できません。',
     addDisabled: '行を追加するにはエディターを有効にしてください',
     addReadonly: '行を追加するには読み取り専用を解除してください',
     noAvailableKeys: '使用可能なキーはすべて使用中です',
@@ -147,6 +165,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '削除',
   },
   ko: {
+    retainedValue: '저장된 값:',
+    arrayFormat:
+      '한 줄에 항목 하나를 입력하세요. 빈 항목 하나만 있는 배열이나 줄바꿈이 포함된 항목은 표현할 수 없습니다.',
     addDisabled: '행을 추가하려면 편집기를 활성화하세요',
     addReadonly: '행을 추가하려면 읽기 전용 모드를 해제하세요',
     noAvailableKeys: '사용 가능한 모든 키가 이미 사용 중입니다',
@@ -168,6 +189,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '삭제',
   },
   nl: {
+    retainedValue: 'Opgeslagen waarde:',
+    arrayFormat:
+      'Gebruik één item per regel. Eén leeg item of een item met een regeleinde kan niet worden weergegeven.',
     addDisabled: 'Schakel de editor in om rijen toe te voegen',
     addReadonly: 'Schakel alleen-lezen uit om rijen toe te voegen',
     noAvailableKeys: 'Alle beschikbare sleutels zijn al in gebruik',
@@ -189,6 +213,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Verwijderen',
   },
   pt: {
+    retainedValue: 'Valor salvo:',
+    arrayFormat:
+      'Use um item por linha. Um único item vazio ou um item que contenha uma quebra de linha não pode ser representado.',
     addDisabled: 'Ative o editor para adicionar linhas',
     addReadonly: 'Desative o modo somente leitura para adicionar linhas',
     noAvailableKeys: 'Todas as chaves disponíveis já estão em uso',
@@ -210,6 +237,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Excluir',
   },
   'pt-BR': {
+    retainedValue: 'Valor salvo:',
+    arrayFormat:
+      'Use um item por linha. Um único item vazio ou um item que contenha uma quebra de linha não pode ser representado.',
     addDisabled: 'Ative o editor para adicionar linhas',
     addReadonly: 'Desative o modo somente leitura para adicionar linhas',
     noAvailableKeys: 'Todas as chaves disponíveis já estão em uso',
@@ -231,6 +261,8 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: 'Excluir',
   },
   'zh-CN': {
+    retainedValue: '已保存的值：',
+    arrayFormat: '每行输入一项。无法表示仅含一个空字符串的数组，也无法表示包含换行符的项。',
     addDisabled: '启用编辑器后可添加行',
     addReadonly: '关闭只读模式后可添加行',
     noAvailableKeys: '所有可用键均已使用',
@@ -252,6 +284,8 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '删除',
   },
   'zh-TW': {
+    retainedValue: '已儲存的值：',
+    arrayFormat: '每行輸入一項。無法表示僅含一個空字串的陣列，也無法表示包含換行字元的項目。',
     addDisabled: '啟用編輯器後即可新增列',
     addReadonly: '關閉唯讀模式後即可新增列',
     noAvailableKeys: '所有可用鍵皆已使用',
@@ -273,6 +307,9 @@ export const keyValueTranslations: Record<string, Record<string, string>> = {
     delete: '刪除',
   },
   ru: {
+    retainedValue: 'Сохранённое значение:',
+    arrayFormat:
+      'Вводите по одному элементу в строке. Единственный пустой элемент или элемент с переводом строки невозможно представить.',
     addDisabled: 'Включите редактор, чтобы добавить строки',
     addReadonly: 'Отключите режим чтения, чтобы добавить строки',
     noAvailableKeys: 'Все доступные ключи уже используются',

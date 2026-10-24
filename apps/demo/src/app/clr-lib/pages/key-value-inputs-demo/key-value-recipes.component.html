@@ -19,6 +19,11 @@
           [excludeSelectedKeys]="!!recipe.excludeSelected"
         />
         <div cds-layout="m-t:md">
+          @if (recipe.id === 'schema') {
+            <button type="button" class="btn" (click)="loadIncompatibleValues()">
+              {{ 'keyValueRecipes.loadIncompatible' | translate }}
+            </button>
+          }
           <button type="button" class="btn" (click)="recipe.control.reset()">
             {{ 'keyValueControl.reset' | translate }}
           </button>

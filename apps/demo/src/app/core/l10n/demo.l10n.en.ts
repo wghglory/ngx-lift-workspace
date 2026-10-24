@@ -1,4 +1,5 @@
 export const enTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Load incompatible saved values',
   'keyValueRecipes.title': 'Choose editors for your data',
   'keyValueRecipes.keySelect': 'Select a key, enter a value',
   'keyValueRecipes.keySelectHelp': 'Restrict keys to known options while keeping values as free text.',

@@ -55,3 +55,17 @@ Prefer browser APIs and existing supported dependencies. Add a runtime dependenc
 cases justify its maintenance, installation, bundle, and integration costs. Optional heavyweight features must not
 require an engine installation for ordinary consumers; lazy loading alone does not establish dependency isolation.
 Record the alternatives and consumer evidence in the feature spec before adding a dependency.
+
+## Agent skills
+
+### Issue tracker
+
+Before reading or publishing issues and specs, read `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Before triaging issues, read `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Use the single-context layout. Before domain exploration, read `docs/agents/domain.md`.

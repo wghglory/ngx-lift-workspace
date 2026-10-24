@@ -1,4 +1,5 @@
 export const frTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': 'Charger des valeurs enregistrées incompatibles',
   'keyValueRecipes.title': 'Choisir les éditeurs adaptés aux données',
   'keyValueRecipes.keySelect': 'Sélectionner une clé et saisir une valeur',
   'keyValueRecipes.keySelectHelp': 'Limitez les clés aux options connues et conservez les valeurs en texte libre.',

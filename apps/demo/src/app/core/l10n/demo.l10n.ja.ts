@@ -1,4 +1,5 @@
 export const jaTranslations: Record<string, string> = {
+  'keyValueRecipes.loadIncompatible': '互換性のない保存値を読み込む',
   'keyValueRecipes.title': 'データに合ったエディターを選択',
   'keyValueRecipes.keySelect': 'キーを選択して値を入力',
   'keyValueRecipes.keySelectHelp': 'キーを既知の選択肢に制限し、値は自由に入力できます。',
