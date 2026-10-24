@@ -1,4 +1,18 @@
 export const koTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': '버킷 및 객체 탐색기',
+  'breadcrumbStorage.intro':
+    '현재 버킷과 경로의 정확한 키로 탐색 경로를 구성합니다. 제어된 백엔드 예제 데이터를 사용하므로 클라우드 계정이 필요하지 않습니다.',
+  'breadcrumbStorage.flow':
+    'ListBuckets는 버킷 이름을 제공합니다. ListObjectsV2는 현재 Prefix의 CommonPrefixes와 Contents를 반환합니다. 상위 경로는 라우트에서 구성하므로 단계마다 요청할 필요가 없습니다.',
+  'breadcrumbStorage.examples': '직접 링크 예제',
+  'breadcrumbStorage.invalid': '경로 종류, 키 또는 허용된 루트가 잘못되었습니다. 초기화하여 복구하세요.',
+  'breadcrumbStorage.children': '하위 접두사 및 객체',
+  'breadcrumbStorage.empty': '이 접두사에 하위 항목이 없습니다.',
+  'breadcrumbStorage.object': '객체 세부 정보',
+  'breadcrumbStorage.missing': '예제 데이터에 이 객체의 메타데이터가 없습니다. 구성된 경로는 존재를 증명하지 않습니다.',
+  'breadcrumbStorage.scope':
+    'rootPrefix는 생성된 경로와 콜백 위치를 제한합니다. 권한은 애플리케이션과 서버가 관리합니다. 예제 링크와 초기화는 의도적으로 범위를 전환합니다.',
+  'breadcrumbStorage.state': '라우트, API 응답 및 생성된 항목',
   'breadcrumbs.deep': '깊은 경로',
   'breadcrumbs.deepDescription': '세부 정보를 열어 모든 상위 위치에 접근하세요. 너비나 글꼴 크기를 변경해 보세요.',
   'breadcrumbs.width': '컨테이너 너비',

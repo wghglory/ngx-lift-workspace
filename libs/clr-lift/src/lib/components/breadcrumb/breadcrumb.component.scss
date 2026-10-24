@@ -80,6 +80,11 @@ a:focus-visible {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.crumb-label:not([aria-current]) {
+  // Constrain projected anchors too, without reaching through Angular style encapsulation.
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
 .crumb-label a,
 .crumb-label button {
   display: block;

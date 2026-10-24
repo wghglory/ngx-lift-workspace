@@ -6,18 +6,17 @@ retains existing release, security, and acceptance work.
 
 ## Recommended order
 
-| Order       | Deliverable                            | Why this comes here                                                                 | Exit condition                                                     |
-| ----------- | -------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 0           | Spec template and development workflow | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                      |
-| 1           | Angular 21 shared form contract        | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass |
-| 2           | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass      |
-| 3           | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified            |
-| 4           | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified       |
-| 5           | Breadcrumb navigation                  | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
-| 6           | Drawer                                 | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified          |
-| 7           | Cascader, then tree-select             | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved  |
-| 8           | Calendar view                          | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract          |
-| Reuse first | Badges/labels                          | Clarity already provides both; first document composition and remaining gaps        | Add a wrapper only for a demonstrated missing behavior             |
+| Order | Deliverable                            | Why this comes here                                                                 | Exit condition                                                     |
+| ----- | -------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 0     | Spec template and development workflow | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                      |
+| 1     | Angular 21 shared form contract        | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass |
+| 2     | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass      |
+| 3     | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified            |
+| 4     | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified       |
+| 5     | Breadcrumb navigation                  | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
+| 6     | Drawer                                 | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified          |
+| 7     | Cascader, then tree-select             | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved  |
+| 8     | Calendar view                          | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract          |
 
 New value controls target **Angular 21 first**. Angular 22 and the Nx major upgrade are **deferred** and do not block
 component delivery. Review the shared CVA contract and each feature API before implementation. The earlier
@@ -55,9 +54,9 @@ The maintainer's October 16 direction settles the delivery order:
    CDK, Nx, TypeScript, Node, packaging and test tooling versions using current official compatibility guidance. Recheck
    third-party peers and installed declarations before generating migrations. No dependency pins change in this PR.
 4. After the upgrade, add native signal-field support to **every new value control**: key/value value editor, YAML
-   editor, temporal inputs/ranges, cascader, tree-select, and selectable calendar. The viewer, breadcrumbs, badges and
-   drawer have no artificial form value. File-reader and wizard form integration must also be reviewed during this
-   sweep; the wizard hosts fields rather than being a field itself.
+   editor, temporal inputs/ranges, cascader, tree-select, and selectable calendar. The viewer, breadcrumbs and drawer
+   have no artificial form value. File-reader and wizard form integration must also be reviewed during this sweep; the
+   wizard hosts fields rather than being a field itself.
 5. Require native value/reset/disabled/readonly/touched/validation/pending and async cancellation tests, real form
    submissions, browser demos and strict installed consumers. Keep Angular 21 CVA behavior until an explicit supported
    version/release decision replaces it. A CVA alone does not establish native signal-field support.
@@ -81,7 +80,6 @@ first is settled.
 | Deep folder navigation                               | [Breadcrumbs](design/clr-lift/breadcrumb-design-spec.md)                        |
 | Cascader and tree-select                             | [Hierarchical selection](design/clr-lift/hierarchical-selection-design-spec.md) |
 | Details and edit panels                              | [Drawer](design/clr-lift/drawer-design-spec.md)                                 |
-| Counts, dots, status, and text tags                  | [Badges](design/clr-lift/badge-design-spec.md)                                  |
 
 ## Delivery policy
 

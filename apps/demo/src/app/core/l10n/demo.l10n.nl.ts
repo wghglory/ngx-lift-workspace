@@ -1,4 +1,20 @@
 export const nlTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Bucket- en objectbrowser',
+  'breadcrumbStorage.intro':
+    'Maak het pad op basis van de huidige bucket en de exacte routesleutel. Deze gecontroleerde backendvoorbeelden vereisen geen cloudaccount.',
+  'breadcrumbStorage.flow':
+    'ListBuckets levert bucketnamen. ListObjectsV2 geeft CommonPrefixes en Contents voor de huidige Prefix terug; de route levert de bovenliggende locaties zonder aanvraag per niveau.',
+  'breadcrumbStorage.examples': 'Voorbeelden met directe links',
+  'breadcrumbStorage.invalid':
+    'Het routetype, de sleutel of de toegestane hoofdlocatie is ongeldig. Herstel met Opnieuw instellen.',
+  'breadcrumbStorage.children': 'Onderliggende prefixen en objecten',
+  'breadcrumbStorage.empty': 'Deze prefix heeft geen onderliggende items.',
+  'breadcrumbStorage.object': 'Objectdetails',
+  'breadcrumbStorage.missing':
+    'Dit object heeft geen metadata in de voorbeeldgegevens. Een samengesteld pad bewijst het bestaan niet.',
+  'breadcrumbStorage.scope':
+    'rootPrefix beperkt het gegenereerde pad en de callbacklocaties. De toepassing en server beheren machtigingen. Voorbeeldlinks en Opnieuw instellen wijzigen bewust het bereik.',
+  'breadcrumbStorage.state': 'Route, API-antwoord en gegenereerde items',
   'breadcrumbs.deep': 'Diepe paden',
   'breadcrumbs.deepDescription':
     'Open de details om alle bovenliggende locaties te bereiken. Wijzig de breedte of lettergrootte.',

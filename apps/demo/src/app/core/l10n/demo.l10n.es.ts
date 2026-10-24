@@ -1,4 +1,20 @@
 export const esTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Explorador de buckets y objetos',
+  'breadcrumbStorage.intro':
+    'Construya la ruta a partir del bucket actual y la clave exacta de la ruta. Estos datos de backend controlados no requieren una cuenta en la nube.',
+  'breadcrumbStorage.flow':
+    'ListBuckets proporciona nombres de buckets. ListObjectsV2 devuelve CommonPrefixes y Contents para el Prefix actual; la ruta proporciona los antecesores sin una solicitud por nivel.',
+  'breadcrumbStorage.examples': 'Ejemplos de enlaces directos',
+  'breadcrumbStorage.invalid':
+    'El tipo de ruta, la clave o la raíz permitida no son válidos. Restablezca para recuperarse.',
+  'breadcrumbStorage.children': 'Prefijos secundarios y objetos',
+  'breadcrumbStorage.empty': 'Este prefijo no tiene elementos secundarios.',
+  'breadcrumbStorage.object': 'Detalles del objeto',
+  'breadcrumbStorage.missing':
+    'No hay metadatos de este objeto en los datos de ejemplo. Una ruta construida no demuestra su existencia.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limita la ruta generada y las ubicaciones del callback. La aplicación y el servidor gestionan los permisos. Los enlaces de ejemplo y Restablecer cambian el ámbito deliberadamente.',
+  'breadcrumbStorage.state': 'Ruta, respuesta de API y elementos generados',
   'breadcrumbs.deep': 'Rutas profundas',
   'breadcrumbs.deepDescription':
     'Abra los detalles para acceder a todos los antecesores. Cambie el ancho o el tamaño de letra.',

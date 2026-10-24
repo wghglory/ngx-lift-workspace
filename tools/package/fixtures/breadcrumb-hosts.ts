@@ -2,7 +2,14 @@
 import {Component, signal} from '@angular/core';
 import {provideRouter, RouterLink} from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries -- Isolated installed-package consumer.
-import {BreadcrumbComponent, BreadcrumbItem, BreadcrumbLinkContext} from 'clr-lift';
+import {
+  BreadcrumbComponent,
+  BreadcrumbItem,
+  BreadcrumbLinkContext,
+  buildObjectPathBreadcrumbs,
+  BuildObjectPathBreadcrumbsOptions,
+  ObjectPathLocation,
+} from 'clr-lift';
 
 const root = Object.freeze({id: 'root', label: 'Database'});
 const initial: readonly BreadcrumbItem[] = Object.freeze([root, Object.freeze({id: 'server', label: 'Server'})]);
@@ -39,6 +46,36 @@ export class BreadcrumbConsumer {
     context: `exact/${i}`,
     href: `/browse?key=${i}%2F%25`,
   }));
+  readonly locations: ObjectPathLocation[] = [];
+  readonly objectOptions: BuildObjectPathBreadcrumbsOptions = {
+    bucket: 'bucket-1',
+    key: '/%2F/雪/../marker/',
+    kind: 'object',
+    rootPrefix: '/',
+    emptySegmentLabel: '(empty)',
+    hrefFor: (location) => {
+      this.locations.push(location);
+      if (location.kind === 'bucket') return '/browse?bucket=' + encodeURIComponent(location.bucket);
+      if (location.kind === 'prefix') return '/browse?prefix=' + encodeURIComponent(location.prefix);
+      return '/object?key=' + encodeURIComponent(location.key);
+    },
+  };
+  readonly generated = buildObjectPathBreadcrumbs(this.objectOptions);
   selected?: BreadcrumbItem;
   submissions = 0;
 }
+
+// Public discriminants must reject mixed resource payloads in strict installed consumers.
+const prefixLocation: ObjectPathLocation = {kind: 'prefix', bucket: 'b', prefix: 'a/'};
+// @ts-expect-error Object keys are not prefix fields.
+const wrongLocation: ObjectPathLocation = {kind: 'object', bucket: 'b', prefix: 'a/'};
+// @ts-expect-error Resource kind must be explicit.
+const wrongOptions: BuildObjectPathBreadcrumbsOptions = {
+  bucket: 'b',
+  key: '',
+  emptySegmentLabel: '(empty)',
+  hrefFor: () => '/',
+};
+void prefixLocation;
+void wrongLocation;
+void wrongOptions;

@@ -8,12 +8,15 @@ import {catchError, of} from 'rxjs';
 
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 
+import {BreadcrumbStorageComponent} from './breadcrumb-storage.component';
+
 const path = '/clr-lift/components/breadcrumb';
 
 @Component({
   selector: 'app-breadcrumb-demo',
   imports: [
     BreadcrumbComponent,
+    BreadcrumbStorageComponent,
     PageContainerComponent,
     TranslatePipe,
     RouterLink,

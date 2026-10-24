@@ -1,4 +1,20 @@
 export const frTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Explorateur de buckets et d’objets',
+  'breadcrumbStorage.intro':
+    'Construisez le chemin à partir du bucket actuel et de la clé exacte de la route. Ces données de backend contrôlées ne nécessitent aucun compte cloud.',
+  'breadcrumbStorage.flow':
+    'ListBuckets fournit les noms des buckets. ListObjectsV2 renvoie CommonPrefixes et Contents pour le Prefix actuel ; la route fournit les ancêtres sans requête par niveau.',
+  'breadcrumbStorage.examples': 'Exemples de liens directs',
+  'breadcrumbStorage.invalid':
+    'Le type de route, la clé ou la racine autorisée est invalide. Réinitialisez pour reprendre.',
+  'breadcrumbStorage.children': 'Préfixes enfants et objets',
+  'breadcrumbStorage.empty': 'Ce préfixe ne contient aucun enfant.',
+  'breadcrumbStorage.object': 'Détails de l’objet',
+  'breadcrumbStorage.missing':
+    'Aucune métadonnée pour cet objet dans les données d’exemple. Un chemin construit ne prouve pas son existence.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limite le chemin généré et les emplacements du callback. L’application et le serveur gèrent les autorisations. Les liens d’exemple et Réinitialiser changent volontairement de périmètre.',
+  'breadcrumbStorage.state': 'Route, réponse API et éléments générés',
   'breadcrumbs.deep': 'Chemins profonds',
   'breadcrumbs.deepDescription':
     'Ouvrez les détails pour accéder à tous les ancêtres. Modifiez la largeur ou la taille du texte.',

@@ -1,4 +1,17 @@
 export const zhTWTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': '儲存桶與物件瀏覽器',
+  'breadcrumbStorage.intro': '根據目前儲存桶和路由中的精確鍵建立路徑。這些受控後端範例不需要雲端帳戶。',
+  'breadcrumbStorage.flow':
+    'ListBuckets 提供儲存桶名稱。ListObjectsV2 傳回目前 Prefix 的 CommonPrefixes 和 Contents；路由直接提供祖先資訊，不必逐層請求。',
+  'breadcrumbStorage.examples': '直接連結範例',
+  'breadcrumbStorage.invalid': '路由類型、鍵或允許的根前綴無效。請重設後重試。',
+  'breadcrumbStorage.children': '子前綴與物件',
+  'breadcrumbStorage.empty': '此前綴沒有子項。',
+  'breadcrumbStorage.object': '物件詳細資料',
+  'breadcrumbStorage.missing': '範例中沒有此物件的中繼資料。建立的路徑無法證明資源存在。',
+  'breadcrumbStorage.scope':
+    'rootPrefix 限定產生的路徑和回呼位置。權限由應用程式或伺服器負責。範例連結和重設操作會主動切換範圍。',
+  'breadcrumbStorage.state': '路由、API 回應與產生的項目',
   'breadcrumbs.deep': '深層路徑',
   'breadcrumbs.deepDescription': '開啟詳細資料即可存取所有上層位置。調整寬度或字型大小以查看響應式摺疊。',
   'breadcrumbs.width': '容器寬度',

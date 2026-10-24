@@ -1,4 +1,20 @@
 export const ruTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Обозреватель бакетов и объектов',
+  'breadcrumbStorage.intro':
+    'Постройте путь из текущего бакета и точного ключа маршрута. Эти контролируемые тестовые данные сервера не требуют облачной учётной записи.',
+  'breadcrumbStorage.flow':
+    'ListBuckets предоставляет имена бакетов. ListObjectsV2 возвращает CommonPrefixes и Contents для текущего Prefix; маршрут задаёт предков без запроса для каждого уровня.',
+  'breadcrumbStorage.examples': 'Примеры прямых ссылок',
+  'breadcrumbStorage.invalid':
+    'Недопустимый тип маршрута, ключ или разрешённый корень. Выполните сброс для восстановления.',
+  'breadcrumbStorage.children': 'Дочерние префиксы и объекты',
+  'breadcrumbStorage.empty': 'У этого префикса нет дочерних элементов.',
+  'breadcrumbStorage.object': 'Сведения об объекте',
+  'breadcrumbStorage.missing':
+    'В тестовых данных нет метаданных этого объекта. Построенный путь не доказывает его существование.',
+  'breadcrumbStorage.scope':
+    'rootPrefix ограничивает создаваемый путь и расположения в callback. За разрешения отвечают приложение и сервер. Ссылки примеров и сброс намеренно меняют область.',
+  'breadcrumbStorage.state': 'Маршрут, ответ API и созданные элементы',
   'breadcrumbs.deep': 'Глубокие пути',
   'breadcrumbs.deepDescription': 'Откройте сведения для перехода ко всем предкам. Измените ширину или размер шрифта.',
   'breadcrumbs.width': 'Ширина контейнера',

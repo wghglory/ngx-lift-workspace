@@ -1,4 +1,19 @@
 export const jaTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'バケットとオブジェクトのブラウザー',
+  'breadcrumbStorage.intro':
+    '現在のバケットとルートの正確なキーから経路を構築します。制御されたバックエンドのサンプルデータを使うため、クラウドアカウントは不要です。',
+  'breadcrumbStorage.flow':
+    'ListBuckets はバケット名を提供します。ListObjectsV2 は現在の Prefix の CommonPrefixes と Contents を返します。祖先はルートから取得するため、階層ごとのリクエストは不要です。',
+  'breadcrumbStorage.examples': '直接リンクのサンプル',
+  'breadcrumbStorage.invalid': 'ルートの種類、キー、または許可されたルートが無効です。リセットして復旧してください。',
+  'breadcrumbStorage.children': '子プレフィックスとオブジェクト',
+  'breadcrumbStorage.empty': 'このプレフィックスには子項目がありません。',
+  'breadcrumbStorage.object': 'オブジェクトの詳細',
+  'breadcrumbStorage.missing':
+    'サンプルデータにこのオブジェクトのメタデータはありません。構築された経路は存在を証明しません。',
+  'breadcrumbStorage.scope':
+    'rootPrefix は生成する経路とコールバックの場所を制限します。権限はアプリケーションとサーバーが管理します。サンプルリンクとリセットは意図的に範囲を切り替えます。',
+  'breadcrumbStorage.state': 'ルート、API レスポンス、生成された項目',
   'breadcrumbs.deep': '深い階層のパス',
   'breadcrumbs.deepDescription':
     '詳細を開くとすべての上位階層にアクセスできます。幅や文字サイズを変更して確認してください。',

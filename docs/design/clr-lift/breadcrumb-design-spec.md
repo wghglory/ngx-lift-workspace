@@ -5,10 +5,10 @@ grill decisions, approved continuing with the construction approach, and request
 The five-ticket delivery breakdown is approved. The first ticket proves the exact SPA/helper integration and interaction
 details before public exports.
 
-Status: **Ticket #186 simple breadcrumb and #187 responsive ancestry implemented**, authorized by the maintainer's
-`/implement` request. The component/item/link-template contracts exercised in #185 are approved for this increment.
-Responsive ancestry (#187) is implemented below. The public object-key helper (#188) and scale hardening (#189) remain
-deferred.
+Status: **Tickets #186 simple breadcrumb, #187 responsive ancestry and #188 exact-key construction implemented**,
+authorized by the maintainer's `/implement` request. The component/item/link-template contracts exercised in #185 are
+approved for this increment. Responsive ancestry (#187) is implemented below. The public object-key helper (#188) and
+scale hardening (#189) have separate delivery evidence.
 
 ### Ticket #187 responsive ancestry
 
@@ -37,13 +37,12 @@ until exercised with an actual server/hydration harness; count-based rendering i
 
 Export `BreadcrumbComponent`, `BreadcrumbItem` and `BreadcrumbLinkContext` from `clr-lift`. The component accepts
 required immutable `items`, optional `ariaLabel` (localized Breadcrumb), optional consumer-owned
-`linkTemplate: TemplateRef<BreadcrumbLinkContext>`, and emits original addressless ancestors via `navigate`. It
-originally wrapped all supplied locations; #187 adds responsive collapse. `maxVisible` and overflow controls are not
-part of this increment. Empty trails render no landmark; singleton trails render current text. Duplicate IDs, invisible
-labels, blank navigation names and blank or unsafe destinations throw developer diagnostics. IDs may be empty and
-repeated labels are valid. Destinations are relative URLs or URLs with http, https, mailto, tel or ftp schemes;
-script/data and other schemes are rejected before rendering, including on the current item. No URL or identity is ever
-built from labels.
+`linkTemplate: TemplateRef<BreadcrumbLinkContext>`, and emits original addressless ancestors via `navigate`. It wraps
+all supplied locations in its original #186 behavior; #187 adds the responsive ceiling and details described above.
+Empty trails render no landmark; singleton trails render current text. Duplicate IDs, invisible labels, blank navigation
+names and blank or unsafe destinations throw developer diagnostics. IDs may be empty and repeated labels are valid.
+Destinations are relative URLs or URLs with http, https, mailto, tel or ftp schemes; script/data and other schemes are
+rejected before rendering, including on the current item. No URL or identity is ever built from labels.
 
 Destination syntax is also checked with the URL parser against a fixed HTTPS base, independent of browser globals.
 Malformed absolute or protocol-relative URLs (for example `https://` or `//[`) throw the same diagnostic. Parsing is
@@ -63,7 +62,7 @@ copyable playground source, native and SPA navigation, action identity, singleto
 
 Published specification: [GitHub issue #184](https://github.com/wghglory/ngx-lift-workspace/issues/184), labeled
 `ready-for-agent` by the `to-spec` workflow. The component naming was approved as `BreadcrumbComponent` /
-`cll-breadcrumb`; deferred helper/overflow contracts remain provisional.
+`cll-breadcrumb`. The helper contract was subsequently approved for #188; see its delivery evidence below.
 
 ## Conversation synthesis and review boundary
 
@@ -170,7 +169,7 @@ native links. The proposed demo destination is `/clr-lift/breadcrumb`.
 
 Add the two maintainer-requested teaching tasks: construct `Database > Sql servers > Sql server 1` from known route
 labels/current entity data without context boilerplate; construct
-`Buckets > bucket-1 > folder-1 > folder-nested-2 > object-4` from bucket/key state using the proposed helper and an
+`Buckets > bucket-1 > folder-1 > folder-nested-2 > object-4` from bucket/key state using the public helper and an
 application URL factory. Demonstrate a direct link without click history and distinguish folder listing from object
 details.
 
@@ -350,7 +349,7 @@ export interface BreadcrumbItem {
 `linkTemplate?: TemplateRef<BreadcrumbLinkContext>` is also available in #186; its `$implicit` value is the original
 item. Consumers own the real anchor and RouterLink integration. The `maxVisible` input is implemented in #187. The
 generic renderer is named `BreadcrumbComponent` / `cll-breadcrumb` for both application and object-store paths; the
-deferred `buildObjectPathBreadcrumbs` helper remains specific to exact object keys. No published breadcrumb API is being
+public `buildObjectPathBreadcrumbs` helper remains specific to exact object keys. No published breadcrumb API is being
 renamed because the increment is unreleased.
 
 ### Where items and context come from
@@ -414,15 +413,15 @@ derive the display trail under an explicit slash-delimited browsing policy. No r
 lookup or traversal of all objects is needed. See the official
 [prefix/delimiter model](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-prefixes.html).
 
-### Proposed optional object-path construction helper
+### Optional object-path construction helper
 
 Keep the renderer generic enough for both examples. Add an opt-in, synchronous `buildObjectPathBreadcrumbs` helper that
-understands the caller-selected slash-delimited browsing convention. The helper is **proposed and unavailable**; it
-makes no SDK calls and adds no storage-provider dependency. This explicit helper refines the earlier no-parser boundary:
-the renderer never parses keys, while a caller may opt into the helper's documented delimiter policy.
+understands the caller-selected slash-delimited browsing convention. The helper is **implemented in #188**; it makes no
+SDK calls and adds no storage-provider dependency. This explicit helper refines the earlier no-parser boundary: the
+renderer never parses keys, while a caller may opt into the helper's documented delimiter policy.
 
 ```ts
-// Proposed usage, not an implemented public export.
+// Public usage; compose translated application items outside the helper.
 const items = [
   {id: 'buckets', label: 'Buckets', href: '/buckets'},
   ...buildObjectPathBreadcrumbs({
@@ -451,9 +450,9 @@ The helper generates distinct stable IDs from location kind, bucket and exact pr
 context. Developers do not manually repeat the cumulative prefixes. The last returned location is current; the renderer
 ignores its destination if one was generated.
 
-Proposed callback location data is a discriminated union: a bucket location has bucket identity; a prefix location has
-bucket and exact prefix; an object location has bucket and exact object key. Its final exported type/signature requires
-API review. An application URL factory can look like this:
+Public callback location data is a discriminated union: a bucket location has bucket identity; a prefix location has
+bucket and exact prefix; an object location has bucket and exact object key. The public type is `ObjectPathLocation`,
+exported with `BuildObjectPathBreadcrumbsOptions`. An application URL factory can look like this:
 
 ```ts
 // Application-owned example; route shapes and URL encoding remain host policy.
@@ -613,7 +612,7 @@ are not normalized local filesystem paths.
 
 The caller owns locations/URL construction; the component owns collapse, query and disclosure state. Use signal inputs,
 derived state and OnPush change detection. The renderer never parses keys and its layout helpers remain private. The
-separately proposed opt-in construction helper has its own explicit delimiter/resource-kind policy and public tests.
+separate opt-in construction helper has its own explicit delimiter/resource-kind policy and public tests.
 
 After browser rendering, observe host inline size with `ResizeObserver`. Remove the oldest visible recent ancestor until
 the row fits; restore recent ancestors when space grows, up to `maxVisible`. Measure actual available container width,
@@ -977,8 +976,8 @@ Validated October 24, 2026 on `feat/186-breadcrumbs-public`:
 This increment adds no runtime dependency, router peer or package version bump. The changelog records it under
 Unreleased. CI at a pushed commit, merge, deployment and publication have not been performed. The full unrelated E2E
 suite was not rerun. Independent native-speaker review for each supported language and manual assistive-technology
-acceptance remain pending under the accessibility/language contract. Responsive overflow is implemented in #187 below.
-The public exact-key helper (#188) and scale hardening (#189) remain separate increments.
+acceptance remain pending under the accessibility/language contract. The following #187 increment supersedes the
+original short-trail overflow limitation; helper (#188) and scale hardening (#189) retain separate evidence.
 
 ### Simple-first demo teaching correction
 
@@ -1002,10 +1001,61 @@ unchanged supported relative, query-only, fragment-only and explicit-scheme link
 412 tests; clr-lift lint/type checks, changed-file formatting and `git diff --check` passed. Browser and installed
 package checks were not rerun for this correction.
 
+## Ticket #188 public construction helper
+
+`buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` are now public `clr-lift`
+exports with the settled preview signature and boundary table above. The preview delegates to the same implementation.
+The renderer remains generic. There is no new runtime dependency, storage client, request, router peer or version bump.
+
+The public demo adds a working bucket browser with controlled ListBuckets/ListObjectsV2-shaped fixtures. Route state
+owns exact bucket/key/kind/root; child listings supply full prefixes/keys. Direct-linked objects, an empty bucket,
+repeated names, leading/repeated empty segments, literal percent escapes, Unicode, dot segments and a slash-ending
+object are available. Restricted trails omit the collection/bucket/higher prefixes; fixture links and reset explicitly
+switch the example scope. An invalid/outside-root route renders a translated recovery message. Constructed structure
+never proves existence or authorization; object metadata is separately supplied by the fixture.
+
+Owned messages use `breadcrumbStorage.*`: title, scope/fixture explanation, API flow, direct-link examples,
+invalid-route recovery, child listing, empty state, object details, missing metadata and route/response/generated-data
+disclosure. Existing translated Buckets, empty-segment and Reset labels are reused. All eleven locales are delivered
+together. No helper-owned UI, form integration, keyboard surface or async lifecycle is introduced. The example uses the
+existing real-anchor SPA integration, with ordinary browser semantics and current text supplied by the renderer.
+
+See the [usage and reference guide](../../guides/object-path-breadcrumbs.md) for the public contract. Unit/public-type,
+browser and packed Angular 21 consumer checks cover this increment; actual validation results are recorded below after
+execution. Independent human language/assistive-technology review, CI, merge and publication remain separate gates.
+
+### Ticket #188 local acceptance evidence (October 24, 2026)
+
+- `NX_SOCKET_DIR=/tmp/ngx188 pnpm run validate`: passed formatting, tooling tests, all eleven locale dictionaries (2,157
+  keys each), lint, production types, coverage thresholds, production builds, bundle boundaries and strict
+  installed-package verification. Existing advisory E2E lint warnings remain. Unit suites passed 883 ngx-lift, 431
+  clr-lift and 298 demo tests. The public helper's 18 tests cover callback payloads, exact contexts, stable IDs, roots,
+  empty/repeated/whitespace segments, Unicode/percent/dot data, slash-ending objects, invalid inputs and callback
+  failure propagation. Helper coverage: 100% lines/functions, 93.1% statements and 94.59% branches.
+- `BASE_URL=http://localhost:4318 NX_SOCKET_DIR=/tmp/ngx188 pnpm nx run demo-e2e:e2e src/breadcrumb-storage.spec.ts --workers=3`:
+  **27 passed** across Chromium, Firefox and WebKit. These journeys use visible generated ancestors independently of
+  deep-overflow behavior. They cover bucket listing, prefix/object navigation, direct links with exact unusual keys,
+  trailing-delimiter objects, restricted-root exclusion/recovery, reset, browser Back, native modified/context-menu
+  event semantics, all-locale switching, keyboard focus, 390px containment and light/dark axe scans.
+- The repository gate's fresh tarball install compiled the helper/options/location imports and discriminated-union
+  negative type assertions under strict Angular 21 templates and strict peers. Both zoneless and ZoneJS DOM hosts passed
+  exact callback scope/data, stable distinct identities, once-encoded destinations and generated rendering. This is
+  installed-package evidence, separate from real-browser testing.
+- A broader breadcrumb run also exercised the public component and original preview (their existing WebKit tab-creation
+  skips remain). It exposed five failures in the already in-progress #187 deep suite: singleton-panel interaction in all
+  three engines and two WebKit focus/navigation cases. Those failures are outside this independent helper slice; no
+  passing full browser-suite claim is made. Full unrelated E2E was not run.
+- Usage-guide relative links and `git diff --check` passed. Existing local #187 implementation/demo/translation work was
+  retained; formatting and one equivalent web-first E2E assertion were adjusted for repository checks.
+
+No live storage account, CI run, commit, merge, deployment or publication is claimed. Independent native-speaker and
+manual assistive-technology acceptance remain pending. Maintainer review is the next gate for this helper increment;
+responsive-overflow failures and #189 scale/filtering work retain their separate scope.
+
 ### Ticket #187 validation evidence (October 24, 2026)
 
 - `NX_SOCKET_DIR=/tmp/ngx-nx pnpm run validate` passed after the final focus correction: repository formatting,
-  tooling/translation checks, lint, type checks, coverage (883 ngx-lift, 414 clr-lift and 298 demo tests), all builds,
+  tooling/translation checks, lint, type checks, coverage (883 ngx-lift, 432 clr-lift and 298 demo tests), all builds,
   bundle checks and fresh strict-peer packed consumers. `git diff --check` and subsequent changed-document formatting
   checks pass. The full unrelated browser suite was not run; the targeted public breadcrumb suite is recorded below.
 
@@ -1050,9 +1100,22 @@ and tab order. The regression places excluded controls before the next enabled b
 dismissal in Chromium, Firefox and WebKit. On macOS WebKit it uses Option+Tab for native button traversal. Shift+Tab
 from the first ancestor still closes the panel and returns focus to the disclosure trigger.
 
+The full focused breadcrumb browser run reports **124 passed and 2 skipped** across Chromium, Firefox and WebKit. The
+two existing skips concern headless WebKit modifier/middle-click tab creation; the new feedback regressions pass in
+every engine. Enlarged-text light/dark accessibility checks include projected SPA anchors and disclosure targets.
+
+Final `pnpm run validate` passed: 883 ngx-lift, 432 clr-lift and 298 demo tests, repository formatting, tooling and
+translation checks, lint, type checks, builds, bundle checks and strict-peer packed consumers. A verification browser
+rerun had two Firefox popup-navigation timeouts; both existing modifier/middle-click cases passed on a focused retry.
+The renderer and feedback test source hashes remained unchanged throughout that verification.
+
 The final review also replaced estimated separator spacing with rendered geometry, measures the navigation row's content
 width rather than the padded host, and renders consumer links in the hidden intrinsic probe. Twelve additional browser
 checks cover measured boundaries, host padding, custom link padding and native forward tab order across three engines.
 Consumer link examples clip their clickable boxes to the available label width and retain inset focus outlines; compact
 RTL/light/dark accessibility scans pass after this correction. The copyable deep example now uses `templateUrl` with its
 separate HTML tab.
+
+After merging the upstream #193 ancestry increment on October 25, the combined breadcrumb browser suite reports **136
+passed and 2 existing headless WebKit skips**. Native and storage boundary/focus tests remain separate; upstream
+host-padding and custom-link-padding regressions are retained.

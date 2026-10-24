@@ -1,4 +1,20 @@
 export const deTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Bucket- und Objektbrowser',
+  'breadcrumbStorage.intro':
+    'Erstellen Sie den Pfad aus dem aktuellen Bucket und dem exakten Routenschlüssel. Diese kontrollierten Backend-Beispieldaten benötigen kein Cloud-Konto.',
+  'breadcrumbStorage.flow':
+    'ListBuckets liefert Bucket-Namen. ListObjectsV2 liefert CommonPrefixes und Contents für das aktuelle Prefix; die Route liefert die Vorfahren ohne einzelne Anfragen.',
+  'breadcrumbStorage.examples': 'Beispiele für Direktlinks',
+  'breadcrumbStorage.invalid':
+    'Routentyp, Schlüssel oder zulässiger Stamm ist ungültig. Setzen Sie das Beispiel zurück.',
+  'breadcrumbStorage.children': 'Unterpräfixe und Objekte',
+  'breadcrumbStorage.empty': 'Dieses Präfix hat keine untergeordneten Einträge.',
+  'breadcrumbStorage.object': 'Objektdetails',
+  'breadcrumbStorage.missing':
+    'Für dieses Objekt gibt es keine Metadaten in den Beispieldaten. Ein erstellter Pfad beweist keine Existenz.',
+  'breadcrumbStorage.scope':
+    'rootPrefix begrenzt den erzeugten Pfad und die Callback-Positionen. Anwendung und Server verwalten Berechtigungen. Beispiellinks und Zurücksetzen wechseln den Bereich bewusst.',
+  'breadcrumbStorage.state': 'Route, API-Antwort und erzeugte Einträge',
   'breadcrumbs.deep': 'Tiefe Pfade',
   'breadcrumbs.deepDescription':
     'Öffnen Sie die Details, um alle übergeordneten Orte zu erreichen. Ändern Sie Breite oder Schriftgröße.',

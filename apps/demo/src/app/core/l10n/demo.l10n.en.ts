@@ -1,4 +1,19 @@
 export const enTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Bucket and object browser',
+  'breadcrumbStorage.intro':
+    'Construct the trail from the current bucket and exact route key. These controlled backend fixtures need no cloud account.',
+  'breadcrumbStorage.flow':
+    'ListBuckets supplies bucket names. ListObjectsV2 returns CommonPrefixes and Contents for the current Prefix; the route supplies ancestry without a request per ancestor.',
+  'breadcrumbStorage.examples': 'Direct-link fixtures',
+  'breadcrumbStorage.invalid': 'The route kind, key or permitted root is invalid. Reset to recover.',
+  'breadcrumbStorage.children': 'Child prefixes and objects',
+  'breadcrumbStorage.empty': 'This prefix has no children.',
+  'breadcrumbStorage.object': 'Object details',
+  'breadcrumbStorage.missing':
+    'No object metadata exists in this fixture. A constructed trail does not prove existence.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limits the generated trail and callback locations. Permissions belong to the application/server. Fixture links and Reset deliberately switch scope.',
+  'breadcrumbStorage.state': 'Route, API response and generated items',
   'breadcrumbs.deep': 'Deep paths',
   'breadcrumbs.deepDescription':
     'Open the details to reach every ancestor. Change width or font size to inspect responsive collapse.',

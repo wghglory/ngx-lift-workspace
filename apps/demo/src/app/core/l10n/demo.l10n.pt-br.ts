@@ -1,4 +1,19 @@
 export const ptBRTranslations: Record<string, string> = {
+  'breadcrumbStorage.title': 'Navegador de buckets e objetos',
+  'breadcrumbStorage.intro':
+    'Construa o caminho a partir do bucket atual e da chave exata da rota. Estes dados controlados de backend não exigem conta na nuvem.',
+  'breadcrumbStorage.flow':
+    'ListBuckets fornece nomes de buckets. ListObjectsV2 retorna CommonPrefixes e Contents para o Prefix atual; a rota fornece os ancestrais sem uma solicitação por nível.',
+  'breadcrumbStorage.examples': 'Exemplos de links diretos',
+  'breadcrumbStorage.invalid': 'O tipo de rota, a chave ou a raiz permitida é inválido. Redefina para recuperar.',
+  'breadcrumbStorage.children': 'Prefixos filhos e objetos',
+  'breadcrumbStorage.empty': 'Este prefixo não tem itens filhos.',
+  'breadcrumbStorage.object': 'Detalhes do objeto',
+  'breadcrumbStorage.missing':
+    'Não há metadados deste objeto nos dados de exemplo. Um caminho construído não comprova a existência.',
+  'breadcrumbStorage.scope':
+    'rootPrefix limita o caminho gerado e as localizações do callback. A aplicação e o servidor gerenciam permissões. Os links de exemplo e Redefinir mudam o escopo deliberadamente.',
+  'breadcrumbStorage.state': 'Rota, resposta da API e itens gerados',
   'breadcrumbs.deep': 'Caminhos profundos',
   'breadcrumbs.deepDescription':
     'Abra os detalhes para acessar todos os ancestrais. Altere a largura ou o tamanho da fonte.',
