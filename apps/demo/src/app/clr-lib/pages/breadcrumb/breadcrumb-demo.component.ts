@@ -31,14 +31,46 @@ const path = '/clr-lift/components/breadcrumb';
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem;
-      align-items: center;
+      gap: 0.6rem 1rem;
+      align-items: flex-end;
+      margin-block-end: 0.8rem;
     }
-    clr-range-container {
+    .controls clr-range-container {
       margin-top: 0;
+      max-inline-size: 100%;
+    }
+    .controls .btn {
+      margin: 0;
+      align-self: flex-end;
     }
     .controls input[type='range'] {
-      min-block-size: 24px;
+      display: inline-block;
+      align-items: normal;
+      inline-size: 10rem;
+      max-inline-size: 100%;
+      block-size: 1.2rem;
+      background: transparent;
+      border: 0;
+    }
+    .controls input[type='range']::-webkit-slider-runnable-track {
+      align-self: center;
+      height: var(--clr-forms-range-track-height);
+      background: var(--clr-forms-range-track-color);
+      border: var(--clr-forms-range-track-border-width) solid var(--clr-forms-range-track-border-color);
+      border-radius: var(--clr-forms-range-track-border-radius);
+    }
+    .controls input[type='range']::-webkit-slider-thumb {
+      transform: none;
+      margin-block-start: calc(
+        (var(--clr-forms-range-track-height) - var(--clr-forms-range-thumb-height)) /
+          2 - var(--clr-forms-range-track-border-width)
+      );
+    }
+    .controls input[type='range']::-moz-range-track {
+      block-size: var(--clr-forms-range-track-height);
+      background: var(--clr-forms-range-track-color);
+      border: var(--clr-forms-range-track-border-width) solid var(--clr-forms-range-track-border-color);
+      border-radius: var(--clr-forms-range-track-border-radius);
     }
     .preview {
       padding: 0.3rem;
