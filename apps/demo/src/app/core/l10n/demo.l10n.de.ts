@@ -1,4 +1,10 @@
 export const deTranslations: Record<string, string> = {
+  'breadcrumbs.deep': 'Tiefe Pfade',
+  'breadcrumbs.deepDescription':
+    'Öffnen Sie die Details, um alle übergeordneten Orte zu erreichen. Ändern Sie Breite oder Schriftgröße.',
+  'breadcrumbs.width': 'Containerbreite',
+  'breadcrumbs.replace': 'Pfad ersetzen',
+  'breadcrumbs.stationary': 'Die Objektliste bleibt beim Öffnen der Details an ihrer Position.',
   'breadcrumbs.title': 'Brotkrümelnavigation',
   'breadcrumbs.intro':
     'Erstellen Sie einen kurzen Pfad aus Anwendungsrouten und einem per HTTP gelieferten Entitätsnamen. Verwenden Sie Links für Ziele und Schaltflächen für Aktionen ohne Adresse. Die Schriftgröße lässt sich pro Instanz ändern; andere Pfade erben ihre Größe.',
@@ -6,7 +12,7 @@ export const deTranslations: Record<string, string> = {
   'breadcrumbs.empty': 'Leere Pfade und einzelne Einträge',
   'breadcrumbs.apiTitle': 'Öffentliche API',
   'breadcrumbs.api':
-    'items ist eine erforderliche unveränderliche Liste von BreadcrumbItem (id, label, optional href und context). ariaLabel ersetzt den lokalisierten Navigationsnamen. linkTemplate liefert echte SPA-Links; navigate gibt den ursprünglichen Vorfahren ohne Adresse aus. Der letzte Eintrag ist aktueller Text. Der Standardkontext enthält Anzeigepfad und Tiefe. Doppelte IDs, leere Beschriftungen und ungültige Ziele lösen Diagnosefehler aus. Setzen Sie --cll-breadcrumb-font-size am Host oder Vorfahren; standardmäßig gilt die Clarity-Inline-Typografie. Pfade umbrechen; Überlauf folgt später.',
+    'items ist eine erforderliche unveränderliche Liste von BreadcrumbItem (id, label, optional href und context). ariaLabel ersetzt den lokalisierten Navigationsnamen. linkTemplate liefert echte SPA-Links; navigate gibt den ursprünglichen Vorfahren ohne Adresse aus. Der letzte Eintrag ist aktueller Text. Der Standardkontext enthält Anzeigepfad und Tiefe. Doppelte IDs, leere Beschriftungen und ungültige Ziele lösen Diagnosefehler aus. Setzen Sie --cll-breadcrumb-font-size am Host oder Vorfahren; standardmäßig gilt die Clarity-Inline-Typografie. maxVisible begrenzt die Anzeige standardmäßig auf vier Pfadeinträge; bei wenig Platz werden Vorfahren ausgeblendet. Die Details zeigen vollständige Namen und alle Vorfahren.',
   'breadcrumbs.loading': 'Server wird geladen…',
   'breadcrumbs.error': 'Server konnte nicht geladen werden. Laden Sie die Seite erneut.',
   'breadcrumbs.submissions': 'Formularübermittlungen:',

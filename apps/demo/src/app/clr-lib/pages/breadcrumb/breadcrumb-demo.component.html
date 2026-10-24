@@ -49,6 +49,38 @@
         />
       </div>
     </app-demo-playground>
+    <app-demo-playground [title]="'breadcrumbs.deep' | translate" [tsCode]="deepUsageTs" [htmlCode]="deepUsageHtml">
+      <div preview>
+        <p>{{ 'breadcrumbs.deepDescription' | translate }}</p>
+        <div class="controls">
+          <clr-range-container>
+            <label for="breadcrumb-width">{{ 'breadcrumbs.width' | translate }}</label>
+            <input
+              id="breadcrumb-width"
+              clrRange
+              type="range"
+              min="140"
+              max="900"
+              step="10"
+              [value]="width()"
+              (input)="width.set(+$any($event.target).value)"
+            />
+          </clr-range-container>
+          <button class="btn btn-outline" type="button" (click)="deepLength.set(deepLength() === 30 ? 3 : 30)">
+            {{ 'breadcrumbs.replace' | translate }}
+          </button>
+        </div>
+        <cll-breadcrumb
+          data-testid="deep-trail"
+          [items]="deepItems()"
+          [linkTemplate]="spaLink"
+          [style.inline-size.px]="width()"
+          style="max-inline-size: 100%"
+          [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+        />
+        <p data-testid="object-list">{{ 'breadcrumbs.stationary' | translate }}</p>
+      </div>
+    </app-demo-playground>
     @if (server() === undefined) {
       <p role="status">{{ 'breadcrumbs.loading' | translate }}</p>
     }
@@ -72,7 +104,7 @@
     <article cds-layout="vertical gap:sm">
       <h2>{{ 'breadcrumbs.empty' | translate }}</h2>
       <cll-breadcrumb data-testid="empty-trail" [items]="[]" />
-      <cll-breadcrumb data-testid="singleton-trail" [items]="items().slice(0, 1)" />
+      <cll-breadcrumb data-testid="singleton-trail" [items]="singletonItems()" />
     </article>
     <details>
       <summary>{{ 'breadcrumbs.apiTitle' | translate }}</summary>
@@ -81,5 +113,16 @@
   </section>
 </cll-page-container>
 <ng-template #spaLink let-item>
-  <a style="font-size: inherit; line-height: inherit" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
+  <a
+    style="
+      font-size: inherit;
+      line-height: inherit;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      outline-offset: -2px;
+    "
+    [routerLink]="urlTree(item.href)"
+    >{{ item.label }}</a
+  >
 </ng-template>

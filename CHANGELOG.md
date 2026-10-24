@@ -14,7 +14,9 @@ recorded for the affected releases.
   caller-owned navigation. Includes ordinary/SPA links, form-safe addressless actions, localized current-location
   semantics, and the inherited `--cll-breadcrumb-font-size` CSS property. The working database/server demo and
   [design specification](docs/design/clr-lift/breadcrumb-design-spec.md) document this first short-trail increment.
-  Deep-path overflow and the public object-key helper remain deferred.
+  Responsive collapse defaults to four actual items, preserves root/current, and adapts to container and typography
+  changes. An anchored scrollable panel exposes all supplied ancestors and full labels without shifting content.
+  Includes localized 30-level width/font/path-replacement demos and keyboard/focus handling.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

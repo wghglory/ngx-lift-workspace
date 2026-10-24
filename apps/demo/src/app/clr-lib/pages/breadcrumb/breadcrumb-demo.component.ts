@@ -51,6 +51,38 @@ export class BreadcrumbDemoComponent {
       .get<{id: string; name: string}>('/breadcrumb-server.json')
       .pipe(catchError(() => of(null))),
   );
+  readonly width = signal(640);
+  readonly deepLength = signal(30);
+  readonly deepItems = computed<readonly BreadcrumbItem[]>(() =>
+    Array.from(
+      {
+        length:
+          this.params().get('depth') === null
+            ? this.deepLength()
+            : Math.min(this.deepLength(), Math.max(1, Number(this.params().get('depth')) + 1)),
+      },
+      (_, index) => ({
+        id: `level-${index}`,
+        label:
+          index === 0
+            ? this.translation.translate('breadcrumbPreview.database')
+            : `📁 ${index} · ${this.translation.translate('breadcrumbPreview.servers')}`,
+        href: `${path}?depth=${index}&key=%2F%25`,
+      }),
+    ),
+  );
+  readonly deepUsageTs = `import {Component} from '@angular/core';
+import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
+@Component({
+  selector: 'app-deep-path', imports: [BreadcrumbComponent],
+  templateUrl: './deep-path.component.html',
+})
+export class DeepPathComponent {
+  readonly items: readonly BreadcrumbItem[] = Array.from({length: 30}, (_, i) => ({
+    id: String(i), label: 'Location ' + i, href: '/browse?depth=' + i,
+  }));
+}`;
+  readonly deepUsageHtml = '<cll-breadcrumb [items]="items" [maxVisible]="4" />';
   readonly fontSize = signal<number | null>(null);
   readonly selected = signal<BreadcrumbItem | null>(null);
   readonly submissions = signal(0);
@@ -64,6 +96,7 @@ export class BreadcrumbDemoComponent {
     const level = this.params().get('level');
     return result.slice(0, level === '0' ? 1 : level === '1' ? 2 : 3);
   });
+  readonly singletonItems = computed(() => this.items().slice(0, 1));
   readonly actions = computed(() => this.items().map(({id, label}) => ({id, label})));
   readonly usageTs = `import {Component, signal} from '@angular/core';
 import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
@@ -107,7 +140,7 @@ export class RoutedServerPathComponent {
   [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
 />
 <ng-template #spaLink let-item>
-  <a style="font-size: inherit; line-height: inherit" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
+  <a style="font-size: inherit; line-height: inherit; display: block; overflow: hidden; text-overflow: ellipsis; outline-offset: -2px" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
 </ng-template>`;
   readonly usageScss = `/* Inherited from an ancestor or set on one component instance. */
 .font-scope {
@@ -118,6 +151,8 @@ export class RoutedServerPathComponent {
   }
   reset(): void {
     this.fontSize.set(null);
+    this.width.set(640);
+    this.deepLength.set(30);
     this.selected.set(null);
     void this.router.navigateByUrl(path);
   }

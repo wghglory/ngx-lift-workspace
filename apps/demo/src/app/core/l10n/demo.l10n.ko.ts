@@ -1,4 +1,9 @@
 export const koTranslations: Record<string, string> = {
+  'breadcrumbs.deep': '깊은 경로',
+  'breadcrumbs.deepDescription': '세부 정보를 열어 모든 상위 위치에 접근하세요. 너비나 글꼴 크기를 변경해 보세요.',
+  'breadcrumbs.width': '컨테이너 너비',
+  'breadcrumbs.replace': '경로 교체',
+  'breadcrumbs.stationary': '세부 정보를 열어도 개체 목록은 이동하지 않습니다.',
   'breadcrumbs.title': '탐색 경로',
   'breadcrumbs.intro':
     '애플리케이션 경로와 HTTP로 받은 엔터티 이름으로 짧은 경로를 만듭니다. 목적지에는 링크를, 주소 없는 작업에는 버튼을 사용합니다. 인스턴스별로 글꼴 크기를 변경할 수 있으며 다른 경로는 크기를 상속합니다.',
@@ -6,7 +11,7 @@ export const koTranslations: Record<string, string> = {
   'breadcrumbs.empty': '빈 경로와 단일 항목 경로',
   'breadcrumbs.apiTitle': '공개 API',
   'breadcrumbs.api':
-    'items는 필수 불변 BreadcrumbItem 목록입니다(id, label 및 선택적 href, context). ariaLabel은 번역된 탐색 이름을 재정의합니다. linkTemplate은 실제 SPA 링크를 제공하고 navigate는 주소 없는 상위 항목의 원본을 내보냅니다. 마지막 항목은 현재 위치 텍스트입니다. 기본 컨텍스트에는 순서대로 표시된 경로와 깊이가 포함됩니다. 중복 ID, 빈 레이블 및 잘못된 목적지는 진단 오류를 발생시킵니다. 호스트나 상위 요소에 --cll-breadcrumb-font-size를 설정하세요. 기본값은 Clarity 인라인 타이포그래피입니다. 경로는 줄바꿈되며 오버플로 기능은 추후 제공됩니다.',
+    'items는 필수 불변 BreadcrumbItem 목록입니다(id, label 및 선택적 href, context). ariaLabel은 번역된 탐색 이름을 재정의합니다. linkTemplate은 실제 SPA 링크를 제공하고 navigate는 주소 없는 상위 항목의 원본을 내보냅니다. 마지막 항목은 현재 위치 텍스트입니다. 기본 컨텍스트에는 순서대로 표시된 경로와 깊이가 포함됩니다. 중복 ID, 빈 레이블 및 잘못된 목적지는 진단 오류를 발생시킵니다. 호스트나 상위 요소에 --cll-breadcrumb-font-size를 설정하세요. 기본값은 Clarity 인라인 타이포그래피입니다. maxVisible의 기본값은 실제 경로 항목 4개입니다. 너비가 부족하면 가까운 상위 항목이 숨겨집니다. 세부 정보에서 전체 레이블과 모든 상위 위치에 접근할 수 있습니다.',
   'breadcrumbs.loading': '서버 로드 중…',
   'breadcrumbs.error': '서버를 로드하지 못했습니다. 페이지를 새로 고쳐 다시 시도하세요.',
   'breadcrumbs.submissions': '양식 제출 횟수:',

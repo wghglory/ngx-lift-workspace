@@ -19,6 +19,7 @@ export const routerProviders = provideRouter([]);
   template: `
     <form (submit)="submissions = submissions + 1">
       <cll-breadcrumb [items]="items()" (navigate)="selected = $event" [style.--cll-breadcrumb-font-size]="'1rem'" />
+      <cll-breadcrumb [items]="deepItems" [maxVisible]="3" ariaLabel="Deep" />
       <cll-breadcrumb [items]="links" [linkTemplate]="link" ariaLabel="SPA" />
     </form>
     <ng-template #link let-item
@@ -32,6 +33,12 @@ export class BreadcrumbConsumer {
     {id: 'database', label: 'Database', href: '/database'},
     {id: 'server', label: 'Server'},
   ];
+  readonly deepItems: readonly BreadcrumbItem[] = Array.from({length: 30}, (_, i) => ({
+    id: `deep-${i}`,
+    label: 'Repeated',
+    context: `exact/${i}`,
+    href: `/browse?key=${i}%2F%25`,
+  }));
   selected?: BreadcrumbItem;
   submissions = 0;
 }
