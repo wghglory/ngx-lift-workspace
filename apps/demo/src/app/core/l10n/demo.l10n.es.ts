@@ -1,4 +1,16 @@
 export const esTranslations: Record<string, string> = {
+  'breadcrumbs.title': 'Migas de pan',
+  'breadcrumbs.intro':
+    'Cree una ruta corta con rutas de la aplicación y un nombre de entidad recibido por HTTP. Use enlaces para destinos y botones para acciones sin dirección. Cambie el tamaño de letra por instancia; las demás rutas lo heredan.',
+  'breadcrumbs.spa': 'Base de datos · enlaces SPA',
+  'breadcrumbs.empty': 'Rutas vacías y de un solo elemento',
+  'breadcrumbs.apiTitle': 'API pública',
+  'breadcrumbs.api':
+    'items es una lista inmutable obligatoria de BreadcrumbItem (id, label y href y context opcionales). ariaLabel sustituye el nombre de navegación traducido. linkTemplate proporciona enlaces SPA reales; navigate emite el antecesor original sin dirección. El último elemento es texto de la ubicación actual. El contexto predeterminado contiene la ruta visible ordenada y el nivel. Los ID duplicados, etiquetas vacías y destinos inválidos generan errores de diagnóstico. Defina --cll-breadcrumb-font-size en el componente o un antecesor; por defecto se usa la tipografía en línea de Clarity. Las rutas se ajustan en varias líneas; el desbordamiento se implementará después.',
+  'breadcrumbs.loading': 'Cargando servidor…',
+  'breadcrumbs.error': 'No se pudo cargar el servidor. Recargue la página para reintentar.',
+  'breadcrumbs.submissions': 'Envíos del formulario:',
+
   'breadcrumbPreview.actionsDescription':
     'Use botones para ubicaciones en memoria sin URL, como los pasos de un asistente sin guardar. Este ejemplo solo actualiza la ubicación seleccionada y comprueba que la navegación no envíe el formulario. Si la ubicación tiene URL, use un enlace.',
   'breadcrumbPreview.title': 'Vista previa de navegación por migas de pan',

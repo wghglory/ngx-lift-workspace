@@ -1,4 +1,16 @@
 export const ptBRTranslations: Record<string, string> = {
+  'breadcrumbs.title': 'Navegação estrutural',
+  'breadcrumbs.intro':
+    'Crie um caminho curto com rotas da aplicação e um nome de entidade recebido por HTTP. Use links para destinos e botões para ações sem endereço. Altere o tamanho da fonte por instância; os outros caminhos herdam o tamanho.',
+  'breadcrumbs.spa': 'Banco de dados · links SPA',
+  'breadcrumbs.empty': 'Caminhos vazios e com um único item',
+  'breadcrumbs.apiTitle': 'API pública',
+  'breadcrumbs.api':
+    'items é uma lista imutável obrigatória de BreadcrumbItem (id, label e href e context opcionais). ariaLabel substitui o nome de navegação traduzido. linkTemplate fornece links SPA reais; navigate emite o ancestral original sem endereço. O último item é o texto da localização atual. O contexto padrão contém o caminho de exibição ordenado e o nível. IDs duplicados, rótulos vazios e destinos inválidos geram erros de diagnóstico. Defina --cll-breadcrumb-font-size no componente ou em um ancestral; o padrão usa a tipografia em linha do Clarity. Os caminhos quebram linha; o tratamento de excesso será entregue depois.',
+  'breadcrumbs.loading': 'Carregando servidor…',
+  'breadcrumbs.error': 'Não foi possível carregar o servidor. Recarregue a página para tentar novamente.',
+  'breadcrumbs.submissions': 'Envios do formulário:',
+
   'breadcrumbPreview.actionsDescription':
     'Use botões para locais em memória sem URL, como etapas de um assistente não salvo. Este exemplo apenas atualiza o local selecionado e verifica que a navegação não envia o formulário. Use links sempre que o local tiver uma URL.',
   'breadcrumbPreview.title': 'Prévia interativa do caminho de navegação',

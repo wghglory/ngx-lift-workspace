@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+  font-size: var(--cll-breadcrumb-font-size, var(--clr-base-typography-font-size-inline, 0.65rem));
+  line-height: 1.4;
+}
+ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+li {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+nav,
+ol,
+li,
+a,
+button,
+span {
+  font-size: inherit;
+  line-height: inherit;
+}
+a,
+button {
+  min-block-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+button {
+  font-family: inherit;
+  color: var(--clr-link-color, #0072a3);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-align: start;
+  cursor: pointer;
+}
+button:hover {
+  text-decoration: underline;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--clr-link-color, #0072a3);
+  outline-offset: 2px;
+}
+[aria-current] {
+  font-weight: 600;
+}

@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import {TranslatePipe} from 'clr-lift';
 
-import {ObjectPathBreadcrumbItem, ObjectPathBreadcrumbLinkContext} from './breadcrumb-preview.contract';
+import {BreadcrumbItem, BreadcrumbLinkContext} from './breadcrumb-preview.contract';
 
 let nextPanelId = 0;
 
@@ -34,11 +34,11 @@ export class BreadcrumbPreviewTrailComponent implements AfterViewInit {
       .map((item) => item.label)
       .join(' > '),
   );
-  readonly items = input.required<readonly ObjectPathBreadcrumbItem[]>();
+  readonly items = input.required<readonly BreadcrumbItem[]>();
   readonly ariaLabel = input.required<string>();
   readonly maxVisible = input(4);
-  readonly linkTemplate = input<TemplateRef<ObjectPathBreadcrumbLinkContext>>();
-  readonly navigate = output<ObjectPathBreadcrumbItem>();
+  readonly linkTemplate = input<TemplateRef<BreadcrumbLinkContext>>();
+  readonly navigate = output<BreadcrumbItem>();
   readonly current = computed(() => this.items().at(-1));
   readonly ancestors = computed(() => this.items().slice(0, -1));
   readonly visibleCount = computed(() => {
@@ -164,12 +164,12 @@ export class BreadcrumbPreviewTrailComponent implements AfterViewInit {
     }
   }
 
-  activate(item: ObjectPathBreadcrumbItem): void {
+  activate(item: BreadcrumbItem): void {
     this.close(false);
     this.navigate.emit(item);
   }
 
-  context(item: ObjectPathBreadcrumbItem): string {
+  context(item: BreadcrumbItem): string {
     return (
       item.context ??
       this.items()

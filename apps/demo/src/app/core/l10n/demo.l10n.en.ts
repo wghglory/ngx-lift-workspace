@@ -1,4 +1,16 @@
 export const enTranslations: Record<string, string> = {
+  'breadcrumbs.title': 'Breadcrumbs',
+  'breadcrumbs.intro':
+    'Build a short trail from application routes and an entity name returned by HTTP. Use real links for destinations and buttons for addressless actions. Change font size per instance; the other trails inherit their size.',
+  'breadcrumbs.spa': 'Database · SPA links',
+  'breadcrumbs.empty': 'Empty and singleton trails',
+  'breadcrumbs.apiTitle': 'Public API',
+  'breadcrumbs.api':
+    'items is a required immutable list of BreadcrumbItem (id, label, optional href and context). ariaLabel overrides the localized landmark name. linkTemplate supplies real SPA anchors; navigate emits the original addressless ancestor. The last item is current text. Context defaults to the ordered display trail with depth. Duplicate IDs, blank labels and invalid destinations throw diagnostics. Set --cll-breadcrumb-font-size on the host or an ancestor; the default uses Clarity inline typography. Trails wrap; overflow is deferred.',
+  'breadcrumbs.loading': 'Loading server…',
+  'breadcrumbs.error': 'Could not load the server. Reload the page to retry.',
+  'breadcrumbs.submissions': 'Form submissions:',
+
   'breadcrumbPreview.actionsDescription':
     'Use buttons for in-memory locations without a URL, such as steps in an unsaved wizard. This example only updates the selected location and checks that navigation does not submit the form. Use links whenever a location has a URL.',
   'breadcrumbPreview.title': 'Breadcrumb interaction preview',

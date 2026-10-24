@@ -8,6 +8,14 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Added
+
+- `clr-lift` exports `BreadcrumbComponent` (`cll-breadcrumb`), `BreadcrumbItem` and `BreadcrumbLinkContext` for
+  caller-owned navigation. Includes ordinary/SPA links, form-safe addressless actions, localized current-location
+  semantics, and the inherited `--cll-breadcrumb-font-size` CSS property. The working database/server demo and
+  [design specification](docs/design/clr-lift/breadcrumb-design-spec.md) document this first short-trail increment.
+  Deep-path overflow and the public object-key helper remain deferred.
+
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 
 **Release decision — October 17, 2026:** both packages remain on 21.x; 22.x is reserved for the Angular 22 upgrade. The

@@ -1,4 +1,16 @@
 export const zhCNTranslations: Record<string, string> = {
+  'breadcrumbs.title': '面包屑导航',
+  'breadcrumbs.intro':
+    '使用应用路由和 HTTP 返回的实体名称构建简短路径。有地址的位置使用链接，无地址的操作使用按钮。调整单个实例的字号；其他路径继承字号。',
+  'breadcrumbs.spa': '数据库 · SPA 链接',
+  'breadcrumbs.empty': '空路径与单项路径',
+  'breadcrumbs.apiTitle': '公共 API',
+  'breadcrumbs.api':
+    'items 是必填的不可变 BreadcrumbItem 列表（id、label，以及可选的 href、context）。ariaLabel 覆盖本地化导航名称。linkTemplate 提供真实的 SPA 链接；navigate 发出无地址祖先的原始对象。最后一项是当前位置文本。默认上下文为有序显示路径和深度。重复 ID、空白标签及无效地址会抛出诊断错误。在宿主或祖先上设置 --cll-breadcrumb-font-size；默认采用 Clarity 行内字体。路径换行显示；溢出功能稍后提供。',
+  'breadcrumbs.loading': '正在加载服务器…',
+  'breadcrumbs.error': '无法加载服务器。请重新加载页面重试。',
+  'breadcrumbs.submissions': '表单提交次数：',
+
   'breadcrumbPreview.actionsDescription':
     '没有 URL 的内存位置（例如未保存向导中的步骤）使用按钮。本例仅更新所选位置，并检查导航不会提交表单。只要位置有 URL，就应使用链接。',
   'breadcrumbPreview.title': '面包屑交互预览',

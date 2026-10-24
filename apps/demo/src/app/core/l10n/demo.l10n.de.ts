@@ -1,4 +1,16 @@
 export const deTranslations: Record<string, string> = {
+  'breadcrumbs.title': 'Brotkrümelnavigation',
+  'breadcrumbs.intro':
+    'Erstellen Sie einen kurzen Pfad aus Anwendungsrouten und einem per HTTP gelieferten Entitätsnamen. Verwenden Sie Links für Ziele und Schaltflächen für Aktionen ohne Adresse. Die Schriftgröße lässt sich pro Instanz ändern; andere Pfade erben ihre Größe.',
+  'breadcrumbs.spa': 'Datenbank · SPA-Links',
+  'breadcrumbs.empty': 'Leere Pfade und einzelne Einträge',
+  'breadcrumbs.apiTitle': 'Öffentliche API',
+  'breadcrumbs.api':
+    'items ist eine erforderliche unveränderliche Liste von BreadcrumbItem (id, label, optional href und context). ariaLabel ersetzt den lokalisierten Navigationsnamen. linkTemplate liefert echte SPA-Links; navigate gibt den ursprünglichen Vorfahren ohne Adresse aus. Der letzte Eintrag ist aktueller Text. Der Standardkontext enthält Anzeigepfad und Tiefe. Doppelte IDs, leere Beschriftungen und ungültige Ziele lösen Diagnosefehler aus. Setzen Sie --cll-breadcrumb-font-size am Host oder Vorfahren; standardmäßig gilt die Clarity-Inline-Typografie. Pfade umbrechen; Überlauf folgt später.',
+  'breadcrumbs.loading': 'Server wird geladen…',
+  'breadcrumbs.error': 'Server konnte nicht geladen werden. Laden Sie die Seite erneut.',
+  'breadcrumbs.submissions': 'Formularübermittlungen:',
+
   'breadcrumbPreview.actionsDescription':
     'Verwenden Sie Schaltflächen für Orte im Arbeitsspeicher ohne URL, etwa Schritte in einem ungespeicherten Assistenten. Dieses Beispiel ändert nur die Auswahl und prüft, dass die Navigation das Formular nicht absendet. Hat ein Ort eine URL, verwenden Sie einen Link.',
   'breadcrumbPreview.title': 'Breadcrumb-Interaktionsvorschau',

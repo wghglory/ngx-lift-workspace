@@ -184,7 +184,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
 
   writeFileSync(join(freshConsumer, 'pnpm-workspace.yaml'), 'strictPeerDependencies: true\nautoInstallPeers: false\n');
   run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 60000);
-  for (const name of ['key-value-hosts.ts', 'key-value-browser.mjs']) {
+  for (const name of ['key-value-hosts.ts', 'key-value-browser.mjs', 'breadcrumb-hosts.ts', 'breadcrumb-browser.mjs']) {
     writeFileSync(join(freshConsumer, name), readFileSync(join(root, 'tools/package/fixtures', name), 'utf8'));
   }
   writeFileSync(
@@ -202,12 +202,13 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
         types: [],
       },
       angularCompilerOptions: {strictTemplates: true},
-      files: ['key-value-hosts.ts'],
+      files: ['key-value-hosts.ts', 'breadcrumb-hosts.ts'],
     }),
   );
   run('pnpm', ['exec', 'ngc', '-p', 'key-value-tsconfig.json'], freshConsumer);
   for (const mode of ['zoneless', 'zone']) {
     process.stdout.write(run(process.execPath, ['key-value-browser.mjs', mode], freshConsumer));
+    process.stdout.write(run(process.execPath, ['breadcrumb-browser.mjs', mode], freshConsumer));
   }
 
   writeFileSync(

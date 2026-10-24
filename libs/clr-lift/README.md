@@ -54,6 +54,40 @@ installed version; source changes under Unreleased are not yet on npm.
 
 ---
 
+## Breadcrumb navigation
+
+Import `BreadcrumbComponent` and `BreadcrumbItem` from `clr-lift`. Supply a readonly list ordered from root to current
+location. Ancestors with `href` render ordinary links; addressless ancestors emit their original item through
+`(navigate)`. The final item always renders noninteractive current text. An empty list renders no landmark.
+
+```html
+<cll-breadcrumb [items]="items" ariaLabel="Database" />
+```
+
+```ts
+const items: readonly BreadcrumbItem[] = [
+  {id: 'database', label: 'Database', href: '/database'},
+  {id: 'servers', label: 'Sql servers', href: '/database/servers'},
+  {id: server.id, label: server.name},
+];
+```
+
+Optional `context` supplies display detail; otherwise descriptions include the ordered display trail and localized
+depth. IDs must be unique, labels nonblank and supplied destinations valid. Relative and http/https/mailto/tel/ftp
+destinations are supported. Duplicate IDs, blank labels, blank navigation names and invalid URLs throw developer
+diagnostics.
+
+For SPA routing pass `[linkTemplate]="spaLink"`, with `<ng-template #spaLink let-item>` containing your real RouterLink
+anchor. `BreadcrumbLinkContext` exposes the original item as `$implicit`. Import RouterLink in the host; clr-lift adds
+no router peer. Style the consumer-owned anchor with inherited font size and line height.
+
+Set `--cll-breadcrumb-font-size` on an instance or ancestor, including through Angular
+`[style.--cll-breadcrumb-font-size]="'1rem'"`. The default uses Clarity inline typography. Trails wrap at narrow widths;
+deep-path overflow and object-key construction are deferred.
+
+See the [working demo](https://ngx-lift.vercel.app/clr-lift/components/breadcrumb) and
+[canonical design spec](../../docs/design/clr-lift/breadcrumb-design-spec.md).
+
 ## 🚀 Quick Start (60 Seconds)
 
 ### 1. Install
@@ -207,6 +241,7 @@ export class CertificateImportComponent {
 |                    | `SpinnerComponent`             | `cll-spinner`              | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                                   |
 |                    | `StatusIndicatorComponent`     | `cll-status-indicator`     | Semantic operational state badges (`success`, `warning`, `error`, `pending`).                           |
 | **Navigation**     | `TimelineWizardComponent`      | `cll-timeline-wizard`      | Multi-step asynchronous wizard with timeline navigation and async step hooks.                           |
+| **Navigation**     | `BreadcrumbComponent`          | `cll-breadcrumb`           | Caller-owned ordinary/SPA links, current-location text and addressless navigation; unreleased.          |
 |                    | `PageContainerComponent`       | `cll-page-container`       | Standardized header, breadcrumb, action bar, and content responsive shell.                              |
 | **Forms**          | `FileReaderComponent`          | `cll-file-reader`          | Text/base64 string CVA with size validation and read cancellation.                                      |
 |                    | `KeyValueInputsComponent`      | `cll-key-value-inputs`     | Caller-owned FormArray editor with duplicate key validation; not a CVA.                                 |

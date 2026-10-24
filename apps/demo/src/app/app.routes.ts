@@ -388,6 +388,13 @@ export const routes: Routes = [
         path: 'components',
         children: [
           {
+            path: 'breadcrumb',
+            loadComponent: () =>
+              import('./clr-lib/pages/breadcrumb/breadcrumb-demo.component').then(
+                (module) => module.BreadcrumbDemoComponent,
+              ),
+          },
+          {
             path: 'breadcrumb-preview',
             loadComponent: () =>
               import('./clr-lib/pages/breadcrumb-preview/breadcrumb-preview.component').then(
