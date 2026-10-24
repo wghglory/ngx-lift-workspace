@@ -109,6 +109,7 @@ export const clrLiftNavConfig: NavConfig[] = [
     children: [
       {path: '/alert', value: 'Alert', i18nKey: 'nav.alert'},
       {path: '/multi-alerts', value: 'Alerts (Multiple)', i18nKey: 'nav.multiAlerts'},
+      {path: '/breadcrumb-preview', value: 'Breadcrumb interaction preview', i18nKey: 'breadcrumbPreview.title'},
       {path: '/callout', value: 'Callout', i18nKey: 'nav.callout'},
       {path: '/certificate', value: 'Certificate View', i18nKey: 'nav.certificate'},
       {path: '/file-reader', value: 'File Reader', i18nKey: 'nav.fileReader'},
