@@ -1,4 +1,26 @@
 export const nlTranslations: Record<string, string> = {
+  'breadcrumbPreview.actionsDescription':
+    'Gebruik knoppen voor locaties in het geheugen zonder URL, zoals stappen in een niet-opgeslagen wizard. Dit voorbeeld wijzigt alleen de geselecteerde locatie en controleert dat navigatie het formulier niet verstuurt. Gebruik een link zodra een locatie een URL heeft.',
+  'breadcrumbPreview.title': 'Interactief voorbeeld van broodkruimelnavigatie',
+  'breadcrumbPreview.scope':
+    'Voorlopig interactievoorbeeld voor issue #185. Deze API’s worden niet door de bibliotheek geëxporteerd.',
+  'breadcrumbPreview.font': 'Lettergrootte',
+  'breadcrumbPreview.reset': 'Resetten',
+  'breadcrumbPreview.native': 'Database · gewone links',
+  'breadcrumbPreview.spa': 'Buckets · SPA-links',
+  'breadcrumbPreview.stationary':
+    'Deze inhoud blijft op dezelfde plaats wanneer het paneel met bovenliggende locaties opent.',
+  'breadcrumbPreview.fixture': 'Testgegevens met exacte sleutel',
+  'breadcrumbPreview.actions': 'Acties zonder adres in een formulier',
+  'breadcrumbPreview.selected': 'Geselecteerde locatie:',
+  'breadcrumbPreview.state': 'Contractstatus inspecteren',
+  'breadcrumbPreview.database': 'Database',
+  'breadcrumbPreview.servers': 'SQL-servers',
+  'breadcrumbPreview.buckets': 'Buckets',
+  'breadcrumbPreview.emptySegment': '(leeg segment)',
+  'breadcrumbPreview.show': 'Paddetails en bovenliggende locaties tonen',
+  'breadcrumbPreview.details': 'Paddetails en bovenliggende locaties',
+  'breadcrumbPreview.close': 'Paddetails sluiten',
   'keyValueRecipes.loadIncompatible': 'Incompatibele opgeslagen waarden laden',
   'keyValueRecipes.title': 'Editors kiezen voor uw gegevens',
   'keyValueRecipes.keySelect': 'Sleutel selecteren, waarde invoeren',

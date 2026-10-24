@@ -1,0 +1,73 @@
+<cll-page-container [title]="'breadcrumbPreview.title' | translate">
+  <p>{{ 'breadcrumbPreview.scope' | translate }}</p>
+  <section cds-layout="vertical gap:md">
+    <div class="controls">
+      <clr-range-container>
+        <label for="breadcrumb-font">{{ 'breadcrumbPreview.font' | translate }}</label>
+        <input
+          id="breadcrumb-font"
+          clrRange
+          type="range"
+          min="0.65"
+          max="1.5"
+          step="0.05"
+          [value]="fontSize() ?? 0.65"
+          (input)="fontSize.set(+$any($event.target).value)"
+        />
+      </clr-range-container>
+      <button type="button" class="btn btn-outline" (click)="reset()">
+        {{ 'breadcrumbPreview.reset' | translate }}
+      </button>
+    </div>
+    <article cds-layout="vertical gap:sm">
+      <h2>{{ 'breadcrumbPreview.native' | translate }}</h2>
+      <div class="preview-box">
+        <app-breadcrumb-preview-trail
+          [items]="database()"
+          [ariaLabel]="'breadcrumbPreview.database' | translate"
+          [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+        />
+      </div>
+    </article>
+    <article cds-layout="vertical gap:sm">
+      <h2>{{ 'breadcrumbPreview.spa' | translate }}</h2>
+      <div class="preview-box">
+        <app-breadcrumb-preview-trail
+          [items]="storageWithRoot()"
+          [linkTemplate]="spaLink"
+          [ariaLabel]="'breadcrumbPreview.buckets' | translate"
+          [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+        />
+      </div>
+      <p data-testid="stationary-content">{{ 'breadcrumbPreview.stationary' | translate }}</p>
+      <clr-select-container>
+        <label for="breadcrumb-fixture">{{ 'breadcrumbPreview.fixture' | translate }}</label>
+        <select id="breadcrumb-fixture" clrSelect [ngModel]="fixture()" (ngModelChange)="changeFixture($event)">
+          @for (item of fixtures; track $index) {
+            <option [value]="$index">{{ item.kind }} · {{ item.key || '""' }}</option>
+          }
+        </select>
+      </clr-select-container>
+    </article>
+    <article cds-layout="vertical gap:sm">
+      <h2>{{ 'breadcrumbPreview.actions' | translate }}</h2>
+      <p>{{ 'breadcrumbPreview.actionsDescription' | translate }}</p>
+      <form (submit)="submit($event)">
+        <app-breadcrumb-preview-trail
+          [items]="actions()"
+          [ariaLabel]="'breadcrumbPreview.actions' | translate"
+          [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+          (navigate)="actionItem.set($event)"
+        />
+      </form>
+      <p aria-live="polite">{{ 'breadcrumbPreview.selected' | translate }} {{ actionItem()?.label }}</p>
+    </article>
+    <details>
+      <summary>{{ 'breadcrumbPreview.state' | translate }}</summary>
+      <pre data-testid="preview-state">{{ state() | json }}</pre>
+    </details>
+  </section>
+</cll-page-container>
+<ng-template #spaLink let-item>
+  <a style="font-size: inherit" [routerLink]="urlTree(item.href)" [attr.title]="item.context">{{ item.label }}</a>
+</ng-template>
