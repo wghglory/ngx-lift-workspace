@@ -5,10 +5,10 @@ grill decisions, approved continuing with the construction approach, and request
 The five-ticket delivery breakdown is approved. The first ticket proves the exact SPA/helper integration and interaction
 details before public exports.
 
-Status: **Ticket #186 simple breadcrumb and #187 responsive ancestry implemented**, authorized by the maintainer's
-`/implement` request. The component/item/link-template contracts exercised in #185 are approved for this increment.
-Responsive ancestry (#187) is implemented below. The public object-key helper (#188) and scale hardening (#189) have
-separate delivery evidence.
+Status: **Tickets #186 simple breadcrumb, #187 responsive ancestry and #188 exact-key construction implemented**,
+authorized by the maintainer's `/implement` request. The component/item/link-template contracts exercised in #185 are
+approved for this increment. Responsive ancestry (#187) is implemented below. The public object-key helper (#188) and
+scale hardening (#189) have separate delivery evidence.
 
 ### Ticket #187 responsive ancestry
 
@@ -1062,17 +1062,16 @@ responsive-overflow failures and #189 scale/filtering work retain their separate
 - Public host: 24 breadcrumb tests pass, including the deterministic count fallback, contiguous recent suffix, repeated
   labels/exact destinations, count normalization, form safety, independent instances and observer teardown. The library
   allocates disclosure IDs per application rather than using process-global server state.
-- Public browser journeys: **42 passed** across Chromium, Firefox and WebKit, using a fixed production snapshot so other
-  work in the checkout cannot trigger development-server reloads. The 18 deep-path checks cover complete ordered
-  ancestry, panel scrolling and bounds, unchanged surrounding layout, fixed-width font changes, 200% text sizing, narrow
-  layouts, normal keyboard exit, close/Escape, external focus/path replacement, singleton truncation, multiple
-  instances, native modified clicks and ordinary SPA navigation. Existing public journeys cover all eleven runtime
-  locales, light/dark accessibility, compact RTL, native forms, HTTP recovery and link ownership. Automated scans
-  include the open panel. Text enlargement is automated; native browser zoom and assistive-technology acceptance remain
-  human checks.
+- Public browser journeys: **54 passed** across Chromium, Firefox and WebKit, using the isolated #187 production build.
+  The 18 deep-path checks cover complete ordered ancestry, panel scrolling and bounds, unchanged surrounding layout,
+  fixed-width font changes, 200% text sizing, narrow layouts, normal keyboard exit, close/Escape, external focus/path
+  replacement, singleton truncation, multiple instances, native modified clicks and ordinary SPA navigation. Existing
+  public journeys cover all eleven runtime locales, light/dark accessibility, compact RTL, native forms, HTTP recovery
+  and link ownership. Automated scans include the open panel. Text enlargement is automated; native browser zoom and
+  assistive-technology acceptance remain human checks.
 - Sampled at a 1280×720 viewport: the 30-level fixture at a 640px host width and 18px inherited text renders three
-  actual trail items, 30 panel rows and 29 native ancestor anchors in all three browsers. Chromium reports a 358px panel
-  with 4411px scroll height; Firefox reports 357px/4412px; WebKit reports 357px/4410px. Page width remains 1280px. Tests
+  actual trail items, 30 panel rows and 29 native ancestor anchors in all three browsers. Panel geometry and scroll
+  extent are checked in each browser and recorded by the deep-path layout attachment. Page width remains 1280px. Tests
   scroll to and expose the final ancestor. This is measured 30-level layout evidence, not a 100-level performance
   guarantee.
 - Installed Angular 21 zoneless/ZoneJS fixtures cover the public `maxVisible` input, 30-level unmeasured fallback,
@@ -1109,3 +1108,14 @@ Final `pnpm run validate` passed: 883 ngx-lift, 432 clr-lift and 298 demo tests,
 translation checks, lint, type checks, builds, bundle checks and strict-peer packed consumers. A verification browser
 rerun had two Firefox popup-navigation timeouts; both existing modifier/middle-click cases passed on a focused retry.
 The renderer and feedback test source hashes remained unchanged throughout that verification.
+
+The final review also replaced estimated separator spacing with rendered geometry, measures the navigation row's content
+width rather than the padded host, and renders consumer links in the hidden intrinsic probe. Twelve additional browser
+checks cover measured boundaries, host padding, custom link padding and native forward tab order across three engines.
+Consumer link examples clip their clickable boxes to the available label width and retain inset focus outlines; compact
+RTL/light/dark accessibility scans pass after this correction. The copyable deep example now uses `templateUrl` with its
+separate HTML tab.
+
+After merging the upstream #193 ancestry increment on October 25, the combined breadcrumb browser suite reports **136
+passed and 2 existing headless WebKit skips**. Native and storage boundary/focus tests remain separate; upstream
+host-padding and custom-link-padding regressions are retained.
