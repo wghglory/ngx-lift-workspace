@@ -1,4 +1,16 @@
 export const jaTranslations: Record<string, string> = {
+  'breadcrumbs.title': 'パンくずリスト',
+  'breadcrumbs.intro':
+    'アプリのルートと HTTP で取得したエンティティ名から短いパスを作成します。宛先にはリンク、アドレスのない操作にはボタンを使います。インスタンスごとに文字サイズを変更でき、他のパスはサイズを継承します。',
+  'breadcrumbs.spa': 'データベース · SPA リンク',
+  'breadcrumbs.empty': '空のパスと単一項目のパス',
+  'breadcrumbs.apiTitle': '公開 API',
+  'breadcrumbs.api':
+    'items は必須の不変な BreadcrumbItem リストです（id、label、任意の href と context）。ariaLabel は翻訳済みのナビゲーション名を上書きします。linkTemplate は実際の SPA リンクを提供し、navigate はアドレスのない祖先の元の項目を出力します。最後の項目は現在位置のテキストです。既定のコンテキストには表示パスと階層が含まれます。重複 ID、空白ラベル、無効な宛先は診断エラーになります。ホストまたは祖先で --cll-breadcrumb-font-size を設定します。既定は Clarity のインライン書体です。パスは折り返され、オーバーフロー機能は後日提供されます。',
+  'breadcrumbs.loading': 'サーバーを読み込み中…',
+  'breadcrumbs.error': 'サーバーを読み込めませんでした。ページを再読み込みしてください。',
+  'breadcrumbs.submissions': 'フォーム送信回数：',
+
   'breadcrumbPreview.actionsDescription':
     '未保存ウィザードのステップなど、URL を持たないメモリ内の場所にはボタンを使います。この例は選択した場所だけを更新し、移動によってフォームが送信されないことを確認します。URL がある場所にはリンクを使います。',
   'breadcrumbPreview.title': 'パンくずリストの操作プレビュー',

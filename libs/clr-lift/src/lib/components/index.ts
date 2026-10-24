@@ -6,6 +6,7 @@ export * from './file-reader';
 export * from './idle-detection';
 export * from './key-value-inputs';
 export * from './key-value-control';
+export * from './breadcrumb';
 export * from './page-container';
 export * from './query-devtools';
 export * from './spinner';

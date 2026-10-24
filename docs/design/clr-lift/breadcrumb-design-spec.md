@@ -1,15 +1,44 @@
-# Deep object-path breadcrumbs
+# Breadcrumbs
 
 Owner: clr-lift maintainers. Package: clr-lift. Updated October 24, 2026. Approval: the maintainer accepted the three
 grill decisions, approved continuing with the construction approach, and requested configurable breadcrumb font size.
 The five-ticket delivery breakdown is approved. The first ticket proves the exact SPA/helper integration and interaction
 details before public exports.
 
-Status: **Ticket #185 demo-local interaction preview implemented; public API approval pending**. Proposed symbols remain
-unavailable from library entry points. Production component/helper delivery belongs to #186–#189.
+Status: **Ticket #186 simple public breadcrumb implemented and locally validated**, authorized by the maintainer's
+`/implement` request. The component/item/link-template contracts exercised in #185 are approved for this increment.
+Deep-path overflow (#187), the public object-key helper (#188) and scale hardening (#189) remain deferred.
+
+### Ticket #186 public increment
+
+Export `BreadcrumbComponent`, `BreadcrumbItem` and `BreadcrumbLinkContext` from `clr-lift`. The component accepts
+required immutable `items`, optional `ariaLabel` (localized Breadcrumb), optional consumer-owned
+`linkTemplate: TemplateRef<BreadcrumbLinkContext>`, and emits original addressless ancestors via `navigate`. It wraps
+all supplied locations; `maxVisible` and overflow controls are not part of this increment. Empty trails render no
+landmark; singleton trails render current text. Duplicate IDs, invisible labels, blank navigation names and blank or
+unsafe destinations throw developer diagnostics. IDs may be empty and repeated labels are valid. Destinations are
+relative URLs or URLs with http, https, mailto, tel or ftp schemes; script/data and other schemes are rejected before
+rendering, including on the current item. No URL or identity is ever built from labels.
+
+Destination syntax is also checked with the URL parser against a fixed HTTPS base, independent of browser globals.
+Malformed absolute or protocol-relative URLs (for example `https://` or `//[`) throw the same diagnostic. Parsing is
+validation only: the supplied destination is rendered unchanged, preserving relative routes, queries and fragments.
+
+Each list item exposes its supplied context or ordered display trail plus localized one-based depth as a description.
+The public CSS property `--cll-breadcrumb-font-size` inherits and accepts Angular style binding, falling back to Clarity
+inline typography. Relative line height and wrapping allow live font changes without measurement or browser listeners;
+#187 can observe the resulting host size. No runtime dependency or router peer is added. The component is safe to render
+without browser globals; hydration adds no client-only DOM work. Native links retain normal browser actions; custom SPA
+anchors remain owned by the consumer. Action controls explicitly use `type="button"` inside native forms.
+
+Owned library messages: navigation name and depth description. Owned demo messages: title, introduction, SPA example,
+API explanation, native/action/empty examples and selected location/form state. All supported locales and library
+aliases ship together. The public demo route is `/clr-lift/components/breadcrumb`, with a database/server fixture,
+copyable playground source, native and SPA navigation, action identity, singleton/empty and typography examples.
 
 Published specification: [GitHub issue #184](https://github.com/wghglory/ngx-lift-workspace/issues/184), labeled
-`ready-for-agent` by the `to-spec` workflow. The API-review gate below still applies.
+`ready-for-agent` by the `to-spec` workflow. The component naming was approved as `BreadcrumbComponent` /
+`cll-breadcrumb`; deferred helper/overflow contracts remain provisional.
 
 ## Conversation synthesis and review boundary
 
@@ -105,7 +134,7 @@ replacement belong to these acceptance cases.
 ## Developer learning journey and pedagogy plan
 
 Prerequisites: a standalone Angular 21 host and ordered ancestor locations; no router or forms provider is required for
-native links. The proposed demo destination is `/clr-lift/object-path-breadcrumb`.
+native links. The proposed demo destination is `/clr-lift/breadcrumb`.
 
 | Reader task                          | Learning outcome                                                        | Destination / working example                             |
 | ------------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------- |
@@ -129,10 +158,10 @@ resize, keyboard and packed-consumer checks will verify the examples after imple
 ### Ticket #185 interaction preview
 
 Implement a demo-local preview at `/clr-lift/components/breadcrumb-preview`. This ticket exercises provisional
-contracts; it does not add library exports. The renderer accepts an optional
-`TemplateRef<ObjectPathBreadcrumbLinkContext>` (`{$implicit: ObjectPathBreadcrumbItem}`) for URL-bearing ancestors. The
-application template supplies a real anchor and owns RouterLink/UrlTree conversion; the renderer's default is a native
-`href` anchor. Addressless ancestors emit the original item through `navigate` from `type="button"` controls.
+contracts; it does not add library exports. The renderer accepts an optional `TemplateRef<BreadcrumbLinkContext>`
+(`{$implicit: BreadcrumbItem}`) for URL-bearing ancestors. The application template supplies a real anchor and owns
+RouterLink/UrlTree conversion; the renderer's default is a native `href` anchor. Addressless ancestors emit the original
+item through `navigate` from `type="button"` controls.
 
 The synchronous helper accepts `{bucket, key, kind, rootPrefix?, emptySegmentLabel, hrefFor}`. `kind` is explicitly
 `'prefix' | 'object'`; callback data is a discriminated bucket/prefix/object union. An optional nonempty
@@ -175,14 +204,14 @@ Unicode, dot segments and a permitted-prefix root with a slash-ending object. Fi
 #### Exact preview signatures and link integration
 
 ```ts
-interface ObjectPathBreadcrumbItem {
+interface BreadcrumbItem {
   readonly id: string;
   readonly label: string;
   readonly href?: string;
   readonly context?: string;
 }
-interface ObjectPathBreadcrumbLinkContext {
-  readonly $implicit: ObjectPathBreadcrumbItem;
+interface BreadcrumbLinkContext {
+  readonly $implicit: BreadcrumbItem;
 }
 type ObjectPathLocation =
   | {readonly kind: 'bucket'; readonly bucket: string}
@@ -196,18 +225,15 @@ interface BuildObjectPathBreadcrumbsOptions {
   readonly emptySegmentLabel: string;
   readonly hrefFor: (location: ObjectPathLocation) => string;
 }
-declare function buildObjectPathBreadcrumbs(
-  options: BuildObjectPathBreadcrumbsOptions,
-): readonly ObjectPathBreadcrumbItem[];
+declare function buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): readonly BreadcrumbItem[];
 ```
 
 The preview component has required `items` and `ariaLabel` signal inputs, optional `maxVisible` (default 4), optional
-`linkTemplate: TemplateRef<ObjectPathBreadcrumbLinkContext>`, and
-`navigate: OutputEmitterRef<ObjectPathBreadcrumbItem>`. The proposed production selector stays
-`cll-object-path-breadcrumb`; the runnable experiment uses `app-breadcrumb-preview-trail`. A production localized
-default for `ariaLabel` belongs to #186. There is no item callback for URL activation: native links keep their browser
-behavior and do not emit `navigate`. Current-location destinations are never interactive. Without a custom template,
-ancestors with destinations render as ordinary anchors.
+`linkTemplate: TemplateRef<BreadcrumbLinkContext>`, and `navigate: OutputEmitterRef<BreadcrumbItem>`. The proposed
+production selector stays `cll-breadcrumb`; the runnable experiment uses `app-breadcrumb-preview-trail`. A production
+localized default for `ariaLabel` belongs to #186. There is no item callback for URL activation: native links keep their
+browser behavior and do not emit `navigate`. Current-location destinations are never interactive. Without a custom
+template, ancestors with destinations render as ordinary anchors.
 
 The application imports Angular RouterLink and Router and supplies this template:
 
@@ -277,11 +303,11 @@ Locale switching changes demo names and helper empty-segment labels. It replaces
 closes an open panel; preserving a filter/query through locale changes is deferred with filtering. This preview wraps
 rows at narrow widths instead of claiming the production width-aware partitioning promised in #187.
 
-Propose the standalone `ObjectPathBreadcrumbComponent` / `cll-object-path-breadcrumb` and this item interface:
+The standalone `BreadcrumbComponent` / `cll-breadcrumb` exports this item interface:
 
 ```ts
-// Proposed exports from 'clr-lift'; unavailable until implementation.
-export interface ObjectPathBreadcrumbItem {
+// Public item export from 'clr-lift' (#186). Further overflow inputs below remain deferred.
+export interface BreadcrumbItem {
   readonly id: string;
   readonly label: string;
   readonly href?: string;
@@ -289,12 +315,18 @@ export interface ObjectPathBreadcrumbItem {
 }
 ```
 
-| Member       | Type                                                 | Default and contract                                                                                   |
-| ------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `items`      | required `readonly ObjectPathBreadcrumbItem[]` input | Ordered root through current location; never mutated                                                   |
-| `maxVisible` | `number` input                                       | `4`; ceiling on actual path items including root/current, excluding overflow; width may reduce it      |
-| `ariaLabel`  | `string` input                                       | Localized “Object path”; caller can supply a translated name distinguishing multiple landmarks         |
-| `navigate`   | `ObjectPathBreadcrumbItem` output                    | Emits the original ancestor item only when it has no `href`; native links do not also emit this action |
+| Member       | Type                                       | Default and contract                                                                                   |
+| ------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `items`      | required `readonly BreadcrumbItem[]` input | Ordered root through current location; never mutated                                                   |
+| `maxVisible` | Deferred #187 `number` input               | `4`; ceiling on actual path items including root/current, excluding overflow; width may reduce it      |
+| `ariaLabel`  | `string` input                             | Localized “Breadcrumb”; caller can supply a translated name distinguishing multiple landmarks          |
+| `navigate`   | `BreadcrumbItem` output                    | Emits the original ancestor item only when it has no `href`; native links do not also emit this action |
+
+`linkTemplate?: TemplateRef<BreadcrumbLinkContext>` is also available in #186; its `$implicit` value is the original
+item. Consumers own the real anchor and RouterLink integration. The `maxVisible` row describes the deferred #187
+contract, not an input in this increment. The generic renderer is named `BreadcrumbComponent` / `cll-breadcrumb` for
+both application and object-store paths; the deferred `buildObjectPathBreadcrumbs` helper remains specific to exact
+object keys. No published breadcrumb API is being renamed because the increment is unreleased.
 
 ### Where items and context come from
 
@@ -304,7 +336,7 @@ structure plus the current entity's display name; it needs no path parser or exp
 ```ts
 // Proposed component input; the server supplies the entity ID/name.
 const server = {id: 'sql-1', name: 'Sql server 1'};
-const items: readonly ObjectPathBreadcrumbItem[] = [
+const items: readonly BreadcrumbItem[] = [
   {id: 'database', label: 'Database', href: '/database'},
   {id: 'sql-servers', label: 'Sql servers', href: '/database/sql-servers'},
   {id: server.id, label: server.name},
@@ -432,15 +464,15 @@ must obtain ancestor metadata from its API; this helper cannot reconstruct missi
 ```ts
 // Proposed example; not yet compiled against public exports.
 import {Component} from '@angular/core';
-import {ObjectPathBreadcrumbComponent, ObjectPathBreadcrumbItem} from 'clr-lift';
+import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
 
 @Component({
   selector: 'app-object-location',
-  imports: [ObjectPathBreadcrumbComponent],
-  template: `<cll-object-path-breadcrumb [items]="items" />`,
+  imports: [BreadcrumbComponent],
+  template: `<cll-breadcrumb [items]="items" />`,
 })
 export class ObjectLocationComponent {
-  readonly items: readonly ObjectPathBreadcrumbItem[] = [
+  readonly items: readonly BreadcrumbItem[] = [
     {id: 'bucket', label: 'Backups', href: '/objects'},
     {id: 'prod/', label: 'prod', context: 'prod/', href: '/objects?prefix=prod%2F'},
     {id: 'prod/daily/', label: 'daily', context: 'prod/daily/'},
@@ -461,18 +493,18 @@ example does not define that integration or authorize a new router dependency.
 ```ts
 // Proposed example; caller-owned prefix strings remain exact.
 import {Component, signal} from '@angular/core';
-import {ObjectPathBreadcrumbComponent, ObjectPathBreadcrumbItem} from 'clr-lift';
+import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
 
 @Component({
   selector: 'app-prefix-location',
-  imports: [ObjectPathBreadcrumbComponent],
+  imports: [BreadcrumbComponent],
   template: `
-    <cll-object-path-breadcrumb [items]="items()" [maxVisible]="4" (navigate)="open($event)" />
+    <cll-breadcrumb [items]="items()" [maxVisible]="4" (navigate)="open($event)" />
     <button type="button" class="btn btn-sm" (click)="reset()">Reset</button>
   `,
 })
 export class PrefixLocationComponent {
-  private readonly original: readonly ObjectPathBreadcrumbItem[] = [
+  private readonly original: readonly BreadcrumbItem[] = [
     {id: '', label: 'Backups'},
     {id: 'daily/', label: 'daily'},
     {id: 'daily/2026/', label: '2026'},
@@ -481,7 +513,7 @@ export class PrefixLocationComponent {
   ];
   readonly items = signal(this.original);
 
-  open(item: ObjectPathBreadcrumbItem): void {
+  open(item: BreadcrumbItem): void {
     const index = this.items().findIndex((candidate) => candidate.id === item.id);
     if (index >= 0) this.items.update((items) => items.slice(0, index + 1));
     // A host can instead navigate its router using the original item identity.
@@ -510,7 +542,7 @@ disabled/readonly input. All component buttons have `type="button"`; navigation 
 
 ```html
 <!-- Proposed deep-path configuration. -->
-<cll-object-path-breadcrumb [items]="ancestors" [maxVisible]="4" />
+<cll-breadcrumb [items]="ancestors" [maxVisible]="4" />
 ```
 
 Root + overflow + the two nearest ancestors + current location is the default deep-path presentation. The four-item
@@ -618,7 +650,7 @@ add a numeric Angular input or require consumers to target internal selectors.
 
 ```scss
 /* Proposed styling contract; available when the component is implemented. */
-cll-object-path-breadcrumb {
+cll-breadcrumb {
   --cll-breadcrumb-font-size: 1rem;
 }
 ```
@@ -650,7 +682,7 @@ repeated labels. Preserve visible focus; never nest interactive controls.
 
 | Owned message   | Proposed English meaning                                                                 | Contract                                                                             |
 | --------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Navigation name | Object path                                                                              | Localized default; contextual caller override via `ariaLabel`                        |
+| Navigation name | Breadcrumb                                                                               | Localized default; contextual caller override via `ariaLabel`                        |
 | Trigger         | Show path details and ancestors                                                          | Icon-button name; expanded state comes from ARIA                                     |
 | Region name     | Path details and ancestors                                                               | Names ancestor panel                                                                 |
 | Filter          | Filter ancestors                                                                         | Persistent input label, not placeholder-only                                         |
@@ -722,8 +754,8 @@ evidence as one acceptance scope. Record approval of this concrete revision befo
 
 ## Evidence
 
-- October 24, 2026: created `feat/deep-object-path-breadcrumbs` from freshly fetched `origin/main` at `801225f`. The
-  prior key/value branch and its commits remain intact.
+- October 24, 2026: created the initial design branch from freshly fetched `origin/main` at `801225f`. The prior
+  key/value branch and its commits remain intact.
 - Inspected installed Clarity 18.4.0 breadcrumb declarations/runtime template/styles and fetched all four primary
   sources linked above. These were source findings at the design stage; the #185 preview now supplies rendered evidence
   below.
@@ -888,3 +920,59 @@ type checks, and translation parity for **2,132 keys in each of eleven locales**
 original preview checkout; these counts include current-main additions. E2E lint retains three advisory warnings and has
 no errors. Browser evidence and external CI status are reported in the focused PR; local success does not imply
 independent language/assistive-technology acceptance, production library exports or publication.
+
+## Ticket #186 local acceptance evidence
+
+The maintainer selected this chat to reconcile overlapping work and requested the generic public names
+`BreadcrumbComponent` / `cll-breadcrumb`, with `BreadcrumbItem` and `BreadcrumbLinkContext`. Source files, selectors,
+translations, demo route, public exports, README, roadmap, changelog, tests and incoming spec links use those names.
+There is one implementation and one public demo route: `/clr-lift/components/breadcrumb`.
+
+Validated October 24, 2026 on `feat/186-breadcrumbs-public`:
+
+- Formatting, 24 tooling tests, all eleven translation dictionaries, lint, all project type checks, coverage thresholds,
+  all production builds and bundle checks passed through `NX_SOCKET_DIR=/tmp/ngx186 pnpm run validate`.
+- Unit suites passed: ngx-lift 883 tests, clr-lift 399 tests, demo 298 tests. The breadcrumb component's TypeScript
+  logic has 100% statement, branch, function and line coverage in this run. DOM/CSS behavior is covered separately
+  below.
+- `NX_SOCKET_DIR=/tmp/ngx186 pnpm nx run demo-e2e:e2e src/breadcrumb.spec.ts src/breadcrumb-preview.spec.ts --workers=3`:
+  70 passed; two existing preview tab-creation checks remain skipped for headless WebKit. All 21 new public breadcrumb
+  checks passed, including ordinary versus SPA/history ownership, native modified/context-menu events, keyboard action
+  safety, empty/singleton trails, HTTP data/error recovery, all-locale runtime switching, inherited/per-instance font
+  changes, narrow compact RTL and light/dark accessibility scans. The theme tests wait for the existing playground
+  transition before scanning its final colors; WebKit uses Option+Tab for native-button traversal on macOS.
+- Installed verification initially caught a test assertion expecting a relative RouterLink href in JSDOM, which resolved
+  it against the document base. The assertion now checks the exact resolved URL.
+  `NX_SOCKET_DIR=/tmp/ngx186 pnpm nx run @ngx-lift-workspace/source:package-verify` then passed: fresh strict peer
+  install, public imports/types, strict Angular 21 templates, real DOM routing/actions/forms/replacement in zoneless and
+  ZoneJS hosts, and the existing package import-graph checks. These DOM hosts supplement the three real-browser
+  projects.
+- `git diff --check` and the repository reference search found no old component/selector/type names or spec-path links.
+
+This increment adds no runtime dependency, router peer or package version bump. The changelog records it under
+Unreleased. CI at a pushed commit, merge, deployment and publication have not been performed. The full unrelated E2E
+suite was not rerun. Independent native-speaker review for each supported language and manual assistive-technology
+acceptance remain pending under the accessibility/language contract. Deep-path overflow (#187), the public exact-key
+helper (#188) and scale hardening (#189) remain separate increments.
+
+### Simple-first demo teaching correction
+
+The ordinary-link playground comes first and opens with its code visible. Its complete Angular example imports only
+`BreadcrumbComponent` and supplies `[items]="items()"`. The component builds ancestor anchors automatically; the final
+item always renders current text even if it has a destination. The separate SPA example demonstrates the optional
+consumer-owned RouterLink template, with complete Router imports/methods and matching copyable HTML. This template is an
+Angular `ng-template`, not a required breadcrumb syntax. The Angular Router integration decision is being clarified with
+the maintainer; no router peer or implicit routing behavior has been introduced by this teaching correction.
+
+Correction validation: demo/E2E lint and type checks, demo production build, changed-file formatting and
+`git diff --check` passed. The public breadcrumb browser suite passed all 24 checks across Chromium, Firefox and WebKit,
+including the new assertion that the first example renders automatic links and displays its simple code on initial load.
+No library runtime behavior or package dependency changed in this correction.
+
+### URL syntax review correction
+
+Destination validation now rejects malformed absolute and protocol-relative URLs through the standard URL parser, while
+retaining the original destination for rendering. Regression cases cover `https://`, `https://[invalid]`, `//[`, and
+unchanged supported relative, query-only, fragment-only and explicit-scheme links. The clr-lift unit suite passed all
+412 tests; clr-lift lint/type checks, changed-file formatting and `git diff --check` passed. Browser and installed
+package checks were not rerun for this correction.

@@ -7,7 +7,7 @@ import {ClrRangeModule, ClrSelectModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {BreadcrumbPreviewTrailComponent} from './breadcrumb-preview-trail.component';
-import {buildObjectPathBreadcrumbs, ObjectPathBreadcrumbItem, ObjectPathLocation} from './breadcrumb-preview.contract';
+import {buildObjectPathBreadcrumbs, BreadcrumbItem, ObjectPathLocation} from './breadcrumb-preview.contract';
 
 const previewPath = '/clr-lift/components/breadcrumb-preview';
 
@@ -61,7 +61,7 @@ export class BreadcrumbPreviewComponent {
   readonly translation = inject(TranslationService);
   private readonly params = toSignal(this.route.queryParamMap, {initialValue: this.route.snapshot.queryParamMap});
   readonly fontSize = signal<number | null>(null);
-  readonly actionItem = signal<ObjectPathBreadcrumbItem | null>(null);
+  readonly actionItem = signal<BreadcrumbItem | null>(null);
   readonly submissions = signal(0);
   readonly fixture = computed(() => {
     const value = Number(this.params().get('fixture') ?? 0);
@@ -74,7 +74,7 @@ export class BreadcrumbPreviewComponent {
     {key: 'allowed/a/nested/object/', kind: 'object', rootPrefix: 'allowed/'},
     {key: 'same/same/', kind: 'prefix'},
   ] as const;
-  readonly database = computed<readonly ObjectPathBreadcrumbItem[]>(() => {
+  readonly database = computed<readonly BreadcrumbItem[]>(() => {
     const all = [
       {id: 'database', label: this.translation.translate('breadcrumbPreview.database'), href: `${previewPath}?level=0`},
       {id: 'servers', label: this.translation.translate('breadcrumbPreview.servers'), href: `${previewPath}?level=1`},
@@ -129,7 +129,7 @@ export class BreadcrumbPreviewComponent {
       hrefFor: (location) => this.hrefFor(location),
     });
   });
-  readonly storageWithRoot = computed<readonly ObjectPathBreadcrumbItem[]>(() => {
+  readonly storageWithRoot = computed<readonly BreadcrumbItem[]>(() => {
     // Restricted-root fixtures must not reintroduce a higher application root.
     if ('rootPrefix' in this.fixtures[this.fixture()]) return this.storage();
     const root = {

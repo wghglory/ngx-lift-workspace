@@ -1,0 +1,85 @@
+<cll-page-container [title]="'breadcrumbs.title' | translate">
+  <p>{{ 'breadcrumbs.intro' | translate }}</p>
+  <section cds-layout="vertical gap:md" class="font-scope">
+    <div class="controls">
+      <clr-range-container>
+        <label for="public-breadcrumb-font">{{ 'breadcrumbPreview.font' | translate }}</label>
+        <input
+          id="public-breadcrumb-font"
+          clrRange
+          type="range"
+          min="0.65"
+          max="1.5"
+          step="0.05"
+          [value]="fontSize() ?? 0.9"
+          (input)="fontSize.set(+$any($event.target).value)"
+        />
+      </clr-range-container>
+      <button type="button" class="btn btn-outline" (click)="reset()">
+        {{ 'breadcrumbPreview.reset' | translate }}
+      </button>
+    </div>
+    <app-demo-playground
+      [title]="'breadcrumbPreview.native' | translate"
+      [tsCode]="usageTs"
+      [htmlCode]="usageHtml"
+      [scssCode]="usageScss"
+    >
+      <div preview class="preview">
+        <cll-breadcrumb
+          data-testid="native-trail"
+          [items]="items()"
+          [ariaLabel]="'breadcrumbPreview.native' | translate"
+        />
+      </div>
+    </app-demo-playground>
+    <app-demo-playground
+      [title]="'breadcrumbs.spa' | translate"
+      [tsCode]="spaUsageTs"
+      [htmlCode]="spaUsageHtml"
+      [scssCode]="usageScss"
+    >
+      <div preview class="preview">
+        <cll-breadcrumb
+          data-testid="spa-trail"
+          [items]="items()"
+          [linkTemplate]="spaLink"
+          [ariaLabel]="'breadcrumbPreview.database' | translate"
+          [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+        />
+      </div>
+    </app-demo-playground>
+    @if (server() === undefined) {
+      <p role="status">{{ 'breadcrumbs.loading' | translate }}</p>
+    }
+    @if (server() === null) {
+      <p role="alert">{{ 'breadcrumbs.error' | translate }}</p>
+    }
+    <article cds-layout="vertical gap:sm">
+      <h2>{{ 'breadcrumbPreview.actions' | translate }}</h2>
+      <p>{{ 'breadcrumbPreview.actionsDescription' | translate }}</p>
+      <form (submit)="submit($event)">
+        <cll-breadcrumb
+          data-testid="action-trail"
+          [items]="actions()"
+          [ariaLabel]="'breadcrumbPreview.actions' | translate"
+          (navigate)="selected.set($event)"
+        />
+      </form>
+      <p aria-live="polite">{{ 'breadcrumbPreview.selected' | translate }} {{ selected()?.label }}</p>
+      <output data-testid="form-state">{{ 'breadcrumbs.submissions' | translate }} {{ submissions() }}</output>
+    </article>
+    <article cds-layout="vertical gap:sm">
+      <h2>{{ 'breadcrumbs.empty' | translate }}</h2>
+      <cll-breadcrumb data-testid="empty-trail" [items]="[]" />
+      <cll-breadcrumb data-testid="singleton-trail" [items]="items().slice(0, 1)" />
+    </article>
+    <details>
+      <summary>{{ 'breadcrumbs.apiTitle' | translate }}</summary>
+      <p>{{ 'breadcrumbs.api' | translate }}</p>
+    </details>
+  </section>
+</cll-page-container>
+<ng-template #spaLink let-item>
+  <a style="font-size: inherit; line-height: inherit" [routerLink]="urlTree(item.href)">{{ item.label }}</a>
+</ng-template>

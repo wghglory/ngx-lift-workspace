@@ -1,13 +1,13 @@
-/** Provisional #185 contracts, deliberately absent from library entry points. */
-export interface ObjectPathBreadcrumbItem {
+/** Demo-local #185 helper contracts; the item shape matches the public breadcrumb contract. */
+export interface BreadcrumbItem {
   readonly id: string;
   readonly label: string;
   readonly href?: string;
   readonly context?: string;
 }
 
-export interface ObjectPathBreadcrumbLinkContext {
-  readonly $implicit: ObjectPathBreadcrumbItem;
+export interface BreadcrumbLinkContext {
+  readonly $implicit: BreadcrumbItem;
 }
 
 export type ObjectPathLocation =
@@ -25,9 +25,7 @@ export interface BuildObjectPathBreadcrumbsOptions {
 }
 
 /** Slash browsing convention only: never decode, normalize, trim or query storage. */
-export function buildObjectPathBreadcrumbs(
-  options: BuildObjectPathBreadcrumbsOptions,
-): readonly ObjectPathBreadcrumbItem[] {
+export function buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): readonly BreadcrumbItem[] {
   const {bucket, key, kind, rootPrefix, emptySegmentLabel, hrefFor} = options;
   if (!bucket.trim() || !emptySegmentLabel.trim()) throw new Error('Bucket and emptySegmentLabel must be nonblank');
   if (kind !== 'prefix' && kind !== 'object') throw new Error('Explicit prefix/object kind required');
@@ -36,7 +34,7 @@ export function buildObjectPathBreadcrumbs(
   if (rootPrefix !== undefined && (!rootPrefix || !rootPrefix.endsWith('/') || !key.startsWith(rootPrefix))) {
     throw new Error('rootPrefix must be a nonempty complete prefix containing the key');
   }
-  const items: ObjectPathBreadcrumbItem[] = [];
+  const items: BreadcrumbItem[] = [];
   const add = (location: ObjectPathLocation, raw: string, label: string) => {
     const href = hrefFor(location);
     if (!href.trim()) throw new Error('hrefFor must return a nonblank application destination');

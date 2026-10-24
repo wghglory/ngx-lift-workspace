@@ -1,4 +1,16 @@
 export const frTranslations: Record<string, string> = {
+  'breadcrumbs.title': 'Fil d’Ariane',
+  'breadcrumbs.intro':
+    'Créez un chemin court à partir des routes de l’application et d’un nom d’entité reçu par HTTP. Utilisez des liens pour les destinations et des boutons pour les actions sans adresse. Modifiez la taille du texte par instance ; les autres chemins héritent de leur taille.',
+  'breadcrumbs.spa': 'Base de données · liens SPA',
+  'breadcrumbs.empty': 'Chemins vides et à un seul élément',
+  'breadcrumbs.apiTitle': 'API publique',
+  'breadcrumbs.api':
+    'items est une liste immuable obligatoire de BreadcrumbItem (id, label, href et context facultatifs). ariaLabel remplace le nom de navigation traduit. linkTemplate fournit de vrais liens SPA ; navigate émet l’ancêtre original sans adresse. Le dernier élément est le texte de la position actuelle. Le contexte par défaut contient le chemin affiché ordonné et le niveau. Les ID en double, libellés vides et destinations invalides déclenchent des erreurs de diagnostic. Définissez --cll-breadcrumb-font-size sur le composant ou un ancêtre ; la typographie en ligne de Clarity est utilisée par défaut. Les chemins passent à la ligne ; le débordement sera traité ultérieurement.',
+  'breadcrumbs.loading': 'Chargement du serveur…',
+  'breadcrumbs.error': 'Impossible de charger le serveur. Rechargez la page pour réessayer.',
+  'breadcrumbs.submissions': 'Envois du formulaire :',
+
   'breadcrumbPreview.actionsDescription':
     'Utilisez des boutons pour les emplacements en mémoire sans URL, par exemple les étapes d’un assistant non enregistré. Cet exemple modifie uniquement l’emplacement sélectionné et vérifie que la navigation ne soumet pas le formulaire. Utilisez un lien dès qu’un emplacement possède une URL.',
   'breadcrumbPreview.title': 'Aperçu interactif du fil d’Ariane',

@@ -1,4 +1,16 @@
 export const zhTWTranslations: Record<string, string> = {
+  'breadcrumbs.title': '麵包屑導覽',
+  'breadcrumbs.intro':
+    '使用應用程式路由與 HTTP 傳回的實體名稱建立簡短路徑。有位址的位置使用連結，無位址的操作使用按鈕。調整單一實例的字型大小；其他路徑繼承字型大小。',
+  'breadcrumbs.spa': '資料庫 · SPA 連結',
+  'breadcrumbs.empty': '空路徑與單項路徑',
+  'breadcrumbs.apiTitle': '公開 API',
+  'breadcrumbs.api':
+    'items 是必填的不可變 BreadcrumbItem 清單（id、label，以及選填的 href、context）。ariaLabel 覆寫本地化導覽名稱。linkTemplate 提供真正的 SPA 連結；navigate 發出無位址祖先的原始物件。最後一項是目前位置文字。預設內容為有序顯示路徑及深度。重複 ID、空白標籤及無效位址會擲出診斷錯誤。在宿主或祖先上設定 --cll-breadcrumb-font-size；預設採用 Clarity 行內字型。路徑會換行；溢位功能稍後提供。',
+  'breadcrumbs.loading': '正在載入伺服器…',
+  'breadcrumbs.error': '無法載入伺服器。請重新載入頁面重試。',
+  'breadcrumbs.submissions': '表單提交次數：',
+
   'breadcrumbPreview.actionsDescription':
     '沒有 URL 的記憶體內位置（例如未儲存精靈中的步驟）使用按鈕。本例僅更新所選位置，並檢查導覽不會提交表單。只要位置有 URL，就應使用連結。',
   'breadcrumbPreview.title': '麵包屑互動預覽',

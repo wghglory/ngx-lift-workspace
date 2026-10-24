@@ -13,7 +13,7 @@ retains existing release, security, and acceptance work.
 | 2           | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass      |
 | 3           | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified            |
 | 4           | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified       |
-| 5           | Deep object-path breadcrumbs           | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
+| 5           | Breadcrumb navigation                  | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
 | 6           | Drawer                                 | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified          |
 | 7           | Cascader, then tree-select             | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved  |
 | 8           | Calendar view                          | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract          |
@@ -78,7 +78,7 @@ first is settled.
 | Repeating key/value fields                           | [Key/value inputs](design/clr-lift/key-value-inputs-design-spec.md)             |
 | Read, edit, validate, and synchronize YAML           | [YAML editor](design/clr-lift/yaml-editor-design-spec.md)                       |
 | Date, time, date-time, ranges, and calendar          | [Temporal controls](design/clr-lift/temporal-controls-design-spec.md)           |
-| Deep folder navigation                               | [Object paths](design/clr-lift/object-path-breadcrumb-design-spec.md)           |
+| Deep folder navigation                               | [Breadcrumbs](design/clr-lift/breadcrumb-design-spec.md)                        |
 | Cascader and tree-select                             | [Hierarchical selection](design/clr-lift/hierarchical-selection-design-spec.md) |
 | Details and edit panels                              | [Drawer](design/clr-lift/drawer-design-spec.md)                                 |
 | Counts, dots, status, and text tags                  | [Badges](design/clr-lift/badge-design-spec.md)                                  |
