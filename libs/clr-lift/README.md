@@ -84,8 +84,9 @@ no router peer. Style the consumer-owned anchor with inherited font size and lin
 inset focus outline (`outline-offset: -2px`) so clipping preserves the focus indicator.
 
 Set `--cll-breadcrumb-font-size` on an instance or ancestor, including through Angular
-`[style.--cll-breadcrumb-font-size]="'1rem'"`. The default uses Clarity inline typography. See the canonical
-specification below for responsive ancestry behavior.
+`[style.--cll-breadcrumb-font-size]="'1rem'"`. It sizes the trail; the ancestor popover keeps Clarity's default inline
+typography and line spacing. Both remain responsive to root font size and browser zoom. See the canonical specification
+below for responsive ancestry behavior.
 
 `maxVisible` defaults to four actual path items, including root/current and excluding disclosure. Available width and
 current typography can remove recent ancestors. The anchored nonmodal details panel preserves complete ordered ancestry,

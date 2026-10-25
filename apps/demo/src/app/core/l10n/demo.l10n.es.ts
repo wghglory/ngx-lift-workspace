@@ -1,4 +1,24 @@
 export const esTranslations: Record<string, string> = {
+  'breadcrumbs.reference.items': 'Ubicaciones ordenadas; la última es el texto actual.',
+  'breadcrumbs.reference.ariaLabel': 'Nombre accesible de navegación.',
+  'breadcrumbs.reference.maxVisible':
+    'Límite que incluye raíz y ubicación actual; mínimo dos. El ancho puede reducirlo.',
+  'breadcrumbs.reference.linkTemplate': 'Enlace real del consumidor; $implicit es el elemento original.',
+  'breadcrumbs.reference.navigate': 'Emite el antecesor original sin dirección al activarlo.',
+  'breadcrumbs.reference.id': 'Identidad única de ruta; se permiten ID vacíos.',
+  'breadcrumbs.reference.label': 'Texto visible no vacío.',
+  'breadcrumbs.reference.href': 'URL de destino; omitir para acciones.',
+  'breadcrumbs.reference.context': 'Detalle visible; nunca se interpreta como destino.',
+  'breadcrumbs.reference.bucket': 'Identidad exacta y no vacía del bucket.',
+  'breadcrumbs.reference.key':
+    'Clave exacta; un prefijo vacío indica la raíz del bucket, los demás terminan en / y los objetos no están vacíos.',
+  'breadcrumbs.reference.kind': 'Tipo de ubicación explícito.',
+  'breadcrumbs.reference.rootPrefix': 'Raíz permitida terminada en /; excluye ubicaciones superiores.',
+  'breadcrumbs.reference.emptySegmentLabel': 'Etiqueta no vacía traducida por el consumidor para segmentos vacíos.',
+  'breadcrumbs.reference.hrefFor':
+    'Fábrica síncrona de destinos para cada elemento, incluido el actual. Codificar claves una vez.',
+  'breadcrumbs.reference.fontSize':
+    'Tamaño del texto de la ruta; establecer en el componente o un antecesor. El panel conserva la tipografía predeterminada de Clarity.',
   'breadcrumbs.searchTitle': 'Buscar antecesores · 100 ubicaciones proporcionadas',
   'breadcrumbs.searchDescription':
     'Abra los detalles y filtre etiquetas repetidas por contexto o nivel. Borre el filtro si no hay coincidencias. Cambie el idioma, el tamaño de letra o el ancho, o sustituya la ruta. El filtrado es local y no navega.',
@@ -38,25 +58,15 @@ export const esTranslations: Record<string, string> = {
 
   'breadcrumbPreview.actionsDescription':
     'Use botones para ubicaciones en memoria sin URL, como los pasos de un asistente sin guardar. Este ejemplo solo actualiza la ubicación seleccionada y comprueba que la navegación no envíe el formulario. Si la ubicación tiene URL, use un enlace.',
-  'breadcrumbPreview.title': 'Vista previa de navegación por migas de pan',
-  'breadcrumbPreview.scope':
-    'Vista previa provisional de interacción para la incidencia #185. Estas API no se exportan desde la biblioteca.',
   'breadcrumbPreview.font': 'Tamaño de fuente',
   'breadcrumbPreview.reset': 'Restablecer',
   'breadcrumbPreview.native': 'Base de datos · enlaces normales',
-  'breadcrumbPreview.spa': 'Buckets · enlaces SPA',
-  'breadcrumbPreview.stationary': 'Este contenido permanece en su sitio al abrir el panel de antecesores.',
-  'breadcrumbPreview.fixture': 'Datos de prueba con clave exacta',
   'breadcrumbPreview.actions': 'Acciones sin dirección dentro de un formulario',
   'breadcrumbPreview.selected': 'Ubicación seleccionada:',
-  'breadcrumbPreview.state': 'Inspeccionar el estado del contrato',
   'breadcrumbPreview.database': 'Base de datos',
   'breadcrumbPreview.servers': 'Servidores SQL',
   'breadcrumbPreview.buckets': 'Buckets',
   'breadcrumbPreview.emptySegment': '(segmento vacío)',
-  'breadcrumbPreview.show': 'Mostrar detalles de ruta y antecesores',
-  'breadcrumbPreview.details': 'Detalles de ruta y antecesores',
-  'breadcrumbPreview.close': 'Cerrar detalles de ruta',
   'keyValueRecipes.loadIncompatible': 'Cargar valores guardados incompatibles',
   'keyValueRecipes.title': 'Elegir editores para los datos',
   'keyValueRecipes.keySelect': 'Seleccionar clave e introducir valor',

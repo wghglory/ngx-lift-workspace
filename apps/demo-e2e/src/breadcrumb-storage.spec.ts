@@ -153,3 +153,27 @@ test('storage prose and empty segment names switch in every locale without chang
     await expect(browser).not.toContainText('!! Key');
   }
 });
+
+test('selecting a direct-link fixture retains the storage viewport', async ({page}) => {
+  await open(page);
+  const browser = page.getByTestId('storage-browser');
+  await browser.getByText('Direct-link fixtures', {exact: true}).click();
+  const fixture = browser.locator('details').first().getByRole('link').nth(1);
+  await fixture.scrollIntoViewIfNeeded();
+  const content = page.locator('main.content-area');
+  const before = await content.evaluate((element) => element.scrollTop);
+  expect(before).toBeGreaterThan(500);
+  await fixture.click();
+  await expect(browser.locator('[aria-current]')).toHaveText('same');
+  await expect(page).toHaveURL(destination('same/same/', 'prefix'));
+  await page.evaluate(
+    () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+  );
+  expect(await content.evaluate((element) => element.scrollTop)).toBeCloseTo(before, 0);
+  await page.goBack();
+  await expect(page).toHaveURL(route);
+  await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeCloseTo(before, 0);
+  await page.locator('a[href="/clr-lift/components/spinner"]').first().click();
+  await expect(page).toHaveURL('/clr-lift/components/spinner');
+  await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBe(0);
+});

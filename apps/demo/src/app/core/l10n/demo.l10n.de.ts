@@ -1,4 +1,24 @@
 export const deTranslations: Record<string, string> = {
+  'breadcrumbs.reference.items': 'Geordnete Orte; der letzte ist der aktuelle Text.',
+  'breadcrumbs.reference.ariaLabel': 'Zugänglicher Navigationsname.',
+  'breadcrumbs.reference.maxVisible':
+    'Obergrenze einschließlich Wurzel und aktuellem Ort; mindestens zwei. Die Breite kann sie verringern.',
+  'breadcrumbs.reference.linkTemplate': 'Eigener echter Link; $implicit ist der ursprüngliche Eintrag.',
+  'breadcrumbs.reference.navigate': 'Gibt den ursprünglichen Vorfahren ohne Adresse bei Aktivierung aus.',
+  'breadcrumbs.reference.id': 'Eindeutige Pfadkennung; leere Kennungen sind erlaubt.',
+  'breadcrumbs.reference.label': 'Nichtleerer Anzeigetext.',
+  'breadcrumbs.reference.href': 'Ziel-URL; für Aktionen weglassen.',
+  'breadcrumbs.reference.context': 'Anzeigedetails; niemals als Ziel interpretiert.',
+  'breadcrumbs.reference.bucket': 'Exakte, nichtleere Bucket-Kennung.',
+  'breadcrumbs.reference.key':
+    'Exakter Schlüssel; ein leeres Präfix bezeichnet die Bucket-Wurzel, andere Präfixe enden mit /, Objektschlüssel sind nichtleer.',
+  'breadcrumbs.reference.kind': 'Explizite Ortsart.',
+  'breadcrumbs.reference.rootPrefix': 'Erlaubte Wurzel mit abschließendem /; höhere Orte werden ausgeschlossen.',
+  'breadcrumbs.reference.emptySegmentLabel': 'Vom Aufrufer übersetzte, nichtleere Bezeichnung leerer Segmente.',
+  'breadcrumbs.reference.hrefFor':
+    'Synchrone Zielfabrik für jeden Eintrag einschließlich des aktuellen. Rohschlüssel einmal kodieren.',
+  'breadcrumbs.reference.fontSize':
+    'Schriftgröße des Pfads; am Host oder Vorfahren setzen. Das Popover behält die Clarity-Standardtypografie.',
   'breadcrumbs.searchTitle': 'Vorfahren finden · 100 übergebene Orte',
   'breadcrumbs.searchDescription':
     'Details öffnen und wiederholte Namen nach Kontext oder Ebene filtern. Den Filter bei fehlenden Treffern löschen. Seitensprache, Schriftgröße und Breite ändern oder den Pfad ersetzen. Die lokale Filterung löst keine Navigation aus.',
@@ -38,25 +58,15 @@ export const deTranslations: Record<string, string> = {
 
   'breadcrumbPreview.actionsDescription':
     'Verwenden Sie Schaltflächen für Orte im Arbeitsspeicher ohne URL, etwa Schritte in einem ungespeicherten Assistenten. Dieses Beispiel ändert nur die Auswahl und prüft, dass die Navigation das Formular nicht absendet. Hat ein Ort eine URL, verwenden Sie einen Link.',
-  'breadcrumbPreview.title': 'Breadcrumb-Interaktionsvorschau',
-  'breadcrumbPreview.scope':
-    'Vorläufige Interaktionsvorschau für Issue #185. Diese APIs werden nicht von der Bibliothek exportiert.',
   'breadcrumbPreview.font': 'Schriftgröße',
   'breadcrumbPreview.reset': 'Zurücksetzen',
   'breadcrumbPreview.native': 'Datenbank · normale Links',
-  'breadcrumbPreview.spa': 'Buckets · SPA-Links',
-  'breadcrumbPreview.stationary': 'Dieser Inhalt bleibt beim Öffnen des Vorfahrenbereichs an derselben Stelle.',
-  'breadcrumbPreview.fixture': 'Testdaten mit exaktem Schlüssel',
   'breadcrumbPreview.actions': 'Adresslose Aktionen in einem Formular',
   'breadcrumbPreview.selected': 'Ausgewählter Ort:',
-  'breadcrumbPreview.state': 'Schnittstellenzustand anzeigen',
   'breadcrumbPreview.database': 'Datenbank',
   'breadcrumbPreview.servers': 'SQL-Server',
   'breadcrumbPreview.buckets': 'Buckets',
   'breadcrumbPreview.emptySegment': '(leeres Segment)',
-  'breadcrumbPreview.show': 'Pfaddetails und Vorfahren anzeigen',
-  'breadcrumbPreview.details': 'Pfaddetails und Vorfahren',
-  'breadcrumbPreview.close': 'Pfaddetails schließen',
   'keyValueRecipes.loadIncompatible': 'Inkompatible gespeicherte Werte laden',
   'keyValueRecipes.title': 'Editoren für Ihre Daten auswählen',
   'keyValueRecipes.keySelect': 'Schlüssel auswählen, Wert eingeben',

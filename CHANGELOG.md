@@ -15,11 +15,11 @@ recorded for the affected releases.
   semantics, and the inherited `--cll-breadcrumb-font-size` CSS property. The working database/server demo and
   [design specification](docs/design/clr-lift/breadcrumb-design-spec.md) document this first short-trail increment.
   Responsive collapse defaults to four actual items, preserves root/current, and adapts to container and typography
-  changes. An anchored scrollable panel exposes all supplied ancestors and full labels without shifting content.
-  Includes localized 30-level width/font/path-replacement demos and keyboard/focus handling. Above twenty hidden
-  ancestors, a labeled local label/context filter preserves current context, supports empty-result recovery and
-  announces matching counts. A separate 100-level supplied-item playground exercises filtering, language and layout
-  changes.
+  changes. An anchored scrollable panel exposes all supplied ancestors and full labels without shifting content. The
+  trail's font-size setting leaves the ancestor panel at Clarity's default typography and line spacing. Includes
+  localized 30-level width/font/path-replacement demos and keyboard/focus handling. Above twenty hidden ancestors, a
+  labeled local label/context filter preserves current context, supports empty-result recovery and announces matching
+  counts. A separate 100-level supplied-item playground exercises filtering, language and layout changes.
 - `clr-lift` exports `buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` for
   synchronous exact-key bucket/prefix/object trails with caller-owned destinations and permitted roots. Includes a
   localized fixture-backed bucket browser and [usage/reference guide](docs/guides/object-path-breadcrumbs.md).

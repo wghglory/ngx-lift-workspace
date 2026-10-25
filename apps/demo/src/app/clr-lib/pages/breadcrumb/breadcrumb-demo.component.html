@@ -1,6 +1,11 @@
-<cll-page-container [title]="'breadcrumbs.title' | translate">
+<cll-page-container [title]="'BreadcrumbComponent'">
   <p>{{ 'breadcrumbs.intro' | translate }}</p>
-  <section cds-layout="vertical gap:md" class="font-scope">
+  <section
+    cds-layout="vertical gap:md"
+    class="font-scope"
+    [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+  >
+    <h2>{{ 'common.examples' | translate }}</h2>
     <div class="controls">
       <clr-range-container>
         <label for="public-breadcrumb-font">{{ 'breadcrumbPreview.font' | translate }}</label>
@@ -139,7 +144,7 @@
       <p role="alert">{{ 'breadcrumbs.error' | translate }}</p>
     }
     <article cds-layout="vertical gap:sm">
-      <h2>{{ 'breadcrumbPreview.actions' | translate }}</h2>
+      <h3>{{ 'breadcrumbPreview.actions' | translate }}</h3>
       <p>{{ 'breadcrumbPreview.actionsDescription' | translate }}</p>
       <form (submit)="submit($event)">
         <cll-breadcrumb
@@ -153,15 +158,31 @@
       <output data-testid="form-state">{{ 'breadcrumbs.submissions' | translate }} {{ submissions() }}</output>
     </article>
     <article cds-layout="vertical gap:sm">
-      <h2>{{ 'breadcrumbs.empty' | translate }}</h2>
+      <h3>{{ 'breadcrumbs.empty' | translate }}</h3>
       <cll-breadcrumb data-testid="empty-trail" [items]="[]" />
       <cll-breadcrumb data-testid="singleton-trail" [items]="singletonItems()" />
     </article>
     <app-breadcrumb-storage />
-    <details>
-      <summary>{{ 'breadcrumbs.apiTitle' | translate }}</summary>
-      <p>{{ 'breadcrumbs.api' | translate }}</p>
-    </details>
+  </section>
+  <section id="api-reference" cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <h3>BreadcrumbComponent (<code>cll-breadcrumb</code>)</h3>
+    <p>{{ 'breadcrumbs.api' | translate }}</p>
+    <h4>{{ 'common.inputs' | translate }}</h4>
+    <app-api-table [properties]="inputs()" />
+    <h4>{{ 'common.outputs' | translate }}</h4>
+    <app-api-table [properties]="outputs()" />
+    <h3>BreadcrumbItem</h3>
+    <app-api-table [properties]="itemProperties()" />
+    <h3>BreadcrumbLinkContext</h3>
+    <code>readonly $implicit: BreadcrumbItem</code>
+    <h3>buildObjectPathBreadcrumbs</h3>
+    <app-code-block [code]="helperSignature" lang="typescript" />
+    <app-api-table [properties]="helperOptions()" />
+    <h3>ObjectPathLocation</h3>
+    <app-code-block [code]="locationType" lang="typescript" />
+    <h3>CSS</h3>
+    <app-api-table [properties]="styles()" />
   </section>
 </cll-page-container>
 <ng-template #spaLink let-item>

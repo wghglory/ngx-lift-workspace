@@ -1,10 +1,16 @@
 import {DOCUMENT, ViewportScroller} from '@angular/common';
 import {inject, Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+
+/** Opt-in for in-page demo navigation; transient info never changes native link destinations. */
+export const PRESERVE_CONTENT_SCROLL = Symbol('preserve-content-scroll');
 
 /** Routes scroll inside Clarity's content area rather than the fixed browser viewport. */
 @Injectable()
 export class ContentViewportScroller extends ViewportScroller {
   private readonly document = inject(DOCUMENT);
+  private readonly router = inject(Router);
+  private preservedNavigationId: number | undefined;
   private offset: [number, number] | (() => [number, number]) = [0, 0];
 
   private get content(): HTMLElement | null {
@@ -20,6 +26,17 @@ export class ContentViewportScroller extends ViewportScroller {
   }
 
   override scrollToPosition([left, top]: [number, number], options?: ScrollOptions): void {
+    const navigation = this.router.lastSuccessfulNavigation();
+    if (
+      left === 0 &&
+      top === 0 &&
+      navigation?.trigger === 'imperative' &&
+      navigation.extras.info === PRESERVE_CONTENT_SCROLL &&
+      this.preservedNavigationId !== navigation.id
+    ) {
+      this.preservedNavigationId = navigation.id;
+      return;
+    }
     this.content?.scrollTo({left, top, ...options});
   }
 

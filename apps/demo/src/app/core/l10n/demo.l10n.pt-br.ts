@@ -1,4 +1,23 @@
 export const ptBRTranslations: Record<string, string> = {
+  'breadcrumbs.reference.items': 'Locais ordenados; o último é o texto atual.',
+  'breadcrumbs.reference.ariaLabel': 'Nome acessível da navegação.',
+  'breadcrumbs.reference.maxVisible': 'Limite incluindo raiz e local atual; mínimo dois. A largura pode reduzi-lo.',
+  'breadcrumbs.reference.linkTemplate': 'Link real do consumidor; $implicit é o item original.',
+  'breadcrumbs.reference.navigate': 'Emite o ancestral original sem endereço ao ativar.',
+  'breadcrumbs.reference.id': 'Identidade única do caminho; IDs vazios são permitidos.',
+  'breadcrumbs.reference.label': 'Texto visível não vazio.',
+  'breadcrumbs.reference.href': 'URL de destino; omita para ações.',
+  'breadcrumbs.reference.context': 'Detalhe visível; nunca interpretado como destino.',
+  'breadcrumbs.reference.bucket': 'Identidade exata e não vazia do bucket.',
+  'breadcrumbs.reference.key':
+    'Chave exata; um prefixo vazio indica a raiz do bucket, os demais terminam em / e objetos não são vazios.',
+  'breadcrumbs.reference.kind': 'Tipo explícito de local.',
+  'breadcrumbs.reference.rootPrefix': 'Raiz permitida terminada em /; exclui locais superiores.',
+  'breadcrumbs.reference.emptySegmentLabel': 'Rótulo não vazio traduzido pelo chamador para segmentos vazios.',
+  'breadcrumbs.reference.hrefFor':
+    'Fábrica síncrona de destinos para cada item, incluindo o atual. Codifique chaves uma vez.',
+  'breadcrumbs.reference.fontSize':
+    'Tamanho do texto do caminho; defina no componente ou ancestral. O painel mantém a tipografia padrão do Clarity.',
   'breadcrumbs.searchTitle': 'Encontrar ancestrais · 100 locais fornecidos',
   'breadcrumbs.searchDescription':
     'Abra os detalhes e filtre rótulos repetidos por contexto ou nível. Limpe o filtro se não houver resultados. Altere o idioma da página, o tamanho da fonte ou a largura, ou substitua o caminho. A filtragem é local e não navega.',
@@ -37,25 +56,15 @@ export const ptBRTranslations: Record<string, string> = {
 
   'breadcrumbPreview.actionsDescription':
     'Use botões para locais em memória sem URL, como etapas de um assistente não salvo. Este exemplo apenas atualiza o local selecionado e verifica que a navegação não envia o formulário. Use links sempre que o local tiver uma URL.',
-  'breadcrumbPreview.title': 'Prévia interativa do caminho de navegação',
-  'breadcrumbPreview.scope':
-    'Prévia provisória de interação para a issue #185. Estas APIs não são exportadas pela biblioteca.',
   'breadcrumbPreview.font': 'Tamanho da fonte',
   'breadcrumbPreview.reset': 'Redefinir',
   'breadcrumbPreview.native': 'Banco de dados · links comuns',
-  'breadcrumbPreview.spa': 'Buckets · links SPA',
-  'breadcrumbPreview.stationary': 'Este conteúdo permanece no lugar ao abrir o painel de ancestrais.',
-  'breadcrumbPreview.fixture': 'Dados de teste com chave exata',
   'breadcrumbPreview.actions': 'Ações sem endereço em um formulário',
   'breadcrumbPreview.selected': 'Local selecionado:',
-  'breadcrumbPreview.state': 'Inspecionar o estado do contrato',
   'breadcrumbPreview.database': 'Banco de dados',
   'breadcrumbPreview.servers': 'Servidores SQL',
   'breadcrumbPreview.buckets': 'Buckets',
   'breadcrumbPreview.emptySegment': '(segmento vazio)',
-  'breadcrumbPreview.show': 'Mostrar detalhes do caminho e ancestrais',
-  'breadcrumbPreview.details': 'Detalhes do caminho e ancestrais',
-  'breadcrumbPreview.close': 'Fechar detalhes do caminho',
   'keyValueRecipes.loadIncompatible': 'Carregar valores salvos incompatíveis',
   'keyValueRecipes.title': 'Escolher editores para os dados',
   'keyValueRecipes.keySelect': 'Selecionar chave e inserir valor',

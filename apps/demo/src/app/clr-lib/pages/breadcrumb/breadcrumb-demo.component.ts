@@ -6,7 +6,11 @@ import {ClrRangeModule} from '@clr/angular';
 import {BreadcrumbComponent, BreadcrumbItem, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {catchError, of} from 'rxjs';
 
+import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
+import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
+
+import {highlight} from '../../../shared/utils/highlight.util';
 
 import {BreadcrumbStorageComponent} from './breadcrumb-storage.component';
 
@@ -22,6 +26,8 @@ const path = '/clr-lift/components/breadcrumb';
     RouterLink,
     ClrRangeModule,
     DemoPlaygroundComponent,
+    ApiTableComponent,
+    CodeBlockComponent,
   ],
   templateUrl: './breadcrumb-demo.component.html',
   styles: `
@@ -126,7 +132,7 @@ export class BreadcrumbDemoComponent {
 import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
 @Component({
   selector: 'app-long-path', imports: [BreadcrumbComponent],
-  template: '<cll-breadcrumb [items]="items" />',
+  templateUrl: './long-path.component.html',
 })
 export class LongPathComponent {
   readonly items: readonly BreadcrumbItem[] = Array.from({length: 100}, (_, index) => ({
@@ -168,7 +174,7 @@ import {BreadcrumbComponent, BreadcrumbItem} from 'clr-lift';
 @Component({
   selector: 'app-server-path',
   imports: [BreadcrumbComponent],
-  template: '<cll-breadcrumb [items]="items()" />',
+  templateUrl: './server-path.component.html',
 })
 export class ServerPathComponent {
   readonly items = signal<readonly BreadcrumbItem[]>([
@@ -210,6 +216,110 @@ export class RoutedServerPathComponent {
 .font-scope {
   --cll-breadcrumb-font-size: 0.9rem;
 }`;
+  readonly helperSignature =
+    highlight(`import {buildObjectPathBreadcrumbs, BuildObjectPathBreadcrumbsOptions, BreadcrumbItem} from 'clr-lift';
+
+// Signature reference; supply application-owned options.
+buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): readonly BreadcrumbItem[];`);
+  readonly locationType = highlight(`type ObjectPathLocation =
+  | {readonly kind: 'bucket'; readonly bucket: string}
+  | {readonly kind: 'prefix'; readonly bucket: string; readonly prefix: string}
+  | {readonly kind: 'object'; readonly bucket: string; readonly key: string};`);
+  readonly inputs = computed<ApiProperty[]>(() => [
+    {
+      name: 'items',
+      type: 'readonly BreadcrumbItem[]',
+      required: true,
+      description: this.translation.translate('breadcrumbs.reference.items'),
+    },
+    {
+      name: 'ariaLabel',
+      type: 'string',
+      defaultValue: 'undefined',
+      description: this.translation.translate('breadcrumbs.reference.ariaLabel'),
+    },
+    {
+      name: 'maxVisible',
+      type: 'number',
+      defaultValue: '4',
+      description: this.translation.translate('breadcrumbs.reference.maxVisible'),
+    },
+    {
+      name: 'linkTemplate',
+      type: 'TemplateRef<BreadcrumbLinkContext>',
+      defaultValue: 'undefined',
+      description: this.translation.translate('breadcrumbs.reference.linkTemplate'),
+    },
+  ]);
+  readonly outputs = computed<ApiProperty[]>(() => [
+    {
+      name: 'navigate',
+      type: 'BreadcrumbItem',
+      description: this.translation.translate('breadcrumbs.reference.navigate'),
+    },
+  ]);
+  readonly itemProperties = computed<ApiProperty[]>(() => [
+    {name: 'id', type: 'string', required: true, description: this.translation.translate('breadcrumbs.reference.id')},
+    {
+      name: 'label',
+      type: 'string',
+      required: true,
+      description: this.translation.translate('breadcrumbs.reference.label'),
+    },
+    {
+      name: 'href',
+      type: 'string',
+      defaultValue: 'undefined',
+      description: this.translation.translate('breadcrumbs.reference.href'),
+    },
+    {
+      name: 'context',
+      type: 'string',
+      defaultValue: 'undefined',
+      description: this.translation.translate('breadcrumbs.reference.context'),
+    },
+  ]);
+  readonly helperOptions = computed<ApiProperty[]>(() => [
+    {
+      name: 'bucket',
+      type: 'string',
+      required: true,
+      description: this.translation.translate('breadcrumbs.reference.bucket'),
+    },
+    {name: 'key', type: 'string', required: true, description: this.translation.translate('breadcrumbs.reference.key')},
+    {
+      name: 'kind',
+      type: "'prefix' | 'object'",
+      required: true,
+      description: this.translation.translate('breadcrumbs.reference.kind'),
+    },
+    {
+      name: 'rootPrefix',
+      type: 'string',
+      defaultValue: 'undefined',
+      description: this.translation.translate('breadcrumbs.reference.rootPrefix'),
+    },
+    {
+      name: 'emptySegmentLabel',
+      type: 'string',
+      required: true,
+      description: this.translation.translate('breadcrumbs.reference.emptySegmentLabel'),
+    },
+    {
+      name: 'hrefFor',
+      type: '(location: ObjectPathLocation) => string',
+      required: true,
+      description: this.translation.translate('breadcrumbs.reference.hrefFor'),
+    },
+  ]);
+  readonly styles = computed<ApiProperty[]>(() => [
+    {
+      name: '--cll-breadcrumb-font-size',
+      type: '<length>',
+      defaultValue: 'var(--clr-base-typography-font-size-inline, 0.65rem)',
+      description: this.translation.translate('breadcrumbs.reference.fontSize'),
+    },
+  ]);
   urlTree(href: string) {
     return this.router.parseUrl(href);
   }

@@ -1,4 +1,24 @@
 export const frTranslations: Record<string, string> = {
+  'breadcrumbs.reference.items': 'Emplacements ordonnés ; le dernier est le texte courant.',
+  'breadcrumbs.reference.ariaLabel': 'Nom accessible de la navigation.',
+  'breadcrumbs.reference.maxVisible':
+    'Limite incluant racine et emplacement courant ; minimum deux. La largeur peut la réduire.',
+  'breadcrumbs.reference.linkTemplate': 'Véritable lien fourni par le consommateur ; $implicit est l’élément original.',
+  'breadcrumbs.reference.navigate': 'Émet l’ancêtre original sans adresse lors de son activation.',
+  'breadcrumbs.reference.id': 'Identité unique du chemin ; les identifiants vides sont autorisés.',
+  'breadcrumbs.reference.label': 'Texte affiché non vide.',
+  'breadcrumbs.reference.href': 'URL cible ; omettre pour une action.',
+  'breadcrumbs.reference.context': 'Détail affiché ; jamais interprété comme destination.',
+  'breadcrumbs.reference.bucket': 'Identité exacte et non vide du bucket.',
+  'breadcrumbs.reference.key':
+    'Clé exacte ; un préfixe vide désigne la racine du bucket, les autres finissent par / et les objets sont non vides.',
+  'breadcrumbs.reference.kind': 'Type explicite d’emplacement.',
+  'breadcrumbs.reference.rootPrefix': 'Racine autorisée terminée par / ; exclut les emplacements supérieurs.',
+  'breadcrumbs.reference.emptySegmentLabel': 'Libellé non vide traduit par l’appelant pour les segments vides.',
+  'breadcrumbs.reference.hrefFor':
+    'Fabrique synchrone de destinations pour chaque élément, y compris le courant. Encoder les clés une fois.',
+  'breadcrumbs.reference.fontSize':
+    'Taille du texte du chemin ; définir sur le composant ou un ancêtre. Le panneau conserve la typographie par défaut de Clarity.',
   'breadcrumbs.searchTitle': 'Rechercher des ancêtres · 100 emplacements fournis',
   'breadcrumbs.searchDescription':
     'Ouvrez les détails et filtrez les libellés répétés par contexte ou niveau. Effacez le filtre en cas de résultat vide. Changez la langue, la taille du texte ou la largeur, ou remplacez le chemin. Le filtrage est local et ne déclenche aucune navigation.',
@@ -38,25 +58,15 @@ export const frTranslations: Record<string, string> = {
 
   'breadcrumbPreview.actionsDescription':
     'Utilisez des boutons pour les emplacements en mémoire sans URL, par exemple les étapes d’un assistant non enregistré. Cet exemple modifie uniquement l’emplacement sélectionné et vérifie que la navigation ne soumet pas le formulaire. Utilisez un lien dès qu’un emplacement possède une URL.',
-  'breadcrumbPreview.title': 'Aperçu interactif du fil d’Ariane',
-  'breadcrumbPreview.scope':
-    'Aperçu provisoire de l’interaction pour le ticket #185. Ces API ne sont pas exportées par la bibliothèque.',
   'breadcrumbPreview.font': 'Taille de police',
   'breadcrumbPreview.reset': 'Réinitialiser',
   'breadcrumbPreview.native': 'Base de données · liens ordinaires',
-  'breadcrumbPreview.spa': 'Buckets · liens SPA',
-  'breadcrumbPreview.stationary': 'Ce contenu reste en place à l’ouverture du panneau des ancêtres.',
-  'breadcrumbPreview.fixture': 'Données de test à clé exacte',
   'breadcrumbPreview.actions': 'Actions sans adresse dans un formulaire',
   'breadcrumbPreview.selected': 'Emplacement sélectionné :',
-  'breadcrumbPreview.state': 'Examiner l’état du contrat',
   'breadcrumbPreview.database': 'Base de données',
   'breadcrumbPreview.servers': 'Serveurs SQL',
   'breadcrumbPreview.buckets': 'Buckets',
   'breadcrumbPreview.emptySegment': '(segment vide)',
-  'breadcrumbPreview.show': 'Afficher les détails du chemin et les ancêtres',
-  'breadcrumbPreview.details': 'Détails du chemin et ancêtres',
-  'breadcrumbPreview.close': 'Fermer les détails du chemin',
   'keyValueRecipes.loadIncompatible': 'Charger des valeurs enregistrées incompatibles',
   'keyValueRecipes.title': 'Choisir les éditeurs adaptés aux données',
   'keyValueRecipes.keySelect': 'Sélectionner une clé et saisir une valeur',

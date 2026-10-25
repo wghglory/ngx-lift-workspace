@@ -125,7 +125,8 @@ a:focus-visible {
   overflow: auto;
   overscroll-behavior: contain;
   overflow-wrap: anywhere;
-  font-size: inherit;
+  font-size: var(--clr-base-typography-font-size-inline, 0.65rem);
+  line-height: 1.4;
   color: var(--clr-global-font-color);
   background: var(--clr-card-bg-color);
   border: 1px solid var(--clr-card-border-color);
