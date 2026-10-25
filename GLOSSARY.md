@@ -26,3 +26,19 @@ bucket, or a permitted prefix within a bucket.
 reachability refers to those supplied locations, not every parent that might exist outside the trail.
 
 **Current location**: The final location in the navigable trail, representing the location being viewed.
+
+## Datagrid selection
+
+**Item**: A resource offered for selection in a datagrid field. Its identity is independent of its current display
+position or presentation.
+
+_Avoid_: Row when referring to the resource rather than its displayed grid row.
+
+**Selection value**: The resource identity or collection of resource identities chosen in a datagrid field. A resource
+can remain selected while it is outside the currently displayed rows.
+
+**Selection key**: The stable identifier distinguishing a selectable resource within the field's resource scope. A
+display name alone is insufficient when different resources in that scope can share it.
+
+**Selection scope**: The items covered by one select-all action after filtering and pagination. Scrolling an item out of
+view does not remove it from this scope, and a footer alone does not establish pagination.
