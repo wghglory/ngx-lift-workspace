@@ -395,11 +395,6 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'breadcrumb-preview',
-            redirectTo: 'breadcrumb',
-            pathMatch: 'full',
-          },
-          {
             path: 'spinner',
             loadComponent: () =>
               import('./clr-lib/pages/spinner-demo/spinner-demo.component').then(

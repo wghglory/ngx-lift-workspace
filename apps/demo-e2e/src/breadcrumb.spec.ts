@@ -12,8 +12,7 @@ test.beforeEach(async ({page}) => {
   await expect(page.getByTestId('spa-trail').locator('[aria-current]')).toHaveText('API server 42');
 });
 
-test('public documentation replaces the prototype and exposes the complete API reference', async ({page}) => {
-  await page.goto('/clr-lift/components/breadcrumb-preview');
+test('public documentation exposes the complete API reference', async ({page}) => {
   await expect(page).toHaveURL(route);
   await expect(page.getByRole('heading', {level: 1})).toHaveText('BreadcrumbComponent');
   await expect(page.getByRole('heading', {name: 'Examples', exact: true})).toBeVisible();
@@ -164,10 +163,9 @@ for (const theme of ['light', 'dark']) {
     await page.setViewportSize({width: 390, height: 800});
     const spa = page.getByTestId('spa-trail');
     const native = page.getByTestId('native-trail');
-    const inherited = await native.evaluate((element) => getComputedStyle(element).fontSize);
     await page.getByRole('slider', {name: 'Font size'}).first().press('End');
     await expect.poll(() => spa.evaluate((element) => getComputedStyle(element).fontSize)).toBe('30px');
-    expect(await native.evaluate((element) => getComputedStyle(element).fontSize)).toBe(inherited);
+    expect(await native.evaluate((element) => getComputedStyle(element).fontSize)).toBe('30px');
     expect(
       await spa
         .getByRole('link')
@@ -224,4 +222,18 @@ test('HTTP failure shows localized recovery while route ancestors stay usable', 
   await page.reload();
   await expect(page.getByRole('alert')).toHaveText('Could not load the server. Reload the page to retry.');
   await expect(page.getByTestId('spa-trail').getByRole('link', {name: 'Database', exact: true})).toBeVisible();
+});
+
+test('page font control updates inherited and per-instance breadcrumb sizes and resets', async ({page}) => {
+  const initialSize = await page.getByTestId('native-trail').evaluate((element) => getComputedStyle(element).fontSize);
+  await page.getByRole('slider', {name: 'Font size'}).first().press('End');
+  for (const id of ['native-trail', 'spa-trail', 'storage-trail', 'action-trail']) {
+    await expect
+      .poll(() => page.getByTestId(id).evaluate((element) => getComputedStyle(element).fontSize))
+      .toBe('30px');
+  }
+  await page.getByRole('button', {name: 'Reset', exact: true}).first().click();
+  await expect
+    .poll(() => page.getByTestId('native-trail').evaluate((element) => getComputedStyle(element).fontSize))
+    .toBe(initialSize);
 });

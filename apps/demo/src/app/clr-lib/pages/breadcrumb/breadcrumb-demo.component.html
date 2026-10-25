@@ -1,6 +1,10 @@
 <cll-page-container [title]="'BreadcrumbComponent'">
   <p>{{ 'breadcrumbs.intro' | translate }}</p>
-  <section cds-layout="vertical gap:md" class="font-scope">
+  <section
+    cds-layout="vertical gap:md"
+    class="font-scope"
+    [style.--cll-breadcrumb-font-size]="fontSize() === null ? null : fontSize() + 'rem'"
+  >
     <h2>{{ 'common.examples' | translate }}</h2>
     <div class="controls">
       <clr-range-container>

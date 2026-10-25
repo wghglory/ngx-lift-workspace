@@ -11,6 +11,7 @@ import {
   TranslationService,
 } from 'clr-lift';
 
+import {PRESERVE_CONTENT_SCROLL} from '../../../core/content-viewport-scroller';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 
 const path = '/clr-lift/components/breadcrumb';
@@ -52,6 +53,7 @@ const objects = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbStorageComponent {
+  readonly navigationInfo = PRESERVE_CONTENT_SCROLL;
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly translationService = inject(TranslationService);
@@ -175,6 +177,6 @@ export class BucketPathComponent {
     return this.router.parseUrl(href);
   }
   reset(): void {
-    void this.router.navigateByUrl(path);
+    void this.router.navigateByUrl(path, {info: this.navigationInfo});
   }
 }

@@ -13,11 +13,11 @@ in #185 are approved for this increment. Responsive ancestry (#187) is implement
 ### Public demo consolidation
 
 All five delivery issues (#185–#189) are closed and their implementation PRs are merged. The provisional interaction
-preview is retired now that the public component covers its scenarios. Its old route redirects to
-`/clr-lift/components/breadcrumb`; the sidebar exposes only the public demo. Prototype implementation and prototype-only
-tests are removed; public-component browser suites retain navigation, focus, exact-key, filtering and accessibility
-coverage. The demo follows the shared Examples / API Reference layout and uses `app-api-table` for component inputs,
-outputs, item fields, helper options and the typography custom property, with descriptions in all eleven locales.
+preview is retired now that the public component covers its scenarios. Its old route is removed; the sidebar exposes
+only `/clr-lift/components/breadcrumb`. Prototype implementation and prototype-only tests are removed; public-component
+browser suites retain navigation, focus, exact-key, filtering and accessibility coverage. The demo follows the shared
+Examples / API Reference layout and uses `app-api-table` for component inputs, outputs, item fields, helper options and
+the typography custom property, with descriptions in all eleven locales.
 
 The #185 sections below are historical design and validation records. They do not describe a second supported renderer.
 Independent language and assistive-technology acceptance is pending in
@@ -255,8 +255,8 @@ From the workspace root:
 NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run demo:serve --port=4307 --hmr=false
 ```
 
-Open <http://localhost:4307/clr-lift/components/breadcrumb>, listed as **Breadcrumbs** in Components. The old preview
-URL redirects here. The short socket directory avoids the macOS Nx socket-length limit. The
+Open <http://localhost:4307/clr-lift/components/breadcrumb>, listed as **Breadcrumbs** in Components. The retired
+preview route has been removed. The short socket directory avoids the macOS Nx socket-length limit. The
 [public demo](../../../apps/demo/src/app/clr-lib/pages/breadcrumb/breadcrumb-demo.component.ts) now exercises the
 settled library contracts. Its storage example exposes route/API state and exact-key direct-link fixtures. The
 signatures and acceptance evidence below record the original #185 prototype stage.
@@ -1230,3 +1230,20 @@ Independent native-speaker and assistive-technology reviews have **not** been pe
 assessor/environment/revision requirements and closure checklist are tracked in
 [issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196). Closing the implementation parent does not
 close that acceptance issue or imply human approval.
+
+### Maintainer demo feedback
+
+The maintainer requested removal of the retired preview redirect, so that route is now deleted. The page font control
+sets `--cll-breadcrumb-font-size` on the examples scope; ordinary links, actions and storage breadcrumbs inherit the
+selected size while the SPA example also demonstrates an instance binding. Reset restores the inherited default.
+
+Storage fixtures, ancestor/child links and Reset opt into viewport preservation using transient Angular Router `info`.
+The content scroller skips the automatic top reset once for that successful imperative navigation. Real `href` values
+and native modified-click behavior remain intact; Back/Forward restoration, anchor scrolling and normal page navigation
+retain their existing behavior. No library public API or navigation behavior changes.
+
+The regression first reproduced ordinary-link text staying at 18px instead of the requested 30px and storage fixture
+navigation resetting content scroll from 3482px to zero. Final validation passed after the scoped font and scroll fixes:
+**120 browser checks** across Chromium, Firefox and WebKit (including fixture viewport retention, Back restoration and
+ordinary page reset), **282 demo unit tests**, demo/E2E lint/type checks and the production build. Independent human
+acceptance remains pending in #196.
