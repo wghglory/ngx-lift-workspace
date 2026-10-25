@@ -396,10 +396,8 @@ export const routes: Routes = [
           },
           {
             path: 'breadcrumb-preview',
-            loadComponent: () =>
-              import('./clr-lib/pages/breadcrumb-preview/breadcrumb-preview.component').then(
-                (module) => module.BreadcrumbPreviewComponent,
-              ),
+            redirectTo: 'breadcrumb',
+            pathMatch: 'full',
           },
           {
             path: 'spinner',

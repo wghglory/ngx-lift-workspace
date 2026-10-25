@@ -12,6 +12,75 @@ test.beforeEach(async ({page}) => {
   await expect(page.getByTestId('spa-trail').locator('[aria-current]')).toHaveText('API server 42');
 });
 
+test('public documentation replaces the prototype and exposes the complete API reference', async ({page}) => {
+  await page.goto('/clr-lift/components/breadcrumb-preview');
+  await expect(page).toHaveURL(route);
+  await expect(page.getByRole('heading', {level: 1})).toHaveText('BreadcrumbComponent');
+  await expect(page.getByRole('heading', {name: 'Examples', exact: true})).toBeVisible();
+  await expect(page.getByRole('link', {name: 'Breadcrumb interaction preview', exact: true})).toHaveCount(0);
+  const reference = page.locator('#api-reference');
+  await expect(reference.getByRole('heading', {name: 'API Reference', exact: true})).toBeVisible();
+  await expect(reference.locator('app-api-table')).toHaveCount(5);
+  for (const name of [
+    'items',
+    'ariaLabel',
+    'maxVisible',
+    'linkTemplate',
+    'navigate',
+    'id',
+    'label',
+    'href',
+    'context',
+    'bucket',
+    'key',
+    'kind',
+    'rootPrefix',
+    'emptySegmentLabel',
+    'hrefFor',
+    '--cll-breadcrumb-font-size',
+  ]) {
+    await expect(
+      reference
+        .locator('.prop-name')
+        .filter({hasText: new RegExp('^' + name + '$')})
+        .first(),
+    ).toBeVisible();
+  }
+  await expect(reference.getByText('localized', {exact: true})).toHaveCount(0);
+  await expect(reference.getByText('display trail + depth', {exact: true})).toHaveCount(0);
+  await expect(reference.getByText('Clarity inline typography', {exact: true})).toHaveCount(0);
+  await expect(reference.getByText('CSS length', {exact: true})).toHaveCount(0);
+  await expect(
+    reference.getByText('var(--clr-base-typography-font-size-inline, 0.65rem)', {exact: true}),
+  ).toBeVisible();
+  await expect(
+    reference.getByText('Exact key; empty prefix means bucket root, other prefixes end in /, objects are nonempty.', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.setViewportSize({width: 390, height: 844});
+  for (const [language, description] of [
+    ['简体中文', '有序位置；最后一项为当前位置文本。'],
+    ['繁體中文', '有序位置；最後一項為目前位置文字。'],
+    ['Deutsch', 'Geordnete Orte; der letzte ist der aktuelle Text.'],
+    ['Español', 'Ubicaciones ordenadas; la última es el texto actual.'],
+    ['Français', 'Emplacements ordonnés ; le dernier est le texte courant.'],
+    ['日本語', '順序付きの場所。最後の項目は現在地のテキストです。'],
+    ['한국어', '순서가 있는 위치 목록. 마지막 항목은 현재 위치 텍스트입니다.'],
+    ['Nederlands', 'Geordende locaties; de laatste is de huidige tekst.'],
+    ['Português', 'Locais ordenados; o último é o texto atual.'],
+    ['Русский', 'Упорядоченные места; последнее — текст текущего места.'],
+    ['English', 'Ordered locations; the last is current text.'],
+  ]) {
+    await page.locator('.language-trigger').click();
+    await page.getByRole('menuitem', {name: language, exact: true}).click();
+    await expect(reference.locator('.prop-description').first()).toHaveText(description);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth),
+    ).toBeLessThanOrEqual(1);
+  }
+});
+
 test('starts with automatically built links and expanded simple usage code', async ({page}) => {
   const first = page.locator('app-demo-playground').first();
   await expect(first.getByRole('navigation')).toHaveAccessibleName('Database · ordinary links');

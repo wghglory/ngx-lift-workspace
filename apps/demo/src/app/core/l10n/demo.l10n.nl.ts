@@ -1,4 +1,23 @@
 export const nlTranslations: Record<string, string> = {
+  'breadcrumbs.reference.items': 'Geordende locaties; de laatste is de huidige tekst.',
+  'breadcrumbs.reference.ariaLabel': 'Toegankelijke navigatienaam.',
+  'breadcrumbs.reference.maxVisible':
+    'Maximum inclusief begin en huidige locatie; minimaal twee. De breedte kan dit verlagen.',
+  'breadcrumbs.reference.linkTemplate': 'Echte link van de gebruiker; $implicit is het oorspronkelijke item.',
+  'breadcrumbs.reference.navigate': 'Geeft de oorspronkelijke voorouder zonder adres bij activering.',
+  'breadcrumbs.reference.id': 'Unieke padidentiteit; lege ID’s zijn toegestaan.',
+  'breadcrumbs.reference.label': 'Niet-lege weergavetekst.',
+  'breadcrumbs.reference.href': 'Doel-URL; weglaten voor een actie.',
+  'breadcrumbs.reference.context': 'Weergavedetail; nooit als bestemming verwerkt.',
+  'breadcrumbs.reference.bucket': 'Exacte niet-lege bucketidentiteit.',
+  'breadcrumbs.reference.key':
+    'Exacte sleutel; een leeg voorvoegsel is de bucketbasis, andere eindigen op / en objecten zijn niet leeg.',
+  'breadcrumbs.reference.kind': 'Expliciet locatietype.',
+  'breadcrumbs.reference.rootPrefix': 'Toegestane basis eindigend op /; hogere locaties zijn uitgesloten.',
+  'breadcrumbs.reference.emptySegmentLabel': 'Door de aanroeper vertaalde niet-lege naam voor lege segmenten.',
+  'breadcrumbs.reference.hrefFor':
+    'Synchrone bestemmingsfunctie voor elk item inclusief het huidige. Ruwe sleutels eenmaal coderen.',
+  'breadcrumbs.reference.fontSize': 'Overgenomen lettergrootte; instellen op host of voorouder.',
   'breadcrumbs.searchTitle': 'Bovenliggende locaties zoeken · 100 aangeleverde locaties',
   'breadcrumbs.searchDescription':
     'Open details en filter herhaalde labels op context of niveau. Wis het filter bij geen resultaten. Wijzig de paginataal, lettergrootte of breedte, of vervang het pad. Filteren gebeurt lokaal en navigeert niet.',
@@ -38,26 +57,15 @@ export const nlTranslations: Record<string, string> = {
 
   'breadcrumbPreview.actionsDescription':
     'Gebruik knoppen voor locaties in het geheugen zonder URL, zoals stappen in een niet-opgeslagen wizard. Dit voorbeeld wijzigt alleen de geselecteerde locatie en controleert dat navigatie het formulier niet verstuurt. Gebruik een link zodra een locatie een URL heeft.',
-  'breadcrumbPreview.title': 'Interactief voorbeeld van broodkruimelnavigatie',
-  'breadcrumbPreview.scope':
-    'Voorlopig interactievoorbeeld voor issue #185. Deze API’s worden niet door de bibliotheek geëxporteerd.',
   'breadcrumbPreview.font': 'Lettergrootte',
   'breadcrumbPreview.reset': 'Resetten',
   'breadcrumbPreview.native': 'Database · gewone links',
-  'breadcrumbPreview.spa': 'Buckets · SPA-links',
-  'breadcrumbPreview.stationary':
-    'Deze inhoud blijft op dezelfde plaats wanneer het paneel met bovenliggende locaties opent.',
-  'breadcrumbPreview.fixture': 'Testgegevens met exacte sleutel',
   'breadcrumbPreview.actions': 'Acties zonder adres in een formulier',
   'breadcrumbPreview.selected': 'Geselecteerde locatie:',
-  'breadcrumbPreview.state': 'Contractstatus inspecteren',
   'breadcrumbPreview.database': 'Database',
   'breadcrumbPreview.servers': 'SQL-servers',
   'breadcrumbPreview.buckets': 'Buckets',
   'breadcrumbPreview.emptySegment': '(leeg segment)',
-  'breadcrumbPreview.show': 'Paddetails en bovenliggende locaties tonen',
-  'breadcrumbPreview.details': 'Paddetails en bovenliggende locaties',
-  'breadcrumbPreview.close': 'Paddetails sluiten',
   'keyValueRecipes.loadIncompatible': 'Incompatibele opgeslagen waarden laden',
   'keyValueRecipes.title': 'Editors kiezen voor uw gegevens',
   'keyValueRecipes.keySelect': 'Sleutel selecteren, waarde invoeren',

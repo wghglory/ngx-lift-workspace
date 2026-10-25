@@ -10,6 +10,21 @@ implemented**, authorized by the maintainer's `/implement` request. The componen
 in #185 are approved for this increment. Responsive ancestry (#187) is implemented below. The public object-key helper
 (#188) and scale hardening (#189) have separate delivery evidence.
 
+### Public demo consolidation
+
+All five delivery issues (#185–#189) are closed and their implementation PRs are merged. The provisional interaction
+preview is retired now that the public component covers its scenarios. Its old route redirects to
+`/clr-lift/components/breadcrumb`; the sidebar exposes only the public demo. Prototype implementation and prototype-only
+tests are removed; public-component browser suites retain navigation, focus, exact-key, filtering and accessibility
+coverage. The demo follows the shared Examples / API Reference layout and uses `app-api-table` for component inputs,
+outputs, item fields, helper options and the typography custom property, with descriptions in all eleven locales.
+
+The #185 sections below are historical design and validation records. They do not describe a second supported renderer.
+Independent language and assistive-technology acceptance is pending in
+[issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196), with per-locale and manual-assessment evidence
+requirements. Actual SSR/hydration verification remains unclaimed. Deployment and package publication are separate from
+issue implementation completion.
+
 ### Ticket #189 local ancestor filtering
 
 Authorized by the maintainer's `/implement` request for issue #189. No new public input, dependency or form value is
@@ -240,15 +255,11 @@ From the workspace root:
 NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run demo:serve --port=4307 --hmr=false
 ```
 
-Open <http://localhost:4307/clr-lift/components/breadcrumb-preview>, also listed as **Breadcrumb interaction preview**
-in Components. The short socket directory avoids the macOS Nx socket-length limit; it does not change project files. The
-preview is intentionally contained under
-[the demo page](../../../apps/demo/src/app/clr-lib/pages/breadcrumb-preview/breadcrumb-preview.component.ts), not either
-library. Source contracts are in
-[the provisional contract module](../../../apps/demo/src/app/clr-lib/pages/breadcrumb-preview/breadcrumb-preview.contract.ts).
-Inspect the state disclosure for generated IDs, labels, contexts, destinations, selected action payload and form-submit
-count. Select raw-key fixtures to exercise bucket root, repeated names, leading/repeated separators, literal `%2F`,
-Unicode, dot segments and a permitted-prefix root with a slash-ending object. Fixture selection is URL-addressable too.
+Open <http://localhost:4307/clr-lift/components/breadcrumb>, listed as **Breadcrumbs** in Components. The old preview
+URL redirects here. The short socket directory avoids the macOS Nx socket-length limit. The
+[public demo](../../../apps/demo/src/app/clr-lib/pages/breadcrumb/breadcrumb-demo.component.ts) now exercises the
+settled library contracts. Its storage example exposes route/API state and exact-key direct-link fixtures. The
+signatures and acceptance evidence below record the original #185 prototype stage.
 
 #### Exact preview signatures and link integration
 
@@ -1188,3 +1199,34 @@ Both Standards and Spec reviews found no remaining actionable issues after corre
 query-only announcement behavior and locale focus recovery. Full unrelated E2E, independent native-speaker acceptance,
 manual assistive-technology/native-browser-zoom acceptance, SSR/hydration, remote CI, merge, deployment and publication
 remain separate gates. Local implementation and automated verification do not supply those external approvals.
+
+## Public demo consolidation validation (October 25, 2026)
+
+Removed the retired prototype renderer, contract adapter, prototype-only unit/browser tests and sidebar entry. The old
+route redirects to the public demo. Existing public suites continue to exercise the production component. Component
+examples retain separate TypeScript and HTML tabs; the native and supplied-item examples now use `templateUrl` rather
+than repeating their HTML inside the TypeScript tab. The API reference documents all four inputs, the output, public
+item/link-context types, construction helper options/location union and font-size custom property.
+
+- Demo and E2E lint/type checks passed; E2E lint reports seven existing advisory warnings and no errors.
+- Demo unit suite: **81 files, 282 tests passed** after deleting the prototype-only tests.
+- Production demo build, all eleven translation dictionaries, embedded-example formatting and `git diff --check` passed.
+- Public breadcrumb browser suites: **111 passed** across Chromium, Firefox and WebKit. The prototype's removed
+  headless-WebKit tab-creation checks are not counted as public-component coverage.
+- The final documentation-only follow-up: **3 passed**, verifying the redirect, exported-name heading, API tables,
+  reactive descriptions in all eleven locales and no horizontal document overflow at 390px in all three engines.
+
+This demo-only consolidation changes no library exports or runtime behavior. Installed-package verification was not
+rerun for it; earlier feature evidence remains above. Independent human language/assistive-technology acceptance, remote
+CI for these local changes, merge, deployment and publication are not supplied by these local results.
+
+### Consolidation review and human acceptance follow-up
+
+Standards and Spec reviews identified two documentation gaps: untranslated explanatory default cells and omission of the
+empty-prefix bucket-root case. The tables now show actual invariant defaults (`undefined` and the Clarity CSS fallback)
+and the helper key description includes the bucket-root exception in all eleven locales. No library behavior changes.
+
+Independent native-speaker and assistive-technology reviews have **not** been performed. Their pending locale matrix,
+assessor/environment/revision requirements and closure checklist are tracked in
+[issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196). Closing the implementation parent does not
+close that acceptance issue or imply human approval.

@@ -1,4 +1,22 @@
 export const ruTranslations: Record<string, string> = {
+  'breadcrumbs.reference.items': 'Упорядоченные места; последнее — текст текущего места.',
+  'breadcrumbs.reference.ariaLabel': 'Доступное имя навигации.',
+  'breadcrumbs.reference.maxVisible': 'Предел с корнем и текущим местом; минимум два. Ширина может его уменьшить.',
+  'breadcrumbs.reference.linkTemplate': 'Настоящая ссылка приложения; $implicit — исходный элемент.',
+  'breadcrumbs.reference.navigate': 'Выдаёт исходного предка без адреса при активации.',
+  'breadcrumbs.reference.id': 'Уникальный ID в пути; пустые ID допустимы.',
+  'breadcrumbs.reference.label': 'Непустой отображаемый текст.',
+  'breadcrumbs.reference.href': 'URL назначения; для действия опустить.',
+  'breadcrumbs.reference.context': 'Отображаемые сведения; не интерпретируются как адрес.',
+  'breadcrumbs.reference.bucket': 'Точный непустой идентификатор бакета.',
+  'breadcrumbs.reference.key':
+    'Точный ключ; пустой префикс означает корень бакета, остальные заканчиваются на /, ключи объектов непустые.',
+  'breadcrumbs.reference.kind': 'Явный тип места.',
+  'breadcrumbs.reference.rootPrefix': 'Разрешённый корень с завершающим /; вышестоящие места исключены.',
+  'breadcrumbs.reference.emptySegmentLabel': 'Непустая переведённая вызывающим кодом метка пустого сегмента.',
+  'breadcrumbs.reference.hrefFor':
+    'Синхронная фабрика адресов для каждого элемента, включая текущий. Кодируйте исходные ключи один раз.',
+  'breadcrumbs.reference.fontSize': 'Наследуемый размер шрифта; задаётся на компоненте или предке.',
   'breadcrumbs.searchTitle': 'Поиск предков · 100 переданных местоположений',
   'breadcrumbs.searchDescription':
     'Откройте сведения и фильтруйте повторяющиеся названия по контексту или уровню. Очистите фильтр, если совпадений нет. Измените язык страницы, размер шрифта или ширину либо замените путь. Фильтрация выполняется локально без переходов.',
@@ -37,25 +55,15 @@ export const ruTranslations: Record<string, string> = {
 
   'breadcrumbPreview.actionsDescription':
     'Используйте кнопки для расположений в памяти без URL, например шагов несохраненного мастера. Этот пример только меняет выбранное расположение и проверяет, что навигация не отправляет форму. Если у расположения есть URL, используйте ссылку.',
-  'breadcrumbPreview.title': 'Предварительный просмотр навигационной цепочки',
-  'breadcrumbPreview.scope':
-    'Предварительный просмотр взаимодействия для задачи #185. Эти API не экспортируются библиотекой.',
   'breadcrumbPreview.font': 'Размер шрифта',
   'breadcrumbPreview.reset': 'Сбросить',
   'breadcrumbPreview.native': 'База данных · обычные ссылки',
-  'breadcrumbPreview.spa': 'Бакеты · ссылки SPA',
-  'breadcrumbPreview.stationary': 'Это содержимое остается на месте при открытии панели предков.',
-  'breadcrumbPreview.fixture': 'Тестовые данные с точным ключом',
   'breadcrumbPreview.actions': 'Действия без адреса внутри формы',
   'breadcrumbPreview.selected': 'Выбранное расположение:',
-  'breadcrumbPreview.state': 'Посмотреть состояние контракта',
   'breadcrumbPreview.database': 'База данных',
   'breadcrumbPreview.servers': 'Серверы SQL',
   'breadcrumbPreview.buckets': 'Бакеты',
   'breadcrumbPreview.emptySegment': '(пустой сегмент)',
-  'breadcrumbPreview.show': 'Показать сведения о пути и предков',
-  'breadcrumbPreview.details': 'Сведения о пути и предки',
-  'breadcrumbPreview.close': 'Закрыть сведения о пути',
   'keyValueRecipes.loadIncompatible': 'Загрузить несовместимые сохранённые значения',
   'keyValueRecipes.title': 'Выбор редакторов для данных',
   'keyValueRecipes.keySelect': 'Выбор ключа и ввод значения',
