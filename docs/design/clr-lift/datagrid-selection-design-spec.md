@@ -9,6 +9,9 @@ unpaged scrolling scope is approved. Proposed symbols remain unavailable until i
 validates the installed Angular/Clarity integration; it does not claim completed production code, demos, localization or
 installed-package acceptance.
 
+Tracking: [Spec #198](https://github.com/wghglory/ngx-lift-workspace/issues/198). The specification is published;
+implementation child tickets await a separate reviewed vertical-slice breakdown.
+
 ## Applicable contracts
 
 - Value/form integration: the [shared forms contract](forms-compatibility-design-spec.md) governs Angular 21 CVA,
