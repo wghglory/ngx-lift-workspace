@@ -1,4 +1,7 @@
 export const koTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': '상위 경로 찾기 · 제공된 위치 100개',
+  'breadcrumbs.searchDescription':
+    '세부 정보를 열고 컨텍스트나 수준으로 반복되는 레이블을 필터링하세요. 결과가 없으면 필터를 지우세요. 페이지 언어, 글꼴 크기, 너비를 바꾸거나 경로를 교체할 수 있습니다. 필터링은 로컬에서 수행되며 탐색하지 않습니다.',
   'breadcrumbStorage.title': '버킷 및 객체 탐색기',
   'breadcrumbStorage.intro':
     '현재 버킷과 경로의 정확한 키로 탐색 경로를 구성합니다. 제어된 백엔드 예제 데이터를 사용하므로 클라우드 계정이 필요하지 않습니다.',

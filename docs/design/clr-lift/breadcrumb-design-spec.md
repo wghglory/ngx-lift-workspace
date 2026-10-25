@@ -1,14 +1,39 @@
 # Breadcrumbs
 
-Owner: clr-lift maintainers. Package: clr-lift. Updated October 24, 2026. Approval: the maintainer accepted the three
+Owner: clr-lift maintainers. Package: clr-lift. Updated October 25, 2026. Approval: the maintainer accepted the three
 grill decisions, approved continuing with the construction approach, and requested configurable breadcrumb font size.
 The five-ticket delivery breakdown is approved. The first ticket proves the exact SPA/helper integration and interaction
 details before public exports.
 
-Status: **Tickets #186 simple breadcrumb, #187 responsive ancestry and #188 exact-key construction implemented**,
-authorized by the maintainer's `/implement` request. The component/item/link-template contracts exercised in #185 are
-approved for this increment. Responsive ancestry (#187) is implemented below. The public object-key helper (#188) and
-scale hardening (#189) have separate delivery evidence.
+Status: **Tickets #186 simple breadcrumb, #187 responsive ancestry, #188 exact-key construction and #189 local filtering
+implemented**, authorized by the maintainer's `/implement` request. The component/item/link-template contracts exercised
+in #185 are approved for this increment. Responsive ancestry (#187) is implemented below. The public object-key helper
+(#188) and scale hardening (#189) have separate delivery evidence.
+
+### Ticket #189 local ancestor filtering
+
+Authorized by the maintainer's `/implement` request for issue #189. No new public input, dependency or form value is
+introduced. Adopt the existing native navigation-list semantics from the primary-source comparison below; reject
+listbox/combobox roles because results are ordinary links/actions. The component owns a labeled Clarity-style search
+input above twenty hidden ancestors, case folding with the active locale and Unicode NFC normalization. Search labels
+and complete supplied/derived descriptions, keep original order and destinations, and retain current text and full-path
+summary separately. Whitespace surrounding the query is ignored; caller data is preserved.
+
+Owned library messages: Filter ancestors, Clear filter, No matching ancestors, and Matching ancestors: {0}. All eleven
+locales plus en-US, pt and it ship together. The visible count updates synchronously; a separate polite status announces
+after 250ms without another meaningful normalized query change. Opening and unrelated renders do not announce counts.
+Clear restores all ancestors. Input uses type=search, with no form model, navigation, remote lookup or custom arrow
+keys. Opening focuses search when present; Shift+Tab from it returns to the trigger, and native forward Tab reaches
+results, clear and close. Escape and Close restore the trigger. A replaced path clears query and closes without
+route-focus restoration. Locale changes preserve a valid input/query when supplied items remain unchanged. A measured
+range change closes stale content, returning focus only when this panel owned it; removal of the trigger falls back to
+the nav.
+
+Keep the existing 30-level regression fixture and add a supplied-item 100-level playground with repeated labels,
+complete context, native/SPA destinations, language switching, font/width controls and path replacement/reset recovery.
+No construction helper is used. Render all matches and current text; there is no virtualization or guarantee above 100
+supplied locations. Measure actual rendered nodes, open/filter/resize durations and incremental FESM bytes after
+implementation. Public-host, installed-package and three-browser journeys use the already approved seams.
 
 ### Ticket #187 responsive ancestry
 
@@ -1119,3 +1144,47 @@ separate HTML tab.
 After merging the upstream #193 ancestry increment on October 25, the combined breadcrumb browser suite reports **136
 passed and 2 existing headless WebKit skips**. Native and storage boundary/focus tests remain separate; upstream
 host-padding and custom-link-padding regressions are retained.
+
+## Ticket #189 local acceptance evidence (October 25, 2026)
+
+Local filtering consumes ordinary supplied items independently of the optional construction helper. The 30-level demo is
+retained; the additional 100-level playground has repeated translated labels, complete supplied context, exact native
+destinations, global language switching, font/width controls and short/full path replacement. No runtime dependency,
+public input, peer-range or version change is required. Changelog entries remain Unreleased.
+
+- `NX_SOCKET_DIR=/tmp/nxl pnpm run validate` passed repository formatting, tooling tests, all eleven translation
+  dictionaries, lint, production type checks, coverage thresholds, all production builds, bundle boundaries and strict
+  installed-package verification. Unit totals: **883 ngx-lift, 435 clr-lift, 298 demo**. The final focused clr-lift
+  test/lint/type and E2E lint/type rerun also passed after the form-safety/browser-assertion corrections.
+- The final combined breadcrumb browser run passed **157 tests**, with **two existing headless WebKit skips** for
+  modifier/middle-click tab creation. The dedicated search suite passed **21 tests across Chromium, Firefox and
+  WebKit**. It verifies label/context/level matching and order, current summary retention, exact native destinations and
+  modified activation, no filtering HTTP requests, clear/empty recovery, non-submitting Enter within a parent form,
+  focus entry and native forward/backward Tab, close/Escape, replacement, all eleven dictionaries, genuine touch
+  contexts, and narrow compact RTL enlarged text in both themes. Whole-document scans cover ordinary open/empty states.
+  Compact open-panel scans explicitly scope to the subject breadcrumb because its nonmodal top-layer panel can partially
+  cover controls in other playgrounds; the scoped scan context is recorded in each accessibility attachment. No axe
+  rules are disabled.
+- Public-host tests additionally cover the exact twenty-hidden boundary, frozen caller data, Turkish case handling,
+  composed/decomposed Unicode, IME composition, normalized equivalent queries, announcement timing, locale-preserved
+  input/query state, locale removal of a focused result and safe focus restoration. Status text snapshots meaningful
+  settled query changes; locale-only updates clear stale announcements rather than announcing another count.
+- Packed Angular 21 strict-template consumers in zoneless and ZoneJS modes now supply 100 ordinary locations and verify
+  the filter label, exact filtered destination, current/full summary, empty recovery and restoration of all 99 ancestor
+  anchors. This installed-package evidence is distinct from the three real-browser projects.
+- The five-cycle browser measurement test observes each open/filter/resize operation through two animation frames. In
+  the dedicated 21-test run, median elapsed milliseconds were Chromium **33.1 / 33.3 / 33.6**, Firefox **33 / 33 / 34**,
+  and WebKit **34 / 31 / 35**, respectively. These include render-frame scheduling, rather than measuring CPU-only work
+  or establishing a cross-device performance guarantee. At 1280×720, each unfiltered host rendered **530 elements**,
+  including the intrinsic measurement probe, **100 panel rows** and **99 ancestor anchors**. A unique level query
+  retained **two rows**: its matching ancestor and current text. Resize focus remained valid in all fifteen measured
+  cycles. The scrollable surface is not virtualized; no larger-than-100 scale guarantee is claimed.
+- Compared with a clean build of starting revision `b926959`, the complete unminified clr-lift primary FESM changed from
+  **572,285 to 581,812 bytes** (**+9,527**), and its Node gzip representation from **117,512 to 119,721 bytes**
+  (**+2,209**). This is whole-library distributed-module cost, including all dictionaries, not a tree-shaken application
+  bundle measurement. Existing demo bundle-boundary checks pass.
+
+Both Standards and Spec reviews found no remaining actionable issues after correcting the copyable plain-array example,
+query-only announcement behavior and locale focus recovery. Full unrelated E2E, independent native-speaker acceptance,
+manual assistive-technology/native-browser-zoom acceptance, SSR/hydration, remote CI, merge, deployment and publication
+remain separate gates. Local implementation and automated verification do not supply those external approvals.

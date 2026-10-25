@@ -1,4 +1,7 @@
 export const enTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': 'Find ancestors · 100 supplied locations',
+  'breadcrumbs.searchDescription':
+    'Open details and filter repeated labels by context or level. Clear to recover from no matches. Use the page language switcher, font and width controls, or replace the path. Filtering is local and does not navigate.',
   'breadcrumbStorage.title': 'Bucket and object browser',
   'breadcrumbStorage.intro':
     'Construct the trail from the current bucket and exact route key. These controlled backend fixtures need no cloud account.',

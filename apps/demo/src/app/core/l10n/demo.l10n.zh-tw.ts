@@ -1,4 +1,7 @@
 export const zhTWTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': '尋找祖先 · 100 個傳入位置',
+  'breadcrumbs.searchDescription':
+    '開啟詳細資料，依上下文或層級篩選重複標籤。清除篩選可從無符合結果的狀態復原。可切換頁面語言、調整字級與寬度，或取代路徑。篩選在本機進行，不觸發導覽。',
   'breadcrumbStorage.title': '儲存桶與物件瀏覽器',
   'breadcrumbStorage.intro': '根據目前儲存桶和路由中的精確鍵建立路徑。這些受控後端範例不需要雲端帳戶。',
   'breadcrumbStorage.flow':

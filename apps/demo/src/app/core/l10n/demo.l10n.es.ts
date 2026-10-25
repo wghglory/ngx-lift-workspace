@@ -1,4 +1,7 @@
 export const esTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': 'Buscar antecesores · 100 ubicaciones proporcionadas',
+  'breadcrumbs.searchDescription':
+    'Abra los detalles y filtre etiquetas repetidas por contexto o nivel. Borre el filtro si no hay coincidencias. Cambie el idioma, el tamaño de letra o el ancho, o sustituya la ruta. El filtrado es local y no navega.',
   'breadcrumbStorage.title': 'Explorador de buckets y objetos',
   'breadcrumbStorage.intro':
     'Construya la ruta a partir del bucket actual y la clave exacta de la ruta. Estos datos de backend controlados no requieren una cuenta en la nube.',

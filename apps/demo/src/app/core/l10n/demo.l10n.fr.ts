@@ -1,4 +1,7 @@
 export const frTranslations: Record<string, string> = {
+  'breadcrumbs.searchTitle': 'Rechercher des ancêtres · 100 emplacements fournis',
+  'breadcrumbs.searchDescription':
+    'Ouvrez les détails et filtrez les libellés répétés par contexte ou niveau. Effacez le filtre en cas de résultat vide. Changez la langue, la taille du texte ou la largeur, ou remplacez le chemin. Le filtrage est local et ne déclenche aucune navigation.',
   'breadcrumbStorage.title': 'Explorateur de buckets et d’objets',
   'breadcrumbStorage.intro':
     'Construisez le chemin à partir du bucket actuel et de la clé exacte de la route. Ces données de backend contrôlées ne nécessitent aucun compte cloud.',

@@ -165,6 +165,159 @@ describe('Breadcrumb public host', () => {
     fixture.destroy();
   });
 
+  it('filters supplied ancestors locally, preserves current context and restores original destinations', () => {
+    const fixture = TestBed.createComponent(BreadcrumbComponent);
+    const items = Object.freeze(
+      Array.from({length: 25}, (_, index) =>
+        Object.freeze({
+          id: String(index),
+          label: index === 7 ? 'ÉTAGE' : 'Repeated',
+          context: `exact/${index}`,
+          href: `/go?key=${index}%2F%25`,
+        }),
+      ),
+    );
+    fixture.componentRef.setInput('items', items);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    const filter = element.querySelector<HTMLInputElement>('input[type="search"]');
+    expect(filter).not.toBeNull();
+    if (!filter) throw new Error('Expected labeled ancestor filter');
+    expect(element.querySelector(`label[for="${filter.id}"]`)?.textContent).toContain('Filter ancestors');
+    filter.value = '  étage  ';
+    filter.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(element.querySelectorAll('.panel-list a')).toHaveLength(1);
+    expect(element.querySelector('.panel-list a')?.getAttribute('href')).toBe('/go?key=7%2F%25');
+    expect(element.querySelector('.panel-list .current')?.textContent).toBe('Repeated');
+    expect(element.querySelector('.full-path')?.textContent).toContain('exact/24');
+    expect(element.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
+    filter.value = 'absent';
+    filter.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(element.textContent).toContain('No matching ancestors');
+    element.querySelector<HTMLButtonElement>('.filter-clear')?.click();
+    fixture.detectChanges();
+    expect(filter.value).toBe('');
+    expect(element.querySelectorAll('.panel-list a')).toHaveLength(24);
+    expect(items[7].label).toBe('ÉTAGE');
+    const enter = new KeyboardEvent('keydown', {key: 'Enter', bubbles: true, cancelable: true});
+    filter.dispatchEvent(enter);
+    expect(enter.defaultPrevented).toBe(true);
+    fixture.componentRef.setInput('items', items.slice(0, 24));
+    fixture.detectChanges();
+    expect(element.querySelector('input[type="search"]')).toBeNull();
+  });
+
+  it('matches locale case and canonical Unicode, keeps the query through locale changes and clears replacement state', () => {
+    const fixture = TestBed.createComponent(BreadcrumbComponent);
+    const items = Array.from({length: 25}, (_, index) => ({
+      id: String(index),
+      label: index === 7 ? 'İSTANBUL' : 'Other',
+      context: index === 8 ? 'Café' : `exact/${index}`,
+      href: `/go/${index}`,
+    }));
+    fixture.componentRef.setInput('items', items);
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    const filter = element.querySelector<HTMLInputElement>('input')!;
+    const translation = TestBed.inject(TranslationService);
+    translation.setLanguage('tr', false);
+    fixture.detectChanges();
+    filter.value = 'istanbul';
+    filter.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(element.querySelector('.panel-list a')?.getAttribute('href')).toBe('/go/7');
+    expect(element.querySelectorAll('.panel-list a')).toHaveLength(1);
+    filter.value = 'Cafe\u0301';
+    filter.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(element.querySelector('.panel-list a')?.getAttribute('href')).toBe('/go/8');
+    translation.setLanguage('zh-CN', false);
+    fixture.detectChanges();
+    expect(element.querySelector('input')).toBe(filter);
+    expect(filter.value).toBe('Cafe\u0301');
+    expect(element.textContent).toContain('匹配的祖先：1');
+    // IME composition does not apply or announce a partial query.
+    filter.value = 'partial';
+    filter.dispatchEvent(new InputEvent('input', {isComposing: true}));
+    fixture.detectChanges();
+    expect(element.querySelector('.panel-list a')?.getAttribute('href')).toBe('/go/8');
+    filter.dispatchEvent(new Event('compositionend'));
+    fixture.detectChanges();
+    expect(element.querySelectorAll('.panel-list a')).toHaveLength(0);
+    fixture.componentRef.setInput('items', [...items]);
+    fixture.detectChanges();
+    expect(filter.value).toBe('');
+    expect(element.querySelectorAll('.panel-list a')).toHaveLength(24);
+    fixture.destroy();
+  });
+
+  it('announces settled query changes once and safely closes if locale matching removes the focused result', async () => {
+    vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+    const fixture = TestBed.createComponent(BreadcrumbComponent);
+    try {
+      fixture.componentRef.setInput(
+        'items',
+        Array.from({length: 25}, (_, index) => ({
+          id: String(index),
+          label: index === 7 ? 'İSTANBUL' : 'Other',
+          href: `/go/${index}`,
+        })),
+      );
+      const translation = TestBed.inject(TranslationService);
+      translation.setLanguage('tr', false);
+      fixture.detectChanges();
+      const element: HTMLElement = fixture.nativeElement;
+      const panel = element.querySelector<HTMLElement>('[popover]')!;
+      // JSDOM has no native popover API; emulate only that browser boundary.
+      let open = false;
+      panel.showPopover = () => {
+        open = true;
+      };
+      panel.hidePopover = () => {
+        open = false;
+      };
+      const matches = panel.matches.bind(panel);
+      panel.matches = (selector) => (selector === ':popover-open' ? open : matches(selector));
+      const trigger = element.querySelector<HTMLButtonElement>('.overflow > button')!;
+      trigger.click();
+      fixture.detectChanges();
+      const filter = element.querySelector<HTMLInputElement>('input')!;
+      expect(document.activeElement).toBe(filter);
+      filter.value = 'istanbul';
+      filter.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(element.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
+      await vi.advanceTimersByTimeAsync(250);
+      fixture.detectChanges();
+      expect(element.querySelector('[role="status"]')?.textContent).toContain('Matching ancestors: 1');
+      filter.value = ' ISTANBUL ';
+      filter.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      // Turkish capital I is distinct from dotted I: this is a meaningful query change.
+      expect(element.querySelectorAll('.panel-list a')).toHaveLength(0);
+      filter.value = 'istanbul';
+      filter.dispatchEvent(new Event('input'));
+      await vi.advanceTimersByTimeAsync(250);
+      fixture.detectChanges();
+      filter.value = ' istanbul ';
+      filter.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(element.querySelector('[role="status"]')?.textContent).toContain('Matching ancestors: 1');
+      element.querySelector<HTMLAnchorElement>('.panel-list a')?.focus();
+      translation.setLanguage('en', false);
+      fixture.detectChanges();
+      expect(element.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
+      expect(trigger.getAttribute('aria-expanded')).toBe('false');
+      expect(document.activeElement).toBe(trigger);
+      expect(filter.value).toBe('');
+    } finally {
+      fixture.destroy();
+      vi.useRealTimers();
+    }
+  });
+
   it('disconnects browser measurement when the public host is destroyed', async () => {
     const disconnect = vi.fn();
     const observe = vi.fn();
