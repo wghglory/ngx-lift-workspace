@@ -17,7 +17,8 @@ export const deTranslations: Record<string, string> = {
   'breadcrumbs.reference.emptySegmentLabel': 'Vom Aufrufer übersetzte, nichtleere Bezeichnung leerer Segmente.',
   'breadcrumbs.reference.hrefFor':
     'Synchrone Zielfabrik für jeden Eintrag einschließlich des aktuellen. Rohschlüssel einmal kodieren.',
-  'breadcrumbs.reference.fontSize': 'Geerbte Schriftgröße; am Host oder Vorfahren setzen.',
+  'breadcrumbs.reference.fontSize':
+    'Schriftgröße des Pfads; am Host oder Vorfahren setzen. Das Popover behält die Clarity-Standardtypografie.',
   'breadcrumbs.searchTitle': 'Vorfahren finden · 100 übergebene Orte',
   'breadcrumbs.searchDescription':
     'Details öffnen und wiederholte Namen nach Kontext oder Ebene filtern. Den Filter bei fehlenden Treffern löschen. Seitensprache, Schriftgröße und Breite ändern oder den Pfad ersetzen. Die lokale Filterung löst keine Navigation aus.',

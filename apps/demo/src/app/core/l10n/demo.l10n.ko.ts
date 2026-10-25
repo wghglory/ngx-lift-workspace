@@ -15,7 +15,8 @@ export const koTranslations: Record<string, string> = {
   'breadcrumbs.reference.rootPrefix': '/로 끝나는 허용 루트. 상위 위치를 제외합니다.',
   'breadcrumbs.reference.emptySegmentLabel': '호출자가 번역한 빈 세그먼트용 비어 있지 않은 레이블.',
   'breadcrumbs.reference.hrefFor': '현재 항목을 포함한 각 항목의 동기 대상 팩터리. 원본 키를 한 번 인코딩합니다.',
-  'breadcrumbs.reference.fontSize': '상속된 글꼴 크기. 호스트 또는 조상에 설정합니다.',
+  'breadcrumbs.reference.fontSize':
+    '경로 글꼴 크기. 호스트 또는 조상에 설정합니다. 팝오버는 Clarity 기본 글꼴을 유지합니다.',
   'breadcrumbs.searchTitle': '상위 경로 찾기 · 제공된 위치 100개',
   'breadcrumbs.searchDescription':
     '세부 정보를 열고 컨텍스트나 수준으로 반복되는 레이블을 필터링하세요. 결과가 없으면 필터를 지우세요. 페이지 언어, 글꼴 크기, 너비를 바꾸거나 경로를 교체할 수 있습니다. 필터링은 로컬에서 수행되며 탐색하지 않습니다.',

@@ -17,7 +17,8 @@ export const frTranslations: Record<string, string> = {
   'breadcrumbs.reference.emptySegmentLabel': 'Libellé non vide traduit par l’appelant pour les segments vides.',
   'breadcrumbs.reference.hrefFor':
     'Fabrique synchrone de destinations pour chaque élément, y compris le courant. Encoder les clés une fois.',
-  'breadcrumbs.reference.fontSize': 'Taille héritée ; définir sur le composant ou un ancêtre.',
+  'breadcrumbs.reference.fontSize':
+    'Taille du texte du chemin ; définir sur le composant ou un ancêtre. Le panneau conserve la typographie par défaut de Clarity.',
   'breadcrumbs.searchTitle': 'Rechercher des ancêtres · 100 emplacements fournis',
   'breadcrumbs.searchDescription':
     'Ouvrez les détails et filtrez les libellés répétés par contexte ou niveau. Effacez le filtre en cas de résultat vide. Changez la langue, la taille du texte ou la largeur, ou remplacez le chemin. Le filtrage est local et ne déclenche aucune navigation.',

@@ -16,7 +16,8 @@ export const enTranslations: Record<string, string> = {
   'breadcrumbs.reference.emptySegmentLabel': 'Caller-translated nonblank empty-segment label.',
   'breadcrumbs.reference.hrefFor':
     'Synchronous destination factory, called for every item including current. Encode raw keys once.',
-  'breadcrumbs.reference.fontSize': 'Inherited font size; set on the host or an ancestor.',
+  'breadcrumbs.reference.fontSize':
+    'Trail font size; set on the host or an ancestor. The popover keeps Clarity default typography.',
   'breadcrumbs.searchTitle': 'Find ancestors · 100 supplied locations',
   'breadcrumbs.searchDescription':
     'Open details and filter repeated labels by context or level. Clear to recover from no matches. Use the page language switcher, font and width controls, or replace the path. Filtering is local and does not navigate.',

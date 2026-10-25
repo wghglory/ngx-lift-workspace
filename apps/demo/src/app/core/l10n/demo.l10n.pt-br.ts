@@ -16,7 +16,8 @@ export const ptBRTranslations: Record<string, string> = {
   'breadcrumbs.reference.emptySegmentLabel': 'Rótulo não vazio traduzido pelo chamador para segmentos vazios.',
   'breadcrumbs.reference.hrefFor':
     'Fábrica síncrona de destinos para cada item, incluindo o atual. Codifique chaves uma vez.',
-  'breadcrumbs.reference.fontSize': 'Tamanho herdado; defina no componente ou ancestral.',
+  'breadcrumbs.reference.fontSize':
+    'Tamanho do texto do caminho; defina no componente ou ancestral. O painel mantém a tipografia padrão do Clarity.',
   'breadcrumbs.searchTitle': 'Encontrar ancestrais · 100 locais fornecidos',
   'breadcrumbs.searchDescription':
     'Abra os detalhes e filtre rótulos repetidos por contexto ou nível. Limpe o filtro se não houver resultados. Altere o idioma da página, o tamanho da fonte ou a largura, ou substitua o caminho. A filtragem é local e não navega.',

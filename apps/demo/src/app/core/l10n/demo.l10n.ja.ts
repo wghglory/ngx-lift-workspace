@@ -15,7 +15,8 @@ export const jaTranslations: Record<string, string> = {
   'breadcrumbs.reference.rootPrefix': '許可された / 終端のルート。上位の場所を除外します。',
   'breadcrumbs.reference.emptySegmentLabel': '空セグメント用の利用側で翻訳した空白以外のラベル。',
   'breadcrumbs.reference.hrefFor': '現在地を含む各項目の同期移動先ファクトリ。元のキーを一度だけエンコードします。',
-  'breadcrumbs.reference.fontSize': '継承する文字サイズ。ホストまたは祖先に設定します。',
+  'breadcrumbs.reference.fontSize':
+    '経路の文字サイズ。ホストまたは祖先に設定します。ポップオーバーは Clarity の既定の文字サイズを使用します。',
   'breadcrumbs.searchTitle': '祖先を検索 · 100 件の指定された場所',
   'breadcrumbs.searchDescription':
     '詳細を開き、コンテキストやレベルで重複するラベルを絞り込みます。一致しない場合は絞り込みをクリアします。ページの言語、文字サイズ、幅を変更したり、パスを置き換えたりできます。絞り込みはローカルで行われ、移動しません。',

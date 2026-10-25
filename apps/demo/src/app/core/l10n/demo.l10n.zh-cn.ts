@@ -14,7 +14,7 @@ export const zhCNTranslations: Record<string, string> = {
   'breadcrumbs.reference.rootPrefix': '以 / 结尾的允许根前缀；排除更高位置。',
   'breadcrumbs.reference.emptySegmentLabel': '调用方翻译的非空白空段标签。',
   'breadcrumbs.reference.hrefFor': '同步地址工厂，为每项（含当前项）调用；原始键编码一次。',
-  'breadcrumbs.reference.fontSize': '继承字号；在组件或祖先上设置。',
+  'breadcrumbs.reference.fontSize': '路径字号；在组件或祖先上设置。弹出面板保持 Clarity 默认字体。',
   'breadcrumbs.searchTitle': '查找祖先 · 100 个传入位置',
   'breadcrumbs.searchDescription':
     '打开详情，按上下文或层级筛选重复标签。清除筛选可从无匹配状态恢复。可切换页面语言、调整字号和宽度，或替换路径。筛选在本地进行，不触发导航。',

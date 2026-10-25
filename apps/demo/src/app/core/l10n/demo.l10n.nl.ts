@@ -17,7 +17,8 @@ export const nlTranslations: Record<string, string> = {
   'breadcrumbs.reference.emptySegmentLabel': 'Door de aanroeper vertaalde niet-lege naam voor lege segmenten.',
   'breadcrumbs.reference.hrefFor':
     'Synchrone bestemmingsfunctie voor elk item inclusief het huidige. Ruwe sleutels eenmaal coderen.',
-  'breadcrumbs.reference.fontSize': 'Overgenomen lettergrootte; instellen op host of voorouder.',
+  'breadcrumbs.reference.fontSize':
+    'Lettergrootte van het pad; instellen op host of voorouder. Het popover behoudt de standaardtypografie van Clarity.',
   'breadcrumbs.searchTitle': 'Bovenliggende locaties zoeken · 100 aangeleverde locaties',
   'breadcrumbs.searchDescription':
     'Open details en filter herhaalde labels op context of niveau. Wis het filter bij geen resultaten. Wijzig de paginataal, lettergrootte of breedte, of vervang het pad. Filteren gebeurt lokaal en navigeert niet.',

@@ -32,7 +32,7 @@ const breadcrumbIds = new InjectionToken<{next: number}>('Breadcrumb IDs', {
 /**
  * Caller-owned breadcrumb navigation. The final item is noninteractive current text.
  * Supply a real-anchor linkTemplate for SPA routing; addressless ancestors emit navigate.
- * Set --cll-breadcrumb-font-size on this host or an ancestor to customize typography.
+ * Set --cll-breadcrumb-font-size on this host or an ancestor to size the trail; the panel uses Clarity defaults.
  * Root/current remain visible; an anchored panel exposes complete supplied ancestry.
  */
 @Component({

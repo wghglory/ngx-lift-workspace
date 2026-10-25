@@ -17,7 +17,8 @@ export const esTranslations: Record<string, string> = {
   'breadcrumbs.reference.emptySegmentLabel': 'Etiqueta no vacía traducida por el consumidor para segmentos vacíos.',
   'breadcrumbs.reference.hrefFor':
     'Fábrica síncrona de destinos para cada elemento, incluido el actual. Codificar claves una vez.',
-  'breadcrumbs.reference.fontSize': 'Tamaño heredado; establecer en el componente o un antecesor.',
+  'breadcrumbs.reference.fontSize':
+    'Tamaño del texto de la ruta; establecer en el componente o un antecesor. El panel conserva la tipografía predeterminada de Clarity.',
   'breadcrumbs.searchTitle': 'Buscar antecesores · 100 ubicaciones proporcionadas',
   'breadcrumbs.searchDescription':
     'Abra los detalles y filtre etiquetas repetidas por contexto o nivel. Borre el filtro si no hay coincidencias. Cambie el idioma, el tamaño de letra o el ancho, o sustituya la ruta. El filtrado es local y no navega.',

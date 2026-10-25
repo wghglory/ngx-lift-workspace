@@ -14,7 +14,7 @@ export const zhTWTranslations: Record<string, string> = {
   'breadcrumbs.reference.rootPrefix': '以 / 結尾的允許根前綴；排除更高位置。',
   'breadcrumbs.reference.emptySegmentLabel': '呼叫端翻譯的非空白空段標籤。',
   'breadcrumbs.reference.hrefFor': '同步位址工廠，為每項（含目前項目）呼叫；原始鍵編碼一次。',
-  'breadcrumbs.reference.fontSize': '繼承字級；在元件或祖先上設定。',
+  'breadcrumbs.reference.fontSize': '路徑字級；在元件或祖先上設定。彈出面板維持 Clarity 預設字體。',
   'breadcrumbs.searchTitle': '尋找祖先 · 100 個傳入位置',
   'breadcrumbs.searchDescription':
     '開啟詳細資料，依上下文或層級篩選重複標籤。清除篩選可從無符合結果的狀態復原。可切換頁面語言、調整字級與寬度，或取代路徑。篩選在本機進行，不觸發導覽。',

@@ -10,6 +10,22 @@ implemented**, authorized by the maintainer's `/implement` request. The componen
 in #185 are approved for this increment. Responsive ancestry (#187) is implemented below. The public object-key helper
 (#188) and scale hardening (#189) have separate delivery evidence.
 
+### Independent popover typography
+
+The maintainer explicitly requested that enlarging the breadcrumb trail must not enlarge the ancestor popover. A large
+trail can serve as a location heading while its 30/100-location details remain a compact navigation surface. The
+existing `--cll-breadcrumb-font-size` property controls the trail and its measurement probe only. The popover starts a
+separate typography scope using `var(--clr-base-typography-font-size-inline, 0.65rem)` and unitless `line-height: 1.4`.
+Summary, links, current item, filter/status messages and buttons inherit that default; secondary context keeps its
+existing relative size with adequate inherited line spacing. Consumer-owned links should continue inheriting their local
+font size and line height. No new public input, CSS property, dependency or form value is introduced.
+
+Adopt the existing Clarity inline typography token for this independent surface; reject fixed pixel sizing and
+inheriting the enlarged trail font. Root font changes and browser zoom still enlarge the default popover typography.
+Retain scrollable viewport bounds, keyboard entry/Escape/close/focus, local filtering and complete label/context access.
+Verify native and projected SPA anchors, long 100-location context, both themes and narrow layouts in all three engines.
+This styling correction supersedes earlier notes describing enlarged panel text.
+
 ### Public demo consolidation
 
 All five delivery issues (#185–#189) are closed and their implementation PRs are merged. The provisional interaction
@@ -1247,3 +1263,24 @@ navigation resetting content scroll from 3482px to zero. Final validation passed
 **120 browser checks** across Chromium, Firefox and WebKit (including fixture viewport retention, Back restoration and
 ordinary page reset), **282 demo unit tests**, demo/E2E lint/type checks and the production build. Independent human
 acceptance remains pending in #196.
+
+### Independent popover typography validation
+
+The maintainer's enlarged-trail example reproduced the popover inheriting 36px text and crowded line spacing. Four
+Chromium regression cases failed before the correction. The panel now establishes the Clarity default inline font size
+and independent unitless line spacing; enlarging the trail leaves the summary, ancestor links, filter and controls at
+that default. Root font enlargement still scales the panel.
+
+- The final combined breadcrumb and documentation navigation browser run passed **135 checks** across Chromium, Firefox
+  and WebKit. This includes **15 new typography checks** covering native/projected links, both themes, 390px layouts,
+  long context, scoped axe checks without disabled rules, Escape/focus restoration and doubled root font size.
+- The clr-lift unit suite passed **34 files / 435 tests**. Library/demo/E2E lint and type checks, production builds,
+  formatting and all eleven translation dictionaries passed. E2E lint retains seven existing advisory warnings.
+- Packed-consumer verification passed fresh peer installation, strict public/template checks and breadcrumb rendering,
+  routing and form safety in both Angular 21 zoneless and ZoneJS consumers. This is separate from real-browser evidence.
+- Standards and Spec reviews found no actionable issues in the correction or new regressions.
+
+The library documentation, demo font-size guidance in all eleven locales and Unreleased changelog describe the trail
+setting's scope. Independent human language, assistive-technology and native-browser-zoom acceptance remains pending in
+[issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196). Local results do not establish remote CI,
+merge, deployment or package publication.
