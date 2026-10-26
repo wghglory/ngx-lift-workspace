@@ -1,7 +1,7 @@
 # Datagrid selection control design specification
 
 Status: **API direction approved; local integration proof passed; production delivery pending**. Owner: clr-lift
-maintainers. Updated: October 25, 2026. Approval: the maintainer approved Q1–Q12, with the simplified Q12 replacing the
+maintainers. Updated: October 26, 2026. Approval: the maintainer approved Q1–Q12, with the simplified Q12 replacing the
 earlier lock/two-permission proposals. Use one single/multi selection component with a fixed mode, preserve thin
 resource-wrapper CVAs and formControlName, and use item disabled plus disabledReason. Dedicated locked/lockedReason and
 select/deselect objects are outside v1. Forms store stable keys; entity conversion belongs at submission. The no-footer,
@@ -9,8 +9,40 @@ unpaged scrolling scope is approved. Proposed symbols remain unavailable until i
 validates the installed Angular/Clarity integration; it does not claim completed production code, demos, localization or
 installed-package acceptance.
 
-Tracking: [Spec #198](https://github.com/wghglory/ngx-lift-workspace/issues/198). The specification is published;
-implementation child tickets await a separate reviewed vertical-slice breakdown.
+Tracking: [Spec #198](https://github.com/wghglory/ngx-lift-workspace/issues/198). The specification is published; the
+approved implementation graph is:
+
+- [#200: Installable local selection field](https://github.com/wghglory/ngx-lift-workspace/issues/200) has no ticket
+  blockers. Its concrete public API review precedes production exports.
+- [#201: Server-page selection and recovery](https://github.com/wghglory/ngx-lift-workspace/issues/201) depends on #200.
+- [#202: Reusable policy create/edit flow](https://github.com/wghglory/ngx-lift-workspace/issues/202) depends on #200.
+
+After #200, #201 and #202 can proceed independently on the integration branch. Final feature closeout requires all three
+slices and their acceptance evidence. The earlier local prototype remains integration evidence only.
+
+## Approved rendering revision, October 26, 2026
+
+The maintainer approved **B by default, A as an explicit advanced option**. This supersedes the earlier A-only
+complete-grid composition decision while preserving the agreed key values, form ownership, availability, validation,
+focus, select-all scope and async/reset semantics.
+
+- **B / columns (default):** the component instantiates Clarity's grid, columns, rows and optional pagination. Callers
+  declare bounded column metadata and Angular cell/custom-filter templates. Native Clarity still processes the table;
+  this is not another grid engine or a universal configuration schema.
+- **A / custom (explicit):** callers supply one complete native Clarity grid and use the shared form/selection bridge.
+  This is the path for needs outside B's deliberate feature scope; extending B is optional, not a prerequisite to use A.
+- Both use one private selection/form mechanism and shared field presentation. A field chooses exactly one renderer for
+  its lifetime; no automatic fallback and no mixing column declarations with a projected native grid.
+- Resource-specific pickers are optional reuse boundaries, not mandatory containers. Either renderer can be used inline
+  in a form or inside a reusable picker. Fetching may belong to a parent, domain service or domain picker; it never
+  becomes a responsibility of the generic selection component. Detail values reach the field through the form owner, not
+  by passing an entire policy DTO to every picker.
+- A preserves native template freedom, not a promise that every advanced Clarity feature is selection-compatible.
+  Virtual scrolling, unusual row structures and complex overlays require their own compatibility evidence when claimed.
+
+The three-ticket graph remains unchanged. #200 delivers the shared core and both local entry points, #201 verifies the
+native server-page path and any deliberately supported built-in server features, and #202 demonstrates reusable pickers
+and inline usage with shared query/edit/reset behavior. Both renderer paths must be independently demonstrated.
 
 ## Applicable contracts
 
@@ -76,7 +108,7 @@ records the architectural tradeoff. Exact symbols remain draft.
 ## Goals
 
 - G1: Deliver single and multiple grid selection as real form values with predictable edit prefill and reset behavior.
-- G2: Preserve caller-owned Clarity columns, cells, filters, action bars, row eligibility, footer, and data operations.
+- G2: Offer concise built-in columns/templates by default and an explicit complete native-grid option for advanced use.
 - G3: Display a meaningful label, helper, and errors with horizontal and vertical field layouts, without consumer CSS
   patches for text-input dimensions.
 - G4: Keep selection stable through loading, filtering, paging, refreshed objects, and future form-bridge changes.
@@ -87,7 +119,8 @@ records the architectural tradeoff. Exact symbols remain draft.
 
 - Implementing the component before the design interview and API approval are complete.
 - Upgrading Angular/Nx or adding native Signal Forms imports to the Angular 21 package.
-- Migrating every application-specific picker, adding a new table engine, or introducing runtime dependencies.
+- Migrating every application-specific picker, replacing Clarity, supporting every advanced grid feature, or introducing
+  runtime dependencies.
 - Treating special values such as a version wildcard or an assignment scope as ordinary selected items.
 
 ### Outside this API
@@ -128,13 +161,13 @@ The inventory below describes observed categories; proposed outcomes are accepta
 Checked October 25, 2026. Installed source governs the current Clarity integration; latest upstream documentation is
 comparison evidence, not proof of compatibility with this package's pinned platform.
 
-| Primary source                                                                                                                   | Observed capability                                                                                                                    | Adopt/adapt/reject recommendation                                                                 | Gap addressed                                                |
-| -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Installed `@clr/angular` 18.4.0 declarations and datagrid implementation                                                         | `clrDgSelectionType`, array `clrDgSelected`, identity function, preserve-selection, selectable items, refresh events, projected footer | Adopt the existing grid and public APIs; adapt selection into a form value                        | Grid lacks a CVA and composite field contract                |
-| [Angular Material table source documentation](https://github.com/angular/components/blob/main/src/material/table/table.md)       | SelectionModel composition; separate table, data source, and paginator                                                                 | Adopt separation of selection/data/pagination; keep Clarity rendering                             | Avoid a second columns/configuration language                |
-| [NG-ZORRO table source documentation](https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/table/doc/index.en-US.md) | Explicit front/server pagination, query events, checkbox disabled/checked state, optional pagination                                   | Adopt explicit data-mode and availability boundaries; retain existing Clarity equivalents         | UI mode must not imply complete inventory or valid form data |
-| [React Aria Table](https://react-aria.adobe.com/Table)                                                                           | Controlled selected keys, single/multiple modes, disabled items and separate row actions                                               | Adapt key identity and independent selection/action semantics; defer the `all` selection sentinel | Stable form values must survive changing row instances/pages |
-| [Angular custom Signal Forms controls](https://angular.dev/guide/forms/signals/custom-controls)                                  | FormValueControl/model value and form-state integration                                                                                | Prepare an independent selection core; recheck interfaces at the platform upgrade                 | CVA alone does not establish native Signal Forms acceptance  |
+| Primary source                                                                                                                   | Observed capability                                                                                                                    | Adopt/adapt/reject recommendation                                                                 | Gap addressed                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Installed `@clr/angular` 18.4.0 declarations and datagrid implementation                                                         | `clrDgSelectionType`, array `clrDgSelected`, identity function, preserve-selection, selectable items, refresh events, projected footer | Adopt the existing grid and public APIs; adapt selection into a form value                        | Grid lacks a CVA and composite field contract                  |
+| [Angular Material table source documentation](https://github.com/angular/components/blob/main/src/material/table/table.md)       | SelectionModel composition; separate table, data source, and paginator                                                                 | Adopt separation of selection/data/pagination; keep Clarity rendering                             | Use declarative templates; avoid a universal configuration DSL |
+| [NG-ZORRO table source documentation](https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/table/doc/index.en-US.md) | Explicit front/server pagination, query events, checkbox disabled/checked state, optional pagination                                   | Adopt explicit data-mode and availability boundaries; retain existing Clarity equivalents         | UI mode must not imply complete inventory or valid form data   |
+| [React Aria Table](https://react-aria.adobe.com/Table)                                                                           | Controlled selected keys, single/multiple modes, disabled items and separate row actions                                               | Adapt key identity and independent selection/action semantics; defer the `all` selection sentinel | Stable form values must survive changing row instances/pages   |
+| [Angular custom Signal Forms controls](https://angular.dev/guide/forms/signals/custom-controls)                                  | FormValueControl/model value and form-state integration                                                                                | Prepare an independent selection core; recheck interfaces at the platform upgrade                 | CVA alone does not establish native Signal Forms acceptance    |
 
 Clarity-specific findings that constrain implementation:
 
@@ -154,7 +187,7 @@ Clarity-specific findings that constrain implementation:
   that the internal element with `role="grid"` is named and described correctly.
 - There is no general datagrid-wide disabled/readonly value-control input. Effective row eligibility and select-all must
   combine caller constraints with form availability.
-- A complete projected grid preserves its own provider hierarchy. Projecting arbitrary caller-declared items into a
+- A complete projected grid in A preserves its own provider hierarchy. Projecting arbitrary caller-declared items into a
   different internal grid needs an injector/content-query proof before such an API can be accepted.
 
 The source audit confirms both API forms. Installed Clarity 18.4.0 and upstream
@@ -186,7 +219,7 @@ All destinations below are proposed. No demo route or package import has been de
 ### Accepted foundation
 
 Q1–Q12 are approved with the simplified availability contract and no dedicated forced-retention API. Resource-specific
-components compose complete Clarity grids with the generic selection/form boundary; external formControlName stays
+components use built-in columns by default or explicitly compose a complete Clarity grid; external formControlName stays
 compatible. Forms store stable primitive keys: single K|null and multiple K[]; readonly key arrays remain supported.
 Entity DTO conversion stays at submission. Field layout inherits clrForm with a per-field override.
 
@@ -199,16 +232,17 @@ The exact implementation and exported declarations require integration proof; ap
 valid.
 
 Here, **caller** means the application component using clr-lift, not the person interacting with the form. Under Q1,
-that component declares the complete `clr-datagrid` with its columns/cells/filters, supplies items and fetching state,
-chooses its optional footer and provides domain eligibility/validation rules. Clarity still renders and operates the
+that component declares columns/cell/filter templates for B, or the complete `clr-datagrid` for A. It supplies items,
+fetching state, pagination preferences and domain eligibility/validation rules. Clarity still renders and operates the
 grid. clr-lift owns the selection-to-form bridge, preselection reconciliation, availability enforcement, composite focus
 and field presentation. The caller does not implement another CVA or independently synchronize `clrDgSelected` for this
 inner control. Any outer application-component form bridge remains an explicit integration choice.
 
-The tradeoff is deliberate: the application retains grid markup, while clr-lift avoids a parallel columns/configuration
-language and feature-forwarding surface. Applications can still reuse domain-specific grid templates/components. An
-internally owned grid would reduce simple usage markup but needs a separately designed extension API for the real custom
-cells, filters, footers and actions found in the audit.
+The revised tradeoff offers a concise default without forcing every use case through a growing wrapper surface. B owns
+routine grid wiring and supports bounded declarative columns, rich cell templates and custom filter templates. A retains
+direct native customization. Both can be centralized in a reusable domain picker or declared inline; domain reuse and
+data retrieval do not determine grid ownership. Do not duplicate the selection engine or create a second form owner to
+support the two renderers.
 
 ### Approved interface direction: Q10–Q12
 
@@ -236,12 +270,12 @@ The proof must use the installed Angular/Clarity components and inspect actual o
 projection/provider behavior and the accessibility tree. Cover delayed prefill/no echo, wrapped formControlName and
 ngModel, disabled/readonly and unavailable selected items, unpaged-scroll/filtered/page select-all, true grid
 naming/errors, and focus across cells/footer/filter popup. Strict templates and a packed consumer check the eventual
-public surface. The local proof now passes strict Angular templates and 38 browser scenarios in each of Chromium,
+public surface. The local proof now passes strict Angular templates and 54 browser scenarios in each of Chromium,
 Firefox and WebKit. This proves the scoped integration, not a new packaged public component.
 
 After the proof, update this canonical spec rather than starting a competing contract. The recommended later route is
-to-spec synthesis against the existing spec, then to-tickets vertical slices and implement per approved slice. Ticket
-publication and implementation have not been started by this workflow-routing discussion.
+implementation against the approved child-ticket graph above. Concrete API review and production delivery remain
+pending; the earlier workflow-routing discussion did not itself implement the component.
 
 ### Application component reuse and the outer form binding
 
@@ -350,54 +384,308 @@ must keep the submitted request blocked until resolved or explicitly handled; do
 existing object-valued application wrapper needs a compatible explicit adapter or a separately reviewed value contract,
 not a silent switch to key arrays.
 
-### Conceptual composition example
+### Hybrid public API proposal for #200 — exact declarations remain under review
 
-The following is an API discussion sketch, not a complete or compiled usage example. Names, export shape, bridge inputs,
-row availability integration, and projection slots remain open. A public proof must resolve them before implementation.
+This section supersedes the earlier conceptual markup. It is a proposed public contract, not implemented exports or a
+compiled consumer. The approved behavior remains, with the October 26 B-default/A-custom rendering revision. Review this
+surface before production implementation.
+
+Proposed standalone imports from `clr-lift`:
+
+```typescript
+import {
+  DatagridSelectionComponent,
+  DatagridSelectionItemDirective,
+  DatagridSelectionColumnDirective,
+  type DatagridSelectionKey,
+  type DatagridSelectionMode,
+  type DatagridSelectionValue,
+  type DatagridSelectionChange,
+  type DatagridSelectionItemAvailability,
+  type DatagridSelectionOwnerState,
+} from 'clr-lift';
+import {ClrDatagridModule} from '@clr/angular';
+import {ReactiveFormsModule, FormControl, Validators} from '@angular/forms';
+```
+
+The component selector is `cll-datagrid-selection`; the row directive selector is
+`clr-dg-row[cllDatagridSelectionItem]`. Do not export a generic CVA host directive or a second grid directive in v1. The
+component creates its own grid in default columns mode. In explicit custom mode it discovers exactly one projected
+complete Clarity grid; the row directive discovers its enclosing selection component and native row. Missing/multiple
+custom grids, mixed renderers and rows outside an owner are developer diagnostics. The two renderers share the same CVA,
+key reconciliation, availability and composite-focus behavior.
+
+```typescript
+export type DatagridSelectionKey = string | number;
+export type DatagridSelectionMode = 'single' | 'multiple';
+export type DatagridSelectionRenderMode = 'columns' | 'custom';
+export type DatagridSelectionValue<K extends DatagridSelectionKey, M extends DatagridSelectionMode> = M extends 'single'
+  ? K | null
+  : readonly K[];
+export type DatagridSelectionChange<
+  K extends DatagridSelectionKey,
+  M extends DatagridSelectionMode,
+> = M extends 'single' ? K | null : K[];
+export interface DatagridSelectionItemAvailability {
+  readonly disabled: boolean;
+  readonly disabledReason?: string;
+}
+export interface DatagridSelectionOwnerState {
+  readonly invalid: boolean;
+  readonly touched: boolean;
+  readonly dirty: boolean;
+  readonly pending: boolean;
+  readonly submitted: boolean;
+}
+// Proposed generic component parameters, inferred from items, itemKey and the literal selectionMode:
+// DatagridSelectionComponent<T, K extends DatagridSelectionKey, M extends DatagridSelectionMode>
+```
+
+String and finite number keys preserve primitive identity; do not coerce between them. Symbols, object keys, NaN and
+infinite numbers are outside v1. Mode is required and fixed for the component lifetime. Single accepts `K | null`;
+multiple accepts mutable or readonly key arrays, emits fresh mutable arrays and normalizes null/reset to `[]`. Neither
+missing loaded items nor reconciliation removes a key or emits a user edit.
+
+| Proposed member           | Type / default                                                | Contract                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `renderMode`              | `'columns' \| 'custom'`; columns                              | Fixed rendering choice, independent of single/multiple selectionMode.                                                       |
+| `pagination`              | `false \| {pageSize: number}`; false                          | B only: absent/false means no pagination processing and no pager/footer. Positive page size enables both.                   |
+| `loading`, `emptyMessage` | boolean / localized text                                      | B presentation inputs; transport/error/retry policy remains application-owned. A binds native loading/placeholder directly. |
+| `itemLabel`               | `(item: T) => string`                                         | Meaningful B row-selection label; exact required/default typing must be proved before export.                               |
+| `selectionMode`           | required `M`                                                  | Literal `single` or `multiple`; maps to native single/multi selection.                                                      |
+| `items`                   | required `readonly T[]`                                       | Current complete local collection or current server page; never mutated.                                                    |
+| `itemKey`                 | required `(item: T) => K`                                     | Stable scoped identity; duplicate candidate keys are developer errors.                                                      |
+| `itemAvailability`        | `(item: T) => DatagridSelectionItemAvailability`; all enabled | Prevent additions when disabled; selected disabled items remain removable.                                                  |
+| `label`                   | required `string`                                             | Visible field label and actual grid accessible name.                                                                        |
+| `helper`, `error`         | `string`; empty                                               | Localized caller text; show error only when owner invalid and touched/submitted, helper otherwise.                          |
+| `required`                | `boolean`; false                                              | Required instruction/marker only; actual validators belong to the owner.                                                    |
+| `layout`                  | `'inherit' \| 'horizontal' \| 'vertical'`; inherit            | Inherit enclosing Clarity form; vertical outside a form; stack at narrow widths.                                            |
+| `readonly`                | `boolean`; false                                              | Prevent selection changes, keep filtering/sorting/paging usable.                                                            |
+| `disabled`                | `boolean`; false                                              | Effective selection disabled = input OR CVA disabled state; never changes owner serialization by itself.                    |
+| `value`                   | `DatagridSelectionValue<K, M>`; absent                        | Controlled-inner mode only; cannot coexist with formControl/ngModel on this component.                                      |
+| `ownerState`              | `DatagridSelectionOwnerState`; absent                         | Required with controlled value; otherwise derived from actual NgControl and containing form submission state.               |
+| `valueChange`             | `DatagridSelectionChange<K, M>`                               | Accepted user edit only; emits alongside CVA onChange in direct mode.                                                       |
+| `focusLeave`              | `void`                                                        | Composite departure including filter portals; emits alongside CVA onTouched in direct mode.                                 |
+| `gridItems()`             | `T[]`                                                         | Cached mutable shallow copy for Clarity iterator compatibility.                                                             |
+| `selectedItems()`         | `T[]`                                                         | Derived loaded selected rows, for template binding only; not all resolved selected entities.                                |
+| `gridSelectionType()`     | installed Clarity `SelectionType`                             | Maps single/multiple to Clarity Single/Multi.                                                                               |
+| `identify`                | `(item: T) => K`                                              | Stable forwarding callback for Clarity identity binding.                                                                    |
+| `selectionDisabled()`     | `boolean`                                                     | Effective disabled OR readonly, for native header binding.                                                                  |
+
+The grid/selection getters above are read-only bridge outputs for advanced A; B consumes them internally. No
+`clrDgSelectedChange` application callback or second writable row-selection model is needed. The component subscribes to
+custom select-all; the item directive handles checkbox/range and radio user intent separately from reconciliation
+notifications and applies native `clrDgSelectable`. It must not blindly forward every grid selection emission to the
+form.
+
+#### Default B: declarative columns and rich templates
+
+The proposed column declaration is a template directive, not a JSON cell-rendering language. Each declaration has a
+stable column id, localized header, optional native field/sort comparator, optional Clarity-compatible custom filter,
+optional filter UI template and an Angular cell template. Display formatting, sort semantics and filter matching remain
+independent. In B, the component creates the native column/filter/row instances and keeps registration in their proper
+Clarity provider context; caller filter UI receives explicit state rather than relying on undeclared parent injection.
 
 ```html
-<!-- Proposed shell owns the one form binding. -->
-<cll-datagrid-selection formControlName="targetIds" selectionMode="multiple" [itemKey]="targetKey">
-  <label>Targets</label>
-  <clr-datagrid cllDatagridSelection [cllDatagridItems]="targets()" [clrDgItemsIdentityFn]="targetKey">
-    <clr-dg-column>Name</clr-dg-column>
-    <clr-dg-row *clrDgItems="let target of targets()" [clrDgItem]="target">
-      <clr-dg-cell>{{ target.name }}</clr-dg-cell>
+<!-- Proposed B shape; names and strict generic template inference still need public-package proof. -->
+<cll-datagrid-selection
+  label="Organizations"
+  selectionMode="multiple"
+  formControlName="organizationIds"
+  [items]="organizations()"
+  [itemKey]="organizationKey"
+  [itemLabel]="organizationLabel"
+  [pagination]="{pageSize: 10}"
+>
+  <ng-template cllDatagridColumn="name" header="Name" field="name" let-item> {{ item.name }} </ng-template>
+  <ng-template
+    cllDatagridColumn="status"
+    header="Status"
+    field="status"
+    [sortBy]="statusComparator"
+    [filter]="statusFilter"
+    [filterTemplate]="statusFilterUi"
+    let-item
+  >
+    <span class="label" [class.label-success]="item.enabled">{{ item.status }}</span>
+  </ng-template>
+</cll-datagrid-selection>
+<ng-template #statusFilterUi><app-status-filter [filter]="statusFilter" /></ng-template>
+```
+
+No row loop, selected-items binding, native mode mapping or item directive is required from B callers. B must support
+rich Angular cells, custom comparison and filter UI, dynamic column definitions and optional pagination within its
+reviewed selection-focused scope. Column ids must be unique. Strict cell-context inference needs its own proof; a parent
+generic component does not automatically make a child template correctly typed. Do not silently fall back to untyped
+public templates or advertise checked generic inference from the fixed-item scratch proof.
+
+A pagination flag is not merely footer visibility: false also disables client page slicing. Server filtering/sorting
+must not be applied again as local processing. Exact built-in server event/data-mode extensions require explicit API
+review in #201; A already provides the native refresh/page integration path. Do not grow B into a universal facade for
+every Clarity feature. A one-off native requirement may use A without extending B.
+
+#### Advanced A: direct form owner and complete native grid
+
+```typescript
+// In a standalone host importing ReactiveFormsModule, ClrDatagridModule and the relevant proposed clr-lift declarations:
+interface Organization { id: string; name: string; enabled: boolean; }
+readonly organizationIds = new FormControl<string[]>([], {
+  nonNullable: true,
+  validators: [Validators.required],
+});
+readonly organizationKey = (item: Organization): string => item.id;
+readonly organizationAvailability = (item: Organization): DatagridSelectionItemAvailability => ({
+  disabled: !item.enabled,
+  disabledReason: item.enabled ? undefined : 'New assignments are unavailable.', // Host-localized text.
+});
+readonly trackOrganization = (_index: number, item: Organization): string => item.id;
+```
+
+```html
+<cll-datagrid-selection
+  renderMode="custom"
+  #selection
+  selectionMode="multiple"
+  [formControl]="organizationIds"
+  [items]="organizations()"
+  [itemKey]="organizationKey"
+  [itemAvailability]="organizationAvailability"
+  label="Organizations"
+  helper="Choose one or more organizations."
+  error="Choose at least one organization."
+  [required]="true"
+>
+  <clr-datagrid
+    [clrDgSelected]="selection.selectedItems()"
+    [clrDgSelectionType]="selection.gridSelectionType()"
+    [clrDgItemsIdentityFn]="selection.identify"
+    [clrDgPreserveSelection]="true"
+    [clrDgCustomSelectAllEnabled]="true"
+    [clrDgSelectAllDisabled]="selection.selectionDisabled()"
+    [clrDgLoading]="loading()"
+  >
+    <clr-dg-column clrDgField="name">Name</clr-dg-column>
+    <clr-dg-column>ID</clr-dg-column>
+    <clr-dg-placeholder>No organizations match.</clr-dg-placeholder>
+    <clr-dg-row
+      *clrDgItems="let item of selection.gridItems(); trackBy: trackOrganization"
+      [clrDgItem]="item"
+      [cllDatagridSelectionItem]="item"
+      [clrDgRowSelectionLabel]="'Select ' + item.name"
+    >
+      <clr-dg-cell
+        >{{ item.name }} @if (!item.enabled) {
+        <div>New assignments are unavailable.</div>
+        }
+      </clr-dg-cell>
+      <clr-dg-cell>{{ item.id }}</clr-dg-cell>
     </clr-dg-row>
-    <!-- Caller may add clr-dg-footer and pagination, or omit both. -->
+    <!-- Optional caller-owned footer; omit it for the approved unpaged scrolling case. -->
+    <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
   </clr-datagrid>
 </cll-datagrid-selection>
 ```
 
-The minimal example needs only the stable grid identity function. The caller may additionally opt into native Clarity
-row-view tracking when refreshing object instances:
+Every example message is caller-localized in the delivered demo. Availability reasons stay caller-rendered beneath the
+name; returning a reason does not inject text into arbitrary cells. Callers may add filters, action bars and custom
+cells. Native row `trackBy` is optional view reuse and does not replace `itemKey`. Retain the explicit Angular
+selected-items binding: direct post-render member assignment left the scratch proof's header stale on page changes.
 
-```typescript
-targetKey = (item: TargetItem): string => item.id;
-trackTarget = (_index: number, item: TargetItem): string => this.targetKey(item);
-```
+For single mode use `selectionMode="single"` with `new FormControl<string | null>(null)`; the same complete grid and row
+bindings apply. In single mode the shell supplies a localized Clear action emitting null, blocked by effective
+disabled/readonly. For ngModel, import FormsModule and replace the formControl binding with
+`[(ngModel)]="organizationIds" name="organizationIds"`; never combine form bindings. `toSignalForm` observes the
+existing owning FormGroup; it adds no binding to the selection shell. Server pages use caller-owned ordinary row
+iteration and `clrDgRefresh` instead of the smart iterator; selection scope is the native logical displayed page, not
+viewport DOM rows. Neither server mode nor native row actions adds a second form owner.
+
+#### Resource wrapper: controlled inner value, actual outer owner
+
+Keep `<app-organization-picker formControlName="organizationIds" />`. The application wrapper retains exactly one CVA
+provider. Its inner shell has no form binding, and its complete grid is exactly the preceding grid template:
 
 ```html
-<clr-dg-row *clrDgItems="let target of targets(); trackBy: trackTarget" [clrDgItem]="target">
-  <clr-dg-cell>{{ target.name }}</clr-dg-cell>
-</clr-dg-row>
+<cll-datagrid-selection
+  renderMode="custom"
+  #selection
+  selectionMode="multiple"
+  [items]="items()"
+  [itemKey]="organizationKey"
+  [itemAvailability]="organizationAvailability"
+  [value]="viewKeys()"
+  [ownerState]="ownerState()"
+  [disabled]="formDisabled()"
+  [readonly]="readonly()"
+  [required]="required()"
+  label="Organizations"
+  helper="Choose organizations."
+  [error]="ownerError()"
+  (valueChange)="accept($event)"
+  (focusLeave)="onTouched()"
+>
+  <!-- Insert the complete caller-owned clr-datagrid from the direct example here. -->
+</cll-datagrid-selection>
 ```
 
-`TargetItem` is an application type. Scoped resources must return a scoped key instead of an unqualified name. The
-selection bridge and grid identity function share that resource key rule. The optional row trackBy uses the same key in
-this example to reuse row elements, but the bridge must not impose this view strategy on every caller. The selection
-component adds no competing trackBy input. With stable-key row tracking configured, refreshing matching object instances
-must reuse retained row elements. With or without row tracking, refresh must preserve selected keys and form
-pristine/untouched state. The local query-edit host now verifies retained row elements across a successful refetch with
-fresh objects. Preserve this optional native trackBy behavior in an explicit production regression.
+The adapter's essential value wiring is:
 
-The bridge must establish one identity function and one selected-value owner. Consumers must not simultaneously bind
-`clrDgSelected` to a competing application value. The final API needs a concrete public row integration for disabled,
-readonly and caller eligibility; the sketch does not establish that requirement.
+```typescript
+readonly viewKeys = signal<readonly string[]>([]);
+readonly formDisabled = signal(false);
+writeValue(value: readonly string[] | null): void { this.viewKeys.set([...(value ?? [])]); }
+setDisabledState(disabled: boolean): void { this.formDisabled.set(disabled); }
+accept(value: string[]): void {
+  this.viewKeys.set(value);
+  this.onChange(value);
+}
+// Standard registerOnChange/registerOnTouched store callbacks; owner writes never invoke them.
+```
 
-With product decisions accepted, the API-review revision must supply complete proposed imports, types, defaults,
-ngModel, typed Reactive Forms and `toSignalForm` hosts, plus the server-page and layout variants. Do not invent a native
-Signal Forms example using Angular 21 imports. The future bridge must preserve approved single/multi value types.
+`ownerState()` reads the outer wrapper's actual `NgControl.control` invalid/touched/dirty/pending properties and its
+containing FormGroupDirective/NgForm submitted state. `ownerError()` maps that owner's errors to localized text;
+`required()` explicitly reflects its required business rule. Resolve NgControl lifecycle-safely (for example via an
+Injector after CVA creation), subscribe to the owner's public `events` for OnPush updates, react to form
+submission/reset, and dispose subscriptions. Do not eagerly inject a cyclic NgControl through the NG_VALUE_ACCESSOR
+factory. These are wrapper responsibilities in this proposal; no unproved reusable owner-state helper is promised.
+
+The view keys may differ from the owner's committed value with updateOn blur/submit. Forward accepted edits immediately
+to outer onChange, forward composite departure to outer onTouched, and let Angular commit and validate. Do not overwrite
+the pending view from owner.value on every status event. Owner reset/writeValue replaces pending edits; disabled changes
+must not emit edit/touch callbacks. No mirrored FormControl is created.
+
+#### Accessibility and typing limits
+
+The shell renders an ARIA-labelled group and forwards its label, active helper/error IDs and optional required
+instruction to the actual native role=grid via the installed public `datagridTable` reference. Apply aria-invalid,
+aria-disabled and aria-readonly there; do not apply aria-required to role=grid. Errors use the Clarity error component,
+icon and token styling; helper/error replacement must keep valid descriptions. Avoid duplicate live announcements. Row
+selection labels, custom filter names, availability explanations and business messages remain caller supplied. Readonly
+leaves browse controls operable; disabled blocks all selection paths including header, range, radio and Clear. Projected
+non-selection actions remain caller-owned and must bind their own appropriate disabled state.
+
+Generic inference can check `items`, `itemKey`, controlled `value` and literal-mode `valueChange` in strict templates.
+Angular's ControlValueAccessor and NG_VALUE_ACCESSOR are untyped boundaries: a typed FormControl or formControlName does
+not guarantee template rejection of a single/multiple/key mismatch. `NgModel` has the same limitation. Runtime incoming
+value diagnostics and negative public type/strict-template fixtures must expose the actual guarantees. Row directives
+that discover owners by DI also cannot establish a compile-time generic relationship to that ancestor; they must
+validate composition at runtime. Do not advertise end-to-end CVA template type safety.
+
+#### Decisions to review before exports
+
+Approve or revise: (1) the shared selection component, column-template declaration, advanced row directive and exported
+type names; (2) literal mode plus conditional value and change types, primitive key scope, and acknowledged CVA limits;
+(3) B column/cell/filter context typing and native registration, plus explicit A grid bindings and its DI-owned row
+directive; (4) controlled-inner value plus ownerState/disabled/required forwarding rather than a public host directive;
+(5) string label/helper/error inputs and caller-rendered reasons; and (6) inherited layout with vertical fallback. These
+are concrete API choices, not a reopening of Q1–Q12. Public names and complete consumer templates still require strict
+compilation, negative type cases and packed-package proof after review.
+
+Installed-source verification for this proposal: @clr/angular 18.4.0 declarations expose array selected input/output,
+SelectionType, identity, preserve-selection, custom-select-all, select-all disabled, row selectable/output/selection
+label, and datagridTable. Its implementation handles select-all over logical displayed items and can emit selection
+updates during reconciliation. This inspection verifies the native building blocks only. No proposed export, strict
+template, packed consumer or runtime production component was delivered for these public declarations. Private hybrid
+proof results are recorded separately and do not establish public generic/type/package guarantees.
 
 ### Application-owned async inventory and mutation
 
@@ -594,7 +882,7 @@ Approved responsibility boundary; concrete bridge implementation remains unprove
 flowchart LR
   F[Angular form owner] <--> B[Form bridge]
   B <--> S[Selection value and identity]
-  S <--> G[Caller-owned Clarity grid]
+  S <--> G[Clarity grid: built-in B or explicit native A]
   A[Application data and query owner] --> G
   L[Field label, layout, helper and errors] --> G
 ```
@@ -757,8 +1045,8 @@ independent language review and manual assistive-technology acceptance remain di
 
 ## Demo and validation plan
 
-No production-component suite has run. A local scratch integration proof passes strict Angular compilation and 114
-browser scenarios (38 per engine); its scope and remaining gates are recorded below.
+No production-component suite has run. A local scratch integration proof passes strict Angular compilation and 162
+browser scenarios (54 per engine); its scope and remaining gates are recorded below.
 
 The local proof exercises complete-grid projection, field registration, item availability, accessible grid naming and
 filter-popup/footer focus against installed Clarity. Production implementation must preserve these verified behaviors,
@@ -805,23 +1093,23 @@ The maintainer accepted Q1–Q9 and clarified that an unpaged, footer-free grid 
 scrolling area. The maintainer subsequently approved Q10/Q11 and the simplified Q12, with dedicated locks removed from
 v1. The API direction is approved; integration proof and production delivery remain separate gates.
 
-| Decision | Accepted policy                                                                                                                                                        |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q1       | One resource component per kind reused across pages; complete caller-owned Clarity grid composed with a generic field/selection bridge; preserve outer formControlName |
-| Q2       | Stable key-valued forms; convert to full/partial entity DTOs at submission when required                                                                               |
-| Q3       | Inherit form horizontal/vertical layout; per-field override and narrow-screen reflow                                                                                   |
-| Q4       | Retain unresolved/off-page selections; only authoritative business validation establishes invalidity; no silent removal                                                |
-| Q5       | Prevent unavailable additions; allow invalid selections to be removed; no independent lock API; reasons beneath the name with caller-controlled placement              |
-| Q6       | Actual filtered page scope; all filtered items when unpaged, including scrolled-out items; preserve out-of-scope selections; no all-server-results sentinel            |
-| Q7       | Readonly supports viewing, filtering, sorting and paging without selection changes; disabled retains value and blocks edits                                            |
-| Q8       | No implicit first/sole selection; application sets defaults; single clear emits null with owner validation                                                             |
-| Q9       | Scoped stable item keys; duplicate candidate keys are developer errors; retain multi-value order and append new selections                                             |
+| Decision | Accepted policy                                                                                                                                             |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1       | B-default built-in columns/templates with explicit A complete-grid option; optional reusable resource pickers; preserve outer formControlName               |
+| Q2       | Stable key-valued forms; convert to full/partial entity DTOs at submission when required                                                                    |
+| Q3       | Inherit form horizontal/vertical layout; per-field override and narrow-screen reflow                                                                        |
+| Q4       | Retain unresolved/off-page selections; only authoritative business validation establishes invalidity; no silent removal                                     |
+| Q5       | Prevent unavailable additions; allow invalid selections to be removed; no independent lock API; reasons beneath the name with caller-controlled placement   |
+| Q6       | Actual filtered page scope; all filtered items when unpaged, including scrolled-out items; preserve out-of-scope selections; no all-server-results sentinel |
+| Q7       | Readonly supports viewing, filtering, sorting and paging without selection changes; disabled retains value and blocks edits                                 |
+| Q8       | No implicit first/sole selection; application sets defaults; single clear emits null with owner validation                                                  |
+| Q9       | Scoped stable item keys; duplicate candidate keys are developer errors; retain multi-value order and append new selections                                  |
 
-The [ADR](../../adr/0002-datagrid-selection-composition.md) records why complete-grid composition and key-valued forms
-are intentional. Next resolve public single/multi typing, wrapper bridge and owner-state presentation, item add/remove
-policy representation, accessible targets and layout defaults. Technical facts come from installed-source/proof work;
-only genuine remaining API/product choices return to maintainer review. Present the complete concrete API before
-production implementation. Existing approved decisions remain valid.
+The [ADR](../../adr/0002-datagrid-selection-composition.md) records the revised B-default/A-custom rendering decision
+and shared key-valued form contract. Next resolve public single/multi typing, wrapper bridge and owner-state
+presentation, item add/remove policy representation, accessible targets and layout defaults. Technical facts come from
+installed-source/proof work; only genuine remaining API/product choices return to maintainer review. Present the
+complete concrete API before production implementation. Existing approved decisions remain valid.
 
 Delivery sequence: concrete API/projection proof; local single/multi selection and field presentation; remote-page and
 unavailable-item acceptance; complete demos/localization/browser/package validation. Include unpaged scroll and filtered
@@ -848,7 +1136,32 @@ select-all in the validation matrix. Roadmap priority remains unchanged.
   and `git diff --check`. Local browser proof is recorded below. Production-component suites, full accessibility and
   installed-consumer acceptance, human review, CI, merge and publication are not claimed.
 
-### Local integration proof, October 25, 2026
+### Hybrid rendering proof, October 26, 2026
+
+The private Angular/Clarity proof now defaults to B and has an explicit A demo over the same policy detail/inventory,
+form values and query/reset/mutation flow. Both entry points use the same selection component, CVA, reconciliation,
+availability and field presentation. B creates a native grid from template column declarations; A retains its complete
+projected native grid and thin resource-wrapper bridge. No public production exports are added by this proof.
+
+Strict Angular template compilation passed. Chromium, Firefox and WebKit each passed **54 scenarios, 162 total**: 26
+existing local-field regressions, 14 B cases, 13 A cases and one isolated mixed-configuration scenario that checks both
+invalid directions. The common query cases cover independent response orders, errors/retries, cached refresh failure,
+cross-page preselection/reset, pending blur/submit reset, mutation failure/success, current unavailable restored keys
+and responsive layouts. B additionally verifies rich Clarity labels, a custom comparator, actual custom-filter
+registration and portal focus. Both renderers verify footer-free scrolling and select-all over all eligible logical
+items. Expected configuration errors are isolated from normal page-error checks.
+
+A real pagination trap was reproduced: removing only the footer left Clarity's old page slicing active. The proof now
+recreates the private grid when pagination is switched on/off while preserving the field and form values. It does not
+mutate Clarity's private page provider. Column/cell/filter declarations and the real native context are exercised, but
+the proof's fixed item type is not public generic-template or installed-package evidence. Full locales, human
+acceptance, server-page compatibility and other production gates remain separate.
+
+The preview exposes explicit B and A links and a comparison of their private declaration syntax. The two links start
+separate local edit sessions; they are not an automatic renderer fallback. The earlier A-only evidence below is retained
+as history and must not be mistaken for public-package delivery.
+
+### Original A-only integration proof, October 25, 2026
 
 Workspace revision: f865000dd9691e83c954ec02a10a126ec197c89c plus the local design/proof work. Installed Angular
 21.2.17, Clarity 18.4.0 and Node v24.18.0. The scratch proof lives in the ignored tmp directory and is not a package
