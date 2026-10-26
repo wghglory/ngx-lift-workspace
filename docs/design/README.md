@@ -38,6 +38,10 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## Review status and maintenance
 
+[Datagrid selection](clr-lift/datagrid-selection-design-spec.md) uses a default built-in grid with bounded
+column/cell/filter templates and an explicit complete-native-grid entry. Both share form/selection semantics; production
+exports and release acceptance remain pending.
+
 The [gap register](implementation-gaps.md) records the check of every preexisting spec, source evidence and prioritized
 implementation fixes. Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not
 implemented APIs. Specs use the shared template's required topics, retaining accurate legacy detail and explicitly
