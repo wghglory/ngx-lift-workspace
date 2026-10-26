@@ -458,10 +458,10 @@ missing loaded items nor reconciliation removes a key or emits a user edit.
 | `itemAvailability`        | `(item: T) => DatagridSelectionItemAvailability`; all enabled | Prevent additions when disabled; selected disabled items remain removable.                                                  |
 | `label`                   | required `string`                                             | Visible field label and actual grid accessible name.                                                                        |
 | `helper`, `error`         | `string`; empty                                               | Localized caller text; show error only when owner invalid and touched/submitted, helper otherwise.                          |
-| `required`                | `boolean`; false                                              | Required instruction/marker only; actual validators belong to the owner.                                                    |
+| `requiredIndicator`       | `boolean`; false                                              | Required instruction/marker only; does not install a validator. Actual validators belong to the owner.                      |
 | `layout`                  | `'inherit' \| 'horizontal' \| 'vertical'`; inherit            | Inherit enclosing Clarity form; vertical outside a form; stack at narrow widths.                                            |
 | `readonly`                | `boolean`; false                                              | Prevent selection changes, keep filtering/sorting/paging usable.                                                            |
-| `disabled`                | `boolean`; false                                              | Effective selection disabled = input OR CVA disabled state; never changes owner serialization by itself.                    |
+| `interactionDisabled`     | `boolean`; false                                              | Effective selection disabled = input OR CVA disabled state; this input never changes owner status or serialization.         |
 | `value`                   | `DatagridSelectionValue<K, M>`; absent                        | Controlled-inner mode only; cannot coexist with formControl/ngModel on this component.                                      |
 | `ownerState`              | `DatagridSelectionOwnerState`; absent                         | Required with controlled value; otherwise derived from actual NgControl and containing form submission state.               |
 | `valueChange`             | `DatagridSelectionChange<K, M>`                               | Accepted user edit only; emits alongside CVA onChange in direct mode.                                                       |
@@ -471,6 +471,22 @@ missing loaded items nor reconciliation removes a key or emits a user edit.
 | `gridSelectionType()`     | installed Clarity `SelectionType`                             | Maps single/multiple to Clarity Single/Multi.                                                                               |
 | `identify`                | `(item: T) => K`                                              | Stable forwarding callback for Clarity identity binding.                                                                    |
 | `selectionDisabled()`     | `boolean`                                                     | Effective disabled OR readonly, for native header binding.                                                                  |
+
+`requiredIndicator` and `interactionDisabled` deliberately avoid Angular form-directive input names. Angular's
+`RequiredValidator` matches `required` together with formControlName, formControl or ngModel on custom components too;
+binding `required` is therefore a validation request, not presentation-only metadata. Reactive Forms examples configure
+`Validators.required` on the owner and bind `requiredIndicator` for presentation. Template-driven examples use Angular's
+`required` directive when validation is intended and set `requiredIndicator` separately. Toggling the indicator alone
+must not change owner validity.
+
+Similarly, `NgModel` consumes a `disabled` binding and enables/disables its owning control. With an enabled containing
+form, a disabled named control is omitted from NgForm.value and retained in the raw value. Reactive Forms hosts instead
+enable/disable the owning control through Angular's control API; CVA setDisabledState forwards that state to the field.
+The component does not declare a `disabled` input. Its `interactionDisabled` input only blocks selection edits and may
+forward an outer wrapper's disabled state in controlled-inner mode; it does not call owner.disable() or owner.enable().
+Use Angular-owned disabling when validation and serialization should change. Clearing interactionDisabled cannot
+override a disabled form owner, and enabling the owner cannot override interactionDisabled. Readonly remains the
+separate inspection mode described above.
 
 The grid/selection getters above are read-only bridge outputs for advanced A; B consumes them internally. No
 `clrDgSelectedChange` application callback or second writable row-selection model is needed. The component subscribes to
@@ -553,7 +569,7 @@ readonly trackOrganization = (_index: number, item: Organization): string => ite
   label="Organizations"
   helper="Choose one or more organizations."
   error="Choose at least one organization."
-  [required]="true"
+  [requiredIndicator]="true"
 >
   <clr-datagrid
     [clrDgSelected]="selection.selectedItems()"
@@ -594,10 +610,13 @@ selected-items binding: direct post-render member assignment left the scratch pr
 For single mode use `selectionMode="single"` with `new FormControl<string | null>(null)`; the same complete grid and row
 bindings apply. In single mode the shell supplies a localized Clear action emitting null, blocked by effective
 disabled/readonly. For ngModel, import FormsModule and replace the formControl binding with
-`[(ngModel)]="organizationIds" name="organizationIds"`; never combine form bindings. `toSignalForm` observes the
-existing owning FormGroup; it adds no binding to the selection shell. Server pages use caller-owned ordinary row
-iteration and `clrDgRefresh` instead of the smart iterator; selection scope is the native logical displayed page, not
-viewport DOM rows. Neither server mode nor native row actions adds a second form owner.
+`[(ngModel)]="organizationIds" name="organizationIds"` with an application-owned key-array model; never combine form
+bindings. Add Angular's `required` directive to preserve this example's required validation; requiredIndicator alone
+does not validate the model. Use `[disabled]="formDisabled()"` on the ngModel host only when Angular-owned disabling,
+including exclusion from an enabled form's value, is intended. Use interactionDisabled for an interaction-only block.
+`toSignalForm` observes the existing owning FormGroup; it adds no binding to the selection shell. Server pages use
+caller-owned ordinary row iteration and `clrDgRefresh` instead of the smart iterator; selection scope is the native
+logical displayed page, not viewport DOM rows. Neither server mode nor native row actions adds a second form owner.
 
 #### Resource wrapper: controlled inner value, actual outer owner
 
@@ -614,9 +633,9 @@ provider. Its inner shell has no form binding, and its complete grid is exactly 
   [itemAvailability]="organizationAvailability"
   [value]="viewKeys()"
   [ownerState]="ownerState()"
-  [disabled]="formDisabled()"
+  [interactionDisabled]="formDisabled()"
   [readonly]="readonly()"
-  [required]="required()"
+  [requiredIndicator]="required()"
   label="Organizations"
   helper="Choose organizations."
   [error]="ownerError()"
@@ -675,10 +694,10 @@ validate composition at runtime. Do not advertise end-to-end CVA template type s
 Approve or revise: (1) the shared selection component, column-template declaration, advanced row directive and exported
 type names; (2) literal mode plus conditional value and change types, primitive key scope, and acknowledged CVA limits;
 (3) B column/cell/filter context typing and native registration, plus explicit A grid bindings and its DI-owned row
-directive; (4) controlled-inner value plus ownerState/disabled/required forwarding rather than a public host directive;
-(5) string label/helper/error inputs and caller-rendered reasons; and (6) inherited layout with vertical fallback. These
-are concrete API choices, not a reopening of Q1–Q12. Public names and complete consumer templates still require strict
-compilation, negative type cases and packed-package proof after review.
+directive; (4) controlled-inner value plus ownerState/interactionDisabled/requiredIndicator forwarding rather than a
+public host directive; (5) string label/helper/error inputs and caller-rendered reasons; and (6) inherited layout with
+vertical fallback. These are concrete API choices, not a reopening of Q1–Q12. Public names and complete consumer
+templates still require strict compilation, negative type cases and packed-package proof after review.
 
 Installed-source verification for this proposal: @clr/angular 18.4.0 declarations expose array selected input/output,
 SelectionType, identity, preserve-selection, custom-select-all, select-all disabled, row selectable/output/selection
@@ -967,9 +986,9 @@ readonly form = new FormGroup({
 
 The wrapper retains the parent's form owner through its CVA/bridge; it must not recreate validators or synchronize a
 second control. The CVA reports value/interaction, while the field presentation reflects real
-required/error/touched/pending state through reviewed metadata and error slots. A required-looking input or label alone
-does not install/forward validation. ngModel validation directives and later native Signal Forms schemas need their own
-real-host checks.
+required/error/touched/pending state through reviewed metadata and error slots. The requiredIndicator input and label
+only present the required rule; Angular's separate required directive installs validation when used with a form binding.
+ngModel validation directives and later native Signal Forms schemas need their own real-host checks.
 
 Business async validators own remote eligibility checks and actual form pending. When authoritative inventory or
 permission state changes independently of the value, business integration must revalidate that owner without faking a
@@ -1065,6 +1084,10 @@ Then cover every approved use case in copyable playgrounds and focused tests:
   edits, immutable submit snapshots and mutation-success/refetch-failure separation.
 - Forms: real ngModel, typed Reactive Forms and toSignalForm hosts; change/blur/submit timing; pristine/dirty/touched,
   caller sync/async validators, disabled initial values, reset and serialized submission.
+- Form-input boundaries: direct Reactive Forms and ngModel hosts prove that requiredIndicator alone does not add
+  validation, while an owner validator or Angular required directive does. interactionDisabled blocks edits without
+  changing owner status or normal/raw serialization; Angular-owned disabling changes those according to the form
+  contract. Cover both orders of input/owner enablement and the controlled wrapper's state forwarding.
 - Browser: Chromium, Firefox and WebKit; keyboard/pointer/touch selection, filters and popup focus, footer optionality,
   horizontal/vertical/reflow, light/dark/compact, locale switching and RTL. Controlled fixtures; no timing sleeps.
 - Installed packages: public declarations and strict templates in Angular 21 zoneless and ZoneJS consumers. Typed
