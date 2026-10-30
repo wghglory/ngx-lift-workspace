@@ -1,0 +1,80 @@
+<form clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <cll-datagrid-selection
+    formControlName="organizationIds"
+    required
+    [helper]="'organizationExample.help' | translate"
+    [error]="selectionError()"
+    [readonly]="readonly()"
+    [layout]="layout()"
+    [itemAvailability]="availability"
+  >
+    <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
+    <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
+      <clr-signpost-content *clrIfOpen>{{ 'organizationExample.help' | translate }}</clr-signpost-content>
+    </clr-signpost>
+    @if (organizationsQuery.error()) {
+      <cll-alert>
+        {{
+          (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+            | translate
+        }}
+        <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+          {{ 'organizationExample.retry' | translate }}
+        </button>
+      </cll-alert>
+    }
+    <clr-datagrid
+      clrDgSelectionType="multi"
+      [clrDgLoading]="organizationsQuery.isLoading()"
+      [clrDgItemsIdentityFn]="organizationKey"
+    >
+      <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
+      <clr-dg-column clrDgField="status" [clrDgSortBy]="statusComparator">
+        {{ 'organizationExample.status' | translate }}
+        <clr-dg-string-filter [clrDgStringFilter]="statusTextFilter" />
+      </clr-dg-column>
+      <clr-dg-row
+        *clrDgItems="let item of organizationsQuery.value() ?? []"
+        [clrDgItem]="item"
+        [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+      >
+        <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+        <clr-dg-cell>
+          <span
+            class="label"
+            [class.label-success]="item.status === 'ready'"
+            [class.label-warning]="item.status === 'maintenance'"
+          >
+            {{ statusKeys[item.status] | translate }}
+          </span>
+        </clr-dg-cell>
+      </clr-dg-row>
+      <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
+    </clr-datagrid>
+  </cll-datagrid-selection>
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <label
+      ><input
+        type="checkbox"
+        [checked]="layout() === 'horizontal'"
+        (change)="layout.set(layout() === 'horizontal' ? 'vertical' : 'horizontal')"
+      />
+      {{ 'selectionDemo.horizontal' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'selectionDemo.readonly' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
+      {{ 'selectionDemo.disabled' | translate }}</label
+    >
+    <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm" (click)="loadSaved()">{{ 'selectionDemo.loadSaved' | translate }}</button>
+  </div>
+  <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
+  <button type="reset" class="btn btn-secondary">{{ 'organizationExample.reset' | translate }}</button>
+</form>
+<pre>{{ sf.submitValue() | json }}</pre>

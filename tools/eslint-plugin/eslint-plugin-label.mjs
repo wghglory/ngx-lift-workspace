@@ -9,6 +9,9 @@ function containsControl(node) {
 function clarityAssociation(node) {
   let parent = node.parent;
   while (parent && parent.type !== 'Element') parent = parent.parent;
+  // The selection field assigns the direct label's ID to its actual role=grid and handles label-click focus.
+  if (parent?.name === 'cll-datagrid-selection')
+    return parent.children.filter((child) => child.name === 'clr-datagrid').length === 1;
   return parent?.name?.startsWith('clr-') && /-(container|wrapper)$/.test(parent.name) && containsControl(parent);
 }
 const rule = {

@@ -1,0 +1,53 @@
+<cll-datagrid-selection
+  cllDatagridSelectionBinding
+  [readonly]="readonly()"
+  [required]="required()"
+  [helper]="'organizationExample.help' | translate"
+  [error]="error() || ('organizationExample.invalidSelection' | translate)"
+>
+  <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
+  <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
+    <clr-signpost-content *clrIfOpen>{{ 'organizationExample.help' | translate }}</clr-signpost-content>
+  </clr-signpost>
+  @if (organizationsQuery.error()) {
+    <cll-alert>
+      {{
+        (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+          | translate
+      }}
+      <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+        {{ 'organizationExample.retry' | translate }}
+      </button>
+    </cll-alert>
+  }
+  <clr-datagrid
+    clrDgSelectionType="multi"
+    [clrDgLoading]="organizationsQuery.isLoading()"
+    [clrDgItemsIdentityFn]="organizationKey"
+  >
+    <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="statusComparator">
+      {{ 'organizationExample.status' | translate }}
+      <clr-dg-filter [clrDgFilter]="statusFilter">
+        <app-organization-status-filter [filter]="statusFilter" />
+      </clr-dg-filter>
+    </clr-dg-column>
+    <clr-dg-row
+      *clrDgItems="let item of organizationsQuery.value() ?? []"
+      [clrDgItem]="item"
+      [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+    >
+      <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+      <clr-dg-cell>
+        <span
+          class="label"
+          [class.label-success]="item.status === 'ready'"
+          [class.label-warning]="item.status === 'maintenance'"
+        >
+          {{ statusKeys[item.status] | translate }}
+        </span>
+      </clr-dg-cell>
+    </clr-dg-row>
+    <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
+  </clr-datagrid>
+</cll-datagrid-selection>

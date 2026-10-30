@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+  margin-block: 0.6rem;
+}
+.selection-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.3rem;
+}
+.field-label {
+  display: flex;
+  align-self: start;
+  align-items: center;
+  gap: 0.4rem;
+  min-inline-size: 0;
+}
+.field-body {
+  min-inline-size: 0;
+}
+:host ::ng-deep .field-label > label {
+  flex: 0 1 auto;
+  max-width: none;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+:host ::ng-deep .field-label > clr-signpost {
+  flex: 0 0 auto;
+}
+// Limit the native scrolling area, not the footer. The adapter retains the unfiltered footprint.
+:host ::ng-deep clr-datagrid .datagrid {
+  max-block-size: 18rem;
+}
+@media (min-width: 768px) {
+  :host-context(.clr-form-horizontal) .selection-field:not(.vertical),
+  .selection-field.horizontal {
+    grid-template-columns: minmax(6rem, 25%) minmax(0, 1fr);
+  }
+}
+:host ::ng-deep .selection-availability-reason {
+  display: block;
+  font-size: var(--clr-forms-subtext-font-size, 0.55rem);
+  color: var(--clr-forms-subtext-color, #454545);
+}

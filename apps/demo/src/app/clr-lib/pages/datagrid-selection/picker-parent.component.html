@@ -1,0 +1,6 @@
+<form clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <app-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
+  <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
+  <button type="reset" class="btn btn-secondary">{{ 'organizationExample.reset' | translate }}</button>
+</form>
+<pre>{{ sf.submitValue() | json }}</pre>
