@@ -1,4 +1,28 @@
 export const enTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    'Load saved selection restores South (org-2) and an unresolved key that is absent from this inventory. Refresh replaces the inventory while preserving selected keys. Reset restores South.',
+  'selectionDemo.pickerHelp':
+    'The picker owns loading and the grid; the parent owns validation and submission. Reset restores North (org-1).',
+  'selectionDemo.reference.overview':
+    'Wrap one native Clarity datagrid with a plain label. Bind the form only to the selection field, or to the reusable picker host.',
+  'selectionDemo.reference.required':
+    'Marks the field as required and activates Angular RequiredValidator on a directly bound control.',
+  'selectionDemo.reference.helper': 'Localized help associated with the grid.',
+  'selectionDemo.reference.error':
+    'Localized validator message shown when the owner is invalid and touched or submitted.',
+  'selectionDemo.reference.layout': 'Field layout; inherits the enclosing Clarity form when omitted.',
+  'selectionDemo.reference.readonly': 'Prevents selection edits while retaining browsing and inclusion in form values.',
+  'selectionDemo.reference.itemAvailability':
+    'Returns disabled and a localized disabledReason for each item. Selected unavailable items remain removable.',
+  'selectionDemo.reference.value':
+    'Single mode stores a stable key or null; multi mode stores ordered keys. Missing and off-page keys are preserved.',
+  'selectionDemo.reference.native':
+    'Configure mode with clrDgSelectionType, identity with clrDgItemsIdentityFn and inventory with clrDgItems. Native columns, filters, sorting and paging stay caller-owned.',
+  'selectionDemo.reference.picker':
+    'Compose DatagridSelectionAccessorDirective on the picker host and cllDatagridSelectionBinding on exactly one inner field. Keep the Angular form binding on the host.',
+  'selectionDemo.reference.events':
+    'Use Angular valueChanges and toSignalForm on the original owner. There are no separate selection outputs or public imperative methods.',
+
   'selectionDemo.horizontal': 'Horizontal layout',
   'selectionDemo.loadSaved': 'Load saved selection',
   'selectionDemo.readonly': 'Readonly',

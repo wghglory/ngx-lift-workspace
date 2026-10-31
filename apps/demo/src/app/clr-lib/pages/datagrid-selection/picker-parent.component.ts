@@ -1,9 +1,10 @@
-import {toSignalForm} from 'ngx-lift';
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, output, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe, TranslationService} from 'clr-lift';
+import {toSignalForm} from 'ngx-lift';
+
 import {OrganizationPickerComponent} from './organization-picker.component';
 
 @Component({
@@ -14,6 +15,7 @@ import {OrganizationPickerComponent} from './organization-picker.component';
 })
 export class PolicyFormComponent {
   private readonly translationService = inject(TranslationService);
+
   private readonly originalOrganizationIds = ['org-1'];
   readonly form = new FormGroup({
     organizationIds: new FormControl<string[]>([...this.originalOrganizationIds], {
@@ -27,6 +29,7 @@ export class PolicyFormComponent {
     // Angular includes children in form.value when the entire group is disabled.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
+
   readonly selectionError = computed(() => {
     const errors = this.sf.fields.organizationIds.errors();
     if (!errors) return '';
@@ -35,6 +38,7 @@ export class PolicyFormComponent {
     return this.translationService.translate('organizationExample.invalidSelection');
   });
   readonly save = output<{organizationIds?: string[]}>();
+
   submit(): void {
     if (this.sf.invalid() || this.sf.pending()) return;
     const payload = this.sf.submitValue();

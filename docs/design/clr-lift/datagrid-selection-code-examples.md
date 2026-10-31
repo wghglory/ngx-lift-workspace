@@ -228,44 +228,47 @@ sf.submitValue() directly. A valid submit emits a copied payload through the ord
 application to persist; no submittedValue signal duplicates the form. sf.submitValue() describes the current sanitized
 value, not submission history. Copy values when handing them to an asynchronous operation.
 
-This example's original IDs are known when the nonNullable control is constructed. A native type="reset" button lets
-Angular reset the model to those defaults and clear the form's submitted state. No reset method, template reference or
-FormGroupDirective parameter is needed. For an edit baseline loaded later, use the explicit reset recipe below rather
-than assuming it has changed the control's original defaults.
+The original IDs are known when the nonNullable control is constructed. The ordinary reset button calls
+formView.resetForm() to restore those defaults and clear submitted state. It avoids the native browser reset action,
+which independently clears Clarity pagination and selection inputs. For an edit baseline loaded later, pass the explicit
+baseline to resetForm(value).
 
 ### data-service-policy-form.component.ts
 
 ```typescript
-import {OrganizationService, organizationListQuery} from './organization.service';
 import {JsonPipe} from '@angular/common';
-import {ChangeDetectionStrategy, Component, computed, inject, OnDestroy, output} from '@angular/core';
+import {
+  afterRenderEffect,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ClarityModule} from '@clr/angular';
+import {ClarityModule, ClrDatagrid} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
-import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
-import {StatusFilter} from './status.filter';
-import {OrganizationStatusFilterComponent} from './organization-status-filter.component';
+import {STATUS_KEYS, type Organization} from './organization-example.data';
+import {OrganizationService, organizationListQuery} from './organization.service';
 
 @Component({
   selector: 'app-data-service-policy-form',
-  imports: [
-    AlertComponent,
-    ClarityModule,
-    ReactiveFormsModule,
-    JsonPipe,
-    TranslatePipe,
-    DatagridSelectionComponent,
-    OrganizationStatusFilterComponent,
-  ],
+  imports: [AlertComponent, ClarityModule, ReactiveFormsModule, JsonPipe, TranslatePipe, DatagridSelectionComponent],
   templateUrl: './data-service-policy-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DataServicePolicyFormComponent implements OnDestroy {
+export class DataServicePolicyFormComponent {
   private readonly translationService = inject(TranslationService);
-  private readonly originalOrganizationIds = ['org-2'];
   private readonly organizationService = inject(OrganizationService);
+  private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
+
+  private readonly originalOrganizationIds = ['org-2'];
   readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+
   readonly form = new FormGroup({
     organizationIds: new FormControl<string[]>([...this.originalOrganizationIds], {
       nonNullable: true,
@@ -275,9 +278,18 @@ export class DataServicePolicyFormComponent implements OnDestroy {
   });
   readonly sf = toSignalForm(this.form, {
     includeDisabled: false,
-    // Keep the DTO policy explicit even when Angular considers the entire group disabled.
+    // Angular includes children in form.value when the entire group is disabled.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
+
+  readonly readonly = signal(false);
+  readonly layout = signal<'horizontal' | 'vertical'>('vertical');
+  readonly availability = (item: Organization) => ({
+    disabled: item.status === 'maintenance',
+    disabledReason:
+      item.status === 'maintenance' ? this.translationService.translate('organizationExample.maintenance') : undefined,
+  });
+
   readonly selectionError = computed(() => {
     const errors = this.sf.fields.organizationIds.errors();
     if (!errors) return '';
@@ -285,20 +297,50 @@ export class DataServicePolicyFormComponent implements OnDestroy {
     if (errors['maxlength']) return this.translationService.translate('organizationExample.maxOrganizations');
     return this.translationService.translate('organizationExample.invalidSelection');
   });
-  readonly save = output<{organizationIds?: string[]}>();
+
   readonly statusKeys = STATUS_KEYS;
   readonly statusComparator = {
-    compare: (a: Organization, b: Organization) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status],
+    compare: (a: Organization, b: Organization) =>
+      new Intl.Collator(this.translationService.locale()).compare(this.statusText(a), this.statusText(b)),
   };
-  readonly statusFilter = new StatusFilter();
+  readonly statusTextFilter = {
+    accepts: (item: Organization, search: string) =>
+      this.statusText(item)
+        .toLocaleLowerCase(this.translationService.locale())
+        .includes(search.toLocaleLowerCase(this.translationService.locale())),
+  };
   readonly organizationKey = (item: Organization) => item.id;
+  readonly save = output<{organizationIds?: string[]}>();
+
+  constructor() {
+    afterRenderEffect(() => {
+      const grid = this.grid();
+      // Track both language and dictionary changes, keeping the native active query and sort state.
+      this.translationService.locale();
+      this.translationService.translate(STATUS_KEYS.ready);
+      this.translationService.translate(STATUS_KEYS.maintenance);
+      untracked(() => grid?.items.refresh());
+    });
+  }
+
+  toggleDisabled(): void {
+    const control = this.form.controls.organizationIds;
+    if (control.disabled) control.enable();
+    else control.disable();
+  }
+  loadSaved(): void {
+    // Restore persisted keys, including one absent from the current inventory; this does not change the reset baseline.
+    this.form.controls.organizationIds.setValue(['org-2', 'unresolved']);
+  }
+
   submit(): void {
     if (this.sf.invalid() || this.sf.pending()) return;
     const payload = this.sf.submitValue();
     this.save.emit(payload.organizationIds === undefined ? {} : {organizationIds: [...payload.organizationIds]});
   }
-  ngOnDestroy(): void {
-    this.statusFilter.destroy();
+
+  private statusText(item: Organization): string {
+    return this.translationService.translate(STATUS_KEYS[item.status]);
   }
 }
 ```
@@ -306,12 +348,15 @@ export class DataServicePolicyFormComponent implements OnDestroy {
 ### data-service-policy-form.component.html
 
 ```html
-<form clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
   <cll-datagrid-selection
     formControlName="organizationIds"
     required
     [helper]="'organizationExample.help' | translate"
     [error]="selectionError()"
+    [readonly]="readonly()"
+    [layout]="layout()"
+    [itemAvailability]="availability"
   >
     <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
     <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
@@ -332,11 +377,9 @@ export class DataServicePolicyFormComponent implements OnDestroy {
       [clrDgItemsIdentityFn]="organizationKey"
     >
       <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
-      <clr-dg-column [clrDgSortBy]="statusComparator">
+      <clr-dg-column clrDgField="status" [clrDgSortBy]="statusComparator">
         {{ 'organizationExample.status' | translate }}
-        <clr-dg-filter [clrDgFilter]="statusFilter">
-          <app-organization-status-filter [filter]="statusFilter" />
-        </clr-dg-filter>
+        <clr-dg-string-filter [clrDgStringFilter]="statusTextFilter" />
       </clr-dg-column>
       <clr-dg-row
         *clrDgItems="let item of organizationsQuery.value() ?? []"
@@ -357,8 +400,32 @@ export class DataServicePolicyFormComponent implements OnDestroy {
       <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
     </clr-datagrid>
   </cll-datagrid-selection>
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <label
+      ><input
+        type="checkbox"
+        [checked]="layout() === 'horizontal'"
+        (change)="layout.set(layout() === 'horizontal' ? 'vertical' : 'horizontal')"
+      />
+      {{ 'selectionDemo.horizontal' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" /> {{ 'selectionDemo.readonly'
+      | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" /> {{
+      'selectionDemo.disabled' | translate }}</label
+    >
+    <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm" (click)="loadSaved()">{{ 'selectionDemo.loadSaved' | translate }}</button>
+  </div>
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
-  <button type="reset" class="btn btn-secondary">{{ 'organizationExample.reset' | translate }}</button>
+  <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
+    {{ 'organizationExample.reset' | translate }}
+  </button>
 </form>
 <pre>{{ sf.submitValue() | json }}</pre>
 ```
@@ -495,12 +562,13 @@ export class OrganizationPickerComponent implements OnDestroy {
 ### picker-parent.component.ts
 
 ```typescript
-import {toSignalForm} from 'ngx-lift';
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, output, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe, TranslationService} from 'clr-lift';
+import {toSignalForm} from 'ngx-lift';
+
 import {OrganizationPickerComponent} from './organization-picker.component';
 
 @Component({
@@ -511,6 +579,7 @@ import {OrganizationPickerComponent} from './organization-picker.component';
 })
 export class PolicyFormComponent {
   private readonly translationService = inject(TranslationService);
+
   private readonly originalOrganizationIds = ['org-1'];
   readonly form = new FormGroup({
     organizationIds: new FormControl<string[]>([...this.originalOrganizationIds], {
@@ -521,9 +590,10 @@ export class PolicyFormComponent {
   });
   readonly sf = toSignalForm(this.form, {
     includeDisabled: false,
-    // Keep the DTO policy explicit even when Angular considers the entire group disabled.
+    // Angular includes children in form.value when the entire group is disabled.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
+
   readonly selectionError = computed(() => {
     const errors = this.sf.fields.organizationIds.errors();
     if (!errors) return '';
@@ -532,6 +602,7 @@ export class PolicyFormComponent {
     return this.translationService.translate('organizationExample.invalidSelection');
   });
   readonly save = output<{organizationIds?: string[]}>();
+
   submit(): void {
     if (this.sf.invalid() || this.sf.pending()) return;
     const payload = this.sf.submitValue();
@@ -543,10 +614,12 @@ export class PolicyFormComponent {
 ### picker-parent.component.html
 
 ```html
-<form clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
   <app-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
-  <button type="reset" class="btn btn-secondary">{{ 'organizationExample.reset' | translate }}</button>
+  <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
+    {{ 'organizationExample.reset' | translate }}
+  </button>
 </form>
 <pre>{{ sf.submitValue() | json }}</pre>
 ```
@@ -661,13 +734,21 @@ this.form.reset({organizationIds: ['org-1']});
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | form.patchValue / setValue | Values and validity; does not automatically reset dirty/touched or submitted state.                                         |
 | form.reset(value)          | Values/validity and pristine/untouched state; cancels buffered edits. Does not clear the form directive's submitted flag.   |
-| Native type="reset" button | Angular resets the model to control defaults and clears the form directive's submitted flag. No handler is needed.          |
+| Native type="reset" button | Also runs the browser reset action on native pagination and selection inputs. Avoid it for this composite grid.             |
 | formView.resetForm(value)  | Resets the model to explicit values and clears submitted state. Useful when an edit baseline was loaded after construction. |
 | sf.reset                   | Delegates to the existing model's reset; it does not reset FormGroupDirective.submitted.                                    |
 
-The two complete Reactive Forms examples use type="reset" because their nonNullable controls were constructed with the
-accepted baseline. Native Angular reset restores that baseline and clears submitted state. This needs no reset method,
-FormGroupDirective import, viewChild or template reference.
+The two complete Reactive Forms examples use an ordinary button and the existing form directive:
+
+```html
+<form #formView="ngForm" [formGroup]="form">
+  <!-- The selection field and native grid go here. -->
+  <button type="button" (click)="formView.resetForm()">Reset</button>
+</form>
+```
+
+This restores the nonNullable control defaults and clears submitted state without the browser resetting native DOM
+inputs behind Clarity's state. The current pagination input stays populated; selected rows match the form's keys.
 
 Direct model reset is supported whenever code needs it:
 
@@ -681,8 +762,8 @@ This resets model values and pristine/untouched state. If the form was submitted
 submitted=true; validation shown for invalid and touched **or submitted** may remain visible. This is ordinary Angular
 behavior, not a selection-specific requirement. When a full programmatic restart must also clear submitted, or restore a
 different baseline loaded after control construction, use the owning directive's resetForm(value). A template
-#formView="ngForm" passed to that handler is one option; it is not mandatory for ordinary model updates or a native
-reset button. See [FormGroup.reset](https://angular.dev/api/forms/FormGroup#reset) and
+#formView="ngForm" passed to that handler is one option; it is not mandatory for ordinary model updates. See
+[FormGroup.reset](https://angular.dev/api/forms/FormGroup#reset) and
 [FormGroupDirective.resetForm](https://angular.dev/api/forms/FormGroupDirective#resetForm).
 
 The real [toSignalForm implementation](../../../libs/ngx-lift/src/lib/signals/to-signal-form.ts) is a facade over the

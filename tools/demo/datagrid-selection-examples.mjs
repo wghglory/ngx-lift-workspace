@@ -10,6 +10,7 @@ const examples = {
   single: 'simple-single.component',
   policy: 'data-service-policy-form.component',
   picker: 'organization-picker.component',
+  pickerParent: 'picker-parent.component',
   model: 'template-driven.component',
 };
 const declarations = [];
@@ -34,4 +35,4 @@ else if (readFileSync(destination, 'utf8') !== generated)
   throw new Error(
     'Datagrid selection source differs from the live examples. Run node tools/demo/datagrid-selection-examples.mjs --write.',
   );
-console.log('Datagrid selection: all ten displayed sources match their runnable files.');
+console.log('Datagrid selection: all displayed sources match their runnable files.');

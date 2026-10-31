@@ -1,4 +1,27 @@
 export const ruTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    'Загрузка сохранённого выбора восстанавливает South (org-2) и ключ, отсутствующий в списке. Обновление заменяет данные и сохраняет выбранные ключи. Сброс восстанавливает South.',
+  'selectionDemo.pickerHelp':
+    'Компонент выбора управляет загрузкой и таблицей, родитель — проверкой и отправкой. Сброс восстанавливает North (org-1).',
+  'selectionDemo.reference.overview':
+    'Оборачивает одну нативную таблицу Clarity с обычной подписью. Привязывайте форму только к полю выбора или хосту повторно используемого компонента.',
+  'selectionDemo.reference.required':
+    'Помечает поле обязательным и активирует Angular RequiredValidator на непосредственно связанном элементе управления.',
+  'selectionDemo.reference.helper': 'Локализованная подсказка, связанная с таблицей.',
+  'selectionDemo.reference.error': 'Локализованная ошибка проверки для недопустимого поля после касания или отправки.',
+  'selectionDemo.reference.layout': 'Расположение поля; если не задано, наследуется от внешней формы Clarity.',
+  'selectionDemo.reference.readonly': 'Запрещает изменение выбора, сохраняя просмотр и включение в значения формы.',
+  'selectionDemo.reference.itemAvailability':
+    'Возвращает disabled и локализованный disabledReason для каждого элемента. Уже выбранные недоступные элементы можно удалить.',
+  'selectionDemo.reference.value':
+    'Одиночный выбор хранит стабильный ключ или null, множественный — упорядоченные ключи. Отсутствующие ключи и ключи вне текущей страницы сохраняются.',
+  'selectionDemo.reference.native':
+    'Задайте режим через clrDgSelectionType, идентификатор через clrDgItemsIdentityFn и данные через clrDgItems. Столбцы, фильтры, сортировка и страницы управляются вызывающим кодом.',
+  'selectionDemo.reference.picker':
+    'Добавьте DatagridSelectionAccessorDirective на хост и cllDatagridSelectionBinding ровно на одно внутреннее поле. Привязка формы Angular остаётся на хосте.',
+  'selectionDemo.reference.events':
+    'Используйте Angular valueChanges и toSignalForm исходной формы. Отдельных выходов выбора и публичных императивных методов нет.',
+
   'selectionDemo.horizontal': 'Горизонтальная компоновка',
   'selectionDemo.loadSaved': 'Загрузить сохранённый выбор',
   'selectionDemo.readonly': 'Только чтение',

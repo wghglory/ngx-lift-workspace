@@ -111,3 +111,24 @@ height through fresh object replacement. The retained height uses rem units for 
   acceptance remain with #201 and #202; their scope is not certified by this local increment.
 - No runtime dependency or package version/peer-range change is needed. Release versioning/publication remains an
   independently authorized release operation.
+
+## Demo feedback follow-up (October 31, 2026)
+
+The native HTML reset action cleared Clarity's pagination input and checkbox DOM state independently of the Angular
+model. Browser regressions reproduced an empty current-page input and an unchecked South despite the owner still
+containing org-2. Both Reactive Forms examples now use ordinary buttons calling the existing directive's resetForm().
+This restores their nonNullable constructor defaults and submitted state without running the browser reset action.
+
+Nine focused checks pass across Chromium, Firefox and WebKit: direct reset restores South, picker reset restores North,
+page inputs remain populated on pages 1 and 2, saved writes after reset/refresh stay checked, and the in-page API
+reference renders its six inputs and accessor/binding contract. The demo now explains the saved/unresolved keys and
+initial reset values in all eleven locales, shows the real picker-parent sources, and groups the validation example's
+dependencies, form state, grid configuration and actions. Displayed sources are generated from twelve runnable files.
+
+Follow-up checks also pass: all 282 demo unit tests, demo/e2e lint and type checks, eleven-locale completeness, source
+drift/formatting checks and the production demo build. Existing e2e lint warnings remain; there are no lint errors.
+Independent human language and assistive-technology acceptance remain separate from this automated evidence.
+
+The complete updated feature suite passes all 42 browser checks, including automated accessibility in both themes,
+eleven-locale switching and the new reset/reference regressions. The earlier 1,618-test full-library/package validation
+above predates this demo-only follow-up; library implementation, dependencies and public signatures are unchanged.

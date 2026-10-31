@@ -1,4 +1,27 @@
 export const jaTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    '保存した選択を読み込むと South（org-2）と現在の一覧にない未解決キーを復元します。更新は選択キーを保ったまま一覧を置換します。リセットは South を復元します。',
+  'selectionDemo.pickerHelp':
+    'ピッカーが読み込みとグリッドを、親が検証と送信を管理します。リセットは North（org-1）を復元します。',
+  'selectionDemo.reference.overview':
+    '通常のラベルと1つのネイティブ Clarity グリッドを包みます。フォームは選択フィールドか再利用ピッカーのホストだけにバインドします。',
+  'selectionDemo.reference.required':
+    '必須を示し、直接バインドしたコントロールで Angular RequiredValidator を有効にします。',
+  'selectionDemo.reference.helper': 'グリッドに関連付ける翻訳済みヘルプ。',
+  'selectionDemo.reference.error': '無効で、操作済みまたは送信済みのコントロールに表示する翻訳済み検証メッセージ。',
+  'selectionDemo.reference.layout': 'フィールドのレイアウト。省略すると外側の Clarity フォームを継承します。',
+  'selectionDemo.reference.readonly': '選択の編集を防ぎ、閲覧とフォーム値への含有は維持します。',
+  'selectionDemo.reference.itemAvailability':
+    '各項目の disabled と翻訳済み disabledReason を返します。選択済みの利用不可項目は解除できます。',
+  'selectionDemo.reference.value':
+    '単一選択は安定キーまたは null、複数選択は順序付きキーを保存します。一覧や現在のページにないキーも保持します。',
+  'selectionDemo.reference.native':
+    'clrDgSelectionType でモード、clrDgItemsIdentityFn で識別、clrDgItems で一覧を指定します。列、フィルター、並べ替え、ページングは呼び出し側が管理します。',
+  'selectionDemo.reference.picker':
+    'ホストに DatagridSelectionAccessorDirective、唯一の内部フィールドに cllDatagridSelectionBinding を設定します。Angular フォームはホストにバインドします。',
+  'selectionDemo.reference.events':
+    '元のフォームで Angular valueChanges と toSignalForm を使用します。独立した選択出力や公開の命令型メソッドはありません。',
+
   'selectionDemo.horizontal': '横方向のレイアウト',
   'selectionDemo.loadSaved': '保存した選択を読み込む',
   'selectionDemo.readonly': '読み取り専用',

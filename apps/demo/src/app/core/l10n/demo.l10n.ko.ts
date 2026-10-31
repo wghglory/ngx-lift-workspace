@@ -1,4 +1,28 @@
 export const koTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    '저장된 선택을 불러오면 South(org-2)와 현재 목록에 없는 키를 복원합니다. 새로 고침은 선택 키를 유지하며 목록을 교체합니다. 재설정은 South를 복원합니다.',
+  'selectionDemo.pickerHelp':
+    '선택기는 로딩과 그리드를, 부모는 검증과 제출을 관리합니다. 재설정은 North(org-1)를 복원합니다.',
+  'selectionDemo.reference.overview':
+    '일반 레이블과 하나의 기본 Clarity 그리드를 감쌉니다. 폼은 선택 필드 또는 재사용 선택기 호스트에만 바인딩합니다.',
+  'selectionDemo.reference.required':
+    '필수 필드를 표시하고 직접 바인딩된 컨트롤에서 Angular RequiredValidator를 활성화합니다.',
+  'selectionDemo.reference.helper': '그리드에 연결된 번역된 도움말입니다.',
+  'selectionDemo.reference.error':
+    '컨트롤이 유효하지 않고 터치되었거나 제출되었을 때 표시하는 번역된 검증 메시지입니다.',
+  'selectionDemo.reference.layout': '필드 레이아웃이며 생략하면 바깥 Clarity 폼을 상속합니다.',
+  'selectionDemo.reference.readonly': '선택 편집을 차단하며 탐색과 폼 값 포함은 유지합니다.',
+  'selectionDemo.reference.itemAvailability':
+    '각 항목의 disabled와 번역된 disabledReason을 반환합니다. 이미 선택된 사용 불가 항목은 제거할 수 있습니다.',
+  'selectionDemo.reference.value':
+    '단일 모드는 안정적인 키 또는 null, 다중 모드는 순서가 있는 키를 저장합니다. 누락되거나 현재 페이지에 없는 키도 유지합니다.',
+  'selectionDemo.reference.native':
+    'clrDgSelectionType으로 모드, clrDgItemsIdentityFn으로 식별, clrDgItems로 목록을 설정합니다. 열, 필터, 정렬 및 페이지 처리는 호출자가 관리합니다.',
+  'selectionDemo.reference.picker':
+    '호스트에 DatagridSelectionAccessorDirective를, 하나의 내부 필드에 cllDatagridSelectionBinding을 적용합니다. Angular 폼 바인딩은 호스트에 유지합니다.',
+  'selectionDemo.reference.events':
+    '원래 폼에서 Angular valueChanges와 toSignalForm을 사용합니다. 별도 선택 출력이나 공개 명령형 메서드는 없습니다.',
+
   'selectionDemo.horizontal': '가로 레이아웃',
   'selectionDemo.loadSaved': '저장된 선택 불러오기',
   'selectionDemo.readonly': '읽기 전용',

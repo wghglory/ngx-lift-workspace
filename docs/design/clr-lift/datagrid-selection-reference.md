@@ -556,16 +556,17 @@ this.formDirective.resetForm(structuredClone(this.baseline));
 
 For this separately loaded edit baseline, use the owning
 [FormGroupDirective's resetForm](https://angular.dev/api/forms/FormGroupDirective#resetform) so Angular also clears
-submitted state. The complete examples with constructor-time nonNullable defaults can instead use a native type="reset"
-button without a handler. Direct form.reset(value) remains supported for model-only resets; bare patchValue does not
-restart the form interaction state. Reset must discard pending blur/submit selections, write every baseline key back
-through the value accessor, and leave controls pristine/untouched. Normal owner reset events may notify Angular
-observers/facades; the CVA must not echo them as a user edit. A Reset button must not rely solely on form.dirty for
-enablement, since pending blur/submit changes can exist before that flag changes. Re-run applicable current validators.
-Preserve current permissions, item availability, inventory and query errors: an originally selected item that is now
-unavailable is restored as a selected key and can still be invalid under today's business rules. Do not falsely restore
-old permission or eligibility metadata. Reset changes preserves grid filters/page by default and does not refetch; a
-separate View selected action can make restored choices easier to inspect.
+submitted state. The complete examples with constructor-time nonNullable defaults use type="button" and resetForm() on
+the existing form directive. Avoid the native browser reset action: it independently clears Clarity pagination and
+checkbox DOM inputs without updating Clarity state. Direct form.reset(value) remains supported for model-only resets;
+bare patchValue does not restart the form interaction state. Reset must discard pending blur/submit selections, write
+every baseline key back through the value accessor, and leave controls pristine/untouched. Normal owner reset events may
+notify Angular observers/facades; the CVA must not echo them as a user edit. A Reset button must not rely solely on
+form.dirty for enablement, since pending blur/submit changes can exist before that flag changes. Re-run applicable
+current validators. Preserve current permissions, item availability, inventory and query errors: an originally selected
+item that is now unavailable is restored as a selected key and can still be invalid under today's business rules. Do not
+falsely restore old permission or eligibility metadata. Reset changes preserves grid filters/page by default and does
+not refetch; a separate View selected action can make restored choices easier to inspect.
 
 For recognition, always display the total selected count across pages. A caller-owned optional **Original
 configuration** summary can show saved names/keys, namespace and added/removed counts without mixing original and

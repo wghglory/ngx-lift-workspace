@@ -139,10 +139,11 @@ bindings. The helper is covered by real-owner and installed Angular 21 consumers
 ## Updating, resetting and observing the form
 
 Use form.setValue/patchValue/reset directly for model updates. reset restores pristine/untouched; it does not clear
-FormGroupDirective.submitted. The complete Reactive Forms examples use a native type="reset" button: Angular resets
-their nonNullable controls to their constructor defaults and clears submitted without a reset handler or directive
-parameter. For a programmatic full restart with a separately loaded edit baseline, resetForm(value) on the owning form
-directive remains useful. See the [reset comparison](datagrid-selection-code-examples.md#reset-and-direct-form-updates).
+FormGroupDirective.submitted. The complete Reactive Forms examples use type="button" with formView.resetForm(): Angular
+resets their nonNullable controls to their constructor defaults and clears submitted. Avoid the native browser reset
+action: it also clears Clarity pagination and selection DOM inputs independently of Angular state. For a separately
+loaded edit baseline, pass that baseline to resetForm(value). See the
+[reset comparison](datagrid-selection-code-examples.md#reset-and-direct-form-updates).
 
 toSignalForm(this.form) observes the same owning FormGroup and adds signals; it does not create native Signal Forms or a
 new value binding. The direct form example uses fields/value, invalid/pending and submitValue signals, explicitly omits
@@ -212,10 +213,18 @@ the same CVA. Availability explanations are visible and associated with the affe
 the actual grid because role=grid does not support aria-required. The parent explicitly excludes disabled fields from
 its submission DTO, including Angular's wholly disabled FormGroup case.
 
-The ten displayed demo sources are generated from runnable files and checked for drift by the tooling target. Direct
+The twelve displayed demo sources are generated from runnable files and checked for drift by the tooling target. Direct
 status text filters resolve the displayed translations and refresh native matching/order on language or dictionary
 changes. The picker retains a separate ordinary enum filter component. Neither path changes native inventory identity.
 
 #201 retains server-page behavior; #202 retains full policy create/edit workflows. Independent native-language and
 assistive-technology acceptance, CI, merge, deployment and npm publication are separate gates. No SSR/hydration or
 virtual-scroll acceptance is claimed by the local-grid increment.
+
+## Demo feedback acceptance (October 31, 2026)
+
+Reset must restore South (org-2) in the direct validation example and North (org-1) in the reusable picker, keep the
+current page input populated, and leave checked rows consistent with the owning form. Loading saved selection restores
+South plus an unresolved key; refreshing replaces objects without losing that selection. Explain these actions in all
+supported locales. Include an in-page API reference for the field inputs, native projection/value contract and
+accessor/binding pair, with complete parent source beside the reusable-picker example.

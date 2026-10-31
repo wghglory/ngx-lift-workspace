@@ -1,4 +1,4 @@
-<form clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
   <cll-datagrid-selection
     formControlName="organizationIds"
     required
@@ -75,6 +75,8 @@
     <button type="button" class="btn btn-sm" (click)="loadSaved()">{{ 'selectionDemo.loadSaved' | translate }}</button>
   </div>
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
-  <button type="reset" class="btn btn-secondary">{{ 'organizationExample.reset' | translate }}</button>
+  <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
+    {{ 'organizationExample.reset' | translate }}
+  </button>
 </form>
 <pre>{{ sf.submitValue() | json }}</pre>

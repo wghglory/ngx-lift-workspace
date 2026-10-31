@@ -183,6 +183,8 @@ test('all supported languages keep selected keys and active translated status fi
     await page.getByRole('menuitem', {name: language, exact: true}).click();
     await expect(policy.getByRole('grid')).toHaveAccessibleName(`${label}*`);
     await expect(preview).toContainText('org-2');
+    await expect(page.locator('#api-reference app-api-table tbody tr')).toHaveCount(6);
+    await expect(page.locator('#api-reference')).not.toContainText('selectionDemo.reference.');
   }
   await expect(policy.getByRole('checkbox', {name: 'Select South', exact: true})).toBeChecked();
   await expect(policy.getByRole('checkbox', {name: 'Select East', exact: true})).toHaveCount(0);
@@ -342,4 +344,57 @@ test('native horizontal layout, compact density, RTL and 200 percent text reflow
   expect(overflow).toBeLessThanOrEqual(1);
   await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
   await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('unresolved');
+});
+
+test('saved selection stays checked after refresh and reset restores both edit baselines without clearing pagination', async ({
+  page,
+}) => {
+  const policy = page.getByTestId('selection-policy');
+  const picker = page.getByTestId('selection-picker');
+  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
+  await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
+  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'false');
+  await expect(policy.getByRole('checkbox', {name: 'Select South', exact: true})).toBeChecked();
+  for (const [example, initialName, initialKey] of [
+    [policy, 'South', 'org-2'],
+    [picker, 'North', 'org-1'],
+  ] as const) {
+    await example.getByRole('checkbox', {name: 'Select West', exact: true}).check();
+    await example.getByRole('button', {name: 'Reset', exact: true}).click();
+    await expect.soft(example.locator('clr-dg-pagination input')).toHaveValue('1');
+    await expect.soft(example.getByRole('checkbox', {name: `Select ${initialName}`, exact: true})).toBeChecked();
+    await expect(example.getByRole('checkbox', {name: 'Select West', exact: true})).not.toBeChecked();
+    await expect(example.locator('.playground-canvas pre')).toContainText(initialKey);
+    await expect(example.locator('.field-feedback.error')).toHaveCount(0);
+    await example.getByRole('button', {name: 'Next Page', exact: true}).click();
+    await expect(example.getByRole('textbox', {name: 'Current Page', exact: true})).toHaveValue('2');
+    await example.getByRole('button', {name: 'Reset', exact: true}).click();
+    await expect(example.getByRole('textbox', {name: 'Current Page', exact: true})).toHaveValue('2');
+    await example.getByRole('button', {name: 'Previous Page', exact: true}).click();
+    await expect(example.getByRole('checkbox', {name: `Select ${initialName}`, exact: true})).toBeChecked();
+  }
+});
+
+test('saved writes after reset also update the checked South row', async ({page}) => {
+  const policy = page.getByTestId('selection-policy');
+  await policy.getByRole('button', {name: 'Reset', exact: true}).click();
+  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
+  await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
+  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'false');
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
+  await expect(policy.getByRole('checkbox', {name: 'Select South', exact: true})).toBeChecked();
+});
+
+test('in-page API reference and complete parent sources follow the component demo pattern', async ({page}) => {
+  const reference = page.locator('#api-reference');
+  await expect(reference.getByRole('heading', {name: 'API Reference', exact: true})).toBeVisible();
+  await expect(reference.locator('app-api-table tbody tr')).toHaveCount(6);
+  for (const name of ['required', 'helper', 'error', 'layout', 'readonly', 'itemAvailability']) {
+    await expect(reference.getByRole('cell', {name, exact: true})).toBeVisible();
+  }
+  await expect(reference).toContainText('DatagridSelectionAccessorDirective');
+  await expect(reference).toContainText('cllDatagridSelectionBinding');
+  await expect(page.getByTestId('selection-policy')).toContainText('South (org-2)');
+  await expect(page.getByTestId('selection-picker')).toContainText('North (org-1)');
+  await expect(page.locator('app-code-block').filter({hasText: 'export class PolicyFormComponent'})).toBeVisible();
 });

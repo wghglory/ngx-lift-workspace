@@ -1,4 +1,24 @@
 export const zhTWTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    '載入已儲存的選擇會還原 South（org-2）及目前清單中不存在的未解析鍵。重新整理會替換清單並保留選取鍵。重設還原 South。',
+  'selectionDemo.pickerHelp': '選擇器負責載入資料和表格；父元件負責驗證和提交。重設還原 North（org-1）。',
+  'selectionDemo.reference.overview':
+    '以此元件包裹一個原生 Clarity 資料表格並投影一般標籤。僅將表單綁定至選擇欄位或可重用選擇器宿主。',
+  'selectionDemo.reference.required': '將欄位標為必填，並在直接綁定的控制項啟用 Angular RequiredValidator。',
+  'selectionDemo.reference.helper': '與表格關聯的本地化說明文字。',
+  'selectionDemo.reference.error': '所屬控制項無效且已觸碰或已提交時顯示的本地化驗證訊息。',
+  'selectionDemo.reference.layout': '欄位版面；未指定時繼承外層 Clarity 表單。',
+  'selectionDemo.reference.readonly': '防止變更選擇，同時保留瀏覽功能並仍計入表單值。',
+  'selectionDemo.reference.itemAvailability':
+    '為每個項目傳回 disabled 與本地化 disabledReason。已選但不可用的項目仍可移除。',
+  'selectionDemo.reference.value': '單選儲存穩定鍵或 null；多選儲存有序鍵陣列。缺失或不在目前頁面的鍵會保留。',
+  'selectionDemo.reference.native':
+    '以 clrDgSelectionType 設定模式、clrDgItemsIdentityFn 設定識別、clrDgItems 綁定清單。欄、篩選、排序與分頁由呼叫端管理。',
+  'selectionDemo.reference.picker':
+    '在選擇器宿主組合 DatagridSelectionAccessorDirective，並在唯一內部欄位使用 cllDatagridSelectionBinding。Angular 表單僅綁定宿主。',
+  'selectionDemo.reference.events':
+    '在原表單控制項使用 Angular valueChanges 與 toSignalForm。沒有額外選擇輸出或公開命令式方法。',
+
   'selectionDemo.horizontal': '水平配置',
   'selectionDemo.loadSaved': '載入已儲存的選取',
   'selectionDemo.readonly': '唯讀',

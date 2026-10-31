@@ -1,4 +1,29 @@
 export const deTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    'Gespeicherte Auswahl laden stellt South (org-2) und einen in dieser Liste fehlenden Schlüssel wieder her. Aktualisieren ersetzt die Liste und behält ausgewählte Schlüssel. Zurücksetzen stellt South wieder her.',
+  'selectionDemo.pickerHelp':
+    'Der Picker verwaltet Laden und Tabelle; die Elternkomponente verwaltet Validierung und Senden. Zurücksetzen stellt North (org-1) wieder her.',
+  'selectionDemo.reference.overview':
+    'Umschließt genau ein natives Clarity-Datagrid mit einem einfachen Label. Das Formular nur an das Auswahlfeld oder den Picker-Host binden.',
+  'selectionDemo.reference.required':
+    'Markiert das Feld als erforderlich und aktiviert Angular RequiredValidator beim direkt gebundenen Steuerelement.',
+  'selectionDemo.reference.helper': 'Lokalisierter Hilfetext, der dem Datagrid zugeordnet ist.',
+  'selectionDemo.reference.error':
+    'Lokalisierte Validierungsmeldung bei ungültigem, berührtem oder abgesendetem Formularfeld.',
+  'selectionDemo.reference.layout': 'Feldlayout; übernimmt ohne Angabe das umgebende Clarity-Formularlayout.',
+  'selectionDemo.reference.readonly':
+    'Verhindert Auswahländerungen; Navigation und Aufnahme in Formularwerte bleiben erhalten.',
+  'selectionDemo.reference.itemAvailability':
+    'Liefert disabled und einen lokalisierten disabledReason je Element. Bereits gewählte nicht verfügbare Elemente bleiben entfernbar.',
+  'selectionDemo.reference.value':
+    'Einzelauswahl speichert einen stabilen Schlüssel oder null; Mehrfachauswahl geordnete Schlüssel. Fehlende und nicht auf der Seite sichtbare Schlüssel bleiben erhalten.',
+  'selectionDemo.reference.native':
+    'Modus mit clrDgSelectionType, Identität mit clrDgItemsIdentityFn und Daten mit clrDgItems konfigurieren. Spalten, Filter, Sortierung und Seitenwechsel bleiben beim Aufrufer.',
+  'selectionDemo.reference.picker':
+    'DatagridSelectionAccessorDirective am Picker-Host und cllDatagridSelectionBinding an genau einem inneren Feld verwenden. Angular-Formularbindung bleibt am Host.',
+  'selectionDemo.reference.events':
+    'Angular valueChanges und toSignalForm am ursprünglichen Formular verwenden. Keine separaten Auswahlausgaben oder öffentlichen imperativen Methoden.',
+
   'selectionDemo.horizontal': 'Horizontales Layout',
   'selectionDemo.loadSaved': 'Gespeicherte Auswahl laden',
   'selectionDemo.readonly': 'Schreibgeschützt',

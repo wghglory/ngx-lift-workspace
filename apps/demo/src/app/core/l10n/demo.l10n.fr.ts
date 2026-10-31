@@ -1,4 +1,29 @@
 export const frTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    'Charger la sélection enregistrée restaure South (org-2) et une clé absente de cet inventaire. Actualiser remplace les données et conserve les clés sélectionnées. Réinitialiser restaure South.',
+  'selectionDemo.pickerHelp':
+    'Le sélecteur gère le chargement et la grille ; le parent gère validation et envoi. Réinitialiser restaure North (org-1).',
+  'selectionDemo.reference.overview':
+    'Encapsule une grille Clarity native avec un libellé simple. Liez le formulaire uniquement au champ de sélection ou à l’hôte du sélecteur réutilisable.',
+  'selectionDemo.reference.required':
+    'Marque le champ obligatoire et active Angular RequiredValidator sur le contrôle directement lié.',
+  'selectionDemo.reference.helper': 'Aide localisée associée à la grille.',
+  'selectionDemo.reference.error':
+    'Message de validation localisé lorsque le contrôle est invalide et touché ou soumis.',
+  'selectionDemo.reference.layout': 'Disposition du champ ; hérite du formulaire Clarity si omise.',
+  'selectionDemo.reference.readonly':
+    'Empêche les modifications de sélection tout en conservant navigation et inclusion dans les valeurs du formulaire.',
+  'selectionDemo.reference.itemAvailability':
+    'Renvoie disabled et un disabledReason localisé par élément. Les éléments indisponibles déjà sélectionnés restent supprimables.',
+  'selectionDemo.reference.value':
+    'Le mode simple stocke une clé stable ou null ; le mode multiple stocke des clés ordonnées. Les clés absentes ou hors page sont conservées.',
+  'selectionDemo.reference.native':
+    'Configurez le mode avec clrDgSelectionType, l’identité avec clrDgItemsIdentityFn et les données avec clrDgItems. Colonnes, filtres, tri et pagination restent gérés par l’appelant.',
+  'selectionDemo.reference.picker':
+    'Composez DatagridSelectionAccessorDirective sur l’hôte et cllDatagridSelectionBinding sur un seul champ interne. Gardez la liaison Angular sur l’hôte.',
+  'selectionDemo.reference.events':
+    'Utilisez Angular valueChanges et toSignalForm sur le formulaire original. Aucune sortie de sélection ni méthode impérative publique supplémentaire.',
+
   'selectionDemo.horizontal': 'Disposition horizontale',
   'selectionDemo.loadSaved': 'Charger la sélection enregistrée',
   'selectionDemo.readonly': 'Lecture seule',

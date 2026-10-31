@@ -1,4 +1,24 @@
 export const zhCNTranslations: Record<string, string> = {
+  'selectionDemo.savedHelp':
+    '加载已保存的选择会恢复 South（org-2）以及当前列表中不存在的未解析键。刷新替换列表并保留选中键。重置恢复 South。',
+  'selectionDemo.pickerHelp': '选择器负责加载数据和表格；父组件负责校验和提交。重置恢复 North（org-1）。',
+  'selectionDemo.reference.overview':
+    '用此组件包裹一个原生 Clarity 数据表格，并投影普通标签。仅将表单绑定到选择字段或可复用选择器宿主。',
+  'selectionDemo.reference.required': '将字段标为必填，并在直接绑定的控件上启用 Angular RequiredValidator。',
+  'selectionDemo.reference.helper': '与表格关联的本地化帮助文本。',
+  'selectionDemo.reference.error': '当所属控件无效且已触碰或已提交时显示的本地化校验消息。',
+  'selectionDemo.reference.layout': '字段布局；未指定时继承外层 Clarity 表单布局。',
+  'selectionDemo.reference.readonly': '阻止修改选择，同时保留浏览功能且仍计入表单值。',
+  'selectionDemo.reference.itemAvailability':
+    '为每个条目返回 disabled 和本地化 disabledReason。已选但不可用的条目仍可移除。',
+  'selectionDemo.reference.value': '单选保存稳定键或 null；多选保存有序键数组。缺失或不在当前页的键会被保留。',
+  'selectionDemo.reference.native':
+    '用 clrDgSelectionType 配置模式、clrDgItemsIdentityFn 配置标识、clrDgItems 绑定列表。列、筛选、排序和分页由调用方管理。',
+  'selectionDemo.reference.picker':
+    '在选择器宿主组合 DatagridSelectionAccessorDirective，并在唯一内部字段使用 cllDatagridSelectionBinding。Angular 表单仅绑定宿主。',
+  'selectionDemo.reference.events':
+    '在原表单控件上使用 Angular valueChanges 和 toSignalForm。没有额外的选择输出或公开命令式方法。',
+
   'selectionDemo.horizontal': '水平布局',
   'selectionDemo.loadSaved': '加载已保存的选择',
   'selectionDemo.readonly': '只读',
