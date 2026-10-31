@@ -1,4 +1,15 @@
 export const zhTWTranslations: Record<string, string> = {
+  'selectionDemo.remove': '移除',
+
+  'selectionDemo.selectedTitle': '已選組織',
+  'selectionDemo.selectedCount': '已選 {0} 個 · 最多 {1} 個',
+  'selectionDemo.unavailableName': '無法使用的組織',
+  'selectionDemo.unverifiedName': '尚未驗證的組織',
+  'selectionDemo.removeKey': '移除 {0}',
+  'selectionDemo.verificationHelp': '尚未驗證所選組織。請等待載入完成，或重試後再儲存。',
+  'selectionDemo.unavailableHelp': '請移除無法使用的組織，或重試後再儲存。',
+  'selectionDemo.unavailableError': '請先移除無法使用的組織再儲存。',
+
   'selectionDemo.savedHelp':
     '載入已儲存的選擇會還原 South（org-2）及目前清單中不存在的未解析鍵。重新整理會替換清單並保留選取鍵。重設還原 South。',
   'selectionDemo.pickerHelp': '選擇器負責載入資料和表格；父元件負責驗證和提交。重設還原 North（org-1）。',

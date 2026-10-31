@@ -1,4 +1,16 @@
 export const ruTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Удалить',
+
+  'selectionDemo.selectedTitle': 'Выбранные организации',
+  'selectionDemo.selectedCount': 'Выбрано: {0} · максимум: {1}',
+  'selectionDemo.unavailableName': 'Недоступная организация',
+  'selectionDemo.unverifiedName': 'Непроверенная организация',
+  'selectionDemo.removeKey': 'Удалить {0}',
+  'selectionDemo.verificationHelp':
+    'Выбранные организации ещё не проверены. Дождитесь загрузки или повторите попытку перед сохранением.',
+  'selectionDemo.unavailableHelp': 'Удалите недоступные организации или повторите попытку перед сохранением.',
+  'selectionDemo.unavailableError': 'Удалите недоступные организации перед сохранением.',
+
   'selectionDemo.savedHelp':
     'Загрузка сохранённого выбора восстанавливает South (org-2) и ключ, отсутствующий в списке. Обновление заменяет данные и сохраняет выбранные ключи. Сброс восстанавливает South.',
   'selectionDemo.pickerHelp':

@@ -228,3 +228,21 @@ current page input populated, and leave checked rows consistent with the owning 
 South plus an unresolved key; refreshing replaces objects without losing that selection. Explain these actions in all
 supported locales. Include an in-page API reference for the field inputs, native projection/value contract and
 accessor/binding pair, with complete parent source beside the reusable-picker example.
+
+## Saved-selection recovery in the validation example
+
+The parent business form owns a selected-key summary, including keys absent from rendered rows, with a total counting
+every submitted key toward the maximum of three. A successful complete organization inventory confirms unavailable keys;
+loading, failed requests, filtering and pagination never establish unavailability. Show a localized inline warning and
+an explicit per-key Remove action. Do not silently discard saved keys. Required, maximum count and unavailable-key
+validation remain on the original Angular control; revalidate when verification changes without marking a user edit.
+Block submission while an enabled selection cannot be verified or contains unavailable keys. Disabled controls remain
+excluded from submission. Removal respects loading/disabled/readonly, marks the owner dirty/touched and returns focus to
+the native grid. Reset restores the accepted baseline. Retry can resolve a previously missing key without changing the
+saved value. The generic library retains its existing preservation contract; no public API is added.
+
+Owned messages in every supported locale: selected-organizations region name, selected/maximum count, unavailable and
+unverified labels, warning/recovery guidance, per-key removal name and unavailable-key validation error.
+
+The validation example uses Angular's default change updates so the selected count and Remove actions reflect every grid
+edit immediately. The reusable-picker example continues demonstrating updateOn: 'blur' and composite departure.

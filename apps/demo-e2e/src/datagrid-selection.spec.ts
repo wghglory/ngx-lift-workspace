@@ -398,3 +398,103 @@ test('in-page API reference and complete parent sources follow the component dem
   await expect(page.getByTestId('selection-picker')).toContainText('North (org-1)');
   await expect(page.locator('app-code-block').filter({hasText: 'export class PolicyFormComponent'})).toBeVisible();
 });
+
+test('unavailable saved keys are visible, count toward the limit, block saving and can be removed', async ({
+  page,
+}, testInfo) => {
+  const policy = page.getByTestId('selection-policy');
+  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
+  const summary = policy.getByRole('region', {name: 'Selected organizations', exact: true});
+  await expect(summary).toContainText('2 selected · maximum 3');
+  await expect(summary).toContainText('Unavailable organization (unresolved)');
+  await expect(policy.getByTestId('unavailable-selection')).toContainText(
+    'Remove unavailable organizations or retry before saving.',
+  );
+  await policy.getByRole('button', {name: 'Submit', exact: true}).click();
+  await expect(policy.locator('clr-control-error')).toHaveText('Remove unavailable organizations before saving.');
+  await policy.getByRole('checkbox', {name: 'Select North', exact: true}).check();
+  await policy.getByRole('checkbox', {name: 'Select West', exact: true}).check();
+  await policy.getByRole('button', {name: 'Submit', exact: true}).click();
+  await expect(summary).toContainText('4 selected · maximum 3');
+  await expect(policy.locator('clr-control-error')).toHaveText('Choose no more than three organizations.');
+  await expectAccessible(page, testInfo, '[data-testid="selection-policy"] .playground-canvas');
+  await page.getByRole('button', {name: 'Toggle to dark theme'}).click();
+  await expectAccessible(page, testInfo, '[data-testid="selection-policy"] .playground-canvas');
+  await summary.getByRole('button', {name: 'Remove unresolved', exact: true}).click();
+  await expect(summary).toContainText('3 selected · maximum 3');
+  await expect(policy.getByRole('grid')).toBeFocused();
+  await expect(policy.locator('app-data-service-policy-form > pre')).not.toContainText('unresolved');
+  await expect(policy.getByRole('checkbox', {name: 'Select South', exact: true})).toBeChecked();
+  await expect(policy.locator('clr-control-error')).toHaveCount(0);
+});
+
+test('failed refresh preserves saved keys without declaring them unavailable and Retry can resolve them', async ({
+  page,
+}) => {
+  const policy = page.getByTestId('selection-policy');
+  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
+  await expect(policy.getByTestId('unavailable-selection')).toBeVisible();
+  let release: () => void = () => undefined;
+  const response = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route('**/assets/datagrid-selection/organizations.json*', async (request) => {
+    await response;
+    await request.fulfill({status: 500, body: 'Failed'});
+  });
+  await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
+  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'true');
+  await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
+  await expect(policy.getByRole('button', {name: 'Remove unresolved', exact: true})).toBeDisabled();
+  await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeDisabled();
+  release();
+  await expect(policy.locator('cll-alert')).toContainText('Could not refresh organizations.');
+  await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
+  await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
+    'Unverified organization (unresolved)',
+  );
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('unresolved');
+  await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeDisabled();
+  await page.unroute('**/assets/datagrid-selection/organizations.json*');
+  await page.route('**/assets/datagrid-selection/organizations.json*', async (request) => {
+    const original = await request.fetch();
+    const items: {id: string; name: string; status: string}[] = await original.json();
+    await request.fulfill({json: [...items, {id: 'unresolved', name: 'Recovered organization', status: 'ready'}]});
+  });
+  await policy.getByRole('button', {name: 'Retry', exact: true}).click();
+  await expect(policy.locator('cll-alert')).toHaveCount(0);
+  await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
+  await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
+    'Recovered organization (unresolved)',
+  );
+  await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeEnabled();
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('unresolved');
+});
+
+test('summary removal respects readonly and disabled, and preserves off-page selections', async ({page}) => {
+  const policy = page.getByTestId('selection-policy');
+  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
+  const remove = policy.getByRole('button', {name: 'Remove unresolved', exact: true});
+  await policy.getByRole('checkbox', {name: 'Readonly', exact: true}).check();
+  await expect(remove).toBeDisabled();
+  await policy.getByRole('checkbox', {name: 'Readonly', exact: true}).uncheck();
+  await policy.getByRole('checkbox', {name: 'Disabled', exact: true}).check();
+  await expect(remove).toBeDisabled();
+  await policy.getByRole('checkbox', {name: 'Disabled', exact: true}).uncheck();
+  await policy.getByRole('checkbox', {name: 'Select North', exact: true}).check();
+  await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
+    '3 selected · maximum 3',
+  );
+  await remove.click();
+  await expect(policy.getByRole('checkbox', {name: 'Select North', exact: true})).toBeChecked();
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-1');
+  await policy.getByRole('button', {name: 'Next Page', exact: true}).click();
+  await policy.getByRole('checkbox', {name: 'Select River', exact: true}).check();
+  await policy.getByRole('button', {name: 'Submit', exact: true}).click();
+  await policy.getByRole('button', {name: 'Previous Page', exact: true}).click();
+  await expect(policy.getByRole('checkbox', {name: 'Select River', exact: true})).toHaveCount(0);
+  await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
+    'River (org-11)',
+  );
+  await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
+});

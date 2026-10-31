@@ -1,4 +1,16 @@
 export const ptBRTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Remover',
+
+  'selectionDemo.selectedTitle': 'Organizações selecionadas',
+  'selectionDemo.selectedCount': '{0} selecionadas · máximo {1}',
+  'selectionDemo.unavailableName': 'Organização indisponível',
+  'selectionDemo.unverifiedName': 'Organização não verificada',
+  'selectionDemo.removeKey': 'Remover {0}',
+  'selectionDemo.verificationHelp':
+    'As organizações selecionadas ainda não foram verificadas. Aguarde o carregamento ou tente novamente antes de salvar.',
+  'selectionDemo.unavailableHelp': 'Remova as organizações indisponíveis ou tente novamente antes de salvar.',
+  'selectionDemo.unavailableError': 'Remova as organizações indisponíveis antes de salvar.',
+
   'selectionDemo.savedHelp':
     'Carregar seleção salva restaura South (org-2) e uma chave ausente deste inventário. Atualizar substitui os dados e preserva as chaves selecionadas. Redefinir restaura South.',
   'selectionDemo.pickerHelp':

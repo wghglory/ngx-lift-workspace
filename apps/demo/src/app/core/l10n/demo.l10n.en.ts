@@ -1,4 +1,16 @@
 export const enTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Remove',
+
+  'selectionDemo.selectedTitle': 'Selected organizations',
+  'selectionDemo.selectedCount': '{0} selected · maximum {1}',
+  'selectionDemo.unavailableName': 'Unavailable organization',
+  'selectionDemo.unverifiedName': 'Unverified organization',
+  'selectionDemo.removeKey': 'Remove {0}',
+  'selectionDemo.verificationHelp':
+    'Selected organizations have not been verified. Wait for loading or retry before saving.',
+  'selectionDemo.unavailableHelp': 'Remove unavailable organizations or retry before saving.',
+  'selectionDemo.unavailableError': 'Remove unavailable organizations before saving.',
+
   'selectionDemo.savedHelp':
     'Load saved selection restores South (org-2) and an unresolved key that is absent from this inventory. Refresh replaces the inventory while preserving selected keys. Reset restores South.',
   'selectionDemo.pickerHelp':

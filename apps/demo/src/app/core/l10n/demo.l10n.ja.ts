@@ -1,4 +1,15 @@
 export const jaTranslations: Record<string, string> = {
+  'selectionDemo.remove': '削除',
+
+  'selectionDemo.selectedTitle': '選択した組織',
+  'selectionDemo.selectedCount': '{0} 件選択 · 最大 {1} 件',
+  'selectionDemo.unavailableName': '利用できない組織',
+  'selectionDemo.unverifiedName': '未確認の組織',
+  'selectionDemo.removeKey': '{0} を削除',
+  'selectionDemo.verificationHelp': '選択した組織は未確認です。読み込み完了を待つか、再試行してから保存してください。',
+  'selectionDemo.unavailableHelp': '利用できない組織を削除するか、再試行してから保存してください。',
+  'selectionDemo.unavailableError': '保存する前に利用できない組織を削除してください。',
+
   'selectionDemo.savedHelp':
     '保存した選択を読み込むと South（org-2）と現在の一覧にない未解決キーを復元します。更新は選択キーを保ったまま一覧を置換します。リセットは South を復元します。',
   'selectionDemo.pickerHelp':

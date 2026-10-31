@@ -1,4 +1,16 @@
 export const frTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Supprimer',
+
+  'selectionDemo.selectedTitle': 'Organisations sélectionnées',
+  'selectionDemo.selectedCount': '{0} sélectionnées · maximum {1}',
+  'selectionDemo.unavailableName': 'Organisation indisponible',
+  'selectionDemo.unverifiedName': 'Organisation non vérifiée',
+  'selectionDemo.removeKey': 'Supprimer {0}',
+  'selectionDemo.verificationHelp':
+    'Les organisations sélectionnées ne sont pas vérifiées. Attendez le chargement ou réessayez avant d’enregistrer.',
+  'selectionDemo.unavailableHelp': 'Supprimez les organisations indisponibles ou réessayez avant d’enregistrer.',
+  'selectionDemo.unavailableError': 'Supprimez les organisations indisponibles avant d’enregistrer.',
+
   'selectionDemo.savedHelp':
     'Charger la sélection enregistrée restaure South (org-2) et une clé absente de cet inventaire. Actualiser remplace les données et conserve les clés sélectionnées. Réinitialiser restaure South.',
   'selectionDemo.pickerHelp':

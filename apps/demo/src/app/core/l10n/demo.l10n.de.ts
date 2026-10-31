@@ -1,4 +1,17 @@
 export const deTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Entfernen',
+
+  'selectionDemo.selectedTitle': 'Ausgewählte Organisationen',
+  'selectionDemo.selectedCount': '{0} ausgewählt · höchstens {1}',
+  'selectionDemo.unavailableName': 'Nicht verfügbare Organisation',
+  'selectionDemo.unverifiedName': 'Nicht überprüfte Organisation',
+  'selectionDemo.removeKey': '{0} entfernen',
+  'selectionDemo.verificationHelp':
+    'Die ausgewählten Organisationen wurden noch nicht überprüft. Warten Sie auf das Laden oder versuchen Sie es vor dem Speichern erneut.',
+  'selectionDemo.unavailableHelp':
+    'Entfernen Sie nicht verfügbare Organisationen oder versuchen Sie es vor dem Speichern erneut.',
+  'selectionDemo.unavailableError': 'Entfernen Sie nicht verfügbare Organisationen vor dem Speichern.',
+
   'selectionDemo.savedHelp':
     'Gespeicherte Auswahl laden stellt South (org-2) und einen in dieser Liste fehlenden Schlüssel wieder her. Aktualisieren ersetzt die Liste und behält ausgewählte Schlüssel. Zurücksetzen stellt South wieder her.',
   'selectionDemo.pickerHelp':

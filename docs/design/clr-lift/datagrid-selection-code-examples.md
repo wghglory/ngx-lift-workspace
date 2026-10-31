@@ -221,17 +221,24 @@ signpost, translated status badge, custom business ordering, a reusable status-c
 There is no explicit ng-template in this example.
 
 toSignalForm observes the same FormGroup; formControlName still owns the selection field. The payload in the preview
-follows the committed form value, so updateOn: 'blur' intentionally leaves it unchanged during a buffered edit. The
-facade supplies reactive validity/pending and sanitized submitValue signals. includeDisabled: false uses Angular
-form.value, and omitIf explicitly excludes disabled fields even when the whole group is disabled. The preview reads
-sf.submitValue() directly. A valid submit emits a copied payload through the ordinary save output for the containing
-application to persist; no submittedValue signal duplicates the form. sf.submitValue() describes the current sanitized
-value, not submission history. Copy values when handing them to an asynchronous operation.
+follows the committed form value. This validation example uses default change updates, so its summary and Remove actions
+stay current with each selection. The reusable-picker example separately demonstrates updateOn: 'blur'. The facade
+supplies reactive validity/pending and sanitized submitValue signals. includeDisabled: false uses Angular form.value,
+and omitIf explicitly excludes disabled fields even when the whole group is disabled. The preview reads sf.submitValue()
+directly. A valid submit emits a copied payload through the ordinary save output for the containing application to
+persist; no submittedValue signal duplicates the form. sf.submitValue() describes the current sanitized value, not
+submission history. Copy values when handing them to an asynchronous operation.
 
 The original IDs are known when the nonNullable control is constructed. The ordinary reset button calls
 formView.resetForm() to restore those defaults and clear submitted state. It avoids the native browser reset action,
 which independently clears Clarity pagination and selection inputs. For an edit baseline loaded later, pass the explicit
 baseline to resetForm(value).
+
+The saved-selection example includes a complete-inventory membership validator and a selected-key summary. Missing keys
+stay in the form and count toward the maximum until the user removes them. A successful complete inventory confirms
+unavailability; a loading or failed request is unverified and blocks submission without declaring keys invalid.
+Revalidation updates the existing owner without changing saved keys or pristine/touched state. A server-paged picker
+must resolve keys separately instead of treating its current page as a complete inventory.
 
 ### data-service-policy-form.component.ts
 
@@ -242,6 +249,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   output,
   signal,
@@ -269,11 +277,23 @@ export class DataServicePolicyFormComponent {
   private readonly originalOrganizationIds = ['org-2'];
   readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
 
+  // Only this endpoint's successful complete inventory can establish that a saved key is unavailable.
+  readonly verifiedOrganizations = computed(() =>
+    this.organizationsQuery.status() === 'resolved' ? this.organizationsQuery.value() : undefined,
+  );
+  readonly maximumOrganizations = 3;
+
   readonly form = new FormGroup({
     organizationIds: new FormControl<string[]>([...this.originalOrganizationIds], {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(3)],
-      updateOn: 'blur',
+      validators: [
+        Validators.required,
+        Validators.maxLength(this.maximumOrganizations),
+        (control) => {
+          const missing = this.unavailableKeys(control.value);
+          return missing.length ? {unavailableOrganizations: missing} : null;
+        },
+      ],
     }),
   });
   readonly sf = toSignalForm(this.form, {
@@ -281,6 +301,17 @@ export class DataServicePolicyFormComponent {
     // Angular includes children in form.value when the entire group is disabled.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
+
+  readonly selectedOrganizations = computed(() => {
+    const inventory = new Map((this.organizationsQuery.value() ?? []).map((item) => [item.id, item]));
+    const unavailable = new Set(this.unavailableKeys(this.sf.fields.organizationIds.value()));
+    return this.sf.fields.organizationIds.value().map((id) => ({
+      id,
+      name: inventory.get(id)?.name,
+      unavailable: unavailable.has(id),
+    }));
+  });
+  readonly hasUnavailableSelection = computed(() => this.selectedOrganizations().some((item) => item.unavailable));
 
   readonly readonly = signal(false);
   readonly layout = signal<'horizontal' | 'vertical'>('vertical');
@@ -295,6 +326,7 @@ export class DataServicePolicyFormComponent {
     if (!errors) return '';
     if (errors['required']) return this.translationService.translate('organizationExample.required');
     if (errors['maxlength']) return this.translationService.translate('organizationExample.maxOrganizations');
+    if (errors['unavailableOrganizations']) return this.translationService.translate('selectionDemo.unavailableError');
     return this.translationService.translate('organizationExample.invalidSelection');
   });
 
@@ -313,6 +345,11 @@ export class DataServicePolicyFormComponent {
   readonly save = output<{organizationIds?: string[]}>();
 
   constructor() {
+    effect(() => {
+      this.verifiedOrganizations();
+      // Query verification changes validity, not the user's selected value or interaction state.
+      untracked(() => this.form.controls.organizationIds.updateValueAndValidity());
+    });
     afterRenderEffect(() => {
       const grid = this.grid();
       // Track both language and dictionary changes, keeping the native active query and sort state.
@@ -333,10 +370,37 @@ export class DataServicePolicyFormComponent {
     this.form.controls.organizationIds.setValue(['org-2', 'unresolved']);
   }
 
+  selectionLocked(): boolean {
+    return this.readonly() || this.form.controls.organizationIds.disabled || this.organizationsQuery.isLoading();
+  }
+
+  removeSelection(id: string): void {
+    if (this.selectionLocked()) return;
+    const control = this.form.controls.organizationIds;
+    control.setValue(control.value.filter((key) => key !== id));
+    control.markAsDirty();
+    control.markAsTouched();
+    this.grid()?.datagridTable.nativeElement.focus();
+  }
+
+  retryVerification(): void {
+    // The warning disappears during verification; keep keyboard focus on a stable element.
+    this.grid()?.datagridTable.nativeElement.focus();
+    this.organizationsQuery.reload();
+  }
+
   submit(): void {
+    if (this.form.controls.organizationIds.enabled && !this.verifiedOrganizations()) return;
     if (this.sf.invalid() || this.sf.pending()) return;
     const payload = this.sf.submitValue();
     this.save.emit(payload.organizationIds === undefined ? {} : {organizationIds: [...payload.organizationIds]});
+  }
+
+  private unavailableKeys(keys: readonly string[]): string[] {
+    const inventory = this.verifiedOrganizations();
+    if (!inventory) return [];
+    const available = new Set(inventory.map((item) => item.id));
+    return keys.filter((key) => !available.has(key));
   }
 
   private statusText(item: Organization): string {
@@ -349,6 +413,42 @@ export class DataServicePolicyFormComponent {
 
 ```html
 <form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <section [attr.aria-label]="'selectionDemo.selectedTitle' | translate" cds-layout="vertical gap:sm">
+    <p role="status" aria-atomic="true">
+      {{ 'selectionDemo.selectedCount' | translate: selectedOrganizations().length : maximumOrganizations }}
+    </p>
+    <ul cds-layout="vertical gap:xs">
+      @for (selection of selectedOrganizations(); track selection.id) {
+      <li>
+        {{ selection.name || ((selection.unavailable ? 'selectionDemo.unavailableName' : 'selectionDemo.unverifiedName')
+        | translate) }} ({{ selection.id }})
+        <button
+          type="button"
+          class="btn btn-link btn-sm"
+          [disabled]="selectionLocked()"
+          [attr.aria-label]="'selectionDemo.removeKey' | translate: selection.id"
+          (click)="removeSelection(selection.id)"
+        >
+          {{ 'selectionDemo.remove' | translate }}
+        </button>
+      </li>
+      }
+    </ul>
+    @if (!verifiedOrganizations() && selectedOrganizations().length) {
+    <p role="status">{{ 'selectionDemo.verificationHelp' | translate }}</p>
+    } @if (hasUnavailableSelection()) {
+    <clr-alert data-testid="unavailable-selection" clrAlertType="warning" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text" role="alert">{{ 'selectionDemo.unavailableHelp' | translate }}</span>
+        <div class="alert-actions">
+          <button type="button" class="btn btn-sm alert-action" (click)="retryVerification()">
+            {{ 'organizationExample.retry' | translate }}
+          </button>
+        </div>
+      </clr-alert-item>
+    </clr-alert>
+    }
+  </section>
   <cll-datagrid-selection
     formControlName="organizationIds"
     required
@@ -422,7 +522,13 @@ export class DataServicePolicyFormComponent {
     </button>
     <button type="button" class="btn btn-sm" (click)="loadSaved()">{{ 'selectionDemo.loadSaved' | translate }}</button>
   </div>
-  <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
+  <button
+    type="submit"
+    class="btn btn-primary"
+    [disabled]="form.controls.organizationIds.enabled && !verifiedOrganizations()"
+  >
+    {{ 'organizationExample.submit' | translate }}
+  </button>
   <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
     {{ 'organizationExample.reset' | translate }}
   </button>

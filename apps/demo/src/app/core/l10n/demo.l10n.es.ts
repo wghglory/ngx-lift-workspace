@@ -1,4 +1,16 @@
 export const esTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Quitar',
+
+  'selectionDemo.selectedTitle': 'Organizaciones seleccionadas',
+  'selectionDemo.selectedCount': '{0} seleccionadas · máximo {1}',
+  'selectionDemo.unavailableName': 'Organización no disponible',
+  'selectionDemo.unverifiedName': 'Organización sin verificar',
+  'selectionDemo.removeKey': 'Quitar {0}',
+  'selectionDemo.verificationHelp':
+    'Las organizaciones seleccionadas no se han verificado. Espere a que se carguen o reintente antes de guardar.',
+  'selectionDemo.unavailableHelp': 'Quite las organizaciones no disponibles o reintente antes de guardar.',
+  'selectionDemo.unavailableError': 'Quite las organizaciones no disponibles antes de guardar.',
+
   'selectionDemo.savedHelp':
     'Cargar selección guardada restaura South (org-2) y una clave ausente del inventario. Actualizar reemplaza los datos y conserva las claves seleccionadas. Restablecer restaura South.',
   'selectionDemo.pickerHelp':

@@ -1,4 +1,15 @@
 export const zhCNTranslations: Record<string, string> = {
+  'selectionDemo.remove': '移除',
+
+  'selectionDemo.selectedTitle': '已选组织',
+  'selectionDemo.selectedCount': '已选 {0} 个 · 最多 {1} 个',
+  'selectionDemo.unavailableName': '不可用的组织',
+  'selectionDemo.unverifiedName': '尚未验证的组织',
+  'selectionDemo.removeKey': '移除 {0}',
+  'selectionDemo.verificationHelp': '尚未验证所选组织。请等待加载完成，或重试后再保存。',
+  'selectionDemo.unavailableHelp': '请移除不可用的组织，或重试后再保存。',
+  'selectionDemo.unavailableError': '请先移除不可用的组织再保存。',
+
   'selectionDemo.savedHelp':
     '加载已保存的选择会恢复 South（org-2）以及当前列表中不存在的未解析键。刷新替换列表并保留选中键。重置恢复 South。',
   'selectionDemo.pickerHelp': '选择器负责加载数据和表格；父组件负责校验和提交。重置恢复 North（org-1）。',

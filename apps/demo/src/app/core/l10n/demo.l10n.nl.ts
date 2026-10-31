@@ -1,4 +1,16 @@
 export const nlTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Verwijderen',
+
+  'selectionDemo.selectedTitle': 'Geselecteerde organisaties',
+  'selectionDemo.selectedCount': '{0} geselecteerd · maximaal {1}',
+  'selectionDemo.unavailableName': 'Niet-beschikbare organisatie',
+  'selectionDemo.unverifiedName': 'Niet-geverifieerde organisatie',
+  'selectionDemo.removeKey': '{0} verwijderen',
+  'selectionDemo.verificationHelp':
+    'De geselecteerde organisaties zijn nog niet geverifieerd. Wacht op het laden of probeer opnieuw voordat u opslaat.',
+  'selectionDemo.unavailableHelp': 'Verwijder niet-beschikbare organisaties of probeer opnieuw voordat u opslaat.',
+  'selectionDemo.unavailableError': 'Verwijder niet-beschikbare organisaties voordat u opslaat.',
+
   'selectionDemo.savedHelp':
     'Opgeslagen selectie laden herstelt South (org-2) en een sleutel die in deze lijst ontbreekt. Vernieuwen vervangt de lijst en behoudt geselecteerde sleutels. Opnieuw instellen herstelt South.',
   'selectionDemo.pickerHelp':

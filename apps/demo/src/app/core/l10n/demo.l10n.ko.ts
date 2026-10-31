@@ -1,4 +1,16 @@
 export const koTranslations: Record<string, string> = {
+  'selectionDemo.remove': '제거',
+
+  'selectionDemo.selectedTitle': '선택한 조직',
+  'selectionDemo.selectedCount': '{0}개 선택 · 최대 {1}개',
+  'selectionDemo.unavailableName': '사용할 수 없는 조직',
+  'selectionDemo.unverifiedName': '확인되지 않은 조직',
+  'selectionDemo.removeKey': '{0} 제거',
+  'selectionDemo.verificationHelp':
+    '선택한 조직을 아직 확인하지 못했습니다. 로딩이 완료될 때까지 기다리거나 다시 시도한 후 저장하세요.',
+  'selectionDemo.unavailableHelp': '사용할 수 없는 조직을 제거하거나 다시 시도한 후 저장하세요.',
+  'selectionDemo.unavailableError': '저장하기 전에 사용할 수 없는 조직을 제거하세요.',
+
   'selectionDemo.savedHelp':
     '저장된 선택을 불러오면 South(org-2)와 현재 목록에 없는 키를 복원합니다. 새로 고침은 선택 키를 유지하며 목록을 교체합니다. 재설정은 South를 복원합니다.',
   'selectionDemo.pickerHelp':
