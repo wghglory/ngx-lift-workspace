@@ -21,7 +21,7 @@ for (const [name, file] of Object.entries(examples)) {
     ['Html', 'html'],
   ]) {
     declarations.push(
-      `export const ${name}${suffix} = ${JSON.stringify(readFileSync(resolve(directory, `${file}.${extension}`), 'utf8'))};`,
+      `/** Displayed ${extension === 'ts' ? 'TypeScript' : 'HTML'} source for the ${name} example. */\nexport const ${name}${suffix} = ${JSON.stringify(readFileSync(resolve(directory, `${file}.${extension}`), 'utf8'))};`,
     );
   }
 }

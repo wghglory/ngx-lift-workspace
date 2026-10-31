@@ -14,6 +14,7 @@ import {type Organization} from './organization-example.data';
 })
 export class TemplateOrganizationFormComponent {
   private readonly organizationService = inject(OrganizationService);
+
   readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
   organizationId: string | null = null;
   readonly save = output<string | null>();

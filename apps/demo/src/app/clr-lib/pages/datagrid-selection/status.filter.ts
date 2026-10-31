@@ -3,7 +3,9 @@ import type {ClrDatagridFilterInterface} from '@clr/angular';
 import {Subject} from 'rxjs';
 import type {Organization, Status} from './organization-example.data';
 
+/** Status choices exposed by the reusable picker filter. */
 export type StatusChoice = 'all' | Status;
+/** Native Clarity status filter used by the reusable organization picker. */
 export class StatusFilter implements ClrDatagridFilterInterface<Organization> {
   readonly changes = new Subject<void>();
   readonly value = signal<StatusChoice>('all');

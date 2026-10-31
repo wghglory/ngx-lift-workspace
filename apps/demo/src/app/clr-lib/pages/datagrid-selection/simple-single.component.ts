@@ -14,6 +14,7 @@ import {type Organization} from './organization-example.data';
 })
 export class SingleOrganizationGridComponent {
   private readonly organizationService = inject(OrganizationService);
+
   readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
   readonly organizationId = new FormControl<string | null>(null);
   readonly organizationKey = (item: Organization) => item.id;

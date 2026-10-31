@@ -508,7 +508,10 @@ test('async eligibility buffers the selection until submit, then accepts an elig
   await expect(example.getByText('Checking eligibility…', {exact: true})).toBeVisible();
   await expect(example.locator('clr-control-error')).toHaveText('West is not eligible for this policy.');
 
-  await example.getByRole('checkbox', {name: 'Select West', exact: true}).uncheck();
+  await example.getByRole('button', {name: 'Reset', exact: true}).click();
+  await expect(example.locator('clr-control-error')).toHaveCount(0);
+  await expect(example.locator('app-async-organization-grid > pre')).toContainText('"organizationIds": []');
+
   await example.getByRole('checkbox', {name: 'Select North', exact: true}).check();
   await example.getByRole('button', {name: 'Submit', exact: true}).click();
   await expect(example.getByRole('status')).toContainText('Submitted keys: org-1');

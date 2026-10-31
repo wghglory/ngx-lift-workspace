@@ -135,9 +135,13 @@ above predates this demo-only follow-up; library implementation, dependencies an
 
 ## Review closeout (October 31, 2026)
 
-The two-axis review of this branch found three standards gaps and four spec gaps. Added: CHANGELOG and README entries,
-section spacing and a grouped parent-source example; a cleanup regression; the async eligibility/submit-buffering
-example with all eleven locale messages; and corrected source/browser counts. The reset deviation is recorded on #200:
-the native browser reset action remains intentionally unused because it clears Clarity pagination and selection DOM
-state independently of Angular; direct `form.reset()` is documented in the reference, while the examples expose
-`resetForm()` from ordinary buttons.
+The first two-axis review of this branch found three standards gaps and four spec gaps. Added: CHANGELOG and README
+entries, section spacing and a grouped parent-source example; a cleanup regression; the async
+eligibility/submit-buffering example with all eleven locale messages; and corrected source/browser counts. A follow-up
+review found two standards gaps (demo injection spacing and missing JSDoc on new demo exports) and one spec gap: the
+async Reset used direct `form.reset` and left the failed-submission error visible. The reset now calls the reactive form
+directive's `resetForm()`, the browser journey asserts the failed submit clears, and the new demo exports are
+documented. The reset deviation is recorded on #200: the native browser reset action remains intentionally unused
+because it clears Clarity pagination and selection DOM state independently of Angular; direct `form.reset()` is
+documented in the reference, while the examples expose `resetForm()` from ordinary buttons. The full 54-check datagrid
+journey passed again after these changes.

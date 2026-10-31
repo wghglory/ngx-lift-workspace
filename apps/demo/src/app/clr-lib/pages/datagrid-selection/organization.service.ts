@@ -4,6 +4,7 @@ import type {Observable} from 'rxjs';
 import type {QueryDefinition} from 'ngx-lift';
 import type {Organization} from './organization-example.data';
 
+/** Loads the complete local organization inventory for a scope. */
 @Injectable({providedIn: 'root'})
 export class OrganizationService {
   private readonly httpClient = inject(HttpClient);
@@ -13,6 +14,7 @@ export class OrganizationService {
   }
 }
 
+/** Declares the shared query used by the datagrid selection examples. */
 export function organizationListQuery(
   organizationService: OrganizationService,
   scope: string,

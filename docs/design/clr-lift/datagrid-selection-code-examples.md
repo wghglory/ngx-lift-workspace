@@ -540,8 +540,9 @@ export class DataServicePolicyFormComponent {
 
 `async-submit.component.ts` and `.html` keep multi-selection edits buffered with `updateOn: 'submit'`. Submitting starts
 an asynchronous eligibility validator; `sf.pending()` drives the status message and button loading state. West (org-4)
-is rejected with a localized error, and an eligible submission emits only the accepted buffered keys. The complete
-source is shown beside the playground on the demo page.
+is rejected with a localized error, and Reset uses the form directive's `resetForm()` so pristine/untouched state and
+the submission flag clear together. An eligible submission emits only the accepted buffered keys. The complete source is
+shown beside the playground on the demo page.
 
 ## With a picker component
 
@@ -779,7 +780,7 @@ export class TemplateOrganizationFormComponent {
 ### template-driven.component.html
 
 ```html
-<form clrForm clrLayout="vertical" #form="ngForm" (ngSubmit)="submit(form)">
+<form clrForm clrLayout="horizontal" #form="ngForm" (ngSubmit)="submit(form)">
   <cll-datagrid-selection
     name="organizationId"
     [(ngModel)]="organizationId"

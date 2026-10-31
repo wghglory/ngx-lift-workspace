@@ -29,6 +29,7 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
 })
 export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
+
   readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});

@@ -1,6 +1,13 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import {AsyncValidatorFn, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AsyncValidatorFn,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
@@ -29,6 +36,7 @@ const eligibility: AsyncValidatorFn = (control) =>
 export class AsyncSubmitComponent {
   private readonly translationService = inject(TranslationService);
   private readonly organizationService = inject(OrganizationService);
+
   readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
 
   readonly form = new FormGroup({
@@ -65,8 +73,8 @@ export class AsyncSubmitComponent {
     this.submitted.set(payload.organizationIds === undefined ? [] : [...payload.organizationIds]);
   }
 
-  reset(): void {
-    this.form.reset({organizationIds: []});
+  reset(formView: FormGroupDirective): void {
+    formView.resetForm({organizationIds: []});
     this.submitted.set(undefined);
   }
 }
