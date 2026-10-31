@@ -1,0 +1,52 @@
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <cll-datagrid-selection
+    formControlName="organizationIds"
+    required
+    [helper]="'selectionDemo.asyncSubmitHelp' | translate"
+    [error]="selectionError()"
+  >
+    <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
+    @if (organizationsQuery.error()) {
+      <cll-alert>
+        {{
+          (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+            | translate
+        }}
+        <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+          {{ 'organizationExample.retry' | translate }}
+        </button>
+      </cll-alert>
+    }
+    <clr-datagrid
+      clrDgSelectionType="multi"
+      [clrDgLoading]="organizationsQuery.isLoading()"
+      [clrDgItemsIdentityFn]="organizationKey"
+    >
+      <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
+      <clr-dg-column clrDgField="status">{{ 'organizationExample.status' | translate }}</clr-dg-column>
+      <clr-dg-row
+        *clrDgItems="let item of organizationsQuery.value() ?? []"
+        [clrDgItem]="item"
+        [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+      >
+        <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+        <clr-dg-cell>{{ statusKeys[item.status] | translate }}</clr-dg-cell>
+      </clr-dg-row>
+    </clr-datagrid>
+  </cll-datagrid-selection>
+  @if (sf.pending()) {
+    <p role="status">{{ 'selectionDemo.asyncChecking' | translate }}</p>
+  }
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <button type="submit" class="btn btn-primary" [clrLoading]="sf.pending()">
+      {{ 'organizationExample.submit' | translate }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="reset(formView)">
+      {{ 'organizationExample.reset' | translate }}
+    </button>
+  </div>
+</form>
+@if (submitted(); as submittedKeys) {
+  <p role="status">{{ 'selectionDemo.asyncSubmitted' | translate }}: {{ submittedKeys.join(', ') }}</p>
+}
+<pre>{{ sf.submitValue() | json }}</pre>

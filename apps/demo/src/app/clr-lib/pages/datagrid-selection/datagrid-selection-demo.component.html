@@ -1,0 +1,83 @@
+<cll-page-container [title]="'DatagridSelectionComponent'">
+  <p>{{ 'selectionDemo.intro' | translate }}</p>
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+    <app-demo-playground
+      data-testid="selection-multiple"
+      [title]="'selectionDemo.multiple' | translate"
+      [tsCode]="multipleTs"
+      [htmlCode]="multipleHtml"
+    >
+      <app-simple-organization-grid preview />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="selection-single"
+      [title]="'selectionDemo.single' | translate"
+      [tsCode]="singleTs"
+      [htmlCode]="singleHtml"
+    >
+      <app-single-organization-grid preview />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="selection-policy"
+      [title]="'selectionDemo.policy' | translate"
+      [description]="'selectionDemo.savedHelp' | translate"
+      [tsCode]="policyTs"
+      [htmlCode]="policyHtml"
+    >
+      <app-data-service-policy-form preview />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="selection-picker"
+      [title]="'selectionDemo.picker' | translate"
+      [description]="'selectionDemo.pickerHelp' | translate"
+      [tsCode]="pickerTs"
+      [htmlCode]="pickerHtml"
+    >
+      <app-policy-form preview />
+    </app-demo-playground>
+    <article cds-layout="vertical gap:sm">
+      <h3>PolicyFormComponent</h3>
+      <p>{{ 'selectionDemo.pickerHelp' | translate }}</p>
+      <app-code-block [code]="pickerParentTs" lang="typescript" />
+      <app-code-block [code]="pickerParentHtml" lang="html" />
+    </article>
+    <app-demo-playground
+      data-testid="selection-async"
+      [title]="'selectionDemo.asyncSubmit' | translate"
+      [description]="'selectionDemo.asyncSubmitHelp' | translate"
+      [tsCode]="asyncSubmitTs"
+      [htmlCode]="asyncSubmitHtml"
+    >
+      <app-async-organization-grid preview />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="selection-model"
+      [title]="'selectionDemo.model' | translate"
+      [tsCode]="modelTs"
+      [htmlCode]="modelHtml"
+    >
+      <app-template-organization-form preview />
+    </app-demo-playground>
+  </section>
+  <section id="api-reference" cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <h3>DatagridSelectionComponent (<code>cll-datagrid-selection</code>)</h3>
+    <p>{{ 'selectionDemo.reference.overview' | translate }}</p>
+    <h4>{{ 'common.inputs' | translate }}</h4>
+    <app-api-table [properties]="inputs()" />
+    <h4>DatagridItemAvailability</h4>
+    <code>disabled: boolean; disabledReason?: string</code>
+    <h4>DatagridSelectionValue</h4>
+    <code>DatagridSelectionKey = string | number</code>
+    <code>DatagridSelectionValue = DatagridSelectionKey | null | readonly DatagridSelectionKey[]</code>
+    <p>{{ 'selectionDemo.reference.value' | translate }}</p>
+    <p>{{ 'selectionDemo.reference.native' | translate }}</p>
+    <h4>{{ 'common.outputs' | translate }} / {{ 'common.methods' | translate }}</h4>
+    <p>{{ 'selectionDemo.reference.events' | translate }}</p>
+    <h3>DatagridSelectionAccessorDirective / DatagridSelectionBindingDirective</h3>
+    <code>hostDirectives: [DatagridSelectionAccessorDirective]</code>
+    <code>&lt;cll-datagrid-selection cllDatagridSelectionBinding&gt;</code>
+    <p>{{ 'selectionDemo.reference.picker' | translate }}</p>
+  </section>
+</cll-page-container>

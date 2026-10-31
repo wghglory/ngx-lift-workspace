@@ -1,4 +1,74 @@
 export const jaTranslations: Record<string, string> = {
+  'selectionDemo.remove': '削除',
+
+  'selectionDemo.selectedTitle': '選択した組織',
+  'selectionDemo.selectedCount': '{0} 件選択 · 最大 {1} 件',
+  'selectionDemo.unavailableName': '利用できない組織',
+  'selectionDemo.unverifiedName': '未確認の組織',
+  'selectionDemo.removeKey': '{0} を削除',
+  'selectionDemo.verificationHelp': '選択した組織は未確認です。読み込み完了を待つか、再試行してから保存してください。',
+  'selectionDemo.unavailableHelp': '利用できない組織を削除するか、再試行してから保存してください。',
+  'selectionDemo.unavailableError': '保存する前に利用できない組織を削除してください。',
+
+  'selectionDemo.savedHelp':
+    '保存した選択を読み込むと South（org-2）と現在の一覧にない未解決キーを復元します。更新は選択キーを保ったまま一覧を置換します。リセットは South を復元します。',
+  'selectionDemo.pickerHelp':
+    'ピッカーが読み込みとグリッドを、親が検証と送信を管理します。リセットは North（org-1）を復元します。',
+  'selectionDemo.reference.overview':
+    '通常のラベルと1つのネイティブ Clarity グリッドを包みます。フォームは選択フィールドか再利用ピッカーのホストだけにバインドします。',
+  'selectionDemo.reference.required':
+    '必須を示し、直接バインドしたコントロールで Angular RequiredValidator を有効にします。',
+  'selectionDemo.reference.helper': 'グリッドに関連付ける翻訳済みヘルプ。',
+  'selectionDemo.reference.error': '無効で、操作済みまたは送信済みのコントロールに表示する翻訳済み検証メッセージ。',
+  'selectionDemo.reference.layout': 'フィールドのレイアウト。省略すると外側の Clarity フォームを継承します。',
+  'selectionDemo.reference.readonly': '選択の編集を防ぎ、閲覧とフォーム値への含有は維持します。',
+  'selectionDemo.reference.itemAvailability':
+    '各項目の disabled と翻訳済み disabledReason を返します。選択済みの利用不可項目は解除できます。',
+  'selectionDemo.reference.value':
+    '単一選択は安定キーまたは null、複数選択は順序付きキーを保存します。一覧や現在のページにないキーも保持します。',
+  'selectionDemo.reference.native':
+    'clrDgSelectionType でモード、clrDgItemsIdentityFn で識別、clrDgItems で一覧を指定します。列、フィルター、並べ替え、ページングは呼び出し側が管理します。',
+  'selectionDemo.reference.picker':
+    'ホストに DatagridSelectionAccessorDirective、唯一の内部フィールドに cllDatagridSelectionBinding を設定します。Angular フォームはホストにバインドします。',
+  'selectionDemo.reference.events':
+    '元のフォームで Angular valueChanges と toSignalForm を使用します。独立した選択出力や公開の命令型メソッドはありません。',
+
+  'selectionDemo.horizontal': '横方向のレイアウト',
+  'selectionDemo.loadSaved': '保存した選択を読み込む',
+  'selectionDemo.readonly': '読み取り専用',
+  'selectionDemo.disabled': '無効',
+  'organizationExample.organization': '組織',
+  'organizationExample.organizations': '組織',
+  'organizationExample.name': '名前',
+  'organizationExample.status': '状態',
+  'organizationExample.ready': '準備完了',
+  'organizationExample.maintenance': 'メンテナンス中',
+  'organizationExample.allStatuses': 'すべての状態',
+  'organizationExample.reset': 'リセット',
+  'organizationExample.submit': '送信',
+  'organizationExample.required': '組織を選択してください。',
+  'organizationExample.rule': '組織を1つから3つ選択してください。',
+  'organizationExample.help': 'このポリシーを使用できる組織を選択してください。',
+  'organizationExample.about': '組織の割り当てについて',
+  'organizationExample.selectRow': '{0} を選択',
+  'organizationExample.loadError': '組織を読み込めませんでした。',
+  'organizationExample.refreshError': '組織を更新できませんでした。前回読み込んだデータを表示しています。',
+  'organizationExample.retry': '再試行',
+  'organizationExample.maxOrganizations': '組織は3つまで選択してください。',
+  'organizationExample.invalidSelection': '組織の選択が無効です。',
+  'selectionDemo.asyncSubmit': '非同期検証と送信バッファリング',
+  'selectionDemo.asyncSubmitHelp':
+    '選択は送信までバッファされ、その後で非同期の適格性チェックが実行されます。West（org-4）は拒否されます。',
+  'selectionDemo.asyncChecking': '適格性を確認しています…',
+  'selectionDemo.asyncError': 'West はこのポリシーの対象外です。',
+  'selectionDemo.asyncSubmitted': '送信されたキー',
+  'selectionDemo.title': 'データグリッド選択',
+  'selectionDemo.intro': 'Angular フォーム内のネイティブ Clarity グリッドで安定したリソース ID を選択します。',
+  'selectionDemo.multiple': '複数選択',
+  'selectionDemo.single': '単一選択',
+  'selectionDemo.policy': '検証と toSignalForm',
+  'selectionDemo.picker': '再利用可能な組織ピッカー',
+  'selectionDemo.model': 'テンプレート駆動フォーム',
   'breadcrumbs.reference.items': '順序付きの場所。最後の項目は現在地のテキストです。',
   'breadcrumbs.reference.ariaLabel': 'ナビゲーションのアクセシブルな名前。',
   'breadcrumbs.reference.maxVisible': 'ルートと現在地を含む上限。最小二項目。幅により減少します。',

@@ -1,4 +1,76 @@
 export const koTranslations: Record<string, string> = {
+  'selectionDemo.remove': '제거',
+
+  'selectionDemo.selectedTitle': '선택한 조직',
+  'selectionDemo.selectedCount': '{0}개 선택 · 최대 {1}개',
+  'selectionDemo.unavailableName': '사용할 수 없는 조직',
+  'selectionDemo.unverifiedName': '확인되지 않은 조직',
+  'selectionDemo.removeKey': '{0} 제거',
+  'selectionDemo.verificationHelp':
+    '선택한 조직을 아직 확인하지 못했습니다. 로딩이 완료될 때까지 기다리거나 다시 시도한 후 저장하세요.',
+  'selectionDemo.unavailableHelp': '사용할 수 없는 조직을 제거하거나 다시 시도한 후 저장하세요.',
+  'selectionDemo.unavailableError': '저장하기 전에 사용할 수 없는 조직을 제거하세요.',
+
+  'selectionDemo.savedHelp':
+    '저장된 선택을 불러오면 South(org-2)와 현재 목록에 없는 키를 복원합니다. 새로 고침은 선택 키를 유지하며 목록을 교체합니다. 재설정은 South를 복원합니다.',
+  'selectionDemo.pickerHelp':
+    '선택기는 로딩과 그리드를, 부모는 검증과 제출을 관리합니다. 재설정은 North(org-1)를 복원합니다.',
+  'selectionDemo.reference.overview':
+    '일반 레이블과 하나의 기본 Clarity 그리드를 감쌉니다. 폼은 선택 필드 또는 재사용 선택기 호스트에만 바인딩합니다.',
+  'selectionDemo.reference.required':
+    '필수 필드를 표시하고 직접 바인딩된 컨트롤에서 Angular RequiredValidator를 활성화합니다.',
+  'selectionDemo.reference.helper': '그리드에 연결된 번역된 도움말입니다.',
+  'selectionDemo.reference.error':
+    '컨트롤이 유효하지 않고 터치되었거나 제출되었을 때 표시하는 번역된 검증 메시지입니다.',
+  'selectionDemo.reference.layout': '필드 레이아웃이며 생략하면 바깥 Clarity 폼을 상속합니다.',
+  'selectionDemo.reference.readonly': '선택 편집을 차단하며 탐색과 폼 값 포함은 유지합니다.',
+  'selectionDemo.reference.itemAvailability':
+    '각 항목의 disabled와 번역된 disabledReason을 반환합니다. 이미 선택된 사용 불가 항목은 제거할 수 있습니다.',
+  'selectionDemo.reference.value':
+    '단일 모드는 안정적인 키 또는 null, 다중 모드는 순서가 있는 키를 저장합니다. 누락되거나 현재 페이지에 없는 키도 유지합니다.',
+  'selectionDemo.reference.native':
+    'clrDgSelectionType으로 모드, clrDgItemsIdentityFn으로 식별, clrDgItems로 목록을 설정합니다. 열, 필터, 정렬 및 페이지 처리는 호출자가 관리합니다.',
+  'selectionDemo.reference.picker':
+    '호스트에 DatagridSelectionAccessorDirective를, 하나의 내부 필드에 cllDatagridSelectionBinding을 적용합니다. Angular 폼 바인딩은 호스트에 유지합니다.',
+  'selectionDemo.reference.events':
+    '원래 폼에서 Angular valueChanges와 toSignalForm을 사용합니다. 별도 선택 출력이나 공개 명령형 메서드는 없습니다.',
+
+  'selectionDemo.horizontal': '가로 레이아웃',
+  'selectionDemo.loadSaved': '저장된 선택 불러오기',
+  'selectionDemo.readonly': '읽기 전용',
+  'selectionDemo.disabled': '비활성화',
+  'organizationExample.organization': '조직',
+  'organizationExample.organizations': '조직',
+  'organizationExample.name': '이름',
+  'organizationExample.status': '상태',
+  'organizationExample.ready': '준비됨',
+  'organizationExample.maintenance': '유지 보수 중',
+  'organizationExample.allStatuses': '모든 상태',
+  'organizationExample.reset': '재설정',
+  'organizationExample.submit': '제출',
+  'organizationExample.required': '조직을 선택하세요.',
+  'organizationExample.rule': '조직을 1개에서 3개까지 선택하세요.',
+  'organizationExample.help': '이 정책을 사용할 수 있는 조직을 선택하세요.',
+  'organizationExample.about': '조직 할당 정보',
+  'organizationExample.selectRow': '{0} 선택',
+  'organizationExample.loadError': '조직을 불러오지 못했습니다.',
+  'organizationExample.refreshError': '조직을 새로 고치지 못했습니다. 이전에 불러온 데이터를 표시합니다.',
+  'organizationExample.retry': '다시 시도',
+  'organizationExample.maxOrganizations': '조직을 최대 3개까지 선택하세요.',
+  'organizationExample.invalidSelection': '조직 선택이 올바르지 않습니다.',
+  'selectionDemo.asyncSubmit': '비동기 유효성 검사 및 제출 버퍼링',
+  'selectionDemo.asyncSubmitHelp':
+    '선택 항목은 제출할 때까지 버퍼링된 후 비동기 자격 검사가 실행됩니다. West(org-4)는 거부됩니다.',
+  'selectionDemo.asyncChecking': '자격을 확인하는 중…',
+  'selectionDemo.asyncError': 'West는 이 정책에 적합하지 않습니다.',
+  'selectionDemo.asyncSubmitted': '제출된 키',
+  'selectionDemo.title': '데이터 그리드 선택',
+  'selectionDemo.intro': 'Angular 폼의 기본 Clarity 그리드에서 안정적인 리소스 ID를 선택합니다.',
+  'selectionDemo.multiple': '다중 선택',
+  'selectionDemo.single': '단일 선택',
+  'selectionDemo.policy': '유효성 검사 및 toSignalForm',
+  'selectionDemo.picker': '재사용 가능한 조직 선택기',
+  'selectionDemo.model': '템플릿 기반 폼',
   'breadcrumbs.reference.items': '순서가 있는 위치 목록. 마지막 항목은 현재 위치 텍스트입니다.',
   'breadcrumbs.reference.ariaLabel': '탐색의 접근 가능한 이름.',
   'breadcrumbs.reference.maxVisible': '루트와 현재 위치를 포함한 상한, 최소 두 개. 너비에 따라 줄어듭니다.',

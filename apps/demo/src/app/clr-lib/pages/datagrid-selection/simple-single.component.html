@@ -1,0 +1,28 @@
+<cll-datagrid-selection [formControl]="organizationId">
+  <label class="clr-control-label">{{ 'organizationExample.organization' | translate }}</label>
+  @if (organizationsQuery.error()) {
+    <cll-alert>
+      {{
+        (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+          | translate
+      }}
+      <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+        {{ 'organizationExample.retry' | translate }}
+      </button>
+    </cll-alert>
+  }
+  <clr-datagrid
+    clrDgSelectionType="single"
+    [clrDgLoading]="organizationsQuery.isLoading()"
+    [clrDgItemsIdentityFn]="organizationKey"
+  >
+    <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
+    <clr-dg-row
+      *clrDgItems="let item of organizationsQuery.value() ?? []"
+      [clrDgItem]="item"
+      [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+    >
+      <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+    </clr-dg-row>
+  </clr-datagrid>
+</cll-datagrid-selection>

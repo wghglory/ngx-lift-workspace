@@ -1,4 +1,76 @@
 export const enTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Remove',
+
+  'selectionDemo.selectedTitle': 'Selected organizations',
+  'selectionDemo.selectedCount': '{0} selected · maximum {1}',
+  'selectionDemo.unavailableName': 'Unavailable organization',
+  'selectionDemo.unverifiedName': 'Unverified organization',
+  'selectionDemo.removeKey': 'Remove {0}',
+  'selectionDemo.verificationHelp':
+    'Selected organizations have not been verified. Wait for loading or retry before saving.',
+  'selectionDemo.unavailableHelp': 'Remove unavailable organizations or retry before saving.',
+  'selectionDemo.unavailableError': 'Remove unavailable organizations before saving.',
+
+  'selectionDemo.savedHelp':
+    'Load saved selection restores South (org-2) and an unresolved key that is absent from this inventory. Refresh replaces the inventory while preserving selected keys. Reset restores South.',
+  'selectionDemo.pickerHelp':
+    'The picker owns loading and the grid; the parent owns validation and submission. Reset restores North (org-1).',
+  'selectionDemo.reference.overview':
+    'Wrap one native Clarity datagrid with a plain label. Bind the form only to the selection field, or to the reusable picker host.',
+  'selectionDemo.reference.required':
+    'Marks the field as required and activates Angular RequiredValidator on a directly bound control.',
+  'selectionDemo.reference.helper': 'Localized help associated with the grid.',
+  'selectionDemo.reference.error':
+    'Localized validator message shown when the owner is invalid and touched or submitted.',
+  'selectionDemo.reference.layout': 'Field layout; inherits the enclosing Clarity form when omitted.',
+  'selectionDemo.reference.readonly': 'Prevents selection edits while retaining browsing and inclusion in form values.',
+  'selectionDemo.reference.itemAvailability':
+    'Returns disabled and a localized disabledReason for each item. Selected unavailable items remain removable.',
+  'selectionDemo.reference.value':
+    'Single mode stores a stable key or null; multi mode stores ordered keys. Missing and off-page keys are preserved.',
+  'selectionDemo.reference.native':
+    'Configure mode with clrDgSelectionType, identity with clrDgItemsIdentityFn and inventory with clrDgItems. Native columns, filters, sorting and paging stay caller-owned.',
+  'selectionDemo.reference.picker':
+    'Compose DatagridSelectionAccessorDirective on the picker host and cllDatagridSelectionBinding on exactly one inner field. Keep the Angular form binding on the host.',
+  'selectionDemo.reference.events':
+    'Use Angular valueChanges and toSignalForm on the original owner. There are no separate selection outputs or public imperative methods.',
+
+  'selectionDemo.horizontal': 'Horizontal layout',
+  'selectionDemo.loadSaved': 'Load saved selection',
+  'selectionDemo.readonly': 'Readonly',
+  'selectionDemo.disabled': 'Disabled',
+  'organizationExample.organization': 'Organization',
+  'organizationExample.organizations': 'Organizations',
+  'organizationExample.name': 'Name',
+  'organizationExample.status': 'Status',
+  'organizationExample.ready': 'Ready',
+  'organizationExample.maintenance': 'Maintenance',
+  'organizationExample.allStatuses': 'All statuses',
+  'organizationExample.reset': 'Reset',
+  'organizationExample.submit': 'Submit',
+  'organizationExample.required': 'Choose an organization.',
+  'organizationExample.rule': 'Choose one to three organizations.',
+  'organizationExample.help': 'Choose the organizations allowed to use this policy.',
+  'organizationExample.about': 'About organization assignments',
+  'organizationExample.selectRow': 'Select {0}',
+  'organizationExample.loadError': 'Organizations could not be loaded.',
+  'organizationExample.refreshError': 'Could not refresh organizations. Showing previously loaded data.',
+  'organizationExample.retry': 'Retry',
+  'organizationExample.maxOrganizations': 'Choose no more than three organizations.',
+  'organizationExample.invalidSelection': 'The organization selection is invalid.',
+  'selectionDemo.asyncSubmit': 'Async validation and submit buffering',
+  'selectionDemo.asyncSubmitHelp':
+    'Selections stay buffered until Submit. An asynchronous eligibility check then runs; West (org-4) is rejected.',
+  'selectionDemo.asyncChecking': 'Checking eligibility…',
+  'selectionDemo.asyncError': 'West is not eligible for this policy.',
+  'selectionDemo.asyncSubmitted': 'Submitted keys',
+  'selectionDemo.title': 'Datagrid selection',
+  'selectionDemo.intro': 'Select stable resource IDs using a native Clarity grid in an Angular form.',
+  'selectionDemo.multiple': 'Multiple selection',
+  'selectionDemo.single': 'Single selection',
+  'selectionDemo.policy': 'Validation and toSignalForm',
+  'selectionDemo.picker': 'Reusable organization picker',
+  'selectionDemo.model': 'Template-driven form',
   'breadcrumbs.reference.items': 'Ordered locations; the last is current text.',
   'breadcrumbs.reference.ariaLabel': 'Accessible navigation name.',
   'breadcrumbs.reference.maxVisible': 'Item ceiling, including root/current; minimum two. Width may reduce it.',
