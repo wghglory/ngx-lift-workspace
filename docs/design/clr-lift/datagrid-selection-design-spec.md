@@ -213,9 +213,10 @@ the same CVA. Availability explanations are visible and associated with the affe
 the actual grid because role=grid does not support aria-required. The parent explicitly excludes disabled fields from
 its submission DTO, including Angular's wholly disabled FormGroup case.
 
-The twelve displayed demo sources are generated from runnable files and checked for drift by the tooling target. Direct
-status text filters resolve the displayed translations and refresh native matching/order on language or dictionary
-changes. The picker retains a separate ordinary enum filter component. Neither path changes native inventory identity.
+The fourteen displayed demo sources are generated from runnable files and checked for drift by the tooling target.
+Direct status text filters resolve the displayed translations and refresh native matching/order on language or
+dictionary changes. The picker retains a separate ordinary enum filter component. Neither path changes native inventory
+identity.
 
 #201 retains server-page behavior; #202 retains full policy create/edit workflows. Independent native-language and
 assistive-technology acceptance, CI, merge, deployment and npm publication are separate gates. No SSR/hydration or
@@ -245,4 +246,6 @@ Owned messages in every supported locale: selected-organizations region name, se
 unverified labels, warning/recovery guidance, per-key removal name and unavailable-key validation error.
 
 The validation example uses Angular's default change updates so the selected count and Remove actions reflect every grid
-edit immediately. The reusable-picker example continues demonstrating updateOn: 'blur' and composite departure.
+edit immediately. The reusable-picker example continues demonstrating updateOn: 'blur' and composite departure. The
+async example buffers multi-selection with updateOn: 'submit'; submitting starts an asynchronous eligibility validator,
+shows pending status, rejects West (org-4) with a localized error and emits only the accepted buffered keys.

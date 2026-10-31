@@ -23,6 +23,12 @@ recorded for the affected releases.
 - `clr-lift` exports `buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` for
   synchronous exact-key bucket/prefix/object trails with caller-owned destinations and permitted roots. Includes a
   localized fixture-backed bucket browser and [usage/reference guide](docs/guides/object-path-breadcrumbs.md).
+- `clr-lift` exports `DatagridSelectionComponent` (`cll-datagrid-selection`), `DatagridSelectionAccessorDirective` and
+  `DatagridSelectionBindingDirective` for caller-written native Clarity datagrids inside Angular forms. Stable
+  single/multiple keys survive filtering, paging, refreshed objects and owner writes; availability, native loading,
+  disabled/readonly guards, composite focus, required validation and a reusable picker adapter are included. See the
+  [design specification](docs/design/clr-lift/datagrid-selection-design-spec.md) and
+  [acceptance record](docs/design/clr-lift/datagrid-selection-acceptance.md).
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

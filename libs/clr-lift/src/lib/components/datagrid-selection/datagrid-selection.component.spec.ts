@@ -409,4 +409,19 @@ describe('Datagrid selection through its real form host', () => {
     expect(host.control.pristine).toBe(true);
     expect(host.control.untouched).toBe(true);
   });
+  it('removes document listeners and pending timers when its host is destroyed', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const remove = vi.spyOn(document, 'removeEventListener');
+    const clear = vi.spyOn(globalThis, 'clearTimeout');
+    fixture.destroy();
+    expect(remove).toHaveBeenCalledWith('focusin', expect.any(Function));
+    expect(remove).toHaveBeenCalledWith('focusout', expect.any(Function));
+    expect(remove).toHaveBeenCalledWith('pointerdown', expect.any(Function), true);
+    expect(clear).toHaveBeenCalled();
+    remove.mockRestore();
+    clear.mockRestore();
+  });
 });

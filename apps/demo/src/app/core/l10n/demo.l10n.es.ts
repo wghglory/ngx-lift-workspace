@@ -60,6 +60,12 @@ export const esTranslations: Record<string, string> = {
   'organizationExample.retry': 'Reintentar',
   'organizationExample.maxOrganizations': 'Seleccione como máximo tres organizaciones.',
   'organizationExample.invalidSelection': 'La selección de organizaciones no es válida.',
+  'selectionDemo.asyncSubmit': 'Validación asíncrona y búfer de envío',
+  'selectionDemo.asyncSubmitHelp':
+    'Las selecciones se almacenan hasta el envío. Después se ejecuta una comprobación asíncrona de elegibilidad; West (org-4) se rechaza.',
+  'selectionDemo.asyncChecking': 'Comprobando elegibilidad…',
+  'selectionDemo.asyncError': 'West no es elegible para esta política.',
+  'selectionDemo.asyncSubmitted': 'Claves enviadas',
   'selectionDemo.title': 'Selección en tabla',
   'selectionDemo.intro':
     'Seleccione identificadores estables de recursos con una tabla nativa de Clarity en un formulario de Angular.',

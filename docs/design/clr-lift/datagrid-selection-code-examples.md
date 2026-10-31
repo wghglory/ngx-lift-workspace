@@ -536,6 +536,13 @@ export class DataServicePolicyFormComponent {
 <pre>{{ sf.submitValue() | json }}</pre>
 ```
 
+## Async validation and submit buffering
+
+`async-submit.component.ts` and `.html` keep multi-selection edits buffered with `updateOn: 'submit'`. Submitting starts
+an asynchronous eligibility validator; `sf.pending()` drives the status message and button loading state. West (org-4)
+is rejected with a localized error, and an eligible submission emits only the accepted buffered keys. The complete
+source is shown beside the playground on the demo page.
+
 ## With a picker component
 
 A reusable app-organization-picker centralizes the organization query, loading/failure/retry UI, business grid markup

@@ -16,9 +16,12 @@ import {
   pickerHtml,
   modelTs,
   modelHtml,
+  asyncSubmitTs,
+  asyncSubmitHtml,
   pickerParentTs,
   pickerParentHtml,
 } from './example-source';
+import {AsyncSubmitComponent} from './async-submit.component';
 import {DataServicePolicyFormComponent} from './data-service-policy-form.component';
 import {registerExampleMessages} from './organization-example.messages';
 import {PolicyFormComponent} from './picker-parent.component';
@@ -37,6 +40,7 @@ import {TemplateOrganizationFormComponent} from './template-driven.component';
     SingleOrganizationGridComponent,
     DataServicePolicyFormComponent,
     PolicyFormComponent,
+    AsyncSubmitComponent,
     TemplateOrganizationFormComponent,
   ],
   templateUrl: './datagrid-selection-demo.component.html',
@@ -57,6 +61,8 @@ export class DatagridSelectionDemoComponent {
   readonly pickerParentHtml = pickerParentHtml;
   readonly modelTs = modelTs;
   readonly modelHtml = modelHtml;
+  readonly asyncSubmitTs = asyncSubmitTs;
+  readonly asyncSubmitHtml = asyncSubmitHtml;
   readonly inputs = computed<ApiProperty[]>(() => [
     {
       name: 'required',

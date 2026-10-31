@@ -57,6 +57,12 @@ export const ruTranslations: Record<string, string> = {
   'organizationExample.retry': 'Повторить',
   'organizationExample.maxOrganizations': 'Выберите не более трёх организаций.',
   'organizationExample.invalidSelection': 'Выбраны недопустимые организации.',
+  'selectionDemo.asyncSubmit': 'Асинхронная проверка и буферизация отправки',
+  'selectionDemo.asyncSubmitHelp':
+    'Выбор сохраняется в буфере до отправки. Затем выполняется асинхронная проверка допустимости; West (org-4) отклоняется.',
+  'selectionDemo.asyncChecking': 'Проверка допустимости…',
+  'selectionDemo.asyncError': 'West не допускается для этой политики.',
+  'selectionDemo.asyncSubmitted': 'Отправленные ключи',
   'selectionDemo.title': 'Выбор в таблице',
   'selectionDemo.intro': 'Выбирайте стабильные идентификаторы ресурсов в таблице Clarity в форме Angular.',
   'selectionDemo.multiple': 'Множественный выбор',

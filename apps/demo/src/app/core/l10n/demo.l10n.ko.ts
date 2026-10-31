@@ -58,6 +58,12 @@ export const koTranslations: Record<string, string> = {
   'organizationExample.retry': '다시 시도',
   'organizationExample.maxOrganizations': '조직을 최대 3개까지 선택하세요.',
   'organizationExample.invalidSelection': '조직 선택이 올바르지 않습니다.',
+  'selectionDemo.asyncSubmit': '비동기 유효성 검사 및 제출 버퍼링',
+  'selectionDemo.asyncSubmitHelp':
+    '선택 항목은 제출할 때까지 버퍼링된 후 비동기 자격 검사가 실행됩니다. West(org-4)는 거부됩니다.',
+  'selectionDemo.asyncChecking': '자격을 확인하는 중…',
+  'selectionDemo.asyncError': 'West는 이 정책에 적합하지 않습니다.',
+  'selectionDemo.asyncSubmitted': '제출된 키',
   'selectionDemo.title': '데이터 그리드 선택',
   'selectionDemo.intro': 'Angular 폼의 기본 Clarity 그리드에서 안정적인 리소스 ID를 선택합니다.',
   'selectionDemo.multiple': '다중 선택',

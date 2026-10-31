@@ -58,6 +58,12 @@ export const enTranslations: Record<string, string> = {
   'organizationExample.retry': 'Retry',
   'organizationExample.maxOrganizations': 'Choose no more than three organizations.',
   'organizationExample.invalidSelection': 'The organization selection is invalid.',
+  'selectionDemo.asyncSubmit': 'Async validation and submit buffering',
+  'selectionDemo.asyncSubmitHelp':
+    'Selections stay buffered until Submit. An asynchronous eligibility check then runs; West (org-4) is rejected.',
+  'selectionDemo.asyncChecking': 'Checking eligibility…',
+  'selectionDemo.asyncError': 'West is not eligible for this policy.',
+  'selectionDemo.asyncSubmitted': 'Submitted keys',
   'selectionDemo.title': 'Datagrid selection',
   'selectionDemo.intro': 'Select stable resource IDs using a native Clarity grid in an Angular form.',
   'selectionDemo.multiple': 'Multiple selection',

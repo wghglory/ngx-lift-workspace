@@ -1,6 +1,6 @@
 <cll-page-container [title]="'DatagridSelectionComponent'">
   <p>{{ 'selectionDemo.intro' | translate }}</p>
-  <section cds-layout="vertical gap:lg">
+  <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
     <app-demo-playground
       data-testid="selection-multiple"
@@ -36,9 +36,21 @@
     >
       <app-policy-form preview />
     </app-demo-playground>
-    <h3>PolicyFormComponent</h3>
-    <app-code-block [code]="pickerParentTs" lang="typescript" />
-    <app-code-block [code]="pickerParentHtml" lang="html" />
+    <article cds-layout="vertical gap:sm">
+      <h3>PolicyFormComponent</h3>
+      <p>{{ 'selectionDemo.pickerHelp' | translate }}</p>
+      <app-code-block [code]="pickerParentTs" lang="typescript" />
+      <app-code-block [code]="pickerParentHtml" lang="html" />
+    </article>
+    <app-demo-playground
+      data-testid="selection-async"
+      [title]="'selectionDemo.asyncSubmit' | translate"
+      [description]="'selectionDemo.asyncSubmitHelp' | translate"
+      [tsCode]="asyncSubmitTs"
+      [htmlCode]="asyncSubmitHtml"
+    >
+      <app-async-organization-grid preview />
+    </app-demo-playground>
     <app-demo-playground
       data-testid="selection-model"
       [title]="'selectionDemo.model' | translate"

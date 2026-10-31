@@ -61,6 +61,12 @@ export const deTranslations: Record<string, string> = {
   'organizationExample.retry': 'Erneut versuchen',
   'organizationExample.maxOrganizations': 'Wählen Sie höchstens drei Organisationen.',
   'organizationExample.invalidSelection': 'Die Organisationsauswahl ist ungültig.',
+  'selectionDemo.asyncSubmit': 'Asynchrone Validierung und Pufferung beim Senden',
+  'selectionDemo.asyncSubmitHelp':
+    'Auswahlen werden bis zum Senden gepuffert. Danach läuft eine asynchrone Berechtigungsprüfung; West (org-4) wird abgelehnt.',
+  'selectionDemo.asyncChecking': 'Berechtigung wird geprüft…',
+  'selectionDemo.asyncError': 'West ist für diese Richtlinie nicht berechtigt.',
+  'selectionDemo.asyncSubmitted': 'Gesendete Schlüssel',
   'selectionDemo.title': 'Datagrid-Auswahl',
   'selectionDemo.intro':
     'Wählen Sie stabile Ressourcen-IDs mit einem nativen Clarity-Datagrid in einem Angular-Formular.',

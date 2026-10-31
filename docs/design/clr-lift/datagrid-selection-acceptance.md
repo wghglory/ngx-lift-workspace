@@ -44,16 +44,16 @@ refresh native processing without replacing active queries or values. The picker
 component. All owned library and demo messages cover the eleven supported locales; existing library aliases remain
 available.
 
-Displayed source is generated from the ten runnable source/template files by
+Displayed source is generated from the fourteen runnable source/template files by
 `node tools/demo/datagrid-selection-examples.mjs --write`. The tooling target checks for drift.
 
 ## Automated evidence
 
 | Gate                          | Evidence                                                                                                                                                                                                                                                                                                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Focused real-host regressions | 18 passing tests for model writes, reconciliation, scope, guards, focus, native row/radio paths, arbitrary count/async errors and wrapper ownership/diagnostics.                                                                                                                                                                |
+| Focused real-host regressions | 19 passing tests for model writes, reconciliation, scope, guards, focus, cleanup, native row/radio paths, arbitrary count/async errors and wrapper ownership/diagnostics.                                                                                                                                                       |
 | Repository validation         | pnpm run validate passed: formatting, tooling, all locale checks, lint, production types, 1,618 unit tests and coverage thresholds (883 ngx-lift, 453 clr-lift, 282 demo), package/demo builds, bundle checks and fresh installed consumers.                                                                                    |
-| Browser journeys              | 33 passing checks across Chromium, Firefox and WebKit, including both themes and horizontal/compact/RTL/200-percent-text reflow.                                                                                                                                                                                                |
+| Browser journeys              | 54 passing checks across Chromium, Firefox and WebKit, including both themes, horizontal/compact/RTL/200-percent-text reflow, saved-selection recovery and async submit buffering.                                                                                                                                              |
 | Packed Angular 21 consumers   | Fresh isolated strict peer install; strictTemplates and skipLibCheck=false; direct, picker, ngModel and facade hosts in zoneless and ZoneJS DOM render modes. Nine negative template contracts reject removed shell inputs and invalid native cell access.                                                                      |
 | Rendering bounds              | The rendered native scroll box has a positive height and a real scroll range: 120 supplied items measure 360px with 3,993px of scroll content. Five items fit naturally and retain height through filtering, empty results and refreshed objects. The pager stays outside the viewport; this is not virtual-windowing evidence. |
 | Accessibility/locales         | Automated axe scans in both themes; native label/grid associations, unique generated IDs, error/helper/availability descriptions, keyboard loading guards, popup departure and all eleven locale switches. Human review remains separate.                                                                                       |
@@ -68,7 +68,7 @@ separate evidence; browser geometry is asserted on a measurable element, not a d
 Reproduce the feature browser suite against the local server:
 
 ```bash
-BASE_URL=http://localhost:4307 pnpm nx e2e demo-e2e --grep='datagrid-selection.spec.ts' --workers=2
+BASE_URL=http://localhost:4307 pnpm nx e2e demo-e2e -- datagrid-selection.spec.ts --workers=2
 ```
 
 ## Standards and Spec review
@@ -123,12 +123,21 @@ Nine focused checks pass across Chromium, Firefox and WebKit: direct reset resto
 page inputs remain populated on pages 1 and 2, saved writes after reset/refresh stay checked, and the in-page API
 reference renders its six inputs and accessor/binding contract. The demo now explains the saved/unresolved keys and
 initial reset values in all eleven locales, shows the real picker-parent sources, and groups the validation example's
-dependencies, form state, grid configuration and actions. Displayed sources are generated from twelve runnable files.
+dependencies, form state, grid configuration and actions. Displayed sources are generated from fourteen runnable files.
 
 Follow-up checks also pass: all 282 demo unit tests, demo/e2e lint and type checks, eleven-locale completeness, source
 drift/formatting checks and the production demo build. Existing e2e lint warnings remain; there are no lint errors.
 Independent human language and assistive-technology acceptance remain separate from this automated evidence.
 
-The complete updated feature suite passes all 42 browser checks, including automated accessibility in both themes,
+The complete updated feature suite passes all 54 browser checks, including automated accessibility in both themes,
 eleven-locale switching and the new reset/reference regressions. The earlier 1,618-test full-library/package validation
 above predates this demo-only follow-up; library implementation, dependencies and public signatures are unchanged.
+
+## Review closeout (October 31, 2026)
+
+The two-axis review of this branch found three standards gaps and four spec gaps. Added: CHANGELOG and README entries,
+section spacing and a grouped parent-source example; a cleanup regression; the async eligibility/submit-buffering
+example with all eleven locale messages; and corrected source/browser counts. The reset deviation is recorded on #200:
+the native browser reset action remains intentionally unused because it clears Clarity pagination and selection DOM
+state independently of Angular; direct `form.reset()` is documented in the reference, while the examples expose
+`resetForm()` from ordinary buttons.

@@ -59,6 +59,12 @@ export const nlTranslations: Record<string, string> = {
   'organizationExample.retry': 'Opnieuw proberen',
   'organizationExample.maxOrganizations': 'Selecteer maximaal drie organisaties.',
   'organizationExample.invalidSelection': 'De organisatieselectie is ongeldig.',
+  'selectionDemo.asyncSubmit': 'Asynchrone validatie en buffering bij verzenden',
+  'selectionDemo.asyncSubmitHelp':
+    'Selecties worden gebufferd totdat u verzendt. Daarna wordt een asynchrone geschiktheidscontrole uitgevoerd; West (org-4) wordt geweigerd.',
+  'selectionDemo.asyncChecking': 'Geschiktheid wordt gecontroleerd…',
+  'selectionDemo.asyncError': 'West is niet geschikt voor dit beleid.',
+  'selectionDemo.asyncSubmitted': 'Verzonden sleutels',
   'selectionDemo.title': 'Datagridselectie',
   'selectionDemo.intro': 'Selecteer stabiele resource-ID’s met een native Clarity-datagrid in een Angular-formulier.',
   'selectionDemo.multiple': 'Meervoudige selectie',

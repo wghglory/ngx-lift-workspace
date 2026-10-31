@@ -498,3 +498,19 @@ test('summary removal respects readonly and disabled, and preserves off-page sel
   );
   await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
 });
+
+test('async eligibility buffers the selection until submit, then accepts an eligible choice', async ({page}) => {
+  const example = page.getByTestId('selection-async');
+  await expect(example.getByRole('grid')).toBeVisible();
+  await example.getByRole('checkbox', {name: 'Select West', exact: true}).check();
+  await expect(example.locator('app-async-organization-grid > pre')).toContainText('"organizationIds": []');
+  await example.getByRole('button', {name: 'Submit', exact: true}).click();
+  await expect(example.getByText('Checking eligibility…', {exact: true})).toBeVisible();
+  await expect(example.locator('clr-control-error')).toHaveText('West is not eligible for this policy.');
+
+  await example.getByRole('checkbox', {name: 'Select West', exact: true}).uncheck();
+  await example.getByRole('checkbox', {name: 'Select North', exact: true}).check();
+  await example.getByRole('button', {name: 'Submit', exact: true}).click();
+  await expect(example.getByRole('status')).toContainText('Submitted keys: org-1');
+  await expect(example.locator('app-async-organization-grid > pre')).toContainText('"org-1"');
+});

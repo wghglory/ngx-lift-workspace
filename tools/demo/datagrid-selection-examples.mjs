@@ -12,6 +12,7 @@ const examples = {
   picker: 'organization-picker.component',
   pickerParent: 'picker-parent.component',
   model: 'template-driven.component',
+  asyncSubmit: 'async-submit.component',
 };
 const declarations = [];
 for (const [name, file] of Object.entries(examples)) {

@@ -56,6 +56,12 @@ export const jaTranslations: Record<string, string> = {
   'organizationExample.retry': '再試行',
   'organizationExample.maxOrganizations': '組織は3つまで選択してください。',
   'organizationExample.invalidSelection': '組織の選択が無効です。',
+  'selectionDemo.asyncSubmit': '非同期検証と送信バッファリング',
+  'selectionDemo.asyncSubmitHelp':
+    '選択は送信までバッファされ、その後で非同期の適格性チェックが実行されます。West（org-4）は拒否されます。',
+  'selectionDemo.asyncChecking': '適格性を確認しています…',
+  'selectionDemo.asyncError': 'West はこのポリシーの対象外です。',
+  'selectionDemo.asyncSubmitted': '送信されたキー',
   'selectionDemo.title': 'データグリッド選択',
   'selectionDemo.intro': 'Angular フォーム内のネイティブ Clarity グリッドで安定したリソース ID を選択します。',
   'selectionDemo.multiple': '複数選択',
