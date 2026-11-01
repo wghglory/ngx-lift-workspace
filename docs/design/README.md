@@ -38,9 +38,14 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## Review status and maintenance
 
-[Datagrid selection](clr-lift/datagrid-selection-design-spec.md) uses a default built-in grid with bounded
-column/cell/filter templates and an explicit complete-native-grid entry. Both share form/selection semantics; production
-exports and release acceptance remain pending.
+[Datagrid selection](clr-lift/datagrid-selection-design-spec.md) supports one caller-written Clarity grid, with a
+required directly projected plain label, optional request alert above the grid, its own CVA, and reusable-picker form
+composition. The
+[complete queryResource/direct/picker/toSignalForm examples](clr-lift/datagrid-selection-code-examples.md),
+[detailed contracts/evidence](clr-lift/datagrid-selection-reference.md), and
+[delivery plan/story map](clr-lift/datagrid-selection-delivery-plan.md) describe the implemented local exports. The
+[acceptance record](clr-lift/datagrid-selection-acceptance.md) separates automated evidence from independent human
+acceptance, CI, merge and publication.
 
 The [gap register](implementation-gaps.md) records the check of every preexisting spec, source evidence and prioritized
 implementation fixes. Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not

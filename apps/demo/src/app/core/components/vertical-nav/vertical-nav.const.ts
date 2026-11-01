@@ -110,6 +110,7 @@ export const clrLiftNavConfig: NavConfig[] = [
       {path: '/alert', value: 'Alert', i18nKey: 'nav.alert'},
       {path: '/multi-alerts', value: 'Alerts (Multiple)', i18nKey: 'nav.multiAlerts'},
       {path: '/breadcrumb', value: 'Breadcrumbs', i18nKey: 'breadcrumbs.title'},
+      {path: '/datagrid-selection', value: 'Datagrid selection', i18nKey: 'selectionDemo.title'},
       {path: '/callout', value: 'Callout', i18nKey: 'nav.callout'},
       {path: '/certificate', value: 'Certificate View', i18nKey: 'nav.certificate'},
       {path: '/file-reader', value: 'File Reader', i18nKey: 'nav.fileReader'},

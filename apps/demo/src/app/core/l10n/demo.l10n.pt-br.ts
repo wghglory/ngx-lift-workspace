@@ -1,4 +1,78 @@
 export const ptBRTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Remover',
+
+  'selectionDemo.selectedTitle': 'Organizações selecionadas',
+  'selectionDemo.selectedCount': '{0} selecionadas · máximo {1}',
+  'selectionDemo.unavailableName': 'Organização indisponível',
+  'selectionDemo.unverifiedName': 'Organização não verificada',
+  'selectionDemo.removeKey': 'Remover {0}',
+  'selectionDemo.verificationHelp':
+    'As organizações selecionadas ainda não foram verificadas. Aguarde o carregamento ou tente novamente antes de salvar.',
+  'selectionDemo.unavailableHelp': 'Remova as organizações indisponíveis ou tente novamente antes de salvar.',
+  'selectionDemo.unavailableError': 'Remova as organizações indisponíveis antes de salvar.',
+
+  'selectionDemo.savedHelp':
+    'Carregar seleção salva restaura South (org-2) e uma chave ausente deste inventário. Atualizar substitui os dados e preserva as chaves selecionadas. Redefinir restaura South.',
+  'selectionDemo.pickerHelp':
+    'O seletor gerencia carregamento e tabela; o pai gerencia validação e envio. Redefinir restaura North (org-1).',
+  'selectionDemo.reference.overview':
+    'Envolve uma tabela nativa Clarity com um rótulo simples. Vincule o formulário apenas ao campo de seleção ou ao host do seletor reutilizável.',
+  'selectionDemo.reference.required':
+    'Marca o campo como obrigatório e ativa Angular RequiredValidator no controle vinculado diretamente.',
+  'selectionDemo.reference.helper': 'Ajuda traduzida associada à tabela.',
+  'selectionDemo.reference.error':
+    'Mensagem de validação traduzida quando o controle está inválido e foi tocado ou enviado.',
+  'selectionDemo.reference.layout': 'Layout do campo; se omitido, herda o formulário Clarity externo.',
+  'selectionDemo.reference.readonly':
+    'Impede alterações na seleção e mantém a navegação e inclusão nos valores do formulário.',
+  'selectionDemo.reference.itemAvailability':
+    'Retorna disabled e um disabledReason traduzido por item. Itens indisponíveis já selecionados ainda podem ser removidos.',
+  'selectionDemo.reference.value':
+    'O modo único armazena uma chave estável ou null; o múltiplo armazena chaves ordenadas. Preserva chaves ausentes ou fora da página.',
+  'selectionDemo.reference.native':
+    'Configure modo com clrDgSelectionType, identidade com clrDgItemsIdentityFn e dados com clrDgItems. Colunas, filtros, ordenação e paginação ficam com o consumidor.',
+  'selectionDemo.reference.picker':
+    'Componha DatagridSelectionAccessorDirective no host e cllDatagridSelectionBinding em um único campo interno. Mantenha o vínculo Angular no host.',
+  'selectionDemo.reference.events':
+    'Use Angular valueChanges e toSignalForm no formulário original. Não há saídas de seleção ou métodos imperativos públicos adicionais.',
+
+  'selectionDemo.horizontal': 'Layout horizontal',
+  'selectionDemo.loadSaved': 'Carregar seleção salva',
+  'selectionDemo.readonly': 'Somente leitura',
+  'selectionDemo.disabled': 'Desabilitado',
+  'organizationExample.organization': 'Organização',
+  'organizationExample.organizations': 'Organizações',
+  'organizationExample.name': 'Nome',
+  'organizationExample.status': 'Status',
+  'organizationExample.ready': 'Pronto',
+  'organizationExample.maintenance': 'Manutenção',
+  'organizationExample.allStatuses': 'Todos os status',
+  'organizationExample.reset': 'Redefinir',
+  'organizationExample.submit': 'Enviar',
+  'organizationExample.required': 'Selecione uma organização.',
+  'organizationExample.rule': 'Selecione de uma a três organizações.',
+  'organizationExample.help': 'Selecione as organizações que podem usar esta política.',
+  'organizationExample.about': 'Sobre as atribuições de organizações',
+  'organizationExample.selectRow': 'Selecionar {0}',
+  'organizationExample.loadError': 'Não foi possível carregar as organizações.',
+  'organizationExample.refreshError':
+    'Não foi possível atualizar as organizações. Os dados carregados anteriormente são exibidos.',
+  'organizationExample.retry': 'Tentar novamente',
+  'organizationExample.maxOrganizations': 'Selecione no máximo três organizações.',
+  'organizationExample.invalidSelection': 'A seleção de organizações é inválida.',
+  'selectionDemo.asyncSubmit': 'Validação assíncrona e buffer de envio',
+  'selectionDemo.asyncSubmitHelp':
+    'As seleções ficam em buffer até o envio. Em seguida, uma verificação assíncrona de elegibilidade é executada; West (org-4) é rejeitado.',
+  'selectionDemo.asyncChecking': 'Verificando elegibilidade…',
+  'selectionDemo.asyncError': 'West não é elegível para esta política.',
+  'selectionDemo.asyncSubmitted': 'Chaves enviadas',
+  'selectionDemo.title': 'Seleção em grade',
+  'selectionDemo.intro': 'Selecione IDs estáveis de recursos com uma grade nativa do Clarity em um formulário Angular.',
+  'selectionDemo.multiple': 'Seleção múltipla',
+  'selectionDemo.single': 'Seleção única',
+  'selectionDemo.policy': 'Validação e toSignalForm',
+  'selectionDemo.picker': 'Seletor de organizações reutilizável',
+  'selectionDemo.model': 'Formulário baseado em modelo',
   'breadcrumbs.reference.items': 'Locais ordenados; o último é o texto atual.',
   'breadcrumbs.reference.ariaLabel': 'Nome acessível da navegação.',
   'breadcrumbs.reference.maxVisible': 'Limite incluindo raiz e local atual; mínimo dois. A largura pode reduzi-lo.',

@@ -144,7 +144,8 @@
         "options": {
           "commands": [
             "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs tools/bundle/*.test.mjs tools/demo/*.test.mjs",
-            "node tools/demo/format-examples.mjs"
+            "node tools/demo/format-examples.mjs",
+            "node tools/demo/datagrid-selection-examples.mjs"
           ],
           "parallel": false
         }

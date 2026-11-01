@@ -1,4 +1,80 @@
 export const deTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Entfernen',
+
+  'selectionDemo.selectedTitle': 'Ausgewählte Organisationen',
+  'selectionDemo.selectedCount': '{0} ausgewählt · höchstens {1}',
+  'selectionDemo.unavailableName': 'Nicht verfügbare Organisation',
+  'selectionDemo.unverifiedName': 'Nicht überprüfte Organisation',
+  'selectionDemo.removeKey': '{0} entfernen',
+  'selectionDemo.verificationHelp':
+    'Die ausgewählten Organisationen wurden noch nicht überprüft. Warten Sie auf das Laden oder versuchen Sie es vor dem Speichern erneut.',
+  'selectionDemo.unavailableHelp':
+    'Entfernen Sie nicht verfügbare Organisationen oder versuchen Sie es vor dem Speichern erneut.',
+  'selectionDemo.unavailableError': 'Entfernen Sie nicht verfügbare Organisationen vor dem Speichern.',
+
+  'selectionDemo.savedHelp':
+    'Gespeicherte Auswahl laden stellt South (org-2) und einen in dieser Liste fehlenden Schlüssel wieder her. Aktualisieren ersetzt die Liste und behält ausgewählte Schlüssel. Zurücksetzen stellt South wieder her.',
+  'selectionDemo.pickerHelp':
+    'Der Picker verwaltet Laden und Tabelle; die Elternkomponente verwaltet Validierung und Senden. Zurücksetzen stellt North (org-1) wieder her.',
+  'selectionDemo.reference.overview':
+    'Umschließt genau ein natives Clarity-Datagrid mit einem einfachen Label. Das Formular nur an das Auswahlfeld oder den Picker-Host binden.',
+  'selectionDemo.reference.required':
+    'Markiert das Feld als erforderlich und aktiviert Angular RequiredValidator beim direkt gebundenen Steuerelement.',
+  'selectionDemo.reference.helper': 'Lokalisierter Hilfetext, der dem Datagrid zugeordnet ist.',
+  'selectionDemo.reference.error':
+    'Lokalisierte Validierungsmeldung bei ungültigem, berührtem oder abgesendetem Formularfeld.',
+  'selectionDemo.reference.layout': 'Feldlayout; übernimmt ohne Angabe das umgebende Clarity-Formularlayout.',
+  'selectionDemo.reference.readonly':
+    'Verhindert Auswahländerungen; Navigation und Aufnahme in Formularwerte bleiben erhalten.',
+  'selectionDemo.reference.itemAvailability':
+    'Liefert disabled und einen lokalisierten disabledReason je Element. Bereits gewählte nicht verfügbare Elemente bleiben entfernbar.',
+  'selectionDemo.reference.value':
+    'Einzelauswahl speichert einen stabilen Schlüssel oder null; Mehrfachauswahl geordnete Schlüssel. Fehlende und nicht auf der Seite sichtbare Schlüssel bleiben erhalten.',
+  'selectionDemo.reference.native':
+    'Modus mit clrDgSelectionType, Identität mit clrDgItemsIdentityFn und Daten mit clrDgItems konfigurieren. Spalten, Filter, Sortierung und Seitenwechsel bleiben beim Aufrufer.',
+  'selectionDemo.reference.picker':
+    'DatagridSelectionAccessorDirective am Picker-Host und cllDatagridSelectionBinding an genau einem inneren Feld verwenden. Angular-Formularbindung bleibt am Host.',
+  'selectionDemo.reference.events':
+    'Angular valueChanges und toSignalForm am ursprünglichen Formular verwenden. Keine separaten Auswahlausgaben oder öffentlichen imperativen Methoden.',
+
+  'selectionDemo.horizontal': 'Horizontales Layout',
+  'selectionDemo.loadSaved': 'Gespeicherte Auswahl laden',
+  'selectionDemo.readonly': 'Schreibgeschützt',
+  'selectionDemo.disabled': 'Deaktiviert',
+  'organizationExample.organization': 'Organisation',
+  'organizationExample.organizations': 'Organisationen',
+  'organizationExample.name': 'Name',
+  'organizationExample.status': 'Status',
+  'organizationExample.ready': 'Bereit',
+  'organizationExample.maintenance': 'Wartung',
+  'organizationExample.allStatuses': 'Alle Status',
+  'organizationExample.reset': 'Zurücksetzen',
+  'organizationExample.submit': 'Senden',
+  'organizationExample.required': 'Wählen Sie eine Organisation.',
+  'organizationExample.rule': 'Wählen Sie eine bis drei Organisationen.',
+  'organizationExample.help': 'Wählen Sie die Organisationen, die diese Richtlinie verwenden dürfen.',
+  'organizationExample.about': 'Informationen zu Organisationszuweisungen',
+  'organizationExample.selectRow': '{0} auswählen',
+  'organizationExample.loadError': 'Organisationen konnten nicht geladen werden.',
+  'organizationExample.refreshError':
+    'Organisationen konnten nicht aktualisiert werden. Die zuvor geladenen Daten werden angezeigt.',
+  'organizationExample.retry': 'Erneut versuchen',
+  'organizationExample.maxOrganizations': 'Wählen Sie höchstens drei Organisationen.',
+  'organizationExample.invalidSelection': 'Die Organisationsauswahl ist ungültig.',
+  'selectionDemo.asyncSubmit': 'Asynchrone Validierung und Pufferung beim Senden',
+  'selectionDemo.asyncSubmitHelp':
+    'Auswahlen werden bis zum Senden gepuffert. Danach läuft eine asynchrone Berechtigungsprüfung; West (org-4) wird abgelehnt.',
+  'selectionDemo.asyncChecking': 'Berechtigung wird geprüft…',
+  'selectionDemo.asyncError': 'West ist für diese Richtlinie nicht berechtigt.',
+  'selectionDemo.asyncSubmitted': 'Gesendete Schlüssel',
+  'selectionDemo.title': 'Datagrid-Auswahl',
+  'selectionDemo.intro':
+    'Wählen Sie stabile Ressourcen-IDs mit einem nativen Clarity-Datagrid in einem Angular-Formular.',
+  'selectionDemo.multiple': 'Mehrfachauswahl',
+  'selectionDemo.single': 'Einzelauswahl',
+  'selectionDemo.policy': 'Validierung und toSignalForm',
+  'selectionDemo.picker': 'Wiederverwendbare Organisationsauswahl',
+  'selectionDemo.model': 'Vorlagengesteuertes Formular',
   'breadcrumbs.reference.items': 'Geordnete Orte; der letzte ist der aktuelle Text.',
   'breadcrumbs.reference.ariaLabel': 'Zugänglicher Navigationsname.',
   'breadcrumbs.reference.maxVisible':

@@ -1,4 +1,77 @@
 export const nlTranslations: Record<string, string> = {
+  'selectionDemo.remove': 'Verwijderen',
+
+  'selectionDemo.selectedTitle': 'Geselecteerde organisaties',
+  'selectionDemo.selectedCount': '{0} geselecteerd · maximaal {1}',
+  'selectionDemo.unavailableName': 'Niet-beschikbare organisatie',
+  'selectionDemo.unverifiedName': 'Niet-geverifieerde organisatie',
+  'selectionDemo.removeKey': '{0} verwijderen',
+  'selectionDemo.verificationHelp':
+    'De geselecteerde organisaties zijn nog niet geverifieerd. Wacht op het laden of probeer opnieuw voordat u opslaat.',
+  'selectionDemo.unavailableHelp': 'Verwijder niet-beschikbare organisaties of probeer opnieuw voordat u opslaat.',
+  'selectionDemo.unavailableError': 'Verwijder niet-beschikbare organisaties voordat u opslaat.',
+
+  'selectionDemo.savedHelp':
+    'Opgeslagen selectie laden herstelt South (org-2) en een sleutel die in deze lijst ontbreekt. Vernieuwen vervangt de lijst en behoudt geselecteerde sleutels. Opnieuw instellen herstelt South.',
+  'selectionDemo.pickerHelp':
+    'De kiezer beheert laden en tabel; de ouder beheert validatie en verzenden. Opnieuw instellen herstelt North (org-1).',
+  'selectionDemo.reference.overview':
+    'Omvat één native Clarity-tabel met een gewoon label. Bind het formulier alleen aan het selectieveld of de host van de herbruikbare kiezer.',
+  'selectionDemo.reference.required':
+    'Markeert het veld als verplicht en activeert Angular RequiredValidator op het rechtstreeks gebonden besturingselement.',
+  'selectionDemo.reference.helper': 'Vertaalde hulptekst die aan de tabel is gekoppeld.',
+  'selectionDemo.reference.error': 'Vertaalde validatiemelding als het veld ongeldig en aangeraakt of ingediend is.',
+  'selectionDemo.reference.layout': 'Veldindeling; erft bij weglaten de indeling van het omringende Clarity-formulier.',
+  'selectionDemo.reference.readonly':
+    'Voorkomt selectiewijzigingen en behoudt navigatie en opname in formulierwaarden.',
+  'selectionDemo.reference.itemAvailability':
+    'Geeft disabled en een vertaalde disabledReason per item terug. Al geselecteerde onbeschikbare items blijven verwijderbaar.',
+  'selectionDemo.reference.value':
+    'Enkelvoudige selectie bewaart een stabiele sleutel of null; meervoudige selectie geordende sleutels. Ontbrekende sleutels en sleutels buiten de pagina blijven behouden.',
+  'selectionDemo.reference.native':
+    'Configureer modus met clrDgSelectionType, identiteit met clrDgItemsIdentityFn en gegevens met clrDgItems. De aanroeper beheert kolommen, filters, sortering en paginering.',
+  'selectionDemo.reference.picker':
+    'Gebruik DatagridSelectionAccessorDirective op de host en cllDatagridSelectionBinding op precies één intern veld. Houd de Angular-formulierbinding op de host.',
+  'selectionDemo.reference.events':
+    'Gebruik Angular valueChanges en toSignalForm op het oorspronkelijke formulier. Geen afzonderlijke selectie-uitvoer of openbare imperatieve methoden.',
+
+  'selectionDemo.horizontal': 'Horizontale indeling',
+  'selectionDemo.loadSaved': 'Opgeslagen selectie laden',
+  'selectionDemo.readonly': 'Alleen-lezen',
+  'selectionDemo.disabled': 'Uitgeschakeld',
+  'organizationExample.organization': 'Organisatie',
+  'organizationExample.organizations': 'Organisaties',
+  'organizationExample.name': 'Naam',
+  'organizationExample.status': 'Status',
+  'organizationExample.ready': 'Gereed',
+  'organizationExample.maintenance': 'Onderhoud',
+  'organizationExample.allStatuses': 'Alle statussen',
+  'organizationExample.reset': 'Opnieuw instellen',
+  'organizationExample.submit': 'Verzenden',
+  'organizationExample.required': 'Selecteer een organisatie.',
+  'organizationExample.rule': 'Selecteer één tot drie organisaties.',
+  'organizationExample.help': 'Selecteer de organisaties die dit beleid mogen gebruiken.',
+  'organizationExample.about': 'Over organisatietoewijzingen',
+  'organizationExample.selectRow': '{0} selecteren',
+  'organizationExample.loadError': 'Organisaties konden niet worden geladen.',
+  'organizationExample.refreshError':
+    'Organisaties konden niet worden vernieuwd. De eerder geladen gegevens worden weergegeven.',
+  'organizationExample.retry': 'Opnieuw proberen',
+  'organizationExample.maxOrganizations': 'Selecteer maximaal drie organisaties.',
+  'organizationExample.invalidSelection': 'De organisatieselectie is ongeldig.',
+  'selectionDemo.asyncSubmit': 'Asynchrone validatie en buffering bij verzenden',
+  'selectionDemo.asyncSubmitHelp':
+    'Selecties worden gebufferd totdat u verzendt. Daarna wordt een asynchrone geschiktheidscontrole uitgevoerd; West (org-4) wordt geweigerd.',
+  'selectionDemo.asyncChecking': 'Geschiktheid wordt gecontroleerd…',
+  'selectionDemo.asyncError': 'West is niet geschikt voor dit beleid.',
+  'selectionDemo.asyncSubmitted': 'Verzonden sleutels',
+  'selectionDemo.title': 'Datagridselectie',
+  'selectionDemo.intro': 'Selecteer stabiele resource-ID’s met een native Clarity-datagrid in een Angular-formulier.',
+  'selectionDemo.multiple': 'Meervoudige selectie',
+  'selectionDemo.single': 'Enkelvoudige selectie',
+  'selectionDemo.policy': 'Validatie en toSignalForm',
+  'selectionDemo.picker': 'Herbruikbare organisatiekiezer',
+  'selectionDemo.model': 'Sjabloongestuurd formulier',
   'breadcrumbs.reference.items': 'Geordende locaties; de laatste is de huidige tekst.',
   'breadcrumbs.reference.ariaLabel': 'Toegankelijke navigatienaam.',
   'breadcrumbs.reference.maxVisible':

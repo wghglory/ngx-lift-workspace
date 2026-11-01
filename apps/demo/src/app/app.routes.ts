@@ -388,6 +388,13 @@ export const routes: Routes = [
         path: 'components',
         children: [
           {
+            path: 'datagrid-selection',
+            loadComponent: () =>
+              import('./clr-lib/pages/datagrid-selection/datagrid-selection-demo.component').then(
+                (module) => module.DatagridSelectionDemoComponent,
+              ),
+          },
+          {
             path: 'breadcrumb',
             loadComponent: () =>
               import('./clr-lib/pages/breadcrumb/breadcrumb-demo.component').then(

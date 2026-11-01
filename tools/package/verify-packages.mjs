@@ -184,7 +184,14 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
 
   writeFileSync(join(freshConsumer, 'pnpm-workspace.yaml'), 'strictPeerDependencies: true\nautoInstallPeers: false\n');
   run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 60000);
-  for (const name of ['key-value-hosts.ts', 'key-value-browser.mjs', 'breadcrumb-hosts.ts', 'breadcrumb-browser.mjs']) {
+  for (const name of [
+    'key-value-hosts.ts',
+    'key-value-browser.mjs',
+    'breadcrumb-hosts.ts',
+    'breadcrumb-browser.mjs',
+    'datagrid-selection-hosts.ts',
+    'datagrid-selection-browser.mjs',
+  ]) {
     writeFileSync(join(freshConsumer, name), readFileSync(join(root, 'tools/package/fixtures', name), 'utf8'));
   }
   writeFileSync(
@@ -202,13 +209,59 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
         types: [],
       },
       angularCompilerOptions: {strictTemplates: true},
-      files: ['key-value-hosts.ts', 'breadcrumb-hosts.ts'],
+      files: ['key-value-hosts.ts', 'breadcrumb-hosts.ts', 'datagrid-selection-hosts.ts'],
     }),
   );
   run('pnpm', ['exec', 'ngc', '-p', 'key-value-tsconfig.json'], freshConsumer);
+  // CVA bindings cannot infer mode/value types from projection. Still reject the removed shell API
+  // and preserve the native iterator's typed row context in a strict installed consumer.
+  const removedInputs = [
+    'items',
+    'itemKey',
+    'selectionMode',
+    'label',
+    'gridTemplate',
+    'columns',
+    'interactionDisabled',
+    'validationControl',
+  ];
+  writeFileSync(
+    join(freshConsumer, 'datagrid-negative.ts'),
+    `
+import {Component} from '@angular/core';
+import {ClarityModule} from '@clr/angular';
+import {DatagridSelectionComponent} from 'clr-lift';
+@Component({imports:[ClarityModule, DatagridSelectionComponent], template: \`
+<cll-datagrid-selection ${removedInputs.map((name) => `[${name}]="null"`).join(' ')}>
+ <label>Organizations</label><clr-datagrid clrDgSelectionType="multi" [clrDgItemsIdentityFn]="key">
+ <clr-dg-column>Name</clr-dg-column><clr-dg-row *clrDgItems="let item of items" [clrDgItem]="item"><clr-dg-cell>{{item.missingProperty}}</clr-dg-cell></clr-dg-row>
+ </clr-datagrid>
+</cll-datagrid-selection>\`})
+class Negative {items=[{id:'org-1',name:'North'}]; key=(item:{id:string})=>item.id;}
+`,
+  );
+  writeFileSync(
+    join(freshConsumer, 'datagrid-negative-tsconfig.json'),
+    JSON.stringify({
+      extends: './key-value-tsconfig.json',
+      compilerOptions: {noEmit: true},
+      files: ['datagrid-negative.ts'],
+    }),
+  );
+  const negative = spawnSync('pnpm', ['exec', 'ngc', '-p', 'datagrid-negative-tsconfig.json'], {
+    cwd: freshConsumer,
+    encoding: 'utf8',
+    timeout: 60000,
+  });
+  assert.notEqual(negative.status, 0, 'Removed APIs and invalid native cells must fail strict templates.');
+  const diagnostics = negative.stdout + negative.stderr;
+  for (const name of [...removedInputs, 'missingProperty'])
+    assert.ok(diagnostics.includes(name), `Missing negative template diagnostic: ${name}`);
+  process.stdout.write('Packed datagrid selection: nine negative template contracts rejected.\n');
   for (const mode of ['zoneless', 'zone']) {
     process.stdout.write(run(process.execPath, ['key-value-browser.mjs', mode], freshConsumer));
     process.stdout.write(run(process.execPath, ['breadcrumb-browser.mjs', mode], freshConsumer));
+    process.stdout.write(run(process.execPath, ['datagrid-selection-browser.mjs', mode], freshConsumer));
   }
 
   writeFileSync(

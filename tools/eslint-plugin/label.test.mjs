@@ -32,3 +32,19 @@ test('explicit associations and nested control flow remain supported', async () 
   assert.equal((await lint('<label>Name<input></label>')).length, 0);
   assert.equal((await lint('@if (visible) {<div><label>Name</label></div>}')).length, 1);
 });
+test('selection labels require a directly projected native grid', async () => {
+  assert.equal(
+    (await lint('<cll-datagrid-selection><label>Organizations</label><clr-datagrid /></cll-datagrid-selection>'))
+      .length,
+    0,
+  );
+  assert.equal((await lint('<cll-datagrid-selection><label>Organizations</label></cll-datagrid-selection>')).length, 1);
+  assert.equal(
+    (
+      await lint(
+        '<cll-datagrid-selection><div><label>Organizations</label></div><clr-datagrid /></cll-datagrid-selection>',
+      )
+    ).length,
+    1,
+  );
+});

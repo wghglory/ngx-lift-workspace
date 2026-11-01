@@ -1,0 +1,22 @@
+<div class="selection-field" [class.vertical]="layout() === 'vertical'" [class.horizontal]="layout() === 'horizontal'">
+  <div class="field-label"><ng-content select="label, clr-signpost" /></div>
+  <div class="field-body">
+    @if (required()) {
+      <span class="clr-sr-only" [id]="id + '-required'">{{ 'datagrid-selection.required' | translate }}</span>
+    }
+    <ng-content select="cll-alert" />
+    @if (single) {
+      <button type="button" class="btn btn-secondary" [disabled]="blocked() || empty" (click)="clear()">
+        {{ 'datagrid-selection.clear' | translate }}
+      </button>
+    }
+    <ng-content select="clr-datagrid" />
+    @if (showError() && error()) {
+      <div class="field-feedback error clr-error" [id]="id + '-error'" aria-live="polite">
+        <clr-control-error>{{ error() }}</clr-control-error>
+      </div>
+    } @else if (helper()) {
+      <div class="field-feedback clr-subtext" [id]="id + '-help'">{{ helper() }}</div>
+    }
+  </div>
+</div>

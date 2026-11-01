@@ -1,0 +1,128 @@
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <section [attr.aria-label]="'selectionDemo.selectedTitle' | translate" cds-layout="vertical gap:sm">
+    <p role="status" aria-atomic="true">
+      {{ 'selectionDemo.selectedCount' | translate: selectedOrganizations().length : maximumOrganizations }}
+    </p>
+    <ul cds-layout="vertical gap:xs">
+      @for (selection of selectedOrganizations(); track selection.id) {
+        <li>
+          {{
+            selection.name ||
+              ((selection.unavailable ? 'selectionDemo.unavailableName' : 'selectionDemo.unverifiedName') | translate)
+          }}
+          ({{ selection.id }})
+          <button
+            type="button"
+            class="btn btn-link btn-sm"
+            [disabled]="selectionLocked()"
+            [attr.aria-label]="'selectionDemo.removeKey' | translate: selection.id"
+            (click)="removeSelection(selection.id)"
+          >
+            {{ 'selectionDemo.remove' | translate }}
+          </button>
+        </li>
+      }
+    </ul>
+    @if (!verifiedOrganizations() && selectedOrganizations().length) {
+      <p role="status">{{ 'selectionDemo.verificationHelp' | translate }}</p>
+    }
+    @if (hasUnavailableSelection()) {
+      <clr-alert data-testid="unavailable-selection" clrAlertType="warning" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text" role="alert">{{ 'selectionDemo.unavailableHelp' | translate }}</span>
+          <div class="alert-actions">
+            <button type="button" class="btn btn-sm alert-action" (click)="retryVerification()">
+              {{ 'organizationExample.retry' | translate }}
+            </button>
+          </div>
+        </clr-alert-item>
+      </clr-alert>
+    }
+  </section>
+  <cll-datagrid-selection
+    formControlName="organizationIds"
+    required
+    [helper]="'organizationExample.help' | translate"
+    [error]="selectionError()"
+    [readonly]="readonly()"
+    [layout]="layout()"
+    [itemAvailability]="availability"
+  >
+    <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
+    <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
+      <clr-signpost-content *clrIfOpen>{{ 'organizationExample.help' | translate }}</clr-signpost-content>
+    </clr-signpost>
+    @if (organizationsQuery.error()) {
+      <cll-alert>
+        {{
+          (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+            | translate
+        }}
+        <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+          {{ 'organizationExample.retry' | translate }}
+        </button>
+      </cll-alert>
+    }
+    <clr-datagrid
+      clrDgSelectionType="multi"
+      [clrDgLoading]="organizationsQuery.isLoading()"
+      [clrDgItemsIdentityFn]="organizationKey"
+    >
+      <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
+      <clr-dg-column clrDgField="status" [clrDgSortBy]="statusComparator">
+        {{ 'organizationExample.status' | translate }}
+        <clr-dg-string-filter [clrDgStringFilter]="statusTextFilter" />
+      </clr-dg-column>
+      <clr-dg-row
+        *clrDgItems="let item of organizationsQuery.value() ?? []"
+        [clrDgItem]="item"
+        [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+      >
+        <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+        <clr-dg-cell>
+          <span
+            class="label"
+            [class.label-success]="item.status === 'ready'"
+            [class.label-warning]="item.status === 'maintenance'"
+          >
+            {{ statusKeys[item.status] | translate }}
+          </span>
+        </clr-dg-cell>
+      </clr-dg-row>
+      <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
+    </clr-datagrid>
+  </cll-datagrid-selection>
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <label
+      ><input
+        type="checkbox"
+        [checked]="layout() === 'horizontal'"
+        (change)="layout.set(layout() === 'horizontal' ? 'vertical' : 'horizontal')"
+      />
+      {{ 'selectionDemo.horizontal' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'selectionDemo.readonly' | translate }}</label
+    >
+    <label
+      ><input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
+      {{ 'selectionDemo.disabled' | translate }}</label
+    >
+    <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+      {{ 'common.refresh' | translate }}
+    </button>
+    <button type="button" class="btn btn-sm" (click)="loadSaved()">{{ 'selectionDemo.loadSaved' | translate }}</button>
+  </div>
+  <button
+    type="submit"
+    class="btn btn-primary"
+    [disabled]="form.controls.organizationIds.enabled && !verifiedOrganizations()"
+  >
+    {{ 'organizationExample.submit' | translate }}
+  </button>
+  <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
+    {{ 'organizationExample.reset' | translate }}
+  </button>
+</form>
+<pre>{{ sf.submitValue() | json }}</pre>

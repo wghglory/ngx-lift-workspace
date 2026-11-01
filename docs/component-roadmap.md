@@ -1,27 +1,45 @@
 # Clarity component roadmap
 
-Status: **Draft for maintainer review**. Updated October 19, 2026 (Asia/Shanghai). This document proposes order and
-scope; it does not approve APIs or authorize component implementation. The [delivery roadmap](priority-roadmap.md)
-retains existing release, security, and acceptance work.
+Status: **Draft for maintainer review**. Updated October 30, 2026 for the datagrid selection track (Asia/Shanghai). This
+document proposes order and scope; it does not approve APIs or authorize component implementation. The
+[delivery roadmap](priority-roadmap.md) retains existing release, security, and acceptance work.
 
 ## Recommended order
 
-| Order | Deliverable                            | Why this comes here                                                                 | Exit condition                                                     |
-| ----- | -------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 0     | Spec template and development workflow | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                      |
-| 1     | Angular 21 shared form contract        | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass |
-| 2     | Resume key/value inputs                | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass      |
-| 3     | YAML viewer, then editor               | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified            |
-| 4     | Date/time inputs and ranges            | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified       |
-| 5     | Breadcrumb navigation                  | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                  |
-| 6     | Drawer                                 | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified          |
-| 7     | Cascader, then tree-select             | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved  |
-| 8     | Calendar view                          | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract          |
+| Order | Deliverable                                        | Why this comes here                                                                 | Exit condition                                                       |
+| ----- | -------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 0     | Spec template and development workflow             | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                        |
+| 1     | Angular 21 shared form contract                    | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass   |
+| 2     | Resume key/value inputs                            | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass        |
+| 2a    | Datagrid selection field, then server/policy flows | Current agreed native-grid/form use case; reuse the shared form contract            | #200 verified; independent #201 and #202 complete their own evidence |
+| 3     | YAML viewer, then editor                           | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified              |
+| 4     | Date/time inputs and ranges                        | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified         |
+| 5     | Breadcrumb navigation                              | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                    |
+| 6     | Drawer                                             | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified            |
+| 7     | Cascader, then tree-select                         | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved    |
+| 8     | Calendar view                                      | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract            |
 
 New value controls target **Angular 21 first**. Angular 22 and the Nx major upgrade are **deferred** and do not block
 component delivery. Review the shared CVA contract and each feature API before implementation. The earlier
 migration-dependent key/value hold is superseded; preserving its existing FormArray API remains mandatory until a
 compatible migration is approved. Release fixes, security remediation, and pending acceptance remain independent.
+
+## Datagrid selection execution track
+
+The October 30 selection revision uses one caller-written native Clarity grid, a directly projected label and optional
+request alert, with normal Angular form bindings. A business organization picker owns its query/loading/retry; its
+parent owns values, validators and saves. Read the
+[selection delivery plan](design/clr-lift/datagrid-selection-delivery-plan.md) for the complete contract, stories and
+working increments. This track does not reorder unrelated component work or upgrade the platform.
+
+The existing graph remains [#200 local field](https://github.com/wghglory/ngx-lift-workspace/issues/200), followed by
+independent [#201 server pages](https://github.com/wghglory/ngx-lift-workspace/issues/201) and
+[#202 policy create/edit](https://github.com/wghglory/ngx-lift-workspace/issues/202). Start with a working local
+multiple selection form, then extend its behavior. Each ticket includes its own runnable examples, localization, tests
+and public package evidence. PR #199 is already merged; it is historical design work, not the next implementation task.
+Production selection exports are implemented locally. The
+[acceptance record](design/clr-lift/datagrid-selection-acceptance.md) separates automated checks from independent human
+acceptance, CI and release.
 
 ## Verified starting point and corrections
 
@@ -79,6 +97,7 @@ first is settled.
 | Date, time, date-time, ranges, and calendar          | [Temporal controls](design/clr-lift/temporal-controls-design-spec.md)           |
 | Deep folder navigation                               | [Breadcrumbs](design/clr-lift/breadcrumb-design-spec.md)                        |
 | Cascader and tree-select                             | [Hierarchical selection](design/clr-lift/hierarchical-selection-design-spec.md) |
+| Datagrid selection form control                      | [Native grid selection](design/clr-lift/datagrid-selection-design-spec.md)      |
 | Details and edit panels                              | [Drawer](design/clr-lift/drawer-design-spec.md)                                 |
 
 ## Delivery policy
