@@ -1,7 +1,5 @@
 ---
-description:
-  CI helper for /monitor-ci. Fetches CI status, retrieves fix details, or updates self-healing fixes. Executes one MCP
-  tool call and returns the result.
+description: CI helper for /monitor-ci. Fetches CI status, retrieves fix details, or updates self-healing fixes. Executes one MCP tool call and returns the result.
 mode: subagent
 ---
 
@@ -30,17 +28,16 @@ Call `ci_information` with heavy select fields. Summarize the heavy content and 
   "suggestedFixDescription": "...",
   "suggestedFixSummary": "...",
   "selfHealingSkipMessage": "...",
-  "taskFailureSummaries": [{"taskId": "...", "summary": "..."}]
+  "taskFailureSummaries": [{ "taskId": "...", "summary": "..." }]
 }
 ```
 
-Do NOT return raw suggestedFix diffs or raw taskOutputSummary — summarize them. The main agent uses these summaries to
-understand what failed and attempt local fixes.
+Do NOT return raw suggestedFix diffs or raw taskOutputSummary — summarize them.
+The main agent uses these summaries to understand what failed and attempt local fixes.
 
 ### UPDATE_FIX
 
-Call `update_self_healing_fix` with the provided shortLink and action (APPLY/REJECT/RERUN_ENVIRONMENT_STATE). Return the
-result message (success/failure string).
+Call `update_self_healing_fix` with the provided shortLink and action (APPLY/REJECT/RERUN_ENVIRONMENT_STATE). Return the result message (success/failure string).
 
 ### FETCH_THROTTLE_INFO
 

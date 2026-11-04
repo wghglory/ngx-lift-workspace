@@ -1,11 +1,6 @@
 ---
 name: link-workspace-packages
-description:
-  'Link workspace packages in monorepos (npm, yarn, pnpm, bun). USE WHEN: (1) you just created or generated new packages
-  and need to wire up their dependencies, (2) user imports from a sibling package and needs to add it as a dependency,
-  (3) you get resolution errors for workspace packages (@org/*) like "cannot find module", "failed to resolve import",
-  "TS2307", or "cannot resolve". DO NOT patch around with tsconfig paths or manual package.json edits - use the package
-  manager''s workspace commands to fix actual linking.'
+description: 'Link workspace packages in monorepos (npm, yarn, pnpm, bun). USE WHEN: (1) you just created or generated new packages and need to wire up their dependencies, (2) user imports from a sibling package and needs to add it as a dependency, (3) you get resolution errors for workspace packages (@org/*) like "cannot find module", "failed to resolve import", "TS2307", or "cannot resolve". DO NOT patch around with tsconfig paths or manual package.json edits - use the package manager''s workspace commands to fix actual linking.'
 ---
 
 # Link Workspace Packages
@@ -47,7 +42,7 @@ pnpm add @org/ui --filter @org/app --workspace
 Result in `package.json`:
 
 ```json
-{"dependencies": {"@org/ui": "workspace:*"}}
+{ "dependencies": { "@org/ui": "workspace:*" } }
 ```
 
 ---
@@ -63,7 +58,7 @@ yarn workspace @org/app add @org/ui
 Result in `package.json`:
 
 ```json
-{"dependencies": {"@org/ui": "workspace:^"}}
+{ "dependencies": { "@org/ui": "workspace:^" } }
 ```
 
 ---
@@ -79,7 +74,7 @@ npm install @org/ui --workspace @org/app
 Result in `package.json`:
 
 ```json
-{"dependencies": {"@org/ui": "*"}}
+{ "dependencies": { "@org/ui": "*" } }
 ```
 
 npm resolves to local workspace automatically during install.
@@ -97,7 +92,7 @@ cd packages/app && bun add @org/ui
 Result in `package.json`:
 
 ```json
-{"dependencies": {"@org/ui": "workspace:*"}}
+{ "dependencies": { "@org/ui": "workspace:*" } }
 ```
 
 ---
