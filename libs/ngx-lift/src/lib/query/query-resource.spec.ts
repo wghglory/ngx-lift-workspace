@@ -9,6 +9,7 @@ import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {QueryDefinition} from './query.models';
 import {QueryClient} from './query-client';
 import {provideQueryClient, QUERY_CLIENT} from './query-client.token';
+import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-errors';
 import {queryResource} from './query-resource';
 
 @Component({
@@ -442,7 +443,7 @@ describe('queryResource', () => {
     await settle();
     expect(resource.status()).toBe('idle');
     expect(resource.reload()).toBe(false);
-    await expect(resource.execute()).rejects.toThrow('disabled');
+    await expect(resource.execute()).rejects.toBeInstanceOf(QueryResourceDisabledError);
     expect(loader).not.toHaveBeenCalled();
     enabled.set(true);
     await settle();
@@ -487,7 +488,7 @@ describe('queryResource', () => {
     await settle();
     expect(resource.value()).toBe(7);
     resource.destroy();
-    await expect(resource.execute()).rejects.toThrow('destroyed');
+    await expect(resource.execute()).rejects.toBeInstanceOf(QueryResourceDisposedError);
   });
 
   it('reads a fresh cache immediately when a disabled query is re-enabled with the same key', async () => {

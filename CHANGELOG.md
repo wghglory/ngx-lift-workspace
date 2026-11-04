@@ -29,6 +29,24 @@ recorded for the affected releases.
   disabled/readonly guards, composite focus, required validation and a reusable picker adapter are included. See the
   [design specification](docs/design/clr-lift/datagrid-selection-design-spec.md) and
   [acceptance record](docs/design/clr-lift/datagrid-selection-acceptance.md).
+- `ngx-lift` exports `QueryResourceDisabledError` and `QueryResourceDisposedError`. `queryResource.execute()` rejects
+  with one of these when its definition is `undefined` or the observer was destroyed; error messages and transport
+  failures are unchanged. Installed-consumer verification covers both exports. See
+  [Failure and recovery](docs/design/ngx-lift/query-resource-design-spec.md#failure-and-recovery).
+
+### Changed
+
+- `MutateResourceRef.invalidationError` is required. `mutateResource` always supplied the signal, so callers no longer
+  need optional chaining; callers that construct structural test doubles must now provide one. This is a type-level
+  narrowing with no runtime behavior change.
+
+### Fixed
+
+- Documentation-only contract alignment: the `resourceAsync` spec now lists every shipped option and its exact callback
+  semantics (including the removed `execute({onSuccess, onError})` shape), the query/mutation specs record the
+  no-callback decision, the outcome tutorial and a provisional per-call mutation callback proposal. The mutation
+  accessibility paragraph, `reload()` boolean wording and queued `concat` pending state are corrected. No demo UI text,
+  route or dictionary key changed.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

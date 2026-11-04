@@ -134,6 +134,43 @@ export function resourceAsync<T, E = Error>(
 | `asReadonly()`    | `() => ResourceRef<T, E>`      | Returns a read-only projection (without `set`/`update` methods).                                       |
 | `hasValue()`      | Type Guard                     | Guard for a defined loaded/local value in an eligible status; initial fallback alone does not qualify. |
 
+### 2.4 Shipped options and callback semantics
+
+This table is the authoritative option surface of `BaseResourceRefOptions<T, E>`, `ResourceRefOptions<T, E>` and the
+strict fallback overloads. The demo API reference lists these same options. Earlier sections introduce them
+progressively; absence from an example does not make an option private.
+
+| Option                          | Type                           | Contract                                                                                                                                                                   |
+| ------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `behavior`                      | `'switch' \| 'exhaust'`        | Default `switch`; see §3.1.                                                                                                                                                |
+| `onError`                       | `(error: E) => T \| undefined` | **Fallback policy, not a notification.** A defined return value becomes `value()`, clears `error()` and sets `status` to `resolved`; `undefined` follows the failure path. |
+| `throwOnError`                  | `boolean`                      | Default `false`. Rethrows after settlement when no defined fallback was returned.                                                                                          |
+| `onSuccess`                     | `(value: T) => void`           | Invoked for each accepted `next` emission, not once per completed operation.                                                                                               |
+| `onLoading`                     | `() => void`                   | Invoked before the loader runs for an accepted operation.                                                                                                                  |
+| `lazy`                          | `boolean`                      | Default `false`; skip automatic initial execution.                                                                                                                         |
+| `reactive`                      | `boolean`                      | Default `true`; `false` disables dependency-driven execution, including after the first explicit trigger.                                                                  |
+| `preserveValueOnError`          | `boolean`                      | Default `false`; see §4.1.                                                                                                                                                 |
+| `initialValue` / `defaultValue` | `T`                            | Aliases selecting the non-nullable overloads; see §2.2.                                                                                                                    |
+| `equal`                         | `ValueEqualityFn<T>`           | Controls `value()` notifications only; see §4.2.                                                                                                                           |
+| `injector`                      | `Injector`                     | Lifecycle owner outside an ambient injection context.                                                                                                                      |
+
+#### Callback behavior to read before copying this API
+
+- `onSuccess` is an emission hook. A streaming Observable calls it once per value; an Observable that completes without
+  emitting resolves `status` to `resolved` with the fallback/undefined value and never calls it. The JSDoc phrase
+  "successfully completes" describes the common single-emission case, not a completion guarantee.
+- `onSuccess` and `onLoading` run inside the operation's state transition. A throw from either is routed to
+  `handleError` and can turn a successful operation into `status === 'error'` and a rejected `execute()`; a throw from
+  `onError` replaces the original transport failure. `throwOnError` rethrows after settlement. Keep these callbacks free
+  of UI work that can fail; observe `status()` / `error()` with `effect()` or handle the returned `execute()` Promise
+  instead. See the [query-family callback decision](query-resource-design-spec.md#reacting-to-success-and-failure).
+- `execute()` takes no arguments and returns `Promise<T>`. An earlier changelog entry described
+  `execute({onSuccess, onError})` per-call callbacks; that object is not part of the shipped signature and no spec
+  recorded its removal. Per-call outcome handling is the returned Promise (`then`/`catch`), which also settles joining
+  `exhaust` callers. This audit records the current contract; it does not approve restoring that option.
+- `resourceAsync` is the only query-family API with these callbacks. `queryResource`, `queryResources` and
+  `mutateResource` intentionally expose outcomes through signals and returned Promises instead.
+
 ---
 
 ## Behavior and architecture
@@ -271,8 +308,10 @@ manual signal maps are not a replacement for its reconciliation/cancellation con
 ## Demo and validation plan
 
 Use existing resourceAsync demos and adjacent lifecycle/type tests. Important assertions include queued executions,
-exhaust dependency tracking, empty/streaming sources, callbacks, reset/local overrides and disposal. Future SSR claims
-need real request isolation/PendingTasks/hydration consumers, beyond installed DOM tests.
+exhaust dependency tracking, empty/streaming sources, `onSuccess` / `onError` / `throwOnError` regressions, reset/local
+overrides and disposal. `onLoading` is public and demonstrated in the demo API reference but has no dedicated
+regression; add one before relying on its exact ordering. Future SSR claims need real request
+isolation/PendingTasks/hydration consumers, beyond installed DOM tests.
 
 ## Compatibility, rollout, and risks
 
@@ -296,3 +335,8 @@ This is an audit of shipped behavior. Proposed features and unresolved implement
 Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
 identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
+
+Contract alignment, November 4, 2026: §2.4 records every shipped option and the exact callback semantics, and the
+validation note names the uncovered `onLoading` case. `resourceAsync` runtime behavior is unchanged by this revision;
+the query-family callback decision belongs to the
+[query specification](query-resource-design-spec.md#reacting-to-success-and-failure).

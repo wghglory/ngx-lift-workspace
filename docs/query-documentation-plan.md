@@ -96,3 +96,14 @@ local revision above records development evidence; it no longer describes unmerg
 
 Maintainer/newcomer reading and native-language review remain open. Publication is separate, under the
 [release policy](DEPLOYMENT.md#version-policy). Later documentation changes require their own PR checks.
+
+## Contract alignment — November 4, 2026
+
+The [query specification](design/ngx-lift/query-resource-design-spec.md#reacting-to-success-and-failure) and the
+[mutation specification](design/ngx-lift/mutate-resource-design-spec.md#24-reacting-to-outcomes) now carry the "reacting
+to success and failure" tutorial and the callback decision. Demo routes, playgrounds and dictionary keys are unchanged:
+the compiled starters already demonstrate signals and `await mutate(args)`, and the mutation page already shows a
+success announcement after a resolved write. A dedicated demo section with new localized prose remains a separate
+increment with its own 11-language, browser and independent human-acceptance gates. Runtime changes in this revision are
+limited to the query execution error classes and the `invalidationError` typing; see the changelog and the linked
+specifications.

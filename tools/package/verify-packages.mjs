@@ -47,7 +47,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
 import {provideQueryDevtools} from 'clr-lift/devtools';
@@ -78,7 +78,7 @@ const providers = provideQueryClient({queryDefaults: {
   retry: {maxAttempts: 3, shouldRetry: () => false, delayMs: 100}, deadlineMs: 5000, refetchOnReconnect: true,
 }});
 const timeoutError = new QueryTimeoutError(20);
-void [users, users$, snapshots$, queryResources, providers, timeoutError];
+void [users, users$, snapshots$, queryResources, providers, timeoutError, new QueryResourceDisabledError(), new QueryResourceDisposedError()];
 function collection() {
   const rows = queryResources(() => [1, 2], id => ({key: ['items', id], loader: () => of({id})}));
   const values: readonly QueryResourceItem<{id: number}>[] = rows();

@@ -30,9 +30,10 @@ export interface MutateResourceOptions<TArgs, TResult> {
 export interface MutateResourceRef<TArgs, TResult, E = Error> {
   readonly value: Signal<TResult | undefined>;
   readonly error: Signal<E | null>;
-  /** Post-success cache synchronization failure. Optional for compatibility with structural test refs. */
-  readonly invalidationError?: Signal<unknown | null>;
+  /** Post-success cache synchronization failure. Always supplied by `mutateResource`. */
+  readonly invalidationError: Signal<unknown | null>;
   readonly status: Signal<'idle' | 'loading' | 'resolved' | 'error'>;
+  /** True while any accepted invocation is outstanding, including queued `concat` work. */
   readonly isLoading: Signal<boolean>;
   /**
    * Runs only on explicit invocation. Pass an immutable argument snapshot, especially with concat.

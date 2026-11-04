@@ -70,6 +70,23 @@ main-only features. [Version policy](../DEPLOYMENT.md#version-policy) keeps both
 migration notices. Closeout formatting, links and example compilation belong to its PR; human comprehension/language
 acceptance remains open.
 
+## Contract alignment — November 4, 2026
+
+- `resourceAsync`: the shipped `onSuccess` / `onLoading` / `throwOnError` / `reactive` options and the exact callback
+  semantics are now recorded in §2.4 of its spec. The earlier `execute({onSuccess, onError})` object is not part of the
+  shipped API; no spec recorded its removal, so the current Promise-returning signature is now the documented contract.
+  `onLoading` has no dedicated regression; add one before relying on its ordering.
+- Query family: the [callback decision](ngx-lift/query-resource-design-spec.md#reacting-to-success-and-failure) records
+  why `queryResource` / `queryResources` have no observer-level success/error callbacks and which shipped patterns
+  replace them. `mutateResource` keeps the Promise boundary; a per-call callback API is a
+  [provisional proposal](ngx-lift/mutate-resource-design-spec.md#proposed-not-approved-per-call-outcome-callbacks), not
+  approved or implemented.
+- `queryResource.execute()` now rejects with `QueryResourceDisabledError` / `QueryResourceDisposedError` instead of a
+  plain `Error`, and `MutateResourceRef.invalidationError` is required. Both are covered by regressions and the packed
+  consumer verifier; the type narrowing needs maintainer review.
+- Demo UI text is unchanged in this revision, so no new dictionary keys were added. A dedicated outcomes demo section
+  with new localized prose remains deferred until the independent language acceptance gate can be supplied.
+
 ## Delivery gates still open
 
 1. Review each proposed component API before implementation; the Angular 21-first policy does not approve selectors.
