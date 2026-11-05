@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, linkedSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, linkedSignal, untracked} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
@@ -45,19 +45,29 @@ export class QueryResourceEditFormComponent {
 
   readonly loaded = computed(() => this.tenantQuery.hasValue());
 
+  // Tracks the id the live FormGroup was seeded from, so a same-id refetch (which transiently resets
+  // value() to undefined and back) does not rebuild the form and clobber the user's edits.
+  private seededId: string | null = null;
+
   // 2) Editable form seeded from the query WITHOUT an effect. `source` is the entity id, so the
   //    computation re-runs only when the id changes:
   //      - null -> 'tenant-1' (first resolution): build the seeded form.
-  //      - same id refetched (value object changes, id unchanged): source is unchanged, so the
-  //        existing FormGroup (with the user's edits) is kept instead of being rebuilt/clobbered.
+  //      - same id refetched (reload transiently resets value() then resolves again): keep the
+  //        existing FormGroup with the user's edits instead of rebuilding it.
   //      - 'tenant-1' -> 'tenant-2' (navigate to another entity): rebuild from the new data.
   //    This is the Angular-recommended alternative to copying query data into the form inside an
   //    effect (which would re-run on every reactive refetch and overwrite in-progress edits).
   readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
     source: () => this.tenantQuery.value()?.id ?? null,
     computation: (id, previous) => {
-      const tenant = this.tenantQuery.value();
-      if (id && tenant) return tenantForm(tenant);
+      // id unchanged since the last seed: keep the live FormGroup (preserves edits across refetches).
+      if (id && this.seededId === id) return previous?.value ?? tenantForm(null);
+      // Read the resolved value WITHOUT making this computation react to every refetch.
+      const tenant = untracked(() => this.tenantQuery.value());
+      if (id && tenant) {
+        this.seededId = id;
+        return tenantForm(tenant);
+      }
       return previous?.value ?? tenantForm(null);
     },
   });

@@ -1,10 +1,14 @@
 import {TestBed} from '@angular/core/testing';
+import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {describe, expect, it, vi} from 'vitest';
 import {QueryResourceEditFormComponent} from './query-resource-edit-form.component';
 
 describe('QueryResourceEditFormComponent', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [QueryResourceEditFormComponent]});
+    TestBed.configureTestingModule({
+      imports: [QueryResourceEditFormComponent],
+      providers: [provideNoopAnimations()],
+    });
   });
 
   it('seeds the form from the query result without an effect', async () => {
@@ -19,9 +23,17 @@ describe('QueryResourceEditFormComponent', () => {
     const fixture = TestBed.createComponent(QueryResourceEditFormComponent);
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.componentInstance.form().value.name).toBe('Acme Corp'));
-    fixture.componentInstance.form().controls.name.setValue('Edited Name');
-    // A background refetch of the same entity (id unchanged) must not clobber the user's edits.
-    await fixture.componentInstance.tenantQuery.reload();
+    const form = fixture.componentInstance.form();
+    form.controls.name.setValue('Edited Name');
+
+    // reload() returns a boolean; it only kicks off the refetch, so we must wait for the NEW response
+    // object to arrive (reference change) before asserting.
+    const before = fixture.componentInstance.tenantQuery.value();
+    fixture.componentInstance.tenantQuery.reload();
+    await vi.waitFor(() => expect(fixture.componentInstance.tenantQuery.value()).not.toBe(before));
+
+    // The same-id refetch must NOT rebuild the form nor clobber the edit.
+    expect(fixture.componentInstance.form()).toBe(form);
     expect(fixture.componentInstance.form().value.name).toBe('Edited Name');
   });
 

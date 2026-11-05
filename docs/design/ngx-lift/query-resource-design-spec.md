@@ -220,6 +220,8 @@ clobbering edits. Keying on the id means the computation only re-runs when the i
 same-id refetch keeps the edits, and navigating to another id rebuilds from the new data.
 
 ```typescript
+import {linkedSignal, untracked} from '@angular/core';
+
 interface Tenant {
   id: string;
   name: string;
@@ -265,14 +267,24 @@ export class TenantEditComponent {
     });
   }
 
+  // Tracks the id the live FormGroup was seeded from, so a same-id refetch (which transiently resets
+  // value() to undefined and back) does not rebuild the form and clobber the user's edits.
+  private seededId: string | null = null;
+
   // `source` is the id, so the computation re-runs only when the id changes: the first resolution
-  // seeds the form, a same-id refetch (value object changes, id unchanged) keeps the live FormGroup
-  // with the user's edits, and navigating to another id rebuilds from the new data.
+  // seeds the form, a same-id refetch keeps the live FormGroup with the user's edits, and navigating
+  // to another id rebuilds from the new data.
   readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
     source: () => this.tenantQuery.value()?.id ?? null,
     computation: (id, previous) => {
-      const tenant = this.tenantQuery.value();
-      if (id && tenant) return this.tenantForm(tenant);
+      // id unchanged since the last seed: keep the live FormGroup (preserves edits across refetches).
+      if (id && this.seededId === id) return previous?.value ?? this.tenantForm(null);
+      // Read the resolved value without making this computation react to every refetch.
+      const tenant = untracked(() => this.tenantQuery.value());
+      if (id && tenant) {
+        this.seededId = id;
+        return this.tenantForm(tenant);
+      }
       return previous?.value ?? this.tenantForm(null);
     },
   });
