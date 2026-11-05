@@ -294,6 +294,24 @@ For a reactive-forms facade with signal-based field access, wrap the `FormGroup`
 seeding where the form is the source of truth, `linkedSignal` is the recommended bridge. The runnable version lives in
 the `queryResource` demo (`app-query-resource-edit-form`).
 
+The derived `linkedSignal` form **requires both `source` and `computation`** — that is its contract. The single-argument
+`linkedSignal(() => initial)` form is only a writable signal with an initial value; it tracks nothing and cannot react
+to the query, so it does not apply here. Keying `source` on the id is the recommended form. If you would rather have
+`computation` receive the whole entity, key `source` on the object instead and supply an `equal` that compares only the
+id:
+
+```typescript
+readonly form = linkedSignal<Tenant | null, FormGroup<TenantForm>>({
+  source: () => this.tenantQuery.value() ?? null,
+  equal: (a, b) => a?.id === b?.id, // only an id change counts as "changed"
+  computation: (tenant) => (tenant ? this.tenantForm(tenant) : this.tenantForm(null)),
+});
+```
+
+This is behaviorally identical to the id-keyed form above. The id-keyed form is preferred because the equality intent is
+visible directly in `source`; with the object form it is hidden inside an `equal` callback, so the id-source form is
+easier to read at a glance.
+
 ## Behavior and architecture
 
 `QueryDefinition<T>` uses `key`, `loader`, optional `tags`, `staleTime`, `gcTime`, `cancelOnNoObservers`, `retry` and
