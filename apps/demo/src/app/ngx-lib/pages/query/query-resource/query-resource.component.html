@@ -296,12 +296,10 @@
 
   <!-- ==================== DEMO 5: SEED EDITABLE FORM FROM QUERY ==================== -->
   <section data-testid="query-edit-form" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
-    <h2 id="edit-form-without-effect"><code>queryResource</code> + <code>linkedSignal</code></h2>
+    <h2 id="edit-form-without-effect"><code>queryResource</code> + <code>effect</code></h2>
     <p>
-      Load an entity with <code>queryResource</code>, then seed an editable form from the result without an effect. Key
-      the <code>linkedSignal</code> source on the entity id so a background refetch of the same entity keeps the user's
-      edits instead of clobbering them. The save reads the mutation ref's own <code>isLoading()</code> /
-      <code>status()</code> state.
+      Load an entity with <code>queryResource</code> and initialize a stable reactive form using an effect. The form is
+      reset only when the entity changes, so a background refetch preserves edits. Save reads the mutation ref state.
     </p>
     <app-demo-playground
       [title]="'queryResource.editFormTitle' | translate"

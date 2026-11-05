@@ -2554,7 +2554,7 @@ export const zhCNTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     '消息中包含 <button type="button" class="btn btn-sm alert-action" id="inline-click-target">点击我</button> 的提醒。',
   'timelineWizard.review': '检查',
-  'queryResource.editFormTitle': 'queryResource + linkedSignal：为可编辑表单填充数据',
+  'queryResource.editFormTitle': 'queryResource + effect：为可编辑表单填充数据',
   'queryResource.editFormDesc':
-    '使用 queryResource 加载实体，再通过 linkedSignal 以实体 id 为键为响应式表单填充初始值，这样后台重新获取时不会覆盖用户的编辑。保存时读取 mutation ref 自身的状态。',
+    '使用 queryResource 加载实体，再通过 effect 以实体 id 为键为响应式表单填充初始值，这样后台重新获取时不会覆盖用户的编辑。保存时读取 mutation ref 自身的状态。',
 };

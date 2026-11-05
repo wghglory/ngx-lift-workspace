@@ -632,42 +632,35 @@ submitNewUser() {
 }`);
 
   // ---------------------------------------------------------------------------
-  // Demo 5: Seed an editable form from a query (no effect)
+  // Demo 5: Seed an editable form from a query
   // ---------------------------------------------------------------------------
   readonly editFormCode =
-    highlight(`import {ChangeDetectionStrategy, Component, computed, linkedSignal, untracked} from '@angular/core';
+    highlight(`import {ChangeDetectionStrategy, Component, computed, effect, signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
-// You can put the interface and form factory in a separate file
 interface Tenant {
   id: string;
   name: string;
   role: string;
 }
+
 interface TenantForm {
-  id: FormControl<string>;
   name: FormControl<string>;
   role: FormControl<string>;
 }
 
-// One factory builds both the empty and the seeded form.
-function tenantForm(tenant: Tenant | null): FormGroup<TenantForm> {
-  return new FormGroup<TenantForm>({
-    id: new FormControl(tenant?.id ?? '', {nonNullable: true}),
-    name: new FormControl(tenant?.name ?? '', {nonNullable: true, validators: [Validators.required]}),
-    role: new FormControl(tenant?.role ?? '', {nonNullable: true}),
-  });
-}
-
 @Component({
   selector: 'app-query-resource-edit-form',
-  imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
+  templateUrl: './query-resource-edit-form.component.html',
 })
 export class QueryResourceEditFormComponent {
+  // 1) Load the entity to edit.
   readonly tenantQuery = queryResource<Tenant>(() => ({
     key: ['tenant', 'detail', 'tenant-1'],
     loader: () =>
@@ -676,32 +669,28 @@ export class QueryResourceEditFormComponent {
       ),
   }));
 
-  readonly loaded = computed(() => this.tenantQuery.hasValue());
-
-  // Tracks the id the live FormGroup was seeded from, so a same-id refetch (which transiently resets
-  // value() to undefined and back) does not rebuild the form and clobber the user's edits.
-  private seededId: string | null = null;
-
-  // Subtlety: the source reads value()?.id, so the linked signal depends on the WHOLE value()
-  // signal. Angular recomputes the computation whenever any signal read inside source changes - i.e.
-  // on every refetch that replaces the tenant object, even with the same id (linkedSignal only
-  // equality-checks the produced FormGroup, never the source id). So a same-id refetch DOES re-run
-  // the computation. The guard keeps the existing form when the id is unchanged:
-  //   - first resolution seeds the form; a same-id refetch keeps the edits; another id rebuilds.
-  readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
-    source: () => this.tenantQuery.value()?.id ?? null,
-    computation: (id, previous) => {
-      if (id && this.seededId === id) return previous?.value ?? tenantForm(null);
-      const tenant = untracked(() => this.tenantQuery.value());
-      if (id && tenant) {
-        this.seededId = id;
-        return tenantForm(tenant);
-      }
-      return previous?.value ?? tenantForm(null);
-    },
+  readonly form = new FormGroup<TenantForm>({
+    name: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+    role: new FormControl('', {nonNullable: true}),
+  });
+  private readonly initializedId = signal<string | undefined>(undefined);
+  readonly loaded = computed(() => {
+    const tenant = this.tenantQuery.value();
+    return !!tenant && tenant.id === this.initializedId();
   });
 
-  // Save reads the mutation ref state - no extra local outcome signals.
+  constructor() {
+    effect(() => {
+      const tenant = this.tenantQuery.value();
+      if (!tenant || tenant.id === this.initializedId()) return;
+      this.form.reset({name: tenant.name, role: tenant.role});
+      this.initializedId.set(tenant.id);
+    });
+  }
+
+  // 3) Save. No local outcome/busy signals: the mutation ref already exposes isLoading()/status(),
+  //    so the template reads saveMutation.status() === 'resolved' | 'error' for the result and
+  //    saveMutation.isLoading() for the pending state. status() tracks only the latest invocation.
   readonly saveMutation = mutateResource(
     (args: Tenant) =>
       new Promise<Tenant>((resolve, reject) =>
@@ -710,11 +699,13 @@ export class QueryResourceEditFormComponent {
   );
 
   save(): void {
-    if (this.form().invalid) {
-      this.form().markAllAsTouched();
+    const id = this.initializedId();
+    if (id === undefined || !this.loaded()) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    void this.saveMutation.mutate(this.form().getRawValue() as Tenant).catch(() => undefined);
+    void this.saveMutation.mutate({id, ...this.form.getRawValue()}).catch(() => undefined);
   }
 }`);
 
@@ -723,7 +714,7 @@ export class QueryResourceEditFormComponent {
   <clr-spinner></clr-spinner>
 }
 @if (loaded()) {
-  <form [formGroup]="form()" (ngSubmit)="save()">
+  <form [formGroup]="form" (ngSubmit)="save()">
     <input id="name" formControlName="name" />
     <input id="role" formControlName="role" />
     <button type="submit" [disabled]="saveMutation.isLoading()">Save</button>

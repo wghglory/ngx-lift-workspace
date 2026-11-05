@@ -55,6 +55,15 @@ for (const file of projectFiles.filter((file) => file.endsWith('.component.ts'))
   }
 }
 
+test('query edit form examples match the runnable component', () => {
+  const dir = join(pages, 'ngx-lib/pages/query/query-resource');
+  const component = readFileSync(join(dir, 'query-resource-edit-form.component.ts'), 'utf8').trim();
+  const displayed = snippets(source(join(dir, 'query-resource.component.ts'))).get('editFormCode');
+  const spec = readFileSync(join(root, 'docs/design/ngx-lift/query-resource-design-spec.md'), 'utf8');
+  assert.equal(displayed?.trim(), component);
+  assert.ok(spec.includes(component), 'design spec must contain the runnable component');
+});
+
 function expandPreview(template) {
   return template.replace(
     /<(app-[\w-]+)\b[^>]*\/?\s*>/g,

@@ -2864,7 +2864,7 @@ export const ruTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Оповещение с <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Нажмите здесь</button> в тексте сообщения.',
   'timelineWizard.review': 'Проверка',
-  'queryResource.editFormTitle': 'queryResource + linkedSignal: заполнение редактируемой формы',
+  'queryResource.editFormTitle': 'queryResource + effect: заполнение редактируемой формы',
   'queryResource.editFormDesc':
-    'Загружает сущность с помощью queryResource, затем заполняет реактивную форму через linkedSignal, привязанный к id сущности, чтобы фоновая перезагрузка сохраняла правки пользователя. Сохранение считывает состояние mutation-ref.',
+    'Загружает сущность с помощью queryResource, затем заполняет реактивную форму через effect, привязанный к id сущности, чтобы фоновая перезагрузка сохраняла правки пользователя. Сохранение считывает состояние mutation-ref.',
 };

@@ -3,7 +3,7 @@
 }
 
 @if (loaded()) {
-  <form [formGroup]="form()" (ngSubmit)="save()">
+  <form [formGroup]="form" (ngSubmit)="save()">
     <div class="clr-form-control">
       <label class="clr-control-label" for="tenant-name">{{ 'mutateResource.nameLabel' | translate }}</label>
       <input id="tenant-name" class="clr-input" formControlName="name" />

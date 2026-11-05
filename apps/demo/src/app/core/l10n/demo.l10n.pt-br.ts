@@ -2858,7 +2858,7 @@ export const ptBRTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Alerta com <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Clique aqui</button> dentro da mensagem.',
   'timelineWizard.review': 'Revisar',
-  'queryResource.editFormTitle': 'queryResource + linkedSignal: preencher um formulário editável',
+  'queryResource.editFormTitle': 'queryResource + effect: preencher um formulário editável',
   'queryResource.editFormDesc':
-    'Carrega uma entidade com queryResource e, a partir dela, preenche um formulário reativo via linkedSignal vinculado ao id da entidade, de modo que uma recarga em segundo plano mantém as edições do usuário. O salvamento lê o estado do ref de mutação.',
+    'Carrega uma entidade com queryResource e, a partir dela, preenche um formulário reativo via effect vinculado ao id da entidade, de modo que uma recarga em segundo plano mantém as edições do usuário. O salvamento lê o estado do ref de mutação.',
 };

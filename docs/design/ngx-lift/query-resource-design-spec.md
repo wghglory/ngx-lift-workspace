@@ -209,124 +209,96 @@ collections and a shared concurrency scheduler are deferred until a consumer nee
 
 ## Seeding an editable form from a query
 
-Loading an entity with `queryResource` and using the result as the _initial_ value of an editable form is one of the
-most common query patterns. The trap is copying `value()` into a `FormGroup` inside an `effect`: the effect re-runs on
-every reactive refetch and overwrites in-progress edits, which is exactly the Angular team's "effect is not the first
-choice for copying state" warning.
-
-Seed the form with `linkedSignal` keyed on the entity **id** (a primitive), not on the query value object. Keying on the
-object is a silent trap: each refetch resolves a new object reference, so the source "changes" and the form is rebuilt,
-clobbering edits. Keying on the id means the computation only re-runs when the id changes — first resolution seeds, a
-same-id refetch keeps the edits, and navigating to another id rebuilds from the new data.
+A reactive form can keep one `FormGroup` for the component's lifetime. An effect bridges the query signal to this
+imperative API: it resets the form when the entity ID changes and leaves same-entity refetches alone. The initialized ID
+also gates rendering and saving, so a new query value cannot be submitted with the previous entity's form values before
+the effect runs. Resetting marks the form pristine and untouched. Handle navigation with unsaved edits separately.
 
 ```typescript
-import {linkedSignal, untracked} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, signal} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {TranslatePipe} from 'clr-lift';
+import {mutateResource, queryResource} from 'ngx-lift';
 
 interface Tenant {
   id: string;
   name: string;
   role: string;
 }
+
 interface TenantForm {
   name: FormControl<string>;
   role: FormControl<string>;
 }
 
 @Component({
-  selector: 'app-tenant-edit',
-  template: `
-    @if (tenantQuery.isLoading()) {
-      <clr-spinner></clr-spinner>
-    }
-    @if (tenantQuery.hasValue()) {
-      <form [formGroup]="form()" (ngSubmit)="save()">
-        <input id="name" formControlName="name" />
-        <input id="role" formControlName="role" />
-        <button type="submit" [clrLoading]="saveMutation.isLoading()">Save</button>
-      </form>
-      @if (saveMutation.status() === 'resolved') {
-        <p>saved</p>
-      }
-      @if (saveMutation.status() === 'error') {
-        <p>failed</p>
-      }
-    }
-  `,
+  selector: 'app-query-resource-edit-form',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
+  templateUrl: './query-resource-edit-form.component.html',
 })
-export class TenantEditComponent {
+export class QueryResourceEditFormComponent {
+  // 1) Load the entity to edit.
   readonly tenantQuery = queryResource<Tenant>(() => ({
-    key: ['tenant', 'detail', this.id()],
-    loader: () => loadTenant(this.id()),
+    key: ['tenant', 'detail', 'tenant-1'],
+    loader: () =>
+      new Promise<Tenant>((resolve) =>
+        setTimeout(() => resolve({id: 'tenant-1', name: 'Acme Corp', role: 'admin'}), 400),
+      ),
   }));
 
-  // One factory builds both the empty and the seeded form, so controls/validators are declared once.
-  private tenantForm(tenant: Tenant | null): FormGroup<TenantForm> {
-    return new FormGroup<TenantForm>({
-      name: new FormControl(tenant?.name ?? '', {nonNullable: true, validators: [Validators.required]}),
-      role: new FormControl(tenant?.role ?? '', {nonNullable: true}),
+  readonly form = new FormGroup<TenantForm>({
+    name: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+    role: new FormControl('', {nonNullable: true}),
+  });
+  private readonly initializedId = signal<string | undefined>(undefined);
+  readonly loaded = computed(() => {
+    const tenant = this.tenantQuery.value();
+    return !!tenant && tenant.id === this.initializedId();
+  });
+
+  constructor() {
+    effect(() => {
+      const tenant = this.tenantQuery.value();
+      if (!tenant || tenant.id === this.initializedId()) return;
+      this.form.reset({name: tenant.name, role: tenant.role});
+      this.initializedId.set(tenant.id);
     });
   }
 
-  // Tracks the id the live FormGroup was seeded from, so a same-id refetch (which transiently resets
-  // value() to undefined and back) does not rebuild the form and clobber the user's edits.
-  private seededId: string | null = null;
+  // 3) Save. No local outcome/busy signals: the mutation ref already exposes isLoading()/status(),
+  //    so the template reads saveMutation.status() === 'resolved' | 'error' for the result and
+  //    saveMutation.isLoading() for the pending state. status() tracks only the latest invocation.
+  readonly saveMutation = mutateResource(
+    (args: Tenant) =>
+      new Promise<Tenant>((resolve, reject) =>
+        setTimeout(() => (Math.random() < 0.15 ? reject(new Error('simulated 500')) : resolve(args)), 300),
+      ),
+  );
 
-  // Subtlety: `source` reads `value()?.id`, so the linked signal depends on the WHOLE `value()` signal,
-  // not just the selected id. Angular recomputes `computation` whenever any signal read inside `source`
-  // changes — i.e. on every refetch that replaces the tenant object, even when the id is still
-  // "tenant-1" (linkedSignal only equality-checks the produced FormGroup, never the source id). So the
-  // computation DOES re-run on a same-id refetch; the `seededId` guard below is what keeps the live
-  // FormGroup (and the user's edits) by returning the previous instance. The first resolution seeds the
-  // form, a same-id refetch keeps the edits, and navigating to another id rebuilds from the new data.
-  readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
-    source: () => this.tenantQuery.value()?.id ?? null,
-    computation: (id, previous) => {
-      // id unchanged since the last seed: keep the live FormGroup (preserves edits across refetches).
-      if (id && this.seededId === id) return previous?.value ?? this.tenantForm(null);
-      // Read the resolved value without making this computation react to every refetch.
-      const tenant = untracked(() => this.tenantQuery.value());
-      if (id && tenant) {
-        this.seededId = id;
-        return this.tenantForm(tenant);
-      }
-      return previous?.value ?? this.tenantForm(null);
-    },
-  });
-
-  // Save reads the mutation ref's own state — no extra local outcome signals. `status()` tracks only
-  // the latest invocation, so it shows 'resolved' / 'error' without stale cross-call residue.
-  readonly saveMutation = mutateResource((args: Tenant) => saveTenant(args));
   save(): void {
-    if (this.form().invalid) {
-      this.form().markAllAsTouched();
+    const id = this.initializedId();
+    if (id === undefined || !this.loaded()) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    void this.saveMutation.mutate(this.form().getRawValue() as Tenant).catch(() => undefined);
+    void this.saveMutation.mutate({id, ...this.form.getRawValue()}).catch(() => undefined);
   }
 }
 ```
 
-For a reactive-forms facade with signal-based field access, wrap the `FormGroup` with `toSignalForm`; for one-way
-seeding where the form is the source of truth, `linkedSignal` is the recommended bridge. The runnable version lives in
-the `queryResource` demo (`app-query-resource-edit-form`).
+The runnable demo uses the template in `query-resource-edit-form.component.html`. `reset()` emits form events by
+default; choose `{emitEvent: false}` only if the application deliberately does not want those notifications. A same-ID
+refetch does not refresh untouched fields; implement an explicit reconciliation or reload action if the product requires
+one.
 
-The derived `linkedSignal` form **requires both `source` and `computation`** — that is its contract. The single-argument
-`linkedSignal(() => initial)` form is only a writable signal with an initial value; it tracks nothing and cannot react
-to the query, so it does not apply here. Keying `source` on the id is the recommended form. If you would rather have
-`computation` receive the whole entity, key `source` on the object instead and supply an `equal` that compares only the
-id:
-
-```typescript
-readonly form = linkedSignal<Tenant | null, FormGroup<TenantForm>>({
-  source: () => this.tenantQuery.value() ?? null,
-  equal: (a, b) => a?.id === b?.id, // only an id change counts as "changed"
-  computation: (tenant) => (tenant ? this.tenantForm(tenant) : this.tenantForm(null)),
-});
-```
-
-This is behaviorally identical to the id-keyed form above. The id-keyed form is preferred because the equality intent is
-visible directly in `source`; with the object form it is hidden inside an `equal` callback, so the id-source form is
-easier to read at a glance.
+This effect synchronizes a signal with the imperative Reactive Forms API; it does not copy between signals. For Angular
+22 Signal Forms, Angular instead demonstrates a `linkedSignal` for the writable model and a stable form created from it.
+See [Angular's effects guidance](https://angular.dev/guide/signals/effect) and
+[Signal Forms model design](https://angular.dev/guide/forms/signals/model-design).
 
 ## Behavior and architecture
 
