@@ -362,7 +362,10 @@ surface on its own ref, so a retry can target one row without touching its peers
 
 Explicit work belongs at the call boundary. `execute()` resolves with a fresh read (or the original transport failure),
 and `mutate(args)` resolves with the server result of that invocation. Both are ordinary Promises, so a toast, close,
-navigation or analytics call is naturally bound to one invocation and receives its arguments/result.
+navigation or analytics call is naturally bound to one invocation and receives its arguments/result. `mutateResource`
+additionally offers approved per-call `onSuccess` / `onError` callbacks for call-site ergonomics; they observe the same
+Promise and are the only callback form in the query family. See
+[Per-call outcome callbacks](mutate-resource-design-spec.md#per-call-outcome-callbacks).
 
 `router`, `dialog` and `saveMutation` below are application-owned; only the query handles are library API.
 
@@ -390,11 +393,12 @@ async saveName(name: string): Promise<void> {
 }
 ```
 
-Fire-and-forget handlers can use `void saveMutation.mutate(args).then(onSaved, onFailed)`; `mutate()` attaches an
-internal rejection observer, so an unawaited call does not log an unhandled rejection. `reload(): boolean` reports
-whether a background refresh was **initiated**, not whether it succeeded; failures appear in `error()` and
-`isRefreshError()`. `execute()` rejects with `QueryResourceDisabledError` when the definition is `undefined` and
-`QueryResourceDisposedError` after destruction, while transport failures keep their original error type.
+Fire-and-forget handlers can use `void saveMutation.mutate(args).then(onSaved, onFailed)` or the equivalent per-call
+callbacks; `mutate()` attaches an internal rejection observer plus an isolated callback observer, so an unawaited call
+does not log an unhandled rejection. `reload(): boolean` reports whether a background refresh was **initiated**, not
+whether it succeeded; failures appear in `error()` and `isRefreshError()`. `execute()` rejects with
+`QueryResourceDisabledError` when the definition is `undefined` and `QueryResourceDisposedError` after destruction,
+while transport failures keep their original error type.
 
 ### Application-wide reporting
 
@@ -433,7 +437,7 @@ already used by this specification.
 | Client-level `onQueryError` / `onDiagnostic`                                                                     | Adopt (already shipped)   | Cache-level, terminal-only reporting with callback isolation; the correct layer for application-wide concerns.                                                                                                                                                                                                                               |
 | [RTK Query `invalidatesTags`](https://redux-toolkit.js.org/rtk-query/usage/automated-refetching)                 | Adapt (already shipped)   | Adapted as `invalidateTags`: a success-only cache synchronization mapper, deliberately not a UI success callback. See [mutation execution](mutate-resource-design-spec.md).                                                                                                                                                                  |
 | [TanStack mutations](https://tanstack.com/query/latest/docs/framework/angular/guides/mutations)                  | Adopt the separation      | Explicit submission plus local pending state; keep this library's own concurrency and `invalidationError` contracts rather than copying another library's defaults.                                                                                                                                                                          |
-| `mutate(args, {onSuccess, onError, onSettled})`                                                                  | Proposed, not approved    | A real per-invocation gap exists, but it needs an approved contract first. See the [provisional proposal](mutate-resource-design-spec.md#proposed-not-approved-per-call-outcome-callbacks).                                                                                                                                                  |
+| `mutate(args, {onSuccess, onError})`                                                                             | Adopt (per-call only)     | Shipped for `mutateResource` only: call-site callbacks carry that invocation's args plus its result or failure, with isolated faults. `onSettled` is rejected; see [Per-call outcome callbacks](mutate-resource-design-spec.md#per-call-outcome-callbacks).                                                                                  |
 
 ## Placement Architecture: Component vs Service
 
@@ -1120,8 +1124,10 @@ This is an audit of shipped behavior. Proposed features and unresolved implement
 
 Contract follow-up, November 4, 2026: this revision adds the outcome tutorial and callback decision above, documents
 `QueryResourceDisabledError` / `QueryResourceDisposedError` and clarifies `reload()`. Those two additive exports and the
-narrowed `MutateResourceRef.invalidationError` type are submitted for maintainer review in the accompanying PR; the
-per-call mutation callbacks remain a proposal only.
+narrowed `MutateResourceRef.invalidationError` type are submitted for maintainer review in the accompanying PR.
+
+November 5, 2026: the maintainer approved per-call `onSuccess` / `onError` for `mutateResource` only. The decision table
+above is updated to "Adopt (per-call only)"; `onSettled` remains rejected. This query API is unchanged.
 
 ## Evidence
 
@@ -1130,8 +1136,9 @@ identify existing coverage; no runtime suites were rerun for this documentation-
 in the corresponding PR and pipeline.
 
 The November 4, 2026 revision updates two execution-error regressions and adds an installed-consumer import check for
-the new exports. Local validation results are reported in the corresponding PR; CI, merge, independent human language
-and assistive-technology acceptance, and publication remain separate gates.
+the new exports. The November 5, 2026 revision records the maintainer-approved per-call mutation callbacks; this query
+API has no corresponding runtime change. Local validation results are reported in the corresponding PR; CI, merge,
+independent human language and assistive-technology acceptance, and publication remain separate gates.
 
 Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
 [query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the

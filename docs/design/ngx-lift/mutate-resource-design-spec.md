@@ -1,8 +1,9 @@
 # Design Specification: `mutateResource`
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
-Approval: existing API plus the October 16 maintainer request for consistent `invalidateTags` naming and domain-owned
-key/tag guidance. Preserve the previous spelling as a compatibility alias.
+Status: Implemented (contract audit + per-call outcome callbacks). Owner: ngx-lift maintainers. Updated: November
+5, 2026. Package: ngx-lift. Approval: existing API plus the October 16 maintainer request for consistent
+`invalidateTags` naming and domain-owned key/tag guidance, and the November 5 maintainer approval of per-call
+`onSuccess` / `onError` with `onSettled` rejected. Preserve the previous spelling as a compatibility alias.
 
 **Source:** [mutate-resource.ts](../../../libs/ngx-lift/src/lib/query/mutate-resource.ts)
 
@@ -108,16 +109,19 @@ Source failures still reject `mutate()` and do not invalidate tags.
 - **`client?: QueryClient`**: Explicit cache client; otherwise resolved from the owner injector.
 - **`injector?: Injector`**: Optional explicit Angular injector.
 
+Per-invocation `onSuccess` / `onError` are deliberately **not** members of `MutateResourceOptions`; they are supplied to
+`mutate(args, options)` as described in [Per-call outcome callbacks](#per-call-outcome-callbacks).
+
 ### 2.3 `MutateResourceRef<TArgs, TResult, E>` Surface
 
-| Property / Method   | Type                                                   | Description                                                                                    |
-| :------------------ | :----------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| `mutate(args)`      | `(args: TArgs) => Promise<TResult>`                    | Executes the mutation with arguments and returns a standard Promise.                           |
-| `value`             | `Signal<TResult \| undefined>`                         | Retains last published success; only the latest accepted invocation can publish a replacement. |
-| `status`            | `Signal<'idle' \| 'loading' \| 'resolved' \| 'error'>` | Current mutation status: `'idle' \| 'loading' \| 'resolved' \| 'error'`.                       |
-| `isLoading`         | `Signal<boolean>`                                      | `true` while any accepted invocation is outstanding, including queued `concat` work.           |
-| `error`             | `Signal<E \| null>`                                    | Failure of the latest accepted invocation; cleared when a new invocation is accepted.          |
-| `invalidationError` | `Signal<unknown \| null>`                              | Post-success cache synchronization failure; never a failed server write.                       |
+| Property / Method        | Type                                                                                        | Description                                                                                                     |
+| :----------------------- | :------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------- |
+| `mutate(args, options?)` | `(args: TArgs, options?: MutateResourceCallOptions<TArgs, TResult, E>) => Promise<TResult>` | Executes the mutation and returns a standard Promise; optional per-call outcome callbacks are isolated from it. |
+| `value`                  | `Signal<TResult \| undefined>`                                                              | Retains last published success; only the latest accepted invocation can publish a replacement.                  |
+| `status`                 | `Signal<'idle' \| 'loading' \| 'resolved' \| 'error'>`                                      | Current mutation status: `'idle' \| 'loading' \| 'resolved' \| 'error'`.                                        |
+| `isLoading`              | `Signal<boolean>`                                                                           | `true` while any accepted invocation is outstanding, including queued `concat` work.                            |
+| `error`                  | `Signal<E \| null>`                                                                         | Failure of the latest accepted invocation; cleared when a new invocation is accepted.                           |
+| `invalidationError`      | `Signal<unknown \| null>`                                                                   | Post-success cache synchronization failure; never a failed server write.                                        |
 
 ```typescript
 // In an Angular injection context, with HttpClient provided.
@@ -136,9 +140,11 @@ const saveMutation = mutateResource((settings: {name: string}) => http.put<{name
 
 ### 2.4 Reacting to outcomes
 
-Mutations have no `onSuccess` / `onError` options. The returned Promise is the per-invocation outcome boundary, while
-signals keep the latest state visible in the UI. This keeps success-only side effects bound to the call that produced
-them, which matters under `parallel` (out-of-order completion) and `exhaust` (several callers join one Promise).
+Mutations have no **resource-level** `onSuccess` / `onError` options. The returned Promise is the per-invocation outcome
+boundary, while signals keep the latest state visible in the UI. Since November 5, 2026, `mutate()` also accepts
+optional per-call `onSuccess` / `onError` callbacks for call-site ergonomics; both patterns are supported and equivalent
+in outcome. Keeping the side effect bound to the call that produced it matters under `parallel` (out-of-order
+completion) and `exhaust` (several callers join one Promise).
 
 `dialog`, `announce` and `pendingByForm` below are application-owned services and signals, not library API.
 
@@ -155,12 +161,19 @@ async save(name: string): Promise<void> {
     // The server write succeeded; refresh reads instead of repeating the write.
   }
 }
+// Equivalent call-site form; see "Per-call outcome callbacks" below.
+void this.saveMutation.mutate({name}, {
+  onSuccess: (saved) => this.announce(saved.name),
+  onError: () => this.announceSaveFailure(), // application-owned localized text
+});
 // Fire-and-forget is also safe: void this.saveMutation.mutate({name}).then(onSaved, onFailed);
+// Cleanup for either outcome: void this.saveMutation.mutate({name}).finally(() => this.pendingByForm.set(false));
 ```
 
 `status()` / `value()` describe the latest accepted invocation, not every invocation. For analytics, toasts, closing
-dialogs or navigation that need the submitted arguments, use the Promise (or a provisional per-call callback once
-approved). `effect()` on `status()` is suitable for view state that does not need to know which invocation settled. See
+dialogs or navigation that need the submitted arguments, use the Promise or the
+[per-call callbacks](#per-call-outcome-callbacks). `effect()` on `status()` is suitable for view state that does not
+need to know which invocation settled. See
 [Reacting to success and failure](query-resource-design-spec.md#reacting-to-success-and-failure) for the shared decision
 and the application-owned localization/accessibility boundary. The compiled mutation starter and the
 `saveSuccessMessage` preview in the demo already show this pattern in all supported languages.
@@ -173,7 +186,9 @@ and the application-owned localization/accessibility boundary. The compiled muta
 
 The returned `Promise` from `mutate()` is internally chained with `.catch(() => undefined)` to prevent unhandled
 rejection warnings in the browser console when callers fire-and-forget without `await`. Callers who do
-`await resource.mutate()` still properly receive the rejection in their `try/catch` block.
+`await resource.mutate()` still properly receive the rejection in their `try/catch` block. The optional per-call
+callback observer attaches its own fulfillment and rejection handlers and returns the **same** Promise unchanged, so
+callbacks cannot introduce an unhandled rejection, delay, replace or reclassify the write outcome.
 
 ### 3.2 Tag Invalidation Timing
 
@@ -239,88 +254,105 @@ declaring duplicate invalidation tags in the calling component.
 
 ---
 
-## Proposed (not approved): per-call outcome callbacks
+## Per-call outcome callbacks
 
-**Status: proposal only. Not implemented, not approved, and not part of the public API in this revision.** The
-maintainer asked for a concrete, reviewable alternative before deciding. This section records the use cases and API
-shape for that decision; the spec-first approval gate in the
-[component development workflow](../component-development.md) still applies.
+**Status: implemented, November 5, 2026.** Maintainer approval covers exactly two per-invocation callbacks on
+`mutate()`: `onSuccess` and `onError`. `onSettled` is rejected. These are **call-site** options, not members of
+`MutateResourceOptions`; the resource handle remains callback-free and the
+[query decision](query-resource-design-spec.md#reacting-to-success-and-failure) is unchanged. The
+[component development workflow](../component-development.md) gates this scope: the spec below describes shipped
+behavior, not a proposal.
 
-### Why this is a real gap
+### Why this shape
 
-`mutate(args)` returns a Promise and the ref exposes signals, but a success side effect frequently needs the submitted
-arguments and the exact invocation. `status()` / `value()` describe only the latest accepted invocation; `parallel` can
-complete out of order, `exhaust` merges callers into one Promise, and `concat` starts a queued write later. A call-site
-callback would carry that context without a new reactive subscription. A resource-level `onSuccess` option is rejected
-for the reasons in [the query decision](query-resource-design-spec.md#reacting-to-success-and-failure): it has no
-invocation context and would double `invalidateTags`, which is already a success-only cache synchronization hook.
+`mutate(args)` returns a Promise and the ref exposes signals, but a success side effect often needs the submitted
+arguments and the exact invocation. `status()` / `value()` describe only the latest accepted invocation; `parallel`
+completes out of order, `exhaust` merges callers into one Promise, and `concat` starts queued work later. A call-site
+callback carries that context without a new reactive subscription. A resource-level `onSuccess` option is rejected for
+the reasons in the [query decision](query-resource-design-spec.md#reacting-to-success-and-failure): no invocation
+context, and it would duplicate `invalidateTags`, already a success-only cache synchronization hook.
 
-### Use cases (candidate acceptance, not delivered)
+### Use cases and acceptance
 
-| ID  | Task                                                                      | Expected outcome                                                            |
-| --- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| M7  | Save a form, then close a dialog / navigate / announce the submitted name | Success side effect runs once with `args` and `result`, after that write    |
-| M8  | Report one failed write to analytics with the submitted arguments         | Error callback runs once per failed invocation; no outcome reclassification |
-| M9  | Clear a pending indicator for one invocation under `parallel`             | Settlement callback runs once regardless of outcome                         |
-| M10 | Fire-and-forget from a template event                                     | Callbacks run without `await`; no unhandled rejection is introduced         |
+| ID  | Task                                                                      | Expected outcome                                                                  | Evidence                                         |
+| --- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------ |
+| M7  | Save a form, then close a dialog / navigate / announce the submitted name | `onSuccess` runs once with `result` and that invocation's `args`, after the write | `mutate-resource.spec.ts` success test           |
+| M8  | Report one failed write to analytics with the submitted arguments         | `onError` runs once with the failure and `args`; no outcome reclassification      | `mutate-resource.spec.ts` failure test           |
+| M9  | Clear a pending indicator for one invocation                              | `.finally()` on the returned Promise; no new callback                             | [rejected alternative](#rejected-onsettled)      |
+| M10 | Fire-and-forget from a template event                                     | Callbacks run without `await`; no unhandled rejection                             | `mutate-resource.spec.ts` fire-and-forget guards |
 
-### Proposed API (provisional)
+### API
 
 ```typescript
-export interface MutateResourceCallOptions<TArgs, TResult> {
+export interface MutateResourceCallOptions<TArgs, TResult, E = Error> {
   onSuccess?: (result: TResult, args: TArgs) => void;
-  onError?: (error: unknown, args: TArgs) => void;
-  onSettled?: (result: TResult | undefined, error: unknown | null, args: TArgs) => void;
+  onError?: (error: E, args: TArgs) => void;
 }
 
-declare function mutate<TArgs, TResult>(
-  args: TArgs,
-  options?: MutateResourceCallOptions<TArgs, TResult>,
-): Promise<TResult>;
+mutate(args: TArgs, options?: MutateResourceCallOptions<TArgs, TResult, E>): Promise<TResult>;
 ```
 
 ```typescript
-// Application code, if approved. Not available today. Services/translations are application-owned.
+// Services and translations below are application-owned, not library API.
 void this.saveMutation.mutate(
   {name},
   {
     onSuccess: (saved, args) => this.announce(this.translate('saved', {name: args.name})),
     onError: (_error, args) => this.analytics.track('save-failed', args),
-    onSettled: () => this.pendingByForm.set(false),
   },
 );
+// Cleanup for both outcomes stays on the returned Promise:
+// void this.saveMutation.mutate({name}).finally(() => this.pendingByForm.set(false));
 ```
 
-### Contract to decide before implementation
+`onError` is typed with the resource's `E` (default `Error`) to match `error()`; as elsewhere in the API this is a
+caller-declared type, not runtime narrowing. `TArgs` / `TResult` are inferred from the mutation function, so every
+existing `mutate(args)` call is unchanged.
 
-| Question                   | Proposed answer to review                                                                                                                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `exhaust` join             | Callbacks belong to the invocation that supplied them; joined callers each receive their own callbacks when the shared Promise settles.                                                          |
-| `concat` queue             | Start callbacks only when that invocation actually runs; a disposed resource rejects queued work and runs no success callback.                                                                   |
-| Callback exceptions        | Must be isolated and never reclassify a completed server write. Whether they surface as `onDiagnostic` or rethrow is undecided.                                                                  |
-| `invalidationError`        | Reported after a successful write; `onSuccess` still runs. Their relative order must be fixed before implementation.                                                                             |
-| Ordering                   | `onSuccess` / `onError` → returned Promise settlement → `onSettled`; no callback may reject or replace the Promise result.                                                                       |
-| Types                      | `onError` receives `unknown` unless `E` is threaded through `mutate()`; generics must not widen `TResult`.                                                                                       |
-| Compatibility              | Additive second parameter; existing `mutate(args)` calls unchanged. Strict packed declarations and overloads must survive.                                                                       |
-| Localization/accessibility | Callbacks own no strings, focus or roles. Every visible or announced message stays application-owned in all supported locales; automated and independent human acceptance remain separate gates. |
+### Contract
 
-### Alternatives and open questions
+| Question                   | Shipped behavior                                                                                                                                                                                                                                                                                                                          |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onSuccess`                | Runs once when that invocation's server write succeeds and receives `(result, args)`. It also runs if `invalidateTags` fails afterwards, because the write succeeded and `invalidationError()` is set first.                                                                                                                              |
+| `onError`                  | Runs once when that invocation rejects: transport failure, a destroyed handle, or a queued `concat` invocation rejected by disposal. It never runs for an invalidation failure.                                                                                                                                                           |
+| Callback faults            | Isolated. Synchronous throws and rejected thenables returned by a callback are reported as developer diagnostics (`console.error('[ngx-lift mutation] callback failed', error)`), matching `QueryClient` callback isolation. They never reject, resolve or reclassify the returned Promise and never change `status` / `value` / `error`. |
+| Ordering                   | Callbacks observe the same Promise that `mutate()` returns. They run after state publication and invalidation handling, and before a caller's later-registered `await` / `.then` continuation. The Promise itself is returned unchanged.                                                                                                  |
+| `exhaust` join             | Each caller keeps its own callbacks although they share one Promise and one server write. A joined caller receives its own `args`, which were not submitted to the server; callbacks run in call order.                                                                                                                                   |
+| `concat` queue             | Callbacks attach when `mutate()` is called and run when that invocation settles. Queued work rejected by disposal triggers `onError`, never `onSuccess`.                                                                                                                                                                                  |
+| `parallel`                 | Each invocation settles independently; callbacks belong to the invocation that supplied them.                                                                                                                                                                                                                                             |
+| Fire-and-forget            | `mutate()` still attaches a no-op rejection observer, and the callback observer handles both outcomes, so no unhandled rejection is introduced.                                                                                                                                                                                           |
+| Compatibility              | Additive optional second parameter. Strict packed declarations are checked in `verify-packages.mjs`, including `@ts-expect-error` guards for the rejected `onSettled` shape.                                                                                                                                                              |
+| Localization/accessibility | Callbacks own no strings, focus or roles. Every visible or announced message stays application-owned in all supported locales; automated and independent human acceptance remain separate gates. No new dictionary key or demo UI text ships with this change.                                                                            |
 
-- **Ship nothing (current contract)**: `await` or `.then/.catch` already covers M7–M10. This remains the recommended
-  default unless a consumer demonstrates that a Promise is insufficient.
-- **Resource-level options**: rejected; no invocation context and duplicates the `invalidateTags` success hook.
-- **`effect()` on `status()`**: rejected for invocation-specific work; acceptable for view state.
-- **Read-side symmetry**: rejected for now; `execute()` already returns a Promise and reads are shared/cache-owned.
-- Open for maintainer: is there a concrete consumer use case that a Promise cannot express? Should `onSettled` exist at
-  all? Should `onError` be typed with `E`? Should callback faults be reported or thrown?
+### Rejected: `onSettled`
 
-No runtime code, demo, translation, test or export ships for this proposal.
+`onSettled?: (result, error, args) => void` would run once for either outcome, for example to clear a per-form spinner.
+It is **not implemented**, with type-level `@ts-expect-error` guards in the spec suite and the packed consumer verifier.
+
+- The returned Promise already has `.finally()`, which is more composable; arguments are captured in the call-site
+  closure. `isLoading()` already covers global pending UI, so M9 needs no new API.
+- `mutateResource` accepts `undefined` as a synchronous `TResult`, so `result: TResult | undefined` cannot distinguish a
+  successful `undefined` result from a failure. A correct signature would need a `{status: 'resolved' | 'error', ...}`
+  discriminant, which is heavier than the pattern it replaces.
+- It adds settlement edge cases (joined `exhaust` callers, queued `concat` disposal, faults after settlement, ordering
+  against `invalidationError`) without adding information. API count is not a quality target.
+
+### Other rejected alternatives
+
+- **Ship nothing**: `await` / `.then/.catch` still covers every use case and remains fully supported; the
+  [outcome tutorial](#24-reacting-to-outcomes) documents both patterns. Per-call callbacks were added for call-site
+  ergonomics after maintainer approval, not because a Promise was insufficient.
+- **Resource-level callbacks**: rejected; no invocation context and duplicates the `invalidateTags` success hook.
+- **`effect()` on `status()`**: rejected for invocation-specific work; still the recommended pattern for view state.
+- **Read-side symmetry on `execute()`**: rejected; reads are shared and cache-owned.
 
 ## 4. Scope and limitations
 
 Shared optimistic cache updates/rollback and a global mutation counter are not implemented. They need overlapping-write,
 cancellation and rollback ownership contracts before becoming public APIs. For now, use local pending UI, explicit write
-results and scoped invalidation. See the [query production guide](query-resource-design-spec.md).
+results and scoped invalidation. Resource-level outcome callbacks, `onSettled` and read-side callback symmetry are
+deliberately rejected; see [Per-call outcome callbacks](#per-call-outcome-callbacks). See the
+[query production guide](query-resource-design-spec.md).
 
 ## Terminology
 
@@ -336,22 +368,28 @@ order, not completion order. Invalidation failure is cache synchronization after
 
 ### Not now
 
-Shared optimistic rollback, reset and global mutation counters.
+Shared optimistic rollback, reset and global mutation counters. A dedicated callback playground with localized demo
+prose is deferred to its own increment with all-locale and human-acceptance gates.
 
 ### Outside this API
 
-Server write undo, automatic retry or endpoint idempotency guarantees.
+Server write undo, automatic retry or endpoint idempotency guarantees. Resource-level outcome callbacks, `onSettled` and
+read-side callback symmetry are rejected, not deferred.
 
 ## Use cases and acceptance
 
-| ID  | Task                  | Initial state/action                                      | Outcome                                                        | Failure/recovery                                         | Demo/test                   |
-| --- | --------------------- | --------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- | --------------------------- |
-| M1  | Prevent double submit | Active exhaust write; click again                         | Same Promise; second args ignored                              | Await original result/error                              | mutate-resource.spec.ts     |
-| M2  | Save independently    | Parallel submissions finish out of order                  | Every server write runs; latest invocation owns display        | Older completion cannot replace latest state             | ordering regressions        |
-| M3  | Synchronize cache     | Server succeeds; invalidation throws                      | mutate resolves server result                                  | invalidationError shows sync failure                     | post-success regression     |
-| M4  | Dispose queued writer | concat queue then injector destroy                        | Accepted started write finishes; queued transport never starts | Queued Promise rejects                                   | disposal tests              |
-| M5  | Share domain reads    | Table and summary observe one definition; create a member | One refetch updates both; other scope remains unchanged        | Closing summary preserves table observation              | query-key-ownership.spec.ts |
-| M6  | Map affected tags     | Successful write returns an ID; invocation contains scope | Mapper receives `(result, args)` and selects domain tags       | Failed writes do not call mapper; old option still works | mutate-resource.spec.ts     |
+| ID  | Task                   | Initial state/action                                      | Outcome                                                        | Failure/recovery                                         | Demo/test                   |
+| --- | ---------------------- | --------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- | --------------------------- |
+| M1  | Prevent double submit  | Active exhaust write; click again                         | Same Promise; second args ignored                              | Await original result/error                              | mutate-resource.spec.ts     |
+| M2  | Save independently     | Parallel submissions finish out of order                  | Every server write runs; latest invocation owns display        | Older completion cannot replace latest state             | ordering regressions        |
+| M3  | Synchronize cache      | Server succeeds; invalidation throws                      | mutate resolves server result                                  | invalidationError shows sync failure                     | post-success regression     |
+| M4  | Dispose queued writer  | concat queue then injector destroy                        | Accepted started write finishes; queued transport never starts | Queued Promise rejects                                   | disposal tests              |
+| M5  | Share domain reads     | Table and summary observe one definition; create a member | One refetch updates both; other scope remains unchanged        | Closing summary preserves table observation              | query-key-ownership.spec.ts |
+| M6  | Map affected tags      | Successful write returns an ID; invocation contains scope | Mapper receives `(result, args)` and selects domain tags       | Failed writes do not call mapper; old option still works | mutate-resource.spec.ts     |
+| M7  | React to one success   | Submit a form with per-call `onSuccess`                   | Callback runs once with `(result, args)` after the write       | Callback faults are isolated as developer diagnostics    | callback regressions        |
+| M8  | React to one failure   | Transport rejects with per-call `onError`                 | Callback runs once with `(error, args)`; write still fails     | Invalidation failure never triggers it                   | callback regressions        |
+| M9  | Clear per-call pending | Either outcome for one invocation                         | `.finally()` on the returned Promise; `isLoading()` for views  | No `onSettled` API                                       | callback regressions        |
+| M10 | Fire-and-forget        | Template event supplies callbacks without `await`         | Callbacks run once; no unhandled rejection                     | Joined `exhaust` callers keep their own callbacks        | callback regressions        |
 
 ## Industry evidence and current gaps
 
@@ -365,20 +403,32 @@ callbacks: adopt that signal-first boundary for view state.
 success-only `(result, args)` mapper, which was adapted as `invalidateTags` for cache synchronization, not for UI
 notifications. A resource-level `onSuccess` / `onError` option is rejected because a single mutation handle can serve
 many invocations with different arguments and concurrency outcomes; the returned Promise already carries that context.
-Per-call callbacks remain a [provisional proposal](#proposed-not-approved-per-call-outcome-callbacks), not a contract.
-These are comparisons, not a promise to copy another library's full API surface.
+Per-call callbacks are adopted at the call site only, where they keep that context without sharing state between
+invocations; `onSettled` is rejected in favor of the Promise's `.finally()`. See
+[Per-call outcome callbacks](#per-call-outcome-callbacks). These are comparisons, not a promise to copy another
+library's full API surface.
 
 ## Demo and validation plan
 
 Use existing query/mutation demos and adjacent mutate-resource tests. Regressions cover plain values/thenables,
-Observable failure, each concurrency mode, latest-invocation ordering, disposal and post-success invalidation failure.
-Show transport error and synchronization error separately when presenting a write outcome.
+Observable failure, each concurrency mode, latest-invocation ordering, disposal, post-success invalidation failure and
+the seven per-call callback cases (success, failure, invalidation, synchronous/asynchronous callback faults, `exhaust`
+join, `concat` disposal, type-level rejection of `onSettled`). Show transport error and synchronization error separately
+when presenting a write outcome. A dedicated callback playground with localized prose is still an open demo gate; no new
+dictionary key ships with the callbacks.
 
 October 16, 2026 local validation: 25 mutation regressions and four mutation-demo unit tests passed; 33 query browser
 cases passed across Chromium, Firefox and WebKit, including scoped invalidation and all 11 demo languages. Library/demo
 type checks, lint, translation coverage, package builds and fresh installed-consumer verification passed. The packed
 declarations expose both spellings and the deprecation notice; installed Angular consumers exercise the preferred
 callback in zoneless and ZoneJS modes. These are local checks, not CI, merge or publication approval.
+
+November 5, 2026 local validation: `pnpm run validate` passed with 890 ngx-lift unit tests, library type checking, lint,
+translation coverage, package builds and strict packed declarations in zoneless and ZoneJS installed consumers. An
+explicit `tsc --noEmit -p libs/ngx-lift/tsconfig.spec.json` run confirms the `@ts-expect-error` guard for `onSettled`;
+it also reports one pre-existing, unrelated error in `kubernetes-pagination.operator.spec.ts`. No Playwright browsers
+are cached locally, so browser checks were not rerun; no demo UI, route or dictionary key changed. CI, merge and
+publication remain separate gates.
 
 ## Compatibility, rollout, and risks
 
@@ -389,23 +439,32 @@ queued writes need caller-owned snapshots. Form submission is an invocation boun
 
 Headless API; it owns no control labels, focus or translations. Application UI shows pending, successful and failed
 writes separately, including post-success cache synchronization failure; it owns every visible or announced message in
-all supported locales. Forms invoke/observe this API without assigning it a CVA/native field value.
+all supported locales. Per-call callbacks own no strings, focus or roles: any toast, announcement or dialog they trigger
+stays application-owned and localized. No new visible or announced message ships with the callback API, so no new
+translation keys were added. Forms invoke/observe this API without assigning it a CVA/native field value.
 
 ## Review decisions and delivery
 
 This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
-[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md).
 
 Contract follow-up, November 4, 2026: this revision makes `invalidationError` required, documents the queued `concat`
-pending state, corrects the accessibility/localization paragraph, adds the outcome tutorial and records the provisional
-per-call callback proposal. The type narrowing is submitted for maintainer review in the accompanying PR; no callback
-API is approved or implemented.
+pending state, corrects the accessibility/localization paragraph and adds the outcome tutorial.
+
+November 5, 2026: the maintainer approved `mutate(args, {onSuccess, onError})` and rejected `onSettled`. This spec, the
+runtime implementation, regressions, changelog and packed-consumer guards were delivered together in one PR so the
+documented contract and shipped code stay in sync. The narrowed `invalidationError` type remains submitted for review.
 
 ## Evidence
 
 Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
-identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
+identify existing coverage; no runtime suites were rerun for that documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
+
+November 5, 2026: seven per-call callback regressions, a type-level `onSettled` rejection test and installed-consumer
+guards were added alongside the implementation. `pnpm run validate` passed on this branch; results are reported in the
+accompanying PR. CI, merge, independent human language and assistive-technology acceptance, and publication remain
+separate gates.
 
 Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
 [query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the

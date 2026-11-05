@@ -33,6 +33,11 @@ recorded for the affected releases.
   with one of these when its definition is `undefined` or the observer was destroyed; error messages and transport
   failures are unchanged. Installed-consumer verification covers both exports. See
   [Failure and recovery](docs/design/ngx-lift/query-resource-design-spec.md#failure-and-recovery).
+- `mutateResource().mutate(args, options)` accepts optional per-call `onSuccess` / `onError` callbacks that receive the
+  result or failure together with that invocation's arguments. Callback faults are isolated as developer diagnostics and
+  never change the write outcome or its returned Promise. `onSettled` is deliberately not offered; use the returned
+  Promise's `.finally()`. See
+  [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
 
 ### Changed
 
@@ -44,9 +49,8 @@ recorded for the affected releases.
 
 - Documentation-only contract alignment: the `resourceAsync` spec now lists every shipped option and its exact callback
   semantics (including the removed `execute({onSuccess, onError})` shape), the query/mutation specs record the
-  no-callback decision, the outcome tutorial and a provisional per-call mutation callback proposal. The mutation
-  accessibility paragraph, `reload()` boolean wording and queued `concat` pending state are corrected. No demo UI text,
-  route or dictionary key changed.
+  observer-level no-callback decision and the outcome tutorial. The mutation accessibility paragraph, `reload()` boolean
+  wording and queued `concat` pending state are corrected. No demo UI text, route or dictionary key changed.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

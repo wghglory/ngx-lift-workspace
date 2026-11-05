@@ -26,6 +26,14 @@ export interface MutateResourceOptions<TArgs, TResult> {
   concurrency?: 'parallel' | 'exhaust' | 'concat';
 }
 
+/** Per-invocation outcome callbacks for one explicit write. */
+export interface MutateResourceCallOptions<TArgs, TResult, E = Error> {
+  /** Runs once after a successful server write, including when cache synchronization later fails. */
+  onSuccess?: (result: TResult, args: TArgs) => void;
+  /** Runs once when this invocation rejects, including a disposal rejection. */
+  onError?: (error: E, args: TArgs) => void;
+}
+
 /** Mutation result signals and an explicit Promise-returning write operation. */
 export interface MutateResourceRef<TArgs, TResult, E = Error> {
   readonly value: Signal<TResult | undefined>;
@@ -38,9 +46,50 @@ export interface MutateResourceRef<TArgs, TResult, E = Error> {
   /**
    * Runs only on explicit invocation. Pass an immutable argument snapshot, especially with concat.
    * Successful writes invalidate without awaiting background refetch. Cache synchronization failures
-   * are reported through invalidationError and never reject an already successful write.
+   * are reported through invalidationError and never reject an already successful write. Optional
+   * per-call callbacks observe that invocation; callback faults are isolated from the write outcome.
    */
-  mutate(args: TArgs): Promise<TResult>;
+  mutate(args: TArgs, options?: MutateResourceCallOptions<TArgs, TResult, E>): Promise<TResult>;
+}
+
+function reportCallbackFault(error: unknown): void {
+  try {
+    console.error('[ngx-lift mutation] callback failed', error);
+  } catch {
+    // Host reporting must never interrupt an already settled write.
+  }
+}
+
+function invokeCallback(callback: () => unknown): void {
+  try {
+    const result = callback();
+    if (result !== null && (typeof result === 'object' || typeof result === 'function')) {
+      void Promise.resolve(result).catch(reportCallbackFault);
+    }
+  } catch (error) {
+    reportCallbackFault(error);
+  }
+}
+
+/** Observe one invocation without replacing or reclassifying its returned Promise. */
+function observeOutcome<TArgs, TResult, E>(
+  request: Promise<TResult>,
+  args: TArgs,
+  options: MutateResourceCallOptions<TArgs, TResult, E> | undefined,
+): Promise<TResult> {
+  const {onSuccess, onError} = options ?? {};
+  if (!onSuccess && !onError) return request;
+  void request
+    .then(
+      (result) => {
+        if (onSuccess) invokeCallback(() => onSuccess(result, args));
+      },
+      (failure: unknown) => {
+        if (onError) invokeCallback(() => onError(failure as E, args));
+      },
+    )
+    .catch(reportCallbackFault);
+  return request;
 }
 
 /**
@@ -120,14 +169,14 @@ export function mutateResource<TArgs, TResult, E = Error>(
     invalidationError: invalidationError.asReadonly(),
     status: computed(() => (outstanding() > 0 ? 'loading' : settledStatus())),
     isLoading: computed(() => outstanding() > 0),
-    mutate: (args) => {
+    mutate: (args, callOptions) => {
       if (destroyed) {
         const rejected = Promise.reject<TResult>(new Error('Mutation resource has been destroyed'));
         void rejected.catch(() => undefined);
-        return rejected;
+        return observeOutcome(rejected, args, callOptions);
       }
       if (pending && options.concurrency === 'exhaust') {
-        return pending;
+        return observeOutcome(pending, args, callOptions);
       }
       outstanding.update((count) => count + 1);
       error.set(null);
@@ -163,7 +212,7 @@ export function mutateResource<TArgs, TResult, E = Error>(
       else start();
       // Event handlers may ignore this Promise, while awaiting callers still receive its rejection.
       void request.catch(() => undefined);
-      return request;
+      return observeOutcome(request, args, callOptions);
     },
   };
 }

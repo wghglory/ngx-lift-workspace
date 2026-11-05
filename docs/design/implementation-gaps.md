@@ -78,9 +78,10 @@ acceptance remains open.
   `onLoading` has no dedicated regression; add one before relying on its ordering.
 - Query family: the [callback decision](ngx-lift/query-resource-design-spec.md#reacting-to-success-and-failure) records
   why `queryResource` / `queryResources` have no observer-level success/error callbacks and which shipped patterns
-  replace them. `mutateResource` keeps the Promise boundary; a per-call callback API is a
-  [provisional proposal](ngx-lift/mutate-resource-design-spec.md#proposed-not-approved-per-call-outcome-callbacks), not
-  approved or implemented.
+  replace them. `mutateResource` keeps the Promise boundary and adds approved
+  [per-call `onSuccess` / `onError`](ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks); `onSettled`
+  remains rejected. A dedicated demo playground for the callback form is still an open gate (no new localized prose
+  shipped with this change).
 - `queryResource.execute()` now rejects with `QueryResourceDisabledError` / `QueryResourceDisposedError` instead of a
   plain `Error`, and `MutateResourceRef.invalidationError` is required. Both are covered by regressions and the packed
   consumer verifier; the type narrowing needs maintainer review.

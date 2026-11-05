@@ -168,8 +168,10 @@ progressively; absence from an example does not make an option private.
   `execute({onSuccess, onError})` per-call callbacks; that object is not part of the shipped signature and no spec
   recorded its removal. Per-call outcome handling is the returned Promise (`then`/`catch`), which also settles joining
   `exhaust` callers. This audit records the current contract; it does not approve restoring that option.
-- `resourceAsync` is the only query-family API with these callbacks. `queryResource`, `queryResources` and
-  `mutateResource` intentionally expose outcomes through signals and returned Promises instead.
+- `resourceAsync` is the only query-family API with **resource-level** lifecycle callbacks. `queryResource` and
+  `queryResources` expose outcomes through signals and returned Promises only. `mutateResource` has no resource-level
+  callbacks; it offers approved per-call `onSuccess` / `onError` on `mutate(args, options)`, with isolated faults and no
+  `onSettled`. See [Per-call outcome callbacks](mutate-resource-design-spec.md#per-call-outcome-callbacks).
 
 ---
 

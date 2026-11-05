@@ -104,6 +104,7 @@ The [query specification](design/ngx-lift/query-resource-design-spec.md#reacting
 to success and failure" tutorial and the callback decision. Demo routes, playgrounds and dictionary keys are unchanged:
 the compiled starters already demonstrate signals and `await mutate(args)`, and the mutation page already shows a
 success announcement after a resolved write. A dedicated demo section with new localized prose remains a separate
-increment with its own 11-language, browser and independent human-acceptance gates. Runtime changes in this revision are
-limited to the query execution error classes and the `invalidationError` typing; see the changelog and the linked
-specifications.
+increment with its own 11-language, browser and independent human-acceptance gates. Runtime changes in this revision
+cover the query execution error classes, the `invalidationError` typing and (November 5) the approved per-call
+`mutate(args, {onSuccess, onError})` callbacks; see the changelog and the linked specifications. A callback playground
+with localized prose remains part of that deferred demo increment.
