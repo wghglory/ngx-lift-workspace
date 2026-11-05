@@ -25,13 +25,20 @@ describe('QueryResourceEditFormComponent', () => {
     expect(fixture.componentInstance.form().value.name).toBe('Edited Name');
   });
 
-  it('reports save success through the per-call callback', async () => {
+  it('reflects the save result through the mutation ref state', async () => {
     const fixture = TestBed.createComponent(QueryResourceEditFormComponent);
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.componentInstance.form().value.name).toBe('Acme Corp'));
-    vi.spyOn(Math, 'random').mockReturnValue(1); // deterministic success (1 < 0.15 is false)
+
+    // Deterministic success (Math.random() < 0.15 is false).
+    vi.spyOn(Math, 'random').mockReturnValue(1);
     fixture.componentInstance.save();
-    await vi.waitFor(() => expect(fixture.componentInstance.saveOutcome()).toBe('success'));
-    expect(fixture.componentInstance.saving()).toBe(false);
+    await vi.waitFor(() => expect(fixture.componentInstance.saveMutation.status()).toBe('resolved'));
+    expect(fixture.componentInstance.saveMutation.isLoading()).toBe(false);
+
+    // Deterministic failure (Math.random() < 0.15 is true); status() tracks only the latest call.
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    fixture.componentInstance.save();
+    await vi.waitFor(() => expect(fixture.componentInstance.saveMutation.status()).toBe('error'));
   });
 });

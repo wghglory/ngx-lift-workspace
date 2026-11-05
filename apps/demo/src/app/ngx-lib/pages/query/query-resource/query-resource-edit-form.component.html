@@ -12,19 +12,19 @@
       <label class="clr-control-label" for="tenant-role">{{ 'mutateResource.roleLabel' | translate }}</label>
       <input id="tenant-role" class="clr-input" formControlName="role" />
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="saving()">
+    <button type="submit" class="btn btn-primary" [disabled]="saveMutation.isLoading()">
       {{ 'queryExamples.submitWrite' | translate }}
     </button>
   </form>
 
-  @if (saveOutcome() === 'success') {
+  @if (saveMutation.status() === 'resolved') {
     <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false">
       <clr-alert-item>
         <span class="alert-text">{{ 'queryLearn.saved' | translate }}</span>
       </clr-alert-item>
     </clr-alert>
   }
-  @if (saveOutcome() === 'error') {
+  @if (saveMutation.status() === 'error') {
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
         <span class="alert-text">{{ 'queryExamples.writeMessage' | translate }}</span>

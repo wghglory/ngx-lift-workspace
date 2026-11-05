@@ -40,8 +40,9 @@ recorded for the affected releases.
   [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
 - The `queryResource` demo adds a runnable edit-form example that seeds an editable `FormGroup` from the query result
   **without an `effect`**, using a `linkedSignal` keyed on the entity id so a background refetch keeps the user's edits.
-  It reuses existing translation keys and pairs the form with the per-call `onSuccess` / `onError` save. No new route,
-  dictionary key or library-owned message was added.
+  A single `tenantForm()` factory builds both the empty and seeded forms. The save reads the mutation ref's own
+  `isLoading()` / `status()` state instead of adding local outcome signals. It reuses existing translation keys; no new
+  route, dictionary key or library-owned message was added.
 
 ### Fixed
 

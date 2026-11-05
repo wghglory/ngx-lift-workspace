@@ -411,27 +411,33 @@ readonly tenantQuery = queryResource<Tenant>(() => ({
   loader: () => loadTenant(id()),
 }));
 
-// Source is the id, so the computation re-runs only when the id changes: the first resolution
-// seeds the form, and a background refetch of the same entity keeps the edits already in the form.
+// One factory builds both the empty and the seeded form, so controls/validators are declared once.
+function tenantForm(tenant: Tenant | null): FormGroup<TenantForm> {
+  return new FormGroup<TenantForm>({
+    name: new FormControl(tenant?.name ?? '', {nonNullable: true}),
+    role: new FormControl(tenant?.role ?? '', {nonNullable: true}),
+  });
+}
+
+// `source` is the id, so the computation re-runs only when the id changes: the first resolution
+// seeds the form, a same-id refetch (value object changes, id unchanged) keeps the live FormGroup
+// with the user's edits, and navigating to another id rebuilds from the new data.
 readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
   source: () => this.tenantQuery.value()?.id ?? null,
   computation: (id, previous) => {
     const tenant = this.tenantQuery.value();
-    if (id && tenant) {
-      return new FormGroup<TenantForm>({
-        name: new FormControl(tenant.name, {nonNullable: true}),
-        role: new FormControl(tenant.role, {nonNullable: true}),
-      });
-    }
-    return previous?.value ?? emptyTenantForm();
+    if (id && tenant) return tenantForm(tenant);
+    return previous?.value ?? tenantForm(null);
   },
 });
 ```
 
 `linkedSignal` re-derives only when its `source` (the id) changes, so a same-id refresh leaves the live `FormGroup`
-untouched. For a reactive-forms facade with signal-based field access, wrap the `FormGroup` with `toSignalForm`; for
-one-way seeding where the form is the source of truth, `linkedSignal` is the recommended bridge. The runnable version
-lives in the `queryResource` demo (`app-query-resource-edit-form`).
+untouched. For saving, read the mutation ref's own state (`saveMutation.isLoading()` / `saveMutation.status()`) rather
+than adding local outcome signals — `status()` tracks only the latest invocation, so it shows `resolved` / `error`
+without stale cross-call residue. For a reactive-forms facade with signal-based field access, wrap the `FormGroup` with
+`toSignalForm`; for one-way seeding where the form is the source of truth, `linkedSignal` is the recommended bridge. The
+runnable version lives in the `queryResource` demo (`app-query-resource-edit-form`).
 
 ### Application-wide reporting
 

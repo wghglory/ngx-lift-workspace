@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, linkedSignal, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, linkedSignal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
@@ -16,11 +16,13 @@ interface TenantForm {
   role: FormControl<string>;
 }
 
-function emptyTenantForm(): FormGroup<TenantForm> {
+// One factory builds both the empty form and the seeded form, so the control set and validators
+// are declared exactly once. `tenant` is null for the empty form.
+function tenantForm(tenant: Tenant | null): FormGroup<TenantForm> {
   return new FormGroup<TenantForm>({
-    id: new FormControl('', {nonNullable: true}),
-    name: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
-    role: new FormControl('', {nonNullable: true}),
+    id: new FormControl(tenant?.id ?? '', {nonNullable: true}),
+    name: new FormControl(tenant?.name ?? '', {nonNullable: true, validators: [Validators.required]}),
+    role: new FormControl(tenant?.role ?? '', {nonNullable: true}),
   });
 }
 
@@ -43,30 +45,26 @@ export class QueryResourceEditFormComponent {
 
   readonly loaded = computed(() => this.tenantQuery.hasValue());
 
-  // 2) Editable form seeded from the query WITHOUT an effect. The source is the entity id, so the
-  //    computation re-runs only when the id changes: the first resolution seeds the form, and a
-  //    background refetch of the same entity (id unchanged) keeps the user's edits instead of
-  //    clobbering them. This is the Angular-recommended alternative to copying query data into the
-  //    form inside an effect (which would re-run on every reactive refetch).
+  // 2) Editable form seeded from the query WITHOUT an effect. `source` is the entity id, so the
+  //    computation re-runs only when the id changes:
+  //      - null -> 'tenant-1' (first resolution): build the seeded form.
+  //      - same id refetched (value object changes, id unchanged): source is unchanged, so the
+  //        existing FormGroup (with the user's edits) is kept instead of being rebuilt/clobbered.
+  //      - 'tenant-1' -> 'tenant-2' (navigate to another entity): rebuild from the new data.
+  //    This is the Angular-recommended alternative to copying query data into the form inside an
+  //    effect (which would re-run on every reactive refetch and overwrite in-progress edits).
   readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
     source: () => this.tenantQuery.value()?.id ?? null,
     computation: (id, previous) => {
       const tenant = this.tenantQuery.value();
-      if (id && tenant) {
-        return new FormGroup<TenantForm>({
-          id: new FormControl(tenant.id, {nonNullable: true}),
-          name: new FormControl(tenant.name, {nonNullable: true, validators: [Validators.required]}),
-          role: new FormControl(tenant.role, {nonNullable: true}),
-        });
-      }
-      return previous?.value ?? emptyTenantForm();
+      if (id && tenant) return tenantForm(tenant);
+      return previous?.value ?? tenantForm(null);
     },
   });
 
-  // 3) Save via the per-call callbacks shipped in the previous increment.
-  readonly saveOutcome = signal<'success' | 'error' | null>(null);
-  readonly saving = signal(false);
-
+  // 3) Save. No local outcome/busy signals: the mutation ref already exposes isLoading()/status(),
+  //    so the template reads saveMutation.status() === 'resolved' | 'error' for the result and
+  //    saveMutation.isLoading() for the pending state. status() tracks only the latest invocation.
   readonly saveMutation = mutateResource(
     (args: Tenant) =>
       new Promise<Tenant>((resolve, reject) =>
@@ -79,15 +77,6 @@ export class QueryResourceEditFormComponent {
       this.form().markAllAsTouched();
       return;
     }
-    this.saveOutcome.set(null);
-    this.saving.set(true);
-    const tenant = this.form().getRawValue() as Tenant;
-    void this.saveMutation
-      .mutate(tenant, {
-        onSuccess: () => this.saveOutcome.set('success'),
-        onError: () => this.saveOutcome.set('error'),
-      })
-      .catch(() => undefined)
-      .finally(() => this.saving.set(false));
+    void this.saveMutation.mutate(this.form().getRawValue() as Tenant).catch(() => undefined);
   }
 }
