@@ -2881,4 +2881,7 @@ export const nlTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Melding met <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Klik hier</button> in de berichttekst.',
   'timelineWizard.review': 'Controleren',
+  'queryResource.editFormTitle': 'queryResource + linkedSignal: een bewerkbaar formulier vullen',
+  'queryResource.editFormDesc':
+    'Laadt een entiteit met queryResource en vult vervolgens een reactief formulier via linkedSignal dat is gekoppeld aan de entiteits-id, zodat een achtergrond-herfetch de bewerkingen van de gebruiker behoudt. Het opslaan leest de status van de mutation-ref.',
 };

@@ -2733,4 +2733,7 @@ export const koTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     '메시지 안에 <button type="button" class="btn btn-sm alert-action" id="inline-click-target">클릭하세요</button>이(가) 있는 알림입니다.',
   'timelineWizard.review': '검토',
+  'queryResource.editFormTitle': 'queryResource + linkedSignal: 편집 가능한 폼 채우기',
+  'queryResource.editFormDesc':
+    'queryResource로 엔티티를 불러온 다음, linkedSignal을 엔티티 id에 연결해 리액티브 폼을 채웁니다. 따라서 백그라운드 재조회가 일어나도 사용자의 수정 내용이 유지됩니다. 저장은 뮤테이션 ref의 상태를 읽습니다.',
 };

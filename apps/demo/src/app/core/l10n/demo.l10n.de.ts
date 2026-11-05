@@ -2922,4 +2922,7 @@ export const deTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Meldung mit <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Hier klicken</button> im Nachrichtentext.',
   'timelineWizard.review': 'Überprüfen',
+  'queryResource.editFormTitle': 'queryResource + linkedSignal: ein bearbeitbares Formular befüllen',
+  'queryResource.editFormDesc':
+    'Lädt eine Entität mit queryResource und befüllt daraus ein reaktives Formular über linkedSignal, das auf die Entitäts-ID abgestimmt ist, sodass ein Hintergrund-Refetch die Bearbeitung des Benutzers erhält. Der Save-Vorgang liest den Status des Mutation-Refs.',
 };

@@ -2545,4 +2545,7 @@ export const zhTWTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     '訊息中包含 <button type="button" class="btn btn-sm alert-action" id="inline-click-target">點選我</button> 的警示。',
   'timelineWizard.review': '檢閱',
+  'queryResource.editFormTitle': 'queryResource + linkedSignal：為可編輯表單填入資料',
+  'queryResource.editFormDesc':
+    '使用 queryResource 載入實體，再透過 linkedSignal 以實體 id 為鍵為響應式表單填入初始值，這樣後台重新取得時不會覆蓋使用者的編輯。儲存時讀取 mutation ref 自身的狀態。',
 };

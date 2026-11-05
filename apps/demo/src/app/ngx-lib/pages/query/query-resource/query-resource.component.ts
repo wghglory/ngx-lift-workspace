@@ -634,10 +634,6 @@ submitNewUser() {
   // ---------------------------------------------------------------------------
   // Demo 5: Seed an editable form from a query (no effect)
   // ---------------------------------------------------------------------------
-  readonly editFormTitle = 'queryResource + linkedSignal: seed an editable form';
-  readonly editFormDesc =
-    'Load an entity with queryResource, then seed a reactive form via linkedSignal keyed on the entity id so a background refetch keeps the user edits. Save reads the mutation ref state.';
-
   readonly editFormCode =
     highlight(`import {ChangeDetectionStrategy, Component, computed, linkedSignal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';

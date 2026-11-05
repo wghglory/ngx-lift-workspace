@@ -2933,4 +2933,7 @@ export const frTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Alerte contenant <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Cliquez ici</button> dans le message.',
   'timelineWizard.review': 'Vérifier',
+  'queryResource.editFormTitle': 'queryResource + linkedSignal : alimenter un formulaire éditable',
+  'queryResource.editFormDesc':
+    "Charge une entité avec queryResource, puis alimente un formulaire réactif via linkedSignal indexé sur l'id de l'entité, afin qu'un rechargement en arrière-plan conserve les modifications de l'utilisateur. L'enregistrement lit l'état du ref de mutation.",
 };
