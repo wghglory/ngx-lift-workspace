@@ -635,7 +635,7 @@ submitNewUser() {
   // Demo 5: Seed an editable form from a query (no effect)
   // ---------------------------------------------------------------------------
   readonly editFormCode =
-    highlight(`import {ChangeDetectionStrategy, Component, computed, linkedSignal} from '@angular/core';
+    highlight(`import {ChangeDetectionStrategy, Component, computed, linkedSignal, untracked} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
@@ -678,13 +678,25 @@ export class QueryResourceEditFormComponent {
 
   readonly loaded = computed(() => this.tenantQuery.hasValue());
 
-  // source is the id, so the computation re-runs only when the id changes: the first
-  // resolution seeds the form, a same-id refetch keeps the edits, another id rebuilds.
+  // Tracks the id the live FormGroup was seeded from, so a same-id refetch (which transiently resets
+  // value() to undefined and back) does not rebuild the form and clobber the user's edits.
+  private seededId: string | null = null;
+
+  // Subtlety: the source reads value()?.id, so the linked signal depends on the WHOLE value()
+  // signal. Angular recomputes the computation whenever any signal read inside source changes - i.e.
+  // on every refetch that replaces the tenant object, even with the same id (linkedSignal only
+  // equality-checks the produced FormGroup, never the source id). So a same-id refetch DOES re-run
+  // the computation. The guard keeps the existing form when the id is unchanged:
+  //   - first resolution seeds the form; a same-id refetch keeps the edits; another id rebuilds.
   readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
     source: () => this.tenantQuery.value()?.id ?? null,
     computation: (id, previous) => {
-      const tenant = this.tenantQuery.value();
-      if (id && tenant) return tenantForm(tenant);
+      if (id && this.seededId === id) return previous?.value ?? tenantForm(null);
+      const tenant = untracked(() => this.tenantQuery.value());
+      if (id && tenant) {
+        this.seededId = id;
+        return tenantForm(tenant);
+      }
       return previous?.value ?? tenantForm(null);
     },
   });

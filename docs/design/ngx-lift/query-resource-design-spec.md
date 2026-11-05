@@ -271,9 +271,13 @@ export class TenantEditComponent {
   // value() to undefined and back) does not rebuild the form and clobber the user's edits.
   private seededId: string | null = null;
 
-  // `source` is the id, so the computation re-runs only when the id changes: the first resolution
-  // seeds the form, a same-id refetch keeps the live FormGroup with the user's edits, and navigating
-  // to another id rebuilds from the new data.
+  // Subtlety: `source` reads `value()?.id`, so the linked signal depends on the WHOLE `value()` signal,
+  // not just the selected id. Angular recomputes `computation` whenever any signal read inside `source`
+  // changes — i.e. on every refetch that replaces the tenant object, even when the id is still
+  // "tenant-1" (linkedSignal only equality-checks the produced FormGroup, never the source id). So the
+  // computation DOES re-run on a same-id refetch; the `seededId` guard below is what keeps the live
+  // FormGroup (and the user's edits) by returning the previous instance. The first resolution seeds the
+  // form, a same-id refetch keeps the edits, and navigating to another id rebuilds from the new data.
   readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
     source: () => this.tenantQuery.value()?.id ?? null,
     computation: (id, previous) => {
