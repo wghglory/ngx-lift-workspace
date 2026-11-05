@@ -2858,4 +2858,7 @@ export const ptBRTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Alerta com <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Clique aqui</button> dentro da mensagem.',
   'timelineWizard.review': 'Revisar',
+  'queryResource.editFormTitle': 'queryResource + effect: preencher um formulário editável',
+  'queryResource.editFormDesc':
+    'Carregue uma entidade com queryResource e inicialize um formulário reativo com um effect. Novos valores da consulta redefinem o formulário e as alterações não salvas.',
 };

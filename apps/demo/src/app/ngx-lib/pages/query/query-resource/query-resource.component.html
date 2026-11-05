@@ -294,6 +294,25 @@
     </app-demo-playground>
   </section>
 
+  <!-- ==================== DEMO 5: SEED EDITABLE FORM FROM QUERY ==================== -->
+  <section data-testid="query-edit-form" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
+    <h2 id="edit-form-without-effect"><code>queryResource</code> + <code>effect</code></h2>
+    <p>
+      Load an entity with <code>queryResource</code> and initialize a stable reactive form using an effect. Each new
+      query value resets the form, including any unsaved edits. Save reads the mutation ref state.
+    </p>
+    <app-demo-playground
+      [title]="'queryResource.editFormTitle' | translate"
+      [description]="'queryResource.editFormDesc' | translate"
+      level="intermediate"
+      layout="split"
+      [tsCode]="editFormCode"
+      [htmlCode]="editFormHtmlCode"
+    >
+      <div preview><app-query-resource-edit-form /></div>
+    </app-demo-playground>
+  </section>
+
   <app-query-failure-examples />
 
   <!-- ==================== ARCHITECTURE: COMPONENT VS SERVICE PLACEMENT ==================== -->

@@ -29,6 +29,27 @@ recorded for the affected releases.
   disabled/readonly guards, composite focus, required validation and a reusable picker adapter are included. See the
   [design specification](docs/design/clr-lift/datagrid-selection-design-spec.md) and
   [acceptance record](docs/design/clr-lift/datagrid-selection-acceptance.md).
+- `ngx-lift` exports `QueryResourceDisabledError` and `QueryResourceDisposedError`. `queryResource.execute()` rejects
+  with one of these when its definition is `undefined` or the observer was destroyed; error messages and transport
+  failures are unchanged. Installed-consumer verification covers both exports. See
+  [Failure and recovery](docs/design/ngx-lift/query-resource-design-spec.md#failure-and-recovery).
+- `mutateResource().mutate(args, options)` accepts optional per-call `onSuccess` / `onError` callbacks that receive the
+  result or failure together with that invocation's arguments. Callback faults are isolated as developer diagnostics and
+  never change the write outcome or its returned Promise. `onSettled` is deliberately not offered; use the returned
+  Promise's `.finally()`. See
+  [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
+- The `queryResource` demo adds a runnable edit-form example. An effect initializes a stable reactive form when the
+  query value changes, including same-entity refetches. Save reads the mutation ref's state.
+
+### Fixed
+
+- Documentation-only contract alignment: the `resourceAsync` spec now lists every shipped option and its exact callback
+  semantics (including the removed `execute({onSuccess, onError})` shape), the query/mutation specs record the
+  observer-level no-callback decision and the outcome tutorial. The mutation accessibility paragraph, `reload()` boolean
+  wording and queued `concat` pending state are corrected. `MutateResourceRef.invalidationError` stays optional as a
+  diagnostic-only signal, not a control-flow gate for submit handlers.
+- The `mutateResource` demo includes a runnable per-call callback playground (success, failure and `.finally()` cleanup)
+  that reuses existing translation keys; no new route, dictionary key or library-owned message was added.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

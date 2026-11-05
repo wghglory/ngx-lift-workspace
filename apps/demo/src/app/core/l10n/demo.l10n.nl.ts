@@ -2881,4 +2881,7 @@ export const nlTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Melding met <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Klik hier</button> in de berichttekst.',
   'timelineWizard.review': 'Controleren',
+  'queryResource.editFormTitle': 'queryResource + effect: een bewerkbaar formulier vullen',
+  'queryResource.editFormDesc':
+    'Laad een entiteit met queryResource en initialiseer een reactief formulier met een effect. Nieuwe querywaarden zetten het formulier en niet-opgeslagen wijzigingen terug.',
 };

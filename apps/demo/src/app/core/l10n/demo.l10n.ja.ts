@@ -2774,4 +2774,7 @@ export const jaTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'メッセージ内に <button type="button" class="btn btn-sm alert-action" id="inline-click-target">クリック</button> があるアラートです。',
   'timelineWizard.review': '確認',
+  'queryResource.editFormTitle': 'queryResource + effect: 編集可能なフォームへの投入',
+  'queryResource.editFormDesc':
+    'queryResource でエンティティを読み込み、effect でリアクティブフォームを初期化します。新しいクエリ値により、未保存の編集を含めフォームがリセットされます。',
 };

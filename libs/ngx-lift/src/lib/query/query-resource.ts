@@ -14,6 +14,7 @@ import {Observable, Subject} from 'rxjs';
 import {QueryDefinition, QueryObserverHandle, QueryRecoveryOptions, QuerySnapshot, QueryStatus} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
+import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-errors';
 import {serializeQueryKey} from './query-key';
 import {resourceAsync} from './resource-async';
 
@@ -49,9 +50,12 @@ export interface QueryResourceRef<T, E = Error> extends QueryFailureSignals {
   readonly isRefreshing: Signal<boolean>;
   readonly isStale: Signal<boolean>;
   hasValue(): this is QueryResourceRef<Exclude<T, undefined>, E>;
-  /** Force fresh data while joining a valid request already in flight. */
+  /** Force fresh data while joining a valid request already in flight; true means initiated, not succeeded. */
   reload(): boolean;
-  /** Await a fresh read, joining current work. Rejects when disabled or destroyed. */
+  /**
+   * Await a fresh read, joining current work. Rejects with `QueryResourceDisabledError` when disabled and
+   * `QueryResourceDisposedError` after destruction; transport failures reject with their original error.
+   */
   execute(): Promise<T>;
   /** Dispose this observer. Other observers and pending shared reads remain active. */
   destroy(): void;
@@ -220,8 +224,9 @@ export function queryResource<T, E = Error>(
   const unregisterDestroy = injector.get(DestroyRef).onDestroy(destroy);
   const execute = (): Promise<T> => {
     const current = untracked(requested);
-    if (destroyed || !current)
-      return Promise.reject(new Error(destroyed ? 'Query resource has been destroyed' : 'Query resource is disabled'));
+    if (destroyed || !current) {
+      return Promise.reject(destroyed ? new QueryResourceDisposedError() : new QueryResourceDisabledError());
+    }
     try {
       if (unsubscribe && !unsubscribe.isAttached() && current.key === untracked(observedKey)) {
         untracked(() => recoverObserver.next());

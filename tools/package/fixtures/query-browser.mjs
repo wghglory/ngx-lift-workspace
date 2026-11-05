@@ -84,7 +84,6 @@ class QueryConsumer {
 }
 Component({
   selector: 'query-consumer',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template:
     '<p>{{ query.value() }} / {{ query.status() }}</p>@for (row of rows(); track row.key) {<span>{{ row.value() }}</span>}',

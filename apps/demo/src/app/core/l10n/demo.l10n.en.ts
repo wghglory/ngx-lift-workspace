@@ -2779,4 +2779,7 @@ export const enTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Alert with <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Click Me</button> inside the message.',
   'timelineWizard.review': 'Review',
+  'queryResource.editFormTitle': 'queryResource + effect: seed an editable form',
+  'queryResource.editFormDesc':
+    'Load an entity with queryResource and use an effect to initialize a reactive form. New query values reset the form, including unsaved edits.',
 };

@@ -369,4 +369,121 @@ describe('mutateResource', () => {
     expect(mutation).toHaveBeenCalledExactlyOnceWith(1);
     expect(resource.isLoading()).toBe(false);
   });
+
+  describe('per-call outcome callbacks', () => {
+    it('runs onSuccess once with the result and the submitted arguments', async () => {
+      const onSuccess = vi.fn();
+      const onError = vi.fn();
+      const resource = TestBed.runInInjectionContext(() => mutateResource((args: {id: number}) => of({id: args.id})));
+      const args = {id: 7};
+      await expect(resource.mutate(args, {onSuccess, onError})).resolves.toEqual({id: 7});
+      expect(onSuccess).toHaveBeenCalledExactlyOnceWith({id: 7}, args);
+      expect(onError).not.toHaveBeenCalled();
+    });
+
+    it('runs onError once with the failure and the submitted arguments', async () => {
+      const onSuccess = vi.fn();
+      const onError = vi.fn();
+      const resource = TestBed.runInInjectionContext(() =>
+        mutateResource((args: {id: number}) => throwError(() => new Error(`write failed: ${args.id}`))),
+      );
+      const args = {id: 7};
+      await expect(resource.mutate(args, {onSuccess, onError})).rejects.toThrow('write failed: 7');
+      expect(onError).toHaveBeenCalledTimes(1);
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
+      expect(onError.mock.calls[0][1]).toBe(args);
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(resource.error()).toBeInstanceOf(Error);
+    });
+
+    it('keeps onSuccess on a successful write whose invalidation fails', async () => {
+      const onSuccess = vi.fn();
+      const onError = vi.fn();
+      const resource = TestBed.runInInjectionContext(() =>
+        mutateResource((args: number) => of(args + 1), {
+          invalidateTags: () => {
+            throw new Error('tag mapping failed');
+          },
+        }),
+      );
+      await expect(resource.mutate(1, {onSuccess, onError})).resolves.toBe(2);
+      expect(resource.invalidationError?.()).toBeInstanceOf(Error);
+      expect(onSuccess).toHaveBeenCalledExactlyOnceWith(2, 1);
+      expect(onError).not.toHaveBeenCalled();
+    });
+
+    it('isolates synchronous and asynchronous callback failures from the settled write', async () => {
+      const report = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      try {
+        const resource = TestBed.runInInjectionContext(() => mutateResource((args: number) => of(args + 1)));
+        const syncFault = new Error('sync callback failed');
+        const asyncFault = new Error('async callback failed');
+        await expect(
+          resource.mutate(1, {
+            onSuccess: () => {
+              throw syncFault;
+            },
+          }),
+        ).resolves.toBe(2);
+        expect(resource.status()).toBe('resolved');
+        expect(resource.error()).toBeNull();
+        expect(report).toHaveBeenCalledWith('[ngx-lift mutation] callback failed', syncFault);
+
+        await expect(
+          resource.mutate(2, {
+            onSuccess: () => Promise.reject(asyncFault),
+          }),
+        ).resolves.toBe(3);
+        await settle();
+        expect(report).toHaveBeenCalledWith('[ngx-lift mutation] callback failed', asyncFault);
+        expect(resource.status()).toBe('resolved');
+      } finally {
+        report.mockRestore();
+      }
+    });
+
+    it('gives each exhaust caller its own callbacks without duplicating the write', async () => {
+      const source = new Subject<number>();
+      const mutation = vi.fn(() => source);
+      const resource = TestBed.runInInjectionContext(() => mutateResource(mutation, {concurrency: 'exhaust'}));
+      const first = vi.fn();
+      const second = vi.fn();
+      const a = resource.mutate(1, {onSuccess: first});
+      const b = resource.mutate(2, {onSuccess: second});
+      expect(b).toBe(a);
+      expect(mutation).toHaveBeenCalledTimes(1);
+      source.next(9);
+      expect(await a).toBe(9);
+      await settle();
+      expect(first).toHaveBeenCalledExactlyOnceWith(9, 1);
+      expect(second).toHaveBeenCalledExactlyOnceWith(9, 2);
+    });
+
+    it('runs onError for a queued concat invocation rejected by disposal', async () => {
+      const componentInjector = Injector.create({providers: [], parent: TestBed.inject(Injector)});
+      const source = new Subject<number>();
+      const mutation = vi.fn((id: number) => (id === 1 ? source : of(id)));
+      const resource = mutateResource(mutation, {injector: componentInjector, client, concurrency: 'concat'});
+      const onSuccess = vi.fn();
+      const onError = vi.fn();
+      const first = resource.mutate(1);
+      const queued = resource.mutate(2, {onSuccess, onError});
+      const rejected = expect(queued).rejects.toThrow('destroyed');
+      componentInjector.destroy();
+      source.next(1);
+      await first;
+      await rejected;
+      await settle();
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(onError).toHaveBeenCalledTimes(1);
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
+      expect(onError.mock.calls[0][1]).toBe(2);
+    });
+
+    it('does not offer onSettled in the public options', async () => {
+      const resource = TestBed.runInInjectionContext(() => mutateResource((args: number) => of(args)));
+      // @ts-expect-error onSettled is deliberately not offered; use the returned Promise's finally().
+      await expect(resource.mutate(1, {onSettled: () => undefined})).resolves.toBe(1);
+    });
+  });
 });

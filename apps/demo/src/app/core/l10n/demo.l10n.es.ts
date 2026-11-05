@@ -2910,4 +2910,7 @@ export const esTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Alerta con <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Púlsame</button> dentro del mensaje.',
   'timelineWizard.review': 'Revisar',
+  'queryResource.editFormTitle': 'queryResource + effect: rellenar un formulario editable',
+  'queryResource.editFormDesc':
+    'Cargue una entidad con queryResource e inicialice un formulario reactivo con un effect. Los nuevos valores de consulta restablecen el formulario y los cambios sin guardar.',
 };

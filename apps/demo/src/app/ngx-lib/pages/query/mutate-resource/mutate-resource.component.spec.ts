@@ -4,7 +4,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
 import {TranslationService} from 'clr-lift';
-import {beforeEach, describe, expect, it} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {demoTranslations} from '../../../../core/l10n/demo.l10n';
 import {MutateResourceDemoComponent} from './mutate-resource.component';
@@ -55,5 +55,15 @@ describe('MutateResourceDemoComponent', () => {
     component.simulateError.set(true);
     await component.onSaveSettings();
     expect(component.saveSuccessMessage()).toBe(false);
+  });
+
+  it('runs per-call outcome callbacks for successful and failed writes', async () => {
+    component.submitCallbackWrite(false);
+    await vi.waitFor(() => expect(component.callbackOutcome()).toBe('success'));
+    expect(component.callbackBusy()).toBe(false);
+
+    component.submitCallbackWrite(true);
+    await vi.waitFor(() => expect(component.callbackOutcome()).toBe('error'));
+    expect(component.callbackBusy()).toBe(false);
   });
 });

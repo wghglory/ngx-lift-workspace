@@ -2933,4 +2933,7 @@ export const frTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Alerte contenant <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Cliquez ici</button> dans le message.',
   'timelineWizard.review': 'Vérifier',
+  'queryResource.editFormTitle': 'queryResource + effect : alimenter un formulaire éditable',
+  'queryResource.editFormDesc':
+    'Chargez une entité avec queryResource et initialisez un formulaire réactif avec un effect. Les nouvelles valeurs réinitialisent le formulaire et les modifications non enregistrées.',
 };

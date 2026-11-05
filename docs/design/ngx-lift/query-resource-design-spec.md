@@ -154,17 +154,17 @@ explicit refresh must bypass their completed data.
 
 `queryResource(() => definition | undefined, options?)` returns readonly signals and explicit execution controls.
 
-| Surface                                         | Meaning                                                                                  |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `value`, `error`, `status`                      | Latest successful data, terminal error and `idle/loading/reloading/resolved/error` state |
-| `isLoading`, `isInitialLoading`, `isRefreshing` | Any pending read, pending without data, pending with retained data                       |
-| `isInitialError`, `isRefreshError`              | Failure without successful data / failure with retained data                             |
-| `hasValue()`                                    | Type guard for a defined successful value                                                |
-| `updatedAt`, `isStale`                          | Last successful time and freshness                                                       |
-| `failureCount`, `failureReason`, `nextRetryAt`  | Current logical read's attempt failures and scheduled retry time                         |
-| `reload()`                                      | Background refresh; returns false when disabled/destroyed                                |
-| `execute()`                                     | Await a fresh read; rejects when disabled/destroyed                                      |
-| `destroy()`                                     | Dispose this observer; shared work follows the cache cancellation policy                 |
+| Surface                                         | Meaning                                                                                      |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `value`, `error`, `status`                      | Latest successful data, terminal error and `idle/loading/reloading/resolved/error` state     |
+| `isLoading`, `isInitialLoading`, `isRefreshing` | Any pending read, pending without data, pending with retained data                           |
+| `isInitialError`, `isRefreshError`              | Failure without successful data / failure with retained data                                 |
+| `hasValue()`                                    | Type guard for a defined successful value                                                    |
+| `updatedAt`, `isStale`                          | Last successful time and freshness                                                           |
+| `failureCount`, `failureReason`, `nextRetryAt`  | Current logical read's attempt failures and scheduled retry time                             |
+| `reload()`                                      | Background refresh; boolean means initiated, not succeeded; false when disabled/destroyed    |
+| `execute()`                                     | Await a fresh read; rejects with `QueryResourceDisabledError` / `QueryResourceDisposedError` |
+| `destroy()`                                     | Dispose this observer; shared work follows the cache cancellation policy                     |
 
 `QueryResourceOptions` accepts `injector`, `client`, reactive `pollInterval`, `refetchOnFocus` and `refetchOnReconnect`.
 Outside an injection context, pass the lifecycle owner's injector explicitly.
@@ -206,6 +206,90 @@ readonly tenantQueries = queryResources(this.selectedIds, id => ({
 Requests start in parallel without a concurrency limit. Paginate, limit selection or use a backend batch endpoint for
 large lists. `maxEntries` cannot evict active observers or pending work. Prebuilt-definition arrays, heterogeneous
 collections and a shared concurrency scheduler are deferred until a consumer needs them.
+
+## Seeding an editable form from a query
+
+A reactive form can keep one `FormGroup` for the component's lifetime. An effect bridges the query signal to this
+imperative API and resets the form when a query value arrives. **A same-entity refetch also resets the form and discards
+unsaved edits**. Use this simple approach only when that behavior is acceptable; add an explicit synchronization policy
+if edits must survive refreshes. Handle navigation with unsaved edits separately.
+
+```typescript
+import {ChangeDetectionStrategy, Component, effect} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {TranslatePipe} from 'clr-lift';
+import {mutateResource, queryResource} from 'ngx-lift';
+
+interface Tenant {
+  id: string;
+  name: string;
+  role: string;
+}
+
+interface TenantForm {
+  name: FormControl<string>;
+  role: FormControl<string>;
+}
+
+@Component({
+  selector: 'app-query-resource-edit-form',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
+  templateUrl: './query-resource-edit-form.component.html',
+})
+export class QueryResourceEditFormComponent {
+  // 1) Load the entity to edit.
+  readonly tenantQuery = queryResource<Tenant>(() => ({
+    key: ['tenant', 'detail', 'tenant-1'],
+    loader: () =>
+      new Promise<Tenant>((resolve) =>
+        setTimeout(() => resolve({id: 'tenant-1', name: 'Acme Corp', role: 'admin'}), 400),
+      ),
+  }));
+
+  readonly form = new FormGroup<TenantForm>({
+    name: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+    role: new FormControl('', {nonNullable: true}),
+  });
+  constructor() {
+    effect(() => {
+      const tenant = this.tenantQuery.value();
+      if (tenant) this.form.reset({name: tenant.name, role: tenant.role});
+    });
+  }
+
+  // 3) Save. No local outcome/busy signals: the mutation ref already exposes isLoading()/status(),
+  //    so the template reads saveMutation.status() === 'resolved' | 'error' for the result and
+  //    saveMutation.isLoading() for the pending state. status() tracks only the latest invocation.
+  readonly saveMutation = mutateResource(
+    (args: Tenant) =>
+      new Promise<Tenant>((resolve, reject) =>
+        setTimeout(() => (Math.random() < 0.15 ? reject(new Error('simulated 500')) : resolve(args)), 300),
+      ),
+  );
+
+  save(): void {
+    const tenant = this.tenantQuery.value();
+    if (!tenant) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    void this.saveMutation.mutate({id: tenant.id, ...this.form.getRawValue()}).catch(() => undefined);
+  }
+}
+```
+
+The runnable demo uses the template in `query-resource-edit-form.component.html`. `reset()` marks controls pristine and
+untouched and emits form events by default. Choose `{emitEvent: false}` only if the application deliberately does not
+want those notifications. The effect runs during change detection; avoid submitting a newly loaded entity before it has
+run.
+
+This effect synchronizes a signal with the imperative Reactive Forms API; it does not copy between signals. For Angular
+22 Signal Forms, Angular instead demonstrates a `linkedSignal` for the writable model and a stable form created from it.
+See [Angular's effects guidance](https://angular.dev/guide/signals/effect) and
+[Signal Forms model design](https://angular.dev/guide/forms/signals/model-design).
 
 ## Behavior and architecture
 
@@ -268,6 +352,8 @@ individual observer. Visibility return resumes overdue work without duplicating 
 | Successful recovery | Clear error and retry metadata                                                                               |
 | Terminal failure    | Keep actual failure count and last failure                                                                   |
 | Deadline            | `QueryTimeoutError`, retaining its cause when available; no invented failed attempt before an actual failure |
+| Disabled execution  | `execute()` rejects with `QueryResourceDisabledError`; no loader runs                                        |
+| Destroyed execution | `execute()` rejects with `QueryResourceDisposedError`; `reload()` returns false                              |
 | Normal cancellation | Awaiting callers reject; no new client-level user-error report                                               |
 
 A logical read's deadline includes synchronous loading publication, attempts and waits. It uses an elapsed-time clock,
@@ -323,6 +409,118 @@ override defaults.
 `QUERY_CLIENT` is root-provided. `provideQueryClient` retains browser events, Angular ErrorHandler diagnostics and
 DestroyRef disposal while configuring defaults. A plain `new QueryClient` is supported; hosts supply visibility/events
 and destruction. Each SSR request needs an isolated injector/client, with browser scheduling disabled.
+
+## Reacting to success and failure
+
+These APIs are headless: they own no labels, announcements or translations, and they expose outcomes as observable state
+rather than lifecycle callbacks. A host picks one of the four patterns below. The compiled starters already demonstrate
+the first two: the query starter renders `isInitialLoading()` / `error()` / `isRefreshing()`, and the mutation starter
+catches `await mutate(args)` before showing a `role="status"` confirmation.
+
+### State in the template or an effect
+
+Signals are the primary outcome channel. Use the state distinctions directly in a template, or derive local UI state
+with `computed` / `effect`. No additional option is needed and no new visible string belongs to the library.
+
+```typescript
+import {computed, effect, signal} from '@angular/core';
+
+// Component fields; tenantQuery is created as shown in "Public API and examples".
+readonly showRefreshWarning = computed(() => this.tenantQuery.isRefreshError());
+readonly blockingFailure = computed(() => this.tenantQuery.isInitialError());
+readonly retryNoticeVisible = signal(false);
+
+constructor() {
+  effect(() => {
+    // Derive application-owned announcement state; the effect re-runs on status changes only.
+    this.retryNoticeVisible.set(this.tenantQuery.failureCount() > 0);
+  });
+}
+```
+
+`status`, `isInitialError`, `isRefreshError`, `updatedAt`, `failureCount`, `failureReason` and `nextRetryAt` distinguish
+first load, retained-data refresh, retry waits and terminal failures. A failed row of `queryResources` exposes the same
+surface on its own ref, so a retry can target one row without touching its peers.
+
+### Per-call work with the returned Promise
+
+Explicit work belongs at the call boundary. `execute()` resolves with a fresh read (or the original transport failure),
+and `mutate(args)` resolves with the server result of that invocation. Both are ordinary Promises, so a toast, close,
+navigation or analytics call is naturally bound to one invocation and receives its arguments/result. `mutateResource`
+additionally offers approved per-call `onSuccess` / `onError` callbacks for call-site ergonomics; they observe the same
+Promise and are the only callback form in the query family. See
+[Per-call outcome callbacks](mutate-resource-design-spec.md#per-call-outcome-callbacks).
+
+`router`, `dialog` and `saveMutation` below are application-owned; only the query handles are library API.
+
+```typescript
+import {QueryResourceDisposedError} from 'ngx-lift';
+
+async refreshAndOpen(): Promise<void> {
+  try {
+    const tenant = await this.tenantQuery.execute();
+    this.router.navigate(['/tenants', tenant.id]); // application-owned success side effect
+  } catch (error) {
+    if (error instanceof QueryResourceDisposedError) return; // the view is gone
+    // error() and isRefreshError() keep the failure visible in the template.
+  }
+}
+
+async saveName(name: string): Promise<void> {
+  try {
+    await this.saveMutation.mutate({name});
+    this.dialog.close(); // success-only; the write already completed
+  } catch {
+    // error() keeps the failed write visible; do not advise resubmitting blindly.
+  }
+}
+```
+
+Fire-and-forget handlers can use `void saveMutation.mutate(args).then(onSaved, onFailed)` or the equivalent per-call
+callbacks; `mutate()` attaches an internal rejection observer plus an isolated callback observer, so an unawaited call
+does not log an unhandled rejection. `reload(): boolean` reports whether a background refresh was **initiated**, not
+whether it succeeded; failures appear in `error()` and `isRefreshError()`. `execute()` rejects with
+`QueryResourceDisabledError` when the definition is `undefined` and `QueryResourceDisposedError` after destruction,
+while transport failures keep their original error type.
+
+### Application-wide reporting
+
+Use the client-level `onQueryError` hook in [Application configuration](#application-configuration) for logging or
+telemetry that applies to every read. It fires once per terminal current logical read with the key, attempt count,
+retained-data flag and trigger, and `onDiagnostic` isolates reporter faults from transport outcomes. It is not a
+per-observer UI hook: keep visible messages and announcements owned, localized and accessible in the application.
+
+### Cache-level streams
+
+For cross-cutting observation outside an injection context, use the Observable facades instead of adding callbacks:
+
+```typescript
+import {toObservable} from '@angular/core/rxjs-interop';
+import {fetchQueryObservable, observeQueryObservable} from 'ngx-lift';
+
+const values$ = toObservable(this.tenantQuery.value); // value changes only
+const snapshots$ = observeQueryObservable(client, definition); // shared status/error/value snapshots
+const oneRead$ = fetchQueryObservable(client, definition); // cold; starts a read on subscription
+```
+
+`observeQueryObservable` streams the shared entry and closes when that entry is purged; it does not create a second
+logical read. `fetchQueryObservable` starts work on subscription and is not an independent cancellation owner.
+
+### Decision: no observer-level success/error callbacks
+
+API count is not a quality target. The following decisions define the boundary; links point to primary documentation
+already used by this specification.
+
+| Candidate / source                                                                                               | Decision                  | Reason                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Angular `resource()` / `httpResource()`](https://angular.dev/guide/signals/resource) status/value/error signals | Adopt                     | Matches Angular's signal-first lifecycle; every outcome is already observable.                                                                                                                                                                                                                                                               |
+| `resourceAsync` `onSuccess` / `onLoading` / `onError` / `throwOnError`                                           | Reject as a model to copy | They are legacy local-resource hooks: `onError` is a data fallback, `onSuccess` fires per emission, and a throwing callback can change the data state. See [callback semantics](resource-async-design-spec.md#24-shipped-options-and-callback-semantics).                                                                                    |
+| Per-observer `onSuccess` / `onError` on `queryResource`                                                          | Reject                    | One logical read may be shared by many observers and triggered by `initial`, `manual`, `poll`, `invalidation`, `focus` or `reconnect`; it may hit fresh cache, join an in-flight request, retry, or retain old data on refresh. "One success" and "one error" are ambiguous per observer, and the snapshot stream emits intermediate states. |
+| Per-row callbacks on `queryResources`                                                                            | Reject                    | All rows share one options object, so a callback would need `item` / `key` context; reordering and removal create callback churn, and a single row's failure must not affect its peers.                                                                                                                                                      |
+| Client-level `onQueryError` / `onDiagnostic`                                                                     | Adopt (already shipped)   | Cache-level, terminal-only reporting with callback isolation; the correct layer for application-wide concerns.                                                                                                                                                                                                                               |
+| [RTK Query `invalidatesTags`](https://redux-toolkit.js.org/rtk-query/usage/automated-refetching)                 | Adapt (already shipped)   | Adapted as `invalidateTags`: a success-only cache synchronization mapper, deliberately not a UI success callback. See [mutation execution](mutate-resource-design-spec.md).                                                                                                                                                                  |
+| [TanStack mutations](https://tanstack.com/query/latest/docs/framework/angular/guides/mutations)                  | Adopt the separation      | Explicit submission plus local pending state; keep this library's own concurrency and `invalidationError` contracts rather than copying another library's defaults.                                                                                                                                                                          |
+| `mutate(args, {onSuccess, onError})`                                                                             | Adopt (per-call only)     | Shipped for `mutateResource` only: call-site callbacks carry that invocation's args plus its result or failure, with isolated faults. `onSettled` is rejected; see [Per-call outcome callbacks](mutate-resource-design-spec.md#per-call-outcome-callbacks).                                                                                  |
 
 ## Placement Architecture: Component vs Service
 
@@ -921,9 +1119,10 @@ entries or replace the provider deliberately. Mutation invalidation must use sco
 a current-session signal sampled after completion. Already-submitted writes may finish after observer destruction.
 
 Writes are never automatically replayed. A timeout can be an uncertain server outcome: reconcile by reading or an
-endpoint-specific idempotency protocol before resubmitting. `invalidationError` means the server write succeeded and
-cache synchronization failed; refresh reads instead of repeating the write. Shared optimistic cache setters and rollback
-are not implemented. See [mutation execution](mutate-resource-design-spec.md).
+endpoint-specific idempotency protocol before resubmitting. `invalidationError` is diagnostic-only: a non-null value
+means the server write succeeded but automatic tag invalidation threw, so never repeat that write; it is not a
+submit-handler branch. Shared optimistic cache setters and rollback are not implemented. See
+[mutation execution](mutate-resource-design-spec.md).
 
 ## Diagnostics
 
@@ -1007,11 +1206,25 @@ retained-data refresh where applicable. Forms invoke/observe this API without as
 This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
 [gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
 
+Contract follow-up, November 4, 2026: this revision adds the outcome tutorial and callback decision above, documents
+`QueryResourceDisabledError` / `QueryResourceDisposedError` and clarifies `reload()`. Those two additive exports are
+submitted for maintainer review in the accompanying PR.
+
+November 5, 2026: the maintainer approved per-call `onSuccess` / `onError` for `mutateResource` only. The decision table
+above is updated to "Adopt (per-call only)"; `onSettled` remains rejected. The submit-handler examples no longer branch
+on `invalidationError`: it is diagnostic-only, and tag invalidation refreshes active observers automatically. This query
+API is unchanged.
+
 ## Evidence
 
 Contract checked against source and existing regression assertions at base `e4a43f9` on October 16, 2026. Test pointers
 identify existing coverage; no runtime suites were rerun for this documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
+
+The November 4, 2026 revision updates two execution-error regressions and adds an installed-consumer import check for
+the new exports. The November 5, 2026 revision records the maintainer-approved per-call mutation callbacks; this query
+API has no corresponding runtime change. Local validation results are reported in the corresponding PR; CI, merge,
+independent human language and assistive-technology acceptance, and publication remain separate gates.
 
 Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
 [query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the

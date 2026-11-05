@@ -70,6 +70,27 @@ main-only features. [Version policy](../DEPLOYMENT.md#version-policy) keeps both
 migration notices. Closeout formatting, links and example compilation belong to its PR; human comprehension/language
 acceptance remains open.
 
+## Contract alignment — November 4, 2026
+
+- `resourceAsync`: the shipped `onSuccess` / `onLoading` / `throwOnError` / `reactive` options and the exact callback
+  semantics are now recorded in §2.4 of its spec. The earlier `execute({onSuccess, onError})` object is not part of the
+  shipped API; no spec recorded its removal, so the current Promise-returning signature is now the documented contract.
+  `onLoading` has no dedicated regression; add one before relying on its ordering.
+- Query family: the [callback decision](ngx-lift/query-resource-design-spec.md#reacting-to-success-and-failure) records
+  why `queryResource` / `queryResources` have no observer-level success/error callbacks and which shipped patterns
+  replace them. `mutateResource` keeps the Promise boundary and adds approved
+  [per-call `onSuccess` / `onError`](ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks); `onSettled`
+  remains rejected. The `mutateResource` demo now has a runnable callback playground reusing existing translation keys.
+- `queryResource.execute()` now rejects with `QueryResourceDisabledError` / `QueryResourceDisposedError` instead of a
+  plain `Error`; both are covered by regressions and the packed consumer verifier.
+- `MutateResourceRef.invalidationError` stays optional and is documented as diagnostic-only: a non-null value means the
+  server write succeeded but automatic tag invalidation threw (usually a mapper bug or a destroyed client). It is not a
+  control-flow gate for submit handlers. The earlier type narrowing was reverted, so no consumer compatibility break
+  remains in this PR.
+- No new demo route, dictionary key or library-owned visible message was added. A follow-up proposal (separate spec and
+  approval) would report invalidation failures once through the client's `onDiagnostic` channel; no global UI observer
+  or per-call `onInvalidationError` hook is planned.
+
 ## Delivery gates still open
 
 1. Review each proposed component API before implementation; the Angular 21-first policy does not approve selectors.

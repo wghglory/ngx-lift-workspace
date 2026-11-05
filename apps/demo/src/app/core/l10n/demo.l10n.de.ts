@@ -2922,4 +2922,7 @@ export const deTranslations: Record<string, string> = {
   'multiAlerts.newInlineMessage':
     'Meldung mit <button type="button" class="btn btn-sm alert-action" id="inline-click-target">Hier klicken</button> im Nachrichtentext.',
   'timelineWizard.review': 'Überprüfen',
+  'queryResource.editFormTitle': 'queryResource + effect: ein bearbeitbares Formular befüllen',
+  'queryResource.editFormDesc':
+    'Laden Sie eine Entität mit queryResource und initialisieren Sie ein reaktives Formular mit einem Effect. Neue Abfragewerte setzen das Formular und ungespeicherte Änderungen zurück.',
 };

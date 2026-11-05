@@ -58,7 +58,6 @@ class DevtoolsConsumer {
 }
 Component({
   selector: 'devtools-consumer',
-  standalone: true,
   imports: [QueryDevtoolsComponent],
   template:
     '<cll-query-devtools /><div id="explicit"><cll-query-devtools [enabled]="enabled()" [client]="scopedClient" /></div>',
