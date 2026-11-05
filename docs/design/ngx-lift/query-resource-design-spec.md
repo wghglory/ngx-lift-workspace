@@ -240,7 +240,7 @@ interface TenantForm {
       <form [formGroup]="form()" (ngSubmit)="save()">
         <input id="name" formControlName="name" />
         <input id="role" formControlName="role" />
-        <button type="submit" [disabled]="saveMutation.isLoading()">Save</button>
+        <button type="submit" [clrLoading]="saveMutation.isLoading()">Save</button>
       </form>
       @if (saveMutation.status() === 'resolved') {
         <p>saved</p>

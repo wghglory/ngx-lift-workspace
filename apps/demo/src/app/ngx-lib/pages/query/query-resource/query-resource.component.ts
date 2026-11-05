@@ -645,6 +645,7 @@ import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
+// You can put the interface and form factory in a separate file
 interface Tenant {
   id: string;
   name: string;

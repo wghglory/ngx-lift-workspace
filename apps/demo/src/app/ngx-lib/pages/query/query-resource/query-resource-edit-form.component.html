@@ -12,7 +12,7 @@
       <label class="clr-control-label" for="tenant-role">{{ 'mutateResource.roleLabel' | translate }}</label>
       <input id="tenant-role" class="clr-input" formControlName="role" />
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="saveMutation.isLoading()">
+    <button cds-layout="m-t:md" type="submit" class="btn btn-primary" [clrLoading]="saveMutation.isLoading()">
       {{ 'queryExamples.submitWrite' | translate }}
     </button>
   </form>
