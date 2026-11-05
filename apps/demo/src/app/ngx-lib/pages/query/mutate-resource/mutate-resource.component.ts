@@ -254,6 +254,72 @@ clearLogs() {
   );
 
   // ---------------------------------------------------------------------------
+  // Demo 4: Per-call outcome callbacks
+  // ---------------------------------------------------------------------------
+  callbackOutcome = signal<'success' | 'error' | null>(null);
+  callbackBusy = signal(false);
+
+  callbackWriteMutation = mutateResource((args: {shouldFail: boolean}) => {
+    return new Promise<{ok: boolean}>((resolve, reject) => {
+      setTimeout(() => {
+        if (args.shouldFail) {
+          reject(new Error('simulated write failure'));
+        } else {
+          resolve({ok: true});
+        }
+      }, 300);
+    });
+  });
+
+  submitCallbackWrite(shouldFail: boolean): void {
+    this.callbackOutcome.set(null);
+    this.callbackBusy.set(true);
+    void this.callbackWriteMutation
+      .mutate(
+        {shouldFail},
+        {
+          onSuccess: () => this.callbackOutcome.set('success'),
+          onError: () => this.callbackOutcome.set('error'),
+        },
+      )
+      .catch(() => undefined)
+      .finally(() => this.callbackBusy.set(false));
+  }
+
+  readonly callbackCode = highlight(`import {signal} from '@angular/core';
+import {mutateResource} from 'ngx-lift';
+
+callbackOutcome = signal<'success' | 'error' | null>(null);
+callbackBusy = signal(false);
+
+callbackWriteMutation = mutateResource((args: {shouldFail: boolean}) => {
+  return new Promise<{ok: boolean}>((resolve, reject) => {
+    setTimeout(() => {
+      if (args.shouldFail) {
+        reject(new Error('simulated write failure'));
+      } else {
+        resolve({ok: true});
+      }
+    }, 300);
+  });
+});
+
+submitCallbackWrite(shouldFail: boolean): void {
+  this.callbackOutcome.set(null);
+  this.callbackBusy.set(true);
+  void this.callbackWriteMutation
+    .mutate(
+      {shouldFail},
+      {
+        onSuccess: () => this.callbackOutcome.set('success'),
+        onError: () => this.callbackOutcome.set('error'),
+      },
+    )
+    .catch(() => undefined)
+    .finally(() => this.callbackBusy.set(false));
+}`);
+
+  // ---------------------------------------------------------------------------
   // API Reference Tables
   // ---------------------------------------------------------------------------
   readonly mutateResourceApiProps = computed<ApiProperty[]>(() => [

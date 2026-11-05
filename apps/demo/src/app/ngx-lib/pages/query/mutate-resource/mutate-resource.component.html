@@ -327,6 +327,57 @@
     </app-demo-playground>
   </section>
 
+  <!-- ==================== DEMO 4: PER-CALL OUTCOME CALLBACKS ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2 id="per-call-callbacks"><code>mutate(args, options)</code></h2>
+
+    <app-demo-playground
+      [title]="'mutateResource.cardPromiseTitle' | translate"
+      [description]="'mutateResource.cardPromiseDesc' | translate"
+      level="intermediate"
+      layout="split"
+      [tsCode]="callbackCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <div cds-layout="horizontal gap:sm align:center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="callbackBusy()"
+              (click)="submitCallbackWrite(false)"
+            >
+              {{ 'queryExamples.submitWrite' | translate }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline"
+              [disabled]="callbackBusy()"
+              (click)="submitCallbackWrite(true)"
+            >
+              {{ 'queryExamples.failWrite' | translate }}
+            </button>
+          </div>
+
+          @if (callbackOutcome() === 'success') {
+            <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false">
+              <clr-alert-item>
+                <span class="alert-text">{{ 'queryLearn.saved' | translate }}</span>
+              </clr-alert-item>
+            </clr-alert>
+          }
+          @if (callbackOutcome() === 'error') {
+            <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+              <clr-alert-item>
+                <span class="alert-text">{{ 'queryExamples.writeMessage' | translate }}</span>
+              </clr-alert-item>
+            </clr-alert>
+          }
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
   <p id="domain-ownership">
     <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
   </p>

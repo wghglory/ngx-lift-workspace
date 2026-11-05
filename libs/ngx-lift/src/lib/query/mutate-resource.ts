@@ -38,8 +38,12 @@ export interface MutateResourceCallOptions<TArgs, TResult, E = Error> {
 export interface MutateResourceRef<TArgs, TResult, E = Error> {
   readonly value: Signal<TResult | undefined>;
   readonly error: Signal<E | null>;
-  /** Post-success cache synchronization failure. Always supplied by `mutateResource`. */
-  readonly invalidationError: Signal<unknown | null>;
+  /**
+   * Diagnostic-only post-success cache synchronization failure. Always supplied by `mutateResource`, but optional here
+   * so structural test doubles need not provide it. A non-null value still means the server write succeeded; it is not
+   * a control-flow signal for submit handlers.
+   */
+  readonly invalidationError?: Signal<unknown | null>;
   readonly status: Signal<'idle' | 'loading' | 'resolved' | 'error'>;
   /** True while any accepted invocation is outstanding, including queued `concat` work. */
   readonly isLoading: Signal<boolean>;

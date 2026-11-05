@@ -74,7 +74,7 @@ describe('mutateResource', () => {
     await expect(resource.mutate(undefined)).resolves.toBe('saved');
     expect(resource.status()).toBe('resolved');
     expect(resource.error()).toBeNull();
-    expect(resource.invalidationError()).toBe(failure);
+    expect(resource.invalidationError?.()).toBe(failure);
   });
 
   it('returns the server result when the client was disposed before invalidation', async () => {
@@ -88,7 +88,7 @@ describe('mutateResource', () => {
     client.destroy();
     result.next('saved');
     await expect(saved).resolves.toBe('saved');
-    expect(resource.invalidationError()).toBeInstanceOf(Error);
+    expect(resource.invalidationError?.()).toBeInstanceOf(Error);
   });
 
   it('runs only when explicitly invoked and invalidates tags from the successful result and arguments', async () => {
@@ -407,7 +407,7 @@ describe('mutateResource', () => {
         }),
       );
       await expect(resource.mutate(1, {onSuccess, onError})).resolves.toBe(2);
-      expect(resource.invalidationError()).toBeInstanceOf(Error);
+      expect(resource.invalidationError?.()).toBeInstanceOf(Error);
       expect(onSuccess).toHaveBeenCalledExactlyOnceWith(2, 1);
       expect(onError).not.toHaveBeenCalled();
     });

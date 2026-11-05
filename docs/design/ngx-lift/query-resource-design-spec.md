@@ -389,7 +389,6 @@ async saveName(name: string): Promise<void> {
   } catch {
     // error() keeps the failed write visible; do not advise resubmitting blindly.
   }
-  // A successful write can still report cache synchronization failure through invalidationError().
 }
 ```
 
@@ -1036,9 +1035,10 @@ entries or replace the provider deliberately. Mutation invalidation must use sco
 a current-session signal sampled after completion. Already-submitted writes may finish after observer destruction.
 
 Writes are never automatically replayed. A timeout can be an uncertain server outcome: reconcile by reading or an
-endpoint-specific idempotency protocol before resubmitting. `invalidationError` means the server write succeeded and
-cache synchronization failed; refresh reads instead of repeating the write. Shared optimistic cache setters and rollback
-are not implemented. See [mutation execution](mutate-resource-design-spec.md).
+endpoint-specific idempotency protocol before resubmitting. `invalidationError` is diagnostic-only: a non-null value
+means the server write succeeded but automatic tag invalidation threw, so never repeat that write; it is not a
+submit-handler branch. Shared optimistic cache setters and rollback are not implemented. See
+[mutation execution](mutate-resource-design-spec.md).
 
 ## Diagnostics
 
@@ -1123,11 +1123,13 @@ This is an audit of shipped behavior. Proposed features and unresolved implement
 [gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
 
 Contract follow-up, November 4, 2026: this revision adds the outcome tutorial and callback decision above, documents
-`QueryResourceDisabledError` / `QueryResourceDisposedError` and clarifies `reload()`. Those two additive exports and the
-narrowed `MutateResourceRef.invalidationError` type are submitted for maintainer review in the accompanying PR.
+`QueryResourceDisabledError` / `QueryResourceDisposedError` and clarifies `reload()`. Those two additive exports are
+submitted for maintainer review in the accompanying PR.
 
 November 5, 2026: the maintainer approved per-call `onSuccess` / `onError` for `mutateResource` only. The decision table
-above is updated to "Adopt (per-call only)"; `onSettled` remains rejected. This query API is unchanged.
+above is updated to "Adopt (per-call only)"; `onSettled` remains rejected. The submit-handler examples no longer branch
+on `invalidationError`: it is diagnostic-only, and tag invalidation refreshes active observers automatically. This query
+API is unchanged.
 
 ## Evidence
 

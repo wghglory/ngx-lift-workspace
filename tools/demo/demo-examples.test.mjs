@@ -193,6 +193,7 @@ test('interactive code excerpts contain the actual handlers driving their previe
       invalidationCode: ['addMemberMutation', 'submitNewMember'],
       concurrencyCode: ['runSimulatedMutation', 'triggerConcurrencyTest', 'clearLogs'],
       errorCode: ['saveSettingsMutation', 'onSaveSettings'],
+      callbackCode: ['callbackWriteMutation', 'submitCallbackWrite'],
     },
     'query/query-resource/query-resource': {
       coalesceCode: ['metricsService', 'metricsWidget', 'refreshMetrics'],

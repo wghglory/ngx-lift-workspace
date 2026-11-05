@@ -3,7 +3,8 @@
 Status: Implemented (contract audit + per-call outcome callbacks). Owner: ngx-lift maintainers. Updated: November
 5, 2026. Package: ngx-lift. Approval: existing API plus the October 16 maintainer request for consistent
 `invalidateTags` naming and domain-owned key/tag guidance, and the November 5 maintainer approval of per-call
-`onSuccess` / `onError` with `onSettled` rejected. Preserve the previous spelling as a compatibility alias.
+`onSuccess` / `onError` with `onSettled` rejected and `invalidationError` demoted to a diagnostic-only optional signal.
+Preserve the previous spelling as a compatibility alias.
 
 **Source:** [mutate-resource.ts](../../../libs/ngx-lift/src/lib/query/mutate-resource.ts)
 
@@ -114,14 +115,14 @@ Per-invocation `onSuccess` / `onError` are deliberately **not** members of `Muta
 
 ### 2.3 `MutateResourceRef<TArgs, TResult, E>` Surface
 
-| Property / Method        | Type                                                                                        | Description                                                                                                     |
-| :----------------------- | :------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------- |
-| `mutate(args, options?)` | `(args: TArgs, options?: MutateResourceCallOptions<TArgs, TResult, E>) => Promise<TResult>` | Executes the mutation and returns a standard Promise; optional per-call outcome callbacks are isolated from it. |
-| `value`                  | `Signal<TResult \| undefined>`                                                              | Retains last published success; only the latest accepted invocation can publish a replacement.                  |
-| `status`                 | `Signal<'idle' \| 'loading' \| 'resolved' \| 'error'>`                                      | Current mutation status: `'idle' \| 'loading' \| 'resolved' \| 'error'`.                                        |
-| `isLoading`              | `Signal<boolean>`                                                                           | `true` while any accepted invocation is outstanding, including queued `concat` work.                            |
-| `error`                  | `Signal<E \| null>`                                                                         | Failure of the latest accepted invocation; cleared when a new invocation is accepted.                           |
-| `invalidationError`      | `Signal<unknown \| null>`                                                                   | Post-success cache synchronization failure; never a failed server write.                                        |
+| Property / Method        | Type                                                                                        | Description                                                                                                             |
+| :----------------------- | :------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------- |
+| `mutate(args, options?)` | `(args: TArgs, options?: MutateResourceCallOptions<TArgs, TResult, E>) => Promise<TResult>` | Executes the mutation and returns a standard Promise; optional per-call outcome callbacks are isolated from it.         |
+| `value`                  | `Signal<TResult \| undefined>`                                                              | Retains last published success; only the latest accepted invocation can publish a replacement.                          |
+| `status`                 | `Signal<'idle' \| 'loading' \| 'resolved' \| 'error'>`                                      | Current mutation status: `'idle' \| 'loading' \| 'resolved' \| 'error'`.                                                |
+| `isLoading`              | `Signal<boolean>`                                                                           | `true` while any accepted invocation is outstanding, including queued `concat` work.                                    |
+| `error`                  | `Signal<E \| null>`                                                                         | Failure of the latest accepted invocation; cleared when a new invocation is accepted.                                   |
+| `invalidationError?`     | `Signal<unknown \| null>` (optional)                                                        | Diagnostic-only post-success cache synchronization failure; never a failed server write, never a submit-handler branch. |
 
 ```typescript
 // In an Angular injection context, with HttpClient provided.
@@ -134,8 +135,8 @@ const saveMutation = mutateResource((settings: {name: string}) => http.put<{name
   concurrency: 'exhaust',
   invalidateTags: [{type: 'Settings'}],
 });
-// In a submit handler, await saveMutation.mutate({name: 'Analytics'}).
-// Catch transport failure; inspect invalidationError separately after a successful write.
+// In a submit handler, await saveMutation.mutate({name: 'Analytics'}) then navigate or close the dialog.
+// A successful write refreshes tagged queries automatically; no manual reload or cache check is needed.
 ```
 
 ### 2.4 Reacting to outcomes
@@ -157,9 +158,7 @@ async save(name: string): Promise<void> {
   } catch {
     // error() keeps the failed write visible until the next attempt.
   }
-  if (this.saveMutation.invalidationError()) {
-    // The server write succeeded; refresh reads instead of repeating the write.
-  }
+  // Configured invalidateTags refreshed matching observers automatically; no reload() call here.
 }
 // Equivalent call-site form; see "Per-call outcome callbacks" below.
 void this.saveMutation.mutate({name}, {
@@ -175,8 +174,9 @@ dialogs or navigation that need the submitted arguments, use the Promise or the
 [per-call callbacks](#per-call-outcome-callbacks). `effect()` on `status()` is suitable for view state that does not
 need to know which invocation settled. See
 [Reacting to success and failure](query-resource-design-spec.md#reacting-to-success-and-failure) for the shared decision
-and the application-owned localization/accessibility boundary. The compiled mutation starter and the
-`saveSuccessMessage` preview in the demo already show this pattern in all supported languages.
+and the application-owned localization/accessibility boundary. The compiled mutation starter, the `saveSuccessMessage`
+preview and the runnable callback playground in the demo show these patterns in all supported languages. Successful
+writes refresh tagged observers automatically; no manual `reload()` or cache-sync check belongs in a submit handler.
 
 ---
 
@@ -226,14 +226,16 @@ The input scope and server-assigned ID select dependencies without duplicating t
 definitions in the domain module described in
 [large-project ownership](query-resource-design-spec.md#large-project-key-and-tag-ownership). Migrate `invalidatesTags:`
 to `invalidateTags:`; legacy consumers keep working. A throwing mapper remains a post-success synchronization failure
-through `invalidationError`, never a failed server write.
+recorded in `invalidationError`, never a failed server write.
 
-Post-success invalidation failures do not reject or reclassify the completed server write. `invalidationError` is a
-required member of `MutateResourceRef` and is always supplied by `mutateResource`; consumers do not need optional
-chaining. Callers that build structural test doubles must now provide a signal for it; this is a type-level narrowing,
-not a runtime change. Handle it separately from `error` so retry UI does not duplicate a successful write. In parallel
-mode, value/error/status publication belongs to the latest accepted invocation, regardless of completion order;
-`isLoading` remains true while any accepted invocation is outstanding, including work queued by `concat`.
+Post-success invalidation failures do not reject or reclassify the completed server write. `invalidationError` is
+**diagnostic-only**: it stays optional on `MutateResourceRef` so structural test doubles need not provide it, although
+`mutateResource` always supplies it. A non-null value normally means a mapper bug or a destroyed `QueryClient`, not a
+recoverable user-facing state, so submit handlers must not branch on it and must never repeat a successful write.
+Reporting these failures once through the client's `onDiagnostic` channel is a separate proposal with its own spec and
+approval; no global UI observer or per-call `onInvalidationError` hook is part of this API. In parallel mode,
+value/error/status publication belongs to the latest accepted invocation, regardless of completion order; `isLoading`
+remains true while any accepted invocation is outstanding, including work queued by `concat`.
 
 ### 3.3 Server Boundary & Argument Snapshots
 
@@ -368,13 +370,14 @@ order, not completion order. Invalidation failure is cache synchronization after
 
 ### Not now
 
-Shared optimistic rollback, reset and global mutation counters. A dedicated callback playground with localized demo
-prose is deferred to its own increment with all-locale and human-acceptance gates.
+Shared optimistic rollback, reset and global mutation counters. Prose written specifically for a callback playground is
+deferred; the shipped playground reuses existing translation keys.
 
 ### Outside this API
 
-Server write undo, automatic retry or endpoint idempotency guarantees. Resource-level outcome callbacks, `onSettled` and
-read-side callback symmetry are rejected, not deferred.
+Server write undo, automatic retry or endpoint idempotency guarantees. Resource-level outcome callbacks, `onSettled`,
+read-side callback symmetry, a global `invalidationError` UI observer and a per-call `onInvalidationError` hook are
+rejected, not deferred. Client-level `onDiagnostic` reporting of invalidation faults is a separate proposal.
 
 ## Use cases and acceptance
 
@@ -382,14 +385,14 @@ read-side callback symmetry are rejected, not deferred.
 | --- | ---------------------- | --------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- | --------------------------- |
 | M1  | Prevent double submit  | Active exhaust write; click again                         | Same Promise; second args ignored                              | Await original result/error                              | mutate-resource.spec.ts     |
 | M2  | Save independently     | Parallel submissions finish out of order                  | Every server write runs; latest invocation owns display        | Older completion cannot replace latest state             | ordering regressions        |
-| M3  | Synchronize cache      | Server succeeds; invalidation throws                      | mutate resolves server result                                  | invalidationError shows sync failure                     | post-success regression     |
+| M3  | Synchronize cache      | Server succeeds; invalidation throws                      | mutate resolves server result                                  | Diagnostic-only `invalidationError`; no app UI branch    | post-success regression     |
 | M4  | Dispose queued writer  | concat queue then injector destroy                        | Accepted started write finishes; queued transport never starts | Queued Promise rejects                                   | disposal tests              |
 | M5  | Share domain reads     | Table and summary observe one definition; create a member | One refetch updates both; other scope remains unchanged        | Closing summary preserves table observation              | query-key-ownership.spec.ts |
 | M6  | Map affected tags      | Successful write returns an ID; invocation contains scope | Mapper receives `(result, args)` and selects domain tags       | Failed writes do not call mapper; old option still works | mutate-resource.spec.ts     |
-| M7  | React to one success   | Submit a form with per-call `onSuccess`                   | Callback runs once with `(result, args)` after the write       | Callback faults are isolated as developer diagnostics    | callback regressions        |
-| M8  | React to one failure   | Transport rejects with per-call `onError`                 | Callback runs once with `(error, args)`; write still fails     | Invalidation failure never triggers it                   | callback regressions        |
-| M9  | Clear per-call pending | Either outcome for one invocation                         | `.finally()` on the returned Promise; `isLoading()` for views  | No `onSettled` API                                       | callback regressions        |
-| M10 | Fire-and-forget        | Template event supplies callbacks without `await`         | Callbacks run once; no unhandled rejection                     | Joined `exhaust` callers keep their own callbacks        | callback regressions        |
+| M7  | React to one success   | Submit a form with per-call `onSuccess`                   | Callback runs once with `(result, args)` after the write       | Callback faults are isolated as developer diagnostics    | callback demo + regressions |
+| M8  | React to one failure   | Transport rejects with per-call `onError`                 | Callback runs once with `(error, args)`; write still fails     | Invalidation failure never triggers it                   | callback demo + regressions |
+| M9  | Clear per-call pending | Either outcome for one invocation                         | `.finally()` on the returned Promise; `isLoading()` for views  | No `onSettled` API                                       | callback demo + regressions |
+| M10 | Fire-and-forget        | Template event supplies callbacks without `await`         | Callbacks run once; no unhandled rejection                     | Joined `exhaust` callers keep their own callbacks        | callback demo + regressions |
 
 ## Industry evidence and current gaps
 
@@ -413,9 +416,11 @@ library's full API surface.
 Use existing query/mutation demos and adjacent mutate-resource tests. Regressions cover plain values/thenables,
 Observable failure, each concurrency mode, latest-invocation ordering, disposal, post-success invalidation failure and
 the seven per-call callback cases (success, failure, invalidation, synchronous/asynchronous callback faults, `exhaust`
-join, `concat` disposal, type-level rejection of `onSettled`). Show transport error and synchronization error separately
-when presenting a write outcome. A dedicated callback playground with localized prose is still an open demo gate; no new
-dictionary key ships with the callbacks.
+join, `concat` disposal, type-level rejection of `onSettled`). The `mutateResource` page has a runnable
+`mutate(args, {onSuccess, onError})` playground for success and failure, with `.finally()` clearing pending state; its
+visible text reuses existing translation keys, so no new dictionary key or library-owned message was added. A demo
+component regression drives both outcomes. Show transport error and synchronization error separately when presenting a
+write outcome; `invalidationError` is diagnostic-only and is deliberately absent from the demo UI.
 
 October 16, 2026 local validation: 25 mutation regressions and four mutation-demo unit tests passed; 33 query browser
 cases passed across Chromium, Firefox and WebKit, including scoped invalidation and all 11 demo languages. Library/demo
@@ -426,34 +431,41 @@ callback in zoneless and ZoneJS modes. These are local checks, not CI, merge or 
 November 5, 2026 local validation: `pnpm run validate` passed with 890 ngx-lift unit tests, library type checking, lint,
 translation coverage, package builds and strict packed declarations in zoneless and ZoneJS installed consumers. An
 explicit `tsc --noEmit -p libs/ngx-lift/tsconfig.spec.json` run confirms the `@ts-expect-error` guard for `onSettled`;
-it also reports one pre-existing, unrelated error in `kubernetes-pagination.operator.spec.ts`. No Playwright browsers
-are cached locally, so browser checks were not rerun; no demo UI, route or dictionary key changed. CI, merge and
-publication remain separate gates.
+it also reports one pre-existing, unrelated error in `kubernetes-pagination.operator.spec.ts`. The callback playground
+reuses existing translation keys; no new route or dictionary key was added. No Playwright browsers are cached locally,
+so browser checks were not rerun; the accessibility browser suite and independent human language/assistive-technology
+acceptance for the changed page remain separate gates. CI, merge and publication remain separate gates.
 
 ## Compatibility, rollout, and risks
 
 Angular 21/RxJS and the selected QueryClient. Pass injector outside injection context. Arguments are not deep-cloned;
 queued writes need caller-owned snapshots. Form submission is an invocation boundary, not a CVA or native field bridge.
+The per-call options are additive, and `invalidationError` remains optional, so this revision introduces no consumer
+type break.
 
 ## Clarity, accessibility, and localization
 
 Headless API; it owns no control labels, focus or translations. Application UI shows pending, successful and failed
-writes separately, including post-success cache synchronization failure; it owns every visible or announced message in
-all supported locales. Per-call callbacks own no strings, focus or roles: any toast, announcement or dialog they trigger
-stays application-owned and localized. No new visible or announced message ships with the callback API, so no new
-translation keys were added. Forms invoke/observe this API without assigning it a CVA/native field value.
+writes separately; it owns every visible or announced message in all supported locales. `invalidationError` is
+diagnostic-only and is not surfaced as a visible or announced message. Per-call callbacks own no strings, focus or
+roles: any toast, announcement or dialog they trigger stays application-owned and localized. The callback playground
+reuses existing translation keys, so no new dictionary key was added. Forms invoke/observe this API without assigning it
+a CVA/native field value.
 
 ## Review decisions and delivery
 
 This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
 [gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md).
 
-Contract follow-up, November 4, 2026: this revision makes `invalidationError` required, documents the queued `concat`
-pending state, corrects the accessibility/localization paragraph and adds the outcome tutorial.
+Contract follow-up, November 4, 2026: this revision documents the queued `concat` pending state, corrects the
+accessibility/localization paragraph and adds the outcome tutorial.
 
 November 5, 2026: the maintainer approved `mutate(args, {onSuccess, onError})` and rejected `onSettled`. This spec, the
-runtime implementation, regressions, changelog and packed-consumer guards were delivered together in one PR so the
-documented contract and shipped code stay in sync. The narrowed `invalidationError` type remains submitted for review.
+runtime implementation, regressions, changelog, packed-consumer guards and a runnable demo playground were delivered
+together in one PR so the documented contract and shipped code stay in sync. `invalidationError` was demoted to a
+diagnostic-only optional signal and the earlier type narrowing reverted: submit handlers do not branch on it, tag
+invalidation refreshes active observers automatically, and no consumer compatibility break remains. Reporting such
+failures once through `onDiagnostic` is a separate proposal requiring its own spec and approval.
 
 ## Evidence
 
@@ -461,10 +473,11 @@ Contract checked against source and existing regression assertions at base `e4a4
 identify existing coverage; no runtime suites were rerun for that documentation-only change. Release/CI evidence remains
 in the corresponding PR and pipeline.
 
-November 5, 2026: seven per-call callback regressions, a type-level `onSettled` rejection test and installed-consumer
-guards were added alongside the implementation. `pnpm run validate` passed on this branch; results are reported in the
-accompanying PR. CI, merge, independent human language and assistive-technology acceptance, and publication remain
-separate gates.
+November 5, 2026: seven per-call callback regressions, a type-level `onSettled` rejection test, a runnable demo
+playground with its own component regression, and installed-consumer guards were added alongside the implementation.
+`invalidationError` stays optional and diagnostic-only; submit-handler examples no longer branch on it. Local validation
+results are reported in the accompanying PR. CI, merge, independent human language and assistive-technology acceptance,
+and publication remain separate gates.
 
 Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
 [query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the

@@ -39,18 +39,15 @@ recorded for the affected releases.
   Promise's `.finally()`. See
   [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
 
-### Changed
-
-- `MutateResourceRef.invalidationError` is required. `mutateResource` always supplied the signal, so callers no longer
-  need optional chaining; callers that construct structural test doubles must now provide one. This is a type-level
-  narrowing with no runtime behavior change.
-
 ### Fixed
 
 - Documentation-only contract alignment: the `resourceAsync` spec now lists every shipped option and its exact callback
   semantics (including the removed `execute({onSuccess, onError})` shape), the query/mutation specs record the
   observer-level no-callback decision and the outcome tutorial. The mutation accessibility paragraph, `reload()` boolean
-  wording and queued `concat` pending state are corrected. No demo UI text, route or dictionary key changed.
+  wording and queued `concat` pending state are corrected. `MutateResourceRef.invalidationError` stays optional as a
+  diagnostic-only signal, not a control-flow gate for submit handlers.
+- The `mutateResource` demo includes a runnable per-call callback playground (success, failure and `.finally()` cleanup)
+  that reuses existing translation keys; no new route, dictionary key or library-owned message was added.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 
