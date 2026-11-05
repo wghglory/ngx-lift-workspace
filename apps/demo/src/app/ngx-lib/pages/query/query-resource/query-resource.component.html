@@ -298,8 +298,8 @@
   <section data-testid="query-edit-form" cds-layout="vertical gap:md align:stretch" class="m-t-lg">
     <h2 id="edit-form-without-effect"><code>queryResource</code> + <code>effect</code></h2>
     <p>
-      Load an entity with <code>queryResource</code> and initialize a stable reactive form using an effect. The form is
-      reset only when the entity changes, so a background refetch preserves edits. Save reads the mutation ref state.
+      Load an entity with <code>queryResource</code> and initialize a stable reactive form using an effect. Each new
+      query value resets the form, including any unsaved edits. Save reads the mutation ref state.
     </p>
     <app-demo-playground
       [title]="'queryResource.editFormTitle' | translate"

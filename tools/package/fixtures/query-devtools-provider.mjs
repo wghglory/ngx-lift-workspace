@@ -38,7 +38,7 @@ const mode = process.argv[2];
 const development = process.argv[3] === 'development';
 if (mode === 'zone') await import('zone.js/node');
 class ProviderConsumer {}
-Component({selector: 'provider-consumer', standalone: true, template: '<p>Application content</p>'})(ProviderConsumer);
+Component({selector: 'provider-consumer', template: '<p>Application content</p>'})(ProviderConsumer);
 const client = new QueryClient();
 await client.fetchQuery({key: ['provider-owned'], loader: () => Promise.resolve(42)});
 const app = await bootstrapApplication(ProviderConsumer, {

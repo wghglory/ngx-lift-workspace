@@ -2912,5 +2912,5 @@ export const esTranslations: Record<string, string> = {
   'timelineWizard.review': 'Revisar',
   'queryResource.editFormTitle': 'queryResource + effect: rellenar un formulario editable',
   'queryResource.editFormDesc':
-    'Carga una entidad con queryResource y, a partir de ella, rellena un formulario reactivo mediante effect anclado al id de la entidad, de modo que una recarga en segundo plano conserva los cambios del usuario. El guardado lee el estado del ref de mutación.',
+    'Cargue una entidad con queryResource e inicialice un formulario reactivo con un effect. Los nuevos valores de consulta restablecen el formulario y los cambios sin guardar.',
 };

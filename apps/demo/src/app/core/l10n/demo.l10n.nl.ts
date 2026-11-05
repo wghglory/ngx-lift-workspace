@@ -2883,5 +2883,5 @@ export const nlTranslations: Record<string, string> = {
   'timelineWizard.review': 'Controleren',
   'queryResource.editFormTitle': 'queryResource + effect: een bewerkbaar formulier vullen',
   'queryResource.editFormDesc':
-    'Laadt een entiteit met queryResource en vult vervolgens een reactief formulier via effect dat is gekoppeld aan de entiteits-id, zodat een achtergrond-herfetch de bewerkingen van de gebruiker behoudt. Het opslaan leest de status van de mutation-ref.',
+    'Laad een entiteit met queryResource en initialiseer een reactief formulier met een effect. Nieuwe querywaarden zetten het formulier en niet-opgeslagen wijzigingen terug.',
 };

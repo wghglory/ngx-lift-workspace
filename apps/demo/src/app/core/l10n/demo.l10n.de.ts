@@ -2924,5 +2924,5 @@ export const deTranslations: Record<string, string> = {
   'timelineWizard.review': 'Überprüfen',
   'queryResource.editFormTitle': 'queryResource + effect: ein bearbeitbares Formular befüllen',
   'queryResource.editFormDesc':
-    'Lädt eine Entität mit queryResource und befüllt daraus ein reaktives Formular über effect, das auf die Entitäts-ID abgestimmt ist, sodass ein Hintergrund-Refetch die Bearbeitung des Benutzers erhält. Der Save-Vorgang liest den Status des Mutation-Refs.',
+    'Laden Sie eine Entität mit queryResource und initialisieren Sie ein reaktives Formular mit einem Effect. Neue Abfragewerte setzen das Formular und ungespeicherte Änderungen zurück.',
 };

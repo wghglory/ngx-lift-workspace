@@ -2547,5 +2547,5 @@ export const zhTWTranslations: Record<string, string> = {
   'timelineWizard.review': '檢閱',
   'queryResource.editFormTitle': 'queryResource + effect：為可編輯表單填入資料',
   'queryResource.editFormDesc':
-    '使用 queryResource 載入實體，再透過 effect 以實體 id 為鍵為響應式表單填入初始值，這樣後台重新取得時不會覆蓋使用者的編輯。儲存時讀取 mutation ref 自身的狀態。',
+    '使用 queryResource 載入實體，並透過 effect 初始化響應式表單。新的查詢值會重設表單，包括未儲存的編輯。',
 };

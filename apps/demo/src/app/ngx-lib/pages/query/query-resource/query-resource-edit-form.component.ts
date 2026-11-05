@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, effect, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
@@ -17,7 +17,6 @@ interface TenantForm {
 
 @Component({
   selector: 'app-query-resource-edit-form',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
   templateUrl: './query-resource-edit-form.component.html',
@@ -36,18 +35,10 @@ export class QueryResourceEditFormComponent {
     name: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
     role: new FormControl('', {nonNullable: true}),
   });
-  private readonly initializedId = signal<string | undefined>(undefined);
-  readonly loaded = computed(() => {
-    const tenant = this.tenantQuery.value();
-    return !!tenant && tenant.id === this.initializedId();
-  });
-
   constructor() {
     effect(() => {
       const tenant = this.tenantQuery.value();
-      if (!tenant || tenant.id === this.initializedId()) return;
-      this.form.reset({name: tenant.name, role: tenant.role});
-      this.initializedId.set(tenant.id);
+      if (tenant) this.form.reset({name: tenant.name, role: tenant.role});
     });
   }
 
@@ -62,12 +53,12 @@ export class QueryResourceEditFormComponent {
   );
 
   save(): void {
-    const id = this.initializedId();
-    if (id === undefined || !this.loaded()) return;
+    const tenant = this.tenantQuery.value();
+    if (!tenant) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-    void this.saveMutation.mutate({id, ...this.form.getRawValue()}).catch(() => undefined);
+    void this.saveMutation.mutate({id: tenant.id, ...this.form.getRawValue()}).catch(() => undefined);
   }
 }

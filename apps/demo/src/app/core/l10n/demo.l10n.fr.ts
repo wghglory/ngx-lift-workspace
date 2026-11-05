@@ -2935,5 +2935,5 @@ export const frTranslations: Record<string, string> = {
   'timelineWizard.review': 'Vérifier',
   'queryResource.editFormTitle': 'queryResource + effect : alimenter un formulaire éditable',
   'queryResource.editFormDesc':
-    "Charge une entité avec queryResource, puis alimente un formulaire réactif via effect indexé sur l'id de l'entité, afin qu'un rechargement en arrière-plan conserve les modifications de l'utilisateur. L'enregistrement lit l'état du ref de mutation.",
+    'Chargez une entité avec queryResource et initialisez un formulaire réactif avec un effect. Les nouvelles valeurs réinitialisent le formulaire et les modifications non enregistrées.',
 };

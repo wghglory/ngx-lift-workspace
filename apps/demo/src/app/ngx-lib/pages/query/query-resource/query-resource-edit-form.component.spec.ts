@@ -20,7 +20,7 @@ describe('QueryResourceEditFormComponent', () => {
     expect(fixture.componentInstance.form.value.role).toBe('admin');
   });
 
-  it('keeps user edits when the same entity refetches', async () => {
+  it('resets the stable form when the same entity refetches', async () => {
     const fixture = TestBed.createComponent(QueryResourceEditFormComponent);
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.componentInstance.form.value.name).toBe('Acme Corp'));
@@ -32,12 +32,12 @@ describe('QueryResourceEditFormComponent', () => {
     await fixture.componentInstance.tenantQuery.execute();
     fixture.detectChanges();
     expect(fixture.componentInstance.tenantQuery.value()).not.toBe(before);
-    // The same-id refetch must NOT rebuild the form nor clobber the edit.
+    // A fresh query value resets the existing form, including unsaved edits.
     expect(fixture.componentInstance.form).toBe(form);
-    expect(fixture.componentInstance.form.value.name).toBe('Edited Name');
+    expect(fixture.componentInstance.form.value.name).toBe('Acme Corp');
   });
 
-  it('retains edits through an absent value and resets the same form for a different entity', () => {
+  it('keeps the form while the value is absent and resets it when data arrives', () => {
     const fixture = TestBed.createComponent(QueryResourceEditFormComponent);
     const value = signal<{id: string; name: string; role: string} | undefined>({
       id: 'one',
@@ -57,15 +57,10 @@ describe('QueryResourceEditFormComponent', () => {
     value.set({id: 'one', name: 'Refetched', role: 'admin'});
     fixture.detectChanges();
     expect(fixture.componentInstance.form).toBe(form);
-    expect(form.controls.name.value).toBe('Edited');
+    expect(form.controls.name.value).toBe('Refetched');
     value.set({id: 'two', name: 'Second', role: 'user'});
-    expect(fixture.componentInstance.loaded()).toBe(false);
-    const mutate = vi.spyOn(fixture.componentInstance.saveMutation, 'mutate');
-    fixture.componentInstance.save();
-    expect(mutate).not.toHaveBeenCalled();
     fixture.detectChanges();
     expect(fixture.componentInstance.form).toBe(form);
-    expect(fixture.componentInstance.loaded()).toBe(true);
     expect(form.pristine).toBe(true);
     expect(form.controls.name.untouched).toBe(true);
     expect(fixture.componentInstance.form.controls.name.value).toBe('Second');

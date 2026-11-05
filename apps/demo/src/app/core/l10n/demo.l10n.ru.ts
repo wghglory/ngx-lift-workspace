@@ -2866,5 +2866,5 @@ export const ruTranslations: Record<string, string> = {
   'timelineWizard.review': 'Проверка',
   'queryResource.editFormTitle': 'queryResource + effect: заполнение редактируемой формы',
   'queryResource.editFormDesc':
-    'Загружает сущность с помощью queryResource, затем заполняет реактивную форму через effect, привязанный к id сущности, чтобы фоновая перезагрузка сохраняла правки пользователя. Сохранение считывает состояние mutation-ref.',
+    'Загрузите сущность с помощью queryResource и инициализируйте реактивную форму с помощью effect. Новые значения запроса сбрасывают форму и несохранённые изменения.',
 };

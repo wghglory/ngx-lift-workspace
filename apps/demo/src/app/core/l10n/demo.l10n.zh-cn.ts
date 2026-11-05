@@ -2556,5 +2556,5 @@ export const zhCNTranslations: Record<string, string> = {
   'timelineWizard.review': '检查',
   'queryResource.editFormTitle': 'queryResource + effect：为可编辑表单填充数据',
   'queryResource.editFormDesc':
-    '使用 queryResource 加载实体，再通过 effect 以实体 id 为键为响应式表单填充初始值，这样后台重新获取时不会覆盖用户的编辑。保存时读取 mutation ref 自身的状态。',
+    '使用 queryResource 加载实体，并通过 effect 初始化响应式表单。新的查询值会重置表单，包括未保存的编辑。',
 };

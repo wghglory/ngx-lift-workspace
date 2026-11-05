@@ -2735,5 +2735,5 @@ export const koTranslations: Record<string, string> = {
   'timelineWizard.review': '검토',
   'queryResource.editFormTitle': 'queryResource + effect: 편집 가능한 폼 채우기',
   'queryResource.editFormDesc':
-    'queryResource로 엔티티를 불러온 다음, effect을 엔티티 id에 연결해 리액티브 폼을 채웁니다. 따라서 백그라운드 재조회가 일어나도 사용자의 수정 내용이 유지됩니다. 저장은 뮤테이션 ref의 상태를 읽습니다.',
+    'queryResource로 엔티티를 불러오고 effect로 리액티브 폼을 초기화합니다. 새 쿼리 값이 도착하면 저장하지 않은 수정 내용을 포함해 폼이 초기화됩니다.',
 };

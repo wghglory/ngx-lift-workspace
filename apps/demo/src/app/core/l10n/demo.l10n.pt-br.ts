@@ -2860,5 +2860,5 @@ export const ptBRTranslations: Record<string, string> = {
   'timelineWizard.review': 'Revisar',
   'queryResource.editFormTitle': 'queryResource + effect: preencher um formulário editável',
   'queryResource.editFormDesc':
-    'Carrega uma entidade com queryResource e, a partir dela, preenche um formulário reativo via effect vinculado ao id da entidade, de modo que uma recarga em segundo plano mantém as edições do usuário. O salvamento lê o estado do ref de mutação.',
+    'Carregue uma entidade com queryResource e inicialize um formulário reativo com um effect. Novos valores da consulta redefinem o formulário e as alterações não salvas.',
 };

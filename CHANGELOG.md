@@ -39,7 +39,7 @@ recorded for the affected releases.
   Promise's `.finally()`. See
   [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
 - The `queryResource` demo adds a runnable edit-form example. An effect initializes a stable reactive form when the
-  entity changes, preserving edits during same-entity refetches. Save reads the mutation ref's state.
+  query value changes, including same-entity refetches. Save reads the mutation ref's state.
 
 ### Fixed
 

@@ -2781,5 +2781,5 @@ export const enTranslations: Record<string, string> = {
   'timelineWizard.review': 'Review',
   'queryResource.editFormTitle': 'queryResource + effect: seed an editable form',
   'queryResource.editFormDesc':
-    'Load an entity with queryResource, then seed a reactive form via effect keyed on the entity id so a background refetch keeps the user edits. Save reads the mutation ref state.',
+    'Load an entity with queryResource and use an effect to initialize a reactive form. New query values reset the form, including unsaved edits.',
 };

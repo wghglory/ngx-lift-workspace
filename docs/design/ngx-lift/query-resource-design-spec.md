@@ -210,12 +210,12 @@ collections and a shared concurrency scheduler are deferred until a consumer nee
 ## Seeding an editable form from a query
 
 A reactive form can keep one `FormGroup` for the component's lifetime. An effect bridges the query signal to this
-imperative API: it resets the form when the entity ID changes and leaves same-entity refetches alone. The initialized ID
-also gates rendering and saving, so a new query value cannot be submitted with the previous entity's form values before
-the effect runs. Resetting marks the form pristine and untouched. Handle navigation with unsaved edits separately.
+imperative API and resets the form when a query value arrives. **A same-entity refetch also resets the form and discards
+unsaved edits**. Use this simple approach only when that behavior is acceptable; add an explicit synchronization policy
+if edits must survive refreshes. Handle navigation with unsaved edits separately.
 
 ```typescript
-import {ChangeDetectionStrategy, Component, computed, effect, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {TranslatePipe} from 'clr-lift';
@@ -234,7 +234,6 @@ interface TenantForm {
 
 @Component({
   selector: 'app-query-resource-edit-form',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
   templateUrl: './query-resource-edit-form.component.html',
@@ -253,18 +252,10 @@ export class QueryResourceEditFormComponent {
     name: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
     role: new FormControl('', {nonNullable: true}),
   });
-  private readonly initializedId = signal<string | undefined>(undefined);
-  readonly loaded = computed(() => {
-    const tenant = this.tenantQuery.value();
-    return !!tenant && tenant.id === this.initializedId();
-  });
-
   constructor() {
     effect(() => {
       const tenant = this.tenantQuery.value();
-      if (!tenant || tenant.id === this.initializedId()) return;
-      this.form.reset({name: tenant.name, role: tenant.role});
-      this.initializedId.set(tenant.id);
+      if (tenant) this.form.reset({name: tenant.name, role: tenant.role});
     });
   }
 
@@ -279,21 +270,21 @@ export class QueryResourceEditFormComponent {
   );
 
   save(): void {
-    const id = this.initializedId();
-    if (id === undefined || !this.loaded()) return;
+    const tenant = this.tenantQuery.value();
+    if (!tenant) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-    void this.saveMutation.mutate({id, ...this.form.getRawValue()}).catch(() => undefined);
+    void this.saveMutation.mutate({id: tenant.id, ...this.form.getRawValue()}).catch(() => undefined);
   }
 }
 ```
 
-The runnable demo uses the template in `query-resource-edit-form.component.html`. `reset()` emits form events by
-default; choose `{emitEvent: false}` only if the application deliberately does not want those notifications. A same-ID
-refetch does not refresh untouched fields; implement an explicit reconciliation or reload action if the product requires
-one.
+The runnable demo uses the template in `query-resource-edit-form.component.html`. `reset()` marks controls pristine and
+untouched and emits form events by default. Choose `{emitEvent: false}` only if the application deliberately does not
+want those notifications. The effect runs during change detection; avoid submitting a newly loaded entity before it has
+run.
 
 This effect synchronizes a signal with the imperative Reactive Forms API; it does not copy between signals. For Angular
 22 Signal Forms, Angular instead demonstrates a `linkedSignal` for the writable model and a stable form created from it.

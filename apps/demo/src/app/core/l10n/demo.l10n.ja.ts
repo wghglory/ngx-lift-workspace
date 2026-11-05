@@ -2776,5 +2776,5 @@ export const jaTranslations: Record<string, string> = {
   'timelineWizard.review': '確認',
   'queryResource.editFormTitle': 'queryResource + effect: 編集可能なフォームへの投入',
   'queryResource.editFormDesc':
-    'queryResource でエンティティを読み込み、effect をエンティティの id に紐付けてリアクティブなフォームに値を投入します。これによりバックグラウンドの再取得でもユーザーの編集が保持されます。保存はミューテーション ref の状態を読み取ります。',
+    'queryResource でエンティティを読み込み、effect でリアクティブフォームを初期化します。新しいクエリ値により、未保存の編集を含めフォームがリセットされます。',
 };
