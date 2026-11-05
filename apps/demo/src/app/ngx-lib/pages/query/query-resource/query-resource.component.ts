@@ -632,6 +632,104 @@ submitNewUser() {
 }`);
 
   // ---------------------------------------------------------------------------
+  // Demo 5: Seed an editable form from a query (no effect)
+  // ---------------------------------------------------------------------------
+  readonly editFormTitle = 'queryResource + linkedSignal: seed an editable form';
+  readonly editFormDesc =
+    'Load an entity with queryResource, then seed a reactive form via linkedSignal keyed on the entity id so a background refetch keeps the user edits. Save reads the mutation ref state.';
+
+  readonly editFormCode =
+    highlight(`import {ChangeDetectionStrategy, Component, computed, linkedSignal} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {TranslatePipe} from 'clr-lift';
+import {mutateResource, queryResource} from 'ngx-lift';
+
+interface Tenant {
+  id: string;
+  name: string;
+  role: string;
+}
+interface TenantForm {
+  id: FormControl<string>;
+  name: FormControl<string>;
+  role: FormControl<string>;
+}
+
+// One factory builds both the empty and the seeded form.
+function tenantForm(tenant: Tenant | null): FormGroup<TenantForm> {
+  return new FormGroup<TenantForm>({
+    id: new FormControl(tenant?.id ?? '', {nonNullable: true}),
+    name: new FormControl(tenant?.name ?? '', {nonNullable: true, validators: [Validators.required]}),
+    role: new FormControl(tenant?.role ?? '', {nonNullable: true}),
+  });
+}
+
+@Component({
+  selector: 'app-query-resource-edit-form',
+  imports: [ReactiveFormsModule, ClarityModule, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class QueryResourceEditFormComponent {
+  readonly tenantQuery = queryResource<Tenant>(() => ({
+    key: ['tenant', 'detail', 'tenant-1'],
+    loader: () =>
+      new Promise<Tenant>((resolve) =>
+        setTimeout(() => resolve({id: 'tenant-1', name: 'Acme Corp', role: 'admin'}), 400),
+      ),
+  }));
+
+  readonly loaded = computed(() => this.tenantQuery.hasValue());
+
+  // source is the id, so the computation re-runs only when the id changes: the first
+  // resolution seeds the form, a same-id refetch keeps the edits, another id rebuilds.
+  readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
+    source: () => this.tenantQuery.value()?.id ?? null,
+    computation: (id, previous) => {
+      const tenant = this.tenantQuery.value();
+      if (id && tenant) return tenantForm(tenant);
+      return previous?.value ?? tenantForm(null);
+    },
+  });
+
+  // Save reads the mutation ref state - no extra local outcome signals.
+  readonly saveMutation = mutateResource(
+    (args: Tenant) =>
+      new Promise<Tenant>((resolve, reject) =>
+        setTimeout(() => (Math.random() < 0.15 ? reject(new Error('simulated 500')) : resolve(args)), 300),
+      ),
+  );
+
+  save(): void {
+    if (this.form().invalid) {
+      this.form().markAllAsTouched();
+      return;
+    }
+    void this.saveMutation.mutate(this.form().getRawValue() as Tenant).catch(() => undefined);
+  }
+}`);
+
+  readonly editFormHtmlCode = highlight(
+    `@if (tenantQuery.isLoading()) {
+  <clr-spinner></clr-spinner>
+}
+@if (loaded()) {
+  <form [formGroup]="form()" (ngSubmit)="save()">
+    <input id="name" formControlName="name" />
+    <input id="role" formControlName="role" />
+    <button type="submit" [disabled]="saveMutation.isLoading()">Save</button>
+  </form>
+  @if (saveMutation.status() === 'resolved') {
+    <p>saved</p>
+  }
+  @if (saveMutation.status() === 'error') {
+    <p>failed</p>
+  }
+}`,
+    'html',
+  );
+
+  // ---------------------------------------------------------------------------
   // API Reference Tables
   // ---------------------------------------------------------------------------
   readonly queryResourceApiProps = computed<ApiProperty[]>(() => [
