@@ -399,6 +399,40 @@ whether it succeeded; failures appear in `error()` and `isRefreshError()`. `exec
 `QueryResourceDisabledError` when the definition is `undefined` and `QueryResourceDisposedError` after destruction,
 while transport failures keep their original error type.
 
+### Seeding an edit form without an effect
+
+A query result often becomes the initial value of an edit form. Do **not** copy `value()` into a `FormGroup` inside an
+`effect`: that re-runs on every reactive refetch and clobbers the user's edits, which is exactly the Angular team's
+"effect is not the first choice for copying state" warning. Key a `linkedSignal` on the entity id instead:
+
+```typescript
+readonly tenantQuery = queryResource<Tenant>(() => ({
+  key: ['tenant', 'detail', id()],
+  loader: () => loadTenant(id()),
+}));
+
+// Source is the id, so the computation re-runs only when the id changes: the first resolution
+// seeds the form, and a background refetch of the same entity keeps the edits already in the form.
+readonly form = linkedSignal<string | null, FormGroup<TenantForm>>({
+  source: () => this.tenantQuery.value()?.id ?? null,
+  computation: (id, previous) => {
+    const tenant = this.tenantQuery.value();
+    if (id && tenant) {
+      return new FormGroup<TenantForm>({
+        name: new FormControl(tenant.name, {nonNullable: true}),
+        role: new FormControl(tenant.role, {nonNullable: true}),
+      });
+    }
+    return previous?.value ?? emptyTenantForm();
+  },
+});
+```
+
+`linkedSignal` re-derives only when its `source` (the id) changes, so a same-id refresh leaves the live `FormGroup`
+untouched. For a reactive-forms facade with signal-based field access, wrap the `FormGroup` with `toSignalForm`; for
+one-way seeding where the form is the source of truth, `linkedSignal` is the recommended bridge. The runnable version
+lives in the `queryResource` demo (`app-query-resource-edit-form`).
+
 ### Application-wide reporting
 
 Use the client-level `onQueryError` hook in [Application configuration](#application-configuration) for logging or

@@ -1,4 +1,5 @@
 import {QueryStarterComponent} from '../query-starter/query-starter.component';
+import {QueryResourceEditFormComponent} from './query-resource-edit-form.component';
 import {QUERY_STARTER_SOURCE, QUERY_STARTER_TEMPLATE} from '../query-starter/query-starter.example';
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject, signal, computed, viewChild} from '@angular/core';
@@ -55,6 +56,7 @@ interface DemoUser {
     ProjectDetailDemoComponent,
     AuthPlacementDemoComponent,
     MetricsWidgetComponent,
+    QueryResourceEditFormComponent,
   ],
   providers: [DatabaseStateService, MetricsService],
   templateUrl: './query-resource.component.html',

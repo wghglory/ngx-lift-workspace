@@ -38,6 +38,10 @@ recorded for the affected releases.
   never change the write outcome or its returned Promise. `onSettled` is deliberately not offered; use the returned
   Promise's `.finally()`. See
   [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
+- The `queryResource` demo adds a runnable edit-form example that seeds an editable `FormGroup` from the query result
+  **without an `effect`**, using a `linkedSignal` keyed on the entity id so a background refetch keeps the user's edits.
+  It reuses existing translation keys and pairs the form with the per-call `onSuccess` / `onError` save. No new route,
+  dictionary key or library-owned message was added.
 
 ### Fixed
 

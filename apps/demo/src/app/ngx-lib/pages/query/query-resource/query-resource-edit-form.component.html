@@ -1,0 +1,34 @@
+@if (tenantQuery.isLoading()) {
+  <clr-spinner></clr-spinner>
+}
+
+@if (loaded()) {
+  <form [formGroup]="form()" (ngSubmit)="save()">
+    <div class="clr-form-control">
+      <label class="clr-control-label" for="tenant-name">{{ 'mutateResource.nameLabel' | translate }}</label>
+      <input id="tenant-name" class="clr-input" formControlName="name" />
+    </div>
+    <div class="clr-form-control">
+      <label class="clr-control-label" for="tenant-role">{{ 'mutateResource.roleLabel' | translate }}</label>
+      <input id="tenant-role" class="clr-input" formControlName="role" />
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      {{ 'queryExamples.submitWrite' | translate }}
+    </button>
+  </form>
+
+  @if (saveOutcome() === 'success') {
+    <clr-alert [clrAlertType]="'success'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text">{{ 'queryLearn.saved' | translate }}</span>
+      </clr-alert-item>
+    </clr-alert>
+  }
+  @if (saveOutcome() === 'error') {
+    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text">{{ 'queryExamples.writeMessage' | translate }}</span>
+      </clr-alert-item>
+    </clr-alert>
+  }
+}
