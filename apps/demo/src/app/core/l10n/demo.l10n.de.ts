@@ -3,6 +3,28 @@ export const deTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Ausgewählte Organisationen',
   'selectionDemo.selectedCount': '{0} ausgewählt · höchstens {1}',
+  'selectionDemo.server': 'Server-seitige Auswahl',
+  'selectionDemo.serverHelp':
+    'Fordert eine begrenzte Seite aus dem kontrollierten HTTP-Testdatensatz an. Auswählen oder Löschen von Zeilen betrifft nur die Zeilen der aktuell gefilterten Seite.',
+  'selectionDemo.serverSavedHelp':
+    'Gespeicherte Schlüssel bleiben über Seiten-, Filter- und Sortieränderungen erhalten. „Gespeicherte Schlüssel laden“ stellt Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) und Willow (org-s-23) wieder her; Elm ist in Wartung, die übrigen liegen auf nicht angeforderten Seiten. Zurücksetzen stellt Quince (org-s-17) und Willow (org-s-23) wieder her.',
+  'selectionDemo.serverScope': 'Bereich',
+  'selectionDemo.serverCommerce': 'Handel',
+  'selectionDemo.serverPublic': 'Öffentlich',
+  'selectionDemo.serverNameFilter': 'Organisationen nach Name filtern',
+  'selectionDemo.serverSummary': 'Ausgewählte Schlüssel ({0})',
+  'selectionDemo.serverOffPage': 'Gespeicherter Schlüssel von einer nicht angeforderten Seite',
+  'selectionDemo.serverEmpty': 'Keine Organisationen entsprechen dieser Serverseite.',
+  'selectionDemo.serverLoading': 'Diese Serverseite wird geladen…',
+  'selectionDemo.serverEvidence': 'Serverantwort: Seite {0} von {1}, {2} Treffer, Bereich {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'Name aufsteigend',
+  'selectionDemo.serverSortDesc': 'Name absteigend',
+  'selectionDemo.serverLoadSaved': 'Gespeicherte Schlüssel laden',
+  'selectionDemo.serverSubmit': 'Schlüssel übermitteln',
+  'selectionDemo.serverSubmitted': 'Übermittelte Schlüssel: {0}',
+  'selectionDemo.serverPicker': 'Wiederverwendbare Server-Auswahl',
+  'selectionDemo.serverPickerHelp':
+    'Die Auswahlkomponente besitzt die Serverabfrage, das Laden, den Fehler und das Wiederholen; die übergeordnete Gruppe besitzt Werte, Validierung und die gespeicherte Schlüsselbasis. Zurücksetzen stellt Maple (org-s-13) und Yarrow (org-s-25) wieder her.',
   'selectionDemo.unavailableName': 'Nicht verfügbare Organisation',
   'selectionDemo.unverifiedName': 'Nicht überprüfte Organisation',
   'selectionDemo.removeKey': '{0} entfernen',
@@ -13,9 +35,9 @@ export const deTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Entfernen Sie nicht verfügbare Organisationen vor dem Speichern.',
 
   'selectionDemo.savedHelp':
-    'Gespeicherte Auswahl laden stellt South (org-2) und einen in dieser Liste fehlenden Schlüssel wieder her. Aktualisieren ersetzt die Liste und behält ausgewählte Schlüssel. Zurücksetzen stellt South wieder her.',
+    'Gespeichelte Auswahl laden stellt Organization 2 (org-2) und einen in dieser Liste fehlenden Schlüssel wieder her. Aktualisieren ersetzt die Liste und behält ausgewählte Schlüssel. Zurücksetzen stellt Organization 2 wieder her.',
   'selectionDemo.pickerHelp':
-    'Der Picker verwaltet Laden und Tabelle; die Elternkomponente verwaltet Validierung und Senden. Zurücksetzen stellt North (org-1) wieder her.',
+    'Der Picker verwaltet Laden und Tabelle; die Elternkomponente verwaltet Validierung und Senden. Zurücksetzen stellt Organization 1 (org-1) wieder her.',
   'selectionDemo.reference.overview':
     'Umschließt genau ein natives Clarity-Datagrid mit einem einfachen Label. Das Formular nur an das Auswahlfeld oder den Picker-Host binden.',
   'selectionDemo.reference.required':
@@ -40,6 +62,9 @@ export const deTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Horizontales Layout',
   'selectionDemo.loadSaved': 'Gespeicherte Auswahl laden',
   'selectionDemo.readonly': 'Schreibgeschützt',
+  'selectionDemo.policyName': 'Richtlinienname',
+  'selectionDemo.policyControls': 'Steuerelemente des Auswahlbeispiels',
+  'selectionDemo.serverControls': 'Steuerelemente der Serverauswahl',
   'selectionDemo.disabled': 'Deaktiviert',
   'organizationExample.organization': 'Organisation',
   'organizationExample.organizations': 'Organisationen',
@@ -63,9 +88,9 @@ export const deTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'Die Organisationsauswahl ist ungültig.',
   'selectionDemo.asyncSubmit': 'Asynchrone Validierung und Pufferung beim Senden',
   'selectionDemo.asyncSubmitHelp':
-    'Auswahlen werden bis zum Senden gepuffert. Danach läuft eine asynchrone Berechtigungsprüfung; West (org-4) wird abgelehnt.',
+    'Auswahlen werden bis zum Senden gepuffert. Danach läuft eine asynchrone Berechtigungsprüfung; Organization 4 (org-4) wird abgelehnt.',
   'selectionDemo.asyncChecking': 'Berechtigung wird geprüft…',
-  'selectionDemo.asyncError': 'West ist für diese Richtlinie nicht berechtigt.',
+  'selectionDemo.asyncError': 'Organization 4 ist für diese Richtlinie nicht berechtigt.',
   'selectionDemo.asyncSubmitted': 'Gesendete Schlüssel',
   'selectionDemo.title': 'Datagrid-Auswahl',
   'selectionDemo.intro':
@@ -663,6 +688,13 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'Die Angular FormGroup-Instanz zum Wickeln mit reaktiven Signalen und Bindungen.',
   'toSignalForm.apiPropOmit': 'Kontrollieren Sie Namen, um von submitValue Nutzlasten wegzulassen.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'Ob submitValue deaktivierte Steuerelemente enthält. Bei false wird Angular form.value gelesen, das ein deaktiviertes untergeordnetes Steuerelement weiterhin enthält; daher mit options.omitIf kombinieren.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'Ob submitValue leere Zeichenkettenwerte entfernt.',
+  'toSignalForm.apiPropOmitNull': 'Ob submitValue null-Werte entfernt.',
+  'toSignalForm.apiPropOmitIf':
+    'Prädikat pro Steuerelement, das ein Steuerelement aus submitValue entfernt. Erhält den aktuellen Wert, den Namen und das übergeordnete Objekt.',
+  'toSignalForm.apiPropDeep': 'Ob submitValue auch verschachtelte Objekte und Arrays bereinigt.',
   'toSignalForm.apiPropEmitEvent': 'Ob Status/Wert-Änderungen Angular-Kontrollereignisse emittieren.',
   'toSignalForm.apiPropValue': 'Reaktives Signal des aktuellen Formwerts.',
   'toSignalForm.apiPropStatus': "Reaktives Signal des Gesamtformstatus ('VALID') 'INVALID' .PENDING' .DISABLED' .",

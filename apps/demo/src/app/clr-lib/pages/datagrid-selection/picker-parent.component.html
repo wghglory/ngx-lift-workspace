@@ -1,8 +1,12 @@
 <form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <clr-input-container>
+    <label for="policy-name">{{ 'selectionDemo.policyName' | translate }}</label>
+    <input clrInput id="policy-name" formControlName="policyName" />
+  </clr-input-container>
   <app-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
   <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
     {{ 'organizationExample.reset' | translate }}
   </button>
 </form>
-<pre>{{ sf.submitValue() | json }}</pre>
+<pre tabindex="0">{{ sf.submitValue() | json }}</pre>

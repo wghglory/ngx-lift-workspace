@@ -58,6 +58,44 @@ cll-page-container > .page-container.density-compact {
   }
 }
 
+// Shared cross-component demo integration: the server-page and server-picker hosts both project
+// this toolbar above their own grid header, and the Clarity select container is rendered inside
+// a child view that an encapsulated component stylesheet cannot reach. See the shared-utility
+// policy at the top of this file.
+.selection-toolbar {
+  align-items: flex-end;
+  padding-block-end: var(--cds-global-space-3, 8px);
+  border-block-end: 1px solid var(--clr-color-neutral-200, #ddd);
+
+  // Pushes the trailing actions to the far edge on wide viewports.
+  .selection-toolbar-spacer {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .selection-toolbar-check {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cds-global-space-2, 4px);
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+
+    input[type='checkbox'] {
+      margin: 0;
+    }
+  }
+
+  clr-select-container {
+    margin: 0;
+  }
+}
+
+// The toolbar and the grid header both read as column headers without this gap.
+.selection-toolbar + cll-datagrid-selection {
+  margin-block-start: var(--cds-global-space-4, 12px);
+}
+
 // Shared layout utilities used by multiple standalone demo components.
 .card-grid {
   display: grid;

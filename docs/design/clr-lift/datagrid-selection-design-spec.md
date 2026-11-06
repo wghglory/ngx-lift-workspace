@@ -1,8 +1,8 @@
 # Datagrid selection form control
 
-Status: **native grid composition approved; production exports implemented locally October 30, 2026**. The
-[delivery plan](datagrid-selection-delivery-plan.md) maps the current stories and execution order. Package: clr-lift.
-The exports below are available in the checkout; npm publication is separate. The
+Status: **native grid composition approved; production exports implemented locally October 30, 2026; server-page example
+added October 31, 2026**. The [delivery plan](datagrid-selection-delivery-plan.md) maps the current stories and
+execution order. Package: clr-lift. The exports below are available in the checkout; npm publication is separate. The
 [composition ADR](../../adr/0002-datagrid-selection-composition.md) supersedes the earlier rendering proposal.
 
 [Parent #198](https://github.com/wghglory/ngx-lift-workspace/issues/198) →
@@ -56,6 +56,8 @@ browsing. The generic field does not fetch or accept a query-library input.
 | Direct use, custom label/filter/sort/pagination and toSignalForm | [Complete direct form](datagrid-selection-code-examples.md#without-a-picker-advanced-form-and-tosignalform) |
 | Business picker without handwritten CVA, plus parent form        | [Picker and parent](datagrid-selection-code-examples.md#with-a-picker-component)                            |
 | Template-driven single field                                     | [ngModel](datagrid-selection-code-examples.md#template-driven-single-selection)                             |
+| Server-paged grid with off-page saved keys and scoped clear      | [Server pages](datagrid-selection-code-examples.md#server-paged-native-grid)                                |
+| Reusable picker owning the server query; parent owning values    | [Reusable server picker](datagrid-selection-code-examples.md#reusable-server-picker)                        |
 
 All imports, classes, HTML, shared filters and localized messages are included. Use id/name/status data and
 organizationId/organizationIds throughout. The [reference](datagrid-selection-reference.md) retains detailed async,
@@ -213,22 +215,25 @@ the same CVA. Availability explanations are visible and associated with the affe
 the actual grid because role=grid does not support aria-required. The parent explicitly excludes disabled fields from
 its submission DTO, including Angular's wholly disabled FormGroup case.
 
-The fourteen displayed demo sources are generated from runnable files and checked for drift by the tooling target.
+The displayed demo sources are generated from the eighteen runnable files and checked for drift by the tooling target.
 Direct status text filters resolve the displayed translations and refresh native matching/order on language or
 dictionary changes. The picker retains a separate ordinary enum filter component. Neither path changes native inventory
 identity.
 
-#201 retains server-page behavior; #202 retains full policy create/edit workflows. Independent native-language and
-assistive-technology acceptance, CI, merge, deployment and npm publication are separate gates. No SSR/hydration or
-virtual-scroll acceptance is claimed by the local-grid increment.
+#201 adds controlled server-page coverage and retains the existing selection contract. Its direct form owns the
+server-paged query with a fresh authoritative eligibility validator response, and its reusable server picker moves that
+query, loading, failure and retry into a picker component kept together through the accessor/binding pair while the
+parent owns values, validators, the saved baseline and the key-only DTO. #202 retains full policy create/edit workflows.
+Independent native-language and assistive-technology acceptance, CI, merge, deployment and npm publication are separate
+gates. No SSR/hydration or virtual-scroll acceptance is claimed by the local-grid increment.
 
 ## Demo feedback acceptance (October 31, 2026)
 
-Reset must restore South (org-2) in the direct validation example and North (org-1) in the reusable picker, keep the
-current page input populated, and leave checked rows consistent with the owning form. Loading saved selection restores
-South plus an unresolved key; refreshing replaces objects without losing that selection. Explain these actions in all
-supported locales. Include an in-page API reference for the field inputs, native projection/value contract and
-accessor/binding pair, with complete parent source beside the reusable-picker example.
+Reset must restore Organization 2 (org-2) in the direct validation example and Organization 1 (org-1) in the reusable
+picker, keep the current page input populated, and leave checked rows consistent with the owning form. Loading saved
+selection restores Organization 2 plus an unresolved key; refreshing replaces objects without losing that selection.
+Explain these actions in all supported locales. Include an in-page API reference for the field inputs, native
+projection/value contract and accessor/binding pair, with complete parent source beside the reusable-picker example.
 
 ## Saved-selection recovery in the validation example
 
@@ -248,4 +253,4 @@ unverified labels, warning/recovery guidance, per-key removal name and unavailab
 The validation example uses Angular's default change updates so the selected count and Remove actions reflect every grid
 edit immediately. The reusable-picker example continues demonstrating updateOn: 'blur' and composite departure. The
 async example buffers multi-selection with updateOn: 'submit'; submitting starts an asynchronous eligibility validator,
-shows pending status, rejects West (org-4) with a localized error and emits only the accepted buffered keys.
+shows pending status, rejects Organization 4 (org-4) with a localized error and emits only the accepted buffered keys.

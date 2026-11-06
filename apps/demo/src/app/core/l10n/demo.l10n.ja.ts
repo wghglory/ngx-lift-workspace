@@ -3,6 +3,28 @@ export const jaTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': '選択した組織',
   'selectionDemo.selectedCount': '{0} 件選択 · 最大 {1} 件',
+  'selectionDemo.server': 'サーバーページ選択',
+  'selectionDemo.serverHelp':
+    '制御された HTTP フィクスチャから 1 つの上限付きページを要求します。行の選択または解除は、現在のフィルター済みページで提供された行だけに影響します。',
+  'selectionDemo.serverSavedHelp':
+    '保存済みキーはページ、フィルター、並べ替えの変更後も保持されます。保存済みキーを読み込むと Elm (org-s-05)、Koa (org-s-11)、Oak (org-s-15)、Willow (org-s-23) が復元されます。Elm はメンテナンス中で、それ以外は未要求のページにあります。リセットすると Quince (org-s-17) と Willow (org-s-23) が復元されます。',
+  'selectionDemo.serverScope': 'スコープ',
+  'selectionDemo.serverCommerce': 'コマース',
+  'selectionDemo.serverPublic': '公開',
+  'selectionDemo.serverNameFilter': '組織を名前でフィルター',
+  'selectionDemo.serverSummary': '選択済みキー ({0})',
+  'selectionDemo.serverOffPage': '未要求ページの保存済みキー',
+  'selectionDemo.serverEmpty': 'このサーバーページに一致する組織はありません。',
+  'selectionDemo.serverLoading': 'このサーバーページを読み込み中…',
+  'selectionDemo.serverEvidence': 'サーバー応答: {1} ページ中 {0} ページ、{2} 件一致、スコープ {3}、{4}。',
+  'selectionDemo.serverSortAsc': '名前の昇順',
+  'selectionDemo.serverSortDesc': '名前の降順',
+  'selectionDemo.serverLoadSaved': '保存済みキーを読み込む',
+  'selectionDemo.serverSubmit': 'キーを送信',
+  'selectionDemo.serverSubmitted': '送信済みキー: {0}',
+  'selectionDemo.serverPicker': '再利用可能なサーバーピッカー',
+  'selectionDemo.serverPickerHelp':
+    'ピッカー コンポーネントがサーバー クエリと読み込み、失敗、再試行を所有し、親が値・検証・保存キーの基準を所有します。リセットで Maple (org-s-13) と Yarrow (org-s-25) を復元します。',
   'selectionDemo.unavailableName': '利用できない組織',
   'selectionDemo.unverifiedName': '未確認の組織',
   'selectionDemo.removeKey': '{0} を削除',
@@ -11,9 +33,9 @@ export const jaTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': '保存する前に利用できない組織を削除してください。',
 
   'selectionDemo.savedHelp':
-    '保存した選択を読み込むと South（org-2）と現在の一覧にない未解決キーを復元します。更新は選択キーを保ったまま一覧を置換します。リセットは South を復元します。',
+    '保存した選択を読み込むと Organization 2（org-2）と現在の一覧にない未解決キーを復元します。更新は選択キーを保ったまま一覧を置換します。リセットは Organization 2 を復元します。',
   'selectionDemo.pickerHelp':
-    'ピッカーが読み込みとグリッドを、親が検証と送信を管理します。リセットは North（org-1）を復元します。',
+    'ピッカーが読み込みとグリッドを、親が検証と送信を管理します。リセットは Organization 1（org-1）を復元します。',
   'selectionDemo.reference.overview':
     '通常のラベルと1つのネイティブ Clarity グリッドを包みます。フォームは選択フィールドか再利用ピッカーのホストだけにバインドします。',
   'selectionDemo.reference.required':
@@ -36,6 +58,9 @@ export const jaTranslations: Record<string, string> = {
   'selectionDemo.horizontal': '横方向のレイアウト',
   'selectionDemo.loadSaved': '保存した選択を読み込む',
   'selectionDemo.readonly': '読み取り専用',
+  'selectionDemo.policyName': 'ポリシー名',
+  'selectionDemo.policyControls': '選択例のコントロール',
+  'selectionDemo.serverControls': 'サーバー選択のコントロール',
   'selectionDemo.disabled': '無効',
   'organizationExample.organization': '組織',
   'organizationExample.organizations': '組織',
@@ -58,9 +83,9 @@ export const jaTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': '組織の選択が無効です。',
   'selectionDemo.asyncSubmit': '非同期検証と送信バッファリング',
   'selectionDemo.asyncSubmitHelp':
-    '選択は送信までバッファされ、その後で非同期の適格性チェックが実行されます。West（org-4）は拒否されます。',
+    '選択は送信までバッファされ、その後で非同期の適格性チェックが実行されます。Organization 4（org-4）は拒否されます。',
   'selectionDemo.asyncChecking': '適格性を確認しています…',
-  'selectionDemo.asyncError': 'West はこのポリシーの対象外です。',
+  'selectionDemo.asyncError': 'Organization 4 はこのポリシーの対象外です。',
   'selectionDemo.asyncSubmitted': '送信されたキー',
   'selectionDemo.title': 'データグリッド選択',
   'selectionDemo.intro': 'Angular フォーム内のネイティブ Clarity グリッドで安定したリソース ID を選択します。',
@@ -642,6 +667,13 @@ export const jaTranslations: Record<string, string> = {
   'toSignalForm.apiPropForm':
     'Angular FormGroupインスタンスをリアクティブなシグナルとバインディングにラップするためのフォーム。',
   'toSignalForm.apiPropOmit': 'サブミット値パッケージから省略するコントロール名。',
+  'toSignalForm.apiPropIncludeDisabled':
+    'submitValue が無効なコントロールを含めるかどうか。false の場合は Angular の form.value を読みますが、そこには無効な子コントロールも残るため、options.omitIf と併用して除外します。',
+  'toSignalForm.apiPropOmitEmptyStrings': 'submitValue が空文字列の値を除去するかどうか。',
+  'toSignalForm.apiPropOmitNull': 'submitValue が null の値を除去するかどうか。',
+  'toSignalForm.apiPropOmitIf':
+    'コントロール単位で submitValue から除外する判定。現在の値、コントロール名、その親オブジェクトを受け取ります。',
+  'toSignalForm.apiPropDeep': 'submitValue が入れ子オブジェクトや配列も整理するかどうか。',
   'toSignalForm.apiPropEmitEvent': 'ステータス/値の変更がAngularコントロールイベントを発生させるかどうか。',
   'toSignalForm.apiPropValue': '現在のフォーム値のリアクティブシグナル。',
   'toSignalForm.apiPropStatus':

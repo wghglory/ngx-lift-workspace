@@ -22,8 +22,9 @@ inventory query. Shared services/query factories retain HTTP/cache responsibilit
 picker host can compose the proposed library-owned accessor/binding pair to retain formControlName without handwritten
 CVA callbacks or a mirrored control. Data retrieval never determines form ownership.
 
-#200 now delivers only this native local entry point and common form behavior. #201 retains the native server-page path;
-#202 retains direct and reusable-picker query/edit/reset demonstrations. No second renderer is required.
+#200 delivers this native local entry point and common form behavior. #201 adds the controlled native server-page
+example without changing that contract; #202 retains full policy create/edit demonstrations. No second renderer is
+required.
 
 ## Loaded data and saved keys
 
@@ -166,7 +167,7 @@ The inventory below describes observed categories; proposed outcomes are accepta
 | UC7  | Choose multiple placement targets               | Current objects include name and namespace                                | Refresh with equal names in different scopes      | Scoped identities remain distinct; payload conversion stays explicit                      | Duplicate keys produce a developer diagnostic           | Planned identity/type host          |
 | UC8  | Embed the picker in a compound version selector | Separate All/Major/Minor scope control                                    | Switch between scope and explicit items           | Parent owns wildcard and scope; picker owns only explicit items                           | Parent explicitly decides when to clear/default         | Planned composition host            |
 | UC9  | Maintain permissions with many items            | Preselected names and a paginated grid                                    | Inspect selected items and return                 | Value preserved; selected-only view is a deliberate presentation choice                   | Readonly remains distinct from disabled                 | Planned inspection host             |
-| UC10 | Select across server pages                      | Saved key absent from current page                                        | Change page/filter, resolve saved key later       | Off-page selection survives; hydration emits no form edit                                 | Failure/stale response cannot clear or overwrite value  | Planned remote fixture host         |
+| UC10 | Select across server pages                      | Saved key absent from current page                                        | Change page/filter, resolve saved key later       | Off-page selection survives; hydration emits no form edit                                 | Failure/stale response cannot clear or overwrite value  | Server-page demo fixture (#201)     |
 | UC11 | Use either field layout                         | Long label, helper/errors, translated filters                             | Switch layout and narrow viewport                 | Label above or beside grid; grid and filter popovers remain usable                        | Reflow, zoom and RTL preserve actions                   | Planned layout/browser host         |
 | UC12 | Reset, disable, and inspect                     | Selected items, focus inside cell/filter/footer                           | Reset or change availability                      | Shared form contract holds; all selection paths respect state                             | No late selection/touch callbacks                       | Planned three-form-host matrix      |
 | UC13 | Select all in a footer-free scrolling grid      | 100 unpaged items; only 10 fit the scroll viewport                        | Click select-all, then scroll                     | All 100 eligible items selected, including initially out-of-view ones                     | Ineligible-item policy respected                        | Planned unpaged-scroll browser host |
@@ -225,16 +226,19 @@ read-only application audit likewise finds identity-only resource pickers and li
 
 ## Developer learning journey and pedagogy plan
 
-All destinations below are proposed. No demo route or package import has been delivered.
+The local field and native server-page example are delivered in the demo; full policy create/edit destinations remain
+with #202.
 
-| Reader task / prerequisite                                      | Learning outcome                                 | Proposed destination                       | Working example and expected result                          | Validation          |
-| --------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------ | ------------------------------------------------------------ | ------------------- |
-| First local multi-select; know Clarity items and Reactive Forms | Submit stable selected keys                      | Datagrid selection playground              | Optional footer; value/status/submitted payload              | Compile and browser |
-| Edit an existing selection                                      | Distinguish value from loaded items              | Prefill and identity example               | Delayed items and refreshed instances preserve pristine form | Controlled requests |
-| Use one selected row                                            | Understand null, required and explicit clear     | Single selection example                   | Agreed scalar/null value; business adapter outside picker    | Forms/type checks   |
-| Use template-driven or signal-observed Reactive Forms           | Keep one owner per host                          | Separate ngModel and toSignalForm examples | Same selection contract, real reset/submit                   | Installed consumers |
-| Load server pages                                               | Preserve keys without claiming global select-all | Remote paging example                      | Keys survive page/filter changes and request races           | Browser fixture     |
-| Adapt presentation and availability                             | Use both layouts and inspect readonly            | Layout/eligibility example                 | Long labels, errors, footer/filter focus and RTL             | Browser/a11y/manual |
+| Reader task / prerequisite                                      | Learning outcome                                 | Proposed destination                       | Working example and expected result                                         | Validation          |
+| --------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------ | --------------------------------------------------------------------------- | ------------------- |
+| First local multi-select; know Clarity items and Reactive Forms | Submit stable selected keys                      | Datagrid selection playground              | Optional footer; value/status/submitted payload                             | Compile and browser |
+| Edit an existing selection                                      | Distinguish value from loaded items              | Prefill and identity example               | Delayed items and refreshed instances preserve pristine form                | Controlled requests |
+| Use one selected row                                            | Understand null, required and explicit clear     | Single selection example                   | Agreed scalar/null value; business adapter outside picker                   | Forms/type checks   |
+| Use template-driven or signal-observed Reactive Forms           | Keep one owner per host                          | Separate ngModel and toSignalForm examples | Same selection contract, real reset/submit                                  | Installed consumers |
+| Load server pages                                               | Preserve keys without claiming global select-all | Server-page example (#201)                 | Keys survive page/filter changes and request races                          | Browser fixture     |
+| Move the server query into a reusable picker                    | Keep values/validators/DTO on the parent         | Server-picker example (#201)               | Picker retries its own query; parent keeps keys and submits keys only       | Browser fixture     |
+| React to authoritative eligibility                              | Validators change validity, never keys           | Server-page eligibility validator (#201)   | Maintained selections become readable/removable and re-validates on refresh | Browser fixture     |
+| Adapt presentation and availability                             | Use both layouts and inspect readonly            | Layout/eligibility example                 | Long labels, errors, footer/filter focus and RTL                            | Browser/a11y/manual |
 
 ## Accepted behavior and integration rationale
 
@@ -580,9 +584,10 @@ host include initial/refresh load failures, Retry, successful empty inventory, s
 reset-result announcement and any original-configuration/diff labels, with all supported locales required at delivery.
 The local proof covers both response orders, error/retry with and without cache, cross-page original keys, reset of
 pending blur/submit edits, submitted-state reset, detail refresh while editing, simulated mutation failure/success, and
-restored keys that are now unavailable. The example uses a complete 25-item inventory with client-side pagination;
-server-page fetches, real HTTP errors, mutation-success/detail-refetch-failure and broader request races still need
-production integration coverage.
+restored keys that are now unavailable. This earlier example uses a complete 25-item inventory with client-side
+pagination. The #201 server-page example adds controlled HTTP-backed page/filter/sort requests, failure/retry,
+stale-response and reset-while-loading evidence. Live business API integration, mutation-success/detail-refetch-failure
+and broader production request races still need integration coverage.
 
 ## Behavior and architecture
 
@@ -909,10 +914,10 @@ policy saves with scoped detail invalidation. It covers both response orders, in
 failure, successful empty inventory, cross-page preselection and reset, preservation of edits/baseline during detail
 refresh, reset of pending blur/submit choices, mutation failure/success and the saved reset baseline, current
 unavailable item validation after reset, and responsive layout. Native row trackBy is verified by retaining a row
-element marker across a successful refetch with fresh item objects. The local fixture has 25 items with client-side
-pagination; no live backend or server-page request is claimed. The preview now has a detached local launcher so serving
-the review page does not depend on an interactive command session remaining open. These scratch additions are not public
-package exports.
+element marker across a successful refetch with fresh item objects. This earlier local fixture has 25 items with
+client-side pagination and makes no live backend request; the #201 demo adds a separate controlled server-page fixture.
+The preview now has a detached local launcher so serving the review page does not depend on an interactive command
+session remaining open. These scratch additions are not public package exports.
 
 The scenarios cover unresolved edit keys, delayed items, refreshed identities/no echo, actual scrolling select-all,
 filtered clear, readonly browsing, field disabled/raw versus normal serialization, unavailable-item removal, single

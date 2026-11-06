@@ -1,0 +1,158 @@
+[
+  {
+    "id": "org-s-01",
+    "name": "Aurora",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-02",
+    "name": "Beacon",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-03",
+    "name": "Cedar",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-04",
+    "name": "Dogwood",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-05",
+    "name": "Elm",
+    "status": "maintenance",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-06",
+    "name": "Fir",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-07",
+    "name": "Ginkgo",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-08",
+    "name": "Hazel",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-09",
+    "name": "Iris",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-10",
+    "name": "Juniper",
+    "status": "maintenance",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-11",
+    "name": "Koa",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-12",
+    "name": "Larch",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-13",
+    "name": "Maple",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-14",
+    "name": "Nettle",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-15",
+    "name": "Oak",
+    "status": "maintenance",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-16",
+    "name": "Pine",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-17",
+    "name": "Quince",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-18",
+    "name": "Rowan",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-19",
+    "name": "Spruce",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-20",
+    "name": "Tamarack",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-21",
+    "name": "Umbrella",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-22",
+    "name": "Violet",
+    "status": "maintenance",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-23",
+    "name": "Willow",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-24",
+    "name": "Xeranthemum",
+    "status": "ready",
+    "scope": "public"
+  },
+  {
+    "id": "org-s-25",
+    "name": "Yarrow",
+    "status": "ready",
+    "scope": "commerce"
+  },
+  {
+    "id": "org-s-26",
+    "name": "Zelkova",
+    "status": "ready",
+    "scope": "public"
+  }
+]

@@ -1,4 +1,4 @@
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, inject, output} from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';
@@ -15,7 +15,7 @@ import {type Organization} from './organization-example.data';
 export class TemplateOrganizationFormComponent {
   private readonly organizationService = inject(OrganizationService);
 
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   organizationId: string | null = null;
   readonly save = output<string | null>();
   readonly organizationKey = (item: Organization) => item.id;

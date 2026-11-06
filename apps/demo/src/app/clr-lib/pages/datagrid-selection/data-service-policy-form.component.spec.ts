@@ -11,9 +11,9 @@ import {registerExampleMessages} from './organization-example.messages';
 import {OrganizationService} from './organization.service';
 
 const inventory: Organization[] = [
-  {id: 'org-1', name: 'North', status: 'ready'},
-  {id: 'org-2', name: 'South', status: 'ready'},
-  {id: 'org-4', name: 'West', status: 'ready'},
+  {id: 'org-1', name: 'Organization 1', status: 'ready'},
+  {id: 'org-2', name: 'Organization 2', status: 'ready'},
+  {id: 'org-4', name: 'Organization 4', status: 'ready'},
 ];
 
 describe('organization selection recovery', () => {
@@ -28,11 +28,16 @@ describe('organization selection recovery', () => {
         {
           provide: OrganizationService,
           useValue: {
-            list: () => {
-              const request = new Subject<Organization[]>();
-              requests.push(request);
-              return request;
-            },
+            listQuery: () => ({
+              key: ['organizations', 'list', 'scope-1'],
+              staleTime: 60_000,
+              // One subject per loader call, so a reload starts a new request.
+              loader: () => {
+                const request = new Subject<Organization[]>();
+                requests.push(request);
+                return request;
+              },
+            }),
           },
         },
       ],

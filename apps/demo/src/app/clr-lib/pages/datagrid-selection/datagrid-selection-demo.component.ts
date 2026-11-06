@@ -20,11 +20,17 @@ import {
   asyncSubmitHtml,
   pickerParentTs,
   pickerParentHtml,
+  serverTs,
+  serverHtml,
+  serverPickerTs,
+  serverPickerHtml,
 } from './example-source';
 import {AsyncSubmitComponent} from './async-submit.component';
 import {DataServicePolicyFormComponent} from './data-service-policy-form.component';
 import {registerExampleMessages} from './organization-example.messages';
 import {PolicyFormComponent} from './picker-parent.component';
+import {ServerPageFormComponent} from './server-page-form.component';
+import {ServerPickerFormComponent} from './server-picker-form.component';
 import {SimpleOrganizationGridComponent} from './simple-multiple.component';
 import {SingleOrganizationGridComponent} from './simple-single.component';
 import {TemplateOrganizationFormComponent} from './template-driven.component';
@@ -42,6 +48,8 @@ import {TemplateOrganizationFormComponent} from './template-driven.component';
     PolicyFormComponent,
     AsyncSubmitComponent,
     TemplateOrganizationFormComponent,
+    ServerPageFormComponent,
+    ServerPickerFormComponent,
   ],
   templateUrl: './datagrid-selection-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +71,10 @@ export class DatagridSelectionDemoComponent {
   readonly modelHtml = modelHtml;
   readonly asyncSubmitTs = asyncSubmitTs;
   readonly asyncSubmitHtml = asyncSubmitHtml;
+  readonly serverTs = serverTs;
+  readonly serverHtml = serverHtml;
+  readonly serverPickerTs = serverPickerTs;
+  readonly serverPickerHtml = serverPickerHtml;
   readonly inputs = computed<ApiProperty[]>(() => [
     {
       name: 'required',

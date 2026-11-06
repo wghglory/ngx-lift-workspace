@@ -1,0 +1,101 @@
+<section
+  class="selection-toolbar"
+  cds-layout="horizontal gap:md wrap:wrap"
+  role="group"
+  [attr.aria-label]="'selectionDemo.serverControls' | translate"
+>
+  <clr-select-container>
+    <label for="picker-scope">{{ 'selectionDemo.serverScope' | translate }}</label>
+    <select clrSelect id="picker-scope" [value]="scope()" (change)="setScope($any($event.target).value)">
+      <option value="commerce">{{ 'selectionDemo.serverCommerce' | translate }}</option>
+      <option value="public">{{ 'selectionDemo.serverPublic' | translate }}</option>
+    </select>
+  </clr-select-container>
+  <clr-select-container>
+    <label for="picker-status">{{ 'organizationExample.status' | translate }}</label>
+    <select clrSelect id="picker-status" [value]="status()" (change)="setStatus($any($event.target).value)">
+      <option value="all">{{ 'organizationExample.allStatuses' | translate }}</option>
+      <option value="ready">{{ 'organizationExample.ready' | translate }}</option>
+      <option value="maintenance">{{ 'organizationExample.maintenance' | translate }}</option>
+    </select>
+  </clr-select-container>
+  <span class="selection-toolbar-spacer"></span>
+  <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+    {{ 'common.refresh' | translate }}
+  </button>
+</section>
+<cll-datagrid-selection
+  cllDatagridSelectionBinding
+  [readonly]="readonly()"
+  [required]="required()"
+  [helper]="'selectionDemo.serverPickerHelp' | translate"
+  [error]="error() || ('organizationExample.invalidSelection' | translate)"
+  [itemAvailability]="availability"
+>
+  <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
+  <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
+    <clr-signpost-content *clrIfOpen>{{ 'selectionDemo.serverPickerHelp' | translate }}</clr-signpost-content>
+  </clr-signpost>
+  @if (organizationsQuery.error()) {
+    <cll-alert data-testid="server-picker-error">
+      {{
+        (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+          | translate
+      }}
+      <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+        {{ 'organizationExample.retry' | translate }}
+      </button>
+    </cll-alert>
+  }
+  <clr-datagrid
+    clrDgSelectionType="multi"
+    [clrDgLoading]="organizationsQuery.isLoading()"
+    [clrDgItemsIdentityFn]="organizationKey"
+  >
+    <clr-dg-column
+      [clrDgSortBy]="nameComparator"
+      [clrDgSortOrder]="sortOrder()"
+      [clrDgDisableUnsort]="true"
+      (clrDgSortOrderChange)="setSort($event)"
+    >
+      {{ 'organizationExample.name' | translate }}
+      <clr-dg-filter [clrDgFilter]="nameFilter">
+        <clr-input-container>
+          <label class="clr-sr-only" for="picker-name-filter">
+            {{ 'selectionDemo.serverNameFilter' | translate }}
+          </label>
+          <input
+            clrInput
+            id="picker-name-filter"
+            type="text"
+            [value]="nameFilter.query()"
+            (input)="nameFilter.set($any($event.target).value)"
+          />
+        </clr-input-container>
+      </clr-dg-filter>
+    </clr-dg-column>
+    <clr-dg-column>{{ 'organizationExample.status' | translate }}</clr-dg-column>
+    @for (item of items(); track item.id) {
+      <clr-dg-row [clrDgItem]="item" [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name">
+        <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+        <clr-dg-cell>
+          <span
+            class="label"
+            [class.label-success]="item.status === 'ready'"
+            [class.label-warning]="item.status === 'maintenance'"
+          >
+            {{ statusKeys[item.status] | translate }}
+          </span>
+        </clr-dg-cell>
+      </clr-dg-row>
+    }
+    <clr-dg-footer>
+      <clr-dg-pagination
+        [clrDgPageSize]="pageSize"
+        [clrDgPage]="page()"
+        [clrDgTotalItems]="total()"
+        (clrDgPageChange)="setPage($event)"
+      />
+    </clr-dg-footer>
+  </clr-datagrid>
+</cll-datagrid-selection>

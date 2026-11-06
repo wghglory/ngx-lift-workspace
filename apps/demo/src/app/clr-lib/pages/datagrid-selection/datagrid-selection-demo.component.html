@@ -52,6 +52,24 @@
       <app-async-organization-grid preview />
     </app-demo-playground>
     <app-demo-playground
+      data-testid="selection-server"
+      [title]="'selectionDemo.server' | translate"
+      [description]="'selectionDemo.serverSavedHelp' | translate"
+      [tsCode]="serverTs"
+      [htmlCode]="serverHtml"
+    >
+      <app-server-organization-grid preview />
+    </app-demo-playground>
+    <app-demo-playground
+      data-testid="selection-server-picker"
+      [title]="'selectionDemo.serverPicker' | translate"
+      [description]="'selectionDemo.serverPickerHelp' | translate"
+      [tsCode]="serverPickerTs"
+      [htmlCode]="serverPickerHtml"
+    >
+      <app-server-picker-form preview />
+    </app-demo-playground>
+    <app-demo-playground
       data-testid="selection-model"
       [title]="'selectionDemo.model' | translate"
       [tsCode]="modelTs"

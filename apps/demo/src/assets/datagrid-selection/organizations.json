@@ -1,62 +1,62 @@
 [
   {
     "id": "org-1",
-    "name": "North",
+    "name": "Organization 1",
     "status": "ready"
   },
   {
     "id": "org-2",
-    "name": "South",
+    "name": "Organization 2",
     "status": "ready"
   },
   {
     "id": "org-3",
-    "name": "East",
+    "name": "Organization 3",
     "status": "maintenance"
   },
   {
     "id": "org-4",
-    "name": "West",
+    "name": "Organization 4",
     "status": "ready"
   },
   {
     "id": "org-5",
-    "name": "Central",
+    "name": "Organization 5",
     "status": "ready"
   },
   {
     "id": "org-6",
-    "name": "Coast",
+    "name": "Organization 6",
     "status": "ready"
   },
   {
     "id": "org-7",
-    "name": "Mountain",
+    "name": "Organization 7",
     "status": "maintenance"
   },
   {
     "id": "org-8",
-    "name": "Valley",
+    "name": "Organization 8",
     "status": "ready"
   },
   {
     "id": "org-9",
-    "name": "Forest",
+    "name": "Organization 9",
     "status": "ready"
   },
   {
     "id": "org-10",
-    "name": "Lake",
+    "name": "Organization 10",
     "status": "ready"
   },
   {
     "id": "org-11",
-    "name": "River",
+    "name": "Organization 11",
     "status": "ready"
   },
   {
     "id": "org-12",
-    "name": "Harbor",
+    "name": "Organization 12",
     "status": "ready"
   }
 ]

@@ -3,6 +3,28 @@ export const enTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Selected organizations',
   'selectionDemo.selectedCount': '{0} selected · maximum {1}',
+  'selectionDemo.server': 'Server-paged selection',
+  'selectionDemo.serverHelp':
+    'Requests one bounded page from the controlled HTTP fixture. Selecting or clearing rows affects only the rows supplied on the current filtered page.',
+  'selectionDemo.serverSavedHelp':
+    'Saved keys persist across page, filter and sort changes. Loading saved keys restores Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) and Willow (org-s-23); Elm is maintenance and the others are on unrequested pages. Reset restores Quince (org-s-17) and Willow (org-s-23).',
+  'selectionDemo.serverScope': 'Scope',
+  'selectionDemo.serverCommerce': 'Commerce',
+  'selectionDemo.serverPublic': 'Public',
+  'selectionDemo.serverNameFilter': 'Filter organizations by name',
+  'selectionDemo.serverSummary': 'Selected keys ({0})',
+  'selectionDemo.serverOffPage': 'Saved key from an unrequested page',
+  'selectionDemo.serverEmpty': 'No organizations match this server page.',
+  'selectionDemo.serverLoading': 'Loading this server page…',
+  'selectionDemo.serverEvidence': 'Server response: page {0} of {1}, {2} matching, scope {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'name ascending',
+  'selectionDemo.serverSortDesc': 'name descending',
+  'selectionDemo.serverLoadSaved': 'Load saved keys',
+  'selectionDemo.serverSubmit': 'Submit keys',
+  'selectionDemo.serverSubmitted': 'Submitted keys: {0}',
+  'selectionDemo.serverPicker': 'Reusable server picker',
+  'selectionDemo.serverPickerHelp':
+    'The picker component owns the server query, loading, failure and retry; the parent owns values, validators and the saved-key baseline. Reset restores Maple (org-s-13) and Yarrow (org-s-25).',
   'selectionDemo.unavailableName': 'Unavailable organization',
   'selectionDemo.unverifiedName': 'Unverified organization',
   'selectionDemo.removeKey': 'Remove {0}',
@@ -12,9 +34,9 @@ export const enTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Remove unavailable organizations before saving.',
 
   'selectionDemo.savedHelp':
-    'Load saved selection restores South (org-2) and an unresolved key that is absent from this inventory. Refresh replaces the inventory while preserving selected keys. Reset restores South.',
+    'Load saved selection restores Organization 2 (org-2) and an unresolved key that is absent from this inventory. Refresh replaces the inventory while preserving selected keys. Reset restores Organization 2.',
   'selectionDemo.pickerHelp':
-    'The picker owns loading and the grid; the parent owns validation and submission. Reset restores North (org-1).',
+    'The picker owns loading and the grid; the parent owns validation and submission. Reset restores Organization 1 (org-1).',
   'selectionDemo.reference.overview':
     'Wrap one native Clarity datagrid with a plain label. Bind the form only to the selection field, or to the reusable picker host.',
   'selectionDemo.reference.required':
@@ -38,6 +60,9 @@ export const enTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Horizontal layout',
   'selectionDemo.loadSaved': 'Load saved selection',
   'selectionDemo.readonly': 'Readonly',
+  'selectionDemo.policyName': 'Policy name',
+  'selectionDemo.policyControls': 'Selection example controls',
+  'selectionDemo.serverControls': 'Server selection controls',
   'selectionDemo.disabled': 'Disabled',
   'organizationExample.organization': 'Organization',
   'organizationExample.organizations': 'Organizations',
@@ -60,9 +85,9 @@ export const enTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'The organization selection is invalid.',
   'selectionDemo.asyncSubmit': 'Async validation and submit buffering',
   'selectionDemo.asyncSubmitHelp':
-    'Selections stay buffered until Submit. An asynchronous eligibility check then runs; West (org-4) is rejected.',
+    'Selections stay buffered until Submit. An asynchronous eligibility check then runs; Organization 4 (org-4) is rejected.',
   'selectionDemo.asyncChecking': 'Checking eligibility…',
-  'selectionDemo.asyncError': 'West is not eligible for this policy.',
+  'selectionDemo.asyncError': 'Organization 4 is not eligible for this policy.',
   'selectionDemo.asyncSubmitted': 'Submitted keys',
   'selectionDemo.title': 'Datagrid selection',
   'selectionDemo.intro': 'Select stable resource IDs using a native Clarity grid in an Angular form.',
@@ -644,6 +669,13 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.apiPropForm': 'The Angular FormGroup instance to wrap with reactive signals and bindings.',
   'toSignalForm.apiPropOmit': 'Control names to omit from submitValue payloads.',
   'toSignalForm.apiPropEmitEvent': 'Whether status/value changes emit Angular control events.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'Whether submitValue includes disabled controls. False reads Angular form.value, which still keeps a disabled child control, so pair it with options.omitIf to exclude that control.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'Whether submitValue drops empty string values.',
+  'toSignalForm.apiPropOmitNull': 'Whether submitValue drops null values.',
+  'toSignalForm.apiPropOmitIf':
+    'Per-control predicate that removes a control from submitValue. Receives the current value, the control name, and its parent object.',
+  'toSignalForm.apiPropDeep': 'Whether submitValue also prunes nested objects and arrays.',
   'toSignalForm.apiPropValue': 'Reactive signal of current form value.',
   'toSignalForm.apiPropStatus':
     "Reactive signal of overall form status ('VALID' | 'INVALID' | 'PENDING' | 'DISABLED').",

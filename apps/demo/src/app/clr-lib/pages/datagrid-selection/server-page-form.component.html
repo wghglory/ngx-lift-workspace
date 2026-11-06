@@ -1,0 +1,178 @@
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <section cds-layout="vertical gap:md" [attr.aria-label]="'selectionDemo.server' | translate">
+    <div
+      class="selection-toolbar"
+      cds-layout="horizontal gap:md wrap:wrap"
+      role="group"
+      [attr.aria-label]="'selectionDemo.serverControls' | translate"
+    >
+      <clr-select-container>
+        <label for="server-scope">{{ 'selectionDemo.serverScope' | translate }}</label>
+        <select clrSelect id="server-scope" [value]="scope()" (change)="setScope($any($event.target).value)">
+          <option value="commerce">{{ 'selectionDemo.serverCommerce' | translate }}</option>
+          <option value="public">{{ 'selectionDemo.serverPublic' | translate }}</option>
+        </select>
+      </clr-select-container>
+      <clr-select-container>
+        <label for="server-status">{{ 'organizationExample.status' | translate }}</label>
+        <select clrSelect id="server-status" [value]="status()" (change)="setStatus($any($event.target).value)">
+          <option value="all">{{ 'organizationExample.allStatuses' | translate }}</option>
+          <option value="ready">{{ 'organizationExample.ready' | translate }}</option>
+          <option value="maintenance">{{ 'organizationExample.maintenance' | translate }}</option>
+        </select>
+      </clr-select-container>
+      <span class="selection-toolbar-spacer"></span>
+      <label class="selection-toolbar-check">
+        <input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+        {{ 'selectionDemo.readonly' | translate }}
+      </label>
+      <label class="selection-toolbar-check">
+        <input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
+        {{ 'selectionDemo.disabled' | translate }}
+      </label>
+      <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+        {{ 'common.refresh' | translate }}
+      </button>
+      <button type="button" class="btn btn-sm" (click)="loadSaved()">
+        {{ 'selectionDemo.serverLoadSaved' | translate }}
+      </button>
+    </div>
+    <section
+      data-testid="server-selection-summary"
+      [attr.aria-label]="'selectionDemo.selectedTitle' | translate"
+      cds-layout="vertical gap:xs"
+    >
+      <p role="status" aria-atomic="true">
+        {{ 'selectionDemo.serverSummary' | translate: selected().length }}
+      </p>
+      <ul cds-layout="vertical gap:xs">
+        @for (selection of selected(); track selection.key) {
+          <li>
+            @if (selection.name) {
+              {{ selection.name }} ({{ selection.key }})
+            } @else {
+              {{ 'selectionDemo.serverOffPage' | translate }} ({{ selection.key }})
+            }
+            @if (selection.unavailable) {
+              — {{ 'organizationExample.maintenance' | translate }}
+            }
+            <button
+              type="button"
+              class="btn btn-link btn-sm"
+              [disabled]="selectionLocked()"
+              [attr.aria-label]="'selectionDemo.removeKey' | translate: selection.key"
+              (click)="removeSelection(selection.key)"
+            >
+              {{ 'selectionDemo.remove' | translate }}
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  </section>
+
+  <cll-datagrid-selection
+    formControlName="organizationIds"
+    required
+    [helper]="'selectionDemo.serverHelp' | translate"
+    [error]="selectionError()"
+    [readonly]="readonly()"
+    [itemAvailability]="availability"
+  >
+    <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
+    @if (organizationsQuery.error()) {
+      <cll-alert data-testid="server-error">
+        {{
+          (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+            | translate
+        }}
+        <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
+          {{ 'organizationExample.retry' | translate }}
+        </button>
+      </cll-alert>
+    }
+    <clr-datagrid
+      clrDgSelectionType="multi"
+      [clrDgLoading]="organizationsQuery.isLoading()"
+      [clrDgItemsIdentityFn]="organizationKey"
+    >
+      <clr-dg-column
+        [clrDgSortBy]="nameComparator"
+        [clrDgSortOrder]="sortOrder()"
+        [clrDgDisableUnsort]="true"
+        (clrDgSortOrderChange)="setSort($event)"
+      >
+        {{ 'organizationExample.name' | translate }}
+        <clr-dg-filter [clrDgFilter]="nameFilter">
+          <clr-input-container>
+            <label class="clr-sr-only" for="server-name-filter">
+              {{ 'selectionDemo.serverNameFilter' | translate }}
+            </label>
+            <input
+              clrInput
+              id="server-name-filter"
+              type="text"
+              [value]="nameFilter.query()"
+              (input)="nameFilter.set($any($event.target).value)"
+            />
+          </clr-input-container>
+        </clr-dg-filter>
+      </clr-dg-column>
+      <clr-dg-column>{{ 'organizationExample.status' | translate }}</clr-dg-column>
+      @for (item of items(); track item.id) {
+        <clr-dg-row
+          [clrDgItem]="item"
+          [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+        >
+          <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+          <clr-dg-cell>
+            <span
+              class="label"
+              [class.label-success]="item.status === 'ready'"
+              [class.label-warning]="item.status === 'maintenance'"
+            >
+              {{ statusKeys[item.status] | translate }}
+            </span>
+          </clr-dg-cell>
+        </clr-dg-row>
+      }
+      <clr-dg-footer>
+        <clr-dg-pagination
+          [clrDgPageSize]="pageSize"
+          [clrDgPage]="page()"
+          [clrDgTotalItems]="total()"
+          (clrDgPageChange)="setPage($event)"
+        />
+      </clr-dg-footer>
+    </clr-datagrid>
+  </cll-datagrid-selection>
+
+  @if (organizationsQuery.isInitialLoading()) {
+    <p class="clr-sr-only" role="status">{{ 'selectionDemo.serverLoading' | translate }}</p>
+  }
+  @if (!organizationsQuery.error() && organizationsQuery.value() && total() === 0) {
+    <p role="status" data-testid="server-empty">{{ 'selectionDemo.serverEmpty' | translate }}</p>
+  }
+  @if (organizationsQuery.value()) {
+    <p data-testid="server-page-evidence">{{ evidence() }}</p>
+  }
+
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="sf.invalid() || sf.pending() || form.controls.organizationIds.disabled"
+    >
+      {{ 'selectionDemo.serverSubmit' | translate }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="reset(formView)">
+      {{ 'organizationExample.reset' | translate }}
+    </button>
+  </div>
+</form>
+@if (submitted() !== null) {
+  <p role="status" data-testid="server-submitted">
+    {{ 'selectionDemo.serverSubmitted' | translate: submitted()?.join(', ') }}
+  </p>
+}
+<pre data-testid="server-json" tabindex="0">{{ sf.submitValue() | json }}</pre>

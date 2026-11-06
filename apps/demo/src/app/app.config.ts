@@ -1,13 +1,14 @@
 import {ViewportScroller} from '@angular/common';
 import {ContentViewportScroller} from './core/content-viewport-scroller';
 import {registerLocaleData} from '@angular/common';
-import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import localeEn from '@angular/common/locales/en';
 import {ApplicationConfig, LOCALE_ID, provideZonelessChangeDetection} from '@angular/core';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {PreloadAllModules, provideRouter, withInMemoryScrolling, withPreloading} from '@angular/router';
 import {provideQueryDevtools} from 'clr-lift/devtools';
 
+import {serverOrganizationFixtureInterceptor} from './clr-lib/pages/datagrid-selection/server-organization.fixture';
 import {routes} from './app.routes';
 
 // Register only English locale to reduce initial bundle size
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules),
     ),
     provideAnimations(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([serverOrganizationFixtureInterceptor])),
     provideQueryDevtools(),
     {
       provide: LOCALE_ID,

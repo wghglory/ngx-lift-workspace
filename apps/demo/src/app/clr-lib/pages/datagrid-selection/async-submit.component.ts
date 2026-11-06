@@ -14,7 +14,7 @@ import {queryResource, toSignalForm} from 'ngx-lift';
 import {filter, firstValueFrom} from 'rxjs';
 
 import {STATUS_KEYS, type Organization} from './organization-example.data';
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 
 const INELIGIBLE_KEYS = new Set(['org-4']);
 
@@ -37,7 +37,7 @@ export class AsyncSubmitComponent {
   private readonly translationService = inject(TranslationService);
   private readonly organizationService = inject(OrganizationService);
 
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
 
   readonly form = new FormGroup({
     organizationIds: new FormControl<string[]>([], {

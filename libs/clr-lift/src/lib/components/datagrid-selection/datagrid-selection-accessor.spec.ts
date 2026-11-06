@@ -161,16 +161,26 @@ describe('Reusable picker with the original form owner', () => {
       };
       await settle();
       const element = fixture.nativeElement as HTMLElement;
-      const checkbox = () => element.querySelector<HTMLInputElement>('clr-dg-row input')!;
+      const checkbox = () => {
+        const input = element.querySelector<HTMLInputElement>('clr-dg-row input');
+        if (!input) throw new Error('cll-datagrid-selection: checkbox input not found');
+        return input;
+      };
       checkbox().focus();
       checkbox().click();
       await settle();
       expect(host.form.controls.ids.value).toEqual(updateOn === 'change' ? ['org-1'] : []);
       expect(host.form.controls.ids.untouched).toBe(true);
-      element.querySelector<HTMLButtonElement>('button:last-child')!.focus();
+      const lastButton = element.querySelector<HTMLButtonElement>('button:last-child');
+      if (!lastButton) throw new Error('cll-datagrid-selection: last button not found');
+      lastButton.focus();
       await vi.waitFor(() => expect(host.form.controls.ids.touched || updateOn === 'submit').toBe(true));
       await settle();
-      if (updateOn === 'submit') element.querySelector<HTMLButtonElement>('[type=submit]')!.click();
+      if (updateOn === 'submit') {
+        const submitButton = element.querySelector<HTMLButtonElement>('[type=submit]');
+        if (!submitButton) throw new Error('cll-datagrid-selection: submit button not found');
+        submitButton.click();
+      }
       await settle();
       expect(host.form.controls.ids.value).toEqual(['org-1']);
       expect(host.form.valid).toBe(true);
@@ -179,7 +189,9 @@ describe('Reusable picker with the original form owner', () => {
       expect(checkbox().disabled).toBe(true);
       expect(host.form.value).toEqual({ids: ['org-1']}); // Entirely disabled groups serialize all children in Angular.
       host.form.controls.ids.enable();
-      element.querySelector<HTMLButtonElement>('[type=reset]')!.click();
+      const resetButton = element.querySelector<HTMLButtonElement>('[type=reset]');
+      if (!resetButton) throw new Error('cll-datagrid-selection: reset button not found');
+      resetButton.click();
       await settle();
       expect(host.form.controls.ids.value).toEqual([]);
       expect(host.form.controls.ids.pristine).toBe(true);

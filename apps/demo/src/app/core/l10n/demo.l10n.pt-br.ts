@@ -3,6 +3,28 @@ export const ptBRTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Organizações selecionadas',
   'selectionDemo.selectedCount': '{0} selecionadas · máximo {1}',
+  'selectionDemo.server': 'Seleção paginada pelo servidor',
+  'selectionDemo.serverHelp':
+    'Solicita uma página limitada ao fixture HTTP controlado. Selecionar ou limpar linhas afeta apenas as linhas fornecidas na página filtrada atual.',
+  'selectionDemo.serverSavedHelp':
+    'As chaves salvas persistem entre alterações de página, filtro e ordenação. Carregar chaves salvas restaura Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) e Willow (org-s-23); Elm está em manutenção e as demais estão em páginas não solicitadas. Redefinir restaura Quince (org-s-17) e Willow (org-s-23).',
+  'selectionDemo.serverScope': 'Escopo',
+  'selectionDemo.serverCommerce': 'Comércio',
+  'selectionDemo.serverPublic': 'Público',
+  'selectionDemo.serverNameFilter': 'Filtrar organizações por nome',
+  'selectionDemo.serverSummary': 'Chaves selecionadas ({0})',
+  'selectionDemo.serverOffPage': 'Chave salva de uma página não solicitada',
+  'selectionDemo.serverEmpty': 'Nenhuma organização corresponde a esta página do servidor.',
+  'selectionDemo.serverLoading': 'Carregando esta página do servidor…',
+  'selectionDemo.serverEvidence': 'Resposta do servidor: página {0} de {1}, {2} correspondências, escopo {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'nome crescente',
+  'selectionDemo.serverSortDesc': 'nome decrescente',
+  'selectionDemo.serverLoadSaved': 'Carregar chaves salvas',
+  'selectionDemo.serverSubmit': 'Enviar chaves',
+  'selectionDemo.serverSubmitted': 'Chaves enviadas: {0}',
+  'selectionDemo.serverPicker': 'Seletor de servidor reutilizável',
+  'selectionDemo.serverPickerHelp':
+    'O componente seletor possui a consulta, o carregamento, a falha e a nova tentativa do servidor; o formulário pai possui valores, validação e a linha de base das chaves salvas. Redefinir restaura Maple (org-s-13) e Yarrow (org-s-25).',
   'selectionDemo.unavailableName': 'Organização indisponível',
   'selectionDemo.unverifiedName': 'Organização não verificada',
   'selectionDemo.removeKey': 'Remover {0}',
@@ -12,9 +34,9 @@ export const ptBRTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Remova as organizações indisponíveis antes de salvar.',
 
   'selectionDemo.savedHelp':
-    'Carregar seleção salva restaura South (org-2) e uma chave ausente deste inventário. Atualizar substitui os dados e preserva as chaves selecionadas. Redefinir restaura South.',
+    'Carregar seleção salva restaura Organization 2 (org-2) e uma chave ausente deste inventário. Atualizar substitui os dados e preserva as chaves selecionadas. Redefinir restaura Organization 2.',
   'selectionDemo.pickerHelp':
-    'O seletor gerencia carregamento e tabela; o pai gerencia validação e envio. Redefinir restaura North (org-1).',
+    'O seletor gerencia carregamento e tabela; o pai gerencia validação e envio. Redefinir restaura Organization 1 (org-1).',
   'selectionDemo.reference.overview':
     'Envolve uma tabela nativa Clarity com um rótulo simples. Vincule o formulário apenas ao campo de seleção ou ao host do seletor reutilizável.',
   'selectionDemo.reference.required':
@@ -39,6 +61,9 @@ export const ptBRTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Layout horizontal',
   'selectionDemo.loadSaved': 'Carregar seleção salva',
   'selectionDemo.readonly': 'Somente leitura',
+  'selectionDemo.policyName': 'Nome da política',
+  'selectionDemo.policyControls': 'Controles do exemplo de seleção',
+  'selectionDemo.serverControls': 'Controles de seleção do servidor',
   'selectionDemo.disabled': 'Desabilitado',
   'organizationExample.organization': 'Organização',
   'organizationExample.organizations': 'Organizações',
@@ -62,9 +87,9 @@ export const ptBRTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'A seleção de organizações é inválida.',
   'selectionDemo.asyncSubmit': 'Validação assíncrona e buffer de envio',
   'selectionDemo.asyncSubmitHelp':
-    'As seleções ficam em buffer até o envio. Em seguida, uma verificação assíncrona de elegibilidade é executada; West (org-4) é rejeitado.',
+    'As seleções ficam em buffer até o envio. Em seguida, uma verificação assíncrona de elegibilidade é executada; Organization 4 (org-4) é rejeitado.',
   'selectionDemo.asyncChecking': 'Verificando elegibilidade…',
-  'selectionDemo.asyncError': 'West não é elegível para esta política.',
+  'selectionDemo.asyncError': 'Organization 4 não é elegível para esta política.',
   'selectionDemo.asyncSubmitted': 'Chaves enviadas',
   'selectionDemo.title': 'Seleção em grade',
   'selectionDemo.intro': 'Selecione IDs estáveis de recursos com uma grade nativa do Clarity em um formulário Angular.',
@@ -653,6 +678,13 @@ export const ptBRTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'A instância Angular FormGroup para envolver-se com sinais reativos e ligantes.',
   'toSignalForm.apiPropOmit': 'Controle os nomes para omitir a partir de submitValue payloads.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'Se submitValue inclui controles desabilitados. Com false o form.value do Angular é lido, que ainda mantém um controle filho desabilitado; combine com options.omitIf para excluí-lo.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'Se submitValue remove valores de string vazia.',
+  'toSignalForm.apiPropOmitNull': 'Se submitValue remove valores null.',
+  'toSignalForm.apiPropOmitIf':
+    'Predicado por controle que remove um controle de submitValue. Recebe o valor atual, o nome do controle e seu objeto pai.',
+  'toSignalForm.apiPropDeep': 'Se submitValue também limpa objetos e matrizes aninhados.',
   'toSignalForm.apiPropEmitEvent': 'Se o estado / valor muda, emitir eventos de controle Angular.',
   'toSignalForm.apiPropValue': 'Sinal reativo do valor da forma atual.',
   'toSignalForm.apiPropStatus':

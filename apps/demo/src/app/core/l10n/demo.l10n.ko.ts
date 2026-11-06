@@ -3,6 +3,28 @@ export const koTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': '선택한 조직',
   'selectionDemo.selectedCount': '{0}개 선택 · 최대 {1}개',
+  'selectionDemo.server': '서버 페이지 선택',
+  'selectionDemo.serverHelp':
+    '제어된 HTTP 픽스처에서 제한된 페이지 하나를 요청합니다. 행 선택 또는 해제는 현재 필터링된 페이지에 제공된 행에만 영향을 줍니다.',
+  'selectionDemo.serverSavedHelp':
+    '저장된 키는 페이지, 필터, 정렬 변경 후에도 유지됩니다. 저장된 키 불러오기는 Elm(org-s-05), Koa(org-s-11), Oak(org-s-15), Willow(org-s-23)를 복원합니다. Elm은 유지보수 중이며 나머지는 요청하지 않은 페이지에 있습니다. 재설정은 Quince(org-s-17)와 Willow(org-s-23)를 복원합니다.',
+  'selectionDemo.serverScope': '범위',
+  'selectionDemo.serverCommerce': '커머스',
+  'selectionDemo.serverPublic': '공개',
+  'selectionDemo.serverNameFilter': '이름으로 조직 필터링',
+  'selectionDemo.serverSummary': '선택된 키({0})',
+  'selectionDemo.serverOffPage': '요청하지 않은 페이지의 저장된 키',
+  'selectionDemo.serverEmpty': '이 서버 페이지와 일치하는 조직이 없습니다.',
+  'selectionDemo.serverLoading': '이 서버 페이지를 불러오는 중…',
+  'selectionDemo.serverEvidence': '서버 응답: {1}페이지 중 {0}페이지, {2}개 일치, 범위 {3}, {4}.',
+  'selectionDemo.serverSortAsc': '이름 오름차순',
+  'selectionDemo.serverSortDesc': '이름 내림차순',
+  'selectionDemo.serverLoadSaved': '저장된 키 불러오기',
+  'selectionDemo.serverSubmit': '키 제출',
+  'selectionDemo.serverSubmitted': '제출된 키: {0}',
+  'selectionDemo.serverPicker': '재사용 가능한 서버 선택기',
+  'selectionDemo.serverPickerHelp':
+    '선택기 컴포넌트가 서버 쿼리와 로딩, 실패, 재시도를 담당하고 부모가 값, 유효성 검사, 저장 키 기준선을 담당합니다. 재설정하면 Maple(org-s-13)과 Yarrow(org-s-25)을 복원합니다.',
   'selectionDemo.unavailableName': '사용할 수 없는 조직',
   'selectionDemo.unverifiedName': '확인되지 않은 조직',
   'selectionDemo.removeKey': '{0} 제거',
@@ -12,9 +34,9 @@ export const koTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': '저장하기 전에 사용할 수 없는 조직을 제거하세요.',
 
   'selectionDemo.savedHelp':
-    '저장된 선택을 불러오면 South(org-2)와 현재 목록에 없는 키를 복원합니다. 새로 고침은 선택 키를 유지하며 목록을 교체합니다. 재설정은 South를 복원합니다.',
+    '저장된 선택을 불러오면 Organization 2(org-2)와 현재 목록에 없는 키를 복원합니다. 새로 고침은 선택 키를 유지하며 목록을 교체합니다. 재설정은 Organization 2를 복원합니다.',
   'selectionDemo.pickerHelp':
-    '선택기는 로딩과 그리드를, 부모는 검증과 제출을 관리합니다. 재설정은 North(org-1)를 복원합니다.',
+    '선택기는 로딩과 그리드를, 부모는 검증과 제출을 관리합니다. 재설정은 Organization 1(org-1)를 복원합니다.',
   'selectionDemo.reference.overview':
     '일반 레이블과 하나의 기본 Clarity 그리드를 감쌉니다. 폼은 선택 필드 또는 재사용 선택기 호스트에만 바인딩합니다.',
   'selectionDemo.reference.required':
@@ -38,6 +60,9 @@ export const koTranslations: Record<string, string> = {
   'selectionDemo.horizontal': '가로 레이아웃',
   'selectionDemo.loadSaved': '저장된 선택 불러오기',
   'selectionDemo.readonly': '읽기 전용',
+  'selectionDemo.policyName': '정책 이름',
+  'selectionDemo.policyControls': '선택 예제 컨트롤',
+  'selectionDemo.serverControls': '서버 선택 컨트롤',
   'selectionDemo.disabled': '비활성화',
   'organizationExample.organization': '조직',
   'organizationExample.organizations': '조직',
@@ -60,9 +85,9 @@ export const koTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': '조직 선택이 올바르지 않습니다.',
   'selectionDemo.asyncSubmit': '비동기 유효성 검사 및 제출 버퍼링',
   'selectionDemo.asyncSubmitHelp':
-    '선택 항목은 제출할 때까지 버퍼링된 후 비동기 자격 검사가 실행됩니다. West(org-4)는 거부됩니다.',
+    '선택 항목은 제출할 때까지 버퍼링된 후 비동기 자격 검사가 실행됩니다. Organization 4(org-4)는 거부됩니다.',
   'selectionDemo.asyncChecking': '자격을 확인하는 중…',
-  'selectionDemo.asyncError': 'West는 이 정책에 적합하지 않습니다.',
+  'selectionDemo.asyncError': 'Organization 4는 이 정책에 적합하지 않습니다.',
   'selectionDemo.asyncSubmitted': '제출된 키',
   'selectionDemo.title': '데이터 그리드 선택',
   'selectionDemo.intro': 'Angular 폼의 기본 Clarity 그리드에서 안정적인 리소스 ID를 선택합니다.',
@@ -637,6 +662,13 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'Angular FormGroup 인스턴스를 반응형 신호 및 바인딩으로 감싸는 대상입니다.',
   'toSignalForm.apiPropOmit': '제출값 파이로드에서 생략할 컨트롤 이름입니다.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'submitValue가 비활성화된 컨트롤을 포함하는지 여부입니다. false이면 Angular의 form.value를 읽지만 그 안에 비활성 자식 컨트롤도 남으므로 options.omitIf와 함께 사용해야 제외됩니다.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'submitValue가 빈 문자열 값을 제거하는지 여부입니다.',
+  'toSignalForm.apiPropOmitNull': 'submitValue가 null 값을 제거하는지 여부입니다.',
+  'toSignalForm.apiPropOmitIf':
+    '컨트롤별로 submitValue에서 제외할지 판단하는 조건입니다. 현재 값, 컨트롤 이름, 상위 객체를 전달받습니다.',
+  'toSignalForm.apiPropDeep': 'submitValue가 중첩 객체와 배열도 정리하는지 여부입니다.',
   'toSignalForm.apiPropEmitEvent': '상태/값 변경이 Angular 컨트롤 이벤트를 발생시키는지 여부입니다.',
   'toSignalForm.apiPropValue': '현재 폼 값의 반응형 신호입니다.',
   'toSignalForm.apiPropStatus': "전체 폼 상태의 반응형 신호('VALID' | 'INVALID' | 'PENDING' | 'DISABLED')입니다.",
