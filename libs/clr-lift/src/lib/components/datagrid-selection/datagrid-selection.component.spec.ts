@@ -439,6 +439,41 @@ describe('Datagrid selection through its real form host', () => {
     expect(changes).not.toHaveBeenCalled();
   });
 
+  it('re-measures a complete inventory so a smaller replacement shrinks the retained viewport', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    // JSDOM reports a zero rect for every element; derive the viewport height from its rendered rows.
+    const rect = (height: number) =>
+      ({x: 0, y: 0, width: 0, height, top: 0, right: 0, bottom: height, left: 0}) as DOMRect;
+    const bounds = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+      if (!this.classList.contains('datagrid')) return rect(0);
+      return rect(this.querySelectorAll('clr-dg-row').length * 20 + 40);
+    });
+    try {
+      const fixture = TestBed.createComponent(Host);
+      const host = fixture.componentInstance;
+      host.items.set([
+        {id: 'org-1', name: 'North'},
+        {id: 'org-2', name: 'South'},
+        {id: 'org-3', name: 'East'},
+        {id: 'org-4', name: 'West'},
+        {id: 'org-5', name: 'River'},
+      ]);
+      await settle(fixture);
+      const viewport = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.datagrid');
+      if (!viewport) throw new Error('cll-datagrid-selection: viewport not found');
+      // Five complete rows retain their own height while the inventory is complete.
+      expect(viewport.style.minBlockSize).toBe('8.75rem');
+      host.items.set([
+        {id: 'org-1', name: 'North'},
+        {id: 'org-2', name: 'South'},
+      ]);
+      await settle(fixture);
+      expect(viewport.style.minBlockSize).toBe('5rem');
+    } finally {
+      bounds.mockRestore();
+    }
+  });
+
   it.each([false, true])(
     'accepts native single edits with row mode %s and keeps keys independent of object replacement',
     async (rowMode) => {

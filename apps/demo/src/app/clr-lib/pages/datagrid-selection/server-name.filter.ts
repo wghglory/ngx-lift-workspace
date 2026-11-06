@@ -15,8 +15,8 @@ export class ServerNameFilter implements ClrDatagridFilterInterface<ServerOrgani
     return true;
   }
   /**
-   * Applies the next non-empty name filter.
-   * @param value Raw query input; surrounding white space is trimmed and empty input stays no-op.
+   * Applies the next name filter.
+   * @param value Raw query input; surrounding white space is trimmed and empty input clears the filter.
    */
   set(value: string): void {
     const next = value.trim();

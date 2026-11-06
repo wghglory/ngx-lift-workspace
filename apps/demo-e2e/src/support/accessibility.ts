@@ -7,13 +7,13 @@ export async function expectAccessible(page: Page, testInfo: TestInfo, scope?: s
   await page.addScriptTag({content: axe.source});
   const results = await page.evaluate((scope) => {
     const axe = (window as unknown as Window & {axe: BrowserAxe}).axe;
-    // Maintainer-approved exception: inert Clarity buttons (e.g. the datagrid loading
-    // button) fail color-contrast by design and cannot be activated. The exclusion is
-    // limited to those buttons; disabled non-button controls and every other node stay
-    // in the scan. The complete WCAG 2.0/2.1/2.2 A/AA tag set remains enabled and no
-    // rule is disabled, per the accessibility and localization acceptance contract.
+    // Maintainer-approved exception: inert Clarity buttons fail color-contrast by design and
+    // cannot be activated. The exclusion is limited to those buttons; disabled non-button
+    // controls and every other node stay in the scan. The complete WCAG 2.0/2.1/2.2 A/AA tag
+    // set remains enabled and no rule is disabled, per the accessibility and localization
+    // acceptance contract.
     const DISABLED_BUTTON_SELECTOR =
-      'button[disabled], button[aria-disabled="true"], button.btn-disabled, button.clr-loading, button.disabled';
+      'button[disabled], button[aria-disabled="true"], button.btn-disabled, button.disabled';
     // `exclude` belongs to the axe context, not to RunOptions. Passing it as a run
     // option is ignored at runtime and breaks the AxeResults return type.
     return axe.run(

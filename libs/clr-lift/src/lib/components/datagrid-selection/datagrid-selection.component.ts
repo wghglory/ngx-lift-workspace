@@ -388,11 +388,16 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
     }
     // The grid only changes height when its row counts change (filtering, paging, fresh data) or the
     // density changes. Selection alone never resizes it, so skip the layout read on the selection hot
-    // path. The captured minimum is the tallest rendered height, keeping the viewport stable as rows
-    // are filtered or paged out instead of collapsing.
+    // path. While a subset is displayed the captured minimum is the tallest rendered height, keeping
+    // the viewport stable as rows are filtered or paged out instead of collapsing. A complete
+    // inventory instead sizes to its content, so a smaller replacement inventory can shrink again.
     const signature = `${sourceCount}|${displayedCount}`;
     if (signature !== this.footprintSignature) {
       this.footprintSignature = signature;
+      if (sourceCount > 0 && sourceCount === displayedCount) {
+        this.footprint = 0;
+        viewport.style.minBlockSize = '';
+      }
       const rem =
         Number.parseFloat(
           this.host.ownerDocument.defaultView?.getComputedStyle(this.host.ownerDocument.documentElement).fontSize ?? '',
