@@ -191,6 +191,10 @@ describe('certificate-parser (certificate type coverage)', () => {
     });
 
     it('parses subjectAltName and subjectKeyIdentifier extensions when present', () => {
+      // directoryName [4] is constructed: a full Name (RDNSequence), not a primitive string.
+      const directoryName = tlv(0xa4, [
+        tlv(0x30, [tlv(0x31, [tlv(0x30, [tlv(0x06, encodeOid('2.5.4.3')), tlv(0x0c, ascii('Dir Example'))])])]),
+      ]);
       const sanExtension = tlv(0x30, [
         tlv(0x06, encodeOid('2.5.29.17')),
         tlv(0x04, [
@@ -199,6 +203,7 @@ describe('certificate-parser (certificate type coverage)', () => {
             tlv(0x81, ascii('a@b.com')),
             tlv(0x86, ascii('https://example.com')),
             tlv(0x87, [192, 168, 1, 7]),
+            directoryName,
           ]),
         ]),
       ]);
@@ -218,6 +223,7 @@ describe('certificate-parser (certificate type coverage)', () => {
         {type: 'email', value: 'a@b.com'},
         {type: 'uri', value: 'https://example.com'},
         {type: 'ip', value: '192.168.1.7'},
+        {type: 'directoryName', value: 'CN=Dir Example'},
       ]);
       expect(cert.subjectKeyIdentifier).toBe('01020304');
     });

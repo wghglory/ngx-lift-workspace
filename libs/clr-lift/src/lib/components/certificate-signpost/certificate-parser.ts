@@ -318,16 +318,25 @@ export function extractDerFromPem(pem: string, pemEncoded = true): Uint8Array {
 function parseGeneralNames(content: Uint8Array): GeneralName[] {
   const names: GeneralName[] = [];
   for (const entry of readNode(content, 0).node.children ?? []) {
-    if (!entry.value) {
-      continue;
-    }
     if (entry.tag === 0x82) {
+      if (!entry.value) {
+        continue;
+      }
       names.push({type: 'dns', value: latin1(entry.value)});
     } else if (entry.tag === 0x81) {
+      if (!entry.value) {
+        continue;
+      }
       names.push({type: 'email', value: latin1(entry.value)});
     } else if (entry.tag === 0x86) {
+      if (!entry.value) {
+        continue;
+      }
       names.push({type: 'uri', value: latin1(entry.value)});
     } else if (entry.tag === 0x87) {
+      if (!entry.value) {
+        continue;
+      }
       const groups: string[] = [];
       if (entry.value.length === 4) {
         names.push({type: 'ip', value: Array.from(entry.value).join('.')});
