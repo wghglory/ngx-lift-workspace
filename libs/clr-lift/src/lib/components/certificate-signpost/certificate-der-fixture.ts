@@ -32,7 +32,8 @@ function flatten(input: (number | number[])[]): number[] {
   return out;
 }
 
-function tlv(tag: number, content: (number | number[])[]): number[] {
+/** Encodes one DER TLV element; nested arrays are flattened. */
+export function tlv(tag: number, content: (number | number[])[]): number[] {
   const bytes = flatten(content);
   const length = bytes.length;
   const lenBytes: number[] = [];
@@ -53,7 +54,8 @@ function tlv(tag: number, content: (number | number[])[]): number[] {
 const SEQUENCE = (content: (number | number[])[]): number[] => tlv(0x30, content);
 const SET = (content: (number | number[])[]): number[] => tlv(0x31, content);
 
-function ascii(s: string): number[] {
+/** Encodes an ASCII string as byte values. */
+export function ascii(s: string): number[] {
   const out: number[] = [];
   for (let i = 0; i < s.length; i++) {
     out.push(s.charCodeAt(i) & 0xff);
@@ -70,7 +72,8 @@ function bmp(s: string): number[] {
   return out;
 }
 
-function encodeOid(dotted: string): number[] {
+/** Encodes a dotted OID string as DER content bytes. */
+export function encodeOid(dotted: string): number[] {
   const parts = dotted.split('.').map(Number);
   const body: number[] = [parts[0] * 40 + parts[1]];
   for (let i = 2; i < parts.length; i++) {
@@ -125,8 +128,8 @@ function genTime(d: Date): number[] {
   return tlv(0x18, ascii(s));
 }
 
-function signatureAlgorithm(): number[] {
-  return SEQUENCE([tlv(0x06, encodeOid('1.2.840.113549.1.1.11'))]);
+function signatureAlgorithm(oid = '1.2.840.113549.1.1.11'): number[] {
+  return SEQUENCE([tlv(0x06, encodeOid(oid))]);
 }
 
 function spki(): number[] {
@@ -149,6 +152,7 @@ export function makeCert(opts: {
   timeTag?: number;
   rawNotBefore?: string;
   rawNotAfter?: string;
+  signatureAlgorithmOid?: string;
   extensions?: number[];
 }): Uint8Array {
   const timeTag = opts.timeTag ?? 0x17;
@@ -157,7 +161,7 @@ export function makeCert(opts: {
     tbsParts.push(tlv(0xa0, tlv(0x02, [opts.version])));
   }
   tbsParts.push(tlv(0x02, opts.serial));
-  tbsParts.push(signatureAlgorithm());
+  tbsParts.push(signatureAlgorithm(opts.signatureAlgorithmOid));
   tbsParts.push(name(opts.issuer));
   const t1 = opts.rawNotBefore
     ? tlv(timeTag, ascii(opts.rawNotBefore))
@@ -176,7 +180,11 @@ export function makeCert(opts: {
     tbsParts.push(tlv(0xa3, SEQUENCE(opts.extensions)));
   }
   const tbs = SEQUENCE(tbsParts.flat());
-  const cert = SEQUENCE([...tbs, ...signatureAlgorithm(), ...tlv(0x03, [0x00, ...ascii('signature')])]);
+  const cert = SEQUENCE([
+    ...tbs,
+    ...signatureAlgorithm(opts.signatureAlgorithmOid),
+    ...tlv(0x03, [0x00, ...ascii('signature')]),
+  ]);
   return new Uint8Array(cert);
 }
 

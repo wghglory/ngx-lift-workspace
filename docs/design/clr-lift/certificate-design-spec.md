@@ -52,6 +52,25 @@ dependency so unrelated consumers are not forced to install it. ASN.1/DER decodi
 they cover the fields this library displays and validates, not full X.509 semantics. Angular's ValidatorFn owns parsing
 errors. Expiry display does not inspect all certificate trust conditions.
 
+## dsm-ui alignment requirement
+
+dsm-ui parses certificates for display with `@peculiar/x509` and hashes DER synchronously with node-forge
+(`libs/core/src/lib/utilities/certificate.utility.ts`, the trusted-root-certificates helpers, and
+`tm-certificate.service`); it never generates keys, signs, or decrypts. Requirement: clr-lift's parser must cover those
+usages so dsm-ui can drop node-forge and `@peculiar/asn1-x509`:
+
+- Parsing is key-algorithm agnostic: RSA, ECDSA, Ed25519 and other certificates parse identically because the subject
+  public key info is not interpreted. Regression fixtures cover RSA and ECDSA signature algorithms.
+- The signature algorithm OID is exposed as `signatureAlgorithm` for labeling RSA/ECDSA and other families; unknown OIDs
+  stay opaque for the caller to map, matching dsm-ui's `DEFAULT_SIGNATURE_ALGORITHM_MAP` fallback.
+- The subjectAltName (2.5.29.17) and subjectKeyIdentifier (2.5.29.14) extensions are parsed when present
+  (`subjectAltName`, `subjectKeyIdentifier`).
+- Fingerprints ship for MD5, SHA-1 and SHA-256 over DER, cross-checked against the platform implementation; SHA-384/512
+  digests should use the async WebCrypto `crypto.subtle.digest` rather than more synchronous code in this library.
+
+Trust decisions in dsm-ui (trusted-certificate submission, connection status) stay server-side; this requirement covers
+parsing and display only.
+
 ## Developer learning journey and pedagogy plan
 
 Prerequisites: Angular components, Clarity setup, and a PEM certificate; parsing does not establish trust.
@@ -123,6 +142,8 @@ separately; neither is silently introduced in this docs update.
 
 The parser, certificateValidator, signpost, and certificate component suites pass. The fixed MD5/SHA1 values were
 independently calculated from DER with Python hashlib and are now reproduced by the dependency-free native
-implementation in `certificate-crypto.ts`. A synthetic DER fixture builder covers certificate types the two real
-fixtures do not: v1 and v3 certificates, UTCTime and GeneralizedTime validity, multi-valued RDNs, UTF8/BMP/Printable/IA5
-distinguished-name encodings, and PEM/raw-DER/base64 inputs. This proves parsing/display behavior, not trust.
+implementation in `certificate-crypto.ts`; SHA-256 is cross-checked against the platform implementation in tests. A
+synthetic DER fixture builder covers certificate types the two real fixtures do not: v1 and v3 certificates, UTCTime and
+GeneralizedTime validity with numeric offsets, multi-valued RDNs, UTF8/BMP/Printable/IA5 distinguished-name encodings,
+RSA and ECDSA signature algorithms, SAN/SKI extensions, and PEM/raw-DER/base64 inputs. This proves parsing/display
+behavior, not trust.

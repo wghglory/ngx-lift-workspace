@@ -1,8 +1,9 @@
+import {createHash} from 'node:crypto';
 import {describe, expect, it} from 'vitest';
 
-import {md5, sha1} from './certificate-crypto';
+import {md5, sha1, sha256} from './certificate-crypto';
 import {certificatePem, digiCertPem} from './certificate.fixture';
-import {binaryString, makeCert, OID, TAG, toPem} from './certificate-der-fixture';
+import {ascii, binaryString, encodeOid, makeCert, OID, TAG, tlv, toPem} from './certificate-der-fixture';
 import {extractDerFromPem, parseCertificate, parseCertificateFromPem, X509Certificate} from './certificate-parser';
 
 describe('certificate-parser (certificate type coverage)', () => {
@@ -164,6 +165,67 @@ describe('certificate-parser (certificate type coverage)', () => {
       expect(cert.subject.getField('O')?.value).toBe('Acme');
       expect(cert.subject.getField('OU')?.value).toBe('Eng');
       expect(cert.subject.getField('CN')?.value).toBe('acme.test');
+    });
+  });
+
+  describe('algorithms and extensions (dsm-ui alignment)', () => {
+    const base = () => ({
+      serial: [0x0a],
+      issuer: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'CA'}]],
+      subject: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'Site'}]],
+      notBefore: new Date(Date.UTC(2026, 0, 1)),
+      notAfter: new Date(Date.UTC(2036, 0, 1)),
+    });
+
+    it('exposes the signature algorithm OID for RSA and ECDSA certificates', () => {
+      const rsa = parseCertificate(makeCert({...base(), signatureAlgorithmOid: '1.2.840.113549.1.1.11'}));
+      expect(rsa.signatureAlgorithm).toBe('1.2.840.113549.1.1.11');
+
+      const ecdsa = parseCertificate(makeCert({...base(), signatureAlgorithmOid: '1.2.840.10045.4.3.2'}));
+      expect(ecdsa.signatureAlgorithm).toBe('1.2.840.10045.4.3.2');
+    });
+
+    it('reads the signature algorithm from the real fixtures', () => {
+      expect(parseCertificateFromPem(certificatePem, false).signatureAlgorithm).toBe('1.2.840.113549.1.1.5');
+      expect(parseCertificateFromPem(digiCertPem, false).signatureAlgorithm).toBe('1.2.840.113549.1.1.11');
+    });
+
+    it('parses subjectAltName and subjectKeyIdentifier extensions when present', () => {
+      const sanExtension = tlv(0x30, [
+        tlv(0x06, encodeOid('2.5.29.17')),
+        tlv(0x04, [
+          tlv(0x30, [
+            tlv(0x82, ascii('www.example.com')),
+            tlv(0x81, ascii('a@b.com')),
+            tlv(0x86, ascii('https://example.com')),
+            tlv(0x87, [192, 168, 1, 7]),
+          ]),
+        ]),
+      ]);
+      const skiExtension = tlv(0x30, [
+        tlv(0x06, encodeOid('2.5.29.14')),
+        tlv(0x04, tlv(0x04, [0x01, 0x02, 0x03, 0x04])),
+      ]);
+      const der = makeCert({
+        ...base(),
+        version: 2,
+        extensions: [sanExtension, skiExtension],
+      });
+
+      const cert = parseCertificate(der);
+      expect(cert.subjectAltName).toEqual([
+        {type: 'dns', value: 'www.example.com'},
+        {type: 'email', value: 'a@b.com'},
+        {type: 'uri', value: 'https://example.com'},
+        {type: 'ip', value: '192.168.1.7'},
+      ]);
+      expect(cert.subjectKeyIdentifier).toBe('01020304');
+    });
+
+    it('computes SHA-256 fingerprints matching the platform implementation', () => {
+      const der = extractDerFromPem(certificatePem, false);
+      expect(sha256(der)).toBe(createHash('sha256').update(der).digest('hex').toUpperCase());
+      expect(sha256(der)).toMatch(/^[0-9A-F]{64}$/);
     });
   });
 

@@ -2,9 +2,11 @@
  * Minimal, dependency-free X.509 certificate parsing used by the certificate signpost and validator.
  *
  * This replaces the node-forge dependency. It extracts the fields the library displays and validates:
- * the subject/issuer distinguished names, the validity period, the serial number, and the raw DER
- * bytes used for fingerprinting. It is intentionally narrow: it does not verify signatures, chains,
- * revocation, or trust, mirroring the previous parsing-only contract.
+ * the subject/issuer distinguished names, the validity period, the serial number, the signature
+ * algorithm OID, the subjectAltName and subjectKeyIdentifier extensions, and the raw DER bytes used
+ * for fingerprinting. It is intentionally narrow and key-algorithm agnostic (RSA, ECDSA, Ed25519 and
+ * other certificates parse identically): it does not verify signatures, chains, revocation, or
+ * trust, mirroring the previous parsing-only contract.
  */
 
 /** A single relative-distinguished-name attribute, e.g. `{ name: 'CN', value: 'example.com' }`. */
@@ -27,12 +29,26 @@ export interface CertificateValidity {
   notAfter: Date;
 }
 
+/** One entry of the subjectAltName extension. */
+export interface GeneralName {
+  /** Kind of name: `dns`, `uri`, `email`, `ip`, or `directoryName`. */
+  type: 'dns' | 'uri' | 'email' | 'ip' | 'directoryName';
+  /** Decoded value; IP addresses render as dotted quad (IPv4) or colon-separated hex (IPv6). */
+  value: string;
+}
+
 /** Parsed certificate surface exposed by the library. */
 export interface X509Certificate {
   serialNumber: string;
   subject: CertificateName;
   issuer: CertificateName;
   validity: CertificateValidity;
+  /** Dotted OID of the signature algorithm, e.g. `1.2.840.113549.1.1.11` (RSA with SHA-256). */
+  signatureAlgorithm: string;
+  /** subjectAltName entries when the extension (2.5.29.17) is present. */
+  subjectAltName?: GeneralName[];
+  /** subjectKeyIdentifier as lowercase hex when the extension (2.5.29.14) is present. */
+  subjectKeyIdentifier?: string;
 }
 
 const OID_SHORT_NAMES: Record<string, string> = {
@@ -298,6 +314,70 @@ export function extractDerFromPem(pem: string, pemEncoded = true): Uint8Array {
   return bytes;
 }
 
+/** Parses the subjectAltName (2.5.29.17) extension content into {@link GeneralName} entries. */
+function parseGeneralNames(content: Uint8Array): GeneralName[] {
+  const names: GeneralName[] = [];
+  for (const entry of readNode(content, 0).node.children ?? []) {
+    if (!entry.value) {
+      continue;
+    }
+    if (entry.tag === 0x82) {
+      names.push({type: 'dns', value: latin1(entry.value)});
+    } else if (entry.tag === 0x81) {
+      names.push({type: 'email', value: latin1(entry.value)});
+    } else if (entry.tag === 0x86) {
+      names.push({type: 'uri', value: latin1(entry.value)});
+    } else if (entry.tag === 0x87) {
+      const groups: string[] = [];
+      if (entry.value.length === 4) {
+        names.push({type: 'ip', value: Array.from(entry.value).join('.')});
+      } else {
+        for (let i = 0; i + 1 < entry.value.length; i += 2) {
+          groups.push(((entry.value[i] << 8) | entry.value[i + 1]).toString(16).padStart(4, '0'));
+        }
+        names.push({type: 'ip', value: groups.join(':')});
+      }
+    } else if (entry.tag === 0xa4) {
+      const nameNode = (entry.children ?? [])[0];
+      if (nameNode) {
+        const dn = parseName(nameNode)
+          .attributes.map((attribute) => `${attribute.name}=${attribute.value}`)
+          .join(', ');
+        names.push({type: 'directoryName', value: dn});
+      }
+    }
+  }
+  return names;
+}
+
+/** Extracts the SAN and SKI extensions when present in the TBSCertificate [3] block. */
+function parseExtensions(tbs: DerNode): {subjectAltName?: GeneralName[]; subjectKeyIdentifier?: string} {
+  const result: {subjectAltName?: GeneralName[]; subjectKeyIdentifier?: string} = {};
+  const extensionsNode = (tbs.children ?? []).find((child) => child.tag === 0xa3);
+  for (const extension of extensionsNode?.children?.[0]?.children ?? []) {
+    const fields = extension.children;
+    if (!fields || fields.length < 2 || !fields[0].value) {
+      continue;
+    }
+    const oid = decodeOid(fields[0].value);
+    // The last field is the extnValue OCTET STRING; an optional critical BOOLEAN precedes it.
+    const valueNode = fields[fields.length - 1];
+    if (!valueNode.value) {
+      continue;
+    }
+    if (oid === '2.5.29.17') {
+      result.subjectAltName = parseGeneralNames(valueNode.value);
+    } else if (oid === '2.5.29.14') {
+      // The SKI extnValue wraps the key identifier in another OCTET STRING.
+      const keyIdentifier = readNode(valueNode.value, 0).node;
+      if (keyIdentifier.value) {
+        result.subjectKeyIdentifier = hexOf(keyIdentifier.value);
+      }
+    }
+  }
+  return result;
+}
+
 /** Parses DER-encoded certificate bytes into the library's {@link X509Certificate} shape. */
 export function parseCertificate(der: Uint8Array): X509Certificate {
   const top = readNode(der, 0).node;
@@ -308,6 +388,12 @@ export function parseCertificate(der: Uint8Array): X509Certificate {
   if (tbs.tag !== 0x30 || !tbs.children) {
     throw new Error('Invalid certificate: expected a TBSCertificate SEQUENCE');
   }
+
+  const signatureAlgorithmNode = top.children[1]?.children?.[0];
+  if (!signatureAlgorithmNode?.value) {
+    throw new Error('Invalid certificate: missing signature algorithm');
+  }
+  const signatureAlgorithm = decodeOid(signatureAlgorithmNode.value);
 
   let index = 0;
   // [0] EXPLICIT version is optional and only present for v2/v3 certificates.
@@ -336,6 +422,8 @@ export function parseCertificate(der: Uint8Array): X509Certificate {
       notBefore: parseTimeNode(validityNode.children[0]),
       notAfter: parseTimeNode(validityNode.children[1]),
     },
+    signatureAlgorithm,
+    ...parseExtensions(tbs),
   };
 }
 
