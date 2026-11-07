@@ -1,24 +1,29 @@
 @use 'sass:meta';
 
 // Self-hosted so code samples render identically on Windows, macOS, and Linux without a CDN request.
-// JetBrains Mono variable, Latin subset from @fontsource-variable/jetbrains-mono@5.2.6:
-// https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5.2.6/files/jetbrains-mono-latin-wght-normal.woff2
-// Licensed under SIL OFL 1.1; the full license is in assets/fonts/OFL.txt.
+// GitHub's code font: Monaspace Neon, Latin 400/700 from @fontsource/monaspace-neon@5.3.0:
+// https://cdn.jsdelivr.net/npm/@fontsource/monaspace-neon@5.3.0/files/
+// SIL OFL 1.1 with Reserved Font Name 'Monaspace'; the full license is in assets/fonts/OFL.txt.
 @font-face {
-  font-family: 'JetBrains Mono Variable';
+  font-family: 'Monaspace Neon';
   font-style: normal;
-  font-weight: 100 800;
+  font-weight: 400;
   font-display: swap;
-  src: url('/assets/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
-    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('/assets/fonts/monaspace-neon-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Monaspace Neon';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/assets/fonts/monaspace-neon-latin-700-normal.woff2') format('woff2');
 }
 
 :root {
+  // GitHub's monospace fallback order follows the self-hosted face.
   --demo-font-mono:
-    'JetBrains Mono Variable', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Consolas,
-    'Liberation Mono', monospace;
+    'Monaspace Neon', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 // Bundle accessible syntax palettes so theme changes do not depend on a CDN request.
@@ -149,13 +154,13 @@ cll-page-container > .page-container.density-compact {
 // Documentation-wide preformatted content and inline code, including translated innerHTML.
 // `pre code` is required because Clarity declares font-family on `code` itself, which would
 // otherwise override the inherited font and leave highlighted samples on the generic monospace.
-// Samples must show the exact characters a reader copies, not typographic ligatures.
+// Disable typographic ligatures so samples show the exact characters a reader copies; Monaspace's
+// `calt` texture healing stays on, which is part of GitHub's code rendering.
 pre,
 pre code,
 code:not([class^='language-']) {
   font-family: var(--demo-font-mono);
   font-variant-ligatures: none;
-  font-feature-settings: 'calt' 0;
 }
 
 pre {
