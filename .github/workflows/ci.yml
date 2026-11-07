@@ -12,6 +12,10 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   quality:
+    # Shared with deploy-demo.yml and publish.yml; `secrets: inherit` forwards
+    # NX_CLOUD_ACCESS_TOKEN so the gate can use the Nx Cloud remote cache.
     uses: ./.github/workflows/quality.yml
+    secrets: inherit
