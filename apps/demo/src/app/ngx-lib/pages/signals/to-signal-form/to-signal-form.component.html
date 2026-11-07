@@ -527,6 +527,123 @@
     </div>
   </app-demo-playground>
 
+  <!-- ==================== SUBMISSION OPTIONS LAB ==================== -->
+  <app-demo-playground
+    [title]="'toSignalForm.optionsLabTitle' | translate"
+    level="intermediate"
+    [description]="'toSignalForm.optionsLabDesc' | translate"
+    [tsCode]="optionsLabTs"
+    [htmlCode]="optionsLabHtml"
+  >
+    <div preview>
+      <div cds-layout="vertical gap:md align:stretch">
+        <section cds-layout="vertical gap:sm align:stretch" aria-labelledby="options-lab-sample-heading">
+          <h3 id="options-lab-sample-heading">{{ 'toSignalForm.optionsLabSampleTitle' | translate }}</h3>
+          <form clrForm [formGroup]="optionsForm" class="options-lab-sample">
+            <clr-input-container>
+              <label for="options-lab-nickname">{{ 'toSignalForm.optionsLabNickname' | translate }}</label>
+              <input id="options-lab-nickname" clrInput formControlName="nickname" />
+            </clr-input-container>
+            <div formGroupName="profile">
+              <clr-input-container>
+                <label for="options-lab-city">{{ 'toSignalForm.optionsLabCity' | translate }}</label>
+                <input id="options-lab-city" clrInput formControlName="city" />
+              </clr-input-container>
+            </div>
+          </form>
+        </section>
+
+        <section cds-layout="vertical gap:sm align:stretch" aria-labelledby="options-lab-switches-heading">
+          <h3 id="options-lab-switches-heading">{{ 'toSignalForm.optionsLabSwitchesTitle' | translate }}</h3>
+          <form clrForm [formGroup]="optionsControls">
+            <clr-toggle-container>
+              <label for="options-lab-include-disabled">
+                <code>includeDisabled</code> — {{ 'toSignalForm.optionsLabHintIncludeDisabled' | translate }}
+              </label>
+              <clr-toggle-wrapper>
+                <input id="options-lab-include-disabled" type="checkbox" clrToggle formControlName="includeDisabled" />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+            <clr-toggle-container>
+              <label for="options-lab-omit-empty-strings">
+                <code>omitEmptyStrings</code> — {{ 'toSignalForm.optionsLabHintOmitEmptyStrings' | translate }}
+              </label>
+              <clr-toggle-wrapper>
+                <input
+                  id="options-lab-omit-empty-strings"
+                  type="checkbox"
+                  clrToggle
+                  formControlName="omitEmptyStrings"
+                />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+            <clr-toggle-container>
+              <label for="options-lab-omit-null">
+                <code>omitNull</code> — {{ 'toSignalForm.optionsLabHintOmitNull' | translate }}
+              </label>
+              <clr-toggle-wrapper>
+                <input id="options-lab-omit-null" type="checkbox" clrToggle formControlName="omitNull" />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+            <clr-toggle-container>
+              <label for="options-lab-omit-if">
+                <code>omitIf</code> — {{ 'toSignalForm.optionsLabHintOmitIf' | translate }}
+              </label>
+              <clr-toggle-wrapper>
+                <input id="options-lab-omit-if" type="checkbox" clrToggle formControlName="omitIf" />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+            <clr-toggle-container>
+              <label for="options-lab-omit">
+                <code>omit</code> — {{ 'toSignalForm.optionsLabHintOmit' | translate }}
+              </label>
+              <clr-toggle-wrapper>
+                <input id="options-lab-omit" type="checkbox" clrToggle formControlName="omit" />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+            <clr-toggle-container>
+              <label for="options-lab-deep">
+                <code>deep</code> — {{ 'toSignalForm.optionsLabHintDeep' | translate }}
+              </label>
+              <clr-toggle-wrapper>
+                <input id="options-lab-deep" type="checkbox" clrToggle formControlName="deep" />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+            <button type="button" class="btn btn-outline" (click)="resetOptions()">
+              {{ 'toSignalForm.optionsLabReset' | translate }}
+            </button>
+          </form>
+        </section>
+
+        <section cds-layout="vertical gap:sm align:stretch" aria-labelledby="options-lab-columns-heading">
+          <h3 id="options-lab-columns-heading">{{ 'toSignalForm.optionsLabColumnsTitle' | translate }}</h3>
+          <div class="options-lab-columns">
+            <div cds-layout="vertical gap:xs">
+              <h4><code>getRawValue()</code></h4>
+              <pre data-testid="options-lab-raw">{{ optionsComparison().rawValue | json }}</pre>
+            </div>
+            <div cds-layout="vertical gap:xs">
+              <h4><code>form.value</code></h4>
+              <pre data-testid="options-lab-form-value">{{ optionsComparison().formValue | json }}</pre>
+            </div>
+            <div cds-layout="vertical gap:xs">
+              <h4><code>toSubmitValue(form, options)</code></h4>
+              <pre data-testid="options-lab-submit-value">{{ optionsComparison().submitValue | json }}</pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div inspector>
+      <app-state-inspector
+        [title]="'toSignalForm.optionsLabStateTitle' | translate"
+        [description]="'toSignalForm.optionsLabStateDesc' | translate"
+        [data]="optionsInspectorState()"
+      />
+    </div>
+  </app-demo-playground>
+
   <!-- ==================== SECTION 3: SPECIALIZED PATTERN CARDS ==================== -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'toSignalForm.patternsTitle' | translate }}</h2>

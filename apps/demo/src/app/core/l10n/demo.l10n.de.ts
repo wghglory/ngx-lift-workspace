@@ -2957,4 +2957,22 @@ export const deTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: ein bearbeitbares Formular befüllen',
   'queryResource.editFormDesc':
     'Laden Sie eine Entität mit queryResource und initialisieren Sie ein reaktives Formular mit einem Effect. Neue Abfragewerte setzen das Formular und ungespeicherte Änderungen zurück.',
+
+  'toSignalForm.optionsLabTitle': 'Labor für Übermittlungsoptionen',
+  'toSignalForm.optionsLabDesc':
+    'Schalten Sie die Optionen um und vergleichen Sie Rohwert, Formularwert und bereinigte Nutzlast.',
+  'toSignalForm.optionsLabSampleTitle': 'Beispielwerte',
+  'toSignalForm.optionsLabSwitchesTitle': 'Übermittlungsoptionen',
+  'toSignalForm.optionsLabColumnsTitle': 'Vergleich der Nutzlasten',
+  'toSignalForm.optionsLabNickname': 'Spitzname',
+  'toSignalForm.optionsLabCity': 'Stadt',
+  'toSignalForm.optionsLabReset': 'Zurücksetzen',
+  'toSignalForm.optionsLabStateTitle': 'Schlüssel der Nutzlast',
+  'toSignalForm.optionsLabStateDesc': 'Schlüssel, die in jedem Schritt erhalten bleiben.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Werte deaktivierter Steuerelemente behalten.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Leere Zeichenfolgen entfernen.',
+  'toSignalForm.optionsLabHintOmitNull': 'Null-Werte entfernen.',
+  'toSignalForm.optionsLabHintOmitIf': 'Interne Felder über eine Schlüsselbedingung entfernen.',
+  'toSignalForm.optionsLabHintOmit': 'Das nur für die Oberfläche benötigte Feld confirmEmail entfernen.',
+  'toSignalForm.optionsLabHintDeep': 'Die Regeln auch in verschachtelten Objekten und Arrays anwenden.',
 };

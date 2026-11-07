@@ -2768,4 +2768,21 @@ export const koTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: 편집 가능한 폼 채우기',
   'queryResource.editFormDesc':
     'queryResource로 엔티티를 불러오고 effect로 리액티브 폼을 초기화합니다. 새 쿼리 값이 도착하면 저장하지 않은 수정 내용을 포함해 폼이 초기화됩니다.',
+
+  'toSignalForm.optionsLabTitle': '제출 옵션 실습',
+  'toSignalForm.optionsLabDesc': '옵션을 전환하고 원시 값, 폼 값, 정리된 페이로드를 비교합니다.',
+  'toSignalForm.optionsLabSampleTitle': '예제 값',
+  'toSignalForm.optionsLabSwitchesTitle': '제출 옵션',
+  'toSignalForm.optionsLabColumnsTitle': '페이로드 비교',
+  'toSignalForm.optionsLabNickname': '별명',
+  'toSignalForm.optionsLabCity': '도시',
+  'toSignalForm.optionsLabReset': '초기화',
+  'toSignalForm.optionsLabStateTitle': '페이로드 키',
+  'toSignalForm.optionsLabStateDesc': '각 단계에서 남는 키입니다.',
+  'toSignalForm.optionsLabHintIncludeDisabled': '비활성화된 컨트롤의 값을 유지합니다.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': '빈 문자열을 제거합니다.',
+  'toSignalForm.optionsLabHintOmitNull': 'null 값을 제거합니다.',
+  'toSignalForm.optionsLabHintOmitIf': '키 조건자로 내부 필드를 제거합니다.',
+  'toSignalForm.optionsLabHintOmit': 'UI 전용 confirmEmail 필드를 제거합니다.',
+  'toSignalForm.optionsLabHintDeep': '중첩된 객체와 배열에도 규칙을 적용합니다.',
 };

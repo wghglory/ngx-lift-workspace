@@ -210,7 +210,10 @@ test('interactive code excerpts contain the actual handlers driving their previe
       mutationCode: ['addUserMutation', 'submitNewUser'],
     },
     'signals/resource-async/resource-async': {basicCode: ['pageNumber', 'userRef', 'changeUserId']},
-    'signals/to-signal-form/to-signal-form': {quickStartTs: ['quickForm', 'saveQuickProfile', 'resetQuickProfile']},
+    'signals/to-signal-form/to-signal-form': {
+      quickStartTs: ['quickForm', 'saveQuickProfile', 'resetQuickProfile'],
+      optionsLabTs: ['optionsForm', 'optionsControls', 'optionsComparison', 'optionsInspectorState', 'resetOptions'],
+    },
     'operators/k8s-retry-backoff/k8s-retry-backoff': {
       simulationCode: ['executeSimulation', 'clearLogs'],
       delaySimulationCode: ['calculateDelay'],
@@ -234,6 +237,20 @@ test('interactive code excerpts contain the actual handlers driving their previe
         );
       }
   }
+});
+
+test('the submission options HTML excerpt mirrors the live preview bindings', () => {
+  const ast = source(join(pages, 'ngx-lib/pages/signals/to-signal-form/to-signal-form.component.ts'));
+  const html = snippets(ast).get('optionsLabHtml');
+  assert.ok(html, 'Missing optionsLabHtml excerpt');
+  for (const name of ['includeDisabled', 'omitEmptyStrings', 'omitNull', 'omitIf', 'omit', 'deep']) {
+    assert.ok(html.includes(`formControlName="${name}"`), `Missing ${name} toggle`);
+  }
+  for (const id of ['options-lab-raw', 'options-lab-form-value', 'options-lab-submit-value']) {
+    assert.ok(html.includes(`data-testid="${id}"`), `Missing ${id} payload column`);
+  }
+  assert.ok(html.includes('(click)="resetOptions()"'), 'Missing reset handler');
+  assert.ok(html.includes('[data]="optionsInspectorState()"'), 'Missing inspector binding');
 });
 
 test('the datagrid tutorial displays the compiled preview component', () => {

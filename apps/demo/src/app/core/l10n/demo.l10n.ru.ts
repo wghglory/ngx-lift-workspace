@@ -2899,4 +2899,22 @@ export const ruTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: заполнение редактируемой формы',
   'queryResource.editFormDesc':
     'Загрузите сущность с помощью queryResource и инициализируйте реактивную форму с помощью effect. Новые значения запроса сбрасывают форму и несохранённые изменения.',
+
+  'toSignalForm.optionsLabTitle': 'Лаборатория параметров отправки',
+  'toSignalForm.optionsLabDesc':
+    'Переключайте параметры и сравнивайте исходное значение, значение формы и очищенные данные.',
+  'toSignalForm.optionsLabSampleTitle': 'Примеры значений',
+  'toSignalForm.optionsLabSwitchesTitle': 'Параметры отправки',
+  'toSignalForm.optionsLabColumnsTitle': 'Сравнение данных',
+  'toSignalForm.optionsLabNickname': 'Псевдоним',
+  'toSignalForm.optionsLabCity': 'Город',
+  'toSignalForm.optionsLabReset': 'Сбросить',
+  'toSignalForm.optionsLabStateTitle': 'Ключи данных',
+  'toSignalForm.optionsLabStateDesc': 'Ключи, сохраняющиеся на каждом шаге.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Сохранять значения отключённых элементов управления.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Удалять пустые строки.',
+  'toSignalForm.optionsLabHintOmitNull': 'Удалять значения null.',
+  'toSignalForm.optionsLabHintOmitIf': 'Удалять внутренние поля по предикату ключа.',
+  'toSignalForm.optionsLabHintOmit': 'Удалять поле confirmEmail, используемое только в интерфейсе.',
+  'toSignalForm.optionsLabHintDeep': 'Применять правила также к вложенным объектам и массивам.',
 };

@@ -1,6 +1,7 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
   AlertComponent,
@@ -10,8 +11,8 @@ import {
   TranslatePipe,
   TranslationService,
 } from 'clr-lift';
-import {computedAsync, resourceAsync, toSignalForm} from 'ngx-lift';
-import {delay, of} from 'rxjs';
+import {computedAsync, resourceAsync, toSignalForm, toSubmitValue} from 'ngx-lift';
+import {delay, merge, of} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -539,6 +540,78 @@ export class ToSignalFormComponent {
     this.nameAvailabilityRef.reset();
   }
 
+  /**
+   * Stable sample form for the submission options lab. Empty strings, null values,
+   * a disabled control, a UI-only field, an internal field, a nested group and an
+   * array each exercise one `toSubmitValue` option.
+   */
+  readonly optionsForm = new FormGroup({
+    displayName: new FormControl('Ada Lovelace', {nonNullable: true}),
+    nickname: new FormControl('', {nonNullable: true}),
+    deletedAt: new FormControl<string | null>(null),
+    internalCode: new FormControl('INT-42', {nonNullable: true}),
+    confirmEmail: new FormControl('ada@example.com', {nonNullable: true}),
+    region: new FormControl({value: 'eu-central-1', disabled: true}),
+    profile: new FormGroup({
+      city: new FormControl('', {nonNullable: true}),
+      backupEmail: new FormControl<string | null>(null),
+    }),
+    tags: new FormArray([new FormControl('primary', {nonNullable: true}), new FormControl('', {nonNullable: true})]),
+  });
+
+  /** Toggle controls bound with formControlName, like the other playgrounds on this page. */
+  readonly optionsControls = new FormGroup({
+    includeDisabled: new FormControl(true, {nonNullable: true}),
+    omitEmptyStrings: new FormControl(false, {nonNullable: true}),
+    omitNull: new FormControl(false, {nonNullable: true}),
+    omitIf: new FormControl(false, {nonNullable: true}),
+    omit: new FormControl(false, {nonNullable: true}),
+    deep: new FormControl(false, {nonNullable: true}),
+  });
+
+  /** Initial sample values and switches, captured once so reset never repeats the defaults. */
+  private readonly initialOptionsFormValue = this.optionsForm.getRawValue();
+  private readonly initialOptionsFlags = this.optionsControls.getRawValue();
+
+  /** Recomputes the three payloads after a value, status or option change. */
+  private readonly optionsChanges = toSignal(
+    merge(this.optionsForm.valueChanges, this.optionsForm.statusChanges, this.optionsControls.valueChanges),
+  );
+
+  /** Raw value, Angular value and sanitized submit value for the currently selected options. */
+  readonly optionsComparison = computed(() => {
+    this.optionsChanges();
+    const flags = this.optionsControls.getRawValue();
+    return {
+      rawValue: this.optionsForm.getRawValue(),
+      formValue: this.optionsForm.value,
+      submitValue: toSubmitValue(this.optionsForm, {
+        includeDisabled: flags.includeDisabled,
+        omitEmptyStrings: flags.omitEmptyStrings,
+        omitNull: flags.omitNull,
+        omitIf: flags.omitIf ? (_value: unknown, key: string) => key.startsWith('internal') : undefined,
+        omit: flags.omit ? ['confirmEmail'] : [],
+        deep: flags.deep,
+      }),
+    };
+  });
+
+  /** Keys surviving each stage, shown by the state inspector. */
+  readonly optionsInspectorState = computed<Record<string, unknown>>(() => {
+    const comparison = this.optionsComparison();
+    return {
+      rawKeys: Object.keys(comparison.rawValue),
+      formValueKeys: Object.keys(comparison.formValue),
+      submitKeys: Object.keys(comparison.submitValue),
+    };
+  });
+
+  /** Restores the sample values and the default option switches. */
+  resetOptions(): void {
+    this.optionsForm.reset(this.initialOptionsFormValue);
+    this.optionsControls.reset(this.initialOptionsFlags);
+  }
+
   // Code snippets for documentation tabs
   readonly quickStartTs = highlight(`import {signal} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -758,4 +831,133 @@ this.sf.controls.engine.watch((engine) => {
 this.sf.watch('engine', (engine) => {
   this.syncVersionForEngine(engine);
 });`);
+
+  readonly optionsLabTs = highlight(`import {computed} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {toSubmitValue} from 'ngx-lift';
+import {merge} from 'rxjs';
+
+// A facade created by toSignalForm owns its form and exposes one reactive
+// submitValue signal for a single option set. This lab needs several payloads
+// from one form, so it uses the pure toSubmitValue helper instead of rebuilding
+// the facade or wrapping its methods. Everything below is the live component code.
+readonly optionsForm = new FormGroup({
+  displayName: new FormControl('Ada Lovelace', {nonNullable: true}),
+  nickname: new FormControl('', {nonNullable: true}),
+  deletedAt: new FormControl<string | null>(null),
+  internalCode: new FormControl('INT-42', {nonNullable: true}),
+  confirmEmail: new FormControl('ada@example.com', {nonNullable: true}),
+  region: new FormControl({value: 'eu-central-1', disabled: true}),
+  profile: new FormGroup({
+    city: new FormControl('', {nonNullable: true}),
+    backupEmail: new FormControl<string | null>(null),
+  }),
+  tags: new FormArray([new FormControl('primary', {nonNullable: true}), new FormControl('', {nonNullable: true})]),
+});
+
+readonly optionsControls = new FormGroup({
+  includeDisabled: new FormControl(true, {nonNullable: true}),
+  omitEmptyStrings: new FormControl(false, {nonNullable: true}),
+  omitNull: new FormControl(false, {nonNullable: true}),
+  omitIf: new FormControl(false, {nonNullable: true}),
+  omit: new FormControl(false, {nonNullable: true}),
+  deep: new FormControl(false, {nonNullable: true}),
+});
+
+private readonly initialOptionsFormValue = this.optionsForm.getRawValue();
+private readonly initialOptionsFlags = this.optionsControls.getRawValue();
+
+private readonly optionsChanges = toSignal(
+  merge(this.optionsForm.valueChanges, this.optionsForm.statusChanges, this.optionsControls.valueChanges),
+);
+
+readonly optionsComparison = computed(() => {
+  this.optionsChanges();
+  const flags = this.optionsControls.getRawValue();
+  return {
+    rawValue: this.optionsForm.getRawValue(),
+    formValue: this.optionsForm.value,
+    submitValue: toSubmitValue(this.optionsForm, {
+      includeDisabled: flags.includeDisabled,
+      omitEmptyStrings: flags.omitEmptyStrings,
+      omitNull: flags.omitNull,
+      omitIf: flags.omitIf ? (_value: unknown, key: string) => key.startsWith('internal') : undefined,
+      omit: flags.omit ? ['confirmEmail'] : [],
+      deep: flags.deep,
+    }),
+  };
+});
+
+readonly optionsInspectorState = computed<Record<string, unknown>>(() => {
+  const comparison = this.optionsComparison();
+  return {
+    rawKeys: Object.keys(comparison.rawValue),
+    formValueKeys: Object.keys(comparison.formValue),
+    submitKeys: Object.keys(comparison.submitValue),
+  };
+});
+
+resetOptions(): void {
+  this.optionsForm.reset(this.initialOptionsFormValue);
+  this.optionsControls.reset(this.initialOptionsFlags);
+}`);
+
+  readonly optionsLabHtml = highlight(`<!-- Localized headings and hint text are omitted; see the page template. -->
+<form clrForm [formGroup]="optionsControls">
+  <clr-toggle-container>
+    <label for="options-lab-include-disabled"><code>includeDisabled</code></label>
+    <clr-toggle-wrapper>
+      <input id="options-lab-include-disabled" type="checkbox" clrToggle formControlName="includeDisabled" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  <clr-toggle-container>
+    <label for="options-lab-omit-empty-strings"><code>omitEmptyStrings</code></label>
+    <clr-toggle-wrapper>
+      <input id="options-lab-omit-empty-strings" type="checkbox" clrToggle formControlName="omitEmptyStrings" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  <clr-toggle-container>
+    <label for="options-lab-omit-null"><code>omitNull</code></label>
+    <clr-toggle-wrapper>
+      <input id="options-lab-omit-null" type="checkbox" clrToggle formControlName="omitNull" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  <clr-toggle-container>
+    <label for="options-lab-omit-if"><code>omitIf</code></label>
+    <clr-toggle-wrapper>
+      <input id="options-lab-omit-if" type="checkbox" clrToggle formControlName="omitIf" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  <clr-toggle-container>
+    <label for="options-lab-omit"><code>omit</code></label>
+    <clr-toggle-wrapper>
+      <input id="options-lab-omit" type="checkbox" clrToggle formControlName="omit" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  <clr-toggle-container>
+    <label for="options-lab-deep"><code>deep</code></label>
+    <clr-toggle-wrapper>
+      <input id="options-lab-deep" type="checkbox" clrToggle formControlName="deep" />
+    </clr-toggle-wrapper>
+  </clr-toggle-container>
+  <button type="button" class="btn btn-outline" (click)="resetOptions()">Reset</button>
+</form>
+
+<div class="options-lab-columns">
+  <div>
+    <code>getRawValue()</code>
+    <pre data-testid="options-lab-raw">{{ optionsComparison().rawValue | json }}</pre>
+  </div>
+  <div>
+    <code>form.value</code>
+    <pre data-testid="options-lab-form-value">{{ optionsComparison().formValue | json }}</pre>
+  </div>
+  <div>
+    <code>toSubmitValue(form, options)</code>
+    <pre data-testid="options-lab-submit-value">{{ optionsComparison().submitValue | json }}</pre>
+  </div>
+</div>
+
+<app-state-inspector [data]="optionsInspectorState()" />`);
 }
