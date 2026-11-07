@@ -153,7 +153,7 @@ export function makeCert(opts: {
   rawNotBefore?: string;
   rawNotAfter?: string;
   signatureAlgorithmOid?: string;
-  extensions?: number[];
+  extensions?: number[][];
 }): Uint8Array {
   const timeTag = opts.timeTag ?? 0x17;
   const tbsParts: number[][] = [];

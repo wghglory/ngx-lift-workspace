@@ -136,7 +136,7 @@ function decodeOid(bytes: Uint8Array): string {
   let first = true;
   for (let i = 0; i < bytes.length; i++) {
     const byte = bytes[i];
-    value = (value << 7) | (byte & 0x7f);
+    value = value * 128 + (byte & 0x7f);
     if ((byte & 0x80) === 0) {
       if (first) {
         const arc1 = Math.floor(value / 40);

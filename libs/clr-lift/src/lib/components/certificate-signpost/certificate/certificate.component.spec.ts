@@ -19,6 +19,7 @@ describe('CertificateComponent', () => {
 
     const cert: X509Certificate = {
       serialNumber: '0',
+      signatureAlgorithm: '1.2.840.113549.1.1.11',
       subject: {
         attributes: [{name: 'CN', value: 'example.com'}],
         getField: (name) => (name === 'CN' ? {name: 'CN', value: 'example.com'} : undefined),

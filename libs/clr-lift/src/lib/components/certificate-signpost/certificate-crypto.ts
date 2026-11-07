@@ -43,6 +43,21 @@ function bitLengthWords(input: Uint8Array): [number, number] {
   return [bitLength >>> 0, Math.floor(bitLength / 4294967296) >>> 0];
 }
 
+/** Appends the 64-bit bit length to the padded message, low word first for little-endian digests. */
+function appendLengthWords(
+  message: number[],
+  bitLengthLow: number,
+  bitLengthHigh: number,
+  littleEndian: boolean,
+): void {
+  const words = littleEndian ? [bitLengthLow, bitLengthHigh] : [bitLengthHigh, bitLengthLow];
+  for (const word of words) {
+    for (let i = 0; i < 4; i++) {
+      message.push((word >>> (littleEndian ? 8 * i : 8 * (3 - i))) & 0xff);
+    }
+  }
+}
+
 function toHexLittleEndian(word: number): string {
   let result = '';
   for (let i = 0; i < 4; i++) {
@@ -55,12 +70,7 @@ function toHexLittleEndian(word: number): string {
 export function md5(input: Uint8Array): string {
   const message = padToBlock(input);
   const [bitLengthLow, bitLengthHigh] = bitLengthWords(input);
-  for (let i = 0; i < 4; i++) {
-    message.push((bitLengthLow >>> (8 * i)) & 0xff);
-  }
-  for (let i = 0; i < 4; i++) {
-    message.push((bitLengthHigh >>> (8 * i)) & 0xff);
-  }
+  appendLengthWords(message, bitLengthLow, bitLengthHigh, true);
 
   let a = 0x67452301;
   let b = 0xefcdab89;
@@ -117,12 +127,7 @@ export function md5(input: Uint8Array): string {
 export function sha1(input: Uint8Array): string {
   const message = padToBlock(input);
   const [bitLengthLow, bitLengthHigh] = bitLengthWords(input);
-  for (let i = 0; i < 4; i++) {
-    message.push((bitLengthHigh >>> (8 * (3 - i))) & 0xff);
-  }
-  for (let i = 0; i < 4; i++) {
-    message.push((bitLengthLow >>> (8 * (3 - i))) & 0xff);
-  }
+  appendLengthWords(message, bitLengthLow, bitLengthHigh, false);
 
   const h = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
   const w = new Uint32Array(80);
@@ -196,12 +201,7 @@ const SHA256_K = [
 export function sha256(input: Uint8Array): string {
   const message = padToBlock(input);
   const [bitLengthLow, bitLengthHigh] = bitLengthWords(input);
-  for (let i = 0; i < 4; i++) {
-    message.push((bitLengthHigh >>> (8 * (3 - i))) & 0xff);
-  }
-  for (let i = 0; i < 4; i++) {
-    message.push((bitLengthLow >>> (8 * (3 - i))) & 0xff);
-  }
+  appendLengthWords(message, bitLengthLow, bitLengthHigh, false);
 
   const h = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
   const w = new Uint32Array(64);

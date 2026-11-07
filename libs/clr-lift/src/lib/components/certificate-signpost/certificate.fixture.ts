@@ -1,4 +1,4 @@
-// Public, expired Google Internet Authority G2 certificate from the service example.
+// Public, expired Google Internet Authority G2 certificate.
 // No private key. Fixed fixture for real parser and digest regressions.
 export const certificatePem = `-----BEGIN CERTIFICATE-----
 MIIEBDCCAuygAwIBAgIDAjppMA0GCSqGSIb3DQEBBQUAMEIxCzAJBgNVBAYTAlVT

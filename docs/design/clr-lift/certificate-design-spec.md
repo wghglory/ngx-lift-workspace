@@ -65,8 +65,9 @@ usages so dsm-ui can drop node-forge and `@peculiar/asn1-x509`:
   stay opaque for the caller to map, matching dsm-ui's `DEFAULT_SIGNATURE_ALGORITHM_MAP` fallback.
 - The subjectAltName (2.5.29.17) and subjectKeyIdentifier (2.5.29.14) extensions are parsed when present
   (`subjectAltName`, `subjectKeyIdentifier`).
-- Fingerprints ship for MD5, SHA-1 and SHA-256 over DER, cross-checked against the platform implementation; SHA-384/512
-  digests should use the async WebCrypto `crypto.subtle.digest` rather than more synchronous code in this library.
+- Fingerprints ship for MD5, SHA-1 and SHA-256 over DER, cross-checked against the platform implementation. This library
+  intentionally ships no more synchronous digests; consumers needing SHA-384/512 compute them in their own component
+  with the async WebCrypto `crypto.subtle.digest` over the DER bytes.
 
 Trust decisions in dsm-ui (trusted-certificate submission, connection status) stay server-side; this requirement covers
 parsing and display only.
