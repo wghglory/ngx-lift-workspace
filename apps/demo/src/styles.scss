@@ -1,5 +1,25 @@
 @use 'sass:meta';
 
+// Self-hosted so code samples render identically on Windows, macOS, and Linux without a CDN request.
+// JetBrains Mono variable, Latin subset from @fontsource-variable/jetbrains-mono@5.2.6.
+// Licensed under SIL OFL 1.1; the full license is in assets/fonts/OFL.txt.
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('/assets/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --demo-font-mono:
+    'JetBrains Mono Variable', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Consolas,
+    'Liberation Mono', monospace;
+}
+
 // Bundle accessible syntax palettes so theme changes do not depend on a CDN request.
 [cds-theme='light'] {
   @include meta.load-css('highlight.js/styles/a11y-light.css');
@@ -126,6 +146,14 @@ cll-page-container > .page-container.density-compact {
 }
 
 // Documentation-wide preformatted content and inline code, including translated innerHTML.
+// Samples must show the exact characters a reader copies, not typographic ligatures.
+pre,
+code:not([class^='language-']) {
+  font-family: var(--demo-font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: 'calt' 0;
+}
+
 pre {
   padding: 1.5rem;
   background-color: var(--clr-global-app-background, #f8fafc);
@@ -134,7 +162,6 @@ pre {
 
 code:not([class^='language-']) {
   display: inline-block;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   font-size: 0.85em;
   background-color: rgba(0, 0, 0, 0.05);
   color: #b91c1c;
