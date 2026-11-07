@@ -297,6 +297,32 @@ function base64ToBytes(base64: string): Uint8Array {
 }
 
 /**
+ * Extracts the base64 body between the PEM armor markers with linear string scans.
+ *
+ * Marker matching is done with `indexOf` rather than a regular expression so hostile input
+ * (for example many repeated `-----BEGIN-----a` sequences) cannot trigger polynomial
+ * backtracking.
+ */
+function extractArmoredBody(decoded: string): string | undefined {
+  const beginMarker = '-----BEGIN';
+  const begin = decoded.indexOf(beginMarker);
+  if (begin === -1) {
+    return undefined;
+  }
+  // The BEGIN label is followed by its own `-----` delimiter before the base64 body starts.
+  const bodyStart = decoded.indexOf('-----', begin + beginMarker.length);
+  if (bodyStart === -1) {
+    return undefined;
+  }
+  const endMarker = '-----END';
+  const end = decoded.indexOf(endMarker, bodyStart + 5);
+  if (end === -1) {
+    return undefined;
+  }
+  return decoded.slice(bodyStart + 5, end);
+}
+
+/**
  * Converts a PEM string into DER bytes.
  *
  * @param pem - The certificate as a PEM string or, when `pemEncoded` is true, its base64 encoding.
@@ -306,9 +332,9 @@ function base64ToBytes(base64: string): Uint8Array {
  */
 export function extractDerFromPem(pem: string, pemEncoded = true): Uint8Array {
   const decoded = pemEncoded ? atob(pem) : pem;
-  const armored = decoded.match(/-----BEGIN[^-]*-----([\s\S]*?)-----END[^-]*-----/);
-  if (armored) {
-    return base64ToBytes(armored[1]);
+  const armored = extractArmoredBody(decoded);
+  if (armored !== undefined) {
+    return base64ToBytes(armored);
   }
   const bytes = new Uint8Array(decoded.length);
   for (let i = 0; i < decoded.length; i++) {

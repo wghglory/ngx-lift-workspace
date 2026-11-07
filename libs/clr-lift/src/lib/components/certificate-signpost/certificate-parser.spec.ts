@@ -246,6 +246,26 @@ describe('certificate-parser (certificate type coverage)', () => {
     it('produces identical DER for PEM and base64-encoded PEM inputs', () => {
       expect(extractDerFromPem(btoa(certificatePem), true)).toEqual(extractDerFromPem(certificatePem, false));
     });
+
+    it('extracts the armored body in linear time on hostile marker input', () => {
+      // The CodeQL polynomial-ReDoS shape: ambiguous BEGIN/END markers repeated thousands of times.
+      const hostile = `-----BEGIN--------BEGIN-----${'-----BEGIN-----a'.repeat(50_000)}-----END-----a`.repeat(2);
+      const started = performance.now();
+      try {
+        extractDerFromPem(hostile, false);
+      } catch {
+        // The extracted pseudo-body is not valid base64; the point is that scanning must not hang.
+      }
+      // Well under a second; the quadratic regex version took far longer on this shape.
+      expect(performance.now() - started).toBeLessThan(1000);
+    });
+
+    it('ignores armor markers that never complete and parses real armor', () => {
+      const incomplete = '-----BEGIN CERTIFICATE----- no end marker';
+      expect(extractDerFromPem(incomplete, false).length).toBe(incomplete.length);
+      const body = '-----BEGIN CERTIFICATE-----\nYWJj\n-----END CERTIFICATE-----\n';
+      expect(Array.from(extractDerFromPem(body, false))).toEqual([0x61, 0x62, 0x63]);
+    });
   });
 
   describe('input encodings (PEM / raw DER / base64)', () => {
