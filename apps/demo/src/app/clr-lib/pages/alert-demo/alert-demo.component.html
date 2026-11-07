@@ -139,6 +139,21 @@
         <cll-alert alertType="warning" [content]="'alert.contentWarning' | translate" [isAppLevel]="true" />
       </div>
     </app-demo-playground>
+
+    <app-demo-playground
+      [title]="'alert.example7' | translate"
+      [description]="'alert.example7Desc' | translate"
+      level="advanced"
+      [badgeText]="'alert.example7Badge' | translate"
+      layout="split"
+      [tsCode]="closableAlertCode"
+      [htmlCode]="closableAlertCodeHtml"
+    >
+      <div preview cds-layout="vertical gap:xs align:stretch">
+        <cll-alert alertType="warning" content="You can dismiss me." />
+        <cll-alert alertType="info" content="Persistent notice." [closable]="false" />
+      </div>
+    </app-demo-playground>
   </section>
 
   <!-- API Reference -->
@@ -150,6 +165,9 @@
 
       <h4>{{ 'common.inputs' | translate }}</h4>
       <app-api-table [properties]="alertInputs()" />
+
+      <h4>{{ 'common.outputs' | translate }}</h4>
+      <app-api-table [properties]="alertOutputs()" />
 
       <h4>{{ 'common.contentProjection' | translate }}</h4>
       <p>{{ 'alert.contentProjectionDesc' | translate }}</p>

@@ -1278,6 +1278,15 @@ export const ptBRTranslations: Record<string, string> = {
   'alert.inputError': 'Um HttpErrorResponse ou objeto de erro para exibir detalhes de erros.',
   'alert.inputContent':
     'Um texto que contém o conteúdo da mensagem de alerta. Suporta as tags HTML através do innerHTML.',
+  'alert.inputClosed':
+    'Estado de aberto/fechado controlado. false exibe o alerta; true o remove. Suporta o binding bidirecional [(closed)].',
+  'alert.outputClosedChange': 'Emite um booleano. true após o usuário fechar o alerta, false após reabri-lo.',
+  'alert.example7': 'Exemplo 7: Alerta fechável',
+  'alert.example7Desc':
+    'Use a entrada closable para exibir um botão de fechar para que os usuários possam dispensar o alerta. Vincule [(closed)] para controlar ou observar o estado aberto/fechado.',
+  'alert.example7Badge': 'Fechável',
+  'alert.inputClosable':
+    'Sinalizador booleano para exibir um botão de fechar que permite ao usuário dispensar o alerta. O padrão é true.',
   'alert.contentProjectionDesc':
     'O componente suporta projeção via ng-content para estruturas HTML complexas e componentes Angular.',
   'alert.projectionNotice': 'Múltiplos erros são listados como abaixo por projeção de conteúdo:',

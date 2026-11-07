@@ -1290,8 +1290,18 @@ export const deTranslations: Record<string, string> = {
   'alert.inputIsLightweight': 'Boolesche Flagge für leichtes Styling ohne Grenzen.',
   'alert.inputError': 'Ein HttpErrorResponse oder ein Fehlerobjekt zur Anzeige von Fehlerdetails.',
   'alert.inputContent': 'Ein String mit dem Inhalt der Alarmmeldung. Unterstützt HTML-Tags über innerHTML.',
+  'alert.inputClosed':
+    'Gesteuerter Ein-/Aus-Zustand. false zeigt die Meldung an, true entfernt sie. Unterstützt die [(closed)]-Zweiweg-Bindung.',
+  'alert.outputClosedChange':
+    'Gibt einen Boolean aus. true, nachdem der Benutzer die Meldung schließt, false, nachdem sie wieder geöffnet wurde.',
   'alert.contentProjectionDesc':
     'Die Komponente unterstützt die ng-Content-Projektion für komplexe HTML-Strukturen und Angular-Komponenten.',
+  'alert.example7': 'Beispiel 7: Schließbare Warnung',
+  'alert.example7Desc':
+    'Verwenden Sie die Eingabe closable, um einen Schließen-Button anzuzeigen, mit dem Benutzer die Warnung schließen können. Binden Sie [(closed)], um den geöffneten/geschlossenen Zustand zu steuern oder zu beobachten.',
+  'alert.example7Badge': 'Schließbar',
+  'alert.inputClosable':
+    'Boolesches Flag, das einen Schließen-Button anzeigt, sodass Benutzer die Warnung schließen können. Standardmäßig true.',
   'alert.projectionNotice': 'Mehrere Fehler werden wie folgt nach Inhaltsprojektion aufgeführt:',
   'alert.errUndefined': 'Undefiniert kann nicht gelesen werden.',
   'alert.errObject': 'Ein Objekt kann nicht hochgeladen werden.',

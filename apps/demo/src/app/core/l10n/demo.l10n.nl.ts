@@ -1287,6 +1287,16 @@ export const nlTranslations: Record<string, string> = {
   'alert.inputError': 'Een HttpErrorResponse of foutobject om foutgegevens weer te geven.',
   'alert.inputContent':
     'Een tekenreeks met de inhoud van het waarschuwingsbericht. Ondersteunt HTML-tags via innerHTML.',
+  'alert.inputClosed':
+    'Gecontroleerde open/dicht-status. false toont de melding; true verwijdert deze. Ondersteunt de [(closed)]-tweeweg-binding.',
+  'alert.outputClosedChange':
+    'Geeft een boolean uit. true nadat de gebruiker de melding sluit, false nadat deze opnieuw is geopend.',
+  'alert.example7': 'Voorbeeld 7: Sluitbare waarschuwing',
+  'alert.example7Desc':
+    'Gebruik de closable-invoer om een sluitknop weer te geven zodat gebruikers de waarschuwing kunnen sluiten. Bind [(closed)] om de geopende/gesloten status te controleren of te observeren.',
+  'alert.example7Badge': 'Sluitbaar',
+  'alert.inputClosable':
+    'Booleaanse vlag om een sluitknop weer te geven zodat gebruikers de waarschuwing kunnen sluiten. Standaard true.',
   'alert.contentProjectionDesc':
     'De component ondersteunt ng-content projectie voor complexe HTML structuren en Angular componenten.',
   'alert.projectionNotice': 'Meerdere fouten worden weergegeven als hieronder door de inhoud projectie:',

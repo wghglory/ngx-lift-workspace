@@ -1256,8 +1256,17 @@ export const jaTranslations: Record<string, string> = {
   'alert.inputIsLightweight': '境界線がない軽量なスタイルを表示するためのブールフラグです。',
   'alert.inputError': '表示するエラーメッセージを表す HttpErrorResponse またはエラーオブジェクトです。',
   'alert.inputContent': 'アラートメッセージのコンテンツを表す文字列。innerHTML で HTML タグをサポートします。',
+  'alert.inputClosed':
+    '制御可能な開閉状態。false でアラートを表示、true で削除。[(closed)] 双方向バインディングをサポート。',
+  'alert.outputClosedChange': '真偽値を emit します。ユーザーがアラートを閉じた後は true、再び開いた後は false。',
   'alert.contentProjectionDesc':
     '複雑な HTML バッファと Angular コンポーネントをサポートする ng-content の投影をサポートしています。',
+  'alert.example7': '例 7: 閉じることができるアラート',
+  'alert.example7Desc':
+    'closable 入力を使用して閉じるボタンを表示し、ユーザーがアラートを閉じられるようにします。[(closed)] をバインドして開閉状態を制御または監視します。',
+  'alert.example7Badge': '閉じる可',
+  'alert.inputClosable':
+    'ユーザーがアラートを閉じられるようにする閉じるボタンを表示するかどうかのブール値。デフォルトは true。',
   'alert.projectionNotice': '複数のエラーは以下のようになっています。',
   'alert.errUndefined': 'undefined が読み込まれません。',
   'alert.errObject': 'オブジェクトをアップロードできません。',

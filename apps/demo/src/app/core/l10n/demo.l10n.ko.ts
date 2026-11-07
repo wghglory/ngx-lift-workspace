@@ -1239,7 +1239,16 @@ export const koTranslations: Record<string, string> = {
   'alert.inputIsLightweight': '경계선이 없는 경량 스타일로 표시하는 데 사용되는 불린 플래그.',
   'alert.inputError': '표시할 오류 세부 정보를 위한 HttpErrorResponse 또는 오류 객체.',
   'alert.inputContent': '알림 메시지의 내용을 포함하는 문자열. innerHTML을 통해 HTML 태그를 지원합니다.',
+  'alert.inputClosed':
+    '제어되는 열림/닫힘 상태입니다. false는 알림을 표시하고, true는 제거합니다. [(closed)] 양방향 바인딩을 지원합니다.',
+  'alert.outputClosedChange': '불리언을 내보냅니다. 사용자가 알림을 닫으면 true, 다시 열면 false입니다.',
   'alert.contentProjectionDesc': '복잡한 HTML 구조 및 Angular 컴포넌트를 지원하는 ng-content 프로젝션을 지원합니다.',
+  'alert.example7': '예제 7: 닫을 수 있는 알림',
+  'alert.example7Desc':
+    'closable 입력을 사용하여 사용자가 알림을 닫을 수 있는 닫기 버튼을 표시합니다. [(closed)]을(를) 바인딩하여 열림/닫힘 상태를 제어하거나 관찰합니다.',
+  'alert.example7Badge': '닫기 가능',
+  'alert.inputClosable':
+    '사용자가 알림을 닫을 수 있도록 닫기 버튼을 표시할지 여부를 나타내는 부울 값입니다. 기본값은 true입니다.',
   'alert.projectionNotice': '다중 오류는 다음처럼 내용 프로젝션을 통해 표시됩니다:',
   'alert.errUndefined': '정의되지 않은 undefined를 읽을 수 없습니다.',
   'alert.errObject': '객체를 업로드할 수 없습니다.',

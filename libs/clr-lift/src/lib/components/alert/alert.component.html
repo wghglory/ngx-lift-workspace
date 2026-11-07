@@ -3,6 +3,10 @@
   [clrAlertSizeSmall]="isSmall()"
   [clrAlertAppLevel]="isAppLevel()"
   [clrAlertLightweight]="isLightweight()"
+  [clrAlertClosable]="closable()"
+  [clrAlertClosed]="closed()"
+  (clrAlertClosedChange)="onClosedChange($event)"
+  [clrCloseButtonAriaLabel]="'alert.close' | translate"
 >
   <clr-alert-item>
     @if (errorMessage()) {
