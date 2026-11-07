@@ -502,11 +502,12 @@ test('Chinese labels stay concise and Pattern C works on a narrow screen', async
 
 test('quick profile form saves a snapshot and reset clears it', async ({page}) => {
   await page.goto('/ngx-lift/signals/toSignalForm');
-  await page.locator('#quick-username').fill('Alex');
-  await page.locator('#quick-email').fill('alex@example.com');
-  await page.getByRole('button', {name: 'Save Profile', exact: true}).click();
-  await expect(page.getByTestId('quick-saved-profile')).toContainText('alex@example.com');
-  await page.getByRole('button', {name: 'Reset', exact: true}).click();
-  await expect(page.getByTestId('quick-saved-profile')).toHaveCount(0);
-  await expect(page.locator('#quick-username')).toHaveValue('');
+  const quickForm = page.getByRole('region', {name: 'Level 1: Quickstart Form Signals', exact: true});
+  await quickForm.locator('#quick-username').fill('Alex');
+  await quickForm.locator('#quick-email').fill('alex@example.com');
+  await quickForm.getByRole('button', {name: 'Save Profile', exact: true}).click();
+  await expect(quickForm.getByTestId('quick-saved-profile')).toContainText('alex@example.com');
+  await quickForm.getByRole('button', {name: 'Reset', exact: true}).click();
+  await expect(quickForm.getByTestId('quick-saved-profile')).toHaveCount(0);
+  await expect(quickForm.locator('#quick-username')).toHaveValue('');
 });
