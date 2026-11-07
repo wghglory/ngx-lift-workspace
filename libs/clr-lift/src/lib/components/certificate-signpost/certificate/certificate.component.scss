@@ -16,10 +16,10 @@
 .certificate-content {
   display: grid;
   // A shared fixed label width keeps every section's values on the same left edge.
-  grid-template-columns: 10rem 1fr;
-  column-gap: 2rem;
+  grid-template-columns: 8rem 1fr;
+  column-gap: 1.5rem;
   text-align: left;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
 
   dt {
     font-weight: 500;
@@ -41,6 +41,6 @@
 
 @media screen and (min-width: 768px) {
   .certificate-content {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 }

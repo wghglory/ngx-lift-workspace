@@ -1,1 +1,21 @@
-// The chain hierarchy uses Clarity's clr-tree directly (as dsm-ui does); no custom tree styles.
+// dsm-ui shows the chain UI inside an xl modal; constrain the section so the
+// tab header and tree do not stretch across the full page width.
+.chain-section {
+  max-width: 50rem;
+
+  .chain-node-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: inherit;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+}

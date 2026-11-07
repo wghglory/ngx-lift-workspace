@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal} from '@angular/core';
-import {ClarityModule} from '@clr/angular';
+import {ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal, viewChildren} from '@angular/core';
+import {ClarityModule, ClrTab} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -12,6 +12,8 @@ import {CERTIFICATE_SAMPLES} from './certificate-samples';
 
 /** Display-ready node of the parsed certificate chain, mirroring dsm-ui's hierarchy tree. */
 interface ChainDisplayNode {
+  /** Stable tab id: the subject key identifier when present, otherwise the node name. */
+  id: string;
   name: string;
   statusText: string;
   labelClass: string;
@@ -124,8 +126,17 @@ export class CertificateDemoComponent {
     return state.status === 'done' ? {tree: state.tree, tabs: state.tabs, encodedPem: state.encodedPem} : null;
   });
 
+  /** The rendered Clarity tabs; hierarchy node clicks activate the matching tab. */
+  private readonly tabsView = viewChildren(ClrTab);
+
   /** Children accessor for Clarity's recursive tree, mirroring the dsm-ui hierarchy component. */
   readonly treeChildren = (node: ChainDisplayNode): ChainDisplayNode[] => node.children;
+
+  /** Clicking a hierarchy node opens that certificate's details tab. */
+  selectTreeNode(node: ChainDisplayNode): void {
+    const tab = this.tabsView().find((candidate) => candidate.tabLink?.tabLinkId === node.id);
+    tab?.tabLink.activate();
+  }
 
   viewerCode = highlight(`import {extractDerFromPem, md5, parseCertificate, pemEncodeDer, sha1, sha256} from 'clr-lift';
 
@@ -168,10 +179,11 @@ const pem = pemEncodeDer(der);`);
       }
       const hierarchy = tools.buildCertificateHierarchy(entries);
       const tree = this.buildChainDisplay(hierarchy!);
+      const tabs = entries.map((entry) => this.buildChainDisplayFromEntry(entry));
       this.viewerState.set({
         status: 'done',
         // dsm-ui tabs list the distributed order (leaf first) and activate the leaf initially.
-        tabs: entries.map((entry) => this.buildChainDisplayFromEntry(entry)),
+        tabs,
         tree: [tree],
         encodedPem: tools.buildCertificateView(this.pemText()).pem,
       });
@@ -186,6 +198,7 @@ const pem = pemEncodeDer(der);`);
   /** Converts a hierarchy node into a display node with translated fields and validity status. */
   private buildChainDisplay(node: CertificateHierarchyNode): ChainDisplayNode {
     return {
+      id: node.certificate.subjectKeyIdentifier ?? node.name,
       name: node.name,
       ...this.buildDisplayCore(node.certificate, node.digests),
       children: node.children.map((child) => this.buildChainDisplay(child)),
@@ -195,6 +208,7 @@ const pem = pemEncodeDer(der);`);
   /** Builds a leaf-first tab display node from one parsed chain entry. */
   private buildChainDisplayFromEntry(entry: ParsedChainEntry): ChainDisplayNode {
     return {
+      id: entry.certificate.subjectKeyIdentifier ?? entry.certificate.subject.getField('CN')?.value ?? '-',
       name: entry.certificate.subject.getField('CN')?.value ?? entry.certificate.subject.getField('O')?.value ?? '-',
       ...this.buildDisplayCore(entry.certificate, entry.digests),
       children: [],

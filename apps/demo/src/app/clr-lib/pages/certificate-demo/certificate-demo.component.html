@@ -119,31 +119,35 @@
       }
 
       @if (viewerResult(); as result) {
-        <h4>{{ 'certificate.viewerChainTitle' | translate }}</h4>
-        <clr-tree>
-          <clr-tree-node *clrRecursiveFor="let node of result.tree; getChildren: treeChildren" [clrExpanded]="true">
-            <cds-icon shape="certificate" size="12" aria-hidden="true" />
-            {{ node.name }}
-            <span class="label" [class]="node.labelClass">
-              <cds-icon [shape]="node.shape" [status]="node.status" size="10" aria-hidden="true" />
-              {{ node.statusText }}
-            </span>
-          </clr-tree-node>
-        </clr-tree>
+        <div class="chain-section">
+          <h4>{{ 'certificate.viewerChainTitle' | translate }}</h4>
+          <clr-tree>
+            <clr-tree-node *clrRecursiveFor="let node of result.tree; getChildren: treeChildren" [clrExpanded]="true">
+              <button type="button" class="chain-node-link" (click)="selectTreeNode(node)">
+                <cds-icon shape="certificate" size="12" aria-hidden="true" />
+                {{ node.name }}
+              </button>
+              <span class="label" [class]="node.labelClass">
+                <cds-icon [shape]="node.shape" [status]="node.status" size="10" aria-hidden="true" />
+                {{ node.statusText }}
+              </span>
+            </clr-tree-node>
+          </clr-tree>
 
-        <clr-tabs>
-          @for (node of result.tabs; track node.name; let isFirst = $first) {
-            <clr-tab>
-              <button clrTabLink>{{ node.name }}</button>
-              <clr-tab-content *clrIfActive="isFirst">
-                <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" />
-              </clr-tab-content>
-            </clr-tab>
-          }
-        </clr-tabs>
+          <clr-tabs>
+            @for (node of result.tabs; track node.id; let isFirst = $first) {
+              <clr-tab>
+                <button clrTabLink [id]="node.id">{{ node.name }}</button>
+                <clr-tab-content *clrIfActive="isFirst">
+                  <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" />
+                </clr-tab-content>
+              </clr-tab>
+            }
+          </clr-tabs>
 
-        <h4>{{ 'certificate.viewerEncodedPem' | translate }}</h4>
-        <app-code-block [code]="result.encodedPem" lang="text" />
+          <h4>{{ 'certificate.viewerEncodedPem' | translate }}</h4>
+          <app-code-block [code]="result.encodedPem" lang="text" />
+        </div>
       }
     </article>
 

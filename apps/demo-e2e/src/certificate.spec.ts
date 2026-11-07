@@ -73,6 +73,10 @@ test('renders a three-level certificate chain in the viewer', async ({page}) => 
   await expect(inspector).toBeVisible();
   await expect(inspector).toContainText('deep.ngx-lift.example');
   await expect(inspector).toContainText('DNS:deep.ngx-lift.example');
+
+  // Clicking a hierarchy tree node opens that certificate's details tab.
+  await page.locator('.chain-node-link').filter({hasText: 'Demo Intermediate CA (ECDSA)'}).click();
+  await expect(inspector).toContainText('CN=Demo Intermediate CA (ECDSA)');
   await page.getByRole('tab', {name: 'Demo Root CA (RSA)'}).click();
   await expect(inspector).toContainText('Demo Root CA (RSA)');
 });
