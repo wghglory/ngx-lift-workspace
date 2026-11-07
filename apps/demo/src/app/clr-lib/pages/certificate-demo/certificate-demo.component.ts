@@ -1,4 +1,3 @@
-import {NgTemplateOutlet} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
@@ -22,12 +21,13 @@ interface ChainDisplayNode {
   children: ChainDisplayNode[];
 }
 
-/** Outcome of the build-your-own-viewer parse action. */
+/** Outcome of the build-your-own-viewer parse action, following the dsm-ui display pattern:
+ * a static fully-expanded hierarchy tree plus one details tab per certificate, leaf first. */
 type ViewerState =
   | {status: 'idle'}
   | {status: 'loading'}
   | {status: 'error'; message: string}
-  | {status: 'done'; chain: ChainDisplayNode[]; encodedPem: string};
+  | {status: 'done'; tree: ChainDisplayNode[]; tabs: ChainDisplayNode[]; encodedPem: string};
 
 @Component({
   selector: 'app-certificate-demo',
@@ -35,7 +35,6 @@ type ViewerState =
     ApiTableComponent,
     AlertComponent,
     CalloutComponent,
-    NgTemplateOutlet,
     PageContainerComponent,
     CodeBlockComponent,
     CertificateExampleComponent,
@@ -122,14 +121,11 @@ export class CertificateDemoComponent {
 
   readonly viewerResult = computed(() => {
     const state = this.viewerState();
-    return state.status === 'done' ? {chain: state.chain, encodedPem: state.encodedPem} : null;
+    return state.status === 'done' ? {tree: state.tree, tabs: state.tabs, encodedPem: state.encodedPem} : null;
   });
 
-  readonly selectedChainNode = signal<ChainDisplayNode | null>(null);
-
-  selectChainNode(node: ChainDisplayNode): void {
-    this.selectedChainNode.set(node);
-  }
+  /** Children accessor for Clarity's recursive tree, mirroring the dsm-ui hierarchy component. */
+  readonly treeChildren = (node: ChainDisplayNode): ChainDisplayNode[] => node.children;
 
   viewerCode = highlight(`import {
   extractDerFromPem,
@@ -178,15 +174,15 @@ const pem = pemEncodeDer(der);`);
         throw new Error('no PEM certificate found in the input');
       }
       const hierarchy = tools.buildCertificateHierarchy(entries);
-      const chain = this.buildChainDisplay(hierarchy!);
+      const tree = this.buildChainDisplay(hierarchy!);
       this.viewerState.set({
         status: 'done',
-        chain: [chain],
+        // dsm-ui tabs list the distributed order (leaf first) and activate the leaf initially.
+        tabs: entries.map((entry) => this.buildChainDisplayFromEntry(entry)),
+        tree: [tree],
         encodedPem: tools.buildCertificateView(this.pemText()).pem,
       });
-      this.selectedChainNode.set(chain);
     } catch (error: unknown) {
-      this.selectedChainNode.set(null);
       this.viewerState.set({
         status: 'error',
         message: error instanceof Error ? error.message : String(error),
@@ -196,8 +192,28 @@ const pem = pemEncodeDer(der);`);
 
   /** Converts a hierarchy node into a display node with translated fields and validity status. */
   private buildChainDisplay(node: CertificateHierarchyNode): ChainDisplayNode {
+    return {
+      name: node.name,
+      ...this.buildDisplayCore(node.certificate, node.digests),
+      children: node.children.map((child) => this.buildChainDisplay(child)),
+    };
+  }
+
+  /** Builds a leaf-first tab display node from one parsed chain entry. */
+  private buildChainDisplayFromEntry(entry: ParsedChainEntry): ChainDisplayNode {
+    return {
+      name: entry.certificate.subject.getField('CN')?.value ?? entry.certificate.subject.getField('O')?.value ?? '-',
+      ...this.buildDisplayCore(entry.certificate, entry.digests),
+      children: [],
+    };
+  }
+
+  /** Translated validity status and detail rows shared by tree nodes and tabs. */
+  private buildDisplayCore(
+    certificate: ParsedChainEntry['certificate'],
+    digests: ParsedChainEntry['digests'],
+  ): Pick<ChainDisplayNode, 'statusText' | 'labelClass' | 'shape' | 'status' | 'items'> {
     const translate = (key: string, arg?: string) => this.translationService.translate(key, arg);
-    const certificate = node.certificate;
     const expiry = certificate.validity.notAfter.getTime();
     let statusText: string;
     let labelClass: string;
@@ -223,13 +239,11 @@ const pem = pemEncodeDer(der);`);
       }
     }
     return {
-      name: node.name,
       statusText,
       labelClass,
       shape,
       status,
-      items: this.buildCertItems(certificate, node.digests),
-      children: node.children.map((child) => this.buildChainDisplay(child)),
+      items: this.buildCertItems(certificate, digests),
     };
   }
 

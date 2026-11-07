@@ -61,19 +61,20 @@ test('renders a three-level certificate chain in the viewer', async ({page}) => 
   await select.selectOption({label: 'Chain — leaf → intermediate CA → root (deep nesting)'});
 
   await page.getByRole('button', {name: 'Parse', exact: true}).click();
-  const tree = page.locator('.chain-tree');
-  await expect(tree).toBeVisible();
-  // dsm-ui-style hierarchy: trust anchor first, issued certificates nested below.
-  await expect(tree.locator('.chain-node .chain-name')).toHaveText([
-    'Demo Root CA (RSA)',
-    'Demo Intermediate CA (ECDSA)',
-    'deep.ngx-lift.example',
-  ]);
-  // The nested leaf node exposes its details on click.
-  await tree.locator('.chain-node').last().click();
-  const results = page.locator('app-state-inspector');
-  await expect(results).toContainText('deep.ngx-lift.example');
-  await expect(results).toContainText('DNS:deep.ngx-lift.example');
+  // dsm-ui-style hierarchy: trust anchor first, issued certificates nested below, fully expanded.
+  const tree = page.locator('clr-tree clr-tree-node');
+  await expect(tree).toHaveCount(3);
+  await expect(tree.first()).toContainText('Demo Root CA (RSA)');
+  await expect(tree.nth(1)).toContainText('Demo Intermediate CA (ECDSA)');
+  await expect(tree.last()).toContainText('deep.ngx-lift.example');
+
+  // Details render as tabs in distributed order (leaf first, active initially).
+  const inspector = page.locator('app-state-inspector');
+  await expect(inspector).toBeVisible();
+  await expect(inspector).toContainText('deep.ngx-lift.example');
+  await expect(inspector).toContainText('DNS:deep.ngx-lift.example');
+  await page.getByRole('tab', {name: 'Demo Root CA (RSA)'}).click();
+  await expect(inspector).toContainText('Demo Root CA (RSA)');
 });
 
 test('reports malformed PEM in the viewer', async ({page}) => {

@@ -15,12 +15,11 @@
 
 .certificate-content {
   display: grid;
-  // Size the label column to its content so wide panels do not stretch a gap
-  // between label and value.
-  grid-template-columns: max-content 1fr;
+  // A shared fixed label width keeps every section's values on the same left edge.
+  grid-template-columns: 10rem 1fr;
   column-gap: 2rem;
   text-align: left;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
 
   dt {
     font-weight: 500;
@@ -34,11 +33,14 @@
 }
 
 .certificate-status {
+  // The layout directive makes the label a flex box; without a width it would
+  // stretch across the whole value column.
+  width: fit-content;
   vertical-align: middle;
 }
 
 @media screen and (min-width: 768px) {
   .certificate-content {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 }

@@ -120,34 +120,27 @@
 
       @if (viewerResult(); as result) {
         <h4>{{ 'certificate.viewerChainTitle' | translate }}</h4>
-        <ul class="list-unstyled chain-tree">
-          <ng-template #chainNodeTpl let-node>
-            <li>
-              <button type="button" class="chain-node" (click)="selectChainNode(node)">
-                <cds-icon shape="certificate" size="14" aria-hidden="true" />
-                <span class="chain-name">{{ node.name }}</span>
-                <span class="label" [class]="node.labelClass">
-                  <cds-icon [shape]="node.shape" [status]="node.status" size="10" aria-hidden="true" />
-                  {{ node.statusText }}
-                </span>
-              </button>
-              @if (node.children.length) {
-                <ul class="list-unstyled">
-                  @for (child of node.children; track child.name) {
-                    <ng-container [ngTemplateOutlet]="chainNodeTpl" [ngTemplateOutletContext]="{$implicit: child}" />
-                  }
-                </ul>
-              }
-            </li>
-          </ng-template>
-          @for (node of result.chain; track node.name) {
-            <ng-container [ngTemplateOutlet]="chainNodeTpl" [ngTemplateOutletContext]="{$implicit: node}" />
-          }
-        </ul>
+        <clr-tree>
+          <clr-tree-node *clrRecursiveFor="let node of result.tree; getChildren: treeChildren" [clrExpanded]="true">
+            <cds-icon shape="certificate" size="12" aria-hidden="true" />
+            {{ node.name }}
+            <span class="label" [class]="node.labelClass">
+              <cds-icon [shape]="node.shape" [status]="node.status" size="10" aria-hidden="true" />
+              {{ node.statusText }}
+            </span>
+          </clr-tree-node>
+        </clr-tree>
 
-        @if (selectedChainNode(); as node) {
-          <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" />
-        }
+        <clr-tabs>
+          @for (node of result.tabs; track node.name; let isFirst = $first) {
+            <clr-tab>
+              <button clrTabLink>{{ node.name }}</button>
+              <clr-tab-content *clrIfActive="isFirst">
+                <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" />
+              </clr-tab-content>
+            </clr-tab>
+          }
+        </clr-tabs>
 
         <h4>{{ 'certificate.viewerEncodedPem' | translate }}</h4>
         <app-code-block [code]="result.encodedPem" lang="text" />

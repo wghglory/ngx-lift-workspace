@@ -17,7 +17,7 @@
 
 @if (showIcon() && certificateStatus()) {
   <div class="certificate-status">
-    <clr-icon [shape]="certificateStatus().shape" [attr.status]="certificateStatus().status" />
+    <clr-icon [shape]="certificateStatus().shape" [status]="iconStatus(certificateStatus().status)" />
     <span [class]="certificateStatusClass()">{{ certificateStatus().labelText }}</span>
   </div>
 }
