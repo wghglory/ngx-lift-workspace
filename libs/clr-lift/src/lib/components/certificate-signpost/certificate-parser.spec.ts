@@ -4,7 +4,13 @@ import {describe, expect, it} from 'vitest';
 import {md5, sha1, sha256} from './certificate-crypto';
 import {certificatePem, digiCertPem} from './certificate.fixture';
 import {ascii, binaryString, encodeOid, makeCert, OID, TAG, tlv, toPem} from './certificate-der-fixture';
-import {extractDerFromPem, parseCertificate, parseCertificateFromPem, X509Certificate} from './certificate-parser';
+import {
+  extractDerFromPem,
+  parseCertificate,
+  parseCertificateFromPem,
+  pemEncodeDer,
+  X509Certificate,
+} from './certificate-parser';
 
 describe('certificate-parser (certificate type coverage)', () => {
   describe('real fixtures', () => {
@@ -265,6 +271,28 @@ describe('certificate-parser (certificate type coverage)', () => {
       expect(extractDerFromPem(incomplete, false).length).toBe(incomplete.length);
       const body = '-----BEGIN CERTIFICATE-----\nYWJj\n-----END CERTIFICATE-----\n';
       expect(Array.from(extractDerFromPem(body, false))).toEqual([0x61, 0x62, 0x63]);
+    });
+
+    it('re-encodes the fixture DER to exactly the fixture PEM', () => {
+      const der = extractDerFromPem(certificatePem, false);
+      expect(pemEncodeDer(der).trim()).toBe(certificatePem.trim());
+    });
+
+    it('round-trips arbitrary DER through pemEncodeDer and extractDerFromPem', () => {
+      const der = extractDerFromPem(digiCertPem, false);
+      const pem = pemEncodeDer(der);
+      expect(extractDerFromPem(pem, false)).toEqual(der);
+      const bodyLines = pem.split('\n').slice(1, -2);
+      expect(bodyLines.length).toBeGreaterThan(0);
+      expect(bodyLines.every((line) => line.length > 0 && line.length <= 64)).toBe(true);
+    });
+
+    it('encodes with a custom armor label', () => {
+      const der = extractDerFromPem(digiCertPem, false);
+      const pem = pemEncodeDer(der, 'PRIVATE KEY');
+      expect(pem.startsWith('-----BEGIN PRIVATE KEY-----\n')).toBe(true);
+      expect(pem.endsWith('\n-----END PRIVATE KEY-----\n')).toBe(true);
+      expect(extractDerFromPem(pem, false)).toEqual(der);
     });
   });
 

@@ -1496,6 +1496,39 @@ export const ptBRTranslations: Record<string, string> = {
   'certificate.example2': 'Exemplo 2: Parsing PEM (Base64 codificado)',
   'certificate.example2Desc':
     'Quando as cordas PEM são codificadas pelo BAS64, rodem o pemEncoded para decodificar-se antes da separação:',
+  'certificate.samplesTitle': 'Certificados de exemplo',
+  'certificate.samplesDesc':
+    'Escolha um certificado por papel (raiz, CA intermediária, folha) e algoritmo de chave. O signpost analiza certificados RSA, ECDSA e Ed25519 da mesma forma.',
+  'certificate.samplesSelectLabel': 'Certificado de exemplo',
+  'certificate.samples.realRootRsa': 'CA raiz — RSA 2048 (raiz pública da DigiCert)',
+  'certificate.samples.rootRsa': 'CA raiz — RSA 2048 (demo autoassinado)',
+  'certificate.samples.rootEc': 'CA raiz — ECDSA P-256 (demo autoassinado)',
+  'certificate.samples.intermediateEc': 'CA intermediária — ECDSA P-256 (assinada pela raiz RSA)',
+  'certificate.samples.leafRsa': 'Folha — RSA 2048 com SANs (assinada pela raiz ECDSA)',
+  'certificate.samples.leafEc': 'Folha — ECDSA P-256 com SANs (assinada pela raiz RSA)',
+  'certificate.samples.leafExpired': 'Folha — RSA (expirado, mostra o status de perigo)',
+  'certificate.viewerTitle': 'Crie seu próprio visualizador',
+  'certificate.viewerDesc':
+    'O signpost é composto por utilitários públicos que você pode reutilizar em suas próprias ferramentas: analisar PEM (ou sua codificação base64) em campos do certificado, calcular impressões dos bytes DER e codificar DER de volta para PEM.',
+  'certificate.viewerPemLabel': 'PEM do certificado',
+  'certificate.viewerParse': 'Analisar',
+  'certificate.viewerReset': 'Redefinir',
+  'certificate.viewerInvalid': 'Esta entrada não é um certificado analisável.',
+  'certificate.viewerResultsTitle': 'Certificado analisado',
+  'certificate.viewerEncodedPem': 'DER recodificado para PEM com pemEncodeDer',
+  'certificate.viewerCodeTitle': 'Os utilitários por trás do visualizador',
+  'certificate.viewerCodeDesc':
+    'A ação de análise usa a mesma API pública que você usaria em seu próprio visualizador de certificados:',
+  'certificate.utilitiesTitle': 'Utilitários de certificados',
+  'certificate.utilitiesDesc': 'Exportados de <code>clr-lift</code> para ferramentas de certificado personalizadas.',
+  'certificate.utilityParse':
+    'Analisa PEM (bruto ou codificado em base64) em campos de assunto, emissor, validade, SAN, SKI e algoritmo de assinatura.',
+  'certificate.utilityExtractDer':
+    'Extrai os bytes DER brutos da armadura PEM, de uma string PEM codificada em base64 ou de texto DER bruto.',
+  'certificate.utilityPemEncode':
+    'Codifica bytes DER de volta em uma string PEM com linhas base64 de 64 caracteres; o inverso de extractDerFromPem.',
+  'certificate.utilityDigest': 'Impressões MD5, SHA-1 e SHA-256 em hexadecimal maiúsculo sobre os bytes DER.',
+
   'idleDetection.utilOverview':
     'Detecção de inatividade é o processo de monitorar a atividade do usuário e determinar quando o usuário se torna inativo. Isso é particularmente útil para aplicações que exigem que os usuários permaneçam autenticados, pois permite que o sistema tome ações apropriadas quando o usuário para de interagir com a aplicação, como alertar o usuário sobre um tempo de expiração iminente ou automaticamente logar o usuário de volta após um período de inatividade.',
   'idleDetection.utilOverviewDesc':

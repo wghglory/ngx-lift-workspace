@@ -1357,6 +1357,36 @@ export const zhTWTranslations: Record<string, string> = {
   'certificate.example1Desc': '解析並展示原始 PEM 憑證：',
   'certificate.example2': '範例 2：解析 Base64 編碼的 PEM',
   'certificate.example2Desc': '憑證若為 Base64 字串，開啟 pemEncoded 即可自動解碼再解析：',
+  'certificate.samplesTitle': '範例憑證',
+  'certificate.samplesDesc':
+    '依角色（根、中繼 CA、分葉）與金鑰演算法選擇憑證。簽章牌元件以相同方式解析 RSA、ECDSA 與 Ed25519 憑證。',
+  'certificate.samplesSelectLabel': '範例憑證',
+  'certificate.samples.realRootRsa': '根 CA — RSA 2048（公開的 DigiCert 根憑證）',
+  'certificate.samples.rootRsa': '根 CA — RSA 2048（自簽示範）',
+  'certificate.samples.rootEc': '根 CA — ECDSA P-256（自簽示範）',
+  'certificate.samples.intermediateEc': '中繼 CA — ECDSA P-256（由 RSA 根憑證簽發）',
+  'certificate.samples.leafRsa': '分葉 — RSA 2048，含 SAN（由 ECDSA 根憑證簽發）',
+  'certificate.samples.leafEc': '分葉 — ECDSA P-256，含 SAN（由 RSA 根憑證簽發）',
+  'certificate.samples.leafExpired': '分葉 — RSA（已過期，顯示危險狀態）',
+  'certificate.viewerTitle': '打造你自己的檢視器',
+  'certificate.viewerDesc':
+    '簽章牌元件由公開工具函式組合而成，你可以在自己的工具中重複使用：將 PEM（或其 base64 編碼）解析為憑證欄位、對 DER 位元組計算指紋，以及把 DER 編碼回 PEM。',
+  'certificate.viewerPemLabel': '憑證 PEM',
+  'certificate.viewerParse': '解析',
+  'certificate.viewerReset': '重設',
+  'certificate.viewerInvalid': '此輸入不是可解析的憑證。',
+  'certificate.viewerResultsTitle': '解析結果',
+  'certificate.viewerEncodedPem': '使用 pemEncodeDer 將 DER 重新編碼為 PEM',
+  'certificate.viewerCodeTitle': '檢視器背後的工具函式',
+  'certificate.viewerCodeDesc': '上方的解析動作使用的是你在自己的憑證檢視器中會用到的同一組公開 API：',
+  'certificate.utilitiesTitle': '憑證工具函式',
+  'certificate.utilitiesDesc': '從 <code>clr-lift</code> 匯出，用於自訂憑證工具。',
+  'certificate.utilityParse': '將 PEM（原始或 base64 編碼）解析為主體、簽發者、有效期、SAN、SKI 與簽章演算法欄位。',
+  'certificate.utilityExtractDer': '從 PEM 裝甲、base64 編碼的 PEM 字串或原始 DER 文字中擷取原始 DER 位元組。',
+  'certificate.utilityPemEncode':
+    '將 DER 位元組編碼回具有 64 字元 base64 行的 PEM 字串；extractDerFromPem 的反向操作。',
+  'certificate.utilityDigest': '對 DER 位元組計算大寫十六進位的 MD5、SHA-1 與 SHA-256 指紋。',
+
   'idleDetection.utilOverview':
     '空閒檢測是監聽使用者活躍度並判定使用者何時處於無操作靜止狀態的過程。這對於需要維護登入鑑權有效性的應用系統尤為關鍵，能夠在使用者停止互動時及時給出超時預警，或在長時間不活動後自動登出以保障系統安全。',
   'idleDetection.utilOverviewDesc':

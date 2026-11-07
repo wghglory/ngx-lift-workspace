@@ -1467,6 +1467,38 @@ export const jaTranslations: Record<string, string> = {
   'certificate.example2': '例2: PEM（Base64エンコード）のパース',
   'certificate.example2Desc':
     'PEM文字列がBase64エンコードされている場合、pemEncodedをトグルして解碼してからパースする:',
+  'certificate.samplesTitle': 'サンプル証明書',
+  'certificate.samplesDesc':
+    '役割（ルート、中間 CA、リーフ）と鍵アルゴリズムで証明書を選択します。サインポストは RSA・ECDSA・Ed25519 の証明書を同じ方法で解析します。',
+  'certificate.samplesSelectLabel': 'サンプル証明書',
+  'certificate.samples.realRootRsa': 'ルート CA — RSA 2048（公開の DigiCert ルート）',
+  'certificate.samples.rootRsa': 'ルート CA — RSA 2048（自己署名デモ）',
+  'certificate.samples.rootEc': 'ルート CA — ECDSA P-256（自己署名デモ）',
+  'certificate.samples.intermediateEc': '中間 CA — ECDSA P-256（RSA ルートで署名）',
+  'certificate.samples.leafRsa': 'リーフ — SAN 付き RSA 2048（ECDSA ルートで署名）',
+  'certificate.samples.leafEc': 'リーフ — SAN 付き ECDSA P-256（RSA ルートで署名）',
+  'certificate.samples.leafExpired': 'リーフ — RSA（期限切れ、危険状態を表示）',
+  'certificate.viewerTitle': '独自のビューアーを作る',
+  'certificate.viewerDesc':
+    'サインポストは自分のツールで再利用できる公開ユーティリティで構成されています: PEM（またはその base64 エンコード）を証明書フィールドへ解析し、DER バイトのフィンガープリントを計算し、DER を PEM に再エンコードします。',
+  'certificate.viewerPemLabel': '証明書 PEM',
+  'certificate.viewerParse': '解析',
+  'certificate.viewerReset': 'リセット',
+  'certificate.viewerInvalid': 'この入力は解析可能な証明書ではありません。',
+  'certificate.viewerResultsTitle': '解析結果',
+  'certificate.viewerEncodedPem': 'pemEncodeDer で DER を PEM に再エンコード',
+  'certificate.viewerCodeTitle': 'ビューアーを支えるユーティリティ',
+  'certificate.viewerCodeDesc': '上の解析操作は、独自の証明書ビューアーで使うのと同じ公開 API を実行します:',
+  'certificate.utilitiesTitle': '証明書ユーティリティ',
+  'certificate.utilitiesDesc': '独自の証明書ツール向けに <code>clr-lift</code> からエクスポートされています。',
+  'certificate.utilityParse':
+    'PEM（生または base64 エンコード）をサブジェクト、発行者、有効期間、SAN、SKI、署名アルゴリズムのフィールドへ解析します。',
+  'certificate.utilityExtractDer':
+    'PEM アーマー、base64 エンコードされた PEM 文字列、または生 DER テキストから生の DER バイトを取り出します。',
+  'certificate.utilityPemEncode':
+    'DER バイトを 64 文字の base64 行を持つ PEM 文字列へエンコードします。extractDerFromPem の逆操作です。',
+  'certificate.utilityDigest': 'DER バイトに対する大文字 16 進の MD5・SHA-1・SHA-256 フィンガープリント。',
+
   'idleDetection.utilOverview':
     'アクティブな検出は、ユーザーのアクティビティを監視し、ユーザーが不活動になるときに何をしますか。これは、ユーザーがログインを維持する必要があるアプリケーションにおいて特に役立ちます。ユーザーがアプリケーションと相互作用を停止するときに、システムが適切なアクションを取るための機能を提供します。例えば、ユーザーがタイムアウトが近づくことを警告するか、一定時間の不活動後に自動的にログアウトするなどの処理を可能にします。',
   'idleDetection.utilOverviewDesc':

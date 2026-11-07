@@ -1463,6 +1463,39 @@ export const enTranslations: Record<string, string> = {
   'certificate.example1Desc': 'Parse and display a raw PEM certificate string:',
   'certificate.example2': 'Example 2: Parsing PEM (Base64 Encoded)',
   'certificate.example2Desc': 'When PEM strings are Base64 encoded, toggle pemEncoded to decode before parsing:',
+  'certificate.samplesTitle': 'Sample certificates',
+  'certificate.samplesDesc':
+    'Choose a certificate by role (root, intermediate CA, leaf) and key algorithm. The signpost parses RSA, ECDSA and Ed25519 certificates the same way.',
+  'certificate.samplesSelectLabel': 'Sample certificate',
+  'certificate.samples.realRootRsa': 'Root CA — RSA 2048 (public DigiCert root)',
+  'certificate.samples.rootRsa': 'Root CA — RSA 2048 (self-signed demo)',
+  'certificate.samples.rootEc': 'Root CA — ECDSA P-256 (self-signed demo)',
+  'certificate.samples.intermediateEc': 'Intermediate CA — ECDSA P-256 (signed by the RSA root)',
+  'certificate.samples.leafRsa': 'Leaf — RSA 2048 with SANs (signed by the ECDSA root)',
+  'certificate.samples.leafEc': 'Leaf — ECDSA P-256 with SANs (signed by the RSA root)',
+  'certificate.samples.leafExpired': 'Leaf — RSA (expired, shows the danger status)',
+  'certificate.viewerTitle': 'Build your own viewer',
+  'certificate.viewerDesc':
+    'The signpost is composed from public utilities you can reuse in your own tools: parse PEM (or its base64 encoding) into certificate fields, hash the DER bytes, and encode DER back to PEM.',
+  'certificate.viewerPemLabel': 'Certificate PEM',
+  'certificate.viewerParse': 'Parse',
+  'certificate.viewerReset': 'Reset',
+  'certificate.viewerInvalid': 'This input is not a parseable certificate.',
+  'certificate.viewerResultsTitle': 'Parsed certificate',
+  'certificate.viewerEncodedPem': 'DER re-encoded to PEM with pemEncodeDer',
+  'certificate.viewerCodeTitle': 'The utilities behind the viewer',
+  'certificate.viewerCodeDesc':
+    'The parse action above runs the same public API you would use in your own certificate viewer:',
+  'certificate.utilitiesTitle': 'Certificate utilities',
+  'certificate.utilitiesDesc': 'Exported from <code>clr-lift</code> for custom certificate tooling.',
+  'certificate.utilityParse':
+    'Parses PEM (raw or base64-encoded) into subject, issuer, validity, SAN, SKI and signature-algorithm fields.',
+  'certificate.utilityExtractDer':
+    'Extracts the raw DER bytes from PEM armor, a base64-encoded PEM string, or raw DER text.',
+  'certificate.utilityPemEncode':
+    'Encodes DER bytes back into an armored PEM string with 64-character base64 lines; the inverse of extractDerFromPem.',
+  'certificate.utilityDigest': 'Uppercase-hex MD5, SHA-1 and SHA-256 fingerprints over the DER bytes.',
+
   'idleDetection.utilOverview':
     'Idle detection is the process of monitoring user activity and determining when a user becomes inactive. This is particularly useful for applications that require users to remain logged in, as it allows the system to take appropriate action when a user stops interacting with the application, such as warning them of an impending timeout or automatically logging them out after a period of inactivity.',
   'idleDetection.utilOverviewDesc':

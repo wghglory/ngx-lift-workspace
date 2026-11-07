@@ -343,6 +343,24 @@ export function extractDerFromPem(pem: string, pemEncoded = true): Uint8Array {
   return bytes;
 }
 
+/**
+ * Encodes DER bytes as an armored PEM string with 64-character base64 lines.
+ *
+ * The inverse of {@link extractDerFromPem} for DER input: `extractDerFromPem(pemEncodeDer(der))`
+ * returns bytes equal to `der`. Use a different `label` (for example `PRIVATE KEY`) when arming
+ * non-certificate content; the label is opaque to this function.
+ */
+export function pemEncodeDer(der: Uint8Array, label = 'CERTIFICATE'): string {
+  let binary = '';
+  for (let i = 0; i < der.length; i++) {
+    binary += String.fromCharCode(der[i]);
+  }
+  const base64 = btoa(binary)
+    .replace(/(.{64})/g, '$1\n')
+    .replace(/\n$/, '');
+  return `-----BEGIN ${label}-----\n${base64}\n-----END ${label}-----\n`;
+}
+
 /** Parses the subjectAltName (2.5.29.17) extension content into {@link GeneralName} entries. */
 function parseGeneralNames(content: Uint8Array): GeneralName[] {
   const names: GeneralName[] = [];

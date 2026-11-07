@@ -96,6 +96,23 @@ flag explicitly at boundaries. Hash output is uppercase MD5/SHA1 for display com
 `certificateValidator(false)` with Reactive Forms for raw PEM; decoding is opt-in. The signpost is display-only; the
 validator works with Reactive Forms + `toSignalForm` because that facade retains the same control.
 
+Build-your-own-viewer utilities, exported alongside the component for custom certificate tooling:
+
+```typescript
+import {extractDerFromPem, md5, parseCertificate, pemEncodeDer, sha1, sha256} from 'clr-lift';
+
+const der = extractDerFromPem(pemText); // PEM (or base64-encoded PEM) -> DER bytes
+const certificate = parseCertificate(der); // DER -> fields; key-algorithm agnostic
+const digests = {md5: md5(der), sha1: sha1(der), sha256: sha256(der)}; // uppercase hex
+const pem = pemEncodeDer(der); // DER -> PEM armor with 64-character base64 lines
+```
+
+`pemEncodeDer(der, label = 'CERTIFICATE')` is the inverse of `extractDerFromPem` for DER input; the round trip
+`extractDerFromPem(pemEncodeDer(der))` returns bytes equal to `der`. The armor label is opaque, so the same function
+arms other PEM content (for example `PRIVATE KEY`). No owned visible strings: it returns data, not UI. The demo page
+exercises these utilities in its build-your-own-viewer section with a sample selector covering root, intermediate CA and
+leaf certificates for RSA and ECDSA keys.
+
 ## Behavior and architecture
 
 Signpost parsing catches failures into error/status state; the surfaced parser message is a developer diagnostic, not

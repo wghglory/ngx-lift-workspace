@@ -1445,6 +1445,38 @@ export const koTranslations: Record<string, string> = {
   'certificate.example2': '예시 2: PEM(기본 64비트 인코딩)',
   'certificate.example2Desc':
     'PEM 문자열이 기본 64비트 인코딩인 경우, pemEncoded를 토글하여 파싱 전에 디코딩해야 합니다:',
+  'certificate.samplesTitle': '샘플 인증서',
+  'certificate.samplesDesc':
+    '역할(루트, 중간 CA, 리프)과 키 알고리즘으로 인증서를 선택하세요. 사인포스트는 RSA, ECDSA, Ed25519 인증서를 동일한 방식으로 파싱합니다.',
+  'certificate.samplesSelectLabel': '샘플 인증서',
+  'certificate.samples.realRootRsa': '루트 CA — RSA 2048 (공개 DigiCert 루트)',
+  'certificate.samples.rootRsa': '루트 CA — RSA 2048 (자체 서명 데모)',
+  'certificate.samples.rootEc': '루트 CA — ECDSA P-256 (자체 서명 데모)',
+  'certificate.samples.intermediateEc': '중간 CA — ECDSA P-256 (RSA 루트로 서명)',
+  'certificate.samples.leafRsa': '리프 — SAN 포함 RSA 2048 (ECDSA 루트로 서명)',
+  'certificate.samples.leafEc': '리프 — SAN 포함 ECDSA P-256 (RSA 루트로 서명)',
+  'certificate.samples.leafExpired': '리프 — RSA (만료됨, 위험 상태 표시)',
+  'certificate.viewerTitle': '자신만의 뷰어 만들기',
+  'certificate.viewerDesc':
+    '사인포스트는 자체 도구에서 재사용할 수 있는 공개 유틸리티로 구성됩니다: PEM(또는 그 base64 인코딩)을 인증서 필드로 파싱하고, DER 바이트의 지문을 계산하고, DER을 PEM으로 다시 인코딩합니다.',
+  'certificate.viewerPemLabel': '인증서 PEM',
+  'certificate.viewerParse': '파싱',
+  'certificate.viewerReset': '초기화',
+  'certificate.viewerInvalid': '이 입력은 파싱 가능한 인증서가 아닙니다.',
+  'certificate.viewerResultsTitle': '파싱 결과',
+  'certificate.viewerEncodedPem': 'pemEncodeDer로 DER을 PEM으로 재인코딩',
+  'certificate.viewerCodeTitle': '뷰어를 뒷받침하는 유틸리티',
+  'certificate.viewerCodeDesc': '위 파싱 동작은 자체 인증서 뷰어에서 사용할 것과 동일한 공개 API를 실행합니다:',
+  'certificate.utilitiesTitle': '인증서 유틸리티',
+  'certificate.utilitiesDesc': '사용자 지정 인증서 도구를 위해 <code>clr-lift</code>에서 내보냅니다.',
+  'certificate.utilityParse':
+    'PEM(원본 또는 base64 인코딩)을 주체, 발급자, 유효 기간, SAN, SKI, 서명 알고리즘 필드로 파싱합니다.',
+  'certificate.utilityExtractDer':
+    'PEM 아머, base64 인코딩된 PEM 문자열 또는 원본 DER 텍스트에서 원본 DER 바이트를 추출합니다.',
+  'certificate.utilityPemEncode':
+    'DER 바이트를 64자 base64 줄을 가진 PEM 문자열로 다시 인코딩합니다. extractDerFromPem의 역동작입니다.',
+  'certificate.utilityDigest': 'DER 바이트에 대한 대문자 16진수 MD5, SHA-1, SHA-256 지문.',
+
   'idleDetection.utilOverview':
     '아이디얼 감지란 사용자 활동을 모니터링하고 사용자가 비활성화되는 시점을 결정하는 과정입니다. 이는 사용자가 로그인을 유지해야 하는 애플리케이션에 특히 유용하며, 사용자가 애플리케이션과 상호작용하지 않으면 시스템이 적절한 조치를 취할 수 있도록 합니다. 예를 들어 사용자가 타임아웃이 시작되기 전에 경고하거나, 일정 기간의 비활성화 후 자동으로 로그아웃할 수 있습니다.',
   'idleDetection.utilOverviewDesc':

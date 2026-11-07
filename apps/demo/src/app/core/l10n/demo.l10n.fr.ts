@@ -1530,6 +1530,39 @@ export const frTranslations: Record<string, string> = {
   'certificate.example2': 'Exemple 2: Parsing PEM (Base64 encodée)',
   'certificate.example2Desc':
     "Lorsque les chaînes PEM sont encodées Base64, basculez pemEncoded pour décoder avant d'analyser :",
+  'certificate.samplesTitle': 'Certificats d’exemple',
+  'certificate.samplesDesc':
+    'Choisissez un certificat par rôle (racine, CA intermédiaire, feuille) et algorithme de clé. Le signpost analyse les certificats RSA, ECDSA et Ed25519 de la même manière.',
+  'certificate.samplesSelectLabel': 'Certificat d’exemple',
+  'certificate.samples.realRootRsa': 'CA racine — RSA 2048 (racine publique DigiCert)',
+  'certificate.samples.rootRsa': 'CA racine — RSA 2048 (démo auto-signée)',
+  'certificate.samples.rootEc': 'CA racine — ECDSA P-256 (démo auto-signée)',
+  'certificate.samples.intermediateEc': 'CA intermédiaire — ECDSA P-256 (signée par la racine RSA)',
+  'certificate.samples.leafRsa': 'Feuille — RSA 2048 avec SAN (signée par la racine ECDSA)',
+  'certificate.samples.leafEc': 'Feuille — ECDSA P-256 avec SAN (signée par la racine RSA)',
+  'certificate.samples.leafExpired': 'Feuille — RSA (expirée, affiche l’état de danger)',
+  'certificate.viewerTitle': 'Créez votre propre visionneuse',
+  'certificate.viewerDesc':
+    'Le signpost est composé d’utilitaires publics réutilisables dans vos propres outils : analyser un PEM (ou son encodage base64) en champs de certificat, calculer les empreintes des octets DER et réencoder le DER en PEM.',
+  'certificate.viewerPemLabel': 'PEM du certificat',
+  'certificate.viewerParse': 'Analyser',
+  'certificate.viewerReset': 'Réinitialiser',
+  'certificate.viewerInvalid': 'Cette entrée n’est pas un certificat analysable.',
+  'certificate.viewerResultsTitle': 'Certificat analysé',
+  'certificate.viewerEncodedPem': 'DER réencodé en PEM avec pemEncodeDer',
+  'certificate.viewerCodeTitle': 'Les utilitaires derrière la visionneuse',
+  'certificate.viewerCodeDesc':
+    'L’action d’analyse ci-dessus utilise la même API publique que celle de votre propre visionneuse :',
+  'certificate.utilitiesTitle': 'Utilitaires de certificats',
+  'certificate.utilitiesDesc': 'Exportés depuis <code>clr-lift</code> pour vos propres outils de certificats.',
+  'certificate.utilityParse':
+    'Analyse un PEM (brut ou encodé en base64) en champs sujet, émetteur, validité, SAN, SKI et algorithme de signature.',
+  'certificate.utilityExtractDer':
+    'Extrait les octets DER bruts de l’armure PEM, d’une chaîne PEM encodée en base64 ou d’un texte DER brut.',
+  'certificate.utilityPemEncode':
+    'Réencode des octets DER en chaîne PEM avec des lignes base64 de 64 caractères ; l’inverse d’extractDerFromPem.',
+  'certificate.utilityDigest': 'Empreintes MD5, SHA-1 et SHA-256 en hexadécimal majuscule sur les octets DER.',
+
   'idleDetection.utilOverview':
     "La détection d'inactivité est le processus de surveillance de l'activité de l'utilisateur et de détermination de quand un utilisateur devient inactif. Cela est particulièrement utile pour les applications nécessitant que les utilisateurs restent connectés, car cela permet au système de prendre des actions appropriées lorsqu'un utilisateur cesse d'interagir avec l'application, comme l'avertir d'un temps d'expiration imminent ou de se déconnecter automatiquement après une période d'inactivité.",
   'idleDetection.utilOverviewDesc':

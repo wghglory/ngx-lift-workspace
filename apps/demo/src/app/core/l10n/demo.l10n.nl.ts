@@ -1508,6 +1508,39 @@ export const nlTranslations: Record<string, string> = {
   'certificate.example2': 'Voorbeeld 2: Ontleden van PEM (Base64 gecodeerd)',
   'certificate.example2Desc':
     'Als PEM-strings Base64 gecodeerd zijn, schakel je pemEncoded om te decoderen voordat je ontleedt:',
+  'certificate.samplesTitle': 'Voorbeeldcertificaten',
+  'certificate.samplesDesc':
+    'Kies een certificaat op rol (root, tussenliggende CA, leaf) en sleutelalgoritme. Het signpost parseert RSA-, ECDSA- en Ed25519-certificaten op dezelfde manier.',
+  'certificate.samplesSelectLabel': 'Voorbeeldcertificaat',
+  'certificate.samples.realRootRsa': 'Root-CA — RSA 2048 (openbare DigiCert-root)',
+  'certificate.samples.rootRsa': 'Root-CA — RSA 2048 (zelfondertekende demo)',
+  'certificate.samples.rootEc': 'Root-CA — ECDSA P-256 (zelfondertekende demo)',
+  'certificate.samples.intermediateEc': 'Tussenliggende CA — ECDSA P-256 (ondertekend door de RSA-root)',
+  'certificate.samples.leafRsa': 'Leaf — RSA 2048 met SANs (ondertekend door de ECDSA-root)',
+  'certificate.samples.leafEc': 'Leaf — ECDSA P-256 met SANs (ondertekend door de RSA-root)',
+  'certificate.samples.leafExpired': 'Leaf — RSA (verlopen, toont de gevarenstatus)',
+  'certificate.viewerTitle': 'Bouw je eigen viewer',
+  'certificate.viewerDesc':
+    'Het signpost is opgebouwd uit openbare utilities die je in eigen tools kunt hergebruiken: PEM (of de base64-codering) parsen naar certificaatvelden, de DER-bytes hashen en DER terug naar PEM coderen.',
+  'certificate.viewerPemLabel': 'Certificaat-PEM',
+  'certificate.viewerParse': 'Parsen',
+  'certificate.viewerReset': 'Resetten',
+  'certificate.viewerInvalid': 'Deze invoer is geen parsbaar certificaat.',
+  'certificate.viewerResultsTitle': 'Geparsd certificaat',
+  'certificate.viewerEncodedPem': 'DER opnieuw gecodeerd naar PEM met pemEncodeDer',
+  'certificate.viewerCodeTitle': 'De utilities achter de viewer',
+  'certificate.viewerCodeDesc':
+    'De parse-actie hierboven gebruikt dezelfde openbare API die je in je eigen certificaatviewer zou gebruiken:',
+  'certificate.utilitiesTitle': 'Certificaat-utilities',
+  'certificate.utilitiesDesc': 'Geëxporteerd vanuit <code>clr-lift</code> voor eigen certificaatgereedschap.',
+  'certificate.utilityParse':
+    'Parst PEM (rauw of base64-gecodeerd) naar subject-, issuer-, geldigheids-, SAN-, SKI- en handtekeningalgoritme-velden.',
+  'certificate.utilityExtractDer':
+    'Haalt de ruwe DER-bytes uit PEM-pantsers, een base64-gecodeerde PEM-string of ruwe DER-tekst.',
+  'certificate.utilityPemEncode':
+    'Codeert DER-bytes terug naar een PEM-string met 64-tekens base64-regels; het tegenovergestelde van extractDerFromPem.',
+  'certificate.utilityDigest': 'MD5-, SHA-1- en SHA-256-vingerafdrukken in hoofdletterhex over de DER-bytes.',
+
   'idleDetection.utilOverview':
     'Het detectieproces van inactiefheid is het proces van het monitoren van gebruikersactiviteit en het bepalen wanneer een gebruiker inactief wordt. Dit is vooral nuttig voor toepassingen waarin gebruikers moeten blijven ingelogd, omdat het het systeem toelaat om de juiste actie te ondernemen wanneer een gebruiker niet meer met de toepassing interagerd, zoals een waarschuwing over een onvermijdellijke tijdsverloop of automatisch uitloggen na een periode van inactiefheid.',
   'idleDetection.utilOverviewDesc':
