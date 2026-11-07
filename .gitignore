@@ -37,7 +37,6 @@ Thumbs.db
 .nx/self-healing
 
 .claude/settings.local.json
-.claude/worktrees
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 

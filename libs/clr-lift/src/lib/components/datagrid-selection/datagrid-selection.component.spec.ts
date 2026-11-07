@@ -469,6 +469,19 @@ describe('Datagrid selection through its real form host', () => {
       ]);
       await settle(fixture);
       expect(viewport.style.minBlockSize).toBe('5rem');
+      // An empty page is a transient loading/failure state, not a smaller inventory.
+      host.items.set([]);
+      await settle(fixture);
+      expect(viewport.style.minBlockSize).toBe('5rem');
+      host.items.set([
+        {id: 'org-1', name: 'North'},
+        {id: 'org-2', name: 'South'},
+        {id: 'org-3', name: 'East'},
+        {id: 'org-4', name: 'West'},
+        {id: 'org-5', name: 'River'},
+      ]);
+      await settle(fixture);
+      expect(viewport.style.minBlockSize).toBe('8.75rem');
     } finally {
       bounds.mockRestore();
     }

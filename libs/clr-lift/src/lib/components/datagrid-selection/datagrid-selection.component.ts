@@ -391,6 +391,8 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
     // path. While a subset is displayed the captured minimum is the tallest rendered height, keeping
     // the viewport stable as rows are filtered or paged out instead of collapsing. A complete
     // inventory instead sizes to its content, so a smaller replacement inventory can shrink again.
+    // A page with no supplied rows intentionally keeps the last height: it is an in-flight or
+    // initially failed request, not a smaller inventory.
     const signature = `${sourceCount}|${displayedCount}`;
     if (signature !== this.footprintSignature) {
       this.footprintSignature = signature;
