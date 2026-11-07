@@ -219,9 +219,8 @@ export class BreadcrumbComponent {
     const separator = trail.querySelector<HTMLElement>('.separator');
     const gap =
       parseFloat(view.getComputedStyle(trail).columnGap) +
-      (separator
-        ? parseFloat(view.getComputedStyle(separator.parentElement!).columnGap) +
-          separator.getBoundingClientRect().width
+      (separator && separator.parentElement
+        ? parseFloat(view.getComputedStyle(separator.parentElement).columnGap) + separator.getBoundingClientRect().width
         : 0);
     const available = trail.clientWidth;
     let count = Math.min(widths.length, this.ceiling());

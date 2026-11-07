@@ -16,6 +16,8 @@ journeys.
 | No picker: scalar/null form value                                                        | [Simple single](#without-a-picker-single-selection)                    |
 | No picker: label signpost, status filter/sort, pagination, toSignalForm and submit/reset | [Direct policy form](#without-a-picker-advanced-form-and-tosignalform) |
 | Reusable business picker with no handwritten CVA                                         | [Picker and parent](#with-a-picker-component)                          |
+| Server-paged grid with off-page saved keys and scoped clear                              | [Server pages](#server-paged-native-grid)                              |
+| Reusable picker owning the server query; parent owning values/validators                 | [Server picker](#reusable-server-picker)                               |
 | Template-driven single selection                                                         | [ngModel](#template-driven-single-selection)                           |
 | Model-only reset versus complete form reset                                              | [Reset and direct form updates](#reset-and-direct-form-updates)        |
 
@@ -91,7 +93,7 @@ form.reset() is enough to restore the model and pristine/untouched state.
 ### simple-multiple.component.ts
 
 ```typescript
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
@@ -107,7 +109,8 @@ import {type Organization} from './organization-example.data';
 })
 export class SimpleOrganizationGridComponent {
   private readonly organizationService = inject(OrganizationService);
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   readonly form = new FormGroup({
     organizationIds: new FormControl<string[]>([], {nonNullable: true}),
   });
@@ -161,7 +164,7 @@ required validation when required is present; resetting restores the form defaul
 ### simple-single.component.ts
 
 ```typescript
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
@@ -177,7 +180,8 @@ import {type Organization} from './organization-example.data';
 })
 export class SingleOrganizationGridComponent {
   private readonly organizationService = inject(OrganizationService);
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   readonly organizationId = new FormControl<string | null>(null);
   readonly organizationKey = (item: Organization) => item.id;
 }
@@ -223,11 +227,11 @@ There is no explicit ng-template in this example.
 toSignalForm observes the same FormGroup; formControlName still owns the selection field. The payload in the preview
 follows the committed form value. This validation example uses default change updates, so its summary and Remove actions
 stay current with each selection. The reusable-picker example separately demonstrates updateOn: 'blur'. The facade
-supplies reactive validity/pending and sanitized submitValue signals. includeDisabled: false uses Angular form.value,
-and omitIf explicitly excludes disabled fields even when the whole group is disabled. The preview reads sf.submitValue()
-directly. A valid submit emits a copied payload through the ordinary save output for the containing application to
-persist; no submittedValue signal duplicates the form. sf.submitValue() describes the current sanitized value, not
-submission history. Copy values when handing them to an asynchronous operation.
+supplies reactive validity/pending and sanitized submitValue signals. Angular keeps a disabled child in FormGroup.value,
+so the demo pairs includeDisabled: false with an omitIf predicate that drops disabled controls explicitly. The preview
+reads sf.submitValue() directly. A valid submit emits a copied payload through the ordinary save output for the
+containing application to persist; no submittedValue signal duplicates the form. sf.submitValue() describes the current
+sanitized value, not submission history. Copy values when handing them to an asynchronous operation.
 
 The original IDs are known when the nonNullable control is constructed. The ordinary reset button calls
 formView.resetForm() to restore those defaults and clear submitted state. It avoids the native browser reset action,
@@ -236,9 +240,10 @@ baseline to resetForm(value).
 
 The saved-selection example includes a complete-inventory membership validator and a selected-key summary. Missing keys
 stay in the form and count toward the maximum until the user removes them. A successful complete inventory confirms
-unavailability; a loading or failed request is unverified and blocks submission without declaring keys invalid.
-Revalidation updates the existing owner without changing saved keys or pristine/touched state. A server-paged picker
-must resolve keys separately instead of treating its current page as a complete inventory.
+unavailability; a loading or failed request is unverified and blocks submission without declaring keys invalid. The
+membership check is a signal-driven validator bound with bindValidators, so a settled query re-runs validity without an
+effect that mutates the form. Revalidation updates the existing owner without changing saved keys or pristine/touched
+state. A server-paged picker must resolve keys separately instead of treating its current page as a complete inventory.
 
 ### data-service-policy-form.component.ts
 
@@ -249,7 +254,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   output,
   signal,
@@ -261,7 +265,7 @@ import {ClarityModule, ClrDatagrid} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
 import {STATUS_KEYS, type Organization} from './organization-example.data';
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 
 @Component({
   selector: 'app-data-service-policy-form',
@@ -275,7 +279,7 @@ export class DataServicePolicyFormComponent {
   private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
   private readonly originalOrganizationIds = ['org-2'];
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
 
   // Only this endpoint's successful complete inventory can establish that a saved key is unavailable.
   readonly verifiedOrganizations = computed(() =>
@@ -289,6 +293,8 @@ export class DataServicePolicyFormComponent {
       validators: [
         Validators.required,
         Validators.maxLength(this.maximumOrganizations),
+        // The membership check reads the verified inventory. It stays installed on the control and
+        // reads the current inventory on every validation run, so it is correct from the first run.
         (control) => {
           const missing = this.unavailableKeys(control.value);
           return missing.length ? {unavailableOrganizations: missing} : null;
@@ -298,7 +304,7 @@ export class DataServicePolicyFormComponent {
   });
   readonly sf = toSignalForm(this.form, {
     includeDisabled: false,
-    // Angular includes children in form.value when the entire group is disabled.
+    // Angular keeps a disabled child in FormGroup.value, so a disabled control is excluded here.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
 
@@ -345,17 +351,18 @@ export class DataServicePolicyFormComponent {
   readonly save = output<{organizationIds?: string[]}>();
 
   constructor() {
-    effect(() => {
-      this.verifiedOrganizations();
-      // Query verification changes validity, not the user's selected value or interaction state.
-      untracked(() => this.form.controls.organizationIds.updateValueAndValidity());
-    });
+    // A settled inventory changes which keys are unavailable, so validity has to be recomputed.
+    // revalidateOnChange re-runs the membership validator without changing saved keys or
+    // pristine/touched state, and without an effect that mutates the form.
+    this.sf.revalidate(this.form.controls.organizationIds, this.verifiedOrganizations);
     afterRenderEffect(() => {
       const grid = this.grid();
-      // Track both language and dictionary changes, keeping the native active query and sort state.
+      // The sort comparator and the string filter read the active language lazily, so the grid
+      // re-evaluates them when the language or dictionary changes. A single translated status key
+      // (ready) detects a dictionary change, so the maintenance key was dropped as redundant;
+      // locale covers the collation order.
       this.translationService.locale();
       this.translationService.translate(STATUS_KEYS.ready);
-      this.translationService.translate(STATUS_KEYS.maintenance);
       untracked(() => grid?.items.refresh());
     });
   }
@@ -500,23 +507,29 @@ export class DataServicePolicyFormComponent {
       <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
     </clr-datagrid>
   </cll-datagrid-selection>
-  <div cds-layout="horizontal gap:md wrap:wrap">
-    <label
-      ><input
+  <div
+    class="selection-toolbar"
+    cds-layout="horizontal gap:md wrap:wrap"
+    role="group"
+    [attr.aria-label]="'selectionDemo.policyControls' | translate"
+  >
+    <label class="selection-toolbar-check">
+      <input
         type="checkbox"
         [checked]="layout() === 'horizontal'"
         (change)="layout.set(layout() === 'horizontal' ? 'vertical' : 'horizontal')"
       />
-      {{ 'selectionDemo.horizontal' | translate }}</label
-    >
-    <label
-      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" /> {{ 'selectionDemo.readonly'
-      | translate }}</label
-    >
-    <label
-      ><input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" /> {{
-      'selectionDemo.disabled' | translate }}</label
-    >
+      {{ 'selectionDemo.horizontal' | translate }}
+    </label>
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'selectionDemo.readonly' | translate }}
+    </label>
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
+      {{ 'selectionDemo.disabled' | translate }}
+    </label>
+    <span class="selection-toolbar-spacer"></span>
     <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
       {{ 'common.refresh' | translate }}
     </button>
@@ -533,16 +546,129 @@ export class DataServicePolicyFormComponent {
     {{ 'organizationExample.reset' | translate }}
   </button>
 </form>
-<pre>{{ sf.submitValue() | json }}</pre>
+<pre tabindex="0">{{ sf.submitValue() | json }}</pre>
 ```
+
+## Server-paged native grid
+
+A server-paged grid supplies only one logical page to the selection field. Keep every response-changing parameter in the
+query key and request only the current page; do not fetch the complete inventory or infer deletion from a missing row.
+The runnable example is
+[server-page-form.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-page-form.component.ts)
+with its [template](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-page-form.component.html),
+[service/query key](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-organization.service.ts) and
+[controlled HTTP fixture](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-organization.fixture.ts).
+
+```ts
+readonly page = signal(1);
+readonly organizationsQuery = queryResource(() =>
+  serverOrganizationQuery(this.organizationService, {
+    scope: this.scope(),
+    name: this.nameFilter.query(),
+    status: this.status(),
+    sort: this.sort(),
+    page: this.page(),
+    pageSize: this.pageSize,
+  }),
+);
+readonly items = computed(() => this.organizationsQuery.value()?.items ?? []);
+// Keep the last settled total during a page request; otherwise total=0 clamps Clarity to page 1.
+private readonly settledTotal = signal(0);
+readonly total = computed(() => this.organizationsQuery.value()?.total ?? this.settledTotal());
+```
+
+Render the supplied page with native `@for`, not `*clrDgItems`, so Clarity does not slice an already-paged response:
+
+```html
+<clr-datagrid
+  clrDgSelectionType="multi"
+  [clrDgLoading]="organizationsQuery.isLoading()"
+  [clrDgItemsIdentityFn]="organizationKey"
+>
+  <clr-dg-column [clrDgSortBy]="nameComparator" [clrDgSortOrder]="sortOrder()" (clrDgSortOrderChange)="setSort($event)">
+    {{ 'organizationExample.name' | translate }}
+    <clr-dg-filter [clrDgFilter]="nameFilter">...</clr-dg-filter>
+  </clr-dg-column>
+  @for (item of items(); track item.id) {
+  <clr-dg-row [clrDgItem]="item">...</clr-dg-row>
+  }
+  <clr-dg-footer>
+    <clr-dg-pagination
+      [clrDgPageSize]="pageSize"
+      [clrDgPage]="page()"
+      [clrDgTotalItems]="total()"
+      (clrDgPageChange)="setPage($event)"
+    />
+  </clr-dg-footer>
+</clr-datagrid>
+```
+
+The native name filter performs no local matching (`accepts()` returns true); its query signal drives the server request
+and resets the page to 1. Scope, status, sort and filter changes do the same. Keep the form value as stable keys and
+render the saved-key summary from the form, not from loaded rows. A saved key whose page has not loaded shows an
+unresolved label until a response contains that row. Select-all and scoped clear operate on the supplied current page;
+out-of-scope keys survive. Submit `sf.submitValue()` with every selected key and never a wildcard/all-server sentinel.
+If an action can run while a request is loading, guard it with the query's loading signal or the owner's
+readonly/disabled state.
+
+The demo fixture serves 26 checked-in organizations, 13 in each of the commerce and public scopes, with a bounded page
+size. It forwards scope/name/status/sort/page to the asset request for test control. Its
+[browser journeys](../../../apps/demo-e2e/src/datagrid-selection-server.spec.ts) cover request identity, off-page saved
+keys, empty/failure/retry, stale responses, reset-while-loading, unavailable saved keys, keyboard filter/footer focus,
+readonly/disabled, accessibility and all eleven locales. This is local fixture evidence, not a live API contract; the
+consumer still resolves submitted keys against its server.
+
+The same demo also surfaces the application eligibility reaction: a sync validator rejects saved keys whose
+authoritatively loaded row says maintenance, and re-validates in response to fresh authoritative page responses without
+writing keys or touch state. See the private `authoritativelyUnavailableKeys` helper and the query response effect in
+[server-page-form.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-page-form.component.ts).
+Selected maintained rows keep readable reasons and stay removable; unresolved off-page keys stay valid and unverified.
+
+## Reusable server picker
+
+A business picker owns its server query; the parent owns values, validators, the saved baseline and the submit DTO. Use
+one accessor host directive and one `cllDatagridSelectionBinding` on the inner field — with no picker CVA callbacks,
+second form control or public valueChange/blurred/validation wiring. The runnable example is
+[server-organization-picker.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-organization-picker.component.ts)
+with its template and
+[server-picker-form.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-picker-form.component.ts)
+with its template.
+
+```ts
+@Component({
+  selector: 'app-server-organization-picker',
+  hostDirectives: [DatagridSelectionAccessorDirective],
+})
+export class ServerOrganizationPickerComponent {
+  readonly organizationsQuery = queryResource(() =>
+    serverOrganizationQuery(this.organizationService, {
+      scope: this.scope(),
+      name: this.nameFilter.query(),
+      status: this.status(),
+      sort: this.sort(),
+      page: this.page(),
+      pageSize: this.pageSize,
+    }),
+  );
+}
+```
+
+```html
+<app-server-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
+```
+
+The picker projects the localized alert/Retry above its own native grid and keeps name sorting, the native name filter
+and server pagination on the same identity. The parent baseline stores keys from pages the picker never requested (Maple
+org-s-13 and Yarrow org-s-25 in the demo), so the browser journeys show scoped paging, retained keys, key-only
+submission, picker-owned failure/retry recovery and parent-owned readonly/disabled ownership for the same binding.
 
 ## Async validation and submit buffering
 
 `async-submit.component.ts` and `.html` keep multi-selection edits buffered with `updateOn: 'submit'`. Submitting starts
-an asynchronous eligibility validator; `sf.pending()` drives the status message and button loading state. West (org-4)
-is rejected with a localized error, and Reset uses the form directive's `resetForm()` so pristine/untouched state and
-the submission flag clear together. An eligible submission emits only the accepted buffered keys. The complete source is
-shown beside the playground on the demo page.
+an asynchronous eligibility validator; `sf.pending()` drives the status message and button loading state. Organization 4
+(org-4) is rejected with a localized error, and Reset uses the form directive's `resetForm()` so pristine/untouched
+state and the submission flag clear together. An eligible submission emits only the accepted buffered keys. The complete
+source is shown beside the playground on the demo page.
 
 ## With a picker component
 
@@ -570,7 +696,7 @@ and lifecycle cleanup; the binding must not create another form control.
 ### organization-picker.component.ts
 
 ```typescript
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
 import {booleanAttribute, ChangeDetectionStrategy, Component, inject, input, OnDestroy} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
@@ -601,7 +727,8 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
 })
 export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -696,6 +823,10 @@ export class PolicyFormComponent {
 
   private readonly originalOrganizationIds = ['org-1'];
   readonly form = new FormGroup({
+    policyName: new FormControl('Data service policy', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     organizationIds: new FormControl<string[]>([...this.originalOrganizationIds], {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(3)],
@@ -704,7 +835,7 @@ export class PolicyFormComponent {
   });
   readonly sf = toSignalForm(this.form, {
     includeDisabled: false,
-    // Angular includes children in form.value when the entire group is disabled.
+    // Angular keeps a disabled child in FormGroup.value, so a disabled control is excluded here.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
 
@@ -715,12 +846,15 @@ export class PolicyFormComponent {
     if (errors['maxlength']) return this.translationService.translate('organizationExample.maxOrganizations');
     return this.translationService.translate('organizationExample.invalidSelection');
   });
-  readonly save = output<{organizationIds?: string[]}>();
+  readonly save = output<{policyName?: string; organizationIds?: string[]}>();
 
   submit(): void {
     if (this.sf.invalid() || this.sf.pending()) return;
     const payload = this.sf.submitValue();
-    this.save.emit(payload.organizationIds === undefined ? {} : {organizationIds: [...payload.organizationIds]});
+    this.save.emit({
+      policyName: payload.policyName,
+      organizationIds: payload.organizationIds === undefined ? [] : [...payload.organizationIds],
+    });
   }
 }
 ```
@@ -729,13 +863,17 @@ export class PolicyFormComponent {
 
 ```html
 <form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <clr-input-container>
+    <label for="policy-name">{{ 'selectionDemo.policyName' | translate }}</label>
+    <input clrInput id="policy-name" formControlName="policyName" />
+  </clr-input-container>
   <app-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
   <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
     {{ 'organizationExample.reset' | translate }}
   </button>
 </form>
-<pre>{{ sf.submitValue() | json }}</pre>
+<pre tabindex="0">{{ sf.submitValue() | json }}</pre>
 ```
 
 ## Template-driven single selection
@@ -747,7 +885,7 @@ filter UI state, not another owner of organizationIds.
 ### template-driven.component.ts
 
 ```typescript
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, inject, output} from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';
@@ -763,7 +901,8 @@ import {type Organization} from './organization-example.data';
 })
 export class TemplateOrganizationFormComponent {
   private readonly organizationService = inject(OrganizationService);
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   organizationId: string | null = null;
   readonly save = output<string | null>();
   readonly organizationKey = (item: Organization) => item.id;
@@ -931,28 +1070,31 @@ export const appConfig: ApplicationConfig = {
 ```typescript
 import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
-import type {Observable} from 'rxjs';
 import type {QueryDefinition} from 'ngx-lift';
 import type {Organization} from './organization-example.data';
 
+/** Loads the complete local organization inventory for a scope. */
 @Injectable({providedIn: 'root'})
 export class OrganizationService {
   private readonly httpClient = inject(HttpClient);
-  list(scope: string): Observable<Organization[]> {
-    // This example endpoint returns the complete local-grid inventory for the scope.
-    return this.httpClient.get<Organization[]>('/api/organizations', {params: {scope}});
-  }
-}
 
-export function organizationListQuery(
-  organizationService: OrganizationService,
-  scope: string,
-): QueryDefinition<Organization[]> {
-  return {
-    key: ['organizations', 'list', scope],
-    staleTime: 60_000,
-    loader: () => organizationService.list(scope),
-  };
+  /**
+   * Declares the shared query for one scope.
+   *
+   * The scope is part of the query key, so the shared client caches one inventory per scope
+   * instead of letting a later scope overwrite an earlier one.
+   *
+   * @param scope Every response-changing parameter of the request.
+   * @returns Query definition with that scope inside both key and loader.
+   */
+  listQuery(scope: string): QueryDefinition<Organization[]> {
+    return {
+      key: ['organizations', 'list', scope],
+      staleTime: 60_000,
+      loader: () =>
+        this.httpClient.get<Organization[]>('/assets/datagrid-selection/organizations.json', {params: {scope}}),
+    };
+  }
 }
 ```
 

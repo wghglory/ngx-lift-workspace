@@ -18,6 +18,10 @@ export class PolicyFormComponent {
 
   private readonly originalOrganizationIds = ['org-1'];
   readonly form = new FormGroup({
+    policyName: new FormControl('Data service policy', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     organizationIds: new FormControl<string[]>([...this.originalOrganizationIds], {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(3)],
@@ -26,7 +30,7 @@ export class PolicyFormComponent {
   });
   readonly sf = toSignalForm(this.form, {
     includeDisabled: false,
-    // Angular includes children in form.value when the entire group is disabled.
+    // Angular keeps a disabled child in FormGroup.value, so a disabled control is excluded here.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
 
@@ -37,11 +41,14 @@ export class PolicyFormComponent {
     if (errors['maxlength']) return this.translationService.translate('organizationExample.maxOrganizations');
     return this.translationService.translate('organizationExample.invalidSelection');
   });
-  readonly save = output<{organizationIds?: string[]}>();
+  readonly save = output<{policyName?: string; organizationIds?: string[]}>();
 
   submit(): void {
     if (this.sf.invalid() || this.sf.pending()) return;
     const payload = this.sf.submitValue();
-    this.save.emit(payload.organizationIds === undefined ? {} : {organizationIds: [...payload.organizationIds]});
+    this.save.emit({
+      policyName: payload.policyName,
+      organizationIds: payload.organizationIds === undefined ? [] : [...payload.organizationIds],
+    });
   }
 }

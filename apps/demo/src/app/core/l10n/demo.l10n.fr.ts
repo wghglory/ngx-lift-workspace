@@ -3,6 +3,28 @@ export const frTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Organisations sélectionnées',
   'selectionDemo.selectedCount': '{0} sélectionnées · maximum {1}',
+  'selectionDemo.server': 'Sélection paginée côté serveur',
+  'selectionDemo.serverHelp':
+    'Demande une page limitée au jeu de données HTTP contrôlé. La sélection ou le retrait de lignes ne concerne que les lignes fournies sur la page filtrée actuelle.',
+  'selectionDemo.serverSavedHelp':
+    'Les clés enregistrées persistent lors des changements de page, de filtre et de tri. Charger les clés enregistrées restaure Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) et Willow (org-s-23) ; Elm est en maintenance et les autres se trouvent sur des pages non demandées. Réinitialiser restaure Quince (org-s-17) et Willow (org-s-23).',
+  'selectionDemo.serverScope': 'Périmètre',
+  'selectionDemo.serverCommerce': 'Commerce',
+  'selectionDemo.serverPublic': 'Public',
+  'selectionDemo.serverNameFilter': 'Filtrer les organisations par nom',
+  'selectionDemo.serverSummary': 'Clés sélectionnées ({0})',
+  'selectionDemo.serverOffPage': 'Clé enregistrée d’une page non demandée',
+  'selectionDemo.serverEmpty': 'Aucune organisation ne correspond à cette page serveur.',
+  'selectionDemo.serverLoading': 'Chargement de cette page serveur…',
+  'selectionDemo.serverEvidence': 'Réponse du serveur : page {0} sur {1}, {2} correspondances, périmètre {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'nom croissant',
+  'selectionDemo.serverSortDesc': 'nom décroissant',
+  'selectionDemo.serverLoadSaved': 'Charger les clés enregistrées',
+  'selectionDemo.serverSubmit': 'Envoyer les clés',
+  'selectionDemo.serverSubmitted': 'Clés envoyées : {0}',
+  'selectionDemo.serverPicker': 'Sélecteur serveur réutilisable',
+  'selectionDemo.serverPickerHelp':
+    "Le composant sélecteur possède la requête serveur, le chargement, l'échec et la relance ; le formulaire parent possède les valeurs, la validation et la ligne de base des clés enregistrées. La réinitialisation restaure Maple (org-s-13) et Yarrow (org-s-25).",
   'selectionDemo.unavailableName': 'Organisation indisponible',
   'selectionDemo.unverifiedName': 'Organisation non vérifiée',
   'selectionDemo.removeKey': 'Supprimer {0}',
@@ -12,9 +34,9 @@ export const frTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Supprimez les organisations indisponibles avant d’enregistrer.',
 
   'selectionDemo.savedHelp':
-    'Charger la sélection enregistrée restaure South (org-2) et une clé absente de cet inventaire. Actualiser remplace les données et conserve les clés sélectionnées. Réinitialiser restaure South.',
+    'Charger la sélection enregistrée restaure Organization 2 (org-2) et une clé absente de cet inventaire. Actualiser remplace les données et conserve les clés sélectionnées. Réinitialiser restaure Organization 2.',
   'selectionDemo.pickerHelp':
-    'Le sélecteur gère le chargement et la grille ; le parent gère validation et envoi. Réinitialiser restaure North (org-1).',
+    'Le sélecteur gère le chargement et la grille ; le parent gère validation et envoi. Réinitialiser restaure Organization 1 (org-1).',
   'selectionDemo.reference.overview':
     'Encapsule une grille Clarity native avec un libellé simple. Liez le formulaire uniquement au champ de sélection ou à l’hôte du sélecteur réutilisable.',
   'selectionDemo.reference.required':
@@ -39,6 +61,9 @@ export const frTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Disposition horizontale',
   'selectionDemo.loadSaved': 'Charger la sélection enregistrée',
   'selectionDemo.readonly': 'Lecture seule',
+  'selectionDemo.policyName': 'Nom de la politique',
+  'selectionDemo.policyControls': "Commandes de l'exemple de sélection",
+  'selectionDemo.serverControls': 'Commandes de sélection du serveur',
   'selectionDemo.disabled': 'Désactivé',
   'organizationExample.organization': 'Organisation',
   'organizationExample.organizations': 'Organisations',
@@ -62,9 +87,9 @@ export const frTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'La sélection d’organisations n’est pas valide.',
   'selectionDemo.asyncSubmit': 'Validation asynchrone et mise en mémoire avant envoi',
   'selectionDemo.asyncSubmitHelp':
-    "Les sélections restent en mémoire jusqu'à l'envoi. Une vérification asynchrone de l'éligibilité s'exécute ensuite ; West (org-4) est refusé.",
+    "Les sélections restent en mémoire jusqu'à l'envoi. Une vérification asynchrone de l'éligibilité s'exécute ensuite ; Organization 4 (org-4) est refusé.",
   'selectionDemo.asyncChecking': "Vérification de l'éligibilité…",
-  'selectionDemo.asyncError': "West n'est pas éligible pour cette politique.",
+  'selectionDemo.asyncError': "Organization 4 n'est pas éligible pour cette politique.",
   'selectionDemo.asyncSubmitted': 'Clés envoyées',
   'selectionDemo.title': 'Sélection dans une grille',
   'selectionDemo.intro':
@@ -664,6 +689,13 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.apiPropForm':
     "L'instance Angular FormGroup pour envelopper avec des signaux réactifs et des fixations.",
   'toSignalForm.apiPropOmit': 'Contrôler les noms à omettre des charges utiles submitValue.',
+  'toSignalForm.apiPropIncludeDisabled':
+    "Indique si submitValue inclut les contrôles désactivés. Avec false, la valeur form.value d'Angular est lue, qui conserve un contrôle enfant désactivé ; associez options.omitIf pour l'exclure.",
+  'toSignalForm.apiPropOmitEmptyStrings': 'Indique si submitValue supprime les valeurs de chaîne vide.',
+  'toSignalForm.apiPropOmitNull': 'Indique si submitValue supprime les valeurs null.',
+  'toSignalForm.apiPropOmitIf':
+    'Prédicat par contrôle qui retire un contrôle de submitValue. Reçoit la valeur courante, le nom du contrôle et son objet parent.',
+  'toSignalForm.apiPropDeep': 'Indique si submitValue nettoie aussi les objets et tableaux imbriqués.',
   'toSignalForm.apiPropEmitEvent':
     'Indique si les changements de statut/valeur émettent des événements de contrôle Angular.',
   'toSignalForm.apiPropValue': 'Signal réactif de la valeur de la forme courante.',

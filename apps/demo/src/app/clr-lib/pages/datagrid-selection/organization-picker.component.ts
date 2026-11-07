@@ -1,4 +1,4 @@
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
 import {booleanAttribute, ChangeDetectionStrategy, Component, inject, input, OnDestroy} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
@@ -30,7 +30,7 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
 export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
 
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');

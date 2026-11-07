@@ -92,23 +92,29 @@
       <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
     </clr-datagrid>
   </cll-datagrid-selection>
-  <div cds-layout="horizontal gap:md wrap:wrap">
-    <label
-      ><input
+  <div
+    class="selection-toolbar"
+    cds-layout="horizontal gap:md wrap:wrap"
+    role="group"
+    [attr.aria-label]="'selectionDemo.policyControls' | translate"
+  >
+    <label class="selection-toolbar-check">
+      <input
         type="checkbox"
         [checked]="layout() === 'horizontal'"
         (change)="layout.set(layout() === 'horizontal' ? 'vertical' : 'horizontal')"
       />
-      {{ 'selectionDemo.horizontal' | translate }}</label
-    >
-    <label
-      ><input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
-      {{ 'selectionDemo.readonly' | translate }}</label
-    >
-    <label
-      ><input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
-      {{ 'selectionDemo.disabled' | translate }}</label
-    >
+      {{ 'selectionDemo.horizontal' | translate }}
+    </label>
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'selectionDemo.readonly' | translate }}
+    </label>
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
+      {{ 'selectionDemo.disabled' | translate }}
+    </label>
+    <span class="selection-toolbar-spacer"></span>
     <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
       {{ 'common.refresh' | translate }}
     </button>
@@ -125,4 +131,4 @@
     {{ 'organizationExample.reset' | translate }}
   </button>
 </form>
-<pre>{{ sf.submitValue() | json }}</pre>
+<pre tabindex="0">{{ sf.submitValue() | json }}</pre>

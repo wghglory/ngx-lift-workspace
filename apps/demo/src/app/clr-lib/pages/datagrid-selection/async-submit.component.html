@@ -49,4 +49,4 @@
 @if (submitted(); as submittedKeys) {
   <p role="status">{{ 'selectionDemo.asyncSubmitted' | translate }}: {{ submittedKeys.join(', ') }}</p>
 }
-<pre>{{ sf.submitValue() | json }}</pre>
+<pre tabindex="0">{{ sf.submitValue() | json }}</pre>

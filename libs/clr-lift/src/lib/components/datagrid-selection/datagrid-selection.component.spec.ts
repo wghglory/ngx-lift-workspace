@@ -1,5 +1,5 @@
 import {Component, signal} from '@angular/core';
-import {TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
@@ -94,6 +94,55 @@ class Host {
   </cll-datagrid-selection>`,
 })
 class PagedHost extends Host {}
+
+@Component({
+  imports: [ClarityModule, ReactiveFormsModule, DatagridSelectionComponent],
+  template: `<cll-datagrid-selection [formControl]="control" [readonly]="readonly()" [itemAvailability]="availability">
+    <label>Organizations</label>
+    <clr-datagrid clrDgSelectionType="multi" [clrDgItemsIdentityFn]="identify" [clrDgLoading]="loading()">
+      <clr-dg-column>Name</clr-dg-column>
+      @for (item of items(); track item.id) {
+        <clr-dg-row [clrDgItem]="item"
+          ><clr-dg-cell>{{ item.name }}</clr-dg-cell></clr-dg-row
+        >
+      }
+    </clr-datagrid>
+  </cll-datagrid-selection>`,
+})
+class ServerPagedHost extends Host {}
+
+@Component({
+  imports: [ClarityModule, ReactiveFormsModule, DatagridSelectionComponent],
+  template: `@if (mounted()) {
+    <cll-datagrid-selection [formControl]="control" [readonly]="readonly()" [itemAvailability]="availability">
+      <label>Organizations</label>
+      <clr-datagrid clrDgSelectionType="multi" [clrDgItemsIdentityFn]="identify">
+        <clr-dg-column>Name</clr-dg-column>
+        @for (item of items(); track item.id) {
+          <clr-dg-row [clrDgItem]="item"
+            ><clr-dg-cell>{{ item.name }}</clr-dg-cell></clr-dg-row
+          >
+        }
+      </clr-datagrid>
+    </cll-datagrid-selection>
+  }`,
+})
+class RemountHost extends Host {
+  mounted = signal(true);
+}
+
+/**
+ * Stabilizes the fixture between steps: change detection, pending timers and signal effects settle
+ * before the next selectors, control value or DOM state is read.
+ * @param fixture Active component fixture.
+ */
+async function settle<T>(fixture: ComponentFixture<T>): Promise<void> {
+  fixture.detectChanges();
+  await fixture.whenStable();
+  await new Promise<void>((resolve) => setTimeout(resolve));
+  await fixture.whenStable();
+  fixture.detectChanges();
+}
 
 describe('Datagrid selection through its real form host', () => {
   it('updates the single Clear lock while a saved key has no loaded items', async () => {
@@ -249,6 +298,195 @@ describe('Datagrid selection through its real form host', () => {
     expect(header().disabled).toBe(true);
   });
 
+  it('retains saved keys across replacement of a complete server page without changing the owner', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    const fixture = TestBed.createComponent(ServerPagedHost);
+    const host = fixture.componentInstance;
+    const changes = vi.fn();
+    host.control.valueChanges.subscribe(changes);
+    const checkboxes = () =>
+      [...fixture.nativeElement.querySelectorAll('clr-dg-row input[type=checkbox]')] as HTMLInputElement[];
+    host.items.set([
+      {id: 'org-1', name: 'North'},
+      {id: 'org-2', name: 'South'},
+    ]);
+    await settle(fixture);
+    expect(checkboxes().map((input) => input.checked)).toEqual([false, true]);
+    host.items.set([
+      {id: 'org-3', name: 'East'},
+      {id: 'org-4', name: 'West'},
+    ]);
+    await settle(fixture);
+    expect(checkboxes().map((input) => input.checked)).toEqual([false, false]);
+    expect(host.control.value).toEqual(['org-2', 'missing']);
+    expect(changes).not.toHaveBeenCalled();
+    host.control.setValue(['org-3', 'org-2', 'missing']);
+    await settle(fixture);
+    expect(checkboxes().map((input) => input.checked)).toEqual([true, false]);
+    expect(host.control.value).toEqual(['org-3', 'org-2', 'missing']);
+  });
+
+  it('selects and clears only the supplied server page while preserving saved keys and their order', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    const fixture = TestBed.createComponent(ServerPagedHost);
+    const host = fixture.componentInstance;
+    host.control.setValue(['org-9']);
+    host.items.set([
+      {id: 'org-1', name: 'North'},
+      {id: 'org-2', name: 'South'},
+    ]);
+    const header = () => fixture.nativeElement.querySelector('.datagrid-header input') as HTMLInputElement;
+    await settle(fixture);
+    header().click();
+    await settle(fixture);
+    expect(host.control.value).toEqual(['org-9', 'org-1', 'org-2']);
+    host.items.set([
+      {id: 'org-3', name: 'East'},
+      {id: 'org-4', name: 'West'},
+    ]);
+    await settle(fixture);
+    header().click();
+    await settle(fixture);
+    expect(host.control.value).toEqual(['org-9', 'org-1', 'org-2', 'org-3', 'org-4']);
+    header().click();
+    await settle(fixture);
+    expect(host.control.value).toEqual(['org-9', 'org-1', 'org-2']);
+    host.items.set([]);
+    await settle(fixture);
+    expect(host.control.value).toEqual(['org-9', 'org-1', 'org-2']);
+    expect(header().disabled).toBe(true);
+  });
+
+  it('locks every server-page selection path while loading, readonly or disabled but accepts owner writes', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    const fixture = TestBed.createComponent(ServerPagedHost);
+    const host = fixture.componentInstance;
+    host.control.setValue(['org-1']);
+    host.items.set([
+      {id: 'org-1', name: 'North'},
+      {id: 'org-2', name: 'South'},
+    ]);
+    const inputs = () =>
+      [...fixture.nativeElement.querySelectorAll('clr-dg-row input[type=checkbox]')] as HTMLInputElement[];
+    const header = () => fixture.nativeElement.querySelector('.datagrid-header input') as HTMLInputElement;
+    await settle(fixture);
+    host.loading.set(true);
+    await settle(fixture);
+    expect(inputs().every((input) => input.disabled)).toBe(true);
+    expect(header().disabled).toBe(true);
+    inputs()[1].click();
+    await settle(fixture);
+    expect(host.control.value).toEqual(['org-1']);
+    host.control.reset(['org-2']);
+    await settle(fixture);
+    expect(host.control.value).toEqual(['org-2']);
+    host.loading.set(false);
+    await settle(fixture);
+    expect(inputs().map((input) => input.checked)).toEqual([false, true]);
+    host.readonly.set(true);
+    await settle(fixture);
+    expect(inputs().every((input) => input.disabled)).toBe(true);
+    host.readonly.set(false);
+    host.control.disable();
+    await settle(fixture);
+    expect(inputs().every((input) => input.disabled)).toBe(true);
+    expect(host.control.enabled).toBe(false);
+    expect(host.control.value).toEqual(['org-2']);
+  });
+
+  it('keeps a selected unavailable server row checked, readable and removable', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    const fixture = TestBed.createComponent(ServerPagedHost);
+    const host = fixture.componentInstance;
+    host.control.setValue(['org-1']);
+    host.unavailable.set(true);
+    host.items.set([
+      {id: 'org-1', name: 'North'},
+      {id: 'org-2', name: 'South'},
+    ]);
+    await settle(fixture);
+    const input = () => fixture.nativeElement.querySelector('clr-dg-row input[type=checkbox]') as HTMLInputElement;
+    expect(input().checked).toBe(true);
+    expect(input().disabled).toBe(false);
+    expect(input().getAttribute('aria-describedby')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.selection-availability-reason')?.textContent).toBe('Unavailable');
+    input().click();
+    await settle(fixture);
+    expect(host.control.value).toEqual([]);
+  });
+
+  it('restores a saved server-page selection after the field is destroyed and remounted', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    const fixture = TestBed.createComponent(RemountHost);
+    const host = fixture.componentInstance;
+    const changes = vi.fn();
+    host.control.valueChanges.subscribe(changes);
+    host.items.set([
+      {id: 'org-1', name: 'North'},
+      {id: 'org-2', name: 'South'},
+    ]);
+    await settle(fixture);
+    const checkbox = () =>
+      fixture.nativeElement.querySelectorAll('clr-dg-row input[type=checkbox]')[1] as HTMLInputElement;
+    expect(checkbox().checked).toBe(true);
+    host.mounted.set(false);
+    await settle(fixture);
+    expect(fixture.nativeElement.querySelector('clr-datagrid')).toBeNull();
+    host.mounted.set(true);
+    await settle(fixture);
+    expect(checkbox().checked).toBe(true);
+    expect(host.control.value).toEqual(['org-2', 'missing']);
+    expect(changes).not.toHaveBeenCalled();
+  });
+
+  it('re-measures a complete inventory so a smaller replacement shrinks the retained viewport', async () => {
+    TestBed.configureTestingModule({providers: [provideNoopAnimations()]});
+    // JSDOM reports a zero rect for every element; derive the viewport height from its rendered rows.
+    const rect = (height: number) =>
+      ({x: 0, y: 0, width: 0, height, top: 0, right: 0, bottom: height, left: 0}) as DOMRect;
+    const bounds = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+      if (!this.classList.contains('datagrid')) return rect(0);
+      return rect(this.querySelectorAll('clr-dg-row').length * 20 + 40);
+    });
+    try {
+      const fixture = TestBed.createComponent(Host);
+      const host = fixture.componentInstance;
+      host.items.set([
+        {id: 'org-1', name: 'North'},
+        {id: 'org-2', name: 'South'},
+        {id: 'org-3', name: 'East'},
+        {id: 'org-4', name: 'West'},
+        {id: 'org-5', name: 'River'},
+      ]);
+      await settle(fixture);
+      const viewport = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('.datagrid');
+      if (!viewport) throw new Error('cll-datagrid-selection: viewport not found');
+      // Five complete rows retain their own height while the inventory is complete.
+      expect(viewport.style.minBlockSize).toBe('8.75rem');
+      host.items.set([
+        {id: 'org-1', name: 'North'},
+        {id: 'org-2', name: 'South'},
+      ]);
+      await settle(fixture);
+      expect(viewport.style.minBlockSize).toBe('5rem');
+      // An empty page is a transient loading/failure state, not a smaller inventory.
+      host.items.set([]);
+      await settle(fixture);
+      expect(viewport.style.minBlockSize).toBe('5rem');
+      host.items.set([
+        {id: 'org-1', name: 'North'},
+        {id: 'org-2', name: 'South'},
+        {id: 'org-3', name: 'East'},
+        {id: 'org-4', name: 'West'},
+        {id: 'org-5', name: 'River'},
+      ]);
+      await settle(fixture);
+      expect(viewport.style.minBlockSize).toBe('8.75rem');
+    } finally {
+      bounds.mockRestore();
+    }
+  });
+
   it.each([false, true])(
     'accepts native single edits with row mode %s and keeps keys independent of object replacement',
     async (rowMode) => {
@@ -303,8 +541,10 @@ describe('Datagrid selection through its real form host', () => {
     };
     await settle();
     const element = fixture.nativeElement as HTMLElement;
-    const label = element.querySelector('cll-datagrid-selection label')!;
-    const grid = element.querySelector<HTMLElement>('[role=grid]')!;
+    const label = element.querySelector('cll-datagrid-selection label');
+    if (!label) throw new Error('cll-datagrid-selection: label not found');
+    const grid = element.querySelector<HTMLElement>('[role=grid]');
+    if (!grid) throw new Error('cll-datagrid-selection: grid not found');
     expect(grid.getAttribute('aria-labelledby')).toBe(label.id);
     expect(label.id).not.toBe('');
     expect(grid.getAttribute('aria-describedby')).toBeTruthy();
@@ -312,7 +552,8 @@ describe('Datagrid selection through its real form host', () => {
     expect(element.ownerDocument.activeElement === grid || grid.contains(element.ownerDocument.activeElement)).toBe(
       true,
     );
-    const clear = [...element.querySelectorAll('button')].find((button) => button.textContent?.trim() === 'Clear')!;
+    const clear = [...element.querySelectorAll('button')].find((button) => button.textContent?.trim() === 'Clear');
+    if (!clear) throw new Error('cll-datagrid-selection: Clear button not found');
     clear.click();
     await settle();
     expect(host.control.value).toBe(null);

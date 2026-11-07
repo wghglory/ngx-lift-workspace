@@ -3,6 +3,28 @@ export const esTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Organizaciones seleccionadas',
   'selectionDemo.selectedCount': '{0} seleccionadas · máximo {1}',
+  'selectionDemo.server': 'Selección paginada por servidor',
+  'selectionDemo.serverHelp':
+    'Solicita una página limitada al fixture HTTP controlado. Seleccionar o borrar filas solo afecta a las filas proporcionadas en la página filtrada actual.',
+  'selectionDemo.serverSavedHelp':
+    'Las claves guardadas persisten entre cambios de página, filtro y orden. Cargar claves guardadas restaura Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) y Willow (org-s-23); Elm está en mantenimiento y las demás están en páginas no solicitadas. Restablecer restaura Quince (org-s-17) y Willow (org-s-23).',
+  'selectionDemo.serverScope': 'Ámbito',
+  'selectionDemo.serverCommerce': 'Comercio',
+  'selectionDemo.serverPublic': 'Público',
+  'selectionDemo.serverNameFilter': 'Filtrar organizaciones por nombre',
+  'selectionDemo.serverSummary': 'Claves seleccionadas ({0})',
+  'selectionDemo.serverOffPage': 'Clave guardada de una página no solicitada',
+  'selectionDemo.serverEmpty': 'Ninguna organización coincide con esta página del servidor.',
+  'selectionDemo.serverLoading': 'Cargando esta página del servidor…',
+  'selectionDemo.serverEvidence': 'Respuesta del servidor: página {0} de {1}, {2} coincidencias, ámbito {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'nombre ascendente',
+  'selectionDemo.serverSortDesc': 'nombre descendente',
+  'selectionDemo.serverLoadSaved': 'Cargar claves guardadas',
+  'selectionDemo.serverSubmit': 'Enviar claves',
+  'selectionDemo.serverSubmitted': 'Claves enviadas: {0}',
+  'selectionDemo.serverPicker': 'Selector del servidor reutilizable',
+  'selectionDemo.serverPickerHelp':
+    'El componente selector posee la consulta, la carga, el fallo y el reintento del servidor; el formulario superior posee los valores, la validación y la línea base de claves guardadas. Restablecer recupera Maple (org-s-13) y Yarrow (org-s-25).',
   'selectionDemo.unavailableName': 'Organización no disponible',
   'selectionDemo.unverifiedName': 'Organización sin verificar',
   'selectionDemo.removeKey': 'Quitar {0}',
@@ -12,9 +34,9 @@ export const esTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Quite las organizaciones no disponibles antes de guardar.',
 
   'selectionDemo.savedHelp':
-    'Cargar selección guardada restaura South (org-2) y una clave ausente del inventario. Actualizar reemplaza los datos y conserva las claves seleccionadas. Restablecer restaura South.',
+    'Cargar selección guardada restaura Organization 2 (org-2) y una clave ausente del inventario. Actualizar reemplaza los datos y conserva las claves seleccionadas. Restablecer restaura Organization 2.',
   'selectionDemo.pickerHelp':
-    'El selector gestiona la carga y la tabla; el padre gestiona validación y envío. Restablecer restaura North (org-1).',
+    'El selector gestiona la carga y la tabla; el padre gestiona validación y envío. Restablecer restaura Organization 1 (org-1).',
   'selectionDemo.reference.overview':
     'Envuelve una tabla nativa de Clarity con una etiqueta simple. Vincula el formulario solo al campo de selección o al host del selector reutilizable.',
   'selectionDemo.reference.required':
@@ -39,6 +61,9 @@ export const esTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Diseño horizontal',
   'selectionDemo.loadSaved': 'Cargar selección guardada',
   'selectionDemo.readonly': 'Solo lectura',
+  'selectionDemo.policyName': 'Nombre de la política',
+  'selectionDemo.policyControls': 'Controles del ejemplo de selección',
+  'selectionDemo.serverControls': 'Controles de selección del servidor',
   'selectionDemo.disabled': 'Deshabilitado',
   'organizationExample.organization': 'Organización',
   'organizationExample.organizations': 'Organizaciones',
@@ -62,9 +87,9 @@ export const esTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'La selección de organizaciones no es válida.',
   'selectionDemo.asyncSubmit': 'Validación asíncrona y búfer de envío',
   'selectionDemo.asyncSubmitHelp':
-    'Las selecciones se almacenan hasta el envío. Después se ejecuta una comprobación asíncrona de elegibilidad; West (org-4) se rechaza.',
+    'Las selecciones se almacenan hasta el envío. Después se ejecuta una comprobación asíncrona de elegibilidad; Organization 4 (org-4) se rechaza.',
   'selectionDemo.asyncChecking': 'Comprobando elegibilidad…',
-  'selectionDemo.asyncError': 'West no es elegible para esta política.',
+  'selectionDemo.asyncError': 'Organization 4 no es elegible para esta política.',
   'selectionDemo.asyncSubmitted': 'Claves enviadas',
   'selectionDemo.title': 'Selección en tabla',
   'selectionDemo.intro':
@@ -660,6 +685,13 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'La instancia Angular FormGroup para envolver con señales reactivas y reactivos.',
   'toSignalForm.apiPropOmit': 'Control de nombres a omitir de las cargas de pago submitValue.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'Si submitValue incluye controles deshabilitados. Con false se lee el form.value de Angular, que sigue incluyendo un control hijo deshabilitado; combínelo con options.omitIf para excluirlo.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'Si submitValue elimina los valores de cadena vacía.',
+  'toSignalForm.apiPropOmitNull': 'Si submitValue elimina los valores null.',
+  'toSignalForm.apiPropOmitIf':
+    'Predicado por control que elimina un control de submitValue. Recibe el valor actual, el nombre del control y su objeto contenedor.',
+  'toSignalForm.apiPropDeep': 'Si submitValue también depura objetos y matrices anidados.',
   'toSignalForm.apiPropEmitEvent': 'Si el estado / valor cambia emite eventos de control Angular.',
   'toSignalForm.apiPropValue': 'Señal reactiva del valor actual de la forma.',
   'toSignalForm.apiPropStatus':

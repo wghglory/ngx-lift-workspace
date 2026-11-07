@@ -63,6 +63,35 @@ export class ToSignalFormComponent {
         description: this.translationService.translate('toSignalForm.apiPropOmit'),
       },
       {
+        name: 'options.includeDisabled',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('toSignalForm.apiPropIncludeDisabled'),
+      },
+      {
+        name: 'options.omitEmptyStrings',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiPropOmitEmptyStrings'),
+      },
+      {
+        name: 'options.omitNull',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiPropOmitNull'),
+      },
+      {
+        name: 'options.omitIf',
+        type: '(value: unknown, key: string, group: Record<string, unknown>) => boolean',
+        description: this.translationService.translate('toSignalForm.apiPropOmitIf'),
+      },
+      {
+        name: 'options.deep',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('toSignalForm.apiPropDeep'),
+      },
+      {
         name: 'options.emitEvent',
         type: 'boolean',
         defaultValue: 'true',

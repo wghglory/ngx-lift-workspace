@@ -3,6 +3,28 @@ export const ruTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Выбранные организации',
   'selectionDemo.selectedCount': 'Выбрано: {0} · максимум: {1}',
+  'selectionDemo.server': 'Выбор на стороне сервера',
+  'selectionDemo.serverHelp':
+    'Запрашивается одна ограниченная страница из контролируемого HTTP-фикстура. Выбор или снятие строк влияет только на строки, предоставленные на текущей отфильтрованной странице.',
+  'selectionDemo.serverSavedHelp':
+    'Сохранённые ключи сохраняются при изменении страницы, фильтра и сортировки. Загрузка сохранённых ключей восстанавливает Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) и Willow (org-s-23); Elm на обслуживании, остальные находятся на не запрошенных страницах. Сброс восстанавливает Quince (org-s-17) и Willow (org-s-23).',
+  'selectionDemo.serverScope': 'Область',
+  'selectionDemo.serverCommerce': 'Коммерция',
+  'selectionDemo.serverPublic': 'Публичная',
+  'selectionDemo.serverNameFilter': 'Фильтровать организации по имени',
+  'selectionDemo.serverSummary': 'Выбранные ключи ({0})',
+  'selectionDemo.serverOffPage': 'Сохранённый ключ с не запрошенной страницы',
+  'selectionDemo.serverEmpty': 'Ни одна организация не соответствует этой странице сервера.',
+  'selectionDemo.serverLoading': 'Загрузка этой страницы сервера…',
+  'selectionDemo.serverEvidence': 'Ответ сервера: страница {0} из {1}, совпадений: {2}, область {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'имя по возрастанию',
+  'selectionDemo.serverSortDesc': 'имя по убыванию',
+  'selectionDemo.serverLoadSaved': 'Загрузить сохранённые ключи',
+  'selectionDemo.serverSubmit': 'Отправить ключи',
+  'selectionDemo.serverSubmitted': 'Отправленные ключи: {0}',
+  'selectionDemo.serverPicker': 'Многоразовый серверный селектор',
+  'selectionDemo.serverPickerHelp':
+    'Компонент селектора владеет серверным запросом, загрузкой, сбоем и повтором; родитель владеет значениями, валидацией и базовой линией сохранённых ключей. Сброс восстанавливает Maple (org-s-13) и Yarrow (org-s-25).',
   'selectionDemo.unavailableName': 'Недоступная организация',
   'selectionDemo.unverifiedName': 'Непроверенная организация',
   'selectionDemo.removeKey': 'Удалить {0}',
@@ -12,9 +34,9 @@ export const ruTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Удалите недоступные организации перед сохранением.',
 
   'selectionDemo.savedHelp':
-    'Загрузка сохранённого выбора восстанавливает South (org-2) и ключ, отсутствующий в списке. Обновление заменяет данные и сохраняет выбранные ключи. Сброс восстанавливает South.',
+    'Загрузка сохранённого выбора восстанавливает Organization 2 (org-2) и ключ, отсутствующий в списке. Обновление заменяет данные и сохраняет выбранные ключи. Сброс восстанавливает Organization 2.',
   'selectionDemo.pickerHelp':
-    'Компонент выбора управляет загрузкой и таблицей, родитель — проверкой и отправкой. Сброс восстанавливает North (org-1).',
+    'Компонент выбора управляет загрузкой и таблицей, родитель — проверкой и отправкой. Сброс восстанавливает Organization 1 (org-1).',
   'selectionDemo.reference.overview':
     'Оборачивает одну нативную таблицу Clarity с обычной подписью. Привязывайте форму только к полю выбора или хосту повторно используемого компонента.',
   'selectionDemo.reference.required':
@@ -37,6 +59,9 @@ export const ruTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Горизонтальная компоновка',
   'selectionDemo.loadSaved': 'Загрузить сохранённый выбор',
   'selectionDemo.readonly': 'Только чтение',
+  'selectionDemo.policyName': 'Название политики',
+  'selectionDemo.policyControls': 'Элементы управления примером выбора',
+  'selectionDemo.serverControls': 'Элементы управления серверным выбором',
   'selectionDemo.disabled': 'Отключено',
   'organizationExample.organization': 'Организация',
   'organizationExample.organizations': 'Организации',
@@ -59,9 +84,9 @@ export const ruTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'Выбраны недопустимые организации.',
   'selectionDemo.asyncSubmit': 'Асинхронная проверка и буферизация отправки',
   'selectionDemo.asyncSubmitHelp':
-    'Выбор сохраняется в буфере до отправки. Затем выполняется асинхронная проверка допустимости; West (org-4) отклоняется.',
+    'Выбор сохраняется в буфере до отправки. Затем выполняется асинхронная проверка допустимости; Organization 4 (org-4) отклоняется.',
   'selectionDemo.asyncChecking': 'Проверка допустимости…',
-  'selectionDemo.asyncError': 'West не допускается для этой политики.',
+  'selectionDemo.asyncError': 'Organization 4 не допускается для этой политики.',
   'selectionDemo.asyncSubmitted': 'Отправленные ключи',
   'selectionDemo.title': 'Выбор в таблице',
   'selectionDemo.intro': 'Выбирайте стабильные идентификаторы ресурсов в таблице Clarity в форме Angular.',
@@ -651,6 +676,13 @@ export const ruTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTitle': '/ revalidateOnChange',
   'toSignalForm.apiPropForm': 'Пример Angular FormGroup, чтобы обернуться реактивными сигналами и связками.',
   'toSignalForm.apiPropOmit': 'Контролировать имена для исключения из полезной нагрузки submitValue.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'Включает ли submitValue отключённые элементы управления. При false читается form.value Angular, где отключённый дочерний элемент остаётся; объедините с options.omitIf, чтобы его исключить.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'Удаляет ли submitValue пустые строковые значения.',
+  'toSignalForm.apiPropOmitNull': 'Удаляет ли submitValue значения null.',
+  'toSignalForm.apiPropOmitIf':
+    'Предикат для каждого элемента, который исключает его из submitValue. Получает текущее значение, имя элемента и родительский объект.',
+  'toSignalForm.apiPropDeep': 'Очищает ли submitValue также вложенные объекты и массивы.',
   'toSignalForm.apiPropEmitEvent':
     'Вне зависимости от того, происходят ли изменения в состоянии/значении изменения в контрольной деятельности Angular.',
   'toSignalForm.apiPropValue': 'Реактивный сигнал текущей формы.',

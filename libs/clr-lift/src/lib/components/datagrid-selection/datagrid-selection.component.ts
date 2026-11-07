@@ -91,6 +91,8 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   /** Measured native viewport height in rem, retained while filters/pages hide supplied items. */
   private footprint = 0;
   private footprintDensity = '';
+  /** Row-count + density signature of the last footprint measurement, to skip re-measuring on selection. */
+  private footprintSignature = '';
   /** @internal The library picker binding supplies the original host control without creating another control. */
   ɵowner?: () => NgControl | null;
   private readonly reasons = new Map<ClrDatagridRow<T>, HTMLElement>();
@@ -103,83 +105,84 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
     /* Angular callback */
   };
 
+  private pointerInside = false;
+  private readonly guard = (event: Event) => {
+    const target = event.target as HTMLElement;
+    const selectionCell = target.closest('.datagrid-select');
+    const row = this.grid?.rows.find((row) => row.el.nativeElement.contains(target));
+    const rowClick =
+      this.grid?.selection.rowSelectionMode && !!row && !target.closest('a, button, input, select, textarea');
+    if (!selectionCell && !rowClick) return;
+    if (event instanceof KeyboardEvent && ![' ', 'Enter'].includes(event.key)) return;
+    const blocked = this.blocked() || (!!row && !this.keys.includes(this.key(row.item)) && !this.eligible(row.item));
+    const headerSpace =
+      this.mode === SelectionType.Multi && !row && event instanceof KeyboardEvent && event.key === ' ';
+    if (!blocked && !headerSpace) return;
+    // Capture before Clarity handles a focused checkbox/header, including under its loading overlay.
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!blocked && headerSpace) this.selectAll(!this.allInScopeSelected);
+  };
+  // Native single radios update Selection directly, without the row's selectedChanged output.
+  private readonly radioChange = (event: Event) => {
+    if (this.single && (event.target as HTMLElement).matches('.datagrid-select input[type=radio]')) this.edit();
+  };
+  private readonly rowClick = (event: Event) => {
+    const target = event.target as HTMLElement;
+    if (
+      this.single &&
+      this.grid?.selection.rowSelectionMode &&
+      !target.closest('.datagrid-select') &&
+      this.grid.rows.some((row) => row.el.nativeElement.contains(target))
+    )
+      this.edit();
+  };
+  private readonly focusIn = (event: FocusEvent) => {
+    if (this.ownsFocus(event.target as Node)) {
+      this.focused = true;
+      clearTimeout(this.focusTimer);
+      this.focusTimer = undefined;
+      this.focusTarget = event.target as HTMLElement;
+    } else this.deferDeparture();
+  };
+  private readonly focusOut = (event: FocusEvent) => {
+    if (!this.ownsFocus(event.target as Node) || this.disabled) return;
+    if (event.relatedTarget && this.ownsFocus(event.relatedTarget as Node)) return;
+    if (!event.relatedTarget && this.pointerInside) return;
+    this.deferDeparture();
+  };
+  private readonly pointerDown = (event: Event) => {
+    this.pointerInside = this.ownsFocus(event.target as Node);
+    if (this.pointerInside) this.focused = true;
+    else this.depart();
+    // Safari may leave activeElement on body when a button is clicked. That is an internal pointer move,
+    // not departure. A later outside pointer/focus transition still commits a blur-buffered edit.
+    clearTimeout(this.pointerTimer);
+    this.pointerTimer = setTimeout(() => {
+      this.pointerInside = false;
+    });
+  };
+
   constructor() {
     inject(TranslationService).loadTranslationsForComponent('datagrid-selection', datagridSelectionTranslations);
-    const guard = (event: Event) => {
-      const target = event.target as HTMLElement;
-      const selectionCell = target.closest('.datagrid-select');
-      const row = this.grid?.rows.find((row) => row.el.nativeElement.contains(target));
-      const rowClick =
-        this.grid?.selection.rowSelectionMode && !!row && !target.closest('a, button, input, select, textarea');
-      if (!selectionCell && !rowClick) return;
-      if (event instanceof KeyboardEvent && ![' ', 'Enter'].includes(event.key)) return;
-      const blocked = this.blocked() || (!!row && !this.keys.includes(this.key(row.item)) && !this.eligible(row.item));
-      const headerSpace =
-        this.mode === SelectionType.Multi && !row && event instanceof KeyboardEvent && event.key === ' ';
-      if (!blocked && !headerSpace) return;
-      // Capture before Clarity handles a focused checkbox/header, including under its loading overlay.
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      if (!blocked && headerSpace) this.selectAll(!this.allInScopeSelected);
-    };
-    for (const name of ['click', 'keydown', 'change']) this.host.addEventListener(name, guard, true);
-    // Native single radios update Selection directly, without the row's selectedChanged output.
-    const radioChange = (event: Event) => {
-      if (this.single && (event.target as HTMLElement).matches('.datagrid-select input[type=radio]')) this.edit();
-    };
-    const rowClick = (event: Event) => {
-      const target = event.target as HTMLElement;
-      if (
-        this.single &&
-        this.grid?.selection.rowSelectionMode &&
-        !target.closest('.datagrid-select') &&
-        this.grid.rows.some((row) => row.el.nativeElement.contains(target))
-      )
-        this.edit();
-    };
-    this.host.addEventListener('change', radioChange);
-    this.host.addEventListener('click', rowClick);
-    const focusIn = (event: FocusEvent) => {
-      if (this.ownsFocus(event.target as Node)) {
-        this.focused = true;
-        clearTimeout(this.focusTimer);
-        this.focusTimer = undefined;
-        this.focusTarget = event.target as HTMLElement;
-      } else this.deferDeparture();
-    };
-    let pointerInside = false;
-    const pointerDown = (event: Event) => {
-      pointerInside = this.ownsFocus(event.target as Node);
-      if (pointerInside) this.focused = true;
-      else this.depart();
-      // Safari may leave activeElement on body when a button is clicked. That is an internal pointer move,
-      // not departure. A later outside pointer/focus transition still commits a blur-buffered edit.
-      clearTimeout(this.pointerTimer);
-      this.pointerTimer = setTimeout(() => {
-        pointerInside = false;
-      });
-    };
-    const focusOut = (event: FocusEvent) => {
-      if (!this.ownsFocus(event.target as Node) || this.disabled) return;
-      if (event.relatedTarget && this.ownsFocus(event.relatedTarget as Node)) return;
-      if (!event.relatedTarget && pointerInside) return;
-      this.deferDeparture();
-    };
-    this.host.ownerDocument.addEventListener('focusin', focusIn);
-    this.host.ownerDocument.addEventListener('focusout', focusOut);
-    this.host.ownerDocument.addEventListener('pointerdown', pointerDown, true);
+    for (const name of ['click', 'keydown', 'change']) this.host.addEventListener(name, this.guard, true);
+    this.host.addEventListener('change', this.radioChange);
+    this.host.addEventListener('click', this.rowClick);
+    this.host.ownerDocument.addEventListener('focusin', this.focusIn);
+    this.host.ownerDocument.addEventListener('focusout', this.focusOut);
+    this.host.ownerDocument.addEventListener('pointerdown', this.pointerDown, true);
     this.subscriptions.add(this.form?.ngSubmit.subscribe(() => this.cdr.markForCheck()));
     this.destroyRef.onDestroy(() => {
       clearTimeout(this.focusTimer);
       clearTimeout(this.pointerTimer);
       this.label?.removeEventListener('click', this.focusLabel);
-      this.host.removeEventListener('change', radioChange);
-      this.host.removeEventListener('click', rowClick);
+      this.host.removeEventListener('change', this.radioChange);
+      this.host.removeEventListener('click', this.rowClick);
       this.ownerSubscription?.unsubscribe();
-      this.host.ownerDocument.removeEventListener('focusin', focusIn);
-      this.host.ownerDocument.removeEventListener('focusout', focusOut);
-      this.host.ownerDocument.removeEventListener('pointerdown', pointerDown, true);
-      for (const name of ['click', 'keydown', 'change']) this.host.removeEventListener(name, guard, true);
+      this.host.ownerDocument.removeEventListener('focusin', this.focusIn);
+      this.host.ownerDocument.removeEventListener('focusout', this.focusOut);
+      this.host.ownerDocument.removeEventListener('pointerdown', this.pointerDown, true);
+      for (const name of ['click', 'keydown', 'change']) this.host.removeEventListener(name, this.guard, true);
       this.subscriptions.unsubscribe();
       for (const subscription of this.rows.values()) subscription.unsubscribe();
     });
@@ -263,7 +266,9 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   }
 
   private key(item: T): DatagridSelectionKey {
-    const key: unknown = this.grid!.items.identifyBy(item);
+    const grid = this.grid;
+    if (!grid) throw new Error('cll-datagrid-selection: grid must be mounted before key lookup.');
+    const key: unknown = grid.items.identifyBy(item);
     if (!isKey(key))
       throw new Error('cll-datagrid-selection: clrDgItemsIdentityFn must return a stable string/finite-number key.');
     return key;
@@ -322,6 +327,10 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   }
 
   private present(): void {
+    const gridEl = this.grid;
+    if (!gridEl) return;
+    const grid = gridEl.datagridTable.nativeElement;
+    const nativeHost = gridEl.el.nativeElement;
     const labels = this.host.querySelectorAll<HTMLLabelElement>(':scope > .selection-field > .field-label > label');
     if (labels.length !== 1) throw new Error('cll-datagrid-selection: project exactly one direct plain label.');
     const label = labels[0];
@@ -332,23 +341,22 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
     }
     label.id ||= `${this.id}-label`;
     label.classList.toggle('clr-required-mark', this.required());
-    const grid = this.grid!.datagridTable.nativeElement;
-    const nativeHost = this.grid!.el.nativeElement;
     const explicitName = nativeHost.getAttribute('aria-labelledby');
+    const ariaLabel = nativeHost.getAttribute('aria-label');
     if (explicitName) grid.setAttribute('aria-labelledby', explicitName);
-    else if (nativeHost.getAttribute('aria-label'))
-      grid.setAttribute('aria-label', nativeHost.getAttribute('aria-label')!);
+    else if (ariaLabel) grid.setAttribute('aria-label', ariaLabel);
     else grid.setAttribute('aria-labelledby', label.id);
     const feedback = this.showError() && this.error() ? `${this.id}-error` : this.helper() ? `${this.id}-help` : '';
     const description =
       `${nativeHost.getAttribute('aria-describedby') ?? ''} ${feedback} ${this.required() ? `${this.id}-required` : ''}`.trim();
-    if (description) grid.setAttribute('aria-describedby', description);
-    else grid.removeAttribute('aria-describedby');
-    grid.setAttribute('aria-invalid', String(this.showError()));
-    // role=grid does not support aria-required. Describe the field requirement explicitly instead.
-    grid.setAttribute('aria-disabled', String(this.disabled));
-    grid.setAttribute('aria-readonly', String(this.readonly()));
-    grid.setAttribute('aria-busy', String(this.grid!.loading));
+    // role=grid does not support aria-required; the field requirement is described explicitly instead.
+    this.setAria(grid, {
+      'aria-describedby': description || null,
+      'aria-invalid': String(this.showError()),
+      'aria-disabled': String(this.disabled),
+      'aria-readonly': String(this.readonly()),
+      'aria-busy': String(gridEl.loading),
+    });
     if (
       this.focused &&
       this.focusTarget &&
@@ -365,28 +373,52 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
     }
     // contentWrapper is display: contents in Clarity 18: it has no box to measure or constrain.
     // The native datagrid owns scrolling and its sticky header; the footer is outside this box.
-    const viewport = this.grid!.datagrid.nativeElement;
-    const source = this.grid!.items.all;
+    const viewport = gridEl.datagrid.nativeElement;
+    const source = gridEl.items.all;
+    const displayed = gridEl.items.displayed ?? [];
     const density = `${!!nativeHost.closest('.datagrid-compact')}|${nativeHost.closest('[cds-density]')?.getAttribute('cds-density') ?? ''}`;
-    if (
-      density !== this.footprintDensity ||
-      !source?.length ||
-      (source?.length > 0 && source.length === this.grid!.items.displayed?.length)
-    ) {
+    const sourceCount = source?.length ?? 0;
+    const displayedCount = displayed.length;
+    // A different density changes row sizing, so forget the captured minimum and re-measure from scratch.
+    if (density !== this.footprintDensity) {
       this.footprintDensity = density;
       this.footprint = 0;
       viewport.style.minBlockSize = '';
+      this.footprintSignature = '';
     }
-    const rem =
-      Number.parseFloat(
-        this.host.ownerDocument.defaultView?.getComputedStyle(this.host.ownerDocument.documentElement).fontSize ?? '',
-      ) || 16;
-    this.footprint = Math.max(this.footprint, viewport.getBoundingClientRect().height / rem);
-    if (this.footprint > 0) viewport.style.minBlockSize = `${this.footprint}rem`;
+    // The grid only changes height when its row counts change (filtering, paging, fresh data) or the
+    // density changes. Selection alone never resizes it, so skip the layout read on the selection hot
+    // path. While a subset is displayed the captured minimum is the tallest rendered height, keeping
+    // the viewport stable as rows are filtered or paged out instead of collapsing. A complete
+    // inventory instead sizes to its content, so a smaller replacement inventory can shrink again.
+    // A page with no supplied rows intentionally keeps the last height: it is an in-flight or
+    // initially failed request, not a smaller inventory.
+    const signature = `${sourceCount}|${displayedCount}`;
+    if (signature !== this.footprintSignature) {
+      this.footprintSignature = signature;
+      if (sourceCount > 0 && sourceCount === displayedCount) {
+        this.footprint = 0;
+        viewport.style.minBlockSize = '';
+      }
+      const rem =
+        Number.parseFloat(
+          this.host.ownerDocument.defaultView?.getComputedStyle(this.host.ownerDocument.documentElement).fontSize ?? '',
+        ) || 16;
+      this.footprint = Math.max(this.footprint, viewport.getBoundingClientRect().height / rem);
+      viewport.style.minBlockSize = this.footprint > 0 ? `${this.footprint}rem` : '';
+    }
+  }
+
+  private setAria(element: HTMLElement, attributes: Record<string, string | null>): void {
+    for (const [name, value] of Object.entries(attributes)) {
+      if (value) element.setAttribute(name, value);
+      else element.removeAttribute(name);
+    }
   }
 
   private synchronizeAvailability(): void {
-    const grid = this.grid!;
+    const grid = this.grid;
+    if (!grid) return;
     for (const row of grid.rows) {
       const availability = this.itemAvailability()(row.item);
       if (availability.disabled && !availability.disabledReason?.trim())
@@ -444,16 +476,20 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
 
   private eligible(item: T): boolean {
     // Native inputs keep ownership of their locks; field loading/readonly never overwrites caller permissions.
-    return !this.itemAvailability()(item).disabled && !this.grid!.selection.isLocked(item);
+    const grid = this.grid;
+    if (!grid) return false;
+    return !this.itemAvailability()(item).disabled && !grid.selection.isLocked(item);
   }
 
   private selectAll(selected: boolean): void {
+    const grid = this.grid;
+    if (!grid) return;
     if (this.mode !== SelectionType.Multi) return;
     if (this.blocked()) {
       this.renderSelection();
       return;
     }
-    const scope = this.grid!.items.displayed ?? [];
+    const scope = grid.items.displayed ?? [];
     const scopedKeys = new Set(scope.map((item) => this.key(item)));
     const keys = selected
       ? [
@@ -478,7 +514,8 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   }
 
   private edit(): void {
-    const grid = this.grid!;
+    const grid = this.grid;
+    if (!grid) return;
     if (this.blocked()) {
       this.renderSelection();
       return;
@@ -504,12 +541,14 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   }
 
   private commit(keys: DatagridSelectionKey[]): void {
+    const grid = this.grid;
+    if (!grid) return;
     if (keys.length === this.keys.length && keys.every((key, index) => key === this.keys[index])) {
       this.renderSelection();
       return;
     }
     this.keys = keys;
-    this.value = this.grid!.selectionType === SelectionType.Multi ? [...keys] : (keys[0] ?? null);
+    this.value = grid.selectionType === SelectionType.Multi ? [...keys] : (keys[0] ?? null);
     this.onChange(this.value as DatagridSelectionValue);
     this.renderSelection();
     this.cdr.markForCheck();

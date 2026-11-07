@@ -3,6 +3,28 @@ export const nlTranslations: Record<string, string> = {
 
   'selectionDemo.selectedTitle': 'Geselecteerde organisaties',
   'selectionDemo.selectedCount': '{0} geselecteerd · maximaal {1}',
+  'selectionDemo.server': "Selectie met serverpagina's",
+  'selectionDemo.serverHelp':
+    'Vraagt één begrensde pagina op uit de gecontroleerde HTTP-fixture. Rijen selecteren of wissen beïnvloedt alleen de rijen die op de huidige gefilterde pagina worden geleverd.',
+  'selectionDemo.serverSavedHelp':
+    "Opgeslagen sleutels blijven behouden bij pagina-, filter- en sorteerwijzigingen. Opgeslagen sleutels laden herstelt Elm (org-s-05), Koa (org-s-11), Oak (org-s-15) en Willow (org-s-23); Elm is in onderhoud en de andere staan op niet-opgevraagde pagina's. Resetten herstelt Quince (org-s-17) en Willow (org-s-23).",
+  'selectionDemo.serverScope': 'Bereik',
+  'selectionDemo.serverCommerce': 'Handel',
+  'selectionDemo.serverPublic': 'Openbaar',
+  'selectionDemo.serverNameFilter': 'Organisaties op naam filteren',
+  'selectionDemo.serverSummary': 'Geselecteerde sleutels ({0})',
+  'selectionDemo.serverOffPage': 'Opgeslagen sleutel van een niet-opgevraagde pagina',
+  'selectionDemo.serverEmpty': 'Geen organisaties komen overeen met deze serverpagina.',
+  'selectionDemo.serverLoading': 'Deze serverpagina wordt geladen…',
+  'selectionDemo.serverEvidence': 'Serverantwoord: pagina {0} van {1}, {2} overeenkomsten, bereik {3}, {4}.',
+  'selectionDemo.serverSortAsc': 'naam oplopend',
+  'selectionDemo.serverSortDesc': 'naam aflopend',
+  'selectionDemo.serverLoadSaved': 'Opgeslagen sleutels laden',
+  'selectionDemo.serverSubmit': 'Sleutels verzenden',
+  'selectionDemo.serverSubmitted': 'Verzonden sleutels: {0}',
+  'selectionDemo.serverPicker': 'Herbruikbare serverkiezer',
+  'selectionDemo.serverPickerHelp':
+    'De kiezer bezit de serverquery, het laden, de fout en de herhaling; het hoofdformulier bezit waarden, validatie en de basis van opgeslagen sleutels. Reset herstelt Maple (org-s-13) en Yarrow (org-s-25).',
   'selectionDemo.unavailableName': 'Niet-beschikbare organisatie',
   'selectionDemo.unverifiedName': 'Niet-geverifieerde organisatie',
   'selectionDemo.removeKey': '{0} verwijderen',
@@ -12,9 +34,9 @@ export const nlTranslations: Record<string, string> = {
   'selectionDemo.unavailableError': 'Verwijder niet-beschikbare organisaties voordat u opslaat.',
 
   'selectionDemo.savedHelp':
-    'Opgeslagen selectie laden herstelt South (org-2) en een sleutel die in deze lijst ontbreekt. Vernieuwen vervangt de lijst en behoudt geselecteerde sleutels. Opnieuw instellen herstelt South.',
+    'Opgeslagen selectie laden herstelt Organization 2 (org-2) en een sleutel die in deze lijst ontbreekt. Vernieuwen vervangt de lijst en behoudt geselecteerde sleutels. Opnieuw instellen herstelt Organization 2.',
   'selectionDemo.pickerHelp':
-    'De kiezer beheert laden en tabel; de ouder beheert validatie en verzenden. Opnieuw instellen herstelt North (org-1).',
+    'De kiezer beheert laden en tabel; de ouder beheert validatie en verzenden. Opnieuw instellen herstelt Organization 1 (org-1).',
   'selectionDemo.reference.overview':
     'Omvat één native Clarity-tabel met een gewoon label. Bind het formulier alleen aan het selectieveld of de host van de herbruikbare kiezer.',
   'selectionDemo.reference.required':
@@ -38,6 +60,9 @@ export const nlTranslations: Record<string, string> = {
   'selectionDemo.horizontal': 'Horizontale indeling',
   'selectionDemo.loadSaved': 'Opgeslagen selectie laden',
   'selectionDemo.readonly': 'Alleen-lezen',
+  'selectionDemo.policyName': 'Beleidsnaam',
+  'selectionDemo.policyControls': 'Bediening van het selectievoorbeeld',
+  'selectionDemo.serverControls': 'Bediening van de serverselectie',
   'selectionDemo.disabled': 'Uitgeschakeld',
   'organizationExample.organization': 'Organisatie',
   'organizationExample.organizations': 'Organisaties',
@@ -61,9 +86,9 @@ export const nlTranslations: Record<string, string> = {
   'organizationExample.invalidSelection': 'De organisatieselectie is ongeldig.',
   'selectionDemo.asyncSubmit': 'Asynchrone validatie en buffering bij verzenden',
   'selectionDemo.asyncSubmitHelp':
-    'Selecties worden gebufferd totdat u verzendt. Daarna wordt een asynchrone geschiktheidscontrole uitgevoerd; West (org-4) wordt geweigerd.',
+    'Selecties worden gebufferd totdat u verzendt. Daarna wordt een asynchrone geschiktheidscontrole uitgevoerd; Organization 4 (org-4) wordt geweigerd.',
   'selectionDemo.asyncChecking': 'Geschiktheid wordt gecontroleerd…',
-  'selectionDemo.asyncError': 'West is niet geschikt voor dit beleid.',
+  'selectionDemo.asyncError': 'Organization 4 is niet geschikt voor dit beleid.',
   'selectionDemo.asyncSubmitted': 'Verzonden sleutels',
   'selectionDemo.title': 'Datagridselectie',
   'selectionDemo.intro': 'Selecteer stabiele resource-ID’s met een native Clarity-datagrid in een Angular-formulier.',
@@ -656,6 +681,13 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'De Angular FormGroup instantie om in te pakken met reactieve signalen en bindingen.',
   'toSignalForm.apiPropOmit': 'Controleer namen om weg te laten van submitValue payloads.',
+  'toSignalForm.apiPropIncludeDisabled':
+    'Of submitValue uitgeschakelde besturingselementen bevat. Met false wordt de form.value van Angular gelezen, waarin een uitgeschakeld kindelement aanwezig blijft; combineer het met options.omitIf.',
+  'toSignalForm.apiPropOmitEmptyStrings': 'Of submitValue lege tekenreekswaarden verwijdert.',
+  'toSignalForm.apiPropOmitNull': 'Of submitValue null-waarden verwijdert.',
+  'toSignalForm.apiPropOmitIf':
+    'Predicaat per besturingselement dat een element uit submitValue verwijdert. Ontvangt de huidige waarde, de naam en het bovenliggende object.',
+  'toSignalForm.apiPropDeep': 'Of submitValue ook geneste objecten en arrays opschoont.',
   'toSignalForm.apiPropEmitEvent': 'Of status/waardeveranderingen Angular-besturingsgebeurtenissen uitzenden.',
   'toSignalForm.apiPropValue': 'Reactive signaal van de huidige vorm waarde.',
   'toSignalForm.apiPropStatus': "Reactive signaal van algemene vormstatus (')VALID'INVALID'PENDING'DISABLED').",

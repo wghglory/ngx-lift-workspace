@@ -1,0 +1,41 @@
+<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
+  <div
+    class="selection-toolbar"
+    cds-layout="horizontal gap:md wrap:wrap"
+    role="group"
+    [attr.aria-label]="'selectionDemo.policyControls' | translate"
+  >
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'selectionDemo.readonly' | translate }}
+    </label>
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
+      {{ 'selectionDemo.disabled' | translate }}
+    </label>
+  </div>
+  <app-server-organization-picker
+    [error]="selectionError()"
+    [readonly]="readonly()"
+    formControlName="organizationIds"
+    required
+  />
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="sf.invalid() || sf.pending() || form.controls.organizationIds.disabled"
+    >
+      {{ 'selectionDemo.serverSubmit' | translate }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="reset(formView)">
+      {{ 'organizationExample.reset' | translate }}
+    </button>
+  </div>
+</form>
+@if (submitted() !== null) {
+  <p role="status" data-testid="server-picker-submitted">
+    {{ 'selectionDemo.serverSubmitted' | translate: submitted()?.join(', ') }}
+  </p>
+}
+<pre data-testid="server-picker-json" tabindex="0">{{ sf.submitValue() | json }}</pre>

@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   output,
   signal,
@@ -16,7 +15,7 @@ import {ClarityModule, ClrDatagrid} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
 import {STATUS_KEYS, type Organization} from './organization-example.data';
-import {OrganizationService, organizationListQuery} from './organization.service';
+import {OrganizationService} from './organization.service';
 
 @Component({
   selector: 'app-data-service-policy-form',
@@ -30,7 +29,7 @@ export class DataServicePolicyFormComponent {
   private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
   private readonly originalOrganizationIds = ['org-2'];
-  readonly organizationsQuery = queryResource(() => organizationListQuery(this.organizationService, 'scope-1'));
+  readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
 
   // Only this endpoint's successful complete inventory can establish that a saved key is unavailable.
   readonly verifiedOrganizations = computed(() =>
@@ -44,6 +43,8 @@ export class DataServicePolicyFormComponent {
       validators: [
         Validators.required,
         Validators.maxLength(this.maximumOrganizations),
+        // The membership check reads the verified inventory. It stays installed on the control and
+        // reads the current inventory on every validation run, so it is correct from the first run.
         (control) => {
           const missing = this.unavailableKeys(control.value);
           return missing.length ? {unavailableOrganizations: missing} : null;
@@ -53,7 +54,7 @@ export class DataServicePolicyFormComponent {
   });
   readonly sf = toSignalForm(this.form, {
     includeDisabled: false,
-    // Angular includes children in form.value when the entire group is disabled.
+    // Angular keeps a disabled child in FormGroup.value, so a disabled control is excluded here.
     omitIf: (_value, key) => this.form.get(key)?.disabled ?? false,
   });
 
@@ -100,17 +101,18 @@ export class DataServicePolicyFormComponent {
   readonly save = output<{organizationIds?: string[]}>();
 
   constructor() {
-    effect(() => {
-      this.verifiedOrganizations();
-      // Query verification changes validity, not the user's selected value or interaction state.
-      untracked(() => this.form.controls.organizationIds.updateValueAndValidity());
-    });
+    // A settled inventory changes which keys are unavailable, so validity has to be recomputed.
+    // revalidateOnChange re-runs the membership validator without changing saved keys or
+    // pristine/touched state, and without an effect that mutates the form.
+    this.sf.revalidate(this.form.controls.organizationIds, this.verifiedOrganizations);
     afterRenderEffect(() => {
       const grid = this.grid();
-      // Track both language and dictionary changes, keeping the native active query and sort state.
+      // The sort comparator and the string filter read the active language lazily, so the grid
+      // re-evaluates them when the language or dictionary changes. A single translated status key
+      // (ready) detects a dictionary change, so the maintenance key was dropped as redundant;
+      // locale covers the collation order.
       this.translationService.locale();
       this.translationService.translate(STATUS_KEYS.ready);
-      this.translationService.translate(STATUS_KEYS.maintenance);
       untracked(() => grid?.items.refresh());
     });
   }

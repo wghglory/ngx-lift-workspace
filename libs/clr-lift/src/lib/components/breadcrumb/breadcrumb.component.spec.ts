@@ -220,7 +220,8 @@ describe('Breadcrumb public host', () => {
     fixture.componentRef.setInput('items', items);
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    const filter = element.querySelector<HTMLInputElement>('input')!;
+    const filter = element.querySelector<HTMLInputElement>('input');
+    if (!filter) throw new Error('breadcrumb: input not found');
     const translation = TestBed.inject(TranslationService);
     translation.setLanguage('tr', false);
     fixture.detectChanges();
@@ -269,7 +270,8 @@ describe('Breadcrumb public host', () => {
       translation.setLanguage('tr', false);
       fixture.detectChanges();
       const element: HTMLElement = fixture.nativeElement;
-      const panel = element.querySelector<HTMLElement>('[popover]')!;
+      const panel = element.querySelector<HTMLElement>('[popover]');
+      if (!panel) throw new Error('breadcrumb: panel not found');
       // JSDOM has no native popover API; emulate only that browser boundary.
       let open = false;
       panel.showPopover = () => {
@@ -280,10 +282,12 @@ describe('Breadcrumb public host', () => {
       };
       const matches = panel.matches.bind(panel);
       panel.matches = (selector) => (selector === ':popover-open' ? open : matches(selector));
-      const trigger = element.querySelector<HTMLButtonElement>('.overflow > button')!;
+      const trigger = element.querySelector<HTMLButtonElement>('.overflow > button');
+      if (!trigger) throw new Error('breadcrumb: overflow button not found');
       trigger.click();
       fixture.detectChanges();
-      const filter = element.querySelector<HTMLInputElement>('input')!;
+      const filter = element.querySelector<HTMLInputElement>('input');
+      if (!filter) throw new Error('breadcrumb: input not found');
       expect(document.activeElement).toBe(filter);
       filter.value = 'istanbul';
       filter.dispatchEvent(new Event('input'));
