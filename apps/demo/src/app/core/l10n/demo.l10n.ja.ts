@@ -1467,6 +1467,18 @@ export const jaTranslations: Record<string, string> = {
   'certificate.example2': '例2: PEM（Base64エンコード）のパース',
   'certificate.example2Desc':
     'PEM文字列がBase64エンコードされている場合、pemEncodedをトグルして解碼してからパースする:',
+  'certificate.viewerFields.subject': '主体',
+  'certificate.viewerFields.issuer': '発行者',
+  'certificate.viewerFields.serialNumber': 'シリアル番号',
+  'certificate.viewerFields.notBefore': '有効開始',
+  'certificate.viewerFields.notAfter': '有効期限',
+  'certificate.viewerFields.signatureAlgorithm': '署名アルゴリズム (OID)',
+  'certificate.viewerFields.subjectAltName': 'サブジェクト代替名',
+  'certificate.viewerFields.subjectKeyIdentifier': 'サブジェクトキー識別子',
+  'certificate.viewerFields.md5': 'MD5フィンガープリント',
+  'certificate.viewerFields.sha1': 'SHA-1フィンガープリント',
+  'certificate.viewerFields.sha256': 'SHA-256フィンガープリント',
+
   'certificate.samplesTitle': 'サンプル証明書',
   'certificate.samplesDesc':
     '役割（ルート、中間 CA、リーフ）と鍵アルゴリズムで証明書を選択します。サインポストは RSA・ECDSA・Ed25519 の証明書を同じ方法で解析します。',

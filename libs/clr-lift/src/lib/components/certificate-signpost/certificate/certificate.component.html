@@ -7,9 +7,10 @@
     <dt>{{ 'certificate.expiresOn' | translate }}</dt>
     <dd>
       {{ formattedNotAfter() }}
-      @if (certificateStatus()) {
-        <span class="label ml-2 align-middle" [class]="certificateStatus().labelClass">
-          {{ certificateStatus().labelText }}
+      @if (certificateStatus(); as status) {
+        <span class="certificate-status" [class]="'label ml-2 align-middle ' + status.labelClass">
+          <cds-icon [shape]="status.shape" size="12" aria-hidden="true" />
+          {{ status.labelText }}
         </span>
       }
     </dd>

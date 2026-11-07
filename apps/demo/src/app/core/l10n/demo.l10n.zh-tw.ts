@@ -1357,6 +1357,18 @@ export const zhTWTranslations: Record<string, string> = {
   'certificate.example1Desc': '解析並展示原始 PEM 憑證：',
   'certificate.example2': '範例 2：解析 Base64 編碼的 PEM',
   'certificate.example2Desc': '憑證若為 Base64 字串，開啟 pemEncoded 即可自動解碼再解析：',
+  'certificate.viewerFields.subject': '主體',
+  'certificate.viewerFields.issuer': '簽發者',
+  'certificate.viewerFields.serialNumber': '序號',
+  'certificate.viewerFields.notBefore': '有效起始',
+  'certificate.viewerFields.notAfter': '有效期限',
+  'certificate.viewerFields.signatureAlgorithm': '簽章演算法 (OID)',
+  'certificate.viewerFields.subjectAltName': '主體別名',
+  'certificate.viewerFields.subjectKeyIdentifier': '主體金鑰識別碼',
+  'certificate.viewerFields.md5': 'MD5 指紋',
+  'certificate.viewerFields.sha1': 'SHA-1 指紋',
+  'certificate.viewerFields.sha256': 'SHA-256 指紋',
+
   'certificate.samplesTitle': '範例憑證',
   'certificate.samplesDesc':
     '依角色（根、中繼 CA、分葉）與金鑰演算法選擇憑證。簽章牌元件以相同方式解析 RSA、ECDSA 與 Ed25519 憑證。',

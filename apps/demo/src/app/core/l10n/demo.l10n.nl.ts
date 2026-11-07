@@ -1508,6 +1508,18 @@ export const nlTranslations: Record<string, string> = {
   'certificate.example2': 'Voorbeeld 2: Ontleden van PEM (Base64 gecodeerd)',
   'certificate.example2Desc':
     'Als PEM-strings Base64 gecodeerd zijn, schakel je pemEncoded om te decoderen voordat je ontleedt:',
+  'certificate.viewerFields.subject': 'Onderwerp',
+  'certificate.viewerFields.issuer': 'Uitgever',
+  'certificate.viewerFields.serialNumber': 'Serienummer',
+  'certificate.viewerFields.notBefore': 'Geldig vanaf',
+  'certificate.viewerFields.notAfter': 'Geldig tot',
+  'certificate.viewerFields.signatureAlgorithm': 'Handtekeningalgoritme (OID)',
+  'certificate.viewerFields.subjectAltName': 'Alternatieve onderwerpnamen',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Onderwerpsleutel-id',
+  'certificate.viewerFields.md5': 'MD5-vingerafdruk',
+  'certificate.viewerFields.sha1': 'SHA-1-vingerafdruk',
+  'certificate.viewerFields.sha256': 'SHA-256-vingerafdruk',
+
   'certificate.samplesTitle': 'Voorbeeldcertificaten',
   'certificate.samplesDesc':
     'Kies een certificaat op rol (root, tussenliggende CA, leaf) en sleutelalgoritme. Het signpost parseert RSA-, ECDSA- en Ed25519-certificaten op dezelfde manier.',

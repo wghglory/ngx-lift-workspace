@@ -1496,6 +1496,18 @@ export const ptBRTranslations: Record<string, string> = {
   'certificate.example2': 'Exemplo 2: Parsing PEM (Base64 codificado)',
   'certificate.example2Desc':
     'Quando as cordas PEM são codificadas pelo BAS64, rodem o pemEncoded para decodificar-se antes da separação:',
+  'certificate.viewerFields.subject': 'Assunto',
+  'certificate.viewerFields.issuer': 'Emissor',
+  'certificate.viewerFields.serialNumber': 'Número de série',
+  'certificate.viewerFields.notBefore': 'Válido a partir de',
+  'certificate.viewerFields.notAfter': 'Válido até',
+  'certificate.viewerFields.signatureAlgorithm': 'Algoritmo de assinatura (OID)',
+  'certificate.viewerFields.subjectAltName': 'Nomes alternativos do assunto',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Identificador de chave do assunto',
+  'certificate.viewerFields.md5': 'Impressão digital MD5',
+  'certificate.viewerFields.sha1': 'Impressão digital SHA-1',
+  'certificate.viewerFields.sha256': 'Impressão digital SHA-256',
+
   'certificate.samplesTitle': 'Certificados de exemplo',
   'certificate.samplesDesc':
     'Escolha um certificado por papel (raiz, CA intermediária, folha) e algoritmo de chave. O signpost analiza certificados RSA, ECDSA e Ed25519 da mesma forma.',

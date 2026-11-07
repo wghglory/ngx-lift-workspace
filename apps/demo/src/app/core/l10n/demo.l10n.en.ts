@@ -1463,6 +1463,18 @@ export const enTranslations: Record<string, string> = {
   'certificate.example1Desc': 'Parse and display a raw PEM certificate string:',
   'certificate.example2': 'Example 2: Parsing PEM (Base64 Encoded)',
   'certificate.example2Desc': 'When PEM strings are Base64 encoded, toggle pemEncoded to decode before parsing:',
+  'certificate.viewerFields.subject': 'Subject',
+  'certificate.viewerFields.issuer': 'Issuer',
+  'certificate.viewerFields.serialNumber': 'Serial Number',
+  'certificate.viewerFields.notBefore': 'Not Before',
+  'certificate.viewerFields.notAfter': 'Not After',
+  'certificate.viewerFields.signatureAlgorithm': 'Signature Algorithm (OID)',
+  'certificate.viewerFields.subjectAltName': 'Subject Alternative Names',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Subject Key Identifier',
+  'certificate.viewerFields.md5': 'MD5 Fingerprint',
+  'certificate.viewerFields.sha1': 'SHA-1 Fingerprint',
+  'certificate.viewerFields.sha256': 'SHA-256 Fingerprint',
+
   'certificate.samplesTitle': 'Sample certificates',
   'certificate.samplesDesc':
     'Choose a certificate by role (root, intermediate CA, leaf) and key algorithm. The signpost parses RSA, ECDSA and Ed25519 certificates the same way.',

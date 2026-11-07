@@ -1445,6 +1445,18 @@ export const koTranslations: Record<string, string> = {
   'certificate.example2': '예시 2: PEM(기본 64비트 인코딩)',
   'certificate.example2Desc':
     'PEM 문자열이 기본 64비트 인코딩인 경우, pemEncoded를 토글하여 파싱 전에 디코딩해야 합니다:',
+  'certificate.viewerFields.subject': '주체',
+  'certificate.viewerFields.issuer': '발급자',
+  'certificate.viewerFields.serialNumber': '일련 번호',
+  'certificate.viewerFields.notBefore': '유효 시작',
+  'certificate.viewerFields.notAfter': '유효 만료',
+  'certificate.viewerFields.signatureAlgorithm': '서명 알고리즘 (OID)',
+  'certificate.viewerFields.subjectAltName': '주체 대체 이름',
+  'certificate.viewerFields.subjectKeyIdentifier': '주체 키 식별자',
+  'certificate.viewerFields.md5': 'MD5 지문',
+  'certificate.viewerFields.sha1': 'SHA-1 지문',
+  'certificate.viewerFields.sha256': 'SHA-256 지문',
+
   'certificate.samplesTitle': '샘플 인증서',
   'certificate.samplesDesc':
     '역할(루트, 중간 CA, 리프)과 키 알고리즘으로 인증서를 선택하세요. 사인포스트는 RSA, ECDSA, Ed25519 인증서를 동일한 방식으로 파싱합니다.',

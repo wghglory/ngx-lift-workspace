@@ -1499,6 +1499,18 @@ export const ruTranslations: Record<string, string> = {
   'certificate.example2': 'Пример 2: Партия PEM (Баз64 Закодировано)',
   'certificate.example2Desc':
     'Когда строки PEM закодированы в базе64, тоггл pemEncoded для расшифровки перед расшифровкой:',
+  'certificate.viewerFields.subject': 'Субъект',
+  'certificate.viewerFields.issuer': 'Издатель',
+  'certificate.viewerFields.serialNumber': 'Серийный номер',
+  'certificate.viewerFields.notBefore': 'Действителен с',
+  'certificate.viewerFields.notAfter': 'Действителен до',
+  'certificate.viewerFields.signatureAlgorithm': 'Алгоритм подписи (OID)',
+  'certificate.viewerFields.subjectAltName': 'Альтернативные имена субъекта',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Идентификатор ключа субъекта',
+  'certificate.viewerFields.md5': 'Отпечаток MD5',
+  'certificate.viewerFields.sha1': 'Отпечаток SHA-1',
+  'certificate.viewerFields.sha256': 'Отпечаток SHA-256',
+
   'certificate.samplesTitle': 'Примеры сертификатов',
   'certificate.samplesDesc':
     'Выберите сертификат по роли (корневой, промежуточный CA, конечный) и алгоритму ключа. Сигнпост разбирает сертификаты RSA, ECDSA и Ed25519 одинаково.',

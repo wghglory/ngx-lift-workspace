@@ -1368,6 +1368,18 @@ export const zhCNTranslations: Record<string, string> = {
   'certificate.example1Desc': '解析并展示原始 PEM 格式的 SSL/TLS 证书：',
   'certificate.example2': '示例 2：解析 Base64 编码的 PEM',
   'certificate.example2Desc': '当证书内容为 Base64 字符串时，开启 pemEncoded 即可先解码再解析：',
+  'certificate.viewerFields.subject': '主体',
+  'certificate.viewerFields.issuer': '颁发者',
+  'certificate.viewerFields.serialNumber': '序列号',
+  'certificate.viewerFields.notBefore': '生效时间',
+  'certificate.viewerFields.notAfter': '失效时间',
+  'certificate.viewerFields.signatureAlgorithm': '签名算法 (OID)',
+  'certificate.viewerFields.subjectAltName': '主体备用名称',
+  'certificate.viewerFields.subjectKeyIdentifier': '主体密钥标识符',
+  'certificate.viewerFields.md5': 'MD5 指纹',
+  'certificate.viewerFields.sha1': 'SHA-1 指纹',
+  'certificate.viewerFields.sha256': 'SHA-256 指纹',
+
   'certificate.samplesTitle': '示例证书',
   'certificate.samplesDesc':
     '按角色（根、中间 CA、叶子）和密钥算法选择证书。签名牌组件以相同方式解析 RSA、ECDSA 和 Ed25519 证书。',

@@ -1513,6 +1513,18 @@ export const deTranslations: Record<string, string> = {
   'certificate.example2': 'Beispiel 2: Parsing PEM (Base64 codiert)',
   'certificate.example2Desc':
     'Wenn PEM-Strings Base64 kodiert sind, schalten Sie pemEncoded ein, um vor dem Parsen zu dekodieren:',
+  'certificate.viewerFields.subject': 'Antragsteller',
+  'certificate.viewerFields.issuer': 'Aussteller',
+  'certificate.viewerFields.serialNumber': 'Seriennummer',
+  'certificate.viewerFields.notBefore': 'Gültig ab',
+  'certificate.viewerFields.notAfter': 'Gültig bis',
+  'certificate.viewerFields.signatureAlgorithm': 'Signaturalgorithmus (OID)',
+  'certificate.viewerFields.subjectAltName': 'Alternative Antragstellernamen',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Subject Key Identifier',
+  'certificate.viewerFields.md5': 'MD5-Fingerabdruck',
+  'certificate.viewerFields.sha1': 'SHA-1-Fingerabdruck',
+  'certificate.viewerFields.sha256': 'SHA-256-Fingerabdruck',
+
   'certificate.samplesTitle': 'Beispielzertifikate',
   'certificate.samplesDesc':
     'Wählen Sie ein Zertifikat nach Rolle (Root, Intermediate-CA, Leaf) und Schlüsselalgorithmus. Das Signpost parst RSA-, ECDSA- und Ed25519-Zertifikate auf dieselbe Weise.',
