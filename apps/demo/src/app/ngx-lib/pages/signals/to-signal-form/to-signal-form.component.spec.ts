@@ -388,4 +388,71 @@ describe('ToSignalFormComponent', () => {
     expect(revalidatePropNames).toContain('target');
     expect(revalidatePropNames).toContain('sources');
   });
+
+  describe('submission options lab', () => {
+    const submitValue = () => component.optionsComparison().submitValue as Record<string, unknown>;
+
+    it('compares raw value, Angular form value and the sanitized payload', () => {
+      const comparison = component.optionsComparison();
+      expect(comparison.rawValue.region).toBe('eu-central-1');
+      expect('region' in comparison.formValue).toBe(false);
+      expect(submitValue()['region']).toBe('eu-central-1');
+      expect(component.optionsInspectorState().rawKeys).toContain('region');
+      expect(component.optionsInspectorState().formValueKeys).not.toContain('region');
+    });
+
+    it('drops disabled controls when includeDisabled is off', () => {
+      component.optionsControls.controls.includeDisabled.setValue(false);
+      expect('region' in submitValue()).toBe(false);
+    });
+
+    it('prunes empty strings, nulls, internal and UI-only fields at the top level', () => {
+      component.optionsControls.patchValue({
+        omitEmptyStrings: true,
+        omitNull: true,
+        omitIf: true,
+        omit: true,
+      });
+
+      const value = submitValue();
+      expect('nickname' in value).toBe(false);
+      expect('deletedAt' in value).toBe(false);
+      expect('internalCode' in value).toBe(false);
+      expect('confirmEmail' in value).toBe(false);
+      expect(value['displayName']).toBe('Ada Lovelace');
+      expect(value['profile']).toEqual({city: '', backupEmail: null});
+      expect(value['tags']).toEqual(['primary', '']);
+    });
+
+    it('applies the rules to nested objects and arrays when deep is enabled', () => {
+      component.optionsControls.patchValue({
+        omitEmptyStrings: true,
+        omitNull: true,
+        omitIf: true,
+        omit: true,
+        deep: true,
+      });
+
+      expect(submitValue()['profile']).toEqual({});
+      expect(submitValue()['tags']).toEqual(['primary']);
+    });
+
+    it('recomputes every payload when the sample form changes', () => {
+      component.optionsForm.controls.nickname.setValue('Ada');
+      expect(component.optionsComparison().rawValue.nickname).toBe('Ada');
+      expect(submitValue()['nickname']).toBe('Ada');
+    });
+
+    it('resets sample values and switches while keeping the disabled control disabled', () => {
+      component.optionsControls.controls.deep.setValue(true);
+      component.optionsForm.controls.nickname.setValue('changed');
+      component.resetOptions();
+
+      expect(component.optionsForm.controls.region.disabled).toBe(true);
+      expect(component.optionsForm.getRawValue().region).toBe('eu-central-1');
+      expect(component.optionsForm.getRawValue().nickname).toBe('');
+      expect(component.optionsControls.getRawValue().deep).toBe(false);
+      expect(component.optionsControls.getRawValue().includeDisabled).toBe(true);
+    });
+  });
 });

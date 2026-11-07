@@ -2968,4 +2968,22 @@ export const frTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect : alimenter un formulaire éditable',
   'queryResource.editFormDesc':
     'Chargez une entité avec queryResource et initialisez un formulaire réactif avec un effect. Les nouvelles valeurs réinitialisent le formulaire et les modifications non enregistrées.',
+
+  'toSignalForm.optionsLabTitle': 'Atelier des options de soumission',
+  'toSignalForm.optionsLabDesc':
+    'Activez les options et comparez la valeur brute, la valeur du formulaire et la charge utile nettoyée.',
+  'toSignalForm.optionsLabSampleTitle': "Valeurs d'exemple",
+  'toSignalForm.optionsLabSwitchesTitle': 'Options de soumission',
+  'toSignalForm.optionsLabColumnsTitle': 'Comparaison des charges utiles',
+  'toSignalForm.optionsLabNickname': 'Pseudonyme',
+  'toSignalForm.optionsLabCity': 'Ville',
+  'toSignalForm.optionsLabReset': 'Réinitialiser',
+  'toSignalForm.optionsLabStateTitle': 'Clés de la charge utile',
+  'toSignalForm.optionsLabStateDesc': 'Clés conservées à chaque étape.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Conserver les valeurs des contrôles désactivés.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Supprimer les chaînes vides.',
+  'toSignalForm.optionsLabHintOmitNull': 'Supprimer les valeurs nulles.',
+  'toSignalForm.optionsLabHintOmitIf': 'Supprimer les champs internes avec un prédicat sur la clé.',
+  'toSignalForm.optionsLabHintOmit': "Supprimer le champ confirmEmail, utilisé uniquement par l'interface.",
+  'toSignalForm.optionsLabHintDeep': 'Appliquer les règles aux objets et tableaux imbriqués.',
 };

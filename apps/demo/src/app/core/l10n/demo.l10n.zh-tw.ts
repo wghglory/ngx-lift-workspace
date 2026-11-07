@@ -2578,4 +2578,21 @@ export const zhTWTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect：為可編輯表單填入資料',
   'queryResource.editFormDesc':
     '使用 queryResource 載入實體，並透過 effect 初始化響應式表單。新的查詢值會重設表單，包括未儲存的編輯。',
+
+  'toSignalForm.optionsLabTitle': '提交選項實驗室',
+  'toSignalForm.optionsLabDesc': '切換選項，比較原始值、表單值與淨化後的提交資料。',
+  'toSignalForm.optionsLabSampleTitle': '範例值',
+  'toSignalForm.optionsLabSwitchesTitle': '提交選項',
+  'toSignalForm.optionsLabColumnsTitle': '提交資料對照',
+  'toSignalForm.optionsLabNickname': '暱稱',
+  'toSignalForm.optionsLabCity': '城市',
+  'toSignalForm.optionsLabReset': '重設',
+  'toSignalForm.optionsLabStateTitle': '提交資料的鍵',
+  'toSignalForm.optionsLabStateDesc': '各階段保留的鍵。',
+  'toSignalForm.optionsLabHintIncludeDisabled': '保留停用控制項的值。',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': '移除空字串。',
+  'toSignalForm.optionsLabHintOmitNull': '移除 null 值。',
+  'toSignalForm.optionsLabHintOmitIf': '按鍵判斷條件移除內部欄位。',
+  'toSignalForm.optionsLabHintOmit': '移除僅供介面使用的 confirmEmail 欄位。',
+  'toSignalForm.optionsLabHintDeep': '對巢狀物件與陣列同樣套用這些規則。',
 };

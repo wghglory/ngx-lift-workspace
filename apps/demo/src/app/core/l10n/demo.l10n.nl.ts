@@ -2916,4 +2916,22 @@ export const nlTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: een bewerkbaar formulier vullen',
   'queryResource.editFormDesc':
     'Laad een entiteit met queryResource en initialiseer een reactief formulier met een effect. Nieuwe querywaarden zetten het formulier en niet-opgeslagen wijzigingen terug.',
+
+  'toSignalForm.optionsLabTitle': 'Lab voor verzendopties',
+  'toSignalForm.optionsLabDesc':
+    'Schakel de opties in en vergelijk de ruwe waarde, de formulierwaarde en de opgeschoonde payload.',
+  'toSignalForm.optionsLabSampleTitle': 'Voorbeeldwaarden',
+  'toSignalForm.optionsLabSwitchesTitle': 'Verzendopties',
+  'toSignalForm.optionsLabColumnsTitle': 'Vergelijking van payloads',
+  'toSignalForm.optionsLabNickname': 'Bijnaam',
+  'toSignalForm.optionsLabCity': 'Stad',
+  'toSignalForm.optionsLabReset': 'Herstellen',
+  'toSignalForm.optionsLabStateTitle': 'Sleutels van de payload',
+  'toSignalForm.optionsLabStateDesc': 'Sleutels die in elke stap overblijven.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Waarden van uitgeschakelde besturingselementen behouden.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Lege tekenreeksen verwijderen.',
+  'toSignalForm.optionsLabHintOmitNull': 'Null-waarden verwijderen.',
+  'toSignalForm.optionsLabHintOmitIf': 'Interne velden verwijderen met een sleutelpredicaat.',
+  'toSignalForm.optionsLabHintOmit': 'Het veld confirmEmail, dat alleen voor de UI bestaat, verwijderen.',
+  'toSignalForm.optionsLabHintDeep': 'De regels ook op geneste objecten en arrays toepassen.',
 };

@@ -2945,4 +2945,22 @@ export const esTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: rellenar un formulario editable',
   'queryResource.editFormDesc':
     'Cargue una entidad con queryResource e inicialice un formulario reactivo con un effect. Los nuevos valores de consulta restablecen el formulario y los cambios sin guardar.',
+
+  'toSignalForm.optionsLabTitle': 'Laboratorio de opciones de envío',
+  'toSignalForm.optionsLabDesc':
+    'Active las opciones y compare el valor sin procesar, el valor del formulario y la carga útil depurada.',
+  'toSignalForm.optionsLabSampleTitle': 'Valores de ejemplo',
+  'toSignalForm.optionsLabSwitchesTitle': 'Opciones de envío',
+  'toSignalForm.optionsLabColumnsTitle': 'Comparación de cargas útiles',
+  'toSignalForm.optionsLabNickname': 'Apodo',
+  'toSignalForm.optionsLabCity': 'Ciudad',
+  'toSignalForm.optionsLabReset': 'Restablecer',
+  'toSignalForm.optionsLabStateTitle': 'Claves de la carga útil',
+  'toSignalForm.optionsLabStateDesc': 'Claves que se conservan en cada paso.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Conservar los valores de los controles deshabilitados.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Descartar cadenas vacías.',
+  'toSignalForm.optionsLabHintOmitNull': 'Descartar valores nulos.',
+  'toSignalForm.optionsLabHintOmitIf': 'Descartar campos internos mediante un predicado de clave.',
+  'toSignalForm.optionsLabHintOmit': 'Descartar el campo confirmEmail, usado solo por la interfaz.',
+  'toSignalForm.optionsLabHintDeep': 'Aplicar las reglas también a objetos y arrays anidados.',
 };

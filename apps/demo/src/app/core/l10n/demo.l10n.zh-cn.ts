@@ -2587,4 +2587,21 @@ export const zhCNTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect：为可编辑表单填充数据',
   'queryResource.editFormDesc':
     '使用 queryResource 加载实体，并通过 effect 初始化响应式表单。新的查询值会重置表单，包括未保存的编辑。',
+
+  'toSignalForm.optionsLabTitle': '提交选项实验室',
+  'toSignalForm.optionsLabDesc': '切换选项，比较原始值、表单值与净化后的提交数据。',
+  'toSignalForm.optionsLabSampleTitle': '示例值',
+  'toSignalForm.optionsLabSwitchesTitle': '提交选项',
+  'toSignalForm.optionsLabColumnsTitle': '提交数据对照',
+  'toSignalForm.optionsLabNickname': '昵称',
+  'toSignalForm.optionsLabCity': '城市',
+  'toSignalForm.optionsLabReset': '重置',
+  'toSignalForm.optionsLabStateTitle': '提交数据的键',
+  'toSignalForm.optionsLabStateDesc': '各阶段保留的键。',
+  'toSignalForm.optionsLabHintIncludeDisabled': '保留禁用控件的值。',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': '移除空字符串。',
+  'toSignalForm.optionsLabHintOmitNull': '移除 null 值。',
+  'toSignalForm.optionsLabHintOmitIf': '按键判断条件移除内部字段。',
+  'toSignalForm.optionsLabHintOmit': '移除仅用于界面的 confirmEmail 字段。',
+  'toSignalForm.optionsLabHintDeep': '对嵌套对象与数组同样应用这些规则。',
 };

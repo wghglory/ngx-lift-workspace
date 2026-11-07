@@ -2809,4 +2809,21 @@ export const jaTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: 編集可能なフォームへの投入',
   'queryResource.editFormDesc':
     'queryResource でエンティティを読み込み、effect でリアクティブフォームを初期化します。新しいクエリ値により、未保存の編集を含めフォームがリセットされます。',
+
+  'toSignalForm.optionsLabTitle': '送信オプション ラボ',
+  'toSignalForm.optionsLabDesc': 'オプションを切り替え、生の値、フォームの値、整形後のペイロードを比較します。',
+  'toSignalForm.optionsLabSampleTitle': 'サンプル値',
+  'toSignalForm.optionsLabSwitchesTitle': '送信オプション',
+  'toSignalForm.optionsLabColumnsTitle': 'ペイロードの比較',
+  'toSignalForm.optionsLabNickname': 'ニックネーム',
+  'toSignalForm.optionsLabCity': '都市',
+  'toSignalForm.optionsLabReset': 'リセット',
+  'toSignalForm.optionsLabStateTitle': 'ペイロードのキー',
+  'toSignalForm.optionsLabStateDesc': '各段階で残るキー。',
+  'toSignalForm.optionsLabHintIncludeDisabled': '無効なコントロールの値を保持します。',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': '空文字を除外します。',
+  'toSignalForm.optionsLabHintOmitNull': 'null 値を除外します。',
+  'toSignalForm.optionsLabHintOmitIf': 'キーの述語で内部フィールドを除外します。',
+  'toSignalForm.optionsLabHintOmit': 'UI 専用の confirmEmail フィールドを除外します。',
+  'toSignalForm.optionsLabHintDeep': '入れ子のオブジェクトと配列にも規則を適用します。',
 };

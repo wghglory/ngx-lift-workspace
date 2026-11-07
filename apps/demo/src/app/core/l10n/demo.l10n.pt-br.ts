@@ -2893,4 +2893,22 @@ export const ptBRTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: preencher um formulário editável',
   'queryResource.editFormDesc':
     'Carregue uma entidade com queryResource e inicialize um formulário reativo com um effect. Novos valores da consulta redefinem o formulário e as alterações não salvas.',
+
+  'toSignalForm.optionsLabTitle': 'Laboratório de opções de envio',
+  'toSignalForm.optionsLabDesc':
+    'Alterne as opções e compare o valor bruto, o valor do formulário e a carga útil limpa.',
+  'toSignalForm.optionsLabSampleTitle': 'Valores de exemplo',
+  'toSignalForm.optionsLabSwitchesTitle': 'Opções de envio',
+  'toSignalForm.optionsLabColumnsTitle': 'Comparação de cargas úteis',
+  'toSignalForm.optionsLabNickname': 'Apelido',
+  'toSignalForm.optionsLabCity': 'Cidade',
+  'toSignalForm.optionsLabReset': 'Redefinir',
+  'toSignalForm.optionsLabStateTitle': 'Chaves da carga útil',
+  'toSignalForm.optionsLabStateDesc': 'Chaves que permanecem em cada etapa.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Manter os valores de controles desabilitados.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Remover strings vazias.',
+  'toSignalForm.optionsLabHintOmitNull': 'Remover valores nulos.',
+  'toSignalForm.optionsLabHintOmitIf': 'Remover campos internos com um predicado de chave.',
+  'toSignalForm.optionsLabHintOmit': 'Remover o campo confirmEmail, usado apenas pela interface.',
+  'toSignalForm.optionsLabHintDeep': 'Aplicar as regras também a objetos e arrays aninhados.',
 };

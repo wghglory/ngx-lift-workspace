@@ -2814,4 +2814,22 @@ export const enTranslations: Record<string, string> = {
   'queryResource.editFormTitle': 'queryResource + effect: seed an editable form',
   'queryResource.editFormDesc':
     'Load an entity with queryResource and use an effect to initialize a reactive form. New query values reset the form, including unsaved edits.',
+
+  'toSignalForm.optionsLabTitle': 'Submission options lab',
+  'toSignalForm.optionsLabDesc':
+    'Toggle the options and compare the raw value, the form value and the sanitized payload.',
+  'toSignalForm.optionsLabSampleTitle': 'Sample values',
+  'toSignalForm.optionsLabSwitchesTitle': 'Submission options',
+  'toSignalForm.optionsLabColumnsTitle': 'Payload comparison',
+  'toSignalForm.optionsLabNickname': 'Nickname',
+  'toSignalForm.optionsLabCity': 'City',
+  'toSignalForm.optionsLabReset': 'Reset',
+  'toSignalForm.optionsLabStateTitle': 'Payload keys',
+  'toSignalForm.optionsLabStateDesc': 'Keys that survive each stage.',
+  'toSignalForm.optionsLabHintIncludeDisabled': 'Keep values from disabled controls.',
+  'toSignalForm.optionsLabHintOmitEmptyStrings': 'Drop empty strings.',
+  'toSignalForm.optionsLabHintOmitNull': 'Drop null values.',
+  'toSignalForm.optionsLabHintOmitIf': 'Drop internal fields with a key predicate.',
+  'toSignalForm.optionsLabHintOmit': 'Drop the UI-only confirmEmail field.',
+  'toSignalForm.optionsLabHintDeep': 'Apply the rules inside nested objects and arrays.',
 };
