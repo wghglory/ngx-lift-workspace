@@ -12,6 +12,170 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# Nx Cloud remote cache. Sourced from the NX_CLOUD_ACCESS_TOKEN repo secret.
+# If the free-account credits are exhausted, Nx logs a warning and runs tasks
+# locally — the workflow still passes. Together with the parallel + `nx affected`
+# jobs below, typical PRs stay fast even without a remote cache hit.
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
 jobs:
-  quality:
-    uses: ./.github/workflows/quality.yml
+  # Whole-repo, dependency-free checks. Always runs fully.
+  fast-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run format:check
+      - run: pnpm run i18n:check
+      - run: pnpm run test:tools
+
+  # Lint + typecheck. `nx affected` on PRs, full `run-many` on push.
+  lint-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+      - name: Fetch base branch for affected
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags origin ${{ github.base_ref }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Compute nx command
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "cmd=affected --base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "cmd=run-many" >> "$GITHUB_OUTPUT"
+          fi
+      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t lint typecheck --parallel=3
+
+  # Unit tests (no coverage in the PR gate). `nx affected` on PRs, full on push.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+      - name: Fetch base branch for affected
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags origin ${{ github.base_ref }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Compute nx command
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "cmd=affected --base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "cmd=run-many" >> "$GITHUB_OUTPUT"
+          fi
+      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t test --parallel=3
+
+  # Builds. Package/bundle verification runs only on the full (push) path.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+      - name: Fetch base branch for affected
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags origin ${{ github.base_ref }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Compute nx command
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "cmd=affected --base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "cmd=run-many" >> "$GITHUB_OUTPUT"
+          fi
+      # Best-effort local cache fallback for months when Nx Cloud credits run out.
+      - name: Restore local Nx cache
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            nx-${{ runner.os }}-
+      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t build --parallel=2
+      - name: Package & bundle verification
+        if: github.event_name != 'pull_request'
+        run: pnpm run bundle:check && pnpm run verify:packages
+
+  # E2E only for affected projects on PRs; full on push.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+      - name: Fetch base branch for affected
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags origin ${{ github.base_ref }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps
+      - name: Compute nx command
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "cmd=affected --base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "cmd=run-many" >> "$GITHUB_OUTPUT"
+          fi
+      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1
+      - name: Upload browser report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: dist/.playwright/apps/demo-e2e/playwright-report/
+          if-no-files-found: ignore
+
+  # Full coverage report — detached from the PR gate; runs on push/main + schedule.
+  coverage:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run test:coverage
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: error

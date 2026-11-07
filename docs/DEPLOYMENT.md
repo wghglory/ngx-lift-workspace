@@ -1,7 +1,7 @@
 # Publishing and demo deployment
 
 Automation is defined in [publish.yml](../.github/workflows/publish.yml),
-[deploy-demo.yml](../.github/workflows/deploy-demo.yml) and the shared [quality.yml](../.github/workflows/quality.yml).
+[deploy-demo.yml](../.github/workflows/deploy-demo.yml) and the [CI workflow](../.github/workflows/ci.yml).
 Package manifests and [CHANGELOG](../CHANGELOG.md) own version history.
 
 ## Verification before publication
