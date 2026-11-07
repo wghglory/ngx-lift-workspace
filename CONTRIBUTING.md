@@ -70,6 +70,24 @@ This project adheres to a Code of Conduct that all contributors are expected to 
    git checkout -b fix/your-bug-fix
    ```
 
+### Using git worktrees
+
+For isolated, long-lived, or experimental work, create a git worktree instead of branching inside the primary checkout:
+
+```bash
+git worktree add -b your-branch .worktrees/your-branch HEAD
+cd .worktrees/your-branch
+pnpm install --frozen-lockfile
+```
+
+- The canonical holding directory is `.worktrees/` at the repository root. It is already listed in `.gitignore`, so the
+  primary checkout's `git status` stays clean.
+- Each worktree has its own `node_modules` and `.nx/cache`; run `pnpm install` and Nx tasks from inside the worktree,
+  not from the primary checkout.
+- Move a worktree with `git worktree move`, never a plain `mv`, so the registration in `.git/worktrees/` stays valid.
+- **Warning**: `.worktrees/` is git-ignored. A `git clean -fdx` run in the primary checkout removes ignored files and
+  will **delete the worktree**. Use `git clean -fd` (without `-x`) to leave ignored directories alone.
+
 ### Making Changes
 
 1. **Make your changes** following our [coding standards](#-coding-standards)

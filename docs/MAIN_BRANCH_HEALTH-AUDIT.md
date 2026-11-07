@@ -1,8 +1,8 @@
 # Main branch health review — 2026-11-07
 
-> Temporary review aid. Per `docs/README.md:26-27`, temporary audits and local log snapshots are **not** maintained
-> documentation: do not link this file from a documentation index and do not commit it. Repository documentation stays
-> in English.
+> Review artifact and standing backlog. Per `docs/README.md:26-27`, temporary audits and local log snapshots are **not**
+> linked from a documentation index. This file is kept as the maintained backlog for the findings it records. Repository
+> documentation stays in English.
 
 ## Scope
 
@@ -275,6 +275,14 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   `21.2.17`; CLI/build tooling is `21.2.14` and `ng-packagr` `21.2.5`. The lockfile resolves it, but the mix invites
   peer drift. **Fix:** align to one patch release in a dedicated dependency PR.
 
+- **D7 — Low, confirmed. No canonical, gitignored worktree holding directory.** The 2026-11-05 architecture review used
+  a sibling directory to avoid nesting a full checkout inside the primary tree; Codex-style `.worktrees/` holding
+  folders are cleaner but were neither adopted nor ignored, and `.claude/worktrees` remains unscoped. **Fix:** adopt
+  `.worktrees/` as the canonical, gitignored worktree holding directory (the only pattern added to `.gitignore`); point
+  future worktrees there. The `refactor/architecture-deepening` worktree now lives at
+  `.worktrees/architecture-deepening`; the earlier `pr204-fixes` worktree under `.claude/worktrees/` has since been
+  removed.
+
 ### E. PR and branch hygiene
 
 - **E1 — Medium, verified. Stale pull requests.** Five feature PRs (#137–#141) have not been updated since 2026-10-10
@@ -305,6 +313,8 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
    2026-10-18. Once the independent human language and assistive-technology acceptance required by
    `docs/guides/accessibility-and-localization.md` is recorded, cut the next versions through the `docs/DEPLOYMENT.md`
    gates rather than the direct publish scripts.
+7. **Address the architecture deepening backlog (§7, F1–F5).** Start with F2 (highest leverage: every feature increment
+   pays the localization tax) and F1 (safe immediate win); treat F4 only after an explicit decision to reopen ADR-0002.
 
 ## 5. What is already healthy
 
@@ -327,4 +337,76 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   instead. The local `test:coverage` failure is environmental (see §2) and must be re-checked on a quiet, clean `main`
   checkout.
 - GitHub issue/PR/CI facts were read with `gh` from this checkout; nothing was written to the tracker.
-- No source file was changed. The only artifact of this review is this temporary Markdown file.
+- No source file was changed in the main tree. The 2026-11-05 architecture review's findings were merged into §7 of this
+  document; its standalone plan file and temporary HTML report were deleted. The only artifact is this document.
+
+## 7. Architecture deepening opportunities (review 2026-11-05)
+
+A read-only architecture review — run in a dedicated worktree `.worktrees/architecture-deepening` (branch
+`refactor/architecture-deepening`) — surfaced five deepening opportunities using the codebase-design vocabulary (module,
+interface, implementation, depth, seam, adapter, leverage, locality). No interfaces were proposed; these are friction
+statements for future work. The review scanned the last 40 commits' hot spots (11 locale dictionaries, the breadcrumb
+module and its demo pages, datagrid selection form control, `tools/package/` fixtures) and recorded each candidate with
+a deletion test: deleting a module should concentrate complexity, not move it into callers. Candidates were grilled
+against the domain docs (`GLOSSARY.md`, ADR-0001/0002, the design specs) before being recorded here.
+
+- **F1 — Strong, verified. Shallow pure-helper cluster in `ngx-lift/utils`.**
+  - **Files**: `omit-by.util.ts`, `pick-by.util.ts`, `is-promise.util.ts`, `is-empty.util.ts`, `internal.util.ts`, their
+    specs, `utils/index.ts`, `libs/ngx-lift/src/index.ts`.
+  - **Friction**: `omit-by.util.ts` is a one-line negation of `pickBy`; `is-empty.util.ts` wraps a short body in four
+    overloads; each helper owns a barrel export and a standalone spec, so the interface is nearly as large as the
+    implementation.
+  - **Deletion test**: removing `omitBy` only moves the negation into callers; the real depth sits at the public export
+    → demo route → locale-key seam.
+  - **Constrained by**: `docs/design/implementation-gaps.md` (keep JSDoc + focused tests for simple pure helpers).
+  - **Fix (deepening)**: collapse the negation into `pickBy` and keep the public export surface narrow.
+- **F2 — Strong, verified. Localization registration seam leaks both ways.** _(Top recommendation of the review.)_
+  - **Files**: 11 `apps/demo/src/app/core/l10n/demo.l10n.*.ts` dictionaries, `demo.l10n.ts`, `demo-language-loader.ts`,
+    `app.component.ts`, `libs/clr-lift/src/lib/services/translation.service.ts`, 15 library `*.l10n.ts` modules.
+  - **Friction**: the demo registers with an empty key while libraries use divergent keys (`'breadcrumb'`,
+    `'FileReader'`, `'cll-spinner'`), so adding one string bounces across 11 dictionaries, an aggregator, a lazy loader,
+    and library modules; locality is lost.
+  - **Deletion test**: removing the aggregator only moves its 11 imports into the loader.
+  - **Constrained by**: `docs/guides/accessibility-and-localization.md`,
+    `docs/design/clr-lift/runtime-presentation-design-spec.md`.
+  - **Fix (deepening)**: one registration adapter with one key convention; the aggregator and loader collapse into that
+    interface. **Verify**: `pnpm run i18n:check` plus a complete dictionary set.
+- **F3 — Worth exploring. Breadcrumb object-path helper split from its callers.**
+  - **Files**: `build-object-path-breadcrumbs.ts`, `breadcrumb.component.ts`,
+    `apps/demo/src/app/clr-lib/pages/breadcrumb/breadcrumb-storage.component.ts`,
+    `tools/package/fixtures/breadcrumb-hosts.ts`, seven `apps/demo-e2e/src/breadcrumb*.spec.ts`.
+  - **Friction**: the helper exposes a thick interface (six options, a three-state union, `hrefFor`) while URL encoding,
+    navigation-root prefixing, and error recovery live in callers, and a bare `catch` swallows the whole contract.
+  - **Deletion test**: removing the helper copies ~30 lines into callers with no focused test.
+  - **Constrained by**: `docs/design/clr-lift/breadcrumb-design-spec.md`, `docs/guides/object-path-breadcrumbs.md`,
+    `docs/design/implementation-gaps.md`.
+  - **Fix (deepening)**: fold the caller string logic into the module and own the error contract at the deepened
+    interface. **Verify**: the seven breadcrumb browser specs plus the library spec.
+- **F4 — Worth exploring. Datagrid selection adapter rewrites form ownership.**
+  - **Files**: `datagrid-selection-accessor.directive.ts`, `datagrid-selection.component.ts`, `selection-id.service.ts`,
+    `libs/clr-lift/src/lib/components/index.ts`.
+  - **Friction**: the adapter rewrites NgControl ownership through `ɵconnect`/`ɵowner`, so one concept — form ownership
+    — is spread across three modules; `selection-id.service.ts` is an 11-line shallow module.
+  - **Deletion test**: removing the service moves a counter; removing the adapter would concentrate the value-control
+    implementation but contradicts ADR-0002's composition decision.
+  - **Constrained by**: ADR-0002, ADR-0001, `docs/design/clr-lift/datagrid-selection-design-spec.md`,
+    `docs/design/clr-lift/forms-compatibility-design-spec.md`.
+  - **Fix (deepening)**: deepen into one value-control module; do not proceed without an explicit decision to reopen
+    ADR-0002.
+- **F5 — Speculative. Packaged-consumer verification seam duplicates the demo.**
+  - **Files**: `tools/package/verify-packages.mjs`, `tools/package/fixtures/*-hosts.ts`,
+    `tools/package/fixtures/*-browser.mjs`.
+  - **Friction**: consumer hosts duplicate demo page setup, including the same object-path options, so one change must
+    be made twice and leverage is low.
+  - **Deletion test**: removing a fixture removes the only evidence at the installed-package seam.
+  - **Constrained by**: `docs/design/clr-lift/datagrid-selection-acceptance.md`,
+    `docs/design/clr-lift/datagrid-selection-design-spec.md`.
+  - **Fix (deepening)**: extract a shared consumer harness reused by the demo and the packaged verification.
+
+### Validation per candidate
+
+Run all commands from the worktree root with pnpm; prefer Nx targets over underlying tooling. F1 and F4 touch the public
+export surface, so `pnpm run verify:packages` and `pnpm run bundle:check` apply (plus `test`, `lint`, `typecheck`); F2
+requires `pnpm run i18n:check` and a complete dictionary set; F3 requires the breadcrumb browser specs; F5 requires
+`pnpm run verify:packages`. Documentation-only increments need formatting and link/diff checks, not a full test run.
+Keep local verification, CI, maintainer approval, human acceptance, merge, and publication separate.
