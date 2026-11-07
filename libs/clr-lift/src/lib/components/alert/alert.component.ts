@@ -1,8 +1,11 @@
 import {HttpErrorResponse} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, model, output} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 
 import {AlertType} from '../alerts/alert.type';
+import {alertTranslations} from '../alerts/alert.l10n';
+import {TranslatePipe} from '../../pipes/translate.pipe';
+import {TranslationService} from '../../services/translation.service';
 
 /**
  * A reusable alert component built on top of Clarity Design System.
@@ -32,7 +35,7 @@ import {AlertType} from '../alerts/alert.type';
   selector: 'cll-alert',
   templateUrl: './alert.component.html',
   styleUrl: './alert.component.scss',
-  imports: [ClarityModule],
+  imports: [ClarityModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertComponent {
@@ -72,6 +75,37 @@ export class AlertComponent {
    * If both `error` and `content` are provided, `error` takes precedence.
    */
   content = input('');
+
+  /**
+   * Whether to render a close button so the user can dismiss the alert.
+   * Defaults to `true`, preserving the current visible close button behavior.
+   * When `false`, the alert stays visible and cannot be dismissed by the user.
+   */
+  closable = input(true);
+
+  /**
+   * Controlled open/closed state of the alert.
+   * `false` shows the alert; `true` closes (removes) it from the view.
+   * Supports two-way binding through `[(closed)]`; setting it back to `false`
+   * reopens a previously closed alert.
+   */
+  closed = model(false);
+
+  /**
+   * Emits when the alert is closed (`true`) or reopened (`false`).
+   * Fires after a user dismisses the alert or after a controlled `[(closed)]` change.
+   */
+  closedChange = output<boolean>();
+
+  constructor() {
+    inject(TranslationService).loadTranslationsForComponent('alert', alertTranslations);
+  }
+
+  /** Relays Clarity's close/open event to the controlled `closed` model and `closedChange` output. */
+  protected onClosedChange(closed: boolean): void {
+    this.closed.set(closed);
+    this.closedChange.emit(closed);
+  }
 
   /**
    * Computed error message extracted from various error formats.

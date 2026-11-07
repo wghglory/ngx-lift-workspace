@@ -73,6 +73,29 @@ export class AlertDemoComponent {
         defaultValue: `''`,
         description: this.translationService.translate('alert.inputContent'),
       },
+      {
+        name: 'closable',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('alert.inputClosable'),
+      },
+      {
+        name: 'closed',
+        type: 'boolean',
+        defaultValue: 'false',
+        description: this.translationService.translate('alert.inputClosed'),
+      },
+    ];
+  });
+
+  alertOutputs = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'closedChange',
+        type: 'output<boolean>()',
+        description: this.translationService.translate('alert.outputClosedChange'),
+      },
     ];
   });
 
@@ -156,5 +179,27 @@ export class AlertDemoComponent {
 </cll-alert>
 <cll-alert alertType="info" content="I'm a info content" [isAppLevel]="true" />
 <cll-alert alertType="warning" content="I'm a warning content" [isAppLevel]="true" />`,
+  );
+
+  closableAlertCode = highlight(
+    "import {ChangeDetectionStrategy, Component, signal} from '@angular/core';\n\nimport {AlertComponent} from 'clr-lift';\n\n@Component({\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [AlertComponent],\n  templateUrl: './example.html',\n})\nexport class AlertClosableExampleComponent {\n  dismissed = signal(false);\n}",
+  );
+  closableAlertCodeHtml = highlight(
+    `<!-- Default: close button visible (closable defaults to true) -->
+<cll-alert alertType="warning" content="You can dismiss me." />
+
+<!-- Hide the close button -->
+<cll-alert alertType="info" content="Persistent notice." [closable]="false" />
+
+<!-- Controlled close + reopen -->
+@if (!dismissed()) {
+  <cll-alert
+    alertType="success"
+    content="Dismiss, then show again."
+    [closed]="dismissed()"
+    (closedChange)="dismissed.set($event)"
+  />
+}
+<button type="button" (click)="dismissed.set(false)">Show again</button>`,
   );
 }

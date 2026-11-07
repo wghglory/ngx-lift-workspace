@@ -1252,8 +1252,16 @@ export const enTranslations: Record<string, string> = {
   'alert.inputIsLightweight': 'Boolean flag for lightweight styling without borders.',
   'alert.inputError': 'An HttpErrorResponse or error object to display error details.',
   'alert.inputContent': 'A string containing the alert message content. Supports HTML tags via innerHTML.',
+  'alert.inputClosed':
+    'Controlled open/closed state. false shows the alert; true removes it. Supports the [(closed)] two-way binding.',
+  'alert.outputClosedChange': 'Emits a boolean. true after the user closes the alert, false after it is reopened.',
   'alert.contentProjectionDesc':
     'The component supports ng-content projection for complex HTML structures and Angular components.',
+  'alert.example7': 'Example 7: Closable Alert',
+  'alert.example7Desc':
+    'Use the closable input to show a close button so users can dismiss the alert. Bind [(closed)] to control or observe the open/closed state.',
+  'alert.example7Badge': 'Closable',
+  'alert.inputClosable': 'Boolean flag to show a close button so the user can dismiss the alert. Defaults to true.',
   'alert.projectionNotice': 'Multiple errors are listed as below by content projection:',
   'alert.errUndefined': 'Cannot read undefined.',
   'alert.errObject': 'Cannot upload an object.',

@@ -1298,6 +1298,15 @@ export const esTranslations: Record<string, string> = {
   'alert.inputError': 'Un HttpErrorResponse o un objeto de error para mostrar detalles de error.',
   'alert.inputContent':
     'Una cadena que contiene el contenido del mensaje de alerta. Apoye las etiquetas HTML a través de innerHTML.',
+  'alert.inputClosed':
+    'Estado de apertura/cierre controlado. false muestra la alerta; true la elimina. Admite el enlace bidireccional [(closed)].',
+  'alert.outputClosedChange': 'Emite un booleano. true tras cerrar la alerta el usuario, false tras reabrirla.',
+  'alert.example7': 'Ejemplo 7: Alerta descartable',
+  'alert.example7Desc':
+    'Use la entrada closable para mostrar un botón de cierre para que los usuarios puedan descartar la alerta. Enlace [(closed)] para controlar o observar el estado abierto/cerrado.',
+  'alert.example7Badge': 'Descartable',
+  'alert.inputClosable':
+    'Indicador booleano para mostrar un botón de cierre que permite al usuario descartar la alerta. El valor predeterminado es true.',
   'alert.contentProjectionDesc':
     'El componente admite proyección de contenido ng- para estructuras HTML complejas y componentes Angular.',
   'alert.projectionNotice': 'Múltiples errores se enumeran a continuación mediante proyección de contenido:',

@@ -1303,6 +1303,15 @@ export const frTranslations: Record<string, string> = {
   'alert.inputError': "Un objet HttpErrorResponse ou erreur pour afficher les détails d'erreur.",
   'alert.inputContent':
     "Une chaîne contenant le contenu du message d'alerte. Prise en charge des balises HTML via innerHTML.",
+  'alert.inputClosed':
+    'État ouvert/fermé contrôlé. false affiche l’alerte ; true la retire. Prend en charge la liaison bidirectionnelle [(closed)].',
+  'alert.outputClosedChange': 'Émet un booléen. true après la fermeture par l’utilisateur, false après la réouverture.',
+  'alert.example7': 'Exemple 7 : Alerte fermable',
+  'alert.example7Desc':
+    "Utilisez l'entrée closable pour afficher un bouton de fermeture permettant à l'utilisateur de rejeter l'alerte. Liez [(closed)] pour contrôler ou observer l'état ouvert/fermé.",
+  'alert.example7Badge': 'Fermable',
+  'alert.inputClosable':
+    "Drapeau booléen pour afficher un bouton de fermeture permettant à l'utilisateur de rejeter l'alerte. Valeur par défaut : true.",
   'alert.contentProjectionDesc':
     'Le composant supporte la projection de contenu ng pour les structures complexes HTML et Angular.',
   'alert.projectionNotice': 'Plusieurs erreurs sont énumérées ci-dessous par projection de contenu :',
