@@ -10,10 +10,11 @@ Reactive Forms; the signpost has no form value or shared query cache.
 
 ## Background
 
-[CertificateService](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate.service.ts),
 [signpost](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate-signpost.component.ts) and
 [certificateValidator](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate.validator.ts) support
-PEM inspection and Reactive Forms parsing checks.
+PEM inspection and Reactive Forms parsing checks. The signpost calls the
+[certificate parser](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate-parser.ts) directly;
+there is no certificate service.
 
 ## Terminology
 
@@ -45,8 +46,11 @@ TLS trust decisions, chain validation, private-key handling, revocation and serv
 
 ## Industry evidence and current gaps
 
-The installed node-forge APIs supply PEM parsing, DER and digest functions; reuse them rather than implementing ASN.1.
-Angular's ValidatorFn owns parsing errors. Expiry display does not inspect all certificate trust conditions.
+Certificate parsing, DER decoding, and MD5/SHA-1 fingerprints are implemented with dependency-free, synchronous
+browser-native code in `certificate-parser.ts` and `certificate-crypto.ts`. This removed the previous node-forge peer
+dependency so unrelated consumers are not forced to install it. ASN.1/DER decoding and hashing are intentionally narrow:
+they cover the fields this library displays and validates, not full X.509 semantics. Angular's ValidatorFn owns parsing
+errors. Expiry display does not inspect all certificate trust conditions.
 
 ## Developer learning journey and pedagogy plan
 
@@ -68,17 +72,17 @@ limitations; examples introduce them after the first task.
 <cll-certificate-signpost [pem]="pem" [pemEncoded]="false" />
 ```
 
-`CertificateService.getCertificateFromPem` and `getCertificateHashes` default `pemEncoded=true`; the signpost input
-defaults false. Pass the flag explicitly at boundaries. Hash output is uppercase MD5/SHA1 for display compatibility. Use
+The exported `parseCertificateFromPem` helper defaults `pemEncoded=true`; the signpost input defaults false. Pass the
+flag explicitly at boundaries. Hash output is uppercase MD5/SHA1 for display compatibility. Use
 `certificateValidator(false)` with Reactive Forms for raw PEM; decoding is opt-in. The signpost is display-only; the
 validator works with Reactive Forms + `toSignalForm` because that facade retains the same control.
 
 ## Behavior and architecture
 
 Signpost parsing catches failures into error/status state. Expiry compares exact notAfter timestamp, then day difference
-for warning text. A component `clock` overrides `CERTIFICATE_CLOCK`; otherwise a browser minute timer refreshes current
-time and is cleaned up by the effect. A supplied clock must expose reactive dependencies if live updates are needed. The
-validator returns null for empty input and `{invalidCertificate: error}` for nonempty parse failures.
+for warning text. A component `clock` overrides the default browser minute timer, which refreshes current time and is
+cleaned up by the effect. A supplied clock must expose reactive dependencies if live updates are needed. The validator
+returns null for empty input and `{invalidCertificate: error}` for nonempty parse failures.
 
 ## Clarity, accessibility, and localization
 
@@ -97,9 +101,13 @@ package installation checks a different boundary.
 
 ## Compatibility, rollout, and risks
 
-Angular 21 and existing node-forge peer. Current package root requires node-forge even for unrelated consumers; lazy
-demo loading does not make that installation optional. Evaluate secondary packaging only with consumer evidence. Native
-signal-field validation is a future reviewed integration, not provided by the current ValidatorFn.
+Angular 21. The node-forge peer dependency was removed; certificate parsing and fingerprinting are now dependency-free
+and synchronous, so unrelated consumers no longer install node-forge and the main `clr-lift` entry does not reference
+it. The stateful `CertificateService` was removed: the signpost calls the parser and digest functions directly and owns
+clock resolution, so consumers bind `pem`/`pemEncoded`/`clock` inputs instead of injecting a service or providing an
+injection token. The `CertificateComponent` `certificate` input and the exported parser expose the local
+`X509Certificate` type instead of `node-forge`'s `pki.Certificate`. Native signal-field validation is a future reviewed
+integration, not provided by the current ValidatorFn.
 
 ## Review decisions and delivery
 
@@ -108,5 +116,8 @@ separately; neither is silently introduced in this docs update.
 
 ## Evidence
 
-The direct CertificateService/certificateValidator suites pass 18 tests with real node-forge parsing and fixed MD5/SHA1
-values independently calculated from DER with Python hashlib. This proves parsing/display behavior, not trust.
+The parser, certificateValidator, signpost, and certificate component suites pass. The fixed MD5/SHA1 values were
+independently calculated from DER with Python hashlib and are now reproduced by the dependency-free native
+implementation in `certificate-crypto.ts`. A synthetic DER fixture builder covers certificate types the two real
+fixtures do not: v1 and v3 certificates, UTCTime and GeneralizedTime validity, multi-valued RDNs, UTF8/BMP/Printable/IA5
+distinguished-name encodings, and PEM/raw-DER/base64 inputs. This proves parsing/display behavior, not trust.

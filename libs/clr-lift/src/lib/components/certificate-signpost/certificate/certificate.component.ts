@@ -1,11 +1,11 @@
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import type {pki} from 'node-forge';
 
 import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {TranslationService} from '../../../services/translation.service';
 import {certificateTranslations} from '../certificate.l10n';
+import {X509Certificate} from '../certificate-parser';
 import {CertificateStatus} from '../certificate.model';
 
 @Component({
@@ -18,7 +18,7 @@ import {CertificateStatus} from '../certificate.model';
 export class CertificateComponent {
   private translationService = inject(TranslationService);
 
-  certificate = input.required<pki.Certificate>();
+  certificate = input.required<X509Certificate>();
   certificateStatus = input.required<CertificateStatus>();
 
   readonly formattedNotBefore = computed(() =>
