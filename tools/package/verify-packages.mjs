@@ -178,14 +178,12 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
           '@clr/angular': '^18.4.0',
           '@clr/ui': '^18.4.0',
           rxjs: '^7.8.0',
-          'node-forge': '^1.4.0',
           jsdom: '^27.0.0',
           'zone.js': '~0.16.0',
         },
         devDependencies: {
           '@angular/compiler-cli': '~21.2.0',
           '@types/node': '^22.0.0',
-          '@types/node-forge': '^1.3.11',
           typescript: '^5.9.0',
         },
       },
@@ -326,7 +324,7 @@ class Negative {items=[{id:'org-1',name:'North'}]; key=(item:{id:string})=>item.
       minify: true,
       metafile: true,
       conditions: [condition],
-      external: ['@angular/*', '@clr/*', 'ngx-lift', 'rxjs', 'rxjs/*', 'node-forge'],
+      external: ['@angular/*', '@clr/*', 'ngx-lift', 'rxjs', 'rxjs/*'],
       define: {ngDevMode: condition === 'development' ? 'true' : 'false', ngJitMode: 'false'},
       plugins: [
         {

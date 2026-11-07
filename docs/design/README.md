@@ -28,7 +28,7 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 | ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
 | TooltipDirective and owned/borrowed popup content                  | [Tooltip and popover](clr-lift/tooltip-design-spec.md)                  |
 | FileReaderComponent CVA, encoding and read cancellation            | [File reader](clr-lift/file-reader-design-spec.md)                      |
-| CertificateService, signpost and parsing validator                 | [Certificates](clr-lift/certificate-design-spec.md)                     |
+| Certificate signpost and parsing validator                         | [Certificates](clr-lift/certificate-design-spec.md)                     |
 | IdleDetectionComponent shared/scoped warning                       | [Idle warning](clr-lift/idle-warning-design-spec.md)                    |
 | AlertService/ToastService and notification containers              | [Notifications](clr-lift/notifications-design-spec.md)                  |
 | TimelineWizardComponent, base step and service                     | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)              |

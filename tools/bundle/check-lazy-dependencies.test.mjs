@@ -9,13 +9,9 @@ function fixture() {
       'main.js': {entryPoint: 'src/main.ts', imports: [{path: 'route.js', kind: 'dynamic-import'}]},
       'route.js': {
         entryPoint: 'src/certificate-demo.component.ts',
-        imports: [
-          {path: 'forge.js', kind: 'dynamic-import'},
-          {path: 'highlight.js', kind: 'dynamic-import'},
-        ],
+        imports: [{path: 'highlight.js', kind: 'dynamic-import'}],
       },
       'reader.js': {entryPoint: 'src/file-reader-demo.component.ts', imports: []},
-      'forge.js': {inputs: {'node_modules/node-forge/lib/forge.js': {}}},
       'highlight.js': {inputs: {'node_modules/highlight.js/lib/core.js': {}}},
     },
   };
@@ -24,11 +20,11 @@ test('accepts dynamic boundaries and rejects transitive imports of heavy depende
   const stats = fixture();
   assert.deepEqual(validateLazyDependencies(stats), []);
   stats.outputs['route.js'].imports[0].kind = 'import-statement';
-  assert.deepEqual(validateLazyDependencies(stats), ['node-forge loads synchronously with the certificate route']);
+  assert.deepEqual(validateLazyDependencies(stats), ['highlight.js loads synchronously with the certificate route']);
   stats.outputs['main.js'].imports[0].kind = 'import-statement';
   assert.deepEqual(validateLazyDependencies(stats), [
-    'node-forge is in the initial bundle',
-    'node-forge loads synchronously with the certificate route',
+    'highlight.js is in the initial bundle',
+    'highlight.js loads synchronously with the certificate route',
   ]);
 });
 test('fails when required build metadata is missing', () => {

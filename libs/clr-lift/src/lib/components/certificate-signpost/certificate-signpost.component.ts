@@ -2,13 +2,14 @@ import {DOCUMENT} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal, signal} from '@angular/core';
 import {certificateIcon, ClarityIcons} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
-import type {pki} from 'node-forge';
+import {differenceInDays} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {certificateTranslations} from './certificate.l10n';
-import {CERTIFICATE_CLOCK, CertificateClock, CertificateStatus} from './certificate.model';
-import {CertificateService} from './certificate.service';
+import {md5, sha1} from './certificate-crypto';
+import {extractDerFromPem, parseCertificate, X509Certificate} from './certificate-parser';
+import {CertificateClock, CertificateStatus} from './certificate.model';
 import {CertificateComponent} from './certificate/certificate.component';
 
 ClarityIcons.addIcons(certificateIcon);
@@ -22,8 +23,6 @@ ClarityIcons.addIcons(certificateIcon);
 })
 export class CertificateSignpostComponent {
   private translationService = inject(TranslationService);
-  private certificateService = inject(CertificateService);
-  private injectedClock = inject(CERTIFICATE_CLOCK, {optional: true});
 
   /** Optional clock; signal-backed functions reactively update certificate status. */
   clock = input<CertificateClock>();
@@ -49,14 +48,18 @@ export class CertificateSignpostComponent {
 
   private certificateResult = computed(() => {
     try {
+      const der = extractDerFromPem(this.pem(), this.pemEncoded());
+      const certificate = parseCertificate(der);
       return {
-        certificate: this.certificateService.getCertificateFromPem(this.pem(), this.pemEncoded()),
+        certificate,
         error: '',
+        hashes: {md5: md5(der), sha1: sha1(der)},
       };
     } catch (error: unknown) {
       return {
         certificate: undefined,
         error: error instanceof Error ? error.message : String(error),
+        hashes: undefined,
       };
     }
   });
@@ -77,7 +80,8 @@ export class CertificateSignpostComponent {
         };
   });
 
-  hash = computed(() => this.certificateService.getCertificateHashes(this.pem(), this.pemEncoded()));
+  /** Fingerprint hashes of the parsed certificate; empty for malformed input, which never renders. */
+  hash = computed(() => this.certificateResult().hashes ?? {md5: '', sha1: ''});
 
   certificateStatusClass = computed(() => {
     return this.certificateStatus().status === 'danger'
@@ -91,23 +95,33 @@ export class CertificateSignpostComponent {
     this.translationService.loadTranslationsForComponent('certificate', certificateTranslations);
     const browserWindow = inject(DOCUMENT).defaultView;
     effect((onCleanup) => {
-      if (this.clock() || this.injectedClock || !browserWindow) return;
+      if (this.clock() || !browserWindow) return;
       const timer = browserWindow.setInterval(() => this.currentTime.set(Date.now()), 60_000);
       onCleanup(() => browserWindow.clearInterval(timer));
     });
   }
 
   /**
+   * Resolves the current timestamp in milliseconds from the clock input or the minute-tick signal.
+   */
+  private resolveNowTimestamp(): number {
+    const clock = this.clock();
+    if (clock) {
+      const result = clock();
+      return result instanceof Date ? result.getTime() : result;
+    }
+    return this.currentTime();
+  }
+
+  /**
    * Returns the status of a certificate based on its expiration date.
    *
-   * @param {pki.Certificate} certificate - The certificate to check the status of.
+   * @param {X509Certificate} certificate - The certificate to check the status of.
    * @return {CertificateStatus} The status of the certificate, including label text, label class, status, and shape.
    */
-  private getCertificateStatus(certificate: pki.Certificate): CertificateStatus {
-    const clock = this.clock() ?? this.injectedClock;
-    const nowTimestamp = this.certificateService.getCurrentTime(clock ?? (() => this.currentTime()));
-    const referenceDate = new Date(nowTimestamp);
-    const daysDiff = this.certificateService.getDayDifferences(certificate.validity.notAfter, referenceDate);
+  private getCertificateStatus(certificate: X509Certificate): CertificateStatus {
+    const nowTimestamp = this.resolveNowTimestamp();
+    const daysDiff = differenceInDays(new Date(certificate.validity.notAfter), new Date(nowTimestamp));
 
     if (certificate.validity.notAfter.getTime() <= nowTimestamp) {
       return {
