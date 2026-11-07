@@ -127,14 +127,7 @@ export class CertificateDemoComponent {
   /** Children accessor for Clarity's recursive tree, mirroring the dsm-ui hierarchy component. */
   readonly treeChildren = (node: ChainDisplayNode): ChainDisplayNode[] => node.children;
 
-  viewerCode = highlight(`import {
-  extractDerFromPem,
-  md5,
-  parseCertificate,
-  pemEncodeDer,
-  sha1,
-  sha256,
-} from 'clr-lift';
+  viewerCode = highlight(`import {extractDerFromPem, md5, parseCertificate, pemEncodeDer, sha1, sha256} from 'clr-lift';
 
 // PEM text (or its base64 encoding) -> DER bytes
 const der = extractDerFromPem(pemText);
