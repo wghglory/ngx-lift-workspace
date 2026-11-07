@@ -1,7 +1,8 @@
 @use 'sass:meta';
 
 // Self-hosted so code samples render identically on Windows, macOS, and Linux without a CDN request.
-// JetBrains Mono variable, Latin subset from @fontsource-variable/jetbrains-mono@5.2.6.
+// JetBrains Mono variable, Latin subset from @fontsource-variable/jetbrains-mono@5.2.6:
+// https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5.2.6/files/jetbrains-mono-latin-wght-normal.woff2
 // Licensed under SIL OFL 1.1; the full license is in assets/fonts/OFL.txt.
 @font-face {
   font-family: 'JetBrains Mono Variable';
@@ -146,8 +147,11 @@ cll-page-container > .page-container.density-compact {
 }
 
 // Documentation-wide preformatted content and inline code, including translated innerHTML.
+// `pre code` is required because Clarity declares font-family on `code` itself, which would
+// otherwise override the inherited font and leave highlighted samples on the generic monospace.
 // Samples must show the exact characters a reader copies, not typographic ligatures.
 pre,
+pre code,
 code:not([class^='language-']) {
   font-family: var(--demo-font-mono);
   font-variant-ligatures: none;
