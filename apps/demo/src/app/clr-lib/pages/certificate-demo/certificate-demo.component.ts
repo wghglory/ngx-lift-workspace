@@ -1,3 +1,4 @@
+import {NgTemplateOutlet} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
@@ -7,14 +8,26 @@ import {CodeBlockComponent} from '../../../shared/components/code-block/code-blo
 import {StateInspectorComponent} from '../../../shared/components/state-inspector/state-inspector.component';
 import {CertificateExampleComponent} from '../../../shared/components/certificate-example/certificate-example.component';
 import {highlight} from '../../../shared/utils/highlight.util';
+import type {CertificateHierarchyNode, ParsedChainEntry} from '../../../shared/utils/certificate-viewer-tools';
 import {CERTIFICATE_SAMPLES} from './certificate-samples';
+
+/** Display-ready node of the parsed certificate chain, mirroring dsm-ui's hierarchy tree. */
+interface ChainDisplayNode {
+  name: string;
+  statusText: string;
+  labelClass: string;
+  shape: string;
+  status: 'success' | 'warning' | 'error';
+  items: Record<string, string>;
+  children: ChainDisplayNode[];
+}
 
 /** Outcome of the build-your-own-viewer parse action. */
 type ViewerState =
   | {status: 'idle'}
   | {status: 'loading'}
   | {status: 'error'; message: string}
-  | {status: 'done'; items: Record<string, string>; encodedPem: string};
+  | {status: 'done'; chain: ChainDisplayNode[]; encodedPem: string};
 
 @Component({
   selector: 'app-certificate-demo',
@@ -22,6 +35,7 @@ type ViewerState =
     ApiTableComponent,
     AlertComponent,
     CalloutComponent,
+    NgTemplateOutlet,
     PageContainerComponent,
     CodeBlockComponent,
     CertificateExampleComponent,
@@ -108,8 +122,14 @@ export class CertificateDemoComponent {
 
   readonly viewerResult = computed(() => {
     const state = this.viewerState();
-    return state.status === 'done' ? {items: state.items, encodedPem: state.encodedPem} : null;
+    return state.status === 'done' ? {chain: state.chain, encodedPem: state.encodedPem} : null;
   });
+
+  readonly selectedChainNode = signal<ChainDisplayNode | null>(null);
+
+  selectChainNode(node: ChainDisplayNode): void {
+    this.selectedChainNode.set(node);
+  }
 
   viewerCode = highlight(`import {
   extractDerFromPem,
@@ -152,44 +172,99 @@ const pem = pemEncodeDer(der);`);
     try {
       // Loaded on demand like the rest of the demo's certificate tooling, keeping the parser
       // out of the page's eager chunk.
-      const {buildCertificateView} = await import('../../../shared/utils/certificate-viewer-tools');
-      const view = buildCertificateView(this.pemText());
-      const {certificate, digests} = view;
-      const translate = (key: string) => this.translationService.translate(key);
-      const validity = (date: Date) =>
-        new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium', timeStyle: 'short'}).format(
-          date,
-        );
-      const items: Record<string, string> = {
-        [translate('certificate.viewerFields.subject')]: certificate.subject.attributes
-          .map((attribute) => `${attribute.name}=${attribute.value}`)
-          .join(', '),
-        [translate('certificate.viewerFields.issuer')]: certificate.issuer.attributes
-          .map((attribute) => `${attribute.name}=${attribute.value}`)
-          .join(', '),
-        [translate('certificate.viewerFields.serialNumber')]: certificate.serialNumber,
-        [translate('certificate.viewerFields.notBefore')]: validity(certificate.validity.notBefore),
-        [translate('certificate.viewerFields.notAfter')]: validity(certificate.validity.notAfter),
-        [translate('certificate.viewerFields.signatureAlgorithm')]: certificate.signatureAlgorithm,
-      };
-      if (certificate.subjectAltName?.length) {
-        items[translate('certificate.viewerFields.subjectAltName')] = certificate.subjectAltName
-          .map((name) => `${name.type}:${name.value}`)
-          .join(', ');
+      const tools = await import('../../../shared/utils/certificate-viewer-tools');
+      const entries = tools.parseCertificateChain(this.pemText());
+      if (!entries.length) {
+        throw new Error('no PEM certificate found in the input');
       }
-      if (certificate.subjectKeyIdentifier) {
-        items[translate('certificate.viewerFields.subjectKeyIdentifier')] = certificate.subjectKeyIdentifier;
-      }
-      items[translate('certificate.viewerFields.md5')] = digests.md5;
-      items[translate('certificate.viewerFields.sha1')] = digests.sha1;
-      items[translate('certificate.viewerFields.sha256')] = digests.sha256;
-      this.viewerState.set({status: 'done', items, encodedPem: view.pem});
+      const hierarchy = tools.buildCertificateHierarchy(entries);
+      const chain = this.buildChainDisplay(hierarchy!);
+      this.viewerState.set({
+        status: 'done',
+        chain: [chain],
+        encodedPem: tools.buildCertificateView(this.pemText()).pem,
+      });
+      this.selectedChainNode.set(chain);
     } catch (error: unknown) {
+      this.selectedChainNode.set(null);
       this.viewerState.set({
         status: 'error',
         message: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  /** Converts a hierarchy node into a display node with translated fields and validity status. */
+  private buildChainDisplay(node: CertificateHierarchyNode): ChainDisplayNode {
+    const translate = (key: string, arg?: string) => this.translationService.translate(key, arg);
+    const certificate = node.certificate;
+    const expiry = certificate.validity.notAfter.getTime();
+    let statusText: string;
+    let labelClass: string;
+    let shape: string;
+    let status: 'success' | 'warning' | 'error';
+    if (expiry <= Date.now()) {
+      statusText = translate('certificate.expired');
+      labelClass = 'label-danger';
+      shape = 'error-standard';
+      status = 'error';
+    } else {
+      const days = Math.floor((expiry - Date.now()) / 86_400_000);
+      if (days <= 30) {
+        statusText = translate('certificate.expiresIn', `${days}`);
+        labelClass = 'label-warning';
+        shape = 'exclamation-triangle';
+        status = 'warning';
+      } else {
+        statusText = translate('certificate.valid');
+        labelClass = 'label-success';
+        shape = 'success-standard';
+        status = 'success';
+      }
+    }
+    return {
+      name: node.name,
+      statusText,
+      labelClass,
+      shape,
+      status,
+      items: this.buildCertItems(certificate, node.digests),
+      children: node.children.map((child) => this.buildChainDisplay(child)),
+    };
+  }
+
+  /** Translated label/value rows for one certificate, as shown by the state inspector. */
+  private buildCertItems(
+    certificate: ParsedChainEntry['certificate'],
+    digests: ParsedChainEntry['digests'],
+  ): Record<string, string> {
+    const translate = (key: string) => this.translationService.translate(key);
+    const validity = (date: Date) =>
+      new Intl.DateTimeFormat(this.translationService.locale(), {dateStyle: 'medium', timeStyle: 'short'}).format(date);
+    const items: Record<string, string> = {
+      [translate('certificate.viewerFields.subject')]: certificate.subject.attributes
+        .map((attribute) => `${attribute.name}=${attribute.value}`)
+        .join(', '),
+      [translate('certificate.viewerFields.issuer')]: certificate.issuer.attributes
+        .map((attribute) => `${attribute.name}=${attribute.value}`)
+        .join(', '),
+      [translate('certificate.viewerFields.serialNumber')]: certificate.serialNumber,
+      [translate('certificate.viewerFields.notBefore')]: validity(certificate.validity.notBefore),
+      [translate('certificate.viewerFields.notAfter')]: validity(certificate.validity.notAfter),
+      [translate('certificate.viewerFields.signatureAlgorithm')]: certificate.signatureAlgorithm,
+    };
+    if (certificate.subjectAltName?.length) {
+      items[translate('certificate.viewerFields.subjectAltName')] = certificate.subjectAltName
+        .map((name) => `${name.type}:${name.value}`)
+        .join(', ');
+    }
+    if (certificate.subjectKeyIdentifier) {
+      items[translate('certificate.viewerFields.subjectKeyIdentifier')] = certificate.subjectKeyIdentifier;
+    }
+    items[translate('certificate.viewerFields.md5')] = digests.md5;
+    items[translate('certificate.viewerFields.sha1')] = digests.sha1;
+    items[translate('certificate.viewerFields.sha256')] = digests.sha256;
+    return items;
   }
 
   pem1 = CERTIFICATE_SAMPLES[0].pem;

@@ -370,7 +370,7 @@ export const ptBRTranslations: Record<string, string> = {
   'nav.keyValueInputs': 'Entradas chave-valor',
   'nav.statusIndicator': 'Indicador de status',
   'nav.idleDetection': 'Detecção de inatividade',
-  'nav.certificate': 'Visualizador de certificado',
+  'nav.certificate': 'Visualizador de certificados',
   'nav.datagrid': 'Tabela de dados',
   'nav.byteConverter': 'Conversor de bytes',
   'nav.mask': 'Máscara',
@@ -1488,7 +1488,7 @@ export const ptBRTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'estado inactivo',
   'statusIndicator.tooltipPending': 'alguns que estão pendentes acontecem',
   'statusIndicator.apiSummary': 'Componente para exibir indicadores de status com ícones e texto.',
-  'certificate.title': 'Sinal para o certificado (Visor)',
+  'certificate.title': 'Visualizador de certificados',
   'certificate.overview':
     'O componente <code>CertificateSignpostComponent</code>, um componente Angular, interpreta uma string PEM, exibindo o conteúdo do certificado com um clique no ícone do certificado. Integrado de forma suave com o Clarity, esse componente exibe detalhes cruciais, como o status do certificado, o período de validade, as informações do emissor e os valores de hash.',
   'certificate.example1': 'Exemplo 1: Parsing Raw PEM',
@@ -1507,6 +1507,9 @@ export const ptBRTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'Impressão digital MD5',
   'certificate.viewerFields.sha1': 'Impressão digital SHA-1',
   'certificate.viewerFields.sha256': 'Impressão digital SHA-256',
+
+  'certificate.samples.chainDeep': 'Cadeia — folha → CA intermediária → raiz (aninhamento profundo)',
+  'certificate.viewerChainTitle': 'Cadeia de certificados',
 
   'certificate.samplesTitle': 'Certificados de exemplo',
   'certificate.samplesDesc':

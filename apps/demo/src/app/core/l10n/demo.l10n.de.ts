@@ -379,7 +379,7 @@ export const deTranslations: Record<string, string> = {
   'nav.keyValueInputs': 'Schlüssel-Wert-Eingaben',
   'nav.statusIndicator': 'Statusanzeige',
   'nav.idleDetection': 'Inaktivitätserkennung',
-  'nav.certificate': 'Zertifikatsansicht',
+  'nav.certificate': 'Zertifikats-Viewer',
   'nav.datagrid': 'Datengitter',
   'nav.byteConverter': 'Byte-Konverter',
   'nav.mask': 'Maske',
@@ -1505,7 +1505,7 @@ export const deTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'Nichterwerbsstatus',
   'statusIndicator.tooltipPending': 'einige noch ausstehende geschehen',
   'statusIndicator.apiSummary': 'Komponente zur Anzeige von Status-Indikatoren mit Icons und Text.',
-  'certificate.title': 'Zertifikat-Wegweiser (Viewer)',
+  'certificate.title': 'Zertifikats-Viewer',
   'certificate.overview':
     'Die <code>CertificateSignpostComponent</code>, eine Angular-Komponente, interpretiert eine PEM-String, um den Inhalt des Zertifikats anzuzeigen, wenn auf das Zertifikat-Icon geklickt wird. Sie ist nahtlos mit Clarity integriert und zeigt kritische Details wie Zertifikatsstatus, Gültigkeitsdauer, Ausstellerinformationen und Hashwerte an.',
   'certificate.example1': 'Beispiel 1: Parsing Raw PEM',
@@ -1524,6 +1524,9 @@ export const deTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5-Fingerabdruck',
   'certificate.viewerFields.sha1': 'SHA-1-Fingerabdruck',
   'certificate.viewerFields.sha256': 'SHA-256-Fingerabdruck',
+
+  'certificate.samples.chainDeep': 'Kette — Leaf → Intermediate-CA → Root (tief verschachtelt)',
+  'certificate.viewerChainTitle': 'Zertifikatskette',
 
   'certificate.samplesTitle': 'Beispielzertifikate',
   'certificate.samplesDesc':

@@ -119,7 +119,36 @@
       }
 
       @if (viewerResult(); as result) {
-        <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="result.items" />
+        <h4>{{ 'certificate.viewerChainTitle' | translate }}</h4>
+        <ul class="list-unstyled chain-tree">
+          <ng-template #chainNodeTpl let-node>
+            <li>
+              <button type="button" class="chain-node" (click)="selectChainNode(node)">
+                <cds-icon shape="certificate" size="14" aria-hidden="true" />
+                <span class="chain-name">{{ node.name }}</span>
+                <span class="label" [class]="node.labelClass">
+                  <cds-icon [shape]="node.shape" [status]="node.status" size="10" aria-hidden="true" />
+                  {{ node.statusText }}
+                </span>
+              </button>
+              @if (node.children.length) {
+                <ul class="list-unstyled">
+                  @for (child of node.children; track child.name) {
+                    <ng-container [ngTemplateOutlet]="chainNodeTpl" [ngTemplateOutletContext]="{$implicit: child}" />
+                  }
+                </ul>
+              }
+            </li>
+          </ng-template>
+          @for (node of result.chain; track node.name) {
+            <ng-container [ngTemplateOutlet]="chainNodeTpl" [ngTemplateOutletContext]="{$implicit: node}" />
+          }
+        </ul>
+
+        @if (selectedChainNode(); as node) {
+          <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" />
+        }
+
         <h4>{{ 'certificate.viewerEncodedPem' | translate }}</h4>
         <app-code-block [code]="result.encodedPem" lang="text" />
       }

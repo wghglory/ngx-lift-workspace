@@ -1500,7 +1500,7 @@ export const nlTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'inactieve status',
   'statusIndicator.tooltipPending': 'er is nog wat te gebeuren',
   'statusIndicator.apiSummary': 'Component voor het weergeven van statusindicatoren met iconen en tekst.',
-  'certificate.title': 'Afbakening van certificaat (Viewer)',
+  'certificate.title': 'Certificaatviewer',
   'certificate.overview':
     'De <code>CertificateSignpostComponent</code>, een Angular component, interpreteert een PEM string, toont het inhoud van het certificaat met een klik op het certificaaticoon. Het is perfect geïntegreerd met Clarity, en toont belangrijke details zoals certificaatstatus, geldigheidsperiode, uitgeverinformatie en hashwaarden.',
   'certificate.example1': 'Voorbeeld 1: Ontleden van Raw PEM',
@@ -1519,6 +1519,9 @@ export const nlTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5-vingerafdruk',
   'certificate.viewerFields.sha1': 'SHA-1-vingerafdruk',
   'certificate.viewerFields.sha256': 'SHA-256-vingerafdruk',
+
+  'certificate.samples.chainDeep': 'Keten — leaf → tussenliggende CA → root (diep genest)',
+  'certificate.viewerChainTitle': 'Certificaatketen',
 
   'certificate.samplesTitle': 'Voorbeeldcertificaten',
   'certificate.samplesDesc':

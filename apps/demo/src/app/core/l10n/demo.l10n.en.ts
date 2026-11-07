@@ -367,7 +367,7 @@ export const enTranslations: Record<string, string> = {
   'nav.keyValueInputs': 'Key Value Inputs',
   'nav.statusIndicator': 'Status Indicator',
   'nav.idleDetection': 'Idle Detection',
-  'nav.certificate': 'Certificate View',
+  'nav.certificate': 'Certificate viewer',
   'nav.datagrid': 'Datagrid',
   'nav.byteConverter': 'Byte Converter',
   'nav.mask': 'Mask',
@@ -1456,9 +1456,9 @@ export const enTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'inactive status',
   'statusIndicator.tooltipPending': 'some pending happen',
   'statusIndicator.apiSummary': 'Component for displaying status indicators with icons and text.',
-  'certificate.title': 'Certificate Signpost (Viewer)',
+  'certificate.title': 'Certificate viewer',
   'certificate.overview':
-    "The <code>CertificateSignpostComponent</code>, an Angular component, interprets a PEM string, showcasing the certificate's content with a click on the certificate icon. Seamlessly integrated with Clarity, this component exhibits crucial details such as certificate status, validity period, issuer info, and hash values.",
+    'Parse and inspect X.509 certificates: the <code>CertificateSignpostComponent</code> renders validity, status, issuer details and fingerprints from a PEM string, the sample selector covers root, intermediate and leaf certificates for RSA and ECDSA keys, and the build-your-own-viewer section exercises the public parsing, digest and chain-hierarchy utilities on your own PEM input.',
   'certificate.example1': 'Example 1: Parsing Raw PEM',
   'certificate.example1Desc': 'Parse and display a raw PEM certificate string:',
   'certificate.example2': 'Example 2: Parsing PEM (Base64 Encoded)',
@@ -1474,6 +1474,9 @@ export const enTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5 Fingerprint',
   'certificate.viewerFields.sha1': 'SHA-1 Fingerprint',
   'certificate.viewerFields.sha256': 'SHA-256 Fingerprint',
+
+  'certificate.samples.chainDeep': 'Chain — leaf → intermediate CA → root (deep nesting)',
+  'certificate.viewerChainTitle': 'Certificate chain',
 
   'certificate.samplesTitle': 'Sample certificates',
   'certificate.samplesDesc':

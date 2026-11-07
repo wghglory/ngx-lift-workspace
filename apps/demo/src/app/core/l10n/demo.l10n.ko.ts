@@ -1437,7 +1437,7 @@ export const koTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': '비활성 상태',
   'statusIndicator.tooltipPending': '일부 대기 중 상태가 발생했습니다',
   'statusIndicator.apiSummary': '아이콘과 텍스트가 포함된 상태 표시 컴포넌트',
-  'certificate.title': '인증서 표지 (조회자)',
+  'certificate.title': '인증서 뷰어',
   'certificate.overview':
     '<code>CertificateSignpostComponent</code>, Angular 컴포넌트는 PEM 문자열을 해석하여 인증서의 내용을 표시하며, 인증서 아이콘을 클릭하면 인증서 내용을 확인할 수 있습니다. Clarity와 원활하게 통합되어 있으며, 인증서 상태, 유효 기간, 발급자 정보, 해시 값과 같은 중요한 정보를 표시합니다.',
   'certificate.example1': '예시 1: 원시 PEM 파싱',
@@ -1456,6 +1456,9 @@ export const koTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5 지문',
   'certificate.viewerFields.sha1': 'SHA-1 지문',
   'certificate.viewerFields.sha256': 'SHA-256 지문',
+
+  'certificate.samples.chainDeep': '체인 — 리프 → 중간 CA → 루트 (깊은 중첩)',
+  'certificate.viewerChainTitle': '인증서 체인',
 
   'certificate.samplesTitle': '샘플 인증서',
   'certificate.samplesDesc':

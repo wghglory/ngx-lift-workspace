@@ -338,7 +338,7 @@ export const zhTWTranslations: Record<string, string> = {
   'nav.keyValueInputs': '鍵值對輸入 (Key Value Inputs)',
   'nav.statusIndicator': '狀態指示器 (Status Indicator)',
   'nav.idleDetection': '閒置偵測 (Idle Detection)',
-  'nav.certificate': '憑證檢視 (Certificate View)',
+  'nav.certificate': '憑證檢視器',
   'nav.datagrid': '資料網格工具 (Datagrid)',
   'nav.byteConverter': '位元組轉換 (Byte Converter)',
   'nav.mask': '資料遮罩 (Mask)',
@@ -1350,7 +1350,7 @@ export const zhTWTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': '當前為非活躍狀態',
   'statusIndicator.tooltipPending': '正在處理某項事務',
   'statusIndicator.apiSummary': '整合 Clarity 圖示與文字說明的狀態指示器元件。',
-  'certificate.title': '憑證檢視 (Certificate View)',
+  'certificate.title': '憑證檢視器',
   'certificate.overview':
     '<code>CertificateSignpostComponent</code> 解析 PEM 憑證文字，點擊圖示即可展示憑證有效期限、發行者與指紋雜湊。',
   'certificate.example1': '範例 1：解析原始 PEM 憑證',
@@ -1368,6 +1368,9 @@ export const zhTWTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5 指紋',
   'certificate.viewerFields.sha1': 'SHA-1 指紋',
   'certificate.viewerFields.sha256': 'SHA-256 指紋',
+
+  'certificate.samples.chainDeep': '憑證鏈 — 分葉 → 中繼 CA → 根（深層巢狀）',
+  'certificate.viewerChainTitle': '憑證鏈',
 
   'certificate.samplesTitle': '範例憑證',
   'certificate.samplesDesc':

@@ -39,6 +39,11 @@ export class CertificateComponent {
     sha256: string;
   }>();
 
+  /** Maps the certificate status to the Clarity icon status for the colored cds-icon. */
+  iconStatus(status: CertificateStatus['status']): 'error' | 'warning' | 'success' | 'info' {
+    return status === 'danger' ? 'error' : status;
+  }
+
   constructor() {
     this.translationService.loadTranslationsForComponent('certificate', certificateTranslations);
   }

@@ -19,7 +19,8 @@
   // between label and value.
   grid-template-columns: max-content 1fr;
   column-gap: 2rem;
-  font-size: 0.75rem;
+  text-align: left;
+  font-size: 0.65rem;
 
   dt {
     font-weight: 500;
@@ -33,13 +34,11 @@
 }
 
 .certificate-status {
-  cds-icon {
-    vertical-align: -2px;
-  }
+  vertical-align: middle;
 }
 
 @media screen and (min-width: 768px) {
   .certificate-content {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 }

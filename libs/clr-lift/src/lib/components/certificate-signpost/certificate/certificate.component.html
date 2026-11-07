@@ -8,8 +8,12 @@
     <dd>
       {{ formattedNotAfter() }}
       @if (certificateStatus(); as status) {
-        <span class="certificate-status" [class]="'label ml-2 align-middle ' + status.labelClass">
-          <cds-icon [shape]="status.shape" size="12" aria-hidden="true" />
+        <span
+          class="certificate-status label"
+          [class]="status.labelClass"
+          [attr.cds-layout]="'horizontal gap:xs align:center'"
+        >
+          <cds-icon [shape]="status.shape" [status]="iconStatus(status.status)" size="12" aria-hidden="true" />
           {{ status.labelText }}
         </span>
       }

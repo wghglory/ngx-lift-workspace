@@ -1514,7 +1514,7 @@ export const esTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'estado inactivo',
   'statusIndicator.tooltipPending': 'algunos de los que están pendientes',
   'statusIndicator.apiSummary': 'Componente para mostrar indicadores de estado con iconos y texto.',
-  'certificate.title': 'Signpost de certificado (Viewer)',
+  'certificate.title': 'Visor de certificados',
   'certificate.overview':
     'El componente <code>CertificateSignpostComponent</code>, un componente Angular, interpreta una cadena PEM, mostrando el contenido del certificado con un clic en el icono del certificado. Integrado de forma fluida con Clarity, este componente muestra detalles críticos como el estado del certificado, el período de validez, la información del emisor y los valores de hash.',
   'certificate.example1': 'Ejemplo 1: Parsing Raw PEM',
@@ -1533,6 +1533,9 @@ export const esTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'Huella MD5',
   'certificate.viewerFields.sha1': 'Huella SHA-1',
   'certificate.viewerFields.sha256': 'Huella SHA-256',
+
+  'certificate.samples.chainDeep': 'Cadena — hoja → CA intermedia → raíz (anidamiento profundo)',
+  'certificate.viewerChainTitle': 'Cadena de certificados',
 
   'certificate.samplesTitle': 'Certificados de ejemplo',
   'certificate.samplesDesc':

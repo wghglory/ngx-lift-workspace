@@ -54,6 +54,28 @@ test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page})
   await expect(page.locator('app-code-block').last()).toContainText('-----BEGIN CERTIFICATE-----');
 });
 
+test('renders a three-level certificate chain in the viewer', async ({page}) => {
+  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.goto('/clr-lift/components/certificate');
+  const select = page.getByLabel('Sample certificate');
+  await select.selectOption({label: 'Chain — leaf → intermediate CA → root (deep nesting)'});
+
+  await page.getByRole('button', {name: 'Parse', exact: true}).click();
+  const tree = page.locator('.chain-tree');
+  await expect(tree).toBeVisible();
+  // dsm-ui-style hierarchy: trust anchor first, issued certificates nested below.
+  await expect(tree.locator('.chain-node .chain-name')).toHaveText([
+    'Demo Root CA (RSA)',
+    'Demo Intermediate CA (ECDSA)',
+    'deep.ngx-lift.example',
+  ]);
+  // The nested leaf node exposes its details on click.
+  await tree.locator('.chain-node').last().click();
+  const results = page.locator('app-state-inspector');
+  await expect(results).toContainText('deep.ngx-lift.example');
+  await expect(results).toContainText('DNS:deep.ngx-lift.example');
+});
+
 test('reports malformed PEM in the viewer', async ({page}) => {
   await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
   await page.goto('/clr-lift/components/certificate');

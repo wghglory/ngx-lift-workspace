@@ -1,0 +1,31 @@
+// Mirror the dsm-ui trust-certificate tree: issuer hierarchy drawn with an indent guide,
+// every node selectable to show its translated details below.
+.chain-tree {
+  margin-bottom: 1rem;
+
+  ul {
+    margin-left: 0.75rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--cds-global-color-gray-30, #b3b3b3);
+  }
+
+  .chain-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0.35rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--cds-global-color-gray-10, #f4f4f4);
+    }
+
+    .chain-name {
+      font-weight: 500;
+    }
+  }
+}

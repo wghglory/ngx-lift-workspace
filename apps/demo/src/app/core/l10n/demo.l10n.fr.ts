@@ -376,7 +376,7 @@ export const frTranslations: Record<string, string> = {
   'nav.keyValueInputs': 'Entrées clé-valeur',
   'nav.statusIndicator': 'Indicateur d’état',
   'nav.idleDetection': 'Détection d’inactivité',
-  'nav.certificate': 'Visionneuse de certificat',
+  'nav.certificate': 'Visionneuse de certificats',
   'nav.datagrid': 'Grille de données',
   'nav.byteConverter': 'Convertisseur d’octets',
   'nav.mask': 'Masquage',
@@ -1522,7 +1522,7 @@ export const frTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'État inactif',
   'statusIndicator.tooltipPending': 'certains en attente se produisent',
   'statusIndicator.apiSummary': "Composant pour afficher des indicateurs d'état avec des icônes et du texte.",
-  'certificate.title': "Panneau d'affichage du certificat (Visionneur)",
+  'certificate.title': 'Visionneuse de certificats',
   'certificate.overview':
     "Le <code>CertificateSignpostComponent</code>, un composant Angular, interprète une chaîne PEM et affiche le contenu du certificat en cliquant sur l'icône du certificat. Intégré de manière fluide à Clarity, ce composant affiche des informations critiques telles que l'état du certificat, la période de validité, les informations de l'émetteur et les valeurs de hachage.",
   'certificate.example1': 'Exemple 1: Parsing Raw PEM',
@@ -1541,6 +1541,9 @@ export const frTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'Empreinte MD5',
   'certificate.viewerFields.sha1': 'Empreinte SHA-1',
   'certificate.viewerFields.sha256': 'Empreinte SHA-256',
+
+  'certificate.samples.chainDeep': 'Chaîne — feuille → CA intermédiaire → racine (imbrication profonde)',
+  'certificate.viewerChainTitle': 'Chaîne de certificats',
 
   'certificate.samplesTitle': 'Certificats d’exemple',
   'certificate.samplesDesc':

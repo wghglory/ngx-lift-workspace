@@ -338,7 +338,7 @@ export const zhCNTranslations: Record<string, string> = {
   'nav.keyValueInputs': '键值对输入 (Key Value Inputs)',
   'nav.statusIndicator': '状态指示器 (Status Indicator)',
   'nav.idleDetection': '空闲检测 (Idle Detection)',
-  'nav.certificate': '证书详情视图 (Certificate View)',
+  'nav.certificate': '证书查看器',
   'nav.datagrid': '数据网格工具 (Datagrid)',
   'nav.byteConverter': '字节单位转换 (Byte Converter)',
   'nav.mask': '数据脱敏 (Mask)',
@@ -1361,7 +1361,7 @@ export const zhCNTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': '当前为非活跃状态',
   'statusIndicator.tooltipPending': '正在处理某项事务',
   'statusIndicator.apiSummary': '集成 Clarity 图标与文本说明的状态指示器组件。',
-  'certificate.title': '证书详情视图 (Certificate View)',
+  'certificate.title': '证书查看器',
   'certificate.overview':
     '<code>CertificateSignpostComponent</code> 能够解析 PEM 格式证书文本，点击证书图标即可在 Clarity 弹窗中展示证书主体、有效期、颁发者、指纹哈希等核心信息。',
   'certificate.example1': '示例 1：解析原始 PEM 证书',
@@ -1379,6 +1379,9 @@ export const zhCNTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5 指纹',
   'certificate.viewerFields.sha1': 'SHA-1 指纹',
   'certificate.viewerFields.sha256': 'SHA-256 指纹',
+
+  'certificate.samples.chainDeep': '证书链 — 叶子 → 中间 CA → 根（深层嵌套）',
+  'certificate.viewerChainTitle': '证书链',
 
   'certificate.samplesTitle': '示例证书',
   'certificate.samplesDesc':

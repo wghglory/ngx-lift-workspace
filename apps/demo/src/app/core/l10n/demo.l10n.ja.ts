@@ -363,7 +363,7 @@ export const jaTranslations: Record<string, string> = {
   'nav.keyValueInputs': 'キー・値入力',
   'nav.statusIndicator': '状態インジケーター',
   'nav.idleDetection': 'アイドル検出',
-  'nav.certificate': '証明書ビューア',
+  'nav.certificate': '証明書ビューアー',
   'nav.datagrid': 'データグリッド',
   'nav.byteConverter': 'バイト変換',
   'nav.mask': 'マスク',
@@ -1459,7 +1459,7 @@ export const jaTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': '無効な状態',
   'statusIndicator.tooltipPending': '何かが進行中である',
   'statusIndicator.apiSummary': 'アイコンとテキストを含む状態インジケーターを表示するコンポーネント',
-  'certificate.title': '証明書のサインポスト（ビューアー）',
+  'certificate.title': '証明書ビューアー',
   'certificate.overview':
     '<code>CertificateSignpostComponent</code>は、Angularのコンポーネントであり、PEM文字列を解釈し、証明書の内容をクリックして表示します。Clarityと密接に統合されており、証明書の状態、有効期間、発行者情報、ハッシュ値などの重要な詳細情報を示します。',
   'certificate.example1': '例1: パースする原始PEM',
@@ -1478,6 +1478,9 @@ export const jaTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'MD5フィンガープリント',
   'certificate.viewerFields.sha1': 'SHA-1フィンガープリント',
   'certificate.viewerFields.sha256': 'SHA-256フィンガープリント',
+
+  'certificate.samples.chainDeep': 'チェーン — リーフ → 中間 CA → ルート（深いネスト）',
+  'certificate.viewerChainTitle': '証明書チェーン',
 
   'certificate.samplesTitle': 'サンプル証明書',
   'certificate.samplesDesc':

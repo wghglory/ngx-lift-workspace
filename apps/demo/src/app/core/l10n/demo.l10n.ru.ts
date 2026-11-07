@@ -1491,7 +1491,7 @@ export const ruTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'неактивный статус',
   'statusIndicator.tooltipPending': 'некоторые из них не были выполнены',
   'statusIndicator.apiSummary': 'Компонент для отображения индикаторов состояния с иконками и текстом.',
-  'certificate.title': 'Сигнал свидетельства (Viewer)',
+  'certificate.title': 'Просмотр сертификатов',
   'certificate.overview':
     'Компонент <code>CertificateSignpostComponent</code>, являющийся Angular-компонентом, интерпретирует строку PEM, отображая содержимое сертификата с нажатием на иконку сертификата. Интегрировано с Clarity, этот компонент отображает важные детали, такие как статус сертификата, срок действия, информацию о выдаче и значения хэшей.',
   'certificate.example1': 'Пример 1: Обработка необработанных PEM',
@@ -1510,6 +1510,9 @@ export const ruTranslations: Record<string, string> = {
   'certificate.viewerFields.md5': 'Отпечаток MD5',
   'certificate.viewerFields.sha1': 'Отпечаток SHA-1',
   'certificate.viewerFields.sha256': 'Отпечаток SHA-256',
+
+  'certificate.samples.chainDeep': 'Цепочка — конечный → промежуточный CA → корневой (глубокая вложенность)',
+  'certificate.viewerChainTitle': 'Цепочка сертификатов',
 
   'certificate.samplesTitle': 'Примеры сертификатов',
   'certificate.samplesDesc':
