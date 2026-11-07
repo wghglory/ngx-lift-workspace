@@ -168,7 +168,7 @@ describe('certificate-parser (certificate type coverage)', () => {
     });
   });
 
-  describe('algorithms and extensions (dsm-ui alignment)', () => {
+  describe('algorithms and extensions (downstream consumer alignment)', () => {
     const base = () => ({
       serial: [0x0a],
       issuer: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'CA'}]],

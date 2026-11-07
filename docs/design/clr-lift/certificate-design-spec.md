@@ -52,25 +52,24 @@ dependency so unrelated consumers are not forced to install it. ASN.1/DER decodi
 they cover the fields this library displays and validates, not full X.509 semantics. Angular's ValidatorFn owns parsing
 errors. Expiry display does not inspect all certificate trust conditions.
 
-## dsm-ui alignment requirement
+## Downstream consumer alignment requirement
 
-dsm-ui parses certificates for display with `@peculiar/x509` and hashes DER synchronously with node-forge
-(`libs/core/src/lib/utilities/certificate.utility.ts`, the trusted-root-certificates helpers, and
-`tm-certificate.service`); it never generates keys, signs, or decrypts. Requirement: clr-lift's parser must cover those
-usages so dsm-ui can drop node-forge and `@peculiar/asn1-x509`:
+A downstream UI consumer parses certificates for display with `@peculiar/x509` and hashes DER synchronously with
+node-forge; it never generates keys, signs, or decrypts. Requirement: clr-lift's parser must cover those usages so the
+consumer can drop node-forge and `@peculiar/asn1-x509`:
 
 - Parsing is key-algorithm agnostic: RSA, ECDSA, Ed25519 and other certificates parse identically because the subject
   public key info is not interpreted. Regression fixtures cover RSA and ECDSA signature algorithms.
 - The signature algorithm OID is exposed as `signatureAlgorithm` for labeling RSA/ECDSA and other families; unknown OIDs
-  stay opaque for the caller to map, matching dsm-ui's `DEFAULT_SIGNATURE_ALGORITHM_MAP` fallback.
+  stay opaque for the caller to map, matching the consumer's signature-algorithm map fallback.
 - The subjectAltName (2.5.29.17) and subjectKeyIdentifier (2.5.29.14) extensions are parsed when present
-  (`subjectAltName`, `subjectKeyIdentifier`).
+  (`subjectAltName`, `subjectKeyIdentifier`), including constructed `directoryName` entries.
 - Fingerprints ship for MD5, SHA-1 and SHA-256 over DER, cross-checked against the platform implementation. This library
   intentionally ships no more synchronous digests; consumers needing SHA-384/512 compute them in their own component
   with the async WebCrypto `crypto.subtle.digest` over the DER bytes.
 
-Trust decisions in dsm-ui (trusted-certificate submission, connection status) stay server-side; this requirement covers
-parsing and display only.
+Trust decisions in the downstream consumer (trusted-certificate submission, connection status) stay server-side; this
+requirement covers parsing and display only.
 
 ## Developer learning journey and pedagogy plan
 

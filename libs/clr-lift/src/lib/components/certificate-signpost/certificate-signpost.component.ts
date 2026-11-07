@@ -7,12 +7,19 @@ import {differenceInDays} from 'ngx-lift';
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {certificateTranslations} from './certificate.l10n';
-import {md5, sha1} from './certificate-crypto';
+import {md5, sha1, sha256} from './certificate-crypto';
 import {extractDerFromPem, parseCertificate, X509Certificate} from './certificate-parser';
 import {CertificateClock, CertificateStatus} from './certificate.model';
 import {CertificateComponent} from './certificate/certificate.component';
 
 ClarityIcons.addIcons(certificateIcon);
+
+/** Shared label/icon/text styling per certificate status, so every status site spells it once. */
+const STATUS_STYLES = {
+  danger: {labelClass: 'label-danger', shape: 'error-standard', textClass: 'text-danger'},
+  warning: {labelClass: 'label-warning', shape: 'exclamation-triangle', textClass: 'text-warning'},
+  success: {labelClass: 'label-success', shape: 'success-standard', textClass: 'text-success'},
+} as const;
 
 @Component({
   selector: 'cll-certificate-signpost',
@@ -53,7 +60,7 @@ export class CertificateSignpostComponent {
       return {
         certificate,
         error: '',
-        hashes: {md5: md5(der), sha1: sha1(der)},
+        hashes: {md5: md5(der), sha1: sha1(der), sha256: sha256(der)},
       };
     } catch (error: unknown) {
       return {
@@ -72,23 +79,15 @@ export class CertificateSignpostComponent {
 
     return cert
       ? this.getCertificateStatus(cert)
-      : {
-          labelText: this.error(),
-          labelClass: 'label-danger',
-          status: 'danger',
-          shape: 'error-standard',
-        };
+      : {...STATUS_STYLES.danger, status: 'danger', labelText: this.error()};
   });
 
   /** Fingerprint hashes of the parsed certificate; empty for malformed input, which never renders. */
-  hash = computed(() => this.certificateResult().hashes ?? {md5: '', sha1: ''});
+  hash = computed(() => this.certificateResult().hashes ?? {md5: '', sha1: '', sha256: ''});
 
   certificateStatusClass = computed(() => {
-    return this.certificateStatus().status === 'danger'
-      ? 'text-danger'
-      : this.certificateStatus().status === 'warning'
-        ? 'text-warning'
-        : 'text-success';
+    const status = this.certificateStatus().status;
+    return status === 'info' ? 'text-info' : STATUS_STYLES[status].textClass;
   });
 
   constructor() {
@@ -124,26 +123,19 @@ export class CertificateSignpostComponent {
     const daysDiff = differenceInDays(new Date(certificate.validity.notAfter), new Date(nowTimestamp));
 
     if (certificate.validity.notAfter.getTime() <= nowTimestamp) {
-      return {
-        labelText: this.translationService.translate('certificate.expired'),
-        labelClass: 'label-danger',
-        status: 'danger',
-        shape: 'error-standard',
-      };
+      return this.statusPresentation('danger', this.translationService.translate('certificate.expired'));
     } else if (daysDiff <= 30) {
-      return {
-        labelText: this.translationService.translate('certificate.expiresIn', `${daysDiff}`),
-        labelClass: 'label-warning',
-        status: 'warning',
-        shape: 'exclamation-triangle',
-      };
+      return this.statusPresentation(
+        'warning',
+        this.translationService.translate('certificate.expiresIn', `${daysDiff}`),
+      );
     } else {
-      return {
-        labelText: this.translationService.translate('certificate.valid'),
-        labelClass: 'label-success',
-        status: 'success',
-        shape: 'success-standard',
-      };
+      return this.statusPresentation('success', this.translationService.translate('certificate.valid'));
     }
+  }
+
+  /** Combines the shared status styles with the translated label into a certificate status. */
+  private statusPresentation(status: keyof typeof STATUS_STYLES, labelText: string): CertificateStatus {
+    return {...STATUS_STYLES[status], status, labelText};
   }
 }

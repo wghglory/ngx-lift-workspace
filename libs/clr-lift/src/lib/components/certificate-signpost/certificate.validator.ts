@@ -7,7 +7,7 @@ export function certificateValidator(pemEncoded = false): (control: AbstractCont
   return (control: AbstractControl): ValidationErrors | null => {
     if (control.value) {
       try {
-        parseCertificateFromPem(pemEncoded ? atob(control.value) : control.value, false);
+        parseCertificateFromPem(control.value, pemEncoded);
       } catch (error) {
         return {invalidCertificate: error};
       }

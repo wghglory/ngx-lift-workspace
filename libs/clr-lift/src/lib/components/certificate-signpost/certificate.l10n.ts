@@ -11,6 +11,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Expires On',
     md5Fingerprint: 'MD5 Fingerprint',
     sha1Fingerprint: 'SHA-1 Fingerprint',
+    sha256Fingerprint: 'SHA-256 Fingerprint',
     showCertificate: 'Show certificate',
 
     // certificate attribute keys, named after the short attribute names the parser emits
@@ -43,6 +44,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Expires On',
     md5Fingerprint: 'MD5 Fingerprint',
     sha1Fingerprint: 'SHA-1 Fingerprint',
+    sha256Fingerprint: 'SHA-256 Fingerprint',
     showCertificate: 'Show certificate',
 
     C: 'Country (C)',
@@ -74,6 +76,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Läuft ab am',
     md5Fingerprint: 'MD5-Fingerabdruck',
     sha1Fingerprint: 'SHA-1-Fingerabdruck',
+    sha256Fingerprint: 'SHA-256-Fingerabdruck',
     showCertificate: 'Zertifikat anzeigen',
 
     C: 'Land (C)',
@@ -105,6 +108,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Expira el',
     md5Fingerprint: 'Huella MD5',
     sha1Fingerprint: 'Huella SHA-1',
+    sha256Fingerprint: 'Huella SHA-256',
     showCertificate: 'Mostrar certificado',
 
     C: 'País (C)',
@@ -136,6 +140,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Expire le',
     md5Fingerprint: 'Empreinte MD5',
     sha1Fingerprint: 'Empreinte SHA-1',
+    sha256Fingerprint: 'Empreinte SHA-256',
     showCertificate: 'Afficher le certificat',
 
     C: 'Pays (C)',
@@ -167,6 +172,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Scade il',
     md5Fingerprint: 'Impronta MD5',
     sha1Fingerprint: 'Impronta SHA-1',
+    sha256Fingerprint: 'Impronta SHA-256',
     showCertificate: 'Mostra certificato',
 
     C: 'Paese (C)',
@@ -198,6 +204,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: '有効期限',
     md5Fingerprint: 'MD5フィンガープリント',
     sha1Fingerprint: 'SHA-1フィンガープリント',
+    sha256Fingerprint: 'SHA-256フィンガープリント',
     showCertificate: '証明書を表示する',
 
     C: '国 (C)',
@@ -229,6 +236,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: '만료일',
     md5Fingerprint: 'MD5 지문',
     sha1Fingerprint: 'SHA-1 지문',
+    sha256Fingerprint: 'SHA-256 지문',
     showCertificate: '인증서 표시',
 
     C: '국가 (C)',
@@ -260,6 +268,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Expira em',
     md5Fingerprint: 'Impressão digital MD5',
     sha1Fingerprint: 'Impressão digital SHA-1',
+    sha256Fingerprint: 'Impressão digital SHA-256',
     showCertificate: 'Mostrar certificado',
 
     C: 'País (C)',
@@ -291,6 +300,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Expira em',
     md5Fingerprint: 'Impressão digital MD5',
     sha1Fingerprint: 'Impressão digital SHA-1',
+    sha256Fingerprint: 'Impressão digital SHA-256',
     showCertificate: 'Mostrar certificado',
 
     C: 'País (C)',
@@ -322,6 +332,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: '过期日期',
     md5Fingerprint: 'MD5 指纹',
     sha1Fingerprint: 'SHA-1 指纹',
+    sha256Fingerprint: 'SHA-256 指纹',
     showCertificate: '显示证书',
 
     C: '国家 (C)',
@@ -353,6 +364,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: '過期日期',
     md5Fingerprint: 'MD5 指紋',
     sha1Fingerprint: 'SHA-1 指紋',
+    sha256Fingerprint: 'SHA-256 指紋',
     showCertificate: '顯示證書',
 
     C: '國家 (C)',
@@ -384,6 +396,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Verloopt op',
     md5Fingerprint: 'MD5-vingerafdruk',
     sha1Fingerprint: 'SHA-1-vingerafdruk',
+    sha256Fingerprint: 'SHA-256-vingerafdruk',
     showCertificate: 'Certificaat weergeven',
 
     C: 'Land (C)',
@@ -415,6 +428,7 @@ export const certificateTranslations: Record<string, Record<string, string>> = {
     expiresOn: 'Истекает',
     md5Fingerprint: 'Отпечаток MD5',
     sha1Fingerprint: 'Отпечаток SHA-1',
+    sha256Fingerprint: 'Отпечаток SHA-256',
     showCertificate: 'Показать сертификат',
 
     C: 'Страна (C)',

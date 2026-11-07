@@ -38,7 +38,7 @@ describe('CertificateComponent', () => {
       status: 'info',
       shape: 'error-standard',
     });
-    fixture.componentRef.setInput('hash', {md5: '', sha1: ''});
+    fixture.componentRef.setInput('hash', {md5: '', sha1: '', sha256: ''});
 
     fixture.detectChanges();
   });

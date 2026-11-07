@@ -137,6 +137,9 @@ function decodeOid(bytes: Uint8Array): string {
   for (let i = 0; i < bytes.length; i++) {
     const byte = bytes[i];
     value = value * 128 + (byte & 0x7f);
+    if (!Number.isSafeInteger(value)) {
+      throw new Error('Invalid certificate: malformed DER structure');
+    }
     if ((byte & 0x80) === 0) {
       if (first) {
         const arc1 = Math.floor(value / 40);
@@ -318,41 +321,36 @@ export function extractDerFromPem(pem: string, pemEncoded = true): Uint8Array {
 function parseGeneralNames(content: Uint8Array): GeneralName[] {
   const names: GeneralName[] = [];
   for (const entry of readNode(content, 0).node.children ?? []) {
-    if (entry.tag === 0x82) {
-      if (!entry.value) {
-        continue;
-      }
-      names.push({type: 'dns', value: latin1(entry.value)});
-    } else if (entry.tag === 0x81) {
-      if (!entry.value) {
-        continue;
-      }
-      names.push({type: 'email', value: latin1(entry.value)});
-    } else if (entry.tag === 0x86) {
-      if (!entry.value) {
-        continue;
-      }
-      names.push({type: 'uri', value: latin1(entry.value)});
-    } else if (entry.tag === 0x87) {
-      if (!entry.value) {
-        continue;
-      }
-      const groups: string[] = [];
-      if (entry.value.length === 4) {
-        names.push({type: 'ip', value: Array.from(entry.value).join('.')});
-      } else {
-        for (let i = 0; i + 1 < entry.value.length; i += 2) {
-          groups.push(((entry.value[i] << 8) | entry.value[i + 1]).toString(16).padStart(4, '0'));
-        }
-        names.push({type: 'ip', value: groups.join(':')});
-      }
-    } else if (entry.tag === 0xa4) {
+    // directoryName [4] is the only constructed GeneralName; every other tag carries a value.
+    if (entry.tag === 0xa4) {
       const nameNode = (entry.children ?? [])[0];
       if (nameNode) {
         const dn = parseName(nameNode)
           .attributes.map((attribute) => `${attribute.name}=${attribute.value}`)
           .join(', ');
         names.push({type: 'directoryName', value: dn});
+      }
+      continue;
+    }
+    const value = entry.value;
+    if (!value) {
+      continue;
+    }
+    if (entry.tag === 0x82) {
+      names.push({type: 'dns', value: latin1(value)});
+    } else if (entry.tag === 0x81) {
+      names.push({type: 'email', value: latin1(value)});
+    } else if (entry.tag === 0x86) {
+      names.push({type: 'uri', value: latin1(value)});
+    } else if (entry.tag === 0x87) {
+      const groups: string[] = [];
+      if (value.length === 4) {
+        names.push({type: 'ip', value: Array.from(value).join('.')});
+      } else {
+        for (let i = 0; i + 1 < value.length; i += 2) {
+          groups.push(((value[i] << 8) | value[i + 1]).toString(16).padStart(4, '0'));
+        }
+        names.push({type: 'ip', value: groups.join(':')});
       }
     }
   }
