@@ -1,15 +1,9 @@
-import {readFileSync} from 'node:fs';
-import {fileURLToPath} from 'node:url';
-import {dirname, resolve} from 'node:path';
 import {describe, expect, it} from 'vitest';
 
 import {md5, sha1} from './certificate-crypto';
-import {certificatePem} from './certificate.fixture';
+import {certificatePem, digiCertPem} from './certificate.fixture';
 import {binaryString, makeCert, OID, TAG, toPem} from './certificate-der-fixture';
 import {extractDerFromPem, parseCertificate, parseCertificateFromPem, X509Certificate} from './certificate-parser';
-
-const here = dirname(fileURLToPath(import.meta.url));
-const digiCertPem = readFileSync(resolve(here, '../../../../../../apps/demo/public/sample-certificate.pem'), 'utf8');
 
 describe('certificate-parser (certificate type coverage)', () => {
   describe('real fixtures', () => {
@@ -90,6 +84,22 @@ describe('certificate-parser (certificate type coverage)', () => {
       const cert = parseCertificate(der);
       expect(cert.validity.notBefore.toISOString()).toBe('2022-03-03T04:05:06.000Z');
       expect(cert.validity.notAfter.toISOString()).toBe('2032-03-03T04:05:06.000Z');
+    });
+
+    it('converts numeric timezone offsets to UTC instead of reading them as UTC', () => {
+      const der = makeCert({
+        serial: [0x06],
+        issuer: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'CA'}]],
+        subject: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'Offset'}]],
+        notBefore: new Date(0),
+        notAfter: new Date(0),
+        timeTag: 0x18,
+        rawNotBefore: '20500101000000+0200',
+        rawNotAfter: '20500101000000-0130',
+      });
+      const cert = parseCertificate(der);
+      expect(cert.validity.notBefore.toISOString()).toBe('2049-12-31T22:00:00.000Z');
+      expect(cert.validity.notAfter.toISOString()).toBe('2050-01-01T01:30:00.000Z');
     });
   });
 
@@ -204,6 +214,23 @@ describe('certificate-parser (certificate type coverage)', () => {
       expect(() => parseCertificate(new Uint8Array([1, 2, 3, 4]))).toThrow();
       expect(() => parseCertificateFromPem('%%%')).toThrow();
       expect(() => parseCertificateFromPem(btoa('not a certificate'))).toThrow();
+    });
+
+    it('throws on truncated or indefinite-length DER instead of mis-parsing it', () => {
+      // Content length 5 declared, only 2 bytes present.
+      expect(() => parseCertificate(new Uint8Array([0x30, 0x05, 0x01, 0x02]))).toThrow(/truncated/);
+      // Long-form length bytes cut off.
+      expect(() => parseCertificate(new Uint8Array([0x30, 0x82, 0x01]))).toThrow(/truncated/);
+      // Indefinite length (0x80) is forbidden in DER.
+      expect(() => parseCertificate(new Uint8Array([0x30, 0x80, 0x01, 0x02]))).toThrow(/indefinite/);
+      // Overly long length encoding.
+      expect(() => parseCertificate(new Uint8Array([0x30, 0x85, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06]))).toThrow(
+        /too large/,
+      );
+      // A child element that overruns its parent's declared content while fitting the buffer.
+      expect(() => parseCertificate(new Uint8Array([0x30, 0x03, 0x30, 0x02, 0x01, 0x00, 0x00]))).toThrow(
+        /malformed DER structure/,
+      );
     });
   });
 });

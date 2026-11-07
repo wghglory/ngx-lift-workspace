@@ -8,7 +8,7 @@ import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {certificateTranslations} from './certificate.l10n';
 import {md5, sha1} from './certificate-crypto';
-import {extractDerFromPem, parseCertificate, parseCertificateFromPem, X509Certificate} from './certificate-parser';
+import {extractDerFromPem, parseCertificate, X509Certificate} from './certificate-parser';
 import {CertificateClock, CertificateStatus} from './certificate.model';
 import {CertificateComponent} from './certificate/certificate.component';
 
@@ -48,14 +48,18 @@ export class CertificateSignpostComponent {
 
   private certificateResult = computed(() => {
     try {
+      const der = extractDerFromPem(this.pem(), this.pemEncoded());
+      const certificate = parseCertificate(der);
       return {
-        certificate: parseCertificateFromPem(this.pem(), this.pemEncoded()),
+        certificate,
         error: '',
+        hashes: {md5: md5(der), sha1: sha1(der)},
       };
     } catch (error: unknown) {
       return {
         certificate: undefined,
         error: error instanceof Error ? error.message : String(error),
+        hashes: undefined,
       };
     }
   });
@@ -76,13 +80,8 @@ export class CertificateSignpostComponent {
         };
   });
 
-  hash = computed(() => {
-    const der = extractDerFromPem(this.pem(), this.pemEncoded());
-    // Validate the structure so malformed input throws instead of hashing garbage.
-    parseCertificate(der);
-
-    return {md5: md5(der), sha1: sha1(der)};
-  });
+  /** Fingerprint hashes of the parsed certificate; empty for malformed input, which never renders. */
+  hash = computed(() => this.certificateResult().hashes ?? {md5: '', sha1: ''});
 
   certificateStatusClass = computed(() => {
     return this.certificateStatus().status === 'danger'

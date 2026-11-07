@@ -3,11 +3,11 @@ import {AbstractControl, ValidationErrors} from '@angular/forms';
 import {parseCertificateFromPem} from './certificate-parser';
 
 /** Checks PEM parsing only; does not verify signatures, certificate chains, revocation or trust. */
-export function certificateValidator(shouldDecode = false): (control: AbstractControl) => ValidationErrors | null {
+export function certificateValidator(pemEncoded = false): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
     if (control.value) {
       try {
-        parseCertificateFromPem(shouldDecode ? atob(control.value) : control.value, false);
+        parseCertificateFromPem(pemEncoded ? atob(control.value) : control.value, false);
       } catch (error) {
         return {invalidCertificate: error};
       }

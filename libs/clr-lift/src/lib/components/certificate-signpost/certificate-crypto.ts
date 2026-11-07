@@ -23,6 +23,22 @@ function rotl32(value: number, count: number): number {
   return ((value << count) | (value >>> (32 - count))) >>> 0;
 }
 
+/** Pads the input to a multiple of 64 bytes with the 0x80 terminator and zero fill. */
+function padToBlock(input: Uint8Array): number[] {
+  const message = Array.from(input);
+  message.push(0x80);
+  while (message.length % 64 !== 56) {
+    message.push(0);
+  }
+  return message;
+}
+
+/** Returns the 64-bit message bit length as [low, high] 32-bit words. */
+function bitLengthWords(input: Uint8Array): [number, number] {
+  const bitLength = input.length * 8;
+  return [bitLength >>> 0, Math.floor(bitLength / 4294967296) >>> 0];
+}
+
 function toHexLittleEndian(word: number): string {
   let result = '';
   for (let i = 0; i < 4; i++) {
@@ -33,14 +49,8 @@ function toHexLittleEndian(word: number): string {
 
 /** Computes the MD5 digest of the given bytes and returns it as an uppercase hexadecimal string. */
 export function md5(input: Uint8Array): string {
-  const message = Array.from(input);
-  message.push(0x80);
-  while (message.length % 64 !== 56) {
-    message.push(0);
-  }
-  const bitLength = input.length * 8;
-  const bitLengthLow = bitLength >>> 0;
-  const bitLengthHigh = Math.floor(bitLength / 4294967296) >>> 0;
+  const message = padToBlock(input);
+  const [bitLengthLow, bitLengthHigh] = bitLengthWords(input);
   for (let i = 0; i < 4; i++) {
     message.push((bitLengthLow >>> (8 * i)) & 0xff);
   }
@@ -101,14 +111,8 @@ export function md5(input: Uint8Array): string {
 
 /** Computes the SHA-1 digest of the given bytes and returns it as an uppercase hexadecimal string. */
 export function sha1(input: Uint8Array): string {
-  const message = Array.from(input);
-  message.push(0x80);
-  while (message.length % 64 !== 56) {
-    message.push(0);
-  }
-  const bitLength = input.length * 8;
-  const bitLengthLow = bitLength >>> 0;
-  const bitLengthHigh = Math.floor(bitLength / 4294967296) >>> 0;
+  const message = padToBlock(input);
+  const [bitLengthLow, bitLengthHigh] = bitLengthWords(input);
   for (let i = 0; i < 4; i++) {
     message.push((bitLengthHigh >>> (8 * (3 - i))) & 0xff);
   }

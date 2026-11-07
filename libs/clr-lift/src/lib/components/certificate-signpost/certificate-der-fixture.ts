@@ -6,6 +6,7 @@
  * Not exported from the public API.
  */
 
+/** Dotted OIDs for the distinguished-name attributes the fixtures exercise. */
 export const OID = {
   CN: '2.5.4.3',
   L: '2.5.4.7',
@@ -16,6 +17,7 @@ export const OID = {
   EMAIL: '1.2.840.113549.1.9.1',
 };
 
+/** ASN.1 string tags supported by the fixture attribute encoder. */
 export const TAG = {UTF8: 0x0c, BMP: 0x1e, PRINTABLE: 0x13, IA5: 0x16} as const;
 
 function flatten(input: (number | number[])[]): number[] {
@@ -85,11 +87,14 @@ function encodeOid(dotted: string): number[] {
   return body;
 }
 
+/** A single AttributeTypeAndValue: dotted OID, ASN.1 value tag, and literal value. */
 export interface AttrSpec {
   oid: string;
   tag: number;
   value: string;
 }
+
+/** One relative distinguished name: a SET of one or more attributes. */
 export type Rdn = AttrSpec[];
 
 function attr(at: AttrSpec): number[] {
@@ -128,7 +133,12 @@ function spki(): number[] {
   return SEQUENCE([SEQUENCE([tlv(0x06, encodeOid('1.2.840.10045.2.1'))]), tlv(0x03, [0x00, ...ascii('publickey')])]);
 }
 
-/** Builds a synthetic certificate as raw DER bytes. */
+/**
+ * Builds a synthetic certificate as raw DER bytes.
+ *
+ * `rawNotBefore`/`rawNotAfter` override the encoded time content verbatim (for example
+ * `'20500101000000+0200'`) while `timeTag` selects UTCTime (0x17) or GeneralizedTime (0x18).
+ */
 export function makeCert(opts: {
   version?: number;
   serial: number[];
@@ -137,6 +147,8 @@ export function makeCert(opts: {
   notBefore: Date;
   notAfter: Date;
   timeTag?: number;
+  rawNotBefore?: string;
+  rawNotAfter?: string;
   extensions?: number[];
 }): Uint8Array {
   const timeTag = opts.timeTag ?? 0x17;
@@ -147,8 +159,16 @@ export function makeCert(opts: {
   tbsParts.push(tlv(0x02, opts.serial));
   tbsParts.push(signatureAlgorithm());
   tbsParts.push(name(opts.issuer));
-  const t1 = timeTag === 0x17 ? utcTime(opts.notBefore) : genTime(opts.notBefore);
-  const t2 = timeTag === 0x17 ? utcTime(opts.notAfter) : genTime(opts.notAfter);
+  const t1 = opts.rawNotBefore
+    ? tlv(timeTag, ascii(opts.rawNotBefore))
+    : timeTag === 0x17
+      ? utcTime(opts.notBefore)
+      : genTime(opts.notBefore);
+  const t2 = opts.rawNotAfter
+    ? tlv(timeTag, ascii(opts.rawNotAfter))
+    : timeTag === 0x17
+      ? utcTime(opts.notAfter)
+      : genTime(opts.notAfter);
   tbsParts.push(SEQUENCE([t1, t2]));
   tbsParts.push(name(opts.subject));
   tbsParts.push(spki());
@@ -162,11 +182,7 @@ export function makeCert(opts: {
 
 /** Converts raw DER bytes into a single-line armored PEM string. */
 export function toPem(der: Uint8Array): string {
-  let binary = '';
-  for (let i = 0; i < der.length; i++) {
-    binary += String.fromCharCode(der[i]);
-  }
-  return `-----BEGIN CERTIFICATE-----\n${btoa(binary)}\n-----END CERTIFICATE-----`;
+  return `-----BEGIN CERTIFICATE-----\n${btoa(binaryString(der))}\n-----END CERTIFICATE-----`;
 }
 
 /** Converts raw DER bytes into a binary string, e.g. for `btoa` or raw-DER parser input. */

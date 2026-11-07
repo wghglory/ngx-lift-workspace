@@ -56,10 +56,10 @@ errors. Expiry display does not inspect all certificate trust conditions.
 
 Prerequisites: Angular components, Clarity setup, and a PEM certificate; parsing does not establish trust.
 
-| Reader task            | Learning outcome                                              | Destination / working example                                                                   |
-| ---------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Inspect a certificate  | Read issuer, expiry and SAN from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.vercel.app/clr-lift/components/certificate) |
-| Validate imported text | Distinguish parse failure from certificate trust              | This spec, validator contract and certificate demo                                              |
+| Reader task            | Learning outcome                                                       | Destination / working example                                                                   |
+| ---------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Inspect a certificate  | Read issuer, expiry and fingerprints from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.vercel.app/clr-lift/components/certificate) |
+| Validate imported text | Distinguish parse failure from certificate trust                       | This spec, validator contract and certificate demo                                              |
 
 Validation and delivery: Use certificate parser/validator regressions and certificate E2E. The fixture and teaching flow
 landed in #172; human comprehension remains open. The public API and behavior sections below own exact options and
@@ -79,10 +79,11 @@ validator works with Reactive Forms + `toSignalForm` because that facade retains
 
 ## Behavior and architecture
 
-Signpost parsing catches failures into error/status state. Expiry compares exact notAfter timestamp, then day difference
-for warning text. A component `clock` overrides the default browser minute timer, which refreshes current time and is
-cleaned up by the effect. A supplied clock must expose reactive dependencies if live updates are needed. The validator
-returns null for empty input and `{invalidCertificate: error}` for nonempty parse failures.
+Signpost parsing catches failures into error/status state; the surfaced parser message is a developer diagnostic, not
+translated product copy. Expiry compares exact notAfter timestamp, then day difference for warning text. A component
+`clock` overrides the default browser minute timer, which refreshes current time and is cleaned up by the effect. A
+supplied clock must expose reactive dependencies if live updates are needed. The validator returns null for empty input
+and `{invalidCertificate: error}` for nonempty parse failures.
 
 ## Clarity, accessibility, and localization
 
@@ -108,6 +109,10 @@ clock resolution, so consumers bind `pem`/`pemEncoded`/`clock` inputs instead of
 injection token. The `CertificateComponent` `certificate` input and the exported parser expose the local
 `X509Certificate` type instead of `node-forge`'s `pki.Certificate`. Native signal-field validation is a future reviewed
 integration, not provided by the current ValidatorFn.
+
+Migration for the removed APIs: replace `CertificateService.getCertificateFromPem(pem, pemEncoded)` with the exported
+`parseCertificateFromPem`; replace `getCertificateHashes` with the exported `extractDerFromPem` plus the digest
+functions; replace the `CERTIFICATE_CLOCK` provider with the component `clock` input.
 
 ## Review decisions and delivery
 

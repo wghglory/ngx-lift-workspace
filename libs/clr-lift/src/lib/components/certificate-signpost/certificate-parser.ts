@@ -62,27 +62,49 @@ interface DerNode {
 
 function readLength(bytes: Uint8Array, offset: number): {length: number; next: number} {
   const first = bytes[offset];
+  if (first === undefined) {
+    throw new Error('Invalid certificate: truncated DER');
+  }
   if (first < 0x80) {
     return {length: first, next: offset + 1};
   }
   const byteCount = first & 0x7f;
+  if (byteCount === 0) {
+    throw new Error('Invalid certificate: indefinite lengths are not allowed in DER');
+  }
+  if (byteCount > 4) {
+    throw new Error('Invalid certificate: DER length is too large');
+  }
   let length = 0;
   for (let i = 0; i < byteCount; i++) {
-    length = (length << 8) | bytes[offset + 1 + i];
+    const byte = bytes[offset + 1 + i];
+    if (byte === undefined) {
+      throw new Error('Invalid certificate: truncated DER');
+    }
+    length = (length << 8) | byte;
   }
   return {length, next: offset + 1 + byteCount};
 }
 
 function readNode(bytes: Uint8Array, offset: number): {node: DerNode; next: number} {
   const tag = bytes[offset];
+  if (tag === undefined) {
+    throw new Error('Invalid certificate: truncated DER');
+  }
   const {length, next: contentStart} = readLength(bytes, offset + 1);
   const contentEnd = contentStart + length;
+  if (contentEnd > bytes.length) {
+    throw new Error('Invalid certificate: truncated DER');
+  }
   const node: DerNode = {tag};
   if ((tag & 0x20) !== 0) {
     node.children = [];
     let position = contentStart;
     while (position < contentEnd) {
       const child = readNode(bytes, position);
+      if (child.next > contentEnd) {
+        throw new Error('Invalid certificate: malformed DER structure');
+      }
       node.children.push(child.node);
       position = child.next;
     }
@@ -164,9 +186,12 @@ function parseTimeNode(node: DerNode): Date {
     throw new Error('Invalid certificate: missing time value');
   }
   const raw = latin1(node.value);
-  // Keep only the leading digit run; ignore fractional seconds and any timezone offset.
-  const match = raw.match(/^(\d+)(?:\.\d+)?/);
-  const digits = match ? match[1] : '';
+  const match = raw.match(/^(\d+)(?:\.\d+)?(Z|[+-]\d{2}(?:\d{2})?)?$/);
+  if (!match) {
+    throw new Error('Invalid certificate: malformed time value');
+  }
+  const digits = match[1];
+  let timestamp: number;
   if (node.tag === 0x17) {
     // UTCTime: YYMMDDHHMMSS
     if (digits.length < 12) {
@@ -174,31 +199,37 @@ function parseTimeNode(node: DerNode): Date {
     }
     const year = parseInt(digits.slice(0, 2), 10);
     const fullYear = year >= 50 ? 1900 + year : 2000 + year;
-    return new Date(
-      Date.UTC(
-        fullYear,
-        parseInt(digits.slice(2, 4), 10) - 1,
-        parseInt(digits.slice(4, 6), 10),
-        parseInt(digits.slice(6, 8), 10),
-        parseInt(digits.slice(8, 10), 10),
-        parseInt(digits.slice(10, 12), 10),
-      ),
+    timestamp = Date.UTC(
+      fullYear,
+      parseInt(digits.slice(2, 4), 10) - 1,
+      parseInt(digits.slice(4, 6), 10),
+      parseInt(digits.slice(6, 8), 10),
+      parseInt(digits.slice(8, 10), 10),
+      parseInt(digits.slice(10, 12), 10),
     );
-  }
-  // GeneralizedTime: YYYYMMDDHHMMSS
-  if (digits.length < 14) {
-    throw new Error('Invalid certificate: malformed GeneralizedTime');
-  }
-  return new Date(
-    Date.UTC(
+  } else {
+    // GeneralizedTime: YYYYMMDDHHMMSS
+    if (digits.length < 14) {
+      throw new Error('Invalid certificate: malformed GeneralizedTime');
+    }
+    timestamp = Date.UTC(
       parseInt(digits.slice(0, 4), 10),
       parseInt(digits.slice(4, 6), 10) - 1,
       parseInt(digits.slice(6, 8), 10),
       parseInt(digits.slice(8, 10), 10),
       parseInt(digits.slice(10, 12), 10),
       parseInt(digits.slice(12, 14), 10),
-    ),
-  );
+    );
+  }
+  const zone = match[2];
+  if (zone && zone !== 'Z') {
+    // A numeric offset marks local time; UTC is the local time minus the offset.
+    const hours = parseInt(zone.slice(1, 3), 10);
+    const minutes = zone.length >= 5 ? parseInt(zone.slice(3, 5), 10) : 0;
+    const offsetMs = (hours * 60 + minutes) * 60_000;
+    timestamp += zone[0] === '+' ? -offsetMs : offsetMs;
+  }
+  return new Date(timestamp);
 }
 
 function hexOf(bytes: Uint8Array): string {

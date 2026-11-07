@@ -24,7 +24,7 @@ describe('certificateValidator', () => {
     expect(new FormControl(certificatePem, certificateValidator(true)).errors).toHaveProperty('invalidCertificate');
   });
 
-  it.each([false, true])('reports malformed PEM and recovers with shouldDecode=%s', (encoded) => {
+  it.each([false, true])('reports malformed PEM and recovers with pemEncoded=%s', (encoded) => {
     const control = new FormControl(encoded ? btoa('invalid PEM') : 'invalid PEM', certificateValidator(encoded));
     expect(control.errors).toHaveProperty('invalidCertificate');
     control.setValue(encoded ? btoa(certificatePem) : certificatePem);
