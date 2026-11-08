@@ -1501,7 +1501,7 @@ export const ruTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'неактивный статус',
   'statusIndicator.tooltipPending': 'некоторые из них не были выполнены',
   'statusIndicator.apiSummary': 'Компонент для отображения индикаторов состояния с иконками и текстом.',
-  'certificate.title': 'Сигнал свидетельства (Viewer)',
+  'certificate.title': 'Просмотр сертификатов',
   'certificate.overview':
     'Компонент <code>CertificateSignpostComponent</code>, являющийся Angular-компонентом, интерпретирует строку PEM, отображая содержимое сертификата с нажатием на иконку сертификата. Интегрировано с Clarity, этот компонент отображает важные детали, такие как статус сертификата, срок действия, информацию о выдаче и значения хэшей.',
   'certificate.example1': 'Пример 1: Обработка необработанных PEM',
@@ -1509,6 +1509,55 @@ export const ruTranslations: Record<string, string> = {
   'certificate.example2': 'Пример 2: Партия PEM (Баз64 Закодировано)',
   'certificate.example2Desc':
     'Когда строки PEM закодированы в базе64, тоггл pemEncoded для расшифровки перед расшифровкой:',
+  'certificate.viewerFields.subject': 'Субъект',
+  'certificate.viewerFields.issuer': 'Издатель',
+  'certificate.viewerFields.serialNumber': 'Серийный номер',
+  'certificate.viewerFields.notBefore': 'Действителен с',
+  'certificate.viewerFields.notAfter': 'Действителен до',
+  'certificate.viewerFields.signatureAlgorithm': 'Алгоритм подписи',
+  'certificate.viewerFields.subjectAltName': 'Альтернативные имена субъекта',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Идентификатор ключа субъекта',
+  'certificate.viewerFields.md5': 'Отпечаток MD5',
+  'certificate.viewerFields.sha1': 'Отпечаток SHA-1',
+  'certificate.viewerFields.sha256': 'Отпечаток SHA-256',
+
+  'certificate.samples.chainDeep': 'Цепочка — конечный → промежуточный CA → корневой (глубокая вложенность)',
+  'certificate.viewerChainTitle': 'Цепочка сертификатов',
+
+  'certificate.samplesTitle': 'Примеры сертификатов',
+  'certificate.samplesDesc':
+    'Выберите сертификат по роли (корневой, промежуточный CA, конечный) и алгоритму ключа. Сигнпост разбирает сертификаты RSA, ECDSA и Ed25519 одинаково.',
+  'certificate.samplesSelectLabel': 'Пример сертификата',
+  'certificate.samples.realRootRsa': 'Корневой CA — RSA 2048 (публичный корень DigiCert)',
+  'certificate.samples.rootRsa': 'Корневой CA — RSA 2048 (самоподписанная демонстрация)',
+  'certificate.samples.rootEc': 'Корневой CA — ECDSA P-256 (самоподписанная демонстрация)',
+  'certificate.samples.intermediateEc': 'Промежуточный CA — ECDSA P-256 (подписан корнем RSA)',
+  'certificate.samples.leafRsa': 'Конечный — RSA 2048 с SAN (подписан корнем ECDSA)',
+  'certificate.samples.leafEc': 'Конечный — ECDSA P-256 с SAN (подписан корнем RSA)',
+  'certificate.samples.leafExpired': 'Конечный — RSA (истёк, показывает состояние опасности)',
+  'certificate.viewerTitle': 'Создайте собственное средство просмотра',
+  'certificate.viewerDesc':
+    'Сигнпост состоит из публичных утилит, которые можно переиспользовать в своих инструментах: разобрать PEM (или его кодировку base64) в поля сертификата, вычислить отпечатки байтов DER и закодировать DER обратно в PEM.',
+  'certificate.viewerPemLabel': 'PEM сертификата',
+  'certificate.viewerParse': 'Разобрать',
+  'certificate.viewerReset': 'Сбросить',
+  'certificate.viewerInvalid': 'Эти данные не являются разбираемым сертификатом.',
+  'certificate.viewerResultsTitle': 'Разобранный сертификат',
+  'certificate.viewerEncodedPem': 'DER первого сертификата, перекодированный в PEM с помощью pemEncodeDer',
+  'certificate.viewerCodeTitle': 'Утилиты, на которых построено средство просмотра',
+  'certificate.viewerCodeDesc':
+    'Действие разбора выше использует тот же публичный API, что и ваше собственное средство просмотра:',
+  'certificate.utilitiesTitle': 'Утилиты для сертификатов',
+  'certificate.utilitiesDesc':
+    'Экспортируются из <code>clr-lift</code> для собственных инструментов работы с сертификатами.',
+  'certificate.utilityParse':
+    'Разбирает PEM (исходный или в base64) в поля субъекта, издателя, срока действия, SAN, SKI и алгоритма подписи.',
+  'certificate.utilityExtractDer':
+    'Извлекает исходные байты DER из PEM-оболочки, строки PEM в base64 или исходного текста DER.',
+  'certificate.utilityPemEncode':
+    'Кодирует байты DER обратно в строку PEM с 64-символьными строками base64; операция, обратная extractDerFromPem.',
+  'certificate.utilityDigest': 'Отпечатки MD5, SHA-1 и SHA-256 в верхнем регистре шестнадцатеричных байтов DER.',
+
   'idleDetection.utilOverview':
     'Обнаружение бездействия — это процесс мониторинга активности пользователя и определения, когда пользователь становится неактивным. Это особенно полезно для приложений, требующих, чтобы пользователи оставались авторизованными, так как позволяет системе принять соответствующие действия при прекращении взаимодействия с приложением, например, предупредить пользователя о приближающемся таймауте или автоматически выйти из системы после длительного периода бездействия.',
   'idleDetection.utilOverviewDesc':

@@ -27,7 +27,7 @@ export function validateLazyDependencies(stats) {
     }
     return visited;
   }
-  for (const dependency of ['highlight.js', 'node-forge']) {
+  for (const dependency of ['highlight.js']) {
     const chunks = Object.keys(outputs).filter((file) =>
       Object.keys(outputs[file].inputs ?? {}).some((input) => input.includes(`${dependency}/`)),
     );

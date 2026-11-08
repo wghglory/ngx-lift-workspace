@@ -75,4 +75,18 @@ describe('StateInspectorComponent', () => {
     expect(component.formatValue({foo: 'bar'})).toBe('{"foo":"bar"}');
     expect(component.formatValue('hello')).toBe('hello');
   });
+
+  it('should render plain label/value rows instead of pills when layout is rows', () => {
+    fixture.componentRef.setInput('layout', 'rows');
+    fixture.componentRef.setInput('data', {subject: 'CN=Demo Root CA', count: 42});
+    fixture.detectChanges();
+
+    const rows = fixture.nativeElement.querySelector('.inspector-rows');
+    expect(rows.tagName).toBe('DL');
+    expect(rows.querySelectorAll('dt').length).toBe(2);
+    expect(rows.querySelectorAll('dd').length).toBe(2);
+    expect(rows.querySelector('dt').textContent).toContain('subject:');
+    expect(rows.querySelector('dd').textContent).toContain('CN=Demo Root CA');
+    expect(fixture.nativeElement.querySelector('.state-pill')).toBeNull();
+  });
 });

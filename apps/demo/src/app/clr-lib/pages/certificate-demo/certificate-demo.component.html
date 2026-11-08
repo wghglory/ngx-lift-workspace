@@ -44,6 +44,118 @@
       </div>
       <app-code-block [code]="pem2Code" lang="typescript" />
     </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'certificate.samplesTitle' | translate }}</h3>
+      <p>{{ 'certificate.samplesDesc' | translate }}</p>
+
+      <div class="form-group">
+        <label for="certificate-sample-select">{{ 'certificate.samplesSelectLabel' | translate }}</label>
+        <div class="select-wrapper">
+          <select
+            id="certificate-sample-select"
+            class="select"
+            [value]="selectedSampleId()"
+            (change)="selectSample($any($event.target).value)"
+          >
+            @for (sample of samples; track sample.id) {
+              <option [value]="sample.id" [selected]="sample.id === selectedSampleId()">
+                {{ sample.labelKey | translate }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <p>{{ 'certificate.clickIcon' | translate }}</p>
+      <div cds-layout="horizontal gap:xs align:center">
+        <span>{{ 'certificate.clickCert' | translate }}</span>
+        @defer (on immediate) {
+          <app-certificate-example [pem]="selectedSample().pem" />
+        } @placeholder {
+          <span aria-busy="true">{{ 'certificate.loading' | translate }}</span>
+        } @error {
+          <p role="alert">{{ 'certificate.loadFailed' | translate }}</p>
+        }
+      </div>
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'certificate.viewerTitle' | translate }}</h3>
+      <p [innerHTML]="'certificate.viewerDesc' | translate"></p>
+
+      <div class="form-group clr-form-full-width certificate-pem-form">
+        <label for="certificate-viewer-pem">{{ 'certificate.viewerPemLabel' | translate }}</label>
+        <textarea
+          id="certificate-viewer-pem"
+          class="textarea certificate-pem-input"
+          clrTextarea
+          rows="8"
+          [value]="pemText()"
+          (input)="onPemInput($any($event.target).value)"
+          spellcheck="false"
+        ></textarea>
+      </div>
+
+      <div cds-layout="horizontal gap:sm align:left">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [clrLoading]="viewerState().status === 'loading'"
+          (click)="parseViewerPem()"
+        >
+          {{ 'certificate.viewerParse' | translate }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetViewer()">
+          {{ 'certificate.viewerReset' | translate }}
+        </button>
+      </div>
+
+      @if (viewerError()) {
+        <cll-alert [alertType]="'danger'" [content]="'certificate.viewerInvalid' | translate" />
+        <p role="alert">
+          <code>{{ viewerError() }}</code>
+        </p>
+      }
+
+      @if (viewerResult(); as result) {
+        <div class="chain-section">
+          <h4>{{ 'certificate.viewerChainTitle' | translate }}</h4>
+          <clr-tree>
+            <clr-tree-node *clrRecursiveFor="let node of result.tree; getChildren: treeChildren" [clrExpanded]="true">
+              <button type="button" class="chain-node-link" (click)="selectTreeNode(node)">
+                <cds-icon shape="certificate" size="12" aria-hidden="true" />
+                {{ node.name }}
+              </button>
+              <span class="label" [class]="node.labelClass">
+                <cds-icon [shape]="node.shape" [status]="node.status" size="10" aria-hidden="true" />
+                {{ node.statusText }}
+              </span>
+            </clr-tree-node>
+          </clr-tree>
+
+          <clr-tabs>
+            @for (node of result.tabs; track node.id; let isFirst = $first) {
+              <clr-tab>
+                <button clrTabLink [id]="node.id">{{ node.name }}</button>
+                <clr-tab-content *clrIfActive="isFirst">
+                  <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" layout="rows" />
+                </clr-tab-content>
+              </clr-tab>
+            }
+          </clr-tabs>
+
+          <h4>{{ 'certificate.viewerEncodedPem' | translate }}</h4>
+          <app-code-block [code]="result.encodedPem" lang="text" />
+        </div>
+      }
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'certificate.viewerCodeTitle' | translate }}</h3>
+      <p [innerHTML]="'certificate.viewerCodeDesc' | translate"></p>
+      <app-code-block [code]="viewerCode" lang="typescript" />
+    </article>
   </section>
 
   <!-- API Reference -->
@@ -55,6 +167,12 @@
 
       <h4>{{ 'common.inputs' | translate }}</h4>
       <app-api-table [properties]="inputs()" />
+    </div>
+
+    <div cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'certificate.utilitiesTitle' | translate }}</h3>
+      <p>{{ 'certificate.utilitiesDesc' | translate }}</p>
+      <app-api-table [properties]="utilities()" />
     </div>
   </section>
 </cll-page-container>

@@ -1,8 +1,8 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {pki} from 'node-forge';
 
 import {TranslationService} from '../../../services/translation.service';
 import {MockTranslationService} from '../../../services/translation.service.mock';
+import {X509Certificate} from '../certificate-parser';
 import {CertificateComponent} from './certificate.component';
 
 describe('CertificateComponent', () => {
@@ -17,11 +17,19 @@ describe('CertificateComponent', () => {
     fixture = TestBed.createComponent(CertificateComponent);
     component = fixture.componentInstance;
 
-    const cert = pki.createCertificate();
-    cert.validity.notBefore = new Date();
-    cert.validity.notAfter = new Date();
-    cert.issuer.attributes = [{name: 'string', value: 'string'}];
-    cert.subject.attributes = [{name: 'string', value: 'string'}];
+    const cert: X509Certificate = {
+      serialNumber: '0',
+      signatureAlgorithm: '1.2.840.113549.1.1.11',
+      subject: {
+        attributes: [{name: 'CN', value: 'example.com'}],
+        getField: (name) => (name === 'CN' ? {name: 'CN', value: 'example.com'} : undefined),
+      },
+      issuer: {
+        attributes: [{name: 'O', value: 'Example'}],
+        getField: (name) => (name === 'O' ? {name: 'O', value: 'Example'} : undefined),
+      },
+      validity: {notBefore: new Date(), notAfter: new Date()},
+    };
 
     fixture.componentRef.setInput('certificate', cert);
     fixture.componentRef.setInput('certificateStatus', {
@@ -30,7 +38,7 @@ describe('CertificateComponent', () => {
       status: 'info',
       shape: 'error-standard',
     });
-    fixture.componentRef.setInput('hash', {md5: '', sha1: ''});
+    fixture.componentRef.setInput('hash', {md5: '', sha1: '', sha256: ''});
 
     fixture.detectChanges();
   });

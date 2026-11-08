@@ -379,7 +379,7 @@ export const deTranslations: Record<string, string> = {
   'nav.keyValueInputs': 'Schlüssel-Wert-Eingaben',
   'nav.statusIndicator': 'Statusanzeige',
   'nav.idleDetection': 'Inaktivitätserkennung',
-  'nav.certificate': 'Zertifikatsansicht',
+  'nav.certificate': 'Zertifikats-Viewer',
   'nav.datagrid': 'Datengitter',
   'nav.byteConverter': 'Byte-Konverter',
   'nav.mask': 'Maske',
@@ -1515,7 +1515,7 @@ export const deTranslations: Record<string, string> = {
   'statusIndicator.tooltipInactive': 'Nichterwerbsstatus',
   'statusIndicator.tooltipPending': 'einige noch ausstehende geschehen',
   'statusIndicator.apiSummary': 'Komponente zur Anzeige von Status-Indikatoren mit Icons und Text.',
-  'certificate.title': 'Zertifikat-Wegweiser (Viewer)',
+  'certificate.title': 'Zertifikats-Viewer',
   'certificate.overview':
     'Die <code>CertificateSignpostComponent</code>, eine Angular-Komponente, interpretiert eine PEM-String, um den Inhalt des Zertifikats anzuzeigen, wenn auf das Zertifikat-Icon geklickt wird. Sie ist nahtlos mit Clarity integriert und zeigt kritische Details wie Zertifikatsstatus, Gültigkeitsdauer, Ausstellerinformationen und Hashwerte an.',
   'certificate.example1': 'Beispiel 1: Parsing Raw PEM',
@@ -1523,6 +1523,54 @@ export const deTranslations: Record<string, string> = {
   'certificate.example2': 'Beispiel 2: Parsing PEM (Base64 codiert)',
   'certificate.example2Desc':
     'Wenn PEM-Strings Base64 kodiert sind, schalten Sie pemEncoded ein, um vor dem Parsen zu dekodieren:',
+  'certificate.viewerFields.subject': 'Antragsteller',
+  'certificate.viewerFields.issuer': 'Aussteller',
+  'certificate.viewerFields.serialNumber': 'Seriennummer',
+  'certificate.viewerFields.notBefore': 'Gültig ab',
+  'certificate.viewerFields.notAfter': 'Gültig bis',
+  'certificate.viewerFields.signatureAlgorithm': 'Signaturalgorithmus',
+  'certificate.viewerFields.subjectAltName': 'Alternative Antragstellernamen',
+  'certificate.viewerFields.subjectKeyIdentifier': 'Subject Key Identifier',
+  'certificate.viewerFields.md5': 'MD5-Fingerabdruck',
+  'certificate.viewerFields.sha1': 'SHA-1-Fingerabdruck',
+  'certificate.viewerFields.sha256': 'SHA-256-Fingerabdruck',
+
+  'certificate.samples.chainDeep': 'Kette — Leaf → Intermediate-CA → Root (tief verschachtelt)',
+  'certificate.viewerChainTitle': 'Zertifikatskette',
+
+  'certificate.samplesTitle': 'Beispielzertifikate',
+  'certificate.samplesDesc':
+    'Wählen Sie ein Zertifikat nach Rolle (Root, Intermediate-CA, Leaf) und Schlüsselalgorithmus. Das Signpost parst RSA-, ECDSA- und Ed25519-Zertifikate auf dieselbe Weise.',
+  'certificate.samplesSelectLabel': 'Beispielzertifikat',
+  'certificate.samples.realRootRsa': 'Root-CA — RSA 2048 (öffentlicher DigiCert-Root)',
+  'certificate.samples.rootRsa': 'Root-CA — RSA 2048 (selbstsigniertes Demo)',
+  'certificate.samples.rootEc': 'Root-CA — ECDSA P-256 (selbstsigniertes Demo)',
+  'certificate.samples.intermediateEc': 'Intermediate-CA — ECDSA P-256 (vom RSA-Root signiert)',
+  'certificate.samples.leafRsa': 'Leaf — RSA 2048 mit SANs (von der ECDSA-Root signiert)',
+  'certificate.samples.leafEc': 'Leaf — ECDSA P-256 mit SANs (vom RSA-Root signiert)',
+  'certificate.samples.leafExpired': 'Leaf — RSA (abgelaufen, zeigt den Gefahrenstatus)',
+  'certificate.viewerTitle': 'Eigenen Viewer bauen',
+  'certificate.viewerDesc':
+    'Das Signpost besteht aus öffentlichen Hilfsfunktionen, die Sie in eigenen Tools wiederverwenden können: PEM (oder dessen Base64-Kodierung) in Zertifikatsfelder parsen, die DER-Bytes hashen und DER zurück zu PEM kodieren.',
+  'certificate.viewerPemLabel': 'Zertifikat-PEM',
+  'certificate.viewerParse': 'Parsen',
+  'certificate.viewerReset': 'Zurücksetzen',
+  'certificate.viewerInvalid': 'Diese Eingabe ist kein parsbares Zertifikat.',
+  'certificate.viewerResultsTitle': 'Geparstes Zertifikat',
+  'certificate.viewerEncodedPem': 'DER des ersten Zertifikats mit pemEncodeDer zurück zu PEM kodiert',
+  'certificate.viewerCodeTitle': 'Die Hilfsfunktionen hinter dem Viewer',
+  'certificate.viewerCodeDesc':
+    'Die Parse-Aktion oben verwendet dieselbe öffentliche API, die Sie in einem eigenen Zertifikats-Viewer nutzen würden:',
+  'certificate.utilitiesTitle': 'Zertifikats-Hilfsfunktionen',
+  'certificate.utilitiesDesc': 'Aus <code>clr-lift</code> exportiert für eigene Zertifikatswerkzeuge.',
+  'certificate.utilityParse':
+    'Parst PEM (roh oder base64-kodiert) in Subject-, Issuer-, Gültigkeits-, SAN-, SKI- und Signaturalgorithmus-Felder.',
+  'certificate.utilityExtractDer':
+    'Extrahiert die rohen DER-Bytes aus PEM-Armor, einem base64-kodierten PEM-String oder rohem DER-Text.',
+  'certificate.utilityPemEncode':
+    'Kodiert DER-Bytes zurück in einen PEM-String mit 64-Zeichen-Base64-Zeilen; das Gegenstück zu extractDerFromPem.',
+  'certificate.utilityDigest': 'MD5-, SHA-1- und SHA-256-Fingerabdrücke (Hex, Großbuchstaben) über die DER-Bytes.',
+
   'idleDetection.utilOverview':
     'Die Erkennung von Inaktivität ist der Prozess, bei dem die Benutzeraktivität überwacht und bestimmt wird, wann ein Benutzer inaktiv wird. Dies ist besonders nützlich für Anwendungen, bei denen Benutzer fortlaufend angemeldet bleiben müssen, da es dem System ermöglicht,适当的 Maßnahmen zu ergreifen, wenn ein Benutzer die Anwendung nicht mehr nutzt, z. B. den Benutzer vor einem ablaufenden Timeout zu warnen oder ihn nach einer längeren Inaktivität automatisch abzumelden.',
   'idleDetection.utilOverviewDesc':

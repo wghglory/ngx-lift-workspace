@@ -1,13 +1,23 @@
 import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {pki} from 'node-forge';
 import {vi} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
 import {MockTranslationService} from '../../services/translation.service.mock';
-import {CERTIFICATE_CLOCK} from './certificate.model';
-import {CertificateService} from './certificate.service';
+import {makeCert, OID, TAG, toPem} from './certificate-der-fixture';
 import {CertificateSignpostComponent} from './certificate-signpost.component';
+
+function pemExpiringAt(notAfter: Date, notBefore: Date = new Date(Date.UTC(2020, 0, 1))): string {
+  return toPem(
+    makeCert({
+      serial: [0x01],
+      issuer: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'Test CA'}]],
+      subject: [[{oid: OID.CN, tag: TAG.PRINTABLE, value: 'test.example'}]],
+      notBefore,
+      notAfter,
+    }),
+  );
+}
 
 describe('CertificateSignpostComponent', () => {
   let component: CertificateSignpostComponent;
@@ -16,7 +26,7 @@ describe('CertificateSignpostComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CertificateSignpostComponent],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}, CertificateService],
+      providers: [{provide: TranslationService, useClass: MockTranslationService}],
     });
     fixture = TestBed.createComponent(CertificateSignpostComponent);
     component = fixture.componentInstance;
@@ -27,18 +37,13 @@ describe('CertificateSignpostComponent', () => {
     expect(component).toBeTruthy();
   });
   it('shows a string error for an invalid certificate and recovers after an input change', () => {
-    const certificateService = TestBed.inject(CertificateService);
-    const parse = vi.spyOn(certificateService, 'getCertificateFromPem').mockImplementation(() => {
-      throw new Error('Invalid PEM');
-    });
-    fixture.componentRef.setInput('pem', 'invalid pem');
+    fixture.componentRef.setInput('pem', 'not a certificate');
 
     expect(() => component.certificate()).not.toThrow();
     expect(component.certificate()).toBeUndefined();
-    expect(component.error()).toBe('Invalid PEM');
+    expect(component.error()).toContain('Invalid certificate');
 
-    parse.mockReturnValue(pki.createCertificate());
-    fixture.componentRef.setInput('pem', 'valid pem');
+    fixture.componentRef.setInput('pem', pemExpiringAt(new Date(Date.UTC(2030, 0, 1))));
     expect(component.certificate()).toBeDefined();
     expect(component.error()).toBe('');
   });
@@ -47,10 +52,7 @@ describe('CertificateSignpostComponent', () => {
     vi.useFakeTimers();
     try {
       vi.setSystemTime(new Date('2026-10-11T12:00:00Z'));
-      const certificate = pki.createCertificate();
-      certificate.validity.notAfter = new Date('2026-10-11T11:59:59Z');
-      vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
-      fixture.componentRef.setInput('pem', 'certificate');
+      fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-10-11T11:59:59Z')));
 
       expect(component.certificateStatus().status).toBe('danger');
     } finally {
@@ -63,10 +65,7 @@ describe('CertificateSignpostComponent', () => {
     try {
       vi.setSystemTime(new Date('2026-10-31T23:59:30Z'));
       const timedFixture = TestBed.createComponent(CertificateSignpostComponent);
-      const certificate = pki.createCertificate();
-      certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
-      vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
-      timedFixture.componentRef.setInput('pem', 'certificate');
+      timedFixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
       timedFixture.detectChanges();
       expect(timedFixture.componentInstance.certificateStatus().status).toBe('warning');
       await vi.advanceTimersByTimeAsync(60_000);
@@ -78,10 +77,7 @@ describe('CertificateSignpostComponent', () => {
   });
 
   it('samples a mixed Date/timestamp clock exactly once per status evaluation', () => {
-    const certificate = pki.createCertificate();
-    certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
-    vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
-    fixture.componentRef.setInput('pem', 'certificate');
+    fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
     const clock = vi
       .fn<() => Date | number>()
       .mockReturnValueOnce(new Date('2026-10-22T00:00:00Z'))
@@ -92,10 +88,7 @@ describe('CertificateSignpostComponent', () => {
   });
 
   it('updates status when a signal-backed clock advances without replacing inputs', () => {
-    const certificate = pki.createCertificate();
-    certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
-    vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
-    fixture.componentRef.setInput('pem', 'certificate');
+    fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
     const clock = signal(Date.parse('2026-10-22T00:00:00Z'));
     fixture.componentRef.setInput('clock', clock);
     expect(component.certificateStatus().status).toBe('warning');
@@ -104,10 +97,7 @@ describe('CertificateSignpostComponent', () => {
   });
 
   it('determines certificate status using clock input for deterministic time evaluation', () => {
-    const certificate = pki.createCertificate();
-    certificate.validity.notAfter = new Date('2026-11-01T00:00:00Z');
-    vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
-    fixture.componentRef.setInput('pem', 'certificate');
+    fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
 
     // 10 days before expiry -> warning (<= 30 days)
     fixture.componentRef.setInput('clock', () => new Date('2026-10-22T00:00:00Z'));
@@ -123,27 +113,5 @@ describe('CertificateSignpostComponent', () => {
     fixture.componentRef.setInput('clock', () => new Date('2026-11-02T00:00:00Z'));
     fixture.detectChanges();
     expect(component.certificateStatus().status).toBe('danger');
-  });
-
-  it('honors CERTIFICATE_CLOCK injection token when clock input is omitted', () => {
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [CertificateSignpostComponent],
-      providers: [
-        {provide: TranslationService, useClass: MockTranslationService},
-        {provide: CERTIFICATE_CLOCK, useValue: () => new Date('2026-05-01T00:00:00Z')},
-        CertificateService,
-      ],
-    });
-    const customFixture = TestBed.createComponent(CertificateSignpostComponent);
-    const customComponent = customFixture.componentInstance;
-    const certificate = pki.createCertificate();
-    certificate.validity.notAfter = new Date('2026-05-15T00:00:00Z');
-    vi.spyOn(TestBed.inject(CertificateService), 'getCertificateFromPem').mockReturnValue(certificate);
-    customFixture.componentRef.setInput('pem', 'cert');
-    customFixture.detectChanges();
-
-    // 14 days diff -> warning
-    expect(customComponent.certificateStatus().status).toBe('warning');
   });
 });

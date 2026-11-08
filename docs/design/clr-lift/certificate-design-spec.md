@@ -1,6 +1,6 @@
 # Certificate parsing, status, and validation
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: November 8, 2026. Package: clr-lift.
 Approval: existing parsing/display APIs; no cryptographic trust guarantee.
 
 ## Applicable contracts
@@ -10,10 +10,11 @@ Reactive Forms; the signpost has no form value or shared query cache.
 
 ## Background
 
-[CertificateService](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate.service.ts),
 [signpost](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate-signpost.component.ts) and
 [certificateValidator](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate.validator.ts) support
-PEM inspection and Reactive Forms parsing checks.
+PEM inspection and Reactive Forms parsing checks. The signpost calls the
+[certificate parser](../../../libs/clr-lift/src/lib/components/certificate-signpost/certificate-parser.ts) directly;
+there is no certificate service.
 
 ## Terminology
 
@@ -45,17 +46,42 @@ TLS trust decisions, chain validation, private-key handling, revocation and serv
 
 ## Industry evidence and current gaps
 
-The installed node-forge APIs supply PEM parsing, DER and digest functions; reuse them rather than implementing ASN.1.
+Certificate parsing, DER decoding, and MD5/SHA-1 fingerprints are implemented with dependency-free, synchronous
+browser-native code in `certificate-parser.ts` and `certificate-crypto.ts`. This removed the previous node-forge peer
+dependency so unrelated consumers are not forced to install it. ASN.1/DER decoding and hashing are intentionally narrow:
+they cover the fields this library displays and validates, not full X.509 semantics. A DER buffer must contain exactly
+one top-level TLV; bytes after that TLV are malformed, while text after a PEM END marker is ordinary PEM framing and is
+ignored. OID decoding follows X.690's `40 * arc1 + arc2` rule, including first subidentifiers that span several bytes.
 Angular's ValidatorFn owns parsing errors. Expiry display does not inspect all certificate trust conditions.
+
+## Downstream consumer alignment requirement
+
+A downstream UI consumer parses certificates for display with `@peculiar/x509` and hashes DER synchronously with
+node-forge; it never generates keys, signs, or decrypts. Requirement: clr-lift's parser must cover those usages so the
+consumer can drop node-forge and `@peculiar/asn1-x509`:
+
+- Parsing is key-algorithm agnostic: RSA, ECDSA, Ed25519 and other certificates parse identically because the subject
+  public key info is not interpreted. Regression fixtures cover RSA and ECDSA signature algorithms.
+- The signature algorithm OID is exposed as `signatureAlgorithm` for labeling RSA/ECDSA and other families; unknown OIDs
+  stay opaque for the caller to map, matching the consumer's signature-algorithm map fallback. X.690-compliant OID
+  decoding keeps unknown OIDs under arc 2 with a second arc of 40 or more unchanged as well.
+- The subjectAltName (2.5.29.17) and subjectKeyIdentifier (2.5.29.14) extensions are parsed when present
+  (`subjectAltName`, `subjectKeyIdentifier`), including constructed `directoryName` entries.
+- Fingerprints ship for MD5, SHA-1 and SHA-256 over DER, cross-checked against the platform implementation. This library
+  intentionally ships no more synchronous digests; consumers needing SHA-384/512 compute them in their own component
+  with the async WebCrypto `crypto.subtle.digest` over the DER bytes.
+
+Trust decisions in the downstream consumer (trusted-certificate submission, connection status) stay server-side; this
+requirement covers parsing and display only.
 
 ## Developer learning journey and pedagogy plan
 
 Prerequisites: Angular components, Clarity setup, and a PEM certificate; parsing does not establish trust.
 
-| Reader task            | Learning outcome                                              | Destination / working example                                                                   |
-| ---------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Inspect a certificate  | Read issuer, expiry and SAN from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.vercel.app/clr-lift/components/certificate) |
-| Validate imported text | Distinguish parse failure from certificate trust              | This spec, validator contract and certificate demo                                              |
+| Reader task            | Learning outcome                                                       | Destination / working example                                                                   |
+| ---------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Inspect a certificate  | Read issuer, expiry and fingerprints from the downloadable PEM fixture | [/clr-lift/components/certificate](https://ngx-lift.vercel.app/clr-lift/components/certificate) |
+| Validate imported text | Distinguish parse failure from certificate trust                       | This spec, validator contract and certificate demo                                              |
 
 Validation and delivery: Use certificate parser/validator regressions and certificate E2E. The fixture and teaching flow
 landed in #172; human comprehension remains open. The public API and behavior sections below own exact options and
@@ -68,22 +94,96 @@ limitations; examples introduce them after the first task.
 <cll-certificate-signpost [pem]="pem" [pemEncoded]="false" />
 ```
 
-`CertificateService.getCertificateFromPem` and `getCertificateHashes` default `pemEncoded=true`; the signpost input
-defaults false. Pass the flag explicitly at boundaries. Hash output is uppercase MD5/SHA1 for display compatibility. Use
+The exported `parseCertificateFromPem` helper defaults `pemEncoded=true`; the signpost input defaults false. Pass the
+flag explicitly at boundaries. Hash output is uppercase MD5/SHA1 for display compatibility. Use
 `certificateValidator(false)` with Reactive Forms for raw PEM; decoding is opt-in. The signpost is display-only; the
 validator works with Reactive Forms + `toSignalForm` because that facade retains the same control.
 
+Build-your-own-viewer utilities, exported alongside the component for custom certificate tooling:
+
+```typescript
+import {extractDerFromPem, md5, parseCertificate, pemEncodeDer, sha1, sha256} from 'clr-lift';
+
+const der = extractDerFromPem(pemText); // PEM (or base64-encoded PEM) -> DER bytes
+const certificate = parseCertificate(der); // DER -> fields; key-algorithm agnostic
+const digests = {md5: md5(der), sha1: sha1(der), sha256: sha256(der)}; // uppercase hex
+const pem = pemEncodeDer(der); // DER -> PEM armor with 64-character base64 lines
+```
+
+`pemEncodeDer(der, label = 'CERTIFICATE')` is the inverse of `extractDerFromPem` for DER input; the round trip
+`extractDerFromPem(pemEncodeDer(der))` returns bytes equal to `der`. The armor label is opaque, so the same function
+arms other PEM content (for example `PRIVATE KEY`). No owned visible strings: it returns data, not UI. The demo page
+exercises these utilities in its build-your-own-viewer section with a sample selector covering root, intermediate CA and
+leaf certificates for RSA and ECDSA keys.
+
+The demo's `buildCertificateView` re-encodes the first PEM certificate block: `extractDerFromPem` returns one DER buffer
+and `pemEncodeDer` arms that buffer. Concatenated PEM chains are split by `splitPemBlocks` and parsed by
+`parseCertificateChain`, which supplies the hierarchy tree and one details tab per certificate. The re-encoded PEM panel
+is therefore a single-certificate round trip, not a chain serializer; its label says so in all 11 demo locales.
+
 ## Behavior and architecture
 
-Signpost parsing catches failures into error/status state. Expiry compares exact notAfter timestamp, then day difference
-for warning text. A component `clock` overrides `CERTIFICATE_CLOCK`; otherwise a browser minute timer refreshes current
-time and is cleaned up by the effect. A supplied clock must expose reactive dependencies if live updates are needed. The
-validator returns null for empty input and `{invalidCertificate: error}` for nonempty parse failures.
+Signpost parsing catches failures into error/status state; the surfaced parser message is a developer diagnostic, not
+translated product copy. Expiry compares exact notAfter timestamp, then day difference for warning text. A component
+`clock` overrides the default browser minute timer, which refreshes current time and is cleaned up by the effect. A
+supplied clock must expose reactive dependencies if live updates are needed. The validator returns null for empty input
+and `{invalidCertificate: error}` for nonempty parse failures. `parseCertificate` requires the DER buffer to end exactly
+after the top-level SEQUENCE; nested extension values must also be a single TLV, and an unterminated base-128 OID
+subidentifier is rejected. PEM text after the END marker never reaches the DER parser, so trailing-byte input fails C3
+while ordinary PEM framing and concatenated PEM chains remain usable through `parseCertificateChain`.
 
 ## Clarity, accessibility, and localization
 
 Use translated Clarity signpost/button labels and status text, not color alone. Runtime locale changes recompute
 messages. Verify keyboard open/close and focus return; human translation acceptance remains separate.
+
+## Display details (signpost and demo viewer)
+
+The reference certificate viewer in the downstream consumer renders certificate details as plain label/value rows: a
+left label column, a right value column with wrapping, normal-weight text and no colored chips. Industry evidence:
+Clarity's row grid and form-validation icons (which use `status="danger"` for error states), and the consumer's
+certificate information display. Adopt the plain rows and the `danger` icon status; reject colored status pills in
+certificate detail panels because the color carries no status meaning for subject, issuer or digest values.
+
+Decisions, with no change to the public parsing API:
+
+- Signpost detail headings shrink to a small section-label size, and the definition grid uses a narrower label column
+  with tighter row/column gaps so the popover stays compact.
+- Expired status icons use the Clarity `danger` status (red) at every status site: the signpost trigger, the signpost
+  content and the demo chain tree. Translated status text still carries the meaning, so color is never the only signal.
+- The demo viewer's PEM textarea spans the available form width with a monospace font, so pasted PEM armor is readable.
+  Clarity's `clr-form-full-width` class expands the directive-generated textarea container.
+- The demo's parsed-certificate panels use the shared state inspector's `layout="rows"` variant, which renders semantic
+  `<dl>` label/value pairs. Other demo pages keep the pill layout.
+- The parser keeps returning the dotted signature-algorithm OID. The demo maps well-known OIDs to standard X.509 display
+  names (`SHA256 with RSA`, `ECDSA with SHA256`, `Ed25519`, and the SHA-384/512 variants), falling back to the OID for
+  unknown algorithms. The mapping stays on the display side, as required by the downstream consumer alignment section;
+  it is not a new library export.
+- Hierarchy nodes and details tabs share a stable id derived from the certificate's SHA-256 fingerprint. Clicking a node
+  activates the matching tab even when a certificate has no subject key identifier or common name, and the ids stay
+  unique when certificates share a display name.
+
+### Visible and announced strings
+
+| Surface                  | Message                                                                                                         | Delivery                                                                                                                 |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Demo viewer detail label | `certificate.viewerFields.signatureAlgorithm` changes from "Signature Algorithm (OID)" to "Signature Algorithm" | All 11 demo locales                                                                                                      |
+| Demo viewer PEM label    | `certificate.viewerEncodedPem` states that only the first certificate's DER is re-encoded                       | All 11 demo locales                                                                                                      |
+| Demo viewer detail value | Standard X.509 algorithm names                                                                                  | Technical identifiers derived from certificate data, like OIDs, subject DNs and fingerprints; not localized product copy |
+| Signpost headings/status | No new strings; existing translated keys unchanged                                                              | All 14 library locales unchanged                                                                                         |
+
+The rows variant keeps the existing translated inspector title and raw-JSON toggle. Long values wrap instead of being
+truncated, so translated labels and long fingerprints remain readable at narrow widths and zoom levels. No new public
+API, runtime dependency or announcement is introduced.
+
+### Acceptance evidence
+
+Unit coverage for the OID-to-name mapping (known, unknown, Ed25519 and large-second-arc values), X.690
+first-subidentifier decoding, single-TLV DER enforcement, the shared tab id and the single-certificate re-encode
+contract, plus the rows variant; browser coverage for the friendly algorithm name, the rows layout, the widened
+textarea, the first-certificate PEM label and the `danger` icon status on an expired certificate; accessibility,
+translation and formatting checks for every affected page. Independent human language and assistive-technology
+acceptance remain separate.
 
 ## Demo and validation plan
 
@@ -97,16 +197,41 @@ package installation checks a different boundary.
 
 ## Compatibility, rollout, and risks
 
-Angular 21 and existing node-forge peer. Current package root requires node-forge even for unrelated consumers; lazy
-demo loading does not make that installation optional. Evaluate secondary packaging only with consumer evidence. Native
-signal-field validation is a future reviewed integration, not provided by the current ValidatorFn.
+Angular 21. The node-forge peer dependency was removed; certificate parsing and fingerprinting are now dependency-free
+and synchronous, so unrelated consumers no longer install node-forge and the main `clr-lift` entry does not reference
+it. The stateful `CertificateService` was removed: the signpost calls the parser and digest functions directly and owns
+clock resolution, so consumers bind `pem`/`pemEncoded`/`clock` inputs instead of injecting a service or providing an
+injection token. The `CertificateComponent` `certificate` input and the exported parser expose the local
+`X509Certificate` type instead of `node-forge`'s `pki.Certificate`. Native signal-field validation is a future reviewed
+integration, not provided by the current ValidatorFn.
+
+Migration for the removed APIs: replace `CertificateService.getCertificateFromPem(pem, pemEncoded)` with the exported
+`parseCertificateFromPem`; replace `getCertificateHashes` with the exported `extractDerFromPem` plus the digest
+functions; replace the `CERTIFICATE_CLOCK` provider with the component `clock` input.
 
 ## Review decisions and delivery
 
 Keep explicit parsing-only semantics and clock precedence. Reassess optional packaging and stronger display fingerprints
-separately; neither is silently introduced in this docs update.
+separately; neither is silently introduced in this docs update. Review feedback on trailing DER bytes, X.690 OID
+decoding, hierarchy/tab identity and the single-certificate re-encode label is resolved in code and in this spec; no
+public API signature changed.
 
 ## Evidence
 
-The direct CertificateService/certificateValidator suites pass 18 tests with real node-forge parsing and fixed MD5/SHA1
-values independently calculated from DER with Python hashlib. This proves parsing/display behavior, not trust.
+The parser, certificateValidator, signpost, and certificate component suites pass: `nx run clr-lift:test` reports 36
+files / 478 tests and `nx run demo:test` reports 83 files / 302 tests (the demo suite needs reduced worker concurrency
+in this environment to avoid unrelated hook timeouts). A viewer-level unit test asserts that every hierarchy node id
+matches a details tab id and that the ids are unique. Translation completeness is 2307/2307 keys in all 11 demo locales
+with zero i18n-check errors; typecheck, lint (10 warnings in unrelated e2e specs), format:check and git diff --check
+pass. Browser acceptance passes locally against the PR workspace: all five certificate viewer Playwright tests, both
+light/dark accessibility checks for the certificate route, and all 11 locale coverage tests succeed on Chromium. The
+required system libraries are supplied by a rootless local sysroot under the gitignored `dist/` directory because this
+machine has no passwordless sudo. Independent human language and assistive-technology acceptance remain separate.
+
+The fixed MD5/SHA1 values were independently calculated from DER with Python hashlib and are now reproduced by the
+dependency-free native implementation in `certificate-crypto.ts`; SHA-256 is cross-checked against the platform
+implementation in tests. A synthetic DER fixture builder covers certificate types the two real fixtures do not: v1 and
+v3 certificates, UTCTime and GeneralizedTime validity with numeric offsets, multi-valued RDNs, UTF8/BMP/Printable/IA5
+distinguished-name encodings, RSA and ECDSA signature algorithms, SAN/SKI extensions, and PEM/raw-DER/base64 inputs. It
+emits X.690 base-128 first OID subidentifiers, so `2.100.3` and other large-second-arc OIDs are regression tested
+alongside trailing-DER-byte and nested-TLV rejection. This proves parsing/display behavior, not trust.

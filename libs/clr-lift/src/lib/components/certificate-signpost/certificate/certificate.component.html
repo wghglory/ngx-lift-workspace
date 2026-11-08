@@ -7,9 +7,14 @@
     <dt>{{ 'certificate.expiresOn' | translate }}</dt>
     <dd>
       {{ formattedNotAfter() }}
-      @if (certificateStatus()) {
-        <span class="label ml-2 align-middle" [class]="certificateStatus().labelClass">
-          {{ certificateStatus().labelText }}
+      @if (certificateStatus(); as status) {
+        <span
+          class="certificate-status label"
+          [class]="status.labelClass"
+          [attr.cds-layout]="'horizontal gap:xs align:center'"
+        >
+          <cds-icon [shape]="status.shape" [status]="status.status" size="12" aria-hidden="true" />
+          {{ status.labelText }}
         </span>
       }
     </dd>
@@ -38,5 +43,8 @@
 
     <dt>{{ 'certificate.sha1Fingerprint' | translate }}</dt>
     <dd>{{ hash().sha1 }}</dd>
+
+    <dt>{{ 'certificate.sha256Fingerprint' | translate }}</dt>
+    <dd>{{ hash().sha256 }}</dd>
   </dl>
 </div>
