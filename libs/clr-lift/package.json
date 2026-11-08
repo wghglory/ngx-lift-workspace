@@ -20,14 +20,14 @@
   },
   "homepage": "https://ngx-lift.vercel.app/clr-lift",
   "peerDependencies": {
-    "@angular/common": ">=21 <22",
-    "@angular/core": ">=21 <22",
-    "@angular/cdk": ">=21 <22",
-    "@angular/platform-browser": ">=21 <22",
-    "@angular/forms": ">=21 <22",
-    "rxjs": ">=7.8.0 <8",
-    "@clr/angular": ">=18 <19",
-    "ngx-lift": ">=21.5.0 <22"
+    "@angular/common": ">=21",
+    "@angular/core": ">=21",
+    "@angular/cdk": ">=21",
+    "@angular/platform-browser": ">=21",
+    "@angular/forms": ">=21",
+    "rxjs": ">=7.8.0",
+    "@clr/angular": ">=18",
+    "ngx-lift": ">=21.5.0"
   },
   "publishConfig": {
     "access": "public"

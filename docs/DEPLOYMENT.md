@@ -38,11 +38,11 @@ Complete these in order. A green build, a merged PR and a published npm version 
    migration, and the maintainer decision approving a 21.x compatibility exception.
 2. Run `pnpm run release:check` and `pnpm run validate`, and require the three-browser E2E job. Confirm a green
    `publish.yml` dry run, including `verify:packages` and `nx release publish --dry-run`.
-3. Record independent human language acceptance for all eleven locales and manual assistive-technology acceptance, or
-   explicitly waive them as a maintainer decision. Automated dictionary, accessibility and consumer checks do not supply
-   either.
-4. Review behavioral compatibility, the capped peer ranges, the `ngx-lift`-before-`clr-lift` publish order, and the
-   `NPM_TOKEN` / `npm whoami` credential check.
+3. Confirm independent human language acceptance for all eleven locales (approved by the maintainer on 2026-11-08) and
+   record or waive manual assistive-technology acceptance as a maintainer decision. Automated dictionary, accessibility
+   and consumer checks do not supply the manual assessment.
+4. Review behavioral compatibility, the peer ranges (maintainer decided to keep them unbounded), the
+   `ngx-lift`-before-`clr-lift` publish order, and the `NPM_TOKEN` / `npm whoami` credential check.
 5. Merge the reviewed version/changelog PR, then publish with `version=skip` and `dry_run=false`, or push the reviewed
    `ngx-lift@<version>` / `clr-lift@<version>` tags. Tag events always publish and are never dry runs.
 6. Create the GitHub release records and tags at the reviewed version commit, with a link to the publication workflow
@@ -60,12 +60,12 @@ of backward compatibility. Preserve the [21.4.0 / 21.3.0 breaking and migration 
 dependent peers and installed consumers, and run the publication dry run before the real release. Do not remove the
 compatibility notice when assigning versions.
 
-**November 8, 2026 decision (recorded for maintainer approval in the release PR):** the certificate API removal, the
-`toSignalForm` error-propagation change and the tightened peer ranges in 21.5.0 / 21.4.0 are a second, separate
-exception. The October 17 decision is not blanket approval for later breaks. Peers are capped to the verified platform
-(`>=21 <22`, `>=18 <19`, `>=7.8.0 <8`) and `clr-lift` requires the matching `ngx-lift >=21.5.0 <22`. Preserve the
-[21.5.0 / 21.4.0 migration notes](../CHANGELOG.md#migration), publish `ngx-lift` first, and confirm strict installed
-consumers before authorizing publication. Any later incompatible change needs the same explicit review.
+**November 8, 2026 decision (recorded for maintainer approval in the release PR):** the `node-forge` certificate API
+removal and the `toSignalForm` error-propagation change in 21.5.0 / 21.4.0 are a second, separate exception. The October
+17 decision is not blanket approval for later breaks. Peer ranges stay unbounded (`@angular/* >=21`,
+`@clr/angular >=18`, `rxjs >=7.8.0`, `ngx-lift >=21.5.0`); the verified platform is Angular 21 / Clarity 18 / RxJS 7.
+Preserve the [21.5.0 / 21.4.0 migration notes](../CHANGELOG.md#migration), publish `ngx-lift` first, and confirm strict
+installed consumers before authorizing publication. Any later incompatible change needs the same explicit review.
 
 ## Release tags
 

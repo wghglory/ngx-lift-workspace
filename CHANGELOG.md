@@ -12,10 +12,10 @@ recorded for the affected releases.
 
 **Release decision — November 8, 2026 (recorded for maintainer approval in the release PR):** both packages remain on
 21.x while the supported platform remains Angular 21; 22.x stays reserved for the Angular 22 upgrade. Package versions
-remain independent. The certificate API removal, the `toSignalForm` error-propagation change and the tightened peer
-ranges below are **behaviorally breaking**. Shipping them in these 21.x minor releases is a second explicit,
-maintainer-approved exception to SemVer's major-bump rule, not a claim of backward compatibility. The October 17, 2026
-decision was not blanket approval for later breaks and does not cover this release; see the
+remain independent. The `node-forge` certificate API removal and the `toSignalForm` error-propagation change are
+**behaviorally breaking**. Shipping them in these 21.x minor releases is a second explicit, maintainer-approved
+exception to SemVer's major-bump rule, not a claim of backward compatibility. The October 17, 2026 decision was not
+blanket approval for later breaks and does not cover this release; see the
 [version policy](docs/DEPLOYMENT.md#version-policy).
 
 Publication is a separate gate. This section records reviewed versions, release notes and migration instructions; the
@@ -72,10 +72,7 @@ the evidence that the packages reached the official registry.
   types remain exported. Consumers that injected the service, provided the token, typed against `pki.Certificate` or
   installed `node-forge` only for this library must migrate; see the
   [certificate design specification](docs/design/clr-lift/certificate-design-spec.md).
-- **Peer ranges (`ngx-lift` and `clr-lift`).** Angular peers are now `>=21 <22`, `@clr/angular` is `>=18 <19`, `rxjs` is
-  `>=7.8.0 <8`, and `clr-lift` requires `ngx-lift >=21.5.0 <22`. Installations on Angular 22, Clarity 19, RxJS 8 or an
-  older `ngx-lift` no longer satisfy the peers. Those platforms were never verified; the previous unbounded ranges
-  overstated support. See the [version policy](docs/DEPLOYMENT.md#version-policy).
+
 - **`toSignalForm` error propagation (`ngx-lift`).** The change recorded under Changed below throws at a signal read
   where it previously returned stale state. It is covered by the same approved compatibility exception.
 
@@ -97,8 +94,10 @@ the evidence that the packages reached the official registry.
   // After: <cll-certificate-signpost [pem]="pem" [clock]="clock" />
   ```
 
-- Peer ranges: stay on Angular 21, Clarity 18 and RxJS 7, and upgrade `ngx-lift` to 21.5.0 before installing `clr-lift`
-  21.4.0. Remove an explicit `node-forge` dependency if it was added only for `clr-lift`.
+- Peer ranges: the packages declare unbounded peers (`@angular/* >=21`, `@clr/angular >=18`, `rxjs >=7.8.0`,
+  `ngx-lift >=21.5.0`); we verified on Angular 21 / Clarity 18 / RxJS 7, and later majors are unverified. Upgrade
+  `ngx-lift` to 21.5.0 before installing `clr-lift` 21.4.0. Remove an explicit `node-forge` dependency if it was added
+  only for `clr-lift`.
 - `toSignalForm`: handle a terminal source error at the read site, or rebuild the facade with a healthy control. Stock
   Angular `FormGroup` / `FormControl` event streams do not error.
 
@@ -152,9 +151,9 @@ the evidence that the packages reached the official registry.
 
 ### Release boundary
 
-- Independent human language acceptance for all eleven locales and manual assistive-technology acceptance remain pending
-  until recorded under [the acceptance contract](docs/guides/accessibility-and-localization.md). Automated dictionary,
-  accessibility and packed-consumer checks do not replace them.
+- Independent human language acceptance for all eleven locales was approved by the maintainer on 2026-11-08 (recorded in
+  [the acceptance contract](docs/guides/accessibility-and-localization.md)); manual assistive-technology acceptance
+  remains pending. Automated dictionary, accessibility and packed-consumer checks do not replace the manual assessment.
 - SSR/hydration and a broad peer-version matrix are not established by the installed Angular 21.2 browser consumer.
 - Dependency advisory triage and the flaky three-browser E2E required check remain separate follow-ups.
 - These versions are prepared for review, not yet published. Publication requires a green `publish.yml` dry run, a
