@@ -121,6 +121,9 @@ jobs:
   # E2E only for affected projects on PRs; full on push.
   e2e:
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: http://127.0.0.1:4307
+      PLAYWRIGHT_BROWSERS: ${{ github.event_name == 'pull_request' && 'chromium' || 'chromium,firefox,webkit' }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -134,16 +137,61 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pnpm exec playwright install --with-deps chromium
+          else
+            pnpm exec playwright install --with-deps
+          fi
       - name: Compute nx command
         id: scope
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "cmd=affected --base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+            echo "target=e2e-ci" >> "$GITHUB_OUTPUT"
+            echo "parallel=3" >> "$GITHUB_OUTPUT"
           else
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
+            echo "target=e2e" >> "$GITHUB_OUTPUT"
+            echo "parallel=1" >> "$GITHUB_OUTPUT"
           fi
-      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1
+      - name: Build demo for e2e
+        if: github.event_name == 'pull_request'
+        run: pnpm exec nx build demo
+      - name: Build demo for e2e (push)
+        if: github.event_name != 'pull_request'
+        run: pnpm exec nx build demo
+      - name: Start demo static server
+        run: |
+          if [ ! -f dist/apps/demo/browser/index.html ]; then
+            echo 'dist/apps/demo/browser/index.html not found after build'
+            find dist -maxdepth 4 -name index.html || true
+            exit 1
+          fi
+          pnpm dlx serve@14.2.4 dist/apps/demo/browser --single --listen tcp://127.0.0.1:4307 --no-port-switching --no-request-logging > /tmp/demo-e2e-server.log 2>&1 &
+          echo $! > /tmp/demo-e2e-server.pid
+          npx --yes wait-on@8.0.3 tcp:127.0.0.1:4307 --timeout 180000 || {
+            echo '--- demo static server log ---'
+            tail -200 /tmp/demo-e2e-server.log || true
+            exit 1
+          }
+      - run:
+          pnpm exec nx ${{ steps.scope.outputs.cmd }} -t ${{ steps.scope.outputs.target }} --parallel=${{
+          steps.scope.outputs.parallel }}
+      - name: Merge atomized Playwright reports
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          affected=$(pnpm exec nx show projects --affected --base=origin/${{ github.base_ref }} --withTarget e2e-ci --json)
+          if echo "$affected" | grep -q 'demo-e2e'; then
+            pnpm exec nx run demo-e2e:e2e-ci--merge-reports --skip-nx-cache || true
+          fi
+      - name: Stop demo static server
+        if: always()
+        run: |
+          if [ -f /tmp/demo-e2e-server.pid ]; then
+            kill "$(cat /tmp/demo-e2e-server.pid)" 2>/dev/null || true
+          fi
       - name: Upload browser report
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
