@@ -50,7 +50,6 @@ export default defineConfig({
         command: 'pnpm nx run demo:serve --port=4307 --hmr=false',
         url: baseURL,
         reuseExistingServer: !process.env['CI'],
-
         timeout: 120 * 1000,
         cwd: workspaceRoot,
       },
