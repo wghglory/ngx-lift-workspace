@@ -223,9 +223,10 @@ files / 478 tests and `nx run demo:test` reports 83 files / 302 tests (the demo 
 in this environment to avoid unrelated hook timeouts). A viewer-level unit test asserts that every hierarchy node id
 matches a details tab id and that the ids are unique. Translation completeness is 2307/2307 keys in all 11 demo locales
 with zero i18n-check errors; typecheck, lint (10 warnings in unrelated e2e specs), format:check and git diff --check
-pass. Browser acceptance for the certificate viewer is blocked in this environment because Chromium cannot load
-`libglib-2.0.so.0`; the targeted Playwright run therefore did not complete. Independent human language and
-assistive-technology acceptance remain separate.
+pass. Browser acceptance passes locally against the PR workspace: all five certificate viewer Playwright tests, both
+light/dark accessibility checks for the certificate route, and all 11 locale coverage tests succeed on Chromium. The
+required system libraries are supplied by a rootless local sysroot under the gitignored `dist/` directory because this
+machine has no passwordless sudo. Independent human language and assistive-technology acceptance remain separate.
 
 The fixed MD5/SHA1 values were independently calculated from DER with Python hashlib and are now reproduced by the
 dependency-free native implementation in `certificate-crypto.ts`; SHA-256 is cross-checked against the platform
