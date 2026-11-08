@@ -689,8 +689,7 @@ export const koTranslations: Record<string, string> = {
     'resetOnDisable가 활성화된 경우 특정 리셋 값; 기본값은 컨트롤의 초기값 또는 null입니다.',
   'toSignalForm.apiBindDisabledEmitEvent': '활성화/비활성화 상태 변경 시 값/상태 이벤트를 발행하는지 여부.',
   'toSignalForm.apiRevalidateTarget': '소스 변경 시 검증을 재평가해야 하는 대상 컨트롤.',
-  'toSignalForm.apiRevalidateSources':
-    '값/상태가 변경되는 하나 이상의 의존성 컨트롤이 대상 컨트롤의 재검증을 트리거합니다.',
+  'toSignalForm.apiRevalidateSources': '값/상태 변경 시 대상 재검증을 트리거하는 컨트롤, Signal 또는 getter입니다.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     '사용자가 대상 컨트롤을 터치했을 때만 대상 컨트롤의 재검증을 트리거합니다.',
   'toSignalForm.apiRevalidateOnlyIfDirty': '대상 컨트롤이 변경되었을 때(스모그)만 대상 컨트롤의 재검증을 트리거합니다.',

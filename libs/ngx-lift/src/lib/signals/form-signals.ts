@@ -37,6 +37,8 @@ function createControlEventStream(control: AbstractControl): Observable<unknown>
  */
 function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Injector): Signal<T> {
   const state = signal<T>(initialValue);
+  const sourceError = signal<unknown>(undefined);
+  const hasSourceError = signal(false);
   const destroyRef = injector.get(DestroyRef);
 
   let isSubscribing = true;
@@ -49,10 +51,14 @@ function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Inje
       }
       untracked(() => {
         state.set(val);
+        hasSourceError.set(false);
       });
     },
     error: (err) => {
-      console.error('[safeToSignal] Unhandled stream error:', err);
+      untracked(() => {
+        sourceError.set(err);
+        hasSourceError.set(true);
+      });
     },
   });
   isSubscribing = false;
@@ -61,7 +67,12 @@ function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Inje
     sub.unsubscribe();
   });
 
-  return state.asReadonly();
+  return computed(() => {
+    if (hasSourceError()) {
+      throw sourceError();
+    }
+    return state();
+  });
 }
 
 /**
@@ -75,7 +86,7 @@ function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Inje
  *
  * @param control The `AbstractControl` (or `FormControl`) to observe.
  * @param options Options for injector and debouncing.
- * @returns A reactive `Signal<T>` of the control's value.
+ * @returns A reactive `Signal<T>` of the control's value. Reads rethrow errors from the source Observable.
  */
 export function controlValue<T = unknown>(
   control: AbstractControl<T> | AbstractControl,
@@ -107,6 +118,7 @@ export function controlValue<T = unknown>(
  * @param control The `AbstractControl` to observe.
  * @param options Options for injector.
  * @returns A reactive `Signal<FormControlStatus>` emitting `'VALID' | 'INVALID' | 'PENDING' | 'DISABLED'`.
+ * Reads rethrow errors from the source Observable.
  */
 export function controlStatus(control: AbstractControl, options?: ControlStatusOptions): Signal<FormControlStatus> {
   let injector = options?.injector;
@@ -130,6 +142,7 @@ export function controlStatus(control: AbstractControl, options?: ControlStatusO
  * @param control The `AbstractControl` to observe.
  * @param options Options for injector and debouncing.
  * @returns A `ControlStateSignals` bundle with `.value()`, `.valid()`, `.invalid()`, `.touched()`, etc.
+ * Reading its signals rethrows errors from their source Observables.
  */
 export function controlState<T = unknown>(
   control: AbstractControl<T> | AbstractControl,
@@ -206,6 +219,7 @@ export function controlState<T = unknown>(
  * @param form The `FormGroup` to observe.
  * @param options Options for injector and debouncing.
  * @returns A `FormStateSignals` bundle with `.value()`, `.rawValue()`, `.valid()`, `.invalid()`, etc.
+ * Reading its signals rethrows errors from their source Observables.
  */
 export function formState<T = Record<string, unknown>>(
   form: FormGroup | AbstractControl<T>,

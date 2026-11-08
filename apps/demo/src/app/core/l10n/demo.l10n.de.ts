@@ -719,7 +719,7 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': 'Ob enable/deaktive Änderungen Werte/Statusereignisse emittieren.',
   'toSignalForm.apiRevalidateTarget': 'Zielsteuerung zur Neubewertung der Validierung bei Quelländerungen.',
   'toSignalForm.apiRevalidateSources':
-    'Eine oder mehrere Abhängigkeitskontrollen, deren Wert/Status-Änderungen eine Zielrevalidierung auslösen.',
+    'Steuerelement, Signal oder Getter, dessen Wert-/Statusänderung die erneute Validierung des Ziels auslöst.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     'Nur dann eine Revalidierung des Ziels auslösen, wenn das Ziel vom Benutzer berührt wurde.',
   'toSignalForm.apiRevalidateOnlyIfDirty':

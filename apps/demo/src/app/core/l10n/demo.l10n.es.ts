@@ -719,7 +719,7 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': 'Si permiten / desactivan cambios, emiten eventos de valor / estado.',
   'toSignalForm.apiRevalidateTarget': 'Control objetivo para reevaluar la validación tras los cambios de fuente.',
   'toSignalForm.apiRevalidateSources':
-    'Uno o más controles de dependencia cuyo valor / estado cambia desencadenar revalidación del objetivo.',
+    'Control, señal o getter cuyos cambios de valor/estado activan la revalidación del objetivo.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     'Sólo desencadenar revalidación del objetivo si el usuario ha tocado el objetivo.',
   'toSignalForm.apiRevalidateOnlyIfDirty':

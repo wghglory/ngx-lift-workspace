@@ -93,12 +93,6 @@ export class ToSignalFormComponent {
         description: this.translationService.translate('toSignalForm.apiPropDeep'),
       },
       {
-        name: 'options.emitEvent',
-        type: 'boolean',
-        defaultValue: 'true',
-        description: this.translationService.translate('toSignalForm.apiPropEmitEvent'),
-      },
-      {
         name: 'value',
         type: 'Signal<T>',
         description: this.translationService.translate('toSignalForm.apiPropValue'),
@@ -123,11 +117,6 @@ export class ToSignalFormComponent {
         type: 'Signal<Partial<T>>',
         description: this.translationService.translate('toSignalForm.apiPropSubmitValue'),
       },
-      {
-        name: 'isSubmitting',
-        type: 'WritableSignal<boolean>',
-        description: this.translationService.translate('toSignalForm.apiPropIsSubmitting'),
-      },
     ];
   });
 
@@ -151,17 +140,6 @@ export class ToSignalFormComponent {
         type: 'boolean',
         defaultValue: 'false',
         description: this.translationService.translate('toSignalForm.apiBindIfPreserveValue'),
-      },
-      {
-        name: 'options.defaultValue',
-        type: 'any',
-        description: this.translationService.translate('toSignalForm.apiBindIfDefaultValue'),
-      },
-      {
-        name: 'options.emitEvent',
-        type: 'boolean',
-        defaultValue: 'true',
-        description: this.translationService.translate('toSignalForm.apiBindIfEmitEvent'),
       },
     ];
   });
@@ -211,22 +189,10 @@ export class ToSignalFormComponent {
         description: this.translationService.translate('toSignalForm.apiRevalidateTarget'),
       },
       {
-        name: 'sources',
-        type: 'string | AbstractControl | Array<string | AbstractControl>',
+        name: 'source',
+        type: 'string | AbstractControl | Signal<unknown> | (() => unknown)',
         required: true,
         description: this.translationService.translate('toSignalForm.apiRevalidateSources'),
-      },
-      {
-        name: 'options.onlyIfTouched',
-        type: 'boolean',
-        defaultValue: 'false',
-        description: this.translationService.translate('toSignalForm.apiRevalidateOnlyIfTouched'),
-      },
-      {
-        name: 'options.onlyIfDirty',
-        type: 'boolean',
-        defaultValue: 'false',
-        description: this.translationService.translate('toSignalForm.apiRevalidateOnlyIfDirty'),
       },
     ];
   });

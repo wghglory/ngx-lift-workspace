@@ -714,7 +714,7 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': 'Of veranderingen waarde/status-gebeurtenissen uitstralen/uitschakelen.',
   'toSignalForm.apiRevalidateTarget': 'Doelcontrole om de validatie opnieuw te evalueren bij bronwijzigingen.',
   'toSignalForm.apiRevalidateSources':
-    'Eén of meer afhankelijkheidsfuncties waarvan de waarde/statuswijzigingen de doelverlenging in werking stellen.',
+    'Besturing, signal of getter waarvan een waarde-/statuswijziging de doelvalidatie opnieuw activeert.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     'Alleen trigger doel verlenging als het doel is aangeraakt door de gebruiker.',
   'toSignalForm.apiRevalidateOnlyIfDirty': 'Alleen trigger doel verlenging als het doel is gewijzigd (vuil).',

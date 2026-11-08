@@ -725,7 +725,7 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget':
     'Contrôle de la cible pour réévaluer la validation en fonction des changements de source.',
   'toSignalForm.apiRevalidateSources':
-    'Un ou plusieurs contrôles de dépendance dont les changements de valeur/de statut déclenchent la revalidation de la cible.',
+    'Contrôle, signal ou getter dont le changement de valeur/statut déclenche la revalidation de la cible.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     "Ne déclenchez la revalidation de la cible que si la cible a été touchée par l'utilisateur.",
   'toSignalForm.apiRevalidateOnlyIfDirty':

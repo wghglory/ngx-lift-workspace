@@ -43,6 +43,9 @@ recorded for the affected releases.
 
 ### Fixed
 
+- `toSignalForm` control and form signals now rethrow source Observable errors when read, matching Angular `toSignal`
+  instead of logging the error and silently returning stale state. The demo API reference now matches the exported
+  types, and packed-consumer verification covers dynamic control lifecycle behavior.
 - Documentation-only contract alignment: the `resourceAsync` spec now lists every shipped option and its exact callback
   semantics (including the removed `execute({onSuccess, onError})` shape), the query/mutation specs record the
   observer-level no-callback decision and the outcome tutorial. The mutation accessibility paragraph, `reload()` boolean

@@ -714,7 +714,7 @@ export const ruTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget':
     'Предназначенный контроль для повторной оценки достоверности данных при изменении источников.',
   'toSignalForm.apiRevalidateSources':
-    'Один или несколько механизмов контроля на иждивенцев, изменение стоимости/статуса которых приводит к повторному подтверждению цели.',
+    'Элемент управления, сигнал или getter, изменение значения/статуса которого запускает повторную проверку целевого элемента.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     'Повторная проверка цели только в том случае, если цель была затронута пользователем.',
   'toSignalForm.apiRevalidateOnlyIfDirty':

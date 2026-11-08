@@ -653,7 +653,7 @@ export const zhTWTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledResetValue': '停用重設時賦予的特定重設值；省略時重設為初始值或 null。',
   'toSignalForm.apiBindDisabledEmitEvent': '啟用/停用切換時是否派發值與狀態事件。',
   'toSignalForm.apiRevalidateTarget': '當相依源變化時需要重新執行校驗的目標控制項。',
-  'toSignalForm.apiRevalidateSources': '一個或多個觸發目標重新校驗的關聯控制項。',
+  'toSignalForm.apiRevalidateSources': '值或狀態變更時觸發目標控制項重新校驗的控制項、Signal 或 getter。',
   'toSignalForm.apiRevalidateOnlyIfTouched': '僅在目標控制項已被使用者觸碰（touched）時才觸發重新校驗。',
   'toSignalForm.apiRevalidateOnlyIfDirty': '僅在目標控制項已被修改（dirty）時才觸發重新校驗。',
   'computedAsync.title': 'computedAsync',

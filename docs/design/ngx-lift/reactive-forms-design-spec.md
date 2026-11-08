@@ -39,17 +39,28 @@ CVA implementation, HTTP submission, server validation, and automatic rollback o
 
 ## Use cases and acceptance
 
-| ID  | Task                      | Initial state/action         | Outcome                                          | Failure/recovery                                      | Demo/test                                 |
-| --- | ------------------------- | ---------------------------- | ------------------------------------------------ | ----------------------------------------------------- | ----------------------------------------- |
-| R1  | Observe existing group    | Edit, touch, validate, reset | State follows control events                     | Pending/error states remain distinct                  | to-signal-form demo; form-signals.spec.ts |
-| R2  | Toggle conditional fields | Mount, remove, remount       | Optional preservation restores value             | Missing proxies return undefined; named helpers throw | form-bindings.spec.ts; facade tests       |
-| R3  | Prepare payload           | Disabled field and FormArray | Disabled included by default; arrays stay arrays | Omission is opt-in; inspect output before HTTP        | to-submit-value.spec.ts                   |
+| ID  | Task                                 | Initial state/action                  | Outcome                                                                | Failure/recovery                                      | Demo/test                                 |
+| --- | ------------------------------------ | ------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------- |
+| R1  | Observe existing group               | Edit, touch, validate, reset          | State follows control events                                           | Pending/error states remain distinct                  | to-signal-form demo; form-signals.spec.ts |
+| R2  | Toggle conditional fields            | Mount, remove, remount                | Optional preservation restores value                                   | Missing proxies return undefined; named helpers throw | form-bindings.spec.ts; facade tests       |
+| R3  | Prepare payload                      | Disabled field and FormArray          | Disabled included by default; arrays stay arrays                       | Omission is opt-in; inspect output before HTTP        | to-submit-value.spec.ts                   |
+| R4  | Handle a failed control event stream | Read a signal after its source errors | Signal read rethrows the original source error; no stale-value success | Create a new helper for a replacement source          | form-signals.spec.ts; installed consumer  |
 
 ## Industry evidence and current gaps
 
 [Angular typed forms](https://angular.dev/guide/forms/typed-forms) distinguishes `.value` from `.getRawValue()`. Adopt
 that distinction; submission deliberately defaults to including disabled values. The installed Angular control event
 stream drives state updates. The facade adds dynamic bindings, not a separate form owner.
+
+For Observable failures, adopt Angular [`toSignal`](https://angular.dev/api/core/rxjs-interop/toSignal) semantics: the
+source error is rethrown when the returned signal is read. Do not silently log and keep returning the last value. Do not
+add a separate `error` signal or `onError` option: Angular's adapter has no such parallel channel, and an RxJS
+Observable cannot resume after its terminal error. Consumers replace the source/helper to recover. This concerns errors
+from the observed stream, not Angular validation errors exposed through `errors()`. React's
+[`useSyncExternalStore`](https://react.dev/reference/react/useSyncExternalStore) likewise reads an external-store
+snapshot synchronously; it does not define a separate asynchronous source-error signal. Clarity, Angular Material and
+NG-ZORRO form controls present validation and field feedback, but do not change this library's Observable-to-Signal
+contract.
 
 ## Developer learning journey and pedagogy plan
 
@@ -60,9 +71,9 @@ Prerequisites: An existing Angular FormGroup and basic signals; Angular remains 
 | Observe and submit a local form     | Read value/validity and inspect the omitted-field payload       | [/ngx-lift/signals/toSignalForm](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm) |
 | Toggle and reset conditional fields | Preserve selected values and validation through control changes | Same demo; bindings/submission contracts below                                              |
 
-Validation and delivery: The teaching flow landed in #162. Form/proxy unit cases cover behavior; installed consumers for
-new controls remain a separate gate. The public API and behavior sections below own exact options and limitations;
-examples introduce them after the first task.
+Validation and delivery: The teaching flow landed in #162. Form/proxy unit cases cover behavior; the strict installed
+consumer remains the gate for packed public types and runtime behavior. The public API and behavior sections below own
+exact options and limitations; examples introduce them after the first task.
 
 ## Public API and examples
 
@@ -121,5 +132,6 @@ not silently claim independent wrappers. Follow the
 
 ## Evidence
 
-Source and adjacent specs inspected on October 16, 2026; tests were not rerun for this documentation change. Coverage
-pointers describe existing assertions, not an Angular 22 or native Signal Forms acceptance result.
+Source and adjacent specs inspected on November 8, 2026. Signal reads now propagate terminal source-stream errors in
+line with Angular `toSignal`; focused unit and installed-consumer evidence is recorded with the implementation. This
+does not establish Angular 22 or native Signal Forms acceptance.

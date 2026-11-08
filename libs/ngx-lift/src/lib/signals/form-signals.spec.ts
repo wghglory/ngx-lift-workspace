@@ -1,6 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {describe, expect, it} from 'vitest';
+import {Subject} from 'rxjs';
+import {describe, expect, it, vi} from 'vitest';
 
 import {controlState, controlStatus, controlValue, formState} from './form-signals';
 
@@ -14,6 +15,24 @@ describe('form-signals utilities', () => {
 
       ctrl.setValue('updated');
       expect(valSig()).toBe('updated');
+    });
+  });
+
+  it('should rethrow control stream errors when the signal is read', () => {
+    TestBed.runInInjectionContext(() => {
+      const source = new Subject<string>();
+      const ctrl = new FormControl('initial');
+      Object.defineProperty(ctrl, 'valueChanges', {value: source});
+      const value = controlValue(ctrl);
+      const failure = new Error('control stream failed');
+      const report = vi.spyOn(console, 'error');
+      try {
+        source.error(failure);
+        expect(() => value()).toThrow(failure);
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
     });
   });
 

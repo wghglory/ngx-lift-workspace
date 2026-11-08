@@ -655,7 +655,7 @@ export const zhCNTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledResetValue': '禁用重置时赋予的特定重置值；省略时重置为初始值或 null。',
   'toSignalForm.apiBindDisabledEmitEvent': '启用/禁用切换时是否派发值与状态事件。',
   'toSignalForm.apiRevalidateTarget': '当依赖源变化时需要重新执行校验的目标控件。',
-  'toSignalForm.apiRevalidateSources': '一个或多个触发目标重新校验的关联控件。',
+  'toSignalForm.apiRevalidateSources': '值或状态变化时触发目标控件重新校验的控件、Signal 或 getter。',
   'toSignalForm.apiRevalidateOnlyIfTouched': '仅在目标控件已被用户触碰（touched）时才触发重新校验。',
   'toSignalForm.apiRevalidateOnlyIfDirty': '仅在目标控件已被修改（dirty）时才触发重新校验。',
   'computedAsync.title': 'computedAsync',

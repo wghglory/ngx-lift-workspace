@@ -695,7 +695,8 @@ export const jaTranslations: Record<string, string> = {
     'resetOnDisableが有効な場合に特定のリセット値; デフォルトはコントロールの初期値またはnull。',
   'toSignalForm.apiBindDisabledEmitEvent': '有効/無効の変化が値/ステータスイベントを発行するかどうか。',
   'toSignalForm.apiRevalidateTarget': 'ソース変化によって再検証されるターゲットコントロール。',
-  'toSignalForm.apiRevalidateSources': 'ターゲットコントロールを再検証させるための1つ以上の依存関係コントロール。',
+  'toSignalForm.apiRevalidateSources':
+    '値/状態の変更によってターゲットの再検証をトリガーするコントロール、Signal、または getter。',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     'ユーザーがターゲットコントロールに触れた場合にのみターゲットを再検証する。',
   'toSignalForm.apiRevalidateOnlyIfDirty':

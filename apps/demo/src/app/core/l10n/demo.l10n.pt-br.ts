@@ -710,7 +710,7 @@ export const ptBRTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': 'Se a activação / desactivação altera o valor / estado dos eventos.',
   'toSignalForm.apiRevalidateTarget': 'Controle-alvo para reavaliar a validação sobre as alterações-fonte.',
   'toSignalForm.apiRevalidateSources':
-    'Um ou mais controles de dependência, cujo valor / status altera, desencadeia a revalidação-alvo.',
+    'Controle, sinal ou getter cuja alteração de valor/status aciona a revalidação do alvo.',
   'toSignalForm.apiRevalidateOnlyIfTouched':
     'Apenas desencadeia a revalidação do alvo se o alvo for tocado pelo usuário.',
   'toSignalForm.apiRevalidateOnlyIfDirty': 'Apenas desencadeia a revalidação-alvo se o alvo for modificado (sujo).',

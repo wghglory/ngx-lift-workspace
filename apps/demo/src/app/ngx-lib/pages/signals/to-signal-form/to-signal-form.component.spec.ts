@@ -363,21 +363,24 @@ describe('ToSignalFormComponent', () => {
   });
 
   it('exposes populated API reference tables for toSignalForm, bindIf, bindDisabled, and revalidate', () => {
-    expect(component.toSignalFormProperties().length).toBeGreaterThanOrEqual(8);
-    expect(component.bindIfProperties().length).toBeGreaterThanOrEqual(4);
+    expect(component.toSignalFormProperties().length).toBe(12);
+    expect(component.bindIfProperties().length).toBe(3);
     expect(component.bindDisabledProperties().length).toBeGreaterThanOrEqual(4);
-    expect(component.revalidateProperties().length).toBeGreaterThanOrEqual(3);
+    expect(component.revalidateProperties().length).toBe(2);
 
     // Verify critical properties are documented
     const formPropNames = component.toSignalFormProperties().map((p) => p.name);
     expect(formPropNames).toContain('form');
     expect(formPropNames).toContain('submitValue');
-    expect(formPropNames).toContain('isSubmitting');
+    expect(formPropNames).not.toContain('options.emitEvent');
+    expect(formPropNames).not.toContain('isSubmitting');
 
     const bindIfPropNames = component.bindIfProperties().map((p) => p.name);
     expect(bindIfPropNames).toContain('control');
     expect(bindIfPropNames).toContain('condition');
     expect(bindIfPropNames).toContain('options.preserveValue');
+    expect(bindIfPropNames).not.toContain('options.defaultValue');
+    expect(bindIfPropNames).not.toContain('options.emitEvent');
 
     const bindDisabledPropNames = component.bindDisabledProperties().map((p) => p.name);
     expect(bindDisabledPropNames).toContain('control');
@@ -386,7 +389,10 @@ describe('ToSignalFormComponent', () => {
 
     const revalidatePropNames = component.revalidateProperties().map((p) => p.name);
     expect(revalidatePropNames).toContain('target');
-    expect(revalidatePropNames).toContain('sources');
+    expect(revalidatePropNames).toContain('source');
+    expect(revalidatePropNames).not.toContain('sources');
+    expect(revalidatePropNames).not.toContain('options.onlyIfTouched');
+    expect(revalidatePropNames).not.toContain('options.onlyIfDirty');
   });
 
   describe('submission options lab', () => {

@@ -696,7 +696,7 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': 'Whether enable/disable changes emit value/status events.',
   'toSignalForm.apiRevalidateTarget': 'Target control to re-evaluate validation upon source changes.',
   'toSignalForm.apiRevalidateSources':
-    'One or more dependency controls whose value/status changes trigger target revalidation.',
+    'Control, signal, or getter whose value/status changes trigger target revalidation.',
   'toSignalForm.apiRevalidateOnlyIfTouched': 'Only trigger target revalidation if target has been touched by user.',
   'toSignalForm.apiRevalidateOnlyIfDirty': 'Only trigger target revalidation if target has been modified (dirty).',
   'computedAsync.title': 'computedAsync',
