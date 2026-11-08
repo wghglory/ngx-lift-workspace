@@ -18,9 +18,10 @@ for (const theme of ['light', 'dark']) {
         await page.goto(route, {waitUntil: 'domcontentloaded'});
         await expect(page.locator('body')).toHaveAttribute('cds-theme', theme);
         await expect(page.locator('main h1').first()).not.toBeEmpty();
-        // Wait for both raw/encoded examples, rather than scanning a partially created deferred view.
+        // Wait for the raw, encoded and sample-picker examples, rather than scanning a partially
+        // created deferred view.
         for (const demo of await page.locator('app-certificate-demo').all()) {
-          await expect(demo.locator('app-certificate-example')).toHaveCount(2);
+          await expect(demo.locator('app-certificate-example')).toHaveCount(3);
           for (const example of await demo.locator('app-certificate-example').all()) {
             await expect(example.getByRole('button')).toHaveCount(1);
             await expect(example.getByRole('button')).toHaveAccessibleName('Show certificate');

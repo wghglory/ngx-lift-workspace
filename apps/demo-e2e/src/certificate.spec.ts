@@ -34,10 +34,15 @@ test('switches between sample certificates by role and algorithm', async ({page}
   const details = page.locator('clr-signpost-content');
   await expect(details).toContainText('Demo Root CA (ECDSA)');
 
+  // Close the popover explicitly: an outside click on the select does not dismiss it in every
+  // browser, and a second trigger click would otherwise toggle the previous sample's popover shut.
+  await triggers.last().click();
+  await expect(details).toHaveCount(0);
+
   await select.selectOption({label: 'Leaf — RSA (expired, shows the danger status)'});
   await expect(triggers).toHaveCount(3);
   await triggers.last().click();
-  await expect(page.locator('clr-signpost-content')).toContainText('Expired');
+  await expect(details).toContainText('Expired');
 });
 
 test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page}) => {
@@ -49,9 +54,10 @@ test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page})
   await page.getByRole('button', {name: 'Parse', exact: true}).click();
   const results = page.locator('app-state-inspector');
   await expect(results).toBeVisible();
-  await expect(results).toContainText('CN=Demo Root CA (RSA)');
-  await expect(results).toContainText(/^[0-9A-F]{64}$/m); // SHA-256 fingerprint
-  await expect(page.locator('app-code-block').last()).toContainText('-----BEGIN CERTIFICATE-----');
+  // The viewer starts with the selected sample, which defaults to the real DigiCert root.
+  await expect(results).toContainText('CN=DigiCert Assured ID Root G2');
+  await expect(results).toContainText(/SHA-256 Fingerprint: [0-9A-F]{64}/);
+  await expect(page.locator('.chain-section app-code-block')).toContainText('-----BEGIN CERTIFICATE-----');
 });
 
 test('renders a three-level certificate chain in the viewer', async ({page}) => {
@@ -68,17 +74,19 @@ test('renders a three-level certificate chain in the viewer', async ({page}) => 
   await expect(tree.nth(1)).toContainText('Demo Intermediate CA (ECDSA)');
   await expect(tree.last()).toContainText('deep.ngx-lift.example');
 
-  // Details render as tabs in distributed order (leaf first, active initially).
-  const inspector = page.locator('app-state-inspector');
-  await expect(inspector).toBeVisible();
-  await expect(inspector).toContainText('deep.ngx-lift.example');
-  await expect(inspector).toContainText('DNS:deep.ngx-lift.example');
+  // Details render as tabs in distributed order (leaf first, active initially). Inactive tab
+  // content stays in the DOM, so address each certificate by its named tabpanel.
+  const inspectorIn = (tabName: string) => page.getByRole('tabpanel', {name: tabName}).locator('app-state-inspector');
+  const leafInspector = inspectorIn('deep.ngx-lift.example');
+  await expect(leafInspector).toBeVisible();
+  await expect(leafInspector).toContainText('deep.ngx-lift.example');
+  await expect(leafInspector).toContainText('dns:deep.ngx-lift.example');
 
   // Clicking a hierarchy tree node opens that certificate's details tab.
   await page.locator('.chain-node-link').filter({hasText: 'Demo Intermediate CA (ECDSA)'}).click();
-  await expect(inspector).toContainText('CN=Demo Intermediate CA (ECDSA)');
+  await expect(inspectorIn('Demo Intermediate CA (ECDSA)')).toContainText('CN=Demo Intermediate CA (ECDSA)');
   await page.getByRole('tab', {name: 'Demo Root CA (RSA)'}).click();
-  await expect(inspector).toContainText('Demo Root CA (RSA)');
+  await expect(inspectorIn('Demo Root CA (RSA)')).toContainText('Demo Root CA (RSA)');
 });
 
 test('reports malformed PEM in the viewer', async ({page}) => {
