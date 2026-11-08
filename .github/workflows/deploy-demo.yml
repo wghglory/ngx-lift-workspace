@@ -25,15 +25,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.x'
           cache: 'pnpm'
@@ -52,8 +52,7 @@ jobs:
       - name: Deploy to Netlify
         if: github.ref == 'refs/heads/main'
         id: netlify
-        continue-on-error: true
-        uses: nwtgck/actions-netlify@v4
+        uses: nwtgck/actions-netlify@d22a32a27c918fe470bbc562e984f80ec48c2668 # v4
         with:
           publish-dir: './dist/apps/demo/browser'
           production-branch: main
@@ -67,9 +66,10 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 5
 
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel (production, main only)
+        if: github.ref == 'refs/heads/main'
         id: vercel
-        uses: amondnet/vercel-action@v42
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
