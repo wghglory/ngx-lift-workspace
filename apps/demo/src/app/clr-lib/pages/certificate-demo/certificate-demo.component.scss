@@ -1,5 +1,20 @@
-// dsm-ui shows the chain UI inside an xl modal; constrain the section so the
-// tab header and tree do not stretch across the full page width.
+// Clarity's `clr-form-full-width` class on the form group expands the directive-generated
+// textarea container; a monospace input then keeps pasted PEM armor readable.
+
+.certificate-pem-form {
+  width: 100%;
+
+  .certificate-pem-input {
+    width: 100%;
+    min-height: 12rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    resize: vertical;
+  }
+}
+
+// Keep the chain UI at a readable width so the tab header and tree do not stretch across the page.
 .chain-section {
   max-width: 50rem;
 

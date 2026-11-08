@@ -1513,7 +1513,7 @@ export const nlTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Serienummer',
   'certificate.viewerFields.notBefore': 'Geldig vanaf',
   'certificate.viewerFields.notAfter': 'Geldig tot',
-  'certificate.viewerFields.signatureAlgorithm': 'Handtekeningalgoritme (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Handtekeningalgoritme',
   'certificate.viewerFields.subjectAltName': 'Alternatieve onderwerpnamen',
   'certificate.viewerFields.subjectKeyIdentifier': 'Onderwerpsleutel-id',
   'certificate.viewerFields.md5': 'MD5-vingerafdruk',

@@ -43,6 +43,8 @@ test('switches between sample certificates by role and algorithm', async ({page}
   await expect(triggers).toHaveCount(3);
   await triggers.last().click();
   await expect(details).toContainText('Expired');
+  await expect(details.locator('cds-icon[status="danger"]')).toHaveCount(1);
+  await expect(page.locator('cll-certificate-signpost').last().locator('clr-icon[status="danger"]')).toHaveCount(1);
 });
 
 test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page}) => {
@@ -50,13 +52,18 @@ test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page})
   await page.goto('/clr-lift/components/certificate');
   const pemBox = page.getByLabel('Certificate PEM');
   await expect(pemBox).toHaveValue(/BEGIN CERTIFICATE/);
+  expect((await pemBox.boundingBox())?.width ?? 0).toBeGreaterThan(400);
 
   await page.getByRole('button', {name: 'Parse', exact: true}).click();
   const results = page.locator('app-state-inspector');
   await expect(results).toBeVisible();
   // The viewer starts with the selected sample, which defaults to the real DigiCert root.
   await expect(results).toContainText('CN=DigiCert Assured ID Root G2');
-  await expect(results).toContainText(/SHA-256 Fingerprint: [0-9A-F]{64}/);
+  await expect(results).toContainText('SHA256 with RSA');
+  await expect(results).not.toContainText('1.2.840.113549.1.1.11');
+  await expect(results).toContainText(/SHA-256 Fingerprint:\s*[0-9A-F]{64}/);
+  await expect(page.locator('.chain-section .inspector-rows')).toBeVisible();
+  await expect(page.locator('.chain-section .state-pill')).toHaveCount(0);
   await expect(page.locator('.chain-section app-code-block')).toContainText('-----BEGIN CERTIFICATE-----');
 });
 
@@ -67,7 +74,7 @@ test('renders a three-level certificate chain in the viewer', async ({page}) => 
   await select.selectOption({label: 'Chain — leaf → intermediate CA → root (deep nesting)'});
 
   await page.getByRole('button', {name: 'Parse', exact: true}).click();
-  // dsm-ui-style hierarchy: trust anchor first, issued certificates nested below, fully expanded.
+  // Reference hierarchy: trust anchor first, issued certificates nested below, fully expanded.
   const tree = page.locator('clr-tree clr-tree-node');
   await expect(tree).toHaveCount(3);
   await expect(tree.first()).toContainText('Demo Root CA (RSA)');

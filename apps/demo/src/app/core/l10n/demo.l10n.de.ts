@@ -1518,7 +1518,7 @@ export const deTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Seriennummer',
   'certificate.viewerFields.notBefore': 'Gültig ab',
   'certificate.viewerFields.notAfter': 'Gültig bis',
-  'certificate.viewerFields.signatureAlgorithm': 'Signaturalgorithmus (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Signaturalgorithmus',
   'certificate.viewerFields.subjectAltName': 'Alternative Antragstellernamen',
   'certificate.viewerFields.subjectKeyIdentifier': 'Subject Key Identifier',
   'certificate.viewerFields.md5': 'MD5-Fingerabdruck',

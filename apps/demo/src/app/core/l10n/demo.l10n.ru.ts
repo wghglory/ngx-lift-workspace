@@ -1504,7 +1504,7 @@ export const ruTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Серийный номер',
   'certificate.viewerFields.notBefore': 'Действителен с',
   'certificate.viewerFields.notAfter': 'Действителен до',
-  'certificate.viewerFields.signatureAlgorithm': 'Алгоритм подписи (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Алгоритм подписи',
   'certificate.viewerFields.subjectAltName': 'Альтернативные имена субъекта',
   'certificate.viewerFields.subjectKeyIdentifier': 'Идентификатор ключа субъекта',
   'certificate.viewerFields.md5': 'Отпечаток MD5',

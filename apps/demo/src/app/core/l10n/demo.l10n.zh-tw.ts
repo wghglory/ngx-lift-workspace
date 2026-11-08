@@ -1362,7 +1362,7 @@ export const zhTWTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': '序號',
   'certificate.viewerFields.notBefore': '有效起始',
   'certificate.viewerFields.notAfter': '有效期限',
-  'certificate.viewerFields.signatureAlgorithm': '簽章演算法 (OID)',
+  'certificate.viewerFields.signatureAlgorithm': '簽章演算法',
   'certificate.viewerFields.subjectAltName': '主體別名',
   'certificate.viewerFields.subjectKeyIdentifier': '主體金鑰識別碼',
   'certificate.viewerFields.md5': 'MD5 指紋',

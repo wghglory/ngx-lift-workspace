@@ -75,6 +75,30 @@
   gap: 0.5rem;
 }
 
+// Plain label/value rows for certificate details: no colored pills, values wrap instead of truncating.
+.inspector-rows {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
+  margin: 0;
+  font-size: 0.8125rem;
+
+  .inspector-row-label {
+    font-weight: 500;
+    color: var(--clr-global-font-color);
+  }
+
+  .inspector-row-value {
+    margin: 0;
+    min-width: 0;
+    font-weight: 400;
+    font-family: var(--clr-font-monospace, ui-monospace, monospace);
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+}
+
 .state-pill {
   display: inline-flex;
   align-items: center;

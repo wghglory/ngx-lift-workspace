@@ -1450,7 +1450,7 @@ export const koTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': '일련 번호',
   'certificate.viewerFields.notBefore': '유효 시작',
   'certificate.viewerFields.notAfter': '유효 만료',
-  'certificate.viewerFields.signatureAlgorithm': '서명 알고리즘 (OID)',
+  'certificate.viewerFields.signatureAlgorithm': '서명 알고리즘',
   'certificate.viewerFields.subjectAltName': '주체 대체 이름',
   'certificate.viewerFields.subjectKeyIdentifier': '주체 키 식별자',
   'certificate.viewerFields.md5': 'MD5 지문',

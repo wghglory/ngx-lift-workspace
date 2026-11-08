@@ -24,6 +24,8 @@ export class StateInspectorComponent {
   title = input<string>('inspector.liveState');
   description = input<string>('');
   data = input<Record<string, unknown> | null | undefined>(null);
+  /** Wrapped status pills, or plain label/value rows for dense certificate-style data. */
+  layout = input<'pills' | 'rows'>('pills');
 
   readonly isRawExpanded = signal<boolean>(false);
 

@@ -84,11 +84,11 @@
       <h3>{{ 'certificate.viewerTitle' | translate }}</h3>
       <p [innerHTML]="'certificate.viewerDesc' | translate"></p>
 
-      <div class="form-group">
+      <div class="form-group clr-form-full-width certificate-pem-form">
         <label for="certificate-viewer-pem">{{ 'certificate.viewerPemLabel' | translate }}</label>
         <textarea
           id="certificate-viewer-pem"
-          class="textarea"
+          class="textarea certificate-pem-input"
           clrTextarea
           rows="8"
           [value]="pemText()"
@@ -139,7 +139,7 @@
               <clr-tab>
                 <button clrTabLink [id]="node.id">{{ node.name }}</button>
                 <clr-tab-content *clrIfActive="isFirst">
-                  <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" />
+                  <app-state-inspector [title]="'certificate.viewerResultsTitle'" [data]="node.items" layout="rows" />
                 </clr-tab-content>
               </clr-tab>
             }

@@ -1,6 +1,6 @@
 # Certificate parsing, status, and validation
 
-Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: October 17, 2026. Package: clr-lift.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: November 8, 2026. Package: clr-lift.
 Approval: existing parsing/display APIs; no cryptographic trust guarantee.
 
 ## Applicable contracts
@@ -125,6 +125,48 @@ and `{invalidCertificate: error}` for nonempty parse failures.
 
 Use translated Clarity signpost/button labels and status text, not color alone. Runtime locale changes recompute
 messages. Verify keyboard open/close and focus return; human translation acceptance remains separate.
+
+## Display details (signpost and demo viewer)
+
+The reference certificate viewer in the downstream consumer renders certificate details as plain label/value rows: a
+left label column, a right value column with wrapping, normal-weight text and no colored chips. Industry evidence:
+Clarity's row grid and form-validation icons (which use `status="danger"` for error states), and the consumer's
+certificate information display. Adopt the plain rows and the `danger` icon status; reject colored status pills in
+certificate detail panels because the color carries no status meaning for subject, issuer or digest values.
+
+Decisions, with no change to the public parsing API:
+
+- Signpost detail headings shrink to a small section-label size, and the definition grid uses a narrower label column
+  with tighter row/column gaps so the popover stays compact.
+- Expired status icons use the Clarity `danger` status (red) at every status site: the signpost trigger, the signpost
+  content and the demo chain tree. Translated status text still carries the meaning, so color is never the only signal.
+- The demo viewer's PEM textarea spans the available form width with a monospace font, so pasted PEM armor is readable.
+  Clarity's `clr-form-full-width` class expands the directive-generated textarea container.
+- The demo's parsed-certificate panels use the shared state inspector's `layout="rows"` variant, which renders semantic
+  `<dl>` label/value pairs. Other demo pages keep the pill layout.
+- The parser keeps returning the dotted signature-algorithm OID. The demo maps well-known OIDs to standard X.509 display
+  names (`SHA256 with RSA`, `ECDSA with SHA256`, `Ed25519`, and the SHA-384/512 variants), falling back to the OID for
+  unknown algorithms. The mapping stays on the display side, as required by the downstream consumer alignment section;
+  it is not a new library export.
+
+### Visible and announced strings
+
+| Surface                  | Message                                                                                                         | Delivery                                                                                                                 |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Demo viewer detail label | `certificate.viewerFields.signatureAlgorithm` changes from "Signature Algorithm (OID)" to "Signature Algorithm" | All 11 demo locales                                                                                                      |
+| Demo viewer detail value | Standard X.509 algorithm names                                                                                  | Technical identifiers derived from certificate data, like OIDs, subject DNs and fingerprints; not localized product copy |
+| Signpost headings/status | No new strings; existing translated keys unchanged                                                              | All 14 library locales unchanged                                                                                         |
+
+The rows variant keeps the existing translated inspector title and raw-JSON toggle. Long values wrap instead of being
+truncated, so translated labels and long fingerprints remain readable at narrow widths and zoom levels. No new public
+API, runtime dependency or announcement is introduced.
+
+### Acceptance evidence
+
+Unit coverage for the OID-to-name mapping (known, unknown and Ed25519 values) and for the rows variant; browser coverage
+for the friendly algorithm name, the rows layout, the widened textarea and the `danger` icon status on an expired
+certificate; accessibility, translation and formatting checks for every affected page. Independent human language and
+assistive-technology acceptance remain separate.
 
 ## Demo and validation plan
 

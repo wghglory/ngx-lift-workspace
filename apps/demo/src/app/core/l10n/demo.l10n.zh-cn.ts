@@ -1373,7 +1373,7 @@ export const zhCNTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': '序列号',
   'certificate.viewerFields.notBefore': '生效时间',
   'certificate.viewerFields.notAfter': '失效时间',
-  'certificate.viewerFields.signatureAlgorithm': '签名算法 (OID)',
+  'certificate.viewerFields.signatureAlgorithm': '签名算法',
   'certificate.viewerFields.subjectAltName': '主体备用名称',
   'certificate.viewerFields.subjectKeyIdentifier': '主体密钥标识符',
   'certificate.viewerFields.md5': 'MD5 指纹',

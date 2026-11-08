@@ -21,7 +21,7 @@ export interface ParsedChainEntry {
 }
 
 /**
- * Hierarchy of a parsed chain, mirroring the dsm-ui trust-certificate tree: the trust anchor is the
+ * Hierarchy of a parsed chain, mirroring the reference trust-certificate tree: the trust anchor is the
  * root node and every issued certificate is nested below its issuer. Nodes are named after the
  * common name, falling back to the organization name.
  */
@@ -74,7 +74,7 @@ export function parseCertificateChain(pem: string): ParsedChainEntry[] {
 }
 
 /**
- * Builds the nested issuer hierarchy from a parsed chain the same way dsm-ui's
+ * Builds the nested issuer hierarchy from a parsed chain the same way the reference viewer's
  * buildCertificateHierarchy does: reverse to anchor-first, name by common name with an
  * organization fallback, and nest every next certificate under its issuer.
  */

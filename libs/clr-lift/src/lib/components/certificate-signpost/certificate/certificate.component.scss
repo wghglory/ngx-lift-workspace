@@ -4,9 +4,10 @@
 }
 
 .certificate-subtitle {
-  margin-top: 1.2rem;
-  margin-bottom: 0.7rem;
-  font-weight: 500;
+  margin-top: 0.75rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
 
   &:first-of-type {
     margin-top: 0;
@@ -16,18 +17,17 @@
 .certificate-content {
   display: grid;
   // A shared fixed label width keeps every section's values on the same left edge.
-  grid-template-columns: 8rem 1fr;
-  column-gap: 1.5rem;
+  grid-template-columns: 6rem 1fr;
+  column-gap: 0.5rem;
   text-align: left;
   font-size: 0.55rem;
 
   dt {
     font-weight: 500;
-    padding-right: 0.5rem;
   }
 
   dd {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     min-width: 0;
   }
 }

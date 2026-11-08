@@ -1527,7 +1527,7 @@ export const esTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Número de serie',
   'certificate.viewerFields.notBefore': 'Válido desde',
   'certificate.viewerFields.notAfter': 'Válido hasta',
-  'certificate.viewerFields.signatureAlgorithm': 'Algoritmo de firma (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Algoritmo de firma',
   'certificate.viewerFields.subjectAltName': 'Nombres alternativos del sujeto',
   'certificate.viewerFields.subjectKeyIdentifier': 'Identificador de clave del sujeto',
   'certificate.viewerFields.md5': 'Huella MD5',

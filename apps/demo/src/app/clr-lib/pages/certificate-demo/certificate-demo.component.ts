@@ -10,7 +10,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
 import type {CertificateHierarchyNode, ParsedChainEntry} from '../../../shared/utils/certificate-viewer-tools';
 import {CERTIFICATE_SAMPLES} from './certificate-samples';
 
-/** Display-ready node of the parsed certificate chain, mirroring dsm-ui's hierarchy tree. */
+/** Display-ready node of the parsed certificate chain, mirroring the reference hierarchy tree. */
 interface ChainDisplayNode {
   /** Stable tab id: the subject key identifier when present, otherwise the node name. */
   id: string;
@@ -18,18 +18,35 @@ interface ChainDisplayNode {
   statusText: string;
   labelClass: string;
   shape: string;
-  status: 'success' | 'warning' | 'error';
+  status: 'success' | 'warning' | 'danger';
   items: Record<string, string>;
   children: ChainDisplayNode[];
 }
 
-/** Outcome of the build-your-own-viewer parse action, following the dsm-ui display pattern:
- * a static fully-expanded hierarchy tree plus one details tab per certificate, leaf first. */
+/** Outcome of the build-your-own-viewer parse action: a fully expanded hierarchy tree plus one
+ * details tab per certificate, leaf first. */
 type ViewerState =
   | {status: 'idle'}
   | {status: 'loading'}
   | {status: 'error'; message: string}
   | {status: 'done'; tree: ChainDisplayNode[]; tabs: ChainDisplayNode[]; encodedPem: string};
+
+/** Standard X.509 display names for well-known signature algorithm OIDs; display-only, not a parser contract. */
+export const SIGNATURE_ALGORITHM_NAMES: Record<string, string> = {
+  '1.2.840.113549.1.1.5': 'SHA1 with RSA',
+  '1.2.840.113549.1.1.11': 'SHA256 with RSA',
+  '1.2.840.113549.1.1.12': 'SHA384 with RSA',
+  '1.2.840.113549.1.1.13': 'SHA512 with RSA',
+  '1.2.840.10045.4.3.2': 'ECDSA with SHA256',
+  '1.2.840.10045.4.3.3': 'ECDSA with SHA384',
+  '1.2.840.10045.4.3.4': 'ECDSA with SHA512',
+  '1.3.101.112': 'Ed25519',
+};
+
+/** Falls back to the raw OID so an unknown signature algorithm stays visible and unambiguous. */
+export function signatureAlgorithmName(oid: string): string {
+  return SIGNATURE_ALGORITHM_NAMES[oid] ?? oid;
+}
 
 @Component({
   selector: 'app-certificate-demo',
@@ -129,7 +146,7 @@ export class CertificateDemoComponent {
   /** The rendered Clarity tabs; hierarchy node clicks activate the matching tab. */
   private readonly tabsView = viewChildren(ClrTab);
 
-  /** Children accessor for Clarity's recursive tree, mirroring the dsm-ui hierarchy component. */
+  /** Children accessor for Clarity's recursive hierarchy tree. */
   readonly treeChildren = (node: ChainDisplayNode): ChainDisplayNode[] => node.children;
 
   /** Clicking a hierarchy node opens that certificate's details tab. */
@@ -146,7 +163,7 @@ const der = extractDerFromPem(pemText);
 // DER bytes -> certificate fields, key-algorithm agnostic (RSA, ECDSA, Ed25519, ...)
 const certificate = parseCertificate(der);
 certificate.subject.getField('CN');
-certificate.signatureAlgorithm; // signature OID label
+certificate.signatureAlgorithm; // dotted OID; map it to a display name in your UI
 
 // DER bytes -> fingerprints (uppercase hex)
 const digests = {md5: md5(der), sha1: sha1(der), sha256: sha256(der)};
@@ -182,7 +199,7 @@ const pem = pemEncodeDer(der);`);
       const tabs = entries.map((entry) => this.buildChainDisplayFromEntry(entry));
       this.viewerState.set({
         status: 'done',
-        // dsm-ui tabs list the distributed order (leaf first) and activate the leaf initially.
+        // Tabs follow the distributed order (leaf first) and activate the leaf initially.
         tabs,
         tree: [tree],
         encodedPem: tools.buildCertificateView(this.pemText()).pem,
@@ -225,12 +242,12 @@ const pem = pemEncodeDer(der);`);
     let statusText: string;
     let labelClass: string;
     let shape: string;
-    let status: 'success' | 'warning' | 'error';
+    let status: 'success' | 'warning' | 'danger';
     if (expiry <= Date.now()) {
       statusText = translate('certificate.expired');
       labelClass = 'label-danger';
       shape = 'error-standard';
-      status = 'error';
+      status = 'danger';
     } else {
       const days = Math.floor((expiry - Date.now()) / 86_400_000);
       if (days <= 30) {
@@ -272,7 +289,9 @@ const pem = pemEncodeDer(der);`);
       [translate('certificate.viewerFields.serialNumber')]: certificate.serialNumber,
       [translate('certificate.viewerFields.notBefore')]: validity(certificate.validity.notBefore),
       [translate('certificate.viewerFields.notAfter')]: validity(certificate.validity.notAfter),
-      [translate('certificate.viewerFields.signatureAlgorithm')]: certificate.signatureAlgorithm,
+      [translate('certificate.viewerFields.signatureAlgorithm')]: signatureAlgorithmName(
+        certificate.signatureAlgorithm,
+      ),
     };
     if (certificate.subjectAltName?.length) {
       items[translate('certificate.viewerFields.subjectAltName')] = certificate.subjectAltName

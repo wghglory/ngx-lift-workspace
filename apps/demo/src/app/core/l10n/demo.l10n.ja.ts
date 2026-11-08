@@ -1472,7 +1472,7 @@ export const jaTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'シリアル番号',
   'certificate.viewerFields.notBefore': '有効開始',
   'certificate.viewerFields.notAfter': '有効期限',
-  'certificate.viewerFields.signatureAlgorithm': '署名アルゴリズム (OID)',
+  'certificate.viewerFields.signatureAlgorithm': '署名アルゴリズム',
   'certificate.viewerFields.subjectAltName': 'サブジェクト代替名',
   'certificate.viewerFields.subjectKeyIdentifier': 'サブジェクトキー識別子',
   'certificate.viewerFields.md5': 'MD5フィンガープリント',

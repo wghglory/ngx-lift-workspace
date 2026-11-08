@@ -1535,7 +1535,7 @@ export const frTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Numéro de série',
   'certificate.viewerFields.notBefore': 'Valide à partir de',
   'certificate.viewerFields.notAfter': 'Valide jusqu’à',
-  'certificate.viewerFields.signatureAlgorithm': 'Algorithme de signature (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Algorithme de signature',
   'certificate.viewerFields.subjectAltName': 'Noms alternatifs du sujet',
   'certificate.viewerFields.subjectKeyIdentifier': 'Identificateur de clé du sujet',
   'certificate.viewerFields.md5': 'Empreinte MD5',

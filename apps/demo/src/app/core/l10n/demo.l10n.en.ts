@@ -1468,7 +1468,7 @@ export const enTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Serial Number',
   'certificate.viewerFields.notBefore': 'Not Before',
   'certificate.viewerFields.notAfter': 'Not After',
-  'certificate.viewerFields.signatureAlgorithm': 'Signature Algorithm (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Signature Algorithm',
   'certificate.viewerFields.subjectAltName': 'Subject Alternative Names',
   'certificate.viewerFields.subjectKeyIdentifier': 'Subject Key Identifier',
   'certificate.viewerFields.md5': 'MD5 Fingerprint',

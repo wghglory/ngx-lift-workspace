@@ -16,16 +16,25 @@
   }
 
   @if (items().length > 0) {
-    <div class="inspector-grid">
-      @for (item of items(); track item.label) {
-        <div class="state-pill" [class]="'status-' + item.status">
-          <span class="state-label">{{ item.label }}:</span>
-          <span class="state-val" [title]="formatValue(item.value)">
-            {{ formatValue(item.value) }}
-          </span>
-        </div>
-      }
-    </div>
+    @if (layout() === 'rows') {
+      <dl class="inspector-rows">
+        @for (item of items(); track item.label) {
+          <dt class="inspector-row-label">{{ item.label }}:</dt>
+          <dd class="inspector-row-value" [title]="formatValue(item.value)">{{ formatValue(item.value) }}</dd>
+        }
+      </dl>
+    } @else {
+      <div class="inspector-grid">
+        @for (item of items(); track item.label) {
+          <div class="state-pill" [class]="'status-' + item.status">
+            <span class="state-label">{{ item.label }}:</span>
+            <span class="state-val" [title]="formatValue(item.value)">
+              {{ formatValue(item.value) }}
+            </span>
+          </div>
+        }
+      </div>
+    }
   }
 
   <div class="custom-content">

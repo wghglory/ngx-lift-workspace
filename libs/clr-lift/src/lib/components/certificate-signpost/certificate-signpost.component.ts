@@ -90,11 +90,6 @@ export class CertificateSignpostComponent {
     return status === 'info' ? 'text-info' : STATUS_STYLES[status].textClass;
   });
 
-  /** Maps the certificate status to the Clarity icon status for the colored clr-icon. */
-  iconStatus(status: CertificateStatus['status']): 'error' | 'warning' | 'success' | 'info' {
-    return status === 'danger' ? 'error' : status;
-  }
-
   constructor() {
     this.translationService.loadTranslationsForComponent('certificate', certificateTranslations);
     const browserWindow = inject(DOCUMENT).defaultView;

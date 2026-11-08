@@ -1501,7 +1501,7 @@ export const ptBRTranslations: Record<string, string> = {
   'certificate.viewerFields.serialNumber': 'Número de série',
   'certificate.viewerFields.notBefore': 'Válido a partir de',
   'certificate.viewerFields.notAfter': 'Válido até',
-  'certificate.viewerFields.signatureAlgorithm': 'Algoritmo de assinatura (OID)',
+  'certificate.viewerFields.signatureAlgorithm': 'Algoritmo de assinatura',
   'certificate.viewerFields.subjectAltName': 'Nomes alternativos do assunto',
   'certificate.viewerFields.subjectKeyIdentifier': 'Identificador de chave do assunto',
   'certificate.viewerFields.md5': 'Impressão digital MD5',
