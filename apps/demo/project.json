@@ -16,7 +16,6 @@
         "browser": "apps/demo/src/main.ts",
         "tsConfig": "apps/demo/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-
         "assets": [
           {
             "glob": "**/*",

@@ -234,6 +234,19 @@ describe('certificate-parser (certificate type coverage)', () => {
       expect(cert.subjectKeyIdentifier).toBe('01020304');
     });
 
+    it('renders valid IPv4/IPv6 entries and skips malformed iPAddress bytes', () => {
+      const ipv6 = [0x20, 0x01, 0x0d, 0xb8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+      const sanExtension = tlv(0x30, [
+        tlv(0x06, encodeOid('2.5.29.17')),
+        tlv(0x04, tlv(0x30, [tlv(0x87, [10, 0, 0, 1, 2]), tlv(0x87, [192, 168, 1, 7]), tlv(0x87, ipv6)])),
+      ]);
+      const cert = parseCertificate(makeCert({...base(), version: 2, extensions: [sanExtension]}));
+      expect(cert.subjectAltName).toEqual([
+        {type: 'ip', value: '192.168.1.7'},
+        {type: 'ip', value: '2001:0db8:0000:0000:0000:0000:0000:0001'},
+      ]);
+    });
+
     it('computes SHA-256 fingerprints matching the platform implementation', () => {
       const der = extractDerFromPem(certificatePem, false);
       expect(sha256(der)).toBe(createHash('sha256').update(der).digest('hex').toUpperCase());

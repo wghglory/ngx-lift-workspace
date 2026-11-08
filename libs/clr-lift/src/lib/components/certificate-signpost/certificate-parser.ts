@@ -387,11 +387,12 @@ function parseGeneralNames(content: Uint8Array): GeneralName[] {
     } else if (entry.tag === 0x86) {
       names.push({type: 'uri', value: latin1(value)});
     } else if (entry.tag === 0x87) {
-      const groups: string[] = [];
+      // iPAddress carries exactly 4 (IPv4) or 16 (IPv6) bytes; other lengths are malformed and skipped.
       if (value.length === 4) {
         names.push({type: 'ip', value: Array.from(value).join('.')});
-      } else {
-        for (let i = 0; i + 1 < value.length; i += 2) {
+      } else if (value.length === 16) {
+        const groups: string[] = [];
+        for (let i = 0; i < value.length; i += 2) {
           groups.push(((value[i] << 8) | value[i + 1]).toString(16).padStart(4, '0'));
         }
         names.push({type: 'ip', value: groups.join(':')});

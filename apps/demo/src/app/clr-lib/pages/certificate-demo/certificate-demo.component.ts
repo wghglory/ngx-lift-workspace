@@ -191,11 +191,12 @@ const pem = pemEncodeDer(der);`);
       // out of the page's eager chunk.
       const tools = await import('../../../shared/utils/certificate-viewer-tools');
       const entries = tools.parseCertificateChain(this.pemText());
-      if (!entries.length) {
+      // Zero entries parse to a null hierarchy, so one guard covers both without a non-null assertion.
+      const hierarchy = tools.buildCertificateHierarchy(entries);
+      if (!hierarchy) {
         throw new Error('no PEM certificate found in the input');
       }
-      const hierarchy = tools.buildCertificateHierarchy(entries);
-      const tree = this.buildChainDisplay(hierarchy!);
+      const tree = this.buildChainDisplay(hierarchy);
       const tabs = entries.map((entry) => this.buildChainDisplayFromEntry(entry));
       this.viewerState.set({
         status: 'done',
