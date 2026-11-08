@@ -161,7 +161,7 @@ jobs:
             find dist -maxdepth 4 -name index.html || true
             exit 1
           fi
-          pnpm dlx serve@14.2.4 dist/apps/demo/browser --single --listen tcp://127.0.0.1:4307 --no-port-switching --no-request-logging > /tmp/demo-e2e-server.log 2>&1 &
+          pnpm exec nx run demo:serve-static --buildTarget=demo:build:development --staticFilePath=dist/apps/demo/browser --port=4307 --spa > /tmp/demo-e2e-server.log 2>&1 &
           echo $! > /tmp/demo-e2e-server.pid
           npx --yes wait-on@8.0.3 tcp:127.0.0.1:4307 --timeout 180000 || {
             echo '--- demo static server log ---'
