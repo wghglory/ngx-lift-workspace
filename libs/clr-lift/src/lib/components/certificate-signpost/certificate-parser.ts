@@ -139,6 +139,17 @@ function readSingleNode(bytes: Uint8Array): DerNode {
   return node;
 }
 
+/** Splits the X.690 first subidentifier (40 * arc1 + arc2) into its two arcs. */
+function firstOidArcs(value: number): [number, number] {
+  if (value < 40) {
+    return [0, value];
+  }
+  if (value < 80) {
+    return [1, value - 40];
+  }
+  return [2, value - 80];
+}
+
 function decodeOid(bytes: Uint8Array): string {
   let result = '';
   let value = 0;
@@ -152,8 +163,7 @@ function decodeOid(bytes: Uint8Array): string {
     if ((byte & 0x80) === 0) {
       if (first) {
         // X.690 encodes the first subidentifier as 40 * arc1 + arc2, with arc1 capped at 2.
-        const arc1 = value < 40 ? 0 : value < 80 ? 1 : 2;
-        const arc2 = value < 40 ? value : value < 80 ? value - 40 : value - 80;
+        const [arc1, arc2] = firstOidArcs(value);
         result = `${arc1}.${arc2}`;
         first = false;
       } else {

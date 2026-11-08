@@ -47,12 +47,22 @@ export const SIGNATURE_ALGORITHM_NAMES: Record<string, string> = {
   '1.3.101.112': 'Ed25519',
 };
 
-/** Falls back to the raw OID so an unknown signature algorithm stays visible and unambiguous. */
+/**
+ * Falls back to the raw OID so an unknown signature algorithm stays visible and unambiguous.
+ *
+ * @param oid - The dotted signature algorithm OID from the certificate.
+ * @returns A standard display name, or the original OID when it is unknown.
+ */
 export function signatureAlgorithmName(oid: string): string {
   return SIGNATURE_ALGORITHM_NAMES[oid] ?? oid;
 }
 
-/** Stable, unique id shared by hierarchy nodes and details tabs, independent of DN or extension availability. */
+/**
+ * Stable, unique id shared by hierarchy nodes and details tabs, independent of DN or extension availability.
+ *
+ * @param digests - Fingerprints computed from the certificate's DER bytes.
+ * @returns A DOM-safe tab id derived from the SHA-256 fingerprint.
+ */
 export function certificateTabId(digests: CertificateDigests): string {
   return `cert-${digests.sha256.toLowerCase()}`;
 }

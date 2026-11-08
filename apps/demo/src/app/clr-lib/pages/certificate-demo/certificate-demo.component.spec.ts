@@ -63,9 +63,11 @@ describe('certificateTabId', () => {
     expect(certificateTabId({...digests, sha256: 'FEDCBA'})).toBe('cert-fedcba');
   });
 
-  it('is independent of DN fields and extension availability', () => {
-    const digests = {md5: '', sha1: '', sha256: 'A1B2'};
-    expect(certificateTabId(digests)).toBe(certificateTabId({...digests}));
+  it('is stable for a fingerprint regardless of the other digest fields', () => {
+    const first = {md5: '', sha1: '', sha256: 'A1B2'};
+    const sameFingerprint = {md5: 'md5', sha1: 'sha1', sha256: 'a1b2'};
+    expect(certificateTabId(first)).toBe(certificateTabId(sameFingerprint));
+    expect(certificateTabId(first)).not.toBe(certificateTabId({...first, sha256: 'C3D4'}));
   });
 });
 
