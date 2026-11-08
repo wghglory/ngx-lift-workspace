@@ -4,7 +4,7 @@
 }
 
 .certificate-subtitle {
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
   margin-bottom: 0.3rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -17,10 +17,11 @@
 .certificate-content {
   display: grid;
   // A shared fixed label width keeps every section's values on the same left edge.
-  grid-template-columns: 6rem 1fr;
+  grid-template-columns: 8rem 1fr;
   column-gap: 0.5rem;
   text-align: left;
-  font-size: 0.55rem;
+  font-size: 0.5rem;
+  margin-top: 0.25rem;
 
   dt {
     font-weight: 500;
