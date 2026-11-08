@@ -7,7 +7,8 @@ import {visitDemoTabs} from './support/demo-tabs';
 const demoFile = (locale: string) => `apps/demo/src/app/core/l10n/demo.l10n.${locale.toLowerCase()}.ts`;
 const library = 'libs/clr-lift/src/lib/components/';
 
-for (const {code, label} of demoLocales) {
+for (const [localeIndex, {code, label}] of demoLocales.entries()) {
+  const localeGroup = localeIndex % 4;
   const messages = dictionaryMessages(demoFile(code));
   const inlineButtonLabel = messages['multiAlerts.inlineMessage'].match(/<button[^>]*>([^<]+)<\/button>/)?.[1];
   if (!inlineButtonLabel) throw new Error(`Missing localized inline action for ${code}`);
@@ -20,7 +21,9 @@ for (const {code, label} of demoLocales) {
   if (!alternateLanguage) throw new Error(`Missing alternate locale ${alternate}`);
   const alternateLabel = alternateLanguage.label;
 
-  test(`all demo routes and library labels support ${code}`, async ({page}) => {
+  test(`@locale-coverage @locale-group-${localeGroup} all demo routes and library labels support ${code}`, async ({
+    page,
+  }) => {
     test.setTimeout(180_000);
     await page.setViewportSize({width: 390, height: 844});
     await page.addInitScript((locale) => localStorage.setItem('clr-lift-lang', locale), code);

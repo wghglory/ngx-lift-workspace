@@ -13,7 +13,7 @@ permissions:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   PLAYWRIGHT_BROWSERS: ${{ github.event_name == 'pull_request' && 'chromium' || 'chromium,firefox,webkit' }}
-  PLAYWRIGHT_WORKERS: ${{ github.event_name == 'pull_request' && '4' || '2' }}
+  PLAYWRIGHT_WORKERS: ${{ github.event_name == 'pull_request' && '2' || '1' }}
 
 jobs:
   # Whole-repo, dependency-free checks. Always runs fully.
@@ -140,6 +140,12 @@ jobs:
               for browser in browsers
               for shard in range(1, 9)
           ]
+          locale_browsers = ["chromium"] if is_pull_request else browsers
+          include.extend(
+              {"browser": browser, "locale_group": group}
+              for browser in locale_browsers
+              for group in range(4)
+          )
           if is_pull_request:
               include.extend({"browser": browser, "shard": 1} for browser in ["firefox", "webkit"])
           print("matrix=" + json.dumps({"include": include}, separators=(",", ":")))
@@ -182,11 +188,17 @@ jobs:
           PLAYWRIGHT_BROWSERS: ${{ matrix.browser }}
           PLAYWRIGHT_PROJECT: ${{ matrix.browser }}
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
+          PLAYWRIGHT_LOCALE_GROUP: ${{ matrix.locale_group }}
+          PLAYWRIGHT_WORKERS: 2
         run: |
           if [ "$CI_EVENT" = "pull_request" ] && [ "$PLAYWRIGHT_PROJECT" != "chromium" ]; then
             PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --grep=@cross-browser-smoke"
+          elif [ -n "$PLAYWRIGHT_LOCALE_GROUP" ]; then
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --grep=@locale-group-$PLAYWRIGHT_LOCALE_GROUP"
+          elif [ "$CI_EVENT" = "pull_request" ]; then
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/8 --grep-invert=@locale-coverage"
           else
-            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/8"
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/8 --grep-invert=@locale-coverage"
           fi
           pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1 --outputStyle=stream --skip-nx-cache \
             --args="$PLAYWRIGHT_ARGS"
