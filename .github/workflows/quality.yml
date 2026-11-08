@@ -157,7 +157,7 @@ jobs:
           PLAYWRIGHT_PROJECT: ${{ matrix.browser }}
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
         run: >-
-          pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1 --skip-nx-cache
+          pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1 --outputStyle=stream --skip-nx-cache
           --args="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/5"
       - name: Upload browser report
         if: always()
