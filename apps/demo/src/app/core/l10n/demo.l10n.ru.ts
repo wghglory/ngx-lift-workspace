@@ -82,6 +82,13 @@ export const ruTranslations: Record<string, string> = {
   'organizationExample.retry': 'Повторить',
   'organizationExample.maxOrganizations': 'Выберите не более трёх организаций.',
   'organizationExample.invalidSelection': 'Выбраны недопустимые организации.',
+  'policyExample.namespace': 'Пространство имен',
+  'policyExample.namespaceHelp': 'Выберите пространство имен, к которому применяется эта политика.',
+  'policyExample.saved': 'Политика сохранена.',
+  'policyExample.saveError': 'Не удалось сохранить политику.',
+  'policyExample.unresolvedKeyError': 'Некоторые выбранные элементы не удалось разрешить, они не сохранены.',
+  'policyExample.eligibilityWarning': 'Одна или несколько организаций близки к пределу выбора.',
+
   'selectionDemo.asyncSubmit': 'Асинхронная проверка и буферизация отправки',
   'selectionDemo.asyncSubmitHelp':
     'Выбор сохраняется в буфере до отправки. Затем выполняется асинхронная проверка допустимости; Organization 4 (org-4) отклоняется.',

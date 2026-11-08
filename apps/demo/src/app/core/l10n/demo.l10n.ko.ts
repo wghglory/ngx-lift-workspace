@@ -83,6 +83,13 @@ export const koTranslations: Record<string, string> = {
   'organizationExample.retry': '다시 시도',
   'organizationExample.maxOrganizations': '조직을 최대 3개까지 선택하세요.',
   'organizationExample.invalidSelection': '조직 선택이 올바르지 않습니다.',
+  'policyExample.namespace': '네임스페이스',
+  'policyExample.namespaceHelp': '이 정책이 적용되는 네임스페이스를 선택하세요.',
+  'policyExample.saved': '정책이 저장되었습니다.',
+  'policyExample.saveError': '정책을 저장할 수 없습니다.',
+  'policyExample.unresolvedKeyError': '일부 선택을 확인하지 못해 저장되지 않았습니다.',
+  'policyExample.eligibilityWarning': '하나 이상의 조직이 선택 제한에 근접했습니다.',
+
   'selectionDemo.asyncSubmit': '비동기 유효성 검사 및 제출 버퍼링',
   'selectionDemo.asyncSubmitHelp':
     '선택 항목은 제출할 때까지 버퍼링된 후 비동기 자격 검사가 실행됩니다. Organization 4(org-4)는 거부됩니다.',

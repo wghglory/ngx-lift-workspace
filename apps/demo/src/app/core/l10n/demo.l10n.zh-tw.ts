@@ -77,6 +77,13 @@ export const zhTWTranslations: Record<string, string> = {
   'organizationExample.retry': '重試',
   'organizationExample.maxOrganizations': '最多選擇三個組織。',
   'organizationExample.invalidSelection': '組織選擇無效。',
+  'policyExample.namespace': '命名空間',
+  'policyExample.namespaceHelp': '選擇此原則適用的命名空間。',
+  'policyExample.saved': '原則已儲存。',
+  'policyExample.saveError': '無法儲存原則。',
+  'policyExample.unresolvedKeyError': '部分選擇無法解析，未儲存。',
+  'policyExample.eligibilityWarning': '一個或多個組織接近選擇上限。',
+
   'selectionDemo.asyncSubmit': '非同步驗證與提交緩衝',
   'selectionDemo.asyncSubmitHelp': '選擇會先緩衝，直到提交後才執行非同步資格檢查；Organization 4（org-4）會被拒絕。',
   'selectionDemo.asyncChecking': '正在檢查資格…',

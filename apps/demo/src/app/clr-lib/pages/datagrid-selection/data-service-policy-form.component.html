@@ -1,5 +1,43 @@
-<form #formView="ngForm" clrForm clrLayout="vertical" [formGroup]="form" (ngSubmit)="submit()">
-  <section [attr.aria-label]="'selectionDemo.selectedTitle' | translate" cds-layout="vertical gap:sm">
+<form
+  #formView="ngForm"
+  clrForm
+  clrLayout="vertical"
+  data-testid="policy-form"
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+>
+  <clr-input-container>
+    <label for="policy-name">{{ 'selectionDemo.policyName' | translate }}</label>
+    <input
+      id="policy-name"
+      data-testid="policy-form-name"
+      clrInput
+      formControlName="policyName"
+      [readonly]="readonly()"
+    />
+  </clr-input-container>
+
+  <app-namespace-picker
+    data-testid="policy-form-namespace"
+    formControlName="namespaceId"
+    required
+    [readonly]="readonly()"
+    [error]="namespaceSelectionError()"
+  />
+
+  <app-organization-picker
+    data-testid="policy-form-organizations"
+    formControlName="organizationIds"
+    required
+    [readonly]="readonly()"
+    [error]="orgSelectionError()"
+  />
+
+  <section
+    data-testid="policy-form-summary"
+    [attr.aria-label]="'selectionDemo.selectedTitle' | translate"
+    cds-layout="vertical gap:sm"
+  >
     <p role="status" aria-atomic="true">
       {{ 'selectionDemo.selectedCount' | translate: selectedOrganizations().length : maximumOrganizations }}
     </p>
@@ -23,8 +61,12 @@
         </li>
       }
     </ul>
-    @if (!verifiedOrganizations() && selectedOrganizations().length) {
-      <p role="status">{{ 'selectionDemo.verificationHelp' | translate }}</p>
+    @if (unavailableNamespaceId()) {
+      <clr-alert clrAlertType="warning" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text" role="alert">{{ 'selectionDemo.unavailableHelp' | translate }}</span>
+        </clr-alert-item>
+      </clr-alert>
     }
     @if (hasUnavailableSelection()) {
       <clr-alert data-testid="unavailable-selection" clrAlertType="warning" [clrAlertClosable]="false">
@@ -38,66 +80,44 @@
         </clr-alert-item>
       </clr-alert>
     }
-  </section>
-  <cll-datagrid-selection
-    formControlName="organizationIds"
-    required
-    [helper]="'organizationExample.help' | translate"
-    [error]="selectionError()"
-    [readonly]="readonly()"
-    [layout]="layout()"
-    [itemAvailability]="availability"
-  >
-    <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
-    <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
-      <clr-signpost-content *clrIfOpen>{{ 'organizationExample.help' | translate }}</clr-signpost-content>
-    </clr-signpost>
-    @if (organizationsQuery.error()) {
-      <cll-alert>
-        {{
-          (organizationsQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
-            | translate
-        }}
-        <button type="button" class="btn btn-link" (click)="organizationsQuery.reload()">
-          {{ 'organizationExample.retry' | translate }}
-        </button>
-      </cll-alert>
+    @if (warning()) {
+      <clr-alert data-testid="policy-form-warning" clrAlertType="warning" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text" role="alert">{{ 'policyExample.eligibilityWarning' | translate }}</span>
+        </clr-alert-item>
+      </clr-alert>
     }
-    <clr-datagrid
-      clrDgSelectionType="multi"
-      [clrDgLoading]="organizationsQuery.isLoading()"
-      [clrDgItemsIdentityFn]="organizationKey"
-    >
-      <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
-      <clr-dg-column clrDgField="status" [clrDgSortBy]="statusComparator">
-        {{ 'organizationExample.status' | translate }}
-        <clr-dg-string-filter [clrDgStringFilter]="statusTextFilter" />
-      </clr-dg-column>
-      <clr-dg-row
-        *clrDgItems="let item of organizationsQuery.value() ?? []"
-        [clrDgItem]="item"
-        [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
-      >
-        <clr-dg-cell>{{ item.name }}</clr-dg-cell>
-        <clr-dg-cell>
-          <span
-            class="label"
-            [class.label-success]="item.status === 'ready'"
-            [class.label-warning]="item.status === 'maintenance'"
-          >
-            {{ statusKeys[item.status] | translate }}
-          </span>
-        </clr-dg-cell>
-      </clr-dg-row>
-      <clr-dg-footer><clr-dg-pagination [clrDgPageSize]="10" /></clr-dg-footer>
-    </clr-datagrid>
-  </cll-datagrid-selection>
+  </section>
+
+  @if (saved()) {
+    <clr-alert clrAlertType="success" [clrAlertClosable]="true">
+      <clr-alert-item>
+        <span class="alert-text" role="status">{{ 'policyExample.saved' | translate }}</span>
+      </clr-alert-item>
+    </clr-alert>
+  }
+  @if (saveError()) {
+    <clr-alert data-testid="policy-form-save-error" clrAlertType="danger" [clrAlertClosable]="true">
+      <clr-alert-item>
+        <span class="alert-text" role="alert">{{ saveError() }}</span>
+      </clr-alert-item>
+    </clr-alert>
+  }
+
   <div
     class="selection-toolbar"
     cds-layout="horizontal gap:md wrap:wrap"
     role="group"
     [attr.aria-label]="'selectionDemo.policyControls' | translate"
   >
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
+      {{ 'selectionDemo.readonly' | translate }}
+    </label>
+    <label class="selection-toolbar-check">
+      <input type="checkbox" [checked]="form.disabled" (change)="toggleDisabled()" />
+      {{ 'selectionDemo.disabled' | translate }}
+    </label>
     <label class="selection-toolbar-check">
       <input
         type="checkbox"
@@ -107,28 +127,35 @@
       {{ 'selectionDemo.horizontal' | translate }}
     </label>
     <label class="selection-toolbar-check">
-      <input type="checkbox" [checked]="readonly()" (change)="readonly.set(!readonly())" />
-      {{ 'selectionDemo.readonly' | translate }}
-    </label>
-    <label class="selection-toolbar-check">
-      <input type="checkbox" [checked]="form.controls.organizationIds.disabled" (change)="toggleDisabled()" />
-      {{ 'selectionDemo.disabled' | translate }}
+      {{ 'organizationExample.submit' | translate }}
+      <select data-testid="policy-form-dto" [value]="dtoMode()" (change)="dtoMode.set($any($event.target).value)">
+        <option value="id-only">ID-only</option>
+        <option value="reference">Reference</option>
+        <option value="full-entity">Full entity</option>
+      </select>
     </label>
     <span class="selection-toolbar-spacer"></span>
-    <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
-      {{ 'common.refresh' | translate }}
+    <button type="button" class="btn btn-sm" (click)="reloadDetail()">
+      {{ 'selectionDemo.loadSaved' | translate }}
     </button>
-    <button type="button" class="btn btn-sm" (click)="loadSaved()">{{ 'selectionDemo.loadSaved' | translate }}</button>
   </div>
-  <button
-    type="submit"
-    class="btn btn-primary"
-    [disabled]="form.controls.organizationIds.enabled && !verifiedOrganizations()"
-  >
-    {{ 'organizationExample.submit' | translate }}
-  </button>
-  <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
-    {{ 'organizationExample.reset' | translate }}
-  </button>
+
+  <div cds-layout="horizontal gap:md wrap:wrap">
+    <button
+      type="submit"
+      data-testid="policy-form-save"
+      class="btn btn-primary"
+      [clrLoading]="saving()"
+      [disabled]="selectionLocked() || saving() || sf.invalid() || !verifiedOrgs() || !verifiedNamespaces()"
+    >
+      {{ 'organizationExample.submit' | translate }}
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="reset()">
+      {{ 'organizationExample.reset' | translate }}
+    </button>
+  </div>
 </form>
-<pre tabindex="0">{{ sf.submitValue() | json }}</pre>
+@if (submitted(); as savedDto) {
+  <p role="status" data-testid="policy-form-submitted">{{ 'policyExample.saved' | translate }}</p>
+}
+<pre data-testid="policy-form-json" tabindex="0">{{ sf.submitValue() | json }}</pre>

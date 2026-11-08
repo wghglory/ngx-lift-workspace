@@ -83,6 +83,13 @@ export const enTranslations: Record<string, string> = {
   'organizationExample.retry': 'Retry',
   'organizationExample.maxOrganizations': 'Choose no more than three organizations.',
   'organizationExample.invalidSelection': 'The organization selection is invalid.',
+  'policyExample.namespace': 'Namespace',
+  'policyExample.namespaceHelp': 'Choose the namespace this policy applies to.',
+  'policyExample.saved': 'Policy saved.',
+  'policyExample.saveError': 'Could not save the policy.',
+  'policyExample.unresolvedKeyError': 'Some selections could not be resolved and were not saved.',
+  'policyExample.eligibilityWarning': 'One or more organizations are near the selection limit.',
+
   'selectionDemo.asyncSubmit': 'Async validation and submit buffering',
   'selectionDemo.asyncSubmitHelp':
     'Selections stay buffered until Submit. An asynchronous eligibility check then runs; Organization 4 (org-4) is rejected.',

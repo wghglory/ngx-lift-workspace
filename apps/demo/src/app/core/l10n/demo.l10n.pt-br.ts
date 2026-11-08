@@ -85,6 +85,13 @@ export const ptBRTranslations: Record<string, string> = {
   'organizationExample.retry': 'Tentar novamente',
   'organizationExample.maxOrganizations': 'Selecione no máximo três organizações.',
   'organizationExample.invalidSelection': 'A seleção de organizações é inválida.',
+  'policyExample.namespace': 'Namespace',
+  'policyExample.namespaceHelp': 'Escolha o namespace ao qual esta política se aplica.',
+  'policyExample.saved': 'Política salva.',
+  'policyExample.saveError': 'Não foi possível salvar a política.',
+  'policyExample.unresolvedKeyError': 'Algumas seleções não puderam ser resolvidas e não foram salvas.',
+  'policyExample.eligibilityWarning': 'Uma ou mais organizações estão perto do limite de seleção.',
+
   'selectionDemo.asyncSubmit': 'Validação assíncrona e buffer de envio',
   'selectionDemo.asyncSubmitHelp':
     'As seleções ficam em buffer até o envio. Em seguida, uma verificação assíncrona de elegibilidade é executada; Organization 4 (org-4) é rejeitado.',

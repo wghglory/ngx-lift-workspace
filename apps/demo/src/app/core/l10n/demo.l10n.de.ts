@@ -86,6 +86,13 @@ export const deTranslations: Record<string, string> = {
   'organizationExample.retry': 'Erneut versuchen',
   'organizationExample.maxOrganizations': 'Wählen Sie höchstens drei Organisationen.',
   'organizationExample.invalidSelection': 'Die Organisationsauswahl ist ungültig.',
+  'policyExample.namespace': 'Namespace',
+  'policyExample.namespaceHelp': 'Wählen Sie den Namespace, für den diese Richtlinie gilt.',
+  'policyExample.saved': 'Richtlinie gespeichert.',
+  'policyExample.saveError': 'Richtlinie konnte nicht gespeichert werden.',
+  'policyExample.unresolvedKeyError': 'Einige Auswahlen konnten nicht aufgelöst und nicht gespeichert werden.',
+  'policyExample.eligibilityWarning': 'Eine oder mehrere Organisationen nähern sich dem Auswahllimit.',
+
   'selectionDemo.asyncSubmit': 'Asynchrone Validierung und Pufferung beim Senden',
   'selectionDemo.asyncSubmitHelp':
     'Auswahlen werden bis zum Senden gepuffert. Danach läuft eine asynchrone Berechtigungsprüfung; Organization 4 (org-4) wird abgelehnt.',

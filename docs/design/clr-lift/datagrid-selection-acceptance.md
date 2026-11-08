@@ -124,7 +124,10 @@ height, so a transient empty inventory does not collapse the grid.
 - Angular 21 is the supported baseline. No native Signal Forms, SSR/hydration or native virtual-scroll acceptance is
   claimed. Application-scoped ID generation avoids a module-global request counter; this alone is not hydration proof.
 - The local inventory examples intentionally render supplied unpaged rows. #201 adds separate server-page coverage
-  below; full policy create/edit workflows remain with #202 and are not certified by this local increment.
+  below. #202 delivers the data service policy create/edit workflows (caller-written native fields plus reusable
+  organization and namespace pickers, detail read, edit baseline, explicit reset without a backend write, and
+  key-only/reference/full-entity save DTOs via mutateResource) and is certified locally; independent human language,
+  assistive-technology and WebKit/CI-at-PR acceptance remain open.
 - No runtime dependency or package version/peer-range change is needed. Release versioning/publication remains an
   independently authorized release operation.
 
@@ -228,5 +231,35 @@ substitute for an independent assistive-technology assessment (story 45), native
 or CI at a pull-request commit; those remain open and are recorded separately per
 `docs/guides/accessibility-and-localization.md`. Merge, deployment and publication remain separate gates.
 
-All counts in this record are snapshots of the #201 acceptance commit. Later pull requests add dictionary keys, unit
+All counts in this record are snapshots of the #201 acceptance commit. #202 later added the `policyExample.*` locale
+keys, five policy-form unit tests and one policy-form browser journey. Later pull requests add dictionary keys, unit
 tests and browser journeys to the repository totals; this record is not a live inventory of the current main branch.
+
+## Data service policy form (#202) — November 8, 2026
+
+The policy create/edit example replaces the previous single-grid preview with a caller-written policy form that hosts
+two reusable pickers. `DataServicePolicyFormComponent` (`data-testid="policy-form"`) owns the policy name and a single
+namespace selection through `NamespacePickerComponent`, and the organization selection through the existing
+`OrganizationPickerComponent`. Each picker owns its scoped `queryResource` inventory, native loading and
+`cll-alert`/Retry; the parent owns the detail read, validators, the accepted baseline and the save. The component uses
+the accessor directive plus one `cllDatagridSelectionBinding` per picker — no picker CVA, mirrored control or
+`valueChange` wiring.
+
+The form opens disabled and hydrates from the accepted detail once (detail-first); an inventory-first arrival cannot
+present a blank editable form as saved. It keeps the original organization keys across local pages without dirty/touched
+echoes, shows a single selected-count summary, and distinguishes loading/failure/Retry per read. Reset restores the
+accepted baseline, cancels pending edits, clears dirty/touched/submitted and preserves filters, page, permissions and
+errors; it performs no backend write. Save converts the selected keys into ID-only, reference or full-entity DTOs and
+resolves every key or blocks with an error through `mutateResource`; it never silently filters or emits a wildcard.
+Warning-only status (near the selection limit) is distinct from eligibility errors.
+
+| Gate                    | Result                                                                                                                                                                                                                                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Focused demo tests      | Five new Angular unit tests for `DataServicePolicyFormComponent` pass (hydrate, reset restores baseline, ID-only and full-entity save DTOs, unresolved-key block).                                                                                                                                                 |
+| Three-browser journeys  | The policy-form journeys in `datagrid-selection.spec.ts` (hydrate, loading lock, failure/retry, eleven-locale switch, unavailable keys, reset, save) plus a new namespace/policy-name/save/reset journey are defined for Chromium, Firefox and WebKit; Chromium and Firefox run locally, WebKit remains a CI gate. |
+| Localization and source | All eleven dictionaries add the `policyExample.*` keys; displayed source matches the runnable source/template files via the example generator.                                                                                                                                                                     |
+| Independent acceptance  | Independent native-language and assistive-technology acceptance remain open, as do CI-at-PR, WebKit and the npm-publication gate.                                                                                                                                                                                  |
+
+Limitations: the example uses checked-in JSON inventories and a simulated save; a real consumer still has to resolve
+keys and persist through its own service. Automated accessibility and the eleven-locale switch are covered by the
+journey suite and recorded; a manual assistive-technology pass and native-speaker review remain separate.

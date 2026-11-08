@@ -1,26 +1,32 @@
 import {TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {TranslationService} from 'clr-lift';
-import {Subject} from 'rxjs';
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {of} from 'rxjs';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
 import {enTranslations} from '../../../core/l10n/demo.l10n.en';
 import {DataServicePolicyFormComponent} from './data-service-policy-form.component';
-import {Organization} from './organization-example.data';
+import {Organization, type Status} from './organization-example.data';
+import {type Namespace} from './namespace-example.data';
 import {registerExampleMessages} from './organization-example.messages';
 import {OrganizationService} from './organization.service';
+import {NamespaceService} from './namespace.service';
 
-const inventory: Organization[] = [
-  {id: 'org-1', name: 'Organization 1', status: 'ready'},
-  {id: 'org-2', name: 'Organization 2', status: 'ready'},
-  {id: 'org-4', name: 'Organization 4', status: 'ready'},
+type Org = Organization;
+type Ns = Namespace;
+
+const organizations: Org[] = [
+  {id: 'org-1', name: 'Organization 1', status: 'ready' as Status},
+  {id: 'org-2', name: 'Organization 2', status: 'ready' as Status},
+  {id: 'org-4', name: 'Organization 4', status: 'ready' as Status},
+];
+const namespaces: Ns[] = [
+  {id: 'ns-1', name: 'Production', status: 'ready' as Status},
+  {id: 'ns-3', name: 'Sandbox', status: 'maintenance' as Status},
 ];
 
-describe('organization selection recovery', () => {
-  let requests: Subject<Organization[]>[];
-
+describe('DataServicePolicyFormComponent', () => {
   beforeEach(() => {
-    requests = [];
     TestBed.configureTestingModule({
       imports: [DataServicePolicyFormComponent],
       providers: [
@@ -31,12 +37,17 @@ describe('organization selection recovery', () => {
             listQuery: () => ({
               key: ['organizations', 'list', 'scope-1'],
               staleTime: 60_000,
-              // One subject per loader call, so a reload starts a new request.
-              loader: () => {
-                const request = new Subject<Organization[]>();
-                requests.push(request);
-                return request;
-              },
+              loader: () => of(organizations),
+            }),
+          },
+        },
+        {
+          provide: NamespaceService,
+          useValue: {
+            listQuery: () => ({
+              key: ['namespaces', 'list', 'scope-1'],
+              staleTime: 60_000,
+              loader: () => of(namespaces),
             }),
           },
         },
@@ -53,94 +64,81 @@ describe('organization selection recovery', () => {
   async function createForm() {
     const fixture = TestBed.createComponent(DataServicePolicyFormComponent);
     fixture.detectChanges();
-    await vi.waitFor(() => expect(requests).toHaveLength(1));
-    requests[0].next(inventory);
-    requests[0].complete();
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(fixture.componentInstance.organizationsQuery.status()).toBe('resolved');
-    });
+    // Detail resolves after a short delay and hydrates + enables the form.
+    await vi.waitFor(() => expect(fixture.componentInstance.form.enabled).toBe(true));
+    // Inventories must also be verified before a save can proceed.
+    await vi.waitFor(() => expect(fixture.componentInstance.verifiedOrgs()).toBeDefined());
+    await vi.waitFor(() => expect(fixture.componentInstance.verifiedNamespaces()).toBeDefined());
+    fixture.detectChanges();
     return fixture;
   }
 
-  it('counts every key, rejects unavailable submission, and removes it as an explicit edit', async () => {
+  it('hydrates from the accepted detail and enables editing without dirty/touched echoes', async () => {
     const fixture = await createForm();
     const component = fixture.componentInstance;
-    const control = component.form.controls.organizationIds;
-    const save = vi.spyOn(component.save, 'emit');
-
-    component.loadSaved();
-    expect(control.errors).toEqual({unavailableOrganizations: ['unresolved']});
-    component.submit();
-    expect(save).not.toHaveBeenCalled();
-    expect(control.pristine).toBe(true);
-    expect(control.untouched).toBe(true);
-
-    control.setValue(['org-2', 'unresolved', 'org-1', 'org-4']);
-    expect(control.errors).toEqual({
-      maxlength: {requiredLength: 3, actualLength: 4},
-      unavailableOrganizations: ['unresolved'],
-    });
-    component.readonly.set(true);
-    component.removeSelection('unresolved');
-    expect(control.value).toContain('unresolved');
-    component.readonly.set(false);
-    control.disable();
-    component.removeSelection('unresolved');
-    expect(control.value).toContain('unresolved');
-    control.enable();
-
-    component.removeSelection('unresolved');
-    expect(control.value).toEqual(['org-2', 'org-1', 'org-4']);
-    expect(control.errors).toBeNull();
-    expect(control.dirty).toBe(true);
-    expect(control.touched).toBe(true);
-    component.submit();
-    expect(save).toHaveBeenCalledExactlyOnceWith({organizationIds: ['org-2', 'org-1', 'org-4']});
-    component.form.reset();
-    expect(control.value).toEqual(['org-2']);
-    expect(control.pristine).toBe(true);
+    expect(component.form.controls.policyName.value).toBe('Data service policy');
+    expect(component.form.controls.namespaceId.value).toBe('ns-1');
+    expect(component.form.controls.organizationIds.value).toEqual(['org-1', 'org-2']);
+    expect(component.form.pristine).toBe(true);
+    expect(component.form.untouched).toBe(true);
   });
 
-  it('blocks unverified submission and revalidates Retry without editing saved keys', async () => {
+  it('reset restores the accepted baseline with no backend call and clears dirty/touched', async () => {
     const fixture = await createForm();
     const component = fixture.componentInstance;
-    const control = component.form.controls.organizationIds;
+    component.form.controls.policyName.setValue('Changed');
+    component.form.controls.organizationIds.setValue(['org-1', 'org-4']);
+    component.form.markAsDirty();
+    component.form.markAsTouched();
+    expect(component.form.dirty).toBe(true);
+
+    component.reset();
+    expect(component.form.controls.policyName.value).toBe('Data service policy');
+    expect(component.form.controls.organizationIds.value).toEqual(['org-1', 'org-2']);
+    expect(component.form.pristine).toBe(true);
+    expect(component.form.untouched).toBe(true);
+    expect(component.saved()).toBe(false);
+  });
+
+  it('save converts the selection into an ID-only DTO and accepts a new baseline', async () => {
+    const fixture = await createForm();
+    const component = fixture.componentInstance;
     const save = vi.spyOn(component.save, 'emit');
-    component.loadSaved();
+    component.dtoMode.set('id-only');
+    await component.submit();
+    await vi.waitFor(() => expect(component.submitted()).not.toBeNull());
+    expect(component.submitted()).toMatchObject({
+      mode: 'id-only',
+      policyName: 'Data service policy',
+      namespaceId: 'ns-1',
+      organizationIds: ['org-1', 'org-2'],
+    });
+    expect(component.saved()).toBe(true);
+    expect(component.form.pristine).toBe(true);
+    expect(save).toHaveBeenCalledOnce();
+  });
 
-    component.organizationsQuery.reload();
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(requests).toHaveLength(2);
-    });
-    expect(control.errors).toBeNull();
-    component.submit();
-    component.removeSelection('unresolved');
-    expect(save).not.toHaveBeenCalled();
-    expect(control.value).toEqual(['org-2', 'unresolved']);
-    requests[1].error(new Error('Offline'));
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(component.organizationsQuery.status()).toBe('error');
-    });
-    expect(component.hasUnavailableSelection()).toBe(false);
-    component.submit();
-    expect(save).not.toHaveBeenCalled();
+  it('save resolves a full-entity DTO with every selected key', async () => {
+    const fixture = await createForm();
+    const component = fixture.componentInstance;
+    component.dtoMode.set('full-entity');
+    await component.submit();
+    await vi.waitFor(() => expect(component.submitted()).not.toBeNull());
+    const dto = component.submitted() as {mode: string; organizations: Org[]};
+    expect(dto.mode).toBe('full-entity');
+    expect(dto.organizations.map((o) => o.id)).toEqual(['org-1', 'org-2']);
+  });
 
-    component.organizationsQuery.reload();
-    await vi.waitFor(() => expect(requests).toHaveLength(3));
-    requests[2].next([...inventory, {id: 'unresolved', name: 'Recovered', status: 'ready'}]);
-    requests[2].complete();
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(component.organizationsQuery.status()).toBe('resolved');
-    });
-    expect(control.value).toEqual(['org-2', 'unresolved']);
-    expect(control.errors).toBeNull();
-    expect(control.pristine).toBe(true);
-    expect(control.untouched).toBe(true);
-    component.submit();
-    expect(save).toHaveBeenCalledExactlyOnceWith({organizationIds: ['org-2', 'unresolved']});
+  it('blocks a save with an unresolved key (availability validator) without losing edits', async () => {
+    const fixture = await createForm();
+    const component = fixture.componentInstance;
+    component.form.controls.organizationIds.setValue(['org-1', 'unresolved']);
+    component.form.controls.organizationIds.markAsDirty();
+    await component.submit();
+    // The availability validator marks the key unavailable, so submit is blocked and edits persist.
+    expect(component.form.controls.organizationIds.errors).toMatchObject({unavailableOrganizations: ['unresolved']});
+    expect(component.submitted()).toBeNull();
+    expect(component.form.controls.organizationIds.value).toEqual(['org-1', 'unresolved']);
+    expect(component.form.dirty).toBe(true);
   });
 });

@@ -85,6 +85,13 @@ export const frTranslations: Record<string, string> = {
   'organizationExample.retry': 'Réessayer',
   'organizationExample.maxOrganizations': 'Choisissez au maximum trois organisations.',
   'organizationExample.invalidSelection': 'La sélection d’organisations n’est pas valide.',
+  'policyExample.namespace': 'Espace de noms',
+  'policyExample.namespaceHelp': 'Choisissez l’espace de noms auquel cette stratégie s’applique.',
+  'policyExample.saved': 'Stratégie enregistrée.',
+  'policyExample.saveError': 'Impossible d’enregistrer la stratégie.',
+  'policyExample.unresolvedKeyError': 'Certaines sélections n’ont pas pu être résolues et n’ont pas été enregistrées.',
+  'policyExample.eligibilityWarning': 'Une ou plusieurs organisations approchent la limite de sélection.',
+
   'selectionDemo.asyncSubmit': 'Validation asynchrone et mise en mémoire avant envoi',
   'selectionDemo.asyncSubmitHelp':
     "Les sélections restent en mémoire jusqu'à l'envoi. Une vérification asynchrone de l'éligibilité s'exécute ensuite ; Organization 4 (org-4) est refusé.",

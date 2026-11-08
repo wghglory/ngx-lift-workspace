@@ -84,6 +84,13 @@ export const nlTranslations: Record<string, string> = {
   'organizationExample.retry': 'Opnieuw proberen',
   'organizationExample.maxOrganizations': 'Selecteer maximaal drie organisaties.',
   'organizationExample.invalidSelection': 'De organisatieselectie is ongeldig.',
+  'policyExample.namespace': 'Naamruimte',
+  'policyExample.namespaceHelp': 'Kies de naamruimte waarop dit beleid van toepassing is.',
+  'policyExample.saved': 'Beleid opgeslagen.',
+  'policyExample.saveError': 'Kon het beleid niet opslaan.',
+  'policyExample.unresolvedKeyError': 'Sommige selecties konden niet worden opgelost en zijn niet opgeslagen.',
+  'policyExample.eligibilityWarning': 'Eén of meer organisaties naderen de selectielimiet.',
+
   'selectionDemo.asyncSubmit': 'Asynchrone validatie en buffering bij verzenden',
   'selectionDemo.asyncSubmitHelp':
     'Selecties worden gebufferd totdat u verzendt. Daarna wordt een asynchrone geschiktheidscontrole uitgevoerd; Organization 4 (org-4) wordt geweigerd.',
