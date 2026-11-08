@@ -12,7 +12,6 @@ permissions:
 # fast even without a remote cache hit.
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  BASE_URL: http://127.0.0.1:4307
   PLAYWRIGHT_BROWSERS: ${{ github.event_name == 'pull_request' && 'chromium' || 'chromium,firefox,webkit' }}
   PLAYWRIGHT_WORKERS: ${{ github.event_name == 'pull_request' && '2' || '1' }}
 
@@ -152,29 +151,7 @@ jobs:
           else
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
           fi
-      - name: Build demo for e2e
-        run: pnpm exec nx build demo --configuration=development
-      - name: Start demo static server
-        run: |
-          if [ ! -f dist/apps/demo/browser/index.html ]; then
-            echo 'dist/apps/demo/browser/index.html not found after build'
-            find dist -maxdepth 4 -name index.html || true
-            exit 1
-          fi
-          pnpm exec nx run demo:serve-static --buildTarget=demo:build:development --staticFilePath=dist/apps/demo/browser --port=4307 --spa > /tmp/demo-e2e-server.log 2>&1 &
-          echo $! > /tmp/demo-e2e-server.pid
-          npx --yes wait-on@8.0.3 tcp:127.0.0.1:4307 --timeout 180000 || {
-            echo '--- demo static server log ---'
-            tail -200 /tmp/demo-e2e-server.log || true
-            exit 1
-          }
       - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1
-      - name: Stop demo static server
-        if: always()
-        run: |
-          if [ -f /tmp/demo-e2e-server.pid ]; then
-            kill "$(cat /tmp/demo-e2e-server.pid)" 2>/dev/null || true
-          fi
       - name: Upload browser report
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

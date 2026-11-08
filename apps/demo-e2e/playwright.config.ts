@@ -47,7 +47,9 @@ export default defineConfig({
   webServer: externalBaseURL
     ? undefined
     : {
-        command: 'pnpm nx run demo:serve --port=4307 --hmr=false',
+        command: process.env['CI']
+          ? 'pnpm exec nx run demo:serve-static --buildTarget=demo:build:development --staticFilePath=dist/apps/demo/browser --port=4307 --spa'
+          : 'pnpm nx run demo:serve --port=4307 --hmr=false',
         url: baseURL,
         reuseExistingServer: !process.env['CI'],
         timeout: 120 * 1000,
