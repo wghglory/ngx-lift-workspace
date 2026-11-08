@@ -149,8 +149,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "cmd=affected --base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
-            echo "target=e2e-ci" >> "$GITHUB_OUTPUT"
-            echo "parallel=3" >> "$GITHUB_OUTPUT"
+            echo "target=e2e" >> "$GITHUB_OUTPUT"
+            echo "parallel=1" >> "$GITHUB_OUTPUT"
           else
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
             echo "target=e2e" >> "$GITHUB_OUTPUT"
@@ -180,7 +180,7 @@ jobs:
           pnpm exec nx ${{ steps.scope.outputs.cmd }} -t ${{ steps.scope.outputs.target }} --parallel=${{
           steps.scope.outputs.parallel }}
       - name: Merge atomized Playwright reports
-        if: always() && github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request' && steps.scope.outputs.target == 'e2e-ci'
         run: |
           affected=$(pnpm exec nx show projects --affected --base=origin/${{ github.base_ref }} --withTarget e2e-ci --json)
           if echo "$affected" | grep -q 'demo-e2e'; then
