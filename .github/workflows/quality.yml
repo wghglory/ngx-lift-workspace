@@ -12,6 +12,8 @@ permissions:
 # fast even without a remote cache hit.
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  PLAYWRIGHT_BROWSERS: ${{ github.event_name == 'pull_request' && 'chromium' || 'chromium,firefox,webkit' }}
+  PLAYWRIGHT_WORKERS: ${{ github.event_name == 'pull_request' && '2' || '1' }}
 
 jobs:
   # Whole-repo, dependency-free checks. Always runs fully.
@@ -134,7 +136,13 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pnpm exec playwright install --with-deps chromium
+          else
+            pnpm exec playwright install --with-deps
+          fi
       - name: Compute nx command
         id: scope
         run: |
