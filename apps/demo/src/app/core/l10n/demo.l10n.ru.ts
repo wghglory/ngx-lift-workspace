@@ -671,9 +671,9 @@ export const ruTranslations: Record<string, string> = {
     'Когда изменение контрола формы запускает цепную обновление в другом контроле (например, сброс доступных версий при изменении движка базы данных), можно использовать традиционный паттерн RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> или утилиту сигнал-в-начале <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>. <code>watch</code> работает внутри Angular <code>effect()</code> с автоматической <code>untracked</code> изоляцией, предотвращая ошибки <code>NG0600</code> при записи сигналов, при этом убирая ручное разрушение подписок.',
   'toSignalForm.apiReferenceTitle': 'API Ссылка',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm (форма, опции?)',
-  'toSignalForm.apiBindIfTitle': 'sf.bindIf (контроль, состояние, параметры?) / bindControlIf',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(controlName, condition, controlFactory, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled (контроль, состояние, параметры?) / bindControlDisabled',
-  'toSignalForm.apiRevalidateTitle': '/ revalidateOnChange',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, source) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'Пример Angular FormGroup, чтобы обернуться реактивными сигналами и связками.',
   'toSignalForm.apiPropOmit': 'Контролировать имена для исключения из полезной нагрузки submitValue.',
   'toSignalForm.apiPropIncludeDisabled':
@@ -683,24 +683,17 @@ export const ruTranslations: Record<string, string> = {
   'toSignalForm.apiPropOmitIf':
     'Предикат для каждого элемента, который исключает его из submitValue. Получает текущее значение, имя элемента и родительский объект.',
   'toSignalForm.apiPropDeep': 'Очищает ли submitValue также вложенные объекты и массивы.',
-  'toSignalForm.apiPropEmitEvent':
-    'Вне зависимости от того, происходят ли изменения в состоянии/значении изменения в контрольной деятельности Angular.',
   'toSignalForm.apiPropValue': 'Реактивный сигнал текущей формы.',
   'toSignalForm.apiPropStatus': 'Реактивный сигнал общего состояния формы (VALID) (INVALID), PENDING (DISABLED).',
   'toSignalForm.apiPropValid': 'Вычисленный сигнал, указывающий, является ли форма действительной.',
   'toSignalForm.apiPropInvalid': 'Вычисленный сигнал, указывающий, является ли форма недействительной.',
   'toSignalForm.apiPropSubmitValue':
     'Санитарная полезная нагрузка, за исключением отключенных, опущенных или немонтированных органов управления.',
-  'toSignalForm.apiPropIsSubmitting': 'Сигнал, отслеживающий, находится ли асинковая подача в полете.',
-  'toSignalForm.apiBindIfControl':
-    'Наименование или пример органа управления, предназначенного для установки/отключения условно.',
+  'toSignalForm.apiBindIfControl': 'Имя элемента управления, который условно добавляется или удаляется.',
   'toSignalForm.apiBindIfCondition':
     'Булевой сигнал или основной сигнал, определяющий, установлен ли орган управления.',
   'toSignalForm.apiBindIfPreserveValue':
     'Сохраняет контрольное значение в памяти в течение неустановленных/надбавленных циклов.',
-  'toSignalForm.apiBindIfDefaultValue':
-    'По умолчанию присвоенное значение при установке или повторном включении органа управления.',
-  'toSignalForm.apiBindIfEmitEvent': 'Выделяет ли контрольное добавление/выброс значения и статус FormGroup.',
   'toSignalForm.apiBindDisabledControl':
     'Контроль за целью, срабатывающее/нетрудоспособное состояние которого связано.',
   'toSignalForm.apiBindDisabledCondition':
@@ -715,10 +708,6 @@ export const ruTranslations: Record<string, string> = {
     'Предназначенный контроль для повторной оценки достоверности данных при изменении источников.',
   'toSignalForm.apiRevalidateSources':
     'Элемент управления, сигнал или getter, изменение значения/статуса которого запускает повторную проверку целевого элемента.',
-  'toSignalForm.apiRevalidateOnlyIfTouched':
-    'Повторная проверка цели только в том случае, если цель была затронута пользователем.',
-  'toSignalForm.apiRevalidateOnlyIfDirty':
-    'Повторное утверждение цели только в том случае, если цель была изменена (грязно).',
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'Функция <code>computedAsync</code> — универсальная утилита, позволяющая вычислять значения из Promises, Observables или обычных значений. Она предоставляет гибкость в поведении вычисления через выборочные стратегии сглаживания (switch, merge, concat, exhaust) и присвоение начального значения. Для использования <code>computedAsync</code> нужно предоставить функцию, возвращающую Promise, Observable или обычное значение. Она затем возвращает <code>Signal</code>, отправляющий вычисленное значение.',

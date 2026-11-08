@@ -53,14 +53,14 @@ export class ToSignalFormComponent {
     this.translationService.currentLanguage();
     return [
       {
-        name: 'form',
-        type: 'FormGroup<T>',
+        name: 'form (parameter)',
+        type: 'FormGroup<TControls>',
         required: true,
         description: this.translationService.translate('toSignalForm.apiPropForm'),
       },
       {
         name: 'options.omit',
-        type: 'Array<keyof T>',
+        type: '(keyof T | (string & {}))[]',
         description: this.translationService.translate('toSignalForm.apiPropOmit'),
       },
       {
@@ -83,7 +83,7 @@ export class ToSignalFormComponent {
       },
       {
         name: 'options.omitIf',
-        type: '(value: unknown, key: string, group: Record<string, unknown>) => boolean',
+        type: '(value: unknown, key: string, raw: Record<string, unknown>) => boolean',
         description: this.translationService.translate('toSignalForm.apiPropOmitIf'),
       },
       {
@@ -93,28 +93,28 @@ export class ToSignalFormComponent {
         description: this.translationService.translate('toSignalForm.apiPropDeep'),
       },
       {
-        name: 'value',
-        type: 'Signal<T>',
+        name: 'sf.value',
+        type: 'Signal<TValue>',
         description: this.translationService.translate('toSignalForm.apiPropValue'),
       },
       {
-        name: 'status',
+        name: 'sf.status',
         type: 'Signal<FormControlStatus>',
         description: this.translationService.translate('toSignalForm.apiPropStatus'),
       },
       {
-        name: 'valid',
+        name: 'sf.valid',
         type: 'Signal<boolean>',
         description: this.translationService.translate('toSignalForm.apiPropValid'),
       },
       {
-        name: 'invalid',
+        name: 'sf.invalid',
         type: 'Signal<boolean>',
         description: this.translationService.translate('toSignalForm.apiPropInvalid'),
       },
       {
-        name: 'submitValue',
-        type: 'Signal<Partial<T>>',
+        name: 'sf.submitValue',
+        type: 'Signal<TSubmitValue>',
         description: this.translationService.translate('toSignalForm.apiPropSubmitValue'),
       },
     ];
@@ -124,8 +124,8 @@ export class ToSignalFormComponent {
     this.translationService.currentLanguage();
     return [
       {
-        name: 'control',
-        type: 'string | AbstractControl',
+        name: 'controlName',
+        type: 'string',
         required: true,
         description: this.translationService.translate('toSignalForm.apiBindIfControl'),
       },

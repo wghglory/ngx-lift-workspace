@@ -1,3 +1,4 @@
+import {EventEmitter} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {describe, expect, it, vi} from 'vitest';
@@ -240,5 +241,35 @@ describe('to-submit-value utilities', () => {
     expect(submitVal.blob).toBe(testBlob);
     expect(submitVal.cert).toBe(testCert);
     expect(submitVal.name).toBe('Test');
+  });
+
+  it('should rethrow user callback errors when the submitValue signal is read', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const events = new EventEmitter<unknown>();
+      Object.defineProperty(form, 'events', {value: events});
+
+      const failure = new Error('omitIf failed');
+      let fail = false;
+      const submitSig = formSubmitValue(form, {
+        omitIf: () => {
+          if (fail) {
+            throw failure;
+          }
+          return false;
+        },
+      });
+      expect(submitSig()).toEqual({name: 'Ada'});
+
+      const report = vi.spyOn(console, 'error');
+      try {
+        fail = true;
+        events.emit('tick');
+        expect(() => submitSig()).toThrow(failure);
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
+    });
   });
 });

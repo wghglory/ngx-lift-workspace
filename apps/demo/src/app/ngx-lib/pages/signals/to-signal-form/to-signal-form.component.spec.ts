@@ -362,37 +362,56 @@ describe('ToSignalFormComponent', () => {
     expect(component.createClusterRef.isLoading()).toBe(false);
   });
 
-  it('exposes populated API reference tables for toSignalForm, bindIf, bindDisabled, and revalidate', () => {
-    expect(component.toSignalFormProperties().length).toBe(12);
-    expect(component.bindIfProperties().length).toBe(3);
-    expect(component.bindDisabledProperties().length).toBeGreaterThanOrEqual(4);
-    expect(component.revalidateProperties().length).toBe(2);
+  it('exposes API reference tables that match the exported toSignalForm API', () => {
+    const formProps = component.toSignalFormProperties();
+    const bindIfProps = component.bindIfProperties();
+    const bindDisabledProps = component.bindDisabledProperties();
+    const revalidateProps = component.revalidateProperties();
 
-    // Verify critical properties are documented
-    const formPropNames = component.toSignalFormProperties().map((p) => p.name);
-    expect(formPropNames).toContain('form');
-    expect(formPropNames).toContain('submitValue');
-    expect(formPropNames).not.toContain('options.emitEvent');
-    expect(formPropNames).not.toContain('isSubmitting');
+    expect(formProps.map((p) => p.name)).toEqual([
+      'form (parameter)',
+      'options.omit',
+      'options.includeDisabled',
+      'options.omitEmptyStrings',
+      'options.omitNull',
+      'options.omitIf',
+      'options.deep',
+      'sf.value',
+      'sf.status',
+      'sf.valid',
+      'sf.invalid',
+      'sf.submitValue',
+    ]);
+    expect(bindIfProps.map((p) => p.name)).toEqual(['controlName', 'condition', 'options.preserveValue']);
+    expect(bindDisabledProps.map((p) => p.name)).toEqual([
+      'control',
+      'condition',
+      'options.resetOnDisable',
+      'options.resetValue',
+      'options.emitEvent',
+    ]);
+    expect(revalidateProps.map((p) => p.name)).toEqual(['target', 'source']);
 
-    const bindIfPropNames = component.bindIfProperties().map((p) => p.name);
-    expect(bindIfPropNames).toContain('control');
-    expect(bindIfPropNames).toContain('condition');
-    expect(bindIfPropNames).toContain('options.preserveValue');
-    expect(bindIfPropNames).not.toContain('options.defaultValue');
-    expect(bindIfPropNames).not.toContain('options.emitEvent');
+    // Guard against the fictional rows introduced in #145.
+    expect(formProps.map((p) => p.name)).not.toContain('isSubmitting');
+    expect(formProps.map((p) => p.name)).not.toContain('options.emitEvent');
+    expect(bindIfProps.map((p) => p.name)).not.toContain('options.defaultValue');
+    expect(bindIfProps.map((p) => p.name)).not.toContain('options.emitEvent');
+    expect(revalidateProps.map((p) => p.name)).not.toContain('sources');
+    expect(revalidateProps.map((p) => p.name)).not.toContain('options.onlyIfTouched');
+    expect(revalidateProps.map((p) => p.name)).not.toContain('options.onlyIfDirty');
 
-    const bindDisabledPropNames = component.bindDisabledProperties().map((p) => p.name);
-    expect(bindDisabledPropNames).toContain('control');
-    expect(bindDisabledPropNames).toContain('condition');
-    expect(bindDisabledPropNames).toContain('options.resetOnDisable');
-
-    const revalidatePropNames = component.revalidateProperties().map((p) => p.name);
-    expect(revalidatePropNames).toContain('target');
-    expect(revalidatePropNames).toContain('source');
-    expect(revalidatePropNames).not.toContain('sources');
-    expect(revalidatePropNames).not.toContain('options.onlyIfTouched');
-    expect(revalidatePropNames).not.toContain('options.onlyIfDirty');
+    // Types stay aligned with the exported declarations in to-signal-form.model.ts.
+    const formTypes = new Map(formProps.map((p) => [p.name, p.type]));
+    expect(formTypes.get('form (parameter)')).toBe('FormGroup<TControls>');
+    expect(formTypes.get('options.omit')).toBe('(keyof T | (string & {}))[]');
+    expect(formTypes.get('options.omitIf')).toBe(
+      '(value: unknown, key: string, raw: Record<string, unknown>) => boolean',
+    );
+    expect(formTypes.get('sf.value')).toBe('Signal<TValue>');
+    expect(formTypes.get('sf.submitValue')).toBe('Signal<TSubmitValue>');
+    expect(bindIfProps[0].type).toBe('string');
+    expect(revalidateProps[1].type).toBe('string | AbstractControl | Signal<unknown> | (() => unknown)');
   });
 
   describe('submission options lab', () => {

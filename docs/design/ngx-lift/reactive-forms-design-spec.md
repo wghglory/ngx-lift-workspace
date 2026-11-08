@@ -1,7 +1,8 @@
 # Reactive Forms signals, bindings, and submission
 
-Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
-Approval: existing API; this audit does not approve new behavior.
+Status: Implemented (contract follow-up). Owner: ngx-lift maintainers. Updated: November 8, 2026. Package: ngx-lift.
+Approval: the error-propagation contract is approved in the 2026-11-08 follow-up plan; a parallel `error` signal or an
+`onError` option remains out of scope.
 
 ## Applicable contracts
 
@@ -44,7 +45,7 @@ CVA implementation, HTTP submission, server validation, and automatic rollback o
 | R1  | Observe existing group               | Edit, touch, validate, reset          | State follows control events                                           | Pending/error states remain distinct                  | to-signal-form demo; form-signals.spec.ts |
 | R2  | Toggle conditional fields            | Mount, remove, remount                | Optional preservation restores value                                   | Missing proxies return undefined; named helpers throw | form-bindings.spec.ts; facade tests       |
 | R3  | Prepare payload                      | Disabled field and FormArray          | Disabled included by default; arrays stay arrays                       | Omission is opt-in; inspect output before HTTP        | to-submit-value.spec.ts                   |
-| R4  | Handle a failed control event stream | Read a signal after its source errors | Signal read rethrows the original source error; no stale-value success | Create a new helper for a replacement source          | form-signals.spec.ts; installed consumer  |
+| R4  | Handle a failed control event stream | Read a signal after its source errors | Signal read rethrows the original source error; no stale-value success | Recreate the helper or facade with a healthy control  | form-signals.spec.ts; installed consumer  |
 
 ## Industry evidence and current gaps
 
@@ -55,12 +56,27 @@ stream drives state updates. The facade adds dynamic bindings, not a separate fo
 For Observable failures, adopt Angular [`toSignal`](https://angular.dev/api/core/rxjs-interop/toSignal) semantics: the
 source error is rethrown when the returned signal is read. Do not silently log and keep returning the last value. Do not
 add a separate `error` signal or `onError` option: Angular's adapter has no such parallel channel, and an RxJS
-Observable cannot resume after its terminal error. Consumers replace the source/helper to recover. This concerns errors
-from the observed stream, not Angular validation errors exposed through `errors()`. React's
+Observable cannot resume after its terminal error. Consumers recreate the helper or facade to recover. This concerns
+errors from the observed stream, not Angular validation errors exposed through `errors()`. React's
 [`useSyncExternalStore`](https://react.dev/reference/react/useSyncExternalStore) likewise reads an external-store
 snapshot synchronously; it does not define a separate asynchronous source-error signal. Clarity, Angular Material and
 NG-ZORRO form controls present validation and field feedback, but do not change this library's Observable-to-Signal
 contract.
+
+**When an error can occur.** The observed sources are Angular's control event streams (`events`, `valueChanges`,
+`statusChanges`) plus the library's own `map` / `distinctUntilChanged` / `debounceTime` pipeline. Angular's stock
+`AbstractControl` implementations never call `error()` on these streams, so ordinary form usage never enters this path.
+An error notification can only come from (1) a non-standard or substituted control whose event stream errors, or (2) an
+exception thrown inside the pipeline — `getRawValue()` or `form.value` in `map`, a caller's `omitIf` or `transform`
+callback in `formSubmitValue`, or the `isEqual` comparator. RxJS converts a thrown operator callback into an error
+notification. Validation failures, rejected async validators and wrong options do not use this channel.
+
+**Runtime effect and recovery.** An RxJS error is terminal: the subscription closes, so no later emission can clear it.
+Angular's `computed` caches the thrown error, so every read of that signal — and of derived signals such as `valid`,
+`dirty` and `rawValue` — keeps rethrowing the original error until the helper or facade is recreated with a healthy
+control. Read from a template or effect, it surfaces through Angular's `ErrorHandler` and can break that render cycle.
+If nobody reads the signal, the error is silent; the library no longer logs it. The original audit suggestion (C2) to
+add an error signal or `onError` option is rejected: neither can recover from a terminated stream.
 
 ## Developer learning journey and pedagogy plan
 
@@ -84,10 +100,14 @@ import {toSignalForm, toSubmitValue} from 'ngx-lift';
 
 readonly group = new FormGroup({name: new FormControl('', {nonNullable: true})});
 readonly sf = toSignalForm(this.group, {omitEmptyStrings: true});
-// this.sf.fields.name.value(); this.sf.submitValue();
+// this.sf.fields.name.value(); this.sf.submitValue(); // reads rethrow a terminal stream error
 // One-time snapshot including disabled values:
 // toSubmitValue(this.group, {includeDisabled: true});
 ```
+
+A terminal error in an observed control event stream is rethrown on every read of the affected signal and of its derived
+signals. Recovery requires a new facade with a healthy control; see
+[Compatibility, rollout, and risks](#compatibility-rollout-and-risks).
 
 State helpers are `controlValue`, `controlStatus`, `controlState`, and `formState`. Bindings are `bindControlIf`,
 `bindControlDisabled`, `bindControlValidators`, `revalidateOnChange`, and `watchControl`; the facade exposes
@@ -116,22 +136,37 @@ translations. The facade preserves the form system used by Angular 21 controls.
 ## Demo and validation plan
 
 Existing demo: `apps/demo/src/app/ngx-lib/pages/signals/to-signal-form/`. Regressions beside each source cover dynamic
-mounting, proxy access, async status, debouncing, cross-control updates and arrays. Add a strict installed-consumer
-fixture before claiming the complete dynamic/proxy contract outside workspace aliases. Native fields are deferred.
+mounting, proxy access, async status, debouncing, cross-control updates and arrays. The API reference table is a
+curated, type-accurate subset: the parameter is shown separately from `sf.*` return members, and
+`to-signal-form.model.ts` remains authoritative for the complete surface. A focused demo spec asserts exact row names
+and types so the #145-era fictional rows cannot return. The strict installed-consumer fixture
+`tools/package/fixtures/to-signal-form-browser.mjs` verifies packed public types, dynamic-control lifecycle and error
+propagation in zoneless and ZoneJS modes. Native fields are deferred.
 
 ## Compatibility, rollout, and risks
 
 Angular 21 Reactive Forms and RxJS; no new runtime dependency. Debounced observations may lag a synchronous submit; use
 a direct snapshot when current synchronous data is required. Do not treat a sanitized payload as validation.
 
+**Migration:** the internal stream-to-signal helper previously logged a source error and kept the last value. Reads now
+rethrow that error, matching `formSubmitValue`, which already used Angular `toSignal`. This is a behavioral change, not
+a silent bug fix, and is recorded under `### Changed` in the changelog. Handle the error at the read site or recreate
+the helper/facade with a healthy control; the library exposes no recovery channel. Stock Angular controls do not reach
+this path. Independent human language and assistive-technology acceptance for the demo changes remain separate gates.
+
 ## Review decisions and delivery
 
 Document current behavior first. Resolve overlapping facade ownership through a separate reviewed change if required; do
 not silently claim independent wrappers. Follow the
-[form-control policy](../clr-lift/forms-compatibility-design-spec.md).
+[form-control policy](../clr-lift/forms-compatibility-design-spec.md). The audit's C2 suggestion to add an `error`
+signal or `onError` option was rejected: an RxJS error terminates the stream, so neither can recover, and Angular's
+adapter has no parallel channel.
 
 ## Evidence
 
-Source and adjacent specs inspected on November 8, 2026. Signal reads now propagate terminal source-stream errors in
-line with Angular `toSignal`; focused unit and installed-consumer evidence is recorded with the implementation. This
-does not establish Angular 22 or native Signal Forms acceptance.
+Source and adjacent specs inspected on November 8, 2026. Signal reads propagate terminal source-stream errors in line
+with Angular `toSignal`. `form-signals.spec.ts`, `to-submit-value.spec.ts`, `to-signal-form.spec.ts` and the packed
+`to-signal-form-browser.mjs` fixture cover value/status/event/rawValue pipelines, caller callback failures, derived
+signals, persistence, silence when unread and teardown in zoneless and ZoneJS modes. Browser E2E and independent human
+language / assistive-technology acceptance remain separate gates. This does not establish Angular 22 or native Signal
+Forms acceptance.

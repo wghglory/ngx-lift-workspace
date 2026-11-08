@@ -69,6 +69,21 @@ test.describe('toSignalForm signal-driven forms', () => {
     await expect(submit).toContainText('"nickname": ""');
     await expectAccessible(page, testInfo);
   });
+
+  test('renders API reference rows that match the exported toSignalForm API', async ({page}) => {
+    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.goto('/ngx-lift/signals/toSignalForm');
+
+    const reference = page.locator('#api-reference');
+    await expect(reference.getByRole('heading', {name: 'API Reference', exact: true})).toBeVisible();
+    await expect(reference.getByRole('cell', {name: /form \(parameter\)/})).toBeVisible();
+    await expect(reference.getByRole('cell', {name: 'sf.submitValue', exact: true})).toBeVisible();
+    await expect(reference.getByRole('cell', {name: /controlName/})).toBeVisible();
+    await expect(reference.getByRole('heading', {name: /sf\.revalidate\(target, source\)/})).toBeVisible();
+    await expect(reference.getByRole('cell', {name: 'isSubmitting', exact: true})).toHaveCount(0);
+    await expect(reference.getByRole('cell', {name: 'options.defaultValue', exact: true})).toHaveCount(0);
+    await expect(reference.getByRole('cell', {name: 'options.onlyIfTouched', exact: true})).toHaveCount(0);
+  });
 });
 
 for (const {code} of demoLocales) {

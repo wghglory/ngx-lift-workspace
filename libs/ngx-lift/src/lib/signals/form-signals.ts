@@ -31,14 +31,19 @@ function createControlEventStream(control: AbstractControl): Observable<unknown>
   return merge(control.valueChanges as Observable<unknown>, control.statusChanges).pipe(startWith(null));
 }
 
+type ControlStreamState<T> = {kind: 'value'; value: T} | {kind: 'error'; error: unknown};
+
 /**
- * Safe conversion from an Observable to a Signal that can be invoked from within
- * reactive contexts without triggering Angular NG0602 errors.
+ * Converts an Angular control/form event stream into a Signal without subscribing inside a reactive context (NG0602).
+ *
+ * Terminal errors follow Angular `toSignal`. Stock `AbstractControl` event streams never error, but a non-standard
+ * control or a throwing callback inside the internal RxJS pipeline can deliver an error notification. The original error
+ * is rethrown on every read of the returned signal and of any signal derived from it, until the helper or facade is
+ * recreated. A signal that is never read does not report the error. No error signal or `onError` option is exposed: an
+ * RxJS error terminates the stream, so there is no channel to recover into.
  */
-function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Injector): Signal<T> {
-  const state = signal<T>(initialValue);
-  const sourceError = signal<unknown>(undefined);
-  const hasSourceError = signal(false);
+function signalFromControlStream<T>(source$: Observable<T>, initialValue: T, injector: Injector): Signal<T> {
+  const state = signal<ControlStreamState<T>>({kind: 'value', value: initialValue});
   const destroyRef = injector.get(DestroyRef);
 
   let isSubscribing = true;
@@ -50,14 +55,12 @@ function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Inje
         }
       }
       untracked(() => {
-        state.set(val);
-        hasSourceError.set(false);
+        state.set({kind: 'value', value: val});
       });
     },
     error: (err) => {
       untracked(() => {
-        sourceError.set(err);
-        hasSourceError.set(true);
+        state.set({kind: 'error', error: err});
       });
     },
   });
@@ -68,10 +71,11 @@ function safeToSignal<T>(source$: Observable<T>, initialValue: T, injector: Inje
   });
 
   return computed(() => {
-    if (hasSourceError()) {
-      throw sourceError();
+    const current = state();
+    if (current.kind === 'error') {
+      throw current.error;
     }
-    return state();
+    return current.value;
   });
 }
 
@@ -104,7 +108,7 @@ export function controlValue<T = unknown>(
     stream$ = stream$.pipe(debounceTime(options.debounceTime));
   }
 
-  return safeToSignal(stream$, control.value as T, injector);
+  return signalFromControlStream(stream$, control.value as T, injector);
 }
 
 /**
@@ -128,7 +132,7 @@ export function controlStatus(control: AbstractControl, options?: ControlStatusO
   }
 
   const stream$ = control.statusChanges.pipe(distinctUntilChanged());
-  return safeToSignal(stream$, control.status, injector);
+  return signalFromControlStream(stream$, control.status, injector);
 }
 
 /**
@@ -158,7 +162,7 @@ export function controlState<T = unknown>(
   const statusSignal = controlStatus(control, {injector});
 
   const eventStream$ = createControlEventStream(control);
-  const eventTick = safeToSignal(eventStream$, null, injector);
+  const eventTick = signalFromControlStream(eventStream$, null, injector);
 
   const valid = computed(() => statusSignal() === 'VALID');
   const invalid = computed(() => statusSignal() === 'INVALID');
@@ -253,7 +257,7 @@ export function formState<T = Record<string, unknown>>(
     );
   }
 
-  const rawValueSignal = safeToSignal(rawStream$, computeRaw(), injector);
+  const rawValueSignal = signalFromControlStream(rawStream$, computeRaw(), injector);
 
   return {
     ...baseState,

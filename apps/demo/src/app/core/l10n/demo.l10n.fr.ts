@@ -683,9 +683,9 @@ export const frTranslations: Record<string, string> = {
     "Lorsqu'un changement dans un contrôleur de formulaire déclenche des mises à jour en cascade dans un autre contrôleur (par exemple, réinitialiser les versions disponibles lors de la modification de l'engin de base de données), vous pouvez utiliser le modèle traditionnel de RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> ou l'utilité de signal premier de <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>. <code>watch</code> opère à l'intérieur d'un Angular <code>effect()</code> avec une isolation automatique de <code>untracked</code>, empêchant ainsi les erreurs de écriture de signaux de <code>NG0600</code> tout en éliminant manuellement la déstructuration de l'abonnement.",
   'toSignalForm.apiReferenceTitle': 'Référence API',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
-  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(controlName, condition, controlFactory, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
-  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, source) / revalidateOnChange',
   'toSignalForm.apiPropForm':
     "L'instance Angular FormGroup pour envelopper avec des signaux réactifs et des fixations.",
   'toSignalForm.apiPropOmit': 'Contrôler les noms à omettre des charges utiles submitValue.',
@@ -696,8 +696,6 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.apiPropOmitIf':
     'Prédicat par contrôle qui retire un contrôle de submitValue. Reçoit la valeur courante, le nom du contrôle et son objet parent.',
   'toSignalForm.apiPropDeep': 'Indique si submitValue nettoie aussi les objets et tableaux imbriqués.',
-  'toSignalForm.apiPropEmitEvent':
-    'Indique si les changements de statut/valeur émettent des événements de contrôle Angular.',
   'toSignalForm.apiPropValue': 'Signal réactif de la valeur de la forme courante.',
   'toSignalForm.apiPropStatus':
     "Signal réactif de l'état global de la forme ('VALID'=\"INVALID'=\"PENDING'=\"DISABLED').",
@@ -705,15 +703,10 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.apiPropInvalid': 'Signal calculé indiquant si le formulaire est invalide.',
   'toSignalForm.apiPropSubmitValue':
     "Charge utile sanitaire, à l'exclusion des commandes désactivées, omises ou non montées.",
-  'toSignalForm.apiPropIsSubmitting': "Suivi du signal écrit si une opération de soumission d'async est en vol.",
-  'toSignalForm.apiBindIfControl': 'Nom ou instance de la commande à monter/démonter sous condition.',
+  'toSignalForm.apiBindIfControl': 'Nom du contrôle à monter ou démonter selon la condition.',
   'toSignalForm.apiBindIfCondition': 'Signal booléen ou prédicat régissant le montage de la commande.',
   'toSignalForm.apiBindIfPreserveValue':
     'Préserve la valeur de contrôle en mémoire pendant les cycles de démontage/remontage.',
-  'toSignalForm.apiBindIfDefaultValue':
-    'Valeur par défaut attribuée lors du montage ou de la réinitialisation du contrôle.',
-  'toSignalForm.apiBindIfEmitEvent':
-    "Indique si l'ajout/retrait de contrôle émet des événements de valeur et d'état FormGroup.",
   'toSignalForm.apiBindDisabledControl': "Contrôle de la cible dont l'état activé ou désactivé est lié.",
   'toSignalForm.apiBindDisabledCondition': 'Signal booléen ou prédicat retour vrai pour désactiver, faux pour activer.',
   'toSignalForm.apiBindDisabledResetOnDisable':
@@ -726,10 +719,6 @@ export const frTranslations: Record<string, string> = {
     'Contrôle de la cible pour réévaluer la validation en fonction des changements de source.',
   'toSignalForm.apiRevalidateSources':
     'Contrôle, signal ou getter dont le changement de valeur/statut déclenche la revalidation de la cible.',
-  'toSignalForm.apiRevalidateOnlyIfTouched':
-    "Ne déclenchez la revalidation de la cible que si la cible a été touchée par l'utilisateur.",
-  'toSignalForm.apiRevalidateOnlyIfDirty':
-    "Ne déclenchez la revalidation de la cible que si celle-ci a été modifiée (c'est sale).",
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'La fonction <code>computedAsync</code> est un outil polyvalent permettant de calculer des valeurs à partir de Promises, Observables ou de valeurs régulières. Elle offre une flexibilité dans le comportement de calcul à travers des stratégies de flattening sélectionnables (switch, merge, concat, exhaust) et une affectation initiale. Pour utiliser <code>computedAsync</code>, fournissez une fonction retournant un Promise, un Observable ou une valeur régulière. Elle retourne ensuite un <code>Signal</code> émettant la valeur calculée.',

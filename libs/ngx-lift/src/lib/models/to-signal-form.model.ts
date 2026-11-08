@@ -94,6 +94,9 @@ export interface BindControlValidatorsOptions {
 
 /**
  * Reactive signal representation of an Angular `AbstractControl`'s complete state.
+ *
+ * Reading any signal rethrows a terminal error from the observed control event stream. Recreate the bundle with a
+ * healthy control to recover; no parallel `error` signal is exposed.
  */
 export interface ControlStateSignals<T = unknown> {
   /** Current value of the control. */
@@ -375,6 +378,9 @@ export interface ToSignalFormOptions<
 
 /**
  * A unified, reactive signal facade for Angular `FormGroup`.
+ *
+ * Reading any state or submission signal rethrows a terminal error from its underlying control event stream. Recreate
+ * the facade with a healthy control to recover; no parallel `error` signal is exposed.
  */
 export interface SignalForm<
   TControls extends {[K in keyof TControls]: AbstractControl} = Record<string, AbstractControl>,

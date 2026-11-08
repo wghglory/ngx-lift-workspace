@@ -1,4 +1,4 @@
-import {signal} from '@angular/core';
+import {EventEmitter, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {describe, expect, it, vi} from 'vitest';
@@ -753,6 +753,32 @@ describe('toSignalForm', () => {
 
       expect(sf.hasControl('dynamicField')).toBe(false);
       expect(sf.fields.dynamicField).toBeUndefined();
+    });
+  });
+
+  it('should rethrow source errors through facade value and validity signals', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const values = new EventEmitter<unknown>();
+      const statuses = new EventEmitter<unknown>();
+      Object.defineProperty(form, 'valueChanges', {value: values});
+      Object.defineProperty(form, 'statusChanges', {value: statuses});
+
+      const sf = toSignalForm(form);
+      const valueFailure = new Error('form value stream failed');
+      const statusFailure = new Error('form status stream failed');
+      const report = vi.spyOn(console, 'error');
+
+      try {
+        values.error(valueFailure);
+        statuses.error(statusFailure);
+        expect(() => sf.value()).toThrow(valueFailure);
+        expect(() => sf.valid()).toThrow(statusFailure);
+        expect(sf.submitValue()).toEqual({name: 'Ada'});
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
     });
   });
 });

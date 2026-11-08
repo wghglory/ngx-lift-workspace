@@ -339,8 +339,15 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   documentation delivery are not backlog items; newcomer and native-language acceptance remain separate gates in
   `docs/query-documentation-plan.md`. `toSignalForm` also has a demo, tests, and a behavior specification. Its strict
   installed-consumer facade was already covered by `key-value-hosts.ts`; a new dedicated fixture adds dynamic-control
-  lifecycle coverage. The demo API rows now match the exported types, and stream errors follow Angular `toSignal`
-  semantics; targeted tests and package checks pass in the current PR branch.
+  lifecycle coverage. Stream errors follow Angular `toSignal` semantics; targeted tests and package checks pass in the
+  current PR branch.
+- Contract follow-up (2026-11-08): audit finding C2 is closed by `toSignal`-style error propagation. The original C2
+  suggestion to add an `error` signal or `onError` option was rejected: an RxJS error terminates the stream and
+  Angular's adapter has no parallel channel. Regression coverage now spans `controlValue`, `controlStatus`,
+  `controlState`, `formState`, the facade, `formSubmitValue` and the packed consumer in zoneless and ZoneJS modes. The
+  earlier claims about a missing packed `toSignalForm` fixture and undelivered query/mutation APIs were false positives;
+  the `toSignalForm` demo API rows drifted from #145, the six resulting orphan translation keys are removed from all 11
+  dictionaries, and the stale `bindIf` / `revalidate` signatures are corrected.
 
 ## 6. Caveats
 

@@ -673,9 +673,9 @@ export const ptBRTranslations: Record<string, string> = {
     'Quando um controle de formulário altera e desencadeia atualizações em cascata em outro controle (por exemplo, resetar versões disponíveis quando o motor do banco de dados muda), você pode usar o padrão tradicional RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> ou a utilidade de sinal primeiro <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>. <code>watch</code> opera dentro de um Angular <code>effect()</code> com isolamento automático <code>untracked</code>, evitando erros de escrita de sinal <code>NG0600</code> enquanto elimina a necessidade de desmontagem manual de assinaturas.',
   'toSignalForm.apiReferenceTitle': 'API Referência',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
-  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(controlName, condition, controlFactory, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
-  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, source) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'A instância Angular FormGroup para envolver-se com sinais reativos e ligantes.',
   'toSignalForm.apiPropOmit': 'Controle os nomes para omitir a partir de submitValue payloads.',
   'toSignalForm.apiPropIncludeDisabled':
@@ -685,21 +685,16 @@ export const ptBRTranslations: Record<string, string> = {
   'toSignalForm.apiPropOmitIf':
     'Predicado por controle que remove um controle de submitValue. Recebe o valor atual, o nome do controle e seu objeto pai.',
   'toSignalForm.apiPropDeep': 'Se submitValue também limpa objetos e matrizes aninhados.',
-  'toSignalForm.apiPropEmitEvent': 'Se o estado / valor muda, emitir eventos de controle Angular.',
   'toSignalForm.apiPropValue': 'Sinal reativo do valor da forma atual.',
   'toSignalForm.apiPropStatus':
     'Sinal reativo do status global da forma (VALIDEu...INVALIDEu...PENDINGEu...DISABLED(2).',
   'toSignalForm.apiPropValid': 'Sinal informático que indica se o formulário é válido.',
   'toSignalForm.apiPropInvalid': 'Sinal computado que indica se o formulário é inválido.',
   'toSignalForm.apiPropSubmitValue': 'Carga autorizada sem controle desactivado, omitido ou sem montagens.',
-  'toSignalForm.apiPropIsSubmitting':
-    'Corroboração de sinal para a escrita, se uma operação de submissão sínc estiver em-voo.',
-  'toSignalForm.apiBindIfControl': 'Nome ou instância do controle para montarem / desmontarem condicionalmente.',
+  'toSignalForm.apiBindIfControl': 'Nome do controle que é montado ou desmontado condicionalmente.',
   'toSignalForm.apiBindIfCondition': 'Sinal booleano ou prever se o comando é montado.',
   'toSignalForm.apiBindIfPreserveValue':
     'Preserve o valor de controle em memória em ciclos para desmontarem / remontarem.',
-  'toSignalForm.apiBindIfDefaultValue': 'Valor por omissão atribuído ao montarem ou reinstalarem o controle.',
-  'toSignalForm.apiBindIfEmitEvent': 'Se a adição / remoção de controle emite o valor FormGroup e eventos de status.',
   'toSignalForm.apiBindDisabledControl': 'Controle-alvo que tem o estado habilitado / desativado ligado.',
   'toSignalForm.apiBindDisabledCondition':
     'Sinal booleano ou predicar retornando verdadeiro para desativar, falso para ativar.',
@@ -711,9 +706,6 @@ export const ptBRTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'Controle-alvo para reavaliar a validação sobre as alterações-fonte.',
   'toSignalForm.apiRevalidateSources':
     'Controle, sinal ou getter cuja alteração de valor/status aciona a revalidação do alvo.',
-  'toSignalForm.apiRevalidateOnlyIfTouched':
-    'Apenas desencadeia a revalidação do alvo se o alvo for tocado pelo usuário.',
-  'toSignalForm.apiRevalidateOnlyIfDirty': 'Apenas desencadeia a revalidação-alvo se o alvo for modificado (sujo).',
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'A função <code>computedAsync</code> calcula valores a partir de Promises, Observables ou valores comuns. Ela permite escolher a estratégia de combinação dos fluxos (switch, merge, concat, exhaust) e definir um valor inicial. Forneça uma função que retorne uma Promise, um Observable ou um valor comum; o resultado é um <code>Signal</code> com o valor calculado.',

@@ -661,9 +661,9 @@ export const jaTranslations: Record<string, string> = {
     'フォームコントロールの変更が他のコントロールにキャスケーディングアップデートを引き起こす場合（例: データベースエンジンが変更されたときに有効なバージョンがリセットされる場合）、従来のRxJSパターン<code>valueChanges.pipe(takeUntilDestroyed())</code>またはシグナルファーストの<code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>ユーティリティを使用できます。<code>watch</code>はAngularの<code>effect()</code>内で動作し、自動的に<code>untracked</code>の隔離を提供し、<code>NG0600</code>のシグナル書き込みエラーを防ぎ、手動の購読クリーンアップを排除します。',
   'toSignalForm.apiReferenceTitle': 'API参照',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
-  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(controlName, condition, controlFactory, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
-  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, source) / revalidateOnChange',
   'toSignalForm.apiPropForm':
     'Angular FormGroupインスタンスをリアクティブなシグナルとバインディングにラップするためのフォーム。',
   'toSignalForm.apiPropOmit': 'サブミット値パッケージから省略するコントロール名。',
@@ -674,20 +674,15 @@ export const jaTranslations: Record<string, string> = {
   'toSignalForm.apiPropOmitIf':
     'コントロール単位で submitValue から除外する判定。現在の値、コントロール名、その親オブジェクトを受け取ります。',
   'toSignalForm.apiPropDeep': 'submitValue が入れ子オブジェクトや配列も整理するかどうか。',
-  'toSignalForm.apiPropEmitEvent': 'ステータス/値の変更がAngularコントロールイベントを発生させるかどうか。',
   'toSignalForm.apiPropValue': '現在のフォーム値のリアクティブシグナル。',
   'toSignalForm.apiPropStatus':
     "全体のフォームステータス（'VALID' | 'INVALID' | 'PENDING' | 'DISABLED'）のリアクティブシグナル。",
   'toSignalForm.apiPropValid': 'フォームが有効かどうかを示す計算されたシグナル。',
   'toSignalForm.apiPropInvalid': 'フォームが無効かどうかを示す計算されたシグナル。',
   'toSignalForm.apiPropSubmitValue': '無効、省略、またはアンマウントされたコントロールを除いたクリーンなペイロード。',
-  'toSignalForm.apiPropIsSubmitting': '非同期のサブミット操作が進行中の場合を示す可変信号。',
-  'toSignalForm.apiBindIfControl': '条件的にマウントまたはアンマウントするコントロールの名前またはインスタンス。',
+  'toSignalForm.apiBindIfControl': '条件に応じてマウントまたはアンマウントするコントロールの名前。',
   'toSignalForm.apiBindIfCondition': 'コントロールがマウントされているかどうかを制御するブール信号または述語。',
   'toSignalForm.apiBindIfPreserveValue': 'コントロールの値をアンマウント/リマウントサイクルにおいてメモリに保持する。',
-  'toSignalForm.apiBindIfDefaultValue': 'コントロールをマウントまたはリセットするときに割り当てられるデフォルト値。',
-  'toSignalForm.apiBindIfEmitEvent':
-    'コントロールの追加/削除がフォームグループの値とステータスイベントを発行するかどうか。',
   'toSignalForm.apiBindDisabledControl': '有効/無効状態がバインドされているターゲットコントロール。',
   'toSignalForm.apiBindDisabledCondition': '無効にする場合は真、有効にする場合は偽を返すブール信号または述語。',
   'toSignalForm.apiBindDisabledResetOnDisable': '無効状態に入ったときに自動的にコントロールの値をリセットする。',
@@ -697,10 +692,6 @@ export const jaTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'ソース変化によって再検証されるターゲットコントロール。',
   'toSignalForm.apiRevalidateSources':
     '値/状態の変更によってターゲットの再検証をトリガーするコントロール、Signal、または getter。',
-  'toSignalForm.apiRevalidateOnlyIfTouched':
-    'ユーザーがターゲットコントロールに触れた場合にのみターゲットを再検証する。',
-  'toSignalForm.apiRevalidateOnlyIfDirty':
-    'ターゲットコントロールが変更されている（dirty）場合にのみターゲットを再検証する。',
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'computedAsync関数は、Promise、Observable、または通常の値から値を計算するための柔軟なユーティリティです。計算の動作を柔軟に制御するためには、フラット化戦略（switch、merge、concat、exhaust）を選択し、初期値を指定できます。computedAsyncを使用するには、Promise、Observable、または通常の値を返す関数を提供します。これにより、computedAsyncはSignalを返します。',

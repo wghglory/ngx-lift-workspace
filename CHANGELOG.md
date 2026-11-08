@@ -41,11 +41,21 @@ recorded for the affected releases.
 - The `queryResource` demo adds a runnable edit-form example. An effect initializes a stable reactive form when the
   query value changes, including same-entity refetches. Save reads the mutation ref's state.
 
+### Changed
+
+- **Compatibility:** `toSignalForm` control and form signals now rethrow a terminal source Observable error when read,
+  matching Angular `toSignal` instead of logging it and silently returning stale state. Reads of the affected signal and
+  of signals derived from it keep rethrowing that error until the helper or facade is recreated; a signal that is never
+  read reports nothing. Consumers that relied on the stale-value fallback must handle the error at the read site, or
+  rebuild the facade with a healthy control. Stock Angular `FormGroup` / `FormControl` event streams do not error, so
+  this concerns non-standard controls and failures inside the internal RxJS pipeline. Maintainer-approved in the
+  2026-11-08 contract follow-up; see
+  [Compatibility, rollout, and risks](docs/design/ngx-lift/reactive-forms-design-spec.md#compatibility-rollout-and-risks).
+
 ### Fixed
 
-- `toSignalForm` control and form signals now rethrow source Observable errors when read, matching Angular `toSignal`
-  instead of logging the error and silently returning stale state. The demo API reference now matches the exported
-  types, and packed-consumer verification covers dynamic control lifecycle behavior.
+- The `toSignalForm` demo API reference now matches the exported types, and packed-consumer verification covers dynamic
+  control lifecycle behavior and error propagation in zoneless and ZoneJS modes.
 - Documentation-only contract alignment: the `resourceAsync` spec now lists every shipped option and its exact callback
   semantics (including the removed `execute({onSuccess, onError})` shape), the query/mutation specs record the
   observer-level no-callback decision and the outcome tutorial. The mutation accessibility paragraph, `reload()` boolean

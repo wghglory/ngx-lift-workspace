@@ -657,9 +657,9 @@ export const koTranslations: Record<string, string> = {
     '폼 컨트롤의 변경이 다른 컨트롤에 쇼트크리프 업데이트를 유발할 경우(예: 데이터베이스 엔진이 변경될 때 사용 가능한 버전이 재설정될 수 있음), 전통적인 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 패턴 또는 신호 중심의 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code> 유틸리티를 사용할 수 있습니다. <code>watch</code>는 Angular의 <code>effect()</code> 내에서 작동하며 자동 <code>untracked</code> 고립을 제공하여 <code>NG0600</code> 신호 쓰기 오류를 방지하면서 수동 구독 정리 작업을 제거합니다.',
   'toSignalForm.apiReferenceTitle': 'API 참조',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
-  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(controlName, condition, controlFactory, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
-  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, source) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'Angular FormGroup 인스턴스를 반응형 신호 및 바인딩으로 감싸는 대상입니다.',
   'toSignalForm.apiPropOmit': '제출값 파이로드에서 생략할 컨트롤 이름입니다.',
   'toSignalForm.apiPropIncludeDisabled':
@@ -669,18 +669,14 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.apiPropOmitIf':
     '컨트롤별로 submitValue에서 제외할지 판단하는 조건입니다. 현재 값, 컨트롤 이름, 상위 객체를 전달받습니다.',
   'toSignalForm.apiPropDeep': 'submitValue가 중첩 객체와 배열도 정리하는지 여부입니다.',
-  'toSignalForm.apiPropEmitEvent': '상태/값 변경이 Angular 컨트롤 이벤트를 발생시키는지 여부입니다.',
   'toSignalForm.apiPropValue': '현재 폼 값의 반응형 신호입니다.',
   'toSignalForm.apiPropStatus': "전체 폼 상태의 반응형 신호('VALID' | 'INVALID' | 'PENDING' | 'DISABLED')입니다.",
   'toSignalForm.apiPropValid': '폼이 유효한지 나타내는 계산된 신호입니다.',
   'toSignalForm.apiPropInvalid': '폼이 유효하지 않은지 나타내는 계산된 신호입니다.',
   'toSignalForm.apiPropSubmitValue': '비활성화된, 생략된 또는 언마운트된 컨트롤을 제외한 정제된 payload.',
-  'toSignalForm.apiPropIsSubmitting': '비동기 제출 작업이 진행 중인지에 대한 가독 가능한 신호를 추적합니다.',
-  'toSignalForm.apiBindIfControl': '조건적으로 마운트/언마운트할 컨트롤의 이름이나 인스턴스.',
+  'toSignalForm.apiBindIfControl': '조건에 따라 마운트/언마운트할 컨트롤의 이름.',
   'toSignalForm.apiBindIfCondition': '컨트롤이 마운트되는지 여부를 결정하는 불리언 신호 또는 판별 함수.',
   'toSignalForm.apiBindIfPreserveValue': '언마운트/재마운트 사이클 중 컨트롤 값이 메모리에 유지됩니다.',
-  'toSignalForm.apiBindIfDefaultValue': '컨트롤을 마운트하거나 리셋할 때 할당되는 기본값.',
-  'toSignalForm.apiBindIfEmitEvent': '컨트롤 추가/삭제 시 FormGroup 값 및 상태 이벤트를 발행하는지 여부.',
   'toSignalForm.apiBindDisabledControl': '상태가 바인딩된 대상 컨트롤.',
   'toSignalForm.apiBindDisabledCondition':
     'true를 반환하여 비활성화하고, false를 반환하여 활성화하는 불리언 신호 또는 판별 함수.',
@@ -690,9 +686,6 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': '활성화/비활성화 상태 변경 시 값/상태 이벤트를 발행하는지 여부.',
   'toSignalForm.apiRevalidateTarget': '소스 변경 시 검증을 재평가해야 하는 대상 컨트롤.',
   'toSignalForm.apiRevalidateSources': '값/상태 변경 시 대상 재검증을 트리거하는 컨트롤, Signal 또는 getter입니다.',
-  'toSignalForm.apiRevalidateOnlyIfTouched':
-    '사용자가 대상 컨트롤을 터치했을 때만 대상 컨트롤의 재검증을 트리거합니다.',
-  'toSignalForm.apiRevalidateOnlyIfDirty': '대상 컨트롤이 변경되었을 때(스모그)만 대상 컨트롤의 재검증을 트리거합니다.',
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'computedAsync 함수는 Promise, Observables 또는 일반 값에서 값 계산을 가능하게 하는 유용한 도구입니다. 이 함수는 선택 가능한 평탄화 전략(스위치, 메르지, 콜릿, 에크스haust)과 초기 값 할당을 통해 계산 행동의 유연성을 제공합니다. computedAsync를 사용하려면 Promise, Observable 또는 일반 값 반환하는 함수를 제공해야 합니다. 이 함수는 계산된 값을 발행하는 <code>Signal</code>을 반환합니다.',
