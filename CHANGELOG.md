@@ -8,6 +8,20 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-08
+
+**Release decision — November 8, 2026 (recorded for maintainer approval in the release PR):** both packages remain on
+21.x while the supported platform remains Angular 21; 22.x stays reserved for the Angular 22 upgrade. Package versions
+remain independent. The certificate API removal, the `toSignalForm` error-propagation change and the tightened peer
+ranges below are **behaviorally breaking**. Shipping them in these 21.x minor releases is a second explicit,
+maintainer-approved exception to SemVer's major-bump rule, not a claim of backward compatibility. The October 17, 2026
+decision was not blanket approval for later breaks and does not cover this release; see the
+[version policy](docs/DEPLOYMENT.md#version-policy).
+
+Publication is a separate gate. This section records reviewed versions, release notes and migration instructions; the
+publication workflow run, the three-browser E2E job, the packed-consumer checks and the GitHub release records supply
+the evidence that the packages reached the official registry.
+
 ### Added
 
 - `clr-lift` exports `BreadcrumbComponent` (`cll-breadcrumb`), `BreadcrumbItem` and `BreadcrumbLinkContext` for
@@ -40,6 +54,53 @@ recorded for the affected releases.
   [Per-call outcome callbacks](docs/design/ngx-lift/mutate-resource-design-spec.md#per-call-outcome-callbacks).
 - The `queryResource` demo adds a runnable edit-form example. An effect initializes a stable reactive form when the
   query value changes, including same-entity refetches. Save reads the mutation ref's state.
+- `clr-lift` exports `KeyValueControlComponent` (`cll-key-value-control`), `KeyValueEntry`, `KeyValueFieldConfig`,
+  `KeyValueOption`, `keyValueErrors` and the related typed editor and validation helpers. This is an ordered array-value
+  CVA for `ngModel`, typed Reactive Forms and `toSignalForm`, with text/select/typed editors, custom validation and
+  unique-pair checks; the existing `cll-key-value-inputs` FormArray editor is unchanged. Delivered October 19, 2026; see
+  the [design specification](docs/design/clr-lift/key-value-inputs-design-spec.md).
+- `AlertComponent` (`cll-alert`) adds `closable`, a two-way `closed` model and a `closedChange` output, so callers can
+  suppress dismissal, control the open/closed state and observe dismissal or reopening. `closable` defaults to `true`
+  and the close label is localized; existing templates keep their visible close button.
+
+### Breaking
+
+- **Certificate APIs and dependency (`clr-lift`).** The `node-forge` peer dependency, the stateful `CertificateService`
+  and its `CERTIFICATE_CLOCK` injection token were removed. Certificate parsing and fingerprinting now use synchronous,
+  dependency-free browser APIs. The `CertificateComponent` `certificate` input and the exported parser expose the local
+  `X509Certificate` type instead of `node-forge`'s `pki.Certificate`. The `CertificateClock` and `CertificateStatus`
+  types remain exported. Consumers that injected the service, provided the token, typed against `pki.Certificate` or
+  installed `node-forge` only for this library must migrate; see the
+  [certificate design specification](docs/design/clr-lift/certificate-design-spec.md).
+- **Peer ranges (`ngx-lift` and `clr-lift`).** Angular peers are now `>=21 <22`, `@clr/angular` is `>=18 <19`, `rxjs` is
+  `>=7.8.0 <8`, and `clr-lift` requires `ngx-lift >=21.5.0 <22`. Installations on Angular 22, Clarity 19, RxJS 8 or an
+  older `ngx-lift` no longer satisfy the peers. Those platforms were never verified; the previous unbounded ranges
+  overstated support. See the [version policy](docs/DEPLOYMENT.md#version-policy).
+- **`toSignalForm` error propagation (`ngx-lift`).** The change recorded under Changed below throws at a signal read
+  where it previously returned stale state. It is covered by the same approved compatibility exception.
+
+### Migration
+
+- Certificates: replace the service and token with the exported parser functions and the component `clock` input.
+
+  ```typescript
+  import {extractDerFromPem, parseCertificateFromPem, type X509Certificate} from 'clr-lift';
+
+  // Before: certificateService.getCertificateFromPem(pem, pemEncoded)
+  const certificate: X509Certificate = parseCertificateFromPem(pem, pemEncoded);
+
+  // Before: certificateService.getCertificateHashes(pem, pemEncoded)
+  // Use extractDerFromPem with the exported md5 / sha1 / sha256 digest functions.
+  const der = extractDerFromPem(pem, pemEncoded);
+
+  // Before: providers: [{provide: CERTIFICATE_CLOCK, useValue: clock}]
+  // After: <cll-certificate-signpost [pem]="pem" [clock]="clock" />
+  ```
+
+- Peer ranges: stay on Angular 21, Clarity 18 and RxJS 7, and upgrade `ngx-lift` to 21.5.0 before installing `clr-lift`
+  21.4.0. Remove an explicit `node-forge` dependency if it was added only for `clr-lift`.
+- `toSignalForm`: handle a terminal source error at the read site, or rebuild the facade with a healthy control. Stock
+  Angular `FormGroup` / `FormControl` event streams do not error.
 
 ### Changed
 
@@ -51,6 +112,19 @@ recorded for the affected releases.
   this concerns non-standard controls and failures inside the internal RxJS pipeline. Maintainer-approved in the
   2026-11-08 contract follow-up; see
   [Compatibility, rollout, and risks](docs/design/ngx-lift/reactive-forms-design-spec.md#compatibility-rollout-and-risks).
+  The release decision above records the approval required for this change.
+- **Release verification:** the isolated installed consumer now resolves from the official npm registry instead of the
+  workspace mirror, derives its `jsdom`, `@types/node` and TypeScript versions from the workspace manifest, and allows
+  more time for a fresh install. The publication workflow releases `ngx-lift` before `clr-lift` when both are selected.
+
+### Deprecated
+
+- `MockTranslationService` remains exported from the `clr-lift` root barrel for existing test suites, but it is a test
+  helper and must not be used in application code. Register a dictionary on `TranslationService` instead. Removing it
+  from the public barrel requires a separate breaking-release decision.
+- `IdleDetectionModule` is deprecated in favour of `provideIdleDetectionConfig(...)`.
+- `MutateResourceOptions.invalidatesTags` remains a deprecated alias for `invalidateTags`; the newer option takes
+  precedence when both are supplied. Removal requires an explicit breaking-release decision.
 
 ### Fixed
 
@@ -63,6 +137,28 @@ recorded for the affected releases.
   diagnostic-only signal, not a control-flow gate for submit handlers.
 - The `mutateResource` demo includes a runnable per-call callback playground (success, failure and `.finally()` cleanup)
   that reuses existing translation keys; no new route, dictionary key or library-owned message was added.
+- The 21.1.0 release notes described a `toSubmitValue` `pick` option and a `resourceAsync.execute({onSuccess, onError})`
+  shape that were never shipped. Historical entries are preserved, but the current API surface is the authority:
+  `ToSubmitValueOptions` offers `omit`, `omitEmptyStrings`, `omitNull`, `omitIf`, `includeDisabled`, `deep` and
+  `transform`, and `execute()` accepts a value rather than callbacks. See the
+  [reactive forms specification](docs/design/ngx-lift/reactive-forms-design-spec.md) and the
+  [resourceAsync specification](docs/design/ngx-lift/resource-async-design-spec.md).
+- The `clr-lift` README now names the releases that introduced `cll-breadcrumb`, `cll-key-value-control` and the query
+  devtools, and both locale lists name the same eleven supported locales. The delivery roadmap cites the 21.4.0 / 21.3.0
+  publication rather than the older 21.3.0 / 21.2.0 pair.
+- The private workspace root manifest version, the `commit-msg` hook and the Nx `sharedGlobals` cache inputs were
+  aligned with the release process. Direct `publish:*` scripts that bypassed the reviewed-version gate were replaced
+  with a read-only `release:check` preflight.
+
+### Release boundary
+
+- Independent human language acceptance for all eleven locales and manual assistive-technology acceptance remain pending
+  until recorded under [the acceptance contract](docs/guides/accessibility-and-localization.md). Automated dictionary,
+  accessibility and packed-consumer checks do not replace them.
+- SSR/hydration and a broad peer-version matrix are not established by the installed Angular 21.2 browser consumer.
+- Dependency advisory triage and the flaky three-browser E2E required check remain separate follow-ups.
+- These versions are prepared for review, not yet published. Publication requires a green `publish.yml` dry run, a
+  reviewed merge to `main`, and an explicitly authorized `version=skip` / `dry_run=false` run or reviewed release tags.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

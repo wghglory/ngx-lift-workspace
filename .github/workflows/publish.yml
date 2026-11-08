@@ -171,7 +171,14 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
+        run: |
+          # clr-lift peers on ngx-lift, so publish the core package first when both are selected.
+          if [ -z "$PROJECT_FLAG" ]; then
+            pnpm nx release publish --projects=ngx-lift --registry=https://registry.npmjs.org/
+            pnpm nx release publish --projects=clr-lift --registry=https://registry.npmjs.org/
+          else
+            pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
+          fi
 
       - name: Publish from tag
         id: publish-tag
@@ -179,7 +186,14 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
+        run: |
+          # clr-lift peers on ngx-lift, so publish the core package first when both are selected.
+          if [ -z "$PROJECT_FLAG" ]; then
+            pnpm nx release publish --projects=ngx-lift --registry=https://registry.npmjs.org/
+            pnpm nx release publish --projects=clr-lift --registry=https://registry.npmjs.org/
+          else
+            pnpm nx release publish ${{ env.PROJECT_FLAG }} --registry=https://registry.npmjs.org/
+          fi
 
       - name: Create GitHub Release
         id: github-release

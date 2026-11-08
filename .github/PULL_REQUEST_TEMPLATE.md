@@ -73,9 +73,10 @@
 ### Verification Checklist
 
 - [ ] Unit tests added / updated
-- [ ] All unit tests pass (`npm test` or `npx nx run-many -t test`)
-- [ ] Lint checks pass with zero errors (`npx nx run-many -t lint`)
-- [ ] Production build succeeds (`npm run build:libs` / `npx nx build demo`)
+- [ ] All unit tests pass (`pnpm test` or `pnpm nx run-many -t test`)
+- [ ] Lint checks pass with zero errors (`pnpm nx run-many -t lint`)
+- [ ] Production build succeeds (`pnpm run build:libs` / `pnpm nx build demo`)
+- [ ] Release PRs only: `pnpm run release:check` and a green `publish.yml` dry run
 - [ ] Interactive demo page updated and verified (if applicable)
 - [ ] Accessibility scans and relevant keyboard/focus journeys pass for library and demo UI
 - [ ] All supported library and demo locales are complete, including accessible names and announcements
@@ -87,10 +88,10 @@
 ### Test Commands Run
 
 ```bash
-npx nx test ngx-lift
-npx nx lint ngx-lift
-npx nx test demo
-npx nx build demo
+pnpm nx test ngx-lift
+pnpm nx lint ngx-lift
+pnpm nx test demo
+pnpm nx build demo
 ```
 
 ---

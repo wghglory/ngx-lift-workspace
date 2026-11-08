@@ -32,6 +32,7 @@ The executable definitions live in [package.json](../package.json). Run commands
 | pnpm run i18n:check                         | Validate dictionary coverage, placeholders and fixed API options                                 |
 | pnpm run bundle:check                       | Verify heavyweight dependency loading boundaries                                                 |
 | pnpm run verify:packages                    | Strict tarball consumers, peers, imports and zoneless/ZoneJS DOM fixtures                        |
+| pnpm run release:check                      | Read-only release preflight; never publishes                                                     |
 | git diff --check                            | Whitespace errors in the diff                                                                    |
 
 Playwright starts an isolated dev server by default. Set BASE_URL explicitly to test an existing deployment:

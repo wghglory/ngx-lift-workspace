@@ -1,6 +1,6 @@
 {
   "name": "clr-lift",
-  "version": "21.3.0",
+  "version": "21.4.0",
   "description": "Production-ready Angular component library built on Clarity Design System. Includes 15+ reusable components, utilities, and operators for Clarity-based applications. Built for Angular 21+ with full TypeScript support.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",
@@ -20,14 +20,14 @@
   },
   "homepage": "https://ngx-lift.vercel.app/clr-lift",
   "peerDependencies": {
-    "@angular/common": ">=21",
-    "@angular/core": ">=21",
-    "@angular/cdk": ">=21",
-    "@angular/platform-browser": ">=21",
-    "@angular/forms": ">=21",
-    "rxjs": ">=7.8.0",
-    "@clr/angular": ">=18",
-    "ngx-lift": ">=21.3.0 <22"
+    "@angular/common": ">=21 <22",
+    "@angular/core": ">=21 <22",
+    "@angular/cdk": ">=21 <22",
+    "@angular/platform-browser": ">=21 <22",
+    "@angular/forms": ">=21 <22",
+    "rxjs": ">=7.8.0 <8",
+    "@clr/angular": ">=18 <19",
+    "ngx-lift": ">=21.5.0 <22"
   },
   "publishConfig": {
     "access": "public"

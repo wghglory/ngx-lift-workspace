@@ -48,8 +48,8 @@ installed version; source changes under Unreleased are not yet on npm.
   caller-owned `FormArray`. Neither uploads files to a server.
 - 🌓 **Zero-Config Theming** - `cll-theme-toggle` seamlessly flips Clarity light/dark themes with instant `localStorage`
   persistence.
-- 🌍 **Built-in Localization** - Component dictionaries include English, 简体中文, 繁體中文, Deutsch, Español, Français,
-  Italiano, 日本語, 한국어, Nederlands, and Português out of the box.
+- 🌍 **Built-in Localization** - Component dictionaries include English, 简体中文, 繁體中文, Deutsch, Español,
+  Français, 日本語, 한국어, Nederlands, Português, and Русский out of the box.
 - 📦 **100% Standalone & Tree-Shakable** - Built for Angular Signals and `OnPush` change detection.
 
 ---
@@ -257,7 +257,7 @@ export class CertificateImportComponent {
 |                    | `SpinnerComponent`                   | `cll-spinner`                                         | Center-aligned, sized (`sm`, `md`, `lg`), accessible loading spinner.                                   |
 |                    | `StatusIndicatorComponent`           | `cll-status-indicator`                                | Semantic operational state badges (`success`, `warning`, `error`, `pending`).                           |
 | **Navigation**     | `TimelineWizardComponent`            | `cll-timeline-wizard`                                 | Multi-step asynchronous wizard with timeline navigation and async step hooks.                           |
-| **Navigation**     | `BreadcrumbComponent`                | `cll-breadcrumb`                                      | Caller-owned ordinary/SPA links, current-location text and addressless navigation; unreleased.          |
+| **Navigation**     | `BreadcrumbComponent`                | `cll-breadcrumb`                                      | Caller-owned ordinary/SPA links, current-location text and addressless navigation; added in 21.4.0.     |
 |                    | `PageContainerComponent`             | `cll-page-container`                                  | Standardized header, breadcrumb, action bar, and content responsive shell.                              |
 | **Forms**          | `FileReaderComponent`                | `cll-file-reader`                                     | Text/base64 string CVA with size validation and read cancellation.                                      |
 |                    | `KeyValueInputsComponent`            | `cll-key-value-inputs`                                | Caller-owned FormArray editor with duplicate key validation; not a CVA.                                 |
@@ -273,8 +273,8 @@ export class CertificateImportComponent {
 |                    | `TooltipDirective`                   | `[cllTooltip]`                                        | Dynamic declarative popover tooltip.                                                                    |
 | **Development**    | `QueryDevtoolsComponent`             | `cll-query-devtools`                                  | Resizable query panel with data/error inspection, row actions and a development-only root provider.     |
 
-**Available in clr-lift 21.3.0:** the inspector and `clr-lift/devtools` entry point below are included in this release.
-Upgrade from 21.2.0 before copying this setup. Register once in `app.config.ts`:
+**Available since clr-lift 21.3.0:** the inspector and `clr-lift/devtools` entry point below ship from that release
+onward. Register once in `app.config.ts`:
 
 ```typescript
 import {ApplicationConfig} from '@angular/core';
@@ -286,10 +286,10 @@ export const appConfig: ApplicationConfig = {
 ```
 
 The development launcher opens a resizable, nonmodal bottom panel. Search/filter/sort/paginate queries, inspect data,
-errors and tags, copy keys, and explicitly refetch one query. Data previews are bounded, expandable and read-only. With
-ngx-lift 21.3, inspection is available; Refetch controls require a client exposing `refetchQuery`. Automatic snapshots
-run only while open and unpaused. `provideQueryClient()` is needed only to customize client settings. The package's
-production condition resolves to a no-op and excludes the inspector implementation.
+errors and tags, copy keys, and explicitly refetch one query. Data previews are bounded, expandable and read-only.
+Inspection requires the matching `ngx-lift` 21.4.0 or later; Refetch controls require a client exposing `refetchQuery`.
+Automatic snapshots run only while open and unpaused. `provideQueryClient()` is needed only to customize client
+settings. The package's production condition resolves to a no-op and excludes the inspector implementation.
 
 For scoped clients or inline placement, import `QueryDevtoolsComponent` and use
 `<cll-query-devtools [client]="scopedQueryClient" />`. The caller retains client ownership. `launcher="floating"`
@@ -301,11 +301,10 @@ the documentation preview; that opt-in bypasses the provider's production exclus
 
 ## 🌍 Built-in Localization
 
-Library dictionaries cover English, Simplified/Traditional Chinese, German, Spanish, French, Italian, Japanese, Korean,
-Dutch, Portuguese and Russian, with regional fallback. The demo maintains eleven language dictionaries; its locale
-inventory differs from the library dictionaries. Key/placeholder checks establish dictionary completeness; independent
-native-speaker acceptance remains separate. Applications own translations for their content and can register additional
-dictionaries.
+Library dictionaries cover English, Simplified/Traditional Chinese, German, Spanish, French, Japanese, Korean, Dutch,
+Brazilian Portuguese and Russian, with regional fallback. The libraries and the demo maintain the same eleven language
+dictionaries. Key/placeholder checks establish dictionary completeness; independent native-speaker acceptance remains
+separate. Applications own translations for their content and can register additional dictionaries.
 
 Switch language on the fly via `TranslationService`:
 
