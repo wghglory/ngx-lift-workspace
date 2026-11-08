@@ -6,6 +6,9 @@ permissions:
 
 # Nx Cloud remote cache. Sourced from the NX_CLOUD_ACCESS_TOKEN repo secret.
 # Callers that pass the secret (e.g. `secrets: inherit`) get the remote cache.
+# The `self-healing` job below reports PR failures to Nx Cloud (fix-ci); the
+# feature itself is toggled in the Nx Cloud dashboard (Workspace settings >
+# Self-Healing CI). Without the token every cloud step degrades to a local run.
 # When the free-account credits are exhausted, the token is absent, or Nx Cloud
 # is unreachable, Nx logs a warning and runs tasks locally — the workflow still
 # passes. Together with the parallel + `nx affected` jobs below, typical PRs stay
@@ -151,6 +154,29 @@ jobs:
           name: playwright-report
           path: dist/.playwright/apps/demo-e2e/playwright-report/
           if-no-files-found: ignore
+
+  # AI-powered failure analysis (audit A6-adjacent, self-healing CI). Reports
+  # failing PR tasks to Nx Cloud and proposes fixes. Only on PRs; requires the
+  # caller to pass `secrets: inherit` (ci.yml does). Becoming a no-op when the
+  # token is absent keeps forks and starved free accounts green.
+  self-healing:
+    needs: [fast-checks, lint-typecheck, test, build, e2e]
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run self-healing CI
+        if: env.NX_CLOUD_ACCESS_TOKEN != ''
+        run: pnpm exec nx fix-ci
 
   # Full coverage report — detached from the PR gate; runs on push/main + schedule.
   coverage:

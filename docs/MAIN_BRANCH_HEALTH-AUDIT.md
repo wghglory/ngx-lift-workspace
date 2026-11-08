@@ -76,28 +76,29 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
 
 ### A. CI, deployment and release safety
 
-- **A1 — High, verified. Unguarded Vercel production deploy.** `.github/workflows/deploy-demo.yml:70-78` has no `if:` on
-  the Vercel step, while the Netlify step at `:53` is limited to `refs/heads/main`. The workflow also allows
-  `workflow_dispatch` (`:10`), so a manual run from any ref deploys to Vercel production with `VERCEL_TOKEN`. **Fix:**
-  add `if: github.ref == 'refs/heads/main'` to the Vercel step or restrict dispatch refs.
+- **A1 — High, verified. DONE 2026-11-08 (PR #214, commit `b5db637`).** Unguarded Vercel production deploy.
+  `.github/workflows/deploy-demo.yml:70-78` had no `if:` on the Vercel step, while the Netlify step at `:53` is limited
+  to `refs/heads/main`. The workflow also allows `workflow_dispatch` (`:10`), so a manual run from any ref deploys to
+  Vercel production with `VERCEL_TOKEN`. **Fix:** add `if: github.ref == 'refs/heads/main'` to the Vercel step or
+  restrict dispatch refs.
 - **A2 — High, verified. Nx cache invalidation is too narrow.** `nx.json:13` sets
   `sharedGlobals: ["{workspaceRoot}/.github/workflows/ci.yml"]`, but `.github/workflows/` contains four files (`ci.yml`,
   `quality.yml`, `deploy-demo.yml`, `publish.yml`) and root configs (`package.json`, `nx.json`, `tsconfig.base.json`,
   `eslint.config.mjs`, `.prettierrc`, `tools/*.mjs`, `netlify.toml`, `vercel.json`) are outside `projectRoot` for
   `apps/demo` and `libs/*`. Changes to them can leave stale cached lint/typecheck/build results. **Fix:** enumerate all
   workspace-level config, tool and workflow files in `sharedGlobals`.
-- **A3 — High, verified. Floating action tags receive production secrets.** All workflows use major tags
-  (`actions/checkout@v6`, `actions/setup-node@v6`, `actions/upload-artifact@v7`, `pnpm/action-setup@v6`,
+- **A3 — High, verified. DONE 2026-11-08 (PR #214).** Floating action tags receive production secrets. All workflows
+  used major tags (`actions/checkout@v6`, `actions/setup-node@v6`, `actions/upload-artifact@v7`, `pnpm/action-setup@v6`,
   `nwtgck/actions-netlify@v4`, `amondnet/vercel-action@v42`, `ncipollo/release-action@v1`) with no SHA pin, while
   `NETLIFY_AUTH_TOKEN`, `VERCEL_TOKEN`, `NPM_TOKEN` and `GITHUB_TOKEN` flow into third-party code. **Fix:** pin every
   action to a commit SHA and audit the three third-party actions.
-- **A4 — Medium, verified. A failed production deploy can still be green.** `deploy-demo.yml:55`
-  `continue-on-error: true` on the Netlify step; the summary at `:153` accepts Netlify **or** Vercel success. **Fix:**
-  remove `continue-on-error` or fail the job explicitly when both deploys fail.
-- **A5 — Medium, verified. Misleading hard failure on early validation errors.** `.github/workflows/quality.yml:18-24`
-  uploads coverage with `if: always()` and `if-no-files-found: error`. If `format:check` fails first, `coverage/` never
-  exists and an unrelated artifact error masks the real cause. **Fix:** use `warn` or guard on
-  `hashFiles('coverage/**')`.
+- **A4 — Medium, verified. DONE 2026-11-08 (PR #214).** A failed production deploy could still be green.
+  `deploy-demo.yml:55` had `continue-on-error: true` on the Netlify step; the summary at `:153` accepts Netlify **or**
+  Vercel success. **Fix:** remove `continue-on-error` or fail the job explicitly when both deploys fail.
+- **A5 — Medium, verified. DONE 2026-11-08 (PR #214).** Misleading hard failure on early validation errors.
+  `.github/workflows/quality.yml:18-24` uploaded coverage with `if: always()` and `if-no-files-found: error`. If
+  `format:check` fails first, `coverage/` never exists and an unrelated artifact error masks the real cause. **Fix:**
+  use `warn` or guard on `hashFiles('coverage/**')`.
 - **A6 — Medium, static. No timeouts, concurrency or cache.** Only `deploy-demo.yml:68` sets `timeout-minutes`, only
   `ci.yml:12` sets `concurrency`; `nx.json:93` disables Nx Cloud but nothing caches `.nx/cache` or
   `~/.cache/ms-playwright`, so `playwright install --with-deps` re-downloads browsers each run. PR #208's `validate` job
@@ -113,19 +114,23 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   `registry=https://repo.huaweicloud.com/repository/npm/` and `legacy-peer-deps=true` (an npm-only option that pnpm
   ignores). `tools/package/verify-packages.mjs:152-158` copies this file verbatim into the supposedly "fresh isolated
   consumer". **Fix:** default to `registry.npmjs.org`; scope any mirror to an explicit opt-in.
-- **A10 — Medium, static. Nx Cloud is off but its tooling remains.** `nx.json:92-94` keeps `nxCloudId` with
-  `neverConnectToCloud: true`; `.github/skills/monitor-ci/SKILL.md:42-56` checks for that ID and will falsely report a
-  connection, while `docs/design/clr-lift/breadcrumb-design-spec.md:886-888` records an unavailable remote cache.
-  **Fix:** delete `nxCloudId` and retire/disable the `nx-cloud-*` skills and `monitor-ci` prompt, or reconnect Cloud.
+- **A10 — Medium, static. PARTIALLY STALE, re-checked 2026-11-08. Nx Cloud connection state needs reconciliation.** The
+  audit's premise that `nx.json` had `neverConnectToCloud: true` no longer holds — `nx.json:92` now carries `nxCloudId`
+  and the workspace reports itself as connected to Nx Cloud. Remaining issues: CI callers `deploy-demo.yml` and
+  `publish.yml` do not pass `secrets: inherit`, so their quality jobs silently lose the remote cache;
+  `.github/skills/monitor-ci/SKILL.md:42-56` still infers connection from `nxCloudId` alone; and
+  `docs/design/clr-lift/breadcrumb-design-spec.md:886-888` still records the remote cache as unavailable. **Fix:** pass
+  `secrets: inherit` on the two remaining callers, re-verify the skill's connection check, and update the design-spec
+  note. Self-healing CI wiring landed separately (PR #215); the dashboard toggle is a maintainer action at cloud.nx.app.
 - **A11 — Medium, verified. Pre-commit does not enforce documented requirements.** `.husky/` contains only `pre-commit`;
   no `commit-msg` hook exists, so `@commitlint/cli` / `@commitlint/config-angular` (`package.json:89-90`) are dead
   despite the Conventional Commits rule in `CONTRIBUTING.md:117-129`. The lint-staged globs (`package.json:196-203`)
   miss `.mjs`, `.cjs`, `.mts`, `.cts`, `.yml` and `.yaml`, and no typecheck or tests run. **Fix:** add a `commit-msg`
   hook, extend globs, and add `typecheck`/`format:check` to the hook.
-- **A12 — Medium, verified. Hosting config drift.** `netlify.toml:15` `PNPM_VERSION = "10"` versus `package.json:59`
-  `pnpm@12.16.1`; `vercel.json:14-31` omits `Referrer-Policy: strict-origin-when-cross-origin`, which
-  `netlify.toml:19-25` sets — and Vercel is the host all public links point to. **Fix:** pin pnpm to 12 and add the
-  missing header to `vercel.json`.
+- **A12 — Medium, verified. DONE 2026-11-08 (PR #214).** Hosting config drift. `netlify.toml:15` `PNPM_VERSION = "10"`
+  versus `package.json:59` `pnpm@12.16.1`; `vercel.json:14-31` omits `Referrer-Policy: strict-origin-when-cross-origin`,
+  which `netlify.toml:19-25` sets — and Vercel is the host all public links point to. **Fixed:** pnpm pinned to 12 and
+  the missing header added to `vercel.json`.
 - **A13 — Medium, static. Package verification can pass for the wrong reason.**
   `tools/package/verify-packages.mjs:14-18,198,263-271` asserts only `status !== 0` on the negative fixture (a timeout,
   a missing compiler or an install error also satisfies it), uses `process.cwd()` at `:10`, a 60 s install timeout, and
@@ -299,8 +304,10 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
 
 ## 4. Recommended sequence
 
-1. **Deploy safety first (A1, A3, A4, A5, A12).** Branch guard + SHA pins + truthful failure reporting; these are the
-   only findings with production impact.
+1. **Deploy safety first (A1, A3, A4, A5, A12). DONE 2026-11-08 — PR #214 (`fix/deploy-safety-hardening`, commit
+   `b5db637`).** Branch guard + SHA pins + truthful failure reporting; these are the only findings with production
+   impact. Note: both deploy steps are now main-only, so PR builds no longer receive Vercel previews; add an explicit
+   preview step if that is wanted.
 2. **Make validation deterministic (A2, A6, A7, A10, A11, A13, A14, D3, D4).** Fix cache inputs, add timeouts and
    caches, wire commitlint and the missing documented checks, harden the custom tools.
 3. **Restore a single source of truth (B1–B9, B3).** Correct the agent guidance and contributor setup, close or re-scope
@@ -315,6 +322,20 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
    gates rather than the direct publish scripts.
 7. **Address the architecture deepening backlog (§7, F1–F5).** Start with F2 (highest leverage: every feature increment
    pays the localization tax) and F1 (safe immediate win); treat F4 only after an explicit decision to reopen ADR-0002.
+
+## 4a. Progress log
+
+- **2026-11-08 — PR #214 (`fix/deploy-safety-hardening`, commit `b5db637`, stacked on `main` `9711f2e`).** Closed audit
+  findings A1, A3, A4, A5, A12: Vercel production guard, all 31 workflow actions pinned to commit SHAs (verified via
+  GitHub API), Netlify `continue-on-error` removed, coverage upload de-masked to `warn`, pnpm 12 in `netlify.toml`,
+  `Referrer-Policy` header added to `vercel.json`. Sequence step 1 of §4.
+- **2026-11-08 — PR #215 (`feat/self-healing-ci`, stacked on PR #214).** Nx Cloud self-healing CI wiring: a
+  `self-healing` job in `quality.yml` runs `pnpm exec nx fix-ci` with `if: always()` on pull_request events only, hard
+  10-minute timeout, and skips cleanly when `NX_CLOUD_ACCESS_TOKEN` is absent. Maintainer follow-ups: enable the toggle
+  at cloud.nx.app (Workspace settings → Self-Healing CI), confirm the workspace's VCS integration is active, then
+  optionally tune eligible tasks. Verified locally pre-push: workspace already connected (`nxCloudId` present,
+  `nx connect` reports "already set up", `nx fix-ci` CLI exists on nx 22.7.5).
+- Remaining open (sequence steps 2–7 of §4): A2, A6–A11, A13–A15, B1–B13, C1–C11, D1–D7, E1–E3, F1–F5.
 
 ## 5. What is already healthy
 
