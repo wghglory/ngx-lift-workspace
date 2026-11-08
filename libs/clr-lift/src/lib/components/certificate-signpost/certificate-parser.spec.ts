@@ -196,6 +196,26 @@ describe('certificate-parser (certificate type coverage)', () => {
       expect(parseCertificateFromPem(digiCertPem, false).signatureAlgorithm).toBe('1.2.840.113549.1.1.11');
     });
 
+    it('decodes X.690 first subidentifiers with a large second arc', () => {
+      expect(encodeOid('2.100.3')).toEqual([0x81, 0x34, 0x03]);
+      for (const oid of ['0.39.7', '1.39.7', '2.100.3', '2.999.1']) {
+        expect(parseCertificate(makeCert({...base(), signatureAlgorithmOid: oid})).signatureAlgorithm).toBe(oid);
+      }
+    });
+
+    it('rejects empty and unterminated base-128 OID subidentifiers', () => {
+      const seq = (content: number[]) => tlv(0x30, content);
+      const atv = seq([...tlv(0x06, encodeOid(OID.CN)), ...tlv(0x13, ascii('x'))]);
+      const name = seq([...tlv(0x31, atv)]);
+      const validity = seq([...tlv(0x17, ascii('260101000000Z')), ...tlv(0x17, ascii('360101000000Z'))]);
+      const tbs = seq([...tlv(0x02, [0x01]), ...seq([...tlv(0x06, [])]), ...name, ...validity, ...name]);
+      const emptyOid = seq([...tbs, ...seq([...tlv(0x06, [])]), ...tlv(0x03, [0x00])]);
+      expect(() => parseCertificate(new Uint8Array(emptyOid))).toThrow(/malformed DER structure/);
+
+      const unterminated = seq([...tbs, ...seq([...tlv(0x06, [0x81])]), ...tlv(0x03, [0x00])]);
+      expect(() => parseCertificate(new Uint8Array(unterminated))).toThrow(/malformed DER structure/);
+    });
+
     it('parses subjectAltName and subjectKeyIdentifier extensions when present', () => {
       // directoryName [4] is constructed: a full Name (RDNSequence), not a primitive string.
       const directoryName = tlv(0xa4, [
@@ -245,6 +265,16 @@ describe('certificate-parser (certificate type coverage)', () => {
         {type: 'ip', value: '192.168.1.7'},
         {type: 'ip', value: '2001:0db8:0000:0000:0000:0000:0000:0001'},
       ]);
+    });
+
+    it('rejects trailing DER bytes inside an extension value', () => {
+      const sanExtension = tlv(0x30, [
+        tlv(0x06, encodeOid('2.5.29.17')),
+        tlv(0x04, [...tlv(0x30, [tlv(0x82, ascii('www.example.com'))]), 0x00]),
+      ]);
+      expect(() => parseCertificate(makeCert({...base(), version: 2, extensions: [sanExtension]}))).toThrow(
+        /unexpected trailing DER bytes/,
+      );
     });
 
     it('computes SHA-256 fingerprints matching the platform implementation', () => {
@@ -360,6 +390,16 @@ describe('certificate-parser (certificate type coverage)', () => {
       expect(() => parseCertificate(new Uint8Array([0x30, 0x03, 0x30, 0x02, 0x01, 0x00, 0x00]))).toThrow(
         /malformed DER structure/,
       );
+    });
+
+    it('rejects trailing DER bytes while ignoring text after the PEM END marker', () => {
+      const der = extractDerFromPem(certificatePem, false);
+      const trailing = new Uint8Array([...der, 0xde, 0xad, 0xbe, 0xef]);
+      expect(() => parseCertificate(trailing)).toThrow(/unexpected trailing DER bytes/);
+      expect(() => parseCertificateFromPem(toPem(trailing), false)).toThrow(/unexpected trailing DER bytes/);
+
+      const framed = `${certificatePem.trim()}\nordinary PEM framing after the END marker`;
+      expect(parseCertificateFromPem(framed, false).subject.getField('CN')?.value).toBe('Google Internet Authority G2');
     });
   });
 });

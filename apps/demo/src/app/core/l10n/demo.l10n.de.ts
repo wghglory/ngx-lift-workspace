@@ -1547,7 +1547,7 @@ export const deTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Zurücksetzen',
   'certificate.viewerInvalid': 'Diese Eingabe ist kein parsbares Zertifikat.',
   'certificate.viewerResultsTitle': 'Geparstes Zertifikat',
-  'certificate.viewerEncodedPem': 'DER mit pemEncodeDer zurück zu PEM kodiert',
+  'certificate.viewerEncodedPem': 'DER des ersten Zertifikats mit pemEncodeDer zurück zu PEM kodiert',
   'certificate.viewerCodeTitle': 'Die Hilfsfunktionen hinter dem Viewer',
   'certificate.viewerCodeDesc':
     'Die Parse-Aktion oben verwendet dieselbe öffentliche API, die Sie in einem eigenen Zertifikats-Viewer nutzen würden:',

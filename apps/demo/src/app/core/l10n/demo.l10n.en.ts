@@ -1497,7 +1497,7 @@ export const enTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Reset',
   'certificate.viewerInvalid': 'This input is not a parseable certificate.',
   'certificate.viewerResultsTitle': 'Parsed certificate',
-  'certificate.viewerEncodedPem': 'DER re-encoded to PEM with pemEncodeDer',
+  'certificate.viewerEncodedPem': 'First certificate DER re-encoded to PEM with pemEncodeDer',
   'certificate.viewerCodeTitle': 'The utilities behind the viewer',
   'certificate.viewerCodeDesc':
     'The parse action above runs the same public API you would use in your own certificate viewer:',

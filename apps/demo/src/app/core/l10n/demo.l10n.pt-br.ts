@@ -1530,7 +1530,7 @@ export const ptBRTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Redefinir',
   'certificate.viewerInvalid': 'Esta entrada não é um certificado analisável.',
   'certificate.viewerResultsTitle': 'Certificado analisado',
-  'certificate.viewerEncodedPem': 'DER recodificado para PEM com pemEncodeDer',
+  'certificate.viewerEncodedPem': 'DER do primeiro certificado recodificado para PEM com pemEncodeDer',
   'certificate.viewerCodeTitle': 'Os utilitários por trás do visualizador',
   'certificate.viewerCodeDesc':
     'A ação de análise usa a mesma API pública que você usaria em seu próprio visualizador de certificados:',

@@ -72,20 +72,23 @@ function bmp(s: string): number[] {
   return out;
 }
 
+/** Encodes one OID subidentifier as X.690 base-128 bytes. */
+function base128(value: number): number[] {
+  const bytes: number[] = [value & 0x7f];
+  let rest = Math.floor(value / 128);
+  while (rest > 0) {
+    bytes.unshift((rest & 0x7f) | 0x80);
+    rest = Math.floor(rest / 128);
+  }
+  return bytes;
+}
+
 /** Encodes a dotted OID string as DER content bytes. */
 export function encodeOid(dotted: string): number[] {
   const parts = dotted.split('.').map(Number);
-  const body: number[] = [parts[0] * 40 + parts[1]];
+  const body: number[] = base128(parts[0] * 40 + parts[1]);
   for (let i = 2; i < parts.length; i++) {
-    let v = parts[i];
-    const out: number[] = [];
-    out.unshift(v & 0x7f);
-    v >>= 7;
-    while (v > 0) {
-      out.unshift((v & 0x7f) | 0x80);
-      v >>= 7;
-    }
-    body.push(...out);
+    body.push(...base128(parts[i]));
   }
   return body;
 }

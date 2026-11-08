@@ -1556,7 +1556,7 @@ export const esTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Restablecer',
   'certificate.viewerInvalid': 'Esta entrada no es un certificado analizable.',
   'certificate.viewerResultsTitle': 'Certificado analizado',
-  'certificate.viewerEncodedPem': 'DER re-codificado a PEM con pemEncodeDer',
+  'certificate.viewerEncodedPem': 'DER del primer certificado recodificado a PEM con pemEncodeDer',
   'certificate.viewerCodeTitle': 'Las utilidades detrás del visor',
   'certificate.viewerCodeDesc':
     'La acción de analizar usa la misma API pública que usaría en su propio visor de certificados:',

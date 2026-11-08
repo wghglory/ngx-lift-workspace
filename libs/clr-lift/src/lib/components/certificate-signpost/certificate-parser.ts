@@ -130,6 +130,15 @@ function readNode(bytes: Uint8Array, offset: number): {node: DerNode; next: numb
   return {node, next: contentEnd};
 }
 
+/** Reads one DER TLV and rejects any bytes left after it; a DER buffer holds exactly one value. */
+function readSingleNode(bytes: Uint8Array): DerNode {
+  const {node, next} = readNode(bytes, 0);
+  if (next !== bytes.length) {
+    throw new Error('Invalid certificate: unexpected trailing DER bytes');
+  }
+  return node;
+}
+
 function decodeOid(bytes: Uint8Array): string {
   let result = '';
   let value = 0;
@@ -142,8 +151,9 @@ function decodeOid(bytes: Uint8Array): string {
     }
     if ((byte & 0x80) === 0) {
       if (first) {
-        const arc1 = Math.floor(value / 40);
-        const arc2 = value % 40;
+        // X.690 encodes the first subidentifier as 40 * arc1 + arc2, with arc1 capped at 2.
+        const arc1 = value < 40 ? 0 : value < 80 ? 1 : 2;
+        const arc2 = value < 40 ? value : value < 80 ? value - 40 : value - 80;
         result = `${arc1}.${arc2}`;
         first = false;
       } else {
@@ -151,6 +161,9 @@ function decodeOid(bytes: Uint8Array): string {
       }
       value = 0;
     }
+  }
+  if (first || value !== 0) {
+    throw new Error('Invalid certificate: malformed DER structure');
   }
   return result;
 }
@@ -364,7 +377,7 @@ export function pemEncodeDer(der: Uint8Array, label = 'CERTIFICATE'): string {
 /** Parses the subjectAltName (2.5.29.17) extension content into {@link GeneralName} entries. */
 function parseGeneralNames(content: Uint8Array): GeneralName[] {
   const names: GeneralName[] = [];
-  for (const entry of readNode(content, 0).node.children ?? []) {
+  for (const entry of readSingleNode(content).children ?? []) {
     // directoryName [4] is the only constructed GeneralName; every other tag carries a value.
     if (entry.tag === 0xa4) {
       const nameNode = (entry.children ?? [])[0];
@@ -421,7 +434,7 @@ function parseExtensions(tbs: DerNode): {subjectAltName?: GeneralName[]; subject
       result.subjectAltName = parseGeneralNames(valueNode.value);
     } else if (oid === '2.5.29.14') {
       // The SKI extnValue wraps the key identifier in another OCTET STRING.
-      const keyIdentifier = readNode(valueNode.value, 0).node;
+      const keyIdentifier = readSingleNode(valueNode.value);
       if (keyIdentifier.value) {
         result.subjectKeyIdentifier = hexOf(keyIdentifier.value);
       }
@@ -432,7 +445,7 @@ function parseExtensions(tbs: DerNode): {subjectAltName?: GeneralName[]; subject
 
 /** Parses DER-encoded certificate bytes into the library's {@link X509Certificate} shape. */
 export function parseCertificate(der: Uint8Array): X509Certificate {
-  const top = readNode(der, 0).node;
+  const top = readSingleNode(der);
   if (top.tag !== 0x30 || !top.children || top.children.length < 1) {
     throw new Error('Invalid certificate: expected a SEQUENCE');
   }

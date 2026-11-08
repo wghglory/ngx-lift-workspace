@@ -1479,7 +1479,7 @@ export const koTranslations: Record<string, string> = {
   'certificate.viewerReset': '초기화',
   'certificate.viewerInvalid': '이 입력은 파싱 가능한 인증서가 아닙니다.',
   'certificate.viewerResultsTitle': '파싱 결과',
-  'certificate.viewerEncodedPem': 'pemEncodeDer로 DER을 PEM으로 재인코딩',
+  'certificate.viewerEncodedPem': '첫 번째 인증서의 DER을 pemEncodeDer로 PEM으로 재인코딩',
   'certificate.viewerCodeTitle': '뷰어를 뒷받침하는 유틸리티',
   'certificate.viewerCodeDesc': '위 파싱 동작은 자체 인증서 뷰어에서 사용할 것과 동일한 공개 API를 실행합니다:',
   'certificate.utilitiesTitle': '인증서 유틸리티',

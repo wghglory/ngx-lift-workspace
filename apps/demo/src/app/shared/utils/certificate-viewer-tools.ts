@@ -7,7 +7,7 @@ export interface CertificateDigests {
   sha256: string;
 }
 
-/** Everything a minimal custom certificate viewer needs, computed with the public clr-lift utilities. */
+/** Everything a minimal custom certificate viewer needs for one certificate, computed with the public utilities. */
 export interface CertificateView {
   certificate: X509Certificate;
   digests: CertificateDigests;
@@ -32,7 +32,10 @@ export interface CertificateHierarchyNode {
   children: CertificateHierarchyNode[];
 }
 
-/** Runs the public parse, digest and re-encode utilities after their chunk has been requested. */
+/**
+ * Runs the public parse, digest and re-encode utilities for the first PEM certificate block after their chunk has been
+ * requested. Concatenated chains are handled by {@link parseCertificateChain} instead.
+ */
 export function buildCertificateView(pem: string): CertificateView {
   const der = extractDerFromPem(pem, false);
   return {

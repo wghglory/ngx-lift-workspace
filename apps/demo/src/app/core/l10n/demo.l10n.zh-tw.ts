@@ -1391,7 +1391,7 @@ export const zhTWTranslations: Record<string, string> = {
   'certificate.viewerReset': '重設',
   'certificate.viewerInvalid': '此輸入不是可解析的憑證。',
   'certificate.viewerResultsTitle': '解析結果',
-  'certificate.viewerEncodedPem': '使用 pemEncodeDer 將 DER 重新編碼為 PEM',
+  'certificate.viewerEncodedPem': '使用 pemEncodeDer 將第一張憑證的 DER 重新編碼為 PEM',
   'certificate.viewerCodeTitle': '檢視器背後的工具函式',
   'certificate.viewerCodeDesc': '上方的解析動作使用的是你在自己的憑證檢視器中會用到的同一組公開 API：',
   'certificate.utilitiesTitle': '憑證工具函式',

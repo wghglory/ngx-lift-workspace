@@ -1402,7 +1402,7 @@ export const zhCNTranslations: Record<string, string> = {
   'certificate.viewerReset': '重置',
   'certificate.viewerInvalid': '该输入不是可解析的证书。',
   'certificate.viewerResultsTitle': '解析结果',
-  'certificate.viewerEncodedPem': '使用 pemEncodeDer 将 DER 重新编码为 PEM',
+  'certificate.viewerEncodedPem': '使用 pemEncodeDer 将首张证书的 DER 重新编码为 PEM',
   'certificate.viewerCodeTitle': '查看器背后的工具函数',
   'certificate.viewerCodeDesc': '上面的解析操作使用的是你在自己的证书查看器中会用到的同一组公开 API：',
   'certificate.utilitiesTitle': '证书工具函数',

@@ -65,6 +65,9 @@ test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page})
   await expect(page.locator('.chain-section .inspector-rows')).toBeVisible();
   await expect(page.locator('.chain-section .state-pill')).toHaveCount(0);
   await expect(page.locator('.chain-section app-code-block')).toContainText('-----BEGIN CERTIFICATE-----');
+  await expect(
+    page.getByRole('heading', {name: 'First certificate DER re-encoded to PEM with pemEncodeDer'}),
+  ).toBeVisible();
 });
 
 test('renders a three-level certificate chain in the viewer', async ({page}) => {

@@ -49,8 +49,10 @@ TLS trust decisions, chain validation, private-key handling, revocation and serv
 Certificate parsing, DER decoding, and MD5/SHA-1 fingerprints are implemented with dependency-free, synchronous
 browser-native code in `certificate-parser.ts` and `certificate-crypto.ts`. This removed the previous node-forge peer
 dependency so unrelated consumers are not forced to install it. ASN.1/DER decoding and hashing are intentionally narrow:
-they cover the fields this library displays and validates, not full X.509 semantics. Angular's ValidatorFn owns parsing
-errors. Expiry display does not inspect all certificate trust conditions.
+they cover the fields this library displays and validates, not full X.509 semantics. A DER buffer must contain exactly
+one top-level TLV; bytes after that TLV are malformed, while text after a PEM END marker is ordinary PEM framing and is
+ignored. OID decoding follows X.690's `40 * arc1 + arc2` rule, including first subidentifiers that span several bytes.
+Angular's ValidatorFn owns parsing errors. Expiry display does not inspect all certificate trust conditions.
 
 ## Downstream consumer alignment requirement
 
@@ -61,7 +63,8 @@ consumer can drop node-forge and `@peculiar/asn1-x509`:
 - Parsing is key-algorithm agnostic: RSA, ECDSA, Ed25519 and other certificates parse identically because the subject
   public key info is not interpreted. Regression fixtures cover RSA and ECDSA signature algorithms.
 - The signature algorithm OID is exposed as `signatureAlgorithm` for labeling RSA/ECDSA and other families; unknown OIDs
-  stay opaque for the caller to map, matching the consumer's signature-algorithm map fallback.
+  stay opaque for the caller to map, matching the consumer's signature-algorithm map fallback. X.690-compliant OID
+  decoding keeps unknown OIDs under arc 2 with a second arc of 40 or more unchanged as well.
 - The subjectAltName (2.5.29.17) and subjectKeyIdentifier (2.5.29.14) extensions are parsed when present
   (`subjectAltName`, `subjectKeyIdentifier`), including constructed `directoryName` entries.
 - Fingerprints ship for MD5, SHA-1 and SHA-256 over DER, cross-checked against the platform implementation. This library
@@ -113,13 +116,21 @@ arms other PEM content (for example `PRIVATE KEY`). No owned visible strings: it
 exercises these utilities in its build-your-own-viewer section with a sample selector covering root, intermediate CA and
 leaf certificates for RSA and ECDSA keys.
 
+The demo's `buildCertificateView` re-encodes the first PEM certificate block: `extractDerFromPem` returns one DER buffer
+and `pemEncodeDer` arms that buffer. Concatenated PEM chains are split by `splitPemBlocks` and parsed by
+`parseCertificateChain`, which supplies the hierarchy tree and one details tab per certificate. The re-encoded PEM panel
+is therefore a single-certificate round trip, not a chain serializer; its label says so in all 11 demo locales.
+
 ## Behavior and architecture
 
 Signpost parsing catches failures into error/status state; the surfaced parser message is a developer diagnostic, not
 translated product copy. Expiry compares exact notAfter timestamp, then day difference for warning text. A component
 `clock` overrides the default browser minute timer, which refreshes current time and is cleaned up by the effect. A
 supplied clock must expose reactive dependencies if live updates are needed. The validator returns null for empty input
-and `{invalidCertificate: error}` for nonempty parse failures.
+and `{invalidCertificate: error}` for nonempty parse failures. `parseCertificate` requires the DER buffer to end exactly
+after the top-level SEQUENCE; nested extension values must also be a single TLV, and an unterminated base-128 OID
+subidentifier is rejected. PEM text after the END marker never reaches the DER parser, so trailing-byte input fails C3
+while ordinary PEM framing and concatenated PEM chains remain usable through `parseCertificateChain`.
 
 ## Clarity, accessibility, and localization
 
@@ -148,12 +159,16 @@ Decisions, with no change to the public parsing API:
   names (`SHA256 with RSA`, `ECDSA with SHA256`, `Ed25519`, and the SHA-384/512 variants), falling back to the OID for
   unknown algorithms. The mapping stays on the display side, as required by the downstream consumer alignment section;
   it is not a new library export.
+- Hierarchy nodes and details tabs share a stable id derived from the certificate's SHA-256 fingerprint. Clicking a node
+  activates the matching tab even when a certificate has no subject key identifier or common name, and the ids stay
+  unique when certificates share a display name.
 
 ### Visible and announced strings
 
 | Surface                  | Message                                                                                                         | Delivery                                                                                                                 |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Demo viewer detail label | `certificate.viewerFields.signatureAlgorithm` changes from "Signature Algorithm (OID)" to "Signature Algorithm" | All 11 demo locales                                                                                                      |
+| Demo viewer PEM label    | `certificate.viewerEncodedPem` states that only the first certificate's DER is re-encoded                       | All 11 demo locales                                                                                                      |
 | Demo viewer detail value | Standard X.509 algorithm names                                                                                  | Technical identifiers derived from certificate data, like OIDs, subject DNs and fingerprints; not localized product copy |
 | Signpost headings/status | No new strings; existing translated keys unchanged                                                              | All 14 library locales unchanged                                                                                         |
 
@@ -163,10 +178,12 @@ API, runtime dependency or announcement is introduced.
 
 ### Acceptance evidence
 
-Unit coverage for the OID-to-name mapping (known, unknown and Ed25519 values) and for the rows variant; browser coverage
-for the friendly algorithm name, the rows layout, the widened textarea and the `danger` icon status on an expired
-certificate; accessibility, translation and formatting checks for every affected page. Independent human language and
-assistive-technology acceptance remain separate.
+Unit coverage for the OID-to-name mapping (known, unknown, Ed25519 and large-second-arc values), X.690
+first-subidentifier decoding, single-TLV DER enforcement, the shared tab id and the single-certificate re-encode
+contract, plus the rows variant; browser coverage for the friendly algorithm name, the rows layout, the widened
+textarea, the first-certificate PEM label and the `danger` icon status on an expired certificate; accessibility,
+translation and formatting checks for every affected page. Independent human language and assistive-technology
+acceptance remain separate.
 
 ## Demo and validation plan
 
@@ -195,14 +212,25 @@ functions; replace the `CERTIFICATE_CLOCK` provider with the component `clock` i
 ## Review decisions and delivery
 
 Keep explicit parsing-only semantics and clock precedence. Reassess optional packaging and stronger display fingerprints
-separately; neither is silently introduced in this docs update.
+separately; neither is silently introduced in this docs update. Review feedback on trailing DER bytes, X.690 OID
+decoding, hierarchy/tab identity and the single-certificate re-encode label is resolved in code and in this spec; no
+public API signature changed.
 
 ## Evidence
 
-The parser, certificateValidator, signpost, and certificate component suites pass. The fixed MD5/SHA1 values were
-independently calculated from DER with Python hashlib and are now reproduced by the dependency-free native
-implementation in `certificate-crypto.ts`; SHA-256 is cross-checked against the platform implementation in tests. A
-synthetic DER fixture builder covers certificate types the two real fixtures do not: v1 and v3 certificates, UTCTime and
-GeneralizedTime validity with numeric offsets, multi-valued RDNs, UTF8/BMP/Printable/IA5 distinguished-name encodings,
-RSA and ECDSA signature algorithms, SAN/SKI extensions, and PEM/raw-DER/base64 inputs. This proves parsing/display
-behavior, not trust.
+The parser, certificateValidator, signpost, and certificate component suites pass: `nx run clr-lift:test` reports 36
+files / 478 tests and `nx run demo:test` reports 83 files / 302 tests (the demo suite needs reduced worker concurrency
+in this environment to avoid unrelated hook timeouts). A viewer-level unit test asserts that every hierarchy node id
+matches a details tab id and that the ids are unique. Translation completeness is 2307/2307 keys in all 11 demo locales
+with zero i18n-check errors; typecheck, lint (10 warnings in unrelated e2e specs), format:check and git diff --check
+pass. Browser acceptance for the certificate viewer is blocked in this environment because Chromium cannot load
+`libglib-2.0.so.0`; the targeted Playwright run therefore did not complete. Independent human language and
+assistive-technology acceptance remain separate.
+
+The fixed MD5/SHA1 values were independently calculated from DER with Python hashlib and are now reproduced by the
+dependency-free native implementation in `certificate-crypto.ts`; SHA-256 is cross-checked against the platform
+implementation in tests. A synthetic DER fixture builder covers certificate types the two real fixtures do not: v1 and
+v3 certificates, UTCTime and GeneralizedTime validity with numeric offsets, multi-valued RDNs, UTF8/BMP/Printable/IA5
+distinguished-name encodings, RSA and ECDSA signature algorithms, SAN/SKI extensions, and PEM/raw-DER/base64 inputs. It
+emits X.690 base-128 first OID subidentifiers, so `2.100.3` and other large-second-arc OIDs are regression tested
+alongside trailing-DER-byte and nested-TLV rejection. This proves parsing/display behavior, not trust.

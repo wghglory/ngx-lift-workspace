@@ -1501,7 +1501,7 @@ export const jaTranslations: Record<string, string> = {
   'certificate.viewerReset': 'リセット',
   'certificate.viewerInvalid': 'この入力は解析可能な証明書ではありません。',
   'certificate.viewerResultsTitle': '解析結果',
-  'certificate.viewerEncodedPem': 'pemEncodeDer で DER を PEM に再エンコード',
+  'certificate.viewerEncodedPem': '最初の証明書の DER を pemEncodeDer で PEM に再エンコード',
   'certificate.viewerCodeTitle': 'ビューアーを支えるユーティリティ',
   'certificate.viewerCodeDesc': '上の解析操作は、独自の証明書ビューアーで使うのと同じ公開 API を実行します:',
   'certificate.utilitiesTitle': '証明書ユーティリティ',

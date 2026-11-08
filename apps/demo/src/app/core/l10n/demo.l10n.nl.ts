@@ -1542,7 +1542,7 @@ export const nlTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Resetten',
   'certificate.viewerInvalid': 'Deze invoer is geen parsbaar certificaat.',
   'certificate.viewerResultsTitle': 'Geparsd certificaat',
-  'certificate.viewerEncodedPem': 'DER opnieuw gecodeerd naar PEM met pemEncodeDer',
+  'certificate.viewerEncodedPem': 'DER van het eerste certificaat opnieuw gecodeerd naar PEM met pemEncodeDer',
   'certificate.viewerCodeTitle': 'De utilities achter de viewer',
   'certificate.viewerCodeDesc':
     'De parse-actie hierboven gebruikt dezelfde openbare API die je in je eigen certificaatviewer zou gebruiken:',

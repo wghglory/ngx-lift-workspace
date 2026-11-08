@@ -1564,7 +1564,7 @@ export const frTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Réinitialiser',
   'certificate.viewerInvalid': 'Cette entrée n’est pas un certificat analysable.',
   'certificate.viewerResultsTitle': 'Certificat analysé',
-  'certificate.viewerEncodedPem': 'DER réencodé en PEM avec pemEncodeDer',
+  'certificate.viewerEncodedPem': 'DER du premier certificat réencodé en PEM avec pemEncodeDer',
   'certificate.viewerCodeTitle': 'Les utilitaires derrière la visionneuse',
   'certificate.viewerCodeDesc':
     'L’action d’analyse ci-dessus utilise la même API publique que celle de votre propre visionneuse :',

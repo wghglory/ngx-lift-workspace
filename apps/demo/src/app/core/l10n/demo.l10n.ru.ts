@@ -1533,7 +1533,7 @@ export const ruTranslations: Record<string, string> = {
   'certificate.viewerReset': 'Сбросить',
   'certificate.viewerInvalid': 'Эти данные не являются разбираемым сертификатом.',
   'certificate.viewerResultsTitle': 'Разобранный сертификат',
-  'certificate.viewerEncodedPem': 'DER, перекодированный в PEM с помощью pemEncodeDer',
+  'certificate.viewerEncodedPem': 'DER первого сертификата, перекодированный в PEM с помощью pemEncodeDer',
   'certificate.viewerCodeTitle': 'Утилиты, на которых построено средство просмотра',
   'certificate.viewerCodeDesc':
     'Действие разбора выше использует тот же публичный API, что и ваше собственное средство просмотра:',

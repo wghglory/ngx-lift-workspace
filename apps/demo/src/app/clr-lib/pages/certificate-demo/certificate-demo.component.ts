@@ -7,12 +7,16 @@ import {CodeBlockComponent} from '../../../shared/components/code-block/code-blo
 import {StateInspectorComponent} from '../../../shared/components/state-inspector/state-inspector.component';
 import {CertificateExampleComponent} from '../../../shared/components/certificate-example/certificate-example.component';
 import {highlight} from '../../../shared/utils/highlight.util';
-import type {CertificateHierarchyNode, ParsedChainEntry} from '../../../shared/utils/certificate-viewer-tools';
+import type {
+  CertificateDigests,
+  CertificateHierarchyNode,
+  ParsedChainEntry,
+} from '../../../shared/utils/certificate-viewer-tools';
 import {CERTIFICATE_SAMPLES} from './certificate-samples';
 
 /** Display-ready node of the parsed certificate chain, mirroring the reference hierarchy tree. */
 interface ChainDisplayNode {
-  /** Stable tab id: the subject key identifier when present, otherwise the node name. */
+  /** Stable tab id derived from the certificate's SHA-256 fingerprint; shared by tree nodes and tabs. */
   id: string;
   name: string;
   statusText: string;
@@ -46,6 +50,11 @@ export const SIGNATURE_ALGORITHM_NAMES: Record<string, string> = {
 /** Falls back to the raw OID so an unknown signature algorithm stays visible and unambiguous. */
 export function signatureAlgorithmName(oid: string): string {
   return SIGNATURE_ALGORITHM_NAMES[oid] ?? oid;
+}
+
+/** Stable, unique id shared by hierarchy nodes and details tabs, independent of DN or extension availability. */
+export function certificateTabId(digests: CertificateDigests): string {
+  return `cert-${digests.sha256.toLowerCase()}`;
 }
 
 @Component({
@@ -216,7 +225,7 @@ const pem = pemEncodeDer(der);`);
   /** Converts a hierarchy node into a display node with translated fields and validity status. */
   private buildChainDisplay(node: CertificateHierarchyNode): ChainDisplayNode {
     return {
-      id: node.certificate.subjectKeyIdentifier ?? node.name,
+      id: certificateTabId(node.digests),
       name: node.name,
       ...this.buildDisplayCore(node.certificate, node.digests),
       children: node.children.map((child) => this.buildChainDisplay(child)),
@@ -226,7 +235,7 @@ const pem = pemEncodeDer(der);`);
   /** Builds a leaf-first tab display node from one parsed chain entry. */
   private buildChainDisplayFromEntry(entry: ParsedChainEntry): ChainDisplayNode {
     return {
-      id: entry.certificate.subjectKeyIdentifier ?? entry.certificate.subject.getField('CN')?.value ?? '-',
+      id: certificateTabId(entry.digests),
       name: entry.certificate.subject.getField('CN')?.value ?? entry.certificate.subject.getField('O')?.value ?? '-',
       ...this.buildDisplayCore(entry.certificate, entry.digests),
       children: [],
