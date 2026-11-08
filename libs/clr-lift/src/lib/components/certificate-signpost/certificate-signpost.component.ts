@@ -9,7 +9,7 @@ import {TranslationService} from '../../services/translation.service';
 import {certificateTranslations} from './certificate.l10n';
 import {md5, sha1, sha256} from './certificate-crypto';
 import {extractDerFromPem, parseCertificate, X509Certificate} from './certificate-parser';
-import {CertificateStatus} from './certificate.model';
+import {CertificateStatus} from './certificate-status.model';
 import {CertificateComponent} from './certificate/certificate.component';
 
 ClarityIcons.addIcons(certificateIcon);

@@ -6,7 +6,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {TranslationService} from '../../../services/translation.service';
 import {certificateTranslations} from '../certificate.l10n';
 import {X509Certificate} from '../certificate-parser';
-import {CertificateStatus} from '../certificate.model';
+import {CertificateStatus} from '../certificate-status.model';
 
 @Component({
   selector: 'cll-certificate',
