@@ -1,6 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {describe, expect, it} from 'vitest';
+import {Subject} from 'rxjs';
+import {describe, expect, it, vi} from 'vitest';
 
 import {controlState, controlStatus, controlValue, formState} from './form-signals';
 
@@ -14,6 +15,24 @@ describe('form-signals utilities', () => {
 
       ctrl.setValue('updated');
       expect(valSig()).toBe('updated');
+    });
+  });
+
+  it('should rethrow control stream errors when the signal is read', () => {
+    TestBed.runInInjectionContext(() => {
+      const source = new Subject<string>();
+      const ctrl = new FormControl('initial');
+      Object.defineProperty(ctrl, 'valueChanges', {value: source});
+      const value = controlValue(ctrl);
+      const failure = new Error('control stream failed');
+      const report = vi.spyOn(console, 'error');
+      try {
+        source.error(failure);
+        expect(() => value()).toThrow(failure);
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
     });
   });
 
@@ -102,5 +121,98 @@ describe('form-signals utilities', () => {
       ctrl.setValue('next', {emitEvent: true});
       expect(valSig()).toBe('next');
     });
+  });
+
+  it('should rethrow status stream errors when the status signal is read', () => {
+    TestBed.runInInjectionContext(() => {
+      const source = new Subject<unknown>();
+      const ctrl = new FormControl('initial');
+      Object.defineProperty(ctrl, 'statusChanges', {value: source});
+      const status = controlStatus(ctrl);
+      const failure = new Error('status stream failed');
+      const report = vi.spyOn(console, 'error');
+
+      try {
+        source.error(failure);
+        expect(() => status()).toThrow(failure);
+        expect(() => status()).toThrow(failure);
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
+    });
+  });
+
+  it('should propagate event stream errors through controlState derived signals', () => {
+    TestBed.runInInjectionContext(() => {
+      const source = new Subject<unknown>();
+      const ctrl = new FormControl('initial');
+      Object.defineProperty(ctrl, 'events', {value: source});
+      const state = controlState(ctrl);
+      const failure = new Error('event stream failed');
+      const report = vi.spyOn(console, 'error');
+
+      try {
+        source.error(failure);
+        expect(() => state.dirty()).toThrow(failure);
+        expect(() => state.touched()).toThrow(failure);
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
+    });
+  });
+
+  it('should rethrow rawValue pipeline errors when the signal is read', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const events = new Subject<unknown>();
+      Object.defineProperty(form, 'events', {value: events});
+
+      const failure = new Error('raw value failed');
+      let reads = 0;
+      Object.defineProperty(form, 'getRawValue', {
+        value: () => {
+          reads += 1;
+          if (reads > 2) {
+            throw failure;
+          }
+          return {name: 'Ada'};
+        },
+      });
+
+      const state = formState(form);
+      expect(state.rawValue()).toEqual({name: 'Ada'});
+
+      const report = vi.spyOn(console, 'error');
+      try {
+        events.next('tick');
+        expect(() => state.rawValue()).toThrow(failure);
+        expect(report).not.toHaveBeenCalled();
+      } finally {
+        report.mockRestore();
+      }
+    });
+  });
+
+  it('should stop observing source errors after the owning injector is destroyed', () => {
+    const source = new Subject<string>();
+    const ctrl = new FormControl('initial');
+    Object.defineProperty(ctrl, 'valueChanges', {value: source});
+    let value!: ReturnType<typeof controlValue>;
+
+    TestBed.runInInjectionContext(() => {
+      value = controlValue(ctrl);
+    });
+    TestBed.resetTestingModule();
+
+    const report = vi.spyOn(console, 'error');
+    try {
+      source.error(new Error('late stream failure'));
+      expect(value()).toBe('initial');
+      expect(report).not.toHaveBeenCalled();
+    } finally {
+      report.mockRestore();
+    }
   });
 });

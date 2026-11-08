@@ -168,7 +168,9 @@ export function toSubmitValue<TInput extends object = Record<string, unknown>, T
  *
  * @param form The `FormGroup`, `FormArray`, or `AbstractControl` to observe.
  * @param options Options for omission, pruning, transformation, and debouncing.
- * @returns A reactive `Signal<TOutput>` emitting the latest sanitized submission value.
+ * @returns A reactive `Signal<TOutput>` emitting the latest sanitized submission value. A throwing `omitIf` or
+ * `transform` callback, or any other failure inside the event pipeline, arrives as a terminal Observable error and is
+ * rethrown when the signal is read (Angular `toSignal` semantics).
  */
 export function formSubmitValue<
   TControls extends {[K in keyof TControls]: AbstractControl},

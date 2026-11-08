@@ -1,4 +1,4 @@
-# Main branch health review — 2026-11-07
+# Main branch health review — 2026-11-07 (focused API follow-up — 2026-11-08)
 
 > Review artifact and standing backlog. Per `docs/README.md:26-27`, temporary audits and local log snapshots are **not**
 > linked from a documentation index. This file is kept as the maintained backlog for the findings it records. Repository
@@ -8,7 +8,13 @@
 
 - Reviewed `main` at `8c7205a` (2026-11-07), docs (53 Markdown files), both libraries, the demo app, e2e project,
   tooling scripts, CI/deployment workflows, GitHub issues and PRs.
-- Ran the repository's own validation targets (results below). No source file was modified and no commit was made.
+- On 2026-11-08, re-checked `toSignalForm`, `queryResource`, `queryResources` and `mutateResource` against their source,
+  tests, demo pages and design/documentation plans. The focused PR follow-up corrects the `toSignalForm` API reference,
+  aligns stream errors with Angular `toSignal`, and extends installed-consumer coverage; query/mutation docs and core
+  runtime behavior were already delivered. It also corrected the earlier claim that no packed `toSignalForm` fixture
+  existed: `key-value-hosts.ts` already tests that facade; the new fixture adds dynamic-control lifecycle coverage.
+- The original review ran the repository's own validation targets (results below). This follow-up validates the specific
+  changed targets and is not a new whole-repository health audit.
 - Findings are ordered by risk. `verified` means the evidence was re-checked directly in this audit; `static` means it
   came from a read-only static scan and was not executed; `confirm` means a product/maintainer decision is needed.
 
@@ -19,7 +25,7 @@ commit all succeeded on 2026-11-07T03:34:05Z. Formatting, translations, tooling 
 locally. Coverage is high (ngx-lift 94.14% statements / 90.79% branches; clr-lift 91.23% / 81.62%) and the translation
 dictionaries are complete (2,252/2,252 keys in each of 11 locales).
 
-The actionable risk is **not** in shipped library behavior. It concentrates in four places:
+The original review's actionable risks concentrate in four places:
 
 1. **Deployment and CI safety** — a Vercel production deploy step with no branch guard, unpinned third-party actions
    holding production secrets, a silently swallowed Netlify failure, and an Nx cache key that ignores most workspace
@@ -27,8 +33,8 @@ The actionable risk is **not** in shipped library behavior. It concentrates in f
 2. **Documentation and tracker drift** — the contributor guide cannot install this workspace, agent guidance points at
    the wrong repository, roadmaps still describe shipped work as pending, and all four open issues appear delivered but
    remain `ready-for-agent`.
-3. **A small set of concrete code defects** — an unguarded public pipe, swallowed stream errors, a deprecated test mock
-   in the production barrel, a timer not cleared on destroy, and a few untranslated strings.
+3. **A small set of concrete code defects** — an unguarded public pipe, a deprecated test mock in the production barrel,
+   a timer not cleared on destroy, and a few untranslated strings.
 4. **Policy/gate inconsistencies** — `validate` omits two documented checks, commitlint is installed but not hooked,
    coverage and locale documentation disagree with the code, and `node-forge` remains a mandatory heavy runtime
    dependency despite the repository's dependency policy.
@@ -206,10 +212,6 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
 - **C1 — Medium, verified. `RangePipe` throws on non-array input.** `libs/ngx-lift/src/lib/pipes/range.pipe.ts:38-41`
   casts `unknown` to a tuple and spreads it; `null`, `undefined` or a non-iterable raises a `TypeError` from a template.
   **Fix:** guard with `Array.isArray(value)` and return `[]`.
-- **C2 — Medium, verified. `safeToSignal` swallows stream errors.**
-  `libs/ngx-lift/src/lib/signals/form-signals.ts:54-56` only `console.error`s; `controlValue`, `controlStatus` and
-  `controlState` silently keep their last value with no error state. **Fix:** expose an error signal or an `onError`
-  option, and remove the library `console` call.
 - **C3 — Medium, verified. A deprecated test mock ships in the production barrel.**
   `libs/clr-lift/src/lib/services/index.ts:3` exports `translation.service.mock`, whose `:4` marks
   `MockTranslationService` `@deprecated` (and `:1` disables a lint rule file-wide). **Fix:** remove it from the public
@@ -243,10 +245,14 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   above a commented-out error-recovery expectation; `state-inspector.component.ts:35-36` returns the raw key when a
   translation is missing, masking regressions. **Fix:** restore the assertion with an explicit expectation and fail
   loudly in development on missing keys.
-- **C11 — Low, static. Duplicated callback isolation and deprecated barrels.** `mutate-resource.ts:59-74` and
-  `query-client.ts:590-616` repeat the same callback-fault isolation with an unconfigurable `console.error`;
-  `idle-detection.module.ts` and the `invalidatesTags` alias remain in primary barrels. **Fix:** extract one shared
-  helper with an injectable reporter and schedule deprecation removals.
+- **C11 — Low, verified. Mutation callback faults bypass the query diagnostic hook.** `mutate-resource.ts:59-74` reports
+  per-call callback failures directly through `console.error`, while `query-client.ts:590-616` routes its callback
+  faults through the configurable `onDiagnostic` hook before falling back to host reporting. `mutateResource`'s per-call
+  `onSuccess` / `onError` callbacks are already implemented and documented in
+  `docs/design/ngx-lift/mutate-resource-design-spec.md`; they are not an outstanding feature. The deprecated
+  `invalidatesTags` spelling remains exported as a documented compatibility alias; removal requires an explicit
+  breaking-release decision. **Fix:** decide whether mutation callback faults should use the client's diagnostic
+  channel, preserving the distinct reporting policies if callback isolation is shared.
 
 ### D. Tooling, configuration and dependency policy
 
@@ -303,10 +309,11 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
    only findings with production impact.
 2. **Make validation deterministic (A2, A6, A7, A10, A11, A13, A14, D3, D4).** Fix cache inputs, add timeouts and
    caches, wire commitlint and the missing documented checks, harden the custom tools.
-3. **Restore a single source of truth (B1–B9, B3).** Correct the agent guidance and contributor setup, close or re-scope
-   the four open issues, refresh roadmap statuses to 2026-11-07, fix the broken anchor and the version, locale and
-   coverage mismatches, and complete the indexes. Then consolidate B10.
-4. **Fix the small library defects (C1–C4, C6, C8).** Each is local and low-risk; add regressions alongside.
+3. **Restore a single source of truth (B1–B9).** Correct the agent guidance and contributor setup, close or re-scope the
+   four open issues, refresh roadmap statuses to 2026-11-07, fix the broken anchor and the version, locale and coverage
+   mismatches, and complete the indexes. Then consolidate B10.
+4. **Fix the small library defects (C1, C3, C4, C6, C8, C11).** Add regressions alongside; settle C11's diagnostic and
+   compatibility decisions before changing its public behavior.
 5. **Honour the dependency policy (D1, D2) and decide the canonical host (A15).** Record alternatives and consumer
    evidence in a feature spec as `AGENTS.md:52-57` requires.
 6. **Triage the backlog (E1–E3), then plan a release.** `[Unreleased]` holds six features and two fixes since
@@ -327,6 +334,20 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   `#evidence`), no Chinese prose appears in committed docs, and specs/ADRs/acceptance records are unusually thorough.
 - Known gaps are explicitly registered in `docs/design/implementation-gaps.md` and `docs/priority-roadmap.md`; the
   platform-upgrade deferral and human-acceptance boundary are deliberate maintainer decisions, not oversights.
+- Focused ngx-lift review (2026-11-08): `queryResource`, `queryResources`, and `mutateResource` have public exports,
+  source-adjacent tests, demo examples, and dedicated query/mutation guides and specifications. Their implementation and
+  documentation delivery are not backlog items; newcomer and native-language acceptance remain separate gates in
+  `docs/query-documentation-plan.md`. `toSignalForm` also has a demo, tests, and a behavior specification. Its strict
+  installed-consumer facade was already covered by `key-value-hosts.ts`; a new dedicated fixture adds dynamic-control
+  lifecycle coverage. Stream errors follow Angular `toSignal` semantics; targeted tests and package checks pass in the
+  current PR branch.
+- Contract follow-up (2026-11-08): audit finding C2 is closed by `toSignal`-style error propagation. The original C2
+  suggestion to add an `error` signal or `onError` option was rejected: an RxJS error terminates the stream and
+  Angular's adapter has no parallel channel. Regression coverage now spans `controlValue`, `controlStatus`,
+  `controlState`, `formState`, the facade, `formSubmitValue` and the packed consumer in zoneless and ZoneJS modes. The
+  earlier claims about a missing packed `toSignalForm` fixture and undelivered query/mutation APIs were false positives;
+  the `toSignalForm` demo API rows drifted from #145, the six resulting orphan translation keys are removed from all 11
+  dictionaries, and the stale `bindIf` / `revalidate` signatures are corrected.
 
 ## 6. Caveats
 
@@ -337,8 +358,10 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   instead. The local `test:coverage` failure is environmental (see §2) and must be re-checked on a quiet, clean `main`
   checkout.
 - GitHub issue/PR/CI facts were read with `gh` from this checkout; nothing was written to the tracker.
-- No source file was changed in the main tree. The 2026-11-05 architecture review's findings were merged into §7 of this
-  document; its standalone plan file and temporary HTML report were deleted. The only artifact is this document.
+- The 2026-11-08 follow-up includes source, test, package-consumer, demo, translation and specification changes in its
+  PR branch; it does not change the historical validation results above. The 2026-11-05 architecture review's findings
+  were merged into §7; its standalone plan file and temporary HTML report were deleted. The only audit artifact is this
+  document.
 
 ## 7. Architecture deepening opportunities (review 2026-11-05)
 

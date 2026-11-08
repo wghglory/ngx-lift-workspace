@@ -47,14 +47,14 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
 import {provideQueryDevtools} from 'clr-lift/devtools';
 void provideQueryDevtools();
 const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
-import {FormControl} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
   const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
@@ -101,6 +101,27 @@ function collection() {
   return values;
 }
 void collection;
+function singleQuery() {
+  const query = queryResource(() => ({key: ['package-user', 1], loader: () => of({id: 1})}));
+  const id: number | undefined = query.value()?.id;
+  const refresh: Promise<{id: number} | undefined> = query.execute();
+  void [id, refresh, query.isInitialLoading(), query.isRefreshError()];
+}
+void singleQuery;
+function signalForm() {
+  const group = new FormGroup({
+    name: new FormControl('Ada', {nonNullable: true}),
+    confirmation: new FormControl('', {nonNullable: true}),
+  });
+  const form = toSignalForm(group, {omit: ['confirmation']});
+  const name: string = form.fields.name.value();
+  const submitted: Partial<{name: string; confirmation: string}> = form.submitValue();
+  form.controls.name.setValue('Grace');
+  // @ts-expect-error The installed public proxy keeps the original control value type.
+  form.controls.name.setValue(42);
+  void [name, submitted, form.rawValue(), form.valid(), form.hasControl('name')];
+}
+void signalForm;
 const spinner: typeof SpinnerComponent = SpinnerComponent;
 const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}
@@ -280,6 +301,14 @@ class Negative {items=[{id:'org-1',name:'North'}]; key=(item:{id:string})=>item.
   );
   for (const mode of ['zoneless', 'zone']) {
     process.stdout.write(run(process.execPath, ['query-browser.mjs', mode], freshConsumer));
+  }
+
+  writeFileSync(
+    join(freshConsumer, 'to-signal-form-browser.mjs'),
+    readFileSync(join(root, 'tools/package/fixtures/to-signal-form-browser.mjs'), 'utf8'),
+  );
+  for (const mode of ['zoneless', 'zone']) {
+    process.stdout.write(run(process.execPath, ['to-signal-form-browser.mjs', mode], freshConsumer));
   }
 
   writeFileSync(

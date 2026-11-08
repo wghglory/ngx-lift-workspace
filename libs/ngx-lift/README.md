@@ -275,6 +275,12 @@ export class FormExampleComponent {
 }
 ```
 
+Signal reads rethrow a terminal error from an observed control event stream instead of falling back to the last value.
+Handle such an error at the read site, or recreate the facade with a healthy control; no `error` signal or `onError`
+option is exposed. See the
+[compatibility note](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/ngx-lift/reactive-forms-design-spec.md#compatibility-rollout-and-risks)
+and the [release history](https://github.com/wghglory/ngx-lift-workspace/blob/main/CHANGELOG.md).
+
 Continue with [conditional controls and validation](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm).
 
 ### Share cached reads

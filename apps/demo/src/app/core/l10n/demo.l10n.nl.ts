@@ -676,9 +676,9 @@ export const nlTranslations: Record<string, string> = {
     'Wanneer een formuliercontrole veranderingen aanwekt die cascading updates in een andere controle (bijvoorbeeld beschikbare versies bij verandering van de databaseengine) veroorzaken, kan je de traditionele RxJS- <code>valueChanges.pipe(takeUntilDestroyed())</code>-patron gebruiken of de signal-first- <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>-utiliteit. <code>watch</code> werkt binnen een Angular- <code>effect()</code> met automatische <code>untracked</code>-isolatie, voorkomt <code>NG0600</code>-signal-uitvoerfouten terwijl het manuele abonnementsafsluiting elimineert.',
   'toSignalForm.apiReferenceTitle': 'API-referentie',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
-  'toSignalForm.apiBindIfTitle': 'sf.bindIf(control, condition, options?) / bindControlIf',
+  'toSignalForm.apiBindIfTitle': 'sf.bindIf(controlName, condition, controlFactory, options?) / bindControlIf',
   'toSignalForm.apiBindDisabledTitle': 'sf.bindDisabled(control, condition, options?) / bindControlDisabled',
-  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, sources, options?) / revalidateOnChange',
+  'toSignalForm.apiRevalidateTitle': 'sf.revalidate(target, source) / revalidateOnChange',
   'toSignalForm.apiPropForm': 'De Angular FormGroup instantie om in te pakken met reactieve signalen en bindingen.',
   'toSignalForm.apiPropOmit': 'Controleer namen om weg te laten van submitValue payloads.',
   'toSignalForm.apiPropIncludeDisabled':
@@ -688,22 +688,16 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.apiPropOmitIf':
     'Predicaat per besturingselement dat een element uit submitValue verwijdert. Ontvangt de huidige waarde, de naam en het bovenliggende object.',
   'toSignalForm.apiPropDeep': 'Of submitValue ook geneste objecten en arrays opschoont.',
-  'toSignalForm.apiPropEmitEvent': 'Of status/waardeveranderingen Angular-besturingsgebeurtenissen uitzenden.',
   'toSignalForm.apiPropValue': 'Reactive signaal van de huidige vorm waarde.',
   'toSignalForm.apiPropStatus': "Reactive signaal van algemene vormstatus (')VALID'INVALID'PENDING'DISABLED').",
   'toSignalForm.apiPropValid': 'Berekend signaal dat aangeeft of het formulier geldig is.',
   'toSignalForm.apiPropInvalid': 'Berekend signaal dat aangeeft of het formulier ongeldig is.',
   'toSignalForm.apiPropSubmitValue':
     'Gesaneerde lading exclusief uitgeschakelde, weggelaten of niet-gemonteerde besturingen.',
-  'toSignalForm.apiPropIsSubmitting':
-    'Schrijfbaar signaal dat volgt of een async-inzending tijdens de vlucht plaatsvindt.',
-  'toSignalForm.apiBindIfControl': 'Naam of instantie van de controle om voorwaardelijk te monteren/ontkoppelen.',
+  'toSignalForm.apiBindIfControl': 'Naam van het besturingselement dat voorwaardelijk wordt toegevoegd of verwijderd.',
   'toSignalForm.apiBindIfCondition': 'Booleaans signaal of predicaat om te bepalen of de besturing is gemonteerd.',
   'toSignalForm.apiBindIfPreserveValue':
     'Bewaart de controlewaarde in het geheugen gedurende de ontkoppel/remount cycli.',
-  'toSignalForm.apiBindIfDefaultValue': 'Standaardwaarde toegekend bij het aan- of resetten van de besturing.',
-  'toSignalForm.apiBindIfEmitEvent':
-    'Of optellen/verwijderen van de besturing FormGroup waarde en status-gebeurtenissen uitzendt.',
   'toSignalForm.apiBindDisabledControl': 'Doelcontrole waarvan de ingeschakelde/uitgeschakelde toestand gebonden is.',
   'toSignalForm.apiBindDisabledCondition':
     'Booleaans signaal of voorspellen terug te keren true to disable, vals om in te schakelen.',
@@ -714,10 +708,7 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': 'Of veranderingen waarde/status-gebeurtenissen uitstralen/uitschakelen.',
   'toSignalForm.apiRevalidateTarget': 'Doelcontrole om de validatie opnieuw te evalueren bij bronwijzigingen.',
   'toSignalForm.apiRevalidateSources':
-    'Eén of meer afhankelijkheidsfuncties waarvan de waarde/statuswijzigingen de doelverlenging in werking stellen.',
-  'toSignalForm.apiRevalidateOnlyIfTouched':
-    'Alleen trigger doel verlenging als het doel is aangeraakt door de gebruiker.',
-  'toSignalForm.apiRevalidateOnlyIfDirty': 'Alleen trigger doel verlenging als het doel is gewijzigd (vuil).',
+    'Besturing, signal of getter waarvan een waarde-/statuswijziging de doelvalidatie opnieuw activeert.',
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'De <code>computedAsync</code>-functie is een flexibele utiliteit die waarden kan berekenen uit Promises, Observables of normale waarden. Het biedt flexibiliteit in het computatiegedrag via keuze van samenvoegingsstrategieën (switch, merge, concat, exhaust) en aanvullende startwaarden. Om <code>computedAsync</code> te gebruiken, geef een functie op die een Promise, Observable of normale waarde retourneert. Het retourneert dan een <code>Signal</code> die de berekende waarde uitstraalt.',
