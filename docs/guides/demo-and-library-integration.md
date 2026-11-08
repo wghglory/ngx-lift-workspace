@@ -64,10 +64,6 @@ until `clearTimers()` or injector destruction. Initial component configuration i
 Query diagnostics and shared cache policies are defined in the
 [query contract](../design/ngx-lift/query-resource-design-spec.md).
 
-Certificate clocks accept a callback returning Date or a timestamp. Signals satisfy that callback and drive reactive
-status changes. Bind `[clock]="now"` to override the default; custom clocks own their advancement. The default browser
-clock advances every minute and cleans up with its injector. Each status evaluation samples the clock once.
-
 ## Compatibility
 
 Derived signal error handling is defined in the

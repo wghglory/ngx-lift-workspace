@@ -1,4 +1,3 @@
-import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {vi} from 'vitest';
 
@@ -60,7 +59,7 @@ describe('CertificateSignpostComponent', () => {
     }
   });
 
-  it('ages an unchanged certificate with the default clock and cleans up on destroy', async () => {
+  it('ages an unchanged certificate with the browser clock and cleans up on destroy', async () => {
     vi.useFakeTimers();
     try {
       vi.setSystemTime(new Date('2026-10-31T23:59:30Z'));
@@ -74,44 +73,5 @@ describe('CertificateSignpostComponent', () => {
     } finally {
       vi.useRealTimers();
     }
-  });
-
-  it('samples a mixed Date/timestamp clock exactly once per status evaluation', () => {
-    fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
-    const clock = vi
-      .fn<() => Date | number>()
-      .mockReturnValueOnce(new Date('2026-10-22T00:00:00Z'))
-      .mockReturnValue(Date.parse('2026-11-02T00:00:00Z'));
-    fixture.componentRef.setInput('clock', clock);
-    expect(component.certificateStatus().status).toBe('warning');
-    expect(clock).toHaveBeenCalledTimes(1);
-  });
-
-  it('updates status when a signal-backed clock advances without replacing inputs', () => {
-    fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
-    const clock = signal(Date.parse('2026-10-22T00:00:00Z'));
-    fixture.componentRef.setInput('clock', clock);
-    expect(component.certificateStatus().status).toBe('warning');
-    clock.set(Date.parse('2026-11-02T00:00:00Z'));
-    expect(component.certificateStatus().status).toBe('danger');
-  });
-
-  it('determines certificate status using clock input for deterministic time evaluation', () => {
-    fixture.componentRef.setInput('pem', pemExpiringAt(new Date('2026-11-01T00:00:00Z')));
-
-    // 10 days before expiry -> warning (<= 30 days)
-    fixture.componentRef.setInput('clock', () => new Date('2026-10-22T00:00:00Z'));
-    fixture.detectChanges();
-    expect(component.certificateStatus().status).toBe('warning');
-
-    // 60 days before expiry -> success (> 30 days)
-    fixture.componentRef.setInput('clock', () => new Date('2026-09-02T00:00:00Z'));
-    fixture.detectChanges();
-    expect(component.certificateStatus().status).toBe('success');
-
-    // After expiry -> danger
-    fixture.componentRef.setInput('clock', () => new Date('2026-11-02T00:00:00Z'));
-    fixture.detectChanges();
-    expect(component.certificateStatus().status).toBe('danger');
   });
 });

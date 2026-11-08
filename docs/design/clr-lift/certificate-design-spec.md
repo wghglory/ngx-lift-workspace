@@ -23,7 +23,7 @@ status or fingerprint does not establish signature validity, chain trust, hostna
 
 ## Goals
 
-- G1: Inspect certificate details/fingerprints and show expiry status against a controllable clock.
+- G1: Inspect certificate details/fingerprints and show expiry status against the current time.
 - G2: Reject malformed nonempty certificate input through a Reactive Forms validator.
 
 ## Non-Goals
@@ -38,11 +38,11 @@ TLS trust decisions, chain validation, private-key handling, revocation and serv
 
 ## Use cases and acceptance
 
-| ID  | Task                   | Initial state/action             | Outcome                                     | Failure/recovery                           | Demo/test                                |
-| --- | ---------------------- | -------------------------------- | ------------------------------------------- | ------------------------------------------ | ---------------------------------------- |
-| C1  | Inspect PEM            | Raw/encoded input opens signpost | Details and display hashes                  | Parse failure shown without trust claim    | real raw/encoded parser and digest tests |
-| C2  | Observe expiry         | Inject/update reference clock    | Expired at notAfter; warning within 30 days | Override clock yields deterministic output | clock regressions                        |
-| C3  | Validate imported text | Empty, malformed, valid PEM      | Empty allowed; malformed invalidCertificate | Required is caller-owned                   | validator branch tests; certificate E2E  |
+| ID  | Task                   | Initial state/action             | Outcome                                     | Failure/recovery                        | Demo/test                                |
+| --- | ---------------------- | -------------------------------- | ------------------------------------------- | --------------------------------------- | ---------------------------------------- |
+| C1  | Inspect PEM            | Raw/encoded input opens signpost | Details and display hashes                  | Parse failure shown without trust claim | real raw/encoded parser and digest tests |
+| C2  | Observe expiry         | Render against the browser clock | Expired at notAfter; warning within 30 days | Status reflects current time            | status regressions                       |
+| C3  | Validate imported text | Empty, malformed, valid PEM      | Empty allowed; malformed invalidCertificate | Required is caller-owned                | validator branch tests; certificate E2E  |
 
 ## Industry evidence and current gaps
 
@@ -124,13 +124,13 @@ is therefore a single-certificate round trip, not a chain serializer; its label 
 ## Behavior and architecture
 
 Signpost parsing catches failures into error/status state; the surfaced parser message is a developer diagnostic, not
-translated product copy. Expiry compares exact notAfter timestamp, then day difference for warning text. A component
-`clock` overrides the default browser minute timer, which refreshes current time and is cleaned up by the effect. A
-supplied clock must expose reactive dependencies if live updates are needed. The validator returns null for empty input
-and `{invalidCertificate: error}` for nonempty parse failures. `parseCertificate` requires the DER buffer to end exactly
-after the top-level SEQUENCE; nested extension values must also be a single TLV, and an unterminated base-128 OID
-subidentifier is rejected. PEM text after the END marker never reaches the DER parser, so trailing-byte input fails C3
-while ordinary PEM framing and concatenated PEM chains remain usable through `parseCertificateChain`.
+translated product copy. Expiry compares exact notAfter timestamp, then day difference for warning text. The signpost
+refreshes current time on a minute timer (cleaned up by the effect) so expiry status updates as time passes; no time
+override is exposed. The validator returns null for empty input and `{invalidCertificate: error}` for nonempty parse
+failures. `parseCertificate` requires the DER buffer to end exactly after the top-level SEQUENCE; nested extension
+values must also be a single TLV, and an unterminated base-128 OID subidentifier is rejected. PEM text after the END
+marker never reaches the DER parser, so trailing-byte input fails C3 while ordinary PEM framing and concatenated PEM
+chains remain usable through `parseCertificateChain`.
 
 ## Clarity, accessibility, and localization
 
@@ -189,32 +189,34 @@ acceptance remain separate.
 
 Certificate and file-reader demos automatically load their deferred viewer for the initial PEM, without a load button or
 programmatic focus movement. Keep the signpost trigger and status aligned with their label;
-`apps/demo-e2e/src/certificate.spec.ts` checks details/focus. Adjacent tests cover clock precedence/status and mocked
-parse-error recovery. Direct service/validator tests use an expired public certificate to verify raw/encoded PEM
-parsing, fixed DER fingerprints, malformed input, empty optional values, caller-owned required validation and recovery.
-Parsing an expired certificate remains valid for this API. Dependency/bundle tooling verifies demo lazy-loading; strict
-package installation checks a different boundary.
+`apps/demo-e2e/src/certificate.spec.ts` checks details/focus. Adjacent tests cover expiry status and mocked parse-error
+recovery. Direct service/validator tests use an expired public certificate to verify raw/encoded PEM parsing, fixed DER
+fingerprints, malformed input, empty optional values, caller-owned required validation and recovery. Parsing an expired
+certificate remains valid for this API. Dependency/bundle tooling verifies demo lazy-loading; strict package
+installation checks a different boundary.
 
 ## Compatibility, rollout, and risks
 
 Angular 21. The node-forge peer dependency was removed; certificate parsing and fingerprinting are now dependency-free
 and synchronous, so unrelated consumers no longer install node-forge and the main `clr-lift` entry does not reference
 it. The stateful `CertificateService` was removed: the signpost calls the parser and digest functions directly and owns
-clock resolution, so consumers bind `pem`/`pemEncoded`/`clock` inputs instead of injecting a service or providing an
-injection token. The `CertificateComponent` `certificate` input and the exported parser expose the local
-`X509Certificate` type instead of `node-forge`'s `pki.Certificate`. Native signal-field validation is a future reviewed
-integration, not provided by the current ValidatorFn.
+clock resolution, so consumers bind only the `pem` input (and optionally `pemEncoded`) instead of injecting a service or
+providing an injection token. The signpost uses the browser clock and exposes no time override. The
+`CertificateComponent` `certificate` input and the exported parser expose the local `X509Certificate` type instead of
+`node-forge`'s `pki.Certificate`. Native signal-field validation is a future reviewed integration, not provided by the
+current ValidatorFn.
 
 Migration for the removed APIs: replace `CertificateService.getCertificateFromPem(pem, pemEncoded)` with the exported
 `parseCertificateFromPem`; replace `getCertificateHashes` with the exported `extractDerFromPem` plus the digest
-functions; replace the `CERTIFICATE_CLOCK` provider with the component `clock` input.
+functions; the `CERTIFICATE_CLOCK` provider is removed with the certificate service, and no time-override input replaces
+it. The signpost uses the browser clock.
 
 ## Review decisions and delivery
 
-Keep explicit parsing-only semantics and clock precedence. Reassess optional packaging and stronger display fingerprints
-separately; neither is silently introduced in this docs update. Review feedback on trailing DER bytes, X.690 OID
-decoding, hierarchy/tab identity and the single-certificate re-encode label is resolved in code and in this spec; no
-public API signature changed.
+Keep explicit parsing-only semantics. Reassess optional packaging and stronger display fingerprints separately; neither
+is silently introduced in this docs update. Review feedback on trailing DER bytes, X.690 OID decoding, hierarchy/tab
+identity and the single-certificate re-encode label is resolved in code and in this spec; no public API signature
+changed.
 
 ## Evidence
 

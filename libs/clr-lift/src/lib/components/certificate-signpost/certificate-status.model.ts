@@ -1,10 +1,4 @@
 /**
- * Clock provider function returning the current date or timestamp.
- * Used for deterministic time testing and simulated clocks.
- */
-export type CertificateClock = () => Date | number;
-
-/**
  * Represents the status information for a certificate.
  * Used to display certificate validation status with appropriate styling and icons.
  */

@@ -9,7 +9,7 @@ import {TranslationService} from '../../services/translation.service';
 import {certificateTranslations} from './certificate.l10n';
 import {md5, sha1, sha256} from './certificate-crypto';
 import {extractDerFromPem, parseCertificate, X509Certificate} from './certificate-parser';
-import {CertificateClock, CertificateStatus} from './certificate.model';
+import {CertificateStatus} from './certificate-status.model';
 import {CertificateComponent} from './certificate/certificate.component';
 
 ClarityIcons.addIcons(certificateIcon);
@@ -31,8 +31,7 @@ const STATUS_STYLES = {
 export class CertificateSignpostComponent {
   private translationService = inject(TranslationService);
 
-  /** Optional clock; signal-backed functions reactively update certificate status. */
-  clock = input<CertificateClock>();
+  /** Internal minute-tick so expiry status updates as time passes; the browser clock is used, no time override is exposed. */
   private readonly currentTime = signal(Date.now());
 
   position = input<
@@ -93,23 +92,12 @@ export class CertificateSignpostComponent {
   constructor() {
     this.translationService.loadTranslationsForComponent('certificate', certificateTranslations);
     const browserWindow = inject(DOCUMENT).defaultView;
-    effect((onCleanup) => {
-      if (this.clock() || !browserWindow) return;
-      const timer = browserWindow.setInterval(() => this.currentTime.set(Date.now()), 60_000);
-      onCleanup(() => browserWindow.clearInterval(timer));
-    });
-  }
-
-  /**
-   * Resolves the current timestamp in milliseconds from the clock input or the minute-tick signal.
-   */
-  private resolveNowTimestamp(): number {
-    const clock = this.clock();
-    if (clock) {
-      const result = clock();
-      return result instanceof Date ? result.getTime() : result;
+    if (browserWindow) {
+      effect((onCleanup) => {
+        const timer = browserWindow.setInterval(() => this.currentTime.set(Date.now()), 60_000);
+        onCleanup(() => browserWindow.clearInterval(timer));
+      });
     }
-    return this.currentTime();
   }
 
   /**
@@ -119,7 +107,7 @@ export class CertificateSignpostComponent {
    * @return {CertificateStatus} The status of the certificate, including label text, label class, status, and shape.
    */
   private getCertificateStatus(certificate: X509Certificate): CertificateStatus {
-    const nowTimestamp = this.resolveNowTimestamp();
+    const nowTimestamp = this.currentTime();
     const daysDiff = differenceInDays(new Date(certificate.validity.notAfter), new Date(nowTimestamp));
 
     if (certificate.validity.notAfter.getTime() <= nowTimestamp) {
