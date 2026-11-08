@@ -6,6 +6,8 @@ import {visitDemoTabs} from './support/demo-tabs';
 
 for (const theme of ['light', 'dark']) {
   test.describe(`accessibility ${theme}`, () => {
+    test.describe.configure({mode: 'parallel'});
+
     test.beforeEach(async ({page}) => {
       await page.addInitScript((activeTheme) => {
         localStorage.setItem('clr-lift-lang', 'en');
