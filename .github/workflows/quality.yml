@@ -123,6 +123,12 @@ jobs:
   # E2E only for affected projects on PRs; full on push.
   e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        shard: [1, 2]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -151,12 +157,19 @@ jobs:
           else
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
           fi
-      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1
+      - name: Run affected Playwright shard
+        timeout-minutes: 6
+        env:
+          PLAYWRIGHT_PROJECT: ${{ matrix.browser }}
+          PLAYWRIGHT_SHARD: ${{ matrix.shard }}
+        run: >-
+          pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1 --skip-nx-cache
+          --args="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/2"
       - name: Upload browser report
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}-${{ matrix.shard }}
           path: dist/.playwright/apps/demo-e2e/playwright-report/
           if-no-files-found: ignore
 

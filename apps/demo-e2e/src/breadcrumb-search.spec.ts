@@ -77,6 +77,7 @@ test('100 supplied locations filter locally, recover empty results and keep exac
   await trigger.press('Enter');
   await expect(filter).toHaveValue('');
   await filter.fill('Level 38');
+  await expect(panel.getByRole('link')).toHaveCount(1);
   await panel.getByRole('link').click();
   await expect(page).toHaveURL(/ancestor=37&key=%2F%25/);
 });
