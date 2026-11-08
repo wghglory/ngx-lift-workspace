@@ -13,7 +13,7 @@ permissions:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   PLAYWRIGHT_BROWSERS: ${{ github.event_name == 'pull_request' && 'chromium' || 'chromium,firefox,webkit' }}
-  PLAYWRIGHT_WORKERS: ${{ github.event_name == 'pull_request' && '2' || '1' }}
+  PLAYWRIGHT_WORKERS: ${{ github.event_name == 'pull_request' && '4' || '2' }}
 
 jobs:
   # Whole-repo, dependency-free checks. Always runs fully.
@@ -182,7 +182,6 @@ jobs:
           PLAYWRIGHT_BROWSERS: ${{ matrix.browser }}
           PLAYWRIGHT_PROJECT: ${{ matrix.browser }}
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
-          PLAYWRIGHT_WORKERS: 2
         run: |
           if [ "$CI_EVENT" = "pull_request" ] && [ "$PLAYWRIGHT_PROJECT" != "chromium" ]; then
             PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --grep=@cross-browser-smoke"
