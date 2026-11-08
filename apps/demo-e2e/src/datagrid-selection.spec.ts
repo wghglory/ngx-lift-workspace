@@ -131,11 +131,11 @@ test('loading locks a focused selection cell and the header without removing the
     await response;
     await request.continue();
   });
-  await policy.getByRole('gridcell', {name: 'Select Organization 1', exact: true}).focus();
+  await policy.getByRole('gridcell', {name: 'Select Organization 4', exact: true}).focus();
   await policy.getByRole('button', {name: 'Refresh', exact: true}).dispatchEvent('click');
   await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'true');
   await page.keyboard.press('Space');
-  await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).not.toBeChecked();
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true})).not.toBeChecked();
   await expect(policy.getByRole('checkbox', {name: 'Select All', exact: true})).toBeDisabled();
   await expect(preview).toContainText('org-2');
   release();
@@ -158,7 +158,11 @@ test('request failure and Retry retain the native grid, owner values and distinc
   await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
   await expect(policy.locator('.field-feedback.error')).toHaveCount(0);
   await page.unroute('**/assets/datagrid-selection/organizations.json*');
-  await policy.getByRole('button', {name: 'Retry', exact: true}).click();
+  await policy
+    .locator('app-organization-picker')
+    .locator('cll-alert')
+    .getByRole('button', {name: 'Retry', exact: true})
+    .click();
   await expect(policy.locator('app-organization-picker').locator('cll-alert')).toHaveCount(0);
   expect(await original?.evaluate((element) => element.isConnected)).toBe(true);
 });

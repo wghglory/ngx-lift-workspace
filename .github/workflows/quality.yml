@@ -179,6 +179,7 @@ jobs:
         timeout-minutes: 5
         env:
           CI_EVENT: ${{ github.event_name }}
+          PLAYWRIGHT_BROWSERS: ${{ matrix.browser }}
           PLAYWRIGHT_PROJECT: ${{ matrix.browser }}
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_WORKERS: 2
