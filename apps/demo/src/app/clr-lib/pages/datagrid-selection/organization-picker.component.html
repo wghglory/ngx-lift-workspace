@@ -7,8 +7,10 @@
   cllDatagridSelectionBinding
   [readonly]="readonly()"
   [required]="required()"
+  [layout]="layout()"
   [helper]="'organizationExample.help' | translate"
   [error]="error() || ('organizationExample.invalidSelection' | translate)"
+  [itemAvailability]="availability"
 >
   <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
   <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">

@@ -12,7 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ClarityModule, ClrDatagrid} from '@clr/angular';
+import {ClarityModule} from '@clr/angular';
 import {AlertComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, queryResource, toSignalForm} from 'ngx-lift';
 
@@ -63,7 +63,6 @@ export class DataServicePolicyFormComponent {
   private readonly namespaceService = inject(NamespaceService);
   private readonly organizationPickerRef = viewChild(OrganizationPickerComponent);
   private readonly namespacePickerRef = viewChild(NamespacePickerComponent);
-  private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
   readonly maximumOrganizations = 3;
   readonly policyId = signal('policy-1');
@@ -122,14 +121,8 @@ export class DataServicePolicyFormComponent {
 
   private readonly orgQuery = computed(() => this.organizationPickerRef()?.organizationsQuery);
   private readonly nsQuery = computed(() => this.namespacePickerRef()?.namespacesQuery);
-  readonly verifiedOrgs = computed<Organization[] | undefined>(() => {
-    const query = this.orgQuery();
-    return query?.status() === 'resolved' ? (query.value() ?? []) : undefined;
-  });
-  readonly verifiedNamespaces = computed<Namespace[] | undefined>(() => {
-    const query = this.nsQuery();
-    return query?.status() === 'resolved' ? (query.value() ?? []) : undefined;
-  });
+  readonly verifiedOrgs = computed<Organization[] | undefined>(() => this.orgQuery()?.value());
+  readonly verifiedNamespaces = computed<Namespace[] | undefined>(() => this.nsQuery()?.value());
   readonly loading = computed(
     () => this.orgQuery()?.isLoading() || this.nsQuery()?.isLoading() || this.policyDetailQuery.isLoading() || false,
   );
@@ -194,9 +187,9 @@ export class DataServicePolicyFormComponent {
       untracked(() => this.hydrateFromDetail(detail));
     });
     afterRenderEffect(() => {
-      const grid = this.grid();
+      const picker = this.organizationPickerRef();
       this.translationService.locale();
-      untracked(() => grid?.items.refresh());
+      untracked(() => picker?.refreshGridItems());
     });
   }
 
@@ -305,11 +298,11 @@ export class DataServicePolicyFormComponent {
     control.setValue(control.value.filter((key) => key !== id));
     control.markAsDirty();
     control.markAsTouched();
-    this.grid()?.datagridTable.nativeElement.focus();
+    this.organizationPickerRef()?.focusGrid();
   }
 
   retryVerification(): void {
-    this.grid()?.datagridTable.nativeElement.focus();
+    this.organizationPickerRef()?.focusGrid();
     this.organizationPickerRef()?.organizationsQuery.reload();
     this.namespacePickerRef()?.namespacesQuery.reload();
   }

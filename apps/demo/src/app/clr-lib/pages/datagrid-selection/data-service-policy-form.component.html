@@ -30,6 +30,7 @@
     formControlName="organizationIds"
     required
     [readonly]="readonly()"
+    [layout]="layout()"
     [error]="orgSelectionError()"
   />
 
@@ -146,7 +147,7 @@
       data-testid="policy-form-save"
       class="btn btn-primary"
       [clrLoading]="saving()"
-      [disabled]="selectionLocked() || saving() || sf.invalid() || !verifiedOrgs() || !verifiedNamespaces()"
+      [disabled]="selectionLocked() || saving() || !verifiedOrgs() || !verifiedNamespaces()"
     >
       {{ 'organizationExample.submit' | translate }}
     </button>
