@@ -120,9 +120,45 @@ jobs:
         if: github.event_name != 'pull_request'
         run: pnpm run bundle:check && pnpm run verify:packages
 
-  # E2E only for affected projects on PRs; full on push.
-  e2e:
+  e2e-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+    steps:
+      - id: generate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+
+          is_pull_request = os.environ["EVENT_NAME"] == "pull_request"
+          browsers = ["chromium"] if is_pull_request else ["chromium", "firefox", "webkit"]
+          include = [
+              {"browser": browser, "shard": shard}
+              for browser in browsers
+              for shard in range(1, 9)
+          ]
+          locale_browsers = ["chromium"] if is_pull_request else browsers
+          include.extend(
+              {"browser": browser, "locale_group": group}
+              for browser in locale_browsers
+              for group in range(4)
+          )
+          if is_pull_request:
+              include.extend({"browser": browser, "shard": 1} for browser in ["firefox", "webkit"])
+          print("matrix=" + json.dumps({"include": include}, separators=(",", ":")))
+          PY
+
+  # Full Chromium suite plus cross-browser smoke on PRs; full browser coverage otherwise.
+  e2e:
+    needs: e2e-matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.e2e-matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -136,13 +172,7 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Install Playwright browsers
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            pnpm exec playwright install --with-deps chromium
-          else
-            pnpm exec playwright install --with-deps
-          fi
+      - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
       - name: Compute nx command
         id: scope
         run: |
@@ -151,12 +181,32 @@ jobs:
           else
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
           fi
-      - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1
+      - name: Run affected Playwright shard
+        timeout-minutes: 5
+        env:
+          CI_EVENT: ${{ github.event_name }}
+          PLAYWRIGHT_BROWSERS: ${{ matrix.browser }}
+          PLAYWRIGHT_PROJECT: ${{ matrix.browser }}
+          PLAYWRIGHT_SHARD: ${{ matrix.shard }}
+          PLAYWRIGHT_LOCALE_GROUP: ${{ matrix.locale_group }}
+          PLAYWRIGHT_WORKERS: 2
+        run: |
+          if [ "$CI_EVENT" = "pull_request" ] && [ "$PLAYWRIGHT_PROJECT" != "chromium" ]; then
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --grep=@cross-browser-smoke"
+          elif [ -n "$PLAYWRIGHT_LOCALE_GROUP" ]; then
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --grep=@locale-group-$PLAYWRIGHT_LOCALE_GROUP"
+          elif [ "$CI_EVENT" = "pull_request" ]; then
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/8 --grep-invert=@locale-coverage"
+          else
+            PLAYWRIGHT_ARGS="--project=$PLAYWRIGHT_PROJECT --shard=$PLAYWRIGHT_SHARD/8 --grep-invert=@locale-coverage"
+          fi
+          pnpm exec nx ${{ steps.scope.outputs.cmd }} -t e2e --parallel=1 --outputStyle=stream --skip-nx-cache \
+            --args="$PLAYWRIGHT_ARGS"
       - name: Upload browser report
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}-${{ matrix.shard }}
           path: dist/.playwright/apps/demo-e2e/playwright-report/
           if-no-files-found: ignore
 

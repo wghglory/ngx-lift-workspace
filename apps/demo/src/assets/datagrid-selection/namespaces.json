@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ns-1",
+    "name": "Production",
+    "status": "ready"
+  },
+  {
+    "id": "ns-2",
+    "name": "Staging",
+    "status": "ready"
+  },
+  {
+    "id": "ns-3",
+    "name": "Sandbox",
+    "status": "maintenance"
+  },
+  {
+    "id": "ns-4",
+    "name": "Archive",
+    "status": "ready"
+  },
+  {
+    "id": "ns-5",
+    "name": "Research",
+    "status": "ready"
+  },
+  {
+    "id": "ns-6",
+    "name": "Shared",
+    "status": "ready"
+  }
+]

@@ -1,0 +1,47 @@
+<cll-datagrid-selection
+  cllDatagridSelectionBinding
+  [readonly]="readonly()"
+  [required]="required()"
+  [helper]="'policyExample.namespaceHelp' | translate"
+  [error]="error() || ('organizationExample.invalidSelection' | translate)"
+>
+  <label class="clr-control-label">{{ 'policyExample.namespace' | translate }}</label>
+  <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
+    <clr-signpost-content *clrIfOpen>{{ 'policyExample.namespaceHelp' | translate }}</clr-signpost-content>
+  </clr-signpost>
+  @if (namespacesQuery.error()) {
+    <cll-alert>
+      {{
+        (namespacesQuery.isRefreshError() ? 'organizationExample.refreshError' : 'organizationExample.loadError')
+          | translate
+      }}
+      <button type="button" class="btn btn-link" (click)="namespacesQuery.reload()">
+        {{ 'organizationExample.retry' | translate }}
+      </button>
+    </cll-alert>
+  }
+  <clr-datagrid
+    clrDgSelectionType="single"
+    [clrDgLoading]="namespacesQuery.isLoading()"
+    [clrDgItemsIdentityFn]="namespaceKey"
+  >
+    <clr-dg-column clrDgField="name">{{ 'organizationExample.name' | translate }}</clr-dg-column>
+    <clr-dg-column clrDgField="status">{{ 'organizationExample.status' | translate }}</clr-dg-column>
+    <clr-dg-row
+      *clrDgItems="let item of namespacesQuery.value() ?? []"
+      [clrDgItem]="item"
+      [clrDgRowSelectionLabel]="'organizationExample.selectRow' | translate: item.name"
+    >
+      <clr-dg-cell>{{ item.name }}</clr-dg-cell>
+      <clr-dg-cell>
+        <span
+          class="label"
+          [class.label-success]="item.status === 'ready'"
+          [class.label-warning]="item.status === 'maintenance'"
+        >
+          {{ 'organizationExample.' + item.status | translate }}
+        </span>
+      </clr-dg-cell>
+    </clr-dg-row>
+  </clr-datagrid>
+</cll-datagrid-selection>

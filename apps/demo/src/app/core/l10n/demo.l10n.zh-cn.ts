@@ -77,6 +77,13 @@ export const zhCNTranslations: Record<string, string> = {
   'organizationExample.retry': '重试',
   'organizationExample.maxOrganizations': '最多选择三个组织。',
   'organizationExample.invalidSelection': '组织选择无效。',
+  'policyExample.namespace': '命名空间',
+  'policyExample.namespaceHelp': '选择此策略适用的命名空间。',
+  'policyExample.saved': '策略已保存。',
+  'policyExample.saveError': '无法保存策略。',
+  'policyExample.unresolvedKeyError': '部分选择无法解析，未保存。',
+  'policyExample.eligibilityWarning': '一个或多个组织接近选择上限。',
+
   'selectionDemo.asyncSubmit': '异步校验与提交缓冲',
   'selectionDemo.asyncSubmitHelp': '选择会先缓冲，直到提交后才执行异步资格检查；Organization 4（org-4）会被拒绝。',
   'selectionDemo.asyncChecking': '正在检查资格…',

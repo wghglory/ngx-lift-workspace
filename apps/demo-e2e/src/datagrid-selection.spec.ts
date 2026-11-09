@@ -1,10 +1,26 @@
-import {expect, test} from '@playwright/test';
+import {expect, test, type Page} from '@playwright/test';
 
 import {expectAccessible} from './support/accessibility';
 import {SELECTION_LOCALE_LABELS} from './support/selection-locale-labels';
 
 const route = '/clr-lift/components/datagrid-selection';
 let errors: string[];
+
+async function makeOrganizationUnavailable(page: Page) {
+  const policy = page.getByTestId('selection-policy');
+  await page.route('**/assets/datagrid-selection/organizations.json*', async (request) => {
+    const response = await request.fetch();
+    const items: {id: string; name: string; status: string}[] = await response.json();
+    await request.fulfill({response, json: items.filter((item) => item.id !== 'org-2')});
+  });
+  const refreshResponse = page.waitForResponse((response) =>
+    response.url().includes('/assets/datagrid-selection/organizations.json'),
+  );
+  await policy.locator('app-organization-picker').getByRole('button', {name: 'Refresh', exact: true}).click();
+  await refreshResponse;
+  await expect(policy.getByTestId('unavailable-selection')).toBeVisible();
+}
+
 test.beforeEach(async ({page}) => {
   errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -13,6 +29,9 @@ test.beforeEach(async ({page}) => {
   await expect(
     page.getByTestId('selection-multiple').getByRole('checkbox', {name: 'Select Organization 1', exact: true}),
   ).toBeVisible();
+  const policy = page.getByTestId('selection-policy');
+  await expect(policy.locator('#policy-name')).toHaveValue('Data service policy');
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 2', exact: true})).toBeChecked();
 });
 test.afterEach(() => expect(errors).toEqual([]));
 
@@ -93,7 +112,7 @@ test('real fields have unique names and descriptions, reflow in both themes and 
   expect(new Set(ids).size).toBe(ids.length);
   expect(ids.every(Boolean)).toBe(true);
   for (const example of ['selection-policy', 'selection-picker']) {
-    const labelGroup = page.getByTestId(example).locator('.field-label');
+    const labelGroup = page.getByTestId(example).locator('app-organization-picker .field-label');
     const label = await labelGroup.locator(':scope > label').boundingBox();
     const signpost = await labelGroup.locator(':scope > clr-signpost').boundingBox();
     expect(label).not.toBeNull();
@@ -131,15 +150,15 @@ test('loading locks a focused selection cell and the header without removing the
     await response;
     await request.continue();
   });
-  await policy.getByRole('gridcell', {name: 'Select Organization 1', exact: true}).focus();
+  await policy.getByRole('gridcell', {name: 'Select Organization 4', exact: true}).focus();
   await policy.getByRole('button', {name: 'Refresh', exact: true}).dispatchEvent('click');
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'true');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'true');
   await page.keyboard.press('Space');
-  await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).not.toBeChecked();
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true})).not.toBeChecked();
   await expect(policy.getByRole('checkbox', {name: 'Select All', exact: true})).toBeDisabled();
   await expect(preview).toContainText('org-2');
   release();
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'false');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'false');
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).toBeEnabled();
 });
 
@@ -150,28 +169,34 @@ test('request failure and Retry retain the native grid, owner values and distinc
   await page.route('**/assets/datagrid-selection/organizations.json*', (request) =>
     request.fulfill({status: 500, body: 'Failed'}),
   );
-  const original = await policy.locator('clr-datagrid').elementHandle();
+  const original = await policy.locator('app-organization-picker clr-datagrid').elementHandle();
   await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
-  await expect(policy.locator('cll-alert')).toContainText('Could not refresh organizations.');
+  await expect(policy.locator('app-organization-picker').locator('cll-alert')).toContainText(
+    'Could not refresh organizations.',
+  );
   await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
   await expect(policy.locator('.field-feedback.error')).toHaveCount(0);
   await page.unroute('**/assets/datagrid-selection/organizations.json*');
-  await policy.getByRole('button', {name: 'Retry', exact: true}).click();
-  await expect(policy.locator('cll-alert')).toHaveCount(0);
+  await policy
+    .locator('app-organization-picker')
+    .locator('cll-alert')
+    .getByRole('button', {name: 'Retry', exact: true})
+    .click();
+  await expect(policy.locator('app-organization-picker').locator('cll-alert')).toHaveCount(0);
   expect(await original?.evaluate((element) => element.isConnected)).toBe(true);
 });
 
 test('all supported languages keep selected keys and active translated status filtering', async ({page}) => {
   const policy = page.getByTestId('selection-policy');
   const preview = policy.locator('app-data-service-policy-form > pre');
-  await policy.getByRole('button', {name: 'status filter', exact: true}).click();
-  await page.getByRole('textbox', {name: 'Filter items', exact: true}).fill('Ready');
+  await policy.locator('app-organization-picker').getByRole('button', {name: 'status filter', exact: true}).click();
+  await page.getByRole('dialog', {name: 'Filter dialog'}).getByLabel('Status', {exact: true}).selectOption('ready');
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 3', exact: true})).toHaveCount(0);
   await page.keyboard.press('Escape');
   for (const {language, organization} of SELECTION_LOCALE_LABELS) {
     await page.locator('.language-trigger').click();
     await page.getByRole('menuitem', {name: language, exact: true}).click();
-    await expect(policy.getByRole('grid')).toHaveAccessibleName(`${organization}*`);
+    await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAccessibleName(`${organization}*`);
     await expect(preview).toContainText('org-2');
     await expect(page.locator('#api-reference app-api-table tbody tr')).toHaveCount(6);
     await expect(page.locator('#api-reference')).not.toContainText('selectionDemo.reference.');
@@ -189,27 +214,27 @@ test('readonly and disabled selection preserve browsing, availability reasons an
   );
   await expect(policy.locator('.selection-availability-reason').first()).toBeVisible();
   await policy.getByRole('checkbox', {name: 'Readonly', exact: true}).check();
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-readonly', 'true');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-readonly', 'true');
   expect(
     await policy
-      .locator('clr-dg-row input')
+      .locator('app-organization-picker clr-dg-row input')
       .evaluateAll((inputs) => inputs.every((input) => (input as HTMLInputElement).disabled)),
   ).toBe(true);
-  await policy.getByRole('button', {name: 'name filter', exact: true}).click();
+  await policy.locator('app-organization-picker').getByRole('button', {name: 'name filter', exact: true}).click();
   await page.getByRole('textbox', {name: 'Filter items', exact: true}).fill('Organization 3');
-  await expect(policy.locator('clr-dg-row')).toHaveCount(1);
+  await expect(policy.locator('app-organization-picker clr-dg-row')).toHaveCount(1);
   await page.getByRole('textbox', {name: 'Filter items', exact: true}).fill('');
   await page.keyboard.press('Escape');
   await policy.getByRole('checkbox', {name: 'Readonly', exact: true}).uncheck();
   await policy.getByRole('checkbox', {name: 'Disabled', exact: true}).check();
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-disabled', 'true');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-disabled', 'true');
   await expect(preview).not.toContainText('org-2');
   await policy.getByRole('checkbox', {name: 'Disabled', exact: true}).uncheck();
   await expect(preview).toContainText('org-2');
   await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
-  await expect(preview).toContainText('unresolved');
+  await expect(preview).toContainText('org-2');
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 2', exact: true})).toBeChecked();
-  await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).not.toBeChecked();
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).toBeChecked();
 });
 
 test('native inventories bound scrolling and paged rendering while select-all includes offscreen items', async ({
@@ -241,9 +266,12 @@ test('native inventories bound scrolling and paged rendering while select-all in
   expect(sizes.scrollHeight).toBeGreaterThan(sizes.clientHeight);
   await multiple.getByRole('checkbox', {name: 'Select Resource 120', exact: true}).scrollIntoViewIfNeeded();
   await expect.poll(() => viewport.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-  await expect(page.getByTestId('selection-policy').locator('clr-dg-row')).toHaveCount(10);
+  await expect(
+    page.getByTestId('selection-policy').locator('app-organization-picker').locator('clr-dg-row'),
+  ).toHaveCount(10);
   const pagerPosition = await page
     .getByTestId('selection-policy')
+    .locator('app-organization-picker')
     .locator('clr-datagrid')
     .evaluate((grid) => ({
       viewportBottom: grid.querySelector('.datagrid')?.getBoundingClientRect().bottom ?? 0,
@@ -315,25 +343,29 @@ test('native horizontal layout, compact density, RTL and 200 percent text reflow
 }) => {
   const policy = page.getByTestId('selection-policy');
   await policy.getByRole('checkbox', {name: 'Horizontal layout', exact: true}).check();
-  await expect(policy.locator('.selection-field')).toHaveClass(/horizontal/);
   await expect(page.getByTestId('selection-model').locator('form')).toHaveClass(/clr-form-horizontal/);
-  const label = policy.locator('.field-label');
-  const body = policy.locator('.field-body');
+  const organizationField = policy.locator('app-organization-picker');
+  await expect(organizationField.locator('.selection-field')).toHaveClass(/horizontal/);
+  const label = organizationField.locator('.field-label');
+  const body = organizationField.locator('.field-body');
   const positions = await Promise.all([label.boundingBox(), body.boundingBox()]);
   expect(positions[1]?.x).toBeGreaterThan(positions[0]?.x ?? 0);
   expect(positions[0]?.y).toBeLessThanOrEqual((positions[1]?.y ?? 0) + 8);
-  await policy.locator('clr-datagrid').evaluate((element) => element.classList.add('datagrid-compact'));
+  await policy
+    .locator('app-organization-picker')
+    .locator('clr-datagrid')
+    .evaluate((element) => element.classList.add('datagrid-compact'));
   await page.setViewportSize({width: 390, height: 844});
   await page.evaluate(() => {
     document.documentElement.dir = 'rtl';
     document.documentElement.style.fontSize = '200%';
   });
   await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeVisible();
-  const field = policy.locator('cll-datagrid-selection');
+  const field = policy.locator('app-organization-picker').locator('cll-datagrid-selection');
   const overflow = await field.evaluate((element) => element.scrollWidth - element.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
   await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
-  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('unresolved');
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
 });
 
 test('saved selection stays checked after refresh and reset restores both edit baselines without clearing pagination', async ({
@@ -343,7 +375,7 @@ test('saved selection stays checked after refresh and reset restores both edit b
   const picker = page.getByTestId('selection-picker');
   await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
   await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'false');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'false');
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 2', exact: true})).toBeChecked();
   for (const [example, initialName, initialKey] of [
     [policy, 'Organization 2', 'org-2'],
@@ -370,7 +402,7 @@ test('saved writes after reset also update the checked Organization 2 row', asyn
   await policy.getByRole('button', {name: 'Reset', exact: true}).click();
   await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
   await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'false');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'false');
   await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 2', exact: true})).toBeChecked();
 });
@@ -393,10 +425,10 @@ test('unavailable saved keys are visible, count toward the limit, block saving a
   page,
 }, testInfo) => {
   const policy = page.getByTestId('selection-policy');
-  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
+  await makeOrganizationUnavailable(page);
   const summary = policy.getByRole('region', {name: 'Selected organizations', exact: true});
   await expect(summary).toContainText('2 selected · maximum 3');
-  await expect(summary).toContainText('Unavailable organization (unresolved)');
+  await expect(summary).toContainText('Unavailable organization (org-2)');
   await expect(policy.getByTestId('unavailable-selection')).toContainText(
     'Remove unavailable organizations or retry before saving.',
   );
@@ -404,26 +436,24 @@ test('unavailable saved keys are visible, count toward the limit, block saving a
   await expect(policy.locator('clr-control-error')).toHaveText('Remove unavailable organizations before saving.');
   await policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true}).check();
   await policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true}).check();
+  await policy.getByRole('checkbox', {name: 'Select Organization 5', exact: true}).check();
   await policy.getByRole('button', {name: 'Submit', exact: true}).click();
   await expect(summary).toContainText('4 selected · maximum 3');
   await expect(policy.locator('clr-control-error')).toHaveText('Choose no more than three organizations.');
   await expectAccessible(page, testInfo, '[data-testid="selection-policy"] .playground-canvas');
   await page.getByRole('button', {name: 'Toggle to dark theme'}).click();
   await expectAccessible(page, testInfo, '[data-testid="selection-policy"] .playground-canvas');
-  await summary.getByRole('button', {name: 'Remove unresolved', exact: true}).click();
+  await summary.getByRole('button', {name: 'Remove org-2', exact: true}).click();
   await expect(summary).toContainText('3 selected · maximum 3');
-  await expect(policy.getByRole('grid')).toBeFocused();
-  await expect(policy.locator('app-data-service-policy-form > pre')).not.toContainText('unresolved');
-  await expect(policy.getByRole('checkbox', {name: 'Select Organization 2', exact: true})).toBeChecked();
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toBeFocused();
+  await expect(policy.locator('app-data-service-policy-form > pre')).not.toContainText('org-2');
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).toBeChecked();
   await expect(policy.locator('clr-control-error')).toHaveCount(0);
 });
 
-test('failed refresh preserves saved keys without declaring them unavailable and Retry can resolve them', async ({
-  page,
-}) => {
+test('failed refresh preserves the last verified inventory and Retry can load updated data', async ({page}) => {
   const policy = page.getByTestId('selection-policy');
   await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
-  await expect(policy.getByTestId('unavailable-selection')).toBeVisible();
   let release: () => void = () => undefined;
   const response = new Promise<void>((resolve) => {
     release = resolve;
@@ -433,58 +463,67 @@ test('failed refresh preserves saved keys without declaring them unavailable and
     await request.fulfill({status: 500, body: 'Failed'});
   });
   await policy.getByRole('button', {name: 'Refresh', exact: true}).click();
-  await expect(policy.getByRole('grid')).toHaveAttribute('aria-busy', 'true');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'true');
   await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
-  await expect(policy.getByRole('button', {name: 'Remove unresolved', exact: true})).toBeDisabled();
   await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeDisabled();
   release();
-  await expect(policy.locator('cll-alert')).toContainText('Could not refresh organizations.');
+  await expect(policy.locator('app-organization-picker').locator('cll-alert')).toContainText(
+    'Could not refresh organizations.',
+  );
   await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
   await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
-    'Unverified organization (unresolved)',
+    'Organization 2 (org-2)',
   );
-  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('unresolved');
-  await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeDisabled();
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
+  await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeEnabled();
   await page.unroute('**/assets/datagrid-selection/organizations.json*');
   await page.route('**/assets/datagrid-selection/organizations.json*', async (request) => {
     const original = await request.fetch();
     const items: {id: string; name: string; status: string}[] = await original.json();
-    await request.fulfill({json: [...items, {id: 'unresolved', name: 'Recovered organization', status: 'ready'}]});
+    await request.fulfill({
+      json: items.map((item) => (item.id === 'org-2' ? {...item, name: 'Recovered organization'} : item)),
+    });
   });
-  await policy.getByRole('button', {name: 'Retry', exact: true}).click();
-  await expect(policy.locator('cll-alert')).toHaveCount(0);
+  await policy
+    .locator('app-organization-picker')
+    .locator('cll-alert')
+    .getByRole('button', {name: 'Retry', exact: true})
+    .click();
+  await expect(policy.locator('app-organization-picker').locator('cll-alert')).toHaveCount(0);
   await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
   await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
-    'Recovered organization (unresolved)',
+    'Recovered organization (org-2)',
   );
-  await expect(policy.getByRole('button', {name: 'Submit', exact: true})).toBeEnabled();
-  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('unresolved');
+  await expect(policy.getByRole('checkbox', {name: 'Select Recovered organization', exact: true})).toBeChecked();
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-2');
 });
 
 test('summary removal respects readonly and disabled, and preserves off-page selections', async ({page}) => {
   const policy = page.getByTestId('selection-policy');
-  await policy.getByRole('button', {name: 'Load saved selection', exact: true}).click();
-  const remove = policy.getByRole('button', {name: 'Remove unresolved', exact: true});
+  await makeOrganizationUnavailable(page);
+  const remove = policy.getByRole('button', {name: 'Remove org-2', exact: true});
   await policy.getByRole('checkbox', {name: 'Readonly', exact: true}).check();
   await expect(remove).toBeDisabled();
   await policy.getByRole('checkbox', {name: 'Readonly', exact: true}).uncheck();
   await policy.getByRole('checkbox', {name: 'Disabled', exact: true}).check();
   await expect(remove).toBeDisabled();
   await policy.getByRole('checkbox', {name: 'Disabled', exact: true}).uncheck();
-  await policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true}).check();
+  await policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true}).check();
   await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
     '3 selected · maximum 3',
   );
   await remove.click();
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).toBeChecked();
-  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-1');
+  await expect(policy.locator('app-data-service-policy-form > pre')).not.toContainText('org-2');
   await policy.getByRole('button', {name: 'Next Page', exact: true}).click();
-  await policy.getByRole('checkbox', {name: 'Select Organization 11', exact: true}).check();
+  await expect(policy.getByRole('textbox', {name: 'Current Page', exact: true})).toHaveValue('2');
+  await expect(policy.locator('app-organization-picker').getByRole('grid')).toHaveAttribute('aria-busy', 'false');
+  await policy.getByRole('checkbox', {name: 'Select Organization 12', exact: true}).check();
   await policy.getByRole('button', {name: 'Submit', exact: true}).click();
   await policy.getByRole('button', {name: 'Previous Page', exact: true}).click();
-  await expect(policy.getByRole('checkbox', {name: 'Select Organization 11', exact: true})).toHaveCount(0);
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 12', exact: true})).toHaveCount(0);
   await expect(policy.getByRole('region', {name: 'Selected organizations', exact: true})).toContainText(
-    'Organization 11 (org-11)',
+    'Organization 12 (org-12)',
   );
   await expect(policy.getByTestId('unavailable-selection')).toHaveCount(0);
 });
@@ -506,4 +545,20 @@ test('async eligibility buffers the selection until submit, then accepts an elig
   await example.getByRole('button', {name: 'Submit', exact: true}).click();
   await expect(example.getByRole('status')).toContainText('Submitted keys: org-1');
   await expect(example.locator('app-async-organization-grid > pre')).toContainText('"org-1"');
+});
+
+test('policy name and namespace hydrate from detail, reset restores the baseline, and save persists a new baseline', async ({
+  page,
+}) => {
+  const policy = page.getByTestId('selection-policy');
+  await expect(policy.locator('#policy-name')).toHaveValue('Data service policy');
+  await policy.getByRole('radio', {name: 'Select Production', exact: true}).check();
+  await policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true}).check();
+  await policy.getByRole('button', {name: 'Reset', exact: true}).click();
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true})).not.toBeChecked();
+  await expect(policy.getByRole('checkbox', {name: 'Select Organization 1', exact: true})).toBeChecked();
+  await expect(policy.locator('#policy-name')).toHaveValue('Data service policy');
+  await policy.getByRole('checkbox', {name: 'Select Organization 4', exact: true}).check();
+  await policy.getByRole('button', {name: 'Submit', exact: true}).click();
+  await expect(policy.locator('app-data-service-policy-form > pre')).toContainText('org-4');
 });

@@ -1,9 +1,16 @@
+<div class="selection-toolbar" cds-layout="horizontal gap:md wrap:wrap">
+  <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+    {{ 'common.refresh' | translate }}
+  </button>
+</div>
 <cll-datagrid-selection
   cllDatagridSelectionBinding
   [readonly]="readonly()"
   [required]="required()"
+  [layout]="layout()"
   [helper]="'organizationExample.help' | translate"
   [error]="error() || ('organizationExample.invalidSelection' | translate)"
+  [itemAvailability]="availability"
 >
   <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
   <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">

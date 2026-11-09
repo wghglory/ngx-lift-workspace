@@ -1,10 +1,16 @@
-import {defineConfig, devices} from '@playwright/test';
+import {defineConfig, devices, type ReporterDescription} from '@playwright/test';
 import {nxE2EPreset} from '@nx/playwright/preset';
 import {workspaceRoot} from '@nx/devkit';
 
 // For CI, set BASE_URL to the already-running app to avoid per-task webServer startup.
 const externalBaseURL = process.env['BASE_URL'];
 const baseURL = externalBaseURL || 'http://localhost:4307';
+const nxPreset = nxE2EPreset(__filename, {testDir: './src'});
+const presetReporters: ReporterDescription[] = Array.isArray(nxPreset.reporter)
+  ? nxPreset.reporter.map((reporter): ReporterDescription => (typeof reporter === 'string' ? [reporter] : reporter))
+  : nxPreset.reporter
+    ? [[nxPreset.reporter]]
+    : [];
 const requestedBrowsers = (process.env['PLAYWRIGHT_BROWSERS'] ?? 'chromium,firefox,webkit')
   .split(',')
   .map((name) => name.trim())
@@ -34,7 +40,8 @@ const browserProjects = [
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  ...nxE2EPreset(__filename, {testDir: './src'}),
+  ...nxPreset,
+  reporter: process.env['CI'] ? [['line'], ...presetReporters] : nxPreset.reporter,
   /* Nx Playwright preset forces 1 worker on CI; allow opt-in parallel workers. */
   workers: process.env['CI'] ? Number(process.env['PLAYWRIGHT_WORKERS'] ?? 1) : undefined,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

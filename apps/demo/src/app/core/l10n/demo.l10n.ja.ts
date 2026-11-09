@@ -81,6 +81,13 @@ export const jaTranslations: Record<string, string> = {
   'organizationExample.retry': '再試行',
   'organizationExample.maxOrganizations': '組織は3つまで選択してください。',
   'organizationExample.invalidSelection': '組織の選択が無効です。',
+  'policyExample.namespace': '名前空間',
+  'policyExample.namespaceHelp': 'このポリシーを適用する名前空間を選択してください。',
+  'policyExample.saved': 'ポリシーを保存しました。',
+  'policyExample.saveError': 'ポリシーを保存できませんでした。',
+  'policyExample.unresolvedKeyError': '解決できなかった選択があり、保存されませんでした。',
+  'policyExample.eligibilityWarning': '1 つ以上の組織が選択上限に近づいています。',
+
   'selectionDemo.asyncSubmit': '非同期検証と送信バッファリング',
   'selectionDemo.asyncSubmitHelp':
     '選択は送信までバッファされ、その後で非同期の適格性チェックが実行されます。Organization 4（org-4）は拒否されます。',

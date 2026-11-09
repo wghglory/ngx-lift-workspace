@@ -85,6 +85,13 @@ export const esTranslations: Record<string, string> = {
   'organizationExample.retry': 'Reintentar',
   'organizationExample.maxOrganizations': 'Seleccione como máximo tres organizaciones.',
   'organizationExample.invalidSelection': 'La selección de organizaciones no es válida.',
+  'policyExample.namespace': 'Espacio de nombres',
+  'policyExample.namespaceHelp': 'Elija el espacio de nombres al que se aplica esta política.',
+  'policyExample.saved': 'Política guardada.',
+  'policyExample.saveError': 'No se pudo guardar la política.',
+  'policyExample.unresolvedKeyError': 'Algunas selecciones no se pudieron resolver y no se guardaron.',
+  'policyExample.eligibilityWarning': 'Una o más organizaciones están cerca del límite de selección.',
+
   'selectionDemo.asyncSubmit': 'Validación asíncrona y búfer de envío',
   'selectionDemo.asyncSubmitHelp':
     'Las selecciones se almacenan hasta el envío. Después se ejecuta una comprobación asíncrona de elegibilidad; Organization 4 (org-4) se rechaza.',

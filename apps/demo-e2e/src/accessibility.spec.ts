@@ -1,8 +1,24 @@
-import {expect, test} from '@playwright/test';
+import {expect, test, type Page} from '@playwright/test';
 
 import {expectAccessible} from './support/accessibility';
 import {demoRoutes} from './support/demo-routes';
 import {visitDemoTabs} from './support/demo-tabs';
+
+async function waitForInitialRouteData(page: Page, route: string) {
+  if (route !== '/ngx-lift/signals/computedAsync') return;
+
+  const usersDemo = page.getByTestId('computed-http-users-demo');
+  await expect(usersDemo.locator('app-user-card')).toHaveCount(9);
+  await expect(usersDemo.getByRole('button', {name: 'Refresh', exact: true})).toBeEnabled();
+  await page.evaluate(async () => {
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    );
+  });
+}
 
 for (const theme of ['light', 'dark']) {
   test.describe(`accessibility ${theme}`, () => {
@@ -15,9 +31,27 @@ for (const theme of ['light', 'dark']) {
 
     for (const route of demoRoutes) {
       test(`${route}`, async ({page}, testInfo) => {
+        await page.route(
+          (url) => url.origin === 'https://randomuser.me' && url.pathname === '/api',
+          (request) => {
+            const count = Number(new URL(request.request().url()).searchParams.get('results') ?? 1);
+            return request.fulfill({
+              json: {
+                results: Array.from({length: count}, (_, index) => ({
+                  id: {name: 'test', value: String(index)},
+                  gender: 'female',
+                  name: {first: 'API', last: 'User'},
+                  picture: {thumbnail: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='},
+                })),
+                info: {page: 1, results: count, seed: 'test', version: '1'},
+              },
+            });
+          },
+        );
         await page.goto(route, {waitUntil: 'domcontentloaded'});
         await expect(page.locator('body')).toHaveAttribute('cds-theme', theme);
         await expect(page.locator('main h1').first()).not.toBeEmpty();
+        await waitForInitialRouteData(page, route);
         // Wait for the raw, encoded and sample-picker examples, rather than scanning a partially
         // created deferred view.
         for (const demo of await page.locator('app-certificate-demo').all()) {
