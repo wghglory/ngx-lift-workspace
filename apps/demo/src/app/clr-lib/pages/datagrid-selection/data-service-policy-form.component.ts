@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, TranslationService} from 'clr-lift';
 import {mutateResource, queryResource, toSignalForm} from 'ngx-lift';
 
 import {OrganizationPickerComponent} from './organization-picker.component';
@@ -46,7 +46,6 @@ type DtoMode = 'id-only' | 'reference' | 'full-entity';
 @Component({
   selector: 'app-data-service-policy-form',
   imports: [
-    AlertComponent,
     ClarityModule,
     JsonPipe,
     ReactiveFormsModule,
