@@ -1,6 +1,6 @@
 {
   "name": "@ngx-lift-workspace/source",
-  "version": "21.2.0",
+  "version": "21.5.0",
   "license": "MIT",
   "author": "Derek Wang <guanghui-wang@foxmail.com>",
   "keywords": [
@@ -45,9 +45,7 @@
     "validate": "pnpm run format:check && pnpm run test:tools && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run bundle:check && pnpm run verify:packages",
     "release:version": "nx release version",
     "release:publish": "nx release publish",
-    "publish:ngx": "nx build ngx-lift && cd dist/libs/ngx-lift && pnpm publish --registry=https://registry.npmjs.org/",
-    "publish:clr": "nx build clr-lift && cd dist/libs/clr-lift && pnpm publish --registry=https://registry.npmjs.org/",
-    "publish:all": "pnpm run build:libs && pnpm run publish:ngx && pnpm run publish:clr",
+    "release:check": "pnpm run format:check && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run verify:packages",
     "prepare": "husky",
     "fix": "pnpm run format && pnpm run lint:fix",
     "test:tools": "nx run @ngx-lift-workspace/source:tooling-test",

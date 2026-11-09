@@ -54,19 +54,19 @@ and approval date in the PR. Review library messages and demo teaching content t
 natural wording, grammar, consistent terminology, placeholders/plurals, accessible names and announcements, and long
 label layouts. Read actual rendered states and exercise runtime switching; key parity alone is insufficient.
 
-| Locale | Independent reviewer | Acceptance |
-| ------ | -------------------- | ---------- |
-| en     | wghglory             | Pending    |
-| zh-CN  | wghglory             | Pending    |
-| zh-TW  | wghglory             | Pending    |
-| de     | wghglory             | Pending    |
-| es     | wghglory             | Pending    |
-| fr     | wghglory             | Pending    |
-| ja     | wghglory             | Pending    |
-| ko     | wghglory             | Pending    |
-| nl     | wghglory             | Pending    |
-| pt-BR  | wghglory             | Pending    |
-| ru     | wghglory             | Pending    |
+| Locale | Independent reviewer | Acceptance                     |
+| ------ | -------------------- | ------------------------------ |
+| en     | wghglory             | Approved (2026-11-08, PR #218) |
+| zh-CN  | wghglory             | Approved (2026-11-08, PR #218) |
+| zh-TW  | wghglory             | Approved (2026-11-08, PR #218) |
+| de     | wghglory             | Approved (2026-11-08, PR #218) |
+| es     | wghglory             | Approved (2026-11-08, PR #218) |
+| fr     | wghglory             | Approved (2026-11-08, PR #218) |
+| ja     | wghglory             | Approved (2026-11-08, PR #218) |
+| ko     | wghglory             | Approved (2026-11-08, PR #218) |
+| nl     | wghglory             | Approved (2026-11-08, PR #218) |
+| pt-BR  | wghglory             | Approved (2026-11-08, PR #218) |
+| ru     | wghglory             | Approved (2026-11-08, PR #218) |
 
 For manual accessibility acceptance, record assessor, revision, operating system, browser, assistive technology, scope,
 findings, and disposition. Cover keyboard-only use and screen-reader reading/interaction for navigation, tooltip/dialog,

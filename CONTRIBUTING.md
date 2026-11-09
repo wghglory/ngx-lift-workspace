@@ -23,8 +23,8 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ### Prerequisites
 
-- Node.js 22.x or higher
-- npm 10.x or higher
+- Node.js 24.x or higher
+- pnpm 12.16.1 (pinned via `packageManager`; enable Corepack)
 - Git
 
 ### Setup
@@ -41,15 +41,15 @@ This project adheres to a Code of Conduct that all contributors are expected to 
    ```
 4. **Install dependencies**:
    ```bash
-   npm install
+   pnpm install --frozen-lockfile
    ```
 5. **Build the libraries**:
    ```bash
-   npm run build:libs
+   pnpm run build:libs
    ```
 6. **Start the demo app** (optional):
    ```bash
-   npm start
+   pnpm start
    ```
 
 ## 🔄 Development Workflow

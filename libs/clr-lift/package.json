@@ -1,6 +1,6 @@
 {
   "name": "clr-lift",
-  "version": "21.3.0",
+  "version": "21.4.0",
   "description": "Production-ready Angular component library built on Clarity Design System. Includes 15+ reusable components, utilities, and operators for Clarity-based applications. Built for Angular 21+ with full TypeScript support.",
   "author": "Guanghui Wang <guanghui-wang@foxmail.com>",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "@angular/forms": ">=21",
     "rxjs": ">=7.8.0",
     "@clr/angular": ">=18",
-    "ngx-lift": ">=21.3.0 <22"
+    "ngx-lift": ">=21.5.0"
   },
   "publishConfig": {
     "access": "public"

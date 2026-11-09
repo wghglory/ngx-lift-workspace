@@ -30,17 +30,42 @@ dependent package peer ranges using the version policy below before publication.
 After successful manual publication, create the corresponding GitHub release records and tags at the reviewed version
 commit. Those records document the release; source manifests own the next version calculation.
 
+### Release checklist
+
+Complete these in order. A green build, a merged PR and a published npm version are separate outcomes.
+
+1. Prepare the version bump and the dated changelog section in a PR on `main`. Record every breaking change, its
+   migration, and the maintainer decision approving a 21.x compatibility exception.
+2. Run `pnpm run release:check` and `pnpm run validate`, and require the three-browser E2E job. Confirm a green
+   `publish.yml` dry run, including `verify:packages` and `nx release publish --dry-run`.
+3. Confirm independent human language acceptance for all eleven locales (approved by the maintainer on 2026-11-08) and
+   record or waive manual assistive-technology acceptance as a maintainer decision. Automated dictionary, accessibility
+   and consumer checks do not supply the manual assessment.
+4. Review behavioral compatibility, the peer ranges (maintainer decided to keep them unbounded), the
+   `ngx-lift`-before-`clr-lift` publish order, and the `NPM_TOKEN` / `npm whoami` credential check.
+5. Merge the reviewed version/changelog PR, then publish with `version=skip` and `dry_run=false`, or push the reviewed
+   `ngx-lift@<version>` / `clr-lift@<version>` tags. Tag events always publish and are never dry runs.
+6. Create the GitHub release records and tags at the reviewed version commit, with a link to the publication workflow
+   run as release evidence.
+
 ## Version policy
 
 The maintainer decided on October 17, 2026 to keep both packages on **21.x** while the supported platform remains
 Angular 21, and reserve **22.x** for the Angular 22 upgrade. Upcoming additions belong in 21.x minor releases. The
 package versions remain independent; this decision does not select exact release numbers or publish anything.
 
-The current `computedAsync` error/type correction and idle-warning countdown change remain **behaviorally breaking**.
-Shipping them in 21.x is an explicit maintainer-approved exception to SemVer's major-bump rule, not a claim of backward
-compatibility. Preserve the [migration notes](../CHANGELOG.md#breaking), verify dependent peers and installed consumers,
-and run the publication dry run before the real release. Do not remove the compatibility notice when assigning versions.
-The same review is required for any later incompatible change; this decision is not blanket approval for future breaks.
+The `computedAsync` error/type correction and idle-warning countdown change in 21.4.0 / 21.3.0 remain **behaviorally
+breaking**. Shipping them in 21.x is an explicit maintainer-approved exception to SemVer's major-bump rule, not a claim
+of backward compatibility. Preserve the [21.4.0 / 21.3.0 breaking and migration notes](../CHANGELOG.md), verify
+dependent peers and installed consumers, and run the publication dry run before the real release. Do not remove the
+compatibility notice when assigning versions.
+
+**November 8, 2026 decision (recorded for maintainer approval in the release PR):** the `node-forge` certificate API
+removal and the `toSignalForm` error-propagation change in 21.5.0 / 21.4.0 are a second, separate exception. The October
+17 decision is not blanket approval for later breaks. Peer ranges stay unbounded (`@angular/* >=21`,
+`@clr/angular >=18`, `rxjs >=7.8.0`, `ngx-lift >=21.5.0`); the verified platform is Angular 21 / Clarity 18 / RxJS 7.
+Preserve the [21.5.0 / 21.4.0 migration notes](../CHANGELOG.md#migration), publish `ngx-lift` first, and confirm strict
+installed consumers before authorizing publication. Any later incompatible change needs the same explicit review.
 
 ## Release tags
 

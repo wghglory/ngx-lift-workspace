@@ -1,7 +1,7 @@
 # Issue tracker: GitHub
 
-Issues and specs live in this repository's GitHub Issues. Repository: https://github.com/wghglory/ngx-lift Use the gh
-CLI from this checkout; infer the repository and host from origin.
+Issues and specs live in this repository's GitHub Issues. Repository: https://github.com/wghglory/ngx-lift-workspace Use
+the gh CLI from this checkout; infer the repository and host from origin.
 
 ## Operations
 

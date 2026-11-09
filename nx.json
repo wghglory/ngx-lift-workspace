@@ -10,7 +10,12 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/src/test-setup.[jt]s"
     ],
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
+    "sharedGlobals": [
+      "{workspaceRoot}/.github/workflows/ci.yml",
+      "{workspaceRoot}/.github/workflows/quality.yml",
+      "{workspaceRoot}/.github/workflows/publish.yml",
+      "{workspaceRoot}/.github/workflows/deploy-demo.yml"
+    ]
   },
   "plugins": [
     {

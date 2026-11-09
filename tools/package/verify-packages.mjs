@@ -7,7 +7,8 @@ import {join, resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 
-const root = process.cwd();
+const root = resolve(import.meta.dirname, '../..');
+const rootManifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const consumer = mkdtempSync(join(tmpdir(), 'ngx-lift-consumer-'));
 const freshConsumer = mkdtempSync(join(tmpdir(), 'ngx-lift-fresh-consumer-'));
 
@@ -169,14 +170,12 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   );
   run(process.execPath, ['consumer.mjs']);
 
-  // Phase 2: Fresh isolated consumer without host node_modules symlinking
-  const registryConfig = readFileSync(join(root, '.npmrc'), 'utf8')
-    .split('\n')
-    .filter((line) => !/^(legacy-peer-deps|strict-peer-dependencies|auto-install-peers)=/.test(line))
-    .join('\n');
+  // Phase 2: Fresh isolated consumer without host node_modules symlinking.
+  // Use the official registry explicitly: the workspace .npmrc may point at a mirror, and a
+  // "fresh" consumer must not inherit a registry or peer-resolution override from the host.
   writeFileSync(
     join(freshConsumer, '.npmrc'),
-    `${registryConfig}\nstrict-peer-dependencies=true\nauto-install-peers=false\n`,
+    'registry=https://registry.npmjs.org/\nstrict-peer-dependencies=true\nauto-install-peers=false\n',
   );
   writeFileSync(
     join(freshConsumer, 'package.json'),
@@ -199,13 +198,13 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
           '@clr/angular': '^18.4.0',
           '@clr/ui': '^18.4.0',
           rxjs: '^7.8.0',
-          jsdom: '^27.0.0',
+          jsdom: rootManifest.devDependencies.jsdom,
           'zone.js': '~0.16.0',
         },
         devDependencies: {
           '@angular/compiler-cli': '~21.2.0',
-          '@types/node': '^22.0.0',
-          typescript: '^5.9.0',
+          '@types/node': rootManifest.devDependencies['@types/node'],
+          typescript: rootManifest.devDependencies.typescript,
         },
       },
       null,
@@ -214,7 +213,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   );
 
   writeFileSync(join(freshConsumer, 'pnpm-workspace.yaml'), 'strictPeerDependencies: true\nautoInstallPeers: false\n');
-  run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 60000);
+  run('pnpm', ['install', '--prefer-offline', '--no-frozen-lockfile'], freshConsumer, 180000);
   for (const name of [
     'key-value-hosts.ts',
     'key-value-browser.mjs',

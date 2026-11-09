@@ -927,11 +927,11 @@ describe(computedAsync.name, () => {
         expect(data().status).toEqual('loading');
         await flushEffects(500);
 
-        // TODO:
-        // expect(data()).toEqual({
-        //   status: 'error',
-        //   error: new Error('error-message'),
-        // });
+        // The error is captured and surfaced as a value (not thrown), then recovered below.
+        expect(data()).toEqual({
+          status: 'error',
+          error: new Error('error-message'),
+        });
 
         id.set(4);
         throwErrorFlag = false; // should recover from error

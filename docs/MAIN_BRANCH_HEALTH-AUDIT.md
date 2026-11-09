@@ -39,6 +39,28 @@ The original review's actionable risks concentrate in four places:
    coverage and locale documentation disagree with the code, and `node-forge` remains a mandatory heavy runtime
    dependency despite the repository's dependency policy.
 
+## Release preparation closeout — 2026-11-08
+
+The release-preparation PR for `ngx-lift` 21.5.0 / `clr-lift` 21.4.0 closes the publication-relevant findings below.
+Unlisted findings stay open; a version bump is not a whole-tree audit result.
+
+- **Closed:** A2 (all four workflows are now `sharedGlobals`), A8 (direct `publish:*` scripts replaced by the read-only
+  `release:check` preflight), A9 and part of A13 (the isolated consumer uses the official registry and derives `jsdom`,
+  `@types/node` and TypeScript from the workspace manifest), A11 (a `commit-msg` hook now runs commitlint), B1 (issue
+  tracker repository URL), B2 (pnpm commands in contributor guidance and the PR template), B6, B8 and B13 (stale release
+  versions, locale lists and README labels), D2 (peer ranges kept unbounded per maintainer decision), and the missing
+  `ngx-lift`-before-`clr-lift` publish order in `publish.yml`. C2's documentation follow-up is recorded in the release
+  changelog.
+- **Documented, not fixed:** C3 (`MockTranslationService` stays in the production barrel with a deprecation note;
+  removal needs its own breaking-release decision), C10 (the disabled `computedAsync` assertion and its design question
+  remain), and the historical changelog inaccuracies, which are corrected by a note in the new release section rather
+  than by rewriting history. The `node-forge` finding D1 is superseded: the dependency was removed, and the removal is
+  now recorded as a breaking change with migration instructions.
+- **Still open:** manual assistive-technology acceptance (locale translation approval was granted 2026-11-08),
+  dependency advisory triage, E1–E3 (stale PRs, the failing required e2e check, worktree cleanup), the F1–F5
+  architecture backlog, SSR/hydration and the broad peer-version matrix. Several line-number citations in this audit are
+  stale relative to current files; re-verify them before using them as gating evidence.
+
 ## 1. Branch, release and tracker state
 
 | Item                          | State                                                                                                                                           |
