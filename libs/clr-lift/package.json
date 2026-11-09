@@ -27,7 +27,7 @@
     "@angular/forms": ">=21",
     "rxjs": ">=7.8.0",
     "@clr/angular": ">=18",
-    "ngx-lift": ">=21.5.0"
+    "ngx-lift": ">=21"
   },
   "publishConfig": {
     "access": "public"
