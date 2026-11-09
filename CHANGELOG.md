@@ -78,7 +78,8 @@ the evidence that the packages reached the official registry.
 
 ### Migration
 
-- Certificates: replace the service and token with the exported parser functions and the component `clock` input.
+- Certificates: replace the service and token with the exported parser functions; the signpost no longer accepts a clock
+  override (it uses the browser clock internally).
 
   ```typescript
   import {extractDerFromPem, parseCertificateFromPem, type X509Certificate} from 'clr-lift';
@@ -91,7 +92,8 @@ the evidence that the packages reached the official registry.
   const der = extractDerFromPem(pem, pemEncoded);
 
   // Before: providers: [{provide: CERTIFICATE_CLOCK, useValue: clock}]
-  // After: <cll-certificate-signpost [pem]="pem" [clock]="clock" />
+  // After: no clock override is exposed — the signpost uses the browser clock internally.
+  //         Drop the provider; for tests, mock the browser clock (e.g. fake timers) instead.
   ```
 
 - Peer ranges: the packages declare unbounded peers (`@angular/* >=21`, `@clr/angular >=18`, `rxjs >=7.8.0`,
