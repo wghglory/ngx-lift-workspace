@@ -46,32 +46,39 @@ belong in the PR and CI artifacts.
 
 ## Independent human acceptance
 
-Automated checks and AI translation review establish engineering evidence. They cannot supply native-speaker approval or
-a manual assistive-technology assessment. Keep these gates separate in the roadmap and PR.
+Automated checks and AI translation review establish engineering evidence. Independent language approval and a manual
+assistive-technology (AT) decision are separate records. AT covers screen readers, keyboard-only navigation, magnifiers,
+switch input and similar access tools. Keep these records separate from automated results in the roadmap and PR.
 
 An independent language reviewer records the locale, name, reviewed commit, pages/components, issues and corrections,
 and approval date in the PR. Review library messages and demo teaching content together, including technical meaning,
 natural wording, grammar, consistent terminology, placeholders/plurals, accessible names and announcements, and long
 label layouts. Read actual rendered states and exercise runtime switching; key parity alone is insufficient.
 
-| Locale | Independent reviewer | Acceptance                     |
-| ------ | -------------------- | ------------------------------ |
-| en     | wghglory             | Approved (2026-11-08, PR #218) |
-| zh-CN  | wghglory             | Approved (2026-11-08, PR #218) |
-| zh-TW  | wghglory             | Approved (2026-11-08, PR #218) |
-| de     | wghglory             | Approved (2026-11-08, PR #218) |
-| es     | wghglory             | Approved (2026-11-08, PR #218) |
-| fr     | wghglory             | Approved (2026-11-08, PR #218) |
-| ja     | wghglory             | Approved (2026-11-08, PR #218) |
-| ko     | wghglory             | Approved (2026-11-08, PR #218) |
-| nl     | wghglory             | Approved (2026-11-08, PR #218) |
-| pt-BR  | wghglory             | Approved (2026-11-08, PR #218) |
-| ru     | wghglory             | Approved (2026-11-08, PR #218) |
+| Locale | Independent reviewer          | Acceptance                     |
+| ------ | ----------------------------- | ------------------------------ |
+| en     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| zh-CN  | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| zh-TW  | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| de     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| es     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| fr     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| ja     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| ko     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| nl     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| pt-BR  | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
+| ru     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
 
-For manual accessibility acceptance, record assessor, revision, operating system, browser, assistive technology, scope,
-findings, and disposition. Cover keyboard-only use and screen-reader reading/interaction for navigation, tooltip/dialog,
-file selection, validation, wizard transitions, notifications, and query status. Check zoom/reflow, contrast, and
-applicable motion preferences. Manual assessment remains pending until this evidence is supplied.
+### Manual assistive-technology decision
+
+The maintainer waived the independent manual assistive-technology assessment on 2026-11-10. This waiver is not a passed
+assessment and does not turn automated scans into human approval. Automated accessibility checks, keyboard/focus
+journeys, all-locale rendering, semantic names and states remain required for new or changed UI. Reintroduce human
+assessment only through an explicit maintainer decision.
+
+If reintroduced, record assessor, revision, operating system, browser, assistive technology, scope, findings and
+disposition. Cover keyboard-only use, screen-reader reading/interaction, zoom/reflow, contrast and applicable motion
+preferences.
 
 ## References
 

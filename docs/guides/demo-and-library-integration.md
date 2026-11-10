@@ -33,11 +33,12 @@ options. Dictionaries load asynchronously; API tables recompute when the selecte
 Clarity common strings cover all upstream keys, with a test that detects new upstream strings.
 
 Translations were AI-assisted and technically reviewed for API names, concurrency behavior, retry safety and
-placeholders. This is not independent native-speaker sign-off; linguistic approval remains an external acceptance item.
+placeholders. Independent language acceptance for all eleven locales was approved on 2026-11-08; see the
+[acceptance contract](accessibility-and-localization.md). Automated and technical review remain separate evidence.
 
 ```typescript
-translationService.loadClarityCommonStrings('de-DE', {close: 'Custom close'});
-translationService.setLanguage('de-DE');
+translationService.loadClarityCommonStrings('de', {close: 'Custom close'});
+translationService.setLanguage('de');
 ```
 
 Every switch resets against upstream and English defaults before applying base and exact locale overrides. Custom

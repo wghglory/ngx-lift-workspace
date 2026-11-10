@@ -18,12 +18,29 @@
 - Findings are ordered by risk. `verified` means the evidence was re-checked directly in this audit; `static` means it
   came from a read-only static scan and was not executed; `confirm` means a product/maintainer decision is needed.
 
-## Executive summary
+## Current state — 2026-11-10
 
-`main` is healthy: clean tree, in sync with `origin/main`, and the CI, deploy and push-on-main workflows for the HEAD
-commit all succeeded on 2026-11-07T03:34:05Z. Formatting, translations, tooling tests, lint and typecheck all pass
-locally. Coverage is high (ngx-lift 94.14% statements / 90.79% branches; clr-lift 91.23% / 81.62%) and the translation
-dictionaries are complete (2,252/2,252 keys in each of 11 locales).
+This file remains the historical audit and standing finding backlog. Current status lives in the
+[gap register](gap-register.md); release, tracker and CI records are authoritative.
+
+- `ngx-lift 21.5.0` / `clr-lift 21.4.0` were published to the official npm registry on 2026-11-09, with remote tags and
+  GitHub release records.
+- Issues #198, #200, #201 and #202 are closed; PRs #137–#141 and #134 remain open for independent review.
+- Independent language acceptance for all eleven locales was approved on 2026-11-08. Manual assistive-technology
+  assessment was waived by the maintainer on 2026-11-10; the waiver is not a pass.
+- YAML viewer/editor work is paused and is not the next implementation task. Angular 22 and the Nx major upgrade remain
+  deferred.
+- Both Netlify and Vercel are required on main. Vercel is the canonical public host; Netlify is a required secondary
+  target. Netlify returned `Forbidden` on 2026-11-09; verify its token scope and site ownership outside the repository.
+- The 2026-11-10 scheduled CI failed on two WebKit shard 5 E2E timeouts. Read current gate status from workflow runs,
+  not from the historical validation table below.
+
+## Executive summary — historical snapshot (2026-11-07)
+
+At the audit base, `main` was clean and in sync with `origin/main`; CI, deploy and push-on-main workflows for the HEAD
+commit succeeded on 2026-11-07T03:34:05Z. Formatting, translations, tooling tests, lint and typecheck passed locally.
+Coverage was high (ngx-lift 94.14% statements / 90.79% branches; clr-lift 91.23% / 81.62%) and the translation
+dictionaries were complete (2,252/2,252 keys in each of 11 locales).
 
 The original review's actionable risks concentrate in four places:
 
@@ -166,8 +183,10 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
   argument, log skipped reports, and align the documented thresholds.
 - **A15 — Medium, confirm. Two production hosts, no canonical target.** `.github/workflows/deploy-demo.yml:52-78`
   deploys to both Netlify and Vercel; `README.md:8,14,59,139` and `package.json:15` advertise only Vercel;
-  `docs/DEPLOYMENT.md:71-74` names both without choosing. **Fix:** declare one canonical host, remove the dead
-  job/config, and confirm Git auto-builds are disabled so artifacts are not deployed twice.
+  `docs/DEPLOYMENT.md:71-74` names both without choosing. **Decision (2026-11-10):** keep both hosts required on main,
+  declare Vercel canonical for public links and Netlify a required secondary target. Make the two steps independent,
+  fail the job when either target fails, and verify Netlify token scope and site ownership outside the repository.
+  Confirm Git auto-builds remain disabled so artifacts are not deployed twice.
 
 ### B. Documentation and tracker drift
 
@@ -336,12 +355,11 @@ Not run locally (CI covers them): `build`, `bundle:check`, `verify:packages`, Pl
    mismatches, and complete the indexes. Then consolidate B10.
 4. **Fix the small library defects (C1, C3, C4, C6, C8, C11).** Add regressions alongside; settle C11's diagnostic and
    compatibility decisions before changing its public behavior.
-5. **Honour the dependency policy (D1, D2) and decide the canonical host (A15).** Record alternatives and consumer
+5. **Honour the dependency policy (D1, D2) and keep both deployment hosts (A15).** Record alternatives and consumer
    evidence in a feature spec as `AGENTS.md:52-57` requires.
-6. **Triage the backlog (E1–E3), then plan a release.** `[Unreleased]` holds six features and two fixes since
-   2026-10-18. Once the independent human language and assistive-technology acceptance required by
-   `docs/guides/accessibility-and-localization.md` is recorded, cut the next versions through the `docs/DEPLOYMENT.md`
-   gates rather than the direct publish scripts.
+6. **Triage the backlog (E1–E3).** The 21.5.0 / 21.4.0 versions were published on 2026-11-09 through the
+   `docs/DEPLOYMENT.md` gates. Independent language acceptance was approved on 2026-11-08; manual assistive-technology
+   assessment was waived on 2026-11-10. Current open items live in the [gap register](gap-register.md).
 7. **Address the architecture deepening backlog (§7, F1–F5).** Start with F2 (highest leverage: every feature increment
    pays the localization tax) and F1 (safe immediate win); treat F4 only after an explicit decision to reopen ADR-0002.
 

@@ -45,7 +45,7 @@ This project adheres to a Code of Conduct that all contributors are expected to 
    ```
 5. **Build the libraries**:
    ```bash
-   pnpm run build:libs
+   ppnpm run build:libs
    ```
 6. **Start the demo app** (optional):
    ```bash
@@ -95,15 +95,15 @@ pnpm install --frozen-lockfile
 3. **Update documentation** if needed
 4. **Run tests** to ensure everything passes:
    ```bash
-   npm test
+   pnpm test
    ```
 5. **Run linting**:
    ```bash
-   npm run lint
+   pnpm run lint
    ```
 6. **Format code**:
    ```bash
-   npm run format
+   pnpm run format
    ```
 
 ### Committing Changes
@@ -166,9 +166,9 @@ git commit -m "test(ngx-lift): add tests for new operator"
 
 ### Test Coverage
 
-- **Minimum Coverage**: 60% for all components
-- **Critical Paths**: Aim for 80%+ coverage on business logic
-- **Test Types**: Unit tests (Vitest) and E2E tests (Playwright)
+- **Thresholds**: statements 80%, branches 75%, functions 50%, lines 80% in the three `vite.config.mts` files.
+- **Critical Paths**: prioritize critical branches over coverage-only assertions.
+- **Test Types**: Unit tests (Vitest) and E2E tests (Playwright).
 
 ### Writing Tests
 
@@ -199,17 +199,17 @@ describe('MyComponent', () => {
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Run tests for specific library
-npm run test:ngx
-npm run test:clr
+pnpm run test:ngx
+pnpm run test:clr
 
 # Run tests with coverage
-npm run test:coverage
+pnpm run test:coverage
 
 # Run tests in watch mode
-nx test ngx-lift --watch
+pnpm exec nx test ngx-lift --watch
 ```
 
 ## 📚 Documentation

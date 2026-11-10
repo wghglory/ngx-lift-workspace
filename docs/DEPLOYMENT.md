@@ -36,17 +36,20 @@ Complete these in order. A green build, a merged PR and a published npm version 
 
 1. Prepare the version bump and the dated changelog section in a PR on `main`. Record every breaking change, its
    migration, and the maintainer decision approving a 21.x compatibility exception.
-2. Run `pnpm run release:check` and `pnpm run validate`, and require the three-browser E2E job. Confirm a green
-   `publish.yml` dry run, including `verify:packages` and `nx release publish --dry-run`.
-3. Confirm independent human language acceptance for all eleven locales (approved by the maintainer on 2026-11-08) and
-   record or waive manual assistive-technology acceptance as a maintainer decision. Automated dictionary, accessibility
-   and consumer checks do not supply the manual assessment.
+2. Run `pnpm run release:check` and `pnpm run validate`, and require the PR E2E gate: the full Chromium suite plus
+   Firefox/WebKit smoke. The full three-browser matrix runs on push and schedule. Start the `publish.yml` dry run with
+   `gh workflow run publish.yml`; the workflow has no pull-request trigger. Confirm `verify:packages` and
+   `nx release publish --dry-run` in that run.
+3. Confirm independent human language acceptance for all eleven locales (approved 2026-11-08) and the recorded manual
+   assistive-technology waiver (2026-11-10). Automated dictionary, accessibility and consumer checks remain required;
+   the waiver does not mark the assessment as passed.
 4. Review behavioral compatibility, the peer ranges (maintainer decided to keep them unbounded), the
    `ngx-lift`-before-`clr-lift` publish order, and the `NPM_TOKEN` / `npm whoami` credential check.
 5. Merge the reviewed version/changelog PR, then publish with `version=skip` and `dry_run=false`, or push the reviewed
    `ngx-lift@<version>` / `clr-lift@<version>` tags. Tag events always publish and are never dry runs.
-6. Create the GitHub release records and tags at the reviewed version commit, with a link to the publication workflow
-   run as release evidence.
+6. Confirm the GitHub release records and remote tags created by the publication workflow, with a link to the workflow
+   run as release evidence. Do not push a reviewed tag again after a manual `version=skip` publication; tag events
+   always publish and create release records.
 
 ## Version policy
 
@@ -60,12 +63,13 @@ of backward compatibility. Preserve the [21.4.0 / 21.3.0 breaking and migration 
 dependent peers and installed consumers, and run the publication dry run before the real release. Do not remove the
 compatibility notice when assigning versions.
 
-**November 8, 2026 decision (recorded for maintainer approval in the release PR):** the `node-forge` certificate API
-removal and the `toSignalForm` error-propagation change in 21.5.0 / 21.4.0 are a second, separate exception. The October
-17 decision is not blanket approval for later breaks. Peer ranges stay unbounded (`@angular/* >=21`,
-`@clr/angular >=18`, `rxjs >=7.8.0`, `ngx-lift >=21.5.0`); the verified platform is Angular 21 / Clarity 18 / RxJS 7.
-Preserve the [21.5.0 / 21.4.0 migration notes](../CHANGELOG.md#migration), publish `ngx-lift` first, and confirm strict
-installed consumers before authorizing publication. Any later incompatible change needs the same explicit review.
+**November 8, 2026 decision (approved and published on 2026-11-09):** the `node-forge` certificate API removal and the
+`toSignalForm` error-propagation change in 21.5.0 / 21.4.0 are a second, separate exception. The October 17 decision is
+not blanket approval for later breaks. Peer ranges stay unbounded (`@angular/* >=21`, `@clr/angular >=18`,
+`rxjs >=7.8.0`, `ngx-lift >=21.5.0`); the verified platform is Angular 21 / Clarity 18 / RxJS 7. Preserve the
+[21.5.0 / 21.4.0 migration notes](../CHANGELOG.md#migration), publish `ngx-lift` first, and confirm strict installed
+consumers before authorizing publication. The publish order, installed-consumer checks and credential check were
+verified before the 2026-11-09 publication. Any later incompatible change needs the same explicit review.
 
 ## Release tags
 
@@ -88,12 +92,19 @@ cd dist/libs/ngx-lift
 npm pack --dry-run
 ```
 
-Use npm pack to create a local tarball when needed. The installed-consumer check already verifies package exports,
-strict declarations, peer installation, runtime imports and mounted Angular consumer lifecycle.
+Use `npm pack` to create a local tarball when needed; this is a local inspection exception, while all workspace
+automation uses `pnpm`. The installed-consumer check already verifies package exports, strict declarations, peer
+installation, runtime imports and mounted Angular consumer lifecycle.
 
 ## Demo deployment
 
 The production site lives in dist/apps/demo/browser. Netlify and Vercel settings are in [netlify.toml](../netlify.toml)
 and [vercel.json](../vercel.json). The Deploy Demo App workflow waits for quality gates, builds the libraries/demo and
-deploys the generated browser output. Hosting integrations may also create PR previews; the corresponding remote
-job/deployment records provide status.
+deploys the generated browser output.
+
+Both Netlify and Vercel production deployments are required on main. Vercel is the canonical host for public links;
+Netlify is a required secondary target. The workflow attempts both independently and the job gate requires both
+successes; a single failed target fails the job without skipping the other target. Hosting integrations may also create
+PR previews; the corresponding remote job/deployment records provide status. A Netlify `Forbidden` response indicates a
+token scope or site ownership issue that the maintainer must verify outside the repository; secret values are not part
+of codebase validation.

@@ -17,9 +17,9 @@
 
 ---
 
-**clr-lift** supercharges VMware's **Clarity Design System** with battle-tested enterprise primitives. It fills the gaps
-in standard Clarity by delivering flicker-free datagrid state management, reactive notification systems, async
-multi-step wizards, type-safe form controls, zero-config dark mode, and built-in localization.
+**clr-lift** supercharges the **Clarity Design System** with battle-tested enterprise primitives. It fills the gaps in
+standard Clarity by delivering flicker-free datagrid state management, reactive notification systems, async multi-step
+wizards, type-safe form controls, zero-config dark mode, and built-in localization.
 
 ```html
 <!-- Enhanced Clarity alert with automatic Error/HttpErrorResponse extraction -->
@@ -342,7 +342,7 @@ beforeEach(async () => {
 
 ## 📄 License
 
-MIT © [Guanghui Wang](https://github.com/wghglory)
+MIT © Project maintainers
 
 ## Lifecycle and production contracts
 

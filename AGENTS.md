@@ -69,3 +69,8 @@ Before triaging issues, read `docs/agents/triage-labels.md`.
 ### Domain docs
 
 Use the single-context layout. Before domain exploration, read `docs/agents/domain.md`.
+
+### Gap scanning
+
+Before a periodic docs/codebase gap sweep, post-release status refresh, or documentation drift check, read
+`.agents/skills/find-repo-gaps/SKILL.md` and current `docs/gap-register.md`.

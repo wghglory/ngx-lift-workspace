@@ -35,10 +35,16 @@ The executable definitions live in [package.json](../package.json). Run commands
 | pnpm run release:check                      | Read-only release preflight; never publishes                                                     |
 | git diff --check                            | Whitespace errors in the diff                                                                    |
 
+`pnpm run validate` is the local full chain. `pnpm run e2e:verify` and `git diff --check` are additional local review
+checks; they are not part of `validate`. CI runs fast checks, library tests, demo tests, builds and E2E as parallel
+jobs. Coverage, installed-consumer checks and the full three-browser E2E matrix run on push/schedule, while the blocking
+PR E2E gate uses the full Chromium suite plus Firefox/WebKit smoke. See `.github/workflows/quality.yml` and
+[DEPLOYMENT](DEPLOYMENT.md).
+
 Playwright starts an isolated dev server by default. Set BASE_URL explicitly to test an existing deployment:
 
 ```bash
-BASE_URL=http://localhost:4318 pnpm run e2e:verify
+BASE_URL=http://localhost:4307 pnpm run e2e:verify
 ```
 
 Test-source types can also be checked explicitly with the installed TypeScript compiler:
