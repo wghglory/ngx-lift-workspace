@@ -1,9 +1,10 @@
 # Datagrid selection implementation and acceptance
 
-Updated October 31, 2026. Scope: [issue #200](https://github.com/wghglory/ngx-lift-workspace/issues/200) and the
-[#201](https://github.com/wghglory/ngx-lift-workspace/issues/201) server-page example. The production increment and the
-server-page fixture/demo are implemented locally and the automated gates below pass. Independent human acceptance and
-publication remain separate.
+Current status — 2026-11-10: issues #198, #200, #201 and #202 are closed, and the selection exports shipped in
+`ngx-lift 21.5.0` / `clr-lift 21.4.0` on 2026-11-09. Language approval, the manual assistive-technology waiver, release
+and CI evidence are owned by the [acceptance contract](../../guides/accessibility-and-localization.md) and the
+[gap register](../../gap-register.md). The sections below preserve the October 31 acceptance evidence as historical
+snapshots.
 
 ## Delivered behavior
 

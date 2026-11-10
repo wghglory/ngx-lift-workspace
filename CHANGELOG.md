@@ -152,10 +152,9 @@ release notes and migration instructions; publication is a separate gate.
 
 ### Release boundary
 
-- Independent human language acceptance for all eleven locales was approved on 2026-11-08 (recorded in
-  [the acceptance contract](docs/guides/accessibility-and-localization.md)). Manual assistive-technology assessment was
-  formally waived by the maintainer on 2026-11-10; the waiver is not a passed assessment. Automated dictionary,
-  accessibility and packed-consumer checks remain required.
+- The current [acceptance contract](docs/guides/accessibility-and-localization.md) and
+  [gap register](docs/gap-register.md) own the independent language approval, the manual assistive-technology waiver and
+  the automated-check boundary for this release. The waiver is not a passed assessment.
 - SSR/hydration and a broad peer-version matrix are not established by the installed Angular 21.2 browser consumer.
 - Dependency advisory triage and the 2026-11-10 WebKit shard 5 E2E timeouts remain separate follow-ups.
 - These versions were published to the official npm registry on 2026-11-09. Remote tags, GitHub release records, the

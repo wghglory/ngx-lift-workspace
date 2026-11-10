@@ -37,7 +37,7 @@ This project adheres to a Code of Conduct that all contributors are expected to 
    ```
 3. **Add the upstream remote**:
    ```bash
-   git remote add upstream https://github.com/wghglory/ngx-lift-workspace.git
+   git remote add upstream <repository-url>
    ```
 4. **Install dependencies**:
    ```bash
@@ -45,7 +45,7 @@ This project adheres to a Code of Conduct that all contributors are expected to 
    ```
 5. **Build the libraries**:
    ```bash
-   ppnpm run build:libs
+   pnpm run build:libs
    ```
 6. **Start the demo app** (optional):
    ```bash

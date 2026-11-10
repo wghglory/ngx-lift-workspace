@@ -52,7 +52,7 @@ Preserve a statement when it names a date, PR, issue, or increment and describes
 
 ## Repo constraints
 
-- Use `pnpm` and `pnpm exec nx` for workspace tasks; `npm` is reserved for local `npm pack` inspection.
+- Use `pnpm` and `pnpm exec nx` for workspace tasks, including read-only `pnpm view` registry queries; `npm` is reserved for local `npm pack` inspection.
 - Keep `quality.yml` as the shared `workflow_call` workflow, PR jobs parallel and affected-based, and coverage off the blocking PR path.
 - Keep Nx Cloud enabled.
 - Keep committed documentation in English and use generic maintainer, package, and application names.

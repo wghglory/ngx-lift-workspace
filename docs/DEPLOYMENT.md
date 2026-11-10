@@ -27,8 +27,9 @@ to publish those reviewed versions, or push their reviewed release tags. Other w
 previews only. The workflow uses the official npm registry and checks credentials. Review behavioral compatibility and
 dependent package peer ranges using the version policy below before publication.
 
-After successful manual publication, create the corresponding GitHub release records and tags at the reviewed version
-commit. Those records document the release; source manifests own the next version calculation.
+The publication workflow creates GitHub release records and remote tags on tag events. After a manual `version=skip`
+publication, confirm those records rather than pushing the reviewed tag again; source manifests own the next version
+calculation.
 
 ### Release checklist
 
@@ -40,9 +41,9 @@ Complete these in order. A green build, a merged PR and a published npm version 
    Firefox/WebKit smoke. The full three-browser matrix runs on push and schedule. Start the `publish.yml` dry run with
    `gh workflow run publish.yml`; the workflow has no pull-request trigger. Confirm `verify:packages` and
    `nx release publish --dry-run` in that run.
-3. Confirm independent human language acceptance for all eleven locales (approved 2026-11-08) and the recorded manual
-   assistive-technology waiver (2026-11-10). Automated dictionary, accessibility and consumer checks remain required;
-   the waiver does not mark the assessment as passed.
+3. Confirm the acceptance boundary in the [acceptance contract](guides/accessibility-and-localization.md) and the
+   [gap register](gap-register.md). Automated dictionary, accessibility and consumer checks remain required; a waiver
+   does not mark the assessment as passed.
 4. Review behavioral compatibility, the peer ranges (maintainer decided to keep them unbounded), the
    `ngx-lift`-before-`clr-lift` publish order, and the `NPM_TOKEN` / `npm whoami` credential check.
 5. Merge the reviewed version/changelog PR, then publish with `version=skip` and `dry_run=false`, or push the reviewed
@@ -103,8 +104,8 @@ and [vercel.json](../vercel.json). The Deploy Demo App workflow waits for qualit
 deploys the generated browser output.
 
 Both Netlify and Vercel production deployments are required on main. Vercel is the canonical host for public links;
-Netlify is a required secondary target. The workflow attempts both independently and the job gate requires both
-successes; a single failed target fails the job without skipping the other target. Hosting integrations may also create
-PR previews; the corresponding remote job/deployment records provide status. A Netlify `Forbidden` response indicates a
-token scope or site ownership issue that the maintainer must verify outside the repository; secret values are not part
-of codebase validation.
+Netlify is a required secondary target. Current host status is owned by the [gap register](gap-register.md). The
+workflow attempts both independently and the job gate requires both successes; a single failed target fails the job
+without skipping the other target. Hosting integrations may also create PR previews; the corresponding remote
+job/deployment records provide status. A Netlify `Forbidden` response indicates a token scope or site ownership issue
+that the maintainer must verify outside the repository; secret values are not part of codebase validation.

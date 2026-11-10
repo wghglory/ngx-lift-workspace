@@ -66,7 +66,7 @@ run "Remote release tags" bash -c "git ls-remote --tags origin 'refs/tags/ngx-li
 
 section "Package versions"
 run "Source manifests" node -e 'const fs=require("fs"); for (const p of ["package.json","libs/ngx-lift/package.json","libs/clr-lift/package.json"]) { const j=JSON.parse(fs.readFileSync(p,"utf8")); console.log(p, j.name||"(private)", j.version); } console.log("packageManager", JSON.parse(fs.readFileSync("package.json","utf8")).packageManager);'
-run "Official npm versions" bash -c "npm view --registry=https://registry.npmjs.org ngx-lift version || true; npm view --registry=https://registry.npmjs.org clr-lift version || true"
+run "Official npm versions" bash -c "pnpm view --registry=https://registry.npmjs.org ngx-lift version || true; pnpm view --registry=https://registry.npmjs.org clr-lift version || true"
 run "Validation scripts" node -e 'const s=require("./package.json").scripts; for (const k of ["validate","release:check","format:check","i18n:check","lint","typecheck","test:tools","e2e:verify"]) console.log(k+": "+(s[k]||"(missing)"));'
 
 section "Tracker and workflow runs"

@@ -21,7 +21,7 @@ Find gaps between what the repository claims and what the repository currently d
 
 ## Repo constraints
 
-- Use `pnpm` and `pnpm exec nx` for workspace tasks; leave `npm` for local `npm pack` inspection only.
+- Use `pnpm` and `pnpm exec nx` for workspace tasks, including read-only `pnpm view` registry queries; leave `npm` for local `npm pack` inspection only.
 - Keep `.github/workflows/quality.yml` as the shared `workflow_call` gate, keep PR jobs parallel and affected-based, and keep coverage off the blocking PR path.
 - Keep Nx Cloud enabled; do not reintroduce `neverConnectToCloud`.
 - Treat `docs/README.md` as the canonical index, `CHANGELOG.md` and package manifests as version sources, and workflow runs as validation evidence.

@@ -80,9 +80,9 @@
 - [ ] Interactive demo page updated and verified (if applicable)
 - [ ] Accessibility scans and relevant keyboard/focus journeys pass for library and demo UI
 - [ ] All supported library and demo locales are complete, including accessible names and announcements
-- Independent human language acceptance for all eleven locales was approved on 2026-11-08 (PR #218).
-- Manual assistive-technology assessment was waived by the maintainer on 2026-11-10; it is not recorded as passed.
-  Automated accessibility scans and keyboard/focus journeys remain required for UI changes.
+- Acceptance status is owned by the [acceptance contract](../docs/guides/accessibility-and-localization.md) and the
+  [gap register](../docs/gap-register.md). Automated accessibility scans and keyboard/focus journeys remain required for
+  UI changes.
 
 ### Test Commands Run
 

@@ -26,12 +26,13 @@ This file remains the historical audit and standing finding backlog. Current sta
 - `ngx-lift 21.5.0` / `clr-lift 21.4.0` were published to the official npm registry on 2026-11-09, with remote tags and
   GitHub release records.
 - Issues #198, #200, #201 and #202 are closed; PRs #137–#141 and #134 remain open for independent review.
-- Independent language acceptance for all eleven locales was approved on 2026-11-08. Manual assistive-technology
-  assessment was waived by the maintainer on 2026-11-10; the waiver is not a pass.
+- Independent language acceptance and the manual assistive-technology waiver are recorded in the
+  [acceptance contract](guides/accessibility-and-localization.md) and [gap register](gap-register.md); the waiver is not
+  a pass.
 - YAML viewer/editor work is paused and is not the next implementation task. Angular 22 and the Nx major upgrade remain
   deferred.
-- Both Netlify and Vercel are required on main. Vercel is the canonical public host; Netlify is a required secondary
-  target. Netlify returned `Forbidden` on 2026-11-09; verify its token scope and site ownership outside the repository.
+- Both Netlify and Vercel are required on main. Current deployment status and the canonical public host live in the
+  [gap register](gap-register.md) and [deployment guide](DEPLOYMENT.md).
 - The 2026-11-10 scheduled CI failed on two WebKit shard 5 E2E timeouts. Read current gate status from workflow runs,
   not from the historical validation table below.
 

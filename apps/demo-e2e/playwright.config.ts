@@ -42,8 +42,6 @@ const browserProjects = [
 export default defineConfig({
   ...nxPreset,
   reporter: process.env['CI'] ? [['line'], ...presetReporters] : nxPreset.reporter,
-  /* Full-matrix WebKit journeys exceed the 30s default; keep the per-shard step timeout authoritative. */
-  timeout: 60 * 1000,
   /* Nx Playwright preset forces 1 worker on CI; allow opt-in parallel workers. */
   workers: process.env['CI'] ? Number(process.env['PLAYWRIGHT_WORKERS'] ?? 1) : undefined,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
