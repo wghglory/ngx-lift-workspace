@@ -7,8 +7,9 @@ workflow runs. Historical acceptance records and the dated health audit remain a
 register owns present status.
 
 Repeat the sweep with the project skill at `.agents/skills/find-repo-gaps/SKILL.md`. Its `scripts/collect-evidence.sh`
-gathers deterministic evidence; `references/gap-taxonomy.md` defines classes, severity and dispositions. Report in chat
-by default and update this register only on explicit request.
+gathers read-only evidence with a recorded workflow-run window and explicit `SKIPPED` / `EVIDENCE UNAVAILABLE` markers;
+`references/gap-taxonomy.md` defines classes, severity and dispositions. Report in chat by default and update this
+register only on explicit request.
 
 ## Severity and disposition
 
