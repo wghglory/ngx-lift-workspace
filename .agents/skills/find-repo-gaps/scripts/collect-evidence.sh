@@ -5,10 +5,19 @@
 set -uo pipefail
 
 output=""
+run_window_days=90
+run_limit=50
+release_limit=30
+since="$(date -u -d "$run_window_days days ago" '+%Y-%m-%d' 2>/dev/null || date -u -v-"${run_window_days}"d '+%Y-%m-%d' 2>/dev/null || printf '1970-01-01')"
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --output)
-      output="${2:-}"
+      if [ "$#" -lt 2 ] || [ -z "${2:-}" ]; then
+        printf 'Missing value for --output.\n' >&2
+        exit 2
+      fi
+      output="$2"
       shift 2
       ;;
     *)
@@ -47,7 +56,15 @@ run() {
   shift
   emit "### $title"
   emit '```text'
-  ("$@" 2>&1 || true) | while IFS= read -r line; do emit "$line"; done
+  local result
+  if result=$("$@" 2>&1); then
+    if [ -n "$result" ]; then
+      while IFS= read -r line; do emit "$line"; done <<< "$result"
+    fi
+  else
+    emit "EVIDENCE UNAVAILABLE: $1 failed. The lines below are the error, not evidence."
+    while IFS= read -r line; do emit "  $line"; done <<< "$result"
+  fi
   emit '```'
   emit
 }
@@ -70,16 +87,26 @@ run "Official npm versions" bash -c "pnpm view --registry=https://registry.npmjs
 run "Validation scripts" node -e 'const s=require("./package.json").scripts; for (const k of ["validate","release:check","format:check","i18n:check","lint","typecheck","test:tools","e2e:verify"]) console.log(k+": "+(s[k]||"(missing)"));'
 
 section "Tracker and workflow runs"
-if command -v gh >/dev/null 2>&1; then
+emit "Query window: workflow runs created on or after $since (UTC), up to $run_limit per workflow; up to $release_limit releases."
+emit
+missing_gh_evidence="Open issues, open PRs, release records, deployment secret names, and CI/deploy/publish workflow runs."
+if ! command -v gh >/dev/null 2>&1; then
+  emit "SKIPPED: the gh CLI is unavailable. Install it and re-run the sweep to collect tracker and workflow evidence."
+elif ! gh api user --silent >/dev/null 2>&1; then
+  emit "SKIPPED: gh is installed but its credentials are missing, invalid, or the API is unreachable (gh api user failed)."
+else
+  missing_gh_evidence=""
   run "Open issues" gh issue list --state open --json number,title,labels --jq '.[] | "#\(.number) [\([.labels[].name] | join(","))] \(.title)"'
   run "Open PRs" gh pr list --state open --json number,title,headRefName,updatedAt --jq '.[] | "#\(.number) \(.headRefName) \(.updatedAt) \(.title)"'
-  run "Recent releases" gh release list --limit 8
+  run "Recent releases" gh release list --limit "$release_limit"
   run "Deployment secret names" gh secret list --json name --jq '.[].name'
-  run "CI runs" gh run list --workflow=ci.yml --limit 10 --json createdAt,event,headBranch,conclusion --jq '.[] | "\(.createdAt) \(.event) \(.headBranch) \(.conclusion // "pending")"'
-  run "Deploy runs" gh run list --workflow=deploy-demo.yml --limit 10 --json databaseId,createdAt,headBranch,conclusion --jq '.[] | "\(.createdAt) \(.headBranch) \(.conclusion // "pending") #\(.databaseId)"'
-  run "Publish runs" gh run list --workflow=publish.yml --limit 10 --json databaseId,createdAt,headBranch,conclusion --jq '.[] | "\(.createdAt) \(.headBranch) \(.conclusion // "pending") #\(.databaseId)"'
-else
-  emit "The gh CLI is unavailable; fetch tracker, release, and workflow-run evidence manually."
+  run "CI runs" gh run list --workflow=ci.yml --created ">=$since" --limit "$run_limit" --json databaseId,createdAt,event,headBranch,conclusion --jq '.[] | "\(.createdAt) \(.event) \(.headBranch) \(.conclusion // "pending") #\(.databaseId)"'
+  run "Deploy runs" gh run list --workflow=deploy-demo.yml --created ">=$since" --limit "$run_limit" --json databaseId,createdAt,headBranch,conclusion --jq '.[] | "\(.createdAt) \(.headBranch) \(.conclusion // "pending") #\(.databaseId)"'
+  run "Publish runs" gh run list --workflow=publish.yml --created ">=$since" --limit "$run_limit" --json databaseId,createdAt,headBranch,conclusion --jq '.[] | "\(.createdAt) \(.headBranch) \(.conclusion // "pending") #\(.databaseId)"'
+fi
+if [ -n "$missing_gh_evidence" ]; then
+  emit "Missing evidence: $missing_gh_evidence"
+  emit "Do not classify tracker, release, or workflow claims from this report until the evidence is collected."
 fi
 
 section "Documentation inventory"
@@ -96,4 +123,4 @@ run "Design specs" bash -c "find docs/design -name '*.md' -type f | sort"
 run "Gap register" bash -c "test -f docs/gap-register.md && sed -n '1,80p' docs/gap-register.md || true"
 
 emit
-emit "Evidence collection complete. Use semantic comparison before assigning gap dispositions."
+emit "Evidence collection finished. Treat every SKIPPED and EVIDENCE UNAVAILABLE marker as missing evidence, then use semantic comparison before assigning gap dispositions."

@@ -5,6 +5,7 @@
 - Base: [commit/branch/tag]
 - Areas compared: [docs/code/workflows/tracker/npm/CI]
 - Evidence commands: [commands and run IDs]
+- Workflow-run query window: [UTC start date, limit per workflow, release limit]
 - Fixed point for review: [git diff command]
 
 ## Summary
@@ -42,3 +43,8 @@
 - [Command]: [result]
 - [Command]: [result]
 - CI/PR evidence: [run IDs or pending]
+
+## Evidence gaps
+
+- [Each SKIPPED or EVIDENCE UNAVAILABLE marker: section, cause, and the claims that must not be classified from this sweep]
+- [Write "None" only when the collector emitted no markers; never treat missing tracker, release, or workflow evidence as an empty result]
