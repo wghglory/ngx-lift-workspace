@@ -57,6 +57,7 @@ jobs:
   quality:
     needs: release-inputs
     uses: ./.github/workflows/quality.yml
+    secrets: inherit
   publish:
     needs: quality
     name: Publish

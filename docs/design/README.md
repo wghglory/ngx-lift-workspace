@@ -36,6 +36,17 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 | Legacy FormArray editor and additive immutable array-value control | [Key/value control contracts](clr-lift/key-value-inputs-design-spec.md) |
 | QueryDevtoolsComponent and conditional root provider               | [Query inspector](clr-lift/query-devtools-design-spec.md)               |
 
+## Proposed or paused contracts
+
+| Area                        | Canonical draft                                                          |
+| --------------------------- | ------------------------------------------------------------------------ |
+| Breadcrumbs                 | [Breadcrumbs](clr-lift/breadcrumb-design-spec.md)                        |
+| Datagrid selection          | [Native grid selection](clr-lift/datagrid-selection-design-spec.md)      |
+| YAML viewer/editor (paused) | [YAML editor](clr-lift/yaml-editor-design-spec.md)                       |
+| Temporal controls           | [Temporal controls](clr-lift/temporal-controls-design-spec.md)           |
+| Cascader and tree-select    | [Hierarchical selection](clr-lift/hierarchical-selection-design-spec.md) |
+| Drawer                      | [Drawer](clr-lift/drawer-design-spec.md)                                 |
+
 ## Review status and maintenance
 
 [Datagrid selection](clr-lift/datagrid-selection-design-spec.md) supports one caller-written Clarity grid, with a

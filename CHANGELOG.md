@@ -8,19 +8,18 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
-## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-08
+## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-09
 
-**Release decision — November 8, 2026 (recorded for maintainer approval in the release PR):** both packages remain on
-21.x while the supported platform remains Angular 21; 22.x stays reserved for the Angular 22 upgrade. Package versions
-remain independent. The `node-forge` certificate API removal and the `toSignalForm` error-propagation change are
-**behaviorally breaking**. Shipping them in these 21.x minor releases is a second explicit, maintainer-approved
-exception to SemVer's major-bump rule, not a claim of backward compatibility. The October 17, 2026 decision was not
-blanket approval for later breaks and does not cover this release; see the
-[version policy](docs/DEPLOYMENT.md#version-policy).
+**Release decision — November 8, 2026 (approved and published on 2026-11-09):** both packages remain on 21.x while the
+supported platform remains Angular 21; 22.x stays reserved for the Angular 22 upgrade. Package versions remain
+independent. The `node-forge` certificate API removal and the `toSignalForm` error-propagation change are **behaviorally
+breaking**. Shipping them in these 21.x minor releases is a second explicit, maintainer-approved exception to SemVer's
+major-bump rule, not a claim of backward compatibility. The October 17, 2026 decision was not blanket approval for later
+breaks and does not cover this release; see the [version policy](docs/DEPLOYMENT.md#version-policy).
 
-Publication is a separate gate. This section records reviewed versions, release notes and migration instructions; the
-publication workflow run, the three-browser E2E job, the packed-consumer checks and the GitHub release records supply
-the evidence that the packages reached the official registry.
+The reviewed versions were published to the official npm registry on 2026-11-09. Remote tags, GitHub release records,
+the publish workflow run, the PR E2E gate and packed-consumer checks are the release evidence. This section owns the
+release notes and migration instructions; publication is a separate gate.
 
 ### Added
 
@@ -145,21 +144,21 @@ the evidence that the packages reached the official registry.
   [reactive forms specification](docs/design/ngx-lift/reactive-forms-design-spec.md) and the
   [resourceAsync specification](docs/design/ngx-lift/resource-async-design-spec.md).
 - The `clr-lift` README now names the releases that introduced `cll-breadcrumb`, `cll-key-value-control` and the query
-  devtools, and both locale lists name the same eleven supported locales. The delivery roadmap cites the 21.4.0 / 21.3.0
-  publication rather than the older 21.3.0 / 21.2.0 pair.
+  devtools, and both locale lists name the same eleven supported locales. The delivery roadmap cites the 21.5.0 / 21.4.0
+  publication rather than the older 21.4.0 / 21.3.0 pair.
 - The private workspace root manifest version, the `commit-msg` hook and the Nx `sharedGlobals` cache inputs were
   aligned with the release process. Direct `publish:*` scripts that bypassed the reviewed-version gate were replaced
   with a read-only `release:check` preflight.
 
 ### Release boundary
 
-- Independent human language acceptance for all eleven locales was approved by the maintainer on 2026-11-08 (recorded in
-  [the acceptance contract](docs/guides/accessibility-and-localization.md)); manual assistive-technology acceptance
-  remains pending. Automated dictionary, accessibility and packed-consumer checks do not replace the manual assessment.
+- The current [acceptance contract](docs/guides/accessibility-and-localization.md) and
+  [gap register](docs/gap-register.md) own the independent language approval, the manual assistive-technology waiver and
+  the automated-check boundary for this release. The waiver is not a passed assessment.
 - SSR/hydration and a broad peer-version matrix are not established by the installed Angular 21.2 browser consumer.
-- Dependency advisory triage and the flaky three-browser E2E required check remain separate follow-ups.
-- These versions are prepared for review, not yet published. Publication requires a green `publish.yml` dry run, a
-  reviewed merge to `main`, and an explicitly authorized `version=skip` / `dry_run=false` run or reviewed release tags.
+- Dependency advisory triage and the 2026-11-10 WebKit shard 5 E2E timeouts remain separate follow-ups.
+- These versions were published to the official npm registry on 2026-11-09. Remote tags, GitHub release records, the
+  publish workflow run, the PR E2E gate and packed-consumer checks are the publication evidence.
 
 ## [21.4.0] (ngx-lift) / [21.3.0] (clr-lift) - 2026-10-18
 

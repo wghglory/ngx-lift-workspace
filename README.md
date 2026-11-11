@@ -39,7 +39,7 @@ simplify your development experience. Built with Angular 21, TypeScript 5.9, and
 
 ### 🎨 clr-lift
 
-**An Angular component library** built on top of VMware Clarity Design System:
+**An Angular component library** built on top of the Clarity Design System:
 
 - 🧩 **15+ Production-Ready Components** - Alerts, toasts, spinners, wizards, and more
 - 🔧 **Clarity Utilities** - Enhanced datagrid state management and helpers
@@ -161,7 +161,7 @@ If this project helped you, please consider giving it a ⭐ on GitHub!
 **Built with ❤️ using [Nx](https://nx.dev), [Angular](https://angular.io), and
 [Clarity Design System](https://clarity.design)**
 
-Made by [Guanghui Wang](https://github.com/wghglory)
+Maintained by the project maintainers
 
 </div>
 

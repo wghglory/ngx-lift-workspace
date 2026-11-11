@@ -1,8 +1,9 @@
 # Documentation refinement roadmap
 
 Status: demo refinement PRs #161–#174 merged October 17, 2026. Engineering delivery is complete for the scope below;
-newcomer comprehension and native-language acceptance remain open. Package README/spec closeout uses the same acceptance
-policy and records its own PR validation.
+newcomer comprehension remains open. Independent language acceptance was approved on 2026-11-08 and manual
+assistive-technology assessment was waived on 2026-11-10 (not a pass). Package README/spec closeout uses the same
+acceptance policy and records its own PR validation.
 
 ## Delivery coverage
 
@@ -13,8 +14,9 @@ theme and retry edits were introductory only; the PRs below complete their follo
 The inventory includes **55 feature-entry templates plus two library homepages**. The query-guide template serves seven
 routes, so template counts are not route counts. The 12 implementation PRs below cover all **45 remaining feature
 templates and both homepages**. Entry tasks, setup/source accuracy and concise-reference contracts were refined
-individually; this does not claim every advanced recipe was rewritten. Newcomer comprehension and native-language review
-remain separate acceptance checks.
+individually; this does not claim every advanced recipe was rewritten. Newcomer comprehension remains a separate
+acceptance check; independent language approval and the manual assistive-technology waiver are recorded in the
+[acceptance contract](guides/accessibility-and-localization.md).
 
 ## Implementation PRs
 

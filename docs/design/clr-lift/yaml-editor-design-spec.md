@@ -1,9 +1,11 @@
 # YAML viewer, editor, and future form synchronization
 
-Owner: clr-lift maintainers. Package: clr-lift. Approval: feature API pending; template/contract coverage updated
-October 17, 2026.
+Owner: clr-lift maintainers. Package: clr-lift. Template/contract coverage updated October 17, 2026.
 
-Status: **Draft; API approval pending**. Updated October 17, 2026. New symbols are proposed.
+Status: **Paused by maintainer decision (2026-11-10)**. Updated November 10, 2026. No feature API review, implementation
+or dependency decision is scheduled. The draft is retained for future reference and proposes no available export. The
+remainder of this document is historical design material, not an active API proposal, implementation plan or dependency
+decision.
 
 ## Applicable contracts
 

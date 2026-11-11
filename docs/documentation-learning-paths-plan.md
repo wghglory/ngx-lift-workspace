@@ -71,9 +71,9 @@ coverage run on this follow-up branch passes with 78.60% branch coverage (338/43
 The parent PR independently passes locally at 79.06% (340/430).
 
 The production build compiles the final demo templates; library/package verification is not rerun because `libs/` and
-package metadata are unchanged. Local review found no blocking issues. Human newcomer comprehension and native-language
-review remain open. Main integration and deployment evidence is linked in the refinement roadmap; publication remains
-separate.
+package metadata are unchanged. Local review found no blocking issues. Human newcomer comprehension remains open;
+independent language acceptance was approved on 2026-11-08 and manual assistive-technology assessment was waived on
+2026-11-10. Main integration and deployment evidence is linked in the refinement roadmap; publication remains separate.
 
 The remaining catalog was delivered through twelve merged implementation PRs, tracked in the
 [refinement roadmap](documentation-refinement-roadmap.md). Those sibling PRs own the other pages; #162 retains the

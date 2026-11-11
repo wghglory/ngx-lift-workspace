@@ -15,6 +15,7 @@ env:
 jobs:
   quality:
     uses: ./.github/workflows/quality.yml
+    secrets: inherit
   deploy:
     needs: quality
     name: Deploy
@@ -49,9 +50,11 @@ jobs:
         id: build-demo
         run: pnpm nx build demo --configuration=production
 
+      # Both production targets are required on main; keep Vercel independent of a Netlify failure.
       - name: Deploy to Netlify
-        if: github.ref == 'refs/heads/main'
+        if: ${{ success() && github.ref == 'refs/heads/main' }}
         id: netlify
+        continue-on-error: true
         uses: nwtgck/actions-netlify@d22a32a27c918fe470bbc562e984f80ec48c2668 # v4
         with:
           publish-dir: './dist/apps/demo/browser'
@@ -67,8 +70,9 @@ jobs:
         timeout-minutes: 5
 
       - name: Deploy to Vercel (production, main only)
-        if: github.ref == 'refs/heads/main'
+        if: ${{ success() && github.ref == 'refs/heads/main' }}
         id: vercel
+        continue-on-error: true
         uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -76,6 +80,7 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./dist/apps/demo/browser
           target: production
+        timeout-minutes: 5
 
       - name: Generate Deployment Summary
         if: always()
@@ -150,6 +155,26 @@ jobs:
 
           ## 📈 Overall Status
 
-          $([ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && { [ "$NETLIFY_STATUS" = "success" ] || [ "$VERCEL_STATUS" = "success" ]; } && echo "### ✅ Deployment completed successfully!" || echo "### ⚠️ Deployment did not complete successfully. Check logs for details.")
+          Both production targets are required on main. A single failed target fails the job gate without skipping the other target.
+
+          $([ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && [ "$NETLIFY_STATUS" = "success" ] && [ "$VERCEL_STATUS" = "success" ] && echo "### ✅ Deployment completed successfully!" || echo "### ⚠️ Deployment did not complete successfully. Check logs for details.")
 
           EOF
+
+      - name: Enforce deployment gate
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        env:
+          BUILD_LIBS_STATUS: ${{ steps.build-libs.outcome }}
+          BUILD_DEMO_STATUS: ${{ steps.build-demo.outcome }}
+          NETLIFY_STATUS: ${{ steps.netlify.outcome }}
+          VERCEL_STATUS: ${{ steps.vercel.outcome }}
+        run: |
+          if [ "$BUILD_LIBS_STATUS" != "success" ] || [ "$BUILD_DEMO_STATUS" != "success" ]; then
+            echo "::error::Build steps failed; production deployment was not attempted."
+            exit 1
+          fi
+          if [ "$NETLIFY_STATUS" != "success" ] || [ "$VERCEL_STATUS" != "success" ]; then
+            echo "::error::At least one required production deployment failed."
+            exit 1
+          fi
+          echo "Both Netlify and Vercel production deployments succeeded."

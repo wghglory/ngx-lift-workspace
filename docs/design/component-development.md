@@ -49,11 +49,14 @@ the spec.
   placeholders/plurals and verify runtime switching. Translation checks and native-speaker acceptance are different
   gates.
 - Unit tests cover meaningful transitions, races, identity, forms, errors, and cleanup. Add type tests for
-  generic/public contracts. Aim above 70% for new logic and prioritize critical branches over coverage-only assertions.
+  generic/public contracts. Meet the thresholds in the three `vite.config.mts` files (statements 80%, branches 75%,
+  functions 50%, lines 80%) and prioritize critical branches over coverage-only assertions.
 - Browser E2E covers practical journeys in Chromium, Firefox, and WebKit, with stable role-based selectors, controlled
   network fixtures, and no timing sleeps. Assert projected content and actual user-visible results.
-- Verify accessibility semantics and keyboard/focus behavior, and manually check relevant assistive-technology flows.
-  Check contrast, large text/zoom, long labels, and translated layouts; automated scans alone are insufficient.
+- Verify accessibility semantics and keyboard/focus behavior with automated scans and explicit interaction tests. Check
+  contrast, large text/zoom, long labels, and translated layouts. Manual assistive-technology assessment is waived by
+  maintainer decision (2026-11-10) and is not a delivery gate unless reintroduced; see the
+  [acceptance contract](../guides/accessibility-and-localization.md).
 - Measure relevant scale and bundle budgets. Bound remote pages and rendering independently. Verify cancellation,
   disposal, optional heavy dependencies, safe rendering, and documented SSR/hydration behavior.
 - Verify installed public packages with strict peers/types and declared render modes; repo path aliases are

@@ -9,7 +9,7 @@ Use the Node version required by package.json engines and the pnpm version decla
 run:
 
 ```bash
-git clone https://github.com/wghglory/ngx-lift-workspace.git
+git clone <repository-url>
 cd ngx-lift-workspace
 pnpm install --frozen-lockfile
 pnpm start

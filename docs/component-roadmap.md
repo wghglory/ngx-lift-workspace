@@ -1,8 +1,10 @@
 # Clarity component roadmap
 
-Status: **Draft for maintainer review**. Updated October 30, 2026 for the datagrid selection track (Asia/Shanghai). This
-document proposes order and scope; it does not approve APIs or authorize component implementation. The
-[delivery roadmap](priority-roadmap.md) retains existing release, security, and acceptance work.
+Status: Updated November 10, 2026. This roadmap records the component sequence and maintainer decisions; it does not
+approve APIs or authorize implementation. Issues #198, #200, #201 and #202 are closed, and their exports shipped in
+`ngx-lift 21.5.0` / `clr-lift 21.4.0` on 2026-11-09. YAML viewer/editor work is **paused** by maintainer decision; no
+API review or implementation is scheduled. The [delivery roadmap](priority-roadmap.md) retains release, security and
+acceptance work.
 
 ## Recommended order
 
@@ -11,10 +13,10 @@ document proposes order and scope; it does not approve APIs or authorize compone
 | 0     | Spec template and development workflow             | Make reviewable use cases and API examples the starting point                       | Maintainer reviews this plan and the template                        |
 | 1     | Angular 21 shared form contract                    | Avoid redesigning each control around incompatible form ownership                   | Angular 21 installed consumers and three integration examples pass   |
 | 2     | Resume key/value inputs                            | Important existing control; its FormArray coupling needs the agreed form contract   | Additive API approved; local form/package/browser checks pass        |
-| 2a    | Datagrid selection field, then server/policy flows | Current agreed native-grid/form use case; reuse the shared form contract            | #200 verified; independent #201 and #202 complete their own evidence |
-| 3     | YAML viewer, then editor                           | Supports immediate inspect/edit needs and later Postgres workflows                  | Text, validation, engine loading, and disposal verified              |
+| 2a    | Datagrid selection field, then server/policy flows | Delivered; reuse the shared form contract                                           | #198, #200, #201 and #202 closed; exports shipped in 21.5.0 / 21.4.0 |
+| 3     | YAML viewer, then editor                           | **Paused by maintainer decision (2026-11-10)**                                      | No API review, implementation or exit condition is scheduled         |
 | 4     | Date/time inputs and ranges                        | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified         |
-| 5     | Breadcrumb navigation                              | Focused navigation improvement with a clear object-store use case                   | Every ancestor remains reachable at narrow widths                    |
+| 5     | Breadcrumb navigation                              | Delivered in 21.5.0 / 21.4.0                                                        | Every ancestor remains reachable at narrow widths                    |
 | 6     | Drawer                                             | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified            |
 | 7     | Cascader, then tree-select                         | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved    |
 | 8     | Calendar view                                      | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract            |
@@ -22,7 +24,8 @@ document proposes order and scope; it does not approve APIs or authorize compone
 New value controls target **Angular 21 first**. Angular 22 and the Nx major upgrade are **deferred** and do not block
 component delivery. Review the shared CVA contract and each feature API before implementation. The earlier
 migration-dependent key/value hold is superseded; preserving its existing FormArray API remains mandatory until a
-compatible migration is approved. Release fixes, security remediation, and pending acceptance remain independent.
+compatible migration is approved. Release fixes, security remediation and remaining acceptance records remain
+independent; YAML work is paused.
 
 ## Datagrid selection execution track
 
@@ -32,21 +35,17 @@ parent owns values, validators and saves. Read the
 [selection delivery plan](design/clr-lift/datagrid-selection-delivery-plan.md) for the complete contract, stories and
 working increments. This track does not reorder unrelated component work or upgrade the platform.
 
-The existing graph remains [#200 local field](https://github.com/wghglory/ngx-lift-workspace/issues/200), followed by
-independent [#201 server pages](https://github.com/wghglory/ngx-lift-workspace/issues/201) and
-[#202 policy create/edit](https://github.com/wghglory/ngx-lift-workspace/issues/202). Start with a working local
-multiple selection form, then extend its behavior. Each ticket includes its own runnable examples, localization, tests
-and public package evidence. PR #199 is already merged; it is historical design work, not the next implementation task.
-Production selection exports are implemented locally. The
-[acceptance record](design/clr-lift/datagrid-selection-acceptance.md) separates automated checks from independent human
-acceptance, CI and release.
+Issues #198, #200, #201 and #202 are closed; the selection exports shipped in `ngx-lift 21.5.0` / `clr-lift 21.4.0` on
+2026-11-09. PR #199 is historical design work, not the next implementation task. The
+[acceptance record](design/clr-lift/datagrid-selection-acceptance.md) separates automated checks from independent
+language approval, the manual assistive-technology waiver, CI and release evidence.
 
 ## Verified starting point and corrections
 
 - Workspace manifest: Angular **21.2.17**, CDK **21.2.10**, Nx and official Nx plugins **22.7.5**, TypeScript **5.9.x**.
 - Installed Clarity **18.4.0** permits Angular/CDK `^21.1.0 || 22`; this is a peer declaration, not rendering evidence.
-- `ngx-lift` is **21.4.0** and `clr-lift` **21.3.0**. Their current broad Angular peers are not proof of Angular 22
-  support.
+- `ngx-lift` is **21.5.0** and `clr-lift` **21.4.0** (published 2026-11-09). Their current broad Angular peers are not
+  proof of Angular 22 support.
 - `toSignalForm(FormGroup)` exposes signals over Reactive Forms. It does not create an Angular Signal Forms `FieldTree`.
 - `cll-key-value-inputs` retains its caller-owned `FormArray`; additive `cll-key-value-control` binds one immutable
   array through ngModel, typed Reactive Forms and `toSignalForm`.
@@ -71,21 +70,25 @@ The maintainer's October 16 direction settles the delivery order:
 3. Revisit Angular 22 and Nx together in a separate platform PR. At that time select mutually supported pinned Angular,
    CDK, Nx, TypeScript, Node, packaging and test tooling versions using current official compatibility guidance. Recheck
    third-party peers and installed declarations before generating migrations. No dependency pins change in this PR.
-4. After the upgrade, add native signal-field support to **every new value control**: key/value value editor, YAML
-   editor, temporal inputs/ranges, cascader, tree-select, and selectable calendar. The viewer, breadcrumbs and drawer
-   have no artificial form value. File-reader and wizard form integration must also be reviewed during this sweep; the
-   wizard hosts fields rather than being a field itself.
+4. After the upgrade, add native signal-field support to **every new value control that is later approved**: key/value
+   value editor, YAML editor (if YAML work resumes), temporal inputs/ranges, cascader, tree-select, and selectable
+   calendar. The viewer, breadcrumbs and drawer have no artificial form value. File-reader and wizard form integration
+   must also be reviewed during this sweep; the wizard hosts fields rather than being a field itself.
 5. Require native value/reset/disabled/readonly/touched/validation/pending and async cancellation tests, real form
    submissions, browser demos and strict installed consumers. Keep Angular 21 CVA behavior until an explicit supported
    version/release decision replaces it. A CVA alone does not establish native signal-field support.
+
+YAML viewer/editor work is paused by maintainer decision on 2026-11-10. The deferred upgrade sweep must not schedule
+YAML API review, implementation or native-field work unless that decision is explicitly reversed.
 
 The [forms contract](design/clr-lift/forms-compatibility-design-spec.md) owns the two phases and acceptance matrix. Its
 October 18 contract revision `1e3ae98` was accepted by the maintainer in chat review: owner writes/reset, composite
 touch, Angular commit timing, validation and payload policy have concrete examples and gates. The additive key/value
 control now supplies three real integration demos and strict installed Angular 21 templates/DOM hosts in zoneless and
-ZoneJS modes. This proves that control's phase-1 integration; native fields and independent human acceptance remain
-separate gates. Compatibility/release policy for the upgrade remains open; the decision to deliver Angular 21 controls
-first is settled.
+ZoneJS modes. This proves that control's phase-1 integration; native fields remain a separate gate for the deferred
+platform upgrade. Independent language acceptance was approved on 2026-11-08 and manual assistive-technology assessment
+was waived on 2026-11-10. Compatibility/release policy for the upgrade remains open; the decision to deliver Angular 21
+controls first is settled.
 
 ## Specifications to review
 
@@ -93,7 +96,7 @@ first is settled.
 | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Shared form behavior and staged integration examples | [Forms compatibility](design/clr-lift/forms-compatibility-design-spec.md)       |
 | Repeating key/value fields                           | [Key/value inputs](design/clr-lift/key-value-inputs-design-spec.md)             |
-| Read, edit, validate, and synchronize YAML           | [YAML editor](design/clr-lift/yaml-editor-design-spec.md)                       |
+| YAML viewer/editor (paused draft)                    | [YAML editor](design/clr-lift/yaml-editor-design-spec.md)                       |
 | Date, time, date-time, ranges, and calendar          | [Temporal controls](design/clr-lift/temporal-controls-design-spec.md)           |
 | Deep folder navigation                               | [Breadcrumbs](design/clr-lift/breadcrumb-design-spec.md)                        |
 | Cascader and tree-select                             | [Hierarchical selection](design/clr-lift/hierarchical-selection-design-spec.md) |
@@ -106,8 +109,8 @@ Each feature moves through **Draft → API reviewed → Implementing → Verifie
 revision it covers; a draft example is not an available export. Changes to approved behavior return to API review. Use
 the [template](design/templates/component-design-spec.md) and [workflow](design/component-development.md).
 
-Review API examples first, then behavior, then implementation. Design YAML synchronization now, but deliver it after the
-editor has its own reliable contract. Calendar reuses date logic without turning the picker into a scheduling product.
+Review API examples first, then behavior, then implementation. YAML viewer/editor work is paused; no synchronization
+design or delivery is scheduled. Calendar reuses date logic without turning the picker into a scheduling product.
 
 No dates or engineering estimates are promised before feature API review. Each implementation increment must build and
 have useful tests; keep migration, new controls, and Postgres integration independently reviewable.
@@ -115,6 +118,7 @@ have useful tests; keep migration, new controls, and Postgres integration indepe
 ## Current validation boundary
 
 The [key/value spec](design/clr-lift/key-value-inputs-design-spec.md#evidence) records the additive control's local
-unit, browser, localization and installed Angular 21 evidence. Other proposed controls remain drafts. Installed Angular
-22 consumers, dedicated large-scale performance measurements, independent human language/accessibility review, CI, merge
-and publication remain separate work.
+unit, browser, localization and installed Angular 21 evidence. Other proposed controls remain drafts; YAML work is
+paused. Installed Angular 22 consumers and dedicated large-scale performance measurements remain separate work.
+Independent language acceptance is approved, manual assistive-technology assessment is waived, and CI, merge and
+publication are recorded in workflow runs and the 2026-11-09 release evidence.

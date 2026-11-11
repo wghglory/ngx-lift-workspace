@@ -1,9 +1,10 @@
 # Datagrid selection implementation and acceptance
 
-Updated October 31, 2026. Scope: [issue #200](https://github.com/wghglory/ngx-lift-workspace/issues/200) and the
-[#201](https://github.com/wghglory/ngx-lift-workspace/issues/201) server-page example. The production increment and the
-server-page fixture/demo are implemented locally and the automated gates below pass. Independent human acceptance and
-publication remain separate.
+Current status — 2026-11-10: issues #198, #200, #201 and #202 are closed, and the selection exports shipped in
+`ngx-lift 21.5.0` / `clr-lift 21.4.0` on 2026-11-09. Language approval, the manual assistive-technology waiver, release
+and CI evidence are owned by the [acceptance contract](../../guides/accessibility-and-localization.md) and the
+[gap register](../../gap-register.md). The sections below preserve the October 31 acceptance evidence as historical
+snapshots.
 
 ## Delivered behavior
 
@@ -117,19 +118,19 @@ its content so a smaller replacement can shrink again, while a filtered or parti
 tallest height it has shown. A page with no supplied rows (an in-flight or initially failed request) also keeps that
 height, so a transient empty inventory does not collapse the grid.
 
-- Independent native-language and manual assistive-technology acceptance are pending under the repository contract.
-  Automated checks do not provide those approvals.
+- Independent language acceptance for all eleven locales was approved on 2026-11-08; manual assistive-technology
+  assessment was waived by the maintainer on 2026-11-10 and is not a pass. Automated checks remain required.
 - Local acceptance does not establish CI at the pull request commit, merge, deployment or npm publication; each requires
-  its own evidence.
+  its own workflow-run evidence.
 - Angular 21 is the supported baseline. No native Signal Forms, SSR/hydration or native virtual-scroll acceptance is
   claimed. Application-scoped ID generation avoids a module-global request counter; this alone is not hydration proof.
 - The local inventory examples intentionally render supplied unpaged rows. #201 adds separate server-page coverage
   below. #202 delivers the data service policy create/edit workflows (caller-written native fields plus reusable
   organization and namespace pickers, detail read, edit baseline, explicit reset without a backend write, and
-  key-only/reference/full-entity save DTOs via mutateResource) and is certified locally; independent human language,
-  assistive-technology and WebKit/CI-at-PR acceptance remain open.
-- No runtime dependency or package version/peer-range change is needed. Release versioning/publication remains an
-  independently authorized release operation.
+  key-only/reference/full-entity save DTOs via mutateResource) and is certified locally. Language approval, the AT
+  waiver and PR/CI evidence are recorded separately; the 2026-11-10 WebKit shard 5 E2E timeouts remain an open CI gap.
+- No runtime dependency or package version/peer-range change is needed. Publication completed on 2026-11-09; see the
+  [gap register](../../gap-register.md) and the workflow runs.
 
 ## Demo feedback follow-up (October 31, 2026)
 
@@ -258,8 +259,9 @@ Warning-only status (near the selection limit) is distinct from eligibility erro
 | Focused demo tests      | Five new Angular unit tests for `DataServicePolicyFormComponent` pass (hydrate, reset restores baseline, ID-only and full-entity save DTOs, unresolved-key block).                                                                                                                                                 |
 | Three-browser journeys  | The policy-form journeys in `datagrid-selection.spec.ts` (hydrate, loading lock, failure/retry, eleven-locale switch, unavailable keys, reset, save) plus a new namespace/policy-name/save/reset journey are defined for Chromium, Firefox and WebKit; Chromium and Firefox run locally, WebKit remains a CI gate. |
 | Localization and source | All eleven dictionaries add the `policyExample.*` keys; displayed source matches the runnable source/template files via the example generator.                                                                                                                                                                     |
-| Independent acceptance  | Independent native-language and assistive-technology acceptance remain open, as do CI-at-PR, WebKit and the npm-publication gate.                                                                                                                                                                                  |
+| Independent acceptance  | Independent language acceptance was approved on 2026-11-08; manual assistive-technology assessment was waived on 2026-11-10 (not a pass). CI-at-PR, WebKit shard 5 and publication evidence are recorded separately.                                                                                               |
 
 Limitations: the example uses checked-in JSON inventories and a simulated save; a real consumer still has to resolve
 keys and persist through its own service. Automated accessibility and the eleven-locale switch are covered by the
-journey suite and recorded; a manual assistive-technology pass and native-speaker review remain separate.
+journey suite and recorded. Independent language acceptance was approved on 2026-11-08; manual assistive-technology
+assessment was waived on 2026-11-10 and is not a pass.

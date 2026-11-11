@@ -94,7 +94,9 @@ installed-package verification and the complete three-browser suite; the
 [demo deployment](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851437) also passed. The earlier
 local revision above records development evidence; it no longer describes unmerged work.
 
-Maintainer/newcomer reading and native-language review remain open. Publication is separate, under the
+Newcomer comprehension remains open. Independent language acceptance was approved on 2026-11-08 and manual
+assistive-technology assessment was waived on 2026-11-10; see the
+[acceptance contract](guides/accessibility-and-localization.md). Publication is separate, under the
 [release policy](DEPLOYMENT.md#version-policy). Later documentation changes require their own PR checks.
 
 ## Contract alignment — November 4-5, 2026
