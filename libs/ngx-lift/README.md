@@ -275,6 +275,47 @@ export class FormExampleComponent {
 }
 ```
 
+Bind validators from a signal when a rule depends on a changing policy. The facade resolves the named control on every
+change, so it also works for controls mounted by `bindIf`:
+
+```typescript
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {toSignalForm} from 'ngx-lift';
+
+@Component({
+  selector: 'app-policy-example',
+  imports: [ReactiveFormsModule],
+  template: `
+    <form [formGroup]="form">
+      <label for="project-code">Project code</label>
+      <input id="project-code" formControlName="projectCode" />
+    </form>
+    <button type="button" (click)="strict.set(!strict())">Toggle policy</button>
+    <p>Valid: {{ sf.fields.projectCode.valid() }}</p>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class PolicyExampleComponent {
+  readonly strict = signal(false);
+  readonly form = new FormGroup({
+    projectCode: new FormControl('', {nonNullable: true}),
+  });
+  readonly sf = toSignalForm(this.form);
+
+  constructor() {
+    this.sf.bindValidators('projectCode', () =>
+      this.strict() ? [Validators.required, Validators.minLength(6)] : null,
+    );
+  }
+}
+```
+
+`sf.controls.projectCode.bindValidators(...)` binds one enhanced control, and the standalone
+`bindControlValidators(form.controls.projectCode, ...)` helper works with any `AbstractControl`. All three return an
+`EffectRef` and accept `emitEvent`, `updateValueAndValidity` and `injector` options. See the
+[interactive validator example](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm).
+
 Signal reads rethrow a terminal error from an observed control event stream instead of falling back to the last value.
 Handle such an error at the read site, or recreate the facade with a healthy control; no `error` signal or `onError`
 option is exposed. See the

@@ -61,6 +61,32 @@ describe('ToSignalFormComponent', () => {
     expect(component.quickForm.pristine).toBe(true);
   });
 
+  it('replaces validators from the strict policy signal and restores the relaxed state on reset', () => {
+    expect(component.policySf.fields.projectCode.valid()).toBe(true);
+
+    component.policyForm.controls.strict.setValue(true);
+    fixture.detectChanges();
+
+    expect(component.policyForm.controls.projectCode.hasError('required')).toBe(true);
+    expect(component.policySf.fields.projectCode.valid()).toBe(false);
+    expect(component.policyState().strict).toBe(true);
+
+    component.policyForm.controls.projectCode.setValue('abc');
+    fixture.detectChanges();
+    expect(component.policyForm.controls.projectCode.hasError('minlength')).toBe(true);
+
+    component.policyForm.controls.projectCode.setValue('billing-api');
+    fixture.detectChanges();
+    expect(component.policySf.fields.projectCode.valid()).toBe(true);
+    expect(component.policyState().value).toBe('billing-api');
+
+    component.resetPolicyDemo();
+    fixture.detectChanges();
+    expect(component.policyForm.controls.strict.value).toBe(false);
+    expect(component.policyForm.controls.projectCode.value).toBe('');
+    expect(component.policySf.fields.projectCode.valid()).toBe(true);
+  });
+
   it('should filter versions reactively when engine changes', () => {
     expect(component.engine()).toBe('');
     expect(component.availableVersions()).toEqual([]);
@@ -366,6 +392,7 @@ describe('ToSignalFormComponent', () => {
     const formProps = component.toSignalFormProperties();
     const bindIfProps = component.bindIfProperties();
     const bindDisabledProps = component.bindDisabledProperties();
+    const bindValidatorsProps = component.bindValidatorsProperties();
     const revalidateProps = component.revalidateProperties();
 
     expect(formProps.map((p) => p.name)).toEqual([
@@ -391,6 +418,15 @@ describe('ToSignalFormComponent', () => {
       'options.emitEvent',
     ]);
     expect(revalidateProps.map((p) => p.name)).toEqual(['target', 'source']);
+    expect(bindValidatorsProps.map((p) => p.name)).toEqual([
+      'control',
+      'validators',
+      'options.emitEvent',
+      'options.updateValueAndValidity',
+    ]);
+    expect(bindValidatorsProps[1].type).toBe(
+      'ValidatorFn | ValidatorFn[] | null | Signal<ValidatorFn | ValidatorFn[] | null> | (() => ValidatorFn | ValidatorFn[] | null)',
+    );
 
     // Guard against the fictional rows introduced in #145.
     expect(formProps.map((p) => p.name)).not.toContain('isSubmitting');
@@ -412,6 +448,7 @@ describe('ToSignalFormComponent', () => {
     expect(formTypes.get('sf.submitValue')).toBe('Signal<TSubmitValue>');
     expect(bindIfProps[0].type).toBe('string');
     expect(revalidateProps[1].type).toBe('string | AbstractControl | Signal<unknown> | (() => unknown)');
+    expect(bindValidatorsProps.map((p) => p.name)).not.toContain('options.asyncValidators');
   });
 
   describe('submission options lab', () => {

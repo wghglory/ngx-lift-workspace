@@ -652,21 +652,24 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': 'Sanitized Submission Payload (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Auto-omits UI-only <code>confirmPassword</code> and omits detached <code>password</code> on Windows auth.',
-  'toSignalForm.patternsTitle': 'Specialized Architectural Patterns',
-  'toSignalForm.pattern1Title': 'Pattern 1: Dependent / Conditional Field Trees (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': 'Form API Guides',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — Conditional field trees',
+  'toSignalForm.apiGuideBindIfDesc':
     'Mounts or unmounts a group of related controls (such as database credentials) together based on a reactive condition. Detached controls are automatically excluded from validation and backend payloads, and their input is preserved across switches when <code>preserveValue: true</code> is configured.',
-  'toSignalForm.pattern2Title': 'Pattern 2: Reactive Disabling & Auto-Reset (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — Reactive disabling',
+  'toSignalForm.apiGuideBindDisabledDesc':
     "Binds a control's enabled/disabled state directly to a boolean signal or reactive getter function (<code>() =&gt; boolean</code>). It supports strongly-typed control keys, direct <code>sf.controls.&lt;name&gt;</code> enhanced controls, and <code>AbstractControl</code> instances. Defaults to <code>emitEvent: true</code> to ensure reactive status signals update synchronously, and supports optional reset-on-disable with a strongly-typed <code>resetValue</code>.",
-  'toSignalForm.pattern3Title': 'Pattern 3: Sanitized Submissions (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signal-driven validators',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Replaces the validator set of a control whenever a signal or getter changes, while keeping the current value. The interactive playground above shows live errors, the active rule and reset.',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — Sanitized submissions',
+  'toSignalForm.apiGuideSubmitValueDesc':
     'Solves the tension between <code>form.value</code> (which drops disabled controls) and <code>form.getRawValue()</code> (which dumps UI-only fields like <code>confirmPassword</code>). <code>sf.submitValue()</code> provides a continuous reactive signal that is always sanitized and ready for submission or <code>resourceAsync</code>.',
-  'toSignalForm.pattern4Title': 'Pattern 4: Asynchronous Feature Gating (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — Async feature gating',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     'In cloud and enterprise applications, available form fields often depend on regional capabilities or feature flags resolved asynchronously from API endpoints. <code>computedAsync</code> derives a reactive <code>Signal&lt;boolean&gt;</code> from the selected region and engine, which passes directly into <code>sf.bindIf</code> to mount or unmount capability controls on the fly.',
-  'toSignalForm.pattern5Title': 'Pattern 5: Cascading Updates & Change Watch (sf.watch)',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — Cascading updates',
+  'toSignalForm.apiGuideWatchDesc':
     "When a form control's change triggers cascading updates in another control (e.g. resetting available versions when the database engine changes), you can use the traditional RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> pattern or the signal-first <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code> utility. <code>watch</code> operates inside an Angular <code>effect()</code> with automatic <code>untracked</code> isolation, preventing <code>NG0600</code> signal write errors while eliminating manual subscription teardown.",
   'toSignalForm.apiReferenceTitle': 'API Reference',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
@@ -700,6 +703,32 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'Target control to re-evaluate validation upon source changes.',
   'toSignalForm.apiRevalidateSources':
     'Control, signal, or getter whose value/status changes trigger target revalidation.',
+  'toSignalForm.validatorsTitle': 'Reactive validators (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Switch a policy on or off to replace the validators of a control from a signal. The current value stays in place while validity is recomputed immediately.',
+  'toSignalForm.validatorsStrictLabel': 'Require a strict project code',
+  'toSignalForm.validatorsStrictHelper':
+    'Strict mode requires a value of at least six lowercase letters, digits or hyphens.',
+  'toSignalForm.validatorsCodeLabel': 'Project code',
+  'toSignalForm.validatorsCodePlaceholder': 'e.g. billing-api',
+  'toSignalForm.validatorsRequired': 'A project code is required in strict mode.',
+  'toSignalForm.validatorsMinLength': 'Use at least 6 characters in strict mode.',
+  'toSignalForm.validatorsPattern': 'Use lowercase letters, digits or hyphens only.',
+  'toSignalForm.validatorsRuleStrict':
+    'Strict rule active: required, at least 6 characters, lowercase letters, digits or hyphens.',
+  'toSignalForm.validatorsRuleRelaxed': 'No rule active: any value is accepted.',
+  'toSignalForm.validatorsValid': 'The current value passes the active rule.',
+  'toSignalForm.validatorsInvalid': 'The current value fails the active rule.',
+  'toSignalForm.validatorsStateTitle': 'Validator binding state',
+  'toSignalForm.validatorsStateDesc': 'Signals follow the control as its validators are replaced',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': 'Target control name or instance whose validators are replaced.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'A validator, an array, null, or a signal or getter returning the active set. The set is replaced whenever the source changes.',
+  'toSignalForm.apiBindValidatorsEmitEvent': 'Whether validity updates emit value and status events.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Whether validity is recomputed immediately after the validators are replaced.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises, Observables, or regular values. It provides flexibility in computational behavior through selectable flattening strategies (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>, provide a function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting the computed value.',

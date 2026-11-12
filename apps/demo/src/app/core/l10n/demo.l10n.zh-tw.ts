@@ -613,21 +613,24 @@ export const zhTWTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': '淨化後的提交載荷 (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     '自動過濾僅用於介面的 <code>confirmPassword</code>，並在 Windows 驗證下自動排除已卸載的 <code>password</code>。',
-  'toSignalForm.patternsTitle': '典型架構模式與最佳實踐',
-  'toSignalForm.pattern1Title': '模式 1：條件控制組與動態掛載 (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': '表單 API 指南',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — 條件控制組與動態掛載',
+  'toSignalForm.apiGuideBindIfDesc':
     '基於響應式條件將一組相關聯的控制項（如資料庫憑據）統一掛載或卸載。卸載後的控制項會自動從表單驗證與後端提交載荷中排除，且配置 <code>preserveValue: true</code> 時可在切換間保留使用者輸入。',
-  'toSignalForm.pattern2Title': '模式 2：響應式停用與值重設 (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — 回應式停用與重設',
+  'toSignalForm.apiGuideBindDisabledDesc':
     '將控制項的啟用/停用狀態直接綁定至布林 Signal 或響應式 getter 函式 (<code>() =&gt; boolean</code>)。支援型別安全的控制項鍵名、直接增強控制項 <code>sf.controls.&lt;name&gt;</code> 以及 <code>AbstractControl</code> 執行個體。預設 <code>emitEvent: true</code> 保證狀態 Signal 同步重新整理，並支援在停用時透過 <code>resetValue</code> 進行自動重設。',
-  'toSignalForm.pattern3Title': '模式 3：資料載荷淨化與提交 (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signal 驅動的校驗器',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    '當 Signal 或 getter 變化時取代控制項的校驗器集合，並保留目前值。上方的互動式範例展示錯誤訊息、目前規則與重設。',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — 淨化後的提交載荷',
+  'toSignalForm.apiGuideSubmitValueDesc':
     '徹底解決 <code>form.value</code>（遺失被停用的有效控制項值）與 <code>form.getRawValue()</code>（混入僅 UI 使用的冗餘欄位如 <code>confirmPassword</code>）之間的矛盾。<code>sf.submitValue()</code> 輸出一個持續響應的 Signal，始終提供乾淨、就緒的提交資料或接入 <code>resourceAsync</code>。',
-  'toSignalForm.pattern4Title': '模式 4：非同步能力與特性門控 (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — 非同步特性門控',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     '在雲端平台與企業應用中，可用表單欄位通常取決於非同步 API 返回的區域能力或特性開關。利用 <code>computedAsync</code> 根據所選區域與引擎衍生出布林 <code>Signal&lt;boolean&gt;</code>，直接接入 <code>sf.bindIf</code> 實現按需動態掛載/卸載進階能力項。',
-  'toSignalForm.pattern5Title': '模式 5：級聯連動與變更監聽 (sf.watch)',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — 級聯更新與變更監聽',
+  'toSignalForm.apiGuideWatchDesc':
     '當某個表單控制項的變更觸發其他控制項的級聯更新時（例如資料庫引擎切換時重設其可用版本清單），可以使用傳統的 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 模式，或者更推薦的 Signal 優先工具 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>。<code>watch</code> 運行在 Angular <code>effect()</code> 內部，帶有自動的 <code>untracked</code> 隔離保護，消除手動取消訂閱的同時，徹底杜絕 <code>NG0600</code> 信號寫入錯誤。',
   'toSignalForm.apiReferenceTitle': 'API 參考',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
@@ -657,6 +660,29 @@ export const zhTWTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': '啟用/停用切換時是否派發值與狀態事件。',
   'toSignalForm.apiRevalidateTarget': '當相依源變化時需要重新執行校驗的目標控制項。',
   'toSignalForm.apiRevalidateSources': '值或狀態變更時觸發目標控制項重新校驗的控制項、Signal 或 getter。',
+  'toSignalForm.validatorsTitle': '回應式校驗器（bindValidators）',
+  'toSignalForm.validatorsDesc':
+    '開啟或關閉原則，透過 Signal 取代控制項的校驗器。目前值會保留，而校驗狀態會立即重新計算。',
+  'toSignalForm.validatorsStrictLabel': '要求嚴格的專案代碼',
+  'toSignalForm.validatorsStrictHelper': '嚴格模式要求至少 6 個字元，且只能使用小寫字母、數字或連字號。',
+  'toSignalForm.validatorsCodeLabel': '專案代碼',
+  'toSignalForm.validatorsCodePlaceholder': '例如 billing-api',
+  'toSignalForm.validatorsRequired': '嚴格模式下專案代碼為必填。',
+  'toSignalForm.validatorsMinLength': '嚴格模式下至少需要 6 個字元。',
+  'toSignalForm.validatorsPattern': '只能使用小寫字母、數字或連字號。',
+  'toSignalForm.validatorsRuleStrict': '嚴格規則已啟用：必填、至少 6 個字元、僅限小寫字母、數字或連字號。',
+  'toSignalForm.validatorsRuleRelaxed': '未啟用規則：任何值都可通過。',
+  'toSignalForm.validatorsValid': '目前值符合已啟用的規則。',
+  'toSignalForm.validatorsInvalid': '目前值不符合已啟用的規則。',
+  'toSignalForm.validatorsStateTitle': '校驗器綁定狀態',
+  'toSignalForm.validatorsStateDesc': '校驗器被取代時，Signal 會同步跟隨控制項狀態',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': '要取代校驗器的目標控制項名稱或執行個體。',
+  'toSignalForm.apiBindValidatorsValidators':
+    '單一校驗器、校驗器陣列、null，或回傳目前校驗器集合的 Signal / getter。來源變更時會取代整個集合。',
+  'toSignalForm.apiBindValidatorsEmitEvent': '校驗狀態更新時是否發出值與狀態事件。',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity': '取代校驗器後是否立即重新計算校驗狀態。',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     '<code>computedAsync</code> 可從 Promise、Observable 或一般值計算結果，支援 switch、merge、concat、exhaust 策略與初始值。傳入回傳 Promise、Observable 或一般值的函式，即可取得發出計算結果的 <code>Signal</code>。',

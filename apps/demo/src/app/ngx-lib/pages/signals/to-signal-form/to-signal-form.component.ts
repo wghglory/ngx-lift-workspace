@@ -197,6 +197,36 @@ export class ToSignalFormComponent {
     ];
   });
 
+  readonly bindValidatorsProperties = computed<ApiProperty[]>(() => {
+    this.translationService.currentLanguage();
+    return [
+      {
+        name: 'control',
+        type: 'string | AbstractControl',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiBindValidatorsControl'),
+      },
+      {
+        name: 'validators',
+        type: 'ValidatorFn | ValidatorFn[] | null | Signal<ValidatorFn | ValidatorFn[] | null> | (() => ValidatorFn | ValidatorFn[] | null)',
+        required: true,
+        description: this.translationService.translate('toSignalForm.apiBindValidatorsValidators'),
+      },
+      {
+        name: 'options.emitEvent',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('toSignalForm.apiBindValidatorsEmitEvent'),
+      },
+      {
+        name: 'options.updateValueAndValidity',
+        type: 'boolean',
+        defaultValue: 'true',
+        description: this.translationService.translate('toSignalForm.apiBindValidatorsUpdateValueAndValidity'),
+      },
+    ];
+  });
+
   // Quickstart minimal form (Beginner friendly)
   readonly quickForm = new FormGroup({
     username: new FormControl('', {
@@ -234,6 +264,24 @@ export class ToSignalFormComponent {
     email: this.quickSf.fields.email.value(),
     notifications: this.quickSf.fields.notifications.value(),
   }));
+
+  // Validator binding lab: a policy control drives the active validator set.
+  readonly policyForm = new FormGroup({
+    projectCode: new FormControl('', {nonNullable: true}),
+    strict: new FormControl(false, {nonNullable: true}),
+  });
+  readonly policySf = toSignalForm(this.policyForm);
+
+  readonly policyState = computed(() => ({
+    strict: this.policySf.fields.strict.value(),
+    value: this.policySf.fields.projectCode.value(),
+    valid: this.policySf.fields.projectCode.valid(),
+    errors: this.policySf.fields.projectCode.errors(),
+  }));
+
+  resetPolicyDemo(): void {
+    this.policySf.reset();
+  }
 
   // Available versions per database engine
   readonly engineVersionMap: Record<string, string[]> = {
@@ -399,6 +447,14 @@ export class ToSignalFormComponent {
   }));
 
   constructor() {
+    // Reactive validator binding: the policy control's value signal replaces the
+    // whole validator set. Switching the policy never clears the typed value.
+    this.policySf.bindValidators('projectCode', () =>
+      this.policySf.fields.strict.value()
+        ? [Validators.required, Validators.minLength(6), Validators.pattern(/^[a-z0-9-]+$/)]
+        : null,
+    );
+
     // Cascading Version Selection when Engine changes (Modern Signal-Based Approach):
     // Uses sf.controls.engine.watch (or sf.watch), which runs inside an Angular effect under the hood.
     // It automatically runs the callback in an untracked context, allowing safe control updates
@@ -711,19 +767,19 @@ this.sf.bindIf(
 this.sf.revalidate('confirmPassword', 'password');`);
 
   readonly bindDisabledSnippet = highlight(`
-// Pattern 1: Strongly-typed control name + reactive getter function + auto-reset
+// Option 1: Strongly-typed control name + reactive getter function + auto-reset
 this.sf.bindDisabled('storageGb', () => this.autoScaling(), {
   resetOnDisable: true,
   resetValue: 250, // Strongly typed to number!
 });
 
-// Pattern 2: Directly on the enhanced control instance (sf.controls.<name>)
+// Option 2: Directly on the enhanced control instance (sf.controls.<name>)
 this.sf.controls.storageGb.bindDisabled(this.autoScaling, {
   resetOnDisable: true,
   resetValue: 250,
 });
 
-// Pattern 3: Passing AbstractControl instance directly
+// Option 3: Passing AbstractControl instance directly
 this.sf.bindDisabled(this.sf.controls.storageGb, () => this.autoScaling(), {
   resetOnDisable: true,
   resetValue: 250,
@@ -732,6 +788,85 @@ this.sf.bindDisabled(this.sf.controls.storageGb, () => this.autoScaling(), {
 // Reactive status is immediately available anywhere via signals:
 // const isLocked = this.sf.fields.storageGb.disabled();
 `);
+
+  readonly bindValidatorsSnippet = highlight(`// Facade method: resolves the named control whenever the policy changes.
+this.policySf.bindValidators('projectCode', () =>
+  this.policySf.fields.strict.value() ? [Validators.required, Validators.minLength(6)] : null,
+);
+
+// Equivalent on an enhanced control, or as a standalone helper:
+// this.policySf.controls.projectCode.bindValidators(() => ...);
+// bindControlValidators(this.policyForm.controls.projectCode, () => ...);`);
+
+  readonly validatorsTs = highlight(`import {computed} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {toSignalForm} from 'ngx-lift';
+
+// The policy toggle and the value share one caller-owned FormGroup.
+readonly policyForm = new FormGroup({
+  projectCode: new FormControl('', {nonNullable: true}),
+  strict: new FormControl(false, {nonNullable: true}),
+});
+readonly policySf = toSignalForm(this.policyForm);
+
+readonly policyState = computed(() => ({
+  strict: this.policySf.fields.strict.value(),
+  value: this.policySf.fields.projectCode.value(),
+  valid: this.policySf.fields.projectCode.valid(),
+  errors: this.policySf.fields.projectCode.errors(),
+}));
+
+constructor() {
+  // The getter is reactive: each policy change replaces the entire validator set.
+  this.policySf.bindValidators('projectCode', () =>
+    this.policySf.fields.strict.value()
+      ? [Validators.required, Validators.minLength(6), Validators.pattern(/^[a-z0-9-]+$/)]
+      : null,
+  );
+
+  // Equivalent public surfaces:
+  // this.policySf.controls.projectCode.bindValidators(() => ...);
+  // bindControlValidators(this.policyForm.controls.projectCode, () => ...);
+}
+
+resetPolicyDemo(): void {
+  this.policySf.reset();
+}`);
+
+  readonly validatorsHtml = highlight(
+    `<form clrForm [formGroup]="policyForm">
+  <clr-toggle-container>
+    <label for="validator-strict-toggle">{{ 'toSignalForm.validatorsStrictLabel' | translate }}</label>
+    <clr-toggle-wrapper>
+      <input id="validator-strict-toggle" type="checkbox" clrToggle [formControl]="policySf.controls.strict" />
+    </clr-toggle-wrapper>
+    <clr-control-helper>{{ 'toSignalForm.validatorsStrictHelper' | translate }}</clr-control-helper>
+  </clr-toggle-container>
+
+  <clr-input-container>
+    <label for="validator-project-code">{{ 'toSignalForm.validatorsCodeLabel' | translate }}</label>
+    <input id="validator-project-code" clrInput [formControl]="policySf.controls.projectCode" />
+    <clr-control-error *clrIfError="'required'">{{ 'toSignalForm.validatorsRequired' | translate }}</clr-control-error>
+    <clr-control-error *clrIfError="'minlength'">{{
+      'toSignalForm.validatorsMinLength' | translate
+    }}</clr-control-error>
+    <clr-control-error *clrIfError="'pattern'">{{ 'toSignalForm.validatorsPattern' | translate }}</clr-control-error>
+  </clr-input-container>
+
+  <p role="status">
+    @if (policySf.fields.strict.value()) {
+      {{ 'toSignalForm.validatorsRuleStrict' | translate }}
+    } @else {
+      {{ 'toSignalForm.validatorsRuleRelaxed' | translate }}
+    }
+  </p>
+
+  <button type="button" class="btn btn-outline" (click)="resetPolicyDemo()">
+    {{ 'toSignalForm.reset' | translate }}
+  </button>
+</form>`,
+    'html',
+  );
 
   readonly submitValueSnippet = highlight(`// 1. Facade initialization (omits confirmPassword from submitValue):
 readonly sf = toSignalForm(this.form, {

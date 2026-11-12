@@ -672,21 +672,24 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': 'sanitäre Submission Payload (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Auto-Omit UI-nur <code>confirmPassword</code> und verzichtet auf losgelöste <code>password</code> auf Windows-Auth.',
-  'toSignalForm.patternsTitle': 'Spezialisierte Architekturmuster',
-  'toSignalForm.pattern1Title': 'Muster 1: Abhängigkeits-/Bedingte Feldbäume (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': 'API-Leitfäden für Formulare',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — Bedingte Feldbäume',
+  'toSignalForm.apiGuideBindIfDesc':
     'Mountet oder unmountet eine Gruppe verwandter Kontrollen (z. B. Datenbankanmeldedaten) basierend auf einer reaktiven Bedingung. Getrennte Kontrollen werden automatisch aus der Validierung und Backend-Payload ausgeschlossen, und ihr Eingabewert wird bei Wechseln bei <code>preserveValue: true</code> beibehalten.',
-  'toSignalForm.pattern2Title': 'Muster 2: Reaktives Deaktivieren & Auto-Reset (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — Reaktives Deaktivieren',
+  'toSignalForm.apiGuideBindDisabledDesc':
     'Bindet den Aktivierungs- / Deaktivierungsstatus einer Kontrolle direkt an einen booleschen Signal oder reaktiven Getter-Funktion (<code>() =&gt; boolean</code>). Es unterstützt stark typisierte Kontrollen-Schlüssel, direkte <code>sf.controls.&lt;name&gt;</code>-erweiterte Kontrollen und <code>AbstractControl</code>-Instanzen. Standardmäßig wird <code>emitEvent: true</code> verwendet, um die reaktive Status-Signale synchron zu aktualisieren, und es wird eine optionale Reset-on-disable-Funktion mit einem stark typisierten <code>resetValue</code> unterstützt.',
-  'toSignalForm.pattern3Title': 'Muster 3: Sanitisierte Einreichungen (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signalgesteuerte Validatoren',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Ersetzt die Validatoren eines Steuerelements, sobald sich ein Signal oder Getter ändert, und behält dabei den aktuellen Wert. Das interaktive Beispiel oben zeigt Fehler, die aktive Regel und das Zurücksetzen.',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — Bereinigte Übermittlungen',
+  'toSignalForm.apiGuideSubmitValueDesc':
     'Löst die Spannung zwischen <code>form.value</code> (die deaktivierte Kontrollen ignoriert) und <code>form.getRawValue()</code> (die UI-Only-Felder wie <code>confirmPassword</code> ausgibt) auf. <code>sf.submitValue()</code> bietet eine kontinuierliche reaktive Signal, die immer gesanitiert und für die Ausgabe oder <code>resourceAsync</code> vorbereitet ist.',
-  'toSignalForm.pattern4Title': 'Muster 4: Asynchrones Feature-Gating (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — Asynchrones Feature-Gating',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     'In Cloud- und Enterprise-Anwendungen sind verfügbare Formfelder oft abhängig von regionalen Fähigkeiten oder Feature-Flags, die asynchron von API-Endpunkten gelöst werden. <code>computedAsync</code> leitet eine reaktive <code>Signal&lt;boolean&gt;</code> aus dem ausgewählten Region und Engine, die direkt in <code>sf.bindIf</code> übertragen wird, um die Fähigkeitskontrollen dynamisch zu mounten oder unmounten.',
-  'toSignalForm.pattern5Title': 'Muster 5: Clarity-Formularcontainer-Parität',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — Kaskadierende Aktualisierungen',
+  'toSignalForm.apiGuideWatchDesc':
     'Wenn ein Formularfeld-Veränderung in eine andere Kontrolle kaskadieren (z. B. die Verfügbare Versionen bei Änderung des Datenbank-Engines) kann man die traditionelle RxJS-<code>valueChanges.pipe(takeUntilDestroyed())</code>-Muster oder das Signal-erst <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>-Utility verwenden. <code>watch</code> läuft innerhalb eines Angular-<code>effect()</code> mit automatischer <code>untracked</code>-Isolation, was <code>NG0600</code>-Signal-Schreibfehler verhindert und die manuelle Abonnierung aufheben vermeidet.',
   'toSignalForm.apiReferenceTitle': 'API-Referenz',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',
@@ -722,6 +725,33 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'Zielsteuerung zur Neubewertung der Validierung bei Quelländerungen.',
   'toSignalForm.apiRevalidateSources':
     'Steuerelement, Signal oder Getter, dessen Wert-/Statusänderung die erneute Validierung des Ziels auslöst.',
+  'toSignalForm.validatorsTitle': 'Reaktive Validatoren (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Schalten Sie eine Richtlinie ein oder aus, um die Validatoren eines Steuerelements über ein Signal zu ersetzen. Der aktuelle Wert bleibt erhalten, während die Gültigkeit sofort neu berechnet wird.',
+  'toSignalForm.validatorsStrictLabel': 'Strengen Projektcode verlangen',
+  'toSignalForm.validatorsStrictHelper':
+    'Im strengen Modus sind mindestens sechs Zeichen aus Kleinbuchstaben, Ziffern oder Bindestrichen erforderlich.',
+  'toSignalForm.validatorsCodeLabel': 'Projektcode',
+  'toSignalForm.validatorsCodePlaceholder': 'z. B. billing-api',
+  'toSignalForm.validatorsRequired': 'Im strengen Modus ist ein Projektcode erforderlich.',
+  'toSignalForm.validatorsMinLength': 'Im strengen Modus sind mindestens 6 Zeichen erforderlich.',
+  'toSignalForm.validatorsPattern': 'Nur Kleinbuchstaben, Ziffern oder Bindestriche verwenden.',
+  'toSignalForm.validatorsRuleStrict':
+    'Strenge Regel aktiv: Pflichtfeld, mindestens 6 Zeichen, nur Kleinbuchstaben, Ziffern oder Bindestriche.',
+  'toSignalForm.validatorsRuleRelaxed': 'Keine Regel aktiv: jeder Wert wird akzeptiert.',
+  'toSignalForm.validatorsValid': 'Der aktuelle Wert erfüllt die aktive Regel.',
+  'toSignalForm.validatorsInvalid': 'Der aktuelle Wert erfüllt die aktive Regel nicht.',
+  'toSignalForm.validatorsStateTitle': 'Zustand der Validatorenbindung',
+  'toSignalForm.validatorsStateDesc': 'Signale folgen dem Steuerelement, während seine Validatoren ersetzt werden',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl':
+    'Name oder Instanz des Zielsteuerelements, dessen Validatoren ersetzt werden.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'Ein Validator, ein Array, null oder ein Signal bzw. Getter, der die aktive Menge zurückgibt. Bei jeder Änderung der Quelle wird die Menge ersetzt.',
+  'toSignalForm.apiBindValidatorsEmitEvent': 'Ob Aktualisierungen der Gültigkeit Wert- und Statusereignisse auslösen.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Ob die Gültigkeit direkt nach dem Ersetzen der Validatoren neu berechnet wird.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'Die <code>computedAsync</code>-Funktion ist ein vielseitiges Werkzeug, das Werte aus Promises, Observables oder regulären Werten berechnet. Es bietet Flexibilität in der Berechnung durch auswählbare Flattening-Strategien (switch, merge, concat, exhaust) und eine Anfangswertzuweisung. Um <code>computedAsync</code> zu nutzen, muss eine Funktion zurückgegeben werden, die einen Promise, Observable oder regulären Wert zurückgibt. Es gibt dann einen <code>Signal</code>, der den berechneten Wert ausgibt.',

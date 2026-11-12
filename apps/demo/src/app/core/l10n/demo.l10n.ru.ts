@@ -660,21 +660,24 @@ export const ruTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': 'Рационализованная рабочая нагрузка на представление документации (Sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Auto-omits UI-только <code>confirmPassword</code> и опущенный <code>password</code> на Windows auth.',
-  'toSignalForm.patternsTitle': 'Специализированные архитектурные шаблоны',
-  'toSignalForm.pattern1Title': 'Шаблон 1: Условное добавление полей с bindIf',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': 'Руководства по API форм',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — Условные деревья полей',
+  'toSignalForm.apiGuideBindIfDesc':
     'Привязывает группу связанных контролов (например, данные базы данных) вместе на основе реактивного условия. Отсоединённые контролы автоматически исключаются из проверки и отправки на сервер, и их ввод сохраняется при переключении, когда <code>preserveValue: true</code> настроен.',
-  'toSignalForm.pattern2Title': 'Шаблон 2: Условное отключение с bindDisabled',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — Реактивное отключение',
+  'toSignalForm.apiGuideBindDisabledDesc':
     'Привязывает состояние включения/выключения контрола напрямую к булевскому сигналу или реактивному получателю функции (<code>() =&gt; boolean</code>). Поддерживает сильнотипизированные ключи контролов, прямые <code>sf.controls.&lt;name&gt;</code> улучшенные контролы и <code>AbstractControl</code> инстансы. По умолчанию <code>emitEvent: true</code> для обеспечения синхронного обновления реактивных сигналов статуса, и поддерживает опциональное сброс при отключении с сильнотипизированным <code>resetValue</code>.',
-  'toSignalForm.pattern3Title': 'Шаблон 3: Отправка значения через submitValue',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Валидаторы на основе сигналов',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Заменяет набор валидаторов элемента управления при изменении сигнала или getter, сохраняя текущее значение. Интерактивный пример выше показывает ошибки, активное правило и сброс.',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — Очищенные отправки',
+  'toSignalForm.apiGuideSubmitValueDesc':
     'Решает противоречие между <code>form.value</code> (который исключает отключенные контролы) и <code>form.getRawValue()</code> (который выдает UI-поле, например, <code>confirmPassword</code>). <code>sf.submitValue()</code> предоставляет реактивный сигнал, который всегда очищен и готов к отправке или <code>resourceAsync</code>.',
-  'toSignalForm.pattern4Title': 'Шаблон 4: Асинхронные данные с computedAsync и bindIf',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — Асинхронное управление функциями',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     'В облаке и в корпоративных приложениях, доступные поля форм часто зависят от региональных возможностей или флагов функций, разрешенных асинхронно из API-концовок. <code>computedAsync</code> производит реактивный <code>Signal&lt;boolean&gt;</code> из выбранного региона и движка, который передаётся напрямую в <code>sf.bindIf</code> для привязки или отвязки возможностей контролей в режиме реального времени.',
-  'toSignalForm.pattern5Title': 'Шаблон 5: Паритет контейнеров форм Clarity',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — Каскадные обновления',
+  'toSignalForm.apiGuideWatchDesc':
     'Когда изменение контрола формы запускает цепную обновление в другом контроле (например, сброс доступных версий при изменении движка базы данных), можно использовать традиционный паттерн RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> или утилиту сигнал-в-начале <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>. <code>watch</code> работает внутри Angular <code>effect()</code> с автоматической <code>untracked</code> изоляцией, предотвращая ошибки <code>NG0600</code> при записи сигналов, при этом убирая ручное разрушение подписок.',
   'toSignalForm.apiReferenceTitle': 'API Ссылка',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm (форма, опции?)',
@@ -715,6 +718,32 @@ export const ruTranslations: Record<string, string> = {
     'Предназначенный контроль для повторной оценки достоверности данных при изменении источников.',
   'toSignalForm.apiRevalidateSources':
     'Элемент управления, сигнал или getter, изменение значения/статуса которого запускает повторную проверку целевого элемента.',
+  'toSignalForm.validatorsTitle': 'Реактивные валидаторы (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Включите или отключите политику, чтобы заменить валидаторы элемента управления из сигнала. Текущее значение сохраняется, а проверка выполняется заново сразу же.',
+  'toSignalForm.validatorsStrictLabel': 'Требовать строгий код проекта',
+  'toSignalForm.validatorsStrictHelper':
+    'В строгом режиме требуется не менее шести символов: строчных букв, цифр или дефисов.',
+  'toSignalForm.validatorsCodeLabel': 'Код проекта',
+  'toSignalForm.validatorsCodePlaceholder': 'например, billing-api',
+  'toSignalForm.validatorsRequired': 'В строгом режиме код проекта обязателен.',
+  'toSignalForm.validatorsMinLength': 'В строгом режиме используйте не менее 6 символов.',
+  'toSignalForm.validatorsPattern': 'Используйте только строчные буквы, цифры или дефисы.',
+  'toSignalForm.validatorsRuleStrict':
+    'Строгое правило активно: обязательное поле, не менее 6 символов, только строчные буквы, цифры или дефисы.',
+  'toSignalForm.validatorsRuleRelaxed': 'Правило не активно: принимается любое значение.',
+  'toSignalForm.validatorsValid': 'Текущее значение соответствует активному правилу.',
+  'toSignalForm.validatorsInvalid': 'Текущее значение не соответствует активному правилу.',
+  'toSignalForm.validatorsStateTitle': 'Состояние привязки валидаторов',
+  'toSignalForm.validatorsStateDesc': 'Сигналы следуют за элементом управления при замене его валидаторов',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': 'Имя или экземпляр целевого элемента управления, чьи валидаторы заменяются.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'Один валидатор, массив, null или сигнал / getter, возвращающий активный набор. При каждом изменении источника набор заменяется целиком.',
+  'toSignalForm.apiBindValidatorsEmitEvent': 'Создают ли обновления проверки события значения и состояния.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Выполняется ли проверка заново сразу после замены валидаторов.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'Функция <code>computedAsync</code> — универсальная утилита, позволяющая вычислять значения из Promises, Observables или обычных значений. Она предоставляет гибкость в поведении вычисления через выборочные стратегии сглаживания (switch, merge, concat, exhaust) и присвоение начального значения. Для использования <code>computedAsync</code> нужно предоставить функцию, возвращающую Promise, Observable или обычное значение. Она затем возвращает <code>Signal</code>, отправляющий вычисленное значение.',
