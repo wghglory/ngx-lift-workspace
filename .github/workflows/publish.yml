@@ -36,9 +36,10 @@ on:
       - 'ngx-lift@*'
       - 'clr-lift@*'
 
-# Serialize publications for a tag; never cancel one already in progress.
+# One publication at a time across tags and manual dispatch, preserving the
+# ngx-lift-before-clr-lift order; never cancel one already in progress.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: publish-libraries
   cancel-in-progress: false
 
 env:

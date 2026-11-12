@@ -127,6 +127,9 @@ test('real fields have unique names, descriptions and light-theme accessibility'
 });
 
 test('real fields reflow at narrow widths in dark theme and pass automated accessibility', async ({page}, testInfo) => {
+  const model = page.getByTestId('selection-model');
+  await model.getByRole('button', {name: 'Submit', exact: true}).click();
+  await expect(model.locator('clr-control-error')).toBeVisible();
   await page.getByRole('button', {name: 'Toggle to dark theme'}).click();
   await page.setViewportSize({width: 390, height: 844});
   await expectAccessible(page, testInfo, 'main');

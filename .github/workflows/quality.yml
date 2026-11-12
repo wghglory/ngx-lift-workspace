@@ -201,6 +201,8 @@ jobs:
               if [ "$attempt" -eq 3 ]; then
                 exit 1
               fi
+              # Give a transient apt mirror/DNS failure time to recover.
+              sleep $((attempt * 10))
             done
           fi
       - name: Compute nx command
