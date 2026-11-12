@@ -669,21 +669,24 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': 'Carga de pago de la presentación Sanitized (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Autoomites UI-sólo <code>confirmPassword</code> y omites <code>password</code> separados en Windows auth.',
-  'toSignalForm.patternsTitle': 'Patrones arquitectónicos especializados',
-  'toSignalForm.pattern1Title': 'Patrón 1: Árboles de campo dependientes / condicionados (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': 'Guías de API de formularios',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — Árboles de campos condicionales',
+  'toSignalForm.apiGuideBindIfDesc':
     'Crea o destruye un grupo de controles relacionados (como credenciales de base de datos) juntos basándose en una condición reactiva. Los controles desacoplados se excluyen automáticamente de la validación y los payloads del backend, y su entrada se preserva durante los cambios cuando <code>preserveValue: true</code> está configurado.',
-  'toSignalForm.pattern2Title': 'Patrón 2: Deshabilitador reactivo AutoReset (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — Desactivación reactiva',
+  'toSignalForm.apiGuideBindDisabledDesc':
     'Vincula directamente el estado habilitado/deshabilitado de un control a una señal booleana o a una función de obtención reactiva (<code>() =&gt; boolean</code>). Soporta claves de control de tipo fuerte, controles mejorados directamente de <code>sf.controls.&lt;name&gt;</code>, y instancias de <code>AbstractControl</code>. Predeterminado es <code>emitEvent: true</code> para garantizar que los señales de estado reactivas se actualicen de forma sincrónica, y soporta opcionalmente la reinicialización al deshabilitar con una valor de tipo fuerte <code>resetValue</code>.',
-  'toSignalForm.pattern3Title': 'Patrón 3: Submisiones Sanitized (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Validadores reactivos',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Reemplaza el conjunto de validadores de un control cada vez que cambia una señal o un getter, conservando el valor actual. El ejemplo interactivo de arriba muestra los errores, la regla activa y el reinicio.',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — Envíos depurados',
+  'toSignalForm.apiGuideSubmitValueDesc':
     'Resuelve la tensión entre <code>form.value</code> (que descarta controles deshabilitados) y <code>form.getRawValue()</code> (que incluye campos de UI como <code>confirmPassword</code>). <code>sf.submitValue()</code> proporciona una señal reactiva continua que siempre está limpiada y lista para el envío o <code>resourceAsync</code>.',
-  'toSignalForm.pattern4Title': 'Patrón 4: Gato de la característica acrónica (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — Control asíncrono de funcionalidades',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     'En aplicaciones en la nube y empresariales, los campos de formulario disponibles a menudo dependen de capacidades regionales o banderas de características resueltas asincrónicamente desde puntos finales de API. <code>computedAsync</code> deriva una señal reactiva <code>Signal&lt;boolean&gt;</code> desde la región seleccionada y el motor, que se pasa directamente a <code>sf.bindIf</code> para montar o desmontar controles de capacidad en tiempo real.',
-  'toSignalForm.pattern5Title': 'Patrón 5: Actualizaciones de cascada',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — Actualizaciones en cascada',
+  'toSignalForm.apiGuideWatchDesc':
     'Cuando un cambio en un control de formulario desencadena actualizaciones en otro control (por ejemplo, reiniciar versiones disponibles cuando cambia el motor de base de datos), puedes usar el patrón tradicional de RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> o la utilidad de tipo señal primero <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>. <code>watch</code> opera dentro de una <code>effect()</code> de Angular con aislamiento automático <code>untracked</code>, evitando errores de señal de escritura <code>NG0600</code> mientras elimina la desinstalación manual de suscripciones.',
   'toSignalForm.apiReferenceTitle': 'Referencia API',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',

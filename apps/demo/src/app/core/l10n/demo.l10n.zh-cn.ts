@@ -615,21 +615,24 @@ export const zhCNTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': '净化后的提交载荷 (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     '自动过滤仅用于界面的 <code>confirmPassword</code>，并在 Windows 认证下自动剥离已卸载的 <code>password</code>。',
-  'toSignalForm.patternsTitle': '典型架构模式与最佳实践',
-  'toSignalForm.pattern1Title': '模式 1：条件控制组与动态挂载 (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': '表单 API 指南',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — 条件控制组与动态挂载',
+  'toSignalForm.apiGuideBindIfDesc':
     '基于响应式条件将一组相关联的控件（如数据库凭据）统一挂载或卸载。卸载后的控件会自动从表单校验与后端提交载荷中排除，且配置 <code>preserveValue: true</code> 时可在切换间保留用户输入。',
-  'toSignalForm.pattern2Title': '模式 2：响应式禁用与值重置 (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — 响应式禁用与重置',
+  'toSignalForm.apiGuideBindDisabledDesc':
     '将控件的启用/禁用状态直接绑定至布尔 Signal 或响应式 getter 函数 (<code>() =&gt; boolean</code>)。支持类型安全的控件键名、直接增强控件 <code>sf.controls.&lt;name&gt;</code> 以及 <code>AbstractControl</code> 实例。默认 <code>emitEvent: true</code> 保证状态 Signal 同步刷新，并支持在禁用时通过 <code>resetValue</code> 进行自动重置。',
-  'toSignalForm.pattern3Title': '模式 3：数据载荷净化与提交 (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signal 驱动的校验器',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    '当 Signal 或 getter 变化时替换控件的校验器集合，并保留当前值。上方的交互式示例展示了错误提示、当前规则和重置。',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — 净化后的提交载荷',
+  'toSignalForm.apiGuideSubmitValueDesc':
     '彻底解决 <code>form.value</code>（丢失被禁用的有效控件值）与 <code>form.getRawValue()</code>（混入仅 UI 使用的冗余字段如 <code>confirmPassword</code>）之间的矛盾。<code>sf.submitValue()</code> 输出一个持续响应的 Signal，始终提供干净、就绪的提交数据或接入 <code>resourceAsync</code>。',
-  'toSignalForm.pattern4Title': '模式 4：异步能力与特性门控 (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — 异步特性门控',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     '在云平台与企业应用中，可用表单字段通常取决于异步 API 返回的区域能力或特性开关。利用 <code>computedAsync</code> 根据所选地域与引擎衍生出布尔 <code>Signal&lt;boolean&gt;</code>，直接接入 <code>sf.bindIf</code> 实现按需动态挂载/卸载高级能力项。',
-  'toSignalForm.pattern5Title': '模式 5：级联联动与变更监听 (sf.watch)',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — 级联更新与变更监听',
+  'toSignalForm.apiGuideWatchDesc':
     '当某个表单控件的变更触发其他控件的级联更新时（例如数据库引擎切换时重置其可用版本列表），可以使用传统的 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 模式，或者更推荐的 Signal 优先工具 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>。<code>watch</code> 运行在 Angular <code>effect()</code> 内部，带有自动的 <code>untracked</code> 隔离保护，消除手动取消订阅的同时，彻底杜绝 <code>NG0600</code> 信号写入错误。',
   'toSignalForm.apiReferenceTitle': 'API 参考',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',

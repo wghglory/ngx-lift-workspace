@@ -767,19 +767,19 @@ this.sf.bindIf(
 this.sf.revalidate('confirmPassword', 'password');`);
 
   readonly bindDisabledSnippet = highlight(`
-// Pattern 1: Strongly-typed control name + reactive getter function + auto-reset
+// Option 1: Strongly-typed control name + reactive getter function + auto-reset
 this.sf.bindDisabled('storageGb', () => this.autoScaling(), {
   resetOnDisable: true,
   resetValue: 250, // Strongly typed to number!
 });
 
-// Pattern 2: Directly on the enhanced control instance (sf.controls.<name>)
+// Option 2: Directly on the enhanced control instance (sf.controls.<name>)
 this.sf.controls.storageGb.bindDisabled(this.autoScaling, {
   resetOnDisable: true,
   resetValue: 250,
 });
 
-// Pattern 3: Passing AbstractControl instance directly
+// Option 3: Passing AbstractControl instance directly
 this.sf.bindDisabled(this.sf.controls.storageGb, () => this.autoScaling(), {
   resetOnDisable: true,
   resetValue: 250,
@@ -788,6 +788,15 @@ this.sf.bindDisabled(this.sf.controls.storageGb, () => this.autoScaling(), {
 // Reactive status is immediately available anywhere via signals:
 // const isLocked = this.sf.fields.storageGb.disabled();
 `);
+
+  readonly bindValidatorsSnippet = highlight(`// Facade method: resolves the named control whenever the policy changes.
+this.policySf.bindValidators('projectCode', () =>
+  this.policySf.fields.strict.value() ? [Validators.required, Validators.minLength(6)] : null,
+);
+
+// Equivalent on an enhanced control, or as a standalone helper:
+// this.policySf.controls.projectCode.bindValidators(() => ...);
+// bindControlValidators(this.policyForm.controls.projectCode, () => ...);`);
 
   readonly validatorsTs = highlight(`import {computed} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';

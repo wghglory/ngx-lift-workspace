@@ -173,6 +173,11 @@ strict and relaxed rule status, valid and invalid state badges, and the state in
 button reuses `toSignalForm.reset`. Every message ships in en, zh-CN, zh-TW, de, es, fr, ja, ko, nl, pt-BR and ru;
 independent human language acceptance for these new strings is a separate gate.
 
+The API guide cards are named after their APIs rather than numbered patterns: the section title is `Form API Guides`,
+each card title leads with its API name, and `bindValidators` is the third card after `bindIf` and `bindDisabled`,
+pointing to the interactive playground above. The `toSignalForm.apiGuide*` section and card titles plus the validator
+card description ship in all eleven locales; independent human language approval for them is an open gate too.
+
 A labelled `clrToggle` switches the policy with keyboard Space and a labelled `clrInput` accepts typed values, blur,
 clearing and correction. Clarity containers own programmatic labels, descriptions and validation-error associations; IDs
 are unique on the page. The active rule is a `role="status"` region that changes only when the policy changes. The
@@ -222,12 +227,13 @@ and a manual assistive-technology decision remain separate gates. This does not 
 Forms acceptance.
 
 Validator-binding demo evidence (November 12, 2026): `nx test demo` passes 306 unit cases including validator
-replacement, error recovery and reset; `i18n-check` reports zero errors with 2333 keys complete in all eleven locales;
-the production demo build succeeds; `signal-forms.spec.ts` passes 51 browser cases across Chromium, Firefox and WebKit,
-covering the keyboard journey, API reference rows, all-locale rendering and light/dark accessibility checks; the
-route-derived `accessibility.spec.ts` scans pass for this page in both themes. After rebuilding `ngx-lift` and packing
-the tarball, `to-signal-form-browser.mjs` also passes the facade method and the standalone helper in zoneless and ZoneJS
-modes. Independent human language approval for the 20 new strings is not yet recorded, and the 2026-11-10
-assistive-technology waiver is not a pass. Full `verify:packages` could not complete because its isolated `pnpm install`
-cannot reach `registry.npmjs.org` in this environment (see the mirror decision in G-45). The packed-consumer harness
-used the same rebuilt tarball and both rendering modes with workspace dependencies linked locally.
+replacement, error recovery and reset; `i18n-check` reports zero errors with 2335 keys complete in all eleven locales;
+the production demo build succeeds; `signal-forms.spec.ts` passes 54 browser cases across Chromium, Firefox and WebKit,
+covering the keyboard journey, API reference rows, API guide naming and order, all-locale rendering and light/dark
+accessibility checks; the route-derived `accessibility.spec.ts` scans pass for this page in both themes. After
+rebuilding `ngx-lift` and packing the tarball, `to-signal-form-browser.mjs` also passes the facade method and the
+standalone helper in zoneless and ZoneJS modes. Independent human language approval for the new and rewritten strings is
+not yet recorded, and the 2026-11-10 assistive-technology waiver is not a pass. Full `verify:packages` could not
+complete because its isolated `pnpm install` cannot reach `registry.npmjs.org` in this environment (see the mirror
+decision in G-45). The packed-consumer harness used the same rebuilt tarball and both rendering modes with workspace
+dependencies linked locally.

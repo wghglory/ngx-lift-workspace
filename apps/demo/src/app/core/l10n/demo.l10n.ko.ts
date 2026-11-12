@@ -646,21 +646,24 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': '정화된 제출 데이터 (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Windows 인증 시 UI만 사용하는 <code>confirmPassword</code>를 자동으로 생략하고, 분리된 <code>password</code>를 생략합니다.',
-  'toSignalForm.patternsTitle': '전용 아키텍처 패턴',
-  'toSignalForm.pattern1Title': '패턴 1: 의존성/조건부 필드 트리 (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': '폼 API 가이드',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — 조건부 필드 트리',
+  'toSignalForm.apiGuideBindIfDesc':
     '반응형 조건에 따라 관련 제어 요소 그룹(예: 데이터베이스 인증)을 마운트하거나 언마운트합니다. 분리된 제어 요소는 자동으로 검증 및 백엔드 데이터에서 제외되며, <code>preserveValue: true</code>가 설정된 경우 입력값이 스위치 전환 시 유지됩니다.',
-  'toSignalForm.pattern2Title': '패턴 2: 반응형 비활성화 및 자동 리셋 (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — 반응형 비활성화',
+  'toSignalForm.apiGuideBindDisabledDesc':
     '제어 요소의 활성화/비활성화 상태를 boolean 신호 또는 반응형 가져오기 함수(<code>() =&gt; boolean</code>)에 직접 바인드합니다. 강한 타입 제어 키, 직접 <code>sf.controls.&lt;name&gt;</code> 강화된 제어 요소, 및 <code>AbstractControl</code> 인스턴스를 지원합니다. 기본값은 <code>emitEvent: true</code>로 설정되어 반응형 상태 신호가 동기화적으로 업데이트되도록 보장합니다. 비활성화 시 자동 리셋을 지원하며, 강한 타입 <code>resetValue</code>를 사용할 수 있습니다.',
-  'toSignalForm.pattern3Title': '패턴 3: 정화된 제출 (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signal 기반 유효성 검사기',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Signal 또는 getter 가 변경될 때마다 컨트롤의 유효성 검사기 집합을 교체하며 현재 값은 유지합니다. 위의 대화형 데모에서 오류, 활성 규칙, 초기화를 확인할 수 있습니다.',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — 정리된 제출 값',
+  'toSignalForm.apiGuideSubmitValueDesc':
     '<code>form.value</code>는 비활성화된 컨트롤을 제외하고, <code>form.getRawValue()</code>는 <code>confirmPassword</code> 같은 UI 전용 필드도 포함합니다. <code>sf.submitValue()</code>는 제출이나 <code>resourceAsync</code>에 바로 사용할 수 있도록 정리된 값을 반응형 signal로 제공합니다.',
-  'toSignalForm.pattern4Title': '패턴 4: 비동기 기능 락 (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — 비동기 기능 게이팅',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     '클라우드 및 엔터프라이즈 애플리케이션에서 사용 가능한 폼 필드는 지역 기능성 또는 비동기로 해결되는 API 엔드포인트에서 해소되는 기능 락에 따라 종종 달라집니다. <code>computedAsync</code>은 선택된 지역 및 엔진에서 반응형 <code>Signal&lt;boolean&gt;</code>를 파생시켜, <code>sf.bindIf</code>에 직접 전달하여 실시간으로 기능 제어를 마운트하거나 언마운트할 수 있도록 합니다.',
-  'toSignalForm.pattern5Title': '패턴 5: 쇼트크리프 업데이트 및 변경 감시 (sf.watch)',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — 연쇄 업데이트와 변경 감시',
+  'toSignalForm.apiGuideWatchDesc':
     '폼 컨트롤의 변경이 다른 컨트롤에 쇼트크리프 업데이트를 유발할 경우(예: 데이터베이스 엔진이 변경될 때 사용 가능한 버전이 재설정될 수 있음), 전통적인 RxJS <code>valueChanges.pipe(takeUntilDestroyed())</code> 패턴 또는 신호 중심의 <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code> 유틸리티를 사용할 수 있습니다. <code>watch</code>는 Angular의 <code>effect()</code> 내에서 작동하며 자동 <code>untracked</code> 고립을 제공하여 <code>NG0600</code> 신호 쓰기 오류를 방지하면서 수동 구독 정리 작업을 제거합니다.',
   'toSignalForm.apiReferenceTitle': 'API 참조',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',

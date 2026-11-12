@@ -650,21 +650,24 @@ export const jaTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': 'クリーンアップされた送信パラメータ (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Windows認証では、UIのみの <code>confirmPassword</code> を自動的に省略し、分離された <code>password</code> を省略します。',
-  'toSignalForm.patternsTitle': '専用のアーキテクチャパターン',
-  'toSignalForm.pattern1Title': 'パターン1: 依存/条件付きフィールドツリー (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': 'フォーム API ガイド',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — 条件付きフィールドツリー',
+  'toSignalForm.apiGuideBindIfDesc':
     '反復条件に基づいて関連するコントロール（例：データベース認証）をマウントまたはアンマウントします。デタッチされたコントロールは自動的に検証から除外され、設定された <code>preserveValue: true</code> でスイッチ時に入力が保持されます。',
-  'toSignalForm.pattern2Title': 'パターン2: リアクティブな無効化と自動リセット (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — リアクティブな無効化',
+  'toSignalForm.apiGuideBindDisabledDesc':
     'コントロールの有効/無効状態をブール値シグナルまたはリアクティブな取得関数 (<code>() =&gt; boolean</code>) に直接バインドします。強型のコントロールキー、直接 <code>sf.controls.&lt;name&gt;</code> 増強されたコントロール、および <code>AbstractControl</code> インスタンスをサポートします。デフォルトでは <code>emitEvent: true</code> で設定され、リアクティブなステータスシグナルが同期的に更新されるようにします。強型の <code>resetValue</code> を使用してオプションで無効化時にリセットすることも可能です。',
-  'toSignalForm.pattern3Title': 'パターン3: クリーンアップされた送信 (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signal 駆動のバリデーター',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Signal または getter が変化するたびにコントロールのバリデーター集合を置き換え、現在の値は保持します。上の対話型デモでエラー、有効なルール、リセットを確認できます。',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — 整備された送信データ',
+  'toSignalForm.apiGuideSubmitValueDesc':
     'form.value（無効なコントロールを削除）と form.getRawValue()（UIのみのフィールド、例: <code>confirmPassword</code> を含む）の間の緊張を解決します。<code>sf.submitValue()</code> は連続的なリアクティブなシグナルを提供し、常にクリーンアップされ、送信または <code>resourceAsync</code> に準備されています。',
-  'toSignalForm.pattern4Title': 'パターン4: 非同期機能ゲート (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — 非同期機能ゲート',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     'クラウドや企業アプリケーションでは、利用可能なフォームフィールドはしばしば地域の能力や非同期で解決される機能フラグに依存します。<code>computedAsync</code>は選択された地域とエンジンからリアクティブな<code>Signal&lt;boolean&gt;</code>を導出します。これは直接<code>sf.bindIf</code>に渡され、機能コントロールを即座にマウントまたはアンマウントします。',
-  'toSignalForm.pattern5Title': 'パターン5: キャスケーディングアップデートと変更ウォッチ (sf.watch)',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — 連鎖更新と変更監視',
+  'toSignalForm.apiGuideWatchDesc':
     'フォームコントロールの変更が他のコントロールにキャスケーディングアップデートを引き起こす場合（例: データベースエンジンが変更されたときに有効なバージョンがリセットされる場合）、従来のRxJSパターン<code>valueChanges.pipe(takeUntilDestroyed())</code>またはシグナルファーストの<code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>ユーティリティを使用できます。<code>watch</code>はAngularの<code>effect()</code>内で動作し、自動的に<code>untracked</code>の隔離を提供し、<code>NG0600</code>のシグナル書き込みエラーを防ぎ、手動の購読クリーンアップを排除します。',
   'toSignalForm.apiReferenceTitle': 'API参照',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',

@@ -665,21 +665,24 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.sanitizedPayload': 'Gesanctioneerde payload voor indiening (sf.submitValue)',
   'toSignalForm.sanitizedDesc':
     'Auto-omits UI-alleen <code>confirmPassword</code> en laat vrijstaande <code>password</code> op Windows-auth.',
-  'toSignalForm.patternsTitle': 'Gespecialiseerde architecturale patronen',
-  'toSignalForm.pattern1Title': 'Patroon 1: afhankelijke / voorwaardelijke veldbomen (bindIf)',
-  'toSignalForm.pattern1Desc':
+  'toSignalForm.apiGuidesTitle': 'API-gidsen voor formulieren',
+  'toSignalForm.apiGuideBindIfTitle': 'bindIf — Voorwaardelijke veldbomen',
+  'toSignalForm.apiGuideBindIfDesc':
     'Bouwt of ontkoppelt een groep gerelateerde controles (zoals databasegegevens) op basis van een reaktieve voorwaarde. Ontkoppelde controles worden automatisch uitgesloten uit validatie en backend-uitvoer, en hun invoer wordt behouden wanneer <code>preserveValue: true</code> is geconfigureerd.',
-  'toSignalForm.pattern2Title': 'Patroon 2: Reactive uitschakelen en automatisch herstellen (bindDisabled)',
-  'toSignalForm.pattern2Desc':
+  'toSignalForm.apiGuideBindDisabledTitle': 'bindDisabled — Reactief uitschakelen',
+  'toSignalForm.apiGuideBindDisabledDesc':
     'Bindeert de ingeschakelde/uitgeschakelde toestand van een controle direct aan een boolean-signal of reaktieve getterfunctie (<code>() =&gt; boolean</code>). Het ondersteunt sterk typerde controle-sleutels, direct <code>sf.controls.&lt;name&gt;</code> versterkte controles, en <code>AbstractControl</code>-instanties. Standaard is <code>emitEvent: true</code> om te zorgen dat reaktieve status-signalen synchrone wijzigingen doorlaten, en ondersteunt optionele reset bij uitgeschakeling met een sterk typerde <code>resetValue</code>.',
-  'toSignalForm.pattern3Title': 'Patroon 3: Sanitaire indieningen (sf.submitValue)',
-  'toSignalForm.pattern3Desc':
+  'toSignalForm.apiGuideBindValidatorsTitle': 'bindValidators / bindControlValidators — Signaalgstuurde validators',
+  'toSignalForm.apiGuideBindValidatorsDesc':
+    'Vervangt de validators van een besturingselement zodra een signaal of getter verandert, met behoud van de huidige waarde. Het interactieve voorbeeld hierboven toont fouten, de actieve regel en herstellen.',
+  'toSignalForm.apiGuideSubmitValueTitle': 'sf.submitValue — Opgeschoonde indieningen',
+  'toSignalForm.apiGuideSubmitValueDesc':
     'Oplost de spanning tussen <code>form.value</code> (die uitgeschakelde controles verlaat) en <code>form.getRawValue()</code> (die UI-gebaseerde velden zoals <code>confirmPassword</code> opheft). <code>sf.submitValue()</code> biedt een continue reaktieve signal die altijd geverifieerd en klaar is voor indiening of <code>resourceAsync</code>.',
-  'toSignalForm.pattern4Title': 'Patroon 4: Asynchrone feature Gating (computedAsync + bindIf)',
-  'toSignalForm.pattern4Desc':
+  'toSignalForm.apiGuideFeatureGatingTitle': 'computedAsync + bindIf — Asynchrone feature-gating',
+  'toSignalForm.apiGuideFeatureGatingDesc':
     'In cloud- en bedrijfsapplicaties zijn beschikbare veldgroepen vaak afhankelijk van regionale capaciteiten of feature-flags die asynchrone antwoorden uit API-eindpunten opleveren. <code>computedAsync</code> levert een reaktieve <code>Signal&lt;boolean&gt;</code> op basis van de geselecteerde regio en engine, die direct kan worden gebruikt in <code>sf.bindIf</code> om groepen capaciteiten op te bouwen of af te koppelen.',
-  'toSignalForm.pattern5Title': 'Patroon 5: Cascading Updates & Change Watch (sf.watch)',
-  'toSignalForm.pattern5Desc':
+  'toSignalForm.apiGuideWatchTitle': 'sf.watch — Cascaderende updates',
+  'toSignalForm.apiGuideWatchDesc':
     'Wanneer een formuliercontrole veranderingen aanwekt die cascading updates in een andere controle (bijvoorbeeld beschikbare versies bij verandering van de databaseengine) veroorzaken, kan je de traditionele RxJS- <code>valueChanges.pipe(takeUntilDestroyed())</code>-patron gebruiken of de signal-first- <code>sf.controls.&lt;name&gt;.watch()</code> / <code>sf.watch()</code>-utiliteit. <code>watch</code> werkt binnen een Angular- <code>effect()</code> met automatische <code>untracked</code>-isolatie, voorkomt <code>NG0600</code>-signal-uitvoerfouten terwijl het manuele abonnementsafsluiting elimineert.',
   'toSignalForm.apiReferenceTitle': 'API-referentie',
   'toSignalForm.apiToSignalFormTitle': 'toSignalForm(form, options?)',

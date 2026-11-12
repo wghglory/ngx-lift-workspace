@@ -123,6 +123,24 @@ test.describe('toSignalForm signal-driven forms', () => {
     await expect(reference.getByRole('cell', {name: 'options.defaultValue', exact: true})).toHaveCount(0);
     await expect(reference.getByRole('cell', {name: 'options.onlyIfTouched', exact: true})).toHaveCount(0);
   });
+
+  test('renders API guide cards named after their APIs, with bindValidators third', async ({page}, testInfo) => {
+    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.goto('/ngx-lift/signals/toSignalForm');
+
+    const guides = page.locator('#api-guides');
+    await expect(guides.getByRole('heading', {name: 'Form API Guides', exact: true})).toBeVisible();
+    const headings = (await guides.getByRole('heading', {level: 3}).allTextContents()).map((text) => text.trim());
+    expect(headings).toHaveLength(6);
+    expect(headings[0]).toContain('bindIf');
+    expect(headings[1]).toContain('bindDisabled');
+    expect(headings[2]).toContain('bindValidators');
+    expect(headings[3]).toContain('sf.submitValue');
+    expect(headings[4]).toContain('computedAsync + bindIf');
+    expect(headings[5]).toContain('sf.watch');
+    await expect(page.locator('body')).not.toContainText('Pattern 1:');
+    await expectAccessible(page, testInfo);
+  });
 });
 
 for (const {code} of demoLocales) {
@@ -142,6 +160,11 @@ for (const {code} of demoLocales) {
     await expect(page.getByTestId('validator-rule-status')).toContainText(
       messages['toSignalForm.validatorsRuleRelaxed'],
     );
+
+    await expect(page.getByRole('heading', {name: messages['toSignalForm.apiGuidesTitle'], exact: true})).toBeVisible();
+    await expect(
+      page.getByRole('heading', {name: messages['toSignalForm.apiGuideBindValidatorsTitle'], exact: true}),
+    ).toBeVisible();
     await expect(page.locator('body')).not.toContainText('!! Key');
     await expect(page.locator('html')).toHaveAttribute('lang', code);
   });

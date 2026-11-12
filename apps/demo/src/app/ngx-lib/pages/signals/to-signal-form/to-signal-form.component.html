@@ -717,37 +717,43 @@
     </div>
   </app-demo-playground>
 
-  <!-- ==================== SECTION 3: SPECIALIZED PATTERN CARDS ==================== -->
-  <section cds-layout="vertical gap:md align:stretch">
-    <h2>{{ 'toSignalForm.patternsTitle' | translate }}</h2>
+  <!-- ==================== SECTION 3: API GUIDE CARDS ==================== -->
+  <section id="api-guides" cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'toSignalForm.apiGuidesTitle' | translate }}</h2>
 
     <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'toSignalForm.pattern1Title' | translate }}</h3>
-      <p [innerHTML]="'toSignalForm.pattern1Desc' | translate"></p>
+      <h3>{{ 'toSignalForm.apiGuideBindIfTitle' | translate }}</h3>
+      <p [innerHTML]="'toSignalForm.apiGuideBindIfDesc' | translate"></p>
       <app-code-block [code]="bindIfSnippet" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'toSignalForm.pattern2Title' | translate }}</h3>
-      <p [innerHTML]="'toSignalForm.pattern2Desc' | translate"></p>
+      <h3>{{ 'toSignalForm.apiGuideBindDisabledTitle' | translate }}</h3>
+      <p [innerHTML]="'toSignalForm.apiGuideBindDisabledDesc' | translate"></p>
       <app-code-block [code]="bindDisabledSnippet" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'toSignalForm.pattern3Title' | translate }}</h3>
-      <p [innerHTML]="'toSignalForm.pattern3Desc' | translate"></p>
+      <h3>{{ 'toSignalForm.apiGuideBindValidatorsTitle' | translate }}</h3>
+      <p [innerHTML]="'toSignalForm.apiGuideBindValidatorsDesc' | translate"></p>
+      <app-code-block [code]="bindValidatorsSnippet" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'toSignalForm.apiGuideSubmitValueTitle' | translate }}</h3>
+      <p [innerHTML]="'toSignalForm.apiGuideSubmitValueDesc' | translate"></p>
       <app-code-block [code]="submitValueSnippet" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'toSignalForm.pattern4Title' | translate }}</h3>
-      <p [innerHTML]="'toSignalForm.pattern4Desc' | translate"></p>
+      <h3>{{ 'toSignalForm.apiGuideFeatureGatingTitle' | translate }}</h3>
+      <p [innerHTML]="'toSignalForm.apiGuideFeatureGatingDesc' | translate"></p>
       <app-code-block [code]="featureGatingSnippet" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">
-      <h3>{{ 'toSignalForm.pattern5Title' | translate }}</h3>
-      <p [innerHTML]="'toSignalForm.pattern5Desc' | translate"></p>
+      <h3>{{ 'toSignalForm.apiGuideWatchTitle' | translate }}</h3>
+      <p [innerHTML]="'toSignalForm.apiGuideWatchDesc' | translate"></p>
       <app-code-block [code]="cascadingSnippet" lang="typescript" />
     </article>
   </section>
