@@ -9,6 +9,11 @@ on:
       - main
   workflow_dispatch:
 
+# Serialize deployments for a ref; never cancel one already in progress.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 

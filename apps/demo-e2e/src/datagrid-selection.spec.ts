@@ -104,9 +104,7 @@ test('filtered select-all keeps the unfiltered footprint and paging uses the log
   await expect(policy.getByRole('checkbox', {name: 'Select Organization 11', exact: true})).not.toBeChecked();
 });
 
-test('real fields have unique names and descriptions, reflow in both themes and pass automated accessibility', async ({
-  page,
-}, testInfo) => {
+test('real fields have unique names, descriptions and light-theme accessibility', async ({page}, testInfo) => {
   const labels = page.locator('cll-datagrid-selection .field-label > label');
   const ids = await labels.evaluateAll((elements) => elements.map((element) => element.id));
   expect(new Set(ids).size).toBe(ids.length);
@@ -126,16 +124,11 @@ test('real fields have unique names and descriptions, reflow in both themes and 
   await model.getByRole('button', {name: 'Submit', exact: true}).click();
   await expect(model.locator('clr-control-error')).toBeVisible();
   await expectAccessible(page, testInfo, '[data-testid="selection-model"] .playground-canvas');
+});
+
+test('real fields reflow at narrow widths in dark theme and pass automated accessibility', async ({page}, testInfo) => {
   await page.getByRole('button', {name: 'Toggle to dark theme'}).click();
   await page.setViewportSize({width: 390, height: 844});
-  await page.evaluate(async () => {
-    await Promise.all(
-      document
-        .getAnimations()
-        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
-        .map((animation) => animation.finished.catch(() => undefined)),
-    );
-  });
   await expectAccessible(page, testInfo, 'main');
 });
 

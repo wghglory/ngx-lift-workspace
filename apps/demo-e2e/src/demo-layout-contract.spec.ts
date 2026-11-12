@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test';
+import {expect, test, type Page} from '@playwright/test';
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import ts from 'typescript';
@@ -6,6 +6,15 @@ import ts from 'typescript';
 function box(value: {x: number; y: number; width: number; height: number} | null) {
   if (!value) throw new Error('Expected a rendered element');
   return value;
+}
+
+async function openWideQueryDevtools(page: Page) {
+  await page.setViewportSize({width: 1920, height: 1000});
+  await page.goto('/ngx-lift/query/queryResources');
+  await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
+  const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
+  await expect(panel.getByRole('columnheader')).toHaveCount(7);
+  return panel;
 }
 
 function demoRoutes(): string[] {
@@ -359,14 +368,8 @@ test('state counts and shared tags filter collection queries without refetching 
   await expect(panel.locator('clr-dg-row')).toHaveCount(3);
 });
 
-test('query lists size columns automatically and project diagnostics while expansion opens cached levels', async ({
-  page,
-}, testInfo) => {
-  await page.setViewportSize({width: 1920, height: 1000});
-  await page.goto('/ngx-lift/query/queryResources');
-  await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
-  const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
-  await expect(panel.getByRole('columnheader')).toHaveCount(7);
+test('query lists size columns automatically and keep the key column bounded', async ({page}, testInfo) => {
+  const panel = await openWideQueryDevtools(page);
   await expect(panel.getByRole('columnheader', {name: 'Tags'})).toBeVisible();
   await expect(panel.getByRole('columnheader', {name: 'Failed attempts'})).toBeVisible();
   const keyColumn = panel.getByRole('columnheader', {name: 'Query key'});
@@ -379,6 +382,12 @@ test('query lists size columns automatically and project diagnostics while expan
   await expect(bulk.locator('.datagrid-cell')).toHaveCount(7);
   await expect(bulk.locator('.datagrid-cell').nth(5)).toHaveText('0');
   await panel.screenshot({path: testInfo.outputPath('query-devtools-wide-list.png')});
+});
+
+test('query inspector expands cached levels and restores the bounded wide list', async ({page}) => {
+  const panel = await openWideQueryDevtools(page);
+  const keyColumn = panel.getByRole('columnheader', {name: 'Query key'});
+  const bulk = panel.locator('clr-dg-row').filter({hasText: 'clusters-bulk-fleet'});
   await bulk.getByRole('button', {name: 'Refetch', exact: true}).click();
   const inspector = panel.locator('.query-inspector');
   await expect(panel.getByRole('columnheader')).toHaveCount(5);
