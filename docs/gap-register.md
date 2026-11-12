@@ -80,6 +80,15 @@ the source.
 | G-47 | P2       | Duplication drift | Deploy and publish workflows duplicate status icon/badge helpers and summary heredocs.                                                                                          | CI owner: extract a shared mapping when both summaries are next edited; judgement call from code review.                                         |
 | G-48 | P2       | Naming drift      | Historical external tracker and migration URLs still contain a personal repository owner.                                                                                       | Docs owner: replace or retire those links during the next docs cleanup; current maintainer references are generic.                               |
 
+## Resolved since the 2026-11-10 sweep
+
+The 2026-11-12 `toSignalForm` validator-binding increment is recorded here separately; it is not part of the sweep
+above.
+
+| ID   | Severity | Class          | Gap                                                                                                                                                                                        | Resolution                                                                                                                                                                                                                                                                                                                                                                                           |
+| ---- | -------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G-49 | P2       | Evidence drift | `bindValidators` and `bindControlValidators` were public and unit-tested, but the `toSignalForm` demo, API reference, README and packed consumer fixture did not explain or exercise them. | Added a localized demo playground, a fifth type-accurate API table, README and design-spec examples, unit and three-browser E2E regressions, and packed-consumer assertions for both surfaces in zoneless and ZoneJS modes. Automated checks pass. Unlike the sweep, this increment added 20 owned UI strings in eleven locales; independent human language approval for them is still an open gate. |
+
 ## Intentional decisions, not gaps
 
 - Angular 22 and the Nx major upgrade remain deferred; native signal-field support follows that upgrade for new value

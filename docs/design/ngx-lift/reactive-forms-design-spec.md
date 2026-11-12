@@ -1,8 +1,8 @@
 # Reactive Forms signals, bindings, and submission
 
-Status: Implemented (contract follow-up). Owner: ngx-lift maintainers. Updated: November 8, 2026. Package: ngx-lift.
-Approval: the error-propagation contract is approved in the 2026-11-08 follow-up plan; a parallel `error` signal or an
-`onError` option remains out of scope.
+Status: Implemented (contract and demo follow-up). Owner: ngx-lift maintainers. Updated: November 12, 2026. Package:
+ngx-lift. Approval: the error-propagation contract is approved in the 2026-11-08 follow-up plan; a parallel `error`
+signal or an `onError` option remains out of scope.
 
 ## Applicable contracts
 
@@ -82,10 +82,11 @@ add an error signal or `onError` option is rejected: neither can recover from a 
 
 Prerequisites: An existing Angular FormGroup and basic signals; Angular remains the form owner.
 
-| Reader task                         | Learning outcome                                                | Destination / working example                                                               |
-| ----------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Observe and submit a local form     | Read value/validity and inspect the omitted-field payload       | [/ngx-lift/signals/toSignalForm](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm) |
-| Toggle and reset conditional fields | Preserve selected values and validation through control changes | Same demo; bindings/submission contracts below                                              |
+| Reader task                         | Learning outcome                                                  | Destination / working example                                                               |
+| ----------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Observe and submit a local form     | Read value/validity and inspect the omitted-field payload         | [/ngx-lift/signals/toSignalForm](https://ngx-lift.vercel.app/ngx-lift/signals/toSignalForm) |
+| Toggle and reset conditional fields | Preserve selected values and validation through control changes   | Same demo; bindings/submission contracts below                                              |
+| Switch a validation policy          | Replace validators from a signal without losing the current value | Same demo; `bindValidators` playground and API reference                                    |
 
 Validation and delivery: The teaching flow landed in #162. Form/proxy unit cases cover behavior; the strict installed
 consumer remains the gate for packed public types and runtime behavior. The public API and behavior sections below own
@@ -114,6 +115,37 @@ State helpers are `controlValue`, `controlStatus`, `controlState`, and `formStat
 equivalents. Bind templates to original controls or enhanced control proxies, not `sf.fields` state bundles. Named
 helper calls capture the current control; dynamic facade bindings resolve mounted targets during execution.
 
+Validator binding has three public surfaces: the facade method, the enhanced control method and the standalone helper.
+Each accepts one `ValidatorFn`, an array, `null`, a `Signal`, or a zero-argument getter and returns an `EffectRef`.
+
+```typescript
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {bindControlValidators, toSignalForm} from 'ngx-lift';
+
+readonly policyForm = new FormGroup({
+  projectCode: new FormControl('', {nonNullable: true}),
+  strict: new FormControl(false, {nonNullable: true}),
+});
+readonly policySf = toSignalForm(this.policyForm);
+
+constructor() {
+  // Named control: resolves the mounted target during each effect run.
+  this.policySf.bindValidators('projectCode', () =>
+    this.policySf.fields.strict.value()
+      ? [Validators.required, Validators.minLength(6), Validators.pattern(/^[a-z0-9-]+$/)]
+      : null,
+  );
+  // Equivalent on an enhanced control or as a standalone helper:
+  // this.policySf.controls.projectCode.bindValidators(() => ...);
+  // bindControlValidators(this.policyForm.controls.projectCode, () => ...);
+}
+```
+
+`BindControlValidatorsOptions` defaults to `emitEvent: true` and `updateValueAndValidity: true`; `injector` defaults to
+the current injection context. Each change calls `setValidators` with the entire active set, so previously attached
+synchronous validators on that control are replaced. The control value and pristine/touched state are preserved, and
+validity is recomputed immediately so error signals and rendered messages follow the policy.
+
 ## Behavior and architecture
 
 An injector owns effects/subscriptions; pass `options.injector` outside injection context. Proxies preserve bound
@@ -133,15 +165,33 @@ override their legacy nested counterparts.
 Headless APIs supply no labels or strings. Host Clarity controls own error presentation, focus, announcements and
 translations. The facade preserves the form system used by Angular 21 controls.
 
+### Validator-binding playground messages and accessible names
+
+The playground owns the `toSignalForm.validators*` and `toSignalForm.apiBindValidators*` messages: title, description,
+policy toggle label and helper, project-code label, placeholder, required/minimum-length/format validation errors,
+strict and relaxed rule status, valid and invalid state badges, and the state inspector title and description. The reset
+button reuses `toSignalForm.reset`. Every message ships in en, zh-CN, zh-TW, de, es, fr, ja, ko, nl, pt-BR and ru;
+independent human language acceptance for these new strings is a separate gate.
+
+A labelled `clrToggle` switches the policy with keyboard Space and a labelled `clrInput` accepts typed values, blur,
+clearing and correction. Clarity containers own programmatic labels, descriptions and validation-error associations; IDs
+are unique on the page. The active rule is a `role="status"` region that changes only when the policy changes. The
+validity badge and state inspector are plain visible text and do not repeat announcements on every keystroke. Reset
+restores the relaxed policy and an empty value. Automated accessibility scans, the keyboard journey, all-locale
+rendering and both themes cover the changed UI; the manual assistive-technology waiver remains a waiver, not a pass.
+
 ## Demo and validation plan
 
 Existing demo: `apps/demo/src/app/ngx-lib/pages/signals/to-signal-form/`. Regressions beside each source cover dynamic
-mounting, proxy access, async status, debouncing, cross-control updates and arrays. The API reference table is a
-curated, type-accurate subset: the parameter is shown separately from `sf.*` return members, and
-`to-signal-form.model.ts` remains authoritative for the complete surface. A focused demo spec asserts exact row names
-and types so the #145-era fictional rows cannot return. The strict installed-consumer fixture
-`tools/package/fixtures/to-signal-form-browser.mjs` verifies packed public types, dynamic-control lifecycle and error
-propagation in zoneless and ZoneJS modes. Native fields are deferred.
+mounting, proxy access, async status, debouncing, cross-control updates, arrays and signal-driven validator replacement.
+A dedicated `bindValidators` playground replaces the validator set from a policy control and shows localized validation
+errors, the announced active rule, a validity badge, a state inspector and reset. The five API reference tables are a
+curated, type-accurate subset, including `sf.bindValidators`: parameters are shown separately from `sf.*` return
+members, and `to-signal-form.model.ts` remains authoritative for the complete surface. A focused demo spec asserts exact
+row names and types so the #145-era fictional rows cannot return. The browser suite covers the keyboard journey, API
+rows, all supported locales and both themes. The strict installed-consumer fixture
+`tools/package/fixtures/to-signal-form-browser.mjs` verifies packed public types, dynamic-control lifecycle, both
+validator-binding surfaces and error propagation in zoneless and ZoneJS modes. Native fields are deferred.
 
 ## Compatibility, rollout, and risks
 
@@ -167,6 +217,17 @@ adapter has no parallel channel.
 Source and adjacent specs inspected on November 8, 2026. Signal reads propagate terminal source-stream errors in line
 with Angular `toSignal`. `form-signals.spec.ts`, `to-submit-value.spec.ts`, `to-signal-form.spec.ts` and the packed
 `to-signal-form-browser.mjs` fixture cover value/status/event/rawValue pipelines, caller callback failures, derived
-signals, persistence, silence when unread and teardown in zoneless and ZoneJS modes. Browser E2E and independent human
-language / assistive-technology acceptance remain separate gates. This does not establish Angular 22 or native Signal
+signals, persistence, silence when unread and teardown in zoneless and ZoneJS modes. Independent human language approval
+and a manual assistive-technology decision remain separate gates. This does not establish Angular 22 or native Signal
 Forms acceptance.
+
+Validator-binding demo evidence (November 12, 2026): `nx test demo` passes 306 unit cases including validator
+replacement, error recovery and reset; `i18n-check` reports zero errors with 2333 keys complete in all eleven locales;
+the production demo build succeeds; `signal-forms.spec.ts` passes 51 browser cases across Chromium, Firefox and WebKit,
+covering the keyboard journey, API reference rows, all-locale rendering and light/dark accessibility checks; the
+route-derived `accessibility.spec.ts` scans pass for this page in both themes. After rebuilding `ngx-lift` and packing
+the tarball, `to-signal-form-browser.mjs` also passes the facade method and the standalone helper in zoneless and ZoneJS
+modes. Independent human language approval for the 20 new strings is not yet recorded, and the 2026-11-10
+assistive-technology waiver is not a pass. Full `verify:packages` could not complete because its isolated `pnpm install`
+cannot reach `registry.npmjs.org` in this environment (see the mirror decision in G-45). The packed-consumer harness
+used the same rebuilt tarball and both rendering modes with workspace dependencies linked locally.

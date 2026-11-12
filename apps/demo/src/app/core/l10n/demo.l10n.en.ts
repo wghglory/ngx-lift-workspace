@@ -700,6 +700,32 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'Target control to re-evaluate validation upon source changes.',
   'toSignalForm.apiRevalidateSources':
     'Control, signal, or getter whose value/status changes trigger target revalidation.',
+  'toSignalForm.validatorsTitle': 'Reactive validators (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Switch a policy on or off to replace the validators of a control from a signal. The current value stays in place while validity is recomputed immediately.',
+  'toSignalForm.validatorsStrictLabel': 'Require a strict project code',
+  'toSignalForm.validatorsStrictHelper':
+    'Strict mode requires a value of at least six lowercase letters, digits or hyphens.',
+  'toSignalForm.validatorsCodeLabel': 'Project code',
+  'toSignalForm.validatorsCodePlaceholder': 'e.g. billing-api',
+  'toSignalForm.validatorsRequired': 'A project code is required in strict mode.',
+  'toSignalForm.validatorsMinLength': 'Use at least 6 characters in strict mode.',
+  'toSignalForm.validatorsPattern': 'Use lowercase letters, digits or hyphens only.',
+  'toSignalForm.validatorsRuleStrict':
+    'Strict rule active: required, at least 6 characters, lowercase letters, digits or hyphens.',
+  'toSignalForm.validatorsRuleRelaxed': 'No rule active: any value is accepted.',
+  'toSignalForm.validatorsValid': 'The current value passes the active rule.',
+  'toSignalForm.validatorsInvalid': 'The current value fails the active rule.',
+  'toSignalForm.validatorsStateTitle': 'Validator binding state',
+  'toSignalForm.validatorsStateDesc': 'Signals follow the control as its validators are replaced',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': 'Target control name or instance whose validators are replaced.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'A validator, an array, null, or a signal or getter returning the active set. The set is replaced whenever the source changes.',
+  'toSignalForm.apiBindValidatorsEmitEvent': 'Whether validity updates emit value and status events.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Whether validity is recomputed immediately after the validators are replaced.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'The <code>computedAsync</code> function is a versatile utility enabling value computation from Promises, Observables, or regular values. It provides flexibility in computational behavior through selectable flattening strategies (switch, merge, concat, exhaust) and initial value assignment. To utilize <code>computedAsync</code>, provide a function returning a Promise, Observable, or regular value. It then returns a <code>Signal</code> emitting the computed value.',

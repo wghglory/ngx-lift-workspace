@@ -716,6 +716,33 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'Doelcontrole om de validatie opnieuw te evalueren bij bronwijzigingen.',
   'toSignalForm.apiRevalidateSources':
     'Besturing, signal of getter waarvan een waarde-/statuswijziging de doelvalidatie opnieuw activeert.',
+  'toSignalForm.validatorsTitle': 'Reactieve validators (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Schakel een beleid in of uit om de validators van een besturingselement vanuit een signaal te vervangen. De huidige waarde blijft behouden terwijl de geldigheid direct opnieuw wordt berekend.',
+  'toSignalForm.validatorsStrictLabel': 'Een strikte projectcode vereisen',
+  'toSignalForm.validatorsStrictHelper':
+    'In de strikte modus zijn minimaal zes kleine letters, cijfers of streepjes vereist.',
+  'toSignalForm.validatorsCodeLabel': 'Projectcode',
+  'toSignalForm.validatorsCodePlaceholder': 'bijv. billing-api',
+  'toSignalForm.validatorsRequired': 'In de strikte modus is een projectcode verplicht.',
+  'toSignalForm.validatorsMinLength': 'Gebruik minimaal 6 tekens in de strikte modus.',
+  'toSignalForm.validatorsPattern': 'Gebruik alleen kleine letters, cijfers of streepjes.',
+  'toSignalForm.validatorsRuleStrict':
+    'Strikte regel actief: verplicht, minimaal 6 tekens, kleine letters, cijfers of streepjes.',
+  'toSignalForm.validatorsRuleRelaxed': 'Geen regel actief: elke waarde wordt geaccepteerd.',
+  'toSignalForm.validatorsValid': 'De huidige waarde voldoet aan de actieve regel.',
+  'toSignalForm.validatorsInvalid': 'De huidige waarde voldoet niet aan de actieve regel.',
+  'toSignalForm.validatorsStateTitle': 'Status van de validatorbinding',
+  'toSignalForm.validatorsStateDesc': 'Signalen volgen het besturingselement terwijl de validators worden vervangen',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl':
+    'Naam of instantie van het doelbesturingselement waarvan de validators worden vervangen.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'Een validator, een array, null, of een signaal/getter die de actieve set teruggeeft. De set wordt vervangen zodra de bron verandert.',
+  'toSignalForm.apiBindValidatorsEmitEvent': 'Of geldigheidsupdates waarde- en statusgebeurtenissen uitzenden.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Of de geldigheid direct na het vervangen van de validators opnieuw wordt berekend.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'De <code>computedAsync</code>-functie is een flexibele utiliteit die waarden kan berekenen uit Promises, Observables of normale waarden. Het biedt flexibiliteit in het computatiegedrag via keuze van samenvoegingsstrategieën (switch, merge, concat, exhaust) en aanvullende startwaarden. Om <code>computedAsync</code> te gebruiken, geef een functie op die een Promise, Observable of normale waarde retourneert. Het retourneert dan een <code>Signal</code> die de berekende waarde uitstraalt.',

@@ -644,6 +644,79 @@
     </div>
   </app-demo-playground>
 
+  <!-- ==================== VALIDATOR BINDING LAB ==================== -->
+  <app-demo-playground
+    [title]="'toSignalForm.validatorsTitle' | translate"
+    level="intermediate"
+    [description]="'toSignalForm.validatorsDesc' | translate"
+    [tsCode]="validatorsTs"
+    [htmlCode]="validatorsHtml"
+  >
+    <div preview>
+      <form clrForm [formGroup]="policyForm" class="max-w-xl">
+        <clr-toggle-container>
+          <label for="validator-strict-toggle">{{ 'toSignalForm.validatorsStrictLabel' | translate }}</label>
+          <clr-toggle-wrapper>
+            <input id="validator-strict-toggle" type="checkbox" clrToggle [formControl]="policySf.controls.strict" />
+          </clr-toggle-wrapper>
+          <clr-control-helper>{{ 'toSignalForm.validatorsStrictHelper' | translate }}</clr-control-helper>
+        </clr-toggle-container>
+
+        <clr-input-container>
+          <label for="validator-project-code">{{ 'toSignalForm.validatorsCodeLabel' | translate }}</label>
+          <input
+            id="validator-project-code"
+            clrInput
+            [formControl]="policySf.controls.projectCode"
+            [placeholder]="'toSignalForm.validatorsCodePlaceholder' | translate"
+          />
+          <clr-control-error *clrIfError="'required'">{{
+            'toSignalForm.validatorsRequired' | translate
+          }}</clr-control-error>
+          <clr-control-error *clrIfError="'minlength'">{{
+            'toSignalForm.validatorsMinLength' | translate
+          }}</clr-control-error>
+          <clr-control-error *clrIfError="'pattern'">{{
+            'toSignalForm.validatorsPattern' | translate
+          }}</clr-control-error>
+        </clr-input-container>
+
+        <p role="status" data-testid="validator-rule-status">
+          @if (policySf.fields.strict.value()) {
+            {{ 'toSignalForm.validatorsRuleStrict' | translate }}
+          } @else {
+            {{ 'toSignalForm.validatorsRuleRelaxed' | translate }}
+          }
+        </p>
+
+        <p
+          class="label"
+          [class.label-success]="policySf.fields.projectCode.valid()"
+          [class.label-danger]="policySf.fields.projectCode.invalid()"
+          data-testid="validator-validity"
+        >
+          @if (policySf.fields.projectCode.valid()) {
+            {{ 'toSignalForm.validatorsValid' | translate }}
+          } @else {
+            {{ 'toSignalForm.validatorsInvalid' | translate }}
+          }
+        </p>
+
+        <button type="button" class="btn btn-outline" (click)="resetPolicyDemo()">
+          {{ 'toSignalForm.reset' | translate }}
+        </button>
+      </form>
+    </div>
+
+    <div inspector>
+      <app-state-inspector
+        [title]="'toSignalForm.validatorsStateTitle' | translate"
+        [description]="'toSignalForm.validatorsStateDesc' | translate"
+        [data]="policyState()"
+      />
+    </div>
+  </app-demo-playground>
+
   <!-- ==================== SECTION 3: SPECIALIZED PATTERN CARDS ==================== -->
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'toSignalForm.patternsTitle' | translate }}</h2>
@@ -696,6 +769,11 @@
     <article cds-layout="vertical gap:sm align:stretch">
       <h3>{{ 'toSignalForm.apiBindDisabledTitle' | translate }}</h3>
       <app-api-table [properties]="bindDisabledProperties()" />
+    </article>
+
+    <article cds-layout="vertical gap:sm align:stretch">
+      <h3>{{ 'toSignalForm.apiBindValidatorsTitle' | translate }}</h3>
+      <app-api-table [properties]="bindValidatorsProperties()" />
     </article>
 
     <article cds-layout="vertical gap:sm align:stretch">

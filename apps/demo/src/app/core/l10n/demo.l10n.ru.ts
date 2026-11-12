@@ -715,6 +715,32 @@ export const ruTranslations: Record<string, string> = {
     'Предназначенный контроль для повторной оценки достоверности данных при изменении источников.',
   'toSignalForm.apiRevalidateSources':
     'Элемент управления, сигнал или getter, изменение значения/статуса которого запускает повторную проверку целевого элемента.',
+  'toSignalForm.validatorsTitle': 'Реактивные валидаторы (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Включите или отключите политику, чтобы заменить валидаторы элемента управления из сигнала. Текущее значение сохраняется, а проверка выполняется заново сразу же.',
+  'toSignalForm.validatorsStrictLabel': 'Требовать строгий код проекта',
+  'toSignalForm.validatorsStrictHelper':
+    'В строгом режиме требуется не менее шести символов: строчных букв, цифр или дефисов.',
+  'toSignalForm.validatorsCodeLabel': 'Код проекта',
+  'toSignalForm.validatorsCodePlaceholder': 'например, billing-api',
+  'toSignalForm.validatorsRequired': 'В строгом режиме код проекта обязателен.',
+  'toSignalForm.validatorsMinLength': 'В строгом режиме используйте не менее 6 символов.',
+  'toSignalForm.validatorsPattern': 'Используйте только строчные буквы, цифры или дефисы.',
+  'toSignalForm.validatorsRuleStrict':
+    'Строгое правило активно: обязательное поле, не менее 6 символов, только строчные буквы, цифры или дефисы.',
+  'toSignalForm.validatorsRuleRelaxed': 'Правило не активно: принимается любое значение.',
+  'toSignalForm.validatorsValid': 'Текущее значение соответствует активному правилу.',
+  'toSignalForm.validatorsInvalid': 'Текущее значение не соответствует активному правилу.',
+  'toSignalForm.validatorsStateTitle': 'Состояние привязки валидаторов',
+  'toSignalForm.validatorsStateDesc': 'Сигналы следуют за элементом управления при замене его валидаторов',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': 'Имя или экземпляр целевого элемента управления, чьи валидаторы заменяются.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'Один валидатор, массив, null или сигнал / getter, возвращающий активный набор. При каждом изменении источника набор заменяется целиком.',
+  'toSignalForm.apiBindValidatorsEmitEvent': 'Создают ли обновления проверки события значения и состояния.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Выполняется ли проверка заново сразу после замены валидаторов.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'Функция <code>computedAsync</code> — универсальная утилита, позволяющая вычислять значения из Promises, Observables или обычных значений. Она предоставляет гибкость в поведении вычисления через выборочные стратегии сглаживания (switch, merge, concat, exhaust) и присвоение начального значения. Для использования <code>computedAsync</code> нужно предоставить функцию, возвращающую Promise, Observable или обычное значение. Она затем возвращает <code>Signal</code>, отправляющий вычисленное значение.',

@@ -726,6 +726,33 @@ export const frTranslations: Record<string, string> = {
     'Contrôle de la cible pour réévaluer la validation en fonction des changements de source.',
   'toSignalForm.apiRevalidateSources':
     'Contrôle, signal ou getter dont le changement de valeur/statut déclenche la revalidation de la cible.',
+  'toSignalForm.validatorsTitle': 'Validateurs réactifs (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    'Activez ou désactivez une règle pour remplacer les validateurs d’un contrôle depuis un signal. La valeur actuelle est conservée tandis que la validité est recalculée immédiatement.',
+  'toSignalForm.validatorsStrictLabel': 'Exiger un code de projet strict',
+  'toSignalForm.validatorsStrictHelper':
+    'Le mode strict exige au moins six caractères parmi les minuscules, les chiffres ou les tirets.',
+  'toSignalForm.validatorsCodeLabel': 'Code de projet',
+  'toSignalForm.validatorsCodePlaceholder': 'par ex. billing-api',
+  'toSignalForm.validatorsRequired': 'Le code de projet est obligatoire en mode strict.',
+  'toSignalForm.validatorsMinLength': 'Utilisez au moins 6 caractères en mode strict.',
+  'toSignalForm.validatorsPattern': 'Utilisez uniquement des minuscules, des chiffres ou des tirets.',
+  'toSignalForm.validatorsRuleStrict':
+    'Règle stricte active : obligatoire, au moins 6 caractères, minuscules, chiffres ou tirets.',
+  'toSignalForm.validatorsRuleRelaxed': 'Aucune règle active : toute valeur est acceptée.',
+  'toSignalForm.validatorsValid': 'La valeur actuelle satisfait la règle active.',
+  'toSignalForm.validatorsInvalid': 'La valeur actuelle ne satisfait pas la règle active.',
+  'toSignalForm.validatorsStateTitle': 'État de la liaison des validateurs',
+  'toSignalForm.validatorsStateDesc': 'Les signaux suivent le contrôle lorsque ses validateurs sont remplacés',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': 'Nom ou instance du contrôle cible dont les validateurs sont remplacés.',
+  'toSignalForm.apiBindValidatorsValidators':
+    'Un validateur, un tableau, null, ou un signal ou getter renvoyant l’ensemble actif. L’ensemble est remplacé à chaque changement de la source.',
+  'toSignalForm.apiBindValidatorsEmitEvent':
+    'Indique si les mises à jour de validité émettent des événements de valeur et d’état.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    'Indique si la validité est recalculée immédiatement après le remplacement des validateurs.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'La fonction <code>computedAsync</code> est un outil polyvalent permettant de calculer des valeurs à partir de Promises, Observables ou de valeurs régulières. Elle offre une flexibilité dans le comportement de calcul à travers des stratégies de flattening sélectionnables (switch, merge, concat, exhaust) et une affectation initiale. Pour utiliser <code>computedAsync</code>, fournissez une fonction retournant un Promise, un Observable ou une valeur régulière. Elle retourne ensuite un <code>Signal</code> émettant la valeur calculée.',

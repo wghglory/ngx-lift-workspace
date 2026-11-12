@@ -10,8 +10,8 @@ import {
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {toSignalForm} from 'ngx-lift';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {bindControlValidators, toSignalForm} from 'ngx-lift';
 
 const dom = new JSDOM('<html><body><form-consumer></form-consumer></body></html>', {pretendToBeVisual: true});
 for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'Event', 'CustomEvent', 'customElements']) {
@@ -38,11 +38,19 @@ class FormConsumer {
   });
   facade = createFacade(this.form, this.valueStream, this.statusStream);
   includeNote = signal(false);
+  strictName = signal(false);
+  strictConfirmation = signal(false);
 
   constructor() {
     this.facade.bindIf('note', this.includeNote, () => new FormControl('draft', {nonNullable: true}), {
       preserveValue: true,
     });
+    this.facade.bindValidators('name', () =>
+      this.strictName() ? [Validators.required, Validators.minLength(6)] : null,
+    );
+    bindControlValidators(this.form.controls.confirmation, () =>
+      this.strictConfirmation() ? Validators.minLength(10) : null,
+    );
   }
 }
 Component({selector: 'form-consumer', template: ''})(FormConsumer);
@@ -67,6 +75,31 @@ try {
   instance.facade.controls.name.setValue('Grace');
   assert.equal(instance.facade.fields.name.value(), 'Grace');
   assert.deepEqual(instance.facade.submitValue(), {name: 'Grace'});
+
+  // Installed validator binding: both public surfaces replace validators from signals without clearing values.
+  assert.equal(instance.facade.fields.name.valid(), true);
+  instance.strictName.set(true);
+  await until(() => instance.form.controls.name.invalid);
+  assert.equal(instance.form.controls.name.hasError('minlength'), true);
+  assert.equal(instance.facade.fields.name.value(), 'Grace');
+  assert.equal(instance.facade.fields.name.valid(), false);
+
+  instance.facade.controls.name.setValue('Graceland');
+  await until(() => instance.form.controls.name.valid);
+  assert.equal(instance.facade.fields.name.valid(), true);
+
+  instance.strictName.set(false);
+  instance.facade.controls.name.setValue('');
+  await until(() => instance.form.controls.name.valid);
+  assert.ok(!instance.form.controls.name.validator, 'Relaxed policy must clear the validators');
+
+  instance.strictConfirmation.set(true);
+  await until(() => instance.form.controls.confirmation.invalid);
+  assert.equal(instance.form.controls.confirmation.hasError('minlength'), true);
+  instance.strictConfirmation.set(false);
+  await until(() => instance.form.controls.confirmation.valid);
+
+  instance.facade.controls.name.setValue('Grace');
 
   instance.includeNote.set(true);
   await until(() => instance.facade.hasControl('note'));
@@ -97,7 +130,7 @@ try {
   instance.statusStream.error(new Error('late status stream failure'));
   assert.equal(instance.facade.valid(), true, 'A destroyed consumer must stop observing source errors');
   console.log(
-    `Installed toSignalForm consumer (${mode}): typed facade, submit shaping, dynamic controls, error propagation and cleanup passed.`,
+    `Installed toSignalForm consumer (${mode}): typed facade, submit shaping, dynamic controls, validator bindings, error propagation and cleanup passed.`,
   );
 } finally {
   if (!app.destroyed) app.destroy();

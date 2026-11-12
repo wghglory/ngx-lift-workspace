@@ -693,6 +693,31 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.apiBindDisabledEmitEvent': '활성화/비활성화 상태 변경 시 값/상태 이벤트를 발행하는지 여부.',
   'toSignalForm.apiRevalidateTarget': '소스 변경 시 검증을 재평가해야 하는 대상 컨트롤.',
   'toSignalForm.apiRevalidateSources': '값/상태 변경 시 대상 재검증을 트리거하는 컨트롤, Signal 또는 getter입니다.',
+  'toSignalForm.validatorsTitle': '반응형 유효성 검사기 (bindValidators)',
+  'toSignalForm.validatorsDesc':
+    '정책을 켜거나 끄면 Signal 에서 컨트롤의 유효성 검사기가 교체됩니다. 현재 값은 그대로 유지되고 유효성은 즉시 다시 계산됩니다.',
+  'toSignalForm.validatorsStrictLabel': '엄격한 프로젝트 코드 요구',
+  'toSignalForm.validatorsStrictHelper':
+    '엄격 모드에서는 소문자, 숫자 또는 하이픈으로 구성된 6자 이상의 값이 필요합니다.',
+  'toSignalForm.validatorsCodeLabel': '프로젝트 코드',
+  'toSignalForm.validatorsCodePlaceholder': '예: billing-api',
+  'toSignalForm.validatorsRequired': '엄격 모드에서는 프로젝트 코드가 필수입니다.',
+  'toSignalForm.validatorsMinLength': '엄격 모드에서는 6자 이상을 입력하세요.',
+  'toSignalForm.validatorsPattern': '소문자, 숫자 또는 하이픈만 사용할 수 있습니다.',
+  'toSignalForm.validatorsRuleStrict': '엄격 규칙 활성: 필수, 6자 이상, 소문자·숫자·하이픈만 허용.',
+  'toSignalForm.validatorsRuleRelaxed': '활성 규칙 없음: 모든 값이 허용됩니다.',
+  'toSignalForm.validatorsValid': '현재 값이 활성 규칙을 충족합니다.',
+  'toSignalForm.validatorsInvalid': '현재 값이 활성 규칙을 충족하지 않습니다.',
+  'toSignalForm.validatorsStateTitle': '유효성 검사기 바인딩 상태',
+  'toSignalForm.validatorsStateDesc': '유효성 검사기가 교체되면 Signal 도 컨트롤을 따라갑니다',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': '유효성 검사기를 교체할 대상 컨트롤의 이름 또는 인스턴스입니다.',
+  'toSignalForm.apiBindValidatorsValidators':
+    '단일 유효성 검사기, 배열, null, 또는 활성 집합을 반환하는 Signal / getter 입니다. 소스가 변경될 때마다 집합 전체가 교체됩니다.',
+  'toSignalForm.apiBindValidatorsEmitEvent': '유효성 갱신 시 값 및 상태 이벤트를 발생시킬지 여부입니다.',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity':
+    '유효성 검사기를 교체한 직후 유효성을 다시 계산할지 여부입니다.',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'computedAsync 함수는 Promise, Observables 또는 일반 값에서 값 계산을 가능하게 하는 유용한 도구입니다. 이 함수는 선택 가능한 평탄화 전략(스위치, 메르지, 콜릿, 에크스haust)과 초기 값 할당을 통해 계산 행동의 유연성을 제공합니다. computedAsync를 사용하려면 Promise, Observable 또는 일반 값 반환하는 함수를 제공해야 합니다. 이 함수는 계산된 값을 발행하는 <code>Signal</code>을 반환합니다.',

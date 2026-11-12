@@ -70,6 +70,41 @@ test.describe('toSignalForm signal-driven forms', () => {
     await expectAccessible(page, testInfo);
   });
 
+  test('replaces validators from a policy signal and announces the active rule', async ({page}, testInfo) => {
+    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.goto('/ngx-lift/signals/toSignalForm');
+
+    const lab = page.getByRole('region', {name: 'Reactive validators (bindValidators)', exact: true});
+    const status = page.getByTestId('validator-rule-status');
+    const validity = page.getByTestId('validator-validity');
+    const code = page.getByRole('textbox', {name: 'Project code', exact: true});
+
+    await expect(lab.getByRole('heading', {name: 'Reactive validators (bindValidators)', exact: true})).toBeVisible();
+    await expect(status).toContainText('No rule active: any value is accepted.');
+    await expect(validity).toContainText('The current value passes the active rule.');
+
+    const strict = lab.getByRole('switch', {name: 'Require a strict project code'});
+    await strict.focus();
+    await strict.press('Space');
+    await expect(strict).toBeChecked();
+    await expect(status).toContainText('Strict rule active');
+    await expect(validity).toContainText('The current value fails the active rule.');
+
+    await code.fill('abc');
+    await code.press('Tab');
+    await expect(lab.getByText('Use at least 6 characters in strict mode.')).toBeVisible();
+
+    await code.fill('billing-api');
+    await expect(validity).toContainText('The current value passes the active rule.');
+    await expect(lab.getByText('Use at least 6 characters in strict mode.')).toHaveCount(0);
+
+    await lab.getByRole('button', {name: 'Reset', exact: true}).click();
+    await expect(strict).not.toBeChecked();
+    await expect(code).toHaveValue('');
+    await expect(status).toContainText('No rule active: any value is accepted.');
+    await expectAccessible(page, testInfo);
+  });
+
   test('renders API reference rows that match the exported toSignalForm API', async ({page}) => {
     await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
     await page.goto('/ngx-lift/signals/toSignalForm');
@@ -79,6 +114,10 @@ test.describe('toSignalForm signal-driven forms', () => {
     await expect(reference.getByRole('cell', {name: /form \(parameter\)/})).toBeVisible();
     await expect(reference.getByRole('cell', {name: 'sf.submitValue', exact: true})).toBeVisible();
     await expect(reference.getByRole('cell', {name: /controlName/})).toBeVisible();
+    await expect(
+      reference.getByRole('heading', {name: /sf\.bindValidators\(control, validators, options\?\)/}),
+    ).toBeVisible();
+    await expect(reference.getByRole('cell', {name: 'options.updateValueAndValidity', exact: true})).toBeVisible();
     await expect(reference.getByRole('heading', {name: /sf\.revalidate\(target, source\)/})).toBeVisible();
     await expect(reference.getByRole('cell', {name: 'isSubmitting', exact: true})).toHaveCount(0);
     await expect(reference.getByRole('cell', {name: 'options.defaultValue', exact: true})).toHaveCount(0);
@@ -95,6 +134,14 @@ for (const {code} of demoLocales) {
     const lab = page.getByRole('region', {name: messages['toSignalForm.optionsLabTitle'], exact: true});
     await expect(lab.getByRole('heading', {name: messages['toSignalForm.optionsLabTitle'], exact: true})).toBeVisible();
     await expect(lab.getByRole('button', {name: messages['toSignalForm.optionsLabReset'], exact: true})).toBeVisible();
+
+    const validators = page.getByRole('region', {name: messages['toSignalForm.validatorsTitle'], exact: true});
+    await expect(
+      validators.getByRole('heading', {name: messages['toSignalForm.validatorsTitle'], exact: true}),
+    ).toBeVisible();
+    await expect(page.getByTestId('validator-rule-status')).toContainText(
+      messages['toSignalForm.validatorsRuleRelaxed'],
+    );
     await expect(page.locator('body')).not.toContainText('!! Key');
     await expect(page.locator('html')).toHaveAttribute('lang', code);
   });

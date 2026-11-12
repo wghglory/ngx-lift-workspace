@@ -699,6 +699,29 @@ export const jaTranslations: Record<string, string> = {
   'toSignalForm.apiRevalidateTarget': 'ソース変化によって再検証されるターゲットコントロール。',
   'toSignalForm.apiRevalidateSources':
     '値/状態の変更によってターゲットの再検証をトリガーするコントロール、Signal、または getter。',
+  'toSignalForm.validatorsTitle': 'リアクティブなバリデーター（bindValidators）',
+  'toSignalForm.validatorsDesc':
+    'ポリシーの切り替えに応じて、Signal からコントロールのバリデーターを置き換えます。現在の値は保持され、妥当性は即座に再計算されます。',
+  'toSignalForm.validatorsStrictLabel': '厳格なプロジェクトコードを要求する',
+  'toSignalForm.validatorsStrictHelper': '厳格モードでは、6 文字以上の小文字、数字、ハイフンが必要です。',
+  'toSignalForm.validatorsCodeLabel': 'プロジェクトコード',
+  'toSignalForm.validatorsCodePlaceholder': '例: billing-api',
+  'toSignalForm.validatorsRequired': '厳格モードではプロジェクトコードが必須です。',
+  'toSignalForm.validatorsMinLength': '厳格モードでは 6 文字以上を入力してください。',
+  'toSignalForm.validatorsPattern': '小文字、数字、ハイフンのみ使用できます。',
+  'toSignalForm.validatorsRuleStrict': '厳格ルールが有効: 必須、6 文字以上、小文字・数字・ハイフンのみ。',
+  'toSignalForm.validatorsRuleRelaxed': 'ルールは無効です: どの値も受け付けます。',
+  'toSignalForm.validatorsValid': '現在の値は有効なルールを満たしています。',
+  'toSignalForm.validatorsInvalid': '現在の値は有効なルールを満たしていません。',
+  'toSignalForm.validatorsStateTitle': 'バリデーターバインディングの状態',
+  'toSignalForm.validatorsStateDesc': 'バリデーターが置き換わると Signal もコントロールに追従します',
+  'toSignalForm.apiBindValidatorsTitle': 'sf.bindValidators(control, validators, options?) / bindControlValidators',
+  'toSignalForm.apiBindValidatorsControl': 'バリデーターを置き換える対象コントロールの名前またはインスタンス。',
+  'toSignalForm.apiBindValidatorsValidators':
+    '単一のバリデーター、配列、null、または有効なセットを返す Signal / getter。ソースが変化するたびにセット全体が置き換えられます。',
+  'toSignalForm.apiBindValidatorsEmitEvent': '妥当性の更新時に値・ステータスイベントを発行するかどうか。',
+  'toSignalForm.apiBindValidatorsUpdateValueAndValidity': 'バリデーターの置き換え直後に妥当性を再計算するかどうか。',
+
   'computedAsync.title': 'computedAsync',
   'computedAsync.overview':
     'computedAsync関数は、Promise、Observable、または通常の値から値を計算するための柔軟なユーティリティです。計算の動作を柔軟に制御するためには、フラット化戦略（switch、merge、concat、exhaust）を選択し、初期値を指定できます。computedAsyncを使用するには、Promise、Observable、または通常の値を返す関数を提供します。これにより、computedAsyncはSignalを返します。',
