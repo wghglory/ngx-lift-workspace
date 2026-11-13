@@ -1,14 +1,12 @@
 # Datagrid selection: complete consumer code
 
-Status: **native grid composition approved; production exports implemented locally October 30, 2026**. Each grid owner
-directly projects a Clarity label and grid and loads its data with queryResource. There is no gridTemplate, column
-schema, cell/filter-template override API or custom label directive.
+Status: **delivered** in `ngx-lift 21.5.0` / `clr-lift 21.4.0`. Each grid owner directly projects a Clarity label and
+grid and loads its data with `queryResource`. There is no `gridTemplate`, column schema, cell/filter-template override
+API or custom label directive.
 
-The selection/accessor/binding exports are available in this checkout and verified through installed Angular 21
-consumers. npm publication is separate. See the [acceptance record](datagrid-selection-acceptance.md) for current
-evidence and the [delivery plan](datagrid-selection-delivery-plan.md) for downstream scope. The examples below are
-complete consumer recipes; the demo adds interaction switches and a translated-text status filter for acceptance
-journeys.
+The examples below are complete consumer recipes; the demo adds interaction switches and a translated-text status filter
+for acceptance journeys. See the [acceptance record](datagrid-selection-acceptance.md) for current behavior and the
+[detailed reference](datagrid-selection-reference.md) for contracts.
 
 | Need                                                                                     | Complete code                                                          |
 | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
@@ -1033,8 +1031,9 @@ the parent owns scope transitions and edit baselines.
 appConfig registers these example messages once. Component templates use the translate pipe without registering messages
 or injecting TranslationService just for startup. If normal application setup already loads these keys, omit
 registerExampleMessages and its initializer. A translation pipe looks up loaded messages; it does not register a
-dictionary. The advanced validation-message computed still uses TranslationService in TypeScript. All messages cover
-supported locales; independent human language acceptance remains pending.
+dictionary. The advanced validation-message computed still uses TranslationService in TypeScript. All messages cover the
+supported locales; language and assistive-technology acceptance are tracked in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
 
 The direct form and picker parent expose an ordinary save output for the containing application's persistence handler.
 It is a business submit event, not another selection value binding or stored form value. For example:

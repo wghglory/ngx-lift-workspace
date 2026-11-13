@@ -35,11 +35,9 @@ browser suites retain navigation, focus, exact-key, filtering and accessibility 
 Examples / API Reference layout and uses `app-api-table` for component inputs, outputs, item fields, helper options and
 the typography custom property, with descriptions in all eleven locales.
 
-The #185 sections below are historical design and validation records. They do not describe a second supported renderer.
-Independent language and assistive-technology acceptance is pending in
-[issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196), with per-locale and manual-assessment evidence
-requirements. Actual SSR/hydration verification remains unclaimed. Deployment and package publication are separate from
-issue implementation completion.
+Only one renderer is supported. Independent language and assistive-technology acceptance remains open; see the
+[acceptance contract](../../guides/accessibility-and-localization.md) and the [gap register](../../gap-register.md).
+SSR/hydration verification remains unclaimed.
 
 ### Ticket #189 local ancestor filtering
 
@@ -116,9 +114,9 @@ API explanation, native/action/empty examples and selected location/form state. 
 aliases ship together. The public demo route is `/clr-lift/components/breadcrumb`, with a database/server fixture,
 copyable playground source, native and SPA navigation, action identity, singleton/empty and typography examples.
 
-Published specification: [GitHub issue #184](https://github.com/wghglory/ngx-lift-workspace/issues/184), labeled
-`ready-for-agent` by the `to-spec` workflow. The component naming was approved as `BreadcrumbComponent` /
-`cll-breadcrumb`. The helper contract was subsequently approved for #188; see its delivery evidence below.
+Published specification: [GitHub issue #184](https://github.com/wghglory/ngx-lift-workspace/issues/184). The approved
+public names are `BreadcrumbComponent` / `cll-breadcrumb`; the object-path helper is a public export documented in the
+[usage and reference guide](../../guides/object-path-breadcrumbs.md).
 
 ## Conversation synthesis and review boundary
 
@@ -744,7 +742,7 @@ Changing the property at runtime, changing the surrounding font environment, or 
 width/collapse/positioning measurements even when the host width itself is unchanged. Verify two differently sized
 instances, default-token behavior, larger text at narrow widths, and the anchored panel's typography, containment, focus
 outline and lack of clipping. Include a working demo font-size control and copyable CSS with translated owned labels.
-Runtime evidence remains pending implementation.
+Exact browser and package results belong to the corresponding PR and workflow runs.
 
 ### Shared visual and language acceptance
 
@@ -828,459 +826,25 @@ not implied by creating or closing tickets.
 After API review, deliver library behavior/tests, then complete localized playgrounds and browser/packed-consumer
 evidence as one acceptance scope. Record approval of this concrete revision before marking it Implementing.
 
-## Evidence
+## Validation
 
-- October 24, 2026: created the initial design branch from freshly fetched `origin/main` at `801225f`. The prior
-  key/value branch and its commits remain intact.
-- Inspected installed Clarity 18.4.0 breadcrumb declarations/runtime template/styles and fetched all four primary
-  sources linked above. These were source findings at the design stage; the #185 preview now supplies rendered evidence
-  below.
-- Confirmed supported locales from the checker and demo switcher. Nx project discovery passed using
-  `NX_SOCKET_DIR=/tmp/ngx-lift-nx` after the default socket path exceeded the platform length limit.
-- At the initial design stage, only documentation changed. Ticket #185 evidence is recorded below; public exports,
-  installed-package checks, SSR/hydration and independent human acceptance remain pending subsequent delivery.
-- Documentation validation passed: Prettier on both changed Markdown files, all 25 relative link targets, and
-  `git diff --check`. Component tests were not run for this documentation-only change.
-- The maintainer subsequently approved all three grill decisions in chat. The exact SPA integration seam remains under
-  review, and the new helper/examples respond to the maintainer's follow-up about normal database and object APIs.
-  Recorded approved navigation terms in the [glossary](../../../GLOSSARY.md).
-- The maintainer approved continuation with the construction approach and requested font-size control. Added the public
-  CSS contract; the maintainer subsequently approved the five-ticket graph and publication. Published sub-issues
-  #185–#189; the parent body and state remain unchanged.
-- Verified S3 general-purpose prefix/delimiter and folder behavior against official AWS documentation. API payloads
-  above are illustrative and the helper is proposed; no live bucket was queried or new export implemented.
-- Published issue #184 through `gh`; GitHub resolves the `wghglory/ngx-lift` origin to the canonical
-  `wghglory/ngx-lift-workspace` repository. Confirmed the canonical repository through the GitHub API.
-- CI, merge, deployment and package publication have not been performed for this branch.
+`buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` are public `clr-lift`
+exports; see the [usage and reference guide](../../guides/object-path-breadcrumbs.md). Exact test, browser, package, CI
+and release results belong to the corresponding PR and workflow runs. Local checks do not establish independent human
+language or assistive-technology acceptance, SSR/hydration support, remote CI, merge, deployment or publication.
 
-### Ticket #185 local acceptance evidence (October 24, 2026)
+## Proposed styling
 
-The requested database trail and bucket/prefix/object trail are runnable at the preview route documented above. The
-experiment is implemented only in the demo; no production exports, dependency manifests, peers or version numbers are
-changed. Existing local glossary/delivery-plan edits are retained. The preview's exact signatures, destination callback,
-permitted-root policy, native/SPA templates, focus handoff and CSS sizing choices are recorded in this specification so
-#186–#189 can proceed from concrete evidence.
-
-- `NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run demo:test`: **294 tests passed in 82 files**, including **15 focused
-  helper tests** covering exact callback data, cumulative contexts, stable identity, raw-key edge cases and rejected
-  inputs.
-- `NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run-many -t lint,typecheck -p demo,demo-e2e`: passed. The E2E lint target
-  reports advisory warnings; no lint errors or TypeScript errors remain.
-- `NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run @ngx-lift-workspace/source:i18n-check`: all eleven dictionaries complete,
-  2,095 keys per dictionary, zero errors. Browser journeys switch every non-English locale and inspect translated page
-  titles, panel names and empty-segment labels. This is automated evidence, not native-speaker approval.
-- `NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run demo:build`: production build passed within configured budgets. This is
-  demo build evidence, not installed-library consumer verification.
-- Focused Playwright command (against the running preview):
-  `BASE_URL=http://localhost:4307 NX_SOCKET_DIR=/tmp/ngx-lift-nx pnpm nx run demo-e2e:e2e -- src/breadcrumb-preview.spec.ts --workers=3`.
-  The suite covers real native/SPA navigation and browser Back, modified/middle click, unhandled native context-menu
-  events, form safety, stationary content, panel keyboard boundaries/toggle/Escape/Close, external focus preservation,
-  exact-key direct links, restricted roots, runtime locale changes, runtime per-instance typography, 390px containment
-  and open-panel axe scans in both themes. **Latest local result: 49 passed, 2 explicitly skipped** across Chromium,
-  Firefox and WebKit (27.0s).
-- A standalone plain-anchor reproduction showed that this macOS headless WebKit build does not create a new tab for
-  Meta/middle click (middle click can navigate the current page). The two tab-creation tests are explicitly skipped for
-  WebKit; actual tab creation passes in Chromium/Firefox. All three engines still exercise the real anchor, unprevented
-  Ctrl/Meta/auxclick events and a native right-click event. OS context-menu contents and full Safari tab creation
-  require independent manual browser acceptance; they are not claimed as automated passes.
-- Formatting, relative documentation links and `git diff --check` are checked for this increment. Nx Cloud reports an
-  unavailable remote cache because its organization exceeds the free-plan quota; local task results are independent of
-  that cache warning. No CI run, merge, deployment or package publication is claimed.
-
-Remaining boundaries: production exports/API approval and packed Angular consumers (#186/#188); width-aware collapse,
-large-text/zoom/RTL/compact coverage, 30-level behavior and generalized lifecycle/positioning checks (#187); filtering
-and measured 100-level behavior (#189). SSR/hydration and legacy popover support have not been tested or promised by the
-preview. Independent language reviewers and assistive-technology assessors remain pending. No live storage API was
-queried. The next maintainer step is review of these exercised interfaces before beginning #186.
-
-### Preview visual-feedback follow-up
-
-Maintainer screenshots exposed three issues that the original interaction/containment checks did not catch: an undefined
-`--clr-color-neutral-0` token made the popover transparent; Clarity's button defaults gave the ellipsis a 72px minimum
-width and capitalized addressless labels; and the full-path paragraph kept a fixed line height as font size increased.
-Use the installed Clarity 18.4 `--clr-card-bg-color`, `--clr-card-border-color` and `--clr-global-font-color` surface
-tokens, compact link-style navigation buttons, and inherited proportional paragraph line height. The surface
-intentionally floats above stationary content; its background is opaque in both themes.
-
-The font control now uses `clr-range-container`/`clrRange` for aligned Clarity range styling. The fixture picker uses
-`clr-select-container`/`clrSelect` and an application-owned NgModel binding, so a directly linked fixture remains
-selected after options render. Options show concise raw kind/key data; full callback/identity data stays in the state
-disclosure. The navigation entry sits immediately after Alerts (Multiple).
-
-Added a translated explanation in all eleven locales: buttons represent in-memory locations with no URL, such as a
-wizard deliberately kept in local draft state. This example only updates selected state and demonstrates `type="button"`
-form safety. A containing form does not determine navigation semantics: every URL-addressable location, including SPA
-locations, remains a real link.
-
-The feedback regression command first failed on the original 72px trigger and missing Clarity range class; browser
-inspection also confirmed a fully transparent panel. After the fix, the full focused suite reports **40 passed, 2
-explicitly skipped** across Chromium, Firefox and WebKit, including opaque surfaces, proportional large-text line
-height, compact hit areas, ordinary-case action labels and direct-link fixture selection. AI visual inspection confirmed
-the range thumb/track alignment and opaque large-text panel; this is not independent human visual or
-assistive-technology acceptance. Production build, demo/E2E lint and type checks, eleven-locale translation checks and
-formatting/diff checks passed. Existing E2E lint warnings remain advisory. No new dependency, library export, commit,
-pull request or publication was introduced by this follow-up.
-
-### Font-relative separator spacing and standard Close action
-
-A further maintainer review found that separator gaps stayed at 4px while breadcrumb text grew from 13px to 30px. The
-rendered-spacing regression reproduced a gap ratio of 1 for a font-size ratio of 2.31. Both sides of each decorative
-separator now use `0.3em`, preserving the small-text spacing while increasing it proportionally with the breadcrumb
-font. The overflow trigger has no extra horizontal minimum-width reservation; its glyph and surrounding gaps follow the
-same scale as the other trail content. Its vertical hit area is retained.
-
-Only navigation link-style buttons inherit breadcrumb typography. Close path details now uses the ordinary Clarity
-`btn btn-outline` styling, including its default font size, independently of enlarged ancestor labels. A browser
-regression compares its actual font size with the demo's ordinary Reset button at maximum breadcrumb font size.
-
-The `…` trigger and an underlined `..` have separate meanings: the former opens hidden ancestors; the latter is literal
-caller-owned data in the unusual-key fixture `/a//%2F/雪/../object`. The helper preserves those two dots and their exact
-prefix destination; it does not turn them into an overflow marker or normalize them as filesystem parent navigation. The
-added browser journey verifies both the literal label/destination and the overflow control.
-
-The full focused browser suite now reports **43 passed, 2 explicitly skipped** across Chromium, Firefox and WebKit; the
-existing headless WebKit tab-creation limitations remain unchanged. The production demo build passed. This change adds
-no owned messages, dependencies or public API. Manual assistive-technology acceptance and remote CI remain separate
-pending gates.
-
-### Review corrections: scrolled anchors, destination kinds and whitespace
-
-The three P2 review findings have dedicated regressions. Panel positioning now clamps both candidate anchor boundaries
-to the viewport before calculating available block size. When scrolling moves the trigger outside the viewport, the open
-nonmodal panel stays within the 8px viewport inset and scrolls internally; focus remains in the panel until an explicit
-close or ordinary outside dismissal. It does not grow an off-screen-trigger distance larger than the viewport.
-
-The preview host reads the URL's explicit `kind` before fixture defaults. Bucket/collection destinations use the empty
-prefix root, prefix destinations require `prefix`, and object destinations require `key`; unknown kinds and missing
-required destination parameters produce developer diagnostics. A supplied bucket is preserved. Fixture defaults apply
-only in the absence of URL destination data; legacy prefix/key-only preview URLs remain supported. For example,
-`?fixture=4&kind=object&key=object` now represents the object even though fixture 4 normally represents a prefix.
-Restricted-root validation still applies to the resulting exact location.
-
-The helper retains the localized placeholder for an actually empty segment. Whitespace-only labels use JSON quoting
-(e.g. `" "` for a space and `"\t"` for a tab) so their controls have visible text. Labels containing visible characters
-retain their original surrounding whitespace. IDs, contexts and destination callback payloads always preserve the raw
-key, including spaces, tabs, newlines and Unicode whitespace. No source key is trimmed or normalized.
-
-Review-fix validation: all **16 helper tests** passed, and the full focused browser suite passed **49 tests with 2
-previously documented WebKit tab-creation skips**. The new scrolling and direct-link regressions pass in all three
-engines. Each direct-link scenario now starts in an independent page, avoiding interrupted lazy imports from repeated
-hard navigation; console/page-error assertions remain enabled. Demo production build, demo/E2E lint and type checks,
-formatting and diff checks passed; advisory E2E lint warnings remain. The three inline review comments were replied to
-and resolved. No additional package/publication/CI or independent human acceptance is claimed.
-
-### Underline styling discussion (proposal, not a shipped option)
-
-Installed Clarity 18.4 breadcrumb styles explicitly use `text-decoration: none`. The preview currently inherits global
-anchor underlines, while its addressless buttons have no persistent underline. For the eventual component, prefer
-Clarity-aligned navigation styling without persistent underlines, retain clear hover/focus treatment and
-current-location distinction, and consider a CSS `--cll-breadcrumb-link-decoration` override for consumers who prefer
-underlines. The custom link template would need to honor that styling property too. This extra property remains proposed
-and is not implemented by the review fixes.
+Installed Clarity 18.4 breadcrumb styles set `text-decoration: none`. Prefer Clarity-aligned navigation styling without
+persistent underlines, retain clear hover/focus treatment and current-location distinction, and consider a CSS
+`--cll-breadcrumb-link-decoration` override for consumers who prefer underlines. A custom link template would need to
+honor that property too. This property remains proposed and is not implemented.
 
 Underlines are not universally mandated for breadcrumb links; distinguishability, contrast, native semantics and visible
 keyboard focus remain necessary. See [WCAG Use of Color](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html)
 and the [WAI-ARIA breadcrumb pattern](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/). Font size remains the
-already exercised CSS property `--cll-breadcrumb-font-size`, with Clarity typography as the default. It is not an
-Angular component input; the preview's range control writes that CSS property per instance.
+existing CSS property `--cll-breadcrumb-font-size`, with Clarity typography as the default; it is not an Angular
+component input.
 
-### Focused PR integration validation
-
-The #185 preview was transferred to a dedicated branch based on `origin/main` at `5d21127`, preserving the newer
-key/value glossary, shared-form documentation and all eleven upstream dictionaries. Unrelated local changes to
-`.github/workflows/deploy-demo.yml`, `netlify.toml` and `nx.json` were excluded; the original checkout and index were
-left unchanged. This integration introduced no package or lockfile edits.
-
-Fresh isolated-worktree verification passed: **298 demo tests in 82 files**, demo production build, demo/E2E lint and
-type checks, and translation parity for **2,132 keys in each of eleven locales**. The earlier counts above describe the
-original preview checkout; these counts include current-main additions. E2E lint retains three advisory warnings and has
-no errors. Browser evidence and external CI status are reported in the focused PR; local success does not imply
-independent language/assistive-technology acceptance, production library exports or publication.
-
-## Ticket #186 local acceptance evidence
-
-The maintainer selected this chat to reconcile overlapping work and requested the generic public names
-`BreadcrumbComponent` / `cll-breadcrumb`, with `BreadcrumbItem` and `BreadcrumbLinkContext`. Source files, selectors,
-translations, demo route, public exports, README, roadmap, changelog, tests and incoming spec links use those names.
-There is one implementation and one public demo route: `/clr-lift/components/breadcrumb`.
-
-Validated October 24, 2026 on `feat/186-breadcrumbs-public`:
-
-- Formatting, 24 tooling tests, all eleven translation dictionaries, lint, all project type checks, coverage thresholds,
-  all production builds and bundle checks passed through `NX_SOCKET_DIR=/tmp/ngx186 pnpm run validate`.
-- Unit suites passed: ngx-lift 883 tests, clr-lift 399 tests, demo 298 tests. The breadcrumb component's TypeScript
-  logic has 100% statement, branch, function and line coverage in this run. DOM/CSS behavior is covered separately
-  below.
-- `NX_SOCKET_DIR=/tmp/ngx186 pnpm nx run demo-e2e:e2e src/breadcrumb.spec.ts src/breadcrumb-preview.spec.ts --workers=3`:
-  70 passed; two existing preview tab-creation checks remain skipped for headless WebKit. All 21 new public breadcrumb
-  checks passed, including ordinary versus SPA/history ownership, native modified/context-menu events, keyboard action
-  safety, empty/singleton trails, HTTP data/error recovery, all-locale runtime switching, inherited/per-instance font
-  changes, narrow compact RTL and light/dark accessibility scans. The theme tests wait for the existing playground
-  transition before scanning its final colors; WebKit uses Option+Tab for native-button traversal on macOS.
-- Installed verification initially caught a test assertion expecting a relative RouterLink href in JSDOM, which resolved
-  it against the document base. The assertion now checks the exact resolved URL.
-  `NX_SOCKET_DIR=/tmp/ngx186 pnpm nx run @ngx-lift-workspace/source:package-verify` then passed: fresh strict peer
-  install, public imports/types, strict Angular 21 templates, real DOM routing/actions/forms/replacement in zoneless and
-  ZoneJS hosts, and the existing package import-graph checks. These DOM hosts supplement the three real-browser
-  projects.
-- `git diff --check` and the repository reference search found no old component/selector/type names or spec-path links.
-
-This increment adds no runtime dependency, router peer or package version bump. The changelog records it under
-Unreleased. CI at a pushed commit, merge, deployment and publication have not been performed. The full unrelated E2E
-suite was not rerun. Independent native-speaker review for each supported language and manual assistive-technology
-acceptance remain pending under the accessibility/language contract. The following #187 increment supersedes the
-original short-trail overflow limitation; helper (#188) and scale hardening (#189) retain separate evidence.
-
-### Simple-first demo teaching correction
-
-The ordinary-link playground comes first and opens with its code visible. Its complete Angular example imports only
-`BreadcrumbComponent` and supplies `[items]="items()"`. The component builds ancestor anchors automatically; the final
-item always renders current text even if it has a destination. The separate SPA example demonstrates the optional
-consumer-owned RouterLink template, with complete Router imports/methods and matching copyable HTML. This template is an
-Angular `ng-template`, not a required breadcrumb syntax. The Angular Router integration decision is being clarified with
-the maintainer; no router peer or implicit routing behavior has been introduced by this teaching correction.
-
-Correction validation: demo/E2E lint and type checks, demo production build, changed-file formatting and
-`git diff --check` passed. The public breadcrumb browser suite passed all 24 checks across Chromium, Firefox and WebKit,
-including the new assertion that the first example renders automatic links and displays its simple code on initial load.
-No library runtime behavior or package dependency changed in this correction.
-
-### URL syntax review correction
-
-Destination validation now rejects malformed absolute and protocol-relative URLs through the standard URL parser, while
-retaining the original destination for rendering. Regression cases cover `https://`, `https://[invalid]`, `//[`, and
-unchanged supported relative, query-only, fragment-only and explicit-scheme links. The clr-lift unit suite passed all
-412 tests; clr-lift lint/type checks, changed-file formatting and `git diff --check` passed. Browser and installed
-package checks were not rerun for this correction.
-
-## Ticket #188 public construction helper
-
-`buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` are now public `clr-lift`
-exports with the settled preview signature and boundary table above. The preview delegates to the same implementation.
-The renderer remains generic. There is no new runtime dependency, storage client, request, router peer or version bump.
-
-The public demo adds a working bucket browser with controlled ListBuckets/ListObjectsV2-shaped fixtures. Route state
-owns exact bucket/key/kind/root; child listings supply full prefixes/keys. Direct-linked objects, an empty bucket,
-repeated names, leading/repeated empty segments, literal percent escapes, Unicode, dot segments and a slash-ending
-object are available. Restricted trails omit the collection/bucket/higher prefixes; fixture links and reset explicitly
-switch the example scope. An invalid/outside-root route renders a translated recovery message. Constructed structure
-never proves existence or authorization; object metadata is separately supplied by the fixture.
-
-Owned messages use `breadcrumbStorage.*`: title, scope/fixture explanation, API flow, direct-link examples,
-invalid-route recovery, child listing, empty state, object details, missing metadata and route/response/generated-data
-disclosure. Existing translated Buckets, empty-segment and Reset labels are reused. All eleven locales are delivered
-together. No helper-owned UI, form integration, keyboard surface or async lifecycle is introduced. The example uses the
-existing real-anchor SPA integration, with ordinary browser semantics and current text supplied by the renderer.
-
-See the [usage and reference guide](../../guides/object-path-breadcrumbs.md) for the public contract. Unit/public-type,
-browser and packed Angular 21 consumer checks cover this increment; actual validation results are recorded below after
-execution. Independent human language/assistive-technology review, CI, merge and publication remain separate gates.
-
-### Ticket #188 local acceptance evidence (October 24, 2026)
-
-- `NX_SOCKET_DIR=/tmp/ngx188 pnpm run validate`: passed formatting, tooling tests, all eleven locale dictionaries (2,157
-  keys each), lint, production types, coverage thresholds, production builds, bundle boundaries and strict
-  installed-package verification. Existing advisory E2E lint warnings remain. Unit suites passed 883 ngx-lift, 431
-  clr-lift and 298 demo tests. The public helper's 18 tests cover callback payloads, exact contexts, stable IDs, roots,
-  empty/repeated/whitespace segments, Unicode/percent/dot data, slash-ending objects, invalid inputs and callback
-  failure propagation. Helper coverage: 100% lines/functions, 93.1% statements and 94.59% branches.
-- `BASE_URL=http://localhost:4318 NX_SOCKET_DIR=/tmp/ngx188 pnpm nx run demo-e2e:e2e src/breadcrumb-storage.spec.ts --workers=3`:
-  **27 passed** across Chromium, Firefox and WebKit. These journeys use visible generated ancestors independently of
-  deep-overflow behavior. They cover bucket listing, prefix/object navigation, direct links with exact unusual keys,
-  trailing-delimiter objects, restricted-root exclusion/recovery, reset, browser Back, native modified/context-menu
-  event semantics, all-locale switching, keyboard focus, 390px containment and light/dark axe scans.
-- The repository gate's fresh tarball install compiled the helper/options/location imports and discriminated-union
-  negative type assertions under strict Angular 21 templates and strict peers. Both zoneless and ZoneJS DOM hosts passed
-  exact callback scope/data, stable distinct identities, once-encoded destinations and generated rendering. This is
-  installed-package evidence, separate from real-browser testing.
-- A broader breadcrumb run also exercised the public component and original preview (their existing WebKit tab-creation
-  skips remain). It exposed five failures in the already in-progress #187 deep suite: singleton-panel interaction in all
-  three engines and two WebKit focus/navigation cases. Those failures are outside this independent helper slice; no
-  passing full browser-suite claim is made. Full unrelated E2E was not run.
-- Usage-guide relative links and `git diff --check` passed. Existing local #187 implementation/demo/translation work was
-  retained; formatting and one equivalent web-first E2E assertion were adjusted for repository checks.
-
-No live storage account, CI run, commit, merge, deployment or publication is claimed. Independent native-speaker and
-manual assistive-technology acceptance remain pending. Maintainer review is the next gate for this helper increment;
-responsive-overflow failures and #189 scale/filtering work retain their separate scope.
-
-### Ticket #187 validation evidence (October 24, 2026)
-
-- `NX_SOCKET_DIR=/tmp/ngx-nx pnpm run validate` passed after the final focus correction: repository formatting,
-  tooling/translation checks, lint, type checks, coverage (883 ngx-lift, 432 clr-lift and 298 demo tests), all builds,
-  bundle checks and fresh strict-peer packed consumers. `git diff --check` and subsequent changed-document formatting
-  checks pass. The full unrelated browser suite was not run; the targeted public breadcrumb suite is recorded below.
-
-- Public host: 24 breadcrumb tests pass, including the deterministic count fallback, contiguous recent suffix, repeated
-  labels/exact destinations, count normalization, form safety, independent instances and observer teardown. The library
-  allocates disclosure IDs per application rather than using process-global server state.
-- Public browser journeys: **54 passed** across Chromium, Firefox and WebKit, using the isolated #187 production build.
-  The 18 deep-path checks cover complete ordered ancestry, panel scrolling and bounds, unchanged surrounding layout,
-  fixed-width font changes, 200% text sizing, narrow layouts, normal keyboard exit, close/Escape, external focus/path
-  replacement, singleton truncation, multiple instances, native modified clicks and ordinary SPA navigation. Existing
-  public journeys cover all eleven runtime locales, light/dark accessibility, compact RTL, native forms, HTTP recovery
-  and link ownership. Automated scans include the open panel. Text enlargement is automated; native browser zoom and
-  assistive-technology acceptance remain human checks.
-- Sampled at a 1280×720 viewport: the 30-level fixture at a 640px host width and 18px inherited text renders three
-  actual trail items, 30 panel rows and 29 native ancestor anchors in all three browsers. Panel geometry and scroll
-  extent are checked in each browser and recorded by the deep-path layout attachment. Page width remains 1280px. Tests
-  scroll to and expose the final ancestor. This is measured 30-level layout evidence, not a 100-level performance
-  guarantee.
-- Installed Angular 21 zoneless/ZoneJS fixtures cover the public `maxVisible` input, 30-level unmeasured fallback,
-  disclosure relationships, exact destinations and existing routing/actions/forms. No runtime dependency, router peer or
-  package version changes are required for #187.
-- Browser debugging found two correctness issues now covered by regressions: disclosure DOM must remain stable when the
-  recent suffix changes, and WebKit can focus the containing navigation during an inside pointer-down before the
-  anchor/button receives its click. Pointer-origin tracking preserves the pending inside activation without suppressing
-  ordinary keyboard exit. The demo also memoizes singleton arrays so it does not replace the path on each render.
-
-SSR/hydration remains unclaimed: stable count fallback and browser-only initialization are implemented, but an actual
-server-render/hydration harness has not run. Independent language review, assistive-technology/native-zoom acceptance,
-remote CI, merge, deployment and publication remain separate gates. Local filtering and 100-level scale hardening belong
-to #189.
-
-### Review feedback corrections (October 24, 2026)
-
-The renderer uses the breadcrumb-specific `crumb-label` class so Clarity's global badge padding, border and margins do
-not invalidate the text measurement. A boundary-width browser regression verifies that clipped text always has a details
-disclosure. The disclosure has a minimum 24px target width, and its measurement budget includes that width plus
-separator spacing; the compact RTL, enlarged-text accessibility journeys verify the target in both themes.
-
-Forward Tab from Close now uses native sequential navigation. The existing outside-focus listener dismisses the panel
-after focus moves, preserving browser handling of negative tab indices, inert ancestors, disabled fieldsets, visibility
-and tab order. The regression places excluded controls before the next enabled button and checks both focus and
-dismissal in Chromium, Firefox and WebKit. On macOS WebKit it uses Option+Tab for native button traversal. Shift+Tab
-from the first ancestor still closes the panel and returns focus to the disclosure trigger.
-
-The full focused breadcrumb browser run reports **124 passed and 2 skipped** across Chromium, Firefox and WebKit. The
-two existing skips concern headless WebKit modifier/middle-click tab creation; the new feedback regressions pass in
-every engine. Enlarged-text light/dark accessibility checks include projected SPA anchors and disclosure targets.
-
-Final `pnpm run validate` passed: 883 ngx-lift, 432 clr-lift and 298 demo tests, repository formatting, tooling and
-translation checks, lint, type checks, builds, bundle checks and strict-peer packed consumers. A verification browser
-rerun had two Firefox popup-navigation timeouts; both existing modifier/middle-click cases passed on a focused retry.
-The renderer and feedback test source hashes remained unchanged throughout that verification.
-
-The final review also replaced estimated separator spacing with rendered geometry, measures the navigation row's content
-width rather than the padded host, and renders consumer links in the hidden intrinsic probe. Twelve additional browser
-checks cover measured boundaries, host padding, custom link padding and native forward tab order across three engines.
-Consumer link examples clip their clickable boxes to the available label width and retain inset focus outlines; compact
-RTL/light/dark accessibility scans pass after this correction. The copyable deep example now uses `templateUrl` with its
-separate HTML tab.
-
-After merging the upstream #193 ancestry increment on October 25, the combined breadcrumb browser suite reports **136
-passed and 2 existing headless WebKit skips**. Native and storage boundary/focus tests remain separate; upstream
-host-padding and custom-link-padding regressions are retained.
-
-## Ticket #189 local acceptance evidence (October 25, 2026)
-
-Local filtering consumes ordinary supplied items independently of the optional construction helper. The 30-level demo is
-retained; the additional 100-level playground has repeated translated labels, complete supplied context, exact native
-destinations, global language switching, font/width controls and short/full path replacement. No runtime dependency,
-public input, peer-range or version change is required. Changelog entries remain Unreleased.
-
-- `NX_SOCKET_DIR=/tmp/nxl pnpm run validate` passed repository formatting, tooling tests, all eleven translation
-  dictionaries, lint, production type checks, coverage thresholds, all production builds, bundle boundaries and strict
-  installed-package verification. Unit totals: **883 ngx-lift, 435 clr-lift, 298 demo**. The final focused clr-lift
-  test/lint/type and E2E lint/type rerun also passed after the form-safety/browser-assertion corrections.
-- The final combined breadcrumb browser run passed **157 tests**, with **two existing headless WebKit skips** for
-  modifier/middle-click tab creation. The dedicated search suite passed **21 tests across Chromium, Firefox and
-  WebKit**. It verifies label/context/level matching and order, current summary retention, exact native destinations and
-  modified activation, no filtering HTTP requests, clear/empty recovery, non-submitting Enter within a parent form,
-  focus entry and native forward/backward Tab, close/Escape, replacement, all eleven dictionaries, genuine touch
-  contexts, and narrow compact RTL enlarged text in both themes. Whole-document scans cover ordinary open/empty states.
-  Compact open-panel scans explicitly scope to the subject breadcrumb because its nonmodal top-layer panel can partially
-  cover controls in other playgrounds; the scoped scan context is recorded in each accessibility attachment. No axe
-  rules are disabled.
-- Public-host tests additionally cover the exact twenty-hidden boundary, frozen caller data, Turkish case handling,
-  composed/decomposed Unicode, IME composition, normalized equivalent queries, announcement timing, locale-preserved
-  input/query state, locale removal of a focused result and safe focus restoration. Status text snapshots meaningful
-  settled query changes; locale-only updates clear stale announcements rather than announcing another count.
-- Packed Angular 21 strict-template consumers in zoneless and ZoneJS modes now supply 100 ordinary locations and verify
-  the filter label, exact filtered destination, current/full summary, empty recovery and restoration of all 99 ancestor
-  anchors. This installed-package evidence is distinct from the three real-browser projects.
-- The five-cycle browser measurement test observes each open/filter/resize operation through two animation frames. In
-  the dedicated 21-test run, median elapsed milliseconds were Chromium **33.1 / 33.3 / 33.6**, Firefox **33 / 33 / 34**,
-  and WebKit **34 / 31 / 35**, respectively. These include render-frame scheduling, rather than measuring CPU-only work
-  or establishing a cross-device performance guarantee. At 1280×720, each unfiltered host rendered **530 elements**,
-  including the intrinsic measurement probe, **100 panel rows** and **99 ancestor anchors**. A unique level query
-  retained **two rows**: its matching ancestor and current text. Resize focus remained valid in all fifteen measured
-  cycles. The scrollable surface is not virtualized; no larger-than-100 scale guarantee is claimed.
-- Compared with a clean build of starting revision `b926959`, the complete unminified clr-lift primary FESM changed from
-  **572,285 to 581,812 bytes** (**+9,527**), and its Node gzip representation from **117,512 to 119,721 bytes**
-  (**+2,209**). This is whole-library distributed-module cost, including all dictionaries, not a tree-shaken application
-  bundle measurement. Existing demo bundle-boundary checks pass.
-
-Both Standards and Spec reviews found no remaining actionable issues after correcting the copyable plain-array example,
-query-only announcement behavior and locale focus recovery. Full unrelated E2E, independent native-speaker acceptance,
-manual assistive-technology/native-browser-zoom acceptance, SSR/hydration, remote CI, merge, deployment and publication
-remain separate gates. Local implementation and automated verification do not supply those external approvals.
-
-## Public demo consolidation validation (October 25, 2026)
-
-Removed the retired prototype renderer, contract adapter, prototype-only unit/browser tests and sidebar entry. The old
-route redirects to the public demo. Existing public suites continue to exercise the production component. Component
-examples retain separate TypeScript and HTML tabs; the native and supplied-item examples now use `templateUrl` rather
-than repeating their HTML inside the TypeScript tab. The API reference documents all four inputs, the output, public
-item/link-context types, construction helper options/location union and font-size custom property.
-
-- Demo and E2E lint/type checks passed; E2E lint reports seven existing advisory warnings and no errors.
-- Demo unit suite: **81 files, 282 tests passed** after deleting the prototype-only tests.
-- Production demo build, all eleven translation dictionaries, embedded-example formatting and `git diff --check` passed.
-- Public breadcrumb browser suites: **111 passed** across Chromium, Firefox and WebKit. The prototype's removed
-  headless-WebKit tab-creation checks are not counted as public-component coverage.
-- The final documentation-only follow-up: **3 passed**, verifying the redirect, exported-name heading, API tables,
-  reactive descriptions in all eleven locales and no horizontal document overflow at 390px in all three engines.
-
-This demo-only consolidation changes no library exports or runtime behavior. Installed-package verification was not
-rerun for it; earlier feature evidence remains above. Independent human language/assistive-technology acceptance, remote
-CI for these local changes, merge, deployment and publication are not supplied by these local results.
-
-### Consolidation review and human acceptance follow-up
-
-Standards and Spec reviews identified two documentation gaps: untranslated explanatory default cells and omission of the
-empty-prefix bucket-root case. The tables now show actual invariant defaults (`undefined` and the Clarity CSS fallback)
-and the helper key description includes the bucket-root exception in all eleven locales. No library behavior changes.
-
-Independent native-speaker and assistive-technology reviews have **not** been performed. Their pending locale matrix,
-assessor/environment/revision requirements and closure checklist are tracked in
-[issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196). Closing the implementation parent does not
-close that acceptance issue or imply human approval.
-
-### Maintainer demo feedback
-
-The maintainer requested removal of the retired preview redirect, so that route is now deleted. The page font control
-sets `--cll-breadcrumb-font-size` on the examples scope; ordinary links, actions and storage breadcrumbs inherit the
-selected size while the SPA example also demonstrates an instance binding. Reset restores the inherited default.
-
-Storage fixtures, ancestor/child links and Reset opt into viewport preservation using transient Angular Router `info`.
-The content scroller skips the automatic top reset once for that successful imperative navigation. Real `href` values
-and native modified-click behavior remain intact; Back/Forward restoration, anchor scrolling and normal page navigation
-retain their existing behavior. No library public API or navigation behavior changes.
-
-The regression first reproduced ordinary-link text staying at 18px instead of the requested 30px and storage fixture
-navigation resetting content scroll from 3482px to zero. Final validation passed after the scoped font and scroll fixes:
-**120 browser checks** across Chromium, Firefox and WebKit (including fixture viewport retention, Back restoration and
-ordinary page reset), **282 demo unit tests**, demo/E2E lint/type checks and the production build. Independent human
-acceptance remains pending in #196.
-
-### Independent popover typography validation
-
-The maintainer's enlarged-trail example reproduced the popover inheriting 36px text and crowded line spacing. Four
-Chromium regression cases failed before the correction. The panel now establishes the Clarity default inline font size
-and independent unitless line spacing; enlarging the trail leaves the summary, ancestor links, filter and controls at
-that default. Root font enlargement still scales the panel.
-
-- The final combined breadcrumb and documentation navigation browser run passed **135 checks** across Chromium, Firefox
-  and WebKit. This includes **15 new typography checks** covering native/projected links, both themes, 390px layouts,
-  long context, scoped axe checks without disabled rules, Escape/focus restoration and doubled root font size.
-- The clr-lift unit suite passed **34 files / 435 tests**. Library/demo/E2E lint and type checks, production builds,
-  formatting and all eleven translation dictionaries passed. E2E lint retains seven existing advisory warnings.
-- Packed-consumer verification passed fresh peer installation, strict public/template checks and breadcrumb rendering,
-  routing and form safety in both Angular 21 zoneless and ZoneJS consumers. This is separate from real-browser evidence.
-- Standards and Spec reviews found no actionable issues in the correction or new regressions.
-
-The library documentation, demo font-size guidance in all eleven locales and Unreleased changelog describe the trail
-setting's scope. Independent human language, assistive-technology and native-browser-zoom acceptance remains pending in
-[issue #196](https://github.com/wghglory/ngx-lift-workspace/issues/196). Local results do not establish remote CI,
-merge, deployment or package publication.
+Independent language and assistive-technology acceptance remains open; see the
+[acceptance contract](../../guides/accessibility-and-localization.md) and the [gap register](../../gap-register.md).

@@ -99,13 +99,12 @@ installation, runtime imports and mounted Angular consumer lifecycle.
 
 ## Demo deployment
 
-The production site lives in dist/apps/demo/browser. Netlify and Vercel settings are in [netlify.toml](../netlify.toml)
-and [vercel.json](../vercel.json). The Deploy Demo App workflow waits for quality gates, builds the libraries/demo and
-deploys the generated browser output.
+The production site lives in `dist/apps/demo/browser`. Vercel settings are in [vercel.json](../vercel.json). The Deploy
+Demo App workflow waits for the shared quality gates, builds the libraries/demo and deploys the generated browser output
+to Vercel.
 
-Both Netlify and Vercel production deployments are required on main. Vercel is the canonical host for public links;
-Netlify is a required secondary target. Current host status is owned by the [gap register](gap-register.md). The
-workflow attempts both independently and the job gate requires both successes; a single failed target fails the job
-without skipping the other target. Hosting integrations may also create PR previews; the corresponding remote
-job/deployment records provide status. A Netlify `Forbidden` response indicates a token scope or site ownership issue
-that the maintainer must verify outside the repository; secret values are not part of codebase validation.
+Vercel is the only production deployment target on main and the canonical host for public links. The workflow deploys
+only from `refs/heads/main`; its job gate requires successful builds and a successful Vercel production deployment, and
+a failed build or deployment fails the job. Hosting integrations may also create PR previews; the corresponding remote
+job/deployment records provide status. A manual workflow run outside main builds the demo without a production
+deployment.

@@ -28,7 +28,6 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
-      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -56,25 +55,7 @@ jobs:
         id: build-demo
         run: pnpm nx build demo --configuration=production
 
-      # Both production targets are required on main; keep Vercel independent of a Netlify failure.
-      - name: Deploy to Netlify
-        if: ${{ success() && github.ref == 'refs/heads/main' }}
-        id: netlify
-        continue-on-error: true
-        uses: nwtgck/actions-netlify@d22a32a27c918fe470bbc562e984f80ec48c2668 # v4
-        with:
-          publish-dir: './dist/apps/demo/browser'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy from GitHub Actions'
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 5
-
+      # Vercel is the only production deployment target on main.
       - name: Deploy to Vercel (production, main only)
         if: ${{ success() && github.ref == 'refs/heads/main' }}
         id: vercel
@@ -93,7 +74,6 @@ jobs:
         run: |
           BUILD_LIBS_STATUS="${{ steps.build-libs.outcome }}"
           BUILD_DEMO_STATUS="${{ steps.build-demo.outcome }}"
-          NETLIFY_STATUS="${{ steps.netlify.outcome }}"
           VERCEL_STATUS="${{ steps.vercel.outcome }}"
           BRANCH="${{ github.ref }}"
           EVENT="${{ github.event_name }}"
@@ -120,12 +100,10 @@ jobs:
 
           BUILD_LIBS_ICON=$(get_status_icon "$BUILD_LIBS_STATUS")
           BUILD_DEMO_ICON=$(get_status_icon "$BUILD_DEMO_STATUS")
-          NETLIFY_ICON=$(get_status_icon "$NETLIFY_STATUS")
           VERCEL_ICON=$(get_status_icon "$VERCEL_STATUS")
 
           BUILD_LIBS_BADGE=$(get_status_badge "$BUILD_LIBS_STATUS")
           BUILD_DEMO_BADGE=$(get_status_badge "$BUILD_DEMO_STATUS")
-          NETLIFY_BADGE=$(get_status_badge "$NETLIFY_STATUS")
           VERCEL_BADGE=$(get_status_badge "$VERCEL_STATUS")
 
           cat >> $GITHUB_STEP_SUMMARY << EOF
@@ -154,16 +132,23 @@ jobs:
 
           | Platform | Status | Description |
           |----------|--------|-------------|
-          | 🟢 **Netlify** | $NETLIFY_ICON $NETLIFY_BADGE | Production deployment |
           | ⚫ **Vercel** | $VERCEL_ICON $VERCEL_BADGE | Production deployment |
 
           ---
 
           ## 📈 Overall Status
 
-          Both production targets are required on main. A single failed target fails the job gate without skipping the other target.
+          Vercel is the only production deployment target on main. A failed build or deployment fails the job gate.
 
-          $([ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && [ "$NETLIFY_STATUS" = "success" ] && [ "$VERCEL_STATUS" = "success" ] && echo "### ✅ Deployment completed successfully!" || echo "### ⚠️ Deployment did not complete successfully. Check logs for details.")
+          $(
+            if [ "$BRANCH" != "refs/heads/main" ]; then
+              echo "### Production deployment is skipped outside main."
+            elif [ "$BUILD_LIBS_STATUS" = "success" ] && [ "$BUILD_DEMO_STATUS" = "success" ] && [ "$VERCEL_STATUS" = "success" ]; then
+              echo "### ✅ Deployment completed successfully!"
+            else
+              echo "### ⚠️ Deployment did not complete successfully. Check logs for details."
+            fi
+          )
 
           EOF
 
@@ -172,15 +157,14 @@ jobs:
         env:
           BUILD_LIBS_STATUS: ${{ steps.build-libs.outcome }}
           BUILD_DEMO_STATUS: ${{ steps.build-demo.outcome }}
-          NETLIFY_STATUS: ${{ steps.netlify.outcome }}
           VERCEL_STATUS: ${{ steps.vercel.outcome }}
         run: |
           if [ "$BUILD_LIBS_STATUS" != "success" ] || [ "$BUILD_DEMO_STATUS" != "success" ]; then
             echo "::error::Build steps failed; production deployment was not attempted."
             exit 1
           fi
-          if [ "$NETLIFY_STATUS" != "success" ] || [ "$VERCEL_STATUS" != "success" ]; then
-            echo "::error::At least one required production deployment failed."
+          if [ "$VERCEL_STATUS" != "success" ]; then
+            echo "::error::The required Vercel production deployment failed."
             exit 1
           fi
-          echo "Both Netlify and Vercel production deployments succeeded."
+          echo "Vercel production deployment succeeded."

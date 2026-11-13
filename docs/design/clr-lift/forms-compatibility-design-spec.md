@@ -328,20 +328,10 @@ composite touch boundary, intrinsic-validator composition and explicit payload f
 Clarity reuse examples preserve that shared contract without claiming Clarity already satisfies every requirement.
 Feature value APIs, key/value coexistence strategy and the platform upgrade's release policy stay with their reviews.
 
-The October 19 delivery implements additive `cll-key-value-control` alongside the existing FormArray interface. Its
-[feature spec](key-value-inputs-design-spec.md#evidence) records all three delivered hosts and installed Angular 21
-evidence. Other approved controls must supply the same integration proof. Keep any shared bridge private until real
-controls prove its shape.
-
-## Evidence
-
-Source inspection on October 18, 2026 at base `f021fb6` (merged #179): installed Angular 21.2.17 forms pipelines,
-installed Clarity combobox and the local file-reader, key/value and facade sources linked above. Current primary
-Material, NG-ZORRO and React Aria references informed the adopt/adapt decisions. Installed Angular source governs the
-first delivery phase. The revised ngModel/Reactive Forms examples and composed facade variant pass local strict Angular
-21.2.17 template compilation with installed Clarity 18.4.0 and the built ngx-lift declarations. This compilation does
-not prove runtime form behavior, a new installed-package consumer, or all of Clarity's accessibility semantics. The
-October 19 additive key/value implementation and browser/package results are recorded in its
-[feature evidence](key-value-inputs-design-spec.md#evidence); this does not certify other proposed controls.
-Revision-specific checks and reviewer evidence belong in the PR; future component APIs and delivery evidence remain
+The additive `cll-key-value-control` ships alongside the existing FormArray interface. See the
+[key/value spec](key-value-inputs-design-spec.md#usage) for its contracts. Other approved controls must supply the same
+ngModel, typed Reactive Forms, `toSignalForm` and installed-consumer proof. Keep any shared bridge private until real
+controls prove its shape. Installed Angular source governs the first delivery phase; strict template compilation does
+not prove runtime form behavior, a new installed-package consumer or all of Clarity's accessibility semantics. Exact
+checks and reviewer evidence belong in the corresponding PR; future component APIs and delivery evidence remain
 separate.

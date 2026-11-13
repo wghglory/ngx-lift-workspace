@@ -1,9 +1,8 @@
 # Datagrid selection form control
 
-Status: **native grid composition approved; production exports implemented locally October 30, 2026; server-page example
-added October 31, 2026**. The [delivery plan](datagrid-selection-delivery-plan.md) maps the current stories and
-execution order. Package: clr-lift. The exports below are available in the checkout; npm publication is separate. The
-[composition ADR](../../adr/0002-datagrid-selection-composition.md) supersedes the earlier rendering proposal.
+Status: **delivered** in `ngx-lift 21.5.0` / `clr-lift 21.4.0`. Package: clr-lift. The
+[delivery plan](datagrid-selection-delivery-plan.md) records the story sequence and the
+[composition ADR](../../adr/0002-datagrid-selection-composition.md) owns the rendering decision.
 
 [Parent #198](https://github.com/wghglory/ngx-lift-workspace/issues/198) →
 [#200 local field](https://github.com/wghglory/ngx-lift-workspace/issues/200) → independent

@@ -1,14 +1,14 @@
 # Datagrid selection delivery plan
 
-Updated October 30, 2026. The native composition and consumer simplifications are agreed; public exports and production
-behavior are implemented locally, with evidence in the [acceptance record](datagrid-selection-acceptance.md). This plan
-updates the existing issue graph and does not add another renderer, prerequisite interface ticket or final testing
-ticket.
+The native composition and selection exports are delivered in `ngx-lift 21.5.0` / `clr-lift 21.4.0`. This plan records
+the story sequence used for that delivery; it is not a schedule for remaining work.
 
 Start with the [short specification](datagrid-selection-design-spec.md),
 [complete consumer examples](datagrid-selection-code-examples.md) and
 [composition ADR](../../adr/0002-datagrid-selection-composition.md). The
-[detailed reference](datagrid-selection-reference.md) preserves async, availability, reset and historical evidence.
+[detailed reference](datagrid-selection-reference.md) documents async, availability, reset and localization contracts.
+Current acceptance status lives in the [acceptance record](datagrid-selection-acceptance.md) and the
+[gap register](../../gap-register.md).
 
 ## Existing work and current checkpoint
 

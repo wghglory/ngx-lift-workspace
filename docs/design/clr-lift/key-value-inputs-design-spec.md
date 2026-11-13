@@ -479,42 +479,23 @@ semantics and explicit raw/filtered payload choice must be reviewed by each call
 
 ## Review decisions and delivery
 
-Settled by this task: additive `cll-key-value-control`, fresh ordered entries, current consumers preserved, Angular 21
-first, owner-controlled reset/disabled state, composite touch and Angular-owned updateOn timing. New control, demo,
-dictionaries and validation evidence are one delivery scope. Release/publication, human language acceptance and manual
-assistive-technology approval retain separate evidence gates.
+Settled: additive `cll-key-value-control`, fresh ordered entries, current consumers preserved, Angular 21 first,
+owner-controlled reset/disabled state, composite touch and Angular-owned `updateOn` timing. The control, localized demo,
+browser journeys and installed Angular 21 consumers are delivered in `ngx-lift 21.5.0` / `clr-lift 21.4.0`.
 
-## Previous implementation evidence (October 19)
+## Delivery evidence
 
-Local checks on October 19, 2026:
-
-- Library suite: 347 tests passed, including 16 new real-owner integration tests; legacy FormArray regressions pass. New
-  control logic: 95.49% statements, 94.31% branches and 96.70% lines under V8 coverage.
-- Demo suite: 263 tests passed. The first working value-control preview precedes the legacy API explanation.
-- Feature E2E: 51 tests passed across Chromium, Firefox and WebKit, covering three form modes, all 11 locales, runtime
-  switching, invalid correction, reset, focus, disabled/readonly and route disposal. Six additional accessibility checks
-  passed using actual `clr-density="compact"`, narrow light/dark layouts and RTL. Full-page scans also exposed shared
-  mobile-header target overlap and nonfocusable scrolling API tables; both are fixed without scan exclusions.
-- Library/demo/browser and library/demo spec type checks pass. Three preexisting Query DevTools test assertions now use
-  index-signature-safe access; its 32 tests and the new control's 16 tests pass together. Lint passes with no newly
-  introduced warnings. Existing unrelated `documentation-validation-rules.spec.ts` conditional-test warnings remain.
-  Translation parity/placeholder checks and tooling/example checks pass.
-- Production library/demo builds and lazy dependency bundle checks pass. Fresh strict-peer tarball installation, strict
-  TypeScript/Angular template compilation and actual installed DOM interactions pass in zoneless and ZoneJS processes
-  under Angular 21.2.25. Workspace source and host tests use Angular 21.2.17. No workspace path aliases enter the
-  isolated fixtures. Both legacy and additive selectors compile/render in the same consumer.
-
-Tests/fixtures:
+The relevant fixtures remain in the repository:
 [form-owner tests](../../../libs/clr-lift/src/lib/components/key-value-control/key-value-control.component.spec.ts),
 [browser journeys](../../../apps/demo-e2e/src/key-value-control.spec.ts),
-[installed strict hosts](../../../tools/package/fixtures/key-value-hosts.ts) and
+[installed strict hosts](../../../tools/package/fixtures/key-value-hosts.ts) and the
 [installed DOM runner](../../../tools/package/fixtures/key-value-browser.mjs). The package check is part of the existing
-`package-verify` target. The demo source checker inspects the extracted example template, so copyable snippets and
-rendered bindings remain checked together.
+`package-verify` target.
 
-Independent native-speaker approval, manual screen-reader/zoom assessment, dedicated large-scale measurements,
-SSR/hydration, CI, merge and publication are not established by these local checks. The control targets small editable
-metadata collections; applications choose maxRows for their use case. Native signal fields remain deferred.
+Exact test, browser, package, CI and release results belong to the corresponding PR and workflow runs. Local checks do
+not establish independent human language/assistive-technology acceptance, dedicated large-scale measurements,
+SSR/hydration, remote CI, merge or publication. The control targets small editable metadata collections; applications
+choose `maxRows` for their use case. Native signal fields remain deferred.
 
 ## October 22 acceptance expansion
 
@@ -564,28 +545,6 @@ implementation only and does not establish acceptance of this expansion.
   dynamic rows; retain Angular's form state and validation composition instead of a second form framework.
 - [React Aria combobox](https://react-aria.adobe.com/ComboBox/useComboBox): adapt explicit labeling and validation
   associations. Do not introduce React dependencies or remote-data infrastructure for local choices.
-
-## October 22 validation evidence
-
-- Compared rendered production and local controls. Default row labels and the group legend are screen-reader-only;
-  removal uses the times icon; unequal error messages preserve input alignment and form actions have separate spacing.
-- clr-lift: 357 unit/integration tests passed, including dependent resets, typed values, copied nested arrays, pair
-  uniqueness, custom validation, invalid selection retention, Clarity selection, readonly and popup focus ownership.
-  Library coverage: 93.07% statements, 84.43% branches. New renderer statement coverage: 96.61%.
-- Demo: 263 tests passed. All nine runnable key/value snippets compiled with strict Angular templates.
-- Browser: 69 checks passed across Chromium, Firefox and WebKit, including narrow layouts, error alignment, all
-  input/select combinations, typed searchable configuration, keyboard selection/Escape, open-popup accessibility and
-  runtime languages.
-- Lint, library/demo/E2E typechecks, spec typecheck, translation completeness (all 11 demo locales and library aliases),
-  tooling/example-format checks, production demo build and diff checks passed.
-- Installed package verification passed with Angular 21.2.25 in zoneless and ZoneJS modes, including strict
-  templates/types, numeric/boolean/array values and the existing FormArray integration.
-- The installed Clarity 18.4 combobox needs explicit aria-controls while open and removal of a stale no-results active
-  descendant when its popup disappears. The internal renderer supplies these associations; closed and open states pass
-  accessibility scans. Popup ownership participates in the composite blur boundary.
-
-These are local results. Remote CI, merge, publication/deployment, independent language review and manual
-assistive-technology acceptance were not performed. Consumer applications were audited but not migrated.
 
 ### Follow-up interaction refinement
 
