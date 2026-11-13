@@ -1,6 +1,8 @@
 import {readFileSync} from 'node:fs';
-import {resolve} from 'node:path';
+import {join, resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
+
+const rootDir = join(import.meta.dirname, '../..');
 
 /** Verifies that heavyweight demo dependencies stay behind their asynchronous boundaries. */
 export function validateLazyDependencies(stats) {
@@ -44,9 +46,19 @@ export function validateLazyDependencies(stats) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const errors = validateLazyDependencies(JSON.parse(readFileSync('dist/apps/demo/stats.json', 'utf8')));
-  if (errors.length) {
-    errors.forEach((error) => console.error(error));
-    process.exitCode = 1;
-  } else console.log('Verified lazy highlighting and deferred certificate parsing from production build metadata.');
+  const statsPath = 'dist/apps/demo/stats.json';
+  let stats;
+  try {
+    stats = JSON.parse(readFileSync(join(rootDir, statsPath), 'utf8')) ?? {};
+  } catch (error) {
+    console.error(`Missing or invalid build metadata: ${statsPath} (${error.message})`);
+  }
+  if (stats === undefined) process.exitCode = 1;
+  else {
+    const errors = validateLazyDependencies(stats);
+    if (errors.length) {
+      errors.forEach((error) => console.error(error));
+      process.exitCode = 1;
+    } else console.log('Verified lazy highlighting and deferred certificate parsing from production build metadata.');
+  }
 }

@@ -34,15 +34,15 @@
     "e2e:ui": "nx e2e demo-e2e --ui",
     "e2e:lint": "nx lint demo-e2e",
     "e2e:verify": "pnpm run e2e:lint && pnpm run e2e",
-    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md,html,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,json,css,scss,md,html,yml,yaml}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,mts,cts,json,css,scss,md,html,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,mts,cts,json,css,scss,md,html,yml,yaml}\"",
     "format:examples": "nx run @ngx-lift-workspace/source:demo-examples-format",
     "affected:test": "nx affected -t test",
     "affected:build": "nx affected -t build",
     "affected:lint": "nx affected -t lint",
     "graph": "nx graph",
     "clean": "nx reset && rm -rf dist tmp .nx/cache",
-    "validate": "pnpm run format:check && pnpm run test:tools && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run bundle:check && pnpm run verify:packages",
+    "validate": "pnpm run format:check && git diff --check HEAD && pnpm run test:tools && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run bundle:check && pnpm run verify:packages",
     "release:version": "nx release version",
     "release:publish": "nx release publish",
     "release:check": "pnpm run format:check && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run verify:packages",
@@ -139,7 +139,7 @@
         "executor": "nx:run-commands",
         "options": {
           "commands": [
-            "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs tools/bundle/*.test.mjs tools/demo/*.test.mjs",
+            "node --test tools/eslint-plugin/*.test.mjs tools/i18n/*.test.mjs tools/bundle/*.test.mjs tools/demo/*.test.mjs tools/vitest/*.test.mjs",
             "node tools/demo/format-examples.mjs",
             "node tools/demo/datagrid-selection-examples.mjs"
           ],
@@ -194,7 +194,7 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,css,scss,md,html}": [
+    "*.{mjs,cjs,mts,cts,json,css,scss,md,html,yml,yaml}": [
       "prettier --write"
     ]
   }
