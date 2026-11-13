@@ -1,4 +1,4 @@
-import {expect, test, type Page} from '@playwright/test';
+import {expect, test, type Locator, type Page} from '@playwright/test';
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import ts from 'typescript';
@@ -8,13 +8,27 @@ function box(value: {x: number; y: number; width: number; height: number} | null
   return value;
 }
 
+/**
+ * Opens the query devtools at a wide viewport, waits for the seven-column list and
+ * returns the locators shared by the wide-list and inspector journeys.
+ */
 async function openWideQueryDevtools(page: Page) {
   await page.setViewportSize({width: 1920, height: 1000});
   await page.goto('/ngx-lift/query/queryResources');
   await page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true}).click();
   const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
   await expect(panel.getByRole('columnheader')).toHaveCount(7);
-  return panel;
+  return {
+    panel,
+    keyColumn: panel.getByRole('columnheader', {name: 'Query key'}),
+    bulkRow: panel.locator('clr-dg-row').filter({hasText: 'clusters-bulk-fleet'}),
+  };
+}
+
+async function expectBoundedKeyColumn(panel: Locator, keyColumn: Locator) {
+  expect(box(await keyColumn.boundingBox()).width).toBeLessThan(
+    box(await panel.locator('.query-list').boundingBox()).width / 2,
+  );
 }
 
 function demoRoutes(): string[] {
@@ -369,26 +383,20 @@ test('state counts and shared tags filter collection queries without refetching 
 });
 
 test('query lists size columns automatically and keep the key column bounded', async ({page}, testInfo) => {
-  const panel = await openWideQueryDevtools(page);
+  const {panel, keyColumn, bulkRow} = await openWideQueryDevtools(page);
   await expect(panel.getByRole('columnheader', {name: 'Tags'})).toBeVisible();
   await expect(panel.getByRole('columnheader', {name: 'Failed attempts'})).toBeVisible();
-  const keyColumn = panel.getByRole('columnheader', {name: 'Query key'});
-  expect(box(await keyColumn.boundingBox()).width).toBeLessThan(
-    box(await panel.locator('.query-list').boundingBox()).width / 2,
-  );
-  const bulk = panel.locator('clr-dg-row').filter({hasText: 'clusters-bulk-fleet'});
-  await expect(bulk.locator('.state-badge')).toHaveText('fresh');
+  await expectBoundedKeyColumn(panel, keyColumn);
+  await expect(bulkRow.locator('.state-badge')).toHaveText('fresh');
   await expect(panel.getByRole('columnheader').nth(1)).toContainText('Tags');
-  await expect(bulk.locator('.datagrid-cell')).toHaveCount(7);
-  await expect(bulk.locator('.datagrid-cell').nth(5)).toHaveText('0');
+  await expect(bulkRow.locator('.datagrid-cell')).toHaveCount(7);
+  await expect(bulkRow.locator('.datagrid-cell').nth(5)).toHaveText('0');
   await panel.screenshot({path: testInfo.outputPath('query-devtools-wide-list.png')});
 });
 
 test('query inspector expands cached levels and restores the bounded wide list', async ({page}) => {
-  const panel = await openWideQueryDevtools(page);
-  const keyColumn = panel.getByRole('columnheader', {name: 'Query key'});
-  const bulk = panel.locator('clr-dg-row').filter({hasText: 'clusters-bulk-fleet'});
-  await bulk.getByRole('button', {name: 'Refetch', exact: true}).click();
+  const {panel, keyColumn, bulkRow} = await openWideQueryDevtools(page);
+  await bulkRow.getByRole('button', {name: 'Refetch', exact: true}).click();
   const inspector = panel.locator('.query-inspector');
   await expect(panel.getByRole('columnheader')).toHaveCount(5);
   await expect(inspector.getByRole('button', {name: 'Refetch', exact: true})).toBeEnabled();
@@ -401,9 +409,7 @@ test('query inspector expands cached levels and restores the bounded wide list',
   await expect(inspector.locator('.value-tree')).toContainText('cpuUsagePct:');
   await inspector.getByRole('button', {name: 'Back', exact: true}).click();
   await expect(panel.getByRole('columnheader')).toHaveCount(7);
-  expect(box(await keyColumn.boundingBox()).width).toBeLessThan(
-    box(await panel.locator('.query-list').boundingBox()).width / 2,
-  );
+  await expectBoundedKeyColumn(panel, keyColumn);
 });
 
 test('pointer resizing persists height once dragging finishes and restores it on reopen', async ({page}) => {

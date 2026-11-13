@@ -3,6 +3,16 @@ import axe from 'axe-core';
 
 type BrowserAxe = typeof axe;
 
+/**
+ * Runs the complete WCAG 2.0/2.1/2.2 A/AA axe scan after finite animations settle,
+ * attaches the result to the Playwright report and fails on any violation.
+ *
+ * @param page - The page under test.
+ * @param testInfo - Playwright test info used for the accessibility attachment.
+ * @param scope - Optional CSS selector narrowing the scan to one subtree.
+ * @example
+ * await expectAccessible(page, testInfo, 'main');
+ */
 export async function expectAccessible(page: Page, testInfo: TestInfo, scope?: string) {
   await page.addScriptTag({content: axe.source});
   // Clarity's loading button fades its projected content in. Scanning during that

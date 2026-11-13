@@ -102,7 +102,11 @@ translations, so its own diff needs no translation acceptance. Automated results
 | G-28 | P1       | Gate drift       | WebKit shard 5 exceeded the 30-second test default on `datagrid-selection.spec.ts:107` and `demo-layout-contract.spec.ts:362`.                                                                       | Split each heavy journey into two tests with the same assertions and extracted the shared setup. The 30-second test default, 5-minute shard cap and coverage gate are unchanged. |
 | G-32 | P2       | Gate drift       | Some jobs lacked timeouts; deploy/publish lacked concurrency; Playwright browsers were reinstalled on every run.                                                                                     | Added job timeouts, non-cancelling concurrency groups for both workflows, and a browser cache keyed by OS, browser and lockfile. Coverage stays off the PR gate.                 |
 | G-50 | P1       | Acceptance drift | `expectAccessible` scanned Clarity's loading button while its content faded in, producing a reproducible `color-contrast` failure (1.02:1) on `/ngx-lift/operators/createAsyncState` in light theme. | Wait for finite, running animations before axe runs. No axe rule, scope or selector exclusion was added, and the settled UI is unchanged.                                        |
-| G-51 | P1       | Gate drift       | The 2026-11-11 push CI and demo deploy failed in every Chromium shard when `playwright install --with-deps` could not resolve apt mirrors.                                                           | Install OS dependencies only for a cold browser cache (with retries); on a cache hit run `playwright install` without apt.                                                       |
+| G-51 | P1       | Gate drift       | The 2026-11-11 push CI and demo deploy failed in every Chromium shard when `playwright install --with-deps` could not resolve apt mirrors.                                                           | Cache browser binaries only; run `playwright install --with-deps` on every shard with retries/backoff, and document the runner-image dependency in `docs/COMMANDS.md`.           |
+
+| G-52 | P1 | Gate drift | Skipping apt on a warm browser cache left WebKit without `libevent-2.1.so.7`; PR #223's
+WebKit smoke could not launch (run `43210408521`). | Cache browser binaries only; run `playwright install --with-deps`
+on every shard with retries/backoff. |
 
 ## Intentional decisions, not gaps
 

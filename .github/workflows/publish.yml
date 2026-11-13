@@ -50,6 +50,7 @@ env:
 jobs:
   release-inputs:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Require reviewed versions for real publication
         env:
@@ -68,6 +69,7 @@ jobs:
     needs: quality
     name: Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       id-token: write

@@ -177,11 +177,11 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # `--with-deps` installs OS packages through apt in every shard. A transient
-      # apt/DNS failure failed all Chromium shards and the deploy/publish callers.
-      # Cache the browser binaries and run apt only for a cold cache, with retries.
+      # Browser binaries are cached, but OS libraries are not part of the runner
+      # image: WebKit needs libevent, which only `--with-deps` installs. Skipping
+      # apt on a cache hit made WebKit fail to launch in PR #223. Retry transient
+      # apt mirror/DNS failures rather than failing the shard on the first attempt.
       - name: Restore Playwright browser cache
-        id: playwright-cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/ms-playwright
@@ -191,20 +191,16 @@ jobs:
       - name: Install Playwright browsers
         timeout-minutes: 10
         run: |
-          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
-            pnpm exec playwright install ${{ matrix.browser }}
-          else
-            for attempt in 1 2 3; do
-              if pnpm exec playwright install --with-deps ${{ matrix.browser }}; then
-                exit 0
-              fi
-              if [ "$attempt" -eq 3 ]; then
-                exit 1
-              fi
-              # Give a transient apt mirror/DNS failure time to recover.
-              sleep $((attempt * 10))
-            done
-          fi
+          for attempt in 1 2 3; do
+            if pnpm exec playwright install --with-deps ${{ matrix.browser }}; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            # Give a transient apt mirror/DNS failure time to recover.
+            sleep $((attempt * 10))
+          done
       - name: Compute nx command
         id: scope
         run: |
