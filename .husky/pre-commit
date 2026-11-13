@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
 pnpm exec lint-staged
+pnpm run format:check
 

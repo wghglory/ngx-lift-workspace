@@ -16,31 +16,34 @@ The executable definitions live in [package.json](../package.json). Run commands
 
 ## Validation
 
-| Command                                     | Purpose                                                                                          |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| pnpm run validate                           | Formatting, tooling, locales, lint, types, coverage, builds, bundle and installed-package checks |
-| pnpm test                                   | All unit-test projects                                                                           |
-| pnpm run test:ngx / pnpm run test:clr       | One library's unit tests                                                                         |
-| pnpm nx run ngx-lift:test -- computed-async | Focused signal regressions                                                                       |
-| pnpm run test:coverage                      | Coverage run and summary using configured thresholds                                             |
-| pnpm run e2e:verify                         | Browser-test lint and Playwright tests                                                           |
-| pnpm run e2e:ui                             | Interactive Playwright runner                                                                    |
-| pnpm run typecheck                          | Production TypeScript checks                                                                     |
-| pnpm run lint                               | All project lint checks                                                                          |
-| pnpm run format:check                       | Verify formatting                                                                                |
-| pnpm run format                             | Apply formatting                                                                                 |
-| pnpm run i18n:check                         | Validate dictionary coverage, placeholders and fixed API options                                 |
-| pnpm run bundle:check                       | Verify heavyweight dependency loading boundaries                                                 |
-| pnpm run verify:packages                    | Strict tarball consumers, peers, imports and zoneless/ZoneJS DOM fixtures                        |
-| pnpm run release:check                      | Read-only release preflight; never publishes                                                     |
-| git diff --check                            | Whitespace errors in the diff                                                                    |
+| Command                                     | Purpose                                                                                                           |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| pnpm run validate                           | Formatting, diff whitespace, tooling, locales, lint, types, coverage, builds, bundle and installed-package checks |
+| pnpm test                                   | All unit-test projects                                                                                            |
+| pnpm run test:ngx / pnpm run test:clr       | One library's unit tests                                                                                          |
+| pnpm nx run ngx-lift:test -- computed-async | Focused signal regressions                                                                                        |
+| pnpm run test:coverage                      | Coverage run and summary using configured thresholds                                                              |
+| pnpm run e2e:verify                         | Browser-test lint and Playwright tests                                                                            |
+| pnpm run e2e:ui                             | Interactive Playwright runner                                                                                     |
+| pnpm run typecheck                          | Production TypeScript checks                                                                                      |
+| pnpm run lint                               | All project lint checks                                                                                           |
+| pnpm run format:check                       | Verify formatting                                                                                                 |
+| pnpm run format                             | Apply formatting                                                                                                  |
+| pnpm run i18n:check                         | Validate dictionary coverage, placeholders and fixed API options                                                  |
+| pnpm run bundle:check                       | Verify heavyweight dependency loading boundaries                                                                  |
+| pnpm run verify:packages                    | Strict tarball consumers, peers, imports and zoneless/ZoneJS DOM fixtures                                         |
+| pnpm run release:check                      | Read-only release preflight; never publishes                                                                      |
+| git diff --check HEAD                       | Whitespace errors in staged and unstaged changes                                                                  |
 
-`pnpm run validate` is the local full chain. `pnpm run e2e:verify` and `git diff --check` are additional local review
-checks; they are not part of `validate`. CI runs fast checks, library tests, demo tests, builds and E2E as parallel
-jobs. Coverage, installed-consumer checks and the full three-browser E2E matrix run on push/schedule, while the blocking
-PR E2E gate uses the full Chromium suite plus Firefox/WebKit smoke. The E2E job caches Playwright browser binaries by
-OS, browser and lockfile, then still runs `playwright install --with-deps` on every shard with retries: WebKit's shared
-libraries are not part of the runner image. See `.github/workflows/quality.yml` and [DEPLOYMENT](DEPLOYMENT.md).
+`pnpm run validate` is the local full chain and includes `git diff --check HEAD`; CI's `fast-checks` job enforces the
+same whitespace policy through `format:check` over every formatted extension. `pnpm run e2e:verify` stays outside
+`validate` because it needs installed Playwright browsers and a dev server. CI covers its two parts as separate jobs:
+`lint-typecheck` runs `nx lint demo-e2e` when that project is affected, and the sharded `e2e` matrix runs Playwright. CI
+runs fast checks, library tests, demo tests, builds and E2E as parallel jobs. Coverage, installed-consumer checks and
+the full three-browser E2E matrix run on push/schedule, while the blocking PR E2E gate uses the full Chromium suite plus
+Firefox/WebKit smoke. The E2E job caches Playwright browser binaries by OS, browser and lockfile, then still runs
+`playwright install --with-deps` on every shard with retries: WebKit's shared libraries are not part of the runner
+image. See `.github/workflows/quality.yml` and [DEPLOYMENT](DEPLOYMENT.md).
 
 Playwright starts an isolated dev server by default. Set BASE_URL explicitly to test an existing deployment:
 

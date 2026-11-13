@@ -14,7 +14,19 @@
       "{workspaceRoot}/.github/workflows/ci.yml",
       "{workspaceRoot}/.github/workflows/quality.yml",
       "{workspaceRoot}/.github/workflows/publish.yml",
-      "{workspaceRoot}/.github/workflows/deploy-demo.yml"
+      "{workspaceRoot}/.github/workflows/deploy-demo.yml",
+      "{workspaceRoot}/.npmrc",
+      "{workspaceRoot}/commitlint.config.js",
+      "{workspaceRoot}/eslint.config.mjs",
+      "{workspaceRoot}/netlify.toml",
+      "{workspaceRoot}/nx.json",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/pnpm-lock.yaml",
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/project.json",
+      "{workspaceRoot}/tools/**/*",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/vercel.json"
     ]
   },
   "plugins": [
