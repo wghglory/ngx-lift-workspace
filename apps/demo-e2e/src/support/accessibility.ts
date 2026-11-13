@@ -3,8 +3,32 @@ import axe from 'axe-core';
 
 type BrowserAxe = typeof axe;
 
+/**
+ * Runs the complete WCAG 2.0/2.1/2.2 A/AA axe scan after finite animations settle,
+ * attaches the result to the Playwright report and fails on any violation.
+ *
+ * @param page - The page under test.
+ * @param testInfo - Playwright test info used for the accessibility attachment.
+ * @param scope - Optional CSS selector narrowing the scan to one subtree.
+ * @example
+ * await expectAccessible(page, testInfo, 'main');
+ */
 export async function expectAccessible(page: Page, testInfo: TestInfo, scope?: string) {
   await page.addScriptTag({content: axe.source});
+  // Clarity's loading button fades its projected content in. Scanning during that
+  // transition reports near-transparent text as a color-contrast failure even though
+  // the settled UI passes. Wait for finite, running animations instead of sleeping so
+  // every route, tab and scoped scan observes the rendered state.
+  await page.evaluate(async () => {
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter(
+          (animation) => animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity,
+        )
+        .map((animation) => animation.finished.catch(() => undefined)),
+    );
+  });
   const results = await page.evaluate((scope) => {
     const axe = (window as unknown as Window & {axe: BrowserAxe}).axe;
     // Maintainer-approved exception: inert Clarity buttons fail color-contrast by design and

@@ -38,8 +38,9 @@ The executable definitions live in [package.json](../package.json). Run commands
 `pnpm run validate` is the local full chain. `pnpm run e2e:verify` and `git diff --check` are additional local review
 checks; they are not part of `validate`. CI runs fast checks, library tests, demo tests, builds and E2E as parallel
 jobs. Coverage, installed-consumer checks and the full three-browser E2E matrix run on push/schedule, while the blocking
-PR E2E gate uses the full Chromium suite plus Firefox/WebKit smoke. See `.github/workflows/quality.yml` and
-[DEPLOYMENT](DEPLOYMENT.md).
+PR E2E gate uses the full Chromium suite plus Firefox/WebKit smoke. The E2E job caches Playwright browser binaries by
+OS, browser and lockfile, then still runs `playwright install --with-deps` on every shard with retries: WebKit's shared
+libraries are not part of the runner image. See `.github/workflows/quality.yml` and [DEPLOYMENT](DEPLOYMENT.md).
 
 Playwright starts an isolated dev server by default. Set BASE_URL explicitly to test an existing deployment:
 

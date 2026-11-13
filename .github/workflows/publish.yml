@@ -36,6 +36,12 @@ on:
       - 'ngx-lift@*'
       - 'clr-lift@*'
 
+# One publication at a time across tags and manual dispatch, preserving the
+# ngx-lift-before-clr-lift order; never cancel one already in progress.
+concurrency:
+  group: publish-libraries
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
   RELEASE_VERSION: ${{ inputs.version || 'skip' }}
@@ -44,6 +50,7 @@ env:
 jobs:
   release-inputs:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Require reviewed versions for real publication
         env:
@@ -62,6 +69,7 @@ jobs:
     needs: quality
     name: Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
       id-token: write
