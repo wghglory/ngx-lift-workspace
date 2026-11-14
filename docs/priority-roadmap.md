@@ -14,7 +14,7 @@ new value control. This roadmap owns current delivery priorities and acceptance 
 | 3        | Secondary entry points                                  | Measure first  | Compare installed-consumer bundles and optional-dependency boundaries before choosing splits such as `ngx-lift/query` or `clr-lift/certificate`.                              |
 | 4        | SSR/hydration                                           | Lower priority | Define request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency with dedicated consumers. Node DOM tests do not prove SSR/hydration. |
 | 5        | Large-collection scheduling and advanced cache features | Demand-driven  | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback need concrete consumers and ownership contracts.        |
-| 6        | Human documentation acceptance                          | Open           | Newcomer comprehension and independent language approval for the 2026-11-12 UI strings remain separate gates.                                                                 |
+| 6        | Human documentation acceptance                          | Partial        | Newcomer comprehension remains an open human gate. Independent language approval for the 2026-11-12 UI strings was recorded on 2026-11-14 (PR #226).                          |
 | 7        | Angular 22 / Nx upgrade                                 | Deferred       | Deliver Angular 21 controls first; revisit in a separate platform PR with pinned versions, an installed-consumer matrix and native signal-field support.                      |
 
 ## Acceptance boundaries

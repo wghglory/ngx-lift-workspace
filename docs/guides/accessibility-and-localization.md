@@ -69,6 +69,13 @@ label layouts. Read actual rendered states and exercise runtime switching; key p
 | pt-BR  | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
 | ru     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
 
+On 2026-11-14 the maintainer approved the language acceptance gate for the 2026-11-12 `toSignalForm` validator-binding
+playground and API-guide strings, closing G-49 (recorded in PR #226). Scope: the playground messages and accessible
+names plus the API-guide card titles and descriptions, across all eleven supported locales. This is a dated maintainer
+acceptance decision, not an automated check result and not a claim that automated checks produced human approval;
+automated dictionary, accessibility, keyboard and consumer checks remain required. It leaves the 2026-11-10 manual
+assistive-technology waiver unchanged as a decision rather than a passed assessment.
+
 ### Manual assistive-technology decision
 
 The maintainer waived the independent manual assistive-technology assessment on 2026-11-10. This waiver is not a passed
