@@ -399,8 +399,9 @@ export interface BreadcrumbItem {
 `linkTemplate?: TemplateRef<BreadcrumbLinkContext>` is also available in #186; its `$implicit` value is the original
 item. Consumers own the real anchor and RouterLink integration. The `maxVisible` input is implemented in #187. The
 generic renderer is named `BreadcrumbComponent` / `cll-breadcrumb` for both application and object-store paths; the
-public `buildObjectPathBreadcrumbs` helper remains specific to exact object keys. No published breadcrumb API is being
-renamed because the increment is unreleased.
+public `buildObjectPathBreadcrumbs` helper remains specific to exact object keys. No published breadcrumb API was being
+renamed because the increment was unreleased when this decision was recorded. The breadcrumb exports are now public in
+`clr-lift`; current release status belongs to the changelog and release records.
 
 ### Where items and context come from
 
@@ -627,8 +628,8 @@ text, never HTML. Object permissions and server acceptance remain caller concern
 
 ## Demo and validation plan
 
-Follow the [workflow](../component-development.md) and [COMMANDS](../../COMMANDS.md). All checks below are planned, not
-results from this revision:
+Follow the [workflow](../component-development.md) and the [command reference](../../commands.md). All checks below are
+planned, not results from this revision:
 
 - Clarity playgrounds for native links; 30/100-level navigation with width controls; repeated/long/special-character
   labels; action navigation/reset. Include empty/one-item paths, search recovery, input replacement, multiple instances

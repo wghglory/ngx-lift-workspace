@@ -22,38 +22,42 @@ the source.
 
 ## Open and deferred gaps
 
-| ID   | Severity | Class             | Gap                                                                                                                                                                   | Owner and reason                                                                                                     |
-| ---- | -------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| G-36 | P2       | API drift         | `RangePipe` casts non-array input to a tuple and can throw from a template.                                                                                           | Library owner: guard with `Array.isArray` and add a regression.                                                      |
-| G-38 | P2       | Acceptance drift  | Dynamic translation keys bypass `tools/i18n/check-translations.mjs`; a few demo strings remain hardcoded.                                                             | Library owner: declare typed key maps and localize visible strings.                                                  |
-| G-39 | P2       | API drift         | Some exported helpers and test doubles lack colocated specs.                                                                                                          | Library owner: add focused specs or remove the exports.                                                              |
-| G-40 | P2       | Decision          | `mutateResource` callback faults bypass the configurable query diagnostic hook.                                                                                       | Maintainer: decide whether to share the diagnostic channel, preserving callback isolation.                           |
-| G-41 | P2       | Status drift      | PRs #137–#141 and #134 remain open for independent review.                                                                                                            | Maintainer: rebase and review, or close with a recorded decision.                                                    |
-| G-42 | P2       | Duplication drift | Several roadmap/plan documents and five `datagrid-selection-*` documents repeat status and contract text.                                                             | Docs owner: keep current status in this register and link to one canonical datagrid contract.                        |
-| G-43 | P2       | Evidence drift    | Several spec-level acceptance statements still describe staged human gates as historical snapshots.                                                                   | Docs owner: add short pointers to this register during the next spec edit.                                           |
-| G-44 | P2       | Architecture      | The D1–D5 architecture deepening backlog remains open, starting with the localization registration seam D2. See [implementation gaps](design/implementation-gaps.md). | Architecture owner: schedule separately; no interface change is implied.                                             |
-| G-45 | P2       | Dependency drift  | Whole-tree dependency advisory triage remains unverified; `.npmrc` still defaults to a mirror while isolated consumers explicitly use the official registry.          | Maintainer: resolve advisories and decide whether to make the mirror opt-in.                                         |
-| G-46 | P2       | Gate drift        | `monitor-ci` and `nx-cloud-*` skills do not verify that Nx Cloud CIPE data is available for deploy/publish paths.                                                     | Skills owner: validate CIPE availability before relying on those skills for those workflows.                         |
-| G-47 | P2       | Duplication drift | Deploy and publish workflows duplicate status icon/badge helpers and summary heredocs.                                                                                | CI owner: extract a shared mapping when both summaries are next edited.                                              |
-| G-48 | P2       | Naming drift      | Historical external tracker and migration URLs and `package.json` author metadata still contain a personal repository owner or name.                                  | Docs owner: replace or retire those references during the next cleanup.                                              |
-| G-49 | P1       | Acceptance drift  | The 2026-11-12 `toSignalForm` validator-binding UI strings still need independent human language approval.                                                            | Maintainer: record the reviewed locales, revision and approval in the PR; automated checks do not replace this gate. |
+| ID   | Severity | Class             | Gap                                                                                                                                                                   | Owner and reason                                                                              |
+| ---- | -------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| G-36 | P2       | API drift         | `RangePipe` casts non-array input to a tuple and can throw from a template.                                                                                           | Library owner: guard with `Array.isArray` and add a regression.                               |
+| G-38 | P2       | Acceptance drift  | Dynamic translation keys bypass `tools/i18n/check-translations.mjs`; a few demo strings remain hardcoded.                                                             | Library owner: declare typed key maps and localize visible strings.                           |
+| G-39 | P2       | API drift         | Some exported helpers and test doubles lack colocated specs.                                                                                                          | Library owner: add focused specs or remove the exports.                                       |
+| G-40 | P2       | Decision          | `mutateResource` callback faults bypass the configurable query diagnostic hook.                                                                                       | Maintainer: decide whether to share the diagnostic channel, preserving callback isolation.    |
+| G-41 | P2       | Status drift      | PRs #137–#141 and #134 remain open for independent review.                                                                                                            | Maintainer: rebase and review, or close with a recorded decision.                             |
+| G-42 | P2       | Duplication drift | Several roadmap/plan documents and five `datagrid-selection-*` documents repeat status and contract text.                                                             | Docs owner: keep current status in this register and link to one canonical datagrid contract. |
+| G-43 | P2       | Evidence drift    | Several spec-level acceptance statements still describe staged human gates as historical snapshots.                                                                   | Docs owner: add short pointers to this register during the next spec edit.                    |
+| G-44 | P2       | Architecture      | The D1–D5 architecture deepening backlog remains open, starting with the localization registration seam D2. See [implementation gaps](design/implementation-gaps.md). | Architecture owner: schedule separately; no interface change is implied.                      |
+| G-45 | P2       | Dependency drift  | Whole-tree dependency advisory triage remains unverified; `.npmrc` still defaults to a mirror while isolated consumers explicitly use the official registry.          | Maintainer: resolve advisories and decide whether to make the mirror opt-in.                  |
+| G-46 | P2       | Gate drift        | `monitor-ci` and `nx-cloud-*` skills do not verify that Nx Cloud CIPE data is available for deploy/publish paths.                                                     | Skills owner: validate CIPE availability before relying on those skills for those workflows.  |
+| G-47 | P2       | Duplication drift | Deploy and publish workflows duplicate status icon/badge helpers and summary heredocs.                                                                                | CI owner: extract a shared mapping when both summaries are next edited.                       |
 
 ## Intentional decisions, not gaps
 
 - Angular 22 and the Nx major upgrade remain deferred; native signal-field support follows that upgrade for new value
   controls.
 - Both packages stay on 21.x; the approved 21.x compatibility exceptions remain documented in the
-  [version policy](DEPLOYMENT.md#version-policy).
+  [version policy](deployment.md#version-policy).
 - YAML viewer/editor work is paused; its draft spec is retained for future reference.
-- Vercel is the only production deployment target on main and the canonical public host.
+- Vercel is the only production deployment target on main and the canonical public host. This is a topology decision,
+  not a health claim; deployment outcomes are evidenced by their CI run records.
+- `Decision` (2026-11-14, maintainer): the project is personally maintained. The manifest author metadata and the
+  repository owner URLs are the authoritative project identity, not internal company or product identifiers. No
+  replacement identity, organization rename or URL migration is planned, so the naming-drift finding is closed rather
+  than rewritten.
 - Local validation, CI, maintainer API approval, human acceptance, merge, deployment and publication remain separate
   gates.
 
 ## Acceptance boundary
 
 - The [acceptance contract](guides/accessibility-and-localization.md) owns the independent language approval for all
-  eleven locales (2026-11-08) and the manual assistive-technology waiver (2026-11-10). The waiver is not a pass, and
-  automated dictionary, accessibility, keyboard and consumer checks remain required for UI changes.
+  eleven locales (2026-11-08, plus the 2026-11-12 `toSignalForm` strings approved on 2026-11-14 in PR #226) and the
+  manual assistive-technology waiver (2026-11-10). The waiver is not a pass, and automated dictionary, accessibility,
+  keyboard and consumer checks remain required for UI changes.
 - Newcomer comprehension remains a separate human gate for documentation work.
 - Record exact validation commands, results and CI run IDs in the pull request; this register does not replace CI
   artifacts.

@@ -31,6 +31,9 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 | Certificate signpost and parsing validator                         | [Certificates](clr-lift/certificate-design-spec.md)                     |
 | IdleDetectionComponent shared/scoped warning                       | [Idle warning](clr-lift/idle-warning-design-spec.md)                    |
 | AlertService/ToastService and notification containers              | [Notifications](clr-lift/notifications-design-spec.md)                  |
+| AlertComponent closable state and localized close button           | [Alert closable](clr-lift/alert-design-spec.md)                         |
+| BreadcrumbComponent and object-path helper                         | [Breadcrumbs](clr-lift/breadcrumb-design-spec.md)                       |
+| DatagridSelectionComponent, accessor and binding                   | [Native grid selection](clr-lift/datagrid-selection-design-spec.md)     |
 | TimelineWizardComponent, base step and service                     | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)              |
 | TranslationService and ThemeService                                | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)    |
 | Legacy FormArray editor and additive immutable array-value control | [Key/value control contracts](clr-lift/key-value-inputs-design-spec.md) |
@@ -40,12 +43,19 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 | Area                        | Canonical draft                                                          |
 | --------------------------- | ------------------------------------------------------------------------ |
-| Breadcrumbs                 | [Breadcrumbs](clr-lift/breadcrumb-design-spec.md)                        |
-| Datagrid selection          | [Native grid selection](clr-lift/datagrid-selection-design-spec.md)      |
+| Badges and labels           | [Badges and labels](clr-lift/badge-design-spec.md)                       |
 | YAML viewer/editor (paused) | [YAML editor](clr-lift/yaml-editor-design-spec.md)                       |
 | Temporal controls           | [Temporal controls](clr-lift/temporal-controls-design-spec.md)           |
 | Cascader and tree-select    | [Hierarchical selection](clr-lift/hierarchical-selection-design-spec.md) |
 | Drawer                      | [Drawer](clr-lift/drawer-design-spec.md)                                 |
+
+## Supporting research and demo notes
+
+| Topic                                | Document                                                                      |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| Shared form-control compatibility    | [Forms compatibility](clr-lift/forms-compatibility-design-spec.md)            |
+| YAML editor dependency research      | [YAML editor research](clr-lift/yaml-editor-research.md)                      |
+| toSignalForm submission options demo | [Submission options demo](ngx-lift/to-signal-form-submission-options-demo.md) |
 
 ## Review status and maintenance
 
@@ -67,5 +77,5 @@ compatibility contract warrants a separate spec.
 
 These documents define behavior, error handling, cancellation, lifetime and supported scope. Public signatures and
 regression tests remain in the libraries. Keep release changes in [CHANGELOG](../../CHANGELOG.md), publishing procedures
-in [DEPLOYMENT](../DEPLOYMENT.md), and loading/localization/shared-service guidance in the
+in the [deployment guide](../deployment.md), and loading/localization/shared-service guidance in the
 [integration guide](../guides/demo-and-library-integration.md).

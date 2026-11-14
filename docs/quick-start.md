@@ -29,5 +29,6 @@ packages under dist/libs and the demo under dist/apps/demo/browser.
 | tools         | Consumer, bundle, translation and other verification tools |
 | docs          | [Guides, contracts and roadmap](README.md)                 |
 
-Continue with the [command reference](COMMANDS.md), [API specifications](design/README.md) or
-[integration guide](guides/demo-and-library-integration.md). Publishing is covered by [DEPLOYMENT](DEPLOYMENT.md).
+Continue with the [command reference](commands.md), [API specifications](design/README.md) or
+[integration guide](guides/demo-and-library-integration.md). Publishing is covered by the
+[deployment guide](deployment.md).

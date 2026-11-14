@@ -98,11 +98,11 @@ browser; unmeasured rendering uses the count ceiling. SSR/hydration support has 
 For exact bucket/prefix/object state, opt in to `buildObjectPathBreadcrumbs` with `BuildObjectPathBreadcrumbsOptions`
 and `ObjectPathLocation`. It constructs stable IDs, display labels and exact cumulative contexts synchronously;
 `hrefFor` owns destinations and `rootPrefix` excludes higher ancestors. Compose translated application items outside the
-helper. See the [usage and reference guide](../../docs/guides/object-path-breadcrumbs.md) for scope, encoding, unusual
-keys and API-response examples.
+helper. The repository's `docs/guides/object-path-breadcrumbs.md` covers scope, encoding, unusual keys and API-response
+examples.
 
-See the [working demo](https://ngx-lift.vercel.app/clr-lift/components/breadcrumb) and
-[canonical design spec](../../docs/design/clr-lift/breadcrumb-design-spec.md).
+See the [working demo](https://ngx-lift.vercel.app/clr-lift/components/breadcrumb) and the canonical design spec at
+`docs/design/clr-lift/breadcrumb-design-spec.md` in the repository.
 
 ## 🚀 Quick Start (60 Seconds)
 
@@ -350,5 +350,5 @@ See
 [service scoping, clocks, localization and query diagnostics](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/guides/demo-and-library-integration.md)
 for ownership and loading contracts.
 
-See the [key/value usage and design spec](../../docs/design/clr-lift/key-value-inputs-design-spec.md#usage) for selects,
+The `Usage` section of `docs/design/clr-lift/key-value-inputs-design-spec.md` in the repository covers selects,
 dependent options, typed values, validation and migration.

@@ -67,7 +67,7 @@ The operator demo documents all configuration options and displays actual schedu
 default POST failure, explicitly opted-in Kubernetes POST recovery, and rejection of a generic gateway 429. The mock
 next handler exercises the production interceptor without changing application-wide HTTP configuration.
 
-See the [command reference](../../COMMANDS.md) for validation commands.
+See the [command reference](../../commands.md) for validation commands.
 
 ## Background
 

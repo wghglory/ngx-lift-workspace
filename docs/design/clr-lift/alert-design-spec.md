@@ -1,8 +1,13 @@
 # Alert closable design specification
 
-Status: Draft (API review pending). Owner: clr-lift maintainers. Updated: 2026-11-07. Approval: pending. Package:
-clr-lift. All proposed symbols and examples are unavailable until implemented and verified. For existing APIs, use
-Status: Implemented (contract audit) once verified.
+Status: Implemented (contract audit). Owner: clr-lift maintainers. Updated: 2026-11-14. Package: clr-lift.
+
+Current state: `closable`, `closed` and `closedChange` are implemented in
+`libs/clr-lift/src/lib/components/alert/alert.component.ts`, forwarded to Clarity in `alert.component.html` and exported
+from the `clr-lift` public barrel. Unit coverage lives in `alert.component.spec.ts` and a working demo in
+`apps/demo/src/app/clr-lib/pages/alert-demo/`. The proposal and review sections below are retained as a historical
+record of the design decision. This documentation sweep verified the exported symbols against source; it did not re-run
+unit, browser, accessibility or translation suites, so no test result is claimed here.
 
 ## Applicable contracts
 
@@ -13,13 +18,13 @@ so the forms contract does not apply. The change reuses the same `alert.close` d
 
 ## Background
 
-`cll-alert` is a thin wrapper over Clarity's `clr-alert`. Today it does not bind `clrAlertClosable`, `clrAlertClosed`,
-or `clrCloseButtonAriaLabel` (see `libs/clr-lift/src/lib/components/alert/alert.component.ts` and `.html`). Because
-Clarity's `clrAlertClosable` defaults to `true`, the close button already renders — but with Clarity's built-in English
-common string as the accessible name, not the repository's localized `alert.close`. The service-based
-`cll-alert-container` already wires all three correctly
-(`libs/clr-lift/src/lib/components/alerts/alert-container.component.html`), so this spec brings the standalone wrapper
-to parity and exposes explicit, documented control.
+`cll-alert` is a thin wrapper over Clarity's `clr-alert`. Before this change it did not bind `clrAlertClosable`,
+`clrAlertClosed`, or `clrCloseButtonAriaLabel` (see `libs/clr-lift/src/lib/components/alert/alert.component.ts` and
+`.html`). Because Clarity's `clrAlertClosable` defaults to `true`, the close button already rendered — but with
+Clarity's built-in English common string as the accessible name, not the repository's localized `alert.close`. The
+service-based `cll-alert-container` already wired all three correctly
+(`libs/clr-lift/src/lib/components/alerts/alert-container.component.html`), so this spec brought the standalone wrapper
+to parity. All three bindings are now present; the rest of this section is the original problem statement.
 
 ## Terminology
 
@@ -60,7 +65,7 @@ to parity and exposes explicit, documented control.
 
 | Existing implementation / primary source                                                                           | Verified behavior                                                                                                                                                                                                                                                                                                           | Adopt, adapt, or reject | Our gap and reason                                                                                                                                |
 | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Clarity `clr-alert` (local `@clr/angular` 18.4.0 / fesm2022; `clr-angular-emphasis-alert.d.ts`)                    | `clrAlertClosable` default **true**; `clrAlertClosed` two-way default `false`; `clrAlertClosedChange` emits `true` on close, `false` on reopen; `clrCloseButtonAriaLabel` default is Clarity's built-in "Close alert"; close button only rendered when `closable`; `@if(!_closed)` removes the alert from the DOM on close. | Adopt                   | `cll-alert` never bound these; default already closable but aria-label was unlocalized.                                                           |
+| Clarity `clr-alert` (local `@clr/angular` 18.4.0 / fesm2022; `clr-angular-emphasis-alert.d.ts`)                    | `clrAlertClosable` default **true**; `clrAlertClosed` two-way default `false`; `clrAlertClosedChange` emits `true` on close, `false` on reopen; `clrCloseButtonAriaLabel` default is Clarity's built-in "Close alert"; close button only rendered when `closable`; `@if(!_closed)` removes the alert from the DOM on close. | Adopt                   | Historical gap: `cll-alert` had not bound these, so the default close button used Clarity's unlocalized aria-label.                               |
 | NG-ZORRO `nz-alert` (web search of official doc)                                                                   | `nzCloseable` (optional, no close button by default); `nzCloseText` custom close label; `nzOnClose` callback on close (returning `false` cancels removal); `nzAfterClose`.                                                                                                                                                  | Adapt                   | We expose an explicit `closable` default `true` (matching current Clarity behavior) and a `closedChange` output instead of a cancelable callback. |
 | Angular Material (no standalone alert; closest patterns are `MatSnackBar` dismiss action and `mat-chip` removable) | Dismissible surfaces expose a button with an `aria-label` and an `(removed)`/`dismissed` event; no boolean "alert" component.                                                                                                                                                                                               | Reference only          | Confirms the close-button + accessible-name + dismissal-event pattern, which we already follow via Clarity.                                       |
 
@@ -164,11 +169,15 @@ break). No new dependency or Clarity feature is introduced.
 
 ## Review decisions and delivery
 
-Open for maintainer review:
+Decisions applied in the implementation:
 
-- Default `closable=true` (preserves current rendering) — recommended.
-- `closed` as `model()` with `closedChange` output — recommended for controlled reopen.
+- Default `closable=true` (preserves the previous rendering).
+- `closed` as `model()` with `closedChange` output for controlled reopen.
 
 ## Evidence
 
-Draft only. No validation has been run yet.
+Implementation evidence is in `libs/clr-lift/src/lib/components/alert/alert.component.ts`, `alert.component.html`,
+`alert.component.spec.ts` and `apps/demo/src/app/clr-lib/pages/alert-demo/`. The
+[documentation gap register](../../gap-register.md) owns current documentation and codebase gaps. This sweep verified
+the exported symbols and Clarity bindings against source; it did not re-run unit, browser, accessibility or translation
+suites, so validation results belong to the corresponding CI run and pull request.
