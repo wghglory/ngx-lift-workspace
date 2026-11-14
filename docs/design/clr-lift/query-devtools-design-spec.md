@@ -264,7 +264,7 @@ Data-first baseline validation, October 17, 2026 (latest full-list/expansion evi
   semantic link/label tokens preserve themed state and action contrast.
 
 Human assistive-technology and native-speaker acceptance, full SSR/hydration integration and publication remain separate
-gates. Both packages remain on 21.x under the [version policy](../../DEPLOYMENT.md#version-policy). Inspection remains
+gates. Both packages remain on 21.x under the [version policy](../../deployment.md#version-policy). Inspection remains
 compatible with the declared ngx-lift 21.3 peer minimum; Refetch controls are shown only when the client exposes
 refetchQuery. The current matching workspace tarballs prove the full feature set, and a legacy-client regression proves
 read-only inspection remains usable without that method.

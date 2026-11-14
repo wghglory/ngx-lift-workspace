@@ -43,7 +43,7 @@ runs fast checks, library tests, demo tests, builds and E2E as parallel jobs. Co
 the full three-browser E2E matrix run on push/schedule, while the blocking PR E2E gate uses the full Chromium suite plus
 Firefox/WebKit smoke. The E2E job caches Playwright browser binaries by OS, browser and lockfile, then still runs
 `playwright install --with-deps` on every shard with retries: WebKit's shared libraries are not part of the runner
-image. See `.github/workflows/quality.yml` and [DEPLOYMENT](DEPLOYMENT.md).
+image. See `.github/workflows/quality.yml` and [DEPLOYMENT](deployment.md).
 
 Playwright starts an isolated dev server by default. Set BASE_URL explicitly to test an existing deployment:
 
@@ -58,4 +58,4 @@ node node_modules/typescript/bin/tsc --noEmit -p libs/ngx-lift/tsconfig.spec.jso
 node node_modules/typescript/bin/tsc --noEmit -p apps/demo/tsconfig.spec.json
 ```
 
-Release commands and their side effects are documented in [DEPLOYMENT](DEPLOYMENT.md).
+Release commands and their side effects are documented in [DEPLOYMENT](deployment.md).

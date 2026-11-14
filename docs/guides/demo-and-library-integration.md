@@ -16,7 +16,7 @@ from being mistaken for component-level deferred loading.
 
 `pnpm run verify:packages` packs both libraries and tests isolated installs with strict peer dependency checks and no
 automatic peer installation. The consumer compiles with strict TypeScript settings and runs public imports. See
-[publishing](../DEPLOYMENT.md) for the dry-run and release procedure.
+[publishing](../deployment.md) for the dry-run and release procedure.
 
 ## User API examples
 

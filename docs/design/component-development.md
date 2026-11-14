@@ -66,7 +66,7 @@ the spec.
 ## Validation and reporting
 
 Discover resolved Nx targets using the local nx-workspace skill. Use focused checks during development, then the
-applicable repository gates in [COMMANDS](../COMMANDS.md). Current release gates include `pnpm run validate` and
+applicable repository gates in [COMMANDS](../commands.md). Current release gates include `pnpm run validate` and
 `pnpm nx run demo-e2e:e2e`; verify these against the manifest before running them. Use `git diff --check` for every
 change. Documentation-only changes need formatting and link/diff checks; they do not need a component test run.
 

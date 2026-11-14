@@ -20,4 +20,4 @@ installed DOM fixture checks both modes, but does not establish SSR/hydration or
 
 Async API responsibilities and concurrency contracts are defined in the [API specifications](design/README.md). Large
 example dependencies load at interaction/render boundaries as described in the
-[integration guide](guides/demo-and-library-integration.md). Validation commands are in [COMMANDS](COMMANDS.md).
+[integration guide](guides/demo-and-library-integration.md). Validation commands are in [COMMANDS](commands.md).

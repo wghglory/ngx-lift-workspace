@@ -627,7 +627,7 @@ text, never HTML. Object permissions and server acceptance remain caller concern
 
 ## Demo and validation plan
 
-Follow the [workflow](../component-development.md) and [COMMANDS](../../COMMANDS.md). All checks below are planned, not
+Follow the [workflow](../component-development.md) and [COMMANDS](../../commands.md). All checks below are planned, not
 results from this revision:
 
 - Clarity playgrounds for native links; 30/100-level navigation with width controls; repeated/long/special-character

@@ -15,7 +15,7 @@ supported platform remains Angular 21; 22.x stays reserved for the Angular 22 up
 independent. The `node-forge` certificate API removal and the `toSignalForm` error-propagation change are **behaviorally
 breaking**. Shipping them in these 21.x minor releases is a second explicit, maintainer-approved exception to SemVer's
 major-bump rule, not a claim of backward compatibility. The October 17, 2026 decision was not blanket approval for later
-breaks and does not cover this release; see the [version policy](docs/DEPLOYMENT.md#version-policy).
+breaks and does not cover this release; see the [version policy](docs/deployment.md#version-policy).
 
 The reviewed versions were published to the official npm registry on 2026-11-09. Remote tags, GitHub release records,
 the publish workflow run, the PR E2E gate and packed-consumer checks are the release evidence. This section owns the
@@ -164,7 +164,7 @@ release notes and migration instructions; publication is a separate gate.
 
 **Release decision — October 17, 2026:** both packages remain on 21.x; 22.x is reserved for the Angular 22 upgrade. The
 maintainer accepts the behavioral breaks below in these 21.x minor releases. This is an explicit exception to SemVer,
-not backward-compatible behavior; see the [version policy](docs/DEPLOYMENT.md#version-policy).
+not backward-compatible behavior; see the [version policy](docs/deployment.md#version-policy).
 
 The [release workflow](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39095608373) passed full validation,
 three-browser E2E and npm authentication, then published both packages to the official registry with the `latest` tag.

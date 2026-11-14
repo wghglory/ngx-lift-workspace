@@ -6,7 +6,7 @@ Package manifests and [CHANGELOG](../CHANGELOG.md) own version history.
 
 ## Verification before publication
 
-Run the [validation commands](COMMANDS.md) and review package compatibility, release notes and credentials before
+Run the [validation commands](commands.md) and review package compatibility, release notes and credentials before
 publishing. A successful build, a merged PR and a published npm version are separate outcomes.
 
 The Publish Libraries workflow accepts project all/ngx-lift/clr-lift, version major/minor/patch/skip and dry_run. Manual

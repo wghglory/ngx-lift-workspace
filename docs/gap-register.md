@@ -43,7 +43,7 @@ the source.
 - Angular 22 and the Nx major upgrade remain deferred; native signal-field support follows that upgrade for new value
   controls.
 - Both packages stay on 21.x; the approved 21.x compatibility exceptions remain documented in the
-  [version policy](DEPLOYMENT.md#version-policy).
+  [version policy](deployment.md#version-policy).
 - YAML viewer/editor work is paused; its draft spec is retained for future reference.
 - Vercel is the only production deployment target on main and the canonical public host.
 - Local validation, CI, maintainer API approval, human acceptance, merge, deployment and publication remain separate

@@ -20,7 +20,7 @@ new value control. This roadmap owns current delivery priorities and acceptance 
 ## Acceptance boundaries
 
 - New Angular 21 CVA controls proceed only after feature API review; YAML viewer/editor work is paused.
-- Both packages stay on 21.x until Angular 22; the [version policy](DEPLOYMENT.md#version-policy) records the approved
+- Both packages stay on 21.x until Angular 22; the [version policy](deployment.md#version-policy) records the approved
   compatibility exceptions and migration requirements.
 - After the platform upgrade, native signal-field integration is a required delivery gate for every new value control.
 - `toSignalForm(FormGroup)` exposes signals over Reactive Forms; it does not create an Angular Signal Forms `FieldTree`.
@@ -33,7 +33,7 @@ new value control. This roadmap owns current delivery priorities and acceptance 
 ## Documentation
 
 The [component roadmap](component-roadmap.md) owns the component sequence, the [gap register](gap-register.md) owns
-current gaps, and [COMMANDS](COMMANDS.md) owns validation commands. Release history lives in
-[CHANGELOG](../CHANGELOG.md), publication gates in [DEPLOYMENT](DEPLOYMENT.md), demo teaching status in
+current gaps, and [COMMANDS](commands.md) owns validation commands. Release history lives in
+[CHANGELOG](../CHANGELOG.md), publication gates in [DEPLOYMENT](deployment.md), demo teaching status in
 [demo documentation status](documentation-refinement-roadmap.md), and query reader outcomes in the
 [query documentation plan](query-documentation-plan.md).

@@ -67,5 +67,5 @@ compatibility contract warrants a separate spec.
 
 These documents define behavior, error handling, cancellation, lifetime and supported scope. Public signatures and
 regression tests remain in the libraries. Keep release changes in [CHANGELOG](../../CHANGELOG.md), publishing procedures
-in [DEPLOYMENT](../DEPLOYMENT.md), and loading/localization/shared-service guidance in the
+in [DEPLOYMENT](../deployment.md), and loading/localization/shared-service guidance in the
 [integration guide](../guides/demo-and-library-integration.md).

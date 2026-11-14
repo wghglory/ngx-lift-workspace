@@ -15,7 +15,7 @@ Sources: [query exports](../../../libs/ngx-lift/src/lib/query/index.ts),
 [QueryClient](../../../libs/ngx-lift/src/lib/query/query-client.ts) and the adjacent query regression suites.
 
 Implemented APIs: `QueryClient`, `queryResource`, `queryResources`, `fetchQueryObservable`, `observeQueryObservable` and
-`provideQueryClient`. See the [publishing procedure](../../DEPLOYMENT.md) for release gates.
+`provideQueryClient`. See the [publishing procedure](../../deployment.md) for release gates.
 
 This is the single query design entry point. Mutation execution has its own
 [specification](mutate-resource-design-spec.md); published-version changes belong in the
@@ -578,7 +578,7 @@ The placement demo exercises these owners directly: Pattern A injects a root `Au
 observer. Pattern C's displayed template is the same constant compiled by its live component. Refresh retains the
 project while a new response version loads. Pattern A presents the actual auth component's HTML in a separate code tab,
 including its loading states and update action. Action buttons use short translated labels; method paths belong in code.
-The [demo documentation standards](../../DOCUMENTATION_STANDARDS.md#code-example-best-practices) apply to every page.
+The [demo documentation standards](../../documentation-standards.md#code-example-best-practices) apply to every page.
 
 The placement mocks use separate `UserProfileService`, `DatabaseService` and `ProjectService` transports. The project
 preview passes `projectId="website-redesign"`; the displayed mock returns the visible "Website redesign" name. The
@@ -1154,7 +1154,7 @@ reconciliation and optimism remain application-specific/deferred.
 Persistence, infinite queries, offline queues, shared rollback, mutation reset, nondestructive cancellation and a global
 concurrency scheduler require concrete consumers and ownership contracts. `fetchQuery` already warms cache without a
 separate prefetch helper. Publication additionally requires dependency triage/audit, compatible versioning,
-final-revision checks and authentication; [publishing](../../DEPLOYMENT.md) defines those gates.
+final-revision checks and authentication; [publishing](../../deployment.md) defines those gates.
 
 ## Industry evidence and current gaps
 

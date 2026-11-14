@@ -86,7 +86,7 @@ import {AlertComponent, ToastService} from 'clr-lift';
 
 ### Workspace development
 
-Follow the [quick start](docs/QUICK_START.md) for setup and the [command reference](docs/COMMANDS.md) for builds,
+Follow the [quick start](docs/quick-start.md) for setup and the [command reference](docs/commands.md) for builds,
 testing and validation. Exact tool versions live in package.json and the lockfile.
 
 ## Documentation
@@ -96,8 +96,8 @@ The [documentation index](docs/README.md) maps each topic to its canonical sourc
 - [Library installation and usage](libs/ngx-lift/README.md) · [Clarity package](libs/clr-lift/README.md)
 - [Async/query/retry API contracts](docs/design/README.md)
 - [Loading, localization and shared lifecycle](docs/guides/demo-and-library-integration.md)
-- [Publishing and deployment](docs/DEPLOYMENT.md)
-- [Architecture](docs/TECHNOLOGY_ANALYSIS.md), [roadmap](docs/priority-roadmap.md) and [changelog](CHANGELOG.md)
+- [Publishing and deployment](docs/deployment.md)
+- [Architecture](docs/technology-analysis.md), [roadmap](docs/priority-roadmap.md) and [changelog](CHANGELOG.md)
 
 ## 🤝 Contributing
 
@@ -167,6 +167,6 @@ Maintained by the project maintainers
 
 ### Quality checks
 
-Run [the validation commands](docs/COMMANDS.md) before submitting changes. The
+Run [the validation commands](docs/commands.md) before submitting changes. The
 [integration guide](docs/guides/demo-and-library-integration.md) describes loading/localization ownership and acceptance
-limits; [publishing](docs/DEPLOYMENT.md) describes release gates.
+limits; [publishing](docs/deployment.md) describes release gates.

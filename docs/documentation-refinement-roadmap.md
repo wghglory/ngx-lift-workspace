@@ -20,5 +20,5 @@ independent language approval and the manual assistive-technology waiver are rec
 - Track implementation, automated verification, newcomer comprehension, native-language review and remote CI separately.
   A reordered page or passing screenshot does not establish that a first-time reader can follow it.
 
-Current demo pages follow the [documentation standards](DOCUMENTATION_STANDARDS.md). Query reader outcomes are owned by
+Current demo pages follow the [documentation standards](documentation-standards.md). Query reader outcomes are owned by
 the [query documentation plan](query-documentation-plan.md).
