@@ -67,7 +67,7 @@ compatibility notice when assigning versions.
 **November 8, 2026 decision (approved and published on 2026-11-09):** the `node-forge` certificate API removal and the
 `toSignalForm` error-propagation change in 21.5.0 / 21.4.0 are a second, separate exception. The October 17 decision is
 not blanket approval for later breaks. Peer ranges stay unbounded (`@angular/* >=21`, `@clr/angular >=18`,
-`rxjs >=7.8.0`, `ngx-lift >=21.5.0`); the verified platform is Angular 21 / Clarity 18 / RxJS 7. Preserve the
+`rxjs >=7.8.0`, `ngx-lift >=21`); the verified platform is Angular 21 / Clarity 18 / RxJS 7. Preserve the
 [21.5.0 / 21.4.0 migration notes](../CHANGELOG.md#migration), publish `ngx-lift` first, and confirm strict installed
 consumers before authorizing publication. The publish order, installed-consumer checks and credential check were
 verified before the 2026-11-09 publication. Any later incompatible change needs the same explicit review.
@@ -108,3 +108,7 @@ only from `refs/heads/main`; its job gate requires successful builds and a succe
 a failed build or deployment fails the job. Hosting integrations may also create PR previews; the corresponding remote
 job/deployment records provide status. A manual workflow run outside main builds the demo without a production
 deployment.
+
+Deployment health is a current-state record, not part of this procedure. The [gap register](gap-register.md) owns open
+deployment incidents, and CI run records are the validation evidence. A green CI run and a successful production
+deployment remain separate outcomes, so do not infer deployment status from the CI gate.

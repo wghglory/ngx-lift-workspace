@@ -237,7 +237,8 @@ retained-data refresh where applicable. Forms invoke/observe this API without as
 
 ## Review decisions and delivery
 
-This is an audit of implemented behavior, including the unreleased correction above. Proposed features and unresolved
+This is an audit of implemented behavior, including the correction above, which was unreleased when this audit was
+written; current release status belongs to the changelog and release records. Proposed features and unresolved
 implementation work belong in the [gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no
 new API is approved here.
 

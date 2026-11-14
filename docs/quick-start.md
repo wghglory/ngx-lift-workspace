@@ -30,4 +30,5 @@ packages under dist/libs and the demo under dist/apps/demo/browser.
 | docs          | [Guides, contracts and roadmap](README.md)                 |
 
 Continue with the [command reference](commands.md), [API specifications](design/README.md) or
-[integration guide](guides/demo-and-library-integration.md). Publishing is covered by [DEPLOYMENT](deployment.md).
+[integration guide](guides/demo-and-library-integration.md). Publishing is covered by the
+[deployment guide](deployment.md).

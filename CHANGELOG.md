@@ -96,9 +96,9 @@ release notes and migration instructions; publication is a separate gate.
   ```
 
 - Peer ranges: the packages declare unbounded peers (`@angular/* >=21`, `@clr/angular >=18`, `rxjs >=7.8.0`,
-  `ngx-lift >=21.5.0`); we verified on Angular 21 / Clarity 18 / RxJS 7, and later majors are unverified. Upgrade
-  `ngx-lift` to 21.5.0 before installing `clr-lift` 21.4.0. Remove an explicit `node-forge` dependency if it was added
-  only for `clr-lift`.
+  `ngx-lift >=21`); we verified on Angular 21 / Clarity 18 / RxJS 7, and later majors are unverified. Upgrade `ngx-lift`
+  to 21.5.0 before installing `clr-lift` 21.4.0. Remove an explicit `node-forge` dependency if it was added only for
+  `clr-lift`.
 - `toSignalForm`: handle a terminal source error at the read site, or rebuild the facade with a healthy control. Stock
   Angular `FormGroup` / `FormControl` event streams do not error.
 
@@ -144,8 +144,9 @@ release notes and migration instructions; publication is a separate gate.
   [reactive forms specification](docs/design/ngx-lift/reactive-forms-design-spec.md) and the
   [resourceAsync specification](docs/design/ngx-lift/resource-async-design-spec.md).
 - The `clr-lift` README now names the releases that introduced `cll-breadcrumb`, `cll-key-value-control` and the query
-  devtools, and both locale lists name the same eleven supported locales. The delivery roadmap cites the 21.5.0 / 21.4.0
-  publication rather than the older 21.4.0 / 21.3.0 pair.
+  devtools, and both locale lists name the same eleven supported locales. The delivery roadmap cited the 21.5.0 / 21.4.0
+  publication rather than the older 21.4.0 / 21.3.0 pair at release time; the roadmap is now the canonical status
+  source.
 - The private workspace root manifest version, the `commit-msg` hook and the Nx `sharedGlobals` cache inputs were
   aligned with the release process. Direct `publish:*` scripts that bypassed the reviewed-version gate were replaced
   with a read-only `release:check` preflight.

@@ -33,7 +33,7 @@ new value control. This roadmap owns current delivery priorities and acceptance 
 ## Documentation
 
 The [component roadmap](component-roadmap.md) owns the component sequence, the [gap register](gap-register.md) owns
-current gaps, and [COMMANDS](commands.md) owns validation commands. Release history lives in
-[CHANGELOG](../CHANGELOG.md), publication gates in [DEPLOYMENT](deployment.md), demo teaching status in
+current gaps, and the [command reference](commands.md) owns validation commands. Release history lives in
+[CHANGELOG](../CHANGELOG.md), publication gates in the [deployment guide](deployment.md), demo teaching status in
 [demo documentation status](documentation-refinement-roadmap.md), and query reader outcomes in the
 [query documentation plan](query-documentation-plan.md).

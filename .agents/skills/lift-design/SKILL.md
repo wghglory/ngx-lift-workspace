@@ -24,7 +24,7 @@ policy. Read the relevant existing design spec and current source first. The
 5. After approval, implement functional increments and satisfy the workflow's demos, localization, tests, accessibility,
    lifecycle, performance and installed-consumer gates. Update the spec with actual evidence.
 
-Read [documentation standards](../../../docs/DOCUMENTATION_STANDARDS.md) when editing demo pages. Use the local
+Read [documentation standards](../../../docs/documentation-standards.md) when editing demo pages. Use the local
 nx-workspace skill to discover targets and the manifest/command guide for actual commands. Scale validation to the
 change; do not run component suites for a documentation-only draft or claim planned tests passed.
 

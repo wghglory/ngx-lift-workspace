@@ -118,8 +118,10 @@ leaf certificates for RSA and ECDSA keys.
 
 The demo's `buildCertificateView` re-encodes the first PEM certificate block: `extractDerFromPem` returns one DER buffer
 and `pemEncodeDer` arms that buffer. Concatenated PEM chains are split by `splitPemBlocks` and parsed by
-`parseCertificateChain`, which supplies the hierarchy tree and one details tab per certificate. The re-encoded PEM panel
-is therefore a single-certificate round trip, not a chain serializer; its label says so in all 11 demo locales.
+`parseCertificateChain`, both demo-local helpers in `apps/demo/src/app/shared/utils/certificate-viewer-tools.ts`, which
+supply the hierarchy tree and one details tab per certificate. These two helpers are not library exports; only the
+functions in the `clr-lift` import above belong to the public API. The re-encoded PEM panel is therefore a
+single-certificate round trip, not a chain serializer; its label says so in all 11 demo locales.
 
 ## Behavior and architecture
 
@@ -130,7 +132,7 @@ override is exposed. The validator returns null for empty input and `{invalidCer
 failures. `parseCertificate` requires the DER buffer to end exactly after the top-level SEQUENCE; nested extension
 values must also be a single TLV, and an unterminated base-128 OID subidentifier is rejected. PEM text after the END
 marker never reaches the DER parser, so trailing-byte input fails C3 while ordinary PEM framing and concatenated PEM
-chains remain usable through `parseCertificateChain`.
+chains remain usable through the demo-local `parseCertificateChain` helper, not through a library export.
 
 ## Clarity, accessibility, and localization
 
