@@ -210,7 +210,9 @@ jobs:
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
           fi
       - name: Run affected Playwright shard
-        timeout-minutes: 5
+        # Push/schedule runs execute the full three-browser matrix (up to ~52 tests per WebKit shard);
+        # PR shards only run the Chromium suite plus cross-browser smoke and finish in ~1.5 minutes.
+        timeout-minutes: 10
         env:
           CI_EVENT: ${{ github.event_name }}
           PLAYWRIGHT_BROWSERS: ${{ matrix.browser }}
