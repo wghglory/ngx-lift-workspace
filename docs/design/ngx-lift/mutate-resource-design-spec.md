@@ -479,6 +479,6 @@ playground with its own component regression, and installed-consumer guards were
 results are reported in the accompanying PR. CI, merge, independent human language and assistive-technology acceptance,
 and publication remain separate gates.
 
-Documentation delivery, October 17, 2026: the approved routes and compiled introductory examples are implemented. See
-[query documentation delivery](../../query-documentation-plan.md#local-delivery-evidence--october-17-2026) for the
-follow-up revision, actual checks and remaining human/remote gates. This supplements the earlier runtime contract audit.
+The approved query tutorial routes and compiled introductory examples are implemented. See the
+[query documentation plan](../../query-documentation-plan.md#acceptance-and-evidence) for acceptance criteria and
+remaining human/remote gates.

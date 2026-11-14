@@ -1,8 +1,7 @@
-# Query documentation delivery
+# Query documentation plan
 
-Approved scope: October 17, 2026. Runtime APIs are unchanged. This plan records documentation delivery separately from
-the implemented query/mutation contracts. The destinations below are implemented. Local validation is recorded below;
-human acceptance remains a separate gate.
+The query tutorial routes and compiled introductory examples are implemented. Runtime APIs are unchanged. Newcomer
+comprehension remains open; see the [acceptance contract](guides/accessibility-and-localization.md).
 
 ## Readers and outcomes
 
@@ -51,62 +50,8 @@ substitution and explain production HTTP setup. Avoid fresh/stale/inactive as a 
 
 ## Editorial sources
 
-Reviewed October 17, 2026:
-
 - [Angular resources](https://angular.dev/guide/signals/resource): adapt problem/example/explanation before status
   tables.
 - [TanStack Quick Start](https://tanstack.com/query/latest/docs/framework/react/quick-start): adapt a working path with
   required setup and links to focused guides; do not copy defaults or public API behavior.
 - [Diátaxis](https://diataxis.fr/): separate reader needs; do not impose all four documentation modes on every page.
-
-## Local delivery evidence — October 17, 2026
-
-Implementation revision: `4264a75` (follow-up to PR head `a51d132`). No library exports, signatures or runtime contracts
-changed. This revision adds compiled read/save/collection starters, seven guide destinations, shallow translated
-navigation, reference anchors inside Clarity's scroll container, and narrow-screen header spacing. Introductory
-playgrounds precede lifecycle/comparison/organization reference; TypeScript and HTML source are shown by default in
-separate tabs and can be collapsed with Hide Code.
-
-Completed local checks:
-
-| Check                                                                            | Result                                                                           |
-| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Demo tests (`pnpm nx run demo:test --run`)                                       | 79 files, 238 tests passed                                                       |
-| Tooling (`pnpm nx run @ngx-lift-workspace/source:tooling-test`)                  | 19 tests passed, including three complete-source parity checks                   |
-| New learning E2E (`query-learning.spec.ts`)                                      | 15 cases passed across Chromium, Firefox and WebKit                              |
-| Existing query/ownership/layout E2E                                              | 90 cases passed across Chromium, Firefox and WebKit                              |
-| Demo and E2E lint; demo TypeScript                                               | Passed                                                                           |
-| Dictionary checks                                                                | 11 complete dictionaries; 57 new translated learning/guide messages per language |
-| Formatting, example formatting, `git diff --check`, relative documentation links | Passed; 31 relative file targets checked                                         |
-| Demo production build                                                            | Passed                                                                           |
-
-Browser checks include first-load and refresh failure, retained data, save input preservation and retry, collection
-add/reorder/remove, all guide destinations, reference-anchor navigation, 390px layouts, runtime guide language changes,
-query ownership/disposal, devtools, dark/RTL layouts and existing demo layout checks. Parsing, compilation, interaction
-checks, and human judgment are different evidence: these tests do not establish that a new developer can learn the API
-without help or that every translation has native-speaker approval.
-
-## Integration and remaining acceptance
-
-PR #161 and its follow-ups are merged.
-[Main CI at 5bee7e1](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851435) passed full validation,
-installed-package verification and the complete three-browser suite; the
-[demo deployment](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851437) also passed. The earlier
-local revision above records development evidence; it no longer describes unmerged work.
-
-Newcomer comprehension remains open. Independent language acceptance was approved on 2026-11-08 and manual
-assistive-technology assessment was waived on 2026-11-10; see the
-[acceptance contract](guides/accessibility-and-localization.md). Publication is separate, under the
-[release policy](DEPLOYMENT.md#version-policy). Later documentation changes require their own PR checks.
-
-## Contract alignment — November 4-5, 2026
-
-The [query specification](design/ngx-lift/query-resource-design-spec.md#reacting-to-success-and-failure) and the
-[mutation specification](design/ngx-lift/mutate-resource-design-spec.md#24-reacting-to-outcomes) now carry the "reacting
-to success and failure" tutorial and the callback decision. The `mutateResource` demo now includes a runnable
-`mutate(args, {onSuccess, onError})` playground (success, failure and `.finally()` cleanup) that reuses existing
-translation keys; the compiled starters still demonstrate signals and `await mutate(args)`. No new demo route,
-dictionary key or library-owned message was added, so the 11-language and independent human-acceptance gates for new
-prose remain open for a later increment. Runtime changes in this revision cover the query execution error classes and
-the approved per-call `mutate(args, {onSuccess, onError})` callbacks; `invalidationError` stays optional and is
-documented as diagnostic-only. See the changelog and the linked specifications.

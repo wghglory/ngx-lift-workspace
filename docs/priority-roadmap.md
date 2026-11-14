@@ -1,69 +1,39 @@
 # ngx-lift delivery priorities
 
-Updated November 10, 2026. The [component roadmap](component-roadmap.md) owns the component sequence and its current
-maintainer decisions, including the pause on YAML viewer/editor work. Angular 22 and the Nx major upgrade are deferred;
-native signal-field support follows that upgrade for every new value control. The table below preserves the existing
-delivery backlog and evidence; its historical rank is not the component order.
+Updated 2026-11-14. The [component roadmap](component-roadmap.md) owns the component sequence and its maintainer
+decisions. Angular 22 and the Nx major upgrade are deferred; native signal-field support follows that upgrade for every
+new value control. This roadmap owns current delivery priorities and acceptance boundaries; the
+[gap register](gap-register.md) owns the detailed backlog.
 
-🟢 **Done** means the stated scope has evidence. 🟡 **In progress / partial** identifies remaining work. ⚪ **Planned**
-and ⏸️ **Deferred** are not completed work. Local validation, remote merge and npm publication remain separate gates.
+## Current priorities
 
-| Rank | Item                                                                                         | Status                                                    | Acceptance and remaining work                                                                                                                                                                                                                                                                                                                      |
-| ---- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | Original Priority 1: release guards, isolated package consumers, deferred heavy dependencies | 🟢 Done                                                   | Release guards and strict consumer verification are implemented; production bundle metadata checks pass. The publish jobs and GitHub releases for ngx-lift 21.4.0 / clr-lift 21.3.0 and ngx-lift 21.5.0 / clr-lift 21.4.0 succeeded.                                                                                                               |
-| 2    | Original Priority 2: dictionary/Clarity coverage, diagnostics, scope and clocks              | 🟢 Engineering and language acceptance done               | Eleven demo dictionaries pass key and placeholder checks; counts change with new content. Lifecycle and diagnostics engineering is delivered. Independent language acceptance was approved on 2026-11-08 (PR #218); newcomer comprehension remains open.                                                                                           |
-| 3    | Previous order 1: installed rendering compatibility                                          | 🟢 Local implementation and validation done               | Commit `27a4499` runs the installed Angular 21.2 DOM fixture in separate zoneless and ZoneJS processes. Package exports, strict types and strict peer installation pass. Merged in PR #150; this does not prove SSR/hydration or Angular 22.                                                                                                       |
-| 4    | Previous order 2: dependency security                                                        | 🟡 Partial; migration separate                            | Vitest 4.1.11, PostCSS and scoped development-tool patches remain. Angular and Nx pins remain unchanged; their major migration is deferred. Independent security fixes remain eligible. Whole-tree audit remains unverified.                                                                                                                       |
-| 5    | Previous order 8a: computedAsync error/type defect                                           | 🟢 Published in ngx-lift 21.4.0                           | Read-time errors, typed fallbacks/recovery and invalid-contract rejection are delivered. The approved 21.x exception, migrations, packed-consumer verification and publication are recorded in the [21.4.0 release evidence](../CHANGELOG.md). No new result API.                                                                                  |
-| 6    | Previous order 8b: Angular migration                                                         | ⏸️ Deferred by maintainer                                 | Deliver new controls on Angular 21 first. Revisit Angular 22/Nx in a separate platform PR, then require native signal-field support across all new value controls and an installed-consumer matrix.                                                                                                                                                |
-| 7    | Accessibility and independent language acceptance                                            | 🟢 Automated coverage and language approval; ⚪ AT waiver | Route-derived light/dark scans, keyboard tooltip/dialog/file-reader/wizard journeys, all-locale browser checks, and two-model review of language corrections are implemented. The [acceptance contract](guides/accessibility-and-localization.md) and [gap register](gap-register.md) own current human acceptance status; a waiver is not a pass. |
-| 8    | Existing feature PRs #137–#141 and #134                                                      | ⚪ Review pending                                         | Independently review core utilities, validators, headless directives, transactional/testing APIs and Clarity directives; do not merge solely because a PR exists.                                                                                                                                                                                  |
-| 9    | Secondary entry points                                                                       | ⚪ Measure first                                          | Compare installed-consumer bundle and optional-dependency boundaries before choosing splits such as ngx-lift/query or clr-lift/certificate.                                                                                                                                                                                                        |
-| 10   | Previous order 3: SSR/hydration                                                              | ⏸️ Lower priority                                         | Request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency need dedicated consumers. Node DOM tests do not prove SSR or hydration.                                                                                                                                                                          |
-| 11   | Large-collection scheduling and advanced cache features                                      | ⏸️ Demand-driven                                          | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback require concrete consumers and ownership contracts.                                                                                                                                                                          |
-
-The October 19 key/value delivery adds `cll-key-value-control` for fresh array values while retaining the existing
-FormArray editor. Three Angular 21 form demos, all supported dictionaries, cross-browser journeys and strict installed
-zoneless/ZoneJS consumers are locally verified; the
-[feature evidence](design/clr-lift/key-value-inputs-design-spec.md#evidence) records scope and remaining human/release
-gates. Other proposed component APIs remain drafts.
-
-## Repairs before extending the affected APIs
-
-The [active gap register](design/implementation-gaps.md) owns source evidence and acceptance criteria. Preserve
-intentional developer-trusted localized alert HTML and scoped callbacks (F1); caller interpolation must escape untrusted
-values. File-reader disable handling (F2, #156) and mixed hover/focus toast timeout plus viewport containment (F3, #155)
-are implemented and merged. Pagination cursor-loop protection (F4, #159) is implemented; its PR owns final validation
-and merge evidence. Configurable aggregate page/item caps were declined. These focused repairs target Angular 21; the
-deferred platform upgrade is not a prerequisite. Package publication remains separate.
+| Priority | Item                                                    | Status         | Remaining work                                                                                                                                                                |
+| -------- | ------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | Dependency security                                     | Partial        | Resolve remaining development-tool advisories and verify whole-tree advisory triage. Angular and Nx pins stay unchanged.                                                      |
+| 2        | Open feature PRs #137–#141 and #134                     | Review pending | Rebase and review independently, or close with a recorded decision. Do not merge solely because a PR exists.                                                                  |
+| 3        | Secondary entry points                                  | Measure first  | Compare installed-consumer bundles and optional-dependency boundaries before choosing splits such as `ngx-lift/query` or `clr-lift/certificate`.                              |
+| 4        | SSR/hydration                                           | Lower priority | Define request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency with dedicated consumers. Node DOM tests do not prove SSR/hydration. |
+| 5        | Large-collection scheduling and advanced cache features | Demand-driven  | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback need concrete consumers and ownership contracts.        |
+| 6        | Human documentation acceptance                          | Open           | Newcomer comprehension and independent language approval for the 2026-11-12 UI strings remain separate gates.                                                                 |
+| 7        | Angular 22 / Nx upgrade                                 | Deferred       | Deliver Angular 21 controls first; revisit in a separate platform PR with pinned versions, an installed-consumer matrix and native signal-field support.                      |
 
 ## Acceptance boundaries
 
-The [integration guide](guides/demo-and-library-integration.md) owns loading, localization and shared lifecycle;
-[API specifications](design/README.md) own API behavior. The roadmap owns only priority and completion status. Commands
-live in [COMMANDS](COMMANDS.md), release history in [CHANGELOG](../CHANGELOG.md), and publication gates in
-[DEPLOYMENT](DEPLOYMENT.md). CI runs and the corresponding PR record exact validation evidence.
-
-- A green implementation status is scoped to the stated work; it does not imply merge or publication.
-- Dictionary checks do not replace independent human language approval.
-- Strict installed Angular consumers cover zoneless and ZoneJS DOM modes, not SSR/hydration or every permitted peer.
-- Both packages stay on 21.x until Angular 22; the [version policy](DEPLOYMENT.md#version-policy) records the explicit
-  compatibility exception for computedAsync and idle warnings, and the separate 2026-11-08 exception for certificate
-  APIs, toSignalForm error propagation and unbounded peer ranges (maintainer decision). Packed-consumer verification and
-  publication completed for ngx-lift 21.4.0 / clr-lift 21.3.0 and ngx-lift 21.5.0 / clr-lift 21.4.0; see the
-  [release evidence](../CHANGELOG.md).
-- Angular 22 and the Nx major upgrade are deferred; new Angular 21 CVA controls can proceed after feature API review.
+- New Angular 21 CVA controls proceed only after feature API review; YAML viewer/editor work is paused.
+- Both packages stay on 21.x until Angular 22; the [version policy](DEPLOYMENT.md#version-policy) records the approved
+  compatibility exceptions and migration requirements.
 - After the platform upgrade, native signal-field integration is a required delivery gate for every new value control.
-- Dependency advisory follow-ups remain open; unsuccessful audit access is not a clean whole-tree result.
+- `toSignalForm(FormGroup)` exposes signals over Reactive Forms; it does not create an Angular Signal Forms `FieldTree`.
+- Strict installed Angular consumers cover zoneless and ZoneJS DOM modes, not SSR/hydration or every permitted peer.
+- Automated dictionary, accessibility, keyboard and consumer checks are required for UI changes; a manual
+  assistive-technology waiver is not a pass. See the [acceptance contract](guides/accessibility-and-localization.md).
+- Local validation, CI, maintainer API approval, human acceptance, merge, deployment and publication remain separate
+  gates. Exact validation evidence belongs to the PR and CI artifacts.
 
-## Documentation maintenance
+## Documentation
 
-The [demo refinement roadmap](documentation-refinement-roadmap.md) records merged delivery through #175 and links to
-successful main CI/deployment. The [query learning plan](query-documentation-plan.md) owns its reader outcomes.
-Documentation closeout aligns package examples, per-spec learning briefs and status references; its PR owns validation.
-Human newcomer comprehension remains open. Independent language acceptance was approved on 2026-11-08 and manual
-assistive-technology assessment was waived on 2026-11-10. Proposed component APIs remain drafts; YAML work is paused.
-
-🟢 Canonical navigation, integration guidance and generic fixtures are maintained; obsolete audit/review snapshots are
-removed. Revision-specific validation evidence lives in CI and the corresponding PR, including any failed runs and
-subsequent verification. It is not duplicated in standalone reports.
+The [component roadmap](component-roadmap.md) owns the component sequence, the [gap register](gap-register.md) owns
+current gaps, and [COMMANDS](COMMANDS.md) owns validation commands. Release history lives in
+[CHANGELOG](../CHANGELOG.md), publication gates in [DEPLOYMENT](DEPLOYMENT.md), demo teaching status in
+[demo documentation status](documentation-refinement-roadmap.md), and query reader outcomes in the
+[query documentation plan](query-documentation-plan.md).

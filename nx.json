@@ -18,7 +18,6 @@
       "{workspaceRoot}/.npmrc",
       "{workspaceRoot}/commitlint.config.js",
       "{workspaceRoot}/eslint.config.mjs",
-      "{workspaceRoot}/netlify.toml",
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/pnpm-lock.yaml",

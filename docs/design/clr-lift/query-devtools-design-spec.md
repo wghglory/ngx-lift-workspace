@@ -1,9 +1,9 @@
 # Query devtools
 
-Status: Implemented, merged in #160; unreleased. Owner: clr-lift maintainers. Updated October 17, 2026. Package:
-clr-lift. Approval: the maintainer approved the docked-panel revision. Local acceptance evidence is recorded below;
-[main CI at 5bee7e1](https://github.com/wghglory/ngx-lift-workspace/actions/runs/39036851435) also passed. Publication
-and human accessibility/language acceptance remain separate.
+Status: **delivered** in `clr-lift 21.4.0`. Owner: clr-lift maintainers. Package: clr-lift. The maintainer approved the
+docked-panel revision. Exact test, browser, package, CI and release results belong to the corresponding PR and workflow
+runs. Independent language and assistive-technology acceptance remain separate gates; see the
+[acceptance contract](../../guides/accessibility-and-localization.md) and the [gap register](../../gap-register.md).
 
 ## Applicable contracts
 
