@@ -11,16 +11,17 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## ngx-lift implemented contracts
 
-| API                                                               | Canonical contract                                                    |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------- |
-| queryResource, queryResources, QueryClient and Observable facades | [Query and cache](ngx-lift/query-resource-design-spec.md)             |
-| mutateResource                                                    | [Writes and concurrency](ngx-lift/mutate-resource-design-spec.md)     |
-| resourceAsync                                                     | [Independent async lifecycle](ngx-lift/resource-async-design-spec.md) |
-| computedAsync                                                     | [Derived async signals](ngx-lift/computed-async-design-spec.md)       |
-| Kubernetes retry operator and interceptor                         | [Retry policy](ngx-lift/k8s-retry-options.md)                         |
-| Reactive Forms state, facade, bindings and submission             | [Reactive Forms](ngx-lift/reactive-forms-design-spec.md)              |
-| IdleDetectionService and watch ownership                          | [Idle lifecycle](ngx-lift/idle-detection-design-spec.md)              |
-| poll and Kubernetes list aggregation                              | [Polling and pagination](ngx-lift/polling-pagination-design-spec.md)  |
+| API                                                               | Canonical contract                                                      |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| queryResource, queryResources, QueryClient and Observable facades | [Query and cache](ngx-lift/query-resource-design-spec.md)               |
+| mutateResource                                                    | [Writes and concurrency](ngx-lift/mutate-resource-design-spec.md)       |
+| resourceAsync                                                     | [Independent async lifecycle](ngx-lift/resource-async-design-spec.md)   |
+| computedAsync                                                     | [Derived async signals](ngx-lift/computed-async-design-spec.md)         |
+| Kubernetes retry operator and interceptor                         | [Retry policy](ngx-lift/k8s-retry-options.md)                           |
+| Reactive Forms state, facade, bindings and submission             | [Reactive Forms](ngx-lift/reactive-forms-design-spec.md)                |
+| IdleDetectionService and watch ownership                          | [Idle lifecycle](ngx-lift/idle-detection-design-spec.md)                |
+| poll and Kubernetes list aggregation                              | [Polling and pagination](ngx-lift/polling-pagination-design-spec.md)    |
+| getValueByPath, deleteValueByPath, downloadFile                   | [Object path and file download](ngx-lift/core-utilities-design-spec.md) |
 
 ## clr-lift implemented contracts
 

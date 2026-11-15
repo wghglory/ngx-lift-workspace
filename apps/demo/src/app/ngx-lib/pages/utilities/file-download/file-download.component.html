@@ -1,0 +1,87 @@
+<cll-page-container [title]="'downloadFile'">
+  <p [innerHTML]="'downloadFile.overview' | translate"></p>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.liveDemo' | translate }}</h2>
+    <app-demo-playground
+      data-testid="download-file-playground"
+      [title]="'downloadFile.playgroundTitle' | translate"
+      [description]="'downloadFile.playgroundDescription' | translate"
+      [tsCode]="firstTaskCode"
+    >
+      <div preview cds-layout="vertical gap:sm">
+        <clr-input-container>
+          <label for="download-file-name">{{ 'downloadFile.fileNameLabel' | translate }}</label>
+          <input
+            clrInput
+            id="download-file-name"
+            type="text"
+            #fileNameInput
+            data-testid="download-file-name"
+            [attr.aria-describedby]="canStart() ? null : 'download-file-name-error'"
+            [value]="fileName()"
+            (input)="setFileName(fileNameInput.value)"
+          />
+        </clr-input-container>
+
+        @if (!canStart()) {
+          <p id="download-file-name-error" data-testid="download-file-error" class="clr-subtext">
+            {{ 'downloadFile.emptyNameError' | translate }}
+          </p>
+        }
+
+        <clr-textarea-container>
+          <label for="download-file-content">{{ 'downloadFile.contentLabel' | translate }}</label>
+          <textarea
+            clrTextarea
+            id="download-file-content"
+            rows="5"
+            #contentInput
+            data-testid="download-file-content"
+            style="max-width: 100%"
+            [value]="content()"
+            (input)="setContent(contentInput.value)"
+          ></textarea>
+        </clr-textarea-container>
+
+        <div cds-layout="horizontal gap:sm wrap">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-testid="download-file-start"
+            [disabled]="!canStart()"
+            (click)="start()"
+          >
+            {{ 'downloadFile.startButton' | translate }}
+          </button>
+        </div>
+
+        <div role="status" aria-live="polite" data-testid="download-file-status">
+          @if (status() === 'started') {
+            <p>{{ statusText() }}</p>
+          }
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'downloadFile.advancedTitle' | translate }}</h3>
+      <p>{{ 'downloadFile.advancedDescription' | translate }}</p>
+      <app-code-block [code]="advancedCode" lang="typescript" />
+    </article>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <p>{{ 'downloadFile.apiSummary' | translate }}</p>
+    <h3>{{ 'common.signature' | translate }}</h3>
+    <app-code-block [code]="signatureCode" lang="typescript" />
+    <h3>{{ 'common.parameters' | translate }}</h3>
+    <app-api-table [properties]="parameters()" />
+    <h3>{{ 'common.returns' | translate }}</h3>
+    <p>{{ 'downloadFile.returnsDesc' | translate }}</p>
+  </section>
+</cll-page-container>

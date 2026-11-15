@@ -3048,4 +3048,43 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.optionsLabHintOmitIf': 'Descartar campos internos mediante un predicado de clave.',
   'toSignalForm.optionsLabHintOmit': 'Descartar el campo confirmEmail, usado solo por la interfaz.',
   'toSignalForm.optionsLabHintDeep': 'Aplicar las reglas también a objetos y arrays anidados.',
+
+  'objectPath.overview':
+    '<code>getValueByPath</code> lee un valor anidado propio mediante una ruta de puntos; <code>deleteValueByPath</code> lo elimina en el mismo objeto. Los segmentos heredados y los relacionados con prototipos nunca se resuelven.',
+  'objectPath.playgroundTitle': 'Leer y eliminar un valor anidado',
+  'objectPath.playgroundDescription':
+    'Cambie las rutas siguientes y aplique después la eliminación al objeto de ejemplo.',
+  'objectPath.sampleTitle': 'Objeto de ejemplo',
+  'objectPath.readPathLabel': 'Ruta de lectura',
+  'objectPath.deletePathLabel': 'Ruta de eliminación',
+  'objectPath.resolvedTitle': 'Valor resuelto',
+  'objectPath.emptyValue': 'No hay un valor propio en esta ruta',
+  'objectPath.unsafePath': 'La ruta está vacía, es inválida o contiene un segmento relacionado con prototipos.',
+  'objectPath.applyDelete': 'Aplicar eliminación',
+  'objectPath.deleteSuccess': 'Propiedad propia eliminada.',
+  'objectPath.deleteFailure': 'No se eliminó nada.',
+  'objectPath.reset': 'Restablecer ejemplo',
+  'objectPath.apiSummary': 'Lee o elimina una propiedad anidada propia mediante una ruta de puntos.',
+  'objectPath.paramObj': 'Objeto de origen que se lee o se modifica en el mismo sitio.',
+  'objectPath.paramPath':
+    'Ruta de propiedades propias separada por puntos; los segmentos numéricos indican índices de arrays.',
+  'objectPath.returnsGet': 'El valor de la ruta, o ningún valor cuando no se puede resolver.',
+  'objectPath.returnsDelete': 'Un booleano que solo es verdadero cuando se eliminó una propiedad propia.',
+
+  'downloadFile.overview':
+    '<code>downloadFile</code> inicia una descarga del navegador a partir de una cadena o un Blob. Elimina el enlace temporal y libera la URL de objeto en la siguiente tarea; en el servidor no hace nada.',
+  'downloadFile.playgroundTitle': 'Crear un archivo de texto',
+  'downloadFile.playgroundDescription': 'Edite el nombre y el contenido del archivo y después inicie la descarga.',
+  'downloadFile.fileNameLabel': 'Nombre del archivo',
+  'downloadFile.contentLabel': 'Contenido del archivo',
+  'downloadFile.startButton': 'Iniciar descarga',
+  'downloadFile.emptyNameError': 'Introduzca un nombre de archivo antes de iniciar la descarga.',
+  'downloadFile.startedStatus': 'Descarga iniciada para {0}.',
+  'downloadFile.advancedTitle': 'Usar un Blob tipado',
+  'downloadFile.advancedDescription': 'Un Blob conserva su propio tipo MIME cuando se pasa como contenido.',
+  'downloadFile.apiSummary': 'Inicia una descarga del navegador a partir de una cadena o un Blob.',
+  'downloadFile.paramContent': 'Texto o Blob que se va a descargar.',
+  'downloadFile.paramFileName': 'Nombre de archivo sugerido no vacío; el navegador puede ajustarlo.',
+  'downloadFile.paramMimeType': 'Tipo MIME usado cuando el contenido es una cadena; se ignora con un Blob.',
+  'downloadFile.returnsDesc': 'Ningún valor devuelto; la función no confirma que se haya guardado un archivo.',
 };

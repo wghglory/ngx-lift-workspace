@@ -3020,4 +3020,43 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.optionsLabHintOmitIf': 'Interne velden verwijderen met een sleutelpredicaat.',
   'toSignalForm.optionsLabHintOmit': 'Het veld confirmEmail, dat alleen voor de UI bestaat, verwijderen.',
   'toSignalForm.optionsLabHintDeep': 'De regels ook op geneste objecten en arrays toepassen.',
+
+  'objectPath.overview':
+    '<code>getValueByPath</code> leest een eigen geneste waarde via een puntpad; <code>deleteValueByPath</code> verwijdert die ter plaatse. Geërfde en prototype-gerelateerde segmenten worden nooit omgezet.',
+  'objectPath.playgroundTitle': 'Geneste waarde lezen en verwijderen',
+  'objectPath.playgroundDescription':
+    'Wijzig de paden hieronder en pas daarna het verwijderen toe op het voorbeeldobject.',
+  'objectPath.sampleTitle': 'Voorbeeldobject',
+  'objectPath.readPathLabel': 'Leespad',
+  'objectPath.deletePathLabel': 'Verwijderpad',
+  'objectPath.resolvedTitle': 'Omgezette waarde',
+  'objectPath.emptyValue': 'Geen eigen waarde op dit pad',
+  'objectPath.unsafePath': 'Het pad is leeg, ongeldig of bevat een prototype-gerelateerd segment.',
+  'objectPath.applyDelete': 'Verwijderen toepassen',
+  'objectPath.deleteSuccess': 'Eigen eigenschap verwijderd.',
+  'objectPath.deleteFailure': 'Er is niets verwijderd.',
+  'objectPath.reset': 'Voorbeeld herstellen',
+  'objectPath.apiSummary': 'Leest of verwijdert een eigen geneste eigenschap via een puntpad.',
+  'objectPath.paramObj': 'Bronobject dat wordt gelezen of ter plaatse gewijzigd.',
+  'objectPath.paramPath':
+    'Puntgescheiden pad van eigen eigenschappen; numerieke segmenten verwijzen naar array-indexen.',
+  'objectPath.returnsGet': 'De waarde op het pad, of geen waarde als het pad niet kan worden omgezet.',
+  'objectPath.returnsDelete': 'Een booleaanse waarde die alleen waar is als een eigen eigenschap is verwijderd.',
+
+  'downloadFile.overview':
+    '<code>downloadFile</code> start een browserdownload vanuit een tekst of een Blob. De tijdelijke link wordt verwijderd en de object-URL wordt in de volgende taak vrijgegeven; op de server gebeurt er niets.',
+  'downloadFile.playgroundTitle': 'Tekstbestand maken',
+  'downloadFile.playgroundDescription': 'Bewerk de bestandsnaam en de inhoud en start daarna de download.',
+  'downloadFile.fileNameLabel': 'Bestandsnaam',
+  'downloadFile.contentLabel': 'Bestandsinhoud',
+  'downloadFile.startButton': 'Download starten',
+  'downloadFile.emptyNameError': 'Vul eerst een bestandsnaam in voordat u de download start.',
+  'downloadFile.startedStatus': 'Download gestart voor {0}.',
+  'downloadFile.advancedTitle': 'Een getypeerde Blob gebruiken',
+  'downloadFile.advancedDescription': 'Een Blob behoudt zijn eigen MIME-type wanneer die als inhoud wordt meegegeven.',
+  'downloadFile.apiSummary': 'Start een browserdownload vanuit een tekst of een Blob.',
+  'downloadFile.paramContent': 'Tekst of Blob die gedownload moet worden.',
+  'downloadFile.paramFileName': 'Niet-lege voorgestelde bestandsnaam; de browser kan die aanpassen.',
+  'downloadFile.paramMimeType': 'MIME-type voor tekstinhoud; wordt genegeerd bij een Blob.',
+  'downloadFile.returnsDesc': 'Geen retourwaarde; de functie bevestigt niet dat een bestand is opgeslagen.',
 };

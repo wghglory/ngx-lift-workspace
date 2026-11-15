@@ -329,6 +329,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'file-download',
+            loadComponent: () =>
+              import('./ngx-lib/pages/utilities/file-download/file-download.component').then(
+                (module) => module.FileDownloadComponent,
+              ),
+          },
+          {
             path: 'idle-detection',
             loadComponent: () =>
               import('./ngx-lib/pages/utilities/idle-detection-demo/idle-detection-demo.component').then(
@@ -350,6 +357,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./ngx-lib/pages/utilities/is-promise/is-promise.component').then(
                 (module) => module.IsPromiseComponent,
+              ),
+          },
+          {
+            path: 'object-path',
+            loadComponent: () =>
+              import('./ngx-lib/pages/utilities/object-path/object-path.component').then(
+                (module) => module.ObjectPathComponent,
               ),
           },
           {

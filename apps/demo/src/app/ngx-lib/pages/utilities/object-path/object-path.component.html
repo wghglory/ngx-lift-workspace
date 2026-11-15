@@ -1,0 +1,101 @@
+<cll-page-container [title]="'getValueByPath & deleteValueByPath'">
+  <p [innerHTML]="'objectPath.overview' | translate"></p>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.liveDemo' | translate }}</h2>
+    <app-demo-playground
+      data-testid="object-path-playground"
+      [title]="'objectPath.playgroundTitle' | translate"
+      [description]="'objectPath.playgroundDescription' | translate"
+      [tsCode]="firstTaskCode"
+    >
+      <div preview cds-layout="vertical gap:sm">
+        <clr-input-container>
+          <label for="object-path-read">{{ 'objectPath.readPathLabel' | translate }}</label>
+          <input
+            clrInput
+            id="object-path-read"
+            type="text"
+            #readPathInput
+            data-testid="object-path-read"
+            [value]="readPath()"
+            (input)="setReadPath(readPathInput.value)"
+          />
+        </clr-input-container>
+
+        <clr-input-container>
+          <label for="object-path-delete">{{ 'objectPath.deletePathLabel' | translate }}</label>
+          <input
+            clrInput
+            id="object-path-delete"
+            type="text"
+            #deletePathInput
+            data-testid="object-path-delete"
+            [value]="deletePath()"
+            (input)="setDeletePath(deletePathInput.value)"
+          />
+        </clr-input-container>
+
+        <div cds-layout="horizontal gap:sm wrap">
+          <button type="button" class="btn btn-primary" data-testid="object-path-apply" (click)="applyDelete()">
+            {{ 'objectPath.applyDelete' | translate }}
+          </button>
+          <button type="button" class="btn btn-outline" data-testid="object-path-reset" (click)="reset()">
+            {{ 'objectPath.reset' | translate }}
+          </button>
+        </div>
+
+        <div role="status" aria-live="polite" data-testid="object-path-status">
+          @if (status() === 'deleted') {
+            <p>{{ 'objectPath.deleteSuccess' | translate }}</p>
+          } @else if (status() === 'unchanged') {
+            <p>{{ 'objectPath.deleteFailure' | translate }}</p>
+          }
+        </div>
+
+        <h4>{{ 'objectPath.resolvedTitle' | translate }}</h4>
+        <div
+          role="region"
+          [attr.aria-label]="'objectPath.resolvedTitle' | translate"
+          data-testid="object-path-resolved"
+          style="max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere"
+        >
+          @if (resolvedValue(); as value) {
+            <p>{{ value }}</p>
+          } @else {
+            <p>{{ 'objectPath.emptyValue' | translate }}</p>
+          }
+        </div>
+
+        <h4>{{ 'objectPath.sampleTitle' | translate }}</h4>
+        <pre
+          role="region"
+          [attr.aria-label]="'objectPath.sampleTitle' | translate"
+          data-testid="object-path-sample"
+          style="max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere"
+          >{{ sampleText() }}</pre>
+      </div>
+    </app-demo-playground>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'common.usageNotes' | translate }}</h3>
+      <p>{{ 'objectPath.unsafePath' | translate }}</p>
+      <app-code-block [code]="advancedCode" lang="typescript" />
+    </article>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <p>{{ 'objectPath.apiSummary' | translate }}</p>
+    <h3>{{ 'common.signature' | translate }}</h3>
+    <app-code-block [code]="signatureCode" lang="typescript" />
+    <h3>{{ 'common.parameters' | translate }}</h3>
+    <app-api-table [properties]="parameters()" />
+    <h3>{{ 'common.returns' | translate }}</h3>
+    <p>{{ 'objectPath.returnsGet' | translate }}</p>
+    <p>{{ 'objectPath.returnsDelete' | translate }}</p>
+  </section>
+</cll-page-container>

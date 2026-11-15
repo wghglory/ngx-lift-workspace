@@ -3061,4 +3061,43 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.optionsLabHintOmitIf': 'Interne Felder über eine Schlüsselbedingung entfernen.',
   'toSignalForm.optionsLabHintOmit': 'Das nur für die Oberfläche benötigte Feld confirmEmail entfernen.',
   'toSignalForm.optionsLabHintDeep': 'Die Regeln auch in verschachtelten Objekten und Arrays anwenden.',
+
+  'objectPath.overview':
+    '<code>getValueByPath</code> liest einen eigenen verschachtelten Wert über einen Punktpfad; <code>deleteValueByPath</code> entfernt ihn direkt im Objekt. Geerbte und prototypbezogene Segmente werden nie aufgelöst.',
+  'objectPath.playgroundTitle': 'Verschachtelten Wert lesen und löschen',
+  'objectPath.playgroundDescription':
+    'Ändern Sie die Pfade unten und wenden Sie danach das Löschen auf das Beispielobjekt an.',
+  'objectPath.sampleTitle': 'Beispielobjekt',
+  'objectPath.readPathLabel': 'Lesepfad',
+  'objectPath.deletePathLabel': 'Löschpfad',
+  'objectPath.resolvedTitle': 'Aufgelöster Wert',
+  'objectPath.emptyValue': 'Kein eigener Wert an diesem Pfad',
+  'objectPath.unsafePath': 'Der Pfad ist leer, ungültig oder enthält ein prototypbezogenes Segment.',
+  'objectPath.applyDelete': 'Löschen anwenden',
+  'objectPath.deleteSuccess': 'Eigene Eigenschaft entfernt.',
+  'objectPath.deleteFailure': 'Es wurde nichts entfernt.',
+  'objectPath.reset': 'Beispiel zurücksetzen',
+  'objectPath.apiSummary': 'Liest oder entfernt eine eigene verschachtelte Eigenschaft über einen Punktpfad.',
+  'objectPath.paramObj': 'Quellobjekt, das gelesen oder direkt geändert wird.',
+  'objectPath.paramPath': 'Punktgetrennter Pfad eigener Eigenschaften; numerische Segmente adressieren Array-Indizes.',
+  'objectPath.returnsGet': 'Der Wert am Pfad, sonst kein Wert, wenn er nicht aufgelöst werden kann.',
+  'objectPath.returnsDelete':
+    'Ein boolescher Wert, der nur dann wahr ist, wenn eine eigene Eigenschaft gelöscht wurde.',
+
+  'downloadFile.overview':
+    '<code>downloadFile</code> startet einen Browser-Download aus einer Zeichenfolge oder einem Blob. Der temporäre Link wird entfernt und die Objekt-URL im nächsten Task freigegeben; auf dem Server geschieht nichts.',
+  'downloadFile.playgroundTitle': 'Textdatei erstellen',
+  'downloadFile.playgroundDescription': 'Bearbeiten Sie Dateiname und Inhalt und starten Sie dann den Download.',
+  'downloadFile.fileNameLabel': 'Dateiname',
+  'downloadFile.contentLabel': 'Dateiinhalt',
+  'downloadFile.startButton': 'Download starten',
+  'downloadFile.emptyNameError': 'Geben Sie erst einen Dateinamen ein, bevor Sie den Download starten.',
+  'downloadFile.startedStatus': 'Download für {0} gestartet.',
+  'downloadFile.advancedTitle': 'Ein typisiertes Blob verwenden',
+  'downloadFile.advancedDescription': 'Ein Blob behält seinen eigenen MIME-Typ, wenn er als Inhalt übergeben wird.',
+  'downloadFile.apiSummary': 'Startet einen Browser-Download aus einer Zeichenfolge oder einem Blob.',
+  'downloadFile.paramContent': 'Text oder Blob, der heruntergeladen werden soll.',
+  'downloadFile.paramFileName': 'Nicht leerer vorgeschlagener Dateiname; der Browser kann ihn anpassen.',
+  'downloadFile.paramMimeType': 'MIME-Typ für Zeichenfolgeninhalte; bei einem Blob ignoriert.',
+  'downloadFile.returnsDesc': 'Kein Rückgabewert; die Funktion bestätigt keine gespeicherte Datei.',
 };
