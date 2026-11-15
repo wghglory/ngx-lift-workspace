@@ -4,6 +4,7 @@ import {TranslationService} from 'clr-lift';
 import {describe, expect, it} from 'vitest';
 
 import {enTranslations} from '../../../../core/l10n/demo.l10n.en';
+import {sourceText} from '../../../../shared/utils/highlight.util';
 import {FileDownloadComponent} from './file-download.component';
 
 describe('FileDownloadComponent', () => {
@@ -55,5 +56,12 @@ describe('FileDownloadComponent', () => {
   it('exposes localized API parameter descriptions', () => {
     expect(component.parameters().map((property) => property.name)).toEqual(['content', 'fileName', 'mimeType']);
     expect(component.parameters().every((property) => property.description.length > 0)).toBe(true);
+  });
+
+  it('shows complete runnable examples whose first task matches the preview', () => {
+    const firstTask = sourceText(component.firstTaskCode);
+    expect(firstTask).toContain("import {downloadFile} from 'ngx-lift';");
+    expect(firstTask).toContain('downloadFile(content, fileName);');
+    expect(sourceText(component.advancedCode)).toContain("import {downloadFile} from 'ngx-lift';");
   });
 });

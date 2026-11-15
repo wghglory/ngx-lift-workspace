@@ -8,5 +8,6 @@ describe('downloadFile without a DOM', () => {
     expect(typeof document).toBe('undefined');
     expect(() => downloadFile('data', 'file.txt')).not.toThrow();
     expect(() => downloadFile(new Blob(['data']), 'file.txt')).not.toThrow();
+    expect(() => downloadFile('data', '')).not.toThrow();
   });
 });

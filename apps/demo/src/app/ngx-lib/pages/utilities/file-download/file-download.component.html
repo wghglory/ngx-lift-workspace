@@ -16,10 +16,11 @@
             clrInput
             id="download-file-name"
             type="text"
+            #fileNameInput
             data-testid="download-file-name"
             [attr.aria-describedby]="canStart() ? null : 'download-file-name-error'"
             [value]="fileName()"
-            (input)="setFileName($any($event.target).value)"
+            (input)="setFileName(fileNameInput.value)"
           />
         </clr-input-container>
 
@@ -35,10 +36,11 @@
             clrTextarea
             id="download-file-content"
             rows="5"
+            #contentInput
             data-testid="download-file-content"
             style="max-width: 100%"
             [value]="content()"
-            (input)="setContent($any($event.target).value)"
+            (input)="setContent(contentInput.value)"
           ></textarea>
         </clr-textarea-container>
 
@@ -65,10 +67,6 @@
 
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'common.basicUsage' | translate }}</h3>
-      <app-code-block [code]="firstTaskCode" lang="typescript" />
-    </article>
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'downloadFile.advancedTitle' | translate }}</h3>
       <p>{{ 'downloadFile.advancedDescription' | translate }}</p>

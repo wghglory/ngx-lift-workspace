@@ -72,6 +72,29 @@ describe('downloadFile', () => {
     expect(createObjectURLMock).not.toHaveBeenCalled();
   });
 
+  it('is a no-op when object URL creation is unavailable', () => {
+    window.URL.createObjectURL = undefined as unknown as typeof URL.createObjectURL;
+
+    expect(() => downloadFile('data', 'file.txt')).not.toThrow();
+    expect(document.querySelector('a[download]')).toBeNull();
+    expect(createObjectURLMock).not.toHaveBeenCalled();
+  });
+
+  it('is a no-op when object URL revocation is unavailable', () => {
+    window.URL.revokeObjectURL = undefined as unknown as typeof URL.revokeObjectURL;
+
+    expect(() => downloadFile('data', 'file.txt')).not.toThrow();
+    expect(document.querySelector('a[download]')).toBeNull();
+  });
+
+  it('validates arguments before checking object URL support on a browser host', () => {
+    window.URL.createObjectURL = undefined as unknown as typeof URL.createObjectURL;
+
+    expect(() => downloadFile('data', '')).toThrow(RangeError);
+    expect(() => downloadFile(42 as unknown as string, 'file.txt')).toThrow(TypeError);
+    expect(document.querySelector('a[download]')).toBeNull();
+  });
+
   it('exposes a void return type', () => {
     expectTypeOf(downloadFile).returns.toEqualTypeOf<void>();
   });

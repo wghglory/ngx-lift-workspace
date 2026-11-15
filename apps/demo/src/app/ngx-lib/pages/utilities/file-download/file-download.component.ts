@@ -3,10 +3,11 @@ import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {downloadFile} from 'ngx-lift';
 
-import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
+import {localizedApiParameters} from '../../../../shared/utils/localized-api-parameters.util';
 
 type DownloadStatus = 'idle' | 'started';
 
@@ -41,26 +42,11 @@ export class FileDownloadComponent {
       : '';
   });
 
-  readonly parameters = computed<ApiProperty[]>(() => {
-    this.translationService.currentLanguage();
-    return [
-      {
-        name: 'content',
-        type: 'string | Blob',
-        description: this.translationService.translate('downloadFile.paramContent'),
-      },
-      {
-        name: 'fileName',
-        type: 'string',
-        description: this.translationService.translate('downloadFile.paramFileName'),
-      },
-      {
-        name: 'mimeType',
-        type: 'string',
-        description: this.translationService.translate('downloadFile.paramMimeType'),
-      },
-    ];
-  });
+  readonly parameters = localizedApiParameters(this.translationService, [
+    {name: 'content', type: 'string | Blob', descriptionKey: 'downloadFile.paramContent'},
+    {name: 'fileName', type: 'string', descriptionKey: 'downloadFile.paramFileName'},
+    {name: 'mimeType', type: 'string', descriptionKey: 'downloadFile.paramMimeType'},
+  ]);
 
   readonly signatureCode = highlight(
     `downloadFile(content: string | Blob, fileName: string, mimeType = 'text/plain;charset=utf-8'): void;`,
@@ -68,9 +54,13 @@ export class FileDownloadComponent {
 
   readonly firstTaskCode = highlight(`import {downloadFile} from 'ngx-lift';
 
-downloadFile('{"status":"ok"}', 'config.json', 'application/json');`);
+const content = 'Hello from ngx-lift!';
+const fileName = 'report.txt';
+downloadFile(content, fileName);`);
 
-  readonly advancedCode = highlight(`const csv = new Blob(['name,role\\nAlice,Admin'], {type: 'text/csv'});
+  readonly advancedCode = highlight(`import {downloadFile} from 'ngx-lift';
+
+const csv = new Blob(['name,role\\nAlice,Admin'], {type: 'text/csv'});
 downloadFile(csv, 'users.csv');`);
 
   setFileName(value: string): void {

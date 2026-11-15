@@ -3,14 +3,13 @@ import {ClarityModule} from '@clr/angular';
 import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {deleteValueByPath, getValueByPath} from 'ngx-lift';
 
-import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
+import {ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
+import {localizedApiParameters} from '../../../../shared/utils/localized-api-parameters.util';
 
-type DeleteStatus = 'idle' | 'unsafe' | 'deleted' | 'unchanged';
-
-const UNSAFE_SEGMENTS = ['__proto__', 'prototype', 'constructor'];
+type DeleteStatus = 'idle' | 'deleted' | 'unchanged';
 
 function createSample(): Record<string, unknown> {
   return {
@@ -40,45 +39,23 @@ function createSample(): Record<string, unknown> {
 })
 export class ObjectPathComponent {
   private readonly translationService = inject(TranslationService);
-  private source = createSample();
+  private readonly source = signal(createSample());
 
   readonly readPath = signal('user.profile.contact.email');
   readonly deletePath = signal('user.profile.contact.phone');
   readonly status = signal<DeleteStatus>('idle');
-  readonly version = signal(0);
 
-  readonly sampleText = computed(() => {
-    this.version();
-    return JSON.stringify(this.source, null, 2);
-  });
-
-  readonly unsafeReadPath = computed(() => this.isUnsafe(this.readPath()));
+  readonly sampleText = computed(() => JSON.stringify(this.source(), null, 2));
 
   readonly resolvedValue = computed(() => {
-    this.version();
-    const path = this.readPath().trim();
-    if (this.isUnsafe(path)) {
-      return undefined;
-    }
-    const value = getValueByPath(this.source, path);
+    const value = getValueByPath(this.source(), this.readPath().trim());
     return value === undefined ? undefined : JSON.stringify(value);
   });
 
-  readonly parameters = computed<ApiProperty[]>(() => {
-    this.translationService.currentLanguage();
-    return [
-      {
-        name: 'obj',
-        type: 'unknown',
-        description: this.translationService.translate('objectPath.paramObj'),
-      },
-      {
-        name: 'path',
-        type: 'string',
-        description: this.translationService.translate('objectPath.paramPath'),
-      },
-    ];
-  });
+  readonly parameters = localizedApiParameters(this.translationService, [
+    {name: 'obj', type: 'unknown', descriptionKey: 'objectPath.paramObj'},
+    {name: 'path', type: 'string', descriptionKey: 'objectPath.paramPath'},
+  ]);
 
   readonly signatureCode = highlight(`getValueByPath<T = unknown>(obj: unknown, path: string): T | undefined;
 deleteValueByPath(obj: unknown, path: string): boolean;`);
@@ -89,8 +66,12 @@ const config = {server: {host: 'localhost', port: 8080}};
 const host = getValueByPath<string>(config, 'server.host');
 deleteValueByPath(config, 'server.port'); // true`);
 
-  readonly advancedCode = highlight(`// A caller-supplied path never reaches prototype state.
-const email = getValueByPath(payload, 'user.profile.contact.email');
+  readonly advancedCode = highlight(`import {deleteValueByPath, getValueByPath} from 'ngx-lift';
+
+const payload = {user: {profile: {contact: {email: 'alice@example.com'}}}};
+
+// A caller-supplied path never reaches prototype state.
+const email = getValueByPath<string>(payload, 'user.profile.contact.email'); // 'alice@example.com'
 getValueByPath(payload, '__proto__.polluted'); // undefined
 deleteValueByPath(payload, 'constructor.prototype'); // false`);
 
@@ -105,26 +86,14 @@ deleteValueByPath(payload, 'constructor.prototype'); // false`);
   }
 
   applyDelete(): void {
-    const path = this.deletePath().trim();
-    if (this.isUnsafe(path)) {
-      this.status.set('unsafe');
-      return;
-    }
-    const deleted = deleteValueByPath(this.source, path);
-    this.version.update((current) => current + 1);
+    const sample = structuredClone(this.source());
+    const deleted = deleteValueByPath(sample, this.deletePath().trim());
+    this.source.set(sample);
     this.status.set(deleted ? 'deleted' : 'unchanged');
   }
 
   reset(): void {
-    this.source = createSample();
-    this.version.update((current) => current + 1);
+    this.source.set(createSample());
     this.status.set('idle');
-  }
-
-  private isUnsafe(path: string): boolean {
-    if (!path.trim()) {
-      return true;
-    }
-    return path.split('.').some((segment) => !segment.trim() || UNSAFE_SEGMENTS.includes(segment));
   }
 }

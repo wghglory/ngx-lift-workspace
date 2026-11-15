@@ -4,6 +4,7 @@ import {TranslationService} from 'clr-lift';
 import {describe, expect, it} from 'vitest';
 
 import {enTranslations} from '../../../../core/l10n/demo.l10n.en';
+import {sourceText} from '../../../../shared/utils/highlight.util';
 import {ObjectPathComponent} from './object-path.component';
 
 describe('ObjectPathComponent', () => {
@@ -41,14 +42,15 @@ describe('ObjectPathComponent', () => {
     expect(component.resolvedValue()).toBeUndefined();
   });
 
-  it('rejects unsafe paths in both read and delete flows', () => {
+  it('delegates prototype-path rejection to the library helpers', () => {
     component.setReadPath('__proto__.polluted');
-    expect(component.unsafeReadPath()).toBe(true);
     expect(component.resolvedValue()).toBeUndefined();
+    expect(Object.hasOwn(Object.prototype, 'polluted')).toBe(false);
 
     component.setDeletePath('constructor.prototype');
     component.applyDelete();
-    expect(component.status()).toBe('unsafe');
+    expect(component.status()).toBe('unchanged');
+    expect(component.sampleText()).toContain('+1-555-0100');
   });
 
   it('deletes an own property, reports repeat deletes and resets the sample', () => {
@@ -68,5 +70,14 @@ describe('ObjectPathComponent', () => {
   it('exposes localized API parameter descriptions', () => {
     expect(component.parameters().map((property) => property.name)).toEqual(['obj', 'path']);
     expect(component.parameters().every((property) => property.description.length > 0)).toBe(true);
+  });
+
+  it('shows complete runnable examples with their imports', () => {
+    expect(sourceText(component.firstTaskCode)).toContain(
+      "import {getValueByPath, deleteValueByPath} from 'ngx-lift';",
+    );
+    const advanced = sourceText(component.advancedCode);
+    expect(advanced).toContain("import {deleteValueByPath, getValueByPath} from 'ngx-lift';");
+    expect(advanced).toContain('const payload');
   });
 });

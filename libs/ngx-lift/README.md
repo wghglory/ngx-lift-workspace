@@ -112,11 +112,11 @@ installed version; source changes under Unreleased are not yet on npm.
 Both helpers are exported from the `ngx-lift` root entry point. See the
 [design spec](../../docs/design/ngx-lift/core-utilities-design-spec.md) for the full contract.
 
-| Function                      | Signature                                                                                    | Returns                                    | Errors / no-op                                                                      |
-| ----------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------- |
-| `getValueByPath<T = unknown>` | `(obj: unknown, path: string) => T \| undefined`                                             | Own value at the dot path, or `undefined`  | Blank, malformed, inherited or unsafe path → `undefined`                            |
-| `deleteValueByPath`           | `(obj: unknown, path: string) => boolean`                                                    | `true` only if an own property was deleted | Missing, locked, inherited or unsafe path → `false`                                 |
-| `downloadFile`                | `(content: string \| Blob, fileName: string, mimeType = 'text/plain;charset=utf-8') => void` | Nothing (fire-and-forget)                  | Blank name → `RangeError`; invalid content → `TypeError`; SSR/no object URL → no-op |
+| Function                      | Signature                                                                                    | Returns                                    | Errors / no-op                                                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `getValueByPath<T = unknown>` | `(obj: unknown, path: string) => T \| undefined`                                             | Own value at the dot path, or `undefined`  | Blank, malformed, inherited or unsafe path → `undefined`                                                               |
+| `deleteValueByPath`           | `(obj: unknown, path: string) => boolean`                                                    | `true` only if an own property was deleted | Missing, locked, inherited or unsafe path → `false`                                                                    |
+| `downloadFile`                | `(content: string \| Blob, fileName: string, mimeType = 'text/plain;charset=utf-8') => void` | Nothing (fire-and-forget)                  | Blank name → `RangeError`; invalid content → `TypeError` on browser hosts; SSR/no object URL (valid arguments) → no-op |
 
 ```typescript
 import {deleteValueByPath, downloadFile, getValueByPath} from 'ngx-lift';
@@ -128,8 +128,9 @@ downloadFile(JSON.stringify(config), 'config.json', 'application/json');
 ```
 
 Paths are dot-separated own-property segments (numeric segments address array indices). `__proto__`, `prototype` and
-`constructor` are always rejected. `downloadFile` revokes its blob URL on the next task, removes the temporary anchor,
-and does not confirm that the browser saved the file.
+`constructor` are always rejected. `downloadFile` returns before any DOM work when `window` or `document` is absent; on
+a browser host it validates its arguments before checking object URL support. It revokes its blob URL on the next task,
+removes the temporary anchor, and does not confirm that the browser saved the file.
 
 ### 📦 Models
 
