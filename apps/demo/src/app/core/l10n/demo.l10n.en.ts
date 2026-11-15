@@ -2955,4 +2955,87 @@ export const enTranslations: Record<string, string> = {
   'downloadFile.paramFileName': 'Non-empty suggested filename; the browser may adjust it.',
   'downloadFile.paramMimeType': 'MIME type used when content is a string; ignored for a Blob.',
   'downloadFile.returnsDesc': 'Nothing; the function does not confirm a saved file.',
+
+  'standardValidators.example1': 'Example 1: Basic usage',
+  'standardValidators.example2': 'Example 2: Advanced usage',
+  'standardValidators.statusValid': 'The form is valid.',
+  'standardValidators.statusInvalid': 'The form has validation errors.',
+  'standardValidators.statusDisabled': 'The form is disabled.',
+  'standardValidators.disableForm': 'Disable form',
+  'standardValidators.enableForm': 'Enable form',
+
+  'integerValidator.overview':
+    'integerValidator accepts only safe integers in a form control. Numbers and signed decimal integer strings are valid; decimals, exponent notation, hexadecimal text and values JavaScript would otherwise coerce are rejected. Combine it with Validators.required when the field is mandatory.',
+  'integerValidator.playgroundTitle': 'Validate a replica count',
+  'integerValidator.playgroundDescription': 'Type a whole number, correct an invalid value, then clear the field.',
+  'integerValidator.firstLabel': 'Replica count',
+  'integerValidator.firstError': 'Enter a whole number.',
+  'integerValidator.example1Desc':
+    'Attach the validator to a typed Reactive Forms control and read the invalidInteger error.',
+  'integerValidator.example2Desc': 'Combine the validator with required and min rules for a realistic deployment form.',
+  'integerValidator.summary':
+    'Creates a ValidatorFn that accepts safe integer numbers or signed decimal integer strings.',
+  'integerValidator.returns':
+    'A ValidatorFn that returns the invalidInteger error for a non-integer value, or null when the value is valid or empty.',
+
+  'jsonValidator.overview':
+    'jsonValidator checks that a form control contains syntactically valid JSON text. Objects, arrays and JSON primitives are accepted; schema validation remains a separate task for the application. Empty values are valid unless Validators.required is added.',
+  'jsonValidator.playgroundTitle': 'Validate a JSON payload',
+  'jsonValidator.playgroundDescription': 'Paste valid JSON, break the syntax, then clear the editor.',
+  'jsonValidator.firstLabel': 'JSON payload',
+  'jsonValidator.firstError': 'Enter valid JSON text.',
+  'jsonValidator.example1Desc': 'Attach the validator to a textarea control and render the invalidJson error.',
+  'jsonValidator.example2Desc': 'Accept any JSON value type and add a shape check when a schema is required.',
+  'jsonValidator.summary': 'Creates a ValidatorFn that parses a string with JSON.parse and reports syntax errors.',
+  'jsonValidator.returns':
+    'A ValidatorFn that returns the invalidJson error for malformed or non-string values, or null when valid or empty.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator checks that every selected file name ends with an allowed extension. It accepts a FileList, an array of files, a single file, or a file name string, and compares suffixes case-insensitively.',
+  'fileExtensionValidator.playgroundTitle': 'Validate an upload',
+  'fileExtensionValidator.playgroundDescription': 'Enter or select .png and .jpg files, then try another extension.',
+  'fileExtensionValidator.firstLabel': 'File name',
+  'fileExtensionValidator.secondLabel': 'Select files',
+  'fileExtensionValidator.firstError': 'Use a .png or .jpg file.',
+  'fileExtensionValidator.example1Desc': 'Validate a file name string and read the invalidFileExtension error.',
+  'fileExtensionValidator.example2Desc': 'Validate a real FileList and allow compound suffixes such as .tar.gz.',
+  'fileExtensionValidator.summary':
+    'Creates a ValidatorFn that checks file names against a list of allowed extensions.',
+  'fileExtensionValidator.paramFirst': 'One extension or a list of extensions; a leading dot is optional.',
+  'fileExtensionValidator.returns':
+    'A ValidatorFn that returns the invalidFileExtension error when any file fails, or null when all files pass.',
+
+  'numberRangeValidator.overview':
+    'numberRangeValidator is a pure group validator that rejects a minimum greater than its maximum. Numeric strings and numbers are compared, and the error belongs to the group so child controls keep their own errors.',
+  'numberRangeValidator.playgroundTitle': 'Validate a numeric range',
+  'numberRangeValidator.playgroundDescription': 'Correct the maximum value, then clear both bounds.',
+  'numberRangeValidator.firstLabel': 'Minimum',
+  'numberRangeValidator.secondLabel': 'Maximum',
+  'numberRangeValidator.groupError': 'The minimum must not exceed the maximum.',
+  'numberRangeValidator.example1Desc': 'Attach the validator to a FormGroup and read minGreaterThanMax from the group.',
+  'numberRangeValidator.example2Desc': 'Rename both controls and let required rules report missing bounds.',
+  'numberRangeValidator.summary':
+    'Creates a ValidatorFn for a FormGroup that compares the parsed minimum and maximum controls.',
+  'numberRangeValidator.paramFirst': 'Name of the minimum control; defaults to min.',
+  'numberRangeValidator.paramSecond': 'Name of the maximum control; defaults to max.',
+  'numberRangeValidator.returns':
+    'A ValidatorFn that returns the minGreaterThanMax error on the group when min is greater than max, or null otherwise.',
+
+  'passwordMatchValidator.overview':
+    'passwordMatchValidator is a pure group validator that checks two controls hold the same value. The mismatch error belongs to the group, so required and minlength errors on the child controls are preserved.',
+  'passwordMatchValidator.playgroundTitle': 'Validate a password confirmation',
+  'passwordMatchValidator.playgroundDescription': 'Enter matching passwords, change one, then clear the fields.',
+  'passwordMatchValidator.firstLabel': 'Password',
+  'passwordMatchValidator.secondLabel': 'Confirm password',
+  'passwordMatchValidator.groupError': 'The two passwords do not match.',
+  'passwordMatchValidator.example1Desc':
+    'Attach the validator to a FormGroup and read passwordMismatch from the group.',
+  'passwordMatchValidator.example2Desc': 'Use custom control names for a PIN confirmation form.',
+  'passwordMatchValidator.summary':
+    'Creates a ValidatorFn for a FormGroup that compares two control values with strict equality.',
+  'passwordMatchValidator.paramFirst': 'Name of the password control; defaults to password.',
+  'passwordMatchValidator.paramSecond': 'Name of the confirmation control; defaults to confirmPassword.',
+  'passwordMatchValidator.returns':
+    'A ValidatorFn that returns the passwordMismatch error on the group when two non-empty values differ, or null otherwise.',
+  'passwordMatchValidator.minLengthError': 'Use at least 8 characters.',
 };

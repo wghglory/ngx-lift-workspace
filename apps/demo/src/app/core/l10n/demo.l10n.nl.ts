@@ -3059,4 +3059,94 @@ export const nlTranslations: Record<string, string> = {
   'downloadFile.paramFileName': 'Niet-lege voorgestelde bestandsnaam; de browser kan die aanpassen.',
   'downloadFile.paramMimeType': 'MIME-type voor tekstinhoud; wordt genegeerd bij een Blob.',
   'downloadFile.returnsDesc': 'Geen retourwaarde; de functie bevestigt niet dat een bestand is opgeslagen.',
+
+  'standardValidators.example1': 'Voorbeeld 1: Basisgebruik',
+  'standardValidators.example2': 'Voorbeeld 2: Geavanceerd gebruik',
+  'standardValidators.statusValid': 'Het formulier is geldig.',
+  'standardValidators.statusInvalid': 'Het formulier heeft validatiefouten.',
+  'standardValidators.statusDisabled': 'Het formulier is uitgeschakeld.',
+  'standardValidators.disableForm': 'Formulier uitschakelen',
+  'standardValidators.enableForm': 'Formulier inschakelen',
+
+  'integerValidator.overview':
+    'integerValidator accepteert alleen veilige gehele getallen in een formulierbesturingselement. Getallen en ondertekende decimale geheeltal-tekenreeksen zijn geldig; decimalen, exponentnotatie, hexadecimale tekst en waarden die JavaScript anders impliciet zou omzetten worden geweigerd. Combineer het met Validators.required voor verplichte velden.',
+  'integerValidator.playgroundTitle': 'Een replicaaantal valideren',
+  'integerValidator.playgroundDescription':
+    'Typ een geheel getal, corrigeer een ongeldige waarde en maak het veld daarna leeg.',
+  'integerValidator.firstLabel': 'Replicaaantal',
+  'integerValidator.firstError': 'Voer een geheel getal in.',
+  'integerValidator.example1Desc':
+    'Koppel de validator aan een getypeerd Reactive Forms-besturingselement en lees de fout invalidInteger.',
+  'integerValidator.example2Desc':
+    'Combineer de validator met required- en min-regels in een realistisch implementatieformulier.',
+  'integerValidator.summary':
+    'Maakt een ValidatorFn die veilige gehele getallen of ondertekende decimale geheeltal-tekenreeksen accepteert.',
+  'integerValidator.returns':
+    'Een ValidatorFn die de fout invalidInteger teruggeeft voor een niet-geheel getal, of null voor geldige of lege waarden.',
+
+  'jsonValidator.overview':
+    'jsonValidator controleert of een formulierbesturingselement syntactisch geldige JSON-tekst bevat. Objecten, arrays en JSON-primitieven worden geaccepteerd; schemavalidatie blijft een aparte taak van de toepassing. Lege waarden zijn geldig tenzij Validators.required wordt toegevoegd.',
+  'jsonValidator.playgroundTitle': 'Een JSON-payload valideren',
+  'jsonValidator.playgroundDescription': 'Plak geldige JSON, verbreek de syntaxis en maak de editor daarna leeg.',
+  'jsonValidator.firstLabel': 'JSON-payload',
+  'jsonValidator.firstError': 'Voer geldige JSON-tekst in.',
+  'jsonValidator.example1Desc': 'Koppel de validator aan een tekstvak en toon de fout invalidJson.',
+  'jsonValidator.example2Desc': 'Accepteer elk type JSON-waarde en voeg indien nodig een vormcontrole toe.',
+  'jsonValidator.summary': 'Maakt een ValidatorFn die een tekenreeks met JSON.parse ontleedt en syntaxisfouten meldt.',
+  'jsonValidator.returns':
+    'Een ValidatorFn die de fout invalidJson teruggeeft voor misvormde tekst of niet-tekstwaarden, en anders null.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator controleert of elke geselecteerde bestandsnaam eindigt op een toegestane extensie. Het accepteert een FileList, een reeks bestanden, één bestand of een bestandsnaam als tekenreeks en vergelijkt achtervoegsels hoofdletterongevoelig.',
+  'fileExtensionValidator.playgroundTitle': 'Een upload valideren',
+  'fileExtensionValidator.playgroundDescription':
+    'Voer .png- en .jpg-bestanden in of selecteer ze en probeer daarna een andere extensie.',
+  'fileExtensionValidator.firstLabel': 'Bestandsnaam',
+  'fileExtensionValidator.secondLabel': 'Bestanden selecteren',
+  'fileExtensionValidator.firstError': 'Gebruik een .png- of .jpg-bestand.',
+  'fileExtensionValidator.example1Desc':
+    'Valideer een bestandsnaam als tekenreeks en lees de fout invalidFileExtension.',
+  'fileExtensionValidator.example2Desc':
+    'Valideer een echte FileList en sta samengestelde achtervoegsels zoals .tar.gz toe.',
+  'fileExtensionValidator.summary':
+    'Maakt een ValidatorFn die bestandsnamen toetst aan een lijst toegestane extensies.',
+  'fileExtensionValidator.paramFirst': 'Eén extensie of een lijst extensies; een voorlooppunt is optioneel.',
+  'fileExtensionValidator.returns':
+    'Een ValidatorFn die de fout invalidFileExtension teruggeeft zodra een bestand faalt, of null als alle bestanden slagen.',
+
+  'numberRangeValidator.overview':
+    'numberRangeValidator is een zuivere groepsvalidator die een minimum groter dan het maximum weigert. Getallen en numerieke tekenreeksen worden vergeleken en de fout hoort bij de groep, zodat onderliggende besturingselementen hun eigen fouten behouden.',
+  'numberRangeValidator.playgroundTitle': 'Een numeriek bereik valideren',
+  'numberRangeValidator.playgroundDescription': 'Corrigeer de maximumwaarde en maak daarna beide grenzen leeg.',
+  'numberRangeValidator.firstLabel': 'Minimum',
+  'numberRangeValidator.secondLabel': 'Maximum',
+  'numberRangeValidator.groupError': 'Het minimum mag het maximum niet overschrijden.',
+  'numberRangeValidator.example1Desc': 'Koppel de validator aan een FormGroup en lees minGreaterThanMax van de groep.',
+  'numberRangeValidator.example2Desc':
+    'Hernoem beide besturingselementen en laat required-regels ontbrekende grenzen melden.',
+  'numberRangeValidator.summary':
+    'Maakt een ValidatorFn voor een FormGroup die de ontlede minimum- en maximumbesturingselementen vergelijkt.',
+  'numberRangeValidator.paramFirst': 'Naam van het minimumbesturingselement; standaard min.',
+  'numberRangeValidator.paramSecond': 'Naam van het maximumbesturingselement; standaard max.',
+  'numberRangeValidator.returns':
+    'Een ValidatorFn die de fout minGreaterThanMax op de groep teruggeeft als min groter is dan max, en anders null.',
+
+  'passwordMatchValidator.overview':
+    'passwordMatchValidator is een zuivere groepsvalidator die controleert of twee besturingselementen dezelfde waarde bevatten. De mismatchfout hoort bij de groep, zodat required- en minlength-fouten op onderliggende elementen behouden blijven.',
+  'passwordMatchValidator.playgroundTitle': 'Een wachtwoordbevestiging valideren',
+  'passwordMatchValidator.playgroundDescription':
+    'Voer gelijke wachtwoorden in, wijzig er één en maak de velden daarna leeg.',
+  'passwordMatchValidator.firstLabel': 'Wachtwoord',
+  'passwordMatchValidator.secondLabel': 'Wachtwoord bevestigen',
+  'passwordMatchValidator.groupError': 'De twee wachtwoorden komen niet overeen.',
+  'passwordMatchValidator.example1Desc': 'Koppel de validator aan een FormGroup en lees passwordMismatch van de groep.',
+  'passwordMatchValidator.example2Desc':
+    'Gebruik aangepaste namen voor de besturingselementen van een pincodebevestiging.',
+  'passwordMatchValidator.summary':
+    'Maakt een ValidatorFn voor een FormGroup die twee waarden met strikte gelijkheid vergelijkt.',
+  'passwordMatchValidator.paramFirst': 'Naam van het wachtwoordbesturingselement; standaard password.',
+  'passwordMatchValidator.paramSecond': 'Naam van het bevestigingsbesturingselement; standaard confirmPassword.',
+  'passwordMatchValidator.returns':
+    'Een ValidatorFn die de fout passwordMismatch op de groep teruggeeft als twee niet-lege waarden verschillen, en anders null.',
+  'passwordMatchValidator.minLengthError': 'Gebruik minimaal 8 tekens.',
 };

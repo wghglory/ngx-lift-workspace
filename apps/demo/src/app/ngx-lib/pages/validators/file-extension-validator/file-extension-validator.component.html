@@ -1,0 +1,108 @@
+<cll-page-container [title]="'fileExtensionValidator'">
+  <p>{{ 'fileExtensionValidator.overview' | translate }}</p>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.liveDemo' | translate }}</h2>
+    <app-demo-playground
+      data-testid="file-extension-validator-starter"
+      [title]="'fileExtensionValidator.playgroundTitle' | translate"
+      [description]="'fileExtensionValidator.playgroundDescription' | translate"
+      [tsCode]="firstTaskCode"
+      [htmlCode]="firstTaskHtml"
+    >
+      <form preview [formGroup]="form" clrForm cds-layout="vertical gap:sm">
+        <clr-input-container>
+          <label for="file-extension-name">{{ 'fileExtensionValidator.firstLabel' | translate }}</label>
+          <input id="file-extension-name" clrInput formControlName="fileName" data-testid="file-extension-name" />
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+          <clr-control-error *clrIfError="'invalidFileExtension'">
+            {{ 'fileExtensionValidator.firstError' | translate }}
+          </clr-control-error>
+        </clr-input-container>
+
+        <div cds-layout="vertical gap:xs">
+          <label for="file-extension-files">{{ 'fileExtensionValidator.secondLabel' | translate }}</label>
+          <input
+            id="file-extension-files"
+            type="file"
+            multiple
+            (change)="onFiles($event)"
+            data-testid="file-extension-files"
+          />
+          @if (form.controls.files.hasError('invalidFileExtension')) {
+            <p role="status" aria-live="polite" data-testid="file-extension-file-error">
+              {{ 'fileExtensionValidator.firstError' | translate }}
+            </p>
+          }
+          @if (selectedNames().length) {
+            <ul cds-layout="vertical gap:xs" data-testid="file-extension-names">
+              @for (name of selectedNames(); track name) {
+                <li>{{ name }}</li>
+              }
+            </ul>
+          }
+        </div>
+
+        <div cds-layout="horizontal gap:sm wrap">
+          <button type="button" class="btn btn-sm btn-outline" (click)="reset()" data-testid="file-extension-reset">
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline"
+            (click)="toggleDisabled()"
+            data-testid="file-extension-disable"
+          >
+            {{ (isDisabled ? 'standardValidators.enableForm' : 'standardValidators.disableForm') | translate }}
+          </button>
+        </div>
+
+        <output aria-live="polite" data-testid="file-extension-status">
+          @if (form.disabled) {
+            {{ 'standardValidators.statusDisabled' | translate }}
+          } @else if (form.valid) {
+            {{ 'standardValidators.statusValid' | translate }}
+          } @else {
+            {{ 'standardValidators.statusInvalid' | translate }}
+          }
+        </output>
+      </form>
+    </app-demo-playground>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'standardValidators.example1' | translate }}</h3>
+      <p>{{ 'fileExtensionValidator.example1Desc' | translate }}</p>
+      <app-code-block [code]="basicUsageCode" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'standardValidators.example2' | translate }}</h3>
+      <p>{{ 'fileExtensionValidator.example2Desc' | translate }}</p>
+      <app-code-block [code]="advancedCode" lang="typescript" />
+    </article>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>fileExtensionValidator</h3>
+      <p>{{ 'fileExtensionValidator.summary' | translate }}</p>
+
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <ul cds-layout="vertical gap:xs">
+        <li><code>allowedExtensions</code>: {{ 'fileExtensionValidator.paramFirst' | translate }}</li>
+      </ul>
+
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'fileExtensionValidator.returns' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

@@ -1,0 +1,107 @@
+<cll-page-container [title]="'numberRangeValidator'">
+  <p>{{ 'numberRangeValidator.overview' | translate }}</p>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.liveDemo' | translate }}</h2>
+    <app-demo-playground
+      data-testid="number-range-validator-starter"
+      [title]="'numberRangeValidator.playgroundTitle' | translate"
+      [description]="'numberRangeValidator.playgroundDescription' | translate"
+      [tsCode]="firstTaskCode"
+      [htmlCode]="firstTaskHtml"
+    >
+      <form preview [formGroup]="form" clrForm cds-layout="vertical gap:sm">
+        <clr-input-container>
+          <label for="number-range-min">{{ 'numberRangeValidator.firstLabel' | translate }}</label>
+          <input
+            id="number-range-min"
+            clrInput
+            inputmode="numeric"
+            formControlName="min"
+            data-testid="number-range-min"
+          />
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+        </clr-input-container>
+
+        <clr-input-container>
+          <label for="number-range-max">{{ 'numberRangeValidator.secondLabel' | translate }}</label>
+          <input
+            id="number-range-max"
+            clrInput
+            inputmode="numeric"
+            formControlName="max"
+            data-testid="number-range-max"
+          />
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+        </clr-input-container>
+
+        <div role="status" aria-live="polite" data-testid="number-range-error">
+          @if (form.hasError('minGreaterThanMax')) {
+            <p>{{ 'numberRangeValidator.groupError' | translate }}</p>
+          }
+        </div>
+
+        <div cds-layout="horizontal gap:sm wrap">
+          <button type="button" class="btn btn-sm btn-outline" (click)="reset()" data-testid="number-range-reset">
+            {{ 'common.clear' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline"
+            (click)="toggleDisabled()"
+            data-testid="number-range-disable"
+          >
+            {{ (isDisabled ? 'standardValidators.enableForm' : 'standardValidators.disableForm') | translate }}
+          </button>
+        </div>
+
+        <output aria-live="polite" data-testid="number-range-status">
+          @if (form.disabled) {
+            {{ 'standardValidators.statusDisabled' | translate }}
+          } @else if (form.valid) {
+            {{ 'standardValidators.statusValid' | translate }}
+          } @else {
+            {{ 'standardValidators.statusInvalid' | translate }}
+          }
+        </output>
+      </form>
+    </app-demo-playground>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'standardValidators.example1' | translate }}</h3>
+      <p>{{ 'numberRangeValidator.example1Desc' | translate }}</p>
+      <app-code-block [code]="basicUsageCode" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'standardValidators.example2' | translate }}</h3>
+      <p>{{ 'numberRangeValidator.example2Desc' | translate }}</p>
+      <app-code-block [code]="advancedCode" lang="typescript" />
+    </article>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>numberRangeValidator</h3>
+      <p>{{ 'numberRangeValidator.summary' | translate }}</p>
+
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>{{ 'common.parameters' | translate }}</h4>
+      <ul cds-layout="vertical gap:xs">
+        <li><code>minControlName</code>: {{ 'numberRangeValidator.paramFirst' | translate }}</li>
+        <li><code>maxControlName</code>: {{ 'numberRangeValidator.paramSecond' | translate }}</li>
+      </ul>
+
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'numberRangeValidator.returns' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

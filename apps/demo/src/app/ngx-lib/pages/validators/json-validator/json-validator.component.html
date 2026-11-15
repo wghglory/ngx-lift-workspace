@@ -1,0 +1,75 @@
+<cll-page-container [title]="'jsonValidator'">
+  <p>{{ 'jsonValidator.overview' | translate }}</p>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.liveDemo' | translate }}</h2>
+    <app-demo-playground
+      data-testid="json-validator-starter"
+      [title]="'jsonValidator.playgroundTitle' | translate"
+      [description]="'jsonValidator.playgroundDescription' | translate"
+      [tsCode]="firstTaskCode"
+      [htmlCode]="firstTaskHtml"
+    >
+      <form preview [formGroup]="form" clrForm cds-layout="vertical gap:sm">
+        <clr-textarea-container>
+          <label for="json-payload">{{ 'jsonValidator.firstLabel' | translate }}</label>
+          <textarea id="json-payload" clrTextarea formControlName="payload" data-testid="json-payload"></textarea>
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+          <clr-control-error *clrIfError="'invalidJson'">{{
+            'jsonValidator.firstError' | translate
+          }}</clr-control-error>
+        </clr-textarea-container>
+
+        <div cds-layout="horizontal gap:sm wrap">
+          <button type="button" class="btn btn-sm btn-outline" (click)="reset()" data-testid="json-reset">
+            {{ 'common.clear' | translate }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" (click)="toggleDisabled()" data-testid="json-disable">
+            {{ (isDisabled ? 'standardValidators.enableForm' : 'standardValidators.disableForm') | translate }}
+          </button>
+        </div>
+
+        <output aria-live="polite" data-testid="json-status">
+          @if (form.disabled) {
+            {{ 'standardValidators.statusDisabled' | translate }}
+          } @else if (form.valid) {
+            {{ 'standardValidators.statusValid' | translate }}
+          } @else {
+            {{ 'standardValidators.statusInvalid' | translate }}
+          }
+        </output>
+      </form>
+    </app-demo-playground>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.examples' | translate }}</h2>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'standardValidators.example1' | translate }}</h3>
+      <p>{{ 'jsonValidator.example1Desc' | translate }}</p>
+      <app-code-block [code]="basicUsageCode" lang="typescript" />
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'standardValidators.example2' | translate }}</h3>
+      <p>{{ 'jsonValidator.example2Desc' | translate }}</p>
+      <app-code-block [code]="advancedCode" lang="typescript" />
+    </article>
+  </section>
+
+  <section cds-layout="vertical gap:md">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+
+    <div cds-layout="vertical gap:sm">
+      <h3>jsonValidator</h3>
+      <p>{{ 'jsonValidator.summary' | translate }}</p>
+
+      <h4>{{ 'common.signature' | translate }}</h4>
+      <app-code-block [code]="signatureCode" lang="typescript" />
+
+      <h4>{{ 'common.returns' | translate }}</h4>
+      <p>{{ 'jsonValidator.returns' | translate }}</p>
+    </div>
+  </section>
+</cll-page-container>

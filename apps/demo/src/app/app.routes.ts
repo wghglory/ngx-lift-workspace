@@ -289,6 +289,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'file-extension',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/file-extension-validator/file-extension-validator.component').then(
+                (module) => module.FileExtensionValidatorComponent,
+              ),
+          },
+          {
             path: 'if',
             loadComponent: () =>
               import('./ngx-lib/pages/validators/if-validator/if-validator.component').then(
@@ -296,10 +303,38 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'integer',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/integer-validator/integer-validator.component').then(
+                (module) => module.IntegerValidatorComponent,
+              ),
+          },
+          {
             path: 'intersection',
             loadComponent: () =>
               import('./ngx-lib/pages/validators/intersection-validator/intersection-validator.component').then(
                 (module) => module.IntersectionValidatorComponent,
+              ),
+          },
+          {
+            path: 'json',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/json-validator/json-validator.component').then(
+                (module) => module.JsonValidatorComponent,
+              ),
+          },
+          {
+            path: 'number-range',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/number-range-validator/number-range-validator.component').then(
+                (module) => module.NumberRangeValidatorComponent,
+              ),
+          },
+          {
+            path: 'password-match',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/password-match-validator/password-match-validator.component').then(
+                (module) => module.PasswordMatchValidatorComponent,
               ),
           },
           {

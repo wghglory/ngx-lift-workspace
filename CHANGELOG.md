@@ -8,6 +8,16 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Added
+
+- `ngx-lift` exports five Reactive Forms validator factories (`integerValidator`, `jsonValidator`,
+  `fileExtensionValidator`, `numberRangeValidator`, `passwordMatchValidator`) and two supporting types (`NamedFile`,
+  `FileSelection`). Each factory allows empty values, returns one documented error key, and is pure — the two group
+  validators report errors on the group and never call `setErrors` on child controls. The
+  [design specification](docs/design/ngx-lift/standard-validators-design-spec.md) records the API, the scope decisions
+  from the PR #138 review, and the deferred proposals. Five localized demo pages document the validators with working
+  playgrounds. API approval is pending; this entry is not released.
+
 ## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-09
 
 **Release decision — November 8, 2026 (approved and published on 2026-11-09):** both packages remain on 21.x while the

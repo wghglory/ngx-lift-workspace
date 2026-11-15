@@ -3100,4 +3100,97 @@ export const deTranslations: Record<string, string> = {
   'downloadFile.paramFileName': 'Nicht leerer vorgeschlagener Dateiname; der Browser kann ihn anpassen.',
   'downloadFile.paramMimeType': 'MIME-Typ für Zeichenfolgeninhalte; bei einem Blob ignoriert.',
   'downloadFile.returnsDesc': 'Kein Rückgabewert; die Funktion bestätigt keine gespeicherte Datei.',
+
+  'standardValidators.example1': 'Beispiel 1: Grundlegende Verwendung',
+  'standardValidators.example2': 'Beispiel 2: Erweiterte Verwendung',
+  'standardValidators.statusValid': 'Das Formular ist gültig.',
+  'standardValidators.statusInvalid': 'Das Formular enthält Validierungsfehler.',
+  'standardValidators.statusDisabled': 'Das Formular ist deaktiviert.',
+  'standardValidators.disableForm': 'Formular deaktivieren',
+  'standardValidators.enableForm': 'Formular aktivieren',
+
+  'integerValidator.overview':
+    'integerValidator akzeptiert nur sichere ganze Zahlen in einem Formularsteuerelement. Zahlen und vorzeichenbehaftete Ganzzahl-Zeichenfolgen sind gültig; Dezimalzahlen, Exponentialschreibweise, Hexadezimaltext und Werte, die JavaScript sonst umwandeln würde, werden abgelehnt. Für Pflichtfelder mit Validators.required kombinieren.',
+  'integerValidator.playgroundTitle': 'Replica-Anzahl prüfen',
+  'integerValidator.playgroundDescription':
+    'Geben Sie eine ganze Zahl ein, korrigieren Sie einen ungültigen Wert und leeren Sie dann das Feld.',
+  'integerValidator.firstLabel': 'Replica-Anzahl',
+  'integerValidator.firstError': 'Geben Sie eine ganze Zahl ein.',
+  'integerValidator.example1Desc':
+    'Binden Sie den Validator an ein typisiertes Reactive-Forms-Steuerelement und lesen Sie den Fehler invalidInteger aus.',
+  'integerValidator.example2Desc':
+    'Kombinieren Sie den Validator mit required- und min-Regeln für ein realistisches Bereitstellungsformular.',
+  'integerValidator.summary':
+    'Erzeugt eine ValidatorFn, die sichere ganze Zahlen oder vorzeichenbehaftete Ganzzahl-Zeichenfolgen akzeptiert.',
+  'integerValidator.returns':
+    'Eine ValidatorFn, die für einen Nicht-Ganzzahlwert den Fehler invalidInteger zurückgibt, sonst null für gültige oder leere Werte.',
+
+  'jsonValidator.overview':
+    'jsonValidator prüft, ob ein Formularsteuerelement syntaktisch gültigen JSON-Text enthält. Objekte, Arrays und JSON-Primitive werden akzeptiert; die Schemaprüfung bleibt eine eigene Aufgabe der Anwendung. Leere Werte sind gültig, sofern Validators.required nicht ergänzt wird.',
+  'jsonValidator.playgroundTitle': 'JSON-Nutzlast prüfen',
+  'jsonValidator.playgroundDescription':
+    'Fügen Sie gültiges JSON ein, erzeugen Sie einen Syntaxfehler und leeren Sie dann das Feld.',
+  'jsonValidator.firstLabel': 'JSON-Nutzlast',
+  'jsonValidator.firstError': 'Geben Sie gültigen JSON-Text ein.',
+  'jsonValidator.example1Desc': 'Binden Sie den Validator an ein Textfeld und zeigen Sie den Fehler invalidJson an.',
+  'jsonValidator.example2Desc': 'Akzeptieren Sie jeden JSON-Werttyp und ergänzen Sie bei Bedarf eine Formprüfung.',
+  'jsonValidator.summary':
+    'Erzeugt eine ValidatorFn, die eine Zeichenfolge mit JSON.parse analysiert und Syntaxfehler meldet.',
+  'jsonValidator.returns':
+    'Eine ValidatorFn, die für fehlerhaften Text oder Nicht-Zeichenfolgen den Fehler invalidJson zurückgibt, sonst null.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator prüft, ob jeder ausgewählte Dateiname mit einer erlaubten Endung abschließt. Es akzeptiert ein FileList, ein Array von Dateien, eine einzelne Datei oder eine Dateinamen-Zeichenfolge und vergleicht Endungen ohne Beachtung der Groß- und Kleinschreibung.',
+  'fileExtensionValidator.playgroundTitle': 'Einen Upload prüfen',
+  'fileExtensionValidator.playgroundDescription':
+    'Geben Sie .png- und .jpg-Dateien ein oder wählen Sie diese aus und versuchen Sie dann eine andere Endung.',
+  'fileExtensionValidator.firstLabel': 'Dateiname',
+  'fileExtensionValidator.secondLabel': 'Dateien auswählen',
+  'fileExtensionValidator.firstError': 'Verwenden Sie eine .png- oder .jpg-Datei.',
+  'fileExtensionValidator.example1Desc':
+    'Prüfen Sie eine Dateinamen-Zeichenfolge und lesen Sie den Fehler invalidFileExtension aus.',
+  'fileExtensionValidator.example2Desc':
+    'Prüfen Sie ein echtes FileList und erlauben Sie zusammengesetzte Endungen wie .tar.gz.',
+  'fileExtensionValidator.summary':
+    'Erzeugt eine ValidatorFn, die Dateinamen gegen eine Liste erlaubter Endungen prüft.',
+  'fileExtensionValidator.paramFirst': 'Eine Endung oder eine Liste von Endungen; ein führender Punkt ist optional.',
+  'fileExtensionValidator.returns':
+    'Eine ValidatorFn, die den Fehler invalidFileExtension zurückgibt, wenn eine Datei nicht passt, sonst null.',
+
+  'numberRangeValidator.overview':
+    'numberRangeValidator ist ein reiner Gruppenvalidator, der ein Minimum größer als das Maximum ablehnt. Zahlen und numerische Zeichenfolgen werden verglichen; der Fehler gehört zur Gruppe, sodass untergeordnete Steuerelemente ihre eigenen Fehler behalten.',
+  'numberRangeValidator.playgroundTitle': 'Einen Zahlenbereich prüfen',
+  'numberRangeValidator.playgroundDescription': 'Korrigieren Sie den Maximalwert und leeren Sie dann beide Grenzen.',
+  'numberRangeValidator.firstLabel': 'Minimum',
+  'numberRangeValidator.secondLabel': 'Maximum',
+  'numberRangeValidator.groupError': 'Das Minimum darf das Maximum nicht überschreiten.',
+  'numberRangeValidator.example1Desc':
+    'Binden Sie den Validator an eine FormGroup und lesen Sie minGreaterThanMax von der Gruppe.',
+  'numberRangeValidator.example2Desc':
+    'Bennen Sie beide Steuerelemente um und lassen Sie required-Regeln fehlende Grenzen melden.',
+  'numberRangeValidator.summary':
+    'Erzeugt eine ValidatorFn für eine FormGroup, die die geparsten Minimum- und Maximum-Steuerelemente vergleicht.',
+  'numberRangeValidator.paramFirst': 'Name des Minimum-Steuerelements; Standard ist min.',
+  'numberRangeValidator.paramSecond': 'Name des Maximum-Steuerelements; Standard ist max.',
+  'numberRangeValidator.returns':
+    'Eine ValidatorFn, die bei min größer max den Fehler minGreaterThanMax auf der Gruppe zurückgibt, sonst null.',
+
+  'passwordMatchValidator.overview':
+    'passwordMatchValidator ist ein reiner Gruppenvalidator, der prüft, ob zwei Steuerelemente denselben Wert enthalten. Der Fehler gehört zur Gruppe, sodass required- und minlength-Fehler der untergeordneten Steuerelemente erhalten bleiben.',
+  'passwordMatchValidator.playgroundTitle': 'Eine Passwortbestätigung prüfen',
+  'passwordMatchValidator.playgroundDescription':
+    'Geben Sie übereinstimmende Passwörter ein, ändern Sie eines und leeren Sie dann die Felder.',
+  'passwordMatchValidator.firstLabel': 'Passwort',
+  'passwordMatchValidator.secondLabel': 'Passwort bestätigen',
+  'passwordMatchValidator.groupError': 'Die beiden Passwörter stimmen nicht überein.',
+  'passwordMatchValidator.example1Desc':
+    'Binden Sie den Validator an eine FormGroup und lesen Sie passwordMismatch von der Gruppe.',
+  'passwordMatchValidator.example2Desc': 'Verwenden Sie eigene Steuerelementnamen für ein PIN-Bestätigungsformular.',
+  'passwordMatchValidator.summary':
+    'Erzeugt eine ValidatorFn für eine FormGroup, die zwei Werte mit strikter Gleichheit vergleicht.',
+  'passwordMatchValidator.paramFirst': 'Name des Passwort-Steuerelements; Standard ist password.',
+  'passwordMatchValidator.paramSecond': 'Name des Bestätigungs-Steuerelements; Standard ist confirmPassword.',
+  'passwordMatchValidator.returns':
+    'Eine ValidatorFn, die bei abweichenden nicht-leeren Werten den Fehler passwordMismatch auf der Gruppe zurückgibt, sonst null.',
+  'passwordMatchValidator.minLengthError': 'Verwenden Sie mindestens 8 Zeichen.',
 };
