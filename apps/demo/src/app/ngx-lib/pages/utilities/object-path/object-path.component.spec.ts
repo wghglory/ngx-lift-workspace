@@ -34,6 +34,12 @@ describe('ObjectPathComponent', () => {
     expect(fixture.nativeElement.querySelector('p')?.textContent).toContain('getValueByPath');
   });
 
+  it('names both exports in the page title', () => {
+    const title = fixture.nativeElement.querySelector('h1')?.textContent ?? '';
+    expect(title).toContain('getValueByPath');
+    expect(title).toContain('deleteValueByPath');
+  });
+
   it('reads an own nested value from the current read path', () => {
     expect(component.resolvedValue()).toBe('"alice@example.com"');
     component.setReadPath('user.profile.roles.1');

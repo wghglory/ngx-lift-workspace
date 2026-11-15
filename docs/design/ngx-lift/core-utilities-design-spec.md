@@ -1,9 +1,9 @@
 # Object path and file download utilities
 
-Status: Implemented; CI verification and independent language approval remain separate open gates. The independent
-manual assistive-technology assessment was waived by the maintainer on 2026-11-10; that waiver is a decision, not a
-passed assessment. Owner: ngx-lift maintainers. Updated: 2026-11-15. Approval: maintainer directive of 2026-11-14,
-limited to `getValueByPath`, `deleteValueByPath` and `downloadFile`; see
+Status: Implemented; CI is green on `0c10110` and repeats on every push, while independent language approval remains an
+open human gate. The independent manual assistive-technology assessment was waived by the maintainer on 2026-11-10; that
+waiver is a decision, not a passed assessment. Owner: ngx-lift maintainers. Updated: 2026-11-15. Approval: maintainer
+directive of 2026-11-14, limited to `getValueByPath`, `deleteValueByPath` and `downloadFile`; see
 [Review decisions](#review-decisions-and-delivery). Package: ngx-lift. These three exports are implemented in the
 library; the remaining utilities proposed in PR #137 were rejected and are not available.
 
@@ -190,11 +190,12 @@ namespaces in `apps/demo/src/app/core/l10n/`:
 | `downloadFile.*` | Overview, playground title/description, file name/content labels, download button, empty-name error, started status, API table descriptions                                                    |
 
 Both namespaces are complete for `en, zh-CN, zh-TW, de, es, fr, ja, ko, nl, pt-BR, ru`, including placeholders such as
-`{0}` and any `<code>` API identifiers. Shared headings reuse `common.*` keys. Sidebar labels for the two pages are
-exact public API identifiers (`getValueByPath`, `downloadFile`) and stay in English by contract; no untranslated prose
-is added to the navigation. The dictionaries are checked by `pnpm run i18n:check`; `localization-coverage.spec.ts`
-visits every demo route for every locale and asserts no missing key, no `!! Key` marker and no horizontal overflow at a
-narrow viewport. Runtime language switching is covered by the same suite.
+`{0}` and any `<code>` API identifiers. Shared headings reuse `common.*` keys. The object-path page title and sidebar
+label list both exports (`getValueByPath & deleteValueByPath`, following the existing `pickBy & omitBy` page); the
+download sidebar label is `downloadFile`. These are exact public API identifiers, so they stay in English by contract;
+no untranslated prose is added to the navigation. The dictionaries are checked by `pnpm run i18n:check`;
+`localization-coverage.spec.ts` visits every demo route for every locale and asserts no missing key, no `!! Key` marker
+and no horizontal overflow at a narrow viewport. Runtime language switching is covered by the same suite.
 
 Demo controls are native Clarity inputs and buttons inside `cll-page-container` with `cds-layout`. Every rendered
 control has a programmatic label (`for`/`id` or `aria-label`), unique IDs within the page, visible focus, and a keyboard
@@ -222,11 +223,11 @@ the generic empty-value / nothing-removed outcomes; the usage notes explain prot
 inherited properties, unsafe segments, non-configurable properties, array indices, type assertions, DOM cleanup, URL
 revocation after a failed click, argument validation, hosts without object URL helpers and a real Node (SSR)
 environment. The two new Playwright specs are configured for Chromium, Firefox and WebKit with role-based selectors for
-controls and semantic regions for readouts, and no timing sleeps; local browser execution is currently blocked by
-missing host libraries, so CI must supply that evidence (see [Evidence](#evidence)). Installed public-package
-verification uses `pnpm run bundle:check` and `pnpm run verify:packages`; no new runtime dependency is introduced, so
-there is no optional-installation or bundle-isolation question. No dedicated scale benchmark is warranted for two
-O(path-length) helpers.
+controls and semantic regions for readouts, and no timing sleeps; local browser execution is blocked by missing host
+libraries, so CI runs that matrix on every push (see [Evidence](#evidence)). Installed public-package verification uses
+`pnpm run bundle:check` and `pnpm run verify:packages`; no new runtime dependency is introduced, so there is no
+optional-installation or bundle-isolation question. No dedicated scale benchmark is warranted for two O(path-length)
+helpers.
 
 ## Compatibility, rollout, and risks
 
@@ -268,25 +269,25 @@ separate gates.
 
 Review follow-up (2026-11-15): a two-axis review of PR #137 found documentation-standard breaches and spec/code
 mismatches. The follow-up removes the duplicated minimal example from both pages, adds imports and runnable setup to
-both advanced examples, replaces `$any` casts with typed template references, uses the exact export name as the
-object-path page title, changes the sidebar label to an exact API identifier, removes the demo's duplicate path-safety
-predicate, extracts the shared localized API-parameter helper, aligns the download preview with its displayed call, adds
-the missing platform no-op unit tests, and switches the new E2E specs to role-based selectors with explicit compact/RTL
-coverage. Independent human language approval is still open and is recorded separately from these automated checks.
+both advanced examples, replaces `$any` casts with typed template references, names both exports in the object-path page
+title and sidebar label, removes the demo's duplicate path-safety predicate, extracts the shared localized API-parameter
+helper, aligns the download preview with its displayed call, adds the missing platform no-op unit tests, and switches
+the new E2E specs to role-based selectors with explicit compact/RTL coverage. Independent human language approval is
+still open and is recorded separately from these automated checks.
 
 ## Evidence
 
 Local verification on 2026-11-15, branch `pr-137-rebase` on `origin/main` (`cc8e4be`), after the review follow-up.
 
-| Check                                   | Command                                                                                                                                              | Result                                                                                                                                                                                                                                                                                                                   |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Library and demo quality                | `pnpm nx run-many -t lint,typecheck,test,build --projects=ngx-lift,demo --skipNxCache`                                                               | Passes on 2026-11-15: ngx-lift 54 files / 921 tests, demo 85 files / 319 tests, both builds. The earlier flaky `beforeEach` timeouts did not recur in this run.                                                                                                                                                          |
-| E2E spec quality                        | `pnpm nx run-many -t lint,typecheck --projects=demo-e2e --skipNxCache`                                                                               | Passes; the 10 lint warnings are pre-existing in other specs, none in the two new utility specs.                                                                                                                                                                                                                         |
-| Dictionary parity                       | `pnpm run i18n:check`                                                                                                                                | 2368 keys complete in all 11 locales (33 new keys), no placeholder, identifier or missing-key errors.                                                                                                                                                                                                                    |
-| Tooling, formatting and whitespace      | `pnpm run test:tools`, `pnpm run format:check`, `git diff --check`                                                                                   | All pass, including the demo-example formatter (33 tooling tests).                                                                                                                                                                                                                                                       |
-| Bundle isolation                        | `pnpm run bundle:check`                                                                                                                              | Passes; lazy highlighting and deferred parsing unchanged.                                                                                                                                                                                                                                                                |
-| Browser E2E and accessibility scans     | New `utilities-object-path.spec.ts`, `utilities-file-download.spec.ts`, plus route-derived `accessibility.spec.ts` / `localization-coverage.spec.ts` | **Not executed locally.** Re-checked on 2026-11-15: Chromium, Firefox and WebKit all fail to launch in this container because host libraries are missing. The two new specs are lint/type clean; the role-based journeys and the compact/RTL/long-label tests still need CI with Playwright system dependencies.         |
-| Installed-consumer package verification | `pnpm run verify:packages`                                                                                                                           | **Still open; not re-run in this pass.** Previously blocked before consuming the packages by a reproducible registry peer mismatch in the fresh-consumer harness: `@clr/angular@18.5.1` requires `@clr/ui@18.5.1` while the installer selected `@clr/ui@18.5.0`. Unrelated to these exports; Nx cache can mask it in CI. |
+| Check                                   | Command                                                                                                                                              | Result                                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Library and demo quality                | `pnpm nx run-many -t lint,typecheck,test,build --projects=ngx-lift,demo --skipNxCache`                                                               | Passes on 2026-11-15: ngx-lift 54 files / 921 tests, demo 85 files / 321 tests, both builds. The 10 s hook timeouts in unrelated query/idle-detection specs remain intermittently reproducible under parallel load; a clean full-suite run and isolated runs of the changed specs both pass.                                                                                                      |
+| E2E spec quality                        | `pnpm nx run-many -t lint,typecheck --projects=demo-e2e --skipNxCache`                                                                               | Passes; the 10 lint warnings are pre-existing in other specs, none in the two new utility specs.                                                                                                                                                                                                                                                                                                  |
+| Dictionary parity                       | `pnpm run i18n:check`                                                                                                                                | 2368 keys complete in all 11 locales (33 new keys), no placeholder, identifier or missing-key errors.                                                                                                                                                                                                                                                                                             |
+| Tooling, formatting and whitespace      | `pnpm run test:tools`, `pnpm run format:check`, `git diff --check`                                                                                   | All pass, including the demo-example formatter (33 tooling tests).                                                                                                                                                                                                                                                                                                                                |
+| Bundle isolation                        | `pnpm run bundle:check`                                                                                                                              | Passes; lazy highlighting and deferred parsing unchanged.                                                                                                                                                                                                                                                                                                                                         |
+| Browser E2E and accessibility scans     | New `utilities-object-path.spec.ts`, `utilities-file-download.spec.ts`, plus route-derived `accessibility.spec.ts` / `localization-coverage.spec.ts` | **Not executable locally** (Chromium, Firefox and WebKit all fail to launch in this container), but CI supplied the evidence on 2026-11-15: the full `quality` matrix is green on `0c10110` (`lint-typecheck`, `test`, `build`, CodeQL and every chromium/firefox/webkit E2E shard), covering the role-based journeys and the compact/RTL/long-label tests. Each further push re-runs the matrix. |
+| Installed-consumer package verification | `pnpm run verify:packages`                                                                                                                           | **Still open; not re-run in this pass.** Previously blocked before consuming the packages by a reproducible registry peer mismatch in the fresh-consumer harness: `@clr/angular@18.5.1` requires `@clr/ui@18.5.1` while the installer selected `@clr/ui@18.5.0`. Unrelated to these exports; Nx cache can mask it in CI.                                                                          |
 
 Nx Cloud remote caching is unavailable in this environment (organization disabled, HTTP 401); every target above was run
 with `--skipNxCache`, so these results are local and uncached.

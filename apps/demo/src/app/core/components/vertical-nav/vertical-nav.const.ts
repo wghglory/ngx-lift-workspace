@@ -89,7 +89,7 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/is-empty', value: 'isEmpty'},
       {path: '/is-equal', value: 'isEqual'},
       {path: '/is-promise', value: 'isPromise'},
-      {path: '/object-path', value: 'getValueByPath'},
+      {path: '/object-path', value: 'getValueByPath & deleteValueByPath'},
       {path: '/pick-by', value: 'pickBy & omitBy'},
       {path: '/idle-detection', value: 'Idle Detection', i18nKey: 'nav.idleDetection'},
       {path: '/url', value: 'URL'},

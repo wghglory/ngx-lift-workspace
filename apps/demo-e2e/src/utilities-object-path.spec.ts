@@ -27,6 +27,7 @@ test.beforeEach(async ({page}) => {
 
 test('reads own nested values and rejects prototype paths', async ({page}) => {
   const ui = controls(page, english);
+  await expect(page.getByRole('heading', {level: 1})).toContainText('getValueByPath & deleteValueByPath');
   await expect(ui.resolved).toContainText('alice@example.com');
 
   await ui.read.fill('user.profile.roles.1');
