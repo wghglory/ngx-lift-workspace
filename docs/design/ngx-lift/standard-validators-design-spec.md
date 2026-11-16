@@ -87,7 +87,7 @@ document replaces the missing specification and records the scope decisions from
 | UC1 | Developer validates a replica count               | Empty required text field | Enter `3`, then `3.5`, then clear      | VALID, then `invalidInteger`, then `required`             | Correct the value; reset restores the empty state      | `/ngx-lift/validators/integer`, `integer.validator.spec.ts`               |
 | UC2 | Developer validates a JSON payload editor         | Empty textarea            | Paste valid JSON, then malformed JSON  | VALID, then `invalidJson`                                 | Fix the syntax; the control value is untouched         | `/ngx-lift/validators/json`, `json.validator.spec.ts`                     |
 | UC3 | Developer constrains an upload to `.png` / `.jpg` | No selection              | Choose an accepted and a rejected file | VALID, then `invalidFileExtension`                        | Choose a valid file; clear removes the selection       | `/ngx-lift/validators/file-extension`, `file-extension.validator.spec.ts` |
-| UC4 | Developer validates a password confirmation       | Both fields empty         | Enter matching, then differing values  | No error, then group error `passwordMismatch`             | Child `required`/`minlength` errors stay intact        | `/ngx-lift/validators/password-match`, `password-match.validator.spec.ts` |
+| UC4 | Developer validates a password confirmation       | Both fields empty         | Enter matching, then differing values  | No error, then group error `valuesMismatch`               | Child `required`/`minlength` errors stay intact        | `/ngx-lift/validators/same-value`, `same-value.validator.spec.ts`         |
 | UC5 | Reader switches the demo language on any new page | English                   | Choose another supported locale        | All owned labels, errors and prose render translated text | Missing key never appears; long labels do not overflow | `localization-coverage.spec.ts`, `pnpm run i18n:check`                    |
 
 ## Industry evidence and current gaps
@@ -106,25 +106,25 @@ access are sufficient; no DOM global is required at validation time.
 
 ## Developer learning journey and pedagogy plan
 
-| Reader task / prerequisites                 | Learning outcome                                                         | Destination / page type                                    | Working example and expected result                                                   | Validation                                         |
-| ------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Knows `FormControl`; needs an integer field | Attach `integerValidator()` and read `invalidInteger`                    | `/ngx-lift/validators/integer` (tutorial)                  | Playground with required + integer rules, live status, clear action and complete code | Unit spec, browser E2E, both themes, all locales   |
-| Needs to accept JSON text                   | Distinguish JSON syntax from schema validation                           | `/ngx-lift/validators/json` (tutorial)                     | Paste valid/invalid payloads; see `invalidJson`; complete runnable example            | Unit spec, E2E                                     |
-| Needs to constrain a file input             | Normalize extensions and handle a `FileList` or a name string            | `/ngx-lift/validators/file-extension` (how-to)             | Choose files, see the rejected name, compound-suffix example                          | Unit spec, E2E                                     |
-| Knows `FormGroup`; needs cross-field rules  | Understand group-level errors, purity and `form.hasError(...)`           | `/ngx-lift/validators/password-match` (how-to + reference) | Two controls, live group error, reset, custom control-name example                    | Unit spec, E2E                                     |
-| Needs an exact signature or error key       | Look up defaults, empty-value behavior and error keys without a tutorial | API Reference section at the end of each page              | Signature code block, parameter list for factories with parameters, and returns list  | `documentation-standards.md`, example-format check |
+| Reader task / prerequisites                 | Learning outcome                                                                   | Destination / page type                                | Working example and expected result                                                   | Validation                                         |
+| ------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Knows `FormControl`; needs an integer field | Attach `integerValidator()` and read `invalidInteger`                              | `/ngx-lift/validators/integer` (tutorial)              | Playground with required + integer rules, live status, clear action and complete code | Unit spec, browser E2E, both themes, all locales   |
+| Needs to accept JSON text                   | Distinguish JSON syntax from schema validation                                     | `/ngx-lift/validators/json` (tutorial)                 | Paste valid/invalid payloads; see `invalidJson`; complete runnable example            | Unit spec, E2E                                     |
+| Needs to constrain a file input             | Normalize extensions and handle a `FileList` or a name string                      | `/ngx-lift/validators/file-extension` (how-to)         | Choose files, see the rejected name, compound-suffix example                          | Unit spec, E2E                                     |
+| Knows `FormGroup`; needs cross-field rules  | Understand group-level errors, purity and `form.hasError(...)`                     | `/ngx-lift/validators/same-value` (how-to + reference) | Two controls, live group error, reset, custom control-name example                    | Unit spec, E2E                                     |
+| Needs an exact signature or error key       | Look up required arguments, empty-value behavior and error keys without a tutorial | API Reference section at the end of each page          | Signature code block, parameter list for factories with parameters, and returns list  | `documentation-standards.md`, example-format check |
 
 ## Public API and examples
 
 Four functions and two supporting types are exported from `ngx-lift`. The functions are factories (call them) and allow
 empty values. Every error object contains exactly one key with value `true`.
 
-| Export                                                                                                                  | Applies to    | Error key              | Rejects                                                                   |
-| ----------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------- | ------------------------------------------------------------------------- |
-| `integerValidator(): ValidatorFn`                                                                                       | `FormControl` | `invalidInteger`       | Non-safe-integer values, decimals, exponent/hex strings, booleans, arrays |
-| `jsonValidator(): ValidatorFn`                                                                                          | `FormControl` | `invalidJson`          | Non-string values and text that `JSON.parse` cannot parse                 |
-| `fileExtensionValidator(allowedExtensions: string \| readonly string[]): ValidatorFn`                                   | `FormControl` | `invalidFileExtension` | Any selected file whose name does not end with an allowed suffix          |
-| `passwordMatchValidator(passwordControlName = 'password', confirmPasswordControlName = 'confirmPassword'): ValidatorFn` | `FormGroup`   | `passwordMismatch`     | Two non-empty values that differ under strict equality                    |
+| Export                                                                                 | Applies to    | Error key              | Rejects                                                                   |
+| -------------------------------------------------------------------------------------- | ------------- | ---------------------- | ------------------------------------------------------------------------- |
+| `integerValidator(): ValidatorFn`                                                      | `FormControl` | `invalidInteger`       | Non-safe-integer values, decimals, exponent/hex strings, booleans, arrays |
+| `jsonValidator(): ValidatorFn`                                                         | `FormControl` | `invalidJson`          | Non-string values and text that `JSON.parse` cannot parse                 |
+| `fileExtensionValidator(allowedExtensions: string \| readonly string[]): ValidatorFn`  | `FormControl` | `invalidFileExtension` | Any selected file whose name does not end with an allowed suffix          |
+| `sameValueValidator(firstControlName: string, secondControlName: string): ValidatorFn` | `FormGroup`   | `valuesMismatch`       | Two non-empty values that differ under strict equality                    |
 
 Supporting types exported by `file-extension.validator.ts` (not factories, no error keys):
 
@@ -167,21 +167,21 @@ Advanced example (group validator, custom control names, file selection, submitt
 
 ```typescript
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {FileSelection, fileExtensionValidator, passwordMatchValidator} from 'ngx-lift';
+import {FileSelection, fileExtensionValidator, sameValueValidator} from 'ngx-lift';
 
 const credentials = new FormGroup(
   {
     newPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
     repeatedPassword: new FormControl('', [Validators.required]),
   },
-  {validators: [passwordMatchValidator('newPassword', 'repeatedPassword')]},
+  {validators: [sameValueValidator('newPassword', 'repeatedPassword')]},
 );
 const attachment = new FormControl<FileSelection>(null, [
   Validators.required,
   fileExtensionValidator(['.png', 'jpg', '.tar.gz']),
 ]);
 
-// credentials.hasError('passwordMismatch') and attachment.hasError('invalidFileExtension') are
+// credentials.hasError('valuesMismatch') and attachment.hasError('invalidFileExtension') are
 // the values the view renders. On submit, read form.getRawValue(); validators never change control values.
 ```
 
@@ -228,13 +228,13 @@ supported dictionaries (`en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `n
 | Page overviews, playground prose | `<ns>.overview`, `<ns>.playgroundTitle`, `<ns>.playgroundDescription`, `<ns>.example1Desc`, `<ns>.example2Desc`                                                            | `<p>`, `app-demo-playground` inputs                | pending (new strings)                        |
 | Programmatic control labels      | `<ns>.firstLabel`, `<ns>.secondLabel` (group page)                                                                                                                         | `<label for>`                                      | pending (new strings)                        |
 | Required error                   | `common.required`                                                                                                                                                          | `clr-control-error *clrIfError="'required'"`       | pre-approved shared key                      |
-| Validator errors                 | `<ns>.firstError`, `<ns>.groupError`, `passwordMatchValidator.minLengthError`                                                                                              | `clr-control-error` and a non-closable `cll-alert` | pending (new strings)                        |
+| Validator errors                 | `<ns>.firstError`, `<ns>.groupError`, `sameValueValidator.minLengthError`                                                                                                  | `clr-control-error` and a non-closable `cll-alert` | pending (new strings)                        |
 | File selection errors and names  | `fileExtensionValidator.firstError`; file names are caller data                                                                                                            | `role="status"` region and `<ul>`                  | error text pending; names are not UI strings |
 | Status announcements             | `standardValidators.statusValid`, `.statusInvalid`, `.statusDisabled`                                                                                                      | `<output aria-live="polite">`                      | pending (new strings)                        |
 | Action labels                    | `common.clear`, `standardValidators.disableForm`, `standardValidators.enableForm`                                                                                          | `<button>`                                         | clear pre-approved; toggle labels pending    |
 | API reference prose              | `common.signature`, `common.parameters` (parameterized factories only), `common.returns`, `<ns>.summary`, `<ns>.paramFirst`, `.paramSecond` (where applicable), `.returns` | `<h4>`, `<p>`, `<ul>`                              | pending (new strings)                        |
 
-`<ns>` is one of `integerValidator`, `jsonValidator`, `fileExtensionValidator`, `passwordMatchValidator`. Independent
+`<ns>` is one of `integerValidator`, `jsonValidator`, `fileExtensionValidator`, `sameValueValidator`. Independent
 language reviewer: not yet assigned; approval date: not recorded. This is an open gate, not a completed acceptance step.
 
 - Each page uses `cll-page-container`, Clarity form containers with programmatic `<label for>` bindings, `cds-layout`
@@ -264,7 +264,7 @@ language reviewer: not yet assigned; approval date: not recorded. This is an ope
 | UC1      | `/ngx-lift/validators/integer`        | `integer.validator.spec.ts`        | `standard-validators.spec.ts`                                                                                             |
 | UC2      | `/ngx-lift/validators/json`           | `json.validator.spec.ts`           | `standard-validators.spec.ts`                                                                                             |
 | UC3      | `/ngx-lift/validators/file-extension` | `file-extension.validator.spec.ts` | `standard-validators.spec.ts`                                                                                             |
-| UC4      | `/ngx-lift/validators/password-match` | `password-match.validator.spec.ts` | `standard-validators.spec.ts`                                                                                             |
+| UC4      | `/ngx-lift/validators/same-value`     | `same-value.validator.spec.ts`     | `standard-validators.spec.ts`                                                                                             |
 | UC5      | every route above                     | `pnpm run i18n:check`              | `standard-validators.spec.ts` (locale presets + runtime switch), `localization-coverage.spec.ts`, `accessibility.spec.ts` |
 
 All routes are lazy (`loadComponent`) so the route-derived inventory adds them to the accessibility, localization and
@@ -291,21 +291,24 @@ Coverage thresholds stay at the three `vite.config.mts` values.
 
 ## Review decisions and delivery
 
-| Decision                                       | Alternative                                       | Recommendation                                                     |
-| ---------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------ |
-| Keep 4 validators, drop 6 exports from PR #138 | Ship all 10 original exports                      | Keep the focused set; record the rest as "Not now" with reasons    |
-| Pure group-level errors                        | `setErrors` on children (original PR)             | Pure; child errors and validity belong to their own validators     |
-| `invalid*` error keys with `true` values       | PR's mixed `notInteger`/`json`/`invalidExtension` | Consistent keys; the UI owns translated messages                   |
-| One demo page per export, all locales          | One consolidated page or English-only pages       | Per-API pages match the existing Validators nav and docs standards |
-| Strict integer/JSON/file parsing               | `Number()` coercion and `split('.').pop()`        | Strict; tests cover the coercion and compound-suffix traps         |
-| One `cll-alert` plus `aria-describedby`        | Duplicate visible error on the confirmation field | One announced message; no duplicate live region or wording drift   |
+| Decision                                       | Alternative                                       | Recommendation                                                              |
+| ---------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
+| Keep 4 validators, drop 6 exports from PR #138 | Ship all 10 original exports                      | Keep the focused set; record the rest as "Not now" with reasons             |
+| Pure group-level errors                        | `setErrors` on children (original PR)             | Pure; child errors and validity belong to their own validators              |
+| `invalid*` error keys with `true` values       | PR's mixed `notInteger`/`json`/`invalidExtension` | Consistent keys; the UI owns translated messages                            |
+| One demo page per export, all locales          | One consolidated page or English-only pages       | Per-API pages match the existing Validators nav and docs standards          |
+| Strict integer/JSON/file parsing               | `Number()` coercion and `split('.').pop()`        | Strict; tests cover the coercion and compound-suffix traps                  |
+| One `cll-alert` plus `aria-describedby`        | Duplicate visible error on the confirmation field | One announced message; no duplicate live region or wording drift            |
+| Generic `sameValueValidator` name              | Domain-specific `passwordMatchValidator`          | Name the capability; required control-name arguments make any pair explicit |
 
 Increments: (1) this specification and API proposal; (2) library implementation, unit tests and exports; (3) spec index,
 CHANGELOG, demo pages, routes, navigation and dictionaries; (4) browser E2E and the second review round; (5) a third
 review follow-up covering disabled-child group semantics, the native file-input clear/disable flow, the public API
 documentation and the associated regression tests; (6) a fourth review follow-up that narrows the public surface to four
-factories and renders the cross-field error with `cll-alert` plus `aria-describedby`. Evidence below is updated with
-actual results; planned checks are not evidence.
+factories and renders the cross-field error with `cll-alert` plus `aria-describedby`; (7) a fifth review follow-up that
+generalizes the cross-field validator to `sameValueValidator` with required `firstControlName` and `secondControlName`
+arguments and the `valuesMismatch` error key. Evidence below is updated with actual results; planned checks are not
+evidence.
 
 ## Evidence
 

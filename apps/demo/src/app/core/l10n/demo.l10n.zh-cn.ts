@@ -2764,19 +2764,19 @@ export const zhCNTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     '返回一个 ValidatorFn：任一文件不合格时给出 invalidFileExtension 错误，否则返回 null。',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator 是纯函数式组校验器，检查两个控件的值是否相同。不匹配错误属于表单组，因此子控件上的 required 和 minlength 错误会被保留。',
-  'passwordMatchValidator.playgroundTitle': '校验密码确认',
-  'passwordMatchValidator.playgroundDescription': '输入两次相同的密码，改动其中一个，然后清空字段。',
-  'passwordMatchValidator.firstLabel': '密码',
-  'passwordMatchValidator.secondLabel': '确认密码',
-  'passwordMatchValidator.groupError': '两次输入的密码不一致。',
-  'passwordMatchValidator.example1Desc': '将校验器附加到 FormGroup，并从表单组读取 passwordMismatch。',
-  'passwordMatchValidator.example2Desc': '为 PIN 确认表单使用自定义控件名称。',
-  'passwordMatchValidator.summary': '创建一个用于 FormGroup 的 ValidatorFn，以严格相等比较两个控件的值。',
-  'passwordMatchValidator.paramFirst': '密码控件的名称；默认为 password。',
-  'passwordMatchValidator.paramSecond': '确认控件的名称；默认为 confirmPassword。',
-  'passwordMatchValidator.returns':
-    '返回一个 ValidatorFn：两个非空值不同时在表单组上给出 passwordMismatch 错误，否则返回 null。',
-  'passwordMatchValidator.minLengthError': '请至少输入 8 个字符。',
+  'sameValueValidator.overview':
+    'sameValueValidator 是纯函数式组校验器，检查两个控件的值是否相同。不匹配错误属于表单组，因此子控件上的 required 和 minlength 错误会被保留。',
+  'sameValueValidator.playgroundTitle': '校验密码确认',
+  'sameValueValidator.playgroundDescription': '输入两次相同的密码，改动其中一个，然后清空字段。',
+  'sameValueValidator.firstLabel': '密码',
+  'sameValueValidator.secondLabel': '确认密码',
+  'sameValueValidator.groupError': '两次输入的密码不一致。',
+  'sameValueValidator.example1Desc': '将校验器附加到 FormGroup，并从表单组读取 valuesMismatch。',
+  'sameValueValidator.example2Desc': '为 PIN 确认表单使用自定义控件名称。',
+  'sameValueValidator.summary': '创建一个用于 FormGroup 的 ValidatorFn，以严格相等比较两个控件的值。',
+  'sameValueValidator.paramFirst': '参与比较的第一个控件的名称。',
+  'sameValueValidator.paramSecond': '参与比较的第二个控件的名称。',
+  'sameValueValidator.returns':
+    '返回一个 ValidatorFn：两个非空值不同时在表单组上给出 valuesMismatch 错误，否则返回 null。',
+  'sameValueValidator.minLengthError': '请至少输入 8 个字符。',
 };

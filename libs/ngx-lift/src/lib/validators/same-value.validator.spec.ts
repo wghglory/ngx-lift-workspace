@@ -1,18 +1,18 @@
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {describe, expect, it} from 'vitest';
 
-import {passwordMatchValidator} from './password-match.validator';
+import {sameValueValidator} from './same-value.validator';
 
 const formWith = (password: unknown, confirmation: unknown) =>
   new FormGroup(
     {password: new FormControl(password), confirmPassword: new FormControl(confirmation)},
-    {validators: [passwordMatchValidator()]},
+    {validators: [sameValueValidator('password', 'confirmPassword')]},
   );
 
-describe('passwordMatchValidator', () => {
+describe('sameValueValidator', () => {
   it('reports a mismatch on the group and clears it when corrected', () => {
     const form = formWith('secret', 'secre');
-    expect(form.errors).toEqual({passwordMismatch: true});
+    expect(form.errors).toEqual({valuesMismatch: true});
 
     form.controls.confirmPassword.setValue('secret');
     expect(form.errors).toBeNull();
@@ -25,21 +25,21 @@ describe('passwordMatchValidator', () => {
   });
 
   it('compares without trimming or coercing values', () => {
-    expect(formWith('secret', 'secret ').errors).toEqual({passwordMismatch: true});
-    expect(formWith(1, '1').errors).toEqual({passwordMismatch: true});
+    expect(formWith('secret', 'secret ').errors).toEqual({valuesMismatch: true});
+    expect(formWith(1, '1').errors).toEqual({valuesMismatch: true});
     expect(formWith(1, 1).errors).toBeNull();
   });
 
   it('ignores disabled child controls instead of reporting an unfixable group error', () => {
     const form = formWith('secret', 'other');
-    expect(form.errors).toEqual({passwordMismatch: true});
+    expect(form.errors).toEqual({valuesMismatch: true});
 
     form.controls.confirmPassword.disable();
     expect(form.controls.confirmPassword.value).toBe('other');
     expect(form.errors).toBeNull();
 
     form.controls.confirmPassword.enable();
-    expect(form.errors).toEqual({passwordMismatch: true});
+    expect(form.errors).toEqual({valuesMismatch: true});
 
     form.controls.password.disable();
     expect(form.errors).toBeNull();
@@ -49,7 +49,7 @@ describe('passwordMatchValidator', () => {
         password: new FormControl('secret'),
         confirmPassword: new FormControl({value: 'other', disabled: true}),
       },
-      {validators: [passwordMatchValidator()]},
+      {validators: [sameValueValidator('password', 'confirmPassword')]},
     );
     expect(initiallyDisabled.errors).toBeNull();
   });
@@ -57,11 +57,11 @@ describe('passwordMatchValidator', () => {
   it('supports custom control names and tolerates missing controls', () => {
     const form = new FormGroup(
       {pin: new FormControl('1234'), repeatPin: new FormControl('1235')},
-      {validators: [passwordMatchValidator('pin', 'repeatPin')]},
+      {validators: [sameValueValidator('pin', 'repeatPin')]},
     );
-    expect(form.errors).toEqual({passwordMismatch: true});
-    expect(passwordMatchValidator('pin', 'missing')(form)).toBeNull();
-    expect(passwordMatchValidator()(new FormControl('secret'))).toBeNull();
+    expect(form.errors).toEqual({valuesMismatch: true});
+    expect(sameValueValidator('pin', 'missing')(form)).toBeNull();
+    expect(sameValueValidator('password', 'confirmPassword')(new FormControl('secret'))).toBeNull();
   });
 
   it('never mutates child errors', () => {
@@ -70,10 +70,10 @@ describe('passwordMatchValidator', () => {
         password: new FormControl('secret123', [Validators.required]),
         confirmPassword: new FormControl('other', [Validators.minLength(8)]),
       },
-      {validators: [passwordMatchValidator()]},
+      {validators: [sameValueValidator('password', 'confirmPassword')]},
     );
 
-    expect(form.errors).toEqual({passwordMismatch: true});
+    expect(form.errors).toEqual({valuesMismatch: true});
     expect(form.controls.confirmPassword.errors).toEqual({
       minlength: {requiredLength: 8, actualLength: 5},
     });

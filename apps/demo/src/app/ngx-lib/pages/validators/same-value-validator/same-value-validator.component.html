@@ -1,67 +1,67 @@
-<cll-page-container [title]="'passwordMatchValidator'">
-  <p>{{ 'passwordMatchValidator.overview' | translate }}</p>
+<cll-page-container [title]="'sameValueValidator'">
+  <p>{{ 'sameValueValidator.overview' | translate }}</p>
 
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.liveDemo' | translate }}</h2>
     <app-demo-playground
-      data-testid="password-match-validator-starter"
-      [title]="'passwordMatchValidator.playgroundTitle' | translate"
-      [description]="'passwordMatchValidator.playgroundDescription' | translate"
+      data-testid="same-value-validator-starter"
+      [title]="'sameValueValidator.playgroundTitle' | translate"
+      [description]="'sameValueValidator.playgroundDescription' | translate"
       [tsCode]="firstTaskCode"
       [htmlCode]="firstTaskHtml"
     >
       <form preview [formGroup]="form" clrForm cds-layout="vertical gap:sm">
         <clr-password-container>
-          <label for="password-match-password">{{ 'passwordMatchValidator.firstLabel' | translate }}</label>
+          <label for="same-value-password">{{ 'sameValueValidator.firstLabel' | translate }}</label>
           <input
-            id="password-match-password"
+            id="same-value-password"
             type="password"
             clrPassword
             formControlName="password"
-            data-testid="password-match-password"
+            data-testid="same-value-password"
           />
           <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
           <clr-control-error *clrIfError="'minlength'">
-            {{ 'passwordMatchValidator.minLengthError' | translate }}
+            {{ 'sameValueValidator.minLengthError' | translate }}
           </clr-control-error>
         </clr-password-container>
 
         <clr-password-container>
-          <label for="password-match-confirm">{{ 'passwordMatchValidator.secondLabel' | translate }}</label>
+          <label for="same-value-confirm">{{ 'sameValueValidator.secondLabel' | translate }}</label>
           <input
-            id="password-match-confirm"
+            id="same-value-confirm"
             type="password"
             clrPassword
             formControlName="confirmPassword"
-            [attr.aria-describedby]="form.hasError('passwordMismatch') ? 'password-match-group-error' : null"
-            data-testid="password-match-confirm"
+            [attr.aria-describedby]="form.hasError('valuesMismatch') ? 'same-value-group-error' : null"
+            data-testid="same-value-confirm"
           />
           <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
         </clr-password-container>
 
-        <div id="password-match-group-error" data-testid="password-match-error">
-          @if (form.hasError('passwordMismatch')) {
+        <div id="same-value-group-error" data-testid="same-value-error">
+          @if (form.hasError('valuesMismatch')) {
             <cll-alert [alertType]="'danger'" [isSmall]="true" [closable]="false">
-              {{ 'passwordMatchValidator.groupError' | translate }}
+              {{ 'sameValueValidator.groupError' | translate }}
             </cll-alert>
           }
         </div>
 
         <div cds-layout="horizontal gap:sm wrap">
-          <button type="button" class="btn btn-sm btn-outline" (click)="reset()" data-testid="password-match-reset">
+          <button type="button" class="btn btn-sm btn-outline" (click)="reset()" data-testid="same-value-reset">
             {{ 'common.clear' | translate }}
           </button>
           <button
             type="button"
             class="btn btn-sm btn-outline"
             (click)="toggleDisabled()"
-            data-testid="password-match-disable"
+            data-testid="same-value-disable"
           >
             {{ (isDisabled ? 'standardValidators.enableForm' : 'standardValidators.disableForm') | translate }}
           </button>
         </div>
 
-        <output aria-live="polite" data-testid="password-match-status">
+        <output aria-live="polite" data-testid="same-value-status">
           @if (form.disabled) {
             {{ 'standardValidators.statusDisabled' | translate }}
           } @else if (form.valid) {
@@ -79,13 +79,13 @@
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'standardValidators.example1' | translate }}</h3>
-      <p>{{ 'passwordMatchValidator.example1Desc' | translate }}</p>
+      <p>{{ 'sameValueValidator.example1Desc' | translate }}</p>
       <app-code-block [code]="basicUsageCode" lang="typescript" />
     </article>
 
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'standardValidators.example2' | translate }}</h3>
-      <p>{{ 'passwordMatchValidator.example2Desc' | translate }}</p>
+      <p>{{ 'sameValueValidator.example2Desc' | translate }}</p>
       <app-code-block [code]="advancedCode" lang="typescript" />
     </article>
   </section>
@@ -94,20 +94,20 @@
     <h2>{{ 'common.apiReference' | translate }}</h2>
 
     <div cds-layout="vertical gap:sm">
-      <h3>passwordMatchValidator</h3>
-      <p>{{ 'passwordMatchValidator.summary' | translate }}</p>
+      <h3>sameValueValidator</h3>
+      <p>{{ 'sameValueValidator.summary' | translate }}</p>
 
       <h4>{{ 'common.signature' | translate }}</h4>
       <app-code-block [code]="signatureCode" lang="typescript" />
 
       <h4>{{ 'common.parameters' | translate }}</h4>
       <ul cds-layout="vertical gap:xs">
-        <li><code>passwordControlName</code>: {{ 'passwordMatchValidator.paramFirst' | translate }}</li>
-        <li><code>confirmPasswordControlName</code>: {{ 'passwordMatchValidator.paramSecond' | translate }}</li>
+        <li><code>firstControlName</code>: {{ 'sameValueValidator.paramFirst' | translate }}</li>
+        <li><code>secondControlName</code>: {{ 'sameValueValidator.paramSecond' | translate }}</li>
       </ul>
 
       <h4>{{ 'common.returns' | translate }}</h4>
-      <p>{{ 'passwordMatchValidator.returns' | translate }}</p>
+      <p>{{ 'sameValueValidator.returns' | translate }}</p>
     </div>
   </section>
 </cll-page-container>

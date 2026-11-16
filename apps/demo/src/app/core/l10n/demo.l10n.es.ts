@@ -3141,21 +3141,19 @@ export const esTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Una ValidatorFn que devuelve el error invalidFileExtension si algún archivo no cumple, o null si todos pasan.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator es un validador de grupo puro que comprueba que dos controles contienen el mismo valor. El error de discrepancia pertenece al grupo, por lo que se conservan los errores required y minlength de los controles hijos.',
-  'passwordMatchValidator.playgroundTitle': 'Validar una confirmación de contraseña',
-  'passwordMatchValidator.playgroundDescription': 'Escribe contraseñas iguales, cambia una y después vacía los campos.',
-  'passwordMatchValidator.firstLabel': 'Contraseña',
-  'passwordMatchValidator.secondLabel': 'Confirmar contraseña',
-  'passwordMatchValidator.groupError': 'Las dos contraseñas no coinciden.',
-  'passwordMatchValidator.example1Desc': 'Asocia el validador a un FormGroup y lee passwordMismatch desde el grupo.',
-  'passwordMatchValidator.example2Desc':
-    'Usa nombres de control personalizados en un formulario de confirmación de PIN.',
-  'passwordMatchValidator.summary':
-    'Crea una ValidatorFn para un FormGroup que compara dos valores con igualdad estricta.',
-  'passwordMatchValidator.paramFirst': 'Nombre del control de la contraseña; por defecto password.',
-  'passwordMatchValidator.paramSecond': 'Nombre del control de confirmación; por defecto confirmPassword.',
-  'passwordMatchValidator.returns':
-    'Una ValidatorFn que devuelve el error passwordMismatch en el grupo cuando dos valores no vacíos difieren, o null en caso contrario.',
-  'passwordMatchValidator.minLengthError': 'Usa al menos 8 caracteres.',
+  'sameValueValidator.overview':
+    'sameValueValidator es un validador de grupo puro que comprueba que dos controles contienen el mismo valor. El error de discrepancia pertenece al grupo, por lo que se conservan los errores required y minlength de los controles hijos.',
+  'sameValueValidator.playgroundTitle': 'Validar una confirmación de contraseña',
+  'sameValueValidator.playgroundDescription': 'Escribe contraseñas iguales, cambia una y después vacía los campos.',
+  'sameValueValidator.firstLabel': 'Contraseña',
+  'sameValueValidator.secondLabel': 'Confirmar contraseña',
+  'sameValueValidator.groupError': 'Las dos contraseñas no coinciden.',
+  'sameValueValidator.example1Desc': 'Asocia el validador a un FormGroup y lee valuesMismatch desde el grupo.',
+  'sameValueValidator.example2Desc': 'Usa nombres de control personalizados en un formulario de confirmación de PIN.',
+  'sameValueValidator.summary': 'Crea una ValidatorFn para un FormGroup que compara dos valores con igualdad estricta.',
+  'sameValueValidator.paramFirst': 'Nombre del primer control cuyo valor se compara.',
+  'sameValueValidator.paramSecond': 'Nombre del segundo control cuyo valor se compara.',
+  'sameValueValidator.returns':
+    'Una ValidatorFn que devuelve el error valuesMismatch en el grupo cuando dos valores no vacíos difieren, o null en caso contrario.',
+  'sameValueValidator.minLengthError': 'Usa al menos 8 caracteres.',
 };

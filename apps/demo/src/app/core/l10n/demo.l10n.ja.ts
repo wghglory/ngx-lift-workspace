@@ -2992,20 +2992,19 @@ export const jaTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'いずれかのファイルが不合格なら invalidFileExtension エラーを返し、すべて合格なら null を返す ValidatorFn です。',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator は 2 つのコントロールの値が同じか確認する純粋なグループバリデータです。不一致エラーはグループに属するため、子コントロールの required や minlength のエラーは保持されます。',
-  'passwordMatchValidator.playgroundTitle': 'パスワード確認を検証する',
-  'passwordMatchValidator.playgroundDescription': '同じパスワードを入力し、一方を変更してからフィールドを空にします。',
-  'passwordMatchValidator.firstLabel': 'パスワード',
-  'passwordMatchValidator.secondLabel': 'パスワードの確認',
-  'passwordMatchValidator.groupError': '2 つのパスワードが一致しません。',
-  'passwordMatchValidator.example1Desc':
-    'FormGroup にバリデータを設定し、グループから passwordMismatch を読み取ります。',
-  'passwordMatchValidator.example2Desc': 'PIN 確認フォームで独自のコントロール名を使用します。',
-  'passwordMatchValidator.summary': '2 つの値を厳密等価で比較する FormGroup 用の ValidatorFn を作成します。',
-  'passwordMatchValidator.paramFirst': 'パスワードコントロールの名前。既定値は password です。',
-  'passwordMatchValidator.paramSecond': '確認コントロールの名前。既定値は confirmPassword です。',
-  'passwordMatchValidator.returns':
-    '空でない 2 つの値が異なる場合にグループへ passwordMismatch エラーを返し、それ以外は null を返す ValidatorFn です。',
-  'passwordMatchValidator.minLengthError': '8 文字以上で入力してください。',
+  'sameValueValidator.overview':
+    'sameValueValidator は 2 つのコントロールの値が同じか確認する純粋なグループバリデータです。不一致エラーはグループに属するため、子コントロールの required や minlength のエラーは保持されます。',
+  'sameValueValidator.playgroundTitle': 'パスワード確認を検証する',
+  'sameValueValidator.playgroundDescription': '同じパスワードを入力し、一方を変更してからフィールドを空にします。',
+  'sameValueValidator.firstLabel': 'パスワード',
+  'sameValueValidator.secondLabel': 'パスワードの確認',
+  'sameValueValidator.groupError': '2 つのパスワードが一致しません。',
+  'sameValueValidator.example1Desc': 'FormGroup にバリデータを設定し、グループから valuesMismatch を読み取ります。',
+  'sameValueValidator.example2Desc': 'PIN 確認フォームで独自のコントロール名を使用します。',
+  'sameValueValidator.summary': '2 つの値を厳密等価で比較する FormGroup 用の ValidatorFn を作成します。',
+  'sameValueValidator.paramFirst': '比較される値を持つ 1 番目のコントロールの名前。',
+  'sameValueValidator.paramSecond': '比較される値を持つ 2 番目のコントロールの名前。',
+  'sameValueValidator.returns':
+    '空でない 2 つの値が異なる場合にグループへ valuesMismatch エラーを返し、それ以外は null を返す ValidatorFn です。',
+  'sameValueValidator.minLengthError': '8 文字以上で入力してください。',
 };

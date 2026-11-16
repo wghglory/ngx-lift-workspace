@@ -3090,20 +3090,20 @@ export const ptBRTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Uma ValidatorFn que retorna o erro invalidFileExtension quando algum arquivo falha, ou null quando todos passam.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator é um validador de grupo puro que verifica se dois controles possuem o mesmo valor. O erro de divergência pertence ao grupo, preservando os erros required e minlength dos controles filhos.',
-  'passwordMatchValidator.playgroundTitle': 'Validar a confirmação de senha',
-  'passwordMatchValidator.playgroundDescription': 'Informe senhas iguais, altere uma delas e depois limpe os campos.',
-  'passwordMatchValidator.firstLabel': 'Senha',
-  'passwordMatchValidator.secondLabel': 'Confirmar senha',
-  'passwordMatchValidator.groupError': 'As duas senhas não coincidem.',
-  'passwordMatchValidator.example1Desc': 'Associe o validador a um FormGroup e leia passwordMismatch no grupo.',
-  'passwordMatchValidator.example2Desc': 'Use nomes de controle personalizados em um formulário de confirmação de PIN.',
-  'passwordMatchValidator.summary':
+  'sameValueValidator.overview':
+    'sameValueValidator é um validador de grupo puro que verifica se dois controles possuem o mesmo valor. O erro de divergência pertence ao grupo, preservando os erros required e minlength dos controles filhos.',
+  'sameValueValidator.playgroundTitle': 'Validar a confirmação de senha',
+  'sameValueValidator.playgroundDescription': 'Informe senhas iguais, altere uma delas e depois limpe os campos.',
+  'sameValueValidator.firstLabel': 'Senha',
+  'sameValueValidator.secondLabel': 'Confirmar senha',
+  'sameValueValidator.groupError': 'As duas senhas não coincidem.',
+  'sameValueValidator.example1Desc': 'Associe o validador a um FormGroup e leia valuesMismatch no grupo.',
+  'sameValueValidator.example2Desc': 'Use nomes de controle personalizados em um formulário de confirmação de PIN.',
+  'sameValueValidator.summary':
     'Cria uma ValidatorFn para um FormGroup que compara dois valores com igualdade estrita.',
-  'passwordMatchValidator.paramFirst': 'Nome do controle de senha; o padrão é password.',
-  'passwordMatchValidator.paramSecond': 'Nome do controle de confirmação; o padrão é confirmPassword.',
-  'passwordMatchValidator.returns':
-    'Uma ValidatorFn que retorna o erro passwordMismatch no grupo quando dois valores não vazios diferem, ou null caso contrário.',
-  'passwordMatchValidator.minLengthError': 'Use pelo menos 8 caracteres.',
+  'sameValueValidator.paramFirst': 'Nome do primeiro controle cujo valor é comparado.',
+  'sameValueValidator.paramSecond': 'Nome do segundo controle cujo valor é comparado.',
+  'sameValueValidator.returns':
+    'Uma ValidatorFn que retorna o erro valuesMismatch no grupo quando dois valores não vazios diferem, ou null caso contrário.',
+  'sameValueValidator.minLengthError': 'Use pelo menos 8 caracteres.',
 };

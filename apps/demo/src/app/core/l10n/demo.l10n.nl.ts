@@ -3114,22 +3114,21 @@ export const nlTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Een ValidatorFn die de fout invalidFileExtension teruggeeft zodra een bestand faalt, of null als alle bestanden slagen.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator is een zuivere groepsvalidator die controleert of twee besturingselementen dezelfde waarde bevatten. De mismatchfout hoort bij de groep, zodat required- en minlength-fouten op onderliggende elementen behouden blijven.',
-  'passwordMatchValidator.playgroundTitle': 'Een wachtwoordbevestiging valideren',
-  'passwordMatchValidator.playgroundDescription':
+  'sameValueValidator.overview':
+    'sameValueValidator is een zuivere groepsvalidator die controleert of twee besturingselementen dezelfde waarde bevatten. De mismatchfout hoort bij de groep, zodat required- en minlength-fouten op onderliggende elementen behouden blijven.',
+  'sameValueValidator.playgroundTitle': 'Een wachtwoordbevestiging valideren',
+  'sameValueValidator.playgroundDescription':
     'Voer gelijke wachtwoorden in, wijzig er één en maak de velden daarna leeg.',
-  'passwordMatchValidator.firstLabel': 'Wachtwoord',
-  'passwordMatchValidator.secondLabel': 'Wachtwoord bevestigen',
-  'passwordMatchValidator.groupError': 'De twee wachtwoorden komen niet overeen.',
-  'passwordMatchValidator.example1Desc': 'Koppel de validator aan een FormGroup en lees passwordMismatch van de groep.',
-  'passwordMatchValidator.example2Desc':
-    'Gebruik aangepaste namen voor de besturingselementen van een pincodebevestiging.',
-  'passwordMatchValidator.summary':
+  'sameValueValidator.firstLabel': 'Wachtwoord',
+  'sameValueValidator.secondLabel': 'Wachtwoord bevestigen',
+  'sameValueValidator.groupError': 'De twee wachtwoorden komen niet overeen.',
+  'sameValueValidator.example1Desc': 'Koppel de validator aan een FormGroup en lees valuesMismatch van de groep.',
+  'sameValueValidator.example2Desc': 'Gebruik aangepaste namen voor de besturingselementen van een pincodebevestiging.',
+  'sameValueValidator.summary':
     'Maakt een ValidatorFn voor een FormGroup die twee waarden met strikte gelijkheid vergelijkt.',
-  'passwordMatchValidator.paramFirst': 'Naam van het wachtwoordbesturingselement; standaard password.',
-  'passwordMatchValidator.paramSecond': 'Naam van het bevestigingsbesturingselement; standaard confirmPassword.',
-  'passwordMatchValidator.returns':
-    'Een ValidatorFn die de fout passwordMismatch op de groep teruggeeft als twee niet-lege waarden verschillen, en anders null.',
-  'passwordMatchValidator.minLengthError': 'Gebruik minimaal 8 tekens.',
+  'sameValueValidator.paramFirst': 'Naam van het eerste besturingselement waarvan de waarde wordt vergeleken.',
+  'sameValueValidator.paramSecond': 'Naam van het tweede besturingselement waarvan de waarde wordt vergeleken.',
+  'sameValueValidator.returns':
+    'Een ValidatorFn die de fout valuesMismatch op de groep teruggeeft als twee niet-lege waarden verschillen, en anders null.',
+  'sameValueValidator.minLengthError': 'Gebruik minimaal 8 tekens.',
 };

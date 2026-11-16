@@ -324,10 +324,10 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'password-match',
+            path: 'same-value',
             loadComponent: () =>
-              import('./ngx-lib/pages/validators/password-match-validator/password-match-validator.component').then(
-                (module) => module.PasswordMatchValidatorComponent,
+              import('./ngx-lib/pages/validators/same-value-validator/same-value-validator.component').then(
+                (module) => module.SameValueValidatorComponent,
               ),
           },
           {

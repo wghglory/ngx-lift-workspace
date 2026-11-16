@@ -3005,21 +3005,20 @@ export const enTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'A ValidatorFn that returns the invalidFileExtension error when any file fails, or null when all files pass.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator is a pure group validator that checks two controls hold the same value. The mismatch error belongs to the group, so required and minlength errors on the child controls are preserved.',
-  'passwordMatchValidator.playgroundTitle': 'Validate a password confirmation',
-  'passwordMatchValidator.playgroundDescription': 'Enter matching passwords, change one, then clear the fields.',
-  'passwordMatchValidator.firstLabel': 'Password',
-  'passwordMatchValidator.secondLabel': 'Confirm password',
-  'passwordMatchValidator.groupError': 'The two passwords do not match.',
-  'passwordMatchValidator.example1Desc':
-    'Attach the validator to a FormGroup and read passwordMismatch from the group.',
-  'passwordMatchValidator.example2Desc': 'Use custom control names for a PIN confirmation form.',
-  'passwordMatchValidator.summary':
+  'sameValueValidator.overview':
+    'sameValueValidator is a pure group validator that checks two controls hold the same value. The mismatch error belongs to the group, so required and minlength errors on the child controls are preserved.',
+  'sameValueValidator.playgroundTitle': 'Validate a password confirmation',
+  'sameValueValidator.playgroundDescription': 'Enter matching passwords, change one, then clear the fields.',
+  'sameValueValidator.firstLabel': 'Password',
+  'sameValueValidator.secondLabel': 'Confirm password',
+  'sameValueValidator.groupError': 'The two passwords do not match.',
+  'sameValueValidator.example1Desc': 'Attach the validator to a FormGroup and read valuesMismatch from the group.',
+  'sameValueValidator.example2Desc': 'Use custom control names for a PIN confirmation form.',
+  'sameValueValidator.summary':
     'Creates a ValidatorFn for a FormGroup that compares two control values with strict equality.',
-  'passwordMatchValidator.paramFirst': 'Name of the password control; defaults to password.',
-  'passwordMatchValidator.paramSecond': 'Name of the confirmation control; defaults to confirmPassword.',
-  'passwordMatchValidator.returns':
-    'A ValidatorFn that returns the passwordMismatch error on the group when two non-empty values differ, or null otherwise.',
-  'passwordMatchValidator.minLengthError': 'Use at least 8 characters.',
+  'sameValueValidator.paramFirst': 'Name of the first control whose value is compared.',
+  'sameValueValidator.paramSecond': 'Name of the second control whose value is compared.',
+  'sameValueValidator.returns':
+    'A ValidatorFn that returns the valuesMismatch error on the group when two non-empty values differ, or null otherwise.',
+  'sameValueValidator.minLengthError': 'Use at least 8 characters.',
 };

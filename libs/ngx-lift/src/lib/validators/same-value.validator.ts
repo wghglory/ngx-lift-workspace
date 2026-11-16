@@ -12,53 +12,50 @@ import {isEmptyControlValue} from './validator-value.util';
  * group's value, so comparing it would leave an error the user cannot clear. Attach it to the
  * `FormGroup`, not to an individual control.
  *
- * The validator is pure: it returns `{passwordMismatch: true}` on the group and never calls
+ * The validator is pure: it returns `{valuesMismatch: true}` on the group and never calls
  * `setErrors` on child controls. Child controls therefore keep their own validity and errors;
- * display the mismatch from `group.hasError('passwordMismatch')`. The names are configurable
- * because confirmation fields are not always called `confirmPassword`.
+ * display the mismatch from `group.hasError('valuesMismatch')`. Both control names are required,
+ * so the validator works for any pair of fields such as passwords, PINs, or email confirmation.
  *
- * @param passwordControlName Name of the password control (defaults to `'password'`).
- * @param confirmPasswordControlName Name of the confirmation control (defaults to `'confirmPassword'`).
+ * @param firstControlName Name of the first control to compare.
+ * @param secondControlName Name of the second control to compare.
  * @returns A `ValidatorFn` for a `FormGroup`.
  *
  * @example
  * ```typescript
  * import {FormControl, FormGroup, Validators} from '@angular/forms';
- * import {passwordMatchValidator} from 'ngx-lift';
+ * import {sameValueValidator} from 'ngx-lift';
  *
  * const form = new FormGroup(
  *   {
  *     password: new FormControl('', [Validators.required]),
  *     confirmPassword: new FormControl('', [Validators.required]),
  *   },
- *   {validators: [passwordMatchValidator()]},
+ *   {validators: [sameValueValidator('password', 'confirmPassword')]},
  * );
- * // form.hasError('passwordMismatch') === true when both values differ
+ * // form.hasError('valuesMismatch') === true when both values differ
  * ```
  */
-export function passwordMatchValidator(
-  passwordControlName = 'password',
-  confirmPasswordControlName = 'confirmPassword',
-): ValidatorFn {
+export function sameValueValidator(firstControlName: string, secondControlName: string): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
-    const passwordControl = group.get(passwordControlName);
-    const confirmPasswordControl = group.get(confirmPasswordControlName);
+    const firstControl = group.get(firstControlName);
+    const secondControl = group.get(secondControlName);
 
-    if (!passwordControl || !confirmPasswordControl) {
+    if (!firstControl || !secondControl) {
       return null;
     }
 
-    if (passwordControl.disabled || confirmPasswordControl.disabled) {
+    if (firstControl.disabled || secondControl.disabled) {
       return null;
     }
 
-    const password: unknown = passwordControl.value;
-    const confirmation: unknown = confirmPasswordControl.value;
+    const firstValue: unknown = firstControl.value;
+    const secondValue: unknown = secondControl.value;
 
-    if (isEmptyControlValue(password) || isEmptyControlValue(confirmation)) {
+    if (isEmptyControlValue(firstValue) || isEmptyControlValue(secondValue)) {
       return null;
     }
 
-    return password === confirmation ? null : {passwordMismatch: true};
+    return firstValue === secondValue ? null : {valuesMismatch: true};
   };
 }

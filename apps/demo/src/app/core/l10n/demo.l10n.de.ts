@@ -3157,22 +3157,22 @@ export const deTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Eine ValidatorFn, die den Fehler invalidFileExtension zurückgibt, wenn eine Datei nicht passt, sonst null.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator ist ein reiner Gruppenvalidator, der prüft, ob zwei Steuerelemente denselben Wert enthalten. Der Fehler gehört zur Gruppe, sodass required- und minlength-Fehler der untergeordneten Steuerelemente erhalten bleiben.',
-  'passwordMatchValidator.playgroundTitle': 'Eine Passwortbestätigung prüfen',
-  'passwordMatchValidator.playgroundDescription':
+  'sameValueValidator.overview':
+    'sameValueValidator ist ein reiner Gruppenvalidator, der prüft, ob zwei Steuerelemente denselben Wert enthalten. Der Fehler gehört zur Gruppe, sodass required- und minlength-Fehler der untergeordneten Steuerelemente erhalten bleiben.',
+  'sameValueValidator.playgroundTitle': 'Eine Passwortbestätigung prüfen',
+  'sameValueValidator.playgroundDescription':
     'Geben Sie übereinstimmende Passwörter ein, ändern Sie eines und leeren Sie dann die Felder.',
-  'passwordMatchValidator.firstLabel': 'Passwort',
-  'passwordMatchValidator.secondLabel': 'Passwort bestätigen',
-  'passwordMatchValidator.groupError': 'Die beiden Passwörter stimmen nicht überein.',
-  'passwordMatchValidator.example1Desc':
-    'Binden Sie den Validator an eine FormGroup und lesen Sie passwordMismatch von der Gruppe.',
-  'passwordMatchValidator.example2Desc': 'Verwenden Sie eigene Steuerelementnamen für ein PIN-Bestätigungsformular.',
-  'passwordMatchValidator.summary':
+  'sameValueValidator.firstLabel': 'Passwort',
+  'sameValueValidator.secondLabel': 'Passwort bestätigen',
+  'sameValueValidator.groupError': 'Die beiden Passwörter stimmen nicht überein.',
+  'sameValueValidator.example1Desc':
+    'Binden Sie den Validator an eine FormGroup und lesen Sie valuesMismatch von der Gruppe.',
+  'sameValueValidator.example2Desc': 'Verwenden Sie eigene Steuerelementnamen für ein PIN-Bestätigungsformular.',
+  'sameValueValidator.summary':
     'Erzeugt eine ValidatorFn für eine FormGroup, die zwei Werte mit strikter Gleichheit vergleicht.',
-  'passwordMatchValidator.paramFirst': 'Name des Passwort-Steuerelements; Standard ist password.',
-  'passwordMatchValidator.paramSecond': 'Name des Bestätigungs-Steuerelements; Standard ist confirmPassword.',
-  'passwordMatchValidator.returns':
-    'Eine ValidatorFn, die bei abweichenden nicht-leeren Werten den Fehler passwordMismatch auf der Gruppe zurückgibt, sonst null.',
-  'passwordMatchValidator.minLengthError': 'Verwenden Sie mindestens 8 Zeichen.',
+  'sameValueValidator.paramFirst': 'Name des ersten Steuerelements, dessen Wert verglichen wird.',
+  'sameValueValidator.paramSecond': 'Name des zweiten Steuerelements, dessen Wert verglichen wird.',
+  'sameValueValidator.returns':
+    'Eine ValidatorFn, die bei abweichenden nicht-leeren Werten den Fehler valuesMismatch auf der Gruppe zurückgibt, sonst null.',
+  'sameValueValidator.minLengthError': 'Verwenden Sie mindestens 8 Zeichen.',
 };

@@ -2953,19 +2953,19 @@ export const koTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     '파일 하나라도 실패하면 invalidFileExtension 오류를 반환하고, 모두 통과하면 null을 반환하는 ValidatorFn입니다.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator는 두 컨트롤의 값이 같은지 확인하는 순수 그룹 검증기입니다. 불일치 오류가 그룹에 속하므로 자식 컨트롤의 required 및 minlength 오류가 보존됩니다.',
-  'passwordMatchValidator.playgroundTitle': '비밀번호 확인 검증',
-  'passwordMatchValidator.playgroundDescription': '같은 비밀번호를 입력하고 하나를 바꾼 뒤 필드를 비웁니다.',
-  'passwordMatchValidator.firstLabel': '비밀번호',
-  'passwordMatchValidator.secondLabel': '비밀번호 확인',
-  'passwordMatchValidator.groupError': '두 비밀번호가 일치하지 않습니다.',
-  'passwordMatchValidator.example1Desc': 'FormGroup에 검증기를 연결하고 그룹에서 passwordMismatch를 읽습니다.',
-  'passwordMatchValidator.example2Desc': 'PIN 확인 폼에 사용자 지정 컨트롤 이름을 사용합니다.',
-  'passwordMatchValidator.summary': '두 값을 엄격한 동등성으로 비교하는 FormGroup용 ValidatorFn을 만듭니다.',
-  'passwordMatchValidator.paramFirst': '비밀번호 컨트롤의 이름이며 기본값은 password입니다.',
-  'passwordMatchValidator.paramSecond': '확인 컨트롤의 이름이며 기본값은 confirmPassword입니다.',
-  'passwordMatchValidator.returns':
-    '비어 있지 않은 두 값이 다르면 그룹에 passwordMismatch 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
-  'passwordMatchValidator.minLengthError': '8자 이상 입력하세요.',
+  'sameValueValidator.overview':
+    'sameValueValidator는 두 컨트롤의 값이 같은지 확인하는 순수 그룹 검증기입니다. 불일치 오류가 그룹에 속하므로 자식 컨트롤의 required 및 minlength 오류가 보존됩니다.',
+  'sameValueValidator.playgroundTitle': '비밀번호 확인 검증',
+  'sameValueValidator.playgroundDescription': '같은 비밀번호를 입력하고 하나를 바꾼 뒤 필드를 비웁니다.',
+  'sameValueValidator.firstLabel': '비밀번호',
+  'sameValueValidator.secondLabel': '비밀번호 확인',
+  'sameValueValidator.groupError': '두 비밀번호가 일치하지 않습니다.',
+  'sameValueValidator.example1Desc': 'FormGroup에 검증기를 연결하고 그룹에서 valuesMismatch를 읽습니다.',
+  'sameValueValidator.example2Desc': 'PIN 확인 폼에 사용자 지정 컨트롤 이름을 사용합니다.',
+  'sameValueValidator.summary': '두 값을 엄격한 동등성으로 비교하는 FormGroup용 ValidatorFn을 만듭니다.',
+  'sameValueValidator.paramFirst': '값이 비교되는 첫 번째 컨트롤의 이름입니다.',
+  'sameValueValidator.paramSecond': '값이 비교되는 두 번째 컨트롤의 이름입니다.',
+  'sameValueValidator.returns':
+    '비어 있지 않은 두 값이 다르면 그룹에 valuesMismatch 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
+  'sameValueValidator.minLengthError': '8자 이상 입력하세요.',
 };

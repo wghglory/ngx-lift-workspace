@@ -3091,19 +3091,19 @@ export const ruTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'ValidatorFn, возвращающая ошибку invalidFileExtension, если какой-либо файл не подходит, иначе null.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator — чистый валидатор группы, проверяющий совпадение значений двух элементов. Ошибка несовпадения принадлежит группе, поэтому ошибки required и minlength дочерних элементов сохраняются.',
-  'passwordMatchValidator.playgroundTitle': 'Проверить подтверждение пароля',
-  'passwordMatchValidator.playgroundDescription': 'Введите одинаковые пароли, измените один, затем очистите поля.',
-  'passwordMatchValidator.firstLabel': 'Пароль',
-  'passwordMatchValidator.secondLabel': 'Подтверждение пароля',
-  'passwordMatchValidator.groupError': 'Пароли не совпадают.',
-  'passwordMatchValidator.example1Desc': 'Привяжите валидатор к FormGroup и прочитайте passwordMismatch у группы.',
-  'passwordMatchValidator.example2Desc': 'Используйте собственные имена элементов в форме подтверждения PIN-кода.',
-  'passwordMatchValidator.summary': 'Создаёт ValidatorFn для FormGroup, сравнивающую два значения строгим равенством.',
-  'passwordMatchValidator.paramFirst': 'Имя элемента пароля; по умолчанию password.',
-  'passwordMatchValidator.paramSecond': 'Имя элемента подтверждения; по умолчанию confirmPassword.',
-  'passwordMatchValidator.returns':
-    'ValidatorFn, возвращающая ошибку passwordMismatch у группы, когда два непустых значения различаются, иначе null.',
-  'passwordMatchValidator.minLengthError': 'Используйте не менее 8 символов.',
+  'sameValueValidator.overview':
+    'sameValueValidator — чистый валидатор группы, проверяющий совпадение значений двух элементов. Ошибка несовпадения принадлежит группе, поэтому ошибки required и minlength дочерних элементов сохраняются.',
+  'sameValueValidator.playgroundTitle': 'Проверить подтверждение пароля',
+  'sameValueValidator.playgroundDescription': 'Введите одинаковые пароли, измените один, затем очистите поля.',
+  'sameValueValidator.firstLabel': 'Пароль',
+  'sameValueValidator.secondLabel': 'Подтверждение пароля',
+  'sameValueValidator.groupError': 'Пароли не совпадают.',
+  'sameValueValidator.example1Desc': 'Привяжите валидатор к FormGroup и прочитайте valuesMismatch у группы.',
+  'sameValueValidator.example2Desc': 'Используйте собственные имена элементов в форме подтверждения PIN-кода.',
+  'sameValueValidator.summary': 'Создаёт ValidatorFn для FormGroup, сравнивающую два значения строгим равенством.',
+  'sameValueValidator.paramFirst': 'Имя первого элемента управления, значение которого сравнивается.',
+  'sameValueValidator.paramSecond': 'Имя второго элемента управления, значение которого сравнивается.',
+  'sameValueValidator.returns':
+    'ValidatorFn, возвращающая ошибку valuesMismatch у группы, когда два непустых значения различаются, иначе null.',
+  'sameValueValidator.minLengthError': 'Используйте не менее 8 символов.',
 };

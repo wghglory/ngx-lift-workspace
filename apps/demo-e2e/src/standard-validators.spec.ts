@@ -102,24 +102,24 @@ test.describe('English validator journeys', () => {
     await expectAccessible(page, testInfo, 'main');
   });
 
-  test('passwordMatchValidator keeps child errors independent of the group error', async ({page}, testInfo) => {
-    await page.goto('/ngx-lift/validators/password-match');
-    const password = page.getByTestId('password-match-password');
-    const confirmation = page.getByTestId('password-match-confirm');
-    const error = page.getByTestId('password-match-error');
-    const status = page.getByTestId('password-match-status');
+  test('sameValueValidator keeps child errors independent of the group error', async ({page}, testInfo) => {
+    await page.goto('/ngx-lift/validators/same-value');
+    const password = page.getByTestId('same-value-password');
+    const confirmation = page.getByTestId('same-value-confirm');
+    const error = page.getByTestId('same-value-error');
+    const status = page.getByTestId('same-value-status');
 
     await password.fill('secret123');
     await confirmation.fill('secret124');
     await confirmation.blur();
-    await expect(error).toContainText(english['passwordMatchValidator.groupError']);
+    await expect(error).toContainText(english['sameValueValidator.groupError']);
     await expect(error.locator('cll-alert')).toBeVisible();
-    await expect(confirmation).toHaveAttribute('aria-describedby', 'password-match-group-error');
+    await expect(confirmation).toHaveAttribute('aria-describedby', 'same-value-group-error');
 
     await password.fill('short');
     await password.blur();
-    await expect(page.getByText(english['passwordMatchValidator.minLengthError'])).toBeVisible();
-    await expect(error).toContainText(english['passwordMatchValidator.groupError']);
+    await expect(page.getByText(english['sameValueValidator.minLengthError'])).toBeVisible();
+    await expect(error).toContainText(english['sameValueValidator.groupError']);
 
     await password.fill('secret123');
     await confirmation.fill('secret123');
@@ -136,7 +136,7 @@ test('the new validator pages render translated messages after a language switch
     {route: '/ngx-lift/validators/integer', key: 'integerValidator.overview'},
     {route: '/ngx-lift/validators/json', key: 'jsonValidator.overview'},
     {route: '/ngx-lift/validators/file-extension', key: 'fileExtensionValidator.overview'},
-    {route: '/ngx-lift/validators/password-match', key: 'passwordMatchValidator.overview'},
+    {route: '/ngx-lift/validators/same-value', key: 'sameValueValidator.overview'},
   ];
   for (const {route, key} of pages) {
     await page.goto(route);
@@ -149,15 +149,15 @@ test('the new validator pages render translated messages after a language switch
 
 test('switching language at runtime updates validator page messages', async ({page}) => {
   await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
-  await page.goto('/ngx-lift/validators/password-match');
+  await page.goto('/ngx-lift/validators/same-value');
   const overview = page.locator('main p').first();
-  await expect(overview).toContainText(english['passwordMatchValidator.overview']);
+  await expect(overview).toContainText(english['sameValueValidator.overview']);
 
   await page.getByRole('button', {name: english['header.selectLanguage'], exact: true}).click();
   await page.getByRole('menuitem', {name: 'Deutsch', exact: true}).click();
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-  await expect(overview).toContainText(german['passwordMatchValidator.overview']);
+  await expect(overview).toContainText(german['sameValueValidator.overview']);
   await expect(page.getByRole('button', {name: german['common.clear'], exact: true})).toBeVisible();
   await expect(page.locator('body')).not.toContainText('!! Key');
 });

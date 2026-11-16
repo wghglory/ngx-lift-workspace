@@ -99,7 +99,7 @@ installed version; source changes under Unreleased are not yet on npm.
 - **`integerValidator`** - Accepts only safe integers (`invalidInteger`)
 - **`jsonValidator`** - Validates JSON text syntax (`invalidJson`)
 - **`fileExtensionValidator`** - Checks selected file names against allowed suffixes (`invalidFileExtension`)
-- **`passwordMatchValidator`** - Reports `passwordMismatch` on a `FormGroup` when two values differ
+- **`sameValueValidator`** - Reports `valuesMismatch` on a `FormGroup` when two values differ
 - **`NamedFile` / `FileSelection`** - Structural file shape and typed control value for `fileExtensionValidator`
 
 The four standard validators are pure `ValidatorFn` factories: they allow empty values, return one error key and leave

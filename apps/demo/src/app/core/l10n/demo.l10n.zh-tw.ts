@@ -2756,19 +2756,19 @@ export const zhTWTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     '回傳一個 ValidatorFn：任一檔案不合格時給出 invalidFileExtension 錯誤，否則回傳 null。',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator 是純函式群組驗證器，檢查兩個控制項的值是否相同。不相符錯誤屬於表單群組，因此子控制項上的 required 與 minlength 錯誤會保留。',
-  'passwordMatchValidator.playgroundTitle': '驗證密碼確認',
-  'passwordMatchValidator.playgroundDescription': '輸入兩次相同的密碼，改動其中一個，然後清空欄位。',
-  'passwordMatchValidator.firstLabel': '密碼',
-  'passwordMatchValidator.secondLabel': '確認密碼',
-  'passwordMatchValidator.groupError': '兩次輸入的密碼不一致。',
-  'passwordMatchValidator.example1Desc': '將驗證器附加到 FormGroup，並從表單群組讀取 passwordMismatch。',
-  'passwordMatchValidator.example2Desc': '為 PIN 確認表單使用自訂控制項名稱。',
-  'passwordMatchValidator.summary': '建立一個用於 FormGroup 的 ValidatorFn，以嚴格相等比較兩個控制項的值。',
-  'passwordMatchValidator.paramFirst': '密碼控制項的名稱；預設為 password。',
-  'passwordMatchValidator.paramSecond': '確認控制項的名稱；預設為 confirmPassword。',
-  'passwordMatchValidator.returns':
-    '回傳一個 ValidatorFn：兩個非空值不同時在表單群組給出 passwordMismatch 錯誤，否則回傳 null。',
-  'passwordMatchValidator.minLengthError': '請至少輸入 8 個字元。',
+  'sameValueValidator.overview':
+    'sameValueValidator 是純函式群組驗證器，檢查兩個控制項的值是否相同。不相符錯誤屬於表單群組，因此子控制項上的 required 與 minlength 錯誤會保留。',
+  'sameValueValidator.playgroundTitle': '驗證密碼確認',
+  'sameValueValidator.playgroundDescription': '輸入兩次相同的密碼，改動其中一個，然後清空欄位。',
+  'sameValueValidator.firstLabel': '密碼',
+  'sameValueValidator.secondLabel': '確認密碼',
+  'sameValueValidator.groupError': '兩次輸入的密碼不一致。',
+  'sameValueValidator.example1Desc': '將驗證器附加到 FormGroup，並從表單群組讀取 valuesMismatch。',
+  'sameValueValidator.example2Desc': '為 PIN 確認表單使用自訂控制項名稱。',
+  'sameValueValidator.summary': '建立一個用於 FormGroup 的 ValidatorFn，以嚴格相等比較兩個控制項的值。',
+  'sameValueValidator.paramFirst': '參與比較的第一個控制項的名稱。',
+  'sameValueValidator.paramSecond': '參與比較的第二個控制項的名稱。',
+  'sameValueValidator.returns':
+    '回傳一個 ValidatorFn：兩個非空值不同時在表單群組給出 valuesMismatch 錯誤，否則回傳 null。',
+  'sameValueValidator.minLengthError': '請至少輸入 8 個字元。',
 };

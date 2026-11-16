@@ -3161,23 +3161,22 @@ export const frTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Une ValidatorFn qui renvoie l’erreur invalidFileExtension si un fichier échoue, ou null si tous passent.',
 
-  'passwordMatchValidator.overview':
-    'passwordMatchValidator est un validateur de groupe pur qui vérifie que deux contrôles contiennent la même valeur. L’erreur de discordance appartient au groupe, ce qui préserve les erreurs required et minlength des contrôles enfants.',
-  'passwordMatchValidator.playgroundTitle': 'Valider une confirmation de mot de passe',
-  'passwordMatchValidator.playgroundDescription':
+  'sameValueValidator.overview':
+    'sameValueValidator est un validateur de groupe pur qui vérifie que deux contrôles contiennent la même valeur. L’erreur de discordance appartient au groupe, ce qui préserve les erreurs required et minlength des contrôles enfants.',
+  'sameValueValidator.playgroundTitle': 'Valider une confirmation de mot de passe',
+  'sameValueValidator.playgroundDescription':
     'Saisissez deux mots de passe identiques, modifiez l’un, puis videz les champs.',
-  'passwordMatchValidator.firstLabel': 'Mot de passe',
-  'passwordMatchValidator.secondLabel': 'Confirmer le mot de passe',
-  'passwordMatchValidator.groupError': 'Les deux mots de passe ne correspondent pas.',
-  'passwordMatchValidator.example1Desc':
-    'Attachez le validateur à un FormGroup et lisez passwordMismatch sur le groupe.',
-  'passwordMatchValidator.example2Desc':
+  'sameValueValidator.firstLabel': 'Mot de passe',
+  'sameValueValidator.secondLabel': 'Confirmer le mot de passe',
+  'sameValueValidator.groupError': 'Les deux mots de passe ne correspondent pas.',
+  'sameValueValidator.example1Desc': 'Attachez le validateur à un FormGroup et lisez valuesMismatch sur le groupe.',
+  'sameValueValidator.example2Desc':
     'Utilisez des noms de contrôles personnalisés pour un formulaire de confirmation de code PIN.',
-  'passwordMatchValidator.summary':
+  'sameValueValidator.summary':
     'Crée une ValidatorFn pour un FormGroup qui compare deux valeurs avec une égalité stricte.',
-  'passwordMatchValidator.paramFirst': 'Nom du contrôle du mot de passe ; vaut password par défaut.',
-  'passwordMatchValidator.paramSecond': 'Nom du contrôle de confirmation ; vaut confirmPassword par défaut.',
-  'passwordMatchValidator.returns':
-    'Une ValidatorFn qui renvoie l’erreur passwordMismatch sur le groupe quand deux valeurs non vides diffèrent, ou null sinon.',
-  'passwordMatchValidator.minLengthError': 'Utilisez au moins 8 caractères.',
+  'sameValueValidator.paramFirst': 'Nom du premier contrôle dont la valeur est comparée.',
+  'sameValueValidator.paramSecond': 'Nom du deuxième contrôle dont la valeur est comparée.',
+  'sameValueValidator.returns':
+    'Une ValidatorFn qui renvoie l’erreur valuesMismatch sur le groupe quand deux valeurs non vides diffèrent, ou null sinon.',
+  'sameValueValidator.minLengthError': 'Utilisez au moins 8 caractères.',
 };
