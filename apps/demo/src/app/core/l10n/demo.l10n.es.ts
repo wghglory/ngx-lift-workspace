@@ -3087,4 +3087,73 @@ export const esTranslations: Record<string, string> = {
   'downloadFile.paramFileName': 'Nombre de archivo sugerido no vacío; el navegador puede ajustarlo.',
   'downloadFile.paramMimeType': 'Tipo MIME usado cuando el contenido es una cadena; se ignora con un Blob.',
   'downloadFile.returnsDesc': 'Ningún valor devuelto; la función no confirma que se haya guardado un archivo.',
+
+  'standardValidators.example1': 'Ejemplo 1: Uso básico',
+  'standardValidators.example2': 'Ejemplo 2: Uso avanzado',
+  'standardValidators.statusValid': 'El formulario es válido.',
+  'standardValidators.statusInvalid': 'El formulario tiene errores de validación.',
+  'standardValidators.statusDisabled': 'El formulario está deshabilitado.',
+  'standardValidators.disableForm': 'Deshabilitar formulario',
+  'standardValidators.enableForm': 'Habilitar formulario',
+
+  'integerValidator.overview':
+    'integerValidator solo acepta enteros seguros en un control de formulario. Son válidos los números y las cadenas de enteros decimales con signo; se rechazan decimales, notación exponencial, texto hexadecimal y valores que JavaScript convertiría implícitamente. Combínalo con Validators.required cuando el campo sea obligatorio.',
+  'integerValidator.playgroundTitle': 'Validar un número de réplicas',
+  'integerValidator.playgroundDescription': 'Escribe un entero, corrige un valor no válido y después vacía el campo.',
+  'integerValidator.firstLabel': 'Número de réplicas',
+  'integerValidator.firstError': 'Introduce un número entero.',
+  'integerValidator.example1Desc':
+    'Asocia el validador a un control tipado de Reactive Forms y lee el error invalidInteger.',
+  'integerValidator.example2Desc':
+    'Combina el validador con las reglas required y min en un formulario de despliegue realista.',
+  'integerValidator.summary':
+    'Crea una ValidatorFn que acepta enteros seguros o cadenas de enteros decimales con signo.',
+  'integerValidator.returns':
+    'Una ValidatorFn que devuelve el error invalidInteger para valores no enteros, o null cuando el valor es válido o está vacío.',
+
+  'jsonValidator.overview':
+    'jsonValidator comprueba que un control contenga texto JSON sintácticamente válido. Se aceptan objetos, arrays y primitivos JSON; la validación del esquema sigue siendo una tarea independiente de la aplicación. Los valores vacíos son válidos salvo que se añada Validators.required.',
+  'jsonValidator.playgroundTitle': 'Validar una carga JSON',
+  'jsonValidator.playgroundDescription': 'Pega un JSON válido, rompe la sintaxis y después vacía el editor.',
+  'jsonValidator.firstLabel': 'Carga JSON',
+  'jsonValidator.firstError': 'Introduce texto JSON válido.',
+  'jsonValidator.example1Desc': 'Asocia el validador a un área de texto y muestra el error invalidJson.',
+  'jsonValidator.example2Desc':
+    'Acepta cualquier tipo de valor JSON y añade una comprobación de forma cuando haga falta.',
+  'jsonValidator.summary':
+    'Crea una ValidatorFn que analiza una cadena con JSON.parse e informa de errores de sintaxis.',
+  'jsonValidator.returns':
+    'Una ValidatorFn que devuelve el error invalidJson para texto mal formado o valores que no son cadenas, o null en caso contrario.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator comprueba que todos los nombres de archivo seleccionados terminen con una extensión permitida. Acepta un FileList, un array de archivos, un archivo suelto o un nombre de archivo como cadena, y compara los sufijos sin distinguir mayúsculas y minúsculas.',
+  'fileExtensionValidator.playgroundTitle': 'Validar una subida',
+  'fileExtensionValidator.playgroundDescription':
+    'Escribe o selecciona archivos .png y .jpg y prueba después con otra extensión.',
+  'fileExtensionValidator.firstLabel': 'Nombre de archivo',
+  'fileExtensionValidator.secondLabel': 'Seleccionar archivos',
+  'fileExtensionValidator.firstError': 'Usa un archivo .png o .jpg.',
+  'fileExtensionValidator.example1Desc': 'Valida un nombre de archivo como cadena y lee el error invalidFileExtension.',
+  'fileExtensionValidator.example2Desc': 'Valida un FileList real y permite sufijos compuestos como .tar.gz.',
+  'fileExtensionValidator.summary':
+    'Crea una ValidatorFn que compara nombres de archivo con una lista de extensiones permitidas.',
+  'fileExtensionValidator.paramFirst': 'Una extensión o una lista de extensiones; el punto inicial es opcional.',
+  'fileExtensionValidator.returns':
+    'Una ValidatorFn que devuelve el error invalidFileExtension si algún archivo no cumple, o null si todos pasan.',
+
+  'sameValueValidator.overview':
+    'sameValueValidator es un validador de grupo puro que comprueba que dos controles contienen el mismo valor. El error de discrepancia pertenece al grupo, por lo que se conservan los errores required y minlength de los controles hijos.',
+  'sameValueValidator.playgroundTitle': 'Validar una confirmación de contraseña',
+  'sameValueValidator.playgroundDescription': 'Escribe contraseñas iguales, cambia una y después vacía los campos.',
+  'sameValueValidator.firstLabel': 'Contraseña',
+  'sameValueValidator.secondLabel': 'Confirmar contraseña',
+  'sameValueValidator.groupError': 'Las dos contraseñas no coinciden.',
+  'sameValueValidator.example1Desc': 'Asocia el validador a un FormGroup y lee valuesMismatch desde el grupo.',
+  'sameValueValidator.example2Desc': 'Usa nombres de control personalizados en un formulario de confirmación de PIN.',
+  'sameValueValidator.summary': 'Crea una ValidatorFn para un FormGroup que compara dos valores con igualdad estricta.',
+  'sameValueValidator.paramFirst': 'Nombre del primer control cuyo valor se compara.',
+  'sameValueValidator.paramSecond': 'Nombre del segundo control cuyo valor se compara.',
+  'sameValueValidator.returns':
+    'Una ValidatorFn que devuelve el error valuesMismatch en el grupo cuando dos valores no vacíos difieren, o null en caso contrario.',
+  'sameValueValidator.minLengthError': 'Usa al menos 8 caracteres.',
 };

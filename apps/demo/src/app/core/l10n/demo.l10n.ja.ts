@@ -2944,4 +2944,67 @@ export const jaTranslations: Record<string, string> = {
   'downloadFile.paramFileName': '空ではない推奨ファイル名。ブラウザーが調整する場合があります。',
   'downloadFile.paramMimeType': '内容が文字列の場合に使う MIME タイプ。Blob の場合は無視されます。',
   'downloadFile.returnsDesc': '戻り値はありません。この関数はファイルの保存を確認しません。',
+
+  'standardValidators.example1': '例 1: 基本的な使い方',
+  'standardValidators.example2': '例 2: 応用的な使い方',
+  'standardValidators.statusValid': 'フォームは有効です。',
+  'standardValidators.statusInvalid': 'フォームに検証エラーがあります。',
+  'standardValidators.statusDisabled': 'フォームは無効化されています。',
+  'standardValidators.disableForm': 'フォームを無効化',
+  'standardValidators.enableForm': 'フォームを有効化',
+
+  'integerValidator.overview':
+    'integerValidator はフォームコントロール内の安全な整数のみを受け付けます。数値と符号付きの 10 進整数文字列は有効です。小数、指数表記、16 進表記、および JavaScript が暗黙に変換してしまう値は拒否されます。必須項目には Validators.required を併用してください。',
+  'integerValidator.playgroundTitle': 'レプリカ数を検証する',
+  'integerValidator.playgroundDescription': '整数を入力し、無効な値を修正してからフィールドを空にします。',
+  'integerValidator.firstLabel': 'レプリカ数',
+  'integerValidator.firstError': '整数を入力してください。',
+  'integerValidator.example1Desc':
+    '型付き Reactive Forms コントロールにバリデータを設定し、invalidInteger エラーを読み取ります。',
+  'integerValidator.example2Desc': '実際のデプロイフォームで required と min のルールを組み合わせます。',
+  'integerValidator.summary': '安全な整数または符号付き 10 進整数文字列を受け付ける ValidatorFn を作成します。',
+  'integerValidator.returns':
+    '整数以外で invalidInteger エラーを返し、有効または空の場合は null を返す ValidatorFn です。',
+
+  'jsonValidator.overview':
+    'jsonValidator はフォームコントロールに構文的に正しい JSON テキストが含まれるか確認します。オブジェクト、配列、JSON のプリミティブ値を受け付けます。スキーマ検証はアプリケーション側の別の作業です。Validators.required を追加しない限り、空の値は有効です。',
+  'jsonValidator.playgroundTitle': 'JSON ペイロードを検証する',
+  'jsonValidator.playgroundDescription': '正しい JSON を貼り付け、構文を壊してからエディターを空にします。',
+  'jsonValidator.firstLabel': 'JSON ペイロード',
+  'jsonValidator.firstError': '正しい JSON テキストを入力してください。',
+  'jsonValidator.example1Desc': 'テキストエリアにバリデータを設定し、invalidJson エラーを表示します。',
+  'jsonValidator.example2Desc': 'あらゆる JSON 値の型を受け付け、必要に応じて構造チェックを追加します。',
+  'jsonValidator.summary': 'JSON.parse で文字列を解析し、構文エラーを報告する ValidatorFn を作成します。',
+  'jsonValidator.returns':
+    '不正なテキストまたは文字列以外の値で invalidJson エラーを返し、それ以外は null を返す ValidatorFn です。',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator は選択されたすべてのファイル名が許可された拡張子で終わるか確認します。FileList、ファイルの配列、単一のファイル、ファイル名の文字列を受け付け、大文字と小文字を区別せずに接尾辞を比較します。',
+  'fileExtensionValidator.playgroundTitle': 'アップロードを検証する',
+  'fileExtensionValidator.playgroundDescription': '.png と .jpg のファイルを入力または選択し、別の拡張子も試します。',
+  'fileExtensionValidator.firstLabel': 'ファイル名',
+  'fileExtensionValidator.secondLabel': 'ファイルを選択',
+  'fileExtensionValidator.firstError': '.png または .jpg のファイルを使用してください。',
+  'fileExtensionValidator.example1Desc': 'ファイル名の文字列を検証し、invalidFileExtension エラーを読み取ります。',
+  'fileExtensionValidator.example2Desc': '実際の FileList を検証し、.tar.gz のような複合接尾辞を許可します。',
+  'fileExtensionValidator.summary': 'ファイル名を許可された拡張子の一覧と照合する ValidatorFn を作成します。',
+  'fileExtensionValidator.paramFirst': '拡張子 1 つ、または拡張子の一覧。先頭のドットは省略できます。',
+  'fileExtensionValidator.returns':
+    'いずれかのファイルが不合格なら invalidFileExtension エラーを返し、すべて合格なら null を返す ValidatorFn です。',
+
+  'sameValueValidator.overview':
+    'sameValueValidator は 2 つのコントロールの値が同じか確認する純粋なグループバリデータです。不一致エラーはグループに属するため、子コントロールの required や minlength のエラーは保持されます。',
+  'sameValueValidator.playgroundTitle': 'パスワード確認を検証する',
+  'sameValueValidator.playgroundDescription': '同じパスワードを入力し、一方を変更してからフィールドを空にします。',
+  'sameValueValidator.firstLabel': 'パスワード',
+  'sameValueValidator.secondLabel': 'パスワードの確認',
+  'sameValueValidator.groupError': '2 つのパスワードが一致しません。',
+  'sameValueValidator.example1Desc': 'FormGroup にバリデータを設定し、グループから valuesMismatch を読み取ります。',
+  'sameValueValidator.example2Desc': 'PIN 確認フォームで独自のコントロール名を使用します。',
+  'sameValueValidator.summary': '2 つの値を厳密等価で比較する FormGroup 用の ValidatorFn を作成します。',
+  'sameValueValidator.paramFirst': '比較される値を持つ 1 番目のコントロールの名前。',
+  'sameValueValidator.paramSecond': '比較される値を持つ 2 番目のコントロールの名前。',
+  'sameValueValidator.returns':
+    '空でない 2 つの値が異なる場合にグループへ valuesMismatch エラーを返し、それ以外は null を返す ValidatorFn です。',
+  'sameValueValidator.minLengthError': '8 文字以上で入力してください。',
 };

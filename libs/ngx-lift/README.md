@@ -96,6 +96,17 @@ installed version; source changes under Unreleased are not yet on npm.
 - **`intersectionValidator`** - Validates array intersections
 - **`UniqueValidator`** - Validates unique values in arrays
 - **`urlValidator` / `httpsValidator`** - Validate URL format
+- **`integerValidator`** - Accepts only safe integers (`invalidInteger`)
+- **`jsonValidator`** - Validates JSON text syntax (`invalidJson`)
+- **`fileExtensionValidator`** - Checks selected file names against allowed suffixes (`invalidFileExtension`)
+- **`sameValueValidator`** - Reports `valuesMismatch` on a `FormGroup` when two values differ
+- **`NamedFile` / `FileSelection`** - Structural file shape and typed control value for `fileExtensionValidator`
+
+The four standard validators are pure `ValidatorFn` factories: they allow empty values, return one error key and leave
+message rendering to the application. The group validator reports its error on the group, never calls `setErrors` on
+child controls, and ignores disabled child controls. See the
+[design specification](../../docs/design/ngx-lift/standard-validators-design-spec.md) for the full contract. Maintainer
+API approval was recorded on 2026-11-16, but these exports are not part of a release yet.
 
 ### 🛠️ Utilities
 

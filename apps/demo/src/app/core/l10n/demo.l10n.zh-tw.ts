@@ -2711,4 +2711,64 @@ export const zhTWTranslations: Record<string, string> = {
   'downloadFile.paramFileName': '非空的建議檔名；瀏覽器可能會調整它。',
   'downloadFile.paramMimeType': '內容為字串時使用的 MIME 類型；傳入 Blob 時忽略。',
   'downloadFile.returnsDesc': '無回傳值；此函式不會確認檔案是否已儲存。',
+
+  'standardValidators.example1': '範例 1：基本用法',
+  'standardValidators.example2': '範例 2：進階用法',
+  'standardValidators.statusValid': '表單有效。',
+  'standardValidators.statusInvalid': '表單有驗證錯誤。',
+  'standardValidators.statusDisabled': '表單已停用。',
+  'standardValidators.disableForm': '停用表單',
+  'standardValidators.enableForm': '啟用表單',
+
+  'integerValidator.overview':
+    'integerValidator 只接受表單控制項中的安全整數。數字與帶正負號的十進位整數字串有效；小數、指數記法、十六進位文字，以及會被 JavaScript 隱含轉換的值都會被拒絕。欄位必填時請搭配 Validators.required。',
+  'integerValidator.playgroundTitle': '驗證複本數量',
+  'integerValidator.playgroundDescription': '輸入一個整數，修正無效值，然後清空欄位。',
+  'integerValidator.firstLabel': '複本數量',
+  'integerValidator.firstError': '請輸入整數。',
+  'integerValidator.example1Desc': '將驗證器附加到具型別的回應式表單控制項，並讀取 invalidInteger 錯誤。',
+  'integerValidator.example2Desc': '在真實的部署表單中搭配 required 與 min 規則。',
+  'integerValidator.summary': '建立一個 ValidatorFn，接受安全整數或帶正負號的十進位整數字串。',
+  'integerValidator.returns': '回傳一個 ValidatorFn：非整數時給出 invalidInteger 錯誤，有效或空白時回傳 null。',
+
+  'jsonValidator.overview':
+    'jsonValidator 檢查表單控制項是否包含語法有效的 JSON 文字。物件、陣列與 JSON 基本型別都可接受；結構驗證由應用程式另行處理。除非加上 Validators.required，否則空白值有效。',
+  'jsonValidator.playgroundTitle': '驗證 JSON 承載資料',
+  'jsonValidator.playgroundDescription': '貼上有效的 JSON，製造語法錯誤，然後清空編輯器。',
+  'jsonValidator.firstLabel': 'JSON 承載資料',
+  'jsonValidator.firstError': '請輸入有效的 JSON 文字。',
+  'jsonValidator.example1Desc': '將驗證器附加到文字區域控制項並顯示 invalidJson 錯誤。',
+  'jsonValidator.example2Desc': '接受任意 JSON 值型別，並在需要時補上結構檢查。',
+  'jsonValidator.summary': '建立一個 ValidatorFn，使用 JSON.parse 剖析字串並回報語法錯誤。',
+  'jsonValidator.returns': '回傳一個 ValidatorFn：格式錯誤或值不是字串時給出 invalidJson 錯誤，否則回傳 null。',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator 檢查每個選取的檔名是否以允許的副檔名結尾。它接受 FileList、檔案陣列、單一檔案或檔名字串，並以不區分大小寫的方式比對後綴。',
+  'fileExtensionValidator.playgroundTitle': '驗證上傳檔案',
+  'fileExtensionValidator.playgroundDescription': '輸入或選取 .png 與 .jpg 檔案，再試試其他副檔名。',
+  'fileExtensionValidator.firstLabel': '檔案名稱',
+  'fileExtensionValidator.secondLabel': '選取檔案',
+  'fileExtensionValidator.firstError': '請使用 .png 或 .jpg 檔案。',
+  'fileExtensionValidator.example1Desc': '驗證檔名字串並讀取 invalidFileExtension 錯誤。',
+  'fileExtensionValidator.example2Desc': '驗證真實的 FileList，並允許 .tar.gz 之類的複合後綴。',
+  'fileExtensionValidator.summary': '建立一個 ValidatorFn，依允許的副檔名清單檢查檔案名稱。',
+  'fileExtensionValidator.paramFirst': '單一副檔名或副檔名清單；前置點可省略。',
+  'fileExtensionValidator.returns':
+    '回傳一個 ValidatorFn：任一檔案不合格時給出 invalidFileExtension 錯誤，否則回傳 null。',
+
+  'sameValueValidator.overview':
+    'sameValueValidator 是純函式群組驗證器，檢查兩個控制項的值是否相同。不相符錯誤屬於表單群組，因此子控制項上的 required 與 minlength 錯誤會保留。',
+  'sameValueValidator.playgroundTitle': '驗證密碼確認',
+  'sameValueValidator.playgroundDescription': '輸入兩次相同的密碼，改動其中一個，然後清空欄位。',
+  'sameValueValidator.firstLabel': '密碼',
+  'sameValueValidator.secondLabel': '確認密碼',
+  'sameValueValidator.groupError': '兩次輸入的密碼不一致。',
+  'sameValueValidator.example1Desc': '將驗證器附加到 FormGroup，並從表單群組讀取 valuesMismatch。',
+  'sameValueValidator.example2Desc': '為 PIN 確認表單使用自訂控制項名稱。',
+  'sameValueValidator.summary': '建立一個用於 FormGroup 的 ValidatorFn，以嚴格相等比較兩個控制項的值。',
+  'sameValueValidator.paramFirst': '參與比較的第一個控制項的名稱。',
+  'sameValueValidator.paramSecond': '參與比較的第二個控制項的名稱。',
+  'sameValueValidator.returns':
+    '回傳一個 ValidatorFn：兩個非空值不同時在表單群組給出 valuesMismatch 錯誤，否則回傳 null。',
+  'sameValueValidator.minLengthError': '請至少輸入 8 個字元。',
 };

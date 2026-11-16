@@ -2719,4 +2719,64 @@ export const zhCNTranslations: Record<string, string> = {
   'downloadFile.paramFileName': '非空的建议文件名；浏览器可能会调整它。',
   'downloadFile.paramMimeType': '内容为字符串时使用的 MIME 类型；传入 Blob 时忽略。',
   'downloadFile.returnsDesc': '无返回值；该函数不确认文件是否已保存。',
+
+  'standardValidators.example1': '示例 1：基本用法',
+  'standardValidators.example2': '示例 2：高级用法',
+  'standardValidators.statusValid': '表单有效。',
+  'standardValidators.statusInvalid': '表单存在校验错误。',
+  'standardValidators.statusDisabled': '表单已禁用。',
+  'standardValidators.disableForm': '禁用表单',
+  'standardValidators.enableForm': '启用表单',
+
+  'integerValidator.overview':
+    'integerValidator 只接受表单控件中的安全整数。数字和带符号的十进制整数字符串有效；小数、指数记法、十六进制文本以及会被 JavaScript 隐式转换的值都会被拒绝。字段必填时请配合 Validators.required 使用。',
+  'integerValidator.playgroundTitle': '校验副本数量',
+  'integerValidator.playgroundDescription': '输入一个整数，修正无效值，然后清空字段。',
+  'integerValidator.firstLabel': '副本数量',
+  'integerValidator.firstError': '请输入整数。',
+  'integerValidator.example1Desc': '将校验器附加到类型化的响应式表单控件，并读取 invalidInteger 错误。',
+  'integerValidator.example2Desc': '在真实的部署表单中组合使用 required 和 min 规则。',
+  'integerValidator.summary': '创建一个 ValidatorFn，接受安全的整数或带符号的十进制整数字符串。',
+  'integerValidator.returns': '返回一个 ValidatorFn：非整数时给出 invalidInteger 错误，有效或为空时返回 null。',
+
+  'jsonValidator.overview':
+    'jsonValidator 检查表单控件是否包含语法有效的 JSON 文本。对象、数组和 JSON 基本类型均可接受；结构校验由应用另行处理。除非添加 Validators.required，否则空值有效。',
+  'jsonValidator.playgroundTitle': '校验 JSON 负载',
+  'jsonValidator.playgroundDescription': '粘贴有效的 JSON，制造语法错误，然后清空编辑器。',
+  'jsonValidator.firstLabel': 'JSON 负载',
+  'jsonValidator.firstError': '请输入有效的 JSON 文本。',
+  'jsonValidator.example1Desc': '将校验器附加到文本域控件并显示 invalidJson 错误。',
+  'jsonValidator.example2Desc': '接受任意 JSON 值类型，并在需要时补充结构校验。',
+  'jsonValidator.summary': '创建一个 ValidatorFn，使用 JSON.parse 解析字符串并报告语法错误。',
+  'jsonValidator.returns': '返回一个 ValidatorFn：文本格式错误或值不是字符串时给出 invalidJson 错误，否则返回 null。',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator 检查每个已选文件名是否以允许的扩展名结尾。它接受 FileList、文件数组、单个文件或文件名字符串，并忽略大小写比较后缀。',
+  'fileExtensionValidator.playgroundTitle': '校验上传文件',
+  'fileExtensionValidator.playgroundDescription': '输入或选择 .png 与 .jpg 文件，再尝试其他扩展名。',
+  'fileExtensionValidator.firstLabel': '文件名',
+  'fileExtensionValidator.secondLabel': '选择文件',
+  'fileExtensionValidator.firstError': '请使用 .png 或 .jpg 文件。',
+  'fileExtensionValidator.example1Desc': '校验文件名字符串并读取 invalidFileExtension 错误。',
+  'fileExtensionValidator.example2Desc': '校验真实的 FileList，并允许 .tar.gz 这样的复合后缀。',
+  'fileExtensionValidator.summary': '创建一个 ValidatorFn，按允许的扩展名列表检查文件名。',
+  'fileExtensionValidator.paramFirst': '单个扩展名或扩展名列表；前导点可省略。',
+  'fileExtensionValidator.returns':
+    '返回一个 ValidatorFn：任一文件不合格时给出 invalidFileExtension 错误，否则返回 null。',
+
+  'sameValueValidator.overview':
+    'sameValueValidator 是纯函数式组校验器，检查两个控件的值是否相同。不匹配错误属于表单组，因此子控件上的 required 和 minlength 错误会被保留。',
+  'sameValueValidator.playgroundTitle': '校验密码确认',
+  'sameValueValidator.playgroundDescription': '输入两次相同的密码，改动其中一个，然后清空字段。',
+  'sameValueValidator.firstLabel': '密码',
+  'sameValueValidator.secondLabel': '确认密码',
+  'sameValueValidator.groupError': '两次输入的密码不一致。',
+  'sameValueValidator.example1Desc': '将校验器附加到 FormGroup，并从表单组读取 valuesMismatch。',
+  'sameValueValidator.example2Desc': '为 PIN 确认表单使用自定义控件名称。',
+  'sameValueValidator.summary': '创建一个用于 FormGroup 的 ValidatorFn，以严格相等比较两个控件的值。',
+  'sameValueValidator.paramFirst': '参与比较的第一个控件的名称。',
+  'sameValueValidator.paramSecond': '参与比较的第二个控件的名称。',
+  'sameValueValidator.returns':
+    '返回一个 ValidatorFn：两个非空值不同时在表单组上给出 valuesMismatch 错误，否则返回 null。',
+  'sameValueValidator.minLengthError': '请至少输入 8 个字符。',
 };

@@ -2905,4 +2905,67 @@ export const koTranslations: Record<string, string> = {
   'downloadFile.paramFileName': '비어 있지 않은 제안 파일 이름이며, 브라우저가 변경할 수 있습니다.',
   'downloadFile.paramMimeType': '내용이 문자열일 때 사용하는 MIME 형식이며, Blob에는 적용되지 않습니다.',
   'downloadFile.returnsDesc': '반환값이 없으며, 이 함수는 파일 저장 여부를 확인하지 않습니다.',
+
+  'standardValidators.example1': '예제 1: 기본 사용법',
+  'standardValidators.example2': '예제 2: 고급 사용법',
+  'standardValidators.statusValid': '폼이 유효합니다.',
+  'standardValidators.statusInvalid': '폼에 유효성 검사 오류가 있습니다.',
+  'standardValidators.statusDisabled': '폼이 비활성화되었습니다.',
+  'standardValidators.disableForm': '폼 비활성화',
+  'standardValidators.enableForm': '폼 활성화',
+
+  'integerValidator.overview':
+    'integerValidator는 폼 컨트롤에서 안전한 정수만 허용합니다. 숫자와 부호가 있는 10진 정수 문자열은 유효합니다. 소수, 지수 표기법, 16진수 텍스트, 그리고 JavaScript가 암묵적으로 변환하는 값은 거부됩니다. 필수 입력란에는 Validators.required를 함께 사용하세요.',
+  'integerValidator.playgroundTitle': '복제본 수 검증',
+  'integerValidator.playgroundDescription': '정수를 입력하고 잘못된 값을 수정한 뒤 필드를 비웁니다.',
+  'integerValidator.firstLabel': '복제본 수',
+  'integerValidator.firstError': '정수를 입력하세요.',
+  'integerValidator.example1Desc':
+    '타입이 지정된 Reactive Forms 컨트롤에 검증기를 연결하고 invalidInteger 오류를 읽습니다.',
+  'integerValidator.example2Desc': '실제 배포 폼에서 required 및 min 규칙과 함께 사용합니다.',
+  'integerValidator.summary': '안전한 정수 또는 부호가 있는 10진 정수 문자열을 허용하는 ValidatorFn을 만듭니다.',
+  'integerValidator.returns':
+    '정수가 아닌 값에 invalidInteger 오류를 반환하고, 유효하거나 비어 있으면 null을 반환하는 ValidatorFn입니다.',
+
+  'jsonValidator.overview':
+    'jsonValidator는 폼 컨트롤에 문법적으로 올바른 JSON 텍스트가 있는지 확인합니다. 객체, 배열, JSON 기본값을 모두 허용하며 스키마 검증은 애플리케이션의 별도 작업입니다. Validators.required를 추가하지 않으면 빈 값은 유효합니다.',
+  'jsonValidator.playgroundTitle': 'JSON 페이로드 검증',
+  'jsonValidator.playgroundDescription': '올바른 JSON을 붙여넣고 문법을 깨뜨린 뒤 편집기를 비웁니다.',
+  'jsonValidator.firstLabel': 'JSON 페이로드',
+  'jsonValidator.firstError': '올바른 JSON 텍스트를 입력하세요.',
+  'jsonValidator.example1Desc': '텍스트 영역 컨트롤에 검증기를 연결하고 invalidJson 오류를 표시합니다.',
+  'jsonValidator.example2Desc': '모든 JSON 값 유형을 허용하고 필요할 때 구조 검사를 추가합니다.',
+  'jsonValidator.summary': 'JSON.parse로 문자열을 해석하고 문법 오류를 보고하는 ValidatorFn을 만듭니다.',
+  'jsonValidator.returns':
+    '잘못된 텍스트나 문자열이 아닌 값에 invalidJson 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator는 선택한 모든 파일 이름이 허용된 확장자로 끝나는지 확인합니다. FileList, 파일 배열, 단일 파일, 파일 이름 문자열을 허용하며 대소문자를 구분하지 않고 접미사를 비교합니다.',
+  'fileExtensionValidator.playgroundTitle': '업로드 검증',
+  'fileExtensionValidator.playgroundDescription': '.png 및 .jpg 파일을 입력하거나 선택한 뒤 다른 확장자도 시도합니다.',
+  'fileExtensionValidator.firstLabel': '파일 이름',
+  'fileExtensionValidator.secondLabel': '파일 선택',
+  'fileExtensionValidator.firstError': '.png 또는 .jpg 파일을 사용하세요.',
+  'fileExtensionValidator.example1Desc': '파일 이름 문자열을 검증하고 invalidFileExtension 오류를 읽습니다.',
+  'fileExtensionValidator.example2Desc': '실제 FileList를 검증하고 .tar.gz 같은 복합 접미사를 허용합니다.',
+  'fileExtensionValidator.summary': '파일 이름을 허용된 확장자 목록과 대조하는 ValidatorFn을 만듭니다.',
+  'fileExtensionValidator.paramFirst': '확장자 하나 또는 확장자 목록입니다. 앞의 점은 생략할 수 있습니다.',
+  'fileExtensionValidator.returns':
+    '파일 하나라도 실패하면 invalidFileExtension 오류를 반환하고, 모두 통과하면 null을 반환하는 ValidatorFn입니다.',
+
+  'sameValueValidator.overview':
+    'sameValueValidator는 두 컨트롤의 값이 같은지 확인하는 순수 그룹 검증기입니다. 불일치 오류가 그룹에 속하므로 자식 컨트롤의 required 및 minlength 오류가 보존됩니다.',
+  'sameValueValidator.playgroundTitle': '비밀번호 확인 검증',
+  'sameValueValidator.playgroundDescription': '같은 비밀번호를 입력하고 하나를 바꾼 뒤 필드를 비웁니다.',
+  'sameValueValidator.firstLabel': '비밀번호',
+  'sameValueValidator.secondLabel': '비밀번호 확인',
+  'sameValueValidator.groupError': '두 비밀번호가 일치하지 않습니다.',
+  'sameValueValidator.example1Desc': 'FormGroup에 검증기를 연결하고 그룹에서 valuesMismatch를 읽습니다.',
+  'sameValueValidator.example2Desc': 'PIN 확인 폼에 사용자 지정 컨트롤 이름을 사용합니다.',
+  'sameValueValidator.summary': '두 값을 엄격한 동등성으로 비교하는 FormGroup용 ValidatorFn을 만듭니다.',
+  'sameValueValidator.paramFirst': '값이 비교되는 첫 번째 컨트롤의 이름입니다.',
+  'sameValueValidator.paramSecond': '값이 비교되는 두 번째 컨트롤의 이름입니다.',
+  'sameValueValidator.returns':
+    '비어 있지 않은 두 값이 다르면 그룹에 valuesMismatch 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
+  'sameValueValidator.minLengthError': '8자 이상 입력하세요.',
 };

@@ -3108,4 +3108,75 @@ export const frTranslations: Record<string, string> = {
   'downloadFile.paramFileName': 'Nom de fichier suggéré non vide ; le navigateur peut l’ajuster.',
   'downloadFile.paramMimeType': 'Type MIME utilisé quand le contenu est une chaîne ; ignoré pour un Blob.',
   'downloadFile.returnsDesc': 'Aucune valeur de retour ; la fonction ne confirme pas l’enregistrement du fichier.',
+
+  'standardValidators.example1': 'Exemple 1 : utilisation de base',
+  'standardValidators.example2': 'Exemple 2 : utilisation avancée',
+  'standardValidators.statusValid': 'Le formulaire est valide.',
+  'standardValidators.statusInvalid': 'Le formulaire contient des erreurs de validation.',
+  'standardValidators.statusDisabled': 'Le formulaire est désactivé.',
+  'standardValidators.disableForm': 'Désactiver le formulaire',
+  'standardValidators.enableForm': 'Activer le formulaire',
+
+  'integerValidator.overview':
+    'integerValidator n’accepte que des entiers sûrs dans un contrôle de formulaire. Les nombres et les chaînes d’entiers décimaux signés sont valides ; les décimales, la notation exponentielle, le texte hexadécimal et les valeurs que JavaScript convertirait implicitement sont rejetés. Combinez-le avec Validators.required pour un champ obligatoire.',
+  'integerValidator.playgroundTitle': 'Valider un nombre de réplicas',
+  'integerValidator.playgroundDescription': 'Saisissez un entier, corrigez une valeur invalide, puis videz le champ.',
+  'integerValidator.firstLabel': 'Nombre de réplicas',
+  'integerValidator.firstError': 'Saisissez un nombre entier.',
+  'integerValidator.example1Desc':
+    'Attachez le validateur à un contrôle typé de Reactive Forms et lisez l’erreur invalidInteger.',
+  'integerValidator.example2Desc':
+    'Combinez le validateur avec les règles required et min dans un formulaire de déploiement réaliste.',
+  'integerValidator.summary':
+    'Crée une ValidatorFn qui accepte les entiers sûrs ou les chaînes d’entiers décimaux signés.',
+  'integerValidator.returns':
+    'Une ValidatorFn qui renvoie l’erreur invalidInteger pour une valeur non entière, ou null si la valeur est valide ou vide.',
+
+  'jsonValidator.overview':
+    'jsonValidator vérifie qu’un contrôle contient du texte JSON syntaxiquement valide. Objets, tableaux et primitives JSON sont acceptés ; la validation du schéma reste une tâche distincte de l’application. Les valeurs vides sont valides sauf si Validators.required est ajouté.',
+  'jsonValidator.playgroundTitle': 'Valider une charge JSON',
+  'jsonValidator.playgroundDescription': 'Collez un JSON valide, cassez la syntaxe, puis videz l’éditeur.',
+  'jsonValidator.firstLabel': 'Charge JSON',
+  'jsonValidator.firstError': 'Saisissez du texte JSON valide.',
+  'jsonValidator.example1Desc': 'Attachez le validateur à une zone de texte et affichez l’erreur invalidJson.',
+  'jsonValidator.example2Desc': 'Acceptez tout type de valeur JSON et ajoutez une vérification de forme si nécessaire.',
+  'jsonValidator.summary':
+    'Crée une ValidatorFn qui analyse une chaîne avec JSON.parse et signale les erreurs de syntaxe.',
+  'jsonValidator.returns':
+    'Une ValidatorFn qui renvoie l’erreur invalidJson pour un texte mal formé ou une valeur non textuelle, ou null sinon.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator vérifie que chaque nom de fichier sélectionné se termine par une extension autorisée. Il accepte un FileList, un tableau de fichiers, un fichier unique ou un nom de fichier sous forme de chaîne, et compare les suffixes sans tenir compte de la casse.',
+  'fileExtensionValidator.playgroundTitle': 'Valider un téléversement',
+  'fileExtensionValidator.playgroundDescription':
+    'Saisissez ou sélectionnez des fichiers .png et .jpg, puis essayez une autre extension.',
+  'fileExtensionValidator.firstLabel': 'Nom de fichier',
+  'fileExtensionValidator.secondLabel': 'Sélectionner des fichiers',
+  'fileExtensionValidator.firstError': 'Utilisez un fichier .png ou .jpg.',
+  'fileExtensionValidator.example1Desc': 'Validez un nom de fichier texte et lisez l’erreur invalidFileExtension.',
+  'fileExtensionValidator.example2Desc': 'Validez un vrai FileList et autorisez les suffixes composés comme .tar.gz.',
+  'fileExtensionValidator.summary':
+    'Crée une ValidatorFn qui compare les noms de fichiers à une liste d’extensions autorisées.',
+  'fileExtensionValidator.paramFirst': 'Une extension ou une liste d’extensions ; le point initial est facultatif.',
+  'fileExtensionValidator.returns':
+    'Une ValidatorFn qui renvoie l’erreur invalidFileExtension si un fichier échoue, ou null si tous passent.',
+
+  'sameValueValidator.overview':
+    'sameValueValidator est un validateur de groupe pur qui vérifie que deux contrôles contiennent la même valeur. L’erreur de discordance appartient au groupe, ce qui préserve les erreurs required et minlength des contrôles enfants.',
+  'sameValueValidator.playgroundTitle': 'Valider une confirmation de mot de passe',
+  'sameValueValidator.playgroundDescription':
+    'Saisissez deux mots de passe identiques, modifiez l’un, puis videz les champs.',
+  'sameValueValidator.firstLabel': 'Mot de passe',
+  'sameValueValidator.secondLabel': 'Confirmer le mot de passe',
+  'sameValueValidator.groupError': 'Les deux mots de passe ne correspondent pas.',
+  'sameValueValidator.example1Desc': 'Attachez le validateur à un FormGroup et lisez valuesMismatch sur le groupe.',
+  'sameValueValidator.example2Desc':
+    'Utilisez des noms de contrôles personnalisés pour un formulaire de confirmation de code PIN.',
+  'sameValueValidator.summary':
+    'Crée une ValidatorFn pour un FormGroup qui compare deux valeurs avec une égalité stricte.',
+  'sameValueValidator.paramFirst': 'Nom du premier contrôle dont la valeur est comparée.',
+  'sameValueValidator.paramSecond': 'Nom du deuxième contrôle dont la valeur est comparée.',
+  'sameValueValidator.returns':
+    'Une ValidatorFn qui renvoie l’erreur valuesMismatch sur le groupe quand deux valeurs non vides diffèrent, ou null sinon.',
+  'sameValueValidator.minLengthError': 'Utilisez au moins 8 caractères.',
 };

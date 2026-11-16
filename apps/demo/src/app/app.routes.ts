@@ -289,6 +289,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'file-extension',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/file-extension-validator/file-extension-validator.component').then(
+                (module) => module.FileExtensionValidatorComponent,
+              ),
+          },
+          {
             path: 'if',
             loadComponent: () =>
               import('./ngx-lib/pages/validators/if-validator/if-validator.component').then(
@@ -296,10 +303,31 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'integer',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/integer-validator/integer-validator.component').then(
+                (module) => module.IntegerValidatorComponent,
+              ),
+          },
+          {
             path: 'intersection',
             loadComponent: () =>
               import('./ngx-lib/pages/validators/intersection-validator/intersection-validator.component').then(
                 (module) => module.IntersectionValidatorComponent,
+              ),
+          },
+          {
+            path: 'json',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/json-validator/json-validator.component').then(
+                (module) => module.JsonValidatorComponent,
+              ),
+          },
+          {
+            path: 'same-value',
+            loadComponent: () =>
+              import('./ngx-lib/pages/validators/same-value-validator/same-value-validator.component').then(
+                (module) => module.SameValueValidatorComponent,
               ),
           },
           {

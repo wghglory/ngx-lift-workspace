@@ -61,8 +61,12 @@ export const ngxLiftNavConfig: NavConfig[] = [
     icon: 'certificate',
     children: [
       {path: '/date-range', value: 'dateRangeValidator'},
+      {path: '/file-extension', value: 'fileExtensionValidator'},
       {path: '/if', value: 'ifValidator / ifAsyncValidator'},
+      {path: '/integer', value: 'integerValidator'},
       {path: '/intersection', value: 'intersectionValidator'},
+      {path: '/json', value: 'jsonValidator'},
+      {path: '/same-value', value: 'sameValueValidator'},
       {path: '/unique', value: 'UniqueValidator'},
       {path: '/url', value: 'urlValidator'},
     ],

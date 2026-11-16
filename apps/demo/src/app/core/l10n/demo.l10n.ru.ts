@@ -3039,4 +3039,71 @@ export const ruTranslations: Record<string, string> = {
   'downloadFile.paramFileName': 'Непустое предлагаемое имя файла; браузер может изменить его.',
   'downloadFile.paramMimeType': 'MIME-тип для строкового содержимого; для Blob не используется.',
   'downloadFile.returnsDesc': 'Ничего не возвращает; функция не подтверждает сохранение файла.',
+
+  'standardValidators.example1': 'Пример 1: базовое использование',
+  'standardValidators.example2': 'Пример 2: расширенное использование',
+  'standardValidators.statusValid': 'Форма действительна.',
+  'standardValidators.statusInvalid': 'В форме есть ошибки проверки.',
+  'standardValidators.statusDisabled': 'Форма отключена.',
+  'standardValidators.disableForm': 'Отключить форму',
+  'standardValidators.enableForm': 'Включить форму',
+
+  'integerValidator.overview':
+    'integerValidator принимает в элементе формы только безопасные целые числа. Допустимы числа и строки с десятичными целыми числами со знаком; дробные значения, экспоненциальная запись, шестнадцатеричный текст и значения, которые JavaScript неявно привёл бы к числу, отклоняются. Для обязательного поля используйте Validators.required.',
+  'integerValidator.playgroundTitle': 'Проверить число реплик',
+  'integerValidator.playgroundDescription': 'Введите целое число, исправьте неверное значение, затем очистите поле.',
+  'integerValidator.firstLabel': 'Число реплик',
+  'integerValidator.firstError': 'Введите целое число.',
+  'integerValidator.example1Desc':
+    'Привяжите валидатор к типизированному элементу Reactive Forms и прочитайте ошибку invalidInteger.',
+  'integerValidator.example2Desc': 'Сочетайте валидатор с правилами required и min в реалистичной форме развёртывания.',
+  'integerValidator.summary':
+    'Создаёт ValidatorFn, принимающую безопасные целые числа или строки целых чисел со знаком.',
+  'integerValidator.returns':
+    'ValidatorFn, возвращающая ошибку invalidInteger для нецелого значения и null для допустимого или пустого значения.',
+
+  'jsonValidator.overview':
+    'jsonValidator проверяет, что элемент формы содержит синтаксически корректный JSON-текст. Допускаются объекты, массивы и примитивные значения JSON; проверка схемы остаётся отдельной задачей приложения. Пустые значения допустимы, если не добавлен Validators.required.',
+  'jsonValidator.playgroundTitle': 'Проверить JSON-полезную нагрузку',
+  'jsonValidator.playgroundDescription': 'Вставьте корректный JSON, нарушьте синтаксис, затем очистите поле.',
+  'jsonValidator.firstLabel': 'JSON-полезная нагрузка',
+  'jsonValidator.firstError': 'Введите корректный JSON-текст.',
+  'jsonValidator.example1Desc': 'Привяжите валидатор к текстовой области и покажите ошибку invalidJson.',
+  'jsonValidator.example2Desc': 'Принимайте значения JSON любого типа и при необходимости добавьте проверку структуры.',
+  'jsonValidator.summary':
+    'Создаёт ValidatorFn, разбирающую строку через JSON.parse и сообщающую о синтаксических ошибках.',
+  'jsonValidator.returns':
+    'ValidatorFn, возвращающая ошибку invalidJson для некорректного текста или нестроковых значений, иначе null.',
+
+  'fileExtensionValidator.overview':
+    'fileExtensionValidator проверяет, что каждое выбранное имя файла заканчивается разрешённым расширением. Принимает FileList, массив файлов, один файл или имя файла строкой и сравнивает суффиксы без учёта регистра.',
+  'fileExtensionValidator.playgroundTitle': 'Проверить загрузку файла',
+  'fileExtensionValidator.playgroundDescription':
+    'Введите или выберите файлы .png и .jpg, затем попробуйте другое расширение.',
+  'fileExtensionValidator.firstLabel': 'Имя файла',
+  'fileExtensionValidator.secondLabel': 'Выбрать файлы',
+  'fileExtensionValidator.firstError': 'Используйте файл .png или .jpg.',
+  'fileExtensionValidator.example1Desc': 'Проверьте имя файла как строку и прочитайте ошибку invalidFileExtension.',
+  'fileExtensionValidator.example2Desc':
+    'Проверьте реальный FileList и разрешите составные суффиксы, например .tar.gz.',
+  'fileExtensionValidator.summary': 'Создаёт ValidatorFn, сравнивающую имена файлов со списком разрешённых расширений.',
+  'fileExtensionValidator.paramFirst': 'Одно расширение или список расширений; точка в начале необязательна.',
+  'fileExtensionValidator.returns':
+    'ValidatorFn, возвращающая ошибку invalidFileExtension, если какой-либо файл не подходит, иначе null.',
+
+  'sameValueValidator.overview':
+    'sameValueValidator — чистый валидатор группы, проверяющий совпадение значений двух элементов. Ошибка несовпадения принадлежит группе, поэтому ошибки required и minlength дочерних элементов сохраняются.',
+  'sameValueValidator.playgroundTitle': 'Проверить подтверждение пароля',
+  'sameValueValidator.playgroundDescription': 'Введите одинаковые пароли, измените один, затем очистите поля.',
+  'sameValueValidator.firstLabel': 'Пароль',
+  'sameValueValidator.secondLabel': 'Подтверждение пароля',
+  'sameValueValidator.groupError': 'Пароли не совпадают.',
+  'sameValueValidator.example1Desc': 'Привяжите валидатор к FormGroup и прочитайте valuesMismatch у группы.',
+  'sameValueValidator.example2Desc': 'Используйте собственные имена элементов в форме подтверждения PIN-кода.',
+  'sameValueValidator.summary': 'Создаёт ValidatorFn для FormGroup, сравнивающую два значения строгим равенством.',
+  'sameValueValidator.paramFirst': 'Имя первого элемента управления, значение которого сравнивается.',
+  'sameValueValidator.paramSecond': 'Имя второго элемента управления, значение которого сравнивается.',
+  'sameValueValidator.returns':
+    'ValidatorFn, возвращающая ошибку valuesMismatch у группы, когда два непустых значения различаются, иначе null.',
+  'sameValueValidator.minLengthError': 'Используйте не менее 8 символов.',
 };
