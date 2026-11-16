@@ -11,9 +11,8 @@ description:
 
 Use the repository's [development workflow](../../../docs/design/component-development.md) as the canonical acceptance
 policy. The [component roadmap](../../../docs/component-roadmap.md) defines Angular 21 delivery and the deferred
-platform upgrade. Rejecting a proposal is a legitimate outcome of this skill and is reported in chat with evidence.
-The sequence is admission decision, then industry comparison, then spec, then spec PR and review, then implementation;
-"design spec first" means the spec precedes implementation, and a rejected API gets no spec at all.
+platform upgrade. The sequence is admission decision, then industry comparison, then spec, then spec PR and review,
+then implementation; "design spec first" means the spec precedes implementation.
 
 ## Admission gate
 
@@ -23,8 +22,8 @@ from current primary sources and the current codebase; note the check date and U
 row per symbol with the test result and a verdict: `Proceed to spec`, `Request consumer evidence`, or `Reject`.
 
 **Completion:** a written admission decision exists with one evidence line per symbol. A `Reject` verdict ends the
-skill here: report it in chat, open no spec and no implementation PR, and keep the rejected API out of every public
-barrel. Do not treat a demo or an implementation already in a PR as consumer evidence.
+skill here: report it in chat with the failing test, open no spec and no implementation PR, and keep the rejected API
+out of every public barrel.
 
 ## Industry comparison
 

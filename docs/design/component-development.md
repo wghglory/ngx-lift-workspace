@@ -6,11 +6,10 @@ evidence. Formatting-only work uses the existing spec without inventing a new on
 
 ## Design before implementation
 
-Use the [lift-design skill](../../.agents/skills/lift-design/SKILL.md) for the full sequence. Its
-[admission criteria](../../.agents/skills/lift-design/references/admission-criteria.md) decide whether a proposed API
-should exist; rejection is a valid outcome before any spec or implementation PR. Run that decision before step 1: a
-rejected API gets no spec, and an admitted API gets its spec before any implementation. The numbered steps below own the
-spec and delivery work; the gate is not an extra numbered step.
+Use the [lift-design skill](../../.agents/skills/lift-design/SKILL.md) for the full sequence and apply its
+[admission criteria](../../.agents/skills/lift-design/references/admission-criteria.md) before step 1. A rejected API
+gets no spec; an admitted API gets its spec before any implementation. The numbered steps below own the spec and
+delivery work; the gate is not an extra numbered step.
 
 1. Read the relevant spec and current code. When a spec is absent, create one from the
    [template](templates/component-design-spec.md); when behavior changes, update it first.

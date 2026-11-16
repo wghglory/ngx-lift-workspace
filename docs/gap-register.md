@@ -48,8 +48,8 @@ the source.
   repository owner URLs are the authoritative project identity, not internal company or product identifiers. No
   replacement identity, organization rename or URL migration is planned, so the naming-drift finding is closed rather
   than rewritten.
-- Local validation, CI, maintainer API approval, human acceptance, merge, deployment and publication remain separate
-  gates.
+- Gate definitions live in the [roadmap's acceptance boundaries](priority-roadmap.md#acceptance-boundaries); this
+  register records gaps, not gate status.
 
 ## Acceptance boundary
 

@@ -1,8 +1,8 @@
 # Active design and implementation gaps
 
 This register owns current design-contract gaps and delivery gates. The [delivery roadmap](../priority-roadmap.md) owns
-scheduling; package specifications own API behavior. Implementation, merge, publication and human acceptance remain
-separate gates.
+scheduling and [acceptance boundaries](../priority-roadmap.md#acceptance-boundaries); package specifications own API
+behavior.
 
 ## Alert trust contract
 
@@ -21,8 +21,9 @@ boundary. No blanket sanitizer or template migration is approved.
    async-work acceptance across every new value control. Review file-reader and wizard integration in the same sweep.
 4. Extend installed consumers when public form/proxy/overlay contracts change. The existing verifier exercises query
    lifecycles and selected imports; it does not prove every form-control integration or SSR/hydration.
-5. Keep automated checks, independent human language acceptance, manual assistive-technology decisions, CI, merge and
-   publication as separate evidence gates. See the [acceptance contract](../guides/accessibility-and-localization.md).
+5. Keep acceptance gates separate as defined by the
+   [roadmap's acceptance boundaries](../priority-roadmap.md#acceptance-boundaries) and the
+   [acceptance contract](../guides/accessibility-and-localization.md).
 
 Keep simple pure helpers, pipes and display shells documented through exported JSDoc, package usage and focused tests
 unless they acquire substantial state, asynchronous work, external resources or nontrivial compatibility policy.
