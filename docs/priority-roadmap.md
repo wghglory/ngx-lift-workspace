@@ -1,20 +1,26 @@
 # ngx-lift delivery priorities
 
-Updated 2026-11-14. The [component roadmap](component-roadmap.md) owns the component sequence and its maintainer
+Updated 2026-11-16. The [component roadmap](component-roadmap.md) owns the component sequence and its maintainer
 decisions. Angular 22 and the Nx major upgrade are deferred; native signal-field support follows that upgrade for every
 new value control. This roadmap owns current delivery priorities and acceptance boundaries; the
 [gap register](gap-register.md) owns the detailed backlog.
 
 ## Current priorities
 
-| Priority | Item                                                    | Status         | Remaining work                                                                                                                                                                |
-| -------- | ------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1        | Dependency security                                     | Partial        | Resolve remaining development-tool advisories and verify whole-tree advisory triage. Angular and Nx pins stay unchanged.                                                      |
-| 2        | Secondary entry points                                  | Measure first  | Compare installed-consumer bundles and optional-dependency boundaries before choosing splits such as `ngx-lift/query` or `clr-lift/certificate`.                              |
-| 3        | SSR/hydration                                           | Lower priority | Define request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency with dedicated consumers. Node DOM tests do not prove SSR/hydration. |
-| 4        | Large-collection scheduling and advanced cache features | Demand-driven  | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback need concrete consumers and ownership contracts.        |
-| 5        | Human documentation acceptance                          | Partial        | Newcomer comprehension remains an open human gate. Independent language approval for the 2026-11-12 UI strings was recorded on 2026-11-14 (PR #226).                          |
-| 6        | Angular 22 / Nx upgrade                                 | Deferred       | Deliver Angular 21 controls first; revisit in a separate platform PR with pinned versions, an installed-consumer matrix and native signal-field support.                      |
+| Priority | Item                                                    | Status         | Remaining work                                                                                                                                                                            |
+| -------- | ------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | Dependency security                                     | Verified       | Whole-tree advisory triage uses the official registry; one unfixable low-severity development advisory remains explicitly ignored. Angular 21.2.25 and Nx 22.7.10 patch pins are current. |
+| 2        | Secondary entry points                                  | Measure first  | Compare installed-consumer bundles and optional-dependency boundaries before choosing splits such as `ngx-lift/query` or `clr-lift/certificate`.                                          |
+| 3        | SSR/hydration                                           | Lower priority | Define request isolation, PendingTasks, cancellation/deadlines, server polling and hydration consistency with dedicated consumers. Node DOM tests do not prove SSR/hydration.             |
+| 4        | Large-collection scheduling and advanced cache features | Demand-driven  | Measure actual fan-out before a limiter; persistence, offline queues, infinite queries and shared optimistic rollback need concrete consumers and ownership contracts.                    |
+| 5        | Human documentation acceptance                          | Partial        | Newcomer comprehension remains an open human gate. Independent language approval for the 2026-11-12 UI strings was recorded on 2026-11-14 (PR #226).                                      |
+| 6        | Angular 22 / Nx upgrade                                 | Deferred       | Deliver Angular 21 controls first; revisit in a separate platform PR with pinned versions, an installed-consumer matrix and native signal-field support.                                  |
+
+Whole-tree advisory triage means auditing direct, development, optional and transitive packages resolved in
+`pnpm-lock.yaml`, then recording each finding as fixed, deferred or waived with its advisory ID and patched version. The
+previous mirror could not serve pnpm's bulk advisory endpoint; the official registry is now the default while the
+restricted-environment mirror remains commented for local opt-in. `GHSA-gcqx-w48m-w2h4` is ignored because the current
+tree has no patched version for that low-severity development dependency.
 
 ## Acceptance boundaries
 

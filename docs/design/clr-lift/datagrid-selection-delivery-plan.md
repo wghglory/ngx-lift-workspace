@@ -1,14 +1,11 @@
 # Datagrid selection delivery plan
 
-The native composition and selection exports are delivered in `ngx-lift 21.5.0` / `clr-lift 21.4.0`. This plan records
-the story sequence used for that delivery; it is not a schedule for remaining work.
-
-Start with the [short specification](datagrid-selection-design-spec.md),
-[complete consumer examples](datagrid-selection-code-examples.md) and
-[composition ADR](../../adr/0002-datagrid-selection-composition.md). The
-[detailed reference](datagrid-selection-reference.md) documents async, availability, reset and localization contracts.
-Current acceptance status lives in the [acceptance record](datagrid-selection-acceptance.md) and the
-[gap register](../../gap-register.md).
+This plan records the story sequence used for the delivered local exports; it is not a schedule for remaining work.
+Start with the [canonical contract](datagrid-selection-design-spec.md) and
+[complete consumer examples](datagrid-selection-code-examples.md). The
+[composition ADR](../../adr/0002-datagrid-selection-composition.md) owns the rendering decision, the
+[detailed reference](datagrid-selection-reference.md) documents async, availability, reset and localization contracts,
+and release history lives in [CHANGELOG](../../../CHANGELOG.md).
 
 ## Existing work and current checkpoint
 

@@ -23,6 +23,16 @@ import {TranslationService} from '../../services/translation.service';
 import {breadcrumbTranslations} from './breadcrumb.l10n';
 import {BreadcrumbItem, BreadcrumbLinkContext} from './breadcrumb.model';
 
+const BREADCRUMB_MESSAGE_KEYS = {
+  show: 'breadcrumb.show',
+  details: 'breadcrumb.details',
+  filter: 'breadcrumb.filter',
+  clear: 'breadcrumb.clear',
+  empty: 'breadcrumb.empty',
+  close: 'breadcrumb.close',
+  navigation: 'breadcrumb.navigation',
+} as const;
+
 // Per-application allocation also gives repeated server renders a deterministic initial sequence.
 const breadcrumbIds = new InjectionToken<{next: number}>('Breadcrumb IDs', {
   providedIn: 'root',
@@ -129,8 +139,8 @@ export class BreadcrumbComponent {
   private openPanel: HTMLElement | null = null;
   private frame: number | undefined;
   private focusFrame: number | undefined;
-  protected message(key: string): string {
-    return this.translation.translate('breadcrumb.' + key);
+  protected message(key: keyof typeof BREADCRUMB_MESSAGE_KEYS): string {
+    return this.translation.translate(BREADCRUMB_MESSAGE_KEYS[key]);
   }
 
   protected readonly navigationName = computed(() => {

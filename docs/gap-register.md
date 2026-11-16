@@ -1,6 +1,6 @@
 # Documentation and codebase gap register
 
-Updated 2026-11-14. This register owns current documentation and codebase gaps. Resolved delivery records belong to the
+Updated 2026-11-16. This register owns current documentation and codebase gaps. Resolved delivery records belong to the
 corresponding PR and CI artifacts, not here.
 
 Repeat the sweep with the project skill at `.agents/skills/find-repo-gaps/SKILL.md`. Its `scripts/collect-evidence.sh`
@@ -22,23 +22,20 @@ the source.
 
 ## Open and deferred gaps
 
-| ID   | Severity | Class             | Gap                                                                                                                                                                   | Owner and reason                                                                              |
-| ---- | -------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| G-36 | P2       | API drift         | `RangePipe` casts non-array input to a tuple and can throw from a template.                                                                                           | Library owner: guard with `Array.isArray` and add a regression.                               |
-| G-38 | P2       | Acceptance drift  | Dynamic translation keys bypass `tools/i18n/check-translations.mjs`; a few demo strings remain hardcoded.                                                             | Library owner: declare typed key maps and localize visible strings.                           |
-| G-39 | P2       | API drift         | Some exported helpers and test doubles lack colocated specs.                                                                                                          | Library owner: add focused specs or remove the exports.                                       |
-| G-40 | P2       | Decision          | `mutateResource` callback faults bypass the configurable query diagnostic hook.                                                                                       | Maintainer: decide whether to share the diagnostic channel, preserving callback isolation.    |
-| G-42 | P2       | Duplication drift | Several roadmap/plan documents and five `datagrid-selection-*` documents repeat status and contract text.                                                             | Docs owner: keep current status in this register and link to one canonical datagrid contract. |
-| G-43 | P2       | Evidence drift    | Several spec-level acceptance statements still describe staged human gates as historical snapshots.                                                                   | Docs owner: add short pointers to this register during the next spec edit.                    |
-| G-44 | P2       | Architecture      | The D1–D5 architecture deepening backlog remains open, starting with the localization registration seam D2. See [implementation gaps](design/implementation-gaps.md). | Architecture owner: schedule separately; no interface change is implied.                      |
-| G-45 | P2       | Dependency drift  | Whole-tree dependency advisory triage remains unverified; `.npmrc` still defaults to a mirror while isolated consumers explicitly use the official registry.          | Maintainer: resolve advisories and decide whether to make the mirror opt-in.                  |
-| G-46 | P2       | Gate drift        | `monitor-ci` and `nx-cloud-*` skills do not verify that Nx Cloud CIPE data is available for deploy/publish paths.                                                     | Skills owner: validate CIPE availability before relying on those skills for those workflows.  |
-| G-47 | P2       | Duplication drift | Deploy and publish workflows duplicate status icon/badge helpers and summary heredocs.                                                                                | CI owner: extract a shared mapping when both summaries are next edited.                       |
+| ID   | Severity | Class             | Gap                                                                                                                                                                   | Owner and reason                                                                             |
+| ---- | -------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| G-40 | P2       | Decision          | `mutateResource` callback faults bypass the configurable query diagnostic hook.                                                                                       | Maintainer: decide whether to share the diagnostic channel, preserving callback isolation.   |
+| G-44 | P2       | Architecture      | The D1–D5 architecture deepening backlog remains open, starting with the localization registration seam D2. See [implementation gaps](design/implementation-gaps.md). | Architecture owner: schedule separately; no interface change is implied.                     |
+| G-46 | P2       | Gate drift        | `monitor-ci` and `nx-cloud-*` skills do not verify that Nx Cloud CIPE data is available for deploy/publish paths.                                                     | Skills owner: validate CIPE availability before relying on those skills for those workflows. |
+| G-47 | P2       | Duplication drift | Deploy and publish workflows duplicate status icon/badge helpers and summary heredocs.                                                                                | CI owner: extract a shared mapping when both summaries are next edited.                      |
 
 ## Intentional decisions, not gaps
 
 - Angular 22 and the Nx major upgrade remain deferred; native signal-field support follows that upgrade for new value
   controls.
+- `Decision` (2026-11-16, maintainer): Angular and Nx patch pins moved to 21.2.25 and 22.7.10 to clear published
+  production and development advisories. Major versions stay deferred; the official registry is the default and the
+  restricted-environment mirror remains a documented local opt-in in `.npmrc`.
 - Both packages stay on 21.x; the approved 21.x compatibility exceptions remain documented in the
   [version policy](deployment.md#version-policy).
 - YAML viewer/editor work is paused; its draft spec is retained for future reference.

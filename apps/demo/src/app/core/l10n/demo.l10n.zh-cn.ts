@@ -560,6 +560,8 @@ export const zhCNTranslations: Record<string, string> = {
   'toSignalForm.clusterNameMinLength': '长度不能少于 4 个字符。',
   'toSignalForm.clusterNameHelper': '防抖 400ms 并异步校验保留名称 (如 prod-db, test-cluster 等)。',
   'toSignalForm.clusterNameChecking': '正在检查名称可用性... (防抖 400ms)',
+  'toSignalForm.clusterNameReserved': '集群名称“{0}”已被占用，请选择其他名称。',
+  'toSignalForm.clusterNameAvailable': '集群名称“{0}”可用！',
   'toSignalForm.autoScaling': '存储自动伸缩',
   'toSignalForm.autoScalingHelper': '启用后，手动存储输入将自动禁用并重置为 250 GB。',
   'toSignalForm.storageGb': '分配存储容量 (GB)',

@@ -25,6 +25,16 @@ import {AlertComponent} from '../alert/alert.component';
 import {queryDevtoolsTranslations} from './query-devtools.l10n';
 import {copyableJson, expandAllValueRows, valueRows, ValueRow} from './query-value-preview';
 
+const STATE_LABEL_KEYS = {
+  retrying: 'queryDevtools.retrying',
+  refreshing: 'queryDevtools.refreshing',
+  loading: 'queryDevtools.loading',
+  error: 'queryDevtools.error',
+  stale: 'queryDevtools.stale',
+  fresh: 'queryDevtools.fresh',
+  idle: 'queryDevtools.idle',
+} as const;
+
 let nextPanelId = 0;
 
 /**
@@ -133,7 +143,7 @@ export class QueryDevtoolsComponent {
         age,
         state,
         tagLabels: entry.tagMemberships.join(' '),
-        stateLabel: this.translationService.translate(`queryDevtools.${state}`),
+        stateLabel: this.translationService.translate(STATE_LABEL_KEYS[state]),
       };
     });
   });

@@ -602,6 +602,8 @@ export const ptBRTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Délay de 400ms e verificação assíncrona contra nomes reservados (prod-db, test-cluster, etc.).',
   'toSignalForm.clusterNameChecking': 'A verificar a disponibilidade para o nome... (debuuncted 400ms)',
+  'toSignalForm.clusterNameReserved': "O nome do cluster '{0}' já está reservado. Escolha outro.",
+  'toSignalForm.clusterNameAvailable': "O nome do cluster '{0}' está disponível!",
   'toSignalForm.autoScaling': 'Armazenagem Auto-escala',
   'toSignalForm.autoScalingHelper':
     'Quando ativado, a entrada de armazenamento manual é automaticamente desativa e reiniciar para 250 GB.',

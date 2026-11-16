@@ -1,4 +1,4 @@
-export const enTranslations: Record<string, string> = {
+export const enTranslations = {
   'selectionDemo.remove': 'Remove',
 
   'selectionDemo.selectedTitle': 'Selected organizations',
@@ -595,6 +595,8 @@ export const enTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Debounced 400ms & checked asynchronously against reserved names (prod-db, test-cluster, etc.).',
   'toSignalForm.clusterNameChecking': 'Checking name availability... (debounced 400ms)',
+  'toSignalForm.clusterNameReserved': "Cluster name '{0}' is already reserved. Please choose another.",
+  'toSignalForm.clusterNameAvailable': "Cluster name '{0}' is available!",
   'toSignalForm.autoScaling': 'Storage Auto-scaling',
   'toSignalForm.autoScalingHelper': 'When enabled, manual storage input is automatically disabled and reset to 250 GB.',
   'toSignalForm.storageGb': 'Allocated Storage (GB)',
@@ -3021,4 +3023,7 @@ export const enTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     'A ValidatorFn that returns the valuesMismatch error on the group when two non-empty values differ, or null otherwise.',
   'sameValueValidator.minLengthError': 'Use at least 8 characters.',
-};
+} as const satisfies Record<string, string>;
+
+/** Union of all demo translation keys, used to type dynamic key maps. */
+export type DemoTranslationKey = keyof typeof enTranslations;

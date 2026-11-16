@@ -558,6 +558,8 @@ export const zhTWTranslations: Record<string, string> = {
   'toSignalForm.clusterNameMinLength': '長度不能少於 4 個字元。',
   'toSignalForm.clusterNameHelper': '防抖 400ms 並非同步驗證保留名稱 (如 prod-db, test-cluster 等)。',
   'toSignalForm.clusterNameChecking': '正在檢查名稱可用性... (防抖 400ms)',
+  'toSignalForm.clusterNameReserved': '叢集名稱「{0}」已被佔用，請選擇其他名稱。',
+  'toSignalForm.clusterNameAvailable': '叢集名稱「{0}」可用！',
   'toSignalForm.autoScaling': '儲存自動調整',
   'toSignalForm.autoScalingHelper': '啟用後，手動儲存輸入將自動停用並重設為 250 GB。',
   'toSignalForm.storageGb': '配置儲存容量 (GB)',

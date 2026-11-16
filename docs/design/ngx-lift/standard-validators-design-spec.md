@@ -1,5 +1,8 @@
 # Standard Reactive Forms validators design specification
 
+Dated approvals below are historical evidence; current acceptance boundaries live in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
+
 Status: Approved — maintainer API approval recorded 2026-11-16 (implementation and CI complete). Owner: Derek Wang.
 Updated: 2026-11-16. Approval: granted for the four signatures, two supporting types and error keys in this pull
 request. Package: ngx-lift. The contract is approved for release; publication and the independent language review of the

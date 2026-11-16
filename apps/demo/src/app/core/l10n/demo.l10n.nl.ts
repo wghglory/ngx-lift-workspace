@@ -604,6 +604,8 @@ export const nlTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Debounced 400ms & asynchroon gecontroleerd op gereserveerde namen (prod-db, test-cluster, enz.).',
   'toSignalForm.clusterNameChecking': 'Beschikbaarheid van de naam controleren... (afgewezen 400ms)',
+  'toSignalForm.clusterNameReserved': "Clusternaam '{0}' is al gereserveerd. Kies een andere.",
+  'toSignalForm.clusterNameAvailable': "Clusternaam '{0}' is beschikbaar!",
   'toSignalForm.autoScaling': 'Automatisch schalen van opslag',
   'toSignalForm.autoScalingHelper':
     'Indien ingeschakeld wordt handmatige opslaginvoer automatisch uitgeschakeld en teruggezet naar 250 GB.',

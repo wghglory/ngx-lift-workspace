@@ -29,13 +29,16 @@ export class RangePipe implements PipeTransform {
    *   - `[number, number]`: The start and end values
    *   - `[number, number, number]`: The start, end, and step values
    *   - `[number, number, number, boolean]`: The start, end, step, and inclusive flag
-   * @returns An array of numbers within the specified range
+   * @returns An array of numbers within the specified range, or an empty array when the input is not an array.
    */
   transform(value: [number]): number[];
   transform(value: [number, number]): number[];
   transform(value: [number, number, number]): number[];
   transform(value: [number, number, number, boolean]): number[];
   transform(value: unknown): number[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
     const input = value as [number, number, number, boolean];
     return range(...input);
   }

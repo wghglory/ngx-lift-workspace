@@ -7,15 +7,25 @@ function sourceFile(file: string) {
   return ts.createSourceFile(path, readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true);
 }
 
+function staticObject(node: ts.Expression | undefined): ts.ObjectLiteralExpression | undefined {
+  if (!node) return undefined;
+  if (ts.isAsExpression(node) || ts.isSatisfiesExpression(node)) return staticObject(node.expression);
+  return ts.isObjectLiteralExpression(node) ? node : undefined;
+}
+
 export function dictionaryMessages(file: string, locale?: string): Record<string, string> {
   const source = sourceFile(file);
-  let dictionary = source.statements.find(ts.isVariableStatement)?.declarationList.declarations[0]?.initializer;
-  if (locale && dictionary && ts.isObjectLiteralExpression(dictionary))
-    dictionary = dictionary.properties.find(
-      (property): property is ts.PropertyAssignment =>
-        ts.isPropertyAssignment(property) && property.name.getText(source).replace(/['"]/g, '') === locale,
-    )?.initializer;
-  if (!dictionary || !ts.isObjectLiteralExpression(dictionary)) throw new Error(`Missing dictionary ${file} ${locale}`);
+  let dictionary = staticObject(
+    source.statements.find(ts.isVariableStatement)?.declarationList.declarations[0]?.initializer,
+  );
+  if (locale && dictionary)
+    dictionary = staticObject(
+      dictionary.properties.find(
+        (property): property is ts.PropertyAssignment =>
+          ts.isPropertyAssignment(property) && property.name.getText(source).replace(/['"]/g, '') === locale,
+      )?.initializer,
+    );
+  if (!dictionary) throw new Error(`Missing dictionary ${file} ${locale}`);
   return Object.fromEntries(
     dictionary.properties.map((property) => {
       if (!ts.isPropertyAssignment(property) || !ts.isStringLiteralLike(property.initializer))

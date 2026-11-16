@@ -1,11 +1,10 @@
 # Datagrid selection: detailed contracts and evidence
 
-Current decision: **one caller-written Clarity grid, approved October 29, 2026**. Start with the
-[short design](datagrid-selection-design-spec.md) and [complete consumer code](datagrid-selection-code-examples.md).
-This reference retains detailed use cases, async/edit/availability contracts and historical proof evidence; the
-historical two-renderer and column-candidate results do not certify the current native-grid proposal. The selection
-control and reusable-picker adapter are now exported locally; see the
-[current acceptance record](datagrid-selection-acceptance.md). Historical proof sections below remain historical.
+The [canonical contract](datagrid-selection-design-spec.md) owns the current API and the
+[acceptance contract](../../guides/accessibility-and-localization.md) owns current gate status. This reference retains
+detailed use cases, async/edit/availability contracts and historical proof evidence; the historical two-renderer and
+column-candidate results do not certify the current native-grid proposal. Historical proof sections below remain
+historical.
 
 ## Approved rendering revision, October 29, 2026
 
@@ -793,7 +792,7 @@ Then cover every approved use case in copyable playgrounds and focused tests:
 
 ## Compatibility, rollout, and risks
 
-The current workspace uses Angular 21.2.17 and installed Clarity 18.4.0. Existing broad package peers do not prove every
+The current workspace uses Angular 21.2.25 and installed Clarity 18.4.0. Existing broad package peers do not prove every
 older Clarity version supports the proposed bridge. Record a minimum supported Clarity version and installed evidence
 after API proof; do not silently narrow peers in this design draft.
 

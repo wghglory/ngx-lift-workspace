@@ -1,5 +1,8 @@
 # Design Specification: `mutateResource`
 
+Dated approvals below are historical evidence; current acceptance boundaries live in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
+
 Status: Implemented (contract audit + per-call outcome callbacks). Owner: ngx-lift maintainers. Updated: November
 5, 2026. Package: ngx-lift. Approval: existing API plus the October 16 maintainer request for consistent
 `invalidateTags` naming and domain-owned key/tag guidance, and the November 5 maintainer approval of per-call

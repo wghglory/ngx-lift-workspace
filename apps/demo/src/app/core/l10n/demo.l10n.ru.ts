@@ -601,6 +601,8 @@ export const ruTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Дебюнсированные 400 мс & асинхронно проверялись по зарезервированным названиям (прод-дб, испытательный блок и т.д.).',
   'toSignalForm.clusterNameChecking': 'Проверка наличия имени... (выпущено 400 мс)',
+  'toSignalForm.clusterNameReserved': "Имя кластера '{0}' уже зарезервировано. Выберите другое.",
+  'toSignalForm.clusterNameAvailable': "Имя кластера '{0}' доступно!",
   'toSignalForm.autoScaling': 'Автоматическое расширение',
   'toSignalForm.autoScalingHelper':
     'При включении ручное хранение автоматически отключается и перезапускается на 250 GB.',

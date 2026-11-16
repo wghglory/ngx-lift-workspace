@@ -18,7 +18,13 @@ import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {StateInspectorComponent} from '../../../../shared/components/state-inspector/state-inspector.component';
+import type {DemoTranslationKey} from '../../../../core/l10n/demo.l10n.en';
 import {highlight} from '../../../../shared/utils/highlight.util';
+
+const CLUSTER_NAME_KEYS = {
+  reserved: 'toSignalForm.clusterNameReserved',
+  available: 'toSignalForm.clusterNameAvailable',
+} as const satisfies Record<string, DemoTranslationKey>;
 
 export interface ClusterNameCheckResult {
   name: string;
@@ -368,13 +374,12 @@ export class ToSignalFormComponent {
     }
     const takenNames = ['prod-db', 'test-cluster', 'postgres-main', 'admin-db'];
     const isTaken = takenNames.includes(name.toLowerCase());
+    const messageKey = isTaken ? CLUSTER_NAME_KEYS.reserved : CLUSTER_NAME_KEYS.available;
 
     return of({
       name,
       available: !isTaken,
-      message: isTaken
-        ? `Cluster name "${name}" is already reserved. Please choose another.`
-        : `Cluster name "${name}" is available!`,
+      message: this.translationService.translate(messageKey, name),
     }).pipe(delay(600));
   });
 

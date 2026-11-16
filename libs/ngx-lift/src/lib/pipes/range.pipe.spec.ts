@@ -45,4 +45,8 @@ describe('RangePipe', () => {
     const result = pipe.transform([-5, 5, 2, true]);
     expect(result).toEqual([3, 1, -1, -3, -5]);
   });
+
+  it.each([undefined, null, 5, '5', {end: 5}])('should return an empty array for non-array input %p', (value) => {
+    expect(pipe.transform(value)).toEqual([]);
+  });
 });
