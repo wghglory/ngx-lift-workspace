@@ -1,8 +1,8 @@
 # Datagrid selection: complete consumer code
 
-Status: **delivered** in `ngx-lift 21.5.0` / `clr-lift 21.4.0`. Each grid owner directly projects a Clarity label and
-grid and loads its data with `queryResource`. There is no `gridTemplate`, column schema, cell/filter-template override
-API or custom label directive.
+The [canonical contract](datagrid-selection-design-spec.md) owns the API; release history lives in
+[CHANGELOG](../../../CHANGELOG.md). Each grid owner directly projects a Clarity label and grid and loads its data with
+`queryResource`. There is no `gridTemplate`, column schema, cell/filter-template override API or custom label directive.
 
 The examples below are complete consumer recipes; the demo adds interaction switches and a translated-text status filter
 for acceptance journeys. See the [acceptance record](datagrid-selection-acceptance.md) for current behavior and the

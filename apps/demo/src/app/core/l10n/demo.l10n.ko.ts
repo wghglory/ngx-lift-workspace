@@ -589,6 +589,8 @@ export const koTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     '400ms 디바운스 및 예약된 이름(예: prod-db, test-cluster 등)과의 비동기 검사가 수행됩니다.',
   'toSignalForm.clusterNameChecking': '이름 사용 가능 여부 확인 중... (400ms 디바운스)',
+  'toSignalForm.clusterNameReserved': "클러스터 이름 '{0}'은(는) 이미 예약되었습니다. 다른 이름을 선택하세요.",
+  'toSignalForm.clusterNameAvailable': "클러스터 이름 '{0}'은(는) 사용 가능합니다!",
   'toSignalForm.autoScaling': '저장소 자동 스케일링',
   'toSignalForm.autoScalingHelper': '활성화 시 수동 저장소 입력은 자동으로 비활성화되고 250 GB로 재설정됩니다.',
   'toSignalForm.storageGb': '할당된 저장소 (GB)',

@@ -1,5 +1,8 @@
 # Reactive Forms signals, bindings, and submission
 
+Dated approvals below are historical evidence; current acceptance boundaries live in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
+
 Status: Implemented (contract and demo follow-up). Owner: ngx-lift maintainers. Updated: November 12, 2026. Package:
 ngx-lift. Approval: the error-propagation contract is approved in the 2026-11-08 follow-up plan; a parallel `error`
 signal or an `onError` option remains out of scope.

@@ -591,6 +591,8 @@ export const jaTranslations: Record<string, string> = {
   'toSignalForm.clusterNameMinLength': '少なくとも4文字が必要です。',
   'toSignalForm.clusterNameHelper': '400msデバウンスで、予約された名前（prod-db、test-clusterなど）と異なります。',
   'toSignalForm.clusterNameChecking': '名前が利用可能かどうか確認中...（400msデバウンス）',
+  'toSignalForm.clusterNameReserved': 'クラスター名「{0}」は既に予約されています。別の名前を選択してください。',
+  'toSignalForm.clusterNameAvailable': 'クラスター名「{0}」は利用可能です。',
   'toSignalForm.autoScaling': 'ストレージ自動スケーリング',
   'toSignalForm.autoScalingHelper': '有効にすると、手動のストレージ入力は自動で無効になり、250GBにリセットされます。',
   'toSignalForm.storageGb': '割り当てたストレージ（GB）',

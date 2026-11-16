@@ -39,6 +39,19 @@ test('TypeScript AST ignores illustrative snippets but checks executable calls',
 test('does not mistake dynamic key prefixes for complete translation keys', () => {
   assert.deepEqual([...usedKeys("{{ ('certificate.' + property) | translate }}", 'fixture.html')], []);
 });
+test('validates literals in typed key maps and data-driven fields', () => {
+  const prefixes = new Set(['form']);
+  assert.deepEqual(
+    [
+      ...usedKeys(
+        "const KEYS = {ok: 'form.ok', bad: 'form.missing'} as const; const data = {i18nKey: 'form.title'};",
+        'fixture.ts',
+        {prefixes},
+      ),
+    ].sort(),
+    ['form.missing', 'form.ok', 'form.title'],
+  );
+});
 
 test('checks translated labels and visible messages in inline Angular component templates', () => {
   assert.deepEqual(

@@ -1,5 +1,8 @@
 # Query design and production contracts
 
+Dated approvals below are historical evidence; current acceptance boundaries live in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
+
 Status: Implemented (contract audit). Owner: ngx-lift maintainers. Updated: October 17, 2026. Package: ngx-lift.
 Approval: existing API plus the October 16 maintainer request for domain-owned key/tag guidance and consistent mutation
 `invalidateTags` naming. See the mutation spec for compatibility.

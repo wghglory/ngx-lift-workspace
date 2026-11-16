@@ -61,21 +61,19 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## Review status and maintenance
 
-[Datagrid selection](clr-lift/datagrid-selection-design-spec.md) supports one caller-written Clarity grid, with a
-required directly projected plain label, optional request alert above the grid, its own CVA, and reusable-picker form
-composition. The
-[complete queryResource/direct/picker/toSignalForm examples](clr-lift/datagrid-selection-code-examples.md),
-[detailed contracts/evidence](clr-lift/datagrid-selection-reference.md), and
-[delivery plan/story map](clr-lift/datagrid-selection-delivery-plan.md) describe the implemented local exports. The
-[acceptance record](clr-lift/datagrid-selection-acceptance.md) separates automated evidence from independent human
-acceptance, CI, merge and publication.
+The canonical datagrid contract is [datagrid selection](clr-lift/datagrid-selection-design-spec.md); its
+[complete examples](clr-lift/datagrid-selection-code-examples.md),
+[detailed reference](clr-lift/datagrid-selection-reference.md),
+[delivery plan](clr-lift/datagrid-selection-delivery-plan.md), and
+[acceptance record](clr-lift/datagrid-selection-acceptance.md) are supporting documents. The
+[acceptance contract](../guides/accessibility-and-localization.md) owns gate status and [CHANGELOG](../../CHANGELOG.md)
+owns release history; [active design gaps](implementation-gaps.md) records implementation gates.
 
-The [gap register](implementation-gaps.md) records the check of every preexisting spec, source evidence and prioritized
-implementation fixes. Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not
-implemented APIs. Specs use the shared template's required topics, retaining accurate legacy detail and explicitly
-marking inapplicable UI/forms concerns. The documentation learning briefs distinguish delivered demos from proposed
-destinations. Simple pure helpers/pipes stay in public JSDoc and focused tests unless their state, resource or
-compatibility contract warrants a separate spec.
+Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not implemented APIs. Specs
+use the shared template's required topics, retaining accurate legacy detail and explicitly marking inapplicable UI/forms
+concerns. The documentation learning briefs distinguish delivered demos from proposed destinations. Simple pure
+helpers/pipes stay in public JSDoc and focused tests unless their state, resource or compatibility contract warrants a
+separate spec.
 
 These documents define behavior, error handling, cancellation, lifetime and supported scope. Public signatures and
 regression tests remain in the libraries. Keep release changes in [CHANGELOG](../../CHANGELOG.md), publishing procedures

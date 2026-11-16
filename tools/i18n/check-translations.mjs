@@ -6,6 +6,15 @@ import {pathToFileURL} from 'node:url';
 import ts from 'typescript';
 import {parseTemplate} from '@angular/compiler';
 
+const KEY_PATTERN = /^[A-Za-z][\w-]*(?:\.[A-Za-z0-9][\w-]*)+$/;
+const keyPrefix = (key) => key.split('.')[0];
+function candidateKey(value, prefixes) {
+  return prefixes.size > 0 && KEY_PATTERN.test(value) && prefixes.has(keyPrefix(value));
+}
+function staticInitializer(node) {
+  if (ts.isAsExpression(node) || ts.isSatisfiesExpression(node)) return staticInitializer(node.expression);
+  return node;
+}
 export function dictionary(file) {
   const ast = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
   const declaration = ast.statements.find(ts.isVariableStatement)?.declarationList.declarations[0];
@@ -21,7 +30,7 @@ export function dictionary(file) {
     }
     return result;
   }
-  return value(declaration.initializer);
+  return value(staticInitializer(declaration.initializer));
 }
 function files(dir) {
   return readdirSync(dir, {withFileTypes: true}).flatMap((entry) =>
@@ -56,11 +65,20 @@ export function validateDictionary(english, translated, {complete = true} = {}) 
   for (const key of Object.keys(translated)) if (!Object.hasOwn(english, key)) errors.push(`Unknown key: ${key}`);
   return errors;
 }
-export function usedKeys(source, file) {
+export function usedKeys(source, file, {prefixes = new Set()} = {}) {
   const keys = new Set();
   if (file.endsWith('.ts')) {
     const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
-    const visit = (node) => {
+    const visit = (node, inKeyMap = false) => {
+      if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && /KEYS?|KEY_MAP/i.test(node.name.text))
+        inKeyMap = true;
+      if (
+        ts.isPropertyAssignment(node) &&
+        /Key$/i.test(node.name.getText(ast)) &&
+        ts.isStringLiteralLike(node.initializer) &&
+        candidateKey(node.initializer.text, prefixes)
+      )
+        keys.add(node.initializer.text);
       if (
         ts.isCallExpression(node) &&
         ts.isPropertyAccessExpression(node.expression) &&
@@ -83,7 +101,8 @@ export function usedKeys(source, file) {
             for (const key of usedKeys(property.initializer.text, `${file}.html`)) keys.add(key);
         }
       }
-      ts.forEachChild(node, visit);
+      if (inKeyMap && ts.isStringLiteralLike(node) && candidateKey(node.text, prefixes)) keys.add(node.text);
+      ts.forEachChild(node, (child) => visit(child, inKeyMap));
     };
     visit(ast);
   } else {
@@ -117,6 +136,7 @@ export function usedKeys(source, file) {
 export function checkWorkspace(root = process.cwd()) {
   const dir = join(root, 'apps/demo/src/app/core/l10n');
   const english = dictionary(join(dir, 'demo.l10n.en.ts'));
+  const demoPrefixes = new Set(Object.keys(english).map(keyPrefix));
   const errors = [],
     coverage = {};
   for (const file of files(dir).filter((file) => /demo\.l10n\..+\.ts$/.test(file))) {
@@ -134,7 +154,7 @@ export function checkWorkspace(root = process.cwd()) {
   for (const file of files(join(root, 'apps/demo/src/app')).filter(
     (file) => /\.(html|ts)$/.test(file) && !file.endsWith('.spec.ts') && !file.includes('/l10n/'),
   )) {
-    for (const key of usedKeys(readFileSync(file, 'utf8'), file))
+    for (const key of usedKeys(readFileSync(file, 'utf8'), file, {prefixes: demoPrefixes}))
       if (!Object.hasOwn(english, key)) errors.push(`${file}: missing English key ${key}`);
   }
   const libraryFiles = files(join(root, 'libs/clr-lift/src/lib'));
@@ -170,8 +190,9 @@ export function checkWorkspace(root = process.cwd()) {
     for (const namespace of registrations.get(name) ?? [])
       for (const key of Object.keys(locales.en)) libraryKeys.add([namespace, key].filter(Boolean).join('.'));
   }
+  const libraryPrefixes = new Set([...libraryKeys].map(keyPrefix));
   for (const file of libraryFiles.filter((file) => /\.(html|ts)$/.test(file) && !/\.(spec|l10n)\.ts$/.test(file))) {
-    for (const key of usedKeys(readFileSync(file, 'utf8'), file))
+    for (const key of usedKeys(readFileSync(file, 'utf8'), file, {prefixes: libraryPrefixes}))
       if (!libraryKeys.has(key)) errors.push(`${file}: missing library key ${key}`);
   }
   return {errors, coverage};

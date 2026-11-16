@@ -612,6 +612,8 @@ export const frTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Débloqué 400ms & vérifié asynchronement contre les noms réservés (prod-db, test-cluster, etc.).',
   'toSignalForm.clusterNameChecking': 'Vérifier la disponibilité des noms... (débloqué 400ms)',
+  'toSignalForm.clusterNameReserved': 'Le nom de cluster « {0} » est déjà réservé. Veuillez en choisir un autre.',
+  'toSignalForm.clusterNameAvailable': 'Le nom de cluster « {0} » est disponible !',
   'toSignalForm.autoScaling': 'Stockage Calibrage automatique',
   'toSignalForm.autoScalingHelper':
     "Lorsque activé, l'entrée de stockage manuel est automatiquement désactivée et réinitialisée à 250 GB.",

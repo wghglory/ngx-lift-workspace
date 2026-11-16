@@ -1,9 +1,9 @@
 # Datagrid selection implementation and acceptance
 
-The selection exports shipped in `ngx-lift 21.5.0` / `clr-lift 21.4.0`. This document records the delivered behavior and
-the acceptance boundaries. Language approval, the manual assistive-technology waiver, release and CI evidence are owned
-by the [acceptance contract](../../guides/accessibility-and-localization.md) and the
-[gap register](../../gap-register.md).
+This document records delivered behavior and acceptance boundaries. The
+[canonical contract](datagrid-selection-design-spec.md) owns the API; the
+[acceptance contract](../../guides/accessibility-and-localization.md) owns current gate status and evidence. Release
+history lives in [CHANGELOG](../../../CHANGELOG.md).
 
 ## Delivered behavior
 

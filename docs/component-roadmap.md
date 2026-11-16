@@ -1,6 +1,6 @@
 # Clarity component roadmap
 
-Updated 2026-11-14. This roadmap records the component sequence and maintainer decisions; it does not approve APIs or
+Updated 2026-11-16. This roadmap records the component sequence and maintainer decisions; it does not approve APIs or
 authorize implementation. Breadcrumb navigation, datagrid selection and the additive key/value control are delivered in
 `ngx-lift 21.5.0` / `clr-lift 21.4.0`. YAML viewer/editor work is paused; no API review or implementation is scheduled.
 The [delivery roadmap](priority-roadmap.md) owns release, security and acceptance work.
@@ -20,7 +20,7 @@ and remaining acceptance records remain independent.
 
 ## Current baseline
 
-- Workspace manifest: Angular 21.2.17, CDK 21.2.10, Nx and official Nx plugins 22.7.5, TypeScript 5.9.x.
+- Workspace manifest: Angular 21.2.25, CDK 21.2.10, Nx and official Nx plugins 22.7.10, TypeScript 5.9.x.
 - Installed Clarity 18.4.0 permits Angular/CDK `^21.1.0 || 22`; this is a peer declaration, not rendering evidence.
 - `ngx-lift` 21.5.0 and `clr-lift` 21.4.0 are published. Their broad Angular peers are not proof of Angular 22 support.
 - `toSignalForm(FormGroup)` exposes signals over Reactive Forms. It does not create an Angular Signal Forms `FieldTree`.

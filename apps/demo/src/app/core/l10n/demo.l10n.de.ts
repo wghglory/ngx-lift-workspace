@@ -612,6 +612,8 @@ export const deTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Debounced 400ms & asynchron mit reservierten Namen geprüft (prod-db, test-cluster, etc.).',
   'toSignalForm.clusterNameChecking': 'Name überprüfen Verfügbarkeit... (debounced 400ms)',
+  'toSignalForm.clusterNameReserved': 'Der Clustername „{0}“ ist bereits reserviert. Bitte wählen Sie einen anderen.',
+  'toSignalForm.clusterNameAvailable': 'Der Clustername „{0}“ ist verfügbar!',
   'toSignalForm.autoScaling': 'Auto-Skalierung speichern',
   'toSignalForm.autoScalingHelper':
     'Wenn aktiviert, wird die manuelle Speichereingabe automatisch deaktiviert und auf 250 GB zurückgesetzt.',

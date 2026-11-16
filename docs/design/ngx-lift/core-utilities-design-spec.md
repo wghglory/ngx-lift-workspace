@@ -1,5 +1,8 @@
 # Object path and file download utilities
 
+Dated approvals below are historical evidence; current acceptance boundaries live in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
+
 Status: Implemented; CI is green on `0c10110` and repeats on every push, while independent language approval remains an
 open human gate. The independent manual assistive-technology assessment was waived by the maintainer on 2026-11-10; that
 waiver is a decision, not a passed assessment. Owner: ngx-lift maintainers. Updated: 2026-11-15. Approval: maintainer

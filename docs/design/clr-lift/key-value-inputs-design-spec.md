@@ -1,5 +1,8 @@
 # Key/value inputs
 
+Dated approvals below are historical evidence; current acceptance boundaries live in the
+[acceptance contract](../../guides/accessibility-and-localization.md).
+
 Owner: clr-lift maintainers. Package: clr-lift. Updated October 24, 2026.
 
 Status: **October 24 review refinements implemented; current browser, demo-build and fresh-install gates incomplete**.

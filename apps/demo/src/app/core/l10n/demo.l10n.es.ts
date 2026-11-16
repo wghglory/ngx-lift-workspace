@@ -610,6 +610,8 @@ export const esTranslations: Record<string, string> = {
   'toSignalForm.clusterNameHelper':
     'Determinados 400ms se verificó asíncrónicamente contra nombres reservados (prod-db, test-cluster, etc.).',
   'toSignalForm.clusterNameChecking': 'Comprobando la disponibilidad de nombres... (desestimado 400ms)',
+  'toSignalForm.clusterNameReserved': "El nombre de clúster '{0}' ya está reservado. Elige otro.",
+  'toSignalForm.clusterNameAvailable': "¡El nombre de clúster '{0}' está disponible!",
   'toSignalForm.autoScaling': 'Autoescala de almacenamiento',
   'toSignalForm.autoScalingHelper':
     'Cuando está habilitado, la entrada de almacenamiento manual está automáticamente desactivada y reactiva a 250 GB.',
