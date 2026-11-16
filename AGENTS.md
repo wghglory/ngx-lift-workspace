@@ -29,12 +29,15 @@
 
 # Library and component design
 
-For a new or changed public component, utility, operator, directive, validator, or form integration, read
-[the component development workflow](docs/design/component-development.md) and use
-[the lift-design skill](.agents/skills/lift-design/SKILL.md). Create or update the design spec before implementation;
-present practical use cases and proposed API examples for maintainer review. Existing explicit approval remains valid
-for its scope. The workflow owns industry comparisons, form applicability, Clarity demos, localization and validation.
-Use the [component roadmap](docs/component-roadmap.md) for the Angular 21 delivery sequence and deferred platform work.
+For a new or changed public component, utility, operator, directive, pipe, validator, service, form integration, or
+entry point, read [the component development workflow](docs/design/component-development.md) and use
+[the lift-design skill](.agents/skills/lift-design/SKILL.md). Follow its admission gate, docs-only spec PR and
+[spec-review](.agents/skills/spec-review/SKILL.md) sequence; implement only within an explicitly approved scope, and
+existing approval remains valid for its scope. The workflow owns industry comparisons, form applicability, Clarity
+demos, localization and validation; see
+[admission criteria](.agents/skills/lift-design/references/admission-criteria.md) and
+[review aspects](.agents/skills/spec-review/references/review-aspects.md) for the two gates. Use the
+[component roadmap](docs/component-roadmap.md) for the Angular 21 delivery sequence and deferred platform work.
 
 ## Documentation language and examples
 
@@ -58,6 +61,10 @@ Record the alternatives and consumer evidence in the feature spec before adding 
 
 ## Agent skills
 
+Project design and gap skills live in `.agents/skills/` and are reached through the pointers in this file and
+`docs/README.md`. The `.github/skills/` and `.opencode/skills/` directories hold the Nx skills, and `.cursor/skills/`
+holds Cursor-only skills; those are client-specific sets and are not the canonical home for project design skills.
+
 ### Issue tracker
 
 Before reading or publishing issues and specs, read `docs/agents/issue-tracker.md`.
@@ -74,3 +81,10 @@ Use the single-context layout. Before domain exploration, read `docs/agents/doma
 
 Before a periodic docs/codebase gap sweep, post-release status refresh, or documentation drift check, read
 `.agents/skills/find-repo-gaps/SKILL.md` and current `docs/gap-register.md`.
+
+### Review aspects
+
+Before approving a public API spec, read `.agents/skills/spec-review/SKILL.md`. Code review covers an implementation
+diff; spec review covers admission, specification quality, contracts, language, evidence, and codebase gaps before code
+exists. Report evidence using the sections defined by the
+[acceptance contract](docs/guides/accessibility-and-localization.md).

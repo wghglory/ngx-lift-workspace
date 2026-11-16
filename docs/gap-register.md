@@ -28,7 +28,6 @@ the source.
 | G-38 | P2       | Acceptance drift  | Dynamic translation keys bypass `tools/i18n/check-translations.mjs`; a few demo strings remain hardcoded.                                                             | Library owner: declare typed key maps and localize visible strings.                           |
 | G-39 | P2       | API drift         | Some exported helpers and test doubles lack colocated specs.                                                                                                          | Library owner: add focused specs or remove the exports.                                       |
 | G-40 | P2       | Decision          | `mutateResource` callback faults bypass the configurable query diagnostic hook.                                                                                       | Maintainer: decide whether to share the diagnostic channel, preserving callback isolation.    |
-| G-41 | P2       | Status drift      | PRs #137–#141 and #134 remain open for independent review.                                                                                                            | Maintainer: rebase and review, or close with a recorded decision.                             |
 | G-42 | P2       | Duplication drift | Several roadmap/plan documents and five `datagrid-selection-*` documents repeat status and contract text.                                                             | Docs owner: keep current status in this register and link to one canonical datagrid contract. |
 | G-43 | P2       | Evidence drift    | Several spec-level acceptance statements still describe staged human gates as historical snapshots.                                                                   | Docs owner: add short pointers to this register during the next spec edit.                    |
 | G-44 | P2       | Architecture      | The D1–D5 architecture deepening backlog remains open, starting with the localization registration seam D2. See [implementation gaps](design/implementation-gaps.md). | Architecture owner: schedule separately; no interface change is implied.                      |
@@ -49,8 +48,8 @@ the source.
   repository owner URLs are the authoritative project identity, not internal company or product identifiers. No
   replacement identity, organization rename or URL migration is planned, so the naming-drift finding is closed rather
   than rewritten.
-- Local validation, CI, maintainer API approval, human acceptance, merge, deployment and publication remain separate
-  gates.
+- Gate definitions live in the [roadmap's acceptance boundaries](priority-roadmap.md#acceptance-boundaries); this
+  register records gaps, not gate status.
 
 ## Acceptance boundary
 
