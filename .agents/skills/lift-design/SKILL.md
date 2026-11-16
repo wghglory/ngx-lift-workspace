@@ -12,8 +12,10 @@ description:
 Use the repository's [development workflow](../../../docs/design/component-development.md) as the canonical acceptance
 policy. The [component roadmap](../../../docs/component-roadmap.md) defines Angular 21 delivery and the deferred
 platform upgrade. Rejecting a proposal is a legitimate outcome of this skill and is reported in chat with evidence.
+The sequence is admission decision, then industry comparison, then spec, then spec PR and review, then implementation;
+"design spec first" means the spec precedes implementation, and a rejected API gets no spec at all.
 
-## 1. Admission gate
+## Admission gate
 
 Before writing a spec, decide whether the proposed public API belongs in the project. Read
 [admission criteria](references/admission-criteria.md) and apply every test to every proposed symbol. Gather evidence
@@ -24,7 +26,7 @@ row per symbol with the test result and a verdict: `Proceed to spec`, `Request c
 skill here: report it in chat, open no spec and no implementation PR, and keep the rejected API out of every public
 barrel. Do not treat a demo or an implementation already in a PR as consumer evidence.
 
-## 2. Industry comparison
+## Industry comparison
 
 For admitted symbols, inspect current primary documentation and source: Clarity, Angular Material, NG-ZORRO, and the
 relevant React libraries; add RxJS/MDN/browser sources for headless helpers. Record concrete adopt/adapt/reject decisions
@@ -33,19 +35,19 @@ reject, not a feature.
 
 **Completion:** every admitted symbol has a source row naming what exists, what is missing, and the chosen decision.
 
-## 3. Author the spec
+## Author the spec
 
 Create or update the spec under `docs/design/ngx-lift/` or `docs/design/clr-lift/` using the
 [template](../../../docs/design/templates/component-design-spec.md). Preserve an existing canonical spec. Include the
 admission decision, goals, non-goals, acceptance use cases, minimal/advanced examples, failure states, compatibility,
-and the evidence from step 2. Keep proposed APIs visibly provisional until approved.
+and the evidence from the industry comparison. Keep proposed APIs visibly provisional until approved.
 
 Apply the [form contract](../../../docs/design/clr-lift/forms-compatibility-design-spec.md) to value controls. For
 display, navigation and utilities, explain the relevant integration instead of adding an artificial form value.
 
 **Completion:** the spec is reviewable and states the consumer, the industry gap, and every unresolved decision.
 
-## 4. Spec PR and review
+## Spec PR and review
 
 Open a docs-only PR for the spec and run the [spec review](../spec-review/SKILL.md) on it before any implementation.
 For a full docs/codebase drift sweep, read [find-repo-gaps](../find-repo-gaps/SKILL.md). Present the draft/API changes
@@ -54,11 +56,11 @@ design-only request, stop here.
 
 **Completion:** the spec PR link, the review findings, and the approval scope are recorded.
 
-## 5. Implement after approval
+## Implement after approval
 
 After approval, implement functional increments and satisfy the workflow's demos, localization, tests, accessibility,
 lifecycle, performance and installed-consumer gates. Update the spec with actual evidence and submit the implementation
-as a separate PR. Diff review of that PR is the built-in `code-review` pass, not a substitute for steps 1–4.
+as a separate PR. Diff review of that PR is the built-in `code-review` pass, not a substitute for the earlier sections.
 
 **Completion:** the approved scope is implemented with acceptance evidence; remaining external gates are reported.
 

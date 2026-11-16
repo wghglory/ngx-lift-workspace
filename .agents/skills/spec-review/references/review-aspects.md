@@ -16,7 +16,7 @@ record, or a primary-source URL with a check date.
 | Lifecycle and safety | Cancellation, disposal, SSR behavior, global side effects, and cleanup are specified. | Library code mutates global DOM state or depends on private APIs. |
 | Tests and demos | Unit/type/browser coverage, failure races, and an approved use case in the demo app are planned. | No plan for meaningful transitions, errors, and cleanup. |
 | Evidence separation | Automated checks, human language approval, and assistive-technology decisions are recorded separately. | A check or waiver is reported as human acceptance. |
-| Codebase gaps | Roadmap, changelog, gap register, and index claims match tracker, package, and source evidence. | A status, API, index, or duplication drift claim would mislead contributors. |
+| Codebase gaps | Roadmap, changelog, gap register, and index claims match tracker, package, and source evidence. Check current tracker state for every PR number in docs: a closed or merged PR described as open, pending, or under review is drift. Preserve dated historical records that describe only their own increment. | A status, API, index, stale-PR, or duplication drift claim would mislead contributors. |
 | Fit and sequence | The feature has a roadmap position and release/version decision; the spec revision is recorded. | No delivery position or approval scope is recorded. |
 
 ## Verdict rules

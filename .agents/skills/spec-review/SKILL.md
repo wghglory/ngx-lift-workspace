@@ -29,9 +29,9 @@ a historical snapshot is evidence of a past state, not a current claim.
 4. Report a single disposition: `Approve for implementation`, `Request changes`, or `Reject`. List blocking findings
    first, then non-blocking ones, each with an owner. **Completion:** the disposition names the exact approval scope and
    the conditions that must be met before implementation.
-5. Keep automated checks, independent human language acceptance, and manual assistive-technology decisions in separate
-   report sections. Record a waiver as a decision, never as a pass. **Completion:** no automated result is reported as
-   human acceptance.
+5. Apply the [acceptance contract](../../../docs/guides/accessibility-and-localization.md) to the review report: keep
+   automated checks, independent human language acceptance, and manual assistive-technology decisions in the separate
+   sections it defines. **Completion:** the report follows that contract's section and waiver rules.
 
 ## Boundaries
 

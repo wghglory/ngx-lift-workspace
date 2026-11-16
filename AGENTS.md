@@ -62,6 +62,10 @@ Record the alternatives and consumer evidence in the feature spec before adding 
 
 ## Agent skills
 
+Project design and gap skills live in `.agents/skills/` and are reached through the pointers in this file and
+`docs/README.md`. The `.github/skills/` and `.opencode/skills/` directories hold the Nx skills, and `.cursor/skills/`
+holds Cursor-only skills; those are client-specific sets and are not the canonical home for project design skills.
+
 ### Issue tracker
 
 Before reading or publishing issues and specs, read `docs/agents/issue-tracker.md`.
@@ -83,5 +87,5 @@ Before a periodic docs/codebase gap sweep, post-release status refresh, or docum
 
 Before approving a public API spec, read `.agents/skills/spec-review/SKILL.md`. Code review covers an implementation
 diff; spec review covers admission, specification quality, contracts, language, evidence, and codebase gaps before code
-exists. Keep automated checks, independent human language acceptance, and assistive-technology decisions in separate
-sections.
+exists. Report evidence using the sections defined by the
+[acceptance contract](docs/guides/accessibility-and-localization.md).

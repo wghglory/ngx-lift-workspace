@@ -8,7 +8,9 @@ evidence. Formatting-only work uses the existing spec without inventing a new on
 
 Use the [lift-design skill](../../.agents/skills/lift-design/SKILL.md) for the full sequence. Its
 [admission criteria](../../.agents/skills/lift-design/references/admission-criteria.md) decide whether a proposed API
-should exist; rejection is a valid outcome before any spec or implementation PR.
+should exist; rejection is a valid outcome before any spec or implementation PR. Run that decision before step 1: a
+rejected API gets no spec, and an admitted API gets its spec before any implementation. The numbered steps below own the
+spec and delivery work; the gate is not an extra numbered step.
 
 1. Read the relevant spec and current code. When a spec is absent, create one from the
    [template](templates/component-design-spec.md); when behavior changes, update it first.
@@ -40,7 +42,8 @@ pretending to be values; explain this in their specs. Utilities document the for
 Apply the [accessibility and language acceptance contract](../guides/accessibility-and-localization.md) to library and
 demo work, including AI-generated changes. Complete every supported dictionary as part of the feature increment; runtime
 English fallback does not satisfy delivery. Include visible text, accessible names/descriptions, validation,
-loading/error messages, and announcements. Keep automated evidence and independent human approval separate.
+loading/error messages, and announcements. The contract owns the report sections and waiver rules for evidence and human
+acceptance.
 
 Prefer native browser capabilities and existing supported dependencies. Justify each new runtime dependency against
 important approved use cases, including transitive cost, maintenance, licensing, installation and production
