@@ -31,6 +31,12 @@ describe('fileExtensionValidator', () => {
     expect(validate(validator, 'photo.png')).toBeNull();
   });
 
+  it('reads names from array entries and rejects blank names', () => {
+    expect(validate(validator, ['photo.png', file('notes.JPG')])).toBeNull();
+    expect(validate(validator, fileList('  photo.png', 'b.jpg'))).toBeNull();
+    expect(validate(validator, [file('  ')])).toEqual({invalidFileExtension: true});
+  });
+
   it('rejects the selection when any file has a disallowed extension', () => {
     expect(validate(validator, fileList('a.png', 'notes.txt'))).toEqual({invalidFileExtension: true});
     expect(validate(validator, 'notes.txt')).toEqual({invalidFileExtension: true});

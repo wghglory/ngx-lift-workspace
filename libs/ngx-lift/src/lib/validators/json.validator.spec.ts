@@ -32,8 +32,8 @@ describe('jsonValidator', () => {
   });
 
   it('rejects non-string non-empty values', () => {
-    expect(validate({enabled: true})).toEqual({invalidJson: true});
-    expect(validate(42)).toEqual({invalidJson: true});
-    expect(validate([])).toEqual({invalidJson: true});
+    for (const value of [{enabled: true}, 42, 0, false, NaN, Infinity, [], ['text']]) {
+      expect(validate(value), String(value)).toEqual({invalidJson: true});
+    }
   });
 });

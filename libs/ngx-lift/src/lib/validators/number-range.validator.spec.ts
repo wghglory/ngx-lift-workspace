@@ -32,6 +32,28 @@ describe('numberRangeValidator', () => {
     expect(numberRangeValidator('missing', 'max')(range(10, 5))).toBeNull();
   });
 
+  it('ignores disabled child controls instead of reporting an unfixable group error', () => {
+    const form = range(10, 5);
+    expect(form.errors).toEqual({minGreaterThanMax: true});
+
+    form.controls.max.disable();
+    expect(form.controls.max.value).toBe(5);
+    expect(form.value).toEqual({min: 10});
+    expect(form.errors).toBeNull();
+
+    form.controls.max.enable();
+    expect(form.errors).toEqual({minGreaterThanMax: true});
+
+    form.controls.min.disable();
+    expect(form.errors).toBeNull();
+
+    const initiallyDisabled = new FormGroup(
+      {min: new FormControl({value: 10, disabled: true}), max: new FormControl(5)},
+      {validators: [numberRangeValidator()]},
+    );
+    expect(initiallyDisabled.errors).toBeNull();
+  });
+
   it('supports custom control names', () => {
     const form = new FormGroup(
       {start: new FormControl(9), end: new FormControl(2)},

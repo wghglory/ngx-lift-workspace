@@ -49,6 +49,12 @@ test.describe('English validator journeys', () => {
     await input.blur();
     await expect(page.getByText(english['jsonValidator.firstError'])).toBeVisible();
     await expect(status).toContainText(english['standardValidators.statusInvalid']);
+
+    await input.fill('{"enabled": false}');
+    await input.blur();
+    await expect(page.getByText(english['jsonValidator.firstError'])).toBeHidden();
+    await expect(input).toHaveValue('{"enabled": false}');
+    await expect(status).toContainText(english['standardValidators.statusValid']);
     await expectAccessible(page, testInfo, 'main');
   });
 
@@ -74,13 +80,25 @@ test.describe('English validator journeys', () => {
       english['fileExtensionValidator.firstError'],
     );
 
+    const clear = page.getByTestId('file-extension-reset');
+    await clear.click();
+    await expect(files).toHaveValue('');
+    await expect(name).toHaveValue('');
+    await expect(page.getByTestId('file-extension-names')).toHaveCount(0);
+    await expect(page.getByTestId('file-extension-file-error')).toHaveCount(0);
+
+    await files.setInputFiles({name: 'photo.jpg', mimeType: 'image/jpeg', buffer: Buffer.from('image')});
+    await expect(page.getByTestId('file-extension-names')).toContainText('photo.jpg');
+
     const disable = page.getByTestId('file-extension-disable');
     const status = page.getByTestId('file-extension-status');
     await disable.focus();
     await disable.press('Enter');
     await expect(status).toContainText(english['standardValidators.statusDisabled']);
+    await expect(files).toBeDisabled();
     await disable.press('Enter');
     await expect(status).not.toContainText(english['standardValidators.statusDisabled']);
+    await expect(files).toBeEnabled();
     await expectAccessible(page, testInfo, 'main');
   });
 

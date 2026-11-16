@@ -23,9 +23,11 @@
         <div cds-layout="vertical gap:xs">
           <label for="file-extension-files">{{ 'fileExtensionValidator.secondLabel' | translate }}</label>
           <input
+            #fileInput
             id="file-extension-files"
             type="file"
             multiple
+            [disabled]="form.disabled"
             (change)="onFiles($event)"
             data-testid="file-extension-files"
           />
@@ -44,7 +46,12 @@
         </div>
 
         <div cds-layout="horizontal gap:sm wrap">
-          <button type="button" class="btn btn-sm btn-outline" (click)="reset()" data-testid="file-extension-reset">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline"
+            (click)="reset(fileInput)"
+            data-testid="file-extension-reset"
+          >
             {{ 'common.clear' | translate }}
           </button>
           <button

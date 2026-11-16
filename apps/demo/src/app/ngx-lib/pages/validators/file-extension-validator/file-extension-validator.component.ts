@@ -47,8 +47,16 @@ export class UploadFormComponent {
   });
 
   onFiles(event: Event): void {
+    if (this.form.disabled) {
+      return;
+    }
     const files = (event.target as HTMLInputElement).files;
     this.form.controls.files.setValue(files);
+  }
+
+  reset(fileInput: HTMLInputElement): void {
+    this.form.reset({fileName: '', files: null});
+    fileInput.value = '';
   }
 }`);
 
@@ -60,7 +68,8 @@ export class UploadFormComponent {
     <clr-control-error *clrIfError="'invalidFileExtension'">Use a .png or .jpg file</clr-control-error>
   </clr-input-container>
   <label for="files">Select files</label>
-  <input id="files" type="file" multiple (change)="onFiles($event)" />
+  <input #fileInput id="files" type="file" multiple [disabled]="form.disabled" (change)="onFiles($event)" />
+  <button type="button" (click)="reset(fileInput)">Clear</button>
 </form>`);
 
   readonly basicUsageCode = highlight(`import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -93,14 +102,20 @@ const backup = new FormGroup({
   }
 
   onFiles(event: Event): void {
+    if (this.form.disabled) {
+      return;
+    }
     const files = (event.target as HTMLInputElement).files;
     this.form.controls.files.setValue(files);
     this.selectedNames.set(Array.from(files ?? []).map((file) => file.name));
   }
 
-  reset(): void {
+  reset(fileInput?: HTMLInputElement): void {
     this.form.reset({fileName: '', files: null});
     this.selectedNames.set([]);
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   toggleDisabled(): void {

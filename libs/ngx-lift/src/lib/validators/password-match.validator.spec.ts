@@ -30,6 +30,30 @@ describe('passwordMatchValidator', () => {
     expect(formWith(1, 1).errors).toBeNull();
   });
 
+  it('ignores disabled child controls instead of reporting an unfixable group error', () => {
+    const form = formWith('secret', 'other');
+    expect(form.errors).toEqual({passwordMismatch: true});
+
+    form.controls.confirmPassword.disable();
+    expect(form.controls.confirmPassword.value).toBe('other');
+    expect(form.errors).toBeNull();
+
+    form.controls.confirmPassword.enable();
+    expect(form.errors).toEqual({passwordMismatch: true});
+
+    form.controls.password.disable();
+    expect(form.errors).toBeNull();
+
+    const initiallyDisabled = new FormGroup(
+      {
+        password: new FormControl('secret'),
+        confirmPassword: new FormControl({value: 'other', disabled: true}),
+      },
+      {validators: [passwordMatchValidator()]},
+    );
+    expect(initiallyDisabled.errors).toBeNull();
+  });
+
   it('supports custom control names and tolerates missing controls', () => {
     const form = new FormGroup(
       {pin: new FormControl('1234'), repeatPin: new FormControl('1235')},

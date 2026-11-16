@@ -1,7 +1,7 @@
 # Standard Reactive Forms validators design specification
 
 Status: Draft — API review pending (implementation complete, no approval recorded). Owner: Derek Wang. Updated:
-2026-11-15. Approval: pending; this pull request is the review surface for the five signatures and error keys. Package:
+2026-11-16. Approval: pending; this pull request is the review surface for the five signatures and error keys. Package:
 ngx-lift. The code exists on the branch so maintainers can evaluate it, but it is not an approved or released public
 contract; do not merge or publish it before the maintainer records approval.
 
@@ -112,7 +112,7 @@ access are sufficient; no DOM global is required at validation time.
 | Needs to accept JSON text                   | Distinguish JSON syntax from schema validation                           | `/ngx-lift/validators/json` (tutorial)                                         | Paste valid/invalid payloads; see `invalidJson`; complete runnable example            | Unit spec, E2E                                     |
 | Needs to constrain a file input             | Normalize extensions and handle a `FileList` or a name string            | `/ngx-lift/validators/file-extension` (how-to)                                 | Choose files, see the rejected name, compound-suffix example                          | Unit spec, E2E                                     |
 | Knows `FormGroup`; needs cross-field rules  | Understand group-level errors, purity and `form.hasError(...)`           | `/ngx-lift/validators/number-range` and `/password-match` (how-to + reference) | Two controls, live group error, reset, custom control-name example                    | Unit spec, E2E                                     |
-| Needs an exact signature or error key       | Look up defaults, empty-value behavior and error keys without a tutorial | API Reference section at the end of each page                                  | Signature code block and parameter/returns lists                                      | `documentation-standards.md`, example-format check |
+| Needs an exact signature or error key       | Look up defaults, empty-value behavior and error keys without a tutorial | API Reference section at the end of each page                                  | Signature code block, parameter list for factories with parameters, and returns list  | `documentation-standards.md`, example-format check |
 
 ## Public API and examples
 
@@ -206,13 +206,16 @@ these `ValidatorFn`s and is recorded as a non-goal here rather than claimed as s
   A whitespace-only string is not empty: `integerValidator` and `jsonValidator` reject it.
 - **Numeric parsing:** `validator-value.util.ts` is an internal, non-exported helper. `parseSafeInteger` accepts safe
   integers and signed decimal integer strings; `parseFiniteNumber` accepts finite numbers and decimal/exponential
-  strings. Hexadecimal strings, booleans, arrays, `NaN` and `Infinity` are never silently coerced to `0`.
+  strings. Surrounding whitespace on a numeric string is ignored, so `'  12  '` is an integer; a whitespace-only string
+  is not empty and is rejected. Hexadecimal strings, booleans, arrays, `NaN` and `Infinity` are never silently coerced
+  to `0`.
 - **File selection:** the validator reads only the `name` property. `FileList`, arrays, single files and single name
   strings are accepted; suffixes are lowercased, may be written with or without a leading dot, and may be compound
   (`.tar.gz`). An empty selection is valid. Configuration errors throw when the factory is called, so a broken
   configuration cannot ship as a validator that always fails.
-- **Group validators:** `group.get(name)` accepts nested paths. Missing controls, empty bounds and non-numeric values
-  produce `null`; the caller's other validators own those states.
+- **Group validators:** `group.get(name)` accepts nested paths. Missing or disabled controls, empty bounds and
+  non-numeric values produce `null`; the caller's other validators own those states. A disabled child keeps its own
+  value but is excluded from the group's value, so comparing it would leave an error the user cannot clear.
 - **Lifecycle, SSR and security:** no subscriptions, timers, globals, DOM APIs, network access or mutable module state.
   `FileList` is only a TypeScript type; no `File` constructor is invoked, so server-side rendering is safe. `JSON.parse`
   is used for syntax only and never evaluates input. No new runtime dependency is introduced.
@@ -225,18 +228,18 @@ supported dictionaries (`en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `n
 
 ### Message inventory
 
-| Category                         | Keys / source                                                                                                            | Rendered by                                     | Independent language review                  |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | -------------------------------------------- |
-| Section headings                 | `common.liveDemo`, `common.examples`, `common.apiReference`                                                              | `<h2>`                                          | pre-approved shared keys, no new strings     |
-| Example headings                 | `standardValidators.example1`, `standardValidators.example2`                                                             | `<h3>`                                          | pending (new strings)                        |
-| Page overviews, playground prose | `<ns>.overview`, `<ns>.playgroundTitle`, `<ns>.playgroundDescription`, `<ns>.example1Desc`, `<ns>.example2Desc`          | `<p>`, `app-demo-playground` inputs             | pending (new strings)                        |
-| Programmatic control labels      | `<ns>.firstLabel`, `<ns>.secondLabel` (group pages)                                                                      | `<label for>`                                   | pending (new strings)                        |
-| Required error                   | `common.required`                                                                                                        | `clr-control-error *clrIfError="'required'"`    | pre-approved shared key                      |
-| Validator errors                 | `<ns>.firstError`, `<ns>.groupError`, `passwordMatchValidator.minLengthError`                                            | `clr-control-error` and `role="status"` regions | pending (new strings)                        |
-| File selection errors and names  | `fileExtensionValidator.firstError`; file names are caller data                                                          | `role="status"` region and `<ul>`               | error text pending; names are not UI strings |
-| Status announcements             | `standardValidators.statusValid`, `.statusInvalid`, `.statusDisabled`                                                    | `<output aria-live="polite">`                   | pending (new strings)                        |
-| Action labels                    | `common.clear`, `standardValidators.disableForm`, `standardValidators.enableForm`                                        | `<button>`                                      | clear pre-approved; toggle labels pending    |
-| API reference prose              | `common.signature`, `common.parameters`, `common.returns`, `<ns>.summary`, `<ns>.paramFirst`, `.paramSecond`, `.returns` | `<h4>`, `<p>`, `<ul>`                           | pending (new strings)                        |
+| Category                         | Keys / source                                                                                                                                                              | Rendered by                                     | Independent language review                  |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------- |
+| Section headings                 | `common.liveDemo`, `common.examples`, `common.apiReference`                                                                                                                | `<h2>`                                          | pre-approved shared keys, no new strings     |
+| Example headings                 | `standardValidators.example1`, `standardValidators.example2`                                                                                                               | `<h3>`                                          | pending (new strings)                        |
+| Page overviews, playground prose | `<ns>.overview`, `<ns>.playgroundTitle`, `<ns>.playgroundDescription`, `<ns>.example1Desc`, `<ns>.example2Desc`                                                            | `<p>`, `app-demo-playground` inputs             | pending (new strings)                        |
+| Programmatic control labels      | `<ns>.firstLabel`, `<ns>.secondLabel` (group pages)                                                                                                                        | `<label for>`                                   | pending (new strings)                        |
+| Required error                   | `common.required`                                                                                                                                                          | `clr-control-error *clrIfError="'required'"`    | pre-approved shared key                      |
+| Validator errors                 | `<ns>.firstError`, `<ns>.groupError`, `passwordMatchValidator.minLengthError`                                                                                              | `clr-control-error` and `role="status"` regions | pending (new strings)                        |
+| File selection errors and names  | `fileExtensionValidator.firstError`; file names are caller data                                                                                                            | `role="status"` region and `<ul>`               | error text pending; names are not UI strings |
+| Status announcements             | `standardValidators.statusValid`, `.statusInvalid`, `.statusDisabled`                                                                                                      | `<output aria-live="polite">`                   | pending (new strings)                        |
+| Action labels                    | `common.clear`, `standardValidators.disableForm`, `standardValidators.enableForm`                                                                                          | `<button>`                                      | clear pre-approved; toggle labels pending    |
+| API reference prose              | `common.signature`, `common.parameters` (parameterized factories only), `common.returns`, `<ns>.summary`, `<ns>.paramFirst`, `.paramSecond` (where applicable), `.returns` | `<h4>`, `<p>`, `<ul>`                           | pending (new strings)                        |
 
 `<ns>` is one of `integerValidator`, `jsonValidator`, `fileExtensionValidator`, `numberRangeValidator`,
 `passwordMatchValidator`. Independent language reviewer: not yet assigned; approval date: not recorded. This is an open
@@ -250,6 +253,9 @@ gate, not a completed acceptance step.
 - Reset/clear and disable/enable actions are available on all five pages, with unit tests for the state changes; long
   translated labels are exercised by the 11-locale route-derived scans. Light/dark themes, narrow (390px) layouts, and
   runtime language switching are covered by the route-derived browser suites and the new E2E locale-switch test.
+- The file page also clears and disables its native `input[type=file]`. Reactive Forms does not bind file inputs, so a
+  reset without clearing the DOM value would keep the old selection visible and leave the input interactive while the
+  form is disabled. The clear and disabled states have unit and browser coverage.
 - The five pages intentionally repeat the same small form/state scaffolding; `documentation-standards.md` requires page
   structure to stay consistent, so no shared demo base class is introduced.
 - **Independent human acceptance:** automated dictionary, accessibility, keyboard and consumer checks are recorded in
@@ -300,13 +306,16 @@ Coverage thresholds stay at the three `vite.config.mts` values.
 | Strict integer/JSON/file parsing               | `Number()` coercion and `split('.').pop()`        | Strict; tests cover the coercion and compound-suffix traps         |
 
 Increments: (1) this specification and API proposal; (2) library implementation, unit tests and exports; (3) spec index,
-CHANGELOG, demo pages, routes, navigation and dictionaries; (4) browser E2E and the second review round. Evidence below
-is updated with actual results; planned checks are not evidence.
+CHANGELOG, demo pages, routes, navigation and dictionaries; (4) browser E2E and the second review round; (5) a third
+review follow-up covering disabled-child group semantics, the native file-input clear/disable flow, the public API
+documentation and the associated regression tests. Evidence below is updated with actual results; planned checks are not
+evidence.
 
 ## Evidence
 
 Scope: rebased branch `feat/form-validators` onto `main` (`fc114be`), full staged diff versus `main`, 2026-11-15. These
-are the recorded local results, not claimed CI results.
+are the recorded local results, not claimed CI results. The 2026-11-16 third-review follow-up results are recorded
+separately below.
 
 | Check                                                                      | Result                                                                                                                                              |
 | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -318,6 +327,23 @@ are the recorded local results, not claimed CI results.
 | `pnpm nx build ngx-lift`, `pnpm nx build demo --configuration=production`  | Pass                                                                                                                                                |
 | `pnpm nx run demo-e2e:e2e --args="src/standard-validators.spec.ts …"`      | Firefox: 7/7 passed (5 journeys, locale presets, runtime switch, `expectAccessible`). Chromium/WebKit: could not launch locally                     |
 | `pnpm run validate`                                                        | Not completed — blocked at `demo:build:production` by the environment `safe-delete` bulk-cleanup guard; re-running the build target alone succeeded |
+
+### Third review follow-up (2026-11-16)
+
+Scope: the follow-up diff on `feat/138-standard-validators` against `d9888cc`, covering disabled-child group semantics,
+the native file-input clear/disable flow, public API documentation, JSDoc tags and regression tests. Local results:
+`pnpm nx test ngx-lift` (59 files / 951 tests) and `pnpm nx test demo` (90 files / 343 tests) pass;
+`pnpm run format:check`, `pnpm run i18n:check`, `pnpm run typecheck`, `pnpm run lint`, `pnpm run test:tools`,
+`node tools/demo/format-examples.mjs`, `pnpm nx build ngx-lift`, `pnpm nx build demo --configuration=production`,
+`pnpm run bundle:check`, `pnpm run verify:packages` and `git diff --check` pass.
+
+`pnpm run validate` reached `test:coverage`: the container's `safe-delete` bulk-cleanup guard blocks removal of stale
+`coverage/` output, and after that output is moved aside unrelated timing-sensitive demo specs fail under coverage
+instrumentation. The same demo suite passes without coverage, and the coverage job is skipped on the PR path. Browser
+E2E cannot launch locally: Firefox now fails with a missing `libgtk-3.so.0`, while Chromium and WebKit remain
+unavailable (fontconfig), so the extended `standard-validators.spec.ts` assertions are CI gates. Nx Cloud remote cache
+is unavailable (organization disabled, HTTP 401); these are local results. Independent language review, manual
+assistive-technology assessment and maintainer API approval remain open gates.
 
 Limitations and open gates: Chromium and WebKit abort with `Fontconfig error: Cannot load default config file` and
 `FATAL: SkFontMgr_FontConfigInterface.cpp:163 Not implemented` in this container, so the three-browser matrix and the

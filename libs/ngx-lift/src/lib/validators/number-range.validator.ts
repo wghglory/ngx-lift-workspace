@@ -6,9 +6,11 @@ import {parseFiniteNumber} from './validator-value.util';
  * Creates a group validator that rejects a minimum value greater than its maximum value.
  *
  * Both values are parsed as finite numbers, so numeric strings from text inputs are compared as
- * well as numbers from `input[type=number]`. When either control is empty, non-numeric, or absent,
- * the validator returns `null` and leaves `Validators.required` and other rules to report those
- * states. Attach it to the `FormGroup`, not to an individual control.
+ * well as numbers from `input[type=number]`. When either control is empty, non-numeric, disabled,
+ * or absent, the validator returns `null` and leaves `Validators.required` and other rules to
+ * report those states. A disabled child keeps its own value but is excluded from the group's
+ * value, so comparing it would leave an error the user cannot clear. Attach it to the `FormGroup`,
+ * not to an individual control.
  *
  * The validator is pure: it returns `{minGreaterThanMax: true}` on the group and never calls
  * `setErrors` on child controls. Child controls therefore keep their own validity and errors;
@@ -38,7 +40,7 @@ export function numberRangeValidator(minControlName = 'min', maxControlName = 'm
     const minControl = group.get(minControlName);
     const maxControl = group.get(maxControlName);
 
-    if (!minControl || !maxControl) {
+    if (!minControl || !maxControl || minControl.disabled || maxControl.disabled) {
       return null;
     }
 

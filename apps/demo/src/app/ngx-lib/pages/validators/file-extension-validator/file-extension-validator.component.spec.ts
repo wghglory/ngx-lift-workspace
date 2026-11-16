@@ -43,21 +43,38 @@ describe('FileExtensionValidatorComponent', () => {
     expect(component.form.controls.files.hasError('invalidFileExtension')).toBe(true);
   });
 
-  it('resets both controls and clears the reported names', () => {
+  it('resets both controls, the reported names and the native file input', () => {
     component.onFiles({target: {files: {length: 1, 0: {name: 'photo.png'}}}} as unknown as Event);
     expect(component.selectedNames()).toEqual(['photo.png']);
-    component.reset();
+
+    const fileInput = {value: 'photo.png'} as HTMLInputElement;
+    component.reset(fileInput);
+    expect(fileInput.value).toBe('');
     expect(component.selectedNames()).toEqual([]);
     expect(component.form.controls.files.value).toBeNull();
   });
 
-  it('toggles the disabled state and re-enables the form', () => {
+  it('toggles the disabled state and disables the native file input', () => {
+    const fileInput = fixture.nativeElement.querySelector('#file-extension-files') as HTMLInputElement;
+
     component.toggleDisabled();
+    fixture.detectChanges();
     expect(component.isDisabled).toBe(true);
     expect(component.form.disabled).toBe(true);
+    expect(fileInput.disabled).toBe(true);
+
     component.toggleDisabled();
+    fixture.detectChanges();
     expect(component.isDisabled).toBe(false);
     expect(component.form.enabled).toBe(true);
+    expect(fileInput.disabled).toBe(false);
+  });
+
+  it('ignores file selection events while the form is disabled', () => {
+    component.toggleDisabled();
+    component.onFiles({target: {files: {length: 1, 0: {name: 'photo.png'}}}} as unknown as Event);
+    expect(component.selectedNames()).toEqual([]);
+    expect(component.form.controls.files.value).toBeNull();
   });
 
   it('documents runnable imports and the real error key', () => {

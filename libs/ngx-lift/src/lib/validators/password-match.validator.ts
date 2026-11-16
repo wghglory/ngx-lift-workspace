@@ -6,9 +6,11 @@ import {isEmptyControlValue} from './validator-value.util';
  * Creates a group validator that checks two controls hold the same value.
  *
  * Values are compared with strict equality and are not trimmed or normalized, so a trailing space
- * in either field is a mismatch. When either value is empty or a named control is absent, the
- * validator returns `null` and leaves `Validators.required` and other rules to report those
- * states. Attach it to the `FormGroup`, not to an individual control.
+ * in either field is a mismatch. When either value is empty, a named control is absent, or a named
+ * control is disabled, the validator returns `null` and leaves `Validators.required` and other
+ * rules to report those states. A disabled child keeps its own value but is excluded from the
+ * group's value, so comparing it would leave an error the user cannot clear. Attach it to the
+ * `FormGroup`, not to an individual control.
  *
  * The validator is pure: it returns `{passwordMismatch: true}` on the group and never calls
  * `setErrors` on child controls. Child controls therefore keep their own validity and errors;
@@ -43,6 +45,10 @@ export function passwordMatchValidator(
     const confirmPasswordControl = group.get(confirmPasswordControlName);
 
     if (!passwordControl || !confirmPasswordControl) {
+      return null;
+    }
+
+    if (passwordControl.disabled || confirmPasswordControl.disabled) {
       return null;
     }
 
