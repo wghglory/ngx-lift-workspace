@@ -42,14 +42,14 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## Proposed or paused contracts
 
-| Area                                     | Canonical draft                                                                   |
-| ---------------------------------------- | --------------------------------------------------------------------------------- |
-| Badges and labels                        | [Badges and labels](clr-lift/badge-design-spec.md)                                |
-| YAML viewer/editor (paused)              | [YAML editor](clr-lift/yaml-editor-design-spec.md)                                |
-| Temporal controls                        | [Temporal controls](clr-lift/temporal-controls-design-spec.md)                    |
-| Cascader and tree-select                 | [Hierarchical selection](clr-lift/hierarchical-selection-design-spec.md)          |
-| Drawer                                   | [Drawer](clr-lift/drawer-design-spec.md)                                          |
-| Standard validators (API review pending) | [Standard Reactive Forms validators](ngx-lift/standard-validators-design-spec.md) |
+| Area                           | Canonical draft                                                                   |
+| ------------------------------ | --------------------------------------------------------------------------------- |
+| Badges and labels              | [Badges and labels](clr-lift/badge-design-spec.md)                                |
+| YAML viewer/editor (paused)    | [YAML editor](clr-lift/yaml-editor-design-spec.md)                                |
+| Temporal controls              | [Temporal controls](clr-lift/temporal-controls-design-spec.md)                    |
+| Cascader and tree-select       | [Hierarchical selection](clr-lift/hierarchical-selection-design-spec.md)          |
+| Drawer                         | [Drawer](clr-lift/drawer-design-spec.md)                                          |
+| Standard validators (approved) | [Standard Reactive Forms validators](ngx-lift/standard-validators-design-spec.md) |
 
 ## Supporting research and demo notes
 

@@ -16,7 +16,7 @@ recorded for the affected releases.
   group, never calls `setErrors` on child controls, and ignores disabled child controls so that a disabled field cannot
   leave an unfixable group error. The [design specification](docs/design/ngx-lift/standard-validators-design-spec.md)
   records the API, the scope decisions from the PR #138 review, and the deferred proposals. Four localized demo pages
-  document the validators with working playgrounds. API approval is pending; this entry is not released.
+  document the validators with working playgrounds. API approval was recorded on 2026-11-16; this entry is not released.
 
 ## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-09
 

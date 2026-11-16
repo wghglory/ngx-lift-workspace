@@ -106,7 +106,7 @@ The four standard validators are pure `ValidatorFn` factories: they allow empty 
 message rendering to the application. The group validator reports its error on the group, never calls `setErrors` on
 child controls, and ignores disabled child controls. See the
 [design specification](../../docs/design/ngx-lift/standard-validators-design-spec.md) for the full contract. Maintainer
-API approval is pending, so these exports are not part of a release yet.
+API approval was recorded on 2026-11-16, but these exports are not part of a release yet.
 
 ### 🛠️ Utilities
 

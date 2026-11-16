@@ -1,9 +1,9 @@
 # Standard Reactive Forms validators design specification
 
-Status: Draft — API review pending (implementation complete, no approval recorded). Owner: Derek Wang. Updated:
-2026-11-16. Approval: pending; this pull request is the review surface for the four signatures and error keys. Package:
-ngx-lift. The code exists on the branch so maintainers can evaluate it, but it is not an approved or released public
-contract; do not merge or publish it before the maintainer records approval.
+Status: Approved — maintainer API approval recorded 2026-11-16 (implementation and CI complete). Owner: Derek Wang.
+Updated: 2026-11-16. Approval: granted for the four signatures, two supporting types and error keys in this pull
+request. Package: ngx-lift. The contract is approved for release; publication and the independent language review of the
+demo strings remain separate steps.
 
 ## Applicable contracts
 
@@ -136,7 +136,7 @@ Supporting types exported by `file-extension.validator.ts` (not factories, no er
 Both are part of the public surface and are listed in the CHANGELOG; they were added because `FileSelection` gives
 consumers a typed control value and because the validator reads only `name`.
 
-Minimal example (proposed until API approval; imports and setup are complete):
+Minimal example (imports and setup are complete):
 
 ```typescript
 import {Component} from '@angular/core';
@@ -287,7 +287,8 @@ Coverage thresholds stay at the three `vite.config.mts` values.
   non-closable `cll-alert` announced with `role="alert"` and an `aria-describedby` association on the confirmation
   control. `JSON.parse` accepts any JSON value, so schema checking remains the caller's job. Rollback is the removal of
   the four exports and demo routes, with no data or persisted state involved.
-- **Unresolved gate:** maintainer API approval for the four signatures and error keys. Owner: Derek Wang.
+- **API approval:** recorded by the maintainer on 2026-11-16 for the four signatures, two supporting types and error
+  keys. Owner: Derek Wang.
 
 ## Review decisions and delivery
 
@@ -341,8 +342,9 @@ the native file-input clear/disable flow, public API documentation, JSDoc tags a
 instrumentation. The same demo suite passes without coverage, and the coverage job is skipped on the PR path. Browser
 E2E cannot launch locally: Firefox now fails with a missing `libgtk-3.so.0`, while Chromium and WebKit remain
 unavailable (fontconfig), so the extended `standard-validators.spec.ts` assertions are CI gates. Nx Cloud remote cache
-is unavailable (organization disabled, HTTP 401); these are local results. Independent language review and maintainer
-API approval remain open gates; the 2026-11-10 maintainer waiver covers manual assistive-technology assessment.
+is unavailable (organization disabled, HTTP 401); these are local results. Independent language review remains an open
+gate; the 2026-11-10 maintainer waiver covers manual assistive-technology assessment. Maintainer API approval was
+recorded later on 2026-11-16 (see below).
 
 ### Fourth review follow-up (2026-11-16)
 
@@ -360,6 +362,14 @@ matrix remains a CI gate because Chromium and WebKit cannot launch locally (font
 Limitations and open gates: Chromium and WebKit abort with `Fontconfig error: Cannot load default config file` and
 `FATAL: SkFontMgr_FontConfigInterface.cpp:163 Not implemented` in this container, so the three-browser matrix and the
 route-derived `accessibility.spec.ts` / `localization-coverage.spec.ts` runs are CI gates, not local passes. Independent
-language review of the new strings, maintainer API approval, CI, merge and publication are separate gates; none is
-claimed as passed. The 2026-11-10 maintainer waiver covers manual assistive-technology assessment but does not cover
-these new strings.
+language review of the new strings, CI, merge and publication are separate gates; none is claimed as passed. The
+2026-11-10 maintainer waiver covers manual assistive-technology assessment but does not cover these new strings.
+Maintainer API approval was recorded later on 2026-11-16 (see below).
+
+### API approval (2026-11-16)
+
+The maintainer approved this specification, including the four validator factories (`integerValidator`, `jsonValidator`,
+`fileExtensionValidator`, `sameValueValidator`), the supporting types (`NamedFile`, `FileSelection`) and the error keys
+(`invalidInteger`, `invalidJson`, `invalidFileExtension`, `valuesMismatch`). The API is no longer a proposed contract;
+release and publication remain separate steps. Independent language review of the new demo strings is still an open
+gate, and the 2026-11-10 maintainer waiver continues to cover manual assistive-technology assessment only.
