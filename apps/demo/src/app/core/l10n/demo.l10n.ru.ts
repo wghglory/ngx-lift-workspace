@@ -3091,23 +3091,6 @@ export const ruTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'ValidatorFn, возвращающая ошибку invalidFileExtension, если какой-либо файл не подходит, иначе null.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator — чистый валидатор группы, отклоняющий минимум, превышающий максимум. Сравниваются числа и числовые строки; ошибка принадлежит группе, поэтому дочерние элементы сохраняют собственные ошибки.',
-  'numberRangeValidator.playgroundTitle': 'Проверить числовой диапазон',
-  'numberRangeValidator.playgroundDescription': 'Исправьте максимальное значение, затем очистите обе границы.',
-  'numberRangeValidator.firstLabel': 'Минимум',
-  'numberRangeValidator.secondLabel': 'Максимум',
-  'numberRangeValidator.groupError': 'Минимум не должен превышать максимум.',
-  'numberRangeValidator.example1Desc': 'Привяжите валидатор к FormGroup и прочитайте minGreaterThanMax у группы.',
-  'numberRangeValidator.example2Desc':
-    'Переименуйте оба элемента и позвольте правилам required сообщать о пустых границах.',
-  'numberRangeValidator.summary':
-    'Создаёт ValidatorFn для FormGroup, сравнивающую разобранные элементы минимума и максимума.',
-  'numberRangeValidator.paramFirst': 'Имя элемента минимума; по умолчанию min.',
-  'numberRangeValidator.paramSecond': 'Имя элемента максимума; по умолчанию max.',
-  'numberRangeValidator.returns':
-    'ValidatorFn, возвращающая ошибку minGreaterThanMax у группы, когда min больше max, иначе null.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator — чистый валидатор группы, проверяющий совпадение значений двух элементов. Ошибка несовпадения принадлежит группе, поэтому ошибки required и minlength дочерних элементов сохраняются.',
   'passwordMatchValidator.playgroundTitle': 'Проверить подтверждение пароля',

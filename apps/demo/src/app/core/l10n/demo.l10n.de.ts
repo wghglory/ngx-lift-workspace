@@ -3157,24 +3157,6 @@ export const deTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Eine ValidatorFn, die den Fehler invalidFileExtension zurückgibt, wenn eine Datei nicht passt, sonst null.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator ist ein reiner Gruppenvalidator, der ein Minimum größer als das Maximum ablehnt. Zahlen und numerische Zeichenfolgen werden verglichen; der Fehler gehört zur Gruppe, sodass untergeordnete Steuerelemente ihre eigenen Fehler behalten.',
-  'numberRangeValidator.playgroundTitle': 'Einen Zahlenbereich prüfen',
-  'numberRangeValidator.playgroundDescription': 'Korrigieren Sie den Maximalwert und leeren Sie dann beide Grenzen.',
-  'numberRangeValidator.firstLabel': 'Minimum',
-  'numberRangeValidator.secondLabel': 'Maximum',
-  'numberRangeValidator.groupError': 'Das Minimum darf das Maximum nicht überschreiten.',
-  'numberRangeValidator.example1Desc':
-    'Binden Sie den Validator an eine FormGroup und lesen Sie minGreaterThanMax von der Gruppe.',
-  'numberRangeValidator.example2Desc':
-    'Bennen Sie beide Steuerelemente um und lassen Sie required-Regeln fehlende Grenzen melden.',
-  'numberRangeValidator.summary':
-    'Erzeugt eine ValidatorFn für eine FormGroup, die die geparsten Minimum- und Maximum-Steuerelemente vergleicht.',
-  'numberRangeValidator.paramFirst': 'Name des Minimum-Steuerelements; Standard ist min.',
-  'numberRangeValidator.paramSecond': 'Name des Maximum-Steuerelements; Standard ist max.',
-  'numberRangeValidator.returns':
-    'Eine ValidatorFn, die bei min größer max den Fehler minGreaterThanMax auf der Gruppe zurückgibt, sonst null.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator ist ein reiner Gruppenvalidator, der prüft, ob zwei Steuerelemente denselben Wert enthalten. Der Fehler gehört zur Gruppe, sodass required- und minlength-Fehler der untergeordneten Steuerelemente erhalten bleiben.',
   'passwordMatchValidator.playgroundTitle': 'Eine Passwortbestätigung prüfen',

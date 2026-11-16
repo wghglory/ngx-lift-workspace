@@ -54,9 +54,30 @@ describe('PasswordMatchValidatorComponent', () => {
     expect(component.isDisabled).toBe(false);
   });
 
+  it('announces the group error once and associates it with the confirmation control', () => {
+    const confirmation = fixture.nativeElement.querySelector('#password-match-confirm') as HTMLInputElement;
+    const error = fixture.nativeElement.querySelector('#password-match-group-error') as HTMLElement;
+    expect(confirmation.getAttribute('aria-describedby')).toBeNull();
+    expect(error.querySelector('cll-alert')).toBeNull();
+
+    component.form.controls.password.setValue('secret123');
+    component.form.controls.confirmPassword.setValue('secret124');
+    fixture.detectChanges();
+    expect(error.querySelector('cll-alert')).not.toBeNull();
+    expect(confirmation.getAttribute('aria-describedby')).toBe('password-match-group-error');
+
+    component.form.controls.confirmPassword.setValue('secret123');
+    fixture.detectChanges();
+    expect(error.querySelector('cll-alert')).toBeNull();
+    expect(confirmation.getAttribute('aria-describedby')).toBeNull();
+  });
+
   it('documents runnable imports and the real error key', () => {
     expect(sourceText(component.firstTaskCode)).toContain("import {passwordMatchValidator} from 'ngx-lift';");
+    expect(sourceText(component.firstTaskCode)).toContain("import {AlertComponent} from 'clr-lift';");
     expect(sourceText(component.firstTaskHtml)).toContain('passwordMismatch');
+    expect(sourceText(component.firstTaskHtml)).toContain('<cll-alert');
+    expect(sourceText(component.firstTaskHtml)).toContain('aria-describedby');
     expect(sourceText(component.advancedCode)).toContain("passwordMatchValidator('pin', 'repeatPin')");
   });
 });

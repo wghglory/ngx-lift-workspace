@@ -324,13 +324,6 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'number-range',
-            loadComponent: () =>
-              import('./ngx-lib/pages/validators/number-range-validator/number-range-validator.component').then(
-                (module) => module.NumberRangeValidatorComponent,
-              ),
-          },
-          {
             path: 'password-match',
             loadComponent: () =>
               import('./ngx-lib/pages/validators/password-match-validator/password-match-validator.component').then(

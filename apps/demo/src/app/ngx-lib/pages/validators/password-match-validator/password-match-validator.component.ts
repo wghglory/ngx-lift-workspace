@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, TranslatePipe} from 'clr-lift';
 import {passwordMatchValidator} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -11,6 +11,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 @Component({
   selector: 'app-password-match-validator',
   imports: [
+    AlertComponent,
     ClarityModule,
     PageContainerComponent,
     ReactiveFormsModule,
@@ -33,11 +34,12 @@ export class PasswordMatchValidatorComponent {
   readonly firstTaskCode = highlight(`import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
+import {AlertComponent} from 'clr-lift';
 import {passwordMatchValidator} from 'ngx-lift';
 
 @Component({
   selector: 'app-credentials-form',
-  imports: [ClarityModule, ReactiveFormsModule],
+  imports: [AlertComponent, ClarityModule, ReactiveFormsModule],
   templateUrl: './credentials-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -60,12 +62,20 @@ export class CredentialsFormComponent {
   </clr-password-container>
   <clr-password-container>
     <label for="confirmPassword">Confirm password</label>
-    <input id="confirmPassword" type="password" clrPassword formControlName="confirmPassword" />
+    <input
+      id="confirmPassword"
+      type="password"
+      clrPassword
+      formControlName="confirmPassword"
+      [attr.aria-describedby]="form.hasError('passwordMismatch') ? 'mismatch-error' : null"
+    />
     <clr-control-error *clrIfError="'required'">Required</clr-control-error>
   </clr-password-container>
-  @if (form.hasError('passwordMismatch')) {
-    <p role="status" aria-live="polite">The two passwords do not match</p>
-  }
+  <div id="mismatch-error">
+    @if (form.hasError('passwordMismatch')) {
+      <cll-alert [alertType]="'danger'" [isSmall]="true" [closable]="false"> The two passwords do not match </cll-alert>
+    }
+  </div>
 </form>`);
 
   readonly basicUsageCode = highlight(`import {FormControl, FormGroup, Validators} from '@angular/forms';

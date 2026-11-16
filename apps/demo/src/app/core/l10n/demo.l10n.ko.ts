@@ -2953,21 +2953,6 @@ export const koTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     '파일 하나라도 실패하면 invalidFileExtension 오류를 반환하고, 모두 통과하면 null을 반환하는 ValidatorFn입니다.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator는 최솟값이 최댓값보다 큰 경우를 거부하는 순수 그룹 검증기입니다. 숫자와 숫자 문자열을 비교하며 오류가 그룹에 속하므로 자식 컨트롤은 자체 오류를 유지합니다.',
-  'numberRangeValidator.playgroundTitle': '숫자 범위 검증',
-  'numberRangeValidator.playgroundDescription': '최댓값을 수정한 뒤 두 경계를 모두 비웁니다.',
-  'numberRangeValidator.firstLabel': '최솟값',
-  'numberRangeValidator.secondLabel': '최댓값',
-  'numberRangeValidator.groupError': '최솟값은 최댓값을 초과할 수 없습니다.',
-  'numberRangeValidator.example1Desc': 'FormGroup에 검증기를 연결하고 그룹에서 minGreaterThanMax를 읽습니다.',
-  'numberRangeValidator.example2Desc': '두 컨트롤 이름을 바꾸고 누락된 경계는 required 규칙이 보고하도록 합니다.',
-  'numberRangeValidator.summary': '해석된 최솟값 및 최댓값 컨트롤을 비교하는 FormGroup용 ValidatorFn을 만듭니다.',
-  'numberRangeValidator.paramFirst': '최솟값 컨트롤의 이름이며 기본값은 min입니다.',
-  'numberRangeValidator.paramSecond': '최댓값 컨트롤의 이름이며 기본값은 max입니다.',
-  'numberRangeValidator.returns':
-    'min이 max보다 크면 그룹에 minGreaterThanMax 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator는 두 컨트롤의 값이 같은지 확인하는 순수 그룹 검증기입니다. 불일치 오류가 그룹에 속하므로 자식 컨트롤의 required 및 minlength 오류가 보존됩니다.',
   'passwordMatchValidator.playgroundTitle': '비밀번호 확인 검증',

@@ -66,7 +66,6 @@ export const ngxLiftNavConfig: NavConfig[] = [
       {path: '/integer', value: 'integerValidator'},
       {path: '/intersection', value: 'intersectionValidator'},
       {path: '/json', value: 'jsonValidator'},
-      {path: '/number-range', value: 'numberRangeValidator'},
       {path: '/password-match', value: 'passwordMatchValidator'},
       {path: '/unique', value: 'UniqueValidator'},
       {path: '/url', value: 'urlValidator'},

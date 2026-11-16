@@ -102,24 +102,6 @@ test.describe('English validator journeys', () => {
     await expectAccessible(page, testInfo, 'main');
   });
 
-  test('numberRangeValidator reports a group error and clears it after correction', async ({page}, testInfo) => {
-    await page.goto('/ngx-lift/validators/number-range');
-    const error = page.getByTestId('number-range-error');
-    const status = page.getByTestId('number-range-status');
-    const clear = page.getByRole('button', {name: english['common.clear'], exact: true});
-
-    await expect(error).toContainText(english['numberRangeValidator.groupError']);
-    await page.getByTestId('number-range-max').fill('20');
-    await expect(error).toBeEmpty();
-    await expect(status).toContainText(english['standardValidators.statusValid']);
-
-    await clear.focus();
-    await clear.press('Enter');
-    await expect(page.getByTestId('number-range-min')).toHaveValue('');
-    await expect(error).toBeEmpty();
-    await expectAccessible(page, testInfo, 'main');
-  });
-
   test('passwordMatchValidator keeps child errors independent of the group error', async ({page}, testInfo) => {
     await page.goto('/ngx-lift/validators/password-match');
     const password = page.getByTestId('password-match-password');
@@ -131,6 +113,8 @@ test.describe('English validator journeys', () => {
     await confirmation.fill('secret124');
     await confirmation.blur();
     await expect(error).toContainText(english['passwordMatchValidator.groupError']);
+    await expect(error.locator('cll-alert')).toBeVisible();
+    await expect(confirmation).toHaveAttribute('aria-describedby', 'password-match-group-error');
 
     await password.fill('short');
     await password.blur();
@@ -140,6 +124,7 @@ test.describe('English validator journeys', () => {
     await password.fill('secret123');
     await confirmation.fill('secret123');
     await expect(error).toBeEmpty();
+    expect(await confirmation.getAttribute('aria-describedby')).toBeNull();
     await expect(status).toContainText(english['standardValidators.statusValid']);
     await expectAccessible(page, testInfo, 'main');
   });
@@ -151,7 +136,6 @@ test('the new validator pages render translated messages after a language switch
     {route: '/ngx-lift/validators/integer', key: 'integerValidator.overview'},
     {route: '/ngx-lift/validators/json', key: 'jsonValidator.overview'},
     {route: '/ngx-lift/validators/file-extension', key: 'fileExtensionValidator.overview'},
-    {route: '/ngx-lift/validators/number-range', key: 'numberRangeValidator.overview'},
     {route: '/ngx-lift/validators/password-match', key: 'passwordMatchValidator.overview'},
   ];
   for (const {route, key} of pages) {

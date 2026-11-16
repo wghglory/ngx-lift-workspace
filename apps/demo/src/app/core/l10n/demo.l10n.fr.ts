@@ -3161,24 +3161,6 @@ export const frTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Une ValidatorFn qui renvoie l’erreur invalidFileExtension si un fichier échoue, ou null si tous passent.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator est un validateur de groupe pur qui rejette un minimum supérieur à son maximum. Les nombres et les chaînes numériques sont comparés, et l’erreur appartient au groupe : les contrôles enfants conservent donc leurs propres erreurs.',
-  'numberRangeValidator.playgroundTitle': 'Valider une plage numérique',
-  'numberRangeValidator.playgroundDescription': 'Corrigez la valeur maximale, puis videz les deux bornes.',
-  'numberRangeValidator.firstLabel': 'Minimum',
-  'numberRangeValidator.secondLabel': 'Maximum',
-  'numberRangeValidator.groupError': 'Le minimum ne doit pas dépasser le maximum.',
-  'numberRangeValidator.example1Desc':
-    'Attachez le validateur à un FormGroup et lisez minGreaterThanMax sur le groupe.',
-  'numberRangeValidator.example2Desc':
-    'Renommez les deux contrôles et laissez les règles required signaler les bornes manquantes.',
-  'numberRangeValidator.summary':
-    'Crée une ValidatorFn pour un FormGroup qui compare les contrôles minimum et maximum analysés.',
-  'numberRangeValidator.paramFirst': 'Nom du contrôle du minimum ; vaut min par défaut.',
-  'numberRangeValidator.paramSecond': 'Nom du contrôle du maximum ; vaut max par défaut.',
-  'numberRangeValidator.returns':
-    'Une ValidatorFn qui renvoie l’erreur minGreaterThanMax sur le groupe quand min dépasse max, ou null sinon.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator est un validateur de groupe pur qui vérifie que deux contrôles contiennent la même valeur. L’erreur de discordance appartient au groupe, ce qui préserve les erreurs required et minlength des contrôles enfants.',
   'passwordMatchValidator.playgroundTitle': 'Valider une confirmation de mot de passe',

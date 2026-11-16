@@ -3141,23 +3141,6 @@ export const esTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Una ValidatorFn que devuelve el error invalidFileExtension si algún archivo no cumple, o null si todos pasan.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator es un validador de grupo puro que rechaza un mínimo mayor que su máximo. Compara números y cadenas numéricas, y el error pertenece al grupo, por lo que los controles hijos conservan sus propios errores.',
-  'numberRangeValidator.playgroundTitle': 'Validar un rango numérico',
-  'numberRangeValidator.playgroundDescription': 'Corrige el valor máximo y después vacía ambos límites.',
-  'numberRangeValidator.firstLabel': 'Mínimo',
-  'numberRangeValidator.secondLabel': 'Máximo',
-  'numberRangeValidator.groupError': 'El mínimo no puede superar el máximo.',
-  'numberRangeValidator.example1Desc': 'Asocia el validador a un FormGroup y lee minGreaterThanMax desde el grupo.',
-  'numberRangeValidator.example2Desc':
-    'Renombra ambos controles y deja que las reglas required informen de los límites vacíos.',
-  'numberRangeValidator.summary':
-    'Crea una ValidatorFn para un FormGroup que compara los controles mínimo y máximo ya analizados.',
-  'numberRangeValidator.paramFirst': 'Nombre del control del mínimo; por defecto min.',
-  'numberRangeValidator.paramSecond': 'Nombre del control del máximo; por defecto max.',
-  'numberRangeValidator.returns':
-    'Una ValidatorFn que devuelve el error minGreaterThanMax en el grupo cuando min supera a max, o null en caso contrario.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator es un validador de grupo puro que comprueba que dos controles contienen el mismo valor. El error de discrepancia pertenece al grupo, por lo que se conservan los errores required y minlength de los controles hijos.',
   'passwordMatchValidator.playgroundTitle': 'Validar una confirmación de contraseña',

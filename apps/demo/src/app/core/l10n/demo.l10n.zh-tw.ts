@@ -2756,21 +2756,6 @@ export const zhTWTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     '回傳一個 ValidatorFn：任一檔案不合格時給出 invalidFileExtension 錯誤，否則回傳 null。',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator 是純函式群組驗證器，用來拒絕最小值大於最大值的情況。數值字串與數字都會比較，錯誤屬於表單群組，因此子控制項保留各自的錯誤。',
-  'numberRangeValidator.playgroundTitle': '驗證數值範圍',
-  'numberRangeValidator.playgroundDescription': '修正最大值，然後清空兩個邊界。',
-  'numberRangeValidator.firstLabel': '最小值',
-  'numberRangeValidator.secondLabel': '最大值',
-  'numberRangeValidator.groupError': '最小值不得大於最大值。',
-  'numberRangeValidator.example1Desc': '將驗證器附加到 FormGroup，並從表單群組讀取 minGreaterThanMax。',
-  'numberRangeValidator.example2Desc': '重新命名兩個控制項，並讓 required 規則回報缺少的邊界。',
-  'numberRangeValidator.summary': '建立一個用於 FormGroup 的 ValidatorFn，比較剖析後的最小值與最大值控制項。',
-  'numberRangeValidator.paramFirst': '最小值控制項的名稱；預設為 min。',
-  'numberRangeValidator.paramSecond': '最大值控制項的名稱；預設為 max。',
-  'numberRangeValidator.returns':
-    '回傳一個 ValidatorFn：最小值大於最大值時在表單群組給出 minGreaterThanMax 錯誤，否則回傳 null。',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator 是純函式群組驗證器，檢查兩個控制項的值是否相同。不相符錯誤屬於表單群組，因此子控制項上的 required 與 minlength 錯誤會保留。',
   'passwordMatchValidator.playgroundTitle': '驗證密碼確認',

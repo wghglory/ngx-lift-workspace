@@ -3005,22 +3005,6 @@ export const enTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'A ValidatorFn that returns the invalidFileExtension error when any file fails, or null when all files pass.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator is a pure group validator that rejects a minimum greater than its maximum. Numeric strings and numbers are compared, and the error belongs to the group so child controls keep their own errors.',
-  'numberRangeValidator.playgroundTitle': 'Validate a numeric range',
-  'numberRangeValidator.playgroundDescription': 'Correct the maximum value, then clear both bounds.',
-  'numberRangeValidator.firstLabel': 'Minimum',
-  'numberRangeValidator.secondLabel': 'Maximum',
-  'numberRangeValidator.groupError': 'The minimum must not exceed the maximum.',
-  'numberRangeValidator.example1Desc': 'Attach the validator to a FormGroup and read minGreaterThanMax from the group.',
-  'numberRangeValidator.example2Desc': 'Rename both controls and let required rules report missing bounds.',
-  'numberRangeValidator.summary':
-    'Creates a ValidatorFn for a FormGroup that compares the parsed minimum and maximum controls.',
-  'numberRangeValidator.paramFirst': 'Name of the minimum control; defaults to min.',
-  'numberRangeValidator.paramSecond': 'Name of the maximum control; defaults to max.',
-  'numberRangeValidator.returns':
-    'A ValidatorFn that returns the minGreaterThanMax error on the group when min is greater than max, or null otherwise.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator is a pure group validator that checks two controls hold the same value. The mismatch error belongs to the group, so required and minlength errors on the child controls are preserved.',
   'passwordMatchValidator.playgroundTitle': 'Validate a password confirmation',

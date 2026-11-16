@@ -2764,21 +2764,6 @@ export const zhCNTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     '返回一个 ValidatorFn：任一文件不合格时给出 invalidFileExtension 错误，否则返回 null。',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator 是纯函数式组校验器，用于拒绝最小值大于最大值的情况。数值字符串与数字都会被比较，错误属于表单组，因此子控件保留各自的错误。',
-  'numberRangeValidator.playgroundTitle': '校验数值范围',
-  'numberRangeValidator.playgroundDescription': '修正最大值，然后清空两个边界。',
-  'numberRangeValidator.firstLabel': '最小值',
-  'numberRangeValidator.secondLabel': '最大值',
-  'numberRangeValidator.groupError': '最小值不能大于最大值。',
-  'numberRangeValidator.example1Desc': '将校验器附加到 FormGroup，并从表单组读取 minGreaterThanMax。',
-  'numberRangeValidator.example2Desc': '重命名两个控件，并让 required 规则报告缺失的边界。',
-  'numberRangeValidator.summary': '创建一个用于 FormGroup 的 ValidatorFn，比较解析后的最小值与最大值控件。',
-  'numberRangeValidator.paramFirst': '最小值控件的名称；默认为 min。',
-  'numberRangeValidator.paramSecond': '最大值控件的名称；默认为 max。',
-  'numberRangeValidator.returns':
-    '返回一个 ValidatorFn：最小值大于最大值时在表单组上给出 minGreaterThanMax 错误，否则返回 null。',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator 是纯函数式组校验器，检查两个控件的值是否相同。不匹配错误属于表单组，因此子控件上的 required 和 minlength 错误会被保留。',
   'passwordMatchValidator.playgroundTitle': '校验密码确认',

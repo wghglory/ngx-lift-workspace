@@ -2992,23 +2992,6 @@ export const jaTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'いずれかのファイルが不合格なら invalidFileExtension エラーを返し、すべて合格なら null を返す ValidatorFn です。',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator は最小値が最大値を超えることを拒否する純粋なグループバリデータです。数値と数値文字列を比較し、エラーはグループに属するため子コントロールは独自のエラーを保持します。',
-  'numberRangeValidator.playgroundTitle': '数値範囲を検証する',
-  'numberRangeValidator.playgroundDescription': '最大値を修正し、両方の境界を空にします。',
-  'numberRangeValidator.firstLabel': '最小値',
-  'numberRangeValidator.secondLabel': '最大値',
-  'numberRangeValidator.groupError': '最小値は最大値を超えてはいけません。',
-  'numberRangeValidator.example1Desc':
-    'FormGroup にバリデータを設定し、グループから minGreaterThanMax を読み取ります。',
-  'numberRangeValidator.example2Desc': '両方のコントロール名を変更し、未入力の境界は required ルールに報告させます。',
-  'numberRangeValidator.summary':
-    '解析済みの最小値・最大値コントロールを比較する FormGroup 用の ValidatorFn を作成します。',
-  'numberRangeValidator.paramFirst': '最小値コントロールの名前。既定値は min です。',
-  'numberRangeValidator.paramSecond': '最大値コントロールの名前。既定値は max です。',
-  'numberRangeValidator.returns':
-    'min が max を超える場合にグループへ minGreaterThanMax エラーを返し、それ以外は null を返す ValidatorFn です。',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator は 2 つのコントロールの値が同じか確認する純粋なグループバリデータです。不一致エラーはグループに属するため、子コントロールの required や minlength のエラーは保持されます。',
   'passwordMatchValidator.playgroundTitle': 'パスワード確認を検証する',

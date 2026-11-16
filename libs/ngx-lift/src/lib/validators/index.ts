@@ -3,7 +3,6 @@ export * from './file-extension.validator';
 export * from './integer.validator';
 export * from './intersection.validator';
 export * from './json.validator';
-export * from './number-range.validator';
 export * from './password-match.validator';
 export * from './unique.validator';
 export * from './url.validator';

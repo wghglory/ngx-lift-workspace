@@ -99,13 +99,12 @@ installed version; source changes under Unreleased are not yet on npm.
 - **`integerValidator`** - Accepts only safe integers (`invalidInteger`)
 - **`jsonValidator`** - Validates JSON text syntax (`invalidJson`)
 - **`fileExtensionValidator`** - Checks selected file names against allowed suffixes (`invalidFileExtension`)
-- **`numberRangeValidator`** - Reports `minGreaterThanMax` on a `FormGroup` when the parsed minimum exceeds the maximum
 - **`passwordMatchValidator`** - Reports `passwordMismatch` on a `FormGroup` when two values differ
 - **`NamedFile` / `FileSelection`** - Structural file shape and typed control value for `fileExtensionValidator`
 
-The five standard validators are pure `ValidatorFn` factories: they allow empty values, return one error key and leave
-message rendering to the application. The two group validators report errors on the group, never call `setErrors` on
-child controls, and ignore disabled child controls. See the
+The four standard validators are pure `ValidatorFn` factories: they allow empty values, return one error key and leave
+message rendering to the application. The group validator reports its error on the group, never calls `setErrors` on
+child controls, and ignores disabled child controls. See the
 [design specification](../../docs/design/ngx-lift/standard-validators-design-spec.md) for the full contract. Maintainer
 API approval is pending, so these exports are not part of a release yet.
 

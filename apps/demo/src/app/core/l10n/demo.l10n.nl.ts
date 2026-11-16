@@ -3114,23 +3114,6 @@ export const nlTranslations: Record<string, string> = {
   'fileExtensionValidator.returns':
     'Een ValidatorFn die de fout invalidFileExtension teruggeeft zodra een bestand faalt, of null als alle bestanden slagen.',
 
-  'numberRangeValidator.overview':
-    'numberRangeValidator is een zuivere groepsvalidator die een minimum groter dan het maximum weigert. Getallen en numerieke tekenreeksen worden vergeleken en de fout hoort bij de groep, zodat onderliggende besturingselementen hun eigen fouten behouden.',
-  'numberRangeValidator.playgroundTitle': 'Een numeriek bereik valideren',
-  'numberRangeValidator.playgroundDescription': 'Corrigeer de maximumwaarde en maak daarna beide grenzen leeg.',
-  'numberRangeValidator.firstLabel': 'Minimum',
-  'numberRangeValidator.secondLabel': 'Maximum',
-  'numberRangeValidator.groupError': 'Het minimum mag het maximum niet overschrijden.',
-  'numberRangeValidator.example1Desc': 'Koppel de validator aan een FormGroup en lees minGreaterThanMax van de groep.',
-  'numberRangeValidator.example2Desc':
-    'Hernoem beide besturingselementen en laat required-regels ontbrekende grenzen melden.',
-  'numberRangeValidator.summary':
-    'Maakt een ValidatorFn voor een FormGroup die de ontlede minimum- en maximumbesturingselementen vergelijkt.',
-  'numberRangeValidator.paramFirst': 'Naam van het minimumbesturingselement; standaard min.',
-  'numberRangeValidator.paramSecond': 'Naam van het maximumbesturingselement; standaard max.',
-  'numberRangeValidator.returns':
-    'Een ValidatorFn die de fout minGreaterThanMax op de groep teruggeeft als min groter is dan max, en anders null.',
-
   'passwordMatchValidator.overview':
     'passwordMatchValidator is een zuivere groepsvalidator die controleert of twee besturingselementen dezelfde waarde bevatten. De mismatchfout hoort bij de groep, zodat required- en minlength-fouten op onderliggende elementen behouden blijven.',
   'passwordMatchValidator.playgroundTitle': 'Een wachtwoordbevestiging valideren',
