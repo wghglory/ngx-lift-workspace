@@ -29,12 +29,16 @@
 
 # Library and component design
 
-For a new or changed public component, utility, operator, directive, validator, or form integration, read
-[the component development workflow](docs/design/component-development.md) and use
-[the lift-design skill](.agents/skills/lift-design/SKILL.md). Create or update the design spec before implementation;
-present practical use cases and proposed API examples for maintainer review. Existing explicit approval remains valid
-for its scope. The workflow owns industry comparisons, form applicability, Clarity demos, localization and validation.
-Use the [component roadmap](docs/component-roadmap.md) for the Angular 21 delivery sequence and deferred platform work.
+For a new or changed public component, utility, operator, directive, pipe, validator, service, form integration, or
+entry point, read [the component development workflow](docs/design/component-development.md) and use
+[the lift-design skill](.agents/skills/lift-design/SKILL.md). Its admission gate decides whether the API should exist
+using [admission criteria](.agents/skills/lift-design/references/admission-criteria.md); rejection is a valid outcome
+before any spec or implementation PR. Create or update the design spec, then open a docs-only spec PR and review it with
+[the spec-review skill](.agents/skills/spec-review/SKILL.md) across
+[review aspects](.agents/skills/spec-review/references/review-aspects.md) and codebase gaps. Implement only within an
+explicitly approved scope; existing approval remains valid for its scope. The workflow owns industry comparisons, form
+applicability, Clarity demos, localization and validation. Use the [component roadmap](docs/component-roadmap.md) for
+the Angular 21 delivery sequence and deferred platform work.
 
 ## Documentation language and examples
 
@@ -74,3 +78,10 @@ Use the single-context layout. Before domain exploration, read `docs/agents/doma
 
 Before a periodic docs/codebase gap sweep, post-release status refresh, or documentation drift check, read
 `.agents/skills/find-repo-gaps/SKILL.md` and current `docs/gap-register.md`.
+
+### Review aspects
+
+Before approving a public API spec, read `.agents/skills/spec-review/SKILL.md`. Code review covers an implementation
+diff; spec review covers admission, specification quality, contracts, language, evidence, and codebase gaps before code
+exists. Keep automated checks, independent human language acceptance, and assistive-technology decisions in separate
+sections.

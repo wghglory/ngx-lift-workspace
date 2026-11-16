@@ -12,8 +12,6 @@ inline buttons/links without templates. Document developer-owned markup and text
 values; inspect unsafe callers individually. Existing inline-button, nested and scoped-click tests remain the acceptance
 boundary. No blanket sanitizer or template migration is approved.
 
-PRs #137–#141 and #134 remain open for independent review; see the [gap register](../gap-register.md).
-
 ## Delivery gates still open
 
 1. Review each proposed component API before implementation; the Angular 21-first policy does not approve selectors.

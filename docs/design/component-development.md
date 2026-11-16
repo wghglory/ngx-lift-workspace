@@ -1,10 +1,14 @@
 # Component and utility development workflow
 
 This policy applies to new public tools/components and changes to existing public behavior in ngx-lift and clr-lift. It
-records the maintainer's October 15, 2026 direction. Formatting-only work uses the existing spec without inventing a new
-one.
+records the maintainer's October 15, 2026 direction and the November 16, 2026 decision to gate new APIs on admission
+evidence. Formatting-only work uses the existing spec without inventing a new one.
 
 ## Design before implementation
+
+Use the [lift-design skill](../../.agents/skills/lift-design/SKILL.md) for the full sequence. Its
+[admission criteria](../../.agents/skills/lift-design/references/admission-criteria.md) decide whether a proposed API
+should exist; rejection is a valid outcome before any spec or implementation PR.
 
 1. Read the relevant spec and current code. When a spec is absent, create one from the
    [template](templates/component-design-spec.md); when behavior changes, update it first.
@@ -14,8 +18,11 @@ one.
    progressive learning path), minimal and advanced API examples, errors, and compatibility. Select additional contracts
    by behavior (forms, UI, async, shared cache), not by package. Keep proposed APIs visibly provisional. Show what the
    consumer imports, binds, and submits.
-4. Present the spec/API changes for maintainer review. Implement after approval for that scope; existing explicit
-   approval remains valid. A material new behavior or breaking API requires review of the updated proposal.
+4. Open a docs-only PR for the spec/API changes and review it with the
+   [spec-review skill](../../.agents/skills/spec-review/SKILL.md) across
+   [review aspects](../../.agents/skills/spec-review/references/review-aspects.md) and codebase gaps. Implement after
+   maintainer approval for that scope; existing explicit approval remains valid. A material new behavior or breaking API
+   requires review of the updated proposal.
 5. Deliver small functional increments. Update the approved spec with final behavior and evidence.
 
 ## Form applicability
