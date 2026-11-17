@@ -83,7 +83,7 @@
                 <tr>
                   <td>{{ source }}</td>
                   <td>
-                    @if (combinedRowsQuery.value()?.failedSources.includes(source)) {
+                    @if (isCombinedSourceFailed(source)) {
                       <span class="label label-danger" role="alert">{{ 'common.failed' | translate }}</span>
                     } @else {
                       <span>{{ combinedRowValue(source) ?? '-' }}</span>

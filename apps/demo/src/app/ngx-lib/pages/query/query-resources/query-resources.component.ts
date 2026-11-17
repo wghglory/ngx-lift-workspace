@@ -204,6 +204,10 @@ export class QueryResourcesDemoComponent {
       ),
   }));
 
+  isCombinedSourceFailed(source: string): boolean {
+    return this.combinedRowsQuery.value()?.failedSources.includes(source) ?? false;
+  }
+
   combinedRowValue(source: string): number | undefined {
     return this.combinedRowsQuery.value()?.rows.find((row) => row.id === source)?.value;
   }
