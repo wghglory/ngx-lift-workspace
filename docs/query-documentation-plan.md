@@ -29,12 +29,6 @@ Use short excerpts only when clearly labeled, with complete compiled examples av
 same source/template in the beginner preview and code display. Local fixtures simulate latency and errors; identify that
 substitution and explain production HTTP setup. Avoid fresh/stale/inactive as a single mandatory sequence.
 
-## Delivery increments
-
-1. Correct standards/template applicability, documentation outcomes and factual spec errors.
-2. Add query/mutation starters, reorder pages, and introduce guide destinations/navigation with supported translations.
-3. Verify examples through compilation and browser interactions; check reference links, languages and narrow screens.
-
 ## Acceptance and evidence
 
 - First query/mutation playground appears before matrices, detailed comparisons or domain architecture.
