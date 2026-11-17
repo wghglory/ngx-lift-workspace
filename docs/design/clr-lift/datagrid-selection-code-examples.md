@@ -13,7 +13,7 @@ for acceptance journeys. See the [acceptance record](datagrid-selection-acceptan
 | No picker: ordinary multiple selection, direct label, model reset                        | [Simple multiple](#without-a-picker-simple-multiple-selection)         |
 | No picker: scalar/null form value                                                        | [Simple single](#without-a-picker-single-selection)                    |
 | No picker: label signpost, status filter/sort, pagination, toSignalForm and submit/reset | [Direct policy form](#without-a-picker-advanced-form-and-tosignalform) |
-| Reusable business picker with no handwritten CVA                                         | [Picker and parent](#with-a-picker-component)                          |
+| Business picker with a page-owned control and keys output                                | [Picker and parent](#with-a-picker-component)                          |
 | Server-paged grid with off-page saved keys and scoped clear                              | [Server pages](#server-paged-native-grid)                              |
 | Reusable picker owning the server query; parent owning values/validators                 | [Server picker](#reusable-server-picker)                               |
 | Template-driven single selection                                                         | [ngModel](#template-driven-single-selection)                           |
@@ -624,9 +624,11 @@ Selected maintained rows keep readable reasons and stay removable; unresolved of
 
 ## Reusable server picker
 
-A business picker owns its server query; the parent owns values, validators, the saved baseline and the submit DTO. Use
-one accessor host directive and one `cllDatagridSelectionBinding` on the inner field — with no picker CVA callbacks,
-second form control or public valueChange/blurred/validation wiring. The runnable example is
+A business picker owns its server query; the parent owns values, validators, the saved baseline and the submit DTO.
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) removed the accessor host directive and inner
+binding: the picker emits selected keys through a `keys` model signal and the page's control is bound directly to the
+inner `cll-datagrid-selection`, with no picker CVA callbacks, second form control or public
+valueChange/blurred/validation wiring. The runnable example is
 [server-organization-picker.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-organization-picker.component.ts)
 with its template and
 [server-picker-form.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-picker-form.component.ts)
@@ -635,9 +637,10 @@ with its template.
 ```ts
 @Component({
   selector: 'app-server-organization-picker',
-  hostDirectives: [DatagridSelectionAccessorDirective],
 })
 export class ServerOrganizationPickerComponent {
+  readonly control = input.required<FormControl>();
+  readonly keys = model<DatagridSelectionValue>(null);
   readonly organizationsQuery = queryResource(() =>
     serverOrganizationQuery(this.organizationService, {
       scope: this.scope(),
@@ -652,7 +655,7 @@ export class ServerOrganizationPickerComponent {
 ```
 
 ```html
-<app-server-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
+<app-server-organization-picker [control]="form.controls.organizationIds" [error]="selectionError()" required />
 ```
 
 The picker projects the localized alert/Retry above its own native grid and keeps name sorting, the native name filter
@@ -672,39 +675,41 @@ source is shown beside the playground on the demo page.
 
 A reusable app-organization-picker centralizes the organization query, loading/failure/retry UI, business grid markup
 and filters. Its parent owns FormGroup, validators, saved values and submission, and does not load the picker inventory.
-The picker should not implement writeValue/registerOnChange/registerOnTouched.
+The picker is a plain presentational/query component and writes no CVA callbacks.
 
-Retain the two explicit composition declarations from the previous proposal:
+Under [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) the two explicit composition declarations
+(`DatagridSelectionAccessorDirective` on the picker host and `cllDatagridSelectionBinding` on the inner field) were
+removed. They were a breaking public API change, replaced by one value-control module:
 
-- hostDirectives: [DatagridSelectionAccessorDirective] gives the business picker host its one library-owned CVA.
-- cllDatagridSelectionBinding marks the inner field to connect to that accessor.
+- the picker accepts the page's `FormControl` through a `control` input and binds it directly to the inner
+  `cll-datagrid-selection`, so the field's own `NgControl` remains the real owner for validation, disabled and
+  touched/submitted state;
+- the picker emits selected keys through a `keys` model signal for page observers; it owns no form control of its own.
 
-The name Binding is reasonable here: it binds the inner selection to the form accessor on its business-picker host. The
-longer prefix identifies the feature and avoids a generic forms API. Keep this explicit connection instead of silently
-attaching every nested selection field, passing a whole FormControl through business inputs, or mirroring one. There is
-no additional callback/state plumbing for business developers. The helper exports have real-owner and installed-package
-evidence in the [acceptance record](datagrid-selection-acceptance.md).
-
-Direct inline usage needs neither helper. Both examples use the same native grid composition. The component itself is a
-CVA; these helpers solve the additional wrapper-host boundary. Angular does not use a child component's accessor as the
-accessor for its parent business component automatically. Reject multiple/missing connected inner fields, conflicting
-inner form/value bindings, and duplicate accessors. Preserve original-owner validation, disabled, updateOn, submit/reset
-and lifecycle cleanup; the binding must not create another form control.
+Direct inline usage binds the same `cll-datagrid-selection` component directly. Angular does not use a child component's
+accessor as the accessor for its parent business component automatically, so the control is passed explicitly rather
+than mirrored. Preserve original-owner validation, disabled, updateOn, submit/reset and lifecycle cleanup; no second
+form control is created. Real-owner and installed-package evidence is in the
+[acceptance record](datagrid-selection-acceptance.md).
 
 ### organization-picker.component.ts
 
 ```typescript
 import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
-import {booleanAttribute, ChangeDetectionStrategy, Component, inject, input, OnDestroy} from '@angular/core';
-import {ClarityModule} from '@clr/angular';
 import {
-  AlertComponent,
-  DatagridSelectionComponent,
-  DatagridSelectionAccessorDirective,
-  DatagridSelectionBindingDirective,
-  TranslatePipe,
-} from 'clr-lift';
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  model,
+  OnDestroy,
+} from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
+import {AlertComponent, DatagridSelectionComponent, DatagridSelectionValue, TranslatePipe} from 'clr-lift';
 import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
 import {StatusFilter} from './status.filter';
 import {OrganizationStatusFilterComponent} from './organization-status-filter.component';
@@ -714,12 +719,11 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
   imports: [
     AlertComponent,
     ClarityModule,
+    ReactiveFormsModule,
     DatagridSelectionComponent,
-    DatagridSelectionBindingDirective,
     TranslatePipe,
     OrganizationStatusFilterComponent,
   ],
-  hostDirectives: [DatagridSelectionAccessorDirective],
   templateUrl: './organization-picker.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -727,6 +731,8 @@ export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
 
   readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
+  readonly control = input.required<FormControl>();
+  readonly keys = model<DatagridSelectionValue>(null);
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -736,6 +742,9 @@ export class OrganizationPickerComponent implements OnDestroy {
   };
   readonly statusFilter = new StatusFilter();
   readonly organizationKey = (item: Organization) => item.id;
+  constructor() {
+    effect(() => this.keys.set(this.control().value as DatagridSelectionValue));
+  }
   ngOnDestroy(): void {
     this.statusFilter.destroy();
   }
@@ -746,7 +755,7 @@ export class OrganizationPickerComponent implements OnDestroy {
 
 ```html
 <cll-datagrid-selection
-  cllDatagridSelectionBinding
+  [formControl]="control()"
   [readonly]="readonly()"
   [required]="required()"
   [helper]="'organizationExample.help' | translate"

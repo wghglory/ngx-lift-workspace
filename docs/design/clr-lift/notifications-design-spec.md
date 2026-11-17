@@ -123,8 +123,8 @@ must remain under the host application's control.
 Existing alert/toast demos and adjacent specs cover inline buttons, nested delegated clicks, alert scoping, structured
 actions, dismissal and timers. Preserve these tests, including localized inline-action examples, translator reordering
 and safely escaped runtime values. Mixed hover/focus and viewport regressions are merged in
-[#155](https://github.com/wghglory/ngx-lift-workspace/pull/155); see the [gap register](../implementation-gaps.md). Do
-not assert that this developer-trusted HTML path sanitizes hostile markup automatically.
+[#155](https://github.com/wghglory/ngx-lift-workspace/pull/155); see the GitHub issues. Do not assert that this
+developer-trusted HTML path sanitizes hostile markup automatically.
 
 ## Compatibility, rollout, and risks
 

@@ -217,10 +217,11 @@ export class RoutedServerPathComponent {
   --cll-breadcrumb-font-size: 0.9rem;
 }`;
   readonly helperSignature =
-    highlight(`import {buildObjectPathBreadcrumbs, BuildObjectPathBreadcrumbsOptions, BreadcrumbItem} from 'clr-lift';
+    highlight(`import {buildObjectPathBreadcrumbs, BuildObjectPathBreadcrumbsOptions, BuildObjectPathResult} from 'clr-lift';
 
-// Signature reference; supply application-owned options.
-buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): readonly BreadcrumbItem[];`);
+// Signature reference; supply application-owned options. Scope and destination
+// failures settle as an error result instead of throwing.
+buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): BuildObjectPathResult;`);
   readonly locationType = highlight(`type ObjectPathLocation =
   | {readonly kind: 'bucket'; readonly bucket: string}
   | {readonly kind: 'prefix'; readonly bucket: string; readonly prefix: string}

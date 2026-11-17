@@ -51,7 +51,7 @@ export const jaTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     'clrDgSelectionType でモード、clrDgItemsIdentityFn で識別、clrDgItems で一覧を指定します。列、フィルター、並べ替え、ページングは呼び出し側が管理します。',
   'selectionDemo.reference.picker':
-    'ホストに DatagridSelectionAccessorDirective、唯一の内部フィールドに cllDatagridSelectionBinding を設定します。Angular フォームはホストにバインドします。',
+    'ピッカーはクエリ、読み込み、失敗と再試行の UI を管理し、選択キーを keys モデルで発行します。ページは自身のコントロールを cll-datagrid-selection に直接バインドし、検証と送信を管理します。',
   'selectionDemo.reference.events':
     '元のフォームで Angular valueChanges と toSignalForm を使用します。独立した選択出力や公開の命令型メソッドはありません。',
 

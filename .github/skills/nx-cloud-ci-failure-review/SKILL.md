@@ -11,6 +11,12 @@ description:
 
 Requires the `nx-cloud-api` skill for all Nx Cloud reads. This workflow is read-only.
 
+When the question concerns `deploy-demo.yml` or `publish.yml`, verify CIPE data covers the named path before relying on
+it: only their shared `quality` job can produce a CIPE, while the `deploy` / `publish` jobs run `nx` locally without
+`NX_CLOUD_ACCESS_TOKEN`. Apply the [deploy and publish path checks](../nx-cloud-api/SKILL.md#deploy-and-publish-paths);
+mark the path `CIPE UNAVAILABLE` and use workflow-run records when no CIPE matches, and never read a green gate CIPE as
+a successful deployment or release.
+
 Reduce failed pipelines to a small set of diagnostic groups. A failed pipeline does not prove that an agent or platform
 caused the failure. Classify each group only at the level the evidence supports.
 

@@ -4,7 +4,3 @@ export type {
   DatagridSelectionValue,
   DatagridItemAvailability,
 } from './datagrid-selection.component';
-export {
-  DatagridSelectionAccessorDirective,
-  DatagridSelectionBindingDirective,
-} from './datagrid-selection-accessor.directive';

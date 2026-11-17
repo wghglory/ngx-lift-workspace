@@ -72,31 +72,13 @@ jobs:
       - name: Generate Deployment Summary
         if: always()
         run: |
+          source .github/scripts/status-summary.sh
+
           BUILD_LIBS_STATUS="${{ steps.build-libs.outcome }}"
           BUILD_DEMO_STATUS="${{ steps.build-demo.outcome }}"
           VERCEL_STATUS="${{ steps.vercel.outcome }}"
           BRANCH="${{ github.ref }}"
           EVENT="${{ github.event_name }}"
-
-          get_status_icon() {
-            case "$1" in
-              "success") echo "✅" ;;
-              "failure") echo "❌" ;;
-              "cancelled") echo "🚫" ;;
-              "skipped") echo "⏭️" ;;
-              *) echo "⏳" ;;
-            esac
-          }
-
-          get_status_badge() {
-            case "$1" in
-              "success") echo "![Success](https://img.shields.io/badge/status-success-brightgreen)" ;;
-              "failure") echo "![Failure](https://img.shields.io/badge/status-failure-red)" ;;
-              "cancelled") echo "![Cancelled](https://img.shields.io/badge/status-cancelled-yellow)" ;;
-              "skipped") echo "![Skipped](https://img.shields.io/badge/status-skipped-lightgrey)" ;;
-              *) echo "![Pending](https://img.shields.io/badge/status-pending-orange)" ;;
-            esac
-          }
 
           BUILD_LIBS_ICON=$(get_status_icon "$BUILD_LIBS_STATUS")
           BUILD_DEMO_ICON=$(get_status_icon "$BUILD_DEMO_STATUS")

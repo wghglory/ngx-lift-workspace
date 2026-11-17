@@ -6,16 +6,17 @@ import {
   effect,
   inject,
   input,
+  model,
   OnDestroy,
   signal,
 } from '@angular/core';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClrDatagridSortOrder} from '@clr/angular';
 import {ClarityModule} from '@clr/angular';
 import {
   AlertComponent,
-  DatagridSelectionAccessorDirective,
-  DatagridSelectionBindingDirective,
   DatagridSelectionComponent,
+  DatagridSelectionValue,
   TranslatePipe,
   TranslationService,
 } from 'clr-lift';
@@ -34,14 +35,7 @@ import {ServerNameFilter} from './server-name.filter';
 
 @Component({
   selector: 'app-server-organization-picker',
-  imports: [
-    AlertComponent,
-    ClarityModule,
-    DatagridSelectionComponent,
-    TranslatePipe,
-    DatagridSelectionBindingDirective,
-  ],
-  hostDirectives: [DatagridSelectionAccessorDirective],
+  imports: [AlertComponent, ClarityModule, ReactiveFormsModule, DatagridSelectionComponent, TranslatePipe],
   templateUrl: './server-organization-picker.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -51,6 +45,10 @@ export class ServerOrganizationPickerComponent implements OnDestroy {
   private readonly translationService = inject(TranslationService);
   private readonly nameFilterSubscription: Subscription;
 
+  /** The page-owned control bound directly to the single value-control module. */
+  readonly control = input.required<FormControl>();
+  /** Selected keys emitted for page observers; the control remains the one form owner. */
+  readonly keys = model<DatagridSelectionValue>(null);
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -94,6 +92,7 @@ export class ServerOrganizationPickerComponent implements OnDestroy {
       if (!page) return;
       this.settledTotal.set(page.total);
     });
+    effect(() => this.keys.set(this.control().value as DatagridSelectionValue));
     this.nameFilterSubscription = this.nameFilter.changes.subscribe(() => this.page.set(1));
   }
 

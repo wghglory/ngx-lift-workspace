@@ -118,8 +118,7 @@ attempts; choose one owner.
 
 Reject invalid cursor progression while preserving valid-list behavior and the existing API. The maintainer rejected
 configurable page/item caps and their configuration-driven errors; do not introduce them. Large collections remain a
-caller-owned server-paging/aggregation decision. The [gap register](../implementation-gaps.md) records the original F4
-finding.
+caller-owned server-paging/aggregation decision.
 
 ## Evidence
 

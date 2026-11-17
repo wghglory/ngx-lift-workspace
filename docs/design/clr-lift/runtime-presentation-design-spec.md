@@ -100,7 +100,7 @@ signal-field API; controls consume their output regardless of form system.
 
 Adjacent translation/pipe/theme tests cover fallbacks, late registration, direction and denied storage. Existing locale
 tooling checks dictionary keys/placeholders. Runtime language switching and human review are separate gates; refer to
-the roadmap rather than inventing sign-off here.
+the acceptance contract and PR artifacts rather than inventing sign-off here.
 
 ## Compatibility, rollout, and risks
 

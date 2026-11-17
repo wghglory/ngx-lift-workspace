@@ -219,6 +219,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
     'key-value-browser.mjs',
     'breadcrumb-hosts.ts',
     'breadcrumb-browser.mjs',
+    'object-path-consumer-harness.ts',
     'datagrid-selection-hosts.ts',
     'datagrid-selection-browser.mjs',
   ]) {
@@ -239,7 +240,12 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
         types: [],
       },
       angularCompilerOptions: {strictTemplates: true},
-      files: ['key-value-hosts.ts', 'breadcrumb-hosts.ts', 'datagrid-selection-hosts.ts'],
+      files: [
+        'key-value-hosts.ts',
+        'breadcrumb-hosts.ts',
+        'object-path-consumer-harness.ts',
+        'datagrid-selection-hosts.ts',
+      ],
     }),
   );
   run('pnpm', ['exec', 'ngc', '-p', 'key-value-tsconfig.json'], freshConsumer);

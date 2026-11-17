@@ -52,7 +52,7 @@ export const ruTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     'Задайте режим через clrDgSelectionType, идентификатор через clrDgItemsIdentityFn и данные через clrDgItems. Столбцы, фильтры, сортировка и страницы управляются вызывающим кодом.',
   'selectionDemo.reference.picker':
-    'Добавьте DatagridSelectionAccessorDirective на хост и cllDatagridSelectionBinding ровно на одно внутреннее поле. Привязка формы Angular остаётся на хосте.',
+    'Пикер управляет запросом, загрузкой, ошибками и повторной попыткой и передаёт выбранные ключи через модель keys. Страница привязывает свой элемент управления напрямую к cll-datagrid-selection и отвечает за проверку и отправку.',
   'selectionDemo.reference.events':
     'Используйте Angular valueChanges и toSignalForm исходной формы. Отдельных выходов выбора и публичных императивных методов нет.',
 

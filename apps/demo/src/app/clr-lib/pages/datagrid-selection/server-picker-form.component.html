@@ -15,9 +15,9 @@
     </label>
   </div>
   <app-server-organization-picker
+    [control]="form.controls.organizationIds"
     [error]="selectionError()"
     [readonly]="readonly()"
-    formControlName="organizationIds"
     required
   />
   <div cds-layout="horizontal gap:md wrap:wrap">

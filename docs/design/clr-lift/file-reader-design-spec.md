@@ -46,8 +46,7 @@ Uploads, content trust, virus scanning, certificate trust validation, and server
 Checked October 16, 2026: [FileReader](https://developer.mozilla.org/en-US/docs/Web/API/FileReader) supports aborting
 pending reads. Adopt abort plus identity checks. [Angular CVA](https://angular.dev/api/forms/ControlValueAccessor)
 separates model writes from user edits. Disabling through the CVA or disabled input must cancel an active read and
-prevent obsolete callbacks from changing the owner; this change closes F2 in the
-[gap register](../implementation-gaps.md).
+prevent obsolete callbacks from changing the owner; this change closes F2 in the GitHub issues.
 
 ## Developer learning journey and pedagogy plan
 

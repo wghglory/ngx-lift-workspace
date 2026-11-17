@@ -13,6 +13,22 @@ function staticObject(node: ts.Expression | undefined): ts.ObjectLiteralExpressi
   return ts.isObjectLiteralExpression(node) ? node : undefined;
 }
 
+function staticArray(node: ts.Expression | undefined): ts.ArrayLiteralExpression | undefined {
+  if (!node) return undefined;
+  if (ts.isAsExpression(node) || ts.isSatisfiesExpression(node)) return staticArray(node.expression);
+  return ts.isArrayLiteralExpression(node) ? node : undefined;
+}
+
+function variableInitializer(source: ts.SourceFile, name: string): ts.Expression | undefined {
+  for (const statement of source.statements) {
+    if (!ts.isVariableStatement(statement)) continue;
+    for (const declaration of statement.declarationList.declarations) {
+      if (declaration.name.getText(source) === name) return declaration.initializer;
+    }
+  }
+  return undefined;
+}
+
 export function dictionaryMessages(file: string, locale?: string): Record<string, string> {
   const source = sourceFile(file);
   let dictionary = staticObject(
@@ -35,27 +51,25 @@ export function dictionaryMessages(file: string, locale?: string): Record<string
   );
 }
 
-const switcher = sourceFile('apps/demo/src/app/core/components/language-switcher/language-switcher.component.ts');
-const component = switcher.statements.find(ts.isClassDeclaration);
-const languages = component?.members.find(
-  (member) => ts.isPropertyDeclaration(member) && member.name.getText(switcher) === 'languages',
-);
-if (
-  !languages ||
-  !ts.isPropertyDeclaration(languages) ||
-  !languages.initializer ||
-  !ts.isArrayLiteralExpression(languages.initializer)
-)
-  throw new Error('Expected static supported demo languages');
+const registration = sourceFile('libs/clr-lift/src/lib/services/translation-registration.ts');
+const supported = staticArray(variableInitializer(registration, 'supportedLocales'));
+if (!supported) throw new Error('Expected static supported locales');
 
-export const demoLocales = languages.initializer.elements.map((element) => {
-  if (!ts.isObjectLiteralExpression(element)) throw new Error('Expected a static demo language');
-  const values = Object.fromEntries(
-    element.properties.map((property) => {
-      if (!ts.isPropertyAssignment(property) || !ts.isStringLiteral(property.initializer))
-        throw new Error('Expected a static language label');
-      return [property.name.getText(switcher), property.initializer.text];
-    }),
-  );
-  return {code: values['code'], label: values['label']};
+const switcher = sourceFile('apps/demo/src/app/core/components/language-switcher/language-switcher.component.ts');
+const labels = staticObject(variableInitializer(switcher, 'LANGUAGE_LABELS'));
+if (!labels) throw new Error('Expected static demo language labels');
+
+const labelByCode = new Map<string, string>();
+for (const property of labels.properties) {
+  if (!ts.isPropertyAssignment(property) || !ts.isStringLiteral(property.initializer))
+    throw new Error('Expected a static demo language label');
+  const code = property.name.getText(switcher).replace(/^['"]|['"]$/g, '');
+  labelByCode.set(code, property.initializer.text);
+}
+
+export const demoLocales = supported.elements.map((element) => {
+  if (!ts.isStringLiteral(element)) throw new Error('Expected a static supported locale');
+  const label = labelByCode.get(element.text);
+  if (!label) throw new Error(`Missing demo language label for ${element.text}`);
+  return {code: element.text, label};
 });

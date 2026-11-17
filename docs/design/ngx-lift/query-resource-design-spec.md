@@ -1206,8 +1206,8 @@ retained-data refresh where applicable. Forms invoke/observe this API without as
 
 ## Review decisions and delivery
 
-This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
-[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in GitHub issues; no
+new API is approved here.
 
 Contract follow-up, November 4, 2026: this revision adds the outcome tutorial and callback decision above, documents
 `QueryResourceDisabledError` / `QueryResourceDisposedError` and clarifies `reload()`. Those two additive exports are

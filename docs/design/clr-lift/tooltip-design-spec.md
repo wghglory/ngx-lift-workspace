@@ -92,7 +92,7 @@ Verify focus return, long text, narrow viewport, dark/RTL and zoom. This is a fo
 
 Existing tooltip demo plus `apps/demo-e2e/src/tooltip.spec.ts`; adjacent directive/component tests cover borrowed views,
 repeated open/close, focus, reactive inputs and cleanup. Remaining manual screen-reader/touch/zoom acceptance is tracked
-in the [delivery roadmap](../../priority-roadmap.md). Do not infer those results from role assertions alone.
+in GitHub issue and CI artifacts. Do not infer those results from role assertions alone.
 
 ## Compatibility, rollout, and risks
 

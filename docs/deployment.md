@@ -41,9 +41,8 @@ Complete these in order. A green build, a merged PR and a published npm version 
    Firefox/WebKit smoke. The full three-browser matrix runs on push and schedule. Start the `publish.yml` dry run with
    `gh workflow run publish.yml`; the workflow has no pull-request trigger. Confirm `verify:packages` and
    `nx release publish --dry-run` in that run.
-3. Confirm the acceptance boundary in the [acceptance contract](guides/accessibility-and-localization.md) and the
-   [gap register](gap-register.md). Automated dictionary, accessibility and consumer checks remain required; a waiver
-   does not mark the assessment as passed.
+3. Confirm the acceptance boundary in the [acceptance contract](guides/accessibility-and-localization.md). Automated
+   dictionary, accessibility and consumer checks remain required; a waiver does not mark the assessment as passed.
 4. Review behavioral compatibility, the peer ranges (maintainer decided to keep them unbounded), the
    `ngx-lift`-before-`clr-lift` publish order, and the `NPM_TOKEN` / `npm whoami` credential check.
 5. Merge the reviewed version/changelog PR, then publish with `version=skip` and `dry_run=false`, or push the reviewed
@@ -109,6 +108,6 @@ a failed build or deployment fails the job. Hosting integrations may also create
 job/deployment records provide status. A manual workflow run outside main builds the demo without a production
 deployment.
 
-Deployment health is a current-state record, not part of this procedure. The [gap register](gap-register.md) owns open
-deployment incidents, and CI run records are the validation evidence. A green CI run and a successful production
-deployment remain separate outcomes, so do not infer deployment status from the CI gate.
+Deployment health is a current-state record, not part of this procedure. CI run records are the validation evidence for
+deployment outcomes. A green CI run and a successful production deployment remain separate outcomes, so do not infer
+deployment status from the CI gate.

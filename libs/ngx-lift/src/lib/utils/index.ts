@@ -6,7 +6,6 @@ export * from './is-empty.util';
 export * from './is-equal.util';
 export * from './is-promise.util';
 export * from './object-path.util';
-export * from './omit-by.util';
 export * from './pick-by.util';
 export * from './range.util';
 export * from './url.util';

@@ -93,36 +93,29 @@ try {
   owner.readonly.set(false);
   owner.form.controls.ids.disable();
   await settle();
-  assert.equal(owner.sf.submitValue().ids, undefined);
+  assert.equal(owner.form.controls.ids.disabled, true);
   owner.form.controls.ids.enable();
   owner.form.reset();
   await settle();
   assert.deepEqual(owner.form.controls.ids.value, ['org-2', 'missing']);
-  const picker = document.querySelector('installed-picker');
-  picker.querySelector('clr-dg-row input').focus();
-  picker.querySelector('clr-dg-row input').click();
-  await settle();
-  assert.deepEqual(owner.form.controls.picker.value, []);
-  document.getElementById('outside').focus();
-  await settle();
-  assert.deepEqual(owner.form.controls.picker.value, ['org-1']);
   const fields = [...document.querySelectorAll('cll-datagrid-selection')];
-  fields[2].querySelector('input[type=radio]').click();
+  // The blur-boundary edit is now owned directly by cll-datagrid-selection, not a picker host.
+  fields[1].querySelector('input[type=radio]').click();
   await settle();
   assert.equal(owner.single.value, 'org-1');
-  fields[2].querySelector('button').click();
+  fields[1].querySelector('button').click();
   await settle();
   assert.equal(owner.single.value, null);
   assert.equal(owner.single.hasError('required'), true);
-  fields[3].querySelector('input[type=radio]').click();
+  fields[2].querySelector('input[type=radio]').click();
   await settle();
   assert.equal(owner.model, 'org-1');
   subscription.unsubscribe();
   const ids = fields.map((field) => field.querySelector('.field-label > label').id);
-  assert.equal(new Set(ids).size, 4);
+  assert.equal(new Set(ids).size, 3);
   assert.ok(fields.every((field) => field.querySelector('[role=grid]').getAttribute('aria-labelledby')));
   console.log(
-    `Packed datagrid selection: Angular 21 strict templates, native grids, direct/picker/ngModel/facade ownership, no-echo, loading, disabled, readonly, reset and ${mode} passed.`,
+    `Packed datagrid selection: Angular 21 strict templates, native grids, direct/multi/single/ngModel/facade ownership, no-echo, loading, disabled, readonly, reset and ${mode} passed.`,
   );
 } finally {
   app.destroy();

@@ -7,11 +7,13 @@ history lives in [CHANGELOG](../../../CHANGELOG.md).
 
 ## Delivered behavior
 
-clr-lift exports `DatagridSelectionComponent`, `DatagridSelectionAccessorDirective` and
-`DatagridSelectionBindingDirective`, plus `DatagridSelectionKey`, `DatagridSelectionValue` and
-`DatagridItemAvailability`. One caller-written label and native Clarity grid define the field. The grid supplies data,
-mode, identity, loading, columns, filters and pagination. The shell supplies the CVA, ordered stable-key reconciliation,
-field presentation and composite focus. It does not fetch data or allocate a second form control.
+clr-lift exports `DatagridSelectionComponent`, plus `DatagridSelectionKey`, `DatagridSelectionValue` and
+`DatagridItemAvailability`. The picker accessor/binding directives were removed by
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md), which supersedes ADR-0002's reusable-picker
+composition; value control now lives in one module. One caller-written label and native Clarity grid define the field.
+The grid supplies data, mode, identity, loading, columns, filters and pagination. The shell supplies the CVA, ordered
+stable-key reconciliation, field presentation, composite focus and its own application-scoped IDs. It does not fetch
+data or allocate a second form control.
 
 The adapter preserves unresolved keys, immutable incoming values and caller-owned native row restrictions. Owner writes
 and reset do not echo changes. Single radios and optional native row-click mode share the same value bridge. Header
@@ -19,10 +21,11 @@ pointer/Space actions select or clear only the eligible filtered logical scope. 
 state guard applicable selection paths; loading does not disable the form owner. Selected unavailable items remain
 removable, with explanations associated with their checkboxes.
 
-The optional picker host directive forwards the owner's value, disabled state, validation and Angular change/blur/submit
-buffering through one explicit inner binding. Missing, multiple or conflicting bindings and duplicate accessors are
-diagnosed. Composite focus includes label help, grid/footer and Clarity-owned portals. Departure cancels focus
-restoration.
+The consuming page binds the form directly to `cll-datagrid-selection`; the component resolves its owner solely from its
+own injector `NgControl` and preserves real-owner validation, disabled state and Angular change/blur/submit buffering. A
+reusable business picker is a plain presentational/query component: it owns its query, loading, failure and retry UI and
+emits selected keys through a `model` output, while the page owns the form, validators and submission. Composite focus
+includes label help, grid/footer and Clarity-owned portals. Departure cancels focus restoration.
 
 Required uses Angular `RequiredValidator` with direct form bindings; the grid describes the requirement without an
 invalid `aria-required`. Parent controls own count, async and business rules plus localized error text. The examples

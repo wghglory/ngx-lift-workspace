@@ -44,8 +44,10 @@ release notes and migration instructions; publication is a separate gate.
   labeled local label/context filter preserves current context, supports empty-result recovery and announces matching
   counts. A separate 100-level supplied-item playground exercises filtering, language and layout changes.
 - `clr-lift` exports `buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` for
-  synchronous exact-key bucket/prefix/object trails with caller-owned destinations and permitted roots. Includes a
-  localized fixture-backed bucket browser and [usage/reference guide](docs/guides/object-path-breadcrumbs.md).
+  synchronous exact-key bucket/prefix/object trails with caller-owned destinations and permitted roots. The helper
+  returns a discriminated success/error result and owns URL encoding plus optional collection prefixing through a
+  navigation contract. Includes a localized fixture-backed bucket browser and
+  [usage/reference guide](docs/guides/object-path-breadcrumbs.md).
 - `clr-lift` exports `DatagridSelectionComponent` (`cll-datagrid-selection`), `DatagridSelectionAccessorDirective` and
   `DatagridSelectionBindingDirective` for caller-written native Clarity datagrids inside Angular forms. Stable
   single/multiple keys survive filtering, paging, refreshed objects and owner writes; availability, native loading,
@@ -163,9 +165,9 @@ release notes and migration instructions; publication is a separate gate.
 
 ### Release boundary
 
-- The current [acceptance contract](docs/guides/accessibility-and-localization.md) and
-  [gap register](docs/gap-register.md) own the independent language approval, the manual assistive-technology waiver and
-  the automated-check boundary for this release. The waiver is not a passed assessment.
+- The current [acceptance contract](docs/guides/accessibility-and-localization.md) owns the independent language
+  approval, the manual assistive-technology waiver and the automated-check boundary for this release. The waiver is not
+  a passed assessment.
 - SSR/hydration and a broad peer-version matrix are not established by the installed Angular 21.2 browser consumer.
 - Dependency advisory triage and the 2026-11-10 WebKit shard 5 E2E timeouts remain separate follow-ups.
 - These versions were published to the official npm registry on 2026-11-09. Remote tags, GitHub release records, the

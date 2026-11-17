@@ -160,19 +160,35 @@ export function checkWorkspace(root = process.cwd()) {
   const libraryFiles = files(join(root, 'libs/clr-lift/src/lib'));
   const libraryKeys = new Set();
   const registrations = new Map();
+  // Both the legacy service call and the shared registration adapter are valid sources.
+  const adapterCalls = new Set(['registerTranslations', 'registerLazyTranslations']);
   for (const file of libraryFiles.filter((path) => path.endsWith('.ts') && !path.endsWith('.spec.ts'))) {
     const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
     const visit = (node) => {
-      if (
-        ts.isCallExpression(node) &&
-        ts.isPropertyAccessExpression(node.expression) &&
-        node.expression.name.text === 'loadTranslationsForComponent' &&
-        ts.isStringLiteralLike(node.arguments[0] ?? {}) &&
-        ts.isIdentifier(node.arguments[1] ?? {})
-      ) {
-        const name = node.arguments[1].text;
-        if (!registrations.has(name)) registrations.set(name, new Set());
-        registrations.get(name).add(node.arguments[0].text);
+      if (ts.isCallExpression(node)) {
+        let namespaceNode;
+        let dictionaryNode;
+        if (
+          ts.isPropertyAccessExpression(node.expression) &&
+          node.expression.name.text === 'loadTranslationsForComponent'
+        ) {
+          namespaceNode = node.arguments[0];
+          dictionaryNode = node.arguments[1];
+        } else if (ts.isIdentifier(node.expression) && adapterCalls.has(node.expression.text)) {
+          // registerTranslations(service, namespace, dictionaries)
+          namespaceNode = node.arguments[1];
+          dictionaryNode = node.arguments[2];
+        }
+        if (
+          namespaceNode &&
+          ts.isStringLiteralLike(namespaceNode ?? {}) &&
+          dictionaryNode &&
+          ts.isIdentifier(dictionaryNode ?? {})
+        ) {
+          const name = dictionaryNode.text;
+          if (!registrations.has(name)) registrations.set(name, new Set());
+          registrations.get(name).add(namespaceNode.text);
+        }
       }
       ts.forEachChild(node, visit);
     };

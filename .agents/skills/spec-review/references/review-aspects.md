@@ -19,7 +19,7 @@ workflow's required checks into the same table; none is optional.
 | Lifecycle and safety | Cancellation, disposal, SSR behavior, global side effects, and cleanup are specified. | Library code mutates global DOM state or depends on private APIs. |
 | Tests and demos | Unit/type/browser coverage, failure races, and an approved use case in the demo app are planned. | No plan for meaningful transitions, errors, and cleanup. |
 | Evidence separation | Automated checks, human language approval, and assistive-technology decisions are recorded separately. | A check or waiver is reported as human acceptance. |
-| Codebase gaps | Roadmap, changelog, gap register, and index claims match tracker, package, and source evidence. Use the `Status drift` class when a closed or merged PR is described as open, pending, or under review. Preserve dated historical records that describe only their own increment. | A status, API, index, or duplication drift claim would mislead contributors. |
+| Codebase gaps | Roadmap, changelog, tracker, and index claims match package, CI, and source evidence. Use the `Status drift` class when a closed or merged PR is described as open, pending, or under review. Preserve dated historical records that describe only their own increment. | A status, API, index, or duplication drift claim would mislead contributors. |
 | Fit and sequence | The feature has a roadmap position and release/version decision; the spec revision is recorded. | No delivery position or approval scope is recorded. |
 
 ## Verdict rules

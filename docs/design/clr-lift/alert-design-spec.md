@@ -177,7 +177,6 @@ Decisions applied in the implementation:
 ## Evidence
 
 Implementation evidence is in `libs/clr-lift/src/lib/components/alert/alert.component.ts`, `alert.component.html`,
-`alert.component.spec.ts` and `apps/demo/src/app/clr-lib/pages/alert-demo/`. The
-[documentation gap register](../../gap-register.md) owns current documentation and codebase gaps. This sweep verified
-the exported symbols and Clarity bindings against source; it did not re-run unit, browser, accessibility or translation
-suites, so validation results belong to the corresponding CI run and pull request.
+`alert.component.spec.ts` and `apps/demo/src/app/clr-lib/pages/alert-demo/`. The GitHub issues own outstanding work.
+This sweep verified the exported symbols and Clarity bindings against source; it did not re-run unit, browser,
+accessibility or translation suites, so validation results belong to the corresponding CI run and pull request.

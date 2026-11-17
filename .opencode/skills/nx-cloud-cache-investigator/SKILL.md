@@ -7,6 +7,13 @@ description: Investigate a specific Nx cache miss, artifact download or extracti
 
 Requires the `nx-cloud-api` skill. Use a matching Nx workspace checkout only for local configuration diagnosis. An API-only investigation does not need a checkout.
 
+For cache questions about `deploy-demo.yml` or `publish.yml`, first confirm a
+CIPE covers the relevant job; their `deploy` / `publish` jobs run `nx` locally
+without `NX_CLOUD_ACCESS_TOKEN` and have no CIPE data. Only the shared
+`quality` job can produce it. Apply the
+[deploy and publish path checks](../nx-cloud-api/SKILL.md#deploy-and-publish-paths)
+and report `CIPE UNAVAILABLE` with a workflow-run source when no CIPE matches.
+
 Diagnose one cache question with bounded evidence. Do not guess a changed hash
 input or change configuration from cache status alone.
 

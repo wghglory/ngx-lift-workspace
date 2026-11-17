@@ -135,8 +135,8 @@ minimum-wait handling; reject implicit POST/PATCH eligibility based only on the 
 
 ## Review decisions and delivery
 
-This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
-[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the GitHub issues;
+no new API is approved here.
 
 ## Evidence
 

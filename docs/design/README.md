@@ -1,6 +1,6 @@
 # API specifications
 
-[Documentation index](../README.md) · [Delivery roadmap](../priority-roadmap.md)
+[Documentation index](../README.md)
 
 ## Component planning and review
 
@@ -34,7 +34,7 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 | AlertService/ToastService and notification containers              | [Notifications](clr-lift/notifications-design-spec.md)                  |
 | AlertComponent closable state and localized close button           | [Alert closable](clr-lift/alert-design-spec.md)                         |
 | BreadcrumbComponent and object-path helper                         | [Breadcrumbs](clr-lift/breadcrumb-design-spec.md)                       |
-| DatagridSelectionComponent, accessor and binding                   | [Native grid selection](clr-lift/datagrid-selection-design-spec.md)     |
+| DatagridSelectionComponent value control                           | [Native grid selection](clr-lift/datagrid-selection-design-spec.md)     |
 | TimelineWizardComponent, base step and service                     | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)              |
 | TranslationService and ThemeService                                | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)    |
 | Legacy FormArray editor and additive immutable array-value control | [Key/value control contracts](clr-lift/key-value-inputs-design-spec.md) |
@@ -67,7 +67,7 @@ The canonical datagrid contract is [datagrid selection](clr-lift/datagrid-select
 [delivery plan](clr-lift/datagrid-selection-delivery-plan.md), and
 [acceptance record](clr-lift/datagrid-selection-acceptance.md) are supporting documents. The
 [acceptance contract](../guides/accessibility-and-localization.md) owns gate status and [CHANGELOG](../../CHANGELOG.md)
-owns release history; [active design gaps](implementation-gaps.md) records implementation gates.
+owns release history; outstanding implementation work is tracked in GitHub issues.
 
 Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not implemented APIs. Specs
 use the shared template's required topics, retaining accurate legacy detail and explicitly marking inapplicable UI/forms

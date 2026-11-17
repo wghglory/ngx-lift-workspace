@@ -47,7 +47,7 @@ export const zhCNTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     '用 clrDgSelectionType 配置模式、clrDgItemsIdentityFn 配置标识、clrDgItems 绑定列表。列、筛选、排序和分页由调用方管理。',
   'selectionDemo.reference.picker':
-    '在选择器宿主组合 DatagridSelectionAccessorDirective，并在唯一内部字段使用 cllDatagridSelectionBinding。Angular 表单仅绑定宿主。',
+    '选择器负责查询、加载、失败与重试界面，并通过 keys 模型发出已选键。页面将自身控件直接绑定到 cll-datagrid-selection，并负责校验与提交。',
   'selectionDemo.reference.events':
     '在原表单控件上使用 Angular valueChanges 和 toSignalForm。没有额外的选择输出或公开命令式方法。',
 
