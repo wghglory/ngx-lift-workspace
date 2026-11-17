@@ -54,8 +54,8 @@ ancestor array. There is no request per ancestor, click-history requirement or f
 
 The [working demo](https://ngx-lift.vercel.app/clr-lift/components/breadcrumb) includes controlled SDK-shaped backend
 fixtures, bucket listing, prefix/object navigation, direct links, empty results, scope validation and reset. The example
-code shows application-owned URL construction; route and response details are available in a disclosure. No live cloud
-account is involved.
+uses `navigation.destination` for helper-owned URL construction; route and response details are available in a
+disclosure. No live cloud account is involved.
 
 ## Reference
 

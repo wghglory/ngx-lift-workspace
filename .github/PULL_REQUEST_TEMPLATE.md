@@ -80,9 +80,9 @@
 - [ ] Interactive demo page updated and verified (if applicable)
 - [ ] Accessibility scans and relevant keyboard/focus journeys pass for library and demo UI
 - [ ] All supported library and demo locales are complete, including accessible names and announcements
-- Acceptance status is owned by the [acceptance contract](../docs/guides/accessibility-and-localization.md) and the
-  [gap register](../docs/gap-register.md). Automated accessibility scans and keyboard/focus journeys remain required for
-  UI changes.
+- Acceptance status is owned by the [acceptance contract](../docs/guides/accessibility-and-localization.md); outstanding
+  work is tracked in GitHub issues. Automated accessibility scans and keyboard/focus journeys remain required for UI
+  changes.
 
 ### Test Commands Run
 

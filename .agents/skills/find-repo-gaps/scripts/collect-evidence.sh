@@ -120,7 +120,6 @@ run "Coverage thresholds" bash -c "grep -RInE 'thresholds|statements|branches|fu
 run "Supported locales" bash -c "grep -RInE 'en|zh-CN|pt-BR|ru' apps/demo/src/app/core/components/language-switcher/language-switcher.component.ts tools/i18n/check-translations.mjs | head -120 || true"
 run "Public barrels" bash -c "find libs -path '*/src/index.ts' -o -path '*/src/lib/*/index.ts' | sort | head -120"
 run "Design specs" bash -c "find docs/design -name '*.md' -type f | sort"
-run "Technical backlog and decisions" bash -c "sed -n '1,80p' docs/design/implementation-gaps.md; sed -n '1,80p' docs/priority-roadmap.md"
 
 emit
 emit "Evidence collection finished. Treat every SKIPPED and EVIDENCE UNAVAILABLE marker as missing evidence, then use semantic comparison before assigning gap dispositions."
