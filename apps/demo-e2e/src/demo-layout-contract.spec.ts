@@ -92,9 +92,11 @@ test('collection queries appear in root devtools on a fresh landing and after ro
   const rows = rootTool.locator('clr-dg-row');
   const tenant = rows.filter({hasText: '["collection-demo","a","tenant"]'});
   const cluster = rows.filter({hasText: '["k8s-demo","cluster-metric","cluster-us-east"]'});
+  const combined = rows.filter({hasText: '["query-failure","combined-rows"]'});
   await expect(tenant).toBeVisible();
   await expect(cluster).toBeVisible();
-  await expect(rows).toHaveCount(8);
+  await expect(combined).toBeVisible();
+  await expect(rows).toHaveCount(9);
   await rootTool.getByRole('button', {name: 'Close', exact: true}).click();
   await page
     .getByRole('link', {name: /queryResource$/})
@@ -103,6 +105,7 @@ test('collection queries appear in root devtools on a fresh landing and after ro
   await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
   await expect(tenant).toHaveCount(0);
   await expect(cluster).toHaveCount(0);
+  await expect(combined).toHaveCount(0);
   await expect(rows.filter({hasText: '["current-user"]'})).toBeVisible();
   await rootTool.getByRole('button', {name: 'Close', exact: true}).click();
   await page
@@ -112,6 +115,7 @@ test('collection queries appear in root devtools on a fresh landing and after ro
   await rootTool.getByRole('button', {name: 'Query devtools', exact: true}).click();
   await expect(tenant).toBeVisible();
   await expect(cluster).toBeVisible();
+  await expect(combined).toBeVisible();
 });
 
 test('comparison tables and tab panels have visible vertical separation', async ({page}) => {
