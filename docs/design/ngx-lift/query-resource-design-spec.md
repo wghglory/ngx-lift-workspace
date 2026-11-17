@@ -263,13 +263,9 @@ application-owned, localized warning and retry control. Contract boundaries:
 - When all sources are required, omit the branch `catchError` and let plain `forkJoin` fail the whole query. Initial
   failure then blocks with `isInitialError()`; refresh failure retains data with `isRefreshError()`.
 
-Visible messages and accessible names in the demo (all reuse existing keys across all eleven locales):
-`queryResources.traditionalTab` names the playground; `common.name` and `queryResource.status` name the grid columns;
-`common.failed` is the failed-source status label and carries `role="alert"` so the status change is announced once;
-`queryExamples.retryRead` labels the recovery button. No new dictionary key is added.
-
-The `queryResources` demo page has a runnable three-source version where one source fails once and a retry recovers it;
-the `mutateResource` demo page shows the complementary write-side partial-success pattern.
+The existing `queryResources` demo page already demonstrates per-source `catchError` into a tagged result in its
+Approach 1 bulk-aggregation tab, so this scenario needs no second playground; this section is the worked reference. The
+`mutateResource` demo page shows the complementary write-side partial-success pattern.
 
 ## Seeding an editable form from a query
 

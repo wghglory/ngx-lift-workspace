@@ -392,20 +392,10 @@
       <div preview>
         <div cds-layout="vertical gap:md">
           <div cds-layout="horizontal gap:sm align:center">
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="batchUpdateMutation.isLoading()"
-              (click)="submitBatch(false)"
-            >
+            <button type="button" class="btn btn-primary" [disabled]="isBatchRunning()" (click)="submitBatch(false)">
               {{ 'queryExamples.submitWrite' | translate }}
             </button>
-            <button
-              type="button"
-              class="btn btn-outline"
-              [disabled]="batchUpdateMutation.isLoading()"
-              (click)="submitBatch(true)"
-            >
+            <button type="button" class="btn btn-outline" [disabled]="isBatchRunning()" (click)="submitBatch(true)">
               {{ 'queryExamples.failWrite' | translate }}
             </button>
           </div>

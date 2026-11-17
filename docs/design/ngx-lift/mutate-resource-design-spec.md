@@ -181,85 +181,53 @@ and the application-owned localization/accessibility boundary. The compiled muta
 preview and the runnable callback playground in the demo show these patterns in all supported languages. Successful
 writes refresh tagged observers automatically; no manual `reload()` or cache-sync check belongs in a submit handler.
 
-### Batch submissions with partial success
+### Batch updates when the API has no batch endpoint
 
-`mutateResource` has no batch mode: one `mutate(args)` call is one accepted invocation, and its `value` / `status` /
-`error` track the latest accepted invocation only. A multi-row update where some rows succeed and some fail is modelled
-at the call site. No new API is required.
-
-**With a backend batch endpoint (preferred).** Let the endpoint return HTTP 200 with a per-row result DTO. The write is
-one success; per-row outcomes are application state, and the invalidation mapper selects only rows the server accepted:
+`mutateResource` does not batch API calls: one `mutate(args)` call is one accepted invocation and one HTTP request. Its
+`value` / `status` / `error` track the latest accepted invocation only. When the API does not support batching, **each
+selected row needs its own API call**. Use the default `parallel` concurrency, collect outcomes with
+`Promise.allSettled`, and let per-call callbacks record which row actually succeeded or failed:
 
 ```typescript
 import {signal} from '@angular/core';
 import {mutateResource} from 'ngx-lift';
 
-interface BatchRowResult {id: string; ok: boolean; message?: string;}
-interface BatchResult {results: BatchRowResult[];}
-
-readonly batchUpdateMutation = mutateResource<
-  {ids: string[]; patch: Partial<Item>},
-  BatchResult
->(
-  ({ids, patch}) => this.http.post<BatchResult>('/api/items/batch', {ids, patch}),
-  {
-    invalidateTags: (result) =>
-      result.results.filter((row) => row.ok).map((row) => ({type: 'Items', id: row.id})),
-  },
-);
-
 readonly rowOutcome = signal<Record<string, 'pending' | 'success' | 'failed'>>({});
 
-async batchUpdate(): Promise<void> {
-  const ids = this.form.controls.itemIds.value; // stable keys from multi-selection
-  if (!ids.length) return;
-  this.rowOutcome.update((previous) => ({
-    ...previous,
-    ...Object.fromEntries(ids.map((id) => [id, 'pending' as const])),
-  }));
-  try {
-    const result = await this.batchUpdateMutation.mutate({ids, patch: this.buildPatch()});
-    this.rowOutcome.update((previous) => ({
-      ...previous,
-      ...Object.fromEntries(
-        result.results.map((row) => [row.id, row.ok ? 'success' as const : 'failed' as const]),
-      ),
-    }));
-  } catch {
-    for (const id of ids) {
-      this.rowOutcome.update((previous) => ({...previous, [id]: 'failed' as const}));
-    }
-  }
-}
-```
-
-Ids absent from `results` must also be settled explicitly; otherwise their rows stay `pending` forever. The grid's list
-query tag (`{type: 'Items'}`) must be included in the mapper when the grid itself needs a refresh.
-
-**Without a batch endpoint (one write per row).** Use the default `parallel` concurrency and collect outcomes with
-`Promise.allSettled`; per-call callbacks already carry the row arguments:
-
-```typescript
 readonly updateRowMutation = mutateResource<{item: Item; patch: Partial<Item>}, Item>(
   ({item, patch}) => this.http.patch<Item>(`/api/items/${item.id}`, patch),
   {invalidateTags: (_result, {item}) => [{type: 'Items', id: item.id}]},
 );
 
 async batchUpdate(): Promise<void> {
-  const selected = this.selectedItems(); // key-to-entity conversion belongs to submission code
+  const selected = this.selectedItems(); // selected stable keys -> entities at submission
+  if (!selected.length) return;
+  this.rowOutcome.update((previous) => ({
+    ...previous,
+    ...Object.fromEntries(selected.map((item) => [item.id, 'pending' as const])),
+  }));
   await Promise.allSettled(
     selected.map((item) =>
       this.updateRowMutation.mutate(
         {item, patch: this.buildPatch()},
         {
-          onSuccess: () => this.rowOutcome.set(item.id, 'success'),
-          onError: () => this.rowOutcome.set(item.id, 'failed'),
+          onSuccess: () => this.rowOutcome.update((previous) => ({...previous, [item.id]: 'success'})),
+          onError: () => this.rowOutcome.update((previous) => ({...previous, [item.id]: 'failed'})),
         },
       ),
     ),
   );
 }
 ```
+
+Every row is settled by its own callback, so a failed request cannot leave its row `pending` or cancel its siblings.
+`Promise.allSettled` resolves after all per-row calls finish; each `mutate()` Promise is internally caught, so no
+additional `try/catch` is needed here. Partial success is the normal outcome, not an exceptional path.
+
+If a backend batch endpoint does exist, the same API can send one request instead: define the mutation with the selected
+ids and a per-row result DTO, map each DTO row into `rowOutcome` (settling ids absent from `results` explicitly), and
+have `invalidateTags: (result) => ...` return tags only for rows the server accepted. Include the grid's list tag
+(`{type: 'Items'}`) in the mapper when the grid itself needs a refresh.
 
 Do **not** use `exhaust` for distinct row payloads: joined callers keep their own callbacks but their arguments were
 never submitted to the server, so rows are silently skipped. `concat` is valid when writes must be sequential.
@@ -273,11 +241,12 @@ Contract boundaries:
   diagnostic-only and must not be branched on. Never repeat a successful write to "recover" from invalidation failure.
 - Pass immutable argument snapshots; queued writes can start after the caller mutated its payload.
 - Every success/failure message, status label and retry action stays application-owned and localized. The
-  `mutateResource` demo page has a runnable three-row playground with a forced partial failure. Its visible messages and
-  accessible names reuse existing keys in all eleven locales: `mutateResource.cardPromiseTitle` names the playground,
-  `queryExamples.submitWrite` and `queryExamples.failWrite` label the two submit buttons, `common.name` and
-  `queryResource.status` name the columns, and `mutateResource.savingBtn` / `queryLearn.saved` / `common.failed` show
-  pending, successful and failed row state. No new dictionary key is added.
+  `mutateResource` demo page has a runnable three-row playground that issues one API call per row with a forced partial
+  failure. Its visible messages and accessible names reuse existing keys in all eleven locales:
+  `mutateResource.cardPromiseTitle` names the playground, `queryExamples.submitWrite` and `queryExamples.failWrite`
+  label the two submit buttons, `common.name` and `queryResource.status` name the columns, and
+  `mutateResource.savingBtn` / `queryLearn.saved` / `common.failed` show pending, successful and failed row state. No
+  new dictionary key is added.
 
 ---
 

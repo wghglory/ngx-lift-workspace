@@ -2,14 +2,14 @@ import {CollectionStarterComponent} from '../collection-starter/collection-start
 import {COLLECTION_STARTER_SOURCE, COLLECTION_STARTER_TEMPLATE} from '../collection-starter/collection-starter.example';
 import {JsonPipe} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
 import {ClarityIcons, refreshIcon} from '@clr/angular/icon';
 import {PageContainerComponent, SpinnerComponent, TranslatePipe} from 'clr-lift';
 
 import {QUERY_CLIENT, queryResource, queryResources} from 'ngx-lift';
-import {defer, forkJoin, Observable, of, throwError} from 'rxjs';
+import {forkJoin, Observable, of} from 'rxjs';
 import {catchError, delay, map, switchMap} from 'rxjs/operators';
 
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
@@ -171,88 +171,6 @@ export class QueryResourcesDemoComponent {
   reloadGranularFleet() {
     this.queryClient.invalidateTags([{type: 'k8s-fleet-demo'}]);
   }
-
-  // --- Fixed same-shape sources: one fails, the other two still combine ---
-  readonly failCombinedSource = signal(true);
-
-  readonly combinedRowsQuery = queryResource<{rows: FailureDemoData[]; failedSources: string[]}>(() => ({
-    key: ['query-failure', 'combined-rows'],
-    staleTime: 30_000,
-    gcTime: 0,
-    deadlineMs: 5000,
-    cancelOnNoObservers: true,
-    loader: () =>
-      forkJoin(
-        ['a', 'b', 'c'].map((source) =>
-          defer(() =>
-            this.failCombinedSource() && source === 'b'
-              ? throwError(() => new Error('simulated source failure'))
-              : of({id: source, value: 42}),
-          ).pipe(
-            delay(200),
-            map((row): {source: string; status: 'ok'; row: FailureDemoData} => ({source, status: 'ok', row})),
-            catchError((error: unknown) =>
-              of({source, status: 'failed' as const, row: undefined as FailureDemoData | undefined, error}),
-            ),
-          ),
-        ),
-      ).pipe(
-        map((results) => ({
-          rows: results.flatMap((result) => (result.status === 'ok' && result.row ? [result.row] : [])),
-          failedSources: results.filter((result) => result.status === 'failed').map((result) => result.source),
-        })),
-      ),
-  }));
-
-  isCombinedSourceFailed(source: string): boolean {
-    return this.combinedRowsQuery.value()?.failedSources.includes(source) ?? false;
-  }
-
-  combinedRowValue(source: string): number | undefined {
-    return this.combinedRowsQuery.value()?.rows.find((row) => row.id === source)?.value;
-  }
-
-  retryCombinedSources(): void {
-    this.failCombinedSource.set(false);
-    this.combinedRowsQuery.reload();
-  }
-
-  readonly combineCode = highlight(`import {catchError, defer, delay, forkJoin, map, of, throwError} from 'rxjs';
-import {queryResource} from 'ngx-lift';
-
-readonly failCombinedSource = signal(true);
-
-readonly combinedRowsQuery = queryResource<{rows: Row[]; failedSources: string[]}>(() => ({
-  key: ['query-failure', 'combined-rows'],
-  staleTime: 30_000,
-  gcTime: 0,
-  deadlineMs: 5000,
-  cancelOnNoObservers: true,
-  loader: () =>
-    forkJoin(
-      ['a', 'b', 'c'].map((source) =>
-        defer(() =>
-          this.failCombinedSource() && source === 'b'
-            ? throwError(() => new Error('simulated source failure'))
-            : of({id: source, value: 42}),
-        ).pipe(
-          delay(200),
-          map((row) => ({source, status: 'ok' as const, row})),
-          catchError((error: unknown) => of({source, status: 'failed' as const, row: undefined, error})),
-        ),
-      ),
-    ).pipe(
-      map((results) => ({
-        rows: results.flatMap((result) => (result.status === 'ok' && result.row ? [result.row] : [])),
-        failedSources: results.filter((result) => result.status === 'failed').map((result) => result.source),
-      })),
-    ),
-}));
-
-retryCombinedSources(): void {
-  this.failCombinedSource.set(false);
-  this.combinedRowsQuery.reload();
-}`);
 
   readonly dynamicCode = highlight(COLLECTION_STARTER_SOURCE);
   readonly dynamicHtmlCode = highlight(COLLECTION_STARTER_TEMPLATE, 'html');

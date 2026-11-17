@@ -67,8 +67,11 @@ describe('MutateResourceDemoComponent', () => {
     expect(component.callbackBusy()).toBe(false);
   });
 
-  it('settles every row of a batch, including a partial failure', async () => {
-    await component.submitBatch(true);
+  it('issues one call per row and settles every row, including a partial failure', async () => {
+    const pending = component.submitBatch(true);
+    expect(component.isBatchRunning()).toBe(true);
+    await pending;
+    expect(component.isBatchRunning()).toBe(false);
     expect(component.batchOutcomes()['item-1']).toBe('success');
     expect(component.batchOutcomes()['item-2']).toBe('failed');
     expect(component.batchOutcomes()['item-3']).toBe('success');
