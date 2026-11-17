@@ -36,7 +36,6 @@ Examples / API Reference layout and uses `app-api-table` for component inputs, o
 the typography custom property, with descriptions in all eleven locales.
 
 Only one renderer is supported. Independent language and assistive-technology acceptance remains open; see the
-[acceptance contract](../../guides/accessibility-and-localization.md) and the
 [acceptance contract](../../guides/accessibility-and-localization.md). SSR/hydration verification remains unclaimed.
 
 ### Ticket #189 local ancestor filtering
@@ -872,5 +871,4 @@ existing CSS property `--cll-breadcrumb-font-size`, with Clarity typography as t
 component input.
 
 Independent language and assistive-technology acceptance remains open; see the
-[acceptance contract](../../guides/accessibility-and-localization.md) and the
 [acceptance contract](../../guides/accessibility-and-localization.md).
