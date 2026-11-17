@@ -410,8 +410,8 @@ test('in-page API reference and complete parent sources follow the component dem
   for (const name of ['required', 'helper', 'error', 'layout', 'readonly', 'itemAvailability']) {
     await expect(reference.getByRole('cell', {name, exact: true})).toBeVisible();
   }
-  await expect(reference).toContainText('DatagridSelectionAccessorDirective');
-  await expect(reference).toContainText('cllDatagridSelectionBinding');
+  await expect(reference).toContainText('Reusable pickers');
+  await expect(reference).toContainText('[control]="form.controls.organizationIds"');
   await expect(page.getByTestId('selection-policy')).toContainText('Organization 2 (org-2)');
   await expect(page.getByTestId('selection-picker')).toContainText('Organization 1 (org-1)');
   await expect(page.locator('app-code-block').filter({hasText: 'export class PolicyFormComponent'})).toBeVisible();

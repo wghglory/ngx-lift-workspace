@@ -8,28 +8,32 @@ required.
 ## First trail
 
 ```ts
-import {BreadcrumbItem, buildObjectPathBreadcrumbs, ObjectPathLocation} from 'clr-lift';
+import {buildObjectPathBreadcrumbs, EncodedObjectPathLocation} from 'clr-lift';
 
-function hrefFor(location: ObjectPathLocation): string {
-  const bucket = encodeURIComponent(location.bucket);
+// The helper encodes each raw field once before calling destination.
+function destination(location: EncodedObjectPathLocation): string {
   switch (location.kind) {
     case 'bucket':
-      return `/browse?bucket=${bucket}`;
+      return `/browse?bucket=${location.bucket}`;
     case 'prefix':
-      return `/browse?bucket=${bucket}&prefix=${encodeURIComponent(location.prefix)}`;
+      return `/browse?bucket=${location.bucket}&prefix=${location.prefix}`;
     case 'object':
-      return `/object?bucket=${bucket}&key=${encodeURIComponent(location.key)}`;
+      return `/object?bucket=${location.bucket}&key=${location.key}`;
   }
 }
 
-const items: readonly BreadcrumbItem[] = buildObjectPathBreadcrumbs({
+const result = buildObjectPathBreadcrumbs({
   bucket: 'bucket-1',
   key: 'folder-1/folder-nested-2/object-4',
   kind: 'object',
   emptySegmentLabel: '(empty segment)', // Use your application's translation.
-  hrefFor,
+  navigation: {destination},
 });
-// bucket-1 > folder-1 > folder-nested-2 > object-4
+if (!result.ok) {
+  // result.error.code is one of the stable ObjectPathErrorCode values.
+} else {
+  // result.items: bucket-1 > folder-1 > folder-nested-2 > object-4
+}
 ```
 
 Import `BreadcrumbComponent` into your Angular component and bind `<cll-breadcrumb [items]="items" />`. The last item
@@ -38,8 +42,8 @@ For Angular Router navigation, supply a consumer-owned real-anchor `linkTemplate
 [breadcrumb README](../../libs/clr-lift/README.md#breadcrumb-navigation). Both retain native modified-click and
 context-menu behavior.
 
-Compose translated application items such as “Buckets” outside the helper. Give them IDs distinct from generated IDs.
-For a restricted root, omit application items that would expose unavailable higher locations.
+For a translated application collection item such as “Buckets”, pass `navigation.collection` with a distinct `id`,
+`label` and `href`; the helper prepends it only when no restricted root is set.
 
 ## Where the data comes from
 
@@ -55,16 +59,20 @@ account is involved.
 
 ## Reference
 
-`buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): readonly BreadcrumbItem[]`
+`buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): BuildObjectPathResult`
 
-| Option              | Contract                                                                                                 |
-| ------------------- | -------------------------------------------------------------------------------------------------------- |
-| `bucket`            | Required nonblank exact bucket identity; used as the bucket label and callback data                      |
-| `key`               | Exact current prefix or object key; never decoded, trimmed, normalized or inferred from labels           |
-| `kind`              | Required `'prefix'` or `'object'`; distinguishes a listing from object details                           |
-| `rootPrefix`        | Optional nonempty slash-terminated permitted root, included as the first item; key must start with it    |
-| `emptySegmentLabel` | Required nonblank caller-translated label used only for empty segments                                   |
-| `hrefFor`           | Synchronous `(location: ObjectPathLocation) => string`; called once per returned item, including current |
+`BuildObjectPathResult` is `{ok: true, items: readonly BreadcrumbItem[]}` or
+`{ok: false, error: {code: ObjectPathErrorCode, message: string}}`.
+
+| Option              | Contract                                                                                                          |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `bucket`            | Required nonblank exact bucket identity; used as the bucket label and destination data                            |
+| `key`               | Exact current prefix or object key; never decoded, trimmed, normalized or inferred from labels                    |
+| `kind`              | Required `'prefix'` or `'object'`; distinguishes a listing from object details                                    |
+| `rootPrefix`        | Optional nonempty slash-terminated permitted root, included as the first item; key must start with it             |
+| `emptySegmentLabel` | Required nonblank caller-translated label used only for empty segments                                            |
+| `navigation`        | Preferred: owns encoding (`encode`, default `encodeURIComponent`), destination assembly and optional `collection` |
+| `hrefFor`           | Deprecated: `(location: ObjectPathLocation) => string` with caller-owned encoding; kept for source compatibility  |
 
 `ObjectPathLocation` is a discriminated union:
 
@@ -77,8 +85,8 @@ type ObjectPathLocation =
 
 Empty `key` with `kind: 'prefix'` generates only the bucket. Nonempty prefixes must end in `/`; object keys must be
 nonempty. A slash-ending object generates both the same-key prefix ancestor and a separate object leaf. Their callback
-kinds and IDs differ. Invalid kind/key/root, blank bucket/empty label and blank callback destinations throw developer
-diagnostics. Callback exceptions propagate to the application. The renderer validates destination safety separately.
+kinds and IDs differ. Invalid kind/key/root, blank bucket/empty label and blank or throwing destinations settle as an
+`ObjectPathError` result rather than throwing. The renderer validates destination safety separately.
 
 Every slash contributes an exact cumulative prefix, including leading/repeated slashes and empty segments. For
 `/same//%2F/雪/../object`, the prefix contexts include `/`, `/same/`, `/same//`, `/same//%2F/`, `/same//%2F/雪/`, and

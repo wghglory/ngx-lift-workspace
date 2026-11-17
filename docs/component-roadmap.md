@@ -1,9 +1,8 @@
 # Clarity component roadmap
 
-Updated 2026-11-16. This roadmap records the component sequence and maintainer decisions; it does not approve APIs or
-authorize implementation. Breadcrumb navigation, datagrid selection and the additive key/value control are delivered in
-`ngx-lift 21.5.0` / `clr-lift 21.4.0`. YAML viewer/editor work is paused; no API review or implementation is scheduled.
-The [delivery roadmap](priority-roadmap.md) owns release, security and acceptance work.
+Updated 2026-11-17. This document records the recommended component sequence only; it does not approve APIs or authorize
+implementation. Release, security, acceptance and platform-upgrade work are tracked in GitHub issues and evidenced by PR
+and CI artifacts. YAML viewer/editor work is paused.
 
 ## Recommended order
 

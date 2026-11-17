@@ -12,6 +12,7 @@ node_modules
 /.idea
 *.launch
 .settings/
+.codebuddy/
 
 # IDE - VSCode
 .vscode/*

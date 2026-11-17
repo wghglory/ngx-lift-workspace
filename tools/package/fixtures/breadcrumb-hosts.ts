@@ -10,6 +10,11 @@ import {
   BuildObjectPathBreadcrumbsOptions,
   ObjectPathLocation,
 } from 'clr-lift';
+import {
+  createObjectPathOptions,
+  encodedObjectPathDestination,
+  expectedObjectPathLocations,
+} from './object-path-consumer-harness.js';
 
 const root = Object.freeze({id: 'root', label: 'Database'});
 const initial: readonly BreadcrumbItem[] = Object.freeze([root, Object.freeze({id: 'server', label: 'Server'})]);
@@ -47,20 +52,20 @@ export class BreadcrumbConsumer {
     href: `/browse?key=${i}%2F%25`,
   }));
   readonly locations: ObjectPathLocation[] = [];
-  readonly objectOptions: BuildObjectPathBreadcrumbsOptions = {
-    bucket: 'bucket-1',
-    key: '/%2F/雪/../marker/',
-    kind: 'object',
-    rootPrefix: '/',
-    emptySegmentLabel: '(empty)',
-    hrefFor: (location) => {
-      this.locations.push(location);
-      if (location.kind === 'bucket') return '/browse?bucket=' + encodeURIComponent(location.bucket);
-      if (location.kind === 'prefix') return '/browse?prefix=' + encodeURIComponent(location.prefix);
-      return '/object?key=' + encodeURIComponent(location.key);
-    },
-  };
-  readonly generated = buildObjectPathBreadcrumbs(this.objectOptions);
+  readonly objectOptions: BuildObjectPathBreadcrumbsOptions = createObjectPathOptions((location) => {
+    // The raw location is reconstructed for the render proof; the helper owns encoding.
+    const raw: ObjectPathLocation =
+      location.kind === 'bucket'
+        ? {kind: 'bucket', bucket: 'bucket-1'}
+        : location.kind === 'prefix'
+          ? {kind: 'prefix', bucket: 'bucket-1', prefix: decodeURIComponent(location.prefix)}
+          : {kind: 'object', bucket: 'bucket-1', key: decodeURIComponent(location.key)};
+    this.locations.push(raw);
+    return encodedObjectPathDestination(location);
+  });
+  readonly result = buildObjectPathBreadcrumbs(this.objectOptions);
+  readonly generated = this.result.ok ? this.result.items : [];
+  readonly expectedLocations = expectedObjectPathLocations;
   selected?: BreadcrumbItem;
   submissions = 0;
 }

@@ -54,7 +54,7 @@ export const esTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     'Configura modo con clrDgSelectionType, identidad con clrDgItemsIdentityFn y datos con clrDgItems. El consumidor controla columnas, filtros, ordenación y paginación.',
   'selectionDemo.reference.picker':
-    'Compón DatagridSelectionAccessorDirective en el host y cllDatagridSelectionBinding en un único campo interno. Mantén el vínculo Angular en el host.',
+    'El selector gestiona su consulta, carga, error y reintento y emite las claves seleccionadas mediante un modelo keys. La página vincula su propio control directamente a cll-datagrid-selection y gestiona la validación y el envío.',
   'selectionDemo.reference.events':
     'Usa Angular valueChanges y toSignalForm en el formulario original. No hay salidas de selección ni métodos imperativos públicos adicionales.',
 

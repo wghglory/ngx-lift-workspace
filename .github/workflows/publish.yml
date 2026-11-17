@@ -216,6 +216,8 @@ jobs:
       - name: Generate Publish Summary
         if: always()
         run: |
+          source .github/scripts/status-summary.sh
+
           BUILD_STATUS="${{ steps.build-libs.outcome }}"
           TEST_STATUS="${{ steps.run-unit-tests.outcome }}"
           EVENT="${{ github.event_name }}"
@@ -236,26 +238,6 @@ jobs:
           fi
 
           RELEASE_STATUS="${{ steps.github-release.outcome }}"
-
-          get_status_icon() {
-            case "$1" in
-              "success") echo "✅" ;;
-              "failure") echo "❌" ;;
-              "cancelled") echo "🚫" ;;
-              "skipped") echo "⏭️" ;;
-              *) echo "⏳" ;;
-            esac
-          }
-
-          get_status_badge() {
-            case "$1" in
-              "success") echo "![Success](https://img.shields.io/badge/status-success-brightgreen)" ;;
-              "failure") echo "![Failure](https://img.shields.io/badge/status-failure-red)" ;;
-              "cancelled") echo "![Cancelled](https://img.shields.io/badge/status-cancelled-yellow)" ;;
-              "skipped") echo "![Skipped](https://img.shields.io/badge/status-skipped-lightgrey)" ;;
-              *) echo "![Pending](https://img.shields.io/badge/status-pending-orange)" ;;
-            esac
-          }
 
           BUILD_ICON=$(get_status_icon "$BUILD_STATUS")
           TEST_ICON=$(get_status_icon "$TEST_STATUS")

@@ -27,7 +27,7 @@ packages under dist/libs and the demo under dist/apps/demo/browser.
 | libs/ngx-lift | Core Angular utilities                                     |
 | libs/clr-lift | Clarity components and extensions                          |
 | tools         | Consumer, bundle, translation and other verification tools |
-| docs          | [Guides, contracts and roadmap](README.md)                 |
+| docs          | [Guides and contracts](README.md)                          |
 
 Continue with the [command reference](commands.md), [API specifications](design/README.md) or
 [integration guide](guides/demo-and-library-integration.md). Publishing is covered by the

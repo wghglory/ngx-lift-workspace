@@ -3,7 +3,7 @@
     <label for="policy-name">{{ 'selectionDemo.policyName' | translate }}</label>
     <input clrInput id="policy-name" formControlName="policyName" />
   </clr-input-container>
-  <app-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
+  <app-organization-picker [control]="form.controls.organizationIds" [error]="selectionError()" required />
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
   <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
     {{ 'organizationExample.reset' | translate }}

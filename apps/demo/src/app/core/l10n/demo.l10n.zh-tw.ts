@@ -47,7 +47,7 @@ export const zhTWTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     '以 clrDgSelectionType 設定模式、clrDgItemsIdentityFn 設定識別、clrDgItems 綁定清單。欄、篩選、排序與分頁由呼叫端管理。',
   'selectionDemo.reference.picker':
-    '在選擇器宿主組合 DatagridSelectionAccessorDirective，並在唯一內部欄位使用 cllDatagridSelectionBinding。Angular 表單僅綁定宿主。',
+    '選擇器負責查詢、載入、失敗與重試介面，並透過 keys 模型發出已選鍵。頁面將自身控制項直接綁定到 cll-datagrid-selection，並負責驗證與提交。',
   'selectionDemo.reference.events':
     '在原表單控制項使用 Angular valueChanges 與 toSignalForm。沒有額外選擇輸出或公開命令式方法。',
 

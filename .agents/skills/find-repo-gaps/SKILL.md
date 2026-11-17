@@ -17,7 +17,7 @@ Find gaps between what the repository claims and what the repository currently d
 
 4. Classify every gap with an ID, class, severity, exact claim, exact evidence, and disposition. Prefer absolute paths and line numbers. Label historical statements as `Historical` rather than rewriting them. Label maintainer decisions as `Decision` and waivers as `Waived`, never `Passed`. **Completion:** every gap has a complete row and no claim rests on an unverified line-number citation.
 
-5. Produce the report with [`assets/gap-report-template.md`](assets/gap-report-template.md). Report automated checks, independent human language acceptance, and manual assistive-technology decisions in separate sections, and list every `SKIPPED` and `EVIDENCE UNAVAILABLE` marker in the Evidence gaps section. Never describe the sweep as complete while tracker, release, or workflow evidence is missing. Report in chat by default; write `docs/gap-register.md` only when explicitly requested, and keep committed prose in English with generic maintainer and product names. **Completion:** the report is reviewable, reproducible, discloses evidence gaps, and contains no unsupported pass claim.
+5. Produce the report with [`assets/gap-report-template.md`](assets/gap-report-template.md). Report automated checks, independent human language acceptance, and manual assistive-technology decisions in separate sections, and list every `SKIPPED` and `EVIDENCE UNAVAILABLE` marker in the Evidence gaps section. Never describe the sweep as complete while tracker, release, or workflow evidence is missing. Report in chat by default; keep committed prose in English with generic maintainer and product names. Move durable technical backlog into `docs/design/implementation-gaps.md` and dated decisions into `docs/priority-roadmap.md` only on explicit request. **Completion:** the report is reviewable, reproducible, discloses evidence gaps, and contains no unsupported pass claim.
 
 ## Repo constraints
 
@@ -25,4 +25,5 @@ Find gaps between what the repository claims and what the repository currently d
 - Keep `.github/workflows/quality.yml` as the shared `workflow_call` gate, keep PR jobs parallel and affected-based, and keep coverage off the blocking PR path.
 - Keep Nx Cloud enabled; do not reintroduce `neverConnectToCloud`.
 - Treat `docs/README.md` as the canonical index, `CHANGELOG.md` and package manifests as version sources, and workflow runs as validation evidence.
-- Treat the current `docs/gap-register.md` as the standing backlog; update it only on explicit request.
+- Treat `docs/design/implementation-gaps.md` as the standing technical backlog and `docs/priority-roadmap.md` as the
+  record of dated decisions and acceptance boundaries; update them only on explicit request.

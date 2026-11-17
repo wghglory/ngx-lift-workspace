@@ -80,7 +80,8 @@ Use the single-context layout. Before domain exploration, read `docs/agents/doma
 ### Gap scanning
 
 Before a periodic docs/codebase gap sweep, post-release status refresh, or documentation drift check, read
-`.agents/skills/find-repo-gaps/SKILL.md` and current `docs/gap-register.md`.
+`.agents/skills/find-repo-gaps/SKILL.md`. Report findings in chat and track outstanding work in GitHub issues;
+`docs/design/` specifications and `docs/guides/accessibility-and-localization.md` are the durable contracts.
 
 ### Review aspects
 

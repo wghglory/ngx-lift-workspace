@@ -48,7 +48,7 @@ belong in the PR and CI artifacts.
 
 Automated checks and AI translation review establish engineering evidence. Independent language approval and a manual
 assistive-technology (AT) decision are separate records. AT covers screen readers, keyboard-only navigation, magnifiers,
-switch input and similar access tools. Keep these records separate from automated results in the roadmap and PR.
+switch input and similar access tools. Keep these records separate from automated results in the PR.
 
 An independent language reviewer records the locale, name, reviewed commit, pages/components, issues and corrections,
 and approval date in the PR. Review library messages and demo teaching content together, including technical meaning,

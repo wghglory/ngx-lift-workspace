@@ -53,7 +53,7 @@ export const enTranslations = {
   'selectionDemo.reference.native':
     'Configure mode with clrDgSelectionType, identity with clrDgItemsIdentityFn and inventory with clrDgItems. Native columns, filters, sorting and paging stay caller-owned.',
   'selectionDemo.reference.picker':
-    'Compose DatagridSelectionAccessorDirective on the picker host and cllDatagridSelectionBinding on exactly one inner field. Keep the Angular form binding on the host.',
+    'The picker owns its query, loading, failure and retry UI and emits selected keys through a keys model. The page binds its own control directly to cll-datagrid-selection and owns validation and submission.',
   'selectionDemo.reference.events':
     'Use Angular valueChanges and toSignalForm on the original owner. There are no separate selection outputs or public imperative methods.',
 

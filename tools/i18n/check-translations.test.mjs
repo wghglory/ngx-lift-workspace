@@ -111,3 +111,26 @@ test('checks library key references and every promised library locale', (t) => {
   writeFileSync(dictionaryFile, `export const controlTranslations = ${JSON.stringify(translations)};`);
   assert.ok(checkWorkspace(root).errors.some((error) => error.includes('unsupported promised locale fr')));
 });
+
+test('accepts library registrations made through the shared registration adapter', (t) => {
+  const root = mkdtempSync(join(tmpdir(), 'lift-i18n-adapter-'));
+  t.after(() => rmSync(root, {recursive: true, force: true}));
+  const demo = join(root, 'apps/demo/src/app/core/l10n');
+  const library = join(root, 'libs/clr-lift/src/lib');
+  mkdirSync(demo, {recursive: true});
+  mkdirSync(library, {recursive: true});
+  const locales = ['en', 'zh-CN', 'zh-TW', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt-BR', 'ru'];
+  for (const locale of locales)
+    writeFileSync(join(demo, `demo.l10n.${locale.toLowerCase()}.ts`), 'export const messages = {save: "Save"};');
+  const translations = Object.fromEntries(locales.map((locale) => [locale, {close: 'Close'}]));
+  writeFileSync(
+    join(library, 'control.l10n.ts'),
+    `export const controlTranslations = ${JSON.stringify(translations)};`,
+  );
+  writeFileSync(join(library, 'control.ts'), "registerTranslations(service, 'control', controlTranslations);");
+  const templateFile = join(library, 'control.html');
+  writeFileSync(templateFile, "<button>{{ 'control.close' | translate }}</button>");
+  assert.deepEqual(checkWorkspace(root).errors, []);
+  writeFileSync(templateFile, "<button>{{ 'control.missing' | translate }}</button>");
+  assert.ok(checkWorkspace(root).errors.some((error) => error.includes('missing library key control.missing')));
+});

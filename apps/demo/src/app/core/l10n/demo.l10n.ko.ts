@@ -53,7 +53,7 @@ export const koTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     'clrDgSelectionType으로 모드, clrDgItemsIdentityFn으로 식별, clrDgItems로 목록을 설정합니다. 열, 필터, 정렬 및 페이지 처리는 호출자가 관리합니다.',
   'selectionDemo.reference.picker':
-    '호스트에 DatagridSelectionAccessorDirective를, 하나의 내부 필드에 cllDatagridSelectionBinding을 적용합니다. Angular 폼 바인딩은 호스트에 유지합니다.',
+    '선택기는 쿼리, 로딩, 실패 및 재시도 UI를 관리하고 선택된 키를 keys 모델로 내보냅니다. 페이지는 자체 컨트롤을 cll-datagrid-selection에 직접 바인딩하고 유효성 검사와 제출을 관리합니다.',
   'selectionDemo.reference.events':
     '원래 폼에서 Angular valueChanges와 toSignalForm을 사용합니다. 별도 선택 출력이나 공개 명령형 메서드는 없습니다.',
 

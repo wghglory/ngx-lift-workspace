@@ -19,7 +19,7 @@
 
   <app-namespace-picker
     data-testid="policy-form-namespace"
-    formControlName="namespaceId"
+    [control]="form.controls.namespaceId"
     required
     [readonly]="readonly()"
     [error]="namespaceSelectionError()"
@@ -27,7 +27,7 @@
 
   <app-organization-picker
     data-testid="policy-form-organizations"
-    formControlName="organizationIds"
+    [control]="form.controls.organizationIds"
     required
     [readonly]="readonly()"
     [layout]="layout()"

@@ -53,7 +53,7 @@ export const nlTranslations: Record<string, string> = {
   'selectionDemo.reference.native':
     'Configureer modus met clrDgSelectionType, identiteit met clrDgItemsIdentityFn en gegevens met clrDgItems. De aanroeper beheert kolommen, filters, sortering en paginering.',
   'selectionDemo.reference.picker':
-    'Gebruik DatagridSelectionAccessorDirective op de host en cllDatagridSelectionBinding op precies één intern veld. Houd de Angular-formulierbinding op de host.',
+    'De picker beheert zijn query, laden, fouten en opnieuw proberen en zendt geselecteerde sleutels via een keys-model. De pagina bindt zijn eigen control rechtstreeks aan cll-datagrid-selection en beheert validatie en verzending.',
   'selectionDemo.reference.events':
     'Gebruik Angular valueChanges en toSignalForm op het oorspronkelijke formulier. Geen afzonderlijke selectie-uitvoer of openbare imperatieve methoden.',
 

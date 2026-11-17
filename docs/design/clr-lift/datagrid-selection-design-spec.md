@@ -2,8 +2,10 @@
 
 This is the canonical contract for datagrid selection. Current acceptance boundaries live in the
 [acceptance contract](../../guides/accessibility-and-localization.md); release history lives in
-[CHANGELOG](../../../CHANGELOG.md). The [delivery plan](datagrid-selection-delivery-plan.md) records the story sequence
-and the [composition ADR](../../adr/0002-datagrid-selection-composition.md) owns the rendering decision.
+[CHANGELOG](../../../CHANGELOG.md). The [delivery plan](datagrid-selection-delivery-plan.md) records the story sequence;
+[ADR-0002](../../adr/0002-datagrid-selection-composition.md) owns the rendering decision and
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) supersedes its reusable-picker accessor/binding
+composition with one value-control module.
 
 [Parent #198](https://github.com/wghglory/ngx-lift-workspace/issues/198) →
 [#200 local field](https://github.com/wghglory/ngx-lift-workspace/issues/200) → independent
@@ -54,7 +56,7 @@ browsing. The generic field does not fetch or accept a query-library input.
 | Direct use, plain label and form.reset                           | [Simple multiple](datagrid-selection-code-examples.md#without-a-picker-simple-multiple-selection)           |
 | Direct use, scalar/null value                                    | [Simple single](datagrid-selection-code-examples.md#without-a-picker-single-selection)                      |
 | Direct use, custom label/filter/sort/pagination and toSignalForm | [Complete direct form](datagrid-selection-code-examples.md#without-a-picker-advanced-form-and-tosignalform) |
-| Business picker without handwritten CVA, plus parent form        | [Picker and parent](datagrid-selection-code-examples.md#with-a-picker-component)                            |
+| Business picker with page-owned control, plus parent form        | [Picker and parent](datagrid-selection-code-examples.md#with-a-picker-component)                            |
 | Template-driven single field                                     | [ngModel](datagrid-selection-code-examples.md#template-driven-single-selection)                             |
 | Server-paged grid with off-page saved keys and scoped clear      | [Server pages](datagrid-selection-code-examples.md#server-paged-native-grid)                                |
 | Reusable picker owning the server query; parent owning values    | [Reusable server picker](datagrid-selection-code-examples.md#reusable-server-picker)                        |
@@ -125,18 +127,24 @@ needed. See the [complete validation recipe](datagrid-selection-code-examples.md
 
 ## Direct form and reusable picker
 
-The selection component itself is the CVA. Direct formControlName/formControl/ngModel usage needs no extra picker
-accessor or binding directive. Optional business components centralize their native markup and business behavior. The
-organization picker also owns its queryResource, loading, request failure and Retry; the parent owns form values,
-validators and submission. Keep the shared service/query definition outside both components and avoid another inventory
-query in the parent. For those, retain DatagridSelectionAccessorDirective on the picker host through hostDirectives and
-one cllDatagridSelectionBinding on its inner field. They avoid handwritten business CVA methods; the name identifies the
-explicit inner-field-to-picker binding. This is independent of grid rendering and creates no second FormControl.
+`DatagridSelectionComponent` is the only CVA and the only value-control module. Direct
+formControlName/formControl/ngModel usage needs no extra picker accessor or binding directive; those two directives were
+removed by [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md), a breaking public API change. The
+component allocates its own application-scoped IDs and resolves its form owner solely from its own injector `NgControl`,
+so no helper can re-point it at a different control.
 
-The library adapter must preserve real-owner validation/disabled/submitted state, change/blur/submit buffering and
-lifecycle cleanup. Do not silently bind unrelated nested fields. Reject duplicate accessors and multiple/missing inner
-bindings. The helper is covered by real-owner and installed Angular 21 consumers; see the
-[acceptance record](datagrid-selection-acceptance.md).
+Optional business pickers are plain presentational/query components. They centralize their native markup and business
+behavior. The organization picker also owns its queryResource, loading, request failure and Retry; it emits selected
+keys through a `keys` model signal. The consuming page owns form values, validators and submission, and binds its own
+control directly to the inner `cll-datagrid-selection` (the page writes `formControlName`/`formControl` on that field,
+or binds it directly). The picker no longer mirrors a form owner: it owns no CVA and creates no mirrored or second
+FormControl. Keep the shared service/query definition outside both components and avoid another inventory query in the
+parent.
+
+The single component preserves real-owner validation/disabled/submitted state, change/blur/submit buffering and
+lifecycle cleanup for every supported form binding. Its `showError` uses the actual `NgControl` on the field, so
+validator presentation stays with the one owning control. Direct owners are covered by real-owner and installed Angular
+21 consumers; see the [acceptance record](datagrid-selection-acceptance.md).
 
 ## Updating, resetting and observing the form
 
@@ -188,26 +196,26 @@ Full transitions, failure/recovery and async examples remain in the [reference](
 
 ## Public surface
 
-| Developers use                     | Purpose                                                                                                                     |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| DatagridSelectionComponent         | One CVA and shared field/selection behavior around a directly projected native grid.                                        |
-| DatagridSelectionAccessorDirective | Optional library-owned accessor on a reusable business-picker host.                                                         |
-| DatagridSelectionBindingDirective  | Optional explicit inner field connection to that picker accessor.                                                           |
-| Common inputs                      | Optional required, helper, error, readonly and layout; no label input.                                                      |
-| itemAvailability                   | Caller policy returning disabled and a localized disabledReason; selected unavailable items remain removable.               |
-| Internal native bridge             | Library-owned selected writes, preservation, select-all/events and loading/disabled guards; no consumer template reference. |
-| Native content                     | One required direct label and clr-datagrid, plus optional cll-alert above the grid. Native content is caller-owned.         |
+| Developers use             | Purpose                                                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| DatagridSelectionComponent | One CVA and shared field/selection behavior around a directly projected native grid.                                        |
+| Common inputs              | Optional required, helper, error, readonly and layout; no label input.                                                      |
+| itemAvailability           | Caller policy returning disabled and a localized disabledReason; selected unavailable items remain removable.               |
+| Internal native bridge     | Library-owned selected writes, preservation, select-all/events and loading/disabled guards; no consumer template reference. |
+| Native content             | One required direct label and clr-datagrid, plus optional cll-alert above the grid. Native content is caller-owned.         |
 
-The wrapper adapter uses a private connection protocol, not another public value/event owner. Primitive-key
-single/multiple value shapes require runtime incoming-value and native identity diagnostics. Angular's CVA bindings are
-untyped boundaries; a typed FormControl alone cannot prove the template rejects the wrong mode/value.
+`DatagridSelectionComponent` allocates its own IDs and reads its form owner from its own injector; no cross-module
+ownership protocol or helper directive remains. Primitive-key single/multiple value shapes require runtime
+incoming-value and native identity diagnostics. Angular's CVA bindings are untyped boundaries; a typed FormControl alone
+cannot prove the template rejects the wrong mode/value.
 
 ## Verification and delivery
 
 The [acceptance record](datagrid-selection-acceptance.md) lists the implementation, runnable route, regression and
-installed-consumer evidence, scope limits, and independent human gates. The component, accessor and binding are exported
-from clr-lift. The local examples exercise real queryResource HTTP data and the original Reactive Forms/ngModel owners;
-toSignalForm observes the same parent form.
+installed-consumer evidence, scope limits, and independent human gates. Only `DatagridSelectionComponent` and its value
+types are exported from clr-lift for this field; the accessor and binding directives were removed by
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md). The local examples exercise real queryResource
+HTTP data and the original Reactive Forms/ngModel owners; toSignalForm observes the same parent form.
 
 Loading/readonly guards do not write native row permissions. Custom header pointer/Space actions use the same eligible
 filtered logical scope; single headers never select an item. Single radios and optional native row-click selection reach
@@ -222,10 +230,11 @@ identity.
 
 #201 adds controlled server-page coverage and retains the existing selection contract. Its direct form owns the
 server-paged query with a fresh authoritative eligibility validator response, and its reusable server picker moves that
-query, loading, failure and retry into a picker component kept together through the accessor/binding pair while the
-parent owns values, validators, the saved baseline and the key-only DTO. #202 retains full policy create/edit workflows.
-Independent native-language and assistive-technology acceptance, CI, merge, deployment and npm publication are separate
-gates. No SSR/hydration or virtual-scroll acceptance is claimed by the local-grid increment.
+query, loading, failure and retry into a picker component that emits keys through a model signal while the page binds
+its own control directly to the inner field and owns values, validators, the saved baseline and the key-only DTO. #202
+retains full policy create/edit workflows. Independent native-language and assistive-technology acceptance, CI, merge,
+deployment and npm publication are separate gates. No SSR/hydration or virtual-scroll acceptance is claimed by the
+local-grid increment.
 
 ## Demo feedback acceptance (October 31, 2026)
 
@@ -233,7 +242,8 @@ Reset must restore Organization 2 (org-2) in the direct validation example and O
 picker, keep the current page input populated, and leave checked rows consistent with the owning form. Loading saved
 selection restores Organization 2 plus an unresolved key; refreshing replaces objects without losing that selection.
 Explain these actions in all supported locales. Include an in-page API reference for the field inputs, native
-projection/value contract and accessor/binding pair, with complete parent source beside the reusable-picker example.
+projection/value contract and the page-owned control binding, with complete parent source beside the reusable-picker
+example.
 
 ## Saved-selection recovery in the validation example
 

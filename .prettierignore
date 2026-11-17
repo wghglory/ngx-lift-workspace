@@ -8,6 +8,7 @@
 .nx/self-healing
 .agents
 .opencode
+.codebuddy
 
 # pnpm owns the canonical lockfile formatting.
 pnpm-lock.yaml

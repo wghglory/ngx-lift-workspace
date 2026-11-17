@@ -176,12 +176,10 @@ const optional = computedAsync<number | undefined>(() => loadCount(), {
 });
 ```
 
-See the [roadmap](../../priority-roadmap.md) for planned work.
-
 ## Compatibility, rollout, and risks
 
 The synchronous initialization path uses Angular's exported createWatch primitive. Recheck that contract when upgrading
-Angular. Loading/reload UI belongs to resourceAsync or queryResource; planned extensions are tracked in the roadmap.
+Angular. Loading/reload UI belongs to resourceAsync or queryResource; planned extensions are tracked in GitHub issues.
 
 ## Interactive examples
 
@@ -239,8 +237,7 @@ retained-data refresh where applicable. Forms invoke/observe this API without as
 
 This is an audit of implemented behavior, including the correction above, which was unreleased when this audit was
 written; current release status belongs to the changelog and release records. Proposed features and unresolved
-implementation work belong in the [gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no
-new API is approved here.
+implementation work belong in GitHub issues; no new API is approved here.
 
 ## Evidence
 

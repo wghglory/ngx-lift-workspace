@@ -36,8 +36,8 @@ Examples / API Reference layout and uses `app-api-table` for component inputs, o
 the typography custom property, with descriptions in all eleven locales.
 
 Only one renderer is supported. Independent language and assistive-technology acceptance remains open; see the
-[acceptance contract](../../guides/accessibility-and-localization.md) and the [gap register](../../gap-register.md).
-SSR/hydration verification remains unclaimed.
+[acceptance contract](../../guides/accessibility-and-localization.md) and the
+[acceptance contract](../../guides/accessibility-and-localization.md). SSR/hydration verification remains unclaimed.
 
 ### Ticket #189 local ancestor filtering
 
@@ -291,15 +291,37 @@ type ObjectPathLocation =
   | {readonly kind: 'bucket'; readonly bucket: string}
   | {readonly kind: 'prefix'; readonly bucket: string; readonly prefix: string}
   | {readonly kind: 'object'; readonly bucket: string; readonly key: string};
+type EncodedObjectPathLocation =
+  | {readonly kind: 'bucket'; readonly bucket: string}
+  | {readonly kind: 'prefix'; readonly bucket: string; readonly prefix: string}
+  | {readonly kind: 'object'; readonly bucket: string; readonly key: string};
+type ObjectPathErrorCode =
+  | 'blank-bucket'
+  | 'blank-empty-label'
+  | 'invalid-kind'
+  | 'invalid-key'
+  | 'invalid-root'
+  | 'blank-destination'
+  | 'destination-failed';
+type BuildObjectPathResult =
+  | {readonly ok: true; readonly items: readonly BreadcrumbItem[]}
+  | {readonly ok: false; readonly error: {readonly code: ObjectPathErrorCode; readonly message: string}};
+interface ObjectPathNavigation {
+  readonly encode?: (raw: string) => string;
+  readonly destination: (location: EncodedObjectPathLocation) => string;
+  readonly collection?: {readonly id: string; readonly label: string; readonly href: string};
+}
 interface BuildObjectPathBreadcrumbsOptions {
   readonly bucket: string;
   readonly key: string;
   readonly kind: 'prefix' | 'object';
   readonly rootPrefix?: string;
   readonly emptySegmentLabel: string;
-  readonly hrefFor: (location: ObjectPathLocation) => string;
+  readonly navigation?: ObjectPathNavigation;
+  /** @deprecated Use navigation; caller-owned encoding. */
+  readonly hrefFor?: (location: ObjectPathLocation) => string;
 }
-declare function buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): readonly BreadcrumbItem[];
+declare function buildObjectPathBreadcrumbs(options: BuildObjectPathBreadcrumbsOptions): BuildObjectPathResult;
 ```
 
 The preview component has required `items` and `ariaLabel` signal inputs, optional `maxVisible` (default 4), optional
@@ -472,23 +494,25 @@ SDK calls and adds no storage-provider dependency. This explicit helper refines 
 renderer never parses keys, while a caller may opt into the helper's documented delimiter policy.
 
 ```ts
-// Public usage; compose translated application items outside the helper.
-const items = [
-  {id: 'buckets', label: 'Buckets', href: '/buckets'},
-  ...buildObjectPathBreadcrumbs({
-    bucket: 'bucket-1',
-    key: 'folder-1/folder-nested-2/object-4',
-    kind: 'object',
-    emptySegmentLabel: '(empty segment)', // Localize this application-owned label.
-    hrefFor: toAppHref,
-  }),
-];
+// Public usage; the helper owns encoding and prepends the collection item.
+const result = buildObjectPathBreadcrumbs({
+  bucket: 'bucket-1',
+  key: 'folder-1/folder-nested-2/object-4',
+  kind: 'object',
+  emptySegmentLabel: '(empty segment)', // Localize this application-owned label.
+  navigation: {
+    destination: toAppHref,
+    collection: {id: 'buckets', label: 'Buckets', href: '/buckets'},
+  },
+});
+const items = result.ok ? result.items : [];
 // Buckets > bucket-1 > folder-1 > folder-nested-2 > object-4
 ```
 
-The application composes its translated leading items, such as “Storage” and “Buckets”; the helper returns the bucket
-and key-derived locations. `kind` explicitly distinguishes browsing a prefix from inspecting an object. Do not infer the
-resource kind from a trailing slash: valid object keys and folder-marker policies may use one too.
+The helper prepends the translated collection item only without a restricted root; the application supplies its label
+and destination. Invalid scope or a failing destination settles as an error result. `kind` explicitly distinguishes
+browsing a prefix from inspecting an object. Do not infer the resource kind from a trailing slash: valid object keys and
+folder-marker policies may use one too.
 
 | Generated label   | Generated display context           | Location given to application URL callback        |
 | ----------------- | ----------------------------------- | ------------------------------------------------- |
@@ -848,4 +872,5 @@ existing CSS property `--cll-breadcrumb-font-size`, with Clarity typography as t
 component input.
 
 Independent language and assistive-technology acceptance remains open; see the
-[acceptance contract](../../guides/accessibility-and-localization.md) and the [gap register](../../gap-register.md).
+[acceptance contract](../../guides/accessibility-and-localization.md) and the
+[acceptance contract](../../guides/accessibility-and-localization.md).

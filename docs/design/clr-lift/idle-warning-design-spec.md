@@ -90,7 +90,8 @@ countdown announcements and translated layout. Countdown updates should not over
 ## Demo and validation plan
 
 Existing idle demo/E2E and adjacent component/scope tests cover countdown, confirmation, shared/scoped ownership and
-repeated mounting. Manual assistive-technology acceptance remains in the delivery roadmap.
+repeated mounting. Manual assistive-technology acceptance remains a separate maintainer decision in the acceptance
+contract.
 
 ## Compatibility, rollout, and risks
 

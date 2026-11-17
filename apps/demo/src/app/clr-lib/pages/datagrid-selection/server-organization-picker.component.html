@@ -25,7 +25,7 @@
   </button>
 </section>
 <cll-datagrid-selection
-  cllDatagridSelectionBinding
+  [formControl]="control()"
   [readonly]="readonly()"
   [required]="required()"
   [helper]="'selectionDemo.serverPickerHelp' | translate"

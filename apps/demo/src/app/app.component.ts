@@ -6,7 +6,7 @@ import {ThemeToggleComponent, ToastContainerComponent, TranslatePipe, Translatio
 
 import {LanguageSwitcherComponent} from './core/components/language-switcher/language-switcher.component';
 import {VerticalNavComponent} from './core/components/vertical-nav/vertical-nav.component';
-import {initialDemoTranslations, loadDemoLanguage} from './core/l10n/demo-language-loader';
+import {loadDemoLanguage, registerDemoTranslations} from './core/l10n/demo-registration';
 
 @Component({
   selector: 'app-root',
@@ -47,7 +47,7 @@ export class AppComponent {
   }
 
   constructor() {
-    this.translationService.loadTranslationsForComponent('', initialDemoTranslations);
+    registerDemoTranslations(this.translationService);
     effect(() => {
       const language = this.translationService.currentLanguage();
       void loadDemoLanguage(this.translationService, language).catch(() => {

@@ -270,8 +270,8 @@ function removeRow(orgId: string) {
 ## 6. Scope and limitations
 
 SSR hydration serialization and automatic optimistic rollback are not implemented. Callers own any rollback snapshots
-used with local set/update operations. Planned work is tracked in the [roadmap](../../priority-roadmap.md); do not
-assume future options are part of the public API.
+used with local set/update operations. Planned work is tracked in GitHub issues; do not assume future options are part
+of the public API.
 
 ## Terminology
 
@@ -329,8 +329,8 @@ retained-data refresh where applicable. Forms invoke/observe this API without as
 
 ## Review decisions and delivery
 
-This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the
-[gap register](../implementation-gaps.md) and [roadmap](../../priority-roadmap.md); no new API is approved here.
+This is an audit of shipped behavior. Proposed features and unresolved implementation work belong in the GitHub issues;
+no new API is approved here.
 
 ## Evidence
 

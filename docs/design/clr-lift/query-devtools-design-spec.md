@@ -3,7 +3,7 @@
 Status: **delivered** in `clr-lift 21.4.0`. Owner: clr-lift maintainers. Package: clr-lift. The maintainer approved the
 docked-panel revision. Exact test, browser, package, CI and release results belong to the corresponding PR and workflow
 runs. Independent language and assistive-technology acceptance remain separate gates; see the
-[acceptance contract](../../guides/accessibility-and-localization.md) and the [gap register](../../gap-register.md).
+[acceptance contract](../../guides/accessibility-and-localization.md).
 
 ## Applicable contracts
 

@@ -4,12 +4,16 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {
   BreadcrumbComponent,
-  BreadcrumbItem,
   buildObjectPathBreadcrumbs,
-  ObjectPathLocation,
+  EncodedObjectPathLocation,
   TranslatePipe,
   TranslationService,
 } from 'clr-lift';
+// eslint-disable-next-line @nx/enforce-module-boundaries -- Shared object-path consumer harness, not a library import.
+import {
+  createObjectPathOptions,
+  ObjectPathDestination,
+} from '../../../../../../../tools/package/fixtures/object-path-consumer-harness.js';
 
 import {PRESERVE_CONTENT_SCROLL} from '../../../core/content-viewport-scroller';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
@@ -77,24 +81,24 @@ export class BreadcrumbStorageComponent {
   });
   readonly trail = computed(() => {
     const {kind, key, bucket, rootPrefix} = this.state();
-    try {
-      if (kind === 'buckets') {
-        if (rootPrefix !== undefined) throw new Error('Restricted root cannot expose the bucket collection');
-        return {items: [this.collectionItem()], error: false};
-      }
-      if (kind !== 'prefix' && kind !== 'object') throw new Error('Unknown resource kind');
-      const items = buildObjectPathBreadcrumbs({
+    if (kind === 'buckets') {
+      if (rootPrefix !== undefined) return {items: [], error: true};
+      return {items: [this.collectionItem()], error: false};
+    }
+    if (kind !== 'prefix' && kind !== 'object') return {items: [], error: true};
+    const destination: ObjectPathDestination = (location) => this.hrefFor(location);
+    const result = buildObjectPathBreadcrumbs(
+      createObjectPathOptions(destination, {
         bucket,
         key,
         kind,
         rootPrefix,
         emptySegmentLabel: this.translationService.translate('breadcrumbPreview.emptySegment'),
-        hrefFor: (location) => this.hrefFor(location),
-      });
-      return {items: rootPrefix === undefined ? [this.collectionItem(), ...items] : items, error: false};
-    } catch {
-      return {items: [], error: true};
-    }
+        // Angular Router encodes query params itself; keep the raw exact keys until createUrlTree.
+        navigation: {destination, encode: (raw) => raw, collection: this.collectionItem()},
+      }),
+    );
+    return result.ok ? {items: result.items, error: false} : {items: [], error: true};
   });
   readonly listing = computed(() => {
     const {bucket, key, kind} = this.state();
@@ -114,7 +118,7 @@ export class BreadcrumbStorageComponent {
     return kind === 'object' && bucket === 'bucket-1' ? objects.find((object) => object.Key === key) : undefined;
   });
   readonly usageTs = `import {Component} from '@angular/core';
-import {BreadcrumbComponent, BreadcrumbItem, buildObjectPathBreadcrumbs, ObjectPathLocation} from 'clr-lift';
+import {BreadcrumbComponent, BreadcrumbItem, buildObjectPathBreadcrumbs, EncodedObjectPathLocation} from 'clr-lift';
 
 @Component({
   selector: 'app-bucket-path',
@@ -123,22 +127,25 @@ import {BreadcrumbComponent, BreadcrumbItem, buildObjectPathBreadcrumbs, ObjectP
 })
 export class BucketPathComponent {
   // Read these exact values from your route or selected API entry.
-  readonly items: readonly BreadcrumbItem[] = buildObjectPathBreadcrumbs({
-    bucket: 'bucket-1', key: 'folder-1/folder-nested-2/object-4', kind: 'object',
+  readonly options = {
+    bucket: 'bucket-1', key: 'folder-1/folder-nested-2/object-4', kind: 'object' as const,
     emptySegmentLabel: '(empty segment)', // Supply your translated label.
-    hrefFor: (location: ObjectPathLocation) => {
-      const bucket = encodeURIComponent(location.bucket);
-      switch (location.kind) {
-        case 'bucket': return '/browse?bucket=' + bucket;
-        case 'prefix': return '/browse?bucket=' + bucket + '&prefix=' + encodeURIComponent(location.prefix);
-        case 'object': return '/object?bucket=' + bucket + '&key=' + encodeURIComponent(location.key);
-      }
+    navigation: {
+      destination: (location: EncodedObjectPathLocation) => {
+        switch (location.kind) {
+          case 'bucket': return '/browse?bucket=' + location.bucket;
+          case 'prefix': return '/browse?bucket=' + location.bucket + '&prefix=' + location.prefix;
+          case 'object': return '/object?bucket=' + location.bucket + '&key=' + location.key;
+        }
+      },
     },
-  });
+  };
+  readonly result = buildObjectPathBreadcrumbs(this.options);
+  readonly items: readonly BreadcrumbItem[] = this.result.ok ? this.result.items : [];
 }`;
   readonly usageHtml = '<cll-breadcrumb [items]="items" />';
 
-  private collectionItem(): BreadcrumbItem {
+  private collectionItem(): {id: string; label: string; href: string} {
     return {
       id: 'bucket-collection',
       label: this.translationService.translate('breadcrumbPreview.buckets'),
@@ -148,7 +155,7 @@ export class BucketPathComponent {
   collectionHref(): string {
     return this.router.serializeUrl(this.router.createUrlTree([path], {queryParams: {storeKind: 'buckets'}}));
   }
-  hrefFor(location: ObjectPathLocation): string {
+  hrefFor(location: EncodedObjectPathLocation): string {
     const {rootPrefix} = this.state();
     return this.router.serializeUrl(
       this.router.createUrlTree([path], {

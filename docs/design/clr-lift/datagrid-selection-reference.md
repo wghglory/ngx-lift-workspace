@@ -16,10 +16,12 @@ validation feedback. Native filters, sorters, row names, footer and pagination b
 label/provider context and row/grid registration still need runtime validation.
 
 Resource-specific pickers remain optional. The organization picker owns its business markup and queryResource, including
-loading, failure and Retry UI. Its parent owns values, validators and submission. Without a picker the page owns the
-inventory query. Shared services/query factories retain HTTP/cache responsibilities; the generic field does not fetch. A
-picker host can compose the proposed library-owned accessor/binding pair to retain formControlName without handwritten
-CVA callbacks or a mirrored control. Data retrieval never determines form ownership.
+loading, failure and Retry UI, and emits selected keys through a `keys` model signal. Its parent owns values, validators
+and submission, binding its own control directly to the inner `cll-datagrid-selection`. Without a picker the page owns
+the inventory query. Shared services/query factories retain HTTP/cache responsibilities; the generic field does not
+fetch. The former library-owned accessor/binding pair was removed by
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md); there is one CVA and one form owner. Data
+retrieval never determines form ownership.
 
 #200 delivers this native local entry point and common form behavior. #201 adds the controlled native server-page
 example without changing that contract; #202 retains full policy create/edit demonstrations. No second renderer is
@@ -273,11 +275,11 @@ The ask-matt workflow review identifies the next step as interface review follow
 proof. Its standard static logic/visual-variant prototypes cannot establish Angular CVA, projection or accessible-grid
 behavior. Continue in this design context, then consolidate the proven contract for ticketing.
 
-| Question | Proposal for review                                                                                                        | Reason                                                                                                                                                        |
-| -------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q10      | One DatagridSelectionComponent reads fixed native clrDgSelectionType and native identity; no duplicate shell configuration | Keep one usage pattern while preserving scalar/null versus key-array values; generic inference and actual forms must be proved                                |
-| Q11      | Revised October 29: compose a library-owned picker accessor and bind its inner selection through a directive               | Supersedes the earlier recommendation to leave thin CVAs in business components; parent formControlName remains unchanged. Runtime/package proof is required. |
-| Q12      | Approved: item disabled plus disabledReason, no dedicated locks or dual permission objects                                 | Keep normal availability simple and preserve removal of invalid saved choices                                                                                 |
+| Question | Proposal for review                                                                                                                                        | Reason                                                                                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q10      | One DatagridSelectionComponent reads fixed native clrDgSelectionType and native identity; no duplicate shell configuration                                 | Keep one usage pattern while preserving scalar/null versus key-array values; generic inference and actual forms must be proved                                                         |
+| Q11      | Superseded November 17 by [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md): one value-control module, no picker accessor/binding pair | The three-module ownership rewrite and the shallow ID service were removed; the page binds its own control directly to `cll-datagrid-selection`. This is a breaking public API change. |
+| Q12      | Approved: item disabled plus disabledReason, no dedicated locks or dual permission objects                                                                 | Keep normal availability simple and preserve removal of invalid saved choices                                                                                                          |
 
 Q12 is approved in its simplified form: item disabled plus a localized disabledReason, without locked/lockedReason or
 separate select/deselect permission objects. Normal disabled items cannot be newly selected. An existing selection that
@@ -326,44 +328,29 @@ separate. Use Angular `setValue`, `patchValue` or `reset` to notify the form of 
 its array in place.
 
 ```html
-<!-- Proposed integration: outer wrappers must retain/provide a real value accessor. -->
+<!-- Single-module integration: the page owns the form and binds its control to the field. -->
 <form [formGroup]="form">
-  <app-organization-picker formControlName="organizationIds" [items]="organizations()" />
-  <app-storage-target-picker formControlName="storageTargetNames" [items]="storageTargets()" />
+  <app-organization-picker [control]="form.controls.organizationIds" [items]="organizations()" />
+  <app-storage-target-picker [control]="form.controls.storageTargetNames" [items]="storageTargets()" />
 </form>
 ```
 
-The organization wrapper's domain inputs include items; its native identity callback chooses the actual stable saved
-key. The October 29 proposal composes a library-owned accessor and marks one inner field for binding. Host NgControl
-does not automatically move to an inner grid: those two directives own the explicit connection. The business component
-writes no CVA callbacks. Runtime/packaging proof and explicit removal of an existing accessor remain required before
-production migration. Preserve existing object-valued wrapper contracts with explicit adaptation rather than silently
-changing those fields to IDs.
+The organization picker's domain inputs include items; its native identity callback chooses the actual stable saved key.
+Under [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) the picker is a plain presentational/query
+component: it emits selected keys through a `keys` model signal and its page-owned `control` is bound directly to the
+inner `cll-datagrid-selection`. No host directive moves NgControl to an inner grid and the picker writes no CVA
+callbacks. The parent form remains the one owner, with no mirrored FormControl. Preserve existing object-valued wrapper
+contracts with explicit adaptation rather than silently changing those fields to IDs. ngModel and future native Signal
+Forms use their own real form systems.
 
-The earlier `[control]` sketch passed an existing FormControl instance directly to a wrapper. That object includes
-value, errors, disabled and touched state; it is not the ID array itself or Clarity's `clrControl` directive. This is a
-possible Reactive Forms composition, but no longer the main API recommendation. It is not required by the generic
-selection core. The parent form remains the one owner under either approach, with no mirrored FormControl. ngModel and
-future native Signal Forms need real bridges for their own form systems.
+### Value-control boundary
 
-### Wrapper bridge feasibility and revised composition
-
-Installed Angular supports a thin resource-wrapper CVA that passes controlled value, availability and interaction events
-to the generic inner selection UI. The inner UI has no formControl/ngModel binding in that mode and creates no
-FormControl. The wrapper remains connected to the original NgControl, validators and form commit timing. Owner writes
-update the view without user callbacks; accepted inner edits and composite departures report through the outer CVA. Read
-required/error/touched/pending presentation from the actual owner's public APIs with lifecycle-safe injection.
-
-The October 29 proposal chooses a reusable standalone CVA host directive, but exactly one custom value accessor may be
-registered on the wrapper host. Installed ClrControl is not standalone and cannot simply be used as a host directive.
-Host directives referenced by exported library components can also impose public-entrypoint visibility/export
-requirements. Do not promise an invisible generic host-directive abstraction before strict packaging proof. The earlier
-private-helper/thin-CVA recommendation is superseded for the intended consumer API; existing custom wrappers can retain
-their current accessor until migrated.
-
-The complete composed picker, parent, direct native grids and reusable filter UI now compile against declaration-only
-candidates. This proves consumer syntax, not runtime bridge/provider/projection behavior. Installed public-package and
-production lifecycle proof remain required; preserving formControlName never requires mirrored controls.
+`DatagridSelectionComponent` is the only CVA. It allocates its own application-scoped IDs and resolves its owner from
+its own injector `NgControl`, so validation/disabled/submitted presentation always reflects the real owning control.
+Owner writes update the view without user callbacks; accepted inner edits and composite departures report through that
+one accessor. The removed accessor/binding pair and shallow ID service are gone; no private cross-module ownership
+protocol remains. Installed public-package and production lifecycle proof remain required; preserving formControlName
+never requires mirrored controls.
 
 ### Integration proof findings to preserve in production
 
@@ -796,10 +783,10 @@ The current workspace uses Angular 21.2.25 and installed Clarity 18.4.0. Existin
 older Clarity version supports the proposed bridge. Record a minimum supported Clarity version and installed evidence
 after API proof; do not silently narrow peers in this design draft.
 
-The roadmap already defers Angular/Nx upgrades and requires native Signal Forms after that upgrade. Preserve existing
-Reactive Forms/ngModel behavior through the future form bridge unless a separately reviewed release decision changes it.
-Object-valued application pickers need explicit adapters under the accepted primitive-key contract. Automatic default
-selection and wildcard semantics must not be imported accidentally from existing domain controls.
+Angular/Nx upgrades are deferred and tracked in GitHub issue #231; native Signal Forms follow that upgrade. Preserve
+existing Reactive Forms/ngModel behavior through the future form bridge unless a separately reviewed release decision
+changes it. Object-valued application pickers need explicit adapters under the accepted primitive-key contract.
+Automatic default selection and wildcard semantics must not be imported accidentally from existing domain controls.
 
 Major risks: unavailable public accessible-name forwarding, disabled/readonly row integration, Clarity projection/DI,
 selection events caused by reconciliation, complete-local versus remote-page removal semantics, scoped key collisions,
@@ -809,7 +796,10 @@ and accidental migration changes in form dirty/submission behavior. Each needs a
 
 The maintainer accepted Q1–Q9 and clarified that an unpaged, footer-free grid may show the entire item collection in a
 scrolling area. The maintainer subsequently approved Q10/Q11 and the simplified Q12, with dedicated locks removed from
-v1. The API direction is approved; integration proof and production delivery remain separate gates.
+v1. On November 17, 2026 the maintainer reopened Q11 through
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) and replaced its accessor/binding composition with
+one value-control module; this is a breaking public API change. The API direction is approved; integration proof and
+production delivery remain separate gates.
 
 | Decision | Accepted policy                                                                                                                                             |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -825,7 +815,7 @@ v1. The API direction is approved; integration proof and production delivery rem
 
 The [ADR](../../adr/0002-datagrid-selection-composition.md) records the native-grid rendering decision and shared
 key-valued form contract. The approved decisions above remain valid. Implementation, validation and release evidence
-belong to the corresponding PR and workflow runs; see the [gap register](../../gap-register.md) for current status.
+belong to the corresponding PR and workflow runs; outstanding work is tracked in GitHub issues.
 
 ## Localized column and filter contract
 
@@ -867,37 +857,28 @@ No column text resolver, column schema, template override directive or new gener
 this contract. Production native filter registration, language switching and independent language acceptance remain
 separate from source compilation.
 
-## Why a wrapper forwards change and touch
+## Why the field forwards change and touch itself
 
-**October 29 optional wrapper proposal:** the library performs this forwarding. The component itself is already the CVA
-for direct native-grid usage; no wrapper helper is required there. Business developers no longer implement the CVA
-methods or bind validationControl/valueChange/blurred in a reusable picker. The
-[complete example](datagrid-selection-code-examples.md#with-a-picker-component) composes
-DatagridSelectionAccessorDirective through hostDirectives and adds cllDatagridSelectionBinding to the inner field. The
-parent still writes app-organization-picker with formControlName or formControl.
+The component is the CVA for every supported form binding; there is no wrapper helper or picker host directive.
+[ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) removed the October 29 accessor/binding pair and
+folded ID allocation and owner resolution into `DatagridSelectionComponent`. Business pickers are plain
+presentational/query components: they emit selected keys through a `keys` model signal while the page binds its own
+control directly to the inner field.
 
 ```mermaid
 flowchart LR
-  P[Original parent FormControl] --> Accessor[Library accessor on business picker host]
-  Accessor <-->|Library binding directive| I[Inner selection field]
-  Business[Business component] -->|Items, columns and presentation| I
+  P[Page FormControl] --> I[cll-datagrid-selection CVA]
+  Business[Business picker: query, loading, failure, retry] -->|keys model and presentation| I
 ```
 
-There is one original form control and one registered outer accessor. The inner field has no direct form binding. The
-adapter preserves Angular's change/blur/submit buffering, disabled state, validators and submitted/reset presentation.
-Owner writes and resets update the view without calling user-change/touch callbacks. Accepted inner edits call Angular's
-registered change callback; leaving the whole composite calls its registered touch callback. Internal focus movement
-between cells, footer, label help and owned filter popups does not count as departure.
+There is one original form control and one registered accessor: the field itself. The component resolves that owner from
+its own injector `NgControl`, so validation and submitted/reset presentation reflect the real control. Owner writes and
+resets update the view without calling user-change/touch callbacks. Accepted inner edits call Angular's registered
+change callback; leaving the whole composite calls its registered touch callback. Internal focus movement between cells,
+footer, label help and owned filter popups does not count as departure. Angular owns change/blur/submit buffering.
 
-Do not implement this by mirroring the parent value into an inner FormControl or binding the original control a second
-time. Do not reread committed control.value during validation updates to overwrite an intentionally pending edit. The
-adapter/binding must resolve the true NgControl lifecycle-safely, observe form metadata, detach old references and
-subscriptions, and reject missing/multiple inner fields or conflicting form/value bindings. Registering another custom
-accessor on the picker host is an error.
-
-The previous manual CVA example explained Angular's protocol but exposed infrastructure work that belongs in the
-library. Its callbacks and validationControl route are now lower-level implementation/legacy-integration details, not
-the recommended application picker recipe. This is a proposed public API refinement with strict consumer syntax proof;
-runtime and public packaging acceptance remain pending. See the
-[directive composition API](https://angular.dev/guide/directives/directive-composition-api) and
+Do not mirror the parent value into a second FormControl or bind the original control a second time. Do not reread
+committed control.value during validation updates to overwrite an intentionally pending edit. The component detaches its
+owner subscription and document listeners on destroy. The single-module contract has strict local, installed-package and
+browser consumer proof; see the [acceptance record](datagrid-selection-acceptance.md). See the
 [ControlValueAccessor protocol](https://angular.dev/api/forms/ControlValueAccessor).

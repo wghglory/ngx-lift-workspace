@@ -1,6 +1,6 @@
 # API specifications
 
-[Documentation index](../README.md) · [Delivery roadmap](../priority-roadmap.md)
+[Documentation index](../README.md)
 
 ## Component planning and review
 
@@ -67,7 +67,7 @@ The canonical datagrid contract is [datagrid selection](clr-lift/datagrid-select
 [delivery plan](clr-lift/datagrid-selection-delivery-plan.md), and
 [acceptance record](clr-lift/datagrid-selection-acceptance.md) are supporting documents. The
 [acceptance contract](../guides/accessibility-and-localization.md) owns gate status and [CHANGELOG](../../CHANGELOG.md)
-owns release history; [active design gaps](implementation-gaps.md) records implementation gates.
+owns release history; outstanding implementation work is tracked in GitHub issues.
 
 Proposed controls are linked from the [component roadmap](../component-roadmap.md); they are not implemented APIs. Specs
 use the shared template's required topics, retaining accurate legacy detail and explicitly marking inapplicable UI/forms

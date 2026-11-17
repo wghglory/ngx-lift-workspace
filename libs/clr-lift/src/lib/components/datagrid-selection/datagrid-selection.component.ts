@@ -1,5 +1,6 @@
 import {
   afterEveryRender,
+  APP_ID,
   booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -27,7 +28,8 @@ import {Subscription} from 'rxjs';
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {datagridSelectionTranslations} from './datagrid-selection.l10n';
-import {SelectionIdService} from './selection-id.service';
+
+let nextId = 0;
 
 /** Stable resource identity within this field's scope. Display names and row positions are not identities. */
 export type DatagridSelectionKey = string | number;
@@ -77,7 +79,7 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   private readonly injector = inject(Injector);
   private readonly form =
     inject(FormGroupDirective, {optional: true, skipSelf: true}) ?? inject(NgForm, {optional: true, skipSelf: true});
-  protected readonly id = inject(SelectionIdService).allocate();
+  protected readonly id = `${inject(APP_ID)}-datagrid-selection-${nextId++}`;
   protected single = false;
   protected empty = true;
   private owner: AbstractControl | null = null;
@@ -93,8 +95,6 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   private footprintDensity = '';
   /** Row-count + density signature of the last footprint measurement, to skip re-measuring on selection. */
   private footprintSignature = '';
-  /** @internal The library picker binding supplies the original host control without creating another control. */
-  ɵowner?: () => NgControl | null;
   private readonly reasons = new Map<ClrDatagridRow<T>, HTMLElement>();
   private nextReason = 0;
   private allInScopeSelected = false;
@@ -211,11 +211,14 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
     return this.disabled || this.readonly() || !!this.grid?.loading;
   }
   ngDoCheck(): void {
-    const owner = (this.ɵowner?.() ?? this.injector.get(NgControl, null, {self: true}))?.control ?? null;
+    const owner = this.resolveOwner();
     if (owner === this.owner) return;
     this.ownerSubscription?.unsubscribe();
     this.owner = owner;
     this.ownerSubscription = owner?.events.subscribe(() => this.cdr.markForCheck());
+  }
+  private resolveOwner(): AbstractControl | null {
+    return this.injector.get(NgControl, null, {self: true})?.control ?? null;
   }
   protected showError(): boolean {
     return !!this.owner?.invalid && (!!this.owner.touched || !!this.form?.submitted);
