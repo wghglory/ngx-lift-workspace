@@ -67,6 +67,22 @@ Vite, ESLint, or another tool-native cache.
 Do not infer `cache: false` from an absent project property. For cache causes, target settings, inputs, outputs, or a
 configuration change, use `nx-cloud-cache-investigator`. API data alone cannot justify a cache or inputs pull request.
 
+## Deploy and publish paths
+
+Before using CIPE data to answer a question about `deploy-demo.yml` or `publish.yml`, verify that a CIPE actually covers
+the run. These workflows call the shared `quality.yml` with `secrets: inherit`, so only their `quality` job runs with
+`NX_CLOUD_ACCESS_TOKEN` and can produce CIPE data. The `deploy` job (Vercel) and `publish` job (npm publish, GitHub
+release) run `nx` in the caller without that token, so Nx falls back to local execution; their non-Nx steps never appear
+in a CIPE.
+
+- Match a CIPE to the run by commit SHA, branch, and CI context. If no CIPE covers the deploy/publish job, report
+  `CIPE UNAVAILABLE` for that path and read workflow-run records (`gh run view`, `gh api`) instead. Do not infer a
+  deployment or publication outcome from a missing CIPE.
+- A green `quality` CIPE proves only the gate, not a successful Vercel deployment, npm publication, or GitHub release.
+  Check those job outcomes in the workflow run.
+- State which source was used for each path in the report. Never describe a deploy/publish path as verified from Nx
+  Cloud data when only the gate CIPE exists.
+
 ## Quick workflow
 
 ```sh

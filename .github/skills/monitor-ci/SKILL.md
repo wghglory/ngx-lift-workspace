@@ -55,6 +55,15 @@ is available and the entire skill is inoperable.
 
 3. **If connected** → continue to main loop
 
+### Deploy/publish path availability
+
+`monitor-ci` tracks the CIPE for the current branch. When the branch run is a `deploy-demo.yml` or `publish.yml`
+execution, verify that CIPE data covers the path you are reporting: only their shared `quality` job produces a CIPE,
+while the `deploy` / `publish` jobs run `nx` locally without `NX_CLOUD_ACCESS_TOKEN` and have no CIPE data. Apply the
+[deploy and publish path checks](../nx-cloud-api/SKILL.md#deploy-and-publish-paths). Mark the missing path
+`CIPE UNAVAILABLE`, read its outcome from workflow-run records, and never present a green gate CIPE as a successful
+deployment or publication.
+
 ## Architecture Overview
 
 1. **This skill (orchestrator)**: spawns subagents, runs scripts, prints status, does local coding work
