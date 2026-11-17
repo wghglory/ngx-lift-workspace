@@ -210,6 +210,67 @@ Requests start in parallel without a concurrency limit. Paginate, limit selectio
 large lists. `maxEntries` cannot evict active observers or pending work. Prebuilt-definition arrays, heterogeneous
 collections and a shared concurrency scheduler are deferred until a consumer needs them.
 
+### Combining fixed same-shape reads with a visible partial failure
+
+When several endpoints return the same item shape and one grid shows their union, use one `queryResource` whose loader
+composes the reads with `forkJoin`. `queryResources` is for a changing collection of independent reads driven by item
+keys, not for a fixed set of endpoints.
+
+A source failure that must be shown to the user while the remaining sources still render is a **domain result**, not a
+swallowed error. Catch it inside that source's branch and map it to a tagged value. Do **not** return a bare `of([])`
+for a failed branch: that makes "failed" indistinguishable from "legitimately empty" and removes the information the UI
+must present and announce.
+
+```typescript
+import {catchError, forkJoin, map, Observable, of} from 'rxjs';
+import {queryResource} from 'ngx-lift';
+
+interface Item {id: string; name: string; source: string;}
+type SourceResult =
+  | {source: string; status: 'ok'; items: Item[]}
+  | {source: string; status: 'failed'; error: unknown};
+
+readonly combinedQuery = queryResource<{items: Item[]; failedSources: string[]}>(() => ({
+  key: ['items', 'combined'],
+  tags: [{type: 'Items'}],
+  staleTime: 30_000,
+  loader: () =>
+    forkJoin(
+      ['a', 'b', 'c'].map((source) =>
+        this.http.get<Item[]>(`/api/items/${source}`).pipe(
+          map((items): SourceResult => ({source, status: 'ok', items})),
+          catchError((error: unknown): Observable<SourceResult> => of({source, status: 'failed', error})),
+        ),
+      ),
+    ).pipe(
+      map((results) => ({
+        items: results.flatMap((result) => (result.status === 'ok' ? result.items : [])),
+        failedSources: results.filter((result) => result.status === 'failed').map((result) => result.source),
+      })),
+    ),
+}));
+```
+
+The grid binds the successful union (`combinedQuery.value()?.items ?? []`) and renders `failedSources` with an
+application-owned, localized warning and retry control. Contract boundaries:
+
+- After every branch settles, `status()` is `resolved`. The failed branch lives in `failedSources`; it is not an
+  `error()` and does not produce `isInitialError()` / `isRefreshError()`.
+- Client-level `onQueryError` does not report a branch whose failure was mapped into the domain result. The application
+  owns the visible and announced failure message in every supported locale.
+- Query-level `retry` and `deadlineMs` still bound the whole logical read. A branch `catchError` does not retry that
+  branch: add `retry()` inside the branch when that is intended, or call `combinedQuery.reload()` from recovery.
+- When all sources are required, omit the branch `catchError` and let plain `forkJoin` fail the whole query. Initial
+  failure then blocks with `isInitialError()`; refresh failure retains data with `isRefreshError()`.
+
+Visible messages and accessible names in the demo (all reuse existing keys across all eleven locales):
+`queryResources.traditionalTab` names the playground; `common.name` and `queryResource.status` name the grid columns;
+`common.failed` is the failed-source status label and carries `role="alert"` so the status change is announced once;
+`queryExamples.retryRead` labels the recovery button. No new dictionary key is added.
+
+The `queryResources` demo page has a runnable three-source version where one source fails once and a retry recovers it;
+the `mutateResource` demo page shows the complementary write-side partial-success pattern.
+
 ## Seeding an editable form from a query
 
 A reactive form can keep one `FormGroup` for the component's lifetime. An effect bridges the query signal to this

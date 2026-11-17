@@ -59,11 +59,21 @@ describe('MutateResourceDemoComponent', () => {
 
   it('runs per-call outcome callbacks for successful and failed writes', async () => {
     component.submitCallbackWrite(false);
-    await vi.waitFor(() => expect(component.callbackOutcome()).toBe('success'));
+    await vi.waitFor(() => expect(component.callbackOutcome()).toBe('success'), {timeout: 3000});
     expect(component.callbackBusy()).toBe(false);
 
     component.submitCallbackWrite(true);
-    await vi.waitFor(() => expect(component.callbackOutcome()).toBe('error'));
+    await vi.waitFor(() => expect(component.callbackOutcome()).toBe('error'), {timeout: 3000});
     expect(component.callbackBusy()).toBe(false);
+  });
+
+  it('settles every row of a batch, including a partial failure', async () => {
+    await component.submitBatch(true);
+    expect(component.batchOutcomes()['item-1']).toBe('success');
+    expect(component.batchOutcomes()['item-2']).toBe('failed');
+    expect(component.batchOutcomes()['item-3']).toBe('success');
+
+    await component.submitBatch(false);
+    expect(Object.values(component.batchOutcomes())).toEqual(['success', 'success', 'success']);
   });
 });

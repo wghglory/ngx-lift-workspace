@@ -32,7 +32,7 @@ describe('queryResources guide', () => {
     fixture.detectChanges();
     await vi.advanceTimersByTimeAsync(150);
     fixture.detectChanges();
-    expect(client.getDiagnostics().entries).toHaveLength(9);
+    expect(client.getDiagnostics().entries).toHaveLength(10);
     fixture.destroy();
     await vi.advanceTimersByTimeAsync(1);
     expect(client.getDiagnostics().entries.map((entry) => entry.key)).toEqual([['unrelated']]);
@@ -146,5 +146,24 @@ describe('queryResources guide', () => {
     });
     expect(component.isFleetRefreshing()).toBe(false);
     expect(component.clustersBulkQuery.updatedAt()).toBe(bulkUpdatedAt);
+  });
+
+  it('combines successful sources and exposes a failed source for retry', async () => {
+    const fixture = TestBed.createComponent(QueryResourcesDemoComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(250);
+    fixture.detectChanges();
+
+    expect(component.combinedRowsQuery.status()).toBe('resolved');
+    expect(component.combinedRowsQuery.value()?.rows).toHaveLength(2);
+    expect(component.combinedRowsQuery.value()?.failedSources).toEqual(['b']);
+    expect(fixture.nativeElement.querySelectorAll('[data-testid="combined-sources"] .label-danger')).toHaveLength(1);
+
+    component.retryCombinedSources();
+    await vi.advanceTimersByTimeAsync(250);
+    fixture.detectChanges();
+    expect(component.combinedRowsQuery.value()?.rows).toHaveLength(3);
+    expect(component.combinedRowsQuery.value()?.failedSources).toEqual([]);
   });
 });

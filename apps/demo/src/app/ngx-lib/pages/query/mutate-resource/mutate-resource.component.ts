@@ -286,6 +286,82 @@ clearLogs() {
       .finally(() => this.callbackBusy.set(false));
   }
 
+  // ---------------------------------------------------------------------------
+  // Demo 5: Batch submission with partial success
+  // ---------------------------------------------------------------------------
+  readonly batchIds = ['item-1', 'item-2', 'item-3'];
+  readonly batchOutcomes = signal<Record<string, 'pending' | 'success' | 'failed'>>({});
+
+  readonly batchUpdateMutation = mutateResource<
+    {ids: string[]; failIds: string[]},
+    {results: {id: string; ok: boolean}[]}
+  >(
+    ({ids, failIds}) =>
+      new Promise<{results: {id: string; ok: boolean}[]}>((resolve) => {
+        setTimeout(() => resolve({results: ids.map((id) => ({id, ok: !failIds.includes(id)}))}), 400);
+      }),
+    {
+      invalidateTags: (result) => result.results.filter((row) => row.ok).map((row) => ({type: 'Items', id: row.id})),
+    },
+  );
+
+  async submitBatch(failSome: boolean): Promise<void> {
+    const failIds = failSome ? ['item-2'] : [];
+    this.batchOutcomes.set(Object.fromEntries(this.batchIds.map((id) => [id, 'pending' as const])));
+    try {
+      const result = await this.batchUpdateMutation.mutate({ids: this.batchIds, failIds});
+      this.batchOutcomes.update((previous) => ({
+        ...previous,
+        ...Object.fromEntries(
+          result.results.map((row) => [row.id, row.ok ? ('success' as const) : ('failed' as const)]),
+        ),
+      }));
+    } catch {
+      this.batchOutcomes.update((previous) => ({
+        ...previous,
+        ...Object.fromEntries(this.batchIds.map((id) => [id, 'failed' as const])),
+      }));
+    }
+  }
+
+  readonly batchCode = highlight(`import {signal} from '@angular/core';
+import {mutateResource} from 'ngx-lift';
+
+readonly batchIds = ['item-1', 'item-2', 'item-3'];
+readonly batchOutcomes = signal<Record<string, 'pending' | 'success' | 'failed'>>({});
+
+readonly batchUpdateMutation = mutateResource<
+  {ids: string[]; failIds: string[]},
+  {results: {id: string; ok: boolean}[]}
+>(
+  ({ids, failIds}) =>
+    new Promise<{results: {id: string; ok: boolean}[]}>((resolve) => {
+      setTimeout(() => resolve({results: ids.map((id) => ({id, ok: !failIds.includes(id)}))}), 400);
+    }),
+  {
+    invalidateTags: (result) => result.results.filter((row) => row.ok).map((row) => ({type: 'Items', id: row.id})),
+  },
+);
+
+async submitBatch(failSome: boolean): Promise<void> {
+  const failIds = failSome ? ['item-2'] : [];
+  this.batchOutcomes.set(Object.fromEntries(this.batchIds.map((id) => [id, 'pending' as const])));
+  try {
+    const result = await this.batchUpdateMutation.mutate({ids: this.batchIds, failIds});
+    this.batchOutcomes.update((previous) => ({
+      ...previous,
+      ...Object.fromEntries(
+        result.results.map((row) => [row.id, row.ok ? ('success' as const) : ('failed' as const)]),
+      ),
+    }));
+  } catch {
+    this.batchOutcomes.update((previous) => ({
+      ...previous,
+      ...Object.fromEntries(this.batchIds.map((id) => [id, 'failed' as const])),
+    }));
+  }
+}`);
+
   readonly callbackCode = highlight(`import {signal} from '@angular/core';
 import {mutateResource} from 'ngx-lift';
 

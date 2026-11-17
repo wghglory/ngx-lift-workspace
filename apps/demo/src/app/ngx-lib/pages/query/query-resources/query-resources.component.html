@@ -53,6 +53,51 @@
     </app-demo-playground>
   </section>
 
+  <section class="query-section" data-testid="combined-sources">
+    <app-demo-playground
+      [title]="'queryResources.traditionalTab' | translate"
+      level="intermediate"
+      [tsCode]="combineCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:sm">
+          <div class="query-actions">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline"
+              [disabled]="combinedRowsQuery.isLoading()"
+              (click)="retryCombinedSources()"
+            >
+              {{ 'queryExamples.retryRead' | translate }}
+            </button>
+          </div>
+          <table class="table table-compact">
+            <thead>
+              <tr>
+                <th>{{ 'common.name' | translate }}</th>
+                <th>{{ 'queryResource.status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (source of ['a', 'b', 'c']; track source) {
+                <tr>
+                  <td>{{ source }}</td>
+                  <td>
+                    @if (combinedRowsQuery.value()?.failedSources.includes(source)) {
+                      <span class="label label-danger" role="alert">{{ 'common.failed' | translate }}</span>
+                    } @else {
+                      <span>{{ combinedRowValue(source) ?? '-' }}</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
   <section class="query-section" data-testid="k8s-cluster-comparison">
     <h2>{{ 'queryResources.k8sComparisonTitle' | translate }}</h2>
     <p>{{ 'queryResources.k8sComparisonDesc' | translate }}</p>
