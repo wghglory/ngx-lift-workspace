@@ -66,24 +66,24 @@ interface DateRangeOptions {
  *
  * @example
  * ```typescript
- * // Date range with inclusive boundaries
+ * // Calendar-day range: date-only strings name the local day, as `<input type="date">` does.
  * const form = new FormGroup({
  *   startDate: new FormControl('', [
  *     dateRangeValidator({
- *       minDate: new Date('2024-01-01'),
- *       maxDate: new Date('2024-12-31'),
+ *       minDate: '2024-01-01',
+ *       maxDate: '2024-12-31',
  *       minInclusive: true,
  *       maxInclusive: true
  *     })
  *   ])
  * });
  *
- * // Date-only comparison (ignores time)
- * const form = new FormGroup({
- *   appointment: new FormControl('', [
+ * // Instant range: pass a Date or a timestamp string when an exact moment is intended.
+ * const appointment = new FormGroup({
+ *   startsAt: new FormControl('', [
  *     dateRangeValidator({
- *       minDate: '2024-01-01',
- *       compareTime: false
+ *       minDate: '2024-01-01T09:00:00Z',
+ *       compareTime: true
  *     })
  *   ])
  * });
