@@ -399,7 +399,7 @@
               {{ 'queryExamples.failWrite' | translate }}
             </button>
           </div>
-          <table class="table table-compact">
+          <table class="table table-compact" data-testid="batch-outcomes">
             <thead>
               <tr>
                 <th>{{ 'common.name' | translate }}</th>
@@ -410,16 +410,19 @@
               @for (id of batchIds; track id) {
                 <tr>
                   <td>{{ id }}</td>
-                  <td>
+                  <td data-testid="batch-status">
                     @switch (batchOutcomes()[id]) {
+                      @case ('idle') {
+                        <!-- No status label before the first submission. -->
+                      }
+                      @case ('pending') {
+                        <span class="label label-info">{{ 'mutateResource.savingBtn' | translate }}</span>
+                      }
                       @case ('success') {
                         <span class="label label-success">{{ 'queryLearn.saved' | translate }}</span>
                       }
                       @case ('failed') {
                         <span class="label label-danger">{{ 'common.failed' | translate }}</span>
-                      }
-                      @default {
-                        <span class="label label-info">{{ 'mutateResource.savingBtn' | translate }}</span>
                       }
                     }
                   </td>

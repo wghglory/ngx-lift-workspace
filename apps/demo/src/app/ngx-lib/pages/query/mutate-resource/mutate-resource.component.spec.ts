@@ -79,4 +79,23 @@ describe('MutateResourceDemoComponent', () => {
     await component.submitBatch(false);
     expect(Object.values(component.batchOutcomes())).toEqual(['success', 'success', 'success']);
   });
+
+  it('renders idle, saving and settled batch states in order', async () => {
+    const statuses = () =>
+      Array.from(fixture.nativeElement.querySelectorAll('[data-testid="batch-status"]')).map(
+        (cell: Element) => cell.textContent?.trim() ?? '',
+      );
+
+    fixture.detectChanges();
+    expect(Object.values(component.batchOutcomes())).toEqual(['idle', 'idle', 'idle']);
+    expect(statuses()).toEqual(['', '', '']);
+
+    const pending = component.submitBatch(true);
+    fixture.detectChanges();
+    expect(statuses()).toEqual(['Saving...', 'Saving...', 'Saving...']);
+
+    await pending;
+    fixture.detectChanges();
+    expect(statuses()).toEqual(['Saved', 'Failed', 'Saved']);
+  });
 });

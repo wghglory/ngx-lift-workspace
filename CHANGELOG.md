@@ -17,6 +17,46 @@ recorded for the affected releases.
   leave an unfixable group error. The [design specification](docs/design/ngx-lift/standard-validators-design-spec.md)
   records the API, the scope decisions from the PR #138 review, and the deferred proposals. Four localized demo pages
   document the validators with working playgrounds. API approval was recorded on 2026-11-16; this entry is not released.
+- `ngx-lift` exports `getValueByPath` and `deleteValueByPath` for safe, own-property dot-path reads and in-place
+  deletes. `getValueByPath<T>` returns `T | undefined` when the path is missing, invalid or reaches prototype state;
+  `deleteValueByPath` reports whether an own property was removed. Numeric array segments are supported. The
+  [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md) and a localized demo page document
+  the contract. This entry is not released.
+- `ngx-lift` exports `downloadFile` for browser downloads from string or Blob content, with temporary URL and anchor
+  cleanup. It starts a download without confirming the file was saved; see the
+  [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md). This entry is not released.
+- `clr-lift` also exports `BuildObjectPathResult`, `ObjectPathError`, `ObjectPathErrorCode`, `ObjectPathNavigation` and
+  `EncodedObjectPathLocation` alongside `buildObjectPathBreadcrumbs`. `navigation` owns URL encoding and optional
+  collection prefixing; the deprecated `hrefFor` path remains available. This entry is not released.
+
+### Breaking
+
+**Release decision pending:** the 21.5.0 decision did not approve later breaks. The maintainer must record a dated 21.x
+compatibility exception for the two changes below before versioning; this entry does not claim that approval.
+
+- **`buildObjectPathBreadcrumbs` return type (`clr-lift`).** The helper no longer returns `readonly BreadcrumbItem[]`.
+  It returns a discriminated `BuildObjectPathResult` (`{ok: true, items}` or `{ok: false, error}`) and settles invalid
+  application input in the error branch instead of throwing. The array-returning shape was released in clr-lift 21.4.0;
+  the new behavior belongs to this unreleased version.
+- **Datagrid selection directives removed (`clr-lift`).** `DatagridSelectionAccessorDirective` and
+  `DatagridSelectionBindingDirective` are no longer exported. `DatagridSelectionComponent` is the only CVA and
+  value-control module. See [ADR-0003](docs/adr/0003-datagrid-selection-single-value-control.md).
+
+### Migration
+
+- Object-path breadcrumbs: check `result.ok` before reading `result.items`, and branch on `result.error.code` instead of
+  catching construction exceptions. Prefer `navigation.destination` over `hrefFor`; the helper now owns encoding and
+  collection prefixing.
+
+  ```typescript
+  const result = buildObjectPathBreadcrumbs({bucket, key, kind, emptySegmentLabel, navigation});
+  if (result.ok) showTrail(result.items);
+  else showError(result.error.code, result.error.message);
+  ```
+
+- Datagrid selection: remove the accessor/binding directives and bind the form directly to `cll-datagrid-selection`. A
+  reusable picker accepts the page-owned control; read and submit selected keys from that same control. No mirrored
+  `keys` model or synchronization helper is required.
 
 ## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-09
 
@@ -44,10 +84,8 @@ release notes and migration instructions; publication is a separate gate.
   labeled local label/context filter preserves current context, supports empty-result recovery and announces matching
   counts. A separate 100-level supplied-item playground exercises filtering, language and layout changes.
 - `clr-lift` exports `buildObjectPathBreadcrumbs`, `BuildObjectPathBreadcrumbsOptions` and `ObjectPathLocation` for
-  synchronous exact-key bucket/prefix/object trails with caller-owned destinations and permitted roots. The helper
-  returns a discriminated success/error result and owns URL encoding plus optional collection prefixing through a
-  navigation contract. Includes a localized fixture-backed bucket browser and
-  [usage/reference guide](docs/guides/object-path-breadcrumbs.md).
+  synchronous exact-key bucket/prefix/object trails with caller-owned destinations and permitted roots. Includes a
+  localized fixture-backed bucket browser and [usage/reference guide](docs/guides/object-path-breadcrumbs.md).
 - `clr-lift` exports `DatagridSelectionComponent` (`cll-datagrid-selection`), `DatagridSelectionAccessorDirective` and
   `DatagridSelectionBindingDirective` for caller-written native Clarity datagrids inside Angular forms. Stable
   single/multiple keys survive filtering, paging, refreshed objects and owner writes; availability, native loading,

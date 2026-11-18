@@ -11,17 +11,18 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## ngx-lift implemented contracts
 
-| API                                                               | Canonical contract                                                      |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| queryResource, queryResources, QueryClient and Observable facades | [Query and cache](ngx-lift/query-resource-design-spec.md)               |
-| mutateResource                                                    | [Writes and concurrency](ngx-lift/mutate-resource-design-spec.md)       |
-| resourceAsync                                                     | [Independent async lifecycle](ngx-lift/resource-async-design-spec.md)   |
-| computedAsync                                                     | [Derived async signals](ngx-lift/computed-async-design-spec.md)         |
-| Kubernetes retry operator and interceptor                         | [Retry policy](ngx-lift/k8s-retry-options.md)                           |
-| Reactive Forms state, facade, bindings and submission             | [Reactive Forms](ngx-lift/reactive-forms-design-spec.md)                |
-| IdleDetectionService and watch ownership                          | [Idle lifecycle](ngx-lift/idle-detection-design-spec.md)                |
-| poll and Kubernetes list aggregation                              | [Polling and pagination](ngx-lift/polling-pagination-design-spec.md)    |
-| getValueByPath, deleteValueByPath, downloadFile                   | [Object path and file download](ngx-lift/core-utilities-design-spec.md) |
+| API                                                               | Canonical contract                                                                |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| queryResource, queryResources, QueryClient and Observable facades | [Query and cache](ngx-lift/query-resource-design-spec.md)                         |
+| mutateResource                                                    | [Writes and concurrency](ngx-lift/mutate-resource-design-spec.md)                 |
+| resourceAsync                                                     | [Independent async lifecycle](ngx-lift/resource-async-design-spec.md)             |
+| computedAsync                                                     | [Derived async signals](ngx-lift/computed-async-design-spec.md)                   |
+| Kubernetes retry operator and interceptor                         | [Retry policy](ngx-lift/k8s-retry-options.md)                                     |
+| Reactive Forms state, facade, bindings and submission             | [Reactive Forms](ngx-lift/reactive-forms-design-spec.md)                          |
+| IdleDetectionService and watch ownership                          | [Idle lifecycle](ngx-lift/idle-detection-design-spec.md)                          |
+| poll and Kubernetes list aggregation                              | [Polling and pagination](ngx-lift/polling-pagination-design-spec.md)              |
+| getValueByPath, deleteValueByPath, downloadFile                   | [Object path and file download](ngx-lift/core-utilities-design-spec.md)           |
+| Standard validators (approved)                                    | [Standard Reactive Forms validators](ngx-lift/standard-validators-design-spec.md) |
 
 ## clr-lift implemented contracts
 
@@ -42,14 +43,13 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 
 ## Proposed or paused contracts
 
-| Area                           | Canonical draft                                                                   |
-| ------------------------------ | --------------------------------------------------------------------------------- |
-| Badges and labels              | [Badges and labels](clr-lift/badge-design-spec.md)                                |
-| YAML viewer/editor (paused)    | [YAML editor](clr-lift/yaml-editor-design-spec.md)                                |
-| Temporal controls              | [Temporal controls](clr-lift/temporal-controls-design-spec.md)                    |
-| Cascader and tree-select       | [Hierarchical selection](clr-lift/hierarchical-selection-design-spec.md)          |
-| Drawer                         | [Drawer](clr-lift/drawer-design-spec.md)                                          |
-| Standard validators (approved) | [Standard Reactive Forms validators](ngx-lift/standard-validators-design-spec.md) |
+| Area                        | Canonical draft                                                          |
+| --------------------------- | ------------------------------------------------------------------------ |
+| Badges and labels           | [Badges and labels](clr-lift/badge-design-spec.md)                       |
+| YAML viewer/editor (paused) | [YAML editor](clr-lift/yaml-editor-design-spec.md)                       |
+| Temporal controls           | [Temporal controls](clr-lift/temporal-controls-design-spec.md)           |
+| Cascader and tree-select    | [Hierarchical selection](clr-lift/hierarchical-selection-design-spec.md) |
+| Drawer                      | [Drawer](clr-lift/drawer-design-spec.md)                                 |
 
 ## Supporting research and demo notes
 

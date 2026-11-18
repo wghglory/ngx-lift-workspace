@@ -626,9 +626,8 @@ Selected maintained rows keep readable reasons and stay removable; unresolved of
 
 A business picker owns its server query; the parent owns values, validators, the saved baseline and the submit DTO.
 [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) removed the accessor host directive and inner
-binding: the picker emits selected keys through a `keys` model signal and the page's control is bound directly to the
-inner `cll-datagrid-selection`, with no picker CVA callbacks, second form control or public
-valueChange/blurred/validation wiring. The runnable example is
+binding: the page's control is bound directly to the inner `cll-datagrid-selection`, with no picker CVA callbacks,
+second form control or public valueChange/blurred/validation wiring. The runnable example is
 [server-organization-picker.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-organization-picker.component.ts)
 with its template and
 [server-picker-form.component.ts](../../../apps/demo/src/app/clr-lib/pages/datagrid-selection/server-picker-form.component.ts)
@@ -640,7 +639,6 @@ with its template.
 })
 export class ServerOrganizationPickerComponent {
   readonly control = input.required<FormControl>();
-  readonly keys = model<DatagridSelectionValue>(null);
   readonly organizationsQuery = queryResource(() =>
     serverOrganizationQuery(this.organizationService, {
       scope: this.scope(),
@@ -677,6 +675,27 @@ A reusable app-organization-picker centralizes the organization query, loading/f
 and filters. Its parent owns FormGroup, validators, saved values and submission, and does not load the picker inventory.
 The picker is a plain presentational/query component and writes no CVA callbacks.
 
+The parent passes its existing control:
+
+```html
+<app-organization-picker [control]="form.controls.organizationIds" />
+```
+
+Read the selected keys from `form.controls.organizationIds.value` on submission. The picker needs only a control input
+and the ordinary Angular form binding on its inner field:
+
+```typescript
+readonly control = input.required<FormControl>();
+```
+
+```html
+<cll-datagrid-selection [formControl]="control()">
+  <!-- Existing projected label and native Clarity datagrid. -->
+</cll-datagrid-selection>
+```
+
+This is a focused binding excerpt; the complete picker below includes the label, grid and query presentation.
+
 Under [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) the two explicit composition declarations
 (`DatagridSelectionAccessorDirective` on the picker host and `cllDatagridSelectionBinding` on the inner field) were
 removed. They were a breaking public API change, replaced by one value-control module:
@@ -684,7 +703,8 @@ removed. They were a breaking public API change, replaced by one value-control m
 - the picker accepts the page's `FormControl` through a `control` input and binds it directly to the inner
   `cll-datagrid-selection`, so the field's own `NgControl` remains the real owner for validation, disabled and
   touched/submitted state;
-- the picker emits selected keys through a `keys` model signal for page observers; it owns no form control of its own.
+- the page reads and submits selected keys from its own control; the picker creates no second selection model or form
+  control.
 
 Direct inline usage binds the same `cll-datagrid-selection` component directly. Angular does not use a child component's
 accessor as the accessor for its parent business component automatically, so the control is passed explicitly rather
@@ -697,23 +717,20 @@ form control is created. Real-owner and installed-package evidence is in the
 ```typescript
 import {OrganizationService} from './organization.service';
 import {queryResource} from 'ngx-lift';
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  input,
-  model,
-  OnDestroy,
-} from '@angular/core';
+import {booleanAttribute, ChangeDetectionStrategy, Component, inject, input, OnDestroy, viewChild} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {ClarityModule} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, DatagridSelectionValue, TranslatePipe} from 'clr-lift';
+import {ClarityModule, ClrDatagrid} from '@clr/angular';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
 import {StatusFilter} from './status.filter';
 import {OrganizationStatusFilterComponent} from './organization-status-filter.component';
 
+/**
+ * Reusable organization query/presentation component. It owns its scoped query, native loading and
+ * failure/retry UI; the consuming page owns the FormControl, validators and submission. The page's
+ * control is bound directly to the inner cll-datagrid-selection. Read and submit selected keys from
+ * that same page-owned control; no mirrored selection model is needed.
+ */
 @Component({
   selector: 'app-organization-picker',
   imports: [
@@ -729,37 +746,62 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
 })
 export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
+  private readonly translationService = inject(TranslationService);
+  private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
   readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
+  /** The page-owned control bound directly to the single value-control module. */
   readonly control = input.required<FormControl>();
-  readonly keys = model<DatagridSelectionValue>(null);
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
+  readonly layout = input<'horizontal' | 'vertical'>('vertical');
   readonly statusKeys = STATUS_KEYS;
+  readonly availability = (item: Organization) => ({
+    disabled: item.status === 'maintenance',
+    disabledReason:
+      item.status === 'maintenance' ? this.translationService.translate('organizationExample.maintenance') : undefined,
+  });
   readonly statusComparator = {
     compare: (a: Organization, b: Organization) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status],
   };
   readonly statusFilter = new StatusFilter();
   readonly organizationKey = (item: Organization) => item.id;
-  constructor() {
-    effect(() => this.keys.set(this.control().value as DatagridSelectionValue));
+
+  focusGrid(): void {
+    this.grid()?.datagridTable.nativeElement.focus();
   }
+
+  refreshGridItems(): void {
+    this.grid()?.items.refresh();
+  }
+
   ngOnDestroy(): void {
     this.statusFilter.destroy();
   }
 }
 ```
 
+The server and namespace pickers follow the same direct-control pattern. Read selected keys from
+`form.controls.organizationIds.value` when submitting. For reactive template state, the page can use its existing
+`toSignalForm(form)` facade. No picker-specific helper, subscription or synchronization effect is required.
+
 ### organization-picker.component.html
 
 ```html
+<div class="selection-toolbar" cds-layout="horizontal gap:md wrap:wrap">
+  <button type="button" class="btn btn-sm" (click)="organizationsQuery.reload()">
+    {{ 'common.refresh' | translate }}
+  </button>
+</div>
 <cll-datagrid-selection
   [formControl]="control()"
   [readonly]="readonly()"
   [required]="required()"
+  [layout]="layout()"
   [helper]="'organizationExample.help' | translate"
   [error]="error() || ('organizationExample.invalidSelection' | translate)"
+  [itemAvailability]="availability"
 >
   <label class="clr-control-label">{{ 'organizationExample.organizations' | translate }}</label>
   <clr-signpost [clrSignpostTriggerAriaLabel]="'organizationExample.about' | translate">
@@ -874,7 +916,7 @@ export class PolicyFormComponent {
     <label for="policy-name">{{ 'selectionDemo.policyName' | translate }}</label>
     <input clrInput id="policy-name" formControlName="policyName" />
   </clr-input-container>
-  <app-organization-picker [error]="selectionError()" formControlName="organizationIds" required />
+  <app-organization-picker [control]="form.controls.organizationIds" [error]="selectionError()" required />
   <button type="submit" class="btn btn-primary">{{ 'organizationExample.submit' | translate }}</button>
   <button type="button" class="btn btn-secondary" (click)="formView.resetForm()">
     {{ 'organizationExample.reset' | translate }}

@@ -21,18 +21,19 @@ allocates its own `${appId}-datagrid-selection-${n}` IDs, and it resolves its fo
 ownership protocol is removed, so no other library object can re-point the field at a different control.
 
 The reusable business picker no longer mirrors a form owner. It is a plain presentational/query component: it owns its
-query, loading, failure and retry UI only. It exposes the selected keys through a `model` signal (two-way `keys`
-binding) and emits key changes through that output; it owns no `ControlValueAccessor` and creates no mirrored or second
-`FormControl`. The consuming page owns the form: it binds `formControlName` (or `formControl` / `ngModel`) to a
-`cll-datagrid-selection` host directly, or binds the inner field directly, and it owns validation, the accepted baseline
-and submission. Key-to-entity conversion and DTO selection remain application concerns at submission, exactly as before.
+query, loading, failure and retry UI only. It accepts the page-owned control as an input and binds it to the inner
+field; selected keys are read from that same control. It owns no `ControlValueAccessor` and creates no mirrored
+selection model or second `FormControl`. The consuming page owns the form: it binds `formControlName` (or `formControl`
+/ `ngModel`) to a `cll-datagrid-selection` host directly, or binds the inner field directly, and it owns validation, the
+accepted baseline and submission. Key-to-entity conversion and DTO selection remain application concerns at submission,
+exactly as before.
 
 Removing the pair eliminates the three-module ownership rewrite and the shallow ID allocator without changing the
 field's value, reconciliation, availability, focus or accessibility contract. Direct form bindings, typed controls,
 `ngModel`, `toSignalForm` and Angular-owned `updateOn` buffering remain supported through the single CVA. Because the
 accessor and binding directives were public exports, removing them is a breaking change for any consumer that composed
-them onto a picker host; those consumers must move the form binding onto `cll-datagrid-selection` and emit keys from the
-picker as described above.
+them onto a picker host; those consumers must move the form binding onto `cll-datagrid-selection` and read selected keys
+from the page-owned control.
 
 ## Consequences
 
@@ -40,3 +41,10 @@ Library, demo, packaged-consumer and browser fixtures must all use the single-mo
 export of the removed directives or the ID service remains. The in-page API reference and design/acceptance documents
 describe only `DatagridSelectionComponent` as the value-control surface. The validation and installed-package evidence
 for direct form bindings remains valid; no SSR/hydration or virtual-scroll acceptance is claimed.
+
+## November 18, 2026 simplification
+
+The maintainer requested simpler consumer examples. This clarifies the picker composition above: the page-owned control
+is sufficient for selection reads, writes and submission. The unused `keys` model and its synchronization helper are
+removed from the demo pickers; no public library API changes. This supersedes the original requirement to emit a
+mirrored selected-key model from every business picker.

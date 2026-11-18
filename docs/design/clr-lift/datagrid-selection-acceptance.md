@@ -23,9 +23,9 @@ removable, with explanations associated with their checkboxes.
 
 The consuming page binds the form directly to `cll-datagrid-selection`; the component resolves its owner solely from its
 own injector `NgControl` and preserves real-owner validation, disabled state and Angular change/blur/submit buffering. A
-reusable business picker is a plain presentational/query component: it owns its query, loading, failure and retry UI and
-emits selected keys through a `model` output, while the page owns the form, validators and submission. Composite focus
-includes label help, grid/footer and Clarity-owned portals. Departure cancels focus restoration.
+reusable business picker is a plain presentational/query component: it owns its query, loading, failure and retry UI.
+The page reads selected keys from its own control and owns the form, validators and submission. Composite focus includes
+label help, grid/footer and Clarity-owned portals. Departure cancels focus restoration.
 
 Required uses Angular `RequiredValidator` with direct form bindings; the grid describes the requirement without an
 invalid `aria-required`. Parent controls own count, async and business rules plus localized error text. The examples

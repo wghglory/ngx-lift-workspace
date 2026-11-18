@@ -257,7 +257,8 @@ language reviewer: not yet assigned; approval date: not recorded. This is an ope
 - The four pages intentionally repeat the same small form/state scaffolding; `documentation-standards.md` requires page
   structure to stay consistent, so no shared demo base class is introduced.
 - **Independent human acceptance:** automated dictionary, accessibility, keyboard and consumer checks are recorded in
-  [Evidence](#evidence). Independent language review remains an open gate; the 2026-11-10 maintainer waiver covers
+  [Evidence](#evidence). Independent language review remains an open gate, owned by the maintainer and tracked in
+  [issue #234](https://github.com/wghglory/ngx-lift-workspace/issues/234); the 2026-11-10 maintainer waiver covers
   manual assistive-technology assessment, and no human language approval is claimed for these new strings.
 
 ## Demo and validation plan
@@ -375,4 +376,5 @@ The maintainer approved this specification, including the four validator factori
 `fileExtensionValidator`, `sameValueValidator`), the supporting types (`NamedFile`, `FileSelection`) and the error keys
 (`invalidInteger`, `invalidJson`, `invalidFileExtension`, `valuesMismatch`). The API is no longer a proposed contract;
 release and publication remain separate steps. Independent language review of the new demo strings is still an open
-gate, and the 2026-11-10 maintainer waiver continues to cover manual assistive-technology assessment only.
+gate, owned by the maintainer and tracked in [issue #234](https://github.com/wghglory/ngx-lift-workspace/issues/234);
+the 2026-11-10 maintainer waiver continues to cover manual assistive-technology assessment only.
