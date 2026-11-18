@@ -58,6 +58,26 @@ compatibility exception for the two changes below before versioning; this entry 
   reusable picker accepts the page-owned control; read and submit selected keys from that same control. No mirrored
   `keys` model or synchronization helper is required.
 
+### Fixed
+
+- **`dateRangeValidator` (`ngx-lift`).** A date-only value or boundary (`YYYY-MM-DD`, the format produced by
+  `<input type="date">`) is now read as the local calendar day it names instead of UTC midnight. The UTC parse resolved
+  to the previous local day west of UTC, so a value the user had just picked could be rejected as too early (or accepted
+  one day too late). Values that carry a time or an offset keep their instant semantics, and an impossible day such as
+  `2026-02-31` still reports `invalidDate`. The demo date-range page derives its `min`/`max` hints from local calendar
+  values for the same reason. **Migration:** this is an observable behavior change even though the signature is
+  unchanged. Pass the `YYYY-MM-DD` string for calendar-day boundaries; `new Date('2024-01-01')` still means an instant
+  (UTC midnight, the previous local day west of UTC), and a full ISO timestamp such as `'2024-01-01T09:00:00Z'` is the
+  way to pin an exact moment.
+- **`urlValidator` and `httpsValidator` (`ngx-lift`).** Empty values (`null`, `undefined`, `''`) are valid, matching the
+  other ngx-lift validators and the
+  [standard validators contract](docs/design/ngx-lift/standard-validators-design-spec.md). Previously empty input
+  reported `invalidUrl`, which duplicated `Validators.required` and left an optional URL field permanently invalid. A
+  whitespace-only value is still rejected. **Migration:** a field whose requiredness relied on the URL validator alone
+  is now optional, so add `Validators.required` wherever empty input must still be rejected.
+- Unit tests also run once in `America/New_York` in CI, so calendar-day and daylight-saving behavior is exercised
+  instead of passing trivially on a UTC runner.
+
 ## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-09
 
 **Release decision — November 8, 2026 (approved and published on 2026-11-09):** both packages remain on 21.x while the

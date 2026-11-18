@@ -9,6 +9,34 @@ import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
+/** Local `YYYY-MM-DD` for a `date` input; `toISOString()` would report the UTC day. */
+function toDateInputValue(date: Date): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+/** Local `YYYY-MM-DDTHH:mm` for a `datetime-local` input. */
+function toDateTimeInputValue(date: Date): string {
+  const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
+  return `${toDateInputValue(date)}T${time}`;
+}
+
+/** Calendar-day arithmetic in the local timezone; adding 86_400_000 ms skips or repeats a day. */
+function addLocalDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+function startOfMinute(date: Date): Date {
+  const result = new Date(date);
+  result.setSeconds(0, 0);
+  return result;
+}
+
 @Component({
   selector: 'app-date-range-validator',
   imports: [
@@ -97,12 +125,12 @@ export class DateExampleComponent {
     return [
       {
         name: 'minDate',
-        type: 'Date | string',
+        type: 'Date | string | null',
         description: this.translationService.translate('dateRangeValidator.optMinDate'),
       },
       {
         name: 'maxDate',
-        type: 'Date | string',
+        type: 'Date | string | null',
         description: this.translationService.translate('dateRangeValidator.optMaxDate'),
       },
       {
@@ -125,28 +153,24 @@ export class DateExampleComponent {
       },
     ];
   });
-  today = new Date();
-  tomorrow = new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000);
-  fiveDaysLater = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000); // 5 days from now
+  // Seconds are dropped so the `datetime-local` hints name exactly the instants the validator
+  // compares; `date` inputs ignore the time part.
+  readonly today = startOfMinute(new Date());
+  readonly tomorrow = addLocalDays(this.today, 1);
+  readonly fiveDaysLater = addLocalDays(this.today, 5);
 
-  todayInISO = this.today.toISOString().split('T')[0]; // get only the date part in YYYY-MM-DD format
-  tomorrowInISO = this.tomorrow.toISOString().split('T')[0];
-  fiveDaysLaterInISO = this.fiveDaysLater.toISOString().split('T')[0];
+  // `date` and `datetime-local` inputs take local wall-clock values. Deriving them from
+  // toISOString() moves the bound to the previous day (or the wrong hour) when the visitor is
+  // not on UTC.
+  readonly todayInISO = toDateInputValue(this.today);
+  readonly tomorrowInISO = toDateInputValue(this.tomorrow);
+  readonly fiveDaysLaterInISO = toDateInputValue(this.fiveDaysLater);
 
-  minTimestamp = this.today.toISOString().slice(0, 16); // slice to ignore seconds part
-  maxTimestamp = this.fiveDaysLater.toISOString().slice(0, 16);
+  readonly minTimestamp = toDateTimeInputValue(this.today);
+  readonly maxTimestamp = toDateTimeInputValue(this.fiveDaysLater);
 
-  readonly starterMin = this.dateInput(1);
-  readonly starterMax = this.dateInput(5);
-  private dateInput(offset: number): string {
-    const date = new Date(this.today);
-    date.setDate(date.getDate() + offset);
-    return [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-');
-  }
+  readonly starterMin = this.tomorrowInISO;
+  readonly starterMax = this.fiveDaysLaterInISO;
   readonly starterForm = new FormGroup({
     date: new FormControl('', {
       nonNullable: true,
@@ -165,10 +189,7 @@ export class DateExampleComponent {
   dateForm = new FormGroup({
     expires: new FormControl<string>('', {
       nonNullable: true,
-      validators: [
-        // If you want to be more accurate, minDate should be new Date() instead of this.today
-        dateRangeValidator({minDate: this.today, minInclusive: true}),
-      ],
+      validators: [dateRangeValidator({minDate: this.today, minInclusive: true})],
     }),
     futureDays: new FormControl<string>('', {
       nonNullable: true,
@@ -189,11 +210,13 @@ export class DateExampleComponent {
       nonNullable: true,
       validators: [
         Validators.required,
-        // If you want to be more accurate, minDate should be new Date() instead of this.today
+        // The `min`/`max` attributes are inclusive, so the validator must be too.
         dateRangeValidator({
           minDate: this.today,
           maxDate: this.fiveDaysLater,
           compareTime: true,
+          minInclusive: true,
+          maxInclusive: true,
         }),
       ],
     }),
@@ -238,13 +261,27 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
   \`,
 })
 export class DateRangeValidatorComponent {
-  today = new Date();
-  tomorrow = new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000);
-  fiveDaysLater = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
+  private addLocalDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+  // Native date inputs take a local wall-clock date; toISOString() would report the UTC day.
+  private toDateInputValue(date: Date): string {
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+  }
 
-  todayInISO = this.today.toISOString().split('T')[0];
-  tomorrowInISO = this.tomorrow.toISOString().split('T')[0];
-  fiveDaysLaterInISO = this.fiveDaysLater.toISOString().split('T')[0];
+  today = new Date();
+  tomorrow = this.addLocalDays(this.today, 1);
+  fiveDaysLater = this.addLocalDays(this.today, 5);
+
+  todayInISO = this.toDateInputValue(this.today);
+  tomorrowInISO = this.toDateInputValue(this.tomorrow);
+  fiveDaysLaterInISO = this.toDateInputValue(this.fiveDaysLater);
 
   dateForm = new FormGroup({
     expires: new FormControl<string>('', {
@@ -296,21 +333,51 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
   \`,
 })
 export class DateTimeRangeValidatorComponent {
-  today = new Date();
-  fiveDaysLater = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
+  private addLocalDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+  // datetime-local takes local wall-clock values, so format the Date in local time.
+  private toDateTimeInputValue(date: Date): string {
+    const day = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+    const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
+    return \`\${day}T\${time}\`;
+  }
 
-  minTimestamp = this.today.toISOString().slice(0, 16);
-  maxTimestamp = this.fiveDaysLater.toISOString().slice(0, 16);
+  // Truncate first so both hints name exactly the instants the validator compares.
+  today = this.startOfMinute(new Date());
+  fiveDaysLater = this.addLocalDays(this.today, 5);
+
+  minTimestamp = this.toDateTimeInputValue(this.today);
+  maxTimestamp = this.toDateTimeInputValue(this.fiveDaysLater);
 
   dateTimeForm = new FormGroup({
     expires: new FormControl<string>('', {
       nonNullable: true,
       validators: [
         Validators.required,
-        dateRangeValidator({minDate: this.today, maxDate: this.fiveDaysLater, compareTime: true}),
+        // The min/max attributes are inclusive, so the validator is too.
+        dateRangeValidator({
+          minDate: this.today,
+          maxDate: this.fiveDaysLater,
+          compareTime: true,
+          minInclusive: true,
+          maxInclusive: true,
+        }),
       ],
     }),
   });
+
+  private startOfMinute(date: Date): Date {
+    const result = new Date(date);
+    result.setSeconds(0, 0);
+    return result;
+  }
 }`);
 
   dateExampleCode = highlight(`
@@ -322,8 +389,9 @@ import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
   imports: [ReactiveFormsModule],
 })
 export class DateRangeExampleComponent {
+  // Date-only boundaries name a local calendar day; use a full ISO string for an exact instant.
   validator = dateRangeValidator({
-    minDate: '2024-09-01', // or new Date('2024-09-01')
+    minDate: '2024-09-01',
     maxDate: '2024-09-15',
     minInclusive: true,
     maxInclusive: false,
@@ -358,8 +426,8 @@ export class DateTimeRangeExampleComponent {
   `);
 
   signatureCode = highlight(`interface DateRangeOptions {
-  minDate?: Date | string;
-  maxDate?: Date | string;
+  minDate?: Date | string | null;
+  maxDate?: Date | string | null;
   minInclusive?: boolean;
   maxInclusive?: boolean;
   compareTime?: boolean;

@@ -1,5 +1,10 @@
 import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 
+import {isEmptyControlValue} from './validator-value.util';
+
+/** Matches the `YYYY-MM-DD` value produced by `<input type="date">`. */
+const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 /**
  * Interface defining the options for the date range validator.
  */
@@ -33,7 +38,7 @@ interface DateRangeOptions {
   /**
    * Whether to compare the time components as well.
    * If `true`, comparisons will include Date time components (hours, minutes, seconds, milliseconds).
-   * If `false` (default), time parts will be ignored and only the date portion will be compared.
+   * If `false` (default), time parts will be ignored and only the local calendar day will be compared.
    */
   compareTime?: boolean;
 }
@@ -47,6 +52,11 @@ interface DateRangeOptions {
  * - Inclusive or exclusive boundary comparisons
  * - Time-aware or date-only comparisons
  *
+ * Date-only strings (`YYYY-MM-DD`, the format produced by `<input type="date">`) describe a
+ * calendar day, so they are read as local days rather than as UTC midnight. Strings that carry a
+ * time or an offset keep their instant semantics. With `compareTime: false` (default) both the
+ * value and the boundaries are reduced to the local calendar day before comparison.
+ *
  * @param options - The options for the date range validation.
  * @returns A validator function that validates a FormControl and returns an error object if the date is out of range,
  *   or `null` if the date is valid. Error objects contain:
@@ -56,24 +66,24 @@ interface DateRangeOptions {
  *
  * @example
  * ```typescript
- * // Date range with inclusive boundaries
+ * // Calendar-day range: date-only strings name the local day, as `<input type="date">` does.
  * const form = new FormGroup({
  *   startDate: new FormControl('', [
  *     dateRangeValidator({
- *       minDate: new Date('2024-01-01'),
- *       maxDate: new Date('2024-12-31'),
+ *       minDate: '2024-01-01',
+ *       maxDate: '2024-12-31',
  *       minInclusive: true,
  *       maxInclusive: true
  *     })
  *   ])
  * });
  *
- * // Date-only comparison (ignores time)
- * const form = new FormGroup({
- *   appointment: new FormControl('', [
+ * // Instant range: pass a Date or a timestamp string when an exact moment is intended.
+ * const appointment = new FormGroup({
+ *   startsAt: new FormControl('', [
  *     dateRangeValidator({
- *       minDate: '2024-01-01',
- *       compareTime: false
+ *       minDate: '2024-01-01T09:00:00Z',
+ *       compareTime: true
  *     })
  *   ])
  * });
@@ -85,18 +95,18 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
   if (
     minDate &&
     maxDate &&
-    (options.compareTime ? minDate.getTime() > maxDate.getTime() : calendarDate(minDate) > calendarDate(maxDate))
+    (options.compareTime ? minDate.getTime() > maxDate.getTime() : calendarDayKey(minDate) > calendarDayKey(maxDate))
   ) {
     throw new RangeError('minDate must not be after maxDate.');
   }
   return (control: AbstractControl): ValidationErrors | null => {
-    // if control doesn't have any value, pass validation. Developer should use Angular required validator.
-    if (!control.value) {
+    // Empty values pass so that Validators.required owns the mandatory case.
+    if (isEmptyControlValue(control.value)) {
       return null;
     }
 
     // Parse the selected date from the control value
-    const selectedDate = new Date(control.value);
+    const selectedDate = parseDateValue(control.value);
 
     if (isNaN(selectedDate.getTime())) {
       return {invalidDate: true};
@@ -110,7 +120,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
           ? selectedDate.getTime() < minDate.getTime()
           : selectedDate.getTime() <= minDate.getTime();
       } else {
-        const diff = calendarDate(selectedDate) - calendarDate(minDate);
+        const diff = calendarDayKey(selectedDate) - calendarDayKey(minDate);
         errorCondition = options.minInclusive ? diff < 0 : diff <= 0;
       }
 
@@ -129,7 +139,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
           ? selectedDate.getTime() > maxDate.getTime()
           : selectedDate.getTime() >= maxDate.getTime();
       } else {
-        const diff = calendarDate(selectedDate) - calendarDate(maxDate);
+        const diff = calendarDayKey(selectedDate) - calendarDayKey(maxDate);
         errorCondition = options.maxInclusive ? diff > 0 : diff >= 0;
       }
 
@@ -144,13 +154,45 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
   };
 }
 
-function calendarDate(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+/**
+ * Ordinal key for a local calendar day, so comparisons never depend on the time of day, the
+ * offset, or daylight-saving transitions.
+ */
+function calendarDayKey(date: Date): number {
+  return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDate();
+}
+
+/**
+ * Reads a value or a boundary without moving a calendar-day string to another day.
+ *
+ * `new Date('2024-01-15')` treats a date-only string as UTC midnight, which is the previous
+ * local day everywhere west of UTC. A date-only value is therefore rebuilt from its local
+ * calendar components. Values that carry a time or an offset keep their instant semantics, and
+ * an impossible calendar day (`2024-02-31`) still produces an invalid date.
+ */
+function parseDateValue(value: Date | string | number): Date {
+  const dateOnly = typeof value === 'string' ? DATE_ONLY_PATTERN.exec(value.trim()) : null;
+  if (!dateOnly) {
+    return new Date(value);
+  }
+
+  const [, year, month, day] = dateOnly;
+  // `new Date(year, month, day)` maps the years 0-99 to 1900-1999 and applies that century's leap
+  // rule, so a day such as 0000-02-29 would be judged impossible. Set the components explicitly.
+  const parsed = new Date(0);
+  parsed.setFullYear(Number(year), Number(month) - 1, Number(day));
+  parsed.setHours(0, 0, 0, 0);
+  const roundTrips =
+    parsed.getFullYear() === Number(year) &&
+    parsed.getMonth() === Number(month) - 1 &&
+    parsed.getDate() === Number(day);
+
+  return roundTrips ? parsed : new Date(NaN);
 }
 
 function parseBoundary(value: Date | string | null | undefined, name: string): Date | null {
   if (value == null) return null;
-  const date = new Date(value);
+  const date = parseDateValue(value);
   if (!Number.isFinite(date.getTime())) throw new TypeError(`${name} must be a valid date.`);
   return date;
 }
