@@ -16,10 +16,10 @@ validation feedback. Native filters, sorters, row names, footer and pagination b
 label/provider context and row/grid registration still need runtime validation.
 
 Resource-specific pickers remain optional. The organization picker owns its business markup and queryResource, including
-loading, failure and Retry UI, and emits selected keys through a `keys` model signal. Its parent owns values, validators
-and submission, binding its own control directly to the inner `cll-datagrid-selection`. Without a picker the page owns
-the inventory query. Shared services/query factories retain HTTP/cache responsibilities; the generic field does not
-fetch. The former library-owned accessor/binding pair was removed by
+loading, failure and Retry UI. Its parent reads selected keys from its own control and owns values, validators and
+submission, binding its own control directly to the inner `cll-datagrid-selection`. Without a picker the page owns the
+inventory query. Shared services/query factories retain HTTP/cache responsibilities; the generic field does not fetch.
+The former library-owned accessor/binding pair was removed by
 [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md); there is one CVA and one form owner. Data
 retrieval never determines form ownership.
 
@@ -337,11 +337,10 @@ its array in place.
 
 The organization picker's domain inputs include items; its native identity callback chooses the actual stable saved key.
 Under [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) the picker is a plain presentational/query
-component: it emits selected keys through a `keys` model signal and its page-owned `control` is bound directly to the
-inner `cll-datagrid-selection`. No host directive moves NgControl to an inner grid and the picker writes no CVA
-callbacks. The parent form remains the one owner, with no mirrored FormControl. Preserve existing object-valued wrapper
-contracts with explicit adaptation rather than silently changing those fields to IDs. ngModel and future native Signal
-Forms use their own real form systems.
+component: its page-owned `control` is bound directly to the inner `cll-datagrid-selection`. No host directive moves
+NgControl to an inner grid and the picker writes no CVA callbacks. The parent form remains the one owner, with no
+mirrored FormControl. Preserve existing object-valued wrapper contracts with explicit adaptation rather than silently
+changing those fields to IDs. ngModel and future native Signal Forms use their own real form systems.
 
 ### Value-control boundary
 
@@ -862,13 +861,13 @@ separate from source compilation.
 The component is the CVA for every supported form binding; there is no wrapper helper or picker host directive.
 [ADR-0003](../../adr/0003-datagrid-selection-single-value-control.md) removed the October 29 accessor/binding pair and
 folded ID allocation and owner resolution into `DatagridSelectionComponent`. Business pickers are plain
-presentational/query components: they emit selected keys through a `keys` model signal while the page binds its own
-control directly to the inner field.
+presentational/query components: the page reads selected keys from its own control, which is bound directly to the inner
+field.
 
 ```mermaid
 flowchart LR
   P[Page FormControl] --> I[cll-datagrid-selection CVA]
-  Business[Business picker: query, loading, failure, retry] -->|keys model and presentation| I
+  Business[Business picker: query, loading, failure, retry] -->|control input and presentation| I
 ```
 
 There is one original form control and one registered accessor: the field itself. The component resolves that owner from

@@ -6,20 +6,13 @@ import {
   effect,
   inject,
   input,
-  model,
   OnDestroy,
   signal,
 } from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClrDatagridSortOrder} from '@clr/angular';
 import {ClarityModule} from '@clr/angular';
-import {
-  AlertComponent,
-  DatagridSelectionComponent,
-  DatagridSelectionValue,
-  TranslatePipe,
-  TranslationService,
-} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
 import {queryResource} from 'ngx-lift';
 import {Subscription} from 'rxjs';
 
@@ -32,7 +25,6 @@ import {
 } from './server-organization.data';
 import {ServerOrganizationService} from './server-organization.service';
 import {ServerNameFilter} from './server-name.filter';
-import {toSelectedKeys} from './selected-keys';
 
 @Component({
   selector: 'app-server-organization-picker',
@@ -48,10 +40,6 @@ export class ServerOrganizationPickerComponent implements OnDestroy {
 
   /** The page-owned control bound directly to the single value-control module. */
   readonly control = input.required<FormControl>();
-  /** Selected keys emitted for page observers; the control remains the one form owner. */
-  readonly keys = model<DatagridSelectionValue>(null);
-  /** Follows the current control's value, including reset and control replacement. */
-  private readonly selectedKeys = toSelectedKeys(this.control);
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -95,7 +83,6 @@ export class ServerOrganizationPickerComponent implements OnDestroy {
       if (!page) return;
       this.settledTotal.set(page.total);
     });
-    effect(() => this.keys.set(this.selectedKeys()));
     this.nameFilterSubscription = this.nameFilter.changes.subscribe(() => this.page.set(1));
   }
 

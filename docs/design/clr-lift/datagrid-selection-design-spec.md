@@ -134,12 +134,11 @@ component allocates its own application-scoped IDs and resolves its form owner s
 so no helper can re-point it at a different control.
 
 Optional business pickers are plain presentational/query components. They centralize their native markup and business
-behavior. The organization picker also owns its queryResource, loading, request failure and Retry; it emits selected
-keys through a `keys` model signal. The consuming page owns form values, validators and submission, and binds its own
-control directly to the inner `cll-datagrid-selection` (the page writes `formControlName`/`formControl` on that field,
-or binds it directly). The picker no longer mirrors a form owner: it owns no CVA and creates no mirrored or second
-FormControl. Keep the shared service/query definition outside both components and avoid another inventory query in the
-parent.
+behavior. The organization picker also owns its queryResource, loading, request failure and Retry. The consuming page
+reads selected keys from its own control, owns form values, validators and submission, and binds that control directly
+to the inner `cll-datagrid-selection` (the page writes `formControlName`/`formControl` on that field, or binds it
+directly). The picker no longer mirrors a form owner: it owns no CVA and creates no mirrored or second FormControl. Keep
+the shared service/query definition outside both components and avoid another inventory query in the parent.
 
 The single component preserves real-owner validation/disabled/submitted state, change/blur/submit buffering and
 lifecycle cleanup for every supported form binding. Its `showError` uses the actual `NgControl` on the field, so
@@ -230,9 +229,9 @@ identity.
 
 #201 adds controlled server-page coverage and retains the existing selection contract. Its direct form owns the
 server-paged query with a fresh authoritative eligibility validator response, and its reusable server picker moves that
-query, loading, failure and retry into a picker component that emits keys through a model signal while the page binds
-its own control directly to the inner field and owns values, validators, the saved baseline and the key-only DTO. #202
-retains full policy create/edit workflows. Independent native-language and assistive-technology acceptance, CI, merge,
+query, loading, failure and retry into a picker component while the page reads selected keys from and binds its own
+control directly to the inner field and owns values, validators, the saved baseline and the key-only DTO. #202 retains
+full policy create/edit workflows. Independent native-language and assistive-technology acceptance, CI, merge,
 deployment and npm publication are separate gates. No SSR/hydration or virtual-scroll acceptance is claimed by the
 local-grid increment.
 

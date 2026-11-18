@@ -55,7 +55,8 @@ compatibility exception for the two changes below before versioning; this entry 
   ```
 
 - Datagrid selection: remove the accessor/binding directives and bind the form directly to `cll-datagrid-selection`. A
-  reusable picker keeps the page-owned control and emits selected keys through its `keys` model.
+  reusable picker accepts the page-owned control; read and submit selected keys from that same control. No mirrored
+  `keys` model or synchronization helper is required.
 
 ## [21.5.0] (ngx-lift) / [21.4.0] (clr-lift) - 2026-11-09
 
