@@ -22,12 +22,14 @@ recorded for the affected releases.
   `deleteValueByPath` reports whether an own property was removed. Numeric array segments are supported. The
   [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md) and a localized demo page document
   the contract. This entry is not released.
-- `clr-lift` also exports `BuildObjectPathResult`, `ObjectPathError`, `ObjectPathErrorCode`, `ObjectPathNavigation`,
-  `EncodedObjectPathLocation` and `ObjectPathLocation` alongside `buildObjectPathBreadcrumbs`. `navigation` owns URL
-  encoding and optional collection prefixing; the deprecated `hrefFor` path remains available. This entry is not
-  released.
+- `clr-lift` also exports `BuildObjectPathResult`, `ObjectPathError`, `ObjectPathErrorCode`, `ObjectPathNavigation` and
+  `EncodedObjectPathLocation` alongside `buildObjectPathBreadcrumbs`. `navigation` owns URL encoding and optional
+  collection prefixing; the deprecated `hrefFor` path remains available. This entry is not released.
 
 ### Breaking
+
+**Release decision pending:** the 21.5.0 decision did not approve later breaks. The maintainer must record a dated 21.x
+compatibility exception for the two changes below before versioning; this entry does not claim that approval.
 
 - **`buildObjectPathBreadcrumbs` return type (`clr-lift`).** The helper no longer returns `readonly BreadcrumbItem[]`.
   It returns a discriminated `BuildObjectPathResult` (`{ok: true, items}` or `{ok: false, error}`) and settles invalid

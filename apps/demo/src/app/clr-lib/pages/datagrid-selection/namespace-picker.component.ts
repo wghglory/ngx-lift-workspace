@@ -1,13 +1,12 @@
 import {booleanAttribute, ChangeDetectionStrategy, Component, effect, inject, input, model} from '@angular/core';
-import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {startWith, switchMap} from 'rxjs';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, DatagridSelectionValue, TranslatePipe} from 'clr-lift';
 import {queryResource} from 'ngx-lift';
 
 import {NamespaceService} from './namespace.service';
 import {type Namespace} from './namespace-example.data';
+import {toSelectedKeys} from './selected-keys';
 
 /**
  * Reusable single-namespace query/presentation component. It owns its scoped inventory query, native
@@ -30,16 +29,13 @@ export class NamespacePickerComponent {
   /** Selected keys emitted for page observers; the control remains the one form owner. */
   readonly keys = model<DatagridSelectionValue>(null);
   /** Follows the current control's value, including reset and control replacement. */
-  private readonly selectedKeys = toSignal(
-    toObservable(this.control).pipe(switchMap((control) => control.valueChanges.pipe(startWith(control.value)))),
-    {initialValue: null as DatagridSelectionValue},
-  );
+  private readonly selectedKeys = toSelectedKeys(this.control);
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
   readonly namespaceKey = (item: Namespace) => item.id;
 
   constructor() {
-    effect(() => this.keys.set(this.selectedKeys() as DatagridSelectionValue));
+    effect(() => this.keys.set(this.selectedKeys()));
   }
 }

@@ -707,14 +707,13 @@ import {
   model,
   OnDestroy,
 } from '@angular/core';
-import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {startWith, switchMap} from 'rxjs';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, DatagridSelectionValue, TranslatePipe} from 'clr-lift';
 import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
 import {StatusFilter} from './status.filter';
 import {OrganizationStatusFilterComponent} from './organization-status-filter.component';
+import {toSelectedKeys} from './selected-keys';
 
 @Component({
   selector: 'app-organization-picker',
@@ -736,10 +735,7 @@ export class OrganizationPickerComponent implements OnDestroy {
   readonly control = input.required<FormControl>();
   readonly keys = model<DatagridSelectionValue>(null);
   /** Follows the current control's value, including reset and control replacement. */
-  private readonly selectedKeys = toSignal(
-    toObservable(this.control).pipe(switchMap((control) => control.valueChanges.pipe(startWith(control.value)))),
-    {initialValue: null as DatagridSelectionValue},
-  );
+  private readonly selectedKeys = toSelectedKeys(this.control);
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -750,13 +746,34 @@ export class OrganizationPickerComponent implements OnDestroy {
   readonly statusFilter = new StatusFilter();
   readonly organizationKey = (item: Organization) => item.id;
   constructor() {
-    effect(() => this.keys.set(this.selectedKeys() as DatagridSelectionValue));
+    effect(() => this.keys.set(this.selectedKeys()));
   }
   ngOnDestroy(): void {
     this.statusFilter.destroy();
   }
 }
 ```
+
+### selected-keys.ts
+
+```typescript
+import {Signal} from '@angular/core';
+import {toObservable, toSignal} from '@angular/core/rxjs-interop';
+import {FormControl} from '@angular/forms';
+import {DatagridSelectionValue} from 'clr-lift';
+import {startWith, switchMap} from 'rxjs';
+
+/** Follows the page-owned control's selected keys across edits, reset and control replacement. */
+export function toSelectedKeys(control: Signal<FormControl>): Signal<DatagridSelectionValue> {
+  return toSignal(
+    toObservable(control).pipe(switchMap((current) => current.valueChanges.pipe(startWith(current.value)))),
+    {initialValue: null as DatagridSelectionValue},
+  );
+}
+```
+
+The server and namespace pickers import the same helper; all three `keys` models stay in sync with the page-owned
+control.
 
 ### organization-picker.component.html
 
