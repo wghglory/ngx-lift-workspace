@@ -75,6 +75,8 @@ describe('Reusable picker keys bridge', () => {
 
   it('organization picker follows selection, reset and control replacement', async () => {
     const fixture = TestBed.createComponent(OrganizationPickerComponent);
+    const keysChanged = vi.fn();
+    fixture.componentInstance.keys.subscribe(keysChanged);
     const first = new FormControl<string[] | null>(['org-1']);
     fixture.componentRef.setInput('control', first);
     fixture.detectChanges();
@@ -82,9 +84,11 @@ describe('Reusable picker keys bridge', () => {
 
     first.setValue([]);
     await expectKeys(fixture, []);
+    expect(keysChanged).toHaveBeenLastCalledWith([]);
 
     first.reset();
     await expectKeys(fixture, null);
+    expect(keysChanged).toHaveBeenLastCalledWith(null);
 
     const replacement = new FormControl<string[] | null>(['org-2']);
     fixture.componentRef.setInput('control', replacement);
@@ -95,6 +99,12 @@ describe('Reusable picker keys bridge', () => {
 
     first.setValue(['org-1']);
     await expectKeys(fixture, ['org-3']);
+    expect(keysChanged).toHaveBeenLastCalledWith(['org-3']);
+
+    keysChanged.mockClear();
+    fixture.destroy();
+    replacement.setValue(['org-4']);
+    expect(keysChanged).not.toHaveBeenCalled();
   });
 
   it('namespace picker follows selection, reset and control replacement', async () => {

@@ -22,6 +22,9 @@ recorded for the affected releases.
   `deleteValueByPath` reports whether an own property was removed. Numeric array segments are supported. The
   [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md) and a localized demo page document
   the contract. This entry is not released.
+- `ngx-lift` exports `downloadFile` for browser downloads from string or Blob content, with temporary URL and anchor
+  cleanup. It starts a download without confirming the file was saved; see the
+  [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md). This entry is not released.
 - `clr-lift` also exports `BuildObjectPathResult`, `ObjectPathError`, `ObjectPathErrorCode`, `ObjectPathNavigation` and
   `EncodedObjectPathLocation` alongside `buildObjectPathBreadcrumbs`. `navigation` owns URL encoding and optional
   collection prefixing; the deprecated `hrefFor` path remains available. This entry is not released.
@@ -33,8 +36,8 @@ compatibility exception for the two changes below before versioning; this entry 
 
 - **`buildObjectPathBreadcrumbs` return type (`clr-lift`).** The helper no longer returns `readonly BreadcrumbItem[]`.
   It returns a discriminated `BuildObjectPathResult` (`{ok: true, items}` or `{ok: false, error}`) and settles invalid
-  application input in the error branch instead of throwing. The array-returning shape was released in 21.5.0; the new
-  behavior belongs to this unreleased version.
+  application input in the error branch instead of throwing. The array-returning shape was released in clr-lift 21.4.0;
+  the new behavior belongs to this unreleased version.
 - **Datagrid selection directives removed (`clr-lift`).** `DatagridSelectionAccessorDirective` and
   `DatagridSelectionBindingDirective` are no longer exported. `DatagridSelectionComponent` is the only CVA and
   value-control module. See [ADR-0003](docs/adr/0003-datagrid-selection-single-value-control.md).

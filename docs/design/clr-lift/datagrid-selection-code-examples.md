@@ -775,6 +775,11 @@ export function toSelectedKeys(control: Signal<FormControl>): Signal<DatagridSel
 The server and namespace pickers import the same helper; all three `keys` models stay in sync with the page-owned
 control.
 
+Reading `control().value` inside an effect tracks only the control input signal, not edits to that same control:
+`FormControl.value` is a plain property. The helper observes `valueChanges` for edits and reset, emits the current value
+when the control is replaced, and unsubscribes from the previous control. Both bridges are destroyed with the picker.
+The page-owned control remains the write source; the `keys` model exposes its value to observers.
+
 ### organization-picker.component.html
 
 ```html
