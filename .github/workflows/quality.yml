@@ -90,7 +90,9 @@ jobs:
       # pass in a zone with a negative offset and daylight-saving transitions.
       # `--skip-nx-cache` keeps a cached result from another timezone from standing in for this run.
       - name: Library tests in a timezone behind UTC
-        run: TZ=America/New_York pnpm exec nx run-many -t test --projects=ngx-lift,clr-lift --skip-nx-cache --parallel=2
+        run: |
+          echo "Running library unit tests in $(TZ=America/New_York date +%Z%z)"
+          TZ=America/New_York pnpm exec nx run-many -t test --projects=ngx-lift,clr-lift --skip-nx-cache --parallel=2
 
   # Builds. Package/bundle verification runs only on the full (push) path.
   build:
