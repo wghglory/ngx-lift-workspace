@@ -399,7 +399,7 @@
               {{ 'queryExamples.failWrite' | translate }}
             </button>
           </div>
-          <table class="table table-compact" data-test-id="batch-outcomes">
+          <table class="table table-compact" data-testid="batch-outcomes">
             <thead>
               <tr>
                 <th>{{ 'common.name' | translate }}</th>
@@ -410,7 +410,7 @@
               @for (id of batchIds; track id) {
                 <tr>
                   <td>{{ id }}</td>
-                  <td data-test-id="batch-status">
+                  <td data-testid="batch-status">
                     @switch (batchOutcomes()[id]) {
                       @case ('idle') {
                         <!-- No status label before the first submission. -->

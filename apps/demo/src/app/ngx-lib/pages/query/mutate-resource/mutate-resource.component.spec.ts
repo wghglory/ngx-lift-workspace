@@ -82,7 +82,7 @@ describe('MutateResourceDemoComponent', () => {
 
   it('renders idle, saving and settled batch states in order', async () => {
     const statuses = () =>
-      Array.from(fixture.nativeElement.querySelectorAll('[data-test-id="batch-status"]')).map(
+      Array.from(fixture.nativeElement.querySelectorAll('[data-testid="batch-status"]')).map(
         (cell: Element) => cell.textContent?.trim() ?? '',
       );
 
