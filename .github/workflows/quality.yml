@@ -85,6 +85,12 @@ jobs:
             echo "cmd=run-many" >> "$GITHUB_OUTPUT"
           fi
       - run: pnpm exec nx ${{ steps.scope.outputs.cmd }} -t test --parallel=3
+      # The runner is UTC, where a calendar day parsed as UTC midnight looks identical to a local
+      # day; date defects are therefore invisible in the run above. The library suites must also
+      # pass in a zone with a negative offset and daylight-saving transitions.
+      # `--skip-nx-cache` keeps a cached result from another timezone from standing in for this run.
+      - name: Library tests in a timezone behind UTC
+        run: TZ=America/New_York pnpm exec nx run-many -t test --projects=ngx-lift,clr-lift --skip-nx-cache --parallel=2
 
   # Builds. Package/bundle verification runs only on the full (push) path.
   build:
