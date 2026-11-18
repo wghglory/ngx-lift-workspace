@@ -378,6 +378,60 @@
     </app-demo-playground>
   </section>
 
+  <!-- ==================== DEMO 5: BATCH PARTIAL SUCCESS ==================== -->
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2><code>mutateResource</code> batch</h2>
+
+    <app-demo-playground
+      [title]="'mutateResource.cardPromiseTitle' | translate"
+      [description]="'mutateResource.cardPromiseDesc' | translate"
+      level="advanced"
+      layout="split"
+      [tsCode]="batchCode"
+    >
+      <div preview>
+        <div cds-layout="vertical gap:md">
+          <div cds-layout="horizontal gap:sm align:center">
+            <button type="button" class="btn btn-primary" [disabled]="isBatchRunning()" (click)="submitBatch(false)">
+              {{ 'queryExamples.submitWrite' | translate }}
+            </button>
+            <button type="button" class="btn btn-outline" [disabled]="isBatchRunning()" (click)="submitBatch(true)">
+              {{ 'queryExamples.failWrite' | translate }}
+            </button>
+          </div>
+          <table class="table table-compact">
+            <thead>
+              <tr>
+                <th>{{ 'common.name' | translate }}</th>
+                <th>{{ 'queryResource.status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (id of batchIds; track id) {
+                <tr>
+                  <td>{{ id }}</td>
+                  <td>
+                    @switch (batchOutcomes()[id]) {
+                      @case ('success') {
+                        <span class="label label-success">{{ 'queryLearn.saved' | translate }}</span>
+                      }
+                      @case ('failed') {
+                        <span class="label label-danger">{{ 'common.failed' | translate }}</span>
+                      }
+                      @default {
+                        <span class="label label-info">{{ 'mutateResource.savingBtn' | translate }}</span>
+                      }
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </app-demo-playground>
+  </section>
+
   <p id="domain-ownership">
     <a routerLink="/ngx-lift/query/organization">{{ 'queryDocs.organization' | translate }}</a>
   </p>
