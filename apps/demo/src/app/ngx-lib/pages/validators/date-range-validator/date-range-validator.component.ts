@@ -129,18 +129,28 @@ export class DateExampleComponent {
   tomorrow = new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000);
   fiveDaysLater = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000); // 5 days from now
 
-  todayInISO = this.today.toISOString().split('T')[0]; // get only the date part in YYYY-MM-DD format
-  tomorrowInISO = this.tomorrow.toISOString().split('T')[0];
-  fiveDaysLaterInISO = this.fiveDaysLater.toISOString().split('T')[0];
+  // `date` and `datetime-local` inputs take local wall-clock values. Deriving them from
+  // toISOString() moves the bound to the previous day (or the wrong hour) when the visitor is
+  // not on UTC.
+  todayInISO = this.dateInput(0);
+  tomorrowInISO = this.dateInput(1);
+  fiveDaysLaterInISO = this.dateInput(5);
 
-  minTimestamp = this.today.toISOString().slice(0, 16); // slice to ignore seconds part
-  maxTimestamp = this.fiveDaysLater.toISOString().slice(0, 16);
+  minTimestamp = this.dateTimeInput(this.today);
+  maxTimestamp = this.dateTimeInput(this.fiveDaysLater);
 
   readonly starterMin = this.dateInput(1);
   readonly starterMax = this.dateInput(5);
   private dateInput(offset: number): string {
     const date = new Date(this.today);
     date.setDate(date.getDate() + offset);
+    return this.formatDate(date);
+  }
+  private dateTimeInput(date: Date): string {
+    const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
+    return `${this.formatDate(date)}T${time}`;
+  }
+  private formatDate(date: Date): string {
     return [
       date.getFullYear(),
       String(date.getMonth() + 1).padStart(2, '0'),

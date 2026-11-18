@@ -1,5 +1,8 @@
 import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 
+/** Matches the `YYYY-MM-DD` value produced by `<input type="date">`. */
+const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 /**
  * Interface defining the options for the date range validator.
  */
@@ -33,7 +36,7 @@ interface DateRangeOptions {
   /**
    * Whether to compare the time components as well.
    * If `true`, comparisons will include Date time components (hours, minutes, seconds, milliseconds).
-   * If `false` (default), time parts will be ignored and only the date portion will be compared.
+   * If `false` (default), time parts will be ignored and only the local calendar day will be compared.
    */
   compareTime?: boolean;
 }
@@ -46,6 +49,11 @@ interface DateRangeOptions {
  * - Minimum and maximum date constraints
  * - Inclusive or exclusive boundary comparisons
  * - Time-aware or date-only comparisons
+ *
+ * Date-only strings (`YYYY-MM-DD`, the format produced by `<input type="date">`) describe a
+ * calendar day, so they are read as local days rather than as UTC midnight. Strings that carry a
+ * time or an offset keep their instant semantics. With `compareTime: false` (default) both the
+ * value and the boundaries are reduced to the local calendar day before comparison.
  *
  * @param options - The options for the date range validation.
  * @returns A validator function that validates a FormControl and returns an error object if the date is out of range,
@@ -96,7 +104,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
     }
 
     // Parse the selected date from the control value
-    const selectedDate = new Date(control.value);
+    const selectedDate = parseDateValue(control.value);
 
     if (isNaN(selectedDate.getTime())) {
       return {invalidDate: true};
@@ -148,9 +156,33 @@ function calendarDate(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }
 
+/**
+ * Reads a value or a boundary without moving a calendar-day string to another day.
+ *
+ * `new Date('2024-01-15')` treats a date-only string as UTC midnight, which is the previous
+ * local day everywhere west of UTC. A date-only value is therefore rebuilt from its local
+ * calendar components. Values that carry a time or an offset keep their instant semantics, and
+ * an impossible calendar day (`2024-02-31`) still produces an invalid date.
+ */
+function parseDateValue(value: Date | string | number): Date {
+  const dateOnly = typeof value === 'string' ? DATE_ONLY_PATTERN.exec(value.trim()) : null;
+  if (!dateOnly) {
+    return new Date(value);
+  }
+
+  const [, year, month, day] = dateOnly;
+  const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+  const roundTrips =
+    parsed.getFullYear() === Number(year) &&
+    parsed.getMonth() === Number(month) - 1 &&
+    parsed.getDate() === Number(day);
+
+  return roundTrips ? parsed : new Date(NaN);
+}
+
 function parseBoundary(value: Date | string | null | undefined, name: string): Date | null {
   if (value == null) return null;
-  const date = new Date(value);
+  const date = parseDateValue(value);
   if (!Number.isFinite(date.getTime())) throw new TypeError(`${name} must be a valid date.`);
   return date;
 }
