@@ -1,5 +1,7 @@
 import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 
+import {isEmptyControlValue} from './validator-value.util';
+
 /** Matches the `YYYY-MM-DD` value produced by `<input type="date">`. */
 const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -93,13 +95,13 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
   if (
     minDate &&
     maxDate &&
-    (options.compareTime ? minDate.getTime() > maxDate.getTime() : calendarDate(minDate) > calendarDate(maxDate))
+    (options.compareTime ? minDate.getTime() > maxDate.getTime() : calendarDayKey(minDate) > calendarDayKey(maxDate))
   ) {
     throw new RangeError('minDate must not be after maxDate.');
   }
   return (control: AbstractControl): ValidationErrors | null => {
-    // if control doesn't have any value, pass validation. Developer should use Angular required validator.
-    if (!control.value) {
+    // Empty values pass so that Validators.required owns the mandatory case.
+    if (isEmptyControlValue(control.value)) {
       return null;
     }
 
@@ -118,7 +120,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
           ? selectedDate.getTime() < minDate.getTime()
           : selectedDate.getTime() <= minDate.getTime();
       } else {
-        const diff = calendarDate(selectedDate) - calendarDate(minDate);
+        const diff = calendarDayKey(selectedDate) - calendarDayKey(minDate);
         errorCondition = options.minInclusive ? diff < 0 : diff <= 0;
       }
 
@@ -137,7 +139,7 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
           ? selectedDate.getTime() > maxDate.getTime()
           : selectedDate.getTime() >= maxDate.getTime();
       } else {
-        const diff = calendarDate(selectedDate) - calendarDate(maxDate);
+        const diff = calendarDayKey(selectedDate) - calendarDayKey(maxDate);
         errorCondition = options.maxInclusive ? diff > 0 : diff >= 0;
       }
 
@@ -152,8 +154,12 @@ export function dateRangeValidator(options: DateRangeOptions): ValidatorFn {
   };
 }
 
-function calendarDate(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+/**
+ * Ordinal key for a local calendar day, so comparisons never depend on the time of day, the
+ * offset, or daylight-saving transitions.
+ */
+function calendarDayKey(date: Date): number {
+  return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDate();
 }
 
 /**
@@ -172,6 +178,8 @@ function parseDateValue(value: Date | string | number): Date {
 
   const [, year, month, day] = dateOnly;
   const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+  // The Date constructor maps the years 0-99 to 1900-1999; the pattern always carries four digits.
+  parsed.setFullYear(Number(year));
   const roundTrips =
     parsed.getFullYear() === Number(year) &&
     parsed.getMonth() === Number(month) - 1 &&

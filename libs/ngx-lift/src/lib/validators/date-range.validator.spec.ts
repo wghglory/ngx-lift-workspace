@@ -247,6 +247,24 @@ describe('dateRangeValidator calendar-day values', () => {
     expect(control.errors).toEqual({minDate: localDay(2026, 11, 18).toISOString()});
   });
 
+  it('ignores surrounding whitespace on a date-only value', () => {
+    const control = new FormControl(' 2026-11-18 ', dateRangeValidator({minDate: '2026-11-18', minInclusive: true}));
+
+    expect(control.errors).toBeNull();
+  });
+
+  it('accepts a four-digit year below 100', () => {
+    const control = new FormControl('0050-01-15', dateRangeValidator({minDate: '0050-01-01', minInclusive: true}));
+
+    expect(control.errors).toBeNull();
+  });
+
+  it('treats numeric zero as the epoch instant rather than an empty value', () => {
+    const control = new FormControl(0, dateRangeValidator({minDate: '2020-01-01', minInclusive: true}));
+
+    expect(control.errors).toEqual({minDate: localDay(2020, 1, 1).toISOString()});
+  });
+
   it('rejects an impossible date-only value instead of rolling it over', () => {
     const control = new FormControl('2026-02-31', dateRangeValidator({}));
 
