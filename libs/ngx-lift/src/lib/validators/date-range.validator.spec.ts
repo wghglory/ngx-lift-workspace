@@ -259,6 +259,12 @@ describe('dateRangeValidator calendar-day values', () => {
     expect(control.errors).toBeNull();
   });
 
+  it('keeps year zero a leap year when checking the day it names', () => {
+    const control = new FormControl('0000-02-29', dateRangeValidator({minDate: '0000-01-01', minInclusive: true}));
+
+    expect(control.errors).toBeNull();
+  });
+
   it('treats numeric zero as the epoch instant rather than an empty value', () => {
     const control = new FormControl(0, dateRangeValidator({minDate: '2020-01-01', minInclusive: true}));
 

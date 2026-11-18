@@ -177,9 +177,11 @@ function parseDateValue(value: Date | string | number): Date {
   }
 
   const [, year, month, day] = dateOnly;
-  const parsed = new Date(Number(year), Number(month) - 1, Number(day));
-  // The Date constructor maps the years 0-99 to 1900-1999; the pattern always carries four digits.
-  parsed.setFullYear(Number(year));
+  // `new Date(year, month, day)` maps the years 0-99 to 1900-1999 and applies that century's leap
+  // rule, so a day such as 0000-02-29 would be judged impossible. Set the components explicitly.
+  const parsed = new Date(0);
+  parsed.setFullYear(Number(year), Number(month) - 1, Number(day));
+  parsed.setHours(0, 0, 0, 0);
   const roundTrips =
     parsed.getFullYear() === Number(year) &&
     parsed.getMonth() === Number(month) - 1 &&
