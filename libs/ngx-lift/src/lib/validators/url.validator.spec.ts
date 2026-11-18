@@ -1,5 +1,3 @@
-// validators.spec.ts
-
 import {AbstractControl, FormControl, ValidationErrors} from '@angular/forms';
 
 import {httpsValidator, urlValidator} from './url.validator';
@@ -23,6 +21,18 @@ describe('Url Validators', () => {
       const result: ValidationErrors | null = urlValidator(control);
       expect(result).toEqual({invalidUrl: true});
     });
+
+    it('should treat empty values as valid so Validators.required owns the mandatory case', () => {
+      for (const empty of ['', null, undefined]) {
+        control.setValue(empty);
+        expect(urlValidator(control)).toBeNull();
+      }
+    });
+
+    it('should reject a whitespace-only value', () => {
+      control.setValue('   ');
+      expect(urlValidator(control)).toEqual({invalidUrl: true});
+    });
   });
 
   describe('httpsValidator', () => {
@@ -36,6 +46,18 @@ describe('Url Validators', () => {
       control.setValue('http://invalid-https-url.com');
       const result: ValidationErrors | null = httpsValidator(control);
       expect(result).toEqual({invalidUrl: true});
+    });
+
+    it('should treat empty values as valid so Validators.required owns the mandatory case', () => {
+      for (const empty of ['', null, undefined]) {
+        control.setValue(empty);
+        expect(httpsValidator(control)).toBeNull();
+      }
+    });
+
+    it('should reject a whitespace-only value', () => {
+      control.setValue('   ');
+      expect(httpsValidator(control)).toEqual({invalidUrl: true});
     });
   });
 });
