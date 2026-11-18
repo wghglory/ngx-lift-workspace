@@ -38,7 +38,8 @@ substitution and explain production HTTP setup. Avoid fresh/stale/inactive as a 
 - Every menu entry resolves, reference section links work, and all supported dictionaries contain translated prose.
 - Complete starter code compiles as part of the demo through public exports. Preview uses its actual component/template.
 - Browser checks cover repeated interactions, narrow screens and language switching. Human newcomer acceptance is a
-  separate, unperformed gate unless explicitly recorded.
+  separate, unperformed gate unless explicitly recorded; it is owned by the maintainer and tracked in
+  [issue #235](https://github.com/wghglory/ngx-lift-workspace/issues/235).
 - Record exact commands/revision/results at completion. Local verification is separate from remote CI, merge and
   release.
 

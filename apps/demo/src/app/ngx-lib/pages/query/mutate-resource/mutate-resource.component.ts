@@ -290,7 +290,9 @@ clearLogs() {
   // Demo 5: selected rows updated with one API call per row (no batch endpoint)
   // ---------------------------------------------------------------------------
   readonly batchIds = ['item-1', 'item-2', 'item-3'];
-  readonly batchOutcomes = signal<Record<string, 'pending' | 'success' | 'failed'>>({});
+  readonly batchOutcomes = signal<Record<string, 'idle' | 'pending' | 'success' | 'failed'>>(
+    Object.fromEntries(this.batchIds.map((id) => [id, 'idle' as const])),
+  );
   readonly isBatchRunning = computed(() => Object.values(this.batchOutcomes()).includes('pending'));
 
   readonly updateRowMutation = mutateResource<{id: string; fail: boolean}, {id: string}>(
@@ -321,7 +323,9 @@ clearLogs() {
 import {mutateResource} from 'ngx-lift';
 
 readonly batchIds = ['item-1', 'item-2', 'item-3'];
-readonly batchOutcomes = signal<Record<string, 'pending' | 'success' | 'failed'>>({});
+readonly batchOutcomes = signal<Record<string, 'idle' | 'pending' | 'success' | 'failed'>>(
+  Object.fromEntries(this.batchIds.map((id) => [id, 'idle' as const])),
+);
 readonly isBatchRunning = computed(() => Object.values(this.batchOutcomes()).includes('pending'));
 
 readonly updateRowMutation = mutateResource<{id: string; fail: boolean}, {id: string}>(

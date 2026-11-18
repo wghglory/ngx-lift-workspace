@@ -707,7 +707,9 @@ import {
   model,
   OnDestroy,
 } from '@angular/core';
+import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {startWith, switchMap} from 'rxjs';
 import {ClarityModule} from '@clr/angular';
 import {AlertComponent, DatagridSelectionComponent, DatagridSelectionValue, TranslatePipe} from 'clr-lift';
 import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
@@ -733,6 +735,11 @@ export class OrganizationPickerComponent implements OnDestroy {
   readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
   readonly control = input.required<FormControl>();
   readonly keys = model<DatagridSelectionValue>(null);
+  /** Follows the current control's value, including reset and control replacement. */
+  private readonly selectedKeys = toSignal(
+    toObservable(this.control).pipe(switchMap((control) => control.valueChanges.pipe(startWith(control.value)))),
+    {initialValue: null as DatagridSelectionValue},
+  );
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -743,7 +750,7 @@ export class OrganizationPickerComponent implements OnDestroy {
   readonly statusFilter = new StatusFilter();
   readonly organizationKey = (item: Organization) => item.id;
   constructor() {
-    effect(() => this.keys.set(this.control().value as DatagridSelectionValue));
+    effect(() => this.keys.set(this.selectedKeys() as DatagridSelectionValue));
   }
   ngOnDestroy(): void {
     this.statusFilter.destroy();

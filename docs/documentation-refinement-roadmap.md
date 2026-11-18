@@ -1,8 +1,9 @@
 # Demo documentation status
 
-Engineering delivery for the demo teaching improvements is complete. Newcomer comprehension remains the open human gate;
-independent language approval and the manual assistive-technology waiver are recorded in the
-[acceptance contract](guides/accessibility-and-localization.md). The waiver is not a pass.
+Engineering delivery for the demo teaching improvements is complete. Newcomer comprehension remains the open human gate,
+owned by the maintainer and tracked in [issue #235](https://github.com/wghglory/ngx-lift-workspace/issues/235); it is
+not claimed passed or waived. Independent language approval and the manual assistive-technology waiver are recorded in
+the [acceptance contract](guides/accessibility-and-localization.md). The waiver is not a pass.
 
 ## Shared acceptance criteria
 

@@ -10,7 +10,9 @@ import {
   OnDestroy,
   signal,
 } from '@angular/core';
+import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {startWith, switchMap} from 'rxjs';
 import {ClrDatagridSortOrder} from '@clr/angular';
 import {ClarityModule} from '@clr/angular';
 import {
@@ -49,6 +51,11 @@ export class ServerOrganizationPickerComponent implements OnDestroy {
   readonly control = input.required<FormControl>();
   /** Selected keys emitted for page observers; the control remains the one form owner. */
   readonly keys = model<DatagridSelectionValue>(null);
+  /** Follows the current control's value, including reset and control replacement. */
+  private readonly selectedKeys = toSignal(
+    toObservable(this.control).pipe(switchMap((control) => control.valueChanges.pipe(startWith(control.value)))),
+    {initialValue: null as DatagridSelectionValue},
+  );
   readonly readonly = input(false, {transform: booleanAttribute});
   readonly required = input(false, {transform: booleanAttribute});
   readonly error = input('');
@@ -92,7 +99,7 @@ export class ServerOrganizationPickerComponent implements OnDestroy {
       if (!page) return;
       this.settledTotal.set(page.total);
     });
-    effect(() => this.keys.set(this.control().value as DatagridSelectionValue));
+    effect(() => this.keys.set(this.selectedKeys() as DatagridSelectionValue));
     this.nameFilterSubscription = this.nameFilter.changes.subscribe(() => this.page.set(1));
   }
 

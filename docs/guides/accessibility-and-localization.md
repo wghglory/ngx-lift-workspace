@@ -69,6 +69,10 @@ label layouts. Read actual rendered states and exercise runtime switching; key p
 | pt-BR  | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
 | ru     | Maintainer-appointed reviewer | Approved (2026-11-08, PR #218) |
 
+Independent language review of the standard-validators demo strings remains open, owned by the maintainer and tracked in
+[issue #234](https://github.com/wghglory/ngx-lift-workspace/issues/234). The 2026-11-10 manual assistive-technology
+waiver is unchanged and is not a passed assessment for those strings.
+
 On 2026-11-14 the maintainer approved the language acceptance gate for the 2026-11-12 `toSignalForm` validator-binding
 playground and API-guide strings, closing G-49 (recorded in PR #226). Scope: the playground messages and accessible
 names plus the API-guide card titles and descriptions, across all eleven supported locales. This is a dated maintainer
