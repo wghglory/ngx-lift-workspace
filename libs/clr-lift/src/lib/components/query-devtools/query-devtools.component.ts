@@ -22,6 +22,7 @@ import {QUERY_CLIENT, QueryClient, QueryClientDiagnostics, QueryEntryDiagnostics
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {AlertComponent} from '../alert/alert.component';
+import {QueryDevtoolsLauncherDirective} from './query-devtools-launcher.directive';
 import {queryDevtoolsTranslations} from './query-devtools.l10n';
 import {copyableJson, expandAllValueRows, valueRows, ValueRow} from './query-value-preview';
 
@@ -46,7 +47,8 @@ let nextPanelId = 0;
  */
 @Component({
   selector: 'cll-query-devtools',
-  imports: [ClarityModule, DatePipe, TranslatePipe, AlertComponent],
+  host: {'[class.floating-launcher]': "launcher() === 'floating'"},
+  imports: [ClarityModule, DatePipe, TranslatePipe, AlertComponent, QueryDevtoolsLauncherDirective],
   templateUrl: './query-devtools.component.html',
   styleUrl: './query-devtools.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

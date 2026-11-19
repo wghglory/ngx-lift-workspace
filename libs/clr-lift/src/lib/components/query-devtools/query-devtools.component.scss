@@ -1,6 +1,10 @@
 :host {
   display: inline-block;
 }
+// A body-mounted floating inspector must not leave a line box below a full-height application.
+:host(.floating-launcher) {
+  display: contents;
+}
 .launcher {
   display: inline-flex;
   align-items: center;
@@ -8,15 +12,46 @@
 }
 .launcher.floating {
   position: fixed;
-  inset-block-end: max(1rem, env(safe-area-inset-bottom));
-  inset-inline-end: 1rem;
+  top: clamp(
+    env(safe-area-inset-top, 0px),
+    var(--cll-query-launcher-top, calc(100dvh - 48px - env(safe-area-inset-bottom, 0px))),
+    calc(100dvh - 32px - env(safe-area-inset-bottom, 0px))
+  );
+  right: env(safe-area-inset-right, 0px);
   z-index: 1000;
-  padding: 0.4rem;
-  min-inline-size: 2.5rem;
-  block-size: 2.5rem;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 4px;
+  inline-size: 32px;
+  min-inline-size: 32px;
+  block-size: 32px;
+  min-block-size: 32px;
+  opacity: 0.6;
+  color: var(--clr-global-font-color);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
   border-radius: 50%;
   background: var(--clr-global-app-background);
   box-shadow: var(--cds-alias-object-shadow-200);
+}
+.launcher.floating:hover,
+.launcher.floating:focus-visible,
+.launcher.floating.dragging {
+  opacity: 1;
+}
+.launcher.floating.dragging {
+  right: auto;
+  left: clamp(
+    env(safe-area-inset-left, 0px),
+    var(--cll-query-launcher-left, 0px),
+    calc(100dvw - 32px - env(safe-area-inset-right, 0px))
+  );
+  cursor: grabbing;
+}
+.launcher.floating:focus-visible {
+  outline: 2px solid var(--clr-link-color);
+  outline-offset: -2px;
 }
 .devtools-panel {
   margin: 0;

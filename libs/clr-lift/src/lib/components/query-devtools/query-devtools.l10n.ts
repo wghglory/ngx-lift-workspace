@@ -1,5 +1,6 @@
 export const queryDevtoolsTranslations: Record<string, Record<string, string>> = {
   en: {
+    moveLauncher: 'Drag to move; release to dock right. Use Up/Down or Home/End when focused.',
     all: 'All',
     allTags: 'All tags',
     live: 'live',
@@ -60,6 +61,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Back',
   },
   de: {
+    moveLauncher: 'Zum Verschieben ziehen; zum Andocken rechts loslassen. Bei Fokus Auf/Ab oder Pos1/Ende verwenden.',
     all: 'Alle',
     allTags: 'Alle Tags',
     live: 'live',
@@ -121,6 +123,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Zurück',
   },
   es: {
+    moveLauncher: 'Arrastra para mover; suelta para acoplar a la derecha. Con el foco, usa Arriba/Abajo o Inicio/Fin.',
     all: 'Todas',
     allTags: 'Todas las etiquetas',
     live: 'en vivo',
@@ -182,6 +185,8 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Volver',
   },
   fr: {
+    moveLauncher:
+      'Faites glisser pour déplacer ; relâchez pour ancrer à droite. Avec le focus, utilisez Haut/Bas ou Début/Fin.',
     all: 'Toutes',
     allTags: 'Toutes les étiquettes',
     live: 'en direct',
@@ -243,6 +248,8 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Retour',
   },
   ja: {
+    moveLauncher:
+      'ドラッグで移動し、離すと右端に固定します。フォーカス時は上下矢印キーまたは Home/End キーで移動できます。',
     all: 'すべて',
     allTags: 'すべてのタグ',
     live: 'ライブ',
@@ -303,6 +310,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: '戻る',
   },
   ko: {
+    moveLauncher: '드래그하여 이동하고 놓으면 오른쪽에 고정됩니다. 포커스 시 위/아래 또는 Home/End 키를 사용하세요.',
     all: '전체',
     allTags: '모든 태그',
     live: '실시간',
@@ -363,6 +371,8 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: '뒤로',
   },
   nl: {
+    moveLauncher:
+      'Sleep om te verplaatsen; laat los om rechts vast te zetten. Gebruik bij focus Omhoog/Omlaag of Home/End.',
     all: 'Alle',
     allTags: 'Alle tags',
     live: 'live',
@@ -424,6 +434,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Terug',
   },
   'pt-BR': {
+    moveLauncher: 'Arraste para mover; solte para fixar à direita. Com foco, use Cima/Baixo ou Home/End.',
     all: 'Todas',
     allTags: 'Todas as tags',
     live: 'ao vivo',
@@ -485,6 +496,8 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Voltar',
   },
   ru: {
+    moveLauncher:
+      'Перетащите и отпустите для закрепления справа. В фокусе используйте стрелки вверх/вниз или Home/End.',
     all: 'Все',
     allTags: 'Все теги',
     live: 'в реальном времени',
@@ -545,6 +558,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Назад',
   },
   'zh-CN': {
+    moveLauncher: '拖动以移动，松开后吸附到右侧。聚焦时可使用上下方向键或 Home/End 键。',
     all: '全部',
     allTags: '所有标签',
     live: '实时',
@@ -605,6 +619,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: '返回',
   },
   'zh-TW': {
+    moveLauncher: '拖曳以移動，放開後吸附至右側。聚焦時可使用上下方向鍵或 Home/End 鍵。',
     all: '全部',
     allTags: '所有標籤',
     live: '即時',
@@ -665,6 +680,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: '返回',
   },
   'en-US': {
+    moveLauncher: 'Drag to move; release to dock right. Use Up/Down or Home/End when focused.',
     all: 'All',
     allTags: 'All tags',
     live: 'live',
@@ -725,6 +741,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Back',
   },
   pt: {
+    moveLauncher: 'Arraste para mover; solte para fixar à direita. Com foco, use Cima/Baixo ou Home/End.',
     all: 'Todas',
     allTags: 'Todas as etiquetas',
     live: 'em direto',
@@ -786,6 +803,7 @@ export const queryDevtoolsTranslations: Record<string, Record<string, string>> =
     back: 'Voltar',
   },
   it: {
+    moveLauncher: 'Trascina per spostare; rilascia per ancorare a destra. Con il focus, usa Su/Giù o Home/End.',
     all: 'Tutte',
     allTags: 'Tutti i tag',
     live: 'in tempo reale',

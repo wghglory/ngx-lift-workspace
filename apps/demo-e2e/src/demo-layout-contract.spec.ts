@@ -3,6 +3,8 @@ import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import ts from 'typescript';
 
+import {expectAccessible} from './support/accessibility';
+
 function box(value: {x: number; y: number; width: number; height: number} | null) {
   if (!value) throw new Error('Expected a rendered element');
   return value;
@@ -82,6 +84,179 @@ test('application query devtools opens the shared client and stays available acr
   await launcher.click();
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
+});
+
+test('floating launcher leaves page scrolling owned by the content area', async ({page}) => {
+  await page.setViewportSize({width: 1280, height: 800});
+  for (const route of ['/', '/ngx-lift/query/queryResource']) {
+    await page.goto(route);
+    const launcher = page.locator('cll-query-devtools-root .launcher');
+    await expect(launcher).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBe(0);
+    const main = page.locator('main.content-area');
+    await expect.poll(() => main.evaluate((element) => element.scrollHeight - element.clientHeight)).toBeGreaterThan(0);
+    await main.evaluate((element) => (element.scrollTop = element.scrollHeight));
+    await expect(main.locator('footer')).toBeInViewport();
+    expect(await page.evaluate(() => scrollY)).toBe(0);
+    await launcher.click();
+    await expect(page.getByRole('region', {name: 'Query devtools', exact: true})).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBe(0);
+    await page.keyboard.press('Escape');
+  }
+});
+
+for (const theme of ['light', 'dark']) {
+  test(`floating launcher remains accessible in ${theme} theme at large text sizes`, async ({page}, testInfo) => {
+    await page.evaluate((theme) => localStorage.setItem('cds-theme', theme), theme);
+    await page.reload();
+    await expect(page.locator('body')).toHaveAttribute('cds-theme', theme);
+    await page.setViewportSize({width: 400, height: 300});
+    await page.locator('html').evaluate((element) => (element.style.fontSize = '200%'));
+    const launcher = page.locator('cll-query-devtools-root .launcher');
+    await expect(launcher).toBeInViewport({ratio: 1});
+    await expect(launcher).toHaveCSS('opacity', '0.6');
+    await expect(launcher).toHaveAccessibleDescription(/Drag to move/);
+    await expectAccessible(page, testInfo, 'cll-query-devtools-root');
+    await launcher.focus();
+    await expect(launcher).toHaveCSS('opacity', '1');
+    await launcher.press('Space');
+    await expect(page.getByRole('region', {name: 'Query devtools', exact: true})).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(launcher).toBeFocused();
+  });
+}
+
+test('floating devtools launcher drags, docks, and clears a footer action', async ({page}) => {
+  await page.setViewportSize({width: 1280, height: 800});
+  const launcher = page.locator('cll-query-devtools-root').getByRole('button', {name: 'Query devtools', exact: true});
+  await expect(launcher).toHaveCSS('opacity', '0.6');
+  const start = box(await launcher.boundingBox());
+  expect(start.width).toBe(32);
+  expect(start.height).toBe(32);
+  expect(start.x + start.width).toBe(1280);
+  // An application-owned footer action occupies the location that the launcher previously covered.
+  await page.evaluate(() => {
+    const action = document.createElement('button');
+    action.textContent = 'Next fixture page';
+    action.style.cssText = 'position:fixed;right:40px;bottom:16px;width:40px;height:32px;z-index:999';
+    action.addEventListener('click', () => (action.textContent = 'Page 2'));
+    document.body.append(action);
+  });
+  await page.getByRole('button', {name: 'Next fixture page'}).click();
+  await expect(page.getByRole('button', {name: 'Page 2', exact: true})).toBeVisible();
+  await page.getByRole('button', {name: 'Page 2', exact: true}).evaluate((element) => {
+    element.style.right = '0px';
+    element.textContent = 'Next fixture page';
+  });
+  await page.mouse.move(start.x + 16, start.y + 16);
+  await expect(launcher).toHaveCSS('opacity', '1');
+  await page.mouse.down();
+  await page.mouse.move(900, 320, {steps: 8});
+  await expect.poll(async () => box(await launcher.boundingBox()).x).toBeLessThan(1000);
+  await page.mouse.up();
+  await expect.poll(async () => box(await launcher.boundingBox()).x).toBe(1248);
+  await expect(page.getByRole('region', {name: 'Query devtools', exact: true})).toHaveCount(0);
+  const docked = box(await launcher.boundingBox());
+  expect(docked.y).toBeCloseTo(304, 0);
+  await page.getByRole('button', {name: 'Next fixture page'}).click();
+  await expect(page.getByRole('button', {name: 'Page 2', exact: true})).toBeVisible();
+  await page.reload();
+  await expect.poll(async () => box(await launcher.boundingBox()).y).toBeCloseTo(docked.y, 0);
+  await page.setViewportSize({width: 400, height: 200});
+  await expect(launcher).toBeInViewport({ratio: 1});
+  await expect.poll(async () => box(await launcher.boundingBox()).y).toBe(168);
+  await launcher.click();
+  await expect(page.getByRole('region', {name: 'Query devtools', exact: true})).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(launcher).toBeFocused();
+  await launcher.press('Home');
+  await expect.poll(async () => box(await launcher.boundingBox()).y).toBe(0);
+  await launcher.press('ArrowDown');
+  await expect.poll(async () => box(await launcher.boundingBox()).y).toBe(20);
+  await launcher.press('ArrowUp');
+  await expect.poll(async () => box(await launcher.boundingBox()).y).toBe(0);
+  await launcher.press('End');
+  await expect.poll(async () => box(await launcher.boundingBox()).y).toBe(168);
+  await launcher.press('Enter');
+  await expect(page.getByRole('region', {name: 'Query devtools', exact: true})).toBeVisible();
+});
+
+test('floating launcher handles a native touch drag without opening on release', async ({browser, browserName}) => {
+  test.skip(browserName !== 'chromium', 'Native touch injection uses CDP; other engines cover touch-pointer handlers.');
+  const context = await browser.newContext({hasTouch: true, viewport: {width: 400, height: 700}});
+  const page = await context.newPage();
+  try {
+    await page.goto('/ngx-lift/query/queryResource');
+    const launcher = page.locator('cll-query-devtools-root .launcher');
+    await expect(launcher).toBeVisible();
+    const start = box(await launcher.boundingBox());
+    const touch = await context.newCDPSession(page);
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{x: start.x + 16, y: start.y + 16}],
+    });
+    for (let step = 1; step <= 5; step++) {
+      await touch.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: [{x: start.x + 16 - step * 30, y: start.y + 16 - step * 60}],
+      });
+    }
+    await expect.poll(async () => box(await launcher.boundingBox()).x).toBeLessThan(300);
+    await touch.send('Input.dispatchTouchEvent', {type: 'touchEnd', touchPoints: []});
+    await expect.poll(async () => box(await launcher.boundingBox()).x).toBe(368);
+    await expect.poll(async () => box(await launcher.boundingBox()).y).toBeCloseTo(start.y - 300, 0);
+    const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
+    await expect(panel).toHaveCount(0);
+    await launcher.tap();
+    await expect(panel).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
+
+test('floating launcher supports touch dragging and right docking in RTL', async ({browser}) => {
+  const context = await browser.newContext({hasTouch: true, viewport: {width: 400, height: 700}});
+  const page = await context.newPage();
+  try {
+    await page.goto('/ngx-lift/query/queryResource');
+    await page.locator('html').evaluate((element) => element.setAttribute('dir', 'rtl'));
+    const launcher = page.locator('cll-query-devtools-root .launcher');
+    await launcher.evaluate((element) => {
+      // Exercise touch-pointer handling with a real capture acquired during pointerdown.
+      element.addEventListener(
+        'pointerdown',
+        (event) => {
+          if (event instanceof PointerEvent && event.pointerType === 'touch') {
+            element.dispatchEvent(
+              new PointerEvent('pointermove', {
+                pointerId: event.pointerId,
+                clientX: 200,
+                clientY: 300,
+                isPrimary: true,
+                pointerType: 'touch',
+              }),
+            );
+            element.dispatchEvent(
+              new PointerEvent('pointerup', {
+                pointerId: event.pointerId,
+                clientX: 200,
+                clientY: 300,
+                isPrimary: true,
+                pointerType: 'touch',
+              }),
+            );
+          }
+        },
+        {once: true},
+      );
+    });
+    await launcher.tap();
+    await expect.poll(async () => box(await launcher.boundingBox()).x).toBe(368);
+    await expect.poll(async () => box(await launcher.boundingBox()).y).toBeCloseTo(284, 0);
+    await expect(page.getByRole('region', {name: 'Query devtools', exact: true})).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
 });
 
 test('collection queries appear in root devtools on a fresh landing and after route navigation', async ({page}) => {

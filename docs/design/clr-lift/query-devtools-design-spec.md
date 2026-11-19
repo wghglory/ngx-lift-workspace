@@ -106,6 +106,37 @@ Column widths follow content and available space; no column is explicitly stretc
 Narrow screens retain horizontal scrolling. Existing cache inspection behavior and application-client ownership are
 unchanged.
 
+### Floating launcher placement (approved November 19, 2026)
+
+Maintainer approval covers this existing launcher behavior; no public symbol, provider option, or dependency is added.
+The concrete consumer needs access to bottom-right datagrid pagination while the inspector is closed.
+
+- The floating host contributes no normal-flow line box. A full-viewport application keeps its content scrollbar without
+  gaining a second document scrollbar when the provider mounts or the inspector opens.
+- Render a 32px circle at the physical right viewport edge, initially 16px above the bottom safe area. Use 60% opacity
+  at rest and full opacity on hover, keyboard focus, or dragging. Keep a visible focus outline.
+- Pointer/touch dragging moves the launcher within the viewport. Release snaps horizontally to the right edge and
+  preserves the chosen vertical position. A movement threshold separates a click from a drag; dragging never opens the
+  inspector. Cancellation restores the previous docked position.
+- With the launcher focused, Up/Down moves it by 20px; Home/End docks it at the top/bottom. Enter/Space retains normal
+  button activation. A localized accessible description and tooltip explain dragging and keyboard movement.
+- Remember the vertical position in session storage, tolerate inaccessible storage, and clamp it after viewport
+  resizing. Remove drag and viewport listeners when disabled, switched to inline, or destroyed. Inline launchers and the
+  inspector panel keep their existing dimensions and behavior. Respect browser safe areas.
+- Verify real pointer capture, drag/click distinction, keyboard activation, opacity, resizing, reload restoration, touch
+  input, RTL, and an underlying footer action in Chromium, Firefox, and WebKit. Existing localized launcher title
+  remains unchanged; the movement instruction ships in all eleven supported dictionaries.
+
+Local validation on November 19, 2026: all 496 clr-lift unit tests pass; the internal launcher directive has 100% line
+and 83.63% branch coverage. Twenty-two focused browser scenarios pass across Chromium, Firefox, and WebKit, including
+light/dark scoped accessibility scans at large text sizes, pointer dragging, native Chromium touch dragging, simulated
+touch-pointer movement in RTL, clicking the vacated footer action, session restoration, viewport bounds, keyboard
+activation, and existing panel resizing. Library/browser-test lint and type checks, dictionary checks, formatting, and
+library builds pass. Six consumer fixtures run against copies of the built packages with the existing local dependency
+tree in ZoneJS and zoneless modes; this is not a fresh registry-install matrix. Movement instructions cover all
+supported dictionaries and existing aliases; independent human language review for these new instructions is not
+established. CI, publication, and downstream package installation are separate gates.
+
 The launcher has an accessible name and tooltip. The panel is a labeled region with no backdrop or focus trap; opening
 focuses Search keys. Close restores focus to its launcher. Escape dismisses an inner grid filter first, then the
 selected inspector, then the panel when focus is inside it. There is no global shortcut. The panel uses the native
