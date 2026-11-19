@@ -60,6 +60,11 @@ compatibility exception for the two changes below before versioning; this entry 
 
 ### Fixed
 
+- The floating query devtools launcher is now a 32px translucent button docked against the right viewport edge. Drag it
+  away from footer controls and release to snap right; focused Up/Down and Home/End keys also reposition it. Placement
+  survives reloads for the session and stays within the safe viewport after resizing. Hover/focus restores full opacity;
+  dragging does not open the inspector. `provideQueryDevtools()` and inline launchers are unchanged.
+
 - **`dateRangeValidator` (`ngx-lift`).** A date-only value or boundary (`YYYY-MM-DD`, the format produced by
   `<input type="date">`) is now read as the local calendar day it names instead of UTC midnight. The UTC parse resolved
   to the previous local day west of UTC, so a value the user had just picked could be rejected as too early (or accepted

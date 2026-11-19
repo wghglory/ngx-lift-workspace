@@ -61,9 +61,11 @@ Record the alternatives and consumer evidence in the feature spec before adding 
 
 ## Agent skills
 
-Project design and gap skills live in `.agents/skills/` and are reached through the pointers in this file and
-`docs/README.md`. The `.github/skills/` and `.opencode/skills/` directories hold the Nx skills, and `.cursor/skills/`
-holds Cursor-only skills; those are client-specific sets and are not the canonical home for project design skills.
+Shared project and Nx skills have one physical source in `.agents/skills/`. The Nx entries in `.github/skills/` and
+`.opencode/skills/` are relative directory symlinks to that source for client discovery; keep each skill's scripts and
+references with its canonical directory. `.cursor/skills/` holds Cursor-specific workflows. Edit the canonical files,
+then verify every client link resolves before committing. `monitor-ci` is explicitly user-invoked as `/monitor-ci`; its
+prompt-file migration keeps the helper scripts and the deploy/publish verification boundary.
 
 ### Issue tracker
 

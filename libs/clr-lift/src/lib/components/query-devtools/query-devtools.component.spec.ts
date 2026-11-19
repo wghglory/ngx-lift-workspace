@@ -17,6 +17,7 @@ describe('QueryDevtoolsComponent', () => {
 
   beforeEach(() => {
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {value: () => undefined, configurable: true});
+    sessionStorage.removeItem('cll-query-devtools-launcher-top');
     client = new QueryClient();
     TestBed.configureTestingModule({
       imports: [QueryDevtoolsComponent],
@@ -65,6 +66,109 @@ describe('QueryDevtoolsComponent', () => {
     click('Actions');
     click('Copy key');
   }
+
+  function floatingLauncher(): HTMLButtonElement {
+    mount();
+    fixture.componentRef.setInput('launcher', 'floating');
+    fixture.detectChanges();
+    const button = fixture.nativeElement.querySelector('.launcher') as HTMLButtonElement;
+    vi.spyOn(button, 'getBoundingClientRect').mockReturnValue(new DOMRect(992, 700, 32, 32));
+    button.setPointerCapture = vi.fn();
+    button.hasPointerCapture = vi.fn(() => true);
+    button.releasePointerCapture = vi.fn();
+    return button;
+  }
+
+  function pointer(button: HTMLButtonElement, type: string, x: number, y: number, pointerId = 1): void {
+    button.dispatchEvent(
+      Object.assign(new MouseEvent(type, {clientX: x, clientY: y, button: 0}), {
+        pointerId,
+        isPrimary: true,
+      }),
+    );
+    fixture.detectChanges();
+  }
+
+  it('docks a dragged floating launcher without activating it and preserves keyboard activation', () => {
+    const button = floatingLauncher();
+    pointer(button, 'pointerdown', 1008, 716);
+    pointer(button, 'pointermove', 800, 316, 2);
+    expect(button.classList.contains('dragging')).toBe(false);
+    pointer(button, 'pointermove', 800, 316);
+    expect(button.classList.contains('dragging')).toBe(true);
+    expect(button.style.getPropertyValue('--cll-query-launcher-left')).toBe('784px');
+    pointer(button, 'pointerup', 800, 316);
+    button.dispatchEvent(new MouseEvent('click', {detail: 1, bubbles: true}));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="region"]')).toBeNull();
+    expect(button.style.getPropertyValue('--cll-query-launcher-left')).toBe('');
+    expect(sessionStorage.getItem('cll-query-devtools-launcher-top')).toBe('300');
+    button.click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="region"]')).not.toBeNull();
+  });
+
+  it('keeps small pointer movements as ordinary clicks', () => {
+    const button = floatingLauncher();
+    pointer(button, 'pointerdown', 1008, 716);
+    pointer(button, 'pointermove', 1009, 718);
+    pointer(button, 'pointerup', 1009, 718);
+    button.dispatchEvent(new MouseEvent('click', {detail: 1, bubbles: true}));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="region"]')).not.toBeNull();
+  });
+
+  it.each(['pointercancel', 'lostpointercapture'])('restores the dock after %s', (type) => {
+    sessionStorage.setItem('cll-query-devtools-launcher-top', '100');
+    const button = floatingLauncher();
+    pointer(button, 'pointerdown', 1008, 716);
+    pointer(button, 'pointermove', 800, 316);
+    pointer(button, type, 800, 316);
+    expect(button.classList.contains('dragging')).toBe(false);
+    expect(button.style.getPropertyValue('--cll-query-launcher-top')).toBe('100px');
+    expect(sessionStorage.getItem('cll-query-devtools-launcher-top')).toBe('100');
+  });
+
+  it('cleans up an active drag when switching to an inline launcher', () => {
+    const button = floatingLauncher();
+    pointer(button, 'pointerdown', 1008, 716);
+    pointer(button, 'pointermove', 800, 316);
+    fixture.componentRef.setInput('launcher', 'inline');
+    fixture.detectChanges();
+    pointer(button, 'pointermove', 500, 200);
+    expect(button.style.getPropertyValue('--cll-query-launcher-left')).toBe('');
+    expect(button.style.getPropertyValue('--cll-query-launcher-top')).toBe('');
+    expect(button.classList.contains('dragging')).toBe(false);
+  });
+
+  it('restores valid session positions and moves the launcher with keyboard bounds', () => {
+    sessionStorage.setItem('cll-query-devtools-launcher-top', '140');
+    const button = floatingLauncher();
+    expect(button.style.getPropertyValue('--cll-query-launcher-top')).toBe('140px');
+    for (const [key, expected] of [
+      ['ArrowUp', 680],
+      ['ArrowDown', 720],
+      ['Home', 0],
+      ['End', innerHeight - 32],
+    ] as const) {
+      button.dispatchEvent(new KeyboardEvent('keydown', {key, cancelable: true}));
+      fixture.detectChanges();
+      expect(button.style.getPropertyValue('--cll-query-launcher-top')).toBe(expected + 'px');
+    }
+  });
+
+  it('tolerates unavailable session storage when moving the launcher', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    const button = floatingLauncher();
+    button.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'}));
+    fixture.detectChanges();
+    expect(button.style.getPropertyValue('--cll-query-launcher-top')).toBe('0px');
+  });
 
   it('shows data immediately and keeps view reads separate from loader execution', async () => {
     const loader = vi.fn(() => Promise.resolve({name: 'Alex'}));
