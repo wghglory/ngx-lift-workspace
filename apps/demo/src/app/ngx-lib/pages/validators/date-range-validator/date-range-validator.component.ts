@@ -3,32 +3,16 @@ import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/cor
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
-import {dateRangeValidator} from 'ngx-lift';
+import {addCalendarDays, dateRangeValidator, toLocalDateString} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
-/** Local `YYYY-MM-DD` for a `date` input; `toISOString()` would report the UTC day. */
-function toDateInputValue(date: Date): string {
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0'),
-  ].join('-');
-}
-
 /** Local `YYYY-MM-DDTHH:mm` for a `datetime-local` input. */
 function toDateTimeInputValue(date: Date): string {
   const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
-  return `${toDateInputValue(date)}T${time}`;
-}
-
-/** Calendar-day arithmetic in the local timezone; adding 86_400_000 ms skips or repeats a day. */
-function addLocalDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
+  return `${toLocalDateString(date)}T${time}`;
 }
 
 function startOfMinute(date: Date): Date {
@@ -58,7 +42,7 @@ export class DateRangeValidatorComponent {
     `import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {dateRangeValidator} from 'ngx-lift';
+import {addCalendarDays, dateRangeValidator, toLocalDateString} from 'ngx-lift';
 
 @Component({
   selector: 'app-date-example',
@@ -69,17 +53,8 @@ import {dateRangeValidator} from 'ngx-lift';
 export class DateExampleComponent {
   today = new Date();
 
-  readonly starterMin = this.dateInput(1);
-  readonly starterMax = this.dateInput(5);
-  private dateInput(offset: number): string {
-    const date = new Date(this.today);
-    date.setDate(date.getDate() + offset);
-    return [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-');
-  }
+  readonly starterMin = toLocalDateString(addCalendarDays(this.today, 1));
+  readonly starterMax = toLocalDateString(addCalendarDays(this.today, 5));
   readonly starterForm = new FormGroup({
     date: new FormControl('', {
       nonNullable: true,
@@ -156,15 +131,15 @@ export class DateExampleComponent {
   // Seconds are dropped so the `datetime-local` hints name exactly the instants the validator
   // compares; `date` inputs ignore the time part.
   readonly today = startOfMinute(new Date());
-  readonly tomorrow = addLocalDays(this.today, 1);
-  readonly fiveDaysLater = addLocalDays(this.today, 5);
+  readonly tomorrow = addCalendarDays(this.today, 1);
+  readonly fiveDaysLater = addCalendarDays(this.today, 5);
 
   // `date` and `datetime-local` inputs take local wall-clock values. Deriving them from
   // toISOString() moves the bound to the previous day (or the wrong hour) when the visitor is
   // not on UTC.
-  readonly todayInISO = toDateInputValue(this.today);
-  readonly tomorrowInISO = toDateInputValue(this.tomorrow);
-  readonly fiveDaysLaterInISO = toDateInputValue(this.fiveDaysLater);
+  readonly todayInISO = toLocalDateString(this.today);
+  readonly tomorrowInISO = toLocalDateString(this.tomorrow);
+  readonly fiveDaysLaterInISO = toLocalDateString(this.fiveDaysLater);
 
   readonly minTimestamp = toDateTimeInputValue(this.today);
   readonly maxTimestamp = toDateTimeInputValue(this.fiveDaysLater);
@@ -230,25 +205,20 @@ const date = new FormControl('2026-01-15', [dateRangeValidator({minDate: '2026-0
 // new Date('2026-01-15') instead constructs an instant at UTC midnight.`);
 
   readonly dateCode = highlight(`import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {dateRangeValidator} from 'ngx-lift';
+import {addCalendarDays, dateRangeValidator, toLocalDateString} from 'ngx-lift';
 
 // The same moving bounds as the live preview.
-function day(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0'),
-  ].join('-');
-}
+const today = new Date();
+const todayDate = toLocalDateString(today);
+const tomorrow = toLocalDateString(addCalendarDays(today, 1));
+const fiveDaysLater = toLocalDateString(addCalendarDays(today, 5));
 const dateForm = new FormGroup({
-  expires: new FormControl('', [dateRangeValidator({minDate: day(0), minInclusive: true})]),
+  expires: new FormControl('', [dateRangeValidator({minDate: todayDate, minInclusive: true})]),
   futureDays: new FormControl('', [
     Validators.required,
     dateRangeValidator({
-      minDate: day(1),
-      maxDate: day(5),
+      minDate: tomorrow,
+      maxDate: fiveDaysLater,
       minInclusive: true,
       maxInclusive: true,
     }),
@@ -274,13 +244,12 @@ const bookingDate = new FormControl('', [
 ]);`);
 
   readonly dateTimeCode = highlight(`import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {dateRangeValidator} from 'ngx-lift';
+import {addCalendarDays, dateRangeValidator} from 'ngx-lift';
 
 // The same moving bounds as the live preview.
 const now = new Date();
 now.setSeconds(0, 0);
-const fiveDaysLater = new Date(now);
-fiveDaysLater.setDate(fiveDaysLater.getDate() + 5);
+const fiveDaysLater = addCalendarDays(now, 5);
 const dateTimeForm = new FormGroup({
   expires: new FormControl('', [
     Validators.required,

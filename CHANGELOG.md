@@ -10,6 +10,11 @@ recorded for the affected releases.
 
 ### Added
 
+- `ngx-lift` exports `addCalendarDays(date, days)` and `toLocalDateString(date)` for nonmutating local-calendar
+  arithmetic and native `YYYY-MM-DD` date values. Offsets must be safe integers; invalid dates, overflow and unsupported
+  formatter years throw. The date-range demo uses the exports instead of private helpers. See the
+  [local calendar utilities specification](docs/design/ngx-lift/local-calendar-utilities-design-spec.md). Unreleased.
+
 - `ngx-lift` exports four Reactive Forms validator factories (`integerValidator`, `jsonValidator`,
   `fileExtensionValidator`, `sameValueValidator`) and two supporting types (`NamedFile`, `FileSelection`). Each factory
   allows empty values, returns one documented error key, and is pure — the group validator reports its error on the

@@ -1,6 +1,6 @@
 # Local calendar utilities design specification
 
-Status: API reviewed; implementation authorized. Owner: ngx-lift maintainers. Updated: 2026-11-20. Package: ngx-lift.
+Status: Implemented (unreleased); API reviewed. Owner: ngx-lift maintainers. Updated: 2026-11-20. Package: ngx-lift.
 Approval: the maintainer explicitly requested the spec and both APIs in PR #240 on 2026-11-20. That instruction also
 authorizes the spec and implementation in the same PR instead of separate PRs. It does not authorize publication.
 
@@ -117,5 +117,21 @@ transitions, invalid dates/offsets, Date overflow, year padding/range, cross-rea
 
 The explicit maintainer instruction supersedes the earlier request for additional consumer evidence and the default
 separate-PR sequence for this bounded scope. The admission table records the actual downstream evidence and the
-correctness guarantees beyond native mutation/UTC formatting. Spec review precedes implementation in this PR;
-implementation/review/check results must be recorded in the PR, not inferred from this plan.
+correctness guarantees beyond native mutation/UTC formatting. Spec review recommended approval before implementation in
+this PR on 2026-11-20 with no blocking contract findings. Implementation/review/check results must be recorded in the
+PR, not inferred from this plan.
+
+## Implementation and local evidence
+
+- Source: [addCalendarDays](../../../libs/ngx-lift/src/lib/utils/add-calendar-days.util.ts) and
+  [toLocalDateString](../../../libs/ngx-lift/src/lib/utils/to-local-date-string.util.ts), exported by the existing root
+  utility barrel. No dependency was added.
+- [Utility tests](../../../libs/ngx-lift/src/lib/utils/local-calendar.util.spec.ts) exercise the specified boundaries,
+  including fresh processes in UTC, New York, Shanghai, Honolulu and Apia. The full ngx-lift suite passed 986 tests
+  across 63 files on 2026-11-20.
+- Both libraries and the demo passed lint/typecheck/build; translation, embedded-example and production bundle checks
+  passed. The existing validation-documentation browser suite passed 12 tests across Chromium, Firefox and WebKit.
+- The [packed-consumer verifier](../../../tools/package/verify-packages.mjs) asserts both root exports, strict public
+  types, runtime date formatting and nonmutation. Its isolated peer-install result is recorded in PR #240 separately.
+- Spec review and implementation review found no blocking findings. These are engineering records; they do not claim
+  remote CI completion, human language acceptance, merge or publication.
